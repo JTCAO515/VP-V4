@@ -35,9 +35,6 @@ export const metadata: Metadata = {
   title: "VisePanda｜来华自由行的 AI 规划与执行工作台",
   description:
     "VisePanda 将对话式规划、Trip Canvas 与旅途中的 Today 执行恢复组织在同一个前端产品预览中。",
-  icons: {
-    icon: "/assets/source/0d18cd3b07fb8516.ico",
-  },
 };
 
 export const viewport: Viewport = {

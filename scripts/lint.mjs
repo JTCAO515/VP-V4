@@ -2,7 +2,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const root = process.cwd();
-const scannedRoots = ["app", "components"];
+const scannedRoots = ["app", "components", "lib"];
 const forbiddenRuntimeClaims = [
   "Layla",
   "莱拉",
@@ -35,7 +35,9 @@ for (const file of files) {
     if (source.includes(claim)) violations.push(`${name}: forbidden runtime copy: ${claim}`);
   }
   if (/<img\b/i.test(source)) violations.push(`${name}: use next/image instead of <img>`);
-  if (/\bany\b/.test(source)) violations.push(`${name}: explicit any is not allowed`);
+  if (/:\s*any\b|\bas\s+any\b|<any>/.test(source)) {
+    violations.push(`${name}: explicit any is not allowed`);
+  }
   if (
     source.includes('"use client"') &&
     /(?:export\s+default\s+)?async\s+function\s+[A-Z]/.test(source)
