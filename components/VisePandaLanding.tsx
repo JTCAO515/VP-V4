@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import {
-  ArrowLeft,
   ArrowRight,
   ArrowUp,
   BedDouble,
@@ -29,7 +28,6 @@ import {
 } from "@/components/icons";
 import {
   type Dispatch,
-  type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
   type SetStateAction,
@@ -46,26 +44,9 @@ type ToastSetter = (message: string) => void;
 
 const tripImages = ["scene-beijing.jpg", "scene-shanghai-rain.jpg", "scene-guangzhou-local.jpg"];
 const featureIcons: IconComponent[] = [HeartHandshake, CircleDollarSign, Diamond, UserRound];
-const momentImages = [
-  "scene-beijing.jpg",
-  "traveler-hutong.jpg",
-  "scene-guangzhou-local.jpg",
-  "traveler-shanghai.jpg",
-  "scene-shanghai-rain.jpg",
-  "recovery-station.jpg",
-  "traveler-chengdu.jpg",
-  "planner-chengdu.jpg",
-];
-const deliveryImages = [
-  "traveler-hutong.jpg",
-  "planner-chengdu.jpg",
-  "hero-beijing.jpg",
-  "traveler-shanghai.jpg",
-  "scene-guangzhou-local.jpg",
-  "recovery-station.jpg",
-];
 const trustIcons: IconComponent[] = [FileText, UserRound, Settings, HeartHandshake];
 const coverageIcons: IconComponent[] = [CircleHelp, Languages, MessageCircle, Diamond, CircleDollarSign, Thermometer, HeartHandshake];
+const hiddenFaqIndexes = new Set([6, 11]);
 
 function BrandClip() {
   return (
@@ -118,23 +99,23 @@ type HeaderProps = {
   openMenu: boolean;
   setOpenMenu: Dispatch<SetStateAction<boolean>>;
   setModal: Dispatch<SetStateAction<ModalKind>>;
-  isMetric: boolean;
-  setIsMetric: Dispatch<SetStateAction<boolean>>;
+  locale: Locale;
 };
 
-function Header({ copy, openMenu, setOpenMenu, setModal, isMetric, setIsMetric }: HeaderProps) {
+function Header({ copy, openMenu, setOpenMenu, setModal, locale }: HeaderProps) {
+  const selectedLocale = localeOptions.find((option) => option.value === locale) ?? localeOptions[0];
+
   return (
     <nav className="site-nav">
       <a href="#top" className="logo-link" aria-label={copy.header.home}>
         <span className="brand-wordmark">VisePanda.</span>
       </a>
       <div className="desktop-nav-actions">
-        <button onClick={() => setModal("display")}>{copy.header.preferences}</button>
-        <button onClick={() => setModal("language")} aria-label={copy.header.language}>
-          <Languages />
+        <button className="currency-trigger" onClick={() => setModal("display")} aria-label={copy.header.preferences}>
+          <span aria-hidden="true">{selectedLocale.currencySymbol}</span>
         </button>
-        <button onClick={() => setIsMetric((current) => !current)}>
-          {isMetric ? copy.header.metric : copy.header.imperial}
+        <button onClick={() => setModal("language")} aria-label={copy.header.language}>
+          <span className="flag-icon" aria-hidden="true">{selectedLocale.flag}</span>
         </button>
         <button
           className="user-button"
@@ -155,7 +136,6 @@ function Header({ copy, openMenu, setOpenMenu, setModal, isMetric, setIsMetric }
           onClose={() => setOpenMenu(false)}
           setModal={setModal}
           copy={copy}
-          isMetric={isMetric}
         />
       ) : null}
     </nav>
@@ -166,10 +146,9 @@ type AccountMenuProps = {
   onClose: () => void;
   setModal: Dispatch<SetStateAction<ModalKind>>;
   copy: LocalizedCopy;
-  isMetric: boolean;
 };
 
-function AccountMenu({ onClose, setModal, copy, isMetric }: AccountMenuProps) {
+function AccountMenu({ onClose, setModal, copy }: AccountMenuProps) {
   const labels = copy.header.menu;
   const entries: Array<{ icon: IconComponent; label: string; action?: () => void }> = [
     { icon: LogIn, label: labels[0] },
@@ -177,9 +156,8 @@ function AccountMenu({ onClose, setModal, copy, isMetric }: AccountMenuProps) {
     { icon: Settings, label: labels[2] },
     { icon: CircleDollarSign, label: labels[3], action: () => setModal("display") },
     { icon: Languages, label: labels[4], action: () => setModal("language") },
-    { icon: Thermometer, label: `${labels[5]} (${isMetric ? copy.header.metric : copy.header.imperial})` },
-    { icon: CircleHelp, label: labels[6] },
-    { icon: MessageCircle, label: labels[7] },
+    { icon: CircleHelp, label: labels[5] },
+    { icon: MessageCircle, label: labels[6] },
   ];
 
   return (
@@ -190,7 +168,7 @@ function AccountMenu({ onClose, setModal, copy, isMetric }: AccountMenuProps) {
         {entries.map(({ icon: Icon, label, action }, index) => (
           <button
             key={label}
-            className={index === 6 ? "menu-divider" : ""}
+            className={index === 5 ? "menu-divider" : ""}
             onClick={() => {
               action?.();
               if (action) onClose();
@@ -202,7 +180,7 @@ function AccountMenu({ onClose, setModal, copy, isMetric }: AccountMenuProps) {
         ))}
         <button>
           <FileText />
-          <span>{labels[8]}</span>
+          <span>{labels[7]}</span>
         </button>
       </div>
     </>
@@ -332,7 +310,6 @@ function Destinations({ copy, setToast }: { copy: LocalizedCopy; setToast: Toast
 
 function FeatureSection({ copy }: { copy: LocalizedCopy }) {
   const [active, setActive] = useState(0);
-  const [expanded, setExpanded] = useState<number | null>(null);
 
   return (
     <section className="section features-section">
@@ -342,17 +319,13 @@ function FeatureSection({ copy }: { copy: LocalizedCopy }) {
         <div className="feature-grid">
           {copy.features.items.map(([title, body], index) => {
             const Icon = featureIcons[index];
-            const isExpanded = expanded === index;
             return (
               <article key={title} className={`feature-card ${active === index ? "active" : ""}`}>
                 <div className="feature-icon">
                   <Icon />
                 </div>
                 <h3>{title}</h3>
-                <p className={isExpanded ? "expanded" : ""}>{body}</p>
-                <button onClick={() => setExpanded(isExpanded ? null : index)}>
-                  {isExpanded ? copy.features.less : copy.features.more}
-                </button>
+                <p>{body}</p>
               </article>
             );
           })}
@@ -403,37 +376,6 @@ function Reviews({ copy, setToast }: { copy: LocalizedCopy; setToast: ToastSette
           </button>
         </div>
       </div>
-    </section>
-  );
-}
-
-function JoyMarquee({ copy }: { copy: LocalizedCopy }) {
-  const momentLabels = [...copy.joy.moments, copy.joy.moments[0], copy.joy.moments[5]];
-  return (
-    <section className="joy-section">
-      <div className="content">
-        <h2>{copy.joy.title}</h2>
-      </div>
-      <div className="joy-row">
-        {momentImages.slice(0, 4).map((image, index) => (
-          <article key={`${image}-${momentLabels[index]}`}>
-            <Image src={`${ASSET_ROOT}${image}`} alt={copy.common.referenceImage} width={500} height={400} unoptimized />
-            <span>{momentLabels[index]}</span>
-          </article>
-        ))}
-      </div>
-      <p className="joy-center">
-        {copy.joy.leadA} <i>{copy.joy.accentA}</i>{copy.joy.separator}{copy.joy.leadB} <i>{copy.joy.accentB}</i>
-      </p>
-      <div className="joy-row reverse">
-        {momentImages.slice(4).map((image, offset) => (
-          <article key={`${image}-${momentLabels[offset + 4]}`}>
-            <Image src={`${ASSET_ROOT}${image}`} alt={copy.common.referenceImage} width={500} height={400} unoptimized />
-            <span>{momentLabels[offset + 4]}</span>
-          </article>
-        ))}
-      </div>
-      <p className="joy-note">{copy.joy.note}</p>
     </section>
   );
 }
@@ -498,65 +440,9 @@ function TrustSection({ copy }: { copy: LocalizedCopy }) {
   );
 }
 
-function Team({ copy }: { copy: LocalizedCopy }) {
-  const [active, setActive] = useState<number | null>(null);
-  const previous = () =>
-    setActive((current) => (current === null ? copy.delivery.cards.length - 1 : (current + copy.delivery.cards.length - 1) % copy.delivery.cards.length));
-  const next = () => setActive((current) => (current === null ? 0 : (current + 1) % copy.delivery.cards.length));
-  const toggle = (index: number) => setActive((current) => (current === index ? null : index));
-  const onCardKeyDown = (event: KeyboardEvent<HTMLElement>, index: number) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      toggle(index);
-    }
-  };
-
-  return (
-    <section className="section team-section">
-      <div className="content">
-        <div className="section-heading-row">
-          <h2>{copy.delivery.title}</h2>
-          <div>
-            <button aria-label={copy.delivery.previous} onClick={previous}>
-              <ArrowLeft />
-            </button>
-            <button aria-label={copy.delivery.next} onClick={next}>
-              <ArrowRight />
-            </button>
-          </div>
-        </div>
-        <div className="team-grid">
-          {copy.delivery.cards.map(([title, status, body], index) => (
-            <article
-              key={title}
-              className={active === index ? "active" : ""}
-              role="button"
-              tabIndex={0}
-              aria-expanded={active === index}
-              onClick={() => toggle(index)}
-              onKeyDown={(event) => onCardKeyDown(event, index)}
-            >
-              <Image
-                src={`${ASSET_ROOT}${deliveryImages[index]}`}
-                alt={`${title} · ${copy.common.referenceImage}`}
-                width={300}
-                height={340}
-                sizes="190px"
-                unoptimized
-              />
-              <h3>{title}</h3>
-              <p>{status}</p>
-              {active === index ? <small>{body}</small> : null}
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function FAQ({ copy }: { copy: LocalizedCopy }) {
   const [open, setOpen] = useState<number | null>(null);
+  const visibleItems = copy.faq.items.filter((_, index) => !hiddenFaqIndexes.has(index));
 
   return (
     <section className="section faq-section">
@@ -564,7 +450,7 @@ function FAQ({ copy }: { copy: LocalizedCopy }) {
         <h2>{copy.faq.title}</h2>
         <p>{copy.faq.subtitle}</p>
         <div className="faq-list">
-          {copy.faq.items.map(([question, answer], index) => (
+          {visibleItems.map(([question, answer], index) => (
             <article key={question} className={open === index ? "open" : ""}>
               <button
                 onClick={() => setOpen((current) => (current === index ? null : index))}
@@ -627,7 +513,6 @@ export function VisePandaLanding() {
   const [locale, setLocale] = useState<Locale>("zh");
   const [openMenu, setOpenMenu] = useState(false);
   const [modal, setModal] = useState<ModalKind>(null);
-  const [isMetric, setIsMetric] = useState(true);
   const [toast, setToast] = useState("");
   const [showTop, setShowTop] = useState(false);
   const localizedCopy = useMemo(() => copyByLocale[locale], [locale]);
@@ -665,8 +550,7 @@ export function VisePandaLanding() {
         openMenu={openMenu}
         setOpenMenu={setOpenMenu}
         setModal={setModal}
-        isMetric={isMetric}
-        setIsMetric={setIsMetric}
+        locale={locale}
       />
       <main>
         <Hero copy={localizedCopy} setToast={setToast} />
@@ -674,10 +558,8 @@ export function VisePandaLanding() {
         <Destinations copy={localizedCopy} setToast={setToast} />
         <FeatureSection copy={localizedCopy} />
         <Reviews copy={localizedCopy} setToast={setToast} />
-        <JoyMarquee copy={localizedCopy} />
         <PlannerSection copy={localizedCopy} setToast={setToast} />
         <TrustSection copy={localizedCopy} />
-        <Team copy={localizedCopy} />
         <FAQ copy={localizedCopy} />
         <Footer copy={localizedCopy} setModal={setModal} setToast={setToast} />
       </main>
@@ -707,7 +589,8 @@ export function VisePandaLanding() {
                 dir={option.value === "ar" ? "rtl" : "ltr"}
                 onClick={() => changeLocale(option.value, option.label)}
               >
-                {option.label}
+                <span className="flag-icon" aria-hidden="true">{option.flag}</span>
+                <span>{option.label}</span>
               </button>
             ))}
           </div>

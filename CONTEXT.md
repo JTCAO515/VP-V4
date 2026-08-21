@@ -1,30 +1,39 @@
 # Context
 
-Objective: keep the accepted Layla-inspired page structure while completing the VisePanda wordmark, five-locale UI, Arabic RTL, China-travel imagery, and removal of unsupported reference-brand sections.
+Objective: simplify the VisePanda landing page so the four core-capability cards always show their complete copy, remove two lower-priority narrative sections and two FAQ items, and make the header navigation visibly local to each supported language.
 
-Status: implementation and automated verification complete; browser-rendered QA and remaining font/shape rights review are open.
+Status: implementation, production build, static regression tests, desktop browser QA, mobile browser QA, five-locale navigation checks, and Arabic RTL checks pass. Commit and remote synchronization are the remaining delivery steps.
 
 Scope:
 
-- Next.js App Router runtime and build configuration
-- typed React Client Component for existing interactions
-- Tailwind v4 foundation plus the preserved fidelity CSS layer
-- text, aria, toast, metadata, and project documentation migration
-- Chinese, English, Spanish, Russian, and Arabic localization with document-level RTL
-- project-local ImageGen China-travel imagery and VisePanda wordmarks
-- removal of the reference logo walls and four-promises chapter
+- remove feature-card detail toggles and text clamping
+- remove the guessing marquee and evidence-delivery sections
+- render 10 FAQ items by excluding the execution-moments and input-storage questions
+- remove metric/imperial state and navigation
+- show locale flags and currency symbols in the header and language modal
+- keep Chinese, English, Spanish, Russian, and Arabic copy plus Arabic document-level RTL
+- rewrite project documentation around VisePanda product scope and current maturity
 
-Blockers: the requested same-font treatment keeps the existing local font files, and the existing shape masks remain; both need a rights review before public release. Real VisePanda interfaces and backends are not connected. Browser-rendered QA must be rerun outside the current port-restricted sandbox.
+Locale mapping:
+
+- `zh` → `🇨🇳` + `¥`
+- `en` → `🇺🇸` + `$`
+- `es` → `🇪🇸` + `€`
+- `ru` → `🇷🇺` + `₽`
+- `ar` → `🇸🇦` + `ر.س`
+
+Boundaries: the page remains frontend-only. Real AI, accounts, Trip persistence, inventory, booking, payment, partner services, and Human Help are not connected. Bundled local fonts and shape masks still need rights review before production release.
 
 Reading order:
 
 1. `README.md`
-2. `docs/adr/0002-visepanda-brand-localization-assets.md`
+2. `HANDOFF.md`
 3. `design-qa.md`
 4. `lib/i18n.ts`
 5. `components/VisePandaLanding.tsx`
 6. `app/globals.css`
+7. `tests/static-output.test.mjs`
 
-Next action: review the deployed branch preview in desktop and 390×844 mobile widths, including all five locales and Arabic RTL.
+Next action: commit the verified change, push `main`, and confirm the Vercel deployment status for that exact commit.
 
-Rollback: revert the VisePanda brand/localization/assets commit.
+Rollback: revert the UI simplification commit.

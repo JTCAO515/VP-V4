@@ -1,8 +1,17 @@
-# VP-V4 — VisePanda 前端内容原型
+# VisePanda — 来华自由行的 AI 规划与执行工作台
 
-一个基于 Next.js App Router、React、TypeScript 与 Tailwind CSS 的 frontend-only VisePanda 内容与交互原型。它演示 Planner、Trip Canvas 与 Today 的产品叙事，不连接真实 AI、账号、Trip、预订、付款或持久化服务。
+VisePanda 面向来中国独立旅行的国际游客，将对话式规划、可见行程和旅途中执行支持放在同一个工作台中。产品目标不是批量生成行程文字，而是帮助旅行者把每天的计划看清楚、确认变化，并在支付、网络、入场、地址和沟通等真实场景中找到可信的下一步或恢复路径。
 
-当前版本已完成顶部与页脚 VisePanda 字标、面向国际自由行旅客的中国旅行视觉资产、中文/英语/西班牙语/俄语/阿拉伯语界面切换，以及阿拉伯语 RTL 布局。原参考站点的投资者/媒体 Logo 墙和“四件我们不会提前承诺的事”章节已移除。
+本仓库是 VisePanda 落地页与交互体验的 frontend-only 实现。当前页面用于表达产品定位、能力边界和 Early Access 状态，不连接真实 AI、账号、Trip 数据、库存、预订、付款或持久化服务。
+
+## 产品体验
+
+- **Chatbot**：理解城市、日期、节奏、兴趣和限制，形成可供检查的候选计划。
+- **Trip Canvas**：逐日展示地点、路线、准备状态和待确认变化，是用户可见的当前行程。
+- **Today**：旅途中只突出一个符合资格的下一步；事实不足时明确说明缺失，并提供安全替代或恢复路径。
+- **可信执行事实**：支付、中文地址、入场、网络和沟通信息需要来源、适用范围、复核时间和过期状态。
+- **五语界面**：支持中文、英语、西班牙语、俄语和阿拉伯语；阿拉伯语启用 RTL。
+- **本地化导航**：根据界面语言显示中国、美国、西班牙、俄罗斯或沙特阿拉伯国旗，以及对应的 `¥`、`$`、`€`、`₽`、`ر.س` 货币符号。
 
 ## 技术栈
 
@@ -12,16 +21,24 @@
 - Tailwind CSS v4 + PostCSS
 - `next/image` 与 `next/font/local`
 
-Tailwind 负责全局基础与主题 token；为避免本轮框架迁移意外改变已验收布局，`app/globals.css` 暂时保留原型的高保真兼容样式。
+`app/page.tsx` 保持为 Server Component；页面交互集中在 `components/VisePandaLanding.tsx` 的显式 Client Component 中。`lib/i18n.ts` 维护五种语言的类型化界面文案，`app/globals.css` 负责当前落地页的响应式视觉层。
 
 ## 本地运行
 
 ```bash
-pnpm install
+pnpm install --frozen-lockfile
 pnpm dev
 ```
 
+默认开发地址为 `http://localhost:3000`。Vercel 部署时 Framework Preset 选择 **Next.js**，Root Directory 使用仓库根目录，其余构建设置保持自动检测即可。
+
 ## 验证
+
+```bash
+pnpm check
+```
+
+该命令依次执行：
 
 ```bash
 pnpm lint
@@ -30,14 +47,37 @@ pnpm build
 pnpm test
 ```
 
-## 当前边界
+前端变更还需补充桌面端、390 × 844 移动端、五语切换、阿拉伯语 RTL、控制台错误和内容溢出检查。
 
-- `implemented`：响应式前端页面、Prompt 本地状态、菜单、弹层、轮播、FAQ、提示反馈、五种界面语言切换与阿拉伯语 RTL。
-- `placeholder`：Planner、Trip Canvas、Today、显示偏好与隐私控制均为前端预览。
+## 项目结构
+
+```text
+app/                         Next.js 路由、布局与全局样式
+components/                  页面交互组件与图标
+lib/i18n.ts                  五语文案、国旗和货币符号配置
+public/assets/visepanda/     VisePanda 中国旅行视觉资产
+tests/                       静态输出与产品边界回归测试
+docs/adr/                    已接受的技术与产品界面决策
+docs/handoff.json            可机读交接状态
+CONTEXT.md / HANDOFF.md      当前上下文与人工交接摘要
+```
+
+## 当前成熟度边界
+
+- `implemented`：响应式落地页、Prompt 本地状态、菜单、弹层、轮播、10 项 FAQ、五语切换、阿拉伯语 RTL、语言国旗和本地货币入口。
+- `placeholder`：Planner、Trip Canvas、Today、显示偏好与隐私控制仍是前端产品预览。
 - `not connected`：真实 AI、账号、Trip 数据、预订、付款、伙伴接口、Human Help 与持久化服务。
 
-## 发布前边界
+生产发布前仍需确认本地字体文件与形状遮罩的使用权，并完成真实浏览器和目标部署环境验收。页面不得把预览能力描述为已经接通的生产服务。
 
-页面已不再运行时加载 Layla 图片、视频、人物或 Logo；新的中国旅行照片由本轮 ImageGen 生成并存入 `public/assets/visepanda/`。为了满足“同样字体”的要求，页面仍保留既有本地字体文件，四个外形裁切 SVG 也沿用原视觉格式，因此在公开发布前仍需完成字体和形状资产权利审查。
+## 继续开发
 
-真实产品接口仍未连接，浏览器视觉与交互 QA 也需在允许本地端口的环境中补跑；生产部署前必须单独确认这两项。
+开始修改前依次阅读：
+
+1. `AGENTS.md`
+2. `CONTEXT.md`
+3. `HANDOFF.md`
+4. `docs/handoff.json`
+5. 与任务相关的 ADR
+
+完成修改后同步代码、测试和交接文档，并如实记录未运行的验证与剩余风险。

@@ -1,11 +1,11 @@
 export type Locale = "zh" | "en" | "es" | "ru" | "ar";
 
-export const localeOptions: ReadonlyArray<{ value: Locale; label: string }> = [
-  { value: "zh", label: "中文" },
-  { value: "en", label: "English" },
-  { value: "es", label: "Español" },
-  { value: "ru", label: "Русский" },
-  { value: "ar", label: "العربية" },
+export const localeOptions: ReadonlyArray<{ value: Locale; label: string; flag: string; currencySymbol: string }> = [
+  { value: "zh", label: "中文", flag: "🇨🇳", currencySymbol: "¥" },
+  { value: "en", label: "English", flag: "🇺🇸", currencySymbol: "$" },
+  { value: "es", label: "Español", flag: "🇪🇸", currencySymbol: "€" },
+  { value: "ru", label: "Русский", flag: "🇷🇺", currencySymbol: "₽" },
+  { value: "ar", label: "العربية", flag: "🇸🇦", currencySymbol: "ر.س" },
 ];
 
 export const copy = {
@@ -14,12 +14,10 @@ export const copy = {
       home: "VisePanda 首页",
       preferences: "偏好",
       language: "界面语言",
-      metric: "公制",
-      imperial: "英制",
       openMenu: "打开产品菜单",
       productMenu: "产品菜单",
       closeMenu: "关闭菜单",
-      menu: ["当前产品", "规划预览", "产品说明", "显示偏好", "语言", "界面单位", "关于 VisePanda", "联系", "使用条款"],
+      menu: ["当前产品", "规划预览", "产品说明", "显示偏好", "语言", "关于 VisePanda", "联系", "使用条款"],
     },
     hero: {
       title: "用 AI 规划中国之旅，再从容地把它走完。",
@@ -70,16 +68,6 @@ export const copy = {
       play: "播放产品预览",
       pause: "暂停产品预览",
     },
-    joy: {
-      title: "少点猜测，多一步可执行。",
-      leadA: "少点",
-      accentA: "猜测",
-      separator: "，",
-      leadB: "多一步",
-      accentB: "可执行。",
-      moments: ["Payment · 支付", "Show to Local · 出示给当地人", "Entry / Booking · 入场与预约", "Translate / Communicate · 翻译与沟通", "Network · 网络", "Rescue / Human Help · 恢复与人工协助"],
-      note: "六个时刻是 VisePanda 的产品边界；每一项仍按可信事实、失败恢复和真实使用证据逐步开放。",
-    },
     planner: {
       title: "VisePanda：AI 规划与执行工作台",
       base: "VisePanda 不只是生成一段行程文字。你可以通过 Chatbot 形成或调整计划，在 Trip Canvas 中逐日查看地点、路线和准备状态，再通过 Today 处理旅途中的下一步与变化。模型只能提出候选；事实资格、用户确认、TripPatch、审计和持久化边界仍由确定性系统控制。",
@@ -94,19 +82,6 @@ export const copy = {
       secondTitle: "覆盖正在按城市和场景扩展。",
       secondBody: "当前页面不宣称完整中国覆盖、实时库存或已激活合作伙伴。Early Access 的任务是先验证哪些信息和执行时刻最值得优先解决。",
       secondBadges: ["北京", "上海", "广州", "成都", "支付准备", "网络准备", "现场恢复"],
-    },
-    delivery: {
-      title: "VisePanda，按证据逐步交付。",
-      cards: [
-        ["Early Access", "逐步开放", "收集真实旅行问题，验证哪些准备事项最值得优先解决。"],
-        ["Planner", "产品预览", "先完成静态候选、缺失、冲突与不可用状态，再接真实事实。"],
-        ["Trip Canvas", "产品预览", "只读行程投影；后续修改必须走确认式 Patch。"],
-        ["Today", "产品预览", "只显示一个符合资格的动作或明确的缺失与恢复状态。"],
-        ["Execution Facts", "建设中", "支付、地址、入场、网络和沟通信息必须带来源与时效。"],
-        ["Recovery", "建设中", "失败时不造假，优先给安全替代、官方渠道或受控升级边界。"],
-      ],
-      previous: "上一项交付能力",
-      next: "下一项交付能力",
     },
     faq: {
       title: "常见问题",
@@ -163,12 +138,10 @@ export const copy = {
       home: "VisePanda home",
       preferences: "Preferences",
       language: "Interface language",
-      metric: "Metric",
-      imperial: "Imperial",
       openMenu: "Open product menu",
       productMenu: "Product menu",
       closeMenu: "Close menu",
-      menu: ["Current product", "Planner preview", "Product notes", "Display preferences", "Language", "Interface units", "About VisePanda", "Contact", "Terms of use"],
+      menu: ["Current product", "Planner preview", "Product notes", "Display preferences", "Language", "About VisePanda", "Contact", "Terms of use"],
     },
     hero: {
       title: "Plan your trip to China with AI, then move through it with confidence.",
@@ -210,16 +183,6 @@ export const copy = {
       play: "Play product preview",
       pause: "Pause product preview",
     },
-    joy: {
-      title: "Less guessing. One more executable step.",
-      leadA: "Less",
-      accentA: "guessing",
-      separator: ", ",
-      leadB: "one more",
-      accentB: "executable step.",
-      moments: ["Payment", "Show to Local", "Entry / Booking", "Translate / Communicate", "Network", "Rescue / Human Help"],
-      note: "These six moments define VisePanda's product boundary. Each opens only as qualified facts, recovery behavior, and real usage evidence become ready.",
-    },
     planner: {
       title: "VisePanda: an AI planning and execution workspace",
       base: "VisePanda does more than generate itinerary text. Form or adjust a plan with Chatbot, inspect places, routes, and preparation status day by day in Trip Canvas, then use Today to handle the next step and changes on the road. The model can only propose candidates; deterministic systems still control fact eligibility, user confirmation, TripPatch, audit, and persistence boundaries.",
@@ -234,12 +197,6 @@ export const copy = {
       secondTitle: "Coverage is expanding by city and scenario.",
       secondBody: "This page does not claim complete China coverage, live inventory, or activated partners. Early Access first validates which facts and execution moments matter most.",
       secondBadges: ["Beijing", "Shanghai", "Guangzhou", "Chengdu", "Payment prep", "Connectivity prep", "On-site recovery"],
-    },
-    delivery: {
-      title: "VisePanda ships one evidence-backed layer at a time.",
-      cards: [["Early Access", "Rolling access", "Collect real travel problems and validate which preparations matter first."], ["Planner", "Product preview", "Start with static candidates, missing facts, conflicts, and unavailable states before connecting live facts."], ["Trip Canvas", "Product preview", "A read-only trip projection. Later changes must use a confirmation-based Patch."], ["Today", "Product preview", "Show one eligible action or an explicit missing or recovery state."], ["Execution Facts", "In progress", "Payments, addresses, entry, connectivity, and communication facts need sources and freshness."], ["Recovery", "In progress", "Do not invent success. Prefer safe alternatives, official channels, and controlled escalation boundaries."]],
-      previous: "Previous capability",
-      next: "Next capability",
     },
     faq: {
       title: "Frequently asked questions",
@@ -277,12 +234,10 @@ export const copy = {
       home: "Inicio de VisePanda",
       preferences: "Preferencias",
       language: "Idioma de la interfaz",
-      metric: "Métrico",
-      imperial: "Imperial",
       openMenu: "Abrir menú del producto",
       productMenu: "Menú del producto",
       closeMenu: "Cerrar menú",
-      menu: ["Producto actual", "Vista previa del planificador", "Información del producto", "Preferencias de visualización", "Idioma", "Unidades", "Acerca de VisePanda", "Contacto", "Términos de uso"],
+      menu: ["Producto actual", "Vista previa del planificador", "Información del producto", "Preferencias de visualización", "Idioma", "Acerca de VisePanda", "Contacto", "Términos de uso"],
     },
     hero: {
       title: "Planifica tu viaje a China con IA y recórrelo con confianza.",
@@ -324,16 +279,6 @@ export const copy = {
       play: "Reproducir vista previa",
       pause: "Pausar vista previa",
     },
-    joy: {
-      title: "Menos suposiciones. Un paso más ejecutable.",
-      leadA: "Menos",
-      accentA: "suposiciones",
-      separator: ", ",
-      leadB: "un paso más",
-      accentB: "ejecutable.",
-      moments: ["Pago", "Mostrar a una persona local", "Acceso / Reserva", "Traducir / Comunicar", "Red", "Rescate / Ayuda humana"],
-      note: "Estos seis momentos definen el límite de VisePanda. Cada uno se abre solo cuando los datos, la recuperación y la evidencia de uso están listos.",
-    },
     planner: {
       title: "VisePanda: espacio de planificación y ejecución con IA",
       base: "VisePanda no se limita a generar un itinerario. Forma o ajusta el plan con Chatbot, revisa lugares, rutas y preparación por día en Trip Canvas y usa Today para el siguiente paso y los cambios del viaje. El modelo solo propone opciones; los sistemas deterministas controlan datos, confirmación, TripPatch, auditoría y persistencia.",
@@ -348,12 +293,6 @@ export const copy = {
       secondTitle: "La cobertura crece por ciudad y escenario.",
       secondBody: "Esta página no afirma cobertura total de China, inventario en vivo ni socios activos. Early Access valida primero qué datos y momentos importan más.",
       secondBadges: ["Pekín", "Shanghái", "Guangzhou", "Chengdu", "Preparar pagos", "Preparar conexión", "Recuperación local"],
-    },
-    delivery: {
-      title: "VisePanda entrega cada capa con evidencia.",
-      cards: [["Early Access", "Acceso gradual", "Recoger problemas reales y validar qué preparativos importan primero."], ["Planner", "Vista previa", "Empezar con opciones estáticas, ausencias, conflictos y estados no disponibles antes de conectar datos reales."], ["Trip Canvas", "Vista previa", "Proyección de solo lectura. Los cambios posteriores requieren un Patch confirmado."], ["Today", "Vista previa", "Mostrar una acción apta o un estado explícito de ausencia o recuperación."], ["Execution Facts", "En desarrollo", "Pagos, direcciones, acceso, conexión y comunicación necesitan fuentes y vigencia."], ["Recovery", "En desarrollo", "No inventar éxito: ofrecer alternativas seguras, canales oficiales y límites de escalado."]],
-      previous: "Capacidad anterior",
-      next: "Capacidad siguiente",
     },
     faq: {
       title: "Preguntas frecuentes",
@@ -372,7 +311,7 @@ export const copy = {
   },
   ru: {
     header: {
-      home: "Главная VisePanda", preferences: "Настройки", language: "Язык интерфейса", metric: "Метрическая", imperial: "Имперская", openMenu: "Открыть меню продукта", productMenu: "Меню продукта", closeMenu: "Закрыть меню", menu: ["Текущий продукт", "Предпросмотр Planner", "О продукте", "Настройки отображения", "Язык", "Единицы", "О VisePanda", "Контакты", "Условия использования"],
+      home: "Главная VisePanda", preferences: "Настройки", language: "Язык интерфейса", openMenu: "Открыть меню продукта", productMenu: "Меню продукта", closeMenu: "Закрыть меню", menu: ["Текущий продукт", "Предпросмотр Planner", "О продукте", "Настройки отображения", "Язык", "О VisePanda", "Контакты", "Условия использования"],
     },
     hero: {
       title: "Спланируйте поездку по Китаю с ИИ — и путешествуйте уверенно.",
@@ -394,17 +333,11 @@ export const copy = {
     reviews: {
       title: "Chatbot и Trip Canvas работают вместе.", body: "Это статический предпросмотр, а не данные в реальном времени. Chatbot предлагает варианты, Canvas позволяет проверить каждый день; изменения попадают в Trip только после подтверждения и детерминированных проверок.", status: "Текущий продукт определяется реально доступными возможностями.", cta: "Открыть текущий продукт", toast: "Текущий продукт определяется реально доступными возможностями.", play: "Запустить предпросмотр", pause: "Приостановить предпросмотр",
     },
-    joy: {
-      title: "Меньше догадок. Ещё один выполнимый шаг.", leadA: "Меньше", accentA: "догадок", separator: ", ", leadB: "ещё один", accentB: "выполнимый шаг.", moments: ["Оплата", "Показать местному жителю", "Вход / Бронирование", "Перевод / Общение", "Связь", "Помощь / Восстановление"], note: "Шесть моментов задают границы VisePanda. Каждый открывается только при готовых фактах, восстановлении и доказательствах использования.",
-    },
     planner: {
       title: "VisePanda: пространство планирования и исполнения с ИИ", base: "VisePanda не просто генерирует текст маршрута. Создавайте и меняйте план с Chatbot, проверяйте места, маршруты и подготовку по дням в Trip Canvas, а Today используйте для следующего шага и изменений в пути. Модель лишь предлагает варианты; факты, подтверждение, TripPatch, аудит и сохранение контролируются детерминированной системой.", expanded: "Продукт остаётся в Early Access. Planner, Canvas и Today выпускаются по мере готовности фактов и интерфейсов. Страница не означает живые билеты, автоматическое бронирование, оплату или полное покрытие городов.", cta: "Открыть текущий продукт", toast: "Вход в продукт появится после готовности реальной интеграции.",
     },
     trust: {
       title: "Доверие — не стена логотипов.", body: "Для поездки по Китаю важно знать источник факта, время проверки, кто подтвердил изменение и как восстановиться после сбоя.", badges: ["Проверяемые источники", "Подтверждение пользователя", "Время проверки", "Восстановление"], secondTitle: "Покрытие растёт по городам и сценариям.", secondBody: "Страница не заявляет полного покрытия Китая, живого инвентаря или активных партнёров. Early Access сначала проверяет самые важные факты и моменты исполнения.", secondBadges: ["Пекин", "Шанхай", "Гуанчжоу", "Чэнду", "Подготовка оплаты", "Подготовка связи", "Восстановление на месте"],
-    },
-    delivery: {
-      title: "VisePanda выпускает продукт по мере появления доказательств.", cards: [["Early Access", "Постепенный доступ", "Собираем реальные проблемы и проверяем, какая подготовка важнее всего."], ["Planner", "Предпросмотр", "Сначала статические варианты, пропуски, конфликты и недоступные состояния, затем реальные факты."], ["Trip Canvas", "Предпросмотр", "Проекция маршрута только для чтения; изменения требуют подтверждённого Patch."], ["Today", "Предпросмотр", "Показывает одно допустимое действие или явное состояние отсутствия и восстановления."], ["Execution Facts", "В разработке", "Оплата, адреса, вход, связь и коммуникация требуют источников и актуальности."], ["Recovery", "В разработке", "Не выдумывать успех: безопасные альтернативы, официальные каналы и контролируемая эскалация."]], previous: "Предыдущая возможность", next: "Следующая возможность",
     },
     faq: {
       title: "Частые вопросы", subtitle: "Честное описание предпросмотра VisePanda и Early Access.", items: [["Что такое VisePanda?", "VisePanda — пространство планирования и исполнения поездки по Китаю с Chatbot и видимым Trip Canvas."], ["Как работает VisePanda?", "Опишите города, даты, темп, интересы и ограничения. Кандидатный план появляется в Canvas. В поездке Today показывает один подходящий шаг или сообщает, чего не хватает."], ["Чем отличаются Chatbot и Trip Canvas?", "Chatbot понимает, объясняет и предлагает. Trip Canvas показывает единственное текущее состояние поездки. Модель не меняет Trip напрямую."], ["Можно ли бронировать билеты и отели?", "Пока нет. Предпросмотр не означает живой инвентарь, цены, бронирования или заказы."], ["Может ли VisePanda платить за меня?", "Нет. Будущие коммерческие функции требуют проверенных партнёров, прозрачного раскрытия и аудита."], ["Откуда берётся информация?", "Исполнимые сведения требуют источника, области действия, даты проверки и срока годности. Без проверенного факта VisePanda сообщает, что он неизвестен."], ["Все шесть моментов уже доступны?", "Нет. Они будут открываться по мере готовности покрытия и операционных доказательств."], ["Human Help — живая поддержка или спасение?", "Нет. Для здоровья и безопасности используйте официальные экстренные каналы. Любая помощь должна определить город, время, объём и ограничения."], ["Покрыты все города Китая?", "Нет. Контент и факты расширяются по городам, сценариям и POI."], ["Что входит в Early Access?", "Планирование, Canvas и подготовка к исполнению будут открываться постепенно по мере готовности фактов."], ["VisePanda бесплатна?", "Первые приглашённые версии могут быть бесплатными. Долгосрочная цена ещё проверяется."], ["Страница сохраняет мой ввод?", "Нет. Это frontend-прототип: он не вызывает реальный ИИ и не сохраняет запросы."]],
@@ -420,7 +353,7 @@ export const copy = {
   },
   ar: {
     header: {
-      home: "الصفحة الرئيسية لـ VisePanda", preferences: "التفضيلات", language: "لغة الواجهة", metric: "متري", imperial: "إمبراطوري", openMenu: "فتح قائمة المنتج", productMenu: "قائمة المنتج", closeMenu: "إغلاق القائمة", menu: ["المنتج الحالي", "معاينة التخطيط", "معلومات المنتج", "تفضيلات العرض", "اللغة", "وحدات الواجهة", "حول VisePanda", "اتصل بنا", "شروط الاستخدام"],
+      home: "الصفحة الرئيسية لـ VisePanda", preferences: "التفضيلات", language: "لغة الواجهة", openMenu: "فتح قائمة المنتج", productMenu: "قائمة المنتج", closeMenu: "إغلاق القائمة", menu: ["المنتج الحالي", "معاينة التخطيط", "معلومات المنتج", "تفضيلات العرض", "اللغة", "حول VisePanda", "اتصل بنا", "شروط الاستخدام"],
     },
     hero: {
       title: "خطّط لرحلتك إلى الصين بالذكاء الاصطناعي، ثم نفّذها بثقة.", subtitle: "يجمع VisePanda بين محادثة السفر وTrip Canvas عملي للمسافرين المستقلين إلى الصين. يساعدك Chatbot على التخطيط والتعديل، ويُظهر Canvas كل يوم بوضوح، ويقدّم Today خطوة تالية موثوقة أو مساراً للتعافي أثناء الرحلة.", placeholder: "هذه زيارتي الأولى للصين: خطط لأربعة أيام في بكين وتحقق من الدفع والاتصال والحجوزات", promptLabel: "أخبر VisePanda عن رحلتك إلى الصين", suggestions: ["أول زيارة إلى الصين", "بكين وشنغهاي في 7 أيام", "التحقق من الدفع والاتصال", "ما الخطوة التالية اليوم؟"], existingPlan: "لديك خطة بالفعل؟", canvasPreview: "عرض معاينة Trip Canvas", submitToast: "تم استلام الإدخال التجريبي. هذا النموذج غير متصل بالذكاء الاصطناعي ولا يحفظ مدخلاتك.", canvasToast: "ستُفتح معاينة Trip Canvas تدريجياً في إصدار لاحق.",
@@ -437,17 +370,11 @@ export const copy = {
     reviews: {
       title: "يعمل Chatbot وTrip Canvas في مساحة عمل واحدة.", body: "هذه معاينة ثابتة وليست بيانات سفر مباشرة. يقترح Chatbot الخيارات والتعديلات، ويتيح Canvas مراجعة كل يوم، ولا تدخل التغييرات إلى Trip إلا بعد التأكيد والفحوص الحتمية.", status: "المنتج الحالي هو ما هو متاح فعلياً.", cta: "عرض المنتج الحالي", toast: "المنتج الحالي هو ما هو متاح فعلياً.", play: "تشغيل معاينة المنتج", pause: "إيقاف معاينة المنتج مؤقتاً",
     },
-    joy: {
-      title: "تخمين أقل، وخطوة إضافية قابلة للتنفيذ.", leadA: "تخمين", accentA: "أقل", separator: "، ", leadB: "خطوة إضافية", accentB: "قابلة للتنفيذ.", moments: ["الدفع", "العرض لشخص محلي", "الدخول / الحجز", "الترجمة / التواصل", "الشبكة", "المساعدة / التعافي"], note: "تحدد هذه اللحظات الست حدود VisePanda. تُفتح كل واحدة فقط عندما تصبح الحقائق والتعافي وأدلة الاستخدام جاهزة.",
-    },
     planner: {
       title: "VisePanda: مساحة عمل للتخطيط والتنفيذ بالذكاء الاصطناعي", base: "لا يكتفي VisePanda بإنشاء نص لمسار الرحلة. كوّن الخطة أو عدّلها عبر Chatbot، وراجع الأماكن والطرق والاستعداد يوماً بيوم في Trip Canvas، ثم استخدم Today للخطوة التالية والتغييرات أثناء الرحلة. لا يقدم النموذج إلا اقتراحات؛ وتظل أهلية الحقائق والتأكيد وTripPatch والتدقيق والحفظ تحت أنظمة حتمية.", expanded: "لا يزال المنتج ضمن Early Access والمعاينة. سيتم تقديم Planner وCanvas وToday وفق جاهزية الحقائق والواجهات. لا تمثل الصفحة تذاكر مباشرة أو حجزاً تلقائياً أو دفعاً أو تغطية كاملة للمدن.", cta: "عرض المنتج الحالي", toast: "سيفتح مدخل المنتج عند جاهزية التكامل الحقيقي.",
     },
     trust: {
       title: "الثقة ليست جداراً من الشعارات.", body: "في السفر إلى الصين، المهم هو مصدر المعلومة ووقت مراجعتها ومن أكد التغيير وكيفية التعافي عند الفشل.", badges: ["مصادر قابلة للتتبع", "تأكيد المستخدم", "وقت المراجعة", "التعافي من الفشل"], secondTitle: "تتوسع التغطية حسب المدينة والسيناريو.", secondBody: "لا تدّعي هذه الصفحة تغطية الصين كاملة أو مخزوناً مباشراً أو شركاء مفعّلين. تتحقق Early Access أولاً من الحقائق ولحظات التنفيذ الأكثر أهمية.", secondBadges: ["بكين", "شنغهاي", "قوانغتشو", "تشنغدو", "الاستعداد للدفع", "الاستعداد للاتصال", "التعافي في الموقع"],
-    },
-    delivery: {
-      title: "يقدّم VisePanda كل طبقة بناءً على الأدلة.", cards: [["Early Access", "إتاحة تدريجية", "جمع مشكلات السفر الحقيقية والتحقق من أهم الاستعدادات أولاً."], ["Planner", "معاينة المنتج", "البدء بخيارات ثابتة ونواقص وتعارضات وحالات غير متاحة قبل ربط الحقائق الحية."], ["Trip Canvas", "معاينة المنتج", "عرض للرحلة للقراءة فقط؛ التغييرات اللاحقة تحتاج إلى Patch مؤكد."], ["Today", "معاينة المنتج", "عرض إجراء مؤهل واحد أو حالة واضحة للنقص أو التعافي."], ["Execution Facts", "قيد البناء", "تحتاج معلومات الدفع والعناوين والدخول والاتصال والتواصل إلى مصادر وحداثة."], ["Recovery", "قيد البناء", "لا تختلق النجاح؛ قدّم بدائل آمنة وقنوات رسمية وحدود تصعيد مضبوطة."]], previous: "القدرة السابقة", next: "القدرة التالية",
     },
     faq: {
       title: "الأسئلة الشائعة", subtitle: "شرح صريح لمعاينة VisePanda وEarly Access.", items: [["ما هو VisePanda؟", "VisePanda مساحة عمل للتخطيط والتنفيذ بالذكاء الاصطناعي للسفر المستقل في الصين، تجمع Chatbot مع Trip Canvas واضح ومستمر."], ["كيف يعمل VisePanda؟", "صف المدن والتواريخ والإيقاع والاهتمامات والقيود. تدخل الخطة المرشحة إلى Canvas للمراجعة. أثناء الرحلة يبرز Today خطوة مؤهلة أو يوضح ما ينقص."], ["ما الفرق بين Chatbot وTrip Canvas؟", "يفهم Chatbot ويشرح ويقترح؛ ويعرض Trip Canvas الحالة الحالية الوحيدة للرحلة. لا يستطيع النموذج تعديل Trip مباشرة."], ["هل يستطيع VisePanda حجز الرحلات والفنادق والتذاكر؟", "ليس حالياً. لا تعني المعاينة وجود مخزون أو أسعار أو حجوزات أو طلبات مباشرة."], ["هل يستطيع VisePanda الدفع نيابةً عني؟", "لا. تتطلب أي بوابة تجارية مستقبلية شركاء مراجعين وإفصاحاً واضحاً وسجلاً قابلاً للتدقيق."], ["من أين تأتي معلومات السفر؟", "تحتاج المعلومات القابلة للتنفيذ إلى مصدر ونطاق ووقت مراجعة وحالة انتهاء. دون حقيقة مؤهلة، يوضح VisePanda أنها مجهولة أو غير متاحة."], ["هل لحظات التنفيذ الست متاحة؟", "ليس بعد. ستُفتح تدريجياً حسب تغطية الحقائق والأدلة التشغيلية."], ["هل Human Help خدمة مباشرة أو إنقاذ طارئ؟", "لا. استخدم القنوات الرسمية للصحة والسلامة. يجب أن تحدد أي مساعدة بشرية المدينة والساعات والنطاق والسعة والحدود."], ["هل يغطي VisePanda كل مدن الصين؟", "لا. تتوسع المحتويات والحقائق حسب المدينة والسيناريو ونقطة الاهتمام."], ["ماذا تتضمن Early Access؟", "ستفتح الدعوات الأولى التخطيط وCanvas والاستعداد للتنفيذ تدريجياً وفق جاهزية الحقائق."], ["هل VisePanda مجاني؟", "قد تكون التجارب الأولى المدعوة مجانية. لا يزال التسعير طويل الأجل بحاجة إلى تحقق مستقل."], ["هل تحفظ هذه الصفحة مدخلاتي؟", "لا. إنها نموذج frontend ولا تستدعي ذكاءً اصطناعياً حقيقياً ولا تحفظ الأوامر."]],

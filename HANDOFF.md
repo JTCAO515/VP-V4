@@ -1,15 +1,31 @@
 # Handoff
 
-VP-V4 runs on Next.js App Router, React, strict TypeScript, and Tailwind CSS v4. The header and footer now use a VisePanda wordmark in the accepted type treatment. Runtime copy, aria labels, toasts, metadata, and project documents use VisePanda product-preview language.
+VP-V4 is a frontend-only VisePanda landing page built with Next.js App Router, React, strict TypeScript, and Tailwind CSS v4. It presents the Chatbot, Trip Canvas, Today, trusted execution facts, and recovery model for international independent travelers visiting China.
 
-The language menu now switches the complete landing page between Chinese, English, Spanish, Russian, and Arabic. Arabic also updates the document to `lang="ar"` and `dir="rtl"`. Nine project-local China-travel images replace runtime reference photography while retaining the existing clover, circle, portrait, and landscape slots. Reference logo walls were replaced with semantic product badges, and the full four-promises chapter was removed.
+This change simplifies the visible product story:
 
-The page remains a frontend-only draft. It does not call real AI, save Prompt input, expose account or Trip data, book inventory, make payments, provide Human Help, or promise complete city coverage.
+- the four “plan, remember, execute, recover” cards always display complete text and no longer expose detail toggles;
+- the guessing marquee and evidence-delivery sections are removed;
+- FAQ renders 10 questions after removing the execution-moments and input-storage items;
+- the header no longer contains metric/imperial state;
+- the display button shows the locale currency symbol, and the language button shows the locale flag;
+- the language modal renders `🇨🇳中文`, `🇺🇸English`, `🇪🇸Español`, `🇷🇺Русский`, and `🇸🇦العربية`;
+- Arabic keeps `lang="ar"` and `dir="rtl"`.
 
-No Layla image, video, portrait, or logo path is used at runtime. The requested same-font treatment retains the existing bundled local fonts, and existing shape masks remain, so those two asset classes still need a rights review before public release.
+Verification evidence:
 
-Verification evidence and residual risks are recorded in [design-qa.md](design-qa.md). Roll back by reverting the framework-and-copy migration commit.
+- `pnpm lint` passed.
+- `pnpm typecheck` passed.
+- `pnpm build` passed with Next.js 16.2.6 and static `/` output.
+- `pnpm test` passed 10/10 regression tests.
+- desktop browser QA at 1440 × 1000 passed with no horizontal overflow or error overlay.
+- mobile browser QA at 390 × 844 passed with no horizontal overflow; both first and fourth capability cards showed full text.
+- all five locale flag/currency mappings passed; Arabic RTL passed.
+- browser console contained no errors. One Next.js development-only LCP warning appeared after reloading at a scrolled position.
+- project documentation scan found no prohibited historical brand or clone terminology.
 
-`pnpm check` passes: source policy lint, strict TypeScript, Next.js production build, and 7/7 static regression tests. Browser-rendered QA remains blocked because this managed sandbox rejects local port binding with `EPERM`; do not treat the browser gate as green.
+The page does not call real AI, save Prompt input, expose account or Trip data, book inventory, make payments, provide Human Help, or promise complete city coverage. Bundled fonts and shape masks still need rights review before production release.
 
-Next action: review the branch preview at desktop and 390×844, switch through all five languages, and verify Arabic RTL before production promotion.
+Rollback: revert the UI simplification commit.
+
+Next action: push the verified commit to `main` and verify the matching Vercel deployment.

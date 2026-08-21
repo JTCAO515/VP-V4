@@ -1,53 +1,55 @@
 {
-  "objective": "Complete the VisePanda wordmark, five-locale UI, Arabic RTL, China-travel imagery, and requested section removal while preserving the accepted page structure.",
+  "objective": "Simplify the VisePanda landing page with complete feature-card copy, two section removals, a ten-item FAQ, and locale-aware flag and currency navigation.",
   "issue": "Direct operator instruction; no tracker issue.",
   "owner": "Codex",
-  "status": "implemented-and-automated-checks-passed-browser-qa-blocked",
+  "status": "implemented-and-automated-and-browser-verified-ready-for-main",
   "scope": [
-    "Next.js App Router runtime",
-    "strict TypeScript client component",
-    "Tailwind CSS v4 foundation",
-    "VisePanda text, aria, toast, metadata, and documentation",
-    "Chinese, English, Spanish, Russian, and Arabic localization",
-    "document-level Arabic RTL",
-    "VisePanda wordmarks and project-local China-travel imagery",
-    "removal of reference logo walls and the four-promises chapter"
+    "show all four feature-card descriptions without detail toggles or clipping",
+    "remove the guessing marquee and evidence-delivery sections",
+    "render ten FAQ items after excluding two requested questions",
+    "remove metric and imperial navigation state",
+    "show locale flags and currency symbols in the header and language modal",
+    "preserve Chinese, English, Spanish, Russian, and Arabic localization with Arabic RTL",
+    "rewrite README and project documentation around VisePanda"
   ],
   "anti_goals": [
-    "No layout redesign",
-    "No redesign of the accepted layout or image-slot formats",
+    "No global visual redesign or image replacement",
     "No real AI, account, Trip, booking, payment, Human Help, or persistence integration",
     "No public deployment"
   ],
   "decisions": [
     "Keep app/page.tsx as a Server Component and isolate interactions in components/VisePandaLanding.tsx.",
-    "Use next/font/local and next/image for existing local assets.",
-    "Use Tailwind v4 for foundations and tokens while retaining the existing fidelity CSS as a migration compatibility layer.",
-    "Keep complete typed copy dictionaries in lib/i18n.ts and switch the document language and direction at runtime.",
-    "Replace source-site runtime media with nine generated VisePanda China-travel photographs while preserving existing masks and ratios.",
-    "Replace reference logo walls with product trust badges and remove the four-promises chapter."
+    "Keep the mobile feature carousel but remove feature detail-toggle state.",
+    "Exclude FAQ items at the shared cross-locale indexes 6 and 11 so all five locales remain synchronized.",
+    "Map zh to CN and yen, en to US and dollar, es to Spain and euro, ru to Russia and ruble, and ar to Saudi Arabia and Saudi riyal abbreviation.",
+    "Keep locale and direction switching deterministic in the existing client component."
   ],
   "blockers": [
-    "The requested same-font treatment retains existing bundled local fonts, and existing shape masks remain; both need rights review before public release.",
-    "VisePanda production interfaces and backends are not connected.",
-    "Browser QA could not run because the managed sandbox rejects local port binding with EPERM and blocks file URLs by policy."
+    "Bundled local fonts and existing shape masks need rights review before public release.",
+    "VisePanda production interfaces and backends are not connected."
   ],
   "verification": [
     "pnpm lint",
     "pnpm typecheck",
     "pnpm build",
-    "pnpm test (7/7)",
-    "runtime copy and unsupported-claim scan",
-    "Next static prerender inspection"
+    "pnpm test (10/10)",
+    "documentation prohibited-term scan",
+    "Next static prerender inspection",
+    "desktop browser QA at 1440x1000",
+    "mobile browser QA at 390x844",
+    "five-locale flag and currency interaction checks",
+    "Arabic RTL and horizontal-overflow checks",
+    "browser console error scan"
   ],
-  "rollback": "Revert the framework-and-copy migration commit.",
+  "rollback": "Revert the UI simplification commit.",
   "mandatory_reading_order": [
     "README.md",
-    "docs/adr/0002-visepanda-brand-localization-assets.md",
+    "HANDOFF.md",
     "design-qa.md",
     "lib/i18n.ts",
     "components/VisePandaLanding.tsx",
-    "app/globals.css"
+    "app/globals.css",
+    "tests/static-output.test.mjs"
   ],
-  "next_action": "Review the branch preview at desktop and 390x844 widths, switch all five locales, and verify Arabic RTL before production promotion."
+  "next_action": "Commit the verified change, push main, and confirm the exact Vercel deployment status."
 }
