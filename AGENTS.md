@@ -1,9 +1,11 @@
-# Prototype Instructions
+# VP-V4 Engineering Instructions
 
-Run the local server yourself and open the preview in the browser available to this environment. Do not give the user server-start instructions when you can run it.
+The accepted runtime is Next.js App Router + React + strict TypeScript + Tailwind CSS v4.
 
-Before making substantial visual changes, use the Product Design plugin's `get-context` skill when the visual source is unclear or no longer matches the current goal. When the user gives durable prototype-specific design feedback, preferences, or decisions, record them in `AGENTS.md`.
-
-When implementing from a selected generated mock, treat that image as the source of truth for layout, component anatomy, density, spacing, color, typography, visible content, and hierarchy.
-
-Build app UI in `src/`. Keep `.openai/hosting.json`, `worker/index.js`, `scripts/prepare-sites-build.mjs`, and `tests/sites-worker.test.mjs` intact so the same local prototype can be handed to Sites. Before a Sites handoff, run `npm run build` and `npm run test:sites`; the build must leave `dist/client/index.html`, `dist/server/index.js`, and `dist/.openai/hosting.json`.
+- Build routes in `app/` and interactive UI in typed components under `components/`.
+- Keep `app/page.tsx` a Server Component; isolate browser state and event handlers behind explicit `"use client"` boundaries.
+- Use `next/image` for local raster/SVG assets and `next/font/local` for bundled fonts.
+- Tailwind owns global foundations and product tokens. `app/globals.css` temporarily retains the reference-clone fidelity layer; do not silently redesign it during framework migration.
+- The current images, video, logo, portraits, and fonts are reference-site assets. The repository remains a local text draft and must not be published until a separate asset, brand, and rights migration passes review.
+- Do not claim real AI, persistence, inventory, booking, payment, Human Help, SLA, or complete city coverage.
+- Required checks: `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, copy/claim scan, desktop browser QA, and 390×844 browser QA.

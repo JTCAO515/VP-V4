@@ -1,40 +1,46 @@
 {
-  "objective": "Create a pixel-faithful, responsive frontend-only clone of the public Chinese Layla.ai homepage and push it to JTCAO515/VP-V4.",
-  "issue": "Direct user request; no tracker issue.",
+  "objective": "Migrate VP-V4 to Next.js, React, strict TypeScript, and Tailwind CSS while applying the approved VisePanda product-preview copy.",
+  "issue": "Direct operator instruction; no tracker issue.",
   "owner": "Codex",
-  "status": "implemented_and_verified",
-  "assumptions": [
-    "The operator owns the target or has permission to reproduce it.",
-    "Frontend-only mock behavior is sufficient; no booking, account, payment, AI, or persistence backend is requested."
+  "status": "implemented-and-build-verified-browser-qa-blocked-not-publishable",
+  "scope": [
+    "Next.js App Router runtime",
+    "strict TypeScript client component",
+    "Tailwind CSS v4 foundation",
+    "VisePanda text, aria, toast, metadata, and documentation"
+  ],
+  "anti_goals": [
+    "No layout redesign",
+    "No asset or brand-rights migration",
+    "No real AI, account, Trip, booking, payment, Human Help, or persistence integration",
+    "No public deployment"
   ],
   "decisions": [
-    "Use the Product Design web prototype template.",
-    "Freeze the captured Chinese locale and locally bundle source assets.",
-    "Generate one lavender testimonial media background because three source Firebase assets could not be bundled."
+    "Keep app/page.tsx as a Server Component and isolate interactions in components/VisePandaLanding.tsx.",
+    "Use next/font/local and next/image for existing local assets.",
+    "Use Tailwind v4 for foundations and tokens while retaining the existing fidelity CSS as a migration compatibility layer."
   ],
-  "changed_files": [
-    "src/App.jsx",
-    "src/styles.css",
-    "index.html",
-    "public/assets/",
-    "design-reference/",
-    "design-qa.md",
-    "README.md"
+  "blockers": [
+    "Reference-site images, video, logo, portraits, and fonts remain.",
+    "VisePanda production interfaces and backends are not connected.",
+    "Browser QA could not run because the managed sandbox rejects local port binding with EPERM and blocks file URLs by policy."
   ],
   "verification": [
-    "npm run build",
-    "npm run test:sites",
-    "Browser desktop 1440x900 visual and interaction checks",
-    "Browser mobile 390x844 visual and interaction checks",
-    "Browser console warning/error check"
+    "pnpm lint",
+    "pnpm typecheck",
+    "pnpm build",
+    "pnpm test",
+    "runtime copy and unsupported-claim scan",
+    "Next static prerender inspection"
   ],
-  "blockers": [],
-  "rollback": "Revert the initial repository commit or remove the main branch from the previously empty repository.",
+  "rollback": "Revert the framework-and-copy migration commit.",
   "mandatory_reading_order": [
     "README.md",
+    "docs/adr/0001-nextjs-typescript-tailwind-migration.md",
     "design-qa.md",
-    "src/App.jsx",
-    "src/styles.css"
+    "app/page.tsx",
+    "components/VisePandaLanding.tsx",
+    "app/globals.css"
   ],
-  "next_action": "Review the local preview and confirm whether the prototype should also be deployed."
+  "next_action": "Run a separate asset, brand, and interface migration review before any public deployment."
 }
