@@ -1,10 +1,27 @@
 # Context
 
-Read in this order:
+Objective: migrate VP-V4 to Next.js, React, strict TypeScript, and Tailwind CSS while replacing runtime copy with the approved VisePanda product-preview language.
 
-1. `README.md` — scope, local commands, rights boundary, and frontend-only limitations.
-2. `design-qa.md` — source captures, comparison evidence, fixes, and final visual result.
-3. `src/App.jsx` — page content and interactive states.
-4. `src/styles.css` — source fonts, tokens, responsive layout, and component styling.
+Status: framework migration and text draft only; not publishable.
 
-The repository started empty. The current implementation is intentionally self-contained and does not modify any existing VisePanda codebase.
+Scope:
+
+- Next.js App Router runtime and build configuration
+- typed React Client Component for existing interactions
+- Tailwind v4 foundation plus the preserved fidelity CSS layer
+- text, aria, toast, metadata, and project documentation migration
+
+Blockers: reference-site images, video, logo, portraits, and fonts remain. Real VisePanda interfaces and backends are not connected. Browser-rendered QA must be rerun outside the current port-restricted sandbox.
+
+Reading order:
+
+1. `README.md`
+2. `docs/adr/0001-nextjs-typescript-tailwind-migration.md`
+3. `design-qa.md`
+4. `app/page.tsx`
+5. `components/VisePandaLanding.tsx`
+6. `app/globals.css`
+
+Next action: run a separate asset, brand, and interface migration review before any public deployment.
+
+Rollback: revert the framework-and-copy migration commit.

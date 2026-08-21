@@ -1,7 +1,13 @@
 # Handoff
 
-VP-V4 is a responsive, frontend-only Layla.ai homepage recreation based on desktop and mobile captures taken on 2026-08-21. The implementation uses locally bundled source assets and passes the Product Design visual gate in [design-qa.md](design-qa.md).
+VP-V4 has been migrated from Vite/JavaScript to Next.js App Router, React, strict TypeScript, and Tailwind CSS v4. Runtime copy, aria labels, toasts, metadata, and project documents now use the approved VisePanda product-preview language.
 
-Run `npm run dev` for local review. Run `npm run build` and `npm run test:sites` before hosting. There is no real booking, payment, account, AI, or data backend. Roll back by reverting the initial commit.
+The page remains a frontend-only draft. It does not call real AI, save Prompt input, expose account or Trip data, book inventory, make payments, provide Human Help, or promise complete city coverage.
 
-Next action: review the local preview, then decide whether to deploy it.
+The reference-site images, video, logo, portraits, and fonts remain intentionally untouched in this migration and block public release.
+
+Verification evidence and residual risks are recorded in [design-qa.md](design-qa.md). Roll back by reverting the framework-and-copy migration commit.
+
+Automated checks and the production build pass. Browser-rendered QA remains blocked because this managed sandbox rejects local port binding with `EPERM`; do not treat the browser gate as green.
+
+Next action: separate asset, brand, and real-interface migration review.
