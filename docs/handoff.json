@@ -1,0 +1,40 @@
+{
+  "objective": "Create a pixel-faithful, responsive frontend-only clone of the public Chinese Layla.ai homepage and push it to JTCAO515/VP-V4.",
+  "issue": "Direct user request; no tracker issue.",
+  "owner": "Codex",
+  "status": "implemented_and_verified",
+  "assumptions": [
+    "The operator owns the target or has permission to reproduce it.",
+    "Frontend-only mock behavior is sufficient; no booking, account, payment, AI, or persistence backend is requested."
+  ],
+  "decisions": [
+    "Use the Product Design web prototype template.",
+    "Freeze the captured Chinese locale and locally bundle source assets.",
+    "Generate one lavender testimonial media background because three source Firebase assets could not be bundled."
+  ],
+  "changed_files": [
+    "src/App.jsx",
+    "src/styles.css",
+    "index.html",
+    "public/assets/",
+    "design-reference/",
+    "design-qa.md",
+    "README.md"
+  ],
+  "verification": [
+    "npm run build",
+    "npm run test:sites",
+    "Browser desktop 1440x900 visual and interaction checks",
+    "Browser mobile 390x844 visual and interaction checks",
+    "Browser console warning/error check"
+  ],
+  "blockers": [],
+  "rollback": "Revert the initial repository commit or remove the main branch from the previously empty repository.",
+  "mandatory_reading_order": [
+    "README.md",
+    "design-qa.md",
+    "src/App.jsx",
+    "src/styles.css"
+  ],
+  "next_action": "Review the local preview and confirm whether the prototype should also be deployed."
+}

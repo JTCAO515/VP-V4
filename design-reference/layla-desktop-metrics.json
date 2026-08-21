@@ -1,0 +1,531 @@
+{
+  "body": {
+    "border": {
+      "color": "rgb(212, 209, 213)",
+      "radius": "0px",
+      "width": "0px"
+    },
+    "colors": {
+      "bg": "rgb(255, 255, 255)",
+      "color": "rgb(42, 24, 46)"
+    },
+    "display": "block",
+    "font": {
+      "family": "\"Fig Grotesk\"",
+      "line": "24px",
+      "size": "16px",
+      "tracking": "0.15008px",
+      "weight": "400"
+    },
+    "rect": {
+      "h": 8963.4296875,
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "space": {
+      "margin": "0px",
+      "padding": "0px"
+    },
+    "tag": "BODY",
+    "text": "$°C$°C你的旅行。几分钟就能规划好。实时价格，统统在一个地方，还有需要时的人类专家。创建一个新旅行启发我去哪里规划自驾游规划一次说走就走的旅行小贴士：只想订酒店？试试 Bellboy2,090,000+ 已规划的旅行您的旅程，由真人保驾护航。从棘手的预订到临时变动，我们的旅行专家随时准备为您出手相助。开始规划接下来去哪儿家庭 - 欧洲之旅开始规划情侣 -"
+  },
+  "h1": {
+    "border": {
+      "color": "rgb(212, 209, 213)",
+      "radius": "0px",
+      "width": "0px"
+    },
+    "colors": {
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(42, 24, 46)"
+    },
+    "display": "block",
+    "font": {
+      "family": "\"Fig Grotesk\"",
+      "line": "68.4px",
+      "size": "72px",
+      "tracking": "-1.8px",
+      "weight": "700"
+    },
+    "rect": {
+      "h": 136.796875,
+      "w": 728,
+      "x": 80,
+      "y": 225.6015625
+    },
+    "space": {
+      "margin": "0px 0px 16px",
+      "padding": "0px 12px"
+    },
+    "tag": "H1",
+    "text": "你的旅行。几分钟就能规划好。"
+  },
+  "main": {
+    "border": {
+      "color": "rgb(212, 209, 213)",
+      "radius": "0px",
+      "width": "0px"
+    },
+    "colors": {
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(42, 24, 46)"
+    },
+    "display": "block",
+    "font": {
+      "family": "\"Fig Grotesk\"",
+      "line": "24px",
+      "size": "16px",
+      "tracking": "0.15008px",
+      "weight": "400"
+    },
+    "rect": {
+      "h": 8346.4453125,
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "space": {
+      "margin": "0px",
+      "padding": "0px"
+    },
+    "tag": "MAIN",
+    "text": "你的旅行。几分钟就能规划好。实时价格，统统在一个地方，还有需要时的人类专家。创建一个新旅行启发我去哪里规划自驾游规划一次说走就走的旅行小贴士：只想订酒店？试试 Bellboy2,090,000+ 已规划的旅行您的旅程，由真人保驾护航。从棘手的预订到临时变动，我们的旅行专家随时准备为您出手相助。开始规划接下来去哪儿家庭 - 欧洲之旅开始规划情侣 - 约旦蜜月开"
+  },
+  "nav": {
+    "border": {
+      "color": "rgb(212, 209, 213)",
+      "radius": "0px",
+      "width": "0px"
+    },
+    "colors": {
+      "bg": "rgb(247, 246, 243)",
+      "color": "rgb(42, 24, 46)"
+    },
+    "display": "block",
+    "font": {
+      "family": "\"Fig Grotesk\"",
+      "line": "24px",
+      "size": "16px",
+      "tracking": "0.15008px",
+      "weight": "400"
+    },
+    "rect": {
+      "h": 60,
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "space": {
+      "margin": "0px",
+      "padding": "0px"
+    },
+    "tag": "NAV",
+    "text": "$°C$°C"
+  },
+  "sections": [
+    {
+      "border": {
+        "color": "rgb(212, 209, 213)",
+        "radius": "0px",
+        "width": "0px"
+      },
+      "colors": {
+        "bg": "rgb(247, 246, 243)",
+        "color": "rgb(42, 24, 46)"
+      },
+      "display": "block",
+      "font": {
+        "family": "\"Fig Grotesk\"",
+        "line": "24px",
+        "size": "16px",
+        "tracking": "0.15008px",
+        "weight": "400"
+      },
+      "rect": {
+        "h": 900,
+        "w": 1440,
+        "x": 0,
+        "y": 0
+      },
+      "space": {
+        "margin": "0px",
+        "padding": "0px 32px"
+      },
+      "tag": "SECTION",
+      "text": "你的旅行。几分钟就能规划好。实时价格，统统在一个地方，还有需要时的人类专家。创建一个新旅行启发我去哪里规划自驾游规划一次说走就走的旅行小贴士：只想订酒店？试试 Bellboy"
+    },
+    {
+      "border": {
+        "color": "rgb(212, 209, 213)",
+        "radius": "0px",
+        "width": "0px"
+      },
+      "colors": {
+        "bg": "rgb(247, 246, 243)",
+        "color": "rgb(42, 24, 46)"
+      },
+      "display": "block",
+      "font": {
+        "family": "\"Fig Grotesk\"",
+        "line": "24px",
+        "size": "16px",
+        "tracking": "0.15008px",
+        "weight": "400"
+      },
+      "rect": {
+        "h": 676,
+        "w": 1440,
+        "x": 0,
+        "y": 900
+      },
+      "space": {
+        "margin": "0px",
+        "padding": "96px 32px"
+      },
+      "tag": "SECTION",
+      "text": "2,090,000+ 已规划的旅行您的旅程，由真人保驾护航。从棘手的预订到临时变动，我们的旅行专家随时准备为您出手相助。开始规划"
+    },
+    {
+      "border": {
+        "color": "rgb(212, 209, 213)",
+        "radius": "0px",
+        "width": "0px"
+      },
+      "colors": {
+        "bg": "rgb(247, 246, 243)",
+        "color": "rgb(42, 24, 46)"
+      },
+      "display": "block",
+      "font": {
+        "family": "\"Fig Grotesk\"",
+        "line": "24px",
+        "size": "16px",
+        "tracking": "0.15008px",
+        "weight": "400"
+      },
+      "rect": {
+        "h": 585.7734375,
+        "w": 1440,
+        "x": 0,
+        "y": 1576
+      },
+      "space": {
+        "margin": "0px",
+        "padding": "72px 32px"
+      },
+      "tag": "SECTION",
+      "text": "接下来去哪儿家庭 - 欧洲之旅开始规划情侣 - 约旦蜜月开始规划公路旅行 1号公路 - 美国开始规划"
+    },
+    {
+      "border": {
+        "color": "rgb(212, 209, 213)",
+        "radius": "0px",
+        "width": "0px"
+      },
+      "colors": {
+        "bg": "rgb(247, 246, 243)",
+        "color": "rgb(42, 24, 46)"
+      },
+      "display": "block",
+      "font": {
+        "family": "\"Fig Grotesk\"",
+        "line": "24px",
+        "size": "16px",
+        "tracking": "0.15008px",
+        "weight": "400"
+      },
+      "rect": {
+        "h": 560.5,
+        "w": 1440,
+        "x": 0,
+        "y": 2161.7734375
+      },
+      "space": {
+        "margin": "0px",
+        "padding": "96px 32px"
+      },
+      "tag": "SECTION",
+      "text": "我会在每一步都支持你策划、保存并随时获取关于您旅行的通知。量身定制让莱拉为你创建一个根据你的喜好和旅行风格量身定制的行程。通过量身定制的计划，发现终极旅行体验，满足你独特的兴趣，确保你旅程中的每一刻都难忘，并完美契合你的愿望。... 查看更多...更便宜I 帮你找到最好的优惠和折扣，让你的旅行计划省钱。有了 Layla 的专业指导，你可以探索各种经济实惠的选"
+    },
+    {
+      "border": {
+        "color": "rgb(212, 209, 213)",
+        "radius": "0px",
+        "width": "0px"
+      },
+      "colors": {
+        "bg": "rgb(247, 246, 243)",
+        "color": "rgb(42, 24, 46)"
+      },
+      "display": "block",
+      "font": {
+        "family": "\"Fig Grotesk\"",
+        "line": "24px",
+        "size": "16px",
+        "tracking": "0.15008px",
+        "weight": "400"
+      },
+      "rect": {
+        "h": 872,
+        "w": 1440,
+        "x": 0,
+        "y": 2722.2734375
+      },
+      "space": {
+        "margin": "0px",
+        "padding": "96px 32px"
+      },
+      "tag": "SECTION",
+      "text": "旅客们对我说的事想与我们的专家聊聊吗？预约通话"
+    },
+    {
+      "border": {
+        "color": "rgb(212, 209, 213)",
+        "radius": "0px",
+        "width": "0px"
+      },
+      "colors": {
+        "bg": "rgb(247, 246, 243)",
+        "color": "rgb(42, 24, 46)"
+      },
+      "display": "block",
+      "font": {
+        "family": "\"Fig Grotesk\"",
+        "line": "24px",
+        "size": "16px",
+        "tracking": "0.15008px",
+        "weight": "400"
+      },
+      "rect": {
+        "h": 629.1875,
+        "w": 1440,
+        "x": 0,
+        "y": 3594.2734375
+      },
+      "space": {
+        "margin": "0px",
+        "padding": "80px 0px"
+      },
+      "tag": "SECTION",
+      "text": "少点 焦虑， 多点 快乐。去巴黎过个周末接下来去哪儿？帮我找个海滩度假去东京来场美食之旅去巴黎过个周末接下来去哪儿？帮我找个海滩度假去东京来场美食之旅少点 焦虑， 多点 快乐。给我个新惊喜巴厘岛什么时候去最好？在罗马浪漫一周去巴黎过个周末给我个新惊喜巴厘岛什么时候去最好？在罗马浪漫一周去巴黎过个周末"
+    },
+    {
+      "border": {
+        "color": "rgb(212, 209, 213)",
+        "radius": "0px",
+        "width": "0px"
+      },
+      "colors": {
+        "bg": "rgb(247, 246, 243)",
+        "color": "rgb(42, 24, 46)"
+      },
+      "display": "block",
+      "font": {
+        "family": "\"Fig Grotesk\"",
+        "line": "24px",
+        "size": "16px",
+        "tracking": "0.15008px",
+        "weight": "400"
+      },
+      "rect": {
+        "h": 676,
+        "w": 1440,
+        "x": 0,
+        "y": 4223.4609375
+      },
+      "space": {
+        "margin": "0px",
+        "padding": "96px 32px"
+      },
+      "tag": "SECTION",
+      "text": "一站式 AI 旅行规划师在找完美的旅行规划师，帮你安排下一个家庭度假、浪漫之旅、周年庆或生日旅行吗？你来对地方了。随便问我关于规划假期的任何问题——从梦幻目的地和舒适住宿到航班、公路旅行等等。无论你是带着孩子、和伴侣还是独自旅行，我都会帮你打造完美的行程。再也不用在标签和应用之间来回切换——我是你需要的唯一 AI travel planner。获取个性化的目"
+    },
+    {
+      "border": {
+        "color": "rgb(212, 209, 213)",
+        "radius": "0px",
+        "width": "0px"
+      },
+      "colors": {
+        "bg": "rgb(247, 246, 243)",
+        "color": "rgb(42, 24, 46)"
+      },
+      "display": "block",
+      "font": {
+        "family": "\"Fig Grotesk\"",
+        "line": "24px",
+        "size": "16px",
+        "tracking": "0.15008px",
+        "weight": "400"
+      },
+      "rect": {
+        "h": 566.984375,
+        "w": 1440,
+        "x": 0,
+        "y": 4899.4609375
+      },
+      "space": {
+        "margin": "0px",
+        "padding": "80px 32px"
+      },
+      "tag": "SECTION",
+      "text": "由可信赖的旅行代理商提供支持在全球引起关注在全球顶尖媒体上亮相，帮助旅行者通过更聪明的行程规划节省时间、金钱和压力。"
+    },
+    {
+      "border": {
+        "color": "rgb(212, 209, 213)",
+        "radius": "0px",
+        "width": "0px"
+      },
+      "colors": {
+        "bg": "rgb(247, 246, 243)",
+        "color": "rgb(42, 24, 46)"
+      },
+      "display": "block",
+      "font": {
+        "family": "\"Fig Grotesk\"",
+        "line": "24px",
+        "size": "16px",
+        "tracking": "0.15008px",
+        "weight": "400"
+      },
+      "rect": {
+        "h": 579,
+        "w": 1440,
+        "x": 0,
+        "y": 5466.4453125
+      },
+      "space": {
+        "margin": "0px",
+        "padding": "96px 32px"
+      },
+      "tag": "SECTION",
+      "text": "我的投资者布伦特·霍伯曼联合创始人，lastminute.com巴里·史密斯联合创始人天巡安迪·菲利普斯创始人 活跃酒店（现在是 Booking.com）巴黎希尔顿希尔顿酒店商务女性"
+    },
+    {
+      "border": {
+        "color": "rgb(212, 209, 213)",
+        "radius": "0px",
+        "width": "0px"
+      },
+      "colors": {
+        "bg": "rgb(247, 246, 243)",
+        "color": "rgb(42, 24, 46)"
+      },
+      "display": "block",
+      "font": {
+        "family": "\"Fig Grotesk\"",
+        "line": "24px",
+        "size": "16px",
+        "tracking": "0.15008px",
+        "weight": "400"
+      },
+      "rect": {
+        "h": 649,
+        "w": 1440,
+        "x": 0,
+        "y": 6045.4453125
+      },
+      "space": {
+        "margin": "0px",
+        "padding": "96px 32px"
+      },
+      "tag": "SECTION",
+      "text": "使命背后的思想Previous slideNext slideAna Chuprey前端打造美丽且直观的用户界面。专注于创建响应式、可访问的网络体验，让来自世界各地的{{travelers}}感到愉悦。Emir Pasic工程Asim Aziz工程Gil Shaked运营Roman Dydyk前端XaviCFOGiulia营销萨德·赛义德战略Fernando"
+    },
+    {
+      "border": {
+        "color": "rgb(212, 209, 213)",
+        "radius": "0px",
+        "width": "0px"
+      },
+      "colors": {
+        "bg": "rgba(0, 0, 0, 0)",
+        "color": "rgb(42, 24, 46)"
+      },
+      "display": "block",
+      "font": {
+        "family": "\"Fig Grotesk\"",
+        "line": "24px",
+        "size": "16px",
+        "tracking": "0.15008px",
+        "weight": "400"
+      },
+      "rect": {
+        "h": 456,
+        "w": 1280,
+        "x": 80,
+        "y": 6142.4453125
+      },
+      "space": {
+        "margin": "0px",
+        "padding": "0px"
+      },
+      "tag": "DIV",
+      "text": "使命背后的思想Previous slideNext slideAna Chuprey前端打造美丽且直观的用户界面。专注于创建响应式、可访问的网络体验，让来自世界各地的{{travelers}}感到愉悦。Emir Pasic工程Asim Aziz工程Gil Shaked运营Roman Dydyk前端XaviCFOGiulia营销萨德·赛义德战略Fernando"
+    },
+    {
+      "border": {
+        "color": "rgb(212, 209, 213)",
+        "radius": "0px",
+        "width": "0px"
+      },
+      "colors": {
+        "bg": "rgb(247, 246, 243)",
+        "color": "rgb(42, 24, 46)"
+      },
+      "display": "block",
+      "font": {
+        "family": "\"Fig Grotesk\"",
+        "line": "24px",
+        "size": "16px",
+        "tracking": "0.15008px",
+        "weight": "400"
+      },
+      "rect": {
+        "h": 1023,
+        "w": 1440,
+        "x": 0,
+        "y": 6694.4453125
+      },
+      "space": {
+        "margin": "0px",
+        "padding": "96px 32px"
+      },
+      "tag": "SECTION",
+      "text": "常见问题找到关于Layla的AI旅行规划服务的常见问题答案什么是 Layla.ai？我是 Layla，你的 AI 旅行代理兼行程规划师。我会为你创建完整而个性化的行程，涵盖航班、酒店、活动、餐饮以及量身定制的推荐。你可以用 AI 规划、与真人旅行专家合作，或者两者结合。我们的专家可以从头到尾为你规划、预订并打理整个行程。Layla.ai 是怎么工作的？只需告"
+    }
+  ],
+  "textarea": {
+    "border": {
+      "color": "rgb(212, 209, 213)",
+      "radius": "8px",
+      "width": "0px"
+    },
+    "colors": {
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgb(42, 24, 46)"
+    },
+    "display": "flex",
+    "font": {
+      "family": "\"Fig Grotesk\"",
+      "line": "24px",
+      "size": "16px",
+      "tracking": "0.15008px",
+      "weight": "400"
+    },
+    "rect": {
+      "h": 64,
+      "w": 726,
+      "x": 81,
+      "y": 419.3984375
+    },
+    "space": {
+      "margin": "0px",
+      "padding": "14px 24px 8px"
+    },
+    "tag": "TEXTAREA",
+    "text": ""
+  }
+}
