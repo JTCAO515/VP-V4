@@ -100,6 +100,11 @@ export function VisePandaChatWorkspace() {
           <span>{copy.briefItems[1]}</span><span>{copy.briefItems[2]}</span>
         </div>
         {showBrief ? <div className="vp-chat-brief-popover"><b>{copy.tripBrief}</b><p>{copy.chatBody}</p></div> : null}
+        <section className="vp-chat-day-card" aria-label="Proposal diff fixture">
+          <div><p>Fixture proposal · not saved</p><h2>Visible change before confirmation</h2></div>
+          <ul><li><span /><p><s>Arrival and payment setup</s> → Arrival, payment setup, and official entry recheck</p></li><li><span /><p>Evidence: reviewed fixture · Assumption: arrival time needs confirmation</p></li></ul>
+          <button type="button" onClick={() => setSubmitted("Fixture proposal confirmed locally; no Trip was saved.")}>Confirm fixture change</button>
+        </section>
 
         {showMap ? (
           <section className="vp-chat-place-view" aria-label={copy.map}>
