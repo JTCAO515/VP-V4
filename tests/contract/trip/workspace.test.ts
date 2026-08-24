@@ -1,0 +1,4 @@
+import assert from "node:assert/strict";import test from "node:test";import {InMemoryTripWorkspace} from "../../../lib/server/trip/workspace/in-memory.ts";import type {TripProposal} from "../../../lib/server/contracts/index.ts";
+const proposal={status:"pending",baseTripVersion:1} as TripProposal;
+const patch={expectedVersion:1,operations:[{kind:"set_title" as const,title:"Next"}]};
+test("applies once and preserves conflict outcomes",()=>{const workspace=new InMemoryTripWorkspace({version:1,title:"Old",days:[]});assert.equal(workspace.apply(proposal,patch,"k","d").kind,"applied");assert.equal(workspace.apply(proposal,patch,"k","d").kind,"applied");assert.equal(workspace.apply(proposal,patch,"k","other").kind,"idempotency_key_reuse");assert.equal(workspace.apply({...proposal,baseTripVersion:1},patch,"new","new").kind,"version_conflict")});
