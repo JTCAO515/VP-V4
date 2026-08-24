@@ -1,56 +1,51 @@
-# VisePanda Landing Simplification QA
+# VisePanda `/visepanda` Chatbot Workspace QA
 
-## Result
+## Comparison target
 
-The requested feature-card expansion, section removals, ten-item FAQ, localized header navigation, five-language switching, Arabic RTL, production build, and browser checks passed.
+- Source visual truth: `https://mindtrip.ai/chat/9273856`
+- Source captures: browser-rendered desktop workspace, place/map state, destination modal, mobile chat state, and mobile Chats drawer.
+- Implementation: `http://127.0.0.1:4175/visepanda`
+- Route canonical: `https://go2china.space/visepanda`
+- Desktop comparison: 1440 × 1000 CSS px, device scale factor 1, initial new-chat state.
+- Mobile comparison: 390 × 844 CSS px, device scale factor 1, Canvas, Chat, and Chats-drawer states.
 
-## Automated evidence
+The source and implementation captures were reviewed together at matched desktop and mobile viewports in the in-app browser. Source screenshots are not retained in the repository because they are third-party reference material; implementation uses only project-local VisePanda assets.
 
-- `pnpm lint` → source policy lint passed.
-- `pnpm typecheck` → strict TypeScript passed with no diagnostics.
-- `pnpm build` → Next.js 16.2.6 webpack production build passed; `/` prerendered as static content.
-- `pnpm test` → 10/10 static-output tests passed.
-- `git diff --check` → passed.
-- Documentation scan → no prohibited historical brand or clone terminology.
-- Runtime scan → no guessing marquee, evidence-delivery section, metric state, feature-detail toggles, or the two removed FAQ questions in rendered HTML.
+## Intentional adaptation
 
-The default Next.js 16 Turbopack build could not run in this sandbox because its PostCSS worker attempted to bind an internal port and received `EPERM`. The supported `next build --webpack` path passed and is the recorded project build command.
+The source uses a left navigation rail, a central Chat surface, and a right POI/map surface. The requested VisePanda adaptation deliberately reverses the two workspace surfaces: the Canvas and POI context are left of the Chatbot on desktop. The source's third-party travel content, Google map, illustrations, brand, and copy are not reused.
 
-## Static prerender inspection
+## Findings and fixes
 
-The generated `.next/server/app/index.html` confirms:
+- [P2, fixed] The first Canvas POI image generated a Next.js development LCP warning.
+  - Evidence: the first desktop browser pass reported `scene-beijing.jpg` as LCP.
+  - Fix: the first POI image now has `priority={index === 0}`.
+  - Post-fix evidence: a fresh desktop browser tab reported zero warnings and zero errors.
 
-- `lang="zh-CN"`
-- theme color `#fefdf9`
-- VisePanda title and description metadata
-- Next-managed local font preloads
-- project-local VisePanda image references
-- Tailwind `bg-vp-paper` and `text-vp-ink` utilities in compiled CSS
-- complete Chinese, English, Spanish, Russian, and Arabic copy dictionaries
-- document-level Arabic `lang`/`dir` switching
-- 10 FAQ controls
-- VisePanda Planner, Trip Canvas, Today, execution-fact, recovery, and honest product-boundary copy
+No remaining P0, P1, or P2 differences are actionable for the requested VisePanda adaptation.
+
+## Fidelity review
+
+- **Fonts and typography:** Reuses the existing VisePanda local typeface and wordmark. The Chat title, Canvas title, compact labels, and fixed composer preserve the source hierarchy while using VisePanda’s softer purple product tokens.
+- **Spacing and layout rhythm:** Desktop retains a narrow navigation rail and two large workspace columns. The Canvas/POI panel is intentionally wider than the Chat panel to satisfy the requested left-context/right-conversation hierarchy. Mobile uses a fixed header, bottom Canvas/Chat switch, and bottom-safe composer.
+- **Colors and tokens:** White work surfaces, fine gray dividers, black-purple action controls, and lilac active states follow the existing VisePanda token set. The product-preview disclosure remains readable in every state.
+- **Image quality and asset fidelity:** All visible imagery comes from `public/assets/visepanda/`. No third-party logo, illustration, map tile, POI image, or hotlink is used. The place view is explicitly labelled as local visual context rather than a live map.
+- **Copy and content:** All new UI strings have Chinese, English, Spanish, Russian, and Arabic variants. The assistant response makes the frontend-only boundary explicit: no AI call, saved input, live map data, or Trip mutation.
 
 ## Browser evidence
 
-- Local dev server: `next dev --webpack --hostname 127.0.0.1 --port 4173` → ready.
-- Desktop 1440 × 1000: `scrollWidth === innerWidth`; four capability cards rendered; all paragraph `clientHeight === scrollHeight`; `overflow: visible`; zero card detail buttons.
-- Mobile 390 × 844: `scrollWidth === innerWidth`; one carousel card visible at a time; both first and fourth cards had `clientHeight === scrollHeight`.
-- Removed sections: `.joy-section` and `.team-section` absent at desktop and mobile.
-- FAQ: exactly 10 rendered articles.
-- Locale interaction: `zh/🇨🇳/¥`, `en/🇺🇸/$`, `es/🇪🇸/€`, `ru/🇷🇺/₽`, `ar/🇸🇦/ر.س` passed.
-- Arabic: `lang="ar"`, `dir="rtl"`, no horizontal overflow, and all four capability paragraphs fully visible.
-- Framework error overlay: absent.
-- Browser console errors: 0. A development-only Next.js LCP warning appeared after a reload preserved a scrolled viewport; it does not block this scoped acceptance.
+- Desktop 1440 × 1000: Canvas/POI rendered left of Chatbot; list/place-view toggle, local prompt/response, POI selection, and language modal worked; `scrollWidth === innerWidth`; no framework error overlay.
+- Mobile 390 × 844: Chat and Canvas tabs each rendered independently; Chats drawer opened above the fixed composer; `scrollWidth === innerWidth`; no framework error overlay.
+- Arabic: `lang="ar"`, `dir="rtl"`, no horizontal overflow, Canvas and Chat surfaces remained usable.
+- Fresh browser console: 0 errors and 0 warnings after the LCP fix.
+- Automated gate: `pnpm check` passed with lint, strict TypeScript, production build, and 13/13 tests.
 
-## Release blockers
+## Residual product boundary
 
-- The requested same-font treatment retains existing bundled local fonts; existing shape masks also remain. Both need rights review before public release.
-- Real VisePanda interfaces and backends are not connected.
-- Target Vercel deployment must be checked after the exact commit is pushed.
+The route is a frontend-only visual shell. It does not authenticate users, call a model, persist messages or Trip state, use a map/POI provider, or make booking/payment claims.
 
-## Rollback
+## Follow-up polish
 
-Revert the UI simplification commit.
+- Connect the workspace only through the later frozen TurnCoordinator, TripWorkspace, KnowledgeSystem, and policy contracts; do not attach it directly to a provider or map SDK.
 
-final result: pass for the requested frontend scope; production integrations remain outside scope
+final result: passed
