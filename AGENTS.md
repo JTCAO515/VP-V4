@@ -10,3 +10,24 @@ The accepted runtime is Next.js App Router + React + strict TypeScript + Tailwin
 - Keep all user-facing copy synchronized across `zh`, `en`, `es`, `ru`, and `ar` in `lib/i18n.ts`. Arabic must keep document-level `lang="ar"` and `dir="rtl"` behavior.
 - Do not claim real AI, persistence, inventory, booking, payment, Human Help, SLA, or complete city coverage.
 - Required checks: `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, copy/claim scan, desktop browser QA, and 390×844 browser QA.
+
+## Agent skills
+
+### Issue tracker
+
+Track work in `JTCAO515/VP-V4` GitHub Issues. External PRs are not a triage request surface. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Use the canonical `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, and `wontfix` roles together with project `phase:*`, `priority:*`, and `status:*` labels. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+This is a single-context repository: read root `CONTEXT.md`, relevant `docs/adr/`, and the mandatory reading order before planning or implementation. See `docs/agents/domain.md`.
+
+### Issue execution contract
+
+Every AI Core Issue's mandatory reading order, allowed and forbidden paths, runnable commands,
+evidence artifacts, and red-line suite IDs live in `docs/agents/issue-execution-contract.md`.
+Issue bodies link to it; that file is the authority. Do not start an Issue whose row is missing.
+
