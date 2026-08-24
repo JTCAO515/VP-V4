@@ -1,27 +1,18 @@
 "use client";
 
-import Image from "next/image";
+import { ChinaMapHero } from "@/components/ChinaMapHero";
+import { HomepageRedesignSections } from "@/components/HomepageRedesignSections";
 import {
-  ArrowRight,
   ArrowUp,
-  BedDouble,
   CircleDollarSign,
   CircleHelp,
-  Diamond,
   FileText,
-  HeartHandshake,
   Languages,
   LogIn,
   MessageCircle,
-  Mic,
-  Paperclip,
-  Pause,
-  Play,
   Plus,
-  Send,
   Settings,
   Sparkles,
-  Thermometer,
   UserRound,
   X,
   type IconComponent,
@@ -37,15 +28,8 @@ import {
 } from "react";
 import { copy as copyByLocale, localeOptions, type Locale, type LocalizedCopy } from "@/lib/i18n";
 
-const ASSET_ROOT = "/assets/visepanda/";
-
 type ModalKind = "language" | "display" | "cookies" | null;
-type ToastSetter = (message: string) => void;
 
-const tripImages = ["scene-beijing.jpg", "scene-shanghai-rain.jpg", "scene-guangzhou-local.jpg"];
-const featureIcons: IconComponent[] = [HeartHandshake, CircleDollarSign, Diamond, UserRound];
-const trustIcons: IconComponent[] = [FileText, UserRound, Settings, HeartHandshake];
-const coverageIcons: IconComponent[] = [CircleHelp, Languages, MessageCircle, Diamond, CircleDollarSign, Thermometer, HeartHandshake];
 const hiddenFaqIndexes = new Set([6, 11]);
 
 function BrandClip() {
@@ -187,257 +171,8 @@ function AccountMenu({ onClose, setModal, copy }: AccountMenuProps) {
   );
 }
 
-function Hero({ copy, setToast }: { copy: LocalizedCopy; setToast: ToastSetter }) {
-  const [prompt, setPrompt] = useState("");
-
-  const submit = () => {
-    if (!prompt.trim()) return;
-    setToast(copy.hero.submitToast);
-  };
-
-  return (
-    <section className="hero" id="top">
-      <div className="hero-inner">
-        <div className="hero-media">
-          <Image src={`${ASSET_ROOT}hero-beijing.jpg`} alt={copy.common.referenceImage} width={1600} height={1600} priority unoptimized />
-        </div>
-        <div className="hero-copy">
-          <h1>{copy.hero.title}</h1>
-          <p className="hero-subtitle">{copy.hero.subtitle}</p>
-          <div className="prompt-box">
-            <textarea
-              value={prompt}
-              onChange={(event) => setPrompt(event.target.value)}
-              placeholder={copy.hero.placeholder}
-              aria-label={copy.hero.promptLabel}
-            />
-            <div className="prompt-tools">
-              <button aria-label={copy.common.attachment}>
-                <Paperclip />
-              </button>
-              <span />
-              <button aria-label={copy.common.voice}>
-                <Mic />
-              </button>
-              <button className="send-button" onClick={submit} disabled={!prompt.trim()} aria-label={copy.common.send}>
-                <Send />
-              </button>
-            </div>
-          </div>
-          <div className="suggestions">
-            {copy.hero.suggestions.map((item) => (
-              <button key={item} onClick={() => setPrompt(item)}>
-                {item}
-              </button>
-            ))}
-          </div>
-          <div className="canvas-hint">
-            <b>{copy.hero.existingPlan}</b>
-            <button onClick={() => setToast(copy.hero.canvasToast)}>
-              <BedDouble />
-              {copy.hero.canvasPreview}
-              <ArrowRight />
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function HumanSupport({ copy, setToast }: { copy: LocalizedCopy; setToast: ToastSetter }) {
-  return (
-    <section className="section human-section">
-      <div className="human-card">
-        <div>
-          <small>{copy.human.eyebrow}</small>
-          <h2>{copy.human.title}</h2>
-          <p>{copy.human.body}</p>
-          <button
-            className="primary-button"
-            onClick={() => setToast(copy.human.toast)}
-          >
-            {copy.human.cta} <ArrowRight />
-          </button>
-        </div>
-        <div className="experts">
-          {["traveler-hutong.jpg", "traveler-shanghai.jpg", "traveler-chengdu.jpg"].map(
-            (image, index) => (
-              <Image
-                key={image}
-                src={`${ASSET_ROOT}${image}`}
-                alt={`${copy.common.referenceImage} ${index + 1}`}
-                width={160}
-                height={160}
-                sizes="160px"
-                unoptimized
-              />
-            ),
-          )}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Destinations({ copy, setToast }: { copy: LocalizedCopy; setToast: ToastSetter }) {
-  return (
-    <section className="section destination-section">
-      <div className="content">
-        <h2>{copy.destinations.title}</h2>
-        <div className="trip-grid">
-          {copy.destinations.cards.map(([title, toast], index) => (
-            <article className="trip-card" key={title}>
-              <Image
-                src={`${ASSET_ROOT}${tripImages[index]}`}
-                alt={`${title} · ${copy.common.referenceImage}`}
-                width={800}
-                height={533}
-                sizes="(max-width: 900px) 82vw, 33vw"
-                unoptimized
-              />
-              <h3>{title}</h3>
-              <button onClick={() => setToast(toast)}>
-                {copy.destinations.cta} <ArrowRight />
-              </button>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function FeatureSection({ copy }: { copy: LocalizedCopy }) {
-  const [active, setActive] = useState(0);
-
-  return (
-    <section className="section features-section">
-      <div className="content">
-        <h2>{copy.features.title}</h2>
-        <p className="section-lede">{copy.features.subtitle}</p>
-        <div className="feature-grid">
-          {copy.features.items.map(([title, body], index) => {
-            const Icon = featureIcons[index];
-            return (
-              <article key={title} className={`feature-card ${active === index ? "active" : ""}`}>
-                <div className="feature-icon">
-                  <Icon />
-                </div>
-                <h3>{title}</h3>
-                <p>{body}</p>
-              </article>
-            );
-          })}
-        </div>
-        <div className="carousel-dots">
-          {copy.features.items.map(([title], index) => (
-            <button
-              key={title}
-              className={active === index ? "active" : ""}
-              onClick={() => setActive(index)}
-              aria-label={`${copy.features.slide} ${index + 1}`}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function Reviews({ copy, setToast }: { copy: LocalizedCopy; setToast: ToastSetter }) {
-  const [playing, setPlaying] = useState(false);
-
-  return (
-    <section className="section reviews-section">
-      <div className="content">
-        <h2>{copy.reviews.title}</h2>
-        <p className="reviews-note">{copy.reviews.body}</p>
-        <div className={`review-media ${playing ? "playing" : ""}`}>
-          <Image
-            src={`${ASSET_ROOT}planner-chengdu.jpg`}
-            alt={copy.common.referenceImage}
-            width={1024}
-            height={1024}
-            sizes="(max-width: 520px) 100vw, 510px"
-            unoptimized
-          />
-          <button
-            onClick={() => setPlaying((current) => !current)}
-            aria-label={playing ? copy.reviews.pause : copy.reviews.play}
-          >
-            {playing ? <Pause /> : <Play />}
-          </button>
-        </div>
-        <div className="expert-call">
-          {copy.reviews.status}{" "}
-          <button onClick={() => setToast(copy.reviews.toast)}>
-            {copy.reviews.cta} <ArrowRight />
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function PlannerSection({ copy, setToast }: { copy: LocalizedCopy; setToast: ToastSetter }) {
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <section className="section planner-section">
-      <div className="planner-card">
-        <div>
-          <h2>{copy.planner.title}</h2>
-          <p className={expanded ? "expanded" : ""}>
-            {copy.planner.base}
-            {expanded ? ` ${copy.planner.expanded}` : ""}
-          </p>
-          <button className="text-button" onClick={() => setExpanded((current) => !current)}>
-            {expanded ? copy.features.less : copy.features.more}
-          </button>
-          <button
-            className="primary-button"
-            onClick={() => setToast(copy.planner.toast)}
-          >
-            {copy.planner.cta} <ArrowRight />
-          </button>
-        </div>
-        <Image
-          src={`${ASSET_ROOT}planner-chengdu.jpg`}
-          alt={copy.common.referenceImage}
-          width={708}
-          height={708}
-          sizes="(max-width: 900px) 250px, 280px"
-          unoptimized
-        />
-      </div>
-    </section>
-  );
-}
-
-function TrustSection({ copy }: { copy: LocalizedCopy }) {
-  return (
-    <section className="section trust-section">
-      <div className="content">
-        <h2>{copy.trust.title}</h2>
-        <p className="trust-copy">{copy.trust.body}</p>
-        <div className="logo-row partners trust-badge-row">
-          {copy.trust.badges.map((label, index) => {
-            const Icon = trustIcons[index];
-            return <div className="trust-badge" key={label}><Icon /><span>{label}</span></div>;
-          })}
-        </div>
-        <h2>{copy.trust.secondTitle}</h2>
-        <p>{copy.trust.secondBody}</p>
-        <div className="logo-row press trust-badge-row">
-          {copy.trust.secondBadges.map((label, index) => {
-            const Icon = coverageIcons[index];
-            return <div className="trust-badge compact" key={label}><Icon /><span>{label}</span></div>;
-          })}
-        </div>
-      </div>
-    </section>
-  );
+function Hero({ copy, locale, onEarlyAccess }: { copy: LocalizedCopy; locale: Locale; onEarlyAccess: () => void }) {
+  return <ChinaMapHero copy={copy} locale={locale} onEarlyAccess={onEarlyAccess} />;
 }
 
 function FAQ({ copy }: { copy: LocalizedCopy }) {
@@ -468,34 +203,16 @@ function FAQ({ copy }: { copy: LocalizedCopy }) {
   );
 }
 
-function Footer({ copy, setModal, setToast }: { copy: LocalizedCopy; setModal: Dispatch<SetStateAction<ModalKind>>; setToast: ToastSetter }) {
+function Footer({ copy }: { copy: LocalizedCopy }) {
   return (
-    <>
-      <section className="final-cta">
-        <h2>{copy.cta.title}</h2>
-        <p>{copy.cta.body}</p>
-        <button
-          className="primary-button"
-          onClick={() => setToast(copy.cta.toast)}
-        >
-          {copy.cta.button} <ArrowRight />
-        </button>
-      </section>
-      <footer>
-        {copy.footer.columns.map(([heading, items], columnIndex) => (
+    <footer>
+        {copy.footer.columns.map(([heading, items]) => (
           <div key={heading}>
             <h2>{heading}</h2>
-            {items.map((item, itemIndex) => (
-              <button
-                key={item}
-                onClick={() =>
-                  columnIndex === 2 && itemIndex === 0
-                    ? setModal("cookies")
-                    : setToast(`${item}: ${copy.footer.previewToast}`)
-                }
-              >
+            {items.map((item) => (
+              <span className="footer-item" key={item}>
                 {item}
-              </button>
+              </span>
             ))}
           </div>
         ))}
@@ -504,8 +221,7 @@ function Footer({ copy, setModal, setToast }: { copy: LocalizedCopy; setModal: D
           <p>{copy.footer.copyright}</p>
           <p>{copy.footer.tagline}</p>
         </div>
-      </footer>
-    </>
+    </footer>
   );
 }
 
@@ -516,6 +232,11 @@ export function VisePandaLanding() {
   const [toast, setToast] = useState("");
   const [showTop, setShowTop] = useState(false);
   const localizedCopy = useMemo(() => copyByLocale[locale], [locale]);
+  const earlyAccessUrl = process.env.NEXT_PUBLIC_JOTFORM_EARLY_ACCESS_URL;
+
+  const openEarlyAccess = () => {
+    if (earlyAccessUrl) window.open(earlyAccessUrl, "_blank", "noopener,noreferrer");
+  };
 
   const changeLocale = (nextLocale: Locale, label: string) => {
     setLocale(nextLocale);
@@ -553,15 +274,10 @@ export function VisePandaLanding() {
         locale={locale}
       />
       <main>
-        <Hero copy={localizedCopy} setToast={setToast} />
-        <HumanSupport copy={localizedCopy} setToast={setToast} />
-        <Destinations copy={localizedCopy} setToast={setToast} />
-        <FeatureSection copy={localizedCopy} />
-        <Reviews copy={localizedCopy} setToast={setToast} />
-        <PlannerSection copy={localizedCopy} setToast={setToast} />
-        <TrustSection copy={localizedCopy} />
+        <Hero copy={localizedCopy} locale={locale} onEarlyAccess={openEarlyAccess} />
+        <HomepageRedesignSections copy={localizedCopy} />
         <FAQ copy={localizedCopy} />
-        <Footer copy={localizedCopy} setModal={setModal} setToast={setToast} />
+        <Footer copy={localizedCopy} />
       </main>
       {showTop ? (
         <button
