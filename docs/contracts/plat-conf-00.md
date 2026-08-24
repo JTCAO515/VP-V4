@@ -24,8 +24,15 @@ The linked project is `dzqdzetcctkhbrhlxxgn` in `ap-southeast-1`. Four V4 migrat
 
 - User and Ops paths do not use a service credential to impersonate the owner/reviewer.
 - The worker path remains private-schema plus explicit resource/table grants; a function grant alone is insufficient.
-- The current local pooler does not prove the required prepared-statement prohibition. It must remain unavailable to a VisePanda client until a connection/client configuration that disables preparation is implemented and tested.
+- The current local `psql` probe does not prove the required prepared-statement prohibition. It is not an accepted VisePanda runtime configuration.
+- VisePanda's future `SystemDataAdapter` transaction-pooler profile is frozen as shared Supavisor transaction mode on port `6543`, username `postgres.<project-ref>`, with prepared statements disabled in the client. A Postgres.js client must use `{ prepare: false }`; a node-postgres query definition must omit `name`. No SystemDataAdapter code may use a named prepared query against this path.
+- Migrations, `pg_dump`, restore, and other native management operations remain direct-connection work. The new project direct endpoint is IPv6-only; the VPN split-DNS exception for `*.supabase.co` is a local operator prerequisite, not a product runtime dependency.
 - Remote evidence applies only to the new linked project; no older Supabase project was linked or queried.
+
+## Primary references
+
+- [Supabase: disabling prepared statements in transaction mode](https://supabase.com/docs/guides/troubleshooting/disabling-prepared-statements-qL8lEL)
+- [Supabase: connection method matrix](https://supabase.com/docs/guides/database/connecting-to-postgres)
 
 ## Rollback
 
