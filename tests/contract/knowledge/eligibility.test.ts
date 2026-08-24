@@ -1,0 +1,3 @@
+import assert from "node:assert/strict";import test from "node:test";import {isEligibleFact} from "../../../lib/server/knowledge/fact/eligibility.ts";
+const now=new Date("2026-08-24T00:00:00Z");const base={id:"fact",expiresAt:"2099-01-01T00:00:00Z",licenceAllowed:true};
+test("permits only reviewed current licensed facts",()=>{assert.equal(isEligibleFact({...base,status:"reviewed"},now),true);for(const status of ["candidate","draft","deprecated"] as const)assert.equal(isEligibleFact({...base,status},now),false);assert.equal(isEligibleFact({...base,status:"reviewed",expiresAt:"2020-01-01T00:00:00Z"},now),false);assert.equal(isEligibleFact({...base,status:"reviewed",licenceAllowed:false},now),false)});
