@@ -33,10 +33,10 @@ export const copy = {
     earlyAccess: { button: "申请 Early Access" },
     redesign: {
       flow: { title: "带着已有计划来，带着可执行行程走。", body: "少看十篇攻略，多完成一个下一步。", steps: ["导入计划", "整理订单", "核对关键事项", "找出准备缺口", "由你确认", "开始执行"] },
-      facts: { title: "先解决最容易卡住的事。", body: "支付、网络、入场和中文地址，集中放在行程准备里。", items: [["支付准备", ""], ["网络连接", ""], ["入场预约", ""], ["中文地址", ""], ["行程变化", ""], ["现场恢复", ""]] },
-      workspace: { title: "一个行程，一个清楚版本。", body: "订单、地点、准备事项和行程变化，都回到同一张 Trip Canvas。", previewLabel: "Trip Canvas", previewState: "当前行程", days: [["Day 01", "北京"], ["Day 02", "城市节奏"], ["Day 03", "上海"]], changeLabel: "行程更新", changeTitle: "每一次变化，都回到行程里", changeBody: "让城市、订单与准备事项始终清楚可见。", reviewAction: "查看行程", pendingState: "保持清晰", toast: "Trip Canvas 让旅行安排更清楚。" },
-      today: { title: "计划变了，先看下一步。", body: "从出发准备到路上变化，清楚知道怎么继续。", momentsLabel: "旅行场景", moments: ["出发前", "入场前", "在路上", "支付与网络", "遇到问题"], statusLabel: "旅行状态", statusValue: "行程进行中", nextLabel: "下一步", nextSteps: ["检查出发准备", "查看入场安排", "调整当天节奏", "整理支付与网络", "找到合适支持"], missingLabel: "旅行提示", missingValue: "从容应对变化" },
-      mobile: { title: "把行程带在身边。", body: "VisePanda 将支持 iOS 与 Android，让旅行计划随时在身边。", label: "移动端应用", platforms: [["iOS App", "即将推出"], ["Android App", "即将推出"]] },
+      facts: { title: "让行程在出发前走通。", body: "把已有计划放进执行逻辑，找到真正影响旅行的准备事项。", items: [["支付准备", ""], ["网络连接", ""], ["入场预约", ""], ["中文地址", ""], ["行程变化", ""], ["现场恢复", ""]] },
+      workspace: { title: "你的行程，不是一串散落的确认。", body: "每天的地点、节奏、订单与临时变化，都回到同一张 Trip Canvas。", previewLabel: "Trip Canvas", previewState: "当前行程", days: [["Day 01", "北京"], ["Day 02", "城市节奏"], ["Day 03", "上海"]], changeLabel: "行程更新", changeTitle: "每一次变化，都回到行程里", changeBody: "让城市、订单与准备事项始终清楚可见。", reviewAction: "查看行程", pendingState: "保持清晰", toast: "Trip Canvas 让旅行安排更清楚。" },
+      today: { title: "现场有变化，行程依然清楚。", body: "把此刻最重要的事情放在前面，让你继续往下走。", momentsLabel: "旅行场景", moments: ["出发前", "入场前", "在路上", "支付与网络", "遇到问题"], statusLabel: "旅行状态", statusValue: "行程进行中", nextLabel: "下一步", nextSteps: ["检查出发准备", "查看入场安排", "调整当天节奏", "整理支付与网络", "找到合适支持"], missingLabel: "旅行提示", missingValue: "从容应对变化" },
+      mobile: { title: "把整个行程，放进口袋。", body: "Trip Canvas、当天节奏与下一步提示，将在 iOS 和 Android 上陪你走完中国之旅。", label: "移动端应用", platforms: [["iOS App", "即将推出"], ["Android App", "即将推出"]] },
     },
     human: {
       eyebrow: "产品边界优先",

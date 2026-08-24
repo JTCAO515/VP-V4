@@ -28,6 +28,7 @@ export function ChinaMapHero({ copy, locale, onEarlyAccess }: ChinaMapHeroProps)
   const mapCopy = mapPreviewCopy[locale];
   const selectedDestination = destinationPreviews[selectedIndex];
   const calloutAlignment = selectedDestination.x > 60 ? "is-right" : "";
+  const destinationStream = Array.from({ length: 5 }, (_, offset) => destinationPreviews[(selectedIndex + offset) % destinationPreviews.length]);
 
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: no-preference)");
@@ -73,6 +74,11 @@ export function ChinaMapHero({ copy, locale, onEarlyAccess }: ChinaMapHeroProps)
             priority
             unoptimized
           />
+          <svg className="map-routes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M25 65 C42 51 51 58 62 59 S77 47 85 59" />
+            <path d="M15 36 C34 26 47 37 58 42 S74 39 82 30" />
+            <path d="M58 74 C68 64 77 70 85 58" />
+          </svg>
           <div className="map-markers" aria-label={mapCopy.mapAlt}>
             {destinationPreviews.map((destination, index) => {
               const active = index === selectedIndex;
@@ -97,6 +103,13 @@ export function ChinaMapHero({ copy, locale, onEarlyAccess }: ChinaMapHeroProps)
             <strong>{selectedDestination.name}</strong>
             <span>{mapCopy.featuredLabel} · {selectedDestination.featuredPlace}</span>
             <span>{mapCopy.weatherLabel} · {mapCopy.weatherUnavailable}</span>
+          </aside>
+          <aside className="destination-stream" aria-label="目的地动态列表">
+            {destinationStream.map((destination, index) => (
+              <div key={`${destination.id}-${index}`} className={index === 0 ? "is-current" : ""}>
+                <span>{String(index + 1).padStart(2, "0")}</span><strong>{destination.name}</strong>
+              </div>
+            ))}
           </aside>
           <figcaption id="map-preview-note">{mapCopy.source}</figcaption>
         </figure>

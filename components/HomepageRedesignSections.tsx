@@ -36,13 +36,27 @@ export function HomepageRedesignSections({ copy }: HomepageRedesignSectionsProps
             <h2>{redesign.facts.title}</h2>
             <p>{redesign.facts.body}</p>
           </div>
-          <div className="fact-rail" role="list">
-            {redesign.facts.items.map(([label]) => (
-              <article key={label} role="listitem">
-                <span className="fact-rail-index" aria-hidden="true" />
-                <strong>{label}</strong>
-              </article>
-            ))}
+          <div className="execution-simulator">
+            <article className="execution-panel execution-plan">
+              <small>你的已有计划</small>
+              {redesign.flow.steps.slice(0, 3).map((step, index) => (
+                <div key={step}><span>Day {index + 1}</span><strong>{step}</strong></div>
+              ))}
+            </article>
+            <span className="execution-arrow" aria-hidden="true">→</span>
+            <article className="execution-panel execution-checks">
+              <small>旅行执行逻辑</small>
+              {redesign.facts.items.map(([label], index) => (
+                <div key={label}><span className={index === 2 ? "is-attention" : "is-ready"} /><strong>{label}</strong><em>{index === 2 ? "关注" : "清晰"}</em></div>
+              ))}
+            </article>
+            <span className="execution-arrow" aria-hidden="true">→</span>
+            <article className="execution-panel execution-output">
+              <small>行程与下一步</small>
+              {redesign.workspace.days.map(([day, place], index) => (
+                <div key={day}><span>{day}</span><strong>{place}</strong><em>{redesign.today.nextSteps[index]}</em></div>
+              ))}
+            </article>
           </div>
         </div>
       </section>
@@ -53,7 +67,7 @@ export function HomepageRedesignSections({ copy }: HomepageRedesignSectionsProps
             <h2>{redesign.workspace.title}</h2>
             <p>{redesign.workspace.body}</p>
           </div>
-          <div className="workspace-preview" aria-label={redesign.workspace.previewLabel}>
+          <div className="workspace-preview canvas-simulator" aria-label={redesign.workspace.previewLabel}>
             <div className="workspace-topline">
               <span>Trip Canvas</span>
               <small>{redesign.workspace.previewState}</small>
@@ -66,14 +80,20 @@ export function HomepageRedesignSections({ copy }: HomepageRedesignSectionsProps
                     <strong>{place}</strong>
                   </div>
                 ))}
+                <div className="canvas-progress"><span>行程节奏</span><i /><i className="is-active" /><i /></div>
               </div>
-              <div className="workspace-change">
-                <span>{redesign.workspace.changeLabel}</span>
-                <strong>{redesign.workspace.changeTitle}</strong>
-                <p>{redesign.workspace.changeBody}</p>
-                <div className="workspace-change-actions">
-                  <span className="workspace-change-action">{redesign.workspace.reviewAction}</span>
-                  <span>{redesign.workspace.pendingState}</span>
+              <div className="canvas-detail">
+                <div className="canvas-detail-header"><span>Day 02</span><strong>{redesign.workspace.days[1][1]}</strong></div>
+                <div className="canvas-timeline">
+                  {redesign.today.nextSteps.slice(0, 3).map((step, index) => (
+                    <div key={step}><time>{String(9 + index * 3).padStart(2, "0")}:00</time><span /><strong>{step}</strong></div>
+                  ))}
+                </div>
+                <div className="workspace-change">
+                  <span>{redesign.workspace.changeLabel}</span>
+                  <strong>{redesign.workspace.changeTitle}</strong>
+                  <p>{redesign.workspace.changeBody}</p>
+                  <div className="workspace-change-actions"><span className="workspace-change-action">{redesign.workspace.reviewAction}</span><span>{redesign.workspace.pendingState}</span></div>
                 </div>
               </div>
             </div>
@@ -102,19 +122,14 @@ export function HomepageRedesignSections({ copy }: HomepageRedesignSectionsProps
                 </button>
               ))}
             </div>
-            <div className="today-panel" role="tabpanel">
-              <div>
-                <span>{redesign.today.statusLabel}</span>
-                <strong>{redesign.today.statusValue}</strong>
+            <div className="today-panel today-command" role="tabpanel">
+              <div className="today-next-card"><span>{redesign.today.nextLabel}</span><strong>{redesign.today.nextSteps[activeMoment]}</strong><small>{redesign.today.statusValue}</small></div>
+              <div className="today-route">
+                {redesign.today.nextSteps.slice(activeMoment, activeMoment + 3).concat(redesign.today.nextSteps.slice(0, activeMoment)).slice(0, 3).map((step, index) => (
+                  <div key={`${step}-${index}`}><time>{String(8 + index * 2).padStart(2, "0")}:30</time><i /><strong>{step}</strong></div>
+                ))}
               </div>
-              <div>
-                <span>{redesign.today.nextLabel}</span>
-                <strong>{redesign.today.nextSteps[activeMoment]}</strong>
-              </div>
-              <div>
-                <span>{redesign.today.missingLabel}</span>
-                <strong>{redesign.today.missingValue}</strong>
-              </div>
+              <div className="today-note"><span>{redesign.today.missingLabel}</span><strong>{redesign.today.missingValue}</strong></div>
             </div>
           </div>
         </div>
@@ -136,8 +151,8 @@ export function HomepageRedesignSections({ copy }: HomepageRedesignSectionsProps
             ))}
           </div>
           <div className="mobile-app-phones" aria-hidden="true">
-            <div><span /><span /><span /></div>
-            <div><span /><span /><span /></div>
+            <div className="app-phone app-canvas"><b>Trip Canvas</b><small>Day 03 · 西安</small><p><i />09:00 · 出发准备</p><p><i />11:30 · 行程安排</p><p><i />15:00 · 下一步</p></div>
+            <div className="app-phone app-today"><b>Today</b><small>你的下一步</small><strong>查看入场安排</strong><p><i />09:30 · 行程更新</p><p><i />12:00 · 路上变化</p></div>
           </div>
         </div>
       </section>
