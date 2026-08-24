@@ -23,12 +23,12 @@ const cssName = readdirSync(".next/static/css").find((file) => file.endsWith(".c
 assert.ok(cssName, "compiled CSS must exist");
 const css = readFileSync(`.next/static/css/${cssName}`, "utf8");
 
-test("renders VisePanda metadata and product-preview copy", () => {
+test("renders VisePanda metadata and commercial homepage copy", () => {
   assert.match(html, /<html lang="zh-CN"/);
   assert.match(html, /<meta name="theme-color" content="#fefdf9"/);
   assert.match(html, /VisePanda｜来华自由行的 AI 规划与执行工作台/);
-  assert.match(html, /用 AI 规划中国之旅，再从容地把它走完。/);
-  assert.match(localeSource, /当前原型未连接 AI，也不会保存你的输入。/);
+  assert.match(html, /把你的中国旅行，变成真正走得通的行程。/);
+  assert.match(html, /申请 Early Access/);
 });
 
 test("removes reference-brand copy and unsupported positive claims", () => {
@@ -76,7 +76,7 @@ test("keeps the VisePanda AI workspace localized and frontend-only", () => {
 test("renders the requested ten-item FAQ, wordmarks, and VisePanda asset references", () => {
   const faqButtons = html.match(/<button aria-expanded="false">/g) ?? [];
   assert.equal(faqButtons.length, 10, "expected exactly 10 FAQ controls");
-  assert.match(html, /VisePanda 可以直接预订机票、酒店或门票吗？/);
+  assert.match(html, /我已经有行程了，还需要 VisePanda 吗？/);
   assert.doesNotMatch(html, /六个执行时刻都已经上线了吗？/);
   assert.doesNotMatch(html, /这个页面会保存我的输入吗？/);
   assert.ok((html.match(/VisePanda\./g) ?? []).length >= 2, "expected header and footer wordmarks");
