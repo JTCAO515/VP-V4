@@ -128,8 +128,18 @@ and any file owned by another Issue's row.
 | #42 AI-40 | External / Flight adapter | `lib/server/external-evidence/flight/**` | `pnpm check`; `pnpm test:contract`; `pnpm test:integration` | field allowlist proof, recheck trace | RL-06 |
 | #43 AI-41 | Release gate R5 / beta | `docs/runbooks/**, docs/acceptance/r5-*.md` | `pnpm check`; `pnpm check` plus every suite this Issue touches | L1-L7 evidence ledger, runbooks | all RL-01..RL-09 |
 
-Rows for Issues added by the 2026-08-24 governance review (AI-42..AI-50) are appended when those
-Issues are created; each new Issue must add its own row before it moves to `status:ready`.
+| #46 AI-42 | Quality / Evals | `evals/**, tests/fixtures/red-lines/**, docs/agents/issue-execution-contract.md` | `pnpm check`; `pnpm evals`; `pnpm docs:check` | qrels version list, stratified report, suite registry | RL-01…RL-09 (registry owner) |
+| #47 AI-43 | ModelGateway / Transport | `lib/server/model-gateway/spike/**, docs/adr/**, docs/architecture/ml-01-ai-sdk-decision.md` | `pnpm check`; `pnpm test:contract`; `pnpm docs:check` | five-condition table, bundle/latency measurements, ADR | RL-07 |
+| #48 AI-44 | Domain Contracts / UX | `lib/server/contracts/errors/**, lib/i18n.ts, tests/contract/errors/**, docs/contracts/failure-taxonomy.md` | `pnpm check`; `pnpm test:contract`; `pnpm docs:check` | taxonomy table, five-locale copy snapshots, mapping tests | RL-04 |
+| #49 AI-45 | Release / Platform | `lib/flags/**, scripts/check-flags.mjs, tests/unit/flags/**, docs/contracts/feature-flags.md` | `pnpm check`; `pnpm test:unit`; `pnpm docs:check` | flag registry, illegal-combination cases | — |
+| #50 AI-46 | Data Platform | `scripts/db/**, supabase/**, docs/contracts/plat-conf-00.md, tests/integration/db/**` | `pnpm check`; `pnpm db:verify`; `pnpm test:integration` | three-path probe logs, frozen configuration table | RL-02 |
+| #51 AI-47 | ModelGateway / Governance | `lib/server/model-gateway/prompt/**, lib/server/model-gateway/registry/**, tests/contract/model-gateway/**` | `pnpm check`; `pnpm test:contract`; `pnpm evals` | version registry snapshot, drift trigger log | RL-07 |
+| #52 AI-48 | Security / Cost | `lib/server/model-gateway/budget/**, lib/server/identity/quota/**, tests/security/cost/**` | `pnpm check`; `pnpm test:security`; `pnpm test:integration` | quota-exhaustion trace, load/abuse report | RL-07 |
+| #53 AI-49 | Data Platform / Operations | `scripts/db/restore/**, docs/runbooks/backup-restore.md, tests/integration/restore/**` | `pnpm check`; `pnpm db:verify`; `pnpm test:integration` | restore rehearsal record, RPO/RTO table, Storage policy | RL-06 RL-07 |
+| #54 AI-50 | KnowledgeSystem / Ops | `lib/server/knowledge/report/**, apps/ops/report/**, tests/security/takedown/**` | `pnpm check`; `pnpm test:security`; `pnpm test:integration`; `pnpm test:e2e` | cascade-invalidation proof, audit record samples | RL-02 RL-08 RL-09 |
+
+Any Issue added after this file was written must add its own row here before it moves to
+`status:ready`.
 
 ## 6. Rules
 

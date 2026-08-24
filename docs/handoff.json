@@ -2,12 +2,12 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Maintain the governed AI Core Issue program while converting Claude's knowledge-base research into a source-aware draft workbench without bypassing operator, migration, review, RLS or eligibility gates.",
-  "status": "claude-knowledge-plan-audited; draft catalogue created; runtime and AI-11 remain blocked",
+  "status": "ai-core-issue-program-reviewed-and-rewired; governance baseline in PR #45; R0 gated on operator DEC-01..DEC-11",
   "currentPhase": "R0",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own independently accepted frontier Issues and their evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "operator for #3 knowledge/architecture decisions; codex for independent ready Issues only; AI-11/#13 remains blocked",
+  "intendedNextAgent": "operator for #3 (AI-01 Decision Register) and PR #45 merge; codex for #4 (AI-02) and #9 (AI-07a CI scaffolding)",
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
     "audit the Claude model-layer draft against current first-party sources",
@@ -57,7 +57,7 @@
     "Launch interface languages are zh/en/es/ru/ar.",
     "One ordinary city plus one popular city is a viable content pilot.",
     "No ticket purchase remains an accepted product boundary.",
-    "Issue-level estimates total 175 focused days (~35 weeks) and land at the top of the report's 24-35 week range, not the 10-15 week core-alpha scenario."
+    "Issue-level estimates total 207 focused days (~41 weeks) after the 2026-08-24 review additions, above the report 24-35 week range and far above the 10-15 week core-alpha scenario."
   ],
   "decisions": [
     "Treat DeepSeek Flash-0731 public beta as a provisional text baseline candidate with thinking explicitly disabled, Pro-0813 as GA for complex async work, and Vision Exp as a separate experimental challenger; no production portfolio is frozen before eval/conformance/region/DPA.",
@@ -105,7 +105,7 @@
     "docs/model-layer-plan.md (new)",
     "docs/external-data-chatbot-plan.md (new)",
     "docs/knowledge-rag-explore-plan.md (new)",
-    "docs/research/*.md (new, 7 evidence ledgers and audits)",
+    "docs/research/*.md (new, 8 evidence ledgers and audits)",
     "docs/agents/{issue-tracker,triage-labels,domain}.md (new)",
     "docs/agents/issue-execution-contract.md (new)",
     "docs/knowledge-base/{README,draft-knowledge-base.json,claude-plan-disposition.md} (new)",
@@ -135,7 +135,7 @@
     "fourth-round pnpm check passed: source-policy lint, strict TypeScript, Next.js production build, and 11/11 tests",
     "fifth-round evidence ledger completed with 117 first-party/source links and deterministic Markdown checks",
     "independent research/product and Staff-level engineering audits completed; their P0 findings were applied to v1.1",
-    "final git diff, handoff JSON, 21-file local links, Markdown structure/fences, paragraph limit, and stale-contract scans passed",
+    "final git diff, handoff/catalogue JSON, 26-file local links, Markdown structure/fences, paragraph limit, and stale-contract scans passed",
     "fifth-round pnpm check passed: source-policy lint, strict TypeScript, Next.js production build, and 11/11 tests",
     "GitHub labels verified for phase 0-2, priority P0-P2, status ready/blocked/in-progress/superseded, governance, migration, and triage roles",
     "GitHub Issue audit passed: 42 AI Issues, 41 Program sub-issues, 39 initially blocked children, three ready Issues, five migration-labelled quality gates, no missing body sections, and no undefined blocker references",
@@ -144,7 +144,8 @@
     "post-Issue-setup pnpm check passed: source-policy lint, strict TypeScript, Next.js production build, and 11/11 tests",
     "independent Claude knowledge-plan audit completed with 75 first-party/repository links and local Markdown/link/structure checks",
     "draft knowledge-base validation passed: 30 unique record types, 18 unique rules, six researched drafts, zero executable rules, zero reviewed/eligible records, and zero unresolved rule references",
-    "six researched drafts have HTTPS source locators, null reviewers and licence policies, status researched_draft and retrievalEligible=false"
+    "six researched drafts have HTTPS source locators, null reviewers and licence policies, status researched_draft and retrievalEligible=false",
+    "post-knowledge-workbench pnpm check passed: source-policy lint, strict TypeScript, Next.js production build and 11/11 tests"
   ],
   "blockers": [
     "Operator has not yet accepted section 13 of the integrated research report or the engineering architecture and acceptance baseline.",
@@ -167,19 +168,20 @@
     "No language/medical reviewer, source-rights decision, Supabase lineage or Knowledge contract has been accepted; AI-11/#13 remains blocked."
   ],
   "risks": [
-    "Release gates #17/#23/#31/#36 were originally not depended on by any implementation Issue; four dependency edges now enforce them. Removing those edges silently reopens the gap.",
+    "Release gates #17/#23/#31/#36 were not depended on by any implementation Issue. Four edges (#18<-#17, #24<-#23, #32<-#31, #37<-#36) now enforce them. Removing those edges silently reopens the gap.",
     "Issue bodies alone do not carry runnable commands; docs/agents/issue-execution-contract.md is the authority and must stay in sync with package.json scripts.",
-    "Aviation adapter #42 depends on an unsigned provider contract; the beta gate #43 must not become hostage to it.",
-    "Model alias drift, Vision Exp instability, candidate/draft leakage, cross-border sensitive media and provider licence violations remain the top runtime risks (report section 14).",
-    "Solo-founder overbuild: 42 Issues at WIP<=2 is a ~35 week serial program; scope must be cut against the R1 tracer bullet, not spread."
+    "Issue-level estimates now total 207 focused days (~41 weeks) across 51 Issues, above the report 24-35 week range. Scope must be cut against the R1 tracer bullet, not spread.",
+    "Aviation adapter #42 depends on an unsigned provider contract; #43 now carries it as a conditional acceptance criterion instead of a hard dependency.",
+    "Model alias drift, Vision Exp instability, candidate/draft leakage, cross-border sensitive media and provider licence violations remain the top runtime risks (report section 14)."
   ],
   "rollback": "Remove docs/knowledge-base/ and its Claude audit link if this research disposition is rejected; no database, public content or runtime state changed. Preserve GitHub Issue history through status:superseded rather than deletion.",
   "operatorActions": [
+    "Merge PR #45 (governance baseline) so the program's authority documents exist on main.",
     "Decide DEC-01..DEC-11 in Issue #3; agents may prepare option matrices but must not decide.",
     "Decide new Supabase project versus VP-Final migration (#6).",
     "Decide model/media/database region, retention and DPA posture (#7).",
-    "Decide and sign the aviation provider contract, or accept the official-handoff fallback (#41/#42).",
-    "Accept or reject the AI SDK adoption decision produced by ML-01 (#45).",
+    "Decide and sign the aviation provider contract, or accept the official-handoff fallback (#41/#42). #43 no longer hard-depends on #42.",
+    "Accept or reject the AI SDK adoption decision produced by ML-01 (#47).",
     "Approve any public capability claim, production cutover, DNS, payment or external account action."
   ],
   "mandatoryReadingOrder": [
@@ -206,12 +208,13 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Use GitHub #3 to decide the audit's record kinds, scope/applicability, payment promise, class wording, readiness axes, time model, reviewers, rights, Ops and pilot. Independent ready Issues may continue; AI-11/#13 remains blocked.",
+  "nextAction": "Merge PR #45, then: operator decides DEC-01..DEC-11 in GitHub #3 (AI-01); in parallel an agent may run #4 (AI-02) and #9 (AI-07a CI/test scaffolding, now dependency-free). Do not start any status:blocked Issue.",
   "lastUpdated": "2026-08-24",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@2dec7b0",
     "vpFinalReference": "JTCAO515/VP-Final@b5ef081",
     "issueProgram": "JTCAO515/VP-V4 Issues #2-#43 plus governance-review additions",
-    "reviewRound": "claude architect review 2026-08-24; findings applied to Issues and this handoff"
+    "reviewRound": "claude architect review 2026-08-24; findings applied to Issues and this handoff",
+    "governanceReview": "2026-08-24 claude architect review: 4 gate edges added, 5 over-coupled edges removed, 9 gap Issues created (#46-#54), execution parameters injected into #2-#43, milestones R0-R5 and phase:R0-R5 introduced, priorities rebalanced to P0=R0+R1 / P1=R2+R3 / P2=R4+R5."
   }
 }
