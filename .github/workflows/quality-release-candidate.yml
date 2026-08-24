@@ -1,0 +1,27 @@
+name: Quality Release Candidate
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release-candidate-local-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm test:unit
+      - run: pnpm test:contract
+      - run: pnpm test:integration
+      - run: pnpm test:security
+      - run: pnpm test:e2e
+      - run: pnpm evals
+      - run: pnpm db:verify
+      - run: pnpm docs:check

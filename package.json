@@ -11,7 +11,15 @@
     "lint": "node scripts/lint.mjs",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/static-output.test.mjs",
-    "check": "pnpm lint && pnpm typecheck && pnpm build && pnpm test"
+    "check": "pnpm lint && pnpm typecheck && pnpm build && pnpm test",
+    "test:unit": "node scripts/run-ci-suite.mjs unit",
+    "test:contract": "node scripts/run-ci-suite.mjs contract",
+    "test:integration": "node scripts/run-ci-suite.mjs integration",
+    "test:security": "node scripts/run-ci-suite.mjs security",
+    "test:e2e": "node scripts/run-ci-suite.mjs e2e",
+    "evals": "node scripts/run-ci-suite.mjs evals",
+    "db:verify": "node scripts/db-verify.mjs",
+    "docs:check": "node scripts/docs-check.mjs"
   },
   "dependencies": {
     "next": "16.2.6",
