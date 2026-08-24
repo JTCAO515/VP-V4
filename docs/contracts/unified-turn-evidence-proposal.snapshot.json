@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "2026-08-24.1",
+  "evidenceReceiptKinds": ["fact", "observation", "user_artifact"],
+  "contextRefKinds": ["fact", "observation", "user_artifact", "external_entity"],
+  "groundedClaimTypes": ["address", "time_window", "money", "payment_method", "admission", "transport_status", "safe_phrase"],
+  "proposalStatuses": ["pending", "applied", "rejected", "expired", "conflicted", "superseded"],
+  "proposalChangeKinds": ["create_trip", "update_trip_title", "upsert_day", "delete_day", "upsert_block", "delete_block"],
+  "consumerOwners": {
+    "TurnCoordinator": ["AssistantTurn", "ContextRef", "GroundedClaim"],
+    "TripWorkspace": ["TripProposal", "ProposalChange", "EvidenceReceipt"],
+    "KnowledgeSystem": ["EvidenceReceipt", "GroundedClaim"],
+    "ExternalEvidenceResolver": ["ContextRef", "EvidenceReceipt"]
+  }
+}
