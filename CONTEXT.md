@@ -1,39 +1,76 @@
 # Context
 
-Objective: simplify the VisePanda landing page so the four core-capability cards always show their complete copy, remove two lower-priority narrative sections and two FAQ items, and make the header navigation visibly local to each supported language.
+Objective: maintain the dependency-ordered AI Core Issue program while converting Claude's knowledge-base research into a source-aware draft catalogue without bypassing operator, migration, review, RLS or eligibility gates.
 
-Status: implementation, production build, static regression tests, desktop browser QA, mobile browser QA, five-locale navigation checks, and Arabic RTL checks pass. Commit and remote synchronization are the remaining delivery steps.
+Status: GitHub Program [#2](https://github.com/JTCAO515/VP-V4/issues/2) remains authoritative for delivery order. Claude's 2026-08-24 plan has been independently audited and converted into a local draft knowledge workbench: 30 record-type candidates, 18 non-executable readiness-rule candidates, and 6 source-backed `researched_draft` records. Reviewed/retrieval-eligible records remain 0. No runtime, database, bulk import or external account was activated.
 
-Scope:
+Accepted repository facts:
 
-- remove feature-card detail toggles and text clamping
-- remove the guessing marquee and evidence-delivery sections
-- render 10 FAQ items by excluding the execution-moments and input-storage questions
-- remove metric/imperial state and navigation
-- show locale flags and currency symbols in the header and language modal
-- keep Chinese, English, Spanish, Russian, and Arabic copy plus Arabic document-level RTL
-- rewrite project documentation around VisePanda product scope and current maturity
+- VP-V4 `main` remains a frontend-only Next.js 16 / React 19 / strict TypeScript / Tailwind v4 product preview.
+- The canonical user flow is VisePanda Chatbot -> TripProposal -> visible Trip Canvas diff -> user confirmation -> deterministic TripPatch.
+- The provisional model candidates are DeepSeek Flash-0731 public beta for text with thinking explicitly off, DeepSeek Pro-0813 GA for complex async work, and separate Vision Exp for shadow; Qwen strict/specialist routes remain region-dependent candidates until conformance/eval/DPA gates pass.
+- Qwen3.5 LiveTranslate joins ASR -> MT -> TTS as an end-to-end five-language voice challenger; Beijing/Singapore OCR/TTS availability changes the mandatory stack, so region is a P0 decision.
+- Kimi and GLM remain eval-only until task-level VisePanda evidence supports promotion.
+- Raw audio and images are not retained by default; provider region, retention, and production data flow remain operator/legal decisions.
+- External data is proposed as ReviewedFact, LiveObservation, EphemeralObservation, UserConfirmedArtifact, and ExternalEntityRef, governed by a versioned Data License Registry.
+- Flight schedule/status should use a licensed aviation provider after a China-route benchmark; purchasing and inventory remain out of scope.
+- 12306 Terms prohibit unrecognized robot/spider/crawler access, so VP-V4 must not build a periodic 12306 scraper. Rail uses reviewed station/corridor guidance, user-confirmed ticket import, and official recheck actions.
+- External-source POIs enter only as private Imported POI Candidates; they are never model-generated, auto-merged, auto-reviewed, or directly published.
+- Canonical POI and reviewed/current Fact are the shared write model. Chatbot RAG, Explore, Trip Canvas, and SEO consume the same IDs and eligibility through rebuildable projections.
+- Language, translation, payment instruments, passport contexts, accessibility, booking, and local-display capabilities are typed atomic Facts, not broad booleans or POI categories.
+- The proposed RAG baseline is Postgres exact/alias/pg_trgm/FTS plus multilingual vector retrieval, RRF, and optional evaluated reranking; do not procure a second vector database initially.
+- The proposed implementation starts as one public Next.js modular monolith with six deep product modules and three platform seams. No Ops UI in R1/R2; the first real curation UI uses a separate protected deploy and only then justifies a minimal shared core workspace.
+- The first accepted tracer bullet is reviewed fixture -> grounded Chat -> TripProposal -> visible Canvas diff -> user confirmation -> persisted deterministic TripPatch -> privacy-safe trace.
+- Confirm and apply are one atomic Trip transaction; pending Proposal revisions are immutable; grounded execution uses typed GroundedClaims/EvidenceReceipts and buffered validated events.
+- Closed beta defaults to authenticated-only pending operator acceptance. User/Ops requests use verified JWT + RLS; system credentials are worker-only and must apply explicit owner/eligibility/policy filters.
+- R1 uses fake model, one Fact fixture, durable Turns and Trip CAS only; no real model, pgvector, queue, external data or Ops UI.
+- VP-Final migration is evidence-gated: #4 disposition matrix -> #11 TripPatch golden contract -> #13 Fact eligibility -> #16 RLS/fault patterns -> #25 import/review/audit. Reuse behavior/tests through V4 interfaces; do not copy directories, direct-write Copilot, static Explore seeds, secrets, or the old full monorepo.
+- Current frontier: operator/human Issue #3 (DEC/ADR baseline) and agent-ready Issue #4 (VP-Final disposition matrix). All other child Issues are `status:blocked` with native GitHub dependencies and textual `Blocked by #N`.
+- Claude's referenced `research/fact-catalogue.json` is missing; 810/122 rows, five weeks and “zero unavailable” are unverified estimates, not targets.
+- The catalogue uses `Knowledge Record Type Candidate`, not “30 Fact Types”: policy/operational Facts, directory entries, procedures, Safe Phrases, observations, assessments and rules have different lifecycle owners.
+- The six researched drafts have direct source locators but no reviewer or licence policy and are explicitly ineligible. The 18 readiness rules all have `executable:false` and preserve Claude's single status only as a legacy hypothesis label; future output uses three axes.
 
-Locale mapping:
+Canonical domain language:
 
-- `zh` → `🇨🇳` + `¥`
-- `en` → `🇺🇸` + `$`
-- `es` → `🇪🇸` + `€`
-- `ru` → `🇷🇺` + `₽`
-- `ar` → `🇸🇦` + `ر.س`
-
-Boundaries: the page remains frontend-only. Real AI, accounts, Trip persistence, inventory, booking, payment, partner services, and Human Help are not connected. Bundled local fonts and shape masks still need rights review before production release.
+- `Imported POI Candidate`: private, externally sourced place candidate carrying source, licence, batch, and stable source identity; avoid “generated POI”.
+- `Canonical POI`: stable internal identity for a real place; it does not certify every attribute about that place.
+- `Fact`: one typed, evidenced, versioned, reviewed, and expiring claim about a scoped target.
+- `Retrieval Unit`: rebuildable lexical/vector projection of eligible Facts or reviewed Guides; it is not the source of truth.
+- `Explore Projection`: rebuildable public read model derived from Canonical POIs, eligible Facts, licensed media, and editorial placement.
+- `Explore Collection`: editorial list of Canonical POI IDs for a city/scene; it does not change Fact eligibility.
+- `Trip Place Reference`: user-confirmed Canvas reference to a Canonical POI plus required Fact/version receipts; avoid copied model-generated POI blobs.
+- `Knowledge Record Type Candidate`: a proposed vocabulary entry that may later become a Fact, Directory Entry, Procedure, Safe Phrase, assessment or facet; it is not retrievable. Avoid calling all catalogue entries “Fact Types”.
+- `Policy Fact`: a sourced rule whose value is conditional on audience, time, geography, authority and exceptions. Avoid “global rule”.
+- `Operational Fact`: a current claim about a concrete venue, channel or process. Avoid “POI attribute” when evidence and expiry matter.
+- `Directory Entry`: a sourced contact or institution record with jurisdiction, purpose, hours and validity. Avoid treating a count or list as guaranteed assistance.
+- `Procedure`: an ordered product-owned sequence whose critical values reference separate eligible Facts. Avoid duplicating policy numbers inside free text.
+- `Class Entitlement`: an obligation or recommendation attached to an official class/grade; it is not proof of current venue delivery. Avoid “class capability”.
+- `Readiness Rule`: a versioned candidate derivation from Trip state and eligible evidence. It is not a Fact and cannot execute before acceptance. Avoid “AI readiness judgment”.
 
 Reading order:
 
-1. `README.md`
-2. `HANDOFF.md`
-3. `design-qa.md`
-4. `lib/i18n.ts`
-5. `components/VisePandaLanding.tsx`
-6. `app/globals.css`
-7. `tests/static-output.test.mjs`
+1. `docs/ai-core-integrated-research-report.md`
+2. `docs/ai-core-engineering-development-acceptance-report.md`
+3. `docs/research/ai-core-deep-optimization-evidence-2026-08-23.md`
+4. `docs/research/ai-core-v1.1-independent-audit-2026-08-23.md`
+5. `docs/research/ai-core-system-evidence-2026-08-23.md`
+6. `docs/model-layer-plan.md`
+7. `docs/external-data-chatbot-plan.md`
+8. `docs/knowledge-rag-explore-plan.md`
+9. `docs/research/knowledge-rag-explore-evidence-2026-08-23.md`
+10. `docs/knowledge-base/README.md`
+11. `docs/knowledge-base/claude-plan-disposition.md`
+12. `docs/research/knowledgebase-claude-audit-2026-08-24.md`
+13. `docs/research/external-data-evidence-2026-08-23.md`
+14. `docs/research/model-provider-evidence-2026-08-22.md`
+15. `README.md`
+16. `AGENTS.md`
+17. `docs/agents/issue-tracker.md`
+18. `docs/agents/triage-labels.md`
+19. `docs/agents/domain.md`
+20. `docs/adr/0001-nextjs-typescript-tailwind-migration.md`
+21. `docs/adr/0002-visepanda-brand-localization-assets.md`
 
-Next action: commit the verified change, push `main`, and confirm the Vercel deployment status for that exact commit.
+Next action: operator reviews the 12 knowledge decisions in `docs/research/knowledgebase-claude-audit-2026-08-24.md` through [#3 AI-01](https://github.com/JTCAO515/VP-V4/issues/3); [#4 AI-02](https://github.com/JTCAO515/VP-V4/issues/4) may run independently. The draft catalogue does not unblock or close [#13 AI-11](https://github.com/JTCAO515/VP-V4/issues/13).
 
-Rollback: revert the UI simplification commit.
+Rollback: remove `docs/knowledge-base/` and its audit link if the research disposition is rejected; no database or public content requires rollback. Preserve GitHub history by superseding replaced Issues rather than deleting them.
