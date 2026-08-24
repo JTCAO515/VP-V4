@@ -4,8 +4,11 @@ import test from "node:test";
 
 const htmlPath = ".next/server/app/index.html";
 const html = readFileSync(htmlPath, "utf8");
+const chatbotHtml = readFileSync(".next/server/app/visepanda.html", "utf8");
 const clientSource = readFileSync("components/VisePandaLanding.tsx", "utf8");
 const localeSource = readFileSync("lib/i18n.ts", "utf8");
+const chatbotSource = readFileSync("components/VisePandaChatWorkspace.tsx", "utf8");
+const chatbotLocaleSource = readFileSync("lib/chat-workspace-i18n.ts", "utf8");
 const documentation = [
   "README.md",
   "CONTEXT.md",
@@ -48,6 +51,26 @@ test("keeps project documentation focused on VisePanda", () => {
   assert.match(documentation, /Trip Canvas/);
   assert.match(documentation, /Today/);
   assert.doesNotMatch(documentation, /Layla|reference[- ]?(?:site|clone|brand)|参考站点|参考克隆|源站/i);
+});
+
+test("renders the VisePanda AI workspace at the canonical chatbot route", () => {
+  assert.match(chatbotHtml, /VisePanda AI \| Chatbot and Trip Canvas preview/);
+  assert.match(chatbotHtml, /https:\/\/go2china\.space\/visepanda/);
+  assert.match(chatbotHtml, /Trip Canvas/);
+  assert.match(chatbotHtml, /Chatbot/);
+  assert.match(chatbotHtml, /Product preview/);
+  assert.ok(chatbotSource.indexOf('className={`vp-chat-context') < chatbotSource.indexOf('className={`vp-chat-conversation'), "Canvas/POI must render before Chatbot on desktop");
+  assert.doesNotMatch(chatbotSource, /Mindtrip|mindtrip/);
+});
+
+test("keeps the VisePanda AI workspace localized and frontend-only", () => {
+  for (const marker of ["zh:", "en:", "es:", "ru:", "ar:", "🇨🇳", "🇺🇸", "🇪🇸", "🇷🇺", "🇸🇦"]) {
+    assert.ok(chatbotLocaleSource.includes(marker) || localeSource.includes(marker), `missing AI workspace locale marker: ${marker}`);
+  }
+  assert.match(chatbotSource, /document\.documentElement\.dir = locale === "ar" \? "rtl" : "ltr"/);
+  assert.match(chatbotLocaleSource, /does not call AI, save input, or change a Trip/);
+  assert.match(css, /\.vp-chat-workspace/);
+  assert.match(css, /\.vp-chat-mobile-tabs/);
 });
 
 test("renders the requested ten-item FAQ, wordmarks, and VisePanda asset references", () => {
