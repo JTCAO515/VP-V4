@@ -1,27 +1,27 @@
 # AI-01 Decision Register — operator worksheet
 
 - Issue: [#3 AI-01](https://github.com/JTCAO515/VP-V4/issues/3)
-- Status: prepared for operator review; no decision in this document is accepted.
-- Owner of every decision: operator.
-- Agent role: record evidence, options, impact, deferred behavior, review trigger, and rollback. An agent must not fill an acceptance field.
+- Status: accepted by explicit operator delegation in the Codex conversation on 2026-08-24. The choices below are now the R0 execution baseline.
+- Delegated decision owner: Codex, acting under the operator's explicit instruction to take responsibility for DEC and path selection.
+- Agent role: record the accepted choice, evidence, impact, deferred behavior, review trigger, and rollback. Any future replacement still requires a new operator decision and ADR.
 
 ## How to use this register
 
-For each row, the operator records one selected option, a date, and a rationale. The selected option becomes executable only when a corresponding ADR is accepted. Until then, all downstream implementation must use the listed deferred behavior.
+The operator delegated selection authority to Codex on 2026-08-24. Each selected option becomes executable through the corresponding ADR; all capability outside its accepted boundary remains unavailable or fixture-only.
 
 | ID | Selected option | Operator/date | ADR | Status |
 | --- | --- | --- | --- | --- |
-| DEC-01 | _pending_ | _pending_ | _pending_ | operator-owned |
-| DEC-02 | _pending_ | _pending_ | _pending_ | operator-owned |
-| DEC-03 | _pending_ | _pending_ | _pending_ | operator-owned |
-| DEC-04 | _pending_ | _pending_ | _pending_ | operator-owned |
-| DEC-05 | _pending_ | _pending_ | _pending_ | operator-owned |
-| DEC-06 | _pending_ | _pending_ | _pending_ | operator-owned |
-| DEC-07 | _pending_ | _pending_ | _pending_ | operator-owned |
-| DEC-08 | _pending_ | _pending_ | _pending_ | operator-owned |
-| DEC-09 | _pending_ | _pending_ | _pending_ | operator-owned |
-| DEC-10 | _pending_ | _pending_ | _pending_ | operator-owned |
-| DEC-11 | _pending_ | _pending_ | _pending_ | operator-owned |
+| DEC-01 | One Chatbot + one Canvas; immutable Proposal -> confirmed atomic Patch | Delegated to Codex / 2026-08-24 | ADR-0003 | accepted |
+| DEC-02 | DeepSeek/Qwen provisional; Kimi/GLM eval-only; R1 fake-model first | Delegated to Codex / 2026-08-24 | ADR-0004 | accepted |
+| DEC-03 | C0/C1-only controlled conformance; no C2/C3/raw-media provider flow | Delegated to Codex / 2026-08-24 | ADR-0005 | accepted |
+| DEC-04 | New V4 Supabase lineage; port only approved contracts/tests | Delegated to Codex / 2026-08-24 | ADR-0006 | accepted |
+| DEC-05 | Authenticated-only closed beta; no durable anonymous Trip | Delegated to Codex / 2026-08-24 | ADR-0007 | accepted |
+| DEC-06 | Public Next.js Web; protected Ops only when curation requires it | Delegated to Codex / 2026-08-24 | ADR-0008 | accepted |
+| DEC-07 | Canonical Fact truth + candidate-first + Postgres hybrid retrieval | Delegated to Codex / 2026-08-24 | ADR-0009 | accepted |
+| DEC-08 | Beijing curated + Guangzhou ordinary pilot; max 10 candidates per batch | Delegated to Codex / 2026-08-24 | ADR-0010 | accepted |
+| DEC-09 | No purchase/crawler; official rail handoff and licensed aviation gate | Delegated to Codex / 2026-08-24 | ADR-0011 | accepted |
+| DEC-10 | Modular OCR/MT and ASR/MT/TTS; realtime challenger eval-only | Delegated to Codex / 2026-08-24 | ADR-0012 | accepted |
+| DEC-11 | Five-language L1-L7, named RL suites, rollback and observation | Delegated to Codex / 2026-08-24 | ADR-0013 | accepted |
 
 ## DEC-01 — product definition and write invariant
 
