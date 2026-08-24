@@ -34,14 +34,14 @@ The domain plans (`docs/model-layer-plan.md`, `docs/external-data-chatbot-plan.m
 | `pnpm build` | exists | — |
 | `pnpm test` | exists | — |
 | `pnpm check` | exists | — |
-| `pnpm test:unit` | planned | AI-07a |
-| `pnpm test:contract` | planned | AI-07a |
-| `pnpm test:integration` | planned | AI-07a |
-| `pnpm test:security` | planned | AI-07a |
-| `pnpm test:e2e` | planned | AI-07a |
-| `pnpm evals` | planned | AI-07a scaffold, AI-42 corpus |
-| `pnpm db:verify` | planned | AI-07a scaffold, AI-08 implementation |
-| `pnpm docs:check` | planned | AI-07a |
+| `pnpm test:unit` | exists | AI-07a |
+| `pnpm test:contract` | exists | AI-07a |
+| `pnpm test:integration` | exists | AI-07a |
+| `pnpm test:security` | exists | AI-07a |
+| `pnpm test:e2e` | exists | AI-07a |
+| `pnpm evals` | exists (scaffold only) | AI-07a scaffold, AI-42 corpus |
+| `pnpm db:verify` | exists (scaffold only) | AI-07a scaffold, AI-08 implementation |
+| `pnpm docs:check` | exists | AI-07a |
 
 A planned command may not be silently skipped. Until AI-07a lands, an Issue records
 `planned — not runnable at <sha>` for that row and runs `pnpm check`.
@@ -92,7 +92,7 @@ and any file owned by another Issue's row.
 | #6 AI-04 | Identity / Data Platform | `docs/adr/**, docs/architecture/actor-model.md` | `pnpm check`; `pnpm docs:check`, `jq empty docs/handoff.json`, `git diff --check` | ADR + actor x credential matrix | — |
 | #7 AI-05 | Security / Privacy | `docs/adr/**, docs/policy/data-classes.md, docs/policy/threat-model.md` | `pnpm check`; `pnpm docs:check`, `jq empty docs/handoff.json`, `git diff --check` | C0-C4 table, region ADR, threat model | RL-06 RL-07 |
 | #8 AI-06 | TurnCoordinator / Web protocol | `lib/server/turn/contract.ts, docs/contracts/turn-sse-v1.md, tests/contract/turn/**` | `pnpm check`; `pnpm docs:check`, `jq empty docs/handoff.json`, `git diff --check`; `pnpm test:contract` | SSE event schema, replay fixtures | — |
-| #9 AI-07a | Quality / CI | `package.json, scripts/**, .github/workflows/**, tests/**/README.md` | `pnpm check`; `pnpm check` plus every suite this Issue touches | CI config, empty suite scaffolds, artifacts/ layout | registry owner |
+| #9 AI-07a | Quality / CI | `package.json, scripts/**, .github/workflows/**, tests/**/README.md, evals/**, .gitignore, artifacts/**, docs/acceptance/**, docs/agents/issue-execution-contract.md` | `pnpm check`; `pnpm check` plus every suite this Issue touches | CI config, empty suite scaffolds, artifacts/ layout | registry owner |
 | #10 AI-08 | Data Platform | `supabase/**, scripts/db/**` | `pnpm check`; `pnpm db:verify`, `pnpm test:integration` | migration head, three connection probes | — |
 | #11 AI-09 | TripWorkspace / Migration | `lib/server/trip/patch/**, tests/contract/trip/**` | `pnpm check`; `pnpm test:contract` | golden patch fixtures, old-vs-new diff | RL-03 |
 | #12 AI-10 | TripWorkspace | `lib/server/trip/**, supabase/migrations/**, app/api/trips/**` | `pnpm check`; `pnpm db:verify`, `pnpm test:integration`; `pnpm test:contract`; `pnpm test:integration` | fault-injection log, idempotency matrix | RL-01 RL-03 |

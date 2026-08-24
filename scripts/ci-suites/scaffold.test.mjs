@@ -13,7 +13,9 @@ const suiteReadmes = {
 
 test(`AI-07a ${suite} suite scaffold is runnable`, () => {
   if (suite === "evals") {
-    assert.equal(existsSync("docs/agents/issue-execution-contract.md"), true);
+    for (const readme of ["evals/fixtures/README.md", "evals/qrels/README.md", "evals/runners/README.md"]) {
+      assert.equal(existsSync(readme), true, `${readme} must exist`);
+    }
     return;
   }
 

@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from "node:fs";
 const handoffPath = "docs/handoff.json";
 assert.equal(existsSync(handoffPath), true, `${handoffPath} must exist`);
 assert.equal(existsSync("docs/agents/issue-execution-contract.md"), true, "execution contract must exist");
+assert.equal(existsSync("docs/acceptance/release-acceptance-template.md"), true, "release acceptance template must exist");
 
 const handoff = JSON.parse(readFileSync(handoffPath, "utf8"));
 assert.equal(handoff.schemaVersion, "jtcoding-handoff/1.0");
