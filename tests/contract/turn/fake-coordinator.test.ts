@@ -1,0 +1,2 @@
+import assert from "node:assert/strict";import test from "node:test";import {runFakeTurn} from "../../../lib/server/turn/fake-coordinator.ts";
+test("buffers a fake reviewed fact turn and fails closed otherwise",()=>{const eligible={id:"f",status:"reviewed" as const,expiresAt:"2099-01-01T00:00:00Z",licenceAllowed:true};assert.deepEqual(runFakeTurn({turnId:"t",fact:eligible}).map(e=>e.type),["accepted","phase","answer","terminal"]);assert.equal(runFakeTurn({turnId:"t",fact:{...eligible,status:"draft"}}).at(-1)?.state,"unavailable")});
