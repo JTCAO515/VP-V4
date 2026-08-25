@@ -19,12 +19,13 @@ The linked project is `dzqdzetcctkhbrhlxxgn` in `ap-southeast-1`. Four V4 migrat
 | User JWT + RLS | insert HTTP `201`; owner read `1`; other user read `0` |
 | Ops role-scoped RPC | `app_metadata.role=ops_probe` JWT called the `security invoker` RPC and returned `1` |
 | System worker | linked SQL `SET ROLE service_role` called the private function after its explicit table grant; the cleaned probe count was `0` |
+| Transaction pooler | remote `PREPARE` followed by `EXECUTE` returned `1`; server-side rejection is not an invariant |
 
 ## Frozen conclusions
 
 - User and Ops paths do not use a service credential to impersonate the owner/reviewer.
 - The worker path remains private-schema plus explicit resource/table grants; a function grant alone is insufficient.
-- The current local `psql` probe does not prove the required prepared-statement prohibition. It is not an accepted VisePanda runtime configuration.
+- Local and remote probes show Supavisor can accept the tested `PREPARE/EXECUTE` sequence. Server-side rejection is not an accepted VisePanda invariant.
 - VisePanda's future `SystemDataAdapter` transaction-pooler profile is frozen as shared Supavisor transaction mode on port `6543`, username `postgres.<project-ref>`, with prepared statements disabled in the client. A Postgres.js client must use `{ prepare: false }`; a node-postgres query definition must omit `name`. No SystemDataAdapter code may use a named prepared query against this path.
 - Migrations, `pg_dump`, restore, and other native management operations remain direct-connection work. The new project direct endpoint is IPv6-only; the VPN split-DNS exception for `*.supabase.co` is a local operator prerequisite, not a product runtime dependency.
 - Remote evidence applies only to the new linked project; no older Supabase project was linked or queried.
@@ -33,6 +34,7 @@ The linked project is `dzqdzetcctkhbrhlxxgn` in `ap-southeast-1`. Four V4 migrat
 
 - [Supabase: disabling prepared statements in transaction mode](https://supabase.com/docs/guides/troubleshooting/disabling-prepared-statements-qL8lEL)
 - [Supabase: connection method matrix](https://supabase.com/docs/guides/database/connecting-to-postgres)
+- [ADR-0016: Supavisor prepared-statement policy](../adr/ADR-0016-supavisor-prepared-statement-policy.md)
 
 ## Rollback
 
