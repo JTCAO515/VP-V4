@@ -2,12 +2,12 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Extend AI Core Program #2 with an evidence-backed bounded-agent architecture and dependency-ordered production-parity Issue plan, without copying Demo fixtures or bypassing accepted Chat, Canvas, evidence, identity, RLS, provider or release contracts.",
-  "status": "Agent/RAG/Memory/Tool/Context research and a 31-Issue tracker plan are accepted for publication; implementation has not started",
+  "status": "V4-01 through V4-31 are published as Program #2 sub-issues with native dependencies, labels and milestones; implementation has not started",
   "currentPhase": "R1",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own independently accepted frontier Issues and their evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "operator for #3 (AI-01 Decision Register) and PR #45 merge; codex for #4 (AI-02) and #9 (AI-07a CI scaffolding)",
+  "intendedNextAgent": "one agent may claim one live frontier Issue: #49 AI-45, #84 AI-51, or #87 V4-01; dependency-blocked Issues remain unavailable",
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
     "audit the Claude model-layer draft against current first-party sources",
@@ -115,6 +115,7 @@
     "docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md (new)",
     "docs/research/agent-context-rag-memory-tool-evidence-2026-08-25.md (new source ledger)",
     "docs/vp-v4-production-parity-issue-plan.md (new accepted tracker plan)",
+    "docs/agents/issue-execution-contract.md (updated with #85/#87-#116 V4 rows)",
     "docs/handoff.json (restructured to jtcoding-handoff/1.0)",
     "AGENTS.md, CONTEXT.md, HANDOFF.md (updated)"
   ],
@@ -218,7 +219,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Publish the accepted AI-51 through AI-81 tracker graph under Program #2, preserve #15/#16 as the active implementation frontier, and do not start dependency-blocked parity work.",
+  "nextAction": "Review and merge PR #83 when ready. Execute only one live frontier Issue at a time (#49, #84, or #87); #15 remains blocked by #84 and V4-02 through V4-31 remain dependency-gated.",
   "lastUpdated": "2026-08-26",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@2dec7b0",

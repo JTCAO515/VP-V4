@@ -79,6 +79,6 @@ Rollback: remove the local `docs/knowledge-base/` package and audit link if the 
 - Product parity baseline: `docs/vp-v4-production-feature-parity-report.md`.
 - AI and Trip Canvas product logic: `docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md`.
 - Agent/RAG/Memory/Tool/Context architecture: `docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md`; source ledger: `docs/research/agent-context-rag-memory-tool-evidence-2026-08-25.md`.
-- Accepted tracker graph: `docs/vp-v4-production-parity-issue-plan.md`, AI-51 through AI-81.
-- #15/#16 remain the current implementation frontier. New parity Issues are not authorization to start dependency-blocked work.
+- Published tracker graph: `docs/vp-v4-production-parity-issue-plan.md`, V4-01 through V4-31, mapped to #85/#87-#116 and registered in `docs/agents/issue-execution-contract.md`.
+- Current ready frontier is #49, #84 and #87. #15 remains blocked by #84. New parity Issues are not authorization to start dependency-blocked work.
 - AI-43 requires a current AI SDK Core/ToolLoop/Workflow comparison before execution; LangChain/LangGraph/GraphRAG/multi-agent are not default production dependencies.
