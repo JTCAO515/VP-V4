@@ -27,11 +27,11 @@ test("AI-14 owner RLS and fault rollback hold on a running local Supabase", asyn
     const response = await fetch(`${env.API_URL}${path}`, init);
     return { response, body: await response.text() };
   };
-  const createUser = async (email) => {
+  const createUser = async (email, appMetadata = {}) => {
     const { response, body } = await request("/auth/v1/admin/users", {
       method: "POST",
       headers: { apikey: env.SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SERVICE_ROLE_KEY}`, "content-type": "application/json" },
-      body: JSON.stringify({ email, password, email_confirm: true }),
+      body: JSON.stringify({ email, password, email_confirm: true, app_metadata: appMetadata }),
     });
     assert.equal(response.status, 200);
     const id = JSON.parse(body).id;
@@ -49,8 +49,10 @@ test("AI-14 owner RLS and fault rollback hold on a running local Supabase", asyn
   try {
     const owner = await createUser(`owner-${tag}@local.test`);
     const other = await createUser(`other-${tag}@local.test`);
+    const reviewer = await createUser(`reviewer-${tag}@local.test`, { role: "reviewer_probe" });
     const ownerToken = await login(owner.email);
     const otherToken = await login(other.email);
+    const reviewerToken = await login(reviewer.email);
     const created = await request("/rest/v1/trips", {
       method: "POST", headers: { apikey: env.ANON_KEY, Authorization: `Bearer ${ownerToken}`, "content-type": "application/json", Prefer: "return=representation" },
       body: JSON.stringify([{ owner_id: owner.id, title: "AI-14 RLS probe" }]),
@@ -65,6 +67,22 @@ test("AI-14 owner RLS and fault rollback hold on a running local Supabase", asyn
     assert.deepEqual(JSON.parse(otherUpdate.body), []);
     const anonRead = await request("/rest/v1/trips?select=id", { headers: { apikey: env.ANON_KEY } });
     assert.equal(anonRead.response.status, 401);
+    const reviewCreated = await request("/rest/v1/review_probe_changes", {
+      method: "POST", headers: { apikey: env.ANON_KEY, Authorization: `Bearer ${ownerToken}`, "content-type": "application/json", Prefer: "return=representation" },
+      body: JSON.stringify([{ author_id: owner.id, status: "draft" }]),
+    });
+    assert.equal(reviewCreated.response.status, 201);
+    const reviewId = JSON.parse(reviewCreated.body)[0].id;
+    const selfApproval = await request(`/rest/v1/review_probe_changes?id=eq.${reviewId}`, {
+      method: "PATCH", headers: { apikey: env.ANON_KEY, Authorization: `Bearer ${ownerToken}`, "content-type": "application/json", Prefer: "return=representation" },
+      body: JSON.stringify({ reviewer_id: owner.id, status: "approved" }),
+    });
+    assert.deepEqual(JSON.parse(selfApproval.body), []);
+    const approval = await request(`/rest/v1/review_probe_changes?id=eq.${reviewId}`, {
+      method: "PATCH", headers: { apikey: env.ANON_KEY, Authorization: `Bearer ${reviewerToken}`, "content-type": "application/json", Prefer: "return=representation" },
+      body: JSON.stringify({ reviewer_id: reviewer.id, status: "approved" }),
+    });
+    assert.equal(JSON.parse(approval.body).length, 1);
     assert.throws(() => execFileSync("docker", ["exec", "supabase_db_vp-v4-ai-08", "psql", "-U", "postgres", "-d", "postgres", "-v", "ON_ERROR_STOP=1", "-c", `set role service_role; select private.ai14_fault_probe('${owner.id}'::uuid, true);`], { stdio: "pipe" }), /AI14_FAULT_PROBE/);
     const rollbackRows = execFileSync("docker", ["exec", "supabase_db_vp-v4-ai-08", "psql", "-U", "postgres", "-d", "postgres", "-Atqc", "select count(*) from public.trips where title = 'AI-14 fault probe';"], { encoding: "utf8" }).trim();
     assert.equal(rollbackRows, "0");
