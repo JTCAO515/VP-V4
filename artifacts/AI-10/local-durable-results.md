@@ -4,4 +4,5 @@
 - Same idempotency key/digest returned `already_applied`; changed digest returned HTTP `400`.
 - Trip title/version became `After`/`1`; exactly one event and one audit row existed.
 - Stale proposal returned `version_conflict` and persisted status `conflicted`.
+- Fault triggers after Trip, event, proposal outcome, idempotency, and audit all exited nonzero; final state was `Before|0|0|0|pending`.
 - Temporary Auth users and all test rows were deleted.
