@@ -1,9 +1,9 @@
 {
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
-  "objective": "Maintain the governed AI Core Issue program while converting Claude's knowledge-base research into a source-aware draft workbench without bypassing operator, migration, review, RLS or eligibility gates.",
-  "status": "ai-core-issue-program-reviewed-and-rewired; governance baseline in PR #45; R0 gated on operator DEC-01..DEC-11",
-  "currentPhase": "R0",
+  "objective": "Extend AI Core Program #2 with an evidence-backed bounded-agent architecture and dependency-ordered production-parity Issue plan, without copying Demo fixtures or bypassing accepted Chat, Canvas, evidence, identity, RLS, provider or release contracts.",
+  "status": "Agent/RAG/Memory/Tool/Context research and a 31-Issue tracker plan are accepted for publication; implementation has not started",
+  "currentPhase": "R1",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own independently accepted frontier Issues and their evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
@@ -110,6 +110,11 @@
     "docs/agents/issue-execution-contract.md (new)",
     "docs/knowledge-base/{README,draft-knowledge-base.json,claude-plan-disposition.md} (new)",
     "docs/research/knowledgebase-claude-audit-2026-08-24.md (new)",
+    "docs/vp-v4-production-feature-parity-report.md (new)",
+    "docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md (new)",
+    "docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md (new)",
+    "docs/research/agent-context-rag-memory-tool-evidence-2026-08-25.md (new source ledger)",
+    "docs/vp-v4-production-parity-issue-plan.md (new accepted tracker plan)",
     "docs/handoff.json (restructured to jtcoding-handoff/1.0)",
     "AGENTS.md, CONTEXT.md, HANDOFF.md (updated)"
   ],
@@ -186,6 +191,11 @@
   ],
   "mandatoryReadingOrder": [
     "docs/ai-core-integrated-research-report.md",
+    "docs/vp-v4-production-feature-parity-report.md",
+    "docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md",
+    "docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md",
+    "docs/research/agent-context-rag-memory-tool-evidence-2026-08-25.md",
+    "docs/vp-v4-production-parity-issue-plan.md",
     "docs/ai-core-engineering-development-acceptance-report.md",
     "docs/research/ai-core-deep-optimization-evidence-2026-08-23.md",
     "docs/research/ai-core-v1.1-independent-audit-2026-08-23.md",
@@ -208,8 +218,8 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Merge PR #45, then: operator decides DEC-01..DEC-11 in GitHub #3 (AI-01); in parallel an agent may run #4 (AI-02) and #9 (AI-07a CI/test scaffolding, now dependency-free). Do not start any status:blocked Issue.",
-  "lastUpdated": "2026-08-24",
+  "nextAction": "Publish the accepted AI-51 through AI-81 tracker graph under Program #2, preserve #15/#16 as the active implementation frontier, and do not start dependency-blocked parity work.",
+  "lastUpdated": "2026-08-26",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@2dec7b0",
     "vpFinalReference": "JTCAO515/VP-Final@b5ef081",

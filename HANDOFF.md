@@ -73,3 +73,12 @@ Verification completed:
 Next action: use [#3 AI-01](https://github.com/JTCAO515/VP-V4/issues/3) to decide the audit's record-kind, scope/applicability, payment, class wording, readiness axes, time model, reviewer, rights, Ops and pilot questions. [#4 AI-02](https://github.com/JTCAO515/VP-V4/issues/4) remains independently agent-ready; #13 remains blocked.
 
 Rollback: remove the local `docs/knowledge-base/` package and audit link if the research disposition is rejected. No database, public content or runtime state needs rollback. Preserve Issue history through `status:superseded` rather than deletion.
+
+## VP-V4 production parity and bounded-agent tracker package
+
+- Product parity baseline: `docs/vp-v4-production-feature-parity-report.md`.
+- AI and Trip Canvas product logic: `docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md`.
+- Agent/RAG/Memory/Tool/Context architecture: `docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md`; source ledger: `docs/research/agent-context-rag-memory-tool-evidence-2026-08-25.md`.
+- Accepted tracker graph: `docs/vp-v4-production-parity-issue-plan.md`, AI-51 through AI-81.
+- #15/#16 remain the current implementation frontier. New parity Issues are not authorization to start dependency-blocked work.
+- AI-43 requires a current AI SDK Core/ToolLoop/Workflow comparison before execution; LangChain/LangGraph/GraphRAG/multi-agent are not default production dependencies.

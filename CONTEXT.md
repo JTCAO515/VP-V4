@@ -74,3 +74,9 @@ Reading order:
 Next action: operator reviews the 12 knowledge decisions in `docs/research/knowledgebase-claude-audit-2026-08-24.md` through [#3 AI-01](https://github.com/JTCAO515/VP-V4/issues/3); [#4 AI-02](https://github.com/JTCAO515/VP-V4/issues/4) may run independently. The draft catalogue does not unblock or close [#13 AI-11](https://github.com/JTCAO515/VP-V4/issues/13).
 
 Rollback: remove `docs/knowledge-base/` and its audit link if the research disposition is rejected; no database or public content requires rollback. Preserve GitHub history by superseding replaced Issues rather than deleting them.
+
+## VP-V4 production parity and bounded-agent planning
+
+The operator requires the real VP-V4 product to reproduce the Early Access Demo's user capabilities without copying its static fixtures. The accepted planning package is `docs/vp-v4-production-feature-parity-report.md`, `docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md`, `docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md`, its source ledger, and `docs/vp-v4-production-parity-issue-plan.md`.
+
+The tracker plan proposes AI-51 through AI-81 while preserving R0-R5 and #15/#16 as the active frontier. It adds ContextPlan, Tool Policy Gateway, ConstraintEngine and a rejectable RoutePattern RAG spike. LangChain/LangGraph/GraphRAG/multi-agent are not default implementation work. New capability Issues remain blocked until their declared dependencies close.
