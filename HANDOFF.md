@@ -1,6 +1,6 @@
 # Handoff
 
-VP-V4 remains a frontend-only VisePanda landing page. This work did not add or claim a live Chatbot, Trip Canvas state, model provider, database, POI import, RAG, Explore route, speech translation, OCR, vision recognition, or persistence service.
+VP-V4 now contains bounded R1 contracts, durable Trip persistence/RLS paths, a fake-model TurnCoordinator and authenticated Trip route code. The product surface remains a preview: real model, RAG, Explore, external data, multimodal providers and fully accepted production Magic Link/session evidence are not available.
 
 GitHub delivery program is now live: [AI-00 Program #2](https://github.com/JTCAO515/VP-V4/issues/2) contains 41 native sub-issues (#3–#43), and every implementation ticket has a full engineering body, textual blockers, native dependency edges, phase/priority/status labels, acceptance, rollback, documentation impact, and observation.
 
@@ -70,6 +70,15 @@ Verification completed:
 - Draft Knowledge Base validation passed: 30 unique record types, 18 unique readiness rules, six source-backed drafts, zero executable rules, zero reviewed/eligible records and zero unresolved rule references.
 - Claude audit passed Markdown/links/structure checks and confirmed the referenced `fact-catalogue.json` is absent; no paid model, POI import or production database was used.
 
-Next action: use [#3 AI-01](https://github.com/JTCAO515/VP-V4/issues/3) to decide the audit's record-kind, scope/applicability, payment, class wording, readiness axes, time model, reviewer, rights, Ops and pilot questions. [#4 AI-02](https://github.com/JTCAO515/VP-V4/issues/4) remains independently agent-ready; #13 remains blocked.
+Historical note: #3 AI-01, #4 AI-02 and #13 AI-11 are closed. Their accepted contracts do not make any researched draft reviewed, retrieval-eligible or production-importable.
 
 Rollback: remove the local `docs/knowledge-base/` package and audit link if the research disposition is rejected. No database, public content or runtime state needs rollback. Preserve Issue history through `status:superseded` rather than deletion.
+
+## VP-V4 production parity and bounded-agent tracker package
+
+- Product parity baseline: `docs/vp-v4-production-feature-parity-report.md`.
+- AI and Trip Canvas product logic: `docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md`.
+- Agent/RAG/Memory/Tool/Context architecture: `docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md`; source ledger: `docs/research/agent-context-rag-memory-tool-evidence-2026-08-25.md`.
+- Published tracker graph: `docs/vp-v4-production-parity-issue-plan.md`, V4-01 through V4-31, mapped to #85/#87-#116 and registered in `docs/agents/issue-execution-contract.md`.
+- Current ready frontier is #84 and #87. #49 closed through PR #118; #84 remains open on real Auth/session and owner/other-user evidence; #15 remains blocked by #84. New parity Issues are not authorization to start dependency-blocked work.
+- AI-43 requires a current AI SDK Core/ToolLoop/Workflow comparison before execution; LangChain/LangGraph/GraphRAG/multi-agent are not default production dependencies.

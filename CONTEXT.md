@@ -6,7 +6,7 @@ Status: GitHub Program [#2](https://github.com/JTCAO515/VP-V4/issues/2) remains 
 
 Accepted repository facts:
 
-- VP-V4 `main` remains a frontend-only Next.js 16 / React 19 / strict TypeScript / Tailwind v4 product preview.
+- VP-V4 `main` is a Next.js 16 / React 19 / strict TypeScript / Tailwind v4 product preview with bounded R1 backend contracts, durable Trip RPCs and authenticated Trip route code. Real model, RAG, external data and fully accepted production Auth remain unavailable.
 - The canonical user flow is VisePanda Chatbot -> TripProposal -> visible Trip Canvas diff -> user confirmation -> deterministic TripPatch.
 - The provisional model candidates are DeepSeek Flash-0731 public beta for text with thinking explicitly off, DeepSeek Pro-0813 GA for complex async work, and separate Vision Exp for shadow; Qwen strict/specialist routes remain region-dependent candidates until conformance/eval/DPA gates pass.
 - Qwen3.5 LiveTranslate joins ASR -> MT -> TTS as an end-to-end five-language voice challenger; Beijing/Singapore OCR/TTS availability changes the mandatory stack, so region is a P0 decision.
@@ -25,7 +25,7 @@ Accepted repository facts:
 - Closed beta defaults to authenticated-only pending operator acceptance. User/Ops requests use verified JWT + RLS; system credentials are worker-only and must apply explicit owner/eligibility/policy filters.
 - R1 uses fake model, one Fact fixture, durable Turns and Trip CAS only; no real model, pgvector, queue, external data or Ops UI.
 - VP-Final migration is evidence-gated: #4 disposition matrix -> #11 TripPatch golden contract -> #13 Fact eligibility -> #16 RLS/fault patterns -> #25 import/review/audit. Reuse behavior/tests through V4 interfaces; do not copy directories, direct-write Copilot, static Explore seeds, secrets, or the old full monorepo.
-- Current frontier: operator/human Issue #3 (DEC/ADR baseline) and agent-ready Issue #4 (VP-Final disposition matrix). All other child Issues are `status:blocked` with native GitHub dependencies and textual `Blocked by #N`.
+- Current frontier: #84 AI-51 is engineering-merged but remains open on real Supabase Auth redirect/session and owner/other-user evidence; #87 V4-01 is agent-ready once PR #83 lands its execution-contract row. #49 AI-45 is closed by PR #118. #15 remains blocked by #84.
 - Claude's referenced `research/fact-catalogue.json` is missing; 810/122 rows, five weeks and “zero unavailable” are unverified estimates, not targets.
 - The catalogue uses `Knowledge Record Type Candidate`, not “30 Fact Types”: policy/operational Facts, directory entries, procedures, Safe Phrases, observations, assessments and rules have different lifecycle owners.
 - The six researched drafts have direct source locators but no reviewer or licence policy and are explicitly ineligible. The 18 readiness rules all have `executable:false` and preserve Claude's single status only as a legacy hypothesis label; future output uses three axes.
@@ -71,6 +71,12 @@ Reading order:
 20. `docs/adr/0001-nextjs-typescript-tailwind-migration.md`
 21. `docs/adr/0002-visepanda-brand-localization-assets.md`
 
-Next action: operator reviews the 12 knowledge decisions in `docs/research/knowledgebase-claude-audit-2026-08-24.md` through [#3 AI-01](https://github.com/JTCAO515/VP-V4/issues/3); [#4 AI-02](https://github.com/JTCAO515/VP-V4/issues/4) may run independently. The draft catalogue does not unblock or close [#13 AI-11](https://github.com/JTCAO515/VP-V4/issues/13).
+Historical note: #3 AI-01, #4 AI-02 and #13 AI-11 are closed. Their decisions and contracts do not promote the draft catalogue to reviewed or retrieval-eligible production content.
 
 Rollback: remove `docs/knowledge-base/` and its audit link if the research disposition is rejected; no database or public content requires rollback. Preserve GitHub history by superseding replaced Issues rather than deleting them.
+
+## VP-V4 production parity and bounded-agent planning
+
+The operator requires the real VP-V4 product to reproduce the Early Access Demo's user capabilities without copying its static fixtures. The accepted planning package is `docs/vp-v4-production-feature-parity-report.md`, `docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md`, `docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md`, its source ledger, and `docs/vp-v4-production-parity-issue-plan.md`.
+
+The tracker plan is published as V4-01 through V4-31 while preserving R0-R5. It adds ContextPlan, Tool Policy Gateway, ConstraintEngine and a rejectable RoutePattern RAG spike. LangChain/LangGraph/GraphRAG/multi-agent are not default implementation work. Current ready frontier is #84 and #87; #49 is closed, #15 remains blocked by #84, and every other V4 Issue remains blocked until its declared dependencies close.
