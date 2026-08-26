@@ -21,19 +21,20 @@
   "activeWork": [
     {
       "id": "publish-github",
-      "description": "Add the owner-authorized GitHub remote and push master.",
+      "description": "Push the local delivery to the safe remote branch codex/visepanda-vi-system; remote main has unrelated history and is preserved.",
       "owner": "Codex with operator authorization"
     }
   ],
   "assumptions": [
     "The specified GitHub repository is owned or writable by the signed-in Git credential.",
+    "Remote main is an existing unrelated history (no merge base with local master), so publication uses a new non-destructive branch.",
     "The digital-first HTML handbook is the accepted manual format; no print/PDF proof was requested.",
     "English is the primary external language, with accurate Chinese place names allowed only in travel context."
   ],
   "decisions": [
     "Visual direction: a warm local friend in China, retaining the supplied panda mascot, cream sticker edge and plum/gold/cream/ink palette.",
     "Original supplied logo assets remain immutable; all derived outputs are contained in brand/.",
-    "The current branch is master and the delivery history is 58bdc8d, 2f4f91e and d02eb46."
+    "The current branch is master and the delivery history is 58bdc8d, 2f4f91e, d02eb46 and 6f1faf9."
   ],
   "changedFiles": [
     "docs/superpowers/specs/2026-08-27-visepanda-vi-design.md",
@@ -78,18 +79,19 @@
   "residualRisk": [
     "Social platforms may add compression or overlays; review their platform previews before publishing campaigns.",
     "Campaign travel facts and Chinese-language content require separate, destination-specific fact checking.",
-    "GitHub push will depend on local credential access to the owner-authorized remote."
+    "GitHub push will depend on local credential access to the owner-authorized remote.",
+    "Remote main is intentionally not updated because it has unrelated history."
   ],
   "deviation": {
     "class": "D1",
     "reason": "A scoped, reversible documentation and asset delivery with no source-artwork or product-interface change."
   },
   "nextAction": {
-    "description": "Push current master, containing the approved VI delivery, to the owner-authorized GitHub remote.",
-    "expectedObservation": "origin/master receives commit d02eb46 and GitHub accepts the push.",
-    "command": "git push -u origin master"
+    "description": "Push current master, containing the approved VI delivery and handoff, to a non-destructive remote branch.",
+    "expectedObservation": "origin/codex/visepanda-vi-system receives commit 6f1faf9 and GitHub accepts the push while origin/main is unchanged.",
+    "command": "git push -u origin HEAD:refs/heads/codex/visepanda-vi-system"
   },
-  "rollback": "If publication must be reverted, create and push a new revert commit for d02eb46, 2f4f91e and 58bdc8d; do not rewrite shared history. For local asset-only rollback, remove brand/ while retaining the immutable source assets.",
+  "rollback": "If publication must be reverted, create and push a new revert commit for 6f1faf9, d02eb46, 2f4f91e and 58bdc8d; do not rewrite shared history. For local asset-only rollback, remove brand/ while retaining the immutable source assets.",
   "readingOrder": [
     "docs/handoff.json",
     "HANDOFF.md",

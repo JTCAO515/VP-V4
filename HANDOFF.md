@@ -2,7 +2,7 @@
 
 ## Status
 
-**Ready to publish.** The approved English-first digital visual-identity system is committed on `master`; its next authorized action is a push to `https://github.com/JTCAO515/VP-V4`.
+**Ready to publish.** The approved English-first digital visual-identity system is committed on `master`. Remote `main` has unrelated history, so the next authorized action is a non-destructive push to `https://github.com/JTCAO515/VP-V4` on branch `codex/visepanda-vi-system`.
 
 ## Objective
 
@@ -54,4 +54,4 @@ Create and publish new revert commits for `d02eb46`, `2f4f91e` and `58bdc8d`; do
 
 ## Exactly one next action
 
-Run `git push -u origin master` after adding the owner-authorized remote `https://github.com/JTCAO515/VP-V4.git`.
+Run `git push -u origin HEAD:refs/heads/codex/visepanda-vi-system` against the owner-authorized remote `https://github.com/JTCAO515/VP-V4.git`. Do not overwrite remote `main`.
