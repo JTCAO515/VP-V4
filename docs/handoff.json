@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "2.0",
+  "lastUpdated": "2026-08-27T00:00:00+08:00",
+  "currentPhase": "G6-handoff",
+  "status": "ready-to-publish",
+  "objective": "Publish the approved VisePanda English-first digital visual identity system for international visitors travelling in China to the owner-authorized GitHub repository.",
+  "acceptedIssue": "Owner request in this task: derive a full VisePanda travel-AI VI system from the supplied logo, then publish the committed delivery to https://github.com/JTCAO515/VP-V4.",
+  "owner": "JTCAO515",
+  "scope": [
+    "Digital-first English visual-identity handbook",
+    "VisePanda Guide pose library",
+    "SVG icon, map-pin, pattern and UI reference assets",
+    "Platform-sized social-media assets",
+    "Source preservation and delivery QA"
+  ],
+  "antiGoals": [
+    "Do not modify the owner-supplied source artwork under assets/brand/vise-panda/.",
+    "Do not claim official government, transport, visa, emergency or booking authority.",
+    "Do not publish any unrelated untracked workspace content."
+  ],
+  "activeWork": [
+    {
+      "id": "publish-github",
+      "description": "Add the owner-authorized GitHub remote and push master.",
+      "owner": "Codex with operator authorization"
+    }
+  ],
+  "assumptions": [
+    "The specified GitHub repository is owned or writable by the signed-in Git credential.",
+    "The digital-first HTML handbook is the accepted manual format; no print/PDF proof was requested.",
+    "English is the primary external language, with accurate Chinese place names allowed only in travel context."
+  ],
+  "decisions": [
+    "Visual direction: a warm local friend in China, retaining the supplied panda mascot, cream sticker edge and plum/gold/cream/ink palette.",
+    "Original supplied logo assets remain immutable; all derived outputs are contained in brand/.",
+    "The current branch is master and the delivery history is 58bdc8d, 2f4f91e and d02eb46."
+  ],
+  "changedFiles": [
+    "docs/superpowers/specs/2026-08-27-visepanda-vi-design.md",
+    "docs/superpowers/plans/2026-08-27-visepanda-vi-asset-production.md",
+    "brand/README.md",
+    "brand/tokens/visepanda.tokens.json",
+    "brand/guidelines/visepanda-vi-guide.html",
+    "brand/guidelines/visepanda-vi-guide.css",
+    "brand/ip/",
+    "brand/icons/",
+    "brand/social/",
+    "brand/ui/",
+    "brand/qa/asset-manifest.json",
+    "brand/qa/verification.md"
+  ],
+  "verification": [
+    {
+      "command": "PowerShell release verification: JSON parse, 8 IP RGBA/alpha checks, five social dimensions, SVG XML/symbols, handbook section IDs, source integrity and git diff --check",
+      "status": "passed",
+      "summary": "RELEASE VERIFICATION PASS",
+      "artifact": "brand/qa/verification.md"
+    },
+    {
+      "command": "git diff --name-only 5900cd5 -- assets/brand/vise-panda",
+      "status": "passed",
+      "summary": "No owner-supplied source-asset changes.",
+      "artifact": "assets/brand/vise-panda/README.md"
+    },
+    {
+      "command": "Visual inspection of brand/social/beijing-48-hours-1080.png and brand/ip/welcome.png + brand/ip/rest.png",
+      "status": "passed",
+      "summary": "Approved palette, sticker edge, English display copy and genuine transparent edges observed.",
+      "artifact": "brand/qa/verification.md"
+    }
+  ],
+  "unrunChecks": [
+    "Native Instagram, TikTok and external-browser publishing previews.",
+    "Commercial font licensing and print/PDF proofing.",
+    "Post-push GitHub repository page verification."
+  ],
+  "blockers": [],
+  "residualRisk": [
+    "Social platforms may add compression or overlays; review their platform previews before publishing campaigns.",
+    "Campaign travel facts and Chinese-language content require separate, destination-specific fact checking.",
+    "GitHub push will depend on local credential access to the owner-authorized remote."
+  ],
+  "deviation": {
+    "class": "D1",
+    "reason": "A scoped, reversible documentation and asset delivery with no source-artwork or product-interface change."
+  },
+  "nextAction": {
+    "description": "Push current master, containing the approved VI delivery, to the owner-authorized GitHub remote.",
+    "expectedObservation": "origin/master receives commit d02eb46 and GitHub accepts the push.",
+    "command": "git push -u origin master"
+  },
+  "rollback": "If publication must be reverted, create and push a new revert commit for d02eb46, 2f4f91e and 58bdc8d; do not rewrite shared history. For local asset-only rollback, remove brand/ while retaining the immutable source assets.",
+  "readingOrder": [
+    "docs/handoff.json",
+    "HANDOFF.md",
+    "CONTEXT.md",
+    "brand/guidelines/visepanda-vi-guide.html",
+    "brand/README.md",
+    "brand/qa/verification.md",
+    "docs/superpowers/specs/2026-08-27-visepanda-vi-design.md",
+    "docs/superpowers/plans/2026-08-27-visepanda-vi-asset-production.md"
+  ]
+}
