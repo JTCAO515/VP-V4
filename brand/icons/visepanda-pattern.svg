@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" role="img" aria-labelledby="title desc">
+  <title id="title">VisePanda travel micro-pattern</title>
+  <desc id="desc">Low-density clouds, leaves, route dashes and plum waves for decorative brand surfaces.</desc>
+  <defs>
+    <pattern id="visepanda-travel-pattern" width="240" height="160" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#732E4B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.1">
+        <path d="M19 27c4-8 16-8 19 0 7-3 13 2 13 8H14c0-5 2-7 5-8Z"/>
+        <path d="M116 129c18-13 36-13 54 0 18-13 36-13 54 0"/>
+        <path d="M45 111c8-14 20-14 28 0"/>
+      </g>
+      <g fill="none" stroke="#8B681F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.12">
+        <path d="M89 24c11 6 17 15 17 27 0 12 6 19 19 22" stroke-dasharray="3 6"/>
+        <path d="M147 21c4 3 7 7 8 12m-13-9c4 4 6 9 6 14m-10-8c4 3 6 7 7 11"/>
+        <path d="M203 77c4-4 9-4 13 0 3-2 8 0 8 4h-26c0-2 2-4 5-4Z"/>
+      </g>
+      <g fill="none" stroke="#FFAB48" stroke-width="2" stroke-linecap="round" opacity="0.1">
+        <path d="M21 70c5-4 10-4 15 0M31 65v11M169 104h16m-8-8v16"/>
+        <rect x="84" y="105" width="25" height="17" rx="3" stroke-dasharray="3 3"/>
+      </g>
+    </pattern>
+  </defs>
+  <rect width="240" height="160" fill="url(#visepanda-travel-pattern)"/>
+</svg>

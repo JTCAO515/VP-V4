@@ -1,0 +1,30 @@
+{
+  "brand": "VisePanda",
+  "version": "1.0.0",
+  "source": "Sampled from owner-supplied VisePanda logo; source artwork remains immutable.",
+  "color": {
+    "VP-Plum-900": { "value": "#732E4B", "role": "Primary brand field, ribbon and display surface" },
+    "VP-Plum-700": { "value": "#994564", "role": "Secondary plum surface and illustrated scenery" },
+    "VP-Gold-800": { "value": "#8B681F", "role": "Antique-gold keyline and premium emphasis" },
+    "VP-Gold-500": { "value": "#FFAB48", "role": "Routes, CTAs and discovery highlights" },
+    "VP-Butter-100": { "value": "#FFF1B8", "role": "Warm highlight and user-chat surface" },
+    "VP-Cream-50": { "value": "#FFFDF4", "role": "Sticker edge, cards and reverse type" },
+    "VP-Ink-950": { "value": "#120807", "role": "Panda patches, outlines and primary text" }
+  },
+  "typography": {
+    "display": { "family": "Baloo 2, Nunito Sans, sans-serif", "weight": 600, "role": "Friendly display titles" },
+    "body": { "family": "Nunito Sans, Noto Sans, sans-serif", "weight": 400, "role": "UI and paragraph text" },
+    "multilingual": { "family": "Noto Sans, sans-serif", "weight": 400, "role": "Fallback for accurate Chinese place names" }
+  },
+  "layout": {
+    "space-base": { "value": "8px", "role": "Base spacing unit" },
+    "radius-standard": { "value": "16px", "role": "Buttons, chips and cards" },
+    "radius-feature": { "value": "24px", "role": "Hero cards and scenic windows" },
+    "touch-minimum": { "value": "44px", "role": "Minimum interactive control size" }
+  },
+  "material": {
+    "outline": { "value": "2px solid #120807", "role": "Rounded ink keyline" },
+    "sticker-edge": { "value": "4px solid #FFFDF4", "role": "Cream sticker separation edge" },
+    "shadow": { "value": "4px 6px 0 rgba(115, 46, 75, 0.14)", "role": "Single restrained offset shadow" }
+  }
+}

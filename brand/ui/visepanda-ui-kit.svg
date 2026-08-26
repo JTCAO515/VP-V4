@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100" role="img" aria-labelledby="kit-title kit-desc">
+  <title id="kit-title">VisePanda web and mobile component reference sheet</title>
+  <desc id="kit-desc">An English reference sheet demonstrating accessible buttons, navigation, destination cards, AI chat, map pins, loading and empty states.</desc>
+  <defs>
+    <filter id="soft-shadow" x="-10%" y="-10%" width="130%" height="140%">
+      <feDropShadow dx="4" dy="6" stdDeviation="0" flood-color="#732E4B" flood-opacity="0.14"/>
+    </filter>
+    <style>
+      .page { fill:#FFFDF4; }
+      .panel { fill:#FFFDF4; stroke:#120807; stroke-width:2; }
+      .kicker { fill:#8B681F; font:700 16px 'Nunito Sans', sans-serif; letter-spacing:1.8px; }
+      .heading { fill:#120807; font:600 29px 'Baloo 2','Nunito Sans',sans-serif; }
+      .label { fill:#120807; font:700 15px 'Nunito Sans',sans-serif; }
+      .body { fill:#120807; font:400 16px 'Nunito Sans',sans-serif; }
+      .small { fill:#120807; font:400 13px 'Nunito Sans',sans-serif; }
+      .cream { fill:#FFFDF4; }
+      .ink { fill:#120807; }
+      .plum { fill:#732E4B; }
+      .plum-700 { fill:#994564; }
+      .gold { fill:#FFAB48; }
+      .butter { fill:#FFF1B8; }
+      .outline { stroke:#120807; stroke-width:2; stroke-linejoin:round; }
+      .round { stroke-linecap:round; stroke-linejoin:round; }
+    </style>
+    <pattern id="micro-pattern" width="72" height="56" patternUnits="userSpaceOnUse">
+      <path d="M10 15c4-5 11-4 13 1 5-2 8 1 8 5H7c0-3 1-5 3-6ZM44 43c6-5 12-5 18 0" fill="none" stroke="#732E4B" stroke-width="2" stroke-linecap="round" opacity=".08"/>
+      <path d="M42 11c5 3 8 7 8 12" fill="none" stroke="#8B681F" stroke-width="2" stroke-dasharray="3 4" opacity=".11"/>
+    </pattern>
+    <clipPath id="window-clip"><rect x="92" y="494" width="330" height="185" rx="18"/></clipPath>
+  </defs>
+
+  <rect class="page" width="1600" height="1100"/>
+  <rect x="0" y="0" width="1600" height="112" class="plum"/>
+  <rect x="0" y="0" width="1600" height="112" fill="url(#micro-pattern)"/>
+  <text x="72" y="50" fill="#FFF1B8" font-family="Nunito Sans, sans-serif" font-size="16" font-weight="700" letter-spacing="2">VISEPANDA · DIGITAL REFERENCE</text>
+  <text x="72" y="88" fill="#FFFDF4" font-family="Baloo 2, Nunito Sans, sans-serif" font-size="36" font-weight="600">Your warm local friend in China</text>
+  <text x="1454" y="55" text-anchor="end" fill="#FFFDF4" font-family="Nunito Sans, sans-serif" font-size="15">v1.0 · English-first</text>
+
+  <g id="primary-cta" aria-label="Primary CTA component">
+    <text x="72" y="163" class="kicker">01 · ACTION</text>
+    <text x="72" y="199" class="heading">Primary CTA</text>
+    <g filter="url(#soft-shadow)">
+      <rect x="72" y="222" width="264" height="52" rx="16" class="gold outline"/>
+      <text x="204" y="255" text-anchor="middle" class="label">Plan my day</text>
+    </g>
+    <rect x="72" y="290" width="264" height="44" rx="12" fill="none" stroke="#732E4B" stroke-width="2" stroke-dasharray="5 4"/>
+    <text x="204" y="318" text-anchor="middle" class="small">Visible focus · 44 px minimum</text>
+  </g>
+
+  <g id="secondary-cta" aria-label="Secondary CTA component">
+    <text x="400" y="163" class="kicker">02 · ACTION</text>
+    <text x="400" y="199" class="heading">Secondary CTA</text>
+    <g filter="url(#soft-shadow)">
+      <rect x="400" y="222" width="264" height="52" rx="16" class="panel"/>
+      <text x="532" y="255" text-anchor="middle" fill="#732E4B" font-family="Nunito Sans, sans-serif" font-size="15" font-weight="700">Save for later</text>
+    </g>
+    <text x="400" y="315" class="small">Cream surface · Ink keyline · Plum label</text>
+  </g>
+
+  <g id="navigation" aria-label="Navigation component">
+    <text x="728" y="163" class="kicker">03 · WAYFINDING</text>
+    <text x="728" y="199" class="heading">Navigation</text>
+    <rect x="728" y="222" width="390" height="60" rx="18" class="panel" filter="url(#soft-shadow)"/>
+    <g class="small" font-weight="700">
+      <text x="764" y="258">Explore</text><text x="867" y="258">Trips</text><text x="950" y="258">Saved</text><text x="1043" y="258">Me</text>
+    </g>
+    <path d="M754 270h57" stroke="#FFAB48" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="752" cy="245" r="4" fill="#732E4B"/>
+    <rect x="1144" y="222" width="310" height="60" rx="18" class="plum" filter="url(#soft-shadow)"/>
+    <text x="1180" y="258" fill="#FFFDF4" font-family="Nunito Sans, sans-serif" font-size="13" font-weight="700">Explore</text>
+    <text x="1262" y="258" fill="#FFFDF4" font-family="Nunito Sans, sans-serif" font-size="13" font-weight="700">Trips</text>
+    <text x="1330" y="258" fill="#FFFDF4" font-family="Nunito Sans, sans-serif" font-size="13" font-weight="700">Saved</text>
+    <path d="M1253 272h38" stroke="#FFAB48" stroke-width="4" stroke-linecap="round"/>
+    <path d="m1243 244 5 5 9-10" fill="none" stroke="#FFF1B8" stroke-width="2" class="round"/>
+    <text x="728" y="315" class="small">Active state = underline + marker, never colour alone.</text>
+  </g>
+
+  <line x1="72" y1="370" x2="1528" y2="370" stroke="#8B681F" stroke-width="2" opacity=".25"/>
+
+  <g id="destination-card" aria-label="Destination card component">
+    <text x="72" y="414" class="kicker">04 · DISCOVER</text>
+    <text x="72" y="450" class="heading">Destination card</text>
+    <g filter="url(#soft-shadow)">
+      <rect x="72" y="474" width="370" height="438" rx="24" class="panel"/>
+      <g clip-path="url(#window-clip)">
+        <rect x="92" y="494" width="330" height="185" fill="#FFF1B8"/>
+        <path d="M92 616 166 550l58 50 66-70 132 86v63H92Z" fill="#994564"/>
+        <path d="M92 644c65-36 115-17 151-40 37-23 81-10 179-44v119H92Z" fill="#8B681F"/>
+        <path d="M115 653c45-42 73-43 111-21 43 25 87 5 167-46" fill="none" stroke="#FFAB48" stroke-width="10" class="round"/>
+        <path d="M115 653c45-42 73-43 111-21 43 25 87 5 167-46" fill="none" stroke="#FFFDF4" stroke-width="3" stroke-dasharray="7 6" class="round"/>
+        <path d="M104 538h29l7 16h-43Z" fill="#FFAB48" stroke="#120807" stroke-width="2" class="round"/>
+        <path d="M110 538v-14h18v14" fill="none" stroke="#120807" stroke-width="2" class="round"/>
+      </g>
+      <text x="96" y="728" class="heading">The Great Wall</text>
+      <text x="96" y="760" class="body">Take the quieter morning route—</text>
+      <text x="96" y="784" class="body">your future self will thank you.</text>
+      <rect x="96" y="816" width="146" height="52" rx="16" class="butter outline"/>
+      <path d="M121 835h18v20l-9-5-9 5Z" fill="none" stroke="#120807" stroke-width="2" class="round"/>
+      <text x="160" y="849" class="label">Save place</text>
+      <circle cx="386" cy="842" r="24" fill="#FFFDF4" stroke="#120807" stroke-width="2"/>
+      <path d="m378 842 6 6 11-13" fill="none" stroke="#8B681F" stroke-width="2.5" class="round"/>
+    </g>
+  </g>
+
+  <g id="ai-chat" aria-label="AI travel guide chat component">
+    <text x="500" y="414" class="kicker">05 · ASK</text>
+    <text x="500" y="450" class="heading">AI chat</text>
+    <g filter="url(#soft-shadow)">
+      <rect x="500" y="474" width="480" height="438" rx="24" class="panel"/>
+      <circle cx="532" cy="514" r="17" fill="#732E4B" stroke="#120807" stroke-width="2"/>
+      <circle cx="526" cy="510" r="4" fill="#FFFDF4"/><circle cx="538" cy="510" r="4" fill="#FFFDF4"/>
+      <path d="M524 520c5 4 12 4 16 0" fill="none" stroke="#FFF1B8" stroke-width="2" class="round"/>
+      <text x="558" y="519" class="label">AI travel guide</text>
+      <path d="M532 547h300a16 16 0 0 1 16 16v57a16 16 0 0 1-16 16H557l-25 17 6-17h-6a16 16 0 0 1-16-16v-57a16 16 0 0 1 16-16Z" class="cream outline"/>
+      <text x="540" y="580" class="body">For a calm evening, try a hutong walk</text>
+      <text x="540" y="605" class="body">before dinner near Nanluoguxiang.</text>
+      <path d="M693 674h235a16 16 0 0 1 16 16v52a16 16 0 0 1-16 16H709l-16 13 4-13h-4a16 16 0 0 1-16-16v-52a16 16 0 0 1 16-16Z" class="butter outline"/>
+      <text x="700" y="708" class="body">Can you add it to my day?</text>
+      <text x="500" y="880" class="small">Label AI assistance clearly; verify practical details in context.</text>
+    </g>
+  </g>
+
+  <g id="map-pins" aria-label="Map pin component">
+    <text x="1038" y="414" class="kicker">06 · ORIENT</text>
+    <text x="1038" y="450" class="heading">Map pins</text>
+    <g filter="url(#soft-shadow)">
+      <rect x="1038" y="474" width="416" height="230" rx="24" class="panel"/>
+      <path d="M1075 650c55-77 120-103 170-75 47 26 90 9 165-59" fill="none" stroke="#FFAB48" stroke-width="8" class="round"/>
+      <path d="M1075 650c55-77 120-103 170-75 47 26 90 9 165-59" fill="none" stroke="#FFFDF4" stroke-width="2.5" stroke-dasharray="6 6" class="round"/>
+      <g transform="translate(1092 565)"><path d="M16 2C8.3 2 3 7.6 3 15.2 3 25.3 16 37 16 37s13-11.7 13-21.8C29 7.6 23.7 2 16 2Z" class="gold outline"/><circle cx="16" cy="15" r="5" class="cream" stroke="#120807" stroke-width="2"/><path d="M16 12.5v5M13.5 15h5" fill="none" stroke="#120807" stroke-width="2" class="round"/></g>
+      <g transform="translate(1222 520)"><path d="M16 2C8.3 2 3 7.6 3 15.2 3 25.3 16 37 16 37s13-11.7 13-21.8C29 7.6 23.7 2 16 2Z" class="plum outline"/><path d="M12.5 10.5h7v9l-3.5-2.2-3.5 2.2Z" class="cream round" stroke="#120807" stroke-width="1.7"/></g>
+      <g transform="translate(1361 500)"><path d="M16 2 27.5 13.5 16 36 4.5 13.5Z" class="cream outline"/><path d="m11.4 16 3 3 6.2-6.2" fill="none" stroke="#8B681F" stroke-width="2.4" class="round"/></g>
+    </g>
+    <g class="small"><text x="1072" y="738">Active +</text><text x="1204" y="738">Saved ▱</text><text x="1348" y="738">Utility ◇</text></g>
+    <text x="1038" y="776" class="small">Shape and internal mark preserve meaning without colour.</text>
+  </g>
+
+  <g id="loading" aria-label="Loading state component">
+    <text x="1038" y="826" class="kicker">07 · PAUSE</text>
+    <text x="1038" y="862" class="heading">Loading</text>
+    <rect x="1038" y="882" width="196" height="160" rx="24" class="butter outline"/>
+    <circle cx="1136" cy="935" r="34" class="cream" stroke="#120807" stroke-width="2"/>
+    <circle cx="1119" cy="917" r="13" class="ink"/><circle cx="1153" cy="917" r="13" class="ink"/>
+    <path d="M1119 958c10 8 25 8 35 0" fill="none" stroke="#120807" stroke-width="2" class="round"/>
+    <path d="M1085 990c19-23 83-23 102 0" class="plum" stroke="#120807" stroke-width="2"/>
+    <circle cx="1103" cy="1013" r="4" fill="#FFAB48"/><circle cx="1136" cy="1013" r="4" fill="#FFAB48"/><circle cx="1169" cy="1013" r="4" fill="#FFAB48"/>
+    <text x="1254" y="925" class="label">Finding a little</text><text x="1254" y="948" class="label">local magic…</text>
+    <text x="1254" y="981" class="small">Low-motion dots only.</text><text x="1254" y="1003" class="small">Final art: brand/ip/rest.png</text>
+  </g>
+
+  <g id="empty-state" aria-label="Empty state component">
+    <text x="72" y="970" class="kicker">08 · START HERE</text>
+    <text x="72" y="1006" class="heading">Empty state</text>
+    <rect x="340" y="942" width="640" height="104" rx="24" fill="#732E4B" stroke="#120807" stroke-width="2" filter="url(#soft-shadow)"/>
+    <circle cx="392" cy="994" r="27" fill="#FFF1B8" stroke="#FFFDF4" stroke-width="4"/>
+    <path d="M382 992h20v15l-10-6-10 6Z" fill="#732E4B" stroke="#120807" stroke-width="2" class="round"/>
+    <text x="440" y="983" fill="#FFFDF4" font-family="Baloo 2, Nunito Sans, sans-serif" font-size="22" font-weight="600">Nothing saved yet—let’s find your next stop.</text>
+    <rect x="759" y="998" width="173" height="34" rx="12" class="gold"/>
+    <text x="845" y="1021" text-anchor="middle" class="small" font-weight="700">Explore places</text>
+  </g>
+</svg>

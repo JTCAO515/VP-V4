@@ -1,0 +1,31 @@
+{
+  "brand": "VisePanda",
+  "version": "1.0.0",
+  "sourceAssets": [
+    "assets/brand/vise-panda/VP-Logo.svg",
+    "assets/brand/vise-panda/VP-Logo.png",
+    "assets/brand/vise-panda/VP-正面全身.png",
+    "assets/brand/vise-panda/VP-三视图.png"
+  ],
+  "assets": [
+    { "id": "tokens", "path": "brand/tokens/visepanda.tokens.json", "format": "json", "alt": "Canonical VisePanda design tokens." },
+    { "id": "utilities", "path": "brand/icons/visepanda-utilities.svg", "format": "svg", "alt": "Twelve rounded VisePanda travel utility icons." },
+    { "id": "map-pins", "path": "brand/icons/visepanda-map-pins.svg", "format": "svg", "alt": "VisePanda active, saved and utility map pins." },
+    { "id": "travel-pattern", "path": "brand/icons/visepanda-pattern.svg", "format": "svg", "alt": "Low-density VisePanda travel micro-pattern." },
+    { "id": "ui-kit", "path": "brand/ui/visepanda-ui-kit.svg", "format": "svg", "dimensions": "1600x1100", "alt": "VisePanda accessible web and mobile component reference." },
+    { "id": "guide-welcome", "path": "brand/ip/welcome.png", "format": "png", "dimensions": "1024x1024", "transparent": true, "alt": "VisePanda Guide welcoming a traveller." },
+    { "id": "guide-guide", "path": "brand/ip/guide.png", "format": "png", "dimensions": "1024x1024", "transparent": true, "alt": "VisePanda Guide pointing out a travel route." },
+    { "id": "guide-recommend", "path": "brand/ip/recommend.png", "format": "png", "dimensions": "1024x1024", "transparent": true, "alt": "VisePanda Guide recommending a local discovery." },
+    { "id": "guide-transit", "path": "brand/ip/transit.png", "format": "png", "dimensions": "1024x1024", "transparent": true, "alt": "VisePanda Guide helping with transport." },
+    { "id": "guide-translate", "path": "brand/ip/translate.png", "format": "png", "dimensions": "1024x1024", "transparent": true, "alt": "VisePanda Guide helping translate a phrase." },
+    { "id": "guide-celebrate", "path": "brand/ip/celebrate.png", "format": "png", "dimensions": "1024x1024", "transparent": true, "alt": "VisePanda Guide celebrating a travel moment." },
+    { "id": "guide-gentle-alert", "path": "brand/ip/gentle-alert.png", "format": "png", "dimensions": "1024x1024", "transparent": true, "alt": "VisePanda Guide giving a gentle travel reminder." },
+    { "id": "guide-rest", "path": "brand/ip/rest.png", "format": "png", "dimensions": "1024x1024", "transparent": true, "alt": "VisePanda Guide resting while content loads." },
+    { "id": "social-avatar", "path": "brand/social/avatar-1080.png", "format": "png", "dimensions": "1080x1080", "alt": "VisePanda social avatar." },
+    { "id": "social-beijing", "path": "brand/social/beijing-48-hours-1080.png", "format": "png", "dimensions": "1080x1080", "alt": "First 48 hours in Beijing social post." },
+    { "id": "social-train", "path": "brand/social/china-train-cheat-sheet-1080x1350.png", "format": "png", "dimensions": "1080x1350", "alt": "China train cheat sheet social post." },
+    { "id": "social-chengdu", "path": "brand/social/chengdu-food-list-1080x1920.png", "format": "png", "dimensions": "1080x1920", "alt": "A local's Chengdu food list Story or Reel cover." },
+    { "id": "social-end-card", "path": "brand/social/reel-end-card-1080x1920.png", "format": "png", "dimensions": "1080x1920", "alt": "VisePanda Story or Reel end card." },
+    { "id": "handbook", "path": "brand/guidelines/visepanda-vi-guide.html", "format": "html", "alt": "English VisePanda visual identity handbook." }
+  ]
+}
