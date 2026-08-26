@@ -9,9 +9,9 @@
   template/config push or application-layer owner simulation is used.
 - `artifacts/AI-51b/commands.jsonl` remains local and git-ignored by the accepted artifact policy.
 - The deployed Preview at `2026-08-26T07:17Z` stayed on “Checking session…” without rendering a form
-  at 1280×800. This exposed an unhandled `getClaims()` rejection path; the PR now catches it and renders
-  the truthful unavailable state. The post-fix Preview deployment and desktop/mobile/RTL recheck remain
-  pending its new CI/Vercel run.
+  at 1280×800. This exposed an unhandled `getClaims()` rejection path. The follow-up commit catches it;
+  its GitHub deterministic gate and Vercel Preview passed. Post-fix Preview QA observed the signed-in
+  state at 1280×800 and 390×844 Arabic RTL with no console warning/error or horizontal overflow.
 - Browser safety policy prohibits entering any operator-controlled password. Consequently, a genuine
   password session, owner read/confirm/reload, other-user denial and sign-out-to-401 still require a
   pre-provisioned account and an operator-controlled credential entry after the post-fix Preview is ready.
