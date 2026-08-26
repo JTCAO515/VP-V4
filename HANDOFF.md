@@ -80,5 +80,6 @@ Rollback: remove the local `docs/knowledge-base/` package and audit link if the 
 - AI and Trip Canvas product logic: `docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md`.
 - Agent/RAG/Memory/Tool/Context architecture: `docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md`; source ledger: `docs/research/agent-context-rag-memory-tool-evidence-2026-08-25.md`.
 - Published tracker graph: `docs/vp-v4-production-parity-issue-plan.md`, V4-01 through V4-31, mapped to #85/#87-#116 and registered in `docs/agents/issue-execution-contract.md`.
-- Current ready frontier is #84 and #87. #49 closed through PR #118; #84 remains open on real Auth/session and owner/other-user evidence; #15 remains blocked by #84. New parity Issues are not authorization to start dependency-blocked work.
+- V4-01 adds `docs/architecture/v4-01-demo-parity-registry.md` and `v4-01-framework-adoption-matrix.md`: 40 grouped Demo actions, 14 framework candidates, explicit fixture disposition and 31/31 execution-row audit. It activates no runtime.
+- After V4-01 closes, #84 is the only ready frontier. Supabase Site URL and callback allowlist are visually verified; real Magic Link session and owner/other-user evidence remain open, so #15 stays blocked. New parity Issues are not authorization to start dependency-blocked work.
 - AI-43 requires a current AI SDK Core/ToolLoop/Workflow comparison before execution; LangChain/LangGraph/GraphRAG/multi-agent are not default production dependencies.

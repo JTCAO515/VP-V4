@@ -2,12 +2,12 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Extend AI Core Program #2 with an evidence-backed bounded-agent architecture and dependency-ordered production-parity Issue plan, without copying Demo fixtures or bypassing accepted Chat, Canvas, evidence, identity, RLS, provider or release contracts.",
-  "status": "R1 contracts and bounded runtime paths are merged; AI-45 is closed; AI-51 code is merged but real Auth/session and owner/other-user acceptance remain open; V4-01 through V4-31 are published and dependency-gated",
+  "status": "R1 bounded paths are merged; AI-45 is closed; AI-51 Site URL/callback configuration is visually verified but real session evidence remains open; V4-01 parity and framework gates are delivered by this change and later V4 work remains dependency-gated",
   "currentPhase": "R1",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own independently accepted frontier Issues and their evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "operator completes the project-access Auth URL action for #84 while an agent may execute #87 V4-01 after PR #83 lands its execution-contract row; dependency-blocked Issues remain unavailable",
+  "intendedNextAgent": "complete #84 real Magic Link session plus owner/other-user route evidence; #15 and every later V4 Issue remain dependency-blocked after V4-01",
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
     "audit the Claude model-layer draft against current first-party sources",
@@ -116,6 +116,9 @@
     "docs/research/agent-context-rag-memory-tool-evidence-2026-08-25.md (new source ledger)",
     "docs/vp-v4-production-parity-issue-plan.md (new accepted tracker plan)",
     "docs/agents/issue-execution-contract.md (updated with #85/#87-#116 V4 rows)",
+    "docs/architecture/v4-01-demo-parity-registry.md (new; 40 grouped Demo actions and fixture disposition)",
+    "docs/architecture/v4-01-framework-adoption-matrix.md (new; 14 paired framework gates)",
+    "artifacts/V4-01/unrun.md (new; registry-only unrun disclosure)",
     "docs/handoff.json (restructured to jtcoding-handoff/1.0)",
     "AGENTS.md, CONTEXT.md, HANDOFF.md (updated)"
   ],
@@ -151,10 +154,14 @@
     "independent Claude knowledge-plan audit completed with 75 first-party/repository links and local Markdown/link/structure checks",
     "draft knowledge-base validation passed: 30 unique record types, 18 unique rules, six researched drafts, zero executable rules, zero reviewed/eligible records, and zero unresolved rule references",
     "six researched drafts have HTTPS source locators, null reviewers and licence policies, status researched_draft and retrievalEligible=false",
-    "post-knowledge-workbench pnpm check passed: source-policy lint, strict TypeScript, Next.js production build and 11/11 tests"
+    "post-knowledge-workbench pnpm check passed: source-policy lint, strict TypeScript, Next.js production build and 11/11 tests",
+    "V4-01 inspected VP-Early-Access@cf6e103 as fixture-only reference and did not import Demo users, Trips, POIs, prices, weather or provider results",
+    "V4-01 registered 40 grouped Demo actions and 14 framework candidates with owner, maturity, source, failure, flag, observation and rollback/disposition boundaries",
+    "V4 execution-contract audit passed: 31/31 rows have issue, owner, allowed paths, commands and artifacts",
+    "V4-01 pnpm docs:check, pnpm check, handoff JSON parse and git diff --check passed; production build and static tests passed 13/13"
   ],
   "blockers": [
-    "Operator has not yet accepted section 13 of the integrated research report or the engineering architecture and acceptance baseline.",
+    "The DEC/ADR and engineering baselines are accepted; later provider, content-rights, release and commercial decisions remain gated by their owning Issues.",
     "Production provider region, retention, privacy/data terms, and five-language speech quality are not verified.",
     "No VisePanda five-language travel eval baseline or live provider conformance evidence exists yet.",
     "No aviation provider has passed China domestic coverage, accuracy, latency, cost, and production-rights evaluation.",
@@ -167,8 +174,8 @@
     "Authenticated-only beta and the new Supabase project are accepted; separate Ops deployment plus model/media region and retention remain future operator decisions.",
     "Qwen3.5 OCR and Qwen Audio 3.0 TTS currently have Beijing constraints; the Singapore mandatory multimodal stack is not frozen.",
     "Vercel WebRTC/WebSocket plan support, direct media upload, Supabase pooler, queue quarantine, Storage backup, and deletion topology remain untested.",
-    "AI-51/#84 remains open: the CLI OAuth account can see project dzqdzetcctkhbrhlxxgn, but the logged Supabase Dashboard account lacks project access, so Site URL/redirect allowlist, real Magic Link session and owner/other-user browser evidence are incomplete.",
-    "#87 V4-01 is the independent agent-ready frontier after PR #83 lands its execution-contract row; other child Issues remain dependency-gated.",
+    "AI-51/#84 remains open: Supabase Site URL, exact production callback, localhost callback and Vercel Preview callback are visually verified, but real Magic Link session and owner/other-user browser evidence are incomplete.",
+    "V4-01 closes through this change; #85/#88/#89/#91/#98 remain blocked by #17 and every other V4 Issue retains another open dependency.",
     "The Claude-referenced research/fact-catalogue.json was not provided, so row-level provenance and counts cannot be reproduced.",
     "Twenty-four of 30 candidate record types still lack an exact source locator and 24 candidates are high or critical risk.",
     "No language/medical reviewer or source-rights decision exists; the closed AI-11 contract does not promote draft Knowledge records to reviewed or retrieval-eligible."
@@ -182,7 +189,7 @@
   ],
   "rollback": "Remove docs/knowledge-base/ and its Claude audit link if this research disposition is rejected; no database, public content or runtime state changed. Preserve GitHub Issue history through status:superseded rather than deletion.",
   "operatorActions": [
-    "Grant the logged Supabase Dashboard account access to project dzqdzetcctkhbrhlxxgn, or sign in with the project-owning account, then set the production Site URL and exact /auth/callback redirect without sharing any credential.",
+    "Authorize one real Magic Link email to a controlled mailbox, complete the browser callback without sharing the link/token, then allow owner/other-user route evidence to run.",
     "Decide model/media region, retention and DPA posture when those provider Issues reach the frontier.",
     "Decide and sign the aviation provider contract, or accept the official-handoff fallback (#41/#42). #43 no longer hard-depends on #42.",
     "Accept or reject the AI SDK adoption decision produced by ML-01 (#47).",
@@ -217,10 +224,10 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Merge PR #83 after current checks, then execute #87 while #84 waits for project-owner Dashboard access; keep #15 blocked until real Auth/session and owner/other-user evidence closes #84.",
+  "nextAction": "Merge V4-01 after current checks, then return to #84 real Magic Link/session and owner/other-user evidence; keep #15 blocked until #84 closes.",
   "lastUpdated": "2026-08-26",
   "provenance": {
-    "vpV4Baseline": "JTCAO515/VP-V4@31af5fe",
+    "vpV4Baseline": "JTCAO515/VP-V4@b443866",
     "vpFinalReference": "JTCAO515/VP-Final@b5ef081",
     "issueProgram": "JTCAO515/VP-V4 Issues #2-#43 plus governance-review additions",
     "reviewRound": "claude architect review 2026-08-24; findings applied to Issues and this handoff",
