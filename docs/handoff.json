@@ -2,12 +2,12 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Extend AI Core Program #2 with an evidence-backed bounded-agent architecture and dependency-ordered production-parity Issue plan, without copying Demo fixtures or bypassing accepted Chat, Canvas, evidence, identity, RLS, provider or release contracts.",
-  "status": "V4-01 through V4-31 are published as Program #2 sub-issues with native dependencies, labels and milestones; implementation has not started",
+  "status": "R1 contracts and bounded runtime paths are merged; AI-45 is closed; AI-51 code is merged but real Auth/session and owner/other-user acceptance remain open; V4-01 through V4-31 are published and dependency-gated",
   "currentPhase": "R1",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own independently accepted frontier Issues and their evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "one agent may claim one live frontier Issue: #49 AI-45, #84 AI-51, or #87 V4-01; dependency-blocked Issues remain unavailable",
+  "intendedNextAgent": "operator completes the project-access Auth URL action for #84 while an agent may execute #87 V4-01 after PR #83 lands its execution-contract row; dependency-blocked Issues remain unavailable",
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
     "audit the Claude model-layer draft against current first-party sources",
@@ -163,15 +163,15 @@
     "Qwen multilingual embedding/rerank quality, region, data flow, dimensions, latency, cost, and VisePanda five-language retrieval metrics are not verified.",
     "OSM derivative-database obligations, map/tiles provider, coordinate handling, media rights, and production POI source contracts require operator/legal decisions.",
     "DeepSeek Vision Exp account access, five-language OCR/POI quality, API compatibility, retention, and production stability have not been tested with the user's account.",
-    "No production Supabase/Vercel topology, preview database workflow, SLO, error budget, or real provider observation window has been accepted.",
-    "Operator must decide new Supabase project versus VP-Final migration, authenticated-only beta, separate Ops deployment, and model/media region and retention before R1/R2.",
+    "Production Vercel and the new Supabase project are configured, but preview database workflow, SLO, error budget and real provider observation windows remain unaccepted.",
+    "Authenticated-only beta and the new Supabase project are accepted; separate Ops deployment plus model/media region and retention remain future operator decisions.",
     "Qwen3.5 OCR and Qwen Audio 3.0 TTS currently have Beijing constraints; the Singapore mandatory multimodal stack is not frozen.",
     "Vercel WebRTC/WebSocket plan support, direct media upload, Supabase pooler, queue quarantine, Storage backup, and deletion topology remain untested.",
-    "Issue #3 requires operator decisions before its dependent contracts can start; Issue #4 is the only current agent-ready implementation-planning frontier.",
-    "All other AI child Issues are blocked by native and textual dependency edges and must not start early.",
+    "AI-51/#84 remains open: the CLI OAuth account can see project dzqdzetcctkhbrhlxxgn, but the logged Supabase Dashboard account lacks project access, so Site URL/redirect allowlist, real Magic Link session and owner/other-user browser evidence are incomplete.",
+    "#87 V4-01 is the independent agent-ready frontier after PR #83 lands its execution-contract row; other child Issues remain dependency-gated.",
     "The Claude-referenced research/fact-catalogue.json was not provided, so row-level provenance and counts cannot be reproduced.",
     "Twenty-four of 30 candidate record types still lack an exact source locator and 24 candidates are high or critical risk.",
-    "No language/medical reviewer, source-rights decision, Supabase lineage or Knowledge contract has been accepted; AI-11/#13 remains blocked."
+    "No language/medical reviewer or source-rights decision exists; the closed AI-11 contract does not promote draft Knowledge records to reviewed or retrieval-eligible."
   ],
   "risks": [
     "Release gates #17/#23/#31/#36 were not depended on by any implementation Issue. Four edges (#18<-#17, #24<-#23, #32<-#31, #37<-#36) now enforce them. Removing those edges silently reopens the gap.",
@@ -182,10 +182,8 @@
   ],
   "rollback": "Remove docs/knowledge-base/ and its Claude audit link if this research disposition is rejected; no database, public content or runtime state changed. Preserve GitHub Issue history through status:superseded rather than deletion.",
   "operatorActions": [
-    "Merge PR #45 (governance baseline) so the program's authority documents exist on main.",
-    "Decide DEC-01..DEC-11 in Issue #3; agents may prepare option matrices but must not decide.",
-    "Decide new Supabase project versus VP-Final migration (#6).",
-    "Decide model/media/database region, retention and DPA posture (#7).",
+    "Grant the logged Supabase Dashboard account access to project dzqdzetcctkhbrhlxxgn, or sign in with the project-owning account, then set the production Site URL and exact /auth/callback redirect without sharing any credential.",
+    "Decide model/media region, retention and DPA posture when those provider Issues reach the frontier.",
     "Decide and sign the aviation provider contract, or accept the official-handoff fallback (#41/#42). #43 no longer hard-depends on #42.",
     "Accept or reject the AI SDK adoption decision produced by ML-01 (#47).",
     "Approve any public capability claim, production cutover, DNS, payment or external account action."
@@ -219,10 +217,10 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Review and merge PR #83 when ready. Execute only one live frontier Issue at a time (#49, #84, or #87); #15 remains blocked by #84 and V4-02 through V4-31 remain dependency-gated.",
+  "nextAction": "Merge PR #83 after current checks, then execute #87 while #84 waits for project-owner Dashboard access; keep #15 blocked until real Auth/session and owner/other-user evidence closes #84.",
   "lastUpdated": "2026-08-26",
   "provenance": {
-    "vpV4Baseline": "JTCAO515/VP-V4@2dec7b0",
+    "vpV4Baseline": "JTCAO515/VP-V4@31af5fe",
     "vpFinalReference": "JTCAO515/VP-Final@b5ef081",
     "issueProgram": "JTCAO515/VP-V4 Issues #2-#43 plus governance-review additions",
     "reviewRound": "claude architect review 2026-08-24; findings applied to Issues and this handoff",
