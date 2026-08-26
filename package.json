@@ -19,9 +19,12 @@
     "test:e2e": "node scripts/run-ci-suite.mjs e2e",
     "evals": "node scripts/run-ci-suite.mjs evals",
     "db:verify": "node scripts/db-verify.mjs",
-    "docs:check": "node scripts/docs-check.mjs"
+    "docs:check": "node scripts/docs-check.mjs",
+    "check:flags": "node --experimental-strip-types scripts/check-flags.mjs"
   },
   "dependencies": {
+    "@supabase/ssr": "0.12.5",
+    "@supabase/supabase-js": "2.112.4",
     "next": "16.2.6",
     "react": "19.2.6",
     "react-dom": "19.2.6"
