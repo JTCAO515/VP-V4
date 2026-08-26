@@ -18,7 +18,7 @@ No file in that source directory is modified by this delivery. New, derived work
 | Folder | Purpose |
 | --- | --- |
 | `tokens/` | Canonical colour, type, layout and material tokens. |
-| `guidelines/` | English visual-identity handbook. |
+| `guidelines/` | English visual-identity handbook, including brand foundation, fixed-logo application concepts, voice, type and social rules. |
 | `ip/` | Transparent VisePanda Guide pose library. |
 | `icons/` | Utility, map-pin and pattern SVG assets. |
 | `social/` | Ready-to-post avatar, feed, Story/reel and end-card exports. |

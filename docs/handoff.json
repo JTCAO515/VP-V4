@@ -1,8 +1,8 @@
 {
   "schemaVersion": "2.0",
   "lastUpdated": "2026-08-27T00:00:00+08:00",
-  "currentPhase": "G6-handoff",
-  "status": "published",
+  "currentPhase": "G4-verify",
+  "status": "ready-for-review",
   "objective": "Publish the approved VisePanda English-first digital visual identity system for international visitors travelling in China to the owner-authorized GitHub repository.",
   "acceptedIssue": "Owner request in this task: derive a full VisePanda travel-AI VI system from the supplied logo, then publish the committed delivery to https://github.com/JTCAO515/VP-V4.",
   "owner": "JTCAO515",
@@ -18,7 +18,13 @@
     "Do not claim official government, transport, visa, emergency or booking authority.",
     "Do not publish any unrelated untracked workspace content."
   ],
-  "activeWork": [],
+  "activeWork": [
+    {
+      "id": "brand-foundation-extension",
+      "description": "Extend the VI handbook with the owner-approved brand-template foundation while preserving the fixed logo and production assets.",
+      "owner": "Codex"
+    }
+  ],
   "assumptions": [
     "The specified GitHub repository is owned or writable by the signed-in Git credential.",
     "Remote main is an existing unrelated history (no merge base with local master), so publication uses a new non-destructive branch.",
@@ -28,7 +34,7 @@
   "decisions": [
     "Visual direction: a warm local friend in China, retaining the supplied panda mascot, cream sticker edge and plum/gold/cream/ink palette.",
     "Original supplied logo assets remain immutable; all derived outputs are contained in brand/.",
-    "The current branch is master and the delivery history is 58bdc8d, 2f4f91e, d02eb46 and 6f1faf9."
+    "This extension is isolated on local branch codex/visepanda-brand-foundation; the previously published branch remains unchanged."
   ],
   "changedFiles": [
     "docs/superpowers/specs/2026-08-27-visepanda-vi-design.md",
@@ -68,28 +74,35 @@
       "status": "passed",
       "summary": "GitHub remote branch contains 348291e9c45a46cc326ce6ed0999b836de6469fc.",
       "artifact": "https://github.com/JTCAO515/VP-V4/tree/codex/visepanda-vi-system"
+    },
+    {
+      "command": "rg -n 'id=\"(purpose|foundation|logo|logo-applications|colour|type|voice|ip|illustration|digital|social|accessibility|non-negotiables|exports)\"' brand/guidelines/visepanda-vi-guide.html && git diff --check",
+      "status": "passed",
+      "summary": "All 14 handbook sections are present and the extension has no whitespace errors.",
+      "artifact": "brand/guidelines/visepanda-vi-guide.html"
     }
   ],
   "unrunChecks": [
     "Native Instagram, TikTok and external-browser publishing previews.",
     "Commercial font licensing and print/PDF proofing.",
-    "GitHub web UI rendering and social-platform upload previews."
+    "GitHub web UI rendering and social-platform upload previews.",
+    "Fresh isolated 375 px browser screenshot after the mobile overflow guard."
   ],
   "blockers": [],
   "residualRisk": [
     "Social platforms may add compression or overlays; review their platform previews before publishing campaigns.",
     "Campaign travel facts and Chinese-language content require separate, destination-specific fact checking.",
     "Remote main is intentionally not updated because it has unrelated history.",
-    "The handoff update following the initial publication must be pushed as a small follow-up commit."
+    "The brand-foundation extension is local-only until the owner requests review publication or integration."
   ],
   "deviation": {
     "class": "D1",
     "reason": "A scoped, reversible documentation and asset delivery with no source-artwork or product-interface change."
   },
   "nextAction": {
-    "description": "Owner reviews the published VI system on the dedicated GitHub branch before merging it into a repository integration branch.",
-    "expectedObservation": "The owner confirms the handbook and assets are ready for repository integration.",
-    "command": "git log --oneline origin/codex/visepanda-vi-system -4"
+    "description": "Owner reviews the handbook extension on codex/visepanda-brand-foundation before authorizing publication or integration.",
+    "expectedObservation": "The owner confirms the extended brand foundation is ready to publish.",
+    "command": "git log --oneline codex/visepanda-brand-foundation -3"
   },
   "rollback": "If publication must be reverted, create and push a new revert commit for the publication branch commits (including 6f1faf9, d02eb46, 2f4f91e and 58bdc8d); do not rewrite shared history. For local asset-only rollback, remove brand/ while retaining the immutable source assets.",
   "readingOrder": [

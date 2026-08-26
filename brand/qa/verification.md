@@ -6,6 +6,10 @@
 
 The VisePanda digital-first visual-identity delivery is complete. This record captures the checks performed against the approved design specification and production plan.
 
+## Brand-foundation extension
+
+The handbook now additionally documents the approved strategic foundation: Guide + Caregiver archetypes, the Reassurance brand keyword, fixed-logo application concepts, colour-use boundaries, exact typography scale, voice/tagline direction, social-template rules and three non-negotiables. These are documentation and handbook changes only; no source logo or derived raster/vector asset changed.
+
 ## Required inventory
 
 | Area | Expected | Result |
@@ -42,6 +46,7 @@ git diff --check
 ## Unrun checks
 
 - Live Instagram, TikTok, browser and device rendering were not tested in an external platform.
+- A fresh isolated 375 px headless-browser screenshot was not produced after the mobile overflow guard was added; static reference and local-asset checks passed, but this viewport remains a manual-review item.
 - Commercial font licensing is not included; the handbook declares font fallbacks.
 - The handbook is delivered as responsive HTML/CSS. No print/PDF proof was produced because the accepted scope is digital-first.
 

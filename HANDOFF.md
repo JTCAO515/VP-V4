@@ -2,7 +2,7 @@
 
 ## Status
 
-**Published for review.** The approved English-first digital visual-identity system is available at [the dedicated GitHub branch](https://github.com/JTCAO515/VP-V4/tree/codex/visepanda-vi-system). Remote `main` has unrelated history and remains unchanged.
+**Handbook extension ready for review.** The original VI system remains published at [the dedicated GitHub branch](https://github.com/JTCAO515/VP-V4/tree/codex/visepanda-vi-system). This branch, `codex/visepanda-brand-foundation`, adds the owner-approved brand foundation to the handbook and has not been published.
 
 ## Objective
 
@@ -16,6 +16,7 @@ Publish the VisePanda travel-AI VI system for international visitors travelling 
 - SVG utility icons, map pins, decorative pattern and UI reference sheet in `brand/icons/` and `brand/ui/`.
 - Five ready-to-post social PNGs in `brand/social/`.
 - Asset manifest and verification evidence in `brand/qa/`.
+- Brand foundation: archetype, personality, promise, positioning, fixed-logo applications, type scale, voice/taglines, social rules and non-negotiables.
 
 ## Commits
 
@@ -55,4 +56,4 @@ Create and publish new revert commits for `d02eb46`, `2f4f91e` and `58bdc8d`; do
 
 ## Exactly one next action
 
-Owner reviews the published `codex/visepanda-vi-system` branch before choosing its repository-integration path. Do not overwrite remote `main`.
+Owner reviews `codex/visepanda-brand-foundation` and authorizes publication or integration. Do not overwrite remote `main`.

@@ -17,6 +17,8 @@ html { background: var(--cream-50); color: var(--ink-950); font-family: "Nunito 
 body { margin: 0; }
 img { display: block; max-width: 100%; }
 a { color: inherit; }
+.hero__grid > *, .grid > *, .social-grid > *, .application-grid > * { min-width: 0; }
+.hero p, .card p, .application p { overflow-wrap: anywhere; }
 h1, h2, h3, .display { font-family: "Baloo 2", "Nunito Sans", sans-serif; letter-spacing: -.025em; }
 h1, h2, h3, p { margin-top: 0; }
 h1 { font-size: clamp(3rem, 8vw, 7rem); line-height: .88; margin-bottom: 1.25rem; }
@@ -116,6 +118,20 @@ p { font-size: 1rem; line-height: 1.65; }
 .checklist { list-style: none; margin: 0; padding: 0; }
 .checklist li { border-bottom: 1px dashed currentColor; padding: 14px 0 14px 32px; position: relative; }
 .checklist li:before { background: var(--gold-500); border: 2px solid var(--ink-950); border-radius: 50%; content: ""; height: 14px; left: 0; position: absolute; top: 17px; width: 14px; }
+.application-grid { display: grid; gap: 16px; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.application { background: var(--cream-50); border: var(--outline); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+.application > span { align-items: center; background: var(--gold-500); border: var(--outline); border-radius: 50%; display: flex; font-weight: 900; height: 30px; justify-content: center; width: 30px; }
+.application h3 { margin-top: 18px; }
+.application p { font-size: .9rem; margin-bottom: 0; }
+.usage-grid { margin-top: 20px; }
+.usage-grid .card { box-shadow: none; }
+.type-scale { display: grid; gap: 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 26px; }
+.type-scale div { background: var(--butter-100); border: var(--outline); border-radius: 12px; display: flex; flex-direction: column; gap: 4px; padding: 14px; }
+.type-scale span, .type-note { font-size: .88rem; line-height: 1.45; }
+.type-note { margin: 16px 0 0; max-width: 820px; }
+.taglines { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.taglines span { background: var(--gold-500); border: var(--outline); border-radius: 99px; color: var(--ink-950); font-family: "Baloo 2", sans-serif; padding: 10px 14px; }
+.social-rules { margin-top: 20px; }
 
 .footer { background: var(--ink-950); color: var(--cream-50); padding: 64px clamp(20px, 7vw, 120px); }
 .footer__inside { margin: auto; max-width: 1176px; }
@@ -126,6 +142,7 @@ p { font-size: 1rem; line-height: 1.65; }
   .hero__grid, .grid--2, .do-dont { grid-template-columns: 1fr; }
   .grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .grid--4, .social-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .application-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hero__logo { max-height: 390px; }
 }
 
@@ -133,5 +150,6 @@ p { font-size: 1rem; line-height: 1.65; }
   .topbar__label { display: none; }
   .section { padding-left: 20px; padding-right: 20px; }
   .grid--3, .grid--4, .social-grid, .poses { grid-template-columns: 1fr 1fr; }
+  .application-grid, .type-scale { grid-template-columns: 1fr; }
   .swatch { min-height: 140px; }
 }
