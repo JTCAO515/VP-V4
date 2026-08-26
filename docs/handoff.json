@@ -2,12 +2,12 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Extend AI Core Program #2 with an evidence-backed bounded-agent architecture and dependency-ordered production-parity Issue plan, without copying Demo fixtures or bypassing accepted Chat, Canvas, evidence, identity, RLS, provider or release contracts.",
-  "status": "R1 bounded paths are merged; AI-45 is closed; AI-51 Site URL/callback configuration is visually verified but real session evidence remains open; V4-01 parity and framework gates are delivered by this change and later V4 work remains dependency-gated",
+  "status": "V4-01 and AI-45 are closed; #120 AI-51a is the only ready frontier after production evidence proved the Magic Link PKCE verifier was not persisted to the callback browser; #84 and #15 remain blocked pending the repaired deployment and real session evidence",
   "currentPhase": "R1",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own independently accepted frontier Issues and their evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "complete #84 real Magic Link session plus owner/other-user route evidence; #15 and every later V4 Issue remain dependency-blocked after V4-01",
+  "intendedNextAgent": "complete #120 PKCE verifier-cookie fix, deploy it, then resume #84 same-browser Magic Link plus owner/other-user route evidence; #15 remains blocked",
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
     "audit the Claude model-layer draft against current first-party sources",
@@ -119,6 +119,11 @@
     "docs/architecture/v4-01-demo-parity-registry.md (new; 40 grouped Demo actions and fixture disposition)",
     "docs/architecture/v4-01-framework-adoption-matrix.md (new; 14 paired framework gates)",
     "artifacts/V4-01/unrun.md (new; registry-only unrun disclosure)",
+    "app/api/auth/magic-link/route.ts (AI-51a same-browser PKCE verifier cookie)",
+    "tests/contract/identity/pkce-magic-link.test.ts (AI-51a verifier/callback regression)",
+    "tests/e2e/identity/pkce-session-boundary.test.mjs (AI-51a request-to-callback boundary)",
+    "tests/security/identity/no-service-credential.test.mjs (AI-51a secret-log negative)",
+    "artifacts/AI-51a/unrun.md (AI-51a deployment and browser acceptance boundary)",
     "docs/handoff.json (restructured to jtcoding-handoff/1.0)",
     "AGENTS.md, CONTEXT.md, HANDOFF.md (updated)"
   ],
@@ -158,7 +163,10 @@
     "V4-01 inspected VP-Early-Access@cf6e103 as fixture-only reference and did not import Demo users, Trips, POIs, prices, weather or provider results",
     "V4-01 registered 40 grouped Demo actions and 14 framework candidates with owner, maturity, source, failure, flag, observation and rollback/disposition boundaries",
     "V4 execution-contract audit passed: 31/31 rows have issue, owner, allowed paths, commands and artifacts",
-    "V4-01 pnpm docs:check, pnpm check, handoff JSON parse and git diff --check passed; production build and static tests passed 13/13"
+    "V4-01 pnpm docs:check, pnpm check, handoff JSON parse and git diff --check passed; production build and static tests passed 13/13",
+    "AI-51a production repro: Magic Link POST returned 202, clicked application probe returned 401 UNAUTHENTICATED, and Supabase Auth Logs showed one verify completion followed by invalid/expired verify failures",
+    "AI-51a red contract test failed against server-memory createClient and passed after @supabase/ssr request/response cookie storage",
+    "AI-51a contract passed 20/20, security passed 3/3 including the running local RLS/fault suite, E2E boundary passed 1/1, and strict typecheck passed"
   ],
   "blockers": [
     "The DEC/ADR and engineering baselines are accepted; later provider, content-rights, release and commercial decisions remain gated by their owning Issues.",
@@ -174,7 +182,7 @@
     "Authenticated-only beta and the new Supabase project are accepted; separate Ops deployment plus model/media region and retention remain future operator decisions.",
     "Qwen3.5 OCR and Qwen Audio 3.0 TTS currently have Beijing constraints; the Singapore mandatory multimodal stack is not frozen.",
     "Vercel WebRTC/WebSocket plan support, direct media upload, Supabase pooler, queue quarantine, Storage backup, and deletion topology remain untested.",
-    "AI-51/#84 remains open: Supabase Site URL, exact production callback, localhost callback and Vercel Preview callback are visually verified, but real Magic Link session and owner/other-user browser evidence are incomplete.",
+    "AI-51/#84 remains open and is natively blocked by #120: Site URL/callback configuration is verified, but the current production route discards the PKCE verifier before callback; real session and owner/other-user evidence are incomplete.",
     "V4-01 closes through this change; #85/#88/#89/#91/#98 remain blocked by #17 and every other V4 Issue retains another open dependency.",
     "The Claude-referenced research/fact-catalogue.json was not provided, so row-level provenance and counts cannot be reproduced.",
     "Twenty-four of 30 candidate record types still lack an exact source locator and 24 candidates are high or critical risk.",
@@ -189,7 +197,7 @@
   ],
   "rollback": "Remove docs/knowledge-base/ and its Claude audit link if this research disposition is rejected; no database, public content or runtime state changed. Preserve GitHub Issue history through status:superseded rather than deletion.",
   "operatorActions": [
-    "Authorize one real Magic Link email to a controlled mailbox, complete the browser callback without sharing the link/token, then allow owner/other-user route evidence to run.",
+    "After #120 deploys, request a fresh Magic Link from the same controlled browser that will open it; do not share the link, auth code, verifier, token or cookie.",
     "Decide model/media region, retention and DPA posture when those provider Issues reach the frontier.",
     "Decide and sign the aviation provider contract, or accept the official-handoff fallback (#41/#42). #43 no longer hard-depends on #42.",
     "Accept or reject the AI SDK adoption decision produced by ML-01 (#47).",
@@ -224,10 +232,10 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Merge V4-01 after current checks, then return to #84 real Magic Link/session and owner/other-user evidence; keep #15 blocked until #84 closes.",
+  "nextAction": "Finish #120 checks and PR, deploy, then run a fresh same-browser Magic Link callback. Only after the session probe changes from 401 to owner-scoped semantics may #84 owner/other-user acceptance continue.",
   "lastUpdated": "2026-08-26",
   "provenance": {
-    "vpV4Baseline": "JTCAO515/VP-V4@b443866",
+    "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
     "vpFinalReference": "JTCAO515/VP-Final@b5ef081",
     "issueProgram": "JTCAO515/VP-V4 Issues #2-#43 plus governance-review additions",
     "reviewRound": "claude architect review 2026-08-24; findings applied to Issues and this handoff",
