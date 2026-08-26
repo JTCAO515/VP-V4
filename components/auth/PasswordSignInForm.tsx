@@ -34,9 +34,13 @@ export function PasswordSignInForm() {
       return;
     }
     let active = true;
-    void client.auth.getClaims().then(({ data, error }) => {
-      if (active) setState(!error && data?.claims?.sub ? "signedIn" : "idle");
-    });
+    void client.auth.getClaims()
+      .then(({ data, error }) => {
+        if (active) setState(!error && data?.claims?.sub ? "signedIn" : "idle");
+      })
+      .catch(() => {
+        if (active) setState("unavailable");
+      });
     return () => { active = false; };
   }, []);
 
