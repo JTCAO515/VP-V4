@@ -25,7 +25,7 @@ Accepted repository facts:
 - Closed beta defaults to authenticated-only pending operator acceptance. User/Ops requests use verified JWT + RLS; system credentials are worker-only and must apply explicit owner/eligibility/policy filters.
 - R1 uses fake model, one Fact fixture, durable Turns and Trip CAS only; no real model, pgvector, queue, external data or Ops UI.
 - VP-Final migration is evidence-gated: #4 disposition matrix -> #11 TripPatch golden contract -> #13 Fact eligibility -> #16 RLS/fault patterns -> #25 import/review/audit. Reuse behavior/tests through V4 interfaces; do not copy directories, direct-write Copilot, static Explore seeds, secrets, or the old full monorepo.
-- Current frontier: #84 AI-51 is engineering-merged and its Supabase Site URL/production callback allowlist is now visually verified, but real Magic Link session and owner/other-user evidence remain open. #87 V4-01 delivers the parity registry and framework adoption gates in this change. #15 remains blocked by #84.
+- Current frontier: #122 AI-51b supersedes the closed/unmerged Magic Link fix and implements operator-provisioned email/password login, sign-out and five-language UI. #122 blocks #84; #84 continues to block #15 until real owner/other-user evidence passes. #87 V4-01 is closed.
 - Claude's referenced `research/fact-catalogue.json` is missing; 810/122 rows, five weeks and “zero unavailable” are unverified estimates, not targets.
 - The catalogue uses `Knowledge Record Type Candidate`, not “30 Fact Types”: policy/operational Facts, directory entries, procedures, Safe Phrases, observations, assessments and rules have different lifecycle owners.
 - The six researched drafts have direct source locators but no reviewer or licence policy and are explicitly ineligible. The 18 readiness rules all have `executable:false` and preserve Claude's single status only as a legacy hypothesis label; future output uses three axes.
@@ -79,7 +79,7 @@ Rollback: remove `docs/knowledge-base/` and its audit link if the research dispo
 
 The operator requires the real VP-V4 product to reproduce the Early Access Demo's user capabilities without copying its static fixtures. The accepted planning package is `docs/vp-v4-production-feature-parity-report.md`, `docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md`, `docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md`, its source ledger, and `docs/vp-v4-production-parity-issue-plan.md`.
 
-The tracker plan is published as V4-01 through V4-31 while preserving R0-R5. It adds ContextPlan, Tool Policy Gateway, ConstraintEngine and a rejectable RoutePattern RAG spike. LangChain/LangGraph/GraphRAG/multi-agent are not default implementation work. After V4-01 closes, #84 is the only ready frontier; #15 remains blocked by #84, and every other V4 Issue still has another open dependency.
+The tracker plan is published as V4-01 through V4-31 while preserving R0-R5. It adds ContextPlan, Tool Policy Gateway, ConstraintEngine and a rejectable RoutePattern RAG spike. LangChain/LangGraph/GraphRAG/multi-agent are not default implementation work. #122 is the only ready frontier; #84, #15 and later V4 work remain dependency-gated.
 
 ## VisePanda visual identity assets
 
