@@ -2,7 +2,7 @@
   "schemaVersion": "2.0",
   "lastUpdated": "2026-08-27T00:00:00+08:00",
   "currentPhase": "G6-handoff",
-  "status": "ready-to-publish",
+  "status": "published",
   "objective": "Publish the approved VisePanda English-first digital visual identity system for international visitors travelling in China to the owner-authorized GitHub repository.",
   "acceptedIssue": "Owner request in this task: derive a full VisePanda travel-AI VI system from the supplied logo, then publish the committed delivery to https://github.com/JTCAO515/VP-V4.",
   "owner": "JTCAO515",
@@ -18,13 +18,7 @@
     "Do not claim official government, transport, visa, emergency or booking authority.",
     "Do not publish any unrelated untracked workspace content."
   ],
-  "activeWork": [
-    {
-      "id": "publish-github",
-      "description": "Push the local delivery to the safe remote branch codex/visepanda-vi-system; remote main has unrelated history and is preserved.",
-      "owner": "Codex with operator authorization"
-    }
-  ],
+  "activeWork": [],
   "assumptions": [
     "The specified GitHub repository is owned or writable by the signed-in Git credential.",
     "Remote main is an existing unrelated history (no merge base with local master), so publication uses a new non-destructive branch.",
@@ -68,30 +62,36 @@
       "status": "passed",
       "summary": "Approved palette, sticker edge, English display copy and genuine transparent edges observed.",
       "artifact": "brand/qa/verification.md"
+    },
+    {
+      "command": "git ls-remote origin refs/heads/codex/visepanda-vi-system",
+      "status": "passed",
+      "summary": "GitHub remote branch contains 348291e9c45a46cc326ce6ed0999b836de6469fc.",
+      "artifact": "https://github.com/JTCAO515/VP-V4/tree/codex/visepanda-vi-system"
     }
   ],
   "unrunChecks": [
     "Native Instagram, TikTok and external-browser publishing previews.",
     "Commercial font licensing and print/PDF proofing.",
-    "Post-push GitHub repository page verification."
+    "GitHub web UI rendering and social-platform upload previews."
   ],
   "blockers": [],
   "residualRisk": [
     "Social platforms may add compression or overlays; review their platform previews before publishing campaigns.",
     "Campaign travel facts and Chinese-language content require separate, destination-specific fact checking.",
-    "GitHub push will depend on local credential access to the owner-authorized remote.",
-    "Remote main is intentionally not updated because it has unrelated history."
+    "Remote main is intentionally not updated because it has unrelated history.",
+    "The handoff update following the initial publication must be pushed as a small follow-up commit."
   ],
   "deviation": {
     "class": "D1",
     "reason": "A scoped, reversible documentation and asset delivery with no source-artwork or product-interface change."
   },
   "nextAction": {
-    "description": "Push current master, containing the approved VI delivery and handoff, to a non-destructive remote branch.",
-    "expectedObservation": "origin/codex/visepanda-vi-system receives commit 6f1faf9 and GitHub accepts the push while origin/main is unchanged.",
-    "command": "git push -u origin HEAD:refs/heads/codex/visepanda-vi-system"
+    "description": "Owner reviews the published VI system on the dedicated GitHub branch before merging it into a repository integration branch.",
+    "expectedObservation": "The owner confirms the handbook and assets are ready for repository integration.",
+    "command": "git log --oneline origin/codex/visepanda-vi-system -4"
   },
-  "rollback": "If publication must be reverted, create and push a new revert commit for 6f1faf9, d02eb46, 2f4f91e and 58bdc8d; do not rewrite shared history. For local asset-only rollback, remove brand/ while retaining the immutable source assets.",
+  "rollback": "If publication must be reverted, create and push a new revert commit for the publication branch commits (including 6f1faf9, d02eb46, 2f4f91e and 58bdc8d); do not rewrite shared history. For local asset-only rollback, remove brand/ while retaining the immutable source assets.",
   "readingOrder": [
     "docs/handoff.json",
     "HANDOFF.md",

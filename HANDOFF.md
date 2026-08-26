@@ -2,7 +2,7 @@
 
 ## Status
 
-**Ready to publish.** The approved English-first digital visual-identity system is committed on `master`. Remote `main` has unrelated history, so the next authorized action is a non-destructive push to `https://github.com/JTCAO515/VP-V4` on branch `codex/visepanda-vi-system`.
+**Published for review.** The approved English-first digital visual-identity system is available at [the dedicated GitHub branch](https://github.com/JTCAO515/VP-V4/tree/codex/visepanda-vi-system). Remote `main` has unrelated history and remains unchanged.
 
 ## Objective
 
@@ -31,6 +31,7 @@ Publish the VisePanda travel-AI VI system for international visitors travelling 
 - SVG XML, 15 SVG symbol IDs and 10 handbook section IDs.
 - Source integrity against `5900cd5` and whitespace validation.
 - Manual high-detail review of one social export and two transparent panda poses.
+- GitHub branch verification: `git ls-remote origin refs/heads/codex/visepanda-vi-system` returned `348291e9c45a46cc326ce6ed0999b836de6469fc`.
 
 The corresponding full record is `brand/qa/verification.md`.
 
@@ -54,4 +55,4 @@ Create and publish new revert commits for `d02eb46`, `2f4f91e` and `58bdc8d`; do
 
 ## Exactly one next action
 
-Run `git push -u origin HEAD:refs/heads/codex/visepanda-vi-system` against the owner-authorized remote `https://github.com/JTCAO515/VP-V4.git`. Do not overwrite remote `main`.
+Owner reviews the published `codex/visepanda-vi-system` branch before choosing its repository-integration path. Do not overwrite remote `main`.

@@ -29,8 +29,8 @@ The owner approved and requested publication of the VisePanda digital visual-ide
 
 - **r:** Owner-approved VI system and request to publish it to the named GitHub repository.
 - **y:** `brand/qa/verification.md`, `git status --short`, `git remote -v`, and GitHub’s push response.
-- **u:** Push the already committed `master` branch to `origin/codex/visepanda-vi-system`.
-- **e:** GitHub `main` has unrelated existing history, so it cannot safely receive a fast-forward update from this local repository.
+- **u:** Published the committed delivery to `origin/codex/visepanda-vi-system`.
+- **e:** GitHub `main` has unrelated existing history, so it was deliberately preserved.
 
 ## Handoff posture
 
@@ -41,4 +41,4 @@ The owner approved and requested publication of the VisePanda digital visual-ide
 
 ## Next action
 
-Publish `master` to the safe branch `codex/visepanda-vi-system` at `https://github.com/JTCAO515/VP-V4.git`, then record the returned GitHub branch/commit confirmation in `docs/handoff.json` and `HANDOFF.md`.
+Owner reviews [the published branch](https://github.com/JTCAO515/VP-V4/tree/codex/visepanda-vi-system) before selecting an integration path that preserves the unrelated remote `main` history.
