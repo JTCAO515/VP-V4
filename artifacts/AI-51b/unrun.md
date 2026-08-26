@@ -1,8 +1,9 @@
 # AI-51b unrun checks
 
-- A valid application password has not been provisioned or entered by Codex. Real sign-in, owner
-  read/confirm/reload, other-user denial and sign-out-to-401 remain pending Preview deployment and an
-  operator-controlled credential entry.
+- The operator completed a real Preview password sign-in. Codex observed the resulting authenticated
+  session and, after explicit browser-action confirmation, clicked Sign out and observed the email/
+  password form return with no console warning/error. This verifies the UI session transition, but not
+  an authenticated Trip API response.
 - Password recovery, public signup, invite, social login and MFA are intentionally unavailable in this
   closed-beta slice; each requires a separate accepted contract.
 - No service/admin key, Auth admin API, manual `auth.users` SQL, migration, RLS/RPC change, Supabase
@@ -13,5 +14,7 @@
   its GitHub deterministic gate and Vercel Preview passed. Post-fix Preview QA observed the signed-in
   state at 1280×800 and 390×844 Arabic RTL with no console warning/error or horizontal overflow.
 - Browser safety policy prohibits entering any operator-controlled password. Consequently, a genuine
-  password session, owner read/confirm/reload, other-user denial and sign-out-to-401 still require a
-  pre-provisioned account and an operator-controlled credential entry after the post-fix Preview is ready.
+  owner read/confirm/reload and other-user denial require separate authenticated route evidence. Browser
+  automation blocks direct navigation to `/api/trips/*` with `net::ERR_BLOCKED_BY_CLIENT`; it must not
+  be substituted with a copied Cookie or token. An anonymous remote curl probe returned `401
+  UNAUTHENTICATED`; the retired Magic Link initiation and callback routes returned `404`.

@@ -2,12 +2,12 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Extend AI Core Program #2 with an evidence-backed bounded-agent architecture and dependency-ordered production-parity Issue plan, without copying Demo fixtures or bypassing accepted Chat, Canvas, evidence, identity, RLS, provider or release contracts.",
-  "status": "AI-45 and V4-01 are closed; the operator retired Magic Link after masked email-rate-limit and otp-expired evidence; #122 AI-51b is the only ready frontier and adds pre-provisioned password login/sign-out while #84 and #15 remain blocked pending real session evidence",
+  "status": "AI-45 and V4-01 are closed; the operator retired Magic Link after masked email-rate-limit and otp-expired evidence; #122 AI-51b has operator-observed Preview password sign-in/sign-out plus anonymous 401 and retired-route 404 evidence, while #84 and #15 remain blocked pending authenticated Trip route evidence",
   "currentPhase": "R1",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own independently accepted frontier Issues and their evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "complete #122 password-login UI, Preview and credential-controlled browser acceptance, then resume #84 owner/other-user Trip evidence; #15 remains blocked",
+  "intendedNextAgent": "retain #122 as open until its authenticated Trip API boundary is independently evidenced, then resume #84 owner/other-user Trip evidence; #15 remains blocked",
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
     "audit the Claude model-layer draft against current first-party sources",
@@ -173,7 +173,10 @@
     "Magic Link diagnosis found a masked 429 over_email_send_rate_limit, no new mail.send, repeated otp_expired links and a persistent 401 application session; #120/PR #121 closed unmerged",
     "AI-51b red contract test failed before login files/retirement and passed 21/21 after password login implementation",
     "AI-51b security passed 3/3 including local RLS/fault and no signup/recovery/admin/credential-log paths; E2E surface boundary passed 1/1",
-    "AI-51b local browser QA passed at 1280x800 and 390x844: meaningful login form, Arabic lang/RTL, no horizontal overflow, no framework overlay and no console warning/error"
+    "AI-51b local browser QA passed at 1280x800 and 390x844: meaningful login form, Arabic lang/RTL, no horizontal overflow, no framework overlay and no console warning/error",
+    "AI-51b Preview: operator-confirmed password sign-in and Codex-observed signed-in then sign-out-to-form transition passed without console warning/error",
+    "AI-51b Preview: anonymous inaccessible Trip GET returned 401 UNAUTHENTICATED; retired Magic Link initiation and callback routes returned 404",
+    "AI-51b authenticated Trip API navigation is blocked by Browser client policy; no Cookie/JWT/token bypass was attempted"
   ],
   "blockers": [
     "The DEC/ADR and engineering baselines are accepted; later provider, content-rights, release and commercial decisions remain gated by their owning Issues.",
@@ -190,7 +193,7 @@
     "Authenticated-only beta and the new Supabase project are accepted; separate Ops deployment plus model/media region and retention remain future operator decisions.",
     "Qwen3.5 OCR and Qwen Audio 3.0 TTS currently have Beijing constraints; the Singapore mandatory multimodal stack is not frozen.",
     "Vercel WebRTC/WebSocket plan support, direct media upload, Supabase pooler, queue quarantine, Storage backup, and deletion topology remain untested.",
-    "AI-51/#84 remains open and is natively blocked by #122: Magic Link is retired; an operator-provisioned application password plus real sign-in/sign-out and owner/other-user browser evidence are incomplete.",
+    "AI-51/#84 remains open and is natively blocked by #122: Magic Link is retired and Preview password session UI is evidenced, but authenticated Trip 403 plus owner/other-user route evidence remain incomplete; Browser client policy blocks direct authenticated API navigation.",
     "V4-01 closes through this change; #85/#88/#89/#91/#98 remain blocked by #17 and every other V4 Issue retains another open dependency.",
     "The Claude-referenced research/fact-catalogue.json was not provided, so row-level provenance and counts cannot be reproduced.",
     "Twenty-four of 30 candidate record types still lack an exact source locator and 24 candidates are high or critical risk.",
@@ -240,7 +243,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Finish #122 full checks and Preview. The operator then enters a distinct application password in the login form; verify signed-in 403 semantics, owner/other-user routes and sign-out 401 before closing #122/#84.",
+  "nextAction": "Obtain authenticated Trip 403 and owner/other-user route evidence without copying any credential. Keep #122 and #84 open until those API/RLS acceptance conditions are independently verified; #15 remains blocked.",
   "lastUpdated": "2026-08-27",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
