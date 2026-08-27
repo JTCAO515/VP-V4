@@ -177,6 +177,7 @@ Any Issue added after this file was written must add its own row here before it 
 | #114 V4-29 | Guide Conflict / Trip | lib/server/artifacts/guide/**, lib/server/trip/**, components/import/** | pnpm check; pnpm test:contract; pnpm test:integration; pnpm test:e2e | artifacts/V4-29/commands.jsonl、artifacts/V4-29/unrun.md、conflict-to-proposal and version traces | RL-01 RL-04 RL-05 |
 | #115 V4-30 | Offline Product | lib/offline/**, components/offline/**, app/manifest.ts | pnpm check; pnpm test:security; pnpm test:e2e | artifacts/V4-30/commands.jsonl、artifacts/V4-30/unrun.md、offline/device/cache isolation evidence | RL-02 RL-07 |
 | #116 V4-31 | Release Gate / Product Parity | docs/acceptance/**, docs/runbooks/** | pnpm check; pnpm docs:check; pnpm test:contract; pnpm test:integration; pnpm test:security; pnpm test:e2e; pnpm evals | artifacts/V4-31/commands.jsonl、artifacts/V4-31/unrun.md、eight-dimension L1-L7 parity report | RL-01 RL-02 RL-03 RL-04 RL-05 RL-06 RL-07 RL-08 RL-09 |
+| #132 GOV-AFK-01 | Governance / Continuous execution | `AGENTS.md, CONTEXT.md, HANDOFF.md, docs/handoff.json, docs/operator-actions.json, docs/agents/**, scripts/docs-check.mjs, scripts/record-command.mjs, artifacts/GOV-AFK-01/**` | `pnpm docs:check`; `pnpm check`; `jq empty docs/handoff.json docs/operator-actions.json`; local Markdown-link check; `git diff --check` | `artifacts/GOV-AFK-01/commands.jsonl`, `artifacts/GOV-AFK-01/unrun.md`, policy, kickoff prompt, queue schema | — |
 
 ## 6. Rules
 
@@ -190,3 +191,16 @@ Any Issue added after this file was written must add its own row here before it 
   fills it. An agent must not write the decision.
 - Merging proves engineering acceptance only. Product effect is reviewed in the Issue's stated
   observation window.
+
+## 7. Continuous AFK scheduler
+
+The one-Issue/branch/PR rule scopes a work unit; it does not require the whole session to pause after
+that work unit. A session launched in Continuous AFK mode follows
+`docs/agents/continuous-afk-execution.md` and, after each PR, merge or safe handoff, recomputes the
+live frontier and continues without routine operator confirmation.
+
+The scheduler may not start an Issue with a missing row, open native blocker, path collision,
+unaccepted contract or operator-owned decision. Operator-owned work is recorded in
+`docs/operator-actions.json` and skipped while another independent frontier exists. The scheduler
+does not weaken the rules above, any RL suite, required check, review, RLS, migration or production
+gate.

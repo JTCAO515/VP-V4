@@ -25,7 +25,7 @@ Accepted repository facts:
 - Closed beta defaults to authenticated-only pending operator acceptance. User/Ops requests use verified JWT + RLS; system credentials are worker-only and must apply explicit owner/eligibility/policy filters.
 - R1 uses fake model, one Fact fixture, durable Turns and Trip CAS only; no real model, pgvector, queue, external data or Ops UI.
 - VP-Final migration is evidence-gated: #4 disposition matrix -> #11 TripPatch golden contract -> #13 Fact eligibility -> #16 RLS/fault patterns -> #25 import/review/audit. Reuse behavior/tests through V4 interfaces; do not copy directories, direct-write Copilot, static Explore seeds, secrets, or the old full monorepo.
-- Current frontier: #122 AI-51b supersedes the closed/unmerged Magic Link fix and implements operator-provisioned email/password login, sign-out and five-language UI. Preview password session, authenticated 403/post-sign-out 401, anonymous 401, retired-route 404 and the controlled owner/other-user matrix are evidenced. Merge #123, then re-evaluate #84 and #15 from main. #87 V4-01 is closed.
+- Current frontier at the 2026-08-27 governance audit: #122 AI-51b, #84 AI-51 and #130 AI-13c are closed after green merged PRs; #15 AI-13 is the independently executable R1 product frontier. #132 GOV-AFK-01 is the in-progress governance change that defines continuous cross-Issue scheduling. Every future session must re-query this state rather than treating it as permanent.
 - Claude's referenced `research/fact-catalogue.json` is missing; 810/122 rows, five weeks and “zero unavailable” are unverified estimates, not targets.
 - The catalogue uses `Knowledge Record Type Candidate`, not “30 Fact Types”: policy/operational Facts, directory entries, procedures, Safe Phrases, observations, assessments and rules have different lifecycle owners.
 - The six researched drafts have direct source locators but no reviewer or licence policy and are explicitly ineligible. The 18 readiness rules all have `executable:false` and preserve Claude's single status only as a legacy hypothesis label; future output uses three axes.
@@ -68,8 +68,10 @@ Reading order:
 17. `docs/agents/issue-tracker.md`
 18. `docs/agents/triage-labels.md`
 19. `docs/agents/domain.md`
-20. `docs/adr/0001-nextjs-typescript-tailwind-migration.md`
-21. `docs/adr/0002-visepanda-brand-localization-assets.md`
+20. `docs/agents/continuous-afk-execution.md` when launching an unattended multi-Issue session
+21. `docs/operator-actions.json` when launching an unattended multi-Issue session
+22. `docs/adr/0001-nextjs-typescript-tailwind-migration.md`
+23. `docs/adr/0002-visepanda-brand-localization-assets.md`
 
 Historical note: #3 AI-01, #4 AI-02 and #13 AI-11 are closed. Their decisions and contracts do not promote the draft catalogue to reviewed or retrieval-eligible production content.
 
@@ -79,7 +81,17 @@ Rollback: remove `docs/knowledge-base/` and its audit link if the research dispo
 
 The operator requires the real VP-V4 product to reproduce the Early Access Demo's user capabilities without copying its static fixtures. The accepted planning package is `docs/vp-v4-production-feature-parity-report.md`, `docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md`, `docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md`, its source ledger, and `docs/vp-v4-production-parity-issue-plan.md`.
 
-The tracker plan is published as V4-01 through V4-31 while preserving R0-R5. It adds ContextPlan, Tool Policy Gateway, ConstraintEngine and a rejectable RoutePattern RAG spike. LangChain/LangGraph/GraphRAG/multi-agent are not default implementation work. #122 is the only ready frontier; #84, #15 and later V4 work remain dependency-gated.
+The tracker plan is published as V4-01 through V4-31 while preserving R0-R5. It adds ContextPlan, Tool Policy Gateway, ConstraintEngine and a rejectable RoutePattern RAG spike. LangChain/LangGraph/GraphRAG/multi-agent are not default implementation work. At the 2026-08-27 audit #15 is the ready product frontier; the Continuous AFK scheduler must recompute native dependencies and labels after every PR or merge.
+
+## Continuous AFK execution
+
+The accepted direction removes routine per-Issue confirmation and adds a cross-Issue frontier loop.
+Each Issue still has its own worktree, branch, PR, checks and evidence. Class A reversible repo-only
+work may use GitHub auto-merge after every required gate succeeds. Class B security/RLS/migration
+work is prepared and handed off without self-approval or production application. Class C operator
+work is recorded in `docs/operator-actions.json` and skipped while another safe frontier exists.
+No AFK instruction weakens RLS, permissions, privacy, data rights, rollback, branch protection or
+irreversible-action gates.
 
 ## VisePanda visual identity assets
 

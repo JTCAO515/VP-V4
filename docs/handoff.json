@@ -2,12 +2,12 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Extend AI Core Program #2 with an evidence-backed bounded-agent architecture and dependency-ordered production-parity Issue plan, without copying Demo fixtures or bypassing accepted Chat, Canvas, evidence, identity, RLS, provider or release contracts.",
-  "status": "AI-45 and V4-01 are closed; the operator retired Magic Link after masked email-rate-limit and otp-expired evidence; #122 AI-51b has complete operator-observed Preview password-session and owner/other-user RLS evidence, and awaits merge before #84/#15 can be re-evaluated from main",
+  "status": "At the 2026-08-27 live audit #122, #84, #127 and #130 are closed after green merged PRs; #15 is the ready R1 product frontier, while #132 adds continuous cross-Issue AFK scheduling without weakening security or production gates",
   "currentPhase": "R1",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own independently accepted frontier Issues and their evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "retain #122 as open until its authenticated Trip API boundary is independently evidenced, then resume #84 owner/other-user Trip evidence; #15 remains blocked",
+  "intendedNextAgent": "after GOV-AFK-01 merges, launch docs/agents/prompts/continuous-afk-kickoff.md and recompute the live frontier; the current product candidate is #15 but GitHub state remains authoritative",
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
     "audit the Claude model-layer draft against current first-party sources",
@@ -32,6 +32,7 @@
     "independently audit both reports for product/domain contradictions and deep-module engineering seams",
     "replace competing evidence models with Fact/Observation/UserArtifact receipts and typed GroundedClaims",
     "freeze immutable Proposal revisions, atomic confirm-and-apply, durable validated Turn streaming, actor/RLS paths, queue semantics, legacy disposition, and one global critical path",
+    "replace routine per-Issue confirmation with a continuous safe-frontier scheduler, automated evidence gates and a durable operator-action queue",
     "configure GitHub tracker, screenshot-style phase/priority/status labels, canonical triage roles, and single-context domain docs",
     "create one AI Core Program and 41 dependency-ordered child Issues with complete engineering bodies",
     "encode VP-Final migration as disposition, TripPatch golden contract, Fact eligibility, RLS/fault patterns, and import/review/audit quality-gate Issues rather than directory copying",
@@ -85,7 +86,9 @@
     "Keep class/grade requirements as obligation expectations only; they cannot prove current venue service or make Canvas ready.",
     "Keep every researched draft and readiness rule private/ineligible until source rights, typed contract, independent review and acceptance are complete.",
     "Track implementation in GitHub Program #2 and native sub-issues; only the live frontier receives status:ready, and only decision-free work receives ready-for-agent.",
-    "Preserve VP-Final migration quality by requiring golden tests first and an explicit reuse-contract, port-behavior, rewrite, or retire disposition; never copy directories, direct-write Copilot, static Explore seeds, secrets, data, or the full old monorepo."
+    "Preserve VP-Final migration quality by requiring golden tests first and an explicit reuse-contract, port-behavior, rewrite, or retire disposition; never copy directories, direct-write Copilot, static Explore seeds, secrets, data, or the full old monorepo.",
+    "Treat one Issue/branch/PR as a work-unit boundary, not a session stop; after every PR, merge or blocker, recompute the live frontier and continue independent safe work.",
+    "Class A reversible repo-only work may use GitHub auto-merge after all required checks; Class B security/RLS/migration/data-policy work is prepare-only; Class C operator work is queued and skipped without weakening hard gates."
   ],
   "architectureContracts": [
     "TurnCoordinator: start/observe/get/cancel; owns intent, retrieval, routing, validation, durable events, resume.",
@@ -126,6 +129,10 @@
     "tests/{contract,security,e2e}/identity password-login coverage (new/updated)",
     "artifacts/AI-51b/unrun.md (new; credential and remote acceptance boundary)",
     "docs/handoff.json (restructured to jtcoding-handoff/1.0)",
+    "docs/agents/continuous-afk-execution.md (new; cross-Issue scheduler, risk classes and stop conditions)",
+    "docs/agents/prompts/continuous-afk-kickoff.md (new; copyable unattended-session prompt)",
+    "docs/operator-actions.json (new; machine-readable non-delegable action queue)",
+    "AGENTS.md, tracker, triage, execution contract and docs check (updated for Continuous AFK)",
     "AGENTS.md, CONTEXT.md, HANDOFF.md (updated)",
     "brand/ (new visual identity handbook, tokens, IP, icons, UI, social and QA assets)",
     "assets/brand/vise-panda/ (new owner-approved source artwork)",
@@ -179,7 +186,10 @@
     "AI-51b authenticated Trip API navigation is blocked by Browser client policy; no Cookie/JWT/token bypass was attempted",
     "AI-51b operator confirmed the real Preview session boundary: inaccessible Trip 403 while authenticated and 401 after sign-out; no credential or private response was recorded",
     "AI-51b operator confirmed the controlled owner read/confirm/reload and other-user read/confirm-denial matrix; no user, Trip or Proposal identifier was retained",
-    "AI-51b rebased onto origin/main ec0faa8: contract 21/21, security 3/3, E2E 1/1, docs/check/json/diff passed; Preview desktop and 390x844 Arabic RTL signed-out form passed with no console warning/error or horizontal overflow"
+    "AI-51b rebased onto origin/main ec0faa8: contract 21/21, security 3/3, E2E 1/1, docs/check/json/diff passed; Preview desktop and 390x844 Arabic RTL signed-out form passed with no console warning/error or horizontal overflow",
+    "GOV-AFK-01 live audit confirmed #122/#84/#127/#130 closed, #15 ready, and #132 in progress; PR #131 merged green before the policy branch rebased onto current main",
+    "GOV-AFK-01 pnpm docs:check, pnpm check, handoff/operator JSON parse, changed-Markdown local-link check and git diff --check passed; production build and static tests passed 13/13",
+    "The first isolated-worktree pnpm check stopped because node_modules was absent; after a frozen lockfile install with lifecycle scripts disabled, the full check passed without changing pnpm-lock.yaml"
   ],
   "blockers": [
     "The DEC/ADR and engineering baselines are accepted; later provider, content-rights, release and commercial decisions remain gated by their owning Issues.",
@@ -196,7 +206,7 @@
     "Authenticated-only beta and the new Supabase project are accepted; separate Ops deployment plus model/media region and retention remain future operator decisions.",
     "Qwen3.5 OCR and Qwen Audio 3.0 TTS currently have Beijing constraints; the Singapore mandatory multimodal stack is not frozen.",
     "Vercel WebRTC/WebSocket plan support, direct media upload, Supabase pooler, queue quarantine, Storage backup, and deletion topology remain untested.",
-    "AI-51/#84 remains open and is natively blocked by #122: Magic Link is retired and the complete controlled password-session plus owner/other-user route matrix is evidenced; merge #123, then re-evaluate #84 from main before closing it.",
+    "Class B/C work can leave a review or operator dependency on the critical path; Continuous AFK can skip it only while another independent safe frontier exists.",
     "V4-01 closes through this change; #85/#88/#89/#91/#98 remain blocked by #17 and every other V4 Issue retains another open dependency.",
     "The Claude-referenced research/fact-catalogue.json was not provided, so row-level provenance and counts cannot be reproduced.",
     "Twenty-four of 30 candidate record types still lack an exact source locator and 24 candidates are high or critical risk.",
@@ -211,7 +221,6 @@
   ],
   "rollback": "Remove docs/knowledge-base/ and its Claude audit link if this research disposition is rejected; no database, public content or runtime state changed. Preserve GitHub Issue history through status:superseded rather than deletion.",
   "operatorActions": [
-    "Provision the invited Auth user with a distinct application password through a Supabase-controlled action; enter it only in the Preview login form, never in chat, terminal, Issue, PR or artifact.",
     "Decide model/media region, retention and DPA posture when those provider Issues reach the frontier.",
     "Decide and sign the aviation provider contract, or accept the official-handoff fallback (#41/#42). #43 no longer hard-depends on #42.",
     "Accept or reject the AI SDK adoption decision produced by ML-01 (#47).",
@@ -242,11 +251,13 @@
     "docs/agents/issue-tracker.md",
     "docs/agents/triage-labels.md",
     "docs/agents/domain.md",
+    "docs/agents/continuous-afk-execution.md",
+    "docs/operator-actions.json",
     "docs/adr/0001-nextjs-typescript-tailwind-migration.md",
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Merge #123 after its current green checks, fetch main, verify the merged deployment and native Issue dependency graph, then re-evaluate #84 and #15.",
+  "nextAction": "Merge the GOV-AFK-01 policy after green checks, then start the copyable Continuous AFK prompt and let it re-query the live frontier before selecting #15 or any newer eligible Issue.",
   "lastUpdated": "2026-08-27",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",

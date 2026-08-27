@@ -1,0 +1,6 @@
+{
+  "schemaVersion": "vp-v4-operator-actions/1.0",
+  "updatedAt": "2026-08-27",
+  "policy": "docs/agents/continuous-afk-execution.md",
+  "actions": []
+}
