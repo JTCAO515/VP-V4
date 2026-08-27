@@ -108,7 +108,7 @@ function Header({ copy, openMenu, setOpenMenu, setModal, locale }: HeaderProps) 
   return (
     <nav className="site-nav">
       <a href="#top" className="logo-link" aria-label={copy.header.home}>
-        <span className="brand-wordmark">VisePanda.</span>
+        <Image className="brand-logo brand-logo-header" src="/assets/visepanda/brand/VP-Logo.svg" alt="VisePanda" width={4096} height={4096} priority />
       </a>
       <div className="desktop-nav-actions">
         <button className="currency-trigger" onClick={() => setModal("display")} aria-label={copy.header.preferences}>
@@ -500,7 +500,7 @@ function Footer({ copy, setModal, setToast }: { copy: LocalizedCopy; setModal: D
           </div>
         ))}
         <div className="footer-bottom">
-          <span className="brand-wordmark footer-wordmark">VisePanda.</span>
+          <Image className="brand-logo brand-logo-footer" src="/assets/visepanda/brand/VP-Logo.svg" alt="VisePanda" width={4096} height={4096} />
           <p>{copy.footer.copyright}</p>
           <p>{copy.footer.tagline}</p>
         </div>

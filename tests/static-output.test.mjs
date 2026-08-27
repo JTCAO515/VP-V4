@@ -73,13 +73,13 @@ test("keeps the VisePanda AI workspace localized and frontend-only", () => {
   assert.match(css, /\.vp-chat-mobile-tabs/);
 });
 
-test("renders the requested ten-item FAQ, wordmarks, and VisePanda asset references", () => {
+test("renders the requested ten-item FAQ, official logo, and VisePanda asset references", () => {
   const faqButtons = html.match(/<button aria-expanded="false">/g) ?? [];
   assert.equal(faqButtons.length, 10, "expected exactly 10 FAQ controls");
   assert.match(html, /VisePanda 可以直接预订机票、酒店或门票吗？/);
   assert.doesNotMatch(html, /六个执行时刻都已经上线了吗？/);
   assert.doesNotMatch(html, /这个页面会保存我的输入吗？/);
-  assert.ok((html.match(/VisePanda\./g) ?? []).length >= 2, "expected header and footer wordmarks");
+  assert.ok((html.match(/\/assets\/visepanda\/brand\/VP-Logo\.svg/g) ?? []).length >= 2, "expected header and footer logo assets");
   assert.match(html, /src="\/assets\/visepanda\//);
   assert.doesNotMatch(html, /\/assets\/source\//);
   assert.doesNotMatch(html, /src="https?:\/\//);

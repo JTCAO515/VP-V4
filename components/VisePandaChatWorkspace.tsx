@@ -65,7 +65,7 @@ export function VisePandaChatWorkspace() {
   return (
     <main className="vp-chat-workspace" data-locale={locale}>
       <aside className="vp-chat-sidebar" aria-label="VisePanda navigation">
-        <a className="vp-chat-logo" href="/" aria-label="VisePanda home"><span className="brand-wordmark">VisePanda.</span></a>
+        <a className="vp-chat-logo" href="/" aria-label="VisePanda home"><Image className="brand-logo brand-logo-chat" src="/assets/visepanda/brand/VP-Logo.svg" alt="VisePanda" width={4096} height={4096} priority /></a>
         <nav>
           {[MessageCircle, BedDouble, Diamond, HeartHandshake].map((Icon, index) => (
             <button className={index === 0 ? "active" : ""} key={copy.nav[index]} onClick={() => setSurface(index === 1 ? "canvas" : "chat")}>
@@ -82,7 +82,7 @@ export function VisePandaChatWorkspace() {
 
       <header className="vp-chat-mobile-header">
         <button onClick={() => setShowDrawer(true)} aria-label={copy.viewChats}><MessageCircle /></button>
-        <a href="/" className="brand-wordmark">VisePanda.</a>
+        <a href="/" aria-label="VisePanda home"><Image className="brand-logo brand-logo-mobile" src="/assets/visepanda/brand/VP-Logo.svg" alt="VisePanda" width={4096} height={4096} priority /></a>
         <button onClick={() => setShowLanguages(true)} aria-label={copy.language}><span className="flag-icon">{selectedLocale.flag}</span></button>
       </header>
 
@@ -143,7 +143,7 @@ export function VisePandaChatWorkspace() {
           <button onClick={() => setShowLanguages(true)} aria-label={copy.language}><span className="flag-icon">{selectedLocale.flag}</span></button>
         </header>
         <div className="vp-chat-scroll-area">
-          <div className="vp-chat-welcome-mark"><Image src={`${ASSET_ROOT}hero-beijing.jpg`} alt="VisePanda China travel preview" width={1600} height={1600} unoptimized /></div>
+          <div className="vp-chat-welcome-mark"><Image src="/assets/visepanda/brand/guide-welcome.png" alt="VisePanda Guide welcoming a traveller" width={1024} height={1024} /></div>
           <p className="vp-chat-eyebrow">{copy.chatEyebrow}</p>
           <h2>{copy.chatTitle}</h2><p className="vp-chat-intro">{copy.chatBody}</p>
           <button className="vp-chat-assistant-chip"><UserRound />{copy.assistantLabel}</button>

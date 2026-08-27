@@ -37,6 +37,11 @@ h1, h2, h3, p { margin-top: 0; }
 
 .site-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 80; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px 0 32px; background: #f7f6f3; border-bottom: 1px solid rgba(42,24,46,.1); }
 .logo-link { color: var(--ink); text-decoration: none; }
+.brand-logo { display: block; width: auto; object-fit: contain; }
+.brand-logo-header { width: 116px; height: 38px; }
+.brand-logo-footer { width: 128px; height: 42px; }
+.brand-logo-chat { width: 132px; height: 44px; }
+.brand-logo-mobile { width: 112px; height: 36px; }
 .brand-wordmark { display: inline-block; color: var(--ink); font-size: 22px; font-weight: 700; letter-spacing: -.055em; line-height: 1; white-space: nowrap; }
 .footer-wordmark { font-size: 24px; }
 .desktop-nav-actions { display: flex; align-items: center; }
@@ -223,6 +228,7 @@ html[dir="rtl"] .toast { direction: rtl; }
   .mobile-user { display: flex; }
   .site-nav { height: 56px; padding: 0 17px 0 22px; }
   .brand-wordmark { font-size: 20px; }
+  .brand-logo-header { width: 104px; height: 34px; }
   .menu-scrim { inset: 0; background: rgba(42,24,46,.35); }
   .account-menu { top: auto; left: 0; right: 0; bottom: 0; width: 100%; max-height: 70vh; overflow: auto; padding: 24px 16px 18px; border-radius: 14px 14px 0 0; }
   .sheet-handle { display: block; width: 42px; height: 4px; margin: -12px auto 10px; border-radius: 999px; background: #eee9ec; }
