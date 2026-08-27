@@ -2,7 +2,7 @@
 
 ## Scope
 
-PR #123 at `de977db` replaces the R1 Magic Link path with an operator-provisioned closed-beta
+PR #123 at `f78b031` replaces the R1 Magic Link path with an operator-provisioned closed-beta
 email/password sign-in and local sign-out surface. It does not change Supabase migrations, RLS,
 Trip RPCs, public signup or password recovery.
 
@@ -14,6 +14,8 @@ Trip RPCs, public signup or password recovery.
   no browser console warning/error was observed.
 - A no-cookie remote GET for an inaccessible UUID returned `401 UNAUTHENTICATED`.
 - The retired `/api/auth/magic-link` and `/auth/callback` routes returned `404` on the Preview.
+- After rebasing onto `ec0faa8`, the Preview rendered the signed-out form at 1280×800 and 390×844 Arabic
+  RTL without console warning/error or horizontal overflow.
 
 ## Boundary and remaining evidence
 

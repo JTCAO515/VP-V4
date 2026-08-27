@@ -18,3 +18,7 @@
   automation blocks direct navigation to `/api/trips/*` with `net::ERR_BLOCKED_BY_CLIENT`; it must not
   be substituted with a copied Cookie or token. An anonymous remote curl probe returned `401
   UNAUTHENTICATED`; the retired Magic Link initiation and callback routes returned `404`.
+- PR #123 was rebased onto `origin/main` at `ec0faa8` after the visual-identity merge. The rebased
+  Preview rendered the signed-out form at 1280×800 and 390×844 Arabic RTL with no console warning/error
+  or horizontal overflow. This is UI/Preview evidence only; it does not replace the missing authenticated
+  Trip API and owner/other-user RLS evidence.

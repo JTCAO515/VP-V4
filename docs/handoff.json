@@ -176,7 +176,8 @@
     "AI-51b local browser QA passed at 1280x800 and 390x844: meaningful login form, Arabic lang/RTL, no horizontal overflow, no framework overlay and no console warning/error",
     "AI-51b Preview: operator-confirmed password sign-in and Codex-observed signed-in then sign-out-to-form transition passed without console warning/error",
     "AI-51b Preview: anonymous inaccessible Trip GET returned 401 UNAUTHENTICATED; retired Magic Link initiation and callback routes returned 404",
-    "AI-51b authenticated Trip API navigation is blocked by Browser client policy; no Cookie/JWT/token bypass was attempted"
+    "AI-51b authenticated Trip API navigation is blocked by Browser client policy; no Cookie/JWT/token bypass was attempted",
+    "AI-51b rebased onto origin/main ec0faa8: contract 21/21, security 3/3, E2E 1/1, docs/check/json/diff passed; Preview desktop and 390x844 Arabic RTL signed-out form passed with no console warning/error or horizontal overflow"
   ],
   "blockers": [
     "The DEC/ADR and engineering baselines are accepted; later provider, content-rights, release and commercial decisions remain gated by their owning Issues.",
