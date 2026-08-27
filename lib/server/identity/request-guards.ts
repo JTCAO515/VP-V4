@@ -21,3 +21,8 @@ export function isProposalRevisionInput(value: unknown): value is Readonly<{ pro
   return isUuid(String(input.proposalId ?? ""))
     && typeof input.title === "string" && input.title.trim().length > 0 && input.title.trim().length <= 160;
 }
+
+export function isProposalRejectInput(value: unknown): value is Readonly<{ proposalId: string }> {
+  if (!value || typeof value !== "object") return false;
+  return isUuid(String((value as Record<string, unknown>).proposalId ?? ""));
+}

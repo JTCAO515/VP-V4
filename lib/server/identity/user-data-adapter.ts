@@ -8,6 +8,7 @@ export type TripSnapshot = Readonly<{ id: string; title: string; headVersion: nu
 export type TripAudit = Readonly<{ id: string; action: string; proposalId: string; createdAt: string }>;
 export type ConfirmInput = Readonly<{ proposalId: string; idempotencyKey: string; digest: string }>;
 export type ProposalRevisionInput = Readonly<{ proposalId: string; title: string }>;
+export type ProposalRejectInput = Readonly<{ proposalId: string }>;
 export type PendingProposalRead = Readonly<{
   trip: TripSnapshot;
   proposal: Readonly<{
@@ -98,6 +99,26 @@ export function createUserDataAdapter(request: NextRequest) {
     if (result.outcome !== "revised" || !result.proposal_id || !result.revision || result.base_trip_version === null) return { error: "PROPOSAL_NOT_CONFIRMABLE" };
     return { data: { proposalId: result.proposal_id, revision: result.revision, baseTripVersion: result.base_trip_version } };
   };
+  const rejectPendingProposal = async (tripId: string, input: ProposalRejectInput): Promise<AdapterResult<Readonly<{ proposalId: string; status: "rejected" }>>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data: proposal, error: proposalError } = await client.from("trip_proposals")
+      .select("trip_id,status,expires_at")
+      .eq("id", input.proposalId)
+      .maybeSingle();
+    if (proposalError || !proposal || proposal.trip_id !== tripId) return { error: "FORBIDDEN" };
+    if (proposal.status !== "pending" || proposal.expires_at <= new Date().toISOString()) return { error: "PROPOSAL_NOT_CONFIRMABLE" };
+    const { data, error } = await client.from("trip_proposals")
+      .update({ status: "rejected" })
+      .eq("id", input.proposalId)
+      .eq("trip_id", tripId)
+      .eq("status", "pending")
+      .select("id,status")
+      .maybeSingle();
+    if (error) return { error: "INTERNAL_ERROR" };
+    if (!data || data.status !== "rejected") return { error: "PROPOSAL_NOT_CONFIRMABLE" };
+    return { data: { proposalId: data.id, status: "rejected" } };
+  };
   const confirm = async (tripId: string, input: ConfirmInput): Promise<AdapterResult<Readonly<{ outcome: "applied" | "already_applied"; resultingVersion: number }>>> => {
     const actor = await authenticated();
     if ("error" in actor) return { error: actor.error };
@@ -113,7 +134,7 @@ export function createUserDataAdapter(request: NextRequest) {
     if (result.outcome !== "applied" && result.outcome !== "already_applied") return { error: "PROPOSAL_NOT_CONFIRMABLE" };
     return { data: { outcome: result.outcome, resultingVersion: result.resulting_version } };
   };
-  return { applyCookies, authenticated, getTrip, getPendingProposal, revisePendingProposal, confirm };
+  return { applyCookies, authenticated, getTrip, getPendingProposal, revisePendingProposal, rejectPendingProposal, confirm };
 }
 
 export function pendingProposalRead(input: Readonly<{
