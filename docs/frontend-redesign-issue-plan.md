@@ -23,7 +23,7 @@ This plan reuses [#87](https://github.com/JTCAO515/VP-V4/issues/87) as Demo pari
 | F2 | [#139 WEB-05](https://github.com/JTCAO515/VP-V4/issues/139) | R0 | blocked by #137 | Three VI directions and operator selection |
 | F3 | [#140 WEB-06](https://github.com/JTCAO515/VP-V4/issues/140) | R1 | blocked by #138/#139 | Shared tokens, brand, locale, motion and primitives |
 | F4 | [#141 WEB-07](https://github.com/JTCAO515/VP-V4/issues/141) | R1 | blocked by #140 | Homepage independent rewrite and Open VisePanda entry |
-| F5 | [#142 WEB-08](https://github.com/JTCAO515/VP-V4/issues/142) | R1 | blocked by #140 | Closed-beta Login, first-run and global auth states |
+| F5 | [#142 WEB-08](https://github.com/JTCAO515/VP-V4/issues/142) | R1 | blocked by #140/#141 | Closed-beta Login, first-run and global auth states |
 | F6 | [#92 V4-07](https://github.com/JTCAO515/VP-V4/issues/92) | R2 | blocked | Existing Product Shell; additionally blocked by #140/#142 |
 | F7 | [#143 WEB-09](https://github.com/JTCAO515/VP-V4/issues/143) | R2 | blocked by #141/#142/#92 | Entry context, locale and auth continuity |
 | F8 | #93-#116 | R2-R5 | existing DAG | Demo parity production capability slices |
@@ -41,6 +41,7 @@ flowchart TD
   V --> F
   F --> H["#141 WEB-07 Homepage"]
   F --> I["#142 WEB-08 Login and first-run"]
+  H --> I
   F --> S["#92 V4-07 Product Shell"]
   I --> S
   H --> C["#143 WEB-09 continuity"]
@@ -59,12 +60,12 @@ Native sub-issue and dependency links are authoritative. Every body retains text
 
 ## 4. Ownership and WIP
 
-- #136 is a sub-issue of Program #2. #137-#145 are sub-issues of #136.
+- #136 is an in-progress program sub-issue of #2. #137-#145 are sub-issues of #136.
 - Only one Issue may own a path at a time. #138 owns removal/licence/asset checks; #140 consumes only approved assets.
 - #92 continues to own `app/(product)/**` and `components/product-shell/**`; no WEB Issue creates a second shell.
 - #93-#116 retain Chat, Canvas, Memory, Today, Tools, Explore, User, Privacy, Offline and final-parity runtime ownership.
 - #57 is superseded by #141. Its map-first local Preview does not authorize production.
-- Open PR #124 applies VisePanda assets to the old stop-ship Landing/Chat surfaces. It must not merge as-is or run in parallel on the same paths. Approved derivatives may be reused through #138/#140 after review.
+- PR #124, which applied VisePanda assets to the old stop-ship Landing/Chat surfaces, was closed as superseded. Approved derivatives may be reused only through #138/#140 after review.
 - One Issue = one branch = one reviewable PR; no stacked PRs on unmerged work.
 
 ## 5. Frontier rules
