@@ -5,11 +5,11 @@
 - Operator decision: accepted in [ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md).
 - Program: [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136); tracker mapping in `docs/frontend-redesign-issue-plan.md`.
 - Current frontend maturity: Homepage and `/visepanda` are `stop-ship`; implementation has not started.
-- Current governance work: [WEB-03 #137](https://github.com/JTCAO515/VP-V4/issues/137) publishes the ADR, Issue DAG, execution rows and handoff.
-- Next frontend frontier after #137 closes: #138 asset/rights work (`ready-for-agent`) and #139 three visual directions (`ready-for-human`).
+- Completed governance work: [WEB-03 #137](https://github.com/JTCAO515/VP-V4/issues/137) published the ADR, Issue DAG, execution rows and handoff to `main@0b6c27f`.
+- Current frontend frontier: #138 asset/rights work (`ready-for-agent`); #139 three visual directions is `ready-for-human`; downstream Issues remain blocked.
 - Shared authorities: #87 Demo parity, #92 Product Shell, ADR-0003 Trip writes, ADR-0017 password-authenticated closed beta.
 - Map: disabled until a separate compliance gate closes. Homepage primary CTA: `Open VisePanda`.
-- WIP conflict: open PR #124 applies brand assets to stop-ship surfaces and must not merge as-is or overlap #138/#140 paths.
+- WIP conflict resolved: PR #124 was closed as superseded; approved derivatives may re-enter only through #138/#140.
 - Rollback: no compliant stop-ship clone may be republished; use truthful unavailable/Early Access if no cleared release exists.
 
 VP-V4 now contains bounded R1 contracts, durable Trip persistence/RLS paths, a fake-model TurnCoordinator and authenticated Trip route code. The product surface remains a preview: real model, RAG, Explore, external data, multimodal providers and fully accepted production Magic Link/session evidence are not available.

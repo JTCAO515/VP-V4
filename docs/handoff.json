@@ -2,12 +2,12 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Deliver the accepted AI Core and a complete independently expressed VisePanda frontend across Homepage, closed-beta Login, first-run, Product Shell, mobile, Profile/Privacy and store release without copying Demo fixtures or competitor expression.",
-  "status": "ADR-0018 and WEB-02 #136 freeze the operator-approved frontend redesign; #137 is the governance publication frontier, while implementation children #138-#145 remain dependency-gated alongside existing #92-#116",
+  "status": "ADR-0018 and WEB-02 #136 are published on main; WEB-03 #137 is closed, #138 is the decision-free frontend asset/rights frontier, #139 is ready-for-human visual-direction work, and all downstream frontend Issues remain dependency-gated",
   "currentPhase": "R1",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own independently accepted frontier Issues and their evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "after #137 reaches main, recompute the live frontier: #138 is the decision-free asset/rights candidate, #139 requires operator visual selection, and #15 remains the independent R1 product candidate",
+  "intendedNextAgent": "execute #138 asset quarantine/rights ledger in its own branch; #139 remains human-gated for the three-direction selection flow, while #15 remains the independent R1 product candidate",
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
     "audit the Claude model-layer draft against current first-party sources",
@@ -203,7 +203,7 @@
   ],
   "blockers": [
     "Homepage and /visepanda are stop-ship until their replacement and WEB-11 release evidence pass; they cannot be used as a public/store fallback.",
-    "Open PR #124 applies approved brand derivatives to the old stop-ship surfaces and must not merge as-is or overlap #138/#140 paths.",
+    "PR #124 was closed as superseded because it applied brand derivatives to stop-ship surfaces; approved derivatives may re-enter only through #138/#140.",
     "China map remains disabled until a separate source/representation/review/allowed-use and operator/legal gate closes.",
     "Runtime source assets, Fig Grotesk, duplicate shapes, asset rights, SBOM/NOTICE and store claim evidence are owned by #138/#145.",
     "The DEC/ADR and engineering baselines are accepted; later provider, content-rights, release and commercial decisions remain gated by their owning Issues.",
@@ -278,7 +278,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Land WEB-03 #137 on main, close it after remote verification, then mark #138 ready-for-agent and #139 ready-for-human while all downstream frontend Issues stay blocked.",
+  "nextAction": "Start WEB-04 #138 from current main in an isolated branch; keep WEB-05 #139 human-gated and all downstream frontend Issues blocked until their native dependencies close.",
   "lastUpdated": "2026-08-27",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
