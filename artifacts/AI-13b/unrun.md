@@ -10,9 +10,11 @@ No required local engineering check is unrun.
   was pushed with `--skip-vault`, then appeared in remote migration history. Read-only schema checks
   confirmed `parent_proposal_id`, `revise_trip_proposal` as `SECURITY INVOKER`, and the owner update
   policy. No seed, role, Vault or other configuration update ran.
-- Preview owner/other-user child-revision session verification and downstream Canvas UI evidence remain
-  pending. The PR is intentionally unmerged until the owner-JWT route proves the remote child revision
-  lifecycle; no production capability claim is made.
+- The operator completed the Preview owner/other-user child-revision matrix on 2026-08-27: other-user
+  revision was denied, the owner read the parent, created a durable child revision, confirmed that exact
+  child and reloaded the updated Trip/audit state. No credential or private identifier is retained.
+  Downstream Canvas UI/browser evidence remains #15 ownership; this backend PR makes no Canvas or
+  production product claim.
 - Remote migration-state reads were attempted twice on 2026-08-27 without a password or connection
   string. The default resolver returned `LegacyDbConnectError: Connection terminated unexpectedly`; the
   HTTPS resolver returned `LegacyDbConnectError` because no valid database IP could be resolved. This
