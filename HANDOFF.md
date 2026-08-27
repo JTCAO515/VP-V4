@@ -81,7 +81,8 @@ Rollback: remove the local `docs/knowledge-base/` package and audit link if the 
 - Agent/RAG/Memory/Tool/Context architecture: `docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md`; source ledger: `docs/research/agent-context-rag-memory-tool-evidence-2026-08-25.md`.
 - Published tracker graph: `docs/vp-v4-production-parity-issue-plan.md`, V4-01 through V4-31, mapped to #85/#87-#116 and registered in `docs/agents/issue-execution-contract.md`.
 - V4-01 adds `docs/architecture/v4-01-demo-parity-registry.md` and `v4-01-framework-adoption-matrix.md`: 40 grouped Demo actions, 14 framework candidates, explicit fixture disposition and 31/31 execution-row audit. It activates no runtime.
-- After V4-01 closes, #84 is the only ready frontier. Supabase Site URL and callback allowlist are visually verified; real Magic Link session and owner/other-user evidence remain open, so #15 stays blocked. New parity Issues are not authorization to start dependency-blocked work.
+- #87 V4-01 is closed. The operator then retired Magic Link after masked email-rate-limit and `otp_expired` evidence; #120/PR #121 is closed without merge.
+- #122 AI-51b adds operator-provisioned email/password login, sign-out and five-locale/RTL UI. Preview password session, authenticated Trip `403`, post-sign-out `401`, anonymous `401`, retired-route `404` and the controlled owner/other-user matrix are evidenced. It has no public signup or recovery and does not reuse Supabase Dashboard credentials. Merge #123, then re-evaluate #84 and #15 from main.
 - AI-43 requires a current AI SDK Core/ToolLoop/Workflow comparison before execution; LangChain/LangGraph/GraphRAG/multi-agent are not default production dependencies.
 
 ## VisePanda visual identity delivery

@@ -133,6 +133,9 @@ export const copy = {
       privacyHint: "当前仅用于展示正式产品可能提供的隐私控制位置。",
       displayOptions: [["美元", "$ - USD"], ["欧元", "€ - EUR"], ["人民币", "¥ - CNY"], ["英镑", "£ - GBP"], ["日元", "¥ - JPY"], ["新加坡元", "S$ - SGD"], ["泰铢", "฿ - THB"], ["澳大利亚元", "A$ - AUD"]],
     },
+    auth: {
+      language: "界面语言", eyebrow: "仅限受邀测试用户", title: "登录 VisePanda", body: "请使用 closed beta 账户对应的邮箱和独立应用密码。", emailLabel: "邮箱", emailPlaceholder: "you@example.com", passwordLabel: "密码", passwordPlaceholder: "应用密码", submit: "登录", submitting: "正在登录…", checking: "正在检查会话…", invalid: "邮箱或密码不正确。", rateLimited: "尝试次数过多，请稍后再试。", unavailable: "登录暂时不可用。", signedInTitle: "已登录", signedInBody: "当前浏览器已建立 VisePanda 认证会话。", continue: "进入工作台", signOut: "退出登录", signingOut: "正在退出…", closedBeta: "Invitation-only closed beta", noSignup: "此处不开放公众注册或密码找回。",
+    },
     common: { attachment: "添加附件", voice: "语音输入", send: "发送", backTop: "返回顶部", referenceImage: "VisePanda 中国旅行场景" },
   },
   en: {
@@ -229,6 +232,9 @@ export const copy = {
       privacyHint: "Shown only to indicate where privacy controls may appear in the real product.",
       displayOptions: [["US dollar", "$ - USD"], ["Euro", "€ - EUR"], ["Chinese yuan", "¥ - CNY"], ["British pound", "£ - GBP"], ["Japanese yen", "¥ - JPY"], ["Singapore dollar", "S$ - SGD"], ["Thai baht", "฿ - THB"], ["Australian dollar", "A$ - AUD"]],
     },
+    auth: {
+      language: "Interface language", eyebrow: "Invitation-only access", title: "Sign in to VisePanda", body: "Use the email and separate application password for your closed-beta account.", emailLabel: "Email", emailPlaceholder: "you@example.com", passwordLabel: "Password", passwordPlaceholder: "Application password", submit: "Sign in", submitting: "Signing in…", checking: "Checking session…", invalid: "The email or password is incorrect.", rateLimited: "Too many attempts. Try again later.", unavailable: "Sign-in is temporarily unavailable.", signedInTitle: "You are signed in", signedInBody: "This browser now has an authenticated VisePanda session.", continue: "Continue to workspace", signOut: "Sign out", signingOut: "Signing out…", closedBeta: "Invitation-only closed beta", noSignup: "Public signup and password recovery are not available here.",
+    },
     common: { attachment: "Add attachment", voice: "Voice input", send: "Send", backTop: "Back to top", referenceImage: "VisePanda China travel scene" },
   },
   es: {
@@ -309,6 +315,9 @@ export const copy = {
     modals: {
       close: "Cerrar", languageTitle: "Idioma de la interfaz", languageToast: "Idioma cambiado a: ", displayTitle: "Vista previa de preferencias", displayToast: "Preferencia actualizada: ", privacyTitle: "Nota de privacidad", privacyBody: "Este prototipo no activa cookies de análisis ni marketing. El producto real seguirá su política de privacidad y configuración de despliegue.", privacyOptions: ["Funciones esenciales (desactivadas)", "Analítica (desactivada)", "Marketing (desactivado)", "Perfil de viaje (desactivado)"], privacyHint: "Solo muestra dónde podrían aparecer los controles de privacidad.", displayOptions: [["Dólar estadounidense", "$ - USD"], ["Euro", "€ - EUR"], ["Yuan chino", "¥ - CNY"], ["Libra esterlina", "£ - GBP"], ["Yen japonés", "¥ - JPY"], ["Dólar de Singapur", "S$ - SGD"], ["Baht tailandés", "฿ - THB"], ["Dólar australiano", "A$ - AUD"]],
     },
+    auth: {
+      language: "Idioma de la interfaz", eyebrow: "Acceso solo por invitación", title: "Inicia sesión en VisePanda", body: "Usa el correo y la contraseña de aplicación independiente de tu cuenta closed beta.", emailLabel: "Correo electrónico", emailPlaceholder: "you@example.com", passwordLabel: "Contraseña", passwordPlaceholder: "Contraseña de la aplicación", submit: "Iniciar sesión", submitting: "Iniciando sesión…", checking: "Comprobando la sesión…", invalid: "El correo o la contraseña no son correctos.", rateLimited: "Demasiados intentos. Inténtalo más tarde.", unavailable: "El inicio de sesión no está disponible temporalmente.", signedInTitle: "Sesión iniciada", signedInBody: "Este navegador ya tiene una sesión autenticada de VisePanda.", continue: "Continuar al espacio de trabajo", signOut: "Cerrar sesión", signingOut: "Cerrando sesión…", closedBeta: "Closed beta solo por invitación", noSignup: "Aquí no están disponibles el registro público ni la recuperación de contraseña.",
+    },
     common: { attachment: "Añadir archivo", voice: "Entrada de voz", send: "Enviar", backTop: "Volver arriba", referenceImage: "Escena de viaje VisePanda en China" },
   },
   ru: {
@@ -351,6 +360,9 @@ export const copy = {
     modals: {
       close: "Закрыть", languageTitle: "Язык интерфейса", languageToast: "Язык изменён: ", displayTitle: "Предпросмотр настроек", displayToast: "Настройка обновлена: ", privacyTitle: "О конфиденциальности", privacyBody: "Прототип не включает аналитические и маркетинговые cookie. Реальный продукт будет следовать опубликованной политике и конфигурации.", privacyOptions: ["Основные функции (выкл.)", "Аналитика (выкл.)", "Маркетинг (выкл.)", "Профиль поездки (выкл.)"], privacyHint: "Только показывает возможное расположение настроек конфиденциальности.", displayOptions: [["Доллар США", "$ - USD"], ["Евро", "€ - EUR"], ["Китайский юань", "¥ - CNY"], ["Фунт стерлингов", "£ - GBP"], ["Японская иена", "¥ - JPY"], ["Сингапурский доллар", "S$ - SGD"], ["Тайский бат", "฿ - THB"], ["Австралийский доллар", "A$ - AUD"]],
     },
+    auth: {
+      language: "Язык интерфейса", eyebrow: "Доступ только по приглашению", title: "Вход в VisePanda", body: "Используйте электронную почту и отдельный пароль приложения для closed beta.", emailLabel: "Электронная почта", emailPlaceholder: "you@example.com", passwordLabel: "Пароль", passwordPlaceholder: "Пароль приложения", submit: "Войти", submitting: "Выполняется вход…", checking: "Проверка сессии…", invalid: "Неверная почта или пароль.", rateLimited: "Слишком много попыток. Повторите позже.", unavailable: "Вход временно недоступен.", signedInTitle: "Вы вошли", signedInBody: "В этом браузере создана подтверждённая сессия VisePanda.", continue: "Перейти в рабочее пространство", signOut: "Выйти", signingOut: "Выполняется выход…", closedBeta: "Closed beta по приглашению", noSignup: "Публичная регистрация и восстановление пароля здесь недоступны.",
+    },
     common: { attachment: "Добавить файл", voice: "Голосовой ввод", send: "Отправить", backTop: "Наверх", referenceImage: "Сцена поездки VisePanda по Китаю" },
   },
   ar: {
@@ -387,6 +399,9 @@ export const copy = {
     },
     modals: {
       close: "إغلاق", languageTitle: "لغة الواجهة", languageToast: "تم تغيير اللغة إلى: ", displayTitle: "معاينة تفضيلات العرض", displayToast: "تم تحديث التفضيل: ", privacyTitle: "ملاحظة الخصوصية", privacyBody: "لا يفعّل هذا النموذج ملفات تعريف ارتباط للتحليلات أو التسويق. سيتبع المنتج الحقيقي سياسة الخصوصية وإعدادات النشر المعلنة.", privacyOptions: ["الميزات الأساسية (متوقفة)", "التحليلات (متوقفة)", "التسويق (متوقف)", "ملف السفر (متوقف)"], privacyHint: "يُعرض فقط لتوضيح مكان ظهور ضوابط الخصوصية مستقبلاً.", displayOptions: [["الدولار الأمريكي", "$ - USD"], ["اليورو", "€ - EUR"], ["اليوان الصيني", "¥ - CNY"], ["الجنيه الإسترليني", "£ - GBP"], ["الين الياباني", "¥ - JPY"], ["الدولار السنغافوري", "S$ - SGD"], ["البات التايلاندي", "฿ - THB"], ["الدولار الأسترالي", "A$ - AUD"]],
+    },
+    auth: {
+      language: "لغة الواجهة", eyebrow: "الدخول بالدعوة فقط", title: "تسجيل الدخول إلى VisePanda", body: "استخدم البريد الإلكتروني وكلمة مرور التطبيق المنفصلة لحساب closed beta.", emailLabel: "البريد الإلكتروني", emailPlaceholder: "you@example.com", passwordLabel: "كلمة المرور", passwordPlaceholder: "كلمة مرور التطبيق", submit: "تسجيل الدخول", submitting: "جارٍ تسجيل الدخول…", checking: "جارٍ التحقق من الجلسة…", invalid: "البريد الإلكتروني أو كلمة المرور غير صحيحة.", rateLimited: "محاولات كثيرة جداً. حاول لاحقاً.", unavailable: "تسجيل الدخول غير متاح مؤقتاً.", signedInTitle: "تم تسجيل الدخول", signedInBody: "لدى هذا المتصفح الآن جلسة VisePanda موثقة.", continue: "المتابعة إلى مساحة العمل", signOut: "تسجيل الخروج", signingOut: "جارٍ تسجيل الخروج…", closedBeta: "نسخة closed beta بالدعوة فقط", noSignup: "التسجيل العام واستعادة كلمة المرور غير متاحين هنا.",
     },
     common: { attachment: "إضافة مرفق", voice: "إدخال صوتي", send: "إرسال", backTop: "العودة للأعلى", referenceImage: "مشهد سفر VisePanda في الصين" },
   },

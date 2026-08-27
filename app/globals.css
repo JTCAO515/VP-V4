@@ -469,3 +469,45 @@ html[dir="rtl"] .vp-chat-context { border-right: 0; border-left: 1px solid #ebe7
 html[dir="rtl"] .vp-chat-sidebar nav button, html[dir="rtl"] .vp-chat-language-modal > button, html[dir="rtl"] .vp-chat-history-row { text-align: right; }
 html[dir="rtl"] .vp-chat-poi-grid button, html[dir="rtl"] .vp-chat-section-heading > button, html[dir="rtl"] .vp-chat-brief-row > button { flex-direction: row-reverse; }
 html[dir="rtl"] .vp-chat-message.user { margin-right: auto; margin-left: 0; }
+
+.auth-shell { min-height: 100dvh; display: grid; grid-template-columns: minmax(320px, .82fr) minmax(440px, 1.18fr); background: #fbfaf7; }
+.auth-brand-panel { padding: clamp(32px, 5vw, 76px); display: flex; flex-direction: column; justify-content: space-between; color: #fff; background: radial-gradient(circle at 18% 20%, rgba(255,255,255,.18), transparent 30%), #30243a; }
+.auth-wordmark { width: fit-content; color: #fff; font-size: 26px; font-weight: 700; letter-spacing: -.04em; text-decoration: none; }
+.auth-brand-panel > div { max-width: 520px; }
+.auth-brand-panel h1 { max-width: 620px; margin: 12px 0 20px; color: #fff; font-size: clamp(44px, 5vw, 76px); line-height: .96; letter-spacing: -.055em; }
+.auth-brand-panel > div > p:last-child { max-width: 48ch; margin: 0; color: #d9cedf; font-size: 17px; line-height: 1.65; }
+.auth-eyebrow { margin: 0; color: #bfa1ef; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.auth-boundary { margin: 0; color: #c7b9cd; font-size: 13px; }
+.auth-form-panel { position: relative; min-width: 0; padding: clamp(90px, 11vh, 136px) clamp(28px, 8vw, 128px) 64px; display: grid; place-items: center; }
+.auth-language { position: absolute; top: 28px; right: 34px; display: flex; align-items: center; gap: 10px; color: #63576a; font-size: 12px; font-weight: 600; }
+.auth-language select { min-height: 38px; padding: 0 34px 0 12px; border: 1px solid #ded7e2; border-radius: 999px; color: #33293a; background: #fff; }
+.auth-card { width: min(480px, 100%); padding: clamp(28px, 5vw, 48px); border: 1px solid #e6e0e8; border-radius: 28px; background: #fff; box-shadow: 0 24px 70px rgba(52,37,61,.11); }
+.auth-card form { display: grid; }
+.auth-card label { margin: 18px 0 7px; color: #403646; font-size: 13px; font-weight: 650; }
+.auth-card input { width: 100%; min-height: 50px; padding: 0 15px; border: 1px solid #d8d0dc; border-radius: 13px; outline: none; color: #2e2434; background: #fff; font: inherit; }
+.auth-card input:focus { border-color: #9d70d7; box-shadow: 0 0 0 3px rgba(157,112,215,.16); }
+.auth-primary, .auth-secondary { width: 100%; min-height: 50px; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; font-size: 14px; font-weight: 700; text-decoration: none; }
+.auth-primary { margin-top: 26px; color: #fff; background: #30243a; }
+.auth-primary:hover { background: #493657; }
+.auth-primary:disabled, .auth-secondary:disabled { opacity: .55; cursor: wait; }
+.auth-secondary { margin-top: 10px; color: #43364b; background: #f1ecf3; }
+.auth-message { min-height: 22px; margin: 12px 0 0; color: #9b3450; font-size: 13px; line-height: 1.45; }
+.auth-no-signup { margin: 20px 0 0; padding-top: 18px; border-top: 1px solid #eee9ef; color: #786d7d; font-size: 12px; line-height: 1.5; }
+.auth-status { margin: 0; color: #655a6a; text-align: center; }
+.auth-signed-in h2 { margin: 10px 0 12px; font-size: 34px; letter-spacing: -.035em; }
+.auth-signed-in > p:not(.auth-eyebrow) { margin: 0; color: #695f6d; line-height: 1.55; }
+
+html[dir="rtl"] .auth-shell { direction: rtl; }
+html[dir="rtl"] .auth-language { right: auto; left: 34px; }
+html[dir="rtl"] .auth-language select { padding: 0 12px 0 34px; }
+
+@media (max-width: 760px) {
+  .auth-shell { display: block; background: #fff; }
+  .auth-brand-panel { min-height: 260px; padding: 28px 24px; }
+  .auth-brand-panel h1 { margin-block: 8px 13px; font-size: 42px; }
+  .auth-brand-panel > div > p:last-child { font-size: 14px; }
+  .auth-form-panel { min-height: calc(100dvh - 260px); padding: 86px 18px 40px; align-items: start; }
+  .auth-language { top: 22px; right: 20px; }
+  html[dir="rtl"] .auth-language { right: auto; left: 20px; }
+  .auth-card { padding: 26px 22px; border: 0; border-radius: 20px; box-shadow: 0 14px 44px rgba(52,37,61,.1); }
+}
