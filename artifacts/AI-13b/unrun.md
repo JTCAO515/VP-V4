@@ -12,3 +12,12 @@ No required local engineering check is unrun.
   string. The default resolver returned `LegacyDbConnectError: Connection terminated unexpectedly`; the
   HTTPS resolver returned `LegacyDbConnectError` because no valid database IP could be resolved. This
   is an external connectivity blocker for remote rehearsal, not evidence that the migration is applied.
+- A Management API read via `supabase db query --linked` subsequently reached the remote migration
+  history and confirmed its head is `20260825161535`, before this migration. `supabase db push --linked
+  --dry-run` still failed through the legacy direct-DB path with connection termination. Do not replace
+  `db push` with an ad-hoc Management API write: that would apply SQL without canonical migration
+  history. Operator action is required to restore the CLI migration path or choose an approved
+  migration-runner procedure.
+- Read-only remote advisors reported pre-existing warnings for `private.ai10_confirm_fault_trigger`
+  search path, public `rls_auto_enable()` security-definer execution, and leaked-password protection.
+  This PR does not create or modify those objects; the warnings need separate security ownership.
