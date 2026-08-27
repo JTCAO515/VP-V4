@@ -1,13 +1,13 @@
 {
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
-  "objective": "Extend AI Core Program #2 with an evidence-backed bounded-agent architecture and dependency-ordered production-parity Issue plan, without copying Demo fixtures or bypassing accepted Chat, Canvas, evidence, identity, RLS, provider or release contracts.",
-  "status": "At the 2026-08-27 live audit #122, #84, #127 and #130 are closed after green merged PRs; #15 is the ready R1 product frontier, while #132 adds continuous cross-Issue AFK scheduling without weakening security or production gates",
+  "objective": "Deliver the accepted AI Core and a complete independently expressed VisePanda frontend across Homepage, closed-beta Login, first-run, Product Shell, mobile, Profile/Privacy and store release without copying Demo fixtures or competitor expression.",
+  "status": "ADR-0018 and WEB-02 #136 freeze the operator-approved frontend redesign; #137 is the governance publication frontier, while implementation children #138-#145 remain dependency-gated alongside existing #92-#116",
   "currentPhase": "R1",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own independently accepted frontier Issues and their evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "after GOV-AFK-01 merges, launch docs/agents/prompts/continuous-afk-kickoff.md and recompute the live frontier; the current product candidate is #15 but GitHub state remains authoritative",
+  "intendedNextAgent": "after #137 reaches main, recompute the live frontier: #138 is the decision-free asset/rights candidate, #139 requires operator visual selection, and #15 remains the independent R1 product candidate",
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
     "audit the Claude model-layer draft against current first-party sources",
@@ -61,6 +61,7 @@
     "Issue-level estimates total 207 focused days (~41 weeks) after the 2026-08-24 review additions, above the report 24-35 week range and far above the 10-15 week core-alpha scenario."
   ],
   "decisions": [
+    "ADR-0018: preserve functional/information equivalence but independently redraw physical expression; current Homepage and /visepanda are stop-ship; VisePanda VI + Golden Route + Guide is the only new visual baseline; map is off by default; source assets/Fig Grotesk/duplicate shapes retire; #87 and #92 remain the parity and Product Shell authorities; complete redesign includes Login/mobile/global states/Profile/Privacy/store; Open VisePanda is the Homepage primary CTA.",
     "Treat DeepSeek Flash-0731 public beta as a provisional text baseline candidate with thinking explicitly disabled, Pro-0813 as GA for complex async work, and Vision Exp as a separate experimental challenger; no production portfolio is frozen before eval/conformance/region/DPA.",
     "Keep Kimi and GLM eval-only until task-level VisePanda evidence supports promotion.",
     "Require TripProposal, visible Canvas diff, explicit user confirmation, and deterministic TripPatch before every AI-originated Trip write.",
@@ -91,6 +92,9 @@
     "Class A reversible repo-only work may use GitHub auto-merge after all required checks; Class B security/RLS/migration/data-policy work is prepare-only; Class C operator work is queued and skipped without weakening hard gates."
   ],
   "architectureContracts": [
+    "Frontend: Homepage, Auth and Product share canonical VI tokens, approved assets/fonts, locale/RTL, focus/motion, capability presentation and safe route context; no second client truth source.",
+    "WorkspaceEntryContextV1 allows stable source/locale/intent/presentation/scenario/resource IDs only; raw prompts, credentials, order/passport content and PII never enter URL/referrer/analytics.",
+    "Frontend release is deny-by-default for blocked source hashes, unapproved assets, map-on state, missing licences/SBOM/NOTICE, over-claimed store screenshots or incomplete parity/accessibility evidence.",
     "TurnCoordinator: start/observe/get/cancel; owns intent, retrieval, routing, validation, durable events, resume.",
     "TripWorkspace: get/createProposal/confirmAndApplyProposal/applyUserEdit; owns immutable revisions, CAS, patch transaction, audit.",
     "KnowledgeSystem: resolveEvidence/explore/prepareImport/commitImport/reviewAndPublish; owns identity, Fact, eligibility, projections.",
@@ -103,6 +107,9 @@
     "All contracts are frozen as schema fixture plus consumer test; provider SDK types never define domain schema."
   ],
   "changedFiles": [
+    "docs/adr/ADR-0018-independent-frontend-redesign-baseline.md (new accepted frontend baseline)",
+    "docs/frontend-redesign-issue-plan.md (new #136-#145 dependency plan)",
+    "docs/agents/issue-execution-contract.md (new WEB-02 through WEB-11 rows)",
     "docs/ai-core-integrated-research-report.md (new)",
     "docs/ai-core-engineering-development-acceptance-report.md (new)",
     "docs/model-layer-plan.md (new)",
@@ -139,6 +146,9 @@
     "docs/superpowers/{specs,plans}/2026-08-27-visepanda-* (new VI design and production documentation)"
   ],
   "verification": [
+    "WEB-02 tracker publication created #136-#145, nested #136 under #2, nested #137-#145 under #136, and established the dependency DAG including new #92 blockers #140/#142.",
+    "WEB-03 governance checks passed on fresh main b861ecb: pnpm docs:check, pnpm check, handoff JSON parse and git diff --check; production build and static tests passed 13/13.",
+    "WEB-01 #57 was closed not-planned with status:superseded; #92 retained its existing Product Shell identity and received the ADR-0018 clean-room/dependency boundary.",
     "VP-V4 origin/main fetched and matched local 2dec7b0",
     "VP-Final origin/main fetched and matched local b5ef081",
     "current VP-V4 README, ADRs, handoff, product copy, and runtime boundary inspected",
@@ -192,6 +202,10 @@
     "The first isolated-worktree pnpm check stopped because node_modules was absent; after a frozen lockfile install with lifecycle scripts disabled, the full check passed without changing pnpm-lock.yaml"
   ],
   "blockers": [
+    "Homepage and /visepanda are stop-ship until their replacement and WEB-11 release evidence pass; they cannot be used as a public/store fallback.",
+    "Open PR #124 applies approved brand derivatives to the old stop-ship surfaces and must not merge as-is or overlap #138/#140 paths.",
+    "China map remains disabled until a separate source/representation/review/allowed-use and operator/legal gate closes.",
+    "Runtime source assets, Fig Grotesk, duplicate shapes, asset rights, SBOM/NOTICE and store claim evidence are owned by #138/#145.",
     "The DEC/ADR and engineering baselines are accepted; later provider, content-rights, release and commercial decisions remain gated by their owning Issues.",
     "Production provider region, retention, privacy/data terms, and five-language speech quality are not verified.",
     "No VisePanda five-language travel eval baseline or live provider conformance evidence exists yet.",
@@ -213,20 +227,27 @@
     "No language/medical reviewer or source-rights decision exists; the closed AI-11 contract does not promote draft Knowledge records to reviewed or retrieval-eligible."
   ],
   "risks": [
+    "Competitor-derived expression and public Git history remain residual IP risks; current-tree cleanup does not remove historical blobs/forks/caches.",
+    "Frontend children must not create a second Product Shell, Auth, Trip, Fact, Memory or capability source while #92-#116 remain authoritative.",
     "Release gates #17/#23/#31/#36 were not depended on by any implementation Issue. Four edges (#18<-#17, #24<-#23, #32<-#31, #37<-#36) now enforce them. Removing those edges silently reopens the gap.",
     "Issue bodies alone do not carry runnable commands; docs/agents/issue-execution-contract.md is the authority and must stay in sync with package.json scripts.",
     "Issue-level estimates now total 207 focused days (~41 weeks) across 51 Issues, above the report 24-35 week range. Scope must be cut against the R1 tracer bullet, not spread.",
     "Aviation adapter #42 depends on an unsigned provider contract; #43 now carries it as a conditional acceptance criterion instead of a hard dependency.",
     "Model alias drift, Vision Exp instability, candidate/draft leakage, cross-border sensitive media and provider licence violations remain the top runtime risks (report section 14)."
   ],
-  "rollback": "Remove docs/knowledge-base/ and its Claude audit link if this research disposition is rejected; no database, public content or runtime state changed. Preserve GitHub Issue history through status:superseded rather than deletion.",
+  "rollback": "Frontend governance can be reverted without runtime/data rollback. Implementation stays isolated and Preview-first; if no compliant prior release exists, show truthful unavailable/Early Access rather than republishing either stop-ship surface. Preserve GitHub history with status:superseded and preserve accepted Trip/Fact/Memory/Auth/RLS/audit data.",
   "operatorActions": [
+    "Select one of the three independent VisePanda visual directions produced by #139.",
+    "Approve any map-on state, brand/asset exception, store submission and Production frontend cutover only after #145 evidence.",
     "Decide model/media region, retention and DPA posture when those provider Issues reach the frontier.",
     "Decide and sign the aviation provider contract, or accept the official-handoff fallback (#41/#42). #43 no longer hard-depends on #42.",
     "Accept or reject the AI SDK adoption decision produced by ML-01 (#47).",
     "Approve any public capability claim, production cutover, DNS, payment or external account action."
   ],
   "mandatoryReadingOrder": [
+    "docs/adr/ADR-0018-independent-frontend-redesign-baseline.md",
+    "docs/frontend-redesign-issue-plan.md",
+    "docs/architecture/v4-01-demo-parity-registry.md",
     "docs/ai-core-integrated-research-report.md",
     "docs/vp-v4-production-feature-parity-report.md",
     "docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md",
@@ -257,7 +278,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Merge the GOV-AFK-01 policy after green checks, then start the copyable Continuous AFK prompt and let it re-query the live frontier before selecting #15 or any newer eligible Issue.",
+  "nextAction": "Land WEB-03 #137 on main, close it after remote verification, then mark #138 ready-for-agent and #139 ready-for-human while all downstream frontend Issues stay blocked.",
   "lastUpdated": "2026-08-27",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",

@@ -1,5 +1,11 @@
 # Context
 
+## Accepted frontend redesign baseline (2026-08-27)
+
+[ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md) and [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136) govern the complete frontend redesign. The current Homepage and `/visepanda` are stop-ship. Preserve functional/information relationships but independently redraw physical expression from VisePanda VI + Golden Route + Guide. Map is off by default; `Open VisePanda` is the Homepage primary CTA. Retire runtime source assets, Fig Grotesk and duplicate shapes through #138. Reuse #87 as Demo parity truth and #92 as the only Product Shell; #93-#116 retain capability ownership. Read `docs/frontend-redesign-issue-plan.md` before frontend work.
+
+The redesign covers Homepage, invitation-only password Login, first-run/empty/global states, Today/Ask/Copilot/Tools/Explore/User, mobile, Profile/Privacy and store release. It does not enable public signup, Magic Link, recovery, social login, AI, booking, payment, live data, Human Help or a China map. Open PR #124 conflicts with this baseline if merged as-is against the stop-ship surfaces.
+
 Objective: maintain the dependency-ordered AI Core Issue program while converting Claude's knowledge-base research into a source-aware draft catalogue without bypassing operator, migration, review, RLS or eligibility gates.
 
 Status: GitHub Program [#2](https://github.com/JTCAO515/VP-V4/issues/2) remains authoritative for delivery order. Claude's 2026-08-24 plan has been independently audited and converted into a local draft knowledge workbench: 30 record-type candidates, 18 non-executable readiness-rule candidates, and 6 source-backed `researched_draft` records. Reviewed/retrieval-eligible records remain 0. No runtime, database, bulk import or external account was activated.
