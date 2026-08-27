@@ -6,6 +6,7 @@ const files = [
   "components/auth/PasswordSignInForm.tsx",
   "lib/server/identity/browser-auth-client.ts",
   "app/api/trips/[tripId]/route.ts",
+  "app/api/trips/[tripId]/proposal/route.ts",
   "app/api/trips/[tripId]/confirm/route.ts",
   "lib/server/identity/user-data-adapter.ts",
 ];
