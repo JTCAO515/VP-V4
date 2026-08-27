@@ -12,6 +12,8 @@ Trip RPCs, public signup or password recovery.
 - Codex subsequently observed `You are signed in` in the same Vercel Preview session.
 - After explicit confirmation, Codex clicked `Sign out` and observed the email/password form again;
   no browser console warning/error was observed.
+- The operator then confirmed an authenticated inaccessible-Trip `403 FORBIDDEN` and the same Trip
+  returning `401 UNAUTHENTICATED` after sign-out, without disclosing any credential or private body.
 - A no-cookie remote GET for an inaccessible UUID returned `401 UNAUTHENTICATED`.
 - The retired `/api/auth/magic-link` and `/auth/callback` routes returned `404` on the Preview.
 - After rebasing onto `ec0faa8`, the Preview rendered the signed-out form at 1280×800 and 390×844 Arabic
@@ -21,8 +23,8 @@ Trip RPCs, public signup or password recovery.
 
 Browser automation rejects direct Preview `/api/trips/*` navigation with `net::ERR_BLOCKED_BY_CLIENT`.
 No Cookie, JWT, password or user identifier was read, copied or used to bypass that limit. Therefore,
-authenticated inaccessible-Trip `403`, owner read/confirm/reload, other-user denial and an API-level
-post-sign-out `401` remain #84 acceptance evidence, not proven by this artifact.
+owner read/confirm/reload and other-user denial remain #84 acceptance evidence, not proven by this
+artifact. The operator's `403`/post-sign-out `401` observation covers the #122 session boundary only.
 
 ## Rollback
 

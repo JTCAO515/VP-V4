@@ -82,7 +82,7 @@ Rollback: remove the local `docs/knowledge-base/` package and audit link if the 
 - Published tracker graph: `docs/vp-v4-production-parity-issue-plan.md`, V4-01 through V4-31, mapped to #85/#87-#116 and registered in `docs/agents/issue-execution-contract.md`.
 - V4-01 adds `docs/architecture/v4-01-demo-parity-registry.md` and `v4-01-framework-adoption-matrix.md`: 40 grouped Demo actions, 14 framework candidates, explicit fixture disposition and 31/31 execution-row audit. It activates no runtime.
 - #87 V4-01 is closed. The operator then retired Magic Link after masked email-rate-limit and `otp_expired` evidence; #120/PR #121 is closed without merge.
-- #122 AI-51b adds operator-provisioned email/password login, sign-out and five-locale/RTL UI. Preview password sign-in/sign-out UI, anonymous `401` and retired-route `404` are evidenced; authenticated Trip `403` and owner/other-user evidence remain open. It has no public signup or recovery and does not reuse Supabase Dashboard credentials. #122 blocks #84; #84 continues to block #15.
+- #122 AI-51b adds operator-provisioned email/password login, sign-out and five-locale/RTL UI. Preview password session, authenticated Trip `403`, post-sign-out `401`, anonymous `401` and retired-route `404` are evidenced; owner/other-user evidence remains open. It has no public signup or recovery and does not reuse Supabase Dashboard credentials. #122 blocks #84; #84 continues to block #15.
 - AI-43 requires a current AI SDK Core/ToolLoop/Workflow comparison before execution; LangChain/LangGraph/GraphRAG/multi-agent are not default production dependencies.
 
 ## VisePanda visual identity delivery

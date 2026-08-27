@@ -2,7 +2,7 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Extend AI Core Program #2 with an evidence-backed bounded-agent architecture and dependency-ordered production-parity Issue plan, without copying Demo fixtures or bypassing accepted Chat, Canvas, evidence, identity, RLS, provider or release contracts.",
-  "status": "AI-45 and V4-01 are closed; the operator retired Magic Link after masked email-rate-limit and otp-expired evidence; #122 AI-51b has operator-observed Preview password sign-in/sign-out plus anonymous 401 and retired-route 404 evidence, while #84 and #15 remain blocked pending authenticated Trip route evidence",
+  "status": "AI-45 and V4-01 are closed; the operator retired Magic Link after masked email-rate-limit and otp-expired evidence; #122 AI-51b has operator-observed Preview password sign-in, authenticated 403 and post-sign-out 401 evidence, while #84 and #15 remain blocked pending owner/other-user Trip route evidence",
   "currentPhase": "R1",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own independently accepted frontier Issues and their evidence.",
@@ -177,6 +177,7 @@
     "AI-51b Preview: operator-confirmed password sign-in and Codex-observed signed-in then sign-out-to-form transition passed without console warning/error",
     "AI-51b Preview: anonymous inaccessible Trip GET returned 401 UNAUTHENTICATED; retired Magic Link initiation and callback routes returned 404",
     "AI-51b authenticated Trip API navigation is blocked by Browser client policy; no Cookie/JWT/token bypass was attempted",
+    "AI-51b operator confirmed the real Preview session boundary: inaccessible Trip 403 while authenticated and 401 after sign-out; no credential or private response was recorded",
     "AI-51b rebased onto origin/main ec0faa8: contract 21/21, security 3/3, E2E 1/1, docs/check/json/diff passed; Preview desktop and 390x844 Arabic RTL signed-out form passed with no console warning/error or horizontal overflow"
   ],
   "blockers": [
@@ -194,7 +195,7 @@
     "Authenticated-only beta and the new Supabase project are accepted; separate Ops deployment plus model/media region and retention remain future operator decisions.",
     "Qwen3.5 OCR and Qwen Audio 3.0 TTS currently have Beijing constraints; the Singapore mandatory multimodal stack is not frozen.",
     "Vercel WebRTC/WebSocket plan support, direct media upload, Supabase pooler, queue quarantine, Storage backup, and deletion topology remain untested.",
-    "AI-51/#84 remains open and is natively blocked by #122: Magic Link is retired and Preview password session UI is evidenced, but authenticated Trip 403 plus owner/other-user route evidence remain incomplete; Browser client policy blocks direct authenticated API navigation.",
+    "AI-51/#84 remains open and is natively blocked by #122: Magic Link is retired and Preview password session UI plus authenticated 403/post-sign-out 401 are evidenced, but owner/other-user route evidence remains incomplete; Browser client policy blocks direct authenticated API navigation.",
     "V4-01 closes through this change; #85/#88/#89/#91/#98 remain blocked by #17 and every other V4 Issue retains another open dependency.",
     "The Claude-referenced research/fact-catalogue.json was not provided, so row-level provenance and counts cannot be reproduced.",
     "Twenty-four of 30 candidate record types still lack an exact source locator and 24 candidates are high or critical risk.",
@@ -244,7 +245,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Obtain authenticated Trip 403 and owner/other-user route evidence without copying any credential. Keep #122 and #84 open until those API/RLS acceptance conditions are independently verified; #15 remains blocked.",
+  "nextAction": "Obtain owner/other-user Trip read and confirm evidence without copying any credential. Keep #122 and #84 open until those RLS acceptance conditions are independently verified; #15 remains blocked.",
   "lastUpdated": "2026-08-27",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
