@@ -31,3 +31,14 @@ Every AI Core Issue's mandatory reading order, allowed and forbidden paths, runn
 evidence artifacts, and red-line suite IDs live in `docs/agents/issue-execution-contract.md`.
 Issue bodies link to it; that file is the authority. Do not start an Issue whose row is missing.
 
+### Continuous AFK sessions
+
+A Continuous AFK session may move from one independently executable Issue to another without
+per-Issue operator confirmation. It must follow `docs/agents/continuous-afk-execution.md`: keep one
+Issue/branch/PR per work unit, recompute the live frontier after every PR or merge, and record then
+skip operator-only blockers while other safe work remains.
+
+AFK mode never authorizes bypassing dependencies, required checks, branch protection, RLS,
+permission boundaries, privacy/data-licence policy, migration rollback requirements, secrets,
+production cutover, or irreversible actions. Human confirmation may be replaced by deterministic
+or browser-automated evidence only when that evidence actually tests the acceptance condition.

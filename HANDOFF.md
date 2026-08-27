@@ -82,7 +82,7 @@ Rollback: remove the local `docs/knowledge-base/` package and audit link if the 
 - Published tracker graph: `docs/vp-v4-production-parity-issue-plan.md`, V4-01 through V4-31, mapped to #85/#87-#116 and registered in `docs/agents/issue-execution-contract.md`.
 - V4-01 adds `docs/architecture/v4-01-demo-parity-registry.md` and `v4-01-framework-adoption-matrix.md`: 40 grouped Demo actions, 14 framework candidates, explicit fixture disposition and 31/31 execution-row audit. It activates no runtime.
 - #87 V4-01 is closed. The operator then retired Magic Link after masked email-rate-limit and `otp_expired` evidence; #120/PR #121 is closed without merge.
-- #122 AI-51b adds operator-provisioned email/password login, sign-out and five-locale/RTL UI. Preview password session, authenticated Trip `403`, post-sign-out `401`, anonymous `401`, retired-route `404` and the controlled owner/other-user matrix are evidenced. It has no public signup or recovery and does not reuse Supabase Dashboard credentials. Merge #123, then re-evaluate #84 and #15 from main.
+- #122 AI-51b and #84 AI-51 are closed after the password-session and route evidence merged. #127 AI-13b and #130 AI-13c are also closed after durable revision/reject work. At the 2026-08-27 live audit, #15 AI-13 is the ready R1 product frontier; future sessions must re-query rather than rely on this snapshot.
 - AI-43 requires a current AI SDK Core/ToolLoop/Workflow comparison before execution; LangChain/LangGraph/GraphRAG/multi-agent are not default production dependencies.
 
 ## VisePanda visual identity delivery
@@ -93,3 +93,11 @@ Rollback: remove the local `docs/knowledge-base/` package and audit link if the 
 - Static asset, JSON, structural, source-integrity, and whitespace checks passed. A fresh isolated 375 px browser screenshot remains a manual review item; no live social-platform publishing test was run.
 - `pnpm check` stopped before lint/type/build/test because the local dependency-security policy requires an operator decision for the ignored `sharp` build script. No approval, package-policy change, or bypass was applied.
 - Roll back a rejected VI delivery with a new revert commit for this merge; do not rewrite shared history or alter the owner-approved source artwork.
+
+## Continuous AFK execution
+
+- [continuous-afk-execution.md](docs/agents/continuous-afk-execution.md) makes completion of one Issue a scheduler event instead of a session stop. It retains one Issue/worktree/branch/PR, all required checks and the native dependency graph.
+- [continuous-afk-kickoff.md](docs/agents/prompts/continuous-afk-kickoff.md) is the copyable startup prompt. It requires a live audit and continuous frontier recomputation after every PR, CI result, merge or blocker change.
+- [operator-actions.json](docs/operator-actions.json) is the machine-readable queue for genuinely non-delegable actions. The session records and skips an operator-only path while independent safe work remains.
+- Class A reversible repo-only work may enable GitHub auto-merge only after all required gates pass and without bypass. Class B auth/RLS/migration/data-policy work can be implemented and evidenced but cannot self-approve or execute production changes. Class C legal, account, payment, production and irreversible actions remain operator-owned.
+- Rollback is a normal revert of the governance PR; no runtime, RLS, schema or production data changes are part of GOV-AFK-01.

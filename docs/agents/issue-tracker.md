@@ -12,6 +12,11 @@ Issues for this repository live in [JTCAO515/VP-V4](https://github.com/JTCAO515/
 - Only frontier work receives `status:ready`; dependency-gated work receives `status:blocked`.
 - Apply `ready-for-agent` only when no human or operator decision remains.
 - One Issue uses one branch and one reviewable PR. Do not stack PRs on unmerged work.
+- A Continuous AFK session does not stop after each Issue. After a PR/merge/handoff it recomputes
+  the live frontier and continues another independent `status:ready` + `ready-for-agent` Issue under
+  `continuous-afk-execution.md`.
+- An operator-only action blocks its owning dependency path, not unrelated frontier work. Record it
+  in `docs/operator-actions.json`, apply `ready-for-human` or `needs-info`, and continue safely.
 
 ## Pull requests as a request surface
 
