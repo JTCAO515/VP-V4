@@ -120,7 +120,10 @@
     "docs/architecture/v4-01-framework-adoption-matrix.md (new; 14 paired framework gates)",
     "artifacts/V4-01/unrun.md (new; registry-only unrun disclosure)",
     "docs/handoff.json (restructured to jtcoding-handoff/1.0)",
-    "AGENTS.md, CONTEXT.md, HANDOFF.md (updated)"
+    "AGENTS.md, CONTEXT.md, HANDOFF.md (updated)",
+    "brand/ (new visual identity handbook, tokens, IP, icons, UI, social and QA assets)",
+    "assets/brand/vise-panda/ (new owner-approved source artwork)",
+    "docs/superpowers/{specs,plans}/2026-08-27-visepanda-* (new VI design and production documentation)"
   ],
   "verification": [
     "VP-V4 origin/main fetched and matched local 2dec7b0",
@@ -158,12 +161,15 @@
     "V4-01 inspected VP-Early-Access@cf6e103 as fixture-only reference and did not import Demo users, Trips, POIs, prices, weather or provider results",
     "V4-01 registered 40 grouped Demo actions and 14 framework candidates with owner, maturity, source, failure, flag, observation and rollback/disposition boundaries",
     "V4 execution-contract audit passed: 31/31 rows have issue, owner, allowed paths, commands and artifacts",
-    "V4-01 pnpm docs:check, pnpm check, handoff JSON parse and git diff --check passed; production build and static tests passed 13/13"
+    "V4-01 pnpm docs:check, pnpm check, handoff JSON parse and git diff --check passed; production build and static tests passed 13/13",
+    "VisePanda visual identity validation passed: tokens and manifest JSON, eight transparent IP assets, five social dimensions, SVG and handbook structural checks, source integrity, and git diff --check; a fresh isolated 375 px browser screenshot remains a manual review item",
+    "VisePanda merge pnpm check stopped before lint/type/build/test because the local dependency-security policy requires an operator decision for the ignored sharp build script; no approval, package-policy change, or bypass was applied"
   ],
   "blockers": [
     "The DEC/ADR and engineering baselines are accepted; later provider, content-rights, release and commercial decisions remain gated by their owning Issues.",
     "Production provider region, retention, privacy/data terms, and five-language speech quality are not verified.",
     "No VisePanda five-language travel eval baseline or live provider conformance evidence exists yet.",
+    "For this VI merge, lint/type/build/test remain unrun because pnpm check stopped at the local ignored sharp build-script policy; operator approval is required before changing that policy.",
     "No aviation provider has passed China domestic coverage, accuracy, latency, cost, and production-rights evaluation.",
     "QWeather, map/POI, aviation, and other external provider account contracts and production data rights are not verified.",
     "The operator has not accepted identity-only Explore visibility, five POI primary categories, typed Fact review cadences, or the ordinary/curated city pilot policy.",
@@ -225,7 +231,7 @@
     "docs/agents/issue-execution-contract.md"
   ],
   "nextAction": "Merge V4-01 after current checks, then return to #84 real Magic Link/session and owner/other-user evidence; keep #15 blocked until #84 closes.",
-  "lastUpdated": "2026-08-26",
+  "lastUpdated": "2026-08-27",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@b443866",
     "vpFinalReference": "JTCAO515/VP-Final@b5ef081",

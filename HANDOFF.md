@@ -83,3 +83,12 @@ Rollback: remove the local `docs/knowledge-base/` package and audit link if the 
 - V4-01 adds `docs/architecture/v4-01-demo-parity-registry.md` and `v4-01-framework-adoption-matrix.md`: 40 grouped Demo actions, 14 framework candidates, explicit fixture disposition and 31/31 execution-row audit. It activates no runtime.
 - After V4-01 closes, #84 is the only ready frontier. Supabase Site URL and callback allowlist are visually verified; real Magic Link session and owner/other-user evidence remain open, so #15 stays blocked. New parity Issues are not authorization to start dependency-blocked work.
 - AI-43 requires a current AI SDK Core/ToolLoop/Workflow comparison before execution; LangChain/LangGraph/GraphRAG/multi-agent are not default production dependencies.
+
+## VisePanda visual identity delivery
+
+- The owner-approved source artwork is in `assets/brand/vise-panda/`; preserve it unchanged.
+- The ready-to-use visual package is in `brand/`: handbook, tokens, eight transparent IP poses, SVG icons/patterns/UI reference, and five social-media exports.
+- Begin brand work with `brand/guidelines/visepanda-vi-guide.html`; use `brand/qa/asset-manifest.json` and `brand/qa/verification.md` to validate file inventory and delivery claims.
+- Static asset, JSON, structural, source-integrity, and whitespace checks passed. A fresh isolated 375 px browser screenshot remains a manual review item; no live social-platform publishing test was run.
+- `pnpm check` stopped before lint/type/build/test because the local dependency-security policy requires an operator decision for the ignored `sharp` build script. No approval, package-policy change, or bypass was applied.
+- Roll back a rejected VI delivery with a new revert commit for this merge; do not rewrite shared history or alter the owner-approved source artwork.

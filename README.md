@@ -81,3 +81,7 @@ CONTEXT.md / HANDOFF.md      当前上下文与人工交接摘要
 5. 与任务相关的 ADR
 
 完成修改后同步代码、测试和交接文档，并如实记录未运行的验证与剩余风险。
+
+## 品牌视觉资产
+
+VisePanda 的旅游 AI 视觉识别资产位于 `brand/`；经确认的原始 Logo 文件位于 `assets/brand/vise-panda/`，不得改写。请从 `brand/guidelines/visepanda-vi-guide.html` 开始阅读，并以 `brand/qa/verification.md` 和 `brand/qa/asset-manifest.json` 作为交付校验依据。该包仅提供视觉与内容资产，不改变现有产品运行时能力或连接状态。

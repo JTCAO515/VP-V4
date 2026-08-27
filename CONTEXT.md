@@ -80,3 +80,7 @@ Rollback: remove `docs/knowledge-base/` and its audit link if the research dispo
 The operator requires the real VP-V4 product to reproduce the Early Access Demo's user capabilities without copying its static fixtures. The accepted planning package is `docs/vp-v4-production-feature-parity-report.md`, `docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md`, `docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md`, its source ledger, and `docs/vp-v4-production-parity-issue-plan.md`.
 
 The tracker plan is published as V4-01 through V4-31 while preserving R0-R5. It adds ContextPlan, Tool Policy Gateway, ConstraintEngine and a rejectable RoutePattern RAG spike. LangChain/LangGraph/GraphRAG/multi-agent are not default implementation work. After V4-01 closes, #84 is the only ready frontier; #15 remains blocked by #84, and every other V4 Issue still has another open dependency.
+
+## VisePanda visual identity assets
+
+An owner-approved, non-runtime visual identity package is available under `brand/`; source Logo artwork is retained under `assets/brand/vise-panda/`. The package adds a handoff-ready handbook, design tokens, mascot poses, icons, UI references, social exports, and a machine-readable manifest. It does not change the product's implemented, placeholder, or not-connected boundaries. For visual or product-facing work, read the handbook and QA evidence after the core project governance documents; preserve the source artwork and use a revert commit if this delivery must be removed.
