@@ -22,9 +22,10 @@ Trip RPCs, public signup or password recovery.
 ## Boundary and remaining evidence
 
 Browser automation rejects direct Preview `/api/trips/*` navigation with `net::ERR_BLOCKED_BY_CLIENT`.
-No Cookie, JWT, password or user identifier was read, copied or used to bypass that limit. Therefore,
-owner read/confirm/reload and other-user denial remain #84 acceptance evidence, not proven by this
-artifact. The operator's `403`/post-sign-out `401` observation covers the #122 session boundary only.
+No Cookie, JWT, password or user identifier was read, copied or used to bypass that limit. The operator
+completed the controlled owner read/confirm/reload and other-user read/confirm-denial matrix on
+2026-08-27; its result is recorded in Issue #122 without persisting any test identifier. This artifact
+therefore separates operator-observed real-session evidence from Codex's direct browser evidence.
 
 ## Rollback
 
