@@ -4,9 +4,21 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 
 export function isUuid(value: string): boolean { return UUID.test(value); }
 export function isSameOriginMutation(request: NextRequest): boolean {
-  return hasSameOrigin(request.headers.get("origin"), request.nextUrl);
+  const origin = request.headers.get("origin");
+  return hasSameOrigin(origin, request.nextUrl) || hasForwardedOrigin(
+    origin,
+    request.headers.get("x-forwarded-host") ?? request.headers.get("host"),
+    request.headers.get("x-forwarded-proto") ?? request.nextUrl.protocol.slice(0, -1),
+  );
 }
 export function hasSameOrigin(origin: string | null, requestUrl: URL): boolean { return origin !== null && origin === requestUrl.origin; }
+export function hasForwardedOrigin(origin: string | null, forwardedHost: string | null, forwardedProto: string | null): boolean {
+  if (!origin || !forwardedHost || !forwardedProto) return false;
+  if (forwardedHost.includes(",") || forwardedProto.includes(",")) return false;
+  if (!/^[a-z0-9.-]+(?::\d{1,5})?$/i.test(forwardedHost)) return false;
+  if (forwardedProto !== "http" && forwardedProto !== "https") return false;
+  return origin === `${forwardedProto}://${forwardedHost}`;
+}
 export function isConfirmInput(value: unknown): value is Readonly<{ proposalId: string; idempotencyKey: string; digest: string }> {
   if (!value || typeof value !== "object") return false;
   const input = value as Record<string, unknown>;
