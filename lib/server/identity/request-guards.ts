@@ -14,3 +14,10 @@ export function isConfirmInput(value: unknown): value is Readonly<{ proposalId: 
     && typeof input.idempotencyKey === "string" && input.idempotencyKey.length > 0 && input.idempotencyKey.length <= 160
     && typeof input.digest === "string" && input.digest.length > 0 && input.digest.length <= 160;
 }
+
+export function isProposalRevisionInput(value: unknown): value is Readonly<{ proposalId: string; title: string }> {
+  if (!value || typeof value !== "object") return false;
+  const input = value as Record<string, unknown>;
+  return isUuid(String(input.proposalId ?? ""))
+    && typeof input.title === "string" && input.title.trim().length > 0 && input.title.trim().length <= 160;
+}

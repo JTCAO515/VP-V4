@@ -7,6 +7,7 @@ type PendingCookie = { name: string; value: string; options: CookieOptions };
 export type TripSnapshot = Readonly<{ id: string; title: string; headVersion: number; updatedAt: string }>;
 export type TripAudit = Readonly<{ id: string; action: string; proposalId: string; createdAt: string }>;
 export type ConfirmInput = Readonly<{ proposalId: string; idempotencyKey: string; digest: string }>;
+export type ProposalRevisionInput = Readonly<{ proposalId: string; title: string }>;
 export type PendingProposalRead = Readonly<{
   trip: TripSnapshot;
   proposal: Readonly<{
@@ -81,6 +82,22 @@ export function createUserDataAdapter(request: NextRequest) {
     }) : null;
     return read ? { data: read } : { error: "PROPOSAL_NOT_CONFIRMABLE" };
   };
+  const revisePendingProposal = async (tripId: string, input: ProposalRevisionInput): Promise<AdapterResult<Readonly<{ proposalId: string; revision: number; baseTripVersion: number }>>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data: proposal, error: proposalError } = await client.from("trip_proposals")
+      .select("trip_id,status")
+      .eq("id", input.proposalId)
+      .maybeSingle();
+    if (proposalError || !proposal || proposal.trip_id !== tripId || proposal.status !== "pending") return { error: "FORBIDDEN" };
+    const { data, error } = await client.rpc("revise_trip_proposal", { p_proposal_id: input.proposalId, p_title: input.title.trim() });
+    if (error) return { error: mapRpcFailure(error.message) };
+    const result = data?.[0];
+    if (!result) return { error: "INTERNAL_ERROR" };
+    if (result.outcome === "version_conflict") return { error: "STALE_TRIP_VERSION" };
+    if (result.outcome !== "revised" || !result.proposal_id || !result.revision || result.base_trip_version === null) return { error: "PROPOSAL_NOT_CONFIRMABLE" };
+    return { data: { proposalId: result.proposal_id, revision: result.revision, baseTripVersion: result.base_trip_version } };
+  };
   const confirm = async (tripId: string, input: ConfirmInput): Promise<AdapterResult<Readonly<{ outcome: "applied" | "already_applied"; resultingVersion: number }>>> => {
     const actor = await authenticated();
     if ("error" in actor) return { error: actor.error };
@@ -96,7 +113,7 @@ export function createUserDataAdapter(request: NextRequest) {
     if (result.outcome !== "applied" && result.outcome !== "already_applied") return { error: "PROPOSAL_NOT_CONFIRMABLE" };
     return { data: { outcome: result.outcome, resultingVersion: result.resulting_version } };
   };
-  return { applyCookies, authenticated, getTrip, getPendingProposal, confirm };
+  return { applyCookies, authenticated, getTrip, getPendingProposal, revisePendingProposal, confirm };
 }
 
 export function pendingProposalRead(input: Readonly<{
