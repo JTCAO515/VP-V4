@@ -8,6 +8,6 @@ test("V4-09 offers only structured feedback and does not make a Trip or model cl
   assert.match(workspace, /\/api\/chat\/turns\/\$\{turnId\}\/feedback/);
   assert.match(workspace, /another_option/);
   assert.match(workspace, /inaccurate/);
-  assert.doesNotMatch(workspace, /textarea|\/api\/trips/);
+  assert.doesNotMatch(workspace, /textarea|\/api\/trips\/\$\{[^}]+\}\/(?:confirm|rollback|proposal)/);
   assert.match(contract, /needs_input.*answer.*card.*proposal_ready.*unavailable.*conflict/);
 });

@@ -2,6 +2,7 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import type { NextRequest, NextResponse } from "next/server";
 import type { FailureCode } from "@/lib/server/contracts/errors";
 import type { TurnFeedbackKind, TurnFeedbackReason } from "@/lib/server/turn/feedback/contract";
+import type { TripPlaceReference } from "@/lib/server/trip/place/contract";
 
 type PendingCookie = { name: string; value: string; options: CookieOptions };
 
@@ -85,6 +86,20 @@ export function createUserDataAdapter(request: NextRequest) {
         ...((snapshotsByVersion.has(0) && !(versions ?? []).some((version) => version.resulting_version === 0)) ? [{ id: `initial-${trip.id}`, resultingVersion: 0, proposalId: null, eventType: "initial" as const, title: snapshotsByVersion.get(0)?.title ?? null, createdAt: snapshotsByVersion.get(0)?.created_at ?? trip.updated_at }] : []),
       ].sort((left, right) => right.resultingVersion - left.resultingVersion),
     } };
+  };
+  const getTripPlaces = async (tripId: string): Promise<AdapterResult<readonly TripPlaceReference[]>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data: trip, error: tripError } = await client.from("trips").select("id").eq("id", tripId).maybeSingle();
+    if (tripError || !trip) return { error: "FORBIDDEN" };
+    const { data, error } = await client.from("trip_place_references")
+      .select("id,reference_kind,canonical_poi_id,user_label,freshness,created_at")
+      .eq("trip_id", tripId)
+      .order("created_at", { ascending: true });
+    if (error) return { error: "INTERNAL_ERROR" };
+    return { data: (data ?? []).map((place) => place.reference_kind === "canonical"
+      ? { id: place.id, kind: "canonical" as const, canonicalPoiId: place.canonical_poi_id, freshness: place.freshness === "recheck_required" ? "recheck_required" as const : "current" as const, createdAt: place.created_at }
+      : { id: place.id, kind: "user" as const, label: place.user_label, freshness: place.freshness === "recheck_required" ? "recheck_required" as const : "current" as const, createdAt: place.created_at }) };
   };
   const getPendingProposal = async (tripId: string): Promise<AdapterResult<PendingProposalRead>> => {
     const actor = await authenticated();
@@ -273,7 +288,7 @@ export function createUserDataAdapter(request: NextRequest) {
       ? { data: { proposalId: result.proposal_id, baseTripVersion: result.base_trip_version, targetVersion: result.target_version } }
       : { error: "INTERNAL_ERROR" };
   };
-  return { applyCookies, authenticated, getTrip, getPendingProposal, revisePendingProposal, rejectPendingProposal, listChatThreads, createChatThread, getChatThread, startChatTurn, cancelChatTurn, replayChatTurn, recordTurnFeedback, confirm, createRollbackProposal };
+  return { applyCookies, authenticated, getTrip, getTripPlaces, getPendingProposal, revisePendingProposal, rejectPendingProposal, listChatThreads, createChatThread, getChatThread, startChatTurn, cancelChatTurn, replayChatTurn, recordTurnFeedback, confirm, createRollbackProposal };
 }
 
 function chatThreadSnapshot(input: Readonly<{ id: string; trip_id: string | null; status: string; created_at: string; updated_at: string }>): ChatThreadSnapshot {

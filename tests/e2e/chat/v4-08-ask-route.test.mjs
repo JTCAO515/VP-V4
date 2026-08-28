@@ -15,6 +15,7 @@ test("V4-08 provides a localized private Ask route without prompt submission or 
   assert.match(workspace, /chat-state-control-v1/);
   assert.match(workspace, /readThread/);
   assert.match(workspace, /copy\.signIn/);
-  assert.doesNotMatch(workspace, /textarea|TripPatch|\/api\/trips/);
+  assert.match(workspace, /\/api\/trips\/\$\{initialPlaceCandidate\.tripId\}\/places/);
+  assert.doesNotMatch(workspace, /textarea|TripPatch|\/api\/trips\/\$\{[^}]+\}\/(?:confirm|rollback|proposal)/);
   for (const title of ["聊天线程", "Chat threads", "Hilos de chat", "Чаты", "سلاسل المحادثة"]) assert.match(copy, new RegExp(title));
 });
