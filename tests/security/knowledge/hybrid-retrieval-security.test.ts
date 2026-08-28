@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { buildHybridEvidencePack } from "../../../lib/server/knowledge/retrieval/hybrid/index.ts";
+import { buildHybridEvidencePack, type HybridRetrievalInputV1 } from "../../../lib/server/knowledge/retrieval/hybrid/index.ts";
 
 const profile = { modelId: "fixture-embedding-v1", region: "none", dimensions: 8, indexVersion: "fixture-index-v1" };
 const now = "2026-08-28T00:00:00.000Z";
@@ -32,7 +32,7 @@ test("RL-02 denies six ineligible or unknown retrieval fixtures before ranking",
 });
 
 test("rejects content-bearing profile fields and non-deterministic timestamps before retrieval", () => {
-  const base = {
+  const base: HybridRetrievalInputV1 = {
     now,
     profile,
     rrfK: 60,
