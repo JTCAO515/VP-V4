@@ -211,7 +211,7 @@
     "WEB-04 asset-policy red test failed before quarantine and passed after the hash ledger, SBOM, NOTICE, denied source removal, Fig retirement and blocked-preview record were added",
     "V4-02 focused contract tests first failed with missing ContextPlan module, then passed 13/13 after the minimal deterministic policy and assembler implementation plus reviewed actor-scope, delimiter, manifest-privacy, actual-budget, escaped-Tool/separator budget and atomic-constraint regressions",
     "V4-02 synthetic eval passed 2/2: full-history and compacted thread inputs retained identical hard constraints, and five cross-actor/ineligible/raw candidate classes produced zero manifest leaks",
-    "V4-02 pre-review full acceptance passed: pnpm check (lint/typecheck/build/static 13/13), pnpm test:contract (37/37), pnpm evals (2/2), pnpm docs:check, handoff JSON parse, and git diff --check; review-fix focused verification then passed contract 41/41, evals 2/2, typecheck, JSON parse and diff check"
+    "V4-02 pre-review full acceptance passed: pnpm check (lint/typecheck/build/static 13/13), pnpm test:contract (37/37), pnpm evals (2/2), pnpm docs:check, handoff JSON parse, and git diff --check; three automated review/fix cycles then reached no Critical/Important findings; final full acceptance passed pnpm check (13 static tests), pnpm test:contract (43/43), pnpm evals (2/2), pnpm docs:check, handoff JSON parse, and git diff --check"
   ],
   "blockers": [
     "Homepage and /visepanda are stop-ship until their replacement and WEB-11 release evidence pass; they cannot be used as a public/store fallback.",

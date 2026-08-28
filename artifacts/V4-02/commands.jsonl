@@ -20,3 +20,8 @@
 {"command":"node --experimental-strip-types --test tests/contract/context/context-assembler.test.ts tests/contract/context/context-plan.test.ts","result":"pass","evidence":"12 focused context tests passed, 0 failed after final Tool-budget fix"}
 {"command":"node --experimental-strip-types --test tests/contract/context/context-assembler.test.ts","result":"expected_fail","evidence":"third-review regression demonstrated uncounted newline separators could overflow a multi-candidate section budget"}
 {"command":"node --experimental-strip-types --test tests/contract/context/context-assembler.test.ts tests/contract/context/context-plan.test.ts","result":"pass","evidence":"13 focused context tests passed, 0 failed after final section-budget fix"}
+{"command":"pnpm check","result":"pass","evidence":"final lint, strict typecheck, Next.js webpack production build, and 13 static tests passed"}
+{"command":"pnpm test:contract","result":"pass","evidence":"final 43 contract tests passed, 0 failed"}
+{"command":"pnpm evals","result":"pass","evidence":"final 2 context eval tests passed, 0 failed"}
+{"command":"pnpm docs:check","result":"pass","evidence":"final AI Core documentation baseline passed"}
+{"command":"git diff --check && node -e JSON.parse(docs/handoff.json)","result":"pass","evidence":"final diff had no whitespace errors and machine-readable handoff parsed"}

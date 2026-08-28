@@ -54,8 +54,8 @@
 
 ### Task 4: Review and integrate
 
-- [ ] Commit the scoped code/tests/docs/evidence.
-- [ ] Request independent automated review; repair every Critical or Important finding and rerun affected verification.
+- [x] Commit the scoped code/tests/docs/evidence.
+- [x] Request independent automated review; repair every Critical or Important finding and rerun affected verification.
 - [ ] Merge reviewed branch into `main`, push, and verify remote `main` head.
 
 ## Coverage review
