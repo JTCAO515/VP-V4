@@ -136,7 +136,13 @@ or status mutation was attempted.
 - #88 adds a pure server-side `ToolRegistry` and `executeToolIntent` contract. A model/UI call is intent only: static allowlist, task/data/license/feature policy, schema, non-expired actor-bound approval, idempotency and deadline all pass before an executor can run.
 - Direct `trip.*` and executable Proposal tools cannot register until a typed capability exists. An external side effect requires `idempotency: required` and a durable pending/succeeded/unknown store; every started-executor failure remains `unknown` to prevent replay. The v1 retry declaration never creates an automatic retry loop.
 - Receipts exclude both raw executor output and actor IDs. Valid bounded JSON output is entity-escaped inside a model-safe `<untrusted-tool-output>` projection, preventing the payload from creating an instruction boundary. See [tool-gateway.md](docs/contracts/tool-gateway.md) and `artifacts/V4-03/`.
-- Focused contract/security tests passed 8/8 after expected red states; `pnpm typecheck` passed and `pnpm test:contract` passed 50/50. Rollback is a revert of #88; no schema, provider, cache, external request or production data is affected.
+- Two automated review/fix cycles left six focused contract tests and one security test green; strict typecheck and the final contract suite passed 48/48. External-side-effect tools remain disabled until a verified persistent idempotency adapter exists. Rollback is a revert of #88; no schema, provider, cache, external request or production data is affected.
+
+## V4-04 Constraint Engine
+
+- #89 adds a pure `ConstraintEngine` for validated candidate plans. It deterministically evaluates hard budget, arrival-window, transfer, opening, reservation and route-evidence constraints before soft stop-count tradeoffs.
+- Budget amounts use group-total currency minor units and require current price evidence. Stops and windows use validated offset-bearing RFC3339 instants, include freshness for opening/reservation evidence, and may not overlap; each transfer must be a current unique adjacent-stop link. Missing or expired price/route/opening/reservation evidence is `unknown`, while an in-range current budget, closed stop, window breach, or short transfer is deterministically decided.
+- The engine has no provider/model/database/Trip write capability. Exact runtime validation rejects forged constraint variants, impossible calendar dates, unsafe numbers, invalid evidence states and invalid chains. Final acceptance passed `pnpm check` (13 static tests), `pnpm test:unit` (16/16), `pnpm test:contract` (48/48), `pnpm evals` (3/3), and `pnpm docs:check`. Rollback is a revert of #89.
 
 ## Continuous AFK execution
 
