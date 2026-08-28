@@ -42,6 +42,7 @@ The domain plans (`docs/model-layer-plan.md`, `docs/external-data-chatbot-plan.m
 | `pnpm evals` | exists (scaffold only) | AI-07a scaffold, AI-42 corpus |
 | `pnpm db:verify` | exists (scaffold only) | AI-07a scaffold, AI-08 implementation |
 | `pnpm docs:check` | exists | AI-07a |
+| `pnpm check:assets` | planned | WEB-04 #138 |
 
 A planned command may not be silently skipped. Until AI-07a lands, an Issue records
 `planned — not runnable at <sha>` for that row and runs `pnpm check`.
@@ -101,6 +102,10 @@ and any file owned by another Issue's row.
 | #15 AI-13 | Trip Canvas UI | `components/canvas/**, app/(product)/trips/**` | `pnpm check`; `pnpm test:e2e`; browser QA at 1280x800 and 390x844, `lang=ar dir=rtl` pass | browser + 390x844 + RTL screenshots | RL-01 |
 | #16 AI-14 | Security / RLS | `supabase/migrations/**, tests/security/**` | `pnpm check`; `pnpm test:security`; `pnpm db:verify`, `pnpm test:integration` | actor x table/RPC matrix, fault log | RL-01 RL-02 |
 | #84 AI-51 | Identity / UserDataAdapter | `app/(auth)/**, app/api/trips/**, lib/server/identity/**, docs/contracts/user-data-adapter.md, tests/{contract,integration,security}/identity/**` | `pnpm check`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm test:e2e`; browser QA at 1280x800 and 390x844 | session/callback proof, owner/other/anon route matrix, CSRF proof | RL-01 RL-02 |
+| #122 AI-51b | Identity / Password Login | `app/(auth)/**, app/api/auth/**, components/auth/**, lib/server/identity/**, lib/i18n.ts, app/globals.css, tests/{contract,security,e2e}/identity/**, docs/adr/ADR-0017-password-authenticated-closed-beta.md, docs/contracts/user-data-adapter.md, docs/agents/issue-execution-contract.md, docs/handoff.json, HANDOFF.md, CONTEXT.md, artifacts/AI-51b/unrun.md` | `pnpm test:contract`; `pnpm test:security`; `pnpm test:e2e`; `pnpm docs:check`; `pnpm check`; copy/claim scan; browser QA at 1280x800 and 390x844 plus Arabic RTL; `jq empty docs/handoff.json`; `git diff --check` | `artifacts/AI-51b/commands.jsonl`, `artifacts/AI-51b/unrun.md`, password-session acceptance summary | RL-01 RL-02 RL-07 |
+| #126 AI-13a | Trip API / Pending Proposal Read | `app/api/trips/[tripId]/proposal/**, lib/server/identity/**, tests/{contract,integration,security}/identity/**, docs/contracts/pending-proposal-read.md, docs/agents/issue-execution-contract.md, artifacts/AI-13a/**` | `pnpm check`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm docs:check`; `jq empty docs/handoff.json`; `git diff --check` | pending-proposal contract, owner/other matrix, unrun | RL-01 RL-02 |
+| #127 AI-13b | TripWorkspace / Proposal Revision | `lib/server/trip/**, supabase/migrations/**, app/api/trips/[tripId]/proposal/**, tests/{contract,integration,security}/trip/**, docs/contracts/**, docs/agents/issue-execution-contract.md, artifacts/AI-13b/**` | `pnpm check`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `pnpm docs:check`; `jq empty docs/handoff.json`; `git diff --check` | revision lineage, CAS/idempotency matrix, migration/rollback proof, unrun | RL-01 |
+| #130 AI-13c | Trip API / Proposal Reject | `app/api/trips/[tripId]/proposal/reject/**, lib/server/identity/**, tests/{contract,integration,security}/trip/**, docs/contracts/proposal-reject-v1.md, docs/agents/issue-execution-contract.md, artifacts/AI-13c/**` | `pnpm check`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm docs:check`; `jq empty docs/handoff.json`; `git diff --check` | reject contract, owner/other/replay matrix, unrun | RL-01 |
 | #17 AI-15 | Release gate R1 | `docs/acceptance/r1-*.md` | `pnpm check`; `pnpm check` plus every suite this Issue touches | eight-dimension acceptance report | RL-01 RL-02 RL-03 |
 | #18 AI-16 | ModelGateway | `lib/server/model-gateway/**, tests/contract/model-gateway/**` | `pnpm check`; `pnpm test:contract` | provider conformance matrix | — |
 | #19 AI-17 | ModelGateway / Observability | `lib/server/model-gateway/route/**, lib/server/observability/**` | `pnpm check`; `pnpm test:contract`; `pnpm test:integration` | trace sample, cost/route snapshots | RL-07 |
@@ -148,7 +153,7 @@ Any Issue added after this file was written must add its own row here before it 
 | #89 V4-04 | Constraint Engine | lib/server/constraints/**, tests/unit/constraints/**, evals/planning/**, docs/contracts/travel-constraints.md | pnpm check; pnpm test:unit; pnpm test:contract; pnpm evals; pnpm docs:check | artifacts/V4-04/commands.jsonl、artifacts/V4-04/unrun.md、constraint corpus, feasibility report, final-state scorer | RL-03 RL-04 |
 | #90 V4-05 | Knowledge / Planning Research | docs/benchmarks/route-pattern/**, evals/route-pattern/** | pnpm check; pnpm evals; pnpm docs:check | artifacts/V4-05/commands.jsonl、artifacts/V4-05/unrun.md、rights matrix, paired retrieval report, adopt/reject record | RL-02 RL-05 RL-06 |
 | #91 V4-06 | Identity / Product Web | lib/server/identity/**, app/(product)/**, tests/security/auth/** | pnpm check; pnpm test:security; pnpm test:e2e; pnpm docs:check | artifacts/V4-06/commands.jsonl、artifacts/V4-06/unrun.md、actor/session matrix, protected-route E2E | RL-01 RL-02 RL-07 |
-| #92 V4-07 | Product Shell | app/(product)/**, components/product-shell/**, lib/i18n.ts | pnpm check; pnpm test:e2e; pnpm docs:check | artifacts/V4-07/commands.jsonl、artifacts/V4-07/unrun.md、five-locale desktop/mobile/RTL evidence | RL-01 |
+| #92 V4-07 | Product Shell | app/(product)/**, components/product-shell/**, lib/i18n.ts, app/visepanda/page.tsx, components/VisePandaChatWorkspace.tsx, tests/static-output.test.mjs | pnpm check; pnpm test:e2e; pnpm docs:check | artifacts/V4-07/commands.jsonl、artifacts/V4-07/unrun.md、five-locale desktop/mobile/RTL evidence | RL-01 |
 | #93 V4-08 | Chat Web / Turn | app/(product)/chat/**, components/chat/**, lib/server/turn/** | pnpm check; pnpm test:contract; pnpm test:integration; pnpm test:e2e | artifacts/V4-08/commands.jsonl、artifacts/V4-08/unrun.md、thread transcript, reconnect/cancel proof | RL-07 |
 | #94 V4-09 | Chat Feedback | components/chat/**, lib/server/turn/feedback/**, tests/e2e/chat/** | pnpm check; pnpm test:contract; pnpm evals; pnpm test:e2e | artifacts/V4-09/commands.jsonl、artifacts/V4-09/unrun.md、result-type and feedback fixtures | RL-04 RL-05 |
 | #95 V4-10 | Trip Canvas | components/canvas/**, app/(product)/trips/**, lib/server/trip/** | pnpm check; pnpm test:contract; pnpm test:e2e | artifacts/V4-10/commands.jsonl、artifacts/V4-10/unrun.md、version/reload/rollback browser evidence | RL-01 RL-03 |
@@ -173,6 +178,17 @@ Any Issue added after this file was written must add its own row here before it 
 | #114 V4-29 | Guide Conflict / Trip | lib/server/artifacts/guide/**, lib/server/trip/**, components/import/** | pnpm check; pnpm test:contract; pnpm test:integration; pnpm test:e2e | artifacts/V4-29/commands.jsonl、artifacts/V4-29/unrun.md、conflict-to-proposal and version traces | RL-01 RL-04 RL-05 |
 | #115 V4-30 | Offline Product | lib/offline/**, components/offline/**, app/manifest.ts | pnpm check; pnpm test:security; pnpm test:e2e | artifacts/V4-30/commands.jsonl、artifacts/V4-30/unrun.md、offline/device/cache isolation evidence | RL-02 RL-07 |
 | #116 V4-31 | Release Gate / Product Parity | docs/acceptance/**, docs/runbooks/** | pnpm check; pnpm docs:check; pnpm test:contract; pnpm test:integration; pnpm test:security; pnpm test:e2e; pnpm evals | artifacts/V4-31/commands.jsonl、artifacts/V4-31/unrun.md、eight-dimension L1-L7 parity report | RL-01 RL-02 RL-03 RL-04 RL-05 RL-06 RL-07 RL-08 RL-09 |
+| #132 GOV-AFK-01 | Governance / Continuous execution | `AGENTS.md, CONTEXT.md, HANDOFF.md, docs/handoff.json, docs/operator-actions.json, docs/agents/**, scripts/docs-check.mjs, scripts/record-command.mjs, artifacts/GOV-AFK-01/**` | `pnpm docs:check`; `pnpm check`; `jq empty docs/handoff.json docs/operator-actions.json`; local Markdown-link check; `git diff --check` | `artifacts/GOV-AFK-01/commands.jsonl`, `artifacts/GOV-AFK-01/unrun.md`, policy, kickoff prompt, queue schema | — |
+| #136 WEB-02 | Frontend program / public contract | `docs/frontend-redesign-issue-plan.md, docs/handoff.json, HANDOFF.md, CONTEXT.md, artifacts/WEB-02/**` | `pnpm docs:check`; `pnpm check`; local Markdown-link check; `git diff --check` | `artifacts/WEB-02/commands.jsonl`, `artifacts/WEB-02/unrun.md`, dependency/frontier audit | — |
+| #137 WEB-03 | Frontend governance | `docs/adr/ADR-0018-independent-frontend-redesign-baseline.md, docs/frontend-redesign-issue-plan.md, docs/agents/issue-execution-contract.md, docs/handoff.json, HANDOFF.md, CONTEXT.md, artifacts/WEB-03/**` | `pnpm docs:check`; `pnpm check`; `jq empty docs/handoff.json`; local Markdown-link check; `git diff --check` | `artifacts/WEB-03/commands.jsonl`, `artifacts/WEB-03/unrun.md`, tracker DAG audit | — |
+| #138 WEB-04 | Frontend assets / rights | `package.json, public/assets/**, app/layout.tsx, brand/qa/**, docs/licenses/**, scripts/check-assets.mjs, tests/**/assets/**, docs/handoff.json, HANDOFF.md, CONTEXT.md, artifacts/WEB-04/**` | `pnpm check`; `pnpm test`; `pnpm check:assets`; `pnpm docs:check`; `git diff --check` | `artifacts/WEB-04/commands.jsonl`, `artifacts/WEB-04/unrun.md`, rights ledger, SBOM/NOTICE, denylist result | — |
+| #139 WEB-05 | Frontend design direction | `docs/design/frontend-redesign/**, docs/handoff.json, HANDOFF.md, CONTEXT.md, artifacts/WEB-05/**` | `pnpm docs:check`; local Markdown-link check; `git diff --check` | `artifacts/WEB-05/commands.jsonl`, `artifacts/WEB-05/unrun.md`, three directions, selection/dissent record | — |
+| #140 WEB-06 | Shared frontend foundation | `components/brand/**, components/ui/**, components/shell/**, components/motion/**, lib/design/**, lib/i18n.ts, app/globals.css, tests/**/design/**, docs/handoff.json, HANDOFF.md, CONTEXT.md, artifacts/WEB-06/**` | `pnpm lint`; `pnpm typecheck`; `pnpm build`; `pnpm test`; `pnpm test:e2e`; `pnpm docs:check`; `git diff --check` | `artifacts/WEB-06/commands.jsonl`, `artifacts/WEB-06/unrun.md`, token/font/five-locale/a11y evidence | — |
+| #141 WEB-07 | Homepage | `app/page.tsx, components/homepage/**, lib/i18n.ts, tests/e2e/homepage/**, docs/homepage-redesign.md, docs/handoff.json, HANDOFF.md, CONTEXT.md, artifacts/WEB-07/**` | `pnpm check`; `pnpm test:e2e`; `pnpm docs:check`; claim/asset scan; desktop/390x844/RTL browser QA; `git diff --check` | `artifacts/WEB-07/commands.jsonl`, `artifacts/WEB-07/unrun.md`, five-locale screenshots, claim/asset results | — |
+| #142 WEB-08 | Auth / first-run web | `app/(auth)/**, components/auth/**, components/first-run/**, lib/i18n.ts, tests/e2e/identity/**, docs/handoff.json, HANDOFF.md, CONTEXT.md, artifacts/WEB-08/**` | `pnpm check`; `pnpm test:security`; `pnpm test:e2e`; `pnpm docs:check`; desktop/mobile/RTL/keyboard QA; `git diff --check` | `artifacts/WEB-08/commands.jsonl`, `artifacts/WEB-08/unrun.md`, auth-state and mobile evidence | RL-02 RL-07 |
+| #143 WEB-09 | Frontend navigation / identity | `lib/navigation/**, tests/e2e/navigation/**, docs/handoff.json, HANDOFF.md, CONTEXT.md, artifacts/WEB-09/**` | `pnpm check`; `pnpm test:security`; `pnpm test:e2e`; `pnpm docs:check`; `git diff --check` | `artifacts/WEB-09/commands.jsonl`, `artifacts/WEB-09/unrun.md`, entry-contract/deep-link/returnTo/locale traces; #141/#142/#92 own consumer integration | RL-01 RL-02 RL-07 |
+| #144 WEB-10 | Frontend acceptance | `tests/e2e/frontend/**, docs/acceptance/frontend-*.md, artifacts/WEB-10/**, docs/handoff.json, HANDOFF.md, CONTEXT.md` | `pnpm check`; `pnpm test:e2e`; `pnpm docs:check`; asset/claim scan; local Markdown-link check; `git diff --check` | `artifacts/WEB-10/commands.jsonl`, `artifacts/WEB-10/unrun.md`, viewport/locale/a11y/motion/state matrix | RL-01 RL-02 RL-04 RL-07 |
+| #145 WEB-11 | Frontend release gate | `docs/acceptance/frontend-release-*.md, docs/runbooks/frontend-cutover.md, docs/licenses/**, artifacts/WEB-11/**, docs/handoff.json, HANDOFF.md, CONTEXT.md` | `pnpm check`; `pnpm test:e2e`; `pnpm docs:check`; asset/claim/SBOM/NOTICE checks; Preview/rollback smoke; `git diff --check` | `artifacts/WEB-11/commands.jsonl`, `artifacts/WEB-11/unrun.md`, release decision, store claim matrix, cutover/rollback record | RL-01…RL-09 |
 
 ## 6. Rules
 
@@ -187,10 +203,21 @@ Any Issue added after this file was written must add its own row here before it 
 - Merging proves engineering acceptance only. Product effect is reviewed in the Issue's stated
   observation window.
 
-## 7. Direct queue supersession
+## 7. Direct queue and continuous scheduler
 
 Defined Issues are directly schedulable. Do not defer implementation solely because another Issue is
 open. `status:blocked` reports an unavailable runtime, provider, legal, or operator state; it does
 not prohibit development, testing, automated review, or merge of independently scoped work.
 Dependency references are planning context only. Runtime authorization, data-policy, and safety
 guards remain fail-closed.
+
+The one-Issue/branch/PR rule scopes a work unit; it does not require the whole session to pause after
+that work unit. A session launched in Continuous AFK mode follows
+`docs/agents/continuous-afk-execution.md` and, after each PR, merge or safe handoff, recomputes the
+live frontier and continues without routine operator confirmation.
+
+The scheduler may not start an Issue with a missing row, path collision,
+unaccepted contract or operator-owned decision. Operator-owned work is recorded in
+`docs/operator-actions.json` and skipped while another independent frontier exists. The scheduler
+does not weaken the rules above, any RL suite, required check, review, RLS, migration or production
+gate.

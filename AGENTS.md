@@ -34,3 +34,14 @@ Issue bodies link to it; that file is the authority. Do not start an Issue whose
 Defined Issues are directly schedulable; open Issue dependencies do not prohibit implementation.
 Preserve one-branch-per-Issue isolation and every runtime fail-closed guard.
 
+### Continuous AFK sessions
+
+A Continuous AFK session may move from one independently executable Issue to another without
+per-Issue operator confirmation. It must follow `docs/agents/continuous-afk-execution.md`: keep one
+Issue/branch/PR per work unit, recompute the live frontier after every PR or merge, and record then
+skip operator-only blockers while other safe work remains.
+
+AFK mode never authorizes bypassing required checks, branch protection, RLS,
+permission boundaries, privacy/data-licence policy, migration rollback requirements, secrets,
+production cutover, or irreversible actions. Human confirmation may be replaced by deterministic
+or browser-automated evidence only when that evidence actually tests the acceptance condition.

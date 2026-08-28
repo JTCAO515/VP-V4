@@ -1,5 +1,17 @@
 # Handoff
 
+## Frontend redesign governance — 2026-08-27
+
+- Operator decision: accepted in [ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md).
+- Program: [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136); tracker mapping in `docs/frontend-redesign-issue-plan.md`.
+- Current frontend maturity: Homepage and `/visepanda` are `stop-ship`; implementation has not started.
+- Completed governance work: [WEB-03 #137](https://github.com/JTCAO515/VP-V4/issues/137) published the ADR, Issue DAG, execution rows and handoff to `main@0b6c27f`.
+- Current frontend frontier: #138 asset/rights work (`ready-for-agent`); #139 three visual directions is `ready-for-human`; downstream Issues remain blocked.
+- Shared authorities: #87 Demo parity, #92 Product Shell, ADR-0003 Trip writes, ADR-0017 password-authenticated closed beta.
+- Map: disabled until a separate compliance gate closes. Homepage primary CTA: `Open VisePanda`.
+- WIP conflict resolved: PR #124 was closed as superseded; approved derivatives may re-enter only through #138/#140.
+- Rollback: no compliant stop-ship clone may be republished; use truthful unavailable/Early Access if no cleared release exists.
+
 VP-V4 now contains bounded R1 contracts, durable Trip persistence/RLS paths, a fake-model TurnCoordinator and authenticated Trip route code. The product surface remains a preview: real model, RAG, Explore, external data, multimodal providers and fully accepted production Magic Link/session evidence are not available.
 
 GitHub delivery program is now live: [AI-00 Program #2](https://github.com/JTCAO515/VP-V4/issues/2) contains 41 native sub-issues (#3–#43), and every implementation ticket has a full engineering body, textual blockers, native dependency edges, phase/priority/status labels, acceptance, rollback, documentation impact, and observation.
@@ -81,7 +93,8 @@ Rollback: remove the local `docs/knowledge-base/` package and audit link if the 
 - Agent/RAG/Memory/Tool/Context architecture: `docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md`; source ledger: `docs/research/agent-context-rag-memory-tool-evidence-2026-08-25.md`.
 - Published tracker graph: `docs/vp-v4-production-parity-issue-plan.md`, V4-01 through V4-31, mapped to #85/#87-#116 and registered in `docs/agents/issue-execution-contract.md`.
 - V4-01 adds `docs/architecture/v4-01-demo-parity-registry.md` and `v4-01-framework-adoption-matrix.md`: 40 grouped Demo actions, 14 framework candidates, explicit fixture disposition and 31/31 execution-row audit. It activates no runtime.
-- After V4-01 closes, #84 is the only ready frontier. Supabase Site URL and callback allowlist are visually verified; real Magic Link session and owner/other-user evidence remain open, so #15 stays blocked. New parity Issues are not authorization to start dependency-blocked work.
+- #87 V4-01 is closed. The operator then retired Magic Link after masked email-rate-limit and `otp_expired` evidence; #120/PR #121 is closed without merge.
+- #122 AI-51b and #84 AI-51 are closed after the password-session and route evidence merged. #127 AI-13b and #130 AI-13c are also closed after durable revision/reject work. At the 2026-08-27 live audit, #15 AI-13 is the ready R1 product frontier; future sessions must re-query rather than rely on this snapshot.
 - AI-43 requires a current AI SDK Core/ToolLoop/Workflow comparison before execution; LangChain/LangGraph/GraphRAG/multi-agent are not default production dependencies.
 
 ## VisePanda visual identity delivery
@@ -108,3 +121,11 @@ running; no bypass was applied.
 
 `gh auth status --hostname github.com` reported no logged-in GitHub host, so no remote Issue label
 or status mutation was attempted.
+
+## Continuous AFK execution
+
+- [continuous-afk-execution.md](docs/agents/continuous-afk-execution.md) makes completion of one Issue a scheduler event instead of a session stop. It retains one Issue/worktree/branch/PR and all required checks; user-authorized direct scheduling supersedes dependency closure as a start condition.
+- [continuous-afk-kickoff.md](docs/agents/prompts/continuous-afk-kickoff.md) is the copyable startup prompt. It requires a live audit and continuous frontier recomputation after every PR, CI result, merge or blocker change.
+- [operator-actions.json](docs/operator-actions.json) is the machine-readable queue for genuinely non-delegable actions. The session records and skips an operator-only path while independent safe work remains.
+- Class A reversible repo-only work may enable GitHub auto-merge only after all required gates pass and without bypass. Class B auth/RLS/migration/data-policy work can be implemented and evidenced but cannot self-approve or execute production changes. Class C legal, account, payment, production and irreversible actions remain operator-owned.
+- Rollback is a normal revert of the governance PR; no runtime, RLS, schema or production data changes are part of GOV-AFK-01.

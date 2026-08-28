@@ -22,7 +22,8 @@ test("direct scheduling retains fail-closed runtime protections", () => {
 });
 
 test("handoff and identity contract reflect anonymous preview without Magic Link", () => {
-  assert.doesNotMatch(identityContract, /magic[ -]?link|\/api\/auth\/magic-link|\/auth\/callback/i);
+  assert.match(identityContract, /no Magic Link or callback session-acquisition route/i);
+  assert.doesNotMatch(identityContract, /\/api\/auth\/magic-link|\/auth\/callback/i);
   assert.match(identityContract, /anonymous preview/i);
   assert.match(identityContract, /auth\.getClaims\(\)/);
   assert.doesNotMatch(handoff.intendedNextAgent, /magic[ -]?link|dependency-blocked/i);

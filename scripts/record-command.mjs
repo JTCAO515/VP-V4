@@ -5,7 +5,9 @@ const [command, ...args] = process.argv.slice(2);
 const artifactIssue = process.env.VP_ARTIFACT_ISSUE ?? "AI-07a";
 
 if (!command) throw new Error("Usage: node scripts/record-command.mjs <command> [args...]");
-if (!/^AI-\d{2}[a-z]?$/.test(artifactIssue)) throw new Error("VP_ARTIFACT_ISSUE must use an AI issue identifier.");
+if (!/^(?:AI-\d{2}[a-z]?|V4-\d{2}|GOV-[A-Z0-9]+(?:-[A-Z0-9]+)*)$/.test(artifactIssue)) {
+  throw new Error("VP_ARTIFACT_ISSUE must use an AI, V4, or GOV issue identifier.");
+}
 
 const startedAt = new Date().toISOString();
 const result = spawnSync(command, args, { stdio: "inherit" });

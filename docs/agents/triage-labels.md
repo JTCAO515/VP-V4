@@ -19,6 +19,11 @@ Project planning also uses:
 
 `status:ready` and `ready-for-agent` are not synonyms: the first means dependencies are complete; the second also means no human decision remains.
 
+In Continuous AFK mode, `ready-for-human` and `needs-info` are skip signals for the scheduler, not a
+reason to pause the entire session. Only the affected dependency path waits. The scheduler removes
+`ready-for-agent` from that Issue, records the exact action in `docs/operator-actions.json`, and
+continues another independently ready Issue.
+
 ## Release milestones
 
 Delivery order also uses GitHub milestones, one per release in the engineering report section 12.2:
