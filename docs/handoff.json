@@ -7,15 +7,15 @@
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "AI-22/#24 is the next direct Policy/Licence slice. Preserve AI-21's R2 blocked audit: fixture contracts are not a provider alpha, and no provider, region, credential, database, public route, or release claim may be introduced without its separately accepted boundary. No locally executable frontend implementation Issue remains; continue the direct queue while preserving the frontend redesign's map-off and Open VisePanda baseline.",
+  "intendedNextAgent": "AI-23/#25 is the next direct Knowledge/Migration slice. Preserve AI-21's R2 blocked audit and AI-22's C0-only PolicyReceipt boundary: fixture contracts are not a provider alpha or a licence grant, and no provider, region, credential, database, public route, external data, or release claim may be introduced without its separately accepted boundary. No locally executable frontend implementation Issue remains; continue the direct queue while preserving the frontend redesign's map-off and Open VisePanda baseline.",
   "latestIssueExecution": {
-    "issue": "AI-21/#23",
-    "changedFiles": ["docs/acceptance/r2-grounded-text-internal-alpha.md", "docs/agents/issue-execution-contract.md", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md", "artifacts/AI-21/commands.jsonl", "artifacts/AI-21/unrun.md", "docs/superpowers/plans/2026-08-28-ai-21-r2-acceptance.md"],
-    "verification": ["Pinned pnpm 9 frozen installation", "R2 repository gate: lint 114 files, typecheck, production build, static 22, contract 110, security 26 with one local-Supabase skip, integration one static pass with eight local-Supabase skips, evals 16, docs/JSON/diff all passing", "pnpm db:verify: all three local paths not configured and no production connection attempted", "Independent automated re-review: Clear, no Critical/Important findings"],
-    "unrun": ["No real provider, credential, region/DPA, data-policy receipt, alias drift, cost/latency, feature flag, staging SSE/abort/degraded browser, production, or observation window evidence", "No local Supabase runtime; RLS integration remains explicitly skipped"],
-    "residualRisk": "Fixture-only contracts cannot prove real R2 provider availability, answer correctness, data-policy compliance, cost/latency, RLS behavior, or release safety.",
-    "rollback": "Revert the AI-21 acceptance, handoff, plan, and artifact records. No schema, durable data, provider configuration, account, flag, or external state was created.",
-    "nextAction": "Review and execute the next direct Policy/Licence Issue while preserving the R2 blocked verdict and frontend redesign baseline."
+    "issue": "AI-22/#24",
+    "changedFiles": ["lib/server/policy/receipts.ts", "tests/contract/policy/policy-receipts.test.ts", "tests/security/policy/policy-receipts-security.test.ts", "docs/contracts/policy-receipts.md", "docs/agents/issue-execution-contract.md", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md", "artifacts/AI-22/commands.jsonl", "artifacts/AI-22/unrun.md", "docs/superpowers/plans/2026-08-28-ai-22-policy-receipts.md"],
+    "verification": ["Pinned pnpm 9 frozen installation", "Repository gates: check (lint 115, typecheck, production build, static/design 22), contract 113, security 29 with one local-Supabase skip, evals 16, docs/JSON/diff all passing", "pnpm db:verify: all three local paths not configured and no production connection attempted", "Independent automated re-review: Clear, no Critical/Important findings"],
+    "unrun": ["No provider, licence feed, legal review, credential, region/DPA, database, cache/RAG/Explore/SEO/Proposal consumer, route, purge, staging, production, or observation-window evidence", "No local Supabase runtime; RLS integration remains explicitly skipped"],
+    "residualRisk": "The pure C0 fixture boundary cannot prove a real licence grant, C1 owner scope, C2/C3 policy agreement, durable registry write/revocation/purge, provider behavior, or release safety.",
+    "rollback": "Revert the AI-22 policy module, fixtures, contract, handoff, plan, and artifact records. No schema, durable data, provider configuration, account, flag, or external state was created.",
+    "nextAction": "Merge AI-22, then execute the next direct Knowledge/Migration Issue while preserving policy fail-closed behavior and the frontend redesign baseline."
   },
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",

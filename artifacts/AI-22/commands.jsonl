@@ -1,0 +1,8 @@
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-08-28T15:04:22.4409763Z","finishedAt":"2026-08-28T15:04:39.1519581Z","env":"local; pnpm=9.15.9; no external runtime"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-08-28T15:04:39.1882346Z","finishedAt":"2026-08-28T15:04:40.0818778Z","env":"local; pnpm=9.15.9; no external runtime"}
+{"command":"pnpm test:security","exitCode":0,"startedAt":"2026-08-28T15:04:40.0829683Z","finishedAt":"2026-08-28T15:04:44.1222163Z","env":"local; pnpm=9.15.9; no external runtime"}
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-08-28T15:04:44.1227282Z","finishedAt":"2026-08-28T15:04:44.6637553Z","env":"local; pnpm=9.15.9; no external runtime"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T15:04:44.6642677Z","finishedAt":"2026-08-28T15:04:45.0022638Z","env":"local; pnpm=9.15.9; no external runtime"}
+{"command":"pnpm db:verify","exitCode":0,"startedAt":"2026-08-28T15:04:45.0028026Z","finishedAt":"2026-08-28T15:04:45.3878900Z","env":"local; pnpm=9.15.9; no external runtime"}
+{"command":"node -e \"JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8'))\"","exitCode":0,"startedAt":"2026-08-28T15:04:45.3883695Z","finishedAt":"2026-08-28T15:04:45.4241466Z","env":"local; pnpm=9.15.9; no external runtime"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T15:04:45.4245623Z","finishedAt":"2026-08-28T15:04:45.4826641Z","env":"local; pnpm=9.15.9; no external runtime"}
