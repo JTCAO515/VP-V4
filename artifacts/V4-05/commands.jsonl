@@ -8,3 +8,4 @@
 {"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T11:54:24.179Z","finishedAt":"2026-08-28T11:54:24.564Z","env":"local"}
 {"command":"pnpm check","exitCode":0,"startedAt":"2026-08-28T11:54:32.780Z","finishedAt":"2026-08-28T11:54:50.761Z","env":"local"}
 {"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T11:54:58.042Z","finishedAt":"2026-08-28T11:54:58.104Z","env":"local"}
+{"command":"node -e \"JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8'))\"","exitCode":0,"startedAt":"2026-08-28T21:50:03.290Z","finishedAt":"2026-08-28T21:50:03.334Z","env":"local"}
