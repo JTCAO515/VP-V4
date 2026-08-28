@@ -40,6 +40,13 @@ export function isProposalRejectInput(value: unknown): value is Readonly<{ propo
   return isUuid(String((value as Record<string, unknown>).proposalId ?? ""));
 }
 
+export function isRollbackInput(value: unknown): value is Readonly<{ targetVersion: number }> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const input = value as Record<string, unknown>;
+  return typeof input.targetVersion === "number" && Number.isInteger(input.targetVersion) && input.targetVersion >= 0
+    && Object.keys(input).every((key) => key === "targetVersion");
+}
+
 export function isChatThreadInput(value: unknown): value is Readonly<{ tripId?: string }> {
   if (value === undefined || value === null) return true;
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;

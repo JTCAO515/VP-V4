@@ -7,6 +7,7 @@ type PendingCookie = { name: string; value: string; options: CookieOptions };
 
 export type TripSnapshot = Readonly<{ id: string; title: string; headVersion: number; updatedAt: string }>;
 export type TripAudit = Readonly<{ id: string; action: string; proposalId: string; createdAt: string }>;
+export type TripVersion = Readonly<{ id: string; resultingVersion: number; proposalId: string | null; eventType: "initial" | "proposal_applied"; title: string | null; createdAt: string }>;
 export type ConfirmInput = Readonly<{ proposalId: string; idempotencyKey: string; digest: string }>;
 export type ProposalRevisionInput = Readonly<{ proposalId: string; title: string }>;
 export type ProposalRejectInput = Readonly<{ proposalId: string }>;
@@ -59,16 +60,30 @@ export function createUserDataAdapter(request: NextRequest) {
     const subject = data?.claims?.sub;
     return error || typeof subject !== "string" ? { error: "UNAUTHENTICATED" } : { data: subject };
   };
-  const getTrip = async (tripId: string): Promise<AdapterResult<Readonly<{ trip: TripSnapshot; audits: readonly TripAudit[] }>>> => {
+  const getTrip = async (tripId: string): Promise<AdapterResult<Readonly<{ trip: TripSnapshot; audits: readonly TripAudit[]; versions: readonly TripVersion[] }>>> => {
     const actor = await authenticated();
     if ("error" in actor) return { error: actor.error };
     const { data: trip, error: tripError } = await client.from("trips").select("id,title,head_version,updated_at").eq("id", tripId).maybeSingle();
     if (tripError || !trip) return { error: "FORBIDDEN" };
     const { data: audits, error: auditError } = await client.from("trip_audit_events").select("id,action,proposal_id,created_at").eq("trip_id", tripId).order("created_at", { ascending: false });
     if (auditError) return { error: "INTERNAL_ERROR" };
+    const { data: versions, error: versionError } = await client.from("trip_events")
+      .select("id,resulting_version,proposal_id,event_type,created_at")
+      .eq("trip_id", tripId)
+      .order("resulting_version", { ascending: false });
+    if (versionError) return { error: "INTERNAL_ERROR" };
+    const { data: snapshots, error: snapshotError } = await client.from("trip_version_snapshots")
+      .select("version,title,created_at")
+      .eq("trip_id", tripId);
+    if (snapshotError) return { error: "INTERNAL_ERROR" };
+    const snapshotsByVersion = new Map((snapshots ?? []).map((snapshot) => [snapshot.version, snapshot]));
     return { data: {
       trip: { id: trip.id, title: trip.title, headVersion: trip.head_version, updatedAt: trip.updated_at },
       audits: (audits ?? []).map((audit) => ({ id: audit.id, action: audit.action, proposalId: audit.proposal_id, createdAt: audit.created_at })),
+      versions: [
+        ...(versions ?? []).map((version) => ({ id: version.id, resultingVersion: version.resulting_version, proposalId: version.proposal_id, eventType: "proposal_applied" as const, title: snapshotsByVersion.get(version.resulting_version)?.title ?? null, createdAt: version.created_at })),
+        ...((snapshotsByVersion.has(0) && !(versions ?? []).some((version) => version.resulting_version === 0)) ? [{ id: `initial-${trip.id}`, resultingVersion: 0, proposalId: null, eventType: "initial" as const, title: snapshotsByVersion.get(0)?.title ?? null, createdAt: snapshotsByVersion.get(0)?.created_at ?? trip.updated_at }] : []),
+      ].sort((left, right) => right.resultingVersion - left.resultingVersion),
     } };
   };
   const getPendingProposal = async (tripId: string): Promise<AdapterResult<PendingProposalRead>> => {
@@ -248,7 +263,17 @@ export function createUserDataAdapter(request: NextRequest) {
     if (result.outcome !== "applied" && result.outcome !== "already_applied") return { error: "PROPOSAL_NOT_CONFIRMABLE" };
     return { data: { outcome: result.outcome, resultingVersion: result.resulting_version } };
   };
-  return { applyCookies, authenticated, getTrip, getPendingProposal, revisePendingProposal, rejectPendingProposal, listChatThreads, createChatThread, getChatThread, startChatTurn, cancelChatTurn, replayChatTurn, recordTurnFeedback, confirm };
+  const createRollbackProposal = async (tripId: string, targetVersion: number): Promise<AdapterResult<Readonly<{ proposalId: string; baseTripVersion: number; targetVersion: number }>>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data, error } = await client.rpc("create_trip_rollback_proposal", { p_trip_id: tripId, p_target_version: targetVersion });
+    if (error) return { error: error.message.includes("ROLLBACK_NOT_AVAILABLE") ? "PROPOSAL_NOT_CONFIRMABLE" : mapRpcFailure(error.message) };
+    const result = data?.[0];
+    return result?.proposal_id && typeof result.base_trip_version === "number" && typeof result.target_version === "number"
+      ? { data: { proposalId: result.proposal_id, baseTripVersion: result.base_trip_version, targetVersion: result.target_version } }
+      : { error: "INTERNAL_ERROR" };
+  };
+  return { applyCookies, authenticated, getTrip, getPendingProposal, revisePendingProposal, rejectPendingProposal, listChatThreads, createChatThread, getChatThread, startChatTurn, cancelChatTurn, replayChatTurn, recordTurnFeedback, confirm, createRollbackProposal };
 }
 
 function chatThreadSnapshot(input: Readonly<{ id: string; trip_id: string | null; status: string; created_at: string; updated_at: string }>): ChatThreadSnapshot {

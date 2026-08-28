@@ -7,7 +7,7 @@ Status: accepted R0 architecture baseline for [AI-04](https://github.com/JTCAO51
 - New V4 Supabase lineage only; VP-Final database history, records, credentials, and environment defaults are not reused.
 - Durable beta state is authenticated-only; anonymous use is preview-only and non-persistent.
 - R1/R2 has no Ops UI or Ops route on the public Web deployment.
-- Authorization is finalized by user/Ops JWT plus RLS and role-scoped `security invoker` RPC. A server secret never stands in for a user or reviewer identity.
+- Authorization is finalized by user/Ops JWT plus RLS and role-scoped `security invoker` RPC. [ADR-0019](../adr/ADR-0019-trip-snapshot-rollback-authorization.md) records the only current user-JWT `security definer` exception for atomic Trip snapshot/rollback functions; a server secret never stands in for a user or reviewer identity.
 - One worker-only system path may use a secret/private schema only with explicit entity/version/policy conditions and an allowlisted audit record.
 
 The controlling ADRs are [ADR-0006](../adr/ADR-0006-new-v4-supabase-lineage.md), [ADR-0007](../adr/ADR-0007-authenticated-closed-beta.md), [ADR-0008](../adr/ADR-0008-public-web-and-protected-ops.md), and [ADR-0014](../adr/ADR-0014-actor-credential-and-data-adapter-boundary.md).
@@ -29,14 +29,14 @@ The controlling ADRs are [ADR-0006](../adr/ADR-0006-new-v4-supabase-lineage.md),
 
 | Adapter | Caller and credential | Database boundary | Transaction rule | Not for |
 | --- | --- | --- | --- | --- |
-| `UserDataAdapter` | server route/action acting with verified user JWT | public schema, RLS, role-scoped `security invoker` RPC | one user-JWT RPC for multi-table owner actions | service secret, public anonymous mutation, Ops review |
+| `UserDataAdapter` | server route/action acting with verified user JWT | public schema, RLS, role-scoped `security invoker` RPC, or the two fixed ADR-0019 owner-checked RPCs | one user-JWT RPC for multi-table owner actions | service secret, public anonymous mutation, Ops review |
 | `OpsDataAdapter` | separate protected Ops deployment with verified scoped JWT | Ops-exposed role-scoped RPC and RLS | audit author/reviewer/admin action within its transaction | R1/R2 public Web, browser service secret, worker impersonation |
 | `SystemDataAdapter` | private worker with server secret | private schema/RPC and explicit resource conditions | named job/entity/version/policy inputs plus allowlisted audit | user/Ops request path, arbitrary SQL, unscoped table scan |
 
 ### Mandatory request rules
 
 1. Treat Route Handlers and Server Actions as public HTTP endpoints: authenticate, authorize, validate input, and apply same-origin/CSRF controls on every call.
-2. Future `confirmAndApplyProposal` must use one user-JWT `security invoker` RPC transaction. It checks actor, proposal status/revision/expiry, `baseTripVersion`, idempotency digest, and RLS in the same database transaction.
+2. Future `confirmAndApplyProposal` must use one user-JWT `security invoker` RPC transaction unless an accepted ADR documents a smaller fixed-function exception. ADR-0019 permits only the named Trip snapshot/rollback functions with database-side `auth.uid()`, owner predicates, locks, fixed search path and no service credential.
 3. No BFF may open a service-key transaction and reproduce owner checks in TypeScript. UI visibility, client-side route guards, and model tool restrictions cannot replace RLS.
 4. System jobs use a closed job contract and explicit resource identifiers. They cannot accept arbitrary URLs, SQL, model prompts, table names, or an actor override.
 5. A public projection remains a projection: each public read later rechecks authoritative eligibility/freshness. Candidate, draft, expired, private, and licence-blocked rows remain denied.
