@@ -7,15 +7,15 @@
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "WEB-05/#139 records the direct selection of VisePanda VI + Golden Route + Guide: retain the map-off default, exact Open VisePanda CTA, truthfully bounded capability states, and approved-asset guardrails. No locally executable frontend implementation Issue remains after refresh; skip WEB-11 release evidence and remote GitHub status/label synchronization while their external prerequisites remain unavailable.",
+  "intendedNextAgent": "AI-19/#21 is a pure eligibility-first hybrid retrieval contract: retain opaque IDs, exact-first ordering, deterministic RRF and default no-evidence. Do not add a schema, database/vector/provider adapter, source text, public route or production RAG claim without a separately accepted contract. No locally executable frontend implementation Issue remains; skip WEB-11 release evidence and remote GitHub status/label synchronization while their external prerequisites remain unavailable.",
   "latestIssueExecution": {
-    "issue": "WEB-05/#139",
-    "changedFiles": ["docs/design/frontend-redesign/web-05-visual-directions.md", "docs/frontend-redesign-issue-plan.md", "docs/agents/issue-execution-contract.md", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md", "artifacts/WEB-05/commands.jsonl", "artifacts/WEB-05/unrun.md"],
-    "verification": ["Direct operator instruction cross-checked against ADR-0018 and the VisePanda brand handbook", "pnpm docs:check", "Node JSON parse for docs/handoff.json", "Local Markdown-link check", "git diff --check", "Independent automated review: no Critical/Important merge blocker"],
-    "unrun": ["No browser or device visual rendering is required for this documentation-only selection record", "No runtime asset, map, Preview, store, external account, production cutover, or release-evidence check applies"],
-    "residualRisk": "The selection record does not prove independent-similarity review, physical-device accessibility, external asset rights, or release readiness. Those remain WEB-11 release-gate obligations.",
-    "rollback": "Revert the selection record and its local queue/handoff evidence. No runtime, durable state, asset, secret, or external configuration was created.",
-    "nextAction": "Refresh the direct Issue queue and start the next independently executable Issue; skip WEB-11 until its external release evidence exists."
+    "issue": "AI-19/#21",
+    "changedFiles": ["lib/server/knowledge/retrieval/hybrid/index.ts", "tests/contract/knowledge/hybrid-retrieval.test.ts", "tests/security/knowledge/hybrid-retrieval-security.test.ts", "evals/qrels/hybrid-retrieval.evals.test.ts", "docs/contracts/hybrid-retrieval-baseline.md", "docs/superpowers/plans/2026-08-28-ai-19-hybrid-retrieval.md", "docs/agents/issue-execution-contract.md", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md", "artifacts/AI-19/acceptance.md", "artifacts/AI-19/commands.jsonl", "artifacts/AI-19/unrun.md"],
+    "verification": ["Expected-red contract and security module imports", "Focused Node retrieval tests: exact-first, RL-02 six-fixture no-leakage, and five-locale/no-evidence fixtures passing", "Main worktree pnpm typecheck blocked by missing node_modules/.bin/tsc; clean isolated verification pending", "Independent automated review pending before merge"],
+    "unrun": ["No local Supabase configuration, migration, extension, database query, integration assertion or RLS probe applies to this schema-free contract", "No provider, embedding/rerank, vector index, production qrel, browser, account, region/retention, external-rights, performance or production observation check applies"],
+    "residualRisk": "Caller-supplied fixture ranks do not prove actual lexical/vector recall, RRF gain, embedding compatibility, filtered ANN recall, database authorization, or provider behavior.",
+    "rollback": "Revert the isolated module, fixtures, contract, plan and evidence. No schema, durable data, provider configuration, account or external state was created.",
+    "nextAction": "Run full verification in a clean isolated dependency directory, then independently review and merge AI-19."
   },
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
