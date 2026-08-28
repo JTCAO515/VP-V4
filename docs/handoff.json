@@ -11,7 +11,7 @@
   "latestIssueExecution": {
     "issue": "WEB-05/#139",
     "changedFiles": ["docs/design/frontend-redesign/web-05-visual-directions.md", "docs/frontend-redesign-issue-plan.md", "docs/agents/issue-execution-contract.md", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md", "artifacts/WEB-05/commands.jsonl", "artifacts/WEB-05/unrun.md"],
-    "verification": ["Direct operator instruction cross-checked against ADR-0018 and the VisePanda brand handbook", "pnpm docs:check", "Node JSON parse for docs/handoff.json", "git diff --check", "Independent automated review pending before merge"],
+    "verification": ["Direct operator instruction cross-checked against ADR-0018 and the VisePanda brand handbook", "pnpm docs:check", "Node JSON parse for docs/handoff.json", "Local Markdown-link check", "git diff --check", "Independent automated review: no Critical/Important merge blocker"],
     "unrun": ["No browser or device visual rendering is required for this documentation-only selection record", "No runtime asset, map, Preview, store, external account, production cutover, or release-evidence check applies"],
     "residualRisk": "The selection record does not prove independent-similarity review, physical-device accessibility, external asset rights, or release readiness. Those remain WEB-11 release-gate obligations.",
     "rollback": "Revert the selection record and its local queue/handoff evidence. No runtime, durable state, asset, secret, or external configuration was created.",

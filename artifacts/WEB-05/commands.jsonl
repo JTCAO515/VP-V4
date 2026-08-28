@@ -1,2 +1,2 @@
-{"command":"pnpm docs:check","exitCode":0,"scope":"WEB-05 documentation baseline"}
-{"command":"node JSON parse plus git diff --check","exitCode":0,"scope":"WEB-05 handoff and diff validation"}
+{"command":"pnpm docs:check","exitCode":0,"sha":"879982e","scope":"WEB-05 documentation baseline"}
+{"command":"node JSON parse, local Markdown-link check, git diff --check, and git show --check","exitCode":0,"sha":"879982e","scope":"WEB-05 handoff, links, working tree, and committed-diff validation"}
