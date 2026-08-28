@@ -2,20 +2,20 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Deliver the accepted AI Core and independently expressed VisePanda frontend without copying Demo fixtures or competitor expression, while preserving runtime identity, RLS, provider, data-policy, and release contracts.",
-  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-06/#140, WEB-07/#141, WEB-08/#142 and WEB-10/#144 are merged; V4-08/#93 through V4-12/#97 are merged; V4-14/#99, V4-16/#101, V4-18/#103, V4-22/#107 and V4-23/#108 are merged as five-locale/RTL truthful unavailable frontend routes because durable data, provider health, reviewed phrases or offline capability are absent. They perform no provider call, cache, TTS, fixture fallback or state mutation.",
+  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-06/#140, WEB-07/#141, WEB-08/#142 and WEB-10/#144 are merged; V4-08/#93 through V4-12/#97 are merged; V4-14/#99, V4-16/#101, V4-18/#103 and V4-22/#107 through V4-30/#115 are merged as five-locale/RTL truthful unavailable routes. They perform no provider call, cache, TTS, artifact upload, fixture fallback or state mutation. V4-31/#116 records a 40-action, eight-dimension L1-L7 audit with a blocked non-release verdict until remaining durable contracts and runtime evidence exist.",
   "currentPhase": "R5 frontend surfaces",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "Refresh main and select the next independently safe, uncompleted frontend-redesign Issue; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
+  "intendedNextAgent": "Refresh main and implement the next missing durable V4 contract, beginning with V4-13 Memory Profile; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
   "latestIssueExecution": {
-    "issue": "V4-23/#108",
-    "changedFiles": ["app/visepanda/tools/safe-phrase/**", "components/tools/SafePhraseWorkspace.tsx", "tests/e2e/tools/v4-23-safe-phrase-unavailable.test.mjs", "docs/contracts/safe-phrase-unavailable.md", "artifacts/V4-23/unrun.md", "docs/agents/issue-execution-contract.md"],
-    "verification": ["pnpm check", "pnpm test:contract", "pnpm evals", "pnpm test:e2e", "pnpm docs:check", "git diff --check"],
-    "unrun": ["Reviewed deterministic high-risk phrase corpus, provenance/expiry, TTS equality and offline eligibility", "Physical-device and assistive-technology interaction validation"],
-    "residualRisk": "The merged V4-14/V4-16/V4-18/V4-22/V4-23 routes expose no real capability until their corresponding durable, reviewed or provider-backed contracts are accepted.",
-    "rollback": "Revert the individual frontend route commit; do not replace it with fixture data or an unverified capability.",
-    "nextAction": "Refresh the frontend frontier and continue the next independently safe, uncompleted route."
+    "issue": "V4-31/#116",
+    "changedFiles": ["docs/acceptance/v4-31-parity-audit.md", "docs/runbooks/v4-31-release-blocked.md", "tests/contract/acceptance/v4-31-parity-audit.test.mjs", "artifacts/V4-31/**", "docs/agents/issue-execution-contract.md", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md"],
+    "verification": ["pnpm check", "pnpm test:contract", "pnpm test:integration", "pnpm test:security", "pnpm test:e2e", "pnpm evals", "pnpm docs:check", "git diff --check"],
+    "unrun": ["Local Supabase integration/RLS because the local runtime is not running", "Physical-device, screen-reader, performance, provider and release-observation evidence"],
+    "residualRisk": "The 40-action audit is blocked: unavailable routes are truthful but do not prove full parity, and V4-13/V4-15/V4-17/V4-19–V4-21 durable contracts remain absent.",
+    "rollback": "Revert the audit if evidence becomes inaccurate; do not convert unavailable routes into fixture-backed capabilities.",
+    "nextAction": "Implement V4-13 Memory Profile before reevaluating the blocked parity gate."
   },
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
@@ -307,7 +307,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Merge V4-12/#97 to main, then refresh the direct frontend queue. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
+  "nextAction": "Implement V4-13 Memory Profile before reevaluating the V4-31 blocked parity gate. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
   "lastUpdated": "2026-08-28",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
