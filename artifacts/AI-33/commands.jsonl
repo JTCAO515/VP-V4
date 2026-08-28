@@ -1,0 +1,6 @@
+{"command":"node --test tests/e2e/translate/ai-33-translate-ui.test.mjs","exitCode":1,"startedAt":"2026-08-29T01:33:00+08:00","finishedAt":"2026-08-29T01:33:00+08:00","env":"local; RED test before route and workspace existed"}
+{"command":"node --test tests/e2e/translate/ai-33-translate-ui.test.mjs","exitCode":0,"startedAt":"2026-08-29T01:34:00+08:00","finishedAt":"2026-08-29T01:34:00+08:00","env":"local; route and fallback UI green"}
+{"command":"pnpm typecheck","exitCode":0,"startedAt":"2026-08-29T01:35:00+08:00","finishedAt":"2026-08-29T01:35:00+08:00","env":"local; pnpm 9.15.9 after frozen-lockfile install"}
+{"command":"pnpm test:e2e","exitCode":0,"startedAt":"2026-08-29T01:36:00+08:00","finishedAt":"2026-08-29T01:36:00+08:00","env":"local; 28 passing"}
+{"command":"local browser QA at 1280x800 and 390x844 plus Arabic RTL","exitCode":0,"startedAt":"2026-08-29T01:37:00+08:00","finishedAt":"2026-08-29T01:38:00+08:00","env":"local Playwright CLI; no hardware permissions"}
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-08-29T01:39:00+08:00","finishedAt":"2026-08-29T01:40:00+08:00","env":"local; lint, typecheck, build, standard test passed"}
