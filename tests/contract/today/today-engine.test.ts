@@ -39,7 +39,27 @@ test("V4-18 fails closed for an unregistered check kind or empty Fact identity",
 });
 
 test("V4-18 fails closed when the current Trip identity or timestamp is invalid", () => {
-  for (const invalidTrip of [{ ...trip, id: "" }, { ...trip, updatedAt: "not-a-time" }, { ...trip, updatedAt: "2026-08-29T00:00:00.000Z" }]) {
+  for (const invalidTrip of [{ ...trip, id: "" }, { ...trip, updatedAt: "not-a-time" }, { ...trip, updatedAt: "2026-08-28T07:30:00" }, { ...trip, updatedAt: "2026-02-30T07:30:00.000Z" }, { ...trip, updatedAt: "2026-08-29T00:00:00.000Z" }]) {
     assert.equal(buildToday({ now, trip: invalidTrip, fact }).nextAction.status, "unavailable");
+  }
+});
+
+test("V4-18 fails closed for malformed runtime input", () => {
+  for (const input of [null as never, { now, trip: null as never, fact }, { now, trip, fact: { ...fact, id: null as never } }]) {
+    const result = buildToday(input);
+    assert.deepEqual(result.nextAction, { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" });
+    assert.ok(result.checks.every((check) => check.status === "unknown"));
+  }
+});
+
+test("V4-18 rejects timezone-less or calendar-invalid Fact expiry", () => {
+  for (const expiresAt of ["2026-08-29T00:00:00", "2026-02-30T00:00:00.000Z"]) {
+    assert.equal(buildToday({ now, trip, fact: { ...fact, expiresAt } }).nextAction.status, "unavailable");
+  }
+});
+
+test("V4-18 rejects forged Fact eligibility fields", () => {
+  for (const invalidFact of [{ ...fact, status: "reviewed", licenceAllowed: "yes" as never }, { ...fact, status: "draft" as never, licenceAllowed: true }]) {
+    assert.equal(buildToday({ now, trip, fact: invalidFact as never }).nextAction.status, "unavailable");
   }
 });

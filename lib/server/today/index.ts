@@ -63,7 +63,7 @@ export function buildToday(input: Readonly<{
     status: "unknown" as const,
     reason: "NO_ELIGIBLE_EVIDENCE" as const,
   }));
-  if (!isCurrentTrip(input.trip, input.now) || !input.fact.id.trim() || !checkKinds.includes(input.fact.checkKind) || !isEligibleFact(input.fact, input.now) || !input.fact.summary.trim()) {
+  if (!input || typeof input !== "object" || !(input.now instanceof Date) || !Number.isFinite(input.now.getTime()) || !isCurrentTrip(input.trip, input.now) || !isValidFact(input.fact) || !isEligibleFact(input.fact, input.now)) {
     return { nextAction: { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" }, checks: unknownChecks };
   }
   const checks = unknownChecks.map((check) =>
@@ -85,6 +85,21 @@ export function buildToday(input: Readonly<{
 }
 
 function isCurrentTrip(trip: Readonly<{ id: string; title: string; updatedAt: string }>, now: Date): boolean {
-  const updatedAt = Date.parse(trip.updatedAt);
-  return trip.id.trim().length > 0 && trip.title.trim().length > 0 && Number.isFinite(updatedAt) && updatedAt <= now.getTime();
+  const updatedAt = parseRfc3339Timestamp(trip?.updatedAt);
+  return typeof trip?.id === "string" && typeof trip?.title === "string" && trip.id.trim().length > 0 && trip.title.trim().length > 0 && Number.isFinite(updatedAt) && updatedAt <= now.getTime();
+}
+
+function isValidFact(fact: unknown): fact is FactEligibility & Readonly<{ summary: string; checkKind: TodayCheckKind }> {
+  const value = fact as Readonly<{ id?: unknown; summary?: unknown; checkKind?: unknown; expiresAt?: unknown; status?: unknown; licenceAllowed?: unknown }> | null;
+  return !!value && typeof value.id === "string" && value.id.trim().length > 0 && typeof value.summary === "string" && value.summary.trim().length > 0 && checkKinds.includes(value.checkKind as TodayCheckKind) && value.status === "reviewed" && value.licenceAllowed === true && Number.isFinite(parseRfc3339Timestamp(value.expiresAt));
+}
+
+function parseRfc3339Timestamp(value: unknown): number {
+  if (typeof value !== "string") return Number.NaN;
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(Z|[+-]\d{2}:\d{2})$/.exec(value);
+  if (!match) return Number.NaN;
+  const [, y, m, d, h, min, s, offset] = match; const year = Number(y), month = Number(m), day = Number(d), hour = Number(h), minute = Number(min), second = Number(s);
+  const days = month === 2 ? (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0) ? 29 : 28) : [4, 6, 9, 11].includes(month) ? 30 : 31;
+  if (month < 1 || month > 12 || day < 1 || day > days || hour > 23 || minute > 59 || second > 59 || (offset !== "Z" && (Number(offset.slice(1, 3)) > 23 || Number(offset.slice(4, 6)) > 59))) return Number.NaN;
+  return Date.parse(value);
 }
