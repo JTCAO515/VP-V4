@@ -16,6 +16,8 @@ V4-10/#95 redraws `/visepanda/trips/[tripId]` as the owner-scoped canonical Trip
 
 V4-11/#96 adds owner-scoped `TripPlaceReference` reads: `canonical` is an exact opaque POI UUID; `user` remains only a user-confirmed label. A `recheck_required` reference stays visible. No label is parsed into a POI, and no map provider/geography/route/live-fact data exists. Only a canonical UUID reaches Ask in validated `poiId` scope, where it remains an opaque identifier and does not submit a prompt.
 
+V4-12/#97 replaces fictional Bookings with owner-scoped `TripActionReference` projections. Each is sourced from the durable Trip, has one explicit current/recheck/unavailable state and may have a recorded HTTPS external link (not an official-channel claim). It creates no order, payment, inventory or provider success; missing links remain unavailable.
+
 Objective: maintain the dependency-ordered AI Core Issue program while converting Claude's knowledge-base research into a source-aware draft catalogue without bypassing operator, migration, review, RLS or eligibility gates.
 
 Status: GitHub Program [#2](https://github.com/JTCAO515/VP-V4/issues/2) remains authoritative for delivery order. Claude's 2026-08-24 plan has been independently audited and converted into a local draft knowledge workbench: 30 record-type candidates, 18 non-executable readiness-rule candidates, and 6 source-backed `researched_draft` records. Reviewed/retrieval-eligible records remain 0. No runtime, database, bulk import or external account was activated.

@@ -2,20 +2,20 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Deliver the accepted AI Core and independently expressed VisePanda frontend without copying Demo fixtures or competitor expression, while preserving runtime identity, RLS, provider, data-policy, and release contracts.",
-  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-07/#141 has merged the VisePanda VI Homepage with Golden Route/Guide and map off; WEB-08/#142 has merged truthful closed-beta password Login and first-run states without changing Auth/RLS contracts; WEB-06/#140 derives shared runtime and generated CSS tokens from the approved brand manifest, centralizes locale attributes, and provides focus/motion/UI primitives; WEB-10/#144 now provides reproducible Chromium viewport, keyboard, RTL, and sign-in accessibility acceptance coverage, and repairs the 768px sign-in overflow; V4-08/#93, V4-09/#94 and V4-10/#95 are merged; V4-11/#96 has passed automated review and is ready to merge with owner-scoped canonical/user place references, exact-ID Ask scope, persistent recheck and no-provider schematic boundaries.",
+  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-07/#141 has merged the VisePanda VI Homepage with Golden Route/Guide and map off; WEB-08/#142 has merged truthful closed-beta password Login and first-run states without changing Auth/RLS contracts; WEB-06/#140 derives shared runtime and generated CSS tokens from the approved brand manifest, centralizes locale attributes, and provides focus/motion/UI primitives; WEB-10/#144 now provides reproducible Chromium viewport, keyboard, RTL, and sign-in accessibility acceptance coverage, and repairs the 768px sign-in overflow; V4-08/#93, V4-09/#94, V4-10/#95 and V4-11/#96 are merged; V4-12/#97 has passed automated review and is ready to merge with owner-scoped Reservations & Actions projections, no order/payment/inventory, and truthful external-link degradation.",
   "currentPhase": "R2",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "merge V4-11/#96, then refresh main and select the next directly executable frontend-redesign Issue; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
+  "intendedNextAgent": "merge V4-12/#97, then refresh main and select the next directly executable frontend-redesign Issue; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
   "latestIssueExecution": {
-    "issue": "V4-11/#96",
+    "issue": "V4-12/#97",
     "changedFiles": ["app/api/trips/[tripId]/places/**", "app/visepanda/{trips,ask}/**", "components/{canvas,chat}/**", "lib/server/{trip/place,identity}/**", "supabase/migrations/20260828180000_v4_11_trip_place_references.sql", "tests/{contract,e2e,integration,security}/**/v4-11-*", "tests/e2e/chat/{v4-08-ask-route,v4-09-feedback}.test.mjs", "docs/{contracts,architecture,agents}/**", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md", "artifacts/V4-11/*"],
     "verification": ["pnpm check", "pnpm test:contract", "pnpm test:integration", "pnpm test:security", "pnpm test:e2e", "pnpm db:verify", "pnpm docs:check", "git diff --check"],
     "unrun": ["Local Supabase migration/RLS integration because the local Supabase runtime is not running", "Assistive-technology and physical-device interaction validation"],
     "residualRisk": "Local Supabase migration/RLS and browser runtime evidence are unverified because the local runtime is unavailable. The service-only canonical registry intentionally stores opaque IDs only; no canonical content or map provider is accepted, so user labels remain un-resolved.",
     "rollback": "Revert the V4-11 merge before applying the migration; after migration execution, use a reviewed forward migration rather than dropping owner place references.",
-    "nextAction": "Merge V4-11 to main, then refresh the direct frontend Issue frontier."
+    "nextAction": "Merge V4-12 to main, then refresh the direct frontend Issue frontier."
   },
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
@@ -307,7 +307,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Merge V4-11/#96 to main, then refresh the direct frontend queue. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
+  "nextAction": "Merge V4-12/#97 to main, then refresh the direct frontend queue. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
   "lastUpdated": "2026-08-28",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",

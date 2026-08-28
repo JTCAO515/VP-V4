@@ -3,6 +3,7 @@ import type { NextRequest, NextResponse } from "next/server";
 import type { FailureCode } from "@/lib/server/contracts/errors";
 import type { TurnFeedbackKind, TurnFeedbackReason } from "@/lib/server/turn/feedback/contract";
 import type { TripPlaceReference } from "@/lib/server/trip/place/contract";
+import type { TripActionReference } from "@/lib/server/trip/actions/contract";
 
 type PendingCookie = { name: string; value: string; options: CookieOptions };
 
@@ -100,6 +101,15 @@ export function createUserDataAdapter(request: NextRequest) {
     return { data: (data ?? []).map((place) => place.reference_kind === "canonical"
       ? { id: place.id, kind: "canonical" as const, canonicalPoiId: place.canonical_poi_id, freshness: place.freshness === "recheck_required" ? "recheck_required" as const : "current" as const, createdAt: place.created_at }
       : { id: place.id, kind: "user" as const, label: place.user_label, freshness: place.freshness === "recheck_required" ? "recheck_required" as const : "current" as const, createdAt: place.created_at }) };
+  };
+  const getTripActions = async (tripId: string): Promise<AdapterResult<readonly TripActionReference[]>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data: trip, error: tripError } = await client.from("trips").select("id").eq("id", tripId).maybeSingle();
+    if (tripError || !trip) return { error: "FORBIDDEN" };
+    const { data, error } = await client.from("trip_action_references").select("id,action_kind,source_kind,action_status,label,external_link_url").eq("trip_id", tripId).order("created_at", { ascending: true });
+    if (error) return { error: "INTERNAL_ERROR" };
+    return { data: (data ?? []).map((action) => ({ id: action.id, kind: action.action_kind as TripActionReference["kind"], source: "trip" as const, status: action.action_status as TripActionReference["status"], label: action.label, externalLinkUrl: action.external_link_url })) };
   };
   const getPendingProposal = async (tripId: string): Promise<AdapterResult<PendingProposalRead>> => {
     const actor = await authenticated();
@@ -288,7 +298,7 @@ export function createUserDataAdapter(request: NextRequest) {
       ? { data: { proposalId: result.proposal_id, baseTripVersion: result.base_trip_version, targetVersion: result.target_version } }
       : { error: "INTERNAL_ERROR" };
   };
-  return { applyCookies, authenticated, getTrip, getTripPlaces, getPendingProposal, revisePendingProposal, rejectPendingProposal, listChatThreads, createChatThread, getChatThread, startChatTurn, cancelChatTurn, replayChatTurn, recordTurnFeedback, confirm, createRollbackProposal };
+  return { applyCookies, authenticated, getTrip, getTripPlaces, getTripActions, getPendingProposal, revisePendingProposal, rejectPendingProposal, listChatThreads, createChatThread, getChatThread, startChatTurn, cancelChatTurn, replayChatTurn, recordTurnFeedback, confirm, createRollbackProposal };
 }
 
 function chatThreadSnapshot(input: Readonly<{ id: string; trip_id: string | null; status: string; created_at: string; updated_at: string }>): ChatThreadSnapshot {
