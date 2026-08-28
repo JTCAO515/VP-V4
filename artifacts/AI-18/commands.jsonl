@@ -1,6 +1,5 @@
-{"command":"node --experimental-strip-types --test evals/qrels/lexical-baseline.evals.test.ts","exitCode":1,"sha":"c1afbaa","scope":"expected-red: lexical module absent"}
-{"command":"pnpm typecheck","exitCode":0,"sha":"3c6be7b","scope":"AI-18 final TypeScript verification"}
-{"command":"pnpm evals","exitCode":0,"sha":"3c6be7b","scope":"AI-18 final evaluator suite: 13 passing"}
-{"command":"pnpm docs:check","exitCode":0,"sha":"3c6be7b","scope":"AI Core documentation baseline"}
-{"command":"node JSON parse plus git diff --check","exitCode":0,"sha":"3c6be7b","scope":"handoff parse and staged diff validation"}
-{"command":"pnpm check","exitCode":0,"sha":"3c6be7b","scope":"clean isolated worktree: source-policy lint 111 files, production build, and 22 static tests passing"}
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:49:44.9729711Z","finishedAt":"2026-08-28T19:50:01.5992192Z","result":"source-policy lint, strict typecheck, production build and 22 static-output/foundation tests passed"}
+{"command":"pnpm evals","exitCode":0,"env":"local","startedAt":"2026-08-28T19:50:01.6037643Z","finishedAt":"2026-08-28T19:50:02.1717036Z","result":"20 deterministic evaluator tests passed, including five-locale lexical exact/transliteration/typo/no-answer and MRR/nDCG contracts"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:50:02.1721804Z","finishedAt":"2026-08-28T19:50:02.5129904Z","result":"documentation baseline passed"}
+{"command":"node -e JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8'))","exitCode":0,"env":"local","startedAt":"2026-08-28T19:50:47.2405070Z","finishedAt":"2026-08-28T19:50:47.2820955Z","result":"read-only handoff JSON parse passed; jq is unavailable locally"}
+{"command":"git diff --cached --check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:51:31.5999178Z","finishedAt":"2026-08-28T19:51:31.6390002Z","result":"staged AI-18 evidence refresh has no whitespace errors"}
