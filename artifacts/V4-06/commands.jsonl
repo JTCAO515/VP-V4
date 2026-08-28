@@ -1,0 +1,5 @@
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:08:11.4848748Z","finishedAt":"2026-08-28T19:08:28.6974754Z","result":"lint, typecheck, production build and 22 static tests passed"}
+{"command":"pnpm test:security","exitCode":0,"env":"local","startedAt":"2026-08-28T19:08:28.7033664Z","finishedAt":"2026-08-28T19:08:32.6909559Z","result":"53 passed; one local-Supabase RLS test skipped because runtime is not running"}
+{"command":"pnpm test:e2e","exitCode":0,"env":"local","startedAt":"2026-08-28T19:08:32.6915322Z","finishedAt":"2026-08-28T19:08:34.0126448Z","result":"28 static route/surface tests passed"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:08:34.0130373Z","finishedAt":"2026-08-28T19:08:34.3496204Z","result":"documentation baseline passed"}
+{"command":"git diff --cached --check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:10:32.1042077Z","finishedAt":"2026-08-28T19:10:32.1429447Z","result":"staged V4-06 evidence has no whitespace errors"}
