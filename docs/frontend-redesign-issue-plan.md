@@ -1,6 +1,6 @@
 # VP-V4 complete frontend redesign Issue plan
 
-Status: published to GitHub; implementation not started.
+Status: published to GitHub; local implementation evidence is merged through WEB-10.
 Date: 2026-08-27.
 Parent: [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136), under [AI-00 #2](https://github.com/JTCAO515/VP-V4/issues/2).
 Decision baseline: [ADR-0018](adr/ADR-0018-independent-frontend-redesign-baseline.md).
@@ -17,18 +17,18 @@ This plan reuses [#87](https://github.com/JTCAO515/VP-V4/issues/87) as Demo pari
 
 | Plan | GitHub Issue | Phase | Initial status | Outcome |
 | --- | --- | --- | --- | --- |
-| Program | [#136 WEB-02](https://github.com/JTCAO515/VP-V4/issues/136) | R0-R5 | ready / human-owned | Complete frontend redesign program |
-| F0 | [#137 WEB-03](https://github.com/JTCAO515/VP-V4/issues/137) | R0 | ready / agent | ADR, numbered DAG, tracker and handoff freeze |
-| F1 | [#138 WEB-04](https://github.com/JTCAO515/VP-V4/issues/138) | R0 | blocked by #137 | Asset quarantine, rights ledger, fonts, SBOM/NOTICE |
-| F2 | [#139 WEB-05](https://github.com/JTCAO515/VP-V4/issues/139) | R0 | blocked by #137 | Three VI directions and operator selection |
-| F3 | [#140 WEB-06](https://github.com/JTCAO515/VP-V4/issues/140) | R1 | blocked by #138/#139 | Shared tokens, brand, locale, motion and primitives |
-| F4 | [#141 WEB-07](https://github.com/JTCAO515/VP-V4/issues/141) | R1 | blocked by #140 | Homepage independent rewrite and Open VisePanda entry |
-| F5 | [#142 WEB-08](https://github.com/JTCAO515/VP-V4/issues/142) | R1 | blocked by #140/#141 | Closed-beta Login, first-run and global auth states |
-| F6 | [#92 V4-07](https://github.com/JTCAO515/VP-V4/issues/92) | R2 | blocked | Existing Product Shell; additionally blocked by #140/#142 |
-| F7 | [#143 WEB-09](https://github.com/JTCAO515/VP-V4/issues/143) | R2 | blocked by #141/#142/#92 | Entry context, locale and auth continuity |
+| Program | [#136 WEB-02](https://github.com/JTCAO515/VP-V4/issues/136) | R0-R5 | in progress / human-owned | Complete frontend redesign program |
+| F0 | [#137 WEB-03](https://github.com/JTCAO515/VP-V4/issues/137) | R0 | merged locally | ADR, numbered DAG, tracker and handoff freeze |
+| F1 | [#138 WEB-04](https://github.com/JTCAO515/VP-V4/issues/138) | R0 | merged locally | Asset quarantine, rights ledger, fonts, SBOM/NOTICE |
+| F2 | [#139 WEB-05](https://github.com/JTCAO515/VP-V4/issues/139) | R0 | operator-owned / skipped | Three VI directions and operator selection |
+| F3 | [#140 WEB-06](https://github.com/JTCAO515/VP-V4/issues/140) | R1 | merged locally under the accepted dependency waiver | Shared tokens, brand, locale, motion and primitives |
+| F4 | [#141 WEB-07](https://github.com/JTCAO515/VP-V4/issues/141) | R1 | merged locally | Homepage independent rewrite and Open VisePanda entry |
+| F5 | [#142 WEB-08](https://github.com/JTCAO515/VP-V4/issues/142) | R1 | merged locally | Closed-beta Login, first-run and global auth states |
+| F6 | [#92 V4-07](https://github.com/JTCAO515/VP-V4/issues/92) | R2 | merged locally | Existing Product Shell |
+| F7 | [#143 WEB-09](https://github.com/JTCAO515/VP-V4/issues/143) | R2 | merged locally | Entry context, locale and auth continuity |
 | F8 | #93-#116 | R2-R5 | existing DAG | Demo parity production capability slices |
-| F9 | [#144 WEB-10](https://github.com/JTCAO515/VP-V4/issues/144) | R2 | blocked by #141/#142/#143/#92 | Mobile, accessibility, motion and global-state acceptance |
-| F10 | [#145 WEB-11](https://github.com/JTCAO515/VP-V4/issues/145) | R5 | blocked by #144/#116/#43 | IP, map, store and Production cutover gate |
+| F9 | [#144 WEB-10](https://github.com/JTCAO515/VP-V4/issues/144) | R2 | merged locally | Mobile, accessibility, motion and global-state acceptance |
+| F10 | [#145 WEB-11](https://github.com/JTCAO515/VP-V4/issues/145) | R5 | pending external release evidence | IP, map, store and Production cutover gate |
 
 ## 3. Dependency graph
 
@@ -79,6 +79,15 @@ After this baseline reaches `main` and #137 closes:
 - Later Issues remain blocked until every native dependency closes.
 
 No frontend child may fall back to Demo fixture success, blocked source assets, map-on behavior or competitor fidelity to appear complete.
+
+## 5.1 Local execution snapshot — 2026-08-28
+
+`main` contains WEB-03, WEB-04, WEB-06, WEB-07, WEB-08, V4-07, WEB-09 and WEB-10.
+The accepted waiver lets WEB-06 proceed without WEB-05's operator-only visual selection; it
+does not waive any release or asset-rights gate. Remote GitHub status synchronization is not
+asserted here: the local `gh` client is unauthenticated and GitHub's anonymous API is rate-limited.
+WEB-11 remains a release-evidence and operator-decision gate, so it is skipped until its
+external prerequisites exist.
 
 ## 6. Required release evidence
 
