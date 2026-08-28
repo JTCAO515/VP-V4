@@ -82,6 +82,10 @@ test("keeps the Product Shell canvas-first, six-surface, and map-off", () => {
   for (const token of productShellCss.match(/--vp-[\w-]+/g) ?? []) assert.match(generatedTokens, new RegExp(`${token}:`), `missing generated token ${token}`);
 });
 
+test("renders one Product Shell wordmark", () => {
+  assert.doesNotMatch(chatbotSource, /<VisePandaMark\s*\/?>\s*<span>VisePanda<\/span>/);
+});
+
 test("keeps the redesigned homepage localized and frontend-only", () => {
   for (const marker of ["zh:", "en:", "es:", "ru:", "ar:", "🇨🇳", "🇺🇸", "🇪🇸", "🇷🇺", "🇸🇦"]) {
     assert.ok(chatbotLocaleSource.includes(marker) || localeSource.includes(marker), `missing AI workspace locale marker: ${marker}`);
