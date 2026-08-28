@@ -100,3 +100,11 @@ remain session-claim protected and fail closed without a valid claim. Every defi
 schedulable; dependency references inform integration but do not block development, testing,
 automated review, or merge. GitHub Issue label/status synchronization is skipped until the local
 `gh` CLI has authenticated access.
+
+Verification for this change: `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`,
+`pnpm test:unit`, `pnpm test:contract`, `pnpm test:e2e`, `pnpm docs:check`, and `git diff --check`
+passed. Integration and local-RLS security fixtures were skipped because local Supabase was not
+running; no bypass was applied.
+
+`gh auth status --hostname github.com` reported no logged-in GitHub host, so no remote Issue label
+or status mutation was attempted.

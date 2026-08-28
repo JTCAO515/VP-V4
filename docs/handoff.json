@@ -163,7 +163,10 @@
     "V4 execution-contract audit passed: 31/31 rows have issue, owner, allowed paths, commands and artifacts",
     "V4-01 pnpm docs:check, pnpm check, handoff JSON parse and git diff --check passed; production build and static tests passed 13/13",
     "VisePanda visual identity validation passed: tokens and manifest JSON, eight transparent IP assets, five social dimensions, SVG and handbook structural checks, source integrity, and git diff --check; a fresh isolated 375 px browser screenshot remains a manual review item",
-    "VisePanda merge pnpm check stopped before lint/type/build/test because the local dependency-security policy requires an operator decision for the ignored sharp build script; no approval, package-policy change, or bypass was applied"
+    "VisePanda merge pnpm check stopped before lint/type/build/test because the local dependency-security policy requires an operator decision for the ignored sharp build script; no approval, package-policy change, or bypass was applied",
+    "authless-preview change passed pnpm lint, pnpm typecheck, pnpm build, pnpm test, pnpm test:unit, pnpm test:contract, pnpm test:e2e, pnpm docs:check, and git diff --check",
+    "authless-preview integration and local-RLS security tests were skipped because local Supabase was not running; no bypass was applied",
+    "authless-preview GitHub Issue label/status synchronization was skipped because gh auth status reported no logged-in GitHub host"
   ],
   "blockers": [
     "The DEC/ADR and engineering baselines are accepted; later provider, content-rights, release and commercial decisions remain gated by their owning Issues.",
