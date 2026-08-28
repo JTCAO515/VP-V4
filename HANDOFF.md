@@ -126,9 +126,9 @@ or status mutation was attempted.
 ## V4-02 Context Engineering
 
 - #85 adds a pure server-side `ContextPlan` and `ContextAssembler` contract. It fixes source order and budgets, requires system/policy/constraints/current user message, and fails closed if an eligibility filter removes a required source.
-- Candidates are actor-scoped and must be `eligible`; cross-user, draft, expired, prohibited, raw user-artifact and raw Tool payload candidates never enter rendered context or the manifest. High-risk plans do not allow Tool context.
-- The manifest deliberately includes only source refs/versions, omission reasons, counts and SHA-256 fingerprints. It contains no actor ID, owner ID, raw source text, credential or provider payload. A model-safe Tool projection is explicitly delimited as untrusted data.
-- `tests/contract/context/` passed 7/7 after the expected missing-module red state; the Tool-delimiter escape regression test also failed before its minimal fix. `pnpm evals` passed 2/2 with synthetic full-history/compaction and zero-leak cases. See [context-plan.md](docs/contracts/context-plan.md) and `artifacts/V4-02/`.
+- Candidates are actor-scoped and must be `eligible`; only global system/policy candidates may have a null owner. Cross-user, unscoped, draft, expired, prohibited, raw user-artifact and raw Tool payload candidates never enter rendered context or the manifest. High-risk plans do not allow Tool context.
+- The manifest deliberately includes only selected source refs/versions, category-only omission reasons, counts and SHA-256 fingerprints. It contains no rejected IDs, actor ID, owner ID, raw source text, credential or provider payload. A model-safe Tool projection uses an allowlisted ref and entity-escaped untrusted-data boundary.
+- `tests/contract/context/` passed 11/11 after the expected missing-module red state; reviewer regressions also proved and then fixed unscoped owner inclusion, Tool ref/text boundary injection, rejected-ID disclosure, caller-count budget bypass, and partial hard-constraint loss. `pnpm evals` passed 2/2 with synthetic full-history/compaction and zero-leak cases. See [context-plan.md](docs/contracts/context-plan.md) and `artifacts/V4-02/`.
 - Rollback: revert the #85 merge. No schema, database, provider, cache or production data is affected. The remaining runtime integration, model-quality, retrieval-latency and production observation evidence belong to later owning Issues.
 
 ## Continuous AFK execution

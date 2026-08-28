@@ -11,7 +11,6 @@ export type ContextCandidate = Readonly<{
   ownerId: string | null;
   state: ContextCandidateState;
   sourceVersion: string;
-  tokenCount: number;
   text: string;
   payloadKind?: ToolPayloadKind;
 }>;
@@ -41,6 +40,9 @@ export class ContextAssemblyError extends Error {
   }
 }
 
+const GLOBAL_SOURCE_KINDS = new Set<ContextSourceKind>(["system", "policy"]);
+const SAFE_REFERENCE_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
+
 export function assembleContext(input: Readonly<{
   plan: ContextPlan;
   actorId: string;
@@ -57,7 +59,7 @@ export function assembleContext(input: Readonly<{
     const sourceCandidates = selected.filter((candidate) => candidate.kind === kind);
     if (sourceCandidates.length === 0) return [];
     const text = sourceCandidates.map(renderCandidate).join("\n");
-    return [{ kind, text, tokenCount: sourceCandidates.reduce((sum, candidate) => sum + candidate.tokenCount, 0) }];
+    return [{ kind, text, tokenCount: sourceCandidates.reduce((sum, candidate) => sum + countContextTokens(candidate.text), 0) }];
   });
 
   const sectionTokenCounts = Object.fromEntries(input.plan.sectionOrder.map((kind) => [kind, 0])) as Record<ContextSection, number>;
@@ -70,7 +72,7 @@ export function assembleContext(input: Readonly<{
     sourceVersions: [...new Set(selected.map((candidate) => candidate.sourceVersion))],
     omittedReasons: omissions,
     sectionTokenCounts,
-    totalTokens: selected.reduce((sum, candidate) => sum + candidate.tokenCount, 0),
+    totalTokens: selected.reduce((sum, candidate) => sum + countContextTokens(candidate.text), 0),
     contentHashes: selected.map((candidate) => sha256(candidate.text)),
   };
 
@@ -84,23 +86,27 @@ export function assembleContext(input: Readonly<{
 function isEligible(candidate: ContextCandidate, actorId: string, plan: ContextPlan, omissions: string[]): boolean {
   assertCandidate(candidate);
   if (candidate.state !== "eligible") {
-    omissions.push(`ineligible_state:${candidate.kind}:${candidate.id}`);
+    omissions.push(`ineligible_state:${candidate.kind}`);
+    return false;
+  }
+  if (candidate.ownerId === null && !GLOBAL_SOURCE_KINDS.has(candidate.kind)) {
+    omissions.push(`actor_scope_required:${candidate.kind}`);
     return false;
   }
   if (candidate.ownerId !== null && candidate.ownerId !== actorId) {
-    omissions.push(`actor_mismatch:${candidate.kind}:${candidate.id}`);
+    omissions.push(`actor_mismatch:${candidate.kind}`);
     return false;
   }
   if (candidate.kind === "user_artifact") {
-    omissions.push(`raw_user_artifact_disallowed:user_artifact:${candidate.id}`);
+    omissions.push("raw_user_artifact_disallowed:user_artifact");
     return false;
   }
   if (!plan.policy.allowedSources.includes(candidate.kind)) {
-    omissions.push(`source_not_allowed:${candidate.kind}:${candidate.id}`);
+    omissions.push(`source_not_allowed:${candidate.kind}`);
     return false;
   }
   if (candidate.kind === "tool" && candidate.payloadKind !== "model_safe_projection") {
-    omissions.push(`raw_tool_payload_disallowed:tool:${candidate.id}`);
+    omissions.push("raw_tool_payload_disallowed:tool");
     return false;
   }
   return true;
@@ -112,22 +118,30 @@ function selectWithinBudgets(candidates: readonly ContextCandidate[], plan: Cont
   let evidenceItems = 0;
   let toolItems = 0;
 
+  const completeConstraintTokens = candidates
+    .filter((candidate) => candidate.kind === "constraints")
+    .reduce((sum, candidate) => sum + countContextTokens(candidate.text), 0);
+  if (completeConstraintTokens > plan.policy.tokenBudgets.constraints) {
+    throw new ContextAssemblyError("Complete eligible constraints exceed the fixed context budget.");
+  }
+
   for (const kind of plan.sectionOrder) {
     for (const candidate of candidates.filter((item) => item.kind === kind)) {
-      if (candidate.tokenCount + usedTokens[kind] > plan.policy.tokenBudgets[kind]) {
-        omissions.push(`budget_exhausted:${kind}:${candidate.id}`);
+      const tokenCount = countContextTokens(candidate.text);
+      if (tokenCount + usedTokens[kind] > plan.policy.tokenBudgets[kind]) {
+        omissions.push(`budget_exhausted:${kind}`);
         continue;
       }
       if (kind === "evidence" && evidenceItems >= plan.policy.maxEvidenceItems) {
-        omissions.push(`evidence_limit:${kind}:${candidate.id}`);
+        omissions.push(`evidence_limit:${kind}`);
         continue;
       }
       if (kind === "tool" && toolItems >= plan.policy.maxToolDefinitions) {
-        omissions.push(`tool_limit:${kind}:${candidate.id}`);
+        omissions.push(`tool_limit:${kind}`);
         continue;
       }
       selected.push(candidate);
-      usedTokens[kind] += candidate.tokenCount;
+      usedTokens[kind] += tokenCount;
       if (kind === "evidence") evidenceItems += 1;
       if (kind === "tool") toolItems += 1;
     }
@@ -143,20 +157,22 @@ function assertRequiredSources(candidates: readonly ContextCandidate[], plan: Co
 
 function renderCandidate(candidate: ContextCandidate): string {
   if (candidate.kind === "tool") {
-    return `<untrusted-data source="tool" ref="${candidate.id}">\n${escapeUntrustedDelimiter(candidate.text)}\n</untrusted-data>`;
+    return `<untrusted-data source="tool" ref="${candidate.id}">\n${escapeUntrustedText(candidate.text)}\n</untrusted-data>`;
   }
   return candidate.text;
 }
 
-function escapeUntrustedDelimiter(value: string): string {
-  return value.replaceAll("</untrusted-data>", "<\\/untrusted-data>");
+function escapeUntrustedText(value: string): string {
+  return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
 }
 
 function assertCandidate(candidate: ContextCandidate): void {
-  if (!candidate.id || !candidate.sourceVersion || !candidate.text) throw new ContextAssemblyError("Context candidates require id, sourceVersion, and text.");
-  if (!Number.isSafeInteger(candidate.tokenCount) || candidate.tokenCount <= 0) {
-    throw new ContextAssemblyError(`Context candidate ${candidate.id} has an invalid tokenCount.`);
-  }
+  if (!SAFE_REFERENCE_ID.test(candidate.id)) throw new ContextAssemblyError("Context candidates require a safe reference id.");
+  if (!candidate.sourceVersion || !candidate.text) throw new ContextAssemblyError("Context candidates require sourceVersion and text.");
+}
+
+function countContextTokens(value: string): number {
+  return Array.from(value).length;
 }
 
 function sha256(value: string): string {

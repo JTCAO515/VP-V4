@@ -18,7 +18,7 @@ The evaluator compares a full-history fixture with a compacted-thread fixture. B
 | Prohibited Evidence | omit: ineligible state |
 | Raw Tool payload | omit: model-safe projection required |
 
-The evaluator treats a prohibited source reference in the manifest as a failure. The manifest intentionally retains only source references, source versions, count statistics, omission reasons, and content fingerprints.
+The evaluator treats a prohibited source reference in the manifest as a failure. The manifest intentionally retains only selected source references, source versions, count statistics, category-only omission reasons, and content fingerprints.
 
 ## Scope limits
 

@@ -11,3 +11,8 @@
 {"command":"pnpm evals","result":"pass","evidence":"2 context eval tests passed, 0 failed"}
 {"command":"pnpm docs:check","result":"pass","evidence":"AI Core documentation baseline passed"}
 {"command":"node -e JSON.parse(docs/handoff.json)","result":"pass","evidence":"machine-readable handoff parsed after V4-02 update"}
+{"command":"node --experimental-strip-types --test tests/contract/context/context-assembler.test.ts","result":"expected_fail","evidence":"reviewer regression cases exposed unscoped owner inclusion, Tool boundary injection, manifest rejected-ID disclosure, caller-count budget bypass, and partial-constraint loss"}
+{"command":"node --experimental-strip-types --test tests/contract/context/context-assembler.test.ts tests/contract/context/context-plan.test.ts","result":"pass","evidence":"11 focused context tests passed, 0 failed after review fixes"}
+{"command":"pnpm test:contract","result":"pass","evidence":"41 contract tests passed, 0 failed after review fixes"}
+{"command":"pnpm evals","result":"pass","evidence":"2 context eval tests passed, 0 failed after review fixes"}
+{"command":"pnpm typecheck","result":"pass","evidence":"tsc --noEmit exited 0 after review fixes"}
