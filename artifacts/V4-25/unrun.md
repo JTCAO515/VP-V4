@@ -2,4 +2,4 @@
 
 Scoped reviewed Policy Fact lookup, authority/expiry validation, personal scope minimization, official-channel rendering and recheck behavior are unrun because their contracts and accepted source records do not exist.
 
-Physical-device and assistive-technology verification are unrun; static route coverage verifies five locales, RTL and no personal-scope collection, request or mutation.
+Physical-device and assistive-technology verification are unrun; static route coverage verifies five locales, RTL and no personal-scope collection, request or mutation. The local quality, contract, evaluator, and static journey suites passed; no policy source, authority, personal scope, official-channel, device, or external runtime evidence was produced.
