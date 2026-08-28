@@ -18,3 +18,5 @@
 {"command":"pnpm typecheck","result":"pass","evidence":"tsc --noEmit exited 0 after review fixes"}
 {"command":"node --experimental-strip-types --test tests/contract/context/context-assembler.test.ts","result":"expected_fail","evidence":"second-review regression demonstrated escaped Tool output plus its wrapper exceeded the raw-text-only budget"}
 {"command":"node --experimental-strip-types --test tests/contract/context/context-assembler.test.ts tests/contract/context/context-plan.test.ts","result":"pass","evidence":"12 focused context tests passed, 0 failed after final Tool-budget fix"}
+{"command":"node --experimental-strip-types --test tests/contract/context/context-assembler.test.ts","result":"expected_fail","evidence":"third-review regression demonstrated uncounted newline separators could overflow a multi-candidate section budget"}
+{"command":"node --experimental-strip-types --test tests/contract/context/context-assembler.test.ts tests/contract/context/context-plan.test.ts","result":"pass","evidence":"13 focused context tests passed, 0 failed after final section-budget fix"}

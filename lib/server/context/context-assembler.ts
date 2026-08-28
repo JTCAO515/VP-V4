@@ -59,7 +59,7 @@ export function assembleContext(input: Readonly<{
     const sourceCandidates = selected.filter((candidate) => candidate.kind === kind);
     if (sourceCandidates.length === 0) return [];
     const text = sourceCandidates.map(renderCandidate).join("\n");
-    return [{ kind, text, tokenCount: sourceCandidates.reduce((sum, candidate) => sum + countRenderedCandidateTokens(candidate), 0) }];
+    return [{ kind, text, tokenCount: countContextTokens(text) }];
   });
 
   const sectionTokenCounts = Object.fromEntries(input.plan.sectionOrder.map((kind) => [kind, 0])) as Record<ContextSection, number>;
@@ -72,7 +72,7 @@ export function assembleContext(input: Readonly<{
     sourceVersions: [...new Set(selected.map((candidate) => candidate.sourceVersion))],
     omittedReasons: omissions,
     sectionTokenCounts,
-    totalTokens: selected.reduce((sum, candidate) => sum + countRenderedCandidateTokens(candidate), 0),
+    totalTokens: sections.reduce((sum, section) => sum + section.tokenCount, 0),
     contentHashes: selected.map((candidate) => sha256(candidate.text)),
   };
 
@@ -120,7 +120,7 @@ function selectWithinBudgets(candidates: readonly ContextCandidate[], plan: Cont
 
   const completeConstraintTokens = candidates
     .filter((candidate) => candidate.kind === "constraints")
-    .reduce((sum, candidate) => sum + countRenderedCandidateTokens(candidate), 0);
+    .reduce((sum, candidate, index) => sum + countRenderedCandidateTokens(candidate) + (index === 0 ? 0 : 1), 0);
   if (completeConstraintTokens > plan.policy.tokenBudgets.constraints) {
     throw new ContextAssemblyError("Complete eligible constraints exceed the fixed context budget.");
   }
@@ -128,7 +128,8 @@ function selectWithinBudgets(candidates: readonly ContextCandidate[], plan: Cont
   for (const kind of plan.sectionOrder) {
     for (const candidate of candidates.filter((item) => item.kind === kind)) {
       const tokenCount = countRenderedCandidateTokens(candidate);
-      if (tokenCount + usedTokens[kind] > plan.policy.tokenBudgets[kind]) {
+      const separatorCost = usedTokens[kind] === 0 ? 0 : 1;
+      if (tokenCount + separatorCost + usedTokens[kind] > plan.policy.tokenBudgets[kind]) {
         omissions.push(`budget_exhausted:${kind}`);
         continue;
       }
@@ -141,7 +142,7 @@ function selectWithinBudgets(candidates: readonly ContextCandidate[], plan: Cont
         continue;
       }
       selected.push(candidate);
-      usedTokens[kind] += tokenCount;
+      usedTokens[kind] += tokenCount + separatorCost;
       if (kind === "evidence") evidenceItems += 1;
       if (kind === "tool") toolItems += 1;
     }

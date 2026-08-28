@@ -194,3 +194,22 @@ test("keeps selected source token counts within each policy budget", () => {
   assert.equal(result.sections.filter((section) => section.kind === "memory").length, 1);
   assert.equal(result.manifest.omittedReasons.includes("budget_exhausted:memory"), true);
 });
+
+test("counts separators between candidates against each final section budget", () => {
+  const memories = Array.from({ length: 160 }, (_, index) => candidate({
+    id: `memory-${index}`,
+    kind: "memory",
+    text: "x",
+  }));
+  const result = assembleContext({
+    plan,
+    actorId: "actor-a",
+    candidates: [...requiredCandidates, ...memories],
+  });
+  const memorySection = result.sections.find((section) => section.kind === "memory");
+
+  assert.equal(memorySection?.tokenCount, 159);
+  assert.equal(memorySection?.text.length, 159);
+  assert.equal(result.manifest.sourceRefs.filter((ref) => ref.kind === "memory").length, 80);
+  assert.equal(result.manifest.omittedReasons.filter((reason) => reason === "budget_exhausted:memory").length, 80);
+});
