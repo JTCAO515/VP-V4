@@ -12,3 +12,8 @@ test("UserDataAdapter still derives the actor only from Supabase claims", () => 
   assert.match(source, /client\.auth\.getClaims\(\)/);
   assert.doesNotMatch(source, /SERVICE_ROLE|service_role|SUPABASE_SECRET|SUPABASE_SERVICE|guest.*actor|fixed.*actor/i);
 });
+
+test("public landing imports no authentication entrypoint", () => {
+  const source = readFileSync("app/page.tsx", "utf8");
+  assert.doesNotMatch(source, /auth|supabase|magic/i);
+});

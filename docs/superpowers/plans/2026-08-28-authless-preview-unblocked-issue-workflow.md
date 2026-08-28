@@ -185,3 +185,4 @@ git log -1 --oneline
 
 Expected: merge succeeds, the merge diff has no whitespace errors, and the top commit is the merge commit. Push only when configured non-interactive Git transport succeeds; otherwise record the push as skipped.
 
+**Plan status:** Ready for implementation.
