@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { decideRecoveryProposal, proposeRecovery } from "../../../lib/server/today/recovery/index.ts";
+import { decideRecoveryProposal, proposeRecovery, proposeSafetyRecovery } from "../../../lib/server/today/recovery/index.ts";
 
 const now = new Date("2026-08-28T08:30:00.000Z");
 
@@ -181,5 +181,84 @@ test("V4-20 fails closed instead of throwing for malformed recovery decisions", 
     { now, proposal: { ...proposal, observedAt: null as never }, decision: "accept" as const, trip: { id: "trip-a", version: 3 } },
   ]) {
     assert.deepEqual(decideRecoveryProposal(input), { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" });
+  }
+});
+
+test("V4-21 turns queue evidence into a pending recovery Proposal without changing the Trip", () => {
+  const trip = { id: "trip-a", version: 3 };
+
+  assert.deepEqual(proposeSafetyRecovery({
+    now,
+    trip,
+    disruption: { kind: "queue", evidenceId: "queue-a", observedAt: "2026-08-28T08:00:00.000Z", expiresAt: "2026-08-28T09:00:00.000Z" },
+  }), {
+    status: "pending_confirmation",
+    tripId: "trip-a",
+    baseVersion: 3,
+    disruption: "queue",
+    evidenceId: "queue-a",
+    observedAt: "2026-08-28T08:00:00.000Z",
+    expiresAt: "2026-08-28T09:00:00.000Z",
+  });
+  assert.deepEqual(trip, { id: "trip-a", version: 3 });
+});
+
+test("V4-21 prioritizes a recorded official channel for high-risk unwell evidence", () => {
+  assert.deepEqual(proposeSafetyRecovery({
+    now,
+    trip: { id: "trip-a", version: 3 },
+    disruption: {
+      kind: "unwell",
+      severity: "high_risk",
+      evidenceId: "unwell-a",
+      observedAt: "2026-08-28T08:00:00.000Z",
+      expiresAt: "2026-08-28T09:00:00.000Z",
+      officialChannel: { id: "channel-a", status: "recorded", authority: "official", expiresAt: "2026-08-28T09:00:00.000Z" },
+    },
+  }), {
+    status: "official_channel",
+    reason: "HIGH_RISK_UNWELL",
+    officialChannelId: "channel-a",
+  });
+});
+
+test("V4-21 leaves ordinary unwell recovery as a user-confirmed Proposal", () => {
+  const trip = { id: "trip-a", version: 3 };
+  const proposal = proposeSafetyRecovery({
+    now,
+    trip,
+    disruption: { kind: "unwell", severity: "ordinary", evidenceId: "unwell-a", observedAt: "2026-08-28T08:00:00.000Z", expiresAt: "2026-08-28T09:00:00.000Z" },
+  });
+  assert.equal(proposal.status, "pending_confirmation");
+  if (proposal.status !== "pending_confirmation") return;
+
+  assert.equal(decideRecoveryProposal({ now, proposal, decision: "accept", trip }).status, "accepted");
+  assert.deepEqual(trip, { id: "trip-a", version: 3 });
+});
+
+test("V4-21 fails closed when high-risk unwell evidence lacks a valid official channel", () => {
+  for (const officialChannel of [undefined, "http://example.gov/emergency" as never]) {
+    assert.deepEqual(proposeSafetyRecovery({
+      now,
+      trip: { id: "trip-a", version: 3 },
+      disruption: { kind: "unwell", severity: "high_risk", evidenceId: "unwell-a", observedAt: "2026-08-28T08:00:00.000Z", expiresAt: "2026-08-28T09:00:00.000Z", officialChannel },
+    }), { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" });
+  }
+});
+
+test("V4-21 rejects unwell input through the generic recovery API", () => {
+  assert.deepEqual(proposeRecovery({
+    now,
+    trip: { id: "trip-a", version: 3 },
+    disruption: { kind: "unwell" as never, evidenceId: "unwell-a", observedAt: "2026-08-28T08:00:00.000Z", expiresAt: "2026-08-28T09:00:00.000Z" },
+  }), { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" });
+});
+
+test("V4-21 fails closed instead of throwing for malformed safety recovery input", () => {
+  for (const input of [null, undefined]) {
+    assert.deepEqual(proposeSafetyRecovery(input as never), {
+      status: "unavailable",
+      reason: "NO_ELIGIBLE_EVIDENCE",
+    });
   }
 });

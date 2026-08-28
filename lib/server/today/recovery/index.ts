@@ -1,12 +1,15 @@
+type RecoveryDisruptionKind = "delay" | "closure" | "queue" | "unwell";
+type GenericRecoveryDisruptionKind = Exclude<RecoveryDisruptionKind, "unwell">;
+
 export type RecoveryProposal =
-  | Readonly<{ status: "pending_confirmation"; tripId: string; baseVersion: number; disruption: "delay" | "closure"; evidenceId: string; observedAt: string; expiresAt: string }>
+  | Readonly<{ status: "pending_confirmation"; tripId: string; baseVersion: number; disruption: RecoveryDisruptionKind; evidenceId: string; observedAt: string; expiresAt: string }>
   | Readonly<{ status: "recheck_required"; reason: "EVIDENCE_STALE" }>
   | Readonly<{ status: "unavailable"; reason: "NO_ELIGIBLE_EVIDENCE" }>;
 
 type PendingRecoveryProposal = Extract<RecoveryProposal, { status: "pending_confirmation" }>;
 
 export type RecoveryDecision =
-  | Readonly<{ status: "accepted"; tripId: string; baseVersion: number; disruption: "delay" | "closure"; evidenceId: string }>
+  | Readonly<{ status: "accepted"; tripId: string; baseVersion: number; disruption: RecoveryDisruptionKind; evidenceId: string }>
   | Readonly<{ status: "rejected"; tripId: string; evidenceId: string }>
   | Readonly<{ status: "conflict"; reason: "TRIP_VERSION_CHANGED" }>
   | Readonly<{ status: "recheck_required"; reason: "EVIDENCE_STALE" }>
@@ -15,7 +18,7 @@ export type RecoveryDecision =
 export function proposeRecovery(input: Readonly<{
   now: Date;
   trip: Readonly<{ id: string; version: number }>;
-  disruption: Readonly<{ kind: "delay" | "closure"; evidenceId: string; observedAt: string; expiresAt: string }> | null;
+  disruption: Readonly<{ kind: GenericRecoveryDisruptionKind; evidenceId: string; observedAt: string; expiresAt: string }> | null;
 }>): RecoveryProposal {
   const disruption = input?.disruption;
   const now = input?.now instanceof Date ? input.now.getTime() : Number.NaN;
@@ -24,7 +27,7 @@ export function proposeRecovery(input: Readonly<{
   const evidenceId = disruption?.evidenceId;
   const observedAt = typeof disruption?.observedAt === "string" ? Date.parse(disruption.observedAt) : Number.NaN;
   const expiresAt = typeof disruption?.expiresAt === "string" ? Date.parse(disruption.expiresAt) : Number.NaN;
-  if (!disruption || (disruption.kind !== "delay" && disruption.kind !== "closure") || typeof tripId !== "string" || !tripId.trim() || !Number.isSafeInteger(tripVersion) || tripVersion < 0 || typeof evidenceId !== "string" || !evidenceId.trim() || !Number.isFinite(now) || !Number.isFinite(observedAt) || !Number.isFinite(expiresAt) || observedAt > now || expiresAt < observedAt) {
+  if (!disruption || (disruption.kind !== "delay" && disruption.kind !== "closure" && disruption.kind !== "queue") || typeof tripId !== "string" || !tripId.trim() || !Number.isSafeInteger(tripVersion) || tripVersion < 0 || typeof evidenceId !== "string" || !evidenceId.trim() || !Number.isFinite(now) || !Number.isFinite(observedAt) || !Number.isFinite(expiresAt) || observedAt > now || expiresAt < observedAt) {
     return { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" };
   }
   if (expiresAt <= now) return { status: "recheck_required", reason: "EVIDENCE_STALE" };
@@ -43,7 +46,7 @@ export function decideRecoveryProposal(input: Readonly<{
   const expiresAt = typeof proposal?.expiresAt === "string" ? Date.parse(proposal.expiresAt) : Number.NaN;
   const tripId = input?.trip?.id;
   const tripVersion = input?.trip?.version;
-  if (!proposal || proposal.status !== "pending_confirmation" || typeof proposal.tripId !== "string" || !proposal.tripId.trim() || !Number.isSafeInteger(proposal.baseVersion) || proposal.baseVersion < 0 || (proposal.disruption !== "delay" && proposal.disruption !== "closure") || typeof proposal.evidenceId !== "string" || !proposal.evidenceId.trim() || typeof proposal.observedAt !== "string" || typeof proposal.expiresAt !== "string" || !Number.isFinite(decisionNow) || !Number.isFinite(observedAt) || !Number.isFinite(expiresAt) || observedAt > decisionNow || expiresAt < observedAt || (input?.decision !== "accept" && input?.decision !== "reject")) {
+  if (!proposal || proposal.status !== "pending_confirmation" || typeof proposal.tripId !== "string" || !proposal.tripId.trim() || !Number.isSafeInteger(proposal.baseVersion) || proposal.baseVersion < 0 || (proposal.disruption !== "delay" && proposal.disruption !== "closure" && proposal.disruption !== "queue" && proposal.disruption !== "unwell") || typeof proposal.evidenceId !== "string" || !proposal.evidenceId.trim() || typeof proposal.observedAt !== "string" || typeof proposal.expiresAt !== "string" || !Number.isFinite(decisionNow) || !Number.isFinite(observedAt) || !Number.isFinite(expiresAt) || observedAt > decisionNow || expiresAt < observedAt || (input?.decision !== "accept" && input?.decision !== "reject")) {
     return { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" };
   }
   if (input.decision === "reject") {
@@ -63,4 +66,46 @@ export function decideRecoveryProposal(input: Readonly<{
     disruption: proposal.disruption,
     evidenceId: proposal.evidenceId,
   };
+}
+
+export type SafetyRecovery = RecoveryProposal | Readonly<{
+  status: "official_channel";
+  reason: "HIGH_RISK_UNWELL";
+  officialChannelId: string;
+}>;
+
+export function proposeSafetyRecovery(input: Readonly<{
+  now: Date;
+  trip: Readonly<{ id: string; version: number }>;
+  disruption: Readonly<{ kind: "queue"; evidenceId: string; observedAt: string; expiresAt: string }> | Readonly<{ kind: "unwell"; severity: "ordinary" | "high_risk"; evidenceId: string; observedAt: string; expiresAt: string; officialChannel?: Readonly<{ id: string; status: "recorded"; authority: "official"; expiresAt: string }> }> | null;
+}>): SafetyRecovery {
+  if (!input || typeof input !== "object") {
+    return { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" };
+  }
+  const disruption = input?.disruption;
+  if (disruption?.kind === "unwell" && disruption.severity !== "ordinary" && disruption.severity !== "high_risk") {
+    return { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" };
+  }
+  if (!disruption || disruption.kind === "queue") {
+    return proposeRecovery({ now: input.now, trip: input.trip, disruption });
+  }
+  const proposal = proposeRecovery({
+    now: input.now,
+    trip: input.trip,
+    disruption: { kind: "queue", evidenceId: disruption.evidenceId, observedAt: disruption.observedAt, expiresAt: disruption.expiresAt },
+  });
+  if (proposal.status !== "pending_confirmation") return proposal;
+  if (disruption.severity === "ordinary") return { ...proposal, disruption: "unwell" };
+  if (disruption.severity !== "high_risk") return { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" };
+  const officialChannel = currentOfficialChannel(disruption.officialChannel, input.now);
+  if (!officialChannel) return { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" };
+  return { status: "official_channel", reason: "HIGH_RISK_UNWELL", officialChannelId: officialChannel };
+}
+
+function currentOfficialChannel(value: unknown, now: unknown): string | null {
+  if (!value || typeof value !== "object" || !(now instanceof Date)) return null;
+  const record = value as Readonly<{ id?: unknown; status?: unknown; authority?: unknown; expiresAt?: unknown }>;
+  const expiresAt = typeof record.expiresAt === "string" ? Date.parse(record.expiresAt) : Number.NaN;
+  if (typeof record.id !== "string" || !record.id.trim() || record.status !== "recorded" || record.authority !== "official" || !Number.isFinite(expiresAt) || expiresAt <= now.getTime()) return null;
+  return record.id;
 }

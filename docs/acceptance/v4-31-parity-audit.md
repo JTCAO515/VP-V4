@@ -17,8 +17,8 @@ route truthfully withholds the capability and has a static route contract; it is
 | TODAY-01 | partial | V4-18 NextAction plus V4-19 timestamped observation contracts; route stays unavailable without owner data | not accepted |
 | TODAY-02 | partial | V4-20 delay recovery contract: pending proposal, stale recheck, accept/reject and version conflict; no Trip write | not accepted |
 | TODAY-03 | partial | V4-20 closure recovery contract: pending proposal, stale recheck, accept/reject and version conflict; no Trip write | not accepted |
-| TODAY-04 | hidden | registry recovery row | not accepted |
-| TODAY-05 | hidden | registry safety row | not accepted |
+| TODAY-04 | partial | V4-21 queue recovery contract: current evidence produces only a pending Proposal; no Trip write | not accepted |
+| TODAY-05 | partial | V4-21 unwell recovery contract: ordinary evidence uses a pending Proposal; high-risk returns only a current recorded official-channel reference | not accepted |
 | TODAY-06 | partial | V4-04 feasibility plus V4-18 nine-check registry contracts | not accepted |
 | CHAT-01 | partial | V4-08 owner-scoped state-only Turn tests | not accepted |
 | CHAT-02 | hidden | registry chat UX row | not accepted |
@@ -113,7 +113,7 @@ offline retention record establishes the remaining product capabilities.
 - No physical-device, assistive-technology, end-to-end fault, performance or production observation
   window exists.
 - Unblock condition: implement and independently verify the missing V4-13, V4-15, V4-17 and
-  V4-21 contracts, then rerun this complete matrix in a release environment.
+  owner/provider/runtime evidence, then rerun this complete matrix in a release environment.
 
 ## Rollback
 

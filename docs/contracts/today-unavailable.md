@@ -34,5 +34,17 @@ cancels anything, or purchases anything. The existing canonical Trip writer is
 intentionally not a V4-20 consumer; a future writer must independently
 validate and atomically apply any accepted recovery.
 
+V4-21 extends the same pure recovery contract with `queue` and `unwell`.
+Current queue evidence and ordinary unwell evidence may produce the same
+`pending_confirmation` Proposal and are subject to the existing explicit
+accept/reject/version/freshness checks. A high-risk unwell record never
+produces a recovery Proposal: it returns an `official_channel` only when it
+has current evidence plus a current recorded official-channel reference. The
+contract returns that opaque reference ID; it neither resolves nor contacts the
+channel. Missing, malformed, stale, non-recorded, or non-official high-risk
+evidence returns
+`NO_ELIGIBLE_EVIDENCE`. This is neither a diagnosis nor a rescue, provider, or
+contact attempt.
+
 Rollback: revert the pure engine/recovery contracts and their tests. No Trip
-state, evidence or recovery action is written.
+state, evidence, recovery action, diagnosis, or external contact is written.

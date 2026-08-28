@@ -1,0 +1,12 @@
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-08-28T11:03:55.280Z","finishedAt":"2026-08-28T11:04:13.375Z","env":"local"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-08-28T11:04:17.528Z","finishedAt":"2026-08-28T11:04:18.311Z","env":"local"}
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-08-28T11:04:22.131Z","finishedAt":"2026-08-28T11:04:22.640Z","env":"local"}
+{"command":"pnpm test:e2e","exitCode":0,"startedAt":"2026-08-28T11:04:26.384Z","finishedAt":"2026-08-28T11:04:27.734Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T11:04:32.585Z","finishedAt":"2026-08-28T11:04:32.962Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T11:04:37.571Z","finishedAt":"2026-08-28T11:04:37.636Z","env":"local"}
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-08-28T11:11:24.533Z","finishedAt":"2026-08-28T11:11:42.490Z","env":"local"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-08-28T11:11:46.386Z","finishedAt":"2026-08-28T11:11:47.163Z","env":"local"}
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-08-28T11:11:52.478Z","finishedAt":"2026-08-28T11:11:52.987Z","env":"local"}
+{"command":"pnpm test:e2e","exitCode":0,"startedAt":"2026-08-28T11:11:56.822Z","finishedAt":"2026-08-28T11:11:58.161Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T11:12:01.812Z","finishedAt":"2026-08-28T11:12:02.186Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T11:12:05.380Z","finishedAt":"2026-08-28T11:12:05.444Z","env":"local"}

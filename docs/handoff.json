@@ -2,20 +2,20 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Deliver the accepted AI Core and independently expressed VisePanda frontend without copying Demo fixtures or competitor expression, while preserving runtime identity, RLS, provider, data-policy, and release contracts.",
-  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-06/#140, WEB-07/#141, WEB-08/#142 and WEB-10/#144 are merged; V4-08/#93 through V4-12/#97 are merged; V4-13/#98 adds the Memory Profile lifecycle, consent, receipt, RLS and safe-retrieval contract; V4-14/#99 provides owner-JWT durable Memory governance; V4-16/#101 adds separate owner-JWT durable explicit Profile persistence; V4-18/#103 provides deterministic, fail-closed NextAction/nine-check logic while its browser route remains unavailable without an owner Trip/Fact reader. V4-19/#104 supplies only timestamped observation projection. V4-20/#105 adds pure delay/closure recovery proposal and disposition contracts: stale evidence rechecks, user accept/reject and Trip-version conflicts are covered, and no Trip/provider/cancellation/purchase write exists. V4-22/#107 through V4-30/#115 remain five-locale/RTL truthful unavailable routes. V4-31/#116 remains a blocked non-release audit until remaining durable contracts and runtime evidence exist.",
+  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-06/#140, WEB-07/#141, WEB-08/#142 and WEB-10/#144 are merged; V4-08/#93 through V4-12/#97 are merged; V4-13/#98 adds the Memory Profile lifecycle, consent, receipt, RLS and safe-retrieval contract; V4-14/#99 provides owner-JWT durable Memory governance; V4-16/#101 adds separate owner-JWT durable explicit Profile persistence; V4-18/#103 provides deterministic, fail-closed NextAction/nine-check logic while its browser route remains unavailable without an owner Trip/Fact reader. V4-19/#104 supplies only timestamped observation projection. V4-20/#105 supplies delay/closure recovery. V4-21/#106 extends pure recovery with queue and ordinary-unwell Proposals, plus high-risk unwell official-channel-only outcomes; it has no Trip/provider/diagnosis/rescue/contact/cancellation/purchase write. V4-22/#107 through V4-30/#115 remain five-locale/RTL truthful unavailable routes. V4-31/#116 remains a blocked non-release audit until remaining durable contracts and runtime evidence exist.",
   "currentPhase": "R5 frontend surfaces",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "Refresh main and implement V4-21 safety recovery as the next directly schedulable frontend surface; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
+  "intendedNextAgent": "Refresh main and implement V4-22 Tool Surface Health as the next directly schedulable frontend surface; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
   "latestIssueExecution": {
-    "issue": "V4-20/#105",
-    "changedFiles": ["lib/server/today/recovery/**", "tests/contract/today/recovery-proposal.test.ts", "docs/{contracts,architecture,acceptance,agents}/**", "artifacts/V4-20/**", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md"],
-    "verification": ["pnpm check", "pnpm test:contract", "pnpm test:integration", "pnpm test:e2e", "pnpm docs:check", "git diff --check"],
-    "unrun": ["Provider request/cache integration because no approved provider/data-policy adapter exists", "Interactive browser recovery evidence because Today owns no truthful owner Trip/observation reader", "Canonical Trip-writer integration because V4-20 owns only the pure recovery contract"],
-    "residualRisk": "V4-20 accepts only supplied timestamped evidence and produces in-memory proposal/disposition values. It does not read owner data, call a provider, persist a proposal, render a recovery, or apply an accepted recovery through the canonical Trip transaction.",
-    "rollback": "Revert the V4-20 pure recovery contract and tests. It writes no Trip, observation, provider, cancellation or purchase state.",
-    "nextAction": "Implement V4-21 safety recovery as the next directly schedulable frontend surface."
+    "issue": "V4-21/#106",
+    "changedFiles": ["lib/server/today/recovery/**", "tests/contract/today/recovery-proposal.test.ts", "docs/{contracts,architecture,acceptance,agents}/**", "artifacts/V4-21/**", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md"],
+    "verification": ["pnpm check", "pnpm test:contract", "pnpm evals", "pnpm test:e2e", "pnpm docs:check", "git diff --check"],
+    "unrun": ["Provider/contact integration because no approved provider/data-policy adapter exists", "Interactive browser recovery evidence because Today owns no truthful owner Trip/observation reader", "Canonical Trip-writer integration because V4-21 owns only pure recovery contracts"],
+    "residualRisk": "V4-21 accepts only supplied timestamped safety evidence and produces in-memory Proposal or recorded official-channel values. It does not read owner data, call a provider, persist a Proposal, render a recovery, diagnose, contact a channel, or apply a recovery through the canonical Trip transaction.",
+    "rollback": "Revert the V4-21 pure safety recovery contract and tests. It writes no Trip, observation, provider, diagnosis, contact, cancellation or purchase state.",
+    "nextAction": "Implement V4-22 Tool Surface Health as the next directly schedulable frontend surface."
   },
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
@@ -307,7 +307,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Implement V4-21 safety recovery as the next directly schedulable frontend surface. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
+  "nextAction": "Implement V4-22 Tool Surface Health as the next directly schedulable frontend surface. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
   "lastUpdated": "2026-08-28",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
