@@ -1,6 +1,7 @@
-{"command":"pnpm check","exitCode":0,"env":"local","result":"lint, typecheck, production build, and 22 static tests passed"}
-{"command":"pnpm db:verify","exitCode":0,"env":"local","result":"database baseline present; local connection paths not configured"}
-{"command":"pnpm test:contract","exitCode":0,"env":"local","result":"60 tests passed including V4-13 lifecycle and V4-31 handoff progression"}
-{"command":"pnpm test:security","exitCode":0,"env":"local","result":"18 tests passed; one pre-existing local-Supabase probe skipped"}
-{"command":"pnpm docs:check","exitCode":0,"env":"local","result":"documentation baseline passed"}
-{"command":"git diff --check","exitCode":0,"env":"local","result":"no whitespace errors"}
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T18:48:41.7936103Z","finishedAt":"2026-08-28T18:48:58.5507589Z","result":"lint, typecheck, production build, and 22 static tests passed"}
+{"command":"pnpm db:verify","exitCode":0,"env":"local","startedAt":"2026-08-28T18:48:58.5570504Z","finishedAt":"2026-08-28T18:48:58.9386554Z","result":"database baseline present; all local connection paths not configured; production was not attempted"}
+{"command":"pnpm test:contract","exitCode":0,"env":"local","startedAt":"2026-08-28T18:48:58.9392634Z","finishedAt":"2026-08-28T18:48:59.8108612Z","result":"126 tests passed including V4-13 lifecycle"}
+{"command":"pnpm test:security","exitCode":0,"env":"local","startedAt":"2026-08-28T18:57:23.4369997Z","finishedAt":"2026-08-28T18:57:27.4395789Z","result":"52 passed, one local-Supabase probe skipped"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T18:49:03.8891705Z","finishedAt":"2026-08-28T18:49:04.2346846Z","result":"documentation baseline passed"}
+{"command":"git diff --cached --check","exitCode":0,"env":"local","startedAt":"2026-08-28T18:57:48.3523663Z","finishedAt":"2026-08-28T18:57:48.3919244Z","result":"no whitespace errors in the staged timestamp hardening change"}
+{"command":"git diff --cached --check","exitCode":0,"env":"local","startedAt":"2026-08-28T18:50:59.9497189Z","finishedAt":"2026-08-28T18:50:59.9908920Z","result":"no whitespace errors in the staged V4-13 hardening change"}
