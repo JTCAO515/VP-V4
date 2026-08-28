@@ -20,7 +20,7 @@ This plan reuses [#87](https://github.com/JTCAO515/VP-V4/issues/87) as Demo pari
 | Program | [#136 WEB-02](https://github.com/JTCAO515/VP-V4/issues/136) | R0-R5 | in progress / human-owned | Complete frontend redesign program |
 | F0 | [#137 WEB-03](https://github.com/JTCAO515/VP-V4/issues/137) | R0 | merged locally | ADR, numbered DAG, tracker and handoff freeze |
 | F1 | [#138 WEB-04](https://github.com/JTCAO515/VP-V4/issues/138) | R0 | merged locally | Asset quarantine, rights ledger, fonts, SBOM/NOTICE |
-| F2 | [#139 WEB-05](https://github.com/JTCAO515/VP-V4/issues/139) | R0 | operator-owned / skipped | Three VI directions and operator selection |
+| F2 | [#139 WEB-05](https://github.com/JTCAO515/VP-V4/issues/139) | R0 | implemented locally under direct operator selection | Three VI directions and selection/dissent record |
 | F3 | [#140 WEB-06](https://github.com/JTCAO515/VP-V4/issues/140) | R1 | merged locally under the accepted dependency waiver | Shared tokens, brand, locale, motion and primitives |
 | F4 | [#141 WEB-07](https://github.com/JTCAO515/VP-V4/issues/141) | R1 | merged locally | Homepage independent rewrite and Open VisePanda entry |
 | F5 | [#142 WEB-08](https://github.com/JTCAO515/VP-V4/issues/142) | R1 | merged locally | Closed-beta Login, first-run and global auth states |
@@ -82,12 +82,13 @@ No frontend child may fall back to Demo fixture success, blocked source assets, 
 
 ## 5.1 Local execution snapshot — 2026-08-28
 
-`main` contains WEB-03, WEB-04, WEB-06, WEB-07, WEB-08, V4-07, WEB-09 and WEB-10.
-The accepted waiver lets WEB-06 proceed without WEB-05's operator-only visual selection; it
-does not waive any release or asset-rights gate. Remote GitHub status synchronization is not
+`main` contains WEB-03 through WEB-10, including WEB-05's direct operator selection record.
+The selected baseline is VisePanda VI + Golden Route + Guide, with `Open VisePanda` as the
+primary CTA and the map disabled by default. This does not waive any release or asset-rights gate.
+Remote GitHub status synchronization is not
 asserted here: the local `gh` client is unauthenticated and GitHub's anonymous API is rate-limited.
 The V4-22 through V4-30 truthful unavailable/degraded frontend boundaries are also merged in
-`main`; no locally executable frontend implementation Issue remains.
+`main`; no locally executable frontend implementation Issue remains after WEB-05.
 WEB-11 remains a release-evidence and operator-decision gate, so it is skipped until its
 external prerequisites exist.
 
