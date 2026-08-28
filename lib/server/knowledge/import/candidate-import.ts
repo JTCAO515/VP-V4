@@ -1,0 +1,22 @@
+type Candidate = Readonly<{ id: string; externalId: string; name: string; aliases: readonly string[]; cityCode: string; latitudeE6: number; longitudeE6: number; visibility: "private" }>;
+const token = /^[a-z][a-z0-9_-]{0,127}$/;
+const hash = /^[a-z0-9_-]{8,128}$/;
+
+export function createCandidateImportDryRunLedger() {
+  const sources = new Map<string, string>();
+  return Object.freeze({
+    dryRun(input: unknown) {
+      record(input, ["now", "actorId", "manifest", "rows"]); timestamp(input.now); id(input.actorId); const manifest = parseManifest(input.manifest); const rows = parseRows(input.rows);
+      const known = sources.get(manifest.sourceId);
+      if (known) return freeze({ kind: "dry-run" as const, disposition: known === manifest.sourceHash ? "no-op" as const : "conflict" as const, candidates: [] as Candidate[] });
+      sources.set(manifest.sourceId, manifest.sourceHash);
+      return freeze({ kind: "dry-run" as const, disposition: "prepared" as const, candidates: rows.map((row) => freeze({ ...row, id: `candidate-${manifest.sourceId}-${row.externalId}`, visibility: "private" as const })) });
+    },
+  });
+}
+function parseManifest(value: unknown) { record(value, ["format", "encoding", "sourceId", "sourceHash", "licenceReceiptId"]); if ((value.format !== "csv" && value.format !== "jsonl") || value.encoding !== "utf-8" || typeof value.sourceHash !== "string" || !hash.test(value.sourceHash)) throw new TypeError("licensed UTF-8 manifest required"); return freeze({ sourceId: id(value.sourceId), sourceHash: value.sourceHash, licenceReceiptId: id(value.licenceReceiptId) }); }
+function parseRows(value: unknown) { if (!Array.isArray(value) || value.length === 0) throw new TypeError("bounded rows required"); const rows = value.map((row) => { record(row, ["externalId", "name", "aliases", "cityCode", "latitudeE6", "longitudeE6"]); const latitudeE6 = row.latitudeE6; const longitudeE6 = row.longitudeE6; if (!Array.isArray(row.aliases) || row.aliases.length === 0 || row.aliases.some((alias) => typeof alias !== "string" || !token.test(alias)) || typeof latitudeE6 !== "number" || typeof longitudeE6 !== "number" || !Number.isInteger(latitudeE6) || !Number.isInteger(longitudeE6) || Math.abs(latitudeE6) > 90_000_000 || Math.abs(longitudeE6) > 180_000_000) throw new TypeError("bounded candidate row required"); return freeze({ externalId: id(row.externalId), name: id(row.name), aliases: freeze([...row.aliases]), cityCode: id(row.cityCode), latitudeE6, longitudeE6 }); }); const cities = new Map<string, number>(); const externalIds = new Set<string>(); for (const row of rows) { if (externalIds.has(row.externalId)) throw new TypeError("duplicate external ID"); externalIds.add(row.externalId); const count = (cities.get(row.cityCode) ?? 0) + 1; if (count > 20) throw new TypeError("city candidate cap exceeded"); cities.set(row.cityCode, count); } return rows; }
+function record(value: unknown, keys: readonly string[]): asserts value is Record<string, unknown> { if (!value || typeof value !== "object" || Array.isArray(value)) throw new TypeError("record required"); const actual = Object.keys(value); if (actual.length !== keys.length || actual.some((key) => !keys.includes(key))) throw new TypeError("closed record required"); }
+function id(value: unknown): string { if (typeof value !== "string" || !token.test(value)) throw new TypeError("bounded ID required"); return value; }
+function timestamp(value: unknown): void { if (typeof value !== "string") throw new TypeError("RFC3339 timestamp required"); const parts = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?(?:Z|[+-](?:0\d|1\d|2[0-3]):[0-5]\d)$/.exec(value); if (!parts) throw new TypeError("RFC3339 timestamp required"); const [year, month, day, hour, minute, second] = parts.slice(1).map(Number); const calendar = new Date(Date.UTC(year, month - 1, day, hour, minute, second)); if (calendar.getUTCFullYear() !== year || calendar.getUTCMonth() !== month - 1 || calendar.getUTCDate() !== day || calendar.getUTCHours() !== hour || calendar.getUTCMinutes() !== minute || calendar.getUTCSeconds() !== second || Number.isNaN(Date.parse(value))) throw new TypeError("RFC3339 timestamp required"); }
+function freeze<T>(value: T): Readonly<T> { if (Array.isArray(value)) value.forEach(freeze); else if (value && typeof value === "object") Object.values(value).forEach(freeze); return Object.freeze(value); }
