@@ -4,6 +4,22 @@ export type Locale = "zh" | "en" | "es" | "ru" | "ar";
 
 export type LocaleAttributes = { lang: string; dir: "ltr" | "rtl" };
 
+type ExecutionCardClaimType = "address" | "time_window" | "money" | "payment_method" | "admission" | "transport_status" | "safe_phrase";
+type ExecutionCardQualifier = "reservation_required" | "official_recheck_required" | "ticket_holder" | "eligible_user";
+type ExecutionCardCopy = Readonly<{
+  heading: string;
+  claimTypes: Readonly<Record<ExecutionCardClaimType, string>>;
+  qualifiers: Readonly<Record<ExecutionCardQualifier, string>>;
+}>;
+
+export const executionCardCopy: Readonly<Record<Locale, ExecutionCardCopy>> = {
+  zh: { heading: "已核验的执行信息", claimTypes: { address: "地址", time_window: "时间", money: "金额", payment_method: "支付方式", admission: "入场", transport_status: "交通状态", safe_phrase: "安全短语" }, qualifiers: { reservation_required: "需要预约", official_recheck_required: "需要官方复核", ticket_holder: "仅限持票人", eligible_user: "仅限符合条件的用户" } },
+  en: { heading: "Verified execution details", claimTypes: { address: "Address", time_window: "Time", money: "Amount", payment_method: "Payment method", admission: "Admission", transport_status: "Transport status", safe_phrase: "Safe phrase" }, qualifiers: { reservation_required: "Reservation required", official_recheck_required: "Official recheck required", ticket_holder: "Ticket holders only", eligible_user: "Eligible users only" } },
+  es: { heading: "Detalles de ejecución verificados", claimTypes: { address: "Dirección", time_window: "Hora", money: "Importe", payment_method: "Método de pago", admission: "Entrada", transport_status: "Estado del transporte", safe_phrase: "Frase segura" }, qualifiers: { reservation_required: "Se requiere reserva", official_recheck_required: "Se requiere verificación oficial", ticket_holder: "Solo titulares de entrada", eligible_user: "Solo usuarios elegibles" } },
+  ru: { heading: "Проверенные сведения для действия", claimTypes: { address: "Адрес", time_window: "Время", money: "Сумма", payment_method: "Способ оплаты", admission: "Вход", transport_status: "Статус транспорта", safe_phrase: "Безопасная фраза" }, qualifiers: { reservation_required: "Требуется бронирование", official_recheck_required: "Нужна официальная проверка", ticket_holder: "Только для владельцев билетов", eligible_user: "Только для подходящих пользователей" } },
+  ar: { heading: "تفاصيل تنفيذ موثقة", claimTypes: { address: "العنوان", time_window: "الوقت", money: "المبلغ", payment_method: "طريقة الدفع", admission: "الدخول", transport_status: "حالة النقل", safe_phrase: "عبارة آمنة" }, qualifiers: { reservation_required: "الحجز مطلوب", official_recheck_required: "يلزم التحقق الرسمي", ticket_holder: "لحاملي التذاكر فقط", eligible_user: "للمستخدمين المؤهلين فقط" } },
+};
+
 const localeAttributes: Record<Locale, LocaleAttributes> = {
   zh: { lang: "zh-CN", dir: "ltr" },
   en: { lang: "en", dir: "ltr" },
