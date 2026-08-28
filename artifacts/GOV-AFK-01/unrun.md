@@ -7,6 +7,9 @@
   user-facing copy.
 - Preview/production smoke and deployment observation: not applicable. No runtime, environment,
   database, RLS policy, migration, provider, external account or public capability changed.
+- Production migration, production/user-data deletion, provider/account action and branch-protection
+  bypass: not run and not authorized. This policy exception is limited to repository-only Class B
+  preparation after explicit operator instruction, independent automated review and required checks.
 - First two-Issue Continuous AFK observation window: pending the policy PR merge and the next
   development session. This is follow-up observation, not evidence that can be fabricated inside the
   policy change.

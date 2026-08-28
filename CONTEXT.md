@@ -105,8 +105,9 @@ The tracker plan is published as V4-01 through V4-31 while preserving R0-R5. It 
 
 The accepted direction removes routine per-Issue confirmation and adds a cross-Issue frontier loop.
 Each Issue still has its own worktree, branch, PR, checks and evidence. Class A reversible repo-only
-work may use GitHub auto-merge after every required gate succeeds. Class B security/RLS/migration
-work is prepared and handed off without self-approval or production application. Class C operator
+work may use GitHub auto-merge after every required gate succeeds. With an active explicit operator
+instruction, Class B repository-only preparation may also auto-merge after independent automated
+review and every required gate succeeds; it never authorizes production application. Class C operator
 work is recorded in `docs/operator-actions.json` and skipped while another safe frontier exists.
 No AFK instruction weakens RLS, permissions, privacy, data rights, rollback, branch protection or
 irreversible-action gates.

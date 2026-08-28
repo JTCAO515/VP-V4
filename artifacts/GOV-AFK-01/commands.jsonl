@@ -1,0 +1,3 @@
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-08-28T11:43:16.557Z","finishedAt":"2026-08-28T11:43:34.600Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T11:43:39.083Z","finishedAt":"2026-08-28T11:43:39.453Z","env":"local"}
+{"command":"git.exe diff --check","exitCode":0,"startedAt":"2026-08-28T11:43:48.301Z","finishedAt":"2026-08-28T11:43:48.363Z","env":"local"}

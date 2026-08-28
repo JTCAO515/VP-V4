@@ -45,3 +45,5 @@ AFK mode never authorizes bypassing required checks, branch protection, RLS,
 permission boundaries, privacy/data-licence policy, migration rollback requirements, secrets,
 production cutover, or irreversible actions. Human confirmation may be replaced by deterministic
 or browser-automated evidence only when that evidence actually tests the acceptance condition.
+An active explicit operator instruction may authorize repository-only Class B preparation to merge
+after independent automated review and every required check; it never authorizes production actions.

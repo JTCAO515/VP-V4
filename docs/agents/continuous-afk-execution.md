@@ -25,7 +25,7 @@ Classify every selected Issue before editing. When uncertain, use the more restr
 | Class | Typical work | Agent authority | After required checks |
 | --- | --- | --- | --- |
 | `A — autonomous` | reversible repo-only D0/D1 code, tests, docs or UI with frozen contracts | implement, verify, open PR, address CI | enable repository auto-merge when branch protection permits, then continue |
-| `B — prepare-only` | auth, RLS, permissions, schema/migration, retention, deletion, data policy, provider region, release controls | implement only the accepted contract, add rollback and adversarial evidence, open PR | do not self-approve or bypass review; leave PR ready and continue an independent Issue |
+| `B — prepare-only` | auth, RLS, permissions, schema/migration, retention, deletion, data policy, provider region, release controls | implement only the accepted contract, add rollback and adversarial evidence, open PR | absent an active explicit operator instruction, leave the PR ready; otherwise use the restricted repository-only auto-merge rule below |
 | `C — operator-owned` | unresolved product/architecture choice, legal/licence/DPA, secret/account provisioning, payment, production migration/cutover, destructive or irreversible action | prepare evidence/options/runbook only | enqueue the exact operator action, mark/retain `ready-for-human` or `needs-info`, then skip |
 
 Class A auto-merge is permitted only when all Issue-required checks and repository required checks are
@@ -33,9 +33,17 @@ successful, the PR is mergeable and not draft, no unresolved review or security 
 base is current, and the PR contains no Class B/C change. GitHub remains the merge authority; the
 agent must not disable protection, self-approve a review requirement or use an admin bypass.
 
+Class B repository-only preparation may auto-merge only when the active operator instruction
+explicitly authorizes no manual review, an independent automated review reports no unresolved
+Critical/Important finding, every Issue-required and repository-required check succeeds, the base is
+current, and the merge uses ordinary repository authority. This exception never authorizes a
+production migration, production or user-data deletion, provider/account action, branch-protection
+bypass, or a claim that a prepared contract has completed its operational lifecycle.
+
 Class B permits normal implementation and review preparation because this keeps the pipeline moving.
 It does not imply production application. A migration must remain append-only/reversible and carry
-forward/rollback verification; a local or Preview result is not production acceptance.
+forward/rollback verification; a local or Preview result is not production acceptance. Without the
+explicit authorization above, Class B remains prepare-only and is handed off rather than merged.
 
 ## 3. Frontier scheduler
 
