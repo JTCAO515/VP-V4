@@ -1,0 +1,6 @@
+{"command":"pnpm test:security","exitCode":0,"startedAt":"2026-08-29T01:39:00+08:00","finishedAt":"2026-08-29T01:39:00+08:00","env":"local; 51 passed, 1 existing local-Supabase skip"}
+{"command":"pnpm test:integration","exitCode":0,"startedAt":"2026-08-29T01:39:00+08:00","finishedAt":"2026-08-29T01:39:00+08:00","env":"local; 4 passed, 8 existing local-Supabase skips"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-08-29T01:39:00+08:00","finishedAt":"2026-08-29T01:39:00+08:00","env":"local; 120 passed"}
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-08-29T01:39:00+08:00","finishedAt":"2026-08-29T01:39:00+08:00","env":"local; 17 passed"}
+{"command":"pnpm test:e2e","exitCode":0,"startedAt":"2026-08-29T01:39:00+08:00","finishedAt":"2026-08-29T01:39:00+08:00","env":"local; 28 passed"}
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-08-29T01:40:00+08:00","finishedAt":"2026-08-29T01:40:00+08:00","env":"local; lint, typecheck, production build, standard test passed"}
