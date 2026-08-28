@@ -77,6 +77,13 @@ The report's nine hard gates become nine named deterministic suites. `0` always 
 An Issue that claims a red line must name the suite ID, the fixture count, and the runtime
 invariant. A suite may only be introduced or extended by the Issues listed in section 5.
 
+### AI-42 registry snapshot
+
+AI-42 owns the C0 fixture-count baseline for the registry: RL-01=2, RL-02=3, RL-03=2,
+RL-04=3, RL-05=2, RL-06=2, RL-07=2, RL-08=3 and RL-09=2. These counts describe only
+the deterministic named fixtures; they do not establish a production safety rate. The executable
+registry, five-locale/six-moment strata and split validator live in `evals/quality/ai-42-corpus.ts`.
+
 ## 5. Per-Issue execution parameters
 
 Global forbidden paths for every implementation Issue: `.env*`, `docs/research/**`,
@@ -134,7 +141,7 @@ and any file owned by another Issue's row.
 | #42 AI-40 | External / Flight adapter | `lib/server/external-evidence/flight/**` | `pnpm check`; `pnpm test:contract`; `pnpm test:integration` | field allowlist proof, recheck trace | RL-06 |
 | #43 AI-41 | Release gate R5 / beta | `docs/runbooks/**, docs/acceptance/r5-*.md` | `pnpm check`; `pnpm check` plus every suite this Issue touches | L1-L7 evidence ledger, runbooks | all RL-01..RL-09 |
 
-| #46 AI-42 | Quality / Evals | `evals/**, tests/fixtures/red-lines/**, docs/agents/issue-execution-contract.md` | `pnpm check`; `pnpm evals`; `pnpm docs:check` | qrels version list, stratified report, suite registry | RL-01…RL-09 (registry owner) |
+| #46 AI-42 | Quality / Evals | `evals/**, tests/fixtures/red-lines/**, artifacts/AI-42/**, docs/agents/issue-execution-contract.md` | `pnpm check`; `pnpm evals`; `pnpm docs:check` | qrels version list, stratified report, suite registry | RL-01…RL-09 (registry owner) |
 | #47 AI-43 | ModelGateway / Transport | `lib/server/model-gateway/spike/**, docs/adr/**, docs/architecture/ml-01-ai-sdk-decision.md` | `pnpm check`; `pnpm test:contract`; `pnpm docs:check` | five-condition table, bundle/latency measurements, ADR | RL-07 |
 | #48 AI-44 | Domain Contracts / UX | `lib/server/contracts/errors/**, lib/i18n.ts, tests/contract/errors/**, docs/contracts/failure-taxonomy.md` | `pnpm check`; `pnpm test:contract`; `pnpm docs:check` | taxonomy table, five-locale copy snapshots, mapping tests | RL-04 |
 | #49 AI-45 | Release / Platform | `package.json, lib/flags/**, scripts/check-flags.mjs, tests/unit/flags/**, docs/contracts/feature-flags.md, docs/agents/issue-execution-contract.md, artifacts/AI-45/unrun.md` | `pnpm check`; `pnpm test:unit`; `pnpm check:flags`; `pnpm docs:check`; `git diff --check` | flag registry, illegal-combination cases | — |
