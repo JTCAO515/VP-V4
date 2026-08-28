@@ -1,9 +1,9 @@
-{"command":"node --experimental-strip-types --test tests/security/knowledge/candidate-import-security.test.ts","exitCode":0,"result":"5 passing","env":"local; no external runtime"}
-{"command":"pnpm check","exitCode":0,"result":"lint 117; typecheck; production build; static/design 22","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm test:contract","exitCode":0,"result":"114 passing","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm test:security","exitCode":0,"result":"40 passing; 1 skipped because local Supabase is not running","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm evals","exitCode":0,"result":"16 passing","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm test:integration","exitCode":0,"result":"1 passing; 8 skipped because local Supabase is not running","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm db:verify","exitCode":0,"result":"all three local paths not configured; productionConnectionAttempted=false","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm docs:check","exitCode":0,"result":"AI Core documentation baseline passed","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"git diff --check","exitCode":0,"result":"no whitespace errors","env":"local"}
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T20:10:37.4313439Z","finishedAt":"2026-08-28T20:10:54.0974899Z","result":"source-policy lint (134 files), strict typecheck, production build and 22 static/foundation tests passed"}
+{"command":"pnpm test:contract","exitCode":0,"env":"local","startedAt":"2026-08-28T20:11:04.8196161Z","finishedAt":"2026-08-28T20:11:05.6982028Z","result":"126 contract tests passed, including current closed import and private-public projection boundaries"}
+{"command":"pnpm test:security","exitCode":0,"env":"local","startedAt":"2026-08-28T20:11:05.7033957Z","finishedAt":"2026-08-28T20:11:09.6318501Z","result":"53 security tests passed; one separate local-Supabase-dependent test was skipped because local Supabase is not running; AI-24 RL-08 dry-run/no-op/conflict/forbidden-input cases passed"}
+{"command":"pnpm evals","exitCode":0,"env":"local","startedAt":"2026-08-28T20:11:09.6323136Z","finishedAt":"2026-08-28T20:11:10.1754732Z","result":"20 deterministic evaluator tests passed"}
+{"command":"pnpm test:integration","exitCode":0,"env":"local","startedAt":"2026-08-28T20:11:10.1757569Z","finishedAt":"2026-08-28T20:11:10.7096144Z","result":"four fixture integration tests passed; eight separate local-Supabase-dependent tests were skipped because local Supabase is not running"}
+{"command":"pnpm db:verify","exitCode":0,"env":"local","startedAt":"2026-08-28T20:11:10.7100153Z","finishedAt":"2026-08-28T20:11:11.0907144Z","result":"database baseline reported all user-JWT, Ops-JWT and system-worker connection probes as not configured; no production connection was attempted"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T20:11:11.0909782Z","finishedAt":"2026-08-28T20:11:11.4327005Z","result":"AI Core documentation baseline passed after evidence refresh"}
+{"command":"node -e JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8'))","exitCode":0,"env":"local","startedAt":"2026-08-28T20:11:11.4329964Z","finishedAt":"2026-08-28T20:11:11.4677180Z","result":"read-only machine handoff JSON parse passed; jq is unavailable locally"}
+{"command":"git diff --cached --check","exitCode":0,"env":"local","startedAt":"2026-08-28T20:11:44.8201224Z","finishedAt":"2026-08-28T20:11:44.8592076Z","result":"staged AI-24 evidence refresh has no whitespace errors"}
