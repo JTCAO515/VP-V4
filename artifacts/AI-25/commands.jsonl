@@ -1,8 +1,8 @@
-{"command":"node --experimental-strip-types --test tests/security/knowledge/ops-review-security.test.ts","exitCode":0,"result":"4 passing","env":"local; no external runtime"}
-{"command":"pnpm check","exitCode":0,"result":"lint 118; typecheck; production build; static/design 22","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm test:contract","exitCode":0,"result":"114 passing","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm test:security","exitCode":0,"result":"44 passing; 1 skipped because local Supabase is not running","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm test:e2e","exitCode":0,"result":"25 passing","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm evals","exitCode":0,"result":"16 passing","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm docs:check","exitCode":0,"result":"AI Core documentation baseline passed","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"git diff --check","exitCode":0,"result":"no whitespace errors","env":"local"}
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T20:13:52.9632638Z","finishedAt":"2026-08-28T20:14:09.6325117Z","result":"source-policy lint (134 files), strict typecheck, production build and 22 static/foundation tests passed"}
+{"command":"pnpm test:contract","exitCode":0,"env":"local","startedAt":"2026-08-28T20:14:21.9981756Z","finishedAt":"2026-08-28T20:14:22.8845316Z","result":"126 contract tests passed"}
+{"command":"pnpm test:security","exitCode":0,"env":"local","startedAt":"2026-08-28T20:14:22.8896738Z","finishedAt":"2026-08-28T20:14:26.8239605Z","result":"53 security tests passed; one separate local-Supabase-dependent test was skipped because local Supabase is not running; AI-25 RL-08 author/reviewer separation, audit rollback, private metadata and timestamp tests passed"}
+{"command":"pnpm test:e2e","exitCode":0,"env":"local","startedAt":"2026-08-28T20:14:26.8244368Z","finishedAt":"2026-08-28T20:14:28.1303416Z","result":"28 source-contract E2E tests passed; this is not deployed-browser Ops UI evidence"}
+{"command":"pnpm evals","exitCode":0,"env":"local","startedAt":"2026-08-28T20:14:28.1306229Z","finishedAt":"2026-08-28T20:14:28.6866890Z","result":"20 deterministic evaluator tests passed"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T20:14:28.6870510Z","finishedAt":"2026-08-28T20:14:29.0262596Z","result":"AI Core documentation baseline passed after evidence refresh"}
+{"command":"node -e JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8'))","exitCode":0,"env":"local","startedAt":"2026-08-28T20:14:29.0265470Z","finishedAt":"2026-08-28T20:14:29.0604363Z","result":"read-only machine handoff JSON parse passed; jq is unavailable locally"}
+{"command":"git diff --cached --check","exitCode":0,"env":"local","startedAt":"2026-08-28T20:14:56.7070317Z","finishedAt":"2026-08-28T20:14:56.7456640Z","result":"staged AI-25 evidence refresh has no whitespace errors"}
