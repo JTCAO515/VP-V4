@@ -1,0 +1,6 @@
+{"command":"pnpm check:assets","exitCode":0,"recordedAt":"2026-08-29T01:45:58+08:00","env":"local preview asset boundary; passed with 23 ledger records and 9 blocked preview files"}
+{"command":"pnpm check:assets:release","exitCode":1,"recordedAt":"2026-08-29T01:45:58+08:00","env":"expected release-stop: blocked-release assets remain in public output"}
+{"command":"pnpm test:e2e","exitCode":0,"recordedAt":"2026-08-29T01:45:58+08:00","env":"local static journey boundary; 28 passed"}
+{"command":"pnpm check","exitCode":0,"recordedAt":"2026-08-29T01:45:58+08:00","env":"local quality gate; lint, typecheck, production build, and 22 static tests passed"}
+{"command":"pnpm docs:check","exitCode":0,"recordedAt":"2026-08-29T01:45:58+08:00","env":"local documentation gate"}
+{"command":"git diff --check","exitCode":0,"recordedAt":"2026-08-29T01:45:58+08:00","env":"local whitespace gate"}
