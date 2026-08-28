@@ -1,6 +1,6 @@
 # VP-V4 complete frontend redesign Issue plan
 
-Status: published to GitHub; local implementation evidence is merged through WEB-10.
+Status: local execution plan; current remote GitHub Program and Issue status is unverified. Local implementation evidence is merged through WEB-10.
 Date: 2026-08-27.
 Parent: [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136), under [AI-00 #2](https://github.com/JTCAO515/VP-V4/issues/2).
 Decision baseline: [ADR-0018](adr/ADR-0018-independent-frontend-redesign-baseline.md).
@@ -86,6 +86,8 @@ No frontend child may fall back to Demo fixture success, blocked source assets, 
 The accepted waiver lets WEB-06 proceed without WEB-05's operator-only visual selection; it
 does not waive any release or asset-rights gate. Remote GitHub status synchronization is not
 asserted here: the local `gh` client is unauthenticated and GitHub's anonymous API is rate-limited.
+The V4-22 through V4-30 truthful unavailable/degraded frontend boundaries are also merged in
+`main`; no locally executable frontend implementation Issue remains.
 WEB-11 remains a release-evidence and operator-decision gate, so it is skipped until its
 external prerequisites exist.
 

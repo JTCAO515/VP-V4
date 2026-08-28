@@ -11,10 +11,11 @@ const actionIds = [
 ];
 
 test("V4-31 records every Demo action, eight dimensions, unrun evidence, and a non-release verdict", async () => {
-  const [audit, commands, handoff] = await Promise.all([
+  const [audit, commands, handoff, frontendPlan] = await Promise.all([
     source("docs/acceptance/v4-31-parity-audit.md"),
     source("artifacts/V4-31/commands.jsonl"),
     source("docs/handoff.json"),
+    source("docs/frontend-redesign-issue-plan.md"),
   ]);
   const normalizedAudit = audit.replace(/\r\n/g, "\n");
   for (const id of actionIds) assert.match(normalizedAudit, new RegExp(`\\| ${id} \\|`));
@@ -33,5 +34,9 @@ test("V4-31 records every Demo action, eight dimensions, unrun evidence, and a n
     assert.ok(Date.parse(record.startedAt) <= Date.parse(record.finishedAt));
   }
   assert.doesNotMatch(handoff, /Merge V4-12/);
-  assert.match(handoff, /Continue the next eligible locally executable Issue/);
+  assert.match(
+    handoff,
+    /No locally executable frontend implementation Issue remains/,
+  );
+  assert.doesNotMatch(frontendPlan, /^Status: published to GitHub/m);
 });
