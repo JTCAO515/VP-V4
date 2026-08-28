@@ -1,0 +1,6 @@
+{"command":"pnpm check","exitCode":0,"env":"local","result":"lint, typecheck, production build, and 22 static tests passed"}
+{"command":"pnpm db:verify","exitCode":0,"env":"local","result":"database baseline present; local connection paths not configured"}
+{"command":"pnpm test:contract","exitCode":0,"env":"local","result":"60 tests passed including V4-13 lifecycle and V4-31 handoff progression"}
+{"command":"pnpm test:security","exitCode":0,"env":"local","result":"18 tests passed; one pre-existing local-Supabase probe skipped"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","result":"documentation baseline passed"}
+{"command":"git diff --check","exitCode":0,"env":"local","result":"no whitespace errors"}
