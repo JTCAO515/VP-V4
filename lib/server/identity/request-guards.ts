@@ -70,3 +70,31 @@ export function isTurnFeedbackInput(value: unknown): value is Readonly<{ kind: T
     && isTurnFeedback({ kind: input.kind, reason: input.reason })
     && Object.keys(input).every((key) => key === "kind" || key === "reason");
 }
+
+export type MemoryTransitionState = "explicit" | "confirmed" | "rejected" | "paused" | "deleted";
+
+export function isMemoryCreateInput(value: unknown): value is Readonly<{ memoryId: string; receiptId: string; consentId: string; constraintKind: "preference" | "hard_constraint"; summary: string }> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const input = value as Record<string, unknown>;
+  return isUuid(String(input.memoryId ?? ""))
+    && isUuid(String(input.receiptId ?? ""))
+    && isUuid(String(input.consentId ?? ""))
+    && (input.constraintKind === "preference" || input.constraintKind === "hard_constraint")
+    && typeof input.summary === "string" && input.summary.trim().length >= 1 && input.summary.trim().length <= 500
+    && Object.keys(input).every((key) => ["memoryId", "receiptId", "consentId", "constraintKind", "summary"].includes(key));
+}
+
+export function isMemoryConsentInput(value: unknown): value is Readonly<{ consentId: string; action: "grant" | "revoke" }> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const input = value as Record<string, unknown>;
+  return isUuid(String(input.consentId ?? ""))
+    && (input.action === "grant" || input.action === "revoke")
+    && Object.keys(input).every((key) => key === "consentId" || key === "action");
+}
+
+export function isMemoryTransitionInput(value: unknown): value is Readonly<{ state: MemoryTransitionState }> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const input = value as Record<string, unknown>;
+  return (input.state === "explicit" || input.state === "confirmed" || input.state === "rejected" || input.state === "paused" || input.state === "deleted")
+    && Object.keys(input).every((key) => key === "state");
+}

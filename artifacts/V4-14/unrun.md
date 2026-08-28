@@ -1,6 +1,8 @@
-# V4-14 unrun verification
+# V4-14 unrun checks
 
-- No owner-scoped durable Memory Profile exists, so no authenticated memory-governance lifecycle, reload, source or impact verification was attempted.
-- Physical-device/screen-reader validation remains unrun. The static E2E boundary covers five-locale selector, RTL attribute update and absence of local/API mutation.
-
-Rollback: revert the Copilot route/component. No data, request, memory receipt or user action exists to delete.
+- Local Supabase migration/RLS integration was not run because the local Supabase runtime is not
+  running. The integration suite therefore skipped all eight existing probes.
+- No authenticated browser persistence/reload trace was run because there is no local Supabase
+  runtime with an owner session.
+- No current verified Turn/Proposal coordinator writes V4-15 consumer receipts. The UI can display
+  existing recorded impacts, but a populated runtime impact trace remains unrun.

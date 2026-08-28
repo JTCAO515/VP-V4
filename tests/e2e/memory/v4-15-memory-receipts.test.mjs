@@ -10,7 +10,8 @@ test("V4-15 exposes recorded receipt references without a Memory summary or clie
   assert.match(adapter, /memory_id,source_receipt_id/);
   assert.match(chat, /Memory provenance/);
   assert.match(canvas, /Memory provenance/);
-  assert.doesNotMatch(adapter, /\.select\([^)]*summary/);
+  const consumerReads = [...adapter.matchAll(/\.from\("memory_consumer_receipts"\)[\s\S]{0,320}/g)].map((match) => match[0]).join("\n");
+  assert.doesNotMatch(consumerReads, /summary/);
   assert.doesNotMatch(chat, /memoryReceipts[^\n]*fetch/);
   assert.doesNotMatch(canvas, /memoryReceipts[^\n]*fetch/);
 });

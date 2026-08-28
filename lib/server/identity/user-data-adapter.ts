@@ -10,6 +10,8 @@ type PendingCookie = { name: string; value: string; options: CookieOptions };
 export type TripSnapshot = Readonly<{ id: string; title: string; headVersion: number; updatedAt: string }>;
 export type TripAudit = Readonly<{ id: string; action: string; proposalId: string; createdAt: string }>;
 export type MemoryConsumerReceiptRead = Readonly<{ memoryId: string; sourceReceiptId: string; constraintKind: "preference" | "hard_constraint" }>;
+export type MemoryImpactRead = Readonly<{ consumerKind: "turn" | "proposal"; consumerId: string; sourceReceiptId: string; constraintKind: "preference" | "hard_constraint"; createdAt: string }>;
+export type MemoryProfileRead = Readonly<{ id: string; state: "explicit" | "confirmed" | "inferred" | "rejected" | "paused" | "deleted"; constraintKind: "preference" | "hard_constraint"; summary: string | null; sourceReceiptId: string; consentId: string; consentStatus: "granted" | "revoked"; createdAt: string; updatedAt: string; impacts: readonly MemoryImpactRead[] }>;
 export type TripVersion = Readonly<{ id: string; resultingVersion: number; proposalId: string | null; eventType: "initial" | "proposal_applied"; title: string | null; createdAt: string; memoryReceipts: readonly MemoryConsumerReceiptRead[] }>;
 export type ConfirmInput = Readonly<{ proposalId: string; idempotencyKey: string; digest: string }>;
 export type ProposalRevisionInput = Readonly<{ proposalId: string; title: string }>;
@@ -62,6 +64,66 @@ export function createUserDataAdapter(request: NextRequest) {
     const { data, error } = await client.auth.getClaims();
     const subject = data?.claims?.sub;
     return error || typeof subject !== "string" ? { error: "UNAUTHENTICATED" } : { data: subject };
+  };
+  const listMemoryProfiles = async (): Promise<AdapterResult<readonly MemoryProfileRead[]>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data: profiles, error: profileError } = await client.from("memory_profiles")
+      .select("id,state,constraint_kind,summary,source_receipt_id,consent_id,created_at,updated_at")
+      .order("updated_at", { ascending: false });
+    if (profileError) return { error: "INTERNAL_ERROR" };
+    const { data: consents, error: consentError } = await client.from("memory_consents").select("id,status");
+    if (consentError) return { error: "INTERNAL_ERROR" };
+    const profileIds = (profiles ?? []).map((profile) => profile.id);
+    const { data: impacts, error: impactError } = profileIds.length === 0
+      ? { data: [], error: null }
+      : await client.from("memory_consumer_receipts")
+        .select("memory_id,source_receipt_id,consumer_kind,turn_id,proposal_id,constraint_kind,created_at")
+        .in("memory_id", profileIds)
+        .order("created_at", { ascending: false });
+    if (impactError) return { error: "INTERNAL_ERROR" };
+    const consentStatusById = new Map((consents ?? []).map((consent) => [consent.id, consent.status === "granted" ? "granted" as const : "revoked" as const]));
+    const impactsByMemory = new Map<string, MemoryImpactRead[]>();
+    for (const impact of impacts ?? []) {
+      const consumerId = impact.consumer_kind === "turn" ? impact.turn_id : impact.proposal_id;
+      if ((impact.consumer_kind !== "turn" && impact.consumer_kind !== "proposal") || typeof consumerId !== "string") continue;
+      const list = impactsByMemory.get(impact.memory_id) ?? [];
+      list.push({ consumerKind: impact.consumer_kind, consumerId, sourceReceiptId: impact.source_receipt_id, constraintKind: impact.constraint_kind === "hard_constraint" ? "hard_constraint" : "preference", createdAt: impact.created_at });
+      impactsByMemory.set(impact.memory_id, list);
+    }
+    return { data: (profiles ?? []).flatMap((profile): MemoryProfileRead[] => {
+      const state = memoryState(profile.state);
+      const consentStatus = consentStatusById.get(profile.consent_id);
+      if (!state || !consentStatus || (profile.constraint_kind !== "preference" && profile.constraint_kind !== "hard_constraint")) return [];
+      return [{ id: profile.id, state, constraintKind: profile.constraint_kind, summary: typeof profile.summary === "string" ? profile.summary : null, sourceReceiptId: profile.source_receipt_id, consentId: profile.consent_id, consentStatus, createdAt: profile.created_at, updatedAt: profile.updated_at, impacts: impactsByMemory.get(profile.id) ?? [] }];
+    }) };
+  };
+  const setMemoryConsent = async (input: Readonly<{ consentId: string; action: "grant" | "revoke" }>): Promise<AdapterResult<Readonly<{ consentId: string; status: "granted" | "revoked"; reused: boolean }>>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const fn = input.action === "grant" ? "grant_memory_retrieval_consent" : "revoke_memory_retrieval_consent";
+    const { data, error } = await client.rpc(fn, { p_consent_id: input.consentId });
+    if (error) return { error: mapRpcFailure(error.message) };
+    const result = data?.[0];
+    const status = result?.status === "granted" ? "granted" : result?.status === "revoked" ? "revoked" : null;
+    return result?.consent_id && status ? { data: { consentId: result.consent_id, status, reused: result.reused === true } } : { error: "INTERNAL_ERROR" };
+  };
+  const createExplicitMemory = async (input: Readonly<{ memoryId: string; receiptId: string; consentId: string; constraintKind: "preference" | "hard_constraint"; summary: string }>): Promise<AdapterResult<Readonly<{ memoryId: string; state: "explicit"; reused: boolean }>>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data, error } = await client.rpc("create_explicit_memory_profile", { p_memory_id: input.memoryId, p_receipt_id: input.receiptId, p_consent_id: input.consentId, p_constraint_kind: input.constraintKind, p_summary: input.summary.trim() });
+    if (error) return { error: mapRpcFailure(error.message) };
+    const result = data?.[0];
+    return result?.memory_id && result.state === "explicit" ? { data: { memoryId: result.memory_id, state: "explicit", reused: result.reused === true } } : { error: "INTERNAL_ERROR" };
+  };
+  const transitionMemory = async (memoryId: string, state: "explicit" | "confirmed" | "rejected" | "paused" | "deleted"): Promise<AdapterResult<Readonly<{ memoryId: string; state: MemoryProfileRead["state"]; reused: boolean }>>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data, error } = await client.rpc("transition_memory_profile", { p_memory_id: memoryId, p_next_state: state });
+    if (error) return { error: mapRpcFailure(error.message) };
+    const result = data?.[0];
+    const nextState = memoryState(result?.state);
+    return result?.memory_id && nextState ? { data: { memoryId: result.memory_id, state: nextState, reused: result.reused === true } } : { error: "INTERNAL_ERROR" };
   };
   const getTrip = async (tripId: string): Promise<AdapterResult<Readonly<{ trip: TripSnapshot; audits: readonly TripAudit[]; versions: readonly TripVersion[] }>>> => {
     const actor = await authenticated();
@@ -328,7 +390,11 @@ export function createUserDataAdapter(request: NextRequest) {
       ? { data: { proposalId: result.proposal_id, baseTripVersion: result.base_trip_version, targetVersion: result.target_version } }
       : { error: "INTERNAL_ERROR" };
   };
-  return { applyCookies, authenticated, getTrip, getTripPlaces, getTripActions, getPendingProposal, revisePendingProposal, rejectPendingProposal, listChatThreads, createChatThread, getChatThread, startChatTurn, cancelChatTurn, replayChatTurn, recordTurnFeedback, confirm, createRollbackProposal };
+  return { applyCookies, authenticated, listMemoryProfiles, setMemoryConsent, createExplicitMemory, transitionMemory, getTrip, getTripPlaces, getTripActions, getPendingProposal, revisePendingProposal, rejectPendingProposal, listChatThreads, createChatThread, getChatThread, startChatTurn, cancelChatTurn, replayChatTurn, recordTurnFeedback, confirm, createRollbackProposal };
+}
+
+function memoryState(value: unknown): MemoryProfileRead["state"] | null {
+  return value === "explicit" || value === "confirmed" || value === "inferred" || value === "rejected" || value === "paused" || value === "deleted" ? value : null;
 }
 
 function chatThreadSnapshot(input: Readonly<{ id: string; trip_id: string | null; status: string; created_at: string; updated_at: string }>): ChatThreadSnapshot {
@@ -376,5 +442,6 @@ function mapRpcFailure(message: string): FailureCode {
   if (message.includes("NO_RESULT_TO_FEEDBACK")) return "PROPOSAL_NOT_CONFIRMABLE";
   if (message.includes("STALE_TRIP_VERSION")) return "STALE_TRIP_VERSION";
   if (message.includes("PROPOSAL_NOT_CONFIRMABLE") || message.includes("INVALID_PATCH")) return "PROPOSAL_NOT_CONFIRMABLE";
+  if (message.includes("INVALID_MEMORY") || message.includes("CONSENT_REQUIRED") || message.includes("TERMINAL_MEMORY")) return "INVALID_INPUT";
   return "INTERNAL_ERROR";
 }

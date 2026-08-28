@@ -2,20 +2,20 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Deliver the accepted AI Core and independently expressed VisePanda frontend without copying Demo fixtures or competitor expression, while preserving runtime identity, RLS, provider, data-policy, and release contracts.",
-  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-06/#140, WEB-07/#141, WEB-08/#142 and WEB-10/#144 are merged; V4-08/#93 through V4-12/#97 are merged; V4-13/#98 adds the Memory Profile lifecycle, consent, receipt, RLS and safe-retrieval contract; V4-14/#99, V4-16/#101, V4-18/#103 and V4-22/#107 through V4-30/#115 are merged as five-locale/RTL truthful unavailable routes. They perform no provider call, cache, TTS, artifact upload, fixture fallback or state mutation. V4-31/#116 records a 40-action, eight-dimension L1-L7 audit with a blocked non-release verdict until remaining durable contracts and runtime evidence exist.",
+  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-06/#140, WEB-07/#141, WEB-08/#142 and WEB-10/#144 are merged; V4-08/#93 through V4-12/#97 are merged; V4-13/#98 adds the Memory Profile lifecycle, consent, receipt, RLS and safe-retrieval contract; V4-14/#99 now replaces its unavailable boundary with owner-JWT durable Memory governance, source and recorded-impact UI; V4-16/#101, V4-18/#103 and V4-22/#107 through V4-30/#115 remain five-locale/RTL truthful unavailable routes. V4-31/#116 remains a blocked non-release audit until remaining durable contracts and runtime evidence exist.",
   "currentPhase": "R5 frontend surfaces",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "Refresh main and implement V4-14 Memory governance UI, then connect a verified Turn/Proposal coordinator to V4-15 receipt writes; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
+  "intendedNextAgent": "Refresh main and implement V4-16 User Profile UI, then connect a verified Turn/Proposal coordinator to V4-15 receipt writes; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
   "latestIssueExecution": {
-    "issue": "V4-15/#100",
-    "changedFiles": ["lib/server/memory/receipts.ts", "supabase/migrations/20260828194000_v4_15_memory_consumer_receipts.sql", "lib/server/identity/user-data-adapter.ts", "components/chat/ChatThreadWorkspace.tsx", "components/canvas/TripCanvas.tsx", "tests/{contract,security,e2e}/memory/**", "evals/memory/**", "docs/contracts/memory-consumer-receipts.md", "artifacts/V4-15/**", "docs/handoff.json", "HANDOFF.md"],
-    "verification": ["pnpm check", "pnpm test:contract", "pnpm evals", "pnpm test:e2e", "pnpm docs:check", "git diff --check"],
-    "unrun": ["Local Supabase migration/RLS integration because the local runtime is not running", "No verified Turn/Proposal coordinator currently writes Memory receipts, so no runtime receipt/reload trace exists", "V4-14 governance actions and production-observation evidence remain separately required"],
-    "residualRisk": "V4-15 safely stores and projects owner-scoped receipt references, but existing state-only Chat and Canvas paths have no verified Memory-consuming result writer; no Memory capability or full parity claim is made.",
-    "rollback": "Before applying a database migration, revert V4-15. After application, use a forward repair migration; do not drop owner receipt history.",
-    "nextAction": "Implement V4-14 Memory governance UI and then wire a verified Turn/Proposal coordinator to V4-15 receipts."
+    "issue": "V4-14/#99",
+    "changedFiles": ["app/api/memory/**", "components/copilot/**", "lib/server/identity/{request-guards,user-data-adapter}.ts", "tests/e2e/copilot/v4-14-memory-unavailable.test.mjs", "docs/{contracts,architecture,acceptance,agents}/**", "artifacts/V4-14/**", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md"],
+    "verification": ["pnpm check", "pnpm test:contract", "pnpm test:security", "pnpm test:e2e", "pnpm docs:check", "git diff --check"],
+    "unrun": ["Local Supabase migration/RLS integration because the local runtime is not running", "Interactive browser persistence/reload trace because no authenticated local Supabase runtime is available", "No verified Turn/Proposal coordinator currently writes V4-15 receipts, so recorded impact may remain empty"],
+    "residualRisk": "V4-14 makes existing owner-JWT Memory lifecycle and consent records governable, but it does not create inferred Memory or a Turn/Proposal receipt writer; no full Memory or parity claim is made.",
+    "rollback": "Revert V4-14 route/UI before deployment. After V4-13/V4-15 migrations are applied, use only a forward repair for owned data; do not drop profiles, consents or receipts.",
+    "nextAction": "Implement V4-16 User Profile UI, then wire a verified Turn/Proposal coordinator to V4-15 receipts."
   },
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
@@ -307,7 +307,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Implement V4-14 Memory governance UI and then wire a verified Turn/Proposal coordinator to V4-15 receipts. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
+  "nextAction": "Implement V4-16 User Profile UI, then wire a verified Turn/Proposal coordinator to V4-15 receipts. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
   "lastUpdated": "2026-08-28",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",

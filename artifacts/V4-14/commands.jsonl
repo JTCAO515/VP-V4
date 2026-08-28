@@ -1,0 +1,7 @@
+{"command":"pnpm check","exitCode":0,"env":"local","result":"lint, typecheck, production build and baseline static tests passed"}
+{"command":"pnpm test:contract","exitCode":0,"env":"local","result":"62 contract tests passed"}
+{"command":"pnpm test:security","exitCode":0,"env":"local","result":"19 passed; one existing local-Supabase RLS test skipped because runtime is not running"}
+{"command":"pnpm test:integration","exitCode":0,"env":"local","result":"8 tests skipped because local Supabase is not running"}
+{"command":"pnpm test:e2e","exitCode":0,"env":"local","result":"21 static E2E/route tests passed after V4-15 consumer projection assertion was narrowed to consumer reads"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","result":"documentation baseline passed"}
+{"command":"git diff --check","exitCode":0,"env":"local","result":"no whitespace errors"}

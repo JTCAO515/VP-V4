@@ -33,9 +33,9 @@ route truthfully withholds the capability and has a static route contract; it is
 | CANVAS-04 | partial | immutable Proposal/RPC contract tests | not accepted |
 | CANVAS-05 | partial | V4-10 append-only rollback tests | not accepted |
 | CANVAS-06 | partial | V4-12 read-only action tests | not accepted |
-| MEMORY-01 | unavailable | V4-14 Copilot unavailable route test | not accepted |
-| MEMORY-02 | hidden | V4-14 unavailable contract | not accepted |
-| MEMORY-03 | hidden | V4-15 has no durable receipt contract | not accepted |
+| MEMORY-01 | partial | V4-14 owner-scoped profile/source/impact static route test; local runtime unrun | not accepted |
+| MEMORY-02 | partial | V4-14 durable action/reload static route contract; local runtime unrun | not accepted |
+| MEMORY-03 | partial | V4-15 durable receipt contract exists, but no current Turn/Proposal writer creates an impact | not accepted |
 | TOOL-01 | unavailable | V4-22 static Tool route test | not accepted |
 | TOOL-02 | unavailable | V4-23 static Safe Phrase route test | not accepted |
 | TOOL-03 | unavailable | V4-24 static Ride Assist route test | not accepted |
@@ -64,8 +64,9 @@ central locale/RTL switching. No browser proof covers each action's live interac
 
 ## Data
 
-Trip, Place and action projections have bounded contracts. Memory, privacy, external observations,
-private artifacts and offline storage lack the durable contracts needed for full parity.
+Trip, Place, action and owner-scoped Memory governance projections have bounded contracts. Memory
+impact writers, privacy, external observations, private artifacts and offline storage still lack the
+runtime/durable contracts needed for full parity.
 
 ## Security
 
