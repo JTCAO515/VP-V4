@@ -10,6 +10,8 @@ const homepageCss = readFileSync("components/homepage/Homepage.module.css", "utf
 const localeSource = readFileSync("lib/i18n.ts", "utf8");
 const chatbotSource = readFileSync("components/VisePandaChatWorkspace.tsx", "utf8");
 const chatbotLocaleSource = readFileSync("lib/chat-workspace-i18n.ts", "utf8");
+const productShellCss = readFileSync("components/product-shell/ProductShell.module.css", "utf8");
+const generatedTokens = readFileSync("app/design-tokens.generated.css", "utf8");
 const documentation = [
   "README.md",
   "CONTEXT.md",
@@ -59,9 +61,25 @@ test("renders the VisePanda AI workspace at the canonical chatbot route", () => 
   assert.match(chatbotHtml, /https:\/\/go2china\.space\/visepanda/);
   assert.match(chatbotHtml, /Trip Canvas/);
   assert.match(chatbotHtml, /Chatbot/);
-  assert.match(chatbotHtml, /Product preview/);
-  assert.ok(chatbotSource.indexOf('className={`vp-chat-context') < chatbotSource.indexOf('className={`vp-chat-conversation'), "Canvas/POI must render before Chatbot on desktop");
+  assert.match(chatbotHtml, /product preview/i);
+  assert.ok(chatbotSource.indexOf('aria-label="Trip Canvas"') < chatbotSource.indexOf('aria-label="Ask VisePanda"'), "Canvas must render before Ask on desktop");
   assert.doesNotMatch(chatbotSource, /Mindtrip|mindtrip/);
+});
+
+test("keeps the Product Shell canvas-first, six-surface, and map-off", () => {
+  for (const destination of ["Today", "Ask", "Copilot", "Tools", "Explore", "Profile"]) {
+    assert.match(localeSource, new RegExp(destination));
+  }
+  assert.match(chatbotSource, /getLocaleAttributes/);
+  assert.match(chatbotSource, /productShellCopy\[locale\]/);
+  assert.match(localeSource, /productShellCopy/);
+  for (const marker of ["zh:", "en:", "es:", "ru:", "ar:"]) assert.match(localeSource, new RegExp(marker));
+  assert.doesNotMatch(chatbotSource, /showMap|setShowMap|vp-chat-place-view|\/assets\/visepanda\//);
+  assert.match(localeSource, /Capability unavailable/);
+  assert.match(chatbotSource, /\[0, 1, 4, 3\]/);
+  assert.match(chatbotSource, /setSurface\("copilot"\)/);
+  assert.match(chatbotSource, /setSurface\("profile"\)/);
+  for (const token of productShellCss.match(/--vp-[\w-]+/g) ?? []) assert.match(generatedTokens, new RegExp(`${token}:`), `missing generated token ${token}`);
 });
 
 test("keeps the redesigned homepage localized and frontend-only", () => {
