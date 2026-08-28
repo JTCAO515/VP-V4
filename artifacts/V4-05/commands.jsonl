@@ -1,0 +1,10 @@
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-08-28T11:50:50.365Z","finishedAt":"2026-08-28T11:50:50.884Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T11:50:54.792Z","finishedAt":"2026-08-28T11:50:55.165Z","env":"local"}
+{"command":"jq.exe empty docs/handoff.json","exitCode":1,"startedAt":"2026-08-28T11:50:59.131Z","finishedAt":"2026-08-28T11:50:59.134Z","env":"local"}
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-08-28T11:51:31.298Z","finishedAt":"2026-08-28T11:51:49.456Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T11:51:54.848Z","finishedAt":"2026-08-28T11:51:54.912Z","env":"local"}
+{"command":"pnpm evals","exitCode":1,"startedAt":"2026-08-28T11:53:20.660Z","finishedAt":"2026-08-28T11:53:21.213Z","env":"local"}
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-08-28T11:53:41.443Z","finishedAt":"2026-08-28T11:53:41.980Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T11:54:24.179Z","finishedAt":"2026-08-28T11:54:24.564Z","env":"local"}
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-08-28T11:54:32.780Z","finishedAt":"2026-08-28T11:54:50.761Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T11:54:58.042Z","finishedAt":"2026-08-28T11:54:58.104Z","env":"local"}

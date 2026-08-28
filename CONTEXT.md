@@ -171,3 +171,11 @@ a pass. RFC3339 instants include an offset, are checked for real calendar dates 
 instants, never as strings; candidate stops cannot overlap. Currency conversion,
 actor/RLS, route/opening/booking freshness and evidence eligibility remain upstream obligations.
 Its synthetic PLAN-EVAL does not claim live itinerary quality or provider evidence.
+
+## V4-05 RoutePattern spike
+
+V4-05 (#90) rejects RoutePattern runtime adoption. No reviewed, licensed route-pattern or
+trajectory corpus is present, and its self-authored synthetic paired evaluation shows no final-state
+gain over POI/Fact/Guide retrieval. A suggested order never replaces current route-matrix or Fact
+evidence, and every candidate remains subject to the deterministic ConstraintEngine; there is no
+new runtime, schema, provider, cache, model or Trip write path.
