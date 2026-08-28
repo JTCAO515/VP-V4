@@ -1,0 +1,13 @@
+{"command":"node --experimental-strip-types --test tests/contract/context/context-plan.test.ts tests/contract/context/context-assembler.test.ts","result":"expected_fail","evidence":"ERR_MODULE_NOT_FOUND for lib/server/context/index.ts before production module creation"}
+{"command":"node --experimental-strip-types --test tests/contract/context/context-assembler.test.ts","result":"expected_fail","evidence":"delimiter-closure regression test observed two closing tags before escaping was implemented"}
+{"command":"node --experimental-strip-types --test tests/contract/context/context-assembler.test.ts tests/contract/context/context-plan.test.ts","result":"pass","evidence":"7 tests passed, 0 failed"}
+{"command":"pnpm test:contract","result":"pass","evidence":"36 contract tests passed, 0 failed"}
+{"command":"pnpm evals","result":"pass","evidence":"2 context eval tests passed, 0 failed"}
+{"command":"pnpm typecheck","result":"pass","evidence":"tsc --noEmit exited 0"}
+{"command":"node -e JSON.parse(docs/handoff.json)","result":"pass","evidence":"handoff JSON parsed successfully"}
+{"command":"git diff --check","result":"pass","evidence":"no whitespace errors"}
+{"command":"pnpm check","result":"pass","evidence":"lint, strict typecheck, Next.js webpack production build, and 13 static tests passed"}
+{"command":"pnpm test:contract","result":"pass","evidence":"37 contract tests passed, 0 failed"}
+{"command":"pnpm evals","result":"pass","evidence":"2 context eval tests passed, 0 failed"}
+{"command":"pnpm docs:check","result":"pass","evidence":"AI Core documentation baseline passed"}
+{"command":"node -e JSON.parse(docs/handoff.json)","result":"pass","evidence":"machine-readable handoff parsed after V4-02 update"}

@@ -1,8 +1,8 @@
 # ContextPlan and ContextAssembler v1
 
-**Owner:** Context Engineering (#85 / V4-02)  
-**Status:** frozen deterministic contract baseline  
-**Consumers:** future TurnCoordinator, Constraint Engine, Knowledge retrieval, Tool Gateway, and trace recorder  
+**Owner:** Context Engineering (#85 / V4-02)
+**Status:** frozen deterministic contract baseline
+**Consumers:** future TurnCoordinator, Constraint Engine, Knowledge retrieval, Tool Gateway, and trace recorder
 **Non-consumers:** provider SDKs, database clients, HTTP routes, UI components, and raw external payloads
 
 ## Objective and boundary
