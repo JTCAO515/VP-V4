@@ -46,8 +46,8 @@ route truthfully withholds the capability and has a static route contract; it is
 | EXPLORE-02 | hidden | registry Explore row | not accepted |
 | EXPLORE-03 | hidden | registry Explore row | not accepted |
 | EXPLORE-04 | hidden | registry Explore row | not accepted |
-| USER-01 | partial | password-session route contracts | not accepted |
-| USER-02 | unavailable | V4-16 Profile unavailable route test | not accepted |
+| USER-01 | partial | V4-16 owner Profile route/UI contract | not accepted |
+| USER-02 | partial | V4-16 explicit Profile/locale/unit and Memory-separation tests | not accepted |
 | USER-03 | hidden | V4-17 privacy lifecycle absent | not accepted |
 | OFFLINE-01 | unavailable | V4-30 static Offline route test | not accepted |
 

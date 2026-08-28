@@ -1,0 +1,7 @@
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T18:18:00+08:00","finishedAt":"2026-08-28T18:18:20+08:00","evidence":"lint, TypeScript, production build, and 22 static tests passed"}
+{"command":"pnpm test:contract","exitCode":0,"env":"local","startedAt":"2026-08-28T18:17:00+08:00","finishedAt":"2026-08-28T18:17:01+08:00","evidence":"63 contract tests passed"}
+{"command":"pnpm test:security","exitCode":0,"env":"local","startedAt":"2026-08-28T18:18:21+08:00","finishedAt":"2026-08-28T18:18:25+08:00","evidence":"20 security tests passed; one existing local-Supabase test skipped"}
+{"command":"pnpm test:integration","exitCode":0,"env":"local","startedAt":"2026-08-28T18:18:25+08:00","finishedAt":"2026-08-28T18:18:26+08:00","evidence":"eight integration tests skipped because local Supabase is not running"}
+{"command":"pnpm test:e2e","exitCode":0,"env":"local","startedAt":"2026-08-28T18:18:26+08:00","finishedAt":"2026-08-28T18:18:27+08:00","evidence":"21 static end-to-end tests passed"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T18:18:27+08:00","finishedAt":"2026-08-28T18:18:28+08:00","evidence":"documentation baseline passed"}
+{"command":"git diff --check","exitCode":0,"env":"local","startedAt":"2026-08-28T18:18:28+08:00","finishedAt":"2026-08-28T18:18:28+08:00","evidence":"no whitespace errors"}
