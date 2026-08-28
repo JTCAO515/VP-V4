@@ -1,0 +1,5 @@
+{"command":"pnpm check","exitCode":0,"recordedAt":"2026-08-29T01:54:59+08:00","env":"local quality gate; lint, typecheck, production build, and 22 static tests passed"}
+{"command":"pnpm test:security","exitCode":0,"recordedAt":"2026-08-29T01:54:59+08:00","env":"local security gate; 51 passed, 1 local-Supabase integration test skipped because the service was not running"}
+{"command":"pnpm test:integration","exitCode":0,"recordedAt":"2026-08-29T01:54:59+08:00","env":"local integration gate; 4 passed and 8 local-Supabase tests skipped because the service was not running"}
+{"command":"pnpm test:e2e","exitCode":0,"recordedAt":"2026-08-29T01:54:59+08:00","env":"local static journey gate; 28 passed, including V4-28 unavailable boundary"}
+{"command":"git diff --check","exitCode":0,"recordedAt":"2026-08-29T01:54:59+08:00","env":"local whitespace gate"}
