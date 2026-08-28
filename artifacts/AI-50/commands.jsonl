@@ -1,0 +1,5 @@
+{"command":"pnpm check","startedAt":"2026-08-28T21:37:12.9045866Z","finishedAt":"2026-08-28T21:37:29.1898144Z","exitCode":0,"env":"local Windows; no external actions"}
+{"command":"pnpm test:security","startedAt":"2026-08-28T21:37:29.2020328Z","finishedAt":"2026-08-28T21:37:33.2439616Z","exitCode":0,"env":"local Windows; no external actions"}
+{"command":"pnpm test:integration","startedAt":"2026-08-28T21:37:33.2450506Z","finishedAt":"2026-08-28T21:37:33.7955582Z","exitCode":0,"env":"local Windows; no external actions"}
+{"command":"pnpm test:e2e","startedAt":"2026-08-28T21:37:33.7960326Z","finishedAt":"2026-08-28T21:37:35.1517317Z","exitCode":0,"env":"local Windows; no external actions"}
+{"command":"pnpm docs:check","startedAt":"2026-08-28T21:37:35.1523118Z","finishedAt":"2026-08-28T21:37:35.5012419Z","exitCode":0,"env":"local Windows; no external actions"}
