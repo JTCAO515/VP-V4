@@ -1,5 +1,6 @@
 {"command":"node --experimental-strip-types --test evals/qrels/lexical-baseline.evals.test.ts","exitCode":1,"sha":"c1afbaa","scope":"expected-red: lexical module absent"}
-{"command":"pnpm check","exitCode":0,"sha":"c1afbaa","scope":"lint, typecheck, production build, static suite: 22 passing"}
-{"command":"pnpm evals","exitCode":0,"sha":"c1afbaa","scope":"final eval suite after review corrections: 13 passing"}
-{"command":"pnpm docs:check","exitCode":0,"sha":"c1afbaa","scope":"AI Core documentation baseline"}
-{"command":"pnpm check","exitCode":1,"sha":"c1afbaa","scope":"main worktree final check blocked by external .next/server/app/api/chat EPERM lock; no process stopped or cache deleted"}
+{"command":"pnpm typecheck","exitCode":0,"sha":"3c6be7b","scope":"AI-18 final TypeScript verification"}
+{"command":"pnpm evals","exitCode":0,"sha":"3c6be7b","scope":"AI-18 final evaluator suite: 13 passing"}
+{"command":"pnpm docs:check","exitCode":0,"sha":"3c6be7b","scope":"AI Core documentation baseline"}
+{"command":"node JSON parse plus git diff --check","exitCode":0,"sha":"3c6be7b","scope":"handoff parse and staged diff validation"}
+{"command":"pnpm check","exitCode":0,"sha":"3c6be7b","scope":"clean isolated worktree: source-policy lint 111 files, production build, and 22 static tests passing"}
