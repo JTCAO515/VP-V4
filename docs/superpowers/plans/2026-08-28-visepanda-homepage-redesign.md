@@ -167,7 +167,7 @@ Verify the original CSS landscape renders, both anchors resolve internally, mobi
 
 Check exact routes, asset provenance, CTA priority, map-off, capability claims, keyboard focus and breakpoints. Fix every Critical/Important finding, rerun focused/full affected checks, and record the result.
 
-- [ ] **Step 4: Commit evidence and merge after a clear review**
+- [x] **Step 4: Commit evidence and merge after a clear review**
 
 ```bash
 git add docs/handoff.json HANDOFF.md CONTEXT.md artifacts/FRONTEND-HOMEPAGE
