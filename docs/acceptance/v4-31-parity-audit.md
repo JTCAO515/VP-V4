@@ -14,7 +14,7 @@ route truthfully withholds the capability and has a static route contract; it is
 | SHELL-02 | hidden | [registry](../architecture/v4-01-demo-parity-registry.md) | not accepted |
 | SHELL-03 | partial | WEB-10 viewport evidence | not accepted |
 | SHELL-04 | partial | locale/RTL static tests | not accepted |
-| TODAY-01 | partial | V4-18 deterministic NextAction contract; route stays unavailable without owner data | not accepted |
+| TODAY-01 | partial | V4-18 NextAction plus V4-19 timestamped observation contracts; route stays unavailable without owner data | not accepted |
 | TODAY-02 | hidden | registry recovery row | not accepted |
 | TODAY-03 | hidden | registry recovery row | not accepted |
 | TODAY-04 | hidden | registry recovery row | not accepted |

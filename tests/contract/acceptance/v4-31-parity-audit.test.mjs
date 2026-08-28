@@ -33,5 +33,5 @@ test("V4-31 records every Demo action, eight dimensions, unrun evidence, and a n
     assert.ok(Date.parse(record.startedAt) <= Date.parse(record.finishedAt));
   }
   assert.doesNotMatch(handoff, /Merge V4-12/);
-  assert.match(handoff, /Implement V4-19 Today external evidence/);
+  assert.match(handoff, /Implement V4-20 recovery proposals/);
 });

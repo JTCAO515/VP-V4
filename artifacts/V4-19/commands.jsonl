@@ -1,0 +1,6 @@
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T18:36:00+08:00","finishedAt":"2026-08-28T18:36:18+08:00"}
+{"command":"pnpm test:contract","exitCode":0,"env":"local","startedAt":"2026-08-28T18:36:18+08:00","finishedAt":"2026-08-28T18:36:19+08:00"}
+{"command":"pnpm test:integration","exitCode":0,"env":"local","startedAt":"2026-08-28T18:36:19+08:00","finishedAt":"2026-08-28T18:36:19+08:00","note":"eight tests skipped because local Supabase is not running"}
+{"command":"pnpm test:e2e","exitCode":0,"env":"local","startedAt":"2026-08-28T18:36:19+08:00","finishedAt":"2026-08-28T18:36:20+08:00"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T18:36:20+08:00","finishedAt":"2026-08-28T18:36:21+08:00"}
+{"command":"git diff --check","exitCode":0,"env":"local","startedAt":"2026-08-28T18:36:21+08:00","finishedAt":"2026-08-28T18:36:21+08:00"}
