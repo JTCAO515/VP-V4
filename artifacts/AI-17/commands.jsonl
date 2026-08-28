@@ -1,0 +1,10 @@
+{"command":"node --experimental-strip-types --test tests/contract/model-gateway/route.test.ts","exitCode":1,"sha":"eab633c","scope":"expected-red: route module absent"}
+{"command":"node --experimental-strip-types --test tests/contract/observability/model-attempt.test.ts tests/integration/model-gateway/route-observability.test.ts","exitCode":1,"sha":"eab633c","scope":"expected-red: observability module absent"}
+{"command":"node --experimental-strip-types --test tests/contract/model-gateway/route.test.ts tests/contract/observability/model-attempt.test.ts tests/integration/model-gateway/route-observability.test.ts; pnpm typecheck","exitCode":0,"sha":"eab633c","scope":"focused route, trace, integration, and type verification: 8 passing"}
+{"command":"node --experimental-strip-types --test tests/contract/model-gateway/route.test.ts tests/contract/observability/model-attempt.test.ts tests/integration/model-gateway/route-observability.test.ts; pnpm typecheck","exitCode":0,"sha":"eab633c","scope":"focused verification after independent review fix: 9 passing"}
+{"command":"pnpm check","exitCode":0,"sha":"eab633c","scope":"final lint, typecheck, production build, and static suite: 22 passing"}
+{"command":"pnpm test:contract","exitCode":0,"sha":"eab633c","scope":"final repository contract suite: 107 passing"}
+{"command":"pnpm test:integration","exitCode":0,"sha":"eab633c","scope":"final integration suite: 1 passing; 8 local-Supabase-dependent tests skipped"}
+{"command":"pnpm docs:check","exitCode":0,"sha":"eab633c","scope":"final documentation baseline"}
+{"command":"node -e JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8')); console.log('docs/handoff.json parsed')","exitCode":0,"sha":"eab633c","scope":"final read-only handoff JSON validation; jq unavailable"}
+{"command":"git diff --check","exitCode":0,"sha":"eab633c","scope":"final whitespace validation before commit"}
