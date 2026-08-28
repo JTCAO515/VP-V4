@@ -1,3 +1,4 @@
-{"command":"pnpm test","result":"passed","evidence":"21 tests passed after the Product Shell source contract was added"}
-{"command":"pnpm typecheck","result":"passed","evidence":"tsc --noEmit completed successfully"}
-{"command":"pnpm build","result":"passed","evidence":"Next webpack production build generated /visepanda as static output"}
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:13:41.4673451Z","finishedAt":"2026-08-28T19:13:58.4076529Z","result":"source-policy lint, strict typecheck, production build and 22 static-output/foundation tests passed"}
+{"command":"pnpm test:e2e","exitCode":0,"env":"local","startedAt":"2026-08-28T19:13:58.4128374Z","finishedAt":"2026-08-28T19:13:59.7693298Z","result":"28 route and five-locale surface-contract tests passed; this suite does not substitute for a real browser viewport observation"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:13:59.7697950Z","finishedAt":"2026-08-28T19:14:00.1183344Z","result":"documentation baseline passed"}
+{"command":"git diff --cached --check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:14:34.7701196Z","finishedAt":"2026-08-28T19:14:34.8094944Z","result":"staged V4-07 evidence has no whitespace errors"}
