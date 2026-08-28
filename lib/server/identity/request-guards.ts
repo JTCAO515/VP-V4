@@ -38,3 +38,19 @@ export function isProposalRejectInput(value: unknown): value is Readonly<{ propo
   if (!value || typeof value !== "object") return false;
   return isUuid(String((value as Record<string, unknown>).proposalId ?? ""));
 }
+
+export function isChatThreadInput(value: unknown): value is Readonly<{ tripId?: string }> {
+  if (value === undefined || value === null) return true;
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const input = value as Record<string, unknown>;
+  return (input.tripId === undefined || isUuid(String(input.tripId))) && Object.keys(input).every((key) => key === "tripId");
+}
+
+export function isChatTurnStartInput(value: unknown): value is Readonly<{ turnId: string; idempotencyKey: string; digest: string }> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const input = value as Record<string, unknown>;
+  return isUuid(String(input.turnId ?? ""))
+    && isUuid(String(input.idempotencyKey ?? ""))
+    && input.digest === "chat-state-control-v1"
+    && Object.keys(input).every((key) => key === "turnId" || key === "idempotencyKey" || key === "digest");
+}

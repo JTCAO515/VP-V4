@@ -9,6 +9,10 @@ export type TripAudit = Readonly<{ id: string; action: string; proposalId: strin
 export type ConfirmInput = Readonly<{ proposalId: string; idempotencyKey: string; digest: string }>;
 export type ProposalRevisionInput = Readonly<{ proposalId: string; title: string }>;
 export type ProposalRejectInput = Readonly<{ proposalId: string }>;
+export type ChatThreadSnapshot = Readonly<{ id: string; tripId: string | null; status: "active" | "archived"; createdAt: string; updatedAt: string }>;
+export type ChatTurnEventHistory = Readonly<{ eventId: string; sequence: number; type: string; state: string; createdAt: string }>;
+export type ChatTurnHistory = Readonly<{ id: string; status: string; createdAt: string; updatedAt: string; events: readonly ChatTurnEventHistory[] }>;
+export type ChatThreadRead = Readonly<{ thread: ChatThreadSnapshot; turns: readonly ChatTurnHistory[] }>;
 export type PendingProposalRead = Readonly<{
   trip: TripSnapshot;
   proposal: Readonly<{
@@ -119,6 +123,93 @@ export function createUserDataAdapter(request: NextRequest) {
     if (!data || data.status !== "rejected") return { error: "PROPOSAL_NOT_CONFIRMABLE" };
     return { data: { proposalId: data.id, status: "rejected" } };
   };
+  const listChatThreads = async (): Promise<AdapterResult<readonly ChatThreadSnapshot[]>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data, error } = await client.from("chat_threads")
+      .select("id,trip_id,status,created_at,updated_at")
+      .order("updated_at", { ascending: false });
+    if (error) return { error: "INTERNAL_ERROR" };
+    return { data: (data ?? []).map(chatThreadSnapshot) };
+  };
+  const createChatThread = async (tripId?: string): Promise<AdapterResult<ChatThreadSnapshot>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    if (tripId) {
+      const { data: trip, error: tripError } = await client.from("trips").select("id").eq("id", tripId).maybeSingle();
+      if (tripError || !trip) return { error: "FORBIDDEN" };
+    }
+    const { data, error } = await client.from("chat_threads")
+      .insert({ owner_id: actor.data, trip_id: tripId ?? null })
+      .select("id,trip_id,status,created_at,updated_at")
+      .maybeSingle();
+    return error || !data ? { error: "INTERNAL_ERROR" } : { data: chatThreadSnapshot(data) };
+  };
+  const getChatThread = async (threadId: string): Promise<AdapterResult<ChatThreadRead>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data: thread, error: threadError } = await client.from("chat_threads")
+      .select("id,trip_id,status,created_at,updated_at")
+      .eq("id", threadId)
+      .maybeSingle();
+    if (threadError || !thread) return { error: "FORBIDDEN" };
+    const { data: turns, error: turnsError } = await client.from("turns")
+      .select("id,status,created_at,updated_at")
+      .eq("thread_id", threadId)
+      .order("created_at", { ascending: true });
+    if (turnsError) return { error: "INTERNAL_ERROR" };
+    const turnIds = (turns ?? []).map((turn) => turn.id);
+    const { data: events, error: eventsError } = turnIds.length === 0
+      ? { data: [], error: null }
+      : await client.from("chat_turn_events")
+        .select("turn_id,event_id,sequence,event_type,state,created_at")
+        .eq("thread_id", threadId)
+        .order("sequence", { ascending: true });
+    if (eventsError) return { error: "INTERNAL_ERROR" };
+    const eventsByTurn = new Map<string, ChatTurnEventHistory[]>();
+    for (const event of events ?? []) {
+      const list = eventsByTurn.get(event.turn_id) ?? [];
+      list.push({ eventId: event.event_id, sequence: event.sequence, type: event.event_type, state: event.state, createdAt: event.created_at });
+      eventsByTurn.set(event.turn_id, list);
+    }
+    return { data: { thread: chatThreadSnapshot(thread), turns: (turns ?? []).map((turn) => ({ id: turn.id, status: turn.status, createdAt: turn.created_at, updatedAt: turn.updated_at, events: eventsByTurn.get(turn.id) ?? [] })) } };
+  };
+  const startChatTurn = async (threadId: string, input: Readonly<{ turnId: string; idempotencyKey: string; digest: string }>): Promise<AdapterResult<Readonly<{ turnId: string; reused: boolean }>>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data, error } = await client.rpc("start_chat_turn", { p_thread_id: threadId, p_turn_id: input.turnId, p_idempotency_key: input.idempotencyKey, p_digest: input.digest });
+    if (error) return { error: mapRpcFailure(error.message) };
+    const result = data?.[0];
+    return result?.turn_id ? { data: { turnId: result.turn_id, reused: result.reused === true } } : { error: "INTERNAL_ERROR" };
+  };
+  const cancelChatTurn = async (turnId: string): Promise<AdapterResult<Readonly<{ sequence: number; state: "cancelled" }>>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data: turn, error: turnError } = await client.from("turns").select("status").eq("id", turnId).maybeSingle();
+    if (turnError || !turn) return { error: "FORBIDDEN" };
+    if (turn.status === "cancelled") {
+      const { data: prior, error: priorError } = await client.from("chat_turn_events").select("sequence,state").eq("turn_id", turnId).eq("state", "cancelled").maybeSingle();
+      return priorError || !prior ? { error: "INTERNAL_ERROR" } : { data: { sequence: prior.sequence, state: "cancelled" } };
+    }
+    if (["completed", "proposal_ready", "unavailable", "failed"].includes(turn.status)) return { error: "CANCELLED" };
+    const { data, error } = await client.rpc("cancel_chat_turn", { p_turn_id: turnId });
+    if (error) return { error: mapRpcFailure(error.message) };
+    const result = data?.[0];
+    return result?.state === "cancelled" && typeof result.sequence === "number" ? { data: { sequence: result.sequence, state: "cancelled" } } : { error: "INTERNAL_ERROR" };
+  };
+  const replayChatTurn = async (turnId: string, afterSequence: number): Promise<AdapterResult<readonly ChatTurnEventHistory[]>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data: turn, error: turnError } = await client.from("turns").select("id").eq("id", turnId).maybeSingle();
+    if (turnError || !turn) return { error: "FORBIDDEN" };
+    const { data, error } = await client.from("chat_turn_events")
+      .select("event_id,sequence,event_type,state,created_at")
+      .eq("turn_id", turnId)
+      .gt("sequence", afterSequence)
+      .order("sequence", { ascending: true });
+    if (error) return { error: "INTERNAL_ERROR" };
+    return { data: (data ?? []).map((event) => ({ eventId: event.event_id, sequence: event.sequence, type: event.event_type, state: event.state, createdAt: event.created_at })) };
+  };
   const confirm = async (tripId: string, input: ConfirmInput): Promise<AdapterResult<Readonly<{ outcome: "applied" | "already_applied"; resultingVersion: number }>>> => {
     const actor = await authenticated();
     if ("error" in actor) return { error: actor.error };
@@ -134,7 +225,11 @@ export function createUserDataAdapter(request: NextRequest) {
     if (result.outcome !== "applied" && result.outcome !== "already_applied") return { error: "PROPOSAL_NOT_CONFIRMABLE" };
     return { data: { outcome: result.outcome, resultingVersion: result.resulting_version } };
   };
-  return { applyCookies, authenticated, getTrip, getPendingProposal, revisePendingProposal, rejectPendingProposal, confirm };
+  return { applyCookies, authenticated, getTrip, getPendingProposal, revisePendingProposal, rejectPendingProposal, listChatThreads, createChatThread, getChatThread, startChatTurn, cancelChatTurn, replayChatTurn, confirm };
+}
+
+function chatThreadSnapshot(input: Readonly<{ id: string; trip_id: string | null; status: string; created_at: string; updated_at: string }>): ChatThreadSnapshot {
+  return { id: input.id, tripId: input.trip_id, status: input.status === "archived" ? "archived" : "active", createdAt: input.created_at, updatedAt: input.updated_at };
 }
 
 export function pendingProposalRead(input: Readonly<{
@@ -172,6 +267,8 @@ export function pendingProposalRead(input: Readonly<{
 
 function mapRpcFailure(message: string): FailureCode {
   if (message.includes("IDEMPOTENCY_KEY_REUSE")) return "IDEMPOTENCY_KEY_REUSE";
+  if (message.includes("FORBIDDEN")) return "FORBIDDEN";
+  if (message.includes("terminal turn cannot emit events")) return "CANCELLED";
   if (message.includes("STALE_TRIP_VERSION")) return "STALE_TRIP_VERSION";
   if (message.includes("PROPOSAL_NOT_CONFIRMABLE") || message.includes("INVALID_PATCH")) return "PROPOSAL_NOT_CONFIRMABLE";
   return "INTERNAL_ERROR";

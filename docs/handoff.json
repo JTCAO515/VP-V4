@@ -2,20 +2,20 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Deliver the accepted AI Core and independently expressed VisePanda frontend without copying Demo fixtures or competitor expression, while preserving runtime identity, RLS, provider, data-policy, and release contracts.",
-  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-07/#141 has merged the VisePanda VI Homepage with Golden Route/Guide and map off; WEB-08/#142 has merged truthful closed-beta password Login and first-run states without changing Auth/RLS contracts; WEB-06/#140 derives shared runtime and generated CSS tokens from the approved brand manifest, centralizes locale attributes, and provides focus/motion/UI primitives; WEB-10/#144 now provides reproducible Chromium viewport, keyboard, RTL, and sign-in accessibility acceptance coverage, and repairs the 768px sign-in overflow.",
+  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-07/#141 has merged the VisePanda VI Homepage with Golden Route/Guide and map off; WEB-08/#142 has merged truthful closed-beta password Login and first-run states without changing Auth/RLS contracts; WEB-06/#140 derives shared runtime and generated CSS tokens from the approved brand manifest, centralizes locale attributes, and provides focus/motion/UI primitives; WEB-10/#144 now provides reproducible Chromium viewport, keyboard, RTL, and sign-in accessibility acceptance coverage, and repairs the 768px sign-in overflow; V4-08/#93 is ready for automated review with owner-scoped durable chat threads, replayable state events and idempotent cancellation that store no prompt, model output, reasoning or Trip write.",
   "currentPhase": "R2",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "complete automated review and merge of WEB-10/#144, then refresh main and select the next directly executable frontend-redesign Issue; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
+  "intendedNextAgent": "complete automated review and merge of V4-08/#93, then refresh main and select the next directly executable frontend-redesign Issue; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
   "latestIssueExecution": {
-    "issue": "WEB-10/#144",
-    "changedFiles": ["package.json", "pnpm-lock.yaml", "playwright.config.mjs", "tests/e2e/frontend/web-10-viewport.spec.mjs", "components/auth/PasswordSignInForm.module.css", "docs/acceptance/frontend-web-10.md", "docs/agents/issue-execution-contract.md", "artifacts/WEB-10/*"],
-    "verification": ["pnpm check", "pnpm test:e2e", "pnpm test:e2e:frontend", "pnpm docs:check", "pnpm check:assets", "git diff --check"],
-    "unrun": ["VoiceOver/TalkBack reading order", "physical-device virtual keyboard, safe area, and 200% zoom", "Preview/production rollback smoke"],
-    "residualRisk": "The automated suite cannot substitute for assistive-technology, physical-device, or release-preview validation.",
-    "rollback": "Revert the WEB-10 merge commit; this changes no accounts, data, schemas, or production configuration.",
-    "nextAction": "Run the required automated review, merge clean work to main, and refresh the ready frontend Issue frontier."
+    "issue": "V4-08/#93",
+    "changedFiles": ["app/api/chat/**", "app/visepanda/ask/**", "components/chat/**", "lib/server/turn/thread-store.ts", "lib/server/identity/{user-data-adapter,request-guards}.ts", "supabase/migrations/20260828153000_v4_08_durable_chat_threads.sql", "tests/{contract,integration,security}/turn/**", "docs/agents/issue-execution-contract.md", "artifacts/V4-08/*"],
+    "verification": ["pnpm check", "pnpm test:contract", "pnpm test:integration", "pnpm test:security", "pnpm test:e2e", "pnpm build", "pnpm docs:check", "git diff --check"],
+    "unrun": ["Local Supabase migration/RLS integration because the local Supabase runtime is not running", "Assistive-technology and physical-device interaction validation"],
+    "residualRisk": "The runtime contract is deliberately state-only: it records no prompt or AI call, and production migration execution remains unverified until a local or deployed Supabase environment is available.",
+    "rollback": "Revert the V4-08 merge commit before applying the migration; after migration execution, use a reviewed forward migration rather than dropping persisted user state.",
+    "nextAction": "Run automated review, address every Critical/Important finding, merge V4-08 to main, then refresh the direct frontend Issue frontier."
   },
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
@@ -307,7 +307,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Run WEB-06/#140 automated review, address every Critical/Important finding, merge to main, then refresh the direct frontend queue. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
+  "nextAction": "Run V4-08/#93 automated review, address every Critical/Important finding, merge to main, then refresh the direct frontend queue. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
   "lastUpdated": "2026-08-28",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
