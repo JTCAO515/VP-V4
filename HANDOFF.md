@@ -4,10 +4,12 @@
 
 - Operator decision: accepted in [ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md).
 - Program: [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136); tracker mapping in `docs/frontend-redesign-issue-plan.md`.
-- Current frontend maturity: Homepage and `/visepanda` are `stop-ship`; implementation has not started.
+- Current frontend maturity: Homepage replacement is in progress under WEB-07/#141; `/visepanda` remains a separate stop-ship surface until its owning Issue and release evidence pass.
 - Completed governance work: [WEB-03 #137](https://github.com/JTCAO515/VP-V4/issues/137) published the ADR, Issue DAG, execution rows and handoff to `main@0b6c27f`.
 - WEB-04 #138 quarantines 48 legacy source assets and four duplicate shapes, removes Fig Grotesk from runtime, and adds a hash-verified rights ledger, SBOM, NOTICE and denylist check. Nine current preview photographs remain `blocked-release` until a separate operator rights record exists.
-- Next frontend work: #139 visual-direction selection remains operator-owned; the direct Issue queue may proceed with another independently scoped Issue without waiting for that selection.
+- Next frontend work: #139 visual-direction selection remains operator-owned and is skipped. WEB-07/#141 independently redraws Homepage with Golden Route/Guide, keeps the map off and makes `Open VisePanda` the primary CTA.
+- WEB-07 verification: production static output confirms the exact CTA route, ten honest FAQs, no blocked legacy-media reference and five-locale/RTL source boundary; local browser QA at desktop and 390px shows no horizontal overflow, the booking FAQ opens correctly, Arabic sets `lang=ar`/`dir=rtl`, and no map rendering node exists. The only development-console entry is the pre-existing missing `/favicon.ico` 404.
+- WEB-07 changed files: `app/page.tsx`, `components/homepage/`, `docs/homepage-redesign.md`, the static-output redesign assertions, and this state record. Roll back with a normal revert; do not republish a stop-ship Homepage as fallback.
 - Shared authorities: #87 Demo parity, #92 Product Shell, ADR-0003 Trip writes, ADR-0017 password-authenticated closed beta.
 - Map: disabled until a separate compliance gate closes. Homepage primary CTA: `Open VisePanda`.
 - WIP conflict resolved: PR #124 was closed as superseded; approved derivatives may re-enter only through #138/#140.
