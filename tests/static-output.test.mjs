@@ -5,7 +5,8 @@ import test from "node:test";
 const htmlPath = ".next/server/app/index.html";
 const html = readFileSync(htmlPath, "utf8");
 const chatbotHtml = readFileSync(".next/server/app/visepanda.html", "utf8");
-const clientSource = readFileSync("components/VisePandaLanding.tsx", "utf8");
+const homepageSource = readFileSync("components/homepage/Homepage.tsx", "utf8");
+const homepageCss = readFileSync("components/homepage/Homepage.module.css", "utf8");
 const localeSource = readFileSync("lib/i18n.ts", "utf8");
 const chatbotSource = readFileSync("components/VisePandaChatWorkspace.tsx", "utf8");
 const chatbotLocaleSource = readFileSync("lib/chat-workspace-i18n.ts", "utf8");
@@ -63,24 +64,25 @@ test("renders the VisePanda AI workspace at the canonical chatbot route", () => 
   assert.doesNotMatch(chatbotSource, /Mindtrip|mindtrip/);
 });
 
-test("keeps the VisePanda AI workspace localized and frontend-only", () => {
+test("keeps the redesigned homepage localized and frontend-only", () => {
   for (const marker of ["zh:", "en:", "es:", "ru:", "ar:", "🇨🇳", "🇺🇸", "🇪🇸", "🇷🇺", "🇸🇦"]) {
     assert.ok(chatbotLocaleSource.includes(marker) || localeSource.includes(marker), `missing AI workspace locale marker: ${marker}`);
   }
-  assert.match(chatbotSource, /document\.documentElement\.dir = locale === "ar" \? "rtl" : "ltr"/);
-  assert.match(chatbotLocaleSource, /does not call AI, save input, or change a Trip/);
-  assert.match(css, /\.vp-chat-workspace/);
-  assert.match(css, /\.vp-chat-mobile-tabs/);
+  assert.match(homepageSource, /document\.documentElement\.dir = attributes\.dir/);
+  assert.match(homepageSource, /href="\/visepanda"/);
+  assert.doesNotMatch(homepageSource, /\b(fetch|localStorage|sessionStorage)\s*\(/);
+  assert.match(homepageCss, /\.hero/);
+  assert.match(homepageCss, /\.routeSection/);
 });
 
-test("renders the requested ten-item FAQ, wordmarks, and VisePanda asset references", () => {
-  const faqButtons = html.match(/<button aria-expanded="false">/g) ?? [];
+test("renders the requested ten-item FAQ, wordmarks, and no blocked legacy media", () => {
+  const faqButtons = html.match(/<button[^>]*aria-expanded="false"[^>]*>/g) ?? [];
   assert.equal(faqButtons.length, 10, "expected exactly 10 FAQ controls");
   assert.match(html, /VisePanda 可以直接预订机票、酒店或门票吗？/);
   assert.doesNotMatch(html, /六个执行时刻都已经上线了吗？/);
   assert.doesNotMatch(html, /这个页面会保存我的输入吗？/);
   assert.ok((html.match(/VisePanda\./g) ?? []).length >= 2, "expected header and footer wordmarks");
-  assert.match(html, /src="\/assets\/visepanda\//);
+  assert.doesNotMatch(homepageSource, /\/assets\/visepanda\//);
   assert.doesNotMatch(html, /\/assets\/source\//);
   assert.doesNotMatch(html, /src="https?:\/\//);
 });
@@ -89,48 +91,43 @@ test("includes English, Spanish, Russian, and Arabic with RTL switching", () => 
   for (const marker of ["en:", "es:", "ru:", "ar:", "Español", "Русский", "العربية"]) {
     assert.ok(localeSource.includes(marker), `missing locale marker: ${marker}`);
   }
-  assert.match(clientSource, /document\.documentElement\.dir = isArabic \? "rtl" : "ltr"/);
-  assert.match(css, /html\[dir=(?:"rtl"|rtl)\]/);
+  assert.match(homepageSource, /localeAttributes/);
+  assert.match(homepageCss, /\[dir="rtl"\]/);
 });
 
-test("uses locale flags and currency symbols without metric state", () => {
+test("keeps locale metadata without adding a metric preference", () => {
   for (const marker of ["🇨🇳", "🇺🇸", "🇪🇸", "🇷🇺", "🇸🇦", 'currencySymbol: "¥"', 'currencySymbol: "$"', 'currencySymbol: "€"', 'currencySymbol: "₽"', 'currencySymbol: "ر.س"']) {
     assert.ok(localeSource.includes(marker), `missing locale navigation marker: ${marker}`);
   }
-  assert.match(html, /🇨🇳/);
-  assert.match(html, />¥</);
-  assert.match(clientSource, /option\.flag/);
-  assert.doesNotMatch(clientSource, /isMetric|setIsMetric|header\.metric|header\.imperial/);
+  assert.doesNotMatch(homepageSource, /isMetric|setIsMetric|header\.metric|header\.imperial/);
 });
 
-test("shows complete feature copy without detail toggles", () => {
-  const featureSource = clientSource.slice(
-    clientSource.indexOf("function FeatureSection"),
-    clientSource.indexOf("function Reviews"),
-  );
-  assert.doesNotMatch(featureSource, /features\.(more|less)|setExpanded|<button onClick=\{\(\) => setExpanded/);
-  assert.doesNotMatch(css, /-webkit-line-clamp/);
-  assert.match(css, /\.feature-card p\{[^}]*overflow:visible/);
+test("shows complete feature copy as the Golden Route", () => {
+  assert.match(homepageSource, /Golden Route/);
+  assert.match(homepageSource, /content\.features\.items\[0\]\[0\]/);
+  assert.doesNotMatch(homepageCss, /-webkit-line-clamp/);
+  assert.match(homepageCss, /\.routeStage/);
 });
 
 test("removes the guessing marquee and evidence-delivery sections", () => {
   assert.doesNotMatch(html, /少点猜测，多一步可执行。/);
   assert.doesNotMatch(html, /VisePanda，按证据逐步交付。/);
-  assert.doesNotMatch(clientSource, /function JoyMarquee|function Team|<JoyMarquee|<Team/);
+  assert.doesNotMatch(homepageSource, /function JoyMarquee|function Team|<JoyMarquee|<Team/);
   assert.doesNotMatch(localeSource, /\n\s+joy:|\n\s+delivery:/);
 });
 
 test("removes the full four-promises chapter", () => {
   assert.doesNotMatch(html, /四件我们不会提前承诺的事/);
   assert.doesNotMatch(html, /investors-section/);
-  assert.doesNotMatch(clientSource, /function Investors/);
+  assert.doesNotMatch(homepageSource, /function Investors/);
 });
 
-test("compiles Tailwind tokens and responsive compatibility styles", () => {
-  assert.match(css, /bg-vp-paper/);
-  assert.match(css, /text-vp-ink/);
-  assert.match(css, /\.mobile-user/);
-  assert.match(css, /@media/);
+test("compiles the redesign tokens and responsive styles", () => {
+  assert.match(homepageCss, /--plum: #732e4b/);
+  assert.match(homepageCss, /--gold: #ffab48/);
+  assert.match(homepageCss, /@media/);
+  assert.match(homepageCss, /prefers-reduced-motion/);
+  assert.match(css, /Homepage_hero/);
 });
 
 test("removes the legacy Vite and Sites runtime", () => {

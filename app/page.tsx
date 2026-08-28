@@ -1,5 +1,5 @@
-import { VisePandaLanding } from "@/components/VisePandaLanding";
+import { Homepage } from "@/components/homepage/Homepage";
 
 export default function HomePage() {
-  return <VisePandaLanding />;
+  return <Homepage />;
 }

@@ -1,0 +1,119 @@
+.page {
+  --cream: #fffdf4;
+  --paper: #f6ead3;
+  --plum: #732e4b;
+  --ink: #120807;
+  --gold: #ffab48;
+  background: var(--cream);
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.hero {
+  background: var(--plum);
+  color: var(--cream);
+  min-height: min(820px, 100svh);
+  padding: 24px clamp(20px, 5vw, 84px) 70px;
+}
+
+.header, .heroGrid, .routeSection, .guideSection, .productSection, .faqSection, .footer {
+  margin-inline: auto;
+  max-width: 1220px;
+}
+
+.header { align-items: center; display: flex; justify-content: space-between; gap: 24px; }
+.wordmark { color: inherit; font-family: var(--font-display), "Baloo 2", sans-serif; font-size: 1.55rem; font-weight: 800; letter-spacing: -.06em; text-decoration: none; }
+.navigation { align-items: center; display: flex; gap: clamp(12px, 2vw, 28px); }
+.navigation a, .footerLinks a { color: inherit; font-size: .94rem; text-decoration: none; }
+.navigation a:hover, .navigation a:focus-visible, .footerLinks a:hover, .footerLinks a:focus-visible { text-decoration: underline; text-underline-offset: 5px; }
+.localeLabel select { background: transparent; border: 1px solid color-mix(in srgb, currentColor 45%, transparent); border-radius: 999px; color: inherit; font: inherit; min-height: 38px; padding: 0 10px; }
+.localeLabel option { color: var(--ink); }
+.heroGrid { align-items: center; display: grid; gap: clamp(40px, 7vw, 104px); grid-template-columns: minmax(0, .92fr) minmax(360px, 1.08fr); padding-top: clamp(70px, 13vw, 154px); }
+.heroCopy { max-width: 585px; }
+.eyebrow { color: var(--gold); font-family: var(--font-display), "Baloo 2", sans-serif; font-size: .85rem; font-weight: 800; letter-spacing: .12em; margin: 0 0 18px; text-transform: uppercase; }
+.hero h1, .sectionIntro h2, .guideCopy h2, .finalCta h2 { font-family: var(--font-display), "Baloo 2", sans-serif; letter-spacing: -.045em; line-height: .98; margin: 0; }
+.hero h1 { font-size: clamp(3.25rem, 6vw, 6.4rem); }
+.heroLead { font-size: clamp(1.08rem, 1.5vw, 1.35rem); line-height: 1.65; margin: 30px 0; max-width: 48ch; }
+.actions { align-items: center; display: flex; flex-wrap: wrap; gap: 14px; }
+.primaryAction, .secondaryAction { align-items: center; border-radius: 999px; display: inline-flex; font-weight: 800; justify-content: center; min-height: 48px; padding: 0 23px; text-decoration: none; transition: transform 160ms ease, box-shadow 160ms ease; }
+.primaryAction { background: var(--gold); color: var(--ink); box-shadow: 5px 5px 0 rgba(18, 8, 7, .42); }
+.secondaryAction { border: 1px solid currentColor; color: inherit; }
+.primaryAction:hover, .primaryAction:focus-visible, .secondaryAction:hover, .secondaryAction:focus-visible { box-shadow: 2px 2px 0 rgba(18, 8, 7, .42); transform: translate(3px, 3px); }
+.boundary { color: color-mix(in srgb, var(--cream) 78%, transparent); font-size: .9rem; line-height: 1.6; margin: 24px 0 0; max-width: 53ch; }
+.heroVisual { min-height: 445px; position: relative; }
+.scenicWindow { background: linear-gradient(158deg, #ffd477 0%, #ffab48 40%, #f3c47f 41%, #f3c47f 100%); border: 11px solid var(--cream); border-radius: 46% 46% 22% 22%; box-shadow: 15px 18px 0 rgba(18, 8, 7, .24); height: min(56vw, 520px); max-height: 520px; overflow: hidden; position: absolute; right: 0; transform: rotate(3deg); width: min(100%, 515px); }
+.sceneSun { background: var(--cream); border-radius: 50%; height: 23%; position: absolute; right: 17%; top: 13%; width: 23%; }
+.sceneHill { border-radius: 50% 50% 0 0; bottom: -4%; position: absolute; }
+.sceneHillFar { background: #c97d55; height: 47%; left: -13%; transform: rotate(4deg); width: 88%; }
+.sceneHillNear { background: var(--plum); height: 38%; right: -16%; transform: rotate(-7deg); width: 86%; }
+.sceneTemple { background: var(--cream); bottom: 22%; box-shadow: 0 -13px 0 -4px var(--ink), 0 -21px 0 -8px var(--cream), 0 -27px 0 -11px var(--ink); height: 19%; left: 42%; position: absolute; width: 17%; }
+.heroRoute { bottom: 1%; color: var(--gold); height: auto; left: -11%; position: absolute; transform: rotate(-8deg); width: 115%; }
+.guideNote { background: var(--cream); bottom: 7%; color: var(--ink); left: 0; max-width: 235px; padding: 17px 19px 20px; position: absolute; transform: rotate(-5deg); }
+.guideNote span { color: var(--plum); display: block; font-size: .73rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.guideNote strong { display: block; font-family: var(--font-display), "Baloo 2", sans-serif; font-size: 1.25rem; line-height: 1.15; margin-top: 6px; }
+.routeSection, .productSection, .faqSection { padding: clamp(82px, 11vw, 150px) clamp(20px, 5vw, 84px); }
+.sectionIntro { max-width: 650px; }
+.sectionIntro .eyebrow, .guideCopy .eyebrow { color: var(--plum); }
+.sectionIntro h2, .guideCopy h2, .finalCta h2 { font-size: clamp(2.45rem, 5vw, 5.2rem); }
+.sectionIntro > p:not(.eyebrow), .guideCopy > p { font-size: 1.08rem; line-height: 1.7; margin: 23px 0 0; }
+.routeList { border-top: 2px solid var(--ink); margin-top: 62px; }
+.routeStage { align-items: start; border-bottom: 2px solid var(--ink); display: grid; gap: clamp(22px, 5vw, 70px); grid-template-columns: 80px 1fr; padding: 28px 0 32px; }
+.stageNumber { color: var(--plum); font-family: var(--font-display), "Baloo 2", sans-serif; font-size: 1.55rem; font-weight: 800; }
+.routeStage h3, .flowPanel h3 { font-family: var(--font-display), "Baloo 2", sans-serif; font-size: clamp(1.6rem, 2.6vw, 2.3rem); letter-spacing: -.035em; margin: 0; }
+.routeStage p, .flowPanel p { line-height: 1.65; margin: 10px 0 0; max-width: 57ch; }
+.guideSection { align-items: center; background: var(--paper); display: grid; gap: clamp(38px, 8vw, 116px); grid-template-columns: 1fr 1fr; max-width: none; padding: clamp(80px, 10vw, 135px) max(20px, calc((100vw - 1052px) / 2)); }
+.guideArtwork { aspect-ratio: 1 / .82; background: var(--plum); color: var(--gold); overflow: hidden; position: relative; }
+.guideArtwork p { bottom: 28px; color: var(--cream); font-size: clamp(.7rem, 1.4vw, 1rem); font-weight: 800; letter-spacing: .15em; margin: 0; position: absolute; right: 26px; }
+.guideSun { background: var(--gold); border-radius: 50%; height: 36%; position: absolute; right: 15%; top: 17%; width: 30%; }
+.guideRoute { bottom: 5%; left: -17%; position: absolute; transform: rotate(-4deg); width: 125%; }
+.careNote { border-inline-start: 4px solid var(--gold); font-weight: 700; padding-inline-start: 16px; }
+.productSection { background: var(--cream); }
+.productFlow { align-items: stretch; display: grid; gap: 16px; grid-template-columns: 1fr auto 1fr auto 1fr; margin-top: 58px; }
+.flowPanel { background: var(--ink); color: var(--cream); min-height: 265px; padding: 27px; }
+.flowPanel:nth-of-type(3) { background: var(--plum); }
+.flowPanel span { color: var(--gold); font-family: var(--font-display), "Baloo 2", sans-serif; font-size: 1.1rem; font-weight: 800; }
+.flowPanel h3 { margin-top: 42px; }
+.flowConnector { align-self: center; color: var(--plum); font-size: 2.2rem; font-weight: 800; }
+.mapOff { border: 1px solid var(--plum); color: var(--plum); display: inline-block; font-size: .92rem; font-weight: 700; margin: 25px 0 0; padding: 10px 14px; }
+.faqSection { background: var(--paper); max-width: none; padding-inline: max(20px, calc((100vw - 1052px) / 2)); }
+.faqList { margin: 58px auto 0; max-width: 840px; }
+.faqItem { border-top: 1px solid color-mix(in srgb, var(--ink) 48%, transparent); }
+.faqItem:last-child { border-bottom: 1px solid color-mix(in srgb, var(--ink) 48%, transparent); }
+.faqItem button { align-items: center; background: transparent; border: 0; color: inherit; cursor: pointer; display: flex; font: inherit; font-weight: 800; gap: 18px; justify-content: space-between; min-height: 66px; padding: 13px 0; text-align: start; width: 100%; }
+.faqItem button > span:last-child { color: var(--plum); font-size: 1.55rem; }
+.faqItem div p { line-height: 1.7; margin: 0 42px 22px 0; }
+.finalCta { background: var(--plum); color: var(--cream); overflow: hidden; padding: clamp(84px, 12vw, 165px) clamp(20px, 5vw, 84px); position: relative; text-align: center; }
+.finalCta > * { position: relative; }
+.finalCta h2 { margin-inline: auto; max-width: 850px; }
+.finalCta p:not(.eyebrow) { line-height: 1.65; margin: 23px auto 34px; max-width: 600px; }
+.finalRoute { color: rgba(255, 171, 72, .32); left: -5%; position: absolute; top: 10%; transform: rotate(9deg); width: 110%; }
+.footer { align-items: center; background: var(--ink); color: var(--cream); display: grid; gap: 20px; grid-template-columns: 1fr 1.4fr auto; max-width: none; padding: 38px clamp(20px, 5vw, 84px); }
+.footer p { margin: 0; }
+.footerLinks { display: flex; flex-wrap: wrap; gap: 16px; justify-content: end; }
+.srOnly { clip: rect(0, 0, 0, 0); clip-path: inset(50%); height: 1px; overflow: hidden; position: absolute; white-space: nowrap; width: 1px; }
+
+@media (max-width: 760px) {
+  .hero { min-height: auto; padding-bottom: 78px; }
+  .header { align-items: start; }
+  .navigation { flex-wrap: wrap; justify-content: end; }
+  .navigation a:not(:last-of-type) { display: none; }
+  .heroGrid, .guideSection { grid-template-columns: 1fr; }
+  .heroGrid { padding-top: 74px; }
+  .heroVisual { min-height: 360px; }
+  .scenicWindow { height: 340px; width: 88%; }
+  .guideNote { bottom: 0; }
+  .routeStage { grid-template-columns: 58px 1fr; }
+  .guideSection { padding-inline: 20px; }
+  .productFlow { grid-template-columns: 1fr; }
+  .flowConnector { display: none; }
+  .flowPanel { min-height: 0; }
+  .flowPanel h3 { margin-top: 22px; }
+  .footer { grid-template-columns: 1fr; }
+  .footerLinks { justify-content: start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primaryAction, .secondaryAction { transition: none; }
+}
+
+:global([dir="rtl"]) .faqItem div p { margin: 0 0 22px 42px; }

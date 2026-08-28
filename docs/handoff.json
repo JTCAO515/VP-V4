@@ -2,7 +2,7 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Deliver the accepted AI Core and independently expressed VisePanda frontend without copying Demo fixtures or competitor expression, while preserving runtime identity, RLS, provider, data-policy, and release contracts.",
-  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 now supplies deterministic feasibility checks with explicit infeasible/unknown outcomes.",
+  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-07/#141 is independently replacing the stop-ship Homepage with VisePanda VI, Golden Route and Guide while the map remains off.",
   "currentPhase": "R2",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
@@ -298,7 +298,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Finish the #89 automated review/merge loop, then refresh main and start the first directly executable frontend-redesign Issue with tests and automated review. Skip GitHub status/label synchronization until gh authentication is available.",
+  "nextAction": "Finish WEB-07/#141 browser/e2e/docs/asset-claim verification and automated review, merge it to main, then refresh the direct frontend queue. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
   "lastUpdated": "2026-08-28",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
