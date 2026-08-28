@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useState } from "react";
 import { FirstRunState } from "@/components/first-run/FirstRunState";
-import { copy, localeOptions, type Locale } from "@/lib/i18n";
+import { copy, getLocaleAttributes, localeOptions, type Locale } from "@/lib/i18n";
 import { createPasswordAuthClient } from "@/lib/server/identity/browser-auth-client";
 
 import styles from "./PasswordSignInForm.module.css";
@@ -23,13 +23,14 @@ type AuthState =
 
 export function PasswordSignInForm({ showFirstRun = false }: { showFirstRun?: boolean }) {
   const router = useRouter();
-  const [locale, setLocale] = useState<Locale>("en");
+  const [locale, setLocale] = useState<Locale>("zh");
   const [state, setState] = useState<AuthState>("checking");
   const authCopy = copy[locale].auth;
 
   useEffect(() => {
-    document.documentElement.lang = locale === "zh" ? "zh-CN" : locale;
-    document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+    const attributes = getLocaleAttributes(locale);
+    document.documentElement.lang = attributes.lang;
+    document.documentElement.dir = attributes.dir;
   }, [locale]);
 
   useEffect(() => {

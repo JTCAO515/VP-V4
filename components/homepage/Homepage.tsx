@@ -2,17 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { copy, localeOptions, type Locale } from "@/lib/i18n";
+import { copy, getLocaleAttributes, localeOptions, type Locale } from "@/lib/i18n";
 
 import styles from "./Homepage.module.css";
-
-const localeAttributes: Record<Locale, { lang: string; dir: "ltr" | "rtl" }> = {
-  zh: { lang: "zh-CN", dir: "ltr" },
-  en: { lang: "en", dir: "ltr" },
-  es: { lang: "es", dir: "ltr" },
-  ru: { lang: "ru", dir: "ltr" },
-  ar: { lang: "ar", dir: "rtl" },
-};
 
 function GoldenRoute({ className }: { className?: string }) {
   return (
@@ -40,7 +32,7 @@ export function Homepage() {
   );
 
   useEffect(() => {
-    const attributes = localeAttributes[locale];
+    const attributes = getLocaleAttributes(locale);
     document.documentElement.lang = attributes.lang;
     document.documentElement.dir = attributes.dir;
   }, [locale]);

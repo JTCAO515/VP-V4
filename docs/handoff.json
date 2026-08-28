@@ -2,12 +2,12 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Deliver the accepted AI Core and independently expressed VisePanda frontend without copying Demo fixtures or competitor expression, while preserving runtime identity, RLS, provider, data-policy, and release contracts.",
-  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-07/#141 has merged the VisePanda VI Homepage with Golden Route/Guide and map off; WEB-08/#142 is independently redesigning closed-beta password Login and truthful first-run states without changing Auth/RLS contracts.",
+  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-07/#141 has merged the VisePanda VI Homepage with Golden Route/Guide and map off; WEB-08/#142 has merged truthful closed-beta password Login and first-run states without changing Auth/RLS contracts; WEB-06/#140 derives shared runtime and generated CSS tokens from the approved brand manifest, centralizes locale attributes, and provides focus/motion/UI primitives.",
   "currentPhase": "R2",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "finish #89 automated review/merge, then refresh main and select the first directly executable frontend-redesign Issue; skip remote GitHub status/label synchronization until gh authentication exists.",
+  "intendedNextAgent": "finish WEB-06/#140 verification and automated review, merge it to main, then refresh main and select the next directly executable frontend-redesign Issue; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
     "audit the Claude model-layer draft against current first-party sources",
@@ -298,7 +298,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Finish WEB-08/#142 security/e2e/docs/browser verification and automated review, merge it to main, then refresh the direct frontend queue. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
+  "nextAction": "Run WEB-06/#140 automated review, address every Critical/Important finding, merge to main, then refresh the direct frontend queue. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
   "lastUpdated": "2026-08-28",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",

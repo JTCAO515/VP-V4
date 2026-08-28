@@ -91,7 +91,7 @@ test("includes English, Spanish, Russian, and Arabic with RTL switching", () => 
   for (const marker of ["en:", "es:", "ru:", "ar:", "Español", "Русский", "العربية"]) {
     assert.ok(localeSource.includes(marker), `missing locale marker: ${marker}`);
   }
-  assert.match(homepageSource, /localeAttributes/);
+  assert.match(homepageSource, /getLocaleAttributes/);
   assert.match(homepageCss, /\[dir="rtl"\]/);
 });
 
@@ -123,8 +123,8 @@ test("removes the full four-promises chapter", () => {
 });
 
 test("compiles the redesign tokens and responsive styles", () => {
-  assert.match(homepageCss, /--plum: #732e4b/);
-  assert.match(homepageCss, /--gold: #ffab48/);
+  assert.match(homepageCss, /--plum: var\(--vp-plum-900\)/);
+  assert.match(homepageCss, /--gold: var\(--vp-gold-500\)/);
   assert.match(homepageCss, /@media/);
   assert.match(homepageCss, /prefers-reduced-motion/);
   assert.match(css, /Homepage_hero/);

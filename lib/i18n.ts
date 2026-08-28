@@ -2,6 +2,20 @@ import { FAILURE_CODES, type FailureCode } from "./server/contracts/errors/index
 
 export type Locale = "zh" | "en" | "es" | "ru" | "ar";
 
+export type LocaleAttributes = { lang: string; dir: "ltr" | "rtl" };
+
+const localeAttributes: Record<Locale, LocaleAttributes> = {
+  zh: { lang: "zh-CN", dir: "ltr" },
+  en: { lang: "en", dir: "ltr" },
+  es: { lang: "es", dir: "ltr" },
+  ru: { lang: "ru", dir: "ltr" },
+  ar: { lang: "ar", dir: "rtl" },
+};
+
+export function getLocaleAttributes(locale: Locale): LocaleAttributes {
+  return localeAttributes[locale];
+}
+
 export const localeOptions: ReadonlyArray<{ value: Locale; label: string; flag: string; currencySymbol: string }> = [
   { value: "zh", label: "中文", flag: "🇨🇳", currencySymbol: "¥" },
   { value: "en", label: "English", flag: "🇺🇸", currencySymbol: "$" },
