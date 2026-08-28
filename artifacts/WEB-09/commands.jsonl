@@ -1,0 +1,3 @@
+{"command":"pnpm typecheck","result":"passed","evidence":"WorkspaceEntryContext compiles with the current route owners"}
+{"command":"pnpm test:e2e","result":"passed","evidence":"3 E2E contract tests passed, including WEB-09 entry negative boundaries"}
+{"command":"pnpm check; pnpm test:security; pnpm docs:check; git diff --check","result":"passed-with-one-existing-skip","evidence":"Build, static output, security, docs and diff checks passed; only the local-Supabase RLS probe skipped because the service is not running"}
