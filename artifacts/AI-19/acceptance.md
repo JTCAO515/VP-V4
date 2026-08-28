@@ -5,8 +5,9 @@ Issue: AI-19/#21. Deviation: **D2** — additive and default-closed retrieval in
 ## Executable evidence
 
 - Expected red: the contract and security suites failed with `ERR_MODULE_NOT_FOUND` before the hybrid module existed.
-- Focused green: three Node tests pass — exact-first fusion, RL-02's six denied fixtures, and five opaque locale fixtures plus no-evidence.
+- Focused green: four Node tests pass — exact-first fusion, RL-02's six denied fixtures, five opaque locale fixtures plus no-evidence, and rejection of content-bearing profile fields or non-deterministic timestamps.
 - Runtime invariant: `isEligibleFact` runs before hit association. Candidate, draft, deprecated, expired, licence-blocked and unknown-ID fixtures produce `0/6` evidence leakage.
+- Independent re-review after the strict descriptor/RFC3339 correction found no Critical or Important finding.
 
 ## Eight-dimension applicability
 

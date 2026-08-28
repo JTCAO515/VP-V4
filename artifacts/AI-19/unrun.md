@@ -1,6 +1,6 @@
 # AI-19 unrun checks
 
-- The current worktree's `node_modules/.bin/tsc` link is absent, so `pnpm typecheck` cannot run here. No dependency directory was deleted or rebuilt destructively; a clean isolated verification directory will be used before merge.
+- The active worktree's `node_modules/.bin/tsc` link is absent, so root-local `pnpm typecheck` cannot run. A frozen, script-disabled dependency install in an isolated worktree completed the full `pnpm check`; no dependency directory was deleted or rebuilt destructively.
 - No local Supabase configuration exists. `pnpm db:verify` and integration verification can only report the scaffold/unconfigured state; no database connection, migration, extension, RLS policy, or query was attempted.
 - No browser, provider, embedding/rerank, vector index, production qrel, latency/cost, account, region/retention, or external-rights check applies to this pure C0 contract.
 
