@@ -4,9 +4,10 @@ Issue: AI-20/#22. Deviation: **D2** — additive, default-closed grounded execut
 
 ## Executable evidence
 
+- Current local verification passes `pnpm check` (source-policy lint, strict TypeScript, production build and 22 static/foundation tests), `pnpm test:contract` (126 tests), `pnpm test:security` (53 passing; one unrelated local-Supabase test skipped) and `pnpm evals` (20 deterministic evaluators).
 - Contract tests render a typed money claim, closed reservation qualifier, exact Fact receipt, and no model explanation.
-- RL-04 rejects stale, negative-evidence, and forged-claim fixtures with zero executable rows.
-- RL-05 derives deterministic rows and exact deduplicated evidence from current accepted claims only.
+- RL-04 rejects three named stale, negative-evidence and forged-claim fixtures with zero executable rows.
+- RL-05 derives deterministic rows and exact deduplicated evidence from current accepted claims only; it never emits a citation or answer from arbitrary prose.
 - The renderer is semantic, data-only, and ships labels for zh/en/es/ru/ar; Arabic continues to use the existing document-level RTL owner.
 
 ## Eight-dimension applicability
@@ -16,7 +17,7 @@ Issue: AI-20/#22. Deviation: **D2** — additive, default-closed grounded execut
 | Functional | applicable | closed outcomes, deterministic ordering, typed value formatting |
 | Interface | applicable | exact-key runtime validation and immutable TypeScript boundary |
 | Data | not applicable | no schema, database, projection, or durable state |
-| Security | applicable | RL-04 rejects stale/negative/forged evidence and raw explanation keys |
+| Security | applicable | RL-04's three named stale/negative/forged fixtures reject to zero rows; raw explanation keys reject before a result |
 | Performance | not applicable | pure in-memory validation only |
 | UX | applicable | semantic card markup and five-locale labels, with existing Arabic RTL |
 | Observability | applicable | deterministic reason/receipt outputs; re-audit at each adapter integration |
@@ -24,4 +25,4 @@ Issue: AI-20/#22. Deviation: **D2** — additive, default-closed grounded execut
 
 ## Residual risk and rollback
 
-These synthetic claims do not prove live Fact eligibility, provider delivery, RLS, database reads, currency presentation policy, or browser accessibility behavior. Revert the AI-20 isolated files for rollback; no external or durable state exists.
+These synthetic claims do not prove live Fact eligibility, provider delivery, RLS, database reads, currency presentation policy, or browser accessibility behavior. Revert the AI-20 isolated files for rollback; no external or durable state exists. This evidence refresh requires independent review before merge and does not change the claim/card contract.
