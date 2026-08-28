@@ -1,0 +1,6 @@
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:00:00+08:00","finishedAt":"2026-08-28T19:00:18+08:00","evidence":"lint, TypeScript, production build and 22 static tests passed"}
+{"command":"pnpm test:contract","exitCode":0,"env":"local","startedAt":"2026-08-28T19:00:18+08:00","finishedAt":"2026-08-28T19:00:19+08:00","evidence":"66 contract tests passed"}
+{"command":"pnpm evals","exitCode":0,"env":"local","startedAt":"2026-08-28T19:00:19+08:00","finishedAt":"2026-08-28T19:00:19+08:00","evidence":"five evals passed"}
+{"command":"pnpm test:e2e","exitCode":0,"env":"local","startedAt":"2026-08-28T19:00:19+08:00","finishedAt":"2026-08-28T19:00:20+08:00","evidence":"21 static end-to-end tests passed"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:00:20+08:00","finishedAt":"2026-08-28T19:00:21+08:00","evidence":"documentation baseline passed"}
+{"command":"git diff --check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:00:21+08:00","finishedAt":"2026-08-28T19:00:21+08:00","evidence":"no whitespace errors"}

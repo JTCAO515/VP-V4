@@ -1,5 +1,17 @@
-# Today unavailable surface v1
+# Today Engine contract v1
 
-V4-18 owns the five-locale/RTL Today route while its deterministic owner-scoped engine and eligible evidence do not exist. It displays no NextAction, Trip check, real-time state or recovery result, and makes no request or mutation.
+V4-18 provides `buildToday`: a deterministic pure function that accepts one
+current Trip, an evaluation time and one Fact. It creates a single
+`review_fact` NextAction only when that Fact is reviewed, licence-allowed and
+unexpired. Otherwise it returns `NO_ELIGIBLE_EVIDENCE`. It always produces the
+same closed nine-item CheckResult registry; only the Fact's declared check kind
+may be marked `evidence_available`, never passed, live, booked or recovered.
 
-Rollback: revert the route/component. No Trip state, evidence or recovery action exists to reverse.
+The browser route remains a five-locale/RTL unavailable surface because this
+Issue owns neither an owner-scoped current-Trip reader nor an eligible-Fact
+query. It makes no request, mutation, browser-local write or real-time claim.
+V4-19–V4-21 own external evidence and recovery; they must not reinterpret a
+Today result as a Trip write.
+
+Rollback: revert the pure engine and its contract tests. No Trip state,
+evidence or recovery action is written.

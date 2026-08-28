@@ -14,12 +14,12 @@ route truthfully withholds the capability and has a static route contract; it is
 | SHELL-02 | hidden | [registry](../architecture/v4-01-demo-parity-registry.md) | not accepted |
 | SHELL-03 | partial | WEB-10 viewport evidence | not accepted |
 | SHELL-04 | partial | locale/RTL static tests | not accepted |
-| TODAY-01 | unavailable | V4-18 route contract | not accepted |
+| TODAY-01 | partial | V4-18 deterministic NextAction contract; route stays unavailable without owner data | not accepted |
 | TODAY-02 | hidden | registry recovery row | not accepted |
 | TODAY-03 | hidden | registry recovery row | not accepted |
 | TODAY-04 | hidden | registry recovery row | not accepted |
 | TODAY-05 | hidden | registry safety row | not accepted |
-| TODAY-06 | partial | V4-04 constraint contracts | not accepted |
+| TODAY-06 | partial | V4-04 feasibility plus V4-18 nine-check registry contracts | not accepted |
 | CHAT-01 | partial | V4-08 owner-scoped state-only Turn tests | not accepted |
 | CHAT-02 | hidden | registry chat UX row | not accepted |
 | CHAT-03 | contract-only | claim failure-code tests | not accepted |

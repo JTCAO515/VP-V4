@@ -2,20 +2,20 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Deliver the accepted AI Core and independently expressed VisePanda frontend without copying Demo fixtures or competitor expression, while preserving runtime identity, RLS, provider, data-policy, and release contracts.",
-  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-06/#140, WEB-07/#141, WEB-08/#142 and WEB-10/#144 are merged; V4-08/#93 through V4-12/#97 are merged; V4-13/#98 adds the Memory Profile lifecycle, consent, receipt, RLS and safe-retrieval contract; V4-14/#99 provides owner-JWT durable Memory governance; V4-16/#101 now adds separate owner-JWT durable explicit Profile persistence for travel pace, locale, currency, units and departure time. V4-18/#103 and V4-22/#107 through V4-30/#115 remain five-locale/RTL truthful unavailable routes. V4-31/#116 remains a blocked non-release audit until remaining durable contracts and runtime evidence exist.",
+  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-06/#140, WEB-07/#141, WEB-08/#142 and WEB-10/#144 are merged; V4-08/#93 through V4-12/#97 are merged; V4-13/#98 adds the Memory Profile lifecycle, consent, receipt, RLS and safe-retrieval contract; V4-14/#99 provides owner-JWT durable Memory governance; V4-16/#101 adds separate owner-JWT durable explicit Profile persistence; V4-18/#103 now provides a deterministic, fail-closed NextAction and nine-check engine, while its browser route remains unavailable without an owner Trip/Fact reader. V4-19/#104 and V4-22/#107 through V4-30/#115 remain five-locale/RTL truthful unavailable routes. V4-31/#116 remains a blocked non-release audit until remaining durable contracts and runtime evidence exist.",
   "currentPhase": "R5 frontend surfaces",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "Refresh main and implement V4-18 Today NextAction as the next frontend surface, then connect a verified Turn/Proposal coordinator to V4-15 receipt writes; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
+  "intendedNextAgent": "Refresh main and implement V4-19 Today external evidence as the next frontend surface; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
   "latestIssueExecution": {
-    "issue": "V4-16/#101",
-    "changedFiles": ["app/api/profile/**", "app/visepanda/profile/**", "components/user/**", "lib/server/identity/{request-guards,user-data-adapter}.ts", "supabase/migrations/20260828200000_v4_16_user_profiles.sql", "tests/{contract,e2e,security}/user/**", "docs/{contracts,architecture,acceptance,agents}/**", "artifacts/V4-16/**", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md"],
-    "verification": ["pnpm check", "pnpm test:contract", "pnpm test:security", "pnpm test:integration", "pnpm test:e2e", "pnpm docs:check", "git diff --check"],
-    "unrun": ["Local Supabase migration/RLS integration because the local runtime is not running", "Interactive authenticated browser save/reload trace because no authenticated local Supabase runtime is available"],
-    "residualRisk": "V4-16 supports only explicit Profile preferences. It does not make Profile, Memory or settings complete product parity, and its owner/RLS migration needs runtime verification after deployment.",
-    "rollback": "Revert the V4-16 route/UI before deployment. After the migration is applied, repair owned profile data forward; do not drop user profiles.",
-    "nextAction": "Implement V4-18 Today NextAction as the next frontend surface."
+    "issue": "V4-18/#103",
+    "changedFiles": ["lib/server/today/**", "components/today/**", "app/visepanda/today/**", "tests/{contract,e2e}/today/**", "evals/today/**", "docs/{contracts,architecture,acceptance,agents}/**", "artifacts/V4-18/**", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md"],
+    "verification": ["pnpm check", "pnpm test:contract", "pnpm evals", "pnpm test:e2e", "pnpm docs:check", "git diff --check"],
+    "unrun": ["Owner-scoped current-Trip and eligible-Fact query integration because V4-18 owns no reader", "Interactive browser Today action evidence because no truthful owner data source exists"],
+    "residualRisk": "V4-18 is a pure deterministic engine only: one eligible Fact can establish evidence availability for one fixed check, but it cannot claim a passed condition, live observation, recovery or Trip write.",
+    "rollback": "Revert the V4-18 pure engine and its tests. It writes no Trip, Fact, observation or recovery state.",
+    "nextAction": "Implement V4-19 Today external evidence as the next frontend surface."
   },
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
@@ -307,7 +307,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Implement V4-18 Today NextAction as the next frontend surface. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
+  "nextAction": "Implement V4-19 Today external evidence as the next frontend surface. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
   "lastUpdated": "2026-08-28",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
