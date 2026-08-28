@@ -16,14 +16,15 @@ test("V4-31 records every Demo action, eight dimensions, unrun evidence, and a n
     source("artifacts/V4-31/commands.jsonl"),
     source("docs/handoff.json"),
   ]);
-  for (const id of actionIds) assert.match(audit, new RegExp(`\\| ${id} \\|`));
+  const normalizedAudit = audit.replace(/\r\n/g, "\n");
+  for (const id of actionIds) assert.match(normalizedAudit, new RegExp(`\\| ${id} \\|`));
   for (const dimension of ["Functional", "Interface", "Data", "Security", "Performance", "UX", "Observable", "Compliance"]) {
-    assert.match(audit, new RegExp(`## ${dimension}`));
+    assert.match(normalizedAudit, new RegExp(`## ${dimension}`));
   }
-  assert.match(audit, /## L1-L7 acceptance/);
-  assert.match(audit, /## Unrun checks and observation window/);
-  assert.match(audit, /## Verdict\n\n`blocked`/);
-  assert.match(audit, /local Supabase is not running/);
+  assert.match(normalizedAudit, /## L1-L7 acceptance/);
+  assert.match(normalizedAudit, /## Unrun checks and observation window/);
+  assert.match(normalizedAudit, /## Verdict\n\n`blocked`/);
+  assert.match(normalizedAudit, /local Supabase is not running/);
   const records = commands.trim().split("\n").map((line) => JSON.parse(line));
   assert.deepEqual(records.map((record) => record.command), ["pnpm check", "pnpm test:contract", "pnpm test:integration", "pnpm test:security", "pnpm test:e2e", "pnpm evals", "pnpm docs:check", "git diff --check"]);
   for (const record of records) {
