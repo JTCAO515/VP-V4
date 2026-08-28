@@ -1,83 +1,57 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-
-import {
-  ToolGatewayError,
-  ToolRegistry,
-  executeToolIntent,
-  type ToolDefinition,
-} from "../../../lib/server/tools/index.ts";
+import { approvalDigestForToolIntent, ToolGatewayError, ToolRegistry, executeToolIntent, type ToolDataClass, type ToolDefinition } from "../../../lib/server/tools/index.ts";
 
 const definition: ToolDefinition<{ readonly cityId: string }, { readonly summary: string }> = {
-  id: "evidence.city-summary",
-  version: "v1",
-  description: "Return one normalized city evidence summary.",
-  riskClass: "R1_read_only",
-  allowedTaskProfiles: ["information_lookup"],
-  allowedDataClasses: ["public_evidence"],
-  requiresApproval: false,
-  idempotency: "required",
-  timeoutMs: 1_000,
-  retryPolicy: "never",
-  maxModelOutputTokens: 80,
-  featureFlag: "tool-evidence-city-summary",
+  id: "evidence.city-summary", version: "v1", description: "Return one normalized city evidence summary.", riskClass: "R1_read_only",
+  allowedTaskProfiles: ["information_lookup"], allowedDataClasses: ["public_evidence"], requiredLicenseScopes: ["public_evidence"], requiresApproval: false,
+  idempotency: "required", timeoutMs: 1_000, retryPolicy: "never", maxModelOutputTokens: 256, featureFlag: "tool-evidence-city-summary",
   validateInput: (input): input is { readonly cityId: string } => typeof input === "object" && input !== null && typeof (input as { cityId?: unknown }).cityId === "string",
   validateOutput: (output): output is { readonly summary: string } => typeof output === "object" && output !== null && typeof (output as { summary?: unknown }).summary === "string",
 };
 
-test("does not execute a model ToolCallIntent until the registry and policy gateway permit it", async () => {
-  const registry = new ToolRegistry([definition]);
-  let calls = 0;
+const actor = { id: "actor-a", taskProfile: "information_lookup" as const, dataClasses: ["public_evidence"] as const, licensedScopes: ["public_evidence"] as const, enabledFeatureFlags: [definition.featureFlag] as const, approvals: [] as const };
+const intent = (callId: string, input: unknown = { cityId: "shanghai" }, dataClasses: readonly ToolDataClass[] = ["public_evidence"]) => ({ source: "model" as const, callId, toolId: definition.id, dataClasses, input });
+const now = () => "2026-08-28T00:00:00.000Z";
 
-  const receipt = await executeToolIntent({
-    registry,
-    intent: { source: "model", callId: "call-1", toolId: definition.id, input: { cityId: "shanghai" } },
-    actor: { id: "actor-a", taskProfile: "information_lookup", dataClasses: ["public_evidence"], approvedDigests: [] },
-    execute: async () => { calls += 1; return { summary: "Shanghai evidence." }; },
-    now: () => "2026-08-28T00:00:00.000Z",
-  });
-
-  assert.equal(calls, 1);
-  assert.equal(receipt.toolId, definition.id);
-  assert.equal(receipt.output.summary, "Shanghai evidence.");
-  assert.match(receipt.inputDigest, /^[a-f0-9]{64}$/);
-  assert.equal("actorId" in receipt, false);
+test("executes only an allowlisted policy-valid intent and returns no raw output", async () => {
+  const receipt = await executeToolIntent({ registry: new ToolRegistry([definition]), intent: intent("call-1"), actor, execute: async () => ({ summary: "Shanghai evidence." }), now });
+  assert.match(receipt.modelSafeProjection, /Shanghai evidence/);
+  assert.equal("output" in receipt, false);
 });
 
-test("rejects unknown, out-of-profile, and invalid intents before a fake executor can run", async () => {
-  const registry = new ToolRegistry([definition]);
-  let calls = 0;
-  const base = { registry, actor: { id: "actor-a", taskProfile: "trip_planning" as const, dataClasses: ["public_evidence"] as const, approvedDigests: [] as const }, execute: async () => { calls += 1; return { summary: "unexpected" }; }, now: () => "2026-08-28T00:00:00.000Z" };
-
-  await assert.rejects(() => executeToolIntent({ ...base, intent: { source: "model", callId: "call-2", toolId: "unknown.tool", input: {} } }), ToolGatewayError);
-  await assert.rejects(() => executeToolIntent({ ...base, intent: { source: "model", callId: "call-3", toolId: definition.id, input: { cityId: "shanghai" } } }), ToolGatewayError);
-  await assert.rejects(() => executeToolIntent({ ...base, intent: { source: "model", callId: "call-4", toolId: definition.id, input: { cityId: 7 } } }), ToolGatewayError);
+test("rejects unknown, feature-disabled, license-invalid, and sensitive active intent data before execution", async () => {
+  let calls = 0; const registry = new ToolRegistry([definition]); const execute = async () => { calls += 1; return { summary: "unexpected" }; };
+  await assert.rejects(() => executeToolIntent({ registry, intent: { ...intent("call-2"), toolId: "unknown.tool" }, actor, execute, now }), ToolGatewayError);
+  await assert.rejects(() => executeToolIntent({ registry, intent: intent("call-3"), actor: { ...actor, enabledFeatureFlags: [] }, execute, now }), /disabled/i);
+  await assert.rejects(() => executeToolIntent({ registry, intent: intent("call-4"), actor: { ...actor, licensedScopes: [] }, execute, now }), /license/i);
+  await assert.rejects(() => executeToolIntent({ registry, intent: intent("call-5", { cityId: "shanghai", media: "secret" }, ["sensitive_media"]), actor: { ...actor, dataClasses: ["public_evidence", "sensitive_media"] }, execute, now }), /intent data/i);
   assert.equal(calls, 0);
 });
 
-test("requires an exact approval digest for external side effects and never grants Trip write authority", async () => {
-  const sideEffect = { ...definition, id: "external.ride-handoff", riskClass: "X_external_side_effect" as const, requiresApproval: true };
-  const registry = new ToolRegistry([sideEffect]);
-  const intent = { source: "ui" as const, callId: "call-5", toolId: sideEffect.id, input: { cityId: "shanghai" } };
-  const actor = { id: "actor-a", taskProfile: "information_lookup" as const, dataClasses: ["public_evidence"] as const, approvedDigests: [] as const };
-
-  await assert.rejects(() => executeToolIntent({ registry, intent, actor, execute: async () => ({ summary: "unexpected" }), now: () => "2026-08-28T00:00:00.000Z" }), ToolGatewayError);
-  assert.throws(() => registry.register({ ...definition, id: "trip.direct-write", riskClass: "P_proposal_producing" }), /Trip writes/);
+test("rejects unsafe registration and external/proposal execution until typed persistent capabilities exist", () => {
+  assert.throws(() => new ToolRegistry([{ ...definition, id: `evidence.${"a".repeat(100)}` }]), ToolGatewayError);
+  assert.throws(() => new ToolRegistry([{ ...definition, version: "v1\"><instruction>inject</instruction>" }]), ToolGatewayError);
+  assert.throws(() => new ToolRegistry([{ ...definition, maxModelOutputTokens: Infinity }]), ToolGatewayError);
+  assert.throws(() => new ToolRegistry([{ ...definition, riskClass: "P_proposal_producing" }]), ToolGatewayError);
+  assert.throws(() => new ToolRegistry([{ ...definition, id: "external.disabled", riskClass: "X_external_side_effect", requiresApproval: true }]), ToolGatewayError);
 });
 
-test("rejects a replayed idempotency call before it can execute twice", async () => {
-  const registry = new ToolRegistry([definition]);
-  let calls = 0;
-  const request = { registry, intent: { source: "model" as const, callId: "call-replay", toolId: definition.id, input: { cityId: "shanghai" } }, actor: { id: "actor-a", taskProfile: "information_lookup" as const, dataClasses: ["public_evidence"] as const, approvedDigests: [] as const }, execute: async () => { calls += 1; return { summary: "Shanghai evidence." }; }, now: () => "2026-08-28T00:00:00.000Z" };
-  await executeToolIntent(request);
-  await assert.rejects(() => executeToolIntent(request), ToolGatewayError);
-  assert.equal(calls, 1);
+test("requires a non-expired actor/call/source-bound approval when a registered tool needs approval", async () => {
+  const protectedTool = { ...definition, id: "evidence.approved-read", requiresApproval: true }; const call = { ...intent("call-approved"), toolId: protectedTool.id };
+  const approval = { actorId: actor.id, callId: call.callId, source: call.source, taskProfile: actor.taskProfile, dataClasses: actor.dataClasses, inputDigest: approvalDigestForToolIntent(protectedTool, call.input), expiresAt: "2026-08-29T00:00:00.000Z" };
+  await executeToolIntent({ registry: new ToolRegistry([protectedTool]), intent: call, actor: { ...actor, approvals: [approval] }, execute: async () => ({ summary: "ok" }), now });
+  await assert.rejects(() => executeToolIntent({ registry: new ToolRegistry([protectedTool]), intent: call, actor: { ...actor, id: "actor-b", approvals: [approval] }, execute: async () => ({ summary: "unexpected" }), now }), /approval/i);
 });
 
-test("releases an uncompleted idempotency claim after an executor failure", async () => {
-  const registry = new ToolRegistry([definition]);
-  const request = { registry, intent: { source: "model" as const, callId: "call-retry", toolId: definition.id, input: { cityId: "shanghai" } }, actor: { id: "actor-a", taskProfile: "information_lookup" as const, dataClasses: ["public_evidence"] as const, approvedDigests: [] as const }, now: () => "2026-08-28T00:00:00.000Z" };
-  await assert.rejects(() => executeToolIntent({ ...request, execute: async () => { throw new Error("provider unavailable"); } }));
-  const receipt = await executeToolIntent({ ...request, execute: async () => ({ summary: "recovered" }) });
-  assert.equal(receipt.output.summary, "recovered");
+test("rejects replay, releases definite read failures, times out reads, and counts the final projection budget", async () => {
+  const registry = new ToolRegistry([definition]); const request = { registry, intent: intent("call-replay"), actor, now };
+  await executeToolIntent({ ...request, execute: async () => ({ summary: "ok" }) });
+  await assert.rejects(() => executeToolIntent({ ...request, execute: async () => ({ summary: "replay" }) }), /already executed/i);
+  const retry = { ...request, intent: intent("call-retry") };
+  await assert.rejects(() => executeToolIntent({ ...retry, execute: async () => { throw new Error("provider unavailable"); } }));
+  await executeToolIntent({ ...retry, execute: async () => ({ summary: "recovered" }) });
+  const short = { ...definition, id: "evidence.short", timeoutMs: 5, maxModelOutputTokens: 1 };
+  await assert.rejects(() => executeToolIntent({ registry: new ToolRegistry([short]), intent: { ...intent("call-timeout"), toolId: short.id }, actor, execute: async () => new Promise<{ summary: string }>((resolve) => setTimeout(() => resolve({ summary: "late" }), 25)), now }), /deadline/i);
+  await assert.rejects(() => executeToolIntent({ registry: new ToolRegistry([short]), intent: { ...intent("call-budget"), toolId: short.id }, actor, execute: async () => ({ summary: "{}" }), now }), /budget/i);
 });

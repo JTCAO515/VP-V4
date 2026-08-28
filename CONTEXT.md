@@ -128,3 +128,18 @@ manifests keep only references, versions, counts, omission reasons and SHA-256 f
 than raw content or actor IDs. Synthetic contract/eval fixtures establish full-history versus
 compaction constraint retention and zero leaks; this does not claim real model/retrieval/provider
 runtime evidence.
+
+## V4-03 Tool Gateway
+
+V4-03 (#88) establishes the pure server-side `ToolRegistry` and `executeToolIntent` baseline in
+`lib/server/tools/`. A model/UI function call is only an intent: the gateway resolves a static
+allowlist, verifies task/data/license/feature policy and schema, requires an exact actor-bound
+expiring approval where needed, and claims idempotency before execution. `trip.*` and executable
+Proposal tools are rejected at registration; Trip truth remains Proposal/Confirm/Patch.
+
+Executors run under a deadline. Definite failures (provider error, invalid output, oversized output)
+release their claim; an external side effect requires a durable pending/succeeded/unknown adapter and
+retains an unknown claim on every started-executor failure to prevent an uncertain duplicate.
+Receipts exclude raw executor output and actor IDs, exposing only a bounded entity-escaped
+`<untrusted-tool-output>` projection. The synthetic tests prove gateway behavior, not provider
+delivery, flag rollout, model selection, or production reconciliation.

@@ -131,6 +131,13 @@ or status mutation was attempted.
 - `tests/contract/context/` passed 13/13 after the expected missing-module red state; reviewer regressions also proved and then fixed unscoped owner inclusion, Tool ref/text boundary injection, rejected-ID disclosure, caller-count budget bypass, escaped-Tool and inter-candidate-separator budget undercount, and partial hard-constraint loss. `pnpm evals` passed 2/2 with synthetic full-history/compaction and zero-leak cases. See [context-plan.md](docs/contracts/context-plan.md) and `artifacts/V4-02/`.
 - Rollback: revert the #85 merge. No schema, database, provider, cache or production data is affected. The remaining runtime integration, model-quality, retrieval-latency and production observation evidence belong to later owning Issues.
 
+## V4-03 Tool Gateway
+
+- #88 adds a pure server-side `ToolRegistry` and `executeToolIntent` contract. A model/UI call is intent only: static allowlist, task/data/license/feature policy, schema, non-expired actor-bound approval, idempotency and deadline all pass before an executor can run.
+- Direct `trip.*` and executable Proposal tools cannot register until a typed capability exists. An external side effect requires `idempotency: required` and a durable pending/succeeded/unknown store; every started-executor failure remains `unknown` to prevent replay. The v1 retry declaration never creates an automatic retry loop.
+- Receipts exclude both raw executor output and actor IDs. Valid bounded JSON output is entity-escaped inside a model-safe `<untrusted-tool-output>` projection, preventing the payload from creating an instruction boundary. See [tool-gateway.md](docs/contracts/tool-gateway.md) and `artifacts/V4-03/`.
+- Focused contract/security tests passed 8/8 after expected red states; `pnpm typecheck` passed and `pnpm test:contract` passed 50/50. Rollback is a revert of #88; no schema, provider, cache, external request or production data is affected.
+
 ## Continuous AFK execution
 
 - [continuous-afk-execution.md](docs/agents/continuous-afk-execution.md) makes completion of one Issue a scheduler event instead of a session stop. It retains one Issue/worktree/branch/PR and all required checks; user-authorized direct scheduling supersedes dependency closure as a start condition.

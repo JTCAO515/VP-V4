@@ -2,12 +2,12 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Deliver the accepted AI Core and independently expressed VisePanda frontend without copying Demo fixtures or competitor expression, while preserving runtime identity, RLS, provider, data-policy, and release contracts.",
-  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; WEB-04 quarantines legacy source assets with a hash-verified ledger; V4-02 now supplies a deterministic ContextPlan/ContextAssembler baseline with bounded, actor-scoped, provenance-safe context assembly.",
+  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 now supplies a fail-closed deterministic Tool Gateway baseline with exact approval, deadline, idempotency and model-safe receipts.",
   "currentPhase": "R2",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "select the next defined Issue directly from the local queue after #85 review/merge; skip remote GitHub status/label synchronization until gh authentication exists.",
+  "intendedNextAgent": "finish #88 automated verification/review/merge, then select the next defined Issue directly from the local queue; skip remote GitHub status/label synchronization until gh authentication exists.",
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
     "audit the Claude model-layer draft against current first-party sources",
@@ -147,7 +147,9 @@
     "lib/server/context/{context-plan,context-assembler,index}.ts (new deterministic ContextPlan/Assembler, policy budgets, source filtering, untrusted Tool delimiter and privacy-safe manifest)",
     "tests/contract/context/** and evals/context/** (new frozen contract and synthetic compaction/leak coverage)",
     "docs/contracts/context-plan.md and artifacts/V4-02/** (new context contract, synthetic fixtures, ablation/unrun and command evidence)",
-    "docs/superpowers/plans/2026-08-28-v4-02-context-engineering.md (new execution plan)"
+    "docs/superpowers/plans/2026-08-28-v4-02-context-engineering.md (new execution plan)",
+    "lib/server/tools/index.ts and tests/{contract,security}/tools/** (new fail-closed Tool Gateway contract, output-safe receipt and regression coverage)",
+    "docs/contracts/tool-gateway.md, artifacts/V4-03/** and docs/superpowers/plans/2026-08-28-v4-03-tool-gateway.md (new Tool Gateway contract, command/unrun evidence and execution plan)"
   ],
   "verification": [
     "WEB-02 tracker publication created #136-#145, nested #136 under #2, nested #137-#145 under #136, and established the dependency DAG including new #92 blockers #140/#142.",
@@ -211,7 +213,8 @@
     "WEB-04 asset-policy red test failed before quarantine and passed after the hash ledger, SBOM, NOTICE, denied source removal, Fig retirement and blocked-preview record were added",
     "V4-02 focused contract tests first failed with missing ContextPlan module, then passed 13/13 after the minimal deterministic policy and assembler implementation plus reviewed actor-scope, delimiter, manifest-privacy, actual-budget, escaped-Tool/separator budget and atomic-constraint regressions",
     "V4-02 synthetic eval passed 2/2: full-history and compacted thread inputs retained identical hard constraints, and five cross-actor/ineligible/raw candidate classes produced zero manifest leaks",
-    "V4-02 pre-review full acceptance passed: pnpm check (lint/typecheck/build/static 13/13), pnpm test:contract (37/37), pnpm evals (2/2), pnpm docs:check, handoff JSON parse, and git diff --check; three automated review/fix cycles then reached no Critical/Important findings; final full acceptance passed pnpm check (13 static tests), pnpm test:contract (43/43), pnpm evals (2/2), pnpm docs:check, handoff JSON parse, and git diff --check"
+    "V4-02 pre-review full acceptance passed: pnpm check (lint/typecheck/build/static 13/13), pnpm test:contract (37/37), pnpm evals (2/2), pnpm docs:check, handoff JSON parse, and git diff --check; three automated review/fix cycles then reached no Critical/Important findings; final full acceptance passed pnpm check (13 static tests), pnpm test:contract (43/43), pnpm evals (2/2), pnpm docs:check, handoff JSON parse, and git diff --check",
+    "V4-03 expected-red tests proved the absent approval-digest API and raw receipt-output leak. Two automated review cycles then exposed replay, arbitrary Proposal execution, unsafe bounds, transferable approval, raw call IDs, wrapper budgets, active-data policy, and a false durable-store claim. The final six focused contract plus one security test fail closed: X tools stay disabled until verified persistence exists; strict typecheck, contract 48/48, security 11/11 executed (one local-Supabase skip), docs and diff checks passed"
   ],
   "blockers": [
     "Homepage and /visepanda are stop-ship until their replacement and WEB-11 release evidence pass; they cannot be used as a public/store fallback.",
@@ -292,7 +295,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Finish the V4-02 verification/review/merge loop, then select the next defined Issue directly with tests and automated review. Skip GitHub status/label synchronization until gh authentication is available.",
+  "nextAction": "Finish the V4-03 verification/review/merge loop, then select the next defined Issue directly with tests and automated review. Skip GitHub status/label synchronization until gh authentication is available.",
   "lastUpdated": "2026-08-28",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
