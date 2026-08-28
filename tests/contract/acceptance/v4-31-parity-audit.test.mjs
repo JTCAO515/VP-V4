@@ -33,5 +33,5 @@ test("V4-31 records every Demo action, eight dimensions, unrun evidence, and a n
     assert.ok(Date.parse(record.startedAt) <= Date.parse(record.finishedAt));
   }
   assert.doesNotMatch(handoff, /Merge V4-12/);
-  assert.match(handoff, /Implement V4-22 Tool Surface Health/);
+  assert.match(handoff, /Continue the next eligible locally executable Issue/);
 });

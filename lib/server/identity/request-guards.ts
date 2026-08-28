@@ -4,6 +4,7 @@ import {
   type TurnFeedbackKind,
   type TurnFeedbackReason,
 } from "../turn/feedback/contract.ts";
+import { normalizePrivacyRequest } from "../privacy/contract.ts";
 
 const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -15,27 +16,59 @@ export function isSameOriginMutation(request: NextRequest): boolean {
   const origin = request.headers.get("origin");
   return (
     hasSameOrigin(origin, request.nextUrl) ||
+    hasLocalDevelopmentOrigin(origin, request.nextUrl) ||
     hasForwardedOrigin(
       origin,
       request.headers.get("x-forwarded-host") ?? request.headers.get("host"),
       request.headers.get("x-forwarded-proto") ??
         request.nextUrl.protocol.slice(0, -1),
+      process.env.VISEPANDA_PUBLIC_ORIGIN ?? null,
     )
   );
 }
 export function hasSameOrigin(origin: string | null, requestUrl: URL): boolean {
   return origin !== null && origin === requestUrl.origin;
 }
+function hasLocalDevelopmentOrigin(
+  origin: string | null,
+  requestUrl: URL,
+): boolean {
+  if (process.env.NODE_ENV === "production" || !origin) return false;
+  try {
+    const candidate = new URL(origin);
+    const localHosts = new Set(["localhost", "127.0.0.1"]);
+    return (
+      candidate.protocol === requestUrl.protocol &&
+      candidate.port === requestUrl.port &&
+      localHosts.has(candidate.hostname) &&
+      localHosts.has(requestUrl.hostname)
+    );
+  } catch {
+    return false;
+  }
+}
 export function hasForwardedOrigin(
   origin: string | null,
   forwardedHost: string | null,
   forwardedProto: string | null,
+  trustedPublicOrigin: string | null,
 ): boolean {
-  if (!origin || !forwardedHost || !forwardedProto) return false;
+  if (!origin || !forwardedHost || !forwardedProto || !trustedPublicOrigin)
+    return false;
   if (forwardedHost.includes(",") || forwardedProto.includes(",")) return false;
   if (!/^[a-z0-9.-]+(?::\d{1,5})?$/i.test(forwardedHost)) return false;
   if (forwardedProto !== "http" && forwardedProto !== "https") return false;
-  return origin === `${forwardedProto}://${forwardedHost}`;
+  try {
+    const trusted = new URL(trustedPublicOrigin);
+    const forwardedOrigin = `${forwardedProto}://${forwardedHost}`;
+    return (
+      trusted.origin === trustedPublicOrigin &&
+      origin === trusted.origin &&
+      forwardedOrigin === trusted.origin
+    );
+  } catch {
+    return false;
+  }
 }
 export function isConfirmInput(
   value: unknown,
@@ -234,4 +267,14 @@ export function isUserProfileInput(
       ].includes(key),
     )
   );
+}
+
+export function isPrivacyRequestInput(
+  value: unknown,
+): value is Readonly<{
+  requestId: string;
+  action: "export" | "delete";
+  scopes: readonly ["profile", "memory", "trip", "turn", "user_artifact"];
+}> {
+  return normalizePrivacyRequest(value) !== null;
 }

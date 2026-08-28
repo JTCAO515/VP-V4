@@ -48,7 +48,7 @@ route truthfully withholds the capability and has a static route contract; it is
 | EXPLORE-04 | hidden | registry Explore row | not accepted |
 | USER-01 | partial | V4-16 owner Profile route/UI contract | not accepted |
 | USER-02 | partial | V4-16 explicit Profile/locale/unit and Memory-separation tests | not accepted |
-| USER-03 | hidden | V4-17 privacy lifecycle absent | not accepted |
+| USER-03 | partial | V4-17 owner-scoped export/delete request and receipt contract; no execution or backup-purge claim | not accepted |
 | OFFLINE-01 | unavailable | V4-30 static Offline route test | not accepted |
 
 ## Functional
@@ -112,8 +112,8 @@ offline retention record establishes the remaining product capabilities.
 - No provider, Policy Fact, reviewed Safe Phrase, private artifact or encrypted offline cache exists.
 - No physical-device, assistive-technology, end-to-end fault, performance or production observation
   window exists.
-- Unblock condition: implement and independently verify the missing V4-13, V4-15, V4-17 and
-  owner/provider/runtime evidence, then rerun this complete matrix in a release environment.
+- Unblock condition: implement and independently verify V4-15 writers plus V4-17 export/delete
+  execution and owner/provider/runtime evidence, then rerun this complete matrix in a release environment.
 
 ## Rollback
 

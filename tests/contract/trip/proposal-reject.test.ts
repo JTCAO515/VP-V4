@@ -20,12 +20,13 @@ test("AI-13c reject route is same-origin POST only", () => {
   assert.doesNotMatch(route, /export async function GET/);
 });
 
-test("AI-13c accepts a validated forwarded public origin and rejects attacker hosts", () => {
-  assert.equal(hasForwardedOrigin("http://127.0.0.1:3231", "127.0.0.1:3231", "http"), true);
-  assert.equal(hasForwardedOrigin("https://preview.example", "preview.example", "https"), true);
-  assert.equal(hasForwardedOrigin("https://attacker.example", "preview.example", "https"), false);
-  assert.equal(hasForwardedOrigin("https://attacker.example", "attacker.example,preview.example", "https"), false);
-  assert.equal(hasForwardedOrigin("javascript://preview.example", "preview.example", "javascript"), false);
+test("AI-13c accepts only a configured forwarded public origin and rejects attacker headers", () => {
+  assert.equal(hasForwardedOrigin("http://127.0.0.1:3231", "127.0.0.1:3231", "http", "http://127.0.0.1:3231"), true);
+  assert.equal(hasForwardedOrigin("https://preview.example", "preview.example", "https", "https://preview.example"), true);
+  assert.equal(hasForwardedOrigin("https://attacker.example", "preview.example", "https", "https://preview.example"), false);
+  assert.equal(hasForwardedOrigin("https://attacker.example", "attacker.example", "https", "https://preview.example"), false);
+  assert.equal(hasForwardedOrigin("https://attacker.example", "attacker.example,preview.example", "https", "https://preview.example"), false);
+  assert.equal(hasForwardedOrigin("javascript://preview.example", "preview.example", "javascript", "https://preview.example"), false);
 });
 
 test("AI-13c accepts the browser origin when Next normalizes the local request URL", () => {

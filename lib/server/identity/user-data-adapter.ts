@@ -7,6 +7,7 @@ import type {
 } from "@/lib/server/turn/feedback/contract";
 import type { TripPlaceReference } from "@/lib/server/trip/place/contract";
 import type { TripActionReference } from "@/lib/server/trip/actions/contract";
+import type { PrivacyRequest } from "@/lib/server/privacy/contract";
 
 type PendingCookie = { name: string; value: string; options: CookieOptions };
 
@@ -61,6 +62,13 @@ export type UserProfileRead = Readonly<{
   temperatureUnit: "celsius" | "fahrenheit";
   defaultDepartureTime: string;
   updatedAt: string;
+}>;
+export type PrivacyRequestRead = Readonly<{
+  requestId: string;
+  action: "export" | "delete";
+  status: "requested";
+  execution: "not_started";
+  createdAt: string;
 }>;
 export type TripVersion = Readonly<{
   id: string;
@@ -212,6 +220,59 @@ export function createUserDataAdapter(request: NextRequest) {
     if ("error" in read || read.data === null)
       return { error: "INTERNAL_ERROR" };
     return { data: read.data };
+  };
+  const listPrivacyRequests = async (): Promise<
+    AdapterResult<readonly PrivacyRequestRead[]>
+  > => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data, error } = await client
+      .from("privacy_requests")
+      .select("id,action,status,execution_state,created_at")
+      .order("created_at", { ascending: false });
+    if (error) return { error: "INTERNAL_ERROR" };
+    return {
+      data: (data ?? []).flatMap((request): PrivacyRequestRead[] =>
+        (request.action === "export" || request.action === "delete") &&
+        request.status === "requested" &&
+        request.execution_state === "not_started"
+          ? [{
+              requestId: request.id,
+              action: request.action,
+              status: "requested",
+              execution: "not_started",
+              createdAt: request.created_at,
+            }]
+          : [],
+      ),
+    };
+  };
+  const requestPrivacyAction = async (
+    input: PrivacyRequest,
+  ): Promise<AdapterResult<PrivacyRequestRead>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data, error } = await client.rpc("request_privacy_action", {
+      p_request_id: input.requestId,
+      p_action: input.action,
+    });
+    if (error) return { error: mapRpcFailure(error.message) };
+    const result = data?.[0];
+    return result?.request_id === input.requestId &&
+      result.action === input.action &&
+      result.status === "requested" &&
+      result.execution_state === "not_started" &&
+      typeof result.created_at === "string"
+      ? {
+          data: {
+            requestId: result.request_id,
+            action: result.action,
+            status: "requested",
+            execution: "not_started",
+            createdAt: result.created_at,
+          },
+        }
+      : { error: "INTERNAL_ERROR" };
   };
   const listMemoryProfiles = async (): Promise<
     AdapterResult<readonly MemoryProfileRead[]>
@@ -1036,6 +1097,8 @@ export function createUserDataAdapter(request: NextRequest) {
     authenticated,
     getUserProfile,
     saveUserProfile,
+    listPrivacyRequests,
+    requestPrivacyAction,
     listMemoryProfiles,
     setMemoryConsent,
     createExplicitMemory,
@@ -1127,7 +1190,11 @@ export function pendingProposalRead(
 }
 
 function mapRpcFailure(message: string): FailureCode {
-  if (message.includes("IDEMPOTENCY_KEY_REUSE")) return "IDEMPOTENCY_KEY_REUSE";
+  if (
+    message.includes("IDEMPOTENCY_KEY_REUSE") ||
+    message.includes("PRIVACY_REQUEST_ID_REUSE")
+  )
+    return "IDEMPOTENCY_KEY_REUSE";
   if (message.includes("FORBIDDEN")) return "FORBIDDEN";
   if (message.includes("terminal turn cannot emit events")) return "CANCELLED";
   if (message.includes("INVALID_FEEDBACK")) return "INVALID_INPUT";
@@ -1142,6 +1209,7 @@ function mapRpcFailure(message: string): FailureCode {
   if (
     message.includes("INVALID_MEMORY") ||
     message.includes("INVALID_PROFILE") ||
+    message.includes("INVALID_PRIVACY_REQUEST") ||
     message.includes("CONSENT_REQUIRED") ||
     message.includes("TERMINAL_MEMORY")
   )

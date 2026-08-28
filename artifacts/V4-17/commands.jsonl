@@ -1,0 +1,16 @@
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-08-28T11:25:26.874Z","finishedAt":"2026-08-28T11:25:45.607Z","env":"local"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-08-28T11:25:49.472Z","finishedAt":"2026-08-28T11:25:50.292Z","env":"local"}
+{"command":"pnpm test:security","exitCode":0,"startedAt":"2026-08-28T11:25:55.682Z","finishedAt":"2026-08-28T11:25:59.738Z","env":"local"}
+{"command":"pnpm test:integration","exitCode":0,"startedAt":"2026-08-28T11:26:04.198Z","finishedAt":"2026-08-28T11:26:04.743Z","env":"local"}
+{"command":"pnpm test:e2e","exitCode":0,"startedAt":"2026-08-28T11:26:09.137Z","finishedAt":"2026-08-28T11:26:10.502Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T11:26:14.686Z","finishedAt":"2026-08-28T11:26:15.064Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T11:26:19.818Z","finishedAt":"2026-08-28T11:26:19.886Z","env":"local"}
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-08-28T11:34:09.031Z","finishedAt":"2026-08-28T11:34:27.235Z","env":"local"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-08-28T11:34:31.141Z","finishedAt":"2026-08-28T11:34:31.940Z","env":"local"}
+{"command":"pnpm test:security","exitCode":0,"startedAt":"2026-08-28T11:34:35.530Z","finishedAt":"2026-08-28T11:34:39.451Z","env":"local"}
+{"command":"pnpm test:integration","exitCode":0,"startedAt":"2026-08-28T11:34:45.174Z","finishedAt":"2026-08-28T11:34:45.697Z","env":"local"}
+{"command":"pnpm test:e2e","exitCode":0,"startedAt":"2026-08-28T11:34:49.401Z","finishedAt":"2026-08-28T11:34:50.747Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T11:34:54.528Z","finishedAt":"2026-08-28T11:34:54.908Z","env":"local"}
+{"command":"git.exe diff --check","exitCode":0,"startedAt":"2026-08-28T11:34:58.740Z","finishedAt":"2026-08-28T11:34:58.805Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T11:35:30.098Z","finishedAt":"2026-08-28T11:35:30.471Z","env":"local"}
+{"command":"git.exe diff --check","exitCode":0,"startedAt":"2026-08-28T11:35:34.153Z","finishedAt":"2026-08-28T11:35:34.217Z","env":"local"}
