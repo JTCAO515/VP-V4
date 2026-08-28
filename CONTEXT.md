@@ -34,6 +34,8 @@ AI-23/#25 ports only the private C0 import/review/audit relationship. Closed, me
 
 AI-24/#26 adds the next C0 import seam: a closed licensed-manifest dry-run produces private external ID/name/alias/city/geo Candidates only. It caps each city at 20, treats the same source/hash as a no-op and a changed hash as conflict, and rejects model/Canonical-ID/arbitrary input before state changes. It has no source parser, licence authority, durable identity resolution, Canonical POI, database/RLS, diff/rebase/commit/audit, public capability, credential, provider, or release evidence.
 
+AI-25/#27 adds a C0-only review transaction seam: private author-bound Drafts require a distinct reviewer, and review publishes private metadata only after the closed audit step succeeds. Any audit failure rolls back both Fact and audit state. No Ops deployment, secret, account, UI, route, database/RLS, durable audit, source payload, Canonical ID, public Fact, provider, or release evidence exists.
+
 V4-11/#96 adds owner-scoped `TripPlaceReference` reads: `canonical` is an exact opaque POI UUID; `user` remains only a user-confirmed label. A `recheck_required` reference stays visible. No label is parsed into a POI, and no map provider/geography/route/live-fact data exists. Only a canonical UUID reaches Ask in validated `poiId` scope, where it remains an opaque identifier and does not submit a prompt.
 
 V4-12/#97 replaces fictional Bookings with owner-scoped `TripActionReference` projections. Each is sourced from the durable Trip, has one explicit current/recheck/unavailable state and may have a recorded HTTPS external link (not an official-channel claim). It creates no order, payment, inventory or provider success; missing links remain unavailable.

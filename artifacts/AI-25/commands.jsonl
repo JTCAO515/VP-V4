@@ -1,0 +1,8 @@
+{"command":"node --experimental-strip-types --test tests/security/knowledge/ops-review-security.test.ts","exitCode":0,"result":"4 passing","env":"local; no external runtime"}
+{"command":"pnpm check","exitCode":0,"result":"lint 118; typecheck; production build; static/design 22","env":"local; pnpm=9.15.9; no external runtime"}
+{"command":"pnpm test:contract","exitCode":0,"result":"114 passing","env":"local; pnpm=9.15.9; no external runtime"}
+{"command":"pnpm test:security","exitCode":0,"result":"44 passing; 1 skipped because local Supabase is not running","env":"local; pnpm=9.15.9; no external runtime"}
+{"command":"pnpm test:e2e","exitCode":0,"result":"25 passing","env":"local; pnpm=9.15.9; no external runtime"}
+{"command":"pnpm evals","exitCode":0,"result":"16 passing","env":"local; pnpm=9.15.9; no external runtime"}
+{"command":"pnpm docs:check","exitCode":0,"result":"AI Core documentation baseline passed","env":"local; pnpm=9.15.9; no external runtime"}
+{"command":"git diff --check","exitCode":0,"result":"no whitespace errors","env":"local"}
