@@ -1,0 +1,7 @@
+{"command":"node --test --experimental-strip-types tests/security/media/private-media-security.test.ts tests/integration/media/private-media.test.ts","exitCode":1,"env":"Windows; Node v24.13.0; no external credentials","result":"expected red: private-media module did not exist"}
+{"command":"node --test --experimental-strip-types tests/security/media/private-media-security.test.ts tests/integration/media/private-media.test.ts","exitCode":0,"env":"Windows; Node v24.13.0; no external credentials","result":"3/3 focused media contract tests passed"}
+{"command":"pnpm install --ignore-workspace --frozen-lockfile","exitCode":0,"env":"Windows; Node v24.13.0; pinned pnpm 9.15.9; no external credentials","result":"frozen install completed; lockfile unchanged"}
+{"command":"pnpm test:security","exitCode":0,"env":"Windows; Node v24.13.0; pinned pnpm 9.15.9; no external credentials","result":"49 passed; 1 local-Supabase runtime test skipped"}
+{"command":"pnpm test:integration","exitCode":0,"env":"Windows; Node v24.13.0; pinned pnpm 9.15.9; no external credentials","result":"4 passed; 8 local-Supabase runtime tests skipped"}
+{"command":"pnpm check","exitCode":0,"env":"Windows; Node v24.13.0; pinned pnpm 9.15.9; no external credentials","result":"source-policy lint 129 files, strict TypeScript, production build, and 22 standard tests passed; workspace-root warning only"}
+{"command":"git diff --check","exitCode":0,"env":"Windows; no external credentials","result":"no whitespace errors"}
