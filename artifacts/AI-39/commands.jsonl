@@ -1,0 +1,6 @@
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-08-28T22:49:17.046Z","finishedAt":"2026-08-28T22:49:33.799Z","env":"local"}
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-08-28T22:49:33.842Z","finishedAt":"2026-08-28T22:49:34.404Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T22:49:34.445Z","finishedAt":"2026-08-28T22:49:34.788Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T22:49:34.829Z","finishedAt":"2026-08-28T22:49:34.893Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T22:50:22.055Z","finishedAt":"2026-08-28T22:50:22.387Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T22:50:22.429Z","finishedAt":"2026-08-28T22:50:22.483Z","env":"local"}
