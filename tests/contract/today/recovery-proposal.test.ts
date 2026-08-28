@@ -184,6 +184,16 @@ test("V4-20 fails closed instead of throwing for malformed recovery decisions", 
   }
 });
 
+test("V4-20 rejects timezone-less and calendar-invalid recovery evidence", () => {
+  for (const observedAt of ["2026-08-28T08:00:00", "2026-02-30T08:00:00.000Z"]) {
+    assert.deepEqual(proposeRecovery({
+      now,
+      trip: { id: "trip-a", version: 3 },
+      disruption: { kind: "delay", evidenceId: "observation-a", observedAt, expiresAt: "2026-08-28T09:00:00.000Z" },
+    }), { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" });
+  }
+});
+
 test("V4-21 turns queue evidence into a pending recovery Proposal without changing the Trip", () => {
   const trip = { id: "trip-a", version: 3 };
 
@@ -242,6 +252,21 @@ test("V4-21 fails closed when high-risk unwell evidence lacks a valid official c
       now,
       trip: { id: "trip-a", version: 3 },
       disruption: { kind: "unwell", severity: "high_risk", evidenceId: "unwell-a", observedAt: "2026-08-28T08:00:00.000Z", expiresAt: "2026-08-28T09:00:00.000Z", officialChannel },
+    }), { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" });
+  }
+});
+
+test("V4-21 rejects non-opaque and calendar-invalid official channel records", () => {
+  for (const officialChannel of [
+    { id: "https://example.gov/emergency", status: "recorded", authority: "official", expiresAt: "2026-08-28T09:00:00.000Z" },
+    { id: "call 120", status: "recorded", authority: "official", expiresAt: "2026-08-28T09:00:00.000Z" },
+    { id: "channel-a", status: "recorded", authority: "official", expiresAt: "2026-02-30T09:00:00.000Z" },
+    { id: "channel-a", status: "recorded", authority: "official", expiresAt: "2026-08-28T09:00:00" },
+  ]) {
+    assert.deepEqual(proposeSafetyRecovery({
+      now,
+      trip: { id: "trip-a", version: 3 },
+      disruption: { kind: "unwell", severity: "high_risk", evidenceId: "unwell-a", observedAt: "2026-08-28T08:00:00.000Z", expiresAt: "2026-08-28T09:00:00.000Z", officialChannel: officialChannel as never },
     }), { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" });
   }
 });

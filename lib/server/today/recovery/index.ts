@@ -25,8 +25,8 @@ export function proposeRecovery(input: Readonly<{
   const tripId = input?.trip?.id;
   const tripVersion = input?.trip?.version;
   const evidenceId = disruption?.evidenceId;
-  const observedAt = typeof disruption?.observedAt === "string" ? Date.parse(disruption.observedAt) : Number.NaN;
-  const expiresAt = typeof disruption?.expiresAt === "string" ? Date.parse(disruption.expiresAt) : Number.NaN;
+  const observedAt = parseRfc3339Timestamp(disruption?.observedAt);
+  const expiresAt = parseRfc3339Timestamp(disruption?.expiresAt);
   if (!disruption || (disruption.kind !== "delay" && disruption.kind !== "closure" && disruption.kind !== "queue") || typeof tripId !== "string" || !tripId.trim() || !Number.isSafeInteger(tripVersion) || tripVersion < 0 || typeof evidenceId !== "string" || !evidenceId.trim() || !Number.isFinite(now) || !Number.isFinite(observedAt) || !Number.isFinite(expiresAt) || observedAt > now || expiresAt < observedAt) {
     return { status: "unavailable", reason: "NO_ELIGIBLE_EVIDENCE" };
   }
@@ -42,8 +42,8 @@ export function decideRecoveryProposal(input: Readonly<{
 }>): RecoveryDecision {
   const proposal = input?.proposal;
   const decisionNow = input?.now instanceof Date ? input.now.getTime() : Number.NaN;
-  const observedAt = typeof proposal?.observedAt === "string" ? Date.parse(proposal.observedAt) : Number.NaN;
-  const expiresAt = typeof proposal?.expiresAt === "string" ? Date.parse(proposal.expiresAt) : Number.NaN;
+  const observedAt = parseRfc3339Timestamp(proposal?.observedAt);
+  const expiresAt = parseRfc3339Timestamp(proposal?.expiresAt);
   const tripId = input?.trip?.id;
   const tripVersion = input?.trip?.version;
   if (!proposal || proposal.status !== "pending_confirmation" || typeof proposal.tripId !== "string" || !proposal.tripId.trim() || !Number.isSafeInteger(proposal.baseVersion) || proposal.baseVersion < 0 || (proposal.disruption !== "delay" && proposal.disruption !== "closure" && proposal.disruption !== "queue" && proposal.disruption !== "unwell") || typeof proposal.evidenceId !== "string" || !proposal.evidenceId.trim() || typeof proposal.observedAt !== "string" || typeof proposal.expiresAt !== "string" || !Number.isFinite(decisionNow) || !Number.isFinite(observedAt) || !Number.isFinite(expiresAt) || observedAt > decisionNow || expiresAt < observedAt || (input?.decision !== "accept" && input?.decision !== "reject")) {
@@ -105,7 +105,31 @@ export function proposeSafetyRecovery(input: Readonly<{
 function currentOfficialChannel(value: unknown, now: unknown): string | null {
   if (!value || typeof value !== "object" || !(now instanceof Date)) return null;
   const record = value as Readonly<{ id?: unknown; status?: unknown; authority?: unknown; expiresAt?: unknown }>;
-  const expiresAt = typeof record.expiresAt === "string" ? Date.parse(record.expiresAt) : Number.NaN;
-  if (typeof record.id !== "string" || !record.id.trim() || record.status !== "recorded" || record.authority !== "official" || !Number.isFinite(expiresAt) || expiresAt <= now.getTime()) return null;
+  const expiresAt = parseRfc3339Timestamp(record.expiresAt);
+  if (typeof record.id !== "string" || !isOpaqueReferenceId(record.id) || record.status !== "recorded" || record.authority !== "official" || !Number.isFinite(now.getTime()) || !Number.isFinite(expiresAt) || expiresAt <= now.getTime()) return null;
   return record.id;
+}
+
+function isOpaqueReferenceId(value: string): boolean {
+  return /^[A-Za-z][A-Za-z0-9_-]{0,127}$/.test(value);
+}
+
+function parseRfc3339Timestamp(value: unknown): number {
+  if (typeof value !== "string") return Number.NaN;
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(Z|[+-]\d{2}:\d{2})$/.exec(value);
+  if (!match) return Number.NaN;
+  const [, yearText, monthText, dayText, hourText, minuteText, secondText, offset] = match;
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const day = Number(dayText);
+  const hour = Number(hourText);
+  const minute = Number(minuteText);
+  const second = Number(secondText);
+  if (month < 1 || month > 12 || day < 1 || day > daysInMonth(year, month) || hour > 23 || minute > 59 || second > 59 || (offset !== "Z" && (Number(offset.slice(1, 3)) > 23 || Number(offset.slice(4, 6)) > 59))) return Number.NaN;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? timestamp : Number.NaN;
+}
+
+function daysInMonth(year: number, month: number): number {
+  return month === 2 ? (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0) ? 29 : 28) : [4, 6, 9, 11].includes(month) ? 30 : 31;
 }
