@@ -11,3 +11,36 @@
 {"command":"node scripts/db-verify.mjs","exitCode":0,"startedAt":"2026-08-28T14:31:47.4269834Z","finishedAt":"2026-08-28T14:31:47.5220515Z","env":"Windows; Node v24.13.0; pinned pnpm 9.15.9; no external credentials"}
 {"command":"node -e \"JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8'))\"","exitCode":0,"startedAt":"2026-08-28T14:31:47.5224651Z","finishedAt":"2026-08-28T14:31:47.5682677Z","env":"Windows; Node v24.13.0; pinned pnpm 9.15.9; no external credentials"}
 {"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T14:31:47.5686823Z","finishedAt":"2026-08-28T14:31:47.6234595Z","env":"Windows; Node v24.13.0; pinned pnpm 9.15.9; no external credentials"}
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-08-28T22:01:54.529Z","finishedAt":"2026-08-28T22:02:11.269Z","env":"local"}
+{"command":"pnpm check:flags","exitCode":0,"startedAt":"2026-08-28T22:02:11.313Z","finishedAt":"2026-08-28T22:02:11.690Z","env":"local"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-08-28T22:02:11.732Z","finishedAt":"2026-08-28T22:02:12.682Z","env":"local"}
+{"command":"pnpm test:security","exitCode":0,"startedAt":"2026-08-28T22:02:12.731Z","finishedAt":"2026-08-28T22:02:16.756Z","env":"local"}
+{"command":"pnpm test:integration","exitCode":0,"startedAt":"2026-08-28T22:02:16.797Z","finishedAt":"2026-08-28T22:02:17.344Z","env":"local"}
+{"command":"pnpm test:e2e","exitCode":0,"startedAt":"2026-08-28T22:02:17.385Z","finishedAt":"2026-08-28T22:02:18.778Z","env":"local"}
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-08-28T22:02:18.819Z","finishedAt":"2026-08-28T22:02:19.372Z","env":"local"}
+{"command":"pnpm db:verify","exitCode":0,"startedAt":"2026-08-28T22:02:19.414Z","finishedAt":"2026-08-28T22:02:19.789Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T22:02:19.830Z","finishedAt":"2026-08-28T22:02:20.166Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T22:02:20.206Z","finishedAt":"2026-08-28T22:02:20.278Z","env":"local"}
+{"command":"node -e \"JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8'))\"","exitCode":0,"startedAt":"2026-08-28T22:02:31.794Z","finishedAt":"2026-08-28T22:02:31.836Z","env":"local; pinned pnpm 9.15.9 checks"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd --version","exitCode":0,"startedAt":"2026-08-28T22:04:13.964Z","finishedAt":"2026-08-28T22:04:14.230Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd check","exitCode":0,"startedAt":"2026-08-28T22:04:14.272Z","finishedAt":"2026-08-28T22:04:30.978Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd check:flags","exitCode":0,"startedAt":"2026-08-28T22:04:31.019Z","finishedAt":"2026-08-28T22:04:31.374Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd test:contract","exitCode":0,"startedAt":"2026-08-28T22:04:31.416Z","finishedAt":"2026-08-28T22:04:32.436Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd test:security","exitCode":0,"startedAt":"2026-08-28T22:04:32.477Z","finishedAt":"2026-08-28T22:04:36.539Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd test:integration","exitCode":0,"startedAt":"2026-08-28T22:04:36.581Z","finishedAt":"2026-08-28T22:04:37.121Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd test:e2e","exitCode":0,"startedAt":"2026-08-28T22:04:37.162Z","finishedAt":"2026-08-28T22:04:38.509Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd evals","exitCode":0,"startedAt":"2026-08-28T22:04:38.549Z","finishedAt":"2026-08-28T22:04:39.106Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd db:verify","exitCode":0,"startedAt":"2026-08-28T22:04:39.146Z","finishedAt":"2026-08-28T22:04:39.536Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd docs:check","exitCode":0,"startedAt":"2026-08-28T22:04:39.576Z","finishedAt":"2026-08-28T22:04:39.913Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T22:04:39.952Z","finishedAt":"2026-08-28T22:04:40.020Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd --version","exitCode":0,"startedAt":"2026-08-28T22:05:10.625Z","finishedAt":"2026-08-28T22:05:10.893Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd check","exitCode":0,"startedAt":"2026-08-28T22:05:10.936Z","finishedAt":"2026-08-28T22:05:27.495Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd check:flags","exitCode":0,"startedAt":"2026-08-28T22:05:27.537Z","finishedAt":"2026-08-28T22:05:27.912Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd test:contract","exitCode":0,"startedAt":"2026-08-28T22:05:27.957Z","finishedAt":"2026-08-28T22:05:28.905Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd test:security","exitCode":0,"startedAt":"2026-08-28T22:05:28.954Z","finishedAt":"2026-08-28T22:05:33.054Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd test:integration","exitCode":0,"startedAt":"2026-08-28T22:05:33.094Z","finishedAt":"2026-08-28T22:05:33.639Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd test:e2e","exitCode":0,"startedAt":"2026-08-28T22:05:33.679Z","finishedAt":"2026-08-28T22:05:35.053Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd evals","exitCode":0,"startedAt":"2026-08-28T22:05:35.094Z","finishedAt":"2026-08-28T22:05:35.643Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd db:verify","exitCode":0,"startedAt":"2026-08-28T22:05:35.683Z","finishedAt":"2026-08-28T22:05:36.065Z","env":"local"}
+{"command":"C:\\Users\\jtcao\\AppData\\Local\\Temp\\vpv4-pnpm9-bin\\pnpm.cmd docs:check","exitCode":0,"startedAt":"2026-08-28T22:05:36.105Z","finishedAt":"2026-08-28T22:05:36.441Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T22:05:36.482Z","finishedAt":"2026-08-28T22:05:36.552Z","env":"local"}
