@@ -25,3 +25,10 @@ test("V4-19 rejects malformed timestamps and unregistered observation kinds", ()
   }
   assert.equal(projectTodayObservation({ now: new Date("invalid"), observation }).state, "unavailable");
 });
+
+test("V4-19 rejects timezone-less or calendar-invalid timestamps and malformed input", () => {
+  for (const invalid of [{ ...observation, observedAt: "2026-08-28T07:45:00" }, { ...observation, expiresAt: "2026-02-30T08:15:00.000Z" }, null as never]) {
+    assert.deepEqual(projectTodayObservation({ now, observation: invalid }), { kind: "unavailable", state: "unavailable", canvasRecheck: true });
+  }
+  assert.deepEqual(projectTodayObservation(null as never), { kind: "unavailable", state: "unavailable", canvasRecheck: true });
+});
