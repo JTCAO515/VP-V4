@@ -73,3 +73,11 @@ test("rejects a replayed idempotency call before it can execute twice", async ()
   await assert.rejects(() => executeToolIntent(request), ToolGatewayError);
   assert.equal(calls, 1);
 });
+
+test("releases an uncompleted idempotency claim after an executor failure", async () => {
+  const registry = new ToolRegistry([definition]);
+  const request = { registry, intent: { source: "model" as const, callId: "call-retry", toolId: definition.id, input: { cityId: "shanghai" } }, actor: { id: "actor-a", taskProfile: "information_lookup" as const, dataClasses: ["public_evidence"] as const, approvedDigests: [] as const }, now: () => "2026-08-28T00:00:00.000Z" };
+  await assert.rejects(() => executeToolIntent({ ...request, execute: async () => { throw new Error("provider unavailable"); } }));
+  const receipt = await executeToolIntent({ ...request, execute: async () => ({ summary: "recovered" }) });
+  assert.equal(receipt.output.summary, "recovered");
+});

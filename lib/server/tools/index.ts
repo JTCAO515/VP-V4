@@ -52,6 +52,7 @@ export class ToolRegistry {
     if (previous) throw new ToolGatewayError(previous === inputDigest ? "Idempotent tool call was already executed." : "Tool call id reuse with a different input is forbidden.");
     this.#callDigests.set(callId, inputDigest);
   }
+  releaseCall(callId: string, inputDigest: string): void { if (this.#callDigests.get(callId) === inputDigest) this.#callDigests.delete(callId); }
 }
 
 export async function executeToolIntent<O>(input: Readonly<{
@@ -69,7 +70,8 @@ export async function executeToolIntent<O>(input: Readonly<{
   if (definition.requiresApproval && !input.actor.approvedDigests.includes(inputDigest)) throw new ToolGatewayError("Exact approval digest is required.");
   if (definition.idempotency === "required") input.registry.claimCall(input.intent.callId, inputDigest);
   const startedAt = input.now();
-  const output = await input.execute(input.intent.input);
+  let output: O;
+  try { output = await input.execute(input.intent.input); } catch (error) { if (definition.idempotency === "required") input.registry.releaseCall(input.intent.callId, inputDigest); throw error; }
   if (!definition.validateOutput(output)) throw new ToolGatewayError("Tool output is invalid.");
   const finishedAt = input.now();
   return Object.freeze({ toolId: definition.id, toolVersion: definition.version, callId: input.intent.callId, inputDigest, output, startedAt, finishedAt, policyReceipt: digest({ toolId: definition.id, callId: input.intent.callId, inputDigest, policy: "allowed" }) });
