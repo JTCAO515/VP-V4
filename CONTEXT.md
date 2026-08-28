@@ -84,3 +84,10 @@ The tracker plan is published as V4-01 through V4-31 while preserving R0-R5. It 
 ## VisePanda visual identity assets
 
 An owner-approved, non-runtime visual identity package is available under `brand/`; source Logo artwork is retained under `assets/brand/vise-panda/`. The package adds a handoff-ready handbook, design tokens, mascot poses, icons, UI references, social exports, and a machine-readable manifest. It does not change the product's implemented, placeholder, or not-connected boundaries. For visual or product-facing work, read the handbook and QA evidence after the core project governance documents; preserve the source artwork and use a revert commit if this delivery must be removed.
+
+## Direct Issue queue and anonymous preview
+
+Magic Link and its callback route are removed. Public preview traffic is anonymous; Trip APIs still
+require a valid Supabase session claim and fail closed without one. Every defined Issue is directly
+schedulable. Dependency references are integration context, not execution gates; runtime security,
+data policy, and authorization checks remain unchanged.

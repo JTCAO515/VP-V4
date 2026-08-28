@@ -2,7 +2,7 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Extend AI Core Program #2 with an evidence-backed bounded-agent architecture and dependency-ordered production-parity Issue plan, without copying Demo fixtures or bypassing accepted Chat, Canvas, evidence, identity, RLS, provider or release contracts.",
-  "status": "R1 bounded paths are merged; AI-45 is closed; AI-51 Site URL/callback configuration is visually verified but real session evidence remains open; V4-01 parity and framework gates are delivered by this change and later V4 work remains dependency-gated",
+  "status": "R1 bounded paths are merged; Magic Link/callback entrypoints are removed; the anonymous preview keeps Trip APIs session-claim protected; the direct Issue queue permits every defined Issue to start without dependency closure",
   "currentPhase": "R1",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own independently accepted frontier Issues and their evidence.",

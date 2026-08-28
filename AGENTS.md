@@ -31,3 +31,6 @@ Every AI Core Issue's mandatory reading order, allowed and forbidden paths, runn
 evidence artifacts, and red-line suite IDs live in `docs/agents/issue-execution-contract.md`.
 Issue bodies link to it; that file is the authority. Do not start an Issue whose row is missing.
 
+Defined Issues are directly schedulable; open Issue dependencies do not prohibit implementation.
+Preserve one-branch-per-Issue isolation and every runtime fail-closed guard.
+
