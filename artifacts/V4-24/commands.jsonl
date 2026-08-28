@@ -1,0 +1,5 @@
+{"command":"pnpm check","exitCode":0,"recordedAt":"2026-08-29T02:03:40+08:00","env":"local quality gate at main@f0fafe7; lint, typecheck, production build, and 22 static tests passed"}
+{"command":"pnpm test:contract","exitCode":0,"recordedAt":"2026-08-29T02:03:40+08:00","env":"local contract gate at main@f0fafe7; 120 passed"}
+{"command":"pnpm test:security","exitCode":0,"recordedAt":"2026-08-29T02:03:40+08:00","env":"local security gate at main@f0fafe7; 51 passed, 1 local-Supabase integration test skipped because the service was not running"}
+{"command":"pnpm test:e2e","exitCode":0,"recordedAt":"2026-08-29T02:03:40+08:00","env":"local static journey gate at main@f0fafe7; 28 passed, including V4-24 unavailable boundary"}
+{"command":"git diff --cached --check","exitCode":0,"recordedAt":"2026-08-29T02:04:45+08:00","env":"current evidence branch whitespace gate; staged V4-24 closure evidence"}
