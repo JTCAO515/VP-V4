@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "web-04-quarantine/1.0",
+  "sourceCommit": "fb7997ecd748eabf39145ada5cb8e1f25c1bf9d2",
+  "retiredTrees": [{"path": "public/assets/source", "fileCount": 48, "treeSha256": "db1173261cfc145c7ce273098ca893e589140ab5f872f4df3f4665c163281495"}],
+  "retiredFiles": [
+    {"path": "public/assets/review-video-lavender-background.png", "sha256": "5b500fe9011823e620dc61224f8cbdfbd87355222d7b6736e1e58cf9dd369582"},
+    {"path": "public/assets/visepanda/shape-clover.svg", "sha256": "d97f4032f7df94a6873a6df18c51a26b984118c19457dcd362916f4d0b7a1e7f"},
+    {"path": "public/assets/visepanda/shape-organic.svg", "sha256": "ec64983b39fd55880e9b378de64ac097b7f8dd5cd203baf8e87174338c22014d"},
+    {"path": "public/assets/visepanda/shape-shield.svg", "sha256": "8a5b056bf0ec7aff8fdab53323a7d0ea08c6435402484253a02483010c6b62b9"},
+    {"path": "public/assets/visepanda/shape-soft.svg", "sha256": "5537240b813dcec0bb360a571d8dd500f63193b42c5eb4c0fe06c6048c4d91ab"}
+  ],
+  "blockedReleaseFiles": [
+    {"path":"public/assets/visepanda/hero-beijing.jpg","sha256":"5c9cd8c26ea7095d1277731e9105e9898a2567e01d7a449db16096c2ec26e6e6"},
+    {"path":"public/assets/visepanda/planner-chengdu.jpg","sha256":"301a3acde14c16e0f9adea8c941e6d1e7022da16f2397c04b8e5073512ae0a12"},
+    {"path":"public/assets/visepanda/recovery-station.jpg","sha256":"7454e38be0514f7be12c08275fd1fb193b895ffd0af50ad270f7c8f3493e289d"},
+    {"path":"public/assets/visepanda/scene-beijing.jpg","sha256":"6937c8d763ee09308811f7d0627333b0c9656c0bbf175b800bbf57a69018b886"},
+    {"path":"public/assets/visepanda/scene-guangzhou-local.jpg","sha256":"578df8efefadf1a594ee96ddf06ab58599a91402dc5545bfc5148b1979ac93e5"},
+    {"path":"public/assets/visepanda/scene-shanghai-rain.jpg","sha256":"40965a76b2256dea620f407f898c07c72eb5c41741654787b13512bf3d6846c1"},
+    {"path":"public/assets/visepanda/traveler-chengdu.jpg","sha256":"2be3e10999102bda2a7bc8e8c963f362d6f976de461fd712a2e3ad27d0156d37"},
+    {"path":"public/assets/visepanda/traveler-hutong.jpg","sha256":"e7628205cde1e1fe2f34a17c682f40a338dd141b4c464b064c21779c36c9fa9e"},
+    {"path":"public/assets/visepanda/traveler-shanghai.jpg","sha256":"830c5903c4be6164d4f5db663100573bc397903daaa6565527a190b10f2a69ff"}
+  ]
+}

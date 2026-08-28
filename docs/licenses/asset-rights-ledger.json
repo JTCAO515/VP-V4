@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "web-04-asset-rights/1.0",
+  "policy": "deny-by-default",
+  "policies": {
+    "owner-master": {"owner": "VisePanda operator", "sourceType": "owner-supplied master", "license": "operator-rights-attestation-pending", "derivativeProvenance": "immutable project-provided source", "permittedSurfaces": ["brand-reference"], "reviewStatus": "pending-operator-attestation", "approver": "operator"},
+    "internal-brand": {"owner": "VisePanda project", "sourceType": "project-created brand artifact", "license": "internal-use-pending-operator-attestation", "derivativeProvenance": "tracked VisePanda brand delivery", "permittedSurfaces": ["brand-reference", "design-review"], "reviewStatus": "internal-review", "approver": "WEB-04 automated integrity check"}
+  },
+  "records": [
+    {"id":"master-logo-svg","path":"assets/brand/vise-panda/VP-Logo.svg","sha256":"ab35b4568cb37ec1a37a6f54f75779beee11da37c19d2036a5f15be04fa3a956","policy":"owner-master"},
+    {"id":"master-logo-png","path":"assets/brand/vise-panda/VP-Logo.png","sha256":"83f1a4c6026e9a026b22f44f1ddf1d7f44fe806a322235dfce53ba831b1d1270","policy":"owner-master"},
+    {"id":"master-guide-front","path":"assets/brand/vise-panda/VP-正面全身.png","sha256":"3cdd805e1ee40792e708563c1b734ef0704ce1a4d001c4ac1297e25321929071","policy":"owner-master"},
+    {"id":"master-guide-views","path":"assets/brand/vise-panda/VP-三视图.png","sha256":"e9a186e800ac73abd57149fcae598e584ac3a4048f26a3ca1e89849445daf74b","policy":"owner-master"},
+    {"id":"tokens","path":"brand/tokens/visepanda.tokens.json","sha256":"02cd94eff0b07bb412574081110cbb3059940426eeaf9b2a4412719b34b2aa29","policy":"internal-brand"},
+    {"id":"utilities","path":"brand/icons/visepanda-utilities.svg","sha256":"77af334b4e172c4869f09922450763ddd24e11b2cfbb943162c1b48735b0f24f","policy":"internal-brand"},
+    {"id":"map-pins","path":"brand/icons/visepanda-map-pins.svg","sha256":"01113e59c754130a44a57bca3c177700687aa7fc1de2cf8110858d8a1d8a624f","policy":"internal-brand"},
+    {"id":"travel-pattern","path":"brand/icons/visepanda-pattern.svg","sha256":"eb5ef4fdd4ad61e4d4e5820f945c3739adda4b3bbbd354bae4f2896efcc23f70","policy":"internal-brand"},
+    {"id":"ui-kit","path":"brand/ui/visepanda-ui-kit.svg","sha256":"36009d7171310050ac5b3f32c48d7fad3e67b410666f8ae9ceb0fd759efe512c","policy":"internal-brand"},
+    {"id":"guide-welcome","path":"brand/ip/welcome.png","sha256":"49753517adbc68dcf9fa515c03874c1fa93955c82b33354e8aa3ed4eac20a3fb","policy":"internal-brand"},
+    {"id":"guide-guide","path":"brand/ip/guide.png","sha256":"2de9ed6c209082c84da43d1ad8d6520dd88afe6c0f20e330623ddd89a9d23fc1","policy":"internal-brand"},
+    {"id":"guide-recommend","path":"brand/ip/recommend.png","sha256":"11723f9f36ea3e93426d57f22a5eb5bdef5da80e6dd73019bb8cf17c56bda22f","policy":"internal-brand"},
+    {"id":"guide-transit","path":"brand/ip/transit.png","sha256":"a468b476fc33740145f54c9819d786a82f3e82e0cd79a700d749b94e4dac9488","policy":"internal-brand"},
+    {"id":"guide-translate","path":"brand/ip/translate.png","sha256":"9bc75a68ebb78c08296ec6e4c07c4e59d6282535beaf8cfaca86477a05c7aff9","policy":"internal-brand"},
+    {"id":"guide-celebrate","path":"brand/ip/celebrate.png","sha256":"890057e6cc9e9b4aba8c56fdcdc949ace2e00ee4bc1f6dfd2ff683d80320f841","policy":"internal-brand"},
+    {"id":"guide-gentle-alert","path":"brand/ip/gentle-alert.png","sha256":"d06f98d93a9a0f0c289f8fe8c9ac93faa38428c4cb644d94abe51928d826b5b9","policy":"internal-brand"},
+    {"id":"guide-rest","path":"brand/ip/rest.png","sha256":"8abb24cd7877126bec60532b20866061154867ef747fddb706f75657fc357db2","policy":"internal-brand"},
+    {"id":"social-avatar","path":"brand/social/avatar-1080.png","sha256":"50d03bc4dfe779f4de7331c8dd91d6c12cc1113449d1bc3a3fb1dd9a77a7f179","policy":"internal-brand"},
+    {"id":"social-beijing","path":"brand/social/beijing-48-hours-1080.png","sha256":"0e814d3ffde56582421f78606345858e70ed2b1d160a9b527568104faa10806c","policy":"internal-brand"},
+    {"id":"social-train","path":"brand/social/china-train-cheat-sheet-1080x1350.png","sha256":"73d7aca441bb8d3c5e714f3f19ce653ab1455aef37d453c3166deed1c2612a45","policy":"internal-brand"},
+    {"id":"social-chengdu","path":"brand/social/chengdu-food-list-1080x1920.png","sha256":"979bf7ac1447fe73c780e3d550451cfc9d9e6d129312f45b30a90359bef778aa","policy":"internal-brand"},
+    {"id":"social-end-card","path":"brand/social/reel-end-card-1080x1920.png","sha256":"ff744cdb5c046dc06aa83398f22fcaf6989ca7c8c9bc3b5997e5a8de18070adf","policy":"internal-brand"},
+    {"id":"handbook","path":"brand/guidelines/visepanda-vi-guide.html","sha256":"3165093a0a1067c310fe98269915caad121bc11407d13f6e9a2480d6cf11814d","policy":"internal-brand"}
+  ]
+}

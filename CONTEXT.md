@@ -109,3 +109,10 @@ Magic Link and its callback route are removed. Public preview traffic is anonymo
 require a valid Supabase session claim and fail closed without one. Every defined Issue is directly
 schedulable. Dependency references are integration context, not execution gates; runtime security,
 data policy, and authorization checks remain unchanged.
+
+## WEB-04 asset rights quarantine
+
+WEB-04 removes legacy source assets, copied shapes and Fig Grotesk from runtime delivery. The
+machine-checked ledger, SBOM, NOTICE and quarantine record live in `docs/licenses/`; existing preview
+photographs are explicitly blocked from release until an operator rights record exists. This is a
+release guard, not a claim that rights have been accepted.

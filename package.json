@@ -20,7 +20,9 @@
     "evals": "node scripts/run-ci-suite.mjs evals",
     "db:verify": "node scripts/db-verify.mjs",
     "docs:check": "node scripts/docs-check.mjs",
-    "check:flags": "node --experimental-strip-types scripts/check-flags.mjs"
+    "check:flags": "node --experimental-strip-types scripts/check-flags.mjs",
+    "check:assets": "node scripts/check-assets.mjs",
+    "check:assets:release": "node scripts/check-assets.mjs --release"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.5",

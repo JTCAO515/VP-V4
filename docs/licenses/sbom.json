@@ -1,0 +1,12 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "metadata": {"component": {"type": "application", "name": "vp-v4"}},
+  "components": [
+    {"type": "library", "name": "@supabase/ssr", "version": "0.12.5", "licenses": [{"license": {"id": "MIT"}}]},
+    {"type": "library", "name": "@supabase/supabase-js", "version": "2.112.4", "licenses": [{"license": {"id": "MIT"}}]},
+    {"type": "library", "name": "next", "version": "16.2.6", "licenses": [{"license": {"id": "MIT"}}]},
+    {"type": "library", "name": "react", "version": "19.2.6", "licenses": [{"license": {"id": "MIT"}}]},
+    {"type": "library", "name": "react-dom", "version": "19.2.6", "licenses": [{"license": {"id": "MIT"}}]}
+  ]
+}
