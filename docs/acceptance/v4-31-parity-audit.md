@@ -1,7 +1,12 @@
 # V4-31 product parity audit
 
-Audit target: `main@3a5171d`. This is an evidence audit, not a release approval.
+Audit target: `main@b2f8db3`. This is an evidence audit, not a release approval.
 The Early Access Demo remains an interaction reference; its prepared data is not production evidence.
+
+Current local replay: `pnpm check` passed; contract 139/139, integration 5 passed with 8
+local-Supabase skips, security 67 passed with 1 local-RLS skip, E2E 29/29 and evals 20/20 passed.
+The exact command timestamps and exit codes are recorded in
+[`artifacts/V4-31/commands.jsonl`](../../artifacts/V4-31/commands.jsonl).
 
 ## Demo action matrix
 
@@ -59,8 +64,9 @@ functional parity.
 
 ## Interface
 
-`pnpm check` builds all product routes. Static E2E contracts verify the new unavailable routes and
-central locale/RTL switching. No browser proof covers each action's live interactive path.
+`pnpm check` builds all product routes. The current static E2E suite passes 29/29 and verifies the
+new unavailable routes and central locale/RTL switching. No browser proof covers each action's live
+interactive path.
 
 ## Data
 
@@ -70,7 +76,7 @@ runtime/durable contracts needed for full parity.
 
 ## Security
 
-`pnpm test:security` passes its static tests. The local Supabase RLS fixture is skipped because
+`pnpm test:security` passes 67 static tests. The one local Supabase RLS fixture is skipped because
 local Supabase is not running; this is not runtime acceptance evidence.
 
 ## Performance

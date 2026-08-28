@@ -307,7 +307,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Review and merge the blocked AI-21 R2 evidence refresh, close #23, then continue the direct Issue queue without promoting provider or R2 release claims.",
+  "nextAction": "Independently review and merge the refreshed V4-31 parity audit, close #116, then recompute the direct Issue queue without promoting runtime or release claims.",
   "lastUpdated": "2026-08-29",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
