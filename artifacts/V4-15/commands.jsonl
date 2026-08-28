@@ -1,6 +1,6 @@
-{"command":"pnpm check","exitCode":0,"env":"local","result":"lint, typecheck, production build, and static tests passed"}
-{"command":"pnpm test:contract","exitCode":0,"env":"local","result":"Memory consumer projection contracts passed"}
-{"command":"pnpm evals","exitCode":0,"env":"local","result":"pause/reject propagation eval passed"}
-{"command":"pnpm test:e2e","exitCode":0,"env":"local","result":"static Chat/Canvas receipt projection contract passed"}
-{"command":"pnpm docs:check","exitCode":0,"env":"local","result":"documentation baseline passed"}
-{"command":"git diff --check","exitCode":0,"env":"local","result":"no whitespace errors"}
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T18:41:17.2317480Z","finishedAt":"2026-08-28T18:41:33.6176616Z","result":"lint, typecheck, production build, and static tests passed"}
+{"command":"pnpm test:contract","exitCode":0,"env":"local","startedAt":"2026-08-28T18:41:33.6241691Z","finishedAt":"2026-08-28T18:41:34.5277336Z","result":"Memory consumer projection contracts passed (126 tests)"}
+{"command":"pnpm evals","exitCode":0,"env":"local","startedAt":"2026-08-28T18:41:34.5283588Z","finishedAt":"2026-08-28T18:41:35.0921010Z","result":"pause/reject propagation eval passed (17 tests)"}
+{"command":"pnpm test:e2e","exitCode":0,"env":"local","startedAt":"2026-08-28T18:41:35.0925202Z","finishedAt":"2026-08-28T18:41:36.4214968Z","result":"static Chat/Canvas receipt projection contract passed (28 tests)"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T18:41:36.4219127Z","finishedAt":"2026-08-28T18:41:36.7666824Z","result":"documentation baseline passed"}
+{"command":"git diff --cached --check","exitCode":0,"env":"local","startedAt":"2026-08-28T18:42:05.1946650Z","finishedAt":"2026-08-28T18:42:05.2330747Z","result":"no whitespace errors in the staged V4-15 evidence correction"}
