@@ -7,15 +7,15 @@
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "AI-26/#28 is a process-local C0 queue contract, not a deployed worker. Preserve its R3-only, payload-version, lease, at-least-once, quarantine and replay boundaries. A separately specified immersive Homepage redesign is awaiting its chosen implementation mode; preserve map-off and Open VisePanda as the primary CTA.",
+  "intendedNextAgent": "The operator-inserted Homepage redesign has a Clear independent review and is ready for fast-forward merge. Preserve the existing AI-26 C0 queue boundary, map-off, original CSS-only landmark composition, five locales/RTL, Open VisePanda as primary CTA, and the separate /homepage legacy route.",
   "latestIssueExecution": {
-    "issue": "AI-26/#28",
-    "changedFiles": ["lib/server/jobs/projection-queue.ts", "tests/security/jobs/projection-queue-security.test.ts", "tests/integration/jobs/projection-queue.test.ts", "docs/contracts/projection-queue-c0.md", "docs/agents/issue-execution-contract.md", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md", "artifacts/AI-26/commands.jsonl", "artifacts/AI-26/unrun.md", "docs/superpowers/plans/2026-08-28-ai-26-projection-worker.md"],
-    "verification": ["Pinned pnpm 9 frozen installation and strict TypeScript typecheck passed", "AI-26 focused RL-02 fixtures: 5 passing (R1 rejection, payload version, duplicate conflict/no-op, expired lease redelivery, poison quarantine/replay, lease-owner acknowledgement)"],
-    "unrun": ["No Supabase Queue/pgmq, worker host, Function poll/push transport, external queue, durable lease/audit, RLS/runtime, credential, staging, Production, feature flag, crash-process, browser or observation-window proof", "No separate Ops replay deployment or account was accessed; replay uses an opaque fixture identity only"],
-    "residualRisk": "The process-local C0 seam cannot prove queue availability, worker concurrency, process crash recovery, durable idempotency, authorization, audit, RLS, payload migration, Fact eligibility/projection, external transport, feature flag or release safety.",
-    "rollback": "Revert the AI-26 queue, fixtures, contract, handoff, plan and artifact records. No schema, durable data, account, secret, flag or external state was created.",
-    "nextAction": "Run AI-26's required full gates and independent automated review, then merge it. Keep the separately specified frontend work isolated until its chosen execution mode is available."
+    "issue": "HOMEPAGE-REDESIGN (operator inserted)",
+    "changedFiles": ["app/page.tsx", "app/homepage/page.tsx", "components/homepage/ImmersiveHomepage.tsx", "components/homepage/ImmersiveHomepage.module.css", "components/homepage/Homepage.tsx", "lib/i18n.ts", "tests/e2e/homepage/immersive-homepage.test.mjs", "tests/static-output.test.mjs", "docs/superpowers/specs/2026-08-28-visepanda-homepage-redesign-design.md", "docs/superpowers/plans/2026-08-28-visepanda-homepage-redesign.md", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md", "artifacts/FRONTEND-HOMEPAGE/commands.jsonl", "artifacts/FRONTEND-HOMEPAGE/unrun.md", "artifacts/FRONTEND-HOMEPAGE/desktop.png", "artifacts/FRONTEND-HOMEPAGE/mobile.png", "artifacts/FRONTEND-HOMEPAGE/rtl.png"],
+    "verification": ["Test-first route contract failed before routes/components existed and passed after implementation; subsequent red tests removed blocked hero-beijing runtime use, localized the new root home label/kicker, and replaced the relocated page's fixed English wordmark label with content.header.home", "Repository gates after the final review repair: check (source policy lint 122, strict TypeScript, production build with / and /homepage, static/design 22), E2E 26, preview asset check, docs/JSON/diff all passing", "Actual local Playwright Chromium inspection at desktop 1440x900, mobile 390x844 and Arabic RTL 390x844: no horizontal overflow; mobile centre navigation collapsed; exact Open VisePanda and /homepage navigation verified", "Preview-only concept-to-implementation comparison completed; the runtime composition is original CSS rather than a generated or blocked raster asset", "Preview asset check passed; release asset check remains correctly blocked by pre-existing blocked-release files in public output"],
+    "unrun": ["No Preview, Vercel deployment, external account, public cutover, DNS, asset-rights attestation, store submission, production observation window, physical-device accessibility review or map-on action", "Browser/IAB was unavailable; actual local Playwright Chromium screenshots replace it for this repository-only UI evidence"],
+    "residualRisk": "The isolated UI cannot prove external asset-rights approvals, public deployment, five-locale human copy review, assistive-technology/device behavior, production navigation/auth state or release acceptance.",
+    "rollback": "Revert the isolated Homepage route/component/copy/test/doc/artifact records. No generated asset, durable data, provider, account, secret, deployment or external state was created.",
+    "nextAction": "Fast-forward merge the Homepage redesign to main. Continue the direct Issue queue after the merge without weakening the R3 queue or frontend release boundaries."
   },
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
@@ -308,7 +308,7 @@
     "docs/agents/issue-execution-contract.md"
   ],
   "nextAction": "Re-audit the direct Issue queue after AI-13. Preserve map-off and the existing protected Proposal/Trip boundary; skip WEB-05's operator-only visual selection, WEB-11's external release evidence, and remote GitHub status/label synchronization until their prerequisites exist.",
-  "lastUpdated": "2026-08-28",
+  "lastUpdated": "2026-08-29",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
     "vpFinalReference": "JTCAO515/VP-Final@b5ef081",

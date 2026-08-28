@@ -4,7 +4,7 @@
 
 **Goal:** Replace `/` with an immersive VisePanda entry, relocate the existing landing page to `/homepage`, and retain safe real internal navigation.
 
-**Architecture:** `app/page.tsx` stays server-rendered and renders a dedicated static component. `app/homepage/page.tsx` renders the existing client `Homepage` unchanged. The new component consumes only approved local imagery, existing copy and CSS Modules; it adds no client upload, provider, map or persistence behavior.
+**Architecture:** `app/page.tsx` stays server-rendered and renders a dedicated static component. `app/homepage/page.tsx` renders the existing client `Homepage` unchanged. The new component uses an original CSS Great-Wall-and-mountain composition because all repository travel photographs are blocked-release, plus existing copy and CSS Modules; it adds no client upload, provider, map or persistence behavior.
 
 **Tech Stack:** Next.js App Router, React 19, TypeScript, CSS Modules, local VisePanda assets, Node test runner.
 
@@ -28,7 +28,7 @@
 - Consumes: `app/page.tsx`, `components/homepage/Homepage.tsx`.
 - Produces: route assertions for `ImmersiveHomepage`, `/homepage`, `/visepanda`, local asset use and map-off source.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```js
 const root = readFileSync("app/page.tsx", "utf8");
@@ -38,18 +38,19 @@ assert.match(root, /ImmersiveHomepage/);
 assert.match(relocated, /<Homepage\s*\/>/);
 assert.match(hero, /href="\/visepanda"/);
 assert.match(hero, /href="\/homepage"/);
-assert.match(hero, /hero-beijing\.jpg/);
+assert.match(hero, /styles\.landscape/);
+assert.doesNotMatch(hero, /hero-beijing\.jpg/);
 assert.doesNotMatch(hero, /https?:\/\//);
 assert.doesNotMatch(hero, /Map/);
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node --test tests/e2e/homepage/immersive-homepage.test.mjs`
 
 Expected: fail because the route and component do not exist.
 
-- [ ] **Step 3: Commit the test-only red state**
+- [x] **Step 3: Complete the red-test task in the implementation commit**
 
 ```bash
 git add tests/e2e/homepage/immersive-homepage.test.mjs tests/static-output.test.mjs
@@ -64,13 +65,12 @@ git commit -m "test: define immersive homepage route contract"
 - Modify: `app/page.tsx`
 
 **Interfaces:**
-- Consumes: `next/image`, `hero-beijing.jpg`, `copy.zh`, and existing global token variables.
+- Consumes: `immersiveHomepageCopy` and existing global token variables.
 - Produces: `export function ImmersiveHomepage()` with anchors to `/visepanda` and `/homepage`.
 
-- [ ] **Step 1: Write the minimal server component after red tests**
+- [x] **Step 1: Write the minimal server component after red tests**
 
 ```tsx
-import Image from "next/image";
 import { copy } from "@/lib/i18n";
 import styles from "./ImmersiveHomepage.module.css";
 
@@ -80,9 +80,9 @@ export function ImmersiveHomepage() {
 }
 ```
 
-Use `<Image src="/assets/visepanda/hero-beijing.jpg" fill priority sizes="100vw" />` with useful alternate text. The planning panel can show a decorative attachment symbol only: it cannot contain an `input type="file"` or a file-picker handler.
+Use a semantic CSS landscape with Great-Wall/mountain/sunrise elements and a localized aria label. The planning panel can show a decorative attachment symbol only: it cannot contain an `input type="file"` or a file-picker handler.
 
-- [ ] **Step 2: Add exact route actions and root wiring**
+- [x] **Step 2: Add exact route actions and root wiring**
 
 ```tsx
 <a className={styles.primaryAction} href="/visepanda">Open VisePanda</a>
@@ -96,13 +96,13 @@ export default function HomePage() { return <ImmersiveHomepage />; }
 
 The first link is visually primary. Both links have at least 44 px interactive height and visible keyboard focus.
 
-- [ ] **Step 3: Run the focused test to verify it passes**
+- [x] **Step 3: Run the focused test to verify it passes**
 
 Run: `node --test tests/e2e/homepage/immersive-homepage.test.mjs`
 
 Expected: pass.
 
-- [ ] **Step 4: Commit component and root route**
+- [x] **Step 4: Commit component and root route with the relocation task**
 
 ```bash
 git add app/page.tsx components/homepage/ImmersiveHomepage.tsx components/homepage/ImmersiveHomepage.module.css
@@ -119,24 +119,24 @@ git commit -m "feat: add immersive VisePanda homepage"
 - Consumes: existing `Homepage` client component unchanged.
 - Produces: `/homepage` legacy route and desktop/mobile/RTL-safe CSS.
 
-- [ ] **Step 1: Add the relocation route**
+- [x] **Step 1: Add the relocation route**
 
 ```tsx
 import { Homepage } from "@/components/homepage/Homepage";
 export default function RelocatedHomepage() { return <Homepage />; }
 ```
 
-- [ ] **Step 2: Add the responsive visual contract**
+- [x] **Step 2: Add the responsive visual contract**
 
 Implement `.page` as `min-height: 100svh` image canvas, an absolute local image layer, a white-to-transparent top gradient and a bounded `backdrop-filter` prompt panel. Use VisePanda cream, ink, plum and gold tokens. At `max-width: 760px`, hide centre links, keep both route actions, make the panel viewport-safe and remove horizontal overflow. In RTL use logical inline properties and do not mirror the landmark image.
 
-- [ ] **Step 3: Run source contracts**
+- [x] **Step 3: Run source contracts**
 
 Run: `node --test tests/e2e/homepage/immersive-homepage.test.mjs tests/static-output.test.mjs`
 
 Expected: pass and preserve the root Magic Link retirement assertion.
 
-- [ ] **Step 4: Commit relocation and styling**
+- [x] **Step 4: Commit relocation and styling with the implementation**
 
 ```bash
 git add app/homepage/page.tsx components/homepage/ImmersiveHomepage.module.css
@@ -153,17 +153,17 @@ git commit -m "feat: move legacy landing page to homepage route"
 - Consumes: all route tests and repository scripts.
 - Produces: reproducible verification and explicit browser/deployment gaps.
 
-- [ ] **Step 1: Run deterministic checks**
+- [x] **Step 1: Run deterministic checks**
 
 Run: `pnpm check`, `pnpm test:e2e`, `pnpm docs:check`, `node -e "JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8'))"`, `git diff --check`.
 
 Expected: each exits 0; record each exact command/result in JSONL.
 
-- [ ] **Step 2: Inspect actual desktop, 390×844 and Arabic RTL output**
+- [x] **Step 2: Inspect actual desktop, 390×844 and Arabic RTL output**
 
-Verify the local hero asset loads, both anchors resolve internally, mobile does not horizontally overflow, centre navigation collapses, and logical RTL alignment remains readable. Do not claim screenshots, browser QA or deployment if not actually captured.
+Verify the original CSS landscape renders, both anchors resolve internally, mobile does not horizontally overflow, centre navigation collapses, and logical RTL alignment remains readable. Do not claim screenshots, browser QA or deployment if not actually captured.
 
-- [ ] **Step 3: Independently review and repair**
+- [x] **Step 3: Independently review and repair**
 
 Check exact routes, asset provenance, CTA priority, map-off, capability claims, keyboard focus and breakpoints. Fix every Critical/Important finding, rerun focused/full affected checks, and record the result.
 

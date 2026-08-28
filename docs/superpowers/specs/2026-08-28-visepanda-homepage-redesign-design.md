@@ -13,7 +13,7 @@ Replace the public root Homepage with an independently expressed VisePanda trave
 
 ## Visual system and content
 
-- Use the approved local `public/assets/visepanda/hero-beijing.jpg` through `next/image`; do not use the supplied Wandor external video, name, colours, fonts, copy, or Vite-specific structure.
+- Use an original CSS Great-Wall-and-mountain illustration; the repository's travel photographs are `blocked-release`, so neither they nor the supplied Wandor external video, name, colours, fonts, copy, or Vite-specific structure may enter runtime.
 - Retain the reference's spatial idea only: full-bleed landmark image, white-to-transparent top gradient, centered navigation, large calm heading, and rounded frosted prompt panel.
 - Use existing VisePanda tokens/local fonts and the five-locale copy system. Chinese copy presents a Golden Route/Guide planning example without claiming live AI, booking, inventory, current facts, or persistence.
 - The prompt panel is presentational. Its upload affordance is disabled/truthfully labelled unless an existing approved import surface owns the interaction; it must not create a new raw-file or persistence path.

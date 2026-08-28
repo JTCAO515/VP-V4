@@ -47,7 +47,7 @@ export function Homepage() {
     <main className={styles.page}>
       <section className={styles.hero} aria-labelledby="home-title">
         <header className={styles.header}>
-          <a className={styles.wordmark} href="#top" aria-label="VisePanda home">
+          <a className={styles.wordmark} href="#top" aria-label={content.header.home}>
             VisePanda.
           </a>
           <nav className={styles.navigation} aria-label={content.header.productMenu}>

@@ -40,6 +40,17 @@ export const localeOptions: ReadonlyArray<{ value: Locale; label: string; flag: 
   { value: "ar", label: "العربية", flag: "🇸🇦", currencySymbol: "ر.س" },
 ];
 
+export const immersiveHomepageCopy: Readonly<Record<Locale, Readonly<{
+  title: string; subtitle: string; prompt: string; promptHint: string; open: string; guide: string; home: string; kicker: string; navigation: string;
+  nav: readonly [string, string, string]; language: string; landmarkAlt: string; attachment: string;
+}>>> = {
+  zh: { title: "找到属于你的中国黄金路线。", subtitle: "从一个想法开始，把城市、节奏和准备事项放进清晰的旅程里。", prompt: "我想在秋天用七天走过北京和西安，想看古迹、吃本地菜，也希望留出从容的空白。", promptHint: "这是前端预览，不会提交或保存内容。", open: "Open VisePanda", guide: "探索路线指南", home: "VisePanda 首页", kicker: "黄金路线 · 向导", navigation: "VisePanda 导航", nav: ["发现中国", "规划方式", "旅行准备"], language: "界面语言", landmarkAlt: "原创长城与群山插画", attachment: "附件功能尚不可用" },
+  en: { title: "Find your Golden Route through China.", subtitle: "Start with one idea, then hold your cities, pace, and preparation in a clearer trip.", prompt: "I want seven autumn days through Beijing and Xi'an: heritage, local food, and room to move slowly.", promptHint: "This is a frontend preview. It does not submit or save content.", open: "Open VisePanda", guide: "Explore the guide", home: "VisePanda home", kicker: "Golden Route · Guide", navigation: "VisePanda navigation", nav: ["Discover China", "How it works", "Travel prep"], language: "Interface language", landmarkAlt: "Original Great Wall and mountain illustration", attachment: "Attachments are unavailable" },
+  es: { title: "Encuentra tu Ruta Dorada por China.", subtitle: "Empieza con una idea y reúne ciudades, ritmo y preparación en un viaje más claro.", prompt: "Quiero siete días de otoño entre Pekín y Xi'an: patrimonio, comida local y tiempo para ir despacio.", promptHint: "Es una vista previa. No envía ni guarda contenido.", open: "Open VisePanda", guide: "Explorar la guía", home: "Inicio de VisePanda", kicker: "Ruta Dorada · Guía", navigation: "Navegación de VisePanda", nav: ["Descubrir China", "Cómo funciona", "Preparación"], language: "Idioma de la interfaz", landmarkAlt: "Ilustración original de la Gran Muralla y montañas", attachment: "Los adjuntos no están disponibles" },
+  ru: { title: "Найдите свой Золотой маршрут по Китаю.", subtitle: "Начните с одной идеи и соберите города, темп и подготовку в более ясное путешествие.", prompt: "Хочу семь осенних дней между Пекином и Сианем: наследие, местная еда и время без спешки.", promptHint: "Это предварительный интерфейс. Он ничего не отправляет и не сохраняет.", open: "Open VisePanda", guide: "Открыть гид", home: "Главная VisePanda", kicker: "Золотой маршрут · Гид", navigation: "Навигация VisePanda", nav: ["Открыть Китай", "Как это работает", "Подготовка"], language: "Язык интерфейса", landmarkAlt: "Оригинальная иллюстрация Великой стены и гор", attachment: "Вложения недоступны" },
+  ar: { title: "اعثر على مسارك الذهبي عبر الصين.", subtitle: "ابدأ بفكرة واحدة ثم اجمع المدن والإيقاع والاستعداد في رحلة أوضح.", prompt: "أريد سبعة أيام خريفية بين بكين وشيآن: تراث وطعام محلي ووقت هادئ.", promptHint: "هذه معاينة للواجهة. لا ترسل أو تحفظ أي محتوى.", open: "Open VisePanda", guide: "استكشف الدليل", home: "الصفحة الرئيسية لـ VisePanda", kicker: "المسار الذهبي · الدليل", navigation: "تنقل VisePanda", nav: ["اكتشف الصين", "كيف تعمل", "الاستعداد للسفر"], language: "لغة الواجهة", landmarkAlt: "رسم أصلي لسور الصين والجبال", attachment: "المرفقات غير متاحة" },
+};
+
 export const copy = {
   zh: {
     header: {

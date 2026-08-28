@@ -4,6 +4,7 @@ import test from "node:test";
 
 const htmlPath = ".next/server/app/index.html";
 const html = readFileSync(htmlPath, "utf8");
+const relocatedHomepageHtml = readFileSync(".next/server/app/homepage.html", "utf8");
 const chatbotHtml = readFileSync(".next/server/app/visepanda.html", "utf8");
 const homepageSource = readFileSync("components/homepage/Homepage.tsx", "utf8");
 const homepageCss = readFileSync("components/homepage/Homepage.module.css", "utf8");
@@ -26,11 +27,14 @@ const cssName = readdirSync(".next/static/css").find((file) => file.endsWith(".c
 assert.ok(cssName, "compiled CSS must exist");
 const css = readFileSync(`.next/static/css/${cssName}`, "utf8");
 
-test("renders VisePanda metadata and product-preview copy", () => {
+test("renders immersive VisePanda metadata while preserving the relocated preview", () => {
   assert.match(html, /<html lang="zh-CN"/);
   assert.match(html, /<meta name="theme-color" content="#fefdf9"/);
   assert.match(html, /VisePanda｜来华自由行的 AI 规划与执行工作台/);
-  assert.match(html, /用 AI 规划中国之旅，再从容地把它走完。/);
+  assert.match(html, /找到属于你的中国黄金路线。/);
+  assert.match(html, /href="\/visepanda"/);
+  assert.match(html, /href="\/homepage"/);
+  assert.match(relocatedHomepageHtml, /用 AI 规划中国之旅，再从容地把它走完。/);
   assert.match(localeSource, /当前原型未连接 AI，也不会保存你的输入。/);
 });
 
@@ -97,15 +101,15 @@ test("keeps the redesigned homepage localized and frontend-only", () => {
   assert.match(homepageCss, /\.routeSection/);
 });
 
-test("renders the requested ten-item FAQ, wordmarks, and no blocked legacy media", () => {
-  const faqButtons = html.match(/<button[^>]*aria-expanded="false"[^>]*>/g) ?? [];
+test("moves the requested FAQ and legacy wordmarks to homepage without blocked media", () => {
+  const faqButtons = relocatedHomepageHtml.match(/<button[^>]*aria-expanded="false"[^>]*>/g) ?? [];
   assert.equal(faqButtons.length, 10, "expected exactly 10 FAQ controls");
-  assert.match(html, /VisePanda 可以直接预订机票、酒店或门票吗？/);
-  assert.doesNotMatch(html, /六个执行时刻都已经上线了吗？/);
-  assert.doesNotMatch(html, /这个页面会保存我的输入吗？/);
-  assert.ok((html.match(/VisePanda\./g) ?? []).length >= 2, "expected header and footer wordmarks");
+  assert.match(relocatedHomepageHtml, /VisePanda 可以直接预订机票、酒店或门票吗？/);
+  assert.doesNotMatch(relocatedHomepageHtml, /六个执行时刻都已经上线了吗？/);
+  assert.doesNotMatch(relocatedHomepageHtml, /这个页面会保存我的输入吗？/);
+  assert.ok((relocatedHomepageHtml.match(/VisePanda\./g) ?? []).length >= 2, "expected header and footer wordmarks");
   assert.doesNotMatch(homepageSource, /\/assets\/visepanda\//);
-  assert.doesNotMatch(html, /\/assets\/source\//);
+  assert.doesNotMatch(`${html}\n${relocatedHomepageHtml}`, /\/assets\/source\//);
   assert.doesNotMatch(html, /src="https?:\/\//);
 });
 

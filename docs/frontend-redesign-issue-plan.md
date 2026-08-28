@@ -82,7 +82,7 @@ No frontend child may fall back to Demo fixture success, blocked source assets, 
 
 ## 5.1 Local execution snapshot — 2026-08-28
 
-`main` contains WEB-03 through WEB-10, including WEB-05's direct operator selection record.
+`main` contains WEB-03 through WEB-10, including WEB-05's direct operator selection record. An operator-inserted isolated Homepage refinement may replace `/` and relocate the earlier long-form landing to `/homepage`; it remains subject to the same ADR-0018 CTA, map-off, asset, locale and release boundaries.
 The selected baseline is VisePanda VI + Golden Route + Guide, with `Open VisePanda` as the
 primary CTA and the map disabled by default. This does not waive any release or asset-rights gate.
 Remote GitHub status synchronization is not
