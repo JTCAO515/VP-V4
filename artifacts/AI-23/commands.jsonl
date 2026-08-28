@@ -1,9 +1,6 @@
-{"command":"node --experimental-strip-types --test tests/security/knowledge/import-migration-security.test.ts","exitCode":0,"result":"7 passing","env":"local; no external runtime"}
-{"command":"pnpm check","exitCode":0,"result":"lint 116; typecheck; production build; static/design 22","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm test:contract","exitCode":0,"result":"114 passing","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm test:security","exitCode":0,"result":"35 passing; 1 skipped because local Supabase is not running","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm evals","exitCode":0,"result":"16 passing","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm db:verify","exitCode":0,"result":"all three local paths not configured; productionConnectionAttempted=false","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"pnpm docs:check","exitCode":0,"result":"AI Core documentation baseline passed","env":"local; pnpm=9.15.9; no external runtime"}
-{"command":"node -e \"JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8'))\"","exitCode":0,"result":"handoff JSON parsed","env":"local; no external runtime"}
-{"command":"git diff --check","exitCode":0,"result":"no whitespace errors","env":"local"}
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T20:07:06.3476533Z","finishedAt":"2026-08-28T20:07:22.9170448Z","result":"source-policy lint (134 files), strict typecheck, production build and 22 static/foundation tests passed"}
+{"command":"pnpm test:security","exitCode":0,"env":"local","startedAt":"2026-08-28T20:07:34.7742656Z","finishedAt":"2026-08-28T20:07:38.6893421Z","result":"53 security tests passed; one separate local-Supabase-dependent test was skipped because local Supabase is not running; AI-23 RL-08 private candidate, replay, CAS/reviewer separation and disposition tests passed"}
+{"command":"pnpm db:verify","exitCode":0,"env":"local","startedAt":"2026-08-28T20:07:38.6947745Z","finishedAt":"2026-08-28T20:07:39.0686303Z","result":"database baseline reported all user-JWT, Ops-JWT and system-worker connection probes as not configured; no production connection was attempted"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T20:07:39.0691371Z","finishedAt":"2026-08-28T20:07:39.4000213Z","result":"AI Core documentation baseline passed after evidence refresh"}
+{"command":"node -e JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8'))","exitCode":0,"env":"local","startedAt":"2026-08-28T20:07:39.4003254Z","finishedAt":"2026-08-28T20:07:39.4356639Z","result":"read-only machine handoff JSON parse passed; jq is unavailable locally"}
+{"command":"git diff --cached --check","exitCode":0,"env":"local","startedAt":"2026-08-28T20:08:07.5660895Z","finishedAt":"2026-08-28T20:08:07.6045826Z","result":"staged AI-23 evidence refresh has no whitespace errors"}
