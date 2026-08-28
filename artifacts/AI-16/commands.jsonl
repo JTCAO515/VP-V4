@@ -1,21 +1,5 @@
-{"command":"pnpm test:contract -- tests/contract/model-gateway/model-gateway.test.ts","exitCode":1,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"expected-red: missing ModelGateway module"}
-{"command":"pnpm typecheck","exitCode":1,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"expected type regression: frozen task arrays inferred as string[]"}
-{"command":"pnpm typecheck","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"AI-16 fixture gateway type verification"}
-{"command":"pnpm test:contract","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"AI-16 contract plus repository contract suite: 97 passing before review findings"}
-{"command":"pnpm check","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"full lint, typecheck, production build, static test suite: 22 passing"}
-{"command":"pnpm docs:check","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"documentation baseline"}
-{"command":"node -e JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8')); console.log('docs/handoff.json parsed')","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"read-only handoff JSON validation; jq unavailable"}
-{"command":"git diff --check","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"working-tree whitespace validation before review"}
-{"command":"node --experimental-strip-types --test tests/contract/model-gateway/model-gateway.test.ts","exitCode":1,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"expected-red: unregistered runtime profile threw before closed outcome guard"}
-{"command":"node --experimental-strip-types --test tests/contract/model-gateway/model-gateway.test.ts","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"AI-16 focused contract: 4 passing"}
-{"command":"pnpm typecheck","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"AI-16 final type verification"}
-{"command":"pnpm test:contract","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"AI-16 contract suite: 97 passing before runtime-shape review findings"}
-{"command":"node --experimental-strip-types --test tests/contract/model-gateway/model-gateway.test.ts","exitCode":1,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"expected-red: malformed request/signal and shadow-only route tests before runtime guards"}
-{"command":"node --experimental-strip-types --test tests/contract/model-gateway/model-gateway.test.ts","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"AI-16 focused contract after review fixes: 6 passing"}
-{"command":"pnpm typecheck","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"AI-16 review-fix type verification"}
-{"command":"pnpm test:contract","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"AI-16 repository contract suite after review fixes: 99 passing"}
-{"command":"pnpm check","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"final acceptance after independent review"}
-{"command":"pnpm test:contract","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"final contract acceptance after independent review: 99 passing"}
-{"command":"pnpm docs:check","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"final documentation acceptance after independent review"}
-{"command":"node -e JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8')); console.log('docs/handoff.json parsed')","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"final read-only handoff JSON validation"}
-{"command":"git diff --check","exitCode":0,"sha":"986376a9bbeebe819a7ff3a41e2ebe8c6ce8c56a","scope":"final whitespace validation before commit"}
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:43:48.8058293Z","finishedAt":"2026-08-28T19:44:05.4220245Z","result":"source-policy lint, strict typecheck, production build and 22 static-output/foundation tests passed"}
+{"command":"pnpm test:contract","exitCode":0,"env":"local","startedAt":"2026-08-28T19:44:05.4265721Z","finishedAt":"2026-08-28T19:44:06.2998713Z","result":"126 contract tests passed, including fixture-only ModelGateway profile and closed-output invariants"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:44:06.3003744Z","finishedAt":"2026-08-28T19:44:06.6507737Z","result":"documentation baseline passed"}
+{"command":"node -e JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8'))","exitCode":0,"env":"local","startedAt":"2026-08-28T19:44:14.7003028Z","finishedAt":"2026-08-28T19:44:14.7445553Z","result":"read-only handoff JSON parse passed; jq is unavailable locally"}
+{"command":"git diff --cached --check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:44:45.0858075Z","finishedAt":"2026-08-28T19:44:45.1247126Z","result":"staged AI-16 evidence refresh has no whitespace errors"}
