@@ -1,0 +1,4 @@
+{"command":"pnpm check","exitCode":0,"recordedAt":"2026-08-29T01:56:58+08:00","env":"local quality gate; lint, typecheck, production build, and 22 static tests passed"}
+{"command":"pnpm test:contract","exitCode":0,"recordedAt":"2026-08-29T01:56:58+08:00","env":"local contract gate; 120 passed"}
+{"command":"pnpm test:e2e","exitCode":0,"recordedAt":"2026-08-29T01:56:58+08:00","env":"local static journey gate; 28 passed, including V4-27 unavailable boundary"}
+{"command":"git diff --check","exitCode":0,"recordedAt":"2026-08-29T01:56:58+08:00","env":"local whitespace gate"}
