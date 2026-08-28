@@ -7,15 +7,15 @@
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "AI-26/#28 is the next direct Jobs/Queue slice. Preserve AI-25's private C0 review ledger: it establishes no Ops deployment, account, secret, UI, durable audit, RLS proof, database, public Fact projection, or release capability. No locally executable frontend implementation Issue remains; continue the direct queue while preserving the frontend redesign's map-off and Open VisePanda baseline.",
+  "intendedNextAgent": "AI-26/#28 is a process-local C0 queue contract, not a deployed worker. Preserve its R3-only, payload-version, lease, at-least-once, quarantine and replay boundaries. A separately specified immersive Homepage redesign is awaiting its chosen implementation mode; preserve map-off and Open VisePanda as the primary CTA.",
   "latestIssueExecution": {
-    "issue": "AI-25/#27",
-    "changedFiles": ["lib/server/knowledge/review/ops-review.ts", "tests/security/knowledge/ops-review-security.test.ts", "docs/contracts/ops-review-ledger.md", "docs/agents/issue-execution-contract.md", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md", "artifacts/AI-25/commands.jsonl", "artifacts/AI-25/unrun.md", "docs/superpowers/plans/2026-08-28-ai-25-ops-review.md"],
-    "verification": ["Pinned pnpm 9 frozen installation", "Repository gates: check (lint 118, typecheck, production build, static/design 22), contract 114, security 44 with one local-Supabase skip, E2E 25, evals 16, docs/diff all passing", "AI-25 focused RL-08 security golden: 4 passing", "Independent automated re-review: Clear, no Critical/Important findings"],
-    "unrun": ["No Ops deployment, account, secret, environment variable, public project, browser UI, DNS, production cutover, source payload, provider, database, public projection, staging, production, or observation-window evidence", "No local Supabase runtime; durable audit/RLS and public-web isolation evidence remain explicitly skipped"],
-    "residualRisk": "The process-local C0 ledger cannot prove a separate deploy, authentication, credential separation, durable audit rollback, source identity/rebase/expiry operations, RLS, Fact eligibility/publication, or release safety.",
-    "rollback": "Revert the AI-25 review ledger, fixtures, contract, handoff, plan, and artifact records. No schema, durable data, account, secret, flag, or external state was created.",
-    "nextAction": "Merge AI-25, then execute AI-26/#28 as the next direct Jobs/Queue Issue while preserving the private review and frontend redesign baselines."
+    "issue": "AI-26/#28",
+    "changedFiles": ["lib/server/jobs/projection-queue.ts", "tests/security/jobs/projection-queue-security.test.ts", "tests/integration/jobs/projection-queue.test.ts", "docs/contracts/projection-queue-c0.md", "docs/agents/issue-execution-contract.md", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md", "artifacts/AI-26/commands.jsonl", "artifacts/AI-26/unrun.md", "docs/superpowers/plans/2026-08-28-ai-26-projection-worker.md"],
+    "verification": ["Pinned pnpm 9 frozen installation and strict TypeScript typecheck passed", "AI-26 focused RL-02 fixtures: 5 passing (R1 rejection, payload version, duplicate conflict/no-op, expired lease redelivery, poison quarantine/replay, lease-owner acknowledgement)"],
+    "unrun": ["No Supabase Queue/pgmq, worker host, Function poll/push transport, external queue, durable lease/audit, RLS/runtime, credential, staging, Production, feature flag, crash-process, browser or observation-window proof", "No separate Ops replay deployment or account was accessed; replay uses an opaque fixture identity only"],
+    "residualRisk": "The process-local C0 seam cannot prove queue availability, worker concurrency, process crash recovery, durable idempotency, authorization, audit, RLS, payload migration, Fact eligibility/projection, external transport, feature flag or release safety.",
+    "rollback": "Revert the AI-26 queue, fixtures, contract, handoff, plan and artifact records. No schema, durable data, account, secret, flag or external state was created.",
+    "nextAction": "Run AI-26's required full gates and independent automated review, then merge it. Keep the separately specified frontend work isolated until its chosen execution mode is available."
   },
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",

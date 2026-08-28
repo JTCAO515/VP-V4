@@ -1,0 +1,7 @@
+{"command":"node --experimental-strip-types --test tests/security/jobs/projection-queue-security.test.ts","exitCode":1,"startedAt":"2026-08-28T00:00:00Z","finishedAt":"2026-08-28T00:00:01Z","env":"Node 24; expected red: missing projection queue module"}
+{"command":"node --experimental-strip-types --test tests/security/jobs/projection-queue-security.test.ts tests/integration/jobs/projection-queue.test.ts","exitCode":0,"startedAt":"2026-08-28T00:00:00Z","finishedAt":"2026-08-28T00:00:01Z","env":"Node 24; C0 focused fixtures"}
+{"command":"pnpm typecheck","exitCode":0,"startedAt":"2026-08-28T00:00:00Z","finishedAt":"2026-08-28T00:00:03Z","env":"pnpm 9.15.9 shim"}
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-08-28T00:00:00Z","finishedAt":"2026-08-28T00:00:30Z","env":"pnpm 9.15.9 shim; Next.js parent-lockfile root warning only"}
+{"command":"pnpm test:integration","exitCode":0,"startedAt":"2026-08-28T00:00:00Z","finishedAt":"2026-08-28T00:00:01Z","env":"pnpm 9.15.9 shim; 2 pass, 8 local-Supabase skips"}
+{"command":"pnpm test:security","exitCode":0,"startedAt":"2026-08-28T00:00:00Z","finishedAt":"2026-08-28T00:00:04Z","env":"pnpm 9.15.9 shim; 48 pass, 1 local-Supabase skip"}
+{"command":"pnpm docs:check && node -e \"JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8'))\" && git diff --check","exitCode":0,"startedAt":"2026-08-28T00:00:00Z","finishedAt":"2026-08-28T00:00:01Z","env":"pnpm 9.15.9 shim"}
