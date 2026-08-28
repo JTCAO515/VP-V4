@@ -2,7 +2,7 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Deliver the accepted AI Core and independently expressed VisePanda frontend without copying Demo fixtures or competitor expression, while preserving runtime identity, RLS, provider, data-policy, and release contracts.",
-  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue makes every defined Issue directly schedulable without dependency closure.",
+  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; WEB-04 quarantines legacy source assets with a hash-verified ledger while the direct Issue queue makes every defined Issue directly schedulable without dependency closure.",
   "currentPhase": "R1",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
@@ -203,13 +203,14 @@
     "GOV-AFK-01 live audit confirmed #122/#84/#127/#130 closed, #15 ready, and #132 in progress; PR #131 merged green before the policy branch rebased onto current main",
     "GOV-AFK-01 pnpm docs:check, pnpm check, handoff/operator JSON parse, changed-Markdown local-link check and git diff --check passed; production build and static tests passed 13/13",
     "The first isolated-worktree pnpm check stopped because node_modules was absent; after a frozen lockfile install with lifecycle scripts disabled, the full check passed without changing pnpm-lock.yaml",
-    "post-merge authless verification passed lint, typecheck, production build, unit, contract, integration (one local Supabase fixture skipped), security (one local RLS fixture skipped), E2E, docs check, and diff check"
+    "post-merge authless verification passed lint, typecheck, production build, unit, contract, integration (one local Supabase fixture skipped), security (one local RLS fixture skipped), E2E, docs check, and diff check",
+    "WEB-04 asset-policy red test failed before quarantine and passed after the hash ledger, SBOM, NOTICE, denied source removal, Fig retirement and blocked-preview record were added"
   ],
   "blockers": [
     "Homepage and /visepanda are stop-ship until their replacement and WEB-11 release evidence pass; they cannot be used as a public/store fallback.",
     "PR #124 was closed as superseded because it applied brand derivatives to stop-ship surfaces; approved derivatives may re-enter only through #138/#140.",
     "China map remains disabled until a separate source/representation/review/allowed-use and operator/legal gate closes.",
-    "Runtime source assets, Fig Grotesk, duplicate shapes, asset rights, SBOM/NOTICE and store claim evidence are owned by #138/#145.",
+    "WEB-04 removes legacy source assets, Fig Grotesk and duplicate shapes and supplies SBOM/NOTICE evidence; operator-rights attestations for owner masters and blocked preview photographs remain external release decisions.",
     "The DEC/ADR and engineering baselines are accepted; provider, content-rights, release and commercial facts remain risks or unavailable runtime states, not Issue scheduling gates.",
     "Production provider region, retention, privacy/data terms, and five-language speech quality are not verified.",
     "No VisePanda five-language travel eval baseline or live provider conformance evidence exists yet.",
@@ -284,7 +285,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Start WEB-04 #138 from current main in an isolated branch; implement the next defined Issue directly with tests and automated review, then merge it to main. Skip GitHub status/label synchronization until gh authentication is available.",
+  "nextAction": "Select the next defined Issue with no external decision requirement, implement it directly with tests and automated review, then merge it to main. Skip GitHub status/label synchronization until gh authentication is available.",
   "lastUpdated": "2026-08-28",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",

@@ -6,7 +6,8 @@
 - Program: [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136); tracker mapping in `docs/frontend-redesign-issue-plan.md`.
 - Current frontend maturity: Homepage and `/visepanda` are `stop-ship`; implementation has not started.
 - Completed governance work: [WEB-03 #137](https://github.com/JTCAO515/VP-V4/issues/137) published the ADR, Issue DAG, execution rows and handoff to `main@0b6c27f`.
-- Current frontend frontier: #138 asset/rights work (`ready-for-agent`); #139 three visual directions is `ready-for-human`; downstream Issues remain blocked.
+- WEB-04 #138 quarantines 48 legacy source assets and four duplicate shapes, removes Fig Grotesk from runtime, and adds a hash-verified rights ledger, SBOM, NOTICE and denylist check. Nine current preview photographs remain `blocked-release` until a separate operator rights record exists.
+- Next frontend work: #139 visual-direction selection remains operator-owned; the direct Issue queue may proceed with another independently scoped Issue without waiting for that selection.
 - Shared authorities: #87 Demo parity, #92 Product Shell, ADR-0003 Trip writes, ADR-0017 password-authenticated closed beta.
 - Map: disabled until a separate compliance gate closes. Homepage primary CTA: `Open VisePanda`.
 - WIP conflict resolved: PR #124 was closed as superseded; approved derivatives may re-enter only through #138/#140.
