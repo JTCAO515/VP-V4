@@ -1,0 +1,18 @@
+{
+  "environment": "isolated-staging",
+  "rpoRto": {
+    "status": "pending-plan-region",
+    "rpo": null,
+    "rto": null
+  },
+  "exercises": [
+    "database_restore",
+    "roll_forward_pitr",
+    "compensation"
+  ],
+  "storage": {
+    "mode": "no-backup-ttl",
+    "policy": "ephemeral-media-task-lifecycle",
+    "deletionVerification": "required"
+  }
+}
