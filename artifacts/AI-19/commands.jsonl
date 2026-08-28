@@ -1,17 +1,8 @@
-{"command":"node --experimental-strip-types --test tests/contract/knowledge/hybrid-retrieval.test.ts","exitCode":1,"sha":"d8db331","scope":"expected-red: hybrid retrieval module absent"}
-{"command":"node --experimental-strip-types --test tests/security/knowledge/hybrid-retrieval-security.test.ts","exitCode":1,"sha":"d8db331","scope":"expected-red: hybrid retrieval module absent"}
-{"command":"pnpm check","exitCode":0,"sha":"3a59b0c","scope":"clean isolated worktree: source-policy lint 112 files, typecheck, production build, static suite 22 passing"}
-{"command":"pnpm test:contract","exitCode":0,"sha":"3a59b0c","scope":"clean isolated worktree: 108 passing"}
-{"command":"pnpm test:security","exitCode":0,"sha":"3a59b0c","scope":"clean isolated worktree: 22 passing, 1 local-Supabase-dependent skip"}
-{"command":"pnpm evals","exitCode":0,"sha":"3a59b0c","scope":"clean isolated worktree: 14 passing"}
-{"command":"pnpm db:verify","exitCode":0,"sha":"3a59b0c","scope":"baseline present; all three connection paths not configured; no production connection attempted"}
-{"command":"pnpm docs:check plus Node JSON parse plus git diff --check","exitCode":0,"sha":"3a59b0c","scope":"clean isolated worktree documentation and diff validation"}
-{"command":"node --experimental-strip-types --test tests/security/knowledge/hybrid-retrieval-security.test.ts","exitCode":1,"sha":"3a59b0c","scope":"expected-red: post-review profile descriptor and strict timestamp regressions"}
-{"command":"node --experimental-strip-types --test tests/security/knowledge/hybrid-retrieval-security.test.ts tests/contract/knowledge/hybrid-retrieval.test.ts evals/qrels/hybrid-retrieval.evals.test.ts","exitCode":0,"sha":"a7115f7","scope":"focused green: exact-first, RL-02, opaque locale/no-evidence, profile and timestamp regressions (4 passing)"}
-{"command":"pnpm check","exitCode":0,"sha":"a7115f7","scope":"clean isolated worktree: source-policy lint 112 files, typecheck, production build, static suite 22 passing"}
-{"command":"pnpm test:contract","exitCode":0,"sha":"a7115f7","scope":"clean isolated worktree: 108 passing"}
-{"command":"pnpm test:security","exitCode":0,"sha":"a7115f7","scope":"clean isolated worktree: 23 passing, 1 local-Supabase-dependent skip"}
-{"command":"pnpm evals","exitCode":0,"sha":"a7115f7","scope":"clean isolated worktree: 14 passing"}
-{"command":"pnpm db:verify","exitCode":0,"sha":"a7115f7","scope":"baseline present; all three connection paths not configured; no production connection attempted"}
-{"command":"pnpm docs:check plus Node JSON parse plus git diff --check","exitCode":0,"sha":"a7115f7","scope":"clean isolated worktree documentation and diff validation"}
-{"command":"independent automated re-review","exitCode":0,"sha":"a7115f7","scope":"no Critical/Important findings after restricted descriptor and strict timestamp correction"}
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:55:00.3469440Z","finishedAt":"2026-08-28T19:55:16.8918738Z","result":"source-policy lint (134 files), strict typecheck, production build and 22 static/foundation tests passed"}
+{"command":"pnpm evals","exitCode":0,"env":"local","startedAt":"2026-08-28T19:55:30.6745767Z","finishedAt":"2026-08-28T19:55:31.2272556Z","result":"20 deterministic evaluator tests passed, including the hybrid five-opaque-locale/no-evidence case and lexical quality contracts"}
+{"command":"pnpm test:security","exitCode":0,"env":"local","startedAt":"2026-08-28T19:55:31.2326502Z","finishedAt":"2026-08-28T19:55:35.1624792Z","result":"53 security tests passed; one separate local-Supabase-dependent test was skipped because local Supabase is not running; AI-19 RL-02 six-denial and input-validation tests passed"}
+{"command":"pnpm test:integration","exitCode":0,"env":"local","startedAt":"2026-08-28T19:55:35.1630401Z","finishedAt":"2026-08-28T19:55:35.6793211Z","result":"four fixture integration tests passed; eight separate local-Supabase-dependent tests were skipped because local Supabase is not running"}
+{"command":"pnpm db:verify","exitCode":0,"env":"local","startedAt":"2026-08-28T19:55:35.6796187Z","finishedAt":"2026-08-28T19:55:36.0626561Z","result":"database baseline reported all user-JWT, Ops-JWT and system-worker connection probes as not configured; no production connection was attempted"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:57:05.9286164Z","finishedAt":"2026-08-28T19:57:06.2795317Z","result":"AI Core documentation baseline passed after evidence disclosure refresh"}
+{"command":"node -e JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8'))","exitCode":0,"env":"local","startedAt":"2026-08-28T19:57:06.2832301Z","finishedAt":"2026-08-28T19:57:06.3179671Z","result":"read-only machine handoff JSON parse passed; jq is unavailable locally"}
+{"command":"git diff --cached --check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:57:26.5759548Z","finishedAt":"2026-08-28T19:57:26.6146882Z","result":"staged AI-19 evidence refresh has no whitespace errors"}
