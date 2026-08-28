@@ -3,7 +3,6 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 const files = [
-  "app/api/auth/magic-link/route.ts",
   "app/api/trips/[tripId]/route.ts",
   "app/api/trips/[tripId]/confirm/route.ts",
   "lib/server/identity/user-data-adapter.ts",

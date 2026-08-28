@@ -186,3 +186,11 @@ Any Issue added after this file was written must add its own row here before it 
   fills it. An agent must not write the decision.
 - Merging proves engineering acceptance only. Product effect is reviewed in the Issue's stated
   observation window.
+
+## 7. Direct queue supersession
+
+Defined Issues are directly schedulable. Do not defer implementation solely because another Issue is
+open. `status:blocked` reports an unavailable runtime, provider, legal, or operator state; it does
+not prohibit development, testing, automated review, or merge of independently scoped work.
+Dependency references are planning context only. Runtime authorization, data-policy, and safety
+guards remain fail-closed.

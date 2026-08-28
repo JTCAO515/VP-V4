@@ -16,3 +16,11 @@ Issues for this repository live in [JTCAO515/VP-V4](https://github.com/JTCAO515/
 ## Pull requests as a request surface
 
 External PRs are not a triage request surface. Collaborator PRs follow normal review and are not treated as incoming feature requests.
+
+## Direct queue supersession
+
+Defined Issues are directly schedulable; an open Issue, textual `Blocked by` reference, or GitHub
+dependency does not prohibit development. `status:blocked` reports unavailable runtime, provider,
+legal, or operator state only. It does not prohibit development, testing, automated review, or merge.
+`UNAUTHENTICATED`, `SAFETY_BLOCKED`, and `DATA_POLICY_BLOCKED` remain fail-closed runtime outcomes;
+they never authorize a guest actor, service credential, or bypass.

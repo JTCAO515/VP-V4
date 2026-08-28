@@ -1,13 +1,13 @@
 {
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
-  "objective": "Extend AI Core Program #2 with an evidence-backed bounded-agent architecture and dependency-ordered production-parity Issue plan, without copying Demo fixtures or bypassing accepted Chat, Canvas, evidence, identity, RLS, provider or release contracts.",
-  "status": "R1 bounded paths are merged; AI-45 is closed; AI-51 Site URL/callback configuration is visually verified but real session evidence remains open; V4-01 parity and framework gates are delivered by this change and later V4 work remains dependency-gated",
+  "objective": "Extend AI Core Program #2 with an evidence-backed bounded-agent architecture and direct Issue queue, without copying Demo fixtures or bypassing runtime Chat, Canvas, evidence, identity, RLS, provider, or release contracts.",
+  "status": "R1 bounded paths are merged; Magic Link/callback entrypoints are removed; the anonymous preview keeps Trip APIs session-claim protected; the direct Issue queue permits every defined Issue to start without dependency closure",
   "currentPhase": "R1",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
-  "owner": "Operator owns Program/DEC/public/external decisions; agents own independently accepted frontier Issues and their evidence.",
+  "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "complete #84 real Magic Link session plus owner/other-user route evidence; #15 and every later V4 Issue remain dependency-blocked after V4-01",
+  "intendedNextAgent": "select the next defined Issue directly from the local queue; session acquisition is removed, and remote GitHub label synchronization is skipped until gh authentication exists",
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
     "audit the Claude model-layer draft against current first-party sources",
@@ -163,10 +163,13 @@
     "V4 execution-contract audit passed: 31/31 rows have issue, owner, allowed paths, commands and artifacts",
     "V4-01 pnpm docs:check, pnpm check, handoff JSON parse and git diff --check passed; production build and static tests passed 13/13",
     "VisePanda visual identity validation passed: tokens and manifest JSON, eight transparent IP assets, five social dimensions, SVG and handbook structural checks, source integrity, and git diff --check; a fresh isolated 375 px browser screenshot remains a manual review item",
-    "VisePanda merge pnpm check stopped before lint/type/build/test because the local dependency-security policy requires an operator decision for the ignored sharp build script; no approval, package-policy change, or bypass was applied"
+    "VisePanda merge pnpm check stopped before lint/type/build/test because the local dependency-security policy requires an operator decision for the ignored sharp build script; no approval, package-policy change, or bypass was applied",
+    "authless-preview change passed pnpm lint, pnpm typecheck, pnpm build, pnpm test, pnpm test:unit, pnpm test:contract, pnpm test:e2e, pnpm docs:check, and git diff --check",
+    "authless-preview integration and local-RLS security tests were skipped because local Supabase was not running; no bypass was applied",
+    "authless-preview GitHub Issue label/status synchronization was skipped because gh auth status reported no logged-in GitHub host"
   ],
   "blockers": [
-    "The DEC/ADR and engineering baselines are accepted; later provider, content-rights, release and commercial decisions remain gated by their owning Issues.",
+    "The DEC/ADR and engineering baselines are accepted; provider, content-rights, release and commercial facts remain risks or unavailable runtime states, not Issue scheduling gates.",
     "Production provider region, retention, privacy/data terms, and five-language speech quality are not verified.",
     "No VisePanda five-language travel eval baseline or live provider conformance evidence exists yet.",
     "For this VI merge, lint/type/build/test remain unrun because pnpm check stopped at the local ignored sharp build-script policy; operator approval is required before changing that policy.",
@@ -180,14 +183,14 @@
     "Authenticated-only beta and the new Supabase project are accepted; separate Ops deployment plus model/media region and retention remain future operator decisions.",
     "Qwen3.5 OCR and Qwen Audio 3.0 TTS currently have Beijing constraints; the Singapore mandatory multimodal stack is not frozen.",
     "Vercel WebRTC/WebSocket plan support, direct media upload, Supabase pooler, queue quarantine, Storage backup, and deletion topology remain untested.",
-    "AI-51/#84 remains open: Supabase Site URL, exact production callback, localhost callback and Vercel Preview callback are visually verified, but real Magic Link session and owner/other-user browser evidence are incomplete.",
-    "V4-01 closes through this change; #85/#88/#89/#91/#98 remain blocked by #17 and every other V4 Issue retains another open dependency.",
+    "Session-acquisition routes are removed; anonymous preview requests cannot acquire a session, while Trip APIs remain fail-closed without an existing valid claim.",
+    "Every defined Issue is directly schedulable. Existing dependency references remain integration context only.",
     "The Claude-referenced research/fact-catalogue.json was not provided, so row-level provenance and counts cannot be reproduced.",
     "Twenty-four of 30 candidate record types still lack an exact source locator and 24 candidates are high or critical risk.",
     "No language/medical reviewer or source-rights decision exists; the closed AI-11 contract does not promote draft Knowledge records to reviewed or retrieval-eligible."
   ],
   "risks": [
-    "Release gates #17/#23/#31/#36 were not depended on by any implementation Issue. Four edges (#18<-#17, #24<-#23, #32<-#31, #37<-#36) now enforce them. Removing those edges silently reopens the gap.",
+    "Release gates #17/#23/#31/#36 provide milestone acceptance evidence but do not prevent independently scoped Issue implementation; runtime and release claims remain evidence-gated.",
     "Issue bodies alone do not carry runnable commands; docs/agents/issue-execution-contract.md is the authority and must stay in sync with package.json scripts.",
     "Issue-level estimates now total 207 focused days (~41 weeks) across 51 Issues, above the report 24-35 week range. Scope must be cut against the R1 tracer bullet, not spread.",
     "Aviation adapter #42 depends on an unsigned provider contract; #43 now carries it as a conditional acceptance criterion instead of a hard dependency.",
@@ -195,7 +198,7 @@
   ],
   "rollback": "Remove docs/knowledge-base/ and its Claude audit link if this research disposition is rejected; no database, public content or runtime state changed. Preserve GitHub Issue history through status:superseded rather than deletion.",
   "operatorActions": [
-    "Authorize one real Magic Link email to a controlled mailbox, complete the browser callback without sharing the link/token, then allow owner/other-user route evidence to run.",
+    "No session-acquisition action is required; anonymous preview remains separate from session-claim-protected Trip APIs.",
     "Decide model/media region, retention and DPA posture when those provider Issues reach the frontier.",
     "Decide and sign the aviation provider contract, or accept the official-handoff fallback (#41/#42). #43 no longer hard-depends on #42.",
     "Accept or reject the AI SDK adoption decision produced by ML-01 (#47).",
@@ -230,8 +233,8 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Merge V4-01 after current checks, then return to #84 real Magic Link/session and owner/other-user evidence; keep #15 blocked until #84 closes.",
-  "lastUpdated": "2026-08-27",
+  "nextAction": "Select the next defined Issue directly, implement its scoped work with tests and automated review, then merge it to main. GitHub status/label synchronization is skipped until gh authentication is available.",
+  "lastUpdated": "2026-08-28",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@b443866",
     "vpFinalReference": "JTCAO515/VP-Final@b5ef081",
