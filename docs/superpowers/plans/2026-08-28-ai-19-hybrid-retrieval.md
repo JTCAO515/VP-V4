@@ -74,7 +74,7 @@ export type EvidencePackV1 =
 export function buildHybridEvidencePack(input: HybridRetrievalInputV1): EvidencePackV1;
 ```
 
-- [ ] Implement closed runtime validation for every object, rank, identifier, profile, timestamp and duplicate.
+- [ ] Implement closed runtime validation for every object, rank, opaque descriptor (`[A-Za-z0-9._-]`), valid timezone-qualified RFC3339 timestamp and duplicate.
 - [ ] Filter units through `isEligibleFact` before associating lexical/vector hits; discard unknown hit IDs, and reject duplicate hit IDs rather than silently using them.
 - [ ] Emit eligible exact lexical hits first; calculate RRF only for the remaining eligible IDs; break ties by ASCII ID; emit no-evidence if no eligible output remains.
 - [ ] Run each Task 2 test after implementation and record passing output.

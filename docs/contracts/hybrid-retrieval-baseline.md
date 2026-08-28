@@ -26,8 +26,9 @@ create a GroundedClaim, write a Trip/Fact/permission, or persist/log a query.
    `no_eligible_evidence`.
 
 `EmbeddingProfileV1` is an immutable descriptor of `modelId`, `region`, `dimensions` and
-`indexVersion`; it validates compatibility only. It neither selects a provider nor activates an
-embedding model, region, index or feature flag.
+`indexVersion`; its text values are bounded opaque identifiers (`[A-Za-z0-9._-]`), and timestamps
+must be valid timezone-qualified RFC3339 values. It validates compatibility only. It neither
+selects a provider nor activates an embedding model, region, index or feature flag.
 
 ## Security and maturity
 

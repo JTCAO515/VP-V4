@@ -42,6 +42,8 @@ export type EvidencePackV1 =
   | Readonly<{ kind: "no_eligible_evidence"; profile: EmbeddingProfileV1 }>;
 
 const ID = /^[A-Za-z0-9_-]{1,64}$/;
+const DESCRIPTOR = /^[A-Za-z0-9._-]+$/;
+const RFC3339_TIMESTAMP = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,3})?(Z|([+-])(\d{2}):(\d{2}))$/;
 const FACT_STATUSES = new Set<FactStatus>(["candidate", "draft", "reviewed", "deprecated"]);
 
 export function buildHybridEvidencePack(input: HybridRetrievalInputV1): EvidencePackV1 {
@@ -139,10 +141,10 @@ function parseHits(value: unknown, allowExact: boolean): readonly RankedRetrieva
 function parseProfile(value: unknown): EmbeddingProfileV1 {
   assertRecord(value, ["modelId", "region", "dimensions", "indexVersion"]);
   return {
-    modelId: parseText(value.modelId, "modelId", 128),
-    region: parseText(value.region, "region", 64),
+    modelId: parseDescriptor(value.modelId, "modelId", 128),
+    region: parseDescriptor(value.region, "region", 64),
     dimensions: parseRank(value.dimensions, "dimensions"),
-    indexVersion: parseText(value.indexVersion, "indexVersion", 128),
+    indexVersion: parseDescriptor(value.indexVersion, "indexVersion", 128),
   };
 }
 
@@ -159,9 +161,9 @@ function parseId(value: unknown, name: string): string {
   return value;
 }
 
-function parseText(value: unknown, name: string, maxLength: number): string {
-  if (typeof value !== "string" || value.trim() !== value || value.length === 0 || value.length > maxLength) {
-    throw new TypeError(`${name} must be bounded text`);
+function parseDescriptor(value: unknown, name: string, maxLength: number): string {
+  if (typeof value !== "string" || value.length === 0 || value.length > maxLength || !DESCRIPTOR.test(value)) {
+    throw new TypeError(`${name} must be a bounded opaque descriptor`);
   }
   return value;
 }
@@ -184,7 +186,25 @@ function parseFactStatus(value: unknown): FactStatus {
 }
 
 function parseTimestamp(value: unknown, name: string): Date {
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}T/.test(value)) throw new TypeError(`${name} must be an RFC3339 timestamp`);
+  if (typeof value !== "string") throw new TypeError(`${name} must be an RFC3339 timestamp`);
+  const match = RFC3339_TIMESTAMP.exec(value);
+  if (!match) throw new TypeError(`${name} must be an RFC3339 timestamp`);
+  const [year, month, day, hour, minute, second] = match.slice(1, 7).map(Number);
+  const offsetHour = Number(match[9] ?? 0);
+  const offsetMinute = Number(match[10] ?? 0);
+  const calendar = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+  if (
+    offsetHour > 23 ||
+    offsetMinute > 59 ||
+    calendar.getUTCFullYear() !== year ||
+    calendar.getUTCMonth() !== month - 1 ||
+    calendar.getUTCDate() !== day ||
+    calendar.getUTCHours() !== hour ||
+    calendar.getUTCMinutes() !== minute ||
+    calendar.getUTCSeconds() !== second
+  ) {
+    throw new TypeError(`${name} must be a valid RFC3339 timestamp`);
+  }
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) throw new TypeError(`${name} must be a valid timestamp`);
   return parsed;

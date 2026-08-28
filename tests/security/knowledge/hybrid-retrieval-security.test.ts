@@ -30,3 +30,18 @@ test("RL-02 denies six ineligible or unknown retrieval fixtures before ranking",
 
   assert.deepEqual(result, { kind: "no_eligible_evidence", profile });
 });
+
+test("rejects content-bearing profile fields and non-deterministic timestamps before retrieval", () => {
+  const base = {
+    now,
+    profile,
+    rrfK: 60,
+    units: [{ id: "unit-reviewed", targetId: "poi-reviewed", fact: { id: "fact-reviewed", status: "reviewed", expiresAt: "2026-12-01T00:00:00.000Z", licenceAllowed: true } }],
+    lexical: [{ unitId: "unit-reviewed", rank: 1, exact: true }],
+    vector: [],
+  };
+
+  assert.throws(() => buildHybridEvidencePack({ ...base, profile: { ...profile, modelId: "raw prompt payload" } }), TypeError);
+  assert.throws(() => buildHybridEvidencePack({ ...base, now: "2026-02-30T00:00:00" }), TypeError);
+  assert.throws(() => buildHybridEvidencePack({ ...base, now: "2026-08-28T00:00:00" }), TypeError);
+});
