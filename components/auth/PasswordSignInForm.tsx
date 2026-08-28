@@ -3,20 +3,25 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useState } from "react";
+import { FirstRunState } from "@/components/first-run/FirstRunState";
 import { copy, localeOptions, type Locale } from "@/lib/i18n";
 import { createPasswordAuthClient } from "@/lib/server/identity/browser-auth-client";
 
+import styles from "./PasswordSignInForm.module.css";
+
 type AuthState =
   | "checking"
-  | "idle"
+  | "ready"
   | "submitting"
   | "invalid"
+  | "notProvisioned"
   | "rateLimited"
   | "unavailable"
+  | "expired"
   | "signedIn"
   | "signingOut";
 
-export function PasswordSignInForm() {
+export function PasswordSignInForm({ showFirstRun = false }: { showFirstRun?: boolean }) {
   const router = useRouter();
   const [locale, setLocale] = useState<Locale>("en");
   const [state, setState] = useState<AuthState>("checking");
@@ -36,7 +41,9 @@ export function PasswordSignInForm() {
     let active = true;
     void client.auth.getClaims()
       .then(({ data, error }) => {
-        if (active) setState(!error && data?.claims?.sub ? "signedIn" : "idle");
+        if (!active) return;
+        const expired = error?.code === "bad_jwt" || error?.code === "session_not_found";
+        setState(!error && data?.claims?.sub ? "signedIn" : expired ? "expired" : "ready");
       })
       .catch(() => {
         if (active) setState("unavailable");
@@ -79,32 +86,39 @@ export function PasswordSignInForm() {
     }
     setState("signingOut");
     const { error } = await client.auth.signOut({ scope: "local" });
-    setState(error ? "unavailable" : "idle");
+    setState(error ? "unavailable" : "ready");
     router.refresh();
   }
 
   const message = state === "invalid"
     ? authCopy.invalid
+    : state === "notProvisioned"
+      ? authCopy.notProvisioned
     : state === "rateLimited"
       ? authCopy.rateLimited
       : state === "unavailable"
-        ? authCopy.unavailable
+      ? authCopy.unavailable
+        : state === "expired"
+          ? authCopy.expired
         : null;
 
   return (
-    <main className="auth-shell">
-      <section className="auth-brand-panel" aria-label="VisePanda">
-        <Link className="auth-wordmark" href="/">VisePanda.</Link>
+    <main className={styles.shell}>
+      <section className={styles.brandPanel} aria-label="VisePanda">
+        <Link className={styles.wordmark} href="/">VisePanda.</Link>
         <div>
-          <p className="auth-eyebrow">{authCopy.eyebrow}</p>
+          <p className={styles.eyebrow}>{authCopy.eyebrow}</p>
           <h1>{authCopy.title}</h1>
           <p>{authCopy.body}</p>
         </div>
-        <p className="auth-boundary">{authCopy.closedBeta}</p>
+        <svg className={styles.goldenRoute} aria-hidden="true" fill="none" viewBox="0 0 540 180">
+          <path d="M-15 143C57 192 100 38 184 82c64 34 53 97 121 75 78-26 87-123 249-65" stroke="currentColor" strokeLinecap="round" strokeWidth="8" />
+        </svg>
+        <p className={styles.boundary}>{authCopy.closedBeta}</p>
       </section>
 
-      <section className="auth-form-panel">
-        <label className="auth-language">
+      <section className={styles.formPanel}>
+        <label className={styles.language}>
           <span>{authCopy.language}</span>
           <select value={locale} onChange={(event) => setLocale(event.target.value as Locale)}>
             {localeOptions.map((option) => (
@@ -113,16 +127,17 @@ export function PasswordSignInForm() {
           </select>
         </label>
 
-        <div className="auth-card">
+        <div className={styles.card} data-auth-state={state}>
           {state === "checking" ? (
-            <p className="auth-status" role="status">{authCopy.checking}</p>
+            <p className={styles.status} role="status">{authCopy.checking}</p>
           ) : state === "signedIn" || state === "signingOut" ? (
-            <div className="auth-signed-in">
-              <p className="auth-eyebrow">{authCopy.eyebrow}</p>
+            <div className={styles.signedIn}>
+              <p className={styles.eyebrow}>{authCopy.eyebrow}</p>
               <h2>{authCopy.signedInTitle}</h2>
               <p>{authCopy.signedInBody}</p>
-              <Link className="auth-primary" href="/visepanda">{authCopy.continue}</Link>
-              <button className="auth-secondary" type="button" disabled={state === "signingOut"} onClick={handleSignOut}>
+              {showFirstRun ? <FirstRunState authCopy={authCopy} /> : null}
+              <Link className={styles.primary} href="/visepanda">{authCopy.continue}</Link>
+              <button className={styles.secondary} type="button" disabled={state === "signingOut"} onClick={handleSignOut}>
                 {state === "signingOut" ? authCopy.signingOut : authCopy.signOut}
               </button>
             </div>
@@ -133,7 +148,7 @@ export function PasswordSignInForm() {
                 id="auth-email"
                 name="email"
                 type="email"
-                autoComplete="email"
+                autoComplete="username"
                 maxLength={320}
                 placeholder={authCopy.emailPlaceholder}
                 required
@@ -147,13 +162,13 @@ export function PasswordSignInForm() {
                 placeholder={authCopy.passwordPlaceholder}
                 required
               />
-              <button className="auth-primary" type="submit" disabled={state === "submitting"}>
+              <button className={styles.primary} type="submit" disabled={state === "submitting"}>
                 {state === "submitting" ? authCopy.submitting : authCopy.submit}
               </button>
-              <p className="auth-message" aria-live="polite">{message}</p>
+              <p className={styles.message} aria-live="polite">{message}</p>
             </form>
           )}
-          <p className="auth-no-signup">{authCopy.noSignup}</p>
+          <p className={styles.noSignup}>{authCopy.noSignup}</p>
         </div>
       </section>
     </main>
