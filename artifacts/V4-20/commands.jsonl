@@ -18,3 +18,4 @@
 {"command":"pnpm test:e2e","exitCode":0,"startedAt":"2026-08-28T10:57:54.531Z","finishedAt":"2026-08-28T10:57:55.888Z","env":"local"}
 {"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T10:57:59.544Z","finishedAt":"2026-08-28T10:57:59.913Z","env":"local"}
 {"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T10:58:03.544Z","finishedAt":"2026-08-28T10:58:03.607Z","env":"local"}
+{"command":"node --test --experimental-strip-types tests/contract/today/recovery-proposal.test.ts","exitCode":0,"startedAt":"2026-08-29T02:19:49.3803320+08:00","finishedAt":"2026-08-29T02:19:49.5112523+08:00","env":"local","revision":"main@62bd288","result":"22 recovery-contract tests passed, including strict RFC3339/calendar rejection"}
