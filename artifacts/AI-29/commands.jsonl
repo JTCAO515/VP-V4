@@ -1,0 +1,6 @@
+{"command":"pnpm install --ignore-workspace --frozen-lockfile","exitCode":0,"env":"Windows; Node v24.13.0; pinned pnpm 9.15.9; no external credentials","result":"frozen install completed; lockfile unchanged"}
+{"command":"pnpm test:contract","exitCode":0,"env":"Windows; Node v24.13.0; pinned pnpm 9.15.9; no external credentials","result":"115/115 passed"}
+{"command":"pnpm test:e2e","exitCode":0,"env":"Windows; Node v24.13.0; pinned pnpm 9.15.9; no external credentials","result":"27/27 passed"}
+{"command":"pnpm check","exitCode":0,"env":"Windows; Node v24.13.0; pinned pnpm 9.15.9; no external credentials","result":"source-policy lint 128 files, strict TypeScript, production build, 22 standard tests passed; workspace-root warning only"}
+{"command":"pnpm docs:check","exitCode":0,"env":"Windows; Node v24.13.0; pinned pnpm 9.15.9; no external credentials","result":"AI Core documentation baseline passed"}
+{"command":"git diff --check","exitCode":0,"env":"Windows; no external credentials","result":"no whitespace errors"}
