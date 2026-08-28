@@ -55,7 +55,8 @@ or an equivalent owner/consent/state filter and must never query a raw profile t
 
 | Operation | Input | Output | Errors / idempotency | Permission |
 | --- | --- | --- | --- | --- |
-| `grant_memory_retrieval_consent` | caller-created consent UUID | ID, status, reused | repeats a grant safely | verified owner JWT |
+| `create_memory_retrieval_consent` | none; ID is server-minted | ID, `granted`, `reused=false` | creates one new owner-scoped consent | verified owner JWT |
+| `grant_memory_retrieval_consent` | existing owner consent UUID only | ID, status, reused | repeats an owner re-grant safely; unknown/other owner is `FORBIDDEN` | verified owner JWT |
 | `revoke_memory_retrieval_consent` | consent UUID | ID, status, reused | unknown/other owner is `FORBIDDEN`; repeat revocation is safe | verified owner JWT |
 | `create_explicit_memory_profile` | memory UUID, receipt UUID, granted consent UUID, `preference` or `hard_constraint`, 1–500 char summary | memory ID, `explicit`, reused | `CONSENT_REQUIRED`, `INVALID_MEMORY`, `MEMORY_ID_REUSE`; exact repeat is safe | verified owner JWT |
 | `transition_memory_profile` | memory UUID, next lifecycle state | memory ID, state, reused | `FORBIDDEN`, `TERMINAL_MEMORY`, `INVALID_MEMORY_STATE`, `INVALID_MEMORY_TRANSITION`; same state is safe | verified owner JWT |
@@ -65,11 +66,15 @@ All mutation RPCs are fixed `security definer` functions with `auth.uid()` check
 and a restricted `search_path`. Authenticated callers receive `select` only on the three tables;
 they cannot insert, update or delete rows directly. Anonymous access is fully revoked. `service_role`
 is reserved for future worker-owned inference paths and remains outside this user-facing contract.
+Initial consent IDs are generated only by the database. Client-provided UUIDs can only target a
+known owner consent for re-grant or revoke, so an unowned UUID is indistinguishable from an absent
+UUID at the mutation boundary.
 
 ## Version, rollback and verification
 
 The database baseline is `v4-13-memory-profile-v1`, represented by migration
-`20260828193000_v4_13_memory_profile.sql`; the pure projection type lives in
+`20260828193000_v4_13_memory_profile.sql` and the additive V4-14 forward repair
+`20260829191000_v4_14_server_minted_memory_consent.sql`; the pure projection type lives in
 `lib/server/memory/profile.ts`. This is additive and has no existing consumer migration.
 
 Rollback is a revert of the V4-13 code and migration before applying it to an environment. After an

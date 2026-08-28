@@ -208,9 +208,12 @@ export function isMemoryCreateInput(
 
 export function isMemoryConsentInput(
   value: unknown,
-): value is Readonly<{ consentId: string; action: "grant" | "revoke" }> {
+): value is
+  | Readonly<{ action: "create" }>
+  | Readonly<{ consentId: string; action: "grant" | "revoke" }> {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const input = value as Record<string, unknown>;
+  if (input.action === "create") return Object.keys(input).length === 1;
   return (
     isUuid(String(input.consentId ?? "")) &&
     (input.action === "grant" || input.action === "revoke") &&

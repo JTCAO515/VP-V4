@@ -284,13 +284,15 @@ export function CopilotMemoryWorkspace() {
     setPending(true);
     setError(false);
     try {
-      const consentId = crypto.randomUUID();
       const consent = await fetch("/api/memory/consent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ consentId, action: "grant" }),
+        body: JSON.stringify({ action: "create" }),
       });
       if (!consent.ok) await messageFor(consent);
+      const consentData = await consent.json() as Readonly<{ consentId?: unknown; status?: unknown }>;
+      if (typeof consentData.consentId !== "string" || consentData.status !== "granted") throw new Error("Memory consent creation returned an invalid response");
+      const consentId = consentData.consentId;
       const response = await fetch("/api/memory", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -1,7 +1,7 @@
-{"command":"pnpm check","exitCode":0,"env":"local","result":"lint, typecheck, production build and baseline static tests passed"}
-{"command":"pnpm test:contract","exitCode":0,"env":"local","result":"62 contract tests passed"}
-{"command":"pnpm test:security","exitCode":0,"env":"local","result":"19 passed; one existing local-Supabase RLS test skipped because runtime is not running"}
-{"command":"pnpm test:integration","exitCode":0,"env":"local","result":"8 tests skipped because local Supabase is not running"}
-{"command":"pnpm test:e2e","exitCode":0,"env":"local","result":"21 static E2E/route tests passed after V4-15 consumer projection assertion was narrowed to consumer reads"}
-{"command":"pnpm docs:check","exitCode":0,"env":"local","result":"documentation baseline passed"}
-{"command":"git diff --check","exitCode":0,"env":"local","result":"no whitespace errors"}
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:02:24.1896831Z","finishedAt":"2026-08-28T19:02:41.2459079Z","result":"lint, typecheck, production build and 22 static tests passed"}
+{"command":"pnpm test:contract","exitCode":0,"env":"local","startedAt":"2026-08-28T19:02:41.2524086Z","finishedAt":"2026-08-28T19:02:42.1284137Z","result":"126 contract tests passed"}
+{"command":"pnpm test:security","exitCode":0,"env":"local","startedAt":"2026-08-28T19:02:42.1290621Z","finishedAt":"2026-08-28T19:02:46.1053506Z","result":"52 passed; one local-Supabase RLS test skipped because runtime is not running"}
+{"command":"pnpm test:integration","exitCode":0,"env":"local","startedAt":"2026-08-28T19:02:46.1058145Z","finishedAt":"2026-08-28T19:02:46.6450438Z","result":"4 passed; eight local-Supabase probes skipped because runtime is not running"}
+{"command":"pnpm test:e2e","exitCode":0,"env":"local","startedAt":"2026-08-28T19:02:46.6454979Z","finishedAt":"2026-08-28T19:02:47.9542866Z","result":"28 static E2E/route tests passed"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:03:31.7803841Z","finishedAt":"2026-08-28T19:03:32.1361997Z","result":"documentation baseline passed"}
+{"command":"git diff --cached --check","exitCode":0,"env":"local","startedAt":"2026-08-28T19:03:47.3808046Z","finishedAt":"2026-08-28T19:03:47.4217240Z","result":"no whitespace errors in the staged V4-14 consent repair"}

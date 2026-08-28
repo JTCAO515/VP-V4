@@ -363,7 +363,9 @@ export function createUserDataAdapter(request: NextRequest) {
     };
   };
   const setMemoryConsent = async (
-    input: Readonly<{ consentId: string; action: "grant" | "revoke" }>,
+    input:
+      | Readonly<{ action: "create" }>
+      | Readonly<{ consentId: string; action: "grant" | "revoke" }>,
   ): Promise<
     AdapterResult<
       Readonly<{
@@ -375,13 +377,14 @@ export function createUserDataAdapter(request: NextRequest) {
   > => {
     const actor = await authenticated();
     if ("error" in actor) return { error: actor.error };
-    const fn =
-      input.action === "grant"
-        ? "grant_memory_retrieval_consent"
-        : "revoke_memory_retrieval_consent";
-    const { data, error } = await client.rpc(fn, {
-      p_consent_id: input.consentId,
-    });
+    const { data, error } = input.action === "create"
+      ? await client.rpc("create_memory_retrieval_consent")
+      : await client.rpc(
+          input.action === "grant"
+            ? "grant_memory_retrieval_consent"
+            : "revoke_memory_retrieval_consent",
+          { p_consent_id: input.consentId },
+        );
     if (error) return { error: mapRpcFailure(error.message) };
     const result = data?.[0];
     const status =
