@@ -4,6 +4,11 @@ type Outcome = Readonly<{ kind: "confirmed"; artifact: Artifact; proposal: Reado
 
 export class UserArtifactImportStore {
   #imports = new Map<string, { digest: string; result: Outcome }>();
+  #artifacts = new Map<string, Artifact>();
+  getConfirmedRailArtifact(ownerId: string, artifactId: string, serviceId: string): Readonly<{ departsAt: string; arrivesAt: string }> | null {
+    const artifact = this.#artifacts.get(`${ownerId}:${artifactId}`);
+    return artifact?.segment.mode === "rail" && artifact.segment.serviceId === serviceId ? freeze({ departsAt: artifact.segment.departsAt, arrivesAt: artifact.segment.arrivesAt }) : null;
+  }
   confirm(input: unknown): Outcome {
     try {
       exact(input, ["ownerId", "importId", "artifactId", "kind", "redaction", "segment", "now", "tripId", "baseTripVersion"]);
@@ -15,7 +20,7 @@ export class UserArtifactImportStore {
       if (prior) return prior.digest === digest ? freeze({ kind: "already_confirmed" as const }) : freeze({ kind: "import_conflict" as const });
       const artifact = freeze({ id: input.artifactId as string, ownerId: input.ownerId as string, version: 1 as const, kind: input.kind as "pdf" | "image" | "ics", segment, confirmedAt: input.now as string });
       const result = freeze({ kind: "confirmed" as const, artifact, proposal: freeze({ kind: "pending_user_artifact_proposal" as const, tripId: input.tripId as string, baseTripVersion: input.baseTripVersion as number, artifactId: artifact.id, artifactVersion: 1 as const }) });
-      this.#imports.set(input.importId as string, { digest, result }); return result;
+      this.#imports.set(input.importId as string, { digest, result }); this.#artifacts.set(`${artifact.ownerId}:${artifact.id}`, artifact); return result;
     } catch { return freeze({ kind: "import_conflict" as const }); }
   }
 }

@@ -1,0 +1,4 @@
+{"command":"pnpm check","exitCode":0,"env":"local","startedAt":"2026-08-28T20:52:21.2382113Z","finishedAt":"2026-08-28T20:52:37.5118048Z","result":"source-policy lint (139 files), strict typecheck, production build and 22 static/foundation tests passed"}
+{"command":"pnpm test:contract","exitCode":0,"env":"local","startedAt":"2026-08-28T20:52:37.5251514Z","finishedAt":"2026-08-28T20:52:38.5030020Z","result":"contract suite passed, including confirmed-artifact-only rail timing and unavailable fallback"}
+{"command":"pnpm test:security","exitCode":0,"env":"local","startedAt":"2026-08-28T20:52:38.5041030Z","finishedAt":"2026-08-28T20:52:42.5687946Z","result":"59 security tests passed; one separate local-Supabase-dependent test skipped; RL-06 rail 3/3 passed"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","startedAt":"2026-08-28T20:52:42.5693201Z","finishedAt":"2026-08-28T20:52:42.9123480Z","result":"AI Core documentation baseline passed"}
