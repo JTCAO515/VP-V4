@@ -6,6 +6,8 @@
 
 The redesign covers Homepage, invitation-only password Login, first-run/empty/global states, Today/Ask/Copilot/Tools/Explore/User, mobile, Profile/Privacy and store release. Homepage WEB-07/#141 and Login/first-run WEB-08/#142 are merged; WEB-06/#140 now establishes their shared tokens, locales, focus and motion behavior without waiting for #139's operator-only visual-direction selection. It does not enable public signup, Magic Link, recovery, social login, AI, booking, payment, live data, Human Help or a China map. Open PR #124 conflicts with this baseline if merged as-is against the stop-ship surfaces.
 
+WEB-10/#144 adds a reproducible Chromium acceptance suite for Homepage, password Login, and Product Shell across 320/390/430/768/1280/1440 widths, plus keyboard focus, Arabic RTL, and sign-in announcement coverage. It found and fixed the Login's 768px horizontal overflow by switching to the mobile layout below 800px. Assistive technology, physical-device keyboard/safe-area/200% zoom, and Preview rollback checks remain explicitly unrun rather than passed.
+
 Objective: maintain the dependency-ordered AI Core Issue program while converting Claude's knowledge-base research into a source-aware draft catalogue without bypassing operator, migration, review, RLS or eligibility gates.
 
 Status: GitHub Program [#2](https://github.com/JTCAO515/VP-V4/issues/2) remains authoritative for delivery order. Claude's 2026-08-24 plan has been independently audited and converted into a local draft knowledge workbench: 30 record-type candidates, 18 non-executable readiness-rule candidates, and 6 source-backed `researched_draft` records. Reviewed/retrieval-eligible records remain 0. No runtime, database, bulk import or external account was activated.

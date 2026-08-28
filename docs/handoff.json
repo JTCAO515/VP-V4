@@ -2,12 +2,21 @@
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
   "objective": "Deliver the accepted AI Core and independently expressed VisePanda frontend without copying Demo fixtures or competitor expression, while preserving runtime identity, RLS, provider, data-policy, and release contracts.",
-  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-07/#141 has merged the VisePanda VI Homepage with Golden Route/Guide and map off; WEB-08/#142 has merged truthful closed-beta password Login and first-run states without changing Auth/RLS contracts; WEB-06/#140 derives shared runtime and generated CSS tokens from the approved brand manifest, centralizes locale attributes, and provides focus/motion/UI primitives.",
+  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; WEB-07/#141 has merged the VisePanda VI Homepage with Golden Route/Guide and map off; WEB-08/#142 has merged truthful closed-beta password Login and first-run states without changing Auth/RLS contracts; WEB-06/#140 derives shared runtime and generated CSS tokens from the approved brand manifest, centralizes locale attributes, and provides focus/motion/UI primitives; WEB-10/#144 now provides reproducible Chromium viewport, keyboard, RTL, and sign-in accessibility acceptance coverage, and repairs the 768px sign-in overflow.",
   "currentPhase": "R2",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "finish WEB-06/#140 verification and automated review, merge it to main, then refresh main and select the next directly executable frontend-redesign Issue; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
+  "intendedNextAgent": "complete automated review and merge of WEB-10/#144, then refresh main and select the next directly executable frontend-redesign Issue; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
+  "latestIssueExecution": {
+    "issue": "WEB-10/#144",
+    "changedFiles": ["package.json", "pnpm-lock.yaml", "playwright.config.mjs", "tests/e2e/frontend/web-10-viewport.spec.mjs", "components/auth/PasswordSignInForm.module.css", "docs/acceptance/frontend-web-10.md", "docs/agents/issue-execution-contract.md", "artifacts/WEB-10/*"],
+    "verification": ["pnpm check", "pnpm test:e2e", "pnpm test:e2e:frontend", "pnpm docs:check", "pnpm check:assets", "git diff --check"],
+    "unrun": ["VoiceOver/TalkBack reading order", "physical-device virtual keyboard, safe area, and 200% zoom", "Preview/production rollback smoke"],
+    "residualRisk": "The automated suite cannot substitute for assistive-technology, physical-device, or release-preview validation.",
+    "rollback": "Revert the WEB-10 merge commit; this changes no accounts, data, schemas, or production configuration.",
+    "nextAction": "Run the required automated review, merge clean work to main, and refresh the ready frontend Issue frontier."
+  },
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
     "audit the Claude model-layer draft against current first-party sources",

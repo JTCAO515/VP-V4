@@ -18,6 +18,7 @@
     "test:integration": "node scripts/run-ci-suite.mjs integration",
     "test:security": "node scripts/run-ci-suite.mjs security",
     "test:e2e": "node scripts/run-ci-suite.mjs e2e",
+    "test:e2e:frontend": "pnpm build && playwright install chromium && playwright test --config playwright.config.mjs --workers=1",
     "evals": "node scripts/run-ci-suite.mjs evals",
     "db:verify": "node scripts/db-verify.mjs",
     "docs:check": "node scripts/docs-check.mjs",
@@ -33,6 +34,7 @@
     "react-dom": "19.2.6"
   },
   "devDependencies": {
+    "@playwright/test": "1.55.0",
     "@tailwindcss/postcss": "4.2.1",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
