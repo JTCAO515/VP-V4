@@ -143,3 +143,18 @@ retains an unknown claim on every started-executor failure to prevent an uncerta
 Receipts exclude raw executor output and actor IDs, exposing only a bounded entity-escaped
 `<untrusted-tool-output>` projection. The synthetic tests prove gateway behavior, not provider
 delivery, flag rollout, model selection, or production reconciliation.
+
+## V4-04 Constraint Engine
+
+V4-04 (#89) adds a pure deterministic `ConstraintEngine` in `lib/server/constraints/`. It evaluates
+validated candidate plans against closed hard budget, time-window, transfer, opening, reservation
+and route-evidence constraints; soft stop-count preferences create tradeoffs only. Hard violations
+produce `infeasible`, missing current evidence produces `unknown`, and only a fully supported plan
+is `feasible`. The final-state scorer maps these to `reject`, `needs_evidence`, and `accept`.
+
+The engine neither calls providers/models nor writes Trip state. Group budget amounts are safe
+integer currency minor units; price, opening/reservation and each route link must be current before
+a pass. RFC3339 instants include an offset, are checked for real calendar dates and are compared as
+instants, never as strings; candidate stops cannot overlap. Currency conversion,
+actor/RLS, route/opening/booking freshness and evidence eligibility remain upstream obligations.
+Its synthetic PLAN-EVAL does not claim live itinerary quality or provider evidence.
