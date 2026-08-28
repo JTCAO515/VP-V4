@@ -116,3 +116,15 @@ WEB-04 removes legacy source assets, copied shapes and Fig Grotesk from runtime 
 machine-checked ledger, SBOM, NOTICE and quarantine record live in `docs/licenses/`; existing preview
 photographs are explicitly blocked from release until an operator rights record exists. This is a
 release guard, not a claim that rights have been accepted.
+
+## V4-02 Context Engineering
+
+V4-02 (#85) establishes the deterministic ContextPlan/ContextAssembler baseline in
+`lib/server/context/`. It has a fixed source order and per-section budgets; required system, policy,
+hard constraints and current user message fail closed if unavailable. Eligible context must be
+actor-scoped and is filtered before rendering; cross-user, draft, expired, prohibited, raw artifact
+and raw Tool data are never included. Tool projections remain explicitly untrusted. Provenance
+manifests keep only references, versions, counts, omission reasons and SHA-256 fingerprints rather
+than raw content or actor IDs. Synthetic contract/eval fixtures establish full-history versus
+compaction constraint retention and zero leaks; this does not claim real model/retrieval/provider
+runtime evidence.
