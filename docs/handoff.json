@@ -9,13 +9,13 @@
   "fromAgent": "claude-opus-5 (architect/reviewer)",
   "intendedNextAgent": "AI-28 is in an isolated branch after the AI-27 Explore boundary merge. Preserve the AI-26 C0 queue boundary, map-off, original CSS-only landmark composition, five locales/RTL, and the rule that only a future reviewed/current/licence-allowed public projection may render Explore data. The exact-ID handoff must not derive a POI from display copy or write a Trip.",
   "latestIssueExecution": {
-    "issue": "AI-28/#30 Explore Ask/Add exact-ID handoff",
-    "changedFiles": ["lib/server/explore/exact-id-handoff.ts", "tests/contract/explore/exact-id-handoff.test.ts", "docs/handoff.json", "artifacts/AI-28/commands.jsonl", "artifacts/AI-28/unrun.md"],
-    "verification": ["A focused exact-ID contract was red before the module existed and green afterward: accepted UUID values become Ask navigation only; unavailable evidence and invalid scope fail closed", "AI-28 suite requirements passed: pnpm check, pnpm test:e2e, pnpm test:contract, handoff JSON parse and git diff --check"],
-    "unrun": ["No Preview/Production deployment, database/RLS runtime, source-rights approval, external data fetch, map-on action, physical-device assistive review or observation window was run", "No eligible public Explore projection exists, so this contract has no public Ask/Add control or Proposal creation path to exercise"],
-    "residualRisk": "A future eligible Explore projection must call this contract with an already-authorized canonical UUID and separately use the protected immutable Proposal flow; no public POI data, Proposal creation, Fact freshness or Canvas runtime integration is proven here.",
-    "rollback": "Revert the isolated exact-ID module, test, handoff update and evidence. No durable data, cache, provider, account, projection, Trip, Fact or external state was created.",
-    "nextAction": "Complete independent review, merge AI-28 to main, then continue the direct Issue queue without weakening the exact-ID/Proposal boundary."
+    "issue": "AI-15/#17 R1 Durable Walking Skeleton acceptance audit",
+    "changedFiles": ["docs/acceptance/r1-durable-walking-skeleton.md", "artifacts/AI-15/commands.jsonl", "artifacts/AI-15/unrun.md", "docs/agents/issue-execution-contract.md", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md"],
+    "verification": ["Current repository gates ran: pnpm check, check:flags, contract, security, integration, e2e, evals, db:verify, docs:check, JSON parse and diff check", "The release report preserves the observed fixture/static passes and the skipped local-Supabase RLS/transaction probes without treating them as a release pass"],
+    "unrun": ["Local Supabase, authenticated owner/other-user browser journey, deployment, provider, production data, telemetry and release observation remain unavailable or unauthorised", "No production connection was attempted; db:verify reports configuration baseline only"],
+    "residualRisk": "R1 cannot prove the required reviewed Fact-to-Turn-to-immutable-Proposal-to-atomic-apply-to-reload/audit flow without a disposable local Supabase runtime, authenticated seed actors and a reproducible browser session.",
+    "rollback": "Revert the acceptance report, evidence ledger, execution-row correction and handoff updates. This audit creates no runtime, data, migration, account or deployment state.",
+    "nextAction": "Review and merge the blocked AI-15 evidence audit, close #17, then continue the direct Issue queue without promoting a release claim."
   },
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
@@ -307,7 +307,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Complete independent review and merge AI-27's truthful unavailable Explore route boundary, then continue the direct Issue queue while preserving map-off and the protected Proposal/Trip boundary.",
+  "nextAction": "Review and merge the blocked AI-15 R1 evidence audit, close #17, then continue the direct Issue queue without promoting a release claim.",
   "lastUpdated": "2026-08-29",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
