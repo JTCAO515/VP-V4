@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { VisePandaMark } from "@/components/brand/VisePandaMark";
 import { chatThreadCopy, getLocaleAttributes, localeOptions, type Locale } from "@/lib/i18n";
+import type { TurnFeedbackKind, TurnFeedbackReason } from "@/lib/server/turn/feedback/contract";
 import styles from "./ChatThreadWorkspace.module.css";
 
 type Thread = { id: string; status: "active" | "archived"; createdAt: string; updatedAt: string };
-type Turn = { id: string; status: string; createdAt: string; updatedAt: string; events: readonly { eventId: string; sequence: number; type: string; state: string; createdAt: string }[] };
+type Turn = { id: string; status: string; createdAt: string; updatedAt: string; events: readonly { eventId: string; sequence: number; type: string; state: string; createdAt: string }[]; feedback: readonly { id: string; kind: TurnFeedbackKind; reason: TurnFeedbackReason; createdAt: string }[] };
 type ThreadRead = { thread: Thread; turns: readonly Turn[] };
 type LoadState = "loading" | "ready" | "unauthenticated" | "unavailable";
 
@@ -20,6 +21,7 @@ export function ChatThreadWorkspace({ initialThreadId }: { initialThreadId?: str
   const [state, setState] = useState<LoadState>("loading");
   const [creating, setCreating] = useState(false);
   const [turnAction, setTurnAction] = useState<"starting" | "cancelling" | null>(null);
+  const [feedbackTurnId, setFeedbackTurnId] = useState<string | null>(null);
   const pendingStarts = useRef(new Map<string, Readonly<{ turnId: string; idempotencyKey: string }>>());
   const copy = chatThreadCopy[locale];
 
@@ -120,13 +122,24 @@ export function ChatThreadWorkspace({ initialThreadId }: { initialThreadId?: str
     } catch { setState("unavailable"); } finally { setTurnAction(null); }
   }
 
+  async function recordFeedback(turnId: string, kind: TurnFeedbackKind, reason: TurnFeedbackReason) {
+    if (!selected) return;
+    setFeedbackTurnId(turnId);
+    try {
+      const response = await fetch(`/api/chat/turns/${turnId}/feedback`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ kind, reason }) });
+      if (!response.ok) { setState(response.status === 401 ? "unauthenticated" : "unavailable"); return; }
+      const refreshed = await readThread(selected.thread.id);
+      if (refreshed) setSelected(refreshed);
+    } catch { setState("unavailable"); } finally { setFeedbackTurnId(null); }
+  }
+
   const statusName = (status: string) => status === "archived" ? copy.archived : status === "active" ? copy.active : status;
   return <main className={styles.shell}>
     <header className={styles.header}><Link href="/" aria-label="VisePanda home"><VisePandaMark /></Link><Link href="/visepanda">{copy.back}</Link><label>{copy.language}<select value={locale} onChange={(event) => setLocale(event.target.value as Locale)}>{localeOptions.map((option) => <option key={option.value} value={option.value}>{option.flag} {option.label}</option>)}</select></label></header>
     <section className={styles.content} aria-labelledby="chat-threads-title"><p>{copy.eyebrow}</p><h1 id="chat-threads-title">{copy.title}</h1><p className={styles.body}>{copy.body}</p>
       <div aria-live="polite" className={styles.status}>{state === "loading" ? copy.loading : state === "unavailable" ? copy.unavailable : null}</div>
       {state === "unauthenticated" ? <Link className={styles.primary} href="/auth/sign-in?returnTo=/visepanda/ask">{copy.signIn}</Link> : null}
-      {state === "ready" ? <><button className={styles.primary} type="button" onClick={createThread} disabled={creating}>{copy.create}</button><div className={styles.grid}><section aria-label={copy.title}>{threads.length === 0 ? <p className={styles.empty}>{copy.empty}</p> : <ul>{threads.map((thread) => <li key={thread.id}><button type="button" onClick={() => void selectThread(thread)}>{statusName(thread.status)} · {new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(thread.createdAt))}</button></li>)}</ul>}</section><section aria-label={copy.state}>{selected ? <><p className={styles.kicker}>{statusName(selected.thread.status)}</p><h2>{selected.turns.length === 0 ? copy.noTurns : `${selected.turns.length} ${copy.recorded}`}</h2>{selected.thread.status === "active" ? <button className={styles.secondary} type="button" onClick={() => void startTurn()} disabled={turnAction !== null}>{turnAction === "starting" ? copy.starting : copy.startTurn}</button> : null}<ul className={styles.turns}>{selected.turns.map((turn) => <li key={turn.id}><strong>{turn.status}</strong><span>{turn.events.map((event) => `${event.sequence}. ${event.state}`).join(" · ")}</span>{turn.status === "accepted" ? <button className={styles.secondary} type="button" onClick={() => void cancelTurn(turn.id)} disabled={turnAction !== null}>{turnAction === "cancelling" ? copy.cancelling : copy.cancelTurn}</button> : null}</li>)}</ul></> : <p className={styles.empty}>{copy.empty}</p>}</section></div></> : null}
+      {state === "ready" ? <><button className={styles.primary} type="button" onClick={createThread} disabled={creating}>{copy.create}</button><div className={styles.grid}><section aria-label={copy.title}>{threads.length === 0 ? <p className={styles.empty}>{copy.empty}</p> : <ul>{threads.map((thread) => <li key={thread.id}><button type="button" onClick={() => void selectThread(thread)}>{statusName(thread.status)} · {new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(thread.createdAt))}</button></li>)}</ul>}</section><section aria-label={copy.state}>{selected ? <><p className={styles.kicker}>{statusName(selected.thread.status)}</p><h2>{selected.turns.length === 0 ? copy.noTurns : `${selected.turns.length} ${copy.recorded}`}</h2>{selected.thread.status === "active" ? <button className={styles.secondary} type="button" onClick={() => void startTurn()} disabled={turnAction !== null}>{turnAction === "starting" ? copy.starting : copy.startTurn}</button> : null}<ul className={styles.turns}>{selected.turns.map((turn) => <li key={turn.id}><strong>{turn.status}</strong><span>{turn.events.map((event) => `${event.sequence}. ${event.state}`).join(" · ")}</span>{turn.status === "accepted" ? <button className={styles.secondary} type="button" onClick={() => void cancelTurn(turn.id)} disabled={turnAction !== null}>{turnAction === "cancelling" ? copy.cancelling : copy.cancelTurn}</button> : null}{["completed", "proposal_ready", "unavailable", "failed"].includes(turn.status) ? <fieldset><legend>{copy.feedback}</legend><button type="button" onClick={() => void recordFeedback(turn.id, "another_option", "different_preference")} disabled={feedbackTurnId === turn.id}>{copy.anotherOption}</button><button type="button" onClick={() => void recordFeedback(turn.id, "inaccurate", "not_relevant")} disabled={feedbackTurnId === turn.id}>{copy.inaccurate}</button><button type="button" onClick={() => void recordFeedback(turn.id, "reject_reason", "missing_evidence")} disabled={feedbackTurnId === turn.id}>{copy.rejectReason}</button><button type="button" onClick={() => void recordFeedback(turn.id, "correction", "incorrect_detail")} disabled={feedbackTurnId === turn.id}>{copy.correction}</button>{turn.feedback.length > 0 ? <small>{copy.feedbackSaved}</small> : null}</fieldset> : null}</li>)}</ul></> : <p className={styles.empty}>{copy.empty}</p>}</section></div></> : null}
     </section>
   </main>;
 }

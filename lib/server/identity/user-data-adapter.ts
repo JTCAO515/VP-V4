@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import type { NextRequest, NextResponse } from "next/server";
 import type { FailureCode } from "@/lib/server/contracts/errors";
+import type { TurnFeedbackKind, TurnFeedbackReason } from "@/lib/server/turn/feedback/contract";
 
 type PendingCookie = { name: string; value: string; options: CookieOptions };
 
@@ -11,7 +12,8 @@ export type ProposalRevisionInput = Readonly<{ proposalId: string; title: string
 export type ProposalRejectInput = Readonly<{ proposalId: string }>;
 export type ChatThreadSnapshot = Readonly<{ id: string; tripId: string | null; status: "active" | "archived"; createdAt: string; updatedAt: string }>;
 export type ChatTurnEventHistory = Readonly<{ eventId: string; sequence: number; type: string; state: string; createdAt: string }>;
-export type ChatTurnHistory = Readonly<{ id: string; status: string; createdAt: string; updatedAt: string; events: readonly ChatTurnEventHistory[] }>;
+export type ChatTurnFeedback = Readonly<{ id: string; kind: TurnFeedbackKind; reason: TurnFeedbackReason; createdAt: string }>;
+export type ChatTurnHistory = Readonly<{ id: string; status: string; createdAt: string; updatedAt: string; events: readonly ChatTurnEventHistory[]; feedback: readonly ChatTurnFeedback[] }>;
 export type ChatThreadRead = Readonly<{ thread: ChatThreadSnapshot; turns: readonly ChatTurnHistory[] }>;
 export type PendingProposalRead = Readonly<{
   trip: TripSnapshot;
@@ -166,13 +168,26 @@ export function createUserDataAdapter(request: NextRequest) {
         .eq("thread_id", threadId)
         .order("sequence", { ascending: true });
     if (eventsError) return { error: "INTERNAL_ERROR" };
+    const { data: feedback, error: feedbackError } = turnIds.length === 0
+      ? { data: [], error: null }
+      : await client.from("turn_feedback")
+        .select("id,turn_id,feedback_kind,reason_code,created_at")
+        .eq("thread_id", threadId)
+        .order("created_at", { ascending: true });
+    if (feedbackError) return { error: "INTERNAL_ERROR" };
     const eventsByTurn = new Map<string, ChatTurnEventHistory[]>();
     for (const event of events ?? []) {
       const list = eventsByTurn.get(event.turn_id) ?? [];
       list.push({ eventId: event.event_id, sequence: event.sequence, type: event.event_type, state: event.state, createdAt: event.created_at });
       eventsByTurn.set(event.turn_id, list);
     }
-    return { data: { thread: chatThreadSnapshot(thread), turns: (turns ?? []).map((turn) => ({ id: turn.id, status: turn.status, createdAt: turn.created_at, updatedAt: turn.updated_at, events: eventsByTurn.get(turn.id) ?? [] })) } };
+    const feedbackByTurn = new Map<string, ChatTurnFeedback[]>();
+    for (const item of feedback ?? []) {
+      const list = feedbackByTurn.get(item.turn_id) ?? [];
+      list.push({ id: item.id, kind: item.feedback_kind as TurnFeedbackKind, reason: item.reason_code as TurnFeedbackReason, createdAt: item.created_at });
+      feedbackByTurn.set(item.turn_id, list);
+    }
+    return { data: { thread: chatThreadSnapshot(thread), turns: (turns ?? []).map((turn) => ({ id: turn.id, status: turn.status, createdAt: turn.created_at, updatedAt: turn.updated_at, events: eventsByTurn.get(turn.id) ?? [], feedback: feedbackByTurn.get(turn.id) ?? [] })) } };
   };
   const startChatTurn = async (threadId: string, input: Readonly<{ turnId: string; idempotencyKey: string; digest: string }>): Promise<AdapterResult<Readonly<{ turnId: string; reused: boolean }>>> => {
     const actor = await authenticated();
@@ -210,6 +225,14 @@ export function createUserDataAdapter(request: NextRequest) {
     if (error) return { error: "INTERNAL_ERROR" };
     return { data: (data ?? []).map((event) => ({ eventId: event.event_id, sequence: event.sequence, type: event.event_type, state: event.state, createdAt: event.created_at })) };
   };
+  const recordTurnFeedback = async (turnId: string, input: Readonly<{ kind: TurnFeedbackKind; reason: TurnFeedbackReason }>): Promise<AdapterResult<Readonly<{ feedbackId: string; reused: boolean }>>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data, error } = await client.rpc("record_turn_feedback", { p_turn_id: turnId, p_feedback_kind: input.kind, p_reason_code: input.reason });
+    if (error) return { error: mapRpcFailure(error.message) };
+    const result = data?.[0];
+    return result?.feedback_id ? { data: { feedbackId: result.feedback_id, reused: result.reused === true } } : { error: "INTERNAL_ERROR" };
+  };
   const confirm = async (tripId: string, input: ConfirmInput): Promise<AdapterResult<Readonly<{ outcome: "applied" | "already_applied"; resultingVersion: number }>>> => {
     const actor = await authenticated();
     if ("error" in actor) return { error: actor.error };
@@ -225,7 +248,7 @@ export function createUserDataAdapter(request: NextRequest) {
     if (result.outcome !== "applied" && result.outcome !== "already_applied") return { error: "PROPOSAL_NOT_CONFIRMABLE" };
     return { data: { outcome: result.outcome, resultingVersion: result.resulting_version } };
   };
-  return { applyCookies, authenticated, getTrip, getPendingProposal, revisePendingProposal, rejectPendingProposal, listChatThreads, createChatThread, getChatThread, startChatTurn, cancelChatTurn, replayChatTurn, confirm };
+  return { applyCookies, authenticated, getTrip, getPendingProposal, revisePendingProposal, rejectPendingProposal, listChatThreads, createChatThread, getChatThread, startChatTurn, cancelChatTurn, replayChatTurn, recordTurnFeedback, confirm };
 }
 
 function chatThreadSnapshot(input: Readonly<{ id: string; trip_id: string | null; status: string; created_at: string; updated_at: string }>): ChatThreadSnapshot {
@@ -269,6 +292,8 @@ function mapRpcFailure(message: string): FailureCode {
   if (message.includes("IDEMPOTENCY_KEY_REUSE")) return "IDEMPOTENCY_KEY_REUSE";
   if (message.includes("FORBIDDEN")) return "FORBIDDEN";
   if (message.includes("terminal turn cannot emit events")) return "CANCELLED";
+  if (message.includes("INVALID_FEEDBACK")) return "INVALID_INPUT";
+  if (message.includes("NO_RESULT_TO_FEEDBACK")) return "PROPOSAL_NOT_CONFIRMABLE";
   if (message.includes("STALE_TRIP_VERSION")) return "STALE_TRIP_VERSION";
   if (message.includes("PROPOSAL_NOT_CONFIRMABLE") || message.includes("INVALID_PATCH")) return "PROPOSAL_NOT_CONFIRMABLE";
   return "INTERNAL_ERROR";

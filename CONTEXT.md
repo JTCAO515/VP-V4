@@ -10,6 +10,8 @@ WEB-10/#144 adds a reproducible Chromium acceptance suite for Homepage, password
 
 V4-08/#93 adds the frontend Ask route's durable, authenticated chat-thread boundary: a user can create, reopen and replay only their own thread metadata and ordered state events, then cancel an active state Turn idempotently. The user-facing control is deliberately bounded to a fixed `chat-state-control-v1` digest: it sends no Prompt, invokes no model, writes no Trip and cannot persist arbitrary request text. The migration enforces owner RLS and terminal append rules; its live local Supabase integration probe is explicitly unrun because that runtime is not started.
 
+V4-09/#94 adds closed result-type vocabulary and durable feedback without overstating an unavailable model runtime. Only a persisted qualifying terminal result may receive a fixed another-option/inaccurate/reject-reason/correction code pair; the database locks its Turn to make concurrent retries idempotent. Free-text feedback, model output storage and all Fact/Trip writes remain excluded.
+
 Objective: maintain the dependency-ordered AI Core Issue program while converting Claude's knowledge-base research into a source-aware draft catalogue without bypassing operator, migration, review, RLS or eligibility gates.
 
 Status: GitHub Program [#2](https://github.com/JTCAO515/VP-V4/issues/2) remains authoritative for delivery order. Claude's 2026-08-24 plan has been independently audited and converted into a local draft knowledge workbench: 30 record-type candidates, 18 non-executable readiness-rule candidates, and 6 source-backed `researched_draft` records. Reviewed/retrieval-eligible records remain 0. No runtime, database, bulk import or external account was activated.

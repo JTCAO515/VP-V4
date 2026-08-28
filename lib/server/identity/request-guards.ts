@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { isTurnFeedback, type TurnFeedbackKind, type TurnFeedbackReason } from "../turn/feedback/contract.ts";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -53,4 +54,12 @@ export function isChatTurnStartInput(value: unknown): value is Readonly<{ turnId
     && isUuid(String(input.idempotencyKey ?? ""))
     && input.digest === "chat-state-control-v1"
     && Object.keys(input).every((key) => key === "turnId" || key === "idempotencyKey" || key === "digest");
+}
+
+export function isTurnFeedbackInput(value: unknown): value is Readonly<{ kind: TurnFeedbackKind; reason: TurnFeedbackReason }> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const input = value as Record<string, unknown>;
+  return typeof input.kind === "string" && typeof input.reason === "string"
+    && isTurnFeedback({ kind: input.kind, reason: input.reason })
+    && Object.keys(input).every((key) => key === "kind" || key === "reason");
 }

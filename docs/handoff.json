@@ -7,15 +7,15 @@
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "complete automated review and merge of V4-08/#93, then refresh main and select the next directly executable frontend-redesign Issue; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
+  "intendedNextAgent": "complete automated review and merge of V4-09/#94, then refresh main and select the next directly executable frontend-redesign Issue; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
   "latestIssueExecution": {
-    "issue": "V4-08/#93",
+    "issue": "V4-09/#94",
     "changedFiles": ["app/api/chat/**", "app/visepanda/ask/**", "components/chat/**", "lib/server/turn/thread-store.ts", "lib/server/identity/{user-data-adapter,request-guards}.ts", "supabase/migrations/20260828153000_v4_08_durable_chat_threads.sql", "tests/{contract,integration,security}/turn/**", "docs/agents/issue-execution-contract.md", "artifacts/V4-08/*"],
     "verification": ["pnpm check", "pnpm test:contract", "pnpm test:integration", "pnpm test:security", "pnpm test:e2e", "pnpm build", "pnpm docs:check", "git diff --check"],
     "unrun": ["Local Supabase migration/RLS integration because the local Supabase runtime is not running", "Assistive-technology and physical-device interaction validation"],
     "residualRisk": "The runtime contract is deliberately state-only: it records no prompt or AI call, and production migration execution remains unverified until a local or deployed Supabase environment is available.",
     "rollback": "Revert the V4-08 merge commit before applying the migration; after migration execution, use a reviewed forward migration rather than dropping persisted user state.",
-    "nextAction": "Run automated review, address every Critical/Important finding, merge V4-08 to main, then refresh the direct frontend Issue frontier."
+    "nextAction": "Run automated review, address every Critical/Important finding, merge V4-09 to main, then refresh the direct frontend Issue frontier."
   },
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
@@ -307,7 +307,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Run V4-08/#93 automated review, address every Critical/Important finding, merge to main, then refresh the direct frontend queue. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
+  "nextAction": "Run V4-09/#94 automated review, address every Critical/Important finding, merge to main, then refresh the direct frontend queue. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
   "lastUpdated": "2026-08-28",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
