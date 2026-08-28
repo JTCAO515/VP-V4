@@ -32,7 +32,7 @@ The complete stable order is:
 
 `system`, `policy`, `constraints`, and `user_message` are required. If filtering or budgeting removes one, assembly fails rather than producing a context missing a hard boundary. `constraints` is intentionally placed before compactable thread state and the current user message has the final stable section.
 
-The v1 policy budgets are deterministic: system 120, policy 120, constraints 200, trip 180, proposal 120, memory 160, evidence 160, tool 100, thread 100, and user message 160 code-point budget units. The assembler calculates these units from candidate text itself; callers cannot declare a smaller count. All eligible `constraints` are atomic: if their complete set cannot fit, assembly fails instead of silently dropping a hard constraint. High-risk policies disallow tools and set their tool-definition maximum to zero. Raw user artifacts are never allowed.
+The v1 policy budgets are deterministic: system 120, policy 120, constraints 200, trip 180, proposal 120, memory 160, evidence 160, tool 100, thread 100, and user message 160 code-point budget units. The assembler calculates these units from the final per-candidate rendering; a Tool projection therefore includes its escaped text and untrusted-data wrapper, and callers cannot declare a smaller count. All eligible `constraints` are atomic: if their complete set cannot fit, assembly fails instead of silently dropping a hard constraint. High-risk policies disallow tools and set their tool-definition maximum to zero. Raw user artifacts are never allowed.
 
 ## Eligibility and injection safety
 

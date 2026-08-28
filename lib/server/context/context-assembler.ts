@@ -59,7 +59,7 @@ export function assembleContext(input: Readonly<{
     const sourceCandidates = selected.filter((candidate) => candidate.kind === kind);
     if (sourceCandidates.length === 0) return [];
     const text = sourceCandidates.map(renderCandidate).join("\n");
-    return [{ kind, text, tokenCount: sourceCandidates.reduce((sum, candidate) => sum + countContextTokens(candidate.text), 0) }];
+    return [{ kind, text, tokenCount: sourceCandidates.reduce((sum, candidate) => sum + countRenderedCandidateTokens(candidate), 0) }];
   });
 
   const sectionTokenCounts = Object.fromEntries(input.plan.sectionOrder.map((kind) => [kind, 0])) as Record<ContextSection, number>;
@@ -72,7 +72,7 @@ export function assembleContext(input: Readonly<{
     sourceVersions: [...new Set(selected.map((candidate) => candidate.sourceVersion))],
     omittedReasons: omissions,
     sectionTokenCounts,
-    totalTokens: selected.reduce((sum, candidate) => sum + countContextTokens(candidate.text), 0),
+    totalTokens: selected.reduce((sum, candidate) => sum + countRenderedCandidateTokens(candidate), 0),
     contentHashes: selected.map((candidate) => sha256(candidate.text)),
   };
 
@@ -120,14 +120,14 @@ function selectWithinBudgets(candidates: readonly ContextCandidate[], plan: Cont
 
   const completeConstraintTokens = candidates
     .filter((candidate) => candidate.kind === "constraints")
-    .reduce((sum, candidate) => sum + countContextTokens(candidate.text), 0);
+    .reduce((sum, candidate) => sum + countRenderedCandidateTokens(candidate), 0);
   if (completeConstraintTokens > plan.policy.tokenBudgets.constraints) {
     throw new ContextAssemblyError("Complete eligible constraints exceed the fixed context budget.");
   }
 
   for (const kind of plan.sectionOrder) {
     for (const candidate of candidates.filter((item) => item.kind === kind)) {
-      const tokenCount = countContextTokens(candidate.text);
+      const tokenCount = countRenderedCandidateTokens(candidate);
       if (tokenCount + usedTokens[kind] > plan.policy.tokenBudgets[kind]) {
         omissions.push(`budget_exhausted:${kind}`);
         continue;
@@ -173,6 +173,10 @@ function assertCandidate(candidate: ContextCandidate): void {
 
 function countContextTokens(value: string): number {
   return Array.from(value).length;
+}
+
+function countRenderedCandidateTokens(candidate: ContextCandidate): number {
+  return countContextTokens(renderCandidate(candidate));
 }
 
 function sha256(value: string): string {
