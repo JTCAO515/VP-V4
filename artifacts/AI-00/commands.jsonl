@@ -1,0 +1,8 @@
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-08-28T22:53:56.308Z","finishedAt":"2026-08-28T22:54:12.873Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T22:54:12.916Z","finishedAt":"2026-08-28T22:54:13.269Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T22:54:13.314Z","finishedAt":"2026-08-28T22:54:13.385Z","env":"local"}
+{"command":"node -e \"JSON.parse(require('node:fs').readFileSync('docs/handoff.json','utf8'))\"","exitCode":0,"startedAt":"2026-08-28T22:58:06.8343041Z","finishedAt":"2026-08-28T22:58:06.8778731Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T22:57:01.729Z","finishedAt":"2026-08-28T22:57:02.058Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T22:57:02.101Z","finishedAt":"2026-08-28T22:57:02.157Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-08-28T22:59:42.025Z","finishedAt":"2026-08-28T22:59:42.355Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-08-28T22:59:42.396Z","finishedAt":"2026-08-28T22:59:42.451Z","env":"local"}
