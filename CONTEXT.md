@@ -99,7 +99,7 @@ Rollback: remove `docs/knowledge-base/` and its audit link if the research dispo
 
 The operator requires the real VP-V4 product to reproduce the Early Access Demo's user capabilities without copying its static fixtures. The accepted planning package is `docs/vp-v4-production-feature-parity-report.md`, `docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md`, `docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md`, its source ledger, and `docs/vp-v4-production-parity-issue-plan.md`.
 
-The tracker plan is published as V4-01 through V4-31 while preserving R0-R5. It adds ContextPlan, Tool Policy Gateway, ConstraintEngine and a rejectable RoutePattern RAG spike. LangChain/LangGraph/GraphRAG/multi-agent are not default implementation work. At the 2026-08-27 audit #15 is the ready product frontier; the Continuous AFK scheduler must recompute native dependencies and labels after every PR or merge.
+The tracker plan is published as V4-01 through V4-31 while preserving R0-R5. It adds ContextPlan, Tool Policy Gateway, ConstraintEngine and a rejectable RoutePattern RAG spike. LangChain/LangGraph/GraphRAG/multi-agent are not default implementation work. V4-14, V4-16, V4-18, V4-22 and V4-23 are now merged as truthful five-locale/RTL unavailable surfaces where durable inputs or reviewed high-risk content do not exist; none activates a provider, offline cache, TTS, state mutation or fixture fallback. The Continuous AFK scheduler must recompute native dependencies and labels after every PR or merge; label synchronization is skipped while `gh` lacks an authenticated user.
 
 ## Continuous AFK execution
 
