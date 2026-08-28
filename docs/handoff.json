@@ -7,15 +7,15 @@
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
   "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
   "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "Refresh main and implement V4-15 Memory Consumers, using only V4-13's owner/consent/state-filtered projection; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
+  "intendedNextAgent": "Refresh main and implement V4-14 Memory governance UI, then connect a verified Turn/Proposal coordinator to V4-15 receipt writes; skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication exists.",
   "latestIssueExecution": {
-    "issue": "V4-13/#98",
-    "changedFiles": ["lib/server/memory/profile.ts", "supabase/migrations/20260828193000_v4_13_memory_profile.sql", "tests/contract/memory/memory-profile.test.ts", "tests/security/memory/memory-profile-security.test.mjs", "docs/contracts/memory-profile.md", "artifacts/V4-13/**", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md"],
-    "verification": ["pnpm check", "pnpm db:verify", "pnpm test:contract", "pnpm test:security", "pnpm docs:check", "git diff --check"],
-    "unrun": ["Local Supabase migration/RLS integration because the local runtime is not running", "Copilot/UI, provider, Chat/Canvas receipt-consumer and production-observation evidence are owned by later Issues"],
-    "residualRisk": "V4-13 is a contract baseline only: no local migration has run and V4-14/V4-15/V4-17 remain required before a Memory capability or full parity claim.",
-    "rollback": "Before applying a database migration, revert V4-13. After application, use a forward repair migration; do not drop owned memory or receipts.",
-    "nextAction": "Implement V4-15 Memory Consumers using only V4-13 eligible owner-scoped projections."
+    "issue": "V4-15/#100",
+    "changedFiles": ["lib/server/memory/receipts.ts", "supabase/migrations/20260828194000_v4_15_memory_consumer_receipts.sql", "lib/server/identity/user-data-adapter.ts", "components/chat/ChatThreadWorkspace.tsx", "components/canvas/TripCanvas.tsx", "tests/{contract,security,e2e}/memory/**", "evals/memory/**", "docs/contracts/memory-consumer-receipts.md", "artifacts/V4-15/**", "docs/handoff.json", "HANDOFF.md"],
+    "verification": ["pnpm check", "pnpm test:contract", "pnpm evals", "pnpm test:e2e", "pnpm docs:check", "git diff --check"],
+    "unrun": ["Local Supabase migration/RLS integration because the local runtime is not running", "No verified Turn/Proposal coordinator currently writes Memory receipts, so no runtime receipt/reload trace exists", "V4-14 governance actions and production-observation evidence remain separately required"],
+    "residualRisk": "V4-15 safely stores and projects owner-scoped receipt references, but existing state-only Chat and Canvas paths have no verified Memory-consuming result writer; no Memory capability or full parity claim is made.",
+    "rollback": "Before applying a database migration, revert V4-15. After application, use a forward repair migration; do not drop owner receipt history.",
+    "nextAction": "Implement V4-14 Memory governance UI and then wire a verified Turn/Proposal coordinator to V4-15 receipts."
   },
   "scope": [
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
@@ -307,7 +307,7 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Implement V4-15 Memory Consumers using only V4-13 eligible owner-scoped projections. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
+  "nextAction": "Implement V4-14 Memory governance UI and then wire a verified Turn/Proposal coordinator to V4-15 receipts. Skip #139's operator-only visual selection and remote GitHub status/label synchronization until gh authentication is available.",
   "lastUpdated": "2026-08-28",
   "provenance": {
     "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",

@@ -1,0 +1,6 @@
+{"command":"pnpm check","exitCode":0,"env":"local","result":"lint, typecheck, production build, and static tests passed"}
+{"command":"pnpm test:contract","exitCode":0,"env":"local","result":"Memory consumer projection contracts passed"}
+{"command":"pnpm evals","exitCode":0,"env":"local","result":"pause/reject propagation eval passed"}
+{"command":"pnpm test:e2e","exitCode":0,"env":"local","result":"static Chat/Canvas receipt projection contract passed"}
+{"command":"pnpm docs:check","exitCode":0,"env":"local","result":"documentation baseline passed"}
+{"command":"git diff --check","exitCode":0,"env":"local","result":"no whitespace errors"}

@@ -9,14 +9,15 @@ type PendingCookie = { name: string; value: string; options: CookieOptions };
 
 export type TripSnapshot = Readonly<{ id: string; title: string; headVersion: number; updatedAt: string }>;
 export type TripAudit = Readonly<{ id: string; action: string; proposalId: string; createdAt: string }>;
-export type TripVersion = Readonly<{ id: string; resultingVersion: number; proposalId: string | null; eventType: "initial" | "proposal_applied"; title: string | null; createdAt: string }>;
+export type MemoryConsumerReceiptRead = Readonly<{ memoryId: string; sourceReceiptId: string; constraintKind: "preference" | "hard_constraint" }>;
+export type TripVersion = Readonly<{ id: string; resultingVersion: number; proposalId: string | null; eventType: "initial" | "proposal_applied"; title: string | null; createdAt: string; memoryReceipts: readonly MemoryConsumerReceiptRead[] }>;
 export type ConfirmInput = Readonly<{ proposalId: string; idempotencyKey: string; digest: string }>;
 export type ProposalRevisionInput = Readonly<{ proposalId: string; title: string }>;
 export type ProposalRejectInput = Readonly<{ proposalId: string }>;
 export type ChatThreadSnapshot = Readonly<{ id: string; tripId: string | null; status: "active" | "archived"; createdAt: string; updatedAt: string }>;
 export type ChatTurnEventHistory = Readonly<{ eventId: string; sequence: number; type: string; state: string; createdAt: string }>;
 export type ChatTurnFeedback = Readonly<{ id: string; kind: TurnFeedbackKind; reason: TurnFeedbackReason; createdAt: string }>;
-export type ChatTurnHistory = Readonly<{ id: string; status: string; createdAt: string; updatedAt: string; events: readonly ChatTurnEventHistory[]; feedback: readonly ChatTurnFeedback[] }>;
+export type ChatTurnHistory = Readonly<{ id: string; status: string; createdAt: string; updatedAt: string; events: readonly ChatTurnEventHistory[]; feedback: readonly ChatTurnFeedback[]; memoryReceipts: readonly MemoryConsumerReceiptRead[] }>;
 export type ChatThreadRead = Readonly<{ thread: ChatThreadSnapshot; turns: readonly ChatTurnHistory[] }>;
 export type PendingProposalRead = Readonly<{
   trip: TripSnapshot;
@@ -78,13 +79,28 @@ export function createUserDataAdapter(request: NextRequest) {
       .select("version,title,created_at")
       .eq("trip_id", tripId);
     if (snapshotError) return { error: "INTERNAL_ERROR" };
+    const proposalIds = (versions ?? []).flatMap((version) => version.proposal_id ? [version.proposal_id] : []);
+    const { data: memoryReceipts, error: memoryReceiptsError } = proposalIds.length === 0
+      ? { data: [], error: null }
+      : await client.from("memory_consumer_receipts")
+        .select("proposal_id,memory_id,source_receipt_id,constraint_kind")
+        .eq("consumer_kind", "proposal")
+        .in("proposal_id", proposalIds);
+    if (memoryReceiptsError) return { error: "INTERNAL_ERROR" };
+    const memoryReceiptsByProposal = new Map<string, MemoryConsumerReceiptRead[]>();
+    for (const receipt of memoryReceipts ?? []) {
+      if (!receipt.proposal_id) continue;
+      const list = memoryReceiptsByProposal.get(receipt.proposal_id) ?? [];
+      list.push({ memoryId: receipt.memory_id, sourceReceiptId: receipt.source_receipt_id, constraintKind: receipt.constraint_kind === "hard_constraint" ? "hard_constraint" : "preference" });
+      memoryReceiptsByProposal.set(receipt.proposal_id, list);
+    }
     const snapshotsByVersion = new Map((snapshots ?? []).map((snapshot) => [snapshot.version, snapshot]));
     return { data: {
       trip: { id: trip.id, title: trip.title, headVersion: trip.head_version, updatedAt: trip.updated_at },
       audits: (audits ?? []).map((audit) => ({ id: audit.id, action: audit.action, proposalId: audit.proposal_id, createdAt: audit.created_at })),
       versions: [
-        ...(versions ?? []).map((version) => ({ id: version.id, resultingVersion: version.resulting_version, proposalId: version.proposal_id, eventType: "proposal_applied" as const, title: snapshotsByVersion.get(version.resulting_version)?.title ?? null, createdAt: version.created_at })),
-        ...((snapshotsByVersion.has(0) && !(versions ?? []).some((version) => version.resulting_version === 0)) ? [{ id: `initial-${trip.id}`, resultingVersion: 0, proposalId: null, eventType: "initial" as const, title: snapshotsByVersion.get(0)?.title ?? null, createdAt: snapshotsByVersion.get(0)?.created_at ?? trip.updated_at }] : []),
+        ...(versions ?? []).map((version) => ({ id: version.id, resultingVersion: version.resulting_version, proposalId: version.proposal_id, eventType: "proposal_applied" as const, title: snapshotsByVersion.get(version.resulting_version)?.title ?? null, createdAt: version.created_at, memoryReceipts: version.proposal_id ? memoryReceiptsByProposal.get(version.proposal_id) ?? [] : [] })),
+        ...((snapshotsByVersion.has(0) && !(versions ?? []).some((version) => version.resulting_version === 0)) ? [{ id: `initial-${trip.id}`, resultingVersion: 0, proposalId: null, eventType: "initial" as const, title: snapshotsByVersion.get(0)?.title ?? null, createdAt: snapshotsByVersion.get(0)?.created_at ?? trip.updated_at, memoryReceipts: [] }] : []),
       ].sort((left, right) => right.resultingVersion - left.resultingVersion),
     } };
   };
@@ -215,6 +231,13 @@ export function createUserDataAdapter(request: NextRequest) {
         .eq("thread_id", threadId)
         .order("created_at", { ascending: true });
     if (feedbackError) return { error: "INTERNAL_ERROR" };
+    const { data: memoryReceipts, error: memoryReceiptsError } = turnIds.length === 0
+      ? { data: [], error: null }
+      : await client.from("memory_consumer_receipts")
+        .select("turn_id,memory_id,source_receipt_id,constraint_kind")
+        .eq("consumer_kind", "turn")
+        .in("turn_id", turnIds);
+    if (memoryReceiptsError) return { error: "INTERNAL_ERROR" };
     const eventsByTurn = new Map<string, ChatTurnEventHistory[]>();
     for (const event of events ?? []) {
       const list = eventsByTurn.get(event.turn_id) ?? [];
@@ -227,7 +250,14 @@ export function createUserDataAdapter(request: NextRequest) {
       list.push({ id: item.id, kind: item.feedback_kind as TurnFeedbackKind, reason: item.reason_code as TurnFeedbackReason, createdAt: item.created_at });
       feedbackByTurn.set(item.turn_id, list);
     }
-    return { data: { thread: chatThreadSnapshot(thread), turns: (turns ?? []).map((turn) => ({ id: turn.id, status: turn.status, createdAt: turn.created_at, updatedAt: turn.updated_at, events: eventsByTurn.get(turn.id) ?? [], feedback: feedbackByTurn.get(turn.id) ?? [] })) } };
+    const memoryReceiptsByTurn = new Map<string, MemoryConsumerReceiptRead[]>();
+    for (const receipt of memoryReceipts ?? []) {
+      if (!receipt.turn_id) continue;
+      const list = memoryReceiptsByTurn.get(receipt.turn_id) ?? [];
+      list.push({ memoryId: receipt.memory_id, sourceReceiptId: receipt.source_receipt_id, constraintKind: receipt.constraint_kind === "hard_constraint" ? "hard_constraint" : "preference" });
+      memoryReceiptsByTurn.set(receipt.turn_id, list);
+    }
+    return { data: { thread: chatThreadSnapshot(thread), turns: (turns ?? []).map((turn) => ({ id: turn.id, status: turn.status, createdAt: turn.created_at, updatedAt: turn.updated_at, events: eventsByTurn.get(turn.id) ?? [], feedback: feedbackByTurn.get(turn.id) ?? [], memoryReceipts: memoryReceiptsByTurn.get(turn.id) ?? [] })) } };
   };
   const startChatTurn = async (threadId: string, input: Readonly<{ turnId: string; idempotencyKey: string; digest: string }>): Promise<AdapterResult<Readonly<{ turnId: string; reused: boolean }>>> => {
     const actor = await authenticated();
