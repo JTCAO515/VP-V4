@@ -1,4 +1,4 @@
-import { TurnEventLog } from "./contract.ts";
+import { TurnEventLog, type TurnEvent } from "./contract.ts";
 
 const CONFIG_KEYS = ["leaseMs", "maxAttempts"] as const;
 const ENQUEUE_KEYS = ["turnId", "ownerId"] as const;
@@ -86,6 +86,9 @@ export class ReliableTurnCoordinator {
 
   finish(worker: unknown, lease: unknown, result: unknown): TurnCoordinatorState {
     if (!isWorker(worker) || !isLease(lease) || LEASE_WORKERS.get(lease) !== worker || !isWorkerOutcome(result)) return invalid();
+    const now = this.#now();
+    if (now === null) return invalid();
+    this.#reclaimExpired(now);
     const record = this.#turns.get(lease.turnId);
     if (!record || record.lease !== lease || record.state !== "leased") return record ? snapshot(record) : invalid();
     this.#clearLease(record);
@@ -107,6 +110,11 @@ export class ReliableTurnCoordinator {
   read(value: unknown): TurnCoordinatorState {
     if (!isRead(value)) throw new TypeError("Read input must be exact owner-scoped metadata.");
     return snapshot(this.#forOwner(value));
+  }
+
+  replay(value: unknown): readonly TurnEvent[] {
+    if (!isRead(value)) throw new TypeError("Replay input must be exact owner-scoped metadata.");
+    return this.#forOwner(value).log.replay();
   }
 
   #forOwner(value: Readonly<{ turnId: string; ownerId: string }>): TurnRecord {

@@ -32,3 +32,17 @@ test("LAUNCH-07 owner cancellation wins a lease race and prevents a later worker
   assert.deepEqual(coordinator.cancel({ turnId: "turn-1", ownerId: owner }), { state: "cancelled", attempt: 1, terminal: true });
   assert.deepEqual(coordinator.finish(worker, lease, { outcome: "completed" }), { state: "cancelled", attempt: 1, terminal: true });
 });
+
+test("LAUNCH-07 expires a lease before an old worker can complete without an intervening claim", () => {
+  let now = 100;
+  const coordinator = new ReliableTurnCoordinator({ leaseMs: 10, maxAttempts: 2 }, () => now);
+  const worker = createTurnWorkerCapability();
+  coordinator.enqueue({ turnId: "turn-1", ownerId: owner });
+  const lease = coordinator.claim(worker);
+  assert.ok(lease);
+  now = 110;
+  assert.deepEqual(coordinator.finish(worker, lease, { outcome: "completed" }), { state: "queued", attempt: 1, terminal: false });
+  const retry = coordinator.claim(worker);
+  assert.ok(retry);
+  assert.equal(retry.attempt, 2);
+});
