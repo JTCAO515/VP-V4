@@ -10,6 +10,9 @@ test("LAUNCH-12 reads only the canonical owner Trip routes and renders Today wit
   assert.match(view, /fetch\("\/api\/trips"/);
   assert.match(view, /\/api\/trips\/\$\{tripId\}/);
   assert.match(view, /selectTripNextAction/);
+  assert.match(view, /type LoadState = "loading" \| "ready" \| "unavailable" \| "unauthenticated" \| "no_current_trip"/);
+  assert.match(view, /if \(!currentTripId\) return setState\("no_current_trip"\)/);
+  assert.match(view, /noCurrentTrip:/);
   assert.match(adapter, /content:.*days/s);
   assert.doesNotMatch(view, /method:\s*["'](?:POST|PUT|PATCH|DELETE)/);
   assert.doesNotMatch(view, /fetch\(\s*["']https?:\/\//);
