@@ -31,8 +31,8 @@ an exact non-negative `expectedCostMicros` amount in process. It returns
 measure actual usage.
 
 `admitLaunch14Execution()` first consumes the existing `CHAT_RUNTIME_ENABLED` flag and validates the
-registry dependency. A disabled or illegal flag state returns `FLAG_DISABLED` and makes no budget
-reservation. It next evaluates an in-memory fixed-window `Launch14RateGuard` by a server-created,
+registry dependency. A disabled state returns `FLAG_DISABLED`; an illegal state returns `invalid`.
+Neither state makes a rate or budget reservation. It next evaluates an in-memory fixed-window `Launch14RateGuard` by a server-created,
 non-serializable subject handle; a `RATE_LIMITED` decision also makes no budget reservation. The
 future API/worker boundary must bind that opaque handle only after verified server-side identity
 resolution. This provides a deterministic integration seam only: LAUNCH-07/08 own the eventual
