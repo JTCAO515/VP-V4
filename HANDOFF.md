@@ -1,5 +1,11 @@
 # Handoff
 
+- LAUNCH-11/#161 adds the repository preparation for complete Day/Item `TripPatch` Proposals: validated
+  owner-scoped creation, immutable full-patch revisions, derived diffs and a manual Canvas patch input
+  that can only create a pending Proposal. `pnpm check`, contract (160), and E2E (39) currently pass.
+  Local Supabase/RLS, Staging migration replay, authenticated browser, live Provider and real-user
+  observation are unrun; rollback is a revert of the LAUNCH-11 PR and no migration has been applied.
+
 - LAUNCH-10/#160 replaces the disconnected `/visepanda` preview with the canonical five-locale/RTL
   Chat workspace and redirects authenticated legacy `/visepanda/ask` deep links there. It reuses only
   owner-visible thread and Trip endpoints; the visible message composer is disabled because no live

@@ -5,6 +5,7 @@ import {
   type TurnFeedbackReason,
 } from "../turn/feedback/contract.ts";
 import { normalizePrivacyRequest } from "../privacy/contract.ts";
+import { assertTripPatch, type TripPatch } from "../trip/patch/contract.ts";
 
 const UUID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -101,6 +102,19 @@ export function isProposalRevisionInput(
     input.title.trim().length > 0 &&
     input.title.trim().length <= 160
   );
+}
+
+export function isTripProposalInput(value: unknown): value is Readonly<{ patch: TripPatch }> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const input = value as Record<string, unknown>;
+  if (Object.keys(input).length !== 1 || !("patch" in input)) return false;
+  try { assertTripPatch(input.patch as TripPatch); return true; } catch { return false; }
+}
+
+export function isTripProposalRevisionInput(value: unknown): value is Readonly<{ proposalId: string; patch: TripPatch }> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const input = value as Record<string, unknown>;
+  return isUuid(String(input.proposalId ?? "")) && Object.keys(input).length === 2 && "patch" in input && isTripProposalInput({ patch: input.patch });
 }
 
 export function isProposalRejectInput(
