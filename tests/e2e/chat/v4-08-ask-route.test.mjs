@@ -9,7 +9,7 @@ test("V4-08 provides a localized private Ask route without prompt submission or 
   assert.match(page, /ChatThreadWorkspace/);
   assert.match(workspace, /\/api\/chat\/threads/);
   assert.match(workspace, /\/api\/chat\/turns\/\$\{turnId\}\/cancel/);
-  assert.match(workspace, /\/api\/chat\/turns\/\$\{turn\.id\}\/events\?afterSequence=/);
+  assert.match(workspace, /replayTurnSse/);
   assert.match(workspace, /pendingStarts/);
   assert.match(workspace, /visibilitychange/);
   assert.match(workspace, /chat-state-control-v1/);

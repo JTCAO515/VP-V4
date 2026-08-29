@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import { VisePandaMark } from "@/components/brand/VisePandaMark";
 import { chatThreadCopy, getLocaleAttributes, localeOptions, type Locale } from "@/lib/i18n";
 import type { TurnFeedbackKind, TurnFeedbackReason } from "@/lib/server/turn/feedback/contract";
+import { replayTurnSse, turnEventsFromHistory } from "./turn-stream-client";
+import { initialTurnStreamState, turnStreamReducer } from "./turn-stream-reducer";
 import styles from "./ChatThreadWorkspace.module.css";
 
 type Thread = { id: string; status: "active" | "archived"; createdAt: string; updatedAt: string };
@@ -23,6 +25,8 @@ export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: 
   const [turnAction, setTurnAction] = useState<"starting" | "cancelling" | null>(null);
   const [feedbackTurnId, setFeedbackTurnId] = useState<string | null>(null);
   const [exactPoiId, setExactPoiId] = useState<string | null>(null);
+  const [turnStreams, dispatchTurnStreams] = useReducer(turnStreamReducer, initialTurnStreamState);
+  const [pollCycle, setPollCycle] = useState(0);
   const pendingStarts = useRef(new Map<string, Readonly<{ turnId: string; idempotencyKey: string }>>());
   const copy = chatThreadCopy[locale];
 
@@ -37,6 +41,20 @@ export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: 
     if (response.status === 401) { setState("unauthenticated"); return null; }
     if (!response.ok) { setState("unavailable"); return null; }
     return response.json() as Promise<ThreadRead>;
+  }
+
+  function selectThreadRead(next: ThreadRead) {
+    dispatchTurnStreams({ type: "reset" });
+    try {
+      for (const turn of next.turns) {
+        dispatchTurnStreams({ type: "events", turnId: turn.id, events: turnEventsFromHistory(turn.id, turn.events) });
+      }
+    } catch {
+      setState("unavailable");
+      return;
+    }
+    setSelected(next);
+    setPollCycle((current) => current + 1);
   }
 
   useEffect(() => {
@@ -54,7 +72,7 @@ export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: 
   useEffect(() => {
     if (!initialThreadId || state !== "ready") return;
     let active = true;
-    void readThread(initialThreadId).then((result) => { if (active && result) setSelected(result); });
+    void readThread(initialThreadId).then((result) => { if (active && result) selectThreadRead(result); });
     return () => { active = false; };
   }, [initialThreadId, state]);
 
@@ -73,14 +91,12 @@ export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: 
 
   async function replaySelected() {
     if (!selected) return;
-    const replayed = await Promise.all(selected.turns.map(async (turn) => {
-      const afterSequence = turn.events.at(-1)?.sequence ?? 0;
-      const response = await fetch(`/api/chat/turns/${turn.id}/events?afterSequence=${afterSequence}`, { cache: "no-store" });
-      if (!response.ok) throw new Error("replay unavailable");
-      const events = await response.json() as Turn["events"];
-      return events.length === 0 ? turn : { ...turn, events: [...turn.events, ...events], status: events.at(-1)?.state ?? turn.status };
+    await Promise.all(selected.turns.map(async (turn) => {
+      const afterSequence = turnStreams.byTurn[turn.id]?.cursor ?? 0;
+      const replay = await replayTurnSse(turn.id, afterSequence);
+      dispatchTurnStreams({ type: "events", turnId: turn.id, events: replay.events });
     }));
-    setSelected((current) => current?.thread.id === selected.thread.id ? { ...current, turns: replayed } : current);
+    setPollCycle((current) => current + 1);
   }
 
   useEffect(() => {
@@ -91,10 +107,16 @@ export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: 
     return () => document.removeEventListener("visibilitychange", onVisibilityChange);
   }, [selected]);
 
+  useEffect(() => {
+    if (!selected || !selected.turns.some((turn) => !turnStreams.byTurn[turn.id]?.terminal && !["completed", "proposal_ready", "unavailable", "failed", "cancelled"].includes(turn.status))) return;
+    const timeout = window.setTimeout(() => { void replaySelected().catch(() => setState("unavailable")); }, 2_000);
+    return () => window.clearTimeout(timeout);
+  }, [pollCycle, selected, turnStreams]);
+
   async function selectThread(thread: Thread) {
     const result = await readThread(thread.id);
     if (!result) return;
-    setSelected(result);
+    selectThreadRead(result);
     router.replace(`/visepanda/ask/${thread.id}`);
   }
 
@@ -106,7 +128,7 @@ export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: 
       if (!response.ok) { setState("unavailable"); return; }
       const thread = await response.json() as Thread;
       setThreads((current) => [thread, ...current]);
-      setSelected({ thread, turns: [] });
+      selectThreadRead({ thread, turns: [] });
       router.replace(`/visepanda/ask/${thread.id}`);
     } catch { setState("unavailable"); } finally { setCreating(false); }
   }
@@ -121,7 +143,7 @@ export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: 
       if (!response.ok) { setState(response.status === 401 ? "unauthenticated" : "unavailable"); return; }
       pendingStarts.current.delete(selected.thread.id);
       const refreshed = await readThread(selected.thread.id);
-      if (refreshed) setSelected(refreshed);
+      if (refreshed) selectThreadRead(refreshed);
     } catch { setState("unavailable"); } finally { setTurnAction(null); }
   }
 
@@ -132,7 +154,7 @@ export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: 
       const response = await fetch(`/api/chat/turns/${turnId}/cancel`, { method: "POST" });
       if (!response.ok) { setState(response.status === 401 ? "unauthenticated" : "unavailable"); return; }
       const refreshed = await readThread(selected.thread.id);
-      if (refreshed) setSelected(refreshed);
+      if (refreshed) selectThreadRead(refreshed);
     } catch { setState("unavailable"); } finally { setTurnAction(null); }
   }
 
@@ -143,7 +165,7 @@ export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: 
       const response = await fetch(`/api/chat/turns/${turnId}/feedback`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ kind, reason }) });
       if (!response.ok) { setState(response.status === 401 ? "unauthenticated" : "unavailable"); return; }
       const refreshed = await readThread(selected.thread.id);
-      if (refreshed) setSelected(refreshed);
+      if (refreshed) selectThreadRead(refreshed);
     } catch { setState("unavailable"); } finally { setFeedbackTurnId(null); }
   }
 
@@ -153,7 +175,7 @@ export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: 
     <section className={styles.content} aria-labelledby="chat-threads-title"><p>{copy.eyebrow}</p><h1 id="chat-threads-title">{copy.title}</h1><p className={styles.body}>{copy.body}</p>{exactPoiId ? <p className={styles.status}>Exact place scope: {exactPoiId}. This opaque ID does not submit a prompt or infer place facts.</p> : null}
       <div aria-live="polite" className={styles.status}>{state === "loading" ? copy.loading : state === "unavailable" ? copy.unavailable : null}</div>
       {state === "unauthenticated" ? <Link className={styles.primary} href="/auth/sign-in?returnTo=/visepanda/ask">{copy.signIn}</Link> : null}
-      {state === "ready" ? <><button className={styles.primary} type="button" onClick={createThread} disabled={creating}>{copy.create}</button><div className={styles.grid}><section aria-label={copy.title}>{threads.length === 0 ? <p className={styles.empty}>{copy.empty}</p> : <ul>{threads.map((thread) => <li key={thread.id}><button type="button" onClick={() => void selectThread(thread)}>{statusName(thread.status)} · {new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(thread.createdAt))}</button></li>)}</ul>}</section><section aria-label={copy.state}>{selected ? <><p className={styles.kicker}>{statusName(selected.thread.status)}</p><h2>{selected.turns.length === 0 ? copy.noTurns : `${selected.turns.length} ${copy.recorded}`}</h2>{selected.thread.status === "active" ? <button className={styles.secondary} type="button" onClick={() => void startTurn()} disabled={turnAction !== null}>{turnAction === "starting" ? copy.starting : copy.startTurn}</button> : null}<ul className={styles.turns}>{selected.turns.map((turn) => <li key={turn.id}><strong>{turn.status}</strong><span>{turn.events.map((event) => `${event.sequence}. ${event.state}`).join(" · ")}</span>{turn.memoryReceipts.length > 0 ? <details><summary>Memory provenance</summary><ul>{turn.memoryReceipts.map((receipt) => <li key={`${receipt.memoryId}-${receipt.sourceReceiptId}`}>{receipt.constraintKind === "hard_constraint" ? "Hard constraint" : "Preference"} · <Link href="/visepanda/copilot">Memory source {receipt.memoryId}</Link> · receipt {receipt.sourceReceiptId}</li>)}</ul></details> : null}{turn.status === "accepted" ? <button className={styles.secondary} type="button" onClick={() => void cancelTurn(turn.id)} disabled={turnAction !== null}>{turnAction === "cancelling" ? copy.cancelling : copy.cancelTurn}</button> : null}{["completed", "proposal_ready", "unavailable", "failed"].includes(turn.status) ? <fieldset><legend>{copy.feedback}</legend><button type="button" onClick={() => void recordFeedback(turn.id, "another_option", "different_preference")} disabled={feedbackTurnId === turn.id}>{copy.anotherOption}</button><button type="button" onClick={() => void recordFeedback(turn.id, "inaccurate", "not_relevant")} disabled={feedbackTurnId === turn.id}>{copy.inaccurate}</button><button type="button" onClick={() => void recordFeedback(turn.id, "reject_reason", "missing_evidence")} disabled={feedbackTurnId === turn.id}>{copy.rejectReason}</button><button type="button" onClick={() => void recordFeedback(turn.id, "correction", "incorrect_detail")} disabled={feedbackTurnId === turn.id}>{copy.correction}</button>{turn.feedback.length > 0 ? <small>{copy.feedbackSaved}</small> : null}</fieldset> : null}</li>)}</ul></> : <p className={styles.empty}>{copy.empty}</p>}</section></div></> : null}
+      {state === "ready" ? <><button className={styles.primary} type="button" onClick={createThread} disabled={creating}>{copy.create}</button><div className={styles.grid}><section aria-label={copy.title}>{threads.length === 0 ? <p className={styles.empty}>{copy.empty}</p> : <ul>{threads.map((thread) => <li key={thread.id}><button type="button" onClick={() => void selectThread(thread)}>{statusName(thread.status)} · {new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(thread.createdAt))}</button></li>)}</ul>}</section><section aria-label={copy.state}>{selected ? <><p className={styles.kicker}>{statusName(selected.thread.status)}</p><h2>{selected.turns.length === 0 ? copy.noTurns : `${selected.turns.length} ${copy.recorded}`}</h2>{selected.thread.status === "active" ? <button className={styles.secondary} type="button" onClick={() => void startTurn()} disabled={turnAction !== null}>{turnAction === "starting" ? copy.starting : copy.startTurn}</button> : null}<ul className={styles.turns}>{selected.turns.map((turn) => { const stream = turnStreams.byTurn[turn.id]; const status = stream?.state ?? turn.status; const events = stream?.events ?? []; return <li key={turn.id}><strong>{status}</strong><span>{events.map((event) => `${event.sequence}. ${event.state}`).join(" · ")}</span>{turn.memoryReceipts.length > 0 ? <details><summary>Memory provenance</summary><ul>{turn.memoryReceipts.map((receipt) => <li key={`${receipt.memoryId}-${receipt.sourceReceiptId}`}>{receipt.constraintKind === "hard_constraint" ? "Hard constraint" : "Preference"} · <Link href="/visepanda/copilot">Memory source {receipt.memoryId}</Link> · receipt {receipt.sourceReceiptId}</li>)}</ul></details> : null}{status === "accepted" ? <button className={styles.secondary} type="button" onClick={() => void cancelTurn(turn.id)} disabled={turnAction !== null}>{turnAction === "cancelling" ? copy.cancelling : copy.cancelTurn}</button> : null}{["completed", "proposal_ready", "unavailable", "failed"].includes(status) ? <fieldset><legend>{copy.feedback}</legend><button type="button" onClick={() => void recordFeedback(turn.id, "another_option", "different_preference")} disabled={feedbackTurnId === turn.id}>{copy.anotherOption}</button><button type="button" onClick={() => void recordFeedback(turn.id, "inaccurate", "not_relevant")} disabled={feedbackTurnId === turn.id}>{copy.inaccurate}</button><button type="button" onClick={() => void recordFeedback(turn.id, "reject_reason", "missing_evidence")} disabled={feedbackTurnId === turn.id}>{copy.rejectReason}</button><button type="button" onClick={() => void recordFeedback(turn.id, "correction", "incorrect_detail")} disabled={feedbackTurnId === turn.id}>{copy.correction}</button>{turn.feedback.length > 0 ? <small>{copy.feedbackSaved}</small> : null}</fieldset> : null}</li>; })}</ul></> : <p className={styles.empty}>{copy.empty}</p>}</section></div></> : null}
     </section>
   </main>;
 }
