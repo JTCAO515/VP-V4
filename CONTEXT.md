@@ -26,8 +26,11 @@ LAUNCH-08, and #168 is post-launch EXPAND-01.
 LAUNCH-05/#155 freezes only a pure `user-message-v1` and `assistant-output-v1` contract. It rejects
 unknown/raw-provider fields, emits content-free telemetry receipts, and makes unapproved content
 capture `not_persisted`; it has no durable message store, provider call, migration, retention period,
-or public privacy claim. Retention, region, provider terms, backup and deletion remain operator-owned
-decisions. LAUNCH-02 Staging configuration is still the one external next action.
+or public privacy claim. LAUNCH-14/#163 adds a separate in-memory content-free trace/SLO/cost-budget
+and chat-flag preparation. It has no exporter, dashboard, real alert, API/worker consumer, Provider
+call, telemetry-retention policy or Staging kill-switch rehearsal. Retention, region, provider terms,
+backup and deletion remain operator-owned decisions. LAUNCH-02 Staging configuration is still the one
+external next action.
 
 ## Accepted frontend redesign baseline (2026-08-27)
 
