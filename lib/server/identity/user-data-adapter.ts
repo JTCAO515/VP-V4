@@ -84,6 +84,7 @@ export type ConfirmInput = Readonly<{
   idempotencyKey: string;
   digest: string;
 }>;
+export type TripCreateInput = Readonly<{ tripId: string; title: string }>;
 export type ProposalRevisionInput = Readonly<{
   proposalId: string;
   title: string;
@@ -468,6 +469,55 @@ export function createUserDataAdapter(request: NextRequest) {
         }
       : { error: "INTERNAL_ERROR" };
   };
+  const listTrips = async (
+    limit: number,
+  ): Promise<AdapterResult<readonly TripSnapshot[]>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data, error } = await client
+      .from("trips")
+      .select("id,title,head_version,updated_at")
+      .order("updated_at", { ascending: false })
+      .limit(limit);
+    if (error) return { error: "INTERNAL_ERROR" };
+    return { data: (data ?? []).map(tripSnapshot) };
+  };
+  const createTrip = async (
+    input: TripCreateInput,
+  ): Promise<AdapterResult<Readonly<{ trip: TripSnapshot; reused: boolean }>>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const title = input.title.trim();
+    const existing = await client
+      .from("trips")
+      .select("id,title,head_version,updated_at")
+      .eq("id", input.tripId)
+      .maybeSingle();
+    if (existing.error) return { error: "INTERNAL_ERROR" };
+    if (existing.data) {
+      return existing.data.title === title
+        ? { data: { trip: tripSnapshot(existing.data), reused: true } }
+        : { error: "IDEMPOTENCY_KEY_REUSE" };
+    }
+    const created = await client
+      .from("trips")
+      .insert({ id: input.tripId, owner_id: actor.data, title })
+      .select("id,title,head_version,updated_at")
+      .maybeSingle();
+    if (!created.error && created.data) {
+      return { data: { trip: tripSnapshot(created.data), reused: false } };
+    }
+    const retried = await client
+      .from("trips")
+      .select("id,title,head_version,updated_at")
+      .eq("id", input.tripId)
+      .maybeSingle();
+    if (retried.error) return { error: "INTERNAL_ERROR" };
+    if (retried.data && retried.data.title === title) {
+      return { data: { trip: tripSnapshot(retried.data), reused: true } };
+    }
+    return { error: "IDEMPOTENCY_KEY_REUSE" };
+  };
   const getTrip = async (
     tripId: string,
   ): Promise<
@@ -538,12 +588,7 @@ export function createUserDataAdapter(request: NextRequest) {
     );
     return {
       data: {
-        trip: {
-          id: trip.id,
-          title: trip.title,
-          headVersion: trip.head_version,
-          updatedAt: trip.updated_at,
-        },
+        trip: tripSnapshot(trip),
         audits: (audits ?? []).map((audit) => ({
           id: audit.id,
           action: audit.action,
@@ -1106,6 +1151,8 @@ export function createUserDataAdapter(request: NextRequest) {
     setMemoryConsent,
     createExplicitMemory,
     transitionMemory,
+    listTrips,
+    createTrip,
     getTrip,
     getTripPlaces,
     getTripActions,
@@ -1121,6 +1168,20 @@ export function createUserDataAdapter(request: NextRequest) {
     recordTurnFeedback,
     confirm,
     createRollbackProposal,
+  };
+}
+
+function tripSnapshot(input: Readonly<{
+  id: string;
+  title: string;
+  head_version: number;
+  updated_at: string;
+}>): TripSnapshot {
+  return {
+    id: input.id,
+    title: input.title,
+    headVersion: input.head_version,
+    updatedAt: input.updated_at,
   };
 }
 
