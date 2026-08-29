@@ -20,6 +20,9 @@ export type TripSnapshot = Readonly<{
   headVersion: number;
   updatedAt: string;
 }>;
+export type TripContentRead = Readonly<{
+  days: readonly (Readonly<{ id: string; date: string; timeZone?: string; items: readonly Readonly<{ id: string; dayId: string; title: string; startsAt?: string; endsAt?: string }>[] }>)[];
+}>;
 export type TripAudit = Readonly<{
   id: string;
   action: string;
@@ -530,6 +533,7 @@ export function createUserDataAdapter(request: NextRequest) {
     AdapterResult<
       Readonly<{
         trip: TripSnapshot;
+        content: TripContentRead;
         audits: readonly TripAudit[];
         versions: readonly TripVersion[];
       }>
@@ -543,6 +547,10 @@ export function createUserDataAdapter(request: NextRequest) {
       .eq("id", tripId)
       .maybeSingle();
     if (tripError || !trip) return { error: "FORBIDDEN" };
+    const { data: days, error: daysError } = await client.from("trip_days").select("day_id,trip_date,time_zone").eq("trip_id", tripId).order("trip_date", { ascending: true });
+    if (daysError) return { error: "INTERNAL_ERROR" };
+    const { data: items, error: itemsError } = await client.from("trip_items").select("item_id,day_id,title,starts_at,ends_at").eq("trip_id", tripId).order("item_id", { ascending: true });
+    if (itemsError) return { error: "INTERNAL_ERROR" };
     const { data: audits, error: auditError } = await client
       .from("trip_audit_events")
       .select("id,action,proposal_id,created_at")
@@ -595,6 +603,7 @@ export function createUserDataAdapter(request: NextRequest) {
     return {
       data: {
         trip: tripSnapshot(trip),
+        content: { days: (days ?? []).map((day) => ({ id: day.day_id, date: day.trip_date, ...(day.time_zone ? { timeZone: day.time_zone } : {}), items: (items ?? []).filter((item) => item.day_id === day.day_id).map((item) => ({ id: item.item_id, dayId: item.day_id, title: item.title, ...(item.starts_at ? { startsAt: item.starts_at } : {}), ...(item.ends_at ? { endsAt: item.ends_at } : {}) })) })) },
         audits: (audits ?? []).map((audit) => ({
           id: audit.id,
           action: audit.action,

@@ -67,6 +67,12 @@ a structured manual patch only as a pending Proposal, then relies on the existin
 No Provider or model creates a proposal. Migrations, cross-owner/RLS, atomic confirm/reload, and
 authenticated browser evidence remain unrun until the operator-owned Staging environment is available.
 
+LAUNCH-12/#169 reads the current owner-scoped Trip and its durable Day/Item projection through the
+existing private routes. With an explicit client clock and each Day's recorded timezone, it selects
+one scheduled current/next item or fails closed for empty, past-only, malformed, or timezone-missing
+data. It does not call external facts or write a Trip. The closed Trip model has no manual completion
+field, so a past date is only a no-remaining-scheduled-item state, never a user-completion claim.
+
 ## Accepted frontend redesign baseline (2026-08-27)
 
 [ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md) and [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136) govern the complete frontend redesign. The current Homepage and `/visepanda` are stop-ship. Preserve functional/information relationships but independently redraw physical expression from VisePanda VI + Golden Route + Guide. Map is off by default; `Open VisePanda` is the Homepage primary CTA. Retire runtime source assets, Fig Grotesk and duplicate shapes through #138. Reuse #87 as Demo parity truth and #92 as the only Product Shell; #93-#116 retain capability ownership. Read `docs/frontend-redesign-issue-plan.md` before frontend work.

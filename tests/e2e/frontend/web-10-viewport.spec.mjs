@@ -4,6 +4,7 @@ const surfaces = [
   ["Homepage", "/"],
   ["Sign in", "/auth/sign-in"],
   ["Product", "/visepanda"],
+  ["Today", "/visepanda/today"],
 ];
 
 const viewports = [
