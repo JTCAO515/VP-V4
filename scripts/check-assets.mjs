@@ -4,12 +4,21 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
 const readJson = (file) => JSON.parse(readFileSync(file, "utf8"));
-const sha256 = (file) => createHash("sha256").update(readFileSync(file)).digest("hex");
 const fail = (message) => {
   throw new Error(`Asset policy failed: ${message}`);
 };
 
 const ledger = readJson("docs/licenses/asset-rights-ledger.json");
+const canonicalTextAssetPaths = new Set(ledger.records
+  .filter((record) => record.policy === "internal-brand" && [".html", ".json", ".svg"].includes(path.extname(record.path)))
+  .map((record) => record.path));
+const sha256 = (file) => {
+  const contents = readFileSync(file);
+  const canonicalContents = canonicalTextAssetPaths.has(file.replaceAll("\\", "/"))
+    ? Buffer.from(contents.toString("utf8").replace(/\r\n/g, "\n"), "utf8")
+    : contents;
+  return createHash("sha256").update(canonicalContents).digest("hex");
+};
 const quarantine = readJson("docs/licenses/WEB-04-quarantine.json");
 const sbom = readJson("docs/licenses/sbom.json");
 const packageJson = readJson("package.json");
