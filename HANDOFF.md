@@ -46,6 +46,14 @@ sign-in without creating accounts or distinguishing provisioning state. The dura
 Staging account setup, real auth/deep-link/owner evidence, and access-removal test remain operator-owned
 and unrun; the external next action remains LAUNCH-02 Staging configuration.
 
+LAUNCH-03/#153 prepares the repository-only Trip content upgrade: a closed versioned Day/Item
+`TripPatch`, owner-readable current Day/Item projections, and append-only full content snapshots.
+The confirmation transaction keeps CAS, idempotency, audit/event writes and server-minted snapshot
+rollback references; direct authenticated Day/Item writes remain denied. Legacy title-only patches and
+snapshots stay readable. TypeScript, contract, security-source and skip-aware integration suites pass,
+but no local or Staging migration was replayed and no external database was accessed. The remaining
+runtime proof belongs to operator-assisted LAUNCH-02 Staging configuration; no release claim follows.
+
 Mandatory reading order: `AGENTS.md` → `CONTEXT.md` → `HANDOFF.md` → `docs/handoff.json` →
 `docs/vp-v4-closed-beta-launch-issue-plan.md` →
 `docs/superpowers/plans/2026-08-29-vp-v4-closed-beta-launch-execution.md` →
