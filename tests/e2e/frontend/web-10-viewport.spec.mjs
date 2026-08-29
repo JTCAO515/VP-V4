@@ -32,16 +32,17 @@ test("WEB-10: core surfaces fit the required viewport matrix", async ({ browser,
   }
 });
 
-test("WEB-10: product supports keyboard focus and RTL locale direction", async ({ browser, baseURL }) => {
+test("LAUNCH-10: canonical workspace supports keyboard focus and RTL locale direction", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const page = await context.newPage();
   await page.goto(`${baseURL}/visepanda`, { waitUntil: "networkidle" });
   await page.keyboard.press("Tab");
   await expect.poll(() => page.evaluate(() => document.activeElement?.tagName)).not.toBe("BODY");
 
-  await page.getByLabel("Interface language").selectOption("ar");
+  await page.locator("select").first().selectOption("ar");
   await expect.poll(() => page.locator("html").getAttribute("dir")).toBe("rtl");
-  await expect(page.getByLabel("Mobile product destinations")).toBeVisible();
+  await expect.poll(() => page.title()).toBe("سلاسل المحادثة | VisePanda");
+  await expect(page.locator("main")).toBeVisible();
   await context.close();
 });
 

@@ -1,4 +1,4 @@
-import { ChatThreadWorkspace } from "@/components/chat/ChatThreadWorkspace";
+import { redirect } from "next/navigation";
 import { isUuid } from "@/lib/server/identity/request-guards";
 import { requireClosedBetaSession } from "@/lib/server/identity/closed-beta-session-guard";
 
@@ -9,6 +9,11 @@ export default async function AskThreadPage({ params, searchParams }: { params: 
   const { tripId, poiId } = await searchParams;
   const initialThreadId = thread?.at(-1);
   await requireClosedBetaSession(initialThreadId && isUuid(initialThreadId) ? `/visepanda/ask/${initialThreadId}` : "/visepanda/ask");
-  const initialPlaceCandidate = tripId && poiId && isUuid(tripId) && isUuid(poiId) ? { tripId, poiId } : undefined;
-  return <ChatThreadWorkspace initialThreadId={initialThreadId} initialPlaceCandidate={initialPlaceCandidate} />;
+  const query = new URLSearchParams();
+  if (initialThreadId && isUuid(initialThreadId)) query.set("thread", initialThreadId);
+  if (tripId && poiId && isUuid(tripId) && isUuid(poiId)) {
+    query.set("tripId", tripId);
+    query.set("poiId", poiId);
+  }
+  redirect(query.size > 0 ? `/visepanda?${query.toString()}` : "/visepanda");
 }

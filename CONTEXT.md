@@ -52,6 +52,15 @@ calls the protected HTTP route; it does not write a table. The existing v0 snaps
 the authority for new Trip snapshots. Local/Staging owner/other-user create/list/retry proof and an
 authenticated browser session are unrun because no disposable Supabase runtime is configured.
 
+LAUNCH-10/#160 makes `/visepanda` the canonical Chat workspace and redirects authenticated legacy
+`/visepanda/ask` links there while preserving valid opaque thread and exact place scope. It reuses the
+owner-visible thread and Trip endpoints, adds a five-locale/RTL Trip selector, and keeps the state
+controls, replay and cancel boundaries. A visible composer is disabled with an explicit no-Provider
+message: it neither accepts nor submits prompt text, and it cannot imply a model answer. Existing
+static preview assertions were replaced with canonical-workspace assertions because the old component
+was retired. Authenticated thread/Trip scope, reload, cancel and real prompt-to-answer evidence stay
+unrun without the operator-owned Provider and Staging configuration.
+
 ## Accepted frontend redesign baseline (2026-08-27)
 
 [ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md) and [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136) govern the complete frontend redesign. The current Homepage and `/visepanda` are stop-ship. Preserve functional/information relationships but independently redraw physical expression from VisePanda VI + Golden Route + Guide. Map is off by default; `Open VisePanda` is the Homepage primary CTA. Retire runtime source assets, Fig Grotesk and duplicate shapes through #138. Reuse #87 as Demo parity truth and #92 as the only Product Shell; #93-#116 retain capability ownership. Read `docs/frontend-redesign-issue-plan.md` before frontend work.

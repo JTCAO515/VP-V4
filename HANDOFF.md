@@ -1,5 +1,18 @@
 # Handoff
 
+- LAUNCH-10/#160 replaces the disconnected `/visepanda` preview with the canonical five-locale/RTL
+  Chat workspace and redirects authenticated legacy `/visepanda/ask` deep links there. It reuses only
+  owner-visible thread and Trip endpoints; the visible message composer is disabled because no live
+  text Provider is configured, so it sends no prompt and invents no answer. Focused red/green source
+  tests, `pnpm typecheck`, build/static checks, `pnpm test:e2e`, Chromium viewport/focus/RTL and docs
+  checks are recorded under `artifacts/LAUNCH-10/`. Independent review found and this branch fixed a
+  canonical-workspace localization gap: POI scope and memory labels now use five-locale copy, and a
+  live Chromium check confirms Arabic `dir` plus document-title switching. A default-pnpm run was rejected by a local ignored
+  build-script policy and made no retained repository change; the accepted pnpm@9 path was used for
+  final checks. Real Provider, authenticated owner/other-user, reload/cancel and Staging evidence
+  remain unrun. Roll back by reverting the LAUNCH-10 PR. Next action: continue the direct repository
+  frontier while LAUNCH-02 remains operator-owned.
+
 ## Accepted closed-beta launch baseline — 2026-08-29
 
 The accepted and active program is [LAUNCH-00 #149](https://github.com/JTCAO515/VP-V4/issues/149),
