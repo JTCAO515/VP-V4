@@ -23,6 +23,12 @@ closed; no Launch Issue is currently `ready-for-agent`. LAUNCH-02 #152 is `ready
 operator-assisted Staging configuration. #151 is closed/superseded into #150, #158 is now
 LAUNCH-08, and #168 is post-launch EXPAND-01.
 
+LAUNCH-05/#155 freezes only a pure `user-message-v1` and `assistant-output-v1` contract. It rejects
+unknown/raw-provider fields, emits content-free telemetry receipts, and makes unapproved content
+capture `not_persisted`; it has no durable message store, provider call, migration, retention period,
+or public privacy claim. Retention, region, provider terms, backup and deletion remain operator-owned
+decisions. LAUNCH-02 Staging configuration is still the one external next action.
+
 ## Accepted frontend redesign baseline (2026-08-27)
 
 [ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md) and [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136) govern the complete frontend redesign. The current Homepage and `/visepanda` are stop-ship. Preserve functional/information relationships but independently redraw physical expression from VisePanda VI + Golden Route + Guide. Map is off by default; `Open VisePanda` is the Homepage primary CTA. Retire runtime source assets, Fig Grotesk and duplicate shapes through #138. Reuse #87 as Demo parity truth and #92 as the only Product Shell; #93-#116 retain capability ownership. Read `docs/frontend-redesign-issue-plan.md` before frontend work.
