@@ -1,5 +1,10 @@
 # Handoff
 
+- LAUNCH-12/#169 adds the private Today reader over the canonical Trip projection: explicit clock and
+  Day timezone select one scheduled item, while no items, past-only dates, malformed data, missing
+  timezone, unauthenticated, and route failures stay bounded. It adds no external source or Trip
+  write. Local/Staging authenticated and RLS evidence remains unrun; see `artifacts/LAUNCH-12/unrun.md`.
+
 - LAUNCH-11/#161 adds the repository preparation for complete Day/Item `TripPatch` Proposals: validated
   owner-scoped creation, immutable full-patch revisions, derived diffs and a manual Canvas patch input
   that can only create a pending Proposal. `pnpm check`, contract (160), and E2E (39) currently pass.

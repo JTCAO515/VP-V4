@@ -105,14 +105,14 @@
 
 ### 4.2 Today MVP
 
-Today 只从当前用户已确认的 Trip 读取数据，以明确时钟和 Trip timezone 计算：
+Today 只从当前用户已确认的 Trip 读取数据，以明确时钟和每个 Day 的已记录 timezone 计算：
 
-- 当前/下一条未完成 itinerary item；
+- 当前/下一条尚未到达其日程日期的 itinerary item；
 - 为什么选中该条目的可解释原因；
 - 打开对应 Trip/Day 的导航；
 - 没有 eligible item、日期不在行程内或数据不完整时的诚实空状态。
 
-Today 不推断实时营业、延误、天气、安全或交通事实，不自动修改 Trip。
+Today 不推断实时营业、延误、天气、安全或交通事实，不自动修改 Trip。当前闭合 Trip 模型没有用户手动完成字段；本轮将日程日期已过表达为没有剩余日期条目，而不会把它声称为用户完成，手动完成状态另行建模。
 
 ### 4.3 环境拓扑
 
@@ -294,8 +294,8 @@ Program：[LAUNCH-00 #149](https://github.com/JTCAO515/VP-V4/issues/149)，作�
 
 - **Owner / 估算：** Today + Web / M。
 - **目标：** 用户从已确认行程得到一个可信、可解释的当前/下一步。
-- **Scope：** durable Trip reader；explicit clock/timezone；eligible item selection；complete/uncomplete；打开 Trip/Day；empty/outside-trip/incomplete-data 状态；五语/RTL/mobile。
-- **Acceptance：** before/during/after trip、timezone boundary、no items、all complete、malformed date 和 cross-owner 测试；Today 与 Canvas 使用同一 canonical Trip version；不调用外部事实、不自动写 Trip。
+- **Scope：** durable Trip reader；explicit clock/Day timezone；eligible scheduled-item selection；before/during/after date states；打开 Trip/Day；empty/outside-trip/incomplete-data 状态；五语/RTL/mobile。手动完成/取消状态不在当前闭合 Trip 模型内。
+- **Acceptance：** before/during/after trip、timezone boundary、no items、no remaining dated items、malformed date 和 cross-owner 测试；Today 与 Canvas 使用同一 canonical Trip version；不调用外部事实、不自动写 Trip。
 - **风险 / 回滚：** 过度暗示实时正确性；隐藏 Today nav 或显示 honest unavailable，Trip 不受影响。
 - **依赖：** LAUNCH-11。
 
