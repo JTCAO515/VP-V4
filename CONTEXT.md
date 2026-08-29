@@ -46,6 +46,12 @@ audit guarantees and makes rollback a server-minted snapshot reference, never an
 content replacement. Legacy title-only data remains readable. The migration has not been applied or
 replayed; local RLS and Staging evidence are explicitly unrun and must not become a capability claim.
 
+LAUNCH-09/#159 adds the repository-only Trip entry path: owner-scoped list/create routes, a private
+`/visepanda/trips` entry page, UUID-based retry idempotency, and direct Canvas links. The client only
+calls the protected HTTP route; it does not write a table. The existing v0 snapshot trigger remains
+the authority for new Trip snapshots. Local/Staging owner/other-user create/list/retry proof and an
+authenticated browser session are unrun because no disposable Supabase runtime is configured.
+
 ## Accepted frontend redesign baseline (2026-08-27)
 
 [ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md) and [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136) govern the complete frontend redesign. The current Homepage and `/visepanda` are stop-ship. Preserve functional/information relationships but independently redraw physical expression from VisePanda VI + Golden Route + Guide. Map is off by default; `Open VisePanda` is the Homepage primary CTA. Retire runtime source assets, Fig Grotesk and duplicate shapes through #138. Reuse #87 as Demo parity truth and #92 as the only Product Shell; #93-#116 retain capability ownership. Read `docs/frontend-redesign-issue-plan.md` before frontend work.

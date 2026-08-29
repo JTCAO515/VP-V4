@@ -54,6 +54,14 @@ snapshots stay readable. TypeScript, contract, security-source and skip-aware in
 but no local or Staging migration was replayed and no external database was accessed. The remaining
 runtime proof belongs to operator-assisted LAUNCH-02 Staging configuration; no release claim follows.
 
+LAUNCH-09/#159 adds repository-only owner-scoped Trip list/create/selection preparation. `/visepanda/trips`
+is server-session guarded; its client calls only the private no-store collection route, validates a
+bounded title and fixed UUID retry key server-side, then opens the canonical Canvas. The existing
+additive v0 snapshot trigger remains responsible for a new Trip's initial snapshot. Contract, source
+security, static E2E, production build, desktop and 390px guarded-route browser checks pass, while
+local/Staging owner-other-user create/list/retry and authenticated Canvas evidence remain unrun without
+a disposable Supabase runtime or external session. No release claim follows.
+
 Mandatory reading order: `AGENTS.md` → `CONTEXT.md` → `HANDOFF.md` → `docs/handoff.json` →
 `docs/vp-v4-closed-beta-launch-issue-plan.md` →
 `docs/superpowers/plans/2026-08-29-vp-v4-closed-beta-launch-execution.md` →

@@ -135,6 +135,33 @@ export function isChatThreadInput(
   );
 }
 
+export function isTripCreateInput(
+  value: unknown,
+): value is Readonly<{ tripId: string; title: string }> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const input = value as Record<string, unknown>;
+  return (
+    typeof input.tripId === "string" &&
+    isUuid(input.tripId) &&
+    typeof input.title === "string" &&
+    input.title.trim().length > 0 &&
+    input.title.trim().length <= 160 &&
+    Object.keys(input).every((key) => key === "tripId" || key === "title")
+  );
+}
+
+export function parseTripListInput(
+  searchParams: URLSearchParams,
+): Readonly<{ limit: number }> | null {
+  const values = [...searchParams.entries()];
+  if (values.length === 0) return { limit: 20 };
+  if (values.length !== 1 || values[0][0] !== "limit") return null;
+  const value = values[0][1];
+  if (!/^[1-9]\d?$/.test(value)) return null;
+  const limit = Number(value);
+  return limit <= 50 ? { limit } : null;
+}
+
 export function isChatTurnStartInput(
   value: unknown,
 ): value is Readonly<{
