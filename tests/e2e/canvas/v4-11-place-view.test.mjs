@@ -17,10 +17,13 @@ test("V4-11 shows only recorded place references and carries a canonical UUID in
   assert.doesNotMatch(view, /latitude|longitude|coordinates|geocode/i);
   assert.doesNotMatch(view, /method:\s*["'](?:POST|PUT|PATCH|DELETE)/);
   assert.match(askPage, /tripId && poiId && isUuid\(tripId\) && isUuid\(poiId\)/);
-  assert.match(workspace, /initialPlaceCandidate/);
-  assert.match(workspace, /\/api\/trips\/\$\{initialPlaceCandidate\.tripId\}\/places/);
-  assert.match(workspace, /place\.canonicalPoiId === initialPlaceCandidate\.poiId/);
+  assert.match(askPage, /query\.set\("tripId", tripId\)/);
+  assert.match(askPage, /query\.set\("poiId", poiId\)/);
+  assert.match(workspace, /effectivePlaceCandidate/);
+  assert.match(workspace, /\/api\/trips\/\$\{effectivePlaceCandidate\.tripId\}\/places/);
+  assert.match(workspace, /place\.canonicalPoiId === effectivePlaceCandidate\.poiId/);
   assert.match(workspace, /setExactPoiId\(null\);/);
   assert.match(workspace, /const places = await response\.json\(\)[\s\S]*?if \(!active\) return;[\s\S]*?places\.some/);
-  assert.match(workspace, /does not submit a prompt or infer place facts/);
+  assert.match(workspace, /copy\.exactPlaceScope\.replace\("\{poiId\}", exactPoiId\)/);
+  assert.match(copy, /does not submit a prompt or infer place facts/);
 });

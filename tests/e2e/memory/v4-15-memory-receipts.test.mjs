@@ -9,7 +9,7 @@ test("V4-15 exposes recorded receipt references without a Memory summary or clie
   const copy = readFileSync("lib/i18n.ts", "utf8");
   assert.match(adapter, /memory_consumer_receipts/);
   assert.match(adapter, /memory_id,source_receipt_id/);
-  assert.match(chat, /Memory provenance/);
+  assert.match(chat, /copy\.memoryProvenance/);
   assert.match(canvas, /memoryProvenance/);
   assert.match(copy, /Memory provenance/);
   const consumerReads = [...adapter.matchAll(/\.from\("memory_consumer_receipts"\)[\s\S]{0,320}/g)].map((match) => match[0]).join("\n");
