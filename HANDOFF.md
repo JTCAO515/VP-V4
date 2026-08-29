@@ -32,9 +32,9 @@ native sub-Issues, actual execution-contract numbers and native blocked-by edges
 merged and closed; old #151 is closed as superseded into #150; old #158 is LAUNCH-08; #168 is
 post-launch EXPAND-01. LAUNCH-05/#155 is merged as a pure, fail-closed message/output and retention
 contract: it does not persist content, call a Provider, change a database, or publish a privacy
-promise. LAUNCH-14/#163 now adds only an in-memory content-free trace/SLO/budget/flag preparation;
-it has no exporter, dashboard, alert destination, runtime consumer, Staging rehearsal, Provider call
-or operational availability claim. The exactly-one external next action remains operator-assisted
+promise. LAUNCH-14/#163 adds only an in-memory content-free trace/SLO/budget/flag preparation.
+LAUNCH-07/#157 now adds only an in-memory reliable worker lifecycle; it has no Provider, queue host,
+database, runtime API, Staging rehearsal or operational availability claim. The exactly-one external next action remains operator-assisted
 Staging configuration and verification for [LAUNCH-02 #152](https://github.com/JTCAO515/VP-V4/issues/152).
 
 Mandatory reading order: `AGENTS.md` → `CONTEXT.md` → `HANDOFF.md` → `docs/handoff.json` →
