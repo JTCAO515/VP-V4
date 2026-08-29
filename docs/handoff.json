@@ -1,23 +1,25 @@
 {
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
-  "objective": "Deliver the accepted AI Core and independently expressed VisePanda frontend without copying Demo fixtures or competitor expression, while preserving runtime identity, RLS, provider, data-policy, and release contracts.",
-  "status": "Magic Link/callback entrypoints are removed; public preview is anonymous and Trip APIs remain session-claim protected; the direct Issue queue remains enabled; WEB-04 quarantines legacy source assets; V4-02 supplies bounded actor-scoped context; V4-03 supplies fail-closed Tool Gateway contracts; V4-04 supplies deterministic feasibility checks; V4-05 rejects RoutePattern runtime adoption because no reviewed/licensed corpus exists and its self-authored synthetic paired evaluation finds no final-state gain; AI-13/#15 now makes the existing owner-scoped pending Proposal visible in Trip Canvas, exposes only title before/after plus explicit not-recorded provenance, and uses the existing protected confirm/reject/revise routes followed by canonical reload; AI-16/#18 supplies a fixture-only, C0-only ModelGateway conformance registry for DeepSeek/Qwen candidates with no provider transport, credential, persistence, domain truth, or write capability; AI-17/#19 adds a deterministic C0 fixture route policy, bounded circuit state, and content-free model-attempt/cost trace projection with no provider transport or persistence; AI-18/#20 adds a deterministic, fixture-only five-locale lexical qrel evaluator with closed aliases/transliterations, explicit no-answer behavior, and no database, production retrieval, provider, or persistence capability; AI-19/#21 adds a pure eligibility-first hybrid retrieval contract with opaque profile descriptors, strict timezone-qualified timestamps, exact-first lexical results, deterministic RRF and default no-evidence. WEB-06/#140, WEB-07/#141, WEB-08/#142, V4-07/#92, WEB-09/#143 and WEB-10/#144 are merged locally; V4-08/#93 through V4-12/#97 are merged; V4-13/#98 adds the Memory Profile lifecycle, consent, receipt, RLS and safe-retrieval contract; V4-14/#99 provides owner-JWT durable Memory governance; V4-16/#101 adds separate owner-JWT durable explicit Profile persistence; V4-17/#102 adds owner-JWT all-data export/delete requests and immutable requested receipts only, with no executor, export delivery, deletion or backup-purge claim; V4-18/#103 provides deterministic, fail-closed NextAction/nine-check logic while its browser route remains unavailable without an owner Trip/Fact reader. V4-19/#104 supplies only timestamped observation projection. V4-20/#105 supplies delay/closure recovery. V4-21/#106 extends pure recovery with queue and ordinary-unwell Proposals, plus high-risk unwell official-channel-only outcomes; it has no Trip/provider/diagnosis/rescue/contact/cancellation/purchase write. V4-22/#107 through V4-30/#115 remain five-locale/RTL truthful unavailable routes. V4-31/#116 remains a blocked non-release audit until remaining durable contracts and runtime evidence exist. No locally executable frontend implementation Issue remains; release evidence stays external/operator-owned.",
-  "currentPhase": "R5 external-provider and recovery preparation",
-  "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/2",
-  "owner": "Operator owns Program/DEC/public/external decisions; agents own every defined Issue's scoped implementation, tests, automated review, and evidence.",
-  "fromAgent": "claude-opus-5 (architect/reviewer)",
-  "intendedNextAgent": "No autonomous implementation Issue is currently open. Keep #53 open for an operator-supplied isolated recovery rehearsal, #41 open for an operator-supplied aviation benchmark environment and terms, and #42 fail-closed until #41 produces one approved provider/policy record. Do not treat any evidence audit, unavailable route, or option matrix as a production capability.",
+  "objective": "Deliver an invitation-only, observable and rollback-safe VP-V4 closed beta in which a real user can sign in, create a Trip, chat through one live text provider, review and confirm a complete itinerary Proposal, reload it, and use Today over the confirmed Trip.",
+  "status": "LAUNCH-00 Program #149 is accepted and open with status:in-progress. Its direct Issue queue has 19 native sub-Issues, actual execution-contract rows and native blocked-by edges for the accepted LAUNCH-00 through LAUNCH-19 closed-beta path. LAUNCH-01 #150 is merged and closed; no Launch Issue is currently ready-for-agent. The current Supabase Project is designated Staging because it has no real users; LAUNCH-02 must verify that fact and no new Staging Project is required. A physically independent Production Project is deferred to LAUNCH-17. Today is in launch scope but bounded to confirmed Trip data; Explore, Knowledge expansion, translation, Guide Import, Offline and live external evidence are post-launch backlog. No locally executable frontend implementation Issue remains.",
+  "currentPhase": "LAUNCH-00 accepted; LAUNCH-01 merged; LAUNCH-02 operator-assisted frontier",
+  "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/149",
+  "owner": "Operator owns provider/region/budget, retention/legal, accounts/secrets, Production Supabase, domain and public cutover decisions; agents own each accepted LAUNCH Issue's bounded repository implementation, tests and evidence.",
+  "fromAgent": "Codex planning audit, incorporating the user-approved bounded launch scope and treating Claude's document only as planning input",
+  "intendedNextAgent": "No Launch Issue is currently agent-ready. LAUNCH-02/#152 requires operator-assisted Staging configuration before its validation can start. Do not begin Provider, Trip migration, Production setup or release before their gates.",
   "latestIssueExecution": {
-    "issue": "AI-00/#2 Program tracker synchronization",
-    "changedFiles": ["docs/handoff.json", "HANDOFF.md", "CONTEXT.md", "artifacts/AI-00/commands.jsonl", "artifacts/AI-00/unrun.md"],
-    "verification": ["Current repository gates ran locally: check, docs:check, JSON parse and diff check", "The tracker matches merged AI-39/AI-41/AI-49 evidence without promoting their external/runtime blockers"],
-    "unrun": ["No runtime, provider, database, recovery, canary, deployment, user-data or operator action ran"],
-    "residualRisk": "Tracker accuracy does not establish aviation provider, recovery or R5 operational readiness; these stay external/operator-bound.",
-    "rollback": "Revert this tracker-only update. It creates no runtime, data, migration, account or deployment state.",
-    "nextAction": "Wait for an external-state change: an operator supplies an isolated synthetic-data recovery environment or accepts one aviation benchmark environment and terms; then execute only that scoped runbook while #42 remains fail-closed."
+    "issue": "LAUNCH-00/#149 Closed Beta Launch Program acceptance",
+    "changedFiles": ["docs/2026-08-29-vp-v4-launch-readiness-audit.md", "docs/vp-v4-closed-beta-launch-issue-plan.md", "docs/superpowers/plans/2026-08-29-vp-v4-closed-beta-launch-execution.md", "docs/agents/issue-execution-contract.md", "docs/operator-actions.json", "docs/handoff.json", "HANDOFF.md", "CONTEXT.md", "artifacts/LAUNCH-00/commands.jsonl", "artifacts/LAUNCH-00/unrun.md", "artifacts/LAUNCH-00/program-status.md"],
+    "verification": ["GitHub #149 is open/status:in-progress beneath Program #2 and has 19/19 native sub-Issues", "LAUNCH-00 through LAUNCH-19 exist exactly once with accepted titles, bodies, R0-R5 milestones, priority/status/triage labels and actual execution-contract rows", "Native blocked-by projection matches the accepted DAG; #150 is merged/closed and #152 is ready-for-human", "#151 is closed/status:superseded into #150; #158 is LAUNCH-08; #168 is EXPAND-01; #169/#170/#171 cover Today/Production/final handoff", "Repository docs, JSON, local links, structural counts and diff were rechecked after synchronization"],
+    "unrun": ["No full lint/typecheck/build/database/browser/product suite was run for this tracker-only Issue", "No provider call, secret access, Supabase migration, account creation, Production project, domain, deployment, canary, user-data or privacy deletion action ran"],
+    "residualRisk": "Provider, retention/legal, current Supabase no-real-user classification, asset rights, domain state and Production topology remain evidence/operator gates rather than accepted runtime facts.",
+    "rollback": "Restore Issue metadata through GitHub history and revert the planning/handoff files. No runtime, data, account or deployment state changed; #151 can be reopened and #168 restored if the Program decision is reversed.",
+    "nextAction": "Complete operator-assisted redacted Staging configuration for LAUNCH-02/#152."
   },
   "scope": [
+    "deliver the user-approved closed-beta core path including Today over confirmed Trip data through LAUNCH-00 to LAUNCH-19",
+    "adopt the current no-real-user Supabase Project as Staging and create an isolated Production Project only at LAUNCH-17",
     "inspect current VP-V4 and the previous VP-Final Chatbot/Trip Canvas architecture",
     "audit the Claude model-layer draft against current first-party sources",
     "select a minimal task-specific LLM and multimodal portfolio",
@@ -51,6 +53,8 @@
     "create six direct-source researched drafts that remain reviewerless, licence-policy-less and retrieval-ineligible"
   ],
   "antiGoals": [
+    "No Explore, public Knowledge/RAG expansion, live weather/flight/rail evidence, voice/OCR, Guide Import, Offline Pack, booking, payment or Human Help in LAUNCH-00 through LAUNCH-19",
+    "No claim that the Provider, retention periods, beta allowlist, custom domain or Production environment is decided or working without operator/runtime evidence",
     "No model/provider implementation or paid API call",
     "No API key or external account configuration",
     "No AI, Trip, persistence, voice, OCR, vision, booking, payment, or Human Help capability claim",
@@ -61,6 +65,9 @@
     "No second vector database, black-box LLM ranking, or large-scale SEO page generation before the pilot and eval gates"
   ],
   "assumptions": [
+    "The operator states that the existing Supabase Project has no real users; LAUNCH-02 must verify this before treating it as Staging.",
+    "Today can provide a useful first version from confirmed Trip items and an explicit clock without external real-time facts.",
+    "Closed-beta navigation may hide post-launch surfaces while deep links remain honestly unavailable in all five locales.",
     "Web/PWA is the launch surface; native mobile is a separate project.",
     "Supabase and Vercel/Next.js remain the operator preference, but accounts and regions are not frozen.",
     "The operator holds DeepSeek, Qwen, Kimi and GLM API access, but per-model entitlements and contracts are untested.",
@@ -70,6 +77,9 @@
     "Issue-level estimates total 207 focused days (~41 weeks) after the 2026-08-24 review additions, above the report 24-35 week range and far above the 10-15 week core-alpha scenario."
   ],
   "decisions": [
+    "Accepted 2026-08-29: use the existing no-real-user Supabase Project as Staging; do not create another Staging Project; create a physically independent Production Project only after Staging golden-path acceptance.",
+    "Accepted 2026-08-29: launch scope is a complete bounded closed-beta core plus Today; Explore, Knowledge expansion, translation, Guide Import, Offline and live external evidence move to EXPAND-01 through EXPAND-10 after LAUNCH-19.",
+    "Accepted 2026-08-29: minimal Trip content is days plus ordered items with optional time, title, text location, notes and completion state; transport, booking, map, price and external evidence are excluded from the first release.",
     "ADR-0018: preserve functional/information equivalence but independently redraw physical expression; current Homepage and /visepanda are stop-ship; VisePanda VI + Golden Route + Guide is the only new visual baseline; map is off by default; source assets/Fig Grotesk/duplicate shapes retire; #87 and #92 remain the parity and Product Shell authorities; complete redesign includes Login/mobile/global states/Profile/Privacy/store; Open VisePanda is the Homepage primary CTA.",
     "Treat DeepSeek Flash-0731 public beta as a provisional text baseline candidate with thinking explicitly disabled, Pro-0813 as GA for complex async work, and Vision Exp as a separate experimental challenger; no production portfolio is frozen before eval/conformance/region/DPA.",
     "Keep Kimi and GLM eval-only until task-level VisePanda evidence supports promotion.",
@@ -160,7 +170,12 @@
     "lib/server/tools/index.ts and tests/{contract,security}/tools/** (new fail-closed Tool Gateway contract, output-safe receipt and regression coverage)",
     "docs/contracts/tool-gateway.md, artifacts/V4-03/** and docs/superpowers/plans/2026-08-28-v4-03-tool-gateway.md (new Tool Gateway contract, command/unrun evidence and execution plan)",
     "lib/server/constraints/**, tests/unit/constraints/** and evals/planning/** (new fail-closed deterministic feasibility engine and synthetic planning corpus)",
-    "docs/contracts/travel-constraints.md, artifacts/V4-04/** and docs/superpowers/plans/2026-08-28-v4-04-constraint-engine.md (new frozen contract, command/unrun evidence and execution plan)"
+    "docs/contracts/travel-constraints.md, artifacts/V4-04/** and docs/superpowers/plans/2026-08-28-v4-04-constraint-engine.md (new frozen contract, command/unrun evidence and execution plan)",
+    "docs/2026-08-29-vp-v4-launch-readiness-audit.md (repository evidence audit; its old LAUNCH numbering is superseded)",
+    "docs/vp-v4-closed-beta-launch-issue-plan.md (accepted LAUNCH-00 through LAUNCH-19 scope, DAG, acceptance, risk, rollback and post-launch backlog)",
+    "docs/superpowers/plans/2026-08-29-vp-v4-closed-beta-launch-execution.md (wave-based implementation and verification plan)",
+    "docs/agents/issue-execution-contract.md (actual LAUNCH Issue rows and bounded execution contracts)",
+    "docs/handoff.json, HANDOFF.md and CONTEXT.md (closed-beta takeover baseline)"
   ],
   "verification": [
     "WEB-02 tracker publication created #136-#145, nested #136 under #2, nested #137-#145 under #136, and established the dependency DAG including new #92 blockers #140/#142.",
@@ -243,8 +258,8 @@
     "Qwen multilingual embedding/rerank quality, region, data flow, dimensions, latency, cost, and VisePanda five-language retrieval metrics are not verified.",
     "OSM derivative-database obligations, map/tiles provider, coordinate handling, media rights, and production POI source contracts require operator/legal decisions.",
     "DeepSeek Vision Exp account access, five-language OCR/POI quality, API compatibility, retention, and production stability have not been tested with the user's account.",
-    "Production Vercel and the new Supabase project are configured, but preview database workflow, SLO, error budget and real provider observation windows remain unaccepted.",
-    "Authenticated-only beta and the new Supabase project are accepted; separate Ops deployment plus model/media region and retention remain future operator decisions.",
+    "The operator states that the current Supabase Project has no real users and may be used as Staging; LAUNCH-02 must verify that classification and execute migration/RLS/E2E evidence before relying on it.",
+    "No independent Production Supabase Project has been created or accepted; LAUNCH-17 owns its operator-gated creation and empty-project migration/RLS verification.",
     "Qwen3.5 OCR and Qwen Audio 3.0 TTS currently have Beijing constraints; the Singapore mandatory multimodal stack is not frozen.",
     "Vercel WebRTC/WebSocket plan support, direct media upload, Supabase pooler, queue quarantine, Storage backup, and deletion topology remain untested.",
     "Session-acquisition routes are removed; anonymous preview requests cannot acquire a session, while Trip APIs remain fail-closed without an existing valid claim.",
@@ -255,6 +270,9 @@
     "No language/medical reviewer or source-rights decision exists; the closed AI-11 contract does not promote draft Knowledge records to reviewed or retrieval-eligible."
   ],
   "risks": [
+    "GitHub LAUNCH Issue scheduling does not replace per-Issue runtime, provider, data-policy, migration or release gates.",
+    "Current Supabase-as-Staging depends on the no-real-user assertion; discovery of real or unexplained data is a D3 stop condition.",
+    "Today must not imply live weather, opening-hours, transport, disruption or safety knowledge; it is limited to confirmed Trip content and an explicit clock.",
     "Release gates #17/#23/#31/#36 provide milestone acceptance evidence but do not prevent independently scoped Issue implementation; runtime and release claims remain evidence-gated.",
     "Competitor-derived expression and public Git history remain residual IP risks; current-tree cleanup does not remove historical blobs/forks/caches.",
     "Frontend children must not create a second Product Shell, Auth, Trip, Fact, Memory or capability source while #92-#116 remain authoritative.",
@@ -263,17 +281,22 @@
     "Aviation adapter #42 depends on an unsigned provider contract; #43 now carries it as a conditional acceptance criterion instead of a hard dependency.",
     "Model alias drift, Vision Exp instability, candidate/draft leakage, cross-border sensitive media and provider licence violations remain the top runtime risks (report section 14)."
   ],
-  "rollback": "Frontend governance can be reverted without runtime/data rollback. Implementation stays isolated and Preview-first; if no compliant prior release exists, show truthful unavailable/Early Access rather than republishing either stop-ship surface. Preserve GitHub history with status:superseded and preserve accepted Trip/Fact/Memory/Auth/RLS/audit data.",
+  "rollback": "This planning change can be reverted without runtime or data rollback. During execution use feature flags, worker stop, prior evidence-backed deployment alias and additive database compensation. Never destructive-down-migrate Production; stop invitations and show truthful unavailable states if no safe release exists.",
   "operatorActions": [
-    "No session-acquisition action is required; anonymous preview remains separate from session-claim-protected Trip APIs.",
-    "Select one of the three independent VisePanda visual directions produced by #139.",
-    "Approve any map-on state, brand/asset exception, store submission and Production frontend cutover only after #145 evidence.",
-    "Decide model/media region, retention and DPA posture when those provider Issues reach the frontier.",
-    "Decide and sign the aviation provider contract, or accept the official-handoff fallback (#41/#42). #43 no longer hard-depends on #42.",
-    "Accept or reject the AI SDK adoption decision produced by ML-01 (#47).",
-    "Approve any public capability claim, production cutover, DNS, payment or external account action."
+    "LAUNCH-00: authorize creation/synchronization of the GitHub LAUNCH Program and its 20 Issues if repository planning is to become the live tracker.",
+    "LAUNCH-02: confirm the current Supabase Project identity and no-real-user/no-production-data status, then supply Staging configuration without exposing secrets.",
+    "LAUNCH-06: select one text Provider, region, DPA posture and budget; create/configure its credential outside the repository.",
+    "LAUNCH-15: decide retention, deletion, backup, telemetry and legal/claim policy; engineering agents may present options but may not approve them.",
+    "LAUNCH-17: create the independent Production Supabase Project and Production-only environment configuration after Staging acceptance.",
+    "LAUNCH-18/19: approve domain/DNS, Production promotion, canary invitations and public claims only after every named release gate passes."
   ],
   "mandatoryReadingOrder": [
+    "AGENTS.md",
+    "CONTEXT.md",
+    "HANDOFF.md",
+    "docs/handoff.json",
+    "docs/vp-v4-closed-beta-launch-issue-plan.md",
+    "docs/superpowers/plans/2026-08-29-vp-v4-closed-beta-launch-execution.md",
     "docs/adr/ADR-0018-independent-frontend-redesign-baseline.md",
     "docs/frontend-redesign-issue-plan.md",
     "docs/architecture/v4-01-demo-parity-registry.md",
@@ -297,7 +320,6 @@
     "docs/research/external-data-evidence-2026-08-23.md",
     "docs/research/model-provider-evidence-2026-08-22.md",
     "README.md",
-    "AGENTS.md",
     "docs/agents/issue-tracker.md",
     "docs/agents/triage-labels.md",
     "docs/agents/domain.md",
@@ -307,13 +329,13 @@
     "docs/adr/0002-visepanda-brand-localization-assets.md",
     "docs/agents/issue-execution-contract.md"
   ],
-  "nextAction": "Wait for an external-state change: an operator supplies an isolated synthetic-data recovery environment or accepts one aviation benchmark environment and terms; then execute only that scoped runbook while #42 remains fail-closed.",
+  "nextAction": "Complete operator-assisted redacted Staging configuration for LAUNCH-02/#152.",
   "lastUpdated": "2026-08-29",
   "provenance": {
-    "vpV4Baseline": "JTCAO515/VP-V4@1ba9b63",
+    "vpV4Baseline": "JTCAO515/VP-V4@594821cc9ebc76b488c7feb65d1421ed26a3651e",
     "vpFinalReference": "JTCAO515/VP-Final@b5ef081",
-    "issueProgram": "JTCAO515/VP-V4 Issues #2-#43 plus governance-review additions",
-    "reviewRound": "claude architect review 2026-08-24; findings applied to Issues and this handoff",
+    "issueProgram": "JTCAO515/VP-V4 #149 with 19 native LAUNCH sub-Issues under Program #2",
+    "reviewRound": "Codex repository audit, user-approved Claude-plan disposition and GitHub LAUNCH-00 acceptance 2026-08-29; tracker mutation only, no runtime mutation",
     "governanceReview": "2026-08-24 claude architect review: 4 gate edges added, 5 over-coupled edges removed, 9 gap Issues created (#46-#54), execution parameters injected into #2-#43, milestones R0-R5 and phase:R0-R5 introduced, priorities rebalanced to P0=R0+R1 / P1=R2+R3 / P2=R4+R5."
   }
 }

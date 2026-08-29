@@ -1,5 +1,44 @@
 # Handoff
 
+## Accepted closed-beta launch baseline — 2026-08-29
+
+The accepted and active program is [LAUNCH-00 #149](https://github.com/JTCAO515/VP-V4/issues/149),
+backed by [LAUNCH-00～19](docs/vp-v4-closed-beta-launch-issue-plan.md). It replaces
+the old launch numbering and the earlier `vp-v4-closed-beta-launch-plan.md` assessment where they
+conflict, but preserves their repository findings as evidence. Completion now means a real
+invited user can sign in, create/select a Trip, send a prompt through one live text Provider, review
+and explicitly confirm a full days-and-items Proposal, reload the persisted Trip, and use Today over
+that confirmed Trip. Page presence, fixture contracts, deployment success and source-string tests do
+not satisfy this outcome.
+
+The operator states that the existing Supabase Project has no real users. LAUNCH-02 must verify and
+adopt it as **Staging** for migrations, RLS, test accounts and real browser E2E; no second Staging
+Project is required. LAUNCH-17 later creates a physically independent **Production** Project, with
+separate users, data, Storage, secrets, redirect URLs and Vercel environment. No Staging users/data
+are copied. Production schema rollback is additive compensation only.
+
+Today is included in launch scope, but only selects one explainable current/next item from the
+confirmed Trip using an explicit clock and Trip timezone. It makes no live weather, opening-hours,
+transport, disruption or safety claim. Explore, public Knowledge/RAG, translation, live external
+evidence, Guide Import and Offline move to `EXPAND-01～10` after LAUNCH-19.
+
+Provider, region, budget, exact retention periods, legal text, beta provisioning mechanism, domain
+state, Production creation and cutover remain operator/runtime gates. Claude's attached plan is an
+input, not authority: its DeepSeek choice, retention numbers, allowlist and domain-success statements
+are not accepted facts.
+
+LAUNCH-00 is accepted and remains open with `status:in-progress` until LAUNCH-19. GitHub now has 19
+native sub-Issues, actual execution-contract numbers and native blocked-by edges. LAUNCH-01 #150 is
+merged and closed; old #151 is closed as superseded into #150; old #158 is LAUNCH-08; #168 is
+post-launch EXPAND-01. No Launch Issue is currently agent-ready. The exactly-one next action is the
+operator-assisted Staging configuration and verification for [LAUNCH-02 #152](https://github.com/JTCAO515/VP-V4/issues/152).
+No product implementation, database, provider or release action occurred in LAUNCH-00.
+
+Mandatory reading order: `AGENTS.md` → `CONTEXT.md` → `HANDOFF.md` → `docs/handoff.json` →
+`docs/vp-v4-closed-beta-launch-issue-plan.md` →
+`docs/superpowers/plans/2026-08-29-vp-v4-closed-beta-launch-execution.md` →
+`docs/agents/issue-execution-contract.md` → accepted Issue and linked contracts/runbooks.
+
 ## Frontend redesign governance — 2026-08-27
 
 - Operator decision: accepted in [ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md).

@@ -1,5 +1,28 @@
 # Context
 
+## Accepted closed-beta launch scope (2026-08-29)
+
+[LAUNCH-00 #149](https://github.com/JTCAO515/VP-V4/issues/149) and [the LAUNCH-00～19 plan](docs/vp-v4-closed-beta-launch-issue-plan.md) are the accepted productization
+baseline. The current product remains a preview until a real Staging golden path proves invited
+password login, Trip create/select, live text-model Chat, full days-and-items Proposal diff,
+explicit atomic confirmation, reload persistence, and Today over the confirmed Trip. Today is not a
+live-evidence product in this release and must not imply weather, business-hours, transport,
+disruption or safety freshness.
+
+The existing no-real-user Supabase Project is designated Staging, subject to LAUNCH-02 verification;
+do not create another Staging Project. LAUNCH-17 creates a separate Production Project only after
+Staging acceptance. Provider, retention/legal, domain and Production/cutover facts remain
+operator-owned and fail closed. Explore, Knowledge expansion, translation, Guide Import, Offline and
+live external evidence are post-launch `EXPAND-01～10`, not LAUNCH scope. The old LAUNCH numbering in
+`docs/2026-08-29-vp-v4-launch-readiness-audit.md` and the earlier
+`docs/vp-v4-closed-beta-launch-plan.md` assessment are superseded by the accepted plan where they
+conflict.
+
+Program #149 has 19 native sub-Issues and native dependency edges. LAUNCH-01 #150 is merged and
+closed; no Launch Issue is currently `ready-for-agent`. LAUNCH-02 #152 is `ready-for-human` for
+operator-assisted Staging configuration. #151 is closed/superseded into #150, #158 is now
+LAUNCH-08, and #168 is post-launch EXPAND-01.
+
 ## Accepted frontend redesign baseline (2026-08-27)
 
 [ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md) and [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136) govern the complete frontend redesign. The current Homepage and `/visepanda` are stop-ship. Preserve functional/information relationships but independently redraw physical expression from VisePanda VI + Golden Route + Guide. Map is off by default; `Open VisePanda` is the Homepage primary CTA. Retire runtime source assets, Fig Grotesk and duplicate shapes through #138. Reuse #87 as Demo parity truth and #92 as the only Product Shell; #93-#116 retain capability ownership. Read `docs/frontend-redesign-issue-plan.md` before frontend work.
