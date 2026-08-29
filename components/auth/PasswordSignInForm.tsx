@@ -21,7 +21,7 @@ type AuthState =
   | "signedIn"
   | "signingOut";
 
-export function PasswordSignInForm({ showFirstRun = false }: { showFirstRun?: boolean }) {
+export function PasswordSignInForm({ showFirstRun = false, returnTo = "/visepanda" }: { showFirstRun?: boolean; returnTo?: string }) {
   const router = useRouter();
   const [locale, setLocale] = useState<Locale>("zh");
   const [state, setState] = useState<AuthState>("checking");
@@ -76,6 +76,7 @@ export function PasswordSignInForm({ showFirstRun = false }: { showFirstRun?: bo
       return;
     }
     setState("signedIn");
+    router.replace(returnTo);
     router.refresh();
   }
 
@@ -137,7 +138,7 @@ export function PasswordSignInForm({ showFirstRun = false }: { showFirstRun?: bo
               <h2>{authCopy.signedInTitle}</h2>
               <p>{authCopy.signedInBody}</p>
               {showFirstRun ? <FirstRunState authCopy={authCopy} /> : null}
-              <Link className={styles.primary} href="/visepanda">{authCopy.continue}</Link>
+              <Link className={styles.primary} href={returnTo}>{authCopy.continue}</Link>
               <button className={styles.secondary} type="button" disabled={state === "signingOut"} onClick={handleSignOut}>
                 {state === "signingOut" ? authCopy.signingOut : authCopy.signOut}
               </button>

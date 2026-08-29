@@ -40,6 +40,12 @@ polling; it sends only closed state metadata and is not a live subscription, Pro
 or Staging availability claim. The exactly-one external next action remains operator-assisted Staging
 configuration and verification for [LAUNCH-02 #152](https://github.com/JTCAO515/VP-V4/issues/152).
 
+LAUNCH-04/#154 adds server-side guards before private Ask, Trip Canvas, Profile, and Copilot rendering,
+plus a strict local post-sign-in return allowlist. It redirects missing/invalid claims to password
+sign-in without creating accounts or distinguishing provisioning state. The durable beta allowlist,
+Staging account setup, real auth/deep-link/owner evidence, and access-removal test remain operator-owned
+and unrun; the external next action remains LAUNCH-02 Staging configuration.
+
 Mandatory reading order: `AGENTS.md` → `CONTEXT.md` → `HANDOFF.md` → `docs/handoff.json` →
 `docs/vp-v4-closed-beta-launch-issue-plan.md` →
 `docs/superpowers/plans/2026-08-29-vp-v4-closed-beta-launch-execution.md` →
