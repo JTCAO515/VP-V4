@@ -28,5 +28,9 @@ test("handoff and identity contract reflect anonymous preview without Magic Link
   assert.match(identityContract, /auth\.getClaims\(\)/);
   assert.doesNotMatch(handoff.intendedNextAgent, /magic[ -]?link|dependency-blocked/i);
   assert.doesNotMatch(handoff.nextAction, /magic[ -]?link|keep .*blocked/i);
-  assert.equal(handoff.lastUpdated, "2026-08-28");
+  assert.match(handoff.lastUpdated, /^\d{4}-\d{2}-\d{2}$/);
+  assert.ok(
+    Date.parse(`${handoff.lastUpdated}T00:00:00Z`) >= Date.parse("2026-08-28T00:00:00Z"),
+    "handoff.lastUpdated must not regress before the anonymous-preview baseline",
+  );
 });

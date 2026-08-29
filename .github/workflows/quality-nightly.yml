@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # scripts/check-assets.mjs reads the quarantine source commit's tree;
+          # the default shallow fetch makes that `fatal: not a tree object`.
+          fetch-depth: 0
       - uses: pnpm/action-setup@v4
         with:
           version: 9.15.9
