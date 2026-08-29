@@ -1,6 +1,6 @@
 # Handoff
 
-- LAUNCH-12/#169 adds the private Today reader over the canonical Trip projection: explicit clock and
+- LAUNCH-12/#169 is merged through PR #183 and adds the private Today reader over the canonical Trip projection: explicit clock and
   Day timezone select one scheduled item, while no items, past-only dates, malformed data, missing
   timezone, unauthenticated, and route failures stay bounded. It adds no external source or Trip
   write. Local/Staging authenticated and RLS evidence remains unrun; see `artifacts/LAUNCH-12/unrun.md`.

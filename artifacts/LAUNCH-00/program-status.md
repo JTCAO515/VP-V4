@@ -6,7 +6,7 @@ Status: `accepted / open / status:in-progress`
 - Parent: AI Core Program #2
 - Native sub-Issues: 19
 - Canonical LAUNCH IDs: 00–19, exactly once each
-- Completed: LAUNCH-01 #150 merged as PR #172
+- Repository preparation merged: LAUNCH-01 #150 (PR #172), LAUNCH-03 #153 (PR #173), LAUNCH-04 #154 (PR #178), LAUNCH-05 #155 (PR #174), LAUNCH-07 #157 (PR #176), LAUNCH-08 #158 (PR #177), LAUNCH-09 #159 (PR #180), LAUNCH-10 #160 (PR #181), LAUNCH-11 #161 (PR #182), LAUNCH-12 #169 (PR #183), and LAUNCH-14 #163 (PR #175)
 - Ready-for-agent frontier: none
 - Operator-assisted frontier: LAUNCH-02 #152
 - Superseded: #151 into #150
