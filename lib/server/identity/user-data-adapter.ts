@@ -8,6 +8,9 @@ import type {
 import type { TripPlaceReference } from "@/lib/server/trip/place/contract";
 import type { TripActionReference } from "@/lib/server/trip/actions/contract";
 import type { PrivacyRequest } from "@/lib/server/privacy/contract";
+import type { TripPatch } from "@/lib/server/trip/patch/contract";
+import { assertTripPatch, type TripSnapshot as TripContentSnapshot } from "../trip/patch/contract.ts";
+import { describeProposalDiff, type ProposalDayDiff } from "../trip/proposal/diff.ts";
 
 type PendingCookie = { name: string; value: string; options: CookieOptions };
 
@@ -85,6 +88,7 @@ export type ConfirmInput = Readonly<{
   digest: string;
 }>;
 export type TripCreateInput = Readonly<{ tripId: string; title: string }>;
+export type TripProposalInput = Readonly<{ patch: TripPatch }>;
 export type ProposalRevisionInput = Readonly<{
   proposalId: string;
   title: string;
@@ -133,6 +137,8 @@ export type PendingProposalRead = Readonly<{
     createdAt: string;
     expiresAt: string;
     titleDiff: Readonly<{ before: string; after: string }>;
+    dayDiffs?: readonly ProposalDayDiff[];
+    patch?: TripPatch;
     evidence: "not_recorded";
     assumptions: "not_recorded";
   }>;
@@ -723,6 +729,12 @@ export function createUserDataAdapter(request: NextRequest) {
       .order("revision", { ascending: false })
       .limit(1)
       .maybeSingle();
+    const { data: days, error: daysError } = await client
+      .from("trip_days").select("day_id,trip_date,time_zone").eq("trip_id", tripId);
+    if (daysError) return { error: "INTERNAL_ERROR" };
+    const { data: items, error: itemsError } = await client
+      .from("trip_items").select("item_id,day_id,title,starts_at,ends_at").eq("trip_id", tripId);
+    if (itemsError) return { error: "INTERNAL_ERROR" };
     const read =
       proposal && !proposalError
         ? pendingProposalRead({
@@ -733,9 +745,23 @@ export function createUserDataAdapter(request: NextRequest) {
               updatedAt: trip.updated_at,
             },
             proposal,
+            content: {
+              version: trip.head_version,
+              title: trip.title,
+              days: (days ?? []).map((day) => ({ id: day.day_id, date: day.trip_date, ...(day.time_zone ? { timeZone: day.time_zone } : {}), items: (items ?? []).filter((item) => item.day_id === day.day_id).map((item) => ({ id: item.item_id, dayId: item.day_id, title: item.title, ...(item.starts_at ? { startsAt: item.starts_at } : {}), ...(item.ends_at ? { endsAt: item.ends_at } : {}) })) })),
+            },
           })
         : null;
     return read ? { data: read } : { error: "PROPOSAL_NOT_CONFIRMABLE" };
+  };
+  const createPendingProposal = async (tripId: string, input: TripProposalInput): Promise<AdapterResult<Readonly<{ proposalId: string; revision: number; baseTripVersion: number }>>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data, error } = await client.rpc("create_trip_proposal_patch", { p_trip_id: tripId, p_patch: input.patch });
+    if (error) return { error: mapRpcFailure(error.message) };
+    const result = data?.[0];
+    if (!result?.proposal_id || !Number.isInteger(result.revision) || !Number.isInteger(result.base_trip_version)) return { error: "INTERNAL_ERROR" };
+    return { data: { proposalId: result.proposal_id, revision: result.revision, baseTripVersion: result.base_trip_version } };
   };
   const revisePendingProposal = async (
     tripId: string,
@@ -786,6 +812,18 @@ export function createUserDataAdapter(request: NextRequest) {
         baseTripVersion: result.base_trip_version,
       },
     };
+  };
+  const revisePendingProposalPatch = async (tripId: string, input: Readonly<{ proposalId: string; patch: TripPatch }>): Promise<AdapterResult<Readonly<{ proposalId: string; revision: number; baseTripVersion: number }>>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data: proposal, error: proposalError } = await client.from("trip_proposals").select("trip_id,status").eq("id", input.proposalId).maybeSingle();
+    if (proposalError || !proposal || proposal.trip_id !== tripId || proposal.status !== "pending") return { error: "FORBIDDEN" };
+    const { data, error } = await client.rpc("revise_trip_proposal_patch", { p_proposal_id: input.proposalId, p_patch: input.patch });
+    if (error) return { error: mapRpcFailure(error.message) };
+    const result = data?.[0];
+    if (result?.outcome === "version_conflict") return { error: "STALE_TRIP_VERSION" };
+    if (result?.outcome !== "revised" || !result.proposal_id || !Number.isInteger(result.revision) || !Number.isInteger(result.base_trip_version)) return { error: "PROPOSAL_NOT_CONFIRMABLE" };
+    return { data: { proposalId: result.proposal_id, revision: result.revision, baseTripVersion: result.base_trip_version } };
   };
   const rejectPendingProposal = async (
     tripId: string,
@@ -1157,6 +1195,8 @@ export function createUserDataAdapter(request: NextRequest) {
     getTripPlaces,
     getTripActions,
     getPendingProposal,
+    createPendingProposal,
+    revisePendingProposalPatch,
     revisePendingProposal,
     rejectPendingProposal,
     listChatThreads,
@@ -1226,6 +1266,7 @@ export function pendingProposalRead(
       created_at: string;
       expires_at: string;
     }>;
+    content?: TripContentSnapshot;
   }>,
 ): PendingProposalRead | null {
   const patch = input.proposal.patch;
@@ -1235,8 +1276,13 @@ export function pendingProposalRead(
   )
     return null;
   if (!patch || typeof patch !== "object" || Array.isArray(patch)) return null;
-  const title = (patch as { title?: unknown }).title;
-  if (typeof title !== "string" || !title.trim()) return null;
+  const legacyTitle = (patch as { title?: unknown }).title;
+  let afterTitle = input.trip.title;
+  let dayDiffs: readonly ProposalDayDiff[] | undefined;
+  if (typeof legacyTitle === "string" && legacyTitle.trim()) afterTitle = legacyTitle;
+  else {
+    try { assertTripPatch(patch as TripPatch); const diff = describeProposalDiff(input.content ?? { version: input.trip.headVersion, title: input.trip.title, days: [] }, patch as TripPatch); afterTitle = diff.next.title; dayDiffs = diff.dayDiffs; } catch { return null; }
+  }
   return {
     trip: input.trip,
     proposal: {
@@ -1246,7 +1292,8 @@ export function pendingProposalRead(
       status: "pending",
       createdAt: input.proposal.created_at,
       expiresAt: input.proposal.expires_at,
-      titleDiff: { before: input.trip.title, after: title },
+      titleDiff: { before: input.trip.title, after: afterTitle },
+      ...(dayDiffs ? { dayDiffs, patch: patch as TripPatch } : {}),
       evidence: "not_recorded",
       assumptions: "not_recorded",
     },

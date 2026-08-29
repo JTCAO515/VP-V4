@@ -10,7 +10,7 @@ import styles from "./TripCanvas.module.css";
 
 type TripVersion = { id: string; resultingVersion: number; proposalId: string | null; eventType: "initial" | "proposal_applied"; title: string | null; createdAt: string; memoryReceipts: readonly { memoryId: string; sourceReceiptId: string; constraintKind: "preference" | "hard_constraint" }[] };
 type TripRead = { trip: { id: string; title: string; headVersion: number; updatedAt: string }; versions: readonly TripVersion[] };
-type PendingProposalRead = { trip: TripRead["trip"]; proposal: { id: string; revision: number; baseTripVersion: number; expiresAt: string; titleDiff: { before: string; after: string }; evidence: "not_recorded"; assumptions: "not_recorded" } };
+type PendingProposalRead = { trip: TripRead["trip"]; proposal: { id: string; revision: number; baseTripVersion: number; expiresAt: string; titleDiff: { before: string; after: string }; dayDiffs?: readonly { kind: "added" | "removed" | "changed"; dayId: string; date: string; items: readonly { kind: "added" | "removed" | "changed"; itemId: string; title: string }[] }[]; patch?: unknown; evidence: "not_recorded"; assumptions: "not_recorded" } };
 type LoadState = "loading" | "unavailable" | "unauthenticated" | "ready";
 type PendingRollback = { proposalId: string; baseTripVersion: number; targetVersion: number; idempotencyKey: string };
 type Mutation = "preparing" | "confirming" | "rejecting" | "revising" | null;
@@ -23,6 +23,7 @@ export function TripCanvas({ tripId }: { tripId: string }) {
   const [pendingRollback, setPendingRollback] = useState<PendingRollback | null>(null);
   const [mutation, setMutation] = useState<Mutation>(null);
   const [draftTitle, setDraftTitle] = useState("");
+  const [manualPatch, setManualPatch] = useState('{\n  "expectedVersion": 0,\n  "operations": []\n}');
   const [notice, setNotice] = useState<string | null>(null);
   const confirmKeys = useRef(new Map<string, string>());
   const requestGeneration = useRef(0);
@@ -64,6 +65,7 @@ export function TripCanvas({ tripId }: { tripId: string }) {
       if (generation !== requestGeneration.current) return null;
       setPendingProposal(proposal);
       setDraftTitle(proposal?.proposal.titleDiff.after ?? "");
+      if (proposal?.proposal.patch) setManualPatch(JSON.stringify(proposal.proposal.patch, null, 2));
     } catch {
       if (generation !== requestGeneration.current) return null;
       setPendingProposal(null);
@@ -155,6 +157,31 @@ export function TripCanvas({ tripId }: { tripId: string }) {
     } catch { if (generation === requestGeneration.current) setNotice(copy.unavailable); } finally { if (generation === requestGeneration.current) setMutation(null); }
   }
 
+  async function reviseStructuredProposal(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!pendingProposal || !pendingProposal.proposal.dayDiffs) return;
+    const generation = requestGeneration.current;
+    let patch: unknown;
+    try { patch = JSON.parse(manualPatch); } catch { setNotice(copy.proposalConflict); return; }
+    setMutation("revising");
+    try {
+      const response = await fetch(`/api/trips/${tripId}/proposal/revision`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ proposalId: pendingProposal.proposal.id, patch }) });
+      await refreshAfterMutation(response, generation);
+    } catch { if (generation === requestGeneration.current) setNotice(copy.unavailable); } finally { if (generation === requestGeneration.current) setMutation(null); }
+  }
+
+  async function createManualProposal(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const generation = requestGeneration.current;
+    let patch: unknown;
+    try { patch = JSON.parse(manualPatch); } catch { setNotice(copy.proposalConflict); return; }
+    setMutation("revising");
+    try {
+      const response = await fetch(`/api/trips/${tripId}/proposal`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ patch }) });
+      await refreshAfterMutation(response, generation);
+    } catch { if (generation === requestGeneration.current) setNotice(copy.unavailable); } finally { if (generation === requestGeneration.current) setMutation(null); }
+  }
+
   if (state === "unauthenticated") return <Shell locale={locale} setLocale={setLocale} copy={copy}><section className={styles.status}><h1>{copy.title}</h1><p>{copy.signInBody}</p><Link className={styles.action} href={`/auth/sign-in?returnTo=/visepanda/trips/${tripId}`}>{copy.signIn}</Link></section></Shell>;
   if (state !== "ready" || !data || data.trip.id !== tripId) return <Shell locale={locale} setLocale={setLocale} copy={copy}><section className={styles.status}><h1>{copy.title}</h1><p>{state === "loading" ? copy.loading : copy.unavailable}</p></section></Shell>;
 
@@ -165,7 +192,7 @@ export function TripCanvas({ tripId }: { tripId: string }) {
     <section className={styles.overview} aria-label={copy.currentVersion}><div><span>{copy.currentVersion}</span><strong>v{data.trip.headVersion}</strong></div><time dateTime={data.trip.updatedAt}>{copy.updated} {new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date(data.trip.updatedAt))}</time></section>
     <p className={styles.notice}>{copy.rollbackNotice}</p>
     <div className={styles.live} aria-live="polite">{notice}</div>
-    {pendingProposal ? <section className={styles.proposal} aria-labelledby="pending-proposal-title"><p className={styles.eyebrow}>{copy.pendingEyebrow}</p><h2 id="pending-proposal-title">{copy.pendingTitle} · v{pendingProposal.proposal.revision}</h2><p>{copy.pendingBody}</p><dl className={styles.diff}><div><dt>{copy.before}</dt><dd>{pendingProposal.proposal.titleDiff.before}</dd></div><div><dt>{copy.after}</dt><dd>{pendingProposal.proposal.titleDiff.after}</dd></div></dl>{pendingProposal.proposal.evidence === "not_recorded" ? <p className={styles.missing}>{copy.evidenceMissing}</p> : null}{pendingProposal.proposal.assumptions === "not_recorded" ? <p className={styles.missing}>{copy.assumptionsMissing}</p> : null}<p className={styles.meta}>{copy.proposalBase} v{pendingProposal.proposal.baseTripVersion} · {copy.expires} {new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date(pendingProposal.proposal.expiresAt))}</p><div className={styles.proposalActions}><button className={styles.primary} type="button" disabled={mutation !== null} onClick={() => void confirmPendingProposal()}>{mutation === "confirming" ? copy.confirming : copy.confirm}</button><button className={styles.secondary} type="button" disabled={mutation !== null} onClick={() => void rejectPendingProposal()}>{mutation === "rejecting" ? copy.rejecting : copy.reject}</button></div><form className={styles.revision} onSubmit={(event) => void revisePendingProposal(event)}><label htmlFor="proposal-title">{copy.reviseLabel}</label><input id="proposal-title" value={draftTitle} maxLength={160} required disabled={mutation !== null} onChange={(event) => setDraftTitle(event.target.value)} /><button className={styles.button} type="submit" disabled={mutation !== null || !draftTitle.trim()}>{mutation === "revising" ? copy.revising : copy.revise}</button></form></section> : <section className={styles.noProposal}><strong>{copy.noPendingTitle}</strong><p>{copy.noPendingBody}</p></section>}
+    {pendingProposal ? <section className={styles.proposal} aria-labelledby="pending-proposal-title"><p className={styles.eyebrow}>{copy.pendingEyebrow}</p><h2 id="pending-proposal-title">{copy.pendingTitle} · v{pendingProposal.proposal.revision}</h2><p>{copy.pendingBody}</p><dl className={styles.diff}><div><dt>{copy.before}</dt><dd>{pendingProposal.proposal.titleDiff.before}</dd></div><div><dt>{copy.after}</dt><dd>{pendingProposal.proposal.titleDiff.after}</dd></div></dl>{pendingProposal.proposal.dayDiffs?.map((day) => <details key={day.dayId}><summary>{day.date}</summary><ul>{day.items.map((item) => <li key={item.itemId}>{item.title}</li>)}</ul></details>)}{pendingProposal.proposal.evidence === "not_recorded" ? <p className={styles.missing}>{copy.evidenceMissing}</p> : null}{pendingProposal.proposal.assumptions === "not_recorded" ? <p className={styles.missing}>{copy.assumptionsMissing}</p> : null}<p className={styles.meta}>{copy.proposalBase} v{pendingProposal.proposal.baseTripVersion} · {copy.expires} {new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date(pendingProposal.proposal.expiresAt))}</p><div className={styles.proposalActions}><button className={styles.primary} type="button" disabled={mutation !== null} onClick={() => void confirmPendingProposal()}>{mutation === "confirming" ? copy.confirming : copy.confirm}</button><button className={styles.secondary} type="button" disabled={mutation !== null} onClick={() => void rejectPendingProposal()}>{mutation === "rejecting" ? copy.rejecting : copy.reject}</button></div>{pendingProposal.proposal.dayDiffs ? <form className={styles.revision} onSubmit={(event) => void reviseStructuredProposal(event)}><label htmlFor="proposal-patch">{copy.reviseLabel}</label><textarea id="proposal-patch" value={manualPatch} disabled={mutation !== null} onChange={(event) => setManualPatch(event.target.value)} /><button className={styles.button} type="submit" disabled={mutation !== null}>{mutation === "revising" ? copy.revising : copy.revise}</button></form> : <form className={styles.revision} onSubmit={(event) => void revisePendingProposal(event)}><label htmlFor="proposal-title">{copy.reviseLabel}</label><input id="proposal-title" value={draftTitle} maxLength={160} required disabled={mutation !== null} onChange={(event) => setDraftTitle(event.target.value)} /><button className={styles.button} type="submit" disabled={mutation !== null || !draftTitle.trim()}>{mutation === "revising" ? copy.revising : copy.revise}</button></form>}</section> : <section className={styles.noProposal}><strong>{copy.noPendingTitle}</strong><p>{copy.noPendingBody}</p><form className={styles.revision} onSubmit={(event) => void createManualProposal(event)}><label htmlFor="manual-proposal-patch">{copy.reviseLabel}</label><textarea id="manual-proposal-patch" value={manualPatch} disabled={mutation !== null} onChange={(event) => setManualPatch(event.target.value)} /><button className={styles.button} type="submit" disabled={mutation !== null}>{copy.revise}</button></form></section>}
     {pendingRollback && <section className={styles.proposal} aria-live="polite"><strong>{copy.restoreReady} {pendingRollback.targetVersion}</strong><p>{copy.restoreBody}</p><div className={styles.proposalActions}><button className={styles.primary} disabled={mutation !== null} onClick={() => void confirmRollback()}>{mutation === "confirming" ? copy.confirming : copy.confirmRestore}</button><button className={styles.secondary} disabled={mutation !== null} onClick={() => setPendingRollback(null)}>{copy.keepCurrent}</button></div></section>}
     <section className={styles.history}><article className={styles.panel}><p className={styles.eyebrow}>{copy.historyEyebrow}</p><h2>{copy.confirmedChanges}</h2>{data.versions.length === 0 ? <p>{copy.noChanges}</p> : <ol className={styles.timeline}>{data.versions.map((version) => <li className={styles.event} key={version.id}><i className={styles.dot} aria-hidden="true"/><div><strong>{version.eventType === "initial" ? copy.initialVersion : `${copy.version} ${version.resultingVersion} ${copy.confirmed}`}</strong><span>{version.eventType === "initial" ? copy.initialBody : copy.confirmedBody}</span><span className={styles.meta}>{copy.recorded} {new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date(version.createdAt))}</span>{version.proposalId && <details><summary>{copy.inspectOrigin}</summary><span className={styles.meta}>{copy.proposalId} {version.proposalId}</span></details>}{version.memoryReceipts.length > 0 ? <details><summary>{copy.memoryProvenance}</summary><ul>{version.memoryReceipts.map((receipt) => <li key={`${receipt.memoryId}-${receipt.sourceReceiptId}`}>{receipt.constraintKind === "hard_constraint" ? copy.hardConstraint : copy.preference} · <Link href="/visepanda/copilot">{copy.memorySource} {receipt.memoryId}</Link> · {copy.receipt} {receipt.sourceReceiptId}</li>)}</ul></details> : null}{version.resultingVersion < data.trip.headVersion && version.title !== null && <button className={styles.button} disabled={mutation !== null || pendingRollback !== null} onClick={() => void prepareRollback(version.resultingVersion)}>{mutation === "preparing" ? copy.preparing : `${copy.restore} v${data.trip.headVersion + 1}`}</button>}</div></li>)}</ol>}</article><div><TripPlaceView tripId={tripId} locale={locale}/><TripActionsView tripId={tripId} locale={locale}/><aside className={styles.panel}><p className={styles.eyebrow}>{copy.integrityEyebrow}</p><h2>{copy.integrityTitle}</h2><p>{copy.integrityBody}</p></aside></div></section>
   </main></Shell>;

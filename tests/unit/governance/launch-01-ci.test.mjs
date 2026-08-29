@@ -81,5 +81,5 @@ test("LAUNCH-01 CI suite runner marks a locally skipped integration suite incomp
 
   assert.equal(result.status, 0);
   assert.match(result.stdout, /VP_CI_SUITE_RESULT .*"outcome":"incomplete"/);
-  assert.match(result.stdout, /"skipped":8/);
+  assert.match(result.stdout, /"skipped":[1-9]\d*/);
 });

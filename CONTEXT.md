@@ -61,6 +61,12 @@ static preview assertions were replaced with canonical-workspace assertions beca
 was retired. Authenticated thread/Trip scope, reload, cancel and real prompt-to-answer evidence stay
 unrun without the operator-owned Provider and Staging configuration.
 
+LAUNCH-11/#161 adds owner-scoped, immutable full `TripPatch` Proposal creation and child revision
+preparation. Pending reads derive Day/Item diffs from the durable current projection; Canvas can submit
+a structured manual patch only as a pending Proposal, then relies on the existing confirmation boundary.
+No Provider or model creates a proposal. Migrations, cross-owner/RLS, atomic confirm/reload, and
+authenticated browser evidence remain unrun until the operator-owned Staging environment is available.
+
 ## Accepted frontend redesign baseline (2026-08-27)
 
 [ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md) and [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136) govern the complete frontend redesign. The current Homepage and `/visepanda` are stop-ship. Preserve functional/information relationships but independently redraw physical expression from VisePanda VI + Golden Route + Guide. Map is off by default; `Open VisePanda` is the Homepage primary CTA. Retire runtime source assets, Fig Grotesk and duplicate shapes through #138. Reuse #87 as Demo parity truth and #92 as the only Product Shell; #93-#116 retain capability ownership. Read `docs/frontend-redesign-issue-plan.md` before frontend work.
