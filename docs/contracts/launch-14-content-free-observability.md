@@ -32,8 +32,11 @@ measure actual usage.
 
 `admitLaunch14Execution()` first consumes the existing `CHAT_RUNTIME_ENABLED` flag and validates the
 registry dependency. A disabled or illegal flag state returns `FLAG_DISABLED` and makes no budget
-reservation. This provides a deterministic integration seam only: LAUNCH-07/08 own the eventual
-API/worker consumers, and no deployed kill switch exists yet.
+reservation. It next evaluates an in-memory fixed-window `Launch14RateGuard` by a server-created,
+non-serializable subject handle; a `RATE_LIMITED` decision also makes no budget reservation. The
+future API/worker boundary must bind that opaque handle only after verified server-side identity
+resolution. This provides a deterministic integration seam only: LAUNCH-07/08 own the eventual
+runtime consumers, and no deployed kill switch exists yet.
 
 `evaluateLaunch14Slo()` accepts only bounded aggregate counts plus p95 latency and cost. It returns a
 local `healthy` or closed alert reason (`error_rate`, `latency`, or `cost`). The deterministic error
@@ -51,6 +54,6 @@ documentation. No external telemetry, metric, alert, flag configuration, Provide
 database row, queue job, account, or deployment exists to compensate.
 
 Still required: a reviewed exporter/privacy policy, worker and API instrumentation, durable bounded
-metrics, dashboard/query, per-user/rate guard consumption, real alert routing, Staging fault
+metrics, dashboard/query, real alert routing, verified identity-to-rate-subject binding, Staging fault
 injection, Staging kill-switch rehearsal, and a finite observation window. Those actions remain
 blocked on LAUNCH-07/08 and Staging/provider/operator gates.

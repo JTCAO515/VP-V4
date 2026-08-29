@@ -16,15 +16,16 @@ const TRACE_EVENT_KEYS = [
   "outputTokens",
   "costMicros",
 ] as const;
-const TRACE_CHAIN_OPTIONS_KEYS = ["mintTraceId"] as const;
 const SLO_KEYS = ["requestCount", "errorCount", "cancelledCount", "retryCount", "p95LatencyMs", "costMicros"] as const;
 const COST_BUDGET_CONFIG_KEYS = ["maxCostMicros"] as const;
 const COST_RESERVATION_KEYS = ["expectedCostMicros"] as const;
+const RATE_GUARD_CONFIG_KEYS = ["windowMs", "perSubjectAttempts"] as const;
 const MAX_COUNTER = 2_147_483_647;
 const MAX_RETRIES = 10;
 const MAX_P95_LATENCY_MS = 3_000;
 const MAX_SLO_COST_MICROS = 1_000_000;
 const MAX_ERROR_RATE = 0.05;
+const RATE_SUBJECTS = new WeakSet<object>();
 
 type TraceStage = "api" | "turn" | "worker" | "provider";
 type TraceOutcome = "started" | "succeeded" | "failed" | "cancelled" | "rejected" | "retry_scheduled";
@@ -73,17 +74,15 @@ type CostBudgetReservation = Readonly<{ expectedCostMicros: number }>;
 
 export type Launch14ExecutionDecision =
   | Readonly<{ kind: "admitted"; reservedCostMicros: number }>
-  | Readonly<{ kind: "unavailable"; code: "FLAG_DISABLED" | "COST_BUDGET_EXHAUSTED"; metric: "flag_disabled" | "cost_budget_exhausted" }>
+  | Readonly<{ kind: "unavailable"; code: "FLAG_DISABLED" | "RATE_LIMITED" | "COST_BUDGET_EXHAUSTED"; metric: "flag_disabled" | "rate_limited" | "cost_budget_exhausted" }>
   | Readonly<{ kind: "invalid" }>;
 
 /**
  * Creates a correlation context whose ID is minted here, never accepted from request/turn/provider input.
  * The returned records are bounded metadata only; this module deliberately has no exporter or transport.
  */
-export function createContentFreeTraceChain(options: unknown = undefined): ContentFreeTraceChain {
-  const resolvedOptions = options === undefined ? { mintTraceId: defaultMintTraceId } : options;
-  if (!isTraceChainOptions(resolvedOptions)) throw new TypeError("Trace chain options must be exact and server-controlled.");
-  const traceId = resolvedOptions.mintTraceId();
+export function createContentFreeTraceChain(): ContentFreeTraceChain {
+  const traceId = defaultMintTraceId();
   if (!isTraceId(traceId)) throw new TypeError("Trace IDs must be server-minted lowercase hexadecimal values.");
 
   return Object.freeze({
@@ -140,6 +139,44 @@ export class Launch14CostBudgetGuard {
   }
 }
 
+/** A server-only opaque subject handle; it has no serializable identifier and cannot enter telemetry. */
+export type Launch14RateSubject = Readonly<Record<never, never>>;
+
+/** Create a subject handle only after server-side identity resolution; it is not request input. */
+export function createLaunch14RateSubject(): Launch14RateSubject {
+  const subject = Object.freeze({});
+  RATE_SUBJECTS.add(subject);
+  return subject;
+}
+
+/** In-memory per-subject fixed-window rate guard. It owns no user identifier, transport, or persistence. */
+export class Launch14RateGuard {
+  readonly #windowMs: number;
+  readonly #perSubjectAttempts: number;
+  readonly #attempts = new Map<Launch14RateSubject, number[]>();
+  #lastNow = -1;
+
+  constructor(value: unknown) {
+    if (!isRateGuardConfig(value)) throw new TypeError("Rate guard configuration must be exact and positive.");
+    this.#windowMs = value.windowMs;
+    this.#perSubjectAttempts = value.perSubjectAttempts;
+  }
+
+  admit(subject: unknown): Launch14ExecutionDecision {
+    if (!isRateSubject(subject)) return Object.freeze({ kind: "invalid" });
+    const now = Date.now();
+    if (!Number.isSafeInteger(now) || now < 0 || now < this.#lastNow) return Object.freeze({ kind: "invalid" });
+    this.#lastNow = now;
+    const active = (this.#attempts.get(subject) ?? []).filter((attemptedAt) => attemptedAt > now - this.#windowMs && attemptedAt <= now);
+    if (active.length >= this.#perSubjectAttempts) {
+      return Object.freeze({ kind: "unavailable", code: "RATE_LIMITED", metric: "rate_limited" });
+    }
+    active.push(now);
+    this.#attempts.set(subject, active);
+    return Object.freeze({ kind: "admitted", reservedCostMicros: 0 });
+  }
+}
+
 /**
  * The only execution gate in this contract. It consumes the existing chat runtime flag before any cost
  * reservation; neither branch can begin a model/provider call because this module owns no transport.
@@ -147,19 +184,18 @@ export class Launch14CostBudgetGuard {
 export function admitLaunch14Execution(
   flags: unknown,
   budget: Launch14CostBudgetGuard,
+  rateGuard: Launch14RateGuard,
+  rateSubject: Launch14RateSubject,
   reservation: unknown,
 ): Launch14ExecutionDecision {
-  if (!(budget instanceof Launch14CostBudgetGuard) || !isFlagState(flags)) return Object.freeze({ kind: "invalid" });
+  if (!(budget instanceof Launch14CostBudgetGuard) || !(rateGuard instanceof Launch14RateGuard) || !isFlagState(flags)) return Object.freeze({ kind: "invalid" });
   if (invalidFlags(flags).length > 0) return Object.freeze({ kind: "invalid" });
   if (!decideFlag(flags, "CHAT_RUNTIME_ENABLED").available) {
     return Object.freeze({ kind: "unavailable", code: "FLAG_DISABLED", metric: "flag_disabled" });
   }
+  const rateDecision = rateGuard.admit(rateSubject);
+  if (rateDecision.kind !== "admitted") return rateDecision;
   return budget.reserve(reservation);
-}
-
-function isTraceChainOptions(value: unknown): value is Readonly<{ mintTraceId: () => string }> {
-  if (!isRecord(value) || !hasExactKeys(value, TRACE_CHAIN_OPTIONS_KEYS) || typeof value.mintTraceId !== "function") return false;
-  return true;
 }
 
 function defaultMintTraceId(): string {
@@ -191,6 +227,17 @@ function isCostBudgetConfig(value: unknown): value is Readonly<{ maxCostMicros: 
 
 function isCostBudgetReservation(value: unknown): value is CostBudgetReservation {
   return isRecord(value) && hasExactKeys(value, COST_RESERVATION_KEYS) && isBoundedCounter(value.expectedCostMicros);
+}
+
+function isRateGuardConfig(value: unknown): value is Readonly<{ windowMs: number; perSubjectAttempts: number }> {
+  return isRecord(value)
+    && hasExactKeys(value, RATE_GUARD_CONFIG_KEYS)
+    && isPositiveSafeInteger(value.windowMs)
+    && isPositiveSafeInteger(value.perSubjectAttempts);
+}
+
+function isRateSubject(value: unknown): value is Launch14RateSubject {
+  return typeof value === "object" && value !== null && RATE_SUBJECTS.has(value);
 }
 
 function isFlagState(value: unknown): value is FlagState {
@@ -225,4 +272,8 @@ function isBoundedCounter(value: unknown): value is number {
 
 function isRetryCount(value: unknown): value is number {
   return isBoundedCounter(value) && value <= MAX_RETRIES;
+}
+
+function isPositiveSafeInteger(value: unknown): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) && value > 0;
 }
