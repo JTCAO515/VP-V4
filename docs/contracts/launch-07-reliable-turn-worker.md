@@ -9,7 +9,8 @@ a Trip, expose an API, or claim that a production coordinator is live.
 ## Closed lifecycle
 
 `ReliableTurnCoordinator` accepts only a Turn ID and owner UUID. It emits an internal accepted/phase
-and terminal event log, but exposes only the owner-scoped state, attempt count, and terminal flag.
+and terminal event log, and exposes only owner-scoped state, attempt count, terminal flag, and
+metadata-only event replay.
 The state transitions are `queued -> leased -> completed|failed|cancelled|quarantined`; a provider
 failure returns to `queued` only while attempts remain. An expired lease follows the same rule, and
 the exhausted state becomes terminal `quarantined`. Its compatible closed SSE terminal state is
