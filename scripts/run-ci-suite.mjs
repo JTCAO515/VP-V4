@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { readdirSync } from "node:fs";
+import { appendFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 const suite = process.argv[2];
@@ -13,12 +13,26 @@ const testDirectory = suite === "evals" ? "evals" : `tests/${suite}`;
 const testFiles = collectTestFiles(testDirectory);
 const filesToRun = testFiles.length > 0 ? testFiles : ["scripts/ci-suites/scaffold.test.mjs"];
 
-const result = spawnSync(process.execPath, ["--experimental-strip-types", "--test", ...filesToRun], {
+const result = spawnSync(process.execPath, ["--experimental-strip-types", "--test", "--test-reporter=tap", ...filesToRun], {
   env: { ...process.env, VP_CI_SUITE: suite },
-  stdio: "inherit",
+  encoding: "utf8",
 });
 
+if (result.stdout) process.stdout.write(result.stdout);
+if (result.stderr) process.stderr.write(result.stderr);
 if (result.error) throw result.error;
+
+const reporterOutput = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+const skipped = Number(/^# skipped (\d+)$/m.exec(reporterOutput)?.[1] ?? 0);
+const outcome = result.status === 0 ? (skipped === 0 ? "passed" : "incomplete") : "failed";
+const summary = { suite, outcome, skipped, testFiles: testFiles.length };
+
+console.log(`VP_CI_SUITE_RESULT ${JSON.stringify(summary)}`);
+
+if (process.env.GITHUB_STEP_SUMMARY) {
+  appendFileSync(process.env.GITHUB_STEP_SUMMARY, `| ${suite} | ${outcome} | ${skipped} | ${testFiles.length} |\n`);
+}
+
 process.exit(result.status ?? 1);
 
 function collectTestFiles(directory) {

@@ -20,12 +20,18 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: 'echo "| Suite | Outcome | Skipped | Test files |" >> "$GITHUB_STEP_SUMMARY"'
+      - run: 'echo "| --- | --- | ---: | ---: |" >> "$GITHUB_STEP_SUMMARY"'
       - run: pnpm check
       - run: pnpm test:unit
       - run: pnpm test:contract
       - run: pnpm test:integration
       - run: pnpm test:security
       - run: pnpm test:e2e
+      - run: pnpm test:e2e:frontend
       - run: pnpm evals
       - run: pnpm db:verify
+      - run: pnpm check:flags
+      - run: pnpm check:assets
+      - run: pnpm check:assets:release
       - run: pnpm docs:check
