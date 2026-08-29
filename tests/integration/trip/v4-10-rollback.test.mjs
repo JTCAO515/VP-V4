@@ -38,10 +38,15 @@ test("V4-10 rollback confirms a prior snapshot as a new append-only version", as
     const otherHeaders = headers(otherToken);
     const trip = JSON.parse((await request("/rest/v1/trips", { method: "POST", headers: ownerHeaders, body: JSON.stringify([{ owner_id: ownerId, title: "Before" }]) })).body)[0];
     for (const [revision, title] of [[1, "After"], [2, "Latest"]]) {
-      const proposal = JSON.parse((await request("/rest/v1/trip_proposals", { method: "POST", headers: ownerHeaders, body: JSON.stringify([{ owner_id: ownerId, trip_id: trip.id, revision, base_trip_version: revision - 1, status: "pending", patch: { title }, expires_at: "2099-01-01T00:00:00Z" }]) })).body)[0];
+      const patch = revision === 1
+        ? { expectedVersion: 0, operations: [{ kind: "set_title", title }, { kind: "upsert_day", dayId: "day-1", date: "2026-10-01", timeZone: "Asia/Shanghai" }, { kind: "upsert_item", itemId: "item-1", dayId: "day-1", title: "Forbidden City", startsAt: "2026-10-01T09:00:00+08:00", endsAt: "2026-10-01T12:00:00+08:00" }] }
+        : { title };
+      const proposal = JSON.parse((await request("/rest/v1/trip_proposals", { method: "POST", headers: ownerHeaders, body: JSON.stringify([{ owner_id: ownerId, trip_id: trip.id, revision, base_trip_version: revision - 1, status: "pending", patch, expires_at: "2099-01-01T00:00:00Z" }]) })).body)[0];
       const confirmed = await request("/rest/v1/rpc/confirm_and_apply_trip_proposal", { method: "POST", headers: ownerHeaders, body: JSON.stringify({ p_proposal_id: proposal.id, p_idempotency_key: `confirm-${revision}`, p_digest: `digest-${revision}` }) });
       assert.equal(JSON.parse(confirmed.body)[0].outcome, "applied", confirmed.body);
     }
+    const contentSnapshot = JSON.parse((await request(`/rest/v1/trip_version_snapshots?trip_id=eq.${trip.id}&version=eq.1&select=content`, { headers: ownerHeaders })).body)[0];
+    assert.equal(contentSnapshot.content.days[0].items[0].id, "item-1");
     const deniedRollback = await request("/rest/v1/rpc/create_trip_rollback_proposal", { method: "POST", headers: otherHeaders, body: JSON.stringify({ p_trip_id: trip.id, p_target_version: 0 }) });
     assert.notEqual(deniedRollback.response.status, 200, deniedRollback.body);
     assert.deepEqual(JSON.parse((await request(`/rest/v1/trip_version_snapshots?trip_id=eq.${trip.id}&select=version`, { headers: otherHeaders })).body), []);

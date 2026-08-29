@@ -40,6 +40,12 @@ allowlist around the existing password surface. Missing configuration, absent/ex
 errors redirect fail-closed to sign-in; this neither provisions an account nor establishes a beta
 allowlist, live session, RLS result, Staging account, browser trace, or user-facing availability claim.
 
+LAUNCH-03/#153 prepares a closed, versioned Day/Item TripPatch with owner-readable current projections
+and append-only complete content snapshots. Its transaction preserves owner lock/CAS/idempotency/event/
+audit guarantees and makes rollback a server-minted snapshot reference, never an arbitrary client
+content replacement. Legacy title-only data remains readable. The migration has not been applied or
+replayed; local RLS and Staging evidence are explicitly unrun and must not become a capability claim.
+
 ## Accepted frontend redesign baseline (2026-08-27)
 
 [ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md) and [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136) govern the complete frontend redesign. The current Homepage and `/visepanda` are stop-ship. Preserve functional/information relationships but independently redraw physical expression from VisePanda VI + Golden Route + Guide. Map is off by default; `Open VisePanda` is the Homepage primary CTA. Retire runtime source assets, Fig Grotesk and duplicate shapes through #138. Reuse #87 as Demo parity truth and #92 as the only Product Shell; #93-#116 retain capability ownership. Read `docs/frontend-redesign-issue-plan.md` before frontend work.
