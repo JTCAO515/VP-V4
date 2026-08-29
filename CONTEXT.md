@@ -67,8 +67,8 @@ a structured manual patch only as a pending Proposal, then relies on the existin
 No Provider or model creates a proposal. Migrations, cross-owner/RLS, atomic confirm/reload, and
 authenticated browser evidence remain unrun until the operator-owned Staging environment is available.
 
-LAUNCH-12/#169 reads the current owner-scoped Trip and its durable Day/Item projection through the
-existing private routes. With an explicit client clock and each Day's recorded timezone, it selects
+LAUNCH-12/#169 is merged through PR #183 and reads the current owner-scoped Trip and its durable
+Day/Item projection through the existing private routes. With an explicit client clock and each Day's recorded timezone, it selects
 one scheduled current/next item or fails closed for empty, past-only, malformed, or timezone-missing
 data. It does not call external facts or write a Trip. The closed Trip model has no manual completion
 field, so a past date is only a no-remaining-scheduled-item state, never a user-completion claim.
