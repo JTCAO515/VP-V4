@@ -29,9 +29,11 @@ capture `not_persisted`; it has no durable message store, provider call, migrati
 or public privacy claim. LAUNCH-14/#163 adds a separate in-memory content-free trace/SLO/cost-budget
 and chat-flag preparation. LAUNCH-07/#157 adds a separate in-memory reliable worker lifecycle with
 owner reads, capability-bound leases, retry/quarantine and cancellation; it has no Provider, queue,
-database, API, telemetry-retention policy or Staging rehearsal. Retention, region, provider terms,
-backup and deletion remain operator-owned decisions. LAUNCH-02 Staging configuration is still the one
-external next action.
+database, API, telemetry-retention policy or Staging rehearsal. LAUNCH-08/#158 adds the
+owner-adapter-backed, content-free `turn-sse-v1` replay transport and a client reducer with bounded
+polling fallback; it is not a live subscription, Provider integration, durable worker, browser-runtime
+or Staging proof. Retention, region, provider terms, backup and deletion remain operator-owned
+decisions. LAUNCH-02 Staging configuration is still the one external next action.
 
 ## Accepted frontend redesign baseline (2026-08-27)
 

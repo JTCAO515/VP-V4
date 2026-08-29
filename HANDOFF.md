@@ -34,8 +34,11 @@ post-launch EXPAND-01. LAUNCH-05/#155 is merged as a pure, fail-closed message/o
 contract: it does not persist content, call a Provider, change a database, or publish a privacy
 promise. LAUNCH-14/#163 adds only an in-memory content-free trace/SLO/budget/flag preparation.
 LAUNCH-07/#157 now adds only an in-memory reliable worker lifecycle; it has no Provider, queue host,
-database, runtime API, Staging rehearsal or operational availability claim. The exactly-one external next action remains operator-assisted
-Staging configuration and verification for [LAUNCH-02 #152](https://github.com/JTCAO515/VP-V4/issues/152).
+database, runtime API, Staging rehearsal or operational availability claim. LAUNCH-08/#158 adds an
+owner-adapter-backed `turn-sse-v1` replay response and de-duplicating Ask reducer with bounded
+polling; it sends only closed state metadata and is not a live subscription, Provider, browser-runtime
+or Staging availability claim. The exactly-one external next action remains operator-assisted Staging
+configuration and verification for [LAUNCH-02 #152](https://github.com/JTCAO515/VP-V4/issues/152).
 
 Mandatory reading order: `AGENTS.md` → `CONTEXT.md` → `HANDOFF.md` → `docs/handoff.json` →
 `docs/vp-v4-closed-beta-launch-issue-plan.md` →
