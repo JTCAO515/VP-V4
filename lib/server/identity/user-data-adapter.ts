@@ -138,6 +138,7 @@ export type PendingProposalRead = Readonly<{
     expiresAt: string;
     titleDiff: Readonly<{ before: string; after: string }>;
     dayDiffs?: readonly ProposalDayDiff[];
+    patch?: TripPatch;
     evidence: "not_recorded";
     assumptions: "not_recorded";
   }>;
@@ -1292,7 +1293,7 @@ export function pendingProposalRead(
       createdAt: input.proposal.created_at,
       expiresAt: input.proposal.expires_at,
       titleDiff: { before: input.trip.title, after: afterTitle },
-      ...(dayDiffs ? { dayDiffs } : {}),
+      ...(dayDiffs ? { dayDiffs, patch: patch as TripPatch } : {}),
       evidence: "not_recorded",
       assumptions: "not_recorded",
     },

@@ -34,3 +34,10 @@ test("AI-13a exposes only owner-scoped pending Proposal reads and the LAUNCH-11 
   assert.match(route, /export async function POST/);
   assert.match(route, /isTripProposalInput/);
 });
+
+test("LAUNCH-11 returns a structured patch only to the owner-scoped pending Proposal reader", () => {
+  const structuredPatch = { expectedVersion: 0, operations: [{ kind: "upsert_day", dayId: "day-1", date: "2026-09-01" }] } as const;
+  const result = pendingProposalRead({ trip, proposal: { ...pending, patch: structuredPatch } });
+  assert.deepEqual(result?.proposal.patch, structuredPatch);
+  assert.equal(result?.proposal.titleDiff.after, "Before");
+});

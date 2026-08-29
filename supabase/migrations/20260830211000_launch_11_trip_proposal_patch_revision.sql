@@ -1,7 +1,7 @@
 -- LAUNCH-11: immutable full-patch revision. The parent is never overwritten.
 create function public.revise_trip_proposal_patch(p_proposal_id uuid, p_patch jsonb)
 returns table(outcome text, proposal_id uuid, revision integer, base_trip_version integer)
-language plpgsql security invoker set search_path = public as $$
+language plpgsql security definer set search_path = public as $$
 declare parent public.trip_proposals%rowtype; trip public.trips%rowtype; child public.trip_proposals%rowtype;
 begin
   select * into parent from public.trip_proposals where id = p_proposal_id and owner_id = (select auth.uid()) for update;
