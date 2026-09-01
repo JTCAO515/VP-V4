@@ -1,5 +1,18 @@
 # Handoff
 
+## Live governance reconciliation — 2026-09-01
+
+The accepted repository baseline is `main@fb8d2ba`. LAUNCH-00/#149 remains open; no Launch Issue is
+currently `ready-for-agent`, and LAUNCH-02/#152 is the operator-assisted Staging frontier. Closed
+Issues no longer retain active scheduling labels. Repository preparation is not Staging, Provider,
+RLS, migration, authenticated-browser, Production or release acceptance. The current full status
+report is `docs/VP-V4-PROJECT-STATUS-REPORT-2026-09-01.md`.
+
+ADR numbering is unique again: the Trip snapshot authorization decision remains ADR-0019, while the
+later ML-01 thin-HTTP decision is ADR-0022. `pnpm docs:check` now rejects duplicate ADR numbers and
+filename/heading mismatches. This governance repair changes no runtime, database, deployment, secret
+or user data.
+
 - LAUNCH-12/#169 is merged through PR #183 and adds the private Today reader over the canonical Trip projection: explicit clock and
   Day timezone select one scheduled item, while no items, past-only dates, malformed data, missing
   timezone, unauthenticated, and route failures stay bounded. It adds no external source or Trip
@@ -87,7 +100,7 @@ local/Staging owner-other-user create/list/retry and authenticated Canvas eviden
 a disposable Supabase runtime or external session. No release claim follows.
 
 Mandatory reading order: `AGENTS.md` → `CONTEXT.md` → `HANDOFF.md` → `docs/handoff.json` →
-`docs/vp-v4-closed-beta-launch-issue-plan.md` →
+`docs/VP-V4-PROJECT-STATUS-REPORT-2026-09-01.md` → `docs/vp-v4-closed-beta-launch-issue-plan.md` →
 `docs/superpowers/plans/2026-08-29-vp-v4-closed-beta-launch-execution.md` →
 `docs/agents/issue-execution-contract.md` → accepted Issue and linked contracts/runbooks.
 
@@ -95,7 +108,7 @@ Mandatory reading order: `AGENTS.md` → `CONTEXT.md` → `HANDOFF.md` → `docs
 
 - Operator decision: accepted in [ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md).
 - Program: [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136); tracker mapping in `docs/frontend-redesign-issue-plan.md`.
-- Current frontend maturity: WEB-05/#139 now records the directly selected Golden Route Guide direction; WEB-06/#140 shared foundation, WEB-07/#141 Homepage, WEB-08/#142 closed-beta Login, V4-07/#92 Product Shell, WEB-09/#143 entry continuity, WEB-10/#144 acceptance, and V4-22/#107 through V4-30/#115 truthful unavailable/degraded boundaries are merged locally. No locally executable frontend implementation Issue remains. WEB-11/#145 release evidence remains external/operator-owned; `/visepanda` is still stop-ship until release evidence passes.
+- Current frontend maturity: WEB-05/#139 records the selected Golden Route Guide direction; WEB-06/#140 shared foundation, WEB-07/#141 Homepage, WEB-08/#142 closed-beta Login, V4-07/#92 Product Shell, WEB-09/#143 entry continuity, WEB-10/#144 acceptance, and V4-22/#107 through V4-30/#115 truthful unavailable/degraded boundaries are on `main`. No frontend-only implementation frontier is currently open. WEB-11/#145 and the release asset/rights gates still block public/store release.
 - AI-49/#53 now has a parameter-free isolated recovery-plan validator and runbook. It rejects production, connection details, invented RPO/RTO, unknown options and every S3 backup choice until an authoritative policy registry exists. Real restore/PITR/compensation, Storage reconciliation and RPO/RTO remain unrun; #53 stays open.
 - AI-41/#43 is closed as an evidence-only R5 audit with a `blocked / non-release` verdict. Current local source suites pass, but no local RLS/provider/Storage/recovery/device/performance/canary/observation evidence exists.
 - AI-39/#41 now has an option matrix with every aviation candidate `unavailable` and `Operator decision: unfilled`; it remains open. AI-40/#42 must remain fail-closed until an operator-approved benchmark and policy record exist.
@@ -220,7 +233,7 @@ Rollback: remove the local `docs/knowledge-base/` package and audit link if the 
 - Published tracker graph: `docs/vp-v4-production-parity-issue-plan.md`, V4-01 through V4-31, mapped to #85/#87-#116 and registered in `docs/agents/issue-execution-contract.md`.
 - V4-01 adds `docs/architecture/v4-01-demo-parity-registry.md` and `v4-01-framework-adoption-matrix.md`: 40 grouped Demo actions, 14 framework candidates, explicit fixture disposition and 31/31 execution-row audit. It activates no runtime.
 - #87 V4-01 is closed. The operator then retired Magic Link after masked email-rate-limit and `otp_expired` evidence; #120/PR #121 is closed without merge.
-- #122 AI-51b and #84 AI-51 are closed after the password-session and route evidence merged. #127 AI-13b and #130 AI-13c are also closed after durable revision/reject work. At the 2026-08-27 live audit, #15 AI-13 is the ready R1 product frontier; future sessions must re-query rather than rely on this snapshot.
+- #122 AI-51b and #84 AI-51 are closed after the password-session and route evidence merged. #127 AI-13b and #130 AI-13c are also closed after durable revision/reject work. The 2026-08-27 #15 frontier statement is historical; the 2026-09-01 live Launch frontier is operator-assisted LAUNCH-02/#152.
 - AI-43 requires a current AI SDK Core/ToolLoop/Workflow comparison before execution; LangChain/LangGraph/GraphRAG/multi-agent are not default production dependencies.
 
 ## VisePanda visual identity delivery
@@ -229,24 +242,24 @@ Rollback: remove the local `docs/knowledge-base/` package and audit link if the 
 - The ready-to-use visual package is in `brand/`: handbook, tokens, eight transparent IP poses, SVG icons/patterns/UI reference, and five social-media exports.
 - Begin brand work with `brand/guidelines/visepanda-vi-guide.html`; use `brand/qa/asset-manifest.json` and `brand/qa/verification.md` to validate file inventory and delivery claims.
 - Static asset, JSON, structural, source-integrity, and whitespace checks passed. A fresh isolated 375 px browser screenshot remains a manual review item; no live social-platform publishing test was run.
-- `pnpm check` stopped before lint/type/build/test because the local dependency-security policy requires an operator decision for the ignored `sharp` build script. No approval, package-policy change, or bypass was applied.
+- Historical VI validation initially stopped at the ignored `sharp` build-script policy. The current `main` baseline now passes lint, typecheck, build, static tests and Preview asset checks without a bypass; release asset checks still fail closed for nine blocked Preview assets.
 - Roll back a rejected VI delivery with a new revert commit for this merge; do not rewrite shared history or alter the owner-approved source artwork.
 
 ## Direct Issue queue and anonymous preview
 
 Magic Link and callback entrypoints are removed. The public preview is anonymous, while Trip APIs
-remain session-claim protected and fail closed without a valid claim. Every defined Issue is directly
-schedulable; dependency references inform integration but do not block development, testing,
-automated review, or merge. GitHub Issue label/status synchronization is skipped until the local
-`gh` CLI has authenticated access.
+remain session-claim protected and fail closed without a valid claim. An Issue is schedulable only
+when it is open, registered in the execution contract, on the live frontier, free of native blockers
+and ownership collisions, and not waiting for operator authority. Repository-only preparation may
+merge while its runtime and release evidence stays open and fail-closed.
 
 Verification for this change: `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`,
 `pnpm test:unit`, `pnpm test:contract`, `pnpm test:e2e`, `pnpm docs:check`, and `git diff --check`
 passed. Integration and local-RLS security fixtures were skipped because local Supabase was not
 running; no bypass was applied.
 
-`gh auth status --hostname github.com` reported no logged-in GitHub host, so no remote Issue label
-or status mutation was attempted.
+The 2026-09-01 governance reconciliation has authenticated GitHub access and removes active scheduling
+labels from closed Issues. Label history remains recoverable through GitHub audit history.
 
 ## V4-02 Context Engineering
 

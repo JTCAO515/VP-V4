@@ -46,10 +46,12 @@ implementation Issue depended on any acceptance gate.
 `priority:P0` is reserved for the R0 contract set and the R1 tracer bullet. R2/R3 are `priority:P1`.
 R4/R5 are `priority:P2`. A program where almost everything is P0 carries no priority signal.
 
-## Direct queue supersession
+## Live frontier rule
 
-This section supersedes the dependency-gated scheduling language above. Every defined Issue is
-directly schedulable. `status:blocked` reports an unavailable runtime, provider, legal, or operator
-state; it does not prohibit development, testing, review, or merge of independently scoped work.
-Release gates remain evidence requirements for release claims, not implementation prerequisites.
+Only an open Issue with `status:ready`, `ready-for-agent`, an execution-contract row and no unresolved
+dependency, path collision or operator decision is agent-schedulable. `status:blocked`,
+`ready-for-human` and `needs-info` are exclusion signals, not alternative forms of readiness.
 
+Repository preparation may be separated into an explicitly accepted work unit when that work is
+independently reversible and does not claim the blocked runtime or release result. Release gates
+remain hard evidence requirements for both promotion and downstream release-dependent work.

@@ -1,8 +1,7 @@
-# ADR-0019: Retain thin HTTP adapters pending ML-01 evidence
+# ADR-0022: Retain thin HTTP adapters pending ML-01 evidence
 
-## Status
-
-Accepted as a fail-closed baseline.
+Status: accepted as a fail-closed baseline. Renumbered from the duplicate `ADR-0019` identifier on
+2026-09-01; the decision itself is unchanged.
 
 ## Decision
 

@@ -9,11 +9,14 @@ const contract = read("docs/agents/issue-execution-contract.md");
 const identityContract = read("docs/contracts/user-data-adapter.md");
 const handoff = JSON.parse(read("docs/handoff.json"));
 
-test("defined Issues are directly schedulable without dependency closure", () => {
-  assert.match(tracker, /defined Issue.*directly schedulable/i);
-  assert.match(labels, /does not prohibit development/i);
-  assert.match(contract, /Do not defer implementation solely because another Issue is\s+open/i);
-  assert.match(handoff.status, /direct Issue queue/i);
+test("only the live ready frontier is directly schedulable", () => {
+  assert.match(tracker, /not automatically schedulable/i);
+  assert.match(labels, /status:ready.*ready-for-agent/is);
+  assert.match(contract, /status:ready.*ready-for-agent/is);
+  assert.match(handoff.status, /no ready-for-agent Issue/i);
+  assert.doesNotMatch(tracker, /Defined Issues are directly schedulable/i);
+  assert.doesNotMatch(labels, /Every defined Issue is directly schedulable/i);
+  assert.doesNotMatch(contract, /Defined Issues are directly schedulable/i);
 });
 
 test("direct scheduling retains fail-closed runtime protections", () => {

@@ -142,7 +142,7 @@ and any file owned by another Issue's row.
 | #43 AI-41 | Release gate R5 / beta | `docs/runbooks/**, docs/acceptance/r5-*.md` | `pnpm check`; `pnpm check` plus every suite this Issue touches | L1-L7 evidence ledger, runbooks | all RL-01..RL-09 |
 
 | #46 AI-42 | Quality / Evals | `evals/**, tests/fixtures/red-lines/**, artifacts/AI-42/**, docs/agents/issue-execution-contract.md` | `pnpm check`; `pnpm evals`; `pnpm docs:check` | qrels version list, stratified report, suite registry | RL-01…RL-09 (registry owner) |
-| #47 AI-43 | ModelGateway / Transport | `lib/server/model-gateway/spike/**, tests/contract/model-gateway/ml-01-spike.test.ts, docs/adr/ADR-0019-ml-01-ai-sdk-thin-http-baseline.md, docs/architecture/ml-01-ai-sdk-decision.md, artifacts/AI-43/**, docs/agents/issue-execution-contract.md` | `pnpm check`; `pnpm test:contract`; `pnpm docs:check` | five-condition unproven table, bundle/latency unrun disclosure, ADR | RL-07 |
+| #47 AI-43 | ModelGateway / Transport | `lib/server/model-gateway/spike/**, tests/contract/model-gateway/ml-01-spike.test.ts, docs/adr/ADR-0022-ml-01-ai-sdk-thin-http-baseline.md, docs/architecture/ml-01-ai-sdk-decision.md, artifacts/AI-43/**, docs/agents/issue-execution-contract.md` | `pnpm check`; `pnpm test:contract`; `pnpm docs:check` | five-condition unproven table, bundle/latency unrun disclosure, ADR | RL-07 |
 | #48 AI-44 | Domain Contracts / UX | `lib/server/contracts/errors/**, lib/i18n.ts, tests/contract/errors/**, docs/contracts/failure-taxonomy.md` | `pnpm check`; `pnpm test:contract`; `pnpm docs:check` | taxonomy table, five-locale copy snapshots, mapping tests | RL-04 |
 | #49 AI-45 | Release / Platform | `package.json, lib/flags/**, scripts/check-flags.mjs, tests/unit/flags/**, docs/contracts/feature-flags.md, docs/agents/issue-execution-contract.md, artifacts/AI-45/unrun.md` | `pnpm check`; `pnpm test:unit`; `pnpm check:flags`; `pnpm docs:check`; `git diff --check` | flag registry, illegal-combination cases | — |
 | #50 AI-46 | Data Platform | `scripts/db/**, supabase/**, docs/contracts/plat-conf-00.md, tests/integration/db/**` | `pnpm check`; `pnpm db:verify`; `pnpm test:integration` | three-path probe logs, frozen configuration table | RL-02 |
@@ -205,7 +205,7 @@ Project, and only an operator may perform the external account/configuration act
 
 | Issue | Owner | Allowed paths | Required commands | Required evidence | Red-line suites |
 | --- | --- | --- | --- | --- | --- |
-| #149 LAUNCH-00 | Launch governance | `docs/vp-v4-closed-beta-launch-issue-plan.md`, `docs/agents/**`, `docs/handoff.json`, `docs/operator-actions.json`, `HANDOFF.md`, `CONTEXT.md`, `artifacts/LAUNCH-00/**` | `pnpm docs:check`; JSON parse; Markdown link check; `git diff --check` | Program/Issue/DAG/label audit, decision queue, unrun record | — |
+| #149 LAUNCH-00 | Launch governance | `docs/vp-v4-closed-beta-launch-issue-plan.md`, `docs/VP-V4-PROJECT-STATUS-REPORT-2026-09-01.md`, `docs/agents/**`, `docs/adr/ADR-0019-trip-snapshot-rollback-authorization.md`, `docs/adr/ADR-0022-ml-01-ai-sdk-thin-http-baseline.md`, `scripts/docs-check.mjs`, `tests/unit/governance/direct-issue-queue.test.mjs`, `tests/contract/acceptance/v4-31-parity-audit.test.mjs`, `docs/handoff.json`, `docs/operator-actions.json`, `HANDOFF.md`, `CONTEXT.md`, `artifacts/LAUNCH-00/**` | `pnpm docs:check`; `pnpm test:unit`; `pnpm test:contract`; JSON parse; Markdown link check; `git diff --check` | Program/Issue/DAG/label audit, decision queue, unrun record | — |
 | #150 LAUNCH-01 | Developer Experience | `package.json`, `pnpm-lock.yaml`, `.npmrc`, `.github/workflows/**`, `scripts/**`, `playwright.config.mjs`, `tests/**`, `docs/acceptance/**`, `artifacts/LAUNCH-01/**`, handoff files | all repository test/check commands named in the accepted plan | clean-checkout CI matrix, skip classification, required-check evidence | RL-01 RL-02 RL-07 |
 | #152 LAUNCH-02 | Data / Security | `supabase/**`, `scripts/db-verify.mjs`, `tests/{integration,security}/**`, `docs/runbooks/**`, `docs/architecture/**`, `artifacts/LAUNCH-02/**`, handoff files | `pnpm db:verify`; `pnpm test:integration`; `pnpm test:security`; `pnpm docs:check` | current-Project Staging classification, empty replay, owner/other-user RLS, reset/unrun record | RL-01 RL-02 RL-07 |
 | #153 LAUNCH-03 | Trip / Data | `lib/server/trip/**`, `lib/server/contracts/**`, `supabase/migrations/**`, `tests/{unit,contract,integration,security}/trip/**`, `docs/{adr,contracts,architecture}/**`, `artifacts/LAUNCH-03/**`, handoff files | `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `pnpm check` | TS/SQL parity, migration replay, RLS/CAS/idempotency/snapshot evidence | RL-01 RL-02 RL-05 |
@@ -239,20 +239,21 @@ Project, and only an operator may perform the external account/configuration act
 - Merging proves engineering acceptance only. Product effect is reviewed in the Issue's stated
   observation window.
 
-## 7. Direct queue and continuous scheduler
+## 7. Live frontier and continuous scheduler
 
-Defined Issues are directly schedulable. Do not defer implementation solely because another Issue is
-open. `status:blocked` reports an unavailable runtime, provider, legal, or operator state; it does
-not prohibit development, testing, automated review, or merge of independently scoped work.
-Dependency references are planning context only. Runtime authorization, data-policy, and safety
-guards remain fail-closed.
+An Issue is schedulable only when it is open, has a row in this contract, carries both
+`status:ready` and `ready-for-agent`, and has no unresolved native/textual blocker, prerequisite PR,
+path collision, ownership conflict or operator decision. `status:blocked`, `ready-for-human` and
+`needs-info` exclude it from the agent frontier. A separately accepted repository-preparation work
+unit may proceed only within its own row and may not close or promote the blocked runtime/release
+acceptance. Runtime authorization, data-policy and safety guards remain fail-closed.
 
 The one-Issue/branch/PR rule scopes a work unit; it does not require the whole session to pause after
 that work unit. A session launched in Continuous AFK mode follows
 `docs/agents/continuous-afk-execution.md` and, after each PR, merge or safe handoff, recomputes the
 live frontier and continues without routine operator confirmation.
 
-The scheduler may not start an Issue with a missing row, path collision,
+The scheduler may not start an Issue with a missing row, open dependency, path collision,
 unaccepted contract or absent operator-owned decision. A direct written operator instruction that
 selects an Issue's documented option is an accepted decision when the Issue records that selection
 and dissent in its own scoped evidence. Otherwise operator-owned work is recorded in

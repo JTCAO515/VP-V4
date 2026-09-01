@@ -1,5 +1,21 @@
 # Context
 
+## Live governance baseline — 2026-09-01
+
+The accepted repository baseline is `main@fb8d2ba`. LAUNCH-00/#149 remains open and the live Launch
+frontier has no `ready-for-agent` Issue; LAUNCH-02/#152 is the operator-assisted Staging action. A
+merged repository slice proves only its named code/contracts. It does not close the Issue's Staging,
+Provider, RLS, migration, authenticated-browser, release or observation requirements.
+
+Closed Issues must not retain active scheduling labels such as `status:ready`, `status:blocked`,
+`status:in-progress`, `ready-for-agent`, `ready-for-human` or `needs-info`. ADR identifiers are unique
+and `pnpm docs:check` rejects a filename/heading mismatch or duplicate number. Historical sections
+below remain evidence snapshots; when they conflict with this section, the accepted LAUNCH plan and
+live GitHub state control.
+
+Read `docs/VP-V4-PROJECT-STATUS-REPORT-2026-09-01.md` for the current cross-system status before
+using the older research and per-Issue evidence below.
+
 ## Accepted closed-beta launch scope (2026-08-29)
 
 [LAUNCH-00 #149](https://github.com/JTCAO515/VP-V4/issues/149) and [the LAUNCH-00～19 plan](docs/vp-v4-closed-beta-launch-issue-plan.md) are the accepted productization
@@ -75,9 +91,9 @@ field, so a past date is only a no-remaining-scheduled-item state, never a user-
 
 ## Accepted frontend redesign baseline (2026-08-27)
 
-[ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md) and [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136) govern the complete frontend redesign. The current Homepage and `/visepanda` are stop-ship. Preserve functional/information relationships but independently redraw physical expression from VisePanda VI + Golden Route + Guide. Map is off by default; `Open VisePanda` is the Homepage primary CTA. Retire runtime source assets, Fig Grotesk and duplicate shapes through #138. Reuse #87 as Demo parity truth and #92 as the only Product Shell; #93-#116 retain capability ownership. Read `docs/frontend-redesign-issue-plan.md` before frontend work.
+[ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md) and [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136) govern the complete frontend redesign. The replacement Homepage and `/visepanda` surfaces are on `main`; public/store release remains stop-ship until WEB-11 and the release asset/rights gates pass. Preserve functional/information relationships but independently redraw physical expression from VisePanda VI + Golden Route + Guide. Map is off by default; `Open VisePanda` is the Homepage primary CTA. Retire runtime source assets, Fig Grotesk and duplicate shapes through #138. Reuse #87 as Demo parity truth and #92 as the only Product Shell; #93-#116 retain capability ownership. Read `docs/frontend-redesign-issue-plan.md` before frontend work.
 
-The redesign covers Homepage, invitation-only password Login, first-run/empty/global states, Today/Ask/Copilot/Tools/Explore/User, mobile, Profile/Privacy and store release. WEB-05/#139 records the direct choice of the Golden Route Guide direction; Homepage WEB-07/#141 and Login/first-run WEB-08/#142 are merged, and WEB-06/#140 establishes their shared tokens, locales, focus and motion behavior. It does not enable public signup, Magic Link, recovery, social login, AI, booking, payment, live data, Human Help or a China map. Open PR #124 conflicts with this baseline if merged as-is against the stop-ship surfaces.
+The redesign covers Homepage, invitation-only password Login, first-run/empty/global states, Today/Ask/Copilot/Tools/Explore/User, mobile, Profile/Privacy and store release. WEB-05/#139 records the direct choice of the Golden Route Guide direction; Homepage WEB-07/#141 and Login/first-run WEB-08/#142 are merged, and WEB-06/#140 establishes their shared tokens, locales, focus and motion behavior. It does not enable public signup, Magic Link, recovery, social login, AI, booking, payment, live data, Human Help or a China map. PR #124 was closed as superseded and is not an open merge path.
 
 WEB-10/#144 adds a reproducible Chromium acceptance suite for Homepage, password Login, and Product Shell across 320/390/430/768/1280/1440 widths, plus keyboard focus, Arabic RTL, and sign-in announcement coverage. It found and fixed the Login's 768px horizontal overflow by switching to the mobile layout below 800px. Assistive technology, physical-device keyboard/safe-area/200% zoom, and Preview rollback checks remain explicitly unrun rather than passed.
 
@@ -229,9 +245,10 @@ An owner-approved, non-runtime visual identity package is available under `brand
 ## Direct Issue queue and anonymous preview
 
 Magic Link and its callback route are removed. Public preview traffic is anonymous; Trip APIs still
-require a valid Supabase session claim and fail closed without one. Every defined Issue is directly
-schedulable. Dependency references are integration context, not execution gates; runtime security,
-data policy, and authorization checks remain unchanged.
+require a valid Supabase session claim and fail closed without one. An Issue is schedulable only when
+it is open, has the required execution-contract row, carries the live frontier labels, has no native
+blocker or ownership collision, and does not require an unresolved operator decision. Repository-only
+preparation may merge without promoting its unavailable runtime or release evidence.
 
 ## WEB-04 asset rights quarantine
 
