@@ -37,7 +37,7 @@ test("V4-31 records every Demo action, eight dimensions, unrun evidence, and a n
   assert.doesNotMatch(handoff, /Merge V4-12/);
   assert.match(
     handoff,
-    /No locally executable frontend implementation Issue remains/,
+    /No LAUNCH Issue is currently ready-for-agent/,
   );
   assert.doesNotMatch(frontendPlan, /^Status: published to GitHub/m);
 });

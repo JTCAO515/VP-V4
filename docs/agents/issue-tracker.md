@@ -22,10 +22,18 @@ Issues for this repository live in [JTCAO515/VP-V4](https://github.com/JTCAO515/
 
 External PRs are not a triage request surface. Collaborator PRs follow normal review and are not treated as incoming feature requests.
 
-## Direct queue supersession
+## Live frontier authority
 
-Defined Issues are directly schedulable; an open Issue, textual `Blocked by` reference, or GitHub
-dependency does not prohibit development. `status:blocked` reports unavailable runtime, provider,
-legal, or operator state only. It does not prohibit development, testing, automated review, or merge.
-`UNAUTHENTICATED`, `SAFETY_BLOCKED`, and `DATA_POLICY_BLOCKED` remain fail-closed runtime outcomes;
-they never authorize a guest actor, service credential, or bypass.
+A defined Issue is not automatically schedulable. The executable frontier is the intersection of:
+
+- Issue state is open;
+- the Issue has an execution-contract row;
+- `status:ready` and `ready-for-agent` are both present;
+- no native/textual dependency, open prerequisite PR, path collision or ownership conflict remains;
+- no unresolved operator, legal, account, secret, data-policy or irreversible decision is required.
+
+`status:blocked`, `ready-for-human` and `needs-info` exclude the Issue from agent scheduling. A
+separately accepted repository-preparation Issue may still produce bounded contracts or runbooks,
+but it must not close or promote the blocked runtime/release acceptance. `UNAUTHENTICATED`,
+`SAFETY_BLOCKED`, and `DATA_POLICY_BLOCKED` remain fail-closed runtime outcomes; they never authorize
+a guest actor, service credential or bypass.
