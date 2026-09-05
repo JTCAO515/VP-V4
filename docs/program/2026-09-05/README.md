@@ -2,6 +2,8 @@
 
 日期2026-09-05。Program：[VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187)。基线分支 `codex/vp-final-program-20260905`；PR与实际tracker结果在issue-plan.json / tracker-verification.json中登记。
 
+统筹PR：[#253](https://github.com/JTCAO515/VP-V4/pull/253)。已核验旧20项关闭、新65项与198条native依赖匹配。给后续agent可直接复制的[启动说明](AGENT-KICKOFF.md)。
+
 ## 先读哪些文件
 
 1. [完整统筹报告](../../VISEPANDA-MASTER-PLAN-2026-09-05.md)：产品、商业、所有客户端/后台、知识、运营、发布和本轮调整。

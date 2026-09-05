@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：VPJ-00 #187 replaces the old open Issue queue. New task graph is published in stages; baseline PR must merge before code implementation. Product/runtime gates remain unverified.
+状态：VPJ-00 #187 published: 65 new tasks, 198 native dependencies, 20 old Issues closed as not_planned with successors. Baseline PR #253 is open and must merge before implementation; product/runtime gates remain unverified.
 
-阶段：VPJ governance and task publication; no product runtime implementation claimed.
+阶段：Planning and tracker migration verified; 60 launch tasks and 5 evidence-triggered expansions await the reviewed baseline and task prerequisites.
 
 ## 读取顺序
 
@@ -36,11 +36,16 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 验证
 
-验证进行中，最终见Program VERIFICATION.md。
+- Remote read-back 2026-09-05: 65 new open tasks, each body/ID/parent and all 198 native dependencies match; 20 old Issues closed with not_planned; PR185/186 remain open.
+- pnpm check passed: lint/typecheck/build plus 22 standard tests; unit29, contract161, source-e2e40 and eval20 passed.
+- Integration19 pass/9 skip; security80 pass/1 skip. Real local Supabase/RLS unavailable, outcomes incomplete, not release success.
+- DAG/missing-dependency tests, 41 archive hashes, docs/JSON/local links and git diff against origin/main passed. Archive whitespace/line endings retained only in hash-checked archive scope.
+- 1280x800 and 390x844 current-page smoke: no horizontal overflow or console errors/warnings. Existing cross-route locale reset is assigned to VPJ-01/41.
+- PR253 CI at commit06bab2f passed; subsequent documentation-only handoff commits receive fresh CI and must be inspected before merge.
 
 ## 下一动作与回滚
 
-Finish and merge the reviewed VPJ planning baseline; then recompute the live frontier. Initial parallel paths: VPJ-01, VPJ-02, VPJ-03, VPJ-33, VPJ-46 and VPJ-62 as dependencies allow.
+Review and merge PR #253, then recompute live blockers and operator conditions. Initial paths: VPJ-01 #188, VPJ-02 #189, VPJ-03 #190, VPJ-46 #246 and VPJ-62 #202; VPJ-33 #225 follows VPJ-03. Use AGENT-KICKOFF.md.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 

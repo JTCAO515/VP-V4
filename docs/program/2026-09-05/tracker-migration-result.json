@@ -1,0 +1,185 @@
+{
+  "updatedAt": "2026-09-05T04:05:47.359Z",
+  "results": [
+    {
+      "number": 171,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-45"
+      ]
+    },
+    {
+      "number": 170,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-43"
+      ]
+    },
+    {
+      "number": 168,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-15",
+        "VPJ-20",
+        "VPJ-48",
+        "VPJ-50"
+      ]
+    },
+    {
+      "number": 166,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-43",
+        "VPJ-44"
+      ]
+    },
+    {
+      "number": 165,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-36",
+        "VPJ-58"
+      ]
+    },
+    {
+      "number": 164,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-03",
+        "VPJ-33",
+        "VPJ-44"
+      ]
+    },
+    {
+      "number": 163,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-35",
+        "VPJ-37",
+        "VPJ-59"
+      ]
+    },
+    {
+      "number": 162,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-42",
+        "VPJ-65"
+      ]
+    },
+    {
+      "number": 158,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-08"
+      ]
+    },
+    {
+      "number": 157,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-07"
+      ]
+    },
+    {
+      "number": 156,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-06",
+        "VPJ-07",
+        "VPJ-59"
+      ]
+    },
+    {
+      "number": 154,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-02",
+        "VPJ-04",
+        "VPJ-55"
+      ]
+    },
+    {
+      "number": 153,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-05",
+        "VPJ-09"
+      ]
+    },
+    {
+      "number": 152,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-02"
+      ]
+    },
+    {
+      "number": 135,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-01",
+        "VPJ-04",
+        "VPJ-40",
+        "VPJ-56"
+      ]
+    },
+    {
+      "number": 53,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-38"
+      ]
+    },
+    {
+      "number": 42,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-52"
+      ]
+    },
+    {
+      "number": 41,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-51"
+      ]
+    },
+    {
+      "number": 149,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-00",
+        "VPJ-42",
+        "VPJ-45"
+      ]
+    },
+    {
+      "number": 2,
+      "state": "closed",
+      "reason": "not_planned",
+      "successors": [
+        "VPJ-00"
+      ]
+    }
+  ]
+}

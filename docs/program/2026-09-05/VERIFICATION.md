@@ -17,6 +17,8 @@
 
 ## Tracker与PR
 
+最终远端回读：2026-09-05T04:06:51Z，65个新任务open、父Program187一致、正文/ID/198条native依赖一致；20个旧Issue closed/not_planned。PR253为当前统筹基线，PR185/186仍open。PR253在06bab2f版本的deterministic-pr-gates、Vercel和Preview Comments通过；最后交接记录提交会触发新CI，合并前读最新结果。
+
 新任务、父子/native依赖和旧20项关闭的最终结果以 `tracker-verification.json` 与 `tracker-migration-result.json` 为准。缺少这些文件或verified不为true时，不得声称迁移完成。基线PR号见issue-plan.json；未合并则所有实现任务保持blocked。
 
 ## 未运行
