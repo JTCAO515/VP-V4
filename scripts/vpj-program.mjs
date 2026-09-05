@@ -105,7 +105,7 @@ function render() {
       `- Rollback: ${t.rollback}\n\n` +
       t.acceptance.map(a=>'- [ ] '+a).join('\n') + '\n\n';
   }
-  save(`${dir}/EXECUTION-CONTRACT.md`, contracts);
+  save(`${dir}/EXECUTION-CONTRACT.md`, contracts.trimEnd()+'\n');
   const snap = json(plan.sourceSnapshot).issues;
   save(`${dir}/ISSUE-MIGRATION.md`, '# 旧开放 Issue → 新责任映射\n\n全部旧项按用户授权superseded/not planned关闭，不代表已验收；原body/comments及关系快照保留。两条既有PR #185/#186仍open。\n\n| 旧Issue | 标题 | 新责任 |\n| --- | --- | --- |\n' + snap.map(t=>`| [#${t.number}](${t.url}) | ${t.title} | ${plan.oldIssueSuccessors[String(t.number)].map(link).join(', ')} |`).join('\n')+'\n');
   renderHandoff();

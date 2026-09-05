@@ -17,4 +17,6 @@ Program #187。归档含义是退出当前生产/执行入口；历史证据与�
 
 ## 恢复
 
+归档保留历史原始字节，包括Markdown双空格换行/末尾空行；`.gitattributes`仅对该只读归档关闭空白重写告警。`archive-manifest.json`逐文件SHA-256继续强制检查，当前代码/新文档不豁免空白检查。
+
 先查看 `archive-manifest.json` 的原路径/归档路径/sha256；恢复旧Landing时同时恢复对应lint/资产检查路径。历史规则恢复需配合reopen旧Issue，不可只恢复一段相互矛盾的调度文字。无需生产数据回滚。
