@@ -1,13 +1,17 @@
 # VP-V4 Engineering Instructions
 
-The accepted runtime is Next.js App Router + React + strict TypeScript + Tailwind CSS v4.
+The current Web/server runtime is Next.js App Router + React + strict TypeScript + Tailwind CSS v4.
+The active delivery baseline is VPJ-00 #187 and ADR-0023: native SwiftUI iOS is the complete product;
+Web is a lightweight same-Trip Planning Studio. Start at `docs/program/2026-09-05/README.md`.
 
 - Build routes in `app/` and interactive UI in typed components under `components/`.
 - Keep `app/page.tsx` a Server Component; isolate browser state and event handlers behind explicit `"use client"` boundaries.
 - Use `next/image` for local raster/SVG assets and `next/font/local` for bundled fonts.
 - Tailwind owns global foundations and product tokens. `app/globals.css` contains the accepted responsive visual compatibility layer; do not silently redesign it outside an approved UI task.
 - Runtime imagery and wordmarks are project-local VisePanda assets under `public/assets/visepanda/`; do not reintroduce `/assets/source/` media paths. Existing bundled fonts and shape masks still require rights review before public release.
-- Keep all user-facing copy synchronized across `zh`, `en`, `es`, `ru`, and `ar` in `lib/i18n.ts`. Arabic must keep document-level `lang="ar"` and `dir="rtl"` behavior.
+- Current release copy and acceptance target `zh` and `en`. VPJ-01 owns the explicit migration of
+  existing five-locale UI/wire tests; preserve legacy es/ru/ar assets and payload compatibility until
+  that migration is verified. Do not advertise future languages as supported or silently break RTL.
 - Do not claim real AI, persistence, inventory, booking, payment, Human Help, SLA, or complete city coverage.
 - Required checks: `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, copy/claim scan, desktop browser QA, and 390×844 browser QA.
 
@@ -31,8 +35,9 @@ Every AI Core Issue's mandatory reading order, allowed and forbidden paths, runn
 evidence artifacts, and red-line suite IDs live in `docs/agents/issue-execution-contract.md`.
 Issue bodies link to it; that file is the authority. Do not start an Issue whose row is missing.
 
-Defined Issues are directly schedulable; open Issue dependencies do not prohibit implementation.
-Preserve one-branch-per-Issue isolation and every runtime fail-closed guard.
+Only the current VPJ execution rows are active. Native dependencies and unmerged interface work
+gate implementation. A fixture preparation may proceed only if its own Issue explicitly permits
+that scope; it is not runtime acceptance. Preserve one-Issue/branch/PR and every fail-closed guard.
 
 ### Continuous AFK sessions
 

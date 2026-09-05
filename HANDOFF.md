@@ -1,278 +1,54 @@
 # Handoff
 
-- LAUNCH-12/#169 is merged through PR #183 and adds the private Today reader over the canonical Trip projection: explicit clock and
-  Day timezone select one scheduled item, while no items, past-only dates, malformed data, missing
-  timezone, unauthenticated, and route failures stay bounded. It adds no external source or Trip
-  write. Local/Staging authenticated and RLS evidence remains unrun; see `artifacts/LAUNCH-12/unrun.md`.
+Generated from docs/handoff.json by vpj-program.mjs.
 
-- LAUNCH-11/#161 adds the repository preparation for complete Day/Item `TripPatch` Proposals: validated
-  owner-scoped creation, immutable full-patch revisions, derived diffs and a manual Canvas patch input
-  that can only create a pending Proposal. `pnpm check`, contract (160), and E2E (39) currently pass.
-  Local Supabase/RLS, Staging migration replay, authenticated browser, live Provider and real-user
-  observation are unrun; rollback is a revert of the LAUNCH-11 PR and no migration has been applied.
+最新Program：[VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187)。
 
-- LAUNCH-10/#160 replaces the disconnected `/visepanda` preview with the canonical five-locale/RTL
-  Chat workspace and redirects authenticated legacy `/visepanda/ask` deep links there. It reuses only
-  owner-visible thread and Trip endpoints; the visible message composer is disabled because no live
-  text Provider is configured, so it sends no prompt and invents no answer. Focused red/green source
-  tests, `pnpm typecheck`, build/static checks, `pnpm test:e2e`, Chromium viewport/focus/RTL and docs
-  checks are recorded under `artifacts/LAUNCH-10/`. Independent review found and this branch fixed a
-  canonical-workspace localization gap: POI scope and memory labels now use five-locale copy, and a
-  live Chromium check confirms Arabic `dir` plus document-title switching. A default-pnpm run was rejected by a local ignored
-  build-script policy and made no retained repository change; the accepted pnpm@9 path was used for
-  final checks. Real Provider, authenticated owner/other-user, reload/cancel and Staging evidence
-  remain unrun. Roll back by reverting the LAUNCH-10 PR. Next action: continue the direct repository
-  frontier while LAUNCH-02 remains operator-owned.
+目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-## Accepted closed-beta launch baseline — 2026-08-29
+状态：VPJ-00 #187 published: 65 new tasks, 198 native dependencies, 20 old Issues closed as not_planned with successors. Baseline PR #253 is open and must merge before implementation; product/runtime gates remain unverified.
 
-The accepted and active program is [LAUNCH-00 #149](https://github.com/JTCAO515/VP-V4/issues/149),
-backed by [LAUNCH-00～19](docs/vp-v4-closed-beta-launch-issue-plan.md). It replaces
-the old launch numbering and the earlier `vp-v4-closed-beta-launch-plan.md` assessment where they
-conflict, but preserves their repository findings as evidence. Completion now means a real
-invited user can sign in, create/select a Trip, send a prompt through one live text Provider, review
-and explicitly confirm a full days-and-items Proposal, reload the persisted Trip, and use Today over
-that confirmed Trip. Page presence, fixture contracts, deployment success and source-string tests do
-not satisfy this outcome.
+阶段：Planning and tracker migration verified; 60 launch tasks and 5 evidence-triggered expansions await the reviewed baseline and task prerequisites.
 
-The operator states that the existing Supabase Project has no real users. LAUNCH-02 must verify and
-adopt it as **Staging** for migrations, RLS, test accounts and real browser E2E; no second Staging
-Project is required. LAUNCH-17 later creates a physically independent **Production** Project, with
-separate users, data, Storage, secrets, redirect URLs and Vercel environment. No Staging users/data
-are copied. Production schema rollback is additive compensation only.
+## 读取顺序
 
-Today is included in launch scope, but only selects one explainable current/next item from the
-confirmed Trip using an explicit clock and Trip timezone. It makes no live weather, opening-hours,
-transport, disruption or safety claim. Explore, public Knowledge/RAG, translation, live external
-evidence, Guide Import and Offline move to `EXPAND-01～10` after LAUNCH-19.
+- [docs/program/2026-09-05/README.md](docs/program/2026-09-05/README.md)
+- [docs/VISEPANDA-MASTER-PLAN-2026-09-05.md](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)
+- [docs/adr/ADR-0023-vpj-integrated-native-journey-baseline.md](docs/adr/ADR-0023-vpj-integrated-native-journey-baseline.md)
+- [docs/program/2026-09-05/INTERFACES.md](docs/program/2026-09-05/INTERFACES.md)
+- [docs/program/2026-09-05/EXECUTION-CONTRACT.md](docs/program/2026-09-05/EXECUTION-CONTRACT.md)
 
-Provider, region, budget, exact retention periods, legal text, beta provisioning mechanism, domain
-state, Production creation and cutover remain operator/runtime gates. Claude's attached plan is an
-input, not authority: its DeepSeek choice, retention numbers, allowlist and domain-success statements
-are not accepted facts.
+## 当前决定
 
-LAUNCH-00 is accepted and remains open with `status:in-progress` until LAUNCH-19. GitHub now has 19
-native sub-Issues, actual execution-contract numbers and native blocked-by edges. LAUNCH-01 #150 is
-merged and closed; old #151 is closed as superseded into #150; old #158 is LAUNCH-08; #168 is
-post-launch EXPAND-01. LAUNCH-05/#155 is merged as a pure, fail-closed message/output and retention
-contract: it does not persist content, call a Provider, change a database, or publish a privacy
-promise. LAUNCH-14/#163 adds only an in-memory content-free trace/SLO/budget/flag preparation.
-LAUNCH-07/#157 now adds only an in-memory reliable worker lifecycle; it has no Provider, queue host,
-database, runtime API, Staging rehearsal or operational availability claim. LAUNCH-08/#158 adds an
-owner-adapter-backed `turn-sse-v1` replay response and de-duplicating Ask reducer with bounded
-polling; it sends only closed state metadata and is not a live subscription, Provider, browser-runtime
-or Staging availability claim. The exactly-one external next action remains operator-assisted Staging
-configuration and verification for [LAUNCH-02 #152](https://github.com/JTCAO515/VP-V4/issues/152).
+- One VP identity, same Trip, full journey; native iOS complete and Web lightweight same-Trip edit/confirm.
+- Current release zh/en; existing es/ru/ar wire/UI assets remain legacy-compatible until VPJ-01 migration.
+- Hotel L1a accommodation fit + verified L1b handoff; no inventory/payment/fulfillment.
+- Free + non-renewing 30-day Journey Pass experiment; $19.99 reference, $14.99 alternative; actual StoreKit terms and cost checked before sale.
+- Keep valid Trip/RLS/migration/knowledge/privacy safety contracts; archived code not production input.
 
-LAUNCH-04/#154 adds server-side guards before private Ask, Trip Canvas, Profile, and Copilot rendering,
-plus a strict local post-sign-in return allowlist. It redirects missing/invalid claims to password
-sign-in without creating accounts or distinguishing provisioning state. The durable beta allowlist,
-Staging account setup, real auth/deep-link/owner evidence, and access-removal test remain operator-owned
-and unrun; the external next action remains LAUNCH-02 Staging configuration.
+## 未决与运行证据
 
-LAUNCH-03/#153 prepares the repository-only Trip content upgrade: a closed versioned Day/Item
-`TripPatch`, owner-readable current Day/Item projections, and append-only full content snapshots.
-The confirmation transaction keeps CAS, idempotency, audit/event writes and server-minted snapshot
-rollback references; direct authenticated Day/Item writes remain denied. Legacy title-only patches and
-snapshots stay readable. TypeScript, contract, security-source and skip-aware integration suites pass,
-but no local or Staging migration was replayed and no external database was accessed. The remaining
-runtime proof belongs to operator-assisted LAUNCH-02 Staging configuration; no release claim follows.
+- Baseline PR must merge before consumers implement new scope.
+- Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 
-LAUNCH-09/#159 adds repository-only owner-scoped Trip list/create/selection preparation. `/visepanda/trips`
-is server-session guarded; its client calls only the private no-store collection route, validates a
-bounded title and fixed UUID retry key server-side, then opens the canonical Canvas. The existing
-additive v0 snapshot trigger remains responsible for a new Trip's initial snapshot. Contract, source
-security, static E2E, production build, desktop and 390px guarded-route browser checks pass, while
-local/Staging owner-other-user create/list/retry and authenticated Canvas evidence remain unrun without
-a disposable Supabase runtime or external session. No release claim follows.
+- No live customer/model/DB/provider/Store/production test or deployment in this planning task.
+- Original local iOS remains preview source; copying archive does not prove native build acceptance.
 
-Mandatory reading order: `AGENTS.md` → `CONTEXT.md` → `HANDOFF.md` → `docs/handoff.json` →
-`docs/vp-v4-closed-beta-launch-issue-plan.md` →
-`docs/superpowers/plans/2026-08-29-vp-v4-closed-beta-launch-execution.md` →
-`docs/agents/issue-execution-contract.md` → accepted Issue and linked contracts/runbooks.
+## 验证
 
-## Frontend redesign governance — 2026-08-27
+- Remote read-back 2026-09-05: 65 new open tasks, each body/ID/parent and all 198 native dependencies match; 20 old Issues closed with not_planned; PR185/186 remain open.
+- pnpm check passed: lint/typecheck/build plus 22 standard tests; unit29, contract161, source-e2e40 and eval20 passed.
+- Integration19 pass/9 skip; security80 pass/1 skip. Real local Supabase/RLS unavailable, outcomes incomplete, not release success.
+- DAG/missing-dependency tests, 41 archive hashes, docs/JSON/local links and git diff against origin/main passed. Archive whitespace/line endings retained only in hash-checked archive scope.
+- 1280x800 and 390x844 current-page smoke: no horizontal overflow or console errors/warnings. Existing cross-route locale reset is assigned to VPJ-01/41.
+- PR253 CI at commit06bab2f passed; subsequent documentation-only handoff commits receive fresh CI and must be inspected before merge.
 
-- Operator decision: accepted in [ADR-0018](docs/adr/ADR-0018-independent-frontend-redesign-baseline.md).
-- Program: [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136); tracker mapping in `docs/frontend-redesign-issue-plan.md`.
-- Current frontend maturity: WEB-05/#139 now records the directly selected Golden Route Guide direction; WEB-06/#140 shared foundation, WEB-07/#141 Homepage, WEB-08/#142 closed-beta Login, V4-07/#92 Product Shell, WEB-09/#143 entry continuity, WEB-10/#144 acceptance, and V4-22/#107 through V4-30/#115 truthful unavailable/degraded boundaries are merged locally. No locally executable frontend implementation Issue remains. WEB-11/#145 release evidence remains external/operator-owned; `/visepanda` is still stop-ship until release evidence passes.
-- AI-49/#53 now has a parameter-free isolated recovery-plan validator and runbook. It rejects production, connection details, invented RPO/RTO, unknown options and every S3 backup choice until an authoritative policy registry exists. Real restore/PITR/compensation, Storage reconciliation and RPO/RTO remain unrun; #53 stays open.
-- AI-41/#43 is closed as an evidence-only R5 audit with a `blocked / non-release` verdict. Current local source suites pass, but no local RLS/provider/Storage/recovery/device/performance/canary/observation evidence exists.
-- AI-39/#41 now has an option matrix with every aviation candidate `unavailable` and `Operator decision: unfilled`; it remains open. AI-40/#42 must remain fail-closed until an operator-approved benchmark and policy record exist.
-- WEB-10/#144 adds reproducible Chromium acceptance for Homepage, Login and Product at 320/390/430/768/1280/1440 widths, keyboard focus, Arabic RTL and sign-in announcement controls. It fixes the Login's 768px overflow by applying the single-column layout below 800px. VoiceOver/TalkBack, physical-device virtual-keyboard/safe-area/200% zoom, and Preview rollback smoke remain unrun and are not release evidence.
-- V4-08/#93 is merged: `/visepanda/ask` exposes authenticated, owner-scoped durable threads and a bounded state-only Turn control. Refreshing or reopening a thread replays its ordered state events; cancellation is idempotent and terminal. No control accepts a prompt, calls a model, writes a Trip, or persists arbitrary request text. The local Supabase migration/RLS probe remains unrun because the local runtime is unavailable.
-- V4-05/#90 is merged as a research decision: RoutePattern runtime adoption is rejected because no reviewed/licensed corpus exists and the self-authored synthetic paired evaluation finds no final-state gain. The retained baseline is POI/Fact/Guide retrieval plus current-evidence revalidation and ConstraintEngine; no runtime path, corpus, provider, schema or cache was added.
-- AI-15/#17 records R1 release evidence with a `blocked` verdict. Build, contract, eval and static E2E checks pass, but local Supabase/RLS is unavailable (one security probe and eight transaction/reload integration probes skip), database configuration is absent, and authenticated browser, deployment, telemetry and observation evidence remains unrun. No R1 release claim or capability promotion follows from the report.
-- V4-09/#94 adds structured, owner-scoped feedback for only completed, proposal-ready, unavailable or failed Turn results. It records one of four fixed kind/reason pairs, is idempotent under concurrent retry, and neither stores free text nor changes a Turn, Fact or Trip. Current state-only Turns do not claim a model result or expose feedback controls.
-- V4-10/#95 is merged: `/visepanda/trips/[tripId]` redraws the owner-scoped Trip Canvas as a canonical version timeline. A version snapshot is captured for new Trips and every confirmed Proposal; restoring an available prior snapshot creates a pending Proposal, and only a separate confirmation writes the next append-only version. The UI does not treat Proposal IDs as chat-thread IDs, has no fixture fallback, and keeps the map off. [ADR-0019](docs/adr/ADR-0019-trip-snapshot-rollback-authorization.md) records the narrow user-JWT `security definer` exception required to atomically write snapshots after direct Trip updates are revoked; it has fixed owner predicates, row locks, `auth.uid()` checks and no service credential. Existing Trips whose historic titles were never stored expose only their known current snapshot; local Supabase migration/RLS and browser runtime evidence remain unrun because the local runtime is unavailable.
-- AI-13/#15 is implemented: Trip Canvas now reads the existing owner-scoped pending Proposal alongside the canonical Trip, shows only the recorded title before/after and explicit `not_recorded` evidence/assumptions, and sends confirm, reject, or revise only to the existing protected routes before reloading authoritative state. It adds five-locale copy and Arabic RTL to the Canvas while retaining map-off. Static source-contract checks pass; anonymous browser QA at 1280x800, 390x844 and Arabic RTL, plus authenticated owner/other-user Proposal interaction, remain unrun without reproducible browser evidence, a disposable local Supabase session and seed data.
-- AI-16/#18 is implemented as a fixture-only ModelGateway conformance seam. It records DeepSeek Flash/Pro/Vision and Qwen 3.7 candidate metadata; it accepts synthetic C0 input only, forces Flash thinking off, validates Qwen's closed known/unknown result shape, and returns a typed unavailable or cancelled outcome otherwise. It has no HTTP transport, provider SDK, credential/environment access, persistence, Trip/Fact/permission write, or production capability claim. Real provider conformance, region/DPA, cost/latency, streaming, and account checks remain explicitly unrun.
-- AI-17/#19 adds deterministic fixture-only route policy and observability around that registry. C0 ordinary text routes only to thinking-off Flash and strict known/unknown text only to Qwen; policy/data/region and safety blocks are final before any choice, while Vision and unsupported shapes are unavailable. Both route and fallback inputs use exact key allowlists, so six raw-content-key families fail closed. The pure circuit breaker counts only bounded pre-output failures and rejects clock overflow. The trace derives provider/model/version metadata from the registry, uses integer microunit snapshots, fixes `recordInputs`/`recordOutputs` false, and rejects six content-key families. It has no provider transport, credential, persistence, Trip/Fact/permission write, or live billing claim.
-- AI-18/#20 establishes only a synthetic five-locale lexical qrels evaluator. Exact aliases, explicit transliterations, one-character typos and no-answer stay deterministic; malformed/out-of-corpus/duplicate relevance IDs fail closed, all five query modes have stable zero-sample semantics, and nDCG uses discounted gain. It has no database, FTS/PGroonga, vector/provider, real corpus, persistence or public retrieval route.
-- AI-19/#21 is implemented as an additive, pure hybrid-retrieval contract: eligibility runs before exact-first lexical and deterministic RRF fusion, and the output contains only opaque evidence IDs or no-evidence. Profile fields are restricted opaque descriptors and timestamps are real timezone-qualified RFC3339 instants. It has no schema, database, vector index, provider, source text, public route or production RAG claim; real adapter work remains separately gated.
-- AI-20/#22 is an additive, pure grounded-execution boundary: current typed claims and exact receipts produce an immutable deterministic card, while low-risk and unsupported paths expose no card. Stale, negative, forged, malformed, future, or unsupported evidence fails closed. The semantic renderer receives only validated rows and five-locale labels; it has no model explanation, route, persistence, provider, or mutation channel.
-- AI-21/#23 refreshes its R2 Grounded Text audit with a `blocked` verdict. Current fixture-only ModelGateway, routing, retrieval and typed-card repository checks pass, but they do not establish a Provider alpha: provider/region/DPA, credentials, cost/latency, flag rollback, staging SSE/degraded browser paths, local RLS, clean frozen-install evidence and an observation window remain explicitly unrun.
-- AI-22/#24 adds a pure, C0-only in-memory `PolicyRegistry`/`PolicyReceipt` decision boundary. Exact atomic field/region/action/purpose grants, current terms and trial windows are mandatory; derivative, combination, redistribution, training and retention are independently enforced and copied to an immutable receipt. Sensitive classes fail closed because their owner/region/retention agreements do not exist here. Shared in-process registry revocation immediately denies that policy ID to every registry view and produces an intent-only deterministic cache/RAG/Explore/SEO/new-Proposal cascade, not a real purge or external action; it is intentionally non-durable across process restart.
-- AI-23/#25 adds a C0-only private import migration ledger. It stores only opaque source row metadata and hashes; replay drift and duplicate source rows fail closed. The author alone creates a revision-bound Change Set; only a distinct reviewer can atomically record one reviewed Fact, its eligibility-recheck event, and audit receipt. Reviewed Facts never become a public projection here. Merge/split/tombstone/source-delete are private audit dispositions, not durable operations. There is no VP-Final content export, database, RLS, provider, credential, public route, transaction, or release claim.
-- AI-24/#26 adds a C0-only licensed-manifest Candidate dry-run. Closed UTF-8 CSV/JSONL fixture metadata and bounded external ID/name/alias/city/geo rows yield only private Candidates, with no Canonical ID capability. Each city caps at 20; an exact source hash is a no-op and a changed hash is a conflict. There is no parser, licence verification, database, RLS, durable diff/rebase/commit/audit, model, public projection, route, credential, or release claim.
-- AI-25/#27 adds a C0-only private Ops-review ledger, not an Ops deployment. Author and reviewer must differ; only a successful closed audit records one private Fact and reviewer audit metadata. Audit failure writes neither result. There is no secret, public project, UI, route, database/RLS, durable audit, source payload, public Fact, provider, account, deployment, or release claim.
-- AI-26/#28 adds a C0-only R3 Projection Queue contract, not a worker host or queue deployment. Version-one, Fact-ID-only jobs are idempotent only when their payload is exact; conflicting duplicates deny. A worker receives an expiring lease and only that holder may acknowledge. Expiry makes work eligible for at-least-once redelivery; the third expiry quarantines it, and an opaque Ops fixture identity can explicitly replay it. There is no pgmq/outbox/second queue, Function, poller, durable state/audit, RLS, credential, raw payload, public projection, provider or release claim.
-- Operator-inserted Homepage redesign is merged to local `main` after a Clear independent review. It replaces `/` with an independently expressed VisePanda immersion: original CSS Great-Wall-and-mountain visual, top legibility fade, Golden Route/Guide prompt card, five-language/RTL selector, `Open VisePanda` primary navigation and a separate guide button to `/homepage`. The previous long-form landing remains intact at `/homepage`. The attachment affordance is visual-only and explicitly unavailable, so no upload/privacy/persistence path was added. Local Playwright screenshots at desktop, 390px and Arabic RTL show no horizontal overflow and the center navigation folds at mobile. This remains repository-only evidence; map-on, Preview/Production, external asset rights and store release are unrun.
-- V4-11/#96 is merged at `main@5757bf3`: Canvas Place View reads only owner-scoped canonical exact IDs or user-confirmed labels. A service-only opaque canonical-ID registry prevents authenticated callers from inventing identities; it never resolves a user label into a POI. A validated canonical UUID can enter Ask as opaque `poiId` scope without submitting a prompt, and route changes clear stale scope even when an earlier read finishes late. There is no map provider, route, geography or live-fact claim; the view stays labelled schematic and recheck-required references remain visible. `pnpm check`, contract (55), E2E (7) and security (16 plus one local-runtime skip) passed; local Supabase integration remains skipped because the runtime is unavailable.
-- V4-12/#97 is merged: Canvas Reservations & Actions reads owner-scoped durable Trip references only. An HTTPS URL is a recorded external link, never an official-channel claim; missing links are unavailable and `recheck_required` remains visible. A future artifact source needs its own owner-bound receipt contract. No route creates orders, payments, inventory or provider completion.
-- V4-14/#99 now replaces its unavailable boundary with a five-locale/RTL owner Memory governance surface. It reads profiles, consent, source receipt and recorded opaque impacts through private no-store API routes; create/confirm/reject/pause/resume/forget and consent actions require same-origin owner-JWT RPCs and reload server state. It keeps no browser-local Memory state, uses no service credential and does not claim that current Turn/Proposal paths write impacts. V4-16/#101 adds a distinct owner-JWT durable Profile workspace for explicit travel pace, locale, currency, units and departure time; it reloads saved server data, has no browser-local cache and never infers from Memory. V4-17/#102 adds a same-origin owner-JWT all-data export/delete request and immutable requested receipt, but neither exports data, deletes data nor claims backup expiry. V4-18/#103 now provides a pure deterministic NextAction and nine-check registry: only one reviewed/licensed/unexpired Fact can mark one check as evidence-available; no owner reader means the browser remains truthful unavailable. V4-19/#104 supplies timestamped observation projection only. V4-20/#105 adds pure delay/closure recovery proposals. V4-21/#106 extends them to current queue and ordinary-unwell evidence, which remain pending Proposals; high-risk unwell returns only a current recorded official-channel reference and otherwise fails closed. It has no owner read, provider, persistence, diagnosis, rescue, contact, cancellation, purchase or canonical Trip-writer integration. V4-22/#107 through V4-30/#115 are merged truthful unavailable boundaries.
-- V4-31/#116 is merged as an evidence audit, not a release gate approval. Its 40-action matrix records current state, L1-L7 and eight dimensions; the Verdict is `blocked` until durable V4-13/V4-15/V4-17/V4-19–V4-21 contracts and local/runtime evidence exist. GitHub label synchronization remains skipped because `gh` has no authenticated user.
-- V4-13/#98 adds the durable Memory Profile baseline: owner-scoped consent, source and lifecycle receipts, and a bounded canonical summary. Only explicit/confirmed memory with granted consent is retrievable; hard constraints sort first but inferred memory can never become one. Paused, rejected, deleted and consent-revoked rows are excluded; deleted rows clear their summary. Owner-JWT RPCs are the only authenticated mutation path, while direct table writes and anonymous access remain blocked. The local Supabase migration/RLS runtime probe is unrun because the runtime is unavailable; V4-14/V4-15 own Memory UI and consumer impact receipts.
-- V4-15/#100 adds durable, owner-scoped Memory consumer receipts: one immutable source receipt may link to exactly one Turn or Proposal, with a composite foreign key preventing owner/source mismatch. Authenticated clients are read-only; a verified future coordinator owns writes. Existing Chat and Canvas paths read and disclose only opaque Memory/source receipt references when present, never a canonical summary, and retain no fixture fallback or client mutation. No current state-only Turn/Canvas writer creates receipts, so runtime impact evidence is absent; V4-14 owns source governance actions.
-- V4-14/#99 verification is source-bound: `pnpm check`, contract/security/E2E and docs checks cover closed inputs, same-origin mutation, no service credential/local cache, five-locale/RTL source, visible source/impact data and lifecycle actions. Local Supabase migration/RLS plus an authenticated browser persistence/reload trace remain unrun because no local Supabase runtime is available. Rollback reverts the route/UI; after migration application, owned Memory data requires a forward repair rather than a drop.
-- Completed governance work: [WEB-03 #137](https://github.com/JTCAO515/VP-V4/issues/137) published the ADR, Issue DAG, execution rows and handoff to `main@0b6c27f`.
-- WEB-04 #138 quarantines 48 legacy source assets and four duplicate shapes, removes Fig Grotesk from runtime, and adds a hash-verified rights ledger, SBOM, NOTICE and denylist check. Nine current preview photographs remain `blocked-release` until a separate operator rights record exists.
-- WEB-05/#139 records the direct selection of Golden Route Guide: it retains the VisePanda VI, keeps the map off and makes `Open VisePanda` the primary CTA. It creates no runtime asset or release authorization.
-- WEB-07 verification: production static output confirms the exact CTA route, ten honest FAQs, no blocked legacy-media reference and five-locale/RTL source boundary; local browser QA at desktop and 390px shows no horizontal overflow, the booking FAQ opens correctly, Arabic sets `lang=ar`/`dir=rtl`, and no map rendering node exists. The only development-console entry is the pre-existing missing `/favicon.ico` 404.
-- WEB-07 changed files: `app/page.tsx`, `components/homepage/`, `docs/homepage-redesign.md`, the static-output redesign assertions, and this state record. Roll back with a normal revert; do not republish a stop-ship Homepage as fallback.
-- WEB-08/#142 is independently implementing the invitation-only password Login and first-run presentation. Its client surface preserves the existing Auth/RLS contract: generic credential failures never select `notProvisioned`, no account-existence signal is added, Magic Link/recovery remain absent, and the first-run state creates or saves no Trip. First-run defaults hidden and can render only when its Product Shell owner supplies an explicit verified `showFirstRun` signal; the Login route never guesses from an authenticated session. The complete named state vocabulary is checking, ready, submitting, invalid, not-provisioned, rate-limited, unavailable, expired, signed-in and signing-out; expired is selected only from a locally held invalid/absent session token signal.
-- WEB-08 local browser QA: desktop and 390px show the VisePanda VI login, the unavailable fallback is explicit when no public client configuration is available, Arabic sets `lang=ar`/`dir=rtl`, and the mobile page has no horizontal overflow. WEB-06 aligns its initial Chinese copy with the root server `lang="zh-CN"` before hydration. The only development-console entry is the existing missing `/favicon.ico` 404. Rollback is a normal UI revert; do not restore Magic Link.
-- WEB-06/#140 is the shared foundation: `brand/tokens/visepanda.tokens.json` now drives both a typed runtime reader and `app/design-tokens.generated.css`, regenerated before each development/build command; global VisePanda CSS properties provide font, colour, 44px target, focus and reduced-motion rules. One locale-attribute resolver replaces Homepage/Login copies, and Login now starts in the root server document's Chinese locale to avoid a language hydration flash. Minimal Button, Field, Badge, Dialog/Drawer, State Notice, locale and motion primitives are available to the Product Shell owner. Homepage and Login consume the central visual/locale source. The legacy local tests now assert that shared source rather than duplicate constants, and the WEB-06 contract test is included in `pnpm test`/`pnpm check`. The current internal-brand Guide images have only design-review/brand-reference rights, so no graphical Guide derivative enters runtime pending the separate operator-rights record. Roll back with a normal revert; do not add an unapproved asset as fallback.
-- Shared authorities: #87 Demo parity, #92 Product Shell, ADR-0003 Trip writes, ADR-0017 password-authenticated closed beta.
-- Map: disabled until a separate compliance gate closes. Homepage primary CTA: `Open VisePanda`.
-- WIP conflict resolved: PR #124 was closed as superseded; approved derivatives may re-enter only through #138/#140.
-- Rollback: no compliant stop-ship clone may be republished; use truthful unavailable/Early Access if no cleared release exists.
+## 下一动作与回滚
 
-VP-V4 now contains bounded R1 contracts, durable Trip persistence/RLS paths, a fake-model TurnCoordinator and authenticated Trip route code. The product surface remains a preview: real model, RAG, Explore, external data, multimodal providers and fully accepted production Magic Link/session evidence are not available.
+Review and merge PR #253, then recompute live blockers and operator conditions. Initial paths: VPJ-01 #188, VPJ-02 #189, VPJ-03 #190, VPJ-46 #246 and VPJ-62 #202; VPJ-33 #225 follows VPJ-03. Use AGENT-KICKOFF.md.
 
-GitHub delivery program is now live: [AI-00 Program #2](https://github.com/JTCAO515/VP-V4/issues/2) contains 41 native sub-issues (#3–#43), and every implementation ticket has a full engineering body, textual blockers, native dependency edges, phase/priority/status labels, acceptance, rollback, documentation impact, and observation.
+Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
-The completed artifacts are the proposed system baselines for rebuilding the product core:
+Technical release acceptance in VPJ-45 and commercial lifecycle evidence in VPJ-47 are distinct terminal conditions.
 
-- [ai-core-integrated-research-report.md](docs/ai-core-integrated-research-report.md) v1.1 consolidates five research rounds and the product audit into one Decision Register, canonical evidence/proposal/claim model, six execution moments, model/region candidates, degraded modes, external-data rights, Knowledge/RAG/Explore linkage, and product hypotheses.
-- [ai-core-engineering-development-acceptance-report.md](docs/ai-core-engineering-development-acceptance-report.md) v1.1 defines deep modules/interfaces, durable validated Turns, atomic Proposal confirm/apply, actor/RLS paths, data consistency/retention/restore, queue semantics, deployment topology, CI/evals, 24–35 week critical path, risk, and release acceptance.
-- [ai-core-system-evidence-2026-08-23.md](docs/research/ai-core-system-evidence-2026-08-23.md) records the fourth-round repository and official-source verification, especially the DeepSeek Vision Exp correction and current platform engineering evidence.
-- [ai-core-deep-optimization-evidence-2026-08-23.md](docs/research/ai-core-deep-optimization-evidence-2026-08-23.md) records 117 first-party/source links for the fifth-round DeepSeek/Qwen/provider lifecycle, multimodal regions/protocols, Vercel/Supabase/RAG/queue and licensing corrections.
-- [ai-core-v1.1-independent-audit-2026-08-23.md](docs/research/ai-core-v1.1-independent-audit-2026-08-23.md) persists both independent audit finding sets and the file/section-level P0 disposition instead of treating model agreement as evidence.
-- [model-layer-plan.md](docs/model-layer-plan.md) contains the final architecture decision proposal, DeepSeek/Qwen task routing, Chatbot-to-Canvas confirmation contract, multimodal plan, eval gates, work packages, rollout, observability, privacy, and rollback.
-- [model-provider-evidence-2026-08-22.md](docs/research/model-provider-evidence-2026-08-22.md) preserves the official-source capability, pricing, region, privacy, OCR, ASR, TTS, and model-id evidence used by the final plan.
-- [external-data-chatbot-plan.md](docs/external-data-chatbot-plan.md) defines external evidence classes, the Data License Registry, Chatbot tool and deterministic-card paths, Canvas persistence/freshness, weather, aviation, rail, maps/POI, crawl policy, and the development sequence.
-- [external-data-evidence-2026-08-23.md](docs/research/external-data-evidence-2026-08-23.md) records current provider APIs, licences, caching/attribution limits, 12306 crawler restrictions, and the aviation/OSM evidence behind that plan.
-- [knowledge-rag-explore-plan.md](docs/knowledge-rag-explore-plan.md) defines external-source POI candidate import, the shared Canonical POI/Fact knowledge model, typed content facets, hybrid RAG, city-first Explore, and exact-ID Chatbot/Canvas linkage.
-- [knowledge-rag-explore-evidence-2026-08-23.md](docs/research/knowledge-rag-explore-evidence-2026-08-23.md) records repository evidence and current first-party RAG, import, source-licence, accessibility, and SEO evidence behind that plan.
-- [Draft Knowledge Base](docs/knowledge-base/README.md) converts Claude's proposal into 30 typed record candidates, 18 non-executable readiness hypotheses and six source-backed but ineligible researched drafts.
-- [Claude plan disposition](docs/knowledge-base/claude-plan-disposition.md) records adopt/revise/reject decisions; [independent audit](docs/research/knowledgebase-claude-audit-2026-08-24.md) provides 75 first-party/repository links and migration/acceptance evidence.
-- [issue-tracker.md](docs/agents/issue-tracker.md), [triage-labels.md](docs/agents/triage-labels.md), and [domain.md](docs/agents/domain.md) configure GitHub, the screenshot-style label/state vocabulary, and single-context domain reading rules for future engineering skills.
-
-Key proposal:
-
-- treat `deepseek-v4-flash` Flash-0731 as a public-beta text baseline candidate with thinking explicitly disabled, not an accepted stable primary;
-- treat DeepSeek Pro-0813 as GA and `deepseek-v4-flash-vision-exp` as a separate experimental vision challenger;
-- treat `deepseek-v4-flash-vision-exp` as a separate experimental vision route for shadow/bake-off/canary; the base Flash model remains text-only;
-- use region-aware Qwen strict/specialist candidates; compare ASR->MT->TTS with Qwen3.5 LiveTranslate; Beijing/Singapore changes OCR/TTS availability;
-- keep Qwen3.8 Max, Kimi K3, and GLM-5.3 as offline/async challengers initially;
-- never allow a model to mutate Trip directly;
-- require immutable TripProposal revisions and one atomic `confirmAndApplyProposal` transaction; background completion never mutates a pending revision.
-- unify Fact/Observation/UserArtifact as typed EvidenceReceipts; critical execution values use typed GroundedClaims and deterministic cards, not string supporting-value checks.
-- integrate no ticket purchasing or inventory; benchmark one licensed aviation schedule/status provider for by-flight use.
-- never build a periodic 12306 crawler under the current Terms; import user-owned tickets and hand off current rail checks to official channels.
-- require a versioned Data License Registry before any provider content can be displayed, cached, sent to an LLM/TTS, or persisted.
-- import externally sourced POIs only as private `ImportedPoiCandidate` records; never generate missing POIs/fields, auto-merge identities, auto-review Facts, or directly publish import rows.
-- use one Canonical POI/Fact write model and the same eligibility/IDs for Chatbot RAG, Explore, Trip Canvas, and SEO; projections are rebuildable and cannot become a second truth source.
-- model language, translation, payment network/channel, passport context, accessibility, and booking as atomic typed Facts with source, review, and expiry.
-- start RAG in Postgres with exact identity/alias resolution, `pg_trgm`/FTS, exact multilingual vectors, RRF, and eval-gated Qwen reranking; do not add a separate vector database initially.
-- make Explore city-first, use deterministic evidence-backed filters/ranking, and let `Ask VisePanda`/`Add to Trip` carry the exact Canonical POI ID into Proposal and Canvas confirmation flows.
-- implement a public Next.js modular monolith with six deep product modules and three platform seams; R1/R2 has no Ops UI, and real curation later receives a separate protected deploy.
-- default closed beta to authenticated-only pending operator acceptance; user/Ops JWT requests use RLS, while system credentials remain worker-only with explicit owner/eligibility/policy filters.
-- R1 uses fake model + one reviewed Fact fixture + durable Turn/Trip only; no real model, vector, queue, external data or Ops UI.
-- accept the first runtime milestone only when a reviewed fixture reaches grounded Chat, Proposal, visible Canvas diff, explicit confirmation, persisted deterministic Patch, reload, and privacy-safe trace.
-- migrate selected VP-Final behavior only in the order #4 -> #11 -> #13 -> #16 -> #25, with golden tests before implementation and explicit reuse/port/rewrite/retire decisions; do not copy legacy directories or runtime defaults.
-- do not accept Claude's 810/122/five-week/zero-unavailable claims without the missing source catalogue and a real pilot; treat them as capacity hypotheses.
-- distinguish Fact, Directory Entry, Procedure, Safe Phrase, Observation, assessment and Readiness Rule; target scope and applicability conditions are separate.
-- keep all six researched drafts without reviewer/licence policy and therefore `retrievalEligible:false`; keep all 18 Readiness Rules `executable:false`.
-- never let class/grade obligations, payment fee arithmetic, eSIM preparation, rail timing or city defaults silently produce POI readiness or guaranteed execution.
-
-Verification completed:
-
-- fetched and matched current `origin/main` for VP-V4 and VP-Final;
-- inspected the current VP-V4 product boundary and VP-Final ADRs, domain contracts, model router, Copilot service, safety layer, two-pass completion, and workspace UI;
-- checked the Claude draft against current first-party provider documentation;
-- recorded official-source evidence without calling a paid model or reading a secret;
-- inspected VP-Final Knowledge, Content AI, bulk import, Explore, and SEO paths plus the current Guangzhou content template/audit boundaries;
-- checked current Postgres, pgvector, Supabase hybrid/RLS, Qwen embedding/rerank, OSM/Google/Amap licence, WCAG, and Google SEO primary sources;
-- ran two bounded, read-only Overpass research samples; Shanghai restaurant `opening_hours` coverage was 35/293 and Chengdu 4/88 in the stated sample boxes, which is not a nationwide estimate;
-- final third-step `git diff --check`, handoff JSON parsing, and local Markdown-link validation passed.
-- `pnpm check` passed after the third-step update: source-policy lint, strict TypeScript, Next.js production build, and 11/11 tests.
-- fourth-round final `git diff --check`, handoff JSON parsing, and local Markdown-link validation passed.
-- fourth-round `pnpm check` passed: source-policy lint, strict TypeScript, Next.js production build, and 11/11 tests.
-- fifth-round official evidence file and two independent read-only report audits completed; all audit P0s were resolved and persisted in the audit disposition record.
-- final `git diff --check`, handoff JSON, 21-file local links, Markdown structure/fences, 240-character paragraph limit, stale-contract scan, and post-Issue-setup `pnpm check` passed; build and 11/11 tests are green.
-- GitHub audit passed: 42 AI Issues, 41 Program sub-issues, 39 initially blocked children, exactly three ready Issues (Program #2, human #3, agent #4), five migration-labelled Issues with migration quality gates, no missing body sections, and no undefined blocker references.
-- Native GitHub relationship audit passed: Program reports 41 sub-issues; sampled #5 reports two blockers; final #43 reports six blockers. Textual `Blocked by #N` remains the portable fallback.
-- Full frontier audit passed with `blocked_mismatches=0` and `ready_mismatches=0`.
-- Draft Knowledge Base validation passed: 30 unique record types, 18 unique readiness rules, six source-backed drafts, zero executable rules, zero reviewed/eligible records and zero unresolved rule references.
-- Claude audit passed Markdown/links/structure checks and confirmed the referenced `fact-catalogue.json` is absent; no paid model, POI import or production database was used.
-
-Historical note: #3 AI-01, #4 AI-02 and #13 AI-11 are closed. Their accepted contracts do not make any researched draft reviewed, retrieval-eligible or production-importable.
-
-Rollback: remove the local `docs/knowledge-base/` package and audit link if the research disposition is rejected. No database, public content or runtime state needs rollback. Preserve Issue history through `status:superseded` rather than deletion.
-
-## VP-V4 production parity and bounded-agent tracker package
-
-- Product parity baseline: `docs/vp-v4-production-feature-parity-report.md`.
-- AI and Trip Canvas product logic: `docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md`.
-- Agent/RAG/Memory/Tool/Context architecture: `docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md`; source ledger: `docs/research/agent-context-rag-memory-tool-evidence-2026-08-25.md`.
-- Published tracker graph: `docs/vp-v4-production-parity-issue-plan.md`, V4-01 through V4-31, mapped to #85/#87-#116 and registered in `docs/agents/issue-execution-contract.md`.
-- V4-01 adds `docs/architecture/v4-01-demo-parity-registry.md` and `v4-01-framework-adoption-matrix.md`: 40 grouped Demo actions, 14 framework candidates, explicit fixture disposition and 31/31 execution-row audit. It activates no runtime.
-- #87 V4-01 is closed. The operator then retired Magic Link after masked email-rate-limit and `otp_expired` evidence; #120/PR #121 is closed without merge.
-- #122 AI-51b and #84 AI-51 are closed after the password-session and route evidence merged. #127 AI-13b and #130 AI-13c are also closed after durable revision/reject work. At the 2026-08-27 live audit, #15 AI-13 is the ready R1 product frontier; future sessions must re-query rather than rely on this snapshot.
-- AI-43 requires a current AI SDK Core/ToolLoop/Workflow comparison before execution; LangChain/LangGraph/GraphRAG/multi-agent are not default production dependencies.
-
-## VisePanda visual identity delivery
-
-- The owner-approved source artwork is in `assets/brand/vise-panda/`; preserve it unchanged.
-- The ready-to-use visual package is in `brand/`: handbook, tokens, eight transparent IP poses, SVG icons/patterns/UI reference, and five social-media exports.
-- Begin brand work with `brand/guidelines/visepanda-vi-guide.html`; use `brand/qa/asset-manifest.json` and `brand/qa/verification.md` to validate file inventory and delivery claims.
-- Static asset, JSON, structural, source-integrity, and whitespace checks passed. A fresh isolated 375 px browser screenshot remains a manual review item; no live social-platform publishing test was run.
-- `pnpm check` stopped before lint/type/build/test because the local dependency-security policy requires an operator decision for the ignored `sharp` build script. No approval, package-policy change, or bypass was applied.
-- Roll back a rejected VI delivery with a new revert commit for this merge; do not rewrite shared history or alter the owner-approved source artwork.
-
-## Direct Issue queue and anonymous preview
-
-Magic Link and callback entrypoints are removed. The public preview is anonymous, while Trip APIs
-remain session-claim protected and fail closed without a valid claim. Every defined Issue is directly
-schedulable; dependency references inform integration but do not block development, testing,
-automated review, or merge. GitHub Issue label/status synchronization is skipped until the local
-`gh` CLI has authenticated access.
-
-Verification for this change: `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`,
-`pnpm test:unit`, `pnpm test:contract`, `pnpm test:e2e`, `pnpm docs:check`, and `git diff --check`
-passed. Integration and local-RLS security fixtures were skipped because local Supabase was not
-running; no bypass was applied.
-
-`gh auth status --hostname github.com` reported no logged-in GitHub host, so no remote Issue label
-or status mutation was attempted.
-
-## V4-02 Context Engineering
-
-- #85 adds a pure server-side `ContextPlan` and `ContextAssembler` contract. It fixes source order and budgets, requires system/policy/constraints/current user message, and fails closed if an eligibility filter removes a required source.
-- Candidates are actor-scoped and must be `eligible`; only global system/policy candidates may have a null owner. Cross-user, unscoped, draft, expired, prohibited, raw user-artifact and raw Tool payload candidates never enter rendered context or the manifest. High-risk plans do not allow Tool context.
-- The manifest deliberately includes only selected source refs/versions, category-only omission reasons, counts and SHA-256 fingerprints. It contains no rejected IDs, actor ID, owner ID, raw source text, credential or provider payload. A model-safe Tool projection uses an allowlisted ref and entity-escaped untrusted-data boundary.
-- `tests/contract/context/` passed 13/13 after the expected missing-module red state; reviewer regressions also proved and then fixed unscoped owner inclusion, Tool ref/text boundary injection, rejected-ID disclosure, caller-count budget bypass, escaped-Tool and inter-candidate-separator budget undercount, and partial hard-constraint loss. `pnpm evals` passed 2/2 with synthetic full-history/compaction and zero-leak cases. See [context-plan.md](docs/contracts/context-plan.md) and `artifacts/V4-02/`.
-- Rollback: revert the #85 merge. No schema, database, provider, cache or production data is affected. The remaining runtime integration, model-quality, retrieval-latency and production observation evidence belong to later owning Issues.
-
-## V4-03 Tool Gateway
-
-- #88 adds a pure server-side `ToolRegistry` and `executeToolIntent` contract. A model/UI call is intent only: static allowlist, task/data/license/feature policy, schema, non-expired actor-bound approval, idempotency and deadline all pass before an executor can run.
-- Direct `trip.*` and executable Proposal tools cannot register until a typed capability exists. An external side effect requires `idempotency: required` and a durable pending/succeeded/unknown store; every started-executor failure remains `unknown` to prevent replay. The v1 retry declaration never creates an automatic retry loop.
-- Receipts exclude both raw executor output and actor IDs. Valid bounded JSON output is entity-escaped inside a model-safe `<untrusted-tool-output>` projection, preventing the payload from creating an instruction boundary. See [tool-gateway.md](docs/contracts/tool-gateway.md) and `artifacts/V4-03/`.
-- Two automated review/fix cycles left six focused contract tests and one security test green; strict typecheck and the final contract suite passed 48/48. External-side-effect tools remain disabled until a verified persistent idempotency adapter exists. Rollback is a revert of #88; no schema, provider, cache, external request or production data is affected.
-
-## V4-04 Constraint Engine
-
-- #89 adds a pure `ConstraintEngine` for validated candidate plans. It deterministically evaluates hard budget, arrival-window, transfer, opening, reservation and route-evidence constraints before soft stop-count tradeoffs.
-- Budget amounts use group-total currency minor units and require current price evidence. Stops and windows use validated offset-bearing RFC3339 instants, include freshness for opening/reservation evidence, and may not overlap; each transfer must be a current unique adjacent-stop link. Missing or expired price/route/opening/reservation evidence is `unknown`, while an in-range current budget, closed stop, window breach, or short transfer is deterministically decided.
-- The engine has no provider/model/database/Trip write capability. Exact runtime validation rejects forged constraint variants, impossible calendar dates, unsafe numbers, invalid evidence states and invalid chains. Final acceptance passed `pnpm check` (13 static tests), `pnpm test:unit` (16/16), `pnpm test:contract` (48/48), `pnpm evals` (3/3), and `pnpm docs:check`. Rollback is a revert of #89.
-
-## Continuous AFK execution
-
-- [continuous-afk-execution.md](docs/agents/continuous-afk-execution.md) makes completion of one Issue a scheduler event instead of a session stop. It retains one Issue/worktree/branch/PR and all required checks; user-authorized direct scheduling supersedes dependency closure as a start condition.
-- [continuous-afk-kickoff.md](docs/agents/prompts/continuous-afk-kickoff.md) is the copyable startup prompt. It requires a live audit and continuous frontier recomputation after every PR, CI result, merge or blocker change.
-- [operator-actions.json](docs/operator-actions.json) is the machine-readable queue for genuinely non-delegable actions. The session records and skips an operator-only path while independent safe work remains.
-- Class A reversible repo-only work may enable GitHub auto-merge only after all required gates pass and without bypass. With an active explicit operator instruction and an independent automated review with no unresolved Critical/Important finding, repository-only Class B auth/RLS/migration/data-policy preparation may also auto-merge; it cannot execute production changes. Class C legal, account, payment, production and irreversible actions remain operator-owned.
-- Rollback is a normal revert of the governance PR; no runtime, RLS, schema or production data changes are part of GOV-AFK-01.
+历史：[docs/archive/2026-09-05/baseline/handoff.json](docs/archive/2026-09-05/baseline/handoff.json), [docs/archive/2026-09-05/baseline/CONTEXT.md](docs/archive/2026-09-05/baseline/CONTEXT.md), [docs/archive/2026-09-05/baseline/HANDOFF.md](docs/archive/2026-09-05/baseline/HANDOFF.md), [docs/archive/2026-09-05/baseline/issue-execution-contract.md](docs/archive/2026-09-05/baseline/issue-execution-contract.md)。

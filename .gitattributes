@@ -1,0 +1,3 @@
+# Archived evidence retains its original bytes (including historical Markdown line breaks).
+# Integrity is enforced by docs/program/2026-09-05/archive-manifest.json, not whitespace rewriting.
+docs/archive/2026-09-05/** -text -whitespace

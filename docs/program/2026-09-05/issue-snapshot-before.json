@@ -1,0 +1,978 @@
+{
+  "capturedAt": "2026-09-05",
+  "repo": "JTCAO515/VP-V4",
+  "issues": [
+    {
+      "body": "> **Program:** #149  \n> **Accepted baseline:** 2026-08-29  \n> **Authoritative plan:** docs/vp-v4-closed-beta-launch-issue-plan.md  \n> **Execution contract:** docs/agents/issue-execution-contract.md\n\n## 上层目标与 Issue 规格\n\n- **Owner / 估算：** Product + Release + operator / M + 72 小时。\n- **目标：** 少量真实测试用户使用后，项目有明确接受结论和下一阶段接手材料。\n- **Scope：** canary cohort；support/incident channel；SLO/成本/漏斗；P0/P1 triage；72 小时观察；Go/No-Go；release notes；`docs/handoff.json`、`HANDOFF.md`、`CONTEXT.md`；post-launch backlog 重估。\n- **Acceptance：** 真实邀请用户至少完成登录→Trip→Chat→Proposal→confirm→Today；观察窗无未决 P0/P1；预算与错误率在批准阈值内；回滚未失效；所有 unrun、风险、owner、唯一下一动作写入交接；Program 状态才可改为 `closed-beta-accepted`。\n- **风险 / 回滚：** 真实用户暴露系统缺陷；立即停止邀请、关闭 AI/Proposal/Today flag 或回滚 deployment，保留数据和事件用于受控诊断。\n- **依赖：** LAUNCH-18。\n\n## 实际依赖与调度\n\n**Blocked by:** #166  \n**WIP:** one Issue / one branch / one PR; no stacked dependent PR. status:blocked 不授权绕过 runtime/operator gate。\n\n## Do not touch / Anti-goals\n\n- 不读取、打印、提交或持久化 secret、cookie、JWT、API key、connection string 或私人标识。\n- 不绕过 RLS、TripPatch、Proposal confirmation、privacy、retention、asset、release 或 operator gate。\n- 不把 fixture、skip、Preview、源码断言或 deployment success 写成真实产品能力。\n- 不捆绑本 Issue 以外的 Explore、Knowledge 扩展、外部实时数据、翻译、Import、Offline、支付或预订。\n\n## 文档、验证与交接\n\n同一 PR 更新 owning contract/runbook、docs/handoff.json、HANDOFF.md、CONTEXT.md 和 ^Grtifacts/LAUNCH-19/**。执行合同的命令和红线 suite 是权威；记录实际 exit code、skip/unrun、残余风险、回滚与 exactly one next action。",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWO4w",
+          "name": "documentation",
+          "description": "Improvements or additions to documentation",
+          "color": "0075ca"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RwWQ",
+          "name": "priority:P2",
+          "description": "Trigger-gated scale or optional capability",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RyHg",
+          "name": "status:blocked",
+          "description": "Waiting for an explicit dependency or operator trigger",
+          "color": "6A737D"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R2iw",
+          "name": "governance",
+          "description": "Architecture, process, documentation, or control-system work",
+          "color": "0052CC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jt5Q",
+          "name": "phase:R5",
+          "description": "R5 controlled production",
+          "color": "BFDADC"
+        }
+      ],
+      "number": 171,
+      "state": "OPEN",
+      "title": "[LAUNCH-19] Closed-beta canary、72 小时观察、最终验收与交接",
+      "updatedAt": "2026-08-29T13:41:03Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/171"
+    },
+    {
+      "body": "> **Program:** #149  \n> **Accepted baseline:** 2026-08-29  \n> **Authoritative plan:** docs/vp-v4-closed-beta-launch-issue-plan.md  \n> **Execution contract:** docs/agents/issue-execution-contract.md\n\n## 上层目标与 Issue 规格\n\n- **Owner / 估算：** Data + Security + operator / M。\n- **目标：** Production 与 Staging 物理隔离，且可从空 Project 重放到 release schema。\n- **Scope：** operator 创建 Production Project；region/PITR/backup 决策；Auth URL；Vercel Production-only secrets；empty-project migration replay；RLS/security smoke；最小管理员/测试用户；禁止复制 Staging 用户和数据；cutover/compensation runbook。\n- **Acceptance：** Project ref 与秘密不进仓库；Preview 不能访问 Production，Production 不能访问 Staging；空库 migrations 全绿；RLS owner/other-user smoke；未开始公开流量；migration manifest/hash 与 Staging accepted revision 一致。\n- **风险 / 回滚：** 外部账号/Production 数据 D3；发布前可断开 Production env 并删除测试用户。数据库 schema 只做追加式补偿，不做破坏性 down migration；是否删除 Project 仅由 operator 决定。\n- **依赖：** LAUNCH-13；LAUNCH-15 的 region/retention 决策。\n\n## 实际依赖与调度\n\n**Blocked by:** #162, #164  \n**WIP:** one Issue / one branch / one PR; no stacked dependent PR. status:blocked 不授权绕过 runtime/operator gate。\n\n## Do not touch / Anti-goals\n\n- 不读取、打印、提交或持久化 secret、cookie、JWT、API key、connection string 或私人标识。\n- 不绕过 RLS、TripPatch、Proposal confirmation、privacy、retention、asset、release 或 operator gate。\n- 不把 fixture、skip、Preview、源码断言或 deployment success 写成真实产品能力。\n- 不捆绑本 Issue 以外的 Explore、Knowledge 扩展、外部实时数据、翻译、Import、Offline、支付或预订。\n\n## 文档、验证与交接\n\n同一 PR 更新 owning contract/runbook、docs/handoff.json、HANDOFF.md、CONTEXT.md 和 ^Grtifacts/LAUNCH-17/**。执行合同的命令和红线 suite 是权威；记录实际 exit code、skip/unrun、残余风险、回滚与 exactly one next action。",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RwWQ",
+          "name": "priority:P2",
+          "description": "Trigger-gated scale or optional capability",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RyHg",
+          "name": "status:blocked",
+          "description": "Waiting for an explicit dependency or operator trigger",
+          "color": "6A737D"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R2iw",
+          "name": "governance",
+          "description": "Architecture, process, documentation, or control-system work",
+          "color": "0052CC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R3kg",
+          "name": "migration",
+          "description": "Evidence-gated reuse or replacement of VP-Final assets",
+          "color": "C5DEF5"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R6Ng",
+          "name": "ready-for-human",
+          "description": "Requires operator or human implementation",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jt5Q",
+          "name": "phase:R5",
+          "description": "R5 controlled production",
+          "color": "BFDADC"
+        }
+      ],
+      "number": 170,
+      "state": "OPEN",
+      "title": "[LAUNCH-17] 创建独立 Production Supabase 并验证迁移",
+      "updatedAt": "2026-08-29T13:40:59Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/170"
+    },
+    {
+      "body": "> **Program disposition:** Post-launch EXPAND backlog  \n> **Moved from:** former LAUNCH-03b on 2026-08-29  \n> **Blocked by:** #171 LAUNCH-19 closed-beta acceptance\n\n## 用户结果\n\n在核心 closed beta 稳定后，为两个试点城市建立 reviewed、current、licensed 的 Canonical POI / Fact 投影，使 Chat 可以引用，随后再支持 Explore 的 exact-ID Ask/Add。\n\n## Scope\n\n- Canonical POI 的可显示内容、owner、许可和读取投影；\n- 两个试点城市、小批量 candidate → review → publish；\n- multilingual alias/identity resolution 和 Fact eligibility；\n- Chat citation 与后续 Explore exact-ID 的接口基线。\n\n## Anti-goals\n\n- 不属于 LAUNCH-00～19，不阻塞核心 Auth/Chat/Trip/Today closed beta；\n- 不做全国导入、自动身份合并、无许可数据、地图、评论/图片复制或 SEO 扩张；\n- 不把当前只有 UUID 的 `canonical_pois` 当作可用产品数据。\n\n## Acceptance before implementation\n\n- [ ] #171 已 accepted，closed-beta 反馈完成排序复核；\n- [ ] source/licence/region/operator 决策存在；\n- [ ] schema、RLS、review、eligibility、projection 和 rollback 使用独立 accepted Issue/ADR；\n- [ ] 与 `EXPAND-01～10` 的最终编号在 LAUNCH-19 handoff 中同步。\n\n## Rollback\n\n本次只改变 Issue 归属和规划状态。恢复历史标题即可回滚；不产生数据、账号或运行时变化。",
+      "comments": [
+        {
+          "id": "IC_kwDOT_h9k88AAAABRZrYUA",
+          "author": {
+            "login": "JTCAO515"
+          },
+          "authorAssociation": "OWNER",
+          "body": "2026-08-29 Program 重构：该能力从 closed-beta 主链移出，保留为 EXPAND-01。核心 Launch 先完成 Auth、真实 Chat、完整 Trip、Today、Privacy 和 Production release；本 Issue 在 #171 后依据真实反馈重估。\r\n",
+          "createdAt": "2026-08-29T13:41:45Z",
+          "includesCreatedEdit": false,
+          "isMinimized": false,
+          "minimizedReason": "",
+          "reactionGroups": [],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/168#issuecomment-5462743120",
+          "viewerDidAuthor": true
+        }
+      ],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2Rv_w",
+          "name": "priority:P1",
+          "description": "Growth and execution data after the core evidence",
+          "color": "D93F0B"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RyHg",
+          "name": "status:blocked",
+          "description": "Waiting for an explicit dependency or operator trigger",
+          "color": "6A737D"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R3kg",
+          "name": "migration",
+          "description": "Evidence-gated reuse or replacement of VP-Final assets",
+          "color": "C5DEF5"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jszQ",
+          "name": "phase:R3",
+          "description": "R3 two-city product beta",
+          "color": "8E7BFF"
+        }
+      ],
+      "number": 168,
+      "state": "OPEN",
+      "title": "[EXPAND-01] Knowledge / Canonical POI 两城市 MVP（Post-launch）",
+      "updatedAt": "2026-08-29T13:41:45Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/168"
+    },
+    {
+      "body": "> **Program:** #149  \n> **Accepted baseline:** 2026-08-29  \n> **Authoritative plan:** docs/vp-v4-closed-beta-launch-issue-plan.md  \n> **Execution contract:** docs/agents/issue-execution-contract.md\n\n## 上层目标与 Issue 规格\n\n- **Owner / 估算：** Release + Security + operator / L（3–5 天）。\n- **目标：** 只有通过证据的 commit 能进入 Production，并能恢复上一安全版本。\n- **Scope：** required checks；release asset rights/SBOM/NOTICE；domain/TLS 实测；env protection；migration plan；provider production budget；feature flags；Preview→Production promotion；health/smoke；previous alias rollback rehearsal；release checklist。\n- **Acceptance：** 所有 required checks 与 release asset check 全绿；`/`、sign-in、workspace、Chat health、Trip、Today smoke；域名以现场证据而非旧声明验收；rollback 恢复上一 alias；DB compensation 和 provider-off degraded path 演练。\n- **风险 / 回滚：** 公共流量、版权、成本和数据；未获 operator cutover 授权只做到 ready，不执行发布。回滚 alias + provider/chat flags；数据库追加式补偿。\n- **依赖：** LAUNCH-14、LAUNCH-15、LAUNCH-16、LAUNCH-17。\n\n## 实际依赖与调度\n\n**Blocked by:** #163, #164, #165, #170  \n**WIP:** one Issue / one branch / one PR; no stacked dependent PR. status:blocked 不授权绕过 runtime/operator gate。\n\n## Do not touch / Anti-goals\n\n- 不读取、打印、提交或持久化 secret、cookie、JWT、API key、connection string 或私人标识。\n- 不绕过 RLS、TripPatch、Proposal confirmation、privacy、retention、asset、release 或 operator gate。\n- 不把 fixture、skip、Preview、源码断言或 deployment success 写成真实产品能力。\n- 不捆绑本 Issue 以外的 Explore、Knowledge 扩展、外部实时数据、翻译、Import、Offline、支付或预订。\n\n## 文档、验证与交接\n\n同一 PR 更新 owning contract/runbook、docs/handoff.json、HANDOFF.md、CONTEXT.md 和 ^Grtifacts/LAUNCH-18/**。执行合同的命令和红线 suite 是权威；记录实际 exit code、skip/unrun、残余风险、回滚与 exactly one next action。",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWO4w",
+          "name": "documentation",
+          "description": "Improvements or additions to documentation",
+          "color": "0075ca"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RwWQ",
+          "name": "priority:P2",
+          "description": "Trigger-gated scale or optional capability",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RyHg",
+          "name": "status:blocked",
+          "description": "Waiting for an explicit dependency or operator trigger",
+          "color": "6A737D"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R2iw",
+          "name": "governance",
+          "description": "Architecture, process, documentation, or control-system work",
+          "color": "0052CC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R6Ng",
+          "name": "ready-for-human",
+          "description": "Requires operator or human implementation",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jt5Q",
+          "name": "phase:R5",
+          "description": "R5 controlled production",
+          "color": "BFDADC"
+        }
+      ],
+      "number": 166,
+      "state": "OPEN",
+      "title": "[LAUNCH-18] Production Release、资产、域名与回滚 Gate",
+      "updatedAt": "2026-08-29T13:41:01Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/166"
+    },
+    {
+      "body": "> **Program:** #149  \n> **Accepted baseline:** 2026-08-29  \n> **Authoritative plan:** docs/vp-v4-closed-beta-launch-issue-plan.md  \n> **Execution contract:** docs/agents/issue-execution-contract.md\n\n## 上层目标与 Issue 规格\n\n- **Owner / 估算：** Privacy + Data / L（4–5 天）。\n- **目标：** 现有 request receipt 从“只记录请求”升级为可执行生命周期。\n- **Scope：** export Profile/Memory/Trip/Chat/Artifact；异步 delete/anonymize；status/receipt；retry/idempotency；撤销窗（若政策采用）；Storage/cache；backup exception；dry-run 和 approval gate。\n- **Acceptance：** export 只含 owner 数据且完整；删除后在线数据不可读；失败可重试不重复删除；状态对用户可见；other-user 拒绝；对 Staging 合成用户完成恢复演练。\n- **风险 / 回滚：** 不可逆 D3；Production delete 默认关闭，先 dry-run。执行前可停 worker；执行后只能依批准的恢复/备份政策，不声称可恢复已删除主数据。\n- **依赖：** LAUNCH-13、LAUNCH-15。\n\n## 实际依赖与调度\n\n**Blocked by:** #162, #164  \n**WIP:** one Issue / one branch / one PR; no stacked dependent PR. status:blocked 不授权绕过 runtime/operator gate。\n\n## Do not touch / Anti-goals\n\n- 不读取、打印、提交或持久化 secret、cookie、JWT、API key、connection string 或私人标识。\n- 不绕过 RLS、TripPatch、Proposal confirmation、privacy、retention、asset、release 或 operator gate。\n- 不把 fixture、skip、Preview、源码断言或 deployment success 写成真实产品能力。\n- 不捆绑本 Issue 以外的 Explore、Knowledge 扩展、外部实时数据、翻译、Import、Offline、支付或预订。\n\n## 文档、验证与交接\n\n同一 PR 更新 owning contract/runbook、docs/handoff.json、HANDOFF.md、CONTEXT.md 和 ^Grtifacts/LAUNCH-16/**。执行合同的命令和红线 suite 是权威；记录实际 exit code、skip/unrun、残余风险、回滚与 exactly one next action。",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RwWQ",
+          "name": "priority:P2",
+          "description": "Trigger-gated scale or optional capability",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RyHg",
+          "name": "status:blocked",
+          "description": "Waiting for an explicit dependency or operator trigger",
+          "color": "6A737D"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R2iw",
+          "name": "governance",
+          "description": "Architecture, process, documentation, or control-system work",
+          "color": "0052CC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jtdw",
+          "name": "phase:R4",
+          "description": "R4 multimodal beta",
+          "color": "A9BDD9"
+        }
+      ],
+      "number": 165,
+      "state": "OPEN",
+      "title": "[LAUNCH-16] Privacy Export/Delete Executor",
+      "updatedAt": "2026-08-29T13:40:58Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/165"
+    },
+    {
+      "body": "> **Program:** #149  \n> **Accepted baseline:** 2026-08-29  \n> **Authoritative plan:** docs/vp-v4-closed-beta-launch-issue-plan.md  \n> **Execution contract:** docs/agents/issue-execution-contract.md\n\n## 上层目标与 Issue 规格\n\n- **Owner / 估算：** Product + Privacy + operator / M。\n- **目标：** 对用户的承诺与实际执行能力一致。\n- **Scope：** operator 决定保留/删除/备份期限；五语 privacy/terms；AI 风险声明；closed-beta/no-SLA；cookie/telemetry；claim matrix；首页/登录链接；隐藏未发布能力。\n- **Acceptance：** 政策每项可追溯到 schema/job/runbook；无法执行的承诺不得发布；五语/RTL 链接可访问；对外文案不超出 `staging-accepted` 能力；operator 记录批准。\n- **风险 / 回滚：** 法律/政策 D3；保持 private closed beta 和旧的更窄承诺，不能由工程 agent 自行批准期限。\n- **依赖：** LAUNCH-05；operator 决策。\n\n## 实际依赖与调度\n\n**Blocked by:** #155 + operator retention/legal decision  \n**WIP:** one Issue / one branch / one PR; no stacked dependent PR. status:blocked 不授权绕过 runtime/operator gate。\n\n## Do not touch / Anti-goals\n\n- 不读取、打印、提交或持久化 secret、cookie、JWT、API key、connection string 或私人标识。\n- 不绕过 RLS、TripPatch、Proposal confirmation、privacy、retention、asset、release 或 operator gate。\n- 不把 fixture、skip、Preview、源码断言或 deployment success 写成真实产品能力。\n- 不捆绑本 Issue 以外的 Explore、Knowledge 扩展、外部实时数据、翻译、Import、Offline、支付或预订。\n\n## 文档、验证与交接\n\n同一 PR 更新 owning contract/runbook、docs/handoff.json、HANDOFF.md、CONTEXT.md 和 ^Grtifacts/LAUNCH-15/**。执行合同的命令和红线 suite 是权威；记录实际 exit code、skip/unrun、残余风险、回滚与 exactly one next action。",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWO4w",
+          "name": "documentation",
+          "description": "Improvements or additions to documentation",
+          "color": "0075ca"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RwWQ",
+          "name": "priority:P2",
+          "description": "Trigger-gated scale or optional capability",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RyHg",
+          "name": "status:blocked",
+          "description": "Waiting for an explicit dependency or operator trigger",
+          "color": "6A737D"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R2iw",
+          "name": "governance",
+          "description": "Architecture, process, documentation, or control-system work",
+          "color": "0052CC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R5Eg",
+          "name": "needs-info",
+          "description": "Waiting on reporter for more information",
+          "color": "FEF2C0"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R6Ng",
+          "name": "ready-for-human",
+          "description": "Requires operator or human implementation",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jtdw",
+          "name": "phase:R4",
+          "description": "R4 multimodal beta",
+          "color": "A9BDD9"
+        }
+      ],
+      "number": 164,
+      "state": "OPEN",
+      "title": "[LAUNCH-15] 隐私政策、服务条款、retention 与 claim matrix",
+      "updatedAt": "2026-08-29T13:40:56Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/164"
+    },
+    {
+      "body": "> **Program:** #149  \n> **Accepted baseline:** 2026-08-29  \n> **Authoritative plan:** docs/vp-v4-closed-beta-launch-issue-plan.md  \n> **Execution contract:** docs/agents/issue-execution-contract.md\n\n## 上层目标与 Issue 规格\n\n- **Owner / 估算：** Platform / M。\n- **目标：** 知道系统是否可用、慢、贵或泄漏，并能快速止损。\n- **Scope：** content-free request/turn/provider/worker traces；latency/error/cancel/retry/token/cost；SLO；alerts；dashboard/query；per-user/rate/budget guard；runtime flags 实际消费；runbook。\n- **Acceptance：** 真实故障注入能触发 alert；trace 可跨 API/worker/provider 关联但不含内容/PII/key；预算阈值自动拒绝新调用；kill switch 在 Staging 演练成功。\n- **风险 / 回滚：** telemetry 泄漏或高基数；关闭 exporter、保留本地 bounded metrics，默认不记录内容。\n- **依赖：** LAUNCH-07、LAUNCH-08。\n\n## 实际依赖与调度\n\n**Blocked by:** #157, #158  \n**WIP:** one Issue / one branch / one PR; no stacked dependent PR. status:blocked 不授权绕过 runtime/operator gate。\n\n## Do not touch / Anti-goals\n\n- 不读取、打印、提交或持久化 secret、cookie、JWT、API key、connection string 或私人标识。\n- 不绕过 RLS、TripPatch、Proposal confirmation、privacy、retention、asset、release 或 operator gate。\n- 不把 fixture、skip、Preview、源码断言或 deployment success 写成真实产品能力。\n- 不捆绑本 Issue 以外的 Explore、Knowledge 扩展、外部实时数据、翻译、Import、Offline、支付或预订。\n\n## 文档、验证与交接\n\n同一 PR 更新 owning contract/runbook、docs/handoff.json、HANDOFF.md、CONTEXT.md 和 ^Grtifacts/LAUNCH-14/**。执行合同的命令和红线 suite 是权威；记录实际 exit code、skip/unrun、残余风险、回滚与 exactly one next action。",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RwWQ",
+          "name": "priority:P2",
+          "description": "Trigger-gated scale or optional capability",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RyHg",
+          "name": "status:blocked",
+          "description": "Waiting for an explicit dependency or operator trigger",
+          "color": "6A737D"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R2iw",
+          "name": "governance",
+          "description": "Architecture, process, documentation, or control-system work",
+          "color": "0052CC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jtdw",
+          "name": "phase:R4",
+          "description": "R4 multimodal beta",
+          "color": "A9BDD9"
+        }
+      ],
+      "number": 163,
+      "state": "OPEN",
+      "title": "[LAUNCH-14] 可观测、预算、SLO 与 kill switch",
+      "updatedAt": "2026-08-29T13:40:54Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/163"
+    },
+    {
+      "body": "> **Program:** #149  \n> **Accepted baseline:** 2026-08-29  \n> **Authoritative plan:** docs/vp-v4-closed-beta-launch-issue-plan.md  \n> **Execution contract:** docs/agents/issue-execution-contract.md\n\n## 上层目标与 Issue 规格\n\n- **Owner / 估算：** QA + Release / M。\n- **目标：** 用真实 Supabase、真实账号和真实 Provider 证明完整用户结果。\n- **Scope：** Playwright seeded owner/other-user；登录→创建 Trip→Chat→answer→Proposal→diff→confirm→reload→Today→logout/login；desktop、390×844、RTL；network/API/database assertions；failure screenshots/traces。\n- **Acceptance：** 黄金路径连续三次全绿；RLS negative matrix 全绿；无 skip、fixture provider 或 source assertion；失败可复现；所有 unrun 显式记录。\n- **风险 / 回滚：** flaky/成本；固定合成输入、预算上限和串行 lane，失败阻止 release 而非跳过。\n- **依赖：** LAUNCH-04、LAUNCH-08、LAUNCH-11、LAUNCH-12。\n\n## 实际依赖与调度\n\n**Blocked by:** #154, #158, #161, #169  \n**WIP:** one Issue / one branch / one PR; no stacked dependent PR. status:blocked 不授权绕过 runtime/operator gate。\n\n## Do not touch / Anti-goals\n\n- 不读取、打印、提交或持久化 secret、cookie、JWT、API key、connection string 或私人标识。\n- 不绕过 RLS、TripPatch、Proposal confirmation、privacy、retention、asset、release 或 operator gate。\n- 不把 fixture、skip、Preview、源码断言或 deployment success 写成真实产品能力。\n- 不捆绑本 Issue 以外的 Explore、Knowledge 扩展、外部实时数据、翻译、Import、Offline、支付或预订。\n\n## 文档、验证与交接\n\n同一 PR 更新 owning contract/runbook、docs/handoff.json、HANDOFF.md、CONTEXT.md 和 ^Grtifacts/LAUNCH-13/**。执行合同的命令和红线 suite 是权威；记录实际 exit code、skip/unrun、残余风险、回滚与 exactly one next action。",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2Rv_w",
+          "name": "priority:P1",
+          "description": "Growth and execution data after the core evidence",
+          "color": "D93F0B"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RyHg",
+          "name": "status:blocked",
+          "description": "Waiting for an explicit dependency or operator trigger",
+          "color": "6A737D"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R2iw",
+          "name": "governance",
+          "description": "Architecture, process, documentation, or control-system work",
+          "color": "0052CC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jszQ",
+          "name": "phase:R3",
+          "description": "R3 two-city product beta",
+          "color": "8E7BFF"
+        }
+      ],
+      "number": 162,
+      "state": "OPEN",
+      "title": "[LAUNCH-13] 真实 Staging 黄金路径 Gate",
+      "updatedAt": "2026-08-29T13:40:52Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/162"
+    },
+    {
+      "body": "> **Program:** #149  \n> **Accepted baseline:** 2026-08-29  \n> **Authoritative plan:** docs/vp-v4-closed-beta-launch-issue-plan.md  \n> **Execution contract:** docs/agents/issue-execution-contract.md\n\n## 上层目标与 Issue 规格\n\n- **Owner / 估算：** Backend + Web / M。\n- **目标：** 用户看到真实进度，刷新或断线后状态不丢。\n- **Scope：** 实现已冻结的 `turn-sse-v1` 或以 ADR 明确替换；Last-Event-ID/replay；heartbeat；terminal close；polling degraded path；取消；客户端 reducer 单一状态源。\n- **Acceptance：** 正常流、断线重连、重复 event、慢客户端、取消和 provider unavailable browser 测试通过；SSE 和 canonical replay 收敛到相同终态。\n- **风险 / 回滚：** serverless 连接限制；降级到 bounded polling，但不得展示 fixture progress。\n- **依赖：** LAUNCH-07。\n\n## 实际依赖与调度\n\n**Blocked by:** #157  \n**WIP:** one Issue / one branch / one PR; no stacked dependent PR. status:blocked 不授权绕过 runtime/operator gate。\n\n## Do not touch / Anti-goals\n\n- 不读取、打印、提交或持久化 secret、cookie、JWT、API key、connection string 或私人标识。\n- 不绕过 RLS、TripPatch、Proposal confirmation、privacy、retention、asset、release 或 operator gate。\n- 不把 fixture、skip、Preview、源码断言或 deployment success 写成真实产品能力。\n- 不捆绑本 Issue 以外的 Explore、Knowledge 扩展、外部实时数据、翻译、Import、Offline、支付或预订。\n\n## 文档、验证与交接\n\n同一 PR 更新 owning contract/runbook、docs/handoff.json、HANDOFF.md、CONTEXT.md 和 ^Grtifacts/LAUNCH-08/**。执行合同的命令和红线 suite 是权威；记录实际 exit code、skip/unrun、残余风险、回滚与 exactly one next action。",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2Rv_w",
+          "name": "priority:P1",
+          "description": "Growth and execution data after the core evidence",
+          "color": "D93F0B"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RyHg",
+          "name": "status:blocked",
+          "description": "Waiting for an explicit dependency or operator trigger",
+          "color": "6A737D"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R2iw",
+          "name": "governance",
+          "description": "Architecture, process, documentation, or control-system work",
+          "color": "0052CC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jsOw",
+          "name": "phase:R2",
+          "description": "R2 grounded text alpha",
+          "color": "7057FF"
+        }
+      ],
+      "number": 158,
+      "state": "OPEN",
+      "title": "[LAUNCH-08] 真实事件 replay、SSE 与断线恢复",
+      "updatedAt": "2026-08-29T13:40:44Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/158"
+    },
+    {
+      "body": "> **Program:** #149  \n> **Accepted baseline:** 2026-08-29  \n> **Authoritative plan:** docs/vp-v4-closed-beta-launch-issue-plan.md  \n> **Execution contract:** docs/agents/issue-execution-contract.md\n\n## 上层目标与 Issue 规格\n\n- **Owner / 估算：** Backend / L（4–5 天）。\n- **目标：** accepted turn 最终可靠到达 terminal result。\n- **Scope：** claim/lease、幂等 job、actor-scoped context、provider call、validation、event append、terminal-once、retry/quarantine/cancel、worker auth、bounded concurrency；禁止 fake coordinator 进入 live flag。\n- **Acceptance：** duplicate delivery、worker crash、lease expiry、cancel race、provider failure、validation failure 和 replay 集成测试通过；任何失败不产生 Trip write；跨用户不可观察。\n- **风险 / 回滚：** 重复计费/重复结果；关闭 worker/flag，保留 durable accepted state 和安全重试能力。\n- **依赖：** LAUNCH-05、LAUNCH-06。\n\n## 实际依赖与调度\n\n**Blocked by:** #155, #156  \n**WIP:** one Issue / one branch / one PR; no stacked dependent PR. status:blocked 不授权绕过 runtime/operator gate。\n\n## Do not touch / Anti-goals\n\n- 不读取、打印、提交或持久化 secret、cookie、JWT、API key、connection string 或私人标识。\n- 不绕过 RLS、TripPatch、Proposal confirmation、privacy、retention、asset、release 或 operator gate。\n- 不把 fixture、skip、Preview、源码断言或 deployment success 写成真实产品能力。\n- 不捆绑本 Issue 以外的 Explore、Knowledge 扩展、外部实时数据、翻译、Import、Offline、支付或预订。\n\n## 文档、验证与交接\n\n同一 PR 更新 owning contract/runbook、docs/handoff.json、HANDOFF.md、CONTEXT.md 和 ^Grtifacts/LAUNCH-07/**。执行合同的命令和红线 suite 是权威；记录实际 exit code、skip/unrun、残余风险、回滚与 exactly one next action。",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2Rv_w",
+          "name": "priority:P1",
+          "description": "Growth and execution data after the core evidence",
+          "color": "D93F0B"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RyHg",
+          "name": "status:blocked",
+          "description": "Waiting for an explicit dependency or operator trigger",
+          "color": "6A737D"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jsOw",
+          "name": "phase:R2",
+          "description": "R2 grounded text alpha",
+          "color": "7057FF"
+        }
+      ],
+      "number": 157,
+      "state": "OPEN",
+      "title": "[LAUNCH-07] 生产 Turn Coordinator 与可靠 worker",
+      "updatedAt": "2026-08-29T13:40:42Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/157"
+    },
+    {
+      "body": "> **Program:** #149  \n> **Accepted baseline:** 2026-08-29  \n> **Authoritative plan:** docs/vp-v4-closed-beta-launch-issue-plan.md  \n> **Execution contract:** docs/agents/issue-execution-contract.md\n\n## 上层目标与 Issue 规格\n\n- **Owner / 估算：** Model Platform + operator / L（3–5 天）。\n- **目标：** server-only 真实调用产生可验证回答，不让模型获得数据库写权限。\n- **Scope：** 候选对比与 operator 选择；transport adapter；server env；timeout/abort/retry/rate limit；structured output；usage/cost；错误归一；five-locale smoke；synthetic travel eval；no-secret logging。\n- **Acceptance：** Staging 对至少 20 个五语/安全/拒答样例产生可复现结果；超时、限流、余额不足、schema error 和取消均可观测并 fail closed；前端 bundle、日志、数据库无 key/reasoning。\n- **风险 / 回滚：** 成本、区域、条款和供应商故障；provider flag 一键关闭并显示 honest unavailable。\n- **依赖：** LAUNCH-01；operator provider/region/budget 决策。\n\n## 实际依赖与调度\n\n**Blocked by:** #150 + operator Provider/region/budget decision  \n**WIP:** one Issue / one branch / one PR; no stacked dependent PR. status:blocked 不授权绕过 runtime/operator gate。\n\n## Do not touch / Anti-goals\n\n- 不读取、打印、提交或持久化 secret、cookie、JWT、API key、connection string 或私人标识。\n- 不绕过 RLS、TripPatch、Proposal confirmation、privacy、retention、asset、release 或 operator gate。\n- 不把 fixture、skip、Preview、源码断言或 deployment success 写成真实产品能力。\n- 不捆绑本 Issue 以外的 Explore、Knowledge 扩展、外部实时数据、翻译、Import、Offline、支付或预订。\n\n## 文档、验证与交接\n\n同一 PR 更新 owning contract/runbook、docs/handoff.json、HANDOFF.md、CONTEXT.md 和 ^Grtifacts/LAUNCH-06/**。执行合同的命令和红线 suite 是权威；记录实际 exit code、skip/unrun、残余风险、回滚与 exactly one next action。",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2Rv_w",
+          "name": "priority:P1",
+          "description": "Growth and execution data after the core evidence",
+          "color": "D93F0B"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RyHg",
+          "name": "status:blocked",
+          "description": "Waiting for an explicit dependency or operator trigger",
+          "color": "6A737D"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R2iw",
+          "name": "governance",
+          "description": "Architecture, process, documentation, or control-system work",
+          "color": "0052CC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R5Eg",
+          "name": "needs-info",
+          "description": "Waiting on reporter for more information",
+          "color": "FEF2C0"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R6Ng",
+          "name": "ready-for-human",
+          "description": "Requires operator or human implementation",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jsOw",
+          "name": "phase:R2",
+          "description": "R2 grounded text alpha",
+          "color": "7057FF"
+        }
+      ],
+      "number": 156,
+      "state": "OPEN",
+      "title": "[LAUNCH-06] 接入一个真实文本 Provider",
+      "updatedAt": "2026-08-29T13:40:40Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/156"
+    },
+    {
+      "body": "> **Program:** #149  \n> **Accepted baseline:** 2026-08-29  \n> **Authoritative plan:** docs/vp-v4-closed-beta-launch-issue-plan.md  \n> **Execution contract:** docs/agents/issue-execution-contract.md\n\n## 上层目标与 Issue 规格\n\n- **Owner / 估算：** Identity + Web / M。\n- **目标：** 受邀用户可靠登录并回到合法目标；未授权用户不能进入私有路由。\n- **Scope：** server-side session guard；安全 `returnTo`；signed-in/out/expired/not-provisioned；first-run；登出；五语/RTL；手动账号开通 SOP。是否新增 `beta_allowlist` 先以接口基线和最小权限评审决定，不能只靠前端状态。\n- **Acceptance：** anonymous/private、valid/invalid/expired、owner/other-user、removed-access、open-redirect、refresh/deep-link 矩阵通过；登录后进入 first-run 或原目标；无公开 signup/recovery；service role 不进浏览器。\n- **风险 / 回滚：** 用户被锁死或 route loop；feature flag 恢复到安全 sign-in/unavailable，不放开匿名私有数据。\n- **依赖：** LAUNCH-02。\n\n## 实际依赖与调度\n\n**Blocked by:** #152  \n**WIP:** one Issue / one branch / one PR; no stacked dependent PR. status:blocked 不授权绕过 runtime/operator gate。\n\n## Do not touch / Anti-goals\n\n- 不读取、打印、提交或持久化 secret、cookie、JWT、API key、connection string 或私人标识。\n- 不绕过 RLS、TripPatch、Proposal confirmation、privacy、retention、asset、release 或 operator gate。\n- 不把 fixture、skip、Preview、源码断言或 deployment success 写成真实产品能力。\n- 不捆绑本 Issue 以外的 Explore、Knowledge 扩展、外部实时数据、翻译、Import、Offline、支付或预订。\n\n## 文档、验证与交接\n\n同一 PR 更新 owning contract/runbook、docs/handoff.json、HANDOFF.md、CONTEXT.md 和 ^Grtifacts/LAUNCH-04/**。执行合同的命令和红线 suite 是权威；记录实际 exit code、skip/unrun、残余风险、回滚与 exactly one next action。",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RD4g",
+          "name": "priority:P0",
+          "description": "Blocks a safe AI Core beta",
+          "color": "B60205"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RyHg",
+          "name": "status:blocked",
+          "description": "Waiting for an explicit dependency or operator trigger",
+          "color": "6A737D"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jsCg",
+          "name": "phase:R1",
+          "description": "R1 durable walking skeleton",
+          "color": "6B2FE0"
+        }
+      ],
+      "number": 154,
+      "state": "OPEN",
+      "title": "[LAUNCH-04] Closed-beta Auth、provisioning 与 route guard",
+      "updatedAt": "2026-08-29T13:40:37Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/154"
+    },
+    {
+      "body": "> **Program:** #149  \n> **Accepted baseline:** 2026-08-29  \n> **Authoritative plan:** docs/vp-v4-closed-beta-launch-issue-plan.md  \n> **Execution contract:** docs/agents/issue-execution-contract.md\n\n## 上层目标与 Issue 规格\n\n- **Owner / 估算：** Domain + Data / L（4–5 天）。\n- **目标：** Trip 从“标题”升级为可编辑的日程表。\n- **Scope：** ADR；Day/Item schema；versioned TripPatch；Proposal revision/diff；snapshot/event；RLS；CAS；atomic confirm-and-apply；旧 title-only Trip 兼容投影；五语日期/timezone 表达边界。\n- **Acceptance：** migration 在空库和现有 Staging 数据上可重复；同一 patch 在 TS/SQL 产生相同结果；stale version、cross-owner、重复 confirm、非法顺序全部 fail closed；快照可恢复但不改写历史。\n- **风险 / 回滚：** D2 接口变化；先做 additive migration 和双读兼容，回滚消费者到 title-only projection，新增表/列保留不破坏删除。\n- **依赖：** LAUNCH-02。\n\n## 实际依赖与调度\n\n**Blocked by:** #152  \n**WIP:** one Issue / one branch / one PR; no stacked dependent PR. status:blocked 不授权绕过 runtime/operator gate。\n\n## Do not touch / Anti-goals\n\n- 不读取、打印、提交或持久化 secret、cookie、JWT、API key、connection string 或私人标识。\n- 不绕过 RLS、TripPatch、Proposal confirmation、privacy、retention、asset、release 或 operator gate。\n- 不把 fixture、skip、Preview、源码断言或 deployment success 写成真实产品能力。\n- 不捆绑本 Issue 以外的 Explore、Knowledge 扩展、外部实时数据、翻译、Import、Offline、支付或预订。\n\n## 文档、验证与交接\n\n同一 PR 更新 owning contract/runbook、docs/handoff.json、HANDOFF.md、CONTEXT.md 和 ^Grtifacts/LAUNCH-03/**。执行合同的命令和红线 suite 是权威；记录实际 exit code、skip/unrun、残余风险、回滚与 exactly one next action。",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RD4g",
+          "name": "priority:P0",
+          "description": "Blocks a safe AI Core beta",
+          "color": "B60205"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RyHg",
+          "name": "status:blocked",
+          "description": "Waiting for an explicit dependency or operator trigger",
+          "color": "6A737D"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R2iw",
+          "name": "governance",
+          "description": "Architecture, process, documentation, or control-system work",
+          "color": "0052CC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R3kg",
+          "name": "migration",
+          "description": "Evidence-gated reuse or replacement of VP-Final assets",
+          "color": "C5DEF5"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jsCg",
+          "name": "phase:R1",
+          "description": "R1 durable walking skeleton",
+          "color": "6B2FE0"
+        }
+      ],
+      "number": 153,
+      "state": "OPEN",
+      "title": "[LAUNCH-03] 冻结并持久化完整 Trip 内容模型",
+      "updatedAt": "2026-08-29T13:40:35Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/153"
+    },
+    {
+      "body": "> **Program:** #149  \n> **Accepted baseline:** 2026-08-29  \n> **Authoritative plan:** docs/vp-v4-closed-beta-launch-issue-plan.md  \n> **Execution contract:** docs/agents/issue-execution-contract.md\n\n## 上层目标与 Issue 规格\n\n- **Owner / 估算：** Data + Security + operator / M。\n- **目标：** 不新建 Staging，用当前无真实用户 Project 获得可重复数据库证据。\n- **Scope：** 记录 Project ref/region 但不记录秘密；核对其无真实用户/生产数据；绑定 Preview 环境；从空 schema 重放 migrations；建立合成 seed/reset；创建至少 owner/other-user 测试账号；运行 migration、RLS、RPC、fault 和恢复探针。\n- **Acceptance：** `db:verify` 与所有本地 Supabase skip 在 Staging lane 中变成执行结果；owner/other-user 隔离通过；Preview 不读取 Production 配置；测试数据可重置；无秘密进入代码、日志或证据。\n- **风险 / 回滚：** 错认含真实数据的 Project；发现真实用户/不可解释数据立即停止并升级 D3。回滚为断开 Preview、撤销测试账号并按安全 runbook 清理合成数据，不删除 Project。\n- **依赖：** LAUNCH-00、LAUNCH-01 的最小 CI lane。\n\n## 实际依赖与调度\n\n**Blocked by:** #149, #150  \n**WIP:** one Issue / one branch / one PR; no stacked dependent PR. status:blocked 不授权绕过 runtime/operator gate。\n\n## Do not touch / Anti-goals\n\n- 不读取、打印、提交或持久化 secret、cookie、JWT、API key、connection string 或私人标识。\n- 不绕过 RLS、TripPatch、Proposal confirmation、privacy、retention、asset、release 或 operator gate。\n- 不把 fixture、skip、Preview、源码断言或 deployment success 写成真实产品能力。\n- 不捆绑本 Issue 以外的 Explore、Knowledge 扩展、外部实时数据、翻译、Import、Offline、支付或预订。\n\n## 文档、验证与交接\n\n同一 PR 更新 owning contract/runbook、docs/handoff.json、HANDOFF.md、CONTEXT.md 和 ^Grtifacts/LAUNCH-02/**。执行合同的命令和红线 suite 是权威；记录实际 exit code、skip/unrun、残余风险、回滚与 exactly one next action。",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RD4g",
+          "name": "priority:P0",
+          "description": "Blocks a safe AI Core beta",
+          "color": "B60205"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RxUA",
+          "name": "status:ready",
+          "description": "Dependencies complete; independently executable",
+          "color": "0E8A16"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R2iw",
+          "name": "governance",
+          "description": "Architecture, process, documentation, or control-system work",
+          "color": "0052CC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R3kg",
+          "name": "migration",
+          "description": "Evidence-gated reuse or replacement of VP-Final assets",
+          "color": "C5DEF5"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R6Ng",
+          "name": "ready-for-human",
+          "description": "Requires operator or human implementation",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jsCg",
+          "name": "phase:R1",
+          "description": "R1 durable walking skeleton",
+          "color": "6B2FE0"
+        }
+      ],
+      "number": 152,
+      "state": "OPEN",
+      "title": "[LAUNCH-02] 把现有 Supabase 正式纳入 Staging 基线",
+      "updatedAt": "2026-08-29T13:40:33Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/152"
+    },
+    {
+      "body": "> **Program status:** ACCEPTED / IN PROGRESS  \n> **Accepted by operator:** 2026-08-29  \n> **Authoritative repository plan:** `docs/vp-v4-closed-beta-launch-issue-plan.md`  \n> **Execution authority:** `docs/agents/issue-execution-contract.md`\n\n## 上层目标\n\n交付一个 invitation-only、可观测、可回滚的 VP-V4 closed beta。真实测试用户必须能够完成：登录 → 创建/选择 Trip → 输入旅行需求 → 一个真实文本 Provider 回复 → 完整 Trip Proposal diff → 明确确认 → 刷新/重登后持久 → Today 显示基于已确认 Trip 的一个可解释下一步。\n\n页面存在、fixture/contract 通过、source-string test、Preview 或 deployment success 都不构成此 Program 的完成证据。\n\n## Accepted decisions\n\n- 当前尚未承载真实用户的 Supabase Project 作为 **Staging**；不再新建 Staging Project。\n- LAUNCH-17 创建物理隔离的 **Production Supabase Project**；用户、数据、Storage、secret、redirect 和 Vercel env 不与 Staging 复用。\n- Today 纳入本轮，但只读取 confirmed Trip + explicit clock/timezone；不声称天气、营业、交通、延误或安全实时性。\n- 最小 Trip 内容为 days + ordered items（可选时间、标题、文字地点、备注、完成状态）。\n- Explore、Knowledge 扩展、翻译、Guide Import、Offline 和 live external evidence 延后到 LAUNCH-19 后的 EXPAND backlog。\n\n## Not accepted as facts\n\nProvider/DeepSeek、具体 retention/backup 期限、`beta_allowlist` 方案、域名可用、Production 配置和公开发布均仍需 operator/运行证据。不得从 Claude 规划文档继承成功或授权声明。\n\n## 子 Issues（依赖顺序）\n\n- [ ] #150 LAUNCH-01 可信工具链、CI 与测试语义\n- [ ] #152 LAUNCH-02 当前 Supabase → Staging 基线\n- [ ] #153 LAUNCH-03 完整 Trip 内容模型\n- [ ] #154 LAUNCH-04 Auth、provisioning 与 route guard\n- [ ] #155 LAUNCH-05 Message/Output/Retention 合同\n- [ ] #156 LAUNCH-06 一个真实文本 Provider\n- [ ] #157 LAUNCH-07 Turn Coordinator 与 worker\n- [ ] #158 LAUNCH-08 Replay、SSE 与断线恢复\n- [ ] #159 LAUNCH-09 Trip 创建、列表与选择\n- [ ] #160 LAUNCH-10 统一 Shell 与真实 Chat UX\n- [ ] #161 LAUNCH-11 完整 Proposal 与 Confirm\n- [ ] #169 LAUNCH-12 Today MVP\n- [ ] #162 LAUNCH-13 Staging 黄金路径\n- [ ] #163 LAUNCH-14 Observability、预算与 kill switch\n- [ ] #164 LAUNCH-15 Privacy/Terms/Retention/Claims\n- [ ] #165 LAUNCH-16 Privacy Executor\n- [ ] #170 LAUNCH-17 独立 Production Supabase\n- [ ] #166 LAUNCH-18 Production Release 与 rollback gate\n- [ ] #171 LAUNCH-19 Canary、72h 观察与最终交接\n\n旧 #151 的 01b 范围并入 #150；#158 原 07b 原位重编号为 08；#168 移出 Launch 并进入 post-launch EXPAND backlog。\n\n## Program acceptance\n\n- [x] 范围、anti-goals、20 个 Issue、DAG、owner、估算、验收、风险和回滚已冻结。\n- [x] Staging → 独立 Production 拓扑与 Today 边界已冻结。\n- [x] operator-only 决策和 post-launch backlog 已显式隔离。\n- [ ] LAUNCH-13 真实 Staging 黄金路径通过。\n- [ ] LAUNCH-18 Production release/rollback gate 通过。\n- [ ] LAUNCH-19 真实 canary + 72 小时观察 + handoff 通过。\n\nProgram 在 LAUNCH-19 accepted 前保持 open / `status:in-progress`。任何 Gate 失败都停止相应 release claim，不绕过 RLS、TripPatch、privacy、asset 或 operator gate。\n\n## Rollback\n\nProgram/Issue 元数据可通过 GitHub 历史恢复。运行期采用 feature flag、worker stop、上一 evidence-backed deployment alias 和 additive DB compensation；Production 不做破坏性 down migration。\n\n## Exactly one next action\n\n执行 #150 LAUNCH-01；#152 同时作为 operator-assisted Staging frontier，禁止提前创建 Production 或接入未批准 Provider。",
+      "comments": [
+        {
+          "id": "IC_kwDOT_h9k88AAAABRZt3vg",
+          "author": {
+            "login": "JTCAO515"
+          },
+          "authorAssociation": "OWNER",
+          "body": "## LAUNCH-00 accepted — 2026-08-29\n\nOperator request accepted this Program baseline. Verification after synchronization:\n\n- Program #149 is a native sub-program of #2 and remains open with `status:in-progress` until LAUNCH-19.\n- 19/19 native sub-Issues exist; LAUNCH-00～19 appear exactly once.\n- Native blocked-by edges match the accepted DAG.\n- #150 is `status:ready + ready-for-agent`; #152 is `status:ready + ready-for-human` for redacted Staging configuration.\n- #151 is closed as `status:superseded` into #150; #158 is LAUNCH-08; #168 moved to EXPAND-01.\n- New #169/#170/#171 own Today, independent Production Supabase and final canary/handoff.\n- Repository handoff, execution-contract numbers, operator queue and `artifacts/LAUNCH-00/**` are synchronized in the working tree.\n\nNo Provider call, secret access, Supabase migration, account/Production project, domain, deployment, canary, user-data or privacy deletion action ran. Program acceptance promotes tracker/governance only, not product maturity.\n\n**Exactly one next action:** execute #150 LAUNCH-01; #152 remains the operator-assisted Staging frontier.\r\n",
+          "createdAt": "2026-08-29T13:50:42Z",
+          "includesCreatedEdit": false,
+          "isMinimized": false,
+          "minimizedReason": "",
+          "reactionGroups": [],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/149#issuecomment-5462783934",
+          "viewerDidAuthor": true
+        },
+        {
+          "id": "IC_kwDOT_h9k88AAAABRbKheA",
+          "author": {
+            "login": "JTCAO515"
+          },
+          "authorAssociation": "OWNER",
+          "body": "LAUNCH-01 已通过并合并：PR #172（commit c0a51fe）。GitHub Quality PR、Vercel Preview 与本地 pnpm@9 验证均通过；本地 integration/security 的 Supabase 依赖跳过仍明确记录为 incomplete，release asset gate 仍按设计阻断。同步审阅并合并了文档 PR #147（commit 784300f）。刷新后的 Launch 前沿没有 ready-for-agent Issue；唯一下一步为 LAUNCH-02 #152 的操作者专属 Staging 配置与验收，未执行任何生产或账户变更。",
+          "createdAt": "2026-08-29T19:07:40Z",
+          "includesCreatedEdit": false,
+          "isMinimized": false,
+          "minimizedReason": "",
+          "reactionGroups": [],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/149#issuecomment-5464301944",
+          "viewerDidAuthor": true
+        }
+      ],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWO4w",
+          "name": "documentation",
+          "description": "Improvements or additions to documentation",
+          "color": "0075ca"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RD4g",
+          "name": "priority:P0",
+          "description": "Blocks a safe AI Core beta",
+          "color": "B60205"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RzFg",
+          "name": "status:in-progress",
+          "description": "Active branch or pull request exists",
+          "color": "1D76DB"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R2iw",
+          "name": "governance",
+          "description": "Architecture, process, documentation, or control-system work",
+          "color": "0052CC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jrqg",
+          "name": "phase:R0",
+          "description": "R0 architecture and contract baseline",
+          "color": "5319E7"
+        }
+      ],
+      "number": 149,
+      "state": "OPEN",
+      "title": "[LAUNCH-00] Closed Beta Launch Program：真实黄金路径与上线验收",
+      "updatedAt": "2026-08-29T19:07:41Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/149"
+    },
+    {
+      "body": "## Program\n\nOperator-directed iOS foundation work aligned with AI Core Program #2 and the R1 product boundary.\n\n## User capability\n\nA user can launch a native VisePanda iPhone app and navigate a truthful first-version shell for Today, Ask, Trip, Explore, and Profile.\n\n## Current evidence\n\nVP-V4 is a frontend-only Next.js preview. No native iOS target exists. Auth, live AI, durable Trip APIs, media, and offline persistence are not production-ready.\n\n## Objective\n\nCreate the smallest buildable native SwiftUI foundation that establishes navigation, design tokens, localization entry points, accessibility behavior, deterministic preview fixtures, and tests.\n\n## Scope\n\n- Add an isolated ios/VisePanda Xcode project targeting iPhone.\n- Use SwiftUI with one NavigationStack per tab.\n- Add five stable top-level tabs: Today, Ask, Trip, Explore, Profile.\n- Add honest placeholder states and no-live-service disclosure.\n- Add zh, en, es, ru, and ar localization resources with RTL support.\n- Add unit tests and SwiftUI previews.\n- Add an iOS architecture/readme document and synchronized handoff state.\n\n## Anti-goals\n\n- No WebView wrapper.\n- No real AI, auth, persistence, inventory, booking, payment, Human Help, SLA, push, media permission, or external API.\n- No direct database access or Trip mutation.\n- No redesign of the accepted web compatibility layer.\n- No App Store submission or signing configuration.\n\n## Interface impact\n\nNo production backend contract. The iOS app consumes deterministic local placeholder content only. Future API consumers must use versioned server contracts after R1/R2 gates.\n\n## Dependencies\n\nOperator instruction in the current Codex session. Future runtime integration remains blocked by R1 Gate #17 and authenticated session/product shell contracts.\n\n## Acceptance\n\n- Xcode project builds for an iPhone Simulator.\n- Swift tests cover stable tab identity and placeholder capability status.\n- Five tabs preserve independent NavigationStack ownership.\n- Dynamic Type, VoiceOver labels, Reduce Motion, Reduce Transparency, light/dark appearance, and Arabic RTL have explicit support or fixtures.\n- UI makes unavailable capabilities explicit.\n- Existing pnpm checks remain unchanged and any unrun checks are disclosed.\n\n## Allowed paths\n\n- ios/**\n- docs/adr/**\n- docs/agents/issue-execution-contract.md\n- docs/handoff.json\n- generated HANDOFF.md and CONTEXT.md only through repository scripts\n- README.md only if required to link the iOS project\n\n## Forbidden paths\n\n- app/**\n- components/**\n- lib/**\n- public/**\n- existing Web UI styling and assets\n- database, provider, auth, payment, or deployment configuration\n\n## Risk\n\nPrimary risk is building UI against unstable runtime contracts. Mitigation: no network integration, local fixtures only, and explicit maturity labels.\n\n## Rollback\n\nRemove the IOS-01 additions under ios/ and its registered documentation/contract entries. No data migration or external account rollback exists.\n\n## Documentation impact\n\nAdd an accepted iOS foundation ADR and ios/README.md. Update handoff/index artifacts through deterministic scripts.\n\n## Observation\n\nOwner: operator/product. Cadence: review at R1 Gate #17 and again when R2 auth/session contracts freeze. Measure: simulator build stays green and the first real vertical slice requires no navigation or ownership rewrite.",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2Rv_w",
+          "name": "priority:P1",
+          "description": "Growth and execution data after the core evidence",
+          "color": "D93F0B"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RzFg",
+          "name": "status:in-progress",
+          "description": "Active branch or pull request exists",
+          "color": "1D76DB"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jsCg",
+          "name": "phase:R1",
+          "description": "R1 durable walking skeleton",
+          "color": "6B2FE0"
+        }
+      ],
+      "number": 135,
+      "state": "OPEN",
+      "title": "[IOS-01] 原生 SwiftUI 应用骨架与首版占位体验",
+      "updatedAt": "2026-08-27T15:25:27Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/135"
+    },
+    {
+      "body": "## Parent\n\nProgram #2（AI-00）\n\n## 上层目标\n\n**Program:** #2 VisePanda AI Core 重建  \n**User Capability:** 按工程报告 §5.7 定义并演练 beta RPO/RTO、数据库 restore、roll-forward/PITR，并为 Storage 建立独立备份或明确的 no-backup TTL 策略。  \n**Business Result:** 在不虚构能力、不复制旧权限/数据/模型边界的前提下，形成可验证、可回滚、可运营的 planning-and-execution workspace。  \n**Subsystem:** Data Platform / Operations  \n**Cynefin:** Complicated；触及跨模块合同、权限、数据所有权或公开承诺时按 D2/D3 升级。\n\n## 当前观测\n\n- **Symptom:** Supabase 数据库备份明确不包含 Storage 对象。这一事实只出现在 #43（AI-41）的一条验收 checkbox 里，没有任何实现 Issue 拥有备份/恢复策略和 Storage 备份决定。\n- **Evidence:** 2026-08-24 架构审阅对 #2–#43 做了全量核查，确认本项在两份主报告中有明确要求但没有任何 Issue 拥有它。\n- **Deviation:** 按工程报告 §5.7 定义并演练 beta RPO/RTO、数据库 restore、roll-forward/PITR，并为 Storage 建立独立备份或明确的 no-backup TTL 策略。\n\n## 预期成果\n\nrestore 演练可复现，Storage 有明确的备份或有意的 no-backup TTL 决定，且该决定不会让 ephemeral media 因备份方便而变成永久保存。\n\n## Scope\n\n- 在 plan/region 选定后定义 beta RPO/RTO\n- 数据库 restore、roll-forward/PITR 与补偿分别演练\n- Storage 独立 S3-compatible 备份 或 有意的 no-backup TTL 策略\n- restore 测试验证 RLS/grants/functions/queues/secrets 与 object metadata-to-file 一致性\n- 加密异地备份遵守删除/保留策略\n\n## Do not touch / Anti-goals\n\n- 不因为备份更方便就把 ephemeral media 变成永久保存\n- 不用数据库备份冒充 Storage 备份\n- 不在未选定 region/plan 前虚构 RPO/RTO 数字\n- 不修改无关模块、生产账号、DNS、支付、购买或公开能力承诺。\n- 不读取、提交或在 Issue/日志/截图中暴露任何 API key、cookie、票据或个人敏感原文。\n\n## 接口影响\n\n- 只使用本 Issue 已冻结的 owner module/interface；额外 schema/API/event/migration 变化必须独立评审。\n- AI 只能产生 validated Answer/Card/Proposal，不能直接写 Trip、Fact、权限或外部状态。\n- Candidate/Draft/expired/licence-blocked 数据不得绕过 authoritative eligibility。\n\n## 所有权与依赖\n\n**Owner:** Codex/agent 执行演练；operator owns plan、region、备份存储账号与成本。  \n**Dependencies:** #10 (AI-08)，#32 (AI-30)  \n**Blocks:** #43 (AI-41)  \n**WIP rule:** 前置依赖未关闭不得开始；一 Issue 一分支、一 PR 一边界、base=main、禁止 stacked PR。\n\n## 验收标准\n\n- [ ] restore 演练有真实命令、耗时与验证输出\n- [ ] Storage 备份策略二选一并写明理由与删除策略交互\n- [ ] restore 后 RLS/grants/functions/queues 与对象元数据一致性有验证\n- [ ] 只有明确可逆的 migration 才跑 down rollback\n- [ ] 本 Issue 的执行参数行已写入 `docs/agents/issue-execution-contract.md` 第 5 节。\n- [ ] 最广相关 lint/typecheck/test/build/docs/contract/eval 检查有真实命令、exit code 和 artifact。\n- [ ] 权限/数据/AI 改动覆盖负例、degraded path、feature flag 和可执行回滚。\n- [ ] 未运行检查、外部阻塞、maturity 和 residual risk 明确披露。\n\n## 执行参数\n\n权威源：[`docs/agents/issue-execution-contract.md`](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/issue-execution-contract.md)。开工前先按其中第 1 节顺序阅读，再按本 Issue 的行执行。\n\n- **允许修改：** `scripts/db/restore/**, docs/runbooks/backup-restore.md, tests/integration/restore/**`\n- **禁止修改：** `.env*`、`docs/research/**`、已接受的 `docs/adr/**`、其他 Issue 行拥有的路径\n- **必跑命令：** `pnpm check`; `pnpm db:verify`; `pnpm test:integration`\n- **证据产物：** `artifacts/AI-49/commands.jsonl`、`artifacts/AI-49/unrun.md`、restore 演练记录、RPO/RTO 表、Storage 策略\n- **红线 suite：** RL-06 RL-07\n\n未实现的 `pnpm` 脚本记为 `planned — not runnable at <sha>`，不得静默跳过。\n\n## 工作估算\n\n**M（<=3 天）**\n\n## 风险与回滚\n\n**Risks:** Storage 不备份而用户以为备份，是不可逆数据损失；反过来备份 ephemeral media 又会违反 C3 保留策略。两个方向都必须显式决定。  \n**Rollback:** 备份配置可独立撤销；已产生的备份按保留/删除策略处理，不静默留存。\n\n## 文档影响\n\n更新 owning module、contract/eval/runbook、acceptance evidence 与 `docs/handoff.json`；重大方向变化追加 ADR。\n\n## 观测\n\n合并只证明工程验收。产品效果按 Issue 对应的用户完成、接受/修改/拒绝、unavailable、correction、latency、cost 或运营指标在明确观察窗复核。\n\n---\n\n_由 2026-08-24 架构审阅补建；来源见 `docs/ai-core-engineering-development-acceptance-report.md` 与 `docs/ai-core-integrated-research-report.md`。_\n",
+      "comments": [
+        {
+          "id": "IC_kwDOT_h9k88AAAABRVpiPw",
+          "author": {
+            "login": "JTCAO515"
+          },
+          "authorAssociation": "OWNER",
+          "body": "AI-49 的仓库内安全准备切片已合并到 main@c72df1e：新增无凭据恢复计划校验器、隔离演练 runbook、回归测试与命令/未运行证据。它明确拒绝生产、连接详情、未决 RPO/RTO、未知配置和全部 S3 备份（当前没有权威 Storage policy registry）。Issue 保持 OPEN：真实数据库 restore、PITR、补偿、Storage TTL/备份和恢复后验证仍需 operator 提供已接受的计划/区域及隔离 synthetic-data 环境；未虚构执行结果。",
+          "createdAt": "2026-08-28T22:42:33Z",
+          "includesCreatedEdit": false,
+          "isMinimized": false,
+          "minimizedReason": "",
+          "reactionGroups": [],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/53#issuecomment-5458518591",
+          "viewerDidAuthor": true
+        }
+      ],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RwWQ",
+          "name": "priority:P2",
+          "description": "Trigger-gated scale or optional capability",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jtdw",
+          "name": "phase:R4",
+          "description": "R4 multimodal beta",
+          "color": "A9BDD9"
+        }
+      ],
+      "number": 53,
+      "state": "OPEN",
+      "title": "[AI-49] Backup、Restore、RPO/RTO 与 Storage 独立备份",
+      "updatedAt": "2026-08-28T22:42:34Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/53"
+    },
+    {
+      "body": "## Parent\n\nProgram #2（AI-00）\n\n## 上层目标\n\n**Program:** #2 VisePanda AI Core 重建  \n**User Capability:** 接入benchmark/合同通过的一家by-flight schedule/status provider，并将变化变成可确认Proposal。  \n**Business Result:** 在不虚构能力、不复制旧权限/数据/模型边界的前提下，形成可验证、可回滚、可运营的 planning-and-execution workspace。  \n**Subsystem:** External Evidence / TripWorkspace  \n**Cynefin:** Complicated；触及跨模块合同、权限、数据所有权或公开承诺时按 D2/D3 升级。\n\n## 当前观测\n\n- **Symptom:** VP-V4 当前仍是 frontend-only preview，本 Issue 描述的 runtime/contract 尚未交付。\n- **Evidence:** 当前基线为 main@2dec7b0；五轮研究和独立审计已形成提案，但规划不是 shipped evidence。\n- **Deviation:** 接入benchmark/合同通过的一家by-flight schedule/status provider，并将变化变成可确认Proposal。\n\n## 预期成果\n\n接入benchmark/合同通过的一家by-flight schedule/status provider，并将变化变成可确认Proposal。\n\n## Scope\n\n- scheduled/estimated/actual/terminal/gate/cancel\n- freshness/attribution/official recheck\n- trip receipt/change detected/recheck\n\n## Do not touch / Anti-goals\n\n- 不买票、不融合第二家实时源、不保存超期raw data\n- 不修改无关模块、生产账号、DNS、支付、购买或公开能力承诺。\n- 不读取、提交或在 Issue/日志/截图中暴露任何 API key、cookie、票据或个人敏感原文。\n\n## 接口影响\n\n- 只使用本 Issue 已冻结的 owner module/interface；额外 schema/API/event/migration 变化必须独立评审。\n- AI 只能产生 validated Answer/Card/Proposal，不能直接写 Trip、Fact、权限或外部状态。\n- Candidate/Draft/expired/licence-blocked 数据不得绕过 authoritative eligibility。\n\n## 所有权与依赖\n\n**Owner:** Codex/agent implementation；operator owns DEC/ADR、公开承诺、生产切流、外部账号、region、retention和合同。  \n**Dependencies:** #12 (AI-10)，#37 (AI-35)，#41 (AI-39)  \n**WIP rule:** 前置依赖未关闭不得开始；一 Issue 一分支、一 PR 一边界、base=main、禁止 stacked PR。\n\n## 验收标准\n\n- [ ] 只有获批fields进入display/prompt/Canvas\n- [ ] provider变化不静默改Trip\n- [ ] flag off/purge恢复到用户artifact+official action\n- [ ] 最广相关 lint/typecheck/test/build/docs/contract/eval 检查有真实命令、exit code 和 artifact。\n- [ ] 权限/数据/AI 改动覆盖负例、degraded path、feature flag 和可执行回滚。\n- [ ] 未运行检查、外部阻塞、maturity 和 residual risk 明确披露。\n\n## 执行参数\n\n权威源：[`docs/agents/issue-execution-contract.md`](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/issue-execution-contract.md)。开工前先按其中第 1 节的强制阅读顺序读，再按本 Issue 的行执行。\n\n- **Owning module：** External / Flight adapter\n- **允许修改：** `lib/server/external-evidence/flight/**`\n- **禁止修改：** `.env*`、`docs/research/**`、已接受的 `docs/adr/**`、`pnpm-lock.yaml`（除非本 Issue 新增依赖）、`.github/workflows/**`（仅 AI-07a）、其他 Issue 行拥有的路径\n- **必跑命令：** `pnpm check`; `pnpm test:contract`; `pnpm test:integration`\n- **证据产物：** `artifacts/AI-40/commands.jsonl`、`artifacts/AI-40/unrun.md`、字段白名单证明、recheck 轨迹\n- **红线 suite：** RL-06\n\n未实现的 `pnpm` 脚本记为 `planned — not runnable at <sha>`，不得静默跳过。红线断言必须写成 suite ID + fixture 计数 + runtime invariant。\n\n## 工作估算\n\n**L（<=5 天）**\n\n## 风险与回滚\n\n**Risks:** 局部实现可能绕过跨模块合同、把 preview 包装为 live、或迁入旧系统隐含耦合。  \n**Rollback:** 关闭对应 feature flag 或撤销本 Issue 的独立 contract/adapter/consumer；保留 accepted Trip/Fact 和审计，不执行破坏性数据回退。\n\n## 文档影响\n\n更新 owning module、contract/eval/runbook、acceptance evidence 与 machine-readable handoff；重大方向变化追加 ADR。\n\n## 观测\n\n合并只证明工程验收。产品效果按 Issue 对应的用户完成、接受/修改/拒绝、unavailable、correction、latency、cost或运营指标在明确观察窗复核。\n---\n\n_2026-08-24 架构审阅：补入执行参数、修正依赖与优先级。审阅结论见 Program #2 的评审评论。_\n",
+      "comments": [],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RwWQ",
+          "name": "priority:P2",
+          "description": "Trigger-gated scale or optional capability",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jt5Q",
+          "name": "phase:R5",
+          "description": "R5 controlled production",
+          "color": "BFDADC"
+        }
+      ],
+      "number": 42,
+      "state": "OPEN",
+      "title": "[AI-40] 单一 Flight Adapter、状态卡与 Canvas Recheck",
+      "updatedAt": "2026-08-28T16:30:06Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/42"
+    },
+    {
+      "body": "## Parent\n\nProgram #2（AI-00）\n\n## 上层目标\n\n**Program:** #2 VisePanda AI Core 重建  \n**User Capability:** 独立评测OAG/Cirium/FlightAware/Amadeus的中国覆盖、身份、时区、状态、延迟、成本和合同权利。  \n**Business Result:** 在不虚构能力、不复制旧权限/数据/模型边界的前提下，形成可验证、可回滚、可运营的 planning-and-execution workspace。  \n**Subsystem:** External Evidence / Aviation Research  \n**Cynefin:** Complicated；触及跨模块合同、权限、数据所有权或公开承诺时按 D2/D3 升级。\n\n## 当前观测\n\n- **Symptom:** VP-V4 当前仍是 frontend-only preview，本 Issue 描述的 runtime/contract 尚未交付。\n- **Evidence:** 当前基线为 main@2dec7b0；五轮研究和独立审计已形成提案，但规划不是 shipped evidence。\n- **Deviation:** 独立评测OAG/Cirium/FlightAware/Amadeus的中国覆盖、身份、时区、状态、延迟、成本和合同权利。\n\n## 预期成果\n\n独立评测OAG/Cirium/FlightAware/Amadeus的中国覆盖、身份、时区、状态、延迟、成本和合同权利。\n\n## Scope\n\n- 分层航班样本/codeshare/异常\n- trial isolation、display/retention/combine/backfill\n- provider scorecard和purge evidence\n\n## Do not touch / Anti-goals\n\n- 不根据宣传或免费额度选型、不调用购买库存\n- 不修改无关模块、生产账号、DNS、支付、购买或公开能力承诺。\n- 不读取、提交或在 Issue/日志/截图中暴露任何 API key、cookie、票据或个人敏感原文。\n\n## 接口影响\n\n- 只使用本 Issue 已冻结的 owner module/interface；额外 schema/API/event/migration 变化必须独立评审。\n- AI 只能产生 validated Answer/Card/Proposal，不能直接写 Trip、Fact、权限或外部状态。\n- Candidate/Draft/expired/licence-blocked 数据不得绕过 authoritative eligibility。\n\n## 所有权与依赖\n\n**Owner:** **Operator**（provider 选型涉及合同签署与付费，属于 operator 决策）。agent 执行 benchmark 并产出 scorecard，不得代为选定或调用付费接口之外的采购动作。\n**Dependencies:** #24 (AI-22)，#46 (AI-42 qrels/scorecard 基线)\n**WIP rule:** 前置依赖未关闭不得开始；一 Issue 一分支、一 PR 一边界、base=main、禁止 stacked PR。\n\n## 验收标准\n\n- [ ] trial数据不对外展示\n- [ ] 不同provider结果不违规融合\n- [ ] 只推荐一家或honest unavailable\n- [ ] 最广相关 lint/typecheck/test/build/docs/contract/eval 检查有真实命令、exit code 和 artifact。\n- [ ] 权限/数据/AI 改动覆盖负例、degraded path、feature flag 和可执行回滚。\n- [ ] 未运行检查、外部阻塞、maturity 和 residual risk 明确披露。\n\n## 执行参数\n\n权威源：[`docs/agents/issue-execution-contract.md`](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/issue-execution-contract.md)。开工前先按其中第 1 节的强制阅读顺序读，再按本 Issue 的行执行。\n\n- **Owning module：** External / Aviation benchmark\n- **允许修改：** `docs/benchmarks/aviation/**`\n- **禁止修改：** `.env*`、`docs/research/**`、已接受的 `docs/adr/**`、`pnpm-lock.yaml`（除非本 Issue 新增依赖）、`.github/workflows/**`（仅 AI-07a）、其他 Issue 行拥有的路径\n- **必跑命令：** `pnpm check`; `pnpm docs:check`; `pnpm evals`\n- **证据产物：** `artifacts/AI-39/commands.jsonl`、`artifacts/AI-39/unrun.md`、provider scorecard、purge 证据\n- **红线 suite：** RL-06\n\n未实现的 `pnpm` 脚本记为 `planned — not runnable at <sha>`，不得静默跳过。红线断言必须写成 suite ID + fixture 计数 + runtime invariant。\n\n## 工作估算\n\n**L（<=5 天）+ observation**\n\n## 风险与回滚\n\n**Risks:** 局部实现可能绕过跨模块合同、把 preview 包装为 live、或迁入旧系统隐含耦合。  \n**Rollback:** 关闭对应 feature flag 或撤销本 Issue 的独立 contract/adapter/consumer；保留 accepted Trip/Fact 和审计，不执行破坏性数据回退。\n\n## 文档影响\n\n更新 owning module、contract/eval/runbook、acceptance evidence 与 machine-readable handoff；重大方向变化追加 ADR。\n\n## 观测\n\n合并只证明工程验收。产品效果按 Issue 对应的用户完成、接受/修改/拒绝、unavailable、correction、latency、cost或运营指标在明确观察窗复核。\n---\n\n_2026-08-24 架构审阅：补入执行参数、修正依赖与优先级。审阅结论见 Program #2 的评审评论。_\n",
+      "comments": [
+        {
+          "id": "IC_kwDOT_h9k88AAAABRVtBpw",
+          "author": {
+            "login": "JTCAO515"
+          },
+          "authorAssociation": "OWNER",
+          "body": "AI-39 的无试用数据 provider scorecard 已合并到 main@ef690c2。四个候选均保持 unavailable，Operator decision 明确为 unfilled；没有 provider 选择、账户、trial、API 调用或合同权利主张。#41 保持 OPEN，等待 operator 接受一个隔离 benchmark 环境及条款后再产生真实结果。",
+          "createdAt": "2026-08-28T22:50:57Z",
+          "includesCreatedEdit": false,
+          "isMinimized": false,
+          "minimizedReason": "",
+          "reactionGroups": [],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/41#issuecomment-5458575783",
+          "viewerDidAuthor": true
+        }
+      ],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RwWQ",
+          "name": "priority:P2",
+          "description": "Trigger-gated scale or optional capability",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R2iw",
+          "name": "governance",
+          "description": "Architecture, process, documentation, or control-system work",
+          "color": "0052CC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jt5Q",
+          "name": "phase:R5",
+          "description": "R5 controlled production",
+          "color": "BFDADC"
+        }
+      ],
+      "number": 41,
+      "state": "OPEN",
+      "title": "[AI-39] 中国航线 Aviation Provider Benchmark",
+      "updatedAt": "2026-08-28T22:50:57Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/41"
+    },
+    {
+      "body": "## 上层目标\n\n**Program:** #2 VisePanda AI Core 重建  \n**User Capability:** 建立 VisePanda planning-and-execution workspace 的完整交付 Program，以 Chatbot、Trip Canvas、Knowledge、Explore、多模态和外部数据形成一个证据化闭环。  \n**Business Result:** 在不虚构能力、不复制旧权限/数据/模型边界的前提下，形成可验证、可回滚、可运营的 planning-and-execution workspace。  \n**Subsystem:** Program / Architecture / Delivery  \n**Cynefin:** Complicated；触及跨模块合同、权限、数据所有权或公开承诺时按 D2/D3 升级。\n\n## 当前观测\n\n- **Symptom:** VP-V4 当前仍是 frontend-only preview，本 Issue 描述的 runtime/contract 尚未交付。\n- **Evidence:** 当前基线为 main@2dec7b0；五轮研究和独立审计已形成提案，但规划不是 shipped evidence。\n- **Deviation:** 建立 VisePanda planning-and-execution workspace 的完整交付 Program，以 Chatbot、Trip Canvas、Knowledge、Explore、多模态和外部数据形成一个证据化闭环。\n\n## 预期成果\n\n建立 VisePanda planning-and-execution workspace 的完整交付 Program，以 Chatbot、Trip Canvas、Knowledge、Explore、多模态和外部数据形成一个证据化闭环。\n\n## Scope\n\n- 维护 R0–R5 关键路径与 frontier\n- 汇总 DEC-01～DEC-11、成熟度和外部阻塞\n- 确保每个子 Issue 可在一个新上下文中独立验收\n\n## Do not touch / Anti-goals\n\n- 不在 Program Issue 中直接实现功能\n- 不绕过子 Issue 的合同和验收门\n- 不修改无关模块、生产账号、DNS、支付、购买或公开能力承诺。\n- 不读取、提交或在 Issue/日志/截图中暴露任何 API key、cookie、票据或个人敏感原文。\n\n## 接口影响\n\n- 只使用本 Issue 已冻结的 owner module/interface；额外 schema/API/event/migration 变化必须独立评审。\n- AI 只能产生 validated Answer/Card/Proposal，不能直接写 Trip、Fact、权限或外部状态。\n- Candidate/Draft/expired/licence-blocked 数据不得绕过 authoritative eligibility。\n\n## 所有权与依赖\n\n**Owner:** Codex/agent implementation；operator owns DEC/ADR、公开承诺、生产切流、外部账号、region、retention和合同。  \n**Dependencies:** None — can start immediately  \n**WIP rule:** 前置依赖未关闭不得开始；一 Issue 一分支、一 PR 一边界、base=main、禁止 stacked PR。\n\n## 验收标准\n\n- [ ] 所有子 Issue 有真实依赖、验收、回滚和观测\n- [ ] Program 不把规划文档或官方模型上线写成已交付产品能力\n- [ ] operator 未批准前不启动生产切流或真实能力宣传\n- [ ] 最广相关 lint/typecheck/test/build/docs/contract/eval 检查有真实命令、exit code 和 artifact。\n- [ ] 权限/数据/AI 改动覆盖负例、degraded path、feature flag 和可执行回滚。\n- [ ] 未运行检查、外部阻塞、maturity 和 residual risk 明确披露。\n\n## 执行参数\n\n权威源：[`docs/agents/issue-execution-contract.md`](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/issue-execution-contract.md)。开工前先按其中第 1 节的强制阅读顺序读，再按本 Issue 的行执行。\n\n- **Owning module：** Program / tracker\n- **允许修改：** `docs/handoff.json, HANDOFF.md, CONTEXT.md`\n- **禁止修改：** `.env*`、`docs/research/**`、已接受的 `docs/adr/**`、`pnpm-lock.yaml`（除非本 Issue 新增依赖）、`.github/workflows/**`（仅 AI-07a）、其他 Issue 行拥有的路径\n- **必跑命令：** `pnpm check`; `pnpm docs:check`\n- **证据产物：** `artifacts/AI-00/commands.jsonl`、`artifacts/AI-00/unrun.md`、program-status.md\n- **红线 suite：** —\n\n未实现的 `pnpm` 脚本记为 `planned — not runnable at <sha>`，不得静默跳过。红线断言必须写成 suite ID + fixture 计数 + runtime invariant。\n\n## 工作估算\n\n**Program（由子 Issue 独立估算）**\n\n## 风险与回滚\n\n**Risks:** 局部实现可能绕过跨模块合同、把 preview 包装为 live、或迁入旧系统隐含耦合。  \n**Rollback:** 关闭对应 feature flag 或撤销本 Issue 的独立 contract/adapter/consumer；保留 accepted Trip/Fact 和审计，不执行破坏性数据回退。\n\n## 文档影响\n\n更新 owning module、contract/eval/runbook、acceptance evidence 与 machine-readable handoff；重大方向变化追加 ADR。\n\n## 观测\n\n合并只证明工程验收。产品效果按 Issue 对应的用户完成、接受/修改/拒绝、unavailable、correction、latency、cost或运营指标在明确观察窗复核。\n\n## 子 Issues（依赖顺序）\n\n- [ ] #3 AI-01 Decision Register 与总体 ADR 基线\n- [ ] #4 AI-02 VP-Final 资产处置与高质量迁移矩阵\n- [ ] #5 AI-03 Turn、Evidence、GroundedClaim 与 TripProposal 统一合同\n- [ ] #6 AI-04 Identity、RLS、Supabase Lineage 与 Ops 部署决策\n- [ ] #7 AI-05 Region、Retention、Threat 与 Purpose-bound License 基线\n- [ ] #8 AI-06 Durable Turn 与 Buffered SSE v1 协议\n- [ ] #9 AI-07 五语 Eval、CI 与八维验收脚手架\n- [ ] #10 AI-08 Supabase Local/CI、连接与迁移基线\n- [ ] #11 AI-09 迁移 TripPatch Golden Contract，不迁旧直接写入\n- [ ] #12 AI-10 TripWorkspace 持久化与原子 Confirm-and-Apply\n- [ ] #13 AI-11 迁移 Fact Eligibility Golden Contract 与负例\n- [ ] #14 AI-12 TurnCoordinator Fake-model Walking Skeleton\n- [ ] #15 AI-13 Canvas Diff、确认、Reload 端到端闭环\n- [ ] #16 AI-14 RLS Actor Matrix、Fault Injection 与迁移安全模式\n- [ ] #17 AI-15 R1 Durable Walking Skeleton 验收报告\n- [ ] #18 AI-16 ModelGateway 与 DeepSeek/Qwen 协议 Conformance\n- [ ] #19 AI-17 Task Routing、成本、Trace 与 Circuit Breaker\n- [ ] #20 AI-18 LEX-00 五语 Lexical Retrieval 基线\n- [ ] #21 AI-19 Hybrid RAG、Embedding、RRF 与 Rerank\n- [ ] #22 AI-20 Typed Grounded Execution 与 Deterministic Cards\n- [ ] #23 AI-21 R2 Grounded Text Internal Alpha 验收\n- [ ] #24 AI-22 Purpose-bound Data License Registry 与 PolicyReceipt\n- [ ] #25 AI-23 迁移 VP-Final Import、Review、Audit 与 RLS 质量门\n- [ ] #26 AI-24 Candidate Import、Identity Resolution 与原子发布\n- [ ] #27 AI-25 独立 Ops 部署与内容审核 UI\n- [ ] #28 AI-26 QUEUE-00 Projection Worker、重投与 Quarantine\n- [ ] #29 AI-27 City-first Explore 与 POI Detail 重写\n- [ ] #30 AI-28 Explore Ask/Add → Proposal → Canvas 精确ID闭环\n- [ ] #31 AI-29 R3 两城市 Content、Explore 与 SEO 验收\n- [ ] #32 AI-30 Private Media Direct Upload、TTL 与删除闭环\n- [ ] #33 AI-31 OCR→MT 图片翻译与 DeepSeek Vision Shadow\n- [ ] #34 AI-32 REALTIME-00 语音翻译协议 Conformance\n- [ ] #35 AI-33 Push-to-talk UI 与 Realtime Session\n- [ ] #36 AI-34 R4 五语多模态真机验收\n- [ ] #37 AI-35 ExternalEvidenceResolver 与 PolicyReceipt\n- [ ] #38 AI-36 Weather、AQ 与预警垂直切片\n- [ ] #39 AI-37 用户票据导入、确认与 Trip Proposal\n- [ ] #40 AI-38 Rail Reviewed Guidance 与官方 Recheck\n- [ ] #41 AI-39 中国航线 Aviation Provider Benchmark\n- [ ] #42 AI-40 单一 Flight Adapter、状态卡与 Canvas Recheck\n- [ ] #43 AI-41 Full Beta Hardening、Runbooks、Canary 与观察窗\n---\n\n_2026-08-24 架构审阅：补入执行参数、修正依赖与优先级。审阅结论见 Program #2 的评审评论。_\n\n### 2026-08-24 架构审阅补建的子 Issues\n\n- [ ] #46 AI-42 五语 Eval Corpus、Red-line Suite 注册表与 Qrels 基线（R0，从 #9 拆出）\n- [ ] #47 AI-43 ML-01：AI SDK 采用/拒绝决策与 Chat plane transport spike（R2）\n- [ ] #48 AI-44 Failure Taxonomy 冻结与五语文案、HTTP/SSE 映射（R0，从 #5 拆出）\n- [ ] #49 AI-45 Feature Flag 注册表、Kill-switch 与非法组合 CI 检查（R0）\n- [ ] #50 AI-46 PLAT-CONF-00：三条数据库连接路径实测与冻结（R1）\n- [ ] #51 AI-47 Prompt/Schema 版本注册与模型别名漂移触发（R2）\n- [ ] #52 AI-48 Per-user 成本配额、Deadline 与 Cost-denial 防护（R2）\n- [ ] #53 AI-49 Backup、Restore、RPO/RTO 与 Storage 独立备份（R4）\n- [ ] #54 AI-50 Knowledge 纠错、权利人删除请求与级联失效（R3）\n\n### 发布门依赖（2026-08-24 审阅新增）\n\n审阅前，四个验收门 #17 / #23 / #31 / #36 没有被任何实现 Issue 依赖——门只串门，不拦实现，#23 的 dependents 数量为 0。现已加四条边：\n\n- #18 (AI-16) blocked by #17 (AI-15，R1 验收门)\n- #24 (AI-22) blocked by #23 (AI-21，R2 验收门)\n- #32 (AI-30) blocked by #31 (AI-29，R3 验收门)\n- #37 (AI-35) blocked by #36 (AI-34，R4 验收门)\n\n删除这四条边等于重新打开该缺口。\n",
+      "comments": [
+        {
+          "id": "IC_kwDOT_h9k88AAAABQUU-wg",
+          "author": {
+            "login": "JTCAO515"
+          },
+          "authorAssociation": "OWNER",
+          "body": "## 2026-08-24 架构审阅结论与已执行的修正\n\n对 #2–#43 共 42 个 Issue 做了全量核查（依赖图重走、正文 grep、估算求和、标签/里程碑核对）。覆盖度和纪律语言合格；不合格在三处，均已修正。\n\n### 核查发现\n\n1. **四个验收门没有被任何实现 Issue 依赖。** #17/#23/#31/#36 只互相串联，`#23` 的 dependents 数量为 0。R1 验收没写完 R2 就能合并，R2 alpha 没过 Knowledge/Explore 整条线照跑。工程报告 §12.2 的 \"Exit gate\" 在图里不存在。\n2. **正文缺执行参数。** 42 个正文里 `pnpm` 命令出现 0 次、文件允许/禁止清单 0 次、强制阅读顺序 0 次、ADR 编号 0 次、flag 名 0 次。\"红线写成 named suite N/N\" 被反复引用，但全程序从未冻结过 suite 名字。\n3. **权威文档没进仓库。** 每个 Issue 写 `Evidence: main@2dec7b0`，但那个 commit 里没有两份主报告——全是 untracked。新 clone 的 agent 无法执行任何 Issue。\n\n### 已执行的修正\n\n**仓库（PR #45）**\n\n- 提交两份 v1.1 主报告、三份领域规划、七份证据/审计台账、knowledge-base 草案包、agent tracker 文档；\n- 新增 `docs/agents/issue-execution-contract.md`：强制阅读顺序、每 Issue 的允许/禁止路径、必跑命令（含 existing / planned 状态与引入它的 Issue）、`artifacts/` 证据布局、**RL-01…RL-09 红线 suite 注册表**；\n- `docs/handoff.json` 重构为 `jtcoding-handoff/1.0`（原缺 13 个必备字段、用 snake_case）；\n- `triage-labels.md` 定义 `phase:R0`–`phase:R5` 与六个里程碑。\n\n**发布门（4 条边）**\n\n| 边 | 含义 |\n| --- | --- |\n| #18 ← #17 | R2 实现必须等 R1 验收门 |\n| #24 ← #23 | R3 实现必须等 R2 验收门 |\n| #32 ← #31 | R4 实现必须等 R3 验收门 |\n| #37 ← #36 | R5 实现必须等 R4 验收门 |\n\n删除这四条边等于重新打开缺口。\n\n**解耦与条件依赖**\n\n- #9 移除 `#5/#6/#7/#8` 四条依赖，改名 **AI-07a**，只做 CI/测试脚手架，已可立即开工。五语 eval corpus 与红线 suite 注册表拆到 #46。\n- #43 移除对 #42 的硬依赖。航空合同是 operator 外部阻塞，工程报告 §0.3 已把 \"aviation contract wait\" 排除在 beta 之外；现改为 `#42 已交付 **或** documented official-handoff fallback` 的验收条件，另加 #53、#54。\n\n**Owner 修正（正文与标签原本互相矛盾）**\n\n#3、#6、#7、#41 的 Owner 从 \"Codex/agent implementation\" 改为 **Operator**。agent 只准备选项矩阵、证据与回滚，不得代填决策行。#3 的工程估算改为 \"Operator-blocked — 无工程估算\"。\n\n**估算修正**\n\n#5（统一合同）与 #8（SSE v1）从 M(≤3d) 提到 L(≤5d)——原估算把全程序最有后果的两个产物压在 3 天内。\n\n**新建 9 个补缺 Issue**\n\n| Issue | 报告出处 | 原状况 |\n| --- | --- | --- |\n| #46 AI-42 五语 Eval Corpus 与红线 suite 注册表 | §9.3 / §10.1 | 与 CI 混在 #9，suite 名字无处冻结 |\n| #47 AI-43 ML-01 AI SDK 采用决策 | 工程 §6.2 | 具名 spike 无归属 |\n| #48 AI-44 Failure Taxonomy 冻结 | 工程 §4.1 | 21 个 code + 五语文案藏在 #5 一条 bullet |\n| #49 AI-45 Feature Flag 注册表 | 工程 §8 | 15 个 flag 无 owner，回滚文案指不到实体 |\n| #50 AI-46 PLAT-CONF-00 连接路径 | 工程 §8.1 | 具名 spike 追溯断链 |\n| #51 AI-47 Prompt/Schema 版本注册 | 工程 §6.3 | 无 owner |\n| #52 AI-48 Per-user 成本配额 | 工程 §7.3 | cost denial 控制无归属 |\n| #53 AI-49 Backup/Restore/Storage | 工程 §5.7 | Supabase 备份不含 Storage，仅一句验收 |\n| #54 AI-50 纠错与权利人删除级联 | 研究 §8.1 | 法律面义务，无 Issue |\n\n**标签与里程碑**\n\n六个里程碑 R0–R5 已建并分配；`phase:0/1/2` 换成 `phase:R0`–`phase:R5`（原来把六个 release 压成三个，R0 门不可查询）；优先级重排为 P0=R0+R1 / P1=R2+R3 / P2=R4+R5（原来 37/42 是 P0，优先级无信息量）。\n\n### 复核结果\n\n51 个 Issue，依赖图 **0 环**，四个门全部生效，51/51 正文含执行参数。`pnpm check` 通过（lint、typecheck、Next build、11/11 tests）。\n\n### 需要 operator 的下一动作\n\n1. 合并 PR #45，否则程序的权威文档仍不在 main 上。\n2. 在 #3 裁决 DEC-01…DEC-11。\n3. 并行：agent 可开 #4（AI-02）和 #9（AI-07a）。\n\n### 仍然存在、但属于 operator 判断的事实\n\nIssue 层估算现在合计 **207 focused days ≈ 41 周**（51 个 Issue），高于工程报告给的 24–35 周区间，也远高于 \"Core private alpha 10–15 周\" 那档。第一个可演示成果（#17 R1 tracer bullet）在 R0+R1 约 12 周之后。要压到 10–15 周，只能砍范围，不能靠并行——单人 WIP≤2。这是范围决定，不是工程决定。",
+          "createdAt": "2026-08-24T02:29:29Z",
+          "includesCreatedEdit": false,
+          "isMinimized": false,
+          "minimizedReason": "",
+          "reactionGroups": [],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/2#issuecomment-5390024386",
+          "viewerDidAuthor": true
+        },
+        {
+          "id": "IC_kwDOT_h9k88AAAABQUjQBw",
+          "author": {
+            "login": "JTCAO515"
+          },
+          "authorAssociation": "OWNER",
+          "body": "## AI-07a execution-path conflict\n\nAI-07a/#9 is dependency-free and `ready-for-agent`, but its current execution parameters contain an ownership/base mismatch that prevents a compliant implementation from reaching its own acceptance criteria:\n\n- The allowed paths are `package.json, scripts/**, .github/workflows/**, tests/**/README.md`.\n- The Issue acceptance also requires `artifacts/` layout and root `.gitignore` rules, `docs/acceptance/` templates, and changing `docs/agents/issue-execution-contract.md` command rows from `planned` to `exists`.\n- Those paths are outside the AI-07a allowed-path row; `docs/agents/issue-execution-contract.md` is additionally only present in unmerged PR #45, while the contract requires all new issue branches to start from `origin/main`.\n\nRule 6 says not to widen an Issue into another owned path. I have therefore created a clean AI-07a worktree from `origin/main` but will not copy PR #45 files, alter `.gitignore`, or submit a partial scaffold.\n\nRequested Program correction: after PR #45 merges, update #9 and the execution-contract row to authorize `.gitignore`, `artifacts/**`, `docs/acceptance/**`, and `docs/agents/issue-execution-contract.md`; alternatively split those obligations into a separate ready Issue. Then AI-07a can implement the scripts/empty runners/CI safely without a stacked base.",
+          "createdAt": "2026-08-24T03:10:37Z",
+          "includesCreatedEdit": false,
+          "isMinimized": false,
+          "minimizedReason": "",
+          "reactionGroups": [],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/2#issuecomment-5390258183",
+          "viewerDidAuthor": true
+        },
+        {
+          "id": "IC_kwDOT_h9k88AAAABQrJIxQ",
+          "author": {
+            "login": "JTCAO515"
+          },
+          "authorAssociation": "OWNER",
+          "body": "AI-13 preflight deviation (after AI-10 / #12 closure):\n\nCurrent `main` has no `components/canvas/**` and no `app/(product)/trips/**`; the only visible Canvas is `components/VisePandaChatWorkspace.tsx` at `/visepanda`, where the proposal is explicitly a local fixture (`not saved` / `no Trip was saved`). There is also no browser-safe authenticated UserDataAdapter or `app/api/trips/**` route for forwarding a verified user JWT to the existing `security invoker` RPC.\n\nTherefore #15 cannot truthfully meet “confirm -> reload -> audit一致” within its frozen allowed paths. Changing the fixture file would violate its ownership boundary; adding an API/auth adapter would violate #15 and reopen AI-10 scope.\n\nRecommended correction: create a dedicated R1 adapter issue that owns `app/api/trips/**` plus the authenticated session boundary, then make #15 depend on it; retain #15 for Canvas UI and browser/RTL evidence only. No persistence behavior will be claimed or simulated until that adapter exists.",
+          "createdAt": "2026-08-25T17:07:16Z",
+          "includesCreatedEdit": false,
+          "isMinimized": false,
+          "minimizedReason": "",
+          "reactionGroups": [],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/2#issuecomment-5413947589",
+          "viewerDidAuthor": true
+        },
+        {
+          "id": "IC_kwDOT_h9k88AAAABQrUGsQ",
+          "author": {
+            "login": "JTCAO515"
+          },
+          "authorAssociation": "OWNER",
+          "body": "## 2026-08-26 VP-V4 production parity tracker expansion\n\nOperator confirmed the bounded-agent / production-parity decomposition. The package is published in [PR #83](https://github.com/JTCAO515/VP-V4/pull/83) and 31 native sub-issues:\n\n- Foundation: [V4-01 #87](https://github.com/JTCAO515/VP-V4/issues/87), [V4-02 #85](https://github.com/JTCAO515/VP-V4/issues/85), [V4-03 #88](https://github.com/JTCAO515/VP-V4/issues/88), [V4-04 #89](https://github.com/JTCAO515/VP-V4/issues/89), [V4-05 #90](https://github.com/JTCAO515/VP-V4/issues/90)\n- Auth/Product/Chat/Canvas: V4-06 through V4-12, #91-#97\n- Memory/User/Privacy: V4-13 through V4-17, #98-#102\n- Today/Recovery: V4-18 through V4-21, #103-#106\n- Product Tools: V4-22 through V4-27, #107-#112\n- Import/Offline/Acceptance: V4-28 through V4-31, #113-#116\n\nThe independent `V4-*` namespace was selected after a concurrent [AI-51 #84](https://github.com/JTCAO515/VP-V4/issues/84) was created during publication. The accidental AI-52 title on #85 was corrected to V4-02 and its wrong dependency was removed before the batch continued.\n\nCurrent ready frontier after native dependency audit: #49, #84 and #87. #15 remains blocked by #84. V4-02 through V4-31 remain `status:blocked`; publication does not authorize implementation before blockers close.\n\nPR #83 passes `pnpm docs:check`, full `pnpm check`, JSON and diff checks. It also registers actual Issue numbers, commands, artifacts and RL suites in the execution contract.",
+          "createdAt": "2026-08-25T17:22:53Z",
+          "includesCreatedEdit": false,
+          "isMinimized": false,
+          "minimizedReason": "",
+          "reactionGroups": [],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/2#issuecomment-5414127281",
+          "viewerDidAuthor": true
+        }
+      ],
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWO4w",
+          "name": "documentation",
+          "description": "Improvements or additions to documentation",
+          "color": "0075ca"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RD4g",
+          "name": "priority:P0",
+          "description": "Blocks a safe AI Core beta",
+          "color": "B60205"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RxUA",
+          "name": "status:ready",
+          "description": "Dependencies complete; independently executable",
+          "color": "0E8A16"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R2iw",
+          "name": "governance",
+          "description": "Architecture, process, documentation, or control-system work",
+          "color": "0052CC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R6Ng",
+          "name": "ready-for-human",
+          "description": "Requires operator or human implementation",
+          "color": "FBCA04"
+        }
+      ],
+      "number": 2,
+      "state": "OPEN",
+      "title": "[AI-00] VisePanda AI Core 重建 Program：Chatbot、Trip Canvas、Knowledge、Explore 与多模态",
+      "updatedAt": "2026-08-25T17:22:53Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/2"
+    }
+  ]
+}

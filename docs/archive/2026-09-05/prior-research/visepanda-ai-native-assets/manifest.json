@@ -1,0 +1,19 @@
+{
+  "kind": "vp-ai-native-static-concepts",
+  "date": "2026-09-03",
+  "status": "research-only-not-approved-for-runtime-or-store",
+  "generationMode": "built-in-imagegen",
+  "reference": "brand/ip/guide.png (inspected and attached)",
+  "competitorVisualsAttached": false,
+  "promptRecord": "docs/research/vp-ai-native-visual-prompts-2026-09-03.md",
+  "requestedLogicalCanvas": { "width": 390, "height": 844 },
+  "postGenerationImageEdits": false,
+  "displayOrderRecordedAfterResults": true,
+  "images": [
+    { "displayedNumber": 1, "path": "conversation-plan.png", "width": 853, "height": 1844, "sha256": "7b3844261d5820054d6806d15d5115a96cb61d07169d586fc02826d329b6bfb8" },
+    { "displayedNumber": 2, "path": "plan-assistant-sheet.png", "width": 853, "height": 1844, "sha256": "bfd593ec7e3460092d7758cb6fccf1336593919995d79f6ad5468f2c6bc9fe11" },
+    { "displayedNumber": 3, "path": "journey-workspace-dark.png", "width": 853, "height": 1844, "sha256": "6fc8d4b1fbe7bfde0d6b000f6d1312751c45fa0b222971e9f0befe15d5c2e398" }
+  ],
+  "unverified": ["native interactivity", "motion", "hit targets", "Dynamic Type", "VoiceOver", "runtime brand fidelity", "real travel facts"],
+  "knownLimitations": ["Unverifiable change count in concept 1", "Selection scope and unapproved navigation in concept 2", "Heavy serif styling and weak state text in concept 3"]
+}

@@ -1,0 +1,1019 @@
+{
+  "schemaVersion": "vpj-docs/1",
+  "date": "2026-09-05",
+  "authority": "docs/VISEPANDA-MASTER-PLAN-2026-09-05.md",
+  "files": [
+    {
+      "path": "docs/2026-08-29-vp-v4-launch-readiness-audit.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/VISEPANDA-MASTER-PLAN-2026-09-05.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/acceptance/frontend-release-web-11.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/acceptance/frontend-web-10.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/acceptance/launch-01-developer-experience.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/acceptance/launch-14-observability-preparation.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/acceptance/r1-durable-walking-skeleton.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/acceptance/r2-grounded-text-internal-alpha.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/acceptance/r3-two-city-content-explore-seo.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/acceptance/r4-five-language-multimodal-device.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/acceptance/r5-full-beta-hardening.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/acceptance/release-acceptance-template.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/acceptance/v4-31-parity-audit.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/0001-nextjs-typescript-tailwind-migration.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/0002-visepanda-brand-localization-assets.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0003-chat-canvas-proposal-invariant.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0004-provisional-model-baseline.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0005-data-region-and-retention-boundary.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0006-new-v4-supabase-lineage.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0007-authenticated-closed-beta.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0008-public-web-and-protected-ops.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0009-canonical-facts-and-postgres-hybrid-rag.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0010-two-city-content-pilot.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0011-transport-official-handoff.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0012-modular-multimodal-baseline.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0013-evidence-based-definition-of-done.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0014-actor-credential-and-data-adapter-boundary.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0015-data-class-policy-and-threat-baseline.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0016-supavisor-prepared-statement-policy.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0017-password-authenticated-closed-beta.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0018-independent-frontend-redesign-baseline.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0019-trip-snapshot-rollback-authorization.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0020-unapproved-message-retention-fails-closed.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0021-trip-content-snapshot-parity.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0022-ml-01-ai-sdk-thin-http-baseline.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/adr/ADR-0023-vpj-integrated-native-journey-baseline.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/agents/continuous-afk-execution.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/agents/domain.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/agents/issue-execution-contract.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/agents/issue-tracker.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/agents/prompts/continuous-afk-kickoff.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/agents/triage-labels.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/ai-core-engineering-development-acceptance-report.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/ai-core-integrated-research-report.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/architecture/actor-model.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/architecture/ai-02-vp-final-disposition-matrix.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/architecture/ml-01-ai-sdk-decision.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/architecture/v4-01-demo-parity-registry.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/architecture/v4-01-framework-adoption-matrix.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/archive/2026-09-05/baseline/CONTEXT.md",
+      "status": "archived"
+    },
+    {
+      "path": "docs/archive/2026-09-05/baseline/HANDOFF.md",
+      "status": "archived"
+    },
+    {
+      "path": "docs/archive/2026-09-05/baseline/issue-execution-contract.md",
+      "status": "archived"
+    },
+    {
+      "path": "docs/archive/2026-09-05/baseline/issue-tracker.md",
+      "status": "archived"
+    },
+    {
+      "path": "docs/archive/2026-09-05/baseline/triage-labels.md",
+      "status": "archived"
+    },
+    {
+      "path": "docs/archive/2026-09-05/ios-source-reference/VisePanda/README.md",
+      "status": "archived"
+    },
+    {
+      "path": "docs/archive/2026-09-05/prior-research/VISEPANDA-CLOSED-BETA-OFFER-AND-STOP-LOSS-2026-09-04.md",
+      "status": "archived"
+    },
+    {
+      "path": "docs/archive/2026-09-05/prior-research/VISEPANDA-FOUNDER-CUSTOMER-ACQUISITION-WEEKLY-PLAN-2026-09-04.md",
+      "status": "archived"
+    },
+    {
+      "path": "docs/archive/2026-09-05/prior-research/VISEPANDA-ONE-STOP-JOURNEY-AGENT-RAG-PLAN-2026-09-04.md",
+      "status": "archived"
+    },
+    {
+      "path": "docs/archive/2026-09-05/prior-research/VISEPANDA-VP-AGENT-V2-DESIGN-RESEARCH-2026-09-03.md",
+      "status": "archived"
+    },
+    {
+      "path": "docs/benchmarks/aviation/ai-39-provider-scorecard.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/benchmarks/route-pattern/decision.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/benchmarks/route-pattern/paired-eval-report.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/benchmarks/route-pattern/rights-matrix.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/benchmarks/route-pattern/schema-and-applicability.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/candidate-import-dry-run.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/context-plan.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/copilot-memory-governance.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/cost-guard-c0.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/external-evidence-c0.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/fact-eligibility.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/failure-taxonomy.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/feature-flags.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/grounded-execution-baseline.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/guide-conflict-unavailable.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/guide-import-unavailable.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/human-handoff-unavailable.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/hybrid-retrieval-baseline.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/import-migration-ledger.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/launch-05-message-output-retention.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/launch-07-reliable-turn-worker.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/launch-14-content-free-observability.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/lexical-retrieval-baseline.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/memory-consumer-receipts.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/memory-profile.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/model-gateway.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/model-routing-observability.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/model-version-registry.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/network-unavailable.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/offline-unavailable.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/ops-review-ledger.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/pending-proposal-read.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/plat-conf-00.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/policy-receipts.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/privacy-lifecycle.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/profile-unavailable.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/projection-queue-c0.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/proposal-reject-v1.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/proposal-revision-v1.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/rail-guidance-c0.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/report-ledger-c0.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/ride-assist-unavailable.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/safe-phrase-unavailable.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/today-unavailable.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/tool-gateway.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/tool-surface-unavailable.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/travel-constraints.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/trip-actions.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/trip-place-reference.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/trippatch-golden.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/turn-sse-v1.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/unified-turn-evidence-proposal.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/user-artifact-c0.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/user-data-adapter.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/visa-unavailable.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/weather-c0.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/decisions/decision-register.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/design/frontend-redesign/web-05-visual-directions.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/external-data-chatbot-plan.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/frontend-redesign-issue-plan.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/homepage-redesign.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/knowledge-base/README.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/knowledge-base/claude-plan-disposition.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/knowledge-rag-explore-plan.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/licenses/NOTICE.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/model-layer-plan.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/policy/data-classes.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/policy/threat-model.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/AGENT-KICKOFF.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/ARCHIVE.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/EXECUTION-CONTRACT.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/ISSUE-MIGRATION.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/ISSUES.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/OPERATIONS-AND-RELEASE.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/README.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/VERIFICATION.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-01.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-02.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-03.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-04.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-05.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-06.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-07.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-08.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-09.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-10.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-11.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-12.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-13.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-14.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-15.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-16.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-17.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-18.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-19.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-20.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-21.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-22.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-23.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-24.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-25.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-26.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-27.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-28.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-29.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-30.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-31.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-32.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-33.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-34.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-35.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-36.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-37.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-38.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-39.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-40.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-41.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-42.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-43.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-44.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-45.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-46.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-47.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-48.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-49.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-50.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-51.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-52.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-53.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-54.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-55.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-56.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-57.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-58.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-59.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-60.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-61.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-62.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-63.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-64.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-65.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/program-body.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/pull-request-body.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/research/agent-context-rag-memory-tool-evidence-2026-08-25.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/ai-core-deep-optimization-evidence-2026-08-23.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/ai-core-system-evidence-2026-08-23.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/ai-core-v1.1-independent-audit-2026-08-23.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/external-data-evidence-2026-08-23.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/final-code-reuse-audit-2026-09-05.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/final-ios-product-delivery-2026-09-05.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/final-tracker-commercial-audit-2026-09-05.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/knowledge-rag-explore-evidence-2026-08-23.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/knowledgebase-claude-audit-2026-08-24.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/model-provider-evidence-2026-08-22.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/runbooks/backup-restore.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/frontend-cutover.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/launch-04-auth-guard.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/launch-07-turn-worker.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/launch-14-observability.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/privacy-lifecycle.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/rail-official-recheck.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/v4-31-release-blocked.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-27-visepanda-vi-asset-production.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-ai-13-trip-canvas-proposal-loop.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-ai-16-model-gateway.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-ai-17-routing-observability.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-ai-18-lexical-retrieval.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-ai-19-hybrid-retrieval.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-ai-20-grounded-execution.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-ai-21-r2-acceptance.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-ai-22-policy-receipts.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-ai-23-import-migration.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-ai-24-candidate-import.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-ai-25-ops-review.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-ai-26-projection-worker.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-authless-preview-unblocked-issue-workflow.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-v4-02-context-engineering.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-v4-03-tool-gateway.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-v4-04-constraint-engine.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-visepanda-homepage-redesign.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-28-web-04-asset-rights.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-29-ai-27-explore.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-08-29-vp-v4-closed-beta-launch-execution.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-08-27-visepanda-vi-design.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-08-28-authless-preview-unblocked-issue-workflow-design.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-08-28-visepanda-homepage-redesign-design.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-08-29-ai-27-explore-design.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/vp-v4-agent-rag-memory-tools-context-engineering-report.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/vp-v4-ai-trip-canvas-product-logic-upgrade-report.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/vp-v4-closed-beta-launch-issue-plan.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/vp-v4-closed-beta-launch-plan.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/vp-v4-production-feature-parity-report.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/vp-v4-production-parity-issue-plan.md",
+      "status": "document"
+    }
+  ]
+}

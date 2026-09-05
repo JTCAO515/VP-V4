@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 
 const handoffPath = "docs/handoff.json";
 const operatorActionsPath = "docs/operator-actions.json";
@@ -37,4 +38,7 @@ for (const action of operatorActions.actions) {
   assert.equal(typeof action.nextSafeIssue, "number");
 }
 
-console.log("AI Core documentation baseline passed.");
+if (existsSync("docs/program/2026-09-05/issue-plan.json")) {
+  execFileSync(process.execPath, ["scripts/vpj-program.mjs", "verify"], { stdio: "inherit" });
+}
+console.log("AI Core and VPJ documentation baseline passed.");

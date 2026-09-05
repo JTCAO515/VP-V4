@@ -2,6 +2,10 @@
 
 VP-V4 is a single-context repository.
 
+The active entry is `docs/program/2026-09-05/README.md`, ADR-0023 and the VPJ master report.
+Historical AI/V4/LAUNCH documents and archived interview records are evidence, not a second active
+product scope. Follow the current VPJ execution row and its actual dependencies before implementation.
+
 Before planning or implementation, read:
 
 1. root `CONTEXT.md` and its mandatory reading order;

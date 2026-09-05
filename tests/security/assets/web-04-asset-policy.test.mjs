@@ -21,7 +21,10 @@ test("WEB-04 removes legacy public assets and source-derived runtime presentatio
 
   const layout = readFileSync("app/layout.tsx", "utf8");
   const styles = readFileSync("app/globals.css", "utf8");
-  const landing = readFileSync("components/VisePandaLanding.tsx", "utf8");
+  const landing = readFileSync("components/homepage/ImmersiveHomepage.tsx", "utf8")
+    + readFileSync("components/homepage/Homepage.tsx", "utf8");
+  assert.equal(existsSync("components/VisePandaLanding.tsx"), false);
+  assert.equal(existsSync("docs/archive/2026-09-05/VisePandaLanding.tsx.reference"), true);
   assert.doesNotMatch(layout, /fig|assets\/source/i);
   assert.doesNotMatch(styles, /fig|vp-clover/i);
   assert.doesNotMatch(landing, /vp-clover|BrandClip/);

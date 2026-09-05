@@ -5,8 +5,8 @@ const [command, ...args] = process.argv.slice(2);
 const artifactIssue = process.env.VP_ARTIFACT_ISSUE ?? "AI-07a";
 
 if (!command) throw new Error("Usage: node scripts/record-command.mjs <command> [args...]");
-if (!/^(?:AI-\d{2}[a-z]?|V4-\d{2}|WEB-\d{2}|LAUNCH-\d{2}|GOV-[A-Z0-9]+(?:-[A-Z0-9]+)*)$/.test(artifactIssue)) {
-  throw new Error("VP_ARTIFACT_ISSUE must use an AI, V4, WEB, LAUNCH, or GOV issue identifier.");
+if (!/^(?:AI-\d{2}[a-z]?|V4-\d{2}|WEB-\d{2}|LAUNCH-\d{2}|VPJ-\d{2}|GOV-[A-Z0-9]+(?:-[A-Z0-9]+)*)$/.test(artifactIssue)) {
+  throw new Error("VP_ARTIFACT_ISSUE must use an AI, V4, WEB, LAUNCH, VPJ, or GOV issue identifier.");
 }
 
 const startedAt = new Date().toISOString();

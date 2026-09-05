@@ -54,7 +54,7 @@ test("removes reference-brand copy and unsupported positive claims", () => {
 });
 
 test("keeps project documentation focused on VisePanda", () => {
-  assert.match(documentation, /VisePanda — 来华自由行的 AI 规划与执行工作台/);
+  assert.match(documentation, /VisePanda — 贯穿中国自由行的 AI 旅行助手/);
   assert.match(documentation, /Chatbot/);
   assert.match(documentation, /Trip Canvas/);
   assert.match(documentation, /Today/);

@@ -83,7 +83,7 @@ for (const requiredNotice of ["asset-rights-ledger.json", "sbom.json", "WEB-04-q
   if (!notice.includes(requiredNotice)) fail(`NOTICE omits ${requiredNotice}`);
 }
 
-for (const file of ["app/layout.tsx", "app/globals.css", "components/VisePandaLanding.tsx"]) {
+for (const file of ["app/layout.tsx", "app/globals.css", "components/homepage/ImmersiveHomepage.tsx", "components/homepage/Homepage.tsx"]) {
   const source = readFileSync(file, "utf8");
   if (/fig|assets\/source|vp-clover|BrandClip/i.test(source)) fail(`denylisted runtime reference in ${path.basename(file)}`);
 }

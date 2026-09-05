@@ -1,5 +1,7 @@
 # VisePanda V4 知识库、RAG、Explore 与 Trip Canvas 联动最终规划
 
+> 历史方案／2026-09-05 起退出当前执行入口。产品、分期、价格及任务队列以 [VPJ 总体规划](VISEPANDA-MASTER-PLAN-2026-09-05.md) 和 [VPJ Program](program/2026-09-05/README.md) 为准。下文保留历史证据；有效安全/数据合同继续沿对应ADR适用，不因方案归档而作废。
+
 - 文档版本：v1.0（Codex 第三步最终建议稿）
 - 核验日期：2026-08-23
 - 状态：**提案，待 operator 接受并通过 ADR/合同 Issue 冻结；不代表知识库、RAG、Explore、外部 POI 导入或数据库已经在 VP-V4 上线**

@@ -1,5 +1,7 @@
 # VisePanda AI Core 软件工程开发、交付与验收报告
 
+> 历史方案／2026-09-05 起退出当前执行入口。产品、分期、价格及任务队列以 [VPJ 总体规划](VISEPANDA-MASTER-PLAN-2026-09-05.md) 和 [VPJ Program](program/2026-09-05/README.md) 为准。下文保留历史证据；有效安全/数据合同继续沿对应ADR适用，不因方案归档而作废。
+
 - 文档版本：v1.1（第五轮深模块与验收优化）
 - 日期：2026-08-23
 - 状态：**System 级工程基线提案；待 operator 接受、ADR 与可执行 Issues 冻结**
