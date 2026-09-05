@@ -57,3 +57,17 @@ provider超时/usage丢失；worker崩溃/lease/poison queue；Trip确认结果�
 ## 8. 现金与容量
 
 12周损失预算由JT在33/46登记。80%冻结新增承诺，100%停止新增支出；未填不允许agent采购，允许已有授权范围内研究/本地准备。Pass成本在15%和30%平台费情景下都复算，税费、退款和人工另列。
+
+## 9. 操作者实际开始的步骤
+
+Staging：登录现有Supabase Dashboard，在Project Settings核对项目身份和环境标签；由VPJ-02按迁移manifest执行受控验证。记录项目用途、migration head、三类身份结果和错误，连接值只存secret配置。目标环境不符时停止，回到项目列表核对，不自动另建或清空。
+
+Apple分发：在Developer/App Store Connect确认Account Holder权限、App ID/BundleID、团队、签名和App记录；VPJ-56用本地Xcode完成Archive与Validate/Upload，安装内部TestFlight构建。看到构建可安装才完成这一步，AppStore正式审核仍是44；上传失败先看签名、SDK版本和BundleID是否一致。
+
+商品：在App Store Connect对应App下配置Non-Renewing Subscription，确认30天规则、中英说明、参考价对应地区商品和税务/收款协议；VPJ-34只先用sandbox核交易、恢复和到期。不要把non-consumable选成永久权益，不向访谈用户索取私人转账；正式生效/退款以verified transaction账本核对。
+
+地图/酒店：联系官方开放平台或联盟账户支持，写明‘海外行前+中国境内在途+原生App/Web+语言+数据字段+缓存/展示/模型用途’；保存获准范围和有效期。真机验证落地参数后，agent才能配置对应白名单模板；合同没有的字段不从网页补抓。
+
+地区与资质：VPJ-03/44按经营主体、用户所在地区、数据路径和商店分发地区核个人信息/跨境处理、APP备案、生成式AI服务、UGC和旅游信息/代理责任的具体适用性。记录‘适用/不适用/待核’及来源/责任人，不能因使用中国LLM或只外跳就推定全部豁免。参考[网信办生成式AI暂行办法](https://www.cac.gov.cn/2023-07/13/c_1690898327029107.htm)、[工信部门APP备案工作说明](https://fjca.miit.gov.cn/zwgk/tzgg/art/2023/art_a0a63f500cb1430bb61279fc462c948e.html)。这项是实际法域确认工作，不是本研究已经给出的法律结论。
+
+所有操作结束后在自己的Issue附脱敏结果、失败/回滚、下一个可执行动作；其他agent由执行合同接手，不依赖聊天中口头‘我配好了’。

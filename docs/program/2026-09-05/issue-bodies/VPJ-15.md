@@ -10,7 +10,7 @@
 
 ## 当前基线与开发入口
 
-基线PR：待发布；此状态为开发阻塞。合并前不要从旧main实施新合同。
+基线PR：#253。合并前不要从旧main实施新合同。
 主报告：[完整统筹方案](https://github.com/JTCAO515/VP-V4/blob/codex/vp-final-program-20260905/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
 必须阅读：[本任务执行合同](https://github.com/JTCAO515/VP-V4/blob/codex/vp-final-program-20260905/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-15) 与 [领域接口](https://github.com/JTCAO515/VP-V4/blob/codex/vp-final-program-20260905/docs/program/2026-09-05/INTERFACES.md)。
 

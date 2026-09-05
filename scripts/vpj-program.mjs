@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { execFileSync } from 'node:child_process';
+import { execFile, execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
@@ -172,9 +172,9 @@ function publish(){
   render();
 }
 
-function closeOld(){
+async function closeOld(){
   validate();assert.ok(plan.tasks.every(t=>t.number&&t.databaseId),'new tasks must exist before closing old');
-  verifyNewRemote();
+  await verifyNewRemote();
   const snapshot=json(plan.sourceSnapshot);const results=[];
   const old=[...snapshot.issues].sort((a,b)=>Number([2,149].includes(a.number))-Number([2,149].includes(b.number)));
   for(const item of old){
@@ -191,14 +191,25 @@ function closeOld(){
   }
 }
 
-function verifyNewRemote(){
+async function verifyNewRemote(){
   validate();const existing=allIssues();
-  for(const t of plan.tasks){const i=existing.find(x=>x.number===t.number);assert.equal(i?.state,'open',t.id);assert.ok(i.title.startsWith(`[${t.id}] `));assert.equal(i.id,t.databaseId);assert.equal(i.body,body(t),`${t.id} body drift`);const deps=api(`repos/${plan.repo}/issues/${t.number}/dependencies/blocked_by`).map(x=>x.number).sort((a,b)=>a-b);assert.deepEqual(deps,t.blockedBy.map(number).sort((a,b)=>a-b),`${t.id} native deps`);const parent=api(`repos/${plan.repo}/issues/${t.number}/parent`);assert.equal(parent.number,plan.parentNumber);if(Number(t.id.slice(4))%10===0)console.log(`verified ${t.id}`);}
+  for(let start=0;start<plan.tasks.length;start+=8){
+    const results=await Promise.allSettled(plan.tasks.slice(start,start+8).map(async t=>{
+      const i=existing.find(x=>x.number===t.number);assert.equal(i?.state,'open',t.id);assert.ok(i.title.startsWith(`[${t.id}] `));assert.equal(i.id,t.databaseId);assert.equal(i.body,body(t),`${t.id} body drift`);
+      assert.ok(i.labels.some(l=>l.name==='status:blocked'),`${t.id} must remain blocked before baseline merge`);
+      const [deps,parent]=await Promise.all([readApi(`repos/${plan.repo}/issues/${t.number}/dependencies/blocked_by`),readApi(`repos/${plan.repo}/issues/${t.number}/parent`)]);
+      assert.deepEqual(deps.map(x=>x.number).sort((a,b)=>a-b),t.blockedBy.map(number).sort((a,b)=>a-b),`${t.id} native deps`);assert.equal(parent.number,plan.parentNumber);
+    }));
+    const failures=results.filter(r=>r.status==='rejected');assert.equal(failures.length,0,failures.map(r=>String(r.reason)).join('\n'));
+    console.log(`verified new tasks ${Math.min(start+8,plan.tasks.length)}/${plan.tasks.length}`);
+  }
   return existing;
 }
 
-function verifyRemote(){
-  const existing=verifyNewRemote();
+function readApi(endpoint){return new Promise((resolve,reject)=>execFile('gh',['api',endpoint],{encoding:'utf8',maxBuffer:32*1024*1024},(error,stdout)=>{if(error)return reject(error);try{resolve(JSON.parse(stdout));}catch(e){reject(e);}}));}
+
+async function verifyRemote(){
+  const existing=await verifyNewRemote();
   for(const n of Object.keys(plan.oldIssueSuccessors)){const i=existing.find(x=>x.number===Number(n));assert.equal(i?.state,'closed',n);assert.equal(i.state_reason,'not_planned',n);}
   const result={at:new Date().toISOString(),repo:plan.repo,parent:plan.parentNumber,newTasks:plan.tasks.length,closedOld:Object.keys(plan.oldIssueSuccessors).length,nativeDependencies:plan.tasks.reduce((n,t)=>n+t.blockedBy.length,0),verified:true};
   saveJson(`${dir}/tracker-verification.json`,result);console.log(JSON.stringify(result));
@@ -230,7 +241,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(root,'scri
   else if(cmd==='publish')publish();
   else if(cmd==='sync-bodies')syncBodies();
   else if(cmd==='sync-selected')syncSelected();
-  else if(cmd==='close-old')closeOld();
-  else if(cmd==='verify-remote')verifyRemote();
+  else if(cmd==='close-old')await closeOld();
+  else if(cmd==='verify-remote')await verifyRemote();
   else throw new Error('Use verify, render, publish, close-old or verify-remote. Mutating commands require explicit task authorization.');
 }

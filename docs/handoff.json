@@ -14,7 +14,7 @@
     "issue": 187,
     "manifest": "docs/program/2026-09-05/issue-plan.json",
     "baselineBranch": "codex/vp-final-program-20260905",
-    "baselinePr": null,
+    "baselinePr": 253,
     "status": "planning-pr-pending",
     "oldIssuesSnapshot": "docs/program/2026-09-05/issue-snapshot-before.json",
     "oldRelationsSnapshot": "docs/program/2026-09-05/issue-relations-before.json"
