@@ -22,10 +22,11 @@ Issues for this repository live in [JTCAO515/VP-V4](https://github.com/JTCAO515/
 
 External PRs are not a triage request surface. Collaborator PRs follow normal review and are not treated as incoming feature requests.
 
-## Direct queue supersession
+## VPJ dependency-aware scheduling
 
-Defined Issues are directly schedulable; an open Issue, textual `Blocked by` reference, or GitHub
-dependency does not prohibit development. `status:blocked` reports unavailable runtime, provider,
-legal, or operator state only. It does not prohibit development, testing, automated review, or merge.
+VPJ-00 #187 replaces all old open Issues by explicit operator authority. Native dependencies and
+the baseline PR gate implementation. Only status:ready plus ready-for-agent, a valid execution row,
+completed blockers and no ownership collision permit automated pickup. Later expand tasks also
+require their activationEvidence. Full bodies are generated from issue-plan.json, never from titles.
 `UNAUTHENTICATED`, `SAFETY_BLOCKED`, and `DATA_POLICY_BLOCKED` remain fail-closed runtime outcomes;
 they never authorize a guest actor, service credential, or bypass.

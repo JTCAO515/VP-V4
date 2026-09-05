@@ -1,5 +1,11 @@
 # Issue execution contract
 
+> Active as of 2026-09-05: VPJ-00 #187. Every new VPJ task must use its row in
+> [the VPJ execution contract](../program/2026-09-05/EXECUTION-CONTRACT.md), generated from
+> `issue-plan.json`. The older AI/V4/LAUNCH rows below are historical references only;
+> they do not authorize current work. Their exact prior version is archived under
+> `docs/archive/2026-09-05/baseline/issue-execution-contract.md`.
+
 `docs/agents/issue-tracker.md` says what an Issue body must contain. This file supplies the four
 execution parameters that Issue bodies do not carry: mandatory reading order, file ownership,
 runnable commands, and evidence artifacts. An Issue body links here; this file is the authority.
@@ -13,11 +19,11 @@ Read in this order before planning or implementing any AI Core Issue:
 
 1. `docs/handoff.json` — machine-readable current state, blockers, operator actions.
 2. `CONTEXT.md` and `AGENTS.md`.
-3. `docs/ai-core-integrated-research-report.md` — product and system adjudication.
-4. `docs/ai-core-engineering-development-acceptance-report.md` — WBS, interfaces, acceptance.
+3. `docs/VISEPANDA-MASTER-PLAN-2026-09-05.md` — active product and delivery direction.
+4. `docs/program/2026-09-05/INTERFACES.md` and `EXECUTION-CONTRACT.md` — current contracts and tasks.
 5. The current GitHub Issue and every Issue it is blocked by.
 6. Accepted ADRs under `docs/adr/` that the Issue names.
-7. This file's row for the Issue.
+7. The generated VPJ execution row for the Issue; old rows below are not active.
 8. The owning module's frozen contract and tests, once they exist.
 9. `git status`, current branch, and `origin/main`.
 
@@ -42,7 +48,7 @@ The domain plans (`docs/model-layer-plan.md`, `docs/external-data-chatbot-plan.m
 | `pnpm evals` | exists (scaffold only) | AI-07a scaffold, AI-42 corpus |
 | `pnpm db:verify` | exists (scaffold only) | AI-07a scaffold, AI-08 implementation |
 | `pnpm docs:check` | exists | AI-07a |
-| `pnpm check:assets` | planned | WEB-04 #138 |
+| `pnpm check:assets` | exists | WEB-04 #138 |
 
 A planned command may not be silently skipped. Until AI-07a lands, an Issue records
 `planned — not runnable at <sha>` for that row and runs `pnpm check`.
@@ -142,7 +148,7 @@ and any file owned by another Issue's row.
 | #43 AI-41 | Release gate R5 / beta | `docs/runbooks/**, docs/acceptance/r5-*.md` | `pnpm check`; `pnpm check` plus every suite this Issue touches | L1-L7 evidence ledger, runbooks | all RL-01..RL-09 |
 
 | #46 AI-42 | Quality / Evals | `evals/**, tests/fixtures/red-lines/**, artifacts/AI-42/**, docs/agents/issue-execution-contract.md` | `pnpm check`; `pnpm evals`; `pnpm docs:check` | qrels version list, stratified report, suite registry | RL-01…RL-09 (registry owner) |
-| #47 AI-43 | ModelGateway / Transport | `lib/server/model-gateway/spike/**, tests/contract/model-gateway/ml-01-spike.test.ts, docs/adr/ADR-0019-ml-01-ai-sdk-thin-http-baseline.md, docs/architecture/ml-01-ai-sdk-decision.md, artifacts/AI-43/**, docs/agents/issue-execution-contract.md` | `pnpm check`; `pnpm test:contract`; `pnpm docs:check` | five-condition unproven table, bundle/latency unrun disclosure, ADR | RL-07 |
+| #47 AI-43 | ModelGateway / Transport | `lib/server/model-gateway/spike/**, tests/contract/model-gateway/ml-01-spike.test.ts, docs/adr/ADR-0022-ml-01-ai-sdk-thin-http-baseline.md, docs/architecture/ml-01-ai-sdk-decision.md, artifacts/AI-43/**, docs/agents/issue-execution-contract.md` | `pnpm check`; `pnpm test:contract`; `pnpm docs:check` | five-condition unproven table, bundle/latency unrun disclosure, ADR | RL-07 |
 | #48 AI-44 | Domain Contracts / UX | `lib/server/contracts/errors/**, lib/i18n.ts, tests/contract/errors/**, docs/contracts/failure-taxonomy.md` | `pnpm check`; `pnpm test:contract`; `pnpm docs:check` | taxonomy table, five-locale copy snapshots, mapping tests | RL-04 |
 | #49 AI-45 | Release / Platform | `package.json, lib/flags/**, scripts/check-flags.mjs, tests/unit/flags/**, docs/contracts/feature-flags.md, docs/agents/issue-execution-contract.md, artifacts/AI-45/unrun.md` | `pnpm check`; `pnpm test:unit`; `pnpm check:flags`; `pnpm docs:check`; `git diff --check` | flag registry, illegal-combination cases | — |
 | #50 AI-46 | Data Platform | `scripts/db/**, supabase/**, docs/contracts/plat-conf-00.md, tests/integration/db/**` | `pnpm check`; `pnpm db:verify`; `pnpm test:integration` | three-path probe logs, frozen configuration table | RL-02 |
@@ -239,13 +245,13 @@ Project, and only an operator may perform the external account/configuration act
 - Merging proves engineering acceptance only. Product effect is reviewed in the Issue's stated
   observation window.
 
-## 7. Direct queue and continuous scheduler
+## 7. Dependency-aware continuous scheduler
 
-Defined Issues are directly schedulable. Do not defer implementation solely because another Issue is
-open. `status:blocked` reports an unavailable runtime, provider, legal, or operator state; it does
-not prohibit development, testing, automated review, or merge of independently scoped work.
-Dependency references are planning context only. Runtime authorization, data-policy, and safety
-guards remain fail-closed.
+Native dependencies and the baseline PR gate implementation. Only status:ready + ready-for-agent,
+completed blockers, an active execution row and no path conflict permit pickup. Runtime authorization,
+data-policy and safety guards remain fail-closed. Explicitly scoped fixture preparation never
+substitutes for an upstream implementation or runtime acceptance. Expand tasks also require
+activationEvidence and do not become ready solely because their dependencies close.
 
 The one-Issue/branch/PR rule scopes a work unit; it does not require the whole session to pause after
 that work unit. A session launched in Continuous AFK mode follows

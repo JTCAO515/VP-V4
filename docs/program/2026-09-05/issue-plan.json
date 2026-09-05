@@ -1,0 +1,4799 @@
+{
+  "schemaVersion": "vpj-plan/1",
+  "date": "2026-09-05",
+  "repo": "JTCAO515/VP-V4",
+  "parentNumber": 187,
+  "baselineBranch": "codex/vp-final-program-20260905",
+  "baselinePr": null,
+  "tasks": [
+    {
+      "id": "VPJ-01",
+      "title": "原生 iOS 五入口、中英文与可访问的首个 Trip 页面",
+      "blockedBy": [],
+      "allowedPaths": [
+        "ios/**",
+        "lib/i18n.ts",
+        "tests/**/locale/**"
+      ],
+      "acceptance": [
+        "审计并移植本地 IOS-01 壳的允许行为到 main，保留原始未跟踪文件；原生 SwiftUI，默认 Ask，Trip/Explore/Ask/Tools/Profile。",
+        "一个真实屏幕在 zh/en、Dynamic Type、VoiceOver、Reduce Motion 下可用；最低 iOS17，上传工具链满足当前 Apple 要求。",
+        "语言发布名单变为 zh/en，es/ru/ar 不向新用户承诺；现有 legacy locale payload兼容策略和五语回归迁移可审查。",
+        "首个Ask/Trip屏幕冻结语义token/字体/通用状态与sheet手势，不把所有视觉设计留到整链QA。"
+      ],
+      "phase": "R1",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [
+        135
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 188,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-01.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-01/verification.md",
+        "artifacts/VPJ-01/unrun.md",
+        "artifacts/VPJ-01/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355304827,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/188"
+    },
+    {
+      "id": "VPJ-02",
+      "title": "现有 Staging 的真实身份、迁移与 owner 隔离验证",
+      "blockedBy": [],
+      "allowedPaths": [
+        "scripts/db/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-02/**"
+      ],
+      "acceptance": [
+        "确认目标确为无真实用户的现有 Staging，记录24条迁移实际状态和差异，不重建历史。",
+        "真实 owner/other-user/anon 三类读取与写入验证；正常数据库、pooler、worker路径分别记录。",
+        "输出脱敏配置结果与可执行下一步；失败不伪装通过，不创建Production。"
+      ],
+      "phase": "R1",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "operational",
+      "oldIssues": [
+        152,
+        154,
+        153
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 189,
+      "effortDays": 2,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-02.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-02/verification.md",
+        "artifacts/VPJ-02/unrun.md",
+        "artifacts/VPJ-02/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355304906,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/189"
+    },
+    {
+      "id": "VPJ-03",
+      "title": "用户对话、材料、模型地区与人工访问的数据政策",
+      "blockedBy": [],
+      "allowedPaths": [
+        "docs/adr/**",
+        "docs/policy/**",
+        "docs/runbooks/**",
+        "docs/operator-actions.json"
+      ],
+      "acceptance": [
+        "清楚给出中英告知、目的、保留期限、处理地域、第三方AI接收方、撤回、删除/备份和客服访问矩阵。",
+        "由JT/相应责任人填写实际经营主体、期限和合同；Owner角色不自动授予跨用户普通读取。",
+        "列出设备端/服务端材料两路径和不授权时可用功能；不要求用户提交密码、验证码、卡号。"
+      ],
+      "phase": "R0",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "decision",
+      "oldIssues": [
+        164
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 190,
+      "effortDays": 3,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-03.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-03/verification.md",
+        "artifacts/VPJ-03/unrun.md",
+        "artifacts/VPJ-03/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355305039,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/190"
+    },
+    {
+      "id": "VPJ-04",
+      "title": "原生登录、手机登录顶替与 Web 会话并存",
+      "blockedBy": [
+        "VPJ-01",
+        "VPJ-02"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/identity/**",
+        "app/api/auth/**",
+        "supabase/migrations/**",
+        "tests/**/identity/**"
+      ],
+      "acceptance": [
+        "iOS bearer/session路径可登录/刷新/退出，Web cookie路径继续使用原CSRF/Origin保护。",
+        "第二手机登录使第一手机会话失效，不踢Web；Keychain/本地缓存/推送绑定正确账号。",
+        "真实iOS→API→RLS owner/other-user及token过期验证，不能以放开Origin实现原生支持。"
+      ],
+      "phase": "R1",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [
+        154,
+        135
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 191,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "pnpm test:e2e",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-04.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-04/verification.md",
+        "artifacts/VPJ-04/unrun.md",
+        "artifacts/VPJ-04/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355305129,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/191"
+    },
+    {
+      "id": "VPJ-05",
+      "title": "同一 Trip 在 iOS 与精简 Web 创建、编辑和重载",
+      "blockedBy": [
+        "VPJ-04"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "app/api/trips/**",
+        "components/canvas/**",
+        "lib/server/trip/**",
+        "tests/**/trip/**",
+        "supabase/migrations/**",
+        "lib/server/identity/**",
+        "components/trips/**",
+        "components/today/**"
+      ],
+      "acceptance": [
+        "复用现有Day/Item与snapshot/CAS；两端同一Trip新增/修改后重载一致。",
+        "草稿、confirmed版本、用户硬锁和外部订单状态可分辨，冲突提示保留用户编辑。",
+        "改变确认计划沿现有Proposal/Confirm/Patch，不创建第二套Trip数据库。"
+      ],
+      "phase": "R1",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [
+        153
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 192,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "pnpm test:e2e",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-05.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-05/verification.md",
+        "artifacts/VPJ-05/unrun.md",
+        "artifacts/VPJ-05/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355305204,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/192"
+    },
+    {
+      "id": "VPJ-06",
+      "title": "Qwen、GLM、DeepSeek 的真实调用与质量成本对照",
+      "blockedBy": [
+        "VPJ-03"
+      ],
+      "allowedPaths": [
+        "lib/server/model-gateway/**",
+        "evals/**",
+        "tests/**/model-gateway/**",
+        "docs/benchmarks/**"
+      ],
+      "acceptance": [
+        "每家按实际地域/账户记录准确model ID、结构输出、tool call、usage、timeout和取消，不假定OpenAI兼容即一致。",
+        "用相同中英旅行任务比较质量、约束、延迟和完整计费；默认一个主provider与最多一条已授权fallback。",
+        "输出主模型/强模型选择和价格版本，所有日志无正文/秘密；缺密钥只报operator block，不写假结果。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [
+        156
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 193,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm evals"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-06.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-06/verification.md",
+        "artifacts/VPJ-06/unrun.md",
+        "artifacts/VPJ-06/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "databaseId": 5355305293,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/193"
+    },
+    {
+      "id": "VPJ-07",
+      "title": "真实 Ask 得到可恢复的最终回答",
+      "blockedBy": [
+        "VPJ-04",
+        "VPJ-05",
+        "VPJ-06",
+        "VPJ-59"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "app/api/chat/**",
+        "lib/server/turn/**",
+        "lib/server/jobs/**",
+        "supabase/migrations/**",
+        "tests/**/turn/**"
+      ],
+      "acceptance": [
+        "仅完成一个文本请求的持久input→worker→provider→最终回答→原生读取纵切；流式/多模态另单。",
+        "answered/partial/clarification/blocked/technical_failure各有中英用户结果；技术失败不计成功。",
+        "taskId与用户扣次幂等，lease expiry/worker crash/重复投递/cancel race/隔离和terminal-once可测；供应商attempt可能重复计费，逐次记录而非承诺费用绝不重复。",
+        "第三方AI许可前无个人数据外发，fallback接收方重新验scope；拒绝许可保留手动Trip路径。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [
+        157,
+        156
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 195,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "pnpm test:e2e",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-07.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-07/verification.md",
+        "artifacts/VPJ-07/unrun.md",
+        "artifacts/VPJ-07/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355305476,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/195"
+    },
+    {
+      "id": "VPJ-08",
+      "title": "流式回答在断网、后台和跨端重连后接续",
+      "blockedBy": [
+        "VPJ-07"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "app/api/chat/**",
+        "lib/server/turn/**",
+        "lib/server/jobs/**",
+        "tests/**/turn/**"
+      ],
+      "acceptance": [
+        "SSE/事件协议提供稳定eventId/cursor；一次已验结构卡以原子事件出现。",
+        "断网重连、App后台、取消、服务重启不丢最终回答、不双扣Ask、不重复Trip提交。",
+        "跨账号旧事件不可回放；流式tail usage缺失进入待核账。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [
+        158
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 196,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:e2e",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-08.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-08/verification.md",
+        "artifacts/VPJ-08/unrun.md",
+        "artifacts/VPJ-08/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355305555,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/196"
+    },
+    {
+      "id": "VPJ-09",
+      "title": "从模糊想法得到可确认的多日行程",
+      "blockedBy": [
+        "VPJ-05",
+        "VPJ-07",
+        "VPJ-08"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/turn/**",
+        "lib/server/constraints/**",
+        "lib/server/trip/**",
+        "tests/**/planning/**",
+        "evals/**"
+      ],
+      "acceptance": [
+        "无精确日期/订单也可先出方向和相对日草稿；日期预算未知明确且追问可跳过。",
+        "两种真正有取舍的方案→日程对象→diff→确认→两端重载；已有Trip不被全量覆盖。",
+        "时间、预算、固定项由确定性校验；缺实时依据标unknown不把想象时刻当可行。",
+        "本单仅相对日方向/用户提供地点草稿；真实地点与grounded计划由VPJ-65补齐，不能把未解析地点当可执行。",
+        "Chat→Plan过渡、键盘、diff和返回锚点随此功能验收。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [
+        162
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 197,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm evals",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-09.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-09/verification.md",
+        "artifacts/VPJ-09/unrun.md",
+        "artifacts/VPJ-09/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355305636,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/197"
+    },
+    {
+      "id": "VPJ-10",
+      "title": "选中一天或项目后与 VP 局部改稿",
+      "blockedBy": [
+        "VPJ-09"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "components/canvas/**",
+        "lib/server/trip/**",
+        "lib/server/constraints/**",
+        "tests/**/planning/**"
+      ],
+      "acceptance": [
+        "选中范围→Ask→局部候选→影响/diff→确认→回到原位置；未选对象保持不动。",
+        "用户可直接移日/排序/改时，手动编辑与硬锁区别明确。",
+        "并发更新旧proposal不能提交；撤销Trip修改不能伪装取消外部订单。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 198,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:e2e",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-10.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-10/verification.md",
+        "artifacts/VPJ-10/unrun.md",
+        "artifacts/VPJ-10/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355305730,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/198"
+    },
+    {
+      "id": "VPJ-11",
+      "title": "Trip 连续记忆与用户可纠正的偏好",
+      "blockedBy": [
+        "VPJ-03",
+        "VPJ-05",
+        "VPJ-07"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/memory/**",
+        "lib/server/context/**",
+        "supabase/migrations/**",
+        "tests/**/memory/**",
+        "app/api/memory/**",
+        "lib/server/identity/**"
+      ],
+      "acceptance": [
+        "当前Trip事实、working context、显式跨Trip偏好分别管理；推断预算先只用于当前Trip。",
+        "纠正/本次不用/忘记后，下一轮上下文和待处理工作不复活旧记录。",
+        "同意、来源、scope、版本和memory-use依据可追；Free同样保留当前Trip安全约束和纠错权。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 199,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "pnpm test:e2e",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-11.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-11/verification.md",
+        "artifacts/VPJ-11/unrun.md",
+        "artifacts/VPJ-11/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355305823,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/199"
+    },
+    {
+      "id": "VPJ-12",
+      "title": "单张旅行截图导入、校正与加入 Trip",
+      "blockedBy": [
+        "VPJ-01",
+        "VPJ-03",
+        "VPJ-04",
+        "VPJ-07",
+        "VPJ-60"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/artifacts/**",
+        "lib/server/media/**",
+        "app/api/artifacts/**",
+        "supabase/migrations/**",
+        "tests/**/artifacts/**"
+      ],
+      "acceptance": [
+        "只做Photo Picker单张旅行截图→私有收件箱→受控解析→关键日期金额原文定位→用户确认；Share Extension/多页文件由VPJ-55承接。",
+        "不给全相册/邮箱读取权限；未批准外发时使用许可内本地/人工录入路径。",
+        "重复导入、解析失败、取消、TTL、删除、跨账号隔离可测；OCR成功不是供应商已确认。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 201,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "pnpm test:e2e",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-12.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-12/verification.md",
+        "artifacts/VPJ-12/unrun.md",
+        "artifacts/VPJ-12/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355305994,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/201"
+    },
+    {
+      "id": "VPJ-13",
+      "title": "首访与回访的三种入口获得首个成果",
+      "blockedBy": [
+        "VPJ-09",
+        "VPJ-11",
+        "VPJ-12",
+        "VPJ-62"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "tests/**/onboarding/**",
+        "docs/product/**"
+      ],
+      "acceptance": [
+        "新想法、已有材料、已在途均可开始；不强制先创建完整计划或填长表。",
+        "回访显示当前Trip/上次决定/下一步，用户可跳过问题；首值来自真实计划对象。",
+        "记录first_value与拒绝原因分开；大字/键盘/无权限/配额用尽有路径。",
+        "继承同意范围内事件schema；first_value/activated/outcome_declined不混计。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 203,
+      "effortDays": 3,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-13.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-13/verification.md",
+        "artifacts/VPJ-13/unrun.md",
+        "artifacts/VPJ-13/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355306163,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/203"
+    },
+    {
+      "id": "VPJ-14",
+      "title": "受保护 Ops 登录与一条候选内容工作流",
+      "blockedBy": [
+        "VPJ-02",
+        "VPJ-03"
+      ],
+      "allowedPaths": [
+        "apps/ops/**",
+        "lib/server/knowledge/review/**",
+        "lib/server/identity/**",
+        "supabase/migrations/**",
+        "tests/**/ops/**"
+      ],
+      "acceptance": [
+        "先交付独立受保护Ops身份→提交一个text候选→异人审查→审计记录纵切；来源全生命周期由15/17承接。",
+        "作者不能自审；运营无普通用户全库读取；生产内容发布需许可和review资格。",
+        "同一操作事务记录审计，失败回滚；无service key进入Ops浏览器。"
+      ],
+      "phase": "R3",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 204,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-14.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-14/verification.md",
+        "artifacts/VPJ-14/unrun.md",
+        "artifacts/VPJ-14/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "databaseId": 5355306236,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/204"
+    },
+    {
+      "id": "VPJ-15",
+      "title": "首批旅程内容从来源登记到已审核可用",
+      "blockedBy": [
+        "VPJ-14"
+      ],
+      "allowedPaths": [
+        "apps/ops/**",
+        "lib/server/knowledge/**",
+        "supabase/migrations/**",
+        "docs/knowledge-base/**",
+        "tests/**/knowledge/**"
+      ],
+      "acceptance": [
+        "为Supported Journey Matrix选10–20条原子事实/流程，登记许可、locator、适用范围、版本与审者。",
+        "中英表达共享语言中立assertion；candidate/reviewed/published/eligible不可混同。",
+        "运营能提交/审查/撤销并在产品读到结果；没有内容授权则阻塞发布，不批量造810条。"
+      ],
+      "phase": "R3",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [
+        168
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 205,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-15.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-15/verification.md",
+        "artifacts/VPJ-15/unrun.md",
+        "artifacts/VPJ-15/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "databaseId": 5355306347,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/205"
+    },
+    {
+      "id": "VPJ-16",
+      "title": "有依据的回答、诚实部分答案与知识缺口",
+      "blockedBy": [
+        "VPJ-07",
+        "VPJ-15"
+      ],
+      "allowedPaths": [
+        "lib/server/knowledge/**",
+        "lib/server/turn/**",
+        "ios/**",
+        "components/chat/**",
+        "tests/**/knowledge/**",
+        "evals/**"
+      ],
+      "acceptance": [
+        "结构化/完整短文baseline→claim coverage→中英回答/卡片；权限时效范围预过滤。",
+        "required/background/coverage/conflicts并存，同一fact多证据可用，no-answer不被相关度掩盖。",
+        "真正knowledge gap与provider/policy/user-input/capability问题分流；不自动承诺人工。"
+      ],
+      "phase": "R3",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 206,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:e2e",
+        "pnpm evals",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-16.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-16/verification.md",
+        "artifacts/VPJ-16/unrun.md",
+        "artifacts/VPJ-16/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355306450,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/206"
+    },
+    {
+      "id": "VPJ-17",
+      "title": "来源更新后安全重验相关知识与 Trip",
+      "blockedBy": [
+        "VPJ-05",
+        "VPJ-14",
+        "VPJ-16"
+      ],
+      "allowedPaths": [
+        "lib/server/knowledge/report/**",
+        "lib/server/jobs/**",
+        "lib/server/trip/**",
+        "apps/ops/**",
+        "supabase/migrations/**",
+        "tests/**/takedown/**"
+      ],
+      "acceptance": [
+        "SourceRevision→影响候选→独立复核→outbox→索引/投影ack可重试；不是仅返回cascade意图。",
+        "TripItemSupport绑定claim版本，旧证据失效不删除用户已确认意图。",
+        "404/页面样式变动不当政策反转；撤权立即停新检索/外发，保留允许的审计。"
+      ],
+      "phase": "R3",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 207,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-17.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-17/verification.md",
+        "artifacts/VPJ-17/unrun.md",
+        "artifacts/VPJ-17/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "databaseId": 5355306536,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/207"
+    },
+    {
+      "id": "VPJ-18",
+      "title": "高德、百度、腾讯的真实使用地域与采购比较",
+      "blockedBy": [
+        "VPJ-03"
+      ],
+      "allowedPaths": [
+        "docs/benchmarks/maps/**",
+        "docs/runbooks/**",
+        "docs/operator-actions.json"
+      ],
+      "acceptance": [
+        "对海外行前+境内在途、英文检索、中文POI、入口/步行/路线矩阵、SDK UI和授权逐项比较。",
+        "取得实际报价/配额/缓存与二次展示许可，不将公开免费量视为商用合同。",
+        "选择一个主地图并列回滚/无地图模式；第二家只在效果/权利证明后加入。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "decision",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 208,
+      "effortDays": 3,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-18.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-18/verification.md",
+        "artifacts/VPJ-18/unrun.md",
+        "artifacts/VPJ-18/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355306606,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/208"
+    },
+    {
+      "id": "VPJ-19",
+      "title": "地点消歧、地图展示与路线出口",
+      "blockedBy": [
+        "VPJ-05",
+        "VPJ-18"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/external-evidence/**",
+        "lib/server/explore/**",
+        "app/api/places/**",
+        "tests/**/places/**"
+      ],
+      "acceptance": [
+        "中文/英文/拼音同一canonical实体；providerID和内部ID分开，城市同名需要消歧。",
+        "GCJ/WGS等坐标转换显式且不双转，地图/列表同选中对象；不从向量分数猜入口。",
+        "当前位置拒权/无网时可用中文地址和缓存；路线报价只按已授权观察时效呈现。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 209,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:e2e",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-19.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-19/verification.md",
+        "artifacts/VPJ-19/unrun.md",
+        "artifacts/VPJ-19/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355306690,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/209"
+    },
+    {
+      "id": "VPJ-20",
+      "title": "Explore 浏览内容并保存、问 VP、加入 Trip",
+      "blockedBy": [
+        "VPJ-09",
+        "VPJ-15",
+        "VPJ-19"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "app/explore/**",
+        "components/explore/**",
+        "lib/server/explore/**",
+        "tests/**/explore/**"
+      ],
+      "acceptance": [
+        "中英官方/编辑内容可主动浏览、搜索和收藏；说明覆盖与来源。",
+        "Save/Ask/Add使用同一实体ID，Add走Proposal/Confirm；地点没找到可发起消歧/研究。",
+        "无内容、已下架、过期图片/许可、分页/弱网状态可用，不用静态假数据冒充全国。"
+      ],
+      "phase": "R3",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [
+        168
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 210,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:e2e",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-20.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-20/verification.md",
+        "artifacts/VPJ-20/unrun.md",
+        "artifacts/VPJ-20/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355306785,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/210"
+    },
+    {
+      "id": "VPJ-21",
+      "title": "准备检查把关键缺口变成可做的下一步",
+      "blockedBy": [
+        "VPJ-10",
+        "VPJ-16",
+        "VPJ-19"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/readiness/**",
+        "lib/server/trip/**",
+        "tests/**/readiness/**"
+      ],
+      "acceptance": [
+        "对首批明确场景检查网络/支付/入场/地址/交通，分knowledgeAvailability/userReadiness/actionTiming。",
+        "日期从相对变精确时重核相关证据；建议不改用户计划，未知不当通过。",
+        "每个缺口一项可操作下一步与依据/适用范围；非适用项目不制造焦虑。"
+      ],
+      "phase": "R3",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 211,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-21.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-21/verification.md",
+        "artifacts/VPJ-21/unrun.md",
+        "artifacts/VPJ-21/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355306877,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/211"
+    },
+    {
+      "id": "VPJ-22",
+      "title": "酒店联盟授权与深链落地验证",
+      "blockedBy": [
+        "VPJ-03"
+      ],
+      "allowedPaths": [
+        "docs/benchmarks/hotels/**",
+        "docs/runbooks/**",
+        "docs/operator-actions.json"
+      ],
+      "acceptance": [
+        "先核Trip.com/Booking.com一个供应商的实际许可、App使用/归因、数据/素材、退款联系人。",
+        "真机验证hotel/date/occupancy/filters究竟保留哪些参数；不保留的字段写入用户提示。",
+        "未取得权限时仍可非联盟官方搜索出口；不抓库存或自造room SKU/佣金参数。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "decision",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 212,
+      "effortDays": 2,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-22.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-22/verification.md",
+        "artifacts/VPJ-22/unrun.md",
+        "artifacts/VPJ-22/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355306969,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/212"
+    },
+    {
+      "id": "VPJ-23",
+      "title": "住宿需求比较与透明联盟跳转",
+      "blockedBy": [
+        "VPJ-11",
+        "VPJ-19",
+        "VPJ-22"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/hotels/**",
+        "app/api/hotels/**",
+        "tests/**/hotels/**"
+      ],
+      "acceptance": [
+        "L1a整理区域/床型/入住/预算需求，L1b只传已验参数；展示候选范围和取舍。",
+        "CTA标供应商/佣金/需要重核条件；不展示无实时证据的可售房型/最终价。",
+        "域名白名单/参数最小化、opened≠booked、失败/过期出口；佣金移除后候选排序不变。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 213,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:e2e",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-23.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-23/verification.md",
+        "artifacts/VPJ-23/unrun.md",
+        "artifacts/VPJ-23/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355307058,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/213"
+    },
+    {
+      "id": "VPJ-24",
+      "title": "第三方订单材料回到同一 Trip",
+      "blockedBy": [
+        "VPJ-12",
+        "VPJ-23"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/artifacts/**",
+        "lib/server/trip/**",
+        "supabase/migrations/**",
+        "tests/**/orders/**"
+      ],
+      "acceptance": [
+        "外跳返回后可跳过或导入凭证；user-reported/artifact-confirmed/provider-verified分开。",
+        "用户核实日期/地址/条款候选后形成external reservation reference，约束后续规划。",
+        "取消/改签在外部发生，VP只记录证据；导入失败保留原Trip和安全重试。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 214,
+      "effortDays": 3,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-24.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-24/verification.md",
+        "artifacts/VPJ-24/unrun.md",
+        "artifacts/VPJ-24/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355307138,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/214"
+    },
+    {
+      "id": "VPJ-25",
+      "title": "Today 与可离线读取的旅行资料",
+      "blockedBy": [
+        "VPJ-04",
+        "VPJ-05"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/today/**",
+        "app/api/trips/**",
+        "tests/**/today/**"
+      ],
+      "acceptance": [
+        "确认Trip上的Today/中文地址/用户选择的资料可离线读取，显示最后同步时刻。",
+        "原生私有缓存按账号/Trip隔离、登出清理；过期事实不变实时事实。",
+        "离线编辑先本地草稿，恢复在线后CAS确认；不执行外部动作或静默覆盖。",
+        "离线授权租约到期进入受限读取，回网重验；AppGroup/旧设备不可永久复活被撤销材料。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 215,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:e2e",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-25.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-25/verification.md",
+        "artifacts/VPJ-25/unrun.md",
+        "artifacts/VPJ-25/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355307355,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/215"
+    },
+    {
+      "id": "VPJ-26",
+      "title": "中英现场表达与大字展示",
+      "blockedBy": [
+        "VPJ-07",
+        "VPJ-16"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/media-translation/**",
+        "app/api/translate/**",
+        "tests/**/translate/**",
+        "evals/**",
+        "app/api/media/**"
+      ],
+      "acceptance": [
+        "首单仅文字输入→中英译文→给本地人看大字卡，原文随时可见；图片入口通过材料API另行接入。",
+        "金额/否定/地点/过敏等关键语义双向验证，高风险不声称认证翻译。",
+        "同一Trip地址/场景可带入但不无关调用历史私密记忆；额度耗尽仍可读已存短语。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 216,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:e2e",
+        "pnpm evals",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-26.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-26/verification.md",
+        "artifacts/VPJ-26/unrun.md",
+        "artifacts/VPJ-26/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355307436,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/216"
+    },
+    {
+      "id": "VPJ-27",
+      "title": "按需语音翻译与可中断播放",
+      "blockedBy": [
+        "VPJ-03",
+        "VPJ-26",
+        "VPJ-60"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/media-translation/**",
+        "lib/server/media/**",
+        "tests/**/voice/**",
+        "evals/**",
+        "app/api/media/**",
+        "app/api/translate/**"
+      ],
+      "acceptance": [
+        "push-to-talk→ASR→翻译→字幕/TTS全链，final字幕与朗读一致，录音权限按需。",
+        "来电/耳机/后台/停止/重试不重复播放或存多份，语音价格按实际秒/字符计。",
+        "没有常开监听；音频TTL/取消删除和无网文字路径验证。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 217,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:e2e",
+        "pnpm evals",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-27.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-27/verification.md",
+        "artifacts/VPJ-27/unrun.md",
+        "artifacts/VPJ-27/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355307490,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/217"
+    },
+    {
+      "id": "VPJ-28",
+      "title": "地点讲解与语音追问接回当前 Trip",
+      "blockedBy": [
+        "VPJ-15",
+        "VPJ-19",
+        "VPJ-27"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/guide/**",
+        "app/api/guide/**",
+        "tests/**/guide/**",
+        "evals/**"
+      ],
+      "acceptance": [
+        "首批已覆盖地点提供短讲解、来源、事实/传说区别、字幕和暂停续播。",
+        "追问使用当前地点/兴趣/已听进度，角色仍VP；未覆盖地点给清楚边界与其他探索入口。",
+        "已缓存内容重播不再扣Ask，新增生成按明确额度；现场注意力优先。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 218,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:e2e",
+        "pnpm evals",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-28.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-28/verification.md",
+        "artifacts/VPJ-28/unrun.md",
+        "artifacts/VPJ-28/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355307561,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/218"
+    },
+    {
+      "id": "VPJ-29",
+      "title": "用户报告变化后的局部恢复",
+      "blockedBy": [
+        "VPJ-10",
+        "VPJ-21",
+        "VPJ-25",
+        "VPJ-65"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/today/recovery/**",
+        "lib/server/constraints/**",
+        "tests/**/recovery/**",
+        "evals/**"
+      ],
+      "acceptance": [
+        "疲劳/晚点/关闭由用户报告或有效外部证据触发，保留固定订单与晚餐等约束。",
+        "给1–2个局部候选和受影响项目diff，经确认更新Trip。",
+        "unknown、无法安全修复、求助外部供应商/官方路径完整；不假装取消退款或实时检测。"
+      ],
+      "phase": "R3",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 220,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm evals",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-29.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-29/verification.md",
+        "artifacts/VPJ-29/unrun.md",
+        "artifacts/VPJ-29/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355307704,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/220"
+    },
+    {
+      "id": "VPJ-30",
+      "title": "有原因、可关闭的旅行提醒",
+      "blockedBy": [
+        "VPJ-11",
+        "VPJ-17",
+        "VPJ-25"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/notifications/**",
+        "lib/server/jobs/**",
+        "supabase/migrations/**",
+        "tests/**/notifications/**"
+      ],
+      "acceptance": [
+        "App内Next Step＋用户亲设时间提醒＋明确watch结果，发送前重验Trip版本/同意/时区/有效期。",
+        "重复、已完成、撤回、旅行结束、换账号提醒不发送；锁屏不泄漏敏感内容。",
+        "通知默认按用途授权，marketing/affiliate不借旅行提醒；Live Activity不在本纵切。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 221,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-30.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-30/verification.md",
+        "artifacts/VPJ-30/unrun.md",
+        "artifacts/VPJ-30/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355307787,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/221"
+    },
+    {
+      "id": "VPJ-31",
+      "title": "按服务任务授权的动态 Traveler Brief",
+      "blockedBy": [
+        "VPJ-03",
+        "VPJ-11",
+        "VPJ-12",
+        "VPJ-14",
+        "VPJ-57"
+      ],
+      "allowedPaths": [
+        "apps/ops/**",
+        "lib/server/ops/**",
+        "lib/server/memory/**",
+        "supabase/migrations/**",
+        "tests/**/ops/**"
+      ],
+      "acceptance": [
+        "用户给case授权后员工只看任务需要字段；Owner可审授权范围和审计，非普通全库读。",
+        "需求/预算/偏好/表达详细程度带来源、更新时刻和显式/推断标记；无敏感人格推定。",
+        "纠正/撤权/删除传播到报告和可控缓存；旧摘要不能压过最新用户输入。"
+      ],
+      "phase": "R3",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 223,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-31.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-31/verification.md",
+        "artifacts/VPJ-31/unrun.md",
+        "artifacts/VPJ-31/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "databaseId": 5355307955,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/223"
+    },
+    {
+      "id": "VPJ-32",
+      "title": "真人协助从请求到接单和结果回传",
+      "blockedBy": [
+        "VPJ-21",
+        "VPJ-31",
+        "VPJ-57"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "apps/ops/**",
+        "lib/server/service-cases/**",
+        "supabase/migrations/**",
+        "tests/**/service-cases/**"
+      ],
+      "acceptance": [
+        "请求→容量检查→queued/accepted/assigned→waiting_external→resolved/unresolved完整可见。",
+        "接单前不承诺ETA/SLA；紧急问题先给官方渠道，用户可退出/撤授权。",
+        "任务一条线接回Trip，结果不是自动Trip写入；人工分钟数和容量计量。"
+      ],
+      "phase": "R3",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 224,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-32.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-32/verification.md",
+        "artifacts/VPJ-32/unrun.md",
+        "artifacts/VPJ-32/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355308032,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/224"
+    },
+    {
+      "id": "VPJ-33",
+      "title": "Journey Pass 商品、权益和定价实验配置",
+      "blockedBy": [
+        "VPJ-03"
+      ],
+      "allowedPaths": [
+        "docs/commercial/**",
+        "docs/runbooks/**",
+        "lib/server/entitlements/**",
+        "tests/**/entitlements/**"
+      ],
+      "acceptance": [
+        "以Free+30天非自动续费Journey Pass为试点：$19.99参考价，$14.99只单变量实验；地区价来自StoreKit。",
+        "明确购买开始/提前续买/退款/恢复/到期、300Ask周期和Free窗口口径；无unlimited或人工包含承诺。",
+        "JT填写store SKU/合同主体/税费及实际价格；未上线商品不能收私人款。",
+        "每笔交易独立720h/300Ask grant；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号60/rolling24h不重置；乱序交易按可信购买时间对账。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的试点上限同时公示并核成本。"
+      ],
+      "phase": "R0",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "decision",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 225,
+      "effortDays": 2,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-33.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-33/verification.md",
+        "artifacts/VPJ-33/unrun.md",
+        "artifacts/VPJ-33/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355308114,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/225"
+    },
+    {
+      "id": "VPJ-34",
+      "title": "官方 IAP 购买、恢复与服务端权益",
+      "blockedBy": [
+        "VPJ-04",
+        "VPJ-05",
+        "VPJ-33"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "app/api/storekit/**",
+        "lib/server/entitlements/**",
+        "supabase/migrations/**",
+        "tests/**/entitlements/**"
+      ],
+      "acceptance": [
+        "StoreKit2交易验证→服务端账号绑定→权益→两端生效；重放/换机/恢复不重复延长或补额度。",
+        "non-renewing类型的期限与恢复由服务端账本处理，退款撤销有可核路径；到期保留Trip/手动编辑/安全资料。",
+        "TestFlight/sandbox与production隔离，购买pending/cancelled/revoked不当success；真实付款另门验证。",
+        "每笔交易独立720h/300Ask grant；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号60/rolling24h不重置；乱序交易按可信购买时间对账。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的试点上限同时公示并核成本。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 226,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "pnpm test:e2e",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-34.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-34/verification.md",
+        "artifacts/VPJ-34/unrun.md",
+        "artifacts/VPJ-34/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355308208,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/226"
+    },
+    {
+      "id": "VPJ-35",
+      "title": "Free/Pass 额度与完整任务成本控制",
+      "blockedBy": [
+        "VPJ-06",
+        "VPJ-08",
+        "VPJ-34"
+      ],
+      "allowedPaths": [
+        "lib/server/identity/quota/**",
+        "lib/server/model-gateway/**",
+        "lib/server/entitlements/**",
+        "ios/**",
+        "tests/**/cost/**"
+      ],
+      "acceptance": [
+        "Free6Ask/4小时+30/滚动7天；Pass300/购买周期+60/滚动24小时作为可配置试点，客户端显示下次可用时刻。",
+        "Ask=一个用户请求，内部重试/降级/失败修复不多扣；并发预留→成功结算→失败返还可审。",
+        "安全/记忆纠错/导出删除/手动编辑/缓存播放不付费；强模型预算不能悄悄降低安全质量。",
+        "每笔交易独立720h/300Ask grant；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号60/rolling24h不重置；乱序交易按可信购买时间对账。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的试点上限同时公示并核成本。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 227,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-35.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-35/verification.md",
+        "artifacts/VPJ-35/unrun.md",
+        "artifacts/VPJ-35/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355308294,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/227"
+    },
+    {
+      "id": "VPJ-36",
+      "title": "核心资料的导出删除框架与首批执行器",
+      "blockedBy": [
+        "VPJ-03",
+        "VPJ-04",
+        "VPJ-11",
+        "VPJ-12",
+        "VPJ-31",
+        "VPJ-34"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "app/api/privacy/**",
+        "lib/server/privacy/**",
+        "lib/server/jobs/**",
+        "supabase/migrations/**",
+        "tests/**/privacy/**"
+      ],
+      "acceptance": [
+        "交付核心Trip/chat/material/memory/Brief/权益引用的身份复核→异步导出/删除→回执。所有新数据模块负责挂接handler，全域验收由58承接。",
+        "在删除期间阻止新的相关生成/同步；重试幂等，备份保留义务与恢复后重删tombstone明确。",
+        "保留法定财务记录的最少字段并解释；provider无法删除的范围如实披露。",
+        "离线旧手机不能立即接收撤销；回网/租约到期清理可控缓存，已导出文件不可远端收回，用户说明准确。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [
+        165
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 228,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "pnpm test:e2e",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-36.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-36/verification.md",
+        "artifacts/VPJ-36/unrun.md",
+        "artifacts/VPJ-36/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355308384,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/228"
+    },
+    {
+      "id": "VPJ-37",
+      "title": "运营看见质量、成本和故障并能停用能力",
+      "blockedBy": [
+        "VPJ-07",
+        "VPJ-35"
+      ],
+      "allowedPaths": [
+        "lib/server/observability/**",
+        "apps/ops/**",
+        "lib/flags/**",
+        "tests/**/observability/**",
+        "docs/runbooks/**"
+      ],
+      "acceptance": [
+        "task/attempt/provider/tool/actor-scope计数互相可对账，日志无原聊天和秘密。",
+        "仪表盘可读任务成功、partial、错误、延迟、provider费用和人工时间，不把未观测记0。",
+        "按能力/供应商/城市关闭可及时作用并提供用户替代；预算熔断可恢复且不删Trip。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [
+        163
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 229,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-37.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-37/verification.md",
+        "artifacts/VPJ-37/unrun.md",
+        "artifacts/VPJ-37/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "databaseId": 5355308454,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/229"
+    },
+    {
+      "id": "VPJ-38",
+      "title": "数据库、对象与删除状态的恢复演练",
+      "blockedBy": [
+        "VPJ-02",
+        "VPJ-36"
+      ],
+      "allowedPaths": [
+        "scripts/db/restore/**",
+        "docs/runbooks/**",
+        "tests/**/restore/**",
+        "artifacts/VPJ-38/**"
+      ],
+      "acceptance": [
+        "在隔离恢复目标实测DB与Storage备份、RPO/RTO、恢复数据一致性。",
+        "恢复后重新应用删除tombstone与权益/许可撤销，避免已删数据复活。",
+        "故障演练记录实际时间/未验项，不在Production做破坏操作。",
+        "按数据类确定backup或no-backup TTL；对象元数据/文件、RLS/grants/functions/queue恢复分别验。"
+      ],
+      "phase": "R5",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "operational",
+      "oldIssues": [
+        53
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 230,
+      "effortDays": 3,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-38.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-38/verification.md",
+        "artifacts/VPJ-38/unrun.md",
+        "artifacts/VPJ-38/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355308525,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/230"
+    },
+    {
+      "id": "VPJ-39",
+      "title": "境内外媒体、酒店跳转、IAP 与通知网络验收",
+      "blockedBy": [
+        "VPJ-07",
+        "VPJ-19",
+        "VPJ-27",
+        "VPJ-63",
+        "VPJ-23",
+        "VPJ-34",
+        "VPJ-30",
+        "VPJ-55"
+      ],
+      "allowedPaths": [
+        "docs/benchmarks/network/**",
+        "scripts/diagnostics/**",
+        "artifacts/VPJ-39/**"
+      ],
+      "acceptance": [
+        "按真实海外/境内WiFi/漫游/弱网记录DNS→API→DB→model/map/media的p50/p95/失败，不用provider国籍推断可达。",
+        "设置超时、断线恢复和离线读取目标，验证语音长连接/图片导入在预算内。",
+        "地区不合格时给实际替代拓扑和用户边界；采购或部署变更不自行执行。",
+        "在真实境内外网络验证OTA参数落地、StoreKit购买/恢复、APNs接收与回跳、Files/Share Extension导入，不以model测试代替这些不同链路。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "operational",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 232,
+      "effortDays": 3,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-39.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-39/verification.md",
+        "artifacts/VPJ-39/unrun.md",
+        "artifacts/VPJ-39/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355308685,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/232"
+    },
+    {
+      "id": "VPJ-40",
+      "title": "原生视觉动效、无障碍与性能整链复验",
+      "blockedBy": [
+        "VPJ-13",
+        "VPJ-20",
+        "VPJ-21",
+        "VPJ-23",
+        "VPJ-25",
+        "VPJ-27",
+        "VPJ-28",
+        "VPJ-29",
+        "VPJ-30",
+        "VPJ-34",
+        "VPJ-48",
+        "VPJ-64",
+        "VPJ-49",
+        "VPJ-55",
+        "VPJ-61",
+        "VPJ-36"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "tests/**/ios/**",
+        "docs/design/**",
+        "artifacts/VPJ-40/**"
+      ],
+      "acceptance": [
+        "统一Cream/Ink/Plum/Gold与原始VP资产；对话/计划/sheet/键盘/返回锚点同一状态语义。",
+        "真机/Simulator完成小屏大屏、大字VoiceOver、Reduce Motion/Transparency、来电低电量弱网；录屏展示可中断动效。",
+        "结构卡原子出现、滚动不抢位、已保存动画只在回执后；用profile定位性能不写未测FPS。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 233,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-40.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-40/verification.md",
+        "artifacts/VPJ-40/unrun.md",
+        "artifacts/VPJ-40/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355308755,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/233"
+    },
+    {
+      "id": "VPJ-41",
+      "title": "精简 Web Planning Studio 的最终体验验收",
+      "blockedBy": [
+        "VPJ-05",
+        "VPJ-20",
+        "VPJ-34"
+      ],
+      "allowedPaths": [
+        "app/**",
+        "components/**",
+        "lib/i18n.ts",
+        "tests/**/frontend/**",
+        "docs/design/**",
+        "public/assets/**"
+      ],
+      "acceptance": [
+        "Web保留Chat/Trip基本编辑/diff确认/材料状态/权益，现场工具引导iOS；同Trip连续性可测。",
+        "公开Landing/Explore明确当前可用/覆盖/第三方预订，Early Access邮箱同意可撤。",
+        "桌面+390x844、中英、键盘无障碍/真实品牌资产/claim scan通过；不重做第二全功能App。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 234,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:e2e"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-41.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-41/verification.md",
+        "artifacts/VPJ-41/unrun.md",
+        "artifacts/VPJ-41/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "databaseId": 5355308838,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/234"
+    },
+    {
+      "id": "VPJ-42",
+      "title": "TestFlight 实机贯通 Plan、Ready、Travel 三段",
+      "blockedBy": [
+        "VPJ-08",
+        "VPJ-16",
+        "VPJ-21",
+        "VPJ-24",
+        "VPJ-28",
+        "VPJ-29",
+        "VPJ-32",
+        "VPJ-35",
+        "VPJ-36",
+        "VPJ-37",
+        "VPJ-38",
+        "VPJ-39",
+        "VPJ-40",
+        "VPJ-41",
+        "VPJ-48",
+        "VPJ-55",
+        "VPJ-56",
+        "VPJ-58",
+        "VPJ-61",
+        "VPJ-64",
+        "VPJ-65",
+        "VPJ-49"
+      ],
+      "allowedPaths": [
+        "docs/acceptance/**",
+        "tests/e2e/**",
+        "artifacts/VPJ-42/**",
+        "docs/runbooks/**"
+      ],
+      "acceptance": [
+        "邀请受控用户在原生build完成一个真实Trip的Plan/Ready/Travel，含外跳、离线、恢复、拒绝/取消。",
+        "真实owner/RLS/provider/数据/网络/权限证明与TestFlight build关联；sandbox购买不算收入。",
+        "所有首发必需项有功能/异常/数据/UX/运行证据；只修验收缺陷，不靠fixture替代。",
+        "非技术经营留存与真实付费效果由47观察，不因旅行节点未到而伪称成功/失败。"
+      ],
+      "phase": "R5",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "acceptance",
+      "oldIssues": [
+        162
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 242,
+      "effortDays": 5,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-42.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-42/verification.md",
+        "artifacts/VPJ-42/unrun.md",
+        "artifacts/VPJ-42/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355309494,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/242"
+    },
+    {
+      "id": "VPJ-43",
+      "title": "独立 Production 与可回滚的客户服务环境",
+      "blockedBy": [
+        "VPJ-38",
+        "VPJ-42"
+      ],
+      "allowedPaths": [
+        "docs/runbooks/**",
+        "scripts/db/**",
+        "docs/operator-actions.json",
+        "artifacts/VPJ-43/**"
+      ],
+      "acceptance": [
+        "独立Production项目/服务凭证/配置和备份，与Staging严格分离；迁移前后验证和回滚完整。",
+        "隐私/Terms/support域名/资产/地区契约已齐备，功能旗标按能力设置。",
+        "实际部署由operator控制，secrets不写repo；不能用Preview通过替代Production验收。"
+      ],
+      "phase": "R5",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "operational",
+      "oldIssues": [
+        170,
+        166
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 243,
+      "effortDays": 3,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-43.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-43/verification.md",
+        "artifacts/VPJ-43/unrun.md",
+        "artifacts/VPJ-43/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355309580,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/243"
+    },
+    {
+      "id": "VPJ-44",
+      "title": "正式 App Store 1.0 提交与数字商品审核",
+      "blockedBy": [
+        "VPJ-34",
+        "VPJ-40",
+        "VPJ-43"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "docs/release/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-44/**"
+      ],
+      "acceptance": [
+        "TestFlight测试轨与AppStore完整1.0生产轨区分；满足当前Xcode/SDK、隐私清单、AI第三方同意和账号删除要求。",
+        "中英元数据/实机截图/支持/隐私URL、reviewer访问、IAP审查与恢复说明对应实际功能。",
+        "JT执行签名/提交/发布，拒审按原因修复；未通过不宣称已上架。"
+      ],
+      "phase": "R5",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "release",
+      "oldIssues": [
+        166
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 244,
+      "effortDays": 3,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-44.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-44/verification.md",
+        "artifacts/VPJ-44/unrun.md",
+        "artifacts/VPJ-44/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355309657,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/244"
+    },
+    {
+      "id": "VPJ-45",
+      "title": "客户收到产品后的观察、支持与发布关账",
+      "blockedBy": [
+        "VPJ-42",
+        "VPJ-44"
+      ],
+      "allowedPaths": [
+        "docs/acceptance/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-45/**",
+        "docs/handoff.json"
+      ],
+      "acceptance": [
+        "至少72小时系统观察与7天机会相关用户跟踪；自助/人工帮助、拒绝/激活、sandbox/真实购买分开。",
+        "支持队列、退款/删除、事故回滚、知识失效有负责人和实测响应。",
+        "发布门全部关闭且未解决严重问题为0才结束Program产品交付；不以下载量作为完成。"
+      ],
+      "phase": "R5",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "acceptance",
+      "oldIssues": [
+        171
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 245,
+      "effortDays": 3,
+      "observationWindow": "72h系统观察+至少7天机会相关跟踪；实际旅行节点未到标not_observed",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-45.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-45/verification.md",
+        "artifacts/VPJ-45/unrun.md",
+        "artifacts/VPJ-45/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355309734,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/245"
+    },
+    {
+      "id": "VPJ-46",
+      "title": "每周35小时客户发现、招募与材料工作坊",
+      "blockedBy": [],
+      "allowedPaths": [
+        "docs/operations/**",
+        "docs/commercial/**",
+        "artifacts/VPJ-46/**"
+      ],
+      "acceptance": [
+        "执行总35h时间盘：真实客户任务10、研发验收8、招募社区6、内容合作4、知识审查3、支持2、复盘2；30–40h按需求伸缩。",
+        "两个周sprint只跑自有/转介绍+一个社区+一个伙伴渠道；3–4访谈+1–2交付起步；禁止未请求群发。",
+        "Planning/Arriving/In-trip队列、opt-in、原话/行为/来源/分钟数去敏记录；为Supported Journey Matrix提供真实需求。",
+        "初期使用许可内现有入口或VPJ-62 intake，不等待地图/支付/完整App；Founder-assisted与产品自助明确。"
+      ],
+      "phase": "R0",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "operational",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 246,
+      "effortDays": 2,
+      "observationWindow": "每周30–40小时、首两周校准；effort仅建立流程，不是整段观察时长",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-46.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-46/verification.md",
+        "artifacts/VPJ-46/unrun.md",
+        "artifacts/VPJ-46/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355309797,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/246"
+    },
+    {
+      "id": "VPJ-47",
+      "title": "真实激活、付费与人工成本的经营观察",
+      "blockedBy": [
+        "VPJ-42",
+        "VPJ-44",
+        "VPJ-46"
+      ],
+      "allowedPaths": [
+        "docs/commercial/**",
+        "docs/operations/**",
+        "apps/ops/**",
+        "artifacts/VPJ-47/**"
+      ],
+      "acceptance": [
+        "activated=采用可继续使用的真实Trip结果；outcome_recorded可含拒绝，不能混为激活。",
+        "opportunity-based organic/triggered/founder-prompted回访分开；真实净付款与退款/赠送/sandbox分开。",
+        "依据主报告单一B0-B4门和容量/现金止损决策，不以一个OR指标杀整个Program；少样本明确不确定。"
+      ],
+      "phase": "R5",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "operational",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 247,
+      "effortDays": 2,
+      "observationWindow": "按B0-B4真实分母；至少两轮有效cohort，不设伪日历保证",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-47.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-47/verification.md",
+        "artifacts/VPJ-47/unrun.md",
+        "artifacts/VPJ-47/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355309870,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/247"
+    },
+    {
+      "id": "VPJ-48",
+      "title": "用户旅行内容投稿与发布前审核",
+      "blockedBy": [
+        "VPJ-14",
+        "VPJ-20",
+        "VPJ-36"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "apps/ops/**",
+        "lib/server/community/**",
+        "supabase/migrations/**",
+        "tests/**/community/**"
+      ],
+      "acceptance": [
+        "注册用户可提交旅行体验/求助，所有内容发布前审；官方/员工身份披露。",
+        "提交→pending→reviewed→published/rejected→用户撤回形成完整小链；举报/屏蔽/申诉/删除扩展由VPJ-64承担，未完成不得公开UGC。",
+        "内容可关联地点/Save/Add to Trip，但体验不自动晋升Fact；无私信/关注/无限社交feed。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 235,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-48.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-48/verification.md",
+        "artifacts/VPJ-48/unrun.md",
+        "artifacts/VPJ-48/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355308927,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/235"
+    },
+    {
+      "id": "VPJ-49",
+      "title": "最简本地旅行分享卡与隐私预览",
+      "blockedBy": [
+        "VPJ-05",
+        "VPJ-11"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/sharing/**",
+        "tests/**/sharing/**",
+        "docs/design/**"
+      ],
+      "acceptance": [
+        "一款中英本地分享模板，用户选择字段→隐私预览→系统Share Sheet，基础分享无需公共托管。",
+        "模板只使用获权资产，标明AI生成或用户体验；不能伪造订单/见证。",
+        "分享前可隐藏酒店/订单/同行/日期等私密字段；已导出图片不能远端撤回；复杂模板/视频/托管分享另期开启。"
+      ],
+      "phase": "R5",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 241,
+      "effortDays": 2,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-49.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-49/verification.md",
+        "artifacts/VPJ-49/unrun.md",
+        "artifacts/VPJ-49/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355309412,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/241"
+    },
+    {
+      "id": "VPJ-50",
+      "title": "有真实召回失败才启用混合 RAG 与重排",
+      "blockedBy": [
+        "VPJ-16",
+        "VPJ-17"
+      ],
+      "allowedPaths": [
+        "lib/server/knowledge/retrieval/**",
+        "evals/**",
+        "docs/benchmarks/**",
+        "supabase/migrations/**"
+      ],
+      "acceptance": [
+        "以实际qrels/语料规模触发实验，对同批直接读取baseline比较exact/FTS/trigram/vector/RRF。",
+        "PGroonga、rerank、Contextual Retrieval逐项消融；权限/时效/例外/反证切片不回退。",
+        "只有质量/延迟/成本净收益才开放；extension版本/许可/恢复失败可回滚直接lookup。"
+      ],
+      "phase": "R5",
+      "track": "expand",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 248,
+      "effortDays": 5,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": "需要在VPJ-47记录需求/成本/责任证据及JT明确开启；不得依赖关闭即自动ready",
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "pnpm evals"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-50.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-50/verification.md",
+        "artifacts/VPJ-50/unrun.md",
+        "artifacts/VPJ-50/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "databaseId": 5355309998,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/248"
+    },
+    {
+      "id": "VPJ-51",
+      "title": "航班来源采购与中国航线实测",
+      "blockedBy": [
+        "VPJ-03",
+        "VPJ-39"
+      ],
+      "allowedPaths": [
+        "docs/benchmarks/aviation/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-51/**"
+      ],
+      "acceptance": [
+        "按中国境内/跨境航线样本比较coverage/延迟/许可/价格/归因/存储，不直接选择名气最大。",
+        "记录字段权威/TTL和无coverage返回，operator批准数据用途与budget。",
+        "不购买/出票/爬取受限系统。"
+      ],
+      "phase": "R5",
+      "track": "expand",
+      "owner": "operator",
+      "kind": "decision",
+      "oldIssues": [
+        41
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 249,
+      "effortDays": 3,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": "需要在VPJ-47记录需求/成本/责任证据及JT明确开启；不得依赖关闭即自动ready",
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-51.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-51/verification.md",
+        "artifacts/VPJ-51/unrun.md",
+        "artifacts/VPJ-51/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355310067,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/249"
+    },
+    {
+      "id": "VPJ-52",
+      "title": "授权航班状态与相关行程重验",
+      "blockedBy": [
+        "VPJ-17",
+        "VPJ-29",
+        "VPJ-51"
+      ],
+      "allowedPaths": [
+        "lib/server/external-evidence/flight/**",
+        "ios/**",
+        "tests/**/flight/**"
+      ],
+      "acceptance": [
+        "单主Flight Adapter显示有效观察与来源时刻，延误信息映射到相关Trip重验候选。",
+        "unknown/取消/过期不自动重订；用户确认后才改变Trip。",
+        "撤权、停用、供应商超时和无覆盖演练，不侵入酒店/铁路交易。"
+      ],
+      "phase": "R5",
+      "track": "expand",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [
+        42
+      ],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 250,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": "需要在VPJ-47记录需求/成本/责任证据及JT明确开启；不得依赖关闭即自动ready",
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-52.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-52/verification.md",
+        "artifacts/VPJ-52/unrun.md",
+        "artifacts/VPJ-52/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355310178,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/250"
+    },
+    {
+      "id": "VPJ-53",
+      "title": "Android 与新增语言的需求触发设计",
+      "blockedBy": [
+        "VPJ-45",
+        "VPJ-47"
+      ],
+      "allowedPaths": [
+        "docs/product/**",
+        "docs/benchmarks/**",
+        "artifacts/VPJ-53/**"
+      ],
+      "acceptance": [
+        "根据真实需求决定Android/西俄阿的先后，不从schema兼容推断已支持。",
+        "复用同协议/Trip/entitlement，平台原生体验、语料和无障碍分别验收。",
+        "给独立容量/预算/迁移计划后再拆实现，不把本研究当客户端开发。"
+      ],
+      "phase": "R5",
+      "track": "expand",
+      "owner": "operator",
+      "kind": "decision",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 251,
+      "effortDays": 2,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": "需要在VPJ-47记录需求/成本/责任证据及JT明确开启；不得依赖关闭即自动ready",
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-53.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-53/verification.md",
+        "artifacts/VPJ-53/unrun.md",
+        "artifacts/VPJ-53/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355310278,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/251"
+    },
+    {
+      "id": "VPJ-54",
+      "title": "长期订阅或交易深度升级的证据决策",
+      "blockedBy": [
+        "VPJ-45",
+        "VPJ-47"
+      ],
+      "allowedPaths": [
+        "docs/commercial/**",
+        "docs/adr/**",
+        "artifacts/VPJ-54/**"
+      ],
+      "acceptance": [
+        "只有重复旅行/持续价值证据才考虑Plus月/年订阅；只读Live Offer、代客执行、签约履约按品类分别决策。",
+        "比较责任、服务成本、恢复/退款和排名中立性；不把affiliate增长自动当升级理由。",
+        "没有授权保持当前Free+Pass与L1a/L1b；本Issue只决策，不启用外部交易。"
+      ],
+      "phase": "R5",
+      "track": "expand",
+      "owner": "operator",
+      "kind": "decision",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 252,
+      "effortDays": 2,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": "需要在VPJ-47记录需求/成本/责任证据及JT明确开启；不得依赖关闭即自动ready",
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-54.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-54/verification.md",
+        "artifacts/VPJ-54/unrun.md",
+        "artifacts/VPJ-54/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355310382,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/252"
+    },
+    {
+      "id": "VPJ-55",
+      "title": "文件与系统分享导入、邀请链接接回原意图",
+      "blockedBy": [
+        "VPJ-04",
+        "VPJ-12"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "app/api/artifacts/**",
+        "lib/server/artifacts/**",
+        "tests/**/artifacts/**"
+      ],
+      "acceptance": [
+        "Share Extension/Files沿已验材料通道投递，支持一类限定页数PDF并保持关键字段校正。",
+        "Universal Link/邀请/登录回跳/未安装回退/链接过期都有明确路径，安装后不承诺系统无法保证的自动传递。",
+        "AppGroup按账号命名空间、TTL/退出/删除清理；恶意文件/重复导入不覆盖Trip。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 236,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:e2e",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-55.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-55/verification.md",
+        "artifacts/VPJ-55/unrun.md",
+        "artifacts/VPJ-55/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355309022,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/236"
+    },
+    {
+      "id": "VPJ-56",
+      "title": "原生 CI、签名 Archive 与首个 TestFlight 安装包",
+      "blockedBy": [
+        "VPJ-01"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        ".github/workflows/**",
+        "scripts/ios/**",
+        "docs/runbooks/**",
+        "artifacts/VPJ-56/**"
+      ],
+      "acceptance": [
+        "macOS CI锁稳定Xcode版本并跑原生build/tests，artifact保存xcresult与bundle版本；PR不用生产秘密。",
+        "JT完成Apple账号/BundleID/签名/上传，产出首个可安装TestFlight构建；只证明分发，不证明完整产品。",
+        "记录实际上传SDK要求和证书轮换/构建失败/撤回路径；42复用该轨，44正式上架。"
+      ],
+      "phase": "R1",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "operational",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 237,
+      "effortDays": 4,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-56.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-56/verification.md",
+        "artifacts/VPJ-56/unrun.md",
+        "artifacts/VPJ-56/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355309096,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/237"
+    },
+    {
+      "id": "VPJ-57",
+      "title": "用户服务请求与按任务授予资料访问",
+      "blockedBy": [
+        "VPJ-03",
+        "VPJ-04",
+        "VPJ-14"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "apps/ops/**",
+        "lib/server/service-cases/**",
+        "lib/server/identity/**",
+        "supabase/migrations/**",
+        "tests/**/service-cases/**"
+      ],
+      "acceptance": [
+        "用户创建CaseRequest、预览要分享字段、授予有期限AccessGrant，指定员工才可读取。",
+        "撤回/到期/换员工/其他用户无法继续读取；未授权仍可请求通用支持。",
+        "此单提供31/32共同依赖的case身份与授权，不承诺真人已接单。"
+      ],
+      "phase": "R3",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 222,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-57.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-57/verification.md",
+        "artifacts/VPJ-57/unrun.md",
+        "artifacts/VPJ-57/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355307870,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/222"
+    },
+    {
+      "id": "VPJ-58",
+      "title": "全数据模块导出删除与恢复后的最终隔离验收",
+      "blockedBy": [
+        "VPJ-30",
+        "VPJ-32",
+        "VPJ-34",
+        "VPJ-36",
+        "VPJ-48",
+        "VPJ-64",
+        "VPJ-24",
+        "VPJ-49",
+        "VPJ-55",
+        "VPJ-28",
+        "VPJ-61",
+        "VPJ-25"
+      ],
+      "allowedPaths": [
+        "tests/security/**",
+        "tests/integration/**",
+        "docs/acceptance/**",
+        "artifacts/VPJ-58/**"
+      ],
+      "acceptance": [
+        "整合Trip/材料/记忆/Brief/Case/UGC/举报/通知/权益的数据注册与export/delete handler。",
+        "删除中有新任务/通知/社区发布的竞态、恢复后tombstone、离线回网和账号切换均测试。",
+        "保留法定字段和外部已导出副本边界准确，任一必需runtime未验则阻塞42。",
+        "终验运行在订单引用/本地分享/AppGroup/Guide缓存/归档/离线模块全部存在之后；每个后续数据模块变化必须重跑handler注册与删除恢复验收。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "acceptance",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 239,
+      "effortDays": 3,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-58.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-58/verification.md",
+        "artifacts/VPJ-58/unrun.md",
+        "artifacts/VPJ-58/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "databaseId": 5355309239,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/239"
+    },
+    {
+      "id": "VPJ-59",
+      "title": "首个真实模型任务的预算预留与故障止损",
+      "blockedBy": [
+        "VPJ-02",
+        "VPJ-06"
+      ],
+      "allowedPaths": [
+        "lib/server/model-gateway/budget/**",
+        "lib/server/jobs/**",
+        "lib/server/observability/**",
+        "lib/flags/**",
+        "supabase/migrations/**",
+        "tests/**/cost/**"
+      ],
+      "acceptance": [
+        "真实调用前做server预算/并发预留，调用后usage结算，取消/超时/无usage尾包进入补偿/待核。",
+        "按task与attempt分别限额，kill flag在调用前实际消费，不能只有配置字段。",
+        "两worker重复任务和进程崩溃成本账一致；此单不依赖购买IAP，35才加商品额度。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 194,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-59.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-59/verification.md",
+        "artifacts/VPJ-59/unrun.md",
+        "artifacts/VPJ-59/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "databaseId": 5355305377,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/194"
+    },
+    {
+      "id": "VPJ-60",
+      "title": "图片和语音 Provider 的中英质量与数据流验收",
+      "blockedBy": [
+        "VPJ-03",
+        "VPJ-06"
+      ],
+      "allowedPaths": [
+        "lib/server/media/**",
+        "lib/server/media-translation/**",
+        "evals/**",
+        "docs/benchmarks/media/**",
+        "tests/**/media/**"
+      ],
+      "acceptance": [
+        "用许可内合成材料验证实际region OCR/vision、ASR和TTS任务能力、usage、取消/删除，不假定文本模型具备媒体。",
+        "中英数字/否定/姓名/日期/字幕朗读一致性及失败输出分任务切片报告。",
+        "选择最少合格媒体路径，未验证能力不进入12/27；密钥不进客户端。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 200,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm evals"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-60.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-60/verification.md",
+        "artifacts/VPJ-60/unrun.md",
+        "artifacts/VPJ-60/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "databaseId": 5355305910,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/200"
+    },
+    {
+      "id": "VPJ-61",
+      "title": "旅行结束、归档与下一次回来",
+      "blockedBy": [
+        "VPJ-05",
+        "VPJ-11",
+        "VPJ-32"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/trip/**",
+        "lib/server/memory/**",
+        "supabase/migrations/**",
+        "tests/**/trip/**"
+      ],
+      "acceptance": [
+        "用户主动结束/归档Trip；时间已过不等于行程完成，归档不删除未完服务。",
+        "提示选择跨Trip保留的偏好，拒绝/跳过可用；创建下一Trip不复活旧时效约束。",
+        "最多3草稿+1Active规则可测，旧Trip可读/导出，Pass到期不抹成果。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 240,
+      "effortDays": 3,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-61.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-61/verification.md",
+        "artifacts/VPJ-61/unrun.md",
+        "artifacts/VPJ-61/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355309339,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/240"
+    },
+    {
+      "id": "VPJ-62",
+      "title": "公开中英申请入口与隐私可控的招募漏斗",
+      "blockedBy": [],
+      "allowedPaths": [
+        "app/**",
+        "components/**",
+        "lib/i18n.ts",
+        "lib/server/intake/**",
+        "tests/**/intake/**",
+        "docs/operations/**"
+      ],
+      "acceptance": [
+        "一页真实范围说明→邮箱/最少资料opt-in→回执→退出，页面可在完整App前作为研究招募使用。",
+        "沿已有允许入口复用，staff/Founder-assisted/fixture说明准确，不声称已可下载完整App。",
+        "事件schema分申请/同意/入组/首值/拒绝，防重复/垃圾请求，营销同意与研究同意分开。"
+      ],
+      "phase": "R1",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 202,
+      "effortDays": 3,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:e2e"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-62.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-62/verification.md",
+        "artifacts/VPJ-62/unrun.md",
+        "artifacts/VPJ-62/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "databaseId": 5355306094,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/202"
+    },
+    {
+      "id": "VPJ-63",
+      "title": "登录、Ask 与 Trip 的境内外网络首轮探针",
+      "blockedBy": [
+        "VPJ-04",
+        "VPJ-07"
+      ],
+      "allowedPaths": [
+        "scripts/diagnostics/**",
+        "docs/benchmarks/network/**",
+        "artifacts/VPJ-63/**"
+      ],
+      "acceptance": [
+        "尽早测真实海外与境内普通网络的登录/Ask/Trip/API/DB/model，不等完整语音和地图。",
+        "明确每段失败原因/延迟和可用退路；无法实测地域标operator evidence missing。",
+        "不切生产拓扑，仅为39的全媒体/OTA/IAP网络验收提供基线。"
+      ],
+      "phase": "R2",
+      "track": "launch",
+      "owner": "operator",
+      "kind": "operational",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 231,
+      "effortDays": 2,
+      "observationWindow": "外部审批/账号/真机/网络等待另计",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.",
+        "Missing access is an explicit operator outcome, never fabricated completion."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-63.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-63/verification.md",
+        "artifacts/VPJ-63/unrun.md",
+        "artifacts/VPJ-63/commands.jsonl"
+      ],
+      "redLines": [
+        "evidence-no-fabrication"
+      ],
+      "databaseId": 5355308620,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/231"
+    },
+    {
+      "id": "VPJ-64",
+      "title": "社区举报、屏蔽、申诉与内容删除",
+      "blockedBy": [
+        "VPJ-14",
+        "VPJ-36",
+        "VPJ-48"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "apps/ops/**",
+        "lib/server/community/**",
+        "supabase/migrations/**",
+        "tests/**/community/**"
+      ],
+      "acceptance": [
+        "公开UGC前补齐举报→运营处置→回执、用户屏蔽、审核拒绝/申诉、作者撤回/删除。",
+        "员工利益关系/来源/著作权字段可见；用户体验不得自动发布为Fact。",
+        "挂接privacy handler，避免下架后Explore/缓存/引用继续可见；无私信/关注系统。"
+      ],
+      "phase": "R4",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 238,
+      "effortDays": 3,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm test:integration",
+        "pnpm test:security",
+        "pnpm db:verify",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-64.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-64/verification.md",
+        "artifacts/VPJ-64/unrun.md",
+        "artifacts/VPJ-64/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355309170,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/238"
+    },
+    {
+      "id": "VPJ-65",
+      "title": "真实地点与依据支撑的完整计划核验",
+      "blockedBy": [
+        "VPJ-09",
+        "VPJ-16",
+        "VPJ-19"
+      ],
+      "allowedPaths": [
+        "ios/**",
+        "lib/server/trip/**",
+        "lib/server/constraints/**",
+        "lib/server/knowledge/**",
+        "tests/**/planning/**",
+        "evals/**"
+      ],
+      "acceptance": [
+        "相对日草稿补成具体日期/实际地点时逐项解析身份、地址、路线和入场约束。",
+        "不完整依据仍可保留用户决定但标待核，plan feasible只能由当前必要证据支持。",
+        "整条有依据Proposal→diff→确认→TripItemSupport→以后重验可追溯。"
+      ],
+      "phase": "R3",
+      "track": "launch",
+      "owner": "coding-agent",
+      "kind": "vertical",
+      "oldIssues": [],
+      "contract": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "baseline-pr-pending",
+      "number": 219,
+      "effortDays": 4,
+      "observationWindow": "PR/实际任务验证窗口",
+      "activationEvidence": null,
+      "checks": [
+        "pnpm docs:check",
+        "git diff --check",
+        "pnpm check",
+        "pnpm test:unit",
+        "pnpm test:contract",
+        "pnpm evals",
+        "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj",
+        "xcrun simctl list devices available",
+        "xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO"
+      ],
+      "doNotTouch": [
+        "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.",
+        "No secrets, original user worktree, old applied migrations, branch protection or production actions.",
+        "No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.",
+        "No archived research/test oracle deletion or invented runtime/provider/Store result."
+      ],
+      "externalPrerequisites": [
+        "Baseline PR merged, all implementation blockers resolved and interfaces available.",
+        "Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial."
+      ],
+      "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+      "docsImpact": [
+        "docs/handoff.json",
+        "HANDOFF.md",
+        "CONTEXT.md",
+        "docs/contracts/vpj-65.md"
+      ],
+      "artifactPaths": [
+        "artifacts/VPJ-65/verification.md",
+        "artifacts/VPJ-65/unrun.md",
+        "artifacts/VPJ-65/commands.jsonl"
+      ],
+      "redLines": [
+        "RL-01",
+        "RL-02",
+        "RL-04",
+        "RL-06",
+        "RL-07"
+      ],
+      "nativeVerification": "工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。",
+      "databaseId": 5355307631,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/219"
+    }
+  ],
+  "parentSupersedes": [
+    2,
+    149
+  ],
+  "sourceSnapshot": "docs/program/2026-09-05/issue-snapshot-before.json",
+  "oldIssueSuccessors": {
+    "2": [
+      "VPJ-00"
+    ],
+    "41": [
+      "VPJ-51"
+    ],
+    "42": [
+      "VPJ-52"
+    ],
+    "53": [
+      "VPJ-38"
+    ],
+    "135": [
+      "VPJ-01",
+      "VPJ-04",
+      "VPJ-40",
+      "VPJ-56"
+    ],
+    "149": [
+      "VPJ-00",
+      "VPJ-42",
+      "VPJ-45"
+    ],
+    "152": [
+      "VPJ-02"
+    ],
+    "153": [
+      "VPJ-05",
+      "VPJ-09"
+    ],
+    "154": [
+      "VPJ-02",
+      "VPJ-04",
+      "VPJ-55"
+    ],
+    "156": [
+      "VPJ-06",
+      "VPJ-07",
+      "VPJ-59"
+    ],
+    "157": [
+      "VPJ-07"
+    ],
+    "158": [
+      "VPJ-08"
+    ],
+    "162": [
+      "VPJ-42",
+      "VPJ-65"
+    ],
+    "163": [
+      "VPJ-35",
+      "VPJ-37",
+      "VPJ-59"
+    ],
+    "164": [
+      "VPJ-03",
+      "VPJ-33",
+      "VPJ-44"
+    ],
+    "165": [
+      "VPJ-36",
+      "VPJ-58"
+    ],
+    "166": [
+      "VPJ-43",
+      "VPJ-44"
+    ],
+    "168": [
+      "VPJ-15",
+      "VPJ-20",
+      "VPJ-48",
+      "VPJ-50"
+    ],
+    "170": [
+      "VPJ-43"
+    ],
+    "171": [
+      "VPJ-45"
+    ]
+  }
+}

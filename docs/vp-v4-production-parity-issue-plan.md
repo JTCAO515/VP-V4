@@ -1,5 +1,7 @@
 # VP-V4 正式产品功能等价 Issue 拆解草案
 
+> 历史方案／2026-09-05 起退出当前执行入口。产品、分期、价格及任务队列以 [VPJ 总体规划](VISEPANDA-MASTER-PLAN-2026-09-05.md) 和 [VPJ Program](program/2026-09-05/README.md) 为准。下文保留历史证据；有效安全/数据合同继续沿对应ADR适用，不因方案归档而作废。
+
 > 状态：published to GitHub；implementation not started
 > 日期：2026-08-26
 > Parent：[AI-00 Program #2](https://github.com/JTCAO515/VP-V4/issues/2)

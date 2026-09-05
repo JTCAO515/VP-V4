@@ -1,4 +1,4 @@
-# ADR-0019: Retain thin HTTP adapters pending ML-01 evidence
+# ADR-0022: Retain thin HTTP adapters pending ML-01 evidence
 
 ## Status
 

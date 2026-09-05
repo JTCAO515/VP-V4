@@ -46,10 +46,9 @@ implementation Issue depended on any acceptance gate.
 `priority:P0` is reserved for the R0 contract set and the R1 tracer bullet. R2/R3 are `priority:P1`.
 R4/R5 are `priority:P2`. A program where almost everything is P0 carries no priority signal.
 
-## Direct queue supersession
+## VPJ active queue
 
-This section supersedes the dependency-gated scheduling language above. Every defined Issue is
-directly schedulable. `status:blocked` reports an unavailable runtime, provider, legal, or operator
-state; it does not prohibit development, testing, review, or merge of independently scoped work.
-Release gates remain evidence requirements for release claims, not implementation prerequisites.
-
+Native dependencies and the baseline PR gate implementation. Use status:ready and ready-for-agent
+only after both are satisfied and there is no human decision or path collision. Operator work uses
+ready-for-human; future expand tasks remain status:blocked until activationEvidence is accepted.
+Closed superseded Issues must not retain status:in-progress, status:ready or ready-for-* labels.

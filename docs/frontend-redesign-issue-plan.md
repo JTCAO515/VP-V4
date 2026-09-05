@@ -1,5 +1,7 @@
 # VP-V4 complete frontend redesign Issue plan
 
+> 历史方案／2026-09-05 起退出当前执行入口。产品、分期、价格及任务队列以 [VPJ 总体规划](VISEPANDA-MASTER-PLAN-2026-09-05.md) 和 [VPJ Program](program/2026-09-05/README.md) 为准。下文保留历史证据；有效安全/数据合同继续沿对应ADR适用，不因方案归档而作废。
+
 Status: local execution plan; current remote GitHub Program and Issue status is unverified. Local implementation evidence is merged through WEB-10.
 Date: 2026-08-27.
 Parent: [WEB-02 #136](https://github.com/JTCAO515/VP-V4/issues/136), under [AI-00 #2](https://github.com/JTCAO515/VP-V4/issues/2).

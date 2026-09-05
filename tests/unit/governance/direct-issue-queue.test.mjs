@@ -9,14 +9,15 @@ const contract = read("docs/agents/issue-execution-contract.md");
 const identityContract = read("docs/contracts/user-data-adapter.md");
 const handoff = JSON.parse(read("docs/handoff.json"));
 
-test("defined Issues are directly schedulable without dependency closure", () => {
-  assert.match(tracker, /defined Issue.*directly schedulable/i);
-  assert.match(labels, /does not prohibit development/i);
-  assert.match(contract, /Do not defer implementation solely because another Issue is\s+open/i);
-  assert.match(handoff.status, /direct Issue queue/i);
+test("VPJ scheduling requires dependencies, a baseline and an execution row", () => {
+  assert.match(tracker, /Native dependencies and\s+the baseline PR gate implementation/i);
+  assert.match(labels, /Native dependencies and the baseline PR gate implementation/i);
+  assert.match(contract, /Native dependencies and the baseline PR gate implementation/i);
+  assert.match(handoff.status, /VPJ-00 #187/);
+  assert.doesNotMatch(tracker, /dependencies.*do not prohibit implementation/i);
 });
 
-test("direct scheduling retains fail-closed runtime protections", () => {
+test("VPJ scheduling retains fail-closed runtime protections", () => {
   assert.match(tracker, /UNAUTHENTICATED.*SAFETY_BLOCKED.*DATA_POLICY_BLOCKED/is);
   assert.match(contract, /runtime.*fail-closed/i);
 });

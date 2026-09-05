@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "vp-v4-operator-actions/1.0",
+  "updatedAt": "2026-08-29",
+  "policy": "docs/agents/continuous-afk-execution.md",
+  "actions": [
+    {
+      "id": "LAUNCH-02-STAGING-CONFIG",
+      "issue": 152,
+      "class": "C",
+      "status": "open",
+      "createdAt": "2026-08-29",
+      "action": "Confirm the existing Supabase Project identity and no-real-user/no-production-data classification, then configure its Staging-only Preview values outside the repository.",
+      "whyHuman": "This requires access to an external account and secret-bearing environment configuration.",
+      "prerequisites": "LAUNCH-01 supplies the trusted database and CI commands; do not share any key or connection string in Issues, chat, logs or artifacts.",
+      "expectedResult": "Preview points only to the verified Staging Project and controlled owner/other-user test accounts can run migration, RLS and browser evidence.",
+      "verify": "Record only Project classification, environment separation and redacted pass/fail evidence; never record secret values or private identifiers.",
+      "dependencyEffect": "Enables LAUNCH-03, LAUNCH-04 and LAUNCH-05 runtime verification.",
+      "rollback": "Remove the Preview environment binding and revoke test accounts; do not delete the Project without a separate operator decision.",
+      "nextSafeIssue": 152
+    },
+    {
+      "id": "LAUNCH-06-PROVIDER-DECISION",
+      "issue": 156,
+      "class": "C",
+      "status": "open",
+      "createdAt": "2026-08-29",
+      "action": "Select one text Provider, region, data terms and budget, and configure its server-only Staging credential outside the repository.",
+      "whyHuman": "Provider contract, billing, region and credential creation are external commercial/account decisions.",
+      "prerequisites": "LAUNCH-01 evidence baseline and a written option matrix with no assumed DeepSeek approval.",
+      "expectedResult": "One approved provider record and a redacted Staging-only configuration are available for live conformance tests.",
+      "verify": "Confirm only provider/profile/region/budget metadata and live test outcomes; never expose a credential or raw private content.",
+      "dependencyEffect": "Enables LAUNCH-06 live transport and LAUNCH-07 coordinator integration.",
+      "rollback": "Revoke the credential, remove the environment binding and keep the provider feature flag off.",
+      "nextSafeIssue": 152
+    },
+    {
+      "id": "LAUNCH-15-RETENTION-LEGAL",
+      "issue": 164,
+      "class": "C",
+      "status": "open",
+      "createdAt": "2026-08-29",
+      "action": "Approve retention, deletion, backup, telemetry, privacy, terms and external claim policy after reviewing engineering options.",
+      "whyHuman": "These values create public, privacy and potentially legal commitments that an engineering agent cannot authorize.",
+      "prerequisites": "LAUNCH-05 provides the enforceable data lifecycle option matrix and actual storage inventory.",
+      "expectedResult": "A signed decision record maps every policy statement to an executable schema, job, UI or runbook behavior.",
+      "verify": "Review the recorded decision and policy-to-runtime matrix without user data or secrets.",
+      "dependencyEffect": "Enables LAUNCH-15 acceptance, LAUNCH-16 deletion behavior and LAUNCH-17 region/backup configuration.",
+      "rollback": "Keep the closed beta private and retain the narrower prior claim boundary until a replacement decision is accepted.",
+      "nextSafeIssue": 152
+    },
+    {
+      "id": "LAUNCH-17-PRODUCTION-SUPABASE",
+      "issue": 170,
+      "class": "C",
+      "status": "open",
+      "createdAt": "2026-08-29",
+      "action": "Create a physically independent Production Supabase Project and Production-only environment configuration after Staging acceptance.",
+      "whyHuman": "This creates a production external account boundary and secret-bearing configuration.",
+      "prerequisites": "LAUNCH-13 Staging acceptance and LAUNCH-15 region/retention decisions.",
+      "expectedResult": "A clean Production Project can replay the accepted migration manifest and isolates users, data, Storage, secrets and redirects from Staging.",
+      "verify": "Use redacted project metadata, migration hashes and owner/other-user RLS smoke results; do not copy Staging users or data.",
+      "dependencyEffect": "Enables LAUNCH-18 Production release readiness.",
+      "rollback": "Disconnect Production environment bindings and remove test users; Project deletion requires a separate operator decision.",
+      "nextSafeIssue": 152
+    },
+    {
+      "id": "LAUNCH-18-19-CUTOVER-CANARY",
+      "issue": 166,
+      "class": "C",
+      "status": "open",
+      "createdAt": "2026-08-29",
+      "action": "Approve domain/DNS, Production promotion, bounded canary invitations and public claims only after every LAUNCH-18 gate passes.",
+      "whyHuman": "Production cutover and real-user invitation change public and external state.",
+      "prerequisites": "LAUNCH-14 through LAUNCH-17 accepted, required checks green, rollback rehearsed and no unresolved P0/P1.",
+      "expectedResult": "The accepted commit enters a bounded canary with observable budget/SLO and a 72-hour Go/No-Go window.",
+      "verify": "Review release evidence, domain smoke, rollback trace and LAUNCH-19 observation without credentials or private user content.",
+      "dependencyEffect": "Enables LAUNCH-19 canary and final closed-beta acceptance.",
+      "rollback": "Stop invitations, restore the prior deployment alias and disable Provider/Chat/Proposal/Today flags; use additive DB compensation only.",
+      "nextSafeIssue": 152
+    }
+  ]
+}

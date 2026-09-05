@@ -50,7 +50,8 @@ const requiredFiles = [
   "app/layout.tsx",
   "app/page.tsx",
   "app/globals.css",
-  "components/VisePandaLanding.tsx",
+  "components/homepage/ImmersiveHomepage.tsx",
+  "components/homepage/Homepage.tsx",
   "postcss.config.mjs",
   "tsconfig.json",
 ];

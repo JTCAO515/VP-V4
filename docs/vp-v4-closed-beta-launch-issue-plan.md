@@ -1,5 +1,7 @@
 # VP-V4 Closed Beta 上线优化与 LAUNCH-00～19 Issue 计划
 
+> 历史方案／2026-09-05 起退出当前执行入口。产品、分期、价格及任务队列以 [VPJ 总体规划](VISEPANDA-MASTER-PLAN-2026-09-05.md) 和 [VPJ Program](program/2026-09-05/README.md) 为准。下文保留历史证据；有效安全/数据合同继续沿对应ADR适用，不因方案归档而作废。
+
 > 状态：accepted planning baseline
 > 日期：2026-08-29
 > 代码基线：`main@594821cc9ebc76b488c7feb65d1421ed26a3651e`

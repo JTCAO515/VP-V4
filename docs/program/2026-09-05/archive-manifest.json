@@ -1,0 +1,210 @@
+{
+  "date": "2026-09-05",
+  "files": [
+    {
+      "archivedPath": "docs/archive/2026-09-05/VisePandaLanding.tsx.reference",
+      "sha256": "bce40a47972419195e20b13f3a8909ac2e7e27dcb2180fc616fcb310feb2179b",
+      "bytes": 20431
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/baseline/CONTEXT.md",
+      "sha256": "d50c3ae9f26f6efdaaa996235d153aadec1ba6b267557fbf21cd0787efcd39ff",
+      "bytes": 36450
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/baseline/HANDOFF.md",
+      "sha256": "fa614f2fa87bea5869a590b06c811b6382a68ab76443f0a269f245401ee0f2bf",
+      "bytes": 48706
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/baseline/handoff.json",
+      "sha256": "b2fec69d6c6c64701f707e96b24a4e78807668b348a819d7be37b12b3d2115f5",
+      "bytes": 43945
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/baseline/issue-execution-contract.md",
+      "sha256": "85060a7bf89a176314d08d0c6ef2b0f242acc205d901fcc58a67c690eb7505db",
+      "bytes": 56001
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/baseline/issue-tracker.md",
+      "sha256": "b5b7302f9602296aecd80634df4c6dba9bdc70059bb1e9f8399a02db675467cd",
+      "bytes": 2017
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/baseline/operator-actions.json",
+      "sha256": "172092529cc05e0a3bb1c7f3d2c7ea11a0df727b6b181f2a1257491591eb1a37",
+      "bytes": 5667
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/baseline/triage-labels.md",
+      "sha256": "c52521af21273aec2c6fbbefca6e7445a558528dd9973b8d9f14ef046b8e679a",
+      "bytes": 2993
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/README.md",
+      "sha256": "4e5a007b2cfc879da371796015613e58f0ebf847811d4d1204e407d4acb9e161",
+      "bytes": 1731
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/App/AppSettings.swift",
+      "sha256": "8d1b24a0a4513f64a0272e6f30396f9e85d35bbeb0e6bb2f945fdda56288874e",
+      "bytes": 1202
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/App/AppShellView.swift",
+      "sha256": "d0dc588c5f25624b83f9361539bfa9c2b7fb4276052c2bd24680d460f17eb079",
+      "bytes": 787
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/App/VisePandaApp.swift",
+      "sha256": "3c1b8c6245039fafa50ca72738697b89a74acd25333c09ac1fd630079e3bd541",
+      "bytes": 423
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Components/BrandHeader.swift",
+      "sha256": "94216a30cf5b4ee2c8ae0896286318702839c6816ae2bda75db9ce3f6ca3af59",
+      "bytes": 834
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Components/CapabilityCard.swift",
+      "sha256": "7045cd3058e55358c261a9c2cecda1c3701487a1b66dfe347e83308b959b2196",
+      "bytes": 938
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Components/PreviewStatusBanner.swift",
+      "sha256": "73c9c9cd45e02c408cf72df13bc507bafe1daf45bcbd4e51e262708645a173e8",
+      "bytes": 1300
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/DesignSystem/VisePandaTheme.swift",
+      "sha256": "8a7c73ba475e4c3ab33fa82633375e6f4ba5f546c96ae5621631ab15e1921945",
+      "bytes": 1775
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Features/Ask/AskView.swift",
+      "sha256": "d8f7e3f34818e983501c2fbf143565be5afbb7173c6dbb94ec924110e32372e5",
+      "bytes": 3876
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Features/Explore/ExploreView.swift",
+      "sha256": "512c29aa8518ec9300d2070371d54ea572852f9f31b1ea30cfa2ae7017ba8157",
+      "bytes": 3148
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Features/Profile/ProfileView.swift",
+      "sha256": "6ec1b72db19365124a27de0faea0efa8deeaa2af1d70e59f606f0d05b6b2a495",
+      "bytes": 2340
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Features/Today/TodayView.swift",
+      "sha256": "11deb32cafd6a704d1ec1a944ce9f39c67faf54bc658fa242618bbbedd0a3fa2",
+      "bytes": 2218
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Features/Trip/TripView.swift",
+      "sha256": "f8c0fb8e0d0c24f058609baa3344ef8764bcf37f20f90d03ea110803fbb96b15",
+      "bytes": 2102
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Navigation/AppRoute.swift",
+      "sha256": "ed67b8474b3a3bdf6e1c3fc7400a99330a8daf560c76092b4c8c8b1cbe1c576c",
+      "bytes": 1123
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Navigation/AppTab.swift",
+      "sha256": "b8082db5cb1c3d6faeec8c14affe86a71b3776a0076628bddff5b89cc1ff3c9f",
+      "bytes": 783
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Navigation/Capability.swift",
+      "sha256": "e37ab47dcee322958c5f9953fbd7457c8562f447895c2fdc6aca8753e965b1d8",
+      "bytes": 1266
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png",
+      "sha256": "caddbbc0ed34706c016db8162b7cb0e79ad6ebf1eef26cbb1739039a42af5824",
+      "bytes": 1196663
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Resources/Assets.xcassets/AppIcon.appiconset/Contents.json",
+      "sha256": "852920cb36e95beb53771138a4b8195a16fcce1cc31250632f246081cc638f9a",
+      "bytes": 203
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Resources/Assets.xcassets/Contents.json",
+      "sha256": "f5fb0e1f3a8142892ed092efb5955c1c2cc537003a89ad7bbdb9dade7fe8985f",
+      "bytes": 60
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Resources/Assets.xcassets/PandaMark.imageset/Contents.json",
+      "sha256": "6e511376a537295b40796cb31b6964d164b254414dc61f2d407ef80f15a6dbaa",
+      "bytes": 296
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Resources/Assets.xcassets/PandaMark.imageset/PandaMark.png",
+      "sha256": "b527d3c63cf08aa8e22ac2bf5e44d3bdc61b0a87d455f755a10203ad2b6d5be8",
+      "bytes": 448111
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda/Resources/Localizable.xcstrings",
+      "sha256": "630da2e14353fe584ba63875657c26228e6c03b1d37917a908244f5bd651b4e2",
+      "bytes": 56998
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda.xcodeproj/project.pbxproj",
+      "sha256": "fde2196df97e0c2ea27443121d9a5fef854e4dab201507d605b3180b325a8d33",
+      "bytes": 18935
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePanda.xcodeproj/xcshareddata/xcschemes/VisePanda.xcscheme",
+      "sha256": "1966d87dbd34c728ed0ef096e2f815b6f3161473eaee37d47165054c951cdad4",
+      "bytes": 2520
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/ios-source-reference/VisePanda/VisePandaTests/AppNavigationContractTests.swift",
+      "sha256": "a68927cb03464343f79f31d0bb19704e5975282a959a5251e0a137c0aeae13ad",
+      "bytes": 1478
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/prior-research/VISEPANDA-CLOSED-BETA-OFFER-AND-STOP-LOSS-2026-09-04.md",
+      "sha256": "8dea94fac7c99f38259b60d9c54ca20adefa2033bcb5d145f1b1e8e80231d90b",
+      "bytes": 15680
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/prior-research/VISEPANDA-FOUNDER-CUSTOMER-ACQUISITION-WEEKLY-PLAN-2026-09-04.md",
+      "sha256": "1a0b190cf59b3e415357a8286b2d8f9992205aabce4b52fb0391a3c72d7735ef",
+      "bytes": 18467
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/prior-research/VISEPANDA-ONE-STOP-JOURNEY-AGENT-RAG-PLAN-2026-09-04.md",
+      "sha256": "5e31b84beea3c8cc041fac2af49122c970d5d0edaed7bf1e91a6cf82e5192440",
+      "bytes": 47296
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/prior-research/VISEPANDA-VP-AGENT-V2-DESIGN-RESEARCH-2026-09-03.md",
+      "sha256": "8999549c3f31dbdb6390da36845074596c72fe4ff28de930008231c4501d1ec3",
+      "bytes": 155913
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/prior-research/visepanda-ai-native-assets/conversation-plan.png",
+      "sha256": "7b3844261d5820054d6806d15d5115a96cb61d07169d586fc02826d329b6bfb8",
+      "bytes": 1081828
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/prior-research/visepanda-ai-native-assets/journey-workspace-dark.png",
+      "sha256": "6fc8d4b1fbe7bfde0d6b000f6d1312751c45fa0b222971e9f0befe15d5c2e398",
+      "bytes": 1251408
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/prior-research/visepanda-ai-native-assets/manifest.json",
+      "sha256": "4a93f58a4c31672d6fe9edec50bc274cd980535f5c9f2519b2b5a3e5dd5913fb",
+      "bytes": 1354
+    },
+    {
+      "archivedPath": "docs/archive/2026-09-05/prior-research/visepanda-ai-native-assets/plan-assistant-sheet.png",
+      "sha256": "bfd593ec7e3460092d7758cb6fccf1336593919995d79f6ad5468f2c6bc9fe11",
+      "bytes": 1157525
+    }
+  ]
+}
