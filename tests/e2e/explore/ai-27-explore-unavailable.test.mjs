@@ -12,7 +12,7 @@ test("AI-27 exposes only localized unavailable Explore routes until an eligible 
 
   for (const route of [index, city, poi]) assert.match(route, /ExploreUnavailableWorkspace/);
   assert.match(workspace, /getLocaleAttributes/);
-  assert.match(workspace, /localeOptions/);
+  assert.match(workspace, /getLocaleSelectionOptions\(locale\)/);
   assert.match(workspace, /kicker: string/);
   assert.match(workspace, /\{content\.kicker\}/);
   assert.doesNotMatch(workspace, /Golden Route · \{content\.route\[route\]\}/);

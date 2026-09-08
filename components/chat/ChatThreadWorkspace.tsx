@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { VisePandaMark } from "@/components/brand/VisePandaMark";
-import { chatThreadCopy, chatThreadWorkspaceCopy, getLocaleAttributes, localeOptions, type Locale } from "@/lib/i18n";
+import { chatThreadCopy, chatThreadWorkspaceCopy, getLocaleAttributes, getLocaleSelectionOptions, type Locale } from "@/lib/i18n";
 import type { TurnFeedbackKind, TurnFeedbackReason } from "@/lib/server/turn/feedback/contract";
 import { replayTurnSse, turnEventsFromHistory } from "./turn-stream-client";
 import { initialTurnStreamState, turnStreamReducer } from "./turn-stream-reducer";
+import { parseLocale } from "@/lib/navigation/workspace-entry";
 import styles from "./ChatThreadWorkspace.module.css";
 
 type Thread = { id: string; tripId: string | null; status: "active" | "archived"; createdAt: string; updatedAt: string };
@@ -24,7 +25,7 @@ const asUuid = (value: string | null): string | undefined =>
 export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: { initialThreadId?: string; initialPlaceCandidate?: Readonly<{ tripId: string; poiId: string }> }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [locale, setLocale] = useState<Locale>("zh");
+  const [locale, setLocale] = useState<Locale>(() => parseLocale(searchParams.get("locale")));
   const [threads, setThreads] = useState<readonly Thread[]>([]);
   const [trips, setTrips] = useState<readonly Trip[]>([]);
   const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
@@ -202,7 +203,7 @@ export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: 
 
   const statusName = (status: string) => status === "archived" ? copy.archived : status === "active" ? copy.active : status;
   return <main className={styles.shell}>
-    <header className={styles.header}><Link href="/" aria-label="VisePanda home"><VisePandaMark /></Link><Link href="/visepanda">{copy.back}</Link><label>{copy.language}<select value={locale} onChange={(event) => setLocale(event.target.value as Locale)}>{localeOptions.map((option) => <option key={option.value} value={option.value}>{option.flag} {option.label}</option>)}</select></label></header>
+    <header className={styles.header}><Link href="/" aria-label="VisePanda home"><VisePandaMark /></Link><Link href="/visepanda">{copy.back}</Link><label>{copy.language}<select value={locale} onChange={(event) => setLocale(event.target.value as Locale)}>{getLocaleSelectionOptions(locale).map((option) => <option key={option.value} value={option.value}>{option.flag} {option.label}</option>)}</select></label></header>
     <section className={styles.content} aria-labelledby="chat-threads-title"><p>{copy.eyebrow}</p><h1 id="chat-threads-title">{copy.title}</h1><p className={styles.body}>{copy.body}</p>{exactPoiId ? <p className={styles.status}>{copy.exactPlaceScope.replace("{poiId}", exactPoiId)}</p> : null}
       <div aria-live="polite" className={styles.status}>{state === "loading" ? copy.loading : state === "unavailable" ? copy.unavailable : null}</div>
       {state === "unauthenticated" ? <Link className={styles.primary} href="/auth/sign-in?returnTo=/visepanda">{copy.signIn}</Link> : null}

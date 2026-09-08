@@ -14,7 +14,7 @@ test("V4-26 withholds Network preparation until reviewed connectivity guidance a
   assert.match(page, /NetworkWorkspace/);
   assert.match(view, /Network preparation is unavailable/);
   assert.match(view, /No reviewed connectivity guide, fact, coverage boundary, or proposal capability exists/);
-  assert.match(view, /localeOptions/);
+  assert.match(view, /getLocaleSelectionOptions\(locale\)/);
   assert.match(view, /document\.documentElement\.dir = attributes\.dir/);
   for (const label of ["VisePanda 首页", "Inicio de VisePanda", "Главная VisePanda", "الصفحة الرئيسية لـ VisePanda"]) {
     assert.match(view, new RegExp(label));

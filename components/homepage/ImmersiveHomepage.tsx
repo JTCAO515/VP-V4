@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-import { getLocaleAttributes, immersiveHomepageCopy, localeOptions, type Locale } from "@/lib/i18n";
+import { getLocaleAttributes, immersiveHomepageCopy, getLocaleSelectionOptions, type Locale } from "@/lib/i18n";
 
 import styles from "./ImmersiveHomepage.module.css";
 
@@ -33,7 +33,7 @@ export function ImmersiveHomepage() {
         <label className={styles.locale}>
           <span className={styles.srOnly}>{content.language}</span>
           <select aria-label={content.language} onChange={(event) => setLocale(event.target.value as Locale)} value={locale}>
-            {localeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+            {getLocaleSelectionOptions(locale).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
         </label>
       </header>

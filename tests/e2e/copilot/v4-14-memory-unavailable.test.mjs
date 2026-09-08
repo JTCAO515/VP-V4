@@ -17,7 +17,7 @@ test("V4-14 presents durable Copilot Memory governance without browser-local mut
   assert.match(view, /Forget|forget|Delete|delete/);
   assert.match(view, /sourceReceiptId/);
   assert.match(view, /impacts/);
-  assert.match(view, /localeOptions/);
+  assert.match(view, /getLocaleSelectionOptions\(locale\)/);
   assert.match(view, /getLocaleAttributes/);
   assert.match(view, /dir = attributes\.dir/);
   for (const label of ["返回 VisePanda", "Volver a VisePanda", "Назад к VisePanda", "العودة إلى VisePanda"]) assert.match(view, new RegExp(label));

@@ -2,7 +2,7 @@
 
 import type { ChangeEvent } from "react";
 
-import { getLocaleAttributes, localeOptions, type Locale } from "@/lib/i18n";
+import { getLocaleAttributes, getLocaleSelectionOptions, type Locale } from "@/lib/i18n";
 
 type LocaleSelectProps = {
   ariaLabel: string;
@@ -20,6 +20,6 @@ export function LocaleSelect({ ariaLabel, locale, onLocaleChange }: LocaleSelect
   }
 
   return <select aria-label={ariaLabel} className="vp-locale-select" onChange={changeLocale} value={locale}>
-    {localeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+    {getLocaleSelectionOptions(locale).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
   </select>;
 }

@@ -14,7 +14,7 @@ test("V4-25 withholds Visa guidance until scoped reviewed policy facts and an au
   assert.match(page, /VisaWorkspace/);
   assert.match(view, /Visa guidance is unavailable/);
   assert.match(view, /No reviewed policy fact with passport, stay, region, time, authority, and expiry scope exists/);
-  assert.match(view, /localeOptions/);
+  assert.match(view, /getLocaleSelectionOptions\(locale\)/);
   assert.match(view, /document\.documentElement\.dir = attributes\.dir/);
   for (const label of ["VisePanda 首页", "Inicio de VisePanda", "Главная VisePanda", "الصفحة الرئيسية لـ VisePanda"]) {
     assert.match(view, new RegExp(label));

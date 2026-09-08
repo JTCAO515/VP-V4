@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { VisePandaMark } from "@/components/brand/VisePandaMark";
-import { getLocaleAttributes, localeOptions, type Locale } from "@/lib/i18n";
+import { getLocaleAttributes, getLocaleSelectionOptions, type Locale } from "@/lib/i18n";
 import styles from "@/components/canvas/TripCanvas.module.css";
 
 type Profile = {
@@ -180,7 +180,7 @@ export function ProfileWorkspace() {
           value={locale}
           onChange={(e) => setLocale(e.target.value as Locale)}
         >
-          {localeOptions.map((o) => (
+          {getLocaleSelectionOptions(locale).map((o) => (
             <option key={o.value} value={o.value}>
               {o.flag} {o.label}
             </option>

@@ -14,7 +14,7 @@ test("V4-24 withholds Ride Assist until confirmed pickup, destination, and provi
   assert.match(page, /RideAssistWorkspace/);
   assert.match(view, /Ride Assist is unavailable/);
   assert.match(view, /No confirmed pickup, Chinese destination, provider handoff, or authorized provider observation is available/);
-  assert.match(view, /localeOptions/);
+  assert.match(view, /getLocaleSelectionOptions\(locale\)/);
   assert.match(view, /document\.documentElement\.dir = attributes\.dir/);
   for (const label of ["VisePanda 首页", "Inicio de VisePanda", "Главная VisePanda", "الصفحة الرئيسية لـ VisePanda"]) {
     assert.match(view, new RegExp(label));

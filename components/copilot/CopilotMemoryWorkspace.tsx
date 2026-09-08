@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { VisePandaMark } from "@/components/brand/VisePandaMark";
-import { getLocaleAttributes, localeOptions, type Locale } from "@/lib/i18n";
+import { getLocaleAttributes, getLocaleSelectionOptions, type Locale } from "@/lib/i18n";
 import memoryStyles from "@/components/copilot/CopilotMemoryWorkspace.module.css";
 import styles from "@/components/canvas/TripCanvas.module.css";
 
@@ -332,7 +332,7 @@ export function CopilotMemoryWorkspace() {
           value={locale}
           onChange={(event) => setLocale(event.target.value as Locale)}
         >
-          {localeOptions.map((option) => (
+          {getLocaleSelectionOptions(locale).map((option) => (
             <option key={option.value} value={option.value}>
               {option.flag} {option.label}
             </option>
