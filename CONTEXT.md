@@ -6,17 +6,14 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：VPJ-00 #187 baseline PR #253 merged at 9a3b724. Operator-authorized isolated Journey and Early Access demo migration is locally verified with independent review; inspect its PR/main for current merge state. Real product/runtime gates remain unverified.
+状态：VPJ-00 #187 baseline PR #253 merged at 9a3b724; Journey preview PR #254 merged on main at 1bd1ffb (2026-09-08 read-back). Governance workflow revision is prepared for review; real product/runtime gates remain unverified.
 
 阶段：Journey visual preview and full prepared Demo migration; no backend, native or same-Trip acceptance implied. The 65-task VPJ dependency graph is unchanged.
 
 ## 读取顺序
 
+- [docs/agents/development-workflow.md](docs/agents/development-workflow.md)
 - [docs/program/2026-09-05/README.md](docs/program/2026-09-05/README.md)
-- [docs/VISEPANDA-MASTER-PLAN-2026-09-05.md](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)
-- [docs/adr/ADR-0023-vpj-integrated-native-journey-baseline.md](docs/adr/ADR-0023-vpj-integrated-native-journey-baseline.md)
-- [docs/program/2026-09-05/INTERFACES.md](docs/program/2026-09-05/INTERFACES.md)
-- [docs/program/2026-09-05/EXECUTION-CONTRACT.md](docs/program/2026-09-05/EXECUTION-CONTRACT.md)
 
 ## 当前决定
 
@@ -43,10 +40,11 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - DAG/missing-dependency tests, 41 archive hashes, docs/JSON/local links and git diff against origin/main passed. Archive whitespace/line endings retained only in hash-checked archive scope.
 - 1280x800 and 390x844 current-page smoke: no horizontal overflow or console errors/warnings. Existing cross-route locale reset is assigned to VPJ-01/41.
 - PR253 CI at commit06bab2f passed; subsequent documentation-only handoff commits receive fresh CI and must be inspected before merge.
+- 2026-09-08 governance read-back at main 1bd1ffb: PR253/254 merged; all 65 VPJ tasks still status:blocked; VPJ-01 #188 and VPJ-62 #202 have no native blockers. These are readiness review candidates, not verified implementation-ready tasks.
 
 ## 下一动作与回滚
 
-Inspect current preview PR/main and required CI before treating it as merged. Preview routes are /journey and /journey/plan; see docs/design/journey/README.md. Keep VPJ-41 #234 open; its real same-Trip prerequisites are not satisfied by this demo. Recompute the live VPJ frontier before product implementation.
+Review the workflow revision PR. For product work, re-evaluate VPJ-01/02/03/46/62 inputs against current GitHub and environment, then reconcile stale blocked labels. The 65-task dependency graph and VPJ-41 #234 runtime acceptance remain unchanged; merged Journey fixtures do not complete it.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 

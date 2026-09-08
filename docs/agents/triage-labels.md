@@ -1,54 +1,28 @@
 # Triage labels
 
-| Canonical role | GitHub label | Meaning |
+| Role | Label | Meaning |
 | --- | --- | --- |
-| needs triage | `needs-triage` | Maintainer evaluation required |
-| needs info | `needs-info` | Waiting on reporter/operator information |
-| AFK-ready | `ready-for-agent` | Fully specified and independently executable |
-| human-ready | `ready-for-human` | Operator/human decision or action required |
-| will not action | `wontfix` | Explicitly not planned |
+| Triage | `needs-triage` | Scope/readiness needs evaluation |
+| Missing information | `needs-info` | A specific unanswered question remains |
+| Agent ready | `ready-for-agent` | The selected scope is independently actionable |
+| Human ready | `ready-for-human` | A named operator decision/action remains |
+| Not planned | `wontfix` | Explicitly not planned |
 
-Project planning also uses:
+Use `status:ready`, `status:blocked`, `status:in-progress` or `status:superseded` for task state;
+`phase:R0`–`phase:R5` for scheduling; and `priority:P0`/`P1`/`P2` for current outcome priority.
+Priority is not permanently tied to a historical release: a blocking defect can be P0 in any phase.
 
-- `phase:R0`-`phase:R5` for delivery order, matching the six release milestones R0-R5;
-- `priority:P0`, `priority:P1`, `priority:P2` for outcome priority;
-- `status:ready`, `status:blocked`, `status:in-progress`, `status:superseded` for live work state;
-- `governance` for architecture/control work;
-- `migration` for evidence-gated VP-Final reuse or replacement;
-- one standard type label such as `documentation` or `enhancement`.
+VPJ's native graph and current scope govern readiness. The old AI-01/15/21/29/34/41 release-gate
+table is archived in `docs/archive/2026-09-05/baseline/triage-labels.md`; it adds no edges to VPJ.
+Use current task phase and dependencies, not an old milestone title, to schedule work.
 
-`status:ready` and `ready-for-agent` are not synonyms: the first means dependencies are complete; the second also means no human decision remains.
+After a baseline/upstream merge, inspect interfaces, environment and ownership, then reconcile
+stale labels using normal tracker authority. A label is not an independent source of approval.
+Closed work must not retain `status:ready`, `status:in-progress` or `ready-for-*` labels.
 
-In Continuous AFK mode, `ready-for-human` and `needs-info` are skip signals for the scheduler, not a
-reason to pause the entire session. Only the affected dependency path waits. The scheduler removes
-`ready-for-agent` from that Issue, records the exact action in `docs/operator-actions.json`, and
-continues another independently ready Issue.
+An operator step blocks its own path. Record it in `docs/operator-actions.json` and continue
+independent work. A bounded preparation slice may have its own ready Issue/PR while its parent
+waits for actual runtime acceptance. Future expand tasks retain their activation gate.
 
-## Release milestones
-
-Delivery order also uses GitHub milestones, one per release in the engineering report section 12.2:
-
-| Milestone | Content | Exit gate Issue |
-| --- | --- | --- |
-| `R0 Architecture baseline` | decisions, contracts, actor/data/deployment ADRs | operator acceptance of AI-01 |
-| `R1 Durable walking skeleton` | fixture -> Turn -> Proposal -> atomic apply -> reload | AI-15 |
-| `R2 Grounded text alpha` | real text providers, RAG baseline, typed claims | AI-21 |
-| `R3 Two-city product beta` | curation, Ops deploy, Explore, exact-ID loop | AI-29 |
-| `R4 Multimodal beta` | media TTL, OCR->MT, push-to-talk | AI-34 |
-| `R5 Controlled production` | external data, hardening, runbooks, observation | AI-41 |
-
-Every release-gate Issue is a hard dependency of the next release's first implementation Issue.
-Removing that edge reopens the gap the 2026-08-24 governance review found, where no
-implementation Issue depended on any acceptance gate.
-
-## Priority meaning
-
-`priority:P0` is reserved for the R0 contract set and the R1 tracer bullet. R2/R3 are `priority:P1`.
-R4/R5 are `priority:P2`. A program where almost everything is P0 carries no priority signal.
-
-## VPJ active queue
-
-Native dependencies and the baseline PR gate implementation. Use status:ready and ready-for-agent
-only after both are satisfied and there is no human decision or path collision. Operator work uses
-ready-for-human; future expand tasks remain status:blocked until activationEvidence is accepted.
-Closed superseded Issues must not retain status:in-progress, status:ready or ready-for-* labels.
+See `development-workflow.md` for scope and evidence, and `continuous-afk-execution.md` for
+scheduling. Do not turn a stale label or absent label into an invented capability result.

@@ -1,31 +1,22 @@
 # 后续 AI coding agent 启动说明
 
-以下内容可以直接交给下一位coding agent。任务以GitHub当前状态为准，不依赖旧对话。
+```text
+在 JTCAO515/VP-V4 推进 VPJ Program #187。
 
-> 在 JTCAO515/VP-V4 开发 VPJ Program #187。先读 docs/program/2026-09-05/README.md、主报告、ADR-0023、issue-plan.json，再读你选中Issue的完整body/comments和EXECUTION-CONTRACT行。
->
-> 先确认规划PR #253已合并；如果仍未合并，先审查这份具体基线并报告PR状态，不能从旧main按新权限/商业合同编码。合并后从当前origin/main建立独立worktree。
->
-> 实时读取Issue/native blockers、现有PR和operator-action队列。无未完成依赖、无文件owner冲突、接口已冻结且没有你无法代办的外部条件时，才设置status:ready+ready-for-agent并认领。不要把后续expand任务因依赖关闭自动开启。
->
-> 第一个可做的原生故事通常是 VPJ-01 #188：审计归档iOS源壳，接入main，建立中英五入口和首个Trip页面，冻结语义token并跑原生build/测试。实际可用任务仍以实时图为准；其他可独立推进路径包括Staging、数据政策、客户发现和申请入口。
->
-> 一条Issue、一条branch/PR。复用当前Trip/Patch/RLS与测试；原生用bearer/session适配，不放宽Web Origin。私有数据、模型、worker、知识、Ops、IAP和外部工具按接口约束执行。
->
-> 先跑验收相关快速检查，再运行本行要求的真实环境/设备检查。环境缺失可以完成允许的准备，但必须标partial/UNRUN并登记operator动作，不能靠fixture关掉真实验收Issue。
->
-> 完成时记录用户结果、变更、命令/失败/skip、真实证据、回滚、下一动作，并更新handoff与相关模块文档。修改issue-plan.json后执行node scripts/vpj-program.mjs render和pnpm docs:check。普通coding任务不要运行publish/close-old等tracker重整模式。
-
-## 查状态的命令
+1. 读取 AGENTS.md、CONTEXT.md、docs/agents/development-workflow.md、当前 Issue/PR 和执行行；再读受影响接口、代码、测试及 ADR。首次进入或产品范围改变时读主报告。
+2. 实时核对 origin/main、现有改动、相关 PR/native blockers、环境及 operator queue。#253 与 #254 已在2026-09-08的核对中合并，后续仍以当前 GitHub 为准，旧“基线待合并”只是历史快照。
+3. 核实后修正陈旧标签。可开始的产品工作必须有实际接口和所需输入；运行条件未满足时，可记录独立准备范围并保留父任务的真实验收门。后续 expand 仍需 activationEvidence。
+4. 一项连贯结果一条 PR，同一 Issue 可增量交付；按需使用 worktree。保护用户改动。必要的相邻类型、调用方、测试和配置变更在同一任务中说明即可。
+5. 按实际改动选择本地验证，保留所有适用 CI 和最终能力验收。原生构建在可用 Apple 工具链验证；缺环境标 UNRUN，不声称设备/DB/provider/生产已通过。
+6. 使用已有 Trip/Patch/RLS 合同。产品范围仍为中英原生 iOS + 同 Trip 精简 Web；模型、数据、IAP及生产授权仍沿原合同。
+7. 完成后在 Issue/PR 记录结果、关键验证、未验项和下一步。共享状态变化/交接时更新 handoff.json，并运行 render-handoff；任务 manifest 变化用 render 更新派生合同。外部 tracker 重整命令不属于普通编码。
+8. 持续目标按 continuous-afk-execution.md 继续独立工作，不因已授权的普通实现或标签维护重复询问。生产、付款、账户、数据等不可代办动作单独排队。
+```
 
 ```bash
 git fetch origin
 gh pr view 253 --repo JTCAO515/VP-V4 --json state,mergedAt,mergeCommit
 gh issue view 187 --repo JTCAO515/VP-V4
-gh issue list --repo JTCAO515/VP-V4 --state open --limit 100
 node scripts/vpj-program.mjs verify
+node scripts/vpj-program.mjs render-handoff
 ```
-
-## 重要约定
-
-正式商店、生产数据库、supplier合同、付款、敏感数据授权由对应operator步骤完成；保留当前已经明确的授权，不反复询问普通实现选择。任何新Issue正文都不能覆盖真实用户授权或服务端权限。不创建假‘已经配置’回执。

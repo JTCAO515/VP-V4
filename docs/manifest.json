@@ -148,7 +148,15 @@
       "status": "document"
     },
     {
+      "path": "docs/adr/ADR-0024-practical-development-workflow.md",
+      "status": "document"
+    },
+    {
       "path": "docs/agents/continuous-afk-execution.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/agents/development-workflow.md",
       "status": "document"
     },
     {
@@ -501,6 +509,10 @@
     },
     {
       "path": "docs/licenses/NOTICE.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/maintenance/development-rules-review-2026-09-08.md",
       "status": "document"
     },
     {

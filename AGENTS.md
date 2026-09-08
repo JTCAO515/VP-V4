@@ -1,54 +1,46 @@
 # VP-V4 Engineering Instructions
 
-The current Web/server runtime is Next.js App Router + React + strict TypeScript + Tailwind CSS v4.
-The active delivery baseline is VPJ-00 #187 and ADR-0023: native SwiftUI iOS is the complete product;
-Web is a lightweight same-Trip Planning Studio. Start at `docs/program/2026-09-05/README.md`.
+Active product: VPJ-00 #187 / ADR-0023. Native SwiftUI iOS is the complete product;
+Web is a lightweight same-Trip Planning Studio. Start with `CONTEXT.md` and the current task.
+Product entry: `docs/program/2026-09-05/README.md`.
 
-- Build routes in `app/` and interactive UI in typed components under `components/`.
-- Keep `app/page.tsx` a Server Component; isolate browser state and event handlers behind explicit `"use client"` boundaries.
-- Use `next/image` for local raster/SVG assets and `next/font/local` for bundled fonts.
-- Tailwind owns global foundations and product tokens. `app/globals.css` contains the accepted responsive visual compatibility layer; do not silently redesign it outside an approved UI task.
-- Runtime imagery and wordmarks are project-local VisePanda assets under `public/assets/visepanda/`; do not reintroduce `/assets/source/` media paths. Existing bundled fonts and shape masks still require rights review before public release.
-- Current release copy and acceptance target `zh` and `en`. VPJ-01 owns the explicit migration of
-  existing five-locale UI/wire tests; preserve legacy es/ru/ar assets and payload compatibility until
-  that migration is verified. Do not advertise future languages as supported or silently break RTL.
-- Do not claim real AI, persistence, inventory, booking, payment, Human Help, SLA, or complete city coverage.
-- Required checks: `pnpm lint`, `pnpm typecheck`, `pnpm build`, `pnpm test`, copy/claim scan, desktop browser QA, and 390×844 browser QA.
+## Development workflow
 
-## Agent skills
+Follow `docs/agents/development-workflow.md` (ADR-0024) for reading, scope, preparation,
+validation and handoff. It replaces conflicting historical workflow instructions.
 
-### Issue tracker
+- Read the current Issue/PR, its VPJ row and affected interfaces/code; load research and other ADRs on demand.
+- Verify live dependencies and readiness; reconcile stale labels instead of treating them as permanent blockers.
+- Use one coherent outcome per PR. Incremental PRs may share an Issue; preserve complete acceptance tracking.
+- Use an isolated checkout/worktree as needed to protect concurrent and user changes.
+- Explicit maintenance requests may use a compact Issue/PR brief without a new VPJ product row.
+- Explain necessary adjacent-file changes and coordinate actual ownership conflicts.
+- Run checks appropriate to changed behavior; existing CI and final capability acceptance remain required.
+- Update shared handoff when shared state changes, using `docs/handoff.json` as the source.
+- Long sessions follow `docs/agents/continuous-afk-execution.md`; continue independent work after a blocker.
 
-Track work in `JTCAO515/VP-V4` GitHub Issues. External PRs are not a triage request surface. See `docs/agents/issue-tracker.md`.
+## Implementation foundations
 
-### Triage labels
+- Web/server: Next.js App Router, React, strict TypeScript, Tailwind CSS v4.
+- Build routes in `app/` and typed interactive UI in `components/`. Keep `app/page.tsx` a Server
+  Component; isolate browser state/handlers behind explicit `"use client"` boundaries.
+- Use `next/image` for supported raster assets and `next/font/local` for bundled fonts. SVG may
+  use an accessible inline component or image element as appropriate to the asset.
+- Use product tokens and the accepted responsive layer in `app/globals.css`; scope visual changes
+  to the requested UI task. Runtime imagery uses local `public/assets/visepanda/` assets, not
+  `/assets/source/`. Observe existing asset rights and release checks.
+- Release languages are zh/en. Preserve legacy es/ru/ar assets and payload compatibility until
+  VPJ-01's migration is verified; test affected locale/RTL paths.
+- Describe only capabilities verified for the stated version, environment and supported scope;
+  fixture demos, planned features and actual runtime outcomes must remain distinguishable.
 
-Use the canonical `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, and `wontfix` roles together with project `phase:*`, `priority:*`, and `status:*` labels. See `docs/agents/triage-labels.md`.
+## Invariants and authority
 
-### Domain docs
+Preserve confirmed TripProposal/diff/atomic Patch, actor isolation/RLS, data/recipient permissions,
+licences, safe logging, append-only applied migrations, deletion and rollback contracts.
+Never fabricate approvals, test results, transactions or runtime evidence. Preserve secrets and
+unrelated user changes. Development autonomy grants no new production, account, payment or
+external-message authority and never bypasses required checks or reviews.
 
-This is a single-context repository: read root `CONTEXT.md`, relevant `docs/adr/`, and the mandatory reading order before planning or implementation. See `docs/agents/domain.md`.
-
-### Issue execution contract
-
-Every AI Core Issue's mandatory reading order, allowed and forbidden paths, runnable commands,
-evidence artifacts, and red-line suite IDs live in `docs/agents/issue-execution-contract.md`.
-Issue bodies link to it; that file is the authority. Do not start an Issue whose row is missing.
-
-Only the current VPJ execution rows are active. Native dependencies and unmerged interface work
-gate implementation. A fixture preparation may proceed only if its own Issue explicitly permits
-that scope; it is not runtime acceptance. Preserve one-Issue/branch/PR and every fail-closed guard.
-
-### Continuous AFK sessions
-
-A Continuous AFK session may move from one independently executable Issue to another without
-per-Issue operator confirmation. It must follow `docs/agents/continuous-afk-execution.md`: keep one
-Issue/branch/PR per work unit, recompute the live frontier after every PR or merge, and record then
-skip operator-only blockers while other safe work remains.
-
-AFK mode never authorizes bypassing required checks, branch protection, RLS,
-permission boundaries, privacy/data-licence policy, migration rollback requirements, secrets,
-production cutover, or irreversible actions. Human confirmation may be replaced by deterministic
-or browser-automated evidence only when that evidence actually tests the acceptance condition.
-An active explicit operator instruction may authorize repository-only Class B preparation to merge
-after independent automated review and every required check; it never authorizes production actions.
+Tracker and labels: `docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md`.
+Task checks and red lines: `docs/agents/issue-execution-contract.md`.

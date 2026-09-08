@@ -12,6 +12,7 @@ const json = p => JSON.parse(read(p));
 const save = (p, value) => { mkdirSync(path.dirname(p), { recursive: true }); writeFileSync(p, value); };
 const saveJson = (p, value) => save(p, JSON.stringify(value, null, 2) + '\n');
 const plan = json(planPath);
+export const executionContractHeader = "# VPJ Issue 执行合同\n\n生成自issue-plan.json。当前共享流程见 [development-workflow.md](../../agents/development-workflow.md) / ADR-0024。\n阅读当前Issue/PR、本行、受影响接口与代码；历史研究按需读取。\n\nChecks列是完整Issue验收清单；每条PR按实际改动选择本地验证，保留适用CI和最终运行门。\nAllowed列标示主要范围；必要的相邻文件调整、维护任务和独立准备片段按共享流程记录。\n运行依赖未完成时父Issue保持未验收；fixture不证明设备、数据库、provider或生产通过。\n\n";
 const byId = new Map(plan.tasks.map(t => [t.id, t]));
 const number = id => id === 'VPJ-00' ? plan.parentNumber : byId.get(id)?.number;
 const link = id => number(id) ? `[${id} #${number(id)}](https://github.com/${plan.repo}/issues/${number(id)})` : id;
@@ -90,7 +91,7 @@ function render() {
   const table = '| 任务 | 交付 | 依赖 | Owner | 专注日/观察 | 阶段 |\n| --- | --- | --- | --- | --- | --- |\n' +
     orderedTasks(plan.tasks).map(t=>`| ${link(t.id)} | ${t.title} | ${t.blockedBy.map(link).join(', ') || '仅基线合并'} | ${t.owner} | ${t.effortDays}日；${t.observationWindow} | ${t.track} |`).join('\n');
   save(`${dir}/ISSUES.md`, header + table + '\n\n后续expand必须另有activationEvidence，依赖完成不会自动开放。\n');
-  let contracts = '# VPJ Issue 执行合同\n\n生成自issue-plan.json。阅读顺序：Program README→当前Issue→本行→INTERFACES→拥有模块及实际代码。\n\n所有任务另允许自己的artifacts、docsImpact以及本Issue新增合同；这些不授予其他模块重构权限。先执行已有快速验证，再做Issue所需设备/运行验收。Native命令由VPJ-01/56引入；未完成不能跳过后声称真机通过。\n\n';
+  let contracts = executionContractHeader;
   for (const t of plan.tasks) {
     save(`${dir}/issue-bodies/${t.id}.md`, body(t));
     contracts += `## ${t.id}\n\n${link(t.id)} — ${t.title}\n\n` +
@@ -174,7 +175,7 @@ function publish(){
 
 async function closeOld(){
   validate();assert.ok(plan.tasks.every(t=>t.number&&t.databaseId),'new tasks must exist before closing old');
-  await verifyNewRemote();
+  await verifyNewRemote({ migrationSnapshot: true });
   const snapshot=json(plan.sourceSnapshot);const results=[];
   const old=[...snapshot.issues].sort((a,b)=>Number([2,149].includes(a.number))-Number([2,149].includes(b.number)));
   for(const item of old){
@@ -191,18 +192,44 @@ async function closeOld(){
   }
 }
 
-async function verifyNewRemote(){
+export function validateRemoteTaskState(task, issue, { baselineMerged, blockers = [], migrationSnapshot = false }) {
+  assert.ok(issue, `${task.id} missing remote issue`);
+  const labels = issue.labels.map(label => label.name);
+  if (migrationSnapshot || !baselineMerged) {
+    assert.equal(issue.state, 'open', `${task.id} must be open before baseline/migration acceptance`);
+    assert.ok(labels.includes('status:blocked'), `${task.id} must remain blocked before baseline/migration acceptance`);
+    return 'baseline-blocked';
+  }
+  if (issue.state === 'closed') {
+    assert.equal(issue.state_reason, 'completed', `${task.id} closed without completion; reconcile its planned scope`);
+    return 'completed';
+  }
+  assert.equal(issue.state, 'open', `${task.id} unexpected state`);
+  const openBlockers = blockers.filter(blocker => blocker.state !== 'closed' || blocker.state_reason !== 'completed');
+  if (labels.some(label => ['status:ready', 'status:in-progress', 'ready-for-agent'].includes(label))) {
+    assert.equal(openBlockers.length, 0, `${task.id} active with unresolved native blockers`);
+  }
+  if (labels.includes('status:blocked') && openBlockers.length === 0) return 'readiness-review';
+  return 'open';
+}
+
+async function verifyNewRemote({ migrationSnapshot = false } = {}){
   validate();const existing=allIssues();
+  const baseline = api(`repos/${plan.repo}/pulls/${plan.baselinePr}`);
+  const baselineMerged = baseline.merged === true;
+  const readinessReview = [];
   for(let start=0;start<plan.tasks.length;start+=8){
     const results=await Promise.allSettled(plan.tasks.slice(start,start+8).map(async t=>{
-      const i=existing.find(x=>x.number===t.number);assert.equal(i?.state,'open',t.id);assert.ok(i.title.startsWith(`[${t.id}] `));assert.equal(i.id,t.databaseId);assert.equal(i.body,body(t),`${t.id} body drift`);
-      assert.ok(i.labels.some(l=>l.name==='status:blocked'),`${t.id} must remain blocked before baseline merge`);
+      const i=existing.find(x=>x.number===t.number);assert.ok(i,`${t.id} missing remote issue`);assert.ok(i.title.startsWith(`[${t.id}] `));assert.equal(i.id,t.databaseId);assert.equal(i.body,body(t),`${t.id} body drift`);
       const [deps,parent]=await Promise.all([readApi(`repos/${plan.repo}/issues/${t.number}/dependencies/blocked_by`),readApi(`repos/${plan.repo}/issues/${t.number}/parent`)]);
       assert.deepEqual(deps.map(x=>x.number).sort((a,b)=>a-b),t.blockedBy.map(number).sort((a,b)=>a-b),`${t.id} native deps`);assert.equal(parent.number,plan.parentNumber);
+      const state = validateRemoteTaskState(t, i, { baselineMerged, blockers: deps, migrationSnapshot });
+      if (state === 'readiness-review') readinessReview.push(t.id);
     }));
     const failures=results.filter(r=>r.status==='rejected');assert.equal(failures.length,0,failures.map(r=>String(r.reason)).join('\n'));
     console.log(`verified new tasks ${Math.min(start+8,plan.tasks.length)}/${plan.tasks.length}`);
   }
+  console.log(JSON.stringify({ baselineMerged, migrationSnapshot, readinessReview: readinessReview.sort(), note: 'Readiness candidates still need interface, environment, ownership and activation review; no labels changed.' }));
   return existing;
 }
 
@@ -238,6 +265,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(root,'scri
   const cmd=process.argv[2]??'verify';
   if(cmd==='verify')validate();
   else if(cmd==='render')render();
+  else if(cmd==='render-handoff')renderHandoff();
   else if(cmd==='publish')publish();
   else if(cmd==='sync-bodies')syncBodies();
   else if(cmd==='sync-selected')syncSelected();

@@ -1,20 +1,18 @@
 # Domain documentation
 
-VP-V4 is a single-context repository.
+VP-V4 has one active product context: VPJ-00 #187, ADR-0023 and the master report.
+Use `development-workflow.md` / ADR-0024 for current execution rules.
 
-The active entry is `docs/program/2026-09-05/README.md`, ADR-0023 and the VPJ master report.
-Historical AI/V4/LAUNCH documents and archived interview records are evidence, not a second active
-product scope. Follow the current VPJ execution row and its actual dependencies before implementation.
+Read root `AGENTS.md`, `CONTEXT.md`, the current Issue/PR and its execution row, then the
+affected module's interface, code, tests and relevant accepted ADRs. Inspect the checkout,
+local changes, base and relevant live blockers. Read the full master report on first entry or a
+scope change; historical research and old AI/V4/LAUNCH rows are on-demand evidence.
 
-Before planning or implementation, read:
+Use established domain terms: TurnCoordinator, TripWorkspace, TripProposal, EvidenceReceipt,
+GroundedClaim, KnowledgeSystem, Imported POI Candidate, Canonical POI, Fact and Explore
+Projection. A term in a planning document does not prove implementation.
 
-1. root `CONTEXT.md` and its mandatory reading order;
-2. the current GitHub Issue and blocking Issues;
-3. relevant accepted ADRs under `docs/adr/`;
-4. `docs/agents/issue-execution-contract.md` for this Issue's reading order, allowed paths, commands and artifacts;
-5. the owning module's contract and tests once they exist;
-6. current git status, branch, and `origin/main`.
-
-Use canonical terms from the integrated research and engineering reports, including `TurnCoordinator`, `TripWorkspace`, `TripProposal`, `EvidenceReceipt`, `GroundedClaim`, `KnowledgeSystem`, `Imported POI Candidate`, `Canonical POI`, `Fact`, and `Explore Projection`.
-
-If an Issue would contradict an accepted ADR, stop and surface the conflict. Planning documents remain proposals until an operator decision and ADR accept them.
+Resolve ordinary implementation choices within accepted contracts. A substantive product,
+security, privacy or architecture conflict needs a scoped decision/new ADR; prepare options and
+continue independent authorized work. Obsolete procedure is handled by ADR-0024's explicit
+supersession, not by repeatedly stopping development.

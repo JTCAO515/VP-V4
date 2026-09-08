@@ -20,21 +20,26 @@
 
 ## 开发调度
 
-基线PR合并前新任务保持blocked。合并后重新查询实际依赖/PR/环境，只有自己的上游已完成、接口存在、没有文件owner冲突且operator条件满足时才可认领。最早可并行路径：原生基础01、Staging02、数据政策03、客户发现46、申请入口62；商品33随03。每条Issue一branch/worktree/PR。
+共享执行规则：[开发流程](../../agents/development-workflow.md) / ADR-0024。2026-09-08核对#253与#254均已合并；manifest状态、旧文案和标签均不能替代实时状态。
+
+基线未合并时保留对应阻塞；合并后按真实依赖、接口、环境和文件协作状态核实并修正陈旧标签。运行验收等待外部条件时，可按共享流程记录独立准备范围，父Issue仍保留实际验收。最早候选路径：原生基础01、Staging02、数据政策03、客户发现46、申请入口62；实际可执行性需逐项核实。每条PR交付一项连贯结果，Issue可增量交付，worktree按需使用。
 
 ## 工具
 
 ```bash
 node scripts/vpj-program.mjs verify
 node scripts/vpj-program.mjs render
+# 仅共享交接变化时，无需重建整套任务文档
+node scripts/vpj-program.mjs render-handoff
 pnpm docs:check
 git diff --check
 ```
 
-`publish / close-old / verify-remote` 由本轮明确tracker迁移授权使用；普通coding Issue不可运行外部变更模式。重复执行发布按VPJ编号查找，不创建同名重复项；迁移快照记录全部旧body/comments/关系。
+`verify-remote` 对GitHub只读，核对基线/任务生命周期和依赖，并提示需要重新判断就绪的标签；不自动修改标签或关闭任务。`publish / close-old / sync-*` 是外部变更模式，保留其明确tracker授权；普通coding Issue不可用来重整队列。重复执行发布按VPJ编号查找，不创建同名重复项；迁移快照记录全部旧body/comments/关系。
 
 ## 完成和回滚
 
 统筹交付包含主报告、详细任务/原生依赖、恢复性归档和reviewable PR；它与产品后续可用是不同完成条件。旧Issue按not planned关闭并链接新责任，不代表Staging/模型/隐私/发布已通过。回滚可reopen旧Issue和恢复标签，源码从hash归档或git恢复；不动用户原工作树或已执行数据库。
 
 观察窗口、运行UNRUN和验证结果见 [验证记录](VERIFICATION.md) 与根handoff。当前没有真实用户/模型/数据库/商店运行验收。
+
