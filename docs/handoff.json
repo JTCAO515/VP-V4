@@ -1,14 +1,14 @@
 {
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
-  "lastUpdated": "2026-09-08",
+  "lastUpdated": "2026-09-09",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
   "status": "VPJ-00 #187 baseline PR #253 merged at 9a3b724; Journey preview PR #254 merged on main at 1bd1ffb (2026-09-08 read-back). Governance workflow revision is prepared for review; real product/runtime gates remain unverified.",
   "currentPhase": "Journey visual preview and full prepared Demo migration; no backend, native or same-Trip acceptance implied. The 65-task VPJ dependency graph is unchanged.",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "JT owns product/commercial/provider/data/account/release decisions. Coding agents own each verified, bounded implementation contract.",
   "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree.",
-  "nextAction": "Review the workflow revision PR. For product work, re-evaluate VPJ-01/02/03/46/62 inputs against current GitHub and environment, then reconcile stale blocked labels. The 65-task dependency graph and VPJ-41 #234 runtime acceptance remain unchanged; merged Journey fixtures do not complete it.",
+  "nextAction": "Verify Journey root-homepage PR/main and its Vercel deployment under the operator's 2026-09-09 authorization. Three generated images have explicit public-Web approval; nine legacy files remain non-public quarantine. Governance PR #256 is merged at 589cee6. Re-evaluate VPJ-01/02/03/46/62 inputs before product work; the dependency graph and VPJ-41 runtime acceptance remain unchanged.",
   "program": {
     "id": "VPJ-00",
     "issue": 187,

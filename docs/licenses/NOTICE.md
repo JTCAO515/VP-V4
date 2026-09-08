@@ -4,4 +4,6 @@
 
 `sbom.json` records every direct runtime dependency and its installed package license. This release tree distributes no third-party font and no public image as an approved brand asset.
 
-The current stop-ship preview photographs are recorded as `blocked-release` in `WEB-04-quarantine.json`. They must not be used for a public/store release without a separately accepted rights record.
+The stop-ship preview photographs remain recorded in `WEB-04-quarantine.json`, physically isolated under `assets/quarantine/web-04/` outside the public output. They must not be used for a public/store release without a separately accepted rights record.
+
+`journey-public-web.json` records the operator's 2026-09-09 explicit public-Web approval of exactly three project-generated Journey images. Their source and hashes remain verified. This approval does not cover other photographs, brand masters, fonts or store use.

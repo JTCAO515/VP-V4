@@ -48,7 +48,7 @@ for (const viewport of [{ width: 1280, height: 800 }, { width: 390, height: 844 
 }
 
 test("Journey landing keeps the signup link and Chinese preview route", async ({ page }) => {
-  await page.goto("/journey?lang=zh");
+  await page.goto("/?lang=zh");
   await expect(page.locator("html")).toHaveAttribute("lang", "zh-CN");
   await expect(page.locator('a[href="https://form.jotform.com/cjttttt/visepanda-early-access"]').first()).toHaveAttribute("rel", "noopener noreferrer");
   await expect(page.locator('a[href="/journey/plan?lang=zh"]').first()).toBeVisible();

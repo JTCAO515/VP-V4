@@ -4,12 +4,14 @@ import { readFileSync } from "node:fs";
 
 const source = (path) => readFileSync(path, "utf8");
 
-test("the root immersive homepage preserves local assets and exact internal routes", () => {
+test("the Journey root preserves the legacy homepage and its internal-route contracts", () => {
   const root = source("app/page.tsx");
   const relocated = source("app/homepage/page.tsx");
   const hero = source("components/homepage/ImmersiveHomepage.tsx");
   const legacyHomepage = source("components/homepage/Homepage.tsx");
-  assert.match(root, /ImmersiveHomepage/);
+  assert.match(root, /from "\.\/journey\/page"/);
+  assert.doesNotMatch(root, /use client/);
+  assert.match(source("app/journey/page.tsx"), /JourneyExperience/);
   assert.match(relocated, /<Homepage\s*\/>/);
   assert.match(hero, /href="\/visepanda"/);
   assert.match(hero, /href="\/homepage"/);
