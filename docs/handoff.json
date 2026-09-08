@@ -1,21 +1,21 @@
 {
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
-  "lastUpdated": "2026-09-05",
+  "lastUpdated": "2026-09-08",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
-  "status": "VPJ-00 #187 published: 65 new tasks, 198 native dependencies, 20 old Issues closed as not_planned with successors. Baseline PR #253 is open and must merge before implementation; product/runtime gates remain unverified.",
-  "currentPhase": "Planning and tracker migration verified; 60 launch tasks and 5 evidence-triggered expansions await the reviewed baseline and task prerequisites.",
+  "status": "VPJ-00 #187 baseline PR #253 merged at 9a3b724. Operator-authorized isolated Journey and Early Access demo migration is locally verified with independent review; inspect its PR/main for current merge state. Real product/runtime gates remain unverified.",
+  "currentPhase": "Journey visual preview and full prepared Demo migration; no backend, native or same-Trip acceptance implied. The 65-task VPJ dependency graph is unchanged.",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "JT owns product/commercial/provider/data/account/release decisions. Coding agents own each verified, bounded implementation contract.",
   "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree.",
-  "nextAction": "Review and merge PR #253, then recompute live blockers and operator conditions. Initial paths: VPJ-01 #188, VPJ-02 #189, VPJ-03 #190, VPJ-46 #246 and VPJ-62 #202; VPJ-33 #225 follows VPJ-03. Use AGENT-KICKOFF.md.",
+  "nextAction": "Inspect current preview PR/main and required CI before treating it as merged. Preview routes are /journey and /journey/plan; see docs/design/journey/README.md. Keep VPJ-41 #234 open; its real same-Trip prerequisites are not satisfied by this demo. Recompute the live VPJ frontier before product implementation.",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
     "manifest": "docs/program/2026-09-05/issue-plan.json",
     "baselineBranch": "codex/vp-final-program-20260905",
     "baselinePr": 253,
-    "status": "baseline-pr-open-tracker-migrated",
+    "status": "baseline-merged-tracker-migrated",
     "oldIssuesSnapshot": "docs/program/2026-09-05/issue-snapshot-before.json",
     "oldRelationsSnapshot": "docs/program/2026-09-05/issue-relations-before.json"
   },
@@ -72,6 +72,7 @@
     "tests/contract/acceptance/v4-31-parity-audit.test.mjs"
   ],
   "verification": [
+    "2026-09-08 Journey preview: lint/typecheck/build, 22 standard tests, asset policy and docs gate passed; 4 new Playwright browser regressions passed at 1280x800 and 390x844. They verify no API calls, confirmation-before-note, per-page state, reject-preserving accept-all, locale/reload, Explore proposal and one-time tool requests. Independent read-only review findings fixed and rechecked. Full repository CI is a separate merge gate.",
     "Remote read-back 2026-09-05: 65 new open tasks, each body/ID/parent and all 198 native dependencies match; 20 old Issues closed with not_planned; PR185/186 remain open.",
     "pnpm check passed: lint/typecheck/build plus 22 standard tests; unit29, contract161, source-e2e40 and eval20 passed.",
     "Integration19 pass/9 skip; security80 pass/1 skip. Real local Supabase/RLS unavailable, outcomes incomplete, not release success.",
@@ -84,7 +85,7 @@
     "Original local iOS remains preview source; copying archive does not prove native build acceptance."
   ],
   "blockers": [
-    "Baseline PR must merge before consumers implement new scope.",
+    "VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.",
     "Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues."
   ],
   "rollback": "Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.",

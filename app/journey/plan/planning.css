@@ -1,0 +1,185 @@
+/* Journey's paper / forest / terracotta theme. Scoped: legacy routes are unchanged. */
+.journey-preview {
+  --cream-50: #f7f5ee; --plum-900: #203a31; --gold-800: #ad4936; --ink: #203a31;
+  color: #203a31; background: #f7f5ee;
+  font: 15px/1.55 "Avenir Next", "Segoe UI", "PingFang SC", sans-serif;
+}
+.journey-preview * { box-sizing: border-box; }
+.journey-preview button, .journey-preview input, .journey-preview select { font: inherit; }
+.journey-preview button { cursor: pointer; }
+.journey-preview button:disabled { opacity: .45; cursor: not-allowed; }
+.journey-preview :is(button,a,input,select):focus-visible { outline: 2px solid #ad4936; outline-offset: 3px; }
+.journey-preview [hidden] { display: none !important; }
+.journey-preview .demo-browser { display: grid; grid-template-rows: 70px minmax(0,1fr) 66px; background: #f7f5ee; }
+.journey-preview .demo-frame.fullscreen.standalone { width: 100%; aspect-ratio: auto; }
+.journey-preview .demo-frame.fullscreen .demo-browser-bar { height: auto; }
+.journey-preview .demo-browser-bar { grid-template-columns: minmax(0,1fr) auto; padding: 0 30px; background: #f7f5ee; border-color: #d8dcd2; }
+.journey-preview .journey-studio-home { color: #203a31; font: 26px Georgia, "Songti SC", serif; text-decoration: none; letter-spacing: -.05em; }
+.journey-preview .journey-studio-home span { font: 12px "Avenir Next", sans-serif; letter-spacing: .1em; text-transform: uppercase; margin-left: 16px; }
+.journey-preview .journey-studio-home small { display: block; margin-top: 4px; color: #69775f; font: 9px/1.2 "Avenir Next", "PingFang SC", sans-serif; letter-spacing: .03em; }
+.journey-preview .demo-bar-right { display: flex; gap: 14px; align-items: center; }
+.journey-preview .vp-fixture { font-size: 11px; color: #5b695f; background: #e9ede2; border-color: #cdd8c9; }
+.journey-preview .vp-demo-language, .journey-preview .vp-demo-back { display: inline-flex; min-height: 44px; align-items: center; padding: 10px 16px; border: 1px solid #ccd2c7; border-radius: 24px; font-size: 12px; color: #203a31; background: transparent; text-decoration: none; }
+.journey-preview .vp-demo-back { background: #ad4936; color: #fff8ec; border-color: #ad4936; }
+.journey-preview .demo-frame.fullscreen .demo-app-shell { height: 100%; grid-template-columns: 220px minmax(0,1fr); }
+.journey-preview .demo-frame.fullscreen .demo-sidebar { padding: 26px 16px 16px; background: #203a31; color: #fff9ec; border: 0; }
+.journey-preview .demo-brand { padding: 0 8px 26px; color: #fff9ec; font: 19px Georgia, "Songti SC", serif; letter-spacing: -.03em; gap: 12px; }
+.journey-preview .demo-brand img { object-fit: contain; }
+.journey-preview .demo-main-nav { gap: 4px; }
+.journey-preview .demo-main-nav button, .journey-preview .demo-user { min-height: 44px; padding: 10px 12px; font-size: 14px; font-weight: 500; color: #e0e5d8; border-radius: 5px; }
+.journey-preview .demo-main-nav button span { color: #c7d4b4; }
+.journey-preview .demo-main-nav button.active, .journey-preview .demo-user.active { background: #ebefdf; color: #203a31; box-shadow: none; }
+.journey-preview .demo-main-nav button:hover, .journey-preview .demo-user:hover { background: #344d42; color: white; }
+.journey-preview .demo-chat-list { margin-top: 26px; }
+.journey-preview .demo-chat-list > small { color: #a5b99f; font-size: 10px; }
+.journey-preview .demo-chat-list button { border-radius: 5px; padding: 12px 9px; min-height: 64px; color: #e6ebde; }
+.journey-preview .demo-chat-list button b { font-size: 12px; font-weight: 500; }
+.journey-preview .demo-chat-list button small, .journey-preview .demo-chat-list button em { color: #acb8a9; font-size: 10px; }
+.journey-preview .demo-chat-list button.active { background: #344d42; color: #fff; box-shadow: inset 2px 0 #d7ba81; }
+.journey-preview .demo-chat-list button:hover { background: #344d42; color: white; }
+.journey-preview .journey-avatar { display: inline-grid; place-items: center; flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; background: #d6dfc5; color: #203a31; font-size: 11px; }
+.journey-preview .journey-avatar.large { width: 64px; height: 64px; font: 24px Georgia, serif; }
+.journey-preview .demo-workspace { background: #f7f5ee; }
+.journey-preview .journey-chat-select { display: none; }
+.journey-preview .demo-ask-layout { grid-template-columns: minmax(0,1.12fr) minmax(0,1fr); }
+.journey-preview .demo-canvas { background: #f7f5ee; border-color: #d8dcd2; }
+.journey-preview .demo-chat { background: #fdfcf7; }
+.journey-preview .demo-canvas > header, .journey-preview .demo-chat > header { min-height: 122px; padding: 23px 24px 16px; background: transparent; border-color: #d8dcd2; align-items: start; }
+.journey-preview .demo-chat > header { flex-direction: column; justify-content: center; gap: 10px; }
+.journey-preview .demo-canvas > header > div > span, .journey-preview .demo-chat > header > span { color: #203a31; font: 29px/1.1 Georgia, "Songti SC", serif; letter-spacing: -.04em; }
+.journey-preview .demo-canvas > header small, .journey-preview .demo-chat > header small, .journey-preview .vp-ability { color: #5d6d61; font-size: 12px; line-height: 1.5; }
+.journey-preview .vp-version { color: #5d6d61; font-size: 10px; }
+.journey-preview .vp-version select { max-width: 140px; font-size: 11px; background: #f7f5ee; border-color: #ccd2c7; padding: 8px; }
+.journey-preview .vp-version-note { background: #edf0e4; color: #53644f; font-size: 11px; margin: 0; padding: 9px 24px; }
+.journey-preview .demo-canvas-tools { padding: 10px 20px; border-color: #d8dcd2; gap: 8px; }
+.journey-preview .demo-canvas-tools button { min-height: 40px; padding: 8px 15px; font-size: 12px; color: #526356; background: transparent; border-radius: 22px; }
+.journey-preview .demo-canvas-tools button.active { background: #203a31; color: #fff9ec; }
+.journey-preview .journey-preview-notice { color: #646d5d; font-size: 11px; line-height: 1.5; padding: 0 20px; margin: 14px 0; }
+.journey-preview .demo-messages > .journey-preview-notice { padding: 0; margin-top: 0; }
+.journey-preview .journey-local-notes { margin: 0 20px 14px; padding: 14px; border: 1px dashed #bec9b3; border-radius: 8px; }
+.journey-preview .journey-local-notes header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.journey-preview .journey-local-notes header b { font-size: 12px; }
+.journey-preview .journey-local-notes header span { font-size: 10px; color: #6c785f; }
+.journey-preview .journey-local-notes p { font-size: 12px; color: #64715e; margin-top: 6px; }
+.journey-preview .journey-local-notes > div { display: flex; gap: 6px; margin-top: 8px; }
+.journey-preview .journey-local-notes input { min-width: 0; flex: 1; padding: 8px; border: 1px solid #ccd2c7; border-radius: 4px; font-size: 13px; }
+.journey-preview .journey-local-notes button { color: #ad4936; font-size: 11px; padding: 8px; }
+.journey-preview .vp-diff-banner { margin: 0 20px 14px; background: #e9ede0; border-color: #ccd6bf; border-radius: 8px; padding: 14px; }
+.journey-preview .vp-diff-banner b, .journey-preview .vp-diff-banner em { color: #354d35; font-size: 12px; }
+.journey-preview .vp-diff-banner em { color: #fff9ec; background: #203a31; }
+.journey-preview .canvas-answer { text-align: left; }
+.journey-preview .vp-diff-banner span { color: #617257; font-size: 11px; }
+.journey-preview .vp-diff { margin: 0 20px 16px; background: #fffef8; border-color: #ccd6bf; padding: 14px; }
+.journey-preview .vp-diff header { flex-wrap: wrap; gap: 8px; }
+.journey-preview .vp-diff-entry { grid-template-columns: 18px minmax(0,1fr); padding: 14px 0; }
+.journey-preview .vp-diff-actions, .journey-preview .vp-diff-done { grid-column: 2; }
+.journey-preview .vp-diff-entry strong { font-size: 13px; }
+.journey-preview .vp-diff-entry small, .journey-preview .vp-diff-entry p { font-size: 11px; line-height: 1.6; }
+.journey-preview .vp-diff button, .journey-preview .journey-note-proposal button { min-height: 36px; padding: 7px 10px; background: #e8ecdf; color: #203a31; font-size: 11px; border-radius: 5px; }
+.journey-preview .demo-canvas-rows { padding: 0 20px; }
+.journey-preview .vp-day { margin-top: 20px; }
+.journey-preview .vp-day > header { flex-wrap: wrap; gap: 7px; padding: 12px 0; background: transparent; }
+.journey-preview .vp-day > header strong { width: 100%; color: #203a31; font: 21px Georgia, "Songti SC", serif; }
+.journey-preview .vp-day > header span { color: #66735d; font-size: 10px; }
+.journey-preview .demo-canvas-rows article { padding: 18px 0; border-color: #dfe3d7; }
+.journey-preview .vp-node-head strong { color: #203a31; font-size: 13px; }
+.journey-preview .vp-node-head { gap: 6px; flex-wrap: wrap; }
+.journey-preview .vp-node-meta { row-gap: 4px; }
+.journey-preview .vp-node-meta dt, .journey-preview .vp-node-meta dd { font-size: 11px; }
+.journey-preview .vp-node-action { padding: 7px; color: #ad4936; background: transparent; font-size: 10px; }
+.journey-preview .vp-state, .journey-preview .vp-confidence { font-size: 9px; }
+.journey-preview .demo-messages { padding: 20px 24px; }
+.journey-preview .message { margin-bottom: 24px; }
+.journey-preview .message > small { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #6a785f; }
+.journey-preview .message p { font-size: 14px; line-height: 1.75; color: #2c4437; }
+.journey-preview .message.user p { background: #e9ede0; color: #203a31; padding: 14px 18px; border-radius: 16px 16px 2px 16px; }
+.journey-preview .vp-recall { background: #eef1e6; border-color: #d7dfcb; color: #526547; padding: 12px; }
+.journey-preview .vp-recall b, .journey-preview .vp-recall span, .journey-preview .vp-recall em { color: #526547; font-size: 11px; }
+.journey-preview .vp-msg-actions button, .journey-preview .vp-chips button, .journey-preview .vp-continue { min-height: 36px; font-size: 11px; color: #53644d; border-color: #ccd7be; }
+.journey-preview .demo-composer { margin: 0 24px 22px; padding: 8px 8px 8px 16px; border-radius: 28px; border-color: #cdd6c1; background: #f7f8f0; }
+.journey-preview .demo-composer input { flex: 1; min-width: 0; background: transparent; border: 0; outline-offset: 0; color: #203a31; font-size: 14px; }
+.journey-preview .demo-composer button { flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: #ad4936; font-size: 22px; }
+.journey-preview .journey-note-proposal { border-left: 2px solid #ad4936; padding-left: 16px; }
+.journey-preview .journey-note-proposal blockquote { margin: 10px 0; font-size: 14px; overflow-wrap: anywhere; }
+.journey-preview .journey-note-proposal > div { display: flex; gap: 8px; }
+.journey-preview .demo-status-bar { height: auto; display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 4px 20px; padding: 10px 28px; border-color: #d8dcd2; background: #f7f5ee; }
+.journey-preview .vp-status-context { font-size: 10px; color: #5e7057; }
+.journey-preview .vp-state-legend { display: none; }
+.journey-preview .vp-tour { flex-wrap: wrap; }
+.journey-preview .vp-tour button { min-height: 30px; background: transparent; color: #54644d; font-size: 10px; padding: 5px 8px; }
+.journey-preview .vp-tour button.active { background: #203a31; color: #fff; }
+.journey-preview :is(.demo-explore,.demo-copilot,.demo-tools,.demo-user-page,.vp-today) { height: 100%; padding: 30px; overflow-y: auto; background: #f7f5ee; }
+.journey-preview :is(.demo-explore,.demo-copilot,.demo-tools,.demo-user-page,.vp-today) > header { margin-bottom: 26px; }
+.journey-preview :is(.demo-explore,.demo-copilot,.demo-tools,.demo-user-page,.vp-today) h3 { font: 32px/1.15 Georgia, "Songti SC", serif; color: #203a31; max-width: 700px; }
+.journey-preview .poi-card-grid { gap: 18px; }
+.journey-preview .poi-card-grid > button { border: 0; border-radius: 4px; background: #fffdf5; padding-bottom: 18px; }
+.journey-preview .poi-cover { height: 140px; background: #dce4ce; color: #466044; }
+.journey-preview .poi-card-grid strong { font: 21px Georgia, "Songti SC", serif; color: #203a31; }
+.journey-preview .explore-city-tabs button.active { background: #203a31; color: #fff9ec; border-color: #203a31; }
+.journey-preview .explore-city-tabs button.active :is(span,small) { color: #e3ead8; }
+.journey-preview .demo-mini-map .vp-map-route { stroke: #466345; }
+.journey-preview .vp-map-pin > i, .journey-preview .vp-map-pin.state-inferred > i { background: #203a31; color: #fff9ec; }
+.journey-preview .vp-memory-item, .journey-preview .vp-tool-screen, .journey-preview .vp-today-next, .journey-preview .vp-today-conditions { background: #fffdf6; border-color: #d6ddc9; }
+.journey-preview .vp-tool-list button.active { background: #e5ebd9; border-color: #a8ba94; }
+.journey-preview .demo-toast { background: #203a31; color: #fff9ec; font-size: 13px; max-width: calc(100% - 32px); }
+.journey-preview .vp-close { min-width: 44px; min-height: 44px; font-size: 24px; }
+.journey-preview .demo-tools-page { height: 100%; padding: 30px; overflow-y: auto; background: #f7f5ee; }
+.journey-preview .demo-tools-page h3 { font: 32px/1.15 Georgia, "Songti SC", serif; color: #203a31; }
+.journey-preview .demo-explore > header img { width: 110px; height: 90px; object-fit: cover; border-radius: 50% 50% 4px 4px; }
+@media (max-width: 1100px) {
+  .journey-preview .demo-frame.fullscreen .demo-app-shell { grid-template-columns: 184px minmax(0,1fr); }
+  .journey-preview .demo-browser-bar { padding: 0 20px; }
+  .journey-preview .journey-studio-home span { display: none; }
+  .journey-preview .demo-canvas > header, .journey-preview .demo-chat > header { padding: 20px 16px 14px; }
+  .journey-preview .demo-canvas > header > div > span, .journey-preview .demo-chat > header > span { font-size: 24px; }
+  .journey-preview .demo-status-bar { grid-template-columns: 1fr; }
+  .journey-preview .vp-status-context { display: none; }
+}
+@media (max-width: 800px) {
+  .journey-preview .demo-browser { grid-template-rows: 64px minmax(0,1fr); }
+  .journey-preview .demo-frame.fullscreen .demo-browser { overflow: hidden; }
+  .journey-preview .demo-frame.fullscreen .demo-app-shell { display: grid; grid-template-columns: 1fr; grid-template-rows: minmax(0,1fr) 64px; height: 100%; min-height: 0; }
+  .journey-preview .demo-frame.fullscreen .demo-sidebar { display: none; }
+  .journey-preview .demo-status-bar { display: none; }
+  .journey-preview .demo-frame.standalone .demo-browser-bar { padding: 0 16px; gap: 8px; }
+  .journey-preview .journey-studio-home { font-size: 23px; }
+  .journey-preview .demo-bar-right > .vp-fixture { display: none; }
+  .journey-preview .demo-frame.standalone .vp-demo-language, .journey-preview .demo-frame.standalone .vp-demo-back { min-height: 40px; padding: 8px 11px; font-size: 10px; }
+  .journey-preview .demo-workspace { display: flex; flex-direction: column; min-height: 0; overflow: hidden; padding-bottom: 0; }
+  .journey-preview .journey-chat-select { display: flex; flex-shrink: 0; align-items: center; gap: 10px; padding: 8px 16px; border-bottom: 1px solid #d8dcd2; }
+  .journey-preview .journey-chat-select label { font-size: 10px; color: #64715e; }
+  .journey-preview .journey-chat-select select { flex: 1; min-width: 0; border: 0; color: #203a31; background: transparent; font-size: 13px; min-height: 32px; }
+  .journey-preview .demo-ask-layout { display: flex; flex-direction: column; flex: 1; height: auto; min-height: 0; overflow: hidden; }
+  .journey-preview .vp-mobile-pane-switch { display: grid; grid-template-columns: 1fr 1fr; flex-shrink: 0; margin: 10px 16px; padding: 3px; border-radius: 24px; background: #e9edde; border: 0; }
+  .journey-preview .vp-mobile-pane-switch button { min-height: 36px; border-radius: 24px; font-size: 12px; color: #53644d; }
+  .journey-preview .vp-mobile-pane-switch button.active { color: #fff9ec; background: #203a31; box-shadow: none; }
+  .journey-preview .demo-chat, .journey-preview .demo-canvas { flex: 1; min-height: 0; height: auto; max-height: none; border: 0; }
+  .journey-preview .demo-canvas.pane-chat, .journey-preview .demo-chat.pane-canvas { display: none; }
+  .journey-preview .demo-chat.pane-chat, .journey-preview .demo-canvas.pane-canvas { display: flex; min-height: 0; }
+  .journey-preview .demo-canvas > header, .journey-preview .demo-chat > header { min-height: 0; flex-shrink: 0; padding: 10px 18px 14px; }
+  .journey-preview .demo-chat > header { gap: 6px; }
+  .journey-preview .demo-chat > header > span { font-size: 26px; }
+  .journey-preview .demo-messages { padding: 14px 18px; }
+  .journey-preview .demo-composer { flex-shrink: 0; margin: 8px 16px 14px; }
+  .journey-preview .demo-composer input { font-size: 16px; }
+  .journey-preview .demo-mobile-nav { position: static; display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); min-height: 0; padding-bottom: env(safe-area-inset-bottom); background: #203a31; border: 0; }
+  .journey-preview .demo-mobile-nav button { display: grid; place-content: center; gap: 3px; min-height: 54px; padding: 4px 0; color: #cdd9c5; }
+  .journey-preview .demo-mobile-nav button span { color: inherit; font-size: 19px; }
+  .journey-preview .demo-mobile-nav button small { color: inherit; font-size: 9px; }
+  .journey-preview .demo-mobile-nav button.active { color: #fff8e6; background: #3b5142; }
+  .journey-preview :is(.demo-explore,.demo-copilot,.demo-tools,.demo-user-page,.vp-today) { flex: 1; min-height: 0; padding: 20px 16px; }
+  .journey-preview :is(.demo-explore,.demo-copilot,.demo-tools,.demo-user-page,.vp-today) h3 { font-size: 27px; }
+  .journey-preview .vp-tools, .journey-preview .vp-today-grid, .journey-preview .user-page-grid { grid-template-columns: 1fr; }
+  .journey-preview .demo-tools-page { flex: 1; min-height: 0; padding: 20px 16px; }
+  .journey-preview .demo-tools-page h3 { font-size: 27px; }
+  .journey-preview .demo-explore > header img { width: 75px; height: 80px; }
+  .journey-preview .vp-tool-list { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .journey-preview .vp-tool-list button { min-height: 60px; }
+  .journey-preview .poi-card-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+  .journey-preview .poi-cover { height: 100px; }
+  .journey-preview .poi-card-grid strong { font-size: 17px; }
+  .journey-preview .poi-detail-drawer, .journey-preview .vp-dish-drawer { inset-inline: 12px; bottom: 76px; width: auto; max-width: calc(100% - 24px); max-height: calc(100dvh - 156px); animation: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey-preview *, .journey-preview *::before, .journey-preview *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
