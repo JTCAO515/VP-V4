@@ -27,3 +27,7 @@ Final latest-base results: PASS `pnpm build`; PASS `pnpm test` 22/22 after migra
 route evidence; PASS `pnpm exec playwright test tests/e2e/frontend/vpj-01-web-locales.spec.mjs
 --workers=1` 2/2, including preserved localized title, canonical and no-preview assertions.
 PASS `pnpm docs:check` and `git diff --check`. Required remote CI/review remain separate gates.
+
+Review follow-up: repeated `?locale=ar&locale=en` now uses the first locale in server metadata,
+matching client URLSearchParams.get. PASS typecheck, build, docs/diff and both desktop/390 browser
+regressions with explicit Arabic title/lang/RTL assertions for the repeated query.

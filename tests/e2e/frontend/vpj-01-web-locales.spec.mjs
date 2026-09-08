@@ -38,6 +38,11 @@ for (const viewport of [{ width: 1280, height: 800 }, { width: 390, height: 844 
       await picker.selectOption("zh");
       await expect(page.locator("html")).toHaveAttribute("lang", "zh-CN");
     }
+    await page.goto("/visepanda?locale=ar&locale=en");
+    await expect(picker).toHaveValue("ar");
+    await expect(page.locator("html")).toHaveAttribute("lang", "ar");
+    await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+    await expect(page).toHaveTitle("سلاسل المحادثة | VisePanda");
     expect(errors).toEqual([]);
   });
 }
