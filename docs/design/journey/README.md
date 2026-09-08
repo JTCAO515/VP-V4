@@ -1,5 +1,15 @@
 # VisePanda Journey 网页概念
 
+## 根路径发布切换（2026-09-09）
+
+用户明确要求 Journey 作为正式 Web 根路径，并推送、合并触发 Vercel。`app/page.tsx` 复用 Journey 的 Server Component 及元数据；`/journey`、`/journey/plan`、原 `/homepage` 与产品 API 保持兼容。正式入口不等于真实 AI、持久化或交易能力已上线，演示边界仍保留。
+
+用户另明确批准桂林、上海、杭州三张生成图片用于公开 Web，记录在 `docs/licenses/journey-public-web.json`。其余九张未被 runtime 引用的旧预览图移至 `assets/quarantine/web-04/`，字节/哈希不变、未删除，也未获公开使用授权。素材检查继续拒绝未知文件、哈希漂移、缺失批准、旧图改名发布及已退休来源。
+
+本地验证：首页切换的 lint/typecheck/build、22 项静态测试、4 项浏览器回归通过；release 素材门禁与4项素材安全测试通过。远端 CI 和实际部署需单独核对。
+
+回滚：回退本次根路径切换 PR。若恢复旧素材位置，须同步恢复禁止发布状态，回滚不构成素材授权。下方的隔离记录为 2026-09-06/08 历史状态，以本节和最新授权记录为准。
+
 入口 `/journey` 与 `/journey/plan`。用户于 2026-09-06 授权 Journey 双语网页、完整 Early Access Demo 的预览迁移及 GitHub main 合并；随后将 Landing 的 Profile 改为 Early Access，直达指定 JotForm。保留原首页与原有五语体验，不连接真实 AI、账号、行程、预订、支付服务。这是明确授权的隔离预览，不是 VPJ-41 真实同 Trip 验收，不关闭其依赖或 Issue。
 
 ## 设计与素材

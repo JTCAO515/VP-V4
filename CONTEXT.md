@@ -44,7 +44,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Review the workflow revision PR. For product work, re-evaluate VPJ-01/02/03/46/62 inputs against current GitHub and environment, then reconcile stale blocked labels. The 65-task dependency graph and VPJ-41 #234 runtime acceptance remain unchanged; merged Journey fixtures do not complete it.
+Verify Journey root-homepage PR/main and its Vercel deployment under the operator's 2026-09-09 authorization. Three generated images have explicit public-Web approval; nine legacy files remain non-public quarantine. Governance PR #256 is merged at 589cee6. Re-evaluate VPJ-01/02/03/46/62 inputs before product work; the dependency graph and VPJ-41 runtime acceptance remain unchanged.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 

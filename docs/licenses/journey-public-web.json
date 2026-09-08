@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "journey-public-web/1.0",
+  "scope": "public-web",
+  "approvedBy": "JT (VisePanda operator)",
+  "approvedAt": "2026-09-09",
+  "approval": "批准这三张图片用于公开 Web",
+  "approvalContext": "Operator explicitly approved the Guilin, Shanghai and Hangzhou generated images for VP-V4 public Web and confirmed responsibility for their usage rights. No other preview or brand assets are approved by this record.",
+  "sourceType": "Project-generated ImageGen destination inspiration, not documentary photographs",
+  "sourceRecord": "docs/design/journey/README.md",
+  "assets": [
+    {"path":"public/assets/visepanda/journey/guilin.png","sha256":"dccdfe66c5189c7786d4691794ca8b2f3ca857ef94e5da3cef55a14c02011c33"},
+    {"path":"public/assets/visepanda/journey/hangzhou.png","sha256":"013df8ccf65190df2971a6213c90d39c077cee24fdc024a1bf8687372f89249f"},
+    {"path":"public/assets/visepanda/journey/shanghai.png","sha256":"8c7dfb119be99797fd1c6fa5885f642299355653b471f628be01c7e6498fcd1e"}
+  ]
+}
