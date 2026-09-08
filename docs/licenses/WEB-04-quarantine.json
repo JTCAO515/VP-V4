@@ -10,6 +10,9 @@
     {"path": "public/assets/visepanda/shape-soft.svg", "sha256": "5537240b813dcec0bb360a571d8dd500f63193b42c5eb4c0fe06c6048c4d91ab"}
   ],
   "blockedReleaseFiles": [
+    {"path":"public/assets/visepanda/journey/guilin.png","sha256":"dccdfe66c5189c7786d4691794ca8b2f3ca857ef94e5da3cef55a14c02011c33"},
+    {"path":"public/assets/visepanda/journey/hangzhou.png","sha256":"013df8ccf65190df2971a6213c90d39c077cee24fdc024a1bf8687372f89249f"},
+    {"path":"public/assets/visepanda/journey/shanghai.png","sha256":"8c7dfb119be99797fd1c6fa5885f642299355653b471f628be01c7e6498fcd1e"},
     {"path":"public/assets/visepanda/hero-beijing.jpg","sha256":"5c9cd8c26ea7095d1277731e9105e9898a2567e01d7a449db16096c2ec26e6e6"},
     {"path":"public/assets/visepanda/planner-chengdu.jpg","sha256":"301a3acde14c16e0f9adea8c941e6d1e7022da16f2397c04b8e5073512ae0a12"},
     {"path":"public/assets/visepanda/recovery-station.jpg","sha256":"7454e38be0514f7be12c08275fd1fb193b895ffd0af50ad270f7c8f3493e289d"},

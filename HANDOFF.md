@@ -6,9 +6,9 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：VPJ-00 #187 published: 65 new tasks, 198 native dependencies, 20 old Issues closed as not_planned with successors. Baseline PR #253 is open and must merge before implementation; product/runtime gates remain unverified.
+状态：VPJ-00 #187 baseline PR #253 merged at 9a3b724. Operator-authorized isolated Journey and Early Access demo migration is locally verified with independent review; inspect its PR/main for current merge state. Real product/runtime gates remain unverified.
 
-阶段：Planning and tracker migration verified; 60 launch tasks and 5 evidence-triggered expansions await the reviewed baseline and task prerequisites.
+阶段：Journey visual preview and full prepared Demo migration; no backend, native or same-Trip acceptance implied. The 65-task VPJ dependency graph is unchanged.
 
 ## 读取顺序
 
@@ -28,7 +28,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 未决与运行证据
 
-- Baseline PR must merge before consumers implement new scope.
+- VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 
 - No live customer/model/DB/provider/Store/production test or deployment in this planning task.
@@ -36,6 +36,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- 2026-09-08 Journey preview: lint/typecheck/build, 22 standard tests, asset policy and docs gate passed; 4 new Playwright browser regressions passed at 1280x800 and 390x844. They verify no API calls, confirmation-before-note, per-page state, reject-preserving accept-all, locale/reload, Explore proposal and one-time tool requests. Independent read-only review findings fixed and rechecked. Full repository CI is a separate merge gate.
 - Remote read-back 2026-09-05: 65 new open tasks, each body/ID/parent and all 198 native dependencies match; 20 old Issues closed with not_planned; PR185/186 remain open.
 - pnpm check passed: lint/typecheck/build plus 22 standard tests; unit29, contract161, source-e2e40 and eval20 passed.
 - Integration19 pass/9 skip; security80 pass/1 skip. Real local Supabase/RLS unavailable, outcomes incomplete, not release success.
@@ -45,7 +46,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Review and merge PR #253, then recompute live blockers and operator conditions. Initial paths: VPJ-01 #188, VPJ-02 #189, VPJ-03 #190, VPJ-46 #246 and VPJ-62 #202; VPJ-33 #225 follows VPJ-03. Use AGENT-KICKOFF.md.
+Inspect current preview PR/main and required CI before treating it as merged. Preview routes are /journey and /journey/plan; see docs/design/journey/README.md. Keep VPJ-41 #234 open; its real same-Trip prerequisites are not satisfied by this demo. Recompute the live VPJ frontier before product implementation.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
