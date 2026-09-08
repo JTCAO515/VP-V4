@@ -28,13 +28,12 @@ const cssName = readdirSync(".next/static/css").find((file) => file.endsWith(".c
 assert.ok(cssName, "compiled CSS must exist");
 const css = readFileSync(`.next/static/css/${cssName}`, "utf8");
 
-test("renders immersive VisePanda metadata while preserving the relocated preview", () => {
+test("renders Journey at the root while preserving the relocated preview", () => {
   assert.match(html, /<html lang="zh-CN"/);
   assert.match(html, /<meta name="theme-color" content="#fefdf9"/);
-  assert.match(html, /VisePanda｜来华自由行的 AI 规划与执行工作台/);
-  assert.match(html, /找到属于你的中国黄金路线。/);
-  assert.match(html, /href="\/visepanda"/);
-  assert.match(html, /href="\/homepage"/);
+  assert.match(html, /VisePanda — A little wonder/);
+  assert.match(html, /href="\/journey\/plan\?lang=en"/);
+  assert.match(html, /https:\/\/form\.jotform\.com\/cjttttt\/visepanda-early-access/);
   assert.match(relocatedHomepageHtml, /用 AI 规划中国之旅，再从容地把它走完。/);
   assert.match(localeSource, /当前原型未连接 AI，也不会保存你的输入。/);
 });

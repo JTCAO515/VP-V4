@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
+import { verifyPublicAssets } from "../../../scripts/lib/public-asset-policy.mjs";
 
 const legacyPublicPaths = [
   "public/assets/visepanda/shape-clover.svg",
@@ -38,10 +39,21 @@ test("WEB-04 asset policy check accepts only ledgered non-runtime assets", () =>
   assert.match(result.stdout, /Asset policy passed/);
 });
 
-test("WEB-04 release policy rejects quarantined preview assets", () => {
+test("WEB-04 release accepts the operator-approved public images with legacy files isolated", () => {
   const result = spawnSync(process.execPath, ["scripts/check-assets.mjs", "--release"], {
     encoding: "utf8",
   });
-  assert.notEqual(result.status, 0);
-  assert.match(result.stderr, /blocked-release assets remain in public output/);
+  assert.equal(result.status, 0, result.stderr || result.stdout);
+});
+
+test("WEB-04 still rejects blocked, renamed, unregistered, modified or unapproved public assets", () => {
+  const approval = JSON.parse(readFileSync("docs/licenses/journey-public-web.json", "utf8"));
+  const blocked = JSON.parse(readFileSync("docs/licenses/WEB-04-quarantine.json", "utf8")).blockedReleaseFiles;
+  const run = (assets, rights = approval, retired = new Set()) => verifyPublicAssets(assets, blocked, rights, retired, true);
+  assert.doesNotThrow(() => run(approval.assets));
+  assert.throws(() => run([{ ...blocked[0], path: "public/renamed.jpg" }]), /blocked-release/);
+  assert.throws(() => run([{ path: "public/unknown.png", sha256: "unknown" }]), /unregistered/);
+  assert.throws(() => run([{ ...approval.assets[0], sha256: "changed" }]), /hash mismatch/);
+  assert.throws(() => run(approval.assets, { ...approval, approvedBy: "" }), /rights approval/);
+  assert.throws(() => run(approval.assets, approval, new Set([approval.assets[0].sha256])), /retired source/);
 });

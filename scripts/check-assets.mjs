@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { verifyPublicAssets } from "./lib/public-asset-policy.mjs";
 
 const readJson = (file) => JSON.parse(readFileSync(file, "utf8"));
 const fail = (message) => {
@@ -20,6 +21,7 @@ const sha256 = (file) => {
   return createHash("sha256").update(canonicalContents).digest("hex");
 };
 const quarantine = readJson("docs/licenses/WEB-04-quarantine.json");
+const publicApproval = readJson("docs/licenses/journey-public-web.json");
 const sbom = readJson("docs/licenses/sbom.json");
 const packageJson = readJson("package.json");
 const manifest = readJson("brand/qa/asset-manifest.json");
@@ -59,18 +61,14 @@ const retiredHashes = new Set(retiredPaths.map((retiredPath) => createHash("sha2
   .update(execFileSync("git", ["show", `${quarantine.sourceCommit}:${retiredPath}`], { maxBuffer: 16 * 1024 * 1024 }))
   .digest("hex")));
 const publicFiles = existsSync("public") ? walk("public") : [];
-const blockedByPath = new Map(quarantine.blockedReleaseFiles.map((asset) => [asset.path, asset.sha256]));
-for (const publicFile of publicFiles) {
-  const publicHash = sha256(publicFile);
-  if (retiredHashes.has(publicHash)) fail(`retired source hash remains public: ${publicFile}`);
-  if (!blockedByPath.has(publicFile)) fail(`unregistered public asset: ${publicFile}`);
-  if (blockedByPath.get(publicFile) !== publicHash) fail(`blocked preview drift: ${publicFile}`);
+verifyPublicAssets(publicFiles.map((file) => ({ path: file, sha256: sha256(file) })), quarantine.blockedReleaseFiles, publicApproval, retiredHashes, releaseMode);
+for (const approved of publicApproval.assets) {
+  if (!approved.path.startsWith("public/") || !existsSync(approved.path) || sha256(approved.path) !== approved.sha256) fail(`approved asset drift: ${approved.path}`);
 }
 
 for (const blocked of quarantine.blockedReleaseFiles) {
   if (!existsSync(blocked.path) || sha256(blocked.path) !== blocked.sha256) fail(`blocked preview drift: ${blocked.path}`);
 }
-if (releaseMode && quarantine.blockedReleaseFiles.length > 0) fail("blocked-release assets remain in public output");
 
 const expectedDependencies = Object.entries(packageJson.dependencies).sort(([left], [right]) => left.localeCompare(right));
 const sbomDependencies = sbom.components.map((component) => [component.name, component.version]).sort(([left], [right]) => left.localeCompare(right));
