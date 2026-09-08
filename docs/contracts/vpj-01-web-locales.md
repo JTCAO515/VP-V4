@@ -25,6 +25,8 @@ existing `parseLocale` parser from the `locale` query parameter. For example,
 `/visepanda?locale=ar` renders the Arabic selected label, Arabic title and document-level
 `lang="ar" dir="rtl"`. Invalid/missing values use the existing zh fallback. Changing the
 selection to English or Chinese updates document language/direction and removes legacy discovery.
+Initial metadata resolves the same locale server-side, making this route dynamically rendered.
+It reads only the locale query and static copy, with no database/provider or identity changes.
 Selection remains component-local; switching does not rewrite the URL or persist a preference.
 Reloading a legacy URL therefore restores its explicit legacy locale.
 Other routes retain their existing locale initialization; this is not a claim of cross-route

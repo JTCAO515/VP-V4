@@ -11,6 +11,9 @@ for (const viewport of [{ width: 1280, height: 800 }, { width: 390, height: 844 
     const picker = page.locator("select").first();
     const values = () => picker.locator("option").evaluateAll((options) => options.map((option) => option.value));
     await expect(picker).toHaveValue("zh");
+    await expect(page).toHaveTitle("聊天线程 | VisePanda");
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://go2china.space/visepanda");
+    await expect(page.locator("body")).not.toContainText(/product preview/i);
     expect(await values()).toEqual(["zh", "en"]);
     await picker.selectOption("en");
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
