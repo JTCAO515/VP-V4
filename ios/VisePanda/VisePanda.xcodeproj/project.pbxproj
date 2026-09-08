@@ -1,0 +1,318 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		200000000000000000000001 /* VisePandaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000001 /* VisePandaApp.swift */; };
+		200000000000000000000002 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000002 /* AppSettings.swift */; };
+		200000000000000000000003 /* AppShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000003 /* AppShellView.swift */; };
+		200000000000000000000004 /* AppTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000004 /* AppTab.swift */; };
+		200000000000000000000005 /* AppRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000005 /* AppRoute.swift */; };
+		200000000000000000000006 /* Capability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000006 /* Capability.swift */; };
+		200000000000000000000007 /* VisePandaTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000007 /* VisePandaTheme.swift */; };
+		200000000000000000000008 /* BrandHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000008 /* BrandHeader.swift */; };
+		200000000000000000000009 /* PreviewStatusBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000009 /* PreviewStatusBanner.swift */; };
+		20000000000000000000000A /* CapabilityCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30000000000000000000000A /* CapabilityCard.swift */; };
+		20000000000000000000000B /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30000000000000000000000B /* TodayView.swift */; };
+		20000000000000000000000C /* AskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30000000000000000000000C /* AskView.swift */; };
+		20000000000000000000000D /* TripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30000000000000000000000D /* TripView.swift */; };
+		20000000000000000000000E /* ExploreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30000000000000000000000E /* ExploreView.swift */; };
+		20000000000000000000000F /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30000000000000000000000F /* ProfileView.swift */; };
+		200000000000000000000010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000010 /* Assets.xcassets */; };
+		200000000000000000000011 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000011 /* Localizable.xcstrings */; };
+		200000000000000000000012 /* AppNavigationContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000012 /* AppNavigationContractTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		400000000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A00000000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 100000000000000000000001;
+			remoteInfo = VisePanda;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		300000000000000000000001 /* VisePandaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePandaApp.swift; sourceTree = "<group>"; };
+		300000000000000000000002 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		300000000000000000000003 /* AppShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShellView.swift; sourceTree = "<group>"; };
+		300000000000000000000004 /* AppTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTab.swift; sourceTree = "<group>"; };
+		300000000000000000000005 /* AppRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRoute.swift; sourceTree = "<group>"; };
+		300000000000000000000006 /* Capability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Capability.swift; sourceTree = "<group>"; };
+		300000000000000000000007 /* VisePandaTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePandaTheme.swift; sourceTree = "<group>"; };
+		300000000000000000000008 /* BrandHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandHeader.swift; sourceTree = "<group>"; };
+		300000000000000000000009 /* PreviewStatusBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewStatusBanner.swift; sourceTree = "<group>"; };
+		30000000000000000000000A /* CapabilityCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CapabilityCard.swift; sourceTree = "<group>"; };
+		30000000000000000000000B /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		30000000000000000000000C /* AskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AskView.swift; sourceTree = "<group>"; };
+		30000000000000000000000D /* TripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripView.swift; sourceTree = "<group>"; };
+		30000000000000000000000E /* ExploreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreView.swift; sourceTree = "<group>"; };
+		30000000000000000000000F /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		300000000000000000000010 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		300000000000000000000011 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		300000000000000000000012 /* AppNavigationContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNavigationContractTests.swift; sourceTree = "<group>"; };
+		300000000000000000000013 /* VisePanda.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VisePanda.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		300000000000000000000014 /* VisePandaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VisePandaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		500000000000000000000001 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		500000000000000000000002 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		600000000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				600000000000000000000002 /* VisePanda */,
+				60000000000000000000000F /* VisePandaTests */,
+				600000000000000000000010 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		600000000000000000000002 /* VisePanda */ = {
+			isa = PBXGroup;
+			children = (
+				600000000000000000000003 /* App */,
+				600000000000000000000004 /* Navigation */,
+				600000000000000000000005 /* DesignSystem */,
+				600000000000000000000006 /* Components */,
+				600000000000000000000007 /* Features */,
+				60000000000000000000000E /* Resources */,
+			);
+			path = VisePanda;
+			sourceTree = "<group>";
+		};
+		600000000000000000000003 /* App */ = {isa = PBXGroup; children = (300000000000000000000001, 300000000000000000000002, 300000000000000000000003); path = App; sourceTree = "<group>"; };
+		600000000000000000000004 /* Navigation */ = {isa = PBXGroup; children = (300000000000000000000004, 300000000000000000000005, 300000000000000000000006); path = Navigation; sourceTree = "<group>"; };
+		600000000000000000000005 /* DesignSystem */ = {isa = PBXGroup; children = (300000000000000000000007); path = DesignSystem; sourceTree = "<group>"; };
+		600000000000000000000006 /* Components */ = {isa = PBXGroup; children = (300000000000000000000008, 300000000000000000000009, 30000000000000000000000A); path = Components; sourceTree = "<group>"; };
+		600000000000000000000007 /* Features */ = {isa = PBXGroup; children = (600000000000000000000008, 600000000000000000000009, 60000000000000000000000A, 60000000000000000000000B, 60000000000000000000000C); path = Features; sourceTree = "<group>"; };
+		600000000000000000000008 /* Today */ = {isa = PBXGroup; children = (30000000000000000000000B); path = Today; sourceTree = "<group>"; };
+		600000000000000000000009 /* Ask */ = {isa = PBXGroup; children = (30000000000000000000000C); path = Ask; sourceTree = "<group>"; };
+		60000000000000000000000A /* Trip */ = {isa = PBXGroup; children = (30000000000000000000000D); path = Trip; sourceTree = "<group>"; };
+		60000000000000000000000B /* Explore */ = {isa = PBXGroup; children = (30000000000000000000000E); path = Explore; sourceTree = "<group>"; };
+		60000000000000000000000C /* Profile */ = {isa = PBXGroup; children = (30000000000000000000000F); path = Profile; sourceTree = "<group>"; };
+		60000000000000000000000E /* Resources */ = {isa = PBXGroup; children = (300000000000000000000010, 300000000000000000000011); path = Resources; sourceTree = "<group>"; };
+		60000000000000000000000F /* VisePandaTests */ = {isa = PBXGroup; children = (300000000000000000000012); path = VisePandaTests; sourceTree = "<group>"; };
+		600000000000000000000010 /* Products */ = {isa = PBXGroup; children = (300000000000000000000013, 300000000000000000000014); name = Products; sourceTree = "<group>"; };
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		100000000000000000000001 /* VisePanda */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 700000000000000000000001;
+			buildPhases = (800000000000000000000001, 500000000000000000000001, 800000000000000000000002);
+			buildRules = ();
+			dependencies = ();
+			name = VisePanda;
+			productName = VisePanda;
+			productReference = 300000000000000000000013;
+			productType = "com.apple.product-type.application";
+		};
+		100000000000000000000002 /* VisePandaTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 700000000000000000000002;
+			buildPhases = (800000000000000000000003, 500000000000000000000002, 800000000000000000000004);
+			buildRules = ();
+			dependencies = (900000000000000000000001);
+			name = VisePandaTests;
+			productName = VisePandaTests;
+			productReference = 300000000000000000000014;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A00000000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
+				TargetAttributes = {
+					100000000000000000000001 = {CreatedOnToolsVersion = 26.6; };
+					100000000000000000000002 = {CreatedOnToolsVersion = 26.6; TestTargetID = 100000000000000000000001; };
+				};
+			};
+			buildConfigurationList = 700000000000000000000003;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base, "zh-Hans", es, ru, ar);
+			mainGroup = 600000000000000000000001;
+			productRefGroup = 600000000000000000000010;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (100000000000000000000001, 100000000000000000000002);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		800000000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000010, 200000000000000000000011); runOnlyForDeploymentPostprocessing = 0; };
+		800000000000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		800000000000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				200000000000000000000001, 200000000000000000000002, 200000000000000000000003,
+				200000000000000000000004, 200000000000000000000005, 200000000000000000000006,
+				200000000000000000000007, 200000000000000000000008, 200000000000000000000009,
+				20000000000000000000000A, 20000000000000000000000B, 20000000000000000000000C,
+				20000000000000000000000D, 20000000000000000000000E, 20000000000000000000000F,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000012); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		900000000000000000000001 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = 100000000000000000000001; targetProxy = 400000000000000000000001; };
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		C00000000000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		C00000000000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		C00000000000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = VisePanda;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = space.go2china.VisePanda;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		C00000000000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = VisePanda;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = space.go2china.VisePanda;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		C00000000000000000000005 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = space.go2china.VisePandaTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VisePanda.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VisePanda";
+			};
+			name = Debug;
+		};
+		C00000000000000000000006 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = space.go2china.VisePandaTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VisePanda.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/VisePanda";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		700000000000000000000001 = {isa = XCConfigurationList; buildConfigurations = (C00000000000000000000003, C00000000000000000000004); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		700000000000000000000002 = {isa = XCConfigurationList; buildConfigurations = (C00000000000000000000005, C00000000000000000000006); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		700000000000000000000003 = {isa = XCConfigurationList; buildConfigurations = (C00000000000000000000001, C00000000000000000000002); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = A00000000000000000000001 /* Project object */;
+}
+
