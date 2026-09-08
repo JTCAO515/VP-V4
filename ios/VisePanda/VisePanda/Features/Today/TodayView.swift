@@ -27,7 +27,7 @@ struct TodayView: View {
             .padding(.vertical, VPSpacing.standard)
         }
         .background(Color.vpBackground)
-        .navigationTitle("tab.today")
+        .vpNavigationTitle("tab.today")
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -68,16 +68,25 @@ struct TodayView: View {
 
 // Native list keeps long labels readable at accessibility text sizes.
 struct ToolsView: View {
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
         List {
             PreviewStatusBanner()
             ForEach([CapabilityKind.translation, .addressCard, .safePhrase]) { capability in
                 NavigationLink(value: AppRoute.capability(capability)) {
-                    Label(capability.title, systemImage: capability.systemImage)
-                        .frame(minHeight: 44)
+                    HStack {
+                        if !dynamicTypeSize.isAccessibilitySize {
+                            Image(systemName: capability.systemImage)
+                                .accessibilityHidden(true)
+                        }
+                        Text(capability.title)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .frame(minHeight: 44)
                 }
             }
         }
-        .navigationTitle("tab.tools")
+        .vpNavigationTitle("tab.tools")
     }
 }

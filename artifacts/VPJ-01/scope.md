@@ -13,3 +13,8 @@ simulator evidence, docs/diff checks and all existing PR CI. No Web behavior cha
 Remaining: real account/Trip integration, signed device/Store acceptance, Web release-locale
 migration and any accessibility observations not actually run. No capability acceptance inferred.
 Rollback: revert this PR; no persisted user data or migration is introduced.
+
+Adjacent operator queue update records the discovered merge/deployment ambiguity under
+OA-VPJ-MERGE-DEPLOY; it changes no deployment setting. GitHub main589cee6 has a successful
+Vercel deployment named Production; actual project settings are inaccessible via current read access.
+Repository auto-merge is disabled; ordinary merge authority cannot substitute for excluded production actions.

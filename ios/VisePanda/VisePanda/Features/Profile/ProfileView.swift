@@ -30,7 +30,7 @@ struct ProfileView: View {
 
             Section("profile.language") {
                 Picker("profile.language", selection: $settings.selectedLocale) {
-                    ForEach(SupportedLocale.releaseLocales) { locale in
+                    ForEach(SupportedLocale.selectionLocales(current: settings.selectedLocale)) { locale in
                         Text(locale.nativeName).tag(locale)
                     }
                 }
@@ -59,7 +59,7 @@ struct ProfileView: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .navigationTitle("tab.profile")
+        .vpNavigationTitle("tab.profile")
     }
 }
 

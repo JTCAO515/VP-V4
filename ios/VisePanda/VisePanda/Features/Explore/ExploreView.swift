@@ -66,7 +66,7 @@ struct ExploreView: View {
             .padding(VPSpacing.standard)
         }
         .background(Color.vpBackground)
-        .navigationTitle("tab.explore")
+        .vpNavigationTitle("tab.explore")
         .navigationBarTitleDisplayMode(.inline)
     }
 }

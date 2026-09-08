@@ -13,12 +13,15 @@ enum CapabilityKind: String, CaseIterable, Identifiable, Hashable, Sendable {
     var id: String { rawValue }
     var availability: CapabilityAvailability { .previewOnly }
 
+    var titleKey: String { "capability.\(rawValue).title" }
+
     var title: LocalizedStringKey {
-        LocalizedStringKey("capability.\(rawValue).title")
+        LocalizedStringKey(titleKey)
     }
 
     var summary: LocalizedStringKey {
-        LocalizedStringKey("capability.\(rawValue).summary")
+        let key = "capability.\(rawValue).summary"
+        return LocalizedStringKey(key)
     }
 
     var systemImage: String {
@@ -42,7 +45,7 @@ struct CapabilityDetailView: View {
         } actions: {
             AvailabilityBadge()
         }
-        .navigationTitle(capability.title)
+        .vpNavigationTitle(capability.titleKey)
         .navigationBarTitleDisplayMode(.inline)
     }
 }

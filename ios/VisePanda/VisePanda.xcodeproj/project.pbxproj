@@ -25,6 +25,7 @@
 		200000000000000000000010 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000010 /* Assets.xcassets */; };
 		200000000000000000000011 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000011 /* Localizable.xcstrings */; };
 		200000000000000000000012 /* AppNavigationContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000012 /* AppNavigationContractTests.swift */; };
+		200000000000000000000015 = {isa = PBXBuildFile; fileRef = 300000000000000000000015; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,11 +59,14 @@
 		300000000000000000000012 /* AppNavigationContractTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNavigationContractTests.swift; sourceTree = "<group>"; };
 		300000000000000000000013 /* VisePanda.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VisePanda.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		300000000000000000000014 /* VisePandaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VisePandaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		300000000000000000000015 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShellUITests.swift; sourceTree = "<group>"; };
+		300000000000000000000016 = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = VisePandaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		500000000000000000000001 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 		500000000000000000000002 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		500000000000000000000003 = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -71,6 +75,7 @@
 			children = (
 				600000000000000000000002 /* VisePanda */,
 				60000000000000000000000F /* VisePandaTests */,
+				600000000000000000000011 /* VisePandaUITests */,
 				600000000000000000000010 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -100,7 +105,8 @@
 		60000000000000000000000C /* Profile */ = {isa = PBXGroup; children = (30000000000000000000000F); path = Profile; sourceTree = "<group>"; };
 		60000000000000000000000E /* Resources */ = {isa = PBXGroup; children = (300000000000000000000010, 300000000000000000000011); path = Resources; sourceTree = "<group>"; };
 		60000000000000000000000F /* VisePandaTests */ = {isa = PBXGroup; children = (300000000000000000000012); path = VisePandaTests; sourceTree = "<group>"; };
-		600000000000000000000010 /* Products */ = {isa = PBXGroup; children = (300000000000000000000013, 300000000000000000000014); name = Products; sourceTree = "<group>"; };
+		600000000000000000000010 /* Products */ = {isa = PBXGroup; children = (300000000000000000000013, 300000000000000000000014, 300000000000000000000016); name = Products; sourceTree = "<group>"; };
+		600000000000000000000011 = {isa = PBXGroup; children = (300000000000000000000015); path = VisePandaUITests; sourceTree = "<group>"; };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -126,6 +132,17 @@
 			productReference = 300000000000000000000014;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		100000000000000000000003 /* VisePandaUITests */ = {
+            isa = PBXNativeTarget;
+            buildConfigurationList = 700000000000000000000004;
+            buildPhases = (800000000000000000000005, 500000000000000000000003, 800000000000000000000006);
+            buildRules = ();
+            dependencies = (900000000000000000000002);
+            name = VisePandaUITests;
+            productName = VisePandaUITests;
+            productReference = 300000000000000000000016;
+            productType = "com.apple.product-type.bundle.ui-testing";
+        };
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -136,6 +153,7 @@
 				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
+					100000000000000000000003 = {CreatedOnToolsVersion = 26.6; TestTargetID = 100000000000000000000001; };
 					100000000000000000000001 = {CreatedOnToolsVersion = 26.6; };
 					100000000000000000000002 = {CreatedOnToolsVersion = 26.6; TestTargetID = 100000000000000000000001; };
 				};
@@ -149,13 +167,14 @@
 			productRefGroup = 600000000000000000000010;
 			projectDirPath = "";
 			projectRoot = "";
-			targets = (100000000000000000000001, 100000000000000000000002);
+			targets = (100000000000000000000001, 100000000000000000000002, 100000000000000000000003);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		800000000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000010, 200000000000000000000011); runOnlyForDeploymentPostprocessing = 0; };
 		800000000000000000000004 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		800000000000000000000006 = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -172,10 +191,12 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000012); runOnlyForDeploymentPostprocessing = 0; };
+		800000000000000000000005 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000015); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
 		900000000000000000000001 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = 100000000000000000000001; targetProxy = 400000000000000000000001; };
+		900000000000000000000002 = {isa = PBXTargetDependency; target = 100000000000000000000001; targetProxy = 400000000000000000000001; };
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -305,14 +326,44 @@
 			};
 			name = Release;
 		};
+        C00000000000000000000007 = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                CODE_SIGN_STYLE = Automatic;
+                GENERATE_INFOPLIST_FILE = YES;
+                IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+                PRODUCT_BUNDLE_IDENTIFIER = space.go2china.VisePandaUITests;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                SWIFT_VERSION = 6.0;
+                SWIFT_STRICT_CONCURRENCY = complete;
+                TARGETED_DEVICE_FAMILY = 1;
+                TEST_TARGET_NAME = VisePanda;
+            };
+            name = Debug;
+        };
+        C00000000000000000000008 = {
+            isa = XCBuildConfiguration;
+            buildSettings = {
+                CODE_SIGN_STYLE = Automatic;
+                GENERATE_INFOPLIST_FILE = YES;
+                IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+                PRODUCT_BUNDLE_IDENTIFIER = space.go2china.VisePandaUITests;
+                PRODUCT_NAME = "$(TARGET_NAME)";
+                SWIFT_VERSION = 6.0;
+                SWIFT_STRICT_CONCURRENCY = complete;
+                TARGETED_DEVICE_FAMILY = 1;
+                TEST_TARGET_NAME = VisePanda;
+            };
+            name = Release;
+        };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
 		700000000000000000000001 = {isa = XCConfigurationList; buildConfigurations = (C00000000000000000000003, C00000000000000000000004); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 		700000000000000000000002 = {isa = XCConfigurationList; buildConfigurations = (C00000000000000000000005, C00000000000000000000006); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 		700000000000000000000003 = {isa = XCConfigurationList; buildConfigurations = (C00000000000000000000001, C00000000000000000000002); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		700000000000000000000004 = {isa = XCConfigurationList; buildConfigurations = (C00000000000000000000007, C00000000000000000000008); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 /* End XCConfigurationList section */
 	};
 	rootObject = A00000000000000000000001 /* Project object */;
 }
-

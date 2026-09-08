@@ -60,11 +60,17 @@ struct AskView: View {
             .padding(.bottom, 120)
         }
         .scrollDismissesKeyboard(.interactively)
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("ask.done") { isComposerFocused = false }
+            }
+        }
         .background(Color.vpBackground)
         .safeAreaInset(edge: .bottom) {
             composer
         }
-        .navigationTitle("tab.ask")
+        .vpNavigationTitle("tab.ask")
         .navigationBarTitleDisplayMode(.inline)
     }
 

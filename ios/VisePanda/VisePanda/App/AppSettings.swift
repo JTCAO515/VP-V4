@@ -11,6 +11,10 @@ enum SupportedLocale: String, CaseIterable, Identifiable, Sendable {
     // Legacy values remain decodable but are not offered as release languages.
     static let releaseLocales: [SupportedLocale] = [.zh, .en]
 
+    static func selectionLocales(current: SupportedLocale) -> [SupportedLocale] {
+        releaseLocales.contains(current) ? releaseLocales : releaseLocales + [current]
+    }
+
     var id: String { rawValue }
     var locale: Locale { Locale(identifier: rawValue) }
     var layoutDirection: LayoutDirection { self == .ar ? .rightToLeft : .leftToRight }

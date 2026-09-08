@@ -52,3 +52,21 @@ struct SoftPressButtonStyle: ButtonStyle {
             )
     }
 }
+
+// Resolve navigation chrome on every locale update without resetting drafts or navigation paths.
+private struct VPNavigationTitle: ViewModifier {
+    @Environment(\.locale) private var locale
+    let key: String
+
+    func body(content: Content) -> some View {
+        let bundle = Bundle.main.path(forResource: locale.identifier, ofType: "lproj")
+            .flatMap(Bundle.init(path:)) ?? .main
+        content.navigationTitle(Text(verbatim: bundle.localizedString(forKey: key, value: nil, table: nil)))
+    }
+}
+
+extension View {
+    func vpNavigationTitle(_ key: String) -> some View {
+        modifier(VPNavigationTitle(key: key))
+    }
+}

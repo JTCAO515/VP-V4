@@ -7,7 +7,8 @@ Observation, one NavigationStack per stable Trip/Explore/Ask/Tools/Profile tab.
 Ask is the default. Today is a Trip route; Tools links to correctly typed unavailable capabilities.
 No service, account, persistence, data export or proposal writer is introduced.
 
-Release selection is zh-Hans/en. SupportedLocale retains es/ru/ar raw values and RTL for
+Release selection is zh-Hans/en. An explicitly selected legacy locale remains visible in its
+picker until the user switches to a release language. SupportedLocale retains es/ru/ar raw values and RTL for
 explicit legacy/QA inputs; existing string resources remain. Web wire locales are unchanged,
 and the Web release selector migration is still outstanding. Launch override is not persisted.
 
@@ -17,7 +18,9 @@ Use system semantic fonts and Dynamic Type, 44pt actions, scrolling content, nat
 and labels. Brand foreground adapts in dark mode; white-on-plum action fill stays separate.
 Grouped backgrounds and secondary surfaces follow system appearance. Cards respect Reduce
 Transparency. Press feedback changes opacity without displacement under Reduce Motion.
-Large accessibility text uses one column for Today cards, with no summary line cap.
+Large accessibility text uses one column for Today cards, with no summary line cap. Tools
+removes decorative icons at accessibility sizes to leave full width for text. Navigation titles
+resolve the current locale bundle explicitly, without resetting draft text or navigation paths.
 
 Empty Trip and unavailable capabilities are explicit. The composer cannot send; typed text
 remains in memory. Tab destinations are not inferred from model text. Navigation does not

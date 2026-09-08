@@ -16,7 +16,7 @@ struct TripView: View {
             .padding(VPSpacing.standard)
         }
         .background(Color.vpBackground)
-        .navigationTitle("tab.trip")
+        .vpNavigationTitle("tab.trip")
         .navigationBarTitleDisplayMode(.inline)
     }
 

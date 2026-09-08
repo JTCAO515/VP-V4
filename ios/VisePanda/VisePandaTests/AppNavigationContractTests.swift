@@ -29,6 +29,14 @@ struct AppNavigationContractTests {
         #expect(SupportedLocale.releaseLocales == [.zh, .en])
     }
 
+    @Test("Legacy selection stays representable until switching to a release locale")
+    func legacySelection() {
+        for legacy in [SupportedLocale.es, .ru, .ar] {
+            #expect(SupportedLocale.selectionLocales(current: legacy) == [.zh, .en, legacy])
+        }
+        #expect(SupportedLocale.selectionLocales(current: .en) == [.zh, .en])
+    }
+
     @Test("Five supported locales include an RTL Arabic option")
     func localeContract() {
         #expect(SupportedLocale.allCases.map(\.rawValue) == ["zh-Hans", "en", "es", "ru", "ar"])

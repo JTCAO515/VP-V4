@@ -5,7 +5,8 @@ Native SwiftUI / Swift 6 / iOS 17 minimum. Each tab owns a NavigationStack.
 Trip, Explore, Ask, Tools, Profile remain stable; Ask opens by default; Today lives in Trip.
 
 The release picker offers zh-Hans/en. Legacy es/ru/ar resources and explicit launch overrides
-remain compatible; Arabic still uses RTL. The Web locale migration is separate.
+remain compatible; an active legacy selection keeps its picker label until switching to zh/en.
+Arabic still uses RTL. The Web locale migration is separate.
 All screens are development preview: no account, AI, network, Trip write, booking or payment.
 Draft text and language selection are session-only. Sending remains disabled.
 
