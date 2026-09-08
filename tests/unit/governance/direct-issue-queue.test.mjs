@@ -4,18 +4,11 @@ import test from "node:test";
 
 const read = (file) => readFileSync(file, "utf8");
 const tracker = read("docs/agents/issue-tracker.md");
-const labels = read("docs/agents/triage-labels.md");
 const contract = read("docs/agents/issue-execution-contract.md");
 const identityContract = read("docs/contracts/user-data-adapter.md");
 const handoff = JSON.parse(read("docs/handoff.json"));
 
-test("VPJ scheduling requires dependencies, a baseline and an execution row", () => {
-  assert.match(tracker, /Native dependencies and\s+the baseline PR gate implementation/i);
-  assert.match(labels, /Native dependencies and the baseline PR gate implementation/i);
-  assert.match(contract, /Native dependencies and the baseline PR gate implementation/i);
-  assert.match(handoff.status, /VPJ-00 #187/);
-  assert.doesNotMatch(tracker, /dependencies.*do not prohibit implementation/i);
-});
+// Lifecycle and unresolved-dependency behavior is exercised in vpj-lifecycle.test.mjs.
 
 test("VPJ scheduling retains fail-closed runtime protections", () => {
   assert.match(tracker, /UNAUTHENTICATED.*SAFETY_BLOCKED.*DATA_POLICY_BLOCKED/is);

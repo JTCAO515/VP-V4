@@ -4,6 +4,10 @@
 
 本文冻结本轮产品与工程组织方向，供产品、设计、iOS、Web、服务端、知识运营、客服与发布人员共同使用。具体商业账户、模型版本、数据保留期限、供应商合同和发布行为仍按对应任务取得事实；本报告不表示这些能力已上线。当前实现证据基于 `origin/main@fb8d2ba227fded32a8df6e4e09f9586ad0150f21`，2026-09-05 重读。
 
+2026-09-08 工程流程修订：[ADR-0024](adr/ADR-0024-practical-development-workflow.md) 与
+[开发流程](agents/development-workflow.md) 管理当前读取、准备范围、文件协作、本地验证和交接。
+本报告的产品范围与实际运行验收保留；下文历史状态不替代当前 GitHub。#253/#254已在本次核对中合并。
+
 ## 1. 总体决定
 
 **VP 定位为面向国际来华自由行旅客的、贯穿整段旅程的 AI 旅行助手。**用户与一个固定身份的 VP 交流，计划、材料、准备、住宿选择、现场沟通、讲解与变化恢复围绕同一个 Trip 持续推进。
@@ -398,11 +402,11 @@ Apple要求真正beta/demo走TestFlight，公开AppStore提交完整可用版本
 
 ## 24. 多Agent开发与文档维护
 
-未来agent从main创建独立worktree，一条Issue一条branch/PR；先读当前Issue及其执行行，不用整段聊天重建需求。跨模块接口先冻结owner/input/output/error/idempotency/permission/version/consumers；多个skill没有独立修改Trip的权限。
+未来agent从当前main使用独立branch/checkout，worktree按需创建；一项连贯结果一条PR，同一Issue可增量交付。先读当前任务及受影响合同，按共享开发流程执行。跨模块接口先冻结owner/input/output/error/idempotency/permission/version/consumers；多个skill没有独立修改Trip的权限。
 
-交付必须更新模块文档、Issue evidence、handoff和未验项。任务完成不是“代码能编译”；还要有该任务的实际用户路径。PR不直接包含用户密钥、生产配置、原始对话或旅行凭证。
+交付记录Issue/PR evidence和未验项；接口/行为变化时更新模块文档，共享状态变化或session交接时更新handoff。任务完成不是“代码能编译”；还要有该任务的实际用户路径。PR不直接包含用户密钥、生产配置、原始对话或旅行凭证。
 
-旧研究和已接受历史ADR按需读，新主报告与ADR0023决定产品/组织范围。工程执行行是唯一文件权限与验证入口；operator actions是唯一外部动作队列。脚本生成任务目录/交接/索引，检查未知依赖、环、链接、重复ID和native关系。
+旧研究和已接受历史ADR按需读，新主报告与ADR0023决定产品/组织范围。工程执行行给出产品任务主要范围和最终验收，共享开发流程规定每条PR的准备与验证；operator actions记录需要代办的外部动作。脚本生成任务目录/交接/索引，检查未知依赖、环、链接、重复ID和native关系。
 
 ## 25. 对抗评审与本轮调整记录
 
@@ -467,6 +471,7 @@ PR #185中依赖调度、ADR编号和文档一致性建议值得继承；该PR�
 
 新Program为[#187](https://github.com/JTCAO515/VP-V4/issues/187)，65个子任务实际编号为#188–#252，按依赖顺序创建（VPJ逻辑编号不等同GitHub顺序）。20个旧开放Issue已全部closed/not_planned并链接替代责任；198条native依赖与父子关系、正文在2026-09-05T04:06:51Z完成回读校验。两个原PR185/186保留。
 
-统筹、归档和文档变更在[PR #253](https://github.com/JTCAO515/VP-V4/pull/253)，尚未合并main；后续agent先用[启动说明](program/2026-09-05/AGENT-KICKOFF.md)确认基线，再按依赖认领。旧Landing精确原文和40份其他来源文件保留hash归档，用户原工作树和24条迁移未改。
+统筹、归档和文档变更在[PR #253](https://github.com/JTCAO515/VP-V4/pull/253)，已合并main（2026-09-08回读）；后续agent先用[启动说明](program/2026-09-05/AGENT-KICKOFF.md)确认基线，再按依赖认领。旧Landing精确原文和40份其他来源文件保留hash归档，用户原工作树和24条迁移未改。
 
 标准构建/22测试、29单元、161合同、40源码E2E、20eval通过；真实DB相关10个skip仍记incomplete。现有页面桌面/手机冒烟通过基本加载/宽度检查，不能据此声称新原生UI或完整App已实现。所有操作与未验项见Program验证记录。
+

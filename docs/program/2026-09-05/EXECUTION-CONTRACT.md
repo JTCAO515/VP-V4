@@ -1,8 +1,11 @@
 # VPJ Issue 执行合同
 
-生成自issue-plan.json。阅读顺序：Program README→当前Issue→本行→INTERFACES→拥有模块及实际代码。
+生成自issue-plan.json。当前共享流程见 [development-workflow.md](../../agents/development-workflow.md) / ADR-0024。
+阅读当前Issue/PR、本行、受影响接口与代码；历史研究按需读取。
 
-所有任务另允许自己的artifacts、docsImpact以及本Issue新增合同；这些不授予其他模块重构权限。先执行已有快速验证，再做Issue所需设备/运行验收。Native命令由VPJ-01/56引入；未完成不能跳过后声称真机通过。
+Checks列是完整Issue验收清单；每条PR按实际改动选择本地验证，保留适用CI和最终运行门。
+Allowed列标示主要范围；必要的相邻文件调整、维护任务和独立准备片段按共享流程记录。
+运行依赖未完成时父Issue保持未验收；fixture不证明设备、数据库、provider或生产通过。
 
 ## VPJ-01
 

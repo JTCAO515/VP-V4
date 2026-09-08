@@ -3,12 +3,12 @@
   "projectId": "visepanda-vp-v4",
   "lastUpdated": "2026-09-08",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
-  "status": "VPJ-00 #187 baseline PR #253 merged at 9a3b724. Operator-authorized isolated Journey and Early Access demo migration is locally verified with independent review; inspect its PR/main for current merge state. Real product/runtime gates remain unverified.",
+  "status": "VPJ-00 #187 baseline PR #253 merged at 9a3b724; Journey preview PR #254 merged on main at 1bd1ffb (2026-09-08 read-back). Governance workflow revision is prepared for review; real product/runtime gates remain unverified.",
   "currentPhase": "Journey visual preview and full prepared Demo migration; no backend, native or same-Trip acceptance implied. The 65-task VPJ dependency graph is unchanged.",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "JT owns product/commercial/provider/data/account/release decisions. Coding agents own each verified, bounded implementation contract.",
   "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree.",
-  "nextAction": "Inspect current preview PR/main and required CI before treating it as merged. Preview routes are /journey and /journey/plan; see docs/design/journey/README.md. Keep VPJ-41 #234 open; its real same-Trip prerequisites are not satisfied by this demo. Recompute the live VPJ frontier before product implementation.",
+  "nextAction": "Review the workflow revision PR. For product work, re-evaluate VPJ-01/02/03/46/62 inputs against current GitHub and environment, then reconcile stale blocked labels. The 65-task dependency graph and VPJ-41 #234 runtime acceptance remain unchanged; merged Journey fixtures do not complete it.",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
@@ -35,11 +35,8 @@
     "All contracts are frozen as schema fixture plus consumer test; provider SDK types never define domain schema."
   ],
   "mandatoryReadingOrder": [
-    "docs/program/2026-09-05/README.md",
-    "docs/VISEPANDA-MASTER-PLAN-2026-09-05.md",
-    "docs/adr/ADR-0023-vpj-integrated-native-journey-baseline.md",
-    "docs/program/2026-09-05/INTERFACES.md",
-    "docs/program/2026-09-05/EXECUTION-CONTRACT.md"
+    "docs/agents/development-workflow.md",
+    "docs/program/2026-09-05/README.md"
   ],
   "decisions": [
     "One VP identity, same Trip, full journey; native iOS complete and Web lightweight same-Trip edit/confirm.",
@@ -78,7 +75,8 @@
     "Integration19 pass/9 skip; security80 pass/1 skip. Real local Supabase/RLS unavailable, outcomes incomplete, not release success.",
     "DAG/missing-dependency tests, 41 archive hashes, docs/JSON/local links and git diff against origin/main passed. Archive whitespace/line endings retained only in hash-checked archive scope.",
     "1280x800 and 390x844 current-page smoke: no horizontal overflow or console errors/warnings. Existing cross-route locale reset is assigned to VPJ-01/41.",
-    "PR253 CI at commit06bab2f passed; subsequent documentation-only handoff commits receive fresh CI and must be inspected before merge."
+    "PR253 CI at commit06bab2f passed; subsequent documentation-only handoff commits receive fresh CI and must be inspected before merge.",
+    "2026-09-08 governance read-back at main 1bd1ffb: PR253/254 merged; all 65 VPJ tasks still status:blocked; VPJ-01 #188 and VPJ-62 #202 have no native blockers. These are readiness review candidates, not verified implementation-ready tasks."
   ],
   "unrun": [
     "No live customer/model/DB/provider/Store/production test or deployment in this planning task.",
@@ -95,5 +93,6 @@
     "docs/archive/2026-09-05/baseline/HANDOFF.md",
     "docs/archive/2026-09-05/baseline/issue-execution-contract.md"
   ],
-  "observation": "Technical release acceptance in VPJ-45 and commercial lifecycle evidence in VPJ-47 are distinct terminal conditions."
+  "observation": "Technical release acceptance in VPJ-45 and commercial lifecycle evidence in VPJ-47 are distinct terminal conditions.",
+  "readingGuidance": "Read the current Issue/PR, its VPJ execution row and affected interfaces/code next. Read the master plan on first entry or scope changes; research and historical ADRs on demand."
 }
