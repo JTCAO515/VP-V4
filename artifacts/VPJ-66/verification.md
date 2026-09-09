@@ -17,3 +17,5 @@ CI保留全部既有门，包括浏览器、integration/security的明确运行/
 必要相邻文档：同步docs/handoff.json并生成HANDOFF.md/CONTEXT.md，因为共享下一步从纯规划推进到离线准备；保留RPC远端授权阻塞及其他既有证据，不改任务图或业务契约。
 
 Issue只可在准确HEAD审阅和必需CI通过、代码合并、合并结果再验证之后按其离线准备范围关闭。当前文件不证明PR已经合并。回滚移除本票新增eval/report/doc接入，不触碰既有测试或真实数据。
+
+已跟踪日志统一去除CR行尾、行尾空白和多余EOF空行，不改测试内容；最终diff门使用git diff --check 6307d79...HEAD检查整个提交范围，不以工作区无差异替代。
