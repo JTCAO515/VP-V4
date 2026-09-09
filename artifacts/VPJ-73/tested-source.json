@@ -1,0 +1,19 @@
+{
+  "frozen_input_commit": "e777ade02002fc23bb5b8a57de83989454db1190",
+  "setup_complete_commit": "64d0d7c4ac2dc0abcc482ea03eae41254dd4e2af",
+  "full_conversion_worker_and_candidate_commit": "9b0b2ea128f05b473a92d5a8796f4ca02561477f",
+  "guard_implementation_commit": "0de43ebd9461b3126ec9d8d7f072a1d6ff00b254",
+  "full_run": "20260909T204621814051Z",
+  "initial_high_level_run": "20260909T204021177871Z",
+  "guard_run": "20260909T205008111292Z",
+  "current_source_blobs": {
+    "scripts/experiments/docling/worker.py": "686868b9d0b9ac41d08add79e2aa90f322a2db69",
+    "scripts/experiments/docling/candidates.py": "fccaa47edf170367a80ab7041ea840dafe2dccd0",
+    "scripts/experiments/docling/run_experiment.py": "0fd2b5973a43a08f5681b0e955cad50d99ff69d0",
+    "scripts/experiments/docling/run_guards.py": "7c1e70c0ad888a981acc29843c55b693fed8ca74",
+    "scripts/experiments/docling/evaluate.py": "e26dd5891bae3ca9d8f524e8c9e3f9ca47fd558a",
+    "tests/unit/docling/test_candidates.py": "e001cf920c672aa824964b63c80964395646ef50",
+    "tests/unit/docling/test_scoring.py": "5e10115e7174859ffa41de7d526fde87e90d4fab"
+  },
+  "worker_unchanged_since_full_run": true
+}

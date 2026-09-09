@@ -1,0 +1,29 @@
+{
+  "engine": "tesseract",
+  "input": "missing-info.png",
+  "source_sha256": "af0d75df7def1b87867916c165ddc07bfaa9d74fe1f1fe37cc8508734ea3db9b",
+  "status": "completed",
+  "exit_code": 0,
+  "elapsed_seconds": 0.4905915829986043,
+  "peak_aggregate_rss_bytes": 151470080,
+  "rss_poll_seconds": 0.05,
+  "conversion_started_observed": true,
+  "output": "/Users/jtcao/Documents/VP-V4-Docling-Experiment/artifacts/VPJ-73/runs/20260909T204621814051Z/0-tesseract-missing-info/output.json",
+  "command": [
+    "/usr/bin/sandbox-exec",
+    "-p",
+    "(version 1)(allow default)(deny network*)",
+    "/Users/jtcao/Library/Caches/visepanda/vpj73/venv/bin/python",
+    "/Users/jtcao/Documents/VP-V4-Docling-Experiment/scripts/experiments/docling/worker.py",
+    "--input",
+    "/Users/jtcao/Documents/VP-V4-Docling-Experiment/artifacts/VPJ-73/fixtures/missing-info.png",
+    "--assets",
+    "/Users/jtcao/Library/Caches/visepanda/vpj73/assets",
+    "--output",
+    "/Users/jtcao/Documents/VP-V4-Docling-Experiment/artifacts/VPJ-73/runs/20260909T204621814051Z/0-tesseract-missing-info/output.json",
+    "--engine",
+    "tesseract"
+  ],
+  "started_at": "2026-09-09T20:47:00.799282+00:00",
+  "network": "OS sandbox deny network*; empty isolated HF cache; no credentials passed"
+}

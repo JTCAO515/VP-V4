@@ -1,0 +1,370 @@
+{
+  "engine": "tesseract",
+  "conversion_status": "success",
+  "conversion_seconds": 0.3520381249982165,
+  "segments": [
+    {
+      "text": "SYNTHETIC TRAVEL MATERIAL",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.062,
+          0.055,
+          0.617,
+          0.07714285714285714
+        ],
+        "parser_ref": "tsv-line-1-1-1"
+      }
+    },
+    {
+      "text": "en-clear / NOT A TICKET / 自 有 测试 材料",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061,
+          0.095,
+          0.457,
+          0.12
+        ],
+        "parser_ref": "tsv-line-2-1-1"
+      }
+    },
+    {
+      "text": "Service: G73",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061,
+          0.16142857142857142,
+          0.231,
+          0.17857142857142858
+        ],
+        "parser_ref": "tsv-line-3-1-1"
+      }
+    },
+    {
+      "text": "Origin: Shanghai Hongqiao",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.062,
+          0.23642857142857143,
+          0.441,
+          0.25857142857142856
+        ],
+        "parser_ref": "tsv-line-4-1-1"
+      }
+    },
+    {
+      "text": "Destination: Hangzhou East",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.063,
+          0.31142857142857144,
+          0.454,
+          0.3335714285714286
+        ],
+        "parser_ref": "tsv-line-5-1-1"
+      }
+    },
+    {
+      "text": "Departure: 2026-11-03 09:30",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.063,
+          0.38785714285714284,
+          0.458,
+          0.4085714285714286
+        ],
+        "parser_ref": "tsv-line-6-1-1"
+      }
+    },
+    {
+      "text": "Arrival: 2026-11-03 10:24",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.4614285714285714,
+          0.405,
+          0.4785714285714286
+        ],
+        "parser_ref": "tsv-line-7-1-1"
+      }
+    },
+    {
+      "text": "Time zone: Asia/Shanghai UTC+08:00",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061,
+          0.5364285714285715,
+          0.579,
+          0.5585714285714286
+        ],
+        "parser_ref": "tsv-line-8-1-1"
+      }
+    },
+    {
+      "text": "Currency: CNY",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.062,
+          0.6128571428571429,
+          0.262,
+          0.6335714285714286
+        ],
+        "parser_ref": "tsv-line-9-1-1"
+      }
+    },
+    {
+      "text": "Amount: 128.50",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.6878571428571428,
+          0.281,
+          0.7035714285714286
+        ],
+        "parser_ref": "tsv-line-10-1-1"
+      }
+    },
+    {
+      "text": "Synthetic rail itinerary. Not a ticket or reservation.",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.062,
+          0.7842857142857143,
+          0.527,
+          0.7992857142857143
+        ],
+        "parser_ref": "tsv-line-11-1-1"
+      }
+    },
+    {
+      "text": "For parser evaluation only. No purchase, booking or Trip is confirmed.",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.062,
+          0.9478571428571428,
+          0.642,
+          0.9607142857142857
+        ],
+        "parser_ref": "tsv-line-12-1-1"
+      }
+    }
+  ],
+  "document": {
+    "format": "tesseract-tsv",
+    "text": "level\tpage_num\tblock_num\tpar_num\tline_num\tword_num\tleft\ttop\twidth\theight\tconf\ttext\n1\t1\t0\t0\t0\t0\t0\t0\t1000\t1400\t-1\t\n2\t1\t1\t0\t0\t0\t62\t77\t555\t31\t-1\t\n3\t1\t1\t1\t0\t0\t62\t77\t555\t31\t-1\t\n4\t1\t1\t1\t1\t0\t62\t77\t555\t31\t-1\t\n5\t1\t1\t1\t1\t1\t62\t77\t206\t31\t96.020813\tSYNTHETIC\n5\t1\t1\t1\t1\t2\t280\t78\t140\t29\t96.247353\tTRAVEL\n5\t1\t1\t1\t1\t3\t434\t78\t183\t29\t95.938675\tMATERIAL\n2\t1\t2\t0\t0\t0\t61\t140\t396\t22\t-1\t\n3\t1\t2\t1\t0\t0\t61\t140\t396\t22\t-1\t\n4\t1\t2\t1\t1\t0\t61\t140\t396\t22\t-1\t\n5\t1\t2\t1\t1\t1\t61\t141\t96\t21\t87.435616\ten-clear\n5\t1\t2\t1\t1\t2\t153\t133\t12\t35\t87.435616\t/\n5\t1\t2\t1\t1\t3\t165\t142\t43\t16\t90.049438\tNOT\n5\t1\t2\t1\t1\t4\t214\t142\t13\t16\t22.497673\tA\n5\t1\t2\t1\t1\t5\t233\t141\t87\t21\t22.497673\tTICKET\n5\t1\t2\t1\t1\t6\t310\t133\t16\t35\t89.967812\t/\n5\t1\t2\t1\t1\t7\t339\t140\t5\t20\t83.782158\t自\n5\t1\t2\t1\t1\t8\t356\t140\t20\t20\t93.300491\t有\n5\t1\t2\t1\t1\t9\t376\t140\t51\t20\t96.688560\t测试\n5\t1\t2\t1\t1\t10\t426\t133\t31\t35\t96.758720\t材料\n2\t1\t3\t0\t0\t0\t61\t226\t170\t24\t-1\t\n3\t1\t3\t1\t0\t0\t61\t226\t170\t24\t-1\t\n4\t1\t3\t1\t1\t0\t61\t226\t170\t24\t-1\t\n5\t1\t3\t1\t1\t1\t61\t226\t108\t24\t96.452179\tService:\n5\t1\t3\t1\t1\t2\t180\t228\t51\t22\t96.890160\tG73\n2\t1\t4\t0\t0\t0\t62\t331\t379\t31\t-1\t\n3\t1\t4\t1\t0\t0\t62\t331\t379\t31\t-1\t\n4\t1\t4\t1\t1\t0\t62\t331\t379\t31\t-1\t\n5\t1\t4\t1\t1\t1\t62\t331\t92\t31\t96.495071\tOrigin:\n5\t1\t4\t1\t1\t2\t164\t331\t129\t31\t96.234070\tShanghai\n5\t1\t4\t1\t1\t3\t305\t331\t136\t31\t94.281654\tHongqiao\n2\t1\t5\t0\t0\t0\t63\t436\t391\t31\t-1\t\n3\t1\t5\t1\t0\t0\t63\t436\t391\t31\t-1\t\n4\t1\t5\t1\t1\t0\t63\t436\t391\t31\t-1\t\n5\t1\t5\t1\t1\t1\t63\t436\t169\t24\t96.168587\tDestination:\n5\t1\t5\t1\t1\t2\t244\t436\t140\t31\t96.168587\tHangzhou\n5\t1\t5\t1\t1\t3\t397\t438\t57\t22\t96.483109\tEast\n2\t1\t6\t0\t0\t0\t63\t543\t395\t29\t-1\t\n3\t1\t6\t1\t0\t0\t63\t543\t395\t29\t-1\t\n4\t1\t6\t1\t1\t0\t63\t543\t395\t29\t-1\t\n5\t1\t6\t1\t1\t1\t63\t543\t149\t29\t96.406929\tDeparture:\n5\t1\t6\t1\t1\t2\t222\t543\t153\t22\t96.276703\t2026-11-03\n5\t1\t6\t1\t1\t3\t385\t543\t73\t22\t96.276703\t09:30\n2\t1\t7\t0\t0\t0\t60\t646\t345\t24\t-1\t\n3\t1\t7\t1\t0\t0\t60\t646\t345\t24\t-1\t\n4\t1\t7\t1\t1\t0\t60\t646\t345\t24\t-1\t\n5\t1\t7\t1\t1\t1\t60\t646\t98\t24\t96.489395\tArrival:\n5\t1\t7\t1\t1\t2\t168\t648\t153\t22\t96.712265\t2026-11-03\n5\t1\t7\t1\t1\t3\t333\t648\t72\t22\t96.577232\t10:24\n2\t1\t8\t0\t0\t0\t61\t751\t518\t31\t-1\t\n3\t1\t8\t1\t0\t0\t61\t751\t518\t31\t-1\t\n4\t1\t8\t1\t1\t0\t61\t751\t518\t31\t-1\t\n5\t1\t8\t1\t1\t1\t61\t751\t69\t24\t96.606720\tTime\n5\t1\t8\t1\t1\t2\t139\t758\t74\t17\t93.198952\tzone:\n5\t1\t8\t1\t1\t3\t222\t751\t199\t31\t92.283798\tAsia/Shanghai\n5\t1\t8\t1\t1\t4\t433\t753\t146\t22\t92.283798\tUTC+08:00\n2\t1\t9\t0\t0\t0\t62\t858\t200\t29\t-1\t\n3\t1\t9\t1\t0\t0\t62\t858\t200\t29\t-1\t\n4\t1\t9\t1\t1\t0\t62\t858\t200\t29\t-1\t\n5\t1\t9\t1\t1\t1\t62\t858\t134\t29\t96.265823\tCurrency:\n5\t1\t9\t1\t1\t2\t207\t858\t55\t22\t96.958229\tCNY\n2\t1\t10\t0\t0\t0\t60\t963\t221\t22\t-1\t\n3\t1\t10\t1\t0\t0\t60\t963\t221\t22\t-1\t\n4\t1\t10\t1\t1\t0\t60\t963\t221\t22\t-1\t\n5\t1\t10\t1\t1\t1\t60\t963\t121\t22\t95.904549\tAmount:\n5\t1\t10\t1\t1\t2\t193\t963\t88\t22\t96.499901\t128.50\n2\t1\t11\t0\t0\t0\t62\t1098\t465\t21\t-1\t\n3\t1\t11\t1\t0\t0\t62\t1098\t465\t21\t-1\t\n4\t1\t11\t1\t1\t0\t62\t1098\t465\t21\t-1\t\n5\t1\t11\t1\t1\t1\t62\t1098\t87\t21\t96.754265\tSynthetic\n5\t1\t11\t1\t1\t2\t156\t1098\t28\t16\t95.235016\trail\n5\t1\t11\t1\t1\t3\t191\t1098\t83\t21\t95.235016\titinerary.\n5\t1\t11\t1\t1\t4\t281\t1100\t32\t14\t79.737320\tNot\n5\t1\t11\t1\t1\t5\t319\t1103\t9\t11\t79.737320\ta\n5\t1\t11\t1\t1\t6\t334\t1098\t52\t16\t96.700287\tticket\n5\t1\t11\t1\t1\t7\t392\t1103\t19\t11\t96.855217\tor\n5\t1\t11\t1\t1\t8\t417\t1098\t110\t16\t96.881378\treservation.\n2\t1\t12\t0\t0\t0\t62\t1327\t580\t18\t-1\t\n3\t1\t12\t1\t0\t0\t62\t1327\t580\t18\t-1\t\n4\t1\t12\t1\t1\t0\t62\t1327\t580\t18\t-1\t\n5\t1\t12\t1\t1\t1\t62\t1328\t26\t13\t96.904030\tFor\n5\t1\t12\t1\t1\t2\t94\t1331\t52\t14\t96.734253\tparser\n5\t1\t12\t1\t1\t3\t151\t1327\t87\t14\t96.145119\tevaluation\n5\t1\t12\t1\t1\t4\t244\t1327\t38\t18\t96.513199\tonly.\n5\t1\t12\t1\t1\t5\t289\t1328\t21\t13\t96.970802\tNo\n5\t1\t12\t1\t1\t6\t317\t1327\t80\t18\t96.292664\tpurchase,\n5\t1\t12\t1\t1\t7\t404\t1327\t67\t18\t96.800941\tbooking\n5\t1\t12\t1\t1\t8\t477\t1331\t17\t10\t96.413826\tor\n5\t1\t12\t1\t1\t9\t499\t1327\t33\t18\t96.252922\tTrip\n5\t1\t12\t1\t1\t10\t538\t1327\t11\t14\t96.252922\tis\n5\t1\t12\t1\t1\t11\t554\t1327\t88\t14\t96.893867\tconfirmed.\n"
+  },
+  "candidates": {
+    "schema_version": 1,
+    "kind": "material_correction_candidates",
+    "source_id": "synthetic-5b4d278b71eea646",
+    "source_sha256": "5b4d278b71eea646ce0566231a796ab62505725630a4b731b97c00a76ce10cae",
+    "incomplete": false,
+    "requires_user_review": true,
+    "confirmed": false,
+    "fields": [
+      {
+        "field": "service_id",
+        "value": "G73",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "G73",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.061,
+                  0.16142857142857142,
+                  0.231,
+                  0.17857142857142858
+                ],
+                "parser_ref": "tsv-line-3-1-1"
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "origin",
+        "value": "Shanghai Hongqiao",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "Shanghai Hongqiao",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.062,
+                  0.23642857142857143,
+                  0.441,
+                  0.25857142857142856
+                ],
+                "parser_ref": "tsv-line-4-1-1"
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "destination",
+        "value": "Hangzhou East",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "Hangzhou East",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.063,
+                  0.31142857142857144,
+                  0.454,
+                  0.3335714285714286
+                ],
+                "parser_ref": "tsv-line-5-1-1"
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "departure_local",
+        "value": "2026-11-03 09:30",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "2026-11-03 09:30",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.063,
+                  0.38785714285714284,
+                  0.458,
+                  0.4085714285714286
+                ],
+                "parser_ref": "tsv-line-6-1-1"
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "arrival_local",
+        "value": "2026-11-03 10:24",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "2026-11-03 10:24",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06,
+                  0.4614285714285714,
+                  0.405,
+                  0.4785714285714286
+                ],
+                "parser_ref": "tsv-line-7-1-1"
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "timezone",
+        "value": "Asia/Shanghai UTC+08:00",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "Asia/Shanghai UTC+08:00",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.061,
+                  0.5364285714285715,
+                  0.579,
+                  0.5585714285714286
+                ],
+                "parser_ref": "tsv-line-8-1-1"
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "currency",
+        "value": "CNY",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "CNY",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.062,
+                  0.6128571428571429,
+                  0.262,
+                  0.6335714285714286
+                ],
+                "parser_ref": "tsv-line-9-1-1"
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "amount",
+        "value": "128.50",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "128.50",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06,
+                  0.6878571428571428,
+                  0.281,
+                  0.7035714285714286
+                ],
+                "parser_ref": "tsv-line-10-1-1"
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      }
+    ]
+  }
+}

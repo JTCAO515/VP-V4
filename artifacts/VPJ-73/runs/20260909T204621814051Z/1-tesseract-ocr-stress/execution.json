@@ -1,0 +1,29 @@
+{
+  "engine": "tesseract",
+  "input": "ocr-stress.png",
+  "source_sha256": "fa8137c71ab82ccc676add207e19418b7887366804379cec59a4940b65961e6c",
+  "status": "completed",
+  "exit_code": 0,
+  "elapsed_seconds": 1.2334128330003296,
+  "peak_aggregate_rss_bytes": 151519232,
+  "rss_poll_seconds": 0.05,
+  "conversion_started_observed": true,
+  "output": "/Users/jtcao/Documents/VP-V4-Docling-Experiment/artifacts/VPJ-73/runs/20260909T204621814051Z/1-tesseract-ocr-stress/output.json",
+  "command": [
+    "/usr/bin/sandbox-exec",
+    "-p",
+    "(version 1)(allow default)(deny network*)",
+    "/Users/jtcao/Library/Caches/visepanda/vpj73/venv/bin/python",
+    "/Users/jtcao/Documents/VP-V4-Docling-Experiment/scripts/experiments/docling/worker.py",
+    "--input",
+    "/Users/jtcao/Documents/VP-V4-Docling-Experiment/artifacts/VPJ-73/fixtures/ocr-stress.png",
+    "--assets",
+    "/Users/jtcao/Library/Caches/visepanda/vpj73/assets",
+    "--output",
+    "/Users/jtcao/Documents/VP-V4-Docling-Experiment/artifacts/VPJ-73/runs/20260909T204621814051Z/1-tesseract-ocr-stress/output.json",
+    "--engine",
+    "tesseract"
+  ],
+  "started_at": "2026-09-09T20:49:10.299294+00:00",
+  "network": "OS sandbox deny network*; empty isolated HF cache; no credentials passed"
+}

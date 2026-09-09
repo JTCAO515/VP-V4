@@ -1,0 +1,16 @@
+test_chinese_and_wrapped_value_keep_the_actual_source_boxes (test_candidates.CandidateBoundaryTests.test_chinese_and_wrapped_value_keep_the_actual_source_boxes) ... ok
+test_conflicting_duplicates_require_correction (test_candidates.CandidateBoundaryTests.test_conflicting_duplicates_require_correction) ... ok
+test_impossible_dates_and_ocr_character_errors_are_not_repaired_by_guess (test_candidates.CandidateBoundaryTests.test_impossible_dates_and_ocr_character_errors_are_not_repaired_by_guess) ... ok
+test_limits_reject_before_expensive_conversion (test_candidates.CandidateBoundaryTests.test_limits_reject_before_expensive_conversion) ... ok
+test_malicious_content_is_not_an_instruction_or_a_confirmation (test_candidates.CandidateBoundaryTests.test_malicious_content_is_not_an_instruction_or_a_confirmation) ... ok
+test_missing_information_stays_missing (test_candidates.CandidateBoundaryTests.test_missing_information_stays_missing) ... ok
+test_missing_or_invalid_provenance_cannot_be_a_complete_candidate (test_candidates.CandidateBoundaryTests.test_missing_or_invalid_provenance_cannot_be_a_complete_candidate) ... ok
+test_native_word_cells_group_without_oracle_positions (test_candidates.CandidateBoundaryTests.test_native_word_cells_group_without_oracle_positions) ... ok
+test_correct_text_with_unrelated_position_fails_location_gate (test_scoring.ScoringBoundaryTests.test_correct_text_with_unrelated_position_fails_location_gate) ... ok
+test_setup_probe_cannot_be_used_as_adoption_evidence (test_scoring.ScoringBoundaryTests.test_setup_probe_cannot_be_used_as_adoption_evidence) ... ok
+test_whole_page_box_is_not_accepted_as_field_provenance (test_scoring.ScoringBoundaryTests.test_whole_page_box_is_not_accepted_as_field_provenance) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.028s
+
+OK

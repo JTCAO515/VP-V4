@@ -1,0 +1,751 @@
+{
+  "engine": "docling",
+  "conversion_status": "success",
+  "conversion_seconds": 13.575335790999816,
+  "segments": [
+    {
+      "text": "SYNTHETIC TRAVEL MATERIAL",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.05523525661375655,
+          0.6166349768518518,
+          0.07666272685185178
+        ],
+        "parser_ref": "#/texts/0"
+      }
+    },
+    {
+      "text": "missing-info / NOT A TICKET / 自 有 测试 材料",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.09618553306878311,
+          0.5019742027777777,
+          0.11856533531746029
+        ],
+        "parser_ref": "#/texts/1"
+      }
+    },
+    {
+      "text": "车",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.1604679437830688,
+          0.125993525,
+          0.17999074999999998
+        ],
+        "parser_ref": "#/texts/2"
+      }
+    },
+    {
+      "text": "出 发 站 :",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06266344629629629,
+          0.2352260066137565,
+          0.15599198333333333,
+          0.2552249788359787
+        ],
+        "parser_ref": "#/texts/3"
+      }
+    },
+    {
+      "text": "上 海 虹桥",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.17865748518518515,
+          0.23570217261904758,
+          0.2839854055555555,
+          0.2552249788359787
+        ],
+        "parser_ref": "#/texts/4"
+      }
+    },
+    {
+      "text": "到 达 站 :",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.31046023544973544,
+          0.15599198333333333,
+          0.3299830416666666
+        ],
+        "parser_ref": "#/texts/5"
+      }
+    },
+    {
+      "text": "出",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06266344629629629,
+          0.3856944642857142,
+          0.125993525,
+          0.40521727050264544
+        ],
+        "parser_ref": "#/texts/6"
+      }
+    },
+    {
+      "text": "2026-11-05 14:20",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.1359930111111111,
+          0.3875991283068782,
+          0.3719808833333333,
+          0.4037887724867724
+        ],
+        "parser_ref": "#/texts/7"
+      }
+    },
+    {
+      "text": "次 : G12 杭州 东 发 :",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.10532792037037035,
+          0.15856327976190474,
+          0.2559868444444444,
+          0.4114074285714285
+        ],
+        "parser_ref": "#/texts/8"
+      }
+    },
+    {
+      "text": "币",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06266344629629629,
+          0.6104448187830687,
+          0.125993525,
+          0.6299676249999999
+        ],
+        "parser_ref": "#/texts/9"
+      }
+    },
+    {
+      "text": "种 : CNY",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.10399465555555555,
+          0.6080639887566137,
+          0.1919901333333333,
+          0.6347292850529099
+        ],
+        "parser_ref": "#/texts/10"
+      }
+    },
+    {
+      "text": "到 达 时 间 、 时 区 和 金额 未 提供 。 不 能 根据 城市 或 其 他 样本 补 全 。",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06133018148148148,
+          0.7813884146825395,
+          0.6073021231481481,
+          0.8037682169312167
+        ],
+        "parser_ref": "#/texts/11"
+      }
+    },
+    {
+      "text": "For parser evaluation only. No purchase, booking or Trip is confirmed.",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.9475703505291004,
+          0.6419670083333333,
+          0.9609029986772485
+        ],
+        "parser_ref": "#/texts/12"
+      }
+    }
+  ],
+  "document": {
+    "schema_name": "DoclingDocument",
+    "version": "1.10.0",
+    "name": "missing-info",
+    "origin": {
+      "mimetype": "application/pdf",
+      "binary_hash": 14737194646973438875,
+      "filename": "missing-info.png"
+    },
+    "furniture": {
+      "self_ref": "#/furniture",
+      "children": [],
+      "content_layer": "furniture",
+      "name": "_root_",
+      "label": "unspecified"
+    },
+    "body": {
+      "self_ref": "#/body",
+      "children": [
+        {
+          "$ref": "#/texts/0"
+        },
+        {
+          "$ref": "#/texts/1"
+        },
+        {
+          "$ref": "#/groups/0"
+        },
+        {
+          "$ref": "#/texts/9"
+        },
+        {
+          "$ref": "#/texts/10"
+        },
+        {
+          "$ref": "#/texts/11"
+        },
+        {
+          "$ref": "#/texts/12"
+        }
+      ],
+      "content_layer": "body",
+      "name": "_root_",
+      "label": "unspecified"
+    },
+    "groups": [
+      {
+        "self_ref": "#/groups/0",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [
+          {
+            "$ref": "#/texts/2"
+          },
+          {
+            "$ref": "#/texts/3"
+          },
+          {
+            "$ref": "#/texts/4"
+          },
+          {
+            "$ref": "#/texts/5"
+          },
+          {
+            "$ref": "#/texts/6"
+          },
+          {
+            "$ref": "#/texts/7"
+          },
+          {
+            "$ref": "#/texts/8"
+          }
+        ],
+        "content_layer": "body",
+        "name": "group",
+        "label": "key_value_area"
+      }
+    ],
+    "texts": [
+      {
+        "self_ref": "#/texts/0",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "section_header",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 31.0,
+              "t": 661.3693074042233,
+              "r": 308.3333333333333,
+              "b": 646.3693074042233,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              25
+            ]
+          }
+        ],
+        "orig": "SYNTHETIC TRAVEL MATERIAL",
+        "text": "SYNTHETIC TRAVEL MATERIAL",
+        "level": 1
+      },
+      {
+        "self_ref": "#/texts/1",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 31.0,
+              "t": 632.7026407375565,
+              "r": 251.0,
+              "b": 617.0359740708899,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              39
+            ]
+          }
+        ],
+        "orig": "missing-info / NOT A TICKET / 自 有 测试 材料",
+        "text": "missing-info / NOT A TICKET / 自 有 测试 材料"
+      },
+      {
+        "self_ref": "#/texts/2",
+        "parent": {
+          "$ref": "#/groups/0"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 31.0,
+              "t": 587.7026407375565,
+              "r": 63.0,
+              "b": 574.0359740708899,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              1
+            ]
+          }
+        ],
+        "orig": "车",
+        "text": "车"
+      },
+      {
+        "self_ref": "#/texts/3",
+        "parent": {
+          "$ref": "#/groups/0"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 31.333333333333332,
+              "t": 535.3693074042233,
+              "r": 78.0,
+              "b": 521.3693074042233,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              7
+            ]
+          }
+        ],
+        "orig": "出 发 站 :",
+        "text": "出 发 站 :"
+      },
+      {
+        "self_ref": "#/texts/4",
+        "parent": {
+          "$ref": "#/groups/0"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 89.33333333333333,
+              "t": 535.0359740708899,
+              "r": 142.0,
+              "b": 521.3693074042233,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              6
+            ]
+          }
+        ],
+        "orig": "上 海 虹桥",
+        "text": "上 海 虹桥"
+      },
+      {
+        "self_ref": "#/texts/5",
+        "parent": {
+          "$ref": "#/groups/0"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 31.0,
+              "t": 482.7026407375565,
+              "r": 78.0,
+              "b": 469.0359740708899,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              7
+            ]
+          }
+        ],
+        "orig": "到 达 站 :",
+        "text": "到 达 站 :"
+      },
+      {
+        "self_ref": "#/texts/6",
+        "parent": {
+          "$ref": "#/groups/0"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 31.333333333333332,
+              "t": 430.0359740708899,
+              "r": 63.0,
+              "b": 416.3693074042232,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              1
+            ]
+          }
+        ],
+        "orig": "出",
+        "text": "出"
+      },
+      {
+        "self_ref": "#/texts/7",
+        "parent": {
+          "$ref": "#/groups/0"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 68.0,
+              "t": 428.7026407375566,
+              "r": 186.0,
+              "b": 417.3693074042232,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              16
+            ]
+          }
+        ],
+        "orig": "2026-11-05 14:20",
+        "text": "2026-11-05 14:20"
+      },
+      {
+        "self_ref": "#/texts/8",
+        "parent": {
+          "$ref": "#/groups/0"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 52.666666666666664,
+              "t": 589.0359740708899,
+              "r": 128.0,
+              "b": 412.0359740708899,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              16
+            ]
+          }
+        ],
+        "orig": "次 : G12 杭州 东 发 :",
+        "text": "次 : G12 杭州 东 发 :"
+      },
+      {
+        "self_ref": "#/texts/9",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 31.333333333333332,
+              "t": 272.7026407375566,
+              "r": 63.0,
+              "b": 259.0359740708899,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              1
+            ]
+          }
+        ],
+        "orig": "币",
+        "text": "币"
+      },
+      {
+        "self_ref": "#/texts/10",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "section_header",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 52.0,
+              "t": 274.3693074042232,
+              "r": 96.0,
+              "b": 255.70264073755658,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              7
+            ]
+          }
+        ],
+        "orig": "种 : CNY",
+        "text": "种 : CNY",
+        "level": 1
+      },
+      {
+        "self_ref": "#/texts/11",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 30.666666666666668,
+              "t": 153.0359740708899,
+              "r": 303.6666666666667,
+              "b": 137.36930740422326,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              50
+            ]
+          }
+        ],
+        "orig": "到 达 时 间 、 时 区 和 金额 未 提供 。 不 能 根据 城市 或 其 他 样本 补 全 。",
+        "text": "到 达 时 间 、 时 区 和 金额 未 提供 。 不 能 根据 城市 或 其 他 样本 补 全 。"
+      },
+      {
+        "self_ref": "#/texts/12",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 31.0,
+              "t": 36.70264073755652,
+              "r": 321.0,
+              "b": 27.369307404223264,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              70
+            ]
+          }
+        ],
+        "orig": "For parser evaluation only. No purchase, booking or Trip is confirmed.",
+        "text": "For parser evaluation only. No purchase, booking or Trip is confirmed."
+      }
+    ],
+    "pictures": [],
+    "tables": [],
+    "key_value_items": [],
+    "form_items": [],
+    "pages": {
+      "1": {
+        "size": {
+          "width": 500.0256957649213,
+          "height": 700.0359740708899
+        },
+        "page_no": 1
+      }
+    }
+  },
+  "candidates": {
+    "schema_version": 1,
+    "kind": "material_correction_candidates",
+    "source_id": "synthetic-af0d75df7def1b87",
+    "source_sha256": "af0d75df7def1b87867916c165ddc07bfaa9d74fe1f1fe37cc8508734ea3db9b",
+    "incomplete": true,
+    "requires_user_review": true,
+    "confirmed": false,
+    "fields": [
+      {
+        "field": "service_id",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "origin",
+        "value": "上海虹桥",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": " 上海虹桥",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06266344629629629,
+                  0.2352260066137565,
+                  0.15599198333333333,
+                  0.2552249788359787
+                ],
+                "parser_ref": "#/texts/3"
+              },
+              {
+                "page": 1,
+                "bbox": [
+                  0.17865748518518515,
+                  0.23570217261904758,
+                  0.2839854055555555,
+                  0.2552249788359787
+                ],
+                "parser_ref": "#/texts/4"
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "destination",
+        "value": "出",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": " 出",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.061996813888888884,
+                  0.31046023544973544,
+                  0.15599198333333333,
+                  0.3299830416666666
+                ],
+                "parser_ref": "#/texts/5"
+              },
+              {
+                "page": 1,
+                "bbox": [
+                  0.06266344629629629,
+                  0.3856944642857142,
+                  0.125993525,
+                  0.40521727050264544
+                ],
+                "parser_ref": "#/texts/6"
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "departure_local",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "arrival_local",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "timezone",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "currency",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "amount",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      }
+    ]
+  }
+}

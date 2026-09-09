@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/usr/bin/sandbox-exec",
+    "-p",
+    "(version 1)(allow default)(deny network*)",
+    "/Users/jtcao/Library/Caches/visepanda/vpj73/venv/bin/python",
+    "-c",
+    "import socket,errno; s=socket.socket(); s.settimeout(1)\ntry:s.connect(('1.1.1.1',443))\nexcept PermissionError as e:\n assert e.errno==errno.EPERM;print('NETWORK_DENIED_EPERM')\nelse:raise RuntimeError('Network unexpectedly available')"
+  ],
+  "exit_code": 0,
+  "stdout": "NETWORK_DENIED_EPERM\n",
+  "stderr": ""
+}

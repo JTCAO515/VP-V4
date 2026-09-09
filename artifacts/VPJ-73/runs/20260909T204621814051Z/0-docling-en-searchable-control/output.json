@@ -1,0 +1,893 @@
+{
+  "adapter_revision": 2,
+  "engine": "docling",
+  "conversion_status": "success",
+  "conversion_seconds": 17.051509917000658,
+  "segments": [
+    {
+      "text": "SYNTHETIC TRAVEL MATERIAL",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.040914285714285695,
+          0.6755599999999999,
+          0.06734285714285712
+        ],
+        "parser_ref": [
+          "page-1-cell-0"
+        ]
+      }
+    },
+    {
+      "text": "Searchable PDF control / NOT A TICKET",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.09585999999999996,
+          0.463458,
+          0.11039571428571435
+        ],
+        "parser_ref": [
+          "page-1-cell-1"
+        ]
+      }
+    },
+    {
+      "text": "Service: G73",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.15604285714285718,
+          0.23340000000000002,
+          0.17586428571428575
+        ],
+        "parser_ref": [
+          "page-1-cell-2"
+        ]
+      }
+    },
+    {
+      "text": "Origin: Shanghai Hongqiao",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.23104285714285716,
+          0.4201800000000001,
+          0.25086428571428576
+        ],
+        "parser_ref": [
+          "page-1-cell-3"
+        ]
+      }
+    },
+    {
+      "text": "Destination: Hangzhou East",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.30604285714285717,
+          0.43185,
+          0.3258642857142857
+        ],
+        "parser_ref": [
+          "page-1-cell-4"
+        ]
+      }
+    },
+    {
+      "text": "Departure: 2026-11-03 09:30",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.3810428571428572,
+          0.4468800000000001,
+          0.40086428571428573
+        ],
+        "parser_ref": [
+          "page-1-cell-5"
+        ]
+      }
+    },
+    {
+      "text": "Arrival: 2026-11-03 10:24",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.4560428571428572,
+          0.39849,
+          0.47586428571428574
+        ],
+        "parser_ref": [
+          "page-1-cell-6"
+        ]
+      }
+    },
+    {
+      "text": "Time zone: Asia/Shanghai UTC+08:00",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.5310428571428571,
+          0.5727299999999999,
+          0.5508642857142857
+        ],
+        "parser_ref": [
+          "page-1-cell-7"
+        ]
+      }
+    },
+    {
+      "text": "Currency: CNY",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.6060428571428572,
+          0.26169,
+          0.6258642857142858
+        ],
+        "parser_ref": [
+          "page-1-cell-8"
+        ]
+      }
+    },
+    {
+      "text": "Amount: 128.50",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.6810428571428572,
+          0.27180000000000004,
+          0.7008642857142857
+        ],
+        "parser_ref": [
+          "page-1-cell-9"
+        ]
+      }
+    },
+    {
+      "text": "Synthetic rail itinerary. Not a ticket or reservation.",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.8111714285714284,
+          0.49570000000000014,
+          0.8243857142857142
+        ],
+        "parser_ref": [
+          "page-1-cell-10"
+        ]
+      }
+    },
+    {
+      "text": "No purchase, booking or Trip is confirmed.",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.9397428571428572,
+          0.4368000000000002,
+          0.952957142857143
+        ],
+        "parser_ref": [
+          "page-1-cell-11"
+        ]
+      }
+    }
+  ],
+  "document": {
+    "docling_document": {
+      "schema_name": "DoclingDocument",
+      "version": "1.10.0",
+      "name": "en-searchable-control",
+      "origin": {
+        "mimetype": "application/pdf",
+        "binary_hash": 12430168153462582796,
+        "filename": "en-searchable-control.pdf"
+      },
+      "furniture": {
+        "self_ref": "#/furniture",
+        "children": [],
+        "content_layer": "furniture",
+        "name": "_root_",
+        "label": "unspecified"
+      },
+      "body": {
+        "self_ref": "#/body",
+        "children": [
+          {
+            "$ref": "#/texts/0"
+          },
+          {
+            "$ref": "#/groups/0"
+          },
+          {
+            "$ref": "#/texts/2"
+          },
+          {
+            "$ref": "#/texts/3"
+          }
+        ],
+        "content_layer": "body",
+        "name": "_root_",
+        "label": "unspecified"
+      },
+      "groups": [
+        {
+          "self_ref": "#/groups/0",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [
+            {
+              "$ref": "#/texts/1"
+            }
+          ],
+          "content_layer": "body",
+          "name": "group",
+          "label": "key_value_area"
+        }
+      ],
+      "texts": [
+        {
+          "self_ref": "#/texts/0",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "section_header",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.0,
+                "t": 671.36,
+                "r": 337.78,
+                "b": 652.86,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                25
+              ]
+            }
+          ],
+          "orig": "SYNTHETIC TRAVEL MATERIAL",
+          "text": "SYNTHETIC TRAVEL MATERIAL",
+          "level": 1
+        },
+        {
+          "self_ref": "#/texts/1",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.0,
+                "t": 632.898,
+                "r": 286.36499999999995,
+                "b": 209.39499999999998,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                221
+              ]
+            }
+          ],
+          "orig": "Searchable PDF control / NOT A TICKET Service: G73 Origin: Shanghai Hongqiao Destination: Hangzhou East Departure: 2026-11-03 09:30 Arrival: 2026-11-03 10:24 Time zone: Asia/Shanghai UTC+08:00 Currency: CNY Amount: 128.50",
+          "text": "Searchable PDF control / NOT A TICKET Service: G73 Origin: Shanghai Hongqiao Destination: Hangzhou East Departure: 2026-11-03 09:30 Arrival: 2026-11-03 10:24 Time zone: Asia/Shanghai UTC+08:00 Currency: CNY Amount: 128.50"
+        },
+        {
+          "self_ref": "#/texts/2",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.0,
+                "t": 132.18000000000006,
+                "r": 247.85000000000008,
+                "b": 122.93000000000006,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                54
+              ]
+            }
+          ],
+          "orig": "Synthetic rail itinerary. Not a ticket or reservation.",
+          "text": "Synthetic rail itinerary. Not a ticket or reservation."
+        },
+        {
+          "self_ref": "#/texts/3",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.0,
+                "t": 42.17999999999995,
+                "r": 218.4000000000001,
+                "b": 32.92999999999995,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                42
+              ]
+            }
+          ],
+          "orig": "No purchase, booking or Trip is confirmed.",
+          "text": "No purchase, booking or Trip is confirmed."
+        }
+      ],
+      "pictures": [],
+      "tables": [],
+      "key_value_items": [],
+      "form_items": [],
+      "pages": {
+        "1": {
+          "size": {
+            "width": 500.0,
+            "height": 700.0
+          },
+          "page_no": 1
+        }
+      }
+    },
+    "page_cells": [
+      {
+        "text": "SYNTHETIC TRAVEL MATERIAL",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06,
+            0.040914285714285695,
+            0.6755599999999999,
+            0.06734285714285712
+          ],
+          "parser_ref": "page-1-cell-0"
+        },
+        "from_ocr": false,
+        "parser_confidence": 1.0
+      },
+      {
+        "text": "Searchable PDF control / NOT A TICKET",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06,
+            0.09585999999999996,
+            0.463458,
+            0.11039571428571435
+          ],
+          "parser_ref": "page-1-cell-1"
+        },
+        "from_ocr": false,
+        "parser_confidence": 1.0
+      },
+      {
+        "text": "Service: G73",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06,
+            0.15604285714285718,
+            0.23340000000000002,
+            0.17586428571428575
+          ],
+          "parser_ref": "page-1-cell-2"
+        },
+        "from_ocr": false,
+        "parser_confidence": 1.0
+      },
+      {
+        "text": "Origin: Shanghai Hongqiao",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06,
+            0.23104285714285716,
+            0.4201800000000001,
+            0.25086428571428576
+          ],
+          "parser_ref": "page-1-cell-3"
+        },
+        "from_ocr": false,
+        "parser_confidence": 1.0
+      },
+      {
+        "text": "Destination: Hangzhou East",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06,
+            0.30604285714285717,
+            0.43185,
+            0.3258642857142857
+          ],
+          "parser_ref": "page-1-cell-4"
+        },
+        "from_ocr": false,
+        "parser_confidence": 1.0
+      },
+      {
+        "text": "Departure: 2026-11-03 09:30",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06,
+            0.3810428571428572,
+            0.4468800000000001,
+            0.40086428571428573
+          ],
+          "parser_ref": "page-1-cell-5"
+        },
+        "from_ocr": false,
+        "parser_confidence": 1.0
+      },
+      {
+        "text": "Arrival: 2026-11-03 10:24",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06,
+            0.4560428571428572,
+            0.39849,
+            0.47586428571428574
+          ],
+          "parser_ref": "page-1-cell-6"
+        },
+        "from_ocr": false,
+        "parser_confidence": 1.0
+      },
+      {
+        "text": "Time zone: Asia/Shanghai UTC+08:00",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06,
+            0.5310428571428571,
+            0.5727299999999999,
+            0.5508642857142857
+          ],
+          "parser_ref": "page-1-cell-7"
+        },
+        "from_ocr": false,
+        "parser_confidence": 1.0
+      },
+      {
+        "text": "Currency: CNY",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06,
+            0.6060428571428572,
+            0.26169,
+            0.6258642857142858
+          ],
+          "parser_ref": "page-1-cell-8"
+        },
+        "from_ocr": false,
+        "parser_confidence": 1.0
+      },
+      {
+        "text": "Amount: 128.50",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06,
+            0.6810428571428572,
+            0.27180000000000004,
+            0.7008642857142857
+          ],
+          "parser_ref": "page-1-cell-9"
+        },
+        "from_ocr": false,
+        "parser_confidence": 1.0
+      },
+      {
+        "text": "Synthetic rail itinerary. Not a ticket or reservation.",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06,
+            0.8111714285714284,
+            0.49570000000000014,
+            0.8243857142857142
+          ],
+          "parser_ref": "page-1-cell-10"
+        },
+        "from_ocr": false,
+        "parser_confidence": 1.0
+      },
+      {
+        "text": "No purchase, booking or Trip is confirmed.",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06,
+            0.9397428571428572,
+            0.4368000000000002,
+            0.952957142857143
+          ],
+          "parser_ref": "page-1-cell-11"
+        },
+        "from_ocr": false,
+        "parser_confidence": 1.0
+      }
+    ],
+    "pipeline_options": {
+      "document_timeout": 110.0,
+      "accelerator_options": {
+        "num_threads": 2,
+        "device": "cpu",
+        "cuda_use_flash_attention2": false
+      },
+      "enable_remote_services": false,
+      "allow_external_plugins": false,
+      "artifacts_path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets",
+      "do_picture_classification": false,
+      "picture_classification_options": {
+        "engine_options": {
+          "engine_type": "transformers",
+          "top_k": null
+        },
+        "model_spec": {
+          "name": "document_figure_classifier_v2",
+          "repo_id": "docling-project/DocumentFigureClassifier-v2.5",
+          "revision": "main",
+          "engine_overrides": {}
+        }
+      },
+      "do_picture_description": false,
+      "picture_description_options": {
+        "batch_size": 8,
+        "scale": 2.0,
+        "picture_area_threshold": 0.05,
+        "classification_allow": null,
+        "classification_deny": null,
+        "classification_min_confidence": 0.0
+      },
+      "do_chart_extraction": false,
+      "chart_extraction_options": {
+        "kind": "chart_extraction",
+        "model": "granite-vision-v4",
+        "chart2csv": true,
+        "chart2code": false,
+        "chart2summary": false
+      },
+      "images_scale": 2.0,
+      "generate_page_images": false,
+      "generate_picture_images": false,
+      "do_table_structure": false,
+      "do_ocr": true,
+      "do_code_enrichment": false,
+      "do_formula_enrichment": false,
+      "force_backend_text": false,
+      "table_structure_options": {},
+      "ocr_options": {
+        "mode": "default",
+        "lang": [
+          "eng",
+          "chi_sim"
+        ],
+        "scale": 3.0,
+        "force_full_page_ocr": false
+      },
+      "layout_options": {
+        "keep_empty_clusters": false,
+        "skip_cell_assignment": false,
+        "create_orphan_clusters": true
+      },
+      "code_formula_options": {
+        "engine_options": {
+          "engine_type": "auto_inline",
+          "prefer_vllm": false
+        },
+        "model_spec": {
+          "name": "CodeFormulaV2",
+          "default_repo_id": "docling-project/CodeFormulaV2",
+          "revision": "main",
+          "prompt": "",
+          "response_format": "plaintext",
+          "supported_engines": null,
+          "engine_overrides": {
+            "transformers": {
+              "repo_id": null,
+              "revision": null,
+              "torch_dtype": null,
+              "min_engine_version": null,
+              "extra_config": {
+                "transformers_model_type": "automodel-imagetexttotext",
+                "extra_generation_config": {
+                  "skip_special_tokens": false
+                },
+                "torch_dtype": "bfloat16"
+              }
+            }
+          },
+          "api_overrides": {},
+          "trust_remote_code": false,
+          "stop_strings": [
+            "</doctag>",
+            "<end_of_utterance>"
+          ],
+          "temperature": 0.0,
+          "max_new_tokens": 4096,
+          "extra_generation_config": {}
+        },
+        "scale": 2.0,
+        "max_size": null,
+        "extract_code": true,
+        "extract_formulas": true
+      },
+      "generate_table_images": false,
+      "generate_parsed_pages": true,
+      "heading_hierarchy_options": {
+        "enabled": false,
+        "use_bookmarks": true,
+        "use_numbering": true,
+        "use_style": true,
+        "use_font_style": true,
+        "style_size_tolerance": 0.05,
+        "numbering_schemes": null,
+        "max_level": 6,
+        "bookmark_match_threshold": 0.8
+      },
+      "ocr_batch_size": 4,
+      "layout_batch_size": 4,
+      "table_batch_size": 4,
+      "batch_polling_interval_seconds": 0.5,
+      "queue_max_size": 100,
+      "stage_shutdown_timeout_seconds": 15.0
+    }
+  },
+  "candidates": {
+    "schema_version": 1,
+    "kind": "material_correction_candidates",
+    "source_id": "synthetic-3657fa9c8d9e5757",
+    "source_sha256": "3657fa9c8d9e5757fc1ef141c97c39734d4b0eadb4fc5d53ac80d413e582ae0c",
+    "incomplete": false,
+    "requires_user_review": true,
+    "confirmed": false,
+    "fields": [
+      {
+        "field": "service_id",
+        "value": "G73",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "G73",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06,
+                  0.15604285714285718,
+                  0.23340000000000002,
+                  0.17586428571428575
+                ],
+                "parser_ref": [
+                  "page-1-cell-2"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "origin",
+        "value": "Shanghai Hongqiao",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "Shanghai Hongqiao",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06,
+                  0.23104285714285716,
+                  0.4201800000000001,
+                  0.25086428571428576
+                ],
+                "parser_ref": [
+                  "page-1-cell-3"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "destination",
+        "value": "Hangzhou East",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "Hangzhou East",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06,
+                  0.30604285714285717,
+                  0.43185,
+                  0.3258642857142857
+                ],
+                "parser_ref": [
+                  "page-1-cell-4"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "departure_local",
+        "value": "2026-11-03 09:30",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "2026-11-03 09:30",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06,
+                  0.3810428571428572,
+                  0.4468800000000001,
+                  0.40086428571428573
+                ],
+                "parser_ref": [
+                  "page-1-cell-5"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "arrival_local",
+        "value": "2026-11-03 10:24",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "2026-11-03 10:24",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06,
+                  0.4560428571428572,
+                  0.39849,
+                  0.47586428571428574
+                ],
+                "parser_ref": [
+                  "page-1-cell-6"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "timezone",
+        "value": "Asia/Shanghai UTC+08:00",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "Asia/Shanghai UTC+08:00",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06,
+                  0.5310428571428571,
+                  0.5727299999999999,
+                  0.5508642857142857
+                ],
+                "parser_ref": [
+                  "page-1-cell-7"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "currency",
+        "value": "CNY",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "CNY",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06,
+                  0.6060428571428572,
+                  0.26169,
+                  0.6258642857142858
+                ],
+                "parser_ref": [
+                  "page-1-cell-8"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "amount",
+        "value": "128.50",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "128.50",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06,
+                  0.6810428571428572,
+                  0.27180000000000004,
+                  0.7008642857142857
+                ],
+                "parser_ref": [
+                  "page-1-cell-9"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,296 @@
+{
+  "engine": "docling",
+  "conversion_status": "success",
+  "conversion_seconds": 6.8717385419986385,
+  "segments": [
+    {
+      "text": "SYNTHETIC TRAVEL MATERIAL",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.05523525661375655,
+          0.6166349768518518,
+          0.07666272685185178
+        ],
+        "parser_ref": "#/texts/0"
+      }
+    },
+    {
+      "text": "zh-clear / NOT A TICKET / 自 有 测试 材料 车 次 : G88 出 发 站 : 上 海 虹桥 到 达 站 : 杭州 东 出 发 : 2026-11-04 08:08 到 达 : 2026-11-04 09:02 时 区 : Asia/Shanghai UTC+08:00 币 种 : CNY 金额 : 188.80",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06133018148148148,
+          0.09951869510582004,
+          0.49197471666666664,
+          0.7090111818783067
+        ],
+        "parser_ref": "#/texts/1"
+      }
+    },
+    {
+      "text": "自 有 合成 行程 。 不 是 车 票 或 预订 ， 不 包含 真实 旅客 信息 。",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.0633300787037037,
+          0.7813884146825395,
+          0.5473052064814815,
+          0.8032920509259258
+        ],
+        "parser_ref": "#/texts/2"
+      }
+    },
+    {
+      "text": "For parser evaluation only. No purchase, booking or Trip is confirmed.",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.9475703505291004,
+          0.6419670083333333,
+          0.9609029986772485
+        ],
+        "parser_ref": "#/texts/3"
+      }
+    }
+  ],
+  "document": {
+    "schema_name": "DoclingDocument",
+    "version": "1.10.0",
+    "name": "zh-clear",
+    "origin": {
+      "mimetype": "application/pdf",
+      "binary_hash": 7931884319788476765,
+      "filename": "zh-clear.png"
+    },
+    "furniture": {
+      "self_ref": "#/furniture",
+      "children": [],
+      "content_layer": "furniture",
+      "name": "_root_",
+      "label": "unspecified"
+    },
+    "body": {
+      "self_ref": "#/body",
+      "children": [
+        {
+          "$ref": "#/texts/0"
+        },
+        {
+          "$ref": "#/texts/1"
+        },
+        {
+          "$ref": "#/texts/2"
+        },
+        {
+          "$ref": "#/texts/3"
+        }
+      ],
+      "content_layer": "body",
+      "name": "_root_",
+      "label": "unspecified"
+    },
+    "groups": [],
+    "texts": [
+      {
+        "self_ref": "#/texts/0",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "section_header",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 31.0,
+              "t": 661.3693074042233,
+              "r": 308.3333333333333,
+              "b": 646.3693074042233,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              25
+            ]
+          }
+        ],
+        "orig": "SYNTHETIC TRAVEL MATERIAL",
+        "text": "SYNTHETIC TRAVEL MATERIAL",
+        "level": 1
+      },
+      {
+        "self_ref": "#/texts/1",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 30.666666666666668,
+              "t": 630.3693074042233,
+              "r": 246.0,
+              "b": 203.70264073755658,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              171
+            ]
+          }
+        ],
+        "orig": "zh-clear / NOT A TICKET / 自 有 测试 材料 车 次 : G88 出 发 站 : 上 海 虹桥 到 达 站 : 杭州 东 出 发 : 2026-11-04 08:08 到 达 : 2026-11-04 09:02 时 区 : Asia/Shanghai UTC+08:00 币 种 : CNY 金额 : 188.80",
+        "text": "zh-clear / NOT A TICKET / 自 有 测试 材料 车 次 : G88 出 发 站 : 上 海 虹桥 到 达 站 : 杭州 东 出 发 : 2026-11-04 08:08 到 达 : 2026-11-04 09:02 时 区 : Asia/Shanghai UTC+08:00 币 种 : CNY 金额 : 188.80"
+      },
+      {
+        "self_ref": "#/texts/2",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 31.666666666666668,
+              "t": 153.0359740708899,
+              "r": 273.6666666666667,
+              "b": 137.70264073755652,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              42
+            ]
+          }
+        ],
+        "orig": "自 有 合成 行程 。 不 是 车 票 或 预订 ， 不 包含 真实 旅客 信息 。",
+        "text": "自 有 合成 行程 。 不 是 车 票 或 预订 ， 不 包含 真实 旅客 信息 。"
+      },
+      {
+        "self_ref": "#/texts/3",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 31.0,
+              "t": 36.70264073755652,
+              "r": 321.0,
+              "b": 27.369307404223264,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              70
+            ]
+          }
+        ],
+        "orig": "For parser evaluation only. No purchase, booking or Trip is confirmed.",
+        "text": "For parser evaluation only. No purchase, booking or Trip is confirmed."
+      }
+    ],
+    "pictures": [],
+    "tables": [],
+    "key_value_items": [],
+    "form_items": [],
+    "pages": {
+      "1": {
+        "size": {
+          "width": 500.0256957649213,
+          "height": 700.0359740708899
+        },
+        "page_no": 1
+      }
+    }
+  },
+  "candidates": {
+    "schema_version": 1,
+    "kind": "material_correction_candidates",
+    "source_id": "synthetic-7da83183fb90da41",
+    "source_sha256": "7da83183fb90da41cc3919a613746d03f847cc1b33a8637c6e13b6c3907ba95d",
+    "incomplete": true,
+    "requires_user_review": true,
+    "confirmed": false,
+    "fields": [
+      {
+        "field": "service_id",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "origin",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "destination",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "departure_local",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "arrival_local",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "timezone",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "currency",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "amount",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      }
+    ]
+  }
+}
