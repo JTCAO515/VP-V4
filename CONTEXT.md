@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Staging25 and ordinary JWT isolation16/16 remain verified. Durable budget local PostgreSQL9/9 and full Supabase25->26/Auth/HTTP1/1 passed, with units45/contracts188/affected11 passing. Remote budget migration, provider-policy applicability and actual Harness integration remain incomplete.
+状态：Authorized Staging budget migration25->26 and40 ordinary-account/HTTP/synthetic-budget checks passed; refreshed encrypted backup restored, fixtures cleaned and original3 Auth/2 Trip digests preserved. JT approved synthetic supplier retention/model-improvement scope; all three provider Keychain entries now exist. Actual paid model tests remain unrun.
 
-阶段：Durable budget local implementation verified; new Staging migration scope and synthetic provider policy/credentials remain runtime gates.
+阶段：Staging budget and synthetic-use grants verified; proceed to bounded real C0 provider conformance and cost evidence.
 
 ## 读取顺序
 
@@ -71,7 +71,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-After exact review/CI, request scope for new budget migration20260909184816 plus its bounded Staging verification; previous grant covered original13 and RPC repair only. Keep C0 per-provider CNY30/total90 limits and no recharge. Resolve pending synthetic training/retention choice and Qwen/GLM credential availability before provider calls. Real C2 retention/deletion/human access, native sessions and licensed knowledge remain independent gates. Apply the reviewed brand planning delta before implementing new ServiceTask consumption or cross-Trip personalization: docs/research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md. Existing scoped protocol/budget/native work continues; no new data/recipient or production authority is granted.
+Use the explicitly approved synthetic-only scope and per-provider CNY30/total90 caps, with durable reservation and unknown-cost holds, to verify actual account/model/endpoint/usage behavior. Credentials come from login Keychain only inside the approved test process. Do not reuse prior temporary Staging accounts or infer C2/native/worker/knowledge acceptance. Real chat retention/deletion/human access remain undecided.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
