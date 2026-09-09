@@ -8,7 +8,7 @@ import subprocess
 import time
 from pathlib import Path
 
-from candidates import extract_candidates
+from candidates import extract_candidates, group_cells_into_lines
 
 TESSERACT = "/opt/homebrew/Cellar/tesseract/5.5.3/bin/tesseract"
 
@@ -52,6 +52,7 @@ def docling_segments(path, assets, marker):
         do_formula_enrichment=False,
         do_chart_extraction=False,
         do_ocr=True,
+        generate_parsed_pages=True,
         document_timeout=110,
         images_scale=2,
         layout_options=layout,
@@ -62,18 +63,15 @@ def docling_segments(path, assets, marker):
     marker.write_text("docling-convert-invocation-started\n")
     result = converter.convert(path, max_num_pages=1, max_file_size=2097152, raises_on_error=False)
     document = result.document.export_to_dict()
-    segments = []
-    for item in document.get("texts", []):
-        for prov in item.get("prov", []):
-            page_no = prov["page_no"]
-            page = document["pages"].get(str(page_no), document["pages"].get(page_no))
-            width, height = page["size"]["width"], page["size"]["height"]
-            box = prov["bbox"]
-            top, bottom = min(box["t"], box["b"]), max(box["t"], box["b"])
-            if str(box["coord_origin"]).upper().endswith("BOTTOMLEFT"):
-                top, bottom = height - bottom, height - top
-            segments.append({"text": item["text"], "source": {"page": page_no, "bbox": [box["l"] / width, top / height, box["r"] / width, bottom / height], "parser_ref": item["self_ref"]}})
-    return segments, document, result.status.value
+    cells = []
+    for page in result.pages:
+        width, height = page.size.width, page.size.height
+        for cell in page.cells:
+            box = cell.rect.to_bounding_box().to_top_left_origin(page_height=height)
+            cells.append({"text": cell.text, "source": {"page": page.page_no, "bbox": [box.l / width, box.t / height, box.r / width, box.b / height], "parser_ref": f"page-{page.page_no}-cell-{cell.index}"}, "from_ocr": cell.from_ocr, "parser_confidence": cell.confidence})
+    # Metadata retention does not change layout/OCR inference. High-level DocItems may
+    # merge many field rows; using them alone discards the parser's actual locations.
+    return group_cells_into_lines(cells), {"docling_document": document, "page_cells": cells, "pipeline_options": options.model_dump(mode="json")}, result.status.value
 
 
 def main():
@@ -88,7 +86,7 @@ def main():
     segments, document, status = (docling_segments if args.engine == "docling" else tesseract_segments)(args.input, args.assets, args.output.with_suffix(".started"))
     candidates = extract_candidates(segments, "synthetic-" + source_hash[:16], source_hash)
     candidates["incomplete"] = candidates["incomplete"] or status != "success"
-    output = {"engine": args.engine, "conversion_status": status, "conversion_seconds": time.monotonic() - started, "segments": segments, "document": document, "candidates": candidates}
+    output = {"adapter_revision": 2, "engine": args.engine, "conversion_status": status, "conversion_seconds": time.monotonic() - started, "segments": segments, "document": document, "candidates": candidates}
     encoded = json.dumps(output, ensure_ascii=False, indent=2).encode()
     if len(encoded) > 8388608:
         raise ValueError("Output exceeds frozen limit")

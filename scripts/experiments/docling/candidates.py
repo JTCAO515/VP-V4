@@ -1,6 +1,7 @@
 """Closed correction candidates from parser text/provenance; never a confirmation API."""
 import re
 import unicodedata
+import math
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
 
@@ -47,10 +48,29 @@ def parse_value(key, text):
 
 
 def valid_source(source):
-    if not isinstance(source, dict) or source.get("page") != 1:
+    if not isinstance(source, dict) or type(source.get("page")) is not int or source["page"] != 1:
         return False
     box = source.get("bbox")
-    return isinstance(box, list) and len(box) == 4 and all(isinstance(n, (float, int)) for n in box) and 0 <= box[0] < box[2] <= 1 and 0 <= box[1] < box[3] <= 1
+    return isinstance(box, list) and len(box) == 4 and all(type(n) in (float, int) and math.isfinite(n) for n in box) and 0 <= box[0] < box[2] <= 1 and 0 <= box[1] < box[3] <= 1
+
+
+def group_cells_into_lines(cells):
+    """Preserve real OCR cell references while grouping horizontally aligned words."""
+    lines = []
+    for cell in sorted(cells, key=lambda cell: (cell["source"]["page"], cell["source"]["bbox"][1], cell["source"]["bbox"][0])):
+        box = cell["source"]["bbox"]
+        center = (box[1] + box[3]) / 2
+        matching = next((line for line in reversed(lines) if line[0]["source"]["page"] == cell["source"]["page"] and abs((line[0]["source"]["bbox"][1] + line[0]["source"]["bbox"][3]) / 2 - center) <= min(line[0]["source"]["bbox"][3] - line[0]["source"]["bbox"][1], box[3] - box[1]) * 0.6), None)
+        if matching is None:
+            lines.append([cell])
+        else:
+            matching.append(cell)
+    segments = []
+    for line in lines:
+        line.sort(key=lambda cell: cell["source"]["bbox"][0])
+        boxes = [cell["source"]["bbox"] for cell in line]
+        segments.append({"text": " ".join(cell["text"] for cell in line), "source": {"page": line[0]["source"]["page"], "bbox": [min(box[0] for box in boxes), min(box[1] for box in boxes), max(box[2] for box in boxes), max(box[3] for box in boxes)], "parser_ref": [cell["source"]["parser_ref"] for cell in line]}})
+    return segments
 
 
 def extract_candidates(segments, source_id, source_sha256):
