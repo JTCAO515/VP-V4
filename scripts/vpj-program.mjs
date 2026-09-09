@@ -64,14 +64,14 @@ function validate() {
 }
 
 export function body(t) {
-  const source = `https://github.com/${plan.repo}/blob/${t.sourceRef ?? plan.baselineBranch}`;
-  const baselineNote = t.baselineNote ?? `基线PR：${plan.baselinePr ? '#' + plan.baselinePr : '待发布；此状态为开发阻塞'}。合并前不要从旧main实施新合同。`;
+  const source = `https://github.com/${plan.repo}/blob/${t.sourceRef ?? 'main'}`;
+  const baselineNote = t.baselineNote ?? `历史规划基线：${plan.baselinePr ? '#' + plan.baselinePr : '尚未登记'}。当前执行读取 main 的合同，并核对实时依赖、可用接口和获准环境；本计划定义不代表任务已就绪或已验收。`;
   return `## Program\n\n${link('VPJ-00')} · ${t.track === 'expand' ? '后续证据触发任务' : '首发交付任务'}\n\n` +
     `## 用户结果\n\n${t.title}。\n\n${t.acceptance[0]}\n\n` +
     `## 当前基线与开发入口\n\n${baselineNote}\n` +
     `主报告：[完整统筹方案](${source}/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。\n` +
     `必须阅读：[本任务执行合同](${source}/${dir}/EXECUTION-CONTRACT.md#${t.id.toLowerCase()}) 与 [领域接口](${source}/${t.contract})。\n\n` +
-    `## Blocked by\n\n${t.blockedBy.length ? t.blockedBy.map(id => '- ' + link(id)).join('\n') : '无其他任务依赖；仍需基线PR已合并。'}\n\n` +
+    `## Blocked by\n\n${t.blockedBy.length ? t.blockedBy.map(id => '- ' + link(id)).join('\n') : '无其他任务依赖；仍需核对当前接口、环境与外部条件。'}\n\n` +
     `## Scope 与接口\n\n${t.allowedPaths.map(p => '- \u0060' + p + '\u0060').join('\n')}\n\n` +
     `只修改本用户故事需要的路径。接口在消费者接入前版本化，不能仅交fixture声称完成。\n\n` +
     `## Acceptance criteria\n\n${t.acceptance.map(a => '- [ ] ' + a).join('\n')}\n\n` +
@@ -88,16 +88,16 @@ export function body(t) {
 
 function render() {
   validate();
-  const header = '# VPJ 新任务队列\n\n生成自 `issue-plan.json`；不要手工改此表。基线合并前全部保持blocked。\n\n';
+  const header = '# VPJ 任务定义与依赖\n\n生成自 `issue-plan.json`；不要手工改此表。这是计划定义，不是实时进度；执行状态以 GitHub、已合并接口和获准环境的当前证据为准。\n\n';
   const table = '| 任务 | 交付 | 依赖 | Owner | 专注日/观察 | 阶段 |\n| --- | --- | --- | --- | --- | --- |\n' +
-    orderedTasks(plan.tasks).map(t=>`| ${link(t.id)} | ${t.title} | ${t.blockedBy.map(link).join(', ') || '仅基线合并'} | ${t.owner} | ${t.effortDays}日；${t.observationWindow} | ${t.track} |`).join('\n');
+    orderedTasks(plan.tasks).map(t=>`| ${link(t.id)} | ${t.title} | ${t.blockedBy.map(link).join(', ') || '无任务依赖；核实际条件'} | ${t.owner} | ${t.effortDays}日；${t.observationWindow} | ${t.track} |`).join('\n');
   save(`${dir}/ISSUES.md`, header + table + '\n\n后续expand必须另有activationEvidence，依赖完成不会自动开放。\n');
   let contracts = executionContractHeader;
   for (const t of plan.tasks) {
     save(`${dir}/issue-bodies/${t.id}.md`, body(t));
     contracts += `## ${t.id}\n\n${link(t.id)} — ${t.title}\n\n` +
       `- Owner: ${t.owner}; ${t.effortDays}专注日，${t.observationWindow}\n` +
-      `- Blocked by: ${t.blockedBy.map(link).join(', ') || '仅基线合并'}\n` +
+      `- Blocked by: ${t.blockedBy.map(link).join(', ') || '无任务依赖；核实际条件'}\n` +
       `- Allowed: ${t.allowedPaths.map(p=>'\u0060'+p+'\u0060').join(', ')}\n` +
       `- Checks: ${t.checks.map(p=>'\u0060'+p+'\u0060').join('; ')}\n` +
       `- Evidence: ${t.artifactPaths.map(p=>'\u0060'+p+'\u0060').join(', ')}\n` +
@@ -109,7 +109,7 @@ function render() {
   }
   save(`${dir}/EXECUTION-CONTRACT.md`, contracts.trimEnd()+'\n');
   const snap = json(plan.sourceSnapshot).issues;
-  save(`${dir}/ISSUE-MIGRATION.md`, '# 旧开放 Issue → 新责任映射\n\n全部旧项按用户授权superseded/not planned关闭，不代表已验收；原body/comments及关系快照保留。两条既有PR #185/#186仍open。\n\n| 旧Issue | 标题 | 新责任 |\n| --- | --- | --- |\n' + snap.map(t=>`| [#${t.number}](${t.url}) | ${t.title} | ${plan.oldIssueSuccessors[String(t.number)].map(link).join(', ')} |`).join('\n')+'\n');
+  save(`${dir}/ISSUE-MIGRATION.md`, '# 2026-09-05 迁移快照：旧开放 Issue → 新责任映射\n\n当日全部旧项按用户授权superseded/not planned关闭，不代表已验收；原body/comments及关系快照保留。PR #185/#186在该迁移快照中为open；当前状态须查询GitHub，不由本历史记录推断。\n\n| 旧Issue | 标题 | 新责任 |\n| --- | --- | --- |\n' + snap.map(t=>`| [#${t.number}](${t.url}) | ${t.title} | ${plan.oldIssueSuccessors[String(t.number)].map(link).join(', ')} |`).join('\n')+'\n');
   renderHandoff();
   const files = walk('docs').filter(p=>p.endsWith('.md') && p !== 'docs/INDEX.md');
   saveJson('docs/manifest.json',{schemaVersion:'vpj-docs/1',date:plan.date,authority:'docs/VISEPANDA-MASTER-PLAN-2026-09-05.md',files:files.map(p=>({path:p,status:p.startsWith('docs/archive/')?'archived':p.startsWith('docs/research/')?'evidence':'document'}))});
@@ -142,9 +142,217 @@ function api(endpoint, method='GET', payload) {
 }
 function allIssues(){const rows=[];for(let page=1;;page++){const part=api(`repos/${plan.repo}/issues?state=all&per_page=100&page=${page}`);rows.push(...part.filter(x=>!x.pull_request));if(part.length<100)break;}return rows;}
 
+const normalizeNewlines = value => value.replace(/\r\n?/g, '\n');
+const normalizeCriterion = value => value.trim().replace(/\s+/g, ' ');
+const maskLines = value => value.replace(/[^\n]/g, ' ');
+
+// CommonMark 0.31.2 sections 4.6 and 6.6: https://spec.commonmark.org/0.31.2/#html-blocks
+// This reader accepts canonical top-level task items; it is not a general Markdown renderer.
+const htmlTagName = '[A-Za-z][A-Za-z0-9-]*';
+const htmlAttributeName = '[A-Za-z_:][A-Za-z0-9_.:-]*';
+const htmlAttributeValue = '(?:[^ \\t\\n"\'=<>`]+|"[^"]*"|\'[^\']*\')';
+const htmlAttribute = `[ \\t\\n]+${htmlAttributeName}(?:[ \\t\\n]*=[ \\t\\n]*${htmlAttributeValue})?`;
+const htmlOpenTag = `<${htmlTagName}(?:${htmlAttribute})*[ \\t\\n]*/?>`;
+const htmlCloseTag = `</${htmlTagName}[ \\t\\n]*>`;
+const standaloneHtmlTag = new RegExp(`^ {0,3}(?:${htmlOpenTag}|${htmlCloseTag})[ \\t]*$`);
+const rawHtmlNames = new Set(['pre', 'script', 'style', 'textarea']);
+const blockHtmlNames = 'address article aside base basefont blockquote body caption center col colgroup dd details dialog dir div dl dt fieldset figcaption figure footer form frame frameset h1 h2 h3 h4 h5 h6 head header hr html iframe legend li link main menu menuitem nav noframes ol optgroup option p param search section summary table tbody td tfoot th thead title tr track ul'.split(' ');
+const blockHtmlStart = new RegExp(`^ {0,3}</?(?:${blockHtmlNames.join('|')})(?:[ \\t]|/?>|$)`, 'i');
+
+function htmlBlockStart(line, paragraphOpen) {
+  if (/^ {0,3}<(?:pre|script|style|textarea)(?:[ \t]|>|$)/i.test(line)) return { type: 1, end: /<\/(?:pre|script|style|textarea)>/i };
+  if (/^ {0,3}<!--/.test(line)) return { type: 2, end: /-->/ };
+  if (/^ {0,3}<\?/.test(line)) return { type: 3, end: /\?>/ };
+  if (/^ {0,3}<![A-Za-z]/.test(line)) return { type: 4, end: />/ };
+  if (/^ {0,3}<!\[CDATA\[/.test(line)) return { type: 5, end: /\]\]>/ };
+  if (blockHtmlStart.test(line)) return { type: 6 };
+  if (!paragraphOpen && standaloneHtmlTag.test(line)) {
+    const tag = line.trimStart().match(/^<(\/?)([A-Za-z][A-Za-z0-9-]*)/);
+    if (tag[1] || !rawHtmlNames.has(tag[2].toLowerCase())) return { type: 7 };
+  }
+  return null;
+}
+
+function markdownLineKinds(lines) {
+  let fence = null, html = null, paragraphOpen = false;
+  return lines.map(line => {
+    if (fence) {
+      if (new RegExp(`^ {0,3}${fence.character}{${fence.length},}[ \\t]*$`).test(line)) fence = null;
+      return { task: false, htmlTags: false };
+    }
+    if (html) {
+      const type = html.type;
+      if (type >= 6 && /^[ \t]*$/.test(line)) html = null;
+      else {
+        if (html.end?.test(line)) html = null;
+        return { task: false, htmlTags: type >= 6 };
+      }
+    }
+    if (/^[ \t]*$/.test(line)) { paragraphOpen = false; return { task: false, htmlTags: true }; }
+    if (/^ {0,3}>/.test(line)) { paragraphOpen = false; return { task: false, htmlTags: false }; }
+    if (/^(?: {4}| {0,3}\t)/.test(line)) return { task: false, htmlTags: false };
+    const opening = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
+    if (opening && (opening[1][0] === '~' || !opening[2].includes('`'))) {
+      fence = { character: opening[1][0], length: opening[1].length };
+      paragraphOpen = false;
+      return { task: false, htmlTags: false };
+    }
+    const started = htmlBlockStart(line, paragraphOpen);
+    if (started) {
+      html = started.end?.test(line) ? null : started;
+      paragraphOpen = false;
+      return { task: false, htmlTags: started.type >= 6 };
+    }
+    const block = /^ {0,3}(?:#{1,6}(?:[ \t]|$)|[-+*][ \t]|\d{1,9}[.)][ \t])/.test(line) ||
+      /^ {0,3}(?:(?:\*[ \t]*){3,}|(?:-[ \t]*){3,}|(?:_[ \t]*){3,}|=+[ \t]*)$/.test(line);
+    paragraphOpen = !block;
+    return { task: true, htmlTags: true };
+  });
+}
+
+// Quoted/code content and collapsed history are excluded even after an HTML block's blank-line
+// boundary. Match complete tags (including quoted attributes) and retain nested container depth.
+function withoutQuotedContainers(markdown) {
+  const tags = new RegExp(`${htmlOpenTag}|${htmlCloseTag}`, 'g');
+  const depths = new Map(['details', 'blockquote', 'q', 'code'].map(name => [name, 0]));
+  const parts = [];
+  let depth = 0, cursor = 0, start = 0, match;
+  while ((match = tags.exec(markdown))) {
+    const tag = match[0].match(/^<(\/?)([A-Za-z][A-Za-z0-9-]*)/);
+    const name = tag[2].toLowerCase();
+    if (!depths.has(name)) continue;
+    if (!tag[1]) {
+      if (depth === 0) { parts.push(markdown.slice(cursor, match.index)); start = match.index; }
+      depths.set(name, depths.get(name) + 1);
+      depth++;
+    } else if (depths.get(name) > 0) {
+      depths.set(name, depths.get(name) - 1);
+      if (--depth === 0) {
+        parts.push(maskLines(markdown.slice(start, tags.lastIndex)));
+        cursor = tags.lastIndex;
+      }
+    }
+  }
+  parts.push(depth > 0 ? maskLines(markdown.slice(start)) : markdown.slice(cursor));
+  return parts.join('');
+}
+
+// Only actual Markdown task items count as acceptance, not examples, quotes or hidden history.
+function checklistEntries(markdown) {
+  const lines = normalizeNewlines(markdown).split('\n');
+  const kinds = markdownLineKinds(lines);
+  const visible = withoutQuotedContainers(lines.map((line, index) => kinds[index].htmlTags ? line : maskLines(line)).join('\n')
+    .replace(/<!--[\s\S]*?(?:-->|$)|<\?[\s\S]*?(?:\?>|$)|<!\[CDATA\[[\s\S]*?(?:\]\]>|$)|<![A-Za-z][^>]*(?:>|$)/g, maskLines));
+  const entries = [];
+  for (const [lineIndex, line] of visible.split('\n').entries()) {
+    if (!kinds[lineIndex].task) continue;
+    const item = line.match(/^ {0,3}[-*+] \[([ xX])\] (.+)$/);
+    if (item) entries.push({ lineIndex, text: normalizeCriterion(item[2]), checked: item[1].toLowerCase() === 'x' });
+  }
+  return entries;
+}
+
+function withoutCheckboxProgress(markdown) {
+  const lines = normalizeNewlines(markdown).split('\n');
+  for (const entry of checklistEntries(markdown)) {
+    lines[entry.lineIndex] = lines[entry.lineIndex].replace(/^( {0,3}[-*+] \[)[xX](\] )/, '$1 $2');
+  }
+  return lines.join('\n');
+}
+
+export function validateRemoteTaskBody(task, markdown, { migrationSnapshot = false } = {}) {
+  assert.equal(typeof markdown, 'string', `${task.id} missing remote body`);
+  if (migrationSnapshot) {
+    assert.equal(markdown, body(task), `${task.id} body drift in migration snapshot`);
+    return 'exact-definition';
+  }
+  const actual = new Set(checklistEntries(markdown).map(entry => entry.text));
+  const missing = task.acceptance.filter(criterion => !actual.has(normalizeCriterion(criterion)));
+  assert.equal(missing.length, 0, `${task.id} definition drift: missing current acceptance criteria:\n${missing.join('\n')}`);
+  return 'acceptance-present';
+}
+
+// Recognize a generated prefix, preserve its checked items and keep all appended history opaque.
+// Changes inside the generated prefix require an explicitly reviewed migration, not a blanket sync.
+export function preserveIssueProgress(currentBody, previousGeneratedBody, nextGeneratedBody, id = 'Issue') {
+  const current = normalizeNewlines(currentBody);
+  const previous = normalizeNewlines(previousGeneratedBody).trimEnd();
+  const canonicalCurrent = withoutCheckboxProgress(current);
+  const canonicalPrevious = withoutCheckboxProgress(previous);
+  assert.ok(canonicalCurrent.startsWith(canonicalPrevious) &&
+    (current.length === previous.length || current[previous.length] === '\n'),
+  `${id} unknown body drift; no safe generated prefix. Review the remote body and preserve progress with a scoped update.`);
+  const prefix = current.slice(0, previous.length);
+  const suffix = current.slice(previous.length);
+  const next = normalizeNewlines(nextGeneratedBody).trimEnd();
+  const nextEntries = checklistEntries(next);
+  const nextCriteria = new Set(nextEntries.map(entry => entry.text));
+  const prefixCompleted = new Set(checklistEntries(prefix).filter(entry => entry.checked).map(entry => entry.text));
+  for (const criterion of prefixCompleted) {
+    assert.ok(nextCriteria.has(criterion), `${id} checked acceptance would be removed or changed: ${criterion}; preserve its evidence in a reviewed scoped update.`);
+  }
+  const completed = new Set(checklistEntries(current).filter(entry => entry.checked).map(entry => entry.text));
+  const lines = next.split('\n');
+  for (const entry of nextEntries) {
+    if (completed.has(entry.text)) lines[entry.lineIndex] = lines[entry.lineIndex].replace(/^( {0,3}[-*+] \[) (\] )/, '$1x$2');
+  }
+  return lines.join('\n') + (suffix || '\n');
+}
+
+export function prepareBodyUpdates(tasks, existing, previousBodies = new Map(), { allowMissing = false } = {}) {
+  return tasks.flatMap(task => {
+    const candidates = existing.filter(issue => issue.title.startsWith(`[${task.id}] `));
+    assert.ok(candidates.length <= 1, `duplicate remote title for ${task.id}`);
+    const issue = existing.find(candidate => candidate.number === task.number) ?? candidates[0];
+    if (!issue) {
+      assert.ok(allowMissing && task.number == null && task.databaseId == null, `${task.id} missing remote issue; do not recreate an assigned identity`);
+      return [];
+    }
+    assert.ok(issue.title.startsWith(`[${task.id}] `), `refuse mismatched issue ${task.id}/#${issue.number}`);
+    if (task.databaseId != null) assert.equal(issue.id, task.databaseId, `database ID mismatch ${task.id}`);
+    if (task.number != null) assert.equal(issue.number, task.number, `number mismatch ${task.id}`);
+    const nextBody = body(task);
+    const templates = [...new Set([nextBody, previousBodies.get(task.id)].filter(value => typeof value === 'string'))];
+    const failures = [];
+    for (const previousBody of templates) {
+      try { return [{ task, issue, body: preserveIssueProgress(issue.body, previousBody, nextBody, task.id) }]; }
+      catch (error) { failures.push(error.message); }
+    }
+    throw new Error(`${task.id} body preflight failed before batch writes:\n${failures.join('\n')}`);
+  });
+}
+
+function previousBodies(tasks) {
+  return new Map(tasks.flatMap(task => {
+    const filename = `${dir}/issue-bodies/${task.id}.md`;
+    return existsSync(filename) ? [[task.id, read(filename)]] : [];
+  }));
+}
+
+function applyBodyUpdate(update) {
+  // GitHub has no transactional multi-Issue edit. Re-read before each PATCH to avoid clobbering
+  // progress added after the complete batch preflight; already applied safe updates remain applied.
+  const latest = api(`repos/${plan.repo}/issues/${update.issue.number}`);
+  assert.equal(latest.id, update.issue.id, `identity changed after preflight for #${update.issue.number}`);
+  assert.equal(latest.title, update.issue.title, `title changed after preflight for #${update.issue.number}`);
+  assert.equal(latest.body, update.issue.body, `body changed after preflight for #${update.issue.number}; stop and re-read the batch`);
+  if (latest.body !== update.body) api(`repos/${plan.repo}/issues/${update.issue.number}`, 'PATCH', { body: update.body });
+}
+
+function programBody() {
+  return read(`${dir}/program-body.md`) + '\n\n## 新队列\n\n' + plan.tasks.map(t => '- ' + link(t.id) + ' ' + t.title).join('\n');
+}
+
 function publish(){
   validate();
   const existing=allIssues();
+  const previous = previousBodies(plan.tasks);
+  const preflight = prepareBodyUpdates(plan.tasks, existing, previous, { allowMissing: true });
+  const parent = api(`repos/${plan.repo}/issues/${plan.parentNumber}`);
+  const initialProgramBody = read(`${dir}/program-body.md`);
+  const priorProgramBody = withoutCheckboxProgress(parent.body).trimEnd() === withoutCheckboxProgress(initialProgramBody).trimEnd()
+    ? initialProgramBody : programBody();
+  preserveIssueProgress(parent.body, priorProgramBody, programBody(), 'VPJ-00');
   for(const t of orderedTasks(plan.tasks)){
     const candidates=existing.filter(i=>i.title.startsWith(`[${t.id}]`));
     assert.ok(candidates.length<=1,`duplicate remote title for ${t.id}`);
@@ -160,8 +368,9 @@ function publish(){
     saveJson(planPath,plan);
     console.log(`${t.id} -> #${t.number}`);
   }
+  const updates = prepareBodyUpdates(preflight.map(update => update.task), existing, previous);
+  for(const update of updates) applyBodyUpdate(update);
   for(const t of orderedTasks(plan.tasks)){
-    api(`repos/${plan.repo}/issues/${t.number}`,'PATCH',{body:body(t)});
     const deps=api(`repos/${plan.repo}/issues/${t.number}/dependencies/blocked_by`);
     for(const id of t.blockedBy){const dep=byId.get(id);if(!deps.some(d=>d.number===dep.number))api(`repos/${plan.repo}/issues/${t.number}/dependencies/blocked_by`,'POST',{issue_id:dep.databaseId});}
     let parent=null;
@@ -170,7 +379,7 @@ function publish(){
     if(parent?.number!==plan.parentNumber)api(`repos/${plan.repo}/issues/${plan.parentNumber}/sub_issues`,'POST',{sub_issue_id:t.databaseId});
     console.log(`${t.id} dependencies and parent linked`);
   }
-  api(`repos/${plan.repo}/issues/${plan.parentNumber}`,'PATCH',{body:read(`${dir}/program-body.md`)+'\n\n## 新队列\n\n'+plan.tasks.map(t=>'- '+link(t.id)+' '+t.title).join('\n')});
+  applyBodyUpdate({ issue: parent, body: preserveIssueProgress(parent.body, priorProgramBody, programBody(), 'VPJ-00') });
   render();
 }
 
@@ -201,12 +410,15 @@ export function validateRemoteTaskState(task, issue, { baselineMerged, blockers 
     assert.ok(labels.includes('status:blocked'), `${task.id} must remain blocked before baseline/migration acceptance`);
     return 'baseline-blocked';
   }
+  const openBlockers = blockers.filter(blocker => blocker.state !== 'closed' || blocker.state_reason !== 'completed');
   if (issue.state === 'closed') {
     assert.equal(issue.state_reason, 'completed', `${task.id} closed without completion; reconcile its planned scope`);
+    assert.equal(openBlockers.length, 0, `${task.id} completed with unresolved native blockers`);
+    assert.ok(!labels.some(label => ['status:ready', 'status:in-progress'].includes(label) || label.startsWith('ready-for-')),
+      `${task.id} completed with active readiness labels; reconcile tracker lifecycle`);
     return 'completed';
   }
   assert.equal(issue.state, 'open', `${task.id} unexpected state`);
-  const openBlockers = blockers.filter(blocker => blocker.state !== 'closed' || blocker.state_reason !== 'completed');
   if (labels.some(label => ['status:ready', 'status:in-progress', 'ready-for-agent'].includes(label))) {
     assert.equal(openBlockers.length, 0, `${task.id} active with unresolved native blockers`);
   }
@@ -221,7 +433,8 @@ async function verifyNewRemote({ migrationSnapshot = false } = {}){
   const readinessReview = [];
   for(let start=0;start<plan.tasks.length;start+=8){
     const results=await Promise.allSettled(plan.tasks.slice(start,start+8).map(async t=>{
-      const i=existing.find(x=>x.number===t.number);assert.ok(i,`${t.id} missing remote issue`);assert.ok(i.title.startsWith(`[${t.id}] `));assert.equal(i.id,t.databaseId);assert.equal(i.body,body(t),`${t.id} body drift`);
+      const i=existing.find(x=>x.number===t.number);assert.ok(i,`${t.id} missing remote issue`);assert.ok(i.title.startsWith(`[${t.id}] `));assert.equal(i.id,t.databaseId);
+      validateRemoteTaskBody(t, i.body, { migrationSnapshot });
       const [deps,parent]=await Promise.all([readApi(`repos/${plan.repo}/issues/${t.number}/dependencies/blocked_by`),readApi(`repos/${plan.repo}/issues/${t.number}/parent`)]);
       assert.deepEqual(deps.map(x=>x.number).sort((a,b)=>a-b),t.blockedBy.map(number).sort((a,b)=>a-b),`${t.id} native deps`);assert.equal(parent.number,plan.parentNumber);
       const state = validateRemoteTaskState(t, i, { baselineMerged, blockers: deps, migrationSnapshot });
@@ -230,7 +443,7 @@ async function verifyNewRemote({ migrationSnapshot = false } = {}){
     const failures=results.filter(r=>r.status==='rejected');assert.equal(failures.length,0,failures.map(r=>String(r.reason)).join('\n'));
     console.log(`verified new tasks ${Math.min(start+8,plan.tasks.length)}/${plan.tasks.length}`);
   }
-  console.log(JSON.stringify({ baselineMerged, migrationSnapshot, readinessReview: readinessReview.sort(), note: 'Readiness candidates still need interface, environment, ownership and activation review; no labels changed.' }));
+  console.log(JSON.stringify({ baselineMerged, migrationSnapshot, readinessReview: readinessReview.sort(), bodyValidation: migrationSnapshot ? 'exact snapshot' : 'current acceptance criteria present; progress and appended history allowed', note: 'Tracker identity, acceptance definitions, dependencies, parent and lifecycle checked; not runtime acceptance. Readiness candidates still need interface, environment, ownership and activation review; no labels changed.' }));
   return existing;
 }
 
@@ -245,19 +458,23 @@ async function verifyRemote(){
 
 function syncBodies(){
   validate();const existing=allIssues();
-  for(const t of plan.tasks){const i=existing.find(x=>x.number===t.number);assert.ok(i?.title.startsWith(`[${t.id}] `));assert.equal(i.id,t.databaseId);api(`repos/${plan.repo}/issues/${t.number}`,'PATCH',{body:body(t)});console.log(`synced ${t.id}`);}
+  const updates = prepareBodyUpdates(plan.tasks, existing, previousBodies(plan.tasks));
+  for(const update of updates){applyBodyUpdate(update);console.log(`synced ${update.task.id}`);}
   render();
 }
 
 function syncSelected(){
   validate();
-  for(const id of process.argv.slice(3)){
-    const t=byId.get(id);assert.ok(t?.number,id);
-    const i=api(`repos/${plan.repo}/issues/${t.number}`);assert.ok(i.title.startsWith(`[${t.id}] `));assert.equal(i.id,t.databaseId);
-    api(`repos/${plan.repo}/issues/${t.number}`,'PATCH',{body:body(t)});
+  const selected = [...new Set(process.argv.slice(3))].map(id => { const task=byId.get(id);assert.ok(task?.number,id);return task; });
+  assert.ok(selected.length, 'sync-selected requires at least one task ID');
+  const existing = selected.map(t => api(`repos/${plan.repo}/issues/${t.number}`));
+  const updates = prepareBodyUpdates(selected, existing, previousBodies(selected));
+  for(const update of updates){
+    const t=update.task;
+    applyBodyUpdate(update);
     const deps=api(`repos/${plan.repo}/issues/${t.number}/dependencies/blocked_by`);
     for(const d of t.blockedBy){const dep=byId.get(d);if(!deps.some(x=>x.number===dep.number))api(`repos/${plan.repo}/issues/${t.number}/dependencies/blocked_by`,'POST',{issue_id:dep.databaseId});}
-    console.log(`synced ${id} and added dependencies`);
+    console.log(`synced ${t.id} and added dependencies`);
   }
   render();
 }

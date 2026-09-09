@@ -16,21 +16,23 @@ test('VPJ orders shared prerequisites once before consumers', () => {
   assert.throws(() => orderedTasks([{id:'A',blockedBy:[]},{id:'A',blockedBy:[]}]), /duplicate task/);
 });
 
-test('VPJ bodies without task overrides preserve their published output', () => {
-  const legacyTasks = plan.tasks.filter(task => task.sourceRef === undefined && task.baselineNote === undefined);
-  assert.ok(legacyTasks.length > 0);
-  for (const task of legacyTasks) {
-    assert.equal(body(task), readFileSync(`${planDir}/issue-bodies/${task.id}.md`, 'utf8'), task.id);
-  }
+test('VPJ default execution links use main without treating a historical PR as pending', () => {
+  const task = { ...plan.tasks[0], sourceRef: undefined, baselineNote: undefined };
+  const generated = body(task);
+  assert.ok(generated.includes(`/blob/main/${planDir}/EXECUTION-CONTRACT.md`));
+  assert.ok(generated.includes(`/blob/main/${task.contract}`));
+  assert.ok(!generated.includes(`/blob/${plan.baselineBranch}/`));
+  assert.ok(!generated.includes('合并前不要从旧main实施新合同'));
+  assert.ok(generated.includes('本计划定义不代表任务已就绪或已验收'));
 });
 
 test('VPJ body supports a task source ref and its own planning merge gate', () => {
   const baselineNote = '本轮规划合并 main 后才可开始；历史基线 PR 的合并不代表本轮就绪。';
-  const task = { ...plan.tasks[0], id: 'VPJ-66', contract: 'docs/harness/README.md', sourceRef: 'main', baselineNote };
+  const task = { ...plan.tasks[0], id: 'VPJ-66', contract: 'docs/harness/README.md', sourceRef: '8ae95a7', baselineNote };
   const generated = body(task);
   assert.ok(generated.includes(`## 当前基线与开发入口\n\n${baselineNote}\n`));
-  assert.ok(generated.includes(`/blob/main/${planDir}/EXECUTION-CONTRACT.md#vpj-66`));
-  assert.ok(generated.includes('/blob/main/docs/harness/README.md'));
+  assert.ok(generated.includes(`/blob/8ae95a7/${planDir}/EXECUTION-CONTRACT.md#vpj-66`));
+  assert.ok(generated.includes('/blob/8ae95a7/docs/harness/README.md'));
   assert.ok(!generated.includes(`/blob/${plan.baselineBranch}/`));
   assert.ok(!generated.includes(`基线PR：#${plan.baselinePr}。`));
 });

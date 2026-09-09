@@ -27,3 +27,11 @@ External PRs are not a feature-request triage surface; collaborator PRs receive 
 
 `UNAUTHENTICATED`, `SAFETY_BLOCKED` and `DATA_POLICY_BLOCKED` remain runtime refusals,
 not permission to use a guest actor, service credential or bypass.
+
+## 定义、进度与同步
+
+当前执行行/接口链接默认指向main；历史研究和验收证据保持固定commit。生成正文中的未勾选框是计划定义，不表示远端实际进度。普通`verify-remote`核任务身份、当前验收条款、原生依赖、parent和生命周期，允许实际勾选与追加证据；它不验证产品已运行。初始队列迁移保留严格快照规则。
+
+`publish`、`sync-bodies`、`sync-selected`先对整批做正文预检，只同步能识别的生成前缀并保留勾选与尾部进度；未知漂移拒绝覆盖。预检后逐票写入前再读正文，出现并行修改即停止重读。GitHub没有跨Issue原子事务，先前已成功的安全更新仍需记录。
+
+遇到历史正文/追加契约不能自动识别，先保存快照、核对最新main与live差异，再在已有授权内作可审查的局部更新；不要为了通过全文比较删除进度或重新跑全量队列迁移。未知漂移本身不是新增人工审批门，只有实质性未决目标/权限变化才需要相应决定。
