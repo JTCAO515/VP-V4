@@ -6,9 +6,9 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：VPJ-00 #187 baseline PR #253 merged at 9a3b724; Journey preview PR #254 merged on main at 1bd1ffb (2026-09-08 read-back). Governance workflow revision is prepared for review; real product/runtime gates remain unverified.
+状态：Continuous development: PR258 native foundation and PR259 Web release locales implemented and independently reviewed. No PR merged by this session. Main51879c3 includes separately authorized PR257; production deployment is excluded from this session.
 
-阶段：Journey visual preview and full prepared Demo migration; no backend, native or same-Trip acceptance implied. The 65-task VPJ dependency graph is unchanged.
+阶段：Repository preparation: native Simulator foundation and Web language migration verified locally; no real AI/account/same-Trip or release acceptance implied. All VPJ task identities/dependencies retained.
 
 ## 读取顺序
 
@@ -25,14 +25,18 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 未决与运行证据
 
+- OA-VPJ-MERGE-DEPLOY: main589cee6 has a Production-named successful Vercel deployment; actual project settings were inaccessible (connector404 / CLI read403). PR257 separately authorized merge-triggered production only for its homepage scope; do not generalize that approval.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 
-- No live customer/model/DB/provider/Store/production test or deployment in this planning task.
-- Original local iOS remains preview source; copying archive does not prove native build acceptance.
+- Real account/Trip/DB/provider/customer and production acceptance not executed by this session.
+- Physical VoiceOver spoken traversal, full contrast/hit-region audit, iOS17 runtime and signed Store delivery remain unrun. Simulator structural AX is not full device/release acceptance.
 
 ## 验证
 
+- 2026-09-09: native8 unit tests and5 UI paths passed across full run plus affected Chinese keyboard/locale rerun. Simulator iPhone17Pro iOS26.5, Xcode26.6. Actual bugs fixed: localization keys, stale navigation titles, AX tool text, keyboard dismissal. Four screenshots and command evidence in artifacts/VPJ-01.
+- PR259 HEAD633778b: lint/typecheck/build,22 standard,36 unit,161 contract,40 source-e2e and desktop/mobile/legacy browser checks passed; remote Quality PR34258367074 and Vercel Preview passed. Independent review: Critical0/Important0.
+- PR258 source b11cdd6 against main51879c3 independently reviewed: Critical0/Important0; final evidence-only commit still receives fresh CI. Earlier PR258 CI on f15f0ad passed, not reused as final-head CI.
 - 2026-09-08 Journey preview: lint/typecheck/build, 22 standard tests, asset policy and docs gate passed; 4 new Playwright browser regressions passed at 1280x800 and 390x844. They verify no API calls, confirmation-before-note, per-page state, reject-preserving accept-all, locale/reload, Explore proposal and one-time tool requests. Independent read-only review findings fixed and rechecked. Full repository CI is a separate merge gate.
 - Remote read-back 2026-09-05: 65 new open tasks, each body/ID/parent and all 198 native dependencies match; 20 old Issues closed with not_planned; PR185/186 remain open.
 - pnpm check passed: lint/typecheck/build plus 22 standard tests; unit29, contract161, source-e2e40 and eval20 passed.
@@ -44,7 +48,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Verify Journey root-homepage PR/main and its Vercel deployment under the operator's 2026-09-09 authorization. Three generated images have explicit public-Web approval; nine legacy files remain non-public quarantine. Governance PR #256 is merged at 589cee6. Re-evaluate VPJ-01/02/03/46/62 inputs before product work; the dependency graph and VPJ-41 runtime acceptance remain unchanged.
+Complete final PR258 CI and retain green PR259 evidence. Resolve OA-VPJ-MERGE-DEPLOY before any merge that could trigger Production; then ordinary merge with current base/checks/review and refresh dependencies. VPJ-02/03/62 need actual environment/data-policy inputs; do not invent them. VPJ-01 remains open for remaining acceptance.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
