@@ -19,3 +19,9 @@ CI保留全部既有门，包括浏览器、integration/security的明确运行/
 Issue只可在准确HEAD审阅和必需CI通过、代码合并、合并结果再验证之后按其离线准备范围关闭。当前文件不证明PR已经合并。回滚移除本票新增eval/report/doc接入，不触碰既有测试或真实数据。
 
 已跟踪日志统一去除CR行尾、行尾空白和多余EOF空行，不改测试内容；最终diff门使用git diff --check 6307d79...HEAD检查整个提交范围，不以工作区无差异替代。
+
+## 合并后验收
+
+PR271 已合并为99f54c4f97b4cd7f00a11f3c1accef70f46b1720。准确HEAD be35ef56bec62bf130d80a319755d300bdc11aaf独立审阅Critical0/Important0；必需CI34313179100全部检查通过，浏览器9通过。CI数据库integration10skip/security1skip仍incomplete，不算数据库验收。
+
+合并树与审阅树git diff --exit-code一致。在合并后HEAD复跑pnpm evals：23/23，零skip；results.json的commit已绑定99f54c4，结果2正常PASS/4注入预期FAIL，见merged-evals.log。Issue263状态CLOSED/COMPLETED，7项验收均勾选，最终证据在issuecomment-5596131601。剩余10个fixture和12个Staging未运行项不变。

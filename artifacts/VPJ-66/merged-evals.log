@@ -1,0 +1,153 @@
+
+> vp-v4@0.0.0 evals /Users/jtcao/Documents/VP-V4-Harness-Seeds
+> node scripts/run-ci-suite.mjs evals
+
+TAP version 13
+# Subtest: reports deterministic claim ordering and an honest no-evidence outcome
+ok 1 - reports deterministic claim ordering and an honest no-evidence outcome
+  ---
+  duration_ms: 10.00125
+  type: 'test'
+  ...
+# Subtest: orders opaque subject identifiers by stable code point rather than host locale
+ok 2 - orders opaque subject identifiers by stable code point rather than host locale
+  ---
+  duration_ms: 2.585083
+  type: 'test'
+  ...
+# Subtest: V4-02 preserves hard constraints across full-history and compacted thread contexts
+ok 3 - V4-02 preserves hard constraints across full-history and compacted thread contexts
+  ---
+  duration_ms: 54.818375
+  type: 'test'
+  ...
+# Subtest: V4-02 context eval records zero prohibited source leaks
+ok 4 - V4-02 context eval records zero prohibited source leaks
+  ---
+  duration_ms: 0.619542
+  type: 'test'
+  ...
+# Subtest: 12 independent specifications preserve the 8/4 stratified split
+ok 5 - 12 independent specifications preserve the 8/4 stratified split
+  ---
+  duration_ms: 3.931292
+  type: 'test'
+  ...
+# Subtest: offline seeds report passing baselines and localized detected faults separately
+ok 6 - offline seeds report passing baselines and localized detected faults separately
+  ---
+  duration_ms: 152.646875
+  type: 'test'
+  ...
+# Subtest: grader catches sidecar, revision, scope, route-basis and reload violations
+ok 7 - grader catches sidecar, revision, scope, route-basis and reload violations
+  ---
+  duration_ms: 12.679041
+  type: 'test'
+  ...
+# Subtest: AI-31 fixture field-exact report covers five locales and five closed field kinds
+ok 8 - AI-31 fixture field-exact report covers five locales and five closed field kinds
+  ---
+  duration_ms: 8.686167
+  type: 'test'
+  ...
+# Subtest: V4-15 synthetic receipt trace retains active hard constraints and abstains after pause or rejection
+ok 9 - V4-15 synthetic receipt trace retains active hard constraints and abstains after pause or rejection
+  ---
+  duration_ms: 83.746542
+  type: 'test'
+  ...
+# Subtest: V4-04 PlanConstraintEval preserves deterministic final-state decisions
+ok 10 - V4-04 PlanConstraintEval preserves deterministic final-state decisions
+  ---
+  duration_ms: 11.345542
+  type: 'test'
+  ...
+# Subtest: reports five opaque locale fixtures and an honest no-evidence result
+ok 11 - reports five opaque locale fixtures and an honest no-evidence result
+  ---
+  duration_ms: 43.590083
+  type: 'test'
+  ...
+# Subtest: reports deterministic MRR, nDCG, and no-answer results by locale and query mode
+ok 12 - reports deterministic MRR, nDCG, and no-answer results by locale and query mode
+  ---
+  duration_ms: 18.207792
+  type: 'test'
+  ...
+# Subtest: fails closed for malformed qrels and never converts an unmatched query into a result
+ok 13 - fails closed for malformed qrels and never converts an unmatched query into a result
+  ---
+  duration_ms: 3.388583
+  type: 'test'
+  ...
+# Subtest: rejects duplicate, malformed, and out-of-corpus relevance identifiers
+ok 14 - rejects duplicate, malformed, and out-of-corpus relevance identifiers
+  ---
+  duration_ms: 0.820416
+  type: 'test'
+  ...
+# Subtest: reports every frozen query mode with deterministic zero-sample metrics
+ok 15 - reports every frozen query mode with deterministic zero-sample metrics
+  ---
+  duration_ms: 1.230416
+  type: 'test'
+  ...
+# Subtest: uses discounted cumulative gain rather than reciprocal rank for a lower-ranked relevant alias
+ok 16 - uses discounted cumulative gain rather than reciprocal rank for a lower-ranked relevant alias
+  ---
+  duration_ms: 0.374792
+  type: 'test'
+  ...
+# Subtest: AI-42 freezes all nine named red-line suites before reporting corpus coverage
+ok 17 - AI-42 freezes all nine named red-line suites before reporting corpus coverage
+  ---
+  duration_ms: 23.306208
+  type: 'test'
+  ...
+# Subtest: AI-42 reports five-locale, six-moment C0 coverage while keeping holdout out of tuning
+ok 18 - AI-42 reports five-locale, six-moment C0 coverage while keeping holdout out of tuning
+  ---
+  duration_ms: 2.8675
+  type: 'test'
+  ...
+# Subtest: AI-42 fails closed when a full-size corpus duplicates one stratum and omits another
+ok 19 - AI-42 fails closed when a full-size corpus duplicates one stratum and omits another
+  ---
+  duration_ms: 2.888167
+  type: 'test'
+  ...
+# Subtest: V4-05 route-pattern order cannot replace current route-matrix evidence
+ok 20 - V4-05 route-pattern order cannot replace current route-matrix evidence
+  ---
+  duration_ms: 4.809666
+  type: 'test'
+  ...
+# Subtest: V4-05 route-pattern order cannot replace a current closed Fact
+ok 21 - V4-05 route-pattern order cannot replace a current closed Fact
+  ---
+  duration_ms: 2.599708
+  type: 'test'
+  ...
+# Subtest: V4-05 synthetic paired spike reports no adoption gain
+ok 22 - V4-05 synthetic paired spike reports no adoption gain
+  ---
+  duration_ms: 0.534541
+  type: 'test'
+  ...
+# Subtest: V4-18 eval: expired, unlicensed, and draft facts never produce a Today action
+ok 23 - V4-18 eval: expired, unlicensed, and draft facts never produce a Today action
+  ---
+  duration_ms: 7.03175
+  type: 'test'
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1575.250708
+VP_CI_SUITE_RESULT {"suite":"evals","outcome":"passed","skipped":0,"testFiles":11}
