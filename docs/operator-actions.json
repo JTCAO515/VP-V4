@@ -278,7 +278,7 @@
       "id": "OA-VPJ-MERGE-DEPLOY",
       "issue": 187,
       "class": "C",
-      "status": "resolved",
+      "status": "done",
       "createdAt": "2026-09-09T01:44:57.579848+08:00",
       "action": "已取得本轮VP-V4生产发布及merge触发部署授权；不再逐PR重复请求此项授权。",
       "whyHuman": "当前会话明确排除生产发布。GitHub deployment 6332724922 将 main589cee6标记为 Production/success；连接器404且既有CLI凭据只读项目请求403，无法确认Vercel实际触发设置。不得推断生产授权或修改保护/部署设置。 PR257的单独首页发布授权不扩展到本会话。",
