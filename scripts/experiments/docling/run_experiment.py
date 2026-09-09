@@ -97,7 +97,7 @@ def check_network_denial(directory, assets):
         raise RuntimeError("Offline isolation is not established")
 
 
-def run_one(path, engine, assets, directory, *, wall_seconds=None, rss_bytes=None, cancel_after_started=None):
+def run_one(path, engine, assets, directory, *, wall_seconds=None, rss_bytes=None, cancel_after_started=None, timeout_after_started=None):
     source_hash = validate_input(path)
     directory.mkdir(parents=True, exist_ok=False)
     output = directory / "output.json"
@@ -125,10 +125,15 @@ def run_one(path, engine, assets, directory, *, wall_seconds=None, rss_bytes=Non
                 stop_reason = "memory_limit"
             elif now - started > deadline:
                 stop_reason = "timeout"
+            elif timeout_after_started is not None and marker_at is not None and now - marker_at >= timeout_after_started:
+                stop_reason = "timeout"
             elif cancel_after_started is not None and marker_at is not None and now - marker_at >= cancel_after_started:
                 stop_reason = "cancelled"
             if stop_reason:
-                os.killpg(process.pid, signal.SIGKILL)
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    stop_reason = None
                 break
             time.sleep(LIMITS["resource_poll_seconds"])
         exit_code = process.wait(timeout=5)
