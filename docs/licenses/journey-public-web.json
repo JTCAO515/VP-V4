@@ -2,14 +2,40 @@
   "schemaVersion": "journey-public-web/1.0",
   "scope": "public-web",
   "approvedBy": "JT (VisePanda operator)",
-  "approvedAt": "2026-09-09",
-  "approval": "批准这三张图片用于公开 Web",
-  "approvalContext": "Operator explicitly approved the Guilin, Shanghai and Hangzhou generated images for VP-V4 public Web and confirmed responsibility for their usage rights. No other preview or brand assets are approved by this record.",
+  "approvedAt": "2026-09-10",
+  "approval": "原三张目的地图片的Web授权继续有效；按2026-09-10明确请求，用所提供Logo与文字版Logo替换旧标识。",
+  "approvalContext": "The 2026-09-09 approval covers the three listed destination images. The additional 2026-09-10 operator request authorizes the two supplied brand PNGs for this project replacement. All other preview assets retain their existing gates.",
   "sourceType": "Project-generated ImageGen destination inspiration, not documentary photographs",
   "sourceRecord": "docs/design/journey/README.md",
   "assets": [
-    {"path":"public/assets/visepanda/journey/guilin.png","sha256":"dccdfe66c5189c7786d4691794ca8b2f3ca857ef94e5da3cef55a14c02011c33"},
-    {"path":"public/assets/visepanda/journey/hangzhou.png","sha256":"013df8ccf65190df2971a6213c90d39c077cee24fdc024a1bf8687372f89249f"},
-    {"path":"public/assets/visepanda/journey/shanghai.png","sha256":"8c7dfb119be99797fd1c6fa5885f642299355653b471f628be01c7e6498fcd1e"}
+    {
+      "path": "public/assets/visepanda/journey/guilin.png",
+      "sha256": "dccdfe66c5189c7786d4691794ca8b2f3ca857ef94e5da3cef55a14c02011c33"
+    },
+    {
+      "path": "public/assets/visepanda/journey/hangzhou.png",
+      "sha256": "013df8ccf65190df2971a6213c90d39c077cee24fdc024a1bf8687372f89249f"
+    },
+    {
+      "path": "public/assets/visepanda/journey/shanghai.png",
+      "sha256": "8c7dfb119be99797fd1c6fa5885f642299355653b471f628be01c7e6498fcd1e"
+    },
+    {
+      "path": "public/assets/visepanda/brand/logo-20260909.png",
+      "sha256": "379c70aaed2fdcd9ac80d6713acc5193085163bf4df52705c49e799d89ebb0d8"
+    },
+    {
+      "path": "public/assets/visepanda/brand/wordmark-20260909.png",
+      "sha256": "923d49a1465920b501643148e74c2997442ffeda1ce3c00bb27af820a231240e"
+    }
+  ],
+  "additionalApprovals": [
+    {
+      "approvedBy": "JT (VisePanda operator)",
+      "approvedAt": "2026-09-10",
+      "request": "替换之前的logo",
+      "scope": "The two supplied brand PNGs in this replacement only",
+      "sourceRecord": "assets/brand/vise-panda/README.md"
+    }
   ]
 }

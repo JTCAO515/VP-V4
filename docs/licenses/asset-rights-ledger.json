@@ -2,14 +2,17 @@
   "schemaVersion": "web-04-asset-rights/1.0",
   "policy": "deny-by-default",
   "policies": {
-    "owner-master": {"owner": "VisePanda operator", "sourceType": "owner-supplied master", "license": "operator-rights-attestation-pending", "derivativeProvenance": "immutable project-provided source", "permittedSurfaces": ["brand-reference"], "reviewStatus": "pending-operator-attestation", "approver": "operator"},
-    "internal-brand": {"owner": "VisePanda project", "sourceType": "project-created brand artifact", "license": "internal-use-pending-operator-attestation", "derivativeProvenance": "tracked VisePanda brand delivery", "permittedSurfaces": ["brand-reference", "design-review"], "reviewStatus": "internal-review", "approver": "WEB-04 automated integrity check"}
+    "owner-master": {"owner":"VisePanda operator","sourceType":"owner-supplied master","license":"operator-rights-attestation-pending","derivativeProvenance":"immutable project-provided source","permittedSurfaces":["brand-reference"],"reviewStatus":"pending-operator-attestation","approver":"operator"},
+    "internal-brand": {"owner":"VisePanda project","sourceType":"project-created brand artifact","license":"internal-use-pending-operator-attestation","derivativeProvenance":"tracked VisePanda brand delivery","permittedSurfaces":["brand-reference","design-review"],"reviewStatus":"internal-review","approver":"WEB-04 automated integrity check"},
+    "operator-brand-replacement-20260910": {"owner":"VisePanda operator-supplied","sourceType":"operator-provided PNG","license":"operator-authorized project brand replacement","derivativeProvenance":"Original PNG preserved; AppIcon resampled to required 1024px; wordmark display viewport only","permittedSurfaces":["brand-reference","public-web","native-app-branding"],"reviewStatus":"approved-for-requested-replacement","approver":"JT explicit replacement instruction 2026-09-10"}
   },
   "records": [
+    {"id":"master-logo-20260909","path":"assets/brand/vise-panda/VP-Logo-20260909.png","sha256":"379c70aaed2fdcd9ac80d6713acc5193085163bf4df52705c49e799d89ebb0d8","policy":"operator-brand-replacement-20260910"},
+    {"id":"master-wordmark-20260909","path":"assets/brand/vise-panda/VP-Wordmark-20260909.png","sha256":"923d49a1465920b501643148e74c2997442ffeda1ce3c00bb27af820a231240e","policy":"operator-brand-replacement-20260910"},
     {"id":"master-logo-svg","path":"assets/brand/vise-panda/VP-Logo.svg","sha256":"ab35b4568cb37ec1a37a6f54f75779beee11da37c19d2036a5f15be04fa3a956","policy":"owner-master"},
     {"id":"master-logo-png","path":"assets/brand/vise-panda/VP-Logo.png","sha256":"83f1a4c6026e9a026b22f44f1ddf1d7f44fe806a322235dfce53ba831b1d1270","policy":"owner-master"},
-    {"id":"master-guide-front","path":"assets/brand/vise-panda/VP-正面全身.png","sha256":"3cdd805e1ee40792e708563c1b734ef0704ce1a4d001c4ac1297e25321929071","policy":"owner-master"},
-    {"id":"master-guide-views","path":"assets/brand/vise-panda/VP-三视图.png","sha256":"e9a186e800ac73abd57149fcae598e584ac3a4048f26a3ca1e89849445daf74b","policy":"owner-master"},
+    {"id":"master-guide-front","path":"assets/brand/vise-panda/VP-\u6b63\u9762\u5168\u8eab.png","sha256":"3cdd805e1ee40792e708563c1b734ef0704ce1a4d001c4ac1297e25321929071","policy":"owner-master"},
+    {"id":"master-guide-views","path":"assets/brand/vise-panda/VP-\u4e09\u89c6\u56fe.png","sha256":"e9a186e800ac73abd57149fcae598e584ac3a4048f26a3ca1e89849445daf74b","policy":"owner-master"},
     {"id":"tokens","path":"brand/tokens/visepanda.tokens.json","sha256":"af86d46daa5b84f948eac3a38446b99bdf8e0cedb8cc44517c0abd2a67d3ffb9","policy":"internal-brand"},
     {"id":"utilities","path":"brand/icons/visepanda-utilities.svg","sha256":"b056ce61d4439389a650c1471f3b4ea990e240fcc8afa90fb2360ac16b2bd7cb","policy":"internal-brand"},
     {"id":"map-pins","path":"brand/icons/visepanda-map-pins.svg","sha256":"2db7238e6d5e983be0ffa217e05846afd7deedaff6d85b4417208f635772d0e6","policy":"internal-brand"},
@@ -28,6 +31,11 @@
     {"id":"social-train","path":"brand/social/china-train-cheat-sheet-1080x1350.png","sha256":"73d7aca441bb8d3c5e714f3f19ce653ab1455aef37d453c3166deed1c2612a45","policy":"internal-brand"},
     {"id":"social-chengdu","path":"brand/social/chengdu-food-list-1080x1920.png","sha256":"979bf7ac1447fe73c780e3d550451cfc9d9e6d129312f45b30a90359bef778aa","policy":"internal-brand"},
     {"id":"social-end-card","path":"brand/social/reel-end-card-1080x1920.png","sha256":"ff744cdb5c046dc06aa83398f22fcaf6989ca7c8c9bc3b5997e5a8de18070adf","policy":"internal-brand"},
-    {"id":"handbook","path":"brand/guidelines/visepanda-vi-guide.html","sha256":"34130799779bdc58c6b01f8e1fceaa524dce2342d5e0447fe4df0eabce4428da","policy":"internal-brand"}
+    {"id":"handbook","path":"brand/guidelines/visepanda-vi-guide.html","sha256":"34130799779bdc58c6b01f8e1fceaa524dce2342d5e0447fe4df0eabce4428da","policy":"internal-brand"},
+    {"id":"web-brand-logo","path":"public/assets/visepanda/brand/logo-20260909.png","sha256":"379c70aaed2fdcd9ac80d6713acc5193085163bf4df52705c49e799d89ebb0d8","policy":"operator-brand-replacement-20260910"},
+    {"id":"web-brand-wordmark","path":"public/assets/visepanda/brand/wordmark-20260909.png","sha256":"923d49a1465920b501643148e74c2997442ffeda1ce3c00bb27af820a231240e","policy":"operator-brand-replacement-20260910"},
+    {"id":"native-brand-logo","path":"ios/VisePanda/VisePanda/Resources/Assets.xcassets/PandaMark.imageset/PandaMark.png","sha256":"379c70aaed2fdcd9ac80d6713acc5193085163bf4df52705c49e799d89ebb0d8","policy":"operator-brand-replacement-20260910"},
+    {"id":"native-brand-wordmark","path":"ios/VisePanda/VisePanda/Resources/Assets.xcassets/BrandWordmark.imageset/BrandWordmark.png","sha256":"923d49a1465920b501643148e74c2997442ffeda1ce3c00bb27af820a231240e","policy":"operator-brand-replacement-20260910"},
+    {"id":"native-app-icon","path":"ios/VisePanda/VisePanda/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png","sha256":"181f87cf71075b453b4972ca2640031bda43ce7cb9d71a4985d5972547f77f18","policy":"operator-brand-replacement-20260910"}
   ]
 }

@@ -1,6 +1,9 @@
 "use client";
 
+import { VisePandaMark } from "@/components/brand/VisePandaMark";
+
 import Link from "next/link";
+import Image from "next/image";
 import { Activity, useCallback, useEffect, useState } from "react";
 import { COPY, PRODUCT_DEMO, type Lang } from "@/lib/journey-preview/copy";
 import { CANVAS } from "@/lib/journey-preview/canvas";
@@ -134,7 +137,7 @@ export default function ProductDemo({ lang, fullscreen, onFullscreen = NOOP_FULL
         <div className={immersive ? `demo-frame fullscreen${standalone ? " standalone" : ""}` : "demo-frame"}>
           <div className="demo-browser" aria-label="Interactive VisePanda product demo">
             <header className="demo-browser-bar">
-              <Link className="journey-studio-home" href={`/journey?lang=${lang}`}>VisePanda<span> / Journey studio</span><small>{lang === "zh" ? "演示预览 · 刷新即重置" : "Demo preview · refresh resets"}</small></Link>
+              <Link className="journey-studio-home" href={`/journey?lang=${lang}`}><VisePandaMark style={{ fontSize: 20, display: "inline-block" }} /><span> / Journey studio</span><small>{lang === "zh" ? "演示预览 · 刷新即重置" : "Demo preview · refresh resets"}</small></Link>
               <div className="demo-bar-right">
                 <span className="vp-fixture" title={DEMO_UI.fixtureLong[lang]}>{DEMO_UI.fixture[lang]}</span>
                 {standalone ? (
@@ -157,7 +160,7 @@ export default function ProductDemo({ lang, fullscreen, onFullscreen = NOOP_FULL
 
             <div className="demo-app-shell">
               <aside className="demo-sidebar">
-                <span className="demo-brand"><span aria-hidden="true">✳</span><span>{lang === "zh" ? "旅途，有你。" : "Make it yours."}</span></span>
+                <span className="demo-brand"><Image className="demo-brand-logo" src="/assets/visepanda/brand/logo-20260909.png" width={30} height={30} alt="" aria-hidden="true" /><span>{lang === "zh" ? "旅途，有你。" : "Make it yours."}</span></span>
 
                 <nav className="demo-main-nav">
                   {NAV.map((item) => (

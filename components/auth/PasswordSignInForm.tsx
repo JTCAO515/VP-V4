@@ -1,5 +1,7 @@
 "use client";
 
+import { VisePandaMark } from "@/components/brand/VisePandaMark";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useState } from "react";
@@ -107,7 +109,7 @@ export function PasswordSignInForm({ showFirstRun = false, returnTo = "/visepand
   return (
     <main className={styles.shell}>
       <section className={styles.brandPanel} aria-label="VisePanda">
-        <Link className={styles.wordmark} href="/">VisePanda.</Link>
+        <Link className={styles.wordmark} href="/"><VisePandaMark /></Link>
         <div>
           <p className={styles.eyebrow}>{authCopy.eyebrow}</p>
           <h1>{authCopy.title}</h1>

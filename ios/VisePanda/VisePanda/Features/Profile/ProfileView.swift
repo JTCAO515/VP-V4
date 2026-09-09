@@ -11,21 +11,20 @@ struct ProfileView: View {
                 HStack(spacing: 14) {
                     Image("PandaMark")
                         .resizable()
-                        .scaledToFill()
+                        .scaledToFit()
                         .frame(width: 58, height: 58)
-                        .clipShape(Circle())
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
                         .accessibilityHidden(true)
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("VisePanda.")
-                            .font(.title3.weight(.bold))
-                            .foregroundStyle(Color.vpBrand)
+                        BrandWordmark(width: 150)
                         Text("profile.preview_account")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
                 }
                 .accessibilityElement(children: .combine)
+                .accessibilityLabel(Text(verbatim: "Vise Panda. ") + Text("profile.preview_account"))
             }
 
             Section("profile.language") {

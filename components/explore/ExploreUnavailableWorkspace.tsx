@@ -1,5 +1,7 @@
 "use client";
 
+import { VisePandaMark } from "@/components/brand/VisePandaMark";
+
 import { useEffect, useState } from "react";
 
 import { getLocaleAttributes, getLocaleSelectionOptions, type Locale } from "@/lib/i18n";
@@ -28,7 +30,7 @@ export function ExploreUnavailableWorkspace({ route }: Readonly<{ route: RouteKi
 
   return <main className={styles.page} data-locale={locale}>
     <header className={styles.header}>
-      <a className={styles.wordmark} href="/" aria-label={content.returnToProduct}>VisePanda.</a>
+      <a className={styles.wordmark} href="/" aria-label={content.returnToProduct}><VisePandaMark /></a>
       <label className={styles.localeLabel}><span>{content.language}</span><select aria-label={content.language} onChange={(event) => setLocale(event.target.value as Locale)} value={locale}>{getLocaleSelectionOptions(locale).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
     </header>
     <section className={styles.panel} aria-labelledby="explore-title">

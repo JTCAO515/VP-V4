@@ -1,5 +1,7 @@
 "use client";
 
+import { VisePandaMark } from "@/components/brand/VisePandaMark";
+
 import { useEffect, useState } from "react";
 
 import { getLocaleAttributes, immersiveHomepageCopy, getLocaleSelectionOptions, type Locale } from "@/lib/i18n";
@@ -26,7 +28,7 @@ export function ImmersiveHomepage() {
       </div>
       <div className={styles.topFade} />
       <header className={styles.header}>
-        <a className={styles.wordmark} href="/" aria-label={content.home}>VisePanda.</a>
+        <a className={styles.wordmark} href="/" aria-label={content.home}><VisePandaMark /></a>
         <nav className={styles.navigation} aria-label={content.navigation}>
           {content.nav.map((label) => <a href="/homepage" key={label}>{label}</a>)}
         </nav>
