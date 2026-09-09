@@ -1,9 +1,10 @@
 # VPJ-59 remaining acceptance
 
-- New migration20260909184816_vpj_59_durable_model_budget.sql has not been applied to Staging;
-  the previous grant covered original13+RPC repair only. Production DB remains out of scope.
+- New budget migration was authorized and applied to the same Staging:25→26, refreshed
+  backup/restore and40 scoped HTTP/account/budget checks PASS with exact-ID cleanup.
+  See [actual Staging evidence](staging-20260910.md). No Production DB operation.
 - Standalone PostgreSQL9 and full local Supabase25->26/Auth/PostgREST1 checks passed.
-  The latter still does not establish a Staging worker or remote budget deployment.
+  A deployed Staging worker and real paid provider attempt remain unverified.
 - No paid provider call, exact account-policy/price receipt, authoritative native session,
   actual worker host identity or user-facing Ask integration is claimed.
 - No real-user budget value or retention policy is invented from the C0 testing allowance.

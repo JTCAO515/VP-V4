@@ -35,7 +35,10 @@ explicit confirmation → atomic Patch, with server receipts as the only success
 
 For the future contextual Ask sheet, use native dismissal and a visible close control; dismissing
 must not confirm a proposal or discard confirmed Trip state. No custom sheet gesture is introduced
-by this foundation. Actual sheet and selected-object behavior remain future VPJ-01/10 evidence.
+by this foundation. Generic presentation/dismissal and accessibility belong to VPJ-01. The authenticated selected-Trip
+Ask → Proposal/diff → confirmation → reload path belongs to VPJ-10 #198, with integrated UX
+verification in #233 and device acceptance in #242. It must not block VPJ-01 while identity/Trip
+consumers themselves depend on that foundation. This does not waive any native UI acceptance.
 
 ## Verification and rollback
 
@@ -51,7 +54,8 @@ and are reported separately. The iOS 17.5 run passed eight unit tests and three 
 four UI tests failed text-clipping audits, so minimum-runtime acceptance remains incomplete.
 A retained maximum-size contrast diagnostic reports FAIL on partially exposed scroll text; it must
 not be relabeled NOT_RUN or used to close VPJ-01. VoiceOver on a physical device and contextual
-Ask sheet integration remain unrun.
+Ask sheet integration remain unrun; the latter is tracked under #198/#233/#242, not a reverse
+completion prerequisite of #188.
 
 The [same-device baseline comparison](../../artifacts/VPJ-01/native-acceptance/hypothesis-checks/README.md)
 reproduced the Chinese banner clipping and Tools audit failures in the preceding main product.

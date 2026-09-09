@@ -95,6 +95,9 @@ Use the Issue/PR as the normal work log: result, key checks, unresolved limits a
 Keep raw logs/screenshots in artifacts when useful to review. Avoid copying identical logs into
 multiple documents. Update `docs/handoff.json` when the shared phase, decision, blocker or next
 action changes, or at session handoff; regenerate `HANDOFF.md` and `CONTEXT.md` from it.
+Keep the active handoff concise: retain current decisions, blockers and evidence pointers. Move
+superseded verification history to a linked dated snapshot rather than repeating it in both generated
+entry files; keep failures and unrun acceptance visible. Historical snapshots never grant new authority.
 Do not edit all three for every test run or small commit. Update module contracts when behavior
 or interfaces change, not merely because a PR exists.
 
