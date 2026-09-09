@@ -1,0 +1,2013 @@
+{
+  "adapter_revision": 2,
+  "engine": "docling",
+  "conversion_status": "success",
+  "conversion_seconds": 8.183028583000123,
+  "segments": [
+    {
+      "text": "SYNTHETIC TRAVEL MATERIAL",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.0552352566137566,
+          0.6166349768518518,
+          0.07666272685185184
+        ],
+        "parser_ref": [
+          "page-1-cell-0",
+          "page-1-cell-1",
+          "page-1-cell-2"
+        ]
+      }
+    },
+    {
+      "text": "zh-clear / NOT A TICKET / 自 有 测试 材料",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06133018148148148,
+          0.09951869510582009,
+          0.45597656666666664,
+          0.11570833928571427
+        ],
+        "parser_ref": [
+          "page-1-cell-3",
+          "page-1-cell-4",
+          "page-1-cell-5",
+          "page-1-cell-6",
+          "page-1-cell-7",
+          "page-1-cell-8",
+          "page-1-cell-9",
+          "page-1-cell-10",
+          "page-1-cell-11",
+          "page-1-cell-12"
+        ]
+      }
+    },
+    {
+      "text": "车 次 : G88",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.15856327976190474,
+          0.18799033888888889,
+          0.18665707407407403
+        ],
+        "parser_ref": [
+          "page-1-cell-13",
+          "page-1-cell-14",
+          "page-1-cell-15",
+          "page-1-cell-16"
+        ]
+      }
+    },
+    {
+      "text": "出 发 站 : 上 海 虹桥",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06266344629629629,
+          0.23522600661375656,
+          0.2839854055555555,
+          0.2552249788359788
+        ],
+        "parser_ref": [
+          "page-1-cell-17",
+          "page-1-cell-18",
+          "page-1-cell-19",
+          "page-1-cell-20",
+          "page-1-cell-21",
+          "page-1-cell-22",
+          "page-1-cell-23"
+        ]
+      }
+    },
+    {
+      "text": "到 达 站 : 杭州 东",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.30807940542328033,
+          0.2559868444444444,
+          0.3376016977513227
+        ],
+        "parser_ref": [
+          "page-1-cell-24",
+          "page-1-cell-25",
+          "page-1-cell-26",
+          "page-1-cell-27",
+          "page-1-cell-28",
+          "page-1-cell-29"
+        ]
+      }
+    },
+    {
+      "text": "出 发 : 2026-11-04 08:08",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06266344629629629,
+          0.38378980026455023,
+          0.3719808833333333,
+          0.4114074285714285
+        ],
+        "parser_ref": [
+          "page-1-cell-30",
+          "page-1-cell-31",
+          "page-1-cell-32",
+          "page-1-cell-33",
+          "page-1-cell-34"
+        ]
+      }
+    },
+    {
+      "text": "到 达 : 2026-11-04 09:02",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.458547863095238,
+          0.3719808833333333,
+          0.4861654914021163
+        ],
+        "parser_ref": [
+          "page-1-cell-35",
+          "page-1-cell-36",
+          "page-1-cell-37",
+          "page-1-cell-38",
+          "page-1-cell-39"
+        ]
+      }
+    },
+    {
+      "text": "时 区 : Asia/Shanghai UTC+08:00",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06266344629629629,
+          0.5333059259259257,
+          0.49197471666666664,
+          0.5609235542328042
+        ],
+        "parser_ref": [
+          "page-1-cell-40",
+          "page-1-cell-41",
+          "page-1-cell-42",
+          "page-1-cell-43",
+          "page-1-cell-44"
+        ]
+      }
+    },
+    {
+      "text": "币 种 : CNY",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06266344629629629,
+          0.6080639887566137,
+          0.1919901333333333,
+          0.6347292850529099
+        ],
+        "parser_ref": [
+          "page-1-cell-45",
+          "page-1-cell-46",
+          "page-1-cell-47",
+          "page-1-cell-48"
+        ]
+      }
+    },
+    {
+      "text": "金额 : 188.80",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06133018148148148,
+          0.6832982175925925,
+          0.2259883861111111,
+          0.7090111818783067
+        ],
+        "parser_ref": [
+          "page-1-cell-49",
+          "page-1-cell-50",
+          "page-1-cell-51"
+        ]
+      }
+    },
+    {
+      "text": "自 有 合成 行程 。 不 是 车 票 或 预订 ， 不 包含 真实 旅客 信息 。",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.0633300787037037,
+          0.7813884146825395,
+          0.5473052064814815,
+          0.8032920509259258
+        ],
+        "parser_ref": [
+          "page-1-cell-52",
+          "page-1-cell-53",
+          "page-1-cell-54",
+          "page-1-cell-55",
+          "page-1-cell-56",
+          "page-1-cell-57",
+          "page-1-cell-58",
+          "page-1-cell-59",
+          "page-1-cell-60",
+          "page-1-cell-61",
+          "page-1-cell-62",
+          "page-1-cell-63",
+          "page-1-cell-64",
+          "page-1-cell-65",
+          "page-1-cell-66",
+          "page-1-cell-67",
+          "page-1-cell-68",
+          "page-1-cell-69"
+        ]
+      }
+    },
+    {
+      "text": "For parser evaluation only. No purchase, booking or Trip is confirmed.",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.9475703505291004,
+          0.6419670083333333,
+          0.9609029986772485
+        ],
+        "parser_ref": [
+          "page-1-cell-70",
+          "page-1-cell-71",
+          "page-1-cell-72",
+          "page-1-cell-73",
+          "page-1-cell-74",
+          "page-1-cell-75",
+          "page-1-cell-76",
+          "page-1-cell-77",
+          "page-1-cell-78",
+          "page-1-cell-79",
+          "page-1-cell-80"
+        ]
+      }
+    }
+  ],
+  "document": {
+    "docling_document": {
+      "schema_name": "DoclingDocument",
+      "version": "1.10.0",
+      "name": "zh-clear",
+      "origin": {
+        "mimetype": "application/pdf",
+        "binary_hash": 7931884319788476765,
+        "filename": "zh-clear.png"
+      },
+      "furniture": {
+        "self_ref": "#/furniture",
+        "children": [],
+        "content_layer": "furniture",
+        "name": "_root_",
+        "label": "unspecified"
+      },
+      "body": {
+        "self_ref": "#/body",
+        "children": [
+          {
+            "$ref": "#/texts/0"
+          },
+          {
+            "$ref": "#/texts/1"
+          },
+          {
+            "$ref": "#/texts/2"
+          },
+          {
+            "$ref": "#/texts/3"
+          }
+        ],
+        "content_layer": "body",
+        "name": "_root_",
+        "label": "unspecified"
+      },
+      "groups": [],
+      "texts": [
+        {
+          "self_ref": "#/texts/0",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "section_header",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.0,
+                "t": 661.3693074042233,
+                "r": 308.3333333333333,
+                "b": 646.3693074042233,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                25
+              ]
+            }
+          ],
+          "orig": "SYNTHETIC TRAVEL MATERIAL",
+          "text": "SYNTHETIC TRAVEL MATERIAL",
+          "level": 1
+        },
+        {
+          "self_ref": "#/texts/1",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.666666666666668,
+                "t": 630.3693074042233,
+                "r": 246.0,
+                "b": 203.70264073755658,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                171
+              ]
+            }
+          ],
+          "orig": "zh-clear / NOT A TICKET / 自 有 测试 材料 车 次 : G88 出 发 站 : 上 海 虹桥 到 达 站 : 杭州 东 出 发 : 2026-11-04 08:08 到 达 : 2026-11-04 09:02 时 区 : Asia/Shanghai UTC+08:00 币 种 : CNY 金额 : 188.80",
+          "text": "zh-clear / NOT A TICKET / 自 有 测试 材料 车 次 : G88 出 发 站 : 上 海 虹桥 到 达 站 : 杭州 东 出 发 : 2026-11-04 08:08 到 达 : 2026-11-04 09:02 时 区 : Asia/Shanghai UTC+08:00 币 种 : CNY 金额 : 188.80"
+        },
+        {
+          "self_ref": "#/texts/2",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.666666666666668,
+                "t": 153.0359740708899,
+                "r": 273.6666666666667,
+                "b": 137.70264073755652,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                42
+              ]
+            }
+          ],
+          "orig": "自 有 合成 行程 。 不 是 车 票 或 预订 ， 不 包含 真实 旅客 信息 。",
+          "text": "自 有 合成 行程 。 不 是 车 票 或 预订 ， 不 包含 真实 旅客 信息 。"
+        },
+        {
+          "self_ref": "#/texts/3",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.0,
+                "t": 36.70264073755652,
+                "r": 321.0,
+                "b": 27.369307404223264,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                70
+              ]
+            }
+          ],
+          "orig": "For parser evaluation only. No purchase, booking or Trip is confirmed.",
+          "text": "For parser evaluation only. No purchase, booking or Trip is confirmed."
+        }
+      ],
+      "pictures": [],
+      "tables": [],
+      "key_value_items": [],
+      "form_items": [],
+      "pages": {
+        "1": {
+          "size": {
+            "width": 500.0256957649213,
+            "height": 700.0359740708899
+          },
+          "page_no": 1
+        }
+      }
+    },
+    "page_cells": [
+      {
+        "text": "SYNTHETIC",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.0552352566137566,
+            0.2686528601851852,
+            0.07666272685185184
+          ],
+          "parser_ref": "page-1-cell-0"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96298225
+      },
+      {
+        "text": "TRAVEL",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2799856111111111,
+            0.05571142261904761,
+            0.41997841666666663,
+            0.07666272685185184
+          ],
+          "parser_ref": "page-1-cell-1"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96500778
+      },
+      {
+        "text": "MATERIAL",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4339776972222222,
+            0.05571142261904761,
+            0.6166349768518518,
+            0.07666272685185184
+          ],
+          "parser_ref": "page-1-cell-2"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96500778
+      },
+      {
+        "text": "zh-clear",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06133018148148148,
+            0.10047102711640209,
+            0.14265933518518517,
+            0.11285134325396823
+          ],
+          "parser_ref": "page-1-cell-3"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.88357086
+      },
+      {
+        "text": "/",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1539920861111111,
+            0.1009471931216931,
+            0.15599198333333333,
+            0.11570833928571427
+          ],
+          "parser_ref": "page-1-cell-4"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.88357086
+      },
+      {
+        "text": "NOT",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.16399157222222221,
+            0.10142335912698411,
+            0.20665604629629628,
+            0.11285134325396823
+          ],
+          "parser_ref": "page-1-cell-5"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9287396200000001
+      },
+      {
+        "text": "A",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.21332237037037036,
+            0.10142335912698411,
+            0.2259883861111111,
+            0.11285134325396823
+          ],
+          "parser_ref": "page-1-cell-6"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.17455921
+      },
+      {
+        "text": "TICKET",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.23198807777777775,
+            0.10142335912698411,
+            0.3046510101851852,
+            0.11285134325396823
+          ],
+          "parser_ref": "page-1-cell-7"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.17455921
+      },
+      {
+        "text": "/",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3113173342592592,
+            0.1009471931216931,
+            0.3193169231481481,
+            0.11570833928571427
+          ],
+          "parser_ref": "page-1-cell-8"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9080413799999999
+      },
+      {
+        "text": "自",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3373159981481481,
+            0.09951869510582009,
+            0.34331568981481475,
+            0.11427984126984125
+          ],
+          "parser_ref": "page-1-cell-9"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.90208221
+      },
+      {
+        "text": "有",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3573149703703703,
+            0.0999948611111111,
+            0.37464741296296294,
+            0.11427984126984125
+          ],
+          "parser_ref": "page-1-cell-10"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93222305
+      },
+      {
+        "text": "测试",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.37531404537037033,
+            0.0999948611111111,
+            0.4253114759259259,
+            0.11427984126984125
+          ],
+          "parser_ref": "page-1-cell-11"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9626577000000001
+      },
+      {
+        "text": "材料",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4359775944444444,
+            0.0999948611111111,
+            0.45597656666666664,
+            0.11427984126984125
+          ],
+          "parser_ref": "page-1-cell-12"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96941124
+      },
+      {
+        "text": "车",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.16046794378306875,
+            0.125993525,
+            0.17999074999999998
+          ],
+          "parser_ref": "page-1-cell-13"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96670013
+      },
+      {
+        "text": "次",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.10599455277777776,
+            0.15856327976190474,
+            0.125993525,
+            0.18665707407407403
+          ],
+          "parser_ref": "page-1-cell-14"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92735092
+      },
+      {
+        "text": ":",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.12532689259259258,
+            0.15856327976190474,
+            0.13865954074074072,
+            0.18665707407407403
+          ],
+          "parser_ref": "page-1-cell-15"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.91567047
+      },
+      {
+        "text": "G88",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1366596435185185,
+            0.16284877380952378,
+            0.18799033888888889,
+            0.17856225198412695
+          ],
+          "parser_ref": "page-1-cell-16"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9566275000000001
+      },
+      {
+        "text": "出",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06266344629629629,
+            0.23570217261904758,
+            0.08666221296296296,
+            0.2552249788359788
+          ],
+          "parser_ref": "page-1-cell-17"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96964546
+      },
+      {
+        "text": "发",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.10332802314814814,
+            0.23570217261904758,
+            0.11866056851851851,
+            0.2552249788359788
+          ],
+          "parser_ref": "page-1-cell-18"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9693858299999999
+      },
+      {
+        "text": "站",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.13465974629629626,
+            0.23522600661375656,
+            0.14865902685185184,
+            0.2552249788359788
+          ],
+          "parser_ref": "page-1-cell-19"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9323262800000001
+      },
+      {
+        "text": ":",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.15265882129629627,
+            0.24141616468253962,
+            0.15599198333333333,
+            0.25379648082010575
+          ],
+          "parser_ref": "page-1-cell-20"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9261199999999999
+      },
+      {
+        "text": "上",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.17865748518518515,
+            0.23570217261904758,
+            0.20398951666666665,
+            0.2547488128306878
+          ],
+          "parser_ref": "page-1-cell-21"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9329170999999999
+      },
+      {
+        "text": "海",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.20665604629629628,
+            0.23570217261904758,
+            0.22398848888888886,
+            0.2552249788359788
+          ],
+          "parser_ref": "page-1-cell-22"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9199073
+      },
+      {
+        "text": "虹桥",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2379877694444444,
+            0.23570217261904758,
+            0.2839854055555555,
+            0.2552249788359788
+          ],
+          "parser_ref": "page-1-cell-23"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.95384033
+      },
+      {
+        "text": "到",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.3104602354497354,
+            0.08732884537037036,
+            0.3299830416666666
+          ],
+          "parser_ref": "page-1-cell-24"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93236748
+      },
+      {
+        "text": "达",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.09799496388888888,
+            0.3104602354497354,
+            0.11866056851851851,
+            0.3295068756613756
+          ],
+          "parser_ref": "page-1-cell-25"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92262611
+      },
+      {
+        "text": "站",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.125993525,
+            0.3104602354497354,
+            0.14865902685185184,
+            0.3299830416666666
+          ],
+          "parser_ref": "page-1-cell-26"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9126396200000001
+      },
+      {
+        "text": ":",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.15199218888888888,
+            0.3161742275132275,
+            0.15599198333333333,
+            0.32855454365079356
+          ],
+          "parser_ref": "page-1-cell-27"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.90777794
+      },
+      {
+        "text": "杭州",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.16599146944444443,
+            0.3104602354497354,
+            0.2526536824074074,
+            0.3299830416666666
+          ],
+          "parser_ref": "page-1-cell-28"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93109146
+      },
+      {
+        "text": "东",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.23732113703703703,
+            0.30807940542328033,
+            0.2559868444444444,
+            0.3376016977513227
+          ],
+          "parser_ref": "page-1-cell-29"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93272064
+      },
+      {
+        "text": "出",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06266344629629629,
+            0.3856944642857142,
+            0.125993525,
+            0.40521727050264544
+          ],
+          "parser_ref": "page-1-cell-30"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96936821
+      },
+      {
+        "text": "发",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.10532792037037035,
+            0.38378980026455023,
+            0.13065995185185184,
+            0.4114074285714285
+          ],
+          "parser_ref": "page-1-cell-31"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9294303899999999
+      },
+      {
+        "text": ":",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.12999331944444442,
+            0.38378980026455023,
+            0.13999280555555554,
+            0.4114074285714285
+          ],
+          "parser_ref": "page-1-cell-32"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92337349
+      },
+      {
+        "text": "2026-11-04",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1359930111111111,
+            0.3875991283068782,
+            0.2899850972222222,
+            0.4037887724867724
+          ],
+          "parser_ref": "page-1-cell-33"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92063606
+      },
+      {
+        "text": "08:08",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2986513185185185,
+            0.3875991283068782,
+            0.3719808833333333,
+            0.4037887724867724
+          ],
+          "parser_ref": "page-1-cell-34"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9195250699999999
+      },
+      {
+        "text": "到",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.460452527116402,
+            0.125993525,
+            0.47997533333333325
+          ],
+          "parser_ref": "page-1-cell-35"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9328456900000001
+      },
+      {
+        "text": "达",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.09799496388888888,
+            0.458547863095238,
+            0.12266036296296295,
+            0.4861654914021163
+          ],
+          "parser_ref": "page-1-cell-36"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.8972178599999999
+      },
+      {
+        "text": ":",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.12199373055555554,
+            0.458547863095238,
+            0.13465974629629626,
+            0.4861654914021163
+          ],
+          "parser_ref": "page-1-cell-37"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9302404
+      },
+      {
+        "text": "2026-11-04",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1359930111111111,
+            0.46283335714285706,
+            0.2899850972222222,
+            0.47854683531746023
+          ],
+          "parser_ref": "page-1-cell-38"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9219297000000001
+      },
+      {
+        "text": "09:02",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2986513185185185,
+            0.46283335714285706,
+            0.3719808833333333,
+            0.47854683531746023
+          ],
+          "parser_ref": "page-1-cell-39"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.91291748
+      },
+      {
+        "text": "时",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06266344629629629,
+            0.5356867559523808,
+            0.125993525,
+            0.555209562169312
+          ],
+          "parser_ref": "page-1-cell-40"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96417084
+      },
+      {
+        "text": "区",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.0986615962962963,
+            0.5333059259259257,
+            0.12066046574074074,
+            0.5609235542328042
+          ],
+          "parser_ref": "page-1-cell-41"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9293754599999999
+      },
+      {
+        "text": ":",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.11999383333333333,
+            0.5333059259259257,
+            0.13065995185185184,
+            0.5609235542328042
+          ],
+          "parser_ref": "page-1-cell-42"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92622147
+      },
+      {
+        "text": "Asia/Shanghai",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1353263787037037,
+            0.5361629219576718,
+            0.33398283611111107,
+            0.5585427242063491
+          ],
+          "parser_ref": "page-1-cell-43"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.91721207
+      },
+      {
+        "text": "UTC+08:00",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3459822194444444,
+            0.5375914199735449,
+            0.49197471666666664,
+            0.5537810641534391
+          ],
+          "parser_ref": "page-1-cell-44"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.90899788
+      },
+      {
+        "text": "币",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06266344629629629,
+            0.6104448187830687,
+            0.125993525,
+            0.6299676249999999
+          ],
+          "parser_ref": "page-1-cell-45"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9160144
+      },
+      {
+        "text": "种",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.10399465555555555,
+            0.6080639887566137,
+            0.12532689259259258,
+            0.6347292850529099
+          ],
+          "parser_ref": "page-1-cell-46"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92477074
+      },
+      {
+        "text": ":",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.12532689259259258,
+            0.6080639887566137,
+            0.13732627592592592,
+            0.6347292850529099
+          ],
+          "parser_ref": "page-1-cell-47"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93126198
+      },
+      {
+        "text": "CNY",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1366596435185185,
+            0.6128256488095237,
+            0.1919901333333333,
+            0.6285391269841268
+          ],
+          "parser_ref": "page-1-cell-48"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9274202699999999
+      },
+      {
+        "text": "金额",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06133018148148148,
+            0.6856790476190475,
+            0.125993525,
+            0.7052018538359788
+          ],
+          "parser_ref": "page-1-cell-49"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9314820899999999
+      },
+      {
+        "text": ":",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1279934222222222,
+            0.6832982175925925,
+            0.13799290833333333,
+            0.7090111818783067
+          ],
+          "parser_ref": "page-1-cell-50"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92000099
+      },
+      {
+        "text": "188.80",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.13799290833333333,
+            0.6875837116402115,
+            0.2259883861111111,
+            0.7037733558201057
+          ],
+          "parser_ref": "page-1-cell-51"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.90672737
+      },
+      {
+        "text": "自",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.0633300787037037,
+            0.7837692447089945,
+            0.07732935925925925,
+            0.7966257268518516
+          ],
+          "parser_ref": "page-1-cell-52"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.81412308
+      },
+      {
+        "text": "有",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.08932874259259257,
+            0.7837692447089945,
+            0.0993282287037037,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-53"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93238419
+      },
+      {
+        "text": "合成",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.10466128796296296,
+            0.7837692447089945,
+            0.14732576203703704,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-54"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96248779
+      },
+      {
+        "text": "行程",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.15065892407407405,
+            0.7842454107142856,
+            0.18732370648148147,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-55"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92687378
+      },
+      {
+        "text": "。",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.19065686851851849,
+            0.7813884146825395,
+            0.20665604629629628,
+            0.8032920509259258
+          ],
+          "parser_ref": "page-1-cell-56"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93272774
+      },
+      {
+        "text": "不",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.20598941388888886,
+            0.7847215767195767,
+            0.2186554296296296,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-57"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93184822
+      },
+      {
+        "text": "是",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.22932154814814815,
+            0.7842454107142856,
+            0.23865440185185183,
+            0.7966257268518516
+          ],
+          "parser_ref": "page-1-cell-58"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96807671
+      },
+      {
+        "text": "车",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.24798725555555554,
+            0.7837692447089945,
+            0.25865337407407407,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-59"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93202286
+      },
+      {
+        "text": "票",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2693194925925925,
+            0.7837692447089945,
+            0.29065172962962965,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-60"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9089444
+      },
+      {
+        "text": "或",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3006512157407407,
+            0.7842454107142856,
+            0.309317437037037,
+            0.7966257268518516
+          ],
+          "parser_ref": "page-1-cell-61"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96892006
+      },
+      {
+        "text": "预订",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3113173342592592,
+            0.7837692447089945,
+            0.3459822194444444,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-62"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93261612
+      },
+      {
+        "text": "，",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3459822194444444,
+            0.7813884146825395,
+            0.36598119166666665,
+            0.8032920509259258
+          ],
+          "parser_ref": "page-1-cell-63"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9247374
+      },
+      {
+        "text": "不",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3653145592592592,
+            0.7847215767195767,
+            0.37864720740740737,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-64"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92949432
+      },
+      {
+        "text": "包含",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.38598016388888884,
+            0.7832930787037036,
+            0.4306445351851852,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-65"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9653697200000001
+      },
+      {
+        "text": "真实",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4419772861111111,
+            0.7837692447089945,
+            0.46864258240740736,
+            0.7966257268518516
+          ],
+          "parser_ref": "page-1-cell-66"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9687970699999999
+      },
+      {
+        "text": "旅客",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.47064247962962963,
+            0.7837692447089945,
+            0.5059739972222221,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-67"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96877815
+      },
+      {
+        "text": "信息",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5066406296296296,
+            0.7832930787037036,
+            0.538638985185185,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-68"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9325355500000001
+      },
+      {
+        "text": "。",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5406388824074073,
+            0.7918640667989417,
+            0.5473052064814815,
+            0.7966257268518516
+          ],
+          "parser_ref": "page-1-cell-69"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92820473
+      },
+      {
+        "text": "For",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.9485226825396823,
+            0.08799547777777778,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-70"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96994553
+      },
+      {
+        "text": "parser",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.09399516944444444,
+            0.9504273465608464,
+            0.1459924972222222,
+            0.9604268326719575
+          ],
+          "parser_ref": "page-1-cell-71"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9686290700000001
+      },
+      {
+        "text": "evaluation",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.15132555648148147,
+            0.9475703505291004,
+            0.2379877694444444,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-72"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96591248
+      },
+      {
+        "text": "only.",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.24398746111111108,
+            0.9475703505291004,
+            0.2819855083333333,
+            0.9609029986772485
+          ],
+          "parser_ref": "page-1-cell-73"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9670764900000001
+      },
+      {
+        "text": "No",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2886518324074074,
+            0.9485226825396823,
+            0.3099840694444444,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-74"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9691298700000001
+      },
+      {
+        "text": "purchase,",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.31665039351851854,
+            0.9480465165343913,
+            0.3973129148148148,
+            0.9609029986772485
+          ],
+          "parser_ref": "page-1-cell-75"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96093307
+      },
+      {
+        "text": "booking",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.40397923888888887,
+            0.9480465165343913,
+            0.47064247962962963,
+            0.9609029986772485
+          ],
+          "parser_ref": "page-1-cell-76"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9681272900000001
+      },
+      {
+        "text": "or",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.47730880370370365,
+            0.9504273465608464,
+            0.49397461388888886,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-77"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96932098
+      },
+      {
+        "text": "Trip",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4993076731481481,
+            0.9480465165343913,
+            0.5313060287037037,
+            0.9609029986772485
+          ],
+          "parser_ref": "page-1-cell-78"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96697449
+      },
+      {
+        "text": "is",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5379723527777778,
+            0.9480465165343913,
+            0.5486384712962962,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-79"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96806068
+      },
+      {
+        "text": "confirmed.",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5539715305555555,
+            0.9475703505291004,
+            0.6419670083333333,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-80"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9651374800000001
+      }
+    ],
+    "pipeline_options": {
+      "document_timeout": 110.0,
+      "accelerator_options": {
+        "num_threads": 2,
+        "device": "cpu",
+        "cuda_use_flash_attention2": false
+      },
+      "enable_remote_services": false,
+      "allow_external_plugins": false,
+      "artifacts_path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets",
+      "do_picture_classification": false,
+      "picture_classification_options": {
+        "engine_options": {
+          "engine_type": "transformers",
+          "top_k": null
+        },
+        "model_spec": {
+          "name": "document_figure_classifier_v2",
+          "repo_id": "docling-project/DocumentFigureClassifier-v2.5",
+          "revision": "main",
+          "engine_overrides": {}
+        }
+      },
+      "do_picture_description": false,
+      "picture_description_options": {
+        "batch_size": 8,
+        "scale": 2.0,
+        "picture_area_threshold": 0.05,
+        "classification_allow": null,
+        "classification_deny": null,
+        "classification_min_confidence": 0.0
+      },
+      "do_chart_extraction": false,
+      "chart_extraction_options": {
+        "kind": "chart_extraction",
+        "model": "granite-vision-v4",
+        "chart2csv": true,
+        "chart2code": false,
+        "chart2summary": false
+      },
+      "images_scale": 2.0,
+      "generate_page_images": false,
+      "generate_picture_images": false,
+      "do_table_structure": false,
+      "do_ocr": true,
+      "do_code_enrichment": false,
+      "do_formula_enrichment": false,
+      "force_backend_text": false,
+      "table_structure_options": {},
+      "ocr_options": {
+        "mode": "full_page",
+        "lang": [
+          "eng",
+          "chi_sim"
+        ],
+        "scale": 3.0,
+        "force_full_page_ocr": true
+      },
+      "layout_options": {
+        "keep_empty_clusters": false,
+        "skip_cell_assignment": false,
+        "create_orphan_clusters": true
+      },
+      "code_formula_options": {
+        "engine_options": {
+          "engine_type": "auto_inline",
+          "prefer_vllm": false
+        },
+        "model_spec": {
+          "name": "CodeFormulaV2",
+          "default_repo_id": "docling-project/CodeFormulaV2",
+          "revision": "main",
+          "prompt": "",
+          "response_format": "plaintext",
+          "supported_engines": null,
+          "engine_overrides": {
+            "transformers": {
+              "repo_id": null,
+              "revision": null,
+              "torch_dtype": null,
+              "min_engine_version": null,
+              "extra_config": {
+                "transformers_model_type": "automodel-imagetexttotext",
+                "extra_generation_config": {
+                  "skip_special_tokens": false
+                },
+                "torch_dtype": "bfloat16"
+              }
+            }
+          },
+          "api_overrides": {},
+          "trust_remote_code": false,
+          "stop_strings": [
+            "</doctag>",
+            "<end_of_utterance>"
+          ],
+          "temperature": 0.0,
+          "max_new_tokens": 4096,
+          "extra_generation_config": {}
+        },
+        "scale": 2.0,
+        "max_size": null,
+        "extract_code": true,
+        "extract_formulas": true
+      },
+      "generate_table_images": false,
+      "generate_parsed_pages": true,
+      "heading_hierarchy_options": {
+        "enabled": false,
+        "use_bookmarks": true,
+        "use_numbering": true,
+        "use_style": true,
+        "use_font_style": true,
+        "style_size_tolerance": 0.05,
+        "numbering_schemes": null,
+        "max_level": 6,
+        "bookmark_match_threshold": 0.8
+      },
+      "ocr_batch_size": 4,
+      "layout_batch_size": 4,
+      "table_batch_size": 4,
+      "batch_polling_interval_seconds": 0.5,
+      "queue_max_size": 100,
+      "stage_shutdown_timeout_seconds": 15.0
+    }
+  },
+  "candidates": {
+    "schema_version": 1,
+    "kind": "material_correction_candidates",
+    "source_id": "synthetic-7da83183fb90da41",
+    "source_sha256": "7da83183fb90da41cc3919a613746d03f847cc1b33a8637c6e13b6c3907ba95d",
+    "incomplete": false,
+    "requires_user_review": true,
+    "confirmed": false,
+    "fields": [
+      {
+        "field": "service_id",
+        "value": "G88",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "G88",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.061996813888888884,
+                  0.15856327976190474,
+                  0.18799033888888889,
+                  0.18665707407407403
+                ],
+                "parser_ref": [
+                  "page-1-cell-13",
+                  "page-1-cell-14",
+                  "page-1-cell-15",
+                  "page-1-cell-16"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "origin",
+        "value": "上海虹桥",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "上海虹桥",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06266344629629629,
+                  0.23522600661375656,
+                  0.2839854055555555,
+                  0.2552249788359788
+                ],
+                "parser_ref": [
+                  "page-1-cell-17",
+                  "page-1-cell-18",
+                  "page-1-cell-19",
+                  "page-1-cell-20",
+                  "page-1-cell-21",
+                  "page-1-cell-22",
+                  "page-1-cell-23"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "destination",
+        "value": "杭州东",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "杭州东",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.061996813888888884,
+                  0.30807940542328033,
+                  0.2559868444444444,
+                  0.3376016977513227
+                ],
+                "parser_ref": [
+                  "page-1-cell-24",
+                  "page-1-cell-25",
+                  "page-1-cell-26",
+                  "page-1-cell-27",
+                  "page-1-cell-28",
+                  "page-1-cell-29"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "departure_local",
+        "value": "2026-11-04 08:08",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "2026-11-04 08:08",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06266344629629629,
+                  0.38378980026455023,
+                  0.3719808833333333,
+                  0.4114074285714285
+                ],
+                "parser_ref": [
+                  "page-1-cell-30",
+                  "page-1-cell-31",
+                  "page-1-cell-32",
+                  "page-1-cell-33",
+                  "page-1-cell-34"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "arrival_local",
+        "value": "2026-11-04 09:02",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "2026-11-04 09:02",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.061996813888888884,
+                  0.458547863095238,
+                  0.3719808833333333,
+                  0.4861654914021163
+                ],
+                "parser_ref": [
+                  "page-1-cell-35",
+                  "page-1-cell-36",
+                  "page-1-cell-37",
+                  "page-1-cell-38",
+                  "page-1-cell-39"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "timezone",
+        "value": "Asia/Shanghai UTC+08:00",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "Asia/Shanghai UTC+08:00",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06266344629629629,
+                  0.5333059259259257,
+                  0.49197471666666664,
+                  0.5609235542328042
+                ],
+                "parser_ref": [
+                  "page-1-cell-40",
+                  "page-1-cell-41",
+                  "page-1-cell-42",
+                  "page-1-cell-43",
+                  "page-1-cell-44"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "currency",
+        "value": "CNY",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "CNY",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06266344629629629,
+                  0.6080639887566137,
+                  0.1919901333333333,
+                  0.6347292850529099
+                ],
+                "parser_ref": [
+                  "page-1-cell-45",
+                  "page-1-cell-46",
+                  "page-1-cell-47",
+                  "page-1-cell-48"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "amount",
+        "value": "188.80",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "188.80",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06133018148148148,
+                  0.6832982175925925,
+                  0.2259883861111111,
+                  0.7090111818783067
+                ],
+                "parser_ref": [
+                  "page-1-cell-49",
+                  "page-1-cell-50",
+                  "page-1-cell-51"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      }
+    ]
+  }
+}

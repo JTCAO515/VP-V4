@@ -1,0 +1,611 @@
+[
+  {
+    "package": "docling-slim",
+    "version": "2.126.0",
+    "license": "MIT",
+    "project_urls": [
+      "homepage, https://github.com/docling-project/docling",
+      "repository, https://github.com/docling-project/docling",
+      "issues, https://github.com/docling-project/docling/issues",
+      "changelog, https://github.com/docling-project/docling/blob/main/CHANGELOG.md"
+    ],
+    "license_files": [
+      {
+        "file": "artifacts/VPJ-73/licenses/docling-slim/LICENSE",
+        "sha256": "edb765d1e3e60d0c7a7d5fba5f2bb2c3c29f7465cecb5c22cf1185c884954e4c"
+      }
+    ]
+  },
+  {
+    "package": "docling-core",
+    "version": "2.95.0",
+    "license": "MIT",
+    "project_urls": [
+      "homepage, https://github.com/docling-project",
+      "repository, https://github.com/docling-project/docling-core",
+      "issues, https://github.com/docling-project/docling-core/issues",
+      "changelog, https://github.com/docling-project/docling-core/blob/main/CHANGELOG.md"
+    ],
+    "license_files": [
+      {
+        "file": "artifacts/VPJ-73/licenses/docling-core/LICENSE",
+        "sha256": "d8cf7ee84a10d6cc45ced4ce917180b7050326f9d66801dd07d058595c06908c"
+      }
+    ]
+  },
+  {
+    "package": "docling-ibm-models",
+    "version": "4.0.2",
+    "license": "MIT",
+    "project_urls": [
+      "homepage, https://github.com/docling-project/docling-ibm-models",
+      "repository, https://github.com/docling-project/docling-ibm-models",
+      "issues, https://github.com/docling-project/docling-ibm-models/issues",
+      "changelog, https://github.com/docling-project/docling-ibm-models/blob/main/CHANGELOG.md"
+    ],
+    "license_files": [
+      {
+        "file": "artifacts/VPJ-73/licenses/docling-ibm-models/LICENSE",
+        "sha256": "9816fb12b11c33c552f4e8621879d0da493be47c0f86be785b53a2cf7f7ae4c6"
+      }
+    ]
+  },
+  {
+    "package": "docling-parse",
+    "version": "7.18.0",
+    "license": "MIT",
+    "project_urls": [
+      "Homepage, https://github.com/docling-project/docling-parse",
+      "Repository, https://github.com/docling-project/docling-parse"
+    ],
+    "license_files": [
+      {
+        "file": "artifacts/VPJ-73/licenses/docling-parse/LICENSE",
+        "sha256": "002c2696d92b5c8cf956c11072baa58eaf9f6ade995c031ea635c6a1ee342ad1"
+      }
+    ]
+  },
+  {
+    "package": "pypdfium2",
+    "version": "5.13.0",
+    "license": "BSD-3-Clause, Apache-2.0, dependency licenses",
+    "project_urls": [
+      "Source, https://github.com/pypdfium2-team/pypdfium2",
+      "Tracker, https://github.com/pypdfium2-team/pypdfium2/issues",
+      "Documentation, https://pypdfium2.readthedocs.io",
+      "Changelog, https://pypdfium2.readthedocs.io/en/stable/changelog.html"
+    ],
+    "license_files": [
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/LICENSES/Apache-2.0.txt",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/LICENSES/BSD-3-Clause.txt",
+        "sha256": "a6d11f0694c0137e9b02924b9d33a159f6c72f220fa4655bb2e1ea3654377d39"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/LICENSES/CC-BY-4.0.txt",
+        "sha256": "419896aea50c15d6e40c5b4baf4bd346f78223b9a354c7357ad00262afdc08ec"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/abseil.txt",
+        "sha256": "c79a7fea0e3cac04cd43f20e7b648e5a0ff8fa5344e644b0ee09ca1162b62747"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/agg23.txt",
+        "sha256": "c110d3ea2ad77467ce0dcff7d3337e6c8be8049a5103f4b9bd5fd911a77972e5"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/fast_float.txt",
+        "sha256": "e562f3f974ced7e69dd1db77b820b36bcf8f30377f1aa105723fba449c53c4e6"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/freetype.txt",
+        "sha256": "f4b133e25df1f86ad3ffea453aa0e613f0474f34778dbbb3e437e7b2724937d8"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/icu.txt",
+        "sha256": "e55522d81edc687a341a4411e0776e54ca654e90147f354a90458aaced4116af"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/lcms.txt",
+        "sha256": "7312b68c5b25e9bf2b828706fb4e29588f22705112f411fd42e1f7d84c3d139a"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/libjpeg_turbo.ijg",
+        "sha256": "75815e3bf6484201a3c3d17a1bbf10f2e8e3237f84df10a2357ea896db2a81d6"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/libjpeg_turbo.md",
+        "sha256": "96f5b328adbb78eeaaec6980d73fd558cb1e4d62560ed615646bc3cf5e532430"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/libopenjpeg.txt",
+        "sha256": "c5ab0890a737c2dfa7ba675036554f6d17741d98629b0c2a145354d00617e6b2"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/libpng.txt",
+        "sha256": "bdb0a645ea18c60507d0368379b1ac5474b92255fcc2d115e07486a7672ba526"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/libtiff.txt",
+        "sha256": "92b72ba97e6c2749c2a94bc0ef646b47080217f1e772a482b33cf5a5f98a6506"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/llvm-libc.txt",
+        "sha256": "ebcd9bbf783a73d05c53ba4d586b8d5813dcdf3bbec50265860ccc885e606f47"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/pdfium-binaries.txt",
+        "sha256": "ba26c1263131696b86c10496b5066b918a20b7161822a80c274d0080105f6c93"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/pdfium.txt",
+        "sha256": "1fe9dea718fbd75cf149adaf4d8a22a4335604d964ddb76d1b45383dec8668c9"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/simdutf.txt",
+        "sha256": "fc8dbc04e03ad4efc08a647ffe7f995b811a95bc04c0e85a56d5277c6593fa5f"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/pypdfium2/data/darwin_arm64/BUILD_LICENSES/zlib.txt",
+        "sha256": "33fd641c9f3b0e0be64bc78fea9e94807674cdd70c48477599226cb8956565fe"
+      }
+    ]
+  },
+  {
+    "package": "torch",
+    "version": "2.14.0",
+    "license": "Apache-2.0 AND Apache-2.0 WITH LLVM-exception AND BSD-2-Clause AND BSD-3-Clause AND BSL-1.0 AND MIT",
+    "project_urls": [
+      "Homepage, https://pytorch.org",
+      "Repository, https://github.com/pytorch/pytorch",
+      "Documentation, https://pytorch.org/docs",
+      "Issue Tracker, https://github.com/pytorch/pytorch/issues",
+      "Forum, https://discuss.pytorch.org"
+    ],
+    "license_files": [
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/LICENSE",
+        "sha256": "bd018feef8825e88181c84eb7e3aa4eafb8f08a20d9fd6ef948569610c4a3e43"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/FP16/LICENSE",
+        "sha256": "17e4f539024be2749ee729d1e2f01d24cef12ece8c9bf18e91a4349be29c80bf"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/FXdiv/LICENSE",
+        "sha256": "7cac00006125b1486a27e4801ed66357236e984c540bd323945ab7b66b078ec3"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/NNPACK/LICENSE",
+        "sha256": "ab09e33621f513ebdd1ef685b324f39c1f6bee9221d15600bafd958322df1231"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/NVTX/LICENSE.txt",
+        "sha256": "abdfd8a6738b27cd1504e091f77b682dbae928339f040b8a6f59a548245991a0"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/NVTX/docs/LICENSE.txt",
+        "sha256": "abdfd8a6738b27cd1504e091f77b682dbae928339f040b8a6f59a548245991a0"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/NVTX/python/LICENSE.txt",
+        "sha256": "abdfd8a6738b27cd1504e091f77b682dbae928339f040b8a6f59a548245991a0"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/NVTX/rust/LICENSE",
+        "sha256": "e165ed77854f47fb208850d23d935a9f0ab8bb4527381466beeb16025e2f6e9e"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/VulkanMemoryAllocator/LICENSE.txt",
+        "sha256": "8d70e4cf2a9941f6454da71cd60e38484dd3e34810c824760d550e982af6d97a"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/XNNPACK/LICENSE",
+        "sha256": "63f519e15726f4c4f830bd958f694c84fecb4e0a4cacc527d2696bb71ef95ada"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/aiter/3rdparty/composable_kernel/LICENSE",
+        "sha256": "20f3b83dfda01bd18d285e0edbb9d044be6dde04cdf76a1ec18d9fc7127936bf"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/aiter/LICENSE",
+        "sha256": "0baca809927cad448401b252ce3bae12687c2987597ad7088cf3423f872d5bcd"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/benchmark/LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/composable_kernel/LICENSE",
+        "sha256": "20f3b83dfda01bd18d285e0edbb9d044be6dde04cdf76a1ec18d9fc7127936bf"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/cpp-httplib/LICENSE",
+        "sha256": "4b45cbe16d7b71b89ae6127e26e0d90a029198ca5e958ad8e3d0b8bbed364d8b"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/cpuinfo/LICENSE",
+        "sha256": "8e7e60636c3aa0cb03571a1a841ce5697f9551ff92b3c426c2561613d15ade70"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/cpuinfo/deps/clog/LICENSE",
+        "sha256": "68a14c3e79add023eecd83d611e73f05b8bf1d16852efeb7eb4033a96736da9e"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/cudnn_frontend/LICENSE.txt",
+        "sha256": "3fc4b473a2c08768a8066bf7e4a58a1185060f3ad674f2ca9e2011bca4adf2ce"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/cutlass/LICENSE.txt",
+        "sha256": "ad1513ca983da737a6843364ad19e8424a56d860736c2da773b8c5be527e1475"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/cutlass/python/LICENSE.txt",
+        "sha256": "00bf1806f664ac1afe4221f5f04b384fb6f1ca6eb33efcb6dccf599eb06d08b9"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/fbgemm/LICENSE",
+        "sha256": "12c2370ec32e78115dcd71ba22cdcb1297320fdc4ade81f798136d42357c58b8"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/fbgemm/external/composable_kernel/LICENSE",
+        "sha256": "20f3b83dfda01bd18d285e0edbb9d044be6dde04cdf76a1ec18d9fc7127936bf"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/fbgemm/external/cpuinfo/LICENSE",
+        "sha256": "8e7e60636c3aa0cb03571a1a841ce5697f9551ff92b3c426c2561613d15ade70"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/fbgemm/external/cpuinfo/deps/clog/LICENSE",
+        "sha256": "68a14c3e79add023eecd83d611e73f05b8bf1d16852efeb7eb4033a96736da9e"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/fbgemm/external/cutlass/LICENSE.txt",
+        "sha256": "80a7a18b73d41f64dd9ca881af35938f8de88b18c728703251f4c94d1299884d"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/fbgemm/external/cutlass/python/LICENSE.txt",
+        "sha256": "42fec630f410aa308f70a51a89fadcd19586fa620f9831a32bee528a9a10000e"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/fbgemm/external/googletest/LICENSE",
+        "sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/fbgemm/external/hipify_torch/LICENSE.txt",
+        "sha256": "ecf819d55b17c2f091b3ba0934d044368aa0680d8a81374860306aa2b91aa1eb"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/fbgemm/fbgemm_gpu/experimental/hstu/LICENSE",
+        "sha256": "8c9ccb96c065e706135b6cbad279b721da6156e51f3a5f27c6b3329af9416d73"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/fbgemm/fbgemm_gpu/src/quantize_ops/mx/LICENSE",
+        "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/fbgemm/fbgemm_gpu/test/quantize/mx/LICENSE",
+        "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/flash-attention/LICENSE",
+        "sha256": "8c9ccb96c065e706135b6cbad279b721da6156e51f3a5f27c6b3329af9416d73"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/flash-attention/csrc/composable_kernel/LICENSE",
+        "sha256": "20f3b83dfda01bd18d285e0edbb9d044be6dde04cdf76a1ec18d9fc7127936bf"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/flash-attention/csrc/cutlass/LICENSE.txt",
+        "sha256": "80a7a18b73d41f64dd9ca881af35938f8de88b18c728703251f4c94d1299884d"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/flash-attention/csrc/cutlass/python/LICENSE.txt",
+        "sha256": "42fec630f410aa308f70a51a89fadcd19586fa620f9831a32bee528a9a10000e"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/flash-attention/flash_attn/cute/LICENSE",
+        "sha256": "8c9ccb96c065e706135b6cbad279b721da6156e51f3a5f27c6b3329af9416d73"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/flash-attention/third_party/aiter/3rdparty/composable_kernel/LICENSE",
+        "sha256": "20f3b83dfda01bd18d285e0edbb9d044be6dde04cdf76a1ec18d9fc7127936bf"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/flash-attention/third_party/aiter/LICENSE",
+        "sha256": "0baca809927cad448401b252ce3bae12687c2987597ad7088cf3423f872d5bcd"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/flatbuffers/LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/flatbuffers/dart/LICENSE",
+        "sha256": "edd9b3459bee4c79b549a5ef66d06d12bd144ddb8d08e0b448fb421267f43dd5"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/flatbuffers/swift/LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/fmt/LICENSE",
+        "sha256": "a65fcc5a1095fc33cc37e4fff69366e49d7e92f613558a2b95ed1b70e33758b4"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/gemmlowp/gemmlowp/LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/gloo/LICENSE",
+        "sha256": "2afbc572cf7f60888159bc2ca48ba58f8adec06682ae5de820d61449d1eeea81"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/googletest/LICENSE",
+        "sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/ideep/LICENSE",
+        "sha256": "a26add03107a53a605a89711b9b7dbd4f5dd668ae193a912e01a879366a23b0e"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/ideep/mkl-dnn/LICENSE",
+        "sha256": "e9fc874fc09801b9acf3411ba72394098473704d832d713404b6c4861a086318"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/ideep/mkl-dnn/third_party/gtest/LICENSE",
+        "sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/ideep/mkl-dnn/third_party/opencl/LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/kineto/LICENSE",
+        "sha256": "6f3d59b9103e72e5c977eecf61b261c2e1546a9be2995847e3ee2d31021fd39b"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/kineto/libkineto/third_party/dynolog_headers/LICENSE",
+        "sha256": "52412d7bc7ce4157ea628bbaacb8829e0a9cb3c58f57f99176126bc8cf2bfc85"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/kineto/libkineto/third_party/fmt/LICENSE",
+        "sha256": "07580f2a3b35709ce703d523f447b242f6dfec7582a8c0df102c7fa2849375f8"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/kineto/libkineto/third_party/googletest/LICENSE",
+        "sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/llvm-openmp/LICENSE.txt",
+        "sha256": "68395143f21a9aa29b8232168c71892af5ec4f1ae2529571cd250a71c9e37a03"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/mimalloc/LICENSE",
+        "sha256": "82ade5d7d9b029044b5fbbc326207fc47c2d44ee4dd71e8a559c36d728217de9"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/miniz-3.0.2/LICENSE",
+        "sha256": "0115478d567121238cf6cc1c0c361926cf07a49d9e4c9e66da97fac6a01646b3"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/mslk/LICENSE",
+        "sha256": "44519cbe722d7bf092cd7e0fa26558b9e3905b88fca4c0c278e2733a9f6b4cf9"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/mslk/external/composable_kernel/LICENSE",
+        "sha256": "20f3b83dfda01bd18d285e0edbb9d044be6dde04cdf76a1ec18d9fc7127936bf"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/mslk/external/cutlass/LICENSE.txt",
+        "sha256": "80a7a18b73d41f64dd9ca881af35938f8de88b18c728703251f4c94d1299884d"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/mslk/external/cutlass/python/LICENSE.txt",
+        "sha256": "42fec630f410aa308f70a51a89fadcd19586fa620f9831a32bee528a9a10000e"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/mslk/external/googletest/LICENSE",
+        "sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/mslk/external/hipify_torch/LICENSE.txt",
+        "sha256": "ecf819d55b17c2f091b3ba0934d044368aa0680d8a81374860306aa2b91aa1eb"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/mslk/mslk/attention/flash_attn/LICENSE",
+        "sha256": "8c9ccb96c065e706135b6cbad279b721da6156e51f3a5f27c6b3329af9416d73"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/nccl/LICENSE.txt",
+        "sha256": "c1f53beabe4dbf05bd87c00f7ca6084c0cb541c3f7bf8edab7913f266018b7be"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/nccl/bindings/nccl4py/LICENSE.txt",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/nccl/contrib/nccl_checkpoint/python/LICENSE.txt",
+        "sha256": "89374f8cc48236dccfcd0cea43974f7ee4f4bf77c8649da71c7c4cfef515f0d7"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/nccl/contrib/nccl_ep/LICENSE.txt",
+        "sha256": "89374f8cc48236dccfcd0cea43974f7ee4f4bf77c8649da71c7c4cfef515f0d7"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/nccl/contrib/nccl_ubx/LICENSE.txt",
+        "sha256": "89374f8cc48236dccfcd0cea43974f7ee4f4bf77c8649da71c7c4cfef515f0d7"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/onnx/LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/onnx/third_party/pybind11/LICENSE",
+        "sha256": "83965b843b98f670d3a85bd041ed4b372c8ec50d7b4a5995a83ac697ba675dcb"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/perfetto/LICENSE",
+        "sha256": "9a682a56cffc9524dfa9b0b1c0dca9cb81a19e96d5bd0793aaf02c08a95ee7ca"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/protobuf/LICENSE",
+        "sha256": "6e5e117324afd944dcf67f36cf329843bc1a92229a8cd9bb573d7a83130fea7d"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/protobuf/third_party/benchmark/LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/protobuf/third_party/googletest/LICENSE",
+        "sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/protobuf/third_party/googletest/googlemock/LICENSE",
+        "sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/protobuf/third_party/googletest/googlemock/scripts/generator/LICENSE",
+        "sha256": "5e0df8c845c742e76f2f64d2d9ce1b7e74a2422fddbc577ae6a56319083de0bf"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/protobuf/third_party/googletest/googletest/LICENSE",
+        "sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/protobuf/third_party/utf8_range/LICENSE",
+        "sha256": "5a629d2b868081d8af08bbce5d038116f3a0e2e0d4ce9adf4d53f14e76b6b2e0"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/psimd/LICENSE",
+        "sha256": "984ce1e0b8ee89d234e28b960381f240e03a07a8031f35012f9c3256f56964e2"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/pthreadpool/LICENSE",
+        "sha256": "57814a606b4d0fb087d9a534919084b6c11b58a4174cb5a4aef200187780dc3a"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/pybind11/LICENSE",
+        "sha256": "83965b843b98f670d3a85bd041ed4b372c8ec50d7b4a5995a83ac697ba675dcb"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/python-peachpy/LICENSE.rst",
+        "sha256": "e6d6fdbfc09c9cc1bfc55946ca9690dd9276deeaed2b72ac7fc5c79bde80ff32"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/sleef/LICENSE.txt",
+        "sha256": "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/tensorpipe/LICENSE.txt",
+        "sha256": "f4dcef0d1f0520b414d5bfaeed8df02f188e4ec05c0a17bf1c18f25f6cc66245"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/tensorpipe/third_party/googletest/LICENSE",
+        "sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/tensorpipe/third_party/googletest/googlemock/LICENSE",
+        "sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/tensorpipe/third_party/googletest/googlemock/scripts/generator/LICENSE",
+        "sha256": "5e0df8c845c742e76f2f64d2d9ce1b7e74a2422fddbc577ae6a56319083de0bf"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/tensorpipe/third_party/googletest/googletest/LICENSE",
+        "sha256": "9702de7e4117a8e2b20dafab11ffda58c198aede066406496bef670d40a22138"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/tensorpipe/third_party/libnop/LICENSE",
+        "sha256": "876e8f7432440974ee5543a2aa1344370ef1f2f7949ad98a1f3899cf722d5631"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/tensorpipe/third_party/libuv/LICENSE",
+        "sha256": "16de0c32b265cb7d46a6d3bd614f259dd4d693a5e26b3407b04aae8d73041f0c"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/third_party/tensorpipe/third_party/pybind11/LICENSE",
+        "sha256": "9a37ea54aa3cf12c7f3292799f20822ffd4b9b7142b36a7a9997b28c39264dc9"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/torch/_vendor/packaging/LICENSE",
+        "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+      },
+      {
+        "file": "artifacts/VPJ-73/licenses/torch/torch/_vendor/quack/LICENSE",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+      }
+    ]
+  },
+  {
+    "package": "torchvision",
+    "version": "0.29.0",
+    "license": "BSD",
+    "project_urls": null,
+    "license_files": [
+      {
+        "file": "artifacts/VPJ-73/licenses/torchvision/torchvision-0.29.0.dist-info/LICENSE",
+        "sha256": "6502f676851cfe25f8af75531dfb32375b7325b73c37e7b43741fa422893e71d"
+      }
+    ]
+  },
+  {
+    "package": "transformers",
+    "version": "5.17.0",
+    "license": "Apache 2.0 License",
+    "project_urls": null,
+    "license_files": [
+      {
+        "file": "artifacts/VPJ-73/licenses/transformers/LICENSE",
+        "sha256": "77fd4710def9ec3c0f6225800e0235f15a425abd4a8b03559127fcd782612049"
+      }
+    ]
+  },
+  {
+    "package": "reportlab",
+    "version": "5.0.1",
+    "license": "BSD license (see license.txt for details), Copyright (c) 2000-2025, ReportLab Inc.",
+    "project_urls": null,
+    "license_files": [
+      {
+        "file": "artifacts/VPJ-73/licenses/reportlab/LICENSE",
+        "sha256": "ef831761646313921375fc2cb888e8eeaf7da213d0b92852c10c42f3a0b4d138"
+      }
+    ]
+  },
+  {
+    "package": "Pillow",
+    "version": "12.3.0",
+    "license": "MIT-CMU",
+    "project_urls": [
+      "Release notes, https://pillow.readthedocs.io/en/stable/releasenotes/index.html",
+      "Changelog, https://github.com/python-pillow/Pillow/releases",
+      "Documentation, https://pillow.readthedocs.io",
+      "Funding, https://tidelift.com/subscription/pkg/pypi-pillow?utm_source=pypi-pillow&utm_medium=pypi",
+      "Homepage, https://python-pillow.github.io",
+      "Mastodon, https://fosstodon.org/@pillow",
+      "Source, https://github.com/python-pillow/Pillow"
+    ],
+    "license_files": [
+      {
+        "file": "artifacts/VPJ-73/licenses/Pillow/LICENSE",
+        "sha256": "dda12a98c1979cf3d94df1cff45d27a4cb3f04a60c76f76902ac54cac03ec0ce"
+      }
+    ]
+  },
+  {
+    "package": "psutil",
+    "version": "7.2.2",
+    "license": "BSD-3-Clause",
+    "project_urls": null,
+    "license_files": [
+      {
+        "file": "artifacts/VPJ-73/licenses/psutil/psutil-7.2.2.dist-info/LICENSE",
+        "sha256": "b89c063b3786e28e0c0a38f1931db61fed35e69dd2a2966fbecffee0f46c8d10"
+      }
+    ]
+  }
+]

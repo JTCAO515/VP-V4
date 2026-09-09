@@ -1,0 +1,1432 @@
+{
+  "adapter_revision": 2,
+  "engine": "docling",
+  "conversion_status": "success",
+  "conversion_seconds": 12.97385291700266,
+  "segments": [
+    {
+      "text": "SYNTHETIC TRAVEL MATERIAL",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.060663549074074063,
+          0.053806758597883586,
+          0.618634874074074,
+          0.07856739087301585
+        ],
+        "parser_ref": [
+          "page-1-cell-0",
+          "page-1-cell-1",
+          "page-1-cell-2"
+        ]
+      }
+    },
+    {
+      "text": "ocratiess / NOTA TICRET / OTR",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.05733038703703704,
+          0.09809019708994708,
+          0.47530890648148144,
+          0.1204699993386243
+        ],
+        "parser_ref": [
+          "page-1-cell-3",
+          "page-1-cell-4",
+          "page-1-cell-5",
+          "page-1-cell-6",
+          "page-1-cell-7",
+          "page-1-cell-8"
+        ]
+      }
+    },
+    {
+      "text": "Serna Come",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.05733038703703704,
+          0.1557062837301587,
+          0.17065789629629627,
+          0.1733244259259259
+        ],
+        "parser_ref": [
+          "page-1-cell-9",
+          "page-1-cell-10"
+        ]
+      }
+    },
+    {
+      "text": "Ong. Shanghe Monge",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.05733038703703704,
+          0.22617885251322747,
+          0.28065224351851853,
+          0.2523679828042327
+        ],
+        "parser_ref": [
+          "page-1-cell-11",
+          "page-1-cell-12",
+          "page-1-cell-13"
+        ]
+      }
+    },
+    {
+      "text": "Departure 200% 11 0) Soe",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.059996916666666664,
+          0.38045663822751313,
+          0.28131887592592586,
+          0.4004556104497353
+        ],
+        "parser_ref": [
+          "page-1-cell-14",
+          "page-1-cell-15",
+          "page-1-cell-16",
+          "page-1-cell-17",
+          "page-1-cell-18"
+        ]
+      }
+    },
+    {
+      "text": "Area 10S 11-10 Ora)",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.05933028425925926,
+          0.455214701058201,
+          0.24732062314814815,
+          0.4752136732804232
+        ],
+        "parser_ref": [
+          "page-1-cell-19",
+          "page-1-cell-20",
+          "page-1-cell-21",
+          "page-1-cell-22"
+        ]
+      }
+    },
+    {
+      "text": "Time Aade/thanghn sune UTC eaban",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.057997019444444436,
+          0.5299727638888888,
+          0.3606481324074074,
+          0.549019404100529
+        ],
+        "parser_ref": [
+          "page-1-cell-23",
+          "page-1-cell-25",
+          "page-1-cell-24",
+          "page-1-cell-26",
+          "page-1-cell-27"
+        ]
+      }
+    },
+    {
+      "text": "IWherteenalty degraded pyntheta OCR sivas cane Review every",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.059996916666666664,
+          0.7761505886243385,
+          0.654633024074074,
+          0.8028158849206347
+        ],
+        "parser_ref": [
+          "page-1-cell-28",
+          "page-1-cell-29",
+          "page-1-cell-30",
+          "page-1-cell-31",
+          "page-1-cell-32",
+          "page-1-cell-33",
+          "page-1-cell-34",
+          "page-1-cell-35"
+        ]
+      }
+    },
+    {
+      "text": "mar acter,",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.05733038703703704,
+          0.7980542248677247,
+          0.15265882129629627,
+          0.82424335515873
+        ],
+        "parser_ref": [
+          "page-1-cell-36",
+          "page-1-cell-37"
+        ]
+      }
+    },
+    {
+      "text": "Fut Parser eeahseteit ents ts puri Pate jasonag or Tiisnfiirrime",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.059996916666666664,
+          0.9447133544973544,
+          0.6406337435185184,
+          0.9632838287037035
+        ],
+        "parser_ref": [
+          "page-1-cell-38",
+          "page-1-cell-39",
+          "page-1-cell-40",
+          "page-1-cell-41",
+          "page-1-cell-42",
+          "page-1-cell-43",
+          "page-1-cell-44",
+          "page-1-cell-45",
+          "page-1-cell-46",
+          "page-1-cell-47"
+        ]
+      }
+    }
+  ],
+  "document": {
+    "docling_document": {
+      "schema_name": "DoclingDocument",
+      "version": "1.10.0",
+      "name": "ocr-stress",
+      "origin": {
+        "mimetype": "application/pdf",
+        "binary_hash": 6459450542226021996,
+        "filename": "ocr-stress.png"
+      },
+      "furniture": {
+        "self_ref": "#/furniture",
+        "children": [],
+        "content_layer": "furniture",
+        "name": "_root_",
+        "label": "unspecified"
+      },
+      "body": {
+        "self_ref": "#/body",
+        "children": [
+          {
+            "$ref": "#/texts/0"
+          },
+          {
+            "$ref": "#/texts/1"
+          },
+          {
+            "$ref": "#/texts/2"
+          },
+          {
+            "$ref": "#/texts/3"
+          },
+          {
+            "$ref": "#/texts/4"
+          },
+          {
+            "$ref": "#/texts/5"
+          },
+          {
+            "$ref": "#/texts/6"
+          },
+          {
+            "$ref": "#/texts/7"
+          },
+          {
+            "$ref": "#/texts/8"
+          }
+        ],
+        "content_layer": "body",
+        "name": "_root_",
+        "label": "unspecified"
+      },
+      "groups": [],
+      "texts": [
+        {
+          "self_ref": "#/texts/0",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "section_header",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.333333333333332,
+                "t": 662.3693074042233,
+                "r": 309.3333333333333,
+                "b": 645.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                25
+              ]
+            }
+          ],
+          "orig": "SYNTHETIC TRAVEL MATERIAL",
+          "text": "SYNTHETIC TRAVEL MATERIAL",
+          "level": 1
+        },
+        {
+          "self_ref": "#/texts/1",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 28.666666666666668,
+                "t": 631.3693074042233,
+                "r": 237.66666666666666,
+                "b": 615.7026407375565,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                29
+              ]
+            }
+          ],
+          "orig": "ocratiess / NOTA TICRET / OTR",
+          "text": "ocratiess / NOTA TICRET / OTR"
+        },
+        {
+          "self_ref": "#/texts/2",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 28.666666666666668,
+                "t": 591.0359740708899,
+                "r": 85.33333333333333,
+                "b": 578.7026407375565,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                10
+              ]
+            }
+          ],
+          "orig": "Serna Come",
+          "text": "Serna Come"
+        },
+        {
+          "self_ref": "#/texts/3",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 28.666666666666668,
+                "t": 541.7026407375565,
+                "r": 140.33333333333334,
+                "b": 523.3693074042233,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                18
+              ]
+            }
+          ],
+          "orig": "Ong. Shanghe Monge",
+          "text": "Ong. Shanghe Monge"
+        },
+        {
+          "self_ref": "#/texts/4",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.0,
+                "t": 433.7026407375566,
+                "r": 140.66666666666666,
+                "b": 419.7026407375566,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                24
+              ]
+            }
+          ],
+          "orig": "Departure 200% 11 0) Soe",
+          "text": "Departure 200% 11 0) Soe"
+        },
+        {
+          "self_ref": "#/texts/5",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 29.666666666666668,
+                "t": 381.3693074042232,
+                "r": 123.66666666666667,
+                "b": 367.3693074042232,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                19
+              ]
+            }
+          ],
+          "orig": "Area 10S 11-10 Ora)",
+          "text": "Area 10S 11-10 Ora)"
+        },
+        {
+          "self_ref": "#/texts/6",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 29.0,
+                "t": 329.0359740708899,
+                "r": 180.33333333333334,
+                "b": 315.7026407375566,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                32
+              ]
+            }
+          ],
+          "orig": "Time sune Aade/thanghn UTC eaban",
+          "text": "Time sune Aade/thanghn UTC eaban"
+        },
+        {
+          "self_ref": "#/texts/7",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 28.666666666666668,
+                "t": 156.70264073755652,
+                "r": 327.3333333333333,
+                "b": 123.03597407088989,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                70
+              ]
+            }
+          ],
+          "orig": "IWherteenalty degraded pyntheta OCR sivas cane Review every mar acter,",
+          "text": "IWherteenalty degraded pyntheta OCR sivas cane Review every mar acter,"
+        },
+        {
+          "self_ref": "#/texts/8",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.0,
+                "t": 38.70264073755652,
+                "r": 320.3333333333333,
+                "b": 25.70264073755652,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                64
+              ]
+            }
+          ],
+          "orig": "Fut Parser eeahseteit ents ts puri Pate jasonag or Tiisnfiirrime",
+          "text": "Fut Parser eeahseteit ents ts puri Pate jasonag or Tiisnfiirrime"
+        }
+      ],
+      "pictures": [],
+      "tables": [],
+      "key_value_items": [],
+      "form_items": [],
+      "pages": {
+        "1": {
+          "size": {
+            "width": 500.0256957649213,
+            "height": 700.0359740708899
+          },
+          "page_no": 1
+        }
+      }
+    },
+    "page_cells": [
+      {
+        "text": "SYNTHETIC",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.060663549074074063,
+            0.053806758597883586,
+            0.26998612499999997,
+            0.07856739087301585
+          ],
+          "parser_ref": "page-1-cell-0"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.95916573
+      },
+      {
+        "text": "TRAVEL",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.27931897870370365,
+            0.05428292460317459,
+            0.4206450490740741,
+            0.07809122486772485
+          ],
+          "parser_ref": "page-1-cell-1"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96100166
+      },
+      {
+        "text": "MATERIAL",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.43197779999999997,
+            0.053806758597883586,
+            0.618634874074074,
+            0.07809122486772485
+          ],
+          "parser_ref": "page-1-cell-2"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.95815659
+      },
+      {
+        "text": "ocratiess",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.05733038703703704,
+            0.09809019708994708,
+            0.16199167499999997,
+            0.1204699993386243
+          ],
+          "parser_ref": "page-1-cell-3"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.08174543
+      },
+      {
+        "text": "/",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1719911611111111,
+            0.10380418915343914,
+            0.1739910583333333,
+            0.11427984126984125
+          ],
+          "parser_ref": "page-1-cell-4"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.61405891
+      },
+      {
+        "text": "NOTA",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1899902361111111,
+            0.09809019708994708,
+            0.2433208287037037,
+            0.1204699993386243
+          ],
+          "parser_ref": "page-1-cell-5"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.41375304999999996
+      },
+      {
+        "text": "TICRET",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.24998715277777775,
+            0.09809019708994708,
+            0.32131682037037035,
+            0.1204699993386243
+          ],
+          "parser_ref": "page-1-cell-6"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.32380291
+      },
+      {
+        "text": "/",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3313163064814814,
+            0.10047102711640209,
+            0.3373159981481481,
+            0.11475600727513224
+          ],
+          "parser_ref": "page-1-cell-7"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.903815
+      },
+      {
+        "text": "OTR",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3913132231481481,
+            0.09809019708994708,
+            0.47530890648148144,
+            0.1204699993386243
+          ],
+          "parser_ref": "page-1-cell-8"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.15055037000000002
+      },
+      {
+        "text": "Serna",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.05733038703703704,
+            0.1557062837301587,
+            0.11932720092592591,
+            0.1733244259259259
+          ],
+          "parser_ref": "page-1-cell-9"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.0
+      },
+      {
+        "text": "Come",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.13132658425925925,
+            0.1557062837301587,
+            0.17065789629629627,
+            0.1733244259259259
+          ],
+          "parser_ref": "page-1-cell-10"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.46956745
+      },
+      {
+        "text": "Ong.",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.05733038703703704,
+            0.22617885251322747,
+            0.11532740648148147,
+            0.2523679828042327
+          ],
+          "parser_ref": "page-1-cell-11"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.13002443
+      },
+      {
+        "text": "Shanghe",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.12399362777777777,
+            0.22617885251322747,
+            0.1919901333333333,
+            0.2523679828042327
+          ],
+          "parser_ref": "page-1-cell-12"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.28080631
+      },
+      {
+        "text": "Monge",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.20398951666666665,
+            0.22617885251322747,
+            0.28065224351851853,
+            0.2523679828042327
+          ],
+          "parser_ref": "page-1-cell-13"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.27387947
+      },
+      {
+        "text": "Departure",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.059996916666666664,
+            0.3823613022486772,
+            0.2799856111111111,
+            0.39664628240740735
+          ],
+          "parser_ref": "page-1-cell-14"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.63153233
+      },
+      {
+        "text": "200%",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.15265882129629627,
+            0.38045663822751313,
+            0.18599044166666664,
+            0.4004556104497353
+          ],
+          "parser_ref": "page-1-cell-15"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.51482719
+      },
+      {
+        "text": "11",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.19532329537037035,
+            0.38045663822751313,
+            0.20998920833333332,
+            0.4004556104497353
+          ],
+          "parser_ref": "page-1-cell-16"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.71665756
+      },
+      {
+        "text": "0)",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2179887972222222,
+            0.38045663822751313,
+            0.23465460740740737,
+            0.4004556104497353
+          ],
+          "parser_ref": "page-1-cell-17"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.28332787
+      },
+      {
+        "text": "Soe",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.24398746111111108,
+            0.38045663822751313,
+            0.28131887592592586,
+            0.4004556104497353
+          ],
+          "parser_ref": "page-1-cell-18"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.17395077
+      },
+      {
+        "text": "Area",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.05933028425925926,
+            0.45759553108465595,
+            0.20265625185185182,
+            0.46949968121693114
+          ],
+          "parser_ref": "page-1-cell-19"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.04882851
+      },
+      {
+        "text": "10S",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1266601574074074,
+            0.455214701058201,
+            0.15265882129629627,
+            0.4752136732804232
+          ],
+          "parser_ref": "page-1-cell-20"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.54697651
+      },
+      {
+        "text": "11-10",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.16399157222222221,
+            0.45759553108465595,
+            0.20132298703703702,
+            0.46949968121693114
+          ],
+          "parser_ref": "page-1-cell-21"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.7604471599999999
+      },
+      {
+        "text": "Ora)",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2073226787037037,
+            0.457119365079365,
+            0.24732062314814815,
+            0.46997584722222213
+          ],
+          "parser_ref": "page-1-cell-22"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.44061317
+      },
+      {
+        "text": "Time",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.057997019444444436,
+            0.5299727638888888,
+            0.10066149351851851,
+            0.549019404100529
+          ],
+          "parser_ref": "page-1-cell-23"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.5549203500000001
+      },
+      {
+        "text": "sune",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1086610824074074,
+            0.5299727638888888,
+            0.14732576203703704,
+            0.549019404100529
+          ],
+          "parser_ref": "page-1-cell-24"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.34782241999999997
+      },
+      {
+        "text": "Aade/thanghn",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.10532792037037035,
+            0.5318774279100528,
+            0.35931486759259257,
+            0.547114740079365
+          ],
+          "parser_ref": "page-1-cell-25"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.0
+      },
+      {
+        "text": "UTC",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.273319287037037,
+            0.5299727638888888,
+            0.30531764259259253,
+            0.549019404100529
+          ],
+          "parser_ref": "page-1-cell-26"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.51394028
+      },
+      {
+        "text": "eaban",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3113173342592592,
+            0.5299727638888888,
+            0.3606481324074074,
+            0.549019404100529
+          ],
+          "parser_ref": "page-1-cell-27"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.0
+      },
+      {
+        "text": "IWherteenalty",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.059996916666666664,
+            0.7842454107142856,
+            0.5246397046296295,
+            0.7999588888888888
+          ],
+          "parser_ref": "page-1-cell-28"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.27427397
+      },
+      {
+        "text": "degraded",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.19065686851851849,
+            0.7761505886243385,
+            0.2753191842592592,
+            0.8028158849206347
+          ],
+          "parser_ref": "page-1-cell-29"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.12122116
+      },
+      {
+        "text": "pyntheta",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2839854055555555,
+            0.7761505886243385,
+            0.3653145592592592,
+            0.8028158849206347
+          ],
+          "parser_ref": "page-1-cell-30"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.0
+      },
+      {
+        "text": "OCR",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.37731394259259254,
+            0.7761505886243385,
+            0.40931229814814807,
+            0.8028158849206347
+          ],
+          "parser_ref": "page-1-cell-31"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.3789035
+      },
+      {
+        "text": "sivas",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4213116814814814,
+            0.7761505886243385,
+            0.47464227407407406,
+            0.8028158849206347
+          ],
+          "parser_ref": "page-1-cell-32"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.14537468
+      },
+      {
+        "text": "cane",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4833084953703703,
+            0.7761505886243385,
+            0.5213065425925926,
+            0.8028158849206347
+          ],
+          "parser_ref": "page-1-cell-33"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.57744865
+      },
+      {
+        "text": "Review",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.533305925925926,
+            0.7761505886243385,
+            0.5926362101851851,
+            0.8028158849206347
+          ],
+          "parser_ref": "page-1-cell-34"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.6719549600000001
+      },
+      {
+        "text": "every",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.6046355935185185,
+            0.7761505886243385,
+            0.654633024074074,
+            0.8028158849206347
+          ],
+          "parser_ref": "page-1-cell-35"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.90920357
+      },
+      {
+        "text": "mar",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.05733038703703704,
+            0.7980542248677247,
+            0.10066149351851851,
+            0.82424335515873
+          ],
+          "parser_ref": "page-1-cell-36"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.0
+      },
+      {
+        "text": "acter,",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.10266139074074074,
+            0.7980542248677247,
+            0.15265882129629627,
+            0.82424335515873
+          ],
+          "parser_ref": "page-1-cell-37"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.0
+      },
+      {
+        "text": "Fut",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.059996916666666664,
+            0.9447133544973544,
+            0.08799547777777778,
+            0.9632838287037035
+          ],
+          "parser_ref": "page-1-cell-38"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.59339195
+      },
+      {
+        "text": "Parser",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.09599506666666666,
+            0.9447133544973544,
+            0.1439926,
+            0.9632838287037035
+          ],
+          "parser_ref": "page-1-cell-39"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.28368362
+      },
+      {
+        "text": "eeahseteit",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.14999229166666667,
+            0.9475703505291004,
+            0.2786523462962963,
+            0.9604268326719575
+          ],
+          "parser_ref": "page-1-cell-40"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.07896166
+      },
+      {
+        "text": "ents",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.24798725555555554,
+            0.9447133544973544,
+            0.28065224351851853,
+            0.9632838287037035
+          ],
+          "parser_ref": "page-1-cell-41"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.47489338
+      },
+      {
+        "text": "ts",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.29265162685185186,
+            0.9447133544973544,
+            0.3113173342592592,
+            0.9632838287037035
+          ],
+          "parser_ref": "page-1-cell-42"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.42936855
+      },
+      {
+        "text": "puri",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.31731702592592587,
+            0.9447133544973544,
+            0.3519819111111111,
+            0.9632838287037035
+          ],
+          "parser_ref": "page-1-cell-43"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.56124268
+      },
+      {
+        "text": "Pate",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3559817055555555,
+            0.9447133544973544,
+            0.3933131203703703,
+            0.9632838287037035
+          ],
+          "parser_ref": "page-1-cell-44"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.45839233
+      },
+      {
+        "text": "jasonag",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.40197934166666666,
+            0.9480465165343913,
+            0.49397461388888886,
+            0.9613791646825395
+          ],
+          "parser_ref": "page-1-cell-45"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.12485485
+      },
+      {
+        "text": "or",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.47730880370370365,
+            0.9447133544973544,
+            0.4933079814814814,
+            0.9632838287037035
+          ],
+          "parser_ref": "page-1-cell-46"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.45579079
+      },
+      {
+        "text": "Tiisnfiirrime",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4999743055555555,
+            0.9466180185185182,
+            0.6406337435185184,
+            0.9594745006613754
+          ],
+          "parser_ref": "page-1-cell-47"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.0
+      }
+    ],
+    "pipeline_options": {
+      "document_timeout": 110.0,
+      "accelerator_options": {
+        "num_threads": 2,
+        "device": "cpu",
+        "cuda_use_flash_attention2": false
+      },
+      "enable_remote_services": false,
+      "allow_external_plugins": false,
+      "artifacts_path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets",
+      "do_picture_classification": false,
+      "picture_classification_options": {
+        "engine_options": {
+          "engine_type": "transformers",
+          "top_k": null
+        },
+        "model_spec": {
+          "name": "document_figure_classifier_v2",
+          "repo_id": "docling-project/DocumentFigureClassifier-v2.5",
+          "revision": "main",
+          "engine_overrides": {}
+        }
+      },
+      "do_picture_description": false,
+      "picture_description_options": {
+        "batch_size": 8,
+        "scale": 2.0,
+        "picture_area_threshold": 0.05,
+        "classification_allow": null,
+        "classification_deny": null,
+        "classification_min_confidence": 0.0
+      },
+      "do_chart_extraction": false,
+      "chart_extraction_options": {
+        "kind": "chart_extraction",
+        "model": "granite-vision-v4",
+        "chart2csv": true,
+        "chart2code": false,
+        "chart2summary": false
+      },
+      "images_scale": 2.0,
+      "generate_page_images": false,
+      "generate_picture_images": false,
+      "do_table_structure": false,
+      "do_ocr": true,
+      "do_code_enrichment": false,
+      "do_formula_enrichment": false,
+      "force_backend_text": false,
+      "table_structure_options": {},
+      "ocr_options": {
+        "mode": "full_page",
+        "lang": [
+          "eng",
+          "chi_sim"
+        ],
+        "scale": 3.0,
+        "force_full_page_ocr": true
+      },
+      "layout_options": {
+        "keep_empty_clusters": false,
+        "skip_cell_assignment": false,
+        "create_orphan_clusters": true
+      },
+      "code_formula_options": {
+        "engine_options": {
+          "engine_type": "auto_inline",
+          "prefer_vllm": false
+        },
+        "model_spec": {
+          "name": "CodeFormulaV2",
+          "default_repo_id": "docling-project/CodeFormulaV2",
+          "revision": "main",
+          "prompt": "",
+          "response_format": "plaintext",
+          "supported_engines": null,
+          "engine_overrides": {
+            "transformers": {
+              "repo_id": null,
+              "revision": null,
+              "torch_dtype": null,
+              "min_engine_version": null,
+              "extra_config": {
+                "transformers_model_type": "automodel-imagetexttotext",
+                "extra_generation_config": {
+                  "skip_special_tokens": false
+                },
+                "torch_dtype": "bfloat16"
+              }
+            }
+          },
+          "api_overrides": {},
+          "trust_remote_code": false,
+          "stop_strings": [
+            "</doctag>",
+            "<end_of_utterance>"
+          ],
+          "temperature": 0.0,
+          "max_new_tokens": 4096,
+          "extra_generation_config": {}
+        },
+        "scale": 2.0,
+        "max_size": null,
+        "extract_code": true,
+        "extract_formulas": true
+      },
+      "generate_table_images": false,
+      "generate_parsed_pages": true,
+      "heading_hierarchy_options": {
+        "enabled": false,
+        "use_bookmarks": true,
+        "use_numbering": true,
+        "use_style": true,
+        "use_font_style": true,
+        "style_size_tolerance": 0.05,
+        "numbering_schemes": null,
+        "max_level": 6,
+        "bookmark_match_threshold": 0.8
+      },
+      "ocr_batch_size": 4,
+      "layout_batch_size": 4,
+      "table_batch_size": 4,
+      "batch_polling_interval_seconds": 0.5,
+      "queue_max_size": 100,
+      "stage_shutdown_timeout_seconds": 15.0
+    }
+  },
+  "candidates": {
+    "schema_version": 1,
+    "kind": "material_correction_candidates",
+    "source_id": "synthetic-fa8137c71ab82ccc",
+    "source_sha256": "fa8137c71ab82ccc676add207e19418b7887366804379cec59a4940b65961e6c",
+    "incomplete": true,
+    "requires_user_review": true,
+    "confirmed": false,
+    "fields": [
+      {
+        "field": "service_id",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "origin",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "destination",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "departure_local",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "arrival_local",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "timezone",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "currency",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "amount",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      }
+    ]
+  }
+}

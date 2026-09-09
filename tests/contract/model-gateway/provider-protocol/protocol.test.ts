@@ -11,7 +11,7 @@ const tool: ProtocolTool = {
 };
 
 for (const provider of providers) {
-  test(`${provider}: serializes documented non-thinking HTTP dialect and normalizes usage`, async () => {
+  test(`${provider}: serializes provider-specific HTTP dialect and normalizes usage`, async () => {
     let calls = 0;
     const result = await invokeProviderProtocol(request(provider), budget(), async (wire) => {
       calls++;
@@ -23,7 +23,8 @@ for (const provider of providers) {
       assert.equal(body.max_tokens, 128);
       assert.equal(body.extra_body, undefined);
       if (provider === "qwen") { assert.equal(body.enable_thinking, false); assert.equal(body.thinking, undefined); }
-      else { assert.deepEqual(body.thinking, { type: "disabled" }); assert.equal(body.enable_thinking, undefined); }
+      else if (provider === "deepseek") { assert.deepEqual(body.thinking, { type: "disabled" }); assert.equal(body.enable_thinking, undefined); }
+      else { assert.equal(body.thinking, undefined); assert.equal(body.enable_thinking, undefined); }
       return Response.json(completion(provider));
     }, signal());
     assert.equal(calls, 1);
@@ -93,4 +94,14 @@ test("unknown optional billing dimensions stay unknown; inconsistent cache usage
     const rejected = await invokeProviderProtocol(request(provider), budget(), async () => Response.json({ ...sample, usage: corrupt }), signal());
     assert.equal(rejected.kind, "unavailable");
   }
+});
+
+test("GLM preserves its native thinking default instead of sending the rejected disable flag", async () => {
+  const result = await invokeProviderProtocol(request("glm"), budget(), async wire => {
+    const body = JSON.parse(wire.body);
+    if (Object.hasOwn(body, "thinking")) return Response.json({ error: { code: "1210" } }, { status: 400 });
+    return Response.json(completion("glm", { role: "assistant", content: "Synthetic answer", reasoning_content: "private synthetic reasoning" }));
+  }, signal());
+  assert.equal(result.kind, "protocol_validated");
+  assert.equal(JSON.stringify(result).includes("private synthetic reasoning"), false);
 });

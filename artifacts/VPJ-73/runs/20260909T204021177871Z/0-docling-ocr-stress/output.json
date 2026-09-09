@@ -1,0 +1,511 @@
+{
+  "engine": "docling",
+  "conversion_status": "success",
+  "conversion_seconds": 6.697018499999103,
+  "segments": [
+    {
+      "text": "SYNTHETIC TRAVEL MATERIAL",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.060663549074074063,
+          0.05380675859788353,
+          0.618634874074074,
+          0.07856739087301585
+        ],
+        "parser_ref": "#/texts/0"
+      }
+    },
+    {
+      "text": "ocratiess / NOTA TICRET / OTR",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.05733038703703704,
+          0.09809019708994701,
+          0.47530890648148144,
+          0.12046999933862437
+        ],
+        "parser_ref": "#/texts/1"
+      }
+    },
+    {
+      "text": "Serna Come",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.05733038703703704,
+          0.1557062837301587,
+          0.17065789629629627,
+          0.17332442592592595
+        ],
+        "parser_ref": "#/texts/2"
+      }
+    },
+    {
+      "text": "Ong. Shanghe Monge",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.05733038703703704,
+          0.22617885251322753,
+          0.28065224351851853,
+          0.2523679828042327
+        ],
+        "parser_ref": "#/texts/3"
+      }
+    },
+    {
+      "text": "Departure 200% 11 0) Soe",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.059996916666666664,
+          0.38045663822751313,
+          0.28131887592592586,
+          0.4004556104497353
+        ],
+        "parser_ref": "#/texts/4"
+      }
+    },
+    {
+      "text": "Area 10S 11-10 Ora)",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.05933028425925926,
+          0.455214701058201,
+          0.24732062314814815,
+          0.4752136732804232
+        ],
+        "parser_ref": "#/texts/5"
+      }
+    },
+    {
+      "text": "Time sune Aade/thanghn UTC eaban",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.057997019444444436,
+          0.5299727638888888,
+          0.3606481324074074,
+          0.549019404100529
+        ],
+        "parser_ref": "#/texts/6"
+      }
+    },
+    {
+      "text": "IWherteenalty degraded pyntheta OCR sivas cane Review every mar acter,",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.05733038703703704,
+          0.7761505886243385,
+          0.654633024074074,
+          0.82424335515873
+        ],
+        "parser_ref": "#/texts/7"
+      }
+    },
+    {
+      "text": "Fut Parser eeahseteit ents ts puri Pate jasonag or Tiisnfiirrime",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.059996916666666664,
+          0.9447133544973544,
+          0.6406337435185184,
+          0.9632838287037035
+        ],
+        "parser_ref": "#/texts/8"
+      }
+    }
+  ],
+  "document": {
+    "schema_name": "DoclingDocument",
+    "version": "1.10.0",
+    "name": "ocr-stress",
+    "origin": {
+      "mimetype": "application/pdf",
+      "binary_hash": 6459450542226021996,
+      "filename": "ocr-stress.png"
+    },
+    "furniture": {
+      "self_ref": "#/furniture",
+      "children": [],
+      "content_layer": "furniture",
+      "name": "_root_",
+      "label": "unspecified"
+    },
+    "body": {
+      "self_ref": "#/body",
+      "children": [
+        {
+          "$ref": "#/texts/0"
+        },
+        {
+          "$ref": "#/texts/1"
+        },
+        {
+          "$ref": "#/texts/2"
+        },
+        {
+          "$ref": "#/texts/3"
+        },
+        {
+          "$ref": "#/texts/4"
+        },
+        {
+          "$ref": "#/texts/5"
+        },
+        {
+          "$ref": "#/texts/6"
+        },
+        {
+          "$ref": "#/texts/7"
+        },
+        {
+          "$ref": "#/texts/8"
+        }
+      ],
+      "content_layer": "body",
+      "name": "_root_",
+      "label": "unspecified"
+    },
+    "groups": [],
+    "texts": [
+      {
+        "self_ref": "#/texts/0",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "section_header",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 30.333333333333332,
+              "t": 662.3693074042233,
+              "r": 309.3333333333333,
+              "b": 645.0359740708899,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              25
+            ]
+          }
+        ],
+        "orig": "SYNTHETIC TRAVEL MATERIAL",
+        "text": "SYNTHETIC TRAVEL MATERIAL",
+        "level": 1
+      },
+      {
+        "self_ref": "#/texts/1",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 28.666666666666668,
+              "t": 631.3693074042233,
+              "r": 237.66666666666666,
+              "b": 615.7026407375565,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              29
+            ]
+          }
+        ],
+        "orig": "ocratiess / NOTA TICRET / OTR",
+        "text": "ocratiess / NOTA TICRET / OTR"
+      },
+      {
+        "self_ref": "#/texts/2",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 28.666666666666668,
+              "t": 591.0359740708899,
+              "r": 85.33333333333333,
+              "b": 578.7026407375565,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              10
+            ]
+          }
+        ],
+        "orig": "Serna Come",
+        "text": "Serna Come"
+      },
+      {
+        "self_ref": "#/texts/3",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 28.666666666666668,
+              "t": 541.7026407375565,
+              "r": 140.33333333333334,
+              "b": 523.3693074042233,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              18
+            ]
+          }
+        ],
+        "orig": "Ong. Shanghe Monge",
+        "text": "Ong. Shanghe Monge"
+      },
+      {
+        "self_ref": "#/texts/4",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 30.0,
+              "t": 433.7026407375566,
+              "r": 140.66666666666666,
+              "b": 419.7026407375566,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              24
+            ]
+          }
+        ],
+        "orig": "Departure 200% 11 0) Soe",
+        "text": "Departure 200% 11 0) Soe"
+      },
+      {
+        "self_ref": "#/texts/5",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 29.666666666666668,
+              "t": 381.3693074042232,
+              "r": 123.66666666666667,
+              "b": 367.3693074042232,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              19
+            ]
+          }
+        ],
+        "orig": "Area 10S 11-10 Ora)",
+        "text": "Area 10S 11-10 Ora)"
+      },
+      {
+        "self_ref": "#/texts/6",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 29.0,
+              "t": 329.0359740708899,
+              "r": 180.33333333333334,
+              "b": 315.7026407375566,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              32
+            ]
+          }
+        ],
+        "orig": "Time sune Aade/thanghn UTC eaban",
+        "text": "Time sune Aade/thanghn UTC eaban"
+      },
+      {
+        "self_ref": "#/texts/7",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 28.666666666666668,
+              "t": 156.70264073755652,
+              "r": 327.3333333333333,
+              "b": 123.03597407088989,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              70
+            ]
+          }
+        ],
+        "orig": "IWherteenalty degraded pyntheta OCR sivas cane Review every mar acter,",
+        "text": "IWherteenalty degraded pyntheta OCR sivas cane Review every mar acter,"
+      },
+      {
+        "self_ref": "#/texts/8",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 30.0,
+              "t": 38.70264073755652,
+              "r": 320.3333333333333,
+              "b": 25.70264073755652,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              64
+            ]
+          }
+        ],
+        "orig": "Fut Parser eeahseteit ents ts puri Pate jasonag or Tiisnfiirrime",
+        "text": "Fut Parser eeahseteit ents ts puri Pate jasonag or Tiisnfiirrime"
+      }
+    ],
+    "pictures": [],
+    "tables": [],
+    "key_value_items": [],
+    "form_items": [],
+    "pages": {
+      "1": {
+        "size": {
+          "width": 500.0256957649213,
+          "height": 700.0359740708899
+        },
+        "page_no": 1
+      }
+    }
+  },
+  "candidates": {
+    "schema_version": 1,
+    "kind": "material_correction_candidates",
+    "source_id": "synthetic-fa8137c71ab82ccc",
+    "source_sha256": "fa8137c71ab82ccc676add207e19418b7887366804379cec59a4940b65961e6c",
+    "incomplete": true,
+    "requires_user_review": true,
+    "confirmed": false,
+    "fields": [
+      {
+        "field": "service_id",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "origin",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "destination",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "departure_local",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "arrival_local",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "timezone",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "currency",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "amount",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      }
+    ]
+  }
+}

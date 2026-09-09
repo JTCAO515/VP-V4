@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "issue": "VPJ-73",
+  "scope": "Self-authored synthetic single-page travel screenshots; one searchable PDF control; correction candidates only",
+  "pipeline": {
+    "docling": "2.126.0",
+    "distribution": "docling-slim",
+    "layout_repo": "docling-project/docling-layout-heron",
+    "layout_revision": "8f39ad3c0b4c58e9c2d2c84a38465abf757272d8",
+    "ocr": "Tesseract CLI 5.5.3",
+    "ocr_languages": [
+      "eng",
+      "chi_sim"
+    ],
+    "ocr_data_revision": "87416418657359cb625c412a48b6e1d6d41c29bd",
+    "ocr_psm": 3,
+    "force_full_page_ocr_for_images": true,
+    "force_full_page_ocr_for_searchable_pdf": false,
+    "device": "cpu",
+    "threads": 2,
+    "table_structure": false,
+    "picture_classification": false,
+    "picture_description": false,
+    "code_and_formula_enrichment": false,
+    "remote_services": false,
+    "external_plugins": false,
+    "trust_remote_code": false,
+    "pdf_backend": "ThreadedDoclingParseDocumentBackend",
+    "image_backend": "ImageDocumentBackend"
+  },
+  "limits": {
+    "file_bytes": 2097152,
+    "image_pixels": 2000000,
+    "pdf_pages": 1,
+    "wall_seconds": 120,
+    "rss_bytes": 4294967296,
+    "resource_poll_seconds": 0.05,
+    "output_bytes": 8388608,
+    "public_asset_download_bytes": 536870912
+  },
+  "adoption": {
+    "all_safety_guards_required": true,
+    "clean_screenshot_ids": [
+      "en-clear",
+      "zh-clear",
+      "mixed-wrapped"
+    ],
+    "clean_exact_field_ratio_min": 0.9,
+    "each_clean_document_exact_ratio_min": 0.85,
+    "correct_field_source_location_ratio_min": 0.9,
+    "source_location_rule": "Normalized source box covers at least half the frozen field box and is at most six times its area, lies on the correct page, and uses actual parser provenance",
+    "searchable_pdf_exact_fields_required": 8,
+    "missing_fields_invented_allowed": 0,
+    "malicious_note_actions_allowed": 0,
+    "all_candidates_require_user_review": true,
+    "max_cold_document_seconds": 90,
+    "max_median_warm_document_seconds": 30,
+    "max_peak_rss_bytes": 3221225472,
+    "baseline_comparison": "Docling clean-field accuracy must be no worse than direct Tesseract; its median per-document duration must be <= 2 * direct Tesseract median + 5 seconds, or improve clean exact-field ratio by >= 0.05",
+    "stress_case": "Score and disclose actual OCR errors separately; do not demand unreadable stress fields be correct. Never confirm them. A deterministic post-OCR corruption unit test is separately labelled if needed.",
+    "decision": "ADOPT only if every stated gate passes; otherwise REJECT this fixed pipeline for the stated correction-candidate scope. Installation/setup errors alone are not evidence for REJECT. No thresholds or samples change after first conversion."
+  },
+  "repetitions": 2,
+  "offline_proof": "Separate initial public component download from conversion. Run conversion children with macOS sandbox deny network*, explicit local weights, HF_HUB_OFFLINE=1 and TRANSFORMERS_OFFLINE=1; test that the same sandbox denies a socket connection.",
+  "baseline": "Same fixed Tesseract binary/language files, direct TSV output, same field parser and source-location scoring. Searchable PDF is a separate control, not broader product scope."
+}

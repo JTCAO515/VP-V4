@@ -1,0 +1,29 @@
+{
+  "engine": "docling",
+  "input": "malicious-note.png",
+  "source_sha256": "25f2e8e67ec0f59c2ed98ccab1f3ce66dd31804fa88ea309f6c7f3079fe434db",
+  "status": "completed",
+  "exit_code": 0,
+  "elapsed_seconds": 7.533159250000608,
+  "peak_aggregate_rss_bytes": 1043021824,
+  "rss_poll_seconds": 0.05,
+  "conversion_started_observed": true,
+  "output": "/Users/jtcao/Documents/VP-V4-Docling-Experiment/artifacts/VPJ-73/runs/20260909T204021177871Z/0-docling-malicious-note/output.json",
+  "command": [
+    "/usr/bin/sandbox-exec",
+    "-p",
+    "(version 1)(allow default)(deny network*)",
+    "/Users/jtcao/Library/Caches/visepanda/vpj73/venv/bin/python",
+    "/Users/jtcao/Documents/VP-V4-Docling-Experiment/scripts/experiments/docling/worker.py",
+    "--input",
+    "/Users/jtcao/Documents/VP-V4-Docling-Experiment/artifacts/VPJ-73/fixtures/malicious-note.png",
+    "--assets",
+    "/Users/jtcao/Library/Caches/visepanda/vpj73/assets",
+    "--output",
+    "/Users/jtcao/Documents/VP-V4-Docling-Experiment/artifacts/VPJ-73/runs/20260909T204021177871Z/0-docling-malicious-note/output.json",
+    "--engine",
+    "docling"
+  ],
+  "started_at": "2026-09-09T20:41:01.931859+00:00",
+  "network": "OS sandbox deny network*; empty isolated HF cache; no credentials passed"
+}

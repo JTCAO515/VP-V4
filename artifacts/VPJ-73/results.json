@@ -1,0 +1,2248 @@
+{
+  "schema_version": 1,
+  "decision": "REJECT",
+  "decision_scope": "This fixed local CPU Docling/Tesseract correction-candidate pipeline on the predeclared synthetic set; no production acceptance",
+  "summary": "artifacts/VPJ-73/runs/20260909T204621814051Z/summary.json",
+  "guards": "artifacts/VPJ-73/guards/20260909T205008111292Z/results.json",
+  "freeze_sha256": "636618b8ef80241a4753577591224a2392e7db035510f547f739d74907ac7f27",
+  "plan_sha256": "548f628e370c28c6d6f8807e304d6a66c78812304595a556813f6adbbd11f551",
+  "gates": {
+    "all_frozen_runs_present": true,
+    "all_conversions_successful": true,
+    "actual_guard_checks": true,
+    "every_candidate_requires_review": true,
+    "clean_exact_fields": true,
+    "each_clean_document": true,
+    "source_locations": true,
+    "searchable_pdf_control": true,
+    "missing_information_not_invented": true,
+    "malicious_content_observed_as_content": true,
+    "repeated_material_stable_candidate_identity_and_fields": true,
+    "cold_process_time": true,
+    "repeat_median_time": true,
+    "peak_memory": true,
+    "not_worse_than_direct_ocr": true,
+    "incremental_value_or_bounded_overhead": false
+  },
+  "metrics": {
+    "clean_field_exact_ratio": {
+      "docling": 1.0,
+      "tesseract": 0.9583333333333334
+    },
+    "correct_field_source_location_ratio": {
+      "docling": 1.0,
+      "tesseract": 1.0
+    },
+    "per_clean_document_exact_ratio": {
+      "docling": {
+        "en-clear": 1.0,
+        "zh-clear": 1.0,
+        "mixed-wrapped": 1.0
+      },
+      "tesseract": {
+        "en-clear": 1.0,
+        "zh-clear": 0.875,
+        "mixed-wrapped": 1.0
+      }
+    },
+    "median_screenshot_process_seconds": {
+      "docling": 12.205357687000287,
+      "tesseract": 0.9101796459999605
+    },
+    "repeat_docling_median_seconds": 14.018658208999113,
+    "max_docling_process_seconds": 29.69375083400155,
+    "peak_docling_rss_bytes": 1259585536
+  },
+  "documents": [
+    {
+      "case_id": "en-clear",
+      "engine": "docling",
+      "repetition": 0,
+      "conversion_success": true,
+      "elapsed_seconds": 8.441824792000261,
+      "peak_rss_bytes": 1234698240,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/0-docling-en-clear/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G73",
+          "actual": "G73",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao",
+          "actual": "Shanghai Hongqiao",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East",
+          "actual": "Hangzhou East",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-03 09:30",
+          "actual": "2026-11-03 09:30",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-03 10:24",
+          "actual": "2026-11-03 10:24",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "128.50",
+          "actual": "128.50",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "en-clear",
+      "engine": "tesseract",
+      "repetition": 0,
+      "conversion_success": true,
+      "elapsed_seconds": 0.4455857089997153,
+      "peak_rss_bytes": 149782528,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/0-tesseract-en-clear/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G73",
+          "actual": "G73",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao",
+          "actual": "Shanghai Hongqiao",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East",
+          "actual": "Hangzhou East",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-03 09:30",
+          "actual": "2026-11-03 09:30",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-03 10:24",
+          "actual": "2026-11-03 10:24",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "128.50",
+          "actual": "128.50",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "zh-clear",
+      "engine": "docling",
+      "repetition": 0,
+      "conversion_success": true,
+      "elapsed_seconds": 8.919940666997718,
+      "peak_rss_bytes": 1163345920,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/0-docling-zh-clear/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G88",
+          "actual": "G88",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "上海虹桥",
+          "actual": "上海虹桥",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "杭州东",
+          "actual": "杭州东",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-04 08:08",
+          "actual": "2026-11-04 08:08",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-04 09:02",
+          "actual": "2026-11-04 09:02",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "188.80",
+          "actual": "188.80",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "zh-clear",
+      "engine": "tesseract",
+      "repetition": 0,
+      "conversion_success": true,
+      "elapsed_seconds": 0.49609925000186195,
+      "peak_rss_bytes": 151224320,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/0-tesseract-zh-clear/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G88",
+          "actual": "G88",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "上海虹桥",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "杭州东",
+          "actual": "杭州东",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-04 08:08",
+          "actual": "2026-11-04 08:08",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-04 09:02",
+          "actual": "2026-11-04 09:02",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "188.80",
+          "actual": "188.80",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "mixed-wrapped",
+      "engine": "docling",
+      "repetition": 0,
+      "conversion_success": true,
+      "elapsed_seconds": 9.017175000000861,
+      "peak_rss_bytes": 1180368896,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/0-docling-mixed-wrapped/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "D109",
+          "actual": "D109",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao 上海虹桥站",
+          "actual": "Shanghai Hongqiao 上海虹桥站",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East 杭州东站",
+          "actual": "Hangzhou East 杭州东站",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-12-31 23:40",
+          "actual": "2026-12-31 23:40",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2027-01-01 00:38",
+          "actual": "2027-01-01 00:38",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "99.05",
+          "actual": "99.05",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "mixed-wrapped",
+      "engine": "tesseract",
+      "repetition": 0,
+      "conversion_success": true,
+      "elapsed_seconds": 0.9787631250001141,
+      "peak_rss_bytes": 151339008,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/0-tesseract-mixed-wrapped/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "D109",
+          "actual": "D109",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao 上海虹桥站",
+          "actual": "Shanghai Hongqiao 上海虹桥站",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East 杭州东站",
+          "actual": "Hangzhou East 杭州东站",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-12-31 23:40",
+          "actual": "2026-12-31 23:40",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2027-01-01 00:38",
+          "actual": "2027-01-01 00:38",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "99.05",
+          "actual": "99.05",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "missing-info",
+      "engine": "docling",
+      "repetition": 0,
+      "conversion_success": true,
+      "elapsed_seconds": 10.639121666001301,
+      "peak_rss_bytes": 1198702592,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/0-docling-missing-info/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G12",
+          "actual": "G12",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "上海虹桥",
+          "actual": "上海虹桥",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "杭州东",
+          "actual": "杭州东",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-05 14:20",
+          "actual": "2026-11-05 14:20",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": null,
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": true
+        },
+        {
+          "field": "timezone",
+          "expected": null,
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": true
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": null,
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": true
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "missing-info",
+      "engine": "tesseract",
+      "repetition": 0,
+      "conversion_success": true,
+      "elapsed_seconds": 0.4905915829986043,
+      "peak_rss_bytes": 151470080,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/0-tesseract-missing-info/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G12",
+          "actual": "G12",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "上海虹桥",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "杭州东",
+          "actual": "杭州东",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-05 14:20",
+          "actual": "2026-11-05 14:20",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": null,
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": true
+        },
+        {
+          "field": "timezone",
+          "expected": null,
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": true
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": null,
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": true
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "ocr-stress",
+      "engine": "docling",
+      "repetition": 0,
+      "conversion_success": true,
+      "elapsed_seconds": 9.202690166999673,
+      "peak_rss_bytes": 977862656,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/0-docling-ocr-stress/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G808",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-01 08:08",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-01 09:01",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "188.80",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "ocr-stress",
+      "engine": "tesseract",
+      "repetition": 0,
+      "conversion_success": true,
+      "elapsed_seconds": 0.9349387080001179,
+      "peak_rss_bytes": 152190976,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/0-tesseract-ocr-stress/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G808",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-01 08:08",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-01 09:01",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "188.80",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "malicious-note",
+      "engine": "docling",
+      "repetition": 0,
+      "conversion_success": true,
+      "elapsed_seconds": 12.597320666001906,
+      "peak_rss_bytes": 1193459712,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/0-docling-malicious-note/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G66",
+          "actual": "G66",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao",
+          "actual": "Shanghai Hongqiao",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East",
+          "actual": "Hangzhou East",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-06 12:00",
+          "actual": "2026-11-06 12:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-06 12:55",
+          "actual": "2026-11-06 12:55",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "188.80",
+          "actual": "188.80",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": true
+    },
+    {
+      "case_id": "malicious-note",
+      "engine": "tesseract",
+      "repetition": 0,
+      "conversion_success": true,
+      "elapsed_seconds": 1.2739898750005523,
+      "peak_rss_bytes": 153223168,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/0-tesseract-malicious-note/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G66",
+          "actual": "G66",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao",
+          "actual": "Shanghai Hongqiao",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East",
+          "actual": "Hangzhou East",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-06 12:00",
+          "actual": "2026-11-06 12:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-06 12:55",
+          "actual": "2026-11-06 12:55",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "188.80",
+          "actual": "188.80",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": true
+    },
+    {
+      "case_id": "en-searchable-control",
+      "engine": "docling",
+      "repetition": 0,
+      "conversion_success": true,
+      "elapsed_seconds": 18.534402666999085,
+      "peak_rss_bytes": 955023360,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/0-docling-en-searchable-control/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G73",
+          "actual": "G73",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao",
+          "actual": "Shanghai Hongqiao",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East",
+          "actual": "Hangzhou East",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-03 09:30",
+          "actual": "2026-11-03 09:30",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-03 10:24",
+          "actual": "2026-11-03 10:24",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "128.50",
+          "actual": "128.50",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "en-clear",
+      "engine": "docling",
+      "repetition": 1,
+      "conversion_success": true,
+      "elapsed_seconds": 29.69375083400155,
+      "peak_rss_bytes": 938033152,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/1-docling-en-clear/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G73",
+          "actual": "G73",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao",
+          "actual": "Shanghai Hongqiao",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East",
+          "actual": "Hangzhou East",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-03 09:30",
+          "actual": "2026-11-03 09:30",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-03 10:24",
+          "actual": "2026-11-03 10:24",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "128.50",
+          "actual": "128.50",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "en-clear",
+      "engine": "tesseract",
+      "repetition": 1,
+      "conversion_success": true,
+      "elapsed_seconds": 0.5755007090010622,
+      "peak_rss_bytes": 150798336,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/1-tesseract-en-clear/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G73",
+          "actual": "G73",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao",
+          "actual": "Shanghai Hongqiao",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East",
+          "actual": "Hangzhou East",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-03 09:30",
+          "actual": "2026-11-03 09:30",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-03 10:24",
+          "actual": "2026-11-03 10:24",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "128.50",
+          "actual": "128.50",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "zh-clear",
+      "engine": "docling",
+      "repetition": 1,
+      "conversion_success": true,
+      "elapsed_seconds": 15.015654041999369,
+      "peak_rss_bytes": 1095139328,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/1-docling-zh-clear/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G88",
+          "actual": "G88",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "上海虹桥",
+          "actual": "上海虹桥",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "杭州东",
+          "actual": "杭州东",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-04 08:08",
+          "actual": "2026-11-04 08:08",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-04 09:02",
+          "actual": "2026-11-04 09:02",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "188.80",
+          "actual": "188.80",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "zh-clear",
+      "engine": "tesseract",
+      "repetition": 1,
+      "conversion_success": true,
+      "elapsed_seconds": 0.8963958749991434,
+      "peak_rss_bytes": 151355392,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/1-tesseract-zh-clear/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G88",
+          "actual": "G88",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "上海虹桥",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "杭州东",
+          "actual": "杭州东",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-04 08:08",
+          "actual": "2026-11-04 08:08",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-04 09:02",
+          "actual": "2026-11-04 09:02",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "188.80",
+          "actual": "188.80",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "mixed-wrapped",
+      "engine": "docling",
+      "repetition": 1,
+      "conversion_success": true,
+      "elapsed_seconds": 11.813394707998668,
+      "peak_rss_bytes": 1148223488,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/1-docling-mixed-wrapped/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "D109",
+          "actual": "D109",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao 上海虹桥站",
+          "actual": "Shanghai Hongqiao 上海虹桥站",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East 杭州东站",
+          "actual": "Hangzhou East 杭州东站",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-12-31 23:40",
+          "actual": "2026-12-31 23:40",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2027-01-01 00:38",
+          "actual": "2027-01-01 00:38",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "99.05",
+          "actual": "99.05",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "mixed-wrapped",
+      "engine": "tesseract",
+      "repetition": 1,
+      "conversion_success": true,
+      "elapsed_seconds": 0.8506559999987076,
+      "peak_rss_bytes": 150487040,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/1-tesseract-mixed-wrapped/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "D109",
+          "actual": "D109",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao 上海虹桥站",
+          "actual": "Shanghai Hongqiao 上海虹桥站",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East 杭州东站",
+          "actual": "Hangzhou East 杭州东站",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-12-31 23:40",
+          "actual": "2026-12-31 23:40",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2027-01-01 00:38",
+          "actual": "2027-01-01 00:38",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "99.05",
+          "actual": "99.05",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "missing-info",
+      "engine": "docling",
+      "repetition": 1,
+      "conversion_success": true,
+      "elapsed_seconds": 12.63115866699809,
+      "peak_rss_bytes": 1259585536,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/1-docling-missing-info/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G12",
+          "actual": "G12",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "上海虹桥",
+          "actual": "上海虹桥",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "杭州东",
+          "actual": "杭州东",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-05 14:20",
+          "actual": "2026-11-05 14:20",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": null,
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": true
+        },
+        {
+          "field": "timezone",
+          "expected": null,
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": true
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": null,
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": true
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "missing-info",
+      "engine": "tesseract",
+      "repetition": 1,
+      "conversion_success": true,
+      "elapsed_seconds": 0.9239634170007776,
+      "peak_rss_bytes": 151683072,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/1-tesseract-missing-info/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G12",
+          "actual": "G12",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "上海虹桥",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "杭州东",
+          "actual": "杭州东",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-05 14:20",
+          "actual": "2026-11-05 14:20",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": null,
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": true
+        },
+        {
+          "field": "timezone",
+          "expected": null,
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": true
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": null,
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": true
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "ocr-stress",
+      "engine": "docling",
+      "repetition": 1,
+      "conversion_success": true,
+      "elapsed_seconds": 14.018658208999113,
+      "peak_rss_bytes": 1139064832,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/1-docling-ocr-stress/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G808",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-01 08:08",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-01 09:01",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "188.80",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "ocr-stress",
+      "engine": "tesseract",
+      "repetition": 1,
+      "conversion_success": true,
+      "elapsed_seconds": 1.2334128330003296,
+      "peak_rss_bytes": 151519232,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/1-tesseract-ocr-stress/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G808",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-01 08:08",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-01 09:01",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "188.80",
+          "actual": null,
+          "status": "missing",
+          "exact": false,
+          "source_location_passed": false,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    },
+    {
+      "case_id": "malicious-note",
+      "engine": "docling",
+      "repetition": 1,
+      "conversion_success": true,
+      "elapsed_seconds": 20.170925624999654,
+      "peak_rss_bytes": 972718080,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/1-docling-malicious-note/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G66",
+          "actual": "G66",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao",
+          "actual": "Shanghai Hongqiao",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East",
+          "actual": "Hangzhou East",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-06 12:00",
+          "actual": "2026-11-06 12:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-06 12:55",
+          "actual": "2026-11-06 12:55",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "188.80",
+          "actual": "188.80",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": true
+    },
+    {
+      "case_id": "malicious-note",
+      "engine": "tesseract",
+      "repetition": 1,
+      "conversion_success": true,
+      "elapsed_seconds": 1.1841937080025673,
+      "peak_rss_bytes": 152076288,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/1-tesseract-malicious-note/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G66",
+          "actual": "G66",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao",
+          "actual": "Shanghai Hongqiao",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East",
+          "actual": "Hangzhou East",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-06 12:00",
+          "actual": "2026-11-06 12:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-06 12:55",
+          "actual": "2026-11-06 12:55",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "188.80",
+          "actual": "188.80",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": true
+    },
+    {
+      "case_id": "en-searchable-control",
+      "engine": "docling",
+      "repetition": 1,
+      "conversion_success": true,
+      "elapsed_seconds": 12.075311874999898,
+      "peak_rss_bytes": 1127497728,
+      "output": "artifacts/VPJ-73/runs/20260909T204621814051Z/1-docling-en-searchable-control/output.json",
+      "fields": [
+        {
+          "field": "service_id",
+          "expected": "G73",
+          "actual": "G73",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "origin",
+          "expected": "Shanghai Hongqiao",
+          "actual": "Shanghai Hongqiao",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "destination",
+          "expected": "Hangzhou East",
+          "actual": "Hangzhou East",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "departure_local",
+          "expected": "2026-11-03 09:30",
+          "actual": "2026-11-03 09:30",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "arrival_local",
+          "expected": "2026-11-03 10:24",
+          "actual": "2026-11-03 10:24",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "timezone",
+          "expected": "Asia/Shanghai UTC+08:00",
+          "actual": "Asia/Shanghai UTC+08:00",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "currency",
+          "expected": "CNY",
+          "actual": "CNY",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        },
+        {
+          "field": "amount",
+          "expected": "128.50",
+          "actual": "128.50",
+          "status": "candidate",
+          "exact": true,
+          "source_location_passed": true,
+          "expected_missing_preserved": false
+        }
+      ],
+      "attack_text_observed": null
+    }
+  ],
+  "limits": [
+    "Every run starts a fresh process. Repeat means a later cache-warm process, not an in-process model kept resident.",
+    "Initial setup/conversion attempts are retained separately, not replaced by the scored run.",
+    "No actual user, provider, DB, confirmation or Trip writer used.",
+    "OCR stress values may be wrong while syntactically valid; every candidate remains unconfirmed and requires user review."
+  ]
+}

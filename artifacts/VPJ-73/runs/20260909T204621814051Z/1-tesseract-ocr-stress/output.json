@@ -1,0 +1,191 @@
+{
+  "adapter_revision": 2,
+  "engine": "tesseract",
+  "conversion_status": "success",
+  "conversion_seconds": 1.138866417000827,
+  "segments": [
+    {
+      "text": "SYNTHETIC TRAVEL MATERIAL",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061,
+          0.05357142857142857,
+          0.619,
+          0.07857142857142857
+        ],
+        "parser_ref": "tsv-line-1-1-1"
+      }
+    },
+    {
+      "text": "ocrateess / NOTA TICKET / SOT",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.056,
+          0.09714285714285714,
+          0.474,
+          0.12142857142857143
+        ],
+        "parser_ref": "tsv-line-2-1-1"
+      }
+    },
+    {
+      "text": "Departure 228 11 中 oe",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.3792857142857143,
+          0.283,
+          0.3992857142857143
+        ],
+        "parser_ref": "tsv-line-3-1-1"
+      }
+    },
+    {
+      "text": "Apert INS 1140 Oey",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.059,
+          0.4542857142857143,
+          0.252,
+          0.4764285714285714
+        ],
+        "parser_ref": "tsv-line-4-1-1"
+      }
+    },
+    {
+      "text": "Time gure Aadesthanghan UTC ommend",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.057,
+          0.5292857142857142,
+          0.362,
+          0.5514285714285714
+        ],
+        "parser_ref": "tsv-line-5-1-1"
+      }
+    },
+    {
+      "text": "Iiierteerally Ongraded ryn thet: OCR SNTES cane Rewew every",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.7814285714285715,
+          0.656,
+          0.8028571428571428
+        ],
+        "parser_ref": "tsv-line-6-1-1"
+      }
+    },
+    {
+      "text": "Character,",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.8064285714285714,
+          0.152,
+          0.8185714285714286
+        ],
+        "parser_ref": "tsv-line-6-1-2"
+      }
+    },
+    {
+      "text": "Fut parser eoahsetwin ety Mie puri tane Beedeng ot Tet asinfirimnt",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.9442857142857143,
+          0.64,
+          0.9642857142857143
+        ],
+        "parser_ref": "tsv-line-7-1-1"
+      }
+    }
+  ],
+  "document": {
+    "format": "tesseract-tsv",
+    "text": "level\tpage_num\tblock_num\tpar_num\tline_num\tword_num\tleft\ttop\twidth\theight\tconf\ttext\n1\t1\t0\t0\t0\t0\t0\t0\t1000\t1400\t-1\t\n2\t1\t1\t0\t0\t0\t61\t75\t558\t35\t-1\t\n3\t1\t1\t1\t0\t0\t61\t75\t558\t35\t-1\t\n4\t1\t1\t1\t1\t0\t61\t75\t558\t35\t-1\t\n5\t1\t1\t1\t1\t1\t61\t75\t209\t35\t96.018250\tSYNTHETIC\n5\t1\t1\t1\t1\t2\t279\t76\t142\t33\t96.659042\tTRAVEL\n5\t1\t1\t1\t1\t3\t432\t75\t187\t35\t96.045616\tMATERIAL\n2\t1\t2\t0\t0\t0\t60\t140\t414\t21\t-1\t\n3\t1\t2\t1\t0\t0\t60\t140\t414\t21\t-1\t\n4\t1\t2\t1\t1\t0\t60\t140\t414\t21\t-1\t\n5\t1\t2\t1\t1\t1\t56\t136\t105\t34\t7.238684\tocrateess\n5\t1\t2\t1\t1\t2\t175\t145\t1\t15\t43.127251\t/\n5\t1\t2\t1\t1\t3\t189\t136\t52\t34\t43.127251\tNOTA\n5\t1\t2\t1\t1\t4\t251\t136\t69\t34\t71.245018\tTICKET\n5\t1\t2\t1\t1\t5\t330\t141\t8\t19\t90.744514\t/\n5\t1\t2\t1\t1\t6\t344\t140\t130\t21\t0.000000\tSOT\n2\t1\t3\t0\t0\t0\t60\t535\t220\t20\t-1\t\n3\t1\t3\t1\t0\t0\t60\t535\t220\t20\t-1\t\n4\t1\t3\t1\t1\t0\t60\t535\t220\t20\t-1\t\n5\t1\t3\t1\t1\t1\t60\t535\t220\t20\t64.489349\tDeparture\n5\t1\t3\t1\t1\t2\t154\t531\t33\t28\t47.085567\t228\n5\t1\t3\t1\t1\t3\t196\t531\t14\t28\t85.084572\t11\n5\t1\t3\t1\t1\t4\t222\t531\t11\t28\t21.198841\t中\n5\t1\t3\t1\t1\t5\t242\t531\t41\t28\t0.000000\toe\n2\t1\t4\t0\t0\t0\t59\t640\t188\t18\t-1\t\n3\t1\t4\t1\t0\t0\t59\t640\t188\t18\t-1\t\n4\t1\t4\t1\t1\t0\t59\t640\t188\t18\t-1\t\n5\t1\t4\t1\t1\t1\t59\t640\t188\t18\t17.112484\tApert\n5\t1\t4\t1\t1\t2\t124\t636\t30\t31\t33.358643\tINS\n5\t1\t4\t1\t1\t3\t166\t636\t34\t31\t53.872715\t1140\n5\t1\t4\t1\t1\t4\t210\t636\t42\t31\t39.211536\tOey\n2\t1\t5\t0\t0\t0\t61\t745\t298\t21\t-1\t\n3\t1\t5\t1\t0\t0\t61\t745\t298\t21\t-1\t\n4\t1\t5\t1\t1\t0\t61\t745\t298\t21\t-1\t\n5\t1\t5\t1\t1\t1\t57\t741\t42\t31\t45.569832\tTime\n5\t1\t5\t1\t1\t2\t108\t741\t37\t31\t49.555809\tgure\n5\t1\t5\t1\t1\t3\t106\t745\t253\t21\t0.000000\tAadesthanghan\n5\t1\t5\t1\t1\t4\t276\t741\t30\t31\t73.198677\tUTC\n5\t1\t5\t1\t1\t5\t312\t741\t50\t31\t20.990734\tommend\n2\t1\t6\t0\t0\t0\t60\t1098\t593\t48\t-1\t\n3\t1\t6\t1\t0\t0\t60\t1098\t593\t48\t-1\t\n4\t1\t6\t1\t1\t0\t60\t1098\t593\t22\t-1\t\n5\t1\t6\t1\t1\t1\t60\t1098\t464\t22\t0.000000\tIiierteerally\n5\t1\t6\t1\t1\t2\t193\t1094\t81\t30\t34.144310\tOngraded\n5\t1\t6\t1\t1\t3\t286\t1094\t28\t30\t0.000000\tryn\n5\t1\t6\t1\t1\t4\t316\t1094\t55\t30\t0.000000\tthet:\n5\t1\t6\t1\t1\t5\t378\t1094\t33\t30\t13.355589\tOCR\n5\t1\t6\t1\t1\t6\t421\t1094\t55\t30\t0.000000\tSNTES\n5\t1\t6\t1\t1\t7\t483\t1094\t41\t30\t72.103264\tcane\n5\t1\t6\t1\t1\t8\t536\t1094\t58\t30\t53.405975\tRewew\n5\t1\t6\t1\t1\t9\t603\t1094\t53\t30\t94.249916\tevery\n4\t1\t6\t1\t2\t0\t60\t1129\t92\t17\t-1\t\n5\t1\t6\t1\t2\t1\t60\t1129\t92\t17\t65.241707\tCharacter,\n2\t1\t7\t0\t0\t0\t60\t1326\t580\t20\t-1\t\n3\t1\t7\t1\t0\t0\t60\t1326\t580\t20\t-1\t\n4\t1\t7\t1\t1\t0\t60\t1326\t580\t20\t-1\t\n5\t1\t7\t1\t1\t1\t60\t1322\t29\t28\t30.572538\tFut\n5\t1\t7\t1\t1\t2\t95\t1322\t50\t28\t29.683071\tparser\n5\t1\t7\t1\t1\t3\t150\t1327\t129\t18\t0.000000\teoahsetwin\n5\t1\t7\t1\t1\t4\t247\t1322\t33\t28\t0.000000\tety\n5\t1\t7\t1\t1\t5\t286\t1322\t25\t28\t23.821535\tMie\n5\t1\t7\t1\t1\t6\t319\t1322\t34\t28\t0.000000\tpuri\n5\t1\t7\t1\t1\t7\t354\t1322\t38\t28\t0.000000\ttane\n5\t1\t7\t1\t1\t8\t402\t1327\t92\t19\t0.000000\tBeedeng\n5\t1\t7\t1\t1\t9\t478\t1322\t15\t28\t44.927780\tot\n5\t1\t7\t1\t1\t10\t501\t1322\t27\t28\t14.740934\tTet\n5\t1\t7\t1\t1\t11\t537\t1326\t103\t18\t25.893679\tasinfirimnt\n"
+  },
+  "candidates": {
+    "schema_version": 1,
+    "kind": "material_correction_candidates",
+    "source_id": "synthetic-fa8137c71ab82ccc",
+    "source_sha256": "fa8137c71ab82ccc676add207e19418b7887366804379cec59a4940b65961e6c",
+    "incomplete": true,
+    "requires_user_review": true,
+    "confirmed": false,
+    "fields": [
+      {
+        "field": "service_id",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "origin",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "destination",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "departure_local",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "arrival_local",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "timezone",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "currency",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "amount",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      }
+    ]
+  }
+}

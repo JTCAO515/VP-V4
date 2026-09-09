@@ -46,6 +46,25 @@ test('not-planned is not silently treated as product completion', () => {
   }), /closed without completion/);
 });
 
+test('completed tasks cannot conceal unresolved or cancelled native blockers', () => {
+  for (const blocker of [issue(), issue('closed', [], 'not_planned')]) {
+    assert.throws(() => validateRemoteTaskState(task, issue('closed', [], 'completed'), {
+      baselineMerged: true, blockers: [blocker],
+    }), /completed with unresolved native blockers/);
+  }
+  assert.equal(validateRemoteTaskState(task, issue('closed', [], 'completed'), {
+    baselineMerged: true, blockers: [issue('closed', [], 'completed')],
+  }), 'completed');
+});
+
+test('completed tasks cannot retain active status or ready-for labels', () => {
+  for (const label of ['status:ready', 'status:in-progress', 'ready-for-agent', 'ready-for-human']) {
+    assert.throws(() => validateRemoteTaskState(task, issue('closed', [label], 'completed'), {
+      baselineMerged: true,
+    }), /completed with active readiness labels/);
+  }
+});
+
 test('closing old tasks still demands a strict new-task migration snapshot', () => {
   const options = { baselineMerged: true, migrationSnapshot: true };
   assert.equal(validateRemoteTaskState(task, issue(), options), 'baseline-blocked');

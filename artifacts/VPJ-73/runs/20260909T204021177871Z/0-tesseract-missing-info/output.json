@@ -1,0 +1,254 @@
+{
+  "engine": "tesseract",
+  "conversion_status": "success",
+  "conversion_seconds": 0.3906742920007673,
+  "segments": [
+    {
+      "text": "SYNTHETIC TRAVEL MATERIAL",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.062,
+          0.055,
+          0.617,
+          0.07714285714285714
+        ],
+        "parser_ref": "tsv-line-1-1-1"
+      }
+    },
+    {
+      "text": "missing-info / NOT A TICKET / 自 有 测试 材料",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.062,
+          0.095,
+          0.5,
+          0.11928571428571429
+        ],
+        "parser_ref": "tsv-line-2-1-1"
+      }
+    },
+    {
+      "text": "车 次 : G12",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.062,
+          0.15785714285714286,
+          0.188,
+          0.18785714285714286
+        ],
+        "parser_ref": "tsv-line-3-1-1"
+      }
+    },
+    {
+      "text": "到 达 站 : 杭州 东",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.062,
+          0.31,
+          0.253,
+          0.33
+        ],
+        "parser_ref": "tsv-line-4-1-1"
+      }
+    },
+    {
+      "text": "出 发 :2026-11-05 14:20",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.063,
+          0.38285714285714284,
+          0.372,
+          0.41214285714285714
+        ],
+        "parser_ref": "tsv-line-5-1-1"
+      }
+    },
+    {
+      "text": "币 种 : CNY",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.063,
+          0.6078571428571429,
+          0.192,
+          0.6378571428571429
+        ],
+        "parser_ref": "tsv-line-6-1-1"
+      }
+    },
+    {
+      "text": "到 达 时 间 、 时 区 和 金额 未 提供 。 不 能 根据 城市 或 其 他 样本 补 全 。",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.062,
+          0.7807142857142857,
+          0.607,
+          0.8042857142857143
+        ],
+        "parser_ref": "tsv-line-7-1-1"
+      }
+    },
+    {
+      "text": "For parser evaluation only. No purchase, booking or Trip is confirmed.",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.062,
+          0.9478571428571428,
+          0.642,
+          0.9607142857142857
+        ],
+        "parser_ref": "tsv-line-8-1-1"
+      }
+    }
+  ],
+  "document": {
+    "format": "tesseract-tsv",
+    "text": "level\tpage_num\tblock_num\tpar_num\tline_num\tword_num\tleft\ttop\twidth\theight\tconf\ttext\n1\t1\t0\t0\t0\t0\t0\t0\t1000\t1400\t-1\t\n2\t1\t1\t0\t0\t0\t62\t77\t555\t31\t-1\t\n3\t1\t1\t1\t0\t0\t62\t77\t555\t31\t-1\t\n4\t1\t1\t1\t1\t0\t62\t77\t555\t31\t-1\t\n5\t1\t1\t1\t1\t1\t62\t77\t206\t31\t96.020813\tSYNTHETIC\n5\t1\t1\t1\t1\t2\t280\t78\t140\t29\t96.247353\tTRAVEL\n5\t1\t1\t1\t1\t3\t434\t78\t183\t29\t95.938675\tMATERIAL\n2\t1\t2\t0\t0\t0\t62\t140\t438\t23\t-1\t\n3\t1\t2\t1\t0\t0\t62\t140\t438\t23\t-1\t\n4\t1\t2\t1\t1\t0\t62\t140\t438\t23\t-1\t\n5\t1\t2\t1\t1\t1\t62\t140\t138\t23\t91.577637\tmissing-info\n5\t1\t2\t1\t1\t2\t196\t133\t13\t34\t93.208061\t/\n5\t1\t2\t1\t1\t3\t208\t142\t43\t16\t95.596519\tNOT\n5\t1\t2\t1\t1\t4\t257\t142\t13\t16\t79.574158\tA\n5\t1\t2\t1\t1\t5\t276\t141\t87\t21\t79.574158\tTICKET\n5\t1\t2\t1\t1\t6\t355\t133\t12\t34\t92.721237\t/\n5\t1\t2\t1\t1\t7\t383\t140\t4\t20\t88.942276\t自\n5\t1\t2\t1\t1\t8\t400\t140\t19\t20\t92.570023\t有\n5\t1\t2\t1\t1\t9\t421\t140\t50\t20\t96.338409\t测试\n5\t1\t2\t1\t1\t10\t470\t133\t30\t34\t96.559715\t材料\n2\t1\t3\t0\t0\t0\t62\t225\t126\t27\t-1\t\n3\t1\t3\t1\t0\t0\t62\t225\t126\t27\t-1\t\n4\t1\t3\t1\t1\t0\t62\t225\t126\t27\t-1\t\n5\t1\t3\t1\t1\t1\t62\t225\t64\t27\t96.822113\t车\n5\t1\t3\t1\t1\t2\t102\t221\t25\t42\t92.784058\t次\n5\t1\t3\t1\t1\t3\t126\t221\t11\t42\t91.877991\t:\n5\t1\t3\t1\t1\t4\t137\t228\t51\t22\t92.193642\tG12\n2\t1\t4\t0\t0\t0\t62\t434\t191\t28\t-1\t\n3\t1\t4\t1\t0\t0\t62\t434\t191\t28\t-1\t\n4\t1\t4\t1\t1\t0\t62\t434\t191\t28\t-1\t\n5\t1\t4\t1\t1\t1\t62\t435\t25\t27\t92.826828\t到\n5\t1\t4\t1\t1\t2\t96\t435\t23\t26\t91.480965\t达\n5\t1\t4\t1\t1\t3\t126\t435\t23\t27\t91.602844\t站\n5\t1\t4\t1\t1\t4\t152\t443\t4\t17\t88.958138\t:\n5\t1\t4\t1\t1\t5\t166\t434\t56\t28\t92.923492\t杭州\n5\t1\t4\t1\t1\t6\t227\t435\t26\t27\t93.275864\t东\n2\t1\t5\t0\t0\t0\t63\t540\t309\t27\t-1\t\n3\t1\t5\t1\t0\t0\t63\t540\t309\t27\t-1\t\n4\t1\t5\t1\t1\t0\t63\t540\t309\t27\t-1\t\n5\t1\t5\t1\t1\t1\t63\t540\t63\t27\t96.942650\t出\n5\t1\t5\t1\t1\t2\t105\t536\t26\t41\t95.850403\t发\n5\t1\t5\t1\t1\t3\t136\t543\t153\t22\t80.553207\t:2026-11-05\n5\t1\t5\t1\t1\t4\t301\t543\t71\t22\t95.826271\t14:20\n2\t1\t6\t0\t0\t0\t63\t855\t129\t27\t-1\t\n3\t1\t6\t1\t0\t0\t63\t855\t129\t27\t-1\t\n4\t1\t6\t1\t1\t0\t63\t855\t129\t27\t-1\t\n5\t1\t6\t1\t1\t1\t63\t855\t63\t27\t92.518036\t币\n5\t1\t6\t1\t1\t2\t103\t851\t22\t42\t92.076530\t种\n5\t1\t6\t1\t1\t3\t124\t851\t12\t42\t93.072701\t:\n5\t1\t6\t1\t1\t4\t137\t858\t55\t22\t92.757263\tCNY\n2\t1\t7\t0\t0\t0\t62\t1097\t545\t19\t-1\t\n3\t1\t7\t1\t0\t0\t62\t1097\t545\t19\t-1\t\n4\t1\t7\t1\t1\t0\t62\t1097\t545\t19\t-1\t\n5\t1\t7\t1\t1\t1\t62\t1097\t16\t18\t93.183395\t到\n5\t1\t7\t1\t1\t2\t84\t1097\t15\t18\t92.125366\t达\n5\t1\t7\t1\t1\t3\t107\t1097\t19\t19\t88.763893\t时\n5\t1\t7\t1\t1\t4\t127\t1098\t19\t17\t92.382202\t间\n5\t1\t7\t1\t1\t5\t146\t1093\t20\t33\t92.752640\t、\n5\t1\t7\t1\t1\t6\t165\t1097\t14\t18\t92.504410\t时\n5\t1\t7\t1\t1\t7\t187\t1099\t12\t16\t96.882050\t区\n5\t1\t7\t1\t1\t8\t204\t1097\t14\t19\t96.985252\t和\n5\t1\t7\t1\t1\t9\t221\t1097\t106\t19\t90.952950\t金额\n5\t1\t7\t1\t1\t10\t270\t1093\t17\t33\t96.693375\t未\n5\t1\t7\t1\t1\t11\t286\t1093\t43\t33\t93.186333\t提供\n5\t1\t7\t1\t1\t12\t328\t1093\t17\t33\t92.966454\t。\n5\t1\t7\t1\t1\t13\t344\t1097\t24\t19\t91.747787\t不\n5\t1\t7\t1\t1\t14\t371\t1097\t8\t18\t96.914810\t能\n5\t1\t7\t1\t1\t15\t388\t1097\t32\t19\t96.797623\t根据\n5\t1\t7\t1\t1\t16\t429\t1097\t42\t19\t95.072502\t城市\n5\t1\t7\t1\t1\t17\t481\t1097\t11\t19\t94.477531\t或\n5\t1\t7\t1\t1\t18\t491\t1093\t17\t33\t94.715797\t其\n5\t1\t7\t1\t1\t19\t507\t1097\t20\t19\t96.973213\t他\n5\t1\t7\t1\t1\t20\t530\t1097\t40\t19\t93.234192\t样本\n5\t1\t7\t1\t1\t21\t572\t1098\t7\t18\t91.975441\t补\n5\t1\t7\t1\t1\t22\t588\t1097\t11\t18\t93.093697\t全\n5\t1\t7\t1\t1\t23\t601\t1109\t6\t6\t92.658363\t。\n2\t1\t8\t0\t0\t0\t62\t1327\t580\t18\t-1\t\n3\t1\t8\t1\t0\t0\t62\t1327\t580\t18\t-1\t\n4\t1\t8\t1\t1\t0\t62\t1327\t580\t18\t-1\t\n5\t1\t8\t1\t1\t1\t62\t1328\t26\t13\t96.904030\tFor\n5\t1\t8\t1\t1\t2\t94\t1331\t52\t14\t96.734253\tparser\n5\t1\t8\t1\t1\t3\t151\t1327\t87\t14\t96.145119\tevaluation\n5\t1\t8\t1\t1\t4\t244\t1327\t38\t18\t96.513199\tonly.\n5\t1\t8\t1\t1\t5\t289\t1328\t21\t13\t96.970802\tNo\n5\t1\t8\t1\t1\t6\t317\t1327\t80\t18\t96.292664\tpurchase,\n5\t1\t8\t1\t1\t7\t404\t1327\t67\t18\t96.800941\tbooking\n5\t1\t8\t1\t1\t8\t477\t1331\t17\t10\t96.413826\tor\n5\t1\t8\t1\t1\t9\t499\t1327\t33\t18\t96.252922\tTrip\n5\t1\t8\t1\t1\t10\t538\t1327\t11\t14\t96.252922\tis\n5\t1\t8\t1\t1\t11\t554\t1327\t88\t14\t96.893867\tconfirmed.\n"
+  },
+  "candidates": {
+    "schema_version": 1,
+    "kind": "material_correction_candidates",
+    "source_id": "synthetic-af0d75df7def1b87",
+    "source_sha256": "af0d75df7def1b87867916c165ddc07bfaa9d74fe1f1fe37cc8508734ea3db9b",
+    "incomplete": true,
+    "requires_user_review": true,
+    "confirmed": false,
+    "fields": [
+      {
+        "field": "service_id",
+        "value": "G12",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "G12",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.062,
+                  0.15785714285714286,
+                  0.188,
+                  0.18785714285714286
+                ],
+                "parser_ref": "tsv-line-3-1-1"
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "origin",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "destination",
+        "value": "杭州东",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "杭州东",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.062,
+                  0.31,
+                  0.253,
+                  0.33
+                ],
+                "parser_ref": "tsv-line-4-1-1"
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "departure_local",
+        "value": "2026-11-05 14:20",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "2026-11-05 14:20",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.063,
+                  0.38285714285714284,
+                  0.372,
+                  0.41214285714285714
+                ],
+                "parser_ref": "tsv-line-5-1-1"
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "arrival_local",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "timezone",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "currency",
+        "value": "CNY",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "CNY",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.063,
+                  0.6078571428571429,
+                  0.192,
+                  0.6378571428571429
+                ],
+                "parser_ref": "tsv-line-6-1-1"
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "amount",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      }
+    ]
+  }
+}
