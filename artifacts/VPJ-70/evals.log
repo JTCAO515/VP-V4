@@ -1,0 +1,159 @@
+
+> vp-v4@0.0.0 evals /Users/jtcao/Documents/VP-V4-Harness-Pairing
+> node scripts/run-ci-suite.mjs evals
+
+TAP version 13
+# Subtest: reports deterministic claim ordering and an honest no-evidence outcome
+ok 1 - reports deterministic claim ordering and an honest no-evidence outcome
+  ---
+  duration_ms: 11.659917
+  type: 'test'
+  ...
+# Subtest: orders opaque subject identifiers by stable code point rather than host locale
+ok 2 - orders opaque subject identifiers by stable code point rather than host locale
+  ---
+  duration_ms: 0.91
+  type: 'test'
+  ...
+# Subtest: V4-02 preserves hard constraints across full-history and compacted thread contexts
+ok 3 - V4-02 preserves hard constraints across full-history and compacted thread contexts
+  ---
+  duration_ms: 1.492416
+  type: 'test'
+  ...
+# Subtest: V4-02 context eval records zero prohibited source leaks
+ok 4 - V4-02 context eval records zero prohibited source leaks
+  ---
+  duration_ms: 0.1725
+  type: 'test'
+  ...
+# Subtest: 12 independent specifications preserve the 8/4 stratified split
+ok 5 - 12 independent specifications preserve the 8/4 stratified split
+  ---
+  duration_ms: 1.54875
+  type: 'test'
+  ...
+# Subtest: offline seeds report passing baselines and localized detected faults separately
+ok 6 - offline seeds report passing baselines and localized detected faults separately
+  ---
+  duration_ms: 38.025541
+  type: 'test'
+  ...
+# Subtest: grader catches sidecar, revision, scope, route-basis and reload violations
+ok 7 - grader catches sidecar, revision, scope, route-basis and reload violations
+  ---
+  duration_ms: 1.336958
+  type: 'test'
+  ...
+# Subtest: VPJ-70 offline baseline remains insufficient and deliberate read-only regressions reject
+ok 8 - VPJ-70 offline baseline remains insufficient and deliberate read-only regressions reject
+  ---
+  duration_ms: 21.888625
+  type: 'test'
+  ...
+# Subtest: AI-31 fixture field-exact report covers five locales and five closed field kinds
+ok 9 - AI-31 fixture field-exact report covers five locales and five closed field kinds
+  ---
+  duration_ms: 1.047375
+  type: 'test'
+  ...
+# Subtest: V4-15 synthetic receipt trace retains active hard constraints and abstains after pause or rejection
+ok 10 - V4-15 synthetic receipt trace retains active hard constraints and abstains after pause or rejection
+  ---
+  duration_ms: 8.64675
+  type: 'test'
+  ...
+# Subtest: V4-04 PlanConstraintEval preserves deterministic final-state decisions
+ok 11 - V4-04 PlanConstraintEval preserves deterministic final-state decisions
+  ---
+  duration_ms: 2.121041
+  type: 'test'
+  ...
+# Subtest: reports five opaque locale fixtures and an honest no-evidence result
+ok 12 - reports five opaque locale fixtures and an honest no-evidence result
+  ---
+  duration_ms: 2.187209
+  type: 'test'
+  ...
+# Subtest: reports deterministic MRR, nDCG, and no-answer results by locale and query mode
+ok 13 - reports deterministic MRR, nDCG, and no-answer results by locale and query mode
+  ---
+  duration_ms: 4.843167
+  type: 'test'
+  ...
+# Subtest: fails closed for malformed qrels and never converts an unmatched query into a result
+ok 14 - fails closed for malformed qrels and never converts an unmatched query into a result
+  ---
+  duration_ms: 1.689625
+  type: 'test'
+  ...
+# Subtest: rejects duplicate, malformed, and out-of-corpus relevance identifiers
+ok 15 - rejects duplicate, malformed, and out-of-corpus relevance identifiers
+  ---
+  duration_ms: 0.193458
+  type: 'test'
+  ...
+# Subtest: reports every frozen query mode with deterministic zero-sample metrics
+ok 16 - reports every frozen query mode with deterministic zero-sample metrics
+  ---
+  duration_ms: 0.245208
+  type: 'test'
+  ...
+# Subtest: uses discounted cumulative gain rather than reciprocal rank for a lower-ranked relevant alias
+ok 17 - uses discounted cumulative gain rather than reciprocal rank for a lower-ranked relevant alias
+  ---
+  duration_ms: 0.125833
+  type: 'test'
+  ...
+# Subtest: AI-42 freezes all nine named red-line suites before reporting corpus coverage
+ok 18 - AI-42 freezes all nine named red-line suites before reporting corpus coverage
+  ---
+  duration_ms: 8.770083
+  type: 'test'
+  ...
+# Subtest: AI-42 reports five-locale, six-moment C0 coverage while keeping holdout out of tuning
+ok 19 - AI-42 reports five-locale, six-moment C0 coverage while keeping holdout out of tuning
+  ---
+  duration_ms: 1.173
+  type: 'test'
+  ...
+# Subtest: AI-42 fails closed when a full-size corpus duplicates one stratum and omits another
+ok 20 - AI-42 fails closed when a full-size corpus duplicates one stratum and omits another
+  ---
+  duration_ms: 0.779541
+  type: 'test'
+  ...
+# Subtest: V4-05 route-pattern order cannot replace current route-matrix evidence
+ok 21 - V4-05 route-pattern order cannot replace current route-matrix evidence
+  ---
+  duration_ms: 1.455583
+  type: 'test'
+  ...
+# Subtest: V4-05 route-pattern order cannot replace a current closed Fact
+ok 22 - V4-05 route-pattern order cannot replace a current closed Fact
+  ---
+  duration_ms: 0.319542
+  type: 'test'
+  ...
+# Subtest: V4-05 synthetic paired spike reports no adoption gain
+ok 23 - V4-05 synthetic paired spike reports no adoption gain
+  ---
+  duration_ms: 0.156791
+  type: 'test'
+  ...
+# Subtest: V4-18 eval: expired, unlicensed, and draft facts never produce a Today action
+ok 24 - V4-18 eval: expired, unlicensed, and draft facts never produce a Today action
+  ---
+  duration_ms: 3.253708
+  type: 'test'
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 262.724875
+VP_CI_SUITE_RESULT {"suite":"evals","outcome":"passed","skipped":0,"testFiles":12}
