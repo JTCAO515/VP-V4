@@ -1,0 +1,1 @@
+{"command": "node scripts/docs-check.mjs", "exitCode": 0, "elapsedSeconds": 7.801, "result": "VPJ plan passed: 71 tasks, 20 replacements, acyclic dependencies, contracts and archive hashes.\nAI Core and VPJ documentation baseline passed."}
