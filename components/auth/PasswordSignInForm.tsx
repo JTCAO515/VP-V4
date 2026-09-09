@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useState } from "react";
 import { FirstRunState } from "@/components/first-run/FirstRunState";
-import { copy, getLocaleAttributes, localeOptions, type Locale } from "@/lib/i18n";
+import { copy, getLocaleAttributes, getLocaleSelectionOptions, type Locale } from "@/lib/i18n";
 import { createPasswordAuthClient } from "@/lib/server/identity/browser-auth-client";
 
 import styles from "./PasswordSignInForm.module.css";
@@ -123,7 +123,7 @@ export function PasswordSignInForm({ showFirstRun = false, returnTo = "/visepand
         <label className={styles.language}>
           <span>{authCopy.language}</span>
           <select value={locale} onChange={(event) => setLocale(event.target.value as Locale)}>
-            {localeOptions.map((option) => (
+            {getLocaleSelectionOptions(locale).map((option) => (
               <option key={option.value} value={option.value}>{option.flag} {option.label}</option>
             ))}
           </select>

@@ -9,7 +9,7 @@ test("AI-51b exposes an accessible five-locale password session surface", () => 
   assert.match(form, /type="email"/);
   assert.match(form, /type="password"/);
   assert.match(form, /autoComplete="current-password"/);
-  assert.match(form, /localeOptions\.map/);
+  assert.match(form, /getLocaleSelectionOptions\(locale\)\.map/);
   assert.match(form, /document\.documentElement\.dir/);
   assert.match(form, /aria-live="polite"/);
   assert.match(form, /signInWithPassword/);

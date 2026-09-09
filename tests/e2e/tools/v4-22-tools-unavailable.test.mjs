@@ -14,7 +14,7 @@ test("V4-22 exposes no fictional Tool health or offline capability without healt
   assert.match(page, /ToolsWorkspace/);
   assert.match(view, /Tool status is unavailable/);
   assert.match(view, /No provider health observation, offline cache, or authorized tool call is available/);
-  assert.match(view, /localeOptions/);
+  assert.match(view, /getLocaleSelectionOptions\(locale\)/);
   assert.match(view, /document\.documentElement\.dir = attributes\.dir/);
   for (const label of ["VisePanda 首页", "Inicio de VisePanda", "Главная VisePanda", "الصفحة الرئيسية لـ VisePanda"]) {
     assert.match(view, new RegExp(label));

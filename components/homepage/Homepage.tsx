@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { copy, getLocaleAttributes, localeOptions, type Locale } from "@/lib/i18n";
+import { copy, getLocaleAttributes, getLocaleSelectionOptions, type Locale } from "@/lib/i18n";
 
 import styles from "./Homepage.module.css";
 
@@ -57,7 +57,7 @@ export function Homepage() {
             <label className={styles.localeLabel}>
               <span className={styles.srOnly}>{content.header.language}</span>
               <select aria-label={content.header.language} onChange={(event) => setLocale(event.target.value as Locale)} value={locale}>
-                {localeOptions.map((option) => (
+                {getLocaleSelectionOptions(locale).map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>

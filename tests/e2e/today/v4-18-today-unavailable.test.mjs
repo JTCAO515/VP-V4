@@ -13,7 +13,7 @@ test("LAUNCH-12 keeps Today owner-scoped and distinguishes no current Trip from 
   assert.match(view, /noCurrentTrip:/);
   assert.match(projection, /reason: "no_items"/);
   assert.match(projection, /"incomplete_data"/);
-  assert.match(view, /localeOptions/);
+  assert.match(view, /getLocaleSelectionOptions\(locale\)/);
   assert.match(view, /dir = attributes\.dir/);
   for (const label of ["VisePanda 首页", "Inicio de VisePanda", "Главная VisePanda", "الصفحة الرئيسية"]) assert.match(view, new RegExp(label));
   assert.doesNotMatch(view, /localStorage|sessionStorage|method:\s*["'](?:POST|PUT|PATCH|DELETE)|fetch\(\s*["']https?:\/\//);

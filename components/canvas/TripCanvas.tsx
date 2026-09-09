@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { VisePandaMark } from "@/components/brand/VisePandaMark";
-import { getLocaleAttributes, localeOptions, tripCanvasCopy, tripProposalNoticeCopy, type Locale } from "@/lib/i18n";
+import { getLocaleAttributes, getLocaleSelectionOptions, tripCanvasCopy, tripProposalNoticeCopy, type Locale } from "@/lib/i18n";
 import { TripPlaceView } from "./TripPlaceView";
 import { TripActionsView } from "./TripActionsView";
 import styles from "./TripCanvas.module.css";
@@ -199,5 +199,5 @@ export function TripCanvas({ tripId }: { tripId: string }) {
 }
 
 function Shell({ children, locale, setLocale, copy }: { children: ReactNode; locale: Locale; setLocale: (locale: Locale) => void; copy: (typeof tripCanvasCopy)[Locale] }) {
-  return <div className={styles.shell}><header className={styles.header}><Link className={styles.brand} href="/visepanda" aria-label={copy.home}><VisePandaMark /></Link><Link className={styles.back} href="/visepanda">{copy.back}</Link><label className={styles.language}>{copy.language}<select value={locale} onChange={(event) => setLocale(event.target.value as Locale)}>{localeOptions.map((option) => <option key={option.value} value={option.value}>{option.flag} {option.label}</option>)}</select></label></header>{children}</div>;
+  return <div className={styles.shell}><header className={styles.header}><Link className={styles.brand} href="/visepanda" aria-label={copy.home}><VisePandaMark /></Link><Link className={styles.back} href="/visepanda">{copy.back}</Link><label className={styles.language}>{copy.language}<select value={locale} onChange={(event) => setLocale(event.target.value as Locale)}>{getLocaleSelectionOptions(locale).map((option) => <option key={option.value} value={option.value}>{option.flag} {option.label}</option>)}</select></label></header>{children}</div>;
 }

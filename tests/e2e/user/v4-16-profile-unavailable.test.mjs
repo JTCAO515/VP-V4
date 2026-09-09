@@ -12,7 +12,7 @@ test("V4-16 renders durable owner Profile preferences without browser-local writ
   assert.match(view, /distanceUnit/);
   assert.match(view, /temperatureUnit/);
   assert.match(view, /defaultDepartureTime/);
-  assert.match(view, /localeOptions/);
+  assert.match(view, /getLocaleSelectionOptions\(locale\)/);
   assert.match(view, /if \(v\) setLocale\(v\.locale\)/);
   assert.match(view, /dir = attributes\.dir/);
   for (const label of ["VisePanda 首页", "Inicio de VisePanda", "Главная VisePanda", "الصفحة الرئيسية"]) assert.match(view, new RegExp(label));

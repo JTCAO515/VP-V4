@@ -40,6 +40,11 @@ export const localeOptions: ReadonlyArray<{ value: Locale; label: string; flag: 
   { value: "ar", label: "العربية", flag: "🇸🇦", currencySymbol: "ر.س" },
 ];
 
+/** Release discovery is bilingual; a legacy selection remains visible until the user changes it. */
+export function getLocaleSelectionOptions(currentLocale: Locale) {
+  return localeOptions.filter(({ value }) => value === "zh" || value === "en" || value === currentLocale);
+}
+
 export const immersiveHomepageCopy: Readonly<Record<Locale, Readonly<{
   title: string; subtitle: string; prompt: string; promptHint: string; open: string; guide: string; home: string; kicker: string; navigation: string;
   nav: readonly [string, string, string]; language: string; landmarkAlt: string; attachment: string;

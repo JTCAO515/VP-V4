@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { VisePandaMark } from "@/components/brand/VisePandaMark";
-import { getLocaleAttributes, localeOptions, type Locale } from "@/lib/i18n";
+import { getLocaleAttributes, getLocaleSelectionOptions, type Locale } from "@/lib/i18n";
 import styles from "./TranslateWorkspace.module.css";
 
 type Copy = Readonly<{
@@ -68,7 +68,7 @@ export function TranslateWorkspace() {
     <header className={styles.header}>
       <Link className={styles.brand} href="/visepanda" aria-label={words.home}><VisePandaMark /></Link>
       <select aria-label={words.language} value={locale} onChange={(event) => setLocale(event.target.value as Locale)}>
-        {localeOptions.map((option) => <option key={option.value} value={option.value}>{option.flag} {option.label}</option>)}
+        {getLocaleSelectionOptions(locale).map((option) => <option key={option.value} value={option.value}>{option.flag} {option.label}</option>)}
       </select>
     </header>
     <main className={styles.main}>

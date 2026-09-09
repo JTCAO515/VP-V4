@@ -14,7 +14,7 @@ test("V4-27 withholds a Human Handoff pack until owner-scoped context and operat
   assert.match(page, /HandoffWorkspace/);
   assert.match(view, /Human Handoff is unavailable/);
   assert.match(view, /No owner-scoped Trip context, selected city and problem, attempted steps, or operator capacity exists/);
-  assert.match(view, /localeOptions/);
+  assert.match(view, /getLocaleSelectionOptions\(locale\)/);
   assert.match(view, /document\.documentElement\.dir = attributes\.dir/);
   for (const label of ["VisePanda 首页", "Inicio de VisePanda", "Главная VisePanda", "الصفحة الرئيسية لـ VisePanda"]) {
     assert.match(view, new RegExp(label));

@@ -5,7 +5,7 @@ import test from "node:test";
 const htmlPath = ".next/server/app/index.html";
 const html = readFileSync(htmlPath, "utf8");
 const relocatedHomepageHtml = readFileSync(".next/server/app/homepage.html", "utf8");
-const chatbotHtml = readFileSync(".next/server/app/visepanda.html", "utf8");
+const appPaths = JSON.parse(readFileSync(".next/server/app-paths-manifest.json", "utf8"));
 const homepageSource = readFileSync("components/homepage/Homepage.tsx", "utf8");
 const homepageCss = readFileSync("components/homepage/Homepage.module.css", "utf8");
 const localeSource = readFileSync("lib/i18n.ts", "utf8");
@@ -60,11 +60,12 @@ test("keeps project documentation focused on VisePanda", () => {
   assert.doesNotMatch(documentation, /Layla|reference[- ]?(?:site|clone|brand)|参考站点|参考克隆|源站/i);
 });
 
-test("renders the VisePanda private workspace at the canonical route", () => {
-  assert.match(chatbotHtml, /<title>VisePanda<\/title>/);
-  assert.match(chatbotHtml, /https:\/\/go2china\.space\/visepanda/);
+test("builds the locale-aware private workspace at the canonical route", () => {
+  assert.ok(appPaths["/visepanda/page"], "canonical dynamic route is present in the build");
+  assert.match(chatbotPageSource, /generateMetadata/);
+  assert.match(chatbotPageSource, /https:\/\/go2china\.space\/visepanda/);
   assert.match(chatbotSource, /chatThreadCopy\[locale\]/);
-  assert.doesNotMatch(chatbotHtml, /product preview/i);
+  // Actual localized title, canonical URL and absence of preview claims are checked in vpj-01-web-locales.spec.mjs.
   assert.match(chatbotPageSource, /ChatThreadWorkspace/);
   assert.doesNotMatch(chatbotPageSource, /VisePandaChatWorkspace/);
   assert.doesNotMatch(chatbotSource, /Mindtrip|mindtrip/);

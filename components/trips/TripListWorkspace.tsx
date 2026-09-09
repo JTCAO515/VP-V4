@@ -11,7 +11,7 @@ import {
 import { VisePandaMark } from "@/components/brand/VisePandaMark";
 import {
   getLocaleAttributes,
-  localeOptions,
+  getLocaleSelectionOptions,
   tripCanvasCopy,
   type Locale,
 } from "@/lib/i18n";
@@ -110,7 +110,7 @@ export function TripListWorkspace() {
             value={locale}
             onChange={(event) => setLocale(event.target.value as Locale)}
           >
-            {localeOptions.map((option) => (
+            {getLocaleSelectionOptions(locale).map((option) => (
               <option key={option.value} value={option.value}>
                 {option.flag} {option.label}
               </option>
