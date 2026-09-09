@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Staging backup and explicit verified Session pooler are ready. Original13 validation exposed RPC defects; appended repair is locally verified at25 migrations with29 integration/82 security tests,zero skips. Remote remains11; additional repair execution authority pending, original backup/13/two-identity grant retained. Harness planning merged via PR269; six implementation Issues are VPJ-66..71 (#263..268), with runtime acceptance unstarted.
+状态：Staging backup and explicit verified Session pooler are ready. Original13 validation exposed RPC defects; appended repair is locally verified at25 migrations with29 integration/82 security tests,zero skips. Remote remains11; additional repair execution authority pending, original backup/13/two-identity grant retained. Harness planning merged via PR269; six implementation Issues are VPJ-66..71 (#263..268), with runtime acceptance unstarted. VPJ-66 offline seeds are in PR271 with two passing baselines and four detected faults; final CI and merge verification remain pending.
 
 阶段：Validated repository RPC repair and real affected-schema backup/restore preparation; no remote migration or new Auth identities yet.
 
@@ -59,7 +59,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Review/merge RPC repair PR270 against current main with fresh exact-head checks; obtain scope for the single additional migration before Staging application. In parallel verify VPJ-66 #263 offline preparation contract and live dependencies; VPJ-67..71 retain runtime gates.
+Complete exact-HEAD review and required CI for offline-seeds PR271, merge and verify VPJ-66 #263 preparation acceptance, then recalculate live dependencies. RPC repair PR270 is merged; its single additional Staging migration still requires explicit scope approval before remote application. VPJ-67..71 retain runtime gates.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
