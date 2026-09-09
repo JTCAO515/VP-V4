@@ -1,0 +1,11 @@
+{"command":"node --experimental-strip-types --test tests/unit/harness/pairing/grader.test.ts tests/contract/harness/pairing/report.test.ts evals/harness/pairing/pairing.evals.test.ts","exitCode":0,"startedAt":"2026-09-09T17:27:19.850Z","finishedAt":"2026-09-09T17:27:20.281Z","env":"local"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-09-09T17:27:46.825Z","finishedAt":"2026-09-09T17:27:48.588Z","env":"local"}
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-09-09T17:27:47.988Z","finishedAt":"2026-09-09T17:27:48.917Z","env":"local"}
+{"command":"pnpm test:unit","exitCode":0,"startedAt":"2026-09-09T17:27:45.604Z","finishedAt":"2026-09-09T17:27:51.654Z","env":"local"}
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-09-09T17:27:48.984Z","finishedAt":"2026-09-09T17:28:07.983Z","env":"local"}
+{"command":"node --experimental-strip-types --test tests/unit/harness/pairing/grader.test.ts tests/contract/harness/pairing/report.test.ts evals/harness/pairing/pairing.evals.test.ts","exitCode":0,"startedAt":"2026-09-09T17:28:52.958Z","finishedAt":"2026-09-09T17:28:53.155Z","env":"local"}
+{"command":"pnpm lint","exitCode":0,"startedAt":"2026-09-09T17:29:20.134Z","finishedAt":"2026-09-09T17:29:20.440Z","env":"local"}
+{"command":"pnpm typecheck","exitCode":0,"startedAt":"2026-09-09T17:29:20.476Z","finishedAt":"2026-09-09T17:29:24.608Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-09-09T17:30:02.219Z","finishedAt":"2026-09-09T17:30:04.307Z","env":"local"}
+{"command":"git diff --cached --check","exitCode":2,"startedAt":"2026-09-09T17:30:04.583Z","finishedAt":"2026-09-09T17:30:04.626Z","env":"local"}
+{"command":"git diff --cached --check","exitCode":0,"startedAt":"2026-09-09T17:30:25.644Z","finishedAt":"2026-09-09T17:30:25.656Z","env":"local"}

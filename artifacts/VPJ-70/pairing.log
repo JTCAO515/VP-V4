@@ -1,0 +1,18 @@
+✔ VPJ-70 offline baseline remains insufficient and deliberate read-only regressions reject (86.306125ms)
+✔ JSON and Markdown preserve planned Chinese and live modes as NOT_RUN (62.477292ms)
+✔ report projection drops arbitrary payloads, raw assertions and untrusted metadata (2.316166ms)
+✔ quality rubric remains separate from deterministic read-only and receipt checks (77.366209ms)
+✔ one hard failure cannot be offset by perfect quality or a forged seed verdict (14.738958ms)
+✔ unsupported claims and excessive refusal reject even with two passing repeats (3.791708ms)
+✔ missing or duplicated evidence stays NOT_RUN instead of vacuous PASS (0.432625ms)
+✔ matching baseline-only and non-degrading pairs cannot bypass missing adoption gates (2.66075ms)
+✔ every fixed basis dimension and repeat identity must match (16.511916ms)
+✔ producer refuses a caller's fictional clock/evidence binding even if both lanes would match (0.386042ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 331.863375

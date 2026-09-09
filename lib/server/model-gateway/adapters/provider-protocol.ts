@@ -1,0 +1,221 @@
+import { MODEL_PROFILES, validateKnownUnknownOutput, type KnownUnknownOutput, type ModelDataClass, type ModelTask } from "../index.ts";
+import type { CostGuard } from "../budget/index.ts";
+import type { FailureCode } from "../../contracts/errors/index.ts";
+
+export const PROTOCOL_MODELS = Object.freeze({
+  qwen: MODEL_PROFILES.qwen_37_strict.providerModelId,
+  glm: "glm-5.3-flash",
+  deepseek: MODEL_PROFILES.deepseek_flash.providerModelId,
+});
+export type ProtocolProvider = keyof typeof PROTOCOL_MODELS;
+export type ProtocolTool = Readonly<{
+  name: string;
+  parameters: Readonly<Record<string, unknown>>;
+  validateArguments: (value: unknown) => boolean;
+}>;
+export type ProtocolRequest = Readonly<{
+  requestId: string;
+  provider: ProtocolProvider;
+  dataClass: ModelDataClass;
+  input: string;
+  task: ModelTask | "tool_candidate";
+  tool?: ProtocolTool;
+  maxOutputTokens: number;
+  timeoutMs: number;
+}>;
+export type ProtocolUsage = Readonly<{
+  inputTokens: number;
+  outputTokens: number;
+  totalTokens: number;
+  cachedInputTokens: number | null;
+  uncachedInputTokens: number | null;
+  reasoningTokens: number | null;
+  cost: "unknown";
+}>;
+export type ProtocolOutcome =
+  | Readonly<{
+      kind: "protocol_validated";
+      provider: ProtocolProvider;
+      model: string;
+      output: string | KnownUnknownOutput | Readonly<{ kind: "tool_candidate"; id: string; name: string; arguments: Record<string, unknown> }>;
+      usage: ProtocolUsage;
+    }>
+  | Readonly<{ kind: "unavailable"; code: FailureCode; usage: ProtocolUsage | null; cost: "unknown" }>
+  | Readonly<{ kind: "cancelled"; code: "CANCELLED"; usage: null; cost: "unknown" }>;
+
+/** Deliberately no default fetch, endpoint, credential loading or production route. */
+export type ProtocolTransport = (request: Readonly<{
+  provider: ProtocolProvider;
+  method: "POST";
+  body: string;
+  signal: AbortSignal;
+}>) => Promise<Response>;
+type BudgetTurn = Extract<ReturnType<CostGuard["startTurn"]>, { kind: "turn" }>;
+const MAX_RESPONSE_BYTES = 262144;
+
+/** C0 protocol preparation only. Runtime policy, durable reservation and dispatch remain unimplemented. */
+export async function invokeProviderProtocol(
+  request: ProtocolRequest,
+  budget: BudgetTurn,
+  transport: ProtocolTransport,
+  signal: AbortSignal,
+): Promise<ProtocolOutcome> {
+  if (!validRequest(request)) return unavailable("INVALID_INPUT");
+  if (signal.aborted) return cancelled();
+  if (request.dataClass !== "c0_synthetic") return unavailable("DATA_POLICY_BLOCKED");
+  let body: string;
+  try { body = JSON.stringify(requestBody(request)); } catch { return unavailable("INVALID_INPUT"); }
+  if (Buffer.byteLength(body) > MAX_RESPONSE_BYTES) return unavailable("INVALID_INPUT");
+  const admission = budget.admitModelStep();
+  if (admission.kind !== "admitted") return unavailable(admission.kind === "invalid" ? "INVALID_INPUT" : admission.code);
+
+  const controller = new AbortController();
+  let timedOut = false;
+  const abort = () => controller.abort();
+  signal.addEventListener("abort", abort, { once: true });
+  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, request.timeoutMs);
+  let onAbort: () => void = () => {};
+  const interrupted = new Promise<ProtocolOutcome>((resolve) => {
+    onAbort = () => resolve(timedOut ? unavailable("TIMEOUT_BEFORE_OUTPUT") : cancelled());
+    controller.signal.addEventListener("abort", onAbort, { once: true });
+  });
+  try {
+    // Race also covers a transport/body stream that ignores AbortSignal. Late results are discarded.
+    const attempt = async (): Promise<ProtocolOutcome> => {
+      let response: Response;
+      try {
+        response = await transport({ provider: request.provider, method: "POST", body, signal: controller.signal });
+      } catch {
+        return controller.signal.aborted
+          ? timedOut ? unavailable("TIMEOUT_BEFORE_OUTPUT") : cancelled()
+          : unavailable("PROVIDER_UNAVAILABLE");
+      }
+      if (controller.signal.aborted) { await response.body?.cancel(); return cancelled(); }
+      if (!response.ok) {
+        await response.body?.cancel();
+        return unavailable("PROVIDER_UNAVAILABLE");
+      }
+      const value = await readBoundedJson(response, controller.signal);
+      return normalizeResponse(request, value);
+    };
+    return await Promise.race([attempt(), interrupted]);
+  } catch {
+    return controller.signal.aborted
+      ? timedOut ? unavailable("TIMEOUT_BEFORE_OUTPUT") : cancelled()
+      : unavailable("MODEL_OUTPUT_INVALID");
+  } finally {
+    clearTimeout(timer);
+    signal.removeEventListener("abort", abort);
+    controller.signal.removeEventListener("abort", onAbort);
+  }
+}
+
+function requestBody(request: ProtocolRequest): Record<string, unknown> {
+  return {
+    model: PROTOCOL_MODELS[request.provider],
+    messages: [
+      ...(request.task === "strict_known_unknown" ? [{ role: "system", content: 'Return only JSON: {"kind":"known","value":"nonempty text"} or {"kind":"unknown","reason":"fixture_no_evidence"}. Do not add fields.' }] : []),
+      { role: "user", content: request.input },
+    ],
+    stream: false,
+    max_tokens: request.maxOutputTokens,
+    ...(request.provider === "qwen" ? { enable_thinking: false } : { thinking: { type: "disabled" } }),
+    ...(request.task === "strict_known_unknown" ? { response_format: { type: "json_object" } } : {}),
+    ...(request.task === "tool_candidate" && request.tool ? {
+      tools: [{ type: "function", function: { name: request.tool.name, parameters: request.tool.parameters } }],
+      tool_choice: "auto",
+    } : {}),
+  };
+}
+
+function normalizeResponse(request: ProtocolRequest, value: unknown): ProtocolOutcome {
+  if (!record(value)) return unavailable("MODEL_OUTPUT_INVALID");
+  const usage = normalizeUsage(request.provider, value.usage);
+  if (value.error || !usage || value.model !== PROTOCOL_MODELS[request.provider] || !Array.isArray(value.choices) || value.choices.length !== 1) return unavailable("MODEL_OUTPUT_INVALID", usage);
+  const choice = value.choices[0];
+  if (!record(choice) || choice.index !== 0 || !record(choice.message) || choice.message.role !== "assistant") return unavailable("MODEL_OUTPUT_INVALID", usage);
+  const message = choice.message;
+  // Never display reasoning or treat a partial, blocked or resource-exhausted completion as an answer.
+  if (choice.finish_reason === "content_filter" || (request.provider === "glm" && choice.finish_reason === "sensitive")) return unavailable("SAFETY_BLOCKED", usage);
+  if (choice.finish_reason !== "stop" && choice.finish_reason !== "tool_calls") return unavailable("MODEL_OUTPUT_INVALID", usage);
+  let output: Extract<ProtocolOutcome, { kind: "protocol_validated" }>["output"];
+  if (request.task === "tool_candidate") {
+    if (choice.finish_reason !== "tool_calls" || !request.tool || !Array.isArray(message.tool_calls) || message.tool_calls.length !== 1 || (message.content != null && message.content !== "")) return unavailable("MODEL_OUTPUT_INVALID", usage);
+    const call = message.tool_calls[0];
+    if (!record(call) || call.type !== "function" || typeof call.id !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(call.id) || !record(call.function) || call.function.name !== request.tool.name || typeof call.function.arguments !== "string") return unavailable("MODEL_OUTPUT_INVALID", usage);
+    try {
+      const args: unknown = JSON.parse(call.function.arguments);
+      if (!record(args) || !request.tool.validateArguments(args)) return unavailable("MODEL_OUTPUT_INVALID", usage);
+      output = { kind: "tool_candidate", id: call.id, name: request.tool.name, arguments: args };
+    } catch { return unavailable("MODEL_OUTPUT_INVALID", usage); }
+  } else {
+    if (choice.finish_reason !== "stop" || (message.tool_calls != null && (!Array.isArray(message.tool_calls) || message.tool_calls.length > 0)) || typeof message.content !== "string" || !message.content.trim()) return unavailable("MODEL_OUTPUT_INVALID", usage);
+    if (request.task === "strict_known_unknown") {
+      try {
+        const parsed: unknown = JSON.parse(message.content);
+        if (!validateKnownUnknownOutput(parsed)) return unavailable("MODEL_OUTPUT_INVALID", usage);
+        output = parsed;
+      } catch { return unavailable("MODEL_OUTPUT_INVALID", usage); }
+    } else output = message.content;
+  }
+  return { kind: "protocol_validated", provider: request.provider, model: value.model as string, output, usage };
+}
+
+function normalizeUsage(provider: ProtocolProvider, value: unknown): ProtocolUsage | null {
+  if (!record(value) || !count(value.prompt_tokens) || !count(value.completion_tokens) || !count(value.total_tokens) || value.prompt_tokens + value.completion_tokens !== value.total_tokens) return null;
+  const details = value.prompt_tokens_details;
+  const completion = value.completion_tokens_details;
+  if ((details != null && !record(details)) || (completion != null && !record(completion))) return null;
+  const cached = provider === "deepseek" ? value.prompt_cache_hit_tokens : record(details) ? details.cached_tokens : undefined;
+  const uncached = provider === "deepseek" ? value.prompt_cache_miss_tokens : undefined;
+  const reasoning = record(completion) ? completion.reasoning_tokens : undefined;
+  if ((cached !== undefined && (!count(cached) || cached > value.prompt_tokens)) || (reasoning !== undefined && (!count(reasoning) || reasoning > value.completion_tokens))) return null;
+  if (provider === "deepseek" && (!count(cached) || !count(uncached) || cached + uncached !== value.prompt_tokens)) return null;
+  return {
+    inputTokens: value.prompt_tokens, outputTokens: value.completion_tokens, totalTokens: value.total_tokens,
+    cachedInputTokens: typeof cached === "number" ? cached : null,
+    uncachedInputTokens: typeof uncached === "number" ? uncached : null,
+    reasoningTokens: typeof reasoning === "number" ? reasoning : null,
+    cost: "unknown",
+  };
+}
+
+async function readBoundedJson(response: Response, signal: AbortSignal): Promise<unknown> {
+  const type = response.headers.get("content-type")?.split(";")[0].trim();
+  if (type !== "application/json" || !response.body) { await response.body?.cancel(); throw new Error("Invalid response format"); }
+  const reader = response.body.getReader();
+  const stop = () => { void reader.cancel().catch(() => {}); };
+  signal.addEventListener("abort", stop, { once: true });
+  let size = 0;
+  const chunks: Uint8Array[] = [];
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (signal.aborted) throw new Error("Interrupted");
+      if (done) break;
+      size += value.byteLength;
+      if (size > MAX_RESPONSE_BYTES) { await reader.cancel(); throw new Error("Response limit"); }
+      chunks.push(value);
+    }
+    return JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(Buffer.concat(chunks)));
+  } finally {
+    signal.removeEventListener("abort", stop);
+    reader.releaseLock();
+  }
+}
+
+function validRequest(value: ProtocolRequest): boolean {
+  return record(value) && typeof value.requestId === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(value.requestId) && Object.hasOwn(PROTOCOL_MODELS, value.provider)
+    && ["ordinary_text", "strict_known_unknown", "tool_candidate"].includes(value.task)
+    && typeof value.input === "string" && value.input.trim().length > 0 && value.input.length <= 32768
+    && ["c0_synthetic", "c1_user", "c2_sensitive", "c3_restricted", "c4_secret"].includes(value.dataClass)
+    && count(value.maxOutputTokens) && value.maxOutputTokens > 0 && value.maxOutputTokens <= 8192
+    && count(value.timeoutMs) && value.timeoutMs > 0 && value.timeoutMs <= 60000
+    && (value.task === "tool_candidate"
+      ? record(value.tool) && typeof value.tool.name === "string" && /^[A-Za-z_][A-Za-z0-9_]{0,63}$/.test(value.tool.name) && record(value.tool.parameters) && value.tool.parameters.type === "object" && typeof value.tool.validateArguments === "function"
+      : value.tool === undefined);
+}
+function record(value: unknown): value is Record<string, unknown> { return value !== null && typeof value === "object" && !Array.isArray(value); }
+function count(value: unknown): value is number { return typeof value === "number" && Number.isSafeInteger(value) && value >= 0; }
+function unavailable(code: FailureCode, usage: ProtocolUsage | null = null): ProtocolOutcome { return { kind: "unavailable", code, usage, cost: "unknown" }; }
+function cancelled(): ProtocolOutcome { return { kind: "cancelled", code: "CANCELLED", usage: null, cost: "unknown" }; }
