@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：VP-V4 Staging target confirmed by JT: VP - V4, Singapore, no real business users/data. CLI linked and read-only inventory succeeded; remote11 of24 migrations,13 pending. Existing3Auth/2Trip retained; no migration or actor probe writes applied.
+状态：Harness reliability planning and six implementation Issues published as VPJ-66..71 (#263..268); implementation/runtime acceptance unstarted. Prior Staging inventory remains evidence for its own version/environment only.
 
-阶段：Read-only Staging inventory after merged native/Web/CI preparation. Metadata access is verified; latest schema, JWT actor isolation and database connection paths are not accepted.
+阶段：Harness planning coordination: 12 critical scenarios, two core tasks, six incremental slices in the single VPJ program; original Staging/native/provider gates remain.
 
 ## 读取顺序
 
@@ -23,6 +23,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - Free + non-renewing 30-day Journey Pass experiment; $19.99 reference, $14.99 alternative; actual StoreKit terms and cost checked before sale.
 - Keep valid Trip/RLS/migration/knowledge/privacy safety contracts; archived code not production input.
 - 2026-09-09 JT explicitly allows production publishing and merge-triggered Vercel deployments for VP-V4 in this continuing session. Production database migrations, new data/recipient permissions, purchases, legal/material rights and branch-protection bypass remain outside that grant.
+- 2026-09-09 current planning request authorizes optimizing Harness, publishing six incremental Issues and integrating the planning into main. This grants no new provider/data/account/production database or payment authority.
 
 ## 未决与运行证据
 
@@ -30,11 +31,13 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 
+- Harness implementation,12-case runtime coverage, provider pairing, real Trip/worker/fault/rollback acceptance remain UNRUN under VPJ-66..71; this planning delivery is not capability acceptance.
 - Real account/Trip/DB/provider/customer acceptance not executed by this session; Web publication does not establish those capabilities.
 - Physical VoiceOver spoken traversal, full contrast/hit-region audit, iOS17 runtime and signed Store delivery remain unrun. Simulator structural AX is not full device/release acceptance.
 
 ## 验证
 
+- 2026-09-09 Harness planning: VPJ-66..71 published as #263..268; exact remote read-back passed for new bodies/12 native dependencies/parent/labels. Original65 rows/bodies/labels/states and198 dependencies preserved; Program187 now has71 children with unchanged body/state. Local plan/archive/docs checks and11 governance tests passed; independent review has no remaining required changes. See docs/harness/VERIFICATION.md; no Harness runtime execution performed.
 - 2026-09-09 CLI metadata confirms VP - V4/ap-southeast-1/ACTIVE_HEALTHY. Read-only inventory finds11 matching migration records of24,13 pending,no remote-only;3Auth/2Trip;11 observed tables RLS enabled; authenticated direct Trip UPDATE still granted at old schema. No identities/content read and no data/DDL changed.
 - PR261 merged atde18928: hosted Native iOS34298939281 passed unsigned build,8unit+5UI and retained xcresult/version/commands. Production deployment6340704045 reported success forde18928.
 - Production deployment6340395476 reports success for2c46519. Actual browser at1280x800: /visepanda?locale=ar has ar/rtl, correct Arabic title and no overflow; switching toEnglish at390x844 restores en/ltr, removes legacy picker discovery and shows the unauthenticated sign-in boundary. No account/Trip write performed.
@@ -54,7 +57,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Follow artifacts/VPJ-02/verification.md: resolve direct/pooler connectivity and prepare the scoped13-migration/two-test-identity operation. Obtain explicit bounded operational authorization before schema/account changes; preserve all existing data and Production exclusion for database migration.
+After this Harness planning change is merged to main, verify VPJ-66 #263 scope/interfaces and mark its offline preparation frontier ready; VPJ-67..71 retain actual runtime dependencies. This session coordinates planning rather than implementing them. Existing VPJ-02 action remains: follow artifacts/VPJ-02/verification.md for scoped Staging connectivity/migration preparation with the applicable operational authorization.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 

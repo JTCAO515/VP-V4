@@ -32,6 +32,7 @@ node scripts/vpj-program.mjs verify
 - [完整任务与依赖](docs/program/2026-09-05/ISSUES.md)
 - [接口与不变量](docs/program/2026-09-05/INTERFACES.md)
 - [每个Issue的执行边界和命令](docs/program/2026-09-05/EXECUTION-CONTRACT.md)
+- [Harness 可靠性规划与六张实施任务](docs/harness/README.md)
 - [客户运营与发布](docs/program/2026-09-05/OPERATIONS-AND-RELEASE.md)
 - [旧Issue迁移](docs/program/2026-09-05/ISSUE-MIGRATION.md)
 - [归档/恢复](docs/program/2026-09-05/ARCHIVE.md)

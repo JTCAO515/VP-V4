@@ -63,11 +63,12 @@ function validate() {
   console.log(`VPJ plan passed: ${plan.tasks.length} tasks, ${before.length} replacements, acyclic dependencies, contracts and archive hashes.`);
 }
 
-function body(t) {
-  const source = `https://github.com/${plan.repo}/blob/${plan.baselineBranch}`;
+export function body(t) {
+  const source = `https://github.com/${plan.repo}/blob/${t.sourceRef ?? plan.baselineBranch}`;
+  const baselineNote = t.baselineNote ?? `基线PR：${plan.baselinePr ? '#' + plan.baselinePr : '待发布；此状态为开发阻塞'}。合并前不要从旧main实施新合同。`;
   return `## Program\n\n${link('VPJ-00')} · ${t.track === 'expand' ? '后续证据触发任务' : '首发交付任务'}\n\n` +
     `## 用户结果\n\n${t.title}。\n\n${t.acceptance[0]}\n\n` +
-    `## 当前基线与开发入口\n\n基线PR：${plan.baselinePr ? '#' + plan.baselinePr : '待发布；此状态为开发阻塞'}。合并前不要从旧main实施新合同。\n` +
+    `## 当前基线与开发入口\n\n${baselineNote}\n` +
     `主报告：[完整统筹方案](${source}/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。\n` +
     `必须阅读：[本任务执行合同](${source}/${dir}/EXECUTION-CONTRACT.md#${t.id.toLowerCase()}) 与 [领域接口](${source}/${t.contract})。\n\n` +
     `## Blocked by\n\n${t.blockedBy.length ? t.blockedBy.map(id => '- ' + link(id)).join('\n') : '无其他任务依赖；仍需基线PR已合并。'}\n\n` +

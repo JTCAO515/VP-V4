@@ -1,0 +1,278 @@
+{
+  "schemaVersion": "vp-harness-tracker-verification/1",
+  "verifiedAt": "2026-09-09T03:55:26.534462+00:00",
+  "repo": "JTCAO515/VP-V4",
+  "baselineCommit": "e5c05a275e159d9838e779a3810dbe8cbd15c2f0",
+  "verified": true,
+  "originalTaskCount": 65,
+  "originalNativeDependencyCount": 198,
+  "preservedOriginalIssueFields": [
+    "number",
+    "id",
+    "title",
+    "body",
+    "state",
+    "state_reason",
+    "labels",
+    "blockedBy",
+    "parentNumber"
+  ],
+  "originalTasksUnchanged": true,
+  "localOriginalRowsUnchanged": true,
+  "parent": {
+    "number": 187,
+    "metadataUnchanged": true,
+    "previousSubIssueCount": 65,
+    "currentSubIssueCount": 71,
+    "addedSubIssues": [
+      263,
+      264,
+      265,
+      266,
+      267,
+      268
+    ],
+    "removedSubIssues": []
+  },
+  "newTaskCount": 6,
+  "newNativeDependencyCount": 12,
+  "totalTaskCount": 71,
+  "totalNativeDependencyCount": 210,
+  "tasks": [
+    {
+      "id": "VPJ-66",
+      "number": 263,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/263",
+      "state": "open",
+      "labels": [
+        "enhancement",
+        "needs-triage",
+        "phase:R1",
+        "priority:P1",
+        "status:blocked"
+      ],
+      "parentNumber": 187,
+      "blockedBy": [],
+      "checks": {
+        "identity": true,
+        "bodyMatchesGenerator": true,
+        "open": true,
+        "labels": true,
+        "nativeDependencies": true,
+        "parent": true
+      }
+    },
+    {
+      "id": "VPJ-67",
+      "number": 264,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/264",
+      "state": "open",
+      "labels": [
+        "enhancement",
+        "needs-triage",
+        "phase:R2",
+        "priority:P1",
+        "status:blocked"
+      ],
+      "parentNumber": 187,
+      "blockedBy": [
+        206,
+        263
+      ],
+      "checks": {
+        "identity": true,
+        "bodyMatchesGenerator": true,
+        "open": true,
+        "labels": true,
+        "nativeDependencies": true,
+        "parent": true
+      }
+    },
+    {
+      "id": "VPJ-68",
+      "number": 265,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/265",
+      "state": "open",
+      "labels": [
+        "enhancement",
+        "needs-triage",
+        "phase:R2",
+        "priority:P1",
+        "status:blocked"
+      ],
+      "parentNumber": 187,
+      "blockedBy": [
+        198,
+        199,
+        219,
+        264
+      ],
+      "checks": {
+        "identity": true,
+        "bodyMatchesGenerator": true,
+        "open": true,
+        "labels": true,
+        "nativeDependencies": true,
+        "parent": true
+      }
+    },
+    {
+      "id": "VPJ-69",
+      "number": 266,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/266",
+      "state": "open",
+      "labels": [
+        "enhancement",
+        "needs-triage",
+        "phase:R2",
+        "priority:P1",
+        "status:blocked"
+      ],
+      "parentNumber": 187,
+      "blockedBy": [
+        265
+      ],
+      "checks": {
+        "identity": true,
+        "bodyMatchesGenerator": true,
+        "open": true,
+        "labels": true,
+        "nativeDependencies": true,
+        "parent": true
+      }
+    },
+    {
+      "id": "VPJ-70",
+      "number": 267,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/267",
+      "state": "open",
+      "labels": [
+        "enhancement",
+        "needs-triage",
+        "phase:R2",
+        "priority:P1",
+        "status:blocked"
+      ],
+      "parentNumber": 187,
+      "blockedBy": [
+        264
+      ],
+      "checks": {
+        "identity": true,
+        "bodyMatchesGenerator": true,
+        "open": true,
+        "labels": true,
+        "nativeDependencies": true,
+        "parent": true
+      }
+    },
+    {
+      "id": "VPJ-71",
+      "number": 268,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/268",
+      "state": "open",
+      "labels": [
+        "enhancement",
+        "needs-triage",
+        "phase:R5",
+        "priority:P1",
+        "status:blocked"
+      ],
+      "parentNumber": 187,
+      "blockedBy": [
+        229,
+        231,
+        266,
+        267
+      ],
+      "checks": {
+        "identity": true,
+        "bodyMatchesGenerator": true,
+        "open": true,
+        "labels": true,
+        "nativeDependencies": true,
+        "parent": true
+      }
+    }
+  ],
+  "newNativeEdges": [
+    {
+      "task": "VPJ-67",
+      "issue": 264,
+      "blockedByTask": "VPJ-66",
+      "blockedByIssue": 263
+    },
+    {
+      "task": "VPJ-67",
+      "issue": 264,
+      "blockedByTask": "VPJ-16",
+      "blockedByIssue": 206
+    },
+    {
+      "task": "VPJ-68",
+      "issue": 265,
+      "blockedByTask": "VPJ-67",
+      "blockedByIssue": 264
+    },
+    {
+      "task": "VPJ-68",
+      "issue": 265,
+      "blockedByTask": "VPJ-10",
+      "blockedByIssue": 198
+    },
+    {
+      "task": "VPJ-68",
+      "issue": 265,
+      "blockedByTask": "VPJ-11",
+      "blockedByIssue": 199
+    },
+    {
+      "task": "VPJ-68",
+      "issue": 265,
+      "blockedByTask": "VPJ-65",
+      "blockedByIssue": 219
+    },
+    {
+      "task": "VPJ-69",
+      "issue": 266,
+      "blockedByTask": "VPJ-68",
+      "blockedByIssue": 265
+    },
+    {
+      "task": "VPJ-70",
+      "issue": 267,
+      "blockedByTask": "VPJ-67",
+      "blockedByIssue": 264
+    },
+    {
+      "task": "VPJ-71",
+      "issue": 268,
+      "blockedByTask": "VPJ-69",
+      "blockedByIssue": 266
+    },
+    {
+      "task": "VPJ-71",
+      "issue": 268,
+      "blockedByTask": "VPJ-70",
+      "blockedByIssue": 267
+    },
+    {
+      "task": "VPJ-71",
+      "issue": 268,
+      "blockedByTask": "VPJ-37",
+      "blockedByIssue": 229
+    },
+    {
+      "task": "VPJ-71",
+      "issue": 268,
+      "blockedByTask": "VPJ-63",
+      "blockedByIssue": 231
+    }
+  ],
+  "failures": [],
+  "limitations": [
+    "This verifies planning publication and tracker preservation only; no Harness runtime, provider, database, device or production acceptance is claimed.",
+    "All six added tasks remain blocked pending this planning change merging; later readiness reconciliation requires the actual task inputs and live blockers."
+  ],
+  "localOriginalBodiesUnchanged": true
+}
