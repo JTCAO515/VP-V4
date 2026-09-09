@@ -210,14 +210,56 @@ function markdownLineKinds(lines) {
   });
 }
 
+// Shield literal tag text for the container scanner without changing the displayed criterion.
+// Code spans use equal-length backtick runs; unmatched runs stay literal, and blank lines end
+// the inline block. Complete HTML tags take precedence, so attribute contents are never rescanned.
+function containerTagSource(markdown) {
+  const htmlTag = new RegExp(`${htmlOpenTag}|${htmlCloseTag}`, 'y');
+  const parts = [];
+  let cursor = 0, index = 0;
+  const escaped = position => {
+    let count = 0;
+    for (let before = position - 1; before >= 0 && markdown[before] === '\\'; before--) count++;
+    return count % 2 === 1;
+  };
+  const mask = (start, end) => {
+    parts.push(markdown.slice(cursor, start), maskLines(markdown.slice(start, end)));
+    cursor = end;
+  };
+  while (index < markdown.length) {
+    if (markdown[index] === '<') {
+      if (escaped(index)) { mask(index, index + 1); index++; continue; }
+      htmlTag.lastIndex = index;
+      if (htmlTag.exec(markdown)) { index = htmlTag.lastIndex; continue; }
+    }
+    if (markdown[index] !== '`' || escaped(index)) { index++; continue; }
+    let openingEnd = index + 1;
+    while (markdown[openingEnd] === '`') openingEnd++;
+    const length = openingEnd - index;
+    const blankOffset = markdown.slice(openingEnd).search(/\n[ \t]*\n/);
+    const boundary = blankOffset < 0 ? markdown.length : openingEnd + blankOffset;
+    const closingRuns = /`+/g;
+    closingRuns.lastIndex = openingEnd;
+    let closing, end = null;
+    while ((closing = closingRuns.exec(markdown)) && closing.index < boundary) {
+      if (closing[0].length === length) { end = closingRuns.lastIndex; break; }
+    }
+    if (end !== null) { mask(index, end); index = end; }
+    else index = openingEnd;
+  }
+  parts.push(markdown.slice(cursor));
+  return parts.join('');
+}
+
 // Quoted/code content and collapsed history are excluded even after an HTML block's blank-line
 // boundary. Match complete tags (including quoted attributes) and retain nested container depth.
 function withoutQuotedContainers(markdown) {
+  const tagSource = containerTagSource(markdown);
   const tags = new RegExp(`${htmlOpenTag}|${htmlCloseTag}`, 'g');
   const depths = new Map(['details', 'blockquote', 'q', 'code'].map(name => [name, 0]));
   const parts = [];
   let depth = 0, cursor = 0, start = 0, match;
-  while ((match = tags.exec(markdown))) {
+  while ((match = tags.exec(tagSource))) {
     const tag = match[0].match(/^<(\/?)([A-Za-z][A-Za-z0-9-]*)/);
     const name = tag[2].toLowerCase();
     if (!depths.has(name)) continue;

@@ -9,6 +9,7 @@ VisePanda 面向国际来华自由行旅客，围绕同一个 Trip 连接规划�
 | 范围 | 位置与用途 |
 | --- | --- |
 | Web / API | [app](app)、[components](components)：Next.js App Router、React、strict TypeScript、Tailwind CSS v4 |
+| 现有 Web 工作区 | [Chatbot](components/chat/ChatThreadWorkspace.tsx)、[Trip Canvas](components/canvas/TripCanvas.tsx)、[Today](components/today/TodayWorkspace.tsx) 及其[领域合同](docs/program/2026-09-05/INTERFACES.md)继续复用；真实链路按相应 Issue 验收 |
 | 原生 iOS | [ios/VisePanda](ios/VisePanda/README.md)：SwiftUI 工程、导航、语言与原生测试；当前页面仍是开发预览 |
 | 领域与服务端 | [lib/server](lib/server)：Trip/Proposal/Patch、身份、模型协议、持久预算、知识及媒体模块 |
 | 数据库 | [supabase/migrations](supabase/migrations)：只追加迁移；文件存在不表示已应用到目标环境 |

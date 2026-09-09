@@ -109,6 +109,50 @@ test('nested HTML quotes/code/details remain excluded across blank lines until t
   assertHiddenAcceptance(`<blockquote>\n<!-- </blockquote> -->\n\n- [x] ${task.acceptance[1]}\n</blockquote>\n`);
 });
 
+test('inline code spans cannot close hidden containers or transfer their checked acceptance', () => {
+  for (const tag of ['details', 'blockquote', 'q', 'code']) {
+    for (const literal of [
+      `\`</${tag}>\``, `\`\`</${tag}>\`\``, `\`\` example \` </${tag}> \`\``,
+      `Example \`first line\nliteral </${tag}> on another line\``,
+      `Example \`\`first line \`\nliteral </${tag}> on another line\`\``,
+    ]) {
+      assertHiddenAcceptance(`<${tag}>\n\n${literal}\n\n- [x] ${task.acceptance[1]}\n</${tag}>\n`);
+    }
+  }
+});
+
+test('odd backslash escapes cannot close containers while even pairs preserve real closing tags', () => {
+  const previous = body({ ...task, acceptance: [task.acceptance[0]] });
+  for (const count of [1, 3, 5]) {
+    assertHiddenAcceptance(`<details>\n\n${'\\'.repeat(count)}</details>\n\n- [x] ${task.acceptance[1]}\n</details>\n`);
+  }
+  for (const count of [2, 4]) {
+    const remote = previous + `\n<details>\n\n${'\\'.repeat(count)}</details>\n\n- [x] ${task.acceptance[1]}\n`;
+    assert.equal(validateRemoteTaskBody(task, remote), 'acceptance-present');
+    assert.ok(preserveIssueProgress(remote, previous, body(task), task.id).includes(`- [x] ${task.acceptance[1]}\n\n## 不得触碰`));
+  }
+});
+
+test('unclosed and mismatched code spans cannot swallow an actual closing tag or later acceptance', () => {
+  const previous = body({ ...task, acceptance: [task.acceptance[0]] });
+  for (const literal of ['An unmatched ` delimiter', 'Mismatched `` delimiters `', 'An escaped \\` delimiter']) {
+    const remote = previous + `\n<details>\n\n${literal}\n\n</details>\n\n- [x] ${task.acceptance[1]}\n`;
+    assert.equal(validateRemoteTaskBody(task, remote), 'acceptance-present', literal);
+  }
+  const separateParagraphs = previous + `\n<details>\n\nAn unmatched \` delimiter\n\n</details>\n\n- [x] ${task.acceptance[1]}\n\nA later \` literal.\n`;
+  assert.equal(validateRemoteTaskBody(task, separateParagraphs), 'acceptance-present');
+});
+
+test('backticks and escaped-looking text in complete HTML attributes are not container closing tags', () => {
+  for (const literal of [
+    '<span title="`</details>`">example</span>',
+    '<span title="\\</details>">example</span>',
+    '<span title="``\n</details>\n``">example</span>',
+  ]) {
+    assertHiddenAcceptance(`<details>\n\n${literal}\n\n- [x] ${task.acceptance[1]}\n</details>\n`);
+  }
+});
+
 test('HTML-looking examples inside fenced code or Markdown quotes do not capture later real acceptance', () => {
   const previous = body({ ...task, acceptance: [task.acceptance[0]] });
   for (const example of ['```html\n<details>\n```', '~~~html\n<blockquote>\n~~~', '> <details>']) {
