@@ -25,3 +25,7 @@ The Next.js landing page needed complete VisePanda wordmarks, real language swit
 ## Rollback
 
 Revert the VisePanda brand/localization/assets commit.
+
+## Brand rendering amendment — 2026-09-10
+
+The operator supplied two new PNGs, identified them as Logo and text Logo, and explicitly requested replacement of the previous logo. The original text-only wordmark decision above is superseded for brand display by these supplied images. Web uses the shared image wordmark and logo favicon; native uses the supplied logo, wordmark and a 1024px AppIcon derivative. Existing locale, accessibility-label and product-claim boundaries remain in force. Originals, hashes and display adaptation are recorded in `assets/brand/vise-panda/README.md` and the asset ledgers. This approval covers only the supplied replacement assets.

@@ -23,4 +23,4 @@
 | [VP-Logo-20260909.png](VP-Logo-20260909.png) | Logo，RGB 白色背景原图 | 1254 × 1254 px | `379c70aaed2fdcd9ac80d6713acc5193085163bf4df52705c49e799d89ebb0d8` |
 | [VP-Wordmark-20260909.png](VP-Wordmark-20260909.png) | 文字版 Logo，RGBA 原图 | 1448 × 1086 px | `923d49a1465920b501643148e74c2997442ffeda1ce3c00bb27af820a231240e` |
 
-本次为品牌源素材入库；页面/iOS 的运行时采用是后续变更。来源和完整性按现有 owner-master 规则登记，本次不扩展为其他素材的授权。
+项目方随后明确要求替换旧Logo：两张素材用于Web与iOS品牌显示。原始PNG保持不变；文字标识仅裁切显示留白，AppIcon通过系统sips等比适配为1024px。旧版源稿保留为历史资料。授权记录仅涵盖本次两张素材及上述用途。

@@ -1,5 +1,7 @@
 "use client";
 
+import { VisePandaMark } from "@/components/brand/VisePandaMark";
+
 import { useEffect, useMemo, useState } from "react";
 
 import { copy, getLocaleAttributes, getLocaleSelectionOptions, type Locale } from "@/lib/i18n";
@@ -48,7 +50,7 @@ export function Homepage() {
       <section className={styles.hero} aria-labelledby="home-title">
         <header className={styles.header}>
           <a className={styles.wordmark} href="#top" aria-label={content.header.home}>
-            VisePanda.
+            <VisePandaMark />
           </a>
           <nav className={styles.navigation} aria-label={content.header.productMenu}>
             <a href="#golden-route">{content.features.more}</a>
@@ -197,7 +199,7 @@ export function Homepage() {
       </section>
 
       <footer className={styles.footer}>
-        <a className={styles.wordmark} href="#top">VisePanda.</a>
+        <a className={styles.wordmark} href="#top"><VisePandaMark /></a>
         <p>{content.footer.tagline}</p>
         <div className={styles.footerLinks}>
           {content.footer.columns.slice(0, 3).map(([label]) => (

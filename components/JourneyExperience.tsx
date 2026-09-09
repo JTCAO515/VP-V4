@@ -1,5 +1,7 @@
 "use client";
 
+import { VisePandaMark } from "@/components/brand/VisePandaMark";
+
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import type { FormEvent } from "react";
@@ -97,7 +99,7 @@ export function JourneyExperience() {
   return <div ref={root} className="journey" data-locale={locale} id="beginning">
     <a className="j-skip" href="#content">{c.skip}</a>
     <header className="j-header">
-      <a className="j-brand" href="#beginning" aria-label={c.home}>VisePanda<span>.</span></a>
+      <a className="j-brand" href="#beginning" aria-label={c.home}><VisePandaMark /></a>
       <nav aria-label={locale === "en" ? "Main navigation" : "主导航"} className={menu ? "j-nav is-open" : "j-nav"}>
         {sections.map((id, i) => <a key={id} href={id === "profile" ? EARLY_ACCESS_URL : `#${id}`} target={id === "profile" ? "_blank" : undefined} rel={id === "profile" ? "noopener noreferrer" : undefined} onClick={() => setMenu(false)}>{id === "profile" ? access.nav : c.nav[i]}{i === 3 && <Arrow />}</a>)}
       </nav>
@@ -131,7 +133,7 @@ export function JourneyExperience() {
       <section className="j-ask" id="ask" aria-labelledby="j-ask-title">
         <div className="j-ask-intro" data-reveal><Chapter n="02" text={c.askLabel} /><h2 id="j-ask-title">{c.askTitle.map((line, i) => <span key={i}>{line}</span>)}</h2><div className="j-short-rule" /><p>{c.askBody}</p><div className="j-prompts">{c.prompts.map((prompt, i) => <button key={i} onClick={() => send(i)}>{prompt}<Arrow /></button>)}</div></div>
         <div className="j-chat-panel" data-reveal>
-          <div className="j-chat-header"><span className="j-avatar">VP</span><span>{c.companion}</span><small><i />{c.preview}</small></div>
+          <div className="j-chat-header"><span className="j-avatar"><Image src="/assets/visepanda/brand/logo-20260909.png" width={40} height={40} alt="VisePanda" style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: "50%" }} /></span><span>{c.companion}</span><small><i />{c.preview}</small></div>
           <div className="j-chat-messages" ref={chat} role="log" aria-label={c.companion} aria-live="polite" tabIndex={0}>
             <div className="j-welcome"><span className="j-star" aria-hidden="true">✳</span><h3>{c.welcome}</h3><p>{c.welcomeBody}</p></div>
             {messages.map((message, i) => <div className="j-exchange" key={i}>
@@ -159,7 +161,7 @@ export function JourneyExperience() {
         <div className="j-profile-card j-access-card" data-reveal><span className="j-access-star" aria-hidden="true">✳</span><h3>{access.cardTitle}</h3><p>{access.cardBody}</p><a className="j-button j-button-light" href={EARLY_ACCESS_URL} target="_blank" rel="noopener noreferrer">{access.nav}<Arrow /></a><small className="j-session">{access.note}</small></div>
       </section>
     </main>
-    <footer className="j-footer"><div className="j-footer-top"><a className="j-footer-brand" href="#beginning">VisePanda<span>.</span></a><p>{c.footer}</p><a className="j-back" href="#beginning" aria-label={c.back}><Arrow /></a></div><div className="j-footer-bottom"><span>{c.legal}</span><span>{c.footerNote}</span><div><button onClick={() => setLocale("en")} aria-pressed={locale === "en"}>English</button><span>/</span><button onClick={() => setLocale("zh")} aria-pressed={locale === "zh"}>中文</button></div></div></footer>
+    <footer className="j-footer"><div className="j-footer-top"><a className="j-footer-brand" href="#beginning"><VisePandaMark /></a><p>{c.footer}</p><a className="j-back" href="#beginning" aria-label={c.back}><Arrow /></a></div><div className="j-footer-bottom"><span>{c.legal}</span><span>{c.footerNote}</span><div><button onClick={() => setLocale("en")} aria-pressed={locale === "en"}>English</button><span>/</span><button onClick={() => setLocale("zh")} aria-pressed={locale === "zh"}>中文</button></div></div></footer>
 
     <dialog ref={dialog} className="j-dialog" onClose={() => setDetail(null)} onClick={e => { if (e.target === e.currentTarget) setDetail(null); }} aria-labelledby="j-detail-title">
       {detail !== null && detailPlace && <div className="j-story"><button className="j-dialog-close" onClick={() => setDetail(null)} aria-label={c.dismiss}>×</button><div className="j-story-photo"><Image src={destinations[detail].image} alt={detailPlace.alt} fill sizes="(max-width: 700px) 90vw, 400px" /></div><div className="j-story-copy"><small>{detailPlace.category}</small><h2 id="j-detail-title">{detailPlace.name}</h2><h3>{detailPlace.line}</h3><p>{detailPlace.body}</p><button className="j-button" onClick={() => toggleSave(destinations[detail].id)}><Bookmark filled={saved.includes(destinations[detail].id)} />{saved.includes(destinations[detail].id) ? c.unsave : c.save}</button><a href="#ask" onClick={() => { send(detail === 1 ? 2 : 0); setDetail(null); }}>{c.askPlace}<Arrow /></a><small className="j-story-note">{c.detailNote}</small></div></div>}

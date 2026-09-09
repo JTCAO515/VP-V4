@@ -102,7 +102,8 @@ test("moves the requested FAQ and legacy wordmarks to homepage without blocked m
   assert.match(relocatedHomepageHtml, /VisePanda 可以直接预订机票、酒店或门票吗？/);
   assert.doesNotMatch(relocatedHomepageHtml, /六个执行时刻都已经上线了吗？/);
   assert.doesNotMatch(relocatedHomepageHtml, /这个页面会保存我的输入吗？/);
-  assert.ok((relocatedHomepageHtml.match(/VisePanda\./g) ?? []).length >= 2, "expected header and footer wordmarks");
+  assert.ok((relocatedHomepageHtml.match(/aria-label="VisePanda" role="img"/g) ?? []).length >= 2, "expected accessible header and footer wordmarks");
+  assert.match(relocatedHomepageHtml, /wordmark-20260909/);
   assert.doesNotMatch(homepageSource, /\/assets\/visepanda\//);
   assert.doesNotMatch(`${html}\n${relocatedHomepageHtml}`, /\/assets\/source\//);
   assert.doesNotMatch(html, /src="https?:\/\//);
