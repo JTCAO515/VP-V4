@@ -33,6 +33,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 - Real account/Trip/DB/provider/customer acceptance not executed by this session; Web publication does not establish those capabilities.
 - Physical VoiceOver spoken traversal, full contrast/hit-region audit, iOS17 runtime and signed Store delivery remain unrun. Simulator structural AX is not full device/release acceptance.
+- Harness implementation,12-case runtime coverage, provider pairing, real Trip/worker/fault/rollback acceptance remain UNRUN under VPJ-66..71; this planning delivery is not capability acceptance.
 
 ## 验证
 
