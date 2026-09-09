@@ -6,6 +6,7 @@ import { randomUUID } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
 import { identityLocalEnv } from './local-supabase.mjs';
 import { waitForNativeAPI } from './native-api-readiness.mjs';
+import { createNativeRedirectProbe } from './native-redirect-probe.mjs';
 const state=identityLocalEnv();
 assert.ok(state,'Explicit disposable Supabase target required');
 assert.equal(state.API_URL,'http://127.0.0.1:59721');
@@ -24,6 +25,7 @@ const run=(command,args,log,env=xcodeEnv)=>new Promise((resolve,reject)=>{
  child.once('error',()=>reject(Error('Native local verification process failed')));
  child.once('exit',code=>{output.end();code===0?resolve():reject(Error('Native local verification failed; inspect '+log));});
 });
+const redirectProbe=await createNativeRedirectProbe();
 const server=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port','59731'],{env:{...process.env,NEXT_PUBLIC_SUPABASE_URL:state.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:publicKey,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:state.SERVICE_ROLE_KEY},stdio:'ignore'});
 try {
  await waitForNativeAPI('http://127.0.0.1:59731',server);
@@ -39,17 +41,20 @@ try {
  }
  const source='/tmp/vpj04-native-build/Build/Products/VisePanda_iphonesimulator26.5-arm64.xctestrun';
  const target='/tmp/vpj04-native-build/Build/Products/NativeLocal.xctestrun';
- execFileSync('python3',['-c',`import plistlib,sys\np=plistlib.load(open(sys.argv[1],'rb'))\nfor k in ['VisePandaTests','VisePandaUITests']:\n p[k].setdefault('EnvironmentVariables',{}).update({'VP_NATIVE_LOCAL_UI':'1','VP_NATIVE_LOCAL_EMAIL':sys.argv[3],'VP_NATIVE_LOCAL_OTHER_EMAIL':sys.argv[4]})\nplistlib.dump(p,open(sys.argv[2],'wb'))`,source,target,...emails],{stdio:'ignore'});
+ execFileSync('python3',['-c',`import plistlib,sys\np=plistlib.load(open(sys.argv[1],'rb'))\nfor k in ['VisePandaTests','VisePandaUITests']:\n p[k].setdefault('EnvironmentVariables',{}).update({'VP_NATIVE_LOCAL_UI':'1','VP_NATIVE_LOCAL_EMAIL':sys.argv[3],'VP_NATIVE_LOCAL_OTHER_EMAIL':sys.argv[4],'VP_NATIVE_REDIRECT_PROBE_URL':sys.argv[5]})\nplistlib.dump(p,open(sys.argv[2],'wb'))`,source,target,...emails,redirectProbe.url],{stdio:'ignore'});
  const execute=async(device,selector,name)=>{
   await run('xcodebuild',['test-without-building','-xctestrun',target,'-destination','platform=iOS Simulator,id='+device,'-parallel-testing-enabled','NO','-only-testing:'+selector,'-resultBundlePath','/tmp/vpj04-'+name+'-'+runId+'.xcresult'],'/tmp/vpj04-'+name+'.log');
   console.log('PASS '+name+' on assigned disposable Simulator');
  };
  await execute(devices[0],'VisePandaTests/NativeSessionIntegrationTests','native-model');
+ if(process.env.VP_NATIVE_MODEL_ONLY !== 'true') {
  await execute(devices[0],'VisePandaUITests/NativeIdentityUITests/testLoginShowsRealOwnerProfile','phone-a-login');
  await execute(devices[1],'VisePandaUITests/NativeIdentityUITests/testLoginShowsRealOwnerProfile','phone-b-replace');
  await execute(devices[0],'VisePandaUITests/NativeIdentityUITests/testReplacedPhoneCannotRestoreOldSession','phone-a-rejected');
  await execute(devices[1],'VisePandaUITests/NativeIdentityUITests/testLogoutClearsAccount','phone-b-logout');
+ }
 } finally {
+ redirectProbe.close();
  server.kill('SIGTERM');
  if(ids.length){
   const exact=ids.map(id=>"'"+id+"'").join(',');

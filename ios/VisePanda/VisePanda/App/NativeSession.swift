@@ -2,6 +2,16 @@ import Foundation
 import Observation
 import Security
 
+// Reject before URLSession can send a second request with credentials or a refresh body.
+nonisolated final class NativeRedirectBlocker: NSObject, URLSessionTaskDelegate {
+    func urlSession(_ session: URLSession, task: URLSessionTask,
+                    willPerformHTTPRedirection response: HTTPURLResponse,
+                    newRequest request: URLRequest,
+                    completionHandler: @escaping (URLRequest?) -> Void) {
+        completionHandler(nil)
+    }
+}
+
 struct NativeCredential: Codable {
     let subject: String
     var accessToken: String
@@ -41,7 +51,7 @@ final class NativeSession {
         configuration.httpCookieStorage = nil
         configuration.httpShouldSetCookies = false
         configuration.urlCache = nil
-        transport = URLSession(configuration: configuration)
+        transport = URLSession(configuration: configuration, delegate: NativeRedirectBlocker(), delegateQueue: nil)
     }
 
     var enabled: Bool { endpoint != nil }

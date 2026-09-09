@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "vpj04-budget-regression/1",
+  "target": "vp-native-session-replay-20260910",
+  "migrationCount": 27,
+  "migrationSha256": "21fa91dd7e352edccf80ee6ec485e28f85f2f6ba0ee39d40c55f7d3da0618d79",
+  "registeredNativeActor": true,
+  "ordinaryAndAnonymousLedgerDenied": true,
+  "serviceReserveDispatchSettle": true,
+  "persistedReceiptVerified": true,
+  "exactCleanupVerified": true,
+  "providerNetworkCalls": 0,
+  "modelCallback": "synthetic",
+  "existingBudgetScopesTouched": false
+}

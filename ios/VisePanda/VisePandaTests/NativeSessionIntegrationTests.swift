@@ -43,6 +43,46 @@ nonisolated final class NativeSessionIntegrationTests: XCTestCase {
     }
 
     @MainActor
+    func testRedirectsNeverForwardCredentialsAndRefreshCanRecover() async throws {
+        guard let raw = ProcessInfo.processInfo.environment["VP_NATIVE_REDIRECT_PROBE_URL"],
+              let probe = URL(string: raw), probe.host == "127.0.0.1" else {
+            throw XCTSkip("UNRUN: controlled loopback redirect probe is not configured")
+        }
+        struct Counts: Decodable { let secondHops: Int; let redirects: Int }
+        for code in [307, 308] {
+            func control(_ mode: String) async throws {
+                let url = probe.appendingPathComponent("control").appending(queryItems: [URLQueryItem(name: "mode", value: mode), URLQueryItem(name: "code", value: String(code))])
+                _ = try await URLSession.shared.data(from: url)
+            }
+            let defaults = try XCTUnwrap(UserDefaults(suiteName: "vpj04.redirect.\(UUID().uuidString)"))
+            let phone = NativeSession(arguments: ["-VisePandaNativeAPI", raw], defaults: defaults)
+            try await control("credentials")
+            await phone.login(email: "synthetic@example.test", password: "synthetic-redirect-only")
+            XCTAssertEqual(phone.status, "retry")
+            XCTAssertEqual(phone.failureCode, "http:\(code)")
+            XCTAssertNil(phone.subject)
+            try await control("normal")
+            await phone.login(email: "synthetic@example.test", password: "synthetic-redirect-only")
+            XCTAssertEqual(phone.status, "active")
+            let owner = try XCTUnwrap(phone.subject)
+            try await control("refresh")
+            await phone.validate()
+            XCTAssertEqual(phone.status, "retry")
+            XCTAssertEqual(phone.failureCode, "http:\(code)")
+            XCTAssertNil(phone.displayName)
+            try await control("normal")
+            await phone.validate()
+            XCTAssertEqual(phone.status, "active", "The blocked refresh must retain a recoverable credential")
+            XCTAssertEqual(phone.subject, owner)
+            let (data, _) = try await URLSession.shared.data(from: probe.appendingPathComponent("counts"))
+            let counts = try JSONDecoder().decode(Counts.self, from: data)
+            XCTAssertEqual(counts.secondHops, 0, "No second request may forward a password, token or body")
+            XCTAssertEqual(counts.redirects, code == 307 ? 2 : 4, "Exercise actual URLSession redirect callbacks")
+            await phone.logout()
+        }
+    }
+
+    @MainActor
     func testRemoteAndMissingConfigurationRemainUnavailable() {
         XCTAssertFalse(NativeSession(arguments: []).enabled)
         XCTAssertFalse(NativeSession(arguments: ["-VisePandaNativeAPI", "https://example.com"]).enabled)

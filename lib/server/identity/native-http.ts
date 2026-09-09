@@ -1,9 +1,10 @@
+import { nativeFetch } from "./native-fetch.ts";
 import { createClient } from "@supabase/supabase-js";
 import { verifyNativeCredentials } from "./native-credentials.ts";
 import { isUuid } from "./request-guards.ts";
 
 type Config = Readonly<{ url: string; publishableKey: string; serviceRoleKey?: string }>;
-const options = { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } };
+const options = { global: { fetch: nativeFetch }, auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } };
 const json = (data: unknown, status = 200) => Response.json(data, { status, headers: { "Cache-Control": "no-store" } });
 const failure = (code: string, status = 401) => json({ error: { code } }, status);
 const rpcFailure = (message: string) => {

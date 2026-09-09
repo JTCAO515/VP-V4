@@ -1,0 +1,11 @@
+✔ native SDK clients reject 307 before forwarding any credential (37023.653334ms)
+✔ native SDK clients reject 308 before forwarding any credential (36016.812541ms)
+✔ native fetch preserves Request headers and cancellation (7.9965ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 73195.323791
