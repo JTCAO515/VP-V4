@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "vpj-02-upgrade-preparation/1",
+  "observedAt": "2026-09-09T12:33:50.190222+08:00",
+  "sourceBase": "e5c05a275e159d9838e779a3810dbe8cbd15c2f0",
+  "repairFile": "20260909033302_vpj_02_repair_local_rpc_runtime.sql",
+  "repairSha256": "94f5c718802c3f60cd100b7713ac005930d5d62bf24f714ad25f2b3aff4f3950",
+  "original24FilesUnchanged": true,
+  "frozenLocalMigrationCounts": [
+    11,
+    24,
+    25
+  ],
+  "integration": {
+    "passed": 29,
+    "failed": 0,
+    "skipped": 0
+  },
+  "security": {
+    "passed": 82,
+    "failed": 0,
+    "skipped": 0
+  },
+  "databaseLintErrors": 0,
+  "backup": {
+    "encrypted": true,
+    "encryption": "AES-256-GCM",
+    "keyStorage": "macOS login Keychain; no key in repository",
+    "ciphertextSha256": "a5b13c97129f587724dc06c35a4ac516567e06c63c9673b5af99ee2d602ff01d",
+    "bytes": 160620,
+    "archiveEntries": 382,
+    "managedBackupState": "COMPLETED",
+    "managedBackupTime": "2026-09-08T19:43:45.659Z",
+    "localRestore": "PASS",
+    "sourceAndRestoredAuthCount": 3,
+    "sourceAndRestoredTripCount": 2,
+    "sourceAndRestoredMigrationCount": 11,
+    "restoredDigestsMatch": true,
+    "network": "none",
+    "publishedPorts": 0,
+    "createdRestoreContainersRemoved": true,
+    "restoredActualCopySqlReplayCount": 14,
+    "restoredActualCopyProtectedDataPreserved": true,
+    "restoredCopyReplayDoesNotAdvanceMigrationHistory": true
+  },
+  "remote": {
+    "targetName": "VP - V4",
+    "region": "ap-southeast-1",
+    "verifiedPooler": true,
+    "tlsMode": "verify-full",
+    "effectiveMaintenanceRole": "postgres",
+    "original13MigrationDryRun": "PASS",
+    "appliedMigrationCount": 11,
+    "newAuthAccountsCreated": 0,
+    "existingDataMutated": false,
+    "additionalRepairMigrationAuthorization": "PENDING"
+  }
+}

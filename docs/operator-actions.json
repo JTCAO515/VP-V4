@@ -10,14 +10,21 @@
       "class": "C",
       "status": "open",
       "createdAt": "2026-09-05T00:00:00+08:00",
-      "action": "指定Staging已确认且CLI已link；下一步在连接/dry-run/验证/恢复门满足后，明确授权13个待应用迁移以及两个临时普通测试账号及本轮对象清理方案。",
-      "whyHuman": "用户已确认VP - V4位于SG且无真实业务，现有CLI可读；连接器旧项目列表不再阻塞。实测11/24迁移，3Auth/2Trip保留。实际schema/账号变更尚未由本次link授权覆盖；直连dry-run也尚未成功。",
+      "action": "原13迁移/必要备份/两临时普通账号的授权已收到且继续有效。追加RPC修复迁移20260909033302尚需明确纳入本次Staging执行范围；不重复索取原授权。",
+      "whyHuman": "备份/实际隔离恢复与Session pooler verify-full、原13 dry-run均已通过。本地真实测试发现原13基线运行缺陷，已在单一追加迁移修复（包括受限definer例外），原24文件不改。远端仍11，保留既有3Auth/2Trip；新文件超出此前固定13文件清单。",
       "prerequisites": "Baseline PR merged; no other task blockers; follow this task execution row",
       "expectedResult": "确认目标确为无真实用户的现有 Staging，记录24条迁移实际状态和差异，不重建历史。 真实 owner/other-user/anon 三类读取与写入验证；正常数据库、pooler、worker路径分别记录。 输出脱敏配置结果与可执行下一步；失败不伪装通过，不创建Production。",
-      "verify": "见artifacts/VPJ-02/verification.md与readiness.json；先解决可靠连接和运行门，再以真实JWT验证，不使用超级用户查询替代RLS证据。",
+      "verify": "见artifacts/VPJ-02/rpc-repair/verification.md/json及docs/contracts/vpj-02-rpc-repair.md；追加授权后重新核哈希/目标并实际升级与两JWT矩阵，不能用本地/维护role代替Staging用户隔离。",
       "dependencyEffect": "Unblocks only dependents of VPJ-02; does not globally stop unrelated ready work.",
       "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
-      "nextSafeIssue": 188
+      "nextSafeIssue": 188,
+      "approvedScope": [
+        "necessary Staging backup",
+        "original13 pending migrations subject to validation",
+        "two temporary ordinary Auth test identities",
+        "cleanup limited to this run new objects under prior scoped plan"
+      ],
+      "additionalPendingMigration": "20260909033302_vpj_02_repair_local_rpc_runtime.sql"
     },
     {
       "id": "OA-VPJ-03",

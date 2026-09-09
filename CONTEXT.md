@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Harness reliability planning and six implementation Issues published as VPJ-66..71 (#263..268); implementation/runtime acceptance unstarted. Prior Staging inventory remains evidence for its own version/environment only.
+状态：Staging backup and explicit verified Session pooler are ready. Original13 validation exposed RPC defects; appended repair is locally verified at25 migrations with29 integration/82 security tests,zero skips. Remote remains11; additional repair execution authority pending, original backup/13/two-identity grant retained. Harness planning merged via PR269; six implementation Issues are VPJ-66..71 (#263..268), with runtime acceptance unstarted.
 
-阶段：Harness planning coordination: 12 critical scenarios, two core tasks, six incremental slices in the single VPJ program; original Staging/native/provider gates remain.
+阶段：Validated repository RPC repair and real affected-schema backup/restore preparation; no remote migration or new Auth identities yet.
 
 ## 读取顺序
 
@@ -27,17 +27,17 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 未决与运行证据
 
-- VPJ-02: direct Postgres dry-run terminates during connection; HTTPS DNS attempt has no valid IP. Session pooler strict TLS probe needs verifiedSupabaseCA. HTTPS Management access does not establish DB/pooler/worker readiness.
+- One appended RPC repair beyond the authorized13 is now needed; its remote execution remains pending explicit scope approval. Original13 alone failed real local runtime validation.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 
-- Harness implementation,12-case runtime coverage, provider pairing, real Trip/worker/fault/rollback acceptance remain UNRUN under VPJ-66..71; this planning delivery is not capability acceptance.
 - Real account/Trip/DB/provider/customer acceptance not executed by this session; Web publication does not establish those capabilities.
 - Physical VoiceOver spoken traversal, full contrast/hit-region audit, iOS17 runtime and signed Store delivery remain unrun. Simulator structural AX is not full device/release acceptance.
+- Harness implementation,12-case runtime coverage, provider pairing, real Trip/worker/fault/rollback acceptance remain UNRUN under VPJ-66..71; this planning delivery is not capability acceptance.
 
 ## 验证
 
-- 2026-09-09 Harness planning: VPJ-66..71 published as #263..268; exact remote read-back passed for new bodies/12 native dependencies/parent/labels. Original65 rows/bodies/labels/states and198 dependencies preserved; Program187 now has71 children with unchanged body/state. Local plan/archive/docs checks and11 governance tests passed; independent review has no remaining required changes. See docs/harness/VERIFICATION.md; no Harness runtime execution performed.
+- 2026-09-09: final frozen11->24->25 local replay preserves synthetic Trip; integration29/29,security82/82,zero skip,DB lint0. Encrypted actual Staging backup restored with3Auth/2Trip/11history and equal hashes in a no-network container; original13+repair SQL also replayed on that restored copy preserving original data. No remote apply.
 - 2026-09-09 CLI metadata confirms VP - V4/ap-southeast-1/ACTIVE_HEALTHY. Read-only inventory finds11 matching migration records of24,13 pending,no remote-only;3Auth/2Trip;11 observed tables RLS enabled; authenticated direct Trip UPDATE still granted at old schema. No identities/content read and no data/DDL changed.
 - PR261 merged atde18928: hosted Native iOS34298939281 passed unsigned build,8unit+5UI and retained xcresult/version/commands. Production deployment6340704045 reported success forde18928.
 - Production deployment6340395476 reports success for2c46519. Actual browser at1280x800: /visepanda?locale=ar has ar/rtl, correct Arabic title and no overflow; switching toEnglish at390x844 restores en/ltr, removes legacy picker discovery and shows the unauthenticated sign-in boundary. No account/Trip write performed.
@@ -54,10 +54,11 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - 1280x800 and 390x844 current-page smoke: no horizontal overflow or console errors/warnings. Existing cross-route locale reset is assigned to VPJ-01/41.
 - PR253 CI at commit06bab2f passed; subsequent documentation-only handoff commits receive fresh CI and must be inspected before merge.
 - 2026-09-08 governance read-back at main 1bd1ffb: PR253/254 merged; all 65 VPJ tasks still status:blocked; VPJ-01 #188 and VPJ-62 #202 have no native blockers. These are readiness review candidates, not verified implementation-ready tasks.
+- 2026-09-09 Harness planning: VPJ-66..71 published as #263..268; exact remote read-back passed for new bodies/12 native dependencies/parent/labels. Original65 rows/bodies/labels/states and198 dependencies preserved; Program187 now has71 children with unchanged body/state. Local plan/archive/docs checks and11 governance tests passed; independent review has no remaining required changes. See docs/harness/VERIFICATION.md; no Harness runtime execution performed.
 
 ## 下一动作与回滚
 
-After this Harness planning change is merged to main, verify VPJ-66 #263 scope/interfaces and mark its offline preparation frontier ready; VPJ-67..71 retain actual runtime dependencies. This session coordinates planning rather than implementing them. Existing VPJ-02 action remains: follow artifacts/VPJ-02/verification.md for scoped Staging connectivity/migration preparation with the applicable operational authorization.
+Review/merge RPC repair PR270 against current main with fresh exact-head checks; obtain scope for the single additional migration before Staging application. In parallel verify VPJ-66 #263 offline preparation contract and live dependencies; VPJ-67..71 retain runtime gates.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 

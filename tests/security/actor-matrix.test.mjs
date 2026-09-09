@@ -64,7 +64,13 @@ test("AI-14 owner RLS and fault rollback hold on a running local Supabase", asyn
     const otherUpdate = await request(`/rest/v1/trips?id=eq.${tripId}`, {
       method: "PATCH", headers: { apikey: env.ANON_KEY, Authorization: `Bearer ${otherToken}`, "content-type": "application/json", Prefer: "return=representation" }, body: JSON.stringify({ title: "illegal" }),
     });
-    assert.deepEqual(JSON.parse(otherUpdate.body), []);
+    assert.equal(otherUpdate.response.status, 403);
+    assert.equal(JSON.parse(otherUpdate.body).code, "42501");
+    const ownerDirectUpdate = await request(`/rest/v1/trips?id=eq.${tripId}`, {
+      method: "PATCH", headers: { apikey: env.ANON_KEY, Authorization: `Bearer ${ownerToken}`, "content-type": "application/json" }, body: JSON.stringify({ title: "must use confirmed proposal" }),
+    });
+    assert.equal(ownerDirectUpdate.response.status, 403);
+    assert.equal(JSON.parse(ownerDirectUpdate.body).code, "42501");
     const anonRead = await request("/rest/v1/trips?select=id", { headers: { apikey: env.ANON_KEY } });
     assert.equal(anonRead.response.status, 401);
     const reviewCreated = await request("/rest/v1/review_probe_changes", {
