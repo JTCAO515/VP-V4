@@ -4,6 +4,11 @@ import { spawnSync } from "node:child_process";
 const initialized = existsSync("supabase/config.toml");
 const probe = initialized ? spawnSync(process.execPath, ["scripts/db/connection-probes.mjs"], { encoding: "utf8" }) : null;
 
+if (probe && probe.status !== 0) {
+  console.error("Explicit local database target verification failed; raw output suppressed.");
+  process.exit(1);
+}
+
 console.log(JSON.stringify({
   command: "db:verify",
   status: initialized ? "database-baseline-present" : "scaffold-not-configured",

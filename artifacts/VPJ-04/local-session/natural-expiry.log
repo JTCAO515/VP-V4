@@ -1,0 +1,10 @@
+✔ real disposable Auth → HTTP → persistent mobile epoch → RLS and revocation (69366.941666ms)
+ℹ Naturally expired Auth-signed token rejected; refresh retained the same mobile epoch.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 69469.198542

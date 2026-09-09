@@ -26,6 +26,9 @@
 		200000000000000000000011 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000011 /* Localizable.xcstrings */; };
 		200000000000000000000012 /* AppNavigationContractTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300000000000000000000012 /* AppNavigationContractTests.swift */; };
 		200000000000000000000015 = {isa = PBXBuildFile; fileRef = 300000000000000000000015; };
+		200000000000000000000020 = {isa = PBXBuildFile; fileRef = 300000000000000000000020; };
+		200000000000000000000021 = {isa = PBXBuildFile; fileRef = 300000000000000000000021; };
+		200000000000000000000022 = {isa = PBXBuildFile; fileRef = 300000000000000000000022; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +64,9 @@
 		300000000000000000000014 /* VisePandaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VisePandaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		300000000000000000000015 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppShellUITests.swift; sourceTree = "<group>"; };
 		300000000000000000000016 = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = VisePandaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		300000000000000000000020 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSession.swift; sourceTree = "<group>"; };
+		300000000000000000000021 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSessionIntegrationTests.swift; sourceTree = "<group>"; };
+		300000000000000000000022 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeIdentityUITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,7 +99,7 @@
 			path = VisePanda;
 			sourceTree = "<group>";
 		};
-		600000000000000000000003 /* App */ = {isa = PBXGroup; children = (300000000000000000000001, 300000000000000000000002, 300000000000000000000003); path = App; sourceTree = "<group>"; };
+		600000000000000000000003 /* App */ = {isa = PBXGroup; children = (300000000000000000000020, 300000000000000000000001, 300000000000000000000002, 300000000000000000000003); path = App; sourceTree = "<group>"; };
 		600000000000000000000004 /* Navigation */ = {isa = PBXGroup; children = (300000000000000000000004, 300000000000000000000005, 300000000000000000000006); path = Navigation; sourceTree = "<group>"; };
 		600000000000000000000005 /* DesignSystem */ = {isa = PBXGroup; children = (300000000000000000000007); path = DesignSystem; sourceTree = "<group>"; };
 		600000000000000000000006 /* Components */ = {isa = PBXGroup; children = (300000000000000000000008, 300000000000000000000009, 30000000000000000000000A); path = Components; sourceTree = "<group>"; };
@@ -104,9 +110,9 @@
 		60000000000000000000000B /* Explore */ = {isa = PBXGroup; children = (30000000000000000000000E); path = Explore; sourceTree = "<group>"; };
 		60000000000000000000000C /* Profile */ = {isa = PBXGroup; children = (30000000000000000000000F); path = Profile; sourceTree = "<group>"; };
 		60000000000000000000000E /* Resources */ = {isa = PBXGroup; children = (300000000000000000000010, 300000000000000000000011); path = Resources; sourceTree = "<group>"; };
-		60000000000000000000000F /* VisePandaTests */ = {isa = PBXGroup; children = (300000000000000000000012); path = VisePandaTests; sourceTree = "<group>"; };
+		60000000000000000000000F /* VisePandaTests */ = {isa = PBXGroup; children = (300000000000000000000012, 300000000000000000000021); path = VisePandaTests; sourceTree = "<group>"; };
 		600000000000000000000010 /* Products */ = {isa = PBXGroup; children = (300000000000000000000013, 300000000000000000000014, 300000000000000000000016); name = Products; sourceTree = "<group>"; };
-		600000000000000000000011 = {isa = PBXGroup; children = (300000000000000000000015); path = VisePandaUITests; sourceTree = "<group>"; };
+		600000000000000000000011 = {isa = PBXGroup; children = (300000000000000000000015, 300000000000000000000022); path = VisePandaUITests; sourceTree = "<group>"; };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -182,6 +188,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				200000000000000000000020,
 				200000000000000000000001, 200000000000000000000002, 200000000000000000000003,
 				200000000000000000000004, 200000000000000000000005, 200000000000000000000006,
 				200000000000000000000007, 200000000000000000000008, 200000000000000000000009,
@@ -190,8 +197,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000012); runOnlyForDeploymentPostprocessing = 0; };
-		800000000000000000000005 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000015); runOnlyForDeploymentPostprocessing = 0; };
+		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000012, 200000000000000000000021); runOnlyForDeploymentPostprocessing = 0; };
+		800000000000000000000005 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000015, 200000000000000000000022); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */

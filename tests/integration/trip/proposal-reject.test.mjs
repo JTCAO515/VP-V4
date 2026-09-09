@@ -1,19 +1,11 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
 import test from "node:test";
+import { identityLocalEnv } from "../identity/local-supabase.mjs";
 
-function localEnv() {
-  try {
-    const raw = execFileSync("supabase", ["status", "--workdir", ".", "-o", "env"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
-    return Object.fromEntries(raw.trim().split("\n").map((line) => {
-      const index = line.indexOf("="); return [line.slice(0, index), line.slice(index + 1).replace(/^"|"$/g, "")];
-    }));
-  } catch { return null; }
-}
 
 test("AI-13c lets only the owner reject one pending Proposal", async (t) => {
-  const env = localEnv();
-  if (!env?.API_URL || !env.ANON_KEY || !env.SERVICE_ROLE_KEY) return t.skip("local Supabase is not running");
+  const env = identityLocalEnv();
+  if (!env?.API_URL || !env.ANON_KEY || !env.SERVICE_ROLE_KEY) return t.skip("explicit disposable identity Supabase target is not configured");
   const password = "Probe-password-123!";
   const users = [];
   const request = async (path, init = {}) => {
