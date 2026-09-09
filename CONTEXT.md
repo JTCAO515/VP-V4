@@ -33,10 +33,11 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 - Real account/Trip/DB/provider/customer acceptance not executed by this session; Web publication does not establish those capabilities.
 - Physical VoiceOver spoken traversal, full contrast/hit-region audit, iOS17 runtime and signed Store delivery remain unrun. Simulator structural AX is not full device/release acceptance.
-- Harness implementation,12-case runtime coverage, provider pairing, real Trip/worker/fault/rollback acceptance remain UNRUN under VPJ-66..71; this planning delivery is not capability acceptance.
+- VPJ-66 offline preparation is implemented locally; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.
 
 ## 验证
 
+- 2026-09-09: RPC repair PR270 merged as6307d79 after exact HEAD8f93c33 independent review Critical0/Important0 and Quality PR34312166803 passed. Remote migration remains pending approval. VPJ-66 now has two runnable offline seeds, four detected injected failures and12-case specifications; see docs/harness/OFFLINE-SEEDS.md and artifacts/VPJ-66. Local preparation does not establish live capability; its PR/CI/merge are still pending.
 - 2026-09-09: final frozen11->24->25 local replay preserves synthetic Trip; integration29/29,security82/82,zero skip,DB lint0. Encrypted actual Staging backup restored with3Auth/2Trip/11history and equal hashes in a no-network container; original13+repair SQL also replayed on that restored copy preserving original data. No remote apply.
 - 2026-09-09 CLI metadata confirms VP - V4/ap-southeast-1/ACTIVE_HEALTHY. Read-only inventory finds11 matching migration records of24,13 pending,no remote-only;3Auth/2Trip;11 observed tables RLS enabled; authenticated direct Trip UPDATE still granted at old schema. No identities/content read and no data/DDL changed.
 - PR261 merged atde18928: hosted Native iOS34298939281 passed unsigned build,8unit+5UI and retained xcresult/version/commands. Production deployment6340704045 reported success forde18928.

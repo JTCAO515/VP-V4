@@ -4,6 +4,8 @@
 
 权威任务来源为 [issue-plan.json](../program/2026-09-05/issue-plan.json)，执行入口为 [任务表](../program/2026-09-05/ISSUES.md) 和 [执行合同](../program/2026-09-05/EXECUTION-CONTRACT.md)。本文件定义验收口径，不建立第二个 Program、数据库或执行队列。遵循 ADR-0023 与 [开发流程 / ADR-0024](../agents/development-workflow.md)。
 
+离线种子的运行方式、复用接缝和未接通边界见 [VPJ-66 离线种子](OFFLINE-SEEDS.md)；运行证据见 [结果](../../artifacts/VPJ-66/results.json)。真实服务验收仍按下述阶段门。
+
 ## 1. 目标与停点
 
 让现有 VP 在身份、证据、上下文和预算约束内完成两条任务，结果可核验、失败可定位、中断可恢复：
