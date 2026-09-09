@@ -1,4 +1,6 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { verifyNativeCredentials } from "./native-credentials.ts";
 import type { NextRequest, NextResponse } from "next/server";
 import type { FailureCode } from "@/lib/server/contracts/errors";
 import type {
@@ -159,13 +161,13 @@ export function getSupabasePublicConfig(): Readonly<{
   return url && publishableKey ? { url, publishableKey } : null;
 }
 
-export function createUserDataAdapter(request: NextRequest) {
-  const current = getSupabasePublicConfig();
+export function createUserDataAdapter(request: NextRequest, current = getSupabasePublicConfig()) {
   if (!current) return null;
+  const hasAuthorization = request.headers.has("authorization");
   const pendingCookies: PendingCookie[] = [];
   const client = createServerClient(current.url, current.publishableKey, {
     cookies: {
-      getAll: () => request.cookies.getAll(),
+      getAll: () => hasAuthorization ? [] : request.cookies.getAll(),
       setAll: (cookies) => {
         pendingCookies.push(...cookies);
       },
@@ -179,12 +181,36 @@ export function createUserDataAdapter(request: NextRequest) {
     return response;
   };
   const authenticated = async (): Promise<AdapterResult<string>> => {
+    if (hasAuthorization) return { error: "UNAUTHENTICATED" };
     const { data, error } = await client.auth.getClaims();
     const subject = data?.claims?.sub;
     return error || typeof subject !== "string"
       ? { error: "UNAUTHENTICATED" }
       : { data: subject };
   };
+  return createDataOperations(client, authenticated, applyCookies);
+}
+
+/** Preparation only: mobile epoch authority is not implemented; no native data access. */
+export async function createNativeUserDataAdapter(request: NextRequest, current = getSupabasePublicConfig()) {
+  if (!current) return null;
+  const credentials = await verifyNativeCredentials(request, current);
+  if (!credentials) return null;
+  return createDataOperations(
+    credentials.client,
+    async (): Promise<AdapterResult<string>> => {
+      // JWT verification alone cannot establish the current mobile session epoch.
+      return { error: "UNAUTHENTICATED" };
+    },
+    (response) => response,
+  );
+}
+
+function createDataOperations(
+  client: SupabaseClient,
+  authenticated: () => Promise<AdapterResult<string>>,
+  applyCookies: (response: NextResponse) => NextResponse,
+) {
   const getUserProfile = async (): Promise<
     AdapterResult<UserProfileRead | null>
   > => {

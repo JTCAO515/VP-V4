@@ -1,0 +1,38 @@
+✔ LAUNCH-04 keeps only exact internal private deep links after sign-in (0.608209ms)
+✔ LAUNCH-04 private data pages invoke the server session guard before rendering (2.71225ms)
+✔ SDK verifies the signed ordinary user JWT and binds the identical JWT to from/rpc (11.250417ms)
+✔ verified JWT does not open native data operations without mobile epoch authority (3.936125ms)
+✔ cookie-only Web authentication and existing data adapter behavior remain available (7.692292ms)
+✔ Web mutation guard never exempts Bearer, missing Origin or hostile Origin (0.439125ms)
+✔ Web cookie refresh still queues writes for applyCookies through the shared adapter (3.8ms)
+✔ AI-51b retires Magic Link and owns one password-login path (0.431667ms)
+✔ AI-51b exposes password sign-in/sign-out without signup or recovery (0.650084ms)
+✔ AI-51b keeps complete login copy in all five locales (0.148416ms)
+✔ AI-13a projects one pending title diff with explicit missing provenance (1.48625ms)
+✔ AI-13a does not project expired, resolved, or malformed pending rows (0.153542ms)
+✔ AI-13a exposes only owner-scoped pending Proposal reads and the LAUNCH-11 patch boundary (0.28425ms)
+✔ LAUNCH-11 returns a structured patch only to the owner-scoped pending Proposal reader (0.487583ms)
+✔ AI-51 accepts only bounded confirm inputs and UUID resource identifiers (1.148625ms)
+✔ AI-51 rejects cross-origin mutations and maps only frozen failures (0.8735ms)
+✔ V4-10 accepts only an exact non-negative rollback version (0.224542ms)
+✔ LAUNCH-04 guard uses the public SSR client only and redirects unauthenticated sessions (0.723334ms)
+✔ public preview exposes no Magic Link or auth callback endpoints (1.044958ms)
+✔ UserDataAdapter still derives the actor only from Supabase claims (1.78425ms)
+✔ public landing imports no authentication entrypoint (0.997375ms)
+✔ missing, malformed, oversized and duplicate Authorization fail before SDK HTTP (6.029334ms)
+✔ expired and forged JWTs are rejected by the actual Auth SDK (5.265583ms)
+✔ valid signatures cannot turn service, anonymous, wrong-project or incomplete claims into a user (6.5055ms)
+✔ mixed credentials never read/refresh Web cookies or fall back after invalid Bearer (4.308083ms)
+✔ verification transport failure is closed and returns no token/body/error detail (0.658459ms)
+✔ separate verified users retain separate JWTs without a shared session or cookie (1.982958ms)
+✔ SDK remote-verification fallback rejects a token without a matching asymmetric key (0.670208ms)
+✔ AI-51 UserDataAdapter routes never embed or reference a service credential (1.34075ms)
+✔ AI-51b has no signup, recovery, admin auth or credential logging path (0.7085ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 300.659208

@@ -1,0 +1,41 @@
+Updating db347bc..272ca7d
+Fast-forward
+ artifacts/VPJ-70/check.log                    |  126 ++
+ artifacts/VPJ-70/commands.jsonl               |   11 +
+ artifacts/VPJ-70/contract.log                 |  993 +++++++++
+ artifacts/VPJ-70/docs.log                     |    6 +
+ artifacts/VPJ-70/evals.log                    |  159 ++
+ artifacts/VPJ-70/lint-final.log               |    5 +
+ artifacts/VPJ-70/pairing-final.log            |   18 +
+ artifacts/VPJ-70/pairing.log                  |   18 +
+ artifacts/VPJ-70/results.json                 | 2727 +++++++++++++++++++++++++
+ artifacts/VPJ-70/summary.md                   |  135 ++
+ artifacts/VPJ-70/typecheck-final.log          |    3 +
+ artifacts/VPJ-70/unit.log                     |  285 +++
+ artifacts/VPJ-70/unrun.md                     |   22 +
+ artifacts/VPJ-70/verification.md              |   39 +
+ docs/benchmarks/vpj-70/offline-pairing.md     |   72 +
+ evals/harness/pairing/index.ts                |  179 ++
+ evals/harness/pairing/pairing.evals.test.ts   |   27 +
+ tests/contract/harness/pairing/report.test.ts |   34 +
+ tests/unit/harness/pairing/grader.test.ts     |   92 +
+ 19 files changed, 4951 insertions(+)
+ create mode 100644 artifacts/VPJ-70/check.log
+ create mode 100644 artifacts/VPJ-70/commands.jsonl
+ create mode 100644 artifacts/VPJ-70/contract.log
+ create mode 100644 artifacts/VPJ-70/docs.log
+ create mode 100644 artifacts/VPJ-70/evals.log
+ create mode 100644 artifacts/VPJ-70/lint-final.log
+ create mode 100644 artifacts/VPJ-70/pairing-final.log
+ create mode 100644 artifacts/VPJ-70/pairing.log
+ create mode 100644 artifacts/VPJ-70/results.json
+ create mode 100644 artifacts/VPJ-70/summary.md
+ create mode 100644 artifacts/VPJ-70/typecheck-final.log
+ create mode 100644 artifacts/VPJ-70/unit.log
+ create mode 100644 artifacts/VPJ-70/unrun.md
+ create mode 100644 artifacts/VPJ-70/verification.md
+ create mode 100644 docs/benchmarks/vpj-70/offline-pairing.md
+ create mode 100644 evals/harness/pairing/index.ts
+ create mode 100644 evals/harness/pairing/pairing.evals.test.ts
+ create mode 100644 tests/contract/harness/pairing/report.test.ts
+ create mode 100644 tests/unit/harness/pairing/grader.test.ts
