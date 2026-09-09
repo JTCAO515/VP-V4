@@ -27,14 +27,15 @@
       "revision": "8f39ad3c0b4c58e9c2d2c84a38465abf757272d8",
       "license": "Apache-2.0",
       "source": "https://huggingface.co/docling-project/docling-layout-heron/blob/8f39ad3c0b4c58e9c2d2c84a38465abf757272d8/README.md",
-      "serialization": "safetensors; RTDetrForObjectDetection; no custom code/auto_map"
+      "serialization": "safetensors; RTDetrV2ForObjectDetection; no custom code/auto_map"
     },
     {
       "name": "Tesseract",
       "version": "5.5.3",
-      "revision": "6951ffe10ce031374bcd04fe400811da1e7e04ad",
+      "revision": "db0ec62f81b0737fbbe184d8fea40af5738f8eef",
       "license": "Apache-2.0",
-      "source": "https://github.com/tesseract-ocr/tesseract/blob/6951ffe10ce031374bcd04fe400811da1e7e04ad/LICENSE"
+      "source": "https://github.com/tesseract-ocr/tesseract/blob/db0ec62f81b0737fbbe184d8fea40af5738f8eef/LICENSE",
+      "tag_object_revision": "6951ffe10ce031374bcd04fe400811da1e7e04ad"
     },
     {
       "name": "eng + chi_sim tessdata_fast weights",

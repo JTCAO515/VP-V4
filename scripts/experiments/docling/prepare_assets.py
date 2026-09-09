@@ -36,7 +36,14 @@ def main():
                     output.write(chunk)
             records.append({"path": str(target), "url": url, "license": license_name, "bytes": size, "sha256": digest.hexdigest()})
             print(json.dumps(records[-1]), flush=True)
-    (ARTIFACTS / "downloaded-assets.json").write_text(json.dumps(records, indent=2) + "\n")
+    config_url = "https://raw.githubusercontent.com/tesseract-ocr/tesseract/db0ec62f81b0737fbbe184d8fea40af5738f8eef/tessdata/configs/tsv"
+    config = urllib.request.urlopen(config_url, timeout=30).read(4096)
+    target = destination / "tessdata/configs/tsv"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(config)
+    records.append({"path": str(target), "url": config_url, "sha256": hashlib.sha256(config).hexdigest(), "bytes": len(config), "license": "Apache-2.0"})
+    # Setup on another machine must not rewrite the committed preflight evidence.
+    (destination / "downloaded-assets-observed.json").write_text(json.dumps(records, indent=2) + "\n")
 
 
 if __name__ == "__main__":

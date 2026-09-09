@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "frozen_at": "2026-09-09T20:29:30.112000+00:00",
+  "frozen_at": "2026-09-09T20:38:54.809495+00:00",
   "before_first_conversion": true,
   "base": "b5acf58ecc49906826568a314c6aad4dc9a4abc5",
   "files": {
@@ -8,13 +8,20 @@
     "scripts/experiments/docling/fixtures.json": "e0b9475da87cf6b73d63e80266e50cbad7fe64b378098004ca2d65763a59cfcf",
     "scripts/experiments/docling/requirements.lock": "551d112b795b59d78a248e109d629581e21578d472d4231bbe8df1a87a1ab73b",
     "artifacts/VPJ-73/fixtures/oracle.json": "039ce823ec6fe8bf1f674f0849be94a0f210ffe393e4b5a11d38b3deda021d2c",
-    "artifacts/VPJ-73/license-registry.json": "5bfa3f40cde70fc3c8990845ac5472472be6d9ca3e66d52a8776dbe2949d0dd9",
-    "artifacts/VPJ-73/downloaded-assets.json": "04c03a0d705321c6964ddd162a62e4be22caad3a46141e8edadb9a5525d79096"
+    "artifacts/VPJ-73/license-registry.json": "51826e2a122ea425a285058999d8ff452351b94a44493150a36234f20ba023d2",
+    "artifacts/VPJ-73/downloaded-assets.json": "04c03a0d705321c6964ddd162a62e4be22caad3a46141e8edadb9a5525d79096",
+    "artifacts/VPJ-73/tesseract-config-supplement.json": "83f87ce3b5c2e8b040e756364a7048c64e76f42096f82822e04f35eeb851dc87"
   },
   "tesseract_binary": {
     "path": "/opt/homebrew/Cellar/tesseract/5.5.3/bin/tesseract",
     "sha256": "16020f485da1f534089d82608797d98f71322c67dee772438fb755ad9b4f79b5"
   },
   "python": "3.12.14",
-  "fixture_visual_review": "All six PNGs and PDF rendered page inspected; stress degradation intentional; no unintended clipping/overlap."
+  "fixture_visual_review": "All six PNGs and PDF rendered page inspected; stress degradation intentional; no unintended clipping/overlap.",
+  "revision": 2,
+  "setup_corrections_before_first_conversion": [
+    "Peel annotated Tesseract tag to actual source commit",
+    "Record packaged TSV config required by the CLI",
+    "Correct architecture label to RTDetrV2; exact weights unchanged"
+  ]
 }
