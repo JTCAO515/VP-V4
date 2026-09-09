@@ -31,11 +31,11 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 未决与运行证据
 
-- The additional RPC repair was authorized2026-09-10 and applied with original13: Staging11->25. Ordinary JWT isolation16/16 and exact-ID cleanup passed; direct/worker paths remain separately incomplete.
+- Staging26 and the scoped ordinary JWT/budget checks are verified; direct-host database connection and a deployed worker identity/path remain incomplete.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 
-- Real account/Trip/DB/provider/customer acceptance not executed by this session; Web publication does not establish those capabilities.
+- Production/customer and complete native/provider/Harness acceptance remain unrun. Scoped Staging migrations, ordinary identity isolation and synthetic budget HTTP behavior were actually verified; those results do not establish the remaining runtime capabilities.
 - Physical VoiceOver, signed Store and selected-object Ask sheet acceptance remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.
 - VPJ-66 offline preparation is merged and accepted; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.
 
