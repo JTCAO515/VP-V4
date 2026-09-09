@@ -1163,3 +1163,127 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 相对日草稿补成具体日期/实际地点时逐项解析身份、地址、路线和入场约束。
 - [ ] 不完整依据仍可保留用户决定但标待核，plan feasible只能由当前必要证据支持。
 - [ ] 整条有依据Proposal→diff→确认→TripItemSupport→以后重验可追溯。
+
+## VPJ-66
+
+[VPJ-66 #263](https://github.com/JTCAO515/VP-V4/issues/263) — Harness：两条离线旅行任务可运行、判分并定位失败
+
+- Owner: coding-agent; 2专注日，有界PR验证；真实环境/人工校准等待另计
+- Blocked by: 仅基线合并
+- Allowed: `evals/harness/**`, `tests/**/harness/**`, `scripts/run-ci-suite.mjs`, `docs/harness/**`, `artifacts/VPJ-66/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm evals`
+- Evidence: `artifacts/VPJ-66/verification.md`, `artifacts/VPJ-66/unrun.md`, `artifacts/VPJ-66/commands.jsonl`, `artifacts/VPJ-66/results.json`
+- 接口: docs/harness/README.md; Red lines: RL-01, RL-02, RL-03, RL-04, RL-05, RL-06, RL-07
+- 运行门: 本规划已合并；既有版本化合同足以支持两个离线种子。无需provider、数据库或operator授权，不能为方便测试读取实际凭据。
+- Rollback: 移除本票新增场景/报告接入，保留原eval与安全测试；不涉及真实业务数据。
+
+- [ ] 从现有 pnpm evals 入口完整运行无 Trip 问答和保留晚餐的局部调整两个合成开发种子，得到一个 JSON 报告与可读摘要；本票只验收离线准备。
+- [ ] 记录 producer→adapter→consumer→assertion 复用清单，区分 fixture/in-memory/live；定位现有 Trip 路由/RPC、ContextPlan、ToolGateway 和模型/预算接缝，不另造框架。
+- [ ] 定义12个独立场景及6类覆盖，8开发/4分层holdout；每例有固定输入/时钟/证据/Trip版本、允许结果、禁止行为、oracle及required mode。翻译/参数变体不能跨组泄漏或充数。
+- [ ] 两个种子分别注入一个可复现错误：不支持的关键claim、晚餐或未确认写入保护被破坏时，判分器稳定FAIL并指出步骤；全拒答不能通过正常可答案例。
+- [ ] 其余未接通场景标NOT_RUN并映射VPJ-67/68/69，报告独立案例数、语言、运行数与模式；旧AI-42元数据组合不能计入行为覆盖。
+- [ ] 报告执行状态、业务outcome、验收verdict和配置/grader版本分开；仅allowlist元数据。离线测试不连provider、不写真实Trip、不扣用户额度。
+- [ ] 准备验收以两个正常种子PASS及故意失败被检出为准；明确12场景和真实服务验收尚未完成。
+
+## VPJ-67
+
+[VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264) — Harness：真实只读问答产生有依据的结果与回执
+
+- Owner: coding-agent; 4专注日，有界PR验证；真实环境/人工校准等待另计
+- Blocked by: [VPJ-66 #263](https://github.com/JTCAO515/VP-V4/issues/263), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206)
+- Allowed: `lib/server/turn/**`, `lib/server/context/**`, `lib/server/knowledge/**`, `lib/server/observability/**`, `app/api/chat/**`, `components/chat/**`, `ios/VisePanda/**`, `evals/harness/**`, `tests/**/harness/**`, `docs/harness/**`, `artifacts/VPJ-67/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm evals`
+- Evidence: `artifacts/VPJ-67/verification.md`, `artifacts/VPJ-67/unrun.md`, `artifacts/VPJ-67/commands.jsonl`, `artifacts/VPJ-67/results.json`
+- 接口: docs/harness/README.md; Red lines: RL-01, RL-02, RL-03, RL-04, RL-05, RL-06, RL-07
+- 运行门: VPJ-16继承VPJ-07及真实身份/provider/预算/知识门；接口、获准Staging、测试身份、provider接收方和批次费用上限必须实际可用。 按共享流程可先交独立fixture准备PR；真实中英客户端、证据与只读无写入验收缺失时父票不得关闭。
+- Native: 本票实际受影响原生路径必须build/test并附中英交互证据；先xcrun simctl list devices available，记录实际UDID替换后的xcodebuild test命令及版本/xcresult。真实账号/worker/服务不可用标UNRUN；Simulator不替代原票的真机/商店门。
+- Rollback: 关闭本票整合检查点并恢复原支持路径；不清空用户任务、不改授权或预算账本。
+
+- [ ] 获准测试用户在真实原生Ask无需创建Trip即可获得answered/partial/clarification/blocked/technical_failure及对应证据；复用VPJ-07/16实际producer/consumer，不重建基础能力。
+- [ ] 服务端身份和用途/接收方资格始终成立，正常可答/部分可答/缺字段/证据过期与冲突/资料注入/provider不可用均有命名观察；只读请求前后Trip数量和内容不变。
+- [ ] 关键claim有当前适用证据和对应校验回执；必要claim遗漏、过度拒答和无谓追问能被判失败，固定快照不冒充实时核验。
+- [ ] 任务ID可追至attempt、上下文/证据/工具版本、原因码、终态、耗时、预算及实际usage；仅allowlist字段，缺失费用标unknown。
+- [ ] 把12场景中本票负责的只读案例接入必测集合；fixture与真实Staging分栏，中英各至少一条实际任务链通过，不能以界面文字或mock结票。
+- [ ] 验证原生消费者和现有Web Chat的结果语义，保留老客户端兼容；本票不扩充Web范围。
+
+## VPJ-68
+
+[VPJ-68 #265](https://github.com/JTCAO515/VP-V4/issues/265) — Harness：少走路且保留已确认晚餐的局部改稿闭环
+
+- Owner: coding-agent; 4专注日，有界PR验证；真实环境/人工校准等待另计
+- Blocked by: [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264), [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-65 #219](https://github.com/JTCAO515/VP-V4/issues/219)
+- Allowed: `lib/server/trip/**`, `lib/server/constraints/**`, `lib/server/context/**`, `lib/server/memory/**`, `app/api/trips/**`, `components/canvas/**`, `ios/VisePanda/**`, `evals/harness/**`, `tests/**/harness/**`, `docs/harness/**`, `artifacts/VPJ-68/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm evals`
+- Evidence: `artifacts/VPJ-68/verification.md`, `artifacts/VPJ-68/unrun.md`, `artifacts/VPJ-68/commands.jsonl`, `artifacts/VPJ-68/results.json`
+- 接口: docs/harness/README.md; Red lines: RL-01, RL-02, RL-03, RL-04, RL-05, RL-06, RL-07
+- 运行门: 真实Trip、局部提案、可纠正上下文及计划依据由VPJ-10/11/65验收；获准测试身份/数据/路线依据必须存在。 受影响Web路径做桌面与390×844交互/console检查，原生做实际确认/拒绝/重载；全量设备发布门仍归原票。
+- Native: 本票实际受影响原生路径必须build/test并附中英交互证据；先xcrun simctl list devices available，记录实际UDID替换后的xcodebuild test命令及版本/xcresult。真实账号/worker/服务不可用标UNRUN；Simulator不替代原票的真机/商店门。
+- Rollback: 停用本票整合入口，保留已确认Trip及手动编辑路径；不得回写撤销已发生的用户确认或改历史迁移。
+
+- [ ] 用户对当前Trip要求第二天少走路、不动已确认晚餐；沿现有候选→可见diff→精确版本确认→原子Patch→重载路径验收，不另建writer。
+- [ ] 按同日期/时区、出行模式、来源版本和口径比较步行距离或步行时长，运行前选择主要步行指标并要求其严格减少，另一指标辅助披露，不能删必保留项目换成功；基础数据归VPJ-65/19。证据不足只算待核候选，不算已验证少走路。
+- [ ] 晚餐item ID、地点、日期/时区、起止时间、确认状态及回执在候选/diff/最终Trip均不变；当前明确要求优先于旧偏好但不能覆盖权限与安全。
+- [ ] 用户确认绑定不可变proposal revision与base Trip revision；未确认、拒绝、过期、越权/撤权以及另一客户端修改均不误写或覆盖，重复确认不重复提交。
+- [ ] 按12场景规格接入约束/偏好/证据不足及确认冲突案例；原生中英结果和精简Web同Trip/diff语义一致，应用后重载与事务回执一致。
+- [ ] 报告fixture与获准真实环境、测量依据及失败案例；缺路线口径或真实原子回执不可用不能关闭本票。
+
+## VPJ-69
+
+[VPJ-69 #266](https://github.com/JTCAO515/VP-V4/issues/266) — Harness：故障取消与重连不伪造成功或重复提交
+
+- Owner: coding-agent; 3专注日，有界PR验证；真实环境/人工校准等待另计
+- Blocked by: [VPJ-68 #265](https://github.com/JTCAO515/VP-V4/issues/265)
+- Allowed: `lib/server/turn/**`, `lib/server/jobs/**`, `lib/server/observability/**`, `app/api/chat/**`, `ios/VisePanda/**`, `components/chat/**`, `evals/harness/**`, `tests/**/harness/**`, `docs/harness/**`, `artifacts/VPJ-69/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm evals`
+- Evidence: `artifacts/VPJ-69/verification.md`, `artifacts/VPJ-69/unrun.md`, `artifacts/VPJ-69/commands.jsonl`, `artifacts/VPJ-69/results.json`
+- 接口: docs/harness/README.md; Red lines: RL-01, RL-02, RL-03, RL-04, RL-05, RL-06, RL-07
+- 运行门: VPJ-68经VPJ-10→VPJ-09继承VPJ-08的恢复门；不重复建设任务、事件或预算账本。 仅在获准隔离Staging、测试任务与预算下故障注入；无获准worker/持久数据则真实恢复UNRUN，保持父票开放。
+- Native: 本票实际受影响原生路径必须build/test并附中英交互证据；先xcrun simctl list devices available，记录实际UDID替换后的xcodebuild test命令及版本/xcresult。真实账号/worker/服务不可用标UNRUN；Simulator不替代原票的真机/商店门。
+- Rollback: 移除测试故障注入和新增整合点，保留已发生账目/提交、最终回执与原有恢复能力。
+
+- [ ] 对同一真实任务在接受请求、工具返回、提案生成、提交前后及流式尾包命名检查点注入超时/重复投递/进程崩溃/断网/取消，重新进入得到真实最终状态。
+- [ ] 用户扣次和Trip提交不重复；provider attempt可能重复收费须真实计量。提交或usage未知先核验/对账，不盲重试副作用。
+- [ ] 取消阻止后续新副作用；提交已发生则显示已提交，不能伪称撤销。旧租约不能继续提交，跨账号旧事件不能回放。
+- [ ] 实际Staging持久worker/数据/客户端在进程重启后仍恢复同一任务；进程内fake只能作为准备证据。任务次数/期限/费用均有预设上限。
+- [ ] 将12场景中的故障与取消案例及命名注入点加入回归，保存实际最终状态/回执/失败矩阵；原生中英及现有Web受影响恢复路径验证。
+
+## VPJ-70
+
+[VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267) — Harness：只读模型或提示词候选的配对评测与校准
+
+- Owner: coding-agent; 3专注日，有界PR验证；真实环境/人工校准等待另计
+- Blocked by: [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264)
+- Allowed: `evals/harness/**`, `tests/**/harness/**`, `docs/benchmarks/**`, `lib/server/model-gateway/prompt/**`, `docs/harness/**`, `artifacts/VPJ-70/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm evals`
+- Evidence: `artifacts/VPJ-70/verification.md`, `artifacts/VPJ-70/unrun.md`, `artifacts/VPJ-70/commands.jsonl`, `artifacts/VPJ-70/results.json`
+- 接口: docs/harness/README.md; Red lines: RL-01, RL-02, RL-03, RL-04, RL-05, RL-06, RL-07
+- 运行门: 真实只读、模型和预算依赖由VPJ-67→VPJ-16→VPJ-07继承；允许合成评分器准备先行，真实配对及人工校准缺失不能结票。 使用现有获准配置；产品负责人在候选运行前冻结评分容差与费用上限，缺失时仅做无外发的离线准备或已获准基线采集。
+- Rollback: 撤销候选配置，保持基线与原报告；不切换生产配置、不覆盖业务状态。
+
+- [ ] 在获准的同一只读任务链上比较现有基线与一个明确候选，输出采纳/拒绝/证据不足及逐例证据；可只改提示词，不要求新增provider或自动生产路由。
+- [ ] 固定任务输入、时钟、证据、权限、预算政策、grader与版本，开发集调优、holdout只作冻结后评测；污染案例登记后转开发集并补未用于调优的holdout。
+- [ ] 先允许baseline_only；候选运行前由产品负责人记录质量容差、正常可答/必要claim不退化、延迟/单任务/整批费用上限和预声明收益。缺数值或预算许可只报evidence_insufficient，不作通过。
+- [ ] 每个适用只读场景每配置起步重复3次并分中英/风险汇总；样本数、失败、NOT_RUN及unknown成本同时报告，不能用总体均分掩盖切片失败或小样本宣称统计显著。
+- [ ] 确定性红线与质量rubric分开；人工校准正反例、记录grader分歧，不由生成模型自评或看结果后改标准。回归中故意退化候选须被拒绝。
+- [ ] 交付同一JSON报告/Markdown摘要与可复用配对入口；本票关闭限于只读比较，Trip配对与最终能力判定保留VPJ-71。新接收方/地区必须先满足原数据政策门。
+
+## VPJ-71
+
+[VPJ-71 #268](https://github.com/JTCAO515/VP-V4/issues/268) — Harness：核心任务发布判定与能力停用恢复验收
+
+- Owner: coding-agent; 3专注日，有界PR验证；真实环境/人工校准等待另计
+- Blocked by: [VPJ-69 #266](https://github.com/JTCAO515/VP-V4/issues/266), [VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267), [VPJ-37 #229](https://github.com/JTCAO515/VP-V4/issues/229), [VPJ-63 #231](https://github.com/JTCAO515/VP-V4/issues/231)
+- Allowed: `evals/harness/**`, `tests/**/harness/**`, `lib/server/observability/**`, `lib/flags/**`, `docs/acceptance/**`, `docs/runbooks/**`, `docs/benchmarks/**`, `docs/harness/**`, `artifacts/VPJ-71/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm evals`
+- Evidence: `artifacts/VPJ-71/verification.md`, `artifacts/VPJ-71/unrun.md`, `artifacts/VPJ-71/commands.jsonl`, `artifacts/VPJ-71/results.json`
+- 接口: docs/harness/README.md; Red lines: RL-01, RL-02, RL-03, RL-04, RL-05, RL-06, RL-07
+- 运行门: VPJ-69/70实际验收完成，VPJ-37 Ops停用与VPJ-63真实网络证据可用；产品负责人已冻结本轮完整集合阈值。 获准Staging能力停用/恢复与部署回退窗口实际存在；生产开放仍需对应对象/环境/范围有效授权。
+- Rollback: 停用本轮候选/整合，保留可审计报告与既有安全不变量；保持Trip和删除/撤权状态，不回退已应用数据库历史。
+
+- [ ] 使用同一选定commit/config与预冻结grader/阈值整合两条任务；选定配置可为达到门槛的原基线，仅对拟采纳候选复用VPJ-70入口扩充Trip配对。候选被拒可保留基线，不强制新增候选；完整回归与停用责任仍必需。
+- [ ] 完整12场景按required mode实际运行，必测集无FAIL/NOT_RUN；中英/风险/正常可答分别达门槛，未运行不删除分母、全拒答不算成功，命名集硬违规0但不外推绝对可靠。
+- [ ] 真实原生Ask/Trip、精简Web同Trip、持久worker、证据资格、步行量、准确确认/回执与预算/恢复证据可串联；fixture和录制回放不能替代规定真实模式。
+- [ ] 接入已有Ops/flag及发布报告，复用VPJ-63同版本或等价受影响路径的真实境内外网络证据；路径变化需重验，不用本机/VPN假装用户网络。
+- [ ] 在获准Staging演练按能力停用、恢复与部署回退，用户有可用替代，已确认Trip和删除/撤权状态不丢失；不改已应用迁移、不恢复撤销材料。
+- [ ] 先验证故意失败或缺证据能阻塞判定，再提交实际结果；基线/候选变化重跑受影响集合，不拼接不同配置的通过报告。
+- [ ] Harness门纳入现有发布验收资料；本票不授权生产、不自动关闭VPJ-41/42/43/45，不替代真实账号、原生设备、IAP、隐私或商店验收。

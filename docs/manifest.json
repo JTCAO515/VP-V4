@@ -468,6 +468,18 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/vpj-01-web-locales.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-01.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-56.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/weather-c0.md",
       "status": "document"
     },
@@ -489,6 +501,14 @@
     },
     {
       "path": "docs/frontend-redesign-issue-plan.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/harness/README.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/harness/VERIFICATION.md",
       "status": "document"
     },
     {
@@ -517,6 +537,10 @@
     },
     {
       "path": "docs/model-layer-plan.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/operations/operator-quickstart-2026-09-09.md",
       "status": "document"
     },
     {
@@ -821,6 +845,30 @@
     },
     {
       "path": "docs/program/2026-09-05/issue-bodies/VPJ-65.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-66.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-67.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-68.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-69.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-70.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-71.md",
       "status": "document"
     },
     {
