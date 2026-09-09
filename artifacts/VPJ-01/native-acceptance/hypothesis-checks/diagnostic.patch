@@ -1,0 +1,148 @@
+diff --git a/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift b/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift
+index ebf0fb8..07e7319 100644
+--- a/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift
++++ b/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift
+@@ -25,6 +25,7 @@ struct PreviewStatusBanner: View {
+         .padding(14)
+         .background(Color.vpLavender.opacity(0.18), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+         .accessibilityElement(children: .combine)
++        .accessibilityIdentifier("preview-status")
+     }
+ }
+
+diff --git a/ios/VisePanda/VisePandaUITests/AppShellUITests.swift b/ios/VisePanda/VisePandaUITests/AppShellUITests.swift
+index 2c6976a..703db3d 100644
+--- a/ios/VisePanda/VisePandaUITests/AppShellUITests.swift
++++ b/ios/VisePanda/VisePandaUITests/AppShellUITests.swift
+@@ -82,9 +82,11 @@ final class AppShellUITests: XCTestCase {
+         let previousAppearance = XCUIDevice.shared.appearance
+         XCUIDevice.shared.appearance = .light
+         defer { XCUIDevice.shared.appearance = previousAppearance }
+-        for locale in ["en", "zh-Hans"] {
++        for locale in ["zh-Hans", "en"] {
+             let app = launch(locale: locale)
+             XCTAssertEqual(XCUIDevice.shared.appearance, .light)
++            assertFullyVisible(app.staticTexts["preview-status"], in: app)
++            capture("Ask-banner-fully-visible-\(locale)", app: app)
+             XCTAssertTrue(app.staticTexts["ask-availability-notice"].isHittable)
+             try app.performAccessibilityAudit { issue in
+                 print("Full AX issue: \(issue.compactDescription), element: \(String(describing: issue.element))")
+@@ -93,6 +95,8 @@ final class AppShellUITests: XCTestCase {
+             let tripLabel = locale == "en" ? "Trip" : "行程"
+             app.tabBars.buttons[tripLabel].tap()
+             XCTAssertTrue(app.navigationBars[tripLabel].waitForExistence(timeout: 3))
++            assertFullyVisible(app.staticTexts["preview-status"], in: app)
++            capture("Trip-banner-fully-visible-\(locale)", app: app)
+             try app.performAccessibilityAudit { issue in
+                 print("Full AX issue: \(issue.compactDescription), element: \(String(describing: issue.element))")
+                 return false
+@@ -150,6 +154,17 @@ final class AppShellUITests: XCTestCase {
+         }
+     }
+
++    private func assertFullyVisible(_ element: XCUIElement, in app: XCUIApplication) {
++        XCTAssertTrue(element.exists)
++        let top = app.navigationBars.firstMatch.frame.maxY
++        let composer = app.otherElements["ask-composer"]
++        let bottom = composer.exists ? composer.frame.minY : app.tabBars.firstMatch.frame.minY
++        print("Full visibility: \(element.label), frame \(element.frame), viewport \(top)...\(bottom)")
++        XCTAssertGreaterThanOrEqual(element.frame.minY, top)
++        XCTAssertLessThanOrEqual(element.frame.maxY, bottom)
++        XCTAssertTrue(element.isHittable)
++    }
++
+     private func revealFully(_ element: XCUIElement, in app: XCUIApplication) {
+         let scroll = app.scrollViews.firstMatch
+         let composer = app.otherElements["ask-composer"]
+@@ -171,6 +186,91 @@ final class AppShellUITests: XCTestCase {
+         XCTAssertTrue(element.isHittable)
+     }
+
++    @objc func testEnglishAskViewportEvidence() throws {
++        let previousAppearance = XCUIDevice.shared.appearance
++        XCUIDevice.shared.appearance = .light
++        defer { XCUIDevice.shared.appearance = previousAppearance }
++        let app = launch()
++        let scroll = app.scrollViews.firstMatch
++        let composer = app.otherElements["ask-composer"]
++        var fullyVisibleLabels = Set<String>()
++        func recordVisibleText() {
++            let top = app.navigationBars.firstMatch.frame.maxY
++            let bottom = composer.frame.minY
++            for text in scroll.staticTexts.allElementsBoundByIndex {
++                let frame = text.frame
++                if frame.minY >= top && frame.maxY <= bottom {
++                    fullyVisibleLabels.insert(text.label)
++                    print("Ask complete text: \(text.label); frame \(frame), viewport \(top)...\(bottom)")
++                }
++            }
++        }
++        recordVisibleText()
++        capture("Ask-English-initial-text-coverage", app: app)
++        for index in 0..<8 {
++            let top = app.navigationBars.firstMatch.frame.maxY
++            let bottom = composer.frame.minY
++            let clipped = scroll.staticTexts.allElementsBoundByIndex.map(\.frame).filter {
++                ($0.minY < top && $0.maxY > top) || ($0.minY < bottom && $0.maxY > bottom)
++            }
++            print("Ask viewport gap attempt \(index), clipped frames: \(clipped)")
++            if clipped.isEmpty { break }
++            let distance = clipped.map { $0.minY < top ? $0.maxY - top + 8 : $0.maxY - bottom + 8 }.max() ?? 0
++            let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
++            let end = start.withOffset(CGVector(dx: 0, dy: -min(distance, 180)))
++            start.press(forDuration: 0.05, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
++            recordVisibleText()
++        }
++        let finalPrompt = app.buttons["What should I prepare before arrival?"]
++        assertFullyVisible(finalPrompt, in: app)
++        recordVisibleText()
++        print("Ask complete text coverage: \(fullyVisibleLabels.sorted())")
++        capture("Ask-English-gap-before-audit", app: app)
++        let top = app.navigationBars.firstMatch.frame.maxY
++        let bottom = composer.frame.minY
++        for text in scroll.staticTexts.allElementsBoundByIndex {
++            let frame = text.frame
++            XCTAssertFalse(frame.minY < top && frame.maxY > top, "Top boundary crosses \(text.label): \(frame)")
++            XCTAssertFalse(frame.minY < bottom && frame.maxY > bottom, "Bottom boundary crosses \(text.label): \(frame)")
++        }
++        try app.performAccessibilityAudit { issue in
++            print("Ask viewport AX issue: \(issue.compactDescription), element: \(String(describing: issue.element))")
++            return false
++        }
++    }
++
++    func testToolsViewportEvidenceAtLargestTextSize() throws {
++        let app = launch(largeText: true)
++        let previousAppearance = XCUIDevice.shared.appearance
++        XCUIDevice.shared.appearance = .light
++        defer { XCUIDevice.shared.appearance = previousAppearance }
++        app.tabBars.buttons["Tools"].tap()
++        let banner = app.staticTexts["preview-status"]
++        let translation = app.buttons["Translation"]
++        let names = ["Translation", "Address card", "Safe phrases"]
++        let top = app.navigationBars.firstMatch.frame.maxY
++        let bottom = app.tabBars.firstMatch.frame.minY
++        print("Tools initial viewport \(top)...\(bottom); banner \(banner.frame)")
++        capture("Tools-viewport-initial", app: app)
++        assertFullyVisible(banner, in: app)
++        for name in names where app.buttons[name].exists { print("Tools initial \(name): \(app.buttons[name].frame)") }
++        for index in 0..<8 {
++            let distance = translation.frame.minY - app.navigationBars.firstMatch.frame.maxY - 8
++            print("Tools alignment \(index): translation \(translation.frame); banner \(banner.frame); desired distance \(distance)")
++            if abs(distance) < 2 { break }
++            let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.55))
++            let end = start.withOffset(CGVector(dx: 0, dy: -min(max(distance, -200), 200)))
++            start.press(forDuration: 0.05, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
++        }
++        for name in names { assertFullyVisible(app.buttons[name], in: app) }
++        print("Tools audit viewport \(app.navigationBars.firstMatch.frame.maxY)...\(app.tabBars.firstMatch.frame.minY); banner \(banner.frame)")
++        capture("Tools-viewport-before-audit", app: app)
++        try app.performAccessibilityAudit { issue in
++            print("Tools viewport AX issue: \(issue.compactDescription), element: \(String(describing: issue.element))")
++            return false
++        }
++    }
++
+     func testToolsAccessibilityAtLargestTextSize() throws {
+         let app = launch(largeText: true)
+         app.tabBars.buttons["Tools"].tap()

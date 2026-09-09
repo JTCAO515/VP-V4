@@ -7,6 +7,10 @@ extension Color {
             ? UIColor(red: 0.88, green: 0.75, blue: 0.94, alpha: 1)
             : UIColor(red: 0.30, green: 0.12, blue: 0.29, alpha: 1)
     })
+    // Opaque supporting text keeps contrast on grouped and preview surfaces.
+    static let vpSecondaryText = Color(uiColor: UIColor { traits in
+        UIColor(white: traits.userInterfaceStyle == .dark ? 0.80 : 0.30, alpha: 1)
+    })
     static let vpAccent = Color(red: 0.93, green: 0.56, blue: 0.25)
     static let vpLavender = Color(red: 0.80, green: 0.68, blue: 0.93)
     static let vpBackground = Color(uiColor: .systemGroupedBackground)
@@ -21,7 +25,6 @@ enum VPSpacing {
 }
 
 struct VisePandaCard<Content: View>: View {
-    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @ViewBuilder let content: Content
 
     var body: some View {
@@ -30,7 +33,7 @@ struct VisePandaCard<Content: View>: View {
             .padding(VPSpacing.standard)
             .background {
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .fill(reduceTransparency ? AnyShapeStyle(Color.vpSurface) : AnyShapeStyle(.regularMaterial))
+                    .fill(Color.vpSurface)
             }
             .overlay {
                 RoundedRectangle(cornerRadius: 22, style: .continuous)

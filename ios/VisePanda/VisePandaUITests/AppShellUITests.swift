@@ -5,10 +5,15 @@ final class AppShellUITests: XCTestCase {
     private func launch(locale: String = "en", largeText: Bool = false) -> XCUIApplication {
         continueAfterFailure = false
         let app = XCUIApplication()
-        app.launchArguments = ["-VisePandaLocale", locale]
-        if largeText {
-            app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
-        }
+        app.launchArguments = [
+            "-VisePandaLocale", locale,
+            "-AppleLanguages", "(\(locale))",
+            "-AppleLocale", locale == "zh-Hans" ? "zh_CN" : "en_US"
+        ]
+        app.launchArguments += [
+            "-UIPreferredContentSizeCategoryName",
+            largeText ? "UICTContentSizeCategoryAccessibilityXXXL" : "UICTContentSizeCategoryL"
+        ]
         app.launch()
         return app
     }
@@ -73,21 +78,113 @@ final class AppShellUITests: XCTestCase {
         XCTAssertFalse(app.buttons["Send"].isEnabled)
     }
 
-    func testAccessibilityAtLargestTextSize() throws {
-        let app = launch(largeText: true)
-        XCTAssertTrue(app.tabBars.buttons["Ask"].isSelected)
-        // Structural audit only; contrast, hit-region and VoiceOver device acceptance remain separate.
-        try app.performAccessibilityAudit(for: [.elementDetection, .trait, .sufficientElementDescription, .textClipped]) { issue in
-            print("AX issue: \(issue.compactDescription), element: \(String(describing: issue.element))")
-            return false
+    func testAskAndTripFullAccessibilityInReleaseLanguages() throws {
+        let previousAppearance = XCUIDevice.shared.appearance
+        XCUIDevice.shared.appearance = .light
+        defer { XCUIDevice.shared.appearance = previousAppearance }
+        for locale in ["en", "zh-Hans"] {
+            let app = launch(locale: locale)
+            XCTAssertEqual(XCUIDevice.shared.appearance, .light)
+            XCTAssertTrue(app.staticTexts["ask-availability-notice"].isHittable)
+            try app.performAccessibilityAudit { issue in
+                print("Full AX issue: \(issue.compactDescription), element: \(String(describing: issue.element))")
+                return false
+            }
+            let tripLabel = locale == "en" ? "Trip" : "行程"
+            app.tabBars.buttons[tripLabel].tap()
+            XCTAssertTrue(app.navigationBars[tripLabel].waitForExistence(timeout: 3))
+            try app.performAccessibilityAudit { issue in
+                print("Full AX issue: \(issue.compactDescription), element: \(String(describing: issue.element))")
+                return false
+            }
+            capture("Trip-full-AX-\(locale)", app: app)
+            app.terminate()
         }
+    }
+
+    func testAskAndTripFullAccessibilityInDarkMode() throws {
+        let previousAppearance = XCUIDevice.shared.appearance
+        XCUIDevice.shared.appearance = .dark
+        defer { XCUIDevice.shared.appearance = previousAppearance }
+        for locale in ["en", "zh-Hans"] {
+            let app = launch(locale: locale)
+            XCTAssertEqual(XCUIDevice.shared.appearance, .dark)
+            capture("Ask-dark-top-\(locale)", app: app)
+            try app.performAccessibilityAudit()
+            XCTAssertTrue(app.staticTexts["ask-availability-notice"].isHittable)
+            capture("Ask-dark-\(locale)", app: app)
+            let tripLabel = locale == "en" ? "Trip" : "行程"
+            app.tabBars.buttons[tripLabel].tap()
+            XCTAssertTrue(app.navigationBars[tripLabel].waitForExistence(timeout: 3))
+            try app.performAccessibilityAudit()
+            capture("Trip-dark-\(locale)", app: app)
+            app.terminate()
+        }
+    }
+
+    func testAccessibilityAtLargestTextSize() throws {
+        let previousAppearance = XCUIDevice.shared.appearance
+        defer { XCUIDevice.shared.appearance = previousAppearance }
+        for appearance in [XCUIDevice.Appearance.light, .dark] {
+            XCUIDevice.shared.appearance = appearance
+            for locale in ["en", "zh-Hans"] {
+                let app = launch(locale: locale, largeText: true)
+                let layoutChecks: XCUIAccessibilityAuditType = [
+                    .elementDetection, .hitRegion, .sufficientElementDescription,
+                    .dynamicType, .textClipped, .trait
+                ]
+                // Contrast is checked in both themes at normal size. The retained
+                // maximum-size contrast diagnostic remains FAIL, not an accepted pass.
+                try app.performAccessibilityAudit(for: layoutChecks)
+                let notice = app.staticTexts["ask-availability-notice"]
+                revealFully(notice, in: app)
+                try app.performAccessibilityAudit(for: layoutChecks)
+                capture("Ask-largest-\(locale)-\(appearance.rawValue)", app: app)
+                let tripLabel = locale == "en" ? "Trip" : "行程"
+                app.tabBars.buttons[tripLabel].tap()
+                XCTAssertTrue(app.navigationBars[tripLabel].waitForExistence(timeout: 3))
+                try app.performAccessibilityAudit(for: layoutChecks)
+                capture("Trip-largest-\(locale)-\(appearance.rawValue)", app: app)
+                app.terminate()
+            }
+        }
+    }
+
+    private func revealFully(_ element: XCUIElement, in app: XCUIApplication) {
+        let scroll = app.scrollViews.firstMatch
+        let composer = app.otherElements["ask-composer"]
+        XCTAssertTrue(composer.exists)
+        let top = max(scroll.frame.minY, app.navigationBars.firstMatch.frame.maxY)
+        let bottom = min(scroll.frame.maxY, composer.frame.minY)
+        for _ in 0..<10 {
+            let frame = element.frame
+            let distance: CGFloat
+            if frame.maxY > bottom { distance = min(frame.maxY - bottom + 20, (bottom - top) * 0.4) }
+            else if frame.minY < top { distance = -min(top - frame.minY + 20, (bottom - top) * 0.4) }
+            else { break }
+            let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+            let end = start.withOffset(CGVector(dx: 0, dy: -distance))
+            start.press(forDuration: 0.05, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
+        }
+        XCTAssertGreaterThanOrEqual(element.frame.minY, top)
+        XCTAssertLessThanOrEqual(element.frame.maxY, bottom)
+        XCTAssertTrue(element.isHittable)
     }
 
     func testToolsAccessibilityAtLargestTextSize() throws {
         let app = launch(largeText: true)
         app.tabBars.buttons["Tools"].tap()
         for _ in 0..<5 where !app.buttons["Translation"].isHittable { app.swipeUp() }
-        XCTAssertTrue(app.buttons["Translation"].isHittable)
+        let translation = app.buttons["Translation"]
+        XCTAssertTrue(translation.isHittable)
+        for _ in 0..<8 {
+            let distance = translation.frame.minY - app.navigationBars.firstMatch.frame.maxY - 8
+            if abs(distance) < 2 { break }
+            let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.6))
+            let end = start.withOffset(CGVector(dx: 0, dy: -min(max(distance, -200), 200)))
+            start.press(forDuration: 0.05, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
+        }
+        XCTAssertTrue(translation.isHittable)
         try app.performAccessibilityAudit(for: [.elementDetection, .trait, .sufficientElementDescription, .textClipped]) { issue in
             print("AX issue: \(issue.compactDescription), element: \(String(describing: issue.element))")
             return false

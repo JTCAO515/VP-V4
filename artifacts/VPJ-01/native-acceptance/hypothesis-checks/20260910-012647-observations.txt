@@ -1,0 +1,21 @@
+Test Case '-[VisePandaUITests.AppShellUITests testToolsViewportEvidenceAtLargestTextSize]' started.
+Tools initial viewport 170.66666666666666...769.0; banner (20.0, 170.66666666666666, 353.0, 485.33333333333337)
+Full visibility: Interface preview, Live data, accounts, AI, booking, and payments are not connected in this version., frame (20.0, 170.66666666666666, 353.0, 485.33333333333337), viewport 170.66666666666666...769.0
+Tools initial Translation: (20.0, 656.0, 353.0, 85.33333333333337)
+Tools initial Address card: (20.0, 741.3333333333334, 353.0, 147.33333333333326)
+Tools alignment 0: translation (20.0, 656.0, 353.0, 85.33333333333337); banner (20.0, 170.66666666666666, 353.0, 485.33333333333337); desired distance 477.33333333333337
+Tools alignment 1: translation (20.0, 472.3333333333333, 353.0, 85.33333333333331); banner (20.0, -13.0, 353.0, 485.3333333333333); desired distance 366.66666666666663
+Tools alignment 2: translation (20.0, 369.0, 353.0, 85.33333333333331); banner (20.0, -116.33333333333333, 353.0, 485.3333333333333); desired distance 263.3333333333333
+Tools alignment 3: translation (20.0, 369.0, 353.0, 85.33333333333331); banner (20.0, -116.33333333333333, 353.0, 485.3333333333333); desired distance 263.3333333333333
+Tools alignment 4: translation (20.0, 369.0, 353.0, 85.33333333333331); banner (20.0, -116.33333333333333, 353.0, 485.3333333333333); desired distance 263.3333333333333
+Tools alignment 5: translation (20.0, 369.0, 353.0, 85.33333333333331); banner (20.0, -116.33333333333333, 353.0, 485.3333333333333); desired distance 263.3333333333333
+Tools alignment 6: translation (20.0, 369.0, 353.0, 85.33333333333331); banner (20.0, -116.33333333333333, 353.0, 485.3333333333333); desired distance 263.3333333333333
+Tools alignment 7: translation (20.0, 369.0, 353.0, 85.33333333333331); banner (20.0, -116.33333333333333, 353.0, 485.3333333333333); desired distance 263.3333333333333
+Full visibility: Translation, frame (20.0, 369.0, 353.0, 85.33333333333331), viewport 97.66666666666667...769.0
+Full visibility: Address card, frame (20.0, 454.3333333333333, 353.0, 147.33333333333331), viewport 97.66666666666667...769.0
+Full visibility: Safe phrases, frame (20.0, 601.6666666666666, 353.0, 147.33333333333337), viewport 97.66666666666667...769.0
+Tools audit viewport 97.66666666666667...769.0; banner (20.0, -116.33333333333333, 353.0, 485.3333333333333)
+Tools viewport AX issue: Dynamic Type font sizes are unsupported, element: nil
+/Users/jtcao/Documents/VP-V4-Native-Acceptance/ios/VisePanda/VisePandaUITests/AppShellUITests.swift:215: error: -[VisePandaUITests.AppShellUITests testToolsViewportEvidenceAtLargestTextSize] : Dynamic Type font sizes are unsupported
+Test Case '-[VisePandaUITests.AppShellUITests testToolsViewportEvidenceAtLargestTextSize]' failed (20.989 seconds).
+ xcrun: error: unable to find utility "simctl", not a developer tool or in PATH

@@ -1,0 +1,40 @@
+Test Case '-[VisePandaUITests.AppShellUITests testChineseBannerComparison]' started.
+Comparison banner: (16.0, 371.6666666666667, 361.0, 63.333333333333314), navigation/tab bounds 97.66666666666667...769.0
+Comparison AX: Contrast failed, element: Optional(Attributes: StaticText, 0x104647540, {{16.0, 745.7}, {169.0, 13.3}}, label: '认证 AI 服务接入后才会开放发送。'
+/Users/jtcao/Library/Caches/visepanda/native-acceptance/baseline080/ios/VisePanda/VisePandaUITests/AppShellUITests.swift:32: error: -[VisePandaUITests.AppShellUITests testChineseBannerComparison] : Contrast failed
+Comparison AX: Contrast nearly passed, element: Optional(Attributes: StaticText, 0x10467f0f0, {{16.0, 305.4}, {329.3, 42.3}}, label: '这个原生框架已为未来的对话、提案与确认流程做好准备。'
+/Users/jtcao/Library/Caches/visepanda/native-acceptance/baseline080/ios/VisePanda/VisePandaUITests/AppShellUITests.swift:32: error: -[VisePandaUITests.AppShellUITests testChineseBannerComparison] : Contrast nearly passed
+Comparison AX: Contrast nearly passed, element: Optional(Attributes: StaticText, 0x1042af340, {{76.0, 151.1}, {98.3, 14.3}}, label: '你的中国旅行伙伴'
+/Users/jtcao/Library/Caches/visepanda/native-acceptance/baseline080/ios/VisePanda/VisePandaUITests/AppShellUITests.swift:32: error: -[VisePandaUITests.AppShellUITests testChineseBannerComparison] : Contrast nearly passed
+Comparison AX: Contrast nearly passed, element: Optional(Attributes: StaticText, 0x1046f6d00, {{68.3, 406.8}, {273.7, 14.3}}, label: '此版本尚未连接实时数据、账号、AI、预订或支付。'
+/Users/jtcao/Library/Caches/visepanda/native-acceptance/baseline080/ios/VisePanda/VisePandaUITests/AppShellUITests.swift:32: error: -[VisePandaUITests.AppShellUITests testChineseBannerComparison] : Contrast nearly passed
+Comparison AX: Dynamic Type font sizes are partially unsupported, element: Optional(Attributes: StaticText, 0x10e0454d0, {{16.0, 745.7}, {169.0, 13.3}}, label: '认证 AI 服务接入后才会开放发送。'
+/Users/jtcao/Library/Caches/visepanda/native-acceptance/baseline080/ios/VisePanda/VisePandaUITests/AppShellUITests.swift:32: error: -[VisePandaUITests.AppShellUITests testChineseBannerComparison] : Dynamic Type font sizes are partially unsupported
+Comparison AX: Text clipped, element: Optional(Attributes: StaticText, 0x10e171950, {{68.3, 406.8}, {273.7, 14.3}}, label: '此版本尚未连接实时数据、账号、AI、预订或支付。'
+/Users/jtcao/Library/Caches/visepanda/native-acceptance/baseline080/ios/VisePanda/VisePandaUITests/AppShellUITests.swift:32: error: -[VisePandaUITests.AppShellUITests testChineseBannerComparison] : Text clipped
+Test Case '-[VisePandaUITests.AppShellUITests testChineseBannerComparison]' failed (7.971 seconds).
+Test Case '-[VisePandaUITests.AppShellUITests testToolsViewportComparison]' started.
+Comparison tools position 0: (20.0, 369.0, 353.0, 85.33333333333331), distance 263.3333333333333
+Comparison tools position 1: (20.0, 369.0, 353.0, 85.33333333333331), distance 263.3333333333333
+Comparison tools position 2: (20.0, 369.0, 353.0, 85.33333333333331), distance 263.3333333333333
+Comparison tools position 3: (20.0, 369.0, 353.0, 85.33333333333331), distance 263.3333333333333
+Comparison tools position 4: (20.0, 369.0, 353.0, 85.33333333333331), distance 263.3333333333333
+Comparison tools position 5: (20.0, 369.0, 353.0, 85.33333333333331), distance 263.3333333333333
+Comparison tools position 6: (20.0, 369.0, 353.0, 85.33333333333331), distance 263.3333333333333
+Comparison tools position 7: (20.0, 369.0, 353.0, 85.33333333333331), distance 263.3333333333333
+Comparison tools full frame: Translation (20.0, 369.0, 353.0, 85.33333333333331), bounds 97.66666666666667...769.0
+Comparison tools full frame: Address card (20.0, 454.3333333333333, 353.0, 147.33333333333343), bounds 97.66666666666667...769.0
+Comparison tools full frame: Safe phrases (20.0, 601.6666666666666, 353.0, 147.33333333333337), bounds 97.66666666666667...769.0
+Comparison AX: Dynamic Type font sizes are unsupported, element: nil
+/Users/jtcao/Library/Caches/visepanda/native-acceptance/baseline080/ios/VisePanda/VisePandaUITests/AppShellUITests.swift:64: error: -[VisePandaUITests.AppShellUITests testToolsViewportComparison] : Dynamic Type font sizes are unsupported
+Comparison AX: Dynamic Type font sizes are unsupported, element: nil
+/Users/jtcao/Library/Caches/visepanda/native-acceptance/baseline080/ios/VisePanda/VisePandaUITests/AppShellUITests.swift:64: error: -[VisePandaUITests.AppShellUITests testToolsViewportComparison] : Dynamic Type font sizes are unsupported
+Comparison AX: Text clipped, element: nil
+/Users/jtcao/Library/Caches/visepanda/native-acceptance/baseline080/ios/VisePanda/VisePandaUITests/AppShellUITests.swift:64: error: -[VisePandaUITests.AppShellUITests testToolsViewportComparison] : Text clipped
+Comparison AX: Contrast failed, element: Optional(Attributes: StaticText, 0x1046d0680, {{40.0, 380.0}, {243.7, 63.3}}, label: 'Translation'
+/Users/jtcao/Library/Caches/visepanda/native-acceptance/baseline080/ios/VisePanda/VisePandaUITests/AppShellUITests.swift:64: error: -[VisePandaUITests.AppShellUITests testToolsViewportComparison] : Contrast failed
+Test Case '-[VisePandaUITests.AppShellUITests testToolsViewportComparison]' failed (24.842 seconds).
+	 Executed 2 tests, with 10 failures (0 unexpected) in 32.812 (32.814) seconds
+	 Executed 2 tests, with 10 failures (0 unexpected) in 32.812 (32.814) seconds
+	 Executed 2 tests, with 10 failures (0 unexpected) in 32.812 (32.816) seconds
+ xcrun: error: unable to find utility "simctl", not a developer tool or in PATH

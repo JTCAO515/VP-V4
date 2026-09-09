@@ -32,7 +32,7 @@ struct TripView: View {
                     .font(.title2.weight(.bold))
 
                 Text("trip.empty.message")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.vpSecondaryText)
 
                 NavigationLink(value: AppRoute.capability(.tripPlanning)) {
                     Label("trip.empty.action", systemImage: "sparkles")

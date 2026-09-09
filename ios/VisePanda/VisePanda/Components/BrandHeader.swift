@@ -15,7 +15,7 @@ struct BrandHeader: View {
 
                 Text("brand.tagline")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.vpSecondaryText)
             }
 
             Spacer(minLength: 0)
