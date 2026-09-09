@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct TripView: View {
+    @ScaledMetric(relativeTo: .caption) private var workflowBadgeSize: CGFloat = 28
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: VPSpacing.section) {
@@ -58,7 +60,7 @@ struct TripView: View {
         HStack(spacing: 12) {
             Text(number)
                 .font(.caption.weight(.bold))
-                .frame(width: 28, height: 28)
+                .frame(width: workflowBadgeSize, height: workflowBadgeSize)
                 .foregroundStyle(.white)
                 .background(Color.vpBrandFill, in: Circle())
 
