@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：VPJ-66 #263 offline preparation completed and closed after PR271 merged99f54c4, exact HEAD be35ef5 independent review and required CI, and merged-code evals23/23. Two fixture baselines pass and four injected faults fail as intended; ten fixture cases and all12 Staging cases remain NOT_RUN. RPC repair PR270 merged6307d79; additional Staging migration scope pending, remote remains11, original backup/13/two-identity grant retained.
+状态：VPJ-66 #263 offline scope is completed. PR275 merged0aeb0d2 adds reviewed C0-only provider protocol preparation; merged-code protocol/security20/20 pass. PR274 merged080d5f0 replaces approved web/native brand assets. #188, #193 and #267 remain OPEN; local accessibility and pairing work is not merged acceptance.
 
-阶段：Validated repository RPC repair and real affected-schema backup/restore preparation; no remote migration or new Auth identities yet.
+阶段：Parallel bounded preparation: native minimum-runtime accessibility fixes and offline Harness pairing; runtime identity/data/provider/budget gates remain intact.
 
 ## 读取顺序
 
@@ -32,11 +32,13 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 
 - Real account/Trip/DB/provider/customer acceptance not executed by this session; Web publication does not establish those capabilities.
-- Physical VoiceOver spoken traversal, full contrast/hit-region audit, iOS17 runtime and signed Store delivery remain unrun. Simulator structural AX is not full device/release acceptance.
+- Physical VoiceOver, signed Store and selected-object Ask sheet acceptance remain unrun. Local unmerged3f3b651 has iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI text-clipping audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.
 - VPJ-66 offline preparation is merged and accepted; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.
 
 ## 验证
 
+- PR275 exact HEAD92e073b independently reviewed Critical0/Important0; Quality PR34382279996 passed3m16 and Vercel Preview passed. Squash merge0aeb0d2 has identical tree; merged-code protocol/security20/20 pass, zero skip. No live provider, credential loading, routing, tool execution or cost/quality acceptance. #193 stays OPEN.
+- PR274 exact HEAD55f8f7e independently reviewed Critical0/Important0; Quality34377714476 and Native34377714503 passed before merge080d5f0. Supplied logo and wordmark are used by web and native assets; local desktop1280x800/mobile390x844 visual QA passed. This does not establish signed Store or complete native accessibility acceptance.
 - PR271 merged99f54c4; exact HEADbe35ef5 reviewed Critical0/Important0 and Quality PR34313179100 passed. Merge tree equals reviewed tree; merged-code pnpm evals23/23,zero skip,2baseline PASS/4expected injected FAIL. VPJ-66 #263 closed COMPLETED with all7 acceptance boxes checked and evidence comment5596131601. CI browser9 passed; DB integration10skip/security1skip remain incomplete, not live acceptance.
 - 2026-09-09: RPC repair PR270 merged as6307d79 after exact HEAD8f93c33 independent review Critical0/Important0 and Quality PR34312166803 passed. Remote migration remains pending approval. VPJ-66 now has two runnable offline seeds, four detected injected failures and12-case specifications; see docs/harness/OFFLINE-SEEDS.md and artifacts/VPJ-66. This historical local snapshot was subsequently accepted under PR271; real capability remains unverified.
 - 2026-09-09: final frozen11->24->25 local replay preserves synthetic Trip; integration29/29,security82/82,zero skip,DB lint0. Encrypted actual Staging backup restored with3Auth/2Trip/11history and equal hashes in a no-network container; original13+repair SQL also replayed on that restored copy preserving original data. No remote apply.
@@ -60,7 +62,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Obtain explicit scope for appended Staging RPC repair migration20260909033302, then revalidate target/hashes and complete authorized migration plus ordinary-owner isolation under VPJ-02. VPJ-67 #264 still depends on open VPJ-16 and its identity/provider/data-policy chain; do not replace runtime acceptance with more fixture claims. VPJ-01 still needs real accessibility/device and selected-object integration evidence. See docs/harness/IMPLEMENTATION-STATUS.md for current frontier.
+Continue #188 from preserved local HEAD3f3b651: iOS26.5 8unit+7UI pass, iOS17.5 8unit+3UI pass/4UI fail; investigate text measurement and audit viewport without filtering failures. Continue #267 isolated pairing/scorer preparation, preserving holdout isolation and evidence_insufficient when operator thresholds, budget and calibration are absent. Review accurate HEADs and merge serially after required CI. #189 appended Staging RPC migration needs explicit scope; #190 real policy decisions remain pending. See docs/harness/IMPLEMENTATION-STATUS.md.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
