@@ -1,12 +1,12 @@
-# VPJ 新任务队列
+# VPJ 任务定义与依赖
 
-生成自 `issue-plan.json`；不要手工改此表。基线合并前全部保持blocked。
+生成自 `issue-plan.json`；不要手工改此表。这是计划定义，不是实时进度；执行状态以 GitHub、已合并接口和获准环境的当前证据为准。
 
 | 任务 | 交付 | 依赖 | Owner | 专注日/观察 | 阶段 |
 | --- | --- | --- | --- | --- | --- |
-| [VPJ-01 #188](https://github.com/JTCAO515/VP-V4/issues/188) | 原生 iOS 五入口、中英文与可访问的首个 Trip 页面 | 仅基线合并 | coding-agent | 4日；PR/实际任务验证窗口 | launch |
-| [VPJ-02 #189](https://github.com/JTCAO515/VP-V4/issues/189) | 现有 Staging 的真实身份、迁移与 owner 隔离验证 | 仅基线合并 | operator | 2日；外部审批/账号/真机/网络等待另计 | launch |
-| [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190) | 用户对话、材料、模型地区与人工访问的数据政策 | 仅基线合并 | operator | 3日；外部审批/账号/真机/网络等待另计 | launch |
+| [VPJ-01 #188](https://github.com/JTCAO515/VP-V4/issues/188) | 原生 iOS 五入口、中英文与可访问的首个 Trip 页面 | 无任务依赖；核实际条件 | coding-agent | 4日；PR/实际任务验证窗口 | launch |
+| [VPJ-02 #189](https://github.com/JTCAO515/VP-V4/issues/189) | 现有 Staging 的真实身份、迁移与 owner 隔离验证 | 无任务依赖；核实际条件 | operator | 2日；外部审批/账号/真机/网络等待另计 | launch |
+| [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190) | 用户对话、材料、模型地区与人工访问的数据政策 | 无任务依赖；核实际条件 | operator | 3日；外部审批/账号/真机/网络等待另计 | launch |
 | [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191) | 原生登录、手机登录顶替与 Web 会话并存 | [VPJ-01 #188](https://github.com/JTCAO515/VP-V4/issues/188), [VPJ-02 #189](https://github.com/JTCAO515/VP-V4/issues/189) | coding-agent | 5日；PR/实际任务验证窗口 | launch |
 | [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192) | 同一 Trip 在 iOS 与精简 Web 创建、编辑和重载 | [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191) | coding-agent | 5日；PR/实际任务验证窗口 | launch |
 | [VPJ-06 #193](https://github.com/JTCAO515/VP-V4/issues/193) | Qwen、GLM、DeepSeek 的真实调用与质量成本对照 | [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190) | coding-agent | 5日；PR/实际任务验证窗口 | launch |
@@ -18,7 +18,7 @@
 | [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199) | Trip 连续记忆与用户可纠正的偏好 | [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195) | coding-agent | 4日；PR/实际任务验证窗口 | launch |
 | [VPJ-60 #200](https://github.com/JTCAO515/VP-V4/issues/200) | 图片和语音 Provider 的中英质量与数据流验收 | [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-06 #193](https://github.com/JTCAO515/VP-V4/issues/193) | coding-agent | 4日；PR/实际任务验证窗口 | launch |
 | [VPJ-12 #201](https://github.com/JTCAO515/VP-V4/issues/201) | 单张旅行截图导入、校正与加入 Trip | [VPJ-01 #188](https://github.com/JTCAO515/VP-V4/issues/188), [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-60 #200](https://github.com/JTCAO515/VP-V4/issues/200) | coding-agent | 5日；PR/实际任务验证窗口 | launch |
-| [VPJ-62 #202](https://github.com/JTCAO515/VP-V4/issues/202) | 公开中英申请入口与隐私可控的招募漏斗 | 仅基线合并 | coding-agent | 3日；PR/实际任务验证窗口 | launch |
+| [VPJ-62 #202](https://github.com/JTCAO515/VP-V4/issues/202) | 公开中英申请入口与隐私可控的招募漏斗 | 无任务依赖；核实际条件 | coding-agent | 3日；PR/实际任务验证窗口 | launch |
 | [VPJ-13 #203](https://github.com/JTCAO515/VP-V4/issues/203) | 首访与回访的三种入口获得首个成果 | [VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-12 #201](https://github.com/JTCAO515/VP-V4/issues/201), [VPJ-62 #202](https://github.com/JTCAO515/VP-V4/issues/202) | coding-agent | 3日；PR/实际任务验证窗口 | launch |
 | [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204) | 受保护 Ops 登录与一条候选内容工作流 | [VPJ-02 #189](https://github.com/JTCAO515/VP-V4/issues/189), [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190) | coding-agent | 5日；PR/实际任务验证窗口 | launch |
 | [VPJ-15 #205](https://github.com/JTCAO515/VP-V4/issues/205) | 首批旅程内容从来源登记到已审核可用 | [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204) | coding-agent | 5日；PR/实际任务验证窗口 | launch |
@@ -62,20 +62,20 @@
 | [VPJ-43 #243](https://github.com/JTCAO515/VP-V4/issues/243) | 独立 Production 与可回滚的客户服务环境 | [VPJ-38 #230](https://github.com/JTCAO515/VP-V4/issues/230), [VPJ-42 #242](https://github.com/JTCAO515/VP-V4/issues/242) | operator | 3日；外部审批/账号/真机/网络等待另计 | launch |
 | [VPJ-44 #244](https://github.com/JTCAO515/VP-V4/issues/244) | 正式 App Store 1.0 提交与数字商品审核 | [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226), [VPJ-40 #233](https://github.com/JTCAO515/VP-V4/issues/233), [VPJ-43 #243](https://github.com/JTCAO515/VP-V4/issues/243) | operator | 3日；外部审批/账号/真机/网络等待另计 | launch |
 | [VPJ-45 #245](https://github.com/JTCAO515/VP-V4/issues/245) | 客户收到产品后的观察、支持与发布关账 | [VPJ-42 #242](https://github.com/JTCAO515/VP-V4/issues/242), [VPJ-44 #244](https://github.com/JTCAO515/VP-V4/issues/244) | operator | 3日；72h系统观察+至少7天机会相关跟踪；实际旅行节点未到标not_observed | launch |
-| [VPJ-46 #246](https://github.com/JTCAO515/VP-V4/issues/246) | 每周35小时客户发现、招募与材料工作坊 | 仅基线合并 | operator | 2日；每周30–40小时、首两周校准；effort仅建立流程，不是整段观察时长 | launch |
+| [VPJ-46 #246](https://github.com/JTCAO515/VP-V4/issues/246) | 每周35小时客户发现、招募与材料工作坊 | 无任务依赖；核实际条件 | operator | 2日；每周30–40小时、首两周校准；effort仅建立流程，不是整段观察时长 | launch |
 | [VPJ-47 #247](https://github.com/JTCAO515/VP-V4/issues/247) | 真实激活、付费与人工成本的经营观察 | [VPJ-42 #242](https://github.com/JTCAO515/VP-V4/issues/242), [VPJ-44 #244](https://github.com/JTCAO515/VP-V4/issues/244), [VPJ-46 #246](https://github.com/JTCAO515/VP-V4/issues/246) | operator | 2日；按B0-B4真实分母；至少两轮有效cohort，不设伪日历保证 | launch |
 | [VPJ-50 #248](https://github.com/JTCAO515/VP-V4/issues/248) | 有真实召回失败才启用混合 RAG 与重排 | [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-17 #207](https://github.com/JTCAO515/VP-V4/issues/207) | coding-agent | 5日；PR/实际任务验证窗口 | expand |
 | [VPJ-51 #249](https://github.com/JTCAO515/VP-V4/issues/249) | 航班来源采购与中国航线实测 | [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-39 #232](https://github.com/JTCAO515/VP-V4/issues/232) | operator | 3日；外部审批/账号/真机/网络等待另计 | expand |
 | [VPJ-52 #250](https://github.com/JTCAO515/VP-V4/issues/250) | 授权航班状态与相关行程重验 | [VPJ-17 #207](https://github.com/JTCAO515/VP-V4/issues/207), [VPJ-29 #220](https://github.com/JTCAO515/VP-V4/issues/220), [VPJ-51 #249](https://github.com/JTCAO515/VP-V4/issues/249) | coding-agent | 4日；PR/实际任务验证窗口 | expand |
 | [VPJ-53 #251](https://github.com/JTCAO515/VP-V4/issues/251) | Android 与新增语言的需求触发设计 | [VPJ-45 #245](https://github.com/JTCAO515/VP-V4/issues/245), [VPJ-47 #247](https://github.com/JTCAO515/VP-V4/issues/247) | operator | 2日；外部审批/账号/真机/网络等待另计 | expand |
 | [VPJ-54 #252](https://github.com/JTCAO515/VP-V4/issues/252) | 长期订阅或交易深度升级的证据决策 | [VPJ-45 #245](https://github.com/JTCAO515/VP-V4/issues/245), [VPJ-47 #247](https://github.com/JTCAO515/VP-V4/issues/247) | operator | 2日；外部审批/账号/真机/网络等待另计 | expand |
-| [VPJ-66 #263](https://github.com/JTCAO515/VP-V4/issues/263) | Harness：两条离线旅行任务可运行、判分并定位失败 | 仅基线合并 | coding-agent | 2日；有界PR验证；真实环境/人工校准等待另计 | launch |
+| [VPJ-66 #263](https://github.com/JTCAO515/VP-V4/issues/263) | Harness：两条离线旅行任务可运行、判分并定位失败 | 无任务依赖；核实际条件 | coding-agent | 2日；有界PR验证；真实环境/人工校准等待另计 | launch |
 | [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264) | Harness：真实只读问答产生有依据的结果与回执 | [VPJ-66 #263](https://github.com/JTCAO515/VP-V4/issues/263), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206) | coding-agent | 4日；有界PR验证；真实环境/人工校准等待另计 | launch |
 | [VPJ-68 #265](https://github.com/JTCAO515/VP-V4/issues/265) | Harness：少走路且保留已确认晚餐的局部改稿闭环 | [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264), [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-65 #219](https://github.com/JTCAO515/VP-V4/issues/219) | coding-agent | 4日；有界PR验证；真实环境/人工校准等待另计 | launch |
 | [VPJ-69 #266](https://github.com/JTCAO515/VP-V4/issues/266) | Harness：故障取消与重连不伪造成功或重复提交 | [VPJ-68 #265](https://github.com/JTCAO515/VP-V4/issues/265) | coding-agent | 3日；有界PR验证；真实环境/人工校准等待另计 | launch |
 | [VPJ-72 #287](https://github.com/JTCAO515/VP-V4/issues/287) | 中英回答离线内容判分与可导入反馈的盲评包 | [VPJ-66 #263](https://github.com/JTCAO515/VP-V4/issues/263) | coding-agent | 3日；有界准备PR；真实调用/人工校准/产品集成在原父票验证 | launch |
 | [VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267) | Harness：只读模型或提示词候选的配对评测与校准 | [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264), [VPJ-72 #287](https://github.com/JTCAO515/VP-V4/issues/287) | coding-agent | 3日；有界PR验证；真实环境/人工校准等待另计 | launch |
 | [VPJ-71 #268](https://github.com/JTCAO515/VP-V4/issues/268) | Harness：核心任务发布判定与能力停用恢复验收 | [VPJ-69 #266](https://github.com/JTCAO515/VP-V4/issues/266), [VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267), [VPJ-37 #229](https://github.com/JTCAO515/VP-V4/issues/229), [VPJ-63 #231](https://github.com/JTCAO515/VP-V4/issues/231) | coding-agent | 3日；有界PR验证；真实环境/人工校准等待另计 | launch |
-| [VPJ-73 #288](https://github.com/JTCAO515/VP-V4/issues/288) | Docling合成旅行材料解析与校正候选试验 | 仅基线合并 | coding-agent | 3日；有界准备PR；真实调用/人工校准/产品集成在原父票验证 | launch |
+| [VPJ-73 #288](https://github.com/JTCAO515/VP-V4/issues/288) | Docling合成旅行材料解析与校正候选试验 | 无任务依赖；核实际条件 | coding-agent | 3日；有界准备PR；真实调用/人工校准/产品集成在原父票验证 | launch |
 
 后续expand必须另有activationEvidence，依赖完成不会自动开放。

@@ -1,6 +1,6 @@
-# VPJ 统筹交付验证记录
+# VPJ 初始统筹交付验证记录（2026-09-05历史）
 
-日期：2026-09-05。变更属于产品/架构/Tracker重整与可恢复归档，不是App功能上线。
+日期：2026-09-05。变更属于产品/架构/Tracker重整与可恢复归档，不是App功能上线。本文只保留该次交付的证据与未运行项；当前执行从[Program入口](README.md)、对应Issue/PR与[实施状态](../../harness/IMPLEMENTATION-STATUS.md)读取，不能据下文旧数量或未合并状态阻塞后续开发。
 
 ## 已执行
 
@@ -19,7 +19,7 @@
 
 最终远端回读：2026-09-05T04:06:51Z，65个新任务open、父Program187一致、正文/ID/198条native依赖一致；20个旧Issue closed/not_planned。PR253为当前统筹基线，PR185/186仍open。PR253在06bab2f版本的deterministic-pr-gates、Vercel和Preview Comments通过；最后交接记录提交会触发新CI，合并前读最新结果。
 
-新任务、父子/native依赖和旧20项关闭的最终结果以 `tracker-verification.json` 与 `tracker-migration-result.json` 为准。缺少这些文件或verified不为true时，不得声称迁移完成。基线PR号见issue-plan.json；未合并则所有实现任务保持blocked。
+该次迁移结果保留在初始PR/提交与 `tracker-migration-result.json`。`tracker-verification.json` 会被日常只读核对更新，表示其记录时刻的任务定义/依赖/状态，不等同2026-09-05迁移快照，也不证明运行验收。
 
 ## 未运行
 

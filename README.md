@@ -1,45 +1,44 @@
 # VisePanda — 贯穿中国自由行的 AI 旅行助手
 
-最新统筹：[VPJ 主报告](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。开发入口：[Program #187 与任务队列](docs/program/2026-09-05/README.md)。
+VisePanda 面向国际来华自由行旅客，围绕同一个 Trip 连接规划、材料、准备、现场沟通与变化后的行程调整。完整首发产品目标是原生 SwiftUI iOS；Web 是同 Trip 的轻量 Planning Studio。发布范围为中英，既有 es/ru/ar 资产与协议兼容由 VPJ-01 迁移。
 
-VP 帮旅客共同规划、整理材料、检查准备、现场沟通与讲解，并在变化发生后接回同一 Trip。原生 iOS 是完整产品方向；Web 是精简的同 Trip Planning Studio。当前发布范围为中英；其他语言保留历史和兼容资产，迁移由 VPJ-01 负责。
+[产品与任务入口](docs/program/2026-09-05/README.md) · [完整产品规划](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md) · [当前交接与证据](CONTEXT.md)
 
-## 当前代码事实
+## 代码与验证入口
 
-Web/server 是 Next.js App Router、React、strict TypeScript、Tailwind。已有 Trip Day/Item、Proposal/diff/atomic confirm、owner 访问与24条迁移；许多模型、worker、知识和媒体模块仍是fixture/进程内合同。真实 Staging、provider、RLS、原生和商店交付分别待新任务验收。
+| 范围 | 位置与用途 |
+| --- | --- |
+| Web / API | [app](app)、[components](components)：Next.js App Router、React、strict TypeScript、Tailwind CSS v4 |
+| 现有 Web 工作区 | [Chatbot](components/chat/ChatThreadWorkspace.tsx)、[Trip Canvas](components/canvas/TripCanvas.tsx)、[Today](components/today/TodayWorkspace.tsx) 及其[领域合同](docs/program/2026-09-05/INTERFACES.md)继续复用；真实链路按相应 Issue 验收 |
+| 原生 iOS | [ios/VisePanda](ios/VisePanda/README.md)：SwiftUI 工程、导航、语言与原生测试；当前页面仍是开发预览 |
+| 领域与服务端 | [lib/server](lib/server)：Trip/Proposal/Patch、身份、模型协议、持久预算、知识及媒体模块 |
+| 数据库 | [supabase/migrations](supabase/migrations)：只追加迁移；文件存在不表示已应用到目标环境 |
+| Harness | [docs/harness](docs/harness/README.md)、[evals/harness](evals/harness)：复用现有领域链路的评测、配对与恢复验收 |
 
-现有 Web Chatbot、Trip Canvas 与 Today 的有效合同继续复用；新原生界面在同一Trip协议上接入。
+仓库同时包含实际实现、离线准备和 fixture，验收要绑定具体版本、环境与行为。已有 [Staging 迁移和 JWT 隔离记录](artifacts/VPJ-02/staging-apply-20260910.md)、[持久预算本地验证](artifacts/VPJ-59/verification.md)、[Staging 预算迁移与 40 项 HTTP 检查](artifacts/VPJ-59/staging-20260910.md)及[原生验收记录](artifacts/VPJ-01/native-acceptance/verification.md)。Staging 预算使用合成数据，未调用真实付费 provider；部署 worker、原生会话及各父票完整验收仍需各自证据。任务进度以当前 GitHub Issue/PR 和对应运行证据核实。
 
-主线原本没有iOS；原工作区预览壳作为有来源的[归档输入](docs/archive/2026-09-05/ios-source-reference/VisePanda/README.md)保留，新任务移植后才能作为原生实现。当前页面不得声称已提供真实库存、支付、履约或全国覆盖。
-
-## 开发
+## 本地开发
 
 ```bash
 pnpm install --frozen-lockfile
 pnpm dev
-pnpm check
-pnpm docs:check
-node scripts/vpj-program.mjs verify
 ```
 
-当前web路由使用 `components/homepage/ImmersiveHomepage.tsx` 和 `components/homepage/Homepage.tsx`；旧无运行时消费者Landing已按hash归档。
+原生构建与测试见 [iOS 说明](ios/VisePanda/README.md)。Web 基线命令为 `pnpm check`；每次改动按[开发流程](docs/agents/development-workflow.md)选择本地验证，保留适用 CI 与最终能力验收。仅改文档时：
 
-新Issue使用独立worktree和PR，按实际native dependencies和执行合同选择frontier。基线PR未合并前，不从旧main直接实施新商业、权限或语言合同。
+```bash
+pnpm docs:check
+git diff --check
+```
 
-## 重要入口
+开始任务先读 [AGENTS.md](AGENTS.md)、[CONTEXT.md](CONTEXT.md) 和当前 Issue 的[执行行](docs/program/2026-09-05/EXECUTION-CONTRACT.md)。完整阅读与权威关系见 [Program 入口](docs/program/2026-09-05/README.md)，可复制的任务提示见 [Agent 启动说明](docs/program/2026-09-05/AGENT-KICKOFF.md)。
 
-- [品牌方向到工程交付：跨Trip偏好、服务任务、内容与语气](docs/research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md)
+## 专题导航
 
-- [总体产品、商业、设计、后台及客户交付](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)
-- [完整任务与依赖](docs/program/2026-09-05/ISSUES.md)
-- [接口与不变量](docs/program/2026-09-05/INTERFACES.md)
-- [每个Issue的执行边界和命令](docs/program/2026-09-05/EXECUTION-CONTRACT.md)
-- [Harness 可靠性规划与六张实施任务](docs/harness/README.md)
-- [HF 复用执行计划与独立准备任务](docs/harness/hf-reuse/README.md)
-- [客户运营与发布](docs/program/2026-09-05/OPERATIONS-AND-RELEASE.md)
-- [旧Issue迁移](docs/program/2026-09-05/ISSUE-MIGRATION.md)
-- [归档/恢复](docs/program/2026-09-05/ARCHIVE.md)
-- [文档目录](docs/INDEX.md)
-- [本轮验证](docs/program/2026-09-05/VERIFICATION.md)
+- [领域接口与不变量](docs/program/2026-09-05/INTERFACES.md)
+- [品牌工程实施：基础偏好、服务任务与响应表达](docs/program/2026-09-05/BRAND-ALIGNMENT-EXECUTION.md)
+- [HF 复用与两项独立准备](docs/harness/hf-reuse/README.md)
+- [运营、客户交付与发布](docs/program/2026-09-05/OPERATIONS-AND-RELEASE.md)
+- [历史 Issue 迁移](docs/program/2026-09-05/ISSUE-MIGRATION.md)、[归档与恢复](docs/program/2026-09-05/ARCHIVE.md)、[完整文档目录](docs/INDEX.md)
 
-原始VP Logo/熊猫与brand token继续保留；来源许可与已阻塞发布素材仍按既有资产台账验收。研究和概念图不能自动成为正式商店截图或供应商事实。
+现有 TripProposal → 可见 diff → 用户确认 → 原子 Patch、身份/RLS、数据与接收方许可、删除和迁移合同继续有效。运行素材使用本地 [VisePanda 资产](public/assets/visepanda)，保留许可与发布审核；研究、概念图和 fixture 不能当作真实模型、库存、支付、履约或全国覆盖的证明。

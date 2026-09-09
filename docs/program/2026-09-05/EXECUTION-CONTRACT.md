@@ -12,7 +12,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 [VPJ-01 #188](https://github.com/JTCAO515/VP-V4/issues/188) — 原生 iOS 五入口、中英文与可访问的首个 Trip 页面
 
 - Owner: coding-agent; 4专注日，PR/实际任务验证窗口
-- Blocked by: 仅基线合并
+- Blocked by: 无任务依赖；核实际条件
 - Allowed: `ios/**`, `lib/i18n.ts`, `tests/**/locale/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-01/verification.md`, `artifacts/VPJ-01/unrun.md`, `artifacts/VPJ-01/commands.jsonl`
@@ -25,14 +25,15 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 一个真实屏幕在 zh/en、Dynamic Type、VoiceOver、Reduce Motion 下可用；最低 iOS17，上传工具链满足当前 Apple 要求。
 - [ ] 语言发布名单变为 zh/en，es/ru/ar 不向新用户承诺；现有 legacy locale payload兼容策略和五语回归迁移可审查。
 - [ ] 首个Ask/Trip屏幕冻结语义token/字体/通用状态与sheet手势，不把所有视觉设计留到整链QA。
-- [ ] 保留已接受Logo与成熟清爽视觉，状态文字遵守VP响应规范、英文优先且中英事实一致；本票原生可访问性与真实对象验收仍独立，不把预览文案优化当真实AI能力。
+- [ ] 保留已接受Logo与成熟清爽视觉，状态文字遵守VP响应规范、英文优先且中英事实一致；本票验收原生基础屏幕、最低系统/可访问性和通用呈现，不将预览文案优化当真实AI能力。
+- [ ] 本票不等待已登录真实Trip的选区Ask、Proposal确认和持久重载；这些消费者在#198实现、#233整链UX和#242真机贯通验收。原iOS17、VoiceOver、Dynamic Type、Reduce Motion及基础交互门仍须实证，不因职责澄清自动关闭。
 
 ## VPJ-02
 
 [VPJ-02 #189](https://github.com/JTCAO515/VP-V4/issues/189) — 现有 Staging 的真实身份、迁移与 owner 隔离验证
 
 - Owner: operator; 2专注日，外部审批/账号/真机/网络等待另计
-- Blocked by: 仅基线合并
+- Blocked by: 无任务依赖；核实际条件
 - Allowed: `scripts/db/**`, `docs/runbooks/**`, `artifacts/VPJ-02/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-02/verification.md`, `artifacts/VPJ-02/unrun.md`, `artifacts/VPJ-02/commands.jsonl`
@@ -49,7 +50,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190) — 用户对话、材料、模型地区与人工访问的数据政策
 
 - Owner: operator; 3专注日，外部审批/账号/真机/网络等待另计
-- Blocked by: 仅基线合并
+- Blocked by: 无任务依赖；核实际条件
 - Allowed: `docs/adr/**`, `docs/policy/**`, `docs/runbooks/**`, `docs/operator-actions.json`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-03/verification.md`, `artifacts/VPJ-03/unrun.md`, `artifacts/VPJ-03/commands.jsonl`
@@ -194,6 +195,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 选中范围→Ask→局部候选→影响/diff→确认→回到原位置；未选对象保持不动。
 - [ ] 用户可直接移日/排序/改时，手动编辑与硬锁区别明确。
 - [ ] 并发更新旧proposal不能提交；撤销Trip修改不能伪装取消外部订单。
+- [ ] 负责已登录真实Trip的选区→Ask sheet→局部Proposal/diff→确认→回到原对象与位置→重载闭环；复用#188基础导航/样式/可访问性，拒绝或关闭sheet不得误确认，真实凭据/数据条件缺失保留未验收。
 
 ## VPJ-11
 
@@ -753,6 +755,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 统一Cream/Ink/Plum/Gold与原始VP资产；对话/计划/sheet/键盘/返回锚点同一状态语义。
 - [ ] 真机/Simulator完成小屏大屏、大字VoiceOver、Reduce Motion/Transparency、来电低电量弱网；录屏展示可中断动效。
 - [ ] 结构卡原子出现、滚动不抢位、已保存动画只在回执后；用profile定位性能不写未测FPS。
+- [ ] 在#198真实选区Ask消费者上复验sheet、焦点、返回锚点、大字与VoiceOver及拒绝/关闭状态；不能仅引用#188基础屏幕证据完成整链验收。
 
 ## VPJ-41
 
@@ -789,6 +792,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 真实owner/RLS/provider/数据/网络/权限证明与TestFlight build关联；sandbox购买不算收入。
 - [ ] 所有首发必需项有功能/异常/数据/UX/运行证据；只修验收缺陷，不靠fixture替代。
 - [ ] 非技术经营留存与真实付费效果由47观察，不因旅行节点未到而伪称成功/失败。
+- [ ] 真实设备与账号贯通#198选区Ask、明确确认、跨端/重载及拒绝路径；基础壳、模拟数据或仅#188完成不能替代本项联合验收。
 
 ## VPJ-43
 
@@ -847,7 +851,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 [VPJ-46 #246](https://github.com/JTCAO515/VP-V4/issues/246) — 每周35小时客户发现、招募与材料工作坊
 
 - Owner: operator; 2专注日，每周30–40小时、首两周校准；effort仅建立流程，不是整段观察时长
-- Blocked by: 仅基线合并
+- Blocked by: 无任务依赖；核实际条件
 - Allowed: `docs/operations/**`, `docs/commercial/**`, `artifacts/VPJ-46/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-46/verification.md`, `artifacts/VPJ-46/unrun.md`, `artifacts/VPJ-46/commands.jsonl`
@@ -1134,7 +1138,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 [VPJ-62 #202](https://github.com/JTCAO515/VP-V4/issues/202) — 公开中英申请入口与隐私可控的招募漏斗
 
 - Owner: coding-agent; 3专注日，PR/实际任务验证窗口
-- Blocked by: 仅基线合并
+- Blocked by: 无任务依赖；核实际条件
 - Allowed: `app/**`, `components/**`, `lib/i18n.ts`, `lib/server/intake/**`, `tests/**/intake/**`, `docs/operations/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:e2e`
 - Evidence: `artifacts/VPJ-62/verification.md`, `artifacts/VPJ-62/unrun.md`, `artifacts/VPJ-62/commands.jsonl`
@@ -1206,7 +1210,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 [VPJ-66 #263](https://github.com/JTCAO515/VP-V4/issues/263) — Harness：两条离线旅行任务可运行、判分并定位失败
 
 - Owner: coding-agent; 2专注日，有界PR验证；真实环境/人工校准等待另计
-- Blocked by: 仅基线合并
+- Blocked by: 无任务依赖；核实际条件
 - Allowed: `evals/harness/**`, `tests/**/harness/**`, `scripts/run-ci-suite.mjs`, `docs/harness/**`, `artifacts/VPJ-66/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm evals`
 - Evidence: `artifacts/VPJ-66/verification.md`, `artifacts/VPJ-66/unrun.md`, `artifacts/VPJ-66/commands.jsonl`, `artifacts/VPJ-66/results.json`
@@ -1354,7 +1358,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 [VPJ-73 #288](https://github.com/JTCAO515/VP-V4/issues/288) — Docling合成旅行材料解析与校正候选试验
 
 - Owner: coding-agent; 3专注日，有界准备PR；真实调用/人工校准/产品集成在原父票验证
-- Blocked by: 仅基线合并
+- Blocked by: 无任务依赖；核实际条件
 - Allowed: `scripts/experiments/docling/**`, `tests/**/docling/**`, `docs/harness/hf-reuse/**`, `artifacts/VPJ-73/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm evals`
 - Evidence: `artifacts/VPJ-73/verification.md`, `artifacts/VPJ-73/unrun.md`, `artifacts/VPJ-73/commands.jsonl`, `artifacts/VPJ-73/results.json`
