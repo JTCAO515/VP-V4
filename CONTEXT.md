@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Authorized Staging upgrade11->25 and ordinary JWT isolation16/16 passed; fresh encrypted backup restored and original3 Auth/2 Trip row digests preserved after exact-ID cleanup. Prior bounded PR275/277/278/279 remain merged; parent runtime Issues remain OPEN.
+状态：Staging25 and ordinary JWT isolation16/16 remain verified. Durable budget local PostgreSQL9/9 and full Supabase25->26/Auth/HTTP1/1 passed, with units45/contracts188/affected11 passing. Remote budget migration, provider-policy applicability and actual Harness integration remain incomplete.
 
-阶段：Staging schema and ordinary HTTP identity integration verified; continue direct/worker evidence and bounded synthetic provider runtime preparation.
+阶段：Durable budget local implementation verified; new Staging migration scope and synthetic provider policy/credentials remain runtime gates.
 
 ## 读取顺序
 
@@ -41,6 +41,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 ## 验证
 
 - 2026-09-10 brand engineering alignment: comprehensive study, ADR-0025,three planning contracts and26 existing Issue acceptance updates;6 conflictinglegacy metering clauses explicitly superseded with original text/progress retained. Exact GitHub body/metadata/dependency read-back passed. Local71-task identity/graph checks,11 governance tests,docs/links/diff passed. See docs/research/brand-engineering-2026-09-10/DELIVERY.md. Runtime,provider,Store and new data-permission acceptance are not established.
+- VPJ-59 local durable budget: PostgreSQL9/9 and full Supabase25->26/Auth/PostgREST1/1 PASS, no skips; actual local DB lint exit0, run-owned test stack removed. Units45/contracts188/affected11 PASS. Pending-accounting cancel/timeout bug fixed after independent review. Remote new migration and real provider acceptance remain UNRUN; see artifacts/VPJ-59/verification.md.
 - 2026-09-10 actual Staging migration11->25 exited0; fresh encrypted affected-schema backup restored in a no-network container with exact Auth/Trip digests. Ordinary JWT isolation16/16 passed, temporary2 Auth and run-owned Trips cleaned, original3 Auth/2 Trip digests unchanged. Direct/worker and parent acceptance remain incomplete; see artifacts/VPJ-02/staging-apply-20260910.md.
 - PR279 exact HEAD1322254 reviewed Critical0/Important0; Quality34385270635 passed3m15 and Vercel passed, merged798dc36 after PR278. Actual merged-code identity tests30/30 pass, zero skip. The first post-merge command used a nonexistent loader and failed before running assertions; rerunning the recorded native Node command passed. JWT verification does not activate native epochs or RLS access.
 - PR278 exact HEADf1a6a4c independently reviewed Critical0/Important0; Quality34384277871 passed3m18 and Native34384277855 passed11m14 before mergef6928c8. Merge tree equals the tested tree. Local iOS26.5 all15 tests passed; iOS17.5 four UI audits still fail. Matched baseline/candidate diagnostics reproduce Chinese banner and Tools failures in both, with contrast findings removed in the candidate; this is a bounded improvement, not minimum-runtime acceptance.
@@ -70,7 +71,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Complete #189 direct-host/worker path evidence without inferring it from maintenance pooler or HTTP JWT success. User authorized three synthetic-text providers, each cumulative maximum CNY30(total90), with no recharge grant. Verify actual account model/endpoint/prices and bounded spending before calls. #190 retention/deletion and real user/human access rules remain undecided; native epochs and licensed knowledge remain separate gates. Apply the reviewed brand planning delta before implementing new ServiceTask consumption or cross-Trip personalization: docs/research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md. Existing scoped protocol/budget/native work continues; no new data/recipient or production authority is granted.
+After exact review/CI, request scope for new budget migration20260909184816 plus its bounded Staging verification; previous grant covered original13 and RPC repair only. Keep C0 per-provider CNY30/total90 limits and no recharge. Resolve pending synthetic training/retention choice and Qwen/GLM credential availability before provider calls. Real C2 retention/deletion/human access, native sessions and licensed knowledge remain independent gates. Apply the reviewed brand planning delta before implementing new ServiceTask consumption or cross-Trip personalization: docs/research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md. Existing scoped protocol/budget/native work continues; no new data/recipient or production authority is granted.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 

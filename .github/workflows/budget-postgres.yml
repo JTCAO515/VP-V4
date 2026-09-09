@@ -1,0 +1,29 @@
+name: Budget PostgreSQL
+
+on:
+  pull_request:
+    paths:
+      - 'lib/server/model-gateway/budget/**'
+      - 'supabase/migrations/**'
+      - 'tests/**/cost/**'
+      - '.github/workflows/budget-postgres.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  durable-budget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Pull the pinned local test database image
+        run: docker pull public.ecr.aws/supabase/postgres:17.6.1.159
+      - name: Run isolated PostgreSQL budget and worker-crash checks
+        env:
+          VP_BUDGET_DB_TEST: '1'
+        run: node --experimental-strip-types --test tests/integration/cost/durable-budget.test.mjs
