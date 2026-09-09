@@ -1,25 +1,27 @@
 import SwiftUI
 
 struct PreviewStatusBanner: View {
-    var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            Image(systemName: "eye")
-                .font(.body.weight(.semibold))
-                .foregroundStyle(Color.vpBrand)
-                .accessibilityHidden(true)
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
-            VStack(alignment: .leading, spacing: 3) {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                if !dynamicTypeSize.isAccessibilitySize {
+                    Image(systemName: "eye")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(Color.vpBrand)
+                        .accessibilityHidden(true)
+                }
                 Text("preview.title")
                     .font(.subheadline.weight(.semibold))
-
-                Text("preview.message")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
             }
-
-            Spacer(minLength: 0)
+            Text("preview.message")
+                .font(.footnote)
+                .lineLimit(nil)
+                .foregroundStyle(Color.vpSecondaryText)
+                .fixedSize(horizontal: false, vertical: true)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)
         .background(Color.vpLavender.opacity(0.18), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
         .accessibilityElement(children: .combine)

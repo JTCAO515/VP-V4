@@ -27,11 +27,13 @@ struct AskView: View {
                         .fixedSize(horizontal: false, vertical: true)
 
                     Text("ask.subtitle")
+                        .accessibilityIdentifier("ask-introduction")
                         .font(.body)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.vpSecondaryText)
                 }
 
                 PreviewStatusBanner()
+                availabilityNotice
 
                 VStack(alignment: .leading, spacing: 10) {
                     Text("ask.try")
@@ -74,6 +76,14 @@ struct AskView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
+    private var availabilityNotice: some View {
+        Text("ask.disabled_hint")
+            .accessibilityIdentifier("ask-availability-notice")
+            .font(.footnote)
+            .foregroundStyle(.primary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
     private var composer: some View {
         VStack(spacing: 8) {
             HStack(alignment: .bottom, spacing: 10) {
@@ -86,7 +96,7 @@ struct AskView: View {
 
                 Button(action: {}) {
                     Image(systemName: "arrow.up")
-                        .font(.headline.weight(.bold))
+                        .font(.system(size: 17, weight: .bold))
                         .frame(width: 44, height: 44)
                         .foregroundStyle(.white)
                         .background(Color.vpBrandFill, in: Circle())
@@ -95,15 +105,12 @@ struct AskView: View {
                 .accessibilityLabel(Text("ask.send"))
                 .accessibilityHint(Text("ask.disabled_hint"))
             }
-
-            Text("ask.disabled_hint")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, VPSpacing.standard)
         .padding(.vertical, 10)
         .background(.bar)
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("ask-composer")
     }
 }
 

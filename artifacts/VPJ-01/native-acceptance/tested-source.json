@@ -1,0 +1,15 @@
+{
+  "base": "080d5f0",
+  "sourceBlobs": {
+    "ios/VisePanda/VisePanda/Components/BrandHeader.swift": "0f77e6859378642f2bb33d51e8b4cbb23b17d192",
+    "ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift": "ebf0fb8cad1dfbb68a9878162d4481b82738cc13",
+    "ios/VisePanda/VisePanda/DesignSystem/VisePandaTheme.swift": "6651f1e5a8a68b239be4850cda88ff22d6498d48",
+    "ios/VisePanda/VisePanda/Features/Ask/AskView.swift": "b84f632ce9f9965c320ad39340ef5a111bfb101a",
+    "ios/VisePanda/VisePanda/Features/Trip/TripView.swift": "3c9f23ecf0dbd2d7631d0f3860c16202c0823309",
+    "ios/VisePanda/VisePandaUITests/AppShellUITests.swift": "2c6976a2740f3586fc501dacec76c5889f654f47"
+  },
+  "runs": [
+    "20260910-011026",
+    "20260910-011653"
+  ]
+}

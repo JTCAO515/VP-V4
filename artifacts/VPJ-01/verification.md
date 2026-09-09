@@ -33,3 +33,7 @@ Screenshots from actual successful Simulator tests:
 Original user worktree was never modified. No credentials copied into the project, no backend,
 Trip write, signing, migration or production publication performed. Merge remains subject to
 OA-VPJ-MERGE-DEPLOY; preview/CI is not production acceptance. Rollback is a normal revert.
+
+## 后续原生无障碍准备
+
+新增审计与已知失败分别记录于[native-acceptance/verification.md](native-acceptance/verification.md)。不是整张VPJ-01的验收完成；较早结果不替代后续准确版本验证。

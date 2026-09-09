@@ -1,0 +1,121 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "4533365D-53A2-45AF-813F-94EBF47B6A31.txt",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "Complete Issue Description.txt"
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "9767A6DE-2B83-4DBC-9695-CDFEC79898E1.png",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "App Screenshot_0_AE45906B-B647-4F81-B060-F4837520DE69.png",
+        "timestamp" : 1788974277.239
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "EEFEAC53-5C59-41F2-8354-6F8D11CF5A40.png",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "Element Screenshot_1_1E79ECA3-46E0-4FBD-9BB3-E6FA0278518E.png",
+        "timestamp" : 1788974277.239
+      }
+    ],
+    "testIdentifier" : "AppShellUITests/testAccessibilityAtLargestTextSize()",
+    "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testAccessibilityAtLargestTextSize"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "6A44A933-D2CD-4292-A17B-7BC47C2E607E.txt",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "Complete Issue Description.txt"
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "A2D6A82E-C6BB-4255-B556-768B963D4D27.png",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "App Screenshot_0_1FA00275-CA80-4367-9F13-3A9FD947F367.png",
+        "timestamp" : 1788974292.208
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "7F9AA9C4-2E55-41A4-A6A5-87134F8C3C7F.png",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "Element Screenshot_1_1C24BCF0-8D4F-4B2A-BA18-FDDD5C25C72E.png",
+        "timestamp" : 1788974292.208
+      }
+    ],
+    "testIdentifier" : "AppShellUITests/testAskAndTripFullAccessibilityInDarkMode()",
+    "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testAskAndTripFullAccessibilityInDarkMode"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "8ED6790F-563F-421F-9658-571F1F75AB31.txt",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "Complete Issue Description.txt"
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "7BBBF5DF-B5B1-4020-AC6C-FE43BC821233.png",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "App Screenshot_0_A7113132-E9F9-44FF-BD9F-C377CB922657.png",
+        "timestamp" : 1788974306.566
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "91088BA9-9059-4ECF-92C1-7F057425C0B3.png",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "Element Screenshot_1_268834B7-F693-40D3-B7DD-E2E5E6CC97E3.png",
+        "timestamp" : 1788974306.566
+      }
+    ],
+    "testIdentifier" : "AppShellUITests/testAskAndTripFullAccessibilityInReleaseLanguages()",
+    "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testAskAndTripFullAccessibilityInReleaseLanguages"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "1EA615E8-9995-4BDB-AD82-D6DF7D2866CB.txt",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "Complete Issue Description.txt"
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "619E1637-5360-41B5-A98D-03147AECD76A.png",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "App Screenshot_0_2B581D2A-B2FF-48B4-850B-8F7401CDE875.png",
+        "timestamp" : 1788974373.525
+      }
+    ],
+    "testIdentifier" : "AppShellUITests/testToolsAccessibilityAtLargestTextSize()",
+    "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testToolsAccessibilityAtLargestTextSize"
+  }
+]
