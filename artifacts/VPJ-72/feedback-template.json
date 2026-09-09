@@ -1,0 +1,1582 @@
+[
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "a3cf484611100f97f2233ecb-0",
+    "caseId": "H01",
+    "language": "en",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "a3cf484611100f97f2233ecb-1",
+    "caseId": "H01",
+    "language": "en",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "bcadebf9fd4e7a17aaed3988-0",
+    "caseId": "H01",
+    "language": "en",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "bcadebf9fd4e7a17aaed3988-1",
+    "caseId": "H01",
+    "language": "en",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "d10d5138ee96fa72518521b2-0",
+    "caseId": "H01",
+    "language": "en",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "d10d5138ee96fa72518521b2-1",
+    "caseId": "H01",
+    "language": "en",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "3fb5c9f5feab05ffa4fb97c2-0",
+    "caseId": "H01",
+    "language": "en",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "3fb5c9f5feab05ffa4fb97c2-1",
+    "caseId": "H01",
+    "language": "en",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "beb8cf1342b72c58b5b40175-0",
+    "caseId": "H01",
+    "language": "en",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "beb8cf1342b72c58b5b40175-1",
+    "caseId": "H01",
+    "language": "en",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "3cf082b668d0baec586f4771-0",
+    "caseId": "H01",
+    "language": "zh",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "3cf082b668d0baec586f4771-1",
+    "caseId": "H01",
+    "language": "zh",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "f22e5fea4b8a1f109c855d77-0",
+    "caseId": "H01",
+    "language": "zh",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "f22e5fea4b8a1f109c855d77-1",
+    "caseId": "H01",
+    "language": "zh",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "0c328a93515833b5f520f7f3-0",
+    "caseId": "H01",
+    "language": "zh",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "0c328a93515833b5f520f7f3-1",
+    "caseId": "H01",
+    "language": "zh",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "b80e8e6573a955cdeae97f4d-0",
+    "caseId": "H01",
+    "language": "zh",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "b80e8e6573a955cdeae97f4d-1",
+    "caseId": "H01",
+    "language": "zh",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "8f71df775f1917b42db0a678-0",
+    "caseId": "H01",
+    "language": "zh",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "REPLACE_WITH_UNIQUE_ID",
+    "presentationId": "8f71df775f1917b42db0a678-1",
+    "caseId": "H01",
+    "language": "zh",
+    "reviewerId": "REPLACE_WITH_REVIEWER_ID",
+    "source": {
+      "kind": "human",
+      "recordRef": "human:REPLACE_WITH_LOCAL_REVIEW_REF",
+      "method": "manual-local",
+      "attribution": "operator-declared"
+    },
+    "choice": null,
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": "N/A",
+          "density": null,
+          "english_naturalness": "N/A",
+          "tone": null
+        },
+        "reasons": {
+          "goal": "",
+          "evidence": "",
+          "next_step": "",
+          "preferences": "Not applicable to this sample",
+          "density": "",
+          "english_naturalness": "Not applicable to this sample",
+          "tone": ""
+        },
+        "quotes": {
+          "goal": null,
+          "evidence": null,
+          "next_step": null,
+          "preferences": null,
+          "density": null,
+          "english_naturalness": null,
+          "tone": null
+        },
+        "hardFailures": []
+      }
+    }
+  }
+]

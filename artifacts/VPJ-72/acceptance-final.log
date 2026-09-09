@@ -1,0 +1,23 @@
+✔ VPJ-72 full owned-fixture offline entrypoint retains failures, NOT_RUN and provenance (258.979458ms)
+✔ existing pairing JSON -> bilingual blind package -> fixture feedback import -> same-version JSON/Markdown (554.08475ms)
+✔ CLI rejects incorrect case/version/source without publishing a replacement report (389.380875ms)
+✔ typed hard gates veto exact facts, permissions and action receipts without parsing prose (14.86775ms)
+✔ unreviewed semantic errors remain NOT_RUN; fixture labels never become human calibration (16.389917ms)
+✔ A/B swaps normalize the same winner, preserve ties and both-fail, and expose order disagreement (14.698958ms)
+✔ repeated imports deduplicate while changed feedback is an explicit conflict (14.74125ms)
+✔ wrong case, versions, source, rubric completeness and N/A substitutions reject (27.8695ms)
+✔ human source validation is operator-declared, never verified identity or calibration (7.405167ms)
+✔ reviewer projection is blind and bundle tampering cannot silently change answer identity (15.806583ms)
+✔ owned exposed variants preserve canonical 8/4 metadata and cannot import holdout or external data (10.813875ms)
+✔ perfect soft feedback cannot compensate a deterministic hard failure (13.02875ms)
+✔ fixture provenance cannot be promoted to human by changing the source tag (4.921458ms)
+✔ unknown parent grading versions and mismatched source basis are rejected (0.701375ms)
+✔ one presentation's feedback cannot establish an order-bias check (8.63725ms)
+ℹ tests 15
+ℹ suites 0
+ℹ pass 15
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1083.381541
