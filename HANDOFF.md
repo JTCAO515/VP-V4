@@ -6,9 +6,9 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：C0 provider compatibility fix and actual protocol/budget evidence merged under PR292. Docling experiment#288 completed with a scoped REJECT under PR293. VPJ-72 offline blind-review/feedback tooling is implemented and reviewed after two integrity fixes; final CI and acceptance are being finalized. Full customer/runtime acceptance remains separate.
+状态：C0 protocol/budget evidence is merged under PR292. Both bounded HF preparation Issues are completed: Docling #288 with a scoped REJECT under PR293, and offline blind review #287 under PR294. Full customer/runtime acceptance remains separate.
 
-阶段：Finish offline response-quality delivery; continue basic native accessibility and real producer/consumer integration.
+阶段：Continue bounded native accessibility diagnosis; resolve actual producer/consumer and operator prerequisites before runtime integration.
 
 ## 读取顺序
 
@@ -51,7 +51,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-完成#287当前准确提交的CI和离线验收后关闭该准备票；#288已按固定配置的REJECT完成，不阻塞#201/#236替代路线。继续#188基础原生可访问性工作及真实ModelProfile/outcome消费者，真实选区Ask/确认/重载按#198/#233/#242负责。保留C0预算scope、费用上界凭据和未知账单hold，不重置额度；实际人工校准、C2留存/删除/人工权限、部署worker和许可知识仍由原票验收。
+#287已由PR294合并9fa196a并按离线范围验收关闭，#288已按固定配置REJECT完成。继续#188有界基础可访问性诊断；ModelProfile/outcome目前只有fixture消费者，真实Turn/worker接入需要版本化契约、持久lease/terminal、权威native epoch及数据政策，不能仅扩展union冒充集成。真实选区Ask/确认/重载仍由#198/#233/#242负责。保留现有C0预算scope和未知账单hold；人工校准、供应商账单、C2留存/删除/人工权限及真机检查按原票落实。
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
