@@ -54,6 +54,28 @@ test("V4-10 rollback confirms a prior snapshot as a new append-only version", as
     const rollback = await request("/rest/v1/rpc/create_trip_rollback_proposal", { method: "POST", headers: ownerHeaders, body: JSON.stringify({ p_trip_id: trip.id, p_target_version: 0 }) });
     assert.equal(rollback.response.status, 200, rollback.body);
     const rollbackProposal = JSON.parse(rollback.body)[0];
+    const rollbackPath = `/rest/v1/trip_proposals?id=eq.${rollbackProposal.proposal_id}`;
+    const initialRollback = JSON.parse((await request(`${rollbackPath}&select=id,status,rollback_snapshot_version,base_trip_version,expires_at,patch`, { headers: ownerHeaders })).body)[0];
+    const fixtureHeaders = { apikey: env.SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SERVICE_ROLE_KEY}`, "content-type": "application/json" };
+    for (const metadata of [
+      { base_trip_version: 2, expires_at: initialRollback.expires_at },
+      { base_trip_version: 2, expires_at: "2000-01-01T00:00:00Z" },
+      { base_trip_version: 1, expires_at: initialRollback.expires_at },
+    ]) {
+      // Administrative fixture setup only: owners cannot rewrite rollback metadata.
+      const fixture = await request(rollbackPath, { method: "PATCH", headers: fixtureHeaders, body: JSON.stringify(metadata) });
+      assert.equal(fixture.response.status, 204, fixture.body);
+      const before = JSON.parse((await request(`${rollbackPath}&select=id,status,rollback_snapshot_version,base_trip_version,expires_at,patch`, { headers: ownerHeaders })).body)[0];
+      const revisedRollback = await request("/rest/v1/rpc/revise_trip_proposal", { method: "POST", headers: ownerHeaders, body: JSON.stringify({ p_proposal_id: rollbackProposal.proposal_id, p_title: "Cannot replace rollback" }) });
+      assert.equal(revisedRollback.response.status, 200, revisedRollback.body);
+      assert.equal(JSON.parse(revisedRollback.body)[0].outcome, "proposal_not_confirmable");
+      const after = JSON.parse((await request(`${rollbackPath}&select=id,status,rollback_snapshot_version,base_trip_version,expires_at,patch`, { headers: ownerHeaders })).body)[0];
+      assert.deepEqual(after, before);
+      assert.deepEqual(JSON.parse((await request(`/rest/v1/trip_proposals?parent_proposal_id=eq.${rollbackProposal.proposal_id}&select=id`, { headers: ownerHeaders })).body), []);
+      assert.deepEqual(JSON.parse((await request(`/rest/v1/trips?id=eq.${trip.id}&select=title,head_version`, { headers: ownerHeaders })).body)[0], { title: "Latest", head_version: 2 });
+    }
+    const restored = await request(rollbackPath, { method: "PATCH", headers: fixtureHeaders, body: JSON.stringify({ base_trip_version: initialRollback.base_trip_version, expires_at: initialRollback.expires_at }) });
+    assert.equal(restored.response.status, 204, restored.body);
     const deniedConfirm = await request("/rest/v1/rpc/confirm_and_apply_trip_proposal", { method: "POST", headers: otherHeaders, body: JSON.stringify({ p_proposal_id: rollbackProposal.proposal_id, p_idempotency_key: "other-user-key", p_digest: "rollback-v0-to-v2" }) });
     assert.notEqual(JSON.parse(deniedConfirm.body)[0].outcome, "applied", deniedConfirm.body);
     const beforeOwnerConfirm = JSON.parse((await request(`/rest/v1/trips?id=eq.${trip.id}&select=title,head_version`, { headers: ownerHeaders })).body)[0];

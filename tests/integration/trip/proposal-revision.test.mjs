@@ -37,10 +37,14 @@ test("AI-13b replaces a pending owner proposal with an immutable child revision"
     const trip = JSON.parse((await request("/rest/v1/trips", { method: "POST", headers: headers(ownerToken), body: JSON.stringify([{ owner_id: owner.id, title: "Before" }]) })).body)[0];
     const parent = JSON.parse((await request("/rest/v1/trip_proposals", { method: "POST", headers: headers(ownerToken), body: JSON.stringify([{ owner_id: owner.id, trip_id: trip.id, revision: 1, base_trip_version: 0, status: "pending", patch: { title: "Parent" }, expires_at: "2099-01-01T00:00:00Z" }]) })).body)[0];
     const revise = async (auth, proposalId, title) => request("/rest/v1/rpc/revise_trip_proposal", { method: "POST", headers: headers(auth), body: JSON.stringify({ p_proposal_id: proposalId, p_title: title }) });
+    const anonymousRevision = await request("/rest/v1/rpc/revise_trip_proposal", { method: "POST", headers: { apikey: env.ANON_KEY, "content-type": "application/json" }, body: JSON.stringify({ p_proposal_id: parent.id, p_title: "Anonymous" }) });
+    assert.equal(anonymousRevision.response.status, 401);
+    assert.equal(JSON.parse((await revise(ownerToken, parent.id, null)).body)[0].outcome, "invalid_patch");
     const reviseResult = await revise(ownerToken, parent.id, "Child");
     assert.equal(reviseResult.response.status, 200, reviseResult.body);
     const revised = JSON.parse(reviseResult.body)[0];
     assert.equal(revised.outcome, "revised");
+    assert.equal(JSON.parse((await revise(ownerToken, parent.id, "Duplicate")).body)[0].outcome, "proposal_not_confirmable");
     const rows = JSON.parse((await request(`/rest/v1/trip_proposals?select=id,status,parent_proposal_id,revision,patch&id=in.(${parent.id},${revised.proposal_id})`, { headers: headers(ownerToken) })).body);
     const parentRow = rows.find((row) => row.id === parent.id);
     const childRow = rows.find((row) => row.id === revised.proposal_id);
@@ -51,6 +55,14 @@ test("AI-13b replaces a pending owner proposal with an immutable child revision"
     assert.equal(JSON.parse(confirm.body)[0].outcome, "applied");
     const current = JSON.parse((await request(`/rest/v1/trips?id=eq.${trip.id}&select=title,head_version`, { headers: headers(ownerToken) })).body)[0];
     assert.deepEqual(current, { title: "Child", head_version: 1 });
+    for (const [expiresAt, baseVersion, outcome] of [["2000-01-01T00:00:00Z", 1, "proposal_expired"], ["2099-01-01T00:00:00Z", 0, "version_conflict"]]) {
+      const stale = JSON.parse((await request("/rest/v1/trip_proposals", { method: "POST", headers: headers(ownerToken), body: JSON.stringify([{ owner_id: owner.id, trip_id: trip.id, revision: 1, base_trip_version: baseVersion, status: "pending", patch: { title: "Stale" }, expires_at: expiresAt }]) })).body)[0];
+      const denied = await revise(ownerToken, stale.id, "Must not apply");
+      assert.equal(denied.response.status, 200, denied.body);
+      assert.equal(JSON.parse(denied.body)[0].outcome, outcome);
+    }
+    const preserved = JSON.parse((await request(`/rest/v1/trips?id=eq.${trip.id}&select=title,head_version`, { headers: headers(ownerToken) })).body)[0];
+    assert.deepEqual(preserved, current);
   } finally {
     for (const id of users) await request(`/auth/v1/admin/users/${id}`, { method: "DELETE", headers: { apikey: env.SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SERVICE_ROLE_KEY}` } });
   }

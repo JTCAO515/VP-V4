@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：VP-V4 Staging target confirmed by JT: VP - V4, Singapore, no real business users/data. CLI linked and read-only inventory succeeded; remote11 of24 migrations,13 pending. Existing3Auth/2Trip retained; no migration or actor probe writes applied.
+状态：Staging backup and explicit verified Session pooler are ready. Original13 validation exposed RPC defects; appended repair is locally verified at25 migrations with29 integration/82 security tests,zero skips. Remote remains11; additional repair execution authority pending, original backup/13/two-identity grant retained.
 
-阶段：Read-only Staging inventory after merged native/Web/CI preparation. Metadata access is verified; latest schema, JWT actor isolation and database connection paths are not accepted.
+阶段：Validated repository RPC repair and real affected-schema backup/restore preparation; no remote migration or new Auth identities yet.
 
 ## 读取顺序
 
@@ -26,7 +26,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 未决与运行证据
 
-- VPJ-02: direct Postgres dry-run terminates during connection; HTTPS DNS attempt has no valid IP. Session pooler strict TLS probe needs verifiedSupabaseCA. HTTPS Management access does not establish DB/pooler/worker readiness.
+- One appended RPC repair beyond the authorized13 is now needed; its remote execution remains pending explicit scope approval. Original13 alone failed real local runtime validation.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 
@@ -35,6 +35,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 验证
 
+- 2026-09-09: final frozen11->24->25 local replay preserves synthetic Trip; integration29/29,security82/82,zero skip,DB lint0. Encrypted actual Staging backup restored with3Auth/2Trip/11history and equal hashes in a no-network container; original13+repair SQL also replayed on that restored copy preserving original data. No remote apply.
 - 2026-09-09 CLI metadata confirms VP - V4/ap-southeast-1/ACTIVE_HEALTHY. Read-only inventory finds11 matching migration records of24,13 pending,no remote-only;3Auth/2Trip;11 observed tables RLS enabled; authenticated direct Trip UPDATE still granted at old schema. No identities/content read and no data/DDL changed.
 - PR261 merged atde18928: hosted Native iOS34298939281 passed unsigned build,8unit+5UI and retained xcresult/version/commands. Production deployment6340704045 reported success forde18928.
 - Production deployment6340395476 reports success for2c46519. Actual browser at1280x800: /visepanda?locale=ar has ar/rtl, correct Arabic title and no overflow; switching toEnglish at390x844 restores en/ltr, removes legacy picker discovery and shows the unauthenticated sign-in boundary. No account/Trip write performed.
@@ -54,7 +55,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Follow artifacts/VPJ-02/verification.md: resolve direct/pooler connectivity and prepare the scoped13-migration/two-test-identity operation. Obtain explicit bounded operational authorization before schema/account changes; preserve all existing data and Production exclusion for database migration.
+Review/merge the RPC repair PR, retain its exact-head CI and frozen local evidence, then obtain permission for the single additional migration before Staging application. Harness H-01..H-06 remain unnumbered drafts requiring separate ticket-creation confirmation.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
