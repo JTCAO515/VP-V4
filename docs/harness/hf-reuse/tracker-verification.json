@@ -1,0 +1,159 @@
+{
+  "schemaVersion": "vp-hf-tracker-verification/1",
+  "verifiedAt": "2026-09-09T19:48:03.371Z",
+  "taskCount": 73,
+  "nativeEdgeCount": 212,
+  "newTasks": [
+    {
+      "id": "VPJ-72",
+      "number": 287,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/287"
+    },
+    {
+      "id": "VPJ-73",
+      "number": 288,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/288"
+    }
+  ],
+  "updatedIssues": [
+    193,
+    195,
+    199,
+    201,
+    205,
+    206,
+    248,
+    219,
+    267,
+    268
+  ],
+  "originalTaskIdentitiesPreserved": true,
+  "allDependenciesMatch": true,
+  "addedEdges": [
+    {
+      "issue": 287,
+      "blockedBy": 263
+    },
+    {
+      "issue": 267,
+      "blockedBy": 287
+    }
+  ],
+  "parentBodyAndStatePreserved": true,
+  "allChildrenLinked": true,
+  "writeTimeOriginalBodyStateLabelsCommentsPreserved": true,
+  "concurrentStateOrLabelChanges": [],
+  "writes": [
+    {
+      "number": 193,
+      "at": "2026-09-09T19:45:02.154Z",
+      "beforeBodySha": "7288922de1719bf2e81589a381782f78f4a8b6a493fd0fbb7e877ed4d61e2f84",
+      "retainedBodySha": "7288922de1719bf2e81589a381782f78f4a8b6a493fd0fbb7e877ed4d61e2f84",
+      "afterBodySha": "5f6f637bcde50b6df54b6978a70e6e6cdd79569591d804620a1346ce951dc61a",
+      "state": "open",
+      "labelsUnchanged": true,
+      "commentsUnchanged": true,
+      "originalBodyPreserved": true
+    },
+    {
+      "number": 195,
+      "at": "2026-09-09T19:45:06.655Z",
+      "beforeBodySha": "3edc63d5076c522c9306d55615f623a9541d27cd630d22d0950ebfac357c13a9",
+      "retainedBodySha": "3edc63d5076c522c9306d55615f623a9541d27cd630d22d0950ebfac357c13a9",
+      "afterBodySha": "d496723ff9d297303ef00c1180d028c9d15729d8beddc403b57164dca9456625",
+      "state": "open",
+      "labelsUnchanged": true,
+      "commentsUnchanged": true,
+      "originalBodyPreserved": true
+    },
+    {
+      "number": 199,
+      "at": "2026-09-09T19:45:10.799Z",
+      "beforeBodySha": "f32959d092459f45f9246a7205d13b6ea180b83d16a9d627fe9578470cf230a8",
+      "retainedBodySha": "f32959d092459f45f9246a7205d13b6ea180b83d16a9d627fe9578470cf230a8",
+      "afterBodySha": "e4708f0428aeb03c5945137e28842a3ef2152dccffbc77c0c3c8766dff7cbbfa",
+      "state": "open",
+      "labelsUnchanged": true,
+      "commentsUnchanged": true,
+      "originalBodyPreserved": true
+    },
+    {
+      "number": 201,
+      "at": "2026-09-09T19:45:15.187Z",
+      "beforeBodySha": "970ebf276937a6150248ba3942e7dc0dbcc80d0016d5b48e7b88a1f96f96f0ef",
+      "retainedBodySha": "970ebf276937a6150248ba3942e7dc0dbcc80d0016d5b48e7b88a1f96f96f0ef",
+      "afterBodySha": "cb1c787b866bad4a8cdbd357e7e9320bd62c64d6c2ef2a40897ce227343c8d89",
+      "state": "open",
+      "labelsUnchanged": true,
+      "commentsUnchanged": true,
+      "originalBodyPreserved": true
+    },
+    {
+      "number": 205,
+      "at": "2026-09-09T19:45:19.660Z",
+      "beforeBodySha": "246065de12e89c84797c096ad8aa207f333ba30f5a6ff71b4000e0b7472e80c6",
+      "retainedBodySha": "246065de12e89c84797c096ad8aa207f333ba30f5a6ff71b4000e0b7472e80c6",
+      "afterBodySha": "47ca1b6268d8404b8b6c0baa21a0030bccd2d56aff2ecac40539315f10e2684e",
+      "state": "open",
+      "labelsUnchanged": true,
+      "commentsUnchanged": true,
+      "originalBodyPreserved": true
+    },
+    {
+      "number": 206,
+      "at": "2026-09-09T19:45:23.904Z",
+      "beforeBodySha": "f99e79f812e621f2325b1243d24e2432e7e889554650dfba718ef9b6344f1926",
+      "retainedBodySha": "f99e79f812e621f2325b1243d24e2432e7e889554650dfba718ef9b6344f1926",
+      "afterBodySha": "45c2f18e71d1a052009ec39f204fb39704719405247c9ee445f66bb756279f6a",
+      "state": "open",
+      "labelsUnchanged": true,
+      "commentsUnchanged": true,
+      "originalBodyPreserved": true
+    },
+    {
+      "number": 248,
+      "at": "2026-09-09T19:45:28.101Z",
+      "beforeBodySha": "447128251af46061e3b0d51d77d1b7976a054455829189e77162d787b11ae63b",
+      "retainedBodySha": "447128251af46061e3b0d51d77d1b7976a054455829189e77162d787b11ae63b",
+      "afterBodySha": "c5109913f3371b897e9105791e062de3df01bcf5fc9c25d3843792fd4da74c58",
+      "state": "open",
+      "labelsUnchanged": true,
+      "commentsUnchanged": true,
+      "originalBodyPreserved": true
+    },
+    {
+      "number": 219,
+      "at": "2026-09-09T19:45:32.081Z",
+      "beforeBodySha": "b5a64b539f3a9865fa42f526226849e67a6eb21736efe85feedbcdb9f970c901",
+      "retainedBodySha": "b5a64b539f3a9865fa42f526226849e67a6eb21736efe85feedbcdb9f970c901",
+      "afterBodySha": "4af197d67ff8b33defc355f25a3b13f3421c95c559873649042961ab0e50a5e4",
+      "state": "open",
+      "labelsUnchanged": true,
+      "commentsUnchanged": true,
+      "originalBodyPreserved": true
+    },
+    {
+      "number": 267,
+      "at": "2026-09-09T19:45:39.209Z",
+      "beforeBodySha": "2fb8a584d9dc0289448299df0012d19c565d5236b50de732aa585e20560746aa",
+      "retainedBodySha": "2fb8a584d9dc0289448299df0012d19c565d5236b50de732aa585e20560746aa",
+      "afterBodySha": "a78a0a9b4dcdba0c47b16b732e7211746fcef16dd73a8dbca318e22435ec4008",
+      "state": "open",
+      "labelsUnchanged": true,
+      "commentsUnchanged": true,
+      "originalBodyPreserved": true
+    },
+    {
+      "number": 268,
+      "at": "2026-09-09T19:45:43.474Z",
+      "beforeBodySha": "b8e13d34306c9b13d4af0557406505eea2447f05265ddac4a62fd10efdd1980e",
+      "retainedBodySha": "b8e13d34306c9b13d4af0557406505eea2447f05265ddac4a62fd10efdd1980e",
+      "afterBodySha": "85528ff580ed7ce88c320f332362d690623a5082a1e698c38f970d4e002057b2",
+      "state": "open",
+      "labelsUnchanged": true,
+      "commentsUnchanged": true,
+      "originalBodyPreserved": true
+    }
+  ],
+  "scope": "Initial publication snapshot; new tasks blocked until this planning merges. Runtime acceptance not performed."
+}

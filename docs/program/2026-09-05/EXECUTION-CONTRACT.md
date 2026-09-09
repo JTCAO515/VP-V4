@@ -114,6 +114,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 每家按实际地域/账户记录准确model ID、结构输出、tool call、usage、timeout和取消，不假定OpenAI兼容即一致。
 - [ ] 用相同中英旅行任务比较质量、约束、延迟和完整计费；默认一个主provider与最多一条已授权fallback。
 - [ ] 输出主模型/强模型选择和价格版本，所有日志无正文/秘密；缺密钥只报operator block，不写假结果。
+- [ ] HF复用：继续复用已合并三家协议适配和预算接口；仅按明确缺口借HF叶子组件或离线评测，不用smolagents/Lighteval/HF Inference另起无预算路由；采用项固定代码/模型revision并分别核许可、输入去向与回退。
 
 ## VPJ-07
 
@@ -135,6 +136,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 第三方AI许可前无个人数据外发，fallback接收方重新验scope；拒绝许可保留手动Trip路径。
 - [ ] 按ServiceTask规划契约关联一项明确目标的多轮Turn，必要澄清和系统修复不新建用户消费；归属由服务端核验，partial/完成后改稿/TTL等未决收费策略保持不启用。
 - [ ] 真实输出producer采用版本化VP内容与表达策略，英文直接创作、中英事实与动作状态一致；沿现有schema显式扩展并验证消费者，不新增人格服务或无约束二次润色。
+- [ ] HF复用：真实输出接入版本化的内容/语气规范与业务状态，相关性和友好表达不能替代证据/动作回执；复用现有prompt登记与响应合同，不新增人格服务或无约束二次润色。
 
 ## VPJ-08
 
@@ -212,6 +214,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 同意、来源、scope、版本和memory-use依据可追；Free同样保留当前Trip安全约束和纠错权。
 - [ ] Q36明确基础偏好对Free/Pass共同可用并跨Trip；保留Profile/Memory每字段唯一权威，用任务专用资格投影接入真实消费者，不能把管理列表整体注入模型。
 - [ ] 通过跨Trip、当前要求覆盖旧默认、纠正/撤回后排队与重试、跨账号迟到响应验证；明确记住且范围许可清楚不重复询问，推断和敏感画像不自动保存，偏好不得改写已确认Trip或替代外部证据。
+- [ ] HF复用：借LongMemEval更新/跨会话方法编写自有中英反例，分别观察资格、Context入选、实际使用与撤回；管理API不充当模型检索，Profile/Memory字段保持唯一权威源，不为benchmark新建画像或向量库。
 
 ## VPJ-12
 
@@ -230,6 +233,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 只做Photo Picker单张旅行截图→私有收件箱→受控解析→关键日期金额原文定位→用户确认；Share Extension/多页文件由VPJ-55承接。
 - [ ] 不给全相册/邮箱读取权限；未批准外发时使用许可内本地/人工录入路径。
 - [ ] 重复导入、解析失败、取消、TTL、删除、跨账号隔离可测；OCR成功不是供应商已确认。
+- [ ] HF复用：参考VPJ-73的Docling采用/否决证据，合格时只接回本票截图→定位字段→用户校正的边界；研究PDF对照不扩张本票格式，否决Docling不阻止采用其他合格方案；保留原始材料定位及取消/TTL。
 
 ## VPJ-13
 
@@ -285,6 +289,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 中英表达共享语言中立assertion；candidate/reviewed/published/eligible不可混同。
 - [ ] 运营能提交/审查/撤销并在产品读到结果；没有内容授权则阻塞发布，不批量造810条。
 - [ ] 首批内容按普通来华游客的城市/场景/必要claim/权利/时效/可用动作组织覆盖；优先支撑规划与变化后的下一步，未定城市名单不得写成已覆盖全国。
+- [ ] HF复用：测试集与生产知识分别登记；外部数据记录发布者、准确repo/revision/原行ID、逐源许可及变更，公开/NC/混合来源不自动发布为旅游Fact；优先自有合成评测与已许可审核语料。
 
 ## VPJ-16
 
@@ -304,6 +309,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] required/background/coverage/conflicts并存，同一fact多证据可用，no-answer不被相关度掩盖。
 - [ ] 真正knowledge gap与provider/policy/user-input/capability问题分流；不自动承诺人工。
 - [ ] 有依据回答同时约束自由正文和卡片，partial保留可靠部分并指明具体缺口与可用下一步；个人偏好只能筛选解释，不当外部事实；完整证据下全拒答作为失败反例。
+- [ ] HF复用：借MIRACL/BIPIA方法分别诊断检索、无答案与注入，保持请求级资格在召回及模型外发前执行、展示前重验；历史百科/旅行基准不当实时知识，相关高分不推翻时效、反证与许可。
 
 ## VPJ-17
 
@@ -925,6 +931,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 以实际qrels/语料规模触发实验，对同批直接读取baseline比较exact/FTS/trigram/vector/RRF。
 - [ ] PGroonga、rerank、Contextual Retrieval逐项消融；权限/时效/例外/反证切片不回退。
 - [ ] 只有质量/延迟/成本净收益才开放；extension版本/许可/恢复失败可回滚直接lookup。
+- [ ] HF复用：真实激活门保持；明确契约与范围后可先用公开/自有合成数据作有界离线加载、格式和对照准备，不视为本票激活或真实收益。先判定缺内容/别名、排名或召回问题；每轮最多两个候选、只改一个检索变量。
+- [ ] HF复用：优先Sentence Transformers验证，收益成立后再评估TEI；精确核Qwen/BGE各权重许可与revision及运行后端支持，不由embedding支持推定reranker兼容。模型库不替代RLS，主线保留原Postgres/直接lookup回退。
 
 ## VPJ-51
 
@@ -1191,6 +1199,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 不完整依据仍可保留用户决定但标待核，plan feasible只能由当前必要证据支持。
 - [ ] 整条有依据Proposal→diff→确认→TripItemSupport→以后重验可追溯。
 - [ ] 计划适合度由最新明确需求与相关基础偏好参与，但步行量、时间、地点和可行性仍需同口径合格证据；不得因品牌个性化而放宽来源或晚餐锁。
+- [ ] HF复用：借TravelPlanner等的有限约束检查结构并用独立oracle验最终计划，保留真实来源/版本/时区/用户约束；不执行外部hard_logic_py/任意DSL，不将ChinaTravel/Open-Travel的NC数据或历史价目直接导入商业运行链。
 
 ## VPJ-66
 
@@ -1280,7 +1289,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 [VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267) — Harness：只读模型或提示词候选的配对评测与校准
 
 - Owner: coding-agent; 3专注日，有界PR验证；真实环境/人工校准等待另计
-- Blocked by: [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264)
+- Blocked by: [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264), [VPJ-72 #287](https://github.com/JTCAO515/VP-V4/issues/287)
 - Allowed: `evals/harness/**`, `tests/**/harness/**`, `docs/benchmarks/**`, `lib/server/model-gateway/prompt/**`, `docs/harness/**`, `artifacts/VPJ-70/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm evals`
 - Evidence: `artifacts/VPJ-70/verification.md`, `artifacts/VPJ-70/unrun.md`, `artifacts/VPJ-70/commands.jsonl`, `artifacts/VPJ-70/results.json`
@@ -1295,6 +1304,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 确定性红线与质量rubric分开；人工校准正反例、记录grader分歧，不由生成模型自评或看结果后改标准。回归中故意退化候选须被拒绝。
 - [ ] 交付同一JSON报告/Markdown摘要与可复用配对入口；本票关闭限于只读比较，Trip配对与最终能力判定保留VPJ-71。新接收方/地区必须先满足原数据政策门。
 - [ ] 在既有配对入口加入任务完成、事实限定、正确偏好使用、下一步、密度、英文自然度及情境语气rubric；人工校准并预冻结阈值，正常可答的过度拒绝判失败，hard fail不被均分抵消。
+- [ ] HF复用：消费VPJ-72的离线内容判分与盲评包，保留A/B交换、平局/都失败、评分来源和反馈版本；工具验证或合成标注不冒充真实人工校准。HF Judge/Guidebook只借方法，真实候选仍走本票原许可/预算/事前阈值。
 
 ## VPJ-71
 
@@ -1317,3 +1327,44 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 先验证故意失败或缺证据能阻塞判定，再提交实际结果；基线/候选变化重跑受影响集合，不拼接不同配置的通过报告。
 - [ ] Harness门纳入现有发布验收资料；本票不授权生产、不自动关闭VPJ-41/42/43/45，不替代真实账号、原生设备、IAP、隐私或商店验收。
 - [ ] 同一已选配置的两条真实中英任务同时验证ServiceTask必要澄清不重复消费、正确偏好使用及真实状态表达；保留12场景required mode与全部原门，表达更好不替代真实正确性/恢复/费用证据。
+- [ ] HF复用：最终报告同时核验真实任务结果和内容/语气，不以讨喜均分抵消状态、事实、记忆、确认硬失败；确认公开基准、开发集和独立验收集的暴露记录，采用资源版本/许可/运行环境可追。
+
+## VPJ-72
+
+[VPJ-72 #287](https://github.com/JTCAO515/VP-V4/issues/287) — 中英回答离线内容判分与可导入反馈的盲评包
+
+- Owner: coding-agent; 3专注日，有界准备PR；真实调用/人工校准/产品集成在原父票验证
+- Blocked by: [VPJ-66 #263](https://github.com/JTCAO515/VP-V4/issues/263)
+- Allowed: `evals/harness/response-quality/**`, `tests/**/response-quality/**`, `evals/harness/pairing/**`, `docs/harness/hf-reuse/**`, `artifacts/VPJ-72/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm evals`
+- Evidence: `artifacts/VPJ-72/verification.md`, `artifacts/VPJ-72/unrun.md`, `artifacts/VPJ-72/commands.jsonl`, `artifacts/VPJ-72/results.json`
+- 接口: docs/harness/hf-reuse/README.md; Red lines: RL-01, RL-02, RL-04, RL-05, RL-06, RL-07
+- 运行门: VPJ-66已完成，PR277配对接口已在main；只用自有合成样本与已有报告，无真实provider/数据库依赖。 本地反馈界面可选现有静态输出；需要依赖时固定版本和许可，不把安装框架当结果。
+- Rollback: 回退新增判分/盲评入口与报告版本适配，保留旧pairing及已有反馈/证据；不改变线上配置。
+
+- [ ] 开发者从主线已存在的配对报告生成中英离线内容/语气判分与本机盲评包，导入反馈后得到同一版本化JSON/Markdown结果；完整交付限于离线工具和反例。
+- [ ] 复用既有pairing schema/版本/hash及报告，不重建runner或模型路由；优先静态/Markdown，真实交互不足时才用本机Gradio且无公网分享。
+- [ ] 明确回应目标、证据限定、下一步、偏好适用、密度、英文自然和情境语气的有锚点rubric；事实/权限/确认/虚构执行结果硬失败独立否决，正常可答案例过度拒绝被检出。 可确定校验的状态/回执使用确定性断言；语义事实支持和自然度需要人工或经校准judge，未评项标NOT_RUN，不以关键词匹配声称通用语义判分。
+- [ ] 自有中英正常/错误输出通过完整入口验证；交换A/B、平局/都失败、重复反馈去重、错误case/version拒绝、反馈来源human/fixture明确。合成标签不能记为人工评审。
+- [ ] 保留8开发/4holdout及12场景口径，登记已暴露样本；外部例需repo/revision/来源/许可，自有例不伪称外部benchmark正式得分，不复制NC教程正文或数据。
+- [ ] 报告可供#267消费，并明确真实provider配对/人工校准/采用判定仍UNRUN；未执行离线全流程或反例失败不能关闭本票。
+
+## VPJ-73
+
+[VPJ-73 #288](https://github.com/JTCAO515/VP-V4/issues/288) — Docling合成旅行材料解析与校正候选试验
+
+- Owner: coding-agent; 3专注日，有界准备PR；真实调用/人工校准/产品集成在原父票验证
+- Blocked by: 仅基线合并
+- Allowed: `scripts/experiments/docling/**`, `tests/**/docling/**`, `docs/harness/hf-reuse/**`, `artifacts/VPJ-73/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm evals`
+- Evidence: `artifacts/VPJ-73/verification.md`, `artifacts/VPJ-73/unrun.md`, `artifacts/VPJ-73/commands.jsonl`, `artifacts/VPJ-73/results.json`
+- 接口: docs/harness/hf-reuse/README.md; Red lines: RL-01, RL-02, RL-04, RL-05, RL-06, RL-07
+- 运行门: 明确本票是独立本地试验，不依赖真实材料/provider/账号；只采用可核验许可的输入和组件。 实际转换命令由本票实现并记录在commands.jsonl，不预填尚不存在的Docling脚本命令；必要Python依赖与资源在隔离环境核对。
+- Rollback: 移除隔离试验入口与本票自有临时样本，保留采用/否决依据；不改既有材料入口、用户数据或迁移。
+
+- [ ] 用自有合成中英旅行截图评估固定Docling管线，输出带原材料ID/位置/字段/不完整状态的校正候选与可复现采用或否决报告；可搜索PDF仅作对照，不扩#201单张截图或#236多页产品范围。
+- [ ] 运行前登记框架与所用解析器/权重各自许可、revision和资产；不默认使用许可矛盾的SmolDocling，不启用未审remote code、远程服务或外部插件。下载准备与真正离线运行分开证明。 在运行前固定小型中英样本与关键字段/来源位置oracle、采用/否决判据和有限输入/时长/内存上限，禁止跑后挑样或改阈值。
+- [ ] 可运行分支必须保留可重复的实际转换证据，覆盖日期/时区、金额币种、小字/折行、缺失信息和OCR错误，保留可回看的原位置，错误由校正候选呈现；不可运行分支不填转换PASS，按本票有据否决路径处理。
+- [ ] 可运行分支验证文件限额、取消/超时、重复材料与材料内恶意指令只作内容；不连接真实用户、数据库、provider或Trip writer。保留实际资源/耗时、命令与失败，不编造中文效果。
+- [ ] 结论为有据ADOPT或REJECT：可运行分支按事前冻结样本/真值/判据判断；不可运行分支仅在固定组件/版本的具体许可或兼容阻断证据充分且已评估替代路线后作REJECT，明确转换/性能UNRUN。仅未安装/缺环境或证据不足时保持OPEN/UNRUN。
+- [ ] 有采用价值时提供到现有材料候选合同的差异和后续#201/#236集成清单；否决不阻塞这些父票采用其他合格实现，不宣称材料已审核或全部格式/真实产品通过。

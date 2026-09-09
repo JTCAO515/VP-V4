@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "vp-hf-planning-delta/1",
+  "baseCommit": "6b475cff27bfea17db50fa244ce5d1bd5337503f",
+  "policy": "append only HF acceptance; preserve live progress and prior dependencies; add VPJ72/73 and one edge VPJ70->VPJ72",
+  "issues": [
+    {
+      "id": "VPJ-06",
+      "number": 193,
+      "acceptanceAdditions": [
+        "HF复用：继续复用已合并三家协议适配和预算接口；仅按明确缺口借HF叶子组件或离线评测，不用smolagents/Lighteval/HF Inference另起无预算路由；采用项固定代码/模型revision并分别核许可、输入去向与回退。"
+      ],
+      "originalBlockedBy": [
+        "VPJ-03"
+      ]
+    },
+    {
+      "id": "VPJ-07",
+      "number": 195,
+      "acceptanceAdditions": [
+        "HF复用：真实输出接入版本化的内容/语气规范与业务状态，相关性和友好表达不能替代证据/动作回执；复用现有prompt登记与响应合同，不新增人格服务或无约束二次润色。"
+      ],
+      "originalBlockedBy": [
+        "VPJ-04",
+        "VPJ-05",
+        "VPJ-06",
+        "VPJ-59"
+      ]
+    },
+    {
+      "id": "VPJ-11",
+      "number": 199,
+      "acceptanceAdditions": [
+        "HF复用：借LongMemEval更新/跨会话方法编写自有中英反例，分别观察资格、Context入选、实际使用与撤回；管理API不充当模型检索，Profile/Memory字段保持唯一权威源，不为benchmark新建画像或向量库。"
+      ],
+      "originalBlockedBy": [
+        "VPJ-03",
+        "VPJ-05",
+        "VPJ-07"
+      ]
+    },
+    {
+      "id": "VPJ-12",
+      "number": 201,
+      "acceptanceAdditions": [
+        "HF复用：参考VPJ-73的Docling采用/否决证据，合格时只接回本票截图→定位字段→用户校正的边界；研究PDF对照不扩张本票格式，否决Docling不阻止采用其他合格方案；保留原始材料定位及取消/TTL。"
+      ],
+      "originalBlockedBy": [
+        "VPJ-01",
+        "VPJ-03",
+        "VPJ-04",
+        "VPJ-07",
+        "VPJ-60"
+      ]
+    },
+    {
+      "id": "VPJ-15",
+      "number": 205,
+      "acceptanceAdditions": [
+        "HF复用：测试集与生产知识分别登记；外部数据记录发布者、准确repo/revision/原行ID、逐源许可及变更，公开/NC/混合来源不自动发布为旅游Fact；优先自有合成评测与已许可审核语料。"
+      ],
+      "originalBlockedBy": [
+        "VPJ-14"
+      ]
+    },
+    {
+      "id": "VPJ-16",
+      "number": 206,
+      "acceptanceAdditions": [
+        "HF复用：借MIRACL/BIPIA方法分别诊断检索、无答案与注入，保持请求级资格在召回及模型外发前执行、展示前重验；历史百科/旅行基准不当实时知识，相关高分不推翻时效、反证与许可。"
+      ],
+      "originalBlockedBy": [
+        "VPJ-07",
+        "VPJ-15"
+      ]
+    },
+    {
+      "id": "VPJ-50",
+      "number": 248,
+      "acceptanceAdditions": [
+        "HF复用：真实激活门保持；明确契约与范围后可先用公开/自有合成数据作有界离线加载、格式和对照准备，不视为本票激活或真实收益。先判定缺内容/别名、排名或召回问题；每轮最多两个候选、只改一个检索变量。",
+        "HF复用：优先Sentence Transformers验证，收益成立后再评估TEI；精确核Qwen/BGE各权重许可与revision及运行后端支持，不由embedding支持推定reranker兼容。模型库不替代RLS，主线保留原Postgres/直接lookup回退。"
+      ],
+      "originalBlockedBy": [
+        "VPJ-16",
+        "VPJ-17"
+      ]
+    },
+    {
+      "id": "VPJ-65",
+      "number": 219,
+      "acceptanceAdditions": [
+        "HF复用：借TravelPlanner等的有限约束检查结构并用独立oracle验最终计划，保留真实来源/版本/时区/用户约束；不执行外部hard_logic_py/任意DSL，不将ChinaTravel/Open-Travel的NC数据或历史价目直接导入商业运行链。"
+      ],
+      "originalBlockedBy": [
+        "VPJ-09",
+        "VPJ-16",
+        "VPJ-19"
+      ]
+    },
+    {
+      "id": "VPJ-70",
+      "number": 267,
+      "acceptanceAdditions": [
+        "HF复用：消费VPJ-72的离线内容判分与盲评包，保留A/B交换、平局/都失败、评分来源和反馈版本；工具验证或合成标注不冒充真实人工校准。HF Judge/Guidebook只借方法，真实候选仍走本票原许可/预算/事前阈值。"
+      ],
+      "originalBlockedBy": [
+        "VPJ-67"
+      ]
+    },
+    {
+      "id": "VPJ-71",
+      "number": 268,
+      "acceptanceAdditions": [
+        "HF复用：最终报告同时核验真实任务结果和内容/语气，不以讨喜均分抵消状态、事实、记忆、确认硬失败；确认公开基准、开发集和独立验收集的暴露记录，采用资源版本/许可/运行环境可追。"
+      ],
+      "originalBlockedBy": [
+        "VPJ-69",
+        "VPJ-70",
+        "VPJ-37",
+        "VPJ-63"
+      ]
+    }
+  ],
+  "integratedBaseCommit": "d78e18872e308884dcafe5d9b75648ddcbdd568c"
+}

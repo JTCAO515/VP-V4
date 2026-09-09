@@ -44,10 +44,10 @@ VPJ-66 需补齐 producer→adapter→consumer→assertion 的实际复用清单
 | H-02 | [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264) | 真实只读问答、证据与结果回执 | VPJ-66、VPJ-16 | 4 |
 | H-03 | [VPJ-68 #265](https://github.com/JTCAO515/VP-V4/issues/265) | 可测量的少走路、精确保留晚餐与确认重载 | VPJ-67、VPJ-10、VPJ-11、VPJ-65 | 4 |
 | H-04 | [VPJ-69 #266](https://github.com/JTCAO515/VP-V4/issues/266) | 同一任务故障、取消、重连与提交核验 | VPJ-68 | 3 |
-| H-05 | [VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267) | 只读模型/提示词候选的配对比较与评分校准 | VPJ-67 | 3 |
+| H-05 | [VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267) | 只读模型/提示词候选的配对比较与评分校准 | VPJ-67、VPJ-72 | 3 |
 | H-06 | [VPJ-71 #268](https://github.com/JTCAO515/VP-V4/issues/268) | 两条任务的最终回归、发布判定与停用/恢复演练 | VPJ-69、VPJ-70、VPJ-37、VPJ-63 | 3 |
 
-VPJ-68 与 VPJ-70 在 VPJ-67 后并行；VPJ-69 经 VPJ-68→VPJ-10→VPJ-09 继承 VPJ-08，不重复加边；VPJ-67 经 VPJ-16 继承 VPJ-07 及身份/provider/预算门。新增 12 条直接边，原 65 项的身份、验收和 198 条依赖保持不变。
+VPJ-68 与 VPJ-70 在各自直接前置满足后可并行，VPJ-72的离线准备可提前完成；VPJ-69 经 VPJ-68→VPJ-10→VPJ-09 继承 VPJ-08，不重复加边；VPJ-67 经 VPJ-16 继承 VPJ-07 及身份/provider/预算门。最初六票新增12条直接边；2026-09-10的[HF执行增量](hf-reuse/README.md)再新增VPJ-72/73及2条边，其中VPJ-70增加VPJ-72前置。已有任务身份与既有依赖保持，新验收以当前manifest为准。
 
 工时仅为新增整合工作的容量占位，不包含上游实现、审查返工、真机/真实网络或 operator 等待，不是交付日期。单条 PR 应能在一个新上下文中审查；超过范围时在原 Issue 下分增量 PR，不把它变成多模块重写。
 

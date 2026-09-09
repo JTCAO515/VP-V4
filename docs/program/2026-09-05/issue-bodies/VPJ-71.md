@@ -45,6 +45,7 @@ Harness：核心任务发布判定与能力停用恢复验收。
 - [ ] 先验证故意失败或缺证据能阻塞判定，再提交实际结果；基线/候选变化重跑受影响集合，不拼接不同配置的通过报告。
 - [ ] Harness门纳入现有发布验收资料；本票不授权生产、不自动关闭VPJ-41/42/43/45，不替代真实账号、原生设备、IAP、隐私或商店验收。
 - [ ] 同一已选配置的两条真实中英任务同时验证ServiceTask必要澄清不重复消费、正确偏好使用及真实状态表达；保留12场景required mode与全部原门，表达更好不替代真实正确性/恢复/费用证据。
+- [ ] HF复用：最终报告同时核验真实任务结果和内容/语气，不以讨喜均分抵消状态、事实、记忆、确认硬失败；确认公开基准、开发集和独立验收集的暴露记录，采用资源版本/许可/运行环境可追。
 
 ## 不得触碰
 
@@ -89,6 +90,7 @@ Owner: coding-agent。类型: vertical。预估专注工作3日，外部等待�
 - `docs/contracts/service-task-metering.md`
 - `docs/contracts/basic-preferences-cross-trip.md`
 - `docs/contracts/vp-response-policy.md`
+- `docs/harness/hf-reuse/README.md`
 
 停用本轮候选/整合，保留可审计报告与既有安全不变量；保持Trip和删除/撤权状态，不回退已应用数据库历史。
 
