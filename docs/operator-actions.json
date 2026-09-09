@@ -10,11 +10,11 @@
       "class": "C",
       "status": "open",
       "createdAt": "2026-09-05T00:00:00+08:00",
-      "action": "原13迁移/必要备份/两临时普通账号的授权已收到且继续有效。追加RPC修复迁移20260909033302尚需明确纳入本次Staging执行范围；不重复索取原授权。",
-      "whyHuman": "备份/实际隔离恢复与Session pooler verify-full、原13 dry-run均已通过。本地真实测试发现原13基线运行缺陷，已在单一追加迁移修复（包括受限definer例外），原24文件不改。远端仍11，保留既有3Auth/2Trip；新文件超出此前固定13文件清单。",
+      "action": "Staging追加SQL授权已收到并执行，25条迁移与普通JWT隔离16/16通过。继续分别记录direct-host和worker路径的实际结果；不重复索取已授权迁移/账号范围。",
+      "whyHuman": "本轮备份恢复、迁移和两账号清理已完成，原有3Auth/2Trip摘要一致；剩余路径若需新的运行身份或环境权限再限定请求，现有授权内先完成只读诊断。",
       "prerequisites": "Baseline PR merged; no other task blockers; follow this task execution row",
       "expectedResult": "确认目标确为无真实用户的现有 Staging，记录24条迁移实际状态和差异，不重建历史。 真实 owner/other-user/anon 三类读取与写入验证；正常数据库、pooler、worker路径分别记录。 输出脱敏配置结果与可执行下一步；失败不伪装通过，不创建Production。",
-      "verify": "见artifacts/VPJ-02/rpc-repair/verification.md/json及docs/contracts/vpj-02-rpc-repair.md；追加授权后重新核哈希/目标并实际升级与两JWT矩阵，不能用本地/维护role代替Staging用户隔离。",
+      "verify": "artifacts/VPJ-02/staging-apply-20260910.md；普通JWT与维护Session pooler已实测，direct/worker不据此推断通过。",
       "dependencyEffect": "Unblocks only dependents of VPJ-02; does not globally stop unrelated ready work.",
       "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
       "nextSafeIssue": 188,
@@ -22,9 +22,9 @@
         "necessary Staging backup",
         "original13 pending migrations subject to validation",
         "two temporary ordinary Auth test identities",
-        "cleanup limited to this run new objects under prior scoped plan"
-      ],
-      "additionalPendingMigration": "20260909033302_vpj_02_repair_local_rpc_runtime.sql"
+        "cleanup limited to this run new objects under prior scoped plan",
+        "20260909033302_vpj_02_repair_local_rpc_runtime.sql on the same selected Staging"
+      ]
     },
     {
       "id": "OA-VPJ-03",
