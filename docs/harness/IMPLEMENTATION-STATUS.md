@@ -16,7 +16,7 @@
 - VPJ-02 #189：PR281已合并85c2b98。获准原13+RPC修复迁移已实际执行，Staging11→25；新加密备份/断网恢复与普通JWT隔离16/16通过，精确清理后原有3Auth/2Trip摘要一致。新预算迁移20260909184816已获追加授权并执行，Staging现26条迁移；新备份恢复及40项预算/身份检查通过，精确清理后原数据保持一致。direct-host新只读探针仍失败，worker路径仍未验收。见artifacts/VPJ-02/staging-apply-20260910.md。
 - VPJ-03 #190：PR282已合并d4eeb08，记录JT提供的服务入口、Qwen/GLM个人账号、经营主体、测试对象和三家合成推理授权；每家本轮累计≤CNY30、总计≤CNY90，不授权充值。DeepSeek账号类型未提供。JT已选择A，允许仅本轮完全虚构、无个人信息的文本按适用条款留存/模型改进；真实聊天保存/删除和人工访问规则未定。三家登录钥匙串条目均已检测到；DeepSeek此前进程环境变量后来不存在，用户已补录。条目存在不证明密钥有效或模型权限。见docs/policy/vpj-03-text-decisions.md。
 - VPJ-01 #188：PR278合并f6928c8，准确HEAD审阅及Quality/Native CI通过；本地iOS26.5最终8单元+7UI通过，iOS17.5为8单元+3UI通过、4UI裁切审计失败。同设备基线对照复现中文banner及Tools既存失败，本次减少对比度问题；不能作为最低系统验收通过，最大字完整contrast诊断亦保留FAIL。真实VoiceOver/设备等基础原生门仍未验收。已登录真实Trip的选区Ask/确认/重载属于#198及#233/#242联合验收，不反向阻塞#188；当前空Trip预览不能冒充这些消费者。
-- VPJ-04 #191：PR279合并798dc36，准确HEAD审阅/CI及合并后30项身份测试通过。SDK验证普通用户JWT并绑定同JWT客户端，Web cookie/Origin路径保留；没有权威mobile epoch时原生数据方法全部拒绝。真实iOS登录/刷新/退出、第二手机顶替及iOS→API→RLS仍未接通。
+- VPJ-04 #191：基于PR279的JWT接缝，本机native v2已接通真实Profile→URLSession→Next→普通Auth/JWT→持久epoch/RLS。两台iOS26.5的6项身份测试、真实过期/刷新、顶替并发、旧RPC重放拒绝及Web Cookie/Origin均通过；全新本机26→27首次迁移及15函数原体保留已核验。默认远端关闭，Staging仍26；17.5身份、真机、push及完整原生Trip消费者未验，#191保持OPEN。完整证据与保留失败见artifacts/VPJ-04/local-session/verification.md。
 - VPJ-06 #193：已有真实C0协议证据：三家主样本27/27、客户端超时/取消6/6、两个真实DeepSeek调用的重复worker/崩溃记账证明通过。GLM显式关闭思考导致400/1210，保留原生默认后实际9项样本通过；Qwen/DeepSeek各9样本通过。不同轮次输出上限分开记录，只有后两轮同4096；不把协议通过当语义质量/人工校准或模型采用。完整usage按最高公开费率的保守预算扣额0.035014CNY，8个不明费用请求保留28.9CNY预留，均非实际账单声明。真实profile/outcome消费者、地区/账单核验和语义质量仍待完成；见artifacts/VPJ-06/live-c0-20260910。
 
 - VPJ-62 #202无形式任务依赖，但实际邮箱/同意/回执/退出涉及真实接收方与数据政策，且不在Harness主依赖链；不为绕开阻塞自动开放收集。
@@ -29,7 +29,7 @@
 
 #194的持久预算实现已由PR284合并8a465f9：本地PostgreSQL9/9（含并发与worker崩溃）、完整本地Supabase25→26/Auth/PostgREST1/1通过；单元45/契约188/受影响专项11通过。准确HEAD7579cc6独立审阅Critical0/Important0，Quality34394008077与Budget PostgreSQL34394008088通过，后者在镜像仓库限流后重跑成功9/9、零skip；没有跳过检查。新SQL随后获授权并通过Staging25→26、40项HTTP/身份/合成预算检查；随后真实C0 provider与本地worker调用/费用保留已验证；部署worker与完整用户链仍未验收。见artifacts/VPJ-59/verification.md及Issue194的合并结果评论。
 
-新增预算迁移与本轮合成用途授权已落实；当前继续真实provider协议/成本与运行接口验证。#194的Staging预算与本地真实C0 provider调用方已验，部署worker/用户链仍未验；#195仍缺持久coordinator、权威原生会话与真实provider；#206的审核ledger/语料仍属内存或fixture，并依赖#195/#205及获许可知识输入。依赖仍为189+193→194，191+192+193+194→195，195+205→206→Harness67。后续先取得对应授权/策略/真实接口，再接通；不以新增同类fixture替代它们。
+新增预算迁移与本轮合成用途授权已落实；当前继续真实provider协议/成本与运行接口验证。#194的Staging预算与本地真实C0 provider调用方已验，部署worker/用户链仍未验；#195仍缺持久coordinator、部署身份消费者与真实provider；本机身份metadata链已具备，不能混同C2聊天授权；#206的审核ledger/语料仍属内存或fixture，并依赖#195/#205及获许可知识输入。依赖仍为189+193→194，191+192+193+194→195，195+205→206→Harness67。后续先取得对应授权/策略/真实接口，再接通；不以新增同类fixture替代它们。
 
 ## 验证范围
 
