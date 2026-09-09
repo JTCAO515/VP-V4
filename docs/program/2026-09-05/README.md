@@ -16,6 +16,8 @@
 
 ## 当前范围
 
+2026-09-10 [HF复用执行计划](../../harness/hf-reuse/README.md) 增加VPJ-72回答判分/盲评准备、VPJ-73材料解析试验，并为10项现有任务补充资源与验收要求。新增2条依赖，既有边不删除；Docling试验否决不阻止材料能力选其他合格实现。任务身份仍由本Program的issue-plan.json管理。
+
 开发调度：[品牌方向增量开发计划](BRAND-ALIGNMENT-EXECUTION.md)。
 
 2026-09-10 [品牌工程调整研究](../../research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md)将已确认的免费基础跨Trip偏好、完整服务任务和VP输出表达同步为三个规划契约与既有任务验收增量。沿当前依赖推进，未决收费数值、数据许可及激活制不启用；已完成准备和进行中的独立工作继续。

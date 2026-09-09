@@ -34,6 +34,7 @@
 - [ ] 中英表达共享语言中立assertion；candidate/reviewed/published/eligible不可混同。
 - [ ] 运营能提交/审查/撤销并在产品读到结果；没有内容授权则阻塞发布，不批量造810条。
 - [ ] 首批内容按普通来华游客的城市/场景/必要claim/权利/时效/可用动作组织覆盖；优先支撑规划与变化后的下一步，未定城市名单不得写成已覆盖全国。
+- [ ] HF复用：测试集与生产知识分别登记；外部数据记录发布者、准确repo/revision/原行ID、逐源许可及变更，公开/NC/混合来源不自动发布为旅游Fact；优先自有合成评测与已许可审核语料。
 
 ## 不得触碰
 
@@ -77,6 +78,7 @@ Owner: coding-agent。类型: vertical。预估专注工作5日，外部等待�
 - `CONTEXT.md`
 - `docs/contracts/vpj-15.md`
 - `docs/contracts/vp-response-policy.md`
+- `docs/harness/hf-reuse/README.md`
 
 Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 

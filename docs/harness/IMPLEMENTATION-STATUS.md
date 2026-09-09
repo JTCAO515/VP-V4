@@ -24,6 +24,8 @@
 
 ## 下一阶段真实链边界
 
+[HF执行增量](hf-reuse/README.md)新增VPJ-72判分/盲评准备和VPJ-73材料解析试验；本规划合并并核条件后可独立推进。VPJ-70 #267额外消费VPJ-72结果，仍等待真实VPJ-67。HF试验不重做PR277配对框架，不更换真实provider/预算路径，不因此关闭原运行票。
+
 #194的持久预算实现已由PR284合并8a465f9：本地PostgreSQL9/9（含并发与worker崩溃）、完整本地Supabase25→26/Auth/PostgREST1/1通过；单元45/契约188/受影响专项11通过。准确HEAD7579cc6独立审阅Critical0/Important0，Quality34394008077与Budget PostgreSQL34394008088通过，后者在镜像仓库限流后重跑成功9/9、零skip；没有跳过检查。新SQL仍仅本地，真实Staging预算、provider调用和worker接入未验收。见artifacts/VPJ-59/verification.md及Issue194的合并结果评论。
 
 当前需要对应的新增迁移范围、账号/用途决定和运行接口，不能绕过这些条件直接接通。#194仍缺获准的远端预算与真实provider调用方；#195仍缺持久coordinator、权威原生会话与真实provider；#206的审核ledger/语料仍属内存或fixture，并依赖#195/#205及获许可知识输入。依赖仍为189+193→194，191+192+193+194→195，195+205→206→Harness67。后续先取得对应授权/策略/真实接口，再接通；不以新增同类fixture替代它们。

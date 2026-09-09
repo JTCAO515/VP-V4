@@ -556,6 +556,14 @@
       "status": "document"
     },
     {
+      "path": "docs/harness/hf-reuse/DELIVERY.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/harness/hf-reuse/README.md",
+      "status": "document"
+    },
+    {
       "path": "docs/homepage-redesign.md",
       "status": "document"
     },
@@ -924,6 +932,14 @@
       "status": "document"
     },
     {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-72.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-73.md",
+      "status": "document"
+    },
+    {
       "path": "docs/program/2026-09-05/program-body.md",
       "status": "document"
     },
@@ -933,6 +949,10 @@
     },
     {
       "path": "docs/research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/VISEPANDA-HUGGINGFACE-REUSE-REPORT-2026-09-10.md",
       "status": "evidence"
     },
     {
@@ -981,6 +1001,18 @@
     },
     {
       "path": "docs/research/final-tracker-commercial-audit-2026-09-05.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/huggingface-reuse-2026-09-10/evals-memory.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/huggingface-reuse-2026-09-10/retrieval.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/huggingface-reuse-2026-09-10/tools-agents.md",
       "status": "evidence"
     },
     {

@@ -1,0 +1,77 @@
+[
+  {
+    "kind": "datasets",
+    "id": "osunlp/TravelPlanner",
+    "sha": "8736504ecfc31b7f8b7e40122873c337e83fff7c",
+    "lastModified": "2024-07-14T07:47:48.000Z",
+    "gated": false,
+    "private": false,
+    "license": "cc-by-4.0",
+    "language": [
+      "en"
+    ],
+    "files": [
+      "README.md"
+    ]
+  },
+  {
+    "kind": "datasets",
+    "id": "LAMDA-NeSy/ChinaTravel",
+    "sha": "44d5dbf3bba26bdf9a212c3e76d3242b67f0d349",
+    "lastModified": "2026-08-20T05:12:22.000Z",
+    "gated": false,
+    "private": false,
+    "license": "cc-by-nc-sa-4.0",
+    "language": [
+      "zh",
+      "en"
+    ],
+    "files": [
+      "README.md"
+    ]
+  },
+  {
+    "kind": "datasets",
+    "id": "Alibaba-NLP/Open-Travel",
+    "sha": "b997227fb474eb578b7b951694fd4a6bf751bafa",
+    "lastModified": "2026-01-16T05:44:50.000Z",
+    "gated": false,
+    "private": false,
+    "license": "cc-by-nc-4.0",
+    "language": [
+      "zh"
+    ],
+    "files": [
+      "LICENSE",
+      "README.md"
+    ]
+  },
+  {
+    "kind": "spaces",
+    "id": "LAMDA-NeSy/ChinaTravel",
+    "sha": "5eef81910a414308e0496ee0d83c1a3622655430",
+    "lastModified": "2026-08-24T13:55:03.000Z",
+    "gated": false,
+    "private": false,
+    "license": "cc-by-nc-sa-4.0",
+    "language": null,
+    "files": [
+      "README.md"
+    ]
+  },
+  {
+    "kind": "datasets",
+    "id": "HuggingFaceH4/ultrafeedback_binarized",
+    "sha": "3949bf5f8c17c394422ccfab0c31ea9c20bdeb85",
+    "lastModified": "2024-10-16T11:49:06.000Z",
+    "gated": false,
+    "private": false,
+    "license": "mit",
+    "language": [
+      "en"
+    ],
+    "files": [
+      "README.md"
+    ]
+  }
+]
