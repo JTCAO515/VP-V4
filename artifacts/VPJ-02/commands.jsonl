@@ -1,0 +1,3 @@
+{"observedAt": "2026-09-09T10:37:44.644330+08:00", "command": "supabase db query --linked --file scripts/db/vpj-02-readonly.sql --output-format json", "exitCode": 0, "scope": "metadata-only SQL in read-only transaction; target ref held only in ignored CLI link cache"}
+{"observedAt": "2026-09-09T10:37:44.644330+08:00", "command": "supabase db push --linked --dry-run --skip-vault --output-format json", "exitCode": 1, "result": "database connection terminated; no migration applied"}
+{"observedAt": "2026-09-09T10:37:44.644330+08:00", "command": "supabase db push --linked --dry-run --skip-vault --dns-resolver https --output-format json", "exitCode": 1, "result": "DNS-over-HTTPS returned no valid database IP; no migration applied"}
