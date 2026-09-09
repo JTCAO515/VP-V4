@@ -6,6 +6,8 @@
     "internal-brand": {"owner": "VisePanda project", "sourceType": "project-created brand artifact", "license": "internal-use-pending-operator-attestation", "derivativeProvenance": "tracked VisePanda brand delivery", "permittedSurfaces": ["brand-reference", "design-review"], "reviewStatus": "internal-review", "approver": "WEB-04 automated integrity check"}
   },
   "records": [
+    {"id":"master-logo-20260909","path":"assets/brand/vise-panda/VP-Logo-20260909.png","sha256":"379c70aaed2fdcd9ac80d6713acc5193085163bf4df52705c49e799d89ebb0d8","policy":"owner-master"},
+    {"id":"master-wordmark-20260909","path":"assets/brand/vise-panda/VP-Wordmark-20260909.png","sha256":"923d49a1465920b501643148e74c2997442ffeda1ce3c00bb27af820a231240e","policy":"owner-master"},
     {"id":"master-logo-svg","path":"assets/brand/vise-panda/VP-Logo.svg","sha256":"ab35b4568cb37ec1a37a6f54f75779beee11da37c19d2036a5f15be04fa3a956","policy":"owner-master"},
     {"id":"master-logo-png","path":"assets/brand/vise-panda/VP-Logo.png","sha256":"83f1a4c6026e9a026b22f44f1ddf1d7f44fe806a322235dfce53ba831b1d1270","policy":"owner-master"},
     {"id":"master-guide-front","path":"assets/brand/vise-panda/VP-正面全身.png","sha256":"3cdd805e1ee40792e708563c1b734ef0704ce1a4d001c4ac1297e25321929071","policy":"owner-master"},
