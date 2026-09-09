@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Authorized Staging upgrade11->25 and ordinary JWT isolation16/16 passed; fresh encrypted backup restored and original3 Auth/2 Trip row digests preserved after exact-ID cleanup. Prior bounded PR275/277/278/279 remain merged; parent runtime Issues remain OPEN.
+状态：Staging25 and ordinary JWT isolation16/16 remain verified. Durable budget local PostgreSQL9/9 and full Supabase25->26/Auth/HTTP1/1 passed, with units45/contracts188/affected11 passing. Remote budget migration, provider-policy applicability and actual Harness integration remain incomplete.
 
-阶段：Staging schema and ordinary HTTP identity integration verified; continue direct/worker evidence and bounded synthetic provider runtime preparation.
+阶段：Durable budget local implementation verified; new Staging migration scope and synthetic provider policy/credentials remain runtime gates.
 
 ## 读取顺序
 
@@ -65,7 +65,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Complete #189 direct-host/worker path evidence without inferring it from maintenance pooler or HTTP JWT success. User authorized three synthetic-text providers, each cumulative maximum CNY30(total90), with no recharge grant. Verify actual account model/endpoint/prices and bounded spending before calls. #190 retention/deletion and real user/human access rules remain undecided; native epochs and licensed knowledge remain separate gates.
+After exact review/CI, request scope for new budget migration20260909184816 plus its bounded Staging verification; previous grant covered original13 and RPC repair only. Keep C0 per-provider CNY30/total90 limits and no recharge. Resolve pending synthetic training/retention choice and Qwen/GLM credential availability before provider calls. Real C2 retention/deletion/human access, native sessions and licensed knowledge remain independent gates.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
