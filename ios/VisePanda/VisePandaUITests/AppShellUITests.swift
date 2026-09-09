@@ -1,4 +1,5 @@
 import XCTest
+import UIKit
 
 @MainActor
 final class AppShellUITests: XCTestCase {
@@ -23,6 +24,57 @@ final class AppShellUITests: XCTestCase {
         attachment.name = name
         attachment.lifetime = .keepAlways
         add(attachment)
+    }
+
+    // The runner sets Simulator's actual system text size. No app size override.
+    func testWorkflowBadgeBackgroundAtSystemTextSize() throws {
+        continueAfterFailure = false
+        let previousAppearance = XCUIDevice.shared.appearance
+        XCUIDevice.shared.appearance = .light
+        defer { XCUIDevice.shared.appearance = previousAppearance }
+        for locale in ["en", "zh-Hans"] {
+            let app = XCUIApplication()
+            app.launchArguments = ["-VisePandaLocale", locale, "-AppleLanguages", "(\(locale))",
+                                   "-AppleLocale", locale == "en" ? "en_US" : "zh_CN"]
+            app.launch()
+            app.tabBars.buttons[locale == "en" ? "Trip" : "行程"].tap()
+            let last = app.staticTexts["3"]
+            for _ in 0..<8 where !last.isHittable { app.swipeUp() }
+            // Settle at the bottom so every badge is fully visible above the tab bar.
+            app.swipeUp()
+            capture("Workflow-system-text-\(locale)", app: app)
+            let screenshot = app.screenshot().image
+            let cgImage = try XCTUnwrap(screenshot.cgImage)
+            let width = cgImage.width
+            let height = cgImage.height
+            var pixels = [UInt8](repeating: 0, count: width * height * 4)
+            let context = try XCTUnwrap(CGContext(data: &pixels, width: width, height: height,
+                bitsPerComponent: 8, bytesPerRow: width * 4, space: CGColorSpaceCreateDeviceRGB(),
+                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+            context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+            let scale = CGFloat(width) / app.frame.width
+            for number in ["1", "2", "3"] {
+                let text = app.staticTexts[number]
+                XCTAssertTrue(text.isHittable)
+                let frame = text.frame
+                // These points sit beyond the actual text frame. White/pale pixels
+                // mean the number has outgrown its painted purple background.
+                let probes = [CGPoint(x: frame.midX, y: frame.minY - 2),
+                              CGPoint(x: frame.midX, y: frame.maxY + 2),
+                              CGPoint(x: frame.minX - 2, y: frame.midY),
+                              CGPoint(x: frame.maxX + 2, y: frame.midY)]
+                for point in probes {
+                    let x = Int(point.x * scale), y = Int(point.y * scale)
+                    XCTAssertTrue(x >= 0 && x < width && y >= 0 && y < height)
+                    let offset = (y * width + x) * 4
+                    let r = Int(pixels[offset]), g = Int(pixels[offset + 1]), b = Int(pixels[offset + 2])
+                    XCTAssertTrue(r > g * 2 && b > g * 2 && r < 180,
+                        "Badge \(number) background missing at \(point): RGB \(r),\(g),\(b); text frame \(frame)")
+                }
+                print("Badge background passed: \(locale) \(number), text frame \(frame)")
+            }
+            app.terminate()
+        }
     }
 
     func testEnglishTabsTodayAndTranslationRoute() {
