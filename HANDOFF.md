@@ -34,6 +34,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- Production deployment6340395476 reports success for2c46519. Actual browser at1280x800: /visepanda?locale=ar has ar/rtl, correct Arabic title and no overflow; switching toEnglish at390x844 restores en/ltr, removes legacy picker discovery and shows the unauthenticated sign-in boundary. No account/Trip write performed.
 - 2026-09-09: PR258 de20309 Quality PR34259128731 passed; merged6ccddeb. PR259 updated to11f2e7b against6ccddeb, independent review Critical0/Important0 and Quality PR34297787500 passed; merged2c46519.
 - PR258 Production deployment6340328611 reported success for6ccddeb; browser loaded the Journey homepage with explicit preview labels. Final Production for2c46519 is verified separately.
 - 2026-09-09: native8 unit tests and5 UI paths passed across full run plus affected Chinese keyboard/locale rerun. Simulator iPhone17Pro iOS26.5, Xcode26.6. Actual bugs fixed: localization keys, stale navigation titles, AX tool text, keyboard dismissal. Four screenshots and command evidence in artifacts/VPJ-01.
@@ -50,7 +51,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Verify Production for current main; follow docs/operations/operator-quickstart-2026-09-09.md to identify the correct V4 Staging and run the native app. Resume dependent safe work as actual environment/policy inputs arrive; preserve original dirty checkouts.
+Production for2c46519 verified; follow docs/operations/operator-quickstart-2026-09-09.md to identify the correct V4 Staging and run the native app. Resume dependent safe work as actual environment/policy inputs arrive; preserve original dirty checkouts.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
