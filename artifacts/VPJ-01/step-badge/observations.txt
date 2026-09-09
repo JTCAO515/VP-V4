@@ -1,0 +1,44 @@
+20260910-063520
+/Users/jtcao/Documents/VP-V4-Native-Step-Badge/ios/VisePanda/VisePandaUITests/AppShellUITests.swift:71: error: -[VisePandaUITests.AppShellUITests testWorkflowBadgeBackgroundAtSystemTextSize] : XCTAssertTrue failed - Badge 1 background missing at (30.0, 264.77192584462557): RGB 242,242,247; text frame (19.5, 266.77192584462557, 21.0, 51.33333333333326)
+Test Case '-[VisePandaUITests.AppShellUITests testWorkflowBadgeBackgroundAtSystemTextSize]' failed (11.254 seconds).
+20260910-063611
+Badge background passed: en 1, text frame (50.166666666666664, 237.77192584462583, 20.999999999999993, 51.33333333333323)
+Badge background passed: en 2, text frame (47.5, 395.4385925112926, 26.33333333333333, 51.333333333333144)
+Badge background passed: en 3, text frame (46.833333333333336, 611.105259177959, 27.666666666666664, 51.333333333333485)
+Badge background passed: zh-Hans 1, text frame (50.166666666666664, 411.7669616519176, 20.999999999999993, 51.333333333333144)
+Badge background passed: zh-Hans 2, text frame (47.5, 540.4336283185843, 26.33333333333333, 51.33333333333326)
+Badge background passed: zh-Hans 3, text frame (46.833333333333336, 669.100294985251, 27.666666666666664, 51.33333333333326)
+Test Case '-[VisePandaUITests.AppShellUITests testWorkflowBadgeBackgroundAtSystemTextSize]' passed (20.520 seconds).
+20260910-063645
+Badge background passed: en 1, text frame (26.833333333333332, 651.933628318584, 6.333333333333339, 14.333333333333371)
+Badge background passed: en 2, text frame (26.0, 691.933628318584, 8.0, 14.333333333333371)
+Badge background passed: en 3, text frame (25.833333333333332, 731.933628318584, 8.33333333333334, 14.333333333333371)
+Badge background passed: zh-Hans 1, text frame (26.833333333333332, 636.2669616519174, 6.333333333333339, 14.333333333333371)
+Badge background passed: zh-Hans 2, text frame (26.0, 676.2669616519174, 8.0, 14.333333333333371)
+Badge background passed: zh-Hans 3, text frame (25.833333333333332, 716.2669616519174, 8.33333333333334, 14.333333333333371)
+Test Case '-[VisePandaUITests.AppShellUITests testWorkflowBadgeBackgroundAtSystemTextSize]' passed (14.310 seconds).
+20260910-063719
+20260910-064127
+✔ Test run with 8 tests in 1 suite passed after 0.199 seconds.
+Test Case '-[VisePandaUITests.AppShellUITests testEnglishTabsTodayAndTranslationRoute]' passed (18.361 seconds).
+Test Case '-[VisePandaUITests.AppShellUITests testTodayAccessibilityAtLargestTextSize]' passed (11.532 seconds).
+
+20260910-064331
+Badge background passed: en 1, text frame (50.166666666666664, 259.77689003733417, 20.999999999999993, 51.33333333333326)
+Badge background passed: en 2, text frame (47.5, 417.4435567040009, 26.33333333333333, 51.33333333333326)
+Badge background passed: en 3, text frame (46.833333333333336, 633.1102233706672, 27.666666666666664, 51.33333333333337)
+Badge background passed: zh-Hans 1, text frame (50.166666666666664, 433.7719258446256, 20.999999999999993, 51.333333333333144)
+Badge background passed: zh-Hans 2, text frame (47.5, 562.4385925112923, 26.33333333333333, 51.33333333333326)
+Badge background passed: zh-Hans 3, text frame (46.833333333333336, 691.105259177959, 27.666666666666664, 51.33333333333326)
+
+20260910-064536
+✔ Test run with 8 tests in 1 suite passed after 0.036 seconds.
+Test Case '-[VisePandaUITests.AppShellUITests testEnglishTabsTodayAndTranslationRoute]' passed (37.185 seconds).
+Test Case '-[VisePandaUITests.AppShellUITests testTodayAccessibilityAtLargestTextSize]' passed (22.181 seconds).
+Badge background passed: en 1, text frame (26.833333333333332, 672.6002949852508, 6.333333333333339, 14.333333333333485)
+Badge background passed: en 2, text frame (26.0, 712.6002949852508, 8.0, 14.333333333333485)
+Badge background passed: en 3, text frame (25.833333333333332, 752.6002949852508, 8.33333333333334, 14.333333333333485)
+Badge background passed: zh-Hans 1, text frame (26.833333333333332, 654.6002949852508, 6.333333333333339, 14.333333333333371)
+Badge background passed: zh-Hans 2, text frame (26.0, 694.6002949852508, 8.0, 14.333333333333485)
+Badge background passed: zh-Hans 3, text frame (25.833333333333332, 734.6002949852508, 8.33333333333334, 14.333333333333485)
+Test Case '-[VisePandaUITests.AppShellUITests testWorkflowBadgeBackgroundAtSystemTextSize]' passed (30.812 seconds).
