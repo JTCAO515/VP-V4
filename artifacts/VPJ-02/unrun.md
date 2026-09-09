@@ -1,7 +1,8 @@
-# VPJ-02 未验项
+# VPJ-02 remaining runtime acceptance
 
-- 13个待应用迁移：未应用；dry-run的数据库直连失败。
-- 已应用SQL内容等价、备份/恢复演练：未验。
-- 实际owner/other/anon JWT读写矩阵：未运行；没有新增测试账号。
-- direct/pooler/worker完整数据库路径：未通过；管理API只读不等价。
-- 不动已有3Auth/2Trip；不执行Production数据库操作。
+As of2026-09-10, the authorized same-target Staging upgrade11->25, fresh encrypted backup/isolated restore, and two-account ordinary JWT isolation16/16 are PASS. Existing3 Auth/2 Trip row digests match after exact-ID fixture cleanup. See [actual evidence](staging-apply-20260910.md).
+
+- Direct-host database read-only query was rerun2026-09-10 and failed:psql exit2, connection closed with verify-full. Session pooler maintenance passed.
+- Worker connection/identity path remains UNRUN. Ordinary PostgREST JWT success does not establish worker isolation.
+- No native authenticated session epoch, full Harness integration, Production database or real customer acceptance is claimed.
+- Parent#189 remains OPEN; do not rewrite applied history or restore revoked direct UPDATE.

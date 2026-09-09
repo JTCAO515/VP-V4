@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：VPJ-66 #263 offline scope remains completed. Reviewed preparation and native improvements merged: provider protocol PR275/0aeb0d2, pairing PR277/272ca7d, native accessibility PR278/f6928c8, and native credential seam PR279/798dc36. Parents #188/#191/#193/#267 remain OPEN because runtime/device/policy/budget gates are not satisfied.
+状态：Authorized Staging upgrade11->25 and ordinary JWT isolation16/16 passed; fresh encrypted backup restored and original3 Auth/2 Trip row digests preserved after exact-ID cleanup. Prior bounded PR275/277/278/279 remain merged; parent runtime Issues remain OPEN.
 
-阶段：Bounded parallel deliveries merged; real Harness runtime remains blocked by Staging migration scope, operator data/provider policy, authoritative mobile sessions, durable budget and licensed knowledge inputs.
+阶段：Staging schema and ordinary HTTP identity integration verified; continue direct/worker evidence and bounded synthetic provider runtime preparation.
 
 ## 读取顺序
 
@@ -27,7 +27,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 未决与运行证据
 
-- One appended RPC repair beyond the authorized13 is now needed; its remote execution remains pending explicit scope approval. Original13 alone failed real local runtime validation.
+- The additional RPC repair was authorized2026-09-10 and applied with original13: Staging11->25. Ordinary JWT isolation16/16 and exact-ID cleanup passed; direct/worker paths remain separately incomplete.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 
@@ -65,7 +65,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Resolve the specific operator inputs already recorded: #189 appended Staging RPC migration20260909033302 scope; #190 recipient/legal entity, processing regions, retention and budget decisions. Then revalidate the named Staging target and dependencies before runtime work. Keep native epoch enforcement closed until authoritative session integration exists. #188 retains iOS17.5 clipping/Dynamic Type and maximum-size contrast failures plus physical VoiceOver/selected-object sheet gates. Do not add duplicate fixtures to represent a connected #195/#206/Harness67 chain. See docs/harness/IMPLEMENTATION-STATUS.md.
+Complete #189 direct-host/worker path evidence without inferring it from maintenance pooler or HTTP JWT success. User authorized three synthetic-text providers, each cumulative maximum CNY30(total90), with no recharge grant. Verify actual account model/endpoint/prices and bounded spending before calls. #190 retention/deletion and real user/human access rules remain undecided; native epochs and licensed knowledge remain separate gates.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
