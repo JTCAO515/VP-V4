@@ -1,0 +1,2380 @@
+{
+  "adapter_revision": 2,
+  "engine": "docling",
+  "conversion_status": "success",
+  "conversion_seconds": 7.821046541001124,
+  "segments": [
+    {
+      "text": "SYNTHETIC TRAVEL MATERIAL",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.0552352566137566,
+          0.6166349768518518,
+          0.07666272685185184
+        ],
+        "parser_ref": [
+          "page-1-cell-0",
+          "page-1-cell-1",
+          "page-1-cell-2"
+        ]
+      }
+    },
+    {
+      "text": "mixed-wrapped / NOT A TICKET / 自 有 测试 材料",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.09618553306878304,
+          0.5353058231481481,
+          0.11856533531746029
+        ],
+        "parser_ref": [
+          "page-1-cell-3",
+          "page-1-cell-4",
+          "page-1-cell-5",
+          "page-1-cell-6",
+          "page-1-cell-7",
+          "page-1-cell-8",
+          "page-1-cell-9",
+          "page-1-cell-10",
+          "page-1-cell-11",
+          "page-1-cell-12"
+        ]
+      }
+    },
+    {
+      "text": "Service: D109",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06133018148148148,
+          0.15999177777777773,
+          0.19598992777777777,
+          0.1723720939153439
+        ],
+        "parser_ref": [
+          "page-1-cell-13",
+          "page-1-cell-14"
+        ]
+      }
+    },
+    {
+      "text": "Origin: Shanghai Hongqiao",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.060663549074074063,
+          0.23474984060846557,
+          0.33798263055555555,
+          0.2509394847883597
+        ],
+        "parser_ref": [
+          "page-1-cell-15",
+          "page-1-cell-16",
+          "page-1-cell-17"
+        ]
+      }
+    },
+    {
+      "text": "上 海 虹桥 站",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.060663549074074063,
+          0.2542726468253968,
+          0.17265779351851848,
+          0.277604781084656
+        ],
+        "parser_ref": [
+          "page-1-cell-18",
+          "page-1-cell-19",
+          "page-1-cell-20",
+          "page-1-cell-21"
+        ]
+      }
+    },
+    {
+      "text": "Destination: Hangzhou East",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.3099840694444444,
+          0.34731548425925923,
+          0.32569754761904757
+        ],
+        "parser_ref": [
+          "page-1-cell-22",
+          "page-1-cell-23",
+          "page-1-cell-24"
+        ]
+      }
+    },
+    {
+      "text": "杭州 东 站",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.060663549074074063,
+          0.3295068756613756,
+          0.14999229166666667,
+          0.3528390099206348
+        ],
+        "parser_ref": [
+          "page-1-cell-25",
+          "page-1-cell-26",
+          "page-1-cell-27"
+        ]
+      }
+    },
+    {
+      "text": "Departure: 2026-12-31 23:40",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.3856944642857142,
+          0.3479821166666666,
+          0.4009317764550264
+        ],
+        "parser_ref": [
+          "page-1-cell-28",
+          "page-1-cell-29",
+          "page-1-cell-30"
+        ]
+      }
+    },
+    {
+      "text": "Arrival: 2027-01-01 00:38",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.059996916666666664,
+          0.459976361111111,
+          0.309317437037037,
+          0.4723566772486772
+        ],
+        "parser_ref": [
+          "page-1-cell-31",
+          "page-1-cell-32",
+          "page-1-cell-33"
+        ]
+      }
+    },
+    {
+      "text": "Time zone: Asia/Shanghai UTC+08:00",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.060663549074074063,
+          0.5347344239417988,
+          0.44331055092592586,
+          0.550924068121693
+        ],
+        "parser_ref": [
+          "page-1-cell-34",
+          "page-1-cell-35",
+          "page-1-cell-36",
+          "page-1-cell-37"
+        ]
+      }
+    },
+    {
+      "text": "Currency: CNY",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.060663549074074063,
+          0.6104448187830687,
+          0.2079893111111111,
+          0.6256821309523808
+        ],
+        "parser_ref": [
+          "page-1-cell-38",
+          "page-1-cell-39"
+        ]
+      }
+    },
+    {
+      "text": "Amount: 99.05",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.059996916666666664,
+          0.6856790476190475,
+          0.20932257592592593,
+          0.6971070317460316
+        ],
+        "parser_ref": [
+          "page-1-cell-40",
+          "page-1-cell-41"
+        ]
+      }
+    },
+    {
+      "text": "Synthetic small-print, wrapped bilingual fields; arrival is on the next",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.7842454107142856,
+          0.6979641305555555,
+          0.7994827228835977
+        ],
+        "parser_ref": [
+          "page-1-cell-42",
+          "page-1-cell-43",
+          "page-1-cell-44",
+          "page-1-cell-45",
+          "page-1-cell-46",
+          "page-1-cell-47",
+          "page-1-cell-48",
+          "page-1-cell-49",
+          "page-1-cell-50",
+          "page-1-cell-51"
+        ]
+      }
+    },
+    {
+      "text": "day.",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.060663549074074063,
+          0.8061490469576719,
+          0.09799496388888888,
+          0.821386359126984
+        ],
+        "parser_ref": [
+          "page-1-cell-52"
+        ]
+      }
+    },
+    {
+      "text": "For parser evaluation only. No purchase, booking or Trip is confirmed.",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.9475703505291004,
+          0.6419670083333333,
+          0.9609029986772485
+        ],
+        "parser_ref": [
+          "page-1-cell-53",
+          "page-1-cell-54",
+          "page-1-cell-55",
+          "page-1-cell-56",
+          "page-1-cell-57",
+          "page-1-cell-58",
+          "page-1-cell-59",
+          "page-1-cell-60",
+          "page-1-cell-61",
+          "page-1-cell-62",
+          "page-1-cell-63"
+        ]
+      }
+    }
+  ],
+  "document": {
+    "docling_document": {
+      "schema_name": "DoclingDocument",
+      "version": "1.10.0",
+      "name": "mixed-wrapped",
+      "origin": {
+        "mimetype": "application/pdf",
+        "binary_hash": 16716891011244882404,
+        "filename": "mixed-wrapped.png"
+      },
+      "furniture": {
+        "self_ref": "#/furniture",
+        "children": [],
+        "content_layer": "furniture",
+        "name": "_root_",
+        "label": "unspecified"
+      },
+      "body": {
+        "self_ref": "#/body",
+        "children": [
+          {
+            "$ref": "#/texts/0"
+          },
+          {
+            "$ref": "#/texts/1"
+          },
+          {
+            "$ref": "#/groups/0"
+          }
+        ],
+        "content_layer": "body",
+        "name": "_root_",
+        "label": "unspecified"
+      },
+      "groups": [
+        {
+          "self_ref": "#/groups/0",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [
+            {
+              "$ref": "#/texts/2"
+            },
+            {
+              "$ref": "#/texts/3"
+            },
+            {
+              "$ref": "#/texts/4"
+            },
+            {
+              "$ref": "#/texts/5"
+            },
+            {
+              "$ref": "#/texts/6"
+            },
+            {
+              "$ref": "#/texts/7"
+            },
+            {
+              "$ref": "#/texts/8"
+            },
+            {
+              "$ref": "#/texts/9"
+            },
+            {
+              "$ref": "#/texts/10"
+            },
+            {
+              "$ref": "#/texts/11"
+            },
+            {
+              "$ref": "#/texts/12"
+            },
+            {
+              "$ref": "#/texts/13"
+            },
+            {
+              "$ref": "#/texts/14"
+            },
+            {
+              "$ref": "#/texts/15"
+            },
+            {
+              "$ref": "#/texts/16"
+            },
+            {
+              "$ref": "#/texts/17"
+            },
+            {
+              "$ref": "#/texts/18"
+            },
+            {
+              "$ref": "#/texts/19"
+            },
+            {
+              "$ref": "#/texts/20"
+            },
+            {
+              "$ref": "#/texts/21"
+            },
+            {
+              "$ref": "#/texts/22"
+            }
+          ],
+          "content_layer": "body",
+          "name": "group",
+          "label": "key_value_area"
+        }
+      ],
+      "texts": [
+        {
+          "self_ref": "#/texts/0",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "section_header",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.0,
+                "t": 661.3693074042233,
+                "r": 308.3333333333333,
+                "b": 646.3693074042233,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                25
+              ]
+            }
+          ],
+          "orig": "SYNTHETIC TRAVEL MATERIAL",
+          "text": "SYNTHETIC TRAVEL MATERIAL",
+          "level": 1
+        },
+        {
+          "self_ref": "#/texts/1",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.0,
+                "t": 632.7026407375565,
+                "r": 267.6666666666667,
+                "b": 617.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                40
+              ]
+            }
+          ],
+          "orig": "mixed-wrapped / NOT A TICKET / 自 有 测试 材料",
+          "text": "mixed-wrapped / NOT A TICKET / 自 有 测试 材料"
+        },
+        {
+          "self_ref": "#/texts/2",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.666666666666668,
+                "t": 588.0359740708899,
+                "r": 69.66666666666667,
+                "b": 579.3693074042233,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                8
+              ]
+            }
+          ],
+          "orig": "Service:",
+          "text": "Service:"
+        },
+        {
+          "self_ref": "#/texts/3",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 74.0,
+                "t": 587.7026407375565,
+                "r": 98.0,
+                "b": 579.3693074042233,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                4
+              ]
+            }
+          ],
+          "orig": "D109",
+          "text": "D109"
+        },
+        {
+          "self_ref": "#/texts/4",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.333333333333332,
+                "t": 535.7026407375565,
+                "r": 64.66666666666667,
+                "b": 524.3693074042233,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                7
+              ]
+            }
+          ],
+          "orig": "Origin:",
+          "text": "Origin:"
+        },
+        {
+          "self_ref": "#/texts/5",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 68.66666666666667,
+                "t": 535.7026407375565,
+                "r": 169.0,
+                "b": 524.3693074042233,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                17
+              ]
+            }
+          ],
+          "orig": "Shanghai Hongqiao",
+          "text": "Shanghai Hongqiao"
+        },
+        {
+          "self_ref": "#/texts/6",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.333333333333332,
+                "t": 520.3693074042233,
+                "r": 84.66666666666667,
+                "b": 510.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                4
+              ]
+            }
+          ],
+          "orig": "上 虹桥",
+          "text": "上 虹桥"
+        },
+        {
+          "self_ref": "#/texts/7",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 44.0,
+                "t": 522.0359740708899,
+                "r": 86.33333333333333,
+                "b": 505.7026407375565,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                3
+              ]
+            }
+          ],
+          "orig": "海 站",
+          "text": "海 站"
+        },
+        {
+          "self_ref": "#/texts/8",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.0,
+                "t": 483.0359740708899,
+                "r": 92.66666666666667,
+                "b": 474.36930740422326,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                12
+              ]
+            }
+          ],
+          "orig": "Destination:",
+          "text": "Destination:"
+        },
+        {
+          "self_ref": "#/texts/9",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 97.0,
+                "t": 483.0359740708899,
+                "r": 173.66666666666666,
+                "b": 472.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                13
+              ]
+            }
+          ],
+          "orig": "Hangzhou East",
+          "text": "Hangzhou East"
+        },
+        {
+          "self_ref": "#/texts/10",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.333333333333332,
+                "t": 469.36930740422326,
+                "r": 75.0,
+                "b": 453.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                6
+              ]
+            }
+          ],
+          "orig": "杭州 东 站",
+          "text": "杭州 东 站"
+        },
+        {
+          "self_ref": "#/texts/11",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.0,
+                "t": 430.0359740708899,
+                "r": 85.0,
+                "b": 419.3693074042232,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                10
+              ]
+            }
+          ],
+          "orig": "Departure:",
+          "text": "Departure:"
+        },
+        {
+          "self_ref": "#/texts/12",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 89.0,
+                "t": 430.0359740708899,
+                "r": 174.0,
+                "b": 422.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                16
+              ]
+            }
+          ],
+          "orig": "2026-12-31 23:40",
+          "text": "2026-12-31 23:40"
+        },
+        {
+          "self_ref": "#/texts/13",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.0,
+                "t": 378.0359740708899,
+                "r": 65.66666666666667,
+                "b": 369.3693074042232,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                8
+              ]
+            }
+          ],
+          "orig": "Arrival:",
+          "text": "Arrival:"
+        },
+        {
+          "self_ref": "#/texts/14",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 69.33333333333333,
+                "t": 377.7026407375566,
+                "r": 154.66666666666666,
+                "b": 369.3693074042232,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                16
+              ]
+            }
+          ],
+          "orig": "2027-01-01 00:38",
+          "text": "2027-01-01 00:38"
+        },
+        {
+          "self_ref": "#/texts/15",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.333333333333332,
+                "t": 325.7026407375566,
+                "r": 86.0,
+                "b": 317.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                10
+              ]
+            }
+          ],
+          "orig": "Time zone:",
+          "text": "Time zone:"
+        },
+        {
+          "self_ref": "#/texts/16",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 89.66666666666667,
+                "t": 325.7026407375566,
+                "r": 221.66666666666666,
+                "b": 314.3693074042232,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                23
+              ]
+            }
+          ],
+          "orig": "Asia/Shanghai UTC+08:00",
+          "text": "Asia/Shanghai UTC+08:00"
+        },
+        {
+          "self_ref": "#/texts/17",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.333333333333332,
+                "t": 272.7026407375566,
+                "r": 79.66666666666667,
+                "b": 262.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                9
+              ]
+            }
+          ],
+          "orig": "Currency:",
+          "text": "Currency:"
+        },
+        {
+          "self_ref": "#/texts/18",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 83.33333333333333,
+                "t": 272.7026407375566,
+                "r": 104.0,
+                "b": 264.3693074042232,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                3
+              ]
+            }
+          ],
+          "orig": "CNY",
+          "text": "CNY"
+        },
+        {
+          "self_ref": "#/texts/19",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.0,
+                "t": 220.0359740708899,
+                "r": 74.0,
+                "b": 212.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                7
+              ]
+            }
+          ],
+          "orig": "Amount:",
+          "text": "Amount:"
+        },
+        {
+          "self_ref": "#/texts/20",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 78.0,
+                "t": 220.0359740708899,
+                "r": 104.66666666666667,
+                "b": 212.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                5
+              ]
+            }
+          ],
+          "orig": "99.05",
+          "text": "99.05"
+        },
+        {
+          "self_ref": "#/texts/21",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.333333333333332,
+                "t": 151.0359740708899,
+                "r": 349.0,
+                "b": 125.03597407088989,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                76
+              ]
+            }
+          ],
+          "orig": "Synthetic small-print, wrapped bilingual fields; arrival is on the next day.",
+          "text": "Synthetic small-print, wrapped bilingual fields; arrival is on the next day."
+        },
+        {
+          "self_ref": "#/texts/22",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.0,
+                "t": 36.70264073755652,
+                "r": 321.0,
+                "b": 27.369307404223264,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                70
+              ]
+            }
+          ],
+          "orig": "For parser evaluation only. No purchase, booking or Trip is confirmed.",
+          "text": "For parser evaluation only. No purchase, booking or Trip is confirmed."
+        }
+      ],
+      "pictures": [],
+      "tables": [],
+      "key_value_items": [],
+      "form_items": [],
+      "pages": {
+        "1": {
+          "size": {
+            "width": 500.0256957649213,
+            "height": 700.0359740708899
+          },
+          "page_no": 1
+        }
+      }
+    },
+    "page_cells": [
+      {
+        "text": "SYNTHETIC",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.0552352566137566,
+            0.2686528601851852,
+            0.07666272685185184
+          ],
+          "parser_ref": "page-1-cell-0"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96298225
+      },
+      {
+        "text": "TRAVEL",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2799856111111111,
+            0.05571142261904761,
+            0.41997841666666663,
+            0.07666272685185184
+          ],
+          "parser_ref": "page-1-cell-1"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96500778
+      },
+      {
+        "text": "MATERIAL",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4339776972222222,
+            0.05571142261904761,
+            0.6166349768518518,
+            0.07666272685185184
+          ],
+          "parser_ref": "page-1-cell-2"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96500778
+      },
+      {
+        "text": "mixed-wrapped",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.10047102711640209,
+            0.2179887972222222,
+            0.11666067129629629
+          ],
+          "parser_ref": "page-1-cell-3"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9114891799999999
+      },
+      {
+        "text": "/",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2253217537037037,
+            0.1009471931216931,
+            0.23332134259259257,
+            0.11570833928571427
+          ],
+          "parser_ref": "page-1-cell-4"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92304016
+      },
+      {
+        "text": "NOT",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.24065429907407404,
+            0.10142335912698411,
+            0.2839854055555555,
+            0.11285134325396823
+          ],
+          "parser_ref": "page-1-cell-5"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9110841399999999
+      },
+      {
+        "text": "A",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.29065172962962965,
+            0.10142335912698411,
+            0.30265111296296293,
+            0.11285134325396823
+          ],
+          "parser_ref": "page-1-cell-6"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.67468788
+      },
+      {
+        "text": "TICKET",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.309317437037037,
+            0.10142335912698411,
+            0.3819803694444444,
+            0.11285134325396823
+          ],
+          "parser_ref": "page-1-cell-7"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.67468788
+      },
+      {
+        "text": "/",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3886466935185185,
+            0.1009471931216931,
+            0.39597964999999996,
+            0.11570833928571427
+          ],
+          "parser_ref": "page-1-cell-8"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92652336
+      },
+      {
+        "text": "自",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.41531198981481476,
+            0.09951869510582009,
+            0.41997841666666663,
+            0.11427984126984125
+          ],
+          "parser_ref": "page-1-cell-9"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.90345955
+      },
+      {
+        "text": "有",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.43331106481481474,
+            0.0999948611111111,
+            0.4519767722222222,
+            0.11427984126984125
+          ],
+          "parser_ref": "page-1-cell-10"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93034615
+      },
+      {
+        "text": "测试",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4519767722222222,
+            0.0999948611111111,
+            0.533305925925926,
+            0.11427984126984125
+          ],
+          "parser_ref": "page-1-cell-11"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9674511699999999
+      },
+      {
+        "text": "材料",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5013075703703703,
+            0.09618553306878304,
+            0.5353058231481481,
+            0.11856533531746029
+          ],
+          "parser_ref": "page-1-cell-12"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.94562286
+      },
+      {
+        "text": "Service:",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06133018148148148,
+            0.15999177777777773,
+            0.13932617314814816,
+            0.1723720939153439
+          ],
+          "parser_ref": "page-1-cell-13"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96755783
+      },
+      {
+        "text": "D109",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.14799239444444443,
+            0.16046794378306875,
+            0.19598992777777777,
+            0.1723720939153439
+          ],
+          "parser_ref": "page-1-cell-14"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9654080999999999
+      },
+      {
+        "text": "Origin:",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.060663549074074063,
+            0.23474984060846557,
+            0.12932668703703704,
+            0.2509394847883597
+          ],
+          "parser_ref": "page-1-cell-15"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96383186
+      },
+      {
+        "text": "Shanghai",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.13732627592592592,
+            0.23474984060846557,
+            0.23198807777777775,
+            0.2509394847883597
+          ],
+          "parser_ref": "page-1-cell-16"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9618762200000001
+      },
+      {
+        "text": "Hongqiao",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.24065429907407404,
+            0.23474984060846557,
+            0.33798263055555555,
+            0.2509394847883597
+          ],
+          "parser_ref": "page-1-cell-17"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.90298203
+      },
+      {
+        "text": "上",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.060663549074074063,
+            0.2566534768518518,
+            0.16932463148148147,
+            0.27141462301587294
+          ],
+          "parser_ref": "page-1-cell-18"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.91973511
+      },
+      {
+        "text": "海",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.08799547777777778,
+            0.2542726468253968,
+            0.11332750925925925,
+            0.277604781084656
+          ],
+          "parser_ref": "page-1-cell-19"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92418556
+      },
+      {
+        "text": "虹桥",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.11266087685185185,
+            0.2566534768518518,
+            0.1539920861111111,
+            0.27141462301587294
+          ],
+          "parser_ref": "page-1-cell-20"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9581733699999999
+      },
+      {
+        "text": "站",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1533254537037037,
+            0.2542726468253968,
+            0.17265779351851848,
+            0.277604781084656
+          ],
+          "parser_ref": "page-1-cell-21"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96436241
+      },
+      {
+        "text": "Destination:",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.3099840694444444,
+            0.18532380925925926,
+            0.3223643855820105
+          ],
+          "parser_ref": "page-1-cell-22"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9122513600000001
+      },
+      {
+        "text": "Hangzhou",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.19399003055555553,
+            0.3099840694444444,
+            0.2973180537037037,
+            0.32569754761904757
+          ],
+          "parser_ref": "page-1-cell-23"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92612915
+      },
+      {
+        "text": "East",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.305984275,
+            0.3104602354497354,
+            0.34731548425925923,
+            0.3223643855820105
+          ],
+          "parser_ref": "page-1-cell-24"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9657489800000001
+      },
+      {
+        "text": "杭州",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.060663549074074063,
+            0.3314115396825396,
+            0.14732576203703704,
+            0.3466488518518518
+          ],
+          "parser_ref": "page-1-cell-25"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9311346399999999
+      },
+      {
+        "text": "东",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.11466077407407407,
+            0.3295068756613756,
+            0.13199321666666666,
+            0.3528390099206348
+          ],
+          "parser_ref": "page-1-cell-26"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93214073
+      },
+      {
+        "text": "站",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.13132658425925925,
+            0.3295068756613756,
+            0.14999229166666667,
+            0.3528390099206348
+          ],
+          "parser_ref": "page-1-cell-27"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.7196982599999999
+      },
+      {
+        "text": "Departure:",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.3856944642857142,
+            0.16999126388888888,
+            0.4009317764550264
+          ],
+          "parser_ref": "page-1-cell-28"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92539536
+      },
+      {
+        "text": "2026-12-31",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.17799085277777776,
+            0.3856944642857142,
+            0.2879852,
+            0.39712244841269834
+          ],
+          "parser_ref": "page-1-cell-29"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9061832400000001
+      },
+      {
+        "text": "23:40",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2946515240740741,
+            0.3856944642857142,
+            0.3479821166666666,
+            0.39712244841269834
+          ],
+          "parser_ref": "page-1-cell-30"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.89645027
+      },
+      {
+        "text": "Arrival:",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.059996916666666664,
+            0.459976361111111,
+            0.13132658425925925,
+            0.4723566772486772
+          ],
+          "parser_ref": "page-1-cell-31"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.91946693
+      },
+      {
+        "text": "2027-01-01",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.13865954074074072,
+            0.460452527116402,
+            0.24932052037037036,
+            0.4723566772486772
+          ],
+          "parser_ref": "page-1-cell-32"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92135666
+      },
+      {
+        "text": "00:38",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2559868444444444,
+            0.460452527116402,
+            0.309317437037037,
+            0.4723566772486772
+          ],
+          "parser_ref": "page-1-cell-33"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.91969307
+      },
+      {
+        "text": "Time",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.060663549074074063,
+            0.5347344239417988,
+            0.11132761203703702,
+            0.547114740079365
+          ],
+          "parser_ref": "page-1-cell-34"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.91783676
+      },
+      {
+        "text": "zone:",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1179939361111111,
+            0.5385437519841269,
+            0.1719911611111111,
+            0.547114740079365
+          ],
+          "parser_ref": "page-1-cell-35"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.87402695
+      },
+      {
+        "text": "Asia/Shanghai",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1793241175925926,
+            0.5347344239417988,
+            0.3253166148148148,
+            0.550924068121693
+          ],
+          "parser_ref": "page-1-cell-36"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.91736755
+      },
+      {
+        "text": "UTC+08:00",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.33398283611111107,
+            0.5356867559523808,
+            0.44331055092592586,
+            0.547114740079365
+          ],
+          "parser_ref": "page-1-cell-37"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9153569
+      },
+      {
+        "text": "Currency:",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.060663549074074063,
+            0.6104448187830687,
+            0.15932514537037037,
+            0.6256821309523808
+          ],
+          "parser_ref": "page-1-cell-38"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.90070839
+      },
+      {
+        "text": "CNY",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.16665810185185184,
+            0.6104448187830687,
+            0.2079893111111111,
+            0.6223489689153439
+          ],
+          "parser_ref": "page-1-cell-39"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.91879395
+      },
+      {
+        "text": "Amount:",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.059996916666666664,
+            0.6856790476190475,
+            0.14799239444444443,
+            0.6971070317460316
+          ],
+          "parser_ref": "page-1-cell-40"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9012853200000001
+      },
+      {
+        "text": "99.05",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.15599198333333333,
+            0.6856790476190475,
+            0.20932257592592593,
+            0.6971070317460316
+          ],
+          "parser_ref": "page-1-cell-41"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9233947
+      },
+      {
+        "text": "Synthetic",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.7842454107142856,
+            0.14932565925925925,
+            0.7994827228835977
+          ],
+          "parser_ref": "page-1-cell-42"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92367615
+      },
+      {
+        "text": "small-print,",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1546587185185185,
+            0.7842454107142856,
+            0.2646530657407407,
+            0.7994827228835977
+          ],
+          "parser_ref": "page-1-cell-43"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9201567799999999
+      },
+      {
+        "text": "wrapped",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2706527574074074,
+            0.7842454107142856,
+            0.3533151759259259,
+            0.7994827228835977
+          ],
+          "parser_ref": "page-1-cell-44"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9683457900000001
+      },
+      {
+        "text": "bilingual",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3606481324074074,
+            0.7842454107142856,
+            0.4426439185185185,
+            0.7994827228835977
+          ],
+          "parser_ref": "page-1-cell-45"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9672099300000001
+      },
+      {
+        "text": "fields;",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.44864361018518517,
+            0.7842454107142856,
+            0.5039741,
+            0.7980542248677247
+          ],
+          "parser_ref": "page-1-cell-46"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96541634
+      },
+      {
+        "text": "arrival",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5099737916666667,
+            0.7842454107142856,
+            0.567970811111111,
+            0.7956733948412696
+          ],
+          "parser_ref": "page-1-cell-47"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9582656900000001
+      },
+      {
+        "text": "is",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5746371351851851,
+            0.7842454107142856,
+            0.5879697833333333,
+            0.7956733948412696
+          ],
+          "parser_ref": "page-1-cell-48"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9582656900000001
+      },
+      {
+        "text": "on",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.593969475,
+            0.7875785727513227,
+            0.6159683444444444,
+            0.7956733948412696
+          ],
+          "parser_ref": "page-1-cell-49"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9640348799999999
+      },
+      {
+        "text": "the",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.6226346685185185,
+            0.7842454107142856,
+            0.6519664944444444,
+            0.7956733948412696
+          ],
+          "parser_ref": "page-1-cell-50"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9640348799999999
+      },
+      {
+        "text": "next",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.6586328185185184,
+            0.7856739087301585,
+            0.6979641305555555,
+            0.7956733948412696
+          ],
+          "parser_ref": "page-1-cell-51"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9641879299999999
+      },
+      {
+        "text": "day.",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.060663549074074063,
+            0.8061490469576719,
+            0.09799496388888888,
+            0.821386359126984
+          ],
+          "parser_ref": "page-1-cell-52"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9658631099999999
+      },
+      {
+        "text": "For",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.9485226825396823,
+            0.08799547777777778,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-53"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96994553
+      },
+      {
+        "text": "parser",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.09399516944444444,
+            0.9504273465608464,
+            0.1459924972222222,
+            0.9609029986772485
+          ],
+          "parser_ref": "page-1-cell-54"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9686290700000001
+      },
+      {
+        "text": "evaluation",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.15132555648148147,
+            0.9475703505291004,
+            0.2379877694444444,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-55"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96591248
+      },
+      {
+        "text": "only.",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.24398746111111108,
+            0.9475703505291004,
+            0.2819855083333333,
+            0.9609029986772485
+          ],
+          "parser_ref": "page-1-cell-56"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9670764900000001
+      },
+      {
+        "text": "No",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2886518324074074,
+            0.9485226825396823,
+            0.3099840694444444,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-57"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9691298700000001
+      },
+      {
+        "text": "purchase,",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.31665039351851854,
+            0.9475703505291004,
+            0.3973129148148148,
+            0.9609029986772485
+          ],
+          "parser_ref": "page-1-cell-58"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96093307
+      },
+      {
+        "text": "booking",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.40397923888888887,
+            0.9475703505291004,
+            0.47130911203703696,
+            0.9609029986772485
+          ],
+          "parser_ref": "page-1-cell-59"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9681272900000001
+      },
+      {
+        "text": "or",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.47730880370370365,
+            0.9504273465608464,
+            0.49397461388888886,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-60"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96932098
+      },
+      {
+        "text": "Trip",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4993076731481481,
+            0.9480465165343913,
+            0.5319726611111111,
+            0.9609029986772485
+          ],
+          "parser_ref": "page-1-cell-61"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96697449
+      },
+      {
+        "text": "is",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5379723527777778,
+            0.9480465165343913,
+            0.5486384712962962,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-62"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9658132899999999
+      },
+      {
+        "text": "confirmed.",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5539715305555555,
+            0.9475703505291004,
+            0.6419670083333333,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-63"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9651374800000001
+      }
+    ],
+    "pipeline_options": {
+      "document_timeout": 110.0,
+      "accelerator_options": {
+        "num_threads": 2,
+        "device": "cpu",
+        "cuda_use_flash_attention2": false
+      },
+      "enable_remote_services": false,
+      "allow_external_plugins": false,
+      "artifacts_path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets",
+      "do_picture_classification": false,
+      "picture_classification_options": {
+        "engine_options": {
+          "engine_type": "transformers",
+          "top_k": null
+        },
+        "model_spec": {
+          "name": "document_figure_classifier_v2",
+          "repo_id": "docling-project/DocumentFigureClassifier-v2.5",
+          "revision": "main",
+          "engine_overrides": {}
+        }
+      },
+      "do_picture_description": false,
+      "picture_description_options": {
+        "batch_size": 8,
+        "scale": 2.0,
+        "picture_area_threshold": 0.05,
+        "classification_allow": null,
+        "classification_deny": null,
+        "classification_min_confidence": 0.0
+      },
+      "do_chart_extraction": false,
+      "chart_extraction_options": {
+        "kind": "chart_extraction",
+        "model": "granite-vision-v4",
+        "chart2csv": true,
+        "chart2code": false,
+        "chart2summary": false
+      },
+      "images_scale": 2.0,
+      "generate_page_images": false,
+      "generate_picture_images": false,
+      "do_table_structure": false,
+      "do_ocr": true,
+      "do_code_enrichment": false,
+      "do_formula_enrichment": false,
+      "force_backend_text": false,
+      "table_structure_options": {},
+      "ocr_options": {
+        "mode": "full_page",
+        "lang": [
+          "eng",
+          "chi_sim"
+        ],
+        "scale": 3.0,
+        "force_full_page_ocr": true
+      },
+      "layout_options": {
+        "keep_empty_clusters": false,
+        "skip_cell_assignment": false,
+        "create_orphan_clusters": true
+      },
+      "code_formula_options": {
+        "engine_options": {
+          "engine_type": "auto_inline",
+          "prefer_vllm": false
+        },
+        "model_spec": {
+          "name": "CodeFormulaV2",
+          "default_repo_id": "docling-project/CodeFormulaV2",
+          "revision": "main",
+          "prompt": "",
+          "response_format": "plaintext",
+          "supported_engines": null,
+          "engine_overrides": {
+            "transformers": {
+              "repo_id": null,
+              "revision": null,
+              "torch_dtype": null,
+              "min_engine_version": null,
+              "extra_config": {
+                "transformers_model_type": "automodel-imagetexttotext",
+                "extra_generation_config": {
+                  "skip_special_tokens": false
+                },
+                "torch_dtype": "bfloat16"
+              }
+            }
+          },
+          "api_overrides": {},
+          "trust_remote_code": false,
+          "stop_strings": [
+            "</doctag>",
+            "<end_of_utterance>"
+          ],
+          "temperature": 0.0,
+          "max_new_tokens": 4096,
+          "extra_generation_config": {}
+        },
+        "scale": 2.0,
+        "max_size": null,
+        "extract_code": true,
+        "extract_formulas": true
+      },
+      "generate_table_images": false,
+      "generate_parsed_pages": true,
+      "heading_hierarchy_options": {
+        "enabled": false,
+        "use_bookmarks": true,
+        "use_numbering": true,
+        "use_style": true,
+        "use_font_style": true,
+        "style_size_tolerance": 0.05,
+        "numbering_schemes": null,
+        "max_level": 6,
+        "bookmark_match_threshold": 0.8
+      },
+      "ocr_batch_size": 4,
+      "layout_batch_size": 4,
+      "table_batch_size": 4,
+      "batch_polling_interval_seconds": 0.5,
+      "queue_max_size": 100,
+      "stage_shutdown_timeout_seconds": 15.0
+    }
+  },
+  "candidates": {
+    "schema_version": 1,
+    "kind": "material_correction_candidates",
+    "source_id": "synthetic-7969ff538b3a0f91",
+    "source_sha256": "7969ff538b3a0f91eda17ef2592671a2ddb17175c6188fb8e7fe53ce0a2bf9e4",
+    "incomplete": false,
+    "requires_user_review": true,
+    "confirmed": false,
+    "fields": [
+      {
+        "field": "service_id",
+        "value": "D109",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "D109",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06133018148148148,
+                  0.15999177777777773,
+                  0.19598992777777777,
+                  0.1723720939153439
+                ],
+                "parser_ref": [
+                  "page-1-cell-13",
+                  "page-1-cell-14"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "origin",
+        "value": "Shanghai Hongqiao 上海虹桥站",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "Shanghai Hongqiao 上海虹桥站",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.060663549074074063,
+                  0.23474984060846557,
+                  0.33798263055555555,
+                  0.2509394847883597
+                ],
+                "parser_ref": [
+                  "page-1-cell-15",
+                  "page-1-cell-16",
+                  "page-1-cell-17"
+                ]
+              },
+              {
+                "page": 1,
+                "bbox": [
+                  0.060663549074074063,
+                  0.2542726468253968,
+                  0.17265779351851848,
+                  0.277604781084656
+                ],
+                "parser_ref": [
+                  "page-1-cell-18",
+                  "page-1-cell-19",
+                  "page-1-cell-20",
+                  "page-1-cell-21"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "destination",
+        "value": "Hangzhou East 杭州东站",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "Hangzhou East 杭州东站",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.061996813888888884,
+                  0.3099840694444444,
+                  0.34731548425925923,
+                  0.32569754761904757
+                ],
+                "parser_ref": [
+                  "page-1-cell-22",
+                  "page-1-cell-23",
+                  "page-1-cell-24"
+                ]
+              },
+              {
+                "page": 1,
+                "bbox": [
+                  0.060663549074074063,
+                  0.3295068756613756,
+                  0.14999229166666667,
+                  0.3528390099206348
+                ],
+                "parser_ref": [
+                  "page-1-cell-25",
+                  "page-1-cell-26",
+                  "page-1-cell-27"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "departure_local",
+        "value": "2026-12-31 23:40",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "2026-12-31 23:40",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.061996813888888884,
+                  0.3856944642857142,
+                  0.3479821166666666,
+                  0.4009317764550264
+                ],
+                "parser_ref": [
+                  "page-1-cell-28",
+                  "page-1-cell-29",
+                  "page-1-cell-30"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "arrival_local",
+        "value": "2027-01-01 00:38",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "2027-01-01 00:38",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.059996916666666664,
+                  0.459976361111111,
+                  0.309317437037037,
+                  0.4723566772486772
+                ],
+                "parser_ref": [
+                  "page-1-cell-31",
+                  "page-1-cell-32",
+                  "page-1-cell-33"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "timezone",
+        "value": "Asia/Shanghai UTC+08:00",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "Asia/Shanghai UTC+08:00",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.060663549074074063,
+                  0.5347344239417988,
+                  0.44331055092592586,
+                  0.550924068121693
+                ],
+                "parser_ref": [
+                  "page-1-cell-34",
+                  "page-1-cell-35",
+                  "page-1-cell-36",
+                  "page-1-cell-37"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "currency",
+        "value": "CNY",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "CNY",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.060663549074074063,
+                  0.6104448187830687,
+                  0.2079893111111111,
+                  0.6256821309523808
+                ],
+                "parser_ref": [
+                  "page-1-cell-38",
+                  "page-1-cell-39"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "amount",
+        "value": "99.05",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "99.05",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.059996916666666664,
+                  0.6856790476190475,
+                  0.20932257592592593,
+                  0.6971070317460316
+                ],
+                "parser_ref": [
+                  "page-1-cell-40",
+                  "page-1-cell-41"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      }
+    ]
+  }
+}

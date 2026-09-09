@@ -1,0 +1,12 @@
+{
+  "phase": "setup-before-first-conversion",
+  "package": "tesseract5.5.3",
+  "package_metadata": "artifacts/VPJ-73/tesseract-package-metadata.json",
+  "source_path": "/opt/homebrew/Cellar/tesseract/5.5.3/share/tessdata/configs/tsv",
+  "path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets/tessdata/configs/tsv",
+  "sha256": "59d079bb75d8b3d7c839a3564580cb559e362c93a9d70f234e421c0c3e767e04",
+  "license": "Apache-2.0",
+  "content": "tessedit_create_tsv 1\n",
+  "reason": "Docling invokes upstream tsv config by name; language-only cache needs this packaged config.",
+  "url": "https://raw.githubusercontent.com/tesseract-ocr/tesseract/db0ec62f81b0737fbbe184d8fea40af5738f8eef/tessdata/configs/tsv"
+}

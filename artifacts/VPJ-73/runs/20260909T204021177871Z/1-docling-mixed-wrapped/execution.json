@@ -1,0 +1,29 @@
+{
+  "engine": "docling",
+  "input": "mixed-wrapped.png",
+  "source_sha256": "7969ff538b3a0f91eda17ef2592671a2ddb17175c6188fb8e7fe53ce0a2bf9e4",
+  "status": "completed",
+  "exit_code": 0,
+  "elapsed_seconds": 9.382290499997907,
+  "peak_aggregate_rss_bytes": 1212416000,
+  "rss_poll_seconds": 0.05,
+  "conversion_started_observed": true,
+  "output": "/Users/jtcao/Documents/VP-V4-Docling-Experiment/artifacts/VPJ-73/runs/20260909T204021177871Z/1-docling-mixed-wrapped/output.json",
+  "command": [
+    "/usr/bin/sandbox-exec",
+    "-p",
+    "(version 1)(allow default)(deny network*)",
+    "/Users/jtcao/Library/Caches/visepanda/vpj73/venv/bin/python",
+    "/Users/jtcao/Documents/VP-V4-Docling-Experiment/scripts/experiments/docling/worker.py",
+    "--input",
+    "/Users/jtcao/Documents/VP-V4-Docling-Experiment/artifacts/VPJ-73/fixtures/mixed-wrapped.png",
+    "--assets",
+    "/Users/jtcao/Library/Caches/visepanda/vpj73/assets",
+    "--output",
+    "/Users/jtcao/Documents/VP-V4-Docling-Experiment/artifacts/VPJ-73/runs/20260909T204021177871Z/1-docling-mixed-wrapped/output.json",
+    "--engine",
+    "docling"
+  ],
+  "started_at": "2026-09-09T20:41:31.982545+00:00",
+  "network": "OS sandbox deny network*; empty isolated HF cache; no credentials passed"
+}

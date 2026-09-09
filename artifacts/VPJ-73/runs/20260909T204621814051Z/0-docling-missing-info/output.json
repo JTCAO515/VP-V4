@@ -1,0 +1,2065 @@
+{
+  "adapter_revision": 2,
+  "engine": "docling",
+  "conversion_status": "success",
+  "conversion_seconds": 9.879441916997166,
+  "segments": [
+    {
+      "text": "SYNTHETIC TRAVEL MATERIAL",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.0552352566137566,
+          0.6166349768518518,
+          0.07666272685185184
+        ],
+        "parser_ref": [
+          "page-1-cell-0",
+          "page-1-cell-1",
+          "page-1-cell-2"
+        ]
+      }
+    },
+    {
+      "text": "missing-info / NOT A TICKET / 自 有 测试 材料",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.09618553306878304,
+          0.5019742027777777,
+          0.11856533531746029
+        ],
+        "parser_ref": [
+          "page-1-cell-3",
+          "page-1-cell-4",
+          "page-1-cell-5",
+          "page-1-cell-6",
+          "page-1-cell-7",
+          "page-1-cell-8",
+          "page-1-cell-9",
+          "page-1-cell-10",
+          "page-1-cell-11",
+          "page-1-cell-12"
+        ]
+      }
+    },
+    {
+      "text": "车 次 : G12",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.15856327976190474,
+          0.18799033888888889,
+          0.18665707407407403
+        ],
+        "parser_ref": [
+          "page-1-cell-13",
+          "page-1-cell-14",
+          "page-1-cell-15",
+          "page-1-cell-16"
+        ]
+      }
+    },
+    {
+      "text": "出 发 站 : 上 海 虹桥",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06266344629629629,
+          0.23522600661375656,
+          0.2839854055555555,
+          0.2552249788359788
+        ],
+        "parser_ref": [
+          "page-1-cell-17",
+          "page-1-cell-18",
+          "page-1-cell-19",
+          "page-1-cell-20",
+          "page-1-cell-21",
+          "page-1-cell-22",
+          "page-1-cell-23"
+        ]
+      }
+    },
+    {
+      "text": "到 达 站 : 杭州 东",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.30807940542328033,
+          0.2559868444444444,
+          0.3376016977513227
+        ],
+        "parser_ref": [
+          "page-1-cell-24",
+          "page-1-cell-25",
+          "page-1-cell-26",
+          "page-1-cell-27",
+          "page-1-cell-28",
+          "page-1-cell-29"
+        ]
+      }
+    },
+    {
+      "text": "出 发 : 2026-11-05 14:20",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06266344629629629,
+          0.38378980026455023,
+          0.3719808833333333,
+          0.4114074285714285
+        ],
+        "parser_ref": [
+          "page-1-cell-30",
+          "page-1-cell-31",
+          "page-1-cell-32",
+          "page-1-cell-33",
+          "page-1-cell-34"
+        ]
+      }
+    },
+    {
+      "text": "币 种 : CNY",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06266344629629629,
+          0.6080639887566137,
+          0.1919901333333333,
+          0.6347292850529099
+        ],
+        "parser_ref": [
+          "page-1-cell-35",
+          "page-1-cell-36",
+          "page-1-cell-37",
+          "page-1-cell-38"
+        ]
+      }
+    },
+    {
+      "text": "到 达 时 间 、 时 区 和 金额 未 提供 。 不 能 根据 城市 或 其 他 样本 补 全 。",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06133018148148148,
+          0.7813884146825395,
+          0.6073021231481481,
+          0.8037682169312167
+        ],
+        "parser_ref": [
+          "page-1-cell-39",
+          "page-1-cell-40",
+          "page-1-cell-41",
+          "page-1-cell-42",
+          "page-1-cell-43",
+          "page-1-cell-44",
+          "page-1-cell-45",
+          "page-1-cell-46",
+          "page-1-cell-47",
+          "page-1-cell-48",
+          "page-1-cell-49",
+          "page-1-cell-50",
+          "page-1-cell-51",
+          "page-1-cell-52",
+          "page-1-cell-53",
+          "page-1-cell-54",
+          "page-1-cell-55",
+          "page-1-cell-56",
+          "page-1-cell-57",
+          "page-1-cell-58",
+          "page-1-cell-59",
+          "page-1-cell-60",
+          "page-1-cell-61"
+        ]
+      }
+    },
+    {
+      "text": "For parser evaluation only. No purchase, booking or Trip is confirmed.",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.061996813888888884,
+          0.9475703505291004,
+          0.6419670083333333,
+          0.9609029986772485
+        ],
+        "parser_ref": [
+          "page-1-cell-62",
+          "page-1-cell-63",
+          "page-1-cell-64",
+          "page-1-cell-65",
+          "page-1-cell-66",
+          "page-1-cell-67",
+          "page-1-cell-68",
+          "page-1-cell-69",
+          "page-1-cell-70",
+          "page-1-cell-71",
+          "page-1-cell-72"
+        ]
+      }
+    }
+  ],
+  "document": {
+    "docling_document": {
+      "schema_name": "DoclingDocument",
+      "version": "1.10.0",
+      "name": "missing-info",
+      "origin": {
+        "mimetype": "application/pdf",
+        "binary_hash": 14737194646973438875,
+        "filename": "missing-info.png"
+      },
+      "furniture": {
+        "self_ref": "#/furniture",
+        "children": [],
+        "content_layer": "furniture",
+        "name": "_root_",
+        "label": "unspecified"
+      },
+      "body": {
+        "self_ref": "#/body",
+        "children": [
+          {
+            "$ref": "#/texts/0"
+          },
+          {
+            "$ref": "#/texts/1"
+          },
+          {
+            "$ref": "#/groups/0"
+          },
+          {
+            "$ref": "#/texts/9"
+          },
+          {
+            "$ref": "#/texts/10"
+          },
+          {
+            "$ref": "#/texts/11"
+          },
+          {
+            "$ref": "#/texts/12"
+          }
+        ],
+        "content_layer": "body",
+        "name": "_root_",
+        "label": "unspecified"
+      },
+      "groups": [
+        {
+          "self_ref": "#/groups/0",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [
+            {
+              "$ref": "#/texts/2"
+            },
+            {
+              "$ref": "#/texts/3"
+            },
+            {
+              "$ref": "#/texts/4"
+            },
+            {
+              "$ref": "#/texts/5"
+            },
+            {
+              "$ref": "#/texts/6"
+            },
+            {
+              "$ref": "#/texts/7"
+            },
+            {
+              "$ref": "#/texts/8"
+            }
+          ],
+          "content_layer": "body",
+          "name": "group",
+          "label": "key_value_area"
+        }
+      ],
+      "texts": [
+        {
+          "self_ref": "#/texts/0",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "section_header",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.0,
+                "t": 661.3693074042233,
+                "r": 308.3333333333333,
+                "b": 646.3693074042233,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                25
+              ]
+            }
+          ],
+          "orig": "SYNTHETIC TRAVEL MATERIAL",
+          "text": "SYNTHETIC TRAVEL MATERIAL",
+          "level": 1
+        },
+        {
+          "self_ref": "#/texts/1",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.0,
+                "t": 632.7026407375565,
+                "r": 251.0,
+                "b": 617.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                39
+              ]
+            }
+          ],
+          "orig": "missing-info / NOT A TICKET / 自 有 测试 材料",
+          "text": "missing-info / NOT A TICKET / 自 有 测试 材料"
+        },
+        {
+          "self_ref": "#/texts/2",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.0,
+                "t": 587.7026407375565,
+                "r": 63.0,
+                "b": 574.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                1
+              ]
+            }
+          ],
+          "orig": "车",
+          "text": "车"
+        },
+        {
+          "self_ref": "#/texts/3",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.333333333333332,
+                "t": 535.3693074042233,
+                "r": 78.0,
+                "b": 521.3693074042233,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                7
+              ]
+            }
+          ],
+          "orig": "出 发 站 :",
+          "text": "出 发 站 :"
+        },
+        {
+          "self_ref": "#/texts/4",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 89.33333333333333,
+                "t": 535.0359740708899,
+                "r": 142.0,
+                "b": 521.3693074042233,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                6
+              ]
+            }
+          ],
+          "orig": "上 海 虹桥",
+          "text": "上 海 虹桥"
+        },
+        {
+          "self_ref": "#/texts/5",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.0,
+                "t": 482.7026407375565,
+                "r": 78.0,
+                "b": 469.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                7
+              ]
+            }
+          ],
+          "orig": "到 达 站 :",
+          "text": "到 达 站 :"
+        },
+        {
+          "self_ref": "#/texts/6",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.333333333333332,
+                "t": 430.0359740708899,
+                "r": 63.0,
+                "b": 416.3693074042232,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                1
+              ]
+            }
+          ],
+          "orig": "出",
+          "text": "出"
+        },
+        {
+          "self_ref": "#/texts/7",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 68.0,
+                "t": 428.7026407375566,
+                "r": 186.0,
+                "b": 417.3693074042232,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                16
+              ]
+            }
+          ],
+          "orig": "2026-11-05 14:20",
+          "text": "2026-11-05 14:20"
+        },
+        {
+          "self_ref": "#/texts/8",
+          "parent": {
+            "$ref": "#/groups/0"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 52.666666666666664,
+                "t": 589.0359740708899,
+                "r": 128.0,
+                "b": 412.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                16
+              ]
+            }
+          ],
+          "orig": "次 : G12 杭州 东 发 :",
+          "text": "次 : G12 杭州 东 发 :"
+        },
+        {
+          "self_ref": "#/texts/9",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.333333333333332,
+                "t": 272.7026407375566,
+                "r": 63.0,
+                "b": 259.0359740708899,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                1
+              ]
+            }
+          ],
+          "orig": "币",
+          "text": "币"
+        },
+        {
+          "self_ref": "#/texts/10",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "section_header",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 52.0,
+                "t": 274.3693074042232,
+                "r": 96.0,
+                "b": 255.70264073755658,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                7
+              ]
+            }
+          ],
+          "orig": "种 : CNY",
+          "text": "种 : CNY",
+          "level": 1
+        },
+        {
+          "self_ref": "#/texts/11",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 30.666666666666668,
+                "t": 153.0359740708899,
+                "r": 303.6666666666667,
+                "b": 137.36930740422326,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                50
+              ]
+            }
+          ],
+          "orig": "到 达 时 间 、 时 区 和 金额 未 提供 。 不 能 根据 城市 或 其 他 样本 补 全 。",
+          "text": "到 达 时 间 、 时 区 和 金额 未 提供 。 不 能 根据 城市 或 其 他 样本 补 全 。"
+        },
+        {
+          "self_ref": "#/texts/12",
+          "parent": {
+            "$ref": "#/body"
+          },
+          "children": [],
+          "content_layer": "body",
+          "label": "text",
+          "prov": [
+            {
+              "page_no": 1,
+              "bbox": {
+                "l": 31.0,
+                "t": 36.70264073755652,
+                "r": 321.0,
+                "b": 27.369307404223264,
+                "coord_origin": "BOTTOMLEFT"
+              },
+              "charspan": [
+                0,
+                70
+              ]
+            }
+          ],
+          "orig": "For parser evaluation only. No purchase, booking or Trip is confirmed.",
+          "text": "For parser evaluation only. No purchase, booking or Trip is confirmed."
+        }
+      ],
+      "pictures": [],
+      "tables": [],
+      "key_value_items": [],
+      "form_items": [],
+      "pages": {
+        "1": {
+          "size": {
+            "width": 500.0256957649213,
+            "height": 700.0359740708899
+          },
+          "page_no": 1
+        }
+      }
+    },
+    "page_cells": [
+      {
+        "text": "SYNTHETIC",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.0552352566137566,
+            0.2686528601851852,
+            0.07666272685185184
+          ],
+          "parser_ref": "page-1-cell-0"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96298225
+      },
+      {
+        "text": "TRAVEL",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2799856111111111,
+            0.05571142261904761,
+            0.41997841666666663,
+            0.07666272685185184
+          ],
+          "parser_ref": "page-1-cell-1"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96500778
+      },
+      {
+        "text": "MATERIAL",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4339776972222222,
+            0.05571142261904761,
+            0.6166349768518518,
+            0.07666272685185184
+          ],
+          "parser_ref": "page-1-cell-2"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96500778
+      },
+      {
+        "text": "missing-info",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.10047102711640209,
+            0.18599044166666664,
+            0.11666067129629629
+          ],
+          "parser_ref": "page-1-cell-3"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9040908799999999
+      },
+      {
+        "text": "/",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.19265676574074073,
+            0.1009471931216931,
+            0.1999897222222222,
+            0.11570833928571427
+          ],
+          "parser_ref": "page-1-cell-4"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9040908799999999
+      },
+      {
+        "text": "NOT",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2079893111111111,
+            0.10142335912698411,
+            0.2513204175925926,
+            0.11285134325396823
+          ],
+          "parser_ref": "page-1-cell-5"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9240225200000001
+      },
+      {
+        "text": "A",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.25732010925925924,
+            0.10142335912698411,
+            0.26998612499999997,
+            0.11285134325396823
+          ],
+          "parser_ref": "page-1-cell-6"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.73150635
+      },
+      {
+        "text": "TICKET",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.27598581666666666,
+            0.10047102711640209,
+            0.363314662037037,
+            0.11570833928571427
+          ],
+          "parser_ref": "page-1-cell-7"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.73150635
+      },
+      {
+        "text": "/",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3539818083333333,
+            0.09618553306878304,
+            0.36798108888888886,
+            0.11856533531746029
+          ],
+          "parser_ref": "page-1-cell-8"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9130603
+      },
+      {
+        "text": "自",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3819803694444444,
+            0.09951869510582009,
+            0.38731342870370367,
+            0.11427984126984125
+          ],
+          "parser_ref": "page-1-cell-9"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9112648799999999
+      },
+      {
+        "text": "有",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3999794444444444,
+            0.0999948611111111,
+            0.41864515185185186,
+            0.11427984126984125
+          ],
+          "parser_ref": "page-1-cell-10"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9309854900000001
+      },
+      {
+        "text": "测试",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4193117842592592,
+            0.0999948611111111,
+            0.4999743055555555,
+            0.11427984126984125
+          ],
+          "parser_ref": "page-1-cell-11"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96544319
+      },
+      {
+        "text": "材料",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4699758472222222,
+            0.09618553306878304,
+            0.5019742027777777,
+            0.11856533531746029
+          ],
+          "parser_ref": "page-1-cell-12"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9680761699999999
+      },
+      {
+        "text": "车",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.16046794378306875,
+            0.125993525,
+            0.17999074999999998
+          ],
+          "parser_ref": "page-1-cell-13"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96700989
+      },
+      {
+        "text": "次",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.10599455277777776,
+            0.15856327976190474,
+            0.125993525,
+            0.18665707407407403
+          ],
+          "parser_ref": "page-1-cell-14"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9270170600000001
+      },
+      {
+        "text": ":",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.12532689259259258,
+            0.15856327976190474,
+            0.13865954074074072,
+            0.18665707407407403
+          ],
+          "parser_ref": "page-1-cell-15"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.91372955
+      },
+      {
+        "text": "G12",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1366596435185185,
+            0.16284877380952378,
+            0.18799033888888889,
+            0.17856225198412695
+          ],
+          "parser_ref": "page-1-cell-16"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9309357500000001
+      },
+      {
+        "text": "出",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06266344629629629,
+            0.23570217261904758,
+            0.08666221296296296,
+            0.2552249788359788
+          ],
+          "parser_ref": "page-1-cell-17"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96964546
+      },
+      {
+        "text": "发",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.10332802314814814,
+            0.23570217261904758,
+            0.11866056851851851,
+            0.2552249788359788
+          ],
+          "parser_ref": "page-1-cell-18"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9693858299999999
+      },
+      {
+        "text": "站",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.13465974629629626,
+            0.23522600661375656,
+            0.14865902685185184,
+            0.2552249788359788
+          ],
+          "parser_ref": "page-1-cell-19"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9323262800000001
+      },
+      {
+        "text": ":",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.15265882129629627,
+            0.24141616468253962,
+            0.15599198333333333,
+            0.25379648082010575
+          ],
+          "parser_ref": "page-1-cell-20"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9261199999999999
+      },
+      {
+        "text": "上",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.17865748518518515,
+            0.23570217261904758,
+            0.20398951666666665,
+            0.2547488128306878
+          ],
+          "parser_ref": "page-1-cell-21"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9329170999999999
+      },
+      {
+        "text": "海",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.20665604629629628,
+            0.23570217261904758,
+            0.22398848888888886,
+            0.2552249788359788
+          ],
+          "parser_ref": "page-1-cell-22"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9199073
+      },
+      {
+        "text": "虹桥",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2379877694444444,
+            0.23570217261904758,
+            0.2839854055555555,
+            0.2552249788359788
+          ],
+          "parser_ref": "page-1-cell-23"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.95384033
+      },
+      {
+        "text": "到",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.3104602354497354,
+            0.08732884537037036,
+            0.3299830416666666
+          ],
+          "parser_ref": "page-1-cell-24"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93236748
+      },
+      {
+        "text": "达",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.09799496388888888,
+            0.3104602354497354,
+            0.11866056851851851,
+            0.3295068756613756
+          ],
+          "parser_ref": "page-1-cell-25"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92262611
+      },
+      {
+        "text": "站",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.125993525,
+            0.3104602354497354,
+            0.14865902685185184,
+            0.3299830416666666
+          ],
+          "parser_ref": "page-1-cell-26"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9126396200000001
+      },
+      {
+        "text": ":",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.15199218888888888,
+            0.3161742275132275,
+            0.15599198333333333,
+            0.32855454365079356
+          ],
+          "parser_ref": "page-1-cell-27"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.90777794
+      },
+      {
+        "text": "杭州",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.16599146944444443,
+            0.3104602354497354,
+            0.2526536824074074,
+            0.3299830416666666
+          ],
+          "parser_ref": "page-1-cell-28"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93109146
+      },
+      {
+        "text": "东",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.23732113703703703,
+            0.30807940542328033,
+            0.2559868444444444,
+            0.3376016977513227
+          ],
+          "parser_ref": "page-1-cell-29"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93272064
+      },
+      {
+        "text": "出",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06266344629629629,
+            0.3856944642857142,
+            0.125993525,
+            0.40521727050264544
+          ],
+          "parser_ref": "page-1-cell-30"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96962509
+      },
+      {
+        "text": "发",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.10532792037037035,
+            0.38378980026455023,
+            0.13065995185185184,
+            0.4114074285714285
+          ],
+          "parser_ref": "page-1-cell-31"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92920998
+      },
+      {
+        "text": ":",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.12999331944444442,
+            0.38378980026455023,
+            0.13999280555555554,
+            0.4114074285714285
+          ],
+          "parser_ref": "page-1-cell-32"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92056061
+      },
+      {
+        "text": "2026-11-05",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1359930111111111,
+            0.3875991283068782,
+            0.28931846481481477,
+            0.4037887724867724
+          ],
+          "parser_ref": "page-1-cell-33"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9192072299999999
+      },
+      {
+        "text": "14:20",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3006512157407407,
+            0.3875991283068782,
+            0.3719808833333333,
+            0.4037887724867724
+          ],
+          "parser_ref": "page-1-cell-34"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.89604218
+      },
+      {
+        "text": "币",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06266344629629629,
+            0.6104448187830687,
+            0.125993525,
+            0.6299676249999999
+          ],
+          "parser_ref": "page-1-cell-35"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9160144
+      },
+      {
+        "text": "种",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.10399465555555555,
+            0.6080639887566137,
+            0.12532689259259258,
+            0.6347292850529099
+          ],
+          "parser_ref": "page-1-cell-36"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92477074
+      },
+      {
+        "text": ":",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.12532689259259258,
+            0.6080639887566137,
+            0.13732627592592592,
+            0.6347292850529099
+          ],
+          "parser_ref": "page-1-cell-37"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93126198
+      },
+      {
+        "text": "CNY",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1366596435185185,
+            0.6128256488095237,
+            0.1919901333333333,
+            0.6285391269841268
+          ],
+          "parser_ref": "page-1-cell-38"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9274202699999999
+      },
+      {
+        "text": "到",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.06133018148148148,
+            0.7832930787037036,
+            0.1466591296296296,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-39"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9179697400000001
+      },
+      {
+        "text": "达",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.08599558055555555,
+            0.7813884146825395,
+            0.10599455277777776,
+            0.8037682169312167
+          ],
+          "parser_ref": "page-1-cell-40"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.91343781
+      },
+      {
+        "text": "时",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.10532792037037035,
+            0.7832930787037036,
+            0.1273267898148148,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-41"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92194305
+      },
+      {
+        "text": "间",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.1266601574074074,
+            0.7813884146825395,
+            0.14532586481481483,
+            0.8037682169312167
+          ],
+          "parser_ref": "page-1-cell-42"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92900787
+      },
+      {
+        "text": "、",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.14465923240740738,
+            0.7813884146825395,
+            0.1646582046296296,
+            0.8037682169312167
+          ],
+          "parser_ref": "page-1-cell-43"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93049187
+      },
+      {
+        "text": "时",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.16399157222222221,
+            0.7832930787037036,
+            0.1793241175925926,
+            0.7966257268518516
+          ],
+          "parser_ref": "page-1-cell-44"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93100525
+      },
+      {
+        "text": "区",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.18732370648148147,
+            0.7847215767195767,
+            0.1993230898148148,
+            0.7966257268518516
+          ],
+          "parser_ref": "page-1-cell-45"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96962265
+      },
+      {
+        "text": "和",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.20532278148148148,
+            0.7837692447089945,
+            0.2179887972222222,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-46"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9691784699999999
+      },
+      {
+        "text": "金额",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.22065532685185182,
+            0.7837692447089945,
+            0.327316512037037,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-47"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.90608109
+      },
+      {
+        "text": "未",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.26998612499999997,
+            0.7813884146825395,
+            0.28598530277777773,
+            0.8037682169312167
+          ],
+          "parser_ref": "page-1-cell-48"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9582987199999999
+      },
+      {
+        "text": "提供",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.28531867037037034,
+            0.7832930787037036,
+            0.327316512037037,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-49"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.90335632
+      },
+      {
+        "text": "。",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3266498796296296,
+            0.7813884146825395,
+            0.34464895462962963,
+            0.8037682169312167
+          ],
+          "parser_ref": "page-1-cell-50"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92426231
+      },
+      {
+        "text": "不",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3439823222222222,
+            0.7832930787037036,
+            0.3686477212962963,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-51"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92005959
+      },
+      {
+        "text": "能",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.3706476185185185,
+            0.7832930787037036,
+            0.37931383981481476,
+            0.7966257268518516
+          ],
+          "parser_ref": "page-1-cell-52"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9699226400000001
+      },
+      {
+        "text": "根据",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.38731342870370367,
+            0.7837692447089945,
+            0.4193117842592592,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-53"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96782089
+      },
+      {
+        "text": "城市",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4286446379629629,
+            0.7837692447089945,
+            0.4719757444444444,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-54"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96363533
+      },
+      {
+        "text": "或",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4806419657407407,
+            0.7837692447089945,
+            0.49197471666666664,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-55"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96223015
+      },
+      {
+        "text": "其",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5006409379629629,
+            0.7837692447089945,
+            0.5059739972222221,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-56"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96848541
+      },
+      {
+        "text": "他",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5086405268518518,
+            0.7837692447089945,
+            0.5273062342592593,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-57"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9693023700000001
+      },
+      {
+        "text": "样本",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5299727638888888,
+            0.7837692447089945,
+            0.5699707083333333,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-58"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9305241399999999
+      },
+      {
+        "text": "补",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5719706055555555,
+            0.7837692447089945,
+            0.579303562037037,
+            0.7971018928571427
+          ],
+          "parser_ref": "page-1-cell-59"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9256285099999999
+      },
+      {
+        "text": "全",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5873031509259259,
+            0.7837692447089945,
+            0.5986359018518518,
+            0.7966257268518516
+          ],
+          "parser_ref": "page-1-cell-60"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.93199539
+      },
+      {
+        "text": "。",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.6006357990740739,
+            0.7918640667989417,
+            0.6073021231481481,
+            0.7966257268518516
+          ],
+          "parser_ref": "page-1-cell-61"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.92837128
+      },
+      {
+        "text": "For",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.061996813888888884,
+            0.9485226825396823,
+            0.08799547777777778,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-62"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96994553
+      },
+      {
+        "text": "parser",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.09399516944444444,
+            0.9504273465608464,
+            0.1459924972222222,
+            0.9609029986772485
+          ],
+          "parser_ref": "page-1-cell-63"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9686290700000001
+      },
+      {
+        "text": "evaluation",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.15132555648148147,
+            0.9475703505291004,
+            0.2379877694444444,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-64"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96591248
+      },
+      {
+        "text": "only.",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.24398746111111108,
+            0.9475703505291004,
+            0.2819855083333333,
+            0.9609029986772485
+          ],
+          "parser_ref": "page-1-cell-65"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9670764900000001
+      },
+      {
+        "text": "No",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.2886518324074074,
+            0.9485226825396823,
+            0.3099840694444444,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-66"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9691298700000001
+      },
+      {
+        "text": "purchase,",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.31665039351851854,
+            0.9475703505291004,
+            0.3973129148148148,
+            0.9609029986772485
+          ],
+          "parser_ref": "page-1-cell-67"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96093307
+      },
+      {
+        "text": "booking",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.40397923888888887,
+            0.9475703505291004,
+            0.47130911203703696,
+            0.9609029986772485
+          ],
+          "parser_ref": "page-1-cell-68"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9681272900000001
+      },
+      {
+        "text": "or",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.47730880370370365,
+            0.9504273465608464,
+            0.49397461388888886,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-69"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96932098
+      },
+      {
+        "text": "Trip",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.4993076731481481,
+            0.9480465165343913,
+            0.5319726611111111,
+            0.9609029986772485
+          ],
+          "parser_ref": "page-1-cell-70"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96697449
+      },
+      {
+        "text": "is",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5379723527777778,
+            0.9480465165343913,
+            0.5486384712962962,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-71"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.96806068
+      },
+      {
+        "text": "confirmed.",
+        "source": {
+          "page": 1,
+          "bbox": [
+            0.5539715305555555,
+            0.9475703505291004,
+            0.6419670083333333,
+            0.9580460026455024
+          ],
+          "parser_ref": "page-1-cell-72"
+        },
+        "from_ocr": true,
+        "parser_confidence": 0.9651374800000001
+      }
+    ],
+    "pipeline_options": {
+      "document_timeout": 110.0,
+      "accelerator_options": {
+        "num_threads": 2,
+        "device": "cpu",
+        "cuda_use_flash_attention2": false
+      },
+      "enable_remote_services": false,
+      "allow_external_plugins": false,
+      "artifacts_path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets",
+      "do_picture_classification": false,
+      "picture_classification_options": {
+        "engine_options": {
+          "engine_type": "transformers",
+          "top_k": null
+        },
+        "model_spec": {
+          "name": "document_figure_classifier_v2",
+          "repo_id": "docling-project/DocumentFigureClassifier-v2.5",
+          "revision": "main",
+          "engine_overrides": {}
+        }
+      },
+      "do_picture_description": false,
+      "picture_description_options": {
+        "batch_size": 8,
+        "scale": 2.0,
+        "picture_area_threshold": 0.05,
+        "classification_allow": null,
+        "classification_deny": null,
+        "classification_min_confidence": 0.0
+      },
+      "do_chart_extraction": false,
+      "chart_extraction_options": {
+        "kind": "chart_extraction",
+        "model": "granite-vision-v4",
+        "chart2csv": true,
+        "chart2code": false,
+        "chart2summary": false
+      },
+      "images_scale": 2.0,
+      "generate_page_images": false,
+      "generate_picture_images": false,
+      "do_table_structure": false,
+      "do_ocr": true,
+      "do_code_enrichment": false,
+      "do_formula_enrichment": false,
+      "force_backend_text": false,
+      "table_structure_options": {},
+      "ocr_options": {
+        "mode": "full_page",
+        "lang": [
+          "eng",
+          "chi_sim"
+        ],
+        "scale": 3.0,
+        "force_full_page_ocr": true
+      },
+      "layout_options": {
+        "keep_empty_clusters": false,
+        "skip_cell_assignment": false,
+        "create_orphan_clusters": true
+      },
+      "code_formula_options": {
+        "engine_options": {
+          "engine_type": "auto_inline",
+          "prefer_vllm": false
+        },
+        "model_spec": {
+          "name": "CodeFormulaV2",
+          "default_repo_id": "docling-project/CodeFormulaV2",
+          "revision": "main",
+          "prompt": "",
+          "response_format": "plaintext",
+          "supported_engines": null,
+          "engine_overrides": {
+            "transformers": {
+              "repo_id": null,
+              "revision": null,
+              "torch_dtype": null,
+              "min_engine_version": null,
+              "extra_config": {
+                "transformers_model_type": "automodel-imagetexttotext",
+                "extra_generation_config": {
+                  "skip_special_tokens": false
+                },
+                "torch_dtype": "bfloat16"
+              }
+            }
+          },
+          "api_overrides": {},
+          "trust_remote_code": false,
+          "stop_strings": [
+            "</doctag>",
+            "<end_of_utterance>"
+          ],
+          "temperature": 0.0,
+          "max_new_tokens": 4096,
+          "extra_generation_config": {}
+        },
+        "scale": 2.0,
+        "max_size": null,
+        "extract_code": true,
+        "extract_formulas": true
+      },
+      "generate_table_images": false,
+      "generate_parsed_pages": true,
+      "heading_hierarchy_options": {
+        "enabled": false,
+        "use_bookmarks": true,
+        "use_numbering": true,
+        "use_style": true,
+        "use_font_style": true,
+        "style_size_tolerance": 0.05,
+        "numbering_schemes": null,
+        "max_level": 6,
+        "bookmark_match_threshold": 0.8
+      },
+      "ocr_batch_size": 4,
+      "layout_batch_size": 4,
+      "table_batch_size": 4,
+      "batch_polling_interval_seconds": 0.5,
+      "queue_max_size": 100,
+      "stage_shutdown_timeout_seconds": 15.0
+    }
+  },
+  "candidates": {
+    "schema_version": 1,
+    "kind": "material_correction_candidates",
+    "source_id": "synthetic-af0d75df7def1b87",
+    "source_sha256": "af0d75df7def1b87867916c165ddc07bfaa9d74fe1f1fe37cc8508734ea3db9b",
+    "incomplete": true,
+    "requires_user_review": true,
+    "confirmed": false,
+    "fields": [
+      {
+        "field": "service_id",
+        "value": "G12",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "G12",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.061996813888888884,
+                  0.15856327976190474,
+                  0.18799033888888889,
+                  0.18665707407407403
+                ],
+                "parser_ref": [
+                  "page-1-cell-13",
+                  "page-1-cell-14",
+                  "page-1-cell-15",
+                  "page-1-cell-16"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "origin",
+        "value": "上海虹桥",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "上海虹桥",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06266344629629629,
+                  0.23522600661375656,
+                  0.2839854055555555,
+                  0.2552249788359788
+                ],
+                "parser_ref": [
+                  "page-1-cell-17",
+                  "page-1-cell-18",
+                  "page-1-cell-19",
+                  "page-1-cell-20",
+                  "page-1-cell-21",
+                  "page-1-cell-22",
+                  "page-1-cell-23"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "destination",
+        "value": "杭州东",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "杭州东",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.061996813888888884,
+                  0.30807940542328033,
+                  0.2559868444444444,
+                  0.3376016977513227
+                ],
+                "parser_ref": [
+                  "page-1-cell-24",
+                  "page-1-cell-25",
+                  "page-1-cell-26",
+                  "page-1-cell-27",
+                  "page-1-cell-28",
+                  "page-1-cell-29"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "departure_local",
+        "value": "2026-11-05 14:20",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "2026-11-05 14:20",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06266344629629629,
+                  0.38378980026455023,
+                  0.3719808833333333,
+                  0.4114074285714285
+                ],
+                "parser_ref": [
+                  "page-1-cell-30",
+                  "page-1-cell-31",
+                  "page-1-cell-32",
+                  "page-1-cell-33",
+                  "page-1-cell-34"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "arrival_local",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "timezone",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "currency",
+        "value": "CNY",
+        "status": "candidate",
+        "raw_candidates": [
+          {
+            "raw_text": "CNY",
+            "sources": [
+              {
+                "page": 1,
+                "bbox": [
+                  0.06266344629629629,
+                  0.6080639887566137,
+                  0.1919901333333333,
+                  0.6347292850529099
+                ],
+                "parser_ref": [
+                  "page-1-cell-35",
+                  "page-1-cell-36",
+                  "page-1-cell-37",
+                  "page-1-cell-38"
+                ]
+              }
+            ]
+          }
+        ],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "amount",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      }
+    ]
+  }
+}

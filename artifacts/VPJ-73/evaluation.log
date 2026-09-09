@@ -1,0 +1,50 @@
+{
+  "decision": "REJECT",
+  "gates": {
+    "all_frozen_runs_present": true,
+    "all_conversions_successful": true,
+    "actual_guard_checks": true,
+    "every_candidate_requires_review": true,
+    "clean_exact_fields": true,
+    "each_clean_document": true,
+    "source_locations": true,
+    "searchable_pdf_control": true,
+    "missing_information_not_invented": true,
+    "malicious_content_observed_as_content": true,
+    "repeated_material_stable_candidate_identity_and_fields": true,
+    "cold_process_time": true,
+    "repeat_median_time": true,
+    "peak_memory": true,
+    "not_worse_than_direct_ocr": true,
+    "incremental_value_or_bounded_overhead": false
+  },
+  "metrics": {
+    "clean_field_exact_ratio": {
+      "docling": 1.0,
+      "tesseract": 0.9583333333333334
+    },
+    "correct_field_source_location_ratio": {
+      "docling": 1.0,
+      "tesseract": 1.0
+    },
+    "per_clean_document_exact_ratio": {
+      "docling": {
+        "en-clear": 1.0,
+        "zh-clear": 1.0,
+        "mixed-wrapped": 1.0
+      },
+      "tesseract": {
+        "en-clear": 1.0,
+        "zh-clear": 0.875,
+        "mixed-wrapped": 1.0
+      }
+    },
+    "median_screenshot_process_seconds": {
+      "docling": 12.205357687000287,
+      "tesseract": 0.9101796459999605
+    },
+    "repeat_docling_median_seconds": 14.018658208999113,
+    "max_docling_process_seconds": 29.69375083400155,
+    "peak_docling_rss_bytes": 1259585536
+  }
+}

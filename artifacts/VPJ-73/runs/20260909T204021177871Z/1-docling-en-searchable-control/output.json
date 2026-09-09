@@ -1,0 +1,311 @@
+{
+  "engine": "docling",
+  "conversion_status": "success",
+  "conversion_seconds": 10.546954708002886,
+  "segments": [
+    {
+      "text": "SYNTHETIC TRAVEL MATERIAL",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.040914285714285695,
+          0.6755599999999999,
+          0.06734285714285712
+        ],
+        "parser_ref": "#/texts/0"
+      }
+    },
+    {
+      "text": "Searchable PDF control / NOT A TICKET Service: G73 Origin: Shanghai Hongqiao Destination: Hangzhou East Departure: 2026-11-03 09:30 Arrival: 2026-11-03 10:24 Time zone: Asia/Shanghai UTC+08:00 Currency: CNY Amount: 128.50",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.09585999999999996,
+          0.5727299999999999,
+          0.7008642857142857
+        ],
+        "parser_ref": "#/texts/1"
+      }
+    },
+    {
+      "text": "Synthetic rail itinerary. Not a ticket or reservation.",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.8111714285714284,
+          0.49570000000000014,
+          0.8243857142857142
+        ],
+        "parser_ref": "#/texts/2"
+      }
+    },
+    {
+      "text": "No purchase, booking or Trip is confirmed.",
+      "source": {
+        "page": 1,
+        "bbox": [
+          0.06,
+          0.9397428571428572,
+          0.4368000000000002,
+          0.952957142857143
+        ],
+        "parser_ref": "#/texts/3"
+      }
+    }
+  ],
+  "document": {
+    "schema_name": "DoclingDocument",
+    "version": "1.10.0",
+    "name": "en-searchable-control",
+    "origin": {
+      "mimetype": "application/pdf",
+      "binary_hash": 12430168153462582796,
+      "filename": "en-searchable-control.pdf"
+    },
+    "furniture": {
+      "self_ref": "#/furniture",
+      "children": [],
+      "content_layer": "furniture",
+      "name": "_root_",
+      "label": "unspecified"
+    },
+    "body": {
+      "self_ref": "#/body",
+      "children": [
+        {
+          "$ref": "#/texts/0"
+        },
+        {
+          "$ref": "#/groups/0"
+        },
+        {
+          "$ref": "#/texts/2"
+        },
+        {
+          "$ref": "#/texts/3"
+        }
+      ],
+      "content_layer": "body",
+      "name": "_root_",
+      "label": "unspecified"
+    },
+    "groups": [
+      {
+        "self_ref": "#/groups/0",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [
+          {
+            "$ref": "#/texts/1"
+          }
+        ],
+        "content_layer": "body",
+        "name": "group",
+        "label": "key_value_area"
+      }
+    ],
+    "texts": [
+      {
+        "self_ref": "#/texts/0",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "section_header",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 30.0,
+              "t": 671.36,
+              "r": 337.78,
+              "b": 652.86,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              25
+            ]
+          }
+        ],
+        "orig": "SYNTHETIC TRAVEL MATERIAL",
+        "text": "SYNTHETIC TRAVEL MATERIAL",
+        "level": 1
+      },
+      {
+        "self_ref": "#/texts/1",
+        "parent": {
+          "$ref": "#/groups/0"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 30.0,
+              "t": 632.898,
+              "r": 286.36499999999995,
+              "b": 209.39499999999998,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              221
+            ]
+          }
+        ],
+        "orig": "Searchable PDF control / NOT A TICKET Service: G73 Origin: Shanghai Hongqiao Destination: Hangzhou East Departure: 2026-11-03 09:30 Arrival: 2026-11-03 10:24 Time zone: Asia/Shanghai UTC+08:00 Currency: CNY Amount: 128.50",
+        "text": "Searchable PDF control / NOT A TICKET Service: G73 Origin: Shanghai Hongqiao Destination: Hangzhou East Departure: 2026-11-03 09:30 Arrival: 2026-11-03 10:24 Time zone: Asia/Shanghai UTC+08:00 Currency: CNY Amount: 128.50"
+      },
+      {
+        "self_ref": "#/texts/2",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 30.0,
+              "t": 132.18000000000006,
+              "r": 247.85000000000008,
+              "b": 122.93000000000006,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              54
+            ]
+          }
+        ],
+        "orig": "Synthetic rail itinerary. Not a ticket or reservation.",
+        "text": "Synthetic rail itinerary. Not a ticket or reservation."
+      },
+      {
+        "self_ref": "#/texts/3",
+        "parent": {
+          "$ref": "#/body"
+        },
+        "children": [],
+        "content_layer": "body",
+        "label": "text",
+        "prov": [
+          {
+            "page_no": 1,
+            "bbox": {
+              "l": 30.0,
+              "t": 42.17999999999995,
+              "r": 218.4000000000001,
+              "b": 32.92999999999995,
+              "coord_origin": "BOTTOMLEFT"
+            },
+            "charspan": [
+              0,
+              42
+            ]
+          }
+        ],
+        "orig": "No purchase, booking or Trip is confirmed.",
+        "text": "No purchase, booking or Trip is confirmed."
+      }
+    ],
+    "pictures": [],
+    "tables": [],
+    "key_value_items": [],
+    "form_items": [],
+    "pages": {
+      "1": {
+        "size": {
+          "width": 500.0,
+          "height": 700.0
+        },
+        "page_no": 1
+      }
+    }
+  },
+  "candidates": {
+    "schema_version": 1,
+    "kind": "material_correction_candidates",
+    "source_id": "synthetic-3657fa9c8d9e5757",
+    "source_sha256": "3657fa9c8d9e5757fc1ef141c97c39734d4b0eadb4fc5d53ac80d413e582ae0c",
+    "incomplete": true,
+    "requires_user_review": true,
+    "confirmed": false,
+    "fields": [
+      {
+        "field": "service_id",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "origin",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "destination",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "departure_local",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "arrival_local",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "timezone",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "currency",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      },
+      {
+        "field": "amount",
+        "value": null,
+        "status": "missing",
+        "raw_candidates": [],
+        "requires_user_review": true,
+        "confirmed": false
+      }
+    ]
+  }
+}

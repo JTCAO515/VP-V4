@@ -1,0 +1,3 @@
+Loading weights:   0%|          | 0/770 [00:00<?, ?it/s]Loading weights: 100%|██████████| 770/770 [00:00<00:00, 8323.43it/s]
+OSD failed (doc /Users/jtcao/Documents/VP-V4-Docling-Experiment/artifacts/VPJ-73/fixtures/malicious-note.png, page: 0, OCR rectangle: 0, processed image file <tempfile._TemporaryFileWrapper object at 0x121bc0980>):
+ b'Error opening data file /Users/jtcao/Library/Caches/visepanda/vpj73/assets/tessdata/osd.traineddata\nPlease make sure the TESSDATA_PREFIX environment variable is set to your "tessdata" directory.\nFailed loading language \'osd\'\nTesseract couldn\'t load any languages!\nCould not initialize tesseract.\n'
