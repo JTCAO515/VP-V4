@@ -1,0 +1,5 @@
+
+> vp-v4@0.0.0 lint /Users/jtcao/Documents/VP-V4-Harness-Seeds
+> node scripts/lint.mjs
+
+Source policy lint passed (186 files checked).
