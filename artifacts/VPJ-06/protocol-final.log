@@ -1,0 +1,28 @@
+✔ qwen: serializes documented non-thinking HTTP dialect and normalizes usage (18.319708ms)
+✔ qwen: JSON object mode reuses the existing closed known/unknown validator (1.24375ms)
+✔ qwen: tool calls are bounded candidates and require caller argument validation (0.865209ms)
+✔ qwen: rejects incomplete finish reasons, missing usage and model mismatches (1.194375ms)
+✔ glm: serializes documented non-thinking HTTP dialect and normalizes usage (0.113ms)
+✔ glm: JSON object mode reuses the existing closed known/unknown validator (0.389209ms)
+✔ glm: tool calls are bounded candidates and require caller argument validation (1.915333ms)
+✔ glm: rejects incomplete finish reasons, missing usage and model mismatches (0.930167ms)
+✔ deepseek: serializes documented non-thinking HTTP dialect and normalizes usage (0.143083ms)
+✔ deepseek: JSON object mode reuses the existing closed known/unknown validator (0.888417ms)
+✔ deepseek: tool calls are bounded candidates and require caller argument validation (0.488167ms)
+✔ deepseek: rejects incomplete finish reasons, missing usage and model mismatches (0.410625ms)
+✔ unknown optional billing dimensions stay unknown; inconsistent cache usage fails closed (0.525875ms)
+✔ policy rejection, pre-cancellation and exhausted C0 budget never dispatch (19.797708ms)
+✔ invalid runtime requests reject before transport (0.210958ms)
+✔ HTTP failures and exceptions reveal no headers/body/secret and never retry or fallback (1.269417ms)
+✔ timeout aborts one ignored transport and cancels its late response (6.098958ms)
+✔ caller cancellation aborts HTTP and remains cancelled even if transport ignores it (0.308917ms)
+✔ body reads share the deadline and cancel hanging streams (5.61125ms)
+✔ oversized, malformed and streaming bodies reject without returning raw payload (0.769083ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 138.716125

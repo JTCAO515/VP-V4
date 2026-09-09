@@ -1,0 +1,10 @@
+{"command":"node --experimental-strip-types --test tests/security/model-gateway/provider-protocol/boundaries.test.ts","exitCode":0,"startedAt":"2026-09-09T17:14:44.219Z","finishedAt":"2026-09-09T17:14:45.295Z","env":"local"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-09-09T17:14:42.917Z","finishedAt":"2026-09-09T17:14:46.762Z","env":"local"}
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-09-09T17:14:46.685Z","finishedAt":"2026-09-09T17:14:48.992Z","env":"local"}
+{"command":"pnpm test:unit","exitCode":0,"startedAt":"2026-09-09T17:14:45.631Z","finishedAt":"2026-09-09T17:14:57.078Z","env":"local"}
+{"command":"node --experimental-strip-types --test tests/contract/model-gateway/provider-protocol/protocol.test.ts tests/security/model-gateway/provider-protocol/boundaries.test.ts","exitCode":0,"startedAt":"2026-09-09T17:15:30.865Z","finishedAt":"2026-09-09T17:15:31.047Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-09-09T17:15:43.667Z","finishedAt":"2026-09-09T17:15:44.031Z","env":"local"}
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-09-09T17:15:42.506Z","finishedAt":"2026-09-09T17:16:35.108Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-09-09T17:16:52.226Z","finishedAt":"2026-09-09T17:16:52.528Z","env":"local"}
+{"command":"git diff --cached --check","exitCode":2,"startedAt":"2026-09-09T17:16:52.593Z","finishedAt":"2026-09-09T17:16:52.604Z","env":"local"}
+{"command":"git diff --cached --check","exitCode":0,"startedAt":"2026-09-09T17:17:05.781Z","finishedAt":"2026-09-09T17:17:05.834Z","env":"local"}

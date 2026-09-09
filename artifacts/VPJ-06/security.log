@@ -1,0 +1,15 @@
+✔ policy rejection, pre-cancellation and exhausted C0 budget never dispatch (327.781167ms)
+✔ invalid runtime requests reject before transport (2.839625ms)
+✔ HTTP failures and exceptions reveal no headers/body/secret and never retry or fallback (35.187125ms)
+✔ timeout aborts one ignored transport and discards its late result (28.301083ms)
+✔ caller cancellation aborts HTTP and remains cancelled even if transport ignores it (1.12275ms)
+✔ body reads share the deadline and cancel hanging streams (17.588209ms)
+✔ oversized, malformed and streaming bodies reject without returning raw payload (3.205792ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 933.238708

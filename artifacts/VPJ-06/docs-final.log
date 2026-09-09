@@ -1,0 +1,6 @@
+
+> vp-v4@0.0.0 docs:check /Users/jtcao/Documents/VP-V4-Model-Adapters
+> node scripts/docs-check.mjs
+
+VPJ plan passed: 71 tasks, 20 replacements, acyclic dependencies, contracts and archive hashes.
+AI Core and VPJ documentation baseline passed.
