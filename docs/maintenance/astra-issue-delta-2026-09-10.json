@@ -1,0 +1,120 @@
+{
+  "baseCommit": "b5acf58ecc49906826568a314c6aad4dc9a4abc5",
+  "model": "gpt-6-astra",
+  "reasoningEffort": "xhigh",
+  "scope": "clarify native foundation and real selected-Trip consumer acceptance; preserve identities and all212 native edges",
+  "issues": [
+    {
+      "id": "VPJ-01",
+      "number": 188,
+      "beforeAcceptance": [
+        "审计并移植本地 IOS-01 壳的允许行为到 main，保留原始未跟踪文件；原生 SwiftUI，默认 Ask，Trip/Explore/Ask/Tools/Profile。",
+        "一个真实屏幕在 zh/en、Dynamic Type、VoiceOver、Reduce Motion 下可用；最低 iOS17，上传工具链满足当前 Apple 要求。",
+        "语言发布名单变为 zh/en，es/ru/ar 不向新用户承诺；现有 legacy locale payload兼容策略和五语回归迁移可审查。",
+        "首个Ask/Trip屏幕冻结语义token/字体/通用状态与sheet手势，不把所有视觉设计留到整链QA。",
+        "保留已接受Logo与成熟清爽视觉，状态文字遵守VP响应规范、英文优先且中英事实一致；本票原生可访问性与真实对象验收仍独立，不把预览文案优化当真实AI能力。"
+      ],
+      "acceptance": [
+        "审计并移植本地 IOS-01 壳的允许行为到 main，保留原始未跟踪文件；原生 SwiftUI，默认 Ask，Trip/Explore/Ask/Tools/Profile。",
+        "一个真实屏幕在 zh/en、Dynamic Type、VoiceOver、Reduce Motion 下可用；最低 iOS17，上传工具链满足当前 Apple 要求。",
+        "语言发布名单变为 zh/en，es/ru/ar 不向新用户承诺；现有 legacy locale payload兼容策略和五语回归迁移可审查。",
+        "首个Ask/Trip屏幕冻结语义token/字体/通用状态与sheet手势，不把所有视觉设计留到整链QA。",
+        "保留已接受Logo与成熟清爽视觉，状态文字遵守VP响应规范、英文优先且中英事实一致；本票验收原生基础屏幕、最低系统/可访问性和通用呈现，不将预览文案优化当真实AI能力。",
+        "本票不等待已登录真实Trip的选区Ask、Proposal确认和持久重载；这些消费者在#198实现、#233整链UX和#242真机贯通验收。原iOS17、VoiceOver、Dynamic Type、Reduce Motion及基础交互门仍须实证，不因职责澄清自动关闭。"
+      ],
+      "blockedBy": []
+    },
+    {
+      "id": "VPJ-10",
+      "number": 198,
+      "beforeAcceptance": [
+        "选中范围→Ask→局部候选→影响/diff→确认→回到原位置；未选对象保持不动。",
+        "用户可直接移日/排序/改时，手动编辑与硬锁区别明确。",
+        "并发更新旧proposal不能提交；撤销Trip修改不能伪装取消外部订单。"
+      ],
+      "acceptance": [
+        "选中范围→Ask→局部候选→影响/diff→确认→回到原位置；未选对象保持不动。",
+        "用户可直接移日/排序/改时，手动编辑与硬锁区别明确。",
+        "并发更新旧proposal不能提交；撤销Trip修改不能伪装取消外部订单。",
+        "负责已登录真实Trip的选区→Ask sheet→局部Proposal/diff→确认→回到原对象与位置→重载闭环；复用#188基础导航/样式/可访问性，拒绝或关闭sheet不得误确认，真实凭据/数据条件缺失保留未验收。"
+      ],
+      "blockedBy": [
+        "VPJ-09"
+      ]
+    },
+    {
+      "id": "VPJ-40",
+      "number": 233,
+      "beforeAcceptance": [
+        "统一Cream/Ink/Plum/Gold与原始VP资产；对话/计划/sheet/键盘/返回锚点同一状态语义。",
+        "真机/Simulator完成小屏大屏、大字VoiceOver、Reduce Motion/Transparency、来电低电量弱网；录屏展示可中断动效。",
+        "结构卡原子出现、滚动不抢位、已保存动画只在回执后；用profile定位性能不写未测FPS。"
+      ],
+      "acceptance": [
+        "统一Cream/Ink/Plum/Gold与原始VP资产；对话/计划/sheet/键盘/返回锚点同一状态语义。",
+        "真机/Simulator完成小屏大屏、大字VoiceOver、Reduce Motion/Transparency、来电低电量弱网；录屏展示可中断动效。",
+        "结构卡原子出现、滚动不抢位、已保存动画只在回执后；用profile定位性能不写未测FPS。",
+        "在#198真实选区Ask消费者上复验sheet、焦点、返回锚点、大字与VoiceOver及拒绝/关闭状态；不能仅引用#188基础屏幕证据完成整链验收。"
+      ],
+      "blockedBy": [
+        "VPJ-13",
+        "VPJ-20",
+        "VPJ-21",
+        "VPJ-23",
+        "VPJ-25",
+        "VPJ-27",
+        "VPJ-28",
+        "VPJ-29",
+        "VPJ-30",
+        "VPJ-34",
+        "VPJ-48",
+        "VPJ-64",
+        "VPJ-49",
+        "VPJ-55",
+        "VPJ-61",
+        "VPJ-36"
+      ]
+    },
+    {
+      "id": "VPJ-42",
+      "number": 242,
+      "beforeAcceptance": [
+        "邀请受控用户在原生build完成一个真实Trip的Plan/Ready/Travel，含外跳、离线、恢复、拒绝/取消。",
+        "真实owner/RLS/provider/数据/网络/权限证明与TestFlight build关联；sandbox购买不算收入。",
+        "所有首发必需项有功能/异常/数据/UX/运行证据；只修验收缺陷，不靠fixture替代。",
+        "非技术经营留存与真实付费效果由47观察，不因旅行节点未到而伪称成功/失败。"
+      ],
+      "acceptance": [
+        "邀请受控用户在原生build完成一个真实Trip的Plan/Ready/Travel，含外跳、离线、恢复、拒绝/取消。",
+        "真实owner/RLS/provider/数据/网络/权限证明与TestFlight build关联；sandbox购买不算收入。",
+        "所有首发必需项有功能/异常/数据/UX/运行证据；只修验收缺陷，不靠fixture替代。",
+        "非技术经营留存与真实付费效果由47观察，不因旅行节点未到而伪称成功/失败。",
+        "真实设备与账号贯通#198选区Ask、明确确认、跨端/重载及拒绝路径；基础壳、模拟数据或仅#188完成不能替代本项联合验收。"
+      ],
+      "blockedBy": [
+        "VPJ-08",
+        "VPJ-16",
+        "VPJ-21",
+        "VPJ-24",
+        "VPJ-28",
+        "VPJ-29",
+        "VPJ-32",
+        "VPJ-35",
+        "VPJ-36",
+        "VPJ-37",
+        "VPJ-38",
+        "VPJ-39",
+        "VPJ-40",
+        "VPJ-41",
+        "VPJ-48",
+        "VPJ-55",
+        "VPJ-56",
+        "VPJ-58",
+        "VPJ-61",
+        "VPJ-64",
+        "VPJ-65",
+        "VPJ-49"
+      ]
+    }
+  ]
+}

@@ -10,8 +10,9 @@ Arabic still uses RTL. The Web locale migration is separate.
 All screens are development preview: no account, AI, network, Trip write, booking or payment.
 Draft text and language selection are session-only. Sending remains disabled.
 
-The bundled icon is an upscaled local design asset for Simulator use only. Original resolution,
-rights and Store submission approval remain release prerequisites.
+The bundled icon and wordmark use the operator-supplied artwork integrated by PR274.
+[Asset provenance and permitted surfaces](../../docs/licenses/asset-rights-ledger.json) remain
+authoritative; replacement approval does not establish signed Store or complete app acceptance.
 
 ## Build and test
 

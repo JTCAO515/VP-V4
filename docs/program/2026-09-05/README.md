@@ -1,52 +1,51 @@
-# VPJ 最终统筹与开发入口
+# VPJ 产品与开发入口
 
-日期2026-09-05。Program：[VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187)。基线分支 `codex/vp-final-program-20260905`；PR与实际tracker结果在issue-plan.json / tracker-verification.json中登记。
+[VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187) 是唯一活动 Program：中英原生 iOS 完整旅程、同 Trip 轻量 Web Studio、一个 VP 与受控技能。完整范围、商业试验和客户交付由[主报告](../../VISEPANDA-MASTER-PLAN-2026-09-05.md)与 ADR-0023 定义。
 
-统筹PR：[#253](https://github.com/JTCAO515/VP-V4/pull/253)。已核验旧20项关闭、新65项与198条native依赖匹配。给后续agent可直接复制的[启动说明](AGENT-KICKOFF.md)。
+本目录始于 2026-09-05，持续接纳已批准增量；目录日期不是当前状态日期。2026-09-10 本地规划为 **73 项子任务、212 条直接依赖**；该数值描述任务图，不描述完成率。最初 PR #253 的 65 项/198 条依赖、旧 20 项迁移结果保留在[历史验证](VERIFICATION.md)。
 
-## 先读哪些文件
+## 从哪里开始
 
-1. [完整统筹报告](../../VISEPANDA-MASTER-PLAN-2026-09-05.md)：产品、商业、所有客户端/后台、知识、运营、发布和本轮调整。
-2. [ADR-0023](../../adr/ADR-0023-vpj-integrated-native-journey-baseline.md)：新旧基线冲突与权限。
-3. [任务队列](ISSUES.md)：按依赖顺序生成，包含实际GitHub编号。
-4. [接口合同](INTERFACES.md)、[当前Issue执行行](EXECUTION-CONTRACT.md)。
-5. [运营与客户交付](OPERATIONS-AND-RELEASE.md)、[旧新Issue映射](ISSUE-MIGRATION.md)、[归档说明](ARCHIVE.md)。
+首次进入或产品范围变化时读主报告；执行单项任务从根 [AGENTS.md](../../../AGENTS.md)、[CONTEXT.md](../../../CONTEXT.md)、[开发流程](../../agents/development-workflow.md)、当前 Issue/PR 及其[执行行](EXECUTION-CONTRACT.md)开始，再读受影响的接口、代码和测试。历史审计与无关模块按需读取。复制任务提示可用 [AGENT-KICKOFF.md](AGENT-KICKOFF.md)。
 
-证据附件：[代码复用](../../research/final-code-reuse-audit-2026-09-05.md)、[原生iOS/UIUX](../../research/final-ios-product-delivery-2026-09-05.md)、[Tracker/商业](../../research/final-tracker-commercial-audit-2026-09-05.md)。这些是审查输入，主报告与Issue manifest记录最终取舍；附件中的候选拆分不产生第二套队列。
+| 要确认的内容 | 权威来源与用途 |
+| --- | --- |
+| 产品、商业与安全决定 | [主报告](../../VISEPANDA-MASTER-PLAN-2026-09-05.md)、[ADR-0023](../../adr/ADR-0023-vpj-integrated-native-journey-baseline.md)；品牌变更按 [ADR-0025](../../adr/ADR-0025-brand-service-task-and-response-semantics.md)及其三份契约 |
+| 开发、准备范围与验证方法 | [开发流程](../../agents/development-workflow.md) / ADR-0024；替代冲突的旧操作流程，不替代产品验收与安全合同 |
+| 任务身份、计划依赖与验收要求 | [issue-plan.json](issue-plan.json) 是规划源；生成[任务队列](ISSUES.md)、[执行行](EXECUTION-CONTRACT.md)和 `issue-bodies/`。本地清单未勾选、`planned` 状态不表示远端没有进展 |
+| 接口与模块责任 | [INTERFACES.md](INTERFACES.md) 和受影响的 `docs/contracts/`；规划类型由真实生产者/消费者接入前版本化 |
+| 当前进度、依赖与就绪 | 当前 GitHub Issue 正文/评论、原生依赖、相关 PR/CI，以及实际代码与环境；标签和历史快照仅供导航 |
+| 交接与完成证据 | [docs/handoff.json](../../handoff.json) 生成根 CONTEXT/HANDOFF；关键结论回到 Issue/PR 和 `artifacts/<VPJ-ID>/`，核对版本、环境与未验项 |
 
-## 当前范围
+历史研究是决策输入；归档、候选拆分和旧 AI/V4/LAUNCH 队列不产生第二套任务或当前操作授权。
 
-2026-09-10 [HF复用执行计划](../../harness/hf-reuse/README.md) 增加VPJ-72回答判分/盲评准备、VPJ-73材料解析试验，并为10项现有任务补充资源与验收要求。新增2条依赖，既有边不删除；Docling试验否决不阻止材料能力选其他合格实现。任务身份仍由本Program的issue-plan.json管理。
+## 当前增量与对应入口
 
-开发调度：[品牌方向增量开发计划](BRAND-ALIGNMENT-EXECUTION.md)。
+| 工作 | 使用的契约与完成边界 |
+| --- | --- |
+| 品牌方向接入 | [增量开发计划](BRAND-ALIGNMENT-EXECUTION.md)串联[基础跨 Trip 偏好](../../contracts/basic-preferences-cross-trip.md)、[ServiceTask 计量](../../contracts/service-task-metering.md)、[响应规范](../../contracts/vp-response-policy.md)。Free/Pass 共享明确保存的基础偏好；必要澄清和系统修复不新增用户消费。新计量先只记录归属，未决容量、partial/改稿/TTL/跨期及 Q38 不因规划而启用 |
+| Harness 真实集成 | [Harness 计划](../../harness/README.md)。VPJ-66 #263 的[离线准备](../../../artifacts/VPJ-66/verification.md)已有完成记录；VPJ-67…71 的 provider、真实 Trip/worker、故障恢复及最终回归分别验收 |
+| 两项独立准备 | [HF 复用计划](../../harness/hf-reuse/README.md)：[VPJ-72 #287](https://github.com/JTCAO515/VP-V4/issues/287) 准备中英判分/盲评包，[VPJ-73 #288](https://github.com/JTCAO515/VP-V4/issues/288) 评估 Docling 合成材料解析。核实输入、契约与本地条件后可并行；后者与材料运行票是研究关系，没有新增阻塞边 |
+| 运营与客户交付 | [OPERATIONS-AND-RELEASE.md](OPERATIONS-AND-RELEASE.md)。技术发布 VPJ-45 与商业生命周期 VPJ-47 是各自的完成条件；模型、数据、Store、真人及客户结果不能由 Web 发布或准备 PR 代替 |
 
-2026-09-10 [品牌工程调整研究](../../research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md)将已确认的免费基础跨Trip偏好、完整服务任务和VP输出表达同步为三个规划契约与既有任务验收增量。沿当前依赖推进，未决收费数值、数据许可及激活制不启用；已完成准备和进行中的独立工作继续。
+以上为工作路由，不是新的整批等待顺序。按实时依赖、接口、环境及文件协作状态选取可推进任务；`expand` 仍需其 activationEvidence。可独立验证的准备片段按开发流程记录范围，父 Issue 保留未完成的运行验收；Issue 全部验收完成后才关闭。
 
-2026-09-09 新增 [Harness 可靠性整合](../../harness/README.md)：VPJ-66…71 围绕只读问答与保留晚餐的局部改稿，先形成可运行评测，再验证真实服务与恢复。统一纳入本 Program，原65项身份/验收/198条依赖保留；新增6项及12条直接依赖。正式编号和发布读回见 [验证记录](../../harness/VERIFICATION.md)。
-
-原生中英iOS完整旅程，精简Web同Trip基本编辑/确认；一个VP多受控技能。酒店L1a/L1b；Free+30天非自动续费Journey Pass试验；语音/讲解/离线/Community/简单分享/运营/删除/IAP/发布均有责任任务。后续扩展要有真实触发证据。
-
-## 开发调度
-
-共享执行规则：[开发流程](../../agents/development-workflow.md) / ADR-0024。2026-09-08核对#253与#254均已合并；manifest状态、旧文案和标签均不能替代实时状态。
-
-基线未合并时保留对应阻塞；合并后按真实依赖、接口、环境和文件协作状态核实并修正陈旧标签。运行验收等待外部条件时，可按共享流程记录独立准备范围，父Issue仍保留实际验收。最早候选路径：原生基础01、Staging02、数据政策03、客户发现46、申请入口62；实际可执行性需逐项核实。每条PR交付一项连贯结果，Issue可增量交付，worktree按需使用。
-
-## 工具
+## 验证与更新
 
 ```bash
-node scripts/vpj-program.mjs verify
-node scripts/vpj-program.mjs render
-# 仅共享交接变化时，无需重建整套任务文档
-node scripts/vpj-program.mjs render-handoff
+# 本地规划、文档与归档检查；不访问或修改远端
 pnpm docs:check
 git diff --check
+# GitHub 只读核对；结果仍需结合相关接口与环境判断就绪
+node scripts/vpj-program.mjs verify-remote
 ```
 
-`verify-remote` 对GitHub只读，核对基线/任务生命周期和依赖，并提示需要重新判断就绪的标签；不自动修改标签或关闭任务。`publish / close-old / sync-*` 是外部变更模式，保留其明确tracker授权；普通coding Issue不可用来重整队列。重复执行发布按VPJ编号查找，不创建同名重复项；迁移快照记录全部旧body/comments/关系。
+更新规划先改 `issue-plan.json`，再用 `node scripts/vpj-program.mjs render` 生成派生文件并审查 diff；保留远端已有评论、勾选与实施证据。仅共享阶段、决定、阻塞或下一动作变化时更新 `docs/handoff.json`，运行 `node scripts/vpj-program.mjs render-handoff`；启动任务无需重生成。`package.json` 是可运行检查命令源。
 
-## 完成和回滚
+`publish / close-old / sync-*` 修改 GitHub，只在对应 tracker 授权范围使用；文档生成不等于远端同步。既有授权按对象、环境和范围持续有效，规划及命令示例本身不新增生产、账户、付款或数据权限。
 
-统筹交付包含主报告、详细任务/原生依赖、恢复性归档和reviewable PR；它与产品后续可用是不同完成条件。旧Issue按not planned关闭并链接新责任，不代表Staging/模型/隐私/发布已通过。回滚可reopen旧Issue和恢复标签，源码从hash归档或git恢复；不动用户原工作树或已执行数据库。
+## 历史与恢复
 
-观察窗口、运行UNRUN和验证结果见 [验证记录](VERIFICATION.md) 与根handoff。当前没有真实用户/模型/数据库/商店运行验收。
+[旧 Issue 映射](ISSUE-MIGRATION.md)、[归档/恢复](ARCHIVE.md)及[规划验证](VERIFICATION.md)记录当时的操作与证据。旧项按 `not planned` 关闭表示已被替代；历史 UNRUN 也不否定后来独立取得的实际验证。
+
+回滚只撤销对应规划增量，必要时按保存的快照恢复 tracker 关系和源码，保留后续实施进展；不覆盖用户工作树、改写已应用迁移或恢复被撤回的数据权限。

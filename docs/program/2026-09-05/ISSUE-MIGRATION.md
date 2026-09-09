@@ -1,6 +1,6 @@
-# 旧开放 Issue → 新责任映射
+# 2026-09-05 迁移快照：旧开放 Issue → 新责任映射
 
-全部旧项按用户授权superseded/not planned关闭，不代表已验收；原body/comments及关系快照保留。两条既有PR #185/#186仍open。
+当日全部旧项按用户授权superseded/not planned关闭，不代表已验收；原body/comments及关系快照保留。PR #185/#186在该迁移快照中为open；当前状态须查询GitHub，不由本历史记录推断。
 
 | 旧Issue | 标题 | 新责任 |
 | --- | --- | --- |
