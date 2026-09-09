@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Staging backup and explicit verified Session pooler are ready. Original13 validation exposed RPC defects; appended repair is locally verified at25 migrations with29 integration/82 security tests,zero skips. Remote remains11; additional repair execution authority pending, original backup/13/two-identity grant retained.
+状态：Staging backup and explicit verified Session pooler are ready. Original13 validation exposed RPC defects; appended repair is locally verified at25 migrations with29 integration/82 security tests,zero skips. Remote remains11; additional repair execution authority pending, original backup/13/two-identity grant retained. Harness planning merged via PR269; six implementation Issues are VPJ-66..71 (#263..268), with runtime acceptance unstarted.
 
 阶段：Validated repository RPC repair and real affected-schema backup/restore preparation; no remote migration or new Auth identities yet.
 
@@ -23,6 +23,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - Free + non-renewing 30-day Journey Pass experiment; $19.99 reference, $14.99 alternative; actual StoreKit terms and cost checked before sale.
 - Keep valid Trip/RLS/migration/knowledge/privacy safety contracts; archived code not production input.
 - 2026-09-09 JT explicitly allows production publishing and merge-triggered Vercel deployments for VP-V4 in this continuing session. Production database migrations, new data/recipient permissions, purchases, legal/material rights and branch-protection bypass remain outside that grant.
+- 2026-09-09 current planning request authorizes optimizing Harness, publishing six incremental Issues and integrating the planning into main. This grants no new provider/data/account/production database or payment authority.
 
 ## 未决与运行证据
 
@@ -52,10 +53,11 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - 1280x800 and 390x844 current-page smoke: no horizontal overflow or console errors/warnings. Existing cross-route locale reset is assigned to VPJ-01/41.
 - PR253 CI at commit06bab2f passed; subsequent documentation-only handoff commits receive fresh CI and must be inspected before merge.
 - 2026-09-08 governance read-back at main 1bd1ffb: PR253/254 merged; all 65 VPJ tasks still status:blocked; VPJ-01 #188 and VPJ-62 #202 have no native blockers. These are readiness review candidates, not verified implementation-ready tasks.
+- 2026-09-09 Harness planning: VPJ-66..71 published as #263..268; exact remote read-back passed for new bodies/12 native dependencies/parent/labels. Original65 rows/bodies/labels/states and198 dependencies preserved; Program187 now has71 children with unchanged body/state. Local plan/archive/docs checks and11 governance tests passed; independent review has no remaining required changes. See docs/harness/VERIFICATION.md; no Harness runtime execution performed.
 
 ## 下一动作与回滚
 
-Review/merge the RPC repair PR, retain its exact-head CI and frozen local evidence, then obtain permission for the single additional migration before Staging application. Harness H-01..H-06 remain unnumbered drafts requiring separate ticket-creation confirmation.
+Review/merge RPC repair PR270 against current main with fresh exact-head checks; obtain scope for the single additional migration before Staging application. In parallel verify VPJ-66 #263 offline preparation contract and live dependencies; VPJ-67..71 retain runtime gates.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 

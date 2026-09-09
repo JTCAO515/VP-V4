@@ -52,6 +52,8 @@ TripProposal→visible diff→explicit confirm→atomic TripPatch；worker不能
 
 ## 5. 版本与冲突
 
+[VP-Harness](../../harness/README.md) 在 VPJ-66…71 复用上表实际接缝与模块责任，以报告映射执行状态、业务结果及验收判定，不新建权威生命周期。新增报告字段在对应纵切用真实 producer/consumer 验证后版本化；步行量来自同口径路线依据，不能将 transfer minutes 当作已验证少走路。
+
 UI/nav schema、API事件、Trip revision、source revision、memory revision、policy generation、price/entitlement period分别有版本，不能用一个global version解决所有并发。旧客户端在支持窗内收到可理解的降级/升级提示，禁静默新字段改变确认含义。
 
 同一文件可由不同顺序Issue维护，但同时只允许一个编辑owner。`allowedPaths`是边界上限，不是鼓励全范围重构。发现需要未冻结上游行为，先在本Issue记录接口差异，修正依赖后继续。
