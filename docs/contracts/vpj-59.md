@@ -1,6 +1,6 @@
 # RuntimeBudget: durable reservation contract
 
-Status: local implementation in progress, no remote activation. Related to #194.
+Status: local PostgreSQL and Supabase25->26/HTTP implementation verified, no remote activation. Related to #194.
 Amounts are integer micro-units of the scope currency, never floating point. A trusted
 server supplies the approved scope, owner, task/attempt UUIDs and a conservative maximum
 cost from an independently verified model/price version. No client chooses budget limits.

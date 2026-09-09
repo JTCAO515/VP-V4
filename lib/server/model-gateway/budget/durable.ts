@@ -70,7 +70,11 @@ export async function runWithDurableBudget<T>(
       await finish("pending"); return unavailable("accounting");
     }
     const actual = observed.result.actualMicros;
-    if (actual === null) { await finish("pending"); return { kind: "completed", value: observed.result.value, accounting: "pending" }; }
+    if (actual === null) {
+      await finish("pending");
+      if (controller.signal.aborted) return unavailable(timedOut ? "timeout" : "cancelled");
+      return { kind: "completed", value: observed.result.value, accounting: "pending" };
+    }
     if (!Number.isSafeInteger(actual) || actual < 0 || actual > MAX_MICROS) {
       await finish("pending"); return unavailable("accounting");
     }

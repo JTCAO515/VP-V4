@@ -32,3 +32,12 @@ test("cancel while settlement commits suppresses output without reverting accoun
   const rpc: BudgetRpc=async(name)=>{if(name==="finish_model_budget"){controller.abort();return {kind:"settled",overrun:false};}return {kind:name==="reserve_model_budget"?"reserved":"dispatched"};};
   assert.deepEqual(await runWithDurableBudget(attempt(),rpc,async()=>({value:"late",actualMicros:1}),controller.signal),{kind:"unavailable",reason:"cancelled"});
 });
+
+test("cancel or timeout while unknown-cost pending commits never returns late output",async()=>{
+  for(const mode of ["cancel","timeout"]){
+    const controller=new AbortController();const a={...attempt(),timeoutMs:10};const actions: unknown[]=[];
+    const rpc: BudgetRpc=async(name,parameters)=>{if(name==="finish_model_budget"){actions.push(parameters.p_action);if(mode==="cancel")controller.abort();else await new Promise(r=>setTimeout(r,30));return {kind:"pending"};}return {kind:name==="reserve_model_budget"?"reserved":"dispatched"};};
+    assert.deepEqual(await runWithDurableBudget(a,rpc,async()=>({value:"late candidate",actualMicros:null}),controller.signal),{kind:"unavailable",reason:mode==="cancel"?"cancelled":"timeout"});
+    assert.deepEqual(actions,["pending"]);
+  }
+});
