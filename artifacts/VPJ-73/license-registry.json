@@ -1,0 +1,68 @@
+{
+  "scope": "Selected local pipeline; code and weights licensed separately. No hosted service or remote model code.",
+  "components": [
+    {
+      "name": "docling-slim",
+      "version": "2.126.0",
+      "revision": "8071466f2c9f844d630dac879b3988dfb66e4277",
+      "license": "MIT",
+      "source": "https://github.com/docling-project/docling/blob/8071466f2c9f844d630dac879b3988dfb66e4277/LICENSE"
+    },
+    {
+      "name": "docling-parse",
+      "version": "7.18.0",
+      "revision": "55ec76cdae1259e84a8ab6693ff9930d50674dea",
+      "license": "MIT",
+      "source": "https://github.com/docling-project/docling-parse/blob/55ec76cdae1259e84a8ab6693ff9930d50674dea/LICENSE"
+    },
+    {
+      "name": "docling-ibm-models",
+      "version": "4.0.2",
+      "revision": "d1569fdffee1d09cb3111d6d5490991cb59d59fd",
+      "license": "MIT",
+      "source": "https://github.com/docling-project/docling-ibm-models/blob/d1569fdffee1d09cb3111d6d5490991cb59d59fd/LICENSE"
+    },
+    {
+      "name": "Heron layout weights",
+      "revision": "8f39ad3c0b4c58e9c2d2c84a38465abf757272d8",
+      "license": "Apache-2.0",
+      "source": "https://huggingface.co/docling-project/docling-layout-heron/blob/8f39ad3c0b4c58e9c2d2c84a38465abf757272d8/README.md",
+      "serialization": "safetensors; RTDetrForObjectDetection; no custom code/auto_map"
+    },
+    {
+      "name": "Tesseract",
+      "version": "5.5.3",
+      "revision": "6951ffe10ce031374bcd04fe400811da1e7e04ad",
+      "license": "Apache-2.0",
+      "source": "https://github.com/tesseract-ocr/tesseract/blob/6951ffe10ce031374bcd04fe400811da1e7e04ad/LICENSE"
+    },
+    {
+      "name": "eng + chi_sim tessdata_fast weights",
+      "revision": "87416418657359cb625c412a48b6e1d6d41c29bd",
+      "license": "Apache-2.0",
+      "source": "https://github.com/tesseract-ocr/tessdata_fast/blob/87416418657359cb625c412a48b6e1d6d41c29bd/LICENSE"
+    },
+    {
+      "name": "pypdfium2",
+      "version": "5.13.0",
+      "pdfium_build": "153.0.7999.0",
+      "license": "BSD-3-Clause / Apache-2.0 wrapper; PDFium and bundled dependency notices retained",
+      "source": "https://pypi.org/project/pypdfium2/5.13.0/",
+      "notice_directory": "artifacts/VPJ-73/licenses/pypdfium2"
+    },
+    {
+      "name": "Noto Sans SC fixture font",
+      "revision": "334b789e33413f3aba4264d9aa6c97f7b94c5a2f",
+      "license": "OFL-1.1",
+      "source": "https://github.com/google/fonts/blob/334b789e33413f3aba4264d9aa6c97f7b94c5a2f/ofl/notosanssc/OFL.txt"
+    }
+  ],
+  "excluded": [
+    "SmolDocling: model-card licence conflict in HF research; no weights downloaded",
+    "TableFormer, picture classifier, code/formula/VLM/remote services: disabled and not downloaded"
+  ],
+  "dependency_lock": "scripts/experiments/docling/requirements.lock",
+  "installed_license_inventory": "artifacts/VPJ-73/installed-components.json",
+  "weights_and_asset_hashes": "artifacts/VPJ-73/downloaded-assets.json",
+  "compatibility": "Permissive selected code/model/font terms support this local synthetic experiment; licence notices retained. No claim that real travel data or hosted services are licensed by these components."
+}

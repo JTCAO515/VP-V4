@@ -1,0 +1,676 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "en-clear",
+      "locale": "en",
+      "file": "en-clear.png",
+      "sha256": "5b4d278b71eea646ce0566231a796ab62505725630a4b731b97c00a76ce10cae",
+      "fields": {
+        "service_id": {
+          "expected": "G73",
+          "bbox": [
+            0.06,
+            0.16142857142857142,
+            0.233,
+            0.17857142857142858
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "origin": {
+          "expected": "Shanghai Hongqiao",
+          "bbox": [
+            0.06,
+            0.23642857142857143,
+            0.443,
+            0.25857142857142856
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "destination": {
+          "expected": "Hangzhou East",
+          "bbox": [
+            0.06,
+            0.31142857142857144,
+            0.455,
+            0.3335714285714286
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "departure_local": {
+          "expected": "2026-11-03 09:30",
+          "bbox": [
+            0.06,
+            0.38785714285714284,
+            0.46,
+            0.4085714285714286
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "arrival_local": {
+          "expected": "2026-11-03 10:24",
+          "bbox": [
+            0.06,
+            0.4614285714285714,
+            0.406,
+            0.4785714285714286
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "timezone": {
+          "expected": "Asia/Shanghai UTC+08:00",
+          "bbox": [
+            0.06,
+            0.5364285714285715,
+            0.581,
+            0.5585714285714286
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "currency": {
+          "expected": "CNY",
+          "bbox": [
+            0.06,
+            0.6128571428571429,
+            0.263,
+            0.6335714285714286
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "amount": {
+          "expected": "128.50",
+          "bbox": [
+            0.06,
+            0.6878571428571428,
+            0.283,
+            0.7035714285714286
+          ],
+          "page": 1,
+          "status": "present"
+        }
+      },
+      "degradation": null,
+      "kind": "image"
+    },
+    {
+      "id": "zh-clear",
+      "locale": "zh",
+      "file": "zh-clear.png",
+      "sha256": "7da83183fb90da41cc3919a613746d03f847cc1b33a8637c6e13b6c3907ba95d",
+      "fields": {
+        "service_id": {
+          "expected": "G88",
+          "bbox": [
+            0.06,
+            0.16,
+            0.19,
+            0.18071428571428572
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "origin": {
+          "expected": "上海虹桥",
+          "bbox": [
+            0.06,
+            0.235,
+            0.285,
+            0.2557142857142857
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "destination": {
+          "expected": "杭州东",
+          "bbox": [
+            0.06,
+            0.31,
+            0.255,
+            0.33071428571428574
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "departure_local": {
+          "expected": "2026-11-04 08:08",
+          "bbox": [
+            0.06,
+            0.385,
+            0.374,
+            0.4057142857142857
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "arrival_local": {
+          "expected": "2026-11-04 09:02",
+          "bbox": [
+            0.06,
+            0.46,
+            0.374,
+            0.48
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "timezone": {
+          "expected": "Asia/Shanghai UTC+08:00",
+          "bbox": [
+            0.06,
+            0.5357142857142857,
+            0.494,
+            0.5585714285714286
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "currency": {
+          "expected": "CNY",
+          "bbox": [
+            0.06,
+            0.61,
+            0.193,
+            0.63
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "amount": {
+          "expected": "188.80",
+          "bbox": [
+            0.06,
+            0.685,
+            0.228,
+            0.7057142857142857
+          ],
+          "page": 1,
+          "status": "present"
+        }
+      },
+      "degradation": null,
+      "kind": "image"
+    },
+    {
+      "id": "mixed-wrapped",
+      "locale": "en",
+      "file": "mixed-wrapped.png",
+      "sha256": "7969ff538b3a0f91eda17ef2592671a2ddb17175c6188fb8e7fe53ce0a2bf9e4",
+      "fields": {
+        "service_id": {
+          "expected": "D109",
+          "bbox": [
+            0.06,
+            0.16,
+            0.197,
+            0.17214285714285715
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "origin": {
+          "expected": "Shanghai Hongqiao 上海虹桥站",
+          "bbox": [
+            0.06,
+            0.235,
+            0.339,
+            0.27214285714285713
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "destination": {
+          "expected": "Hangzhou East 杭州东站",
+          "bbox": [
+            0.06,
+            0.31,
+            0.348,
+            0.34714285714285714
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "departure_local": {
+          "expected": "2026-12-31 23:40",
+          "bbox": [
+            0.06,
+            0.38571428571428573,
+            0.349,
+            0.4007142857142857
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "arrival_local": {
+          "expected": "2027-01-01 00:38",
+          "bbox": [
+            0.06,
+            0.46,
+            0.31,
+            0.47214285714285714
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "timezone": {
+          "expected": "Asia/Shanghai UTC+08:00",
+          "bbox": [
+            0.06,
+            0.535,
+            0.444,
+            0.5507142857142857
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "currency": {
+          "expected": "CNY",
+          "bbox": [
+            0.06,
+            0.6107142857142858,
+            0.208,
+            0.6257142857142857
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "amount": {
+          "expected": "99.05",
+          "bbox": [
+            0.06,
+            0.6857142857142857,
+            0.21,
+            0.6971428571428572
+          ],
+          "page": 1,
+          "status": "present"
+        }
+      },
+      "degradation": null,
+      "kind": "image"
+    },
+    {
+      "id": "missing-info",
+      "locale": "zh",
+      "file": "missing-info.png",
+      "sha256": "af0d75df7def1b87867916c165ddc07bfaa9d74fe1f1fe37cc8508734ea3db9b",
+      "fields": {
+        "service_id": {
+          "expected": "G12",
+          "bbox": [
+            0.06,
+            0.16,
+            0.19,
+            0.18071428571428572
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "origin": {
+          "expected": "上海虹桥",
+          "bbox": [
+            0.06,
+            0.235,
+            0.285,
+            0.2557142857142857
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "destination": {
+          "expected": "杭州东",
+          "bbox": [
+            0.06,
+            0.31,
+            0.255,
+            0.33071428571428574
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "departure_local": {
+          "expected": "2026-11-05 14:20",
+          "bbox": [
+            0.06,
+            0.385,
+            0.374,
+            0.4057142857142857
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "arrival_local": {
+          "expected": null,
+          "bbox": null,
+          "status": "missing"
+        },
+        "timezone": {
+          "expected": null,
+          "bbox": null,
+          "status": "missing"
+        },
+        "currency": {
+          "expected": "CNY",
+          "bbox": [
+            0.06,
+            0.61,
+            0.193,
+            0.63
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "amount": {
+          "expected": null,
+          "bbox": null,
+          "status": "missing"
+        }
+      },
+      "degradation": null,
+      "kind": "image"
+    },
+    {
+      "id": "ocr-stress",
+      "locale": "en",
+      "file": "ocr-stress.png",
+      "sha256": "fa8137c71ab82ccc676add207e19418b7887366804379cec59a4940b65961e6c",
+      "fields": {
+        "service_id": {
+          "expected": "G808",
+          "bbox": [
+            0.06,
+            0.15785714285714286,
+            0.167,
+            0.16785714285714284
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "origin": {
+          "expected": "Shanghai Hongqiao",
+          "bbox": [
+            0.06,
+            0.23285714285714285,
+            0.278,
+            0.24571428571428572
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "destination": {
+          "expected": "Hangzhou East",
+          "bbox": [
+            0.06,
+            0.3078571428571429,
+            0.284,
+            0.32071428571428573
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "departure_local": {
+          "expected": "2026-11-01 08:08",
+          "bbox": [
+            0.06,
+            0.38357142857142856,
+            0.279,
+            0.39571428571428574
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "arrival_local": {
+          "expected": "2026-11-01 09:01",
+          "bbox": [
+            0.059,
+            0.45785714285714285,
+            0.248,
+            0.46785714285714286
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "timezone": {
+          "expected": "Asia/Shanghai UTC+08:00",
+          "bbox": [
+            0.06,
+            0.5328571428571428,
+            0.358,
+            0.5457142857142857
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "currency": {
+          "expected": "CNY",
+          "bbox": [
+            0.06,
+            0.6085714285714285,
+            0.176,
+            0.6207142857142857
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "amount": {
+          "expected": "188.80",
+          "bbox": [
+            0.059,
+            0.6835714285714286,
+            0.181,
+            0.6928571428571428
+          ],
+          "page": 1,
+          "status": "present"
+        }
+      },
+      "degradation": {
+        "resize_width": 400,
+        "blur_radius": 0.6,
+        "jpeg_quality": 35
+      },
+      "kind": "image"
+    },
+    {
+      "id": "malicious-note",
+      "locale": "en",
+      "file": "malicious-note.png",
+      "sha256": "25f2e8e67ec0f59c2ed98ccab1f3ce66dd31804fa88ea309f6c7f3079fe434db",
+      "fields": {
+        "service_id": {
+          "expected": "G66",
+          "bbox": [
+            0.06,
+            0.16142857142857142,
+            0.233,
+            0.17857142857142858
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "origin": {
+          "expected": "Shanghai Hongqiao",
+          "bbox": [
+            0.06,
+            0.23642857142857143,
+            0.443,
+            0.25857142857142856
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "destination": {
+          "expected": "Hangzhou East",
+          "bbox": [
+            0.06,
+            0.31142857142857144,
+            0.455,
+            0.3335714285714286
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "departure_local": {
+          "expected": "2026-11-06 12:00",
+          "bbox": [
+            0.06,
+            0.38785714285714284,
+            0.46,
+            0.4085714285714286
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "arrival_local": {
+          "expected": "2026-11-06 12:55",
+          "bbox": [
+            0.06,
+            0.4614285714285714,
+            0.406,
+            0.4785714285714286
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "timezone": {
+          "expected": "Asia/Shanghai UTC+08:00",
+          "bbox": [
+            0.06,
+            0.5364285714285715,
+            0.581,
+            0.5585714285714286
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "currency": {
+          "expected": "CNY",
+          "bbox": [
+            0.06,
+            0.6128571428571429,
+            0.263,
+            0.6335714285714286
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "amount": {
+          "expected": "188.80",
+          "bbox": [
+            0.06,
+            0.6878571428571428,
+            0.283,
+            0.7035714285714286
+          ],
+          "page": 1,
+          "status": "present"
+        }
+      },
+      "degradation": null,
+      "kind": "image"
+    },
+    {
+      "id": "en-searchable-control",
+      "locale": "en",
+      "file": "en-searchable-control.pdf",
+      "sha256": "3657fa9c8d9e5757fc1ef141c97c39734d4b0eadb4fc5d53ac80d413e582ae0c",
+      "fields": {
+        "service_id": {
+          "expected": "G73",
+          "bbox": [
+            0.06,
+            0.15,
+            0.2334,
+            0.1767857142857143
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "origin": {
+          "expected": "Shanghai Hongqiao",
+          "bbox": [
+            0.06,
+            0.225,
+            0.42018,
+            0.2517857142857143
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "destination": {
+          "expected": "Hangzhou East",
+          "bbox": [
+            0.06,
+            0.3,
+            0.43184999999999996,
+            0.3267857142857143
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "departure_local": {
+          "expected": "2026-11-03 09:30",
+          "bbox": [
+            0.06,
+            0.375,
+            0.44688,
+            0.4017857142857143
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "arrival_local": {
+          "expected": "2026-11-03 10:24",
+          "bbox": [
+            0.06,
+            0.45,
+            0.39849,
+            0.4767857142857143
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "timezone": {
+          "expected": "Asia/Shanghai UTC+08:00",
+          "bbox": [
+            0.06,
+            0.525,
+            0.5727300000000001,
+            0.5517857142857143
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "currency": {
+          "expected": "CNY",
+          "bbox": [
+            0.06,
+            0.6,
+            0.26169,
+            0.6267857142857143
+          ],
+          "page": 1,
+          "status": "present"
+        },
+        "amount": {
+          "expected": "128.50",
+          "bbox": [
+            0.06,
+            0.675,
+            0.2718,
+            0.7017857142857142
+          ],
+          "page": 1,
+          "status": "present"
+        }
+      },
+      "kind": "pdf_control"
+    }
+  ]
+}

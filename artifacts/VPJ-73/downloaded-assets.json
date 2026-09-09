@@ -1,0 +1,65 @@
+[
+  {
+    "path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets/docling-project--docling-layout-heron/README.md",
+    "url": "https://huggingface.co/docling-project/docling-layout-heron/resolve/8f39ad3c0b4c58e9c2d2c84a38465abf757272d8/README.md",
+    "license": "apache-2.0",
+    "bytes": 3219,
+    "sha256": "175700839bc7808eac6af1d0c23e4f483606ab2276fe01122f4093e61a1a65b6"
+  },
+  {
+    "path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets/docling-project--docling-layout-heron/config.json",
+    "url": "https://huggingface.co/docling-project/docling-layout-heron/resolve/8f39ad3c0b4c58e9c2d2c84a38465abf757272d8/config.json",
+    "license": "apache-2.0",
+    "bytes": 3268,
+    "sha256": "fdea30805ce2f5666b147fca941dcdd27ad468e27d6ed21902207d3da056a97d"
+  },
+  {
+    "path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets/docling-project--docling-layout-heron/preprocessor_config.json",
+    "url": "https://huggingface.co/docling-project/docling-layout-heron/resolve/8f39ad3c0b4c58e9c2d2c84a38465abf757272d8/preprocessor_config.json",
+    "license": "apache-2.0",
+    "bytes": 444,
+    "sha256": "cd38cd59999e7a95d68e487fbe5132df3d4e5c32a0836add57e6126ba0c4eaf1"
+  },
+  {
+    "path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets/docling-project--docling-layout-heron/model.safetensors",
+    "url": "https://huggingface.co/docling-project/docling-layout-heron/resolve/8f39ad3c0b4c58e9c2d2c84a38465abf757272d8/model.safetensors",
+    "license": "apache-2.0",
+    "bytes": 171658996,
+    "sha256": "00333a43451945aaf89db8ca9c0a17e75d1537c17db60fdb91aa95f4c7929e0c"
+  },
+  {
+    "path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets/tessdata/LICENSE",
+    "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/LICENSE",
+    "license": "Apache-2.0",
+    "bytes": 11358,
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  },
+  {
+    "path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets/tessdata/eng.traineddata",
+    "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/eng.traineddata",
+    "license": "Apache-2.0",
+    "bytes": 4113088,
+    "sha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2"
+  },
+  {
+    "path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets/tessdata/chi_sim.traineddata",
+    "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/chi_sim.traineddata",
+    "license": "Apache-2.0",
+    "bytes": 2469156,
+    "sha256": "a5fcb6f0db1e1d6d8522f39db4e848f05984669172e584e8d76b6b3141e1f730"
+  },
+  {
+    "path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets/font/OFL.txt",
+    "url": "https://raw.githubusercontent.com/google/fonts/334b789e33413f3aba4264d9aa6c97f7b94c5a2f/ofl/notosanssc/OFL.txt",
+    "license": "OFL-1.1",
+    "bytes": 4388,
+    "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9"
+  },
+  {
+    "path": "/Users/jtcao/Library/Caches/visepanda/vpj73/assets/font/NotoSansSC[wght].ttf",
+    "url": "https://raw.githubusercontent.com/google/fonts/334b789e33413f3aba4264d9aa6c97f7b94c5a2f/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf",
+    "license": "OFL-1.1",
+    "bytes": 17772300,
+    "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da"
+  }
+]
