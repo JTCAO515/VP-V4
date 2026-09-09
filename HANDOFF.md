@@ -6,9 +6,9 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：VPJ-66 #263 offline scope is completed. PR275 merged0aeb0d2 adds reviewed C0-only provider protocol preparation; merged-code protocol/security20/20 pass. PR274 merged080d5f0 replaces approved web/native brand assets. #188, #193 and #267 remain OPEN; local accessibility and pairing work is not merged acceptance.
+状态：VPJ-66 #263 offline scope remains completed. Reviewed preparation and native improvements merged: provider protocol PR275/0aeb0d2, pairing PR277/272ca7d, native accessibility PR278/f6928c8, and native credential seam PR279/798dc36. Parents #188/#191/#193/#267 remain OPEN because runtime/device/policy/budget gates are not satisfied.
 
-阶段：Parallel bounded preparation: native minimum-runtime accessibility fixes and offline Harness pairing; runtime identity/data/provider/budget gates remain intact.
+阶段：Bounded parallel deliveries merged; real Harness runtime remains blocked by Staging migration scope, operator data/provider policy, authoritative mobile sessions, durable budget and licensed knowledge inputs.
 
 ## 读取顺序
 
@@ -32,11 +32,14 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 
 - Real account/Trip/DB/provider/customer acceptance not executed by this session; Web publication does not establish those capabilities.
-- Physical VoiceOver, signed Store and selected-object Ask sheet acceptance remain unrun. Local unmerged3f3b651 has iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI text-clipping audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.
+- Physical VoiceOver, signed Store and selected-object Ask sheet acceptance remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.
 - VPJ-66 offline preparation is merged and accepted; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.
 
 ## 验证
 
+- PR279 exact HEAD1322254 reviewed Critical0/Important0; Quality34385270635 passed3m15 and Vercel passed, merged798dc36 after PR278. Actual merged-code identity tests30/30 pass, zero skip. The first post-merge command used a nonexistent loader and failed before running assertions; rerunning the recorded native Node command passed. JWT verification does not activate native epochs or RLS access.
+- PR278 exact HEADf1a6a4c independently reviewed Critical0/Important0; Quality34384277871 passed3m18 and Native34384277855 passed11m14 before mergef6928c8. Merge tree equals the tested tree. Local iOS26.5 all15 tests passed; iOS17.5 four UI audits still fail. Matched baseline/candidate diagnostics reproduce Chinese banner and Tools failures in both, with contrast findings removed in the candidate; this is a bounded improvement, not minimum-runtime acceptance.
+- PR277 exact HEAD70d8463 independently reviewed Critical0/Important0; Quality34383456195 passed3m8 and Vercel passed before merge272ca7d. Merge tree equals reviewed tree and actual merged pairing tests10/10 pass, zero skip. Same JSON/Markdown report preserves fixture mode, Chinese/Staging NOT_RUN and unknown cost; no adoption or real model sample claim.
 - PR275 exact HEAD92e073b independently reviewed Critical0/Important0; Quality PR34382279996 passed3m16 and Vercel Preview passed. Squash merge0aeb0d2 has identical tree; merged-code protocol/security20/20 pass, zero skip. No live provider, credential loading, routing, tool execution or cost/quality acceptance. #193 stays OPEN.
 - PR274 exact HEAD55f8f7e independently reviewed Critical0/Important0; Quality34377714476 and Native34377714503 passed before merge080d5f0. Supplied logo and wordmark are used by web and native assets; local desktop1280x800/mobile390x844 visual QA passed. This does not establish signed Store or complete native accessibility acceptance.
 - PR271 merged99f54c4; exact HEADbe35ef5 reviewed Critical0/Important0 and Quality PR34313179100 passed. Merge tree equals reviewed tree; merged-code pnpm evals23/23,zero skip,2baseline PASS/4expected injected FAIL. VPJ-66 #263 closed COMPLETED with all7 acceptance boxes checked and evidence comment5596131601. CI browser9 passed; DB integration10skip/security1skip remain incomplete, not live acceptance.
@@ -62,7 +65,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Continue #188 from preserved local HEAD3f3b651: iOS26.5 8unit+7UI pass, iOS17.5 8unit+3UI pass/4UI fail; investigate text measurement and audit viewport without filtering failures. Continue #267 isolated pairing/scorer preparation, preserving holdout isolation and evidence_insufficient when operator thresholds, budget and calibration are absent. Review accurate HEADs and merge serially after required CI. #189 appended Staging RPC migration needs explicit scope; #190 real policy decisions remain pending. See docs/harness/IMPLEMENTATION-STATUS.md.
+Resolve the specific operator inputs already recorded: #189 appended Staging RPC migration20260909033302 scope; #190 recipient/legal entity, processing regions, retention and budget decisions. Then revalidate the named Staging target and dependencies before runtime work. Keep native epoch enforcement closed until authoritative session integration exists. #188 retains iOS17.5 clipping/Dynamic Type and maximum-size contrast failures plus physical VoiceOver/selected-object sheet gates. Do not add duplicate fixtures to represent a connected #195/#206/Harness67 chain. See docs/harness/IMPLEMENTATION-STATUS.md.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
