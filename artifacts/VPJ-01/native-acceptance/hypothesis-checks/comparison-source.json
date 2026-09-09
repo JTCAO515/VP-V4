@@ -1,0 +1,15 @@
+{
+  "device": "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+  "runtime": "iOS17.5",
+  "xcode": "26.6 (17F113)",
+  "injectedUITestSHA256": "0d9d103e068a83df9229e1908ac4e25e57c0574697581458df0807c6c67fecd7",
+  "injectedUITestGitBlob": "388ba0c096a138749b8a985fd2c038da5d22ef26",
+  "baselineProductCommit": "080d5f0aa2a1e8976d9dc75b8c22207801d87fc4",
+  "candidateProductCommit": "3f3b651abfce77509d6e07ad015acc783e131de9",
+  "baselineProductTree": "fdf036e446878996d0b405a86d9e8fe73fe11909",
+  "candidateProductTree": "a29324448e3eb75d4a5fcec144340bb48b7ff166",
+  "baselineRun": "20260910-013341",
+  "candidateRun": "20260910-013501",
+  "productDiffInBothWorktrees": "git diff --exit-code -- ios/VisePanda/VisePanda returned 0",
+  "scope": "Injected 2 diagnostic UI tests, not original CI suite. Both .all; all issues return false; continueAfterFailure=true collects every failure without changing outcome."
+}

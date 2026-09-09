@@ -46,3 +46,7 @@ Xcode26.6 (17F113)，基线080d5f0。两次全套运行之间无Swift或测试�
 - xcodebuild两次均报告诊断采集子进程找不到simctl；主命令使用明确DEVELOPER_DIR且测试实际执行、xcresult完整。该诊断警告不是iOS17失败的原因，也未被当作测试通过依据。
 
 没有新增真实选区sheet、账号/provider、Trip写入、签名安装或Store操作。VPJ-01保持开放；最低系统失败、完整最大字号contrast、真机VoiceOver和真实选区sheet是未满足的验收门。
+
+## 有界后续诊断与既存问题对照
+
+[两条假设与同设备基线对照](hypothesis-checks/README.md)新增了完整可见帧、测试注入hash及main080/候选3f的同一`.all`证据。subheadline仍在完整可见位置报中文裁切；视口间隙试验未建立通过条件，修改已撤回。两个指定失败点在旧main也复现：中文同句Text clipped，Tools动态字号/裁切。候选在这两个定向场景中没有新增问题类别，但这不是全状态无回归结论，也不解除17.5/最大字contrast/真机/sheet门。此次只追加证据，原生代码保持3f3b651。

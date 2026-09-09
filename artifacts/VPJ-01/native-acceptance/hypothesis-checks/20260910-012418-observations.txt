@@ -1,0 +1,6 @@
+Test Case '-[VisePandaUITests.AppShellUITests testAskAndTripFullAccessibilityInReleaseLanguages]' started.
+Full visibility: 界面预览, 此版本尚未连接实时数据、账号、AI、预订或支付。, frame (16.0, 371.6666666666667, 361.0, 90.0), viewport 97.66666666666667...704.0
+Full AX issue: Text clipped, element: Optional(Attributes: StaticText, 0x102459c40, {{30.0, 409.8}, {287.7, 38.0}}, label: '此版本尚未连接实时数据、账号、AI、预订或支付。'
+/Users/jtcao/Documents/VP-V4-Native-Acceptance/ios/VisePanda/VisePandaUITests/AppShellUITests.swift:91: error: -[VisePandaUITests.AppShellUITests testAskAndTripFullAccessibilityInReleaseLanguages] : Text clipped
+Test Case '-[VisePandaUITests.AppShellUITests testAskAndTripFullAccessibilityInReleaseLanguages]' failed (6.307 seconds).
+ xcrun: error: unable to find utility "simctl", not a developer tool or in PATH

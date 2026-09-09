@@ -1,0 +1,91 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "3784C0C4-9C68-4D8C-8BBA-3C0FE007D4D8.txt",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "Complete Issue Description.txt"
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "DD7A9069-8448-44DB-9C41-3E752ECDA8BE.png",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "App Screenshot_0_A1101739-AAD4-4FE6-9873-E4799CDD6E5C.png",
+        "timestamp" : 1788975342.6
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "B969C0B4-ABC4-49CC-BD0A-8F576DDC6D11.png",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "Element Screenshot_1_EC77D2A3-9F07-43A1-AF57-BD1609ACDB49.png",
+        "timestamp" : 1788975342.6
+      }
+    ],
+    "testIdentifier" : "AppShellUITests/testChineseBannerComparison()",
+    "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testChineseBannerComparison"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "3AED06B9-7C24-4EDD-86B0-032FFB422D21.txt",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "Complete Issue Description.txt"
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "727861E5-35CF-40F8-8370-328188E00263.png",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "App Screenshot_0_C69FAE70-CE16-4199-8DD8-444EA0572F43.png",
+        "timestamp" : 1788975364.121
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "0B478C65-6A4C-436E-BE6F-D7F578770170.txt",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "Complete Issue Description.txt"
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "0EC80141-1957-49CC-A1E4-4E70A26EE79E.png",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "App Screenshot_0_2466B87E-9295-4648-8159-DFA2E66AC323.png",
+        "timestamp" : 1788975364.123
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "50715CDF-DE8B-4535-B4E1-4FA2ED6DB495.txt",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "Complete Issue Description.txt"
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName" : "VPJ01 iPhone 15 iOS 17.5",
+        "exportedFileName" : "BA4F7851-541B-443B-919A-957CB5F7657F.png",
+        "isAssociatedWithFailure" : true,
+        "suggestedHumanReadableName" : "App Screenshot_0_19287C5B-582A-4F14-A69B-77F11026D09A.png",
+        "timestamp" : 1788975364.125
+      }
+    ],
+    "testIdentifier" : "AppShellUITests/testToolsViewportComparison()",
+    "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testToolsViewportComparison"
+  }
+]

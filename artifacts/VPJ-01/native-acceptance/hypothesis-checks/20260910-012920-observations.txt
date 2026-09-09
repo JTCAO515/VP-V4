@@ -1,0 +1,107 @@
+Test Case '-[VisePandaUITests.AppShellUITests testEnglishAskViewportEvidence]' started.
+Ask complete text: ASK VISEPANDA; frame (16.0, 189.43362831858406, 99.66666666666667, 14.333333333333343), viewport 97.66666666666667...705.0
+Ask complete text: Plan China with a clearer next step.; frame (16.0, 213.7669616519174, 263.0, 81.66666666666666), viewport 97.66666666666667...705.0
+Ask complete text: This native shell is ready for the future conversation, proposal, and confirmation flow.; frame (16.0, 305.43362831858406, 349.6666666666667, 42.3333333333332), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview, Live data, accounts, AI, booking, and payments are not connected in this version.; frame (16.0, 371.6666666666667, 361.0, 85.66666666666657), viewport 97.66666666666667...705.0
+Ask complete text: Sending will be enabled after the authenticated AI service is connected.; frame (16.0, 481.43362831858394, 352.3333333333333, 33.66666666666674), viewport 97.66666666666667...705.0
+Ask complete text: Try a direction; frame (16.0, 539.1002949852507, 114.0, 20.333333333333258), viewport 97.66666666666667...705.0
+Ask complete text: Your China travel companion; frame (76.0, 151.10029498525074, 161.66666666666666, 14.333333333333314), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview; frame (64.33333333333334, 385.76696165191726, 124.66666666666666, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Live data, accounts, AI, booking, and payments are not connected in this version.; frame (30.0, 409.76696165191726, 333.0, 33.666666666666686), viewport 97.66666666666667...705.0
+Ask complete text: Plan three relaxed days in Shanghai; frame (30.0, 583.3333333333333, 248.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Help me prepare a bilingual address; frame (30.0, 639.3333333333333, 251.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask viewport gap attempt 0, clipped frames: [(16.0, 68.0, 221.6666717529297, 124.66665649414062), (30.0, 695.3333333333334, 259.3333333333333, 18.0)]
+Ask complete text: Plan China with a clearer next step.; frame (16.0, 120.76696165191738, 263.0, 81.66666666666667), viewport 97.66666666666667...705.0
+Ask complete text: This native shell is ready for the future conversation, proposal, and confirmation flow.; frame (16.0, 212.43362831858406, 349.6666666666667, 42.333333333333286), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview, Live data, accounts, AI, booking, and payments are not connected in this version.; frame (16.0, 278.66666666666663, 361.0, 85.66666666666663), viewport 97.66666666666667...705.0
+Ask complete text: Sending will be enabled after the authenticated AI service is connected.; frame (16.0, 388.43362831858394, 352.3333333333333, 33.66666666666674), viewport 97.66666666666667...705.0
+Ask complete text: Try a direction; frame (16.0, 446.1002949852507, 114.0, 20.333333333333258), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview; frame (64.33333333333334, 292.7669616519173, 124.66666666666666, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Live data, accounts, AI, booking, and payments are not connected in this version.; frame (30.0, 316.7669616519173, 333.0, 33.66666666666663), viewport 97.66666666666667...705.0
+Ask complete text: Plan three relaxed days in Shanghai; frame (30.0, 490.33333333333326, 248.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Help me prepare a bilingual address; frame (30.0, 546.3333333333333, 251.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: What should I prepare before arrival?; frame (30.0, 602.3333333333333, 259.3333333333333, 18.0), viewport 97.66666666666667...705.0
+Ask viewport gap attempt 1, clipped frames: [(16.0, -25.0, 221.6666717529297, 124.66666412353516), (16.0, 96.43362831858407, 99.66666666666667, 14.333333333333314)]
+Ask complete text: This native shell is ready for the future conversation, proposal, and confirmation flow.; frame (16.0, 155.1002949852507, 349.6666666666667, 42.333333333333314), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview, Live data, accounts, AI, booking, and payments are not connected in this version.; frame (16.0, 221.33333333333334, 361.0, 85.66666666666666), viewport 97.66666666666667...705.0
+Ask complete text: Sending will be enabled after the authenticated AI service is connected.; frame (16.0, 331.1002949852507, 352.3333333333333, 33.66666666666657), viewport 97.66666666666667...705.0
+Ask complete text: Try a direction; frame (16.0, 388.76696165191726, 114.0, 20.333333333333428), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview; frame (64.33333333333334, 235.43362831858403, 124.66666666666666, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Live data, accounts, AI, booking, and payments are not connected in this version.; frame (30.0, 259.43362831858406, 333.0, 33.66666666666663), viewport 97.66666666666667...705.0
+Ask complete text: Plan three relaxed days in Shanghai; frame (30.0, 433.0, 248.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Help me prepare a bilingual address; frame (30.0, 489.0, 251.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: What should I prepare before arrival?; frame (30.0, 545.0, 259.3333333333333, 18.0), viewport 97.66666666666667...705.0
+Ask viewport gap attempt 2, clipped frames: [(16.0, 63.43362831858408, 263.0, 81.66666666666663)]
+Ask complete text: This native shell is ready for the future conversation, proposal, and confirmation flow.; frame (16.0, 155.1002949852507, 349.6666666666667, 42.333333333333314), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview, Live data, accounts, AI, booking, and payments are not connected in this version.; frame (16.0, 221.33333333333334, 361.0, 85.66666666666666), viewport 97.66666666666667...705.0
+Ask complete text: Sending will be enabled after the authenticated AI service is connected.; frame (16.0, 331.1002949852507, 352.3333333333333, 33.66666666666657), viewport 97.66666666666667...705.0
+Ask complete text: Try a direction; frame (16.0, 388.76696165191726, 114.0, 20.333333333333428), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview; frame (64.33333333333334, 235.43362831858403, 124.66666666666666, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Live data, accounts, AI, booking, and payments are not connected in this version.; frame (30.0, 259.43362831858406, 333.0, 33.66666666666663), viewport 97.66666666666667...705.0
+Ask complete text: Plan three relaxed days in Shanghai; frame (30.0, 433.0, 248.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Help me prepare a bilingual address; frame (30.0, 489.0, 251.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: What should I prepare before arrival?; frame (30.0, 545.0, 259.3333333333333, 18.0), viewport 97.66666666666667...705.0
+Ask viewport gap attempt 3, clipped frames: [(16.0, 63.43362831858408, 263.0, 81.66666666666663)]
+Ask complete text: This native shell is ready for the future conversation, proposal, and confirmation flow.; frame (16.0, 155.1002949852507, 349.6666666666667, 42.333333333333314), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview, Live data, accounts, AI, booking, and payments are not connected in this version.; frame (16.0, 221.33333333333334, 361.0, 85.66666666666666), viewport 97.66666666666667...705.0
+Ask complete text: Sending will be enabled after the authenticated AI service is connected.; frame (16.0, 331.1002949852507, 352.3333333333333, 33.66666666666657), viewport 97.66666666666667...705.0
+Ask complete text: Try a direction; frame (16.0, 388.76696165191726, 114.0, 20.333333333333428), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview; frame (64.33333333333334, 235.43362831858403, 124.66666666666666, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Live data, accounts, AI, booking, and payments are not connected in this version.; frame (30.0, 259.43362831858406, 333.0, 33.66666666666663), viewport 97.66666666666667...705.0
+Ask complete text: Plan three relaxed days in Shanghai; frame (30.0, 433.0, 248.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Help me prepare a bilingual address; frame (30.0, 489.0, 251.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: What should I prepare before arrival?; frame (30.0, 545.0, 259.3333333333333, 18.0), viewport 97.66666666666667...705.0
+Ask viewport gap attempt 4, clipped frames: [(16.0, 63.43362831858408, 263.0, 81.66666666666663)]
+Ask complete text: This native shell is ready for the future conversation, proposal, and confirmation flow.; frame (16.0, 155.1002949852507, 349.6666666666667, 42.333333333333314), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview, Live data, accounts, AI, booking, and payments are not connected in this version.; frame (16.0, 221.33333333333334, 361.0, 85.66666666666666), viewport 97.66666666666667...705.0
+Ask complete text: Sending will be enabled after the authenticated AI service is connected.; frame (16.0, 331.1002949852507, 352.3333333333333, 33.66666666666657), viewport 97.66666666666667...705.0
+Ask complete text: Try a direction; frame (16.0, 388.76696165191726, 114.0, 20.333333333333428), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview; frame (64.33333333333334, 235.43362831858403, 124.66666666666666, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Live data, accounts, AI, booking, and payments are not connected in this version.; frame (30.0, 259.43362831858406, 333.0, 33.66666666666663), viewport 97.66666666666667...705.0
+Ask complete text: Plan three relaxed days in Shanghai; frame (30.0, 433.0, 248.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Help me prepare a bilingual address; frame (30.0, 489.0, 251.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: What should I prepare before arrival?; frame (30.0, 545.0, 259.3333333333333, 18.0), viewport 97.66666666666667...705.0
+Ask viewport gap attempt 5, clipped frames: [(16.0, 63.43362831858408, 263.0, 81.66666666666663)]
+Ask complete text: This native shell is ready for the future conversation, proposal, and confirmation flow.; frame (16.0, 155.1002949852507, 349.6666666666667, 42.333333333333314), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview, Live data, accounts, AI, booking, and payments are not connected in this version.; frame (16.0, 221.33333333333334, 361.0, 85.66666666666666), viewport 97.66666666666667...705.0
+Ask complete text: Sending will be enabled after the authenticated AI service is connected.; frame (16.0, 331.1002949852507, 352.3333333333333, 33.66666666666657), viewport 97.66666666666667...705.0
+Ask complete text: Try a direction; frame (16.0, 388.76696165191726, 114.0, 20.333333333333428), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview; frame (64.33333333333334, 235.43362831858403, 124.66666666666666, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Live data, accounts, AI, booking, and payments are not connected in this version.; frame (30.0, 259.43362831858406, 333.0, 33.66666666666663), viewport 97.66666666666667...705.0
+Ask complete text: Plan three relaxed days in Shanghai; frame (30.0, 433.0, 248.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Help me prepare a bilingual address; frame (30.0, 489.0, 251.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: What should I prepare before arrival?; frame (30.0, 545.0, 259.3333333333333, 18.0), viewport 97.66666666666667...705.0
+Ask viewport gap attempt 6, clipped frames: [(16.0, 63.43362831858408, 263.0, 81.66666666666663)]
+Ask complete text: This native shell is ready for the future conversation, proposal, and confirmation flow.; frame (16.0, 155.1002949852507, 349.6666666666667, 42.333333333333314), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview, Live data, accounts, AI, booking, and payments are not connected in this version.; frame (16.0, 221.33333333333334, 361.0, 85.66666666666666), viewport 97.66666666666667...705.0
+Ask complete text: Sending will be enabled after the authenticated AI service is connected.; frame (16.0, 331.1002949852507, 352.3333333333333, 33.66666666666657), viewport 97.66666666666667...705.0
+Ask complete text: Try a direction; frame (16.0, 388.76696165191726, 114.0, 20.333333333333428), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview; frame (64.33333333333334, 235.43362831858403, 124.66666666666666, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Live data, accounts, AI, booking, and payments are not connected in this version.; frame (30.0, 259.43362831858406, 333.0, 33.66666666666663), viewport 97.66666666666667...705.0
+Ask complete text: Plan three relaxed days in Shanghai; frame (30.0, 433.0, 248.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Help me prepare a bilingual address; frame (30.0, 489.0, 251.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: What should I prepare before arrival?; frame (30.0, 545.0, 259.3333333333333, 18.0), viewport 97.66666666666667...705.0
+Ask viewport gap attempt 7, clipped frames: [(16.0, 63.43362831858408, 263.0, 81.66666666666663)]
+Ask complete text: This native shell is ready for the future conversation, proposal, and confirmation flow.; frame (16.0, 155.1002949852507, 349.6666666666667, 42.333333333333314), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview, Live data, accounts, AI, booking, and payments are not connected in this version.; frame (16.0, 221.33333333333334, 361.0, 85.66666666666666), viewport 97.66666666666667...705.0
+Ask complete text: Sending will be enabled after the authenticated AI service is connected.; frame (16.0, 331.1002949852507, 352.3333333333333, 33.66666666666657), viewport 97.66666666666667...705.0
+Ask complete text: Try a direction; frame (16.0, 388.76696165191726, 114.0, 20.333333333333428), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview; frame (64.33333333333334, 235.43362831858403, 124.66666666666666, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Live data, accounts, AI, booking, and payments are not connected in this version.; frame (30.0, 259.43362831858406, 333.0, 33.66666666666663), viewport 97.66666666666667...705.0
+Ask complete text: Plan three relaxed days in Shanghai; frame (30.0, 433.0, 248.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Help me prepare a bilingual address; frame (30.0, 489.0, 251.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: What should I prepare before arrival?; frame (30.0, 545.0, 259.3333333333333, 18.0), viewport 97.66666666666667...705.0
+Full visibility: What should I prepare before arrival?, frame (16.0, 531.0, 361.0, 46.0), viewport 97.66666666666667...705.0
+Ask complete text: This native shell is ready for the future conversation, proposal, and confirmation flow.; frame (16.0, 155.1002949852507, 349.6666666666667, 42.333333333333314), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview, Live data, accounts, AI, booking, and payments are not connected in this version.; frame (16.0, 221.33333333333334, 361.0, 85.66666666666666), viewport 97.66666666666667...705.0
+Ask complete text: Sending will be enabled after the authenticated AI service is connected.; frame (16.0, 331.1002949852507, 352.3333333333333, 33.66666666666657), viewport 97.66666666666667...705.0
+Ask complete text: Try a direction; frame (16.0, 388.76696165191726, 114.0, 20.333333333333428), viewport 97.66666666666667...705.0
+Ask complete text: Interface preview; frame (64.33333333333334, 235.43362831858403, 124.66666666666666, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Live data, accounts, AI, booking, and payments are not connected in this version.; frame (30.0, 259.43362831858406, 333.0, 33.66666666666663), viewport 97.66666666666667...705.0
+Ask complete text: Plan three relaxed days in Shanghai; frame (30.0, 433.0, 248.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: Help me prepare a bilingual address; frame (30.0, 489.0, 251.66666666666663, 18.0), viewport 97.66666666666667...705.0
+Ask complete text: What should I prepare before arrival?; frame (30.0, 545.0, 259.3333333333333, 18.0), viewport 97.66666666666667...705.0
+Ask complete text coverage: ["ASK VISEPANDA", "Help me prepare a bilingual address", "Interface preview", "Interface preview, Live data, accounts, AI, booking, and payments are not connected in this version.", "Live data, accounts, AI, booking, and payments are not connected in this version.", "Plan China with a clearer next step.", "Plan three relaxed days in Shanghai", "Sending will be enabled after the authenticated AI service is connected.", "This native shell is ready for the future conversation, proposal, and confirmation flow.", "Try a direction", "What should I prepare before arrival?", "Your China travel companion"]
+/Users/jtcao/Documents/VP-V4-Native-Acceptance/ios/VisePanda/VisePandaUITests/AppShellUITests.swift:233: error: -[VisePandaUITests.AppShellUITests testEnglishAskViewportEvidence] : XCTAssertFalse failed - Top boundary crosses Plan China with a clearer next step.: (16.0, 63.43362831858408, 263.0, 81.66666666666663)
+Test Case '-[VisePandaUITests.AppShellUITests testEnglishAskViewportEvidence]' failed (34.267 seconds).
+ xcrun: error: unable to find utility "simctl", not a developer tool or in PATH
