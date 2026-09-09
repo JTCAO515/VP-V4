@@ -17,6 +17,7 @@ Harness：只读模型或提示词候选的配对评测与校准。
 ## Blocked by
 
 - [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264)
+- [VPJ-72 #287](https://github.com/JTCAO515/VP-V4/issues/287)
 
 ## Scope 与接口
 
@@ -38,6 +39,7 @@ Harness：只读模型或提示词候选的配对评测与校准。
 - [ ] 确定性红线与质量rubric分开；人工校准正反例、记录grader分歧，不由生成模型自评或看结果后改标准。回归中故意退化候选须被拒绝。
 - [ ] 交付同一JSON报告/Markdown摘要与可复用配对入口；本票关闭限于只读比较，Trip配对与最终能力判定保留VPJ-71。新接收方/地区必须先满足原数据政策门。
 - [ ] 在既有配对入口加入任务完成、事实限定、正确偏好使用、下一步、密度、英文自然度及情境语气rubric；人工校准并预冻结阈值，正常可答的过度拒绝判失败，hard fail不被均分抵消。
+- [ ] HF复用：消费VPJ-72的离线内容判分与盲评包，保留A/B交换、平局/都失败、评分来源和反馈版本；工具验证或合成标注不冒充真实人工校准。HF Judge/Guidebook只借方法，真实候选仍走本票原许可/预算/事前阈值。
 
 ## 不得触碰
 
@@ -77,6 +79,7 @@ Owner: coding-agent。类型: vertical。预估专注工作3日，外部等待�
 - `docs/harness/README.md`
 - `docs/handoff.json`
 - `docs/contracts/vp-response-policy.md`
+- `docs/harness/hf-reuse/README.md`
 
 撤销候选配置，保持基线与原报告；不切换生产配置、不覆盖业务状态。
 

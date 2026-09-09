@@ -37,6 +37,7 @@
 - [ ] 不完整依据仍可保留用户决定但标待核，plan feasible只能由当前必要证据支持。
 - [ ] 整条有依据Proposal→diff→确认→TripItemSupport→以后重验可追溯。
 - [ ] 计划适合度由最新明确需求与相关基础偏好参与，但步行量、时间、地点和可行性仍需同口径合格证据；不得因品牌个性化而放宽来源或晚餐锁。
+- [ ] HF复用：借TravelPlanner等的有限约束检查结构并用独立oracle验最终计划，保留真实来源/版本/时区/用户约束；不执行外部hard_logic_py/任意DSL，不将ChinaTravel/Open-Travel的NC数据或历史价目直接导入商业运行链。
 
 ## 不得触碰
 
@@ -81,6 +82,7 @@ Owner: coding-agent。类型: vertical。预估专注工作4日，外部等待�
 - `CONTEXT.md`
 - `docs/contracts/vpj-65.md`
 - `docs/contracts/vp-response-policy.md`
+- `docs/harness/hf-reuse/README.md`
 
 Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 

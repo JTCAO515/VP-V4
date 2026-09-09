@@ -40,6 +40,7 @@
 - [ ] 第三方AI许可前无个人数据外发，fallback接收方重新验scope；拒绝许可保留手动Trip路径。
 - [ ] 按ServiceTask规划契约关联一项明确目标的多轮Turn，必要澄清和系统修复不新建用户消费；归属由服务端核验，partial/完成后改稿/TTL等未决收费策略保持不启用。
 - [ ] 真实输出producer采用版本化VP内容与表达策略，英文直接创作、中英事实与动作状态一致；沿现有schema显式扩展并验证消费者，不新增人格服务或无约束二次润色。
+- [ ] HF复用：真实输出接入版本化的内容/语气规范与业务状态，相关性和友好表达不能替代证据/动作回执；复用现有prompt登记与响应合同，不新增人格服务或无约束二次润色。
 
 ## 不得触碰
 
@@ -88,6 +89,7 @@ Owner: coding-agent。类型: vertical。预估专注工作5日，外部等待�
 - `docs/contracts/vpj-07.md`
 - `docs/contracts/service-task-metering.md`
 - `docs/contracts/vp-response-policy.md`
+- `docs/harness/hf-reuse/README.md`
 
 Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 

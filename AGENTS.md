@@ -33,6 +33,8 @@ validation and handoff. It replaces conflicting historical workflow instructions
   VPJ-01's migration is verified; test affected locale/RTL paths.
 - Describe only capabilities verified for the stated version, environment and supported scope;
   fixture demos, planned features and actual runtime outcomes must remain distinguishable.
+- For external ML tools, weights or datasets, use `docs/harness/hf-reuse/README.md` for scoped
+  reuse, separate licences, fixed revisions and offline-versus-runtime acceptance.
 
 ## Invariants and authority
 

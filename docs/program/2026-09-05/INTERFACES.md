@@ -59,6 +59,8 @@ TripProposal→visible diff→explicit confirm→atomic TripPatch；worker不能
 
 ## 5. 版本与冲突
 
+[HF复用计划](../../harness/hf-reuse/README.md)只在离线评测或受控叶子组件接入：向量、排序、解析和人评结果不拥有身份、最终事实、消费结算或Trip writer。VPJ-72复用现有pairing报告，VPJ-73仅输出可校正材料候选；资源来源/许可/版本及缺失项保留，不能凭外部benchmark替代本表真实消费者验收。
+
 [VP-Harness](../../harness/README.md) 在 VPJ-66…71 复用上表实际接缝与模块责任，以报告映射执行状态、业务结果及验收判定，不新建权威生命周期。新增报告字段在对应纵切用真实 producer/consumer 验证后版本化；步行量来自同口径路线依据，不能将 transfer minutes 当作已验证少走路。
 
 UI/nav schema、API事件、Trip revision、source revision、memory revision、policy generation、price/entitlement period分别有版本，不能用一个global version解决所有并发。旧客户端在支持窗内收到可理解的降级/升级提示，禁静默新字段改变确认含义。

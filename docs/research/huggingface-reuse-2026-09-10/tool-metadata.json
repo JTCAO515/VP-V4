@@ -1,0 +1,47 @@
+[
+  {
+    "repo": "huggingface/evaluation-guidebook",
+    "url": "https://github.com/huggingface/evaluation-guidebook",
+    "archived": false,
+    "pushed_at": "2025-12-03T14:45:05Z",
+    "license": "NOASSERTION",
+    "sha": "e09b159dddd03498e44929fc45bd581c94c13c7f",
+    "default_branch": "main"
+  },
+  {
+    "repo": "huggingface/cookbook",
+    "url": "https://github.com/huggingface/cookbook",
+    "archived": false,
+    "pushed_at": "2026-09-09T15:06:49Z",
+    "license": "Apache-2.0",
+    "sha": "3485bbd366718869b57aa932066dc047011e03c7",
+    "default_branch": "main"
+  },
+  {
+    "repo": "argilla-io/argilla",
+    "url": "https://github.com/argilla-io/argilla",
+    "archived": false,
+    "pushed_at": "2026-09-07T22:29:01Z",
+    "license": "Apache-2.0",
+    "sha": "5338519accb13ae422f8bf9c0642651c249c49af",
+    "default_branch": "develop"
+  },
+  {
+    "repo": "argilla-io/distilabel",
+    "url": "https://github.com/argilla-io/distilabel",
+    "archived": false,
+    "pushed_at": "2026-09-07T22:28:35Z",
+    "license": "Apache-2.0",
+    "sha": "313fac85b1a2472dd88db1a31c2b754599f46476",
+    "default_branch": "main"
+  },
+  {
+    "repo": "huggingface/skills",
+    "url": "https://github.com/huggingface/skills",
+    "archived": false,
+    "pushed_at": "2026-09-08T10:44:02Z",
+    "license": "Apache-2.0",
+    "sha": "97862b0fcc89c850fdd00c82ede1e62d3c930a6d",
+    "default_branch": "main"
+  }
+]

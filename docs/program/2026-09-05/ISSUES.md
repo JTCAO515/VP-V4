@@ -73,7 +73,9 @@
 | [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264) | Harness：真实只读问答产生有依据的结果与回执 | [VPJ-66 #263](https://github.com/JTCAO515/VP-V4/issues/263), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206) | coding-agent | 4日；有界PR验证；真实环境/人工校准等待另计 | launch |
 | [VPJ-68 #265](https://github.com/JTCAO515/VP-V4/issues/265) | Harness：少走路且保留已确认晚餐的局部改稿闭环 | [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264), [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-65 #219](https://github.com/JTCAO515/VP-V4/issues/219) | coding-agent | 4日；有界PR验证；真实环境/人工校准等待另计 | launch |
 | [VPJ-69 #266](https://github.com/JTCAO515/VP-V4/issues/266) | Harness：故障取消与重连不伪造成功或重复提交 | [VPJ-68 #265](https://github.com/JTCAO515/VP-V4/issues/265) | coding-agent | 3日；有界PR验证；真实环境/人工校准等待另计 | launch |
-| [VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267) | Harness：只读模型或提示词候选的配对评测与校准 | [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264) | coding-agent | 3日；有界PR验证；真实环境/人工校准等待另计 | launch |
+| [VPJ-72 #287](https://github.com/JTCAO515/VP-V4/issues/287) | 中英回答离线内容判分与可导入反馈的盲评包 | [VPJ-66 #263](https://github.com/JTCAO515/VP-V4/issues/263) | coding-agent | 3日；有界准备PR；真实调用/人工校准/产品集成在原父票验证 | launch |
+| [VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267) | Harness：只读模型或提示词候选的配对评测与校准 | [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264), [VPJ-72 #287](https://github.com/JTCAO515/VP-V4/issues/287) | coding-agent | 3日；有界PR验证；真实环境/人工校准等待另计 | launch |
 | [VPJ-71 #268](https://github.com/JTCAO515/VP-V4/issues/268) | Harness：核心任务发布判定与能力停用恢复验收 | [VPJ-69 #266](https://github.com/JTCAO515/VP-V4/issues/266), [VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267), [VPJ-37 #229](https://github.com/JTCAO515/VP-V4/issues/229), [VPJ-63 #231](https://github.com/JTCAO515/VP-V4/issues/231) | coding-agent | 3日；有界PR验证；真实环境/人工校准等待另计 | launch |
+| [VPJ-73 #288](https://github.com/JTCAO515/VP-V4/issues/288) | Docling合成旅行材料解析与校正候选试验 | 仅基线合并 | coding-agent | 3日；有界准备PR；真实调用/人工校准/产品集成在原父票验证 | launch |
 
 后续expand必须另有activationEvidence，依赖完成不会自动开放。

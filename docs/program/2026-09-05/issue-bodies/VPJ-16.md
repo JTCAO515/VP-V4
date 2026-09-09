@@ -36,6 +36,7 @@
 - [ ] required/background/coverage/conflicts并存，同一fact多证据可用，no-answer不被相关度掩盖。
 - [ ] 真正knowledge gap与provider/policy/user-input/capability问题分流；不自动承诺人工。
 - [ ] 有依据回答同时约束自由正文和卡片，partial保留可靠部分并指明具体缺口与可用下一步；个人偏好只能筛选解释，不当外部事实；完整证据下全拒答作为失败反例。
+- [ ] HF复用：借MIRACL/BIPIA方法分别诊断检索、无答案与注入，保持请求级资格在召回及模型外发前执行、展示前重验；历史百科/旅行基准不当实时知识，相关高分不推翻时效、反证与许可。
 
 ## 不得触碰
 
@@ -81,6 +82,7 @@ Owner: coding-agent。类型: vertical。预估专注工作5日，外部等待�
 - `CONTEXT.md`
 - `docs/contracts/vpj-16.md`
 - `docs/contracts/vp-response-policy.md`
+- `docs/harness/hf-reuse/README.md`
 
 Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 

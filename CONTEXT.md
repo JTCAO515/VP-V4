@@ -27,6 +27,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - 2026-09-09 current planning request authorizes optimizing Harness, publishing six incremental Issues and integrating the planning into main. This grants no new provider/data/account/production database or payment authority.
 - 2026-09-10 brand Q36/Q37 confirmed directions: Free and Pass share explicitly saved basic cross-Trip preferences; a bounded service goal includes necessary clarification and system repair. Storage/consumer and billing semantics require versioned implementation; new capacity, partial/amendment/TTL and Q38 activation remain undecided.
 - VP response policy: English-first natural wording with equivalent Chinese facts, useful outcomes and next steps; tone never grants action/data permission or overrides evidence and confirmation.
+- 2026-09-10 HF reuse planning: preserve TS Harness and existing product contracts; add two bounded preparation Issues and ten append-only acceptance supplements. No default new Agent framework, vector database, HF hosting, training, data recipient or model purchase; real integrations keep their gates.
 
 ## 未决与运行证据
 
@@ -40,6 +41,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 验证
 
+- HF reuse planning: VPJ-72/73 created as #287/#288. Plan73-task DAG/docs and11 governance tests passed; review corrected Docling runnable/reject paths and predeclared criteria. Publication read-back and exact PR checks recorded in docs/harness/hf-reuse/DELIVERY.md; no model/OCR/user-data runtime performed.
 - 2026-09-10 brand engineering alignment: comprehensive study, ADR-0025,three planning contracts and26 existing Issue acceptance updates;6 conflictinglegacy metering clauses explicitly superseded with original text/progress retained. Exact GitHub body/metadata/dependency read-back passed. Local71-task identity/graph checks,11 governance tests,docs/links/diff passed. See docs/research/brand-engineering-2026-09-10/DELIVERY.md. Runtime,provider,Store and new data-permission acceptance are not established.
 - VPJ-59 local durable budget: PostgreSQL9/9 and full Supabase25->26/Auth/PostgREST1/1 PASS, no skips; actual local DB lint exit0, run-owned test stack removed. Units45/contracts188/affected11 PASS. Pending-accounting cancel/timeout bug fixed after independent review. Remote new migration and real provider acceptance remain UNRUN; see artifacts/VPJ-59/verification.md.
 - 2026-09-10 actual Staging migration11->25 exited0; fresh encrypted affected-schema backup restored in a no-network container with exact Auth/Trip digests. Ordinary JWT isolation16/16 passed, temporary2 Auth and run-owned Trips cleaned, original3 Auth/2 Trip digests unchanged. Direct/worker and parent acceptance remain incomplete; see artifacts/VPJ-02/staging-apply-20260910.md.
@@ -72,6 +74,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 ## 下一动作与回滚
 
 Use the explicitly approved synthetic-only scope and per-provider CNY30/total90 caps, with durable reservation and unknown-cost holds, to verify actual account/model/endpoint/usage behavior. Credentials come from login Keychain only inside the approved test process. Do not reuse prior temporary Staging accounts or infer C2/native/worker/knowledge acceptance. Real chat retention/deletion/human access remain undecided.
+After exact review/CI, request scope for new budget migration20260909184816 plus its bounded Staging verification; previous grant covered original13 and RPC repair only. Keep C0 per-provider CNY30/total90 limits and no recharge. Resolve pending synthetic training/retention choice and Qwen/GLM credential availability before provider calls. Real C2 retention/deletion/human access, native sessions and licensed knowledge remain independent gates. Apply the reviewed brand planning delta before implementing new ServiceTask consumption or cross-Trip personalization: docs/research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md. Existing scoped protocol/budget/native work continues; no new data/recipient or production authority is granted. HF reuse planning adds independent VPJ-72 #287 response-quality/blind-review preparation and VPJ-73 #288 Docling synthetic-material evaluation; after this plan merges, verify their local inputs and run in parallel without changing existing runtime gates. See docs/harness/hf-reuse/README.md.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
