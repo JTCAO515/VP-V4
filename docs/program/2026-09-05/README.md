@@ -16,6 +16,10 @@
 
 ## 当前范围
 
+开发调度：[品牌方向增量开发计划](BRAND-ALIGNMENT-EXECUTION.md)。
+
+2026-09-10 [品牌工程调整研究](../../research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md)将已确认的免费基础跨Trip偏好、完整服务任务和VP输出表达同步为三个规划契约与既有任务验收增量。沿当前依赖推进，未决收费数值、数据许可及激活制不启用；已完成准备和进行中的独立工作继续。
+
 2026-09-09 新增 [Harness 可靠性整合](../../harness/README.md)：VPJ-66…71 围绕只读问答与保留晚餐的局部改稿，先形成可运行评测，再验证真实服务与恢复。统一纳入本 Program，原65项身份/验收/198条依赖保留；新增6项及12条直接依赖。正式编号和发布读回见 [验证记录](../../harness/VERIFICATION.md)。
 
 原生中英iOS完整旅程，精简Web同Trip基本编辑/确认；一个VP多受控技能。酒店L1a/L1b；Free+30天非自动续费Journey Pass试验；语音/讲解/离线/Community/简单分享/运营/删除/IAP/发布均有责任任务。后续扩展要有真实触发证据。
@@ -44,4 +48,3 @@ git diff --check
 统筹交付包含主报告、详细任务/原生依赖、恢复性归档和reviewable PR；它与产品后续可用是不同完成条件。旧Issue按not planned关闭并链接新责任，不代表Staging/模型/隐私/发布已通过。回滚可reopen旧Issue和恢复标签，源码从hash归档或git恢复；不动用户原工作树或已执行数据库。
 
 观察窗口、运行UNRUN和验证结果见 [验证记录](VERIFICATION.md) 与根handoff。当前没有真实用户/模型/数据库/商店运行验收。
-

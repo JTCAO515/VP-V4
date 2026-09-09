@@ -10,7 +10,7 @@ Harness：核心任务发布判定与能力停用恢复验收。
 
 ## 当前基线与开发入口
 
-历史基线 PR #253 已合并；本任务需包含 VPJ-66…71 的 Harness 规划合并 main 后，按实时依赖、接口、环境与所有权核实执行范围。准备片段不等于真实集成验收。
+原VPJ基线已合并；2026-09-10品牌增量以Q1-Q38报告的已确认方向为准，当前任务及新增规划契约需按合入main后的版本执行。已有可独立进行的准备范围继续；未决收费、数据许可和激活制不视为已批准，完整验收仍保留真实依赖。
 主报告：[完整统筹方案](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
 必须阅读：[本任务执行合同](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-71) 与 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md)。
 
@@ -44,6 +44,7 @@ Harness：核心任务发布判定与能力停用恢复验收。
 - [ ] 在获准Staging演练按能力停用、恢复与部署回退，用户有可用替代，已确认Trip和删除/撤权状态不丢失；不改已应用迁移、不恢复撤销材料。
 - [ ] 先验证故意失败或缺证据能阻塞判定，再提交实际结果；基线/候选变化重跑受影响集合，不拼接不同配置的通过报告。
 - [ ] Harness门纳入现有发布验收资料；本票不授权生产、不自动关闭VPJ-41/42/43/45，不替代真实账号、原生设备、IAP、隐私或商店验收。
+- [ ] 同一已选配置的两条真实中英任务同时验证ServiceTask必要澄清不重复消费、正确偏好使用及真实状态表达；保留12场景required mode与全部原门，表达更好不替代真实正确性/恢复/费用证据。
 
 ## 不得触碰
 
@@ -85,6 +86,9 @@ Owner: coding-agent。类型: vertical。预估专注工作3日，外部等待�
 
 - `docs/harness/README.md`
 - `docs/handoff.json`
+- `docs/contracts/service-task-metering.md`
+- `docs/contracts/basic-preferences-cross-trip.md`
+- `docs/contracts/vp-response-policy.md`
 
 停用本轮候选/整合，保留可审计报告与既有安全不变量；保持Trip和删除/撤权状态，不回退已应用数据库历史。
 

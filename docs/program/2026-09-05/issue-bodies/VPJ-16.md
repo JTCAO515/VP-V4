@@ -10,9 +10,9 @@
 
 ## 当前基线与开发入口
 
-基线PR：#253。合并前不要从旧main实施新合同。
-主报告：[完整统筹方案](https://github.com/JTCAO515/VP-V4/blob/codex/vp-final-program-20260905/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
-必须阅读：[本任务执行合同](https://github.com/JTCAO515/VP-V4/blob/codex/vp-final-program-20260905/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-16) 与 [领域接口](https://github.com/JTCAO515/VP-V4/blob/codex/vp-final-program-20260905/docs/program/2026-09-05/INTERFACES.md)。
+原VPJ基线已合并；2026-09-10品牌增量以Q1-Q38报告的已确认方向为准，当前任务及新增规划契约需按合入main后的版本执行。已有可独立进行的准备范围继续；未决收费、数据许可和激活制不视为已批准，完整验收仍保留真实依赖。
+主报告：[完整统筹方案](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
+必须阅读：[本任务执行合同](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-16) 与 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)。
 
 ## Blocked by
 
@@ -35,6 +35,7 @@
 - [ ] 结构化/完整短文baseline→claim coverage→中英回答/卡片；权限时效范围预过滤。
 - [ ] required/background/coverage/conflicts并存，同一fact多证据可用，no-answer不被相关度掩盖。
 - [ ] 真正knowledge gap与provider/policy/user-input/capability问题分流；不自动承诺人工。
+- [ ] 有依据回答同时约束自由正文和卡片，partial保留可靠部分并指明具体缺口与可用下一步；个人偏好只能筛选解释，不当外部事实；完整证据下全拒答作为失败反例。
 
 ## 不得触碰
 
@@ -79,6 +80,7 @@ Owner: coding-agent。类型: vertical。预估专注工作5日，外部等待�
 - `HANDOFF.md`
 - `CONTEXT.md`
 - `docs/contracts/vpj-16.md`
+- `docs/contracts/vp-response-policy.md`
 
 Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 

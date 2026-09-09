@@ -8,7 +8,7 @@
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "JT owns product/commercial/provider/data/account/release decisions. Coding agents own each verified, bounded implementation contract.",
   "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree.",
-  "nextAction": "After exact review/CI, request scope for new budget migration20260909184816 plus its bounded Staging verification; previous grant covered original13 and RPC repair only. Keep C0 per-provider CNY30/total90 limits and no recharge. Resolve pending synthetic training/retention choice and Qwen/GLM credential availability before provider calls. Real C2 retention/deletion/human access, native sessions and licensed knowledge remain independent gates.",
+  "nextAction": "After exact review/CI, request scope for new budget migration20260909184816 plus its bounded Staging verification; previous grant covered original13 and RPC repair only. Keep C0 per-provider CNY30/total90 limits and no recharge. Resolve pending synthetic training/retention choice and Qwen/GLM credential availability before provider calls. Real C2 retention/deletion/human access, native sessions and licensed knowledge remain independent gates. Apply the reviewed brand planning delta before implementing new ServiceTask consumption or cross-Trip personalization: docs/research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md. Existing scoped protocol/budget/native work continues; no new data/recipient or production authority is granted.",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
@@ -32,11 +32,14 @@
     "JobExecutor, OperationalRecorder and ActorResolver seams each require one deterministic fake plus one production adapter.",
     "ApplyOutcome is a closed union; callers never parse exception strings.",
     "Closed failure taxonomy (UNAUTHENTICATED..INTERNAL_ERROR) is frozen with HTTP/SSE mapping, five-language copy, retryability and metric labels.",
-    "All contracts are frozen as schema fixture plus consumer test; provider SDK types never define domain schema."
+    "All contracts are frozen as schema fixture plus consumer test; provider SDK types never define domain schema.",
+    "ServiceTask is a bounded user goal with an agreed deliverable, associated Turns and attempts; an ID does not authorize consumption. ServiceCase remains human-assistance ownership. See ADR-0025 planning adoption gate.",
+    "Basic cross-Trip preferences are explicit, scoped Profile/Memory facts shared by Free/Pass; response wording never overrides evidence, action receipts or permissions."
   ],
   "mandatoryReadingOrder": [
     "docs/agents/development-workflow.md",
-    "docs/program/2026-09-05/README.md"
+    "docs/program/2026-09-05/README.md",
+    "docs/adr/ADR-0025-brand-service-task-and-response-semantics.md"
   ],
   "decisions": [
     "One VP identity, same Trip, full journey; native iOS complete and Web lightweight same-Trip edit/confirm.",
@@ -45,15 +48,35 @@
     "Free + non-renewing 30-day Journey Pass experiment; $19.99 reference, $14.99 alternative; actual StoreKit terms and cost checked before sale.",
     "Keep valid Trip/RLS/migration/knowledge/privacy safety contracts; archived code not production input.",
     "2026-09-09 JT explicitly allows production publishing and merge-triggered Vercel deployments for VP-V4 in this continuing session. Production database migrations, new data/recipient permissions, purchases, legal/material rights and branch-protection bypass remain outside that grant.",
-    "2026-09-09 current planning request authorizes optimizing Harness, publishing six incremental Issues and integrating the planning into main. This grants no new provider/data/account/production database or payment authority."
+    "2026-09-09 current planning request authorizes optimizing Harness, publishing six incremental Issues and integrating the planning into main. This grants no new provider/data/account/production database or payment authority.",
+    "2026-09-10 brand Q36/Q37 confirmed directions: Free and Pass share explicitly saved basic cross-Trip preferences; a bounded service goal includes necessary clarification and system repair. Storage/consumer and billing semantics require versioned implementation; new capacity, partial/amendment/TTL and Q38 activation remain undecided.",
+    "VP response policy: English-first natural wording with equivalent Chinese facts, useful outcomes and next steps; tone never grants action/data permission or overrides evidence and confirmation."
   ],
   "changedFiles": [
-    "docs/harness/IMPLEMENTATION-STATUS.md",
+    "docs/research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md",
+    "docs/research/brand-engineering-2026-09-10/**",
+    "docs/contracts/basic-preferences-cross-trip.md",
+    "docs/contracts/service-task-metering.md",
+    "docs/contracts/vp-response-policy.md",
+    "docs/VISEPANDA-MASTER-PLAN-2026-09-05.md",
+    "docs/program/2026-09-05/issue-plan.json",
+    "docs/program/2026-09-05/EXECUTION-CONTRACT.md",
+    "docs/program/2026-09-05/INTERFACES.md",
+    "docs/program/2026-09-05/README.md",
+    "docs/program/2026-09-05/issue-bodies/**",
+    "docs/harness/README.md",
+    "README.md",
     "docs/handoff.json",
     "HANDOFF.md",
-    "CONTEXT.md"
+    "CONTEXT.md",
+    "docs/INDEX.md",
+    "docs/manifest.json",
+    "docs/adr/ADR-0025-brand-service-task-and-response-semantics.md",
+    "docs/program/2026-09-05/BRAND-ALIGNMENT-EXECUTION.md",
+    "docs/research/brand-engineering-2026-09-10/DELIVERY.md"
   ],
   "verification": [
+    "2026-09-10 brand engineering alignment: comprehensive study, ADR-0025,three planning contracts and26 existing Issue acceptance updates;6 conflictinglegacy metering clauses explicitly superseded with original text/progress retained. Exact GitHub body/metadata/dependency read-back passed. Local71-task identity/graph checks,11 governance tests,docs/links/diff passed. See docs/research/brand-engineering-2026-09-10/DELIVERY.md. Runtime,provider,Store and new data-permission acceptance are not established.",
     "VPJ-59 local durable budget: PostgreSQL9/9 and full Supabase25->26/Auth/PostgREST1/1 PASS, no skips; actual local DB lint exit0, run-owned test stack removed. Units45/contracts188/affected11 PASS. Pending-accounting cancel/timeout bug fixed after independent review. Remote new migration and real provider acceptance remain UNRUN; see artifacts/VPJ-59/verification.md.",
     "2026-09-10 actual Staging migration11->25 exited0; fresh encrypted affected-schema backup restored in a no-network container with exact Auth/Trip digests. Ordinary JWT isolation16/16 passed, temporary2 Auth and run-owned Trips cleaned, original3 Auth/2 Trip digests unchanged. Direct/worker and parent acceptance remain incomplete; see artifacts/VPJ-02/staging-apply-20260910.md.",
     "PR279 exact HEAD1322254 reviewed Critical0/Important0; Quality34385270635 passed3m15 and Vercel passed, merged798dc36 after PR278. Actual merged-code identity tests30/30 pass, zero skip. The first post-merge command used a nonexistent loader and failed before running assertions; rerunning the recorded native Node command passed. JWT verification does not activate native epochs or RLS access.",
