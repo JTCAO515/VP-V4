@@ -1,0 +1,243 @@
+
+> vp-v4@0.0.0 test:unit /Users/jtcao/Documents/VP-V4-Model-Adapters
+> node scripts/run-ci-suite.mjs unit
+
+TAP version 13
+# Subtest: hard budget violations are deterministically infeasible while soft preferences create stable tradeoffs
+ok 1 - hard budget violations are deterministically infeasible while soft preferences create stable tradeoffs
+  ---
+  duration_ms: 6.897042
+  type: 'test'
+  ...
+# Subtest: time windows and transfers are code-decided hard constraints
+ok 2 - time windows and transfers are code-decided hard constraints
+  ---
+  duration_ms: 0.396959
+  type: 'test'
+  ...
+# Subtest: a route-matrix duration cannot hide overlapping or too-short scheduled transfers
+ok 3 - a route-matrix duration cannot hide overlapping or too-short scheduled transfers
+  ---
+  duration_ms: 0.196292
+  type: 'test'
+  ...
+# Subtest: closed places are infeasible and unknown opening, route, or reservation evidence remains visible
+ok 4 - closed places are infeasible and unknown opening, route, or reservation evidence remains visible
+  ---
+  duration_ms: 0.314625
+  type: 'test'
+  ...
+# Subtest: unknown or expired price evidence cannot be silently treated as a verified budget
+ok 5 - unknown or expired price evidence cannot be silently treated as a verified budget
+  ---
+  duration_ms: 1.442625
+  type: 'test'
+  ...
+# Subtest: uses RFC3339 instants rather than lexical timestamp ordering
+ok 6 - uses RFC3339 instants rather than lexical timestamp ordering
+  ---
+  duration_ms: 0.260292
+  type: 'test'
+  ...
+# Subtest: requires current route evidence for every adjacent stop pair
+ok 7 - requires current route evidence for every adjacent stop pair
+  ---
+  duration_ms: 0.195125
+  type: 'test'
+  ...
+# Subtest: a missing route link cannot hide a proven short transfer
+ok 8 - a missing route link cannot hide a proven short transfer
+  ---
+  duration_ms: 0.173125
+  type: 'test'
+  ...
+# Subtest: expired opening and reservation evidence remains unknown even when projected states look positive
+ok 9 - expired opening and reservation evidence remains unknown even when projected states look positive
+  ---
+  duration_ms: 0.209958
+  type: 'test'
+  ...
+# Subtest: rejects malformed candidate constraints instead of scoring invented or nonsensical inputs
+ok 10 - rejects malformed candidate constraints instead of scoring invented or nonsensical inputs
+  ---
+  duration_ms: 0.9415
+  type: 'test'
+  ...
+# Subtest: the registry contains only flags required by the R1 release slice
+ok 11 - the registry contains only flags required by the R1 release slice
+  ---
+  duration_ms: 2.066291
+  type: 'test'
+  ...
+# Subtest: chat runtime requires Trip persistence
+ok 12 - chat runtime requires Trip persistence
+  ---
+  duration_ms: 0.961375
+  type: 'test'
+  ...
+# Subtest: flags default off and only return capability availability
+ok 13 - flags default off and only return capability availability
+  ---
+  duration_ms: 12.488542
+  type: 'test'
+  ...
+# Subtest: VPJ scheduling retains fail-closed runtime protections
+ok 14 - VPJ scheduling retains fail-closed runtime protections
+  ---
+  duration_ms: 2.723167
+  type: 'test'
+  ...
+# Subtest: handoff and identity contract reflect anonymous preview without Magic Link
+ok 15 - handoff and identity contract reflect anonymous preview without Magic Link
+  ---
+  duration_ms: 0.571542
+  type: 'test'
+  ...
+# Subtest: LAUNCH-01 PR workflow runs every deterministic repository gate and the browser lane
+ok 16 - LAUNCH-01 PR workflow runs every deterministic repository gate and the browser lane
+  ---
+  duration_ms: 4.585583
+  type: 'test'
+  ...
+# Subtest: LAUNCH-01 CI suite runner reports skipped tests as an explicit incomplete outcome
+ok 17 - LAUNCH-01 CI suite runner reports skipped tests as an explicit incomplete outcome
+  ---
+  duration_ms: 4.105666
+  type: 'test'
+  ...
+# Subtest: LAUNCH-01 keeps internal text-asset ledger hashes stable across Git line endings
+ok 18 - LAUNCH-01 keeps internal text-asset ledger hashes stable across Git line endings
+  ---
+  duration_ms: 4.154166
+  type: 'test'
+  ...
+# Subtest: LAUNCH-01 workflows initialize a visible CI-suite outcome table
+ok 19 - LAUNCH-01 workflows initialize a visible CI-suite outcome table
+  ---
+  duration_ms: 0.749417
+  type: 'test'
+  ...
+# Subtest: LAUNCH-01 command ledger accepts the LAUNCH Issue namespace
+ok 20 - LAUNCH-01 command ledger accepts the LAUNCH Issue namespace
+  ---
+  duration_ms: 4.494208
+  type: 'test'
+  ...
+# Subtest: LAUNCH-01 labels source-inspection E2E tests separately from browser E2E
+ok 21 - LAUNCH-01 labels source-inspection E2E tests separately from browser E2E
+  ---
+  duration_ms: 0.778166
+  type: 'test'
+  ...
+# Subtest: LAUNCH-01 CI suite runner marks a locally skipped integration suite incomplete
+ok 22 - LAUNCH-01 CI suite runner marks a locally skipped integration suite incomplete
+  ---
+  duration_ms: 9699.23025
+  type: 'test'
+  ...
+# Subtest: unmerged baseline retains the migration gate
+ok 23 - unmerged baseline retains the migration gate
+  ---
+  duration_ms: 17.40125
+  type: 'test'
+  ...
+# Subtest: merged baseline permits ready work and completed tasks
+ok 24 - merged baseline permits ready work and completed tasks
+  ---
+  duration_ms: 0.201833
+  type: 'test'
+  ...
+# Subtest: blocked tasks without open dependencies require review, not automatic readiness
+ok 25 - blocked tasks without open dependencies require review, not automatic readiness
+  ---
+  duration_ms: 0.774375
+  type: 'test'
+  ...
+# Subtest: runtime readiness still rejects open and cancelled upstream dependencies
+ok 26 - runtime readiness still rejects open and cancelled upstream dependencies
+  ---
+  duration_ms: 0.427916
+  type: 'test'
+  ...
+# Subtest: not-planned is not silently treated as product completion
+ok 27 - not-planned is not silently treated as product completion
+  ---
+  duration_ms: 0.233125
+  type: 'test'
+  ...
+# Subtest: closing old tasks still demands a strict new-task migration snapshot
+ok 28 - closing old tasks still demands a strict new-task migration snapshot
+  ---
+  duration_ms: 0.230375
+  type: 'test'
+  ...
+# Subtest: published execution header stays synchronized with the generator
+ok 29 - published execution header stays synchronized with the generator
+  ---
+  duration_ms: 3.04975
+  type: 'test'
+  ...
+# Subtest: VPJ rejects missing blockers and dependency cycles
+ok 30 - VPJ rejects missing blockers and dependency cycles
+  ---
+  duration_ms: 6.894583
+  type: 'test'
+  ...
+# Subtest: VPJ orders shared prerequisites once before consumers
+ok 31 - VPJ orders shared prerequisites once before consumers
+  ---
+  duration_ms: 1.853333
+  type: 'test'
+  ...
+# Subtest: VPJ bodies without task overrides preserve their published output
+ok 32 - VPJ bodies without task overrides preserve their published output
+  ---
+  duration_ms: 22.548333
+  type: 'test'
+  ...
+# Subtest: VPJ body supports a task source ref and its own planning merge gate
+ok 33 - VPJ body supports a task source ref and its own planning merge gate
+  ---
+  duration_ms: 0.340209
+  type: 'test'
+  ...
+# Subtest: release discovery retains only the currently selected legacy locale without changing payload metadata
+ok 34 - release discovery retains only the currently selected legacy locale without changing payload metadata
+  ---
+  duration_ms: 1.995458
+  type: 'test'
+  ...
+# Subtest: LAUNCH-12 selects the next confirmed item from an explicit clock and Day timezone
+ok 35 - LAUNCH-12 selects the next confirmed item from an explicit clock and Day timezone
+  ---
+  duration_ms: 213.14225
+  type: 'test'
+  ...
+# Subtest: LAUNCH-12 distinguishes before, during, and after a confirmed Trip without external evidence
+ok 36 - LAUNCH-12 distinguishes before, during, and after a confirmed Trip without external evidence
+  ---
+  duration_ms: 3.603792
+  type: 'test'
+  ...
+# Subtest: LAUNCH-12 fails closed for empty, timezone-missing, malformed, or cross-trip item data
+ok 37 - LAUNCH-12 fails closed for empty, timezone-missing, malformed, or cross-trip item data
+  ---
+  duration_ms: 0.684875
+  type: 'test'
+  ...
+# Subtest: LAUNCH-05 retention lifecycle cannot transition from an unapproved capture to persistence
+ok 38 - LAUNCH-05 retention lifecycle cannot transition from an unapproved capture to persistence
+  ---
+  duration_ms: 1.182208
+  type: 'test'
+  ...
+1..38
+# tests 38
+# suites 0
+# pass 38
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9899.172625
+VP_CI_SUITE_RESULT {"suite":"unit","outcome":"passed","skipped":0,"testFiles":9}
