@@ -1,0 +1,89 @@
+diff --git a/ios/VisePanda/VisePandaUITests/AppShellUITests.swift b/ios/VisePanda/VisePandaUITests/AppShellUITests.swift
+index 2c6976a..5a3dcc8 100644
+--- a/ios/VisePanda/VisePandaUITests/AppShellUITests.swift
++++ b/ios/VisePanda/VisePandaUITests/AppShellUITests.swift
+@@ -1,4 +1,5 @@
+ import XCTest
++import UIKit
+
+ @MainActor
+ final class AppShellUITests: XCTestCase {
+@@ -25,6 +26,78 @@ final class AppShellUITests: XCTestCase {
+         add(attachment)
+     }
+
++    func testChineseAuditWithAndWithoutTextOverride() throws {
++        continueAfterFailure = true
++        let previousAppearance = XCUIDevice.shared.appearance
++        XCUIDevice.shared.appearance = .light
++        defer { XCUIDevice.shared.appearance = previousAppearance }
++        for fixedOverride in [true, false] {
++            let app = XCUIApplication()
++            app.launchArguments = ["-VisePandaLocale", "zh-Hans", "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN"]
++            if fixedOverride { app.launchArguments += ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryL"] }
++            app.launch()
++            capture("Chinese-before-audit-fixed-\(fixedOverride)", app: app)
++            print("[AX-DIAG] begin fixedOverride=\(fixedOverride)")
++            try app.performAccessibilityAudit { issue in
++                print("[AX-DIAG] fixed=\(fixedOverride) type=\(issue.auditType.rawValue) detail=\(issue.detailedDescription) element=\(String(describing: issue.element))")
++                return false
++            }
++            print("[AX-DIAG] end fixedOverride=\(fixedOverride)")
++            capture("Chinese-after-audit-fixed-\(fixedOverride)", app: app)
++            app.terminate()
++        }
++    }
++
++    func testToolsFullAuditUsingSystemTextSize() throws {
++        continueAfterFailure = true
++        let previousAppearance = XCUIDevice.shared.appearance
++        XCUIDevice.shared.appearance = .light
++        defer { XCUIDevice.shared.appearance = previousAppearance }
++        let app = XCUIApplication()
++        app.launchArguments = ["-VisePandaLocale", "en", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
++        app.launch()
++        app.tabBars.buttons["Tools"].tap()
++        let translation = app.buttons["Translation"]
++        for _ in 0..<5 where !translation.isHittable { app.swipeUp() }
++        for _ in 0..<8 {
++            let distance = translation.frame.minY - app.navigationBars.firstMatch.frame.maxY - 8
++            if abs(distance) < 2 { break }
++            let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.6))
++            let end = start.withOffset(CGVector(dx: 0, dy: -min(max(distance, -200), 200)))
++            start.press(forDuration: 0.05, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.2)
++        }
++        XCTAssertGreaterThan(translation.frame.height, 70)
++        XCTAssertGreaterThan(app.buttons["Address card"].frame.height, 100)
++        print("[AX-DIAG] system-large frames translation=\(translation.frame), address=\(app.buttons["Address card"].frame), nav=\(app.navigationBars.firstMatch.frame), tabs=\(app.tabBars.firstMatch.frame)")
++        capture("Tools-system-largest-before-audit", app: app)
++        try app.performAccessibilityAudit { issue in
++            print("[AX-DIAG] system-large type=\(issue.auditType.rawValue) detail=\(issue.detailedDescription) element=\(String(describing: issue.element))")
++            return false
++        }
++        capture("Tools-system-largest-after-audit", app: app)
++        app.terminate()
++    }
++
++    func testTripWorkflowNumbersFitLargestText() {
++        let app = launch(locale: "zh-Hans", largeText: true)
++        continueAfterFailure = true
++        app.tabBars.buttons["行程"].tap()
++        let lastStep = app.staticTexts["确认后才会保存"]
++        for _ in 0..<8 where !lastStep.isHittable { app.swipeUp(velocity: .slow) }
++        XCTAssertTrue(lastStep.isHittable)
++        let traits = UITraitCollection(preferredContentSizeCategory: .accessibilityExtraExtraExtraLarge)
++        let caption = UIFont.preferredFont(forTextStyle: .caption1, compatibleWith: traits)
++        print("[AX-DIAG] maximum caption lineHeight=\(caption.lineHeight)")
++        capture("Trip-workflow-largest-before-geometry", app: app)
++        for number in ["1", "2", "3"] {
++            let element = app.staticTexts[number]
++            XCTAssertTrue(element.exists)
++            print("[AX-DIAG] workflow number \(number): \(element.frame)")
++            XCTAssertGreaterThanOrEqual(element.frame.height, caption.lineHeight)
++            XCTAssertGreaterThanOrEqual(element.frame.width, (number as NSString).size(withAttributes: [.font: caption]).width)
++        }
++    }
++
+     func testEnglishTabsTodayAndTranslationRoute() {
+         let app = launch()
+         XCTAssertTrue(app.tabBars.buttons["Ask"].isSelected)
