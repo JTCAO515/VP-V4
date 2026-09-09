@@ -2,6 +2,8 @@
 
 研究日期：2026-09-10。代码固定于 `d4eeb084b41f8c82a1794a0f946529bb54e2d5db`；产品输入为 [Q1–Q38 原文](https://github.com/JTCAO515/VP-V4/blob/8ae95a7/docs/brand/VISEPANDA-BRAND-DISTILLATION-Q1-Q38-2026-09-10.md)。下述对象、状态与扣次方案是**建议，尚未批准或实施**。仅作源码、执行合同和一手资料研究，未运行数据库、provider 或 StoreKit 验收。
 
+提交前补充：主线6b475cf已包含[PR #284](https://github.com/JTCAO515/VP-V4/pull/284)的durable模型预算及本地数据库验证。下述“内存/缺持久成本账”判断限定d4eeb084历史快照；后续直接复用[vpj-59契约](https://github.com/JTCAO515/VP-V4/blob/6b475cf/docs/contracts/vpj-59.md)及其实现，剩余Staging预算迁移、真实worker/provider和ServiceTask消费闭环仍待各自验收。
+
 ## 结论与现状证据
 
 Q37 已接受“一项明确服务目标包含必要澄清与系统修复”，但没有确定次数、部分交付和修改边界。当前工程已有 task 级幂等方向，却没有可直接复用的完整服务任务消费实现。最小调整是在 Turn 上方建立业务归属，继续复用 Turn/attempt、TripProposal 与现有身份隔离；不另造聊天引擎，也不能把 300 Ask 直接改名为 300 服务任务。
