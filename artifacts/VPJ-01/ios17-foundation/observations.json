@@ -1,0 +1,112 @@
+{
+  "base": "cfde140d16508aa360438b820a224bf0ea541873",
+  "runs": [
+    {
+      "run": "20260910-055649",
+      "log": "/Users/jtcao/Library/Caches/visepanda/ios17-accessibility/20260910-055649/xcodebuild.log",
+      "xcresult": "/Users/jtcao/Library/Caches/visepanda/ios17-accessibility/20260910-055649/audit.xcresult",
+      "observations": [
+        "Test Case '-[VisePandaUITests.AppShellUITests testChineseAuditWithAndWithoutTextOverride]' started.",
+        "[AX-DIAG] begin fixedOverride=true",
+        "[AX-DIAG] fixed=true type=131072 detail=Text of this element may be clipped at larger Dynamic Type sizes. element=Optional(Attributes: StaticText, 0x102939ac0, {{30.0, 409.8}, {296.3, 15.7}}, label: '此版本尚未连接实时数据、账号、AI、预订或支付。'",
+        "[AX-DIAG] end fixedOverride=true",
+        "[AX-DIAG] begin fixedOverride=false",
+        "[AX-DIAG] fixed=false type=131072 detail=Text of this element may be clipped at larger Dynamic Type sizes. element=Optional(Attributes: StaticText, 0x10140c290, {{30.0, 409.8}, {296.3, 15.7}}, label: '此版本尚未连接实时数据、账号、AI、预订或支付。'",
+        "[AX-DIAG] end fixedOverride=false",
+        "Test Case '-[VisePandaUITests.AppShellUITests testChineseAuditWithAndWithoutTextOverride]' failed (13.291 seconds)."
+      ]
+    },
+    {
+      "run": "20260910-060155",
+      "log": "/Users/jtcao/Library/Caches/visepanda/ios17-accessibility/20260910-060155/xcodebuild.log",
+      "xcresult": "/Users/jtcao/Library/Caches/visepanda/ios17-accessibility/20260910-060155/audit.xcresult",
+      "observations": [
+        "Test Case '-[VisePandaUITests.AppShellUITests testChineseAuditWithAndWithoutTextOverride]' started.",
+        "[AX-DIAG] begin fixedOverride=true",
+        "[AX-DIAG] fixed=true type=131072 detail=Text of this element may be clipped at larger Dynamic Type sizes. element=Optional(Attributes: StaticText, 0x10452dab0, {{30.0, 409.8}, {296.3, 15.7}}, label: '此版本尚未连接实时数据、账号、AI、预订或支付。'",
+        "[AX-DIAG] end fixedOverride=true",
+        "[AX-DIAG] begin fixedOverride=false",
+        "[AX-DIAG] fixed=false type=131072 detail=Text of this element may be clipped at larger Dynamic Type sizes. element=Optional(Attributes: StaticText, 0x104381810, {{30.0, 409.8}, {296.3, 15.7}}, label: '此版本尚未连接实时数据、账号、AI、预订或支付。'",
+        "[AX-DIAG] end fixedOverride=false",
+        "Test Case '-[VisePandaUITests.AppShellUITests testChineseAuditWithAndWithoutTextOverride]' failed (12.416 seconds)."
+      ]
+    },
+    {
+      "run": "20260910-060531",
+      "log": "/Users/jtcao/Library/Caches/visepanda/ios17-accessibility/20260910-060531/xcodebuild.log",
+      "xcresult": "/Users/jtcao/Library/Caches/visepanda/ios17-accessibility/20260910-060531/audit.xcresult",
+      "observations": [
+        "Test Case '-[VisePandaUITests.AppShellUITests testToolsFullAuditUsingSystemTextSize]' started.",
+        "[AX-DIAG] system-large frames translation=(20.0, 369.0, 353.0, 85.33333333333331), address=(20.0, 454.3333333333333, 353.0, 147.33333333333331), nav=(0.0, 53.66666666666666, 393.0, 44.000000000000014), tabs=(0.0, 769.0, 393.0, 83.0)",
+        "[AX-DIAG] system-large type=65536 detail=User will not be able to change the font size of this element element=nil",
+        "[AX-DIAG] system-large type=65536 detail=User will not be able to change the font size of this element element=nil",
+        "[AX-DIAG] system-large type=131072 detail=Text of this element may be clipped at larger Dynamic Type sizes. element=nil",
+        "Test Case '-[VisePandaUITests.AppShellUITests testToolsFullAuditUsingSystemTextSize]' failed (21.269 seconds)."
+      ]
+    },
+    {
+      "run": "20260910-060933",
+      "log": "/Users/jtcao/Library/Caches/visepanda/ios17-accessibility/20260910-060933/xcodebuild.log",
+      "xcresult": "/Users/jtcao/Library/Caches/visepanda/ios17-accessibility/20260910-060933/audit.xcresult",
+      "observations": [
+        "Test Case '-[VisePandaUITests.AppShellUITests testChineseAuditWithAndWithoutTextOverride]' started.",
+        "[AX-DIAG] begin fixedOverride=true",
+        "[AX-DIAG] fixed=true type=131072 detail=Text of this element may be clipped at larger Dynamic Type sizes. element=Optional(Attributes: StaticText, 0x104437ea0, {{30.0, 409.8}, {296.3, 15.7}}, label: '此版本尚未连接实时数据、账号、AI、预订或支付。'",
+        "[AX-DIAG] end fixedOverride=true",
+        "[AX-DIAG] begin fixedOverride=false",
+        "[AX-DIAG] fixed=false type=131072 detail=Text of this element may be clipped at larger Dynamic Type sizes. element=Optional(Attributes: StaticText, 0x1042a0fa0, {{30.0, 409.8}, {296.3, 15.7}}, label: '此版本尚未连接实时数据、账号、AI、预订或支付。'",
+        "[AX-DIAG] end fixedOverride=false",
+        "Test Case '-[VisePandaUITests.AppShellUITests testChineseAuditWithAndWithoutTextOverride]' failed (12.088 seconds)."
+      ]
+    },
+    {
+      "run": "20260910-061246",
+      "log": "/Users/jtcao/Library/Caches/visepanda/ios17-accessibility/20260910-061246/xcodebuild.log",
+      "xcresult": "/Users/jtcao/Library/Caches/visepanda/ios17-accessibility/20260910-061246/audit.xcresult",
+      "observations": [
+        "Test Case '-[VisePandaUITests.AppShellUITests testChineseAuditWithAndWithoutTextOverride]' started.",
+        "[AX-DIAG] begin fixedOverride=true",
+        "[AX-DIAG] fixed=true type=131072 detail=Text of this element may be clipped at larger Dynamic Type sizes. element=Optional(Attributes: StaticText, 0x102145a90, {{30.0, 409.8}, {296.3, 15.7}}, label: '此版本尚未连接实时数据、账号、AI、预订或支付。'",
+        "[AX-DIAG] end fixedOverride=true",
+        "[AX-DIAG] begin fixedOverride=false",
+        "[AX-DIAG] fixed=false type=131072 detail=Text of this element may be clipped at larger Dynamic Type sizes. element=Optional(Attributes: StaticText, 0x10219b340, {{30.0, 409.8}, {296.3, 15.7}}, label: '此版本尚未连接实时数据、账号、AI、预订或支付。'",
+        "[AX-DIAG] end fixedOverride=false",
+        "Test Case '-[VisePandaUITests.AppShellUITests testChineseAuditWithAndWithoutTextOverride]' failed (11.695 seconds)."
+      ]
+    },
+    {
+      "run": "20260910-061720",
+      "log": "/Users/jtcao/Library/Caches/visepanda/ios17-accessibility/20260910-061720/xcodebuild.log",
+      "xcresult": "/Users/jtcao/Library/Caches/visepanda/ios17-accessibility/20260910-061720/audit.xcresult",
+      "observations": [
+        "Test Case '-[VisePandaUITests.AppShellUITests testTripWorkflowNumbersFitLargestText]' started.",
+        "[AX-DIAG] maximum caption lineHeight=51.314453125",
+        "[AX-DIAG] workflow number 1: (19.5, 498.76696165191726, 21.0, 51.333333333333314)",
+        "[AX-DIAG] workflow number 2: (16.833333333333336, 569.433628318584, 26.33333333333333, 51.33333333333326)",
+        "[AX-DIAG] workflow number 3: (16.166666666666668, 669.1002949852508, 27.666666666666668, 51.33333333333326)",
+        "Test Case '-[VisePandaUITests.AppShellUITests testTripWorkflowNumbersFitLargestText]' passed (8.161 seconds)."
+      ]
+    }
+  ],
+  "physicalDevice": {
+    "model": "iPhone 17",
+    "state": "unavailable",
+    "osVersionFromUser": "26.6.1",
+    "osVersionVerifiedByTool": false,
+    "installedBuildVerified": false
+  },
+  "glyphDiagnostic": {
+    "source": "../native-acceptance/ios17-final/91088BA9-9059-4ECF-92C1-7F057425C0B3.png",
+    "elementImagePixels": [
+      888,
+      46
+    ],
+    "darkInkBounds": [
+      1,
+      5,
+      881,
+      40
+    ],
+    "interpretation": "Normal-size image has ink margins; does not establish larger-size/VoiceOver acceptance."
+  }
+}
