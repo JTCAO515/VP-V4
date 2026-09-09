@@ -33,3 +33,12 @@ requirements for the future runtime consumer.
 Rollback disables dispatch and drains/reconciles outstanding reservations. Applied SQL
 is append-only; do not delete ledger evidence or rewrite prior migrations. Exact remote
 retention/deletion rules and actual Staging worker credentials remain future gates.
+
+## Scoped C0 budget debit interpretation
+
+The isolated20260910 synthetic provider campaign uses the explicit
+[C0 accounting v1](../benchmarks/vpj-06/c0-cost-accounting-20260910.md) interpretation:
+validated usage at frozen upper tariffs may settle a conservative budget debit, with
+a durable cost-basis sidecar and actualBilledCost=unknown. This limited interpretation
+does not establish a supplier invoice, customer charge or new production billing policy.
+Unknown/uncovered charges retain their holds; existing settlement cannot be overwritten.

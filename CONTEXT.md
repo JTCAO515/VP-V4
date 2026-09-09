@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Authorized Staging budget migration25->26 and40 ordinary-account/HTTP/synthetic-budget checks passed; refreshed encrypted backup restored, fixtures cleaned and original3 Auth/2 Trip digests preserved. JT approved synthetic supplier retention/model-improvement scope; all three provider Keychain entries now exist. Actual paid model tests remain unrun.
+状态：Staging26/40 scoped checks remain verified. Actual C0 provider protocol samples27/27, client timeout/cancel6/6 and two real-call duplicate/crash worker proofs passed. GLM disabled-thinking incompatibility is corrected locally; exact review/CI and wider quality/runtime acceptance remain separate. Conservative budget debits are not supplier invoices.
 
-阶段：Staging budget and synthetic-use grants verified; proceed to bounded real C0 provider conformance and cost evidence.
+阶段：Real C0 provider compatibility and conservative metering verified; finish reviewed integration and the two independent HF preparation deliveries.
 
 ## 读取顺序
 
@@ -33,12 +33,13 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 
-- Production/customer and complete native/provider/Harness acceptance remain unrun. Scoped Staging migrations, ordinary identity isolation and synthetic budget HTTP behavior were actually verified; those results do not establish the remaining runtime capabilities.
+- Production/customer and complete native/Harness acceptance remain unrun. Scoped Staging and actual C0 model protocol/worker behavior are verified; supplier billing, semantic quality and real user data consumers remain separate.
 - Physical VoiceOver, signed Store and selected-object Ask sheet acceptance under #198/#233/#242 remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.
 - VPJ-66 offline preparation is merged and accepted; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.
 
 ## 验证
 
+- 2026-09-10 actual C0:27/27 protocol matrix samples,6/6 client timeout/cancel checks and two extra real DeepSeek worker duplicate/crash calls passed. Total38 transport invocations/30 usage receipts; highest-tariff budget debit0.035014CNY,8 unknown-cost requests retain28.9CNY. Actual billed amount and semantic/human quality unverified. GLM400/1210 fixed by retaining native default thinking;21 protocol/security checks and units45/contracts189/evals24 pass locally. See artifacts/VPJ-06/live-c0-20260910.
 - Planning evidence: brand/ServiceTask/response alignment PR286 and HF plan PR289 merged; current manifest has73 tasks/212 native edges. These are planning/delivery facts, not runtime acceptance. See docs/research/brand-engineering-2026-09-10/DELIVERY.md and docs/harness/hf-reuse/DELIVERY.md.
 - Staging evidence: PR281 records authorized11→25 migration, restored encrypted backup, ordinary JWT16/16 and exact-ID cleanup preserving existing data. Direct-host/worker acceptance is separate; read the latest #189/PR evidence before action.
 - Budget evidence: PR284 merged durable reservation/dispatch and local concurrency tests; PR290 records authorized Staging25→26, ordinary-account/HTTP/synthetic-budget40/40, backup restore and exact cleanup. Actual paid provider, direct-host and deployed-worker acceptance remain separate. See artifacts/VPJ-59/staging-20260910.md and #194.
@@ -49,7 +50,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-在当前已批准的合成测试范围内，以每供应商CNY30/合计90上限和持久预留验证真实模型协议与usage；凭据仅由获准测试进程从Keychain读取，不重复索取已有同范围授权。并行收尾#188基础原生问题及#287/#288准备；真实用户留存/删除/人工访问仍待对应决定。真实Trip选区Ask/确认/重载由#198/#233/#242联合验收，执行前核当前依赖、接口与占用。
+收尾真实C0协议/GLM兼容修复和#287/#288独立准备的审查、CI与验收。保留同一CNY30/供应商、合计90预算scope及未知费用hold；预算扣额不当作供应商账单。后续版本化真实ModelProfile/outcome消费者，继续核原生身份、C2留存/删除/人工访问、部署worker与许可知识门。#188只收尾基础原生问题；真实Trip选区Ask/确认/重载按#198/#233/#242联合验收，不逆向阻塞#188。品牌ServiceTask/基础偏好及HF复用范围继续有效。
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
