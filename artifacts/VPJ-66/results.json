@@ -9,7 +9,7 @@
     "grader": "harness-grader-v1",
     "corpus": "harness-corpus-v1"
   },
-  "commit": "6307d79d7e33785395d533cd381e32a26f080c01",
+  "commit": "99f54c4f97b4cd7f00a11f3c1accef70f46b1720",
   "sourceState": "working-tree; commit alone does not attest uncommitted source",
   "mode": "fixture",
   "holdout": {
@@ -28,7 +28,7 @@
     "stagingRuns": 0,
     "stagingNotRun": 12
   },
-  "elapsedMs": 100.589,
+  "elapsedMs": 148.647,
   "usage": "unknown",
   "cost": "unknown",
   "providerCalls": 0,
@@ -75,7 +75,7 @@
         }
       ],
       "reasonCode": null,
-      "elapsedMs": 7.16,
+      "elapsedMs": 35.342,
       "usage": "unknown",
       "cost": "unknown"
     },
@@ -154,7 +154,7 @@
         }
       ],
       "reasonCode": null,
-      "elapsedMs": 30.441,
+      "elapsedMs": 47.782,
       "usage": "unknown",
       "cost": "unknown"
     },
@@ -422,7 +422,7 @@
         ],
         "verdict": "FAIL"
       },
-      "elapsedMs": 1.223
+      "elapsedMs": 0.289
     },
     {
       "id": "H01-refusal",
@@ -456,7 +456,7 @@
         ],
         "verdict": "FAIL"
       },
-      "elapsedMs": 0.166
+      "elapsedMs": 0.114
     },
     {
       "id": "H02-dinner",
@@ -525,7 +525,7 @@
         ],
         "verdict": "FAIL"
       },
-      "elapsedMs": 0.666
+      "elapsedMs": 0.634
     },
     {
       "id": "H02-unconfirmed",
@@ -594,7 +594,7 @@
         ],
         "verdict": "FAIL"
       },
-      "elapsedMs": 0.35
+      "elapsedMs": 0.396
     }
   ],
   "preparationVerdict": "PASS",

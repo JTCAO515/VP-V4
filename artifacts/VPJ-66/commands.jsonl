@@ -10,3 +10,4 @@
 {"command": "pnpm lint", "exitCode": 0, "elapsedSeconds": 1.266, "log": "artifacts/VPJ-66/pnpm-lint-final.log"}
 {"command": "pnpm docs:check", "exitCode": 0, "elapsedSeconds": 1.091, "log": "artifacts/VPJ-66/pnpm-docs-check-final.log"}
 {"command": "git diff --check", "exitCode": 0, "elapsedSeconds": 0.051, "log": "artifacts/VPJ-66/git-diff---check-final.log"}
+{"command": "pnpm evals", "commit": "99f54c4f97b4cd7f00a11f3c1accef70f46b1720", "result": "23 passed; 0 failed; 0 skipped; VP_CI_SUITE_RESULT passed", "log": "artifacts/VPJ-66/merged-evals.log"}

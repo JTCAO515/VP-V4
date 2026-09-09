@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Staging backup and explicit verified Session pooler are ready. Original13 validation exposed RPC defects; appended repair is locally verified at25 migrations with29 integration/82 security tests,zero skips. Remote remains11; additional repair execution authority pending, original backup/13/two-identity grant retained. Harness planning merged via PR269; six implementation Issues are VPJ-66..71 (#263..268), with runtime acceptance unstarted. VPJ-66 offline seeds are in PR271 with two passing baselines and four detected faults; final CI and merge verification remain pending.
+状态：VPJ-66 #263 offline preparation completed and closed after PR271 merged99f54c4, exact HEAD be35ef5 independent review and required CI, and merged-code evals23/23. Two fixture baselines pass and four injected faults fail as intended; ten fixture cases and all12 Staging cases remain NOT_RUN. RPC repair PR270 merged6307d79; additional Staging migration scope pending, remote remains11, original backup/13/two-identity grant retained.
 
 阶段：Validated repository RPC repair and real affected-schema backup/restore preparation; no remote migration or new Auth identities yet.
 
@@ -33,11 +33,12 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 - Real account/Trip/DB/provider/customer acceptance not executed by this session; Web publication does not establish those capabilities.
 - Physical VoiceOver spoken traversal, full contrast/hit-region audit, iOS17 runtime and signed Store delivery remain unrun. Simulator structural AX is not full device/release acceptance.
-- VPJ-66 offline preparation is implemented locally; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.
+- VPJ-66 offline preparation is merged and accepted; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.
 
 ## 验证
 
-- 2026-09-09: RPC repair PR270 merged as6307d79 after exact HEAD8f93c33 independent review Critical0/Important0 and Quality PR34312166803 passed. Remote migration remains pending approval. VPJ-66 now has two runnable offline seeds, four detected injected failures and12-case specifications; see docs/harness/OFFLINE-SEEDS.md and artifacts/VPJ-66. Local preparation does not establish live capability; its PR/CI/merge are still pending.
+- PR271 merged99f54c4; exact HEADbe35ef5 reviewed Critical0/Important0 and Quality PR34313179100 passed. Merge tree equals reviewed tree; merged-code pnpm evals23/23,zero skip,2baseline PASS/4expected injected FAIL. VPJ-66 #263 closed COMPLETED with all7 acceptance boxes checked and evidence comment5596131601. CI browser9 passed; DB integration10skip/security1skip remain incomplete, not live acceptance.
+- 2026-09-09: RPC repair PR270 merged as6307d79 after exact HEAD8f93c33 independent review Critical0/Important0 and Quality PR34312166803 passed. Remote migration remains pending approval. VPJ-66 now has two runnable offline seeds, four detected injected failures and12-case specifications; see docs/harness/OFFLINE-SEEDS.md and artifacts/VPJ-66. This historical local snapshot was subsequently accepted under PR271; real capability remains unverified.
 - 2026-09-09: final frozen11->24->25 local replay preserves synthetic Trip; integration29/29,security82/82,zero skip,DB lint0. Encrypted actual Staging backup restored with3Auth/2Trip/11history and equal hashes in a no-network container; original13+repair SQL also replayed on that restored copy preserving original data. No remote apply.
 - 2026-09-09 CLI metadata confirms VP - V4/ap-southeast-1/ACTIVE_HEALTHY. Read-only inventory finds11 matching migration records of24,13 pending,no remote-only;3Auth/2Trip;11 observed tables RLS enabled; authenticated direct Trip UPDATE still granted at old schema. No identities/content read and no data/DDL changed.
 - PR261 merged atde18928: hosted Native iOS34298939281 passed unsigned build,8unit+5UI and retained xcresult/version/commands. Production deployment6340704045 reported success forde18928.
@@ -59,7 +60,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Complete exact-HEAD review and required CI for offline-seeds PR271, merge and verify VPJ-66 #263 preparation acceptance, then recalculate live dependencies. RPC repair PR270 is merged; its single additional Staging migration still requires explicit scope approval before remote application. VPJ-67..71 retain runtime gates.
+Obtain explicit scope for appended Staging RPC repair migration20260909033302, then revalidate target/hashes and complete authorized migration plus ordinary-owner isolation under VPJ-02. VPJ-67 #264 still depends on open VPJ-16 and its identity/provider/data-policy chain; do not replace runtime acceptance with more fixture claims. VPJ-01 still needs real accessibility/device and selected-object integration evidence. See docs/harness/IMPLEMENTATION-STATUS.md for current frontier.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
