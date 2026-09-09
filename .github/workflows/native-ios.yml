@@ -1,0 +1,39 @@
+name: Native iOS
+
+on:
+  pull_request:
+    paths:
+      - 'ios/**'
+      - 'scripts/ios/**'
+      - '.github/workflows/native-ios.yml'
+      - 'docs/contracts/vpj-56.md'
+      - 'artifacts/VPJ-56/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-ios-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  simulator:
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Build and test unsigned Simulator app
+        run: python3 scripts/ios/ci.py --output "$RUNNER_TEMP/vpj-56"
+      - name: Preserve native evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-ios-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/vpj-56
+          retention-days: 14
+          if-no-files-found: error
