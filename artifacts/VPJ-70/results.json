@@ -1,0 +1,2727 @@
+{
+  "schemaVersion": 1,
+  "independentDevelopmentCases": 1,
+  "uniqueFixtureRuns": 12,
+  "syntheticRepetitionsPerConfiguration": 3,
+  "uniqueConfigurations": 4,
+  "realModelRuns": 0,
+  "usage": "unknown",
+  "cost": "unknown",
+  "preparationVerdict": "PASS",
+  "finalAcceptance": "NOT_RUN",
+  "reports": {
+    "baselineOnly": {
+      "schemaVersion": 1,
+      "graderVersion": "vpj70-h01-offline-v1",
+      "commit": "080d5f0aa2a1e8976d9dc75b8c22207801d87fc4",
+      "sourceState": "working-tree; commit alone does not attest source; graderHash binds implementation",
+      "mode": "fixture",
+      "comparison": "baseline_only",
+      "verdict": "evidence_insufficient",
+      "reasons": [
+        "BASELINE_ONLY",
+        "REAL_READONLY_CHAIN_UNRUN",
+        "PRODUCT_THRESHOLDS_NOT_FROZEN",
+        "BUDGET_PERMISSION_UNVERIFIED",
+        "HUMAN_CALIBRATION_UNRUN"
+      ],
+      "pairing": {
+        "matched": true,
+        "basis": {
+          "caseId": "H01",
+          "language": "en",
+          "risk": "normal",
+          "mode": "fixture",
+          "inputHash": "1e023081359525f5a91454de529b8ec045514e6cd0980dfe5a8d6f6f9507d8a6",
+          "clock": "2026-09-09T04:00:00.000Z",
+          "evidenceRevision": "fact-address-v1",
+          "permissionRevision": "c0-no-external-dispatch-v1",
+          "budgetRevision": "c0-no-provider-budget-v1",
+          "contextRevision": "h01-grounded-execution-v1",
+          "tripRevision": "h01-empty-array-v1",
+          "toolsRevision": "h01-none-v1",
+          "graderVersion": "vpj70-h01-offline-v1",
+          "graderHash": "117a41ceb39a73a9614911f2bee397c5f51f428db020d152ba50914c735ec6e6"
+        }
+      },
+      "counts": {
+        "independentDevelopmentCases": 1,
+        "syntheticRepeatsPerConfiguration": 3,
+        "fixtureRuns": 3,
+        "plannedSamples": 6,
+        "failed": 0,
+        "notRun": 3,
+        "stagingRuns": 0,
+        "stagingNotRun": 6
+      },
+      "riskCoverage": {
+        "normal": "H01 fixture only",
+        "ambiguity": "NOT_RUN",
+        "constraint": "NOT_RUN",
+        "evidence": "NOT_RUN",
+        "fault": "NOT_RUN",
+        "authorization": "NOT_RUN"
+      },
+      "holdout": {
+        "contentsRead": false,
+        "evaluated": false,
+        "blindEvaluationClaimed": false
+      },
+      "statisticalSignificanceClaimed": false,
+      "usage": "unknown",
+      "cost": "unknown",
+      "finalAcceptance": "NOT_RUN",
+      "slices": [
+        {
+          "lane": "baseline",
+          "language": "en",
+          "risk": "normal",
+          "planned": 3,
+          "passed": 3,
+          "failed": 0,
+          "notRun": 0,
+          "unknownCost": 3
+        },
+        {
+          "lane": "baseline",
+          "language": "zh",
+          "risk": "normal",
+          "planned": 3,
+          "passed": 0,
+          "failed": 0,
+          "notRun": 3,
+          "unknownCost": 3
+        }
+      ],
+      "rows": [
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 1,
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-1",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 2,
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-2",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 3,
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-3",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 1,
+          "configuration": "h01-baseline-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 2,
+          "configuration": "h01-baseline-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 3,
+          "configuration": "h01-baseline-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        }
+      ]
+    },
+    "unchanged": {
+      "schemaVersion": 1,
+      "graderVersion": "vpj70-h01-offline-v1",
+      "commit": "080d5f0aa2a1e8976d9dc75b8c22207801d87fc4",
+      "sourceState": "working-tree; commit alone does not attest source; graderHash binds implementation",
+      "mode": "fixture",
+      "comparison": "paired",
+      "verdict": "evidence_insufficient",
+      "reasons": [
+        "REAL_READONLY_CHAIN_UNRUN",
+        "PRODUCT_THRESHOLDS_NOT_FROZEN",
+        "BUDGET_PERMISSION_UNVERIFIED",
+        "HUMAN_CALIBRATION_UNRUN"
+      ],
+      "pairing": {
+        "matched": true,
+        "basis": {
+          "caseId": "H01",
+          "language": "en",
+          "risk": "normal",
+          "mode": "fixture",
+          "inputHash": "1e023081359525f5a91454de529b8ec045514e6cd0980dfe5a8d6f6f9507d8a6",
+          "clock": "2026-09-09T04:00:00.000Z",
+          "evidenceRevision": "fact-address-v1",
+          "permissionRevision": "c0-no-external-dispatch-v1",
+          "budgetRevision": "c0-no-provider-budget-v1",
+          "contextRevision": "h01-grounded-execution-v1",
+          "tripRevision": "h01-empty-array-v1",
+          "toolsRevision": "h01-none-v1",
+          "graderVersion": "vpj70-h01-offline-v1",
+          "graderHash": "117a41ceb39a73a9614911f2bee397c5f51f428db020d152ba50914c735ec6e6"
+        }
+      },
+      "counts": {
+        "independentDevelopmentCases": 1,
+        "syntheticRepeatsPerConfiguration": 3,
+        "fixtureRuns": 6,
+        "plannedSamples": 12,
+        "failed": 0,
+        "notRun": 6,
+        "stagingRuns": 0,
+        "stagingNotRun": 12
+      },
+      "riskCoverage": {
+        "normal": "H01 fixture only",
+        "ambiguity": "NOT_RUN",
+        "constraint": "NOT_RUN",
+        "evidence": "NOT_RUN",
+        "fault": "NOT_RUN",
+        "authorization": "NOT_RUN"
+      },
+      "holdout": {
+        "contentsRead": false,
+        "evaluated": false,
+        "blindEvaluationClaimed": false
+      },
+      "statisticalSignificanceClaimed": false,
+      "usage": "unknown",
+      "cost": "unknown",
+      "finalAcceptance": "NOT_RUN",
+      "slices": [
+        {
+          "lane": "baseline",
+          "language": "en",
+          "risk": "normal",
+          "planned": 3,
+          "passed": 3,
+          "failed": 0,
+          "notRun": 0,
+          "unknownCost": 3
+        },
+        {
+          "lane": "candidate",
+          "language": "en",
+          "risk": "normal",
+          "planned": 3,
+          "passed": 3,
+          "failed": 0,
+          "notRun": 0,
+          "unknownCost": 3
+        },
+        {
+          "lane": "baseline",
+          "language": "zh",
+          "risk": "normal",
+          "planned": 3,
+          "passed": 0,
+          "failed": 0,
+          "notRun": 3,
+          "unknownCost": 3
+        },
+        {
+          "lane": "candidate",
+          "language": "zh",
+          "risk": "normal",
+          "planned": 3,
+          "passed": 0,
+          "failed": 0,
+          "notRun": 3,
+          "unknownCost": 3
+        }
+      ],
+      "rows": [
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 1,
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-1",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 2,
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-2",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 3,
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-3",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 1,
+          "configuration": "h01-baseline-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 2,
+          "configuration": "h01-baseline-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 3,
+          "configuration": "h01-baseline-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 1,
+          "configuration": "h01-unchanged-candidate-v1",
+          "runId": "h01-unchanged-candidate-v1-H01-en-1",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 2,
+          "configuration": "h01-unchanged-candidate-v1",
+          "runId": "h01-unchanged-candidate-v1-H01-en-2",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 3,
+          "configuration": "h01-unchanged-candidate-v1",
+          "runId": "h01-unchanged-candidate-v1-H01-en-3",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 1,
+          "configuration": "h01-unchanged-candidate-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 2,
+          "configuration": "h01-unchanged-candidate-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 3,
+          "configuration": "h01-unchanged-candidate-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        }
+      ]
+    },
+    "unsupported": {
+      "schemaVersion": 1,
+      "graderVersion": "vpj70-h01-offline-v1",
+      "commit": "080d5f0aa2a1e8976d9dc75b8c22207801d87fc4",
+      "sourceState": "working-tree; commit alone does not attest source; graderHash binds implementation",
+      "mode": "fixture",
+      "comparison": "paired",
+      "verdict": "reject",
+      "reasons": [
+        "CANDIDATE_REDLINE_OR_REQUIRED_QUALITY_FAILURE",
+        "REAL_READONLY_CHAIN_UNRUN",
+        "PRODUCT_THRESHOLDS_NOT_FROZEN",
+        "BUDGET_PERMISSION_UNVERIFIED",
+        "HUMAN_CALIBRATION_UNRUN"
+      ],
+      "pairing": {
+        "matched": true,
+        "basis": {
+          "caseId": "H01",
+          "language": "en",
+          "risk": "normal",
+          "mode": "fixture",
+          "inputHash": "1e023081359525f5a91454de529b8ec045514e6cd0980dfe5a8d6f6f9507d8a6",
+          "clock": "2026-09-09T04:00:00.000Z",
+          "evidenceRevision": "fact-address-v1",
+          "permissionRevision": "c0-no-external-dispatch-v1",
+          "budgetRevision": "c0-no-provider-budget-v1",
+          "contextRevision": "h01-grounded-execution-v1",
+          "tripRevision": "h01-empty-array-v1",
+          "toolsRevision": "h01-none-v1",
+          "graderVersion": "vpj70-h01-offline-v1",
+          "graderHash": "117a41ceb39a73a9614911f2bee397c5f51f428db020d152ba50914c735ec6e6"
+        }
+      },
+      "counts": {
+        "independentDevelopmentCases": 1,
+        "syntheticRepeatsPerConfiguration": 3,
+        "fixtureRuns": 6,
+        "plannedSamples": 12,
+        "failed": 3,
+        "notRun": 6,
+        "stagingRuns": 0,
+        "stagingNotRun": 12
+      },
+      "riskCoverage": {
+        "normal": "H01 fixture only",
+        "ambiguity": "NOT_RUN",
+        "constraint": "NOT_RUN",
+        "evidence": "NOT_RUN",
+        "fault": "NOT_RUN",
+        "authorization": "NOT_RUN"
+      },
+      "holdout": {
+        "contentsRead": false,
+        "evaluated": false,
+        "blindEvaluationClaimed": false
+      },
+      "statisticalSignificanceClaimed": false,
+      "usage": "unknown",
+      "cost": "unknown",
+      "finalAcceptance": "NOT_RUN",
+      "slices": [
+        {
+          "lane": "baseline",
+          "language": "en",
+          "risk": "normal",
+          "planned": 3,
+          "passed": 3,
+          "failed": 0,
+          "notRun": 0,
+          "unknownCost": 3
+        },
+        {
+          "lane": "candidate",
+          "language": "en",
+          "risk": "normal",
+          "planned": 3,
+          "passed": 0,
+          "failed": 3,
+          "notRun": 0,
+          "unknownCost": 3
+        },
+        {
+          "lane": "baseline",
+          "language": "zh",
+          "risk": "normal",
+          "planned": 3,
+          "passed": 0,
+          "failed": 0,
+          "notRun": 3,
+          "unknownCost": 3
+        },
+        {
+          "lane": "candidate",
+          "language": "zh",
+          "risk": "normal",
+          "planned": 3,
+          "passed": 0,
+          "failed": 0,
+          "notRun": 3,
+          "unknownCost": 3
+        }
+      ],
+      "rows": [
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 1,
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-1",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 2,
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-2",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 3,
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-3",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 1,
+          "configuration": "h01-baseline-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 2,
+          "configuration": "h01-baseline-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 3,
+          "configuration": "h01-baseline-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 1,
+          "configuration": "h01-unsupported-candidate-v1",
+          "runId": "h01-unsupported-candidate-v1-H01-en-1",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "FAIL",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "FAIL",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 0
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 2,
+          "configuration": "h01-unsupported-candidate-v1",
+          "runId": "h01-unsupported-candidate-v1-H01-en-2",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "FAIL",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "FAIL",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 0
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 3,
+          "configuration": "h01-unsupported-candidate-v1",
+          "runId": "h01-unsupported-candidate-v1-H01-en-3",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "FAIL",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "FAIL",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 0
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 1,
+          "configuration": "h01-unsupported-candidate-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 2,
+          "configuration": "h01-unsupported-candidate-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 3,
+          "configuration": "h01-unsupported-candidate-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        }
+      ]
+    },
+    "refusal": {
+      "schemaVersion": 1,
+      "graderVersion": "vpj70-h01-offline-v1",
+      "commit": "080d5f0aa2a1e8976d9dc75b8c22207801d87fc4",
+      "sourceState": "working-tree; commit alone does not attest source; graderHash binds implementation",
+      "mode": "fixture",
+      "comparison": "paired",
+      "verdict": "reject",
+      "reasons": [
+        "CANDIDATE_REDLINE_OR_REQUIRED_QUALITY_FAILURE",
+        "REAL_READONLY_CHAIN_UNRUN",
+        "PRODUCT_THRESHOLDS_NOT_FROZEN",
+        "BUDGET_PERMISSION_UNVERIFIED",
+        "HUMAN_CALIBRATION_UNRUN"
+      ],
+      "pairing": {
+        "matched": true,
+        "basis": {
+          "caseId": "H01",
+          "language": "en",
+          "risk": "normal",
+          "mode": "fixture",
+          "inputHash": "1e023081359525f5a91454de529b8ec045514e6cd0980dfe5a8d6f6f9507d8a6",
+          "clock": "2026-09-09T04:00:00.000Z",
+          "evidenceRevision": "fact-address-v1",
+          "permissionRevision": "c0-no-external-dispatch-v1",
+          "budgetRevision": "c0-no-provider-budget-v1",
+          "contextRevision": "h01-grounded-execution-v1",
+          "tripRevision": "h01-empty-array-v1",
+          "toolsRevision": "h01-none-v1",
+          "graderVersion": "vpj70-h01-offline-v1",
+          "graderHash": "117a41ceb39a73a9614911f2bee397c5f51f428db020d152ba50914c735ec6e6"
+        }
+      },
+      "counts": {
+        "independentDevelopmentCases": 1,
+        "syntheticRepeatsPerConfiguration": 3,
+        "fixtureRuns": 6,
+        "plannedSamples": 12,
+        "failed": 3,
+        "notRun": 6,
+        "stagingRuns": 0,
+        "stagingNotRun": 12
+      },
+      "riskCoverage": {
+        "normal": "H01 fixture only",
+        "ambiguity": "NOT_RUN",
+        "constraint": "NOT_RUN",
+        "evidence": "NOT_RUN",
+        "fault": "NOT_RUN",
+        "authorization": "NOT_RUN"
+      },
+      "holdout": {
+        "contentsRead": false,
+        "evaluated": false,
+        "blindEvaluationClaimed": false
+      },
+      "statisticalSignificanceClaimed": false,
+      "usage": "unknown",
+      "cost": "unknown",
+      "finalAcceptance": "NOT_RUN",
+      "slices": [
+        {
+          "lane": "baseline",
+          "language": "en",
+          "risk": "normal",
+          "planned": 3,
+          "passed": 3,
+          "failed": 0,
+          "notRun": 0,
+          "unknownCost": 3
+        },
+        {
+          "lane": "candidate",
+          "language": "en",
+          "risk": "normal",
+          "planned": 3,
+          "passed": 0,
+          "failed": 3,
+          "notRun": 0,
+          "unknownCost": 3
+        },
+        {
+          "lane": "baseline",
+          "language": "zh",
+          "risk": "normal",
+          "planned": 3,
+          "passed": 0,
+          "failed": 0,
+          "notRun": 3,
+          "unknownCost": 3
+        },
+        {
+          "lane": "candidate",
+          "language": "zh",
+          "risk": "normal",
+          "planned": 3,
+          "passed": 0,
+          "failed": 0,
+          "notRun": 3,
+          "unknownCost": 3
+        }
+      ],
+      "rows": [
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 1,
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-1",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 2,
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-2",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 3,
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-3",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "answered",
+          "verdict": "PASS",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "PASS",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 1
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 1
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 1,
+          "configuration": "h01-baseline-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 2,
+          "configuration": "h01-baseline-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "baseline",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 3,
+          "configuration": "h01-baseline-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 1,
+          "configuration": "h01-refusal-candidate-v1",
+          "runId": "h01-refusal-candidate-v1-H01-en-1",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "blocked",
+          "verdict": "FAIL",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "FAIL",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 0
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 0
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 2,
+          "configuration": "h01-refusal-candidate-v1",
+          "runId": "h01-refusal-candidate-v1-H01-en-2",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "blocked",
+          "verdict": "FAIL",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "FAIL",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 0
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 0
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "en",
+          "risk": "normal",
+          "repeat": 3,
+          "configuration": "h01-refusal-candidate-v1",
+          "runId": "h01-refusal-candidate-v1-H01-en-3",
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "completed",
+          "outcome": "blocked",
+          "verdict": "FAIL",
+          "deterministic": {
+            "verdict": "PASS",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": true
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": true
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": true
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "FAIL",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": 0
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": 0
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": true,
+          "reason": null,
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 1,
+          "configuration": "h01-refusal-candidate-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 2,
+          "configuration": "h01-refusal-candidate-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        },
+        {
+          "lane": "candidate",
+          "caseId": "H01",
+          "group": "development",
+          "language": "zh",
+          "risk": "normal",
+          "repeat": 3,
+          "configuration": "h01-refusal-candidate-v1",
+          "runId": null,
+          "mode": "fixture",
+          "requiredMode": "staging",
+          "requiredModeVerdict": "NOT_RUN",
+          "execution": "not_started",
+          "outcome": null,
+          "verdict": "NOT_RUN",
+          "deterministic": {
+            "verdict": "NOT_RUN",
+            "assertions": [
+              {
+                "code": "TRIP_COLLECTION_UNCHANGED",
+                "passed": null
+              },
+              {
+                "code": "ANSWER_HAS_CURRENT_EVIDENCE",
+                "passed": null
+              },
+              {
+                "code": "READ_ONLY_COMPLETED",
+                "passed": null
+              }
+            ],
+            "coverage": "H01 fixture only; no live identity/RLS or other red-line coverage"
+          },
+          "quality": {
+            "verdict": "NOT_RUN",
+            "scores": [
+              {
+                "criterion": "required_claim_present",
+                "score": null
+              },
+              {
+                "criterion": "claim_matches_fixed_oracle",
+                "score": null
+              }
+            ],
+            "method": "fixed-development-oracle",
+            "humanCalibration": "UNRUN",
+            "graderDisagreement": "not_assessed"
+          },
+          "comparisonEligible": false,
+          "reason": "TRANSLATED_PRODUCER_NOT_CONNECTED",
+          "modelLatencyMs": null,
+          "usage": "unknown",
+          "cost": "unknown"
+        }
+      ]
+    }
+  }
+}
