@@ -1,3 +1,4 @@
+import { buildPairingReport, readOnlyBasis, runReadOnlyConfiguration } from "../../../evals/harness/pairing/index.ts";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { prepareReview, importFeedback, qualityReport, blindPackage, deterministicGrade, hash, validateBundle, type Feedback } from "../../../evals/harness/response-quality/index.ts";
@@ -145,4 +146,37 @@ test("one presentation's feedback cannot establish an order-bias check", () => {
   const checked = report.comparisons.find((c) => c.votes.length === 1)!;
   assert.equal(checked.orderChecks[0].reviewedOrders, 1);
   assert.equal(checked.orderChecks[0].status, "NOT_RUN");
+});
+
+test("parent rows and supplied samples cannot rebind the frozen H01 case to H02", () => {
+  const pairing = fixturePairingReport(); const { manifest } = ownedFixtureInput(pairing);
+  for (const row of pairing.rows) row.caseId = "H02";
+  for (const s of manifest.samples) s.caseId = "H02";
+  assert.throws(() => prepareReview(pairing, manifest, "review-basis-case-probe"), /PAIRING_LINEAGE_MISMATCH/);
+});
+
+test("the imported parent retains its complete repeat, run and configuration lineage", () => {
+  const valid = fixturePairingReport();
+  for (const mutate of [
+    (p: typeof valid) => { p.rows[1].repeat = 4; },
+    (p: typeof valid) => { p.rows[1].repeat = p.rows[0].repeat; },
+    (p: typeof valid) => { p.rows[1].runId = p.rows[0].runId; },
+    (p: typeof valid) => { p.rows[1].runId = null; },
+    (p: typeof valid) => { p.rows[1].configuration = "other-configuration"; },
+    (p: typeof valid) => { p.rows[3].runId = "invented-zh-run"; },
+    (p: typeof valid) => { p.rows.pop(); },
+  ]) {
+    const p = structuredClone(valid); mutate(p);
+    assert.throws(() => prepareReview(p, ownedFixtureInput(valid).manifest, "source-lineage-probe"), /PAIRING_LINEAGE_MISMATCH/);
+  }
+});
+
+
+test("valid opaque parent run IDs remain supported by the existing pairing schema", () => {
+  const basis = readOnlyBasis();
+  const baseline = runReadOnlyConfiguration("baseline-opaque", basis).map((run, index) => ({ ...run, runId: `opaque-b-${index}` }));
+  const candidate = runReadOnlyConfiguration("candidate-opaque", basis).map((run, index) => ({ ...run, runId: `opaque-c-${index}` }));
+  const pairing = buildPairingReport({ baseline, candidate, commit: "b5acf58ecc49906826568a314c6aad4dc9a4abc5" });
+  assert.equal(pairing.pairing.matched, true);
+  assert.doesNotThrow(() => prepareReview(pairing, ownedFixtureInput(pairing).manifest, "opaque-run-compatibility"));
 });

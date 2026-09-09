@@ -4,8 +4,12 @@ import { isDeepStrictEqual } from "node:util";
 import { randomBytes } from "node:crypto";
 import { prepareReview, blindPackage, feedbackTemplate, importFeedback, qualityReport, renderReviewMarkdown, renderQualityMarkdown, ReviewInputError, type ReviewState } from "./index.ts";
 
-const read = (path: string): unknown => { if (statSync(path).size > 2_000_000) throw new ReviewInputError("FILE_LIMIT"); return JSON.parse(readFileSync(path, "utf8")); };
+const JSON_FILE_BYTES = 2_000_000;
+const read = (path: string): unknown => { if (statSync(path).size > JSON_FILE_BYTES) throw new ReviewInputError("FILE_LIMIT"); return JSON.parse(readFileSync(path, "utf8")); };
 function save(state: ReviewState, directory: string, prepare: boolean) {
+  const encodedState = JSON.stringify(state, null, 2) + "\n";
+  // A successful write must remain readable by this CLI, even across many valid batches.
+  if (Buffer.byteLength(encodedState, "utf8") > JSON_FILE_BYTES) throw new ReviewInputError("STATE_FILE_LIMIT");
   const report = qualityReport(state);
   const statePath = join(directory, "state.json");
   if (existsSync(statePath)) {
@@ -21,7 +25,7 @@ function save(state: ReviewState, directory: string, prepare: boolean) {
     finally { if (existsSync(temporary)) unlinkSync(temporary); }
   };
   const json = (name: string, value: unknown) => write(name, JSON.stringify(value, null, 2) + "\n");
-  json("state.json", state); json("results.json", report);
+  write("state.json", encodedState); json("results.json", report);
   write("summary.md", renderQualityMarkdown(report));
   if (prepare) {
     json("review.json", blindPackage(state.bundle)); json("feedback-template.json", feedbackTemplate(state.bundle));

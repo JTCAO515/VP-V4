@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
-import { mkdtempSync, readFileSync, writeFileSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, writeFileSync, rmSync, readdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import test from "node:test";
@@ -60,4 +60,43 @@ test("CLI rejects incorrect case/version/source without publishing a replacement
     assert.equal(attempt.status, 1); assert.doesNotMatch(attempt.stderr, /synthetic-wrong-source/);
     assert.equal(readFileSync(join(out, "results.json"), "utf8"), before);
   }
+});
+
+
+test("CLI rejects cumulative state overflow before replacing any existing review file", (t) => {
+  const directory = mkdtempSync(join(tmpdir(), "vpj72-state-limit-")); t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const pairing = fixturePairingReport(); const owned = ownedFixtureInput(pairing);
+  writeFileSync(join(directory, "pairing.json"), JSON.stringify(pairing));
+  writeFileSync(join(directory, "samples.json"), JSON.stringify(owned.manifest));
+  const out = join(directory, "out");
+  const run = (...args: string[]) => spawnSync(process.execPath, ["--experimental-strip-types", cli, ...args], { encoding: "utf8" });
+  assert.equal(run("prepare", join(directory, "pairing.json"), join(directory, "samples.json"), out).status, 0);
+  const initial = JSON.parse(readFileSync(join(out, "state.json"), "utf8")) as ReviewState;
+  const template = fixtureFeedback(initial.bundle, owned.labels);
+  const batch = (number: number) => structuredClone(template).map((f, index) => {
+    f.id = `review-${number}-${index}`; f.reviewerId = `reviewer-${number}`;
+    for (const side of ["A", "B"] as const) {
+      for (const key of Object.keys(f.ratings[side].reasons) as Array<keyof typeof f.ratings.A.reasons>) f.ratings[side].reasons[key] = "Permitted anchored explanation. ".repeat(190);
+    }
+    return f;
+  });
+  const first = batch(1); const second = batch(2);
+  assert.equal(first.length, 20); assert.equal(second.length, 20);
+  assert.ok(Buffer.byteLength(JSON.stringify(first)) < 2_000_000);
+  assert.ok(Buffer.byteLength(JSON.stringify(second)) < 2_000_000);
+  assert.ok(first.every((f) => Object.values(f.ratings.A.reasons).every((reason) => reason.length < 8000)));
+  writeFileSync(join(directory, "first.json"), JSON.stringify(first)); writeFileSync(join(directory, "second.json"), JSON.stringify(second));
+  assert.equal(run("import", join(out, "state.json"), join(directory, "first.json"), out, "fixture").status, 0);
+  const snapshot = new Map(readdirSync(out).map((name) => [name, readFileSync(join(out, name))]));
+  assert.ok(snapshot.get("state.json")!.byteLength <= 2_000_000);
+  const rejected = run("import", join(out, "state.json"), join(directory, "second.json"), out, "fixture");
+  assert.equal(rejected.status, 1); assert.match(rejected.stderr, /STATE_FILE_LIMIT/);
+  assert.deepEqual(readdirSync(out).sort(), [...snapshot.keys()].sort());
+  for (const [name, bytes] of snapshot) assert.deepEqual(readFileSync(join(out, name)), bytes, `${name} must remain unchanged`);
+  const recovery = structuredClone(template[0]); recovery.id = "review-after-rejection"; recovery.reviewerId = "reviewer-after-rejection";
+  writeFileSync(join(directory, "recovery.json"), JSON.stringify([recovery]));
+  assert.equal(run("import", join(out, "state.json"), join(directory, "recovery.json"), out, "fixture").status, 0);
+  const retained = JSON.parse(readFileSync(join(out, "state.json"), "utf8")) as ReviewState;
+  assert.equal(retained.feedback.length, 21);
+  assert.ok(retained.feedback.every((f) => f.reviewerId !== "reviewer-2"));
 });

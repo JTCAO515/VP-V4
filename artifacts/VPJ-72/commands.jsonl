@@ -23,3 +23,9 @@
 {"command":"git diff --cached --check","exitCode":2,"startedAt":"2026-09-09T20:58:39.431Z","finishedAt":"2026-09-09T20:58:39.443Z","env":"local"}
 {"command":"node --experimental-strip-types --test evals/harness/response-quality/response-quality.evals.test.ts","exitCode":0,"startedAt":"2026-09-09T20:59:26.445Z","finishedAt":"2026-09-09T20:59:26.836Z","env":"local"}
 {"command":"git diff --cached --check","exitCode":0,"startedAt":"2026-09-09T20:59:26.916Z","finishedAt":"2026-09-09T20:59:26.937Z","env":"local"}
+{"command":"pnpm test:unit","exitCode":0,"startedAt":"2026-09-09T21:37:04.038Z","finishedAt":"2026-09-09T21:37:04.724Z","env":"local"}
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-09-09T21:37:05.995Z","finishedAt":"2026-09-09T21:37:06.980Z","env":"local"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-09-09T21:37:04.791Z","finishedAt":"2026-09-09T21:37:07.752Z","env":"local"}
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-09-09T21:37:07.049Z","finishedAt":"2026-09-09T21:37:21.096Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-09-09T21:39:02.015Z","finishedAt":"2026-09-09T21:39:02.324Z","env":"local"}
+{"command":"git diff --cached --check","exitCode":0,"startedAt":"2026-09-09T21:39:02.382Z","finishedAt":"2026-09-09T21:39:02.390Z","env":"local"}

@@ -18,6 +18,12 @@ node --experimental-strip-types evals/harness/response-quality/cli.ts prepare \
 The final argument selects `reports.unchanged` in the existing pairing file. A standalone paired
 report also works. Baseline-only, unknown versions, mismatched basis hashes and wrong row references
 are rejected: this A/B workflow needs both lanes. It does not replace baseline-only collection.
+Every parent row must retain the frozen basis case/mode/risk and development group. Current
+paired-v1 has 12 row slots (one H01 case × two lanes × en/zh × three repeats), with unique
+1–3 repeat tuples, a single distinct configuration per lane, unique nonempty English run IDs
+and unrun Chinese slots. Run IDs remain opaque, as allowed by the existing pairing contract;
+their text is not treated as an encoded case ID. This row count is separate from the canonical
+12 independent scenarios.
 
 The generated files are:
 
@@ -62,6 +68,13 @@ node --experimental-strip-types evals/harness/response-quality/cli.ts import \
 
 Prepare refuses an existing review directory; import cannot replace a newer state with one
 that drops existing feedback. Each generated file is replaced atomically.
+Every JSON input file and the accumulated serialized `state.json` must fit **2,000,000 UTF-8
+bytes**, including JSON formatting. Individual 8,000-character field and 200-feedback limits
+still apply; satisfying them does not waive the total state limit. Before creating/replacing
+any file, the CLI serializes the prospective state and returns `STATE_FILE_LIMIT` if it is too
+large. Existing state, results, reviewer files and feedback remain unchanged, and a later small
+import can continue. No reasons are truncated or old records dropped to make the import fit.
+Further reviews can be kept in a separate explicitly prepared artifact; originals remain intact.
 
 Repeated identical feedback is deduplicated by source/reviewer/presentation, including a resubmission
 with another record ID. Conflicting content is rejected rather than overwriting history. Wrong

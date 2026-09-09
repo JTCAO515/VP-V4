@@ -217,6 +217,22 @@ function validatePairing(value: unknown): PairingReport {
   const b = value.pairing.basis;
   if (!hex(b.inputHash) || !hex(b.graderHash) || value.graderVersion !== GRADER_VERSION || b.graderVersion !== value.graderVersion || !isDeepStrictEqual(b, readOnlyBasis()) || !date(b.clock)) fail("INVALID_PAIRING_VERSION");
   for (const row of value.rows) if (!record(row) || !safeId(row.caseId) || !safeId(row.configuration) || !["en", "zh"].includes(String(row.language)) || !["baseline", "candidate"].includes(String(row.lane)) || !Number.isInteger(row.repeat) || !["PASS", "FAIL", "NOT_RUN"].includes(String(row.verdict))) fail("INVALID_PAIRING_ROW");
+  const rows = value.rows as Record<string, unknown>[];
+  const rowKeys = new Set<string>(); const runIds = new Set<string>(); const configurations = new Map<string, string>();
+  const parentId = (id: unknown): id is string => typeof id === "string" && /^[A-Za-z0-9_.-]{1,96}$/.test(id);
+  if (rows.length !== 12) fail("PAIRING_LINEAGE_MISMATCH");
+  for (const row of rows) {
+    if (row.caseId !== b.caseId || row.mode !== b.mode || row.risk !== b.risk || row.group !== "development" || ![1, 2, 3].includes(Number(row.repeat)) || !parentId(row.configuration)) fail("PAIRING_LINEAGE_MISMATCH");
+    const lane = String(row.lane); const key = `${lane}:${row.language}:${row.repeat}`;
+    if (rowKeys.has(key) || (configurations.has(lane) && configurations.get(lane) !== row.configuration)) fail("PAIRING_LINEAGE_MISMATCH");
+    rowKeys.add(key); configurations.set(lane, row.configuration);
+    if (row.language === b.language) {
+      // Run IDs are opaque in pairing v1; bind their presence and uniqueness, not an invented encoding.
+      if (!parentId(row.runId) || runIds.has(row.runId)) fail("PAIRING_LINEAGE_MISMATCH");
+      runIds.add(row.runId);
+    } else if (row.runId !== null || row.verdict !== "NOT_RUN" || row.execution !== "not_started" || row.outcome !== null) fail("PAIRING_LINEAGE_MISMATCH");
+  }
+  if (configurations.get("baseline") === configurations.get("candidate")) fail("PAIRING_LINEAGE_MISMATCH");
   return structuredClone(value) as PairingReport;
 }
 function validateSample(value: unknown, pairing: PairingReport): OwnedSample {
