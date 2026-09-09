@@ -8,6 +8,8 @@
 
 ## 1. 目标与停点
 
+2026-09-10 [品牌工程增量](../research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md)补充：在既有场景中验证Free基础跨Trip偏好、ServiceTask必要澄清/修复不重复消费，以及有用、直接、中英一致的输出。相关契约见[偏好](../contracts/basic-preferences-cross-trip.md)、[计量](../contracts/service-task-metering.md)、[响应](../contracts/vp-response-policy.md)。原12场景、已完成离线准备和真实运行门保持；新增收费数值、partial/TTL/激活不自行补成决定。
+
 让现有 VP 在身份、证据、上下文和预算约束内完成两条任务，结果可核验、失败可定位、中断可恢复：
 
 1. 获准用户不创建 Trip，也能获得有依据的旅行回答；缺信息时保留确定部分或提出必要问题。

@@ -1,0 +1,1462 @@
+{
+  "observedAt": "2026-09-09T19:02:11.348899+00:00",
+  "codeBaseline": "d4eeb084b41f8c82a1794a0f946529bb54e2d5db",
+  "sourceInput": "8ae95a78cdc02a99c3b3b006f4b3fe44a76ac00c",
+  "issues": [
+    {
+      "id": "VPJ-01",
+      "number": 188,
+      "title": "[VPJ-01] 原生 iOS 五入口、中英文与可访问的首个 Trip 页面",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P0",
+        "status:in-progress",
+        "ready-for-agent",
+        "phase:R1"
+      ],
+      "updatedAt": "2026-09-09T17:57:37Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/188",
+      "blockedBy": [],
+      "plannedBlockedBy": []
+    },
+    {
+      "id": "VPJ-02",
+      "number": 189,
+      "title": "[VPJ-02] 现有 Staging 的真实身份、迁移与 owner 隔离验证",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P0",
+        "status:blocked",
+        "ready-for-human",
+        "phase:R1"
+      ],
+      "updatedAt": "2026-09-09T18:35:29Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/189",
+      "blockedBy": [],
+      "plannedBlockedBy": []
+    },
+    {
+      "id": "VPJ-03",
+      "number": 190,
+      "title": "[VPJ-03] 用户对话、材料、模型地区与人工访问的数据政策",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P0",
+        "status:blocked",
+        "ready-for-human",
+        "phase:R0"
+      ],
+      "updatedAt": "2026-09-09T05:21:17Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/190",
+      "blockedBy": [],
+      "plannedBlockedBy": []
+    },
+    {
+      "id": "VPJ-04",
+      "number": 191,
+      "title": "[VPJ-04] 原生登录、手机登录顶替与 Web 会话并存",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P0",
+        "status:blocked",
+        "needs-triage",
+        "phase:R1"
+      ],
+      "updatedAt": "2026-09-09T17:57:39Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/191",
+      "blockedBy": [
+        {
+          "number": 188,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 189,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        188,
+        189
+      ]
+    },
+    {
+      "id": "VPJ-05",
+      "number": 192,
+      "title": "[VPJ-05] 同一 Trip 在 iOS 与精简 Web 创建、编辑和重载",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P0",
+        "status:blocked",
+        "needs-triage",
+        "phase:R1"
+      ],
+      "updatedAt": "2026-09-05T04:00:57Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/192",
+      "blockedBy": [
+        {
+          "number": 191,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        191
+      ]
+    },
+    {
+      "id": "VPJ-06",
+      "number": 193,
+      "title": "[VPJ-06] Qwen、GLM、DeepSeek 的真实调用与质量成本对照",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-09T17:36:23Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/193",
+      "blockedBy": [
+        {
+          "number": 190,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        190
+      ]
+    },
+    {
+      "id": "VPJ-59",
+      "number": 194,
+      "title": "[VPJ-59] 首个真实模型任务的预算预留与故障止损",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-05T04:02:15Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/194",
+      "blockedBy": [
+        {
+          "number": 189,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 193,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        189,
+        193
+      ]
+    },
+    {
+      "id": "VPJ-07",
+      "number": 195,
+      "title": "[VPJ-07] 真实 Ask 得到可恢复的最终回答",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-05T04:01:00Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/195",
+      "blockedBy": [
+        {
+          "number": 191,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 192,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 193,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 194,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        191,
+        192,
+        193,
+        194
+      ]
+    },
+    {
+      "id": "VPJ-08",
+      "number": 196,
+      "title": "[VPJ-08] 流式回答在断网、后台和跨端重连后接续",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-05T04:01:02Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/196",
+      "blockedBy": [
+        {
+          "number": 195,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        195
+      ]
+    },
+    {
+      "id": "VPJ-09",
+      "number": 197,
+      "title": "[VPJ-09] 从模糊想法得到可确认的多日行程",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-05T04:01:03Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/197",
+      "blockedBy": [
+        {
+          "number": 192,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 195,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 196,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        192,
+        195,
+        196
+      ]
+    },
+    {
+      "id": "VPJ-10",
+      "number": 198,
+      "title": "[VPJ-10] 选中一天或项目后与 VP 局部改稿",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-05T04:01:05Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/198",
+      "blockedBy": [
+        {
+          "number": 197,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        197
+      ]
+    },
+    {
+      "id": "VPJ-11",
+      "number": 199,
+      "title": "[VPJ-11] Trip 连续记忆与用户可纠正的偏好",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-05T04:01:06Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/199",
+      "blockedBy": [
+        {
+          "number": 190,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 192,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 195,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        190,
+        192,
+        195
+      ]
+    },
+    {
+      "id": "VPJ-12",
+      "number": 201,
+      "title": "[VPJ-12] 单张旅行截图导入、校正与加入 Trip",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-05T04:01:08Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/201",
+      "blockedBy": [
+        {
+          "number": 188,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 190,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 191,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 195,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 200,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        188,
+        190,
+        191,
+        195,
+        200
+      ]
+    },
+    {
+      "id": "VPJ-13",
+      "number": 203,
+      "title": "[VPJ-13] 首访与回访的三种入口获得首个成果",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-05T04:01:10Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/203",
+      "blockedBy": [
+        {
+          "number": 197,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 199,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 201,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 202,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        197,
+        199,
+        201,
+        202
+      ]
+    },
+    {
+      "id": "VPJ-14",
+      "number": 204,
+      "title": "[VPJ-14] 受保护 Ops 登录与一条候选内容工作流",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R3"
+      ],
+      "updatedAt": "2026-09-05T04:01:11Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/204",
+      "blockedBy": [
+        {
+          "number": 189,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 190,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        189,
+        190
+      ]
+    },
+    {
+      "id": "VPJ-15",
+      "number": 205,
+      "title": "[VPJ-15] 首批旅程内容从来源登记到已审核可用",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R3"
+      ],
+      "updatedAt": "2026-09-05T04:01:13Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/205",
+      "blockedBy": [
+        {
+          "number": 204,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        204
+      ]
+    },
+    {
+      "id": "VPJ-16",
+      "number": 206,
+      "title": "[VPJ-16] 有依据的回答、诚实部分答案与知识缺口",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R3"
+      ],
+      "updatedAt": "2026-09-05T04:01:15Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/206",
+      "blockedBy": [
+        {
+          "number": 195,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 205,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        195,
+        205
+      ]
+    },
+    {
+      "id": "VPJ-18",
+      "number": 208,
+      "title": "[VPJ-18] 高德、百度、腾讯的真实使用地域与采购比较",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "ready-for-human",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-05T04:01:18Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/208",
+      "blockedBy": [
+        {
+          "number": 190,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        190
+      ]
+    },
+    {
+      "id": "VPJ-19",
+      "number": 209,
+      "title": "[VPJ-19] 地点消歧、地图展示与路线出口",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-05T04:01:19Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/209",
+      "blockedBy": [
+        {
+          "number": 192,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 208,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        192,
+        208
+      ]
+    },
+    {
+      "id": "VPJ-21",
+      "number": 211,
+      "title": "[VPJ-21] 准备检查把关键缺口变成可做的下一步",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R3"
+      ],
+      "updatedAt": "2026-09-05T04:01:22Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/211",
+      "blockedBy": [
+        {
+          "number": 198,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 206,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 209,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        198,
+        206,
+        209
+      ]
+    },
+    {
+      "id": "VPJ-25",
+      "number": 215,
+      "title": "[VPJ-25] Today 与可离线读取的旅行资料",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-05T04:01:27Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/215",
+      "blockedBy": [
+        {
+          "number": 191,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 192,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        191,
+        192
+      ]
+    },
+    {
+      "id": "VPJ-28",
+      "number": 218,
+      "title": "[VPJ-28] 地点讲解与语音追问接回当前 Trip",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R4"
+      ],
+      "updatedAt": "2026-09-05T04:01:32Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/218",
+      "blockedBy": [
+        {
+          "number": 205,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 209,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 217,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        205,
+        209,
+        217
+      ]
+    },
+    {
+      "id": "VPJ-65",
+      "number": 219,
+      "title": "[VPJ-65] 真实地点与依据支撑的完整计划核验",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R3"
+      ],
+      "updatedAt": "2026-09-05T04:02:25Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/219",
+      "blockedBy": [
+        {
+          "number": 197,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 206,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 209,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        197,
+        206,
+        209
+      ]
+    },
+    {
+      "id": "VPJ-29",
+      "number": 220,
+      "title": "[VPJ-29] 用户报告变化后的局部恢复",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R3"
+      ],
+      "updatedAt": "2026-09-05T04:01:33Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/220",
+      "blockedBy": [
+        {
+          "number": 198,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 211,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 215,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 219,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        198,
+        211,
+        215,
+        219
+      ]
+    },
+    {
+      "id": "VPJ-30",
+      "number": 221,
+      "title": "[VPJ-30] 有原因、可关闭的旅行提醒",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R4"
+      ],
+      "updatedAt": "2026-09-05T04:01:34Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/221",
+      "blockedBy": [
+        {
+          "number": 199,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 207,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 215,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        199,
+        207,
+        215
+      ]
+    },
+    {
+      "id": "VPJ-57",
+      "number": 222,
+      "title": "[VPJ-57] 用户服务请求与按任务授予资料访问",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R3"
+      ],
+      "updatedAt": "2026-09-05T04:02:13Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/222",
+      "blockedBy": [
+        {
+          "number": 190,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 191,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 204,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        190,
+        191,
+        204
+      ]
+    },
+    {
+      "id": "VPJ-31",
+      "number": 223,
+      "title": "[VPJ-31] 按服务任务授权的动态 Traveler Brief",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R3"
+      ],
+      "updatedAt": "2026-09-05T04:01:36Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/223",
+      "blockedBy": [
+        {
+          "number": 190,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 199,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 201,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 204,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 222,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        190,
+        199,
+        201,
+        204,
+        222
+      ]
+    },
+    {
+      "id": "VPJ-32",
+      "number": 224,
+      "title": "[VPJ-32] 真人协助从请求到接单和结果回传",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R3"
+      ],
+      "updatedAt": "2026-09-05T04:01:37Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/224",
+      "blockedBy": [
+        {
+          "number": 211,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 223,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 222,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        211,
+        223,
+        222
+      ]
+    },
+    {
+      "id": "VPJ-33",
+      "number": 225,
+      "title": "[VPJ-33] Journey Pass 商品、权益和定价实验配置",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P0",
+        "status:blocked",
+        "ready-for-human",
+        "phase:R0"
+      ],
+      "updatedAt": "2026-09-05T04:01:39Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/225",
+      "blockedBy": [
+        {
+          "number": 190,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        190
+      ]
+    },
+    {
+      "id": "VPJ-34",
+      "number": 226,
+      "title": "[VPJ-34] 官方 IAP 购买、恢复与服务端权益",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R4"
+      ],
+      "updatedAt": "2026-09-05T04:01:40Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/226",
+      "blockedBy": [
+        {
+          "number": 191,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 192,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 225,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        191,
+        192,
+        225
+      ]
+    },
+    {
+      "id": "VPJ-35",
+      "number": 227,
+      "title": "[VPJ-35] Free/Pass 额度与完整任务成本控制",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R4"
+      ],
+      "updatedAt": "2026-09-05T04:01:41Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/227",
+      "blockedBy": [
+        {
+          "number": 193,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 196,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 226,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        193,
+        196,
+        226
+      ]
+    },
+    {
+      "id": "VPJ-36",
+      "number": 228,
+      "title": "[VPJ-36] 核心资料的导出删除框架与首批执行器",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R4"
+      ],
+      "updatedAt": "2026-09-05T04:01:43Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/228",
+      "blockedBy": [
+        {
+          "number": 190,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 191,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 199,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 201,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 223,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 226,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        190,
+        191,
+        199,
+        201,
+        223,
+        226
+      ]
+    },
+    {
+      "id": "VPJ-37",
+      "number": 229,
+      "title": "[VPJ-37] 运营看见质量、成本和故障并能停用能力",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R4"
+      ],
+      "updatedAt": "2026-09-05T04:01:44Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/229",
+      "blockedBy": [
+        {
+          "number": 195,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 227,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        195,
+        227
+      ]
+    },
+    {
+      "id": "VPJ-63",
+      "number": 231,
+      "title": "[VPJ-63] 登录、Ask 与 Trip 的境内外网络首轮探针",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "ready-for-human",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-05T04:02:22Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/231",
+      "blockedBy": [
+        {
+          "number": 191,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 195,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        191,
+        195
+      ]
+    },
+    {
+      "id": "VPJ-41",
+      "number": 234,
+      "title": "[VPJ-41] 精简 Web Planning Studio 的最终体验验收",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R4"
+      ],
+      "updatedAt": "2026-09-05T04:01:50Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/234",
+      "blockedBy": [
+        {
+          "number": 192,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 210,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 226,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        192,
+        210,
+        226
+      ]
+    },
+    {
+      "id": "VPJ-56",
+      "number": 237,
+      "title": "[VPJ-56] 原生 CI、签名 Archive 与首个 TestFlight 安装包",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P0",
+        "status:blocked",
+        "ready-for-human",
+        "phase:R1"
+      ],
+      "updatedAt": "2026-09-09T01:39:28Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/237",
+      "blockedBy": [
+        {
+          "number": 188,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        188
+      ]
+    },
+    {
+      "id": "VPJ-45",
+      "number": 245,
+      "title": "[VPJ-45] 客户收到产品后的观察、支持与发布关账",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "ready-for-human",
+        "phase:R5"
+      ],
+      "updatedAt": "2026-09-05T04:01:56Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/245",
+      "blockedBy": [
+        {
+          "number": 242,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 244,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        242,
+        244
+      ]
+    },
+    {
+      "id": "VPJ-46",
+      "number": 246,
+      "title": "[VPJ-46] 每周35小时客户发现、招募与材料工作坊",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P0",
+        "status:blocked",
+        "ready-for-human",
+        "phase:R0"
+      ],
+      "updatedAt": "2026-09-05T04:01:57Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/246",
+      "blockedBy": [],
+      "plannedBlockedBy": []
+    },
+    {
+      "id": "VPJ-47",
+      "number": 247,
+      "title": "[VPJ-47] 真实激活、付费与人工成本的经营观察",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "ready-for-human",
+        "phase:R5"
+      ],
+      "updatedAt": "2026-09-05T04:01:58Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/247",
+      "blockedBy": [
+        {
+          "number": 242,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 244,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 246,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        242,
+        244,
+        246
+      ]
+    },
+    {
+      "id": "VPJ-66",
+      "number": 263,
+      "title": "[VPJ-66] Harness：两条离线旅行任务可运行、判分并定位失败",
+      "state": "CLOSED",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "phase:R1"
+      ],
+      "updatedAt": "2026-09-09T05:07:32Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/263",
+      "blockedBy": [],
+      "plannedBlockedBy": []
+    },
+    {
+      "id": "VPJ-67",
+      "number": 264,
+      "title": "[VPJ-67] Harness：真实只读问答产生有依据的结果与回执",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-09T03:52:05Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/264",
+      "blockedBy": [
+        {
+          "number": 263,
+          "state": "closed",
+          "stateReason": "completed"
+        },
+        {
+          "number": 206,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        263,
+        206
+      ]
+    },
+    {
+      "id": "VPJ-68",
+      "number": 265,
+      "title": "[VPJ-68] Harness：少走路且保留已确认晚餐的局部改稿闭环",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-09T03:52:16Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/265",
+      "blockedBy": [
+        {
+          "number": 264,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 198,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 199,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 219,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        264,
+        198,
+        199,
+        219
+      ]
+    },
+    {
+      "id": "VPJ-69",
+      "number": 266,
+      "title": "[VPJ-69] Harness：故障取消与重连不伪造成功或重复提交",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-09T03:52:32Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/266",
+      "blockedBy": [
+        {
+          "number": 265,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        265
+      ]
+    },
+    {
+      "id": "VPJ-70",
+      "number": 267,
+      "title": "[VPJ-70] Harness：只读模型或提示词候选的配对评测与校准",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R2"
+      ],
+      "updatedAt": "2026-09-09T17:36:21Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/267",
+      "blockedBy": [
+        {
+          "number": 264,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        264
+      ]
+    },
+    {
+      "id": "VPJ-71",
+      "number": 268,
+      "title": "[VPJ-71] Harness：核心任务发布判定与能力停用恢复验收",
+      "state": "OPEN",
+      "labels": [
+        "enhancement",
+        "priority:P1",
+        "status:blocked",
+        "needs-triage",
+        "phase:R5"
+      ],
+      "updatedAt": "2026-09-09T03:52:53Z",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/268",
+      "blockedBy": [
+        {
+          "number": 266,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 267,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 229,
+          "state": "open",
+          "stateReason": null
+        },
+        {
+          "number": 231,
+          "state": "open",
+          "stateReason": null
+        }
+      ],
+      "plannedBlockedBy": [
+        266,
+        267,
+        229,
+        231
+      ]
+    }
+  ]
+}

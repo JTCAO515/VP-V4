@@ -10,9 +10,9 @@
 
 ## 当前基线与开发入口
 
-基线PR：#253。合并前不要从旧main实施新合同。
-主报告：[完整统筹方案](https://github.com/JTCAO515/VP-V4/blob/codex/vp-final-program-20260905/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
-必须阅读：[本任务执行合同](https://github.com/JTCAO515/VP-V4/blob/codex/vp-final-program-20260905/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-59) 与 [领域接口](https://github.com/JTCAO515/VP-V4/blob/codex/vp-final-program-20260905/docs/program/2026-09-05/INTERFACES.md)。
+原VPJ基线已合并；2026-09-10品牌增量以Q1-Q38报告的已确认方向为准，当前任务及新增规划契约需按合入main后的版本执行。已有可独立进行的准备范围继续；未决收费、数据许可和激活制不视为已批准，完整验收仍保留真实依赖。
+主报告：[完整统筹方案](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
+必须阅读：[本任务执行合同](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-59) 与 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)。
 
 ## Blocked by
 
@@ -35,6 +35,7 @@
 - [ ] 真实调用前做server预算/并发预留，调用后usage结算，取消/超时/无usage尾包进入补偿/待核。
 - [ ] 按task与attempt分别限额，kill flag在调用前实际消费，不能只有配置字段。
 - [ ] 两worker重复任务和进程崩溃成本账一致；此单不依赖购买IAP，35才加商品额度。
+- [ ] Q37下区分ServiceTask业务归属、Turn和provider/tool attempt：必要澄清与修复共享任务成本上限，逐attempt真实计量和未知费用对账；先支持记录模式与持久成本保护，不依赖IAP或未定服务额度数值。
 
 ## 不得触碰
 
@@ -77,6 +78,7 @@ Owner: coding-agent。类型: vertical。预估专注工作4日，外部等待�
 - `HANDOFF.md`
 - `CONTEXT.md`
 - `docs/contracts/vpj-59.md`
+- `docs/contracts/service-task-metering.md`
 
 Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 

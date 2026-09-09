@@ -1,0 +1,287 @@
+{
+  "schemaVersion": "vp-brand-issue-deltas/1",
+  "sourceCommit": "8ae95a78cdc02a99c3b3b006f4b3fe44a76ac00c",
+  "codeBaseline": "d4eeb084b41f8c82a1794a0f946529bb54e2d5db",
+  "policy": "append brand acceptance; explicitly supersede6 conflictinglegacy metering criteria with recorded originals; preserve existing progress evidence, identities, states, labels and dependencies",
+  "issues": [
+    {
+      "number": 188,
+      "acceptanceAdditions": [
+        "保留已接受Logo与成熟清爽视觉，状态文字遵守VP响应规范、英文优先且中英事实一致；本票原生可访问性与真实对象验收仍独立，不把预览文案优化当真实AI能力。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 190,
+      "acceptanceAdditions": [
+        "Q36基础明确偏好的account/Trip/仅本次范围、来源、纠正版本、模型与人工接收方、撤回后队列/缓存/派生物处理进入数据政策；Free/Pass均不替代用户许可。"
+      ],
+      "contractPaths": [
+        "docs/contracts/basic-preferences-cross-trip.md"
+      ]
+    },
+    {
+      "number": 194,
+      "acceptanceAdditions": [
+        "Q37下区分ServiceTask业务归属、Turn和provider/tool attempt：必要澄清与修复共享任务成本上限，逐attempt真实计量和未知费用对账；先支持记录模式与持久成本保护，不依赖IAP或未定服务额度数值。"
+      ],
+      "contractPaths": [
+        "docs/contracts/service-task-metering.md"
+      ]
+    },
+    {
+      "number": 195,
+      "acceptanceAdditions": [
+        "按ServiceTask规划契约关联一项明确目标的多轮Turn，必要澄清和系统修复不新建用户消费；归属由服务端核验，partial/完成后改稿/TTL等未决收费策略保持不启用。",
+        "真实输出producer采用版本化VP内容与表达策略，英文直接创作、中英事实与动作状态一致；沿现有schema显式扩展并验证消费者，不新增人格服务或无约束二次润色。"
+      ],
+      "contractPaths": [
+        "docs/contracts/service-task-metering.md",
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 196,
+      "acceptanceAdditions": [
+        "同一ServiceTask跨轮/断网/重连保持归属，必要澄清或系统恢复不重复消费；状态文案来自实际事件，取消生成、未提交Proposal和已提交Trip分别呈现。"
+      ],
+      "contractPaths": [
+        "docs/contracts/service-task-metering.md",
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 199,
+      "acceptanceAdditions": [
+        "Q36明确基础偏好对Free/Pass共同可用并跨Trip；保留Profile/Memory每字段唯一权威，用任务专用资格投影接入真实消费者，不能把管理列表整体注入模型。",
+        "通过跨Trip、当前要求覆盖旧默认、纠正/撤回后排队与重试、跨账号迟到响应验证；明确记住且范围许可清楚不重复询问，推断和敏感画像不自动保存，偏好不得改写已确认Trip或替代外部证据。"
+      ],
+      "contractPaths": [
+        "docs/contracts/basic-preferences-cross-trip.md"
+      ]
+    },
+    {
+      "number": 203,
+      "acceptanceAdditions": [
+        "按本轮目标先交可用成果，只有会改变方案的缺失信息才追问；回访使用真实可用偏好与已保存成果，必要澄清沿同一ServiceTask，不机械问卷或反复索取已知信息。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 205,
+      "acceptanceAdditions": [
+        "首批内容按普通来华游客的城市/场景/必要claim/权利/时效/可用动作组织覆盖；优先支撑规划与变化后的下一步，未定城市名单不得写成已覆盖全国。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 206,
+      "acceptanceAdditions": [
+        "有依据回答同时约束自由正文和卡片，partial保留可靠部分并指明具体缺口与可用下一步；个人偏好只能筛选解释，不当外部事实；完整证据下全拒答作为失败反例。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 211,
+      "acceptanceAdditions": [
+        "准备检查以可执行下一步呈现：获准资料、核实入口、条件性候选与修改提案分开；不要把review_fact标签或提示文字作为真实问题已解决。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 215,
+      "acceptanceAdditions": [
+        "Free/Pass到期或额度不足时，既有权限允许的已保存计划/地址仍按原合同可读；打开App后的接续使用当前实际状态，不承诺后台持续监控。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 218,
+      "acceptanceAdditions": [
+        "讲解按已获准兴趣给简明、有来源、适用的内容；英文为原生表达，中文保持事实/否定一致，幽默可为零；与VPJ-29局部恢复保持职责区分。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 219,
+      "acceptanceAdditions": [
+        "计划适合度由最新明确需求与相关基础偏好参与，但步行量、时间、地点和可行性仍需同口径合格证据；不得因品牌个性化而放宽来源或晚餐锁。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 220,
+      "acceptanceAdditions": [
+        "用户报告变化后，结合获准且最新的偏好给沉着清楚的下一步及局部候选；保留已确认约束，候选/确认/应用回执分开；技术失败、外部未知和已提交后取消不虚构解决状态。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 221,
+      "acceptanceAdditions": [
+        "先验打开App后接续与用户授权的提醒，实际发送前重验范围/版本/期限；不把亲切或Pass增强解释为持续定位、永久后台或未经许可的主动联系。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 222,
+      "acceptanceAdditions": [
+        "真人路径以具体旅途执行问题申请为范围；申请已记录不等于接单，未确认容量/时段不承诺即时处理或把普通行前规划默认转人工。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 223,
+      "acceptanceAdditions": [
+        "TravelerBrief只投影当前ServiceCase目的下获准的最小资料及偏好版本；不因基础记忆Free可用而开放人工读取全历史，撤回后未来访问与队列重新校验。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 224,
+      "acceptanceAdditions": [
+        "真人状态和文案统一：queued无虚构负责人/ETA，accepted后才按真实时段约定更新；提供教程、已联系服务方、外部实际解决分别有证据，不预设固定AI/人工比例。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 225,
+      "acceptanceAdditions": [
+        "权益表回写Q36：Free与Pass共同具有获准的基础显式跨Trip偏好；Q37采用完整服务任务方向，原Ask数值不得换名沿用，partial/改稿/TTL/跨期及新容量先决策再公布。",
+        "Q38购买后激活、到达起算、eSIM和支付渠道保持待研究；本轮不改变现行购买/生效/到期规则、不增加商品承诺。"
+      ],
+      "contractPaths": [
+        "docs/contracts/service-task-metering.md",
+        "docs/contracts/basic-preferences-cross-trip.md"
+      ],
+      "acceptanceReplacements": [
+        {
+          "original": "明确购买开始/提前续买/退款/恢复/到期、300Ask周期和Free窗口口径；无unlimited或人工包含承诺。",
+          "replacement": "明确现行购买开始/提前续买/退款/恢复/到期，以及获准的新服务任务周期与Free窗口口径；新容量未决定前不写入在售商品，无unlimited或人工包含承诺。",
+          "reason": "Q37 supersedes message-count unit; retain transaction/media invariants; new capacity remains decision-gated"
+        },
+        {
+          "original": "每笔交易独立720h/300Ask grant；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号60/rolling24h不重置；乱序交易按可信购买时间对账。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的试点上限同时公示并核成本。",
+          "replacement": "每笔交易独立720h grant，绑定已批准的计量策略版本和容量；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号滚动窗口不因购买/恢复而重置；乱序交易按可信购买时间对账。容量与窗口数值须按Q37新口径决定，历史300Ask/60Ask只作兼容研究记录，不是新服务任务的实施门。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的既有试点上限保留并核成本。",
+          "reason": "Q37 supersedes message-count unit; retain transaction/media invariants; new capacity remains decision-gated"
+        }
+      ]
+    },
+    {
+      "number": 226,
+      "acceptanceAdditions": [
+        "StoreKit购买交易/grant与ServiceTask容量及attempt成本分离；恢复或任务重试不补发同一权益，本轮保持现行激活起算，未定容量不写入真实在售商品。"
+      ],
+      "contractPaths": [
+        "docs/contracts/service-task-metering.md"
+      ],
+      "acceptanceReplacements": [
+        {
+          "original": "每笔交易独立720h/300Ask grant；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号60/rolling24h不重置；乱序交易按可信购买时间对账。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的试点上限同时公示并核成本。",
+          "replacement": "每笔交易独立720h grant，绑定已批准的计量策略版本和容量；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号滚动窗口不因购买/恢复而重置；乱序交易按可信购买时间对账。容量与窗口数值须按Q37新口径决定，历史300Ask/60Ask只作兼容研究记录，不是新服务任务的实施门。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的既有试点上限保留并核成本。",
+          "reason": "Q37 supersedes message-count unit; retain transaction/media invariants; new capacity remains decision-gated"
+        }
+      ]
+    },
+    {
+      "number": 227,
+      "acceptanceAdditions": [
+        "按ServiceTask计用户服务容量，必要澄清/系统修复沿原任务；内部attempt成本独立累计。新计量先记录模式，未决partial/改稿/TTL/跨期及容量保持禁止启用，不构造双重扣次路径。",
+        "验证最后一份容量竞争、相同key不同参数、两设备/多worker、取消与完成竞态、晚到usage和跨窗口；实际结果/结算幂等，失败或未知状态不被当零成本。"
+      ],
+      "contractPaths": [
+        "docs/contracts/service-task-metering.md"
+      ],
+      "acceptanceReplacements": [
+        {
+          "original": "Free6Ask/4小时+30/滚动7天；Pass300/购买周期+60/滚动24小时作为可配置试点，客户端显示下次可用时刻。",
+          "replacement": "按Q37服务任务口径，由产品负责人在实际启用前冻结Free/Pass周期与滚动窗口容量，配置化验证且客户端显示正确下次可用时刻；旧6/30/300/60 Ask数字仅作历史占位，不换名沿用或构造旧收费路径。",
+          "reason": "Q37 supersedes message-count unit; retain transaction/media invariants; new capacity remains decision-gated"
+        },
+        {
+          "original": "Ask=一个用户请求，内部重试/降级/失败修复不多扣；并发预留→成功结算→失败返还可审。",
+          "replacement": "ServiceTask是一项明确目标及必要澄清、系统修复，关联多个Turn/attempt；并发预留、按获准成果标准结算和失败返还可审，未决partial/改稿/TTL/跨期消费不启用。",
+          "reason": "Q37 supersedes message-count unit; retain transaction/media invariants; new capacity remains decision-gated"
+        },
+        {
+          "original": "每笔交易独立720h/300Ask grant；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号60/rolling24h不重置；乱序交易按可信购买时间对账。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的试点上限同时公示并核成本。",
+          "replacement": "每笔交易独立720h grant，绑定已批准的计量策略版本和容量；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号滚动窗口不因购买/恢复而重置；乱序交易按可信购买时间对账。容量与窗口数值须按Q37新口径决定，历史300Ask/60Ask只作兼容研究记录，不是新服务任务的实施门。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的既有试点上限保留并核成本。",
+          "reason": "Q37 supersedes message-count unit; retain transaction/media invariants; new capacity remains decision-gated"
+        }
+      ]
+    },
+    {
+      "number": 234,
+      "acceptanceAdditions": [
+        "真实Web消费者按VP响应规范呈现主结果、必要限定与下一步；英文原生表达、中英状态一致，正文不控制按钮权限/确认目标，保留轻量同Trip范围与原有可访问性门。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 246,
+      "acceptanceAdditions": [
+        "按规划/临近抵达/在途分别记录真实首值、重复问题与下一自然节点机会；Demo、创始人协助与自助真实能力分别统计，不从社媒触达推断已实现。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 247,
+      "acceptanceAdditions": [
+        "经营指标以有机会的服务任务/Trip为分母，区分Free/Pass、人工辅助、真实支付与sandbox；保留必要澄清次数、任务成本及实际人工分钟，旧Ask数值不可当同等新服务容量。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 267,
+      "acceptanceAdditions": [
+        "在既有配对入口加入任务完成、事实限定、正确偏好使用、下一步、密度、英文自然度及情境语气rubric；人工校准并预冻结阈值，正常可答的过度拒绝判失败，hard fail不被均分抵消。"
+      ],
+      "contractPaths": [
+        "docs/contracts/vp-response-policy.md"
+      ]
+    },
+    {
+      "number": 268,
+      "acceptanceAdditions": [
+        "同一已选配置的两条真实中英任务同时验证ServiceTask必要澄清不重复消费、正确偏好使用及真实状态表达；保留12场景required mode与全部原门，表达更好不替代真实正确性/恢复/费用证据。"
+      ],
+      "contractPaths": [
+        "docs/contracts/service-task-metering.md",
+        "docs/contracts/basic-preferences-cross-trip.md",
+        "docs/contracts/vp-response-policy.md"
+      ]
+    }
+  ]
+}

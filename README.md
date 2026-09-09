@@ -28,6 +28,8 @@ node scripts/vpj-program.mjs verify
 
 ## 重要入口
 
+- [品牌方向到工程交付：跨Trip偏好、服务任务、内容与语气](docs/research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md)
+
 - [总体产品、商业、设计、后台及客户交付](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)
 - [完整任务与依赖](docs/program/2026-09-05/ISSUES.md)
 - [接口与不变量](docs/program/2026-09-05/INTERFACES.md)

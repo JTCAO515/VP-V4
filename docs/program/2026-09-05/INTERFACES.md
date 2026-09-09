@@ -8,6 +8,8 @@
 
 结果至少区分 answered、partial、clarification、blocked、technical_failure，以及 proposed/confirmed/unknown等对象状态。文字、卡片和动画都不能自行给业务对象盖“成功”章。
 
+2026-09-10 品牌增量：Q36/Q37及响应方向见[工程调整研究](../../research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md)。新增规划语义为ServiceTask业务归属→一轮或多轮Turn→实际attempt；沿现有执行系统实现，不另建队列。旧wire保持，以下语义须在实际生产者/消费者接入时版本化，未决收费策略不启用。
+
 ## 2. owner / input / output / error / idempotency / permission / version / consumers
 
 | 接口 | Owner / 所属Issue | 输入 → 输出 | 错误/幂等 | 权限/版本/消费者 |
@@ -15,15 +17,18 @@
 | NativeActorContext | Identity / VPJ-04 | bearer/session → 已验actor/mobile epoch | expired/replaced/unauthenticated；登录attempt幂等 | native与Web Cookie-CSRF独立验证；session v2；所有native API |
 | TripRepository | Trip / VPJ-05 | owner+Trip/version+操作 → snapshot/receipt | not_found/conflict/forbidden；requestId+CAS | owner RLS；扩展现Day/Item/snapshot；iOS/Web/Context |
 | TurnTask | Turn / VPJ-07/08 | 获准input+Trip basis → 持久结果与事件 | lease/cancel/timeout/quarantine；taskId/sequence/terminal once | actor/Trip；event schema v2兼容期；两客户端/worker |
+| ServiceTask（规划语义） | Turn/Quota / VPJ-07/59/35 | 一个明确目标及延续输入 → Turn关联与约定成果 | owner+scope/version；必要澄清/系统修复不新增消费 | 先record-only；schema/完成后改稿/partial/TTL/容量未定不启用收费；见[计量契约](../../contracts/service-task-metering.md) |
 | ModelProfile | Model / VPJ-06 | minimalContext+policy+budget → validated candidate+usage | schema/provider/timeout/partial usage；attemptId | provider/region/purpose grant；模型与价格snapshot；Turn/Skills |
 | RuntimeBudget | Budget / VPJ-59 | task/attempt预算预留 → reserve/settle/reconcile | 并发/取消/尾包缺失；唯一reservation | worker命名任务；账本版本；所有真实provider调用 |
 | SkillManifest | Journey / VPJ-07/09 | 任务scope/evidence → candidate/next action | unsupported/needs input/needs evidence；task scope | read字段/tool allowlist/动作与时间预算；版本；Coordinator唯一提交 |
 | ProposalService | Trip / VPJ-09/10/65 | baseTrip+候选 → diff/immutable proposal | stale basis/invalid patch；proposalRevision | 用户看过并确认的准确版本；兼容原Patch；两端 |
 | Context/Memory | Context / VPJ-11 | latestInput+Trip+consent → scoped context+use receipt | revoked/stale/wrong scope；revision | Trip fact留Trip，明确偏好留Memory；删除传播；所有skills |
+| 基础偏好投影 | Context/Memory / VPJ-11/03 | 现有Profile/Memory权威字段+任务资格 → 最小上下文及使用收据 | scope/revision/consent/撤回重验 | Free/Pass共同；管理列表不直接外发，不新建同义存储；见[偏好契约](../../contracts/basic-preferences-cross-trip.md) |
 | ParsedArtifact | Materials / VPJ-12/55/60 | 单个获准材料 → 原文定位字段候选 | unsupported/low confidence/TTL/cancel；artifactHash+owner | 按用途/接收方授权；parserRevision；用户校正/Trip |
 | KnowledgeSource | Knowledge / VPJ-15 | source/grant/revision/locator → private draft | no rights/parser drift/conflict；sourceHash/revision | author!=reviewer；source/claim独立版本；Ops/索引 |
 | EligibilityReceipt | Policy / VPJ-15/16 | principal+Trip+purpose+field+recipient+region+time → allow/deny理由 | expired/revoked/out-of-scope；policy generation | 请求级计算非永久boolean；所有检索/外发/展示 |
 | EvidencePack | Knowledge / VPJ-16 | ClaimRequirements+eligible units → required/background/coverage/conflicts | unsupported/inaccessible/contradiction；索引generation | 语言中立assertion+zh/en投影；Chat/Ready/Guide |
+| 响应内容与表达策略 | Turn/Knowledge/UI / VPJ-07/08/16 | 目标+获准事实/偏好+实际结果 → 简明回答/必要限定/下一步 | 策略与wire版本；正文不控制权限或确认 | 复用prompt registry与双端，不新增人格服务/默认二次模型；见[响应规范](../../contracts/vp-response-policy.md) |
 | PlanEvidenceBinding | Trip/Knowledge / VPJ-17/65 | tripVersion/itemId+claimRevision+applicability → support/recheck | missing/stale/conflict；bindingID | 不改用户confirmed意图；Trip/source变化消费者 |
 | SourceImpactOutbox | Knowledge / VPJ-17 | source变化候选→人审→失效事件/ack | 404不当政策撤销；at-least-once+consumer幂等 | named worker；review receipt；Chat/Explore/Trip缓存 |
 | MapProvider | External / VPJ-18/19 | provider/locale/coordinate system/query → POI/route观察 | no coverage/denied/timeout；query/TTL | 地域/缓存/展示许可；providerID≠canonicalID；Trip/Explore |
@@ -41,6 +46,8 @@
 | CommunitySubmission | Community / VPJ-48/64 | 用户稿/媒体许可 → pending/review/published/withdrawn | report/block/appeal；submissionRevision | 全量审稿、员工披露、删除handler；Explore不直接变Fact |
 
 ## 3. 必须保留的现有不变量
+
+下段300/60次数保留历史Ask语义；Q37的新服务任务容量尚未确定，禁止只改单位名称后消费。交易的幂等、恢复、退款、现行生效/到期和额度安全规则保留；具体新容量及未决消费分支按计量契约确认后版本化启用。
 
 Pass逐交易建不可重复grant：每段720小时、300次仅在该段开始后可用，到期不结转。提前购买排队，恢复不发额度，退款只撤对应段不移动其他段，60/滚动24小时跨购买持续计数；对账不使用设备时钟。具体媒体页数/大小/时长也进入商品和任务预算。
 

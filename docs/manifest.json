@@ -152,6 +152,10 @@
       "status": "document"
     },
     {
+      "path": "docs/adr/ADR-0025-brand-service-task-and-response-semantics.md",
+      "status": "document"
+    },
+    {
       "path": "docs/agents/continuous-afk-execution.md",
       "status": "document"
     },
@@ -265,6 +269,22 @@
     },
     {
       "path": "docs/benchmarks/route-pattern/schema-and-applicability.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/benchmarks/vpj-04/native-identity-preparation.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/benchmarks/vpj-06/provider-protocol.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/benchmarks/vpj-70/offline-pairing.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/basic-preferences-cross-trip.md",
       "status": "document"
     },
     {
@@ -420,6 +440,10 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/service-task-metering.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/today-unavailable.md",
       "status": "document"
     },
@@ -468,11 +492,19 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/vp-response-policy.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/vpj-01-web-locales.md",
       "status": "document"
     },
     {
       "path": "docs/contracts/vpj-01.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-02-rpc-repair.md",
       "status": "document"
     },
     {
@@ -501,6 +533,14 @@
     },
     {
       "path": "docs/frontend-redesign-issue-plan.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/harness/IMPLEMENTATION-STATUS.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/harness/OFFLINE-SEEDS.md",
       "status": "document"
     },
     {
@@ -549,6 +589,10 @@
     },
     {
       "path": "docs/policy/threat-model.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/policy/vpj-03-text-decisions.md",
       "status": "document"
     },
     {
@@ -880,6 +924,10 @@
       "status": "document"
     },
     {
+      "path": "docs/research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md",
+      "status": "evidence"
+    },
+    {
       "path": "docs/research/agent-context-rag-memory-tool-evidence-2026-08-25.md",
       "status": "evidence"
     },
@@ -893,6 +941,18 @@
     },
     {
       "path": "docs/research/ai-core-v1.1-independent-audit-2026-08-23.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/brand-engineering-2026-09-10/memory-evidence.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/brand-engineering-2026-09-10/response-evidence.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/brand-engineering-2026-09-10/service-task-evidence.md",
       "status": "evidence"
     },
     {

@@ -14,6 +14,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 - [docs/agents/development-workflow.md](docs/agents/development-workflow.md)
 - [docs/program/2026-09-05/README.md](docs/program/2026-09-05/README.md)
+- [docs/adr/ADR-0025-brand-service-task-and-response-semantics.md](docs/adr/ADR-0025-brand-service-task-and-response-semantics.md)
 
 ## 当前决定
 
@@ -24,6 +25,8 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - Keep valid Trip/RLS/migration/knowledge/privacy safety contracts; archived code not production input.
 - 2026-09-09 JT explicitly allows production publishing and merge-triggered Vercel deployments for VP-V4 in this continuing session. Production database migrations, new data/recipient permissions, purchases, legal/material rights and branch-protection bypass remain outside that grant.
 - 2026-09-09 current planning request authorizes optimizing Harness, publishing six incremental Issues and integrating the planning into main. This grants no new provider/data/account/production database or payment authority.
+- 2026-09-10 brand Q36/Q37 confirmed directions: Free and Pass share explicitly saved basic cross-Trip preferences; a bounded service goal includes necessary clarification and system repair. Storage/consumer and billing semantics require versioned implementation; new capacity, partial/amendment/TTL and Q38 activation remain undecided.
+- VP response policy: English-first natural wording with equivalent Chinese facts, useful outcomes and next steps; tone never grants action/data permission or overrides evidence and confirmation.
 
 ## 未决与运行证据
 
@@ -37,6 +40,8 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- Brand engineering study fixed at d4eeb084 against Q1-Q38 input8ae95a7: three planning contracts and26 existing-task acceptance deltas prepared;6 conflictinglegacy metering clauses explicitly superseded with originals retained in issue-deltas.json. No runtime/provider/database/Store acceptance performed by this change; validation and GitHub read-back recorded in the delivery note.
+- 2026-09-10 actual Staging migration11->25 exited0; fresh encrypted affected-schema backup restored in a no-network container with exact Auth/Trip digests. Ordinary JWT isolation16/16 passed, temporary2 Auth and run-owned Trips cleaned, original3 Auth/2 Trip digests unchanged. Direct/worker and parent acceptance remain incomplete; see artifacts/VPJ-02/staging-apply-20260910.md.
 - PR279 exact HEAD1322254 reviewed Critical0/Important0; Quality34385270635 passed3m15 and Vercel passed, merged798dc36 after PR278. Actual merged-code identity tests30/30 pass, zero skip. The first post-merge command used a nonexistent loader and failed before running assertions; rerunning the recorded native Node command passed. JWT verification does not activate native epochs or RLS access.
 - PR278 exact HEADf1a6a4c independently reviewed Critical0/Important0; Quality34384277871 passed3m18 and Native34384277855 passed11m14 before mergef6928c8. Merge tree equals the tested tree. Local iOS26.5 all15 tests passed; iOS17.5 four UI audits still fail. Matched baseline/candidate diagnostics reproduce Chinese banner and Tools failures in both, with contrast findings removed in the candidate; this is a bounded improvement, not minimum-runtime acceptance.
 - PR277 exact HEAD70d8463 independently reviewed Critical0/Important0; Quality34383456195 passed3m8 and Vercel passed before merge272ca7d. Merge tree equals reviewed tree and actual merged pairing tests10/10 pass, zero skip. Same JSON/Markdown report preserves fixture mode, Chinese/Staging NOT_RUN and unknown cost; no adoption or real model sample claim.
@@ -65,7 +70,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Complete #189 direct-host/worker path evidence without inferring it from maintenance pooler or HTTP JWT success. User authorized three synthetic-text providers, each cumulative maximum CNY30(total90), with no recharge grant. Verify actual account model/endpoint/prices and bounded spending before calls. #190 retention/deletion and real user/human access rules remain undecided; native epochs and licensed knowledge remain separate gates.
+Complete #189 direct-host/worker path evidence without inferring it from maintenance pooler or HTTP JWT success. User authorized three synthetic-text providers, each cumulative maximum CNY30(total90), with no recharge grant. Verify actual account model/endpoint/prices and bounded spending before calls. #190 retention/deletion and real user/human access rules remain undecided; native epochs and licensed knowledge remain separate gates. Apply the reviewed brand planning delta before implementing new ServiceTask consumption or cross-Trip personalization: docs/research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md. Existing scoped protocol/budget/native work continues; no new data/recipient or production authority is granted.
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
