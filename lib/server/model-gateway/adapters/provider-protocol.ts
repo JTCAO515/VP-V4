@@ -119,7 +119,9 @@ function requestBody(request: ProtocolRequest): Record<string, unknown> {
     ],
     stream: false,
     max_tokens: request.maxOutputTokens,
-    ...(request.provider === "qwen" ? { enable_thinking: false } : { thinking: { type: "disabled" } }),
+    // GLM-5.3-Flash rejects thinking: disabled (observed HTTP400/1210).
+    // Preserve its native default; reasoning text still never leaves normalization.
+    ...(request.provider === "qwen" ? { enable_thinking: false } : request.provider === "deepseek" ? { thinking: { type: "disabled" } } : {}),
     ...(request.task === "strict_known_unknown" ? { response_format: { type: "json_object" } } : {}),
     ...(request.task === "tool_candidate" && request.tool ? {
       tools: [{ type: "function", function: { name: request.tool.name, parameters: request.tool.parameters } }],

@@ -1,4 +1,6 @@
-# VPJ-06 offline provider protocol verification
+# VPJ-06 provider protocol verification
+
+Latest actual C0 conformance is recorded in [2026-09-10 results](live-c0-20260910/verification.md). The following section is the original offline preparation evidence.
 
 Related to #193; baseline `080d5f0aa2a1e8976d9dc75b8c22207801d87fc4`.
 Worktree: `/Users/jtcao/Documents/VP-V4-Model-Adapters`.
