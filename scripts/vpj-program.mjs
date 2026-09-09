@@ -175,48 +175,67 @@ function htmlBlockStart(line, paragraphOpen) {
 
 function markdownLineKinds(lines) {
   let fence = null, html = null, paragraphOpen = false;
+  let nextInlineBlock = 0, activeInlineBlock = null;
+  const nonInline = (htmlTags = false) => {
+    activeInlineBlock = null;
+    return { task: false, htmlTags, inlineBlock: null };
+  };
   return lines.map(line => {
     if (fence) {
       if (new RegExp(`^ {0,3}${fence.character}{${fence.length},}[ \\t]*$`).test(line)) fence = null;
-      return { task: false, htmlTags: false };
+      return nonInline();
     }
     if (html) {
       const type = html.type;
       if (type >= 6 && /^[ \t]*$/.test(line)) html = null;
       else {
         if (html.end?.test(line)) html = null;
-        return { task: false, htmlTags: type >= 6 };
+        return nonInline(type >= 6);
       }
     }
-    if (/^[ \t]*$/.test(line)) { paragraphOpen = false; return { task: false, htmlTags: true }; }
-    if (/^ {0,3}>/.test(line)) { paragraphOpen = false; return { task: false, htmlTags: false }; }
-    if (/^(?: {4}| {0,3}\t)/.test(line)) return { task: false, htmlTags: false };
+    if (/^[ \t]*$/.test(line)) { paragraphOpen = false; return nonInline(true); }
+    if (/^ {0,3}>/.test(line)) { paragraphOpen = false; return nonInline(); }
+    if (/^(?: {4}| {0,3}\t)/.test(line)) return nonInline();
     const opening = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
     if (opening && (opening[1][0] === '~' || !opening[2].includes('`'))) {
       fence = { character: opening[1][0], length: opening[1].length };
       paragraphOpen = false;
-      return { task: false, htmlTags: false };
+      return nonInline();
     }
     const started = htmlBlockStart(line, paragraphOpen);
     if (started) {
       html = started.end?.test(line) ? null : started;
       paragraphOpen = false;
-      return { task: false, htmlTags: started.type >= 6 };
+      return nonInline(started.type >= 6);
     }
-    const block = /^ {0,3}(?:#{1,6}(?:[ \t]|$)|[-+*][ \t]|\d{1,9}[.)][ \t])/.test(line) ||
-      /^ {0,3}(?:(?:\*[ \t]*){3,}|(?:-[ \t]*){3,}|(?:_[ \t]*){3,}|=+[ \t]*)$/.test(line);
-    paragraphOpen = !block;
-    return { task: true, htmlTags: true };
+    const heading = /^ {0,3}#{1,6}(?:[ \t]|$)/.test(line);
+    const separator = /^ {0,3}(?:(?:\*[ \t]*){3,}|(?:-[ \t]*){3,}|(?:_[ \t]*){3,}|=+[ \t]*)$/.test(line);
+    const list = line.match(/^ {0,3}(?:[-+*]|(\d{1,9})[.)])(?:[ \t]+(.*)|$)/);
+    // An empty list item, or an ordered marker other than 1, cannot interrupt a paragraph.
+    const listStart = list && (!paragraphOpen || (list[2]?.trim() && (!list[1] || Number(list[1]) === 1)));
+    if (separator) { paragraphOpen = false; return nonInline(true); }
+    if (heading || listStart || activeInlineBlock === null) activeInlineBlock = ++nextInlineBlock;
+    const inlineBlock = activeInlineBlock;
+    if (heading) activeInlineBlock = null;
+    paragraphOpen = !heading;
+    return { task: true, htmlTags: true, inlineBlock };
   });
 }
 
 // Shield literal tag text for the container scanner without changing the displayed criterion.
-// Code spans use equal-length backtick runs; unmatched runs stay literal, and blank lines end
-// the inline block. Complete HTML tags take precedence, so attribute contents are never rescanned.
-function containerTagSource(markdown) {
+// Code spans use equal-length backtick runs inside one actual inline block. Complete HTML tags
+// take precedence, so attribute contents are never rescanned. Unmatched runs remain literal.
+function containerTagSource(markdown, kinds) {
   const htmlTag = new RegExp(`${htmlOpenTag}|${htmlCloseTag}`, 'y');
   const parts = [];
-  let cursor = 0, index = 0;
+  const lineStarts = [0];
+  for (let offset = 0; offset < markdown.length; offset++) if (markdown[offset] === '\n') lineStarts.push(offset + 1);
+  const inlineEnds = [];
+  for (let line = kinds.length - 1; line >= 0; line--) {
+    inlineEnds[line] = kinds[line].inlineBlock !== null && kinds[line].inlineBlock === kinds[line + 1]?.inlineBlock
+      ? inlineEnds[line + 1] : (lineStarts[line + 1] ?? markdown.length);
+  }
+  let cursor = 0, index = 0, line = 0;
   const escaped = position => {
     let count = 0;
     for (let before = position - 1; before >= 0 && markdown[before] === '\\'; before--) count++;
@@ -227,17 +246,18 @@ function containerTagSource(markdown) {
     cursor = end;
   };
   while (index < markdown.length) {
+    while (lineStarts[line + 1] <= index) line++;
+    const inline = kinds[line].inlineBlock !== null;
     if (markdown[index] === '<') {
-      if (escaped(index)) { mask(index, index + 1); index++; continue; }
+      if (inline && escaped(index)) { mask(index, index + 1); index++; continue; }
       htmlTag.lastIndex = index;
       if (htmlTag.exec(markdown)) { index = htmlTag.lastIndex; continue; }
     }
-    if (markdown[index] !== '`' || escaped(index)) { index++; continue; }
+    if (!inline || markdown[index] !== '`' || escaped(index)) { index++; continue; }
     let openingEnd = index + 1;
     while (markdown[openingEnd] === '`') openingEnd++;
     const length = openingEnd - index;
-    const blankOffset = markdown.slice(openingEnd).search(/\n[ \t]*\n/);
-    const boundary = blankOffset < 0 ? markdown.length : openingEnd + blankOffset;
+    const boundary = inlineEnds[line];
     const closingRuns = /`+/g;
     closingRuns.lastIndex = openingEnd;
     let closing, end = null;
@@ -253,8 +273,8 @@ function containerTagSource(markdown) {
 
 // Quoted/code content and collapsed history are excluded even after an HTML block's blank-line
 // boundary. Match complete tags (including quoted attributes) and retain nested container depth.
-function withoutQuotedContainers(markdown) {
-  const tagSource = containerTagSource(markdown);
+function withoutQuotedContainers(markdown, kinds) {
+  const tagSource = containerTagSource(markdown, kinds);
   const tags = new RegExp(`${htmlOpenTag}|${htmlCloseTag}`, 'g');
   const depths = new Map(['details', 'blockquote', 'q', 'code'].map(name => [name, 0]));
   const parts = [];
@@ -284,7 +304,7 @@ function checklistEntries(markdown) {
   const lines = normalizeNewlines(markdown).split('\n');
   const kinds = markdownLineKinds(lines);
   const visible = withoutQuotedContainers(lines.map((line, index) => kinds[index].htmlTags ? line : maskLines(line)).join('\n')
-    .replace(/<!--[\s\S]*?(?:-->|$)|<\?[\s\S]*?(?:\?>|$)|<!\[CDATA\[[\s\S]*?(?:\]\]>|$)|<![A-Za-z][^>]*(?:>|$)/g, maskLines));
+    .replace(/<!--[\s\S]*?(?:-->|$)|<\?[\s\S]*?(?:\?>|$)|<!\[CDATA\[[\s\S]*?(?:\]\]>|$)|<![A-Za-z][^>]*(?:>|$)/g, maskLines), kinds);
   const entries = [];
   for (const [lineIndex, line] of visible.split('\n').entries()) {
     if (!kinds[lineIndex].task) continue;

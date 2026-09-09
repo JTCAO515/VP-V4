@@ -121,6 +121,24 @@ test('inline code spans cannot close hidden containers or transfer their checked
   }
 });
 
+test('inline code spans cannot cross real HTML, heading, list or fence block starts and hide a container opener', () => {
+  for (const boundary of [
+    '<details>\n<summary>History ` label</summary>',
+    '# History <details> ` label',
+    '- History <details> ` label',
+    '1. History <details> ` label',
+    '```text\nopaque example\n```\n<details>\n<summary>History ` label</summary>',
+  ]) {
+    assertHiddenAcceptance(`A historical \` example\n${boundary}\n\n- [x] ${task.acceptance[1]}\n\n</details>\n`);
+  }
+});
+
+test('legal paragraph continuations still support multiline code spans', () => {
+  for (const continuation of ['ordinary continuation', '2. a non-interrupting ordered marker', '- ']) {
+    assertHiddenAcceptance(`<details>\n\nA literal \` example\n${continuation}\nliteral </details> label\`\n\n- [x] ${task.acceptance[1]}\n</details>\n`);
+  }
+});
+
 test('odd backslash escapes cannot close containers while even pairs preserve real closing tags', () => {
   const previous = body({ ...task, acceptance: [task.acceptance[0]] });
   for (const count of [1, 3, 5]) {
