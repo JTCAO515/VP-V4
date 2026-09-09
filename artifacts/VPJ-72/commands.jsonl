@@ -1,0 +1,31 @@
+{"command":"node --experimental-strip-types --test tests/unit/response-quality/quality.test.ts tests/contract/response-quality/entrypoint.test.ts evals/harness/response-quality/response-quality.evals.test.ts","exitCode":0,"startedAt":"2026-09-09T20:41:03.348Z","finishedAt":"2026-09-09T20:41:04.286Z","env":"local"}
+{"command":"pnpm typecheck","exitCode":1,"startedAt":"2026-09-09T20:41:04.324Z","finishedAt":"2026-09-09T20:41:05.727Z","env":"local"}
+{"command":"pnpm test:unit","exitCode":0,"startedAt":"2026-09-09T20:44:30.973Z","finishedAt":"2026-09-09T20:44:31.634Z","env":"local"}
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-09-09T20:44:32.945Z","finishedAt":"2026-09-09T20:44:33.882Z","env":"local"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-09-09T20:44:31.702Z","finishedAt":"2026-09-09T20:44:34.098Z","env":"local"}
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-09-09T20:44:33.952Z","finishedAt":"2026-09-09T20:44:55.068Z","env":"local"}
+{"command":"node --experimental-strip-types --test tests/unit/response-quality/quality.test.ts tests/contract/response-quality/entrypoint.test.ts evals/harness/response-quality/response-quality.evals.test.ts","exitCode":0,"startedAt":"2026-09-09T20:46:47.548Z","finishedAt":"2026-09-09T20:46:49.678Z","env":"local"}
+{"command":"pnpm typecheck","exitCode":2,"startedAt":"2026-09-09T20:46:49.738Z","finishedAt":"2026-09-09T20:46:55.319Z","env":"local"}
+{"command":"pnpm test:unit","exitCode":0,"startedAt":"2026-09-09T20:47:56.441Z","finishedAt":"2026-09-09T20:47:59.843Z","env":"local"}
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-09-09T20:47:59.120Z","finishedAt":"2026-09-09T20:48:05.158Z","env":"local"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-09-09T20:47:57.878Z","finishedAt":"2026-09-09T20:48:10.779Z","env":"local"}
+{"command":"pnpm typecheck","exitCode":0,"startedAt":"2026-09-09T20:47:59.957Z","finishedAt":"2026-09-09T20:48:11.336Z","env":"local"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-09-09T20:49:25.109Z","finishedAt":"2026-09-09T20:49:32.209Z","env":"local"}
+{"command":"node --experimental-strip-types --test tests/unit/response-quality/quality.test.ts tests/contract/response-quality/entrypoint.test.ts evals/harness/response-quality/response-quality.evals.test.ts","exitCode":0,"startedAt":"2026-09-09T20:52:02.324Z","finishedAt":"2026-09-09T20:52:03.378Z","env":"local"}
+{"command":"pnpm typecheck","exitCode":0,"startedAt":"2026-09-09T20:52:03.419Z","finishedAt":"2026-09-09T20:52:04.711Z","env":"local"}
+{"command":"node --experimental-strip-types --test tests/unit/response-quality/quality.test.ts tests/contract/response-quality/entrypoint.test.ts evals/harness/response-quality/response-quality.evals.test.ts","exitCode":0,"startedAt":"2026-09-09T20:53:35.363Z","finishedAt":"2026-09-09T20:53:36.488Z","env":"local"}
+{"command":"pnpm typecheck","exitCode":0,"startedAt":"2026-09-09T20:53:36.523Z","finishedAt":"2026-09-09T20:53:37.867Z","env":"local"}
+{"command":"pnpm test:unit","exitCode":0,"startedAt":"2026-09-09T20:55:30.362Z","finishedAt":"2026-09-09T20:55:31.067Z","env":"local"}
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-09-09T20:55:32.346Z","finishedAt":"2026-09-09T20:55:33.373Z","env":"local"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-09-09T20:55:31.132Z","finishedAt":"2026-09-09T20:55:33.570Z","env":"local"}
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-09-09T20:55:33.446Z","finishedAt":"2026-09-09T20:55:47.292Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-09-09T20:58:39.037Z","finishedAt":"2026-09-09T20:58:39.358Z","env":"local"}
+{"command":"git diff --cached --check","exitCode":2,"startedAt":"2026-09-09T20:58:39.431Z","finishedAt":"2026-09-09T20:58:39.443Z","env":"local"}
+{"command":"node --experimental-strip-types --test evals/harness/response-quality/response-quality.evals.test.ts","exitCode":0,"startedAt":"2026-09-09T20:59:26.445Z","finishedAt":"2026-09-09T20:59:26.836Z","env":"local"}
+{"command":"git diff --cached --check","exitCode":0,"startedAt":"2026-09-09T20:59:26.916Z","finishedAt":"2026-09-09T20:59:26.937Z","env":"local"}
+{"command":"pnpm test:unit","exitCode":0,"startedAt":"2026-09-09T21:37:04.038Z","finishedAt":"2026-09-09T21:37:04.724Z","env":"local"}
+{"command":"pnpm evals","exitCode":0,"startedAt":"2026-09-09T21:37:05.995Z","finishedAt":"2026-09-09T21:37:06.980Z","env":"local"}
+{"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-09-09T21:37:04.791Z","finishedAt":"2026-09-09T21:37:07.752Z","env":"local"}
+{"command":"pnpm check","exitCode":0,"startedAt":"2026-09-09T21:37:07.049Z","finishedAt":"2026-09-09T21:37:21.096Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-09-09T21:39:02.015Z","finishedAt":"2026-09-09T21:39:02.324Z","env":"local"}
+{"command":"git diff --cached --check","exitCode":0,"startedAt":"2026-09-09T21:39:02.382Z","finishedAt":"2026-09-09T21:39:02.390Z","env":"local"}

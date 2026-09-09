@@ -2,6 +2,11 @@
 
 本计划将 [HF 研究](../../research/VISEPANDA-HUGGINGFACE-REUSE-REPORT-2026-09-10.md) 转为现有 VPJ Program 的执行范围。2026-09-10 已授权优化任务和文档；安装数量不是交付结果。本计划不新建 Agent 平台、知识数据库或用户消费账本。
 
+## 当前执行结果
+
+- VPJ-73 #288已完成：PR293合并cfde140，固定配置得到有据REJECT。26次实际离线转换和8项guard通过，准确率增益与时间开销未达事前采用门；不泛化到所有Docling，也不阻塞#201/#236其他实现。见[证据](../../../artifacts/VPJ-73/verification.md)。
+- VPJ-72 #287已实现完整离线盲评/反馈入口，修复父报告血缘及累计状态文件上限问题后独立复审通过；实际数据仍是20自有样本、20fixture反馈、0human。见[证据](../../../artifacts/VPJ-72/verification.md)。PR294已合并9fa196a，准确HEAD审阅及CI通过，合并后CLI契约3/3通过；#287按离线范围完成关闭，不代表真实配对/人工校准。
+
 ## 当前基线
 
 从已合并的 PR284/285 开始：持久预算预留与 dispatch 限制已有实现和本地并发测试，不能再将预算模块整体称为只有内存版本；远端预算迁移、真实 provider/worker 与父 Issue 验收仍按实时证据判断。PR271 的离线种子、PR277 的配对报告和既有 Memory/Profile、词法/RRF 代码继续复用。

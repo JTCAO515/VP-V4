@@ -6,9 +6,9 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Staging26/40 scoped checks remain verified. Actual C0 provider protocol samples27/27, client timeout/cancel6/6 and two real-call duplicate/crash worker proofs passed. GLM disabled-thinking incompatibility is corrected locally; exact review/CI and wider quality/runtime acceptance remain separate. Conservative budget debits are not supplier invoices.
+状态：C0 protocol/budget evidence is merged under PR292. Both bounded HF preparation Issues are completed: Docling #288 with a scoped REJECT under PR293, and offline blind review #287 under PR294. Full customer/runtime acceptance remains separate.
 
-阶段：Real C0 provider compatibility and conservative metering verified; finish reviewed integration and the two independent HF preparation deliveries.
+阶段：Continue bounded native accessibility diagnosis; resolve actual producer/consumer and operator prerequisites before runtime integration.
 
 ## 读取顺序
 
@@ -39,6 +39,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- HF preparation: #288 completed via PR293/cfde140 with fixed-config REJECT,26 actual offline conversions/8 guards/11 Python checks and independent metric reproduction. VPJ-72 complete CLI+fixture feedback output passed with0human records; two row-lineage/state-size findings fixed and independently verified. See artifacts/VPJ-72/verification.md and artifacts/VPJ-73/verification.md; neither establishes real user/provider semantic calibration.
 - 2026-09-10 actual C0:27/27 protocol matrix samples,6/6 client timeout/cancel checks and two extra real DeepSeek worker duplicate/crash calls passed. Total38 transport invocations/30 usage receipts; highest-tariff budget debit0.035014CNY,8 unknown-cost requests retain28.9CNY. Actual billed amount and semantic/human quality unverified. GLM400/1210 fixed by retaining native default thinking;21 protocol/security checks and units45/contracts189/evals24 pass locally. See artifacts/VPJ-06/live-c0-20260910.
 - Planning evidence: brand/ServiceTask/response alignment PR286 and HF plan PR289 merged; current manifest has73 tasks/212 native edges. These are planning/delivery facts, not runtime acceptance. See docs/research/brand-engineering-2026-09-10/DELIVERY.md and docs/harness/hf-reuse/DELIVERY.md.
 - Staging evidence: PR281 records authorized11→25 migration, restored encrypted backup, ordinary JWT16/16 and exact-ID cleanup preserving existing data. Direct-host/worker acceptance is separate; read the latest #189/PR evidence before action.
@@ -50,7 +51,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-收尾真实C0协议/GLM兼容修复和#287/#288独立准备的审查、CI与验收。保留同一CNY30/供应商、合计90预算scope及未知费用hold；预算扣额不当作供应商账单。后续版本化真实ModelProfile/outcome消费者，继续核原生身份、C2留存/删除/人工访问、部署worker与许可知识门。#188只收尾基础原生问题；真实Trip选区Ask/确认/重载按#198/#233/#242联合验收，不逆向阻塞#188。品牌ServiceTask/基础偏好及HF复用范围继续有效。
+#287已由PR294合并9fa196a并按离线范围验收关闭，#288已按固定配置REJECT完成。继续#188有界基础可访问性诊断；ModelProfile/outcome目前只有fixture消费者，真实Turn/worker接入需要版本化契约、持久lease/terminal、权威native epoch及数据政策，不能仅扩展union冒充集成。真实选区Ask/确认/重载仍由#198/#233/#242负责。保留现有C0预算scope和未知账单hold；人工校准、供应商账单、C2留存/删除/人工权限及真机检查按原票落实。
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 
