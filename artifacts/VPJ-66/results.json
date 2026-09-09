@@ -1,0 +1,602 @@
+{
+  "schemaVersion": 1,
+  "versions": {
+    "config": "offline-seeds-v1",
+    "prompt": "none-fixture",
+    "tools": "none-fixture",
+    "context": "fixture-context-v1",
+    "evidence": "synthetic-evidence-v1",
+    "grader": "harness-grader-v1",
+    "corpus": "harness-corpus-v1"
+  },
+  "commit": "6307d79d7e33785395d533cd381e32a26f080c01",
+  "sourceState": "working-tree; commit alone does not attest uncommitted source",
+  "mode": "fixture",
+  "holdout": {
+    "status": "specified-not-executed",
+    "promptTuningUsed": false,
+    "blindModelEvaluationClaimed": false
+  },
+  "counts": {
+    "independentCases": 12,
+    "languages": [
+      "en"
+    ],
+    "fixtureBaselineRuns": 2,
+    "mutationRuns": 4,
+    "fixtureNotRun": 10,
+    "stagingRuns": 0,
+    "stagingNotRun": 12
+  },
+  "elapsedMs": 100.589,
+  "usage": "unknown",
+  "cost": "unknown",
+  "providerCalls": 0,
+  "realTripWrites": 0,
+  "userQuotaDebits": 0,
+  "rows": [
+    {
+      "caseId": "H01",
+      "runId": "offline-v1-H01",
+      "taskId": "synthetic-task-H01",
+      "attemptId": "synthetic-attempt-H01-1",
+      "group": "development",
+      "category": "normal",
+      "language": "en",
+      "mode": "fixture",
+      "requiredMode": "staging",
+      "requiredModeVerdict": "NOT_RUN",
+      "owner": "VPJ-67",
+      "clock": "2026-09-09T04:00:00.000Z",
+      "tripVersion": null,
+      "execution": "completed",
+      "outcome": "answered",
+      "verdict": "PASS",
+      "assertions": [
+        {
+          "step": "answer",
+          "code": "REQUIRED_CLAIM_PRESENT",
+          "passed": true
+        },
+        {
+          "step": "grounding",
+          "code": "CLAIM_SUPPORTED_BY_ORACLE",
+          "passed": true
+        },
+        {
+          "step": "grounding",
+          "code": "CURRENT_EVIDENCE_RECEIPT",
+          "passed": true
+        },
+        {
+          "step": "read_only",
+          "code": "TRIP_COLLECTION_UNCHANGED",
+          "passed": true
+        }
+      ],
+      "reasonCode": null,
+      "elapsedMs": 7.16,
+      "usage": "unknown",
+      "cost": "unknown"
+    },
+    {
+      "caseId": "H02",
+      "runId": "offline-v1-H02",
+      "taskId": "synthetic-task-H02",
+      "attemptId": "synthetic-attempt-H02-1",
+      "group": "development",
+      "category": "normal",
+      "language": "en",
+      "mode": "fixture",
+      "requiredMode": "staging",
+      "requiredModeVerdict": "NOT_RUN",
+      "owner": "VPJ-68",
+      "clock": "2026-09-09T04:00:00.000Z",
+      "tripVersion": 7,
+      "execution": "completed",
+      "outcome": "answered",
+      "verdict": "PASS",
+      "assertions": [
+        {
+          "step": "scope",
+          "code": "INDEPENDENT_EXPECTED_STATE",
+          "passed": true
+        },
+        {
+          "step": "candidate",
+          "code": "DINNER_LOCK_PRESERVED",
+          "passed": true
+        },
+        {
+          "step": "diff",
+          "code": "DINNER_LOCK_PRESERVED",
+          "passed": true
+        },
+        {
+          "step": "confirmation",
+          "code": "NO_UNCONFIRMED_WRITE",
+          "passed": true
+        },
+        {
+          "step": "rejection",
+          "code": "NO_REJECTED_WRITE",
+          "passed": true
+        },
+        {
+          "step": "confirmation",
+          "code": "EXACT_REVISION_BOUND",
+          "passed": true
+        },
+        {
+          "step": "final",
+          "code": "DINNER_LOCK_PRESERVED",
+          "passed": true
+        },
+        {
+          "step": "final",
+          "code": "ONLY_REQUESTED_SCOPE_CHANGED",
+          "passed": true
+        },
+        {
+          "step": "route",
+          "code": "COMPARABLE_WALKING_REDUCTION",
+          "passed": true
+        },
+        {
+          "step": "final",
+          "code": "REQUIRED_ITEMS_RETAINED",
+          "passed": true
+        },
+        {
+          "step": "reload",
+          "code": "EXPECTED_VERSION_AND_STATE",
+          "passed": true
+        }
+      ],
+      "reasonCode": null,
+      "elapsedMs": 30.441,
+      "usage": "unknown",
+      "cost": "unknown"
+    },
+    {
+      "caseId": "H03",
+      "runId": "offline-v1-H03",
+      "taskId": "synthetic-task-H03",
+      "attemptId": null,
+      "group": "holdout",
+      "category": "normal",
+      "language": "en",
+      "mode": "fixture",
+      "requiredMode": "staging",
+      "requiredModeVerdict": "NOT_RUN",
+      "owner": "VPJ-67",
+      "clock": "2026-09-09T04:00:00.000Z",
+      "tripVersion": null,
+      "execution": "not_started",
+      "outcome": null,
+      "verdict": "NOT_RUN",
+      "assertions": [],
+      "reasonCode": "INTEGRATION_NOT_CONNECTED",
+      "elapsedMs": null,
+      "usage": "unknown",
+      "cost": "unknown"
+    },
+    {
+      "caseId": "H04",
+      "runId": "offline-v1-H04",
+      "taskId": "synthetic-task-H04",
+      "attemptId": null,
+      "group": "development",
+      "category": "ambiguity",
+      "language": "en",
+      "mode": "fixture",
+      "requiredMode": "staging",
+      "requiredModeVerdict": "NOT_RUN",
+      "owner": "VPJ-67",
+      "clock": "2026-09-09T04:00:00.000Z",
+      "tripVersion": null,
+      "execution": "not_started",
+      "outcome": null,
+      "verdict": "NOT_RUN",
+      "assertions": [],
+      "reasonCode": "INTEGRATION_NOT_CONNECTED",
+      "elapsedMs": null,
+      "usage": "unknown",
+      "cost": "unknown"
+    },
+    {
+      "caseId": "H05",
+      "runId": "offline-v1-H05",
+      "taskId": "synthetic-task-H05",
+      "attemptId": null,
+      "group": "development",
+      "category": "constraint",
+      "language": "en",
+      "mode": "fixture",
+      "requiredMode": "staging",
+      "requiredModeVerdict": "NOT_RUN",
+      "owner": "VPJ-68",
+      "clock": "2026-09-09T04:00:00.000Z",
+      "tripVersion": 7,
+      "execution": "not_started",
+      "outcome": null,
+      "verdict": "NOT_RUN",
+      "assertions": [],
+      "reasonCode": "INTEGRATION_NOT_CONNECTED",
+      "elapsedMs": null,
+      "usage": "unknown",
+      "cost": "unknown"
+    },
+    {
+      "caseId": "H06",
+      "runId": "offline-v1-H06",
+      "taskId": "synthetic-task-H06",
+      "attemptId": null,
+      "group": "holdout",
+      "category": "constraint",
+      "language": "en",
+      "mode": "fixture",
+      "requiredMode": "staging",
+      "requiredModeVerdict": "NOT_RUN",
+      "owner": "VPJ-68",
+      "clock": "2026-09-09T04:00:00.000Z",
+      "tripVersion": 7,
+      "execution": "not_started",
+      "outcome": null,
+      "verdict": "NOT_RUN",
+      "assertions": [],
+      "reasonCode": "INTEGRATION_NOT_CONNECTED",
+      "elapsedMs": null,
+      "usage": "unknown",
+      "cost": "unknown"
+    },
+    {
+      "caseId": "H07",
+      "runId": "offline-v1-H07",
+      "taskId": "synthetic-task-H07",
+      "attemptId": null,
+      "group": "development",
+      "category": "evidence",
+      "language": "en",
+      "mode": "fixture",
+      "requiredMode": "staging",
+      "requiredModeVerdict": "NOT_RUN",
+      "owner": "VPJ-67",
+      "clock": "2026-09-09T04:00:00.000Z",
+      "tripVersion": null,
+      "execution": "not_started",
+      "outcome": null,
+      "verdict": "NOT_RUN",
+      "assertions": [],
+      "reasonCode": "INTEGRATION_NOT_CONNECTED",
+      "elapsedMs": null,
+      "usage": "unknown",
+      "cost": "unknown"
+    },
+    {
+      "caseId": "H08",
+      "runId": "offline-v1-H08",
+      "taskId": "synthetic-task-H08",
+      "attemptId": null,
+      "group": "holdout",
+      "category": "evidence",
+      "language": "en",
+      "mode": "fixture",
+      "requiredMode": "staging",
+      "requiredModeVerdict": "NOT_RUN",
+      "owner": "VPJ-67",
+      "clock": "2026-09-09T04:00:00.000Z",
+      "tripVersion": null,
+      "execution": "not_started",
+      "outcome": null,
+      "verdict": "NOT_RUN",
+      "assertions": [],
+      "reasonCode": "INTEGRATION_NOT_CONNECTED",
+      "elapsedMs": null,
+      "usage": "unknown",
+      "cost": "unknown"
+    },
+    {
+      "caseId": "H09",
+      "runId": "offline-v1-H09",
+      "taskId": "synthetic-task-H09",
+      "attemptId": null,
+      "group": "development",
+      "category": "fault",
+      "language": "en",
+      "mode": "fixture",
+      "requiredMode": "staging",
+      "requiredModeVerdict": "NOT_RUN",
+      "owner": "VPJ-69",
+      "clock": "2026-09-09T04:00:00.000Z",
+      "tripVersion": 7,
+      "execution": "not_started",
+      "outcome": null,
+      "verdict": "NOT_RUN",
+      "assertions": [],
+      "reasonCode": "INTEGRATION_NOT_CONNECTED",
+      "elapsedMs": null,
+      "usage": "unknown",
+      "cost": "unknown"
+    },
+    {
+      "caseId": "H10",
+      "runId": "offline-v1-H10",
+      "taskId": "synthetic-task-H10",
+      "attemptId": null,
+      "group": "development",
+      "category": "fault",
+      "language": "en",
+      "mode": "fixture",
+      "requiredMode": "staging",
+      "requiredModeVerdict": "NOT_RUN",
+      "owner": "VPJ-69",
+      "clock": "2026-09-09T04:00:00.000Z",
+      "tripVersion": 7,
+      "execution": "not_started",
+      "outcome": null,
+      "verdict": "NOT_RUN",
+      "assertions": [],
+      "reasonCode": "INTEGRATION_NOT_CONNECTED",
+      "elapsedMs": null,
+      "usage": "unknown",
+      "cost": "unknown"
+    },
+    {
+      "caseId": "H11",
+      "runId": "offline-v1-H11",
+      "taskId": "synthetic-task-H11",
+      "attemptId": null,
+      "group": "development",
+      "category": "authorization",
+      "language": "en",
+      "mode": "fixture",
+      "requiredMode": "staging",
+      "requiredModeVerdict": "NOT_RUN",
+      "owner": "VPJ-68",
+      "clock": "2026-09-09T04:00:00.000Z",
+      "tripVersion": 7,
+      "execution": "not_started",
+      "outcome": null,
+      "verdict": "NOT_RUN",
+      "assertions": [],
+      "reasonCode": "INTEGRATION_NOT_CONNECTED",
+      "elapsedMs": null,
+      "usage": "unknown",
+      "cost": "unknown"
+    },
+    {
+      "caseId": "H12",
+      "runId": "offline-v1-H12",
+      "taskId": "synthetic-task-H12",
+      "attemptId": null,
+      "group": "holdout",
+      "category": "authorization",
+      "language": "en",
+      "mode": "fixture",
+      "requiredMode": "staging",
+      "requiredModeVerdict": "NOT_RUN",
+      "owner": "VPJ-67",
+      "clock": "2026-09-09T04:00:00.000Z",
+      "tripVersion": null,
+      "execution": "not_started",
+      "outcome": null,
+      "verdict": "NOT_RUN",
+      "assertions": [],
+      "reasonCode": "INTEGRATION_NOT_CONNECTED",
+      "elapsedMs": null,
+      "usage": "unknown",
+      "cost": "unknown"
+    }
+  ],
+  "mutations": [
+    {
+      "id": "H01-unsupported",
+      "caseId": "H01",
+      "expectedStep": "grounding",
+      "expectedCode": "CLAIM_SUPPORTED_BY_ORACLE",
+      "result": {
+        "execution": "completed",
+        "outcome": "answered",
+        "assertions": [
+          {
+            "step": "answer",
+            "code": "REQUIRED_CLAIM_PRESENT",
+            "passed": true
+          },
+          {
+            "step": "grounding",
+            "code": "CLAIM_SUPPORTED_BY_ORACLE",
+            "passed": false
+          },
+          {
+            "step": "grounding",
+            "code": "CURRENT_EVIDENCE_RECEIPT",
+            "passed": true
+          },
+          {
+            "step": "read_only",
+            "code": "TRIP_COLLECTION_UNCHANGED",
+            "passed": true
+          }
+        ],
+        "verdict": "FAIL"
+      },
+      "elapsedMs": 1.223
+    },
+    {
+      "id": "H01-refusal",
+      "caseId": "H01",
+      "expectedStep": "answer",
+      "expectedCode": "REQUIRED_CLAIM_PRESENT",
+      "result": {
+        "execution": "completed",
+        "outcome": "blocked",
+        "assertions": [
+          {
+            "step": "answer",
+            "code": "REQUIRED_CLAIM_PRESENT",
+            "passed": false
+          },
+          {
+            "step": "grounding",
+            "code": "CLAIM_SUPPORTED_BY_ORACLE",
+            "passed": false
+          },
+          {
+            "step": "grounding",
+            "code": "CURRENT_EVIDENCE_RECEIPT",
+            "passed": false
+          },
+          {
+            "step": "read_only",
+            "code": "TRIP_COLLECTION_UNCHANGED",
+            "passed": true
+          }
+        ],
+        "verdict": "FAIL"
+      },
+      "elapsedMs": 0.166
+    },
+    {
+      "id": "H02-dinner",
+      "caseId": "H02",
+      "expectedStep": "candidate",
+      "expectedCode": "DINNER_LOCK_PRESERVED",
+      "result": {
+        "execution": "completed",
+        "outcome": "answered",
+        "assertions": [
+          {
+            "step": "scope",
+            "code": "INDEPENDENT_EXPECTED_STATE",
+            "passed": false
+          },
+          {
+            "step": "candidate",
+            "code": "DINNER_LOCK_PRESERVED",
+            "passed": false
+          },
+          {
+            "step": "diff",
+            "code": "DINNER_LOCK_PRESERVED",
+            "passed": false
+          },
+          {
+            "step": "confirmation",
+            "code": "NO_UNCONFIRMED_WRITE",
+            "passed": true
+          },
+          {
+            "step": "rejection",
+            "code": "NO_REJECTED_WRITE",
+            "passed": true
+          },
+          {
+            "step": "confirmation",
+            "code": "EXACT_REVISION_BOUND",
+            "passed": true
+          },
+          {
+            "step": "final",
+            "code": "DINNER_LOCK_PRESERVED",
+            "passed": false
+          },
+          {
+            "step": "final",
+            "code": "ONLY_REQUESTED_SCOPE_CHANGED",
+            "passed": false
+          },
+          {
+            "step": "route",
+            "code": "COMPARABLE_WALKING_REDUCTION",
+            "passed": true
+          },
+          {
+            "step": "final",
+            "code": "REQUIRED_ITEMS_RETAINED",
+            "passed": true
+          },
+          {
+            "step": "reload",
+            "code": "EXPECTED_VERSION_AND_STATE",
+            "passed": true
+          }
+        ],
+        "verdict": "FAIL"
+      },
+      "elapsedMs": 0.666
+    },
+    {
+      "id": "H02-unconfirmed",
+      "caseId": "H02",
+      "expectedStep": "confirmation",
+      "expectedCode": "NO_UNCONFIRMED_WRITE",
+      "result": {
+        "execution": "completed",
+        "outcome": "answered",
+        "assertions": [
+          {
+            "step": "scope",
+            "code": "INDEPENDENT_EXPECTED_STATE",
+            "passed": true
+          },
+          {
+            "step": "candidate",
+            "code": "DINNER_LOCK_PRESERVED",
+            "passed": true
+          },
+          {
+            "step": "diff",
+            "code": "DINNER_LOCK_PRESERVED",
+            "passed": true
+          },
+          {
+            "step": "confirmation",
+            "code": "NO_UNCONFIRMED_WRITE",
+            "passed": false
+          },
+          {
+            "step": "rejection",
+            "code": "NO_REJECTED_WRITE",
+            "passed": true
+          },
+          {
+            "step": "confirmation",
+            "code": "EXACT_REVISION_BOUND",
+            "passed": true
+          },
+          {
+            "step": "final",
+            "code": "DINNER_LOCK_PRESERVED",
+            "passed": true
+          },
+          {
+            "step": "final",
+            "code": "ONLY_REQUESTED_SCOPE_CHANGED",
+            "passed": true
+          },
+          {
+            "step": "route",
+            "code": "COMPARABLE_WALKING_REDUCTION",
+            "passed": true
+          },
+          {
+            "step": "final",
+            "code": "REQUIRED_ITEMS_RETAINED",
+            "passed": true
+          },
+          {
+            "step": "reload",
+            "code": "EXPECTED_VERSION_AND_STATE",
+            "passed": true
+          }
+        ],
+        "verdict": "FAIL"
+      },
+      "elapsedMs": 0.35
+    }
+  ],
+  "preparationVerdict": "PASS",
+  "finalAcceptance": "NOT_RUN"
+}

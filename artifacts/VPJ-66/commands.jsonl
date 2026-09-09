@@ -1,0 +1,12 @@
+{"command": "pnpm docs:check", "exitCode": 0, "elapsedSeconds": 1.079, "log": "artifacts/VPJ-66/pnpm-docs-check.log"}
+{"command": "git diff --check", "exitCode": 0, "elapsedSeconds": 0.058, "log": "artifacts/VPJ-66/git-diff---check.log"}
+{"command": "pnpm test:unit", "exitCode": 1, "elapsedSeconds": 24.258, "log": "artifacts/VPJ-66/pnpm-test-unit.log"}
+{"command": "pnpm test:unit", "environment": "offline PATH without Supabase CLI; preserves unrelated local stacks", "exitCode": 0, "elapsedSeconds": 6.709, "log": "artifacts/VPJ-66/pnpm-test-unit-offline.log"}
+{"command": "pnpm test:contract", "environment": "offline PATH without Supabase CLI; preserves unrelated local stacks", "exitCode": 0, "elapsedSeconds": 7.701, "log": "artifacts/VPJ-66/pnpm-test-contract-offline.log"}
+{"command": "pnpm evals", "environment": "offline PATH without Supabase CLI; preserves unrelated local stacks", "exitCode": 0, "elapsedSeconds": 2.432, "log": "artifacts/VPJ-66/pnpm-evals-offline.log"}
+{"command": "pnpm check", "environment": "offline PATH without Supabase CLI; preserves unrelated local stacks", "exitCode": 0, "elapsedSeconds": 78.859, "log": "artifacts/VPJ-66/pnpm-check-offline.log"}
+{"command": "pnpm evals", "exitCode": 0, "elapsedSeconds": 2.137, "log": "artifacts/VPJ-66/pnpm-evals-final.log"}
+{"command": "pnpm typecheck", "exitCode": 0, "elapsedSeconds": 16.85, "log": "artifacts/VPJ-66/pnpm-typecheck-final.log"}
+{"command": "pnpm lint", "exitCode": 0, "elapsedSeconds": 1.266, "log": "artifacts/VPJ-66/pnpm-lint-final.log"}
+{"command": "pnpm docs:check", "exitCode": 0, "elapsedSeconds": 1.091, "log": "artifacts/VPJ-66/pnpm-docs-check-final.log"}
+{"command": "git diff --check", "exitCode": 0, "elapsedSeconds": 0.051, "log": "artifacts/VPJ-66/git-diff---check-final.log"}
