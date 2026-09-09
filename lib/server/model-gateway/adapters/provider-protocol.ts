@@ -53,7 +53,7 @@ export type ProtocolTransport = (request: Readonly<{
 type BudgetTurn = Extract<ReturnType<CostGuard["startTurn"]>, { kind: "turn" }>;
 const MAX_RESPONSE_BYTES = 262144;
 
-/** C0 protocol preparation only. Runtime policy, durable reservation and dispatch remain unimplemented. */
+/** C0 protocol seam. The caller owns runtime policy and durable budget/dispatch enforcement. */
 export async function invokeProviderProtocol(
   request: ProtocolRequest,
   budget: BudgetTurn,
