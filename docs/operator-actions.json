@@ -13,7 +13,7 @@
       "action": "新增预算迁移授权已收到并执行，Staging25→26、备份恢复和40项HTTP/账号/预算检查通过，精确清理后原数据摘要一致。继续分别验证direct-host/worker的真实运行路径，不重复索取已给授权。",
       "whyHuman": "本轮限定数据库操作已经完成；未来只有新增对象、权限或环境才需要具体新授权。direct-host失败和实际worker接入尚未验收。",
       "prerequisites": "Baseline PR merged; no other task blockers; follow this task execution row",
-      "expectedResult": "确认目标确为无真实用户的现有 Staging，记录24条迁移实际状态和差异，不重建历史。 真实 owner/other-user/anon 三类读取与写入验证；正常数据库、pooler、worker路径分别记录。 输出脱敏配置结果与可执行下一步；失败不伪装通过，不创建Production。",
+      "expectedResult": "确认目标确为无真实用户的现有 Staging，记录当前迁移实际状态和差异（最新只读核对为26，27/28待协调与新增明确授权），不重建历史。 真实 owner/other-user/anon 三类读取与写入验证；正常数据库、pooler、worker路径分别记录。 输出脱敏配置结果与可执行下一步；失败不伪装通过，不创建Production。",
       "verify": "artifacts/VPJ-02/staging-apply-20260910.md；普通JWT与维护Session pooler已实测，direct/worker不据此推断通过。",
       "dependencyEffect": "Unblocks only dependents of VPJ-02; does not globally stop unrelated ready work.",
       "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
