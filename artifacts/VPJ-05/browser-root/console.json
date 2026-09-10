@@ -1,0 +1,26 @@
+[
+  {
+    "level": "warn",
+    "message": "Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior=\"smooth\"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior",
+    "timestamp": "2026-09-10T00:46:04.453Z",
+    "url": "webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@16.2.6_@playwright+test@1.55.0_react-dom@19.2.6_react@19.2.6__react@19.2.6/node_modules/next/dist/next-devtools/shared/forward-logs-shared.js"
+  },
+  {
+    "level": "warn",
+    "message": "Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior=\"smooth\"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior",
+    "timestamp": "2026-09-10T00:57:50.647Z",
+    "url": "webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@16.2.6_@playwright+test@1.55.0_react-dom@19.2.6_react@19.2.6__react@19.2.6/node_modules/next/dist/next-devtools/shared/forward-logs-shared.js"
+  },
+  {
+    "level": "warn",
+    "message": "Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior=\"smooth\"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior",
+    "timestamp": "2026-09-10T01:14:41.124Z",
+    "url": "webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@16.2.6_@playwright+test@1.55.0_react-dom@19.2.6_react@19.2.6__react@19.2.6/node_modules/next/dist/next-devtools/shared/forward-logs-shared.js"
+  },
+  {
+    "level": "warn",
+    "message": "Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior=\"smooth\"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior",
+    "timestamp": "2026-09-10T01:33:45.727Z",
+    "url": "webpack-internal:///(app-pages-browser)/./node_modules/.pnpm/next@16.2.6_@playwright+test@1.55.0_react-dom@19.2.6_react@19.2.6__react@19.2.6/node_modules/next/dist/next-devtools/shared/forward-logs-shared.js"
+  }
+]
