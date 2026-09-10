@@ -4,7 +4,7 @@
   "lastUpdated": "2026-09-11",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
   "status": "PR301 is merged as28a2d44: local Web/iOS same-Trip consumers and the corrected full Simulator CI pipeline are delivered. PR302 retains the bounded iOS17 CJK diagnostic evidence without changing original failures. Remote/customer activation and complete product/Harness acceptance remain separate.",
-  "currentPhase": "VPJ-07 content-free durable worker preparation under independent review; continue policy/identity/provider integration without enabling a route or remote migration.",
+  "currentPhase": "VPJ-07 durable worker preparation verified locally; finish exact-HEAD PR gates, then implement durable text authorization and the actual Ask executor under existing environment gates.",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "JT owns product/commercial/provider/data/account/release decisions. Coding agents own each verified, bounded implementation contract.",
   "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree.",
@@ -92,7 +92,7 @@
     "Identity/provider preparation: PR279 native JWT seam and PR275 provider protocol adapters passed their scoped tests. Local mobile authority is now verified in the scoped v2 consumer; deployed identity, actual provider/worker consumers and related runtime acceptance remain separate.",
     "Harness evidence: #263 completed its offline scope under PR271; PR277 added offline pairing preparation. Actual provider pairing, human calibration and twelve required Staging cases remain under the open integration Issues.",
     "Brand asset evidence: PR274 integrated the supplied logo/wordmark on web and native surfaces. Current rights remain in docs/licenses/asset-rights-ledger.json; this does not establish Store or full accessibility acceptance.",
-    "VPJ-07 repository preparation: durable PostgreSQL lease/terminal foundation and full application migration-chain tests; see artifacts/VPJ-07/verification.md. No provider/input/native-answer acceptance; #195 remains open."
+    "VPJ-07 preparation: real PostgreSQL10/10 with29 application migrations and old-record preservation, browser9, signed native21/0fail/8explicit API-environment skips; see artifacts/VPJ-07/verification.md. No provider/input/native-answer acceptance; #195 remains open."
   ],
   "unrun": [
     "Production/customer and complete native/Harness acceptance remain unrun. Scoped Staging and actual C0 model protocol/worker behavior are verified; supplier billing, semantic quality and real user data consumers remain separate.",
