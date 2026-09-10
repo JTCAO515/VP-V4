@@ -1,7 +1,7 @@
 # VPJ-07 durable text backend v1
 
-Status: local backend preparation for #195. No active policy rows, recipient configuration,
-remote migration, scheduler, customer traffic or native answer consumer is installed by this change.
+Status: local backend and native consumer preparation for #195. No real policy rows, recipient
+configuration, remote migration, production scheduler or customer traffic are activated.
 The SQL/controlled HTTP tests prove execution of the backend, not real-user/provider acceptance.
 
 ## Authority and scope
@@ -95,6 +95,52 @@ remote Auth, an actual supplier, a deployed worker or native UI acceptance. #195
 
 Before remote activation, complete recipient/region/terms/notice qualification, configure trusted
 RPC/transport and reviewed budget pricing, apply migrations under scoped environment authorization,
-and verify actual clients including native final-answer reload. Rollback disables the consumer and
+and verify the deployed clients including native final-answer reload. Local native evidence does not establish remote acceptance. Rollback disables the consumer and
 policy, retaining content, receipts and applied migration history. Do not drop retained records or
 restore revoked/deleted visibility. An applied migration is never edited or removed.
+
+
+## Native text consumer v1 (local opt-in)
+
+The native `api/chat/native/v1` routes require `VISEPANDA_NATIVE_LOCAL_TEXT=true`, one explicit
+policy UUID and a loopback Supabase URL. Cookie/Origin ambiguity and query fields are rejected.
+The bearer credential is verified through the existing native session epoch authority; every
+sensitive SQL operation independently checks the live owner/session. Bodies are bounded to
+32KiB/5 seconds and closed request shapes; RPCs have a 10-second timeout. No service key enters
+the native app. The migration installs no policy, and flags do not grant third-party permission.
+
+`read_text_policy` exposes the current immutable bilingual notice and the caller's consent state.
+`submit_text_turn` atomically creates a standalone thread and performs existing text admission;
+rejection rolls back an otherwise orphaned thread. `list_text_turns` returns the owner's latest
+20 visible requests under the selected current policy and unwithdrawn consent. It includes the
+technical lifecycle separately from the five business outcomes. A changed deployment policy
+never inherits the previous recipient's permission. Existing withdrawal by policy UUID remains
+available while the local API is enabled, including for a previous selected policy.
+
+The local native Ask view displays the complete stored notice before an explicit unchecked
+agreement/accept action. It supports submit, same-request retry, cancel, withdrawal and history
+reload. The existing preview stays disabled unless the local Native API argument is supplied.
+Controls and outcome labels are translated in all five existing native locales; notices are the
+approved Chinese/English texts. The result is plain text; no new Trip write or action execution.
+
+Native requests share the existing credential/session fencing, with a separate fixed Ask path
+allowlist. Asynchronous store operations additionally bind an operation UUID and identity scope.
+Late responses cannot publish after account changes or operation invalidation. The View observes
+both active and retained identity and the end of session restoration: cold login/restore reloads
+without a manual button; permanent clear removes draft/pending state even if active scope was
+already nil. Temporary authentication loss hides reads and keeps only the same-owner unsent
+in-memory draft/request for recovery. No new on-device content file or outbox is created.
+
+During a running app session, an uncertain submit retains its original IDs/body for retry.
+After app restart, the consumer reloads server-accepted requests; it never automatically
+resubmits an unacknowledged prompt. Unsent drafts and local retry state do not survive process
+termination. Polling is bounded to 60 iterations and stops with view/task or identity changes;
+the manual Reload action remains available. This is not a streaming or background execution SLA.
+
+Local evidence uses a separate disposable Supabase instance with real GoTrue, native JWTs,
+PostgREST and all31 migrations, plus the existing worker and a controlled loopback HTTP model.
+The complete signed Simulator runner can receive a strict synthetic-only local text profile;
+it still executes both full test targets, never filters tests, and removes its owned Simulator
+and temporary xctestrun. Its default CI mode remains unchanged. See
+[native evidence](../../artifacts/VPJ-07/native-text-verification.md). Physical-device, remote,
+real-recipient and provider-semantic acceptance remain separate; #195 stays open.

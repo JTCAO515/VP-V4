@@ -72,12 +72,23 @@ final class NativeSession {
 
     /// The Trip consumer receives response bytes, never the Keychain credential.
     func tripRequest(path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
+        try await dataRequest(prefix: "api/trips/native/v2", path: path, method: method, body: body, queryItems: queryItems)
+    }
+
+    /// Local Ask shares identity fencing, never credentials, with the Trip consumer.
+    func askRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
+        let data = try await dataRequest(prefix: "api/chat/native/v1", path: path, method: method, body: body)
+        guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
+        return data
+    }
+
+    private func dataRequest(prefix: String, path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         guard enabled, !busy, let initial = dataScope else { throw NativeDataError.sessionUnavailable }
         if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 {
             await validate()
         }
         guard dataScope == initial, let credential, let endpoint else { throw NativeDataError.sessionUnavailable }
-        guard path == "api/trips/native/v2" || path.hasPrefix("api/trips/native/v2/"),
+        guard path == prefix || path.hasPrefix(prefix + "/"),
               !path.contains(".."), !path.contains("?"), !path.contains("#") else { throw NativeDataError.invalidResponse }
         guard var target = URLComponents(url: endpoint.appendingPathComponent(path), resolvingAgainstBaseURL: false) else { throw NativeDataError.invalidResponse }
         target.queryItems = queryItems.isEmpty ? nil : queryItems

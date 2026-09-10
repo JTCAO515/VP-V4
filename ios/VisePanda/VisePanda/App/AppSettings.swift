@@ -45,9 +45,10 @@ enum SupportedLocale: String, CaseIterable, Identifiable, Sendable {
 @Observable
 final class AppSettings {
     var selectedLocale: SupportedLocale
-    let nativeSession = NativeSession()
+    let nativeSession: NativeSession
 
-    init(selectedLocale: SupportedLocale? = nil) {
+    init(selectedLocale: SupportedLocale? = nil, nativeSession: NativeSession? = nil) {
+        self.nativeSession = nativeSession ?? NativeSession()
         self.selectedLocale = selectedLocale ?? SupportedLocale.launchLocale()
     }
 }

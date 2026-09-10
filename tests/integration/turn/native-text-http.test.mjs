@@ -1,0 +1,40 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {createNativeTextEnvironment} from './native-text-environment.mjs';
+import {waitUntil} from '../identity/database-barrier.mjs';
+
+test('real local Auth, native HTTP, consent, durable worker and recovery enforce owner/session boundaries',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
+ const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
+ const call=async(path,token,method='GET',body,headers={})=>{
+  const r=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body===undefined?{}:{'Content-Type':'application/json'}),...headers},...(body===undefined?{}:{body:JSON.stringify(body)})});return {status:r.status,body:await r.json()};
+ };
+ const login=async(user)=>{const attemptId=randomUUID();const c=await call('/api/auth/native/v2/credentials',null,'POST',{email:user.email,password:user.password,attemptId});assert.equal(c.status,200);assert.equal((await call('/api/auth/native/v2/login',c.body.accessToken,'POST',{attemptId})).status,200);return c.body.accessToken;};
+ const token=await login(e.users[0]),other=await login(e.users[1]),base='/api/chat/native/v1';
+ assert.equal((await call(base+'/policy')).status,401);
+ assert.equal((await call(base+'/policy',token,'GET',undefined,{Origin:e.api})).status,400);
+ assert.equal((await call(base+'/policy',token,'GET',undefined,{Cookie:'synthetic=only'})).status,400);
+ const policy=(await call(base+'/policy',token)).body.policy;assert.equal(policy.id,e.policyId);assert.equal(policy.consentState,'not_accepted');assert.ok(policy.noticeEn.includes('Local synthetic'));
+ const input={threadId:randomUUID(),turnId:randomUUID(),idempotencyKey:randomUUID(),policyId:e.policyId,locale:'en',text:'Synthetic local request'};
+ assert.equal((await call(base+'/turns',token,'POST',input)).status,403);
+ assert.equal(e.sql(`select count(*) from public.chat_threads where id='${input.threadId}';`),'0','denied submission leaves no orphan thread');
+ assert.equal((await call(base+'/consent',token,'POST',{policyId:e.policyId,noticeHash:'b'.repeat(64)})).status,403);
+ assert.equal((await call(base+'/consent',token,'POST',{policyId:e.policyId,noticeHash:e.noticeHash})).status,200);
+ const accepted=await Promise.all([call(base+'/turns',token,'POST',input),call(base+'/turns',token,'POST',input)]);assert.deepEqual(accepted.map(r=>r.status).sort(),[200,201]);
+ await waitUntil(async()=>{const r=await call(base+'/turns',token);return r.body.turns?.some(t=>t.turnId===input.turnId&&t.outcome==='answered');},30000,'actual worker final answer');
+ const final=(await call(base+'/turns',token)).body.turns[0];assert.equal(final.output,'Local synthetic answer: request completed.');assert.equal(e.counts.http,1);
+ assert.equal((await call(base+'/turns',other)).body.turns.length,0);
+ assert.equal((await call(base+'/turns',token,'POST',{...input,text:'Changed'})).status,409);
+ assert.equal((await call(base+'/turns',token,'POST',{...input,reasoning:'forbidden extra field'})).status,400);
+ const held={...input,threadId:randomUUID(),turnId:randomUUID(),idempotencyKey:randomUUID(),text:'Synthetic HOLD request'};
+ assert.equal((await call(base+'/turns',token,'POST',held)).status,201);
+ await waitUntil(()=>e.counts.http===2,10000,'held provider request');
+ assert.equal((await call(base+'/turns/'+held.turnId+'/cancel',token,'POST',{})).status,200);e.releaseModels();
+ await waitUntil(()=>e.sql(`select status from public.turns where id='${held.turnId}';`)==='cancelled',5000,'cancelled terminal');
+ assert.equal(e.sql(`select output_text is null from turn_private.text_content where turn_id='${held.turnId}';`),'t');
+ assert.equal((await call(base+'/consent',token,'DELETE',{policyId:e.policyId})).status,200);
+ assert.equal((await call(base+'/turns',token)).body.turns.length,0);
+ assert.equal((await call(base+'/policy',token)).body.policy.consentState,'withdrawn');
+ assert.equal((await call(base+'/consent',token,'POST',{policyId:e.policyId,noticeHash:e.noticeHash})).status,403);
+ await login(e.users[0]);assert.equal((await call(base+'/policy',token)).status,401,'replaced mobile token rejected');
+});
