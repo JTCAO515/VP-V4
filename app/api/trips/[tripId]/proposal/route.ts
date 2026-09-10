@@ -9,7 +9,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (!isUuid(tripId)) return NextResponse.json(failureResponse("INVALID_INPUT"), { status: 400 });
   const adapter = createUserDataAdapter(request);
   if (!adapter) return NextResponse.json(failureResponse("PROVIDER_UNAVAILABLE"), { status: 503 });
-  const result = await adapter.getPendingProposal(tripId);
+  const requestedId = request.nextUrl.searchParams.get("proposalId");
+  if (requestedId !== null && !isUuid(requestedId)) return NextResponse.json(failureResponse("INVALID_INPUT"), { status: 400 });
+  const result = requestedId ? await adapter.getPendingProposal(tripId, requestedId) : await adapter.getPendingProposal(tripId);
   if ("error" in result) {
     const failure = failureResponse(result.error);
     return adapter.applyCookies(NextResponse.json(failure, { status: failure.status }));

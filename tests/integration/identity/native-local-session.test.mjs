@@ -6,6 +6,7 @@ import { createWriteStream } from 'node:fs';
 import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { identityLocalEnv } from './local-supabase.mjs';
+import { confirmationDigest } from '../trip/confirmation-input.mjs';
 import { waitForNativeAPI } from './native-api-readiness.mjs';
 
 const enabled = process.env.VP_NATIVE_LOCAL_INTEGRATION === 'true';
@@ -84,7 +85,7 @@ test('real disposable Auth → HTTP → persistent mobile epoch → RLS and revo
   assert.equal(trip.error,null,'synthetic Trip');
   const proposal=await aClient.from('trip_proposals').insert({owner_id:user.data.user.id,trip_id:trip.data.id,revision:1,base_trip_version:0,status:'pending',patch:{title:'Local confirmed auth probe'},expires_at:'2099-01-01T00:00:00Z'}).select('id').single();
   assert.equal(proposal.error,null,'synthetic pending Proposal');
-  const confirmation={p_proposal_id:proposal.data.id,p_idempotency_key:randomUUID(),p_digest:'local-auth-revocation-probe'};
+  const confirmation={p_proposal_id:proposal.data.id,p_idempotency_key:randomUUID(),p_digest:await confirmationDigest(state,{apikey:key,Authorization:'Bearer '+a.body.accessToken},proposal.data.id,'local-auth-revocation-probe')};
   const confirmed=await aClient.rpc('confirm_and_apply_trip_proposal',confirmation);
   assert.equal(confirmed.error,null,'synthetic explicit confirmation');
   assert.equal((await aClient.rpc('confirm_and_apply_trip_proposal',confirmation)).data[0].outcome,'already_applied','exercise no-write confirmation replay');

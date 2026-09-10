@@ -1,0 +1,21 @@
+{
+  "projectId": "vp-trip-upgrade-20260910",
+  "workdir": "/Users/jtcao/Library/Caches/visepanda/trip-upgrade/instance-vlibl6j1",
+  "apiOrigin": "http://127.0.0.1:60021",
+  "migrationHash": "0818eb4fd8666f5385d5995a8a95d41d1fa5c82220b02fb92522056a2c88f587",
+  "beforeSnapshotHash": "98d85fe2f6efb68b11af78eae7f798ca973e25a0e9aacd7abdc144cf40c4efe3",
+  "migrationCount": 28,
+  "checks": [
+    "fresh27_to28_recorded",
+    "existing_trip_and_all_snapshots_preserved",
+    "legacy_receipt_unmodified_unbound",
+    "legacy_replay_refused_without_reapplication",
+    "new_confirmation_concurrent_retry_once",
+    "ordinary_receipt_forgery_denied",
+    "other_owner_remains_isolated",
+    "existing_mobile_authority_preserved"
+  ],
+  "exactCleanupVerified": true,
+  "providerCalls": 0,
+  "remoteOperations": false
+}

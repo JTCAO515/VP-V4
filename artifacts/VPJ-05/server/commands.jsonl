@@ -1,0 +1,12 @@
+{"command": "VP_IDENTITY_SUPABASE_WORKDIR=/Users/jtcao/Library/Caches/visepanda/native-local-session/replay-k_ck2iz0 VP_IDENTITY_SUPABASE_API_URL=http://127.0.0.1:59821 VP_LOCAL_SAME_TRIP=true node --test tests/integration/trip/native-same-trip.test.mjs", "result": "PASS: complete real local same-Trip API/RLS/confirmation chain; 1 test, 0 skip"}
+{"command": "node --experimental-strip-types --test tests/contract/trip/local-trip-protocol.test.mjs", "result": "PASS: legacy default protocol routing, draft base/CAS, snapshot coherence; 3 tests, 0 skip"}
+{"command": "VP_IDENTITY_SUPABASE_WORKDIR=/Users/jtcao/Library/Caches/visepanda/native-local-session/replay-k_ck2iz0 VP_IDENTITY_SUPABASE_API_URL=http://127.0.0.1:59821 VISEPANDA_TRIP_PROTOCOL_V2=true pnpm test:integration", "result": "INCOMPLETE: 29 pass, 0 fail, 12 skipped; separate budget environments plus opt-in identity/same-Trip"}
+{"command": "VP_IDENTITY_SUPABASE_WORKDIR=/Users/jtcao/Library/Caches/visepanda/native-local-session/replay-k_ck2iz0 VP_IDENTITY_SUPABASE_API_URL=http://127.0.0.1:59821 VISEPANDA_TRIP_PROTOCOL_V2=true pnpm test:security", "result": "PASS: 99 tests, 0 skip"}
+{"command": "pnpm lint", "result": "PASS"}
+{"command": "pnpm typecheck", "result": "PASS"}
+{"command": "pnpm test:e2e", "result": "PASS: 40 tests, 0 skip; repository E2E contract suite, browser evidence separately owned by root"}
+{"command": "pnpm --dir /tmp/vpj05-web-build build", "result": "PASS: matching current product sources, separate output directory so consumer service/data stay available"}
+{"command": "pnpm docs:check", "result": "PASS"}
+{"command": "git diff --check", "result": "PASS"}
+{"command": "pnpm test:unit", "result": "FAIL on unmodified H01 fixture midnight wall-clock dependency: 88 pass, 4 pairing failures; root owns separate maintenance"}
+{"command": "pnpm test:contract", "result": "FAIL on same unmodified fixture clock dependency: 197 pass, 1 pairing failure; not reported as feature regression or a pass"}

@@ -29,9 +29,17 @@ test("AI-13c lets only the owner reject one pending Proposal", async (t) => {
     const trip = JSON.parse((await request("/rest/v1/trips", { method: "POST", headers: headers(ownerToken), body: JSON.stringify([{ owner_id: owner.id, title: "Before" }]) })).body)[0];
     const proposal = JSON.parse((await request("/rest/v1/trip_proposals", { method: "POST", headers: headers(ownerToken), body: JSON.stringify([{ owner_id: owner.id, trip_id: trip.id, revision: 1, base_trip_version: 0, status: "pending", patch: { title: "Reject me" }, expires_at: "2099-01-01T00:00:00Z" }]) })).body)[0];
     const reject = (auth) => request(`/rest/v1/trip_proposals?id=eq.${proposal.id}&trip_id=eq.${trip.id}&status=eq.pending`, { method: "PATCH", headers: headers(auth), body: JSON.stringify({ status: "rejected" }) });
+    if (process.env.VISEPANDA_TRIP_PROTOCOL_V2 === "true") {
+      assert.notEqual((await reject(ownerToken)).response.status, 200, "ordinary lifecycle writes are closed");
+      const controlled = (auth) => request("/rest/v1/rpc/reject_trip_proposal_v2", { method: "POST", headers: headers(auth), body: JSON.stringify({ p_proposal_id: proposal.id }) });
+      assert.equal(JSON.parse((await controlled(otherToken)).body).message, "FORBIDDEN");
+      assert.deepEqual(JSON.parse((await controlled(ownerToken)).body), [{ proposal_id: proposal.id, status: "rejected" }]);
+      assert.deepEqual(JSON.parse((await controlled(ownerToken)).body), [{ proposal_id: proposal.id, status: "rejected" }]);
+    } else {
     assert.deepEqual(JSON.parse((await reject(otherToken)).body), []);
     assert.deepEqual(JSON.parse((await reject(ownerToken)).body), [{ ...proposal, status: "rejected" }]);
     assert.deepEqual(JSON.parse((await reject(ownerToken)).body), []);
+    }
     const pending = await request(`/rest/v1/trip_proposals?id=eq.${proposal.id}&status=eq.pending&select=id`, { headers: headers(ownerToken) });
     assert.deepEqual(JSON.parse(pending.body), []);
   } finally {

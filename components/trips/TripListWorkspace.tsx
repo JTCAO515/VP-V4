@@ -13,6 +13,7 @@ import {
   getLocaleAttributes,
   getLocaleSelectionOptions,
   tripCanvasCopy,
+  tripLocalEditorCopy,
   type Locale,
 } from "@/lib/i18n";
 import styles from "./TripListWorkspace.module.css";
@@ -138,20 +139,20 @@ export function TripListWorkspace() {
         {state === "ready" ? (
           <>
             <form className={styles.create} onSubmit={(event) => void createTrip(event)}>
-              <label htmlFor="trip-title">{copy.title}</label>
+              <label htmlFor="trip-title">{tripLocalEditorCopy[locale].tripTitle}</label>
               <input
                 id="trip-title"
                 value={title}
                 maxLength={160}
-                placeholder={copy.title}
+                placeholder={tripLocalEditorCopy[locale].tripTitle}
                 disabled={creating}
                 onChange={(event) => {
                   createId.current = null;
                   setTitle(event.target.value);
                 }}
               />
-              <button className={styles.primary} type="submit" disabled={creating} aria-label={copy.title}>
-                {creating ? copy.loading : "+"}
+              <button className={styles.primary} type="submit" disabled={creating} aria-label={tripLocalEditorCopy[locale].createTrip}>
+                {creating ? copy.loading : tripLocalEditorCopy[locale].createTrip}
               </button>
             </form>
             {trips.length === 0 ? (
