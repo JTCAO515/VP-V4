@@ -1,5 +1,7 @@
 # LAUNCH-05 Message, Assistant Output, and Retention Contract
 
+The opt-in successor for newly consented records is [VPJ-07 durable text backend v1](vpj-07.md). Its empty registry keeps this default closed; the original v1 contract and callers below are unchanged.
+
 ## Purpose and status
 
 This is a pure, versioned contract for handling a user message before durable content storage is authorized. It is not evidence that Chat, a model provider, message persistence, a deletion executor, or a retention policy is live.

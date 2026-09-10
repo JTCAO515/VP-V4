@@ -18,7 +18,7 @@ export type ProtocolRequest = Readonly<{
   provider: ProtocolProvider;
   dataClass: ModelDataClass;
   input: string;
-  task: ModelTask | "tool_candidate";
+  task: ModelTask | "tool_candidate" | "text_turn_v1";
   tool?: ProtocolTool;
   maxOutputTokens: number;
   timeoutMs: number;
@@ -53,16 +53,48 @@ export type ProtocolTransport = (request: Readonly<{
 type BudgetTurn = Extract<ReturnType<CostGuard["startTurn"]>, { kind: "turn" }>;
 const MAX_RESPONSE_BYTES = 262144;
 
-/** C0 protocol seam. The caller owns runtime policy and durable budget/dispatch enforcement. */
+/** C0 compatibility entry. No caller-supplied policy boolean can enable C2. */
 export async function invokeProviderProtocol(
-  request: ProtocolRequest,
-  budget: BudgetTurn,
-  transport: ProtocolTransport,
-  signal: AbortSignal,
+  request: ProtocolRequest, budget: BudgetTurn, transport: ProtocolTransport, signal: AbortSignal,
 ): Promise<ProtocolOutcome> {
   if (!validRequest(request)) return unavailable("INVALID_INPUT");
   if (signal.aborted) return cancelled();
   if (request.dataClass !== "c0_synthetic") return unavailable("DATA_POLICY_BLOCKED");
+  return invokeProtocol(request, budget, transport, signal);
+}
+
+/** Trusted service RPC transport; must impose a finite database timeout. */
+export type TextAuthorizationRpc = (name: "read_text_work" | "authorize_text_dispatch", params: Readonly<Record<string, string>>) => Promise<unknown>;
+/**
+ * The sole C2 exit owns both SQL checks and builds input from the durable row.
+ * Caller binds an approved deployment transport; it cannot provide prompt content
+ * or assert permission. No fallback inherits this recipient's grant.
+ */
+export async function invokeTextProviderProtocol(
+  lease: Readonly<{ turnId: string; leaseToken: string }>,
+  binding: Readonly<{ provider: ProtocolProvider; endpoint: string; maxOutputTokens: number; timeoutMs: number }>,
+  rpc: TextAuthorizationRpc, budget: BudgetTurn, transport: ProtocolTransport, signal: AbortSignal,
+): Promise<ProtocolOutcome> {
+  if (signal.aborted) return cancelled();
+  const keys = { p_turn_id: lease.turnId, p_lease_token: lease.leaseToken };
+  let raw: unknown;
+  try { raw = await rpc("read_text_work", keys); } catch { return unavailable("DATA_POLICY_BLOCKED"); }
+  if (!record(raw) || raw.kind !== "input" || raw.provider !== binding.provider || raw.endpoint !== binding.endpoint
+    || typeof raw.policyId !== "string" || typeof raw.text !== "string" || raw.text.length > 4000) return unavailable("DATA_POLICY_BLOCKED");
+  const policyId = raw.policyId;
+  return invokeProtocol({ requestId: lease.leaseToken, provider: binding.provider, dataClass: "c2_sensitive", input: raw.text, task: "text_turn_v1", maxOutputTokens: binding.maxOutputTokens, timeoutMs: binding.timeoutMs }, budget, transport, signal, async () => {
+    const decision = await rpc("authorize_text_dispatch", { ...keys, p_policy_id: policyId, p_provider: binding.provider });
+    return record(decision) && decision.kind === "authorized";
+  });
+}
+
+async function invokeProtocol(
+  request: ProtocolRequest, budget: BudgetTurn, transport: ProtocolTransport, signal: AbortSignal,
+  authorizeText?: () => Promise<boolean>,
+): Promise<ProtocolOutcome> {
+  if (!validRequest(request)) return unavailable("INVALID_INPUT");
+  if (signal.aborted) return cancelled();
+  if (request.dataClass !== "c0_synthetic" && (request.dataClass !== "c2_sensitive" || request.task !== "text_turn_v1" || !authorizeText)) return unavailable("DATA_POLICY_BLOCKED");
   let body: string;
   try { body = JSON.stringify(requestBody(request)); } catch { return unavailable("INVALID_INPUT"); }
   if (Buffer.byteLength(body) > MAX_RESPONSE_BYTES) return unavailable("INVALID_INPUT");
@@ -84,6 +116,9 @@ export async function invokeProviderProtocol(
     const attempt = async (): Promise<ProtocolOutcome> => {
       let response: Response;
       try {
+        // C2 requires a fresh durable, lease-bound authorization immediately before egress.
+        if (request.dataClass === "c2_sensitive" && !(await authorizeText!())) return unavailable("DATA_POLICY_BLOCKED");
+        if (controller.signal.aborted) return cancelled();
         response = await transport({ provider: request.provider, method: "POST", body, signal: controller.signal });
       } catch {
         return controller.signal.aborted
@@ -114,6 +149,7 @@ function requestBody(request: ProtocolRequest): Record<string, unknown> {
   return {
     model: PROTOCOL_MODELS[request.provider],
     messages: [
+      ...(request.task === "text_turn_v1" ? [{ role: "system", content: 'Return only JSON with exactly {"outcome":"answered|partial|clarification|blocked|technical_failure","text":"nonempty user-facing text"}. Select one outcome. Reply in the language of the user. State uncertainty; do not invent live facts, bookings, payments, evidence or completed actions. This text-only reply cannot modify a trip. Write natural English or Chinese, without hidden reasoning.' }] : []),
       ...(request.task === "strict_known_unknown" ? [{ role: "system", content: 'Return only JSON: {"kind":"known","value":"nonempty text"} or {"kind":"unknown","reason":"fixture_no_evidence"}. Do not add fields.' }] : []),
       { role: "user", content: request.input },
     ],
@@ -122,7 +158,7 @@ function requestBody(request: ProtocolRequest): Record<string, unknown> {
     // GLM-5.3-Flash rejects thinking: disabled (observed HTTP400/1210).
     // Preserve its native default; reasoning text still never leaves normalization.
     ...(request.provider === "qwen" ? { enable_thinking: false } : request.provider === "deepseek" ? { thinking: { type: "disabled" } } : {}),
-    ...(request.task === "strict_known_unknown" ? { response_format: { type: "json_object" } } : {}),
+    ...(["strict_known_unknown", "text_turn_v1"].includes(request.task) ? { response_format: { type: "json_object" } } : {}),
     ...(request.task === "tool_candidate" && request.tool ? {
       tools: [{ type: "function", function: { name: request.tool.name, parameters: request.tool.parameters } }],
       tool_choice: "auto",
@@ -208,7 +244,7 @@ async function readBoundedJson(response: Response, signal: AbortSignal): Promise
 
 function validRequest(value: ProtocolRequest): boolean {
   return record(value) && typeof value.requestId === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(value.requestId) && Object.hasOwn(PROTOCOL_MODELS, value.provider)
-    && ["ordinary_text", "strict_known_unknown", "tool_candidate"].includes(value.task)
+    && ["ordinary_text", "strict_known_unknown", "tool_candidate", "text_turn_v1"].includes(value.task)
     && typeof value.input === "string" && value.input.trim().length > 0 && value.input.length <= 32768
     && ["c0_synthetic", "c1_user", "c2_sensitive", "c3_restricted", "c4_secret"].includes(value.dataClass)
     && count(value.maxOutputTokens) && value.maxOutputTokens > 0 && value.maxOutputTokens <= 8192

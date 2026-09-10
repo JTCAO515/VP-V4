@@ -2,6 +2,14 @@ import { FAILURE_CODES, type FailureCode } from "./server/contracts/errors/index
 
 export type Locale = "zh" | "en" | "es" | "ru" | "ar";
 
+export const textTurnFailureCopy: Readonly<Record<Locale, Readonly<{ blocked: string; technical_failure: string }>>> = {
+  zh: { blocked: "这次请求暂时无法处理。你仍可手动编辑行程。", technical_failure: "这次回答未能完成，请稍后重试。" },
+  en: { blocked: "This request cannot be processed. You can still edit your trip manually.", technical_failure: "The answer could not be completed. Please try again later." },
+  es: { blocked: "No se puede procesar esta solicitud. Puedes seguir editando tu viaje manualmente.", technical_failure: "No se pudo completar la respuesta. Inténtalo de nuevo más tarde." },
+  ru: { blocked: "Этот запрос пока нельзя обработать. Вы можете продолжить редактировать поездку вручную.", technical_failure: "Не удалось завершить ответ. Повторите попытку позже." },
+  ar: { blocked: "يتعذر معالجة هذا الطلب. لا يزال بإمكانك تعديل رحلتك يدويًا.", technical_failure: "تعذر إكمال الإجابة. يرجى المحاولة مرة أخرى لاحقًا." },
+};
+
 export type LocaleAttributes = { lang: string; dir: "ltr" | "rtl" };
 
 type ExecutionCardClaimType = "address" | "time_window" | "money" | "payment_method" | "admission" | "transport_status" | "safe_phrase";
