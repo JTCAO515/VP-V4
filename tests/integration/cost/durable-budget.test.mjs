@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 import { runWithDurableBudget } from '../../../lib/server/model-gateway/budget/durable.ts';
+import { stopDurableBudget } from '../../../lib/server/model-gateway/budget/stop.ts';
 import { command, sql, rpc } from './fixtures/postgres-rpc.mjs';
 const enabled = process.env.VP_BUDGET_DB_TEST === '1';
 const container = 'vpj59-test-'+randomUUID().slice(0,8), image='public.ecr.aws/supabase/postgres:17.6.1.159';
@@ -30,6 +31,11 @@ before(async()=>{
   // Minimal Auth FK fixture only. These tests exercise PostgreSQL roles/locks, not GoTrue/JWT.
   await db('create role anon nologin; create role authenticated nologin; create role service_role nologin bypassrls; create schema auth; create table auth.users(id uuid primary key);');
   await db(readFileSync('supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql','utf8'));
+  const upgrade=await fixture();await reserve(upgrade);await dispatch(upgrade);await finish(upgrade,'pending');
+  const original=await state(upgrade);
+  await db('begin;'+readFileSync('supabase/migrations/20260910190526_vpj_59_stop_model_budget.sql','utf8')+'commit;');
+  assert.deepEqual(await state(upgrade),original,'append-only upgrade preserves unknown cost');
+  assert.equal(await db(`select enabled from public.model_budget_scopes where id='${upgrade.scopeId}';`),'t','migration must not change existing activation');
 });
 after(async()=>{if(created){assert.equal((await command('docker',['rm','-f',container])).code,0);assert.notEqual((await command('docker',['inspect',container])).code,0);}});
 run('two separate SQL clients reserve and dispatch one duplicate attempt only once',async()=>{
@@ -83,5 +89,58 @@ run('killed worker retains dispatched cost across a fresh worker process',async(
   await new Promise((resolve,reject)=>{let text='';const timer=setTimeout(()=>{child.kill('SIGKILL');reject(Error('worker did not dispatch'));},15000);child.stdout.on('data',b=>{text+=b;if(text.includes('DISPATCHED')){clearTimeout(timer);resolve();}});child.on('error',reject);child.on('exit',code=>{if(!text.includes('DISPATCHED')){clearTimeout(timer);reject(Error('worker exited before dispatch '+code));}});});
   const stopped=new Promise(resolve=>child.once('exit',resolve));child.kill('SIGKILL');await stopped;
   assert.equal((await state(a)).status,'dispatched');assert.equal((await reserve(a)).kind,'duplicate');assert.equal((await reserve({...a,attemptId:uuid()})).kind,'exhausted');
-  assert.equal((await finish(a,'pending')).kind,'pending');assert.equal((await finish(a,'settle',30)).kind,'settled');assert.equal((await reserve({...a,attemptId:uuid()})).kind,'reserved');
+  assert.deepEqual(await stopDurableBudget({scopeId:a.scopeId,ownerId:a.ownerId},call),{kind:'stopped',released:0,pending:1});assert.equal((await state(a)).reserved,100);assert.equal((await finish(a,'settle',30)).kind,'settled');assert.equal((await reserve({...a,attemptId:uuid()})).kind,'disabled');
+});
+run('atomic stop releases only unsent work and retains unknown charge across repeat stop',async()=>{
+  const a=await fixture(),b={...a,attemptId:uuid()},c={...a,attemptId:uuid()},d={...a,attemptId:uuid()};
+  for(const item of [a,b,c,d])await reserve(item);
+  await dispatch(b);await dispatch(c);await finish(c,'pending');await dispatch(d);await finish(d,'settle',20);
+  const beforeC=await state(c),beforeD=await state(d);
+  assert.deepEqual(await stopDurableBudget({scopeId:a.scopeId,ownerId:a.ownerId},call),{kind:'stopped',released:1,pending:1});
+  assert.deepEqual(await state(a),{status:'released',actual:null,reserved:100});
+  assert.deepEqual(await state(b),{status:'pending',actual:null,reserved:100});
+  assert.deepEqual(await state(c),beforeC);assert.deepEqual(await state(d),beforeD);
+  assert.deepEqual(await stopDurableBudget({scopeId:a.scopeId,ownerId:a.ownerId},call),{kind:'stopped',released:0,pending:0});
+  assert.equal((await reserve({...a,attemptId:uuid()})).kind,'disabled');
+  assert.equal((await finish(b,'release')).kind,'conflict');
+  // Authorized server re-enable is a separate action; unknown reservations still count.
+  await db(`update public.model_budget_scopes set enabled=true,concurrency_limit=2 where id='${a.scopeId}';`);
+  assert.equal((await reserve({...a,attemptId:uuid()})).kind,'exhausted');
+  assert.equal((await finish(b,'settle',30)).kind,'settled');
+  assert.equal((await reserve({...a,attemptId:uuid()})).kind,'reserved');
+});
+run('stop races dispatch and new reservation without releasing dispatched work',async()=>{
+  for(let i=0;i<5;i++){
+    const a=await fixture();await reserve(a);
+    const [sent,stopped]=await Promise.all([dispatch(a),stopDurableBudget({scopeId:a.scopeId,ownerId:a.ownerId},call)]);
+    assert.equal(stopped.kind,'stopped');
+    if(sent.kind==='dispatched'){
+      assert.equal(stopped.released,0);assert.equal(stopped.pending,1);assert.equal((await state(a)).status,'pending');
+    }else{
+      assert.equal(sent.kind,'duplicate');assert.equal(stopped.released,1);assert.equal(stopped.pending,0);assert.equal((await state(a)).status,'released');
+    }
+    assert.notEqual((await dispatch(a)).kind,'dispatched');
+    const b=await fixture();
+    const [admitted]=await Promise.all([reserve(b),stopDurableBudget({scopeId:b.scopeId,ownerId:b.ownerId},call)]);
+    assert.ok(['reserved','disabled'].includes(admitted.kind));
+    if(admitted.kind==='reserved')assert.equal((await state(b)).status,'released');
+    assert.notEqual((await dispatch(b)).kind,'dispatched');
+  }
+});
+run('stop cannot target another owner or run under ordinary roles; in-flight usage still settles',async()=>{
+  const a=await fixture();await reserve(a);await dispatch(a);
+  assert.deepEqual(await stopDurableBudget({scopeId:a.scopeId,ownerId:uuid()},call),{kind:'unavailable'});
+  assert.equal((await state(a)).status,'dispatched');
+  for(const role of ['anon','authenticated'])assert.notEqual((await sql(container,`set role ${role}; select public.stop_model_budget('${a.scopeId}','${a.ownerId}');`)).code,0);
+  await stopDurableBudget({scopeId:a.scopeId,ownerId:a.ownerId},call);
+  assert.deepEqual(await finish(a,'settle',120),{kind:'settled',overrun:true});
+  assert.equal((await reserve({...a,attemptId:uuid()})).kind,'disabled');
+  assert.equal(await db(`select frozen and not enabled from public.model_budget_scopes where id='${a.scopeId}';`),'t');
+});
+run('lost stop acknowledgment retries safely without clearing unknown holds',async()=>{
+  const a=await fixture();await reserve(a);await dispatch(a);
+  const uncertain=async(name,p)=>{await call(name,p);throw Error('lost acknowledgment');};
+  assert.deepEqual(await stopDurableBudget({scopeId:a.scopeId,ownerId:a.ownerId},uncertain),{kind:'unavailable'});
+  assert.deepEqual(await stopDurableBudget({scopeId:a.scopeId,ownerId:a.ownerId},call),{kind:'stopped',released:0,pending:0});
+  assert.deepEqual(await state(a),{status:'pending',actual:null,reserved:100});
 });

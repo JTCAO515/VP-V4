@@ -39,3 +39,7 @@ are pending. #194 remains OPEN: actual model price/usage, policy, Staging worker
 migration acceptance are not supplied by these local results.
 
 Reproduction: the standalone cost test needs only the pinned Docker image and VP_BUDGET_DB_TEST=1. The full Supabase test requires a fresh unlinked project_id=vpj59-full-local, API55441/DB55442, original25 migrations and GoTrue/PostgREST/Kong; set VP_BUDGET_SUPABASE_WORKDIR to that owned directory. It itself appends26 and cleans exact fixture IDs. Never point this fixture at an existing shared or remote project.
+
+2026-09-11 scoped stop increment: see [stop verification](stop-runtime-verification.md)
+and [commands](stop-runtime-commands.jsonl). Actual isolated budget SQL13 and full-migration
+Turn/text SQL22 pass with zero skips. This extends operator recovery without remote activation.
