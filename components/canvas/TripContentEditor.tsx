@@ -25,6 +25,11 @@ export function TripContentEditor({ data, pending, locale, onReload, onPending }
   const keys = useRef(new Map<string, string>());
   useEffect(() => { live.current = true; return () => { live.current = false; }; }, []);
   useEffect(() => { if (!dirty) { const next = snapshotOf(data); setBase(next); setDraft(next); } }, [data, dirty]);
+  const pendingIdentity = pending ? `${pending.proposal.id}:${pending.proposal.digest ?? ""}` : null;
+  const pendingStale = pending?.proposal.stale === true;
+  useEffect(() => {
+    if (pendingIdentity) setNotice(pendingStale ? copy.conflict : copy.pending);
+  }, [pendingIdentity, pendingStale, copy.conflict, copy.pending]);
   const stale = dirty && base.version !== data.trip.headVersion;
   function reset(next = data) { const value = snapshotOf(next); setBase(value); setDraft(value); setDirty(false); reviewedDraft.current = null; }
   function edit(value: TripSnapshot) { setDraft(value); setDirty(true); }
