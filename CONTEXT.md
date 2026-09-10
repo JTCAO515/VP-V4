@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PR301 is merged as28a2d44: local Web/iOS same-Trip consumers and the corrected full Simulator CI pipeline are delivered. PR302 retains the bounded iOS17 CJK diagnostic evidence without changing original failures. Remote/customer activation and complete product/Harness acceptance remain separate.
+状态：Parallel delivery: native local Ask PR309, policy qualification PR310, atomic budget stop PR311, CI throttling retry PR312 and content-free ops reconciliation PR313 are merged. Trusted provider HTTP transport is locally verified; real-recipient and remote activation remain separately gated.
 
-阶段：VPJ-07 local native text consumer verified through real local Auth/SQL and controlled HTTP, including Chinese/English send and relaunch. Finish exact-HEAD review/CI; remote and actual-recipient activation remain separate.
+阶段：Continue VP-Harness through parallel, non-overlapping Issue lanes. VPJ-06 trusted transport has bounded HTTP/destination receipts; finish its exact-HEAD PR gates, then advance available runtime and qualification work without treating prepared code as full acceptance.
 
 ## 读取顺序
 
@@ -59,6 +59,8 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - VPJ-07 preparation: real PostgreSQL10/10 with29 application migrations and old-record preservation, browser9, signed native21/0fail/8explicit API-environment skips; see artifacts/VPJ-07/verification.md. No provider/input/native-answer acceptance; #195 remains open.
 - VPJ-07 text backend:30 real SQL migrations,22/22 lease/text/controlled HTTP and deletion/withdrawal barriers pass; private C2 authority has no active policy rows. See artifacts/VPJ-07/text-backend-verification.md. No real user/provider or native answer acceptance; #195 remains open.
 - VPJ-07 native text:31 migrations and actual local GoTrue/HTTP/worker integration pass; complete signed Simulator27pass/0fail/8existing environment skips, including bilingual send/relaunch and logout-observer tests. SQL22pass; unit92/contract199/security101pass1skip/E2E40. See artifacts/VPJ-07/native-text-verification.md. No real model or remote acceptance; #195 remains open.
+- Parallel wave: PR310/e7920a5 exact128bfa2 review0/0 and Quality34518825630 passed; PR311/297eb23 exact174417f review0/0 and Quality34518934029+Budget34518934154 passed; PR312/5fd71c4 exacted8f29c review0/0 and Quality34519050541+Budget34519050594 passed. PR313/357551d exactdbacc74 review0/0 and Quality34520210651+Budget34520210648 passed, including5 actual PostgreSQL Ops checks with33 migrations. Expected merge trees and docs passed. #190/#194/#229 remain open for full runtime acceptance; no new recipient, remote migration or paid call was activated.
+- Native Ask delivery PR309/26669d9: exactd74bffb independent review0/0, Quality34516885791, Native34516885847, Budget34516885850 and Vercel passed; merge tree matched. Real local native27pass/0fail/8existing environment skips, Chinese/English send and relaunch plus hosted-View logout observation passed. The new disposable local instance was destroyed after zero users/budget scopes/visible bodies; original local instances preserved.
 
 ## 下一动作与回滚
 
