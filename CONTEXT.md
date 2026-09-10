@@ -8,7 +8,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 状态：PR301 is merged as28a2d44: local Web/iOS same-Trip consumers and the corrected full Simulator CI pipeline are delivered. PR302 retains the bounded iOS17 CJK diagnostic evidence without changing original failures. Remote/customer activation and complete product/Harness acceptance remain separate.
 
-阶段：VPJ-07 local durable text backend verified: consent/input → worker/budget/controlled HTTP → final answer/read. Finish exact-HEAD review and CI; real recipient, deployment and native answer acceptance remain gated.
+阶段：VPJ-07 local native text consumer verified through real local Auth/SQL and controlled HTTP, including Chinese/English send and relaunch. Finish exact-HEAD review/CI; remote and actual-recipient activation remain separate.
 
 ## 读取顺序
 
@@ -58,6 +58,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - Brand asset evidence: PR274 integrated the supplied logo/wordmark on web and native surfaces. Current rights remain in docs/licenses/asset-rights-ledger.json; this does not establish Store or full accessibility acceptance.
 - VPJ-07 preparation: real PostgreSQL10/10 with29 application migrations and old-record preservation, browser9, signed native21/0fail/8explicit API-environment skips; see artifacts/VPJ-07/verification.md. No provider/input/native-answer acceptance; #195 remains open.
 - VPJ-07 text backend:30 real SQL migrations,22/22 lease/text/controlled HTTP and deletion/withdrawal barriers pass; private C2 authority has no active policy rows. See artifacts/VPJ-07/text-backend-verification.md. No real user/provider or native answer acceptance; #195 remains open.
+- VPJ-07 native text:31 migrations and actual local GoTrue/HTTP/worker integration pass; complete signed Simulator27pass/0fail/8existing environment skips, including bilingual send/relaunch and logout-observer tests. SQL22pass; unit92/contract199/security101pass1skip/E2E40. See artifacts/VPJ-07/native-text-verification.md. No real model or remote acceptance; #195 remains open.
 
 ## 下一动作与回滚
 

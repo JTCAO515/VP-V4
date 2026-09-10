@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct AskView: View {
+    @Environment(AppSettings.self) private var settings
     @State private var draft = ""
     @FocusState private var isComposerFocused: Bool
 
@@ -11,6 +12,10 @@ struct AskView: View {
     ]
 
     var body: some View {
+        if settings.nativeSession.enabled { NativeAskView() } else { previewBody }
+    }
+
+    private var previewBody: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: VPSpacing.section) {
                 BrandHeader()
@@ -115,5 +120,5 @@ struct AskView: View {
 }
 
 #Preview {
-    NavigationStack { AskView() }
+    NavigationStack { AskView() }.environment(AppSettings())
 }

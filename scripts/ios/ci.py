@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import plistlib
+import re
 import shlex
 import subprocess
 import sys
@@ -21,7 +22,22 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--preflight", action="store_true", help="Inspect toolchain and devices only")
+    parser.add_argument("--local-text-environment", type=Path, help="Explicit synthetic loopback test profile; no credentials accepted")
     args = parser.parse_args()
+    text_environment = None
+    if args.local_text_environment:
+        text_environment = json.loads(args.local_text_environment.read_text())
+        expected = {"VP_NATIVE_TEXT_TEST", "VP_NATIVE_TEXT_API_URL", "VP_NATIVE_TEXT_CONTROL_URL",
+                    "VP_NATIVE_TEXT_EMAIL", "VP_NATIVE_TEXT_OTHER_EMAIL", "VP_NATIVE_TEXT_UI_EN_EMAIL", "VP_NATIVE_TEXT_UI_ZH_EMAIL"}
+        if not isinstance(text_environment, dict) or set(text_environment) != expected:
+            raise RuntimeError("Invalid local text test profile keys")
+        if text_environment["VP_NATIVE_TEXT_TEST"] != "1" or text_environment["VP_NATIVE_TEXT_API_URL"] != "http://127.0.0.1:59651":
+            raise RuntimeError("Only the explicit loopback text test is supported")
+        if not re.fullmatch(r"http://127\.0\.0\.1:[0-9]{4,5}/release", text_environment["VP_NATIVE_TEXT_CONTROL_URL"]):
+            raise RuntimeError("Invalid local text control URL")
+        if any(not isinstance(value, str) or not re.fullmatch(r"vpj07-[a-z-]+-[0-9a-f-]{36}@example\.test", value)
+               for key, value in text_environment.items() if key.endswith("EMAIL")):
+            raise RuntimeError("Only synthetic test email addresses are accepted")
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     if (output / "commands.jsonl").exists():
@@ -58,7 +74,8 @@ def main():
                 "xcode": version, "runtime": RUNTIME, "deviceName": DEVICE, "deviceUDID": udid,
                 "runnerImageVersion": os.environ.get("ImageVersion"), "preflightOnly": args.preflight,
                 "distributionSigned": False, "genericBuildSigning": "disabled",
-                "simulatorTestSigning": "ad-hoc", "simulatorTestSigningVerified": False}
+                "simulatorTestSigning": "ad-hoc", "simulatorTestSigningVerified": False,
+                "localTextIntegration": text_environment is not None}
     (output / "environment.json").write_text(json.dumps(metadata, indent=2) + "\n")
     if args.preflight:
         return
@@ -95,14 +112,33 @@ def main():
     uuid.UUID(udid)  # Validate without changing case: Xcode destination matching is case-sensitive.
     metadata.update(deviceUDID=udid, simulatorOwned=True, simulatorDeleted=False)
     (output / "environment.json").write_text(json.dumps(metadata, indent=2) + "\n")
+    patched_run = None
+    test_selection = common
     try:
+        if text_environment is not None:
+            candidates = list((derived / "Build/Products").glob("*.xctestrun"))
+            if len(candidates) != 1:
+                raise RuntimeError("Expected one fresh complete xctestrun")
+            with candidates[0].open("rb") as stream:
+                test_run = plistlib.load(stream)
+            for target in ("VisePandaTests", "VisePandaUITests"):
+                if not isinstance(test_run.get(target), dict):
+                    raise RuntimeError("Complete native test target missing")
+                test_run[target].setdefault("EnvironmentVariables", {}).update(text_environment)
+            patched_run = derived / "Build/Products/LocalText.xctestrun"
+            with patched_run.open("wb") as stream:
+                plistlib.dump(test_run, stream)
+            patched_run.chmod(0o600)
+            test_selection = ["-xctestrun", str(patched_run)]
         run(["xcrun", "simctl", "bootstatus", udid, "-b"], "simulator-boot")
-        run(["xcodebuild", "test-without-building", *common,
+        run(["xcodebuild", "test-without-building", *test_selection,
              "-destination", f"platform=iOS Simulator,id={udid}",
              "CODE_SIGNING_ALLOWED=YES", "CODE_SIGN_IDENTITY=-",
              "-parallel-testing-enabled", "NO",
              "-resultBundlePath", str(output / "tests.xcresult")], "tests")
     finally:
+        if patched_run is not None:
+            patched_run.unlink(missing_ok=True)
         # It may already be shut down; deletion remains strict and only targets ours.
         run(["xcrun", "simctl", "shutdown", udid], "simulator-shutdown", allow_failure=True)
         run(["xcrun", "simctl", "delete", udid], "simulator-delete")
