@@ -1,7 +1,7 @@
 /** Service-only transport; it must enforce a finite database request timeout. */
 export type TurnWorkRpc = (name: "enqueue_turn_work" | "claim_turn_work" | "finish_turn_work", params: Readonly<Record<string, string | number>>) => Promise<unknown>;
 export type DurableTurnLease = Readonly<{ turnId: string; ownerId: string; attempt: number; leaseToken: string; leaseMs: number }>;
-export type TurnWorkOutcome = "completed" | "provider_failure" | "validation_failure";
+export type TurnWorkOutcome = "completed" | "provider_failure" | "validation_failure" | "persisted";
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
@@ -38,6 +38,8 @@ export async function runDurableTurnWork(
       try { return await execute(lease, controller.signal); } catch { return null; }
     });
     const outcome = await Promise.race([work, interrupted]);
+    // A content executor can own its atomic answer + terminal transaction.
+    if (outcome === "persisted" && !controller.signal.aborted) return "finished";
     // Unknown execution/acknowledgement retains the lease until durable recovery.
     if (controller.signal.aborted || !["completed", "provider_failure", "validation_failure"].includes(outcome ?? "")) return "unavailable";
     const result = await rpc("finish_turn_work", { p_turn_id: lease.turnId, p_lease_token: lease.leaseToken, p_outcome: outcome! });

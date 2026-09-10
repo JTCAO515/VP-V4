@@ -8,7 +8,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 状态：PR301 is merged as28a2d44: local Web/iOS same-Trip consumers and the corrected full Simulator CI pipeline are delivered. PR302 retains the bounded iOS17 CJK diagnostic evidence without changing original failures. Remote/customer activation and complete product/Harness acceptance remain separate.
 
-阶段：VPJ-07 durable worker preparation verified locally; finish exact-HEAD PR gates, then implement durable text authorization and the actual Ask executor under existing environment gates.
+阶段：VPJ-07 local durable text backend verified: consent/input → worker/budget/controlled HTTP → final answer/read. Finish exact-HEAD review and CI; real recipient, deployment and native answer acceptance remain gated.
 
 ## 读取顺序
 
@@ -57,6 +57,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - Harness evidence: #263 completed its offline scope under PR271; PR277 added offline pairing preparation. Actual provider pairing, human calibration and twelve required Staging cases remain under the open integration Issues.
 - Brand asset evidence: PR274 integrated the supplied logo/wordmark on web and native surfaces. Current rights remain in docs/licenses/asset-rights-ledger.json; this does not establish Store or full accessibility acceptance.
 - VPJ-07 preparation: real PostgreSQL10/10 with29 application migrations and old-record preservation, browser9, signed native21/0fail/8explicit API-environment skips; see artifacts/VPJ-07/verification.md. No provider/input/native-answer acceptance; #195 remains open.
+- VPJ-07 text backend:30 real SQL migrations,22/22 lease/text/controlled HTTP and deletion/withdrawal barriers pass; private C2 authority has no active policy rows. See artifacts/VPJ-07/text-backend-verification.md. No real user/provider or native answer acceptance; #195 remains open.
 
 ## 下一动作与回滚
 

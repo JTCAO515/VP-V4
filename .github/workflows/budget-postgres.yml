@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - 'lib/server/model-gateway/budget/**'
+      - 'lib/server/model-gateway/adapters/**'
       - 'supabase/migrations/**'
       - 'tests/**/cost/**'
       - 'lib/server/turn/**'
@@ -32,4 +33,4 @@ jobs:
       - name: Run isolated PostgreSQL Turn lease and cancellation checks
         env:
           VP_TURN_DB_TEST: '1'
-        run: node --experimental-strip-types --test tests/integration/turn/durable-work.test.mjs
+        run: node --experimental-strip-types --test tests/integration/turn/durable-work.test.mjs tests/integration/turn/text-work.test.mjs

@@ -81,3 +81,13 @@ test("oversized, malformed and streaming bodies reject without returning raw pay
     assert.doesNotMatch(JSON.stringify(result), /synthetic-secret/);
   }
 });
+
+test("a caller boolean callback cannot open the C0 entry to C2", async () => {
+  let calls = 0;
+  const result = await Reflect.apply(invokeProviderProtocol, undefined, [
+    request("qwen", { dataClass: "c2_sensitive", task: "text_turn_v1" }), budget(),
+    async () => { calls++; return Response.json(completion("qwen")); }, signal(), async () => true,
+  ]);
+  assert.equal(result.kind === "unavailable" && result.code, "DATA_POLICY_BLOCKED");
+  assert.equal(calls, 0);
+});

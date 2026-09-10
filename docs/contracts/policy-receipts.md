@@ -2,6 +2,8 @@
 
 Status: fixture-only AI-22/#24 policy and licence boundary. This is an engineering control contract, not legal advice, a licence grant, a provider integration, a registry deployment, or evidence that any external data flow is enabled.
 
+The separate [VPJ-07 durable text backend](vpj-07.md) introduces a private, initially empty C2 text authority. It does not turn this fixture registry into a runtime grant.
+
 ## Decision input
 
 `createPolicyRegistry` accepts one complete fixture policy set and holds parsed records in a private in-memory registry view. Revocation lives in one module-wide in-process authority shared by every view. `evaluatePolicyDecision` receives only a trusted registry, the explicit clock, opaque request ID, registered policy ID, action, purpose, field, and region. A caller cannot supply or refresh a policy object during a decision. It rejects unknown keys, malformed values, duplicate or empty grants, invalid timestamps, and impossible policy ranges before it creates a receipt.
