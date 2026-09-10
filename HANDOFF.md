@@ -8,7 +8,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 状态：PR301 is merged as28a2d44: local Web/iOS same-Trip consumers and the corrected full Simulator CI pipeline are delivered. PR302 retains the bounded iOS17 CJK diagnostic evidence without changing original failures. Remote/customer activation and complete product/Harness acceptance remain separate.
 
-阶段：Resolve the remaining hard-lock behavior and C2 decisions, and establish the exact Staging deployment binding before a separately authorized27/28 rollout.
+阶段：Implement the clarified text/team policy through versioned authorization and lifecycle contracts; verify deployment bindings before a separately authorized Staging27/28 rollout.
 
 ## 读取顺序
 
@@ -37,7 +37,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - Production/customer and complete native/Harness acceptance remain unrun. Scoped Staging and actual C0 model protocol/worker behavior are verified; supplier billing, semantic quality and real user data consumers remain separate.
 - Physical VoiceOver, signed Store and selected-object Ask sheet acceptance under #198/#233/#242 remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.
 - VPJ-66 offline preparation is merged and accepted; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.
-- VPJ-05 hard-lock behavior is not yet frozen or implemented; external order status stays unknown. Native27/Trip28 have not been applied to Staging; local reciprocal consumers do not close#192 or grant real-user processing permission.
+- VPJ-05 hard-lock protection is explicitly deferred by JT on 2026-09-11; the compatible DTO and external order status remain unknown. Native27/Trip28 have not been applied to Staging; local reciprocal consumers do not close#192 or grant real-user processing permission.
 
 ## 验证
 
@@ -59,7 +59,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-#192本机消费者已合并，继续OPEN；先取得已提出的硬锁范围选择，再按同一Trip/Proposal/CAS扩展，不将unknown当保护能力。C2留存/删除/人工访问和真实用户预算继续按#190/#194/#195。已只读复核新加坡Staging仍26；27/28须协调调用端协议后另行授权。当前公开Preview登录bundle匹配该Staging，但Vercel管理接口403，服务端/Production绑定仍unknown；先恢复正确项目的只读访问，盘点共享调用端，再确定具体切换和维护方案。原生服务端/Swift仍loopback-only，数据库升级不等于远程原生就绪。保留C0预算hold及所有旧失败。
+JT已明确团队成员对全部功能/数据的跨用户CRUD长期权限、正文长期及删除后保留方向、模型字段不设额外限制、测试每日预算不限且不等待账单；见docs/policy/vpj-03-text-decisions.md的VPJ03-JT-20260911-v1。首版暂不做硬锁，不再索取硬锁选择或星号含义。下一步落实受控团队身份、服务端权限与审计、留存/删除真实语义和用户告知，并核实provider地区/接收方资格；决定不等于运行开启。Staging仍以已验26为基线，27/28须盘点兼容调用端及另行授权；Vercel管理访问和远端身份/worker仍待核实。保留unknown费用、确认/RLS/删除不变量及未验专项；#190/#191/#192和Harness父票继续开放。
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
