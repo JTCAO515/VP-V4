@@ -25,3 +25,8 @@ validation. A verified JWT-bound client is internal credential material, not ato
 
 Rollback: revert this isolated slice, preserving normal Web behavior and user data. No migration,
 live configuration, accepted architecture, account or provider permission changes need reversal.
+
+Native request-lifetime hardening has controlled SDK and actual isolated GoTrue/HTTP evidence;
+it does not provide new remote, physical-device, signed-store or push-binding acceptance.
+Natural expiry/Keychain tests from earlier work were not rerun for this server-only change.
+Default environment-dependent skips remain; see native-io/commands.jsonl.503 is not rollback proof.

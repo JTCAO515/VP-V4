@@ -23,6 +23,24 @@ All routes are under `/api/auth/native/v2`. JSON responses are `Cache-Control: n
 
 `credentials` performs a real password login and creates a private proof bound to that Auth session, account and attempt. Only the trusted server proof RPC has this authority; even a freshly signed-in Web JWT cannot manufacture a proof. Proofs expire after two minutes. A pending/expired proof already marks its session as native, so it cannot use the unregistered Web path. Swift saves the pending attempt and credentials in Keychain **before** committing login, allowing a lost login response to retry the same session/attempt.
 
+Each identity HTTP request has one10-second lifetime covering streamed input, Auth, claims/JWKS,
+proof/session RPCs and profile reads. The existing20,000 UTF-16 input limit remains, with a60,000
+UTF-8 byte ceiling checked before accumulating additional chunks. Configuration, local URL,
+method and Origin/Cookie guards remain ahead of input processing. A stalled reader or SDK callback
+cannot keep the handler waiting beyond cancellation/deadline; reader cancellation is not awaited.
+The same signal and redirect rejection bind every identity-request SDK fetch. A rejected transport
+closes the scope and prevents subsequent network work, even if the SDK continues internal callbacks.
+Other callers of the existing credential verifier keep their default transport behavior.
+
+Cancellation, deadline, network/redirect failure, upstream429/5xx, malformed Auth JSON or missing
+session returns the existing503 `UNAVAILABLE`, not a claim that the credentials are invalid.
+Only explicit Auth API rejection codes or SDK JWT rejection retain401; malformed caller JWT
+JSON is rejected before SDK parsing. Unknown/proxy errors never become credential denial.503 is unavailable
+or an unknown acknowledgement: a dispatched Auth mutation/proof/login/logout may already have
+committed. It proves neither rollback nor revocation. The server adds no automatic replacement
+attempt or RPC replay; the existing stored session/attempt retry and mobile-epoch checks remain
+authoritative. Existing Swift503 handling retains the pending Keychain credential for retry.
+
 First login for an attempt serializes on the account row, increments its persistent mobile epoch and revokes only the previous mobile Auth session. Repeating the same active session/attempt returns the same epoch. Reusing an attempt with another session conflicts; a superseded attempt/session cannot reclaim the account. Refresh never creates a proof or epoch. A replaced session cannot refresh through either the native API or direct Auth endpoint. A replaced logout cannot clear the new session. Web sessions coexist.
 
 ## Database enforcement

@@ -1,10 +1,9 @@
-import { nativeFetch } from "./native-fetch.ts";
+import { nativeRequestScope } from "./native-request.ts";
 import { createClient } from "@supabase/supabase-js";
-import { verifyNativeCredentials } from "./native-credentials.ts";
+import { verifyNativeCredentials, nativeAuthRejected } from "./native-credentials.ts";
 import { isUuid } from "./request-guards.ts";
 
 type Config = Readonly<{ url: string; publishableKey: string; serviceRoleKey?: string }>;
-const options = { global: { fetch: nativeFetch }, auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } };
 const json = (data: unknown, status = 200) => Response.json(data, { status, headers: { "Cache-Control": "no-store" } });
 const failure = (code: string, status = 401) => json({ error: { code } }, status);
 const rpcFailure = (message: string) => {
@@ -24,9 +23,12 @@ export async function nativeIdentityHTTP(request: Request, action: string, confi
   } catch { return failure("UNAVAILABLE", 503); }
   if (request.headers.has("cookie") || request.headers.has("origin")) return failure("AMBIGUOUS_CREDENTIALS", 400);
   if (request.method !== (["session", "profile"].includes(action) ? "GET" : "POST")) return failure("METHOD_NOT_ALLOWED", 405);
+  const scope = nativeRequestScope(request.signal);
+  const options = { global: { fetch: scope.fetch }, auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } };
   try {
-    const raw = request.method === "GET" ? "{}" : await request.text();
-    if (raw.length > 20000) return failure("INVALID_INPUT", 400);
+    scope.check();
+    const raw = request.method === "GET" ? "{}" : await scope.body(request);
+    if (raw === null || raw.length > 20000) return failure("INVALID_INPUT", 400);
     let input: unknown;
     try { input = JSON.parse(raw); } catch { return failure("INVALID_INPUT", 400); }
     if (!input || typeof input !== "object" || Array.isArray(input)) return failure("INVALID_INPUT", 400);
@@ -37,37 +39,42 @@ export async function nativeIdentityHTTP(request: Request, action: string, confi
           typeof body.attemptId !== "string" || !isUuid(body.attemptId)) return failure("INVALID_INPUT", 400);
       if (!config.serviceRoleKey) return failure("UNAVAILABLE", 503);
       const auth = createClient(config.url, config.publishableKey, options);
-      const { data, error } = await auth.auth.signInWithPassword({ email: body.email, password: body.password });
-      if (error || !data.session) return failure("UNAUTHENTICATED");
-      const verified = await verifyNativeCredentials(tokenRequest(data.session.access_token), config);
+      const email = body.email, password = body.password;
+      const { data, error } = await scope.run(() => auth.auth.signInWithPassword({ email, password }));
+      if (error || !data.session) return nativeAuthRejected(error) ? failure("UNAUTHENTICATED") : failure("UNAVAILABLE", 503);
+      const token = data.session.access_token;
+      const verified = await scope.run(() => verifyNativeCredentials(tokenRequest(token), config, scope.fetch, scope.unavailable));
       if (!verified) return failure("UNAUTHENTICATED");
       const provisioner = createClient(config.url, config.serviceRoleKey, options);
-      const proof = await provisioner.rpc("native_prepare_v2", { p_owner: verified.subject, p_session: verified.sessionId, p_attempt: body.attemptId });
+      const proof = await scope.run(() => provisioner.rpc("native_prepare_v2", { p_owner: verified.subject, p_session: verified.sessionId, p_attempt: body.attemptId }).abortSignal(scope.signal));
       if (proof.error) return failure("UNAVAILABLE", 503);
       return json({ version: 2, subject: verified.subject, accessToken: data.session.access_token, refreshToken: data.session.refresh_token, expiresAt: data.session.expires_at });
     }
     if (action === "refresh") {
       if (request.headers.has("authorization") || Object.keys(body).join() !== "refreshToken" || typeof body.refreshToken !== "string" || !body.refreshToken || body.refreshToken.length > 16384) return failure("INVALID_INPUT", 400);
       const auth = createClient(config.url, config.publishableKey, options);
-      const { data, error } = await auth.auth.refreshSession({ refresh_token: body.refreshToken });
-      if (error || !data.session) return failure("UNAUTHENTICATED");
-      const verified = await verifyNativeCredentials(tokenRequest(data.session.access_token), config);
+      const refreshToken = body.refreshToken;
+      const { data, error } = await scope.run(() => auth.auth.refreshSession({ refresh_token: refreshToken }));
+      if (error || !data.session) return nativeAuthRejected(error) ? failure("UNAUTHENTICATED") : failure("UNAVAILABLE", 503);
+      const token = data.session.access_token;
+      const verified = await scope.run(() => verifyNativeCredentials(tokenRequest(token), config, scope.fetch, scope.unavailable));
       if (!verified) return failure("UNAUTHENTICATED");
-      const state = await verified.client.rpc("native_session_v2", { p_action: "session" });
+      const state = await scope.run(() => verified.client.rpc("native_session_v2", { p_action: "session" }).abortSignal(scope.signal));
       if (state.error) return rpcFailure(state.error.message);
       return json({ ...state.data, accessToken: data.session.access_token, refreshToken: data.session.refresh_token, expiresAt: data.session.expires_at });
     }
     if (!["login", "session", "logout", "profile"].includes(action)) return failure("INVALID_INPUT", 400);
     if (action === "login" ? (Object.keys(body).join() !== "attemptId" || typeof body.attemptId !== "string" || !isUuid(body.attemptId)) : Object.keys(body).length !== 0) return failure("INVALID_INPUT", 400);
-    const verified = await verifyNativeCredentials(request, config);
+    const verified = await scope.run(() => verifyNativeCredentials(request, config, scope.fetch, scope.unavailable));
     if (!verified) return failure("UNAUTHENTICATED");
-    const state = await verified.client.rpc("native_session_v2", { p_action: action === "profile" ? "session" : action, ...(action === "login" ? { p_attempt: body.attemptId } : {}) });
+    const state = await scope.run(() => verified.client.rpc("native_session_v2", { p_action: action === "profile" ? "session" : action, ...(action === "login" ? { p_attempt: body.attemptId } : {}) }).abortSignal(scope.signal));
     if (state.error) return rpcFailure(state.error.message);
     if (action === "profile") {
-      const result = await verified.client.from("user_profiles").select("owner_id,display_name").eq("owner_id", verified.subject).maybeSingle();
+      const result = await scope.run(() => verified.client.from("user_profiles").select("owner_id,display_name").eq("owner_id", verified.subject).abortSignal(scope.signal).maybeSingle());
       if (result.error) return failure("UNAVAILABLE", 503);
       return json({ version: 2, subject: verified.subject, displayName: result.data?.display_name ?? null });
     }
     return json(state.data);
   } catch { return failure("UNAVAILABLE", 503); }
+  finally { scope.dispose(); }
 }

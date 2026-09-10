@@ -42,3 +42,10 @@ return UNAUTHENTICATED without dispatch. No true mobile-session or write-authori
 
 See [module scope](../../docs/benchmarks/vpj-04/native-identity-preparation.md) and
 [unrun.md](unrun.md). #191 stays OPEN; exact-HEAD independent review and required CI pending.
+
+## Native identity I/O increment
+
+See [request-lifetime evidence](native-io/verification.md). The local handler now bounds streamed
+input and all credential/claim/RPC work, preserves503 unknown outcomes, and distinguishes upstream
+failure from explicit401 credential denial. Exact login session/attempt retry and local-only
+activation remain. No Swift, remote profile, shared/remote schema or user policy was changed.

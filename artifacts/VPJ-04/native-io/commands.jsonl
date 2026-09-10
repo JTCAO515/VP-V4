@@ -1,0 +1,15 @@
+{"command": "node --experimental-strip-types --test tests/contract/identity/native-request-io.test.mjs (before fix)", "result": "EXPECTED_FAIL", "evidence": "Original unfinished-body cancellation regression0pass/1fail; red.log retained with whitespace-only normalization."}
+{"command": "temporary local Native runner without explicit Trip v2", "result": "FAIL", "evidence": "Correct CONFIRMATION_DIGEST_MISMATCH on DB28+; corrected only the test runner protocol selection."}
+{"command": "node tests/integration/identity/run-native-io.mjs", "result": "PASS", "evidence": "New owned GoTrue/Next/PostgREST identity aggregate1pass/0skip; explicitv2, current migrations, exact synthetic cleanup and owned stack stop. live.log."}
+{"command": "node --experimental-strip-types --test tests/contract/identity/native-request-io.test.mjs", "result": "PASS", "evidence": "Final10 cases, zero skips; includes HTTP429/500/503 and malformed/missing Auth protocol vs explicit denial; late callbacks and original attempt replay."}
+{"command": "independent runtime review of1026b790", "result": "FAIL", "evidence": "Important: upstream HTTP/protocol failures became401. Full correction and additional regressions followed; initial8 passes did not cover this."}
+{"command": "pnpm test:contract", "result": "PASS", "evidence": "Post-correction232passed, zero skips."}
+{"command": "pnpm test:security", "result": "INCOMPLETE", "evidence": "Post-correction101pass/0fail/1 existing disposable Auth/RLS opt-in skip. Real loopback307/308 zero-second-hop checks passed."}
+{"command": "pnpm test:integration", "result": "INCOMPLETE", "evidence": "23pass/57 environment opt-in skips; explicit local Native identity aggregate ran separately without skips."}
+{"command": "pnpm test:e2e", "result": "PASS", "evidence": "40passed, zero skips; source E2E, not physical device proof."}
+{"command": "pnpm db:verify", "result": "INCOMPLETE", "evidence": "Baseline present; ordinary/ops/worker connection targets not configured; no production probe."}
+{"command": "node --check tests/integration/identity/run-native-io.mjs", "result": "PASS", "evidence": "Reproducer syntax passed; only an explicitly owned local context/stack is used."}
+{"command": "pnpm check", "result": "PASS", "evidence": "Post-review correction lint/typecheck/build and22 static/copy checks."}
+{"command": "pnpm test:unit", "result": "PASS", "evidence": "Post-review92pass/0skip."}
+{"command": "pnpm docs:check", "result": "PASS", "evidence": "Program/contracts/archive hashes passed."}
+{"command": "git diff --check c59fdb92f4b05d51e0f84e3571ff04414711f641", "result": "PASS", "evidence": "Full base-relative staged/working tree, including all new evidence after git add; original red log trailing whitespace normalized explicitly."}

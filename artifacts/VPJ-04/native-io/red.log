@@ -1,0 +1,30 @@
+✖ native request cancellation stops an unfinished body without clearing the session (116.119458ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 247.587042
+
+✖ failing tests:
+
+test at tests/contract/identity/native-request-io.test.mjs:6:1
+✖ native request cancellation stops an unfinished body without clearing the session (116.119458ms)
+  AssertionError [ERR_ASSERTION]: cancellation is unavailable/unknown, not an auth denial or an unbounded wait
+  + actual - expected
+
+  + 'still-pending'
+  - 503
+
+      at TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-Native-Identity-IO/tests/contract/identity/native-request-io.test.mjs:18:9)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'still-pending',
+    expected: 503,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
