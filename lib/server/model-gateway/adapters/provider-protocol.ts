@@ -46,6 +46,8 @@ export type ProtocolOutcome =
 /** Deliberately no default fetch, endpoint, credential loading or production route. */
 export type ProtocolTransport = (request: Readonly<{
   provider: ProtocolProvider;
+  /** C2 supplies the exact durable policy endpoint; a bound HTTP transport must match it. */
+  endpoint?: string;
   method: "POST";
   body: string;
   signal: AbortSignal;
@@ -85,12 +87,13 @@ export async function invokeTextProviderProtocol(
   return invokeProtocol({ requestId: lease.leaseToken, provider: binding.provider, dataClass: "c2_sensitive", input: raw.text, task: "text_turn_v1", maxOutputTokens: binding.maxOutputTokens, timeoutMs: binding.timeoutMs }, budget, transport, signal, async () => {
     const decision = await rpc("authorize_text_dispatch", { ...keys, p_policy_id: policyId, p_provider: binding.provider });
     return record(decision) && decision.kind === "authorized";
-  });
+  }, binding.endpoint);
 }
 
 async function invokeProtocol(
   request: ProtocolRequest, budget: BudgetTurn, transport: ProtocolTransport, signal: AbortSignal,
   authorizeText?: () => Promise<boolean>,
+  endpoint?: string,
 ): Promise<ProtocolOutcome> {
   if (!validRequest(request)) return unavailable("INVALID_INPUT");
   if (signal.aborted) return cancelled();
@@ -119,7 +122,7 @@ async function invokeProtocol(
         // C2 requires a fresh durable, lease-bound authorization immediately before egress.
         if (request.dataClass === "c2_sensitive" && !(await authorizeText!())) return unavailable("DATA_POLICY_BLOCKED");
         if (controller.signal.aborted) return cancelled();
-        response = await transport({ provider: request.provider, method: "POST", body, signal: controller.signal });
+        response = await transport({ provider: request.provider, ...(endpoint === undefined ? {} : { endpoint }), method: "POST", body, signal: controller.signal });
       } catch {
         return controller.signal.aborted
           ? timedOut ? unavailable("TIMEOUT_BEFORE_OUTPUT") : cancelled()
