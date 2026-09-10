@@ -6,6 +6,8 @@ on:
       - 'lib/server/model-gateway/budget/**'
       - 'supabase/migrations/**'
       - 'tests/**/cost/**'
+      - 'lib/server/turn/**'
+      - 'tests/**/turn/**'
       - '.github/workflows/budget-postgres.yml'
   workflow_dispatch:
 
@@ -27,3 +29,7 @@ jobs:
         env:
           VP_BUDGET_DB_TEST: '1'
         run: node --experimental-strip-types --test tests/integration/cost/durable-budget.test.mjs
+      - name: Run isolated PostgreSQL Turn lease and cancellation checks
+        env:
+          VP_TURN_DB_TEST: '1'
+        run: node --experimental-strip-types --test tests/integration/turn/durable-work.test.mjs

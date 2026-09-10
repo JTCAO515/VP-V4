@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "scope": "local full native scheme with unchanged ios tree; not live API acceptance",
+  "result": "Passed",
+  "total": 29,
+  "passed": 21,
+  "failed": 0,
+  "skipped": 8,
+  "skips": "explicit identity/Trip/redirect API environments not configured",
+  "startTime": 1789059051.367,
+  "finishTime": 1789059493.068,
+  "environment": {
+    "commit": "64d833296f64d1aa3991657cbda71d1b533cdeb6",
+    "xcode": "Xcode 26.6\nBuild version 17F113",
+    "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+    "deviceName": "iPhone 17 Pro",
+    "deviceUDID": "978C4967-745F-4795-9548-FA3305D3BAE8",
+    "runnerImageVersion": null,
+    "preflightOnly": false,
+    "distributionSigned": false,
+    "genericBuildSigning": "disabled",
+    "simulatorTestSigning": "ad-hoc",
+    "simulatorTestSigningVerified": true,
+    "simulatorOwned": true,
+    "simulatorDeleted": true
+  },
+  "iosTree": "4fdab2cf23f633e53d40f494347f5353f8deccf3",
+  "sameIosTreeAt": "f0d5bbbaab86ce3187386638957dd1bce29283e1"
+}
