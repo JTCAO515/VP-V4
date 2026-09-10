@@ -1,0 +1,19 @@
+Test Case '-[VisePandaTests.NativeTripStateTests testAccountChangeRejectsAnAlreadyInFlightTripReply]' started.
+[SIGNING-DIAG] status=retry failureCode=keychain:-34018 scope=nil keychainReadStatus=-34018
+/Users/jtcao/Library/Caches/visepanda/pr301-signing/source/ios/VisePanda/VisePandaTests/NativeTripStateTests.swift:103: error: -[VisePandaTests.NativeTripStateTests testAccountChangeRejectsAnAlreadyInFlightTripReply] : XCTUnwrap failed: expected non-nil value of type "NativeDataScope"
+Test Case '-[VisePandaTests.NativeTripStateTests testAccountChangeRejectsAnAlreadyInFlightTripReply]' failed (0.600 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testDraftOnlyChangesRequestedFieldsAndKeepsConfirmedContent]' started.
+Test Case '-[VisePandaTests.NativeTripStateTests testDraftOnlyChangesRequestedFieldsAndKeepsConfirmedContent]' passed (0.012 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testLateRefreshCannotReviveSessionAfterTripDenial]' started.
+[SIGNING-DIAG] status=retry failureCode=keychain:-34018 scope=nil keychainReadStatus=-34018
+/Users/jtcao/Library/Caches/visepanda/pr301-signing/source/ios/VisePanda/VisePandaTests/NativeTripStateTests.swift:18: error: -[VisePandaTests.NativeTripStateTests testLateRefreshCannotReviveSessionAfterTripDenial] : XCTAssertNotNil failed
+/Users/jtcao/Library/Caches/visepanda/pr301-signing/source/ios/VisePanda/VisePandaTests/NativeTripStateTests.swift:23: error: -[VisePandaTests.NativeTripStateTests testLateRefreshCannotReviveSessionAfterTripDenial] : failed - Trip did not reach transport
+Test Case '-[VisePandaTests.NativeTripStateTests testLateRefreshCannotReviveSessionAfterTripDenial]' failed (1.176 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testTemporaryAuthenticationFailureKeepsDraftHiddenAndLogoutClearsIt]' started.
+[SIGNING-DIAG] status=retry failureCode=keychain:-34018 scope=nil keychainReadStatus=-34018
+/Users/jtcao/Library/Caches/visepanda/pr301-signing/source/ios/VisePanda/VisePandaTests/NativeTripStateTests.swift:51: error: -[VisePandaTests.NativeTripStateTests testTemporaryAuthenticationFailureKeepsDraftHiddenAndLogoutClearsIt] : XCTUnwrap failed: expected non-nil value of type "NativeDataScope"
+Test Case '-[VisePandaTests.NativeTripStateTests testTemporaryAuthenticationFailureKeepsDraftHiddenAndLogoutClearsIt]' failed (0.011 seconds).
+	 Executed 4 tests, with 4 failures (0 unexpected) in 1.799 (1.803) seconds
+	 Executed 4 tests, with 4 failures (0 unexpected) in 1.799 (1.814) seconds
+	 Executed 4 tests, with 4 failures (0 unexpected) in 1.799 (1.816) seconds
+** TEST FAILED **

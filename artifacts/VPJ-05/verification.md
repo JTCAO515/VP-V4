@@ -33,3 +33,5 @@ Earlier Swift creation-UUID, departing-view Binding crash and stale-session resu
 Independent code review of application HEAD `7e63fe2b4e41d925f65bab76991057885663e0a2` found Critical0 / Important0 after the fixes. Final test/evidence delivery and exact PR HEAD/CI review are recorded in the PR; no unrun CI outcome is asserted here.
 
 See [unrun.md](unrun.md) for full product, remote and policy boundaries. Current synthetic services/fixtures remain local; no provider budget hold was reset and no provider invocation was added.
+
+The first PR301 Native CI failed. A controlled same-source comparison identified the signing-disabled Keychain precondition; the CI test host now uses verified local ad-hoc signing, with application logic and all assertions unchanged. See [ci-signing/verification.md](ci-signing/verification.md) for the original failures,4/4 local state result and separate UI observations. Corrected remote CI status remains authoritative in the PR.

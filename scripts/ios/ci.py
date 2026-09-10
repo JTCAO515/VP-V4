@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unsigned native CI; fail closed when the pinned toolchain/runtime is unavailable."""
+"""Native CI: unsigned build, ad-hoc Simulator tests, no distribution credentials."""
 import argparse
 import datetime
 import json
@@ -56,23 +56,34 @@ def main():
     metadata = {"commit": run(["git", "rev-parse", "HEAD"], "commit").strip(),
                 "xcode": version, "runtime": RUNTIME, "deviceName": DEVICE, "deviceUDID": udid,
                 "runnerImageVersion": os.environ.get("ImageVersion"), "preflightOnly": args.preflight,
-                "signed": False}
+                "distributionSigned": False, "genericBuildSigning": "disabled",
+                "simulatorTestSigning": "ad-hoc", "simulatorTestSigningVerified": False}
     (output / "environment.json").write_text(json.dumps(metadata, indent=2) + "\n")
     if args.preflight:
         return
     # DerivedData stays outside the uploaded evidence; never upload an app or signing store.
     derived = output.parent / (output.name + "-derived")
-    common = ["-project", PROJECT, "-scheme", "VisePanda", "-derivedDataPath", str(derived),
-              "CODE_SIGNING_ALLOWED=NO"]
+    common = ["-project", PROJECT, "-scheme", "VisePanda", "-derivedDataPath", str(derived)]
     run(["xcodebuild", "build", *common, "-destination", "generic/platform=iOS Simulator",
-         "-resultBundlePath", str(output / "build.xcresult")], "build")
+         "CODE_SIGNING_ALLOWED=NO", "-resultBundlePath", str(output / "build.xcresult")], "build")
     info_path = derived / "Build/Products/Debug-iphonesimulator/VisePanda.app/Info.plist"
     with info_path.open("rb") as stream:
         info = plistlib.load(stream)
     (output / "bundle-version.json").write_text(json.dumps({key: info[key] for key in
         ["CFBundleIdentifier", "CFBundleShortVersionString", "CFBundleVersion"]}, indent=2) + "\n")
     run(["xcodebuild", "test", *common, "-destination", f"platform=iOS Simulator,id={udid}",
+         "CODE_SIGNING_ALLOWED=YES", "CODE_SIGN_IDENTITY=-",
          "-parallel-testing-enabled", "NO", "-resultBundlePath", str(output / "tests.xcresult")], "tests")
+    # A local ad-hoc signature lets the test host exercise the real Keychain. It is
+    # not an Apple Development/Distribution identity and uses no provisioning profile.
+    app_path = info_path.parent
+    signature = run(["codesign", "-d", "--verbose=2", str(app_path)], "test-signature")
+    if ("Signature=adhoc" not in signature or "linker-signed" in signature
+            or "Identifier=" + info["CFBundleIdentifier"] not in signature.splitlines()):
+        raise RuntimeError("Simulator tests require a complete ad-hoc app signature, not linker-only or Apple signing")
+    run(["codesign", "--verify", "--strict", str(app_path)], "test-signature-verification")
+    metadata["simulatorTestSigningVerified"] = True
+    (output / "environment.json").write_text(json.dumps(metadata, indent=2) + "\n")
 
 
 if __name__ == "__main__":
