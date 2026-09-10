@@ -3,12 +3,12 @@
   "projectId": "visepanda-vp-v4",
   "lastUpdated": "2026-09-11",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
-  "status": "Parallel delivery: PR309–314 runtime, policy, budget, Ops reconciliation and trusted transport increments are merged. PR315 fixes usage settlement eligibility; PR316 freezes Staging26→33 preparation. PR317 local candidate review is under revision and independent review; remote activation remains gated.",
-  "currentPhase": "Finish the bounded local Ops candidate workflow and exact-HEAD verification, then advance available identity and knowledge prerequisites. Prepare the shared-database maintenance plan before seeking the scoped Staging27–33 authorization; no remote activation follows from local evidence.",
+  "status": "Parallel delivery: PR309–317 runtime, identity, policy, budget and protected local Ops increments are merged. PR318 records shared-Staging maintenance preparation. The #205 private source/assertion producer is locally verified and awaiting independent PR review/CI; remote activation remains gated.",
+  "currentPhase": "Review the bounded #205 private source/assertion producer and continue native identity prerequisites. Obtain actual city/scene and source-rights inputs before any real content/publication work. The shared-database Staging27–33 maintenance plan remains preparation, not execution authorization.",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "JT owns product/commercial/provider/data/account/release decisions. Coding agents own each verified, bounded implementation contract.",
   "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree.",
-  "nextAction": "JT已明确团队成员对全部功能/数据的跨用户CRUD长期权限、正文长期及删除后保留方向、模型字段不设额外限制、测试每日预算不限且不等待账单；见docs/policy/vpj-03-text-decisions.md的VPJ03-JT-20260911-v1。首版暂不做硬锁，不再索取硬锁选择或星号含义。下一步落实受控团队身份、服务端权限与审计、留存/删除真实语义和用户告知，并核实provider地区/接收方资格；决定不等于运行开启。Staging仍26；PR316已冻结27–33及三函数ACL归一准备，远端未执行。CLI只读核实Vercel三个环境指向同一Staging，因此维护必须覆盖Production/Preview写入及直接数据库调用端。先形成具体停写和Web v2切换方案，再取得对应升级/维护授权；远端原生身份/worker接线仍缺。PR317候选仅私有审核，不发布或进入检索。保留unknown费用、确认/RLS/删除不变量及未验专项；#190/#191/#192和Harness父票继续开放。",
+  "nextAction": "JT已明确团队成员对全部功能/数据的跨用户CRUD长期权限、正文长期及删除后保留方向、模型字段不设额外限制、测试每日预算不限且不等待账单；见docs/policy/vpj-03-text-decisions.md的VPJ03-JT-20260911-v1。首版暂不做硬锁，不再索取硬锁选择或星号含义。下一步落实受控团队身份、服务端权限与审计、留存/删除真实语义和用户告知，并核实provider地区/接收方资格；决定不等于运行开启。Staging仍26；PR316已冻结27–33及三函数ACL归一准备，远端未执行。CLI只读核实Vercel三个环境指向同一Staging，因此维护必须覆盖Production/Preview写入及直接数据库调用端。PR318已形成具体停写和Web v2切换准备方案，仍需对应升级/维护授权；远端原生身份/worker接线仍缺。PR317已合并，候选仍仅私有审核。#205本轮只增加可重载来源片段修订、待审address assertion和同修订zh/en人工表达；未获许可、未发布或进入检索。保留unknown费用、确认/RLS/删除不变量及未验专项；#190/#191/#192和Harness父票继续开放。",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
@@ -34,7 +34,8 @@
     "Closed failure taxonomy (UNAUTHENTICATED..INTERNAL_ERROR) is frozen with HTTP/SSE mapping, five-language copy, retryability and metric labels.",
     "All contracts are frozen as schema fixture plus consumer test; provider SDK types never define domain schema.",
     "ServiceTask is a bounded user goal with an agreed deliverable, associated Turns and attempts; an ID does not authorize consumption. ServiceCase remains human-assistance ownership. See ADR-0025 planning adoption gate.",
-    "Basic cross-Trip preferences are explicit, scoped Profile/Memory facts shared by Free/Pass; response wording never overrides evidence, action receipts or permissions."
+    "Basic cross-Trip preferences are explicit, scoped Profile/Memory facts shared by Free/Pass; response wording never overrides evidence, action receipts or permissions.",
+    "VPJ-15/#205 bounded private producer: declared source revision/locator and stored-snippet SHA256 bind one pending address assertion to manual zh/en expressions. Final real34→35 upgrade/source/browser suite8/8 and original Ops suite8/8 passed; pnpm check22/22, unit/contract and docs passed. Source/locator/usage declarations remain unverified, all candidates private/unpublished/ineligible. No real city/material/license grant was selected. Evidence: artifacts/VPJ-15/verification.md; independent PR review/CI pending."
   ],
   "mandatoryReadingOrder": [
     "docs/agents/development-workflow.md",
@@ -101,13 +102,14 @@
     "Usage basis PR315/efe8564: exact25071ff independent review0/0, Quality34524577875 and Budget34524577868 plus Vercel passed; merged tree matched. Actual loopback HTTP/PostgreSQL24 tests and11-case pricing matrix pass. Only protocol-validated usage or validated safety refusal can settle; invalid protocol retains the full unknown-cost hold. No old ledger or remote schema changed.",
     "Staging preparation PR316/1cbab64: exact3db8936 independent review0/0, Quality34525882006 and Vercel passed; merged tree matched. Independent package tests3/3 and isolated PostgreSQL rehearsal41/41 pass with remoteActions0/providerCalls0. Frozen27–33 excludes Ops34; exact pre27 ACL normalization and data-preserving upgrade/restore are preparation only. See docs/runbooks/staging-26-to-33.md.",
     "Vercel2026-09-11 read-only CLI59 inspection: existing account/project access succeeds; Production/Preview/Development NEXT_PUBLIC_SUPABASE_URL origins match the named Staging, no branch/custom environment overrides observed. Default function region is configured iad1, not worker execution proof. No environment, firewall, deployment or remote DB mutation was performed.",
-    "PR317 local Ops candidate workflow now includes shared body/auth/RPC deadlines, abort fences, and unknown-acknowledgement same-operation retries bound to the verified Cookie actor. Final fresh isolated GoTrue/Next/PostgreSQL/browser run passed8/8, including commit-then-dropped-response retry with one candidate/audit/receipt; seven deadline contracts and pnpm check passed. Renewed exact-HEAD independent review remains pending. Candidates stay private, unpublished and ineligible for retrieval; no remote membership is activated."
+    "PR317 merged after exact-HEAD independent review and CI: protected local Ops includes shared I/O deadlines, actor-bound unknown-ack retries and atomic review/audit. PR318 shared-Staging maintenance preparation is also merged; neither activates remote membership, migrations or publication."
   ],
   "unrun": [
     "Production/customer and complete native/Harness acceptance remain unrun. Scoped Staging and actual C0 model protocol/worker behavior are verified; supplier billing, semantic quality and real user data consumers remain separate.",
     "Physical VoiceOver, signed Store and selected-object Ask sheet acceptance under #198/#233/#242 remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.",
     "VPJ-66 offline preparation is merged and accepted; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.",
-    "VPJ-05 hard-lock protection is explicitly deferred by JT on 2026-09-11; the compatible DTO and external order status remain unknown. Native27/Trip28 have not been applied to Staging; local reciprocal consumers do not close#192 or grant real-user processing permission."
+    "VPJ-05 hard-lock protection is explicitly deferred by JT on 2026-09-11; the compatible DTO and external order status remain unknown. Native27/Trip28 have not been applied to Staging; local reciprocal consumers do not close#192 or grant real-user processing permission.",
+    "VPJ-15/#205 real10–20 content selection, source rights, expert semantic review, publication, request-level eligibility and product read remain open. Migrations34/35 are local-only and outside the separate Staging26→33 package; no remote execution or real membership activation occurred."
   ],
   "blockers": [
     "Staging26 and the scoped ordinary JWT/budget checks are verified; direct-host database connection and a deployed worker identity/path remain incomplete.",

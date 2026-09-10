@@ -1,15 +1,18 @@
+import { isSourcedCandidateInput, type SourcedCandidateInput, type SourcedCandidateRead } from "./source-assertion.ts";
 export type OpsCandidate = Readonly<{
   id: string; authorId: string; title: string; content: string;
   status: "pending" | "reviewed" | "rejected"; version: number;
   reviewerId: string | null; reviewNote: string | null; createdAt: string; reviewedAt: string | null;
   published: false; retrievalEligible: false;
+  structured?: SourcedCandidateRead;
   audit: readonly { id: string; actorId: string; action: "submitted" | "reviewed" | "rejected"; version: number; createdAt: string }[];
 }>;
 export type OpsWorkspace = Readonly<{ actorId: string; candidates: readonly OpsCandidate[] }>;
-export type OpsInput = { action: "submit"; operationId: string; candidateId: string; title: string; content: string }
+export type OpsInput = SourcedCandidateInput | { action: "submit"; operationId: string; candidateId: string; title: string; content: string }
   | { action: "review"; operationId: string; candidateId: string; expectedVersion: 1; decision: "reviewed" | "rejected"; note: string };
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function isOpsInput(value: unknown): value is OpsInput {
+  if (isSourcedCandidateInput(value)) return true;
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const v = value as Record<string, unknown>;
   if (typeof v.operationId !== "string" || !uuid.test(v.operationId) || typeof v.candidateId !== "string" || !uuid.test(v.candidateId)) return false;

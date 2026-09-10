@@ -1,14 +1,16 @@
 "use client";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import { getLocaleAttributes, localeOptions, opsReviewCopy, type Locale } from "@/lib/i18n";
+import { getLocaleAttributes, localeOptions, opsReviewCopy, opsSourceCopy, type Locale } from "@/lib/i18n";
 import { createPasswordAuthClient } from "@/lib/server/identity/browser-auth-client";
 import type { OpsInput, OpsWorkspace } from "@/lib/server/knowledge/review/local-workspace";
 import { dispatchOpsOperation, type PendingOpsOperation } from "@/lib/server/knowledge/review/pending-operation";
+import { SourceAssertionFields, sourceFields } from "./source-fields";
 import styles from "./workspace.module.css";
 
 export function OpsReviewWorkspace() {
   const [locale, setLocale] = useState<Locale>("zh");
+  const [withSource, setWithSource] = useState(false);
   const [workspace, setWorkspace] = useState<OpsWorkspace | null>(null);
   const [pending, setPending] = useState<PendingOpsOperation | null>(null);
   const [busy, setBusy] = useState(false);
@@ -17,6 +19,7 @@ export function OpsReviewWorkspace() {
   const inFlight = useRef<symbol | null>(null);
   const form = useRef<HTMLFormElement>(null);
   const c = opsReviewCopy[locale];
+  const sourceCopy = opsSourceCopy[locale];
   const refresh = useCallback(async () => {
     const current = ++generation.current;
     setWorkspace(null);
@@ -78,6 +81,10 @@ export function OpsReviewWorkspace() {
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); const target = event.currentTarget; const values = new FormData(target);
     if (!workspace) return;
+    if (withSource) {
+      void mutate({ actorId: workspace.actorId, input: { action: "submit_assertion", operationId: crypto.randomUUID(), candidateId: crypto.randomUUID(), title: String(values.get("title")), ...sourceFields(values) } }, target);
+      return;
+    }
     void mutate({ actorId: workspace.actorId, input: { action: "submit", operationId: crypto.randomUUID(), candidateId: crypto.randomUUID(), title: String(values.get("title")), content: String(values.get("content")) } }, target);
   }
   function review(event: FormEvent<HTMLFormElement>, candidateId: string) {
@@ -97,7 +104,8 @@ export function OpsReviewWorkspace() {
     {pending && !busy && <button type="button" onClick={() => { void mutate(pending); }}>{c.retry}</button>}
     {workspace && !pending && <><form ref={form} className={styles.panel} onSubmit={submit}>
       <label>{c.title}<input name="title" required maxLength={160} disabled={busy} /></label>
-      <label>{c.content}<textarea name="content" required maxLength={4000} rows={5} disabled={busy} /></label>
+      <label><input className={styles.modeCheckbox} type="checkbox" checked={withSource} onChange={(event) => setWithSource(event.target.checked)} disabled={busy} />{sourceCopy.mode}</label>
+      {withSource ? <SourceAssertionFields locale={locale} disabled={busy} /> : <label>{c.content}<textarea name="content" required maxLength={4000} rows={5} disabled={busy} /></label>}
       <button disabled={busy} type="submit">{c.submit}</button>
     </form>
     <section className={styles.list} aria-label={c.heading}>{workspace.candidates.length === 0 && <p>{c.empty}</p>}
@@ -105,6 +113,21 @@ export function OpsReviewWorkspace() {
         <p className={styles.eyebrow}>{c[candidate.status]}</p><h2>{candidate.title}</h2><p className={styles.content}>{candidate.content}</p>
         <p className={styles.meta}>{c.author}: {candidate.authorId}</p>
         {candidate.reviewerId && <p className={styles.meta}>{c.reviewer}: {candidate.reviewerId}</p>}
+        {candidate.structured && <details>
+          <summary>{sourceCopy.details}</summary><p>{sourceCopy.unverified}</p>
+          <p className={styles.meta}>{sourceCopy.sourceKey}: {candidate.structured.source.sourceKey} · {candidate.structured.source.revisionLabel}</p>
+          <p className={styles.meta}>{sourceCopy.publisher}: {candidate.structured.source.publisher}</p>
+          <p className={styles.meta}>{sourceCopy.uri}: {candidate.structured.source.uri}</p>
+          <p className={styles.meta}>{sourceCopy.locator}: {candidate.structured.source.locator}</p>
+          <p className={styles.content}>{candidate.structured.source.snippet}</p>
+          <p className={styles.meta}>{sourceCopy.hash}: {candidate.structured.source.snippetHash}</p>
+          <p className={styles.content}>{sourceCopy.usageDeclaration}: {candidate.structured.source.usageDeclaration}</p>
+          <p className={styles.meta}>{sourceCopy.assertion}: {candidate.structured.assertion.assertionId} · {candidate.structured.assertion.revision}</p>
+          <p className={styles.meta}>{sourceCopy.subjectId}: {candidate.structured.assertion.subjectId}</p>
+          <p className={styles.content}>{[...candidate.structured.assertion.value.lines, ...(candidate.structured.assertion.value.locality ? [candidate.structured.assertion.value.locality] : []), candidate.structured.assertion.value.countryCode].join(" · ")}</p>
+          <p className={styles.content} lang="zh-CN" dir="ltr">{sourceCopy.zh}: {candidate.structured.assertion.expressions.zh}</p>
+          <p className={styles.content} lang="en" dir="ltr">{sourceCopy.en}: {candidate.structured.assertion.expressions.en}</p>
+        </details>}
         {candidate.reviewNote && <p className={styles.content}>{candidate.reviewNote}</p>}
         {candidate.status === "pending" && (candidate.authorId === workspace.actorId ? <p>{c.self}</p> : <form onSubmit={(event) => review(event, candidate.id)}>
           <label>{c.note}<textarea name="note" required maxLength={400} rows={2} disabled={busy} /></label>
