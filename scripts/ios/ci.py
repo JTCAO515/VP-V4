@@ -90,8 +90,9 @@ def main():
     device_type = matches[0].get("deviceTypeIdentifier")
     if device_type != "com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro":
         raise RuntimeError("Reference Simulator has an unexpected device type")
-    udid = str(uuid.UUID(run(["xcrun", "simctl", "create", "VP-CI-" + uuid.uuid4().hex,
-                              device_type, RUNTIME], "simulator-create").strip()))
+    udid = run(["xcrun", "simctl", "create", "VP-CI-" + uuid.uuid4().hex,
+                device_type, RUNTIME], "simulator-create").strip()
+    uuid.UUID(udid)  # Validate without changing case: Xcode destination matching is case-sensitive.
     metadata.update(deviceUDID=udid, simulatorOwned=True, simulatorDeleted=False)
     (output / "environment.json").write_text(json.dumps(metadata, indent=2) + "\n")
     try:
