@@ -19,15 +19,16 @@ concurrency:
 
 jobs:
   simulator:
-    runs-on: macos-26
+    runs-on: [self-hosted, macOS, ARM64, vp-v4-ios]
     timeout-minutes: 30
     env:
-      DEVELOPER_DIR: /Applications/Xcode_26.6.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - name: Build unsigned and test ad-hoc Simulator app
+        shell: bash --noprofile --norc -eo pipefail "{0}"
         run: python3 scripts/ios/ci.py --output "$RUNNER_TEMP/vpj-56"
       - name: Preserve native evidence
         if: always()
@@ -35,5 +36,5 @@ jobs:
         with:
           name: native-ios-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/vpj-56
-          retention-days: 14
+          retention-days: 3
           if-no-files-found: error
