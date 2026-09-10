@@ -1,0 +1,567 @@
+
+> vp-v4@0.0.0 test:unit /Users/jtcao/Documents/VP-V4-Native-Local-Trip
+> node scripts/run-ci-suite.mjs unit
+
+TAP version 13
+# Subtest: hard budget violations are deterministically infeasible while soft preferences create stable tradeoffs
+ok 1 - hard budget violations are deterministically infeasible while soft preferences create stable tradeoffs
+  ---
+  duration_ms: 30.356
+  type: 'test'
+  ...
+# Subtest: time windows and transfers are code-decided hard constraints
+ok 2 - time windows and transfers are code-decided hard constraints
+  ---
+  duration_ms: 1.267708
+  type: 'test'
+  ...
+# Subtest: a route-matrix duration cannot hide overlapping or too-short scheduled transfers
+ok 3 - a route-matrix duration cannot hide overlapping or too-short scheduled transfers
+  ---
+  duration_ms: 0.440333
+  type: 'test'
+  ...
+# Subtest: closed places are infeasible and unknown opening, route, or reservation evidence remains visible
+ok 4 - closed places are infeasible and unknown opening, route, or reservation evidence remains visible
+  ---
+  duration_ms: 1.873292
+  type: 'test'
+  ...
+# Subtest: unknown or expired price evidence cannot be silently treated as a verified budget
+ok 5 - unknown or expired price evidence cannot be silently treated as a verified budget
+  ---
+  duration_ms: 0.877958
+  type: 'test'
+  ...
+# Subtest: uses RFC3339 instants rather than lexical timestamp ordering
+ok 6 - uses RFC3339 instants rather than lexical timestamp ordering
+  ---
+  duration_ms: 3.497958
+  type: 'test'
+  ...
+# Subtest: requires current route evidence for every adjacent stop pair
+ok 7 - requires current route evidence for every adjacent stop pair
+  ---
+  duration_ms: 0.366416
+  type: 'test'
+  ...
+# Subtest: a missing route link cannot hide a proven short transfer
+ok 8 - a missing route link cannot hide a proven short transfer
+  ---
+  duration_ms: 0.433084
+  type: 'test'
+  ...
+# Subtest: expired opening and reservation evidence remains unknown even when projected states look positive
+ok 9 - expired opening and reservation evidence remains unknown even when projected states look positive
+  ---
+  duration_ms: 0.314958
+  type: 'test'
+  ...
+# Subtest: rejects malformed candidate constraints instead of scoring invented or nonsensical inputs
+ok 10 - rejects malformed candidate constraints instead of scoring invented or nonsensical inputs
+  ---
+  duration_ms: 3.484875
+  type: 'test'
+  ...
+# Subtest: the registry contains only flags required by the R1 release slice
+ok 11 - the registry contains only flags required by the R1 release slice
+  ---
+  duration_ms: 9.360834
+  type: 'test'
+  ...
+# Subtest: chat runtime requires Trip persistence
+ok 12 - chat runtime requires Trip persistence
+  ---
+  duration_ms: 0.572208
+  type: 'test'
+  ...
+# Subtest: flags default off and only return capability availability
+ok 13 - flags default off and only return capability availability
+  ---
+  duration_ms: 0.469083
+  type: 'test'
+  ...
+# Subtest: VPJ scheduling retains fail-closed runtime protections
+ok 14 - VPJ scheduling retains fail-closed runtime protections
+  ---
+  duration_ms: 2.73975
+  type: 'test'
+  ...
+# Subtest: handoff and identity contract reflect anonymous preview without Magic Link
+ok 15 - handoff and identity contract reflect anonymous preview without Magic Link
+  ---
+  duration_ms: 0.980583
+  type: 'test'
+  ...
+# Subtest: LAUNCH-01 PR workflow runs every deterministic repository gate and the browser lane
+ok 16 - LAUNCH-01 PR workflow runs every deterministic repository gate and the browser lane
+  ---
+  duration_ms: 17.653959
+  type: 'test'
+  ...
+# Subtest: LAUNCH-01 CI suite runner reports skipped tests as an explicit incomplete outcome
+ok 17 - LAUNCH-01 CI suite runner reports skipped tests as an explicit incomplete outcome
+  ---
+  duration_ms: 0.789708
+  type: 'test'
+  ...
+# Subtest: LAUNCH-01 keeps internal text-asset ledger hashes stable across Git line endings
+ok 18 - LAUNCH-01 keeps internal text-asset ledger hashes stable across Git line endings
+  ---
+  duration_ms: 1.029083
+  type: 'test'
+  ...
+# Subtest: LAUNCH-01 workflows initialize a visible CI-suite outcome table
+ok 19 - LAUNCH-01 workflows initialize a visible CI-suite outcome table
+  ---
+  duration_ms: 0.837375
+  type: 'test'
+  ...
+# Subtest: LAUNCH-01 command ledger accepts the LAUNCH Issue namespace
+ok 20 - LAUNCH-01 command ledger accepts the LAUNCH Issue namespace
+  ---
+  duration_ms: 1.917458
+  type: 'test'
+  ...
+# Subtest: LAUNCH-01 labels source-inspection E2E tests separately from browser E2E
+ok 21 - LAUNCH-01 labels source-inspection E2E tests separately from browser E2E
+  ---
+  duration_ms: 0.723166
+  type: 'test'
+  ...
+# Subtest: LAUNCH-01 CI suite runner marks a locally skipped integration suite incomplete
+ok 22 - LAUNCH-01 CI suite runner marks a locally skipped integration suite incomplete
+  ---
+  duration_ms: 987.683125
+  type: 'test'
+  ...
+# Subtest: normal verification accepts checked criteria and append-only progress without claiming runtime acceptance
+ok 23 - normal verification accepts checked criteria and append-only progress without claiming runtime acceptance
+  ---
+  duration_ms: 90.012083
+  type: 'test'
+  ...
+# Subtest: current acceptance may be in an appended planning block, but missing current clauses fail
+ok 24 - current acceptance may be in an appended planning block, but missing current clauses fail
+  ---
+  duration_ms: 3.321375
+  type: 'test'
+  ...
+# Subtest: quotes, fenced or indented code and HTML comments cannot impersonate current acceptance
+ok 25 - quotes, fenced or indented code and HTML comments cannot impersonate current acceptance
+  ---
+  duration_ms: 14.130958
+  type: 'test'
+  ...
+# Subtest: CommonMark HTML block type 1 raw text excludes fake acceptance until its actual boundary
+ok 26 - CommonMark HTML block type 1 raw text excludes fake acceptance until its actual boundary
+  ---
+  duration_ms: 177.400958
+  type: 'test'
+  ...
+# Subtest: CommonMark HTML block type 2 comment excludes fake acceptance until its actual boundary
+ok 27 - CommonMark HTML block type 2 comment excludes fake acceptance until its actual boundary
+  ---
+  duration_ms: 5.218708
+  type: 'test'
+  ...
+# Subtest: CommonMark HTML block type 3 processing instruction excludes fake acceptance until its actual boundary
+ok 28 - CommonMark HTML block type 3 processing instruction excludes fake acceptance until its actual boundary
+  ---
+  duration_ms: 8.577667
+  type: 'test'
+  ...
+# Subtest: CommonMark HTML block type 4 declaration excludes fake acceptance until its actual boundary
+ok 29 - CommonMark HTML block type 4 declaration excludes fake acceptance until its actual boundary
+  ---
+  duration_ms: 13.125541
+  type: 'test'
+  ...
+# Subtest: CommonMark HTML block type 5 CDATA excludes fake acceptance until its actual boundary
+ok 30 - CommonMark HTML block type 5 CDATA excludes fake acceptance until its actual boundary
+  ---
+  duration_ms: 44.169958
+  type: 'test'
+  ...
+# Subtest: CommonMark HTML block type 6 block tag excludes fake acceptance until its actual boundary
+ok 31 - CommonMark HTML block type 6 block tag excludes fake acceptance until its actual boundary
+  ---
+  duration_ms: 269.01025
+  type: 'test'
+  ...
+# Subtest: CommonMark HTML block type 7 standalone custom tag excludes fake acceptance until its actual boundary
+ok 32 - CommonMark HTML block type 7 standalone custom tag excludes fake acceptance until its actual boundary
+  ---
+  duration_ms: 89.282041
+  type: 'test'
+  ...
+# Subtest: blank lines end ordinary div/table/custom blocks while raw-text blocks retain their terminator rule
+ok 33 - blank lines end ordinary div/table/custom blocks while raw-text blocks retain their terminator rule
+  ---
+  duration_ms: 42.613042
+  type: 'test'
+  ...
+# Subtest: type-7 tags cannot interrupt a paragraph and type 1–5 single-line endings resume Markdown
+ok 34 - type-7 tags cannot interrupt a paragraph and type 1–5 single-line endings resume Markdown
+  ---
+  duration_ms: 2.950667
+  type: 'test'
+  ...
+# Subtest: nested HTML quotes/code/details remain excluded across blank lines until the outer container closes
+ok 35 - nested HTML quotes/code/details remain excluded across blank lines until the outer container closes
+  ---
+  duration_ms: 98.828834
+  type: 'test'
+  ...
+# Subtest: inline code spans cannot close hidden containers or transfer their checked acceptance
+ok 36 - inline code spans cannot close hidden containers or transfer their checked acceptance
+  ---
+  duration_ms: 125.072167
+  type: 'test'
+  ...
+# Subtest: inline code spans cannot cross real HTML, heading, list or fence block starts and hide a container opener
+ok 37 - inline code spans cannot cross real HTML, heading, list or fence block starts and hide a container opener
+  ---
+  duration_ms: 13.082917
+  type: 'test'
+  ...
+# Subtest: legal paragraph continuations still support multiline code spans
+ok 38 - legal paragraph continuations still support multiline code spans
+  ---
+  duration_ms: 4.919833
+  type: 'test'
+  ...
+# Subtest: odd backslash escapes cannot close containers while even pairs preserve real closing tags
+ok 39 - odd backslash escapes cannot close containers while even pairs preserve real closing tags
+  ---
+  duration_ms: 27.689167
+  type: 'test'
+  ...
+# Subtest: unclosed and mismatched code spans cannot swallow an actual closing tag or later acceptance
+ok 40 - unclosed and mismatched code spans cannot swallow an actual closing tag or later acceptance
+  ---
+  duration_ms: 1.941917
+  type: 'test'
+  ...
+# Subtest: backticks and escaped-looking text in complete HTML attributes are not container closing tags
+ok 41 - backticks and escaped-looking text in complete HTML attributes are not container closing tags
+  ---
+  duration_ms: 7.9105
+  type: 'test'
+  ...
+# Subtest: HTML-looking examples inside fenced code or Markdown quotes do not capture later real acceptance
+ok 42 - HTML-looking examples inside fenced code or Markdown quotes do not capture later real acceptance
+  ---
+  duration_ms: 30.848375
+  type: 'test'
+  ...
+# Subtest: nested or unclosed details history cannot satisfy or check current acceptance
+ok 43 - nested or unclosed details history cannot satisfy or check current acceptance
+  ---
+  duration_ms: 14.428
+  type: 'test'
+  ...
+# Subtest: a recognized generated prefix retains checked items and the entire opaque progress suffix
+ok 44 - a recognized generated prefix retains checked items and the entire opaque progress suffix
+  ---
+  duration_ms: 17.54425
+  type: 'test'
+  ...
+# Subtest: unknown edits inside the template and changes to a checked clause require a scoped update
+ok 45 - unknown edits inside the template and changes to a checked clause require a scoped update
+  ---
+  duration_ms: 5.723292
+  type: 'test'
+  ...
+# Subtest: promoting an appended criterion into the generated checklist retains its completion and history
+ok 46 - promoting an appended criterion into the generated checklist retains its completion and history
+  ---
+  duration_ms: 1.57325
+  type: 'test'
+  ...
+# Subtest: batch preparation is pure and refuses unknown drift anywhere in the selected batch
+ok 47 - batch preparation is pure and refuses unknown drift anywhere in the selected batch
+  ---
+  duration_ms: 155.228958
+  type: 'test'
+  ...
+# Subtest: sync-bodies performs no remote mutation when a later Issue has unknown body drift
+ok 48 - sync-bodies performs no remote mutation when a later Issue has unknown body drift
+  ---
+  duration_ms: 1422.356459
+  type: 'test'
+  ...
+# Subtest: sync-selected performs no remote mutation when a later Issue has unknown body drift
+ok 49 - sync-selected performs no remote mutation when a later Issue has unknown body drift
+  ---
+  duration_ms: 1402.185167
+  type: 'test'
+  ...
+# Subtest: publish performs no remote mutation when a later Issue has unknown body drift
+ok 50 - publish performs no remote mutation when a later Issue has unknown body drift
+  ---
+  duration_ms: 1055.900292
+  type: 'test'
+  ...
+# Subtest: publish also preflights the existing Program body before any remote mutation
+ok 51 - publish also preflights the existing Program body before any remote mutation
+  ---
+  duration_ms: 2356.960667
+  type: 'test'
+  ...
+# Subtest: publish can add an unassigned task while preserving a completed Issue and its appended progress
+ok 52 - publish can add an unassigned task while preserving a completed Issue and its appended progress
+  ---
+  duration_ms: 5676.823875
+  type: 'test'
+  ...
+# Subtest: unmerged baseline retains the migration gate
+ok 53 - unmerged baseline retains the migration gate
+  ---
+  duration_ms: 25.165333
+  type: 'test'
+  ...
+# Subtest: merged baseline permits ready work and completed tasks
+ok 54 - merged baseline permits ready work and completed tasks
+  ---
+  duration_ms: 0.350583
+  type: 'test'
+  ...
+# Subtest: blocked tasks without open dependencies require review, not automatic readiness
+ok 55 - blocked tasks without open dependencies require review, not automatic readiness
+  ---
+  duration_ms: 2.484917
+  type: 'test'
+  ...
+# Subtest: runtime readiness still rejects open and cancelled upstream dependencies
+ok 56 - runtime readiness still rejects open and cancelled upstream dependencies
+  ---
+  duration_ms: 1.190542
+  type: 'test'
+  ...
+# Subtest: not-planned is not silently treated as product completion
+ok 57 - not-planned is not silently treated as product completion
+  ---
+  duration_ms: 0.770792
+  type: 'test'
+  ...
+# Subtest: completed tasks cannot conceal unresolved or cancelled native blockers
+ok 58 - completed tasks cannot conceal unresolved or cancelled native blockers
+  ---
+  duration_ms: 0.431
+  type: 'test'
+  ...
+# Subtest: completed tasks cannot retain active status or ready-for labels
+ok 59 - completed tasks cannot retain active status or ready-for labels
+  ---
+  duration_ms: 2.520292
+  type: 'test'
+  ...
+# Subtest: closing old tasks still demands a strict new-task migration snapshot
+ok 60 - closing old tasks still demands a strict new-task migration snapshot
+  ---
+  duration_ms: 1.12775
+  type: 'test'
+  ...
+# Subtest: published execution header stays synchronized with the generator
+ok 61 - published execution header stays synchronized with the generator
+  ---
+  duration_ms: 1.706667
+  type: 'test'
+  ...
+# Subtest: VPJ rejects missing blockers and dependency cycles
+ok 62 - VPJ rejects missing blockers and dependency cycles
+  ---
+  duration_ms: 6.230208
+  type: 'test'
+  ...
+# Subtest: VPJ orders shared prerequisites once before consumers
+ok 63 - VPJ orders shared prerequisites once before consumers
+  ---
+  duration_ms: 6.789875
+  type: 'test'
+  ...
+# Subtest: VPJ default execution links use main without treating a historical PR as pending
+ok 64 - VPJ default execution links use main without treating a historical PR as pending
+  ---
+  duration_ms: 1.240292
+  type: 'test'
+  ...
+# Subtest: VPJ body supports a task source ref and its own planning merge gate
+ok 65 - VPJ body supports a task source ref and its own planning merge gate
+  ---
+  duration_ms: 0.3465
+  type: 'test'
+  ...
+# Subtest: quality rubric remains separate from deterministic read-only and receipt checks
+ok 66 - quality rubric remains separate from deterministic read-only and receipt checks
+  ---
+  duration_ms: 16.934625
+  type: 'test'
+  ...
+# Subtest: one hard failure cannot be offset by perfect quality or a forged seed verdict
+ok 67 - one hard failure cannot be offset by perfect quality or a forged seed verdict
+  ---
+  duration_ms: 14.139959
+  type: 'test'
+  ...
+# Subtest: unsupported claims and excessive refusal reject even with two passing repeats
+ok 68 - unsupported claims and excessive refusal reject even with two passing repeats
+  ---
+  duration_ms: 7.250875
+  type: 'test'
+  ...
+# Subtest: missing or duplicated evidence stays NOT_RUN instead of vacuous PASS
+ok 69 - missing or duplicated evidence stays NOT_RUN instead of vacuous PASS
+  ---
+  duration_ms: 0.461833
+  type: 'test'
+  ...
+# Subtest: matching baseline-only and non-degrading pairs cannot bypass missing adoption gates
+ok 70 - matching baseline-only and non-degrading pairs cannot bypass missing adoption gates
+  ---
+  duration_ms: 4.16
+  type: 'test'
+  ...
+# Subtest: every fixed basis dimension and repeat identity must match
+ok 71 - every fixed basis dimension and repeat identity must match
+  ---
+  duration_ms: 111.682583
+  type: 'test'
+  ...
+# Subtest: producer refuses a caller's fictional clock/evidence binding even if both lanes would match
+ok 72 - producer refuses a caller's fictional clock/evidence binding even if both lanes would match
+  ---
+  duration_ms: 2.009208
+  type: 'test'
+  ...
+# Subtest: release discovery retains only the currently selected legacy locale without changing payload metadata
+ok 73 - release discovery retains only the currently selected legacy locale without changing payload metadata
+  ---
+  duration_ms: 19.509041
+  type: 'test'
+  ...
+# Subtest: typed hard gates veto exact facts, permissions and action receipts without parsing prose
+ok 74 - typed hard gates veto exact facts, permissions and action receipts without parsing prose
+  ---
+  duration_ms: 141.298125
+  type: 'test'
+  ...
+# Subtest: unreviewed semantic errors remain NOT_RUN; fixture labels never become human calibration
+ok 75 - unreviewed semantic errors remain NOT_RUN; fixture labels never become human calibration
+  ---
+  duration_ms: 309.635834
+  type: 'test'
+  ...
+# Subtest: A/B swaps normalize the same winner, preserve ties and both-fail, and expose order disagreement
+ok 76 - A/B swaps normalize the same winner, preserve ties and both-fail, and expose order disagreement
+  ---
+  duration_ms: 136.01425
+  type: 'test'
+  ...
+# Subtest: repeated imports deduplicate while changed feedback is an explicit conflict
+ok 77 - repeated imports deduplicate while changed feedback is an explicit conflict
+  ---
+  duration_ms: 84.722125
+  type: 'test'
+  ...
+# Subtest: wrong case, versions, source, rubric completeness and N/A substitutions reject
+ok 78 - wrong case, versions, source, rubric completeness and N/A substitutions reject
+  ---
+  duration_ms: 105.109833
+  type: 'test'
+  ...
+# Subtest: human source validation is operator-declared, never verified identity or calibration
+ok 79 - human source validation is operator-declared, never verified identity or calibration
+  ---
+  duration_ms: 62.145875
+  type: 'test'
+  ...
+# Subtest: reviewer projection is blind and bundle tampering cannot silently change answer identity
+ok 80 - reviewer projection is blind and bundle tampering cannot silently change answer identity
+  ---
+  duration_ms: 36.313667
+  type: 'test'
+  ...
+# Subtest: owned exposed variants preserve canonical 8/4 metadata and cannot import holdout or external data
+ok 81 - owned exposed variants preserve canonical 8/4 metadata and cannot import holdout or external data
+  ---
+  duration_ms: 27.091958
+  type: 'test'
+  ...
+# Subtest: perfect soft feedback cannot compensate a deterministic hard failure
+ok 82 - perfect soft feedback cannot compensate a deterministic hard failure
+  ---
+  duration_ms: 46.022875
+  type: 'test'
+  ...
+# Subtest: fixture provenance cannot be promoted to human by changing the source tag
+ok 83 - fixture provenance cannot be promoted to human by changing the source tag
+  ---
+  duration_ms: 19.566667
+  type: 'test'
+  ...
+# Subtest: unknown parent grading versions and mismatched source basis are rejected
+ok 84 - unknown parent grading versions and mismatched source basis are rejected
+  ---
+  duration_ms: 4.315125
+  type: 'test'
+  ...
+# Subtest: one presentation's feedback cannot establish an order-bias check
+ok 85 - one presentation's feedback cannot establish an order-bias check
+  ---
+  duration_ms: 43.55475
+  type: 'test'
+  ...
+# Subtest: parent rows and supplied samples cannot rebind the frozen H01 case to H02
+ok 86 - parent rows and supplied samples cannot rebind the frozen H01 case to H02
+  ---
+  duration_ms: 2.99325
+  type: 'test'
+  ...
+# Subtest: the imported parent retains its complete repeat, run and configuration lineage
+ok 87 - the imported parent retains its complete repeat, run and configuration lineage
+  ---
+  duration_ms: 13.16475
+  type: 'test'
+  ...
+# Subtest: valid opaque parent run IDs remain supported by the existing pairing schema
+ok 88 - valid opaque parent run IDs remain supported by the existing pairing schema
+  ---
+  duration_ms: 12.866791
+  type: 'test'
+  ...
+# Subtest: LAUNCH-12 selects the next confirmed item from an explicit clock and Day timezone
+ok 89 - LAUNCH-12 selects the next confirmed item from an explicit clock and Day timezone
+  ---
+  duration_ms: 103.52275
+  type: 'test'
+  ...
+# Subtest: LAUNCH-12 distinguishes before, during, and after a confirmed Trip without external evidence
+ok 90 - LAUNCH-12 distinguishes before, during, and after a confirmed Trip without external evidence
+  ---
+  duration_ms: 2.333667
+  type: 'test'
+  ...
+# Subtest: LAUNCH-12 fails closed for empty, timezone-missing, malformed, or cross-trip item data
+ok 91 - LAUNCH-12 fails closed for empty, timezone-missing, malformed, or cross-trip item data
+  ---
+  duration_ms: 0.839959
+  type: 'test'
+  ...
+# Subtest: LAUNCH-05 retention lifecycle cannot transition from an unapproved capture to persistence
+ok 92 - LAUNCH-05 retention lifecycle cannot transition from an unapproved capture to persistence
+  ---
+  duration_ms: 2.15875
+  type: 'test'
+  ...
+1..92
+# tests 92
+# suites 0
+# pass 92
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13756.576708
+VP_CI_SUITE_RESULT {"suite":"unit","outcome":"passed","skipped":0,"testFiles":12}

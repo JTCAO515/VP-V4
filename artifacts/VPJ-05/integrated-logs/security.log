@@ -1,0 +1,609 @@
+
+> vp-v4@0.0.0 test:security /Users/jtcao/Documents/VP-V4-Native-Local-Trip
+> node scripts/run-ci-suite.mjs security
+
+TAP version 13
+# Subtest: AI-14 owner RLS and fault rollback hold on a running local Supabase
+ok 1 - AI-14 owner RLS and fault rollback hold on a running local Supabase
+  ---
+  duration_ms: 14242.160792
+  type: 'test'
+  ...
+# Subtest: RL-06/RL-07 3/3 rejects PNR, ticket number, and QR payload keys before confirmation
+ok 2 - RL-06/RL-07 3/3 rejects PNR, ticket number, and QR payload keys before confirmation
+  ---
+  duration_ms: 70.923292
+  type: 'test'
+  ...
+# Subtest: rejects calendar-invalid confirmation and segment instants before an artifact exists
+ok 3 - rejects calendar-invalid confirmation and segment instants before an artifact exists
+  ---
+  duration_ms: 81.113083
+  type: 'test'
+  ...
+# Subtest: WEB-04 removes legacy public assets and source-derived runtime presentation
+ok 4 - WEB-04 removes legacy public assets and source-derived runtime presentation
+  ---
+  duration_ms: 97.213458
+  type: 'test'
+  ...
+# Subtest: WEB-04 asset policy check accepts only ledgered non-runtime assets
+ok 5 - WEB-04 asset policy check accepts only ledgered non-runtime assets
+  ---
+  duration_ms: 4615.212583
+  type: 'test'
+  ...
+# Subtest: WEB-04 release accepts the operator-approved public images with legacy files isolated
+ok 6 - WEB-04 release accepts the operator-approved public images with legacy files isolated
+  ---
+  duration_ms: 3646.773917
+  type: 'test'
+  ...
+# Subtest: WEB-04 still rejects blocked, renamed, unregistered, modified or unapproved public assets
+ok 7 - WEB-04 still rejects blocked, renamed, unregistered, modified or unapproved public assets
+  ---
+  duration_ms: 1.998125
+  type: 'test'
+  ...
+# Subtest: LAUNCH-08 rejects raw or cross-turn fields before encoding an SSE event
+ok 8 - LAUNCH-08 rejects raw or cross-turn fields before encoding an SSE event
+  ---
+  duration_ms: 44.352542
+  type: 'test'
+  ...
+# Subtest: LAUNCH-08 event transport remains private, no-store, owner-adapter backed and credential-free
+ok 9 - LAUNCH-08 event transport remains private, no-store, owner-adapter backed and credential-free
+  ---
+  duration_ms: 1.212583
+  type: 'test'
+  ...
+# Subtest: exhausts per-task and per-user windows without accepting content
+ok 10 - exhausts per-task and per-user windows without accepting content
+  ---
+  duration_ms: 12.194625
+  type: 'test'
+  ...
+# Subtest: owns turn time and model/tool counts so they cannot be forged by a caller
+ok 11 - owns turn time and model/tool counts so they cannot be forged by a caller
+  ---
+  duration_ms: 3.087
+  type: 'test'
+  ...
+# Subtest: fails closed when the server clock moves backward instead of resetting quota windows
+ok 12 - fails closed when the server clock moves backward instead of resetting quota windows
+  ---
+  duration_ms: 0.40175
+  type: 'test'
+  ...
+# Subtest: RL-06 3/3 rejects provider, URL, and crawler input before rail guidance exists
+ok 13 - RL-06 3/3 rejects provider, URL, and crawler input before rail guidance exists
+  ---
+  duration_ms: 4.080666
+  type: 'test'
+  ...
+# Subtest: RL-06 rejects provider, URL, raw payload and persistent-output keys before resolution
+ok 14 - RL-06 rejects provider, URL, raw payload and persistent-output keys before resolution
+  ---
+  duration_ms: 49.207583
+  type: 'test'
+  ...
+# Subtest: rejects timezone-qualified but impossible calendar timestamps
+ok 15 - rejects timezone-qualified but impossible calendar timestamps
+  ---
+  duration_ms: 40.416709
+  type: 'test'
+  ...
+# Subtest: rejects future observations and observations after their expiry
+ok 16 - rejects future observations and observations after their expiry
+  ---
+  duration_ms: 18.00625
+  type: 'test'
+  ...
+# Subtest: LAUNCH-04 guard uses the public SSR client only and redirects unauthenticated sessions
+ok 17 - LAUNCH-04 guard uses the public SSR client only and redirects unauthenticated sessions
+  ---
+  duration_ms: 3.498958
+  type: 'test'
+  ...
+# Subtest: public preview exposes no Magic Link or auth callback endpoints
+ok 18 - public preview exposes no Magic Link or auth callback endpoints
+  ---
+  duration_ms: 1.326958
+  type: 'test'
+  ...
+# Subtest: UserDataAdapter still derives the actor only from Supabase claims
+ok 19 - UserDataAdapter still derives the actor only from Supabase claims
+  ---
+  duration_ms: 3.597667
+  type: 'test'
+  ...
+# Subtest: public landing imports no authentication entrypoint
+ok 20 - public landing imports no authentication entrypoint
+  ---
+  duration_ms: 1.287834
+  type: 'test'
+  ...
+# Subtest: missing, malformed, oversized and duplicate Authorization fail before SDK HTTP
+ok 21 - missing, malformed, oversized and duplicate Authorization fail before SDK HTTP
+  ---
+  duration_ms: 399.988
+  type: 'test'
+  ...
+# Subtest: expired and forged JWTs are rejected by the actual Auth SDK
+ok 22 - expired and forged JWTs are rejected by the actual Auth SDK
+  ---
+  duration_ms: 278.644209
+  type: 'test'
+  ...
+# Subtest: valid signatures cannot turn service, anonymous, wrong-project or incomplete claims into a user
+ok 23 - valid signatures cannot turn service, anonymous, wrong-project or incomplete claims into a user
+  ---
+  duration_ms: 200.398333
+  type: 'test'
+  ...
+# Subtest: mixed credentials never read/refresh Web cookies or fall back after invalid Bearer
+ok 24 - mixed credentials never read/refresh Web cookies or fall back after invalid Bearer
+  ---
+  duration_ms: 306.061334
+  type: 'test'
+  ...
+# Subtest: verification transport failure is closed and returns no token/body/error detail
+ok 25 - verification transport failure is closed and returns no token/body/error detail
+  ---
+  duration_ms: 57.191625
+  type: 'test'
+  ...
+# Subtest: separate verified users retain separate JWTs without a shared session or cookie
+ok 26 - separate verified users retain separate JWTs without a shared session or cookie
+  ---
+  duration_ms: 72.68325
+  type: 'test'
+  ...
+# Subtest: SDK remote-verification fallback rejects a token without a matching asymmetric key
+ok 27 - SDK remote-verification fallback rejects a token without a matching asymmetric key
+  ---
+  duration_ms: 39.983084
+  type: 'test'
+  ...
+# Subtest: native SDK clients reject 307 before forwarding any credential
+ok 28 - native SDK clients reject 307 before forwarding any credential
+  ---
+  duration_ms: 37162.6185
+  type: 'test'
+  ...
+# Subtest: native SDK clients reject 308 before forwarding any credential
+ok 29 - native SDK clients reject 308 before forwarding any credential
+  ---
+  duration_ms: 37014.418208
+  type: 'test'
+  ...
+# Subtest: native fetch preserves Request headers and cancellation
+ok 30 - native fetch preserves Request headers and cancellation
+  ---
+  duration_ms: 9.759167
+  type: 'test'
+  ...
+# Subtest: AI-51 UserDataAdapter routes never embed or reference a service credential
+ok 31 - AI-51 UserDataAdapter routes never embed or reference a service credential
+  ---
+  duration_ms: 17.952833
+  type: 'test'
+  ...
+# Subtest: AI-51b has no signup, recovery, admin auth or credential logging path
+ok 32 - AI-51b has no signup, recovery, admin auth or credential logging path
+  ---
+  duration_ms: 31.773167
+  type: 'test'
+  ...
+# Subtest: RL-02 rejects a queue before R3 and old payload versions
+ok 33 - RL-02 rejects a queue before R3 and old payload versions
+  ---
+  duration_ms: 7.990334
+  type: 'test'
+  ...
+# Subtest: RL-02 coalesces an identical delivery and rejects a conflicting duplicate
+ok 34 - RL-02 coalesces an identical delivery and rejects a conflicting duplicate
+  ---
+  duration_ms: 1.173709
+  type: 'test'
+  ...
+# Subtest: RL-02 re-delivers a crashed or expired lease at-least-once
+ok 35 - RL-02 re-delivers a crashed or expired lease at-least-once
+  ---
+  duration_ms: 0.818417
+  type: 'test'
+  ...
+# Subtest: RL-02 quarantines poison work after the maximum attempts and supports explicit Ops replay
+ok 36 - RL-02 quarantines poison work after the maximum attempts and supports explicit Ops replay
+  ---
+  duration_ms: 0.631042
+  type: 'test'
+  ...
+# Subtest: RL-08 dry-runs licensed JSONL rows into bounded private candidates without Canonical IDs
+ok 37 - RL-08 dry-runs licensed JSONL rows into bounded private candidates without Canonical IDs
+  ---
+  duration_ms: 12.084833
+  type: 'test'
+  ...
+# Subtest: RL-08 same source and hash is a no-op while changed rows are a conflict
+ok 38 - RL-08 same source and hash is a no-op while changed rows are a conflict
+  ---
+  duration_ms: 0.942792
+  type: 'test'
+  ...
+# Subtest: RL-08 rejects model, Canonical-ID, unlicensed, malformed, or over-cap candidate import input
+ok 39 - RL-08 rejects model, Canonical-ID, unlicensed, malformed, or over-cap candidate import input
+  ---
+  duration_ms: 1.453209
+  type: 'test'
+  ...
+# Subtest: RL-08 rejects impossible calendar instants before source state changes
+ok 40 - RL-08 rejects impossible calendar instants before source state changes
+  ---
+  duration_ms: 0.409875
+  type: 'test'
+  ...
+# Subtest: RL-08 rejects duplicate external IDs before recording the source manifest
+ok 41 - RL-08 rejects duplicate external IDs before recording the source manifest
+  ---
+  duration_ms: 0.498083
+  type: 'test'
+  ...
+# Subtest: RL-04 returns no executable card for stale, negative, or unsupported high-risk claims
+ok 42 - RL-04 returns no executable card for stale, negative, or unsupported high-risk claims
+  ---
+  duration_ms: 176.652209
+  type: 'test'
+  ...
+# Subtest: rejects raw explanation fields before a result exists
+ok 43 - rejects raw explanation fields before a result exists
+  ---
+  duration_ms: 3.86775
+  type: 'test'
+  ...
+# Subtest: rejects forged discriminated values and invalid time-window instants before rendering
+ok 44 - rejects forged discriminated values and invalid time-window instants before rendering
+  ---
+  duration_ms: 0.624458
+  type: 'test'
+  ...
+# Subtest: RL-02 denies six ineligible or unknown retrieval fixtures before ranking
+ok 45 - RL-02 denies six ineligible or unknown retrieval fixtures before ranking
+  ---
+  duration_ms: 8.925709
+  type: 'test'
+  ...
+# Subtest: rejects content-bearing profile fields and non-deterministic timestamps before retrieval
+ok 46 - rejects content-bearing profile fields and non-deterministic timestamps before retrieval
+  ---
+  duration_ms: 0.851042
+  type: 'test'
+  ...
+# Subtest: RL-08 imports a replayed source row only as a private candidate
+ok 47 - RL-08 imports a replayed source row only as a private candidate
+  ---
+  duration_ms: 10.979584
+  type: 'test'
+  ...
+# Subtest: RL-08 rejects source replay drift before it can create a second candidate
+ok 48 - RL-08 rejects source replay drift before it can create a second candidate
+  ---
+  duration_ms: 3.286959
+  type: 'test'
+  ...
+# Subtest: RL-08 rejects an exact source replay under a different Candidate ID
+ok 49 - RL-08 rejects an exact source replay under a different Candidate ID
+  ---
+  duration_ms: 0.323917
+  type: 'test'
+  ...
+# Subtest: RL-08 rejects non-RFC3339 and impossible calendar instants before import
+ok 50 - RL-08 rejects non-RFC3339 and impossible calendar instants before import
+  ---
+  duration_ms: 0.226
+  type: 'test'
+  ...
+# Subtest: RL-08 denies self-review and stale Change Set CAS without publishing a Fact
+ok 51 - RL-08 denies self-review and stale Change Set CAS without publishing a Fact
+  ---
+  duration_ms: 1.786209
+  type: 'test'
+  ...
+# Subtest: an independent current reviewer records one reviewed Fact with an eligibility event and audit, without a public projection
+ok 52 - an independent current reviewer records one reviewed Fact with an eligibility event and audit, without a public projection
+  ---
+  duration_ms: 0.577583
+  type: 'test'
+  ...
+# Subtest: records explicit merge, split, tombstone, and source-delete outcomes as private audit events
+ok 53 - records explicit merge, split, tombstone, and source-delete outcomes as private audit events
+  ---
+  duration_ms: 0.471625
+  type: 'test'
+  ...
+# Subtest: RL-08 author cannot review their own private Fact draft
+ok 54 - RL-08 author cannot review their own private Fact draft
+  ---
+  duration_ms: 8.287417
+  type: 'test'
+  ...
+# Subtest: RL-08 audit failure rolls publication back without a Fact
+ok 55 - RL-08 audit failure rolls publication back without a Fact
+  ---
+  duration_ms: 0.758917
+  type: 'test'
+  ...
+# Subtest: RL-08 independent review yields only private metadata and never an Ops secret
+ok 56 - RL-08 independent review yields only private metadata and never an Ops secret
+  ---
+  duration_ms: 0.878666
+  type: 'test'
+  ...
+# Subtest: RL-08 rejects impossible or timezone-less timestamps before a Draft exists
+ok 57 - RL-08 rejects impossible or timezone-less timestamps before a Draft exists
+  ---
+  duration_ms: 0.468208
+  type: 'test'
+  ...
+# Subtest: AI-32 RL-07 does not emit raw media, SDP, or a browser credential
+ok 58 - AI-32 RL-07 does not emit raw media, SDP, or a browser credential
+  ---
+  duration_ms: 2.385375
+  type: 'test'
+  ...
+# Subtest: AI-32 RL-07 keeps the protocol fixture-only and free of provider transport calls
+ok 59 - AI-32 RL-07 keeps the protocol fixture-only and free of provider transport calls
+  ---
+  duration_ms: 0.739333
+  type: 'test'
+  ...
+# Subtest: AI-30 RL-06/RL-07 fail closed before a private media upload intent
+ok 60 - AI-30 RL-06/RL-07 fail closed before a private media upload intent
+  ---
+  duration_ms: 8.712666
+  type: 'test'
+  ...
+# Subtest: V4-14 uses a server-minted consent creation request and a forward oracle repair
+ok 61 - V4-14 uses a server-minted consent creation request and a forward oracle repair
+  ---
+  duration_ms: 805.467791
+  type: 'test'
+  ...
+# Subtest: V4-15 durable Memory consumer receipts are owner-scoped and cannot be client-forged
+ok 62 - V4-15 durable Memory consumer receipts are owner-scoped and cannot be client-forged
+  ---
+  duration_ms: 5.039583
+  type: 'test'
+  ...
+# Subtest: V4-13 rejects timezone-less and calendar-invalid Memory timestamps before retrieval
+ok 63 - V4-13 rejects timezone-less and calendar-invalid Memory timestamps before retrieval
+  ---
+  duration_ms: 719.138958
+  type: 'test'
+  ...
+# Subtest: V4-13 Memory Profile is owner-scoped, receipt-backed, and excludes unsafe retrieval states
+ok 64 - V4-13 Memory Profile is owner-scoped, receipt-backed, and excludes unsafe retrieval states
+  ---
+  duration_ms: 11.676834
+  type: 'test'
+  ...
+# Subtest: policy rejection, pre-cancellation and exhausted C0 budget never dispatch
+ok 65 - policy rejection, pre-cancellation and exhausted C0 budget never dispatch
+  ---
+  duration_ms: 112.202916
+  type: 'test'
+  ...
+# Subtest: invalid runtime requests reject before transport
+ok 66 - invalid runtime requests reject before transport
+  ---
+  duration_ms: 7.086917
+  type: 'test'
+  ...
+# Subtest: HTTP failures and exceptions reveal no headers/body/secret and never retry or fallback
+ok 67 - HTTP failures and exceptions reveal no headers/body/secret and never retry or fallback
+  ---
+  duration_ms: 5.61525
+  type: 'test'
+  ...
+# Subtest: timeout aborts one ignored transport and cancels its late response
+ok 68 - timeout aborts one ignored transport and cancels its late response
+  ---
+  duration_ms: 25.149583
+  type: 'test'
+  ...
+# Subtest: caller cancellation aborts HTTP and remains cancelled even if transport ignores it
+ok 69 - caller cancellation aborts HTTP and remains cancelled even if transport ignores it
+  ---
+  duration_ms: 19.020708
+  type: 'test'
+  ...
+# Subtest: body reads share the deadline and cancel hanging streams
+ok 70 - body reads share the deadline and cancel hanging streams
+  ---
+  duration_ms: 45.438459
+  type: 'test'
+  ...
+# Subtest: oversized, malformed and streaming bodies reject without returning raw payload
+ok 71 - oversized, malformed and streaming bodies reject without returning raw payload
+  ---
+  duration_ms: 2.750959
+  type: 'test'
+  ...
+# Subtest: LAUNCH-14 rejects raw content, PII-shaped fields, secrets, and unbounded telemetry labels
+ok 72 - LAUNCH-14 rejects raw content, PII-shaped fields, secrets, and unbounded telemetry labels
+  ---
+  duration_ms: 54.916083
+  type: 'test'
+  ...
+# Subtest: LAUNCH-14 consumes the fail-closed chat flag before reserving a bounded cost budget
+ok 73 - LAUNCH-14 consumes the fail-closed chat flag before reserving a bounded cost budget
+  ---
+  duration_ms: 1.898
+  type: 'test'
+  ...
+# Subtest: RL-06 denies unknown, expired, and trial-ended policy actions before any use
+ok 74 - RL-06 denies unknown, expired, and trial-ended policy actions before any use
+  ---
+  duration_ms: 61.817708
+  type: 'test'
+  ...
+# Subtest: rejects injected requests, forged registries, duplicate grants, and sensitive classes
+ok 75 - rejects injected requests, forged registries, duplicate grants, and sensitive classes
+  ---
+  duration_ms: 1.197542
+  type: 'test'
+  ...
+# Subtest: V4-17 privacy requests are owner-scoped, receipt-backed, and never erase user data inline
+ok 76 - V4-17 privacy requests are owner-scoped, receipt-backed, and never erase user data inline
+  ---
+  duration_ms: 14.3025
+  type: 'test'
+  ...
+# Subtest: keeps a submitted report private and cannot change a Fact directly
+ok 77 - keeps a submitted report private and cannot change a Fact directly
+  ---
+  duration_ms: 108.472458
+  type: 'test'
+  ...
+# Subtest: requires independent verified review before a tombstone cascade and leaves Trips for recheck
+ok 78 - requires independent verified review before a tombstone cascade and leaves Trips for recheck
+  ---
+  duration_ms: 2.998667
+  type: 'test'
+  ...
+# Subtest: rejects calendar-impossible audit timestamps before any private Report exists
+ok 79 - rejects calendar-impossible audit timestamps before any private Report exists
+  ---
+  duration_ms: 5.595417
+  type: 'test'
+  ...
+# Subtest: rejects unverified reviewers and resolution timestamps before the private submission
+ok 80 - rejects unverified reviewers and resolution timestamps before the private submission
+  ---
+  duration_ms: 0.569792
+  type: 'test'
+  ...
+# Subtest: requires a strict true verifier result before resolution
+ok 81 - requires a strict true verifier result before resolution
+  ---
+  duration_ms: 0.322
+  type: 'test'
+  ...
+# Subtest: LAUNCH-12 preserves session guards and does not add an unscoped Today data route
+ok 82 - LAUNCH-12 preserves session guards and does not add an unscoped Today data route
+  ---
+  duration_ms: 6.31325
+  type: 'test'
+  ...
+# Subtest: does not expose raw tool output in a receipt and escapes an attempted boundary break
+ok 83 - does not expose raw tool output in a receipt and escapes an attempted boundary break
+  ---
+  duration_ms: 5.1275
+  type: 'test'
+  ...
+# Subtest: LAUNCH-03 keeps full Trip content owner-scoped and confirmation-only
+ok 84 - LAUNCH-03 keeps full Trip content owner-scoped and confirmation-only
+  ---
+  duration_ms: 15.03575
+  type: 'test'
+  ...
+# Subtest: LAUNCH-09 keeps Trip list/create owner-scoped and removes client credential paths
+ok 85 - LAUNCH-09 keeps Trip list/create owner-scoped and removes client credential paths
+  ---
+  duration_ms: 8.268959
+  type: 'test'
+  ...
+# Subtest: AI-13c reject route has no privileged credential or cross-origin bypass
+ok 86 - AI-13c reject route has no privileged credential or cross-origin bypass
+  ---
+  duration_ms: 7.462958
+  type: 'test'
+  ...
+# Subtest: AI-13b revision RPC remains owner-scoped and never introduces a service credential
+ok 87 - AI-13b revision RPC remains owner-scoped and never introduces a service credential
+  ---
+  duration_ms: 22.600791
+  type: 'test'
+  ...
+# Subtest: V4-10 rollback is owner-bound, proposal-confirmed, and cannot re-enable direct Trip updates
+ok 88 - V4-10 rollback is owner-bound, proposal-confirmed, and cannot re-enable direct Trip updates
+  ---
+  duration_ms: 3.20875
+  type: 'test'
+  ...
+# Subtest: V4-11 place references are owner-scoped and expose no map provider or service credential
+ok 89 - V4-11 place references are owner-scoped and expose no map provider or service credential
+  ---
+  duration_ms: 15.463584
+  type: 'test'
+  ...
+# Subtest: V4-12 action references are owner-readable only and never expose payment or service credentials
+ok 90 - V4-12 action references are owner-readable only and never expose payment or service credentials
+  ---
+  duration_ms: 10.392708
+  type: 'test'
+  ...
+# Subtest: V4-09 feedback is owner-scoped, structured, and rejects arbitrary corrections
+ok 91 - V4-09 feedback is owner-scoped, structured, and rejects arbitrary corrections
+  ---
+  duration_ms: 2.256458
+  type: 'test'
+  ...
+# Subtest: V4-08 chat thread routes are private, same-origin for creation, and never use a service credential
+ok 92 - V4-08 chat thread routes are private, same-origin for creation, and never use a service credential
+  ---
+  duration_ms: 6.810417
+  type: 'test'
+  ...
+# Subtest: V4-08 durable chat storage is owner-scoped, append-only, and excludes anon
+ok 93 - V4-08 durable chat storage is owner-scoped, append-only, and excludes anon
+  ---
+  duration_ms: 62.23625
+  type: 'test'
+  ...
+# Subtest: LAUNCH-05 does not accept provider reasoning or expose message text in its telemetry receipt
+ok 94 - LAUNCH-05 does not accept provider reasoning or expose message text in its telemetry receipt
+  ---
+  duration_ms: 3.569291
+  type: 'test'
+  ...
+# Subtest: LAUNCH-05 rejects provider data hidden inside an otherwise valid immutable Proposal
+ok 95 - LAUNCH-05 rejects provider data hidden inside an otherwise valid immutable Proposal
+  ---
+  duration_ms: 2.185458
+  type: 'test'
+  ...
+# Subtest: LAUNCH-07 rejects content-bearing input, forged worker/lease capabilities, and cross-owner reads
+ok 96 - LAUNCH-07 rejects content-bearing input, forged worker/lease capabilities, and cross-owner reads
+  ---
+  duration_ms: 7.146542
+  type: 'test'
+  ...
+# Subtest: LAUNCH-07 owner cancellation wins a lease race and prevents a later worker completion
+ok 97 - LAUNCH-07 owner cancellation wins a lease race and prevents a later worker completion
+  ---
+  duration_ms: 5.340542
+  type: 'test'
+  ...
+# Subtest: LAUNCH-07 expires a lease before an old worker can complete without an intervening claim
+ok 98 - LAUNCH-07 expires a lease before an old worker can complete without an intervening claim
+  ---
+  duration_ms: 0.678375
+  type: 'test'
+  ...
+# Subtest: V4-16 Profile persistence is owner-only and remains separate from inferred Memory
+ok 99 - V4-16 Profile persistence is owner-only and remains separate from inferred Memory
+  ---
+  duration_ms: 8.67525
+  type: 'test'
+  ...
+1..99
+# tests 99
+# suites 0
+# pass 99
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 77755.830292
+VP_CI_SUITE_RESULT {"suite":"security","outcome":"passed","skipped":0,"testFiles":44}

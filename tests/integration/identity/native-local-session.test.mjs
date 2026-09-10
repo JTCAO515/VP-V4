@@ -8,6 +8,7 @@ import { createServerClient } from '@supabase/ssr';
 import { identityLocalEnv } from './local-supabase.mjs';
 import { confirmationDigest } from '../trip/confirmation-input.mjs';
 import { waitForNativeAPI } from './native-api-readiness.mjs';
+import { databaseBarrier, waitUntil } from './database-barrier.mjs';
 
 const enabled = process.env.VP_NATIVE_LOCAL_INTEGRATION === 'true';
 test('real disposable Auth → HTTP → persistent mobile epoch → RLS and revocation', { skip: !enabled, timeout: 180000 }, async (t) => {
@@ -45,7 +46,7 @@ test('real disposable Auth → HTTP → persistent mobile epoch → RLS and revo
   if(other.data.user)syntheticIds.push(other.data.user.id);
   assert.ok(other.data.user && !other.error,'other owner signup');
   const call=async(action,body,token,headers={})=>{
-    const r=await fetch(api+'/api/auth/native/v2/'+action,{method:['session','profile'].includes(action)?'GET':'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{}),...headers},...(['session','profile'].includes(action)?{}:{body:JSON.stringify(body)})});
+    const r=await fetch(api+'/api/auth/native/v2/'+action,{signal:AbortSignal.timeout(60000),method:['session','profile'].includes(action)?'GET':'POST',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{}),...headers},...(['session','profile'].includes(action)?{}:{body:JSON.stringify(body)})});
     assert.ok(r.headers.get('content-type')?.includes('application/json'),'native '+action+' returned non-JSON HTTP '+r.status);
     return {status:r.status,body:await r.json()};
   };
@@ -97,27 +98,29 @@ test('real disposable Auth → HTTP → persistent mobile epoch → RLS and revo
   const attemptB=randomUUID();
   const b=await call('credentials',{email,password,attemptId:attemptB});
   assert.equal(b.status,200);
-  // A disposable test barrier holds the REAL owner write transaction open; it does not
-  // replace the production guard, Auth, RLS or save_user_profile implementation.
-  const sql=statement=>execFileSync('docker',['exec','-i',state.DB_CONTAINER,'psql','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-At'],{input:statement,encoding:'utf8',stdio:['pipe','pipe','pipe']}).trim();
-  sql("create function public.vpj04_test_write_barrier() returns boolean language plpgsql security invoker set search_path='' as $$ begin perform public.save_user_profile('Local ordered write','balanced','en','USD','mile','celsius','09:00'); perform pg_sleep(2); return true; end $$; revoke all on function public.vpj04_test_write_barrier() from public,anon; grant execute on function public.vpj04_test_write_barrier() to authenticated;");
-  t.after(()=>sql('drop function public.vpj04_test_write_barrier();'));
-  const inFlightWrite=Promise.resolve(aClient.rpc('vpj04_test_write_barrier'));
-  let sleeping=false;
-  for(let i=0;i<40;i++){
-    sleeping=sql("select count(*) from pg_stat_activity where wait_event='PgSleep' and query like '%vpj04_test_write_barrier%';")!=='0';
-    if(sleeping)break;
-    await new Promise(r=>setTimeout(r,25));
+  // The real owner RPC holds its account lock until this unique test gate is released.
+  // Observe exact backend blocking relationships instead of racing a fixed pg_sleep window.
+  const gate=await databaseBarrier(state.DB_CONTAINER);
+  t.after(()=>gate.release());
+  const barrierName='vpj04_write_'+randomUUID().replaceAll('-','');
+  gate.sql(`create function public.${barrierName}() returns boolean language plpgsql security invoker set search_path='' as $$ begin perform public.save_user_profile('Local ordered write','balanced','en','USD','mile','celsius','09:00'); perform pg_advisory_xact_lock(${gate.key}::bigint); return true; end $$; revoke all on function public.${barrierName}() from public,anon; grant execute on function public.${barrierName}() to authenticated; notify pgrst,'reload schema';`);
+  t.after(()=>gate.sql(`drop function public.${barrierName}();`));
+  await waitUntil(async()=>{
+    const schema=await fetch(state.API_URL+'/rest/v1/',{redirect:'error',headers:{apikey:key,Authorization:'Bearer '+a.body.accessToken},signal:AbortSignal.timeout(5000)});
+    return schema.ok && Boolean((await schema.json()).paths?.['/rpc/'+barrierName]);
+  },20000,'ordinary-role test RPC schema readiness');
+  const inFlightWrite=Promise.resolve(aClient.rpc(barrierName).abortSignal(AbortSignal.timeout(60000)));
+  let replacing;
+  try {
+    const writePid=Number(await waitUntil(()=>gate.sql(`select pid from pg_stat_activity where wait_event_type='Lock' and query like '%${barrierName}%' and ${gate.pid}=any(pg_blocking_pids(pid));`),20000,'actual write backend blocked by the unique test gate'));
+    assert.ok(Number.isInteger(writePid) && writePid>0,'observed real write backend PID');
+    replacing=call('login',{attemptId:attemptB},b.body.accessToken);
+    const replacementPid=Number(await waitUntil(()=>gate.sql(`select pid from pg_stat_activity where wait_event_type='Lock' and query like '%native_session_v2%' and ${writePid}=any(pg_blocking_pids(pid));`),20000,'replacement backend blocked by that exact write backend'));
+    assert.ok(Number.isInteger(replacementPid) && replacementPid>0 && replacementPid!==writePid,'replacement is blocked by the actual writer');
+  } finally {
+    await gate.release();
+    await Promise.allSettled([inFlightWrite,...(replacing?[replacing]:[])]);
   }
-  assert.ok(sleeping,'actual owner RPC holds the account lock while sleeping');
-  const replacing=call('login',{attemptId:attemptB},b.body.accessToken);
-  let waiting=false;
-  for(let i=0;i<30;i++){
-    waiting=sql("select count(*) from pg_stat_activity where wait_event_type='Lock' and query like '%native_session_v2%';")!=='0';
-    if(waiting)break;
-    await new Promise(r=>setTimeout(r,25));
-  }
-  assert.ok(waiting,'replacement waits on the same account lock as an in-flight business RPC');
   assert.equal((await inFlightWrite).error,null,'write admitted before replacement commits first');
   assert.equal((await replacing).body.mobileEpoch,2,'second phone replaces first after the write');
   assert.equal((await call('session',{},refreshed.body.accessToken)).status,401,'old phone rejected');

@@ -1,6 +1,6 @@
 # Harness 实施状态
 
-2026-09-10 代码基线核对至 main `d78e188`，运行证据更新至本次授权执行；不是最终产品验收。本次在明确追加授权后实际执行Staging预算迁移及验证，结果见artifacts/VPJ-59/staging-20260910.md。
+2026-09-10 已合并基线核对至 main `9fb6a64`；本机同一Trip整合证据另见artifacts/VPJ-05，准确PR交付状态以审阅/CI记录为准，不是最终产品验收。本次在明确追加授权后实际执行Staging预算迁移及验证，结果见artifacts/VPJ-59/staging-20260910.md。
 
 | 任务 | 事实与下一步 |
 | --- | --- |
@@ -15,8 +15,9 @@
 
 - VPJ-02 #189：PR281已合并85c2b98。获准原13+RPC修复迁移已实际执行，Staging11→25；新加密备份/断网恢复与普通JWT隔离16/16通过，精确清理后原有3Auth/2Trip摘要一致。新预算迁移20260909184816已获追加授权并执行，Staging现26条迁移；新备份恢复及40项预算/身份检查通过，精确清理后原数据保持一致。direct-host新只读探针仍失败，worker路径仍未验收。见artifacts/VPJ-02/staging-apply-20260910.md。
 - VPJ-03 #190：PR282已合并d4eeb08，记录JT提供的服务入口、Qwen/GLM个人账号、经营主体、测试对象和三家合成推理授权；每家本轮累计≤CNY30、总计≤CNY90，不授权充值。DeepSeek账号类型未提供。JT已选择A，允许仅本轮完全虚构、无个人信息的文本按适用条款留存/模型改进；真实聊天保存/删除和人工访问规则未定。三家登录钥匙串条目均已检测到；DeepSeek此前进程环境变量后来不存在，用户已补录。条目存在不证明密钥有效或模型权限。见docs/policy/vpj-03-text-decisions.md。
-- VPJ-01 #188：PR278合并f6928c8，准确HEAD审阅及Quality/Native CI通过；本地iOS26.5最终8单元+7UI通过，iOS17.5为8单元+3UI通过、4UI裁切审计失败。同设备基线对照复现中文banner及Tools既存失败，本次减少对比度问题；不能作为最低系统验收通过，最大字完整contrast诊断亦保留FAIL。真实VoiceOver/设备等基础原生门仍未验收。已登录真实Trip的选区Ask/确认/重载属于#198及#233/#242联合验收，不反向阻塞#188；当前空Trip预览不能冒充这些消费者。
-- VPJ-04 #191：基于PR279的JWT接缝，本机native v2已接通真实Profile→URLSession→Next→普通Auth/JWT→持久epoch/RLS。两台iOS26.5的6项身份测试、真实过期/刷新、顶替并发、旧RPC重放拒绝及Web Cookie/Origin均通过；全新本机26→27首次迁移及15函数原体保留已核验。默认远端关闭，Staging仍26；17.5身份、真机、push及完整原生Trip消费者未验，#191保持OPEN。完整证据与保留失败见artifacts/VPJ-04/local-session/verification.md。
+- VPJ-01 #188：PR278合并f6928c8，准确HEAD审阅及Quality/Native CI通过；本地iOS26.5最终8单元+7UI通过，iOS17.5为8单元+3UI通过、4UI裁切审计失败。同设备基线对照复现中文banner及Tools既存失败，本次减少对比度问题；不能作为最低系统验收通过，最大字完整contrast诊断亦保留FAIL。PR300已记录用户确认的iPhone17真机实操PASS及9项设备导航/状态测试；真实VoiceOver及上述完整基础门仍未验收。已登录真实Trip的选区Ask/确认/重载属于#198及#233/#242联合验收，不反向阻塞#188；当前空Trip预览不能冒充这些消费者。
+- VPJ-04 #191：基于PR279的JWT接缝，本机native v2已接通真实Profile→URLSession→Next→普通Auth/JWT→持久epoch/RLS。两台iOS26.5的6项身份测试、真实过期/刷新、顶替并发、旧RPC重放拒绝及Web Cookie/Origin均通过；全新本机26→27首次迁移及15函数原体保留已核验。身份链已由PR298合并。默认远端关闭，Staging仍26；17.5身份、真机身份、push及完整产品门未验，#191保持OPEN。本机同一Trip消费者证据见下一项。完整证据与保留失败见artifacts/VPJ-04/local-session/verification.md。
+- VPJ-05 #192：本机Web与Swift通过同一Trip ID双向创建/修改/确认/重载，草稿和CAS冲突保留、恢复提议确认/拒绝后按钮状态已实测。SQL28的receipt/digest权威与普通JWT/RLS对抗检查、真实27→28旧数据保留升级通过；user hard locks及外部订单仍unknown，远端未启用，#192保持OPEN。完整证据见artifacts/VPJ-05/verification.md。
 - VPJ-06 #193：已有真实C0协议证据：三家主样本27/27、客户端超时/取消6/6、两个真实DeepSeek调用的重复worker/崩溃记账证明通过。GLM显式关闭思考导致400/1210，保留原生默认后实际9项样本通过；Qwen/DeepSeek各9样本通过。不同轮次输出上限分开记录，只有后两轮同4096；不把协议通过当语义质量/人工校准或模型采用。完整usage按最高公开费率的保守预算扣额0.035014CNY，8个不明费用请求保留28.9CNY预留，均非实际账单声明。真实profile/outcome消费者、地区/账单核验和语义质量仍待完成；见artifacts/VPJ-06/live-c0-20260910。
 
 - VPJ-62 #202无形式任务依赖，但实际邮箱/同意/回执/退出涉及真实接收方与数据政策，且不在Harness主依赖链；不为绕开阻塞自动开放收集。
@@ -33,4 +34,6 @@
 
 ## 验证范围
 
-CI34313179100浏览器9通过；integration10skip/security1skip按incomplete保留。VPJ-66仅按离线范围完成。已运行模式、语言、数量、成本unknown和未运行模式见artifacts/VPJ-66/results.json；实际费用与线上能力仍未验证。
+本次整合：unit92/contract199/evals25/security99/E2E40及build/static22通过；真实身份/Trip两个opt-in均执行，integration31pass/0fail/10预算环境skip保持INCOMPLETE。浏览器与Swift双端证据不等于生产/完整产品验收。
+
+历史基线CI34313179100浏览器9通过；integration10skip/security1skip按incomplete保留。VPJ-66仅按离线范围完成。已运行模式、语言、数量、成本unknown和未运行模式见artifacts/VPJ-66/results.json；实际费用与线上能力仍未验证。
