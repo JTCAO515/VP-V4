@@ -77,3 +77,13 @@ git diff --check
 运行前须核对当前独立工作区绑定到指定Staging。只读SQL通过BEGIN READ ONLY/ROLLBACK限定；版本与表元数据不含用户内容。
 
 回滚本PR只需revert文档/只读SQL；未执行远端迁移或用户数据变更。解绑本地缓存不代表删除远端项目。
+
+## 2026-09-11 frozen26→33 preparation
+
+Current [explicit Staging metadata](staging-33-preparation/staging-metadata.json) freshly confirms26,
+matching versions/names and3 Auth/2 Trip. Migration27's exact15-function prerequisite encounters18;
+the three extra effective grants are an observed blocker, not authorization to weaken the check.
+[Preparation evidence](staging-33-preparation/verification.md) includes an isolated two-container
+restore/upgrade rehearsal, guarded pre27 administrative SQL, exact frozen package and caller matrix.
+[Runbook](../../docs/runbooks/staging-26-to-33.md) requires separate actual migration/permission
+approval. No remote writes, real credentials or user-row reads, new policy or team access occurred.

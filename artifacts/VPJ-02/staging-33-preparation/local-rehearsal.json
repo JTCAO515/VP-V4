@@ -1,0 +1,184 @@
+{
+  "schemaVersion": "vpj02-local-upgrade-rehearsal/v1",
+  "sourceBaseline": "cd2201194402b87e6322f4b703dd780707fcae2e",
+  "runnerSha256": "1c49639418c1664569775f63f252c04fdcc6e3eb8d4d15de7597f1b59bf77d44",
+  "manifestSha256": "306356890f50a356fff736949d5749e7deed0efa6b7261bd6fce1705025434c1",
+  "startedAt": "2026-09-10T20:19:58.010Z",
+  "environment": "new synthetic PostgreSQL containers; network none; no published ports; SQL Auth fixtures, not GoTrue",
+  "laterMigrationsExcluded": [],
+  "remoteActions": 0,
+  "providerCalls": 0,
+  "checks": [
+    {
+      "name": "apply frozen baseline26",
+      "result": "PASS"
+    },
+    {
+      "name": "seed old identity Trip snapshots receipt and unresolved budget through existing RPCs",
+      "result": "PASS"
+    },
+    {
+      "name": "simulate observed platform function and three exact effective execution grants",
+      "result": "PASS"
+    },
+    {
+      "name": "synthetic baseline26 logical dump kept only in process memory",
+      "result": "PASS"
+    },
+    {
+      "name": "restore baseline26 into second new container preserves all old table digests",
+      "result": "PASS"
+    },
+    {
+      "name": "source: unchanged27 rejects observed extra grants and rolls back its entire transaction",
+      "result": "PASS"
+    },
+    {
+      "name": "source: unknown source ACL and extra function drift reject normalization without partial revocation",
+      "result": "PASS"
+    },
+    {
+      "name": "source: exact pre27 normalization and explicit pre27 ACL restoration preserve data",
+      "result": "PASS"
+    },
+    {
+      "name": "source: migration27 preserves old table projections",
+      "result": "PASS"
+    },
+    {
+      "name": "source: existing Web session reads; new mobile authority established without replacing Web",
+      "result": "PASS"
+    },
+    {
+      "name": "source: migration28 preserves old table projections",
+      "result": "PASS"
+    },
+    {
+      "name": "source: migration29 preserves old table projections",
+      "result": "PASS"
+    },
+    {
+      "name": "source: migration30 preserves old table projections",
+      "result": "PASS"
+    },
+    {
+      "name": "source: migration31 preserves old table projections",
+      "result": "PASS"
+    },
+    {
+      "name": "source: migration32 preserves old table projections",
+      "result": "PASS"
+    },
+    {
+      "name": "source: migration33 preserves old table projections",
+      "result": "PASS"
+    },
+    {
+      "name": "source: migration27 mobile records survive through33",
+      "result": "PASS"
+    },
+    {
+      "name": "source: old confirmation/reject/receipt-writing callers fail closed on33",
+      "result": "PASS"
+    },
+    {
+      "name": "source: old receipt retained unbound and cannot masquerade as v2 replay",
+      "result": "PASS"
+    },
+    {
+      "name": "source: v2 exact digest confirms old pending proposal and appends history",
+      "result": "PASS"
+    },
+    {
+      "name": "source: new policy consent content and work remain empty without activation",
+      "result": "PASS"
+    },
+    {
+      "name": "source: owner other and anonymous preserve isolation",
+      "result": "PASS"
+    },
+    {
+      "name": "source: stop disables admission while preserving pending hold and identity Trip data",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: unchanged27 rejects observed extra grants and rolls back its entire transaction",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: unknown source ACL and extra function drift reject normalization without partial revocation",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: exact pre27 normalization and explicit pre27 ACL restoration preserve data",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: migration27 preserves old table projections",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: existing Web session reads; new mobile authority established without replacing Web",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: migration28 preserves old table projections",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: migration29 preserves old table projections",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: migration30 preserves old table projections",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: migration31 preserves old table projections",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: migration32 preserves old table projections",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: migration33 preserves old table projections",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: migration27 mobile records survive through33",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: old confirmation/reject/receipt-writing callers fail closed on33",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: old receipt retained unbound and cannot masquerade as v2 replay",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: v2 exact digest confirms old pending proposal and appends history",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: new policy consent content and work remain empty without activation",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: owner other and anonymous preserve isolation",
+      "result": "PASS"
+    },
+    {
+      "name": "restore: stop disables admission while preserving pending hold and identity Trip data",
+      "result": "PASS"
+    }
+  ],
+  "cleanup": "PASS",
+  "result": "PASS",
+  "dockerTransport": "pinned-local-unix-socket-context",
+  "imageId": "sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+  "baselineTableCount": 33,
+  "syntheticDumpSha256": "9aefa6d57ad873e505859e1df2986c90d7c9e1ef3774ddc534d201c847f45202",
+  "finishedAt": "2026-09-10T20:20:10.958Z"
+}

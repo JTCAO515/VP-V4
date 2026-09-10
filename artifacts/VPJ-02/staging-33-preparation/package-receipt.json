@@ -1,0 +1,11 @@
+{
+  "result": "FROZEN_PACKAGE_CREATED",
+  "count": 33,
+  "manifestSha256": "306356890f50a356fff736949d5749e7deed0efa6b7261bd6fce1705025434c1",
+  "laterMigrationsExcluded": [],
+  "linked": false,
+  "remoteActions": 0,
+  "activation": false,
+  "createdAt": "2026-09-10T20:16:29.364586+00:00",
+  "localPackagePath": "/tmp/vpj02-staging33-frozen-e2642ee2fafc"
+}

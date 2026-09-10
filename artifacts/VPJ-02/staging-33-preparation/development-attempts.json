@@ -1,0 +1,65 @@
+{
+  "attempts": [
+    {
+      "attempt": 1,
+      "result": "FAIL",
+      "startedAt": "2026-09-10T19:59:06.875Z",
+      "finishedAt": "2026-09-10T19:59:13.652Z",
+      "passedChecks": 2,
+      "failedStage": "seed old identity Trip snapshots receipt and unresolved budget through existing RPCs",
+      "cleanup": "PASS",
+      "remoteActions": 0,
+      "providerCalls": 0,
+      "diagnosis": "Harness identifier regex excluded existing v4 table names"
+    },
+    {
+      "attempt": 2,
+      "result": "FAIL",
+      "startedAt": "2026-09-10T19:59:31.086Z",
+      "finishedAt": "2026-09-10T19:59:56.279Z",
+      "passedChecks": 14,
+      "failedStage": "source: old receipt retained unbound and cannot masquerade as v2 replay",
+      "cleanup": "PASS",
+      "remoteActions": 0,
+      "providerCalls": 0,
+      "diagnosis": "Minimal SQL Auth fixture lacked schema auth USAGE for invoker read_trip_proposal_v2; diagnosed by SQLSTATE42501 and permission denied for schema auth. No application migration changed."
+    },
+    {
+      "attempt": 3,
+      "result": "FAIL",
+      "startedAt": "2026-09-10T20:00:45.305Z",
+      "finishedAt": "2026-09-10T20:01:10.436Z",
+      "passedChecks": 14,
+      "failedStage": "source: old receipt retained unbound and cannot masquerade as v2 replay",
+      "cleanup": "PASS",
+      "remoteActions": 0,
+      "providerCalls": 0,
+      "diagnosis": "Minimal SQL Auth fixture lacked schema auth USAGE for invoker read_trip_proposal_v2; diagnosed by SQLSTATE42501 and permission denied for schema auth. No application migration changed."
+    },
+    {
+      "attempt": 4,
+      "result": "FAIL",
+      "startedAt": "2026-09-10T20:01:46.735Z",
+      "finishedAt": "2026-09-10T20:02:12.697Z",
+      "passedChecks": 14,
+      "failedStage": "source: old receipt retained unbound and cannot masquerade as v2 replay",
+      "cleanup": "PASS",
+      "remoteActions": 0,
+      "providerCalls": 0,
+      "diagnosis": "Minimal SQL Auth fixture lacked schema auth USAGE for invoker read_trip_proposal_v2; diagnosed by SQLSTATE42501 and permission denied for schema auth. No application migration changed."
+    },
+    {
+      "attempt": 5,
+      "result": "FAIL",
+      "startedAt": "2026-09-10T20:03:00.496Z",
+      "finishedAt": "2026-09-10T20:03:25.914Z",
+      "passedChecks": 14,
+      "failedStage": "source: old receipt retained unbound and cannot masquerade as v2 replay",
+      "cleanup": "PASS",
+      "remoteActions": 0,
+      "providerCalls": 0,
+      "diagnosis": "Minimal SQL Auth fixture lacked schema auth USAGE for invoker read_trip_proposal_v2; diagnosed by SQLSTATE42501 and permission denied for schema auth. No application migration changed."
+    }
+  ],
+  "resolution": "Allowed identifier digits; modeled Auth schema USAGE in the new disposable fixture. Later remote-shaped permission normalization tests are separate from this fixture repair."
+}

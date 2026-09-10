@@ -1,0 +1,221 @@
+{
+  "schemaVersion": "vpj02-staging-upgrade-manifest/v1",
+  "sourceBaseline": "cd2201194402b87e6322f4b703dd780707fcae2e",
+  "lastVerifiedStagingCount": 26,
+  "targetCount": 33,
+  "image": "public.ecr.aws/supabase/postgres:17.6.1.159",
+  "migrations": [
+    {
+      "ordinal": 1,
+      "file": "supabase/migrations/20260824101500_v4_baseline.sql",
+      "version": "20260824101500",
+      "sha256": "2296639fa00f329fe239032a31bfbec7e8d3458318fe04411ff8c625fdee8a78"
+    },
+    {
+      "ordinal": 2,
+      "file": "supabase/migrations/20260824104424_plat_conf_connection_probes.sql",
+      "version": "20260824104424",
+      "sha256": "d56ace82f308e66e8796e461b944a9b308e1cfc9d033a24ab0752a06ac2edbcb"
+    },
+    {
+      "ordinal": 3,
+      "file": "supabase/migrations/20260824104547_plat_conf_ops_probe.sql",
+      "version": "20260824104547",
+      "sha256": "7a753059eb93336e45f9e19e9e3c179ea6f15b34943b1ff0194bd8b5a409ac90"
+    },
+    {
+      "ordinal": 4,
+      "file": "supabase/migrations/20260824105759_plat_conf_worker_probe_grant.sql",
+      "version": "20260824105759",
+      "sha256": "8831e6412a5edccd3b3eb59fe071407b632d45d2a96e3bd232a1d5016b2a0115"
+    },
+    {
+      "ordinal": 5,
+      "file": "supabase/migrations/20260825052328_ai14_actor_rls_fault_probes.sql",
+      "version": "20260825052328",
+      "sha256": "460990e1301406b2d91c5e7e9dbdef265ba915baac8fe2f8f72012401373b57a"
+    },
+    {
+      "ordinal": 6,
+      "file": "supabase/migrations/20260825153534_ai14_reviewer_separation_probe.sql",
+      "version": "20260825153534",
+      "sha256": "39b627433eddcfc61f12380ce33d202a1343d254055656ce3b3010591d508869"
+    },
+    {
+      "ordinal": 7,
+      "file": "supabase/migrations/20260825153613_ai14_reviewer_select_probe.sql",
+      "version": "20260825153613",
+      "sha256": "1f8a9fc86b62a4a76bc3216a6ea6148eac309b82016d2a66eab39dd75228e55e"
+    },
+    {
+      "ordinal": 8,
+      "file": "supabase/migrations/20260825160314_ai10_durable_trip_proposals.sql",
+      "version": "20260825160314",
+      "sha256": "81f70084f62681b1535a1a3e1cd7c0f75aeccb3e3a0c192181570158e1cb03cf"
+    },
+    {
+      "ordinal": 9,
+      "file": "supabase/migrations/20260825160458_ai10_confirm_outcomes.sql",
+      "version": "20260825160458",
+      "sha256": "f8f0d173bdfb4b746ed0e5891d956c4f78a5ab3611a328939abe057686a4afca"
+    },
+    {
+      "ordinal": 10,
+      "file": "supabase/migrations/20260825161535_ai10_confirm_fault_triggers.sql",
+      "version": "20260825161535",
+      "sha256": "b097da413d7eb61392aaeb67c878ae56851ac8b5f4028038a111d50b8014a85d"
+    },
+    {
+      "ordinal": 11,
+      "file": "supabase/migrations/20260827030717_ai13b_proposal_revision_lineage.sql",
+      "version": "20260827030717",
+      "sha256": "5a71c406c7257b3ca2a2b30bcdb835c8d0106cc28cee19211d0ddc45d3acbd05"
+    },
+    {
+      "ordinal": 12,
+      "file": "supabase/migrations/20260828153000_v4_08_durable_chat_threads.sql",
+      "version": "20260828153000",
+      "sha256": "3def5e5859894a6aeea0d6d4d8f87b365f65d385a5f91ac16dd6d6ddbfb916d9"
+    },
+    {
+      "ordinal": 13,
+      "file": "supabase/migrations/20260828160000_v4_09_chat_feedback.sql",
+      "version": "20260828160000",
+      "sha256": "0dc1f1f90a7d1c62815d66d5c9b611fd39b1c5469cf1a3073d857ccef69edadf"
+    },
+    {
+      "ordinal": 14,
+      "file": "supabase/migrations/20260828170000_v4_10_trip_version_snapshots.sql",
+      "version": "20260828170000",
+      "sha256": "f93e9ffde58da85da9920bfcd2b2dfcdd5a08c36425730fca470b5032298db95"
+    },
+    {
+      "ordinal": 15,
+      "file": "supabase/migrations/20260828180000_v4_11_trip_place_references.sql",
+      "version": "20260828180000",
+      "sha256": "dd154a707314884a5539b3d34f3989b71e1e341a78d884bc233b15198eef541f"
+    },
+    {
+      "ordinal": 16,
+      "file": "supabase/migrations/20260828190000_v4_12_trip_action_references.sql",
+      "version": "20260828190000",
+      "sha256": "064e40e9dda61027d46c5cb12e71e4b35fe2b42ba79b787a7cb0cadf14cfc03b"
+    },
+    {
+      "ordinal": 17,
+      "file": "supabase/migrations/20260828193000_v4_13_memory_profile.sql",
+      "version": "20260828193000",
+      "sha256": "8a8c6cdb0eb608f83adcc1c3a861ac20f64314e0016fb2d8293331630ee77050"
+    },
+    {
+      "ordinal": 18,
+      "file": "supabase/migrations/20260828194000_v4_15_memory_consumer_receipts.sql",
+      "version": "20260828194000",
+      "sha256": "edbfc1ec79d214bd8a0ccdc76ecf5135c595150720cf1706265c38250ac223b7"
+    },
+    {
+      "ordinal": 19,
+      "file": "supabase/migrations/20260828200000_v4_16_user_profiles.sql",
+      "version": "20260828200000",
+      "sha256": "235b46b4fb5487742a59254cac4c54e1321fee7bb966df62935caf1380bb310e"
+    },
+    {
+      "ordinal": 20,
+      "file": "supabase/migrations/20260828210000_v4_17_privacy_lifecycle.sql",
+      "version": "20260828210000",
+      "sha256": "0def9e7d3c12d65a9b3c82c18edde5259e8ddb533a5cc9bbe01a8a0dbe19332a"
+    },
+    {
+      "ordinal": 21,
+      "file": "supabase/migrations/20260829191000_v4_14_server_minted_memory_consent.sql",
+      "version": "20260829191000",
+      "sha256": "92abec29621d91e1fc1ae3a2fb05dd0b968eb4821044cf9854297821943d025e"
+    },
+    {
+      "ordinal": 22,
+      "file": "supabase/migrations/20260830100000_launch_03_trip_content_snapshots.sql",
+      "version": "20260830100000",
+      "sha256": "f7dc7df5af0334d09cb43a0bb3853f8e5c2d5fec43a43ded26b5a59a986d5774"
+    },
+    {
+      "ordinal": 23,
+      "file": "supabase/migrations/20260830210000_launch_11_trip_proposal_patch.sql",
+      "version": "20260830210000",
+      "sha256": "afd46ad677053987e3b7b6082e50c2fe0f6ba94d1d1d24594e6f8fc2d766232b"
+    },
+    {
+      "ordinal": 24,
+      "file": "supabase/migrations/20260830211000_launch_11_trip_proposal_patch_revision.sql",
+      "version": "20260830211000",
+      "sha256": "e068f17653de2eedb812b763f732cfaba9e0903aac097a94432160b1275b5d6d"
+    },
+    {
+      "ordinal": 25,
+      "file": "supabase/migrations/20260909033302_vpj_02_repair_local_rpc_runtime.sql",
+      "version": "20260909033302",
+      "sha256": "94f5c718802c3f60cd100b7713ac005930d5d62bf24f714ad25f2b3aff4f3950"
+    },
+    {
+      "ordinal": 26,
+      "file": "supabase/migrations/20260909184816_vpj_59_durable_model_budget.sql",
+      "version": "20260909184816",
+      "sha256": "31feafbdbf096c61d0131754217427e28403b616f36ecb04cfa512c0f03db4f0"
+    },
+    {
+      "ordinal": 27,
+      "file": "supabase/migrations/20260909223841_vpj_04_native_mobile_sessions.sql",
+      "version": "20260909223841",
+      "sha256": "21fa91dd7e352edccf80ee6ec485e28f85f2f6ba0ee39d40c55f7d3da0618d79"
+    },
+    {
+      "ordinal": 28,
+      "file": "supabase/migrations/20260910002858_vpj_05_confirm_intent_authority.sql",
+      "version": "20260910002858",
+      "sha256": "0818eb4fd8666f5385d5995a8a95d41d1fa5c82220b02fb92522056a2c88f587"
+    },
+    {
+      "ordinal": 29,
+      "file": "supabase/migrations/20260910163426_vpj_07_durable_turn_work.sql",
+      "version": "20260910163426",
+      "sha256": "e7d04e2c0598ed0707c05e90d8720e5eca08da22b1c78d59f52b03ac89912705"
+    },
+    {
+      "ordinal": 30,
+      "file": "supabase/migrations/20260910171836_vpj_07_text_authorization.sql",
+      "version": "20260910171836",
+      "sha256": "60ee64bc586921a8ea2972fe9d4aa7fdccade9a4ff2da7f44d8b9345aaacea81"
+    },
+    {
+      "ordinal": 31,
+      "file": "supabase/migrations/20260910174748_vpj_07_native_text_consumer.sql",
+      "version": "20260910174748",
+      "sha256": "156ec168fabffa251df49e4b255d5f6f6d2f1711adf06d0a5736c4aee7f1cc75"
+    },
+    {
+      "ordinal": 32,
+      "file": "supabase/migrations/20260910190526_vpj_59_stop_model_budget.sql",
+      "version": "20260910190526",
+      "sha256": "44b3d19177c2d4f5c73f3ed4cf556054af57a45e517af396193eb563c6717330"
+    },
+    {
+      "ordinal": 33,
+      "file": "supabase/migrations/20260910190658_vpj_37_ops_scope_read_model.sql",
+      "version": "20260910190658",
+      "sha256": "e000845700f84b86da70c9cbddb23b95eb25e07f9f24ce263e93b4915656677a"
+    }
+  ],
+  "administrativePreparation": [
+    {
+      "file": "scripts/db/staging-33-pre27-normalize.sql",
+      "sha256": "8640a5868e1fd6beab735d57b4fda7a9051b28dda8e17a1011ff49b8a9e36316"
+    },
+    {
+      "file": "scripts/db/staging-33-pre27-restore-acl.sql",
+      "sha256": "27db92d8c988f0a77ce80ee00315429803770190a4f7eff0662991e314b0eee9"
+    },
+    {
+      "file": "scripts/db/staging-33-readonly.sql",
+      "sha256": "7fca7225258c09a2afba54a53d75c4275616b647a72485707d0bc2ce84814d80"
+    }
+  ]
+}
