@@ -31,7 +31,7 @@ A retry keeps the exact proposal, digest and idempotency key. A different propos
 
 After a successful confirm, reload the server snapshot; do not infer committed content from a local patch. On conflict, keep the original draft and its base version. Reloading the confirmed server snapshot must not silently replace/rebase the draft. Revision creates a new pending proposal; the consumer must fetch and visibly review its exact ID before confirming.
 
-Hard-lock and external-order states remain **unknown** in this slice; database transaction locks are not user hard locks. Full #192 acceptance remains open for those later states. Web continues to use the original Cookie/same-Origin path; no native cookie fabrication or global Origin exception is allowed.
+Hard-lock and external-order states remain **unknown** in this slice; database transaction locks are not user hard locks. JT explicitly deferred user hard-lock protection on 2026-09-11; lock scope/unlock/restore choices are no longer pending for the initial slice. Keep the existing unknown DTO for compatibility, without claiming protection. External orders and remote/full #192 acceptance remain open; this deferral does not satisfy the locked-dinner scenario in #265. Web continues to use the original Cookie/same-Origin path; no native cookie fabrication or global Origin exception is allowed.
 
 ## Deployment compatibility
 
