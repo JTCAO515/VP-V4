@@ -289,10 +289,12 @@ export function assertTripProposal(proposal: Readonly<TripProposal>): void {
   }
 }
 
-export function assertGroundedClaim(claim: GroundedClaim): void {
+/** Omit the trusted evaluation instant for ordinary wall-clock validation. */
+export function assertGroundedClaim(claim: GroundedClaim, now?: number): void {
+  if (now !== undefined && !Number.isFinite(now)) throw new ContractValidationError("Claim validation time must be finite.");
   assertNonEmpty(claim.subjectId, "claim subjectId");
   assertIsoTimestamp(claim.asOf, "claim asOf");
-  assertEvidenceReceipts(claim.evidence, "claim evidence");
+  assertEvidenceReceipts(claim.evidence, "claim evidence", now);
   if (claim.evidence.length === 0) throw new ContractValidationError("A grounded claim requires evidence receipts.");
 
   switch (claim.claimType) {
@@ -424,20 +426,20 @@ function assertContextRefs(context: readonly ContextRef[]): void {
   }
 }
 
-function assertEvidenceReceipts(receipts: readonly EvidenceReceipt[], label: string): void {
+function assertEvidenceReceipts(receipts: readonly EvidenceReceipt[], label: string, now?: number): void {
   for (const receipt of receipts) {
     switch (receipt.kind) {
       case "fact":
         assertNonEmpty(receipt.factId, `${label} factId`);
         assertPositiveInteger(receipt.version, `${label} fact version`);
         assertIsoTimestamp(receipt.reviewedAt, `${label} fact reviewedAt`);
-        assertFutureOrPresent(receipt.expiresAt, `${label} fact expiresAt`);
+        assertFutureOrPresent(receipt.expiresAt, `${label} fact expiresAt`, now);
         break;
       case "observation":
         assertNonEmpty(receipt.observationId, `${label} observationId`);
         assertNonEmpty(receipt.provider, `${label} observation provider`);
         assertNonEmpty(receipt.policyId, `${label} observation policyId`);
-        assertFutureOrPresent(receipt.expiresAt, `${label} observation expiresAt`);
+        assertFutureOrPresent(receipt.expiresAt, `${label} observation expiresAt`, now);
         break;
       case "user_artifact":
         assertNonEmpty(receipt.artifactId, `${label} artifactId`);
@@ -483,9 +485,9 @@ function assertIsoTimestamp(value: string, label: string): void {
   if (Number.isNaN(Date.parse(value))) throw new ContractValidationError(`${label} must be an ISO timestamp.`);
 }
 
-function assertFutureOrPresent(value: string, label: string): void {
+function assertFutureOrPresent(value: string, label: string, now?: number): void {
   assertIsoTimestamp(value, label);
-  if (Date.parse(value) < Date.now()) throw new ContractValidationError(`${label} must not be expired.`);
+  if (Date.parse(value) < (now ?? Date.now())) throw new ContractValidationError(`${label} must not be expired.`);
 }
 
 function deepFreeze<T>(value: T): Readonly<T> {
