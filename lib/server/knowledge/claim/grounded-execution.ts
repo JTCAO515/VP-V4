@@ -20,6 +20,7 @@ export type GroundedExecutionRequestV1 =
   | Readonly<{ mode: "low_risk_explanation" }>
   | Readonly<{
       mode: "grounded_execution";
+      /** Trusted server clock, or a fixed replay instant; never an untrusted claimed time. */
       now: string;
       cardId: string;
       claims: readonly Readonly<{ claim: GroundedClaim; qualifiers: readonly ClaimQualifierV1[] }>[];
@@ -115,7 +116,7 @@ function parseCurrentRow(value: unknown, now: Date): GroundedExecutionRowV1 | nu
   if (claim.claimType === "payment_method" && claim.value.qualifier) return null;
 
   try {
-    assertGroundedClaim(claim);
+    assertGroundedClaim(claim, now.getTime());
   } catch {
     return null;
   }
