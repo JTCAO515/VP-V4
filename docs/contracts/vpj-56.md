@@ -8,17 +8,26 @@ in PR258; it does not complete VPJ-01 device acceptance or VPJ-56 signed distrib
 It has contents:read only, no persisted checkout credential and no production secrets.
 The existing Quality PR workflow and branch protections remain independent.
 
-Runner: `macos-26` (standard arm64); selected Xcode:
-`/Applications/Xcode_26.6.app/Contents/Developer`, exact 26.6 / 17F113.
+Runner labels: `[self-hosted, macOS, ARM64, vp-v4-ios]`; the registered Mac
+`vp-v4-ios-local` (runner ID21) was verified online with these exact labels before
+changing the workflow. The job ID remains `simulator`. Selected Xcode:
+`/Applications/Xcode.app/Contents/Developer`, exact 26.6 / 17F113.
 Runtime: installed iOS 26.5; device: iPhone 17 Pro. The script discovers its actual
 UDID and records the complete executable command. Missing tools/runtime fail without
 upgrading, downloading a runtime or substituting another device.
 
-Verified against the official [image catalog](https://github.com/actions/runner-images/blob/57fdccbc4a47d85e23cc79eaeb63cb8ae0e997b5/README.md)
-and [macOS 26 arm64 inventory](https://github.com/actions/runner-images/blob/57fdccbc4a47d85e23cc79eaeb63cb8ae0e997b5/images/macos/macos-26-arm64-Readme.md),
-image 20260831.0337.3, read 2026-09-09. GitHub updates the OS image behind the stable
-label; the exact Xcode build/runtime checks prevent silent toolchain substitution.
-ImageVersion and commit are captured for each execution; this is not an immutable VM pin.
+The Mac's runner PATH resolves Python3.14.7 and Xcode26.6/17F113; iOS26.5/23F77
+and the required reference device were verified locally. Each actual job must still pass
+the script's strict preflight; host inspection alone is not runner-job acceptance.
+ImageVersion can be absent on this self-hosted machine; Xcode/runtime and commit remain
+recorded. The former hosted-image evidence remains historical, not current runner proof.
+
+Native tests execute on this Mac rather than consuming GitHub-hosted macOS runner
+minutes. Linux Quality/Budget workflows are unchanged. The owner must keep the Mac
+and runner online in a usable logged-in macOS session. When it is offline, the job waits
+for a matching runner; there is no hosted-macOS fallback or manufactured success status.
+Existing branch protection is not modified. A passing `simulator` check on the exact PR
+head is still required before the authorized merge.
 
 The job builds an unsigned Simulator app, extracts bundle identifier/marketing/build
 versions, then runs every test in the shared scheme with a local ad-hoc signature
@@ -32,14 +41,14 @@ Compilation and testing are separate stages. After `build-for-testing`, the runn
 one owned temporary Simulator of the same pinned iPhone17Pro/iOS26.5 type and waits for
 `simctl bootstatus -b` before `test-without-building`. It deletes only that created device
 in cleanup, including after test failure; it never erases or reuses a user's existing device.
-This isolates the runner-image device state and separates boot from compilation after
+This isolates the machine's existing device state and separates boot from compilation after
 observed audit-service timeouts and App-launch/background-assertion failures. These remain
 recorded infrastructure failures; the change does not filter, retry or weaken tests.
 The existing UI suite audits structure at maximum
 Dynamic Type; it is not complete VoiceOver, contrast, dark-mode or physical-device acceptance.
 All fixture/unavailable capability boundaries remain in force.
 
-Artifacts are retained 14 days, including command argv/cwd/DEVELOPER_DIR/timestamp/exit,
+Artifacts are retained 3 days, including command argv/cwd/DEVELOPER_DIR/timestamp/exit,
 logs, environment, bundle versions, build.xcresult and tests.xcresult when produced.
 Upload runs on failure too; unavailable outputs are not fabricated. DerivedData, apps,
 keychains and signing stores are excluded. Workflow cancellation may prevent final upload.
@@ -49,6 +58,8 @@ Run locally using the same Xcode version:
 Use a fresh output path; `--preflight` inspects only toolchain/project/devices and records
 that limited outcome. It does not claim build or test success.
 
-Revert this isolated CI change to roll back. Certificate rotation, Archive signing,
+If the runner is unavailable, restore its availability or make an explicitly reviewed
+self-hosted configuration correction; do not silently revert to billed hosted macOS.
+Certificate rotation, Archive signing,
 App Store Connect upload/SDK requirements, TestFlight install and withdrawal procedures
 remain named operator work before signed distribution; no credentials are requested here.
