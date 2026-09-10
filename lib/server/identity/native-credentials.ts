@@ -6,6 +6,7 @@ import { isUuid } from "./request-guards.ts";
 export async function verifyNativeCredentials(
   request: Pick<Request, "headers">,
   config: Readonly<{ url: string; publishableKey: string }>,
+  transport: typeof fetch = nativeFetch,
 ) {
   // Reject ambiguous credentials, including chunked/custom cookie names. Never fall back to cookies.
   if (request.headers.has("cookie")) return null;
@@ -14,7 +15,7 @@ export async function verifyNativeCredentials(
   if (!token) return null;
   const client = createClient(config.url, config.publishableKey, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
-    global: { fetch: nativeFetch, headers: { Authorization: `Bearer ${token}` } },
+    global: { fetch: transport, headers: { Authorization: `Bearer ${token}` } },
   });
   try {
     const { data, error } = await client.auth.getClaims(token);

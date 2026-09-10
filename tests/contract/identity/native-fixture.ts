@@ -6,10 +6,10 @@ export const sessionId = "fb2c981e-7e5f-4b07-9f79-af7b907e4f4a";
 const encode = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
 
 /** Synthetic in-memory keys and intercepted SDK HTTP; no environment or real Auth/DB access. */
-export async function nativeFixture(t: TestContext) {
-  const config = { url: `https://vpj04-${randomUUID()}.invalid`, publishableKey: "synthetic-publishable-key" };
+export async function nativeFixture(t: TestContext, origin?: string) {
+  const config = { url: origin ?? `https://vpj04-${randomUUID()}.invalid`, publishableKey: "synthetic-publishable-key" };
   const keys = await webcrypto.subtle.generateKey({ name: "ECDSA", namedCurve: "P-256" }, true, ["sign", "verify"]);
-  const jwk = { ...await webcrypto.subtle.exportKey("jwk", keys.publicKey), kid: "synthetic-signing-key", alg: "ES256", use: "sig" };
+  const jwk = { ...await webcrypto.subtle.exportKey("jwk", keys.publicKey), kid: "synthetic-signing-key-" + randomUUID(), alg: "ES256", use: "sig" };
   const baseClaims = { sub: subject, session_id: sessionId, role: "authenticated", is_anonymous: false, aud: "authenticated", iss: `${config.url}/auth/v1`, iat: Math.floor(Date.now() / 1000), exp: Math.floor(Date.now() / 1000) + 3600 };
   async function sign(overrides: Record<string, unknown> = {}, signingKey = keys.privateKey) {
     const input = `${encode({ alg: "ES256", typ: "JWT", kid: jwk.kid })}.${encode({ ...baseClaims, ...overrides })}`;

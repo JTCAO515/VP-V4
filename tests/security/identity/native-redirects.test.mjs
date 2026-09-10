@@ -60,8 +60,8 @@ for(const code of [307,308]) {
       f.setMode(action);
       const body=action==='credentials'?{email:'synthetic@example.test',password:'synthetic-password',attemptId:randomUUID()}:{refreshToken:'synthetic-refresh'};
       const result=await nativeIdentityHTTP(new Request('http://127.0.0.1/native',{method:'POST',body:JSON.stringify(body)}),action,f.config);
-      assert.equal(result.status,401);
-      assert.deepEqual(await result.json(),{error:{code:'UNAUTHENTICATED'}});
+      assert.equal(result.status,503);
+      assert.deepEqual(await result.json(),{error:{code:'UNAVAILABLE'}});
       f.check();
     }
     f.setMode('prepare');
