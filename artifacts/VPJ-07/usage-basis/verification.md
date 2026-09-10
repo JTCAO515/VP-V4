@@ -49,3 +49,13 @@ can require later authoritative reconciliation; no timeout/refusal/invalid-outpu
 introduced. This patch makes no retrospective ledger edits, supplier billing claim or customer
 charging decision. If reverting the guard, disable the affected worker rather than intentionally
 restoring unverified-model settlement; retain all reservations and existing evidence.
+
+## Evidence whitespace correction
+
+The initial pre-add whitespace check excluded the then-untracked red log. Independent review
+found the committed range failed `git diff --check` at red.log lines17 and25. The repository
+copy now normalizes only those two assertion-diff trailing-space lines; failure content and
+amounts are unchanged. The original temporary reproduction log remains intact (SHA256
+1c2a9142fe94a1e8e8bcc923d49803a6211911ae4c15b24a0c52d89a37f9e0a0).
+The exact-range failure is recorded in commands.jsonl. Runtime source and tests were unchanged;
+the correction requires full base-relative whitespace verification, not another local runtime run.

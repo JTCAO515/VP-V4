@@ -8,4 +8,6 @@
 {"command": "pnpm test:e2e", "result": "PASS", "evidence": "40passed, zero skips."}
 {"command": "pnpm db:verify", "result": "INCOMPLETE", "evidence": "Baseline present; ordinary/ops/system-worker targets not configured; no production probe."}
 {"command": "pnpm docs:check", "result": "PASS", "evidence": "73 tasks, contracts, links and archive hashes passed."}
-{"command": "git diff --check", "result": "PASS", "evidence": "No whitespace errors."}
+{"command": "git diff --check", "result": "LIMITED_PASS", "evidence": "The pre-add worktree check passed but excluded the then-untracked red.log; it did not validate the eventual full commit. The subsequent exact-range failure is retained below."}
+{"command": "git diff --check cd2201194402b87e6322f4b703dd780707fcae2e..3ea8c24156d1dab4c2045dae6d32f75ef958dd13", "result": "FAIL", "evidence": "Exit2: red.log lines17 and25 had trailing spaces from the Node assertion diff. The original /tmp reproduction log is preserved, SHA256 1c2a9142fe94a1e8e8bcc923d49803a6211911ae4c15b24a0c52d89a37f9e0a0."}
+{"command": "git diff --check cd2201194402b87e6322f4b703dd780707fcae2e", "result": "PASS", "evidence": "Full base-relative working tree, including tracked red.log after two-line trailing-whitespace normalization. Runtime/tests unchanged."}
