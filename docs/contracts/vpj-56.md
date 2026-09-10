@@ -28,6 +28,9 @@ and runner online in a usable logged-in macOS session. When it is offline, the j
 for a matching runner; there is no hosted-macOS fallback or manufactured success status.
 Existing branch protection is not modified. A passing `simulator` check on the exact PR
 head is still required before the authorized merge.
+The Native command uses an explicitly quoted shell-script placeholder because this
+runner's installation path contains spaces. Bash still exits on failures and failed
+pipelines; this changes path handling, not test execution or acceptance.
 
 The job builds an unsigned Simulator app, extracts bundle identifier/marketing/build
 versions, then runs every test in the shared scheme with a local ad-hoc signature

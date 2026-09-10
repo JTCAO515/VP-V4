@@ -28,6 +28,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Build unsigned and test ad-hoc Simulator app
+        shell: bash --noprofile --norc -eo pipefail "{0}"
         run: python3 scripts/ios/ci.py --output "$RUNNER_TEMP/vpj-56"
       - name: Preserve native evidence
         if: always()
