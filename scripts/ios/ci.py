@@ -9,6 +9,7 @@ import plistlib
 import shlex
 import subprocess
 import sys
+import uuid
 
 PROJECT = "ios/VisePanda/VisePanda.xcodeproj"
 XCODE = "Xcode 26.6\nBuild version 17F113"
@@ -29,7 +30,7 @@ def main():
     if not developer or not Path(developer).is_dir():
         raise RuntimeError("DEVELOPER_DIR must point to the installed pinned Xcode")
 
-    def run(command, name):
+    def run(command, name, allow_failure=False):
         started = datetime.datetime.now(datetime.timezone.utc).isoformat()
         result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         (output / (name + ".log")).write_text(result.stdout)
@@ -38,7 +39,7 @@ def main():
         with (output / "commands.jsonl").open("a") as stream:
             stream.write(json.dumps(record) + "\n")
         print(f"{name}: exit {result.returncode}", flush=True)
-        if result.returncode:
+        if result.returncode and not allow_failure:
             print(result.stdout[-12000:], file=sys.stderr)
             raise subprocess.CalledProcessError(result.returncode, command)
         return result.stdout
@@ -71,9 +72,9 @@ def main():
         info = plistlib.load(stream)
     (output / "bundle-version.json").write_text(json.dumps({key: info[key] for key in
         ["CFBundleIdentifier", "CFBundleShortVersionString", "CFBundleVersion"]}, indent=2) + "\n")
-    run(["xcodebuild", "test", *common, "-destination", f"platform=iOS Simulator,id={udid}",
+    run(["xcodebuild", "build-for-testing", *common, "-destination", "generic/platform=iOS Simulator",
          "CODE_SIGNING_ALLOWED=YES", "CODE_SIGN_IDENTITY=-",
-         "-parallel-testing-enabled", "NO", "-resultBundlePath", str(output / "tests.xcresult")], "tests")
+         "-resultBundlePath", str(output / "test-build.xcresult")], "test-build")
     # A local ad-hoc signature lets the test host exercise the real Keychain. It is
     # not an Apple Development/Distribution identity and uses no provisioning profile.
     app_path = info_path.parent
@@ -84,6 +85,28 @@ def main():
     run(["codesign", "--verify", "--strict", str(app_path)], "test-signature-verification")
     metadata["simulatorTestSigningVerified"] = True
     (output / "environment.json").write_text(json.dumps(metadata, indent=2) + "\n")
+    # The image's reference device validates the pinned type/runtime. Test in an
+    # owned fresh device, after compilation, so boot readiness is an explicit gate.
+    device_type = matches[0].get("deviceTypeIdentifier")
+    if device_type != "com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro":
+        raise RuntimeError("Reference Simulator has an unexpected device type")
+    udid = str(uuid.UUID(run(["xcrun", "simctl", "create", "VP-CI-" + uuid.uuid4().hex,
+                              device_type, RUNTIME], "simulator-create").strip()))
+    metadata.update(deviceUDID=udid, simulatorOwned=True, simulatorDeleted=False)
+    (output / "environment.json").write_text(json.dumps(metadata, indent=2) + "\n")
+    try:
+        run(["xcrun", "simctl", "bootstatus", udid, "-b"], "simulator-boot")
+        run(["xcodebuild", "test-without-building", *common,
+             "-destination", f"platform=iOS Simulator,id={udid}",
+             "CODE_SIGNING_ALLOWED=YES", "CODE_SIGN_IDENTITY=-",
+             "-parallel-testing-enabled", "NO",
+             "-resultBundlePath", str(output / "tests.xcresult")], "tests")
+    finally:
+        # It may already be shut down; deletion remains strict and only targets ours.
+        run(["xcrun", "simctl", "shutdown", udid], "simulator-shutdown", allow_failure=True)
+        run(["xcrun", "simctl", "delete", udid], "simulator-delete")
+        metadata["simulatorDeleted"] = True
+        (output / "environment.json").write_text(json.dumps(metadata, indent=2) + "\n")
 
 
 if __name__ == "__main__":
