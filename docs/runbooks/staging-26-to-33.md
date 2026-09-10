@@ -129,3 +129,9 @@ git diff --check
 **Auth表和claims是SQL fixture，不是GoTrue/JWT/原生/远端证明。**
 证据见[本地结果](../../artifacts/VPJ-02/staging-33-preparation/local-rehearsal.json)与
 [验证记录](../../artifacts/VPJ-02/staging-33-preparation/verification.md)。
+
+## Vercel维护补充
+
+[具体Vercel停流与v2切换附录](staging-vercel-maintenance.md)已核定Production/Preview/Development
+同指Staging、现有CLI可用、WAF未配置。包含全项目deny→只允许已验新v2部署host/alias的恢复计划、
+版本/ETag并发限制、回退false空配置的条件及直接DB/worker/在途请求盲区；这些动作尚未执行。

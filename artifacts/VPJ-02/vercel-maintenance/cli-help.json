@@ -1,0 +1,23 @@
+{
+  "observedAt": "2026-09-10T21:21:31.410313+00:00",
+  "command": [
+    "pnpm",
+    "dlx",
+    "vercel@59.15.1",
+    "env",
+    "add",
+    "--help"
+  ],
+  "exitCode": 2,
+  "typeConfigSupported": true,
+  "commaSeparatedTargetsSupported": true,
+  "valueFlagSupported": true,
+  "selectedHelpLines": [
+    "--type <TYPE>           Set the Environment Variable type (`config` or",
+    "`secret`)",
+    "--value <VALUE>         Set the variable value for non-interactive use;",
+    "$ vercel env add <name> <environment>[,<environment>]",
+    "$ vercel env add API_URL production,preview,development"
+  ],
+  "realEnvMutationExecuted": false
+}

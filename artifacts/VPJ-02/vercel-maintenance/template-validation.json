@@ -1,0 +1,23 @@
+{
+  "observedAt": "2026-09-10T21:19:49.337094+00:00",
+  "source": "https://openapi.vercel.sh",
+  "sourceSha256": "c61e410773e1c217686559e9c7269f216c8c4cc43b8aace159d2eb90074e7eaa",
+  "operation": "PUT /v1/security/firewall/config",
+  "schemaRequired": [
+    "firewallEnabled"
+  ],
+  "validation": "offline structural validation of payloads against official inline request schema (types, enums, required/additional properties, references, compositions and size constraints)",
+  "results": [
+    {
+      "file": "scripts/db/vercel-maintenance-deny.json",
+      "sha256": "b0f609cf0cb906d8ec8022485c25682953e68db618b9a8ac61a61273e05a0a1f",
+      "result": "PASS"
+    },
+    {
+      "file": "scripts/db/vercel-maintenance-restore-disabled.json",
+      "sha256": "a6cb2bb236d43e030306aad0b5ee984a59588bee795a724a6d97b512dd98a693",
+      "result": "PASS"
+    }
+  ],
+  "liveMutationCalls": 0
+}

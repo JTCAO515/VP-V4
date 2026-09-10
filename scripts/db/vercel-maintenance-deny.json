@@ -1,0 +1,13 @@
+{
+  "firewallEnabled": true,
+  "rules": [
+    {
+      "name": "VPJ02 Staging schema maintenance",
+      "description": "Approved maintenance window: deny all project deployments until verified v2 hosts are released",
+      "active": true,
+      "conditionGroup": [{ "conditions": [{ "type": "path", "op": "pre", "value": "/" }] }],
+      "action": { "mitigate": { "action": "deny" } }
+    }
+  ],
+  "ips": []
+}
