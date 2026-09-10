@@ -1,0 +1,32 @@
+✔ admission binds owner, session and immutable retry limits; duplicate admission is atomic (3509.351125ms)
+✔ concurrent SQL clients claim once; expiry fences the old lease (438.085667ms)
+✔ retry exhaustion and expired final attempt quarantine exactly once (724.133834ms)
+✔ real cancellation RPC and worker finish race produce one terminal (1532.835625ms)
+✔ revoked sessions, archived threads and mobile replacement reject late completion (1228.894542ms)
+✔ ordinary roles cannot read the queue or call worker RPCs; deletion cascades (599.315459ms)
+✔ TypeScript consumer uses durable finish; abort keeps work recoverable without late completion (721.138125ms)
+✔ SIGKILL after committed claim preserves work for a fresh process (484.523917ms)
+✔ retryable failure requeues, a fresh lease succeeds without duplicate terminal (481.17075ms)
+✔ competing claimers clean expired items across owners without accumulating owner locks (4977.89325ms)
+✔ durable owner consent gates input; exact retries reuse and changed text rejects (3762.197209ms)
+✔ cross-owner/session and ordinary roles cannot access private text or service dispatch (645.4515ms)
+✔ withdrawal persists across new clients and denies new attempts, late write and owner reads (539.2795ms)
+✔ recipient substitution, replay and policy revocation fail closed (643.331375ms)
+✔ atomic output maps all five business outcomes to correct terminal, once (2537.545416ms)
+✔ cancel and expired leases prevent late output; cancellation race has one terminal (1451.343666ms)
+✔ UTF-16 input/output limits and secret-bearing envelope alternatives are rejected (502.471ms)
+✔ deletion hides but retains consented content without resurrecting recreated IDs (963.859083ms)
+✔ complete worker uses real SQL budget + controlled HTTP, persists validated outcomes and retains unknown charges (4013.520875ms)
+✔ thread/user deletion lock barriers roll back busy work without deadlock or false cancellation (1075.974125ms)
+✔ withdrawal at the final egress gate prevents HTTP even after budget dispatch (832.805917ms)
+✔ cancel while provider is in flight rejects late answer; unknown extra fields never persist (1694.073583ms)
+✔ unverified model usage retains the full budget hold instead of using the configured tariff (1033.888916ms)
+✔ verified model charges survive business failures while unproved protocol failures remain pending (10940.724875ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 30845.054459

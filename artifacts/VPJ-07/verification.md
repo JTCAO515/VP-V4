@@ -27,3 +27,11 @@ Migration29 is append-only, adds no user-facing policies, alters no existing RPC
 ## Review and remote checks
 
 Independent review of implementation HEAD `f0d5bbbaab86ce3187386638957dd1bce29283e1` reported Critical0/Important0 after both fixes. [PR307](https://github.com/JTCAO515/VP-V4/pull/307) records the final exact-HEAD review and checks before merge. Implementation-HEAD Quality [34504481489](https://github.com/JTCAO515/VP-V4/actions/runs/34504481489) and isolated PostgreSQL [34504481465](https://github.com/JTCAO515/VP-V4/actions/runs/34504481465) passed; Vercel Preview also passed. These results establish this preparation scope only. The Native GitHub path filter did not trigger; Native results above are local, using the unchanged native tree.
+
+## Verified model basis for budget pricing
+
+See [usage-basis verification](usage-basis/verification.md). A real local SQL/controlled HTTP
+red case reproduced settlement under an unverified model; the worker-only guard now retains
+its full pending hold. The complete Turn SQL/HTTP suite24 passed with zero skips, preserving
+known-model business failure/refusal costs and terminal-once behavior. No customer billing
+policy, historical ledger row, provider public outcome or native behavior changed.
