@@ -1,0 +1,181 @@
+{
+  "base": "9fb6a649b7417174ddc0f3498d22f57c2fba9a71",
+  "caseCount": 1,
+  "scenarioCount": 6,
+  "exitCode": 65,
+  "scenarios": [
+    {
+      "mode": "production",
+      "largest": false,
+      "observations": [
+        "[CJK-REFERENCE] mode=production largest=false frame=(30.0, 409.76696165191726, 296.3333333333333, 15.666666666666856) label=此版本尚未连接实时数据、账号、AI、预订或支付。",
+        "[CJK-REFERENCE] issue mode=production largest=false type=131072 detail=Text of this element may be clipped at larger Dynamic Type sizes. element=Optional(Attributes: StaticText, 0x104c215d0, {{30.0, 409.8}, {296.3, 15.7}}, label: '此版本尚未连接实时数据、账号、AI、预订或支付。'"
+      ],
+      "auditOutcome": "FAIL",
+      "beginAndEndObserved": true
+    },
+    {
+      "mode": "production",
+      "largest": true,
+      "observations": [
+        "[CJK-REFERENCE] mode=production largest=true frame=(30.0, 500.43362831858394, 333.0, 156.66666666666674) label=此版本尚未连接实时数据、账号、AI、预订或支付。",
+        "[CJK-REFERENCE] issue mode=production largest=true type=1 detail=Contrast failed for element element=Optional(Attributes: StaticText, 0x10e70b760, {{30.0, 786.4}, {197.0, 58.7}}, label: '界面预览'",
+        "[CJK-REFERENCE] issue mode=production largest=true type=1 detail=Contrast failed for element element=Optional(Attributes: StaticText, 0x104f5db40, {{30.0, 851.1}, {333.0, 156.7}}, label: '此版本尚未连接实时数据、账号、AI、预订或支付。'"
+      ],
+      "auditOutcome": "FAIL",
+      "beginAndEndObserved": true
+    },
+    {
+      "mode": "swiftui",
+      "largest": false,
+      "observations": [
+        "[CJK-REFERENCE] mode=swiftui largest=false frame=(30.0, 430.6666666666667, 296.3333333333333, 15.666666666666629) label=此版本尚未连接实时数据、账号、AI、预订或支付。",
+        "[CJK-REFERENCE] issue mode=swiftui largest=false type=131072 detail=Text of this element may be clipped at larger Dynamic Type sizes. element=Optional(Attributes: StaticText, 0x10e76f160, {{30.0, 430.7}, {296.3, 15.7}}, identifier: 'cjk-reference', label: '此版本尚未连接实时数据、账号、AI、预订或支付。'"
+      ],
+      "auditOutcome": "FAIL",
+      "beginAndEndObserved": true
+    },
+    {
+      "mode": "swiftui",
+      "largest": true,
+      "observations": [
+        "[CJK-REFERENCE] mode=swiftui largest=true frame=(30.0, 360.1666666666667, 333.0, 156.66666666666669) label=此版本尚未连接实时数据、账号、AI、预订或支付。",
+        "[CJK-REFERENCE] issue mode=swiftui largest=true type=131072 detail=Text of this element may be clipped at larger Dynamic Type sizes. element=Optional(Attributes: StaticText, 0x10e863970, {{30.0, 360.2}, {333.0, 156.7}}, identifier: 'cjk-reference', label: '此版本尚未连接实时数据、账号、AI、预订或支付。'"
+      ],
+      "auditOutcome": "FAIL",
+      "beginAndEndObserved": true
+    },
+    {
+      "mode": "uikit",
+      "largest": false,
+      "observations": [
+        "[CJK-REFERENCE] mode=uikit largest=false frame=(30.0, 430.6666666666667, 333.0, 15.666666666666629) label=此版本尚未连接实时数据、账号、AI、预订或支付。"
+      ],
+      "auditOutcome": "PASS-no-issues",
+      "beginAndEndObserved": true
+    },
+    {
+      "mode": "uikit",
+      "largest": true,
+      "observations": [
+        "[CJK-REFERENCE] mode=uikit largest=true frame=(30.0, 360.3333333333333, 333.0, 156.66666666666669) label=此版本尚未连接实时数据、账号、AI、预订或支付。"
+      ],
+      "auditOutcome": "PASS-no-issues",
+      "beginAndEndObserved": true
+    }
+  ],
+  "elementImageMetrics": [
+    {
+      "file": "CJK-element-production-largest.png",
+      "imagePixels": [
+        998,
+        470
+      ],
+      "darkInkBounds": [
+        2,
+        17,
+        976,
+        451
+      ],
+      "verticalInkMargins": [
+        17,
+        18
+      ],
+      "interpretation": "Raster margin measurement only; not an automatic clipping/VoiceOver waiver."
+    },
+    {
+      "file": "CJK-element-production-normal.png",
+      "imagePixels": [
+        888,
+        46
+      ],
+      "darkInkBounds": [
+        2,
+        5,
+        881,
+        40
+      ],
+      "verticalInkMargins": [
+        5,
+        5
+      ],
+      "interpretation": "Raster margin measurement only; not an automatic clipping/VoiceOver waiver."
+    },
+    {
+      "file": "CJK-element-swiftui-largest.png",
+      "imagePixels": [
+        998,
+        470
+      ],
+      "darkInkBounds": [
+        2,
+        18,
+        976,
+        452
+      ],
+      "verticalInkMargins": [
+        18,
+        17
+      ],
+      "interpretation": "Raster margin measurement only; not an automatic clipping/VoiceOver waiver."
+    },
+    {
+      "file": "CJK-element-swiftui-normal.png",
+      "imagePixels": [
+        888,
+        47
+      ],
+      "darkInkBounds": [
+        1,
+        5,
+        881,
+        40
+      ],
+      "verticalInkMargins": [
+        5,
+        6
+      ],
+      "interpretation": "Raster margin measurement only; not an automatic clipping/VoiceOver waiver."
+    },
+    {
+      "file": "CJK-element-uikit-largest.png",
+      "imagePixels": [
+        998,
+        470
+      ],
+      "darkInkBounds": [
+        2,
+        18,
+        976,
+        451
+      ],
+      "verticalInkMargins": [
+        18,
+        18
+      ],
+      "interpretation": "Raster margin measurement only; not an automatic clipping/VoiceOver waiver."
+    },
+    {
+      "file": "CJK-element-uikit-normal.png",
+      "imagePixels": [
+        998,
+        47
+      ],
+      "darkInkBounds": [
+        1,
+        5,
+        881,
+        40
+      ],
+      "verticalInkMargins": [
+        5,
+        6
+      ],
+      "interpretation": "Raster margin measurement only; not an automatic clipping/VoiceOver waiver."
+    }
+  ],
+  "captureLimitation": {
+    "maximumFullScreensByteIdentical": true,
+    "interpretation": "Full-screen maximum UIKit and SwiftUI PNGs cannot be treated as independent rasterization proof; scenario audit markers and element captures remain separate."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "ios/VisePanda/VisePanda/App/VisePandaApp.swift": {
+    "diagnosticSHA256": "79138f4ef33d9eea4e3790e8903ecdd15b9906bb42a17dc48169a206747ce074",
+    "originalSHA256": "3c1b8c6245039fafa50ca72738697b89a74acd25333c09ac1fd630079e3bd541",
+    "restoredSHA256": "3c1b8c6245039fafa50ca72738697b89a74acd25333c09ac1fd630079e3bd541"
+  },
+  "ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift": {
+    "diagnosticSHA256": "d34902880103516ec05cc330da9d30cb87a5bee098ef3f250edb065dea06391d",
+    "originalSHA256": "c7e824e390b96ae548e0cd5a294b9ac4962887b8ba885d98b93cb1a84876e2b3",
+    "restoredSHA256": "c7e824e390b96ae548e0cd5a294b9ac4962887b8ba885d98b93cb1a84876e2b3"
+  },
+  "ios/VisePanda/VisePandaUITests/AppShellUITests.swift": {
+    "diagnosticSHA256": "ae41976783681838651b6a392342eb76915e10087a746de7af95555d24cf8486",
+    "originalSHA256": "9feff3f1545c5337bd94850b014406332cafe6cc53c7181e3b998c70a808b7ed",
+    "restoredSHA256": "9feff3f1545c5337bd94850b014406332cafe6cc53c7181e3b998c70a808b7ed"
+  }
+}

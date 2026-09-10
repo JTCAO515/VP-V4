@@ -1,0 +1,114 @@
+diff --git a/ios/VisePanda/VisePanda/App/VisePandaApp.swift b/ios/VisePanda/VisePanda/App/VisePandaApp.swift
+index ef9194f..79fdbd9 100644
+--- a/ios/VisePanda/VisePanda/App/VisePandaApp.swift
++++ b/ios/VisePanda/VisePanda/App/VisePandaApp.swift
+@@ -6,7 +6,12 @@ struct VisePandaApp: App {
+
+     var body: some Scene {
+         WindowGroup {
+-            AppShellView()
++            Group {
++                if ProcessInfo.processInfo.arguments.contains("-CJKSwiftUI") { CJKReferenceView(useUIKit: false) }
++                else if ProcessInfo.processInfo.arguments.contains("-CJKUIKit") { CJKReferenceView(useUIKit: true) }
++                else { AppShellView() }
++            }
++                .preferredColorScheme(ProcessInfo.processInfo.arguments.contains("-CJKProbe") ? .light : nil)
+                 .environment(settings)
+                 .environment(\.locale, settings.selectedLocale.locale)
+                 .environment(\.layoutDirection, settings.selectedLocale.layoutDirection)
+diff --git a/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift b/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift
+index ebf0fb8..a0cf78c 100644
+--- a/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift
++++ b/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift
+@@ -39,3 +39,44 @@ struct AvailabilityBadge: View {
+             .accessibilityElement(children: .combine)
+     }
+ }
++
++// Temporary reference screen, removed after the diagnostic.
++struct CJKReferenceView: View {
++    let useUIKit: Bool
++    var body: some View {
++        VStack {
++            Spacer()
++            if useUIKit {
++                CJKReferenceLabel().frame(width: 333)
++            } else {
++                Text("preview.message").font(.footnote)
++                    .foregroundStyle(Color.vpSecondaryText)
++                    .fixedSize(horizontal: false, vertical: true)
++                    .frame(width: 333, alignment: .leading)
++                    .accessibilityIdentifier("cjk-reference")
++            }
++            Spacer()
++        }
++        .frame(maxWidth: .infinity, maxHeight: .infinity)
++        .background(Color.vpBackground)
++    }
++}
++struct CJKReferenceLabel: UIViewRepresentable {
++    func makeUIView(context: Context) -> UILabel {
++        let label = UILabel()
++        label.numberOfLines = 0
++        label.adjustsFontForContentSizeCategory = true
++        label.textColor = UIColor(white: 0.30, alpha: 1)
++        label.accessibilityIdentifier = "cjk-reference"
++        return label
++    }
++    func updateUIView(_ label: UILabel, context: Context) {
++        label.text = "此版本尚未连接实时数据、账号、AI、预订或支付。"
++        label.font = UIFont.preferredFont(forTextStyle: .footnote)
++        print("[CJK-REFERENCE] UIKit font=\(label.font.pointSize) category=\(label.traitCollection.preferredContentSizeCategory.rawValue)")
++    }
++    func sizeThatFits(_ proposal: ProposedViewSize, uiView: UILabel, context: Context) -> CGSize? {
++        let width = proposal.width ?? 333
++        return CGSize(width: width, height: uiView.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude)).height)
++    }
++}
+diff --git a/ios/VisePanda/VisePandaUITests/AppShellUITests.swift b/ios/VisePanda/VisePandaUITests/AppShellUITests.swift
+index c822821..d928438 100644
+--- a/ios/VisePanda/VisePandaUITests/AppShellUITests.swift
++++ b/ios/VisePanda/VisePandaUITests/AppShellUITests.swift
+@@ -77,6 +77,42 @@ final class AppShellUITests: XCTestCase {
+         }
+     }
+
++    func testCJKReferenceAudit() throws {
++        continueAfterFailure = true
++        for mode in ["production", "swiftui", "uikit"] {
++            for largest in [false, true] {
++                let app = XCUIApplication()
++                app.launchArguments = ["-VisePandaLocale", "zh-Hans", "-AppleLanguages", "(zh-Hans)", "-AppleLocale", "zh_CN", "-CJKProbe", "-UIPreferredContentSizeCategoryName", largest ? "UICTContentSizeCategoryAccessibilityXXXL" : "UICTContentSizeCategoryL"]
++                if mode == "swiftui" { app.launchArguments.append("-CJKSwiftUI") }
++                if mode == "uikit" { app.launchArguments.append("-CJKUIKit") }
++                app.launch()
++                let message = mode == "production" ? app.staticTexts["此版本尚未连接实时数据、账号、AI、预订或支付。"] : app.staticTexts["cjk-reference"]
++                XCTAssertTrue(message.waitForExistence(timeout: 5))
++                if mode == "production" {
++                    let scroll = app.scrollViews.firstMatch
++                    for _ in 0..<12 {
++                        let top = app.navigationBars.firstMatch.frame.maxY + 8
++                        let bottom = app.otherElements["ask-composer"].frame.minY - 8
++                        let delta = message.frame.maxY > bottom ? min(message.frame.maxY - bottom + 8, 160) : message.frame.minY < top ? -min(top - message.frame.minY + 8, 160) : 0
++                        if delta == 0 { break }
++                        let start = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
++                        start.press(forDuration: 0.05, thenDragTo: start.withOffset(CGVector(dx: 0, dy: -delta)), withVelocity: .slow, thenHoldForDuration: 0.1)
++                    }
++                }
++                print("[CJK-REFERENCE] mode=\(mode) largest=\(largest) frame=\(message.frame) label=\(message.label)")
++                capture("CJK-\(mode)-\(largest ? "largest" : "normal")", app: app)
++                let clipped = XCTAttachment(screenshot: message.screenshot()); clipped.name = "CJK-element-\(mode)-\(largest ? "largest" : "normal")"; clipped.lifetime = .keepAlways; add(clipped)
++                print("[CJK-REFERENCE] audit begin \(mode) largest=\(largest)")
++                try app.performAccessibilityAudit { issue in
++                    print("[CJK-REFERENCE] issue mode=\(mode) largest=\(largest) type=\(issue.auditType.rawValue) detail=\(issue.detailedDescription) element=\(String(describing: issue.element))")
++                    return false
++                }
++                print("[CJK-REFERENCE] audit end \(mode) largest=\(largest)")
++                app.terminate()
++            }
++        }
++    }
++
+     func testEnglishTabsTodayAndTranslationRoute() {
+         let app = launch()
+         XCTAssertTrue(app.tabBars.buttons["Ask"].isSelected)
