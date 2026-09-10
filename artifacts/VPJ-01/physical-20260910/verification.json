@@ -1,0 +1,84 @@
+{
+  "sourceCommit": "cbd9f87163405f53cddaece1f18b10e09f608c8d",
+  "applicationSourceChanged": false,
+  "variant": {
+    "displayName": "VisePanda QA",
+    "bundleIdentifier": "space.go2china.VisePanda",
+    "version": "0.1.0",
+    "build": "18801",
+    "sdk": "iphoneos26.5",
+    "difference": "Command-scoped display name and build number; test-only read-only diagnostic patch."
+  },
+  "signing": {
+    "reusedExistingAppleDevelopmentCertificate": true,
+    "certificateFingerprintMatchedExistingIdentity": true,
+    "reusedExistingWildcardProfileContainingDevice": true,
+    "allowProvisioningUpdates": false,
+    "deepStrictSignatureVerificationExit": 0
+  },
+  "device": {
+    "model": "iPhone 17",
+    "runtime": "26.6.2",
+    "osBuild": "23G90",
+    "paired": true,
+    "developerMode": "enabled"
+  },
+  "install": "PASS-new-app-container",
+  "launch": "PASS",
+  "originalApps": [
+    {
+      "bundleIdentifier": "com.jt.visepanda",
+      "before": {
+        "version": "0.1.0",
+        "build": "1"
+      },
+      "after": {
+        "version": "0.1.0",
+        "build": "1"
+      },
+      "overwrittenOrDeleted": false
+    },
+    {
+      "bundleIdentifier": "space.go2china.visepanda.ios",
+      "before": {
+        "version": "0.1.0",
+        "build": "1"
+      },
+      "after": {
+        "version": "0.1.0",
+        "build": "1"
+      },
+      "overwrittenOrDeleted": false
+    }
+  ],
+  "physicalTests": {
+    "passed": 9,
+    "failed": 0,
+    "contents": "8 existing navigation contracts plus 1 read-only actual-device accessibility-state probe",
+    "resultBundlePrivate": "/Users/jtcao/Library/Caches/visepanda/physical-qa/20260910-100113/result.xcresult"
+  },
+  "userManualAcceptance": {
+    "result": "PASS",
+    "confirmation": "真机实操我看了，没问题，可以标记完成了",
+    "scope": "The physical operation the user actually observed; does not convert unrun automated/VoiceOver checks into passes."
+  },
+  "accessibilityBaseline": {
+    "bodyPointSize": 17,
+    "boldText": false,
+    "contentSizeCategory": "UICTContentSizeCategoryL",
+    "interfaceStyle": 1,
+    "model": "iPhone",
+    "nativeNetworkEnabled": false,
+    "reduceMotion": false,
+    "reduceTransparency": false,
+    "runtime": "26.6.2",
+    "voiceOver": false
+  },
+  "systemSettingsChangedByAgent": false,
+  "voiceOverSpokenValidation": "UNRUN",
+  "automatedBilingualNavigation": "UNRUN",
+  "textSizeSwitching": "UNRUN",
+  "reduceMotionSwitching": "UNRUN",
+  "fullAccessibilityAudit": "UNRUN",
+  "publishableAppScreenshot": "UNRUN-device-auto-locked-at-final-capture"
+}
