@@ -77,3 +77,56 @@ this request-mode difference and key usability, not successful answer completion
 GLM quality. The adapter now preserves GLM's native default; Qwen/DeepSeek keep their
 explicit non-thinking controls. Reasoning content remains discarded, length outcomes still
 reject, and complete real GLM protocol/quality acceptance remains separate.
+
+## Explicit server HTTP transport v1
+
+`adapters/http-transport.ts` supplies the existing `ProtocolTransport` seam only after an
+operator provides a provider, exact HTTPS endpoint, configuration UUID/revision, finite timeout,
+server credential supplier and destination receipt sink. It installs no default binding, key,
+route, scheduler, policy, fallback or enabled scope. The protocol entries still own C0 rejection
+and the C2 lease-bound SQL authorization; the durable worker still owns budget dispatch/finish.
+The factory is a trusted low-level dependency, not a new public invocation API.
+
+The reviewed technical allowlist currently includes Qwen's DashScope Chat URL, GLM's ordinary
+Chat URL, and DeepSeek's explicitly selected root or `/v1` Chat URL. These match the official
+candidate endpoints in [the qualification matrix](../../policy/vpj-03-provider-qualification.md).
+An allowlist entry establishes no account/SKU, region or recipient qualification. Other workspace,
+regional, Coding or compatible endpoints need separately reviewed additions, not URL rewriting.
+No URL query, userinfo, fragment, alternate host/port or normalization is accepted. C2 passes its
+exact durable policy endpoint to the transport; a different bound endpoint fails before fetching
+credentials or sending HTTP. The C0 compatibility entry retains its existing policy behavior.
+
+The transport uses Node fetch with manual redirects, omitted cookies and no cache. It never
+follows Location, retries or falls back. The same maximum60-second deadline covers asynchronous
+credential retrieval, receipt writes, fetch and body reads, with the existing caller's abort.
+Late credential/sink completion cannot initiate a request after the deadline. Late ignored-fetch
+responses are cancelled. A response must be200/application-json and at most262144 decoded bytes;
+only the bounded body and content type reach the existing normalizer. Non-200 error bodies,
+headers, Location and exception details never escape the factory. HTTP200 JSON still requires
+the existing normalizer to reject error envelopes and private reasoning. A receipt failure after sending remains
+an uncertain charged attempt and follows the existing pending-budget path, never zero-cost.
+
+### Destination receipt meaning
+
+The required sink receives only `provider-destination/1`, a generated invocation UUID, provider,
+fixed model, the exact configured endpoint, configuration UUID/revision, phase and timestamp.
+There is no input/output, body hash, authorization header, user/lease identifier or credential.
+The configuration UUID refers to operator evidence kept separately; no account or freeform region
+claim is accepted from the prompt or inferred from the domain.
+
+- `configured`: credential is available and the configured destination was recorded; fetch has
+  not yet been invoked. A failed or timed-out sink here prevents HTTP.
+- `attempted`: fetch was invoked. It does not prove packet delivery, supplier processing or cost.
+  The sink may fail after send, so absence of this phase also does not prove that nothing was sent.
+- `response_buffered`: a bounded200 JSON-typed response was received. It does not prove valid
+  model output, semantic quality, complete usage, supplier billing or physical processing region.
+
+All phases use one invocation UUID; overlapping invocations get different UUIDs. Missing later
+phases mean unknown, not success or free work. The sink must durably store these closed receipts
+within the provided signal/deadline before a deployment claims archived evidence. This increment
+provides the seam; it does not configure a storage sink or backfill the historical C0 campaign's
+unknown endpoint/account/region evidence. A test-injected fetch can remap to an owned loopback
+server; such evidence is explicitly controlled HTTP, never an actual supplier destination.
+
+Rollback removes the explicit binding/consumer and retains any receipts and unknown ledger holds.
+No database migration, recipient activation, real key read or paid call is part of this increment.

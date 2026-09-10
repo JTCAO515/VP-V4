@@ -15,3 +15,8 @@ boundaries and two real-call worker duplicate/crash proofs. See
   remain unactivated; C0 caller evidence cannot substitute for those interfaces.
 - Real user data, materials, human access and downstream knowledge/Trip capability remain
   subject to their separate policies and acceptance. Parent#193 remains OPEN.
+
+The explicit HTTP transport increment does not install any binding, credential or durable
+receipt sink. Production TLS/DNS/destination, account/SKU/region qualification, actual paid
+calls and semantic acceptance remain unrun. Default security/integration retain their explicit
+environment skips; see http-transport-commands.jsonl. No DB action was performed in this slice.

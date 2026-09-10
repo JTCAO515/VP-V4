@@ -1,0 +1,11 @@
+{"command": "node --experimental-strip-types --test tests/contract/model-gateway/provider-protocol/*.test.ts tests/security/model-gateway/provider-protocol/*.test.ts", "result": "PASS", "evidence": "31 pass, zero skip; final C2 matched/denied/exact-endpoint mismatch paths, async late dependencies, redaction and pending cost seam."}
+{"command": "node --experimental-strip-types --test tests/integration/model-gateway/provider-protocol/http-transport.test.ts", "result": "PASS", "evidence": "4 pass, zero skip; real owned loopback HTTP protocol,307 no forwarding, deadline/caller cancellation and oversized response. Explicit injected fetch bridge; no actual supplier/TLS/region proof."}
+{"command": "pnpm check", "result": "PASS", "evidence": "Lint, typecheck, build and 22 static/copy tests."}
+{"command": "pnpm test:unit", "result": "PASS", "evidence": "92 pass, zero skip."}
+{"command": "pnpm test:contract", "result": "PASS", "evidence": "209 pass, zero skip; subsequent scoped C2 test strengthening reran the focused31 suite."}
+{"command": "pnpm evals", "result": "PASS", "evidence": "25 offline tests pass. Only generated Harness artifact side effects were restored to the isolated baseline; no Harness artifact diff retained."}
+{"command": "pnpm test:security", "result": "INCOMPLETE", "evidence": "101 pass, zero fail, one existing disposable Auth/RLS target opt-in skipped."}
+{"command": "pnpm test:integration", "result": "INCOMPLETE", "evidence": "23 pass, zero fail, 49 existing environment opt-in skips; new4 controlled HTTP tests executed with no skip. No DB opt-in enabled or DB action performed."}
+{"command": "pnpm docs:check", "result": "PASS", "evidence": "73 tasks, contracts, links and archive hashes."}
+{"command": "git diff --check", "result": "PASS", "evidence": "No whitespace errors."}
+{"command": "pnpm test:contract && pnpm typecheck && pnpm docs:check && git diff --check", "result": "PASS", "evidence": "After rebase onto main357551d: contracts212/212, typecheck, docs and diff passed. Provider source unchanged by rebase."}

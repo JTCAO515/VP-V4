@@ -35,3 +35,10 @@ No raw provider response, user data, secret, header or credential is recorded.
 
 See [unrun.md](unrun.md). Independent review and final-HEAD required CI remain pending.
 Revert only this isolated slice; no applied migration, user data or live configuration changed.
+
+## Explicit HTTP destination transport increment
+
+See [HTTP transport verification](http-transport-verification.md) and
+[commands](http-transport-commands.jsonl). Real controlled loopback HTTP4 and focused protocol/
+security31 pass with zero skips. Existing provider, C2 and durable-budget authority are preserved.
+No actual supplier endpoint/account/region facts are backfilled from these synthetic results.
