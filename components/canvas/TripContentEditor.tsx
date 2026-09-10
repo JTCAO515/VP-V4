@@ -69,7 +69,7 @@ export function TripContentEditor({ data, pending, locale, onReload, onPending }
     try {
       const result = await fetch(`/api/trips/${data.trip.id}/proposal/reject`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ proposalId: pending.proposal.id }) });
       if (!live.current) return;
-      if (result.ok) onPending(null); else setNotice(copy.unavailable);
+      if (result.ok) { onPending(null); setNotice(copy.rejected); } else setNotice(copy.unavailable);
     } catch { if (live.current) setNotice(copy.unavailable); } finally { if (live.current) setBusy(false); }
   }
   return <section className={styles.workspace} data-testid="same-trip-editor">
