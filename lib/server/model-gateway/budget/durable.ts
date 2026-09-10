@@ -1,5 +1,5 @@
 /** Server-only seam. No default credentials, client route, policy approval or provider fetch. */
-export type BudgetRpc = (name: "reserve_model_budget" | "dispatch_model_budget" | "finish_model_budget", parameters: Readonly<Record<string, string | number | null>>) => Promise<unknown>;
+export type BudgetRpc = (name: "reserve_model_budget" | "dispatch_model_budget" | "finish_model_budget" | "stop_model_budget", parameters: Readonly<Record<string, string | number | null>>) => Promise<unknown>;
 export type BudgetAttempt = Readonly<{
   scopeId: string; ownerId: string; taskId: string; attemptId: string;
   provider: "qwen" | "glm" | "deepseek"; model: string; priceVersion: string;

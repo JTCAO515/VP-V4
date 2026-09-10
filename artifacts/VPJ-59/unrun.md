@@ -10,3 +10,8 @@
 - No real-user budget value or retention policy is invented from the C0 testing allowance.
 - Unknown costs stay reserved; eventual provider reconciliation still requires real usage
   evidence. Overrun recording/freezing does not guarantee that a provider honors its limits.
+
+The trusted stop increment has no remote migration, deployed operator/worker consumer,
+paid-provider or customer acceptance. Default security retains one unavailable disposable
+Auth/RLS skip; integration retains explicit environment skips, with budget13 and Turn/text22
+verified separately against owned PostgreSQL fixtures. See stop-runtime-verification.md.
