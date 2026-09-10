@@ -34,14 +34,24 @@ export function nativeRequestScope(requestSignal: AbortSignal, milliseconds = 10
       let response: Response;
       try { response = await nativeFetch(input, { ...init, signal: AbortSignal.any(signals) }); }
       catch (error) {
-        // A network/redirect failure is not a credential denial. Stop SDK retry
-        // work too; the handler reports503 without deleting the caller's attempt.
+        // A network/redirect failure is not a credential denial. Stop later SDK
+        // network retries;503 does not delete the caller's stored attempt.
         abort(); throw error;
+      }
+      if (response.status === 429 || response.status >= 500) {
+        abort();
+        try { void response.body?.cancel().catch(() => {}); } catch { /* already closed */ }
       }
       try { check(); } catch (error) {
         try { void response.body?.cancel().catch(() => {}); } catch { /* already closed */ }
         throw error;
       }
+      // Auth consumes JSON after fetch resolves. Mark a broken response body
+      // before the SDK can turn it into a denial or retry a refresh mutation.
+      const readJson = response.json.bind(response);
+      response.json = () => run(async () => {
+        try { return await readJson(); } catch (error) { abort(); throw error; }
+      });
       return response;
     });
   };
@@ -67,7 +77,7 @@ export function nativeRequestScope(requestSignal: AbortSignal, milliseconds = 10
       try { reader.releaseLock(); } catch { /* a hostile pending reader may retain its lock */ }
     }
   }
-  return { signal: controller.signal, check, run, fetch: fetcher, body,
+  return { signal: controller.signal, check, run, fetch: fetcher, body, unavailable: abort,
     dispose() { clearTimeout(timer); requestSignal.removeEventListener("abort", abort); abort(); },
   };
 }

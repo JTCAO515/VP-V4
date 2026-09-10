@@ -1,6 +1,6 @@
 import { nativeRequestScope } from "./native-request.ts";
 import { createClient } from "@supabase/supabase-js";
-import { verifyNativeCredentials } from "./native-credentials.ts";
+import { verifyNativeCredentials, nativeAuthRejected } from "./native-credentials.ts";
 import { isUuid } from "./request-guards.ts";
 
 type Config = Readonly<{ url: string; publishableKey: string; serviceRoleKey?: string }>;
@@ -41,9 +41,9 @@ export async function nativeIdentityHTTP(request: Request, action: string, confi
       const auth = createClient(config.url, config.publishableKey, options);
       const email = body.email, password = body.password;
       const { data, error } = await scope.run(() => auth.auth.signInWithPassword({ email, password }));
-      if (error || !data.session) return failure("UNAUTHENTICATED");
+      if (error || !data.session) return nativeAuthRejected(error) ? failure("UNAUTHENTICATED") : failure("UNAVAILABLE", 503);
       const token = data.session.access_token;
-      const verified = await scope.run(() => verifyNativeCredentials(tokenRequest(token), config, scope.fetch));
+      const verified = await scope.run(() => verifyNativeCredentials(tokenRequest(token), config, scope.fetch, scope.unavailable));
       if (!verified) return failure("UNAUTHENTICATED");
       const provisioner = createClient(config.url, config.serviceRoleKey, options);
       const proof = await scope.run(() => provisioner.rpc("native_prepare_v2", { p_owner: verified.subject, p_session: verified.sessionId, p_attempt: body.attemptId }).abortSignal(scope.signal));
@@ -55,9 +55,9 @@ export async function nativeIdentityHTTP(request: Request, action: string, confi
       const auth = createClient(config.url, config.publishableKey, options);
       const refreshToken = body.refreshToken;
       const { data, error } = await scope.run(() => auth.auth.refreshSession({ refresh_token: refreshToken }));
-      if (error || !data.session) return failure("UNAUTHENTICATED");
+      if (error || !data.session) return nativeAuthRejected(error) ? failure("UNAUTHENTICATED") : failure("UNAVAILABLE", 503);
       const token = data.session.access_token;
-      const verified = await scope.run(() => verifyNativeCredentials(tokenRequest(token), config, scope.fetch));
+      const verified = await scope.run(() => verifyNativeCredentials(tokenRequest(token), config, scope.fetch, scope.unavailable));
       if (!verified) return failure("UNAUTHENTICATED");
       const state = await scope.run(() => verified.client.rpc("native_session_v2", { p_action: "session" }).abortSignal(scope.signal));
       if (state.error) return rpcFailure(state.error.message);
@@ -65,7 +65,7 @@ export async function nativeIdentityHTTP(request: Request, action: string, confi
     }
     if (!["login", "session", "logout", "profile"].includes(action)) return failure("INVALID_INPUT", 400);
     if (action === "login" ? (Object.keys(body).join() !== "attemptId" || typeof body.attemptId !== "string" || !isUuid(body.attemptId)) : Object.keys(body).length !== 0) return failure("INVALID_INPUT", 400);
-    const verified = await scope.run(() => verifyNativeCredentials(request, config, scope.fetch));
+    const verified = await scope.run(() => verifyNativeCredentials(request, config, scope.fetch, scope.unavailable));
     if (!verified) return failure("UNAUTHENTICATED");
     const state = await scope.run(() => verified.client.rpc("native_session_v2", { p_action: action === "profile" ? "session" : action, ...(action === "login" ? { p_attempt: body.attemptId } : {}) }).abortSignal(scope.signal));
     if (state.error) return rpcFailure(state.error.message);

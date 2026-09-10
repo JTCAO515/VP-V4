@@ -106,3 +106,28 @@ test('actual Auth denial remains401 while a rejected transport is503 with no ret
  const failed=await nativeIdentityHTTP(request(),'credentials',bound);assert.equal(failed.status,503);assert.deepEqual(await failed.json(),{error:{code:'UNAVAILABLE'}});assert.equal(calls,2);
  await nextTask();assert.equal(calls,2);
 });
+
+test('upstream Auth outages and protocol failures are503 rather than credential denial',async t=>{
+ for(const action of ['credentials','refresh'])for(const sample of [{status:429,body:'{}'},{status:500,body:'{}'},{status:503,body:'{}'},{status:404,body:'<html>missing</html>'},{status:401,body:'{"message":"synthetic proxy denial"}'},{status:400,body:'{}'},{status:200,body:'not-json'},{status:200,body:'{}'}]){
+  let calls=0;t.mock.method(globalThis,'fetch',async()=>{calls++;return new Response(sample.body,{status:sample.status,headers:{'content-type':'application/json'}});});
+  const body=action==='credentials'?{email:'synthetic@example.test',password:'synthetic',attemptId:randomUUID()}:{refreshToken:'synthetic-refresh'};
+  const result=await nativeIdentityHTTP(new Request('http://127.0.0.1/native',{method:'POST',body:JSON.stringify(body)}),action,{...config,serviceRoleKey:'synthetic-service'});
+  assert.equal(result.status,503,action+' '+sample.status+' '+sample.body);assert.deepEqual(await result.json(),{error:{code:'UNAVAILABLE'}});assert.equal(calls,1,action+' '+sample.status+' '+sample.body);
+ }
+});
+
+test('claim transport failures are503 while malformed expired and forged JWTs remain401',async t=>{
+ const {webcrypto}=await import('node:crypto');
+ const f=await nativeFixture(t,'http://127.0.0.1:'+fixturePort++);
+ const request=token=>new Request('http://127.0.0.1/native',{headers:{Authorization:'Bearer '+token}});
+ const expired=await f.sign({exp:Math.floor(Date.now()/1000)-1});
+ const keys=await webcrypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']);
+ const forged=await f.sign({},keys.privateKey);
+ for(const token of ['abc.def.ghi',expired,forged])assert.equal((await nativeIdentityHTTP(request(token),'session',f.config)).status,401);
+ for(const sample of [{status:503,body:'{}'},{status:200,body:'not-json'}]){
+  const g=await nativeFixture(t,'http://127.0.0.1:'+fixturePort++);let calls=0;
+  t.mock.method(globalThis,'fetch',async()=>{calls++;return new Response(sample.body,{status:sample.status,headers:{'content-type':'application/json'}});});
+  const result=await nativeIdentityHTTP(request(g.token),'session',g.config);
+  assert.equal(result.status,503);assert.equal(calls,1);assert.deepEqual(await result.json(),{error:{code:'UNAVAILABLE'}});
+ }
+});
