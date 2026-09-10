@@ -1,17 +1,11 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
 import test from "node:test";
+import { identityLocalEnv } from "../identity/local-supabase.mjs";
 
-function localEnv() {
-  try {
-    const raw = execFileSync("supabase", ["status", "--workdir", ".", "-o", "env"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
-    return Object.fromEntries(raw.trim().split("\n").map((line) => { const i = line.indexOf("="); return [line.slice(0, i), line.slice(i + 1).replace(/^\"|\"$/g, "")]; }));
-  } catch { return null; }
-}
 
 test("V4-11 preserves exact/user place references and rejects cross-owner reads or inserts", async (t) => {
-  const env = localEnv();
-  if (!env?.API_URL || !env.ANON_KEY || !env.SERVICE_ROLE_KEY) return t.skip("local Supabase is not running");
+  const env = identityLocalEnv();
+  if (!env?.API_URL || !env.ANON_KEY || !env.SERVICE_ROLE_KEY) return t.skip("explicit disposable identity Supabase target is not configured");
   const suffix = crypto.randomUUID(); const password = "Probe-password-123!"; const ids = []; let canonicalId = null;
   const request = async (path, init = {}) => { const response = await fetch(`${env.API_URL}${path}`, init); return { response, body: await response.text() }; };
   const adminHeaders = { apikey: env.SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SERVICE_ROLE_KEY}`, "content-type": "application/json" };

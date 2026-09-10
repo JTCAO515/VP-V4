@@ -1,0 +1,174 @@
+{
+  "schemaVersion": "vpj04-local-environment/1",
+  "preparedBy": "root",
+  "date": "2026-09-10",
+  "baseline": "e78ee21",
+  "cliVersion": "2.115.0",
+  "projectId": "vp-native-session-20260910",
+  "workdir": "/Users/jtcao/Library/Caches/visepanda/native-local-session/instance-qrpqhzdi",
+  "apiOrigin": "http://127.0.0.1:59721",
+  "databasePort": 59722,
+  "services": [
+    "postgres",
+    "gotrue",
+    "postgrest",
+    "kong"
+  ],
+  "baselineMigrations": [
+    {
+      "file": "20260824101500_v4_baseline.sql",
+      "sha256": "2296639fa00f329fe239032a31bfbec7e8d3458318fe04411ff8c625fdee8a78"
+    },
+    {
+      "file": "20260824104424_plat_conf_connection_probes.sql",
+      "sha256": "d56ace82f308e66e8796e461b944a9b308e1cfc9d033a24ab0752a06ac2edbcb"
+    },
+    {
+      "file": "20260824104547_plat_conf_ops_probe.sql",
+      "sha256": "7a753059eb93336e45f9e19e9e3c179ea6f15b34943b1ff0194bd8b5a409ac90"
+    },
+    {
+      "file": "20260824105759_plat_conf_worker_probe_grant.sql",
+      "sha256": "8831e6412a5edccd3b3eb59fe071407b632d45d2a96e3bd232a1d5016b2a0115"
+    },
+    {
+      "file": "20260825052328_ai14_actor_rls_fault_probes.sql",
+      "sha256": "460990e1301406b2d91c5e7e9dbdef265ba915baac8fe2f8f72012401373b57a"
+    },
+    {
+      "file": "20260825153534_ai14_reviewer_separation_probe.sql",
+      "sha256": "39b627433eddcfc61f12380ce33d202a1343d254055656ce3b3010591d508869"
+    },
+    {
+      "file": "20260825153613_ai14_reviewer_select_probe.sql",
+      "sha256": "1f8a9fc86b62a4a76bc3216a6ea6148eac309b82016d2a66eab39dd75228e55e"
+    },
+    {
+      "file": "20260825160314_ai10_durable_trip_proposals.sql",
+      "sha256": "81f70084f62681b1535a1a3e1cd7c0f75aeccb3e3a0c192181570158e1cb03cf"
+    },
+    {
+      "file": "20260825160458_ai10_confirm_outcomes.sql",
+      "sha256": "f8f0d173bdfb4b746ed0e5891d956c4f78a5ab3611a328939abe057686a4afca"
+    },
+    {
+      "file": "20260825161535_ai10_confirm_fault_triggers.sql",
+      "sha256": "b097da413d7eb61392aaeb67c878ae56851ac8b5f4028038a111d50b8014a85d"
+    },
+    {
+      "file": "20260827030717_ai13b_proposal_revision_lineage.sql",
+      "sha256": "5a71c406c7257b3ca2a2b30bcdb835c8d0106cc28cee19211d0ddc45d3acbd05"
+    },
+    {
+      "file": "20260828153000_v4_08_durable_chat_threads.sql",
+      "sha256": "3def5e5859894a6aeea0d6d4d8f87b365f65d385a5f91ac16dd6d6ddbfb916d9"
+    },
+    {
+      "file": "20260828160000_v4_09_chat_feedback.sql",
+      "sha256": "0dc1f1f90a7d1c62815d66d5c9b611fd39b1c5469cf1a3073d857ccef69edadf"
+    },
+    {
+      "file": "20260828170000_v4_10_trip_version_snapshots.sql",
+      "sha256": "f93e9ffde58da85da9920bfcd2b2dfcdd5a08c36425730fca470b5032298db95"
+    },
+    {
+      "file": "20260828180000_v4_11_trip_place_references.sql",
+      "sha256": "dd154a707314884a5539b3d34f3989b71e1e341a78d884bc233b15198eef541f"
+    },
+    {
+      "file": "20260828190000_v4_12_trip_action_references.sql",
+      "sha256": "064e40e9dda61027d46c5cb12e71e4b35fe2b42ba79b787a7cb0cadf14cfc03b"
+    },
+    {
+      "file": "20260828193000_v4_13_memory_profile.sql",
+      "sha256": "8a8c6cdb0eb608f83adcc1c3a861ac20f64314e0016fb2d8293331630ee77050"
+    },
+    {
+      "file": "20260828194000_v4_15_memory_consumer_receipts.sql",
+      "sha256": "edbfc1ec79d214bd8a0ccdc76ecf5135c595150720cf1706265c38250ac223b7"
+    },
+    {
+      "file": "20260828200000_v4_16_user_profiles.sql",
+      "sha256": "235b46b4fb5487742a59254cac4c54e1321fee7bb966df62935caf1380bb310e"
+    },
+    {
+      "file": "20260828210000_v4_17_privacy_lifecycle.sql",
+      "sha256": "0def9e7d3c12d65a9b3c82c18edde5259e8ddb533a5cc9bbe01a8a0dbe19332a"
+    },
+    {
+      "file": "20260829191000_v4_14_server_minted_memory_consent.sql",
+      "sha256": "92abec29621d91e1fc1ae3a2fb05dd0b968eb4821044cf9854297821943d025e"
+    },
+    {
+      "file": "20260830100000_launch_03_trip_content_snapshots.sql",
+      "sha256": "f7dc7df5af0334d09cb43a0bb3853f8e5c2d5fec43a43ded26b5a59a986d5774"
+    },
+    {
+      "file": "20260830210000_launch_11_trip_proposal_patch.sql",
+      "sha256": "afd46ad677053987e3b7b6082e50c2fe0f6ba94d1d1d24594e6f8fc2d766232b"
+    },
+    {
+      "file": "20260830211000_launch_11_trip_proposal_patch_revision.sql",
+      "sha256": "e068f17653de2eedb812b763f732cfaba9e0903aac097a94432160b1275b5d6d"
+    },
+    {
+      "file": "20260909033302_vpj_02_repair_local_rpc_runtime.sql",
+      "sha256": "94f5c718802c3f60cd100b7713ac005930d5d62bf24f714ad25f2b3aff4f3950"
+    },
+    {
+      "file": "20260909184816_vpj_59_durable_model_budget.sql",
+      "sha256": "31feafbdbf096c61d0131754217427e28403b616f36ecb04cfa512c0f03db4f0"
+    }
+  ],
+  "initialStartExit": 0,
+  "existingProjectsReset": false,
+  "remoteOperations": false,
+  "credentialsLoggedOrCopiedIntoArtifact": false,
+  "statusHandling": "Supabase CLI output captured in process memory; credentials withheld from terminal/artifacts.",
+  "expiryChanges": [
+    {
+      "configuredSeconds": 60,
+      "specificProjectStopExit": 0,
+      "startExit": 0,
+      "actualAuthEnvSeconds": 60,
+      "actualAuthHealth": "healthy",
+      "nativeTableStillExists": true,
+      "recordedMigrationHistoryCount": 26
+    },
+    {
+      "configuredSeconds": 3600,
+      "specificProjectStopExit": 0,
+      "startExit": 0,
+      "actualAuthEnvSeconds": 3600,
+      "actualAuthHealth": "healthy"
+    }
+  ],
+  "nativeMigrationHistoryAcceptance": "Iteration SQL is separate; final migration replay is still required.",
+  "simulators": [
+    {
+      "name": "VP-Native-Session-A-20260910",
+      "udid": "B8B7B17F-A447-487E-B52C-31A303CF713A"
+    },
+    {
+      "name": "VP-Native-Session-B-20260910",
+      "udid": "152CB87B-089B-4FD4-BC7D-64ED4A621874"
+    }
+  ],
+  "physicalDeviceUsed": false,
+  "legacyTargetIncident": {
+    "affectedTests": [
+      "tests/integration/identity/pending-proposal-read.test.mjs",
+      "tests/integration/identity/profile-privacy-rpc.test.mjs"
+    ],
+    "wrongLocalProject": "vp-v4-ai-08",
+    "cause": "Legacy status --workdir . discovery",
+    "authorReportedResult": "pending test passed; profile test failed 404 versus expected401; finally cleanup requests completed but response statuses were not asserted.",
+    "rootReadOnlyFollowup": {
+      "remainingMatchingRpcAndAi13aAuthUsers": 0,
+      "orphanTrips": 0,
+      "additionalDeletionPerformed": false
+    },
+    "limitation": "No before snapshot or retained exact per-run UUIDs; no row-by-row unchanged-data claim.",
+    "remoteTargetUsed": false
+  }
+}

@@ -1,24 +1,12 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import test from "node:test";
+import { identityLocalEnv } from "../integration/identity/local-supabase.mjs";
 
-function localEnv() {
-  try {
-    const raw = execFileSync("supabase", ["status", "--workdir", ".", "-o", "env"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
-    return Object.fromEntries(raw.trim().split("\n").map((line) => {
-      const separator = line.indexOf("=");
-      let value = line.slice(separator + 1);
-      if (value.startsWith('"') && value.endsWith('"')) value = value.slice(1, -1);
-      return [line.slice(0, separator), value];
-    }));
-  } catch {
-    return null;
-  }
-}
 
 test("AI-14 owner RLS and fault rollback hold on a running local Supabase", async (t) => {
-  const env = localEnv();
-  if (!env?.API_URL || !env.ANON_KEY || !env.SERVICE_ROLE_KEY) return t.skip("local Supabase is not running");
+  const env = identityLocalEnv();
+  if (!env?.API_URL || !env.ANON_KEY || !env.SERVICE_ROLE_KEY) return t.skip("explicit disposable identity Supabase target is not configured");
 
   const users = [];
   const password = "Probe-password-123!";
@@ -89,8 +77,8 @@ test("AI-14 owner RLS and fault rollback hold on a running local Supabase", asyn
       body: JSON.stringify({ reviewer_id: reviewer.id, status: "approved" }),
     });
     assert.equal(JSON.parse(approval.body).length, 1);
-    assert.throws(() => execFileSync("docker", ["exec", "supabase_db_vp-v4-ai-08", "psql", "-U", "postgres", "-d", "postgres", "-v", "ON_ERROR_STOP=1", "-c", `set role service_role; select private.ai14_fault_probe('${owner.id}'::uuid, true);`], { stdio: "pipe" }), /AI14_FAULT_PROBE/);
-    const rollbackRows = execFileSync("docker", ["exec", "supabase_db_vp-v4-ai-08", "psql", "-U", "postgres", "-d", "postgres", "-Atqc", "select count(*) from public.trips where title = 'AI-14 fault probe';"], { encoding: "utf8" }).trim();
+    assert.throws(() => execFileSync("docker", ["exec", env.DB_CONTAINER, "psql", "-U", "postgres", "-d", "postgres", "-v", "ON_ERROR_STOP=1", "-c", `set role service_role; select private.ai14_fault_probe('${owner.id}'::uuid, true);`], { stdio: "pipe" }), /AI14_FAULT_PROBE/);
+    const rollbackRows = execFileSync("docker", ["exec", env.DB_CONTAINER, "psql", "-U", "postgres", "-d", "postgres", "-Atqc", "select count(*) from public.trips where title = 'AI-14 fault probe';"], { encoding: "utf8" }).trim();
     assert.equal(rollbackRows, "0");
   } finally {
     for (const id of users) await request(`/auth/v1/admin/users/${id}`, { method: "DELETE", headers: { apikey: env.SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SERVICE_ROLE_KEY}` } });

@@ -1,25 +1,12 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
 import test from "node:test";
+import { identityLocalEnv } from "../identity/local-supabase.mjs";
 import { createHmac } from "node:crypto";
 
-function localEnv() {
-  try {
-    const raw = execFileSync("supabase", ["status", "--workdir", ".", "-o", "env"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
-    return Object.fromEntries(raw.trim().split("\n").map((line) => {
-      const separator = line.indexOf("=");
-      let value = line.slice(separator + 1);
-      if (value.startsWith('"') && value.endsWith('"')) value = value.slice(1, -1);
-      return [line.slice(0, separator), value];
-    }));
-  } catch {
-    return null;
-  }
-}
 
 test("V4-08 persists owner-scoped thread replay and terminal cancellation", async (t) => {
-  const env = localEnv();
-  if (!env?.API_URL || !env.ANON_KEY || !env.SERVICE_ROLE_KEY) return t.skip("local Supabase is not running");
+  const env = identityLocalEnv();
+  if (!env?.API_URL || !env.ANON_KEY || !env.SERVICE_ROLE_KEY) return t.skip("explicit disposable identity Supabase target is not configured");
   const password = "V4-08-probe-password-123!";
   const makeUser = async () => {
     const email = `v408-${crypto.randomUUID()}@local.test`;

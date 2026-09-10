@@ -6,9 +6,9 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：C0 protocol/budget evidence is merged under PR292. Both bounded HF preparation Issues are completed: Docling #288 with a scoped REJECT under PR293, and offline blind review #287 under PR294. Full customer/runtime acceptance remains separate.
+状态：Native badge scaling is merged under PR297. VPJ-04 now has a locally verified native session v2 consumer with real Auth, persistent mobile replacement, Keychain and owner RLS on a fresh disposable 27-migration database. Remote/customer activation and full native/Harness acceptance remain separate.
 
-阶段：Continue bounded native accessibility diagnosis; resolve actual producer/consumer and operator prerequisites before runtime integration.
+阶段：Complete exact-HEAD identity delivery gates, then continue the local same-Trip consumer using the verified identity contract.
 
 ## 读取顺序
 
@@ -39,19 +39,21 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- VPJ-04 local session v2: two iOS26.5 Simulators passed6 actual identity tests with0skip; natural signed-token expiry/refresh, account-lock race, revoked definer replay, ordinary owner/other and Web Cookie/Origin passed. Fresh disposable26→27 and all15 guarded function bodies were independently verified. Unit92/contract195/security96/E2E40 pass; aggregate integration29pass/11skip remains INCOMPLETE. See artifacts/VPJ-04/local-session/verification.md, including the retained legacy-target incident and startup failures.
+- Native badge: PR297 merged1b6ca49 after exact-HEAD review and Native/Quality CI. Real ordinary/system-maximum bilingual pixels and screenshots passed on iOS17.5/26.5; remaining four audits/full maximum contrast FAIL and physical VoiceOver UNRUN are preserved.
 - HF preparation: #288 completed via PR293/cfde140 with fixed-config REJECT,26 actual offline conversions/8 guards/11 Python checks and independent metric reproduction. VPJ-72 complete CLI+fixture feedback output passed with0human records; two row-lineage/state-size findings fixed and independently verified. See artifacts/VPJ-72/verification.md and artifacts/VPJ-73/verification.md; neither establishes real user/provider semantic calibration.
 - 2026-09-10 actual C0:27/27 protocol matrix samples,6/6 client timeout/cancel checks and two extra real DeepSeek worker duplicate/crash calls passed. Total38 transport invocations/30 usage receipts; highest-tariff budget debit0.035014CNY,8 unknown-cost requests retain28.9CNY. Actual billed amount and semantic/human quality unverified. GLM400/1210 fixed by retaining native default thinking;21 protocol/security checks and units45/contracts189/evals24 pass locally. See artifacts/VPJ-06/live-c0-20260910.
 - Planning evidence: brand/ServiceTask/response alignment PR286 and HF plan PR289 merged; current manifest has73 tasks/212 native edges. These are planning/delivery facts, not runtime acceptance. See docs/research/brand-engineering-2026-09-10/DELIVERY.md and docs/harness/hf-reuse/DELIVERY.md.
 - Staging evidence: PR281 records authorized11→25 migration, restored encrypted backup, ordinary JWT16/16 and exact-ID cleanup preserving existing data. Direct-host/worker acceptance is separate; read the latest #189/PR evidence before action.
 - Budget evidence: PR284 merged durable reservation/dispatch and local concurrency tests; PR290 records authorized Staging25→26, ordinary-account/HTTP/synthetic-budget40/40, backup restore and exact cleanup. Actual paid provider, direct-host and deployed-worker acceptance remain separate. See artifacts/VPJ-59/staging-20260910.md and #194.
 - Native evidence: PR278 passed its scoped CI and iOS26.5 tests; four iOS17.5 UI audits and physical VoiceOver remain incomplete. Authenticated selected-Trip Ask/confirm/reload belongs to #198/#233/#242, not a reverse gate on #188.
-- Identity/provider preparation: PR279 native JWT seam and PR275 provider protocol adapters passed their scoped tests. Authoritative mobile epochs, actual provider/worker consumers and related runtime acceptance are still separate.
+- Identity/provider preparation: PR279 native JWT seam and PR275 provider protocol adapters passed their scoped tests. Local mobile authority is now verified in the scoped v2 consumer; deployed identity, actual provider/worker consumers and related runtime acceptance remain separate.
 - Harness evidence: #263 completed its offline scope under PR271; PR277 added offline pairing preparation. Actual provider pairing, human calibration and twelve required Staging cases remain under the open integration Issues.
 - Brand asset evidence: PR274 integrated the supplied logo/wordmark on web and native surfaces. Current rights remain in docs/licenses/asset-rights-ledger.json; this does not establish Store or full accessibility acceptance.
 
 ## 下一动作与回滚
 
-#287已由PR294合并9fa196a并按离线范围验收关闭，#288已按固定配置REJECT完成。继续#188有界基础可访问性诊断；ModelProfile/outcome目前只有fixture消费者，真实Turn/worker接入需要版本化契约、持久lease/terminal、权威native epoch及数据政策，不能仅扩展union冒充集成。真实选区Ask/确认/重载仍由#198/#233/#242负责。保留现有C0预算scope和未知账单hold；人工校准、供应商账单、C2留存/删除/人工权限及真机检查按原票落实。
+核对#191本机身份交付的准确提交审查与CI/合并结果后，按#192既定契约继续本机同一Trip的真实消费者。不能将C2聊天政策阻塞扩大为所有本机身份/合成账号工作；同样不能把本机27迁移当Staging已升级。Staging仍26；新的身份SQL、远端元数据/账号和运行启用需对应授权及验证。保留C0费用hold；真实模型语义校准、C2政策、许可知识、部署worker和真机旁白仍按原票。
 
 Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
 

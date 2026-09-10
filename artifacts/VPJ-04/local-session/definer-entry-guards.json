@@ -1,0 +1,81 @@
+{
+  "baseline": "e78ee21",
+  "guard": "PERFORM identity_private.guard_mobile_rpc_v2();",
+  "functions": [
+    {
+      "name": "cancel_chat_turn",
+      "signature": "public.cancel_chat_turn(uuid)",
+      "sourceMd5": "1047fd7accd4b7d031caab4a67f49acb"
+    },
+    {
+      "name": "confirm_and_apply_trip_proposal",
+      "signature": "public.confirm_and_apply_trip_proposal(uuid, text, text)",
+      "sourceMd5": "2223a4a456f540165527a74c53227c20"
+    },
+    {
+      "name": "create_explicit_memory_profile",
+      "signature": "public.create_explicit_memory_profile(uuid, uuid, uuid, text, text)",
+      "sourceMd5": "fb56ebf5702edce2354a5e3da994de11"
+    },
+    {
+      "name": "create_memory_retrieval_consent",
+      "signature": "public.create_memory_retrieval_consent()",
+      "sourceMd5": "096c3dff64c238aca0ab97fc59ab1e6b"
+    },
+    {
+      "name": "create_trip_proposal_patch",
+      "signature": "public.create_trip_proposal_patch(uuid, jsonb)",
+      "sourceMd5": "a1573ec20d80b9a7f325789a726aa9e1"
+    },
+    {
+      "name": "create_trip_rollback_proposal",
+      "signature": "public.create_trip_rollback_proposal(uuid, integer)",
+      "sourceMd5": "a83551ae0bb597826ef9045d5b1438fc"
+    },
+    {
+      "name": "grant_memory_retrieval_consent",
+      "signature": "public.grant_memory_retrieval_consent(uuid)",
+      "sourceMd5": "59286a2b6580cce68d774cad65e4ca01"
+    },
+    {
+      "name": "record_turn_feedback",
+      "signature": "public.record_turn_feedback(uuid, text, text)",
+      "sourceMd5": "12581f7a8040230dc69cae741e27717e"
+    },
+    {
+      "name": "request_privacy_action",
+      "signature": "public.request_privacy_action(uuid, text)",
+      "sourceMd5": "e85e9b071c7cda38295e0323b03ead9d"
+    },
+    {
+      "name": "revise_trip_proposal",
+      "signature": "public.revise_trip_proposal(uuid, text)",
+      "sourceMd5": "2fea11769e534fde8dd144da879c6e08"
+    },
+    {
+      "name": "revise_trip_proposal_patch",
+      "signature": "public.revise_trip_proposal_patch(uuid, jsonb)",
+      "sourceMd5": "4393d84571ea21a626a04556d61d2141"
+    },
+    {
+      "name": "revoke_memory_retrieval_consent",
+      "signature": "public.revoke_memory_retrieval_consent(uuid)",
+      "sourceMd5": "590a4ceb93e0cc7c05fa47d4688df80b"
+    },
+    {
+      "name": "save_user_profile",
+      "signature": "public.save_user_profile(text, text, text, text, text, text, time without time zone)",
+      "sourceMd5": "deb86f1261ef54d7de33a7dcecfd85f4"
+    },
+    {
+      "name": "start_chat_turn",
+      "signature": "public.start_chat_turn(uuid, uuid, uuid, text)",
+      "sourceMd5": "48f5cc4d47632ba5c60c83d30788bf35"
+    },
+    {
+      "name": "transition_memory_profile",
+      "signature": "public.transition_memory_profile(uuid, text)",
+      "sourceMd5": "a169637ebc8adf63a33134a42ebb6932"
+    }
+  ]
+}

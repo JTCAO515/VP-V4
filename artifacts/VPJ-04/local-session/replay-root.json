@@ -1,0 +1,108 @@
+{
+  "projectId": "vp-native-session-replay-20260910",
+  "workdir": "/Users/jtcao/Library/Caches/visepanda/native-local-session/replay-k_ck2iz0",
+  "apiOrigin": "http://127.0.0.1:59821",
+  "databasePort": 59822,
+  "firstStartExit": 0,
+  "migrationHistoryCount": 27,
+  "lastMigration": "20260909223841",
+  "migrationSha256": "21fa91dd7e352edccf80ee6ec485e28f85f2f6ba0ee39d40c55f7d3da0618d79",
+  "functions": [
+    {
+      "signature": "public.cancel_chat_turn(uuid)",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    },
+    {
+      "signature": "public.confirm_and_apply_trip_proposal(uuid, text, text)",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    },
+    {
+      "signature": "public.create_explicit_memory_profile(uuid, uuid, uuid, text, text)",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    },
+    {
+      "signature": "public.create_memory_retrieval_consent()",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    },
+    {
+      "signature": "public.create_trip_proposal_patch(uuid, jsonb)",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    },
+    {
+      "signature": "public.create_trip_rollback_proposal(uuid, integer)",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    },
+    {
+      "signature": "public.grant_memory_retrieval_consent(uuid)",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    },
+    {
+      "signature": "public.record_turn_feedback(uuid, text, text)",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    },
+    {
+      "signature": "public.request_privacy_action(uuid, text)",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    },
+    {
+      "signature": "public.revise_trip_proposal(uuid, text)",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    },
+    {
+      "signature": "public.revise_trip_proposal_patch(uuid, jsonb)",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    },
+    {
+      "signature": "public.revoke_memory_retrieval_consent(uuid)",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    },
+    {
+      "signature": "public.save_user_profile(text, text, text, text, text, text, time without time zone)",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    },
+    {
+      "signature": "public.start_chat_turn(uuid, uuid, uuid, text)",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    },
+    {
+      "signature": "public.transition_memory_profile(uuid, text)",
+      "bodyPreserved": true,
+      "guardAtBeginLine": true
+    }
+  ],
+  "repairedHistory": false,
+  "databaseBehaviorRerun": {
+    "status": "PASS",
+    "tests": 1,
+    "failures": 0,
+    "skipped": 0,
+    "evidence": "fresh-replay-behavior.log",
+    "includes": [
+      "ordinary Auth / Next / RLS",
+      "login attempt concurrency",
+      "write versus replacement lock",
+      "definer replay revocation",
+      "real SSR Cookie and Origin compatibility",
+      "cleanup remaining=0"
+    ],
+    "startupIncident": {
+      "firstAttempt": "FAIL: Next returned non-JSON HTML",
+      "rootCause": "not established",
+      "followUp": "read-only native/session 401 JSON UNAUTHENTICATED readiness before any signup; subsequent full runs passed"
+    }
+  }
+}
