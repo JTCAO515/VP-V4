@@ -276,6 +276,10 @@
       "status": "document"
     },
     {
+      "path": "docs/benchmarks/vpj-06/c0-cost-accounting-20260910.md",
+      "status": "document"
+    },
+    {
       "path": "docs/benchmarks/vpj-06/provider-protocol.md",
       "status": "document"
     },
@@ -505,6 +509,14 @@
     },
     {
       "path": "docs/contracts/vpj-02-rpc-repair.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-04.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-05.md",
       "status": "document"
     },
     {
