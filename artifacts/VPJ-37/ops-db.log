@@ -1,0 +1,27 @@
+✔ real ledger statuses and provider sums reconcile without multiplying a repeated task outcome (4841.758791ms)
+ℹ Budget-scope operational snapshot
+Observed at: 2026-09-10T19:22:21.677876+00:00
+Admission flags: enabled=true; frozen=false; expired=false
+Attempts: 5 (reserved 1, dispatched 1, pending 1, settled 1, released 1)
+Ledger debit: 7 CNY micros; unresolved hold: 1000; conservative exposure: 1007. These are ledger amounts, not a supplier invoice.
+Distinct ledger task IDs: 4; owner-matched Turns: 3; missing: 1; owner mismatch: 0. ServiceTask count: unknown.
+Technical states: active=0, failed=1, unknown=1, cancelled=0, completed=1, unavailable=1, proposalReady=0
+Recorded business outcomes: blocked=1, partial=1, answered=0, unobserved=2, clarification=0, technicalFailure=0
+deepseek: attempts=1; ledger debit=0; unresolved hold=200; exposure=200
+glm: attempts=2; ledger debit=0; unresolved hold=500; exposure=500
+qwen: attempts=2; ledger debit=7; unresolved hold=300; exposure=307
+Integrity: inconsistent outcome tasks=0; duplicate terminal tasks=0
+Actual billed cost, provider latency, tool attempts, human time and semantic quality: unknown (no accepted source in this read model).
+Technical completion does not establish an answered request or semantic success. Task IDs are deduplicated before joining outcomes; attempts and money, not task counts, reconcile across providers.
+✔ empty scopes have observed zero rows, while missing scopes and denied roles yield no data (493.83775ms)
+✔ hidden text and foreign-owner task IDs do not become business successes or disclose identifiers (1021.545459ms)
+✔ metadata anomalies are counted without inventing quality or treating an inconsistent outcome as answered (570.697875ms)
+✔ settlement concurrent with repeated snapshots preserves reconciliation and never changes another scope (3198.06825ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10286.367708

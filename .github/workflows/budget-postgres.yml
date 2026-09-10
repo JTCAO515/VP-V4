@@ -9,6 +9,9 @@ on:
       - 'tests/**/cost/**'
       - 'lib/server/turn/**'
       - 'tests/**/turn/**'
+      - 'lib/server/observability/**'
+      - 'apps/ops/**'
+      - 'tests/**/observability/**'
       - '.github/workflows/budget-postgres.yml'
   workflow_dispatch:
 
@@ -50,3 +53,7 @@ jobs:
         env:
           VP_TURN_DB_TEST: '1'
         run: node --experimental-strip-types --test tests/integration/turn/durable-work.test.mjs tests/integration/turn/text-work.test.mjs
+      - name: Reconcile operational metadata with the isolated PostgreSQL ledger
+        env:
+          VP_OPS_DB_TEST: '1'
+        run: node --experimental-strip-types --test tests/integration/observability/ops-ledger.test.mjs
