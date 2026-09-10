@@ -1,6 +1,6 @@
-✔ real ledger statuses and provider sums reconcile without multiplying a repeated task outcome (4815.44925ms)
+✔ real ledger statuses and provider sums reconcile without multiplying a repeated task outcome (4841.758791ms)
 ℹ Budget-scope operational snapshot
-Observed at: 2026-09-10T19:18:04.021377+00:00
+Observed at: 2026-09-10T19:22:21.677876+00:00
 Admission flags: enabled=true; frozen=false; expired=false
 Attempts: 5 (reserved 1, dispatched 1, pending 1, settled 1, released 1)
 Ledger debit: 7 CNY micros; unresolved hold: 1000; conservative exposure: 1007. These are ledger amounts, not a supplier invoice.
@@ -13,10 +13,10 @@ qwen: attempts=2; ledger debit=7; unresolved hold=300; exposure=307
 Integrity: inconsistent outcome tasks=0; duplicate terminal tasks=0
 Actual billed cost, provider latency, tool attempts, human time and semantic quality: unknown (no accepted source in this read model).
 Technical completion does not establish an answered request or semantic success. Task IDs are deduplicated before joining outcomes; attempts and money, not task counts, reconcile across providers.
-✔ empty scopes have observed zero rows, while missing scopes and denied roles yield no data (481.435625ms)
-✔ hidden text and foreign-owner task IDs do not become business successes or disclose identifiers (1038.705709ms)
-✔ metadata anomalies are counted without inventing quality or treating an inconsistent outcome as answered (531.32625ms)
-✔ settlement concurrent with repeated snapshots preserves reconciliation and never changes another scope (3245.833917ms)
+✔ empty scopes have observed zero rows, while missing scopes and denied roles yield no data (493.83775ms)
+✔ hidden text and foreign-owner task IDs do not become business successes or disclose identifiers (1021.545459ms)
+✔ metadata anomalies are counted without inventing quality or treating an inconsistent outcome as answered (570.697875ms)
+✔ settlement concurrent with repeated snapshots preserves reconciliation and never changes another scope (3198.06825ms)
 ℹ tests 5
 ℹ suites 0
 ℹ pass 5
@@ -24,4 +24,4 @@ Technical completion does not establish an answered request or semantic success.
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 10264.994041
+ℹ duration_ms 10286.367708

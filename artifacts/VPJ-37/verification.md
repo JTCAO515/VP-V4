@@ -4,6 +4,11 @@ Base `26669d9ffa595bb069b81e6faa4031568c1cea0e`; branch `codex/ops-229-ledger-re
 Related to #229. This increment implements and verifies a real service-only SQL metadata
 read model plus a strict TypeScript diagnostic consumer. It does not close #229/#195/#227.
 
+Latest main `297eb23df7c441e8e9dfeb20b94e4c9b7642dd5b` was merged without conflicts. Its
+policy records, budget stop API and image-pull retry remain unchanged. The operational SQL,
+TypeScript and tests did not change; the full **33-migration** ops suite passed again5/5 with
+zero skips. The latest database run is the retained `ops-db.log`.
+
 ## Actual result
 
 The isolated test creates the existing budget scope/attempt states through their real RPCs,
@@ -31,15 +36,17 @@ response, not a hand-authored dashboard sample.
 
 ## Checks
 
-- Full base31 application migrations plus the new read-only migration applied transactionally
+- Initially base31 plus this read-only migration, and finally the merged full33 migrations, applied transactionally
   on unique PostgreSQL17.6 containers with `--network none`, no published ports and a private
   Unix socket. Minimal SQL Auth declarations are fixtures, not GoTrue/JWT acceptance.
 - Isolated PostgreSQL suite: **5 passed /0 failed /0 skipped**. Each test run removed only its
   unique container, including earlier failed runs. No existing local or remote database used.
 - New contract tests: **3 passed**; exact allowlist, arbitrary-precision money, unavailable
   transport, extra fields, invented unknown metrics and inconsistent aggregates covered.
-- `pnpm check`: lint/typecheck/build and22 static tests passed. Unit92 and contract202 passed,
-  zero skips. Required docs/diff results and actual commands are in `commands.jsonl`.
+- Before the main merge, `pnpm check`: lint/typecheck/build and22 static tests passed;
+  unit92 and contract202 passed, zero skips. Their application read-model source is unchanged.
+  After the merge, the affected full-migration ops suite and docs/diff checks passed again.
+  Actual commands are in `commands.jsonl`; new exact-HEAD CI remains separate.
 - Budget PostgreSQL CI includes the explicit opt-in ops suite and observability path filters;
   its original budget and Turn checks remain. Exact-HEAD CI and independent review remain
   delivery gates and are not claimed by these local results.
@@ -48,6 +55,10 @@ Two initial test-helper failures were fixed without changing the read model: the
 name validator rejected the version digit, then a pg_catalog `"char"` concatenation needed an
 explicit text cast. Those runs were failures (0/5 then4/5), not relabeled as passes. A final
 repeat additionally verified execution inside a read-only transaction.
+
+Independent review of `fbd4bffd6e03bb65c3a7ab7be2f60c77a8ae0c5c` reported Critical0 /
+Important0 and independently ran the3 new contract tests. Final merge/evidence-only review is
+recorded separately at the PR's exact head, not presumed here.
 
 No provider call, credential read, team permission activation, new platform, paid operation,
 customer endpoint or remote migration occurred. Quality/latency/tools/human time/ServiceTask
