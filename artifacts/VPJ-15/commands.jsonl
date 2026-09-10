@@ -1,0 +1,12 @@
+{"command": "supabase migration new vpj_15_private_source_assertion", "exitCode": 0, "migration": "20260910213151_vpj_15_private_source_assertion.sql"}
+{"command": "node --experimental-strip-types --test tests/contract/knowledge/source-assertion.test.mjs tests/contract/ops/*.test.mjs", "exitCode": 0, "passed": 13, "skipped": 0}
+{"command": "VP_OPS_TEST_FILE=tests/integration/knowledge/private-source.test.mjs VP_OPS_BEFORE_MIGRATION=20260910213151_vpj_15_private_source_assertion.sql VP_OPS_BROWSER_EXECUTABLE=<installed-headless-shell> node tests/integration/ops/run-local.mjs", "exitCode": 0, "passed": 8, "skipped": 0, "scope": "final source/address/bilingual UI; genuine34-to35 CLI upgrade; auth/grants/replay/concurrency/fault/restart/UTF8/padding; owned cleanup"}
+{"command": "VP_OPS_BROWSER_EXECUTABLE=<installed-headless-shell> node tests/integration/ops/run-local.mjs", "exitCode": 0, "passed": 8, "skipped": 0, "scope": "original Ops regression on35; lost acknowledgement retry; owned cleanup"}
+{"command": "pnpm check", "exitCode": 0, "passed": 22, "scope": "lint/typecheck/build/static-copy-claims"}
+{"command": "pnpm test:unit", "exitCode": 0, "testFiles": 12, "skipped": 0}
+{"command": "pnpm test:contract", "exitCode": 0, "testFiles": 63, "skipped": 0}
+{"command": "pnpm test:integration", "exitCode": 0, "outcome": "incomplete", "testFiles": 29, "skipped": 58}
+{"command": "pnpm test:security", "exitCode": 0, "outcome": "incomplete", "testFiles": 45, "skipped": 1}
+{"command": "pnpm docs:check", "exitCode": 0}
+{"command": "pnpm db:verify", "exitCode": 0, "outcome": "baseline-present; connection probes not-configured; no production attempt"}
+{"command": "git diff --check", "exitCode": 0}
