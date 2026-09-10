@@ -3,12 +3,12 @@
   "projectId": "visepanda-vp-v4",
   "lastUpdated": "2026-09-10",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
-  "status": "Native identity PR298 and accepted physical-operation evidence PR300 are merged. The local Web/iOS same-Trip consumer is implemented and verified through real Auth/HTTP/RLS, proposal confirmation, immutable reload and data-preserving migration28. Remote/customer activation and full product/Harness acceptance remain separate.",
-  "currentPhase": "Deliver the exact reviewed local Trip result, then resolve the remaining hard-lock behavior and policy/runtime gates before extending the real Ask chain.",
+  "status": "PR301 is merged as28a2d44: local Web/iOS same-Trip consumers and the corrected full Simulator CI pipeline are delivered. PR302 retains the bounded iOS17 CJK diagnostic evidence without changing original failures. Remote/customer activation and complete product/Harness acceptance remain separate.",
+  "currentPhase": "Resolve the remaining hard-lock behavior and C2 decisions, and establish the exact Staging deployment binding before a separately authorized27/28 rollout.",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "JT owns product/commercial/provider/data/account/release decisions. Coding agents own each verified, bounded implementation contract.",
   "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree.",
-  "nextAction": "按准确HEAD审阅与必需CI交付本机同一Trip消费者；随后依据用户对硬锁边界的选择补足#192，不把unknown占位当验收。#191已合并本机身份链，Staging仍26；native27/Trip28只在隔离本机验证，新的远端迁移/启用需对应授权。C2留存/删除/人工访问及预算选择继续按#190/#194/#195；保留现有C0费用hold，不重复调用供应商。依赖顺序不变，继续#195→#206→Harness67的真实门。",
+  "nextAction": "#192本机消费者已合并，继续OPEN；先取得已提出的硬锁范围选择，再按同一Trip/Proposal/CAS扩展，不将unknown当保护能力。C2留存/删除/人工访问和真实用户预算继续按#190/#194/#195。已只读复核新加坡Staging仍26；27/28须协调调用端协议后另行授权。当前公开Preview登录bundle匹配该Staging，但Vercel管理接口403，服务端/Production绑定仍unknown；先恢复正确项目的只读访问，盘点共享调用端，再确定具体切换和维护方案。原生服务端/Swift仍loopback-only，数据库升级不等于远程原生就绪。保留C0预算hold及所有旧失败。",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
@@ -77,6 +77,8 @@
     "tests/integration/identity/**"
   ],
   "verification": [
+    "Delivery: PR301/28a2d44 exactHEADafa83a5 independent review0/0; Native34471256512, Quality34471256572, Budget34471256522 and Vercel passed, merged tree matched and post-merge docs passed. Simulator CI now uses complete ad-hoc test signing plus an owned fresh device and explicit boot readiness; assertions/audit types are unchanged. Local full runner21pass/0fail/8API-environment skips; separate real API evidence remains underVPJ-05. Initial Keychain, audit-service, launch and destination-format failures remain recorded.",
+    "Foundation evidence: PR302/8175e39 exactHEAD5459c01 review0/0 and Quality/Vercel passed. iOS17 CJK comparison hadproduction2FAIL/SwiftUI2FAIL/UIKit2PASS; element captures showed complete text, with duplicated full-screen capture limitations disclosed. No production UI was changed or original audit failure waived.",
     "VPJ-05 local same-Trip: real Swift/API persistence, reciprocal Web/iOS Trip IDs, bilingual normal/maximum UI and desktop/390px browser checks passed. Unit92/contract199/evals25/security99/E2E40 and build/static22 passed. Both local identity/Trip integration opt-ins ran:31pass/0fail/10budget-environment skips, aggregate INCOMPLETE. A fixed-sleep identity observation failed first; a controlled backend-PID lock barrier corrected the test and passed. Real27→28 data-preserving upgrade passed. See artifacts/VPJ-05/verification.md; hard locks/external orders and remote/full product acceptance remain unknown/unrun.",
     "Physical operation: PR300 merged9fb6a64 after exact f447114 independent review0/0, Quality34429015894 and Vercel. User accepted the observed iPhone17/iOS26.6.2 QA operation;9 device navigation/state contracts passed. Original Apps preserved. VoiceOver, system-setting changes and physical Trip consumer tests were not run. See artifacts/VPJ-01/physical-20260910/verification.md.",
     "VPJ-04 local session v2: two iOS26.5 Simulators passed6 actual identity tests with0skip; natural signed-token expiry/refresh, account-lock race, revoked definer replay, ordinary owner/other and Web Cookie/Origin passed. Fresh disposable26→27 and all15 guarded function bodies were independently verified. Unit92/contract195/security96/E2E40 pass; aggregate integration29pass/11skip remains INCOMPLETE. See artifacts/VPJ-04/local-session/verification.md, including the retained legacy-target incident and startup failures.",
@@ -100,7 +102,8 @@
   "blockers": [
     "Staging26 and the scoped ordinary JWT/budget checks are verified; direct-host database connection and a deployed worker identity/path remain incomplete.",
     "VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.",
-    "Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues."
+    "Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues.",
+    "Current remote rollout: Staging migration metadata freshly confirms26. Vercel management access returns403; public Preview auth bundle matches Staging but server-only/Production bindings are not established.27/28 require coordinated v2 callers and a scoped new authorization; disabling v2 after DB28 is not a compatible rollback."
   ],
   "rollback": "For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.",
   "historicalSnapshots": [
