@@ -6,7 +6,7 @@ index a92c648..e5f41f4 100644
  import XCTest
 +import Security
  @testable import VisePanda
- 
+
  nonisolated final class NativeTripStateTests: XCTestCase {
 @@ -9,6 +10,11 @@ nonisolated final class NativeTripStateTests: XCTestCase {
          let defaults = try XCTUnwrap(UserDefaults(suiteName: "vpj05.denial.\(UUID().uuidString)"))
