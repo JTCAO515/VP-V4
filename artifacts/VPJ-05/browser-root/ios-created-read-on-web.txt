@@ -1,0 +1,72 @@
+- banner:
+  - link "VisePanda 首页":
+    - /url: /visepanda
+    - img "VisePanda":
+  - link "返回 VisePanda":
+    - /url: /visepanda
+  - text: 界面语言
+  - combobox "界面语言":
+    - option "🇨🇳 中文" [selected]
+    - option "🇺🇸 English"
+- main:
+  - paragraph: Trip Canvas · 权威时间线
+  - heading "iOS UI en 0F4091" [level=1]
+  - paragraph: 这里显示当前行程和已确认的版本历史。每项已记录的变化都有不可变提案来源，并保持追加式历史。
+  - region "当前版本":
+    - generic: 当前版本
+    - strong: v1
+    - time: 更新于 2026年9月10日 08:57
+  - paragraph: 回滚不是重写。恢复会先生成新提案；只有明确确认后才会创建下一个版本。
+  - paragraph: 仅本机合成账号测试；两端共用同一 Trip。
+  - heading "已确认内容 · v1" [level=2]
+  - strong: iOS UI en 0F4091
+  - heading "2026-09-10" [level=3]
+  - list:
+    - listitem: Synthetic museum visit
+  - paragraph: 用户硬锁：未知 · 外部订单状态：未知
+  - button "读取最新版本"
+  - status
+  - heading "未提交草稿" [level=2]
+  - paragraph: 草稿基于版本 1
+  - text: 行程名称
+  - textbox "行程名称": iOS UI en 0F4091
+  - group "日期 1":
+    - generic: 日期 1
+    - text: 日期
+    - textbox "日期": 2026-09-10
+    - button "移除"
+    - text: 事项名称
+    - textbox "事项名称": Synthetic museum visit
+    - button "移除"
+    - button "添加事项"
+  - button "添加一天"
+  - button "生成变更提议" [disabled]
+  - button "明确放弃草稿并从最新重建" [disabled]
+  - article:
+    - paragraph: 版本历史
+    - heading "已确认的变化" [level=2]
+    - list:
+      - strong: 版本 1 已确认
+      - generic: 通过不可变提案应用。
+      - generic: 记录于 2026年9月10日 08:57
+      - generic "查看来源提案"
+      - strong: 初始版本
+      - generic: 此行程的不可变基线。
+      - generic: 记录于 2026年9月10日 08:57
+      - button "恢复为 v2"
+  - complementary:
+    - paragraph: 地点视图
+    - heading "精确引用" [level=2]
+    - paragraph: 仅示意 · 没有地图提供商或实时路线数据。
+    - paragraph: 此行程尚未记录地点引用。
+  - complementary:
+    - paragraph: 预订与操作
+    - heading "准备并交接" [level=2]
+    - paragraph: 这里不会创建订单、付款、库存或提供商完成状态。
+    - paragraph: 尚未记录票务、预订、外部链接或准备引用。
+  - complementary:
+    - paragraph: 完整性
+    - heading "唯一当前头版本" [level=2]
+    - paragraph: 时间线与当前版本读取同一份 owner-scoped 行程来源。没有 fixture 回退，也没有直接写入动作。
+- button "Open Next.js Dev Tools":
+- alert

@@ -1,0 +1,15 @@
+Test Case '-[VisePandaTests.NativeTripStateTests testAccountChangeRejectsAnAlreadyInFlightTripReply]' started.
+[SIGNING-DIAG] status=active failureCode=none scope=present keychainReadStatus=0
+Test Case '-[VisePandaTests.NativeTripStateTests testAccountChangeRejectsAnAlreadyInFlightTripReply]' passed (0.078 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testDraftOnlyChangesRequestedFieldsAndKeepsConfirmedContent]' started.
+Test Case '-[VisePandaTests.NativeTripStateTests testDraftOnlyChangesRequestedFieldsAndKeepsConfirmedContent]' passed (0.005 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testLateRefreshCannotReviveSessionAfterTripDenial]' started.
+[SIGNING-DIAG] status=active failureCode=none scope=present keychainReadStatus=0
+Test Case '-[VisePandaTests.NativeTripStateTests testLateRefreshCannotReviveSessionAfterTripDenial]' passed (0.063 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testTemporaryAuthenticationFailureKeepsDraftHiddenAndLogoutClearsIt]' started.
+[SIGNING-DIAG] status=active failureCode=none scope=present keychainReadStatus=0
+Test Case '-[VisePandaTests.NativeTripStateTests testTemporaryAuthenticationFailureKeepsDraftHiddenAndLogoutClearsIt]' passed (0.037 seconds).
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.183 (0.186) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.183 (0.187) seconds
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.183 (0.188) seconds
+** TEST SUCCEEDED **

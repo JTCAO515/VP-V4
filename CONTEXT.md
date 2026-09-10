@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Native badge scaling is merged under PR297. VPJ-04 now has a locally verified native session v2 consumer with real Auth, persistent mobile replacement, Keychain and owner RLS on a fresh disposable 27-migration database. Remote/customer activation and full native/Harness acceptance remain separate.
+状态：Native identity PR298 and accepted physical-operation evidence PR300 are merged. The local Web/iOS same-Trip consumer is implemented and verified through real Auth/HTTP/RLS, proposal confirmation, immutable reload and data-preserving migration28. Remote/customer activation and full product/Harness acceptance remain separate.
 
-阶段：Complete exact-HEAD identity delivery gates, then continue the local same-Trip consumer using the verified identity contract.
+阶段：Deliver the exact reviewed local Trip result, then resolve the remaining hard-lock behavior and policy/runtime gates before extending the real Ask chain.
 
 ## 读取顺序
 
@@ -36,9 +36,12 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - Production/customer and complete native/Harness acceptance remain unrun. Scoped Staging and actual C0 model protocol/worker behavior are verified; supplier billing, semantic quality and real user data consumers remain separate.
 - Physical VoiceOver, signed Store and selected-object Ask sheet acceptance under #198/#233/#242 remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.
 - VPJ-66 offline preparation is merged and accepted; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.
+- VPJ-05 hard-lock behavior is not yet frozen or implemented; external order status stays unknown. Native27/Trip28 have not been applied to Staging; local reciprocal consumers do not close#192 or grant real-user processing permission.
 
 ## 验证
 
+- VPJ-05 local same-Trip: real Swift/API persistence, reciprocal Web/iOS Trip IDs, bilingual normal/maximum UI and desktop/390px browser checks passed. Unit92/contract199/evals25/security99/E2E40 and build/static22 passed. Both local identity/Trip integration opt-ins ran:31pass/0fail/10budget-environment skips, aggregate INCOMPLETE. A fixed-sleep identity observation failed first; a controlled backend-PID lock barrier corrected the test and passed. Real27→28 data-preserving upgrade passed. See artifacts/VPJ-05/verification.md; hard locks/external orders and remote/full product acceptance remain unknown/unrun.
+- Physical operation: PR300 merged9fb6a64 after exact f447114 independent review0/0, Quality34429015894 and Vercel. User accepted the observed iPhone17/iOS26.6.2 QA operation;9 device navigation/state contracts passed. Original Apps preserved. VoiceOver, system-setting changes and physical Trip consumer tests were not run. See artifacts/VPJ-01/physical-20260910/verification.md.
 - VPJ-04 local session v2: two iOS26.5 Simulators passed6 actual identity tests with0skip; natural signed-token expiry/refresh, account-lock race, revoked definer replay, ordinary owner/other and Web Cookie/Origin passed. Fresh disposable26→27 and all15 guarded function bodies were independently verified. Unit92/contract195/security96/E2E40 pass; aggregate integration29pass/11skip remains INCOMPLETE. See artifacts/VPJ-04/local-session/verification.md, including the retained legacy-target incident and startup failures.
 - Native badge: PR297 merged1b6ca49 after exact-HEAD review and Native/Quality CI. Real ordinary/system-maximum bilingual pixels and screenshots passed on iOS17.5/26.5; remaining four audits/full maximum contrast FAIL and physical VoiceOver UNRUN are preserved.
 - HF preparation: #288 completed via PR293/cfde140 with fixed-config REJECT,26 actual offline conversions/8 guards/11 Python checks and independent metric reproduction. VPJ-72 complete CLI+fixture feedback output passed with0human records; two row-lineage/state-size findings fixed and independently verified. See artifacts/VPJ-72/verification.md and artifacts/VPJ-73/verification.md; neither establishes real user/provider semantic calibration.
@@ -53,9 +56,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-核对#191本机身份交付的准确提交审查与CI/合并结果后，按#192既定契约继续本机同一Trip的真实消费者。不能将C2聊天政策阻塞扩大为所有本机身份/合成账号工作；同样不能把本机27迁移当Staging已升级。Staging仍26；新的身份SQL、远端元数据/账号和运行启用需对应授权及验证。保留C0费用hold；真实模型语义校准、C2政策、许可知识、部署worker和真机旁白仍按原票。
+按准确HEAD审阅与必需CI交付本机同一Trip消费者；随后依据用户对硬锁边界的选择补足#192，不把unknown占位当验收。#191已合并本机身份链，Staging仍26；native27/Trip28只在隔离本机验证，新的远端迁移/启用需对应授权。C2留存/删除/人工访问及预算选择继续按#190/#194/#195；保留现有C0费用hold，不重复调用供应商。依赖顺序不变，继续#195→#206→Harness67的真实门。
 
-Revert the planning/archival PR; restore the retired Landing from exact archive; reopen old Issues and restore labels from before snapshot. Never roll back applied migrations or revive revoked user data.
+For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
 Technical release acceptance in VPJ-45 and commercial lifecycle evidence in VPJ-47 are distinct terminal conditions.
 

@@ -1,0 +1,213 @@
+[
+  {
+    "run": "20260910-084744",
+    "mode": "integration",
+    "locale": "en",
+    "systemContentSize": "large",
+    "exitCode": 65,
+    "observations": [
+      "/Users/jtcao/Documents/VP-V4-Native-Local-Trip-iOS/ios/VisePanda/VisePandaTests/NativeTripIntegrationTests.swift:20: error: -[VisePandaTests.NativeTripIntegrationTests testRealLocalCreateConfirmReloadConflictAndReplacedSession] : XCTUnwrap failed: expected non-nil value of type \"NativeTripDetail\" - invalidResponse",
+      "Test Case '-[VisePandaTests.NativeTripIntegrationTests testRealLocalCreateConfirmReloadConflictAndReplacedSession]' failed (10.303 seconds).",
+      "xcrun: error: unable to find utility \"simctl\", not a developer tool or in PATH"
+    ],
+    "webExpectation": null
+  },
+  {
+    "run": "20260910-084956",
+    "mode": "integration",
+    "locale": "en",
+    "systemContentSize": "large",
+    "exitCode": 0,
+    "observations": [
+      "VPJ05 real native Trip created: feefc540-7f64-4bc6-8933-749da0938c5d",
+      "Test Case '-[VisePandaTests.NativeTripIntegrationTests testRealLocalCreateConfirmReloadConflictAndReplacedSession]' passed (15.205 seconds)."
+    ],
+    "webExpectation": null
+  },
+  {
+    "run": "20260910-085208",
+    "mode": "ui",
+    "locale": "en",
+    "systemContentSize": "large",
+    "exitCode": 65,
+    "observations": [
+      "VPJ05 actual iOS UI Trip: 7561781b-844a-4a54-adc9-c26ff44ab3c4, locale: en",
+      "/Users/jtcao/Documents/VP-V4-Native-Local-Trip-iOS/ios/VisePanda/VisePandaUITests/NativeTripUITests.swift:95: error: -[VisePandaUITests.NativeTripUITests testRealLocalTripDraftReviewConfirmAndRelaunch] : XCTAssertTrue failed",
+      "Test Case '-[VisePandaUITests.NativeTripUITests testRealLocalTripDraftReviewConfirmAndRelaunch]' failed (108.835 seconds).",
+      "xcrun: error: unable to find utility \"simctl\", not a developer tool or in PATH"
+    ],
+    "webExpectation": null
+  },
+  {
+    "run": "20260910-085656",
+    "mode": "ui",
+    "locale": "en",
+    "systemContentSize": "large",
+    "exitCode": 0,
+    "observations": [
+      "VPJ05 actual iOS UI Trip: 570b2d6a-67cc-4764-8afe-1ab313503906, locale: en",
+      "Test Case '-[VisePandaUITests.NativeTripUITests testRealLocalTripDraftReviewConfirmAndRelaunch]' passed (55.305 seconds)."
+    ],
+    "webExpectation": null
+  },
+  {
+    "run": "20260910-085934",
+    "mode": "ui",
+    "locale": "en",
+    "systemContentSize": "large",
+    "exitCode": 0,
+    "observations": [
+      "VPJ05 actual iOS UI Trip: 3d446058-8ad8-4d1e-a5c8-9642861e096c, locale: en",
+      "Test Case '-[VisePandaUITests.NativeTripUITests testRealLocalTripDraftReviewConfirmAndRelaunch]' passed (59.536 seconds)."
+    ],
+    "webExpectation": null
+  },
+  {
+    "run": "20260910-090100",
+    "mode": "ui",
+    "locale": "zh-Hans",
+    "systemContentSize": "large",
+    "exitCode": 65,
+    "observations": [
+      "VPJ05 actual iOS UI Trip: 1cd0d574-a291-4f07-919e-15dd5a03897c, locale: zh-Hans",
+      "/Users/jtcao/Documents/VP-V4-Native-Local-Trip-iOS/ios/VisePanda/VisePandaUITests/NativeTripUITests.swift:134: error: -[VisePandaUITests.NativeTripUITests testRealLocalTripDraftReviewConfirmAndRelaunch] : Failed to get matching snapshot: No matches found for Elements matching predicate '\"trip.draft.addDay\" IN identifiers' from input {(",
+      "Test Case '-[VisePandaUITests.NativeTripUITests testRealLocalTripDraftReviewConfirmAndRelaunch]' failed (68.333 seconds).",
+      "xcrun: error: unable to find utility \"simctl\", not a developer tool or in PATH"
+    ],
+    "webExpectation": null
+  },
+  {
+    "run": "20260910-090408",
+    "mode": "ui",
+    "locale": "zh-Hans",
+    "systemContentSize": "large",
+    "exitCode": 0,
+    "observations": [
+      "VPJ05 actual iOS UI Trip: 0e9a7035-6515-4dd0-8c48-7e2e9a8a6593, locale: zh-Hans",
+      "Test Case '-[VisePandaUITests.NativeTripUITests testRealLocalTripDraftReviewConfirmAndRelaunch]' passed (129.341 seconds)."
+    ],
+    "webExpectation": null
+  },
+  {
+    "run": "20260910-090916",
+    "mode": "integration",
+    "locale": "en",
+    "systemContentSize": "large",
+    "exitCode": 0,
+    "observations": [
+      "VPJ05 real native Trip created: 1455b140-7161-4965-bcd2-6032505654b8",
+      "Test Case '-[VisePandaTests.NativeTripIntegrationTests testRealLocalCreateConfirmReloadConflictAndReplacedSession]' passed (4.425 seconds)."
+    ],
+    "webExpectation": null
+  },
+  {
+    "run": "20260910-091058",
+    "mode": "ui",
+    "locale": "en",
+    "systemContentSize": "accessibility-extra-extra-extra-large",
+    "exitCode": 0,
+    "observations": [
+      "VPJ05 actual iOS UI Trip: 9de5c092-3655-4549-961c-a10a3ca1dcb1, locale: en",
+      "Test Case '-[VisePandaUITests.NativeTripUITests testRealLocalTripDraftReviewConfirmAndRelaunch]' passed (194.068 seconds)."
+    ],
+    "webExpectation": null
+  },
+  {
+    "run": "20260910-091439",
+    "mode": "ui",
+    "locale": "zh-Hans",
+    "systemContentSize": "accessibility-extra-extra-extra-large",
+    "exitCode": 0,
+    "observations": [
+      "VPJ05 actual iOS UI Trip: 20dbf410-1c0b-4988-a1c0-062128ea0c1b, locale: zh-Hans",
+      "Test Case '-[VisePandaUITests.NativeTripUITests testRealLocalTripDraftReviewConfirmAndRelaunch]' passed (272.773 seconds)."
+    ],
+    "webExpectation": null
+  },
+  {
+    "run": "20260910-092032",
+    "mode": "web",
+    "locale": "en",
+    "systemContentSize": "large",
+    "exitCode": 0,
+    "observations": [
+      "Test Case '-[VisePandaUITests.NativeTripUITests testReloadSameTripAfterWebConfirmation]' passed (17.263 seconds)."
+    ],
+    "webExpectation": {
+      "VP_NATIVE_TRIP_SHARED_ID": "07457177-9827-4a30-8d49-8169083f2cea",
+      "VP_NATIVE_TRIP_WEB_TITLE": "Web ↔ iOS 合成行程 09010",
+      "VP_NATIVE_TRIP_WEB_ITEM_TITLE": "合成博物馆停留",
+      "VP_NATIVE_TRIP_WEB_DAY": "2026-09-15",
+      "VP_NATIVE_TRIP_WEB_VERSION": "1"
+    }
+  },
+  {
+    "run": "20260910-092129",
+    "mode": "web",
+    "locale": "en",
+    "systemContentSize": "large",
+    "exitCode": 0,
+    "observations": [
+      "Test Case '-[VisePandaUITests.NativeTripUITests testReloadSameTripAfterWebConfirmation]' passed (27.473 seconds)."
+    ],
+    "webExpectation": {
+      "VP_NATIVE_TRIP_SHARED_ID": "570b2d6a-67cc-4764-8afe-1ab313503906",
+      "VP_NATIVE_TRIP_WEB_TITLE": "iOS 与 Web 已互证 570b",
+      "VP_NATIVE_TRIP_WEB_ITEM_TITLE": "Synthetic museum visit",
+      "VP_NATIVE_TRIP_WEB_DAY": "2026-09-10",
+      "VP_NATIVE_TRIP_WEB_VERSION": "2"
+    }
+  },
+  {
+    "run": "20260910-092438",
+    "mode": "web",
+    "locale": "en",
+    "systemContentSize": "large",
+    "exitCode": 0,
+    "observations": [
+      "Test Case '-[VisePandaUITests.NativeTripUITests testReloadSameTripAfterWebConfirmation]' passed (35.327 seconds)."
+    ],
+    "webExpectation": {
+      "VP_NATIVE_TRIP_SHARED_ID": "07457177-9827-4a30-8d49-8169083f2cea",
+      "VP_NATIVE_TRIP_WEB_TITLE": "Web ↔ iOS 合成行程 09010",
+      "VP_NATIVE_TRIP_WEB_ITEM_TITLE": "合成博物馆停留",
+      "VP_NATIVE_TRIP_WEB_DAY": "2026-09-15",
+      "VP_NATIVE_TRIP_WEB_VERSION": "1"
+    }
+  },
+  {
+    "run": "20260910-092611",
+    "mode": "web",
+    "locale": "en",
+    "systemContentSize": "large",
+    "exitCode": 0,
+    "observations": [
+      "Test Case '-[VisePandaUITests.NativeTripUITests testReloadSameTripAfterWebConfirmation]' passed (33.767 seconds)."
+    ],
+    "webExpectation": {
+      "VP_NATIVE_TRIP_SHARED_ID": "570b2d6a-67cc-4764-8afe-1ab313503906",
+      "VP_NATIVE_TRIP_WEB_TITLE": "iOS 与 Web 已互证 570b",
+      "VP_NATIVE_TRIP_WEB_ITEM_TITLE": "Synthetic museum visit",
+      "VP_NATIVE_TRIP_WEB_DAY": "2026-09-10",
+      "VP_NATIVE_TRIP_WEB_VERSION": "2"
+    }
+  },
+  {
+    "run": "20260910-092816",
+    "mode": "default-preview-and-state-regression",
+    "locale": "en/zh",
+    "systemContentSize": "large",
+    "exitCode": 0,
+    "observations": [
+      "Test Case '-[VisePandaTests.NativeSessionIntegrationTests testRemoteAndMissingConfigurationRemainUnavailable]' passed (0.003 seconds).",
+      "Test Case '-[VisePandaTests.NativeTripStateTests testAccountChangeRejectsAnAlreadyInFlightTripReply]' passed (0.076 seconds).",
+      "Test Case '-[VisePandaTests.NativeTripStateTests testDraftOnlyChangesRequestedFieldsAndKeepsConfirmedContent]' passed (0.004 seconds).",
+      "Test Case '-[VisePandaTests.NativeTripStateTests testLateRefreshCannotReviveSessionAfterTripDenial]' passed (0.041 seconds).",
+      "Test Case '-[VisePandaTests.NativeTripStateTests testTemporaryAuthenticationFailureKeepsDraftHiddenAndLogoutClearsIt]' passed (0.020 seconds).",
+      "✔ Test run with 8 tests in 1 suite passed after 0.004 seconds.",
+      "Test Case '-[VisePandaUITests.AppShellUITests testEnglishTabsTodayAndTranslationRoute]' passed (40.018 seconds).",
+      "Test Case '-[VisePandaUITests.AppShellUITests testWorkflowBadgeBackgroundAtSystemTextSize]' passed (33.944 seconds)."
+    ],
+    "webExpectation": null
+  }
+]

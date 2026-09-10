@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { confirmationDigest } from "./confirmation-input.mjs";
 import { identityLocalEnv } from "../identity/local-supabase.mjs";
 
 
@@ -34,7 +35,7 @@ test("V4-10 rollback confirms a prior snapshot as a new append-only version", as
         ? { expectedVersion: 0, operations: [{ kind: "set_title", title }, { kind: "upsert_day", dayId: "day-1", date: "2026-10-01", timeZone: "Asia/Shanghai" }, { kind: "upsert_item", itemId: "item-1", dayId: "day-1", title: "Forbidden City", startsAt: "2026-10-01T09:00:00+08:00", endsAt: "2026-10-01T12:00:00+08:00" }] }
         : { title };
       const proposal = JSON.parse((await request("/rest/v1/trip_proposals", { method: "POST", headers: ownerHeaders, body: JSON.stringify([{ owner_id: ownerId, trip_id: trip.id, revision, base_trip_version: revision - 1, status: "pending", patch, expires_at: "2099-01-01T00:00:00Z" }]) })).body)[0];
-      const confirmed = await request("/rest/v1/rpc/confirm_and_apply_trip_proposal", { method: "POST", headers: ownerHeaders, body: JSON.stringify({ p_proposal_id: proposal.id, p_idempotency_key: `confirm-${revision}`, p_digest: `digest-${revision}` }) });
+      const confirmed = await request("/rest/v1/rpc/confirm_and_apply_trip_proposal", { method: "POST", headers: ownerHeaders, body: JSON.stringify({ p_proposal_id: proposal.id, p_idempotency_key: `confirm-${revision}`, p_digest: await confirmationDigest(env, ownerHeaders, proposal.id, `digest-${revision}`) }) });
       assert.equal(JSON.parse(confirmed.body)[0].outcome, "applied", confirmed.body);
     }
     const contentSnapshot = JSON.parse((await request(`/rest/v1/trip_version_snapshots?trip_id=eq.${trip.id}&version=eq.1&select=content`, { headers: ownerHeaders })).body)[0];
@@ -69,10 +70,13 @@ test("V4-10 rollback confirms a prior snapshot as a new append-only version", as
     const restored = await request(rollbackPath, { method: "PATCH", headers: fixtureHeaders, body: JSON.stringify({ base_trip_version: initialRollback.base_trip_version, expires_at: initialRollback.expires_at }) });
     assert.equal(restored.response.status, 204, restored.body);
     const deniedConfirm = await request("/rest/v1/rpc/confirm_and_apply_trip_proposal", { method: "POST", headers: otherHeaders, body: JSON.stringify({ p_proposal_id: rollbackProposal.proposal_id, p_idempotency_key: "other-user-key", p_digest: "rollback-v0-to-v2" }) });
-    assert.notEqual(JSON.parse(deniedConfirm.body)[0].outcome, "applied", deniedConfirm.body);
+    if (process.env.VISEPANDA_TRIP_PROTOCOL_V2 === "true") {
+      assert.equal(deniedConfirm.response.status, 400);
+      assert.equal(JSON.parse(deniedConfirm.body).message, "FORBIDDEN");
+    } else assert.notEqual(JSON.parse(deniedConfirm.body)[0].outcome, "applied", deniedConfirm.body);
     const beforeOwnerConfirm = JSON.parse((await request(`/rest/v1/trips?id=eq.${trip.id}&select=title,head_version`, { headers: ownerHeaders })).body)[0];
     assert.deepEqual(beforeOwnerConfirm, { title: "Latest", head_version: 2 });
-    const confirmRollback = await request("/rest/v1/rpc/confirm_and_apply_trip_proposal", { method: "POST", headers: ownerHeaders, body: JSON.stringify({ p_proposal_id: rollbackProposal.proposal_id, p_idempotency_key: "rollback-confirm", p_digest: "rollback-v0-to-v2" }) });
+    const confirmRollback = await request("/rest/v1/rpc/confirm_and_apply_trip_proposal", { method: "POST", headers: ownerHeaders, body: JSON.stringify({ p_proposal_id: rollbackProposal.proposal_id, p_idempotency_key: "rollback-confirm", p_digest: await confirmationDigest(env, ownerHeaders, rollbackProposal.proposal_id, "rollback-v0-to-v2") }) });
     assert.deepEqual(JSON.parse(confirmRollback.body)[0], { outcome: "applied", resulting_version: 3 });
     const current = JSON.parse((await request(`/rest/v1/trips?id=eq.${trip.id}&select=title,head_version`, { headers: ownerHeaders })).body)[0];
     assert.deepEqual(current, { title: "Before", head_version: 3 });

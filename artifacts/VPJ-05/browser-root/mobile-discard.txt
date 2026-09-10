@@ -1,0 +1,72 @@
+- banner:
+  - link "VisePanda home":
+    - /url: /visepanda
+    - img "VisePanda":
+  - link "Back to VisePanda":
+    - /url: /visepanda
+  - text: Interface language
+  - combobox "Interface language":
+    - option "🇨🇳 中文"
+    - option "🇺🇸 English" [selected]
+- main:
+  - paragraph: Trip Canvas · canonical timeline
+  - heading "Web ↔ iOS 合成行程 09010" [level=1]
+  - paragraph: This view shows the current Trip and its confirmed version history. Each recorded change has an immutable Proposal origin and remains append-only.
+  - region "Current version":
+    - generic: Current version
+    - strong: v1
+    - time: Updated Sep 10, 2026, 9:04 AM
+  - paragraph: Rollback is not a rewrite. Restoring first makes a new Proposal; only explicit confirmation can create the next version.
+  - paragraph: Local synthetic-account testing only; both clients share the same Trip.
+  - heading "Confirmed content · v1" [level=2]
+  - strong: Web ↔ iOS 合成行程 09010
+  - heading "2026-09-15" [level=3]
+  - list:
+    - listitem: 合成博物馆停留
+  - paragraph: "User hard locks: unknown · External order state: unknown"
+  - button "Load latest version"
+  - status
+  - heading "Unsubmitted draft" [level=2]
+  - paragraph: Draft base version 1
+  - text: Trip title
+  - textbox "Trip title": Web ↔ iOS 合成行程 09010
+  - group "Date 1":
+    - generic: Date 1
+    - text: Date
+    - textbox "Date": 2026-09-15
+    - button "Remove"
+    - text: Item title
+    - textbox "Item title": 合成博物馆停留
+    - button "Remove"
+    - button "Add item"
+  - button "Add day"
+  - button "Create change proposal" [disabled]
+  - button "Discard draft and rebuild from latest" [disabled]
+  - article:
+    - paragraph: Version history
+    - heading "Confirmed changes" [level=2]
+    - list:
+      - strong: Version 1 confirmed
+      - generic: Applied through an immutable Proposal.
+      - generic: Recorded Sep 10, 2026, 9:04 AM
+      - generic "Inspect origin Proposal"
+      - strong: Initial version
+      - generic: The immutable baseline for this Trip.
+      - generic: Recorded Sep 10, 2026, 8:57 AM
+      - button "Restore as v2"
+  - complementary:
+    - paragraph: Place view
+    - heading "Exact references" [level=2]
+    - paragraph: Schematic only · no map provider or live route data.
+    - paragraph: No Trip place references have been recorded.
+  - complementary:
+    - paragraph: Reservations & Actions
+    - heading "Prepare and hand off" [level=2]
+    - paragraph: No orders, payments, inventory, or provider completion are created here.
+    - paragraph: No ticket, reservation, external-link, or preparation reference has been recorded.
+  - complementary:
+    - paragraph: Integrity
+    - heading "One current head" [level=2]
+    - paragraph: The timeline and current version read the same owner-scoped Trip source. There is no fixture fallback and no direct write action.
+- button "Open Next.js Dev Tools":
+- alert

@@ -14,6 +14,8 @@ import type { TripPatch } from "@/lib/server/trip/patch/contract";
 import { assertTripPatch, type TripSnapshot as TripContentSnapshot } from "../trip/patch/contract.ts";
 import { describeProposalDiff, type ProposalDayDiff } from "../trip/proposal/diff.ts";
 
+import { readStoredSnapshot, snapshotRestorePatch } from "../trip/snapshot/read.ts";
+
 type PendingCookie = { name: string; value: string; options: CookieOptions };
 
 export type TripSnapshot = Readonly<{
@@ -26,6 +28,7 @@ export type TripContentRead = Readonly<{
   days: readonly (Readonly<{ id: string; date: string; timeZone?: string; items: readonly Readonly<{ id: string; dayId: string; title: string; startsAt?: string; endsAt?: string }>[] }>)[];
 }>;
 export type TripAudit = Readonly<{
+  verification?: "unknown";
   id: string;
   action: string;
   proposalId: string;
@@ -82,7 +85,7 @@ export type TripVersion = Readonly<{
   id: string;
   resultingVersion: number;
   proposalId: string | null;
-  eventType: "initial" | "proposal_applied";
+  eventType: "initial" | "proposal_applied" | "unverified";
   title: string | null;
   createdAt: string;
   memoryReceipts: readonly MemoryConsumerReceiptRead[];
@@ -146,6 +149,10 @@ export type PendingProposalRead = Readonly<{
     patch?: TripPatch;
     evidence: "not_recorded";
     assumptions: "not_recorded";
+    digest?: string;
+    stale?: boolean;
+    before?: TripContentSnapshot;
+    after?: TripContentSnapshot;
   }>;
 }>;
 type AdapterSuccess<T> = Readonly<{ data: T }>;
@@ -159,6 +166,12 @@ export function getSupabasePublicConfig(): Readonly<{
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   return url && publishableKey ? { url, publishableKey } : null;
+}
+
+export function usesTripProtocolV2(config = getSupabasePublicConfig()): boolean {
+  if (process.env.VISEPANDA_TRIP_PROTOCOL_V2 === "true") return true;
+  if (process.env.VISEPANDA_NATIVE_LOCAL_TRIP !== "true" || !config) return false;
+  try { const url = new URL(config.url); return url.protocol === "http:" && ["127.0.0.1", "localhost"].includes(url.hostname) && !url.username && !url.password; } catch { return false; }
 }
 
 export function createUserDataAdapter(request: NextRequest, current = getSupabasePublicConfig()) {
@@ -188,7 +201,7 @@ export function createUserDataAdapter(request: NextRequest, current = getSupabas
       ? { error: "UNAUTHENTICATED" }
       : { data: subject };
   };
-  return createDataOperations(client, authenticated, applyCookies);
+  return createDataOperations(client, authenticated, applyCookies, usesTripProtocolV2(current));
 }
 
 /** Preparation only: mobile epoch authority is not implemented; no native data access. */
@@ -206,10 +219,29 @@ export async function createNativeUserDataAdapter(request: NextRequest, current 
   );
 }
 
+/** Local native Trip consumer only. Other native data consumers remain closed. */
+export async function createNativeTripDataAdapter(request: Pick<NextRequest, "headers">, current = getSupabasePublicConfig()) {
+  if (!current) return null;
+  const credentials = await verifyNativeCredentials(request, current);
+  if (!credentials) return null;
+  const authenticated = async (): Promise<AdapterResult<string>> => {
+    const state = await credentials.client.rpc("native_session_v2", { p_action: "session" });
+    if (state.error) return { error: mapRpcFailure(state.error.message) };
+    return state.data?.subject === credentials.subject && state.data?.sessionId === credentials.sessionId
+      ? { data: credentials.subject } : { error: "UNAUTHENTICATED" };
+  };
+  const operations = createDataOperations(credentials.client, authenticated, response => response, true);
+  return { authenticated, listTrips: operations.listTrips, createTrip: operations.createTrip,
+    getTrip: operations.getTrip, getPendingProposal: operations.getPendingProposal,
+    createPendingProposal: operations.createPendingProposal, revisePendingProposalPatch: operations.revisePendingProposalPatch,
+    rejectPendingProposal: operations.rejectPendingProposal, confirm: operations.confirm };
+}
+
 function createDataOperations(
   client: SupabaseClient,
   authenticated: () => Promise<AdapterResult<string>>,
   applyCookies: (response: NextResponse) => NextResponse,
+  tripProtocolV2 = false,
 ) {
   const getUserProfile = async (): Promise<
     AdapterResult<UserProfileRead | null>
@@ -523,6 +555,11 @@ function createDataOperations(
     const actor = await authenticated();
     if ("error" in actor) return { error: actor.error };
     const title = input.title.trim();
+    const sameCreation = async (row: { id: string; title: string }): Promise<AdapterResult<boolean>> => {
+      if (!tripProtocolV2) return { data: row.title === title };
+      const initial = await client.from("trip_version_snapshots").select("title").eq("trip_id", row.id).eq("version", 0).maybeSingle();
+      return initial.error ? { error: "INTERNAL_ERROR" } : { data: initial.data?.title === title };
+    };
     const existing = await client
       .from("trips")
       .select("id,title,head_version,updated_at")
@@ -530,9 +567,9 @@ function createDataOperations(
       .maybeSingle();
     if (existing.error) return { error: "INTERNAL_ERROR" };
     if (existing.data) {
-      return existing.data.title === title
-        ? { data: { trip: tripSnapshot(existing.data), reused: true } }
-        : { error: "IDEMPOTENCY_KEY_REUSE" };
+      const match = await sameCreation(existing.data);
+      if ("error" in match) return match;
+      return match.data ? { data: { trip: tripSnapshot(existing.data), reused: true } } : { error: "IDEMPOTENCY_KEY_REUSE" };
     }
     const created = await client
       .from("trips")
@@ -548,8 +585,10 @@ function createDataOperations(
       .eq("id", input.tripId)
       .maybeSingle();
     if (retried.error) return { error: "INTERNAL_ERROR" };
-    if (retried.data && retried.data.title === title) {
-      return { data: { trip: tripSnapshot(retried.data), reused: true } };
+    if (retried.data) {
+      const match = await sameCreation(retried.data);
+      if ("error" in match) return match;
+      if (match.data) return { data: { trip: tripSnapshot(retried.data), reused: true } };
     }
     return { error: "IDEMPOTENCY_KEY_REUSE" };
   };
@@ -562,6 +601,8 @@ function createDataOperations(
         content: TripContentRead;
         audits: readonly TripAudit[];
         versions: readonly TripVersion[];
+        confirmationState: "initial" | "confirmed" | "unknown";
+        unverifiedHistoryCount: number;
       }>
     >
   > => {
@@ -573,10 +614,6 @@ function createDataOperations(
       .eq("id", tripId)
       .maybeSingle();
     if (tripError || !trip) return { error: "FORBIDDEN" };
-    const { data: days, error: daysError } = await client.from("trip_days").select("day_id,trip_date,time_zone").eq("trip_id", tripId).order("trip_date", { ascending: true });
-    if (daysError) return { error: "INTERNAL_ERROR" };
-    const { data: items, error: itemsError } = await client.from("trip_items").select("item_id,day_id,title,starts_at,ends_at").eq("trip_id", tripId).order("item_id", { ascending: true });
-    if (itemsError) return { error: "INTERNAL_ERROR" };
     const { data: audits, error: auditError } = await client
       .from("trip_audit_events")
       .select("id,action,proposal_id,created_at")
@@ -587,13 +624,18 @@ function createDataOperations(
       .from("trip_events")
       .select("id,resulting_version,proposal_id,event_type,created_at")
       .eq("trip_id", tripId)
+      .lte("resulting_version", trip.head_version)
       .order("resulting_version", { ascending: false });
     if (versionError) return { error: "INTERNAL_ERROR" };
     const { data: snapshots, error: snapshotError } = await client
       .from("trip_version_snapshots")
-      .select("version,title,created_at")
-      .eq("trip_id", tripId);
+      .select("version,title,content,created_at")
+      .eq("trip_id", tripId)
+      .lte("version", trip.head_version);
     if (snapshotError) return { error: "INTERNAL_ERROR" };
+    const stored = (snapshots ?? []).find(row => row.version === trip.head_version);
+    const content = stored ? readStoredSnapshot(stored) : null;
+    if (!content || content.title !== trip.title) return { error: "PROJECTION_LAG" };
     const proposalIds = (versions ?? []).flatMap((version) =>
       version.proposal_id ? [version.proposal_id] : [],
     );
@@ -623,25 +665,38 @@ function createDataOperations(
       });
       memoryReceiptsByProposal.set(receipt.proposal_id, list);
     }
+    const [bound, intents] = tripProtocolV2 && proposalIds.length ? await Promise.all([
+      client.from("trip_idempotency").select("proposal_id,resulting_version").in("proposal_id", proposalIds),
+      client.from("trip_proposals").select("id,trip_id,base_trip_version,status").in("id", proposalIds),
+    ]) : [{ data: [], error: null }, { data: [], error: null }];
+    if (bound.error || intents.error) return { error: "INTERNAL_ERROR" };
+    const intentById = new Map((intents.data ?? []).map(row => [row.id, row]));
+    const authoritative = new Set((bound.data ?? []).filter(row => {
+      const intent = intentById.get(row.proposal_id);
+      return intent?.trip_id === tripId && intent.status === "applied" && intent.base_trip_version + 1 === row.resulting_version;
+    }).map(row => `${row.proposal_id}:${row.resulting_version}`));
     const snapshotsByVersion = new Map(
       (snapshots ?? []).map((snapshot) => [snapshot.version, snapshot]),
     );
     return {
       data: {
         trip: tripSnapshot(trip),
-        content: { days: (days ?? []).map((day) => ({ id: day.day_id, date: day.trip_date, ...(day.time_zone ? { timeZone: day.time_zone } : {}), items: (items ?? []).filter((item) => item.day_id === day.day_id).map((item) => ({ id: item.item_id, dayId: item.day_id, title: item.title, ...(item.starts_at ? { startsAt: item.starts_at } : {}), ...(item.ends_at ? { endsAt: item.ends_at } : {}) })) })) },
-        audits: (audits ?? []).map((audit) => ({
+        content: { days: content.days.map(day => ({ ...day, items: day.items ?? [] })) },
+        audits: (audits ?? []).filter(audit => !tripProtocolV2 ? proposalIds.includes(audit.proposal_id) : (versions ?? []).some(version => version.proposal_id === audit.proposal_id && snapshotsByVersion.has(version.resulting_version) && authoritative.has(`${version.proposal_id}:${version.resulting_version}`))).map((audit) => ({
+          ...(tripProtocolV2 ? { verification: "unknown" as const } : {}),
           id: audit.id,
           action: audit.action,
           proposalId: audit.proposal_id,
           createdAt: audit.created_at,
         })),
+        confirmationState: trip.head_version === 0 ? "initial" : (versions ?? []).some(version => version.resulting_version === trip.head_version && authoritative.has(`${version.proposal_id}:${version.resulting_version}`)) ? "confirmed" : "unknown",
+        unverifiedHistoryCount: !tripProtocolV2 ? 0 : (versions ?? []).filter(version => !snapshotsByVersion.has(version.resulting_version) || !authoritative.has(`${version.proposal_id}:${version.resulting_version}`)).length,
         versions: [
-          ...(versions ?? []).map((version) => ({
+          ...(versions ?? []).filter(version => snapshotsByVersion.has(version.resulting_version)).map((version) => ({
             id: version.id,
             resultingVersion: version.resulting_version,
             proposalId: version.proposal_id,
-            eventType: "proposal_applied" as const,
+            eventType: (!tripProtocolV2 || authoritative.has(`${version.proposal_id}:${version.resulting_version}`)) ? "proposal_applied" as const : "unverified" as const,
             title:
               snapshotsByVersion.get(version.resulting_version)?.title ?? null,
             createdAt: version.created_at,
@@ -743,51 +798,38 @@ function createDataOperations(
       })),
     };
   };
-  const getPendingProposal = async (
-    tripId: string,
-  ): Promise<AdapterResult<PendingProposalRead>> => {
+  const getPendingProposal = async (tripId: string, proposalId?: string): Promise<AdapterResult<PendingProposalRead>> => {
     const actor = await authenticated();
     if ("error" in actor) return { error: actor.error };
-    const { data: trip, error: tripError } = await client
-      .from("trips")
-      .select("id,title,head_version,updated_at")
-      .eq("id", tripId)
-      .maybeSingle();
-    if (tripError || !trip) return { error: "FORBIDDEN" };
-    const { data: proposal, error: proposalError } = await client
-      .from("trip_proposals")
-      .select(
-        "id,revision,base_trip_version,status,patch,created_at,expires_at",
-      )
-      .eq("trip_id", tripId)
-      .eq("status", "pending")
-      .order("revision", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    const { data: days, error: daysError } = await client
-      .from("trip_days").select("day_id,trip_date,time_zone").eq("trip_id", tripId);
-    if (daysError) return { error: "INTERNAL_ERROR" };
-    const { data: items, error: itemsError } = await client
-      .from("trip_items").select("item_id,day_id,title,starts_at,ends_at").eq("trip_id", tripId);
-    if (itemsError) return { error: "INTERNAL_ERROR" };
-    const read =
-      proposal && !proposalError
-        ? pendingProposalRead({
-            trip: {
-              id: trip.id,
-              title: trip.title,
-              headVersion: trip.head_version,
-              updatedAt: trip.updated_at,
-            },
-            proposal,
-            content: {
-              version: trip.head_version,
-              title: trip.title,
-              days: (days ?? []).map((day) => ({ id: day.day_id, date: day.trip_date, ...(day.time_zone ? { timeZone: day.time_zone } : {}), items: (items ?? []).filter((item) => item.day_id === day.day_id).map((item) => ({ id: item.item_id, dayId: item.day_id, title: item.title, ...(item.starts_at ? { startsAt: item.starts_at } : {}), ...(item.ends_at ? { endsAt: item.ends_at } : {}) })) })),
-            },
-          })
-        : null;
-    return read ? { data: read } : { error: "PROPOSAL_NOT_CONFIRMABLE" };
+    let selected = proposalId;
+    if (!selected) {
+      const latest = await client.from("trip_proposals").select("id").eq("trip_id", tripId).eq("status", "pending").order("revision", { ascending: false }).limit(1).maybeSingle();
+      if (latest.error) return { error: mapRpcFailure(latest.error.message) };
+      selected = latest.data?.id;
+    }
+    const current = await client.from("trips").select("id,title,head_version,updated_at").eq("id", tripId).maybeSingle();
+    if (current.error || !current.data) return { error: "FORBIDDEN" };
+    if (!selected) return { error: "PROPOSAL_NOT_CONFIRMABLE" };
+    const intent = tripProtocolV2 ? await client.rpc("read_trip_proposal_v2", { p_proposal_id: selected })
+      : await client.from("trip_proposals").select("id,trip_id,revision,base_trip_version,status,patch,created_at,expires_at,rollback_snapshot_version").eq("id", selected).maybeSingle().then(({ data, error }) => ({ data: data ? [{ proposal: data }] : [], error }));
+    if (intent.error) return { error: mapRpcFailure(intent.error.message) };
+    const proof = intent.data?.[0];
+    const proposal = proof?.proposal;
+    if (!proposal || proposal.trip_id !== tripId || (tripProtocolV2 && typeof proof.digest !== "string")) return { error: "FORBIDDEN" };
+    const stored = await client.from("trip_version_snapshots").select("version,title,content").eq("trip_id", tripId).eq("version", proposal.base_trip_version).maybeSingle();
+    const base = stored.data ? readStoredSnapshot(stored.data) : null;
+    if (stored.error || !base) return { error: "PROJECTION_LAG" };
+    let patch: unknown = proposal.patch;
+    if (tripProtocolV2 && proposal.rollback_snapshot_version !== null) {
+      const target = await client.from("trip_version_snapshots").select("version,title,content").eq("trip_id", tripId).eq("version", proposal.rollback_snapshot_version).maybeSingle();
+      const targetSnapshot = target.data ? readStoredSnapshot(target.data) : null;
+      if (target.error || !targetSnapshot) return { error: "PROJECTION_LAG" };
+      patch = snapshotRestorePatch(base, targetSnapshot);
+    } else if (tripProtocolV2 && typeof proposal.patch?.title === "string") {
+      patch = { expectedVersion: base.version, operations: [{ kind: "set_title", title: proposal.patch.title }] };
+    }
+    const read = pendingProposalRead({ trip: tripSnapshot(current.data), proposal: { ...proposal, patch }, content: base });
+    return read ? { data: { ...read, proposal: { ...read.proposal, ...(tripProtocolV2 ? { digest: proof.digest, before: base, after: describeProposalDiff(base, patch as TripPatch).next } : {}), stale: current.data.head_version !== proposal.base_trip_version } } } : { error: "PROPOSAL_NOT_CONFIRMABLE" };
   };
   const createPendingProposal = async (tripId: string, input: TripProposalInput): Promise<AdapterResult<Readonly<{ proposalId: string; revision: number; baseTripVersion: number }>>> => {
     const actor = await authenticated();
@@ -875,23 +917,16 @@ function createDataOperations(
       .maybeSingle();
     if (proposalError || !proposal || proposal.trip_id !== tripId)
       return { error: "FORBIDDEN" };
-    if (
-      proposal.status !== "pending" ||
-      proposal.expires_at <= new Date().toISOString()
-    )
-      return { error: "PROPOSAL_NOT_CONFIRMABLE" };
-    const { data, error } = await client
-      .from("trip_proposals")
-      .update({ status: "rejected" })
-      .eq("id", input.proposalId)
-      .eq("trip_id", tripId)
-      .eq("status", "pending")
-      .select("id,status")
-      .maybeSingle();
-    if (error) return { error: "INTERNAL_ERROR" };
-    if (!data || data.status !== "rejected")
-      return { error: "PROPOSAL_NOT_CONFIRMABLE" };
-    return { data: { proposalId: data.id, status: "rejected" } };
+    if (!tripProtocolV2) {
+      if (proposal.status !== "pending" || proposal.expires_at <= new Date().toISOString()) return { error: "PROPOSAL_NOT_CONFIRMABLE" };
+      const legacy = await client.from("trip_proposals").update({ status: "rejected" }).eq("id", input.proposalId).eq("trip_id", tripId).eq("status", "pending").select("id,status").maybeSingle();
+      if (legacy.error) return { error: "INTERNAL_ERROR" };
+      return legacy.data?.status === "rejected" ? { data: { proposalId: legacy.data.id, status: "rejected" } } : { error: "PROPOSAL_NOT_CONFIRMABLE" };
+    }
+    const { data, error } = await client.rpc("reject_trip_proposal_v2", { p_proposal_id: input.proposalId });
+    if (error) return { error: mapRpcFailure(error.message) };
+    const result = data?.[0];
+    return result?.status === "rejected" ? { data: { proposalId: result.proposal_id, status: "rejected" } } : { error: "PROPOSAL_NOT_CONFIRMABLE" };
   };
   const listChatThreads = async (): Promise<
     AdapterResult<readonly ChatThreadSnapshot[]>
@@ -1154,6 +1189,12 @@ function createDataOperations(
       .maybeSingle();
     if (proposalError || !proposal || proposal.trip_id !== tripId)
       return { error: "FORBIDDEN" };
+    if (tripProtocolV2) {
+      const proof = await client.rpc("read_trip_proposal_v2", { p_proposal_id: input.proposalId });
+      if (proof.error) return { error: "PROVIDER_UNAVAILABLE" };
+      if (!proof.data?.[0] || proof.data[0].proposal.trip_id !== tripId) return { error: "FORBIDDEN" };
+      if (proof.data[0].digest !== input.digest) return { error: "INVALID_INPUT" };
+    }
     const { data, error } = await client.rpc(
       "confirm_and_apply_trip_proposal",
       {
@@ -1185,6 +1226,7 @@ function createDataOperations(
         proposalId: string;
         baseTripVersion: number;
         targetVersion: number;
+        digest?: string;
       }>
     >
   > => {
@@ -1201,17 +1243,12 @@ function createDataOperations(
           : mapRpcFailure(error.message),
       };
     const result = data?.[0];
-    return result?.proposal_id &&
-      typeof result.base_trip_version === "number" &&
-      typeof result.target_version === "number"
-      ? {
-          data: {
-            proposalId: result.proposal_id,
-            baseTripVersion: result.base_trip_version,
-            targetVersion: result.target_version,
-          },
-        }
-      : { error: "INTERNAL_ERROR" };
+    if (!result?.proposal_id || !Number.isInteger(result.base_trip_version) || result.target_version !== targetVersion) return { error: "INTERNAL_ERROR" };
+    if (!tripProtocolV2) return { data: { proposalId: result.proposal_id, baseTripVersion: result.base_trip_version, targetVersion } };
+    const read = await client.rpc("read_trip_proposal_v2", { p_proposal_id: result.proposal_id });
+    const proof = read.data?.[0];
+    if (read.error || !proof || proof.proposal.trip_id !== tripId || proof.proposal.rollback_snapshot_version !== targetVersion || typeof proof.digest !== "string") return { error: "PROPOSAL_NOT_CONFIRMABLE" };
+    return { data: { proposalId: result.proposal_id, baseTripVersion: proof.proposal.base_trip_version, targetVersion, digest: proof.digest } };
   };
   return {
     applyCookies,
@@ -1312,7 +1349,8 @@ export function pendingProposalRead(
     return null;
   if (!patch || typeof patch !== "object" || Array.isArray(patch)) return null;
   const legacyTitle = (patch as { title?: unknown }).title;
-  let afterTitle = input.trip.title;
+  const beforeTitle = input.content?.title ?? input.trip.title;
+  let afterTitle = beforeTitle;
   let dayDiffs: readonly ProposalDayDiff[] | undefined;
   if (typeof legacyTitle === "string" && legacyTitle.trim()) afterTitle = legacyTitle;
   else {
@@ -1327,7 +1365,7 @@ export function pendingProposalRead(
       status: "pending",
       createdAt: input.proposal.created_at,
       expiresAt: input.proposal.expires_at,
-      titleDiff: { before: input.trip.title, after: afterTitle },
+      titleDiff: { before: beforeTitle, after: afterTitle },
       ...(dayDiffs ? { dayDiffs, patch: patch as TripPatch } : {}),
       evidence: "not_recorded",
       assumptions: "not_recorded",
@@ -1336,6 +1374,8 @@ export function pendingProposalRead(
 }
 
 function mapRpcFailure(message: string): FailureCode {
+  if (message.includes("SESSION_REPLACED") || message.includes("UNAUTHENTICATED")) return "UNAUTHENTICATED";
+  if (message.includes("CONFIRMATION_DIGEST_MISMATCH") || message.includes("INVALID_INPUT")) return "INVALID_INPUT";
   if (
     message.includes("IDEMPOTENCY_KEY_REUSE") ||
     message.includes("PRIVACY_REQUEST_ID_REUSE")

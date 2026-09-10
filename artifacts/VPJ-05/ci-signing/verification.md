@@ -1,0 +1,13 @@
+# PR301 Simulator signing correction
+
+Application baseline: `ac3f4f0297ac7e9574b41d411d929b6a64d473c7`. The first Native CI run34460960462 failed in three account-state cases before login produced an active scope, plus the Chinese Trip navigation assertion in the existing dark-mode UI test. The failure was not waived.
+
+On the same dedicated iOS26.5 Simulator A and identical application source, `CODE_SIGNING_ALLOWED=NO` reproduced all three state failures: Keychain returned `errSecMissingEntitlement` (-34018), with no active scope. The four-case result was1 pass/3 fail/0 skip. The same source and read-only diagnostic with `CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-` passed4/4 with Keychain status0 and an active scope. The diagnostic adds only a read/status print; all original assertions and production storage/identity logic remain unchanged. Its patch is retained and the temporary checkout was restored afterward.
+
+The signing-disabled binary still had an automatic linker-only ad-hoc Mach-O signature (`Identifier=VisePanda`, `linker-signed`, no sealed resources). That is different from Xcode's complete app signing step. The passing app has the actual bundle identifier, an ad-hoc signature without `linker-signed`, and no TeamIdentifier; strict codesign verification passed. No Apple certificate, account, provisioning update or distribution signature was used.
+
+CI retains the unsigned generic build, then runs the entire shared test scheme with complete local ad-hoc signing. It verifies the app identifier/signature and records test signing separately from distribution signing. It adds no filters, retries, credential mock, weaker assertion or production permission change. The corresponding workflow, contract and local command documentation are updated.
+
+The UI navigation failure did not reproduce in an unchanged local test on dedicated Simulator B: it passed once with signing disabled and once with ad-hoc signing. It is not claimed independently fixed by a UI code change. A related observation matters: the signing-disabled test's nominal dark screenshots were actually light, while the ad-hoc run visibly rendered dark. Both original images are retained; the passing unsigned test must not be cited as actual dark-mode acceptance. No AppShell test or application UI was changed.
+
+`results.json` records exact local test counts, `commands.jsonl` records executable invocations, and paired log excerpts preserve errors/statuses. Full xcresults remain at the recorded local cache paths. The PR's new exact-HEAD review and CI establish delivery separately; this record does not claim the corrected remote CI has already passed. Existing iOS17/VoiceOver/full-product gaps remain unchanged.

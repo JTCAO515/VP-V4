@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { confirmationDigest } from "./confirmation-input.mjs";
 import { identityLocalEnv } from "../identity/local-supabase.mjs";
 
 
@@ -43,7 +44,7 @@ test("AI-13b replaces a pending owner proposal with an immutable child revision"
     assert.deepEqual(parentRow, { id: parent.id, status: "superseded", parent_proposal_id: null, revision: 1, patch: { title: "Parent" } });
     assert.deepEqual(childRow, { id: revised.proposal_id, status: "pending", parent_proposal_id: parent.id, revision: 2, patch: { title: "Child" } });
     assert.equal(JSON.parse((await revise(otherToken, revised.proposal_id, "Illegal")).body)[0].outcome, "proposal_not_confirmable");
-    const confirm = await request("/rest/v1/rpc/confirm_and_apply_trip_proposal", { method: "POST", headers: headers(ownerToken), body: JSON.stringify({ p_proposal_id: revised.proposal_id, p_idempotency_key: "revision-probe", p_digest: "revision-digest" }) });
+    const confirm = await request("/rest/v1/rpc/confirm_and_apply_trip_proposal", { method: "POST", headers: headers(ownerToken), body: JSON.stringify({ p_proposal_id: revised.proposal_id, p_idempotency_key: "revision-probe", p_digest: await confirmationDigest(env, headers(ownerToken), revised.proposal_id, "revision-digest") }) });
     assert.equal(JSON.parse(confirm.body)[0].outcome, "applied");
     const current = JSON.parse((await request(`/rest/v1/trips?id=eq.${trip.id}&select=title,head_version`, { headers: headers(ownerToken) })).body)[0];
     assert.deepEqual(current, { title: "Child", head_version: 1 });
@@ -93,7 +94,7 @@ test("LAUNCH-11 creates, revises, and confirms a full patch without mutating the
     assert.deepEqual(rows.find((row) => row.id === parent.proposal_id).patch, parentPatch);
     assert.deepEqual(rows.find((row) => row.id === child.proposal_id).patch, childPatch);
     assert.equal(rows.find((row) => row.id === parent.proposal_id).status, "superseded");
-    const confirmed = await request("/rest/v1/rpc/confirm_and_apply_trip_proposal", { method: "POST", headers: headers(ownerToken), body: JSON.stringify({ p_proposal_id: child.proposal_id, p_idempotency_key: "launch11-patch-revision", p_digest: "launch11-patch-revision" }) });
+    const confirmed = await request("/rest/v1/rpc/confirm_and_apply_trip_proposal", { method: "POST", headers: headers(ownerToken), body: JSON.stringify({ p_proposal_id: child.proposal_id, p_idempotency_key: "launch11-patch-revision", p_digest: await confirmationDigest(env, headers(ownerToken), child.proposal_id, "launch11-patch-revision") }) });
     assert.equal(JSON.parse(confirmed.body)[0].outcome, "applied");
     const items = JSON.parse((await request(`/rest/v1/trip_items?trip_id=eq.${trip.id}&select=title`, { headers: headers(ownerToken) })).body);
     assert.deepEqual(items, [{ title: "Child item" }]);

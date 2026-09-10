@@ -1,0 +1,45 @@
+{
+  "ci-first": {
+    "result": "Failed",
+    "run": "https://github.com/JTCAO515/VP-V4/actions/runs/34460960462",
+    "failedCases": [
+      "NativeTripStateTests.testAccountChangeRejectsAnAlreadyInFlightTripReply",
+      "NativeTripStateTests.testLateRefreshCannotReviveSessionAfterTripDenial",
+      "NativeTripStateTests.testTemporaryAuthenticationFailureKeepsDraftHiddenAndLogoutClearsIt",
+      "AppShellUITests.testAskAndTripFullAccessibilityInDarkMode"
+    ],
+    "note": "The three state failures occurred before an active session; UI failure was the Chinese Trip navigation assertion. Downloaded CI artifact was temporary; local controlled reproduction is retained below."
+  },
+  "unsigned-state": {
+    "result": "Failed",
+    "totalTestCount": 4,
+    "passedTests": 1,
+    "failedTests": 3,
+    "skippedTests": 0,
+    "localResultBundle": "/Users/jtcao/Library/Caches/visepanda/pr301-signing/unsigned.xcresult"
+  },
+  "adhoc-state": {
+    "result": "Passed",
+    "totalTestCount": 4,
+    "passedTests": 4,
+    "failedTests": 0,
+    "skippedTests": 0,
+    "localResultBundle": "/Users/jtcao/Library/Caches/visepanda/pr301-signing/adhoc.xcresult"
+  },
+  "unsigned-ui": {
+    "result": "Passed",
+    "totalTestCount": 1,
+    "passedTests": 1,
+    "failedTests": 0,
+    "skippedTests": 0,
+    "localResultBundle": "/Users/jtcao/Library/Caches/visepanda/pr301-dark-ui/baseline.xcresult"
+  },
+  "adhoc-ui": {
+    "result": "Passed",
+    "totalTestCount": 1,
+    "passedTests": 1,
+    "failedTests": 0,
+    "skippedTests": 0,
+    "localResultBundle": "/Users/jtcao/Library/Caches/visepanda/pr301-dark-ui/adhoc.xcresult"
+  }
+}

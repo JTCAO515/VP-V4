@@ -1,0 +1,11 @@
+✔ default Web protocol does not call unavailable v2 database seams (81.24375ms)
+✔ a local draft retains its base and uses only TripPatch operations (5.426917ms)
+✔ stored snapshot title/version must remain internally coherent (2.222958ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 603.105417

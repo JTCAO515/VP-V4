@@ -1,0 +1,35 @@
+[
+  {
+    "run": "20260910-084744",
+    "result": "FAIL",
+    "diagnosis": "Case-sensitive comparison between uppercase Swift creation UUID and canonical lowercase database UUID",
+    "fix": "Generate lowercase Trip UUID before submission; actual integration rerun passed."
+  },
+  {
+    "run": "20260910-085208",
+    "result": "FAIL",
+    "exception": {
+      "codes": "0x0000000000000001, 0x00000001d432a69c",
+      "rawCodes": [
+        1,
+        7855056540
+      ],
+      "type": "EXC_BREAKPOINT",
+      "signal": "SIGTRAP"
+    },
+    "triggeredFrames": [
+      "BindingOperations.ForceUnwrapping.get(base:)",
+      "protocol witness for Projection.get(base:) in conformance BindingOperations.ForceUnwrapping<A>",
+      "ProjectedLocation.update()",
+      "LocationBox.update()"
+    ],
+    "diagnosis": "Optional Binding forced an absent draft during confirmation teardown",
+    "fix": "Unique draft editor identity and safe departing-view getter with id/scope-guarded setter; actual confirm/relaunch reruns passed."
+  },
+  {
+    "run": "20260910-090100",
+    "result": "FAIL",
+    "diagnosis": "Automation clicked an editor while its actual pending-proposal read was still in progress and controls were disabled",
+    "fix": "Wait for enabled state before input; Chinese actual UI rerun passed."
+  }
+]

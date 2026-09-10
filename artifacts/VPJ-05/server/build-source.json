@@ -1,0 +1,8 @@
+{
+  "sourceBase": "cbd9f87163405f53cddaece1f18b10e09f608c8d",
+  "buildDirectory": "/tmp/vpj05-web-build",
+  "productSourcesMatch": true,
+  "sourceFileCount": 210,
+  "productTreeSha256": "b019d8a4d57a4a5499e407af4ff68d0332b5c96fcdcc5df72df0575b6fec24bc",
+  "treeHashRecipe": "SHA256 of sorted app/components/lib relative-path + NUL + file SHA256 + newline"
+}

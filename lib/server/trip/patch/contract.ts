@@ -77,3 +77,5 @@ function validWindow(startsAt: unknown, endsAt: unknown): boolean { if (startsAt
 function isRecord(value: unknown): value is Record<string, unknown> { return typeof value === "object" && value !== null && !Array.isArray(value); }
 function hasOnlyKeys(value: Record<string, unknown>, allowed: readonly string[]): boolean { return Object.keys(value).every((key) => allowed.includes(key)); }
 function fail(message: string): never { throw new InvalidTripPatchError(message); }
+
+export function assertTripSnapshot(value: unknown): asserts value is TripSnapshot { assertSnapshot(value as TripSnapshot); }

@@ -29,6 +29,12 @@
 		200000000000000000000020 = {isa = PBXBuildFile; fileRef = 300000000000000000000020; };
 		200000000000000000000021 = {isa = PBXBuildFile; fileRef = 300000000000000000000021; };
 		200000000000000000000022 = {isa = PBXBuildFile; fileRef = 300000000000000000000022; };
+		200000000000000000000030 = {isa = PBXBuildFile; fileRef = 300000000000000000000030; };
+		200000000000000000000031 = {isa = PBXBuildFile; fileRef = 300000000000000000000031; };
+		200000000000000000000032 = {isa = PBXBuildFile; fileRef = 300000000000000000000032; };
+		200000000000000000000033 = {isa = PBXBuildFile; fileRef = 300000000000000000000033; };
+		200000000000000000000034 = {isa = PBXBuildFile; fileRef = 300000000000000000000034; };
+		200000000000000000000035 = {isa = PBXBuildFile; fileRef = 300000000000000000000035; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +73,12 @@
 		300000000000000000000020 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSession.swift; sourceTree = "<group>"; };
 		300000000000000000000021 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSessionIntegrationTests.swift; sourceTree = "<group>"; };
 		300000000000000000000022 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeIdentityUITests.swift; sourceTree = "<group>"; };
+		300000000000000000000030 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTripModels.swift; sourceTree = "<group>"; };
+		300000000000000000000031 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTripStore.swift; sourceTree = "<group>"; };
+		300000000000000000000032 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTripView.swift; sourceTree = "<group>"; };
+		300000000000000000000033 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTripStateTests.swift; sourceTree = "<group>"; };
+		300000000000000000000034 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTripIntegrationTests.swift; sourceTree = "<group>"; };
+		300000000000000000000035 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeTripUITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,13 +118,13 @@
 		600000000000000000000007 /* Features */ = {isa = PBXGroup; children = (600000000000000000000008, 600000000000000000000009, 60000000000000000000000A, 60000000000000000000000B, 60000000000000000000000C); path = Features; sourceTree = "<group>"; };
 		600000000000000000000008 /* Today */ = {isa = PBXGroup; children = (30000000000000000000000B); path = Today; sourceTree = "<group>"; };
 		600000000000000000000009 /* Ask */ = {isa = PBXGroup; children = (30000000000000000000000C); path = Ask; sourceTree = "<group>"; };
-		60000000000000000000000A /* Trip */ = {isa = PBXGroup; children = (30000000000000000000000D); path = Trip; sourceTree = "<group>"; };
+		60000000000000000000000A /* Trip */ = {isa = PBXGroup; children = (300000000000000000000032, 300000000000000000000031, 300000000000000000000030, 30000000000000000000000D); path = Trip; sourceTree = "<group>"; };
 		60000000000000000000000B /* Explore */ = {isa = PBXGroup; children = (30000000000000000000000E); path = Explore; sourceTree = "<group>"; };
 		60000000000000000000000C /* Profile */ = {isa = PBXGroup; children = (30000000000000000000000F); path = Profile; sourceTree = "<group>"; };
 		60000000000000000000000E /* Resources */ = {isa = PBXGroup; children = (300000000000000000000010, 300000000000000000000011); path = Resources; sourceTree = "<group>"; };
-		60000000000000000000000F /* VisePandaTests */ = {isa = PBXGroup; children = (300000000000000000000012, 300000000000000000000021); path = VisePandaTests; sourceTree = "<group>"; };
+		60000000000000000000000F /* VisePandaTests */ = {isa = PBXGroup; children = (300000000000000000000034, 300000000000000000000033, 300000000000000000000012, 300000000000000000000021); path = VisePandaTests; sourceTree = "<group>"; };
 		600000000000000000000010 /* Products */ = {isa = PBXGroup; children = (300000000000000000000013, 300000000000000000000014, 300000000000000000000016); name = Products; sourceTree = "<group>"; };
-		600000000000000000000011 = {isa = PBXGroup; children = (300000000000000000000015, 300000000000000000000022); path = VisePandaUITests; sourceTree = "<group>"; };
+		600000000000000000000011 = {isa = PBXGroup; children = (300000000000000000000035, 300000000000000000000015, 300000000000000000000022); path = VisePandaUITests; sourceTree = "<group>"; };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -188,6 +200,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				200000000000000000000030, 200000000000000000000031, 200000000000000000000032,
 				200000000000000000000020,
 				200000000000000000000001, 200000000000000000000002, 200000000000000000000003,
 				200000000000000000000004, 200000000000000000000005, 200000000000000000000006,
@@ -197,8 +210,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000012, 200000000000000000000021); runOnlyForDeploymentPostprocessing = 0; };
-		800000000000000000000005 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000015, 200000000000000000000022); runOnlyForDeploymentPostprocessing = 0; };
+		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000034, 200000000000000000000033, 200000000000000000000012, 200000000000000000000021); runOnlyForDeploymentPostprocessing = 0; };
+		800000000000000000000005 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000035, 200000000000000000000015, 200000000000000000000022); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */

@@ -1,0 +1,46 @@
+diff --git a/ios/VisePanda/VisePandaTests/NativeTripStateTests.swift b/ios/VisePanda/VisePandaTests/NativeTripStateTests.swift
+index a92c648..e5f41f4 100644
+--- a/ios/VisePanda/VisePandaTests/NativeTripStateTests.swift
++++ b/ios/VisePanda/VisePandaTests/NativeTripStateTests.swift
+@@ -1,4 +1,5 @@
+ import XCTest
++import Security
+ @testable import VisePanda
+
+ nonisolated final class NativeTripStateTests: XCTestCase {
+@@ -9,6 +10,11 @@ nonisolated final class NativeTripStateTests: XCTestCase {
+         let defaults = try XCTUnwrap(UserDefaults(suiteName: "vpj05.denial.\(UUID().uuidString)"))
+         let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:59931"], defaults: defaults, configuration: configuration)
+         await session.login(email: "owner-a", password: "unit-only")
++        let lookup: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
++            kSecAttrService as String: "com.visepanda.native.local-session.v2.http://127.0.0.1:59931",
++            kSecAttrAccount as String: "owner-a", kSecReturnAttributes as String: true]
++        let keychainReadStatus = SecItemCopyMatching(lookup as CFDictionary, nil)
++        print("[SIGNING-DIAG] status=\(session.status) failureCode=\(session.failureCode ?? "none") scope=\(session.dataScope == nil ? "nil" : "present") keychainReadStatus=\(keychainReadStatus)")
+         XCTAssertNotNil(session.dataScope)
+         DelayedTripProtocol.setHoldRefresh(true)
+         defer { DelayedTripProtocol.setHoldRefresh(false) }
+@@ -37,6 +43,11 @@ nonisolated final class NativeTripStateTests: XCTestCase {
+         let defaults = try XCTUnwrap(UserDefaults(suiteName: "vpj05.offline.\(UUID().uuidString)"))
+         let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:59931"], defaults: defaults, configuration: configuration)
+         await session.login(email: "owner-a", password: "unit-only")
++        let lookup: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
++            kSecAttrService as String: "com.visepanda.native.local-session.v2.http://127.0.0.1:59931",
++            kSecAttrAccount as String: "owner-a", kSecReturnAttributes as String: true]
++        let keychainReadStatus = SecItemCopyMatching(lookup as CFDictionary, nil)
++        print("[SIGNING-DIAG] status=\(session.status) failureCode=\(session.failureCode ?? "none") scope=\(session.dataScope == nil ? "nil" : "present") keychainReadStatus=\(keychainReadStatus)")
+         let identity = try XCTUnwrap(session.dataScope)
+         let store = NativeTripStore()
+         store.reset(for: identity)
+@@ -84,6 +95,11 @@ nonisolated final class NativeTripStateTests: XCTestCase {
+         let defaults = try XCTUnwrap(UserDefaults(suiteName: "vpj05.unit.\(UUID().uuidString)"))
+         let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:59931"], defaults: defaults, configuration: configuration)
+         await session.login(email: "owner-a", password: "unit-only")
++        let lookup: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
++            kSecAttrService as String: "com.visepanda.native.local-session.v2.http://127.0.0.1:59931",
++            kSecAttrAccount as String: "owner-a", kSecReturnAttributes as String: true]
++        let keychainReadStatus = SecItemCopyMatching(lookup as CFDictionary, nil)
++        print("[SIGNING-DIAG] status=\(session.status) failureCode=\(session.failureCode ?? "none") scope=\(session.dataScope == nil ? "nil" : "present") keychainReadStatus=\(keychainReadStatus)")
+         let originalScope = try XCTUnwrap(session.dataScope)
+         let store = NativeTripStore()
+         store.reset(for: originalScope)

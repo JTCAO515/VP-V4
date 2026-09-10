@@ -1,0 +1,262 @@
+
+> vp-v4@0.0.0 test:integration /Users/jtcao/Documents/VP-V4-Native-Local-Trip
+> node scripts/run-ci-suite.mjs integration
+
+TAP version 13
+# Subtest: AI-37 keeps confirmation owner-scoped and never applies its pending Proposal to a Trip
+ok 1 - AI-37 keeps confirmation owner-scoped and never applies its pending Proposal to a Trip
+  ---
+  duration_ms: 5.190333
+  type: 'test'
+  ...
+# Subtest: LAUNCH-08 SSE replay and client reducer converge under reconnect duplicate delivery
+ok 2 - LAUNCH-08 SSE replay and client reducer converge under reconnect duplicate delivery
+  ---
+  duration_ms: 2.5555
+  type: 'test'
+  ...
+# Subtest: LAUNCH-08 client preserves the last canonical cursor for polling degradation
+ok 3 - LAUNCH-08 client preserves the last canonical cursor for polling degradation
+  ---
+  duration_ms: 0.500333
+  type: 'test'
+  ...
+# Subtest: LAUNCH-08 initializes terminal history through the same reducer vocabulary
+ok 4 - LAUNCH-08 initializes terminal history through the same reducer vocabulary
+  ---
+  duration_ms: 0.435208
+  type: 'test'
+  ...
+# Subtest: LAUNCH-08 reducer holds its cursor when a replay has a sequence gap
+ok 5 - LAUNCH-08 reducer holds its cursor when a replay has a sequence gap
+  ---
+  duration_ms: 0.181291
+  type: 'test'
+  ...
+# Subtest: two separate SQL clients reserve and dispatch one duplicate attempt only once
+ok 6 - two separate SQL clients reserve and dispatch one duplicate attempt only once # SKIP
+  ---
+  duration_ms: 0.813833
+  type: 'test'
+  ...
+# Subtest: scope, provider, task, attempt and concurrency caps are atomic
+ok 7 - scope, provider, task, attempt and concurrency caps are atomic # SKIP
+  ---
+  duration_ms: 0.087458
+  type: 'test'
+  ...
+# Subtest: task cap is shared across provider attempts and provider caps cannot be transferred
+ok 8 - task cap is shared across provider attempts and provider caps cannot be transferred # SKIP
+  ---
+  duration_ms: 0.04725
+  type: 'test'
+  ...
+# Subtest: owner/model/price mismatch and ordinary database roles cannot use the ledger
+ok 9 - owner/model/price mismatch and ordinary database roles cannot use the ledger # SKIP
+  ---
+  duration_ms: 0.048667
+  type: 'test'
+  ...
+# Subtest: kill and expiry are consumed after reserve and before provider callback
+ok 10 - kill and expiry are consumed after reserve and before provider callback # SKIP
+  ---
+  duration_ms: 0.0525
+  type: 'test'
+  ...
+# Subtest: settlement is idempotent; conflicting costs cannot overwrite and overrun freezes admission
+ok 11 - settlement is idempotent; conflicting costs cannot overwrite and overrun freezes admission # SKIP
+  ---
+  duration_ms: 0.0695
+  type: 'test'
+  ...
+# Subtest: consumer settles actual usage and returns duplicate without invoking again
+ok 12 - consumer settles actual usage and returns duplicate without invoking again # SKIP
+  ---
+  duration_ms: 0.070958
+  type: 'test'
+  ...
+# Subtest: unknown usage, timeout and cancellation retain reservations; late results do not settle
+ok 13 - unknown usage, timeout and cancellation retain reservations; late results do not settle # SKIP
+  ---
+  duration_ms: 0.051709
+  type: 'test'
+  ...
+# Subtest: killed worker retains dispatched cost across a fresh worker process
+ok 14 - killed worker retains dispatched cost across a fresh worker process # SKIP
+  ---
+  duration_ms: 0.073625
+  type: 'test'
+  ...
+# Subtest: full local Supabase25->26 preserves a Trip and enforces real Auth/PostgREST budget permissions
+ok 15 - full local Supabase25->26 preserves a Trip and enforces real Auth/PostgREST budget permissions # SKIP explicit isolated Supabase upgrade workdir not configured
+  ---
+  duration_ms: 0.57025
+  type: 'test'
+  ...
+# Subtest: real disposable Auth → HTTP → persistent mobile epoch → RLS and revocation
+ok 16 - real disposable Auth → HTTP → persistent mobile epoch → RLS and revocation
+  ---
+  duration_ms: 7784.109083
+  type: 'test'
+  ...
+# Subtest: AI-13a pending proposal rows remain owner-scoped in local RLS
+ok 17 - AI-13a pending proposal rows remain owner-scoped in local RLS
+  ---
+  duration_ms: 4322.840167
+  type: 'test'
+  ...
+# Subtest: profile upsert and privacy request replay preserve owner isolation without executing deletion
+ok 18 - profile upsert and privacy request replay preserve owner isolation without executing deletion
+  ---
+  duration_ms: 4718.767709
+  type: 'test'
+  ...
+# Subtest: only the worker holding a lease can acknowledge a projection and prevent redelivery
+ok 19 - only the worker holding a lease can acknowledge a projection and prevent redelivery
+  ---
+  duration_ms: 8.134334
+  type: 'test'
+  ...
+# Subtest: AI-30 does not make caller metadata into a deletion capability
+ok 20 - AI-30 does not make caller metadata into a deletion capability
+  ---
+  duration_ms: 15.367791
+  type: 'test'
+  ...
+# Subtest: AI-30 rejects unverified provider file deletion before any adapter call
+ok 21 - AI-30 rejects unverified provider file deletion before any adapter call
+  ---
+  duration_ms: 0.388083
+  type: 'test'
+  ...
+# Subtest: records an unavailable policy-blocked route as metadata only
+ok 22 - records an unavailable policy-blocked route as metadata only
+  ---
+  duration_ms: 2.044709
+  type: 'test'
+  ...
+# Subtest: LAUNCH-14 synthetic provider fault produces an alert decision and stops a new call at the budget gate
+ok 23 - LAUNCH-14 synthetic provider fault produces an alert decision and stops a new call at the budget gate
+  ---
+  duration_ms: 4.062583
+  type: 'test'
+  ...
+# Subtest: accepts a parameter-free isolated rehearsal plan and preserves undecided RPO/RTO
+ok 24 - accepts a parameter-free isolated rehearsal plan and preserves undecided RPO/RTO
+  ---
+  duration_ms: 1.443959
+  type: 'test'
+  ...
+# Subtest: rejects production, real connection details, incomplete exercises, and permanent ephemeral-media backup
+ok 25 - rejects production, real connection details, incomplete exercises, and permanent ephemeral-media backup
+  ---
+  duration_ms: 0.343
+  type: 'test'
+  ...
+# Subtest: rejects invented RPO/RTO before plan and region are accepted
+ok 26 - rejects invented RPO/RTO before plan and region are accepted
+  ---
+  duration_ms: 0.286292
+  type: 'test'
+  ...
+# Subtest: rejects undeclared nested configuration instead of silently accepting an execution option
+ok 27 - rejects undeclared nested configuration instead of silently accepting an execution option
+  ---
+  duration_ms: 0.083667
+  type: 'test'
+  ...
+# Subtest: rejects connection details hidden in an S3 backup policy field
+ok 28 - rejects connection details hidden in an S3 backup policy field
+  ---
+  duration_ms: 0.302792
+  type: 'test'
+  ...
+# Subtest: rejects every S3 backup choice until an authoritative storage-policy registry exists
+ok 29 - rejects every S3 backup choice until an authoritative storage-policy registry exists
+  ---
+  duration_ms: 0.235042
+  type: 'test'
+  ...
+# Subtest: CLI validates the committed parameter-free plan
+ok 30 - CLI validates the committed parameter-free plan
+  ---
+  duration_ms: 173.45
+  type: 'test'
+  ...
+# Subtest: AI-10 confirms exactly one pending proposal in a local RLS transaction
+ok 31 - AI-10 confirms exactly one pending proposal in a local RLS transaction
+  ---
+  duration_ms: 4609.517541
+  type: 'test'
+  ...
+# Subtest: local native/Web share one immutable Trip with confirmed intent, CAS and ordinary-owner isolation
+ok 32 - local native/Web share one immutable Trip with confirmed intent, CAS and ordinary-owner isolation
+  ---
+  duration_ms: 10512.85225
+  type: 'test'
+  ...
+# Native/Web same UUID and five atomic confirmed versions; raw authority attacks rejected; all exact synthetic users removed.
+# Subtest: AI-13c lets only the owner reject one pending Proposal
+ok 33 - AI-13c lets only the owner reject one pending Proposal
+  ---
+  duration_ms: 3958.101208
+  type: 'test'
+  ...
+# Subtest: AI-13b replaces a pending owner proposal with an immutable child revision
+ok 34 - AI-13b replaces a pending owner proposal with an immutable child revision
+  ---
+  duration_ms: 5271.761375
+  type: 'test'
+  ...
+# Subtest: LAUNCH-11 creates, revises, and confirms a full patch without mutating the canonical Trip early
+ok 35 - LAUNCH-11 creates, revises, and confirms a full patch without mutating the canonical Trip early
+  ---
+  duration_ms: 4144.420375
+  type: 'test'
+  ...
+# Subtest: V4-10 rollback confirms a prior snapshot as a new append-only version
+ok 36 - V4-10 rollback confirms a prior snapshot as a new append-only version
+  ---
+  duration_ms: 4566.546208
+  type: 'test'
+  ...
+# Subtest: V4-11 preserves exact/user place references and rejects cross-owner reads or inserts
+ok 37 - V4-11 preserves exact/user place references and rejects cross-owner reads or inserts
+  ---
+  duration_ms: 4196.126667
+  type: 'test'
+  ...
+# Subtest: V4-12 exposes only owner action references and rejects user writes
+ok 38 - V4-12 exposes only owner action references and rejects user writes
+  ---
+  duration_ms: 4198.794334
+  type: 'test'
+  ...
+# Subtest: V4-08 persists owner-scoped thread replay and terminal cancellation
+ok 39 - V4-08 persists owner-scoped thread replay and terminal cancellation
+  ---
+  duration_ms: 4522.313792
+  type: 'test'
+  ...
+# Subtest: LAUNCH-05 retries a normalized message as one turn without putting content in turn events
+ok 40 - LAUNCH-05 retries a normalized message as one turn without putting content in turn events
+  ---
+  duration_ms: 20.442458
+  type: 'test'
+  ...
+# Subtest: LAUNCH-07 retries a provider failure once, then completes without a Trip write channel
+ok 41 - LAUNCH-07 retries a provider failure once, then completes without a Trip write channel
+  ---
+  duration_ms: 1.11625
+  type: 'test'
+  ...
+1..41
+# tests 41
+# suites 0
+# pass 31
+# fail 0
+# cancelled 0
+# skipped 10
+# todo 0
+# duration_ms 11307.594959
+VP_CI_SUITE_RESULT {"suite":"integration","outcome":"incomplete","skipped":10,"testFiles":22}

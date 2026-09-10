@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import test from "node:test";
+import { confirmationDigest } from "./confirmation-input.mjs";
 import { identityLocalEnv } from "../identity/local-supabase.mjs";
 
 
@@ -34,8 +35,9 @@ test("AI-10 confirms exactly one pending proposal in a local RLS transaction", a
     });
     const proposal = JSON.parse(result.body)[0];
     const call = (digest) => request("/rest/v1/rpc/confirm_and_apply_trip_proposal", { method: "POST", headers, body: JSON.stringify({ p_proposal_id: proposal.id, p_idempotency_key: "probe-key", p_digest: digest }) });
-    assert.equal(JSON.parse((await call("digest-a")).body)[0].outcome, "applied");
-    assert.equal(JSON.parse((await call("digest-a")).body)[0].outcome, "already_applied");
+    const digest = await confirmationDigest(env, headers, proposal.id, "digest-a");
+    assert.equal(JSON.parse((await call(digest)).body)[0].outcome, "applied");
+    assert.equal(JSON.parse((await call(digest)).body)[0].outcome, "already_applied");
     assert.equal((await call("digest-b")).response.status, 400);
     result = await request(`/rest/v1/trips?id=eq.${trip.id}&select=title,head_version`, { headers });
     assert.deepEqual(JSON.parse(result.body)[0], { title: "After", head_version: 1 });

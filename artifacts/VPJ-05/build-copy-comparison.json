@@ -1,0 +1,9 @@
+{
+  "comparedAt": "2026-09-10T02:51:44.992212+00:00",
+  "workingTreeHead": "39ac9d06b64e1b738af9c0a37dec1f18ad50e1f6",
+  "applicationSourceHead": "7e63fe2b4e41d925f65bab76991057885663e0a2",
+  "copyPath": "/tmp/vpj05-web-build",
+  "scope": "tracked app/components/lib/public/scripts and package/lock/Next/TypeScript/PostCSS config",
+  "comparedFiles": 249,
+  "mismatches": []
+}

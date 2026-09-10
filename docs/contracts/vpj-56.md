@@ -1,4 +1,4 @@
-# VPJ-56 unsigned native CI v1
+# VPJ-56 native CI v2 — unsigned build and ad-hoc tests
 
 Related to #237. This Class A preparation slice consumes the native project merged
 in PR258; it does not complete VPJ-01 device acceptance or VPJ-56 signed distribution.
@@ -21,8 +21,21 @@ label; the exact Xcode build/runtime checks prevent silent toolchain substitutio
 ImageVersion and commit are captured for each execution; this is not an immutable VM pin.
 
 The job builds an unsigned Simulator app, extracts bundle identifier/marketing/build
-versions, then runs every test in the shared scheme (currently 8 unit and 5 UI tests),
-without test filters or retries. The existing UI suite audits structure at maximum
+versions, then runs every test in the shared scheme with a local ad-hoc signature
+(`CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-`), without test filters or retries.
+The ad-hoc test host can exercise the real Keychain; an unsigned host returns
+`errSecMissingEntitlement` (-34018) before the new account-race assertions can run.
+This was reproduced on the same source/device with unsigned failure and ad-hoc success.
+The script verifies the resulting ad-hoc signature and records it separately from
+distribution signing. It uses no Apple certificate, account, provisioning update or profile.
+Compilation and testing are separate stages. After `build-for-testing`, the runner creates
+one owned temporary Simulator of the same pinned iPhone17Pro/iOS26.5 type and waits for
+`simctl bootstatus -b` before `test-without-building`. It deletes only that created device
+in cleanup, including after test failure; it never erases or reuses a user's existing device.
+This isolates the runner-image device state and separates boot from compilation after
+observed audit-service timeouts and App-launch/background-assertion failures. These remain
+recorded infrastructure failures; the change does not filter, retry or weaken tests.
+The existing UI suite audits structure at maximum
 Dynamic Type; it is not complete VoiceOver, contrast, dark-mode or physical-device acceptance.
 All fixture/unavailable capability boundaries remain in force.
 

@@ -25,9 +25,10 @@ xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda \
 xcrun simctl list devices available
 # Substitute an actual available simulator UDID.
 xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda \
-  -destination 'platform=iOS Simulator,id=<UDID>' CODE_SIGNING_ALLOWED=NO
+  -destination 'platform=iOS Simulator,id=<UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-
 ```
 
 A nonpersistent `-VisePandaLocale en` launch argument selects QA language; default is Chinese.
 See [scope and compatibility](../../docs/contracts/vpj-01.md) and
-[verification](../../artifacts/VPJ-01/verification.md). No signing or production action is included.
+[verification](../../artifacts/VPJ-01/verification.md). Tests use a local ad-hoc signature for
+Keychain access; no Apple signing credentials, provisioning update or production action is included.

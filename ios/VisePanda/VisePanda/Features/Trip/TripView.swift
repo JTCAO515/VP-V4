@@ -1,9 +1,15 @@
 import SwiftUI
 
 struct TripView: View {
+    @Environment(AppSettings.self) private var settings
     @ScaledMetric(relativeTo: .caption) private var workflowBadgeSize: CGFloat = 28
 
     var body: some View {
+        if settings.nativeSession.enabled { NativeTripView() }
+        else { preview }
+    }
+
+    private var preview: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: VPSpacing.section) {
                 BrandHeader()
@@ -74,5 +80,5 @@ struct TripView: View {
 }
 
 #Preview {
-    NavigationStack { TripView() }
+    NavigationStack { TripView() }.environment(AppSettings())
 }

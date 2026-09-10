@@ -30,6 +30,7 @@ final class NativeSession {
     private(set) var busy = false
     private(set) var status = "signedOut"
     private(set) var failureCode: String?
+    private(set) var dataGeneration = 0
     private var credential: NativeCredential?
     private let endpoint: URL?
     private let transport: URLSession
@@ -37,7 +38,7 @@ final class NativeSession {
     private let storageKey: String
     private let keychainService = "com.visepanda.native.local-session.v2"
 
-    init(arguments: [String] = ProcessInfo.processInfo.arguments, defaults: UserDefaults = .standard) {
+    init(arguments: [String] = ProcessInfo.processInfo.arguments, defaults: UserDefaults = .standard, configuration: URLSessionConfiguration = .ephemeral) {
         // This slice is explicitly local integration. No remote endpoint can be enabled by arguments.
         let flag = arguments.firstIndex(of: "-VisePandaNativeAPI")
         let raw = flag.flatMap { arguments.indices.contains($0 + 1) ? arguments[$0 + 1] : nil }
@@ -47,7 +48,6 @@ final class NativeSession {
         } else { endpoint = nil }
         self.defaults = defaults
         storageKey = "native.v2.activeSubject.\(endpoint?.absoluteString ?? "disabled")"
-        let configuration = URLSessionConfiguration.ephemeral
         configuration.httpCookieStorage = nil
         configuration.httpShouldSetCookies = false
         configuration.urlCache = nil
@@ -55,6 +55,52 @@ final class NativeSession {
     }
 
     var enabled: Bool { endpoint != nil }
+
+    /// Last verified Keychain identity, for keeping hidden unsent drafts during a
+    /// temporary authentication network failure. It never authorizes a request.
+    var retainedDataScope: NativeDataScope? {
+        guard let credential, let epoch = credential.mobileEpoch else { return nil }
+        return NativeDataScope(endpoint: endpoint?.absoluteString ?? "disabled", subject: credential.subject, mobileEpoch: epoch, generation: dataGeneration)
+    }
+
+    /// Changes on denial/account clearing even if the same owner later signs in again.
+    var dataScope: NativeDataScope? {
+        guard status == "active", let subject, let mobileEpoch,
+              let retained = retainedDataScope, retained.subject == subject, retained.mobileEpoch == mobileEpoch else { return nil }
+        return retained
+    }
+
+    /// The Trip consumer receives response bytes, never the Keychain credential.
+    func tripRequest(path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
+        guard enabled, !busy, let initial = dataScope else { throw NativeDataError.sessionUnavailable }
+        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 {
+            await validate()
+        }
+        guard dataScope == initial, let credential, let endpoint else { throw NativeDataError.sessionUnavailable }
+        guard path == "api/trips/native/v2" || path.hasPrefix("api/trips/native/v2/"),
+              !path.contains(".."), !path.contains("?"), !path.contains("#") else { throw NativeDataError.invalidResponse }
+        guard var target = URLComponents(url: endpoint.appendingPathComponent(path), resolvingAgainstBaseURL: false) else { throw NativeDataError.invalidResponse }
+        target.queryItems = queryItems.isEmpty ? nil : queryItems
+        guard let url = target.url else { throw NativeDataError.invalidResponse }
+        var request = URLRequest(url: url)
+        request.httpMethod = method
+        request.httpShouldHandleCookies = false
+        request.httpBody = body
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        let (data, response) = try await transport.data(for: request)
+        guard dataScope == initial else { throw NativeDataError.staleSessionResponse }
+        guard let http = response as? HTTPURLResponse else { throw NativeDataError.invalidResponse }
+        if http.statusCode == 401 {
+            handle(SessionError.denied)
+            throw NativeDataError.sessionUnavailable
+        }
+        guard (200..<300).contains(http.statusCode) else {
+            let envelope = try? JSONDecoder().decode(NativeDataFailure.self, from: data)
+            throw NativeDataError.server(code: envelope?.error.code ?? "HTTP_\(http.statusCode)")
+        }
+        return data
+    }
 
     func restore() async {
         guard enabled, !busy, credential == nil, let owner = defaults.string(forKey: storageKey) else { return }
@@ -71,28 +117,33 @@ final class NativeSession {
         // A deliberate account change clears all old account data before sending the new request.
         clear()
         let attempt = UUID().uuidString
+        let generation = dataGeneration
         do {
             let data = try await request("credentials", body: ["email": email, "password": password, "attemptId": attempt])
+            try ensureCurrent(generation)
             var value = try JSONDecoder().decode(TokenReply.self, from: data)
             let pending = NativeCredential(subject: value.subject, accessToken: value.accessToken, refreshToken: value.refreshToken, expiresAt: value.expiresAt, attemptId: attempt, mobileEpoch: nil)
             credential = pending
             try save(pending)
             let reply = try await request("login", body: ["attemptId": attempt], token: value.accessToken)
+            try ensureCurrent(generation)
             let state = try JSONDecoder().decode(SessionReply.self, from: reply)
             guard state.subject == value.subject else { throw SessionError.invalid }
             value.mobileEpoch = state.mobileEpoch
             try accept(value, attempt: attempt)
             try await loadProfile()
-        } catch { handle(error) }
+        } catch { if dataGeneration == generation { handle(error) } }
     }
 
     func validate() async {
         guard enabled, !busy, let existing = credential else { return }
+        let generation = dataGeneration
         busy = true
         defer { busy = false }
         do {
             if existing.mobileEpoch == nil {
                 let data = try await request("login", body: ["attemptId": existing.attemptId], token: existing.accessToken)
+                try ensureCurrent(generation)
                 let state = try JSONDecoder().decode(SessionReply.self, from: data)
                 guard state.subject == existing.subject else { throw SessionError.invalid }
                 var updated = existing
@@ -105,16 +156,18 @@ final class NativeSession {
                 try await loadProfile()
             } else {
                 let data = try await request("refresh", body: ["refreshToken": existing.refreshToken])
+                try ensureCurrent(generation)
                 let reply = try JSONDecoder().decode(TokenReply.self, from: data)
                 guard reply.subject == existing.subject, reply.mobileEpoch == existing.mobileEpoch else { throw SessionError.invalid }
                 try accept(reply, attempt: existing.attemptId)
                 try await loadProfile()
             }
-        } catch { handle(error) }
+        } catch { if dataGeneration == generation { handle(error) } }
     }
 
     func logout() async {
         guard !busy else { return }
+        let generation = dataGeneration
         busy = true
         defer { busy = false }
         if let existing = credential {
@@ -122,13 +175,15 @@ final class NativeSession {
                 var token = existing.accessToken
                 if existing.expiresAt <= Date().timeIntervalSince1970 + 10 {
                     let data = try await request("refresh", body: ["refreshToken": existing.refreshToken])
+                    try ensureCurrent(generation)
                     let reply = try JSONDecoder().decode(TokenReply.self, from: data)
                     guard reply.subject == existing.subject, reply.mobileEpoch == existing.mobileEpoch else { throw SessionError.invalid }
                     try accept(reply, attempt: existing.attemptId)
                     token = reply.accessToken
                 }
                 _ = try await request("logout", body: [:], token: token)
-            } catch { handle(error); return }
+                try ensureCurrent(generation)
+            } catch { if dataGeneration == generation { handle(error) }; return }
         }
         clear()
         status = "signedOut"
@@ -136,7 +191,9 @@ final class NativeSession {
 
     private func loadProfile() async throws {
         guard let credential else { throw SessionError.invalid }
+        let generation = dataGeneration
         let data = try await request("profile", body: [:], token: credential.accessToken)
+        try ensureCurrent(generation)
         let reply = try JSONDecoder().decode(ProfileReply.self, from: data)
         guard reply.subject == credential.subject else { throw SessionError.invalid }
         displayName = reply.displayName
@@ -151,7 +208,12 @@ final class NativeSession {
         status = "active"
     }
 
+    private func ensureCurrent(_ generation: Int) throws {
+        guard dataGeneration == generation else { throw SessionError.superseded }
+    }
+
     private func handle(_ error: Error) {
+        if case SessionError.superseded = error { return }
         if let value = error as? URLError { failureCode = "network:\(value.code.rawValue)" }
         else if error is DecodingError { failureCode = "response-decoding" }
         else if case SessionError.storage(let code) = error { failureCode = "keychain:\(code)" }
@@ -207,6 +269,7 @@ final class NativeSession {
         return value
     }
     private func clear() {
+        dataGeneration += 1
         if let owner = credential?.subject ?? defaults.string(forKey: storageKey) { SecItemDelete(query(owner: owner) as CFDictionary) }
         defaults.removeObject(forKey: storageKey)
         credential = nil
@@ -214,7 +277,7 @@ final class NativeSession {
         mobileEpoch = nil
         displayName = nil
     }
-    private enum SessionError: Error { case denied, invalid, storage(OSStatus), http(Int) }
+    private enum SessionError: Error { case denied, invalid, superseded, storage(OSStatus), http(Int) }
     private struct TokenReply: Decodable {
         let subject: String
         let accessToken: String
@@ -224,4 +287,21 @@ final class NativeSession {
     }
     private struct ProfileReply: Decodable { let subject: String; let displayName: String? }
     private struct SessionReply: Decodable { let subject: String; let mobileEpoch: Int }
+}
+
+struct NativeDataScope: Hashable, Sendable {
+    let endpoint: String
+    let subject: String
+    let mobileEpoch: Int
+    let generation: Int
+}
+
+enum NativeDataError: Error {
+    case sessionUnavailable, staleSessionResponse, invalidResponse
+    case server(code: String)
+}
+
+private struct NativeDataFailure: Decodable {
+    struct Failure: Decodable { let code: String }
+    let error: Failure
 }

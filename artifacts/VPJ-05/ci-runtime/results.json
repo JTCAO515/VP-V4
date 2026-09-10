@@ -1,0 +1,12 @@
+{
+  "result": "Passed",
+  "totalTestCount": 29,
+  "passedTests": 21,
+  "failedTests": 0,
+  "skippedTests": 8,
+  "sourceCommit": "dc601ed6d270f2bf76aa292e51201eb420ceab19",
+  "scriptSHA256": "b37506f1c1285023b715c45e3b9540cc24fb31164274a4e4ae8e679166df35b2",
+  "note": "Run started from2586 with the case-preservation correction already in the working tree; dc601ed commits that exact source. Raw environment commit is preserved.",
+  "testSourceChanged": false,
+  "originalSimulatorDataChanged": false
+}
