@@ -1,0 +1,41 @@
+diff --git a/ios/VisePanda/VisePandaTests/AppNavigationContractTests.swift b/ios/VisePanda/VisePandaTests/AppNavigationContractTests.swift
+index 84b1c53..68a281e 100644
+--- a/ios/VisePanda/VisePandaTests/AppNavigationContractTests.swift
++++ b/ios/VisePanda/VisePandaTests/AppNavigationContractTests.swift
+@@ -1,4 +1,5 @@
+ import Testing
++import UIKit
+ @testable import VisePanda
+
+ struct AppNavigationContractTests {
+@@ -49,4 +50,30 @@ struct AppNavigationContractTests {
+         #expect(SupportedLocale.launchLocale(arguments: ["VisePanda", "-VisePandaLocale", "ar"]) == .ar)
+         #expect(SupportedLocale.launchLocale(arguments: ["VisePanda", "-VisePandaLocale", "unknown"]) == .zh)
+     }
++    @Test("Record real-device accessibility defaults without changing them")
++    @MainActor
++    func physicalAccessibilityBaseline() throws {
++#if targetEnvironment(simulator)
++        Issue.record("This diagnostic requires the authorized physical device")
++#else
++        let window = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
++            .flatMap(\.windows).first { $0.isKeyWindow }
++        let values: [String: Any] = [
++            "runtime": UIDevice.current.systemVersion,
++            "model": UIDevice.current.model,
++            "contentSizeCategory": UIApplication.shared.preferredContentSizeCategory.rawValue,
++            "bodyPointSize": UIFont.preferredFont(forTextStyle: .body).pointSize,
++            "reduceMotion": UIAccessibility.isReduceMotionEnabled,
++            "voiceOver": UIAccessibility.isVoiceOverRunning,
++            "boldText": UIAccessibility.isBoldTextEnabled,
++            "reduceTransparency": UIAccessibility.isReduceTransparencyEnabled,
++            "interfaceStyle": window?.traitCollection.userInterfaceStyle.rawValue ?? -1,
++            "nativeNetworkEnabled": NativeSession(arguments: []).enabled
++        ]
++        let data = try JSONSerialization.data(withJSONObject: values, options: [.sortedKeys])
++        print("PHYSICAL_ACCESSIBILITY_BASELINE " + String(decoding: data, as: UTF8.self))
++        #expect(NativeSession(arguments: []).enabled == false)
++#endif
++    }
++
+ }
