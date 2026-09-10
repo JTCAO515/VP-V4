@@ -22,7 +22,7 @@ Migration `20260910002858_vpj_05_confirm_intent_authority.sql` binds confirmatio
 | Browser |1440×900 and390×844 checks; both cross-client Trip IDs/reloads; no pre-confirm write; stale draft retained; explicit discard/reject; restore-confirm/reject controls passed |
 | Migration preservation | Real27→28 upgrade and retained-data comparison passed; the root-only upgrade instance was subsequently stopped with its backup/volume preserved |
 
-`commands.jsonl` records the integrated commands and points to logs. Detailed native commands/screenshots are in [ios/verification.md](ios/verification.md) and [ios/commands.jsonl](ios/commands.jsonl); browser actions in [browser-root/verification.md](browser-root/verification.md); server/adversarial cases in [server/verification.md](server/verification.md); upgrade assertions in [upgrade-root/verification.json](upgrade-root/verification.json). No credentials are committed.
+`commands.jsonl` records the integrated commands and points to logs. Detailed native commands/screenshots are in [ios/verification.md](ios/verification.md) and [ios/commands.jsonl](ios/commands.jsonl); browser actions in [browser-root/verification.md](browser-root/verification.md); server/adversarial cases in [server/verification.md](server/verification.md); upgrade assertions in [upgrade-root/verification.json](upgrade-root/verification.json). No credentials are committed. Retained build-log lines have trailing whitespace normalized; the original log remains in the local test cache.
 
 ## Failures and corrections
 
