@@ -2,6 +2,8 @@ import SwiftUI
 
 @MainActor
 struct AppShellView: View {
+    @Environment(AppSettings.self) private var settings
+    @Environment(\.scenePhase) private var scenePhase
     @State private var selectedTab: AppTab = .defaultSelection
 
     var body: some View {
@@ -15,6 +17,10 @@ struct AppShellView: View {
             }
         }
         .accessibilityIdentifier("main-tab-view")
+        .task { await settings.nativeSession.restore() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { Task { await settings.nativeSession.validate() } }
+        }
     }
 }
 

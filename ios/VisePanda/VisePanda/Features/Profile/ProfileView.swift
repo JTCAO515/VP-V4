@@ -5,7 +5,6 @@ struct ProfileView: View {
 
     @State private var email = ""
     @State private var password = ""
-    @Environment(\.scenePhase) private var scenePhase
 
     private var chinese: Bool { settings.selectedLocale == .zh }
 
@@ -16,7 +15,7 @@ struct ProfileView: View {
         settings.nativeSession.enabled ? Text(verbatim: chinese ? "凭据保存在本机钥匙串" : "Credentials stored in this device’s Keychain") : Text("profile.none")
     }
     private var foundationCaption: Text {
-        settings.nativeSession.enabled ? Text(verbatim: chinese ? "仅用于本机身份测试；行程、AI和推送尚未接入。" : "Local identity testing only. Trip, AI and push are not connected.") : Text("profile.foundation_note")
+        settings.nativeSession.enabled ? Text(verbatim: chinese ? "仅用于本机合成测试；行程可与本机网页同步，AI和推送尚未接入。" : "Local synthetic testing only. Trips can sync with the local web app. AI and push are not connected.") : Text("profile.foundation_note")
     }
 
     private var sessionStatus: String {
@@ -89,7 +88,7 @@ struct ProfileView: View {
 
             Section("profile.status") {
                 if settings.nativeSession.subject == nil { Label("profile.no_account", systemImage: "person.crop.circle.badge.xmark") }
-                Label("profile.no_sync", systemImage: "icloud.slash")
+                if !settings.nativeSession.enabled { Label("profile.no_sync", systemImage: "icloud.slash") }
                 Label("profile.no_live_services", systemImage: "network.slash")
             }
 
@@ -110,10 +109,6 @@ struct ProfileView: View {
             }
         }
         .vpNavigationTitle("tab.profile")
-        .task { await settings.nativeSession.restore() }
-        .onChange(of: scenePhase) { _, phase in
-            if phase == .active { Task { await settings.nativeSession.validate() } }
-        }
     }
 }
 
