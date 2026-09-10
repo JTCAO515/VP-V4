@@ -4,22 +4,24 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from "react"
 import { getLocaleAttributes, localeOptions, opsReviewCopy, type Locale } from "@/lib/i18n";
 import { createPasswordAuthClient } from "@/lib/server/identity/browser-auth-client";
 import type { OpsInput, OpsWorkspace } from "@/lib/server/knowledge/review/local-workspace";
+import { dispatchOpsOperation, type PendingOpsOperation } from "@/lib/server/knowledge/review/pending-operation";
 import styles from "./workspace.module.css";
 
 export function OpsReviewWorkspace() {
   const [locale, setLocale] = useState<Locale>("zh");
   const [workspace, setWorkspace] = useState<OpsWorkspace | null>(null);
+  const [pending, setPending] = useState<PendingOpsOperation | null>(null);
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<"unavailable" | "success" | null>(null);
+  const [message, setMessage] = useState<"unavailable" | "success" | "unknown" | null>(null);
   const generation = useRef(0);
-  const inFlight = useRef(false);
+  const inFlight = useRef<symbol | null>(null);
   const form = useRef<HTMLFormElement>(null);
   const c = opsReviewCopy[locale];
   const refresh = useCallback(async () => {
     const current = ++generation.current;
     setWorkspace(null);
     try {
-      const response = await fetch("/api/ops/review", { cache: "no-store" });
+      const response = await fetch("/api/ops/review", { cache: "no-store", signal: AbortSignal.timeout(10000) });
       const result = await response.json();
       if (current !== generation.current) return;
       if (!response.ok) { setMessage("unavailable"); return; }
@@ -37,43 +39,63 @@ export function OpsReviewWorkspace() {
     const client = createPasswordAuthClient();
     const subscription = client?.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT" || event === "SIGNED_IN" || event === "USER_UPDATED") {
-        ++generation.current; setWorkspace(null); form.current?.reset(); setMessage(null);
+        ++generation.current; inFlight.current = null; setBusy(false); setWorkspace(null); setPending(null); form.current?.reset(); setMessage(null);
         // Keep Supabase auth callback synchronous; refresh on the next task.
         setTimeout(() => { void refresh(); }, 0);
       }
     });
     const visible = () => { if (document.visibilityState === "visible") void refresh(); };
     document.addEventListener("visibilitychange", visible);
-    return () => { ++generation.current; subscription?.data.subscription.unsubscribe(); document.removeEventListener("visibilitychange", visible); };
+    return () => { ++generation.current; inFlight.current = null; subscription?.data.subscription.unsubscribe(); document.removeEventListener("visibilitychange", visible); };
   }, [refresh]);
-  async function mutate(input: OpsInput, target: HTMLFormElement) {
+  async function mutate(operation: PendingOpsOperation, target?: HTMLFormElement) {
     if (inFlight.current) return;
-    inFlight.current = true; setBusy(true); setMessage(null);
-    try {
-      const response = await fetch("/api/ops/review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input) });
-      if (!response.ok) { setWorkspace(null); setMessage("unavailable"); return; }
-      target.reset(); setMessage("success"); await refresh();
-    } catch { setWorkspace(null); setMessage("unavailable"); }
-    finally { inFlight.current = false; setBusy(false); }
+    const current = generation.current;
+    const flight = Symbol("ops-operation");
+    inFlight.current = flight; setBusy(true); setMessage(null); setPending(operation);
+    const outcome = await dispatchOpsOperation(operation, {
+      isCurrent: () => current === generation.current,
+      async currentActor() {
+        const response = await fetch("/api/ops/review", { cache: "no-store", signal: AbortSignal.timeout(10000) });
+        if (response.status >= 500) throw new Error("OPS_UNAVAILABLE");
+        if (!response.ok) return null;
+        const result = await response.json();
+        return typeof result.data?.actorId === "string" ? result.data.actorId : null;
+      },
+      async send(input) {
+        return fetch("/api/ops/review", { method: "POST", headers: { "Content-Type": "application/json", "X-Ops-Expected-Actor": operation.actorId }, body: JSON.stringify(input), signal: AbortSignal.timeout(10000) });
+      },
+    });
+    if (inFlight.current === flight) { inFlight.current = null; setBusy(false); }
+    if (current !== generation.current) return;
+    if (outcome === "confirmed") { setPending(null); target?.reset(); setMessage("success"); await refresh(); }
+    else {
+      setWorkspace(null);
+      if (outcome !== "unknown") setPending(null);
+      setMessage(outcome === "unknown" ? "unknown" : "unavailable");
+    }
   }
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); const target = event.currentTarget; const values = new FormData(target);
-    void mutate({ action: "submit", operationId: crypto.randomUUID(), candidateId: crypto.randomUUID(), title: String(values.get("title")), content: String(values.get("content")) }, target);
+    if (!workspace) return;
+    void mutate({ actorId: workspace.actorId, input: { action: "submit", operationId: crypto.randomUUID(), candidateId: crypto.randomUUID(), title: String(values.get("title")), content: String(values.get("content")) } }, target);
   }
   function review(event: FormEvent<HTMLFormElement>, candidateId: string) {
     event.preventDefault(); const target = event.currentTarget; const values = new FormData(target);
     const button = (event.nativeEvent as SubmitEvent).submitter as HTMLButtonElement | null;
     if (!button || (button.value !== "reviewed" && button.value !== "rejected")) return;
-    void mutate({ action: "review", operationId: crypto.randomUUID(), candidateId, expectedVersion: 1, decision: button.value, note: String(values.get("note")) }, target);
+    if (!workspace) return;
+    void mutate({ actorId: workspace.actorId, input: { action: "review", operationId: crypto.randomUUID(), candidateId, expectedVersion: 1, decision: button.value, note: String(values.get("note")) } }, target);
   }
   return <main className={styles.workspace}>
     <header className={styles.header}><div><p className={styles.eyebrow}>VisePanda · Ops</p><h1>{c.heading}</h1></div>
       <label>{c.language}<select value={locale} onChange={(event) => setLocale(event.target.value as Locale)}>{localeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
     </header>
     <p className={styles.boundary}>{c.boundary}</p>
-    <nav className={styles.actions}><Link href="/auth/sign-in?returnTo=/ops/review">{c.login}</Link><button type="button" disabled={busy} onClick={() => { setMessage(null); void refresh(); }}>{c.refresh}</button></nav>
+    <nav className={styles.actions}><Link href="/auth/sign-in?returnTo=/ops/review">{c.login}</Link><button type="button" disabled={busy || pending !== null} onClick={() => { setMessage(null); void refresh(); }}>{c.refresh}</button></nav>
     <p role="status" aria-live="polite">{busy ? c.busy : message ? c[message] : ""}</p>
-    {workspace && <><form ref={form} className={styles.panel} onSubmit={submit}>
+    {pending && !busy && <button type="button" onClick={() => { void mutate(pending); }}>{c.retry}</button>}
+    {workspace && !pending && <><form ref={form} className={styles.panel} onSubmit={submit}>
       <label>{c.title}<input name="title" required maxLength={160} disabled={busy} /></label>
       <label>{c.content}<textarea name="content" required maxLength={4000} rows={5} disabled={busy} /></label>
       <button disabled={busy} type="submit">{c.submit}</button>

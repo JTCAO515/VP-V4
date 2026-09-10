@@ -38,7 +38,7 @@ test('real GoTrue Cookie → controlled Ops → separate reviewer → atomic aud
     const jwt=createClient(state.API_URL,key,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:'Bearer '+token}}});
     if(member)sql(`insert into knowledge_review_private.members(actor_id,active) values('${id}',true);`);
     const cookie=()=>[...jar].map(([name,value])=>name+'='+value).join('; ');
-    return {id,auth,jwt,token,cookie};
+    return {id,auth,jwt,token,cookie,email,password};
   }
   const author=await actor('author',true), reviewer=await actor('reviewer',true), reviewer2=await actor('reviewer2',true), outsider=await actor('outsider',false);
   const call=async(who,body,headers={})=>{
@@ -63,6 +63,7 @@ test('real GoTrue Cookie → controlled Ops → separate reviewer → atomic aud
   await t.test('strict input, cross-origin, idempotency and author separation',async()=>{
     assert.equal((await call(author,submitted,{Origin:'https://untrusted.example'})).status,403);
     assert.equal((await call(author,{...submitted,authorId:reviewer.id})).status,400);
+    assert.equal((await call(author,submitted,{'X-Ops-Expected-Actor':reviewer.id})).status,403,'credential mismatch assertion cannot become authority');
     assert.equal((await call(author,{...submitted,title:' '})).status,400);
     const both=await Promise.all([call(author,submitted),call(author,submitted)]);assert.deepEqual(both.map(x=>x.status),[200,200]);assert.deepEqual(both[0].body,both[1].body);
     assert.equal(both[0].body.data.authorId,author.id);assert.equal(both[0].body.data.audit.length,1);
@@ -101,6 +102,40 @@ test('real GoTrue Cookie → controlled Ops → separate reviewer → atomic aud
     const draft=make('Concurrent review');assert.equal((await call(author,draft)).status,200);
     const results=await Promise.all([call(reviewer,review(draft.candidateId)),call(reviewer2,review(draft.candidateId,'rejected'))]);assert.deepEqual(results.map(x=>x.status).sort(),[200,409]);
     assert.equal(sql(`select count(*) from knowledge_review_private.audit where candidate_id='${draft.candidateId}';`),'2');
+  });
+  if(process.env.VP_OPS_BROWSER_EXECUTABLE) await t.test('real browser lost acknowledgement retries original operation without second candidate',async()=>{
+    const {chromium}=await import('@playwright/test');
+    const browser=await chromium.launch({executablePath:process.env.VP_OPS_BROWSER_EXECUTABLE,headless:true});
+    try {
+      const page=await browser.newPage({viewport:{width:390,height:844}});
+      await page.goto(api+'/auth/sign-in?returnTo=/ops/review');
+      await page.getByRole('textbox',{name:'邮箱',exact:true}).fill(author.email);
+      await page.getByRole('textbox',{name:'密码',exact:true}).fill(author.password);
+      await page.getByRole('button',{name:'登录',exact:true}).click();
+      await page.waitForURL(api+'/ops/review');
+      await page.getByRole('textbox',{name:'标题',exact:true}).waitFor();
+      let dropped=false;const payloads=[];
+      await page.route('**/api/ops/review',async route=>{
+        if(route.request().method()!=='POST')return route.continue();
+        assert.equal(route.request().headers()['x-ops-expected-actor'],author.id);
+        payloads.push(route.request().postDataJSON());
+        if(!dropped){dropped=true;const committed=await route.fetch();assert.equal(committed.status(),200);return route.abort('failed');}
+        return route.continue();
+      });
+      await page.getByRole('textbox',{name:'标题',exact:true}).fill('Lost acknowledgement browser candidate');
+      await page.getByRole('textbox',{name:'候选正文',exact:true}).fill('Synthetic real-browser lost-response proof.');
+      await page.getByRole('button',{name:'提交候选',exact:true}).click();
+      const retry=page.getByRole('button',{name:'重试同一操作',exact:true});await retry.waitFor();
+      assert.equal(await page.getByRole('textbox',{name:'标题',exact:true}).count(),0,'no new submission while acknowledgement is unknown');
+      await page.screenshot({path:'/tmp/vpj14-unknown-ack-mobile.png',fullPage:true});
+      await retry.click();
+      await page.getByRole('textbox',{name:'标题',exact:true}).waitFor();
+      assert.equal(payloads.length,2);assert.deepEqual(payloads[0],payloads[1]);
+      assert.equal(sql(`select count(*) from knowledge_review_private.candidates where id='${payloads[0].candidateId}';`),'1');
+      assert.equal(sql(`select count(*) from knowledge_review_private.audit where candidate_id='${payloads[0].candidateId}';`),'1');
+      assert.equal(sql(`select count(*) from knowledge_review_private.receipts where operation_id='${payloads[0].operationId}';`),'1');
+      assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth),390);
+    }finally{await browser.close();}
   });
   await t.test('current member, session and global disable checked before successful receipt replay',async()=>{
     sql(`update knowledge_review_private.members set active=false,revision=revision+1 where actor_id='${reviewer.id}';`);

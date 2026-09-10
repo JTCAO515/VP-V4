@@ -9,3 +9,6 @@
 {"command": "git diff --check", "exitCode": 0}
 {"command": "pnpm check", "exitCode": 0, "outcome": "lint/typecheck/build/test passed; 22 static tests including copy/claim scan"}
 {"command": "pnpm test:contract", "exitCode": 0, "outcome": "passed", "testFiles": 61, "skipped": 0}
+{"command": "node --experimental-strip-types --test tests/contract/ops/request-deadline.test.mjs", "exitCode": 0, "passed": 7, "skipped": 0}
+{"command": "VP_OPS_BROWSER_EXECUTABLE=<installed-headless-shell> node tests/integration/ops/run-local.mjs", "exitCode": 0, "passed": 8, "skipped": 0, "scope": "final deadline/actor assertion build; real SQL commit then dropped browser response and same-operation retry; owned stack removed"}
+{"command": "pnpm check", "exitCode": 0, "scope": "after I/O correction", "passed": 22}
