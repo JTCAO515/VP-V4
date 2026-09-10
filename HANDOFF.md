@@ -8,7 +8,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 状态：PR301 is merged as28a2d44: local Web/iOS same-Trip consumers and the corrected full Simulator CI pipeline are delivered. PR302 retains the bounded iOS17 CJK diagnostic evidence without changing original failures. Remote/customer activation and complete product/Harness acceptance remain separate.
 
-阶段：Implement the clarified text/team policy through versioned authorization and lifecycle contracts; verify deployment bindings before a separately authorized Staging27/28 rollout.
+阶段：VPJ-07 content-free durable worker preparation under independent review; continue policy/identity/provider integration without enabling a route or remote migration.
 
 ## 读取顺序
 
@@ -56,6 +56,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - Identity/provider preparation: PR279 native JWT seam and PR275 provider protocol adapters passed their scoped tests. Local mobile authority is now verified in the scoped v2 consumer; deployed identity, actual provider/worker consumers and related runtime acceptance remain separate.
 - Harness evidence: #263 completed its offline scope under PR271; PR277 added offline pairing preparation. Actual provider pairing, human calibration and twelve required Staging cases remain under the open integration Issues.
 - Brand asset evidence: PR274 integrated the supplied logo/wordmark on web and native surfaces. Current rights remain in docs/licenses/asset-rights-ledger.json; this does not establish Store or full accessibility acceptance.
+- VPJ-07 repository preparation: durable PostgreSQL lease/terminal foundation and full application migration-chain tests; see artifacts/VPJ-07/verification.md. No provider/input/native-answer acceptance; #195 remains open.
 
 ## 下一动作与回滚
 

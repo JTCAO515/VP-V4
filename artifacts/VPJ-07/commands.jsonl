@@ -1,0 +1,18 @@
+{"command": "pnpm check", "result": "passed", "exitCode": 0}
+{"command": "pnpm test:unit", "result": "92 passed", "exitCode": 0}
+{"command": "pnpm test:contract", "result": "199 passed", "exitCode": 0}
+{"command": "pnpm test:integration", "result": "19 passed; 32 skipped: explicit integration environments not configured", "exitCode": 0}
+{"command": "pnpm test:security", "result": "98 passed; 1 skipped: explicit local Supabase not configured", "exitCode": 0}
+{"command": "pnpm test:e2e", "result": "40 passed", "exitCode": 0}
+{"command": "pnpm db:verify", "result": "configuration only; all3 connection probes not-configured; no remote connection", "exitCode": 0}
+{"command": "VP_TURN_DB_TEST=1 node --experimental-strip-types --test tests/integration/turn/durable-work.test.mjs", "result": "10 passed; final run after bounded cleanup and long fixture leases", "exitCode": 0}
+{"command": "pnpm docs:check", "result": "passed", "exitCode": 0}
+{"command": "pnpm lint", "result": "passed final source", "exitCode": 0}
+{"command": "pnpm typecheck", "result": "passed final source", "exitCode": 0}
+{"command": "pnpm test:e2e:frontend", "result": "build passed; Chromium installation stalled and was interrupted", "exitCode": 143}
+{"command": "pnpm exec playwright test --config playwright.config.mjs --workers=1", "result": "9 passed including desktop and390x844", "exitCode": 0}
+{"command": "DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj", "result": "passed", "exitCode": 0}
+{"command": "DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl list devices available", "result": "passed; actualiOS26.5 iPhone17Pro CC5A4866-E785-494D-9A7B-FAE14C48A96A", "exitCode": 0}
+{"command": "DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO", "result": "BUILD SUCCEEDED", "exitCode": 0}
+{"command": "DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=CC5A4866-E785-494D-9A7B-FAE14C48A96A' CODE_SIGNING_ALLOWED=NO", "result": "failed3 NativeTripStateTests under unsigned Keychain; interrupted remaining run; signed repository CI rerun pending", "exitCode": null}
+{"command": "git diff --check", "result": "passed", "exitCode": 0}
