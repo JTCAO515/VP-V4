@@ -1,12 +1,13 @@
 const UUID = "[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}";
 const PRIVATE_PATHS = [
+  /^\/ops\/review$/,
   /^\/visepanda\/(?:ask|profile|copilot)$/,
   new RegExp(`^/visepanda/(?:ask|trips)/${UUID}$`, "i"),
 ] as const;
 
 /** Only exact local private routes survive a post-auth return target. */
 export function safeReturnTo(candidate: string | undefined): string {
-  if (typeof candidate !== "string" || candidate !== candidate.trim() || !candidate.startsWith("/") || candidate.startsWith("//")) return "/visepanda";
+  if (typeof candidate !== "string" || candidate !== candidate.trim() || !candidate.startsWith("/") || candidate.startsWith("//") || candidate.includes("\\")) return "/visepanda";
   let parsed: URL;
   try { parsed = new URL(candidate, "https://visepanda.invalid"); } catch { return "/visepanda"; }
   if (parsed.origin !== "https://visepanda.invalid" || parsed.search || parsed.hash) return "/visepanda";
