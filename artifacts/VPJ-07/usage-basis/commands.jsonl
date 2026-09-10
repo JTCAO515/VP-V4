@@ -1,0 +1,13 @@
+{"command": "VP_TURN_DB_TEST=1 node --experimental-strip-types --test --test-name-pattern=\"unverified model usage\" tests/integration/turn/text-work.test.mjs", "result": "EXPECTED_FAIL", "evidence": "Before worker fix: 0pass/1fail. Real disposable SQL row settled20/reserved1000 for an unverified model. See red.log."}
+{"command": "VP_TURN_DB_TEST=1 node --experimental-strip-types --test tests/integration/turn/durable-work.test.mjs tests/integration/turn/text-work.test.mjs", "result": "PASS", "evidence": "After guard: 24pass/0fail/0skip, all migrations in owned network-none PostgreSQL; controlled HTTP wrong-model case and11-case pricing matrix. See green.log."}
+{"command": "pnpm check", "result": "PASS", "evidence": "Lint/typecheck/build and22 static/copy tests passed."}
+{"command": "pnpm test:unit", "result": "PASS", "evidence": "92passed, zero skips."}
+{"command": "pnpm test:contract", "result": "PASS", "evidence": "212passed, zero skips; existing provider refusal/model/usage protocol cases retained."}
+{"command": "pnpm test:security", "result": "INCOMPLETE", "evidence": "101pass/0fail/1 existing explicit disposable Auth/RLS target skip."}
+{"command": "pnpm test:integration", "result": "INCOMPLETE", "evidence": "23pass/0fail/56 environment opt-in skips; Turn SQL/HTTP24 independently executed with zero skips."}
+{"command": "pnpm test:e2e", "result": "PASS", "evidence": "40passed, zero skips."}
+{"command": "pnpm db:verify", "result": "INCOMPLETE", "evidence": "Baseline present; ordinary/ops/system-worker targets not configured; no production probe."}
+{"command": "pnpm docs:check", "result": "PASS", "evidence": "73 tasks, contracts, links and archive hashes passed."}
+{"command": "git diff --check", "result": "LIMITED_PASS", "evidence": "The pre-add worktree check passed but excluded the then-untracked red.log; it did not validate the eventual full commit. The subsequent exact-range failure is retained below."}
+{"command": "git diff --check cd2201194402b87e6322f4b703dd780707fcae2e..3ea8c24156d1dab4c2045dae6d32f75ef958dd13", "result": "FAIL", "evidence": "Exit2: red.log lines17 and25 had trailing spaces from the Node assertion diff. The original /tmp reproduction log is preserved, SHA256 1c2a9142fe94a1e8e8bcc923d49803a6211911ae4c15b24a0c52d89a37f9e0a0."}
+{"command": "git diff --check cd2201194402b87e6322f4b703dd780707fcae2e", "result": "PASS", "evidence": "Full base-relative working tree, including tracked red.log after two-line trailing-whitespace normalization. Runtime/tests unchanged."}

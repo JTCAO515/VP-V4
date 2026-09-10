@@ -6,3 +6,8 @@
 - No production data/recipient permissions, team CRUD, retention/delete semantics or paid provider calls are enabled by this preparation.
 
 - Full signed native suite:21 passed/8 explicit environment-dependent skips/0 failures; no new live native identity/Trip/Ask or minimum-iOS/physical-device acceptance is claimed.
+
+The usage-basis guard has real local SQL/controlled HTTP coverage but no new real-provider,
+invoice, qualified-recipient, remote-worker or native acceptance. Default environment-dependent
+security/integration skips remain explicit; see usage-basis/commands.jsonl. Existing settlements
+are not rewritten and conservative pending amounts require their own authoritative evidence.

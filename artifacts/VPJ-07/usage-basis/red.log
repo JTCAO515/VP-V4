@@ -1,0 +1,36 @@
+✖ unverified model usage retains the full budget hold instead of using the configured tariff (4223.505625ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4396.262625
+
+✖ failing tests:
+
+test at tests/integration/turn/text-work.test.mjs:13:22
+✖ unverified model usage retains the full budget hold instead of using the configured tariff (4223.505625ms)
+  AssertionError [ERR_ASSERTION]: unverified model cannot use the configured model tariff
+  + actual - expected
+
+    {
+  +   actual: 20,
+  -   actual: null,
+      reserved: 1000,
+  +   status: 'settled'
+  -   status: 'pending'
+    }
+
+      at TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-Usage-Basis/tests/integration/turn/text-work.test.mjs:199:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { status: 'settled', actual: 20, reserved: 1000 },
+    expected: { status: 'pending', actual: null, reserved: 1000 },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

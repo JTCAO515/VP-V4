@@ -45,7 +45,12 @@ export async function runTextWorker(
     };
     const result = await runWithDurableBudget(attempt, budgetRpc, async budgetSignal => {
       const value = await invokeTextProviderProtocol(lease, { provider: binding.provider, endpoint: binding.endpoint, maxOutputTokens: config.maxOutputTokens, timeoutMs: config.timeoutMs }, textRpc, guard, binding.transport, budgetSignal);
-      return { value, actualMicros: value.usage ? binding.price(value.usage) : null };
+      // Usage alone does not prove the model used for pricing. The normalizer can
+      // retain usage on MODEL_OUTPUT_INVALID, including a mismatched model. Only
+      // these outcomes establish model + usage; SAFETY_BLOCKED is emitted after
+      // both checks. Business failure/refusal can still incur verified model cost.
+      const priceable = value.kind === "protocol_validated" || (value.kind === "unavailable" && value.code === "SAFETY_BLOCKED");
+      return { value, actualMicros: priceable && value.usage ? binding.price(value.usage) : null };
     }, leaseSignal);
     if (leaseSignal.aborted) throw new Error("Interrupted");
     // A transport failure may have incurred charges. Let the durable queue retry

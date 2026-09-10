@@ -55,6 +55,20 @@ may conservatively leave a pending reservation despite no external call. No supp
 exactly-once supplier charging is promised. Technical queue/timeout/step bounds are not a newly
 chosen daily user spending limit. Existing ledger foreign keys still restrict account deletion.
 
+Worker pricing requires `protocol_validated` or the protocol's `SAFETY_BLOCKED` path, which
+is reached only after the exact configured model and normalized usage are checked. Diagnostic
+usage attached to `MODEL_OUTPUT_INVALID` is not pricing evidence: a mismatched/missing model,
+error envelope or other invalid protocol response retains its full pending reservation and
+concurrency slot. This is intentionally conservative even for invalid responses that may have
+used the expected model; their generic outcome does not provide a separately validated price basis.
+The trusted price function and approved price version remain required; this is a budget debit,
+not supplier-invoice verification. No existing settlement is rewritten by the worker change.
+
+Business outcomes are separate from provider costs. A validated protocol response can still
+incur cost when its business outcome is `blocked` or `technical_failure`, or its business JSON
+fails the final mapping. A verified provider safety refusal can also incur cost. None of these
+states grants a zero charge or changes customer Ask/ServiceTask/Credit consumption semantics.
+
 The versioned provider task requests a closed JSON `{outcome,text}`. Only `answered`, `partial`,
 `clarification`, `blocked`, `technical_failure` with nonblank text ≤8,000 UTF-16 units are accepted.
 Unknown fields/raw reasoning are rejected; no cards, Proposal, tools or Trip writes are emitted.

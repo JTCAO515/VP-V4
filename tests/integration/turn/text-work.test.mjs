@@ -184,3 +184,58 @@ run('cancel while provider is in flight rejects late answer; unknown extra field
   assert.equal(await db(`select count(*) from public.chat_turn_events where turn_id='${a.turn}' and event_type='terminal';`),'1');await clean();
  }
 });
+run('unverified model usage retains the full budget hold instead of using the configured tariff',async()=>{
+ const a=await fixture(),config=await funded(a);let priced=0,hits=0;
+ const server=createServer(async(req,res)=>{
+  for await(const _chunk of req){/* Read only this synthetic request. */}hits++;
+  res.writeHead(200,{'content-type':'application/json'});
+  res.end(JSON.stringify({model:'unverified-model',choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({outcome:'answered',text:'Synthetic response'})}}],usage:{prompt_tokens:10,completion_tokens:10,total_tokens:20}}));
+ });
+ server.listen(0,'127.0.0.1');await once(server,'listening');
+ try{
+  const binding={provider:'qwen',endpoint:'https://synthetic.invalid/inference',price:()=>{priced++;return 20;},transport:request=>fetch('http://127.0.0.1:'+server.address().port,{method:'POST',body:request.body,signal:request.signal})};
+  assert.equal(await runTextWorker(service,service,service,config,binding,new AbortController().signal),'finished');
+  const ledger=JSON.parse(await db(`select json_build_object('status',status,'actual',actual_micros,'reserved',reserved_micros) from public.model_budget_attempts where scope_id='${a.scope}';`));
+  assert.deepEqual(ledger,{status:'pending',actual:null,reserved:1000},'unverified model cannot use the configured model tariff');
+  assert.equal(priced,0);assert.equal(hits,1);
+  assert.equal((await service('reserve_model_budget',{p_scope_id:a.scope,p_owner_id:a.owner,p_task_id:uuid(),p_attempt_id:uuid(),p_provider:'qwen',p_model:PROTOCOL_MODELS.qwen,p_price_version:'synthetic-v1',p_reserved_micros:1})).kind,'exhausted','unknown charge retains its concurrency slot');
+  const read=await a.call('read_text_turn',{p_turn_id:a.turn});assert.equal(read.outcome,'technical_failure');assert.notEqual(read.output,'Synthetic response');
+  assert.equal(await db(`select status from public.turns where id='${a.turn}';`),'failed');
+  assert.equal(await db(`select count(*) from public.chat_turn_events where turn_id='${a.turn}' and event_type='terminal';`),'1');
+  assert.equal(await runTextWorker(service,service,service,config,binding,new AbortController().signal),'empty');assert.equal(hits,1);
+ }finally{server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
+});
+run('verified model charges survive business failures while unproved protocol failures remain pending',async()=>{
+ const good={model:PROTOCOL_MODELS.qwen,choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({outcome:'answered',text:'Synthetic controlled answer'})}}],usage:{prompt_tokens:10,completion_tokens:10,total_tokens:20}};
+ const choice=(finish_reason,content=good.choices[0].message.content)=>[{index:0,finish_reason,message:{role:'assistant',content}}];
+ const cases=[
+  {name:'normal answer',payload:good,priced:true,outcome:'answered'},
+  {name:'business blocked',payload:{...good,choices:choice('stop',JSON.stringify({outcome:'blocked',text:'Synthetic blocked'}))},priced:true,outcome:'blocked'},
+  {name:'business technical failure',payload:{...good,choices:choice('stop',JSON.stringify({outcome:'technical_failure',text:'Synthetic failure'}))},priced:true,outcome:'technical_failure'},
+  {name:'provider safety refusal',payload:{...good,choices:choice('content_filter',null)},priced:true,outcome:'blocked'},
+  {name:'invalid business JSON with verified protocol',payload:{...good,choices:choice('stop','not business JSON')},priced:true,outcome:'technical_failure'},
+  {name:'missing model',payload:{...good,model:undefined},priced:false,outcome:'technical_failure'},
+  {name:'mismatched safety model',payload:{...good,model:'different-model',choices:choice('content_filter',null)},priced:false,outcome:'technical_failure'},
+  {name:'error envelope with usage',payload:{...good,error:{code:'SYNTHETIC_ERROR'}},priced:false,outcome:'technical_failure'},
+  {name:'partial protocol output',payload:{...good,choices:choice('length')},priced:false,outcome:'technical_failure'},
+  {name:'invalid choices with usage',payload:{...good,choices:[]},priced:false,outcome:'technical_failure'},
+  {name:'invalid usage arithmetic',payload:{...good,usage:{prompt_tokens:10,completion_tokens:10,total_tokens:21}},priced:false,outcome:'technical_failure'},
+ ];
+ let payload=good,hits=0;
+ const server=createServer(async(req,res)=>{for await(const _chunk of req){/* Synthetic test input only. */}hits++;res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify(payload));});
+ server.listen(0,'127.0.0.1');await once(server,'listening');
+ try{
+  for(const sample of cases){
+   payload=sample.payload;const a=await fixture(),config=await funded(a);let priced=0;const prior=hits;
+   const binding={provider:'qwen',endpoint:'https://synthetic.invalid/inference',price:usage=>{priced++;assert.equal(usage.totalTokens,20);return 20;},transport:request=>fetch('http://127.0.0.1:'+server.address().port,{method:'POST',body:request.body,signal:request.signal})};
+   assert.equal(await runTextWorker(service,service,service,config,binding,new AbortController().signal),'finished',sample.name);
+   assert.equal(priced,sample.priced?1:0,sample.name);assert.equal(hits,prior+1,sample.name);
+   const ledger=JSON.parse(await db(`select json_build_object('status',status,'actual',actual_micros,'reserved',reserved_micros) from public.model_budget_attempts where scope_id='${a.scope}';`));
+   assert.deepEqual(ledger,{status:sample.priced?'settled':'pending',actual:sample.priced?20:null,reserved:1000},sample.name);
+   assert.equal(await db(`select count(*) from public.model_budget_attempts where scope_id='${a.scope}' and status in ('reserved','dispatched','pending');`),sample.priced?'0':'1',sample.name);
+   const read=await a.call('read_text_turn',{p_turn_id:a.turn});assert.equal(read.outcome,sample.outcome,sample.name);
+   assert.equal(await db(`select status from public.turns where id='${a.turn}';`),sample.outcome==='blocked'?'unavailable':sample.outcome==='technical_failure'?'failed':'completed',sample.name);
+   assert.equal(await db(`select count(*) from public.chat_turn_events where turn_id='${a.turn}' and event_type='terminal';`),'1',sample.name);
+  }
+ }finally{server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
+});
