@@ -1,0 +1,9 @@
+{"command": "node scripts/db/staging-33-metadata.mjs --read-staging-metadata", "exitCode": 2, "result": "BLOCKED: actual26 matches; expected15 vs observed18 public definer inventory; remote writes0"}
+{"command": "node scripts/db/staging-33-rehearsal.mjs --verify", "exitCode": 0, "result": "PASS: frozen33 migration hashes and administrative SQL hashes"}
+{"command": "node scripts/db/staging-33-rehearsal.mjs --execute", "exitCode": 0, "result": "PASS:41 checks, cleanup PASS; own synthetic network-none containers only", "runnerSha256": "1c49639418c1664569775f63f252c04fdcc6e3eb8d4d15de7597f1b59bf77d44", "manifestSha256": "306356890f50a356fff736949d5749e7deed0efa6b7261bd6fce1705025434c1"}
+{"command": "node --test scripts/db/staging-33-package.test.mjs", "exitCode": 0, "result": "PASS:3/3 no skips"}
+{"command": "node scripts/db/staging-33-package.mjs --out /tmp/vpj02-staging33-frozen-e2642ee2fafc", "exitCode": 0, "result": "PASS:33 exact files, unlinked, admin SQL separate", "receipt": "package-receipt.json"}
+{"command": "node --check scripts/db/staging-33-rehearsal.mjs; node --check scripts/db/staging-33-metadata.mjs; node --check scripts/db/staging-33-package.mjs", "exitCode": 0, "result": "PASS"}
+{"command": "pnpm docs:check", "exitCode": 0, "result": "PASS:73 tasks,20 replacements,acyclic dependencies"}
+{"command": "git diff --check", "exitCode": 0, "result": "PASS"}
+{"command": "Python comparison of result hashes and local Markdown links", "exitCode": 0, "result": "PASS"}

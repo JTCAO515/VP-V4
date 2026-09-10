@@ -1,0 +1,309 @@
+{
+  "observedAt": "2026-09-10T20:06:05.244Z",
+  "target": {
+    "name": "VP - V4",
+    "region": "ap-southeast-1",
+    "status": "ACTIVE_HEALTHY",
+    "projectRefRecorded": false
+  },
+  "operation": "official CLI Management API; BEGIN READ ONLY / ROLLBACK",
+  "inventory": {
+    "authAccountCount": 3,
+    "authenticatedPublicDefiners": [
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "append_chat_turn_event(uuid,text,text,text)",
+        "sourceMd5": "87b75d363d22ee004c3d8a34da97ca60"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "cancel_chat_turn(uuid)",
+        "sourceMd5": "1047fd7accd4b7d031caab4a67f49acb"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "trigger",
+        "serviceExecute": true,
+        "signature": "capture_initial_trip_version()",
+        "sourceMd5": "cd64e5a9c72ddc91461765abe18258f1"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "confirm_and_apply_trip_proposal(uuid,text,text)",
+        "sourceMd5": "2223a4a456f540165527a74c53227c20"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "create_explicit_memory_profile(uuid,uuid,uuid,text,text)",
+        "sourceMd5": "fb56ebf5702edce2354a5e3da994de11"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "create_memory_retrieval_consent()",
+        "sourceMd5": "096c3dff64c238aca0ab97fc59ab1e6b"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "create_trip_proposal_patch(uuid,jsonb)",
+        "sourceMd5": "a1573ec20d80b9a7f325789a726aa9e1"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "create_trip_rollback_proposal(uuid,integer)",
+        "sourceMd5": "a83551ae0bb597826ef9045d5b1438fc"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "grant_memory_retrieval_consent(uuid)",
+        "sourceMd5": "59286a2b6580cce68d774cad65e4ca01"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "record_turn_feedback(uuid,text,text)",
+        "sourceMd5": "12581f7a8040230dc69cae741e27717e"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "request_privacy_action(uuid,text)",
+        "sourceMd5": "e85e9b071c7cda38295e0323b03ead9d"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "revise_trip_proposal_patch(uuid,jsonb)",
+        "sourceMd5": "4393d84571ea21a626a04556d61d2141"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": false,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "revise_trip_proposal(uuid,text)",
+        "sourceMd5": "2fea11769e534fde8dd144da879c6e08"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "revoke_memory_retrieval_consent(uuid)",
+        "sourceMd5": "590a4ceb93e0cc7c05fa47d4688df80b"
+      },
+      {
+        "acl": "{=X/postgres,postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "event_trigger",
+        "serviceExecute": true,
+        "signature": "rls_auto_enable()",
+        "sourceMd5": "99be20677b456ea8d3be47bdd44fb369"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "save_user_profile(text,text,text,text,text,text,time without time zone)",
+        "sourceMd5": "deb86f1261ef54d7de33a7dcecfd85f4"
+      },
+      {
+        "acl": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": false,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "start_chat_turn(uuid,uuid,uuid,text)",
+        "sourceMd5": "48f5cc4d47632ba5c60c83d30788bf35"
+      },
+      {
+        "acl": "{postgres=X/postgres,anon=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+        "anonExecute": true,
+        "language": "plpgsql",
+        "returnType": "record",
+        "serviceExecute": true,
+        "signature": "transition_memory_profile(uuid,text)",
+        "sourceMd5": "a169637ebc8adf63a33134a42ebb6932"
+      }
+    ],
+    "authenticatedTripUpdate": false,
+    "budgetStopPresent": false,
+    "migrations": [
+      {
+        "name": "v4_baseline",
+        "version": "20260824101500"
+      },
+      {
+        "name": "plat_conf_connection_probes",
+        "version": "20260824104424"
+      },
+      {
+        "name": "plat_conf_ops_probe",
+        "version": "20260824104547"
+      },
+      {
+        "name": "plat_conf_worker_probe_grant",
+        "version": "20260824105759"
+      },
+      {
+        "name": "ai14_actor_rls_fault_probes",
+        "version": "20260825052328"
+      },
+      {
+        "name": "ai14_reviewer_separation_probe",
+        "version": "20260825153534"
+      },
+      {
+        "name": "ai14_reviewer_select_probe",
+        "version": "20260825153613"
+      },
+      {
+        "name": "ai10_durable_trip_proposals",
+        "version": "20260825160314"
+      },
+      {
+        "name": "ai10_confirm_outcomes",
+        "version": "20260825160458"
+      },
+      {
+        "name": "ai10_confirm_fault_triggers",
+        "version": "20260825161535"
+      },
+      {
+        "name": "ai13b_proposal_revision_lineage",
+        "version": "20260827030717"
+      },
+      {
+        "name": "v4_08_durable_chat_threads",
+        "version": "20260828153000"
+      },
+      {
+        "name": "v4_09_chat_feedback",
+        "version": "20260828160000"
+      },
+      {
+        "name": "v4_10_trip_version_snapshots",
+        "version": "20260828170000"
+      },
+      {
+        "name": "v4_11_trip_place_references",
+        "version": "20260828180000"
+      },
+      {
+        "name": "v4_12_trip_action_references",
+        "version": "20260828190000"
+      },
+      {
+        "name": "v4_13_memory_profile",
+        "version": "20260828193000"
+      },
+      {
+        "name": "v4_15_memory_consumer_receipts",
+        "version": "20260828194000"
+      },
+      {
+        "name": "v4_16_user_profiles",
+        "version": "20260828200000"
+      },
+      {
+        "name": "v4_17_privacy_lifecycle",
+        "version": "20260828210000"
+      },
+      {
+        "name": "v4_14_server_minted_memory_consent",
+        "version": "20260829191000"
+      },
+      {
+        "name": "launch_03_trip_content_snapshots",
+        "version": "20260830100000"
+      },
+      {
+        "name": "launch_11_trip_proposal_patch",
+        "version": "20260830210000"
+      },
+      {
+        "name": "launch_11_trip_proposal_patch_revision",
+        "version": "20260830211000"
+      },
+      {
+        "name": "vpj_02_repair_local_rpc_runtime",
+        "version": "20260909033302"
+      },
+      {
+        "name": "vpj_59_durable_model_budget",
+        "version": "20260909184816"
+      }
+    ],
+    "nativeSessionTablePresent": false,
+    "opsSnapshotPresent": false,
+    "textPolicyTablePresent": false,
+    "tripCount": 2
+  },
+  "migrationVersionNameMatch26": true,
+  "migration27FrozenDefinerBodiesMatch15": false,
+  "definerDifferences": [
+    {
+      "signature": "append_chat_turn_event(uuid,text,text,text)",
+      "expectedMd5": null,
+      "actualMd5": "87b75d363d22ee004c3d8a34da97ca60"
+    },
+    {
+      "signature": "capture_initial_trip_version()",
+      "expectedMd5": null,
+      "actualMd5": "cd64e5a9c72ddc91461765abe18258f1"
+    },
+    {
+      "signature": "rls_auto_enable()",
+      "expectedMd5": null,
+      "actualMd5": "99be20677b456ea8d3be47bdd44fb369"
+    }
+  ],
+  "remoteMutations": 0
+}
