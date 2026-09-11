@@ -240,3 +240,48 @@ Synthetic regression cases and criteria are fixed before the candidate run in
 to identify an earlier defect and is a regression, not blind quality calibration.
 Actual responses require semantic inspection; system-prompt separation tests alone
 cannot prove resistance to arbitrary model prompt injection or factual correctness.
+
+2026-09-12：PR328 的 native v2 ServiceTask 接纳/历史与共享成本已在真实 Staging 两语言四次 Qwen 调用验证，见[记录](../../artifacts/VPJ-07/service-task-staging-20260912/verification.md)。当前仍只外发本次输入；完整多轮上下文、SwiftUI v2 和持续 worker 运行另行完成。
+
+### Bounded same-task context (native v3, 2026-09-12)
+
+This #195 increment lets a short clarification use its original goal. Adjacent
+model-gateway prompt/protocol files change because they own the single C2 exit;
+job configuration and its tests change to bind the worker and audit prompt version.
+No separate conversation service, queue, recipient, billing policy or Trip access is introduced.
+
+- New immutable `text_policies.context_mode=task_history_v1` requires a new policy,
+  bilingual notice/hash and owner consent. Existing rows default to `current_input_v1`;
+  their notice and consent never acquire history permission. No policy is installed by migration.
+- `/api/chat/native/v3/policy`, `/consent` and `/turns` select only the separately
+  configured `VISEPANDA_NATIVE_{LOCAL,STAGING}_TASK_POLICY`. v1/v2 retain their
+  existing policy, response version and record-only behavior. v3 response version is 3;
+  the ServiceTask envelope, scopeVersion 1 and terminal outcome vocabulary stay unchanged.
+- At most four Turns belong to this bounded context mode. Input is the current
+  user text plus up to three ordered user/assistant pairs from the same goal chain.
+  Existing user/answer limits are 4000/8000 UTF-16 units. Admission beyond four fails
+  with `SERVICE_TASK_CONFLICT`; exact replay still works. It does not start another
+  task, reset cost or imply that a new user goal is required.
+- The database validates the entire chain's owner, thread, task, original policy,
+  original consent, visibility and ancestor terminal output. Missing/hidden ancestors
+  invalidate the whole context. `read_text_work` returns new `task_input` plus a
+  SHA-256 context digest. Fresh `authorize_text_task_dispatch` reconstructs that
+  payload and matches its digest before issuing the lease-bound dispatch receipt.
+  Withdrawal/deletion after that authorization retains the existing in-flight boundary;
+  it cannot recall data already sent, and late output remains subject to completion checks.
+- Global and old scoped claimers exclude context tasks. `claim_text_task_work`
+  selects only this mode, so a mixed-version worker cannot consume a context task
+  and terminalize it as a protocol error. No legacy unassociated admission or old
+  dispatch authorization can send a context-policy Turn.
+- `vpj07-staging-text-job/2` requires `inputMode=task_history_v1`; job/1 remains
+  current-input only. The existing worker journal records `vp-task-response-v1`
+  instead of the legacy prompt reference for job/2. The provider uses `text_task_v2`
+  with fixed user/assistant history roles and a server-owned system prompt. Complete
+  serialized RPC/provider payloads are bounded at 262144 bytes. C2 still requires
+  the trusted SQL authorization entry and the existing durable cost reservation.
+
+Rollback disables v3 and its context worker. Retain applied migration, new consent,
+task links, budget pins and cost receipts. Do not change an accepted policy's mode,
+return context work to a legacy claimer, replay it as a fresh task or erase retained
+records. This API slice requires target Staging and a SwiftUI consumer before it can
+establish native multi-turn acceptance. It does not resolve earlier semantic failures.

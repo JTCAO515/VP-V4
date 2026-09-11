@@ -1,0 +1,19 @@
+{
+  "at": "2026-09-11T20:30:10.089Z",
+  "status": "PASS",
+  "migrationCount": 37,
+  "originalTablesPreserved": 70,
+  "originalSchemaEntriesChecked": 225,
+  "expectedChangedFunctions": [
+    "public.start_chat_turn(",
+    "public.reserve_model_budget(",
+    "turn_private.lock_text_work("
+  ],
+  "backupRestore": "PASS",
+  "authCount": 6,
+  "tripCount": 3,
+  "tasks": 0,
+  "links": 0,
+  "oldDirectDenied": true,
+  "newOnlyService": true
+}

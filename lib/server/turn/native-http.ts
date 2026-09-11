@@ -9,19 +9,19 @@ import { FAILURE_TAXONOMY, type FailureCode } from "../contracts/errors/index.ts
 type Action = "policy" | "history" | "accept" | "withdraw" | "submit" | "submit-task" | "task-history" | "cancel";
 const response = (data: unknown, status = 200) => Response.json(data, { status, headers: { "Cache-Control": "private, no-store" } });
 const failure = (code: FailureCode) => response({ error: { code } }, FAILURE_TAXONOMY[code].httpStatus);
-export function getNativeTextConfig(request: Pick<Request, "url">) {
+export function getNativeTextConfig(request: Pick<Request, "url">, taskContext = false) {
   if (process.env.VISEPANDA_NATIVE_STAGING === "true") {
-    const config = getNativeRuntimeConfig(request, "trip"), policyId = process.env.VISEPANDA_NATIVE_STAGING_TEXT_POLICY;
+    const config = getNativeRuntimeConfig(request, "trip"), policyId = taskContext ? process.env.VISEPANDA_NATIVE_STAGING_TASK_POLICY : process.env.VISEPANDA_NATIVE_STAGING_TEXT_POLICY;
     return process.env.VISEPANDA_NATIVE_STAGING_TEXT === "true" && config?.environment === "staging" && uuid(policyId)
       ? { ...config, policyId: policyId.toLowerCase() } : null;
   }
-  const config = getSupabasePublicConfig(), policyId = process.env.VISEPANDA_NATIVE_LOCAL_TEXT_POLICY;
+  const config = getSupabasePublicConfig(), policyId = taskContext ? process.env.VISEPANDA_NATIVE_LOCAL_TASK_POLICY : process.env.VISEPANDA_NATIVE_LOCAL_TEXT_POLICY;
   if (process.env.VERCEL_ENV || process.env.VISEPANDA_NATIVE_LOCAL_TEXT !== "true" || !config || !uuid(policyId)) return null;
   return isLocalNativeTarget(config.url) ? { ...config, policyId: policyId.toLowerCase() } : null;
 }
 
-export async function nativeTextHTTP(request: NextRequest, action: Action, turnId?: string) {
-  const config = getNativeTextConfig(request);
+export async function nativeTextHTTP(request: NextRequest, action: Action, turnId?: string, taskContext = false) {
+  const config = getNativeTextConfig(request, taskContext);
   if (!config) return failure("PROVIDER_UNAVAILABLE");
   if (request.headers.has("cookie") || request.headers.has("origin") || [...request.nextUrl.searchParams].length
     || (turnId !== undefined && !uuid(turnId))) return failure("INVALID_INPUT");
@@ -35,7 +35,11 @@ export async function nativeTextHTTP(request: NextRequest, action: Action, turnI
     if (!record(session.data) || !uuid(session.data.subject) || !uuid(session.data.sessionId)) return failure("PROVIDER_UNAVAILABLE");
     if (session.data.subject !== actor.subject || session.data.sessionId !== actor.sessionId) return failure("UNAUTHENTICATED");
     let result;
-    if (action === "policy") result = await rpc("read_text_policy", { p_policy_id: config.policyId });
+    if (taskContext && action !== "withdraw" && action !== "cancel") {
+      const policy = await rpc("read_text_task_policy", { p_policy_id: config.policyId });
+      if (policy.error || !record(policy.data) || policy.data.kind !== "policy") return failure("DATA_POLICY_BLOCKED");
+    }
+    if (action === "policy") result = await rpc(taskContext ? "read_text_task_policy" : "read_text_policy", { p_policy_id: config.policyId });
     else if (action === "task-history") result = await rpc("list_service_task_turns", { p_policy_id: config.policyId, p_limit: 20 });
     else if (action === "history") result = await rpc("list_text_turns", { p_policy_id: config.policyId, p_limit: 20 });
     else {
@@ -70,7 +74,7 @@ export async function nativeTextHTTP(request: NextRequest, action: Action, turnI
     if (result.error) return failure(mapError(result.error.message));
     if (!record(result.data) || typeof result.data.kind !== "string") return failure("INTERNAL_ERROR");
     if (["blocked","unavailable"].includes(result.data.kind)) return failure("DATA_POLICY_BLOCKED");
-    return response({ version: action === "submit-task" || action === "task-history" ? 2 : 1, ...result.data }, (action === "submit" || action === "submit-task") && result.data.reused !== true ? 201 : 200);
+    return response({ version: taskContext ? 3 : action === "submit-task" || action === "task-history" ? 2 : 1, ...result.data }, (action === "submit" || action === "submit-task") && result.data.reused !== true ? 201 : 200);
   } catch { return failure("PROVIDER_UNAVAILABLE"); }
   finally { scope.dispose(); }
 }

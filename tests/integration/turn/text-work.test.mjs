@@ -22,10 +22,10 @@ const rpc=(role,actor)=>async(name,p={})=>{
 };
 const service=rpc('service_role');
 const notice='a'.repeat(64);
-async function fixture(policyLifetime='1 day'){
+async function fixture(policyLifetime='1 day',contextMode='current_input_v1'){
  const a={owner:uuid(),session:uuid(),thread:uuid(),policy:uuid(),turn:uuid(),idem:uuid(),scope:uuid()};
  await db(`insert into auth.users values('${a.owner}');insert into identity_private.mobile_accounts(owner_id) values('${a.owner}');insert into auth.sessions(id,user_id) values('${a.session}','${a.owner}');insert into public.chat_threads(id,owner_id) values('${a.thread}','${a.owner}');
- insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at) values('${a.policy}','qwen','synthetic-test-only','https://synthetic.invalid/inference','fixture-source','fixture-processing','fixture-storage','test-terms-v1','test-notice-v1','${notice}','合成测试告知','Synthetic test notice','retain_after_hide_v1',now()-interval '1 day',now()+interval '${policyLifetime}',now()+interval '1 day');`);
+ insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at${contextMode==='task_history_v1'?',context_mode':''}) values('${a.policy}','qwen','synthetic-test-only','https://synthetic.invalid/inference','fixture-source','fixture-processing','fixture-storage','test-terms-v1','test-notice-v1','${notice}','合成测试告知','Synthetic test notice','retain_after_hide_v1',now()-interval '1 day',now()+interval '${policyLifetime}',now()+interval '1 day'${contextMode==='task_history_v1'?",'task_history_v1'":''});`);
  a.call=rpc('authenticated',a);
  a.start=()=>a.call('start_text_turn',{p_thread_id:a.thread,p_turn_id:a.turn,p_idempotency_key:a.idem,p_policy_id:a.policy,p_locale:'en',p_text:'Synthetic trip question'});
  a.accept=()=>a.call('accept_text_policy',{p_policy_id:a.policy,p_notice_hash:notice});
@@ -48,7 +48,7 @@ before(async()=>{
  for(const f of migrations.slice(0,stagingIndex+1))await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
  assert.equal(await db('select count(*) from turn_private.text_policies;'),'0');
  const preserved=await fixture();await start(preserved);
- const snapshot=()=>db(`select row_to_json(x) from turn_private.text_content x where turn_id='${preserved.turn}';select row_to_json(x) from turn_private.work x where turn_id='${preserved.turn}';select row_to_json(x) from public.turns x where id='${preserved.turn}';select row_to_json(x) from turn_private.text_policies x where id='${preserved.policy}';`);
+ const snapshot=()=>db(`select row_to_json(x) from turn_private.text_content x where turn_id='${preserved.turn}';select row_to_json(x) from turn_private.work x where turn_id='${preserved.turn}';select row_to_json(x) from public.turns x where id='${preserved.turn}';select to_jsonb(x)-'context_mode' from turn_private.text_policies x where id='${preserved.policy}';`);
  const prior=await snapshot();
  for(const f of migrations.slice(stagingIndex+1,scopedIndex+1))await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
  assert.equal(await snapshot(),prior,'33 to 36 upgrade preserves existing policy, text, Turn and leased work');
@@ -63,6 +63,12 @@ before(async()=>{
    assert.equal(await snapshot(),beforeRollback,'transaction rollback preserves previously leased/retained data');
    assert.equal(await db("select to_regclass('turn_private.service_tasks') is null;"),'t');
    assert.equal(await db("select to_regprocedure('public.reserve_model_budget(uuid,uuid,uuid,uuid,text,text,text,bigint)') is not null;"),'t');
+  }
+  if(f.endsWith('_vpj_07_task_context.sql')){
+   const preservedBefore=await snapshot();await db('begin;'+migration+'rollback;');
+   assert.equal(await snapshot(),preservedBefore,'context migration rollback preserves old policy/input/work');
+   assert.equal(await db("select to_regprocedure('public.claim_text_task_work(uuid,uuid)') is null;"),'t');
+   assert.equal(await db("select count(*) from information_schema.columns where table_schema='turn_private' and table_name='text_policies' and column_name='context_mode';"),'0');
   }
   await db('begin;'+migration+'commit;');
  }
@@ -315,12 +321,14 @@ run('scoped claim rolls back on deletion lock contention and can be disabled wit
  assert.equal((await scopedClaim(a)).kind,'leased');await clean();
 });
 
-async function taskFixture(){
- const a=await fixture();a.task=uuid();await a.accept();
+async function taskFixture(contextMode='current_input_v1'){
+ const a=await fixture('1 day',contextMode);a.task=uuid();await a.accept();
  a.taskInput={p_thread_id:a.thread,p_turn_id:a.turn,p_idempotency_key:a.idem,p_policy_id:a.policy,p_locale:'en',p_text:'Synthetic scoped goal',p_task_id:a.task,p_scope_version:1,p_relationship:'new_goal',p_parent_turn_id:null};
  a.submit=(patch={})=>a.call('submit_service_task_turn',{...a.taskInput,...patch});
  a.next=(parent,relationship='clarification')=>({p_turn_id:uuid(),p_idempotency_key:uuid(),p_parent_turn_id:parent,p_relationship:relationship,p_text:'Synthetic continuation'});
- a.finish=async(kind)=>{const l=await service('claim_text_work',{p_owner_id:a.owner,p_policy_id:a.policy});assert.equal(l.kind,'leased');await authorize(a,l);assert.equal((await complete(l,kind)).kind,'finished');};
+ a.finish=async(kind)=>{const l=await service(contextMode==='task_history_v1'?'claim_text_task_work':'claim_text_work',{p_owner_id:a.owner,p_policy_id:a.policy});assert.equal(l.kind,'leased');
+  if(contextMode==='task_history_v1'){const raw=await service('read_text_work',keys(l));assert.equal((await service('authorize_text_task_dispatch',{...keys(l),p_policy_id:a.policy,p_provider:'qwen',p_context_digest:raw.contextDigest})).kind,'authorized');}else await authorize(a,l);
+  assert.equal((await complete(l,kind)).kind,'finished');};
  return a;
 }
 run('ServiceTask records exact request replay and a latest-parent clarification/repair chain',async()=>{
@@ -393,4 +401,44 @@ run('ServiceTask and legacy Turn IDs cannot collide in either direction or concu
  const results=await Promise.allSettled([b.submit({p_task_id:collision}),other.call('start_chat_turn',{p_thread_id:other.thread,p_turn_id:collision,p_idempotency_key:uuid(),p_digest:'chat-state-control-v1'})]);
  assert.equal(results.filter(r=>r.status==='fulfilled').length,1);assert.match(results.find(r=>r.status==='rejected').reason.message,/SERVICE_TASK_CONFLICT/);
  await clean();
+});
+
+run('task history requires a new immutable policy and consent; legacy claimers leave it recoverable',async()=>{
+ const a=await taskFixture('task_history_v1');await a.submit();
+ await assert.rejects(db(`update turn_private.text_policies set context_mode='current_input_v1' where id='${a.policy}';`),/IMMUTABLE_POLICY/);
+ const before=await db(`select row_to_json(w) from turn_private.work w where turn_id='${a.turn}';`);
+ assert.equal((await scopedClaim(a)).kind,'empty');assert.equal((await service('claim_turn_work')).kind,'empty');
+ assert.equal(await db(`select row_to_json(w) from turn_private.work w where turn_id='${a.turn}';`),before);
+ const l=await service('claim_text_task_work',{p_owner_id:a.owner,p_policy_id:a.policy});assert.equal(l.attempt,1);
+ const raw=await service('read_text_work',keys(l));assert.equal(raw.kind,'task_input');assert.deepEqual(raw.history,[]);
+ assert.equal((await authorize(a,l)).kind,'blocked');
+ for(const role of ['anon','authenticated'])for(const name of ['claim_text_task_work','authorize_text_task_dispatch'])
+  assert.notEqual((await sql(container,`set role ${role};select public.${name}(${name==='claim_text_task_work'?`'${a.owner}','${a.policy}'`:`'${a.turn}','${l.leaseToken}','${a.policy}','qwen','${raw.contextDigest}'`});`)).code,0);
+ const legacy=await fixture();await legacy.accept();assert.equal((await legacy.call('read_text_task_policy',{p_policy_id:legacy.policy})).kind,'unavailable');
+ await assert.rejects(a.call('submit_text_turn',{p_thread_id:uuid(),p_turn_id:uuid(),p_idempotency_key:uuid(),p_policy_id:a.policy,p_locale:'en',p_text:'unassociated'}),/DATA_POLICY_BLOCKED/);
+ await clean();
+});
+run('task history is ordered and capped at four turns with exact replay at the bound',async()=>{
+ const a=await taskFixture('task_history_v1');await a.submit();let parent=a.turn;const inputs=[a.taskInput];
+ for(let index=0;index<3;index++){await a.finish('clarification');const next=a.next(parent);next.p_text='Synthetic followup '+index;inputs.push(next);await a.submit(next);parent=next.p_turn_id;}
+ const l=await service('claim_text_task_work',{p_owner_id:a.owner,p_policy_id:a.policy});const raw=await service('read_text_work',keys(l));
+ assert.equal(raw.history.length,6);assert.deepEqual(raw.history.map(x=>x.role),['user','assistant','user','assistant','user','assistant']);
+ assert.deepEqual(raw.history.filter(x=>x.role==='user').map(x=>x.content),inputs.slice(0,3).map(x=>x.p_text));
+ const auth={...keys(l),p_policy_id:a.policy,p_provider:'qwen',p_context_digest:raw.contextDigest};
+ assert.equal((await service('authorize_text_task_dispatch',{...auth,p_context_digest:'0'.repeat(64)})).kind,'blocked');
+ assert.equal((await service('authorize_text_task_dispatch',auth)).kind,'authorized');assert.equal((await complete(l,'clarification')).kind,'finished');
+ const snapshot=()=>db(`select count(*) from turn_private.service_task_turns where task_id='${a.task}';select last_turn_id from turn_private.service_tasks where id='${a.task}';`),before=await snapshot();
+ await assert.rejects(a.submit(a.next(parent)),/SERVICE_TASK_CONFLICT/);assert.equal(await snapshot(),before);
+ assert.equal((await a.submit(inputs[3])).reused,true);assert.equal((await a.submit()).reused,true);
+});
+run('task dispatch rejects a deleted intermediate ancestor or withdrawn consent after reading',async()=>{
+ for(const mode of ['delete','withdraw','mutated']){
+  const a=await taskFixture('task_history_v1');await a.submit();await a.finish('clarification');const second=a.next(a.turn);await a.submit(second);await a.finish('clarification');const third=a.next(second.p_turn_id);await a.submit(third);
+  const l=await service('claim_text_task_work',{p_owner_id:a.owner,p_policy_id:a.policy}),raw=await service('read_text_work',keys(l));assert.equal(raw.history.length,4);
+  if(mode==='delete')await db(`delete from public.turns where id='${second.p_turn_id}';`);
+  if(mode==='withdraw')await a.call('withdraw_text_policy',{p_policy_id:a.policy});
+  if(mode==='mutated')await db(`update turn_private.text_content set output_text='Synthetic changed ancestor' where turn_id='${second.p_turn_id}';`);
+  assert.equal((await service('authorize_text_task_dispatch',{...keys(l),p_policy_id:a.policy,p_provider:'qwen',p_context_digest:raw.contextDigest})).kind,'blocked');
+  assert.equal(await db(`select count(*) from turn_private.text_dispatches where lease_token='${l.leaseToken}';`),'0');await clean();
+ }
 });

@@ -95,7 +95,7 @@ fixture 先验证语义与状态机；真实数据库并发/恢复、允许的 p
 - [Stripe 幂等请求](https://docs.stripe.com/api/idempotent_requests)：仅作 key、请求参数一致性与重放设计参考；不引入 Stripe，不假设模型供应商支持同样机制。
 - [Apple Transaction ID](https://developer.apple.com/documentation/storekit/transaction/id)、[currentEntitlements](https://developer.apple.com/documentation/storekit/transaction/currententitlements)：购买交易身份和权益读取不等于 VP 的服务消费记录，不可用任务重试或恢复购买重复发权益。
 
-## 2026-09-12 记录模式实施切片（开发中）
+## 2026-09-12 记录模式实施切片（Staging 已验证）
 
 本切片服务 #195/#194：同一明确声明的独立文本目标，其必要澄清和技术修复共享 ServiceTask 与内部成本上限。新任务、Turn、供应商 attempt 使用不同 ID；不启用用户扣次、商品额度、Trip 写入或历史内容外发。
 
@@ -113,3 +113,5 @@ fixture 先验证语义与状态机；真实数据库并发/恢复、允许的 p
 Task/Turn UUID 共用接纳身份锁并双向拒绝碰撞。旧 v1 可重放已接纳文本，但不能向已绑定任务的 thread 加入无关联 Turn。元数据指向已有保留正文，不添加阻止账号/Turn 物理删除的外键；根记录隐藏或删除后，历史、续作与新派发均不可恢复。
 
 回退：撤回本切片 API 的部署即可停止 v2 接纳，保留追加迁移、任务关联和预算固定，继续对既有 worker 强制共享预算；已关联任务不自动降级到 v1。不得通过清除关联或解除 scope 来恢复额度。迁移事务回滚在独立数据库演练；不对已有环境执行破坏性 down migration。本切片未实现 SwiftUI 消费、多轮模型上下文或生产发布。
+
+真实 Staging 的两语言、四次模型调用共享任务预算与迁移/权限证据见[验证记录](../../artifacts/VPJ-07/service-task-staging-20260912/verification.md)。这不替代多轮上下文、原生 v2 消费或完整语义判断验收。

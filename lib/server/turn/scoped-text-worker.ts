@@ -4,7 +4,7 @@ import { runTextWorker, type TextProviderBinding, type TextWorkerConfig } from "
 import { PROTOCOL_MODELS } from "../model-gateway/adapters/provider-protocol.ts";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const RPCS = new Set(["claim_text_work", "finish_turn_work", "read_text_work", "authorize_text_dispatch", "complete_text_work",
+const RPCS = new Set(["claim_text_task_work", "authorize_text_task_dispatch", "claim_text_work", "finish_turn_work", "read_text_work", "authorize_text_dispatch", "complete_text_work",
   "reserve_model_budget", "dispatch_model_budget", "finish_model_budget"]);
 export type ScopedTextWorkerConfig = Readonly<{
   environment: "local" | "staging";
@@ -29,6 +29,7 @@ export type ScopedTextWorkerDependencies = Readonly<{
 export function createScopedTextWorker(config: ScopedTextWorkerConfig, dependencies: ScopedTextWorkerDependencies) {
   if (typeof window !== "undefined" || !valid(config) || typeof dependencies?.credential !== "function"
     || !dependencies.provider || !Object.hasOwn(PROTOCOL_MODELS, dependencies.provider.provider)
+    || (dependencies.provider.inputMode !== undefined && !["current_input_v1", "task_history_v1"].includes(dependencies.provider.inputMode))
     || typeof dependencies.provider.endpoint !== "string" || !/^https:\/\/[^/?#@]+\/[^?#]*$/.test(dependencies.provider.endpoint)
     || typeof dependencies.provider.price !== "function" || typeof dependencies.provider.transport !== "function"
     || (dependencies.fetch !== undefined && typeof dependencies.fetch !== "function")) throw unavailable();
@@ -64,7 +65,7 @@ export function createScopedTextWorker(config: ScopedTextWorkerConfig, dependenc
             const part = await scope.run(() => reader.read());
             if (part.done) break;
             size += part.value.byteLength;
-            if (size > 131072) throw unavailable();
+            if (size > 262144) throw unavailable();
             chunks.push(part.value);
           }
           scope.check();
@@ -78,13 +79,13 @@ export function createScopedTextWorker(config: ScopedTextWorkerConfig, dependenc
     };
     return runTextWorker(async (name, params) => {
       if (name !== "claim_turn_work") return rpc(name, params);
-      const value = await rpc("claim_text_work", { p_owner_id: binding.ownerId, p_policy_id: binding.policyId });
+      const value = await rpc(provider.inputMode === "task_history_v1" ? "claim_text_task_work" : "claim_text_work", { p_owner_id: binding.ownerId, p_policy_id: binding.policyId });
       if (record(value) && value.kind === "leased" && value.ownerId !== binding.ownerId) throw unavailable();
       return value;
     }, async (name, params) => {
-      if (name === "authorize_text_dispatch" && params.p_policy_id !== binding.policyId) throw unavailable();
+      if (["authorize_text_dispatch", "authorize_text_task_dispatch"].includes(name) && params.p_policy_id !== binding.policyId) throw unavailable();
       const value = await rpc(name, params);
-      if (name === "read_text_work" && record(value) && value.kind === "input" && value.policyId !== binding.policyId) throw unavailable();
+      if (name === "read_text_work" && record(value) && ["input", "task_input"].includes(String(value.kind)) && value.policyId !== binding.policyId) throw unavailable();
       return value;
     }, async (name, params) => {
       if (params.p_owner_id !== binding.ownerId || params.p_scope_id !== binding.budget.scopeId) throw unavailable();

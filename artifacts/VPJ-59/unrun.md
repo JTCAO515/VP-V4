@@ -1,3 +1,11 @@
+# VPJ-59 current acceptance — 2026-09-12
+
+The first-model durable-cost and record-only scope now has complete evidence: [live ServiceTask/worker/cost result](../VPJ-07/service-task-staging-20260912/verification.md). Independent acceptance review confirmed coverage of all four #194 technical criteria. Real Staging Qwen calls and controlled PostgreSQL/concurrency/SIGKILL/transport-fault tests remain distinct evidence; no additional real supplier outage was induced.
+
+Four new actual attempts settled across two tasks with pinned scopes and zero unresolved amounts. CNY0.018462 is a conservative tariff debit, not a supplier invoice or user charge. Production scheduling, IAP, general real-user availability and #195 multi-turn context/native/semantic-quality acceptance remain incomplete. #189/#193 are not closed by this result.
+
+The following entries describe earlier preparation slices. Their unrun/open statements are retained as history and do not supersede the current evidence above; unknown charges still require reconciliation and must not be silently refunded.
+
 # VPJ-59 remaining acceptance
 
 - New budget migration was authorized and applied to the same Staging:25→26, refreshed

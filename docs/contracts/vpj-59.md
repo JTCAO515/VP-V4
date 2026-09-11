@@ -1,6 +1,6 @@
 # RuntimeBudget: durable reservation contract
 
-Status: local PostgreSQL and Supabase25->26/HTTP implementation verified, no remote activation. Related to #194.
+Status: first real Staging model cost and record-only ServiceTask integration verified on 2026-09-12. See [current evidence](../../artifacts/VPJ-07/service-task-staging-20260912/verification.md). Related to #194; this is not IAP, a supplier invoice or general Production acceptance.
 Amounts are integer micro-units of the scope currency, never floating point. A trusted
 server supplies the approved scope, owner, task/attempt UUIDs and a conservative maximum
 cost from an independently verified model/price version. No client chooses budget limits.
@@ -23,16 +23,12 @@ not overwrite prior evidence. An observed cost above the reservation must remain
 and freeze new scope admission, rather than truncating cost to the cap. This does not
 prove a provider obeys token limits; caller pricing/usage validation remains mandatory.
 
-Tables/RPCs are maintenance/server-only, SECURITY INVOKER with explicit grants and RLS.
+Tables/RPCs are maintenance/server-only with explicit grants and RLS. The public reserve wrapper is SECURITY DEFINER so it can resolve private ServiceTask associations; the private underlying arithmetic and dispatch/finish remain SECURITY INVOKER.
 Ordinary users have no budget read/write or RPC permission. Service workers are trusted;
-this does not create a new worker login or turn a service key into a user identity. No
-client route or provider default transport is enabled. Local synthetic owner IDs are not
-real C2 authorization. Auth/session, policy and price verification are separate admission
-requirements for the future runtime consumer.
+this does not create a new worker login or turn a service key into a user identity. Ordinary native v2 admission and the scoped Staging worker now consume this budget under verified owner/session/policy/price guards. Synthetic owner IDs alone are never C2 authorization; the live test used ordinary policy consent and the existing bound provider.
 
 Rollback disables dispatch and drains/reconciles outstanding reservations. Applied SQL
-is append-only; do not delete ledger evidence or rewrite prior migrations. Exact remote
-retention/deletion rules and actual Staging worker credentials remain future gates.
+is append-only; do not delete ledger evidence or rewrite prior migrations. Retained data follows the current text policy; remote deletion or user charging remains a separate scoped action.
 
 ## Scoped C0 budget debit interpretation
 
@@ -68,3 +64,10 @@ mechanism implements neither. Daily testing decisions do not remove technical fa
 Code rollback removes the consumer while preserving the append-only function and ledger.
 Stopped scopes remain disabled; rollback must not automatically re-enable them. Remote migration,
 operator identity and deployed scheduling remain separately gated.
+
+
+## Record-only ServiceTask budget binding
+
+Migration37 resolves an associated old-worker Turn ID or a ServiceTask ID to the same task before applying the existing cost arithmetic. It pins the first successfully reserved budget scope atomically; denial does not pin, release does not clear, and a different scope rejects. Unassociated legacy Turns retain their original budgets. Identity locks prevent Task/Turn UUID collisions, and bound threads reject legacy unassociated appends. The underlying unbound function is private and has no direct worker/client execute grant.
+
+The 2026-09-12 two-language real provider run observed four settled attempts under two tasks, with no unknown hold and no duplicate dispatch from exact replay. Multi-worker crash/timeout/stop adversarial evidence remains the actual controlled PostgreSQL/transport suite, not a claim of a real supplier outage. Record-only supports no user consumption or invoice truth; #227 owns later commercial policy.
