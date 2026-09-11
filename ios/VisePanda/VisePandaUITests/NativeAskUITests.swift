@@ -4,7 +4,10 @@ nonisolated final class NativeAskUITests: XCTestCase {
     @MainActor func testEnglishConsentSendAndRelaunch() throws { try exercise(locale: "en", userKey: "VP_NATIVE_TEXT_UI_EN_EMAIL") }
     @MainActor func testChineseConsentSendAndRelaunch() throws { try exercise(locale: "zh-Hans", userKey: "VP_NATIVE_TEXT_UI_ZH_EMAIL") }
 
-    @MainActor private func exercise(locale: String, userKey: String) throws {
+    @MainActor func testEnglishTaskClarificationAndRelaunch() throws { try exercise(locale: "en", userKey: "VP_NATIVE_TEXT_UI_EN_EMAIL", taskContext: true) }
+    @MainActor func testChineseTaskClarificationAndRelaunch() throws { try exercise(locale: "zh-Hans", userKey: "VP_NATIVE_TEXT_UI_ZH_EMAIL", taskContext: true) }
+
+    @MainActor private func exercise(locale: String, userKey: String, taskContext: Bool = false) throws {
         let environment = ProcessInfo.processInfo.environment
         guard environment["VP_NATIVE_TEXT_TEST"] == "1" else { throw XCTSkip("UNRUN: explicit local native text UI environment is not configured") }
         continueAfterFailure = false
@@ -13,6 +16,7 @@ nonisolated final class NativeAskUITests: XCTestCase {
         let chinese = locale == "zh-Hans"
         let app = XCUIApplication()
         app.launchArguments = ["-VisePandaNativeAPI", api, "-VisePandaLocale", locale, "-AppleLanguages", "(\(locale))", "-AppleLocale", chinese ? "zh_CN" : "en_US"]
+        if taskContext { app.launchArguments += ["-VisePandaTaskContext"] }
         app.launch()
         app.tabBars.buttons[chinese ? "我的" : "Profile"].tap()
         let signOut = app.buttons[chinese ? "退出登录" : "Sign out"]
@@ -33,7 +37,7 @@ nonisolated final class NativeAskUITests: XCTestCase {
         let accept = app.buttons["native-ask.accept"]; reveal(accept, app); accept.tap()
         let input = app.descendants(matching: .any).matching(identifier: "native-ask.input").firstMatch
         XCTAssertTrue(input.waitForExistence(timeout: 20)); reveal(input, app); input.tap()
-        input.typeText(chinese ? "中文合成请求" : "Synthetic UI request")
+        input.typeText((chinese ? "中文合成请求" : "Synthetic UI request") + (taskContext ? " kind=clarification" : ""))
         let send = app.buttons["native-ask.send"]; send.tap()
         let answer = app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH %@", "native-ask.answer.")).firstMatch
         XCTAssertTrue(answer.waitForExistence(timeout: 30)); reveal(answer, app)
@@ -45,6 +49,21 @@ nonisolated final class NativeAskUITests: XCTestCase {
         XCTAssertTrue(restored.waitForExistence(timeout: 30)); reveal(restored, app)
         XCTAssertEqual(restored.label, chinese ? "本机合成回答：请求已完成。" : "Local synthetic answer: request completed.")
         capture("Native-Ask-reloaded-\(locale)", app)
+        if taskContext {
+            XCTAssertEqual(app.staticTexts["native-ask.intent"].label, chinese ? "补充当前问题" : "Continue this question")
+            let followup = app.descendants(matching: .any).matching(identifier: "native-ask.input").firstMatch
+            reveal(followup, app); followup.tap()
+            followup.typeText(chinese ? "中文合成补充" : "Synthetic clarification reply")
+            app.buttons["native-ask.send"].tap()
+            let answers = app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH %@", "native-ask.answer."))
+            expectation(for: NSPredicate(format: "count == 2"), evaluatedWith: answers)
+            waitForExpectations(timeout: 30)
+            let newQuestion = app.buttons["native-ask.new-question"]
+            XCTAssertTrue(newQuestion.isEnabled)
+            newQuestion.tap()
+            XCTAssertEqual(app.staticTexts["native-ask.intent"].label, chinese ? "新问题" : "New question")
+            capture("Native-Ask-task-context-\(locale)", app)
+        }
     }
     @MainActor private func reveal(_ element: XCUIElement, _ app: XCUIApplication) {
         for _ in 0..<12 where !element.isHittable { app.swipeUp() }

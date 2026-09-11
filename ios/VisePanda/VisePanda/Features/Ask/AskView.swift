@@ -12,7 +12,7 @@ struct AskView: View {
     ]
 
     var body: some View {
-        if settings.nativeSession.enabled { NativeAskView() } else { previewBody }
+        if settings.nativeSession.enabled { NativeAskView(store: NativeAskStore(mode: settings.nativeSession.askMode)) } else { previewBody }
     }
 
     private var previewBody: some View {

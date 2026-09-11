@@ -21,6 +21,11 @@ struct NativeAskView: View {
                 } else {
                     if let policy = store.policy { consent(policy) }
                     else { Text("ask.local.unavailable").accessibilityIdentifier("native-ask.unavailable") }
+                    if store.hasObsoletePending {
+                        Text("ask.task.uncertain").font(.footnote)
+                        Button("ask.task.stop_previous") { Task { await store.stopPreviousRequest(using: session) } }
+                            .disabled(store.busy).accessibilityIdentifier("native-ask.stop-previous")
+                    }
                     if store.notice != nil { Text("ask.local.retry_hint").font(.footnote).accessibilityIdentifier("native-ask.error") }
                     Text("ask.local.history").font(.title2.bold())
                     ForEach(store.turns) { turn in result(turn) }
@@ -71,8 +76,7 @@ struct NativeAskView: View {
                 Task { await store.reload(using: session) }
             }
         }
-        .onChange(of: store.policy?.id) { _, _ in reviewed = false }
-        .onChange(of: store.policy?.consentState) { _, state in showNotice = state != .accepted }
+        .onChange(of: store.noticeIdentity) { _, _ in reviewed = false; showNotice = true }
     }
 
     private func consent(_ policy: NativeTextPolicy) -> some View {
@@ -124,6 +128,16 @@ struct NativeAskView: View {
 
     private var composer: some View {
         VStack(spacing: 8) {
+            if store.mode == .taskContext {
+                HStack {
+                    Text(LocalizedStringKey(store.intentLabel)).font(.caption)
+                        .accessibilityIdentifier("native-ask.intent")
+                    Spacer()
+                    Button("ask.task.new") { store.startNewQuestion() }
+                        .disabled(!store.canStartNew)
+                        .accessibilityIdentifier("native-ask.new-question")
+                }
+            }
             TextField("ask.placeholder", text: $store.draft, axis: .vertical)
                 .lineLimit(1...5).focused($composing)
                 .disabled(store.busy || store.pending != nil)
