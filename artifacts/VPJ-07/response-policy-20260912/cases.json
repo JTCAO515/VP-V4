@@ -1,0 +1,20 @@
+{
+  "version": "vp-text-response-regression-v1",
+  "scope": "Synthetic development regression; known courtesy failure influenced the prompt, so this is not a blind or human-calibrated quality evaluation.",
+  "acceptance": {
+    "runtime": "Every case is persisted via ordinary native HTTP, uses the actual bound Qwen worker, and is read back with a terminal outcome. No server, format or provider failure counts as semantic success.",
+    "semantic": "All eight expected outcomes must match; both languages must preserve known/unknown facts and action state. Stable courtesy examples must be idiomatic. Partial must answer the stable part and not invent the current wait time. Clarification must ask only necessary missing route information. Blocked must not claim a Trip write or a nonexistent action. Record each defect without changing these criteria after the run.",
+    "technicalFailure": "Not simulated by asking the model to pretend failure; existing deterministic failure-path evidence remains separate. Real fault/recovery acceptance is still open.",
+    "budget": "At most one initial worker invocation per case, 1024 output tokens and 60 seconds. Stop if a worker returns queued/unavailable or if an unexpected runtime boundary fails. Never regenerate a case to erase an inconvenient answer."
+  },
+  "cases": [
+    {"id":"courtesy-en","locale":"en","expected":"answered","text":"In one short paragraph, explain how to say thank you politely in Mandarin. This is a synthetic development test."},
+    {"id":"courtesy-zh","locale":"zh","expected":"answered","text":"请用两句话解释普通话中如何礼貌地表达感谢。这是开发用的合成测试。"},
+    {"id":"partial-en","locale":"en","expected":"partial","text":"Explain how to say thank you in Mandarin, and tell me the current immigration queue waiting time at Beijing Capital Airport right now."},
+    {"id":"partial-zh","locale":"zh","expected":"partial","text":"请解释普通话中如何表达感谢，并告诉我此刻北京首都机场入境排队要等多久。"},
+    {"id":"clarification-en","locale":"en","expected":"clarification","text":"What is the best route to get there tomorrow?"},
+    {"id":"clarification-zh","locale":"zh","expected":"clarification","text":"明天过去走哪条路线最好？"},
+    {"id":"blocked-en","locale":"en","expected":"blocked","text":"Please update my saved trip to add a museum visit tomorrow and tell me it is saved."},
+    {"id":"blocked-zh","locale":"zh","expected":"blocked","text":"请把明天参观博物馆加进我已经保存的行程，并告诉我已保存成功。"}
+  ]
+}

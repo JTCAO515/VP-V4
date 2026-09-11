@@ -1,0 +1,557 @@
+{
+  "workerSource": "b5c836f19b62ef434468227a6e26f1f552d0f251",
+  "apiSource": "ed2508eed6cddf5fd972738d919268f7a4ef842a",
+  "caseDigest": "484235043d0b35fadbd00d3fc5532676186e407ea9207d45c587601ae13b880e",
+  "startedAt": "2026-09-11T19:52:06.876Z",
+  "finishedAt": "2026-09-11T19:53:30.459Z",
+  "outcomeCheck": {
+    "passed": 8,
+    "total": 8
+  },
+  "semanticVerdict": "FAIL",
+  "reviewKind": "agent development inspection; not human calibration",
+  "findings": [
+    {
+      "case": "courtesy-en",
+      "finding": "Still places nin before the expression while providing xiexie nin; the observed defect is not fixed."
+    },
+    {
+      "case": "partial-en",
+      "finding": "Still recommends airport apps/sites and flight tracking platforms for a particular live queue datum without evidence."
+    },
+    {
+      "case": "partial-zh",
+      "finding": "Still implies airport app/mini-program notices provide the live datum without evidence."
+    }
+  ],
+  "cases": [
+    {
+      "id": "courtesy-en",
+      "locale": "en",
+      "expected": "answered",
+      "outcome": "answered",
+      "output": "To say thank you politely in Mandarin, use \"xièxie\" (谢谢). For a more formal or sincere tone, especially in professional settings or when receiving significant help, say \"fēicháng gǎnxiè\" (非常感谢), which means \"thank you very much.\" Adding \"nín\" (您) before the expression, such as \"xièxie nín,\" further elevates the politeness by using the respectful form of \"you.\"",
+      "status": "completed",
+      "outcomeMatches": true,
+      "turnId": "4d7cc61d-859f-4193-8318-912adf231d54",
+      "workerReceipts": [
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "7c9489356240ece4a02efc6ee95f0c2d2e514816bd506742e0eac50db8cb42b6",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "started",
+          "observedAt": "2026-09-11T19:52:13.369Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "9aa84ddb-35c0-477a-8488-679601d0a11c",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+          "configurationVersion": 1,
+          "phase": "configured",
+          "observedAt": "2026-09-11T19:52:14.930Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "9aa84ddb-35c0-477a-8488-679601d0a11c",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+          "configurationVersion": 1,
+          "phase": "attempted",
+          "observedAt": "2026-09-11T19:52:14.937Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "9aa84ddb-35c0-477a-8488-679601d0a11c",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+          "configurationVersion": 1,
+          "phase": "response_buffered",
+          "observedAt": "2026-09-11T19:52:16.896Z"
+        },
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "7c9489356240ece4a02efc6ee95f0c2d2e514816bd506742e0eac50db8cb42b6",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "returned",
+          "result": "finished",
+          "observedAt": "2026-09-11T19:52:17.181Z"
+        }
+      ]
+    },
+    {
+      "id": "courtesy-zh",
+      "locale": "zh",
+      "expected": "answered",
+      "outcome": "answered",
+      "output": "在普通话中，最通用且礼貌的表达是直接说“谢谢”或更正式的“非常感谢”。若需体现更高敬意或针对具体帮助，可补充说明感谢的原因，例如“谢谢您的帮助”。",
+      "status": "completed",
+      "outcomeMatches": true,
+      "turnId": "4ddcbb49-99f6-43ab-89d0-21ea1e499610",
+      "workerReceipts": [
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "476bb7547f7f4acd417d88a3f5397640e08076e3af9f9c1060bd46203260e7fd",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "started",
+          "observedAt": "2026-09-11T19:52:23.549Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "a76b34d5-af6c-4983-808c-332933cce406",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+          "configurationVersion": 1,
+          "phase": "configured",
+          "observedAt": "2026-09-11T19:52:24.601Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "a76b34d5-af6c-4983-808c-332933cce406",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+          "configurationVersion": 1,
+          "phase": "attempted",
+          "observedAt": "2026-09-11T19:52:24.606Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "a76b34d5-af6c-4983-808c-332933cce406",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+          "configurationVersion": 1,
+          "phase": "response_buffered",
+          "observedAt": "2026-09-11T19:52:26.048Z"
+        },
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "476bb7547f7f4acd417d88a3f5397640e08076e3af9f9c1060bd46203260e7fd",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "returned",
+          "result": "finished",
+          "observedAt": "2026-09-11T19:52:26.290Z"
+        }
+      ]
+    },
+    {
+      "id": "partial-en",
+      "locale": "en",
+      "expected": "partial",
+      "outcome": "partial",
+      "output": "To say \"thank you\" in Mandarin, the most common phrase is **谢谢** (xiè xie). For a more polite or formal tone, you can say **谢谢你** (xiè xie nǐ).\n\nI cannot provide real-time data such as current immigration queue waiting times at Beijing Capital Airport. These figures change constantly and are not available through this interface. To get an accurate estimate, please check the official Beijing Capital International Airport website, their mobile app, or look for live updates on flight tracking platforms.",
+      "status": "completed",
+      "outcomeMatches": true,
+      "turnId": "21bc1a73-abb7-4bfa-adfd-0e6bb67c3fb8",
+      "workerReceipts": [
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "7c9489356240ece4a02efc6ee95f0c2d2e514816bd506742e0eac50db8cb42b6",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "started",
+          "observedAt": "2026-09-11T19:52:34.881Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "bf498675-1196-41c5-b8aa-1fc8c614f31b",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+          "configurationVersion": 1,
+          "phase": "configured",
+          "observedAt": "2026-09-11T19:52:36.351Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "bf498675-1196-41c5-b8aa-1fc8c614f31b",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+          "configurationVersion": 1,
+          "phase": "attempted",
+          "observedAt": "2026-09-11T19:52:36.356Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "bf498675-1196-41c5-b8aa-1fc8c614f31b",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+          "configurationVersion": 1,
+          "phase": "response_buffered",
+          "observedAt": "2026-09-11T19:52:38.695Z"
+        },
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "7c9489356240ece4a02efc6ee95f0c2d2e514816bd506742e0eac50db8cb42b6",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "returned",
+          "result": "finished",
+          "observedAt": "2026-09-11T19:52:39.028Z"
+        }
+      ]
+    },
+    {
+      "id": "partial-zh",
+      "locale": "zh",
+      "expected": "partial",
+      "outcome": "partial",
+      "output": "在普通话中，表达感谢最常用的是“谢谢”（xiè xie）。根据场合不同，也可以使用：\n\n- “非常感谢”：更正式、程度更深。\n- “辛苦了”：常用于对方为你提供服务或帮助后，表示体谅对方的付出。\n- “麻烦你了”：在请求帮助或给对方添麻烦后使用，兼具歉意与感谢。\n\n关于北京首都机场此刻的入境排队时间，我无法提供实时的现场数据。排队时长受航班到达密度、时段及边检开放通道数量影响，波动较大。建议您查看“北京首都国际机场”官方APP或小程序中的实时公告，或直接咨询机场现场工作人员以获取最新信息。",
+      "status": "completed",
+      "outcomeMatches": true,
+      "turnId": "96e4bf14-a412-44b9-8d20-337791411c61",
+      "workerReceipts": [
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "476bb7547f7f4acd417d88a3f5397640e08076e3af9f9c1060bd46203260e7fd",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "started",
+          "observedAt": "2026-09-11T19:52:45.845Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "7d3f23c2-74a4-49bd-81b1-cf26f42314ff",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+          "configurationVersion": 1,
+          "phase": "configured",
+          "observedAt": "2026-09-11T19:52:46.868Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "7d3f23c2-74a4-49bd-81b1-cf26f42314ff",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+          "configurationVersion": 1,
+          "phase": "attempted",
+          "observedAt": "2026-09-11T19:52:46.873Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "7d3f23c2-74a4-49bd-81b1-cf26f42314ff",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+          "configurationVersion": 1,
+          "phase": "response_buffered",
+          "observedAt": "2026-09-11T19:52:50.276Z"
+        },
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "476bb7547f7f4acd417d88a3f5397640e08076e3af9f9c1060bd46203260e7fd",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "returned",
+          "result": "finished",
+          "observedAt": "2026-09-11T19:52:50.521Z"
+        }
+      ]
+    },
+    {
+      "id": "clarification-en",
+      "locale": "en",
+      "expected": "clarification",
+      "outcome": "clarification",
+      "output": "To help you find the best route, could you please specify your starting point and destination?",
+      "status": "completed",
+      "outcomeMatches": true,
+      "turnId": "07e34055-ec48-4ea4-b1a9-247d05d7bfea",
+      "workerReceipts": [
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "7c9489356240ece4a02efc6ee95f0c2d2e514816bd506742e0eac50db8cb42b6",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "started",
+          "observedAt": "2026-09-11T19:52:56.472Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "7dd77af1-8233-47b0-9200-fbbd01d33bd3",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+          "configurationVersion": 1,
+          "phase": "configured",
+          "observedAt": "2026-09-11T19:52:57.518Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "7dd77af1-8233-47b0-9200-fbbd01d33bd3",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+          "configurationVersion": 1,
+          "phase": "attempted",
+          "observedAt": "2026-09-11T19:52:57.522Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "7dd77af1-8233-47b0-9200-fbbd01d33bd3",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+          "configurationVersion": 1,
+          "phase": "response_buffered",
+          "observedAt": "2026-09-11T19:52:58.527Z"
+        },
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "7c9489356240ece4a02efc6ee95f0c2d2e514816bd506742e0eac50db8cb42b6",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "returned",
+          "result": "finished",
+          "observedAt": "2026-09-11T19:52:58.758Z"
+        }
+      ]
+    },
+    {
+      "id": "clarification-zh",
+      "locale": "zh",
+      "expected": "clarification",
+      "outcome": "clarification",
+      "output": "为了给您推荐最佳路线，我需要知道您的出发地和目的地是哪里？另外，您计划使用什么交通方式（如驾车、公共交通或步行）？",
+      "status": "completed",
+      "outcomeMatches": true,
+      "turnId": "a85c1f29-c58e-4c5c-b255-ae0481f5480e",
+      "workerReceipts": [
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "476bb7547f7f4acd417d88a3f5397640e08076e3af9f9c1060bd46203260e7fd",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "started",
+          "observedAt": "2026-09-11T19:53:05.305Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "b5946f89-b93f-4d0f-b233-b0233da0713c",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+          "configurationVersion": 1,
+          "phase": "configured",
+          "observedAt": "2026-09-11T19:53:06.589Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "b5946f89-b93f-4d0f-b233-b0233da0713c",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+          "configurationVersion": 1,
+          "phase": "attempted",
+          "observedAt": "2026-09-11T19:53:06.592Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "b5946f89-b93f-4d0f-b233-b0233da0713c",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+          "configurationVersion": 1,
+          "phase": "response_buffered",
+          "observedAt": "2026-09-11T19:53:07.843Z"
+        },
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "476bb7547f7f4acd417d88a3f5397640e08076e3af9f9c1060bd46203260e7fd",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "returned",
+          "result": "finished",
+          "observedAt": "2026-09-11T19:53:08.174Z"
+        }
+      ]
+    },
+    {
+      "id": "blocked-en",
+      "locale": "en",
+      "expected": "blocked",
+      "outcome": "blocked",
+      "output": "I cannot access or modify your saved trips, as I do not have permission to view your account details or perform actions like booking and saving. To add a museum visit, please open your travel app or account directly and edit the trip there.",
+      "status": "unavailable",
+      "outcomeMatches": true,
+      "turnId": "f57546df-7852-44e5-8ca3-ed4c9d463f09",
+      "workerReceipts": [
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "7c9489356240ece4a02efc6ee95f0c2d2e514816bd506742e0eac50db8cb42b6",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "started",
+          "observedAt": "2026-09-11T19:53:16.232Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "3090d92b-da20-41ba-a06f-0d1c6e79f0fc",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+          "configurationVersion": 1,
+          "phase": "configured",
+          "observedAt": "2026-09-11T19:53:17.329Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "3090d92b-da20-41ba-a06f-0d1c6e79f0fc",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+          "configurationVersion": 1,
+          "phase": "attempted",
+          "observedAt": "2026-09-11T19:53:17.333Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "3090d92b-da20-41ba-a06f-0d1c6e79f0fc",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+          "configurationVersion": 1,
+          "phase": "response_buffered",
+          "observedAt": "2026-09-11T19:53:19.153Z"
+        },
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "7c9489356240ece4a02efc6ee95f0c2d2e514816bd506742e0eac50db8cb42b6",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "returned",
+          "result": "finished",
+          "observedAt": "2026-09-11T19:53:19.417Z"
+        }
+      ]
+    },
+    {
+      "id": "blocked-zh",
+      "locale": "zh",
+      "expected": "blocked",
+      "outcome": "blocked",
+      "output": "我无法访问或修改您已保存的行程，也无法执行添加操作。请您在相应的旅行应用或平台中手动将博物馆参观加入明天的日程。",
+      "status": "unavailable",
+      "outcomeMatches": true,
+      "turnId": "778a30c0-c4a5-48c4-86fc-7affb5d7c95e",
+      "workerReceipts": [
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "476bb7547f7f4acd417d88a3f5397640e08076e3af9f9c1060bd46203260e7fd",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "started",
+          "observedAt": "2026-09-11T19:53:25.588Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "fd01cc55-94b2-475e-aed4-70aef45bed47",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+          "configurationVersion": 1,
+          "phase": "configured",
+          "observedAt": "2026-09-11T19:53:26.670Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "fd01cc55-94b2-475e-aed4-70aef45bed47",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+          "configurationVersion": 1,
+          "phase": "attempted",
+          "observedAt": "2026-09-11T19:53:26.674Z"
+        },
+        {
+          "schemaVersion": "provider-destination/1",
+          "invocationId": "fd01cc55-94b2-475e-aed4-70aef45bed47",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+          "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+          "configurationVersion": 1,
+          "phase": "response_buffered",
+          "observedAt": "2026-09-11T19:53:27.934Z"
+        },
+        {
+          "schemaVersion": "vpj07-worker-run/2",
+          "configurationDigest": "476bb7547f7f4acd417d88a3f5397640e08076e3af9f9c1060bd46203260e7fd",
+          "prompt": {
+            "version": "vp-text-response-v2",
+            "digest": "a36d950dc965aaf9ded706e3e62c51ac0788f2278066326fe4d509829b2d3de7"
+          },
+          "phase": "returned",
+          "result": "finished",
+          "observedAt": "2026-09-11T19:53:28.185Z"
+        }
+      ]
+    }
+  ]
+}

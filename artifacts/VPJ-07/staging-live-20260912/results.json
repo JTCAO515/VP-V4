@@ -1,0 +1,149 @@
+{
+  "observedAt": "2026-09-11T19:38:09.493Z",
+  "origin": "https://staging.go2china.space",
+  "checks": [
+    {
+      "locale": "en",
+      "turnId": "7ff877dd-a529-48c4-af39-a10b23e1fc3c",
+      "outcome": "answered",
+      "status": "completed",
+      "output": "To say thank you politely in Mandarin, you can use \"Xièxie\" (谢谢) for general situations. For a more formal or sincere expression, especially when someone has done you a significant favor, use \"Fēicháng gǎnxiè\" (非常感谢), which means \"thank you very much.\" Adding \"Nín\" (您), the respectful form of \"you,\" before the thanks can also enhance politeness in formal contexts.",
+      "foreignOwnerHidden": true
+    },
+    {
+      "locale": "zh",
+      "turnId": "61612bfd-7364-4e14-97a3-de486161df7e",
+      "outcome": "answered",
+      "status": "completed",
+      "output": "在普通话中，最基础的礼貌表达是说“谢谢”，而在更正式或需要强调感激之情的场合，可以使用“非常感谢”或“多谢”。根据具体情境，配合微笑或点头等肢体语言能进一步体现诚意与尊重。",
+      "foreignOwnerHidden": true
+    }
+  ],
+  "source": "ed2508eed6cddf5fd972738d919268f7a4ef842a",
+  "deployment": {
+    "id": "dpl_5RioYCbXfn69EKocdYtK3EKxZGLo",
+    "url": "vp-v4-h8a675zeu-jtcao515s-projects.vercel.app",
+    "regions": [
+      "iad1"
+    ]
+  },
+  "consent": {
+    "observedAt": "2026-09-11T19:36:30.212Z",
+    "policyId": "8ed19537-ac5d-4f92-a2ec-13a421fcff92",
+    "authenticatedSyntheticOwners": 2,
+    "ordinaryNativeHTTP": true,
+    "adminConsentInserted": false
+  },
+  "destinationReceipts": [
+    {
+      "schemaVersion": "vpj07-worker-run/1",
+      "configurationDigest": "7c9489356240ece4a02efc6ee95f0c2d2e514816bd506742e0eac50db8cb42b6",
+      "phase": "started",
+      "observedAt": "2026-09-11T19:37:24.144Z"
+    },
+    {
+      "schemaVersion": "provider-destination/1",
+      "invocationId": "377c3ceb-58fe-454b-8c47-ef4b6e1f35e5",
+      "provider": "qwen",
+      "model": "qwen3.7-plus-2026-05-26",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+      "configurationVersion": 1,
+      "phase": "configured",
+      "observedAt": "2026-09-11T19:37:27.170Z"
+    },
+    {
+      "schemaVersion": "provider-destination/1",
+      "invocationId": "377c3ceb-58fe-454b-8c47-ef4b6e1f35e5",
+      "provider": "qwen",
+      "model": "qwen3.7-plus-2026-05-26",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+      "configurationVersion": 1,
+      "phase": "attempted",
+      "observedAt": "2026-09-11T19:37:27.181Z"
+    },
+    {
+      "schemaVersion": "provider-destination/1",
+      "invocationId": "377c3ceb-58fe-454b-8c47-ef4b6e1f35e5",
+      "provider": "qwen",
+      "model": "qwen3.7-plus-2026-05-26",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+      "configurationVersion": 1,
+      "phase": "response_buffered",
+      "observedAt": "2026-09-11T19:37:29.651Z"
+    },
+    {
+      "schemaVersion": "vpj07-worker-run/1",
+      "configurationDigest": "7c9489356240ece4a02efc6ee95f0c2d2e514816bd506742e0eac50db8cb42b6",
+      "phase": "returned",
+      "result": "finished",
+      "observedAt": "2026-09-11T19:37:29.915Z"
+    },
+    {
+      "schemaVersion": "vpj07-worker-run/1",
+      "configurationDigest": "476bb7547f7f4acd417d88a3f5397640e08076e3af9f9c1060bd46203260e7fd",
+      "phase": "started",
+      "observedAt": "2026-09-11T19:37:49.967Z"
+    },
+    {
+      "schemaVersion": "provider-destination/1",
+      "invocationId": "0add0852-761d-4ad5-994e-f533822a81ef",
+      "provider": "qwen",
+      "model": "qwen3.7-plus-2026-05-26",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+      "configurationVersion": 1,
+      "phase": "configured",
+      "observedAt": "2026-09-11T19:37:51.397Z"
+    },
+    {
+      "schemaVersion": "provider-destination/1",
+      "invocationId": "0add0852-761d-4ad5-994e-f533822a81ef",
+      "provider": "qwen",
+      "model": "qwen3.7-plus-2026-05-26",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+      "configurationVersion": 1,
+      "phase": "attempted",
+      "observedAt": "2026-09-11T19:37:51.403Z"
+    },
+    {
+      "schemaVersion": "provider-destination/1",
+      "invocationId": "0add0852-761d-4ad5-994e-f533822a81ef",
+      "provider": "qwen",
+      "model": "qwen3.7-plus-2026-05-26",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+      "configurationVersion": 1,
+      "phase": "response_buffered",
+      "observedAt": "2026-09-11T19:37:53.353Z"
+    },
+    {
+      "schemaVersion": "vpj07-worker-run/1",
+      "configurationDigest": "476bb7547f7f4acd417d88a3f5397640e08076e3af9f9c1060bd46203260e7fd",
+      "phase": "returned",
+      "result": "finished",
+      "observedAt": "2026-09-11T19:37:53.628Z"
+    }
+  ],
+  "budget": [
+    {
+      "turnId": "7ff877dd-a529-48c4-af39-a10b23e1fc3c",
+      "reservedMicros": 7000000,
+      "actualMicros": 3114,
+      "status": "settled"
+    },
+    {
+      "turnId": "61612bfd-7364-4e14-97a3-de486161df7e",
+      "reservedMicros": 7000000,
+      "actualMicros": 2058,
+      "status": "settled"
+    }
+  ],
+  "budgetCurrency": "CNY",
+  "budgetMeaning": "conservative application ledger estimate, not supplier invoice",
+  "semanticQuality": "not accepted: English suggests placing nin before thanks, an imprecise Mandarin formulation; response-policy follow-up required",
+  "nativePhysicalAnswerRead": "UNRUN: JT deferred further phone verification"
+}

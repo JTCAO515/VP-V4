@@ -1,6 +1,7 @@
 import { MODEL_PROFILES, validateKnownUnknownOutput, type KnownUnknownOutput, type ModelDataClass, type ModelTask } from "../index.ts";
 import type { CostGuard } from "../budget/index.ts";
 import type { FailureCode } from "../../contracts/errors/index.ts";
+import { TEXT_TURN_SYSTEM_PROMPT } from "../prompt/text-turn.ts";
 
 export const PROTOCOL_MODELS = Object.freeze({
   qwen: MODEL_PROFILES.qwen_37_strict.providerModelId,
@@ -152,7 +153,7 @@ function requestBody(request: ProtocolRequest): Record<string, unknown> {
   return {
     model: PROTOCOL_MODELS[request.provider],
     messages: [
-      ...(request.task === "text_turn_v1" ? [{ role: "system", content: 'Return only JSON with exactly {"outcome":"answered|partial|clarification|blocked|technical_failure","text":"nonempty user-facing text"}. Select one outcome. Reply in the language of the user. State uncertainty; do not invent live facts, bookings, payments, evidence or completed actions. This text-only reply cannot modify a trip. Write natural English or Chinese, without hidden reasoning.' }] : []),
+      ...(request.task === "text_turn_v1" ? [{ role: "system", content: TEXT_TURN_SYSTEM_PROMPT }] : []),
       ...(request.task === "strict_known_unknown" ? [{ role: "system", content: 'Return only JSON: {"kind":"known","value":"nonempty text"} or {"kind":"unknown","reason":"fixture_no_evidence"}. Do not add fields.' }] : []),
       { role: "user", content: request.input },
     ],
