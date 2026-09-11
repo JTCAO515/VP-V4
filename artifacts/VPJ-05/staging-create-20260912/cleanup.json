@@ -1,0 +1,14 @@
+{
+  "result": "PASS",
+  "ownedRemaining": {
+    "owned_accounts": 0,
+    "owned_sessions": 0,
+    "owned_trips": 0
+  },
+  "after": {
+    "account_count": 3,
+    "migration_count": 36,
+    "trip_count": 2
+  },
+  "ownedUsersDeleted": 2
+}
