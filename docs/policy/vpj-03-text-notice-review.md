@@ -4,6 +4,10 @@
 承接 [JT决定](vpj-03-text-decisions.md)、[接收方矩阵](vpj-03-provider-qualification.md)及
 [VPJ-07已合并本地契约](../contracts/vpj-07.md)。本文补齐已确认语义，不更改其执行权限。
 
+2026-09-12 对齐 `VPJ03-JT-20260912-v2`：所有模型供应商均可依据公开条款、控制台及实际配置填写告知。
+不要求工单、书面回复、账号合同接受凭证或精确正文/备份TTL；供应商未公开的安排应明确标注未知或未承诺，
+不得据此宣称零留存、不训练或删除已完成。实际接收方、endpoint、已知地区及用户处理范围仍须准确填写。
+
 ## 数据、操作与留存矩阵
 
 | 位置 / 数据 | 用途与动作 | 当前语义 / 生效边界 |
@@ -14,7 +18,7 @@
 | 删除聊天/Turn/账号 | 隐藏已留存正文，停止对应可见访问 | 已有本地实现设置永久hidden_at，正文不级联删除；恢复相同ID也不恢复可见。账号删除仍受现有账本约束，不能承诺任意时刻删除成功 |
 | 撤回文本AI同意 | 停止后续授权、输出落库与读取 | 已提交的dispatch授权可能已有在途请求，不能召回；不承诺立即停止供应商计算。该版本撤回不可重新启用，后续需新policy/新同意；已存正文仍保留 |
 | 实际彻底删除申请 | 另行核验与隐私生命周期处理 | 不把隐藏回执说成彻底删除回执；正文擦除/供应商删除/备份清理执行尚未交付，不能给虚构完成时限 |
-| 供应商输入/输出、日志与备份 | 经资格核验的单一接收方推理 | TTL、训练、撤回限制依供应商实际合同，不能继承VisePanda长期留存方向；见接收方矩阵 |
+| 供应商输入/输出、日志与备份 | 经资格核验的单一接收方推理 | TTL、训练、撤回限制按公开条款、控制台及实际配置如实说明；未知不要求书面补证，也不能继承VisePanda长期留存方向；见接收方矩阵 |
 | VisePanda备份/灾备 | 恢复服务与保留记录 | 实际周期/地区/访问证据待补；恢复必须保留撤回与hidden状态，不复活旧删除数据。本文不授予读取备份正文 |
 | 团队/客服 | 已决定全体受控团队成员长期跨用户CRUD | 运行未开启；需身份来源、服务端能力、审计及退出撤权。普通客户仍owner隔离；成员不能伪造用户Proposal确认、账本或删除回执 |
 | 设备/服务端材料 | 照片、音频、OCR、上传 | 本文本版本均不开启；设备同意不继承为上传同意，拒绝时不得fallback绕过 |
@@ -38,8 +42,9 @@ VisePanda由广州创竞科技有限公司运营，政策负责人JT，联系邮
 该路径在所发布环境中的实际可用性须在发布前验证。
 
 发布前必须在此处填入并审阅：指定接收实体、准确服务与endpoint、来源/处理/存储地区、供应商输入/输出的训练与留存安排、
-备份寿命及限制、长期留存目的与适用依据、实际可用删除申请/撤回渠道、告知生效与复核日期。
-这些不是可对用户展示的占位说明；字段缺失时本稿不进入同意界面。
+备份安排及已知限制、长期留存目的与适用依据、实际可用删除申请/撤回渠道、告知生效与复核日期。
+供应商未公开的细节可明确标注未知或未承诺，不以精确期限或书面回复为前提；这不豁免实际接收方和处理范围的确认。
+这些编辑提示不是可对用户展示的占位说明；未完成如实填写与审阅时本稿不进入同意界面。
 
 ## English review draft
 
@@ -65,9 +70,14 @@ processing, we do not submit your question to AI. Locally verified manual Trip v
 confirmation do not depend on this permission; availability in the release environment must be verified.
 
 Before publication, identify and review the exact recipient, service/endpoint, source/processing/storage
-regions, supplier training and retention arrangements for input/output, backup lifetime and limits,
+regions, supplier training and retention arrangements for input/output, backup arrangements and known limits,
 retention purpose and applicable basis, working withdrawal/erasure-request channels, and effective/recheck dates.
-This paragraph is an editorial requirement, not copy for a consent screen; incomplete copy must not be activated.
+Use public terms, console evidence and actual configuration. Supplier details that are not disclosed may be
+identified as unknown or not promised; exact retention periods, support tickets, written replies and proof of
+account-level contract acceptance are not prerequisites for any model provider. Do not infer zero retention,
+no training or completed deletion. The actual recipient and processing scope must still be identified.
+This paragraph is an editorial requirement, not copy for a consent screen; copy must be completed truthfully
+and reviewed before activation.
 
 ## 同意与拒绝验收
 
