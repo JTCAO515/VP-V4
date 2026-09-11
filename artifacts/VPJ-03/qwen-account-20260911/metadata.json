@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "vpj03-account-observation/1",
+  "observedAt": "2026-09-11",
+  "provider": "qwen",
+  "observation": "authenticated provider console UI after user-approved Alipay login",
+  "source": "https://platform.qianwenai.com/home/api-keys",
+  "facts": {
+    "loginConfirmed": true,
+    "realNameVerificationShown": true,
+    "credentialDescription": "VP-v4",
+    "credentialStatus": "enabled",
+    "credentialSection": "pay-as-you-go",
+    "openAiBaseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "keyCreatedAtShown": "2026-09-09 13:26:49",
+    "defaultWorkspaceShowsAllModelsAuthorized": true
+  },
+  "limits": {
+    "keyValueRead": false,
+    "credentialsCreatedResetOrChanged": false,
+    "paidRequestsExecuted": 0,
+    "keyToLocalRuntimeMatched": false,
+    "keyToDefaultWorkspaceBindingVerified": false,
+    "accountAcceptedTermsVersion": "unknown",
+    "inputOutputRetentionAndDeletionArrangement": "unknown",
+    "accountContractingPartyAndBusinessUseRelationship": "unknown",
+    "processingAndStorageScopeVerifiedForAccount": false
+  },
+  "qualification": "not_qualified",
+  "scope": "account SKU and enabled credential metadata only; not C2 permission or runtime acceptance"
+}

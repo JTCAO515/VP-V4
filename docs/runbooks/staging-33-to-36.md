@@ -1,6 +1,6 @@
 # Staging 33 → 36: bounded Ask worker prerequisites
 
-Related to #195 / #189; single integration PR325. Preparation only, no remote migration executed.
+Related to #195 / #189; single integration PR325. Executed in the newly confirmed maintenance window; see [execution evidence](../../artifacts/VPJ-07/staging36-execution/verification.md).
 Target: existing VP - V4 Staging in ap-southeast-1. Production release remains separately owned.
 This package advances the existing ordered migration history; it does not enable customer Ask,
 install a provider policy, authorize Ops membership, publish knowledge or start a worker.

@@ -38,6 +38,17 @@
 - D2 [DeepSeek隐私政策](https://cdn.deepseek.com/policies/zh-CN/deepseek-privacy-policy.html)，2026-02-10，适用范围、§一.2/一.3、§五、§六。
 - D3 [DeepSeek首次API调用](https://api-docs.deepseek.com/)，官方base URL与Chat路径。
 
+## 2026-09-11 已登录账号补证
+
+[工作台观察记录](../../artifacts/VPJ-03/qwen-account-20260911/metadata.json)确认：用户通过支付宝登录后，
+千问 API Keys 页面在**按量付费**分区显示启用的 `VP-v4` 凭据，OpenAI Base URL 为
+`https://dashscope.aliyuncs.com/compatible-mode/v1`；账号页显示已实名。该凭据未被读取、重置或修改。
+默认业务空间页面显示所有模型已授权，但该旧凭据与此空间的绑定关系尚未证实，不能据此改用空间域名。
+
+这补齐了工作台产品分区与启用状态。账号接受的合同版本、与经营主体的使用关系、正文留存/删除安排及
+实际处理范围仍未从页面取得；本地运行凭据尚未与这条记录匹配。Qwen C2 状态继续为 `not_qualified`，
+没有新增真实文本外发、模型调用、付费套餐或激活 policy。
+
 ## 最少账号补证：只对准备启用的一家提交
 
 JT无需再次选择经营主体、长期正文留存、团队全部跨用户CRUD、模型字段限制或每日测试预算。

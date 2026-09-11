@@ -1,0 +1,151 @@
+{
+  "results": [
+    {
+      "host": "go2china.space",
+      "path": "/",
+      "status": 200,
+      "steps": [
+        {
+          "host": "go2china.space",
+          "status": 308
+        },
+        {
+          "host": "www.go2china.space",
+          "status": 200
+        }
+      ]
+    },
+    {
+      "host": "vp-v4-b468sog8m-jtcao515s-projects.vercel.app",
+      "path": "/",
+      "status": 200,
+      "steps": [
+        {
+          "host": "vp-v4-b468sog8m-jtcao515s-projects.vercel.app",
+          "status": 200
+        }
+      ]
+    },
+    {
+      "host": "vp-v4-d6yc4thvq-jtcao515s-projects.vercel.app",
+      "path": "/",
+      "status": 200,
+      "steps": [
+        {
+          "host": "vp-v4-d6yc4thvq-jtcao515s-projects.vercel.app",
+          "status": 200
+        }
+      ]
+    },
+    {
+      "host": "vp-v4-git-main-jtcao515s-projects.vercel.app",
+      "path": "/",
+      "status": 200,
+      "steps": [
+        {
+          "host": "vp-v4-git-main-jtcao515s-projects.vercel.app",
+          "status": 200
+        }
+      ]
+    },
+    {
+      "host": "vp-v4-jtcao515s-projects.vercel.app",
+      "path": "/",
+      "status": 200,
+      "steps": [
+        {
+          "host": "vp-v4-jtcao515s-projects.vercel.app",
+          "status": 200
+        }
+      ]
+    },
+    {
+      "host": "vp-v4.vercel.app",
+      "path": "/",
+      "status": 200,
+      "steps": [
+        {
+          "host": "vp-v4.vercel.app",
+          "status": 200
+        }
+      ]
+    },
+    {
+      "host": "www.go2china.space",
+      "path": "/",
+      "status": 200,
+      "steps": [
+        {
+          "host": "www.go2china.space",
+          "status": 200
+        }
+      ]
+    },
+    {
+      "host": "vp-v4-6gmyp6494-jtcao515s-projects.vercel.app",
+      "path": "/",
+      "status": 200,
+      "steps": [
+        {
+          "host": "vp-v4-6gmyp6494-jtcao515s-projects.vercel.app",
+          "status": 200
+        }
+      ]
+    },
+    {
+      "host": "vp-v4-6gmyp6494-jtcao515s-projects.vercel.app",
+      "path": "/api/auth/native/v2/session",
+      "status": 401,
+      "steps": [
+        {
+          "host": "vp-v4-6gmyp6494-jtcao515s-projects.vercel.app",
+          "status": 401
+        }
+      ]
+    },
+    {
+      "host": "vp-v4-6gmyp6494-jtcao515s-projects.vercel.app",
+      "path": "/api/trips/native/v2",
+      "status": 401,
+      "steps": [
+        {
+          "host": "vp-v4-6gmyp6494-jtcao515s-projects.vercel.app",
+          "status": 401
+        }
+      ]
+    },
+    {
+      "host": "vp-v4.vercel.app",
+      "path": "/api/trips",
+      "status": 401,
+      "steps": [
+        {
+          "host": "vp-v4.vercel.app",
+          "status": 401
+        }
+      ]
+    },
+    {
+      "host": "vp-v4-pmuu037ke-jtcao515s-projects.vercel.app",
+      "path": "/",
+      "status": 403,
+      "steps": [
+        {
+          "host": "vp-v4-pmuu037ke-jtcao515s-projects.vercel.app",
+          "status": 403
+        }
+      ]
+    },
+    {
+      "host": "vp-v4-j3542umim-jtcao515s-projects.vercel.app",
+      "path": "/",
+      "status": 403,
+      "steps": [
+        {
+          "host": "vp-v4-j3542umim-jtcao515s-projects.vercel.app",
+          "status": 403
+        }
+      ]
+    }
+  ]
+}
