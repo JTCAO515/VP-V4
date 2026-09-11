@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "backendSha": "f5db769fbcca7b24fd6aeebf8dc004b63df1c2b8",
+  "nativeSha": "c333d9b5619a92fd90fe0a4f76743022f3746a50",
+  "host": "vp-v4-6gmyp6494-jtcao515s-projects.vercel.app",
+  "uiChecks": [
+    "A login and owner profile",
+    "A refresh and Keychain relaunch without password",
+    "Web proposal to native explicit confirm v3",
+    "Native proposal to Web explicit confirm v4",
+    "Same Trip v4 displayed in zh A and en B",
+    "B login fences A; A reload hides Trip and profile; retry cannot recover",
+    "Independent pre-existing Web cookie survives B login"
+  ],
+  "webWidths": [
+    390,
+    1280
+  ],
+  "webHorizontalOverflow": false,
+  "browserWarningsErrors": [],
+  "limitations": [
+    "iOS26.5 Simulator only; physical iOS17 and VoiceOver not run",
+    "Web full-page screenshot stitching failed; desktop viewport image was panel-clipped; DOM width checks and existing local browser QA are separate",
+    "Changing Web locale retains earlier status text until subsequent operation",
+    "Simulator Chinese IME inserted thin spaces into synthetic title; both clients preserved identical content",
+    "Native API created initial Trip and Day/Item; UI creation was not separately exercised"
+  ]
+}

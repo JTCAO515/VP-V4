@@ -7,7 +7,7 @@ import {createWriteStream} from 'node:fs';
 import {createClient} from '@supabase/supabase-js';
 import {identityLocalEnv} from '../identity/local-supabase.mjs';
 import {waitForNativeAPI} from '../identity/native-api-readiness.mjs';
-import {runTextWorker} from '../../../lib/server/turn/text-worker.ts';
+import {createStagingTextJob} from '../../../lib/server/jobs/staging-text-job.ts';
 import {PROTOCOL_MODELS} from '../../../lib/server/model-gateway/adapters/provider-protocol.ts';
 
 export async function createNativeTextEnvironment(){
@@ -21,7 +21,7 @@ export async function createNativeTextEnvironment(){
  const noticeZh='仅用于本机合成测试，不向外部模型发送数据。测试输入和回答保存在本次独立数据库中；删除对话或账号会隐藏正文，正文保留到此测试实例销毁。可随时撤回新处理授权，仍可手动编辑行程。';
  const noticeEn='Local synthetic test only. No data goes to an external model. Test inputs and answers remain in this disposable database; deleting a conversation or account hides content until this test instance is destroyed. You may withdraw permission for new processing and continue editing Trip manually.';
  const noticeHash=createHash('sha256').update(JSON.stringify({version:'local-text-v1',zh:noticeZh,en:noticeEn})).digest('hex');
- const counts={http:0,finished:0};
+ const counts={http:0,finished:0,destinationReceipts:0};
  const releaseModels=()=>{for(const deliver of pendingResponses)deliver();pendingResponses.clear();};
  async function cleanup(){
   if(stopping)return;stopping=true;clearInterval(timer);controller.abort();releaseModels();await active.catch(()=>{});
@@ -30,7 +30,7 @@ export async function createNativeTextEnvironment(){
   if(users.length){const ids=users.map(u=>literal(u.id)).join(',');sql(`delete from public.model_budget_attempts where scope_id in (select id from public.model_budget_scopes where owner_id in (${ids}));delete from public.model_budget_provider_limits where scope_id in (select id from public.model_budget_scopes where owner_id in (${ids}));delete from public.model_budget_scopes where owner_id in (${ids});delete from auth.users where id in (${ids});`);}
  }
  try{
-  sql(`insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at) values('${policyId}','qwen','Controlled local fixture','https://synthetic.invalid/inference','local fixture','local fixture','disposable local database','synthetic-v1','local-text-v1','${noticeHash}',${literal(noticeZh)},${literal(noticeEn)},'retain_after_hide_v1',now()-interval '1 minute',now()+interval '1 day',now()+interval '1 day');`);
+  sql(`insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at) values('${policyId}','qwen','Controlled local fixture','https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','local fixture','local fixture','disposable local database','synthetic-v1','local-text-v1','${noticeHash}',${literal(noticeZh)},${literal(noticeEn)},'retain_after_hide_v1',now()-interval '1 minute',now()+interval '1 day',now()+interval '1 day');`);
   for(const label of ['a','b','ui-en','ui-zh']){
    const email='vpj07-'+label+'-'+randomUUID()+'@example.test',password='VPJ07-Local-Synthetic-Only-195!';
    const client=createClient(e.API_URL,key,{auth:{persistSession:false,autoRefreshToken:false}}),signup=await client.auth.signUp({email,password});
@@ -52,14 +52,28 @@ export async function createNativeTextEnvironment(){
   next=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port','59651'],{env:{...process.env,NEXT_PUBLIC_SUPABASE_URL:e.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:key,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:e.SERVICE_ROLE_KEY,VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_NATIVE_LOCAL_TEXT:'true',VISEPANDA_NATIVE_LOCAL_TEXT_POLICY:policyId},stdio:['ignore','pipe','pipe']});
   next.stdout.pipe(log);next.stderr.pipe(log);next.once('exit',()=>log.end());
   await waitForNativeAPI(api,next);
-  const admin=createClient(e.API_URL,e.SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
-  const rpc=async(name,p={})=>{const {data,error}=await admin.rpc(name,p).abortSignal(AbortSignal.timeout(10000));if(error)throw Error('Synthetic worker RPC unavailable');return data;};
+  // Exercise the exact Staging job composition through an explicit closed test
+  // mapper. Both official destinations go only to this disposable DB/model.
+  const stagedDatabase='https://dzqdzetcctkhbrhlxxgn.supabase.co';
+  const providerEndpoint='https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
+  const mappedFetch=async(input,init)=>{
+   const url=typeof input==='string'?input:input.url??String(input);
+   if(url.startsWith(stagedDatabase+'/rest/v1/rpc/'))return fetch(e.API_URL+new URL(url).pathname,init);
+   if(url===providerEndpoint)return fetch(modelURL,init);
+   throw Error('Unexpected synthetic job destination');
+  };
+  const workers=users.map(owner=>createStagingTextJob({schemaVersion:'vpj07-staging-text-job/1',ownerId:owner.id,policyId,
+   budget:{scopeId:owner.scopeId,priceVersion:'synthetic-v1',reservedMicros:1000,maxOutputTokens:512,timeoutMs:60000},
+   provider:{provider:'qwen',endpoint:providerEndpoint,configurationId:randomUUID(),configurationVersion:1,timeoutMs:60000},
+   pricing:{mode:'flat',inputMicrosPerMillion:1,outputMicrosPerMillion:1,cachedInputMicrosPerMillion:null}},
+   {workerCredential:()=>e.SERVICE_ROLE_KEY,providerCredential:()=> 'synthetic-local-provider-only',recordDestination:async()=>{counts.destinationReceipts++;},fetch:mappedFetch}));
   let busy=false;
   timer=setInterval(()=>{if(busy||stopping)return;busy=true;active=(async()=>{
-   const lease=await rpc('claim_turn_work');if(lease.kind!=='leased')return;
-   const owner=users.find(u=>u.id===lease.ownerId);if(!owner)return;
-   const result=await runTextWorker((name,p)=>name==='claim_turn_work'?Promise.resolve(lease):rpc(name,p),rpc,rpc,{scopeId:owner.scopeId,priceVersion:'synthetic-v1',reservedMicros:1000,maxOutputTokens:512,timeoutMs:60000},{provider:'qwen',endpoint:'https://synthetic.invalid/inference',price:()=>null,transport:r=>fetch(modelURL,{method:'POST',body:r.body,signal:r.signal})},controller.signal);
-   if(result==='finished')counts.finished++;
+   for(const worker of workers){
+    if(stopping)return;
+    const result=await worker(controller.signal);
+    if(result==='finished')counts.finished++;
+   }
   })().catch(()=>{}).finally(()=>{busy=false;});},500);
   return {api,policyId,noticeHash,users,sql,counts,releaseModels,controlURL:modelURL+'/release',cleanup};
  }catch(error){await cleanup();throw error;}

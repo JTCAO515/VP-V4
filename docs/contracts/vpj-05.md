@@ -35,10 +35,26 @@ Hard-lock and external-order states remain **unknown** in this slice; database t
 
 ## Deployment compatibility
 
-The Web data adapter selects the v2 database protocol only when `VISEPANDA_TRIP_PROTOCOL_V2=true`, or when the explicitly enabled native local Trip flag also points to loopback. Otherwise it keeps the existing legacy RPC/deny/reject contract and does not query the new receipt column or v2 read/reject RPCs. That branch is not v2 safety acceptance. Native `/api/trips/native/v2` has no legacy fallback and remains local-only.
+The Web data adapter selects the v2 database protocol only when `VISEPANDA_TRIP_PROTOCOL_V2=true`, or when the explicitly enabled native local Trip flag also points to loopback. Otherwise it keeps the existing legacy RPC/deny/reject contract and does not query the new receipt column or v2 read/reject RPCs. That branch is not v2 safety acceptance. Native `/api/trips/native/v2` has no legacy fallback; the explicit Staging exception below is the only remote activation path.
 
 Coordinate remote rollout separately: deploy compatible code with the default legacy protocol; obtain the named environment's migration authorization; apply and verify migration 28 with data preservation; then explicitly enable matching v2 callers. The upgraded database does not accept an arbitrary legacy digest even if a caller is misconfigured. Missing v2 proof support fails before v2 confirmation. This local result authorizes no remote migration or activation.
 
 The v2 SHA256 field set is frozen: proposal ID, owner, Trip ID, revision, base version, patch, rollback target, parent proposal, expiry and creation time, serialized with UTC. Unrelated future columns do not change existing digests; new intent semantics require a versioned change. The read RPC returns the proposal and digest from the same row. Optional `before`/`after` objects show the immutable base and the proposed TripPatch projection; `after` is not committed state.
 
 Snapshot responses also include `confirmationState: "initial"|"confirmed"|"unknown"`. A new Trip starts at version zero. Only a server-bound receipt, matching applied proposal/Trip/base, event and immutable snapshot establish `confirmed`. Unbound legacy history is not guessed or deleted. Audit rows have no unique producer binding, so v2 audit metadata is explicitly `verification:"unknown"`; it is not confirmation authority. Creation retries compare the original immutable version-zero title, even after another client renames the Trip.
+
+## Staging Preview integration increment
+
+The remote identity configuration in [VPJ-04](vpj-04.md) also gates native Trip routes and the
+existing Web Day/Item editor on the exact Preview deployment host. The Web page still requires
+its normal cookie session and all Web mutations retain their Origin/CSRF checks. The historical
+`localTripEnabled` component prop is a UI availability switch; it grants no write authority.
+Production and unrelated aliases do not acquire this editor switch through the new configuration.
+
+Native Trip passes the existing ordinary JWT and mobile-epoch adapter a shared10-second request
+scope, including body reads and SDK requests. Redirects are refused; Auth transport/protocol
+outages abort the scope and return503 rather than incorrectly clearing the session via401.
+The existing64k UTF-16 body limit remains, with a192k UTF-8 preallocation ceiling. Explicit Auth
+rejection still returns401; an interrupted write is an unknown acknowledgement, never a rollback
+claim. No retry or replacement idempotency key is introduced. Proposal/digest/CAS/atomic Patch
+semantics and SQL remain unchanged. Scoped real remote API, two-Simulator and reciprocal browser confirmation/reload results are recorded in the [2026-09-11 execution](../../artifacts/VPJ-04/staging-native/remote-20260911/verification.md). Full #192 acceptance and the listed UI/device/fault-injection gaps remain open.

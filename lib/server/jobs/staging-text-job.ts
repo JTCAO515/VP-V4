@@ -1,0 +1,91 @@
+import { createScopedTextWorker, type ScopedTextWorkerConfig } from "../turn/scoped-text-worker.ts";
+import { createProviderHttpTransport, type HttpProviderConfiguration, type HttpTransportDependencies } from "../model-gateway/adapters/http-transport.ts";
+import { PROTOCOL_MODELS } from "../model-gateway/adapters/provider-protocol.ts";
+import type { ProtocolUsage } from "../model-gateway/adapters/provider-protocol.ts";
+
+export type TextJobPricing = Readonly<{
+  mode: "flat" | "cache_split";
+  inputMicrosPerMillion: number;
+  outputMicrosPerMillion: number;
+  cachedInputMicrosPerMillion: number | null;
+}>;
+export type StagingTextJobConfig = Readonly<{
+  schemaVersion: "vpj07-staging-text-job/1";
+  ownerId: string;
+  policyId: string;
+  budget: ScopedTextWorkerConfig["budget"];
+  provider: HttpProviderConfiguration;
+  pricing: TextJobPricing;
+}>;
+export type StagingTextJobDependencies = Readonly<{
+  workerCredential: HttpTransportDependencies["credential"];
+  providerCredential: HttpTransportDependencies["credential"];
+  recordDestination: HttpTransportDependencies["recordDestination"];
+  /** Test-only closed destination mapper; CLI uses real fetch without an override. */
+  fetch?: typeof globalThis.fetch;
+}>;
+
+/**
+ * One dedicated-process Staging invocation. Operator supplies the actual reviewed
+ * tariff in the budget scope's currency; this calculator is not tariff discovery
+ * or supplier invoice proof. No defaults, fallback, policy installation or timer.
+ */
+export function createStagingTextJob(raw: unknown, dependencies: StagingTextJobDependencies) {
+  if (!record(raw) || Object.keys(raw).length !== 6 || raw.schemaVersion !== "vpj07-staging-text-job/1"
+    || !record(raw.budget) || !record(raw.provider) || raw.provider.timeoutMs !== raw.budget.timeoutMs
+    || !validPricing(raw.pricing)) throw unavailable();
+  const config = raw as StagingTextJobConfig;
+  // This entry is qualified only for the pinned Qwen profile. The full-context
+  // bound deliberately over-reserves input instead of estimating tokens from text.
+  // Source: https://www.qianwenai.com/models/qwen3.7-plus (2026-09-11).
+  if (config.provider.provider !== "qwen" || PROTOCOL_MODELS.qwen !== "qwen3.7-plus-2026-05-26"
+    || !Number.isSafeInteger(config.budget.maxOutputTokens) || config.budget.maxOutputTokens < 1
+    || !Number.isSafeInteger(config.budget.reservedMicros) || config.budget.reservedMicros < 1) throw unavailable();
+  const inputRate = Math.max(config.pricing.inputMicrosPerMillion, config.pricing.cachedInputMicrosPerMillion ?? 0);
+  const numerator = BigInt(1_048_576) * BigInt(inputRate)
+    + BigInt(config.budget.maxOutputTokens) * BigInt(config.pricing.outputMicrosPerMillion);
+  const requiredMicros = (numerator + BigInt(999999)) / BigInt(1000000);
+  if (requiredMicros > BigInt(1_000_000_000_000) || BigInt(config.budget.reservedMicros) < requiredMicros) throw unavailable();
+  const price = createTextJobPrice(config.pricing);
+  const transport = createProviderHttpTransport(config.provider, {
+    credential: dependencies.providerCredential, recordDestination: dependencies.recordDestination,
+    ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
+  });
+  return createScopedTextWorker({ environment: "staging", databaseUrl: "https://dzqdzetcctkhbrhlxxgn.supabase.co",
+    ownerId: config.ownerId, policyId: config.policyId, budget: config.budget }, {
+    credential: dependencies.workerCredential,
+    provider: { provider: config.provider.provider, endpoint: config.provider.endpoint, transport, price },
+    ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
+  });
+}
+
+/** Integer micro-units; incomplete usage never becomes a zero charge. */
+export function createTextJobPrice(value: TextJobPricing): (usage: ProtocolUsage) => number | null {
+  if (!validPricing(value)) throw unavailable();
+  const price = Object.freeze({ ...value });
+  return usage => {
+    if (!usage || ![usage.inputTokens, usage.outputTokens, usage.totalTokens].every(count => Number.isSafeInteger(count) && count >= 0)
+      || usage.inputTokens + usage.outputTokens !== usage.totalTokens) return null;
+    let numerator = BigInt(usage.outputTokens) * BigInt(price.outputMicrosPerMillion);
+    if (price.mode === "cache_split") {
+      const cached = usage.cachedInputTokens;
+      if (cached === null || !Number.isSafeInteger(cached) || cached < 0 || cached > usage.inputTokens
+        || (usage.uncachedInputTokens !== null && usage.uncachedInputTokens !== usage.inputTokens - cached)) return null;
+      numerator += BigInt(cached) * BigInt(price.cachedInputMicrosPerMillion!)
+        + BigInt(usage.inputTokens - cached) * BigInt(price.inputMicrosPerMillion);
+    } else numerator += BigInt(usage.inputTokens) * BigInt(price.inputMicrosPerMillion);
+    // Round the combined charge upward once, preserving any nonzero fraction.
+    const micros = (numerator + BigInt(999999)) / BigInt(1000000);
+    return micros <= BigInt(1_000_000_000_000) ? Number(micros) : null;
+  };
+}
+
+function validPricing(value: unknown): value is TextJobPricing {
+  return record(value) && Object.keys(value).length === 4
+    && [value.inputMicrosPerMillion, value.outputMicrosPerMillion].every(rate => typeof rate === "number" && Number.isSafeInteger(rate) && rate > 0 && rate <= 1_000_000_000_000)
+    && (value.mode === "flat" ? value.cachedInputMicrosPerMillion === null
+      : value.mode === "cache_split" && typeof value.cachedInputMicrosPerMillion === "number" && Number.isSafeInteger(value.cachedInputMicrosPerMillion)
+        && value.cachedInputMicrosPerMillion > 0 && value.cachedInputMicrosPerMillion <= 1_000_000_000_000);
+}
+function record(value: unknown): value is Record<string, unknown> { return value !== null && typeof value === "object" && !Array.isArray(value); }
+function unavailable(): Error { return new Error("Staging text job configuration unavailable."); }

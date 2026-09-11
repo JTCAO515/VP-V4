@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "vpj03-support-receipt/1",
+  "provider": "qwen",
+  "ticketId": "000D0RX4LS",
+  "url": "https://platform.qianwenai.com/home/support/detail?id=000D0RX4LS",
+  "submittedAtShown": "2026-09-12 01:32:12",
+  "category": "API/SDK调用",
+  "statusShown": "已分派",
+  "authorization": "explicit user approval in current conversation",
+  "bodySha256": "37670c0c6e7cc78fb49127022373e0a494413692859e9cc1e25e1586cdf7e2f2",
+  "bodySource": "docs/policy/qwen-account-support-draft.md",
+  "attachments": 0,
+  "submissionVerified": "detail page displays ticket ID, submitted body, timestamp and assigned status",
+  "response": "automated acknowledgement only; engineer response pending",
+  "qualification": "not_qualified",
+  "providerCalls": 0,
+  "credentialsOrUserBodiesIncluded": false
+}

@@ -61,8 +61,10 @@ node scripts/db/vercel-maintenance-metadata.mjs --read-only
 2. 每次写前重新GET active/draft/versions；第一笔要求与快照的未配置状态和fingerprint一致。
    后续要求精确匹配本次上一步返回的id/version/updatedAt与配置内容；发现其他草稿、规则、版本或alias变化立刻停止。
 3. PUT会创建/覆盖配置；仅因当前明确为空且本次独占窗口才使用这些完整payload。若出现其他规则/managed settings，不套用空模板覆盖。
-4. 每笔后再GET核实际active/draft和新增版本。若只生成draft，先核它的完整内容，再按**准确数字版本**激活；
-   不对未核准的通用`draft`执行publish。若响应表明已active，按已生效动作处理，不重复激活。
+4. 每笔后再GET核实际active/draft和新增版本。若只生成draft，记录数字版本和完整内容，
+   发布前再读并核准本次拥有的同一草稿，再执行官方 `firewall publish`。
+   CLI59.15.1实际调用的是`config/draft/activate`并提交JSON空对象；数字展示版本不是可替代的激活路径。
+   不发布未核准或发生漂移的草稿。若响应表明已active，按已生效动作处理，不重复激活。
 5. 只有受控版本与实际拒绝探针同时符合预期才能开始DB动作。HTTP200/已创建draft不证明规则已启用。
 
 这组检查降低误覆盖风险，但不代替服务端CAS。无法建立独占窗口时，本方案不是安全可执行的迁移维护门。
@@ -81,7 +83,7 @@ node scripts/db/vercel-maintenance-metadata.mjs --read-only
 ```sh
 vercel api "/v1/security/firewall/config?projectId=$VP_PROJECT&teamId=$VP_TEAM" --method PUT --input scripts/db/vercel-maintenance-deny.json --raw
 # 由受控子进程筛选GET输出、核准版本和内容；如果只生成draft才执行下一条。
-vercel api "/v1/security/firewall/config/$VP_APPROVED_CONFIG_VERSION/activate?projectId=$VP_PROJECT&teamId=$VP_TEAM" --method POST --raw
+vercel firewall publish --yes --project "$VP_PROJECT" --scope jtcao515s-projects
 ```
 
 验证current和older production URL、production aliases、current/older preview URL与branch alias。
@@ -113,7 +115,7 @@ SOURCE部署必须先核project、准确已审commit、支持DB28+的代码和�
 
 ```sh
 vercel firewall rules edit "$VP_MAINTENANCE_RULE_ID" --condition "$VP_VERIFIED_HOST_CONDITION_JSON" --action deny --yes --project "$VP_PROJECT" --scope jtcao515s-projects
-# 只核准本次准确draft/version及内容后，按上一节准确版本API激活；不用发布他人的草稿。
+# 发布前再次核准本次准确draft/version及完整内容，再按上一节官方CLI发布；不用发布他人的草稿。
 ```
 
 `VP_VERIFIED_HOST_CONDITION_JSON`完整形式是`{"type":"host","op":"ninc","value":["实际新部署host"]}`。

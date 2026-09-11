@@ -60,7 +60,7 @@ nonisolated final class NativeTripUITests: XCTestCase {
         passwordField.tap(); passwordField.typeText(password)
         let login = application.buttons["native.login.submit"]
         reveal(login, application); login.tap()
-        let active = NSPredicate(format: "label == %@", chinese ? "本机会话有效" : "Local session active")
+        let active = NSPredicate(format: "label == %@", chinese ? "会话有效" : "Session active")
         expectation(for: active, evaluatedWith: application.staticTexts["native.session.status"])
         waitForExpectations(timeout: 30)
         application.tabBars.buttons[chinese ? "行程" : "Trip"].tap()

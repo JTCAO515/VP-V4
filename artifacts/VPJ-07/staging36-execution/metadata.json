@@ -1,0 +1,174 @@
+{
+  "schemaVersion": "vpj07-staging-migration-execution/1",
+  "sourceCommit": "3bf26fc4da17c8129ecd89f9aac91609ab92e5ae",
+  "manifestSha256": "e3924d58b3af3cba55d77c5a308b37e497ac74650dcb4184b44a382c0cb5bc12",
+  "target": {
+    "name": "VP - V4",
+    "ref": "dzqdzetcctkhbrhlxxgn",
+    "region": "ap-southeast-1",
+    "environment": "Staging"
+  },
+  "authorization": "JT confirmed the prepared new maintenance window on 2026-09-11; direct writers stopped; apply frozen34–36 and restore existing compatible entry points",
+  "backup": {
+    "format": "VPB1-AES-256-GCM",
+    "createdAt": "2026-09-11T11:20:19.336Z",
+    "bytes": 433974,
+    "ciphertextSha256": "054065e10e6382216554813650dfd33d66f555a86fbb06ceaa210409fb5e6e29",
+    "scopes": [
+      "public",
+      "private",
+      "auth",
+      "supabase_migrations",
+      "identity_private",
+      "turn_private"
+    ],
+    "restoreRehearsal": "PASS",
+    "restoreTableDigestsMatched": 63,
+    "restoreSchemaInventoryMatched": 211,
+    "restoreNetwork": "none",
+    "restorePublishedPorts": 0,
+    "restoreContainerCleaned": true,
+    "restorePublicBootstrap": {
+      "owner": "pg_database_owner",
+      "acl": [
+        "=U/pg_database_owner",
+        "pg_database_owner=UC/pg_database_owner"
+      ],
+      "omittedTocEntries": 1,
+      "omittedType": "SCHEMA - public",
+      "allOtherEntriesRetained": true
+    }
+  },
+  "migration": {
+    "at": "2026-09-11T11:23:37.225Z",
+    "status": "PASS",
+    "history": 36,
+    "originalTablesPreserved": 63,
+    "originalSchemaEntriesPreserved": 211,
+    "backupRestore": "PASS",
+    "migrationFiles": [
+      "20260910200522_vpj_14_ops_candidate_review.sql",
+      "20260910213151_vpj_15_private_source_assertion.sql",
+      "20260911072414_vpj_07_scoped_text_claim.sql"
+    ],
+    "manifestHash": "e3924d58b3af3cba55d77c5a308b37e497ac74650dcb4184b44a382c0cb5bc12"
+  },
+  "security": {
+    "accounts": 3,
+    "claimAnon": false,
+    "claimAuthenticated": false,
+    "claimPublic": false,
+    "claimService": true,
+    "enabledBudgets": 0,
+    "liveWork": 0,
+    "members": 0,
+    "migrations": 36,
+    "policies": 0,
+    "privateSchemaAnon": false,
+    "privateSchemaAuthenticated": false,
+    "privateTableCount": 7,
+    "privateUnsafeTables": 0,
+    "settingsEnabled": false,
+    "sources": 0,
+    "trips": 2
+  },
+  "maintenance": {
+    "entryActiveVersion": 4,
+    "finalActiveVersion": 5,
+    "anonymousDenied403": 80,
+    "automaticProtectionBypassDenied403": 56,
+    "restoredAllowedHosts": 8,
+    "oldHostsStillDenied": 2,
+    "originalRuleRestored": true,
+    "productionDeploymentTargetChanged": false,
+    "environmentMetadataChanged": false
+  },
+  "roleChecks": {
+    "at": "2026-09-11T11:23:02.200Z",
+    "results": [
+      {
+        "role": "anon",
+        "deniedOperations": 5,
+        "status": "PASS"
+      },
+      {
+        "role": "authenticated",
+        "deniedOperations": 5,
+        "status": "PASS"
+      },
+      {
+        "role": "authenticated",
+        "opsDisabled": true,
+        "claims": "synthetic SQL role test; not a real Auth session",
+        "status": "PASS"
+      },
+      {
+        "role": "service_role",
+        "scopedClaim": "empty",
+        "status": "PASS"
+      }
+    ],
+    "transactionsRolledBack": true,
+    "actualAuthSession": false
+  },
+  "realAuthChecks": {
+    "at": "2026-09-11T11:25:36.250Z",
+    "status": "PASS",
+    "checks": [
+      "anonymous scoped claim denied",
+      "real authenticated a: claim denied, Ops disabled, foreign Trips invisible",
+      "real authenticated b: claim denied, Ops disabled, foreign Trips invisible"
+    ],
+    "realAuthSessions": 2,
+    "createdUsersCleaned": true,
+    "originalUsersUntouched": true,
+    "noOutgoingEmail": true,
+    "noProviderCalls": true
+  },
+  "advisors": {
+    "beforeCount": 38,
+    "afterCount": 39,
+    "newFindings": [
+      {
+        "name": "authenticated_security_definer_function_executable",
+        "title": "Signed-In Users Can Execute SECURITY DEFINER Function",
+        "level": "WARN",
+        "facing": "EXTERNAL",
+        "categories": [
+          "SECURITY"
+        ],
+        "description": "Detects `SECURITY DEFINER` functions that are callable by signed-in users. Revoke `EXECUTE`, switch the function to `SECURITY INVOKER`, or move it out of your exposed API schema if signed-in users should not call it.",
+        "detail": "Function `public.ops_review_workspace(p_input jsonb)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/ops_review_workspace`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable",
+        "metadata": {
+          "name": "ops_review_workspace",
+          "schema": "public"
+        },
+        "cacheKey": "authenticated_security_definer_function_executable_public_ops_review_workspace_p_input jsonb"
+      }
+    ],
+    "disposition": "Expected authenticated ops_review_workspace definer entry; both code paths gate current actor/session/member before data access; currently disabled. Independent review found no new Important/Critical defect. Existing38 WARN remain."
+  },
+  "final": {
+    "at": "2026-09-11T11:28:23.909569+00:00",
+    "database": {
+      "accounts": 3,
+      "enabled_scopes": 0,
+      "live_work": 0,
+      "migrations": 36,
+      "policies": 0,
+      "trips": 2
+    },
+    "firewallVersion": 5,
+    "originalRulesRestored": true,
+    "productionTargetUnchanged": true,
+    "environmentMetadataUnchanged": true
+  },
+  "limits": [
+    "No real user text sent to a provider",
+    "No text policy, budget scope, worker or knowledge membership activated",
+    "No production deployment or environment configuration changed",
+    "Existing S1 remote code retained; this does not complete S1/S2 acceptance",
+    "Original63 table and211 schema metadata comparison completed before temporary Auth smoke users; those users were then removed; normal Auth audit history is retained"
+  ]
+}

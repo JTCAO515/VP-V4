@@ -1,0 +1,34 @@
+[
+  {
+    "name": "native password proof login and ordinary owner profile",
+    "status": "PASS"
+  },
+  {
+    "name": "native refresh preserves mobile epoch",
+    "status": "PASS"
+  },
+  {
+    "name": "second phone fences old token and refresh while independent Web persists",
+    "status": "PASS"
+  },
+  {
+    "name": "other owner cannot read synthetic owner profile",
+    "status": "PASS"
+  },
+  {
+    "name": "native API creates same Trip; reviewed proposal does not silently save",
+    "status": "PASS"
+  },
+  {
+    "name": "Web revision invalidates old digest; simultaneous confirmation and replay apply once",
+    "status": "PASS"
+  },
+  {
+    "name": "reciprocal Web/native version2 reload; refusal and stale changes preserve saved content",
+    "status": "PASS"
+  },
+  {
+    "name": "ordinary other-account Trip/proposal/snapshot reads and writes denied",
+    "status": "PASS"
+  }
+]

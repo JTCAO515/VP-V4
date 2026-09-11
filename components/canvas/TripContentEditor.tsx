@@ -8,6 +8,7 @@ import type { TripSnapshot, TripDay } from "@/lib/server/trip/patch/contract";
 import styles from "./TripContentEditor.module.css";
 
 export type LocalTripRead = { trip: { id: string; title: string; headVersion: number; updatedAt: string }; content: { days: readonly TripDay[] }; confirmationState?: "initial" | "confirmed" | "unknown" };
+type Notice = "conflict" | "pending" | "unavailable" | "noChanges" | "stored" | "rejected";
 const snapshotOf = (data: LocalTripRead): TripSnapshot => structuredClone({ version: data.trip.headVersion, title: data.trip.title, days: data.content.days });
 
 export function TripContentEditor({ data, pending, locale, onReload, onPending }: {
@@ -19,7 +20,7 @@ export function TripContentEditor({ data, pending, locale, onReload, onPending }
   const [draft, setDraft] = useState(() => snapshotOf(data));
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [notice, setNotice] = useState("");
+  const [notice, setNotice] = useState<Notice | null>(null);
   const live = useRef(true);
   const reviewedDraft = useRef<string | null>(null);
   const keys = useRef(new Map<string, string>());
@@ -28,30 +29,30 @@ export function TripContentEditor({ data, pending, locale, onReload, onPending }
   const pendingIdentity = pending ? `${pending.proposal.id}:${pending.proposal.digest ?? ""}` : null;
   const pendingStale = pending?.proposal.stale === true;
   useEffect(() => {
-    if (pendingIdentity) setNotice(pendingStale ? copy.conflict : copy.pending);
-  }, [pendingIdentity, pendingStale, copy.conflict, copy.pending]);
+    if (pendingIdentity) setNotice(pendingStale ? "conflict" : "pending");
+  }, [pendingIdentity, pendingStale]);
   const stale = dirty && base.version !== data.trip.headVersion;
   function reset(next = data) { const value = snapshotOf(next); setBase(value); setDraft(value); setDirty(false); reviewedDraft.current = null; }
   function edit(value: TripSnapshot) { setDraft(value); setDirty(true); }
   function dayEdit(id: string, update: (day: TripDay) => TripDay) { edit({ ...draft, days: draft.days.map(day => day.id === id ? update(day) : day) }); }
-  async function loadLatest() { setBusy(true); try { await onReload(); } catch { if (live.current) setNotice(copy.unavailable); } finally { if (live.current) setBusy(false); } }
+  async function loadLatest() { setBusy(true); try { await onReload(); } catch { if (live.current) setNotice("unavailable"); } finally { if (live.current) setBusy(false); } }
   async function propose(revise: boolean) {
     const patch = draftTripPatch(base, draft);
-    if (!patch.operations.length) { setNotice(copy.noChanges); return; }
+    if (!patch.operations.length) { setNotice("noChanges"); return; }
     setBusy(true);
     try {
       const result = await fetch(`/api/trips/${data.trip.id}/proposal${revise ? "/revision" : ""}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(revise && pending ? { proposalId: pending.proposal.id, patch } : { patch }) });
       if (!live.current) return;
-      if (!result.ok) { await onReload(); if (live.current) setNotice(result.status === 409 ? copy.conflict : copy.unavailable); return; }
+      if (!result.ok) { await onReload(); if (live.current) setNotice(result.status === 409 ? "conflict" : "unavailable"); return; }
       const receipt = await result.json() as { proposalId: string };
       const read = await fetch(`/api/trips/${data.trip.id}/proposal?proposalId=${receipt.proposalId}`, { cache: "no-store" });
       if (!live.current) return;
-      if (!read.ok) { setNotice(copy.conflict); return; }
+      if (!read.ok) { setNotice("conflict"); return; }
       const proposal = await read.json() as PendingProposalRead;
       if (!live.current || proposal.trip.id !== data.trip.id || proposal.proposal.id !== receipt.proposalId || !proposal.proposal.digest) return;
       reviewedDraft.current = JSON.stringify(draft);
-      onPending(proposal); setNotice(copy.pending);
-    } catch { if (live.current) setNotice(copy.unavailable); } finally { if (live.current) setBusy(false); }
+      onPending(proposal); setNotice("pending");
+    } catch { if (live.current) setNotice("unavailable"); } finally { if (live.current) setBusy(false); }
   }
   async function confirm() {
     if (!pending?.proposal.digest) return;
@@ -65,22 +66,22 @@ export function TripContentEditor({ data, pending, locale, onReload, onPending }
       if (!live.current) return;
       const latest = await onReload();
       if (!live.current) return;
-      if (result.ok && latest) { if (clearDraft) reset(latest); setNotice(copy.stored); }
-      else setNotice(result.status === 409 ? copy.conflict : copy.unavailable);
-    } catch { if (live.current) setNotice(copy.unavailable); } finally { if (live.current) setBusy(false); }
+      if (result.ok && latest) { if (clearDraft) reset(latest); setNotice("stored"); }
+      else setNotice(result.status === 409 ? "conflict" : "unavailable");
+    } catch { if (live.current) setNotice("unavailable"); } finally { if (live.current) setBusy(false); }
   }
   async function reject() {
     if (!pending) return; setBusy(true);
     try {
       const result = await fetch(`/api/trips/${data.trip.id}/proposal/reject`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ proposalId: pending.proposal.id }) });
       if (!live.current) return;
-      if (result.ok) { onPending(null); setNotice(copy.rejected); } else setNotice(copy.unavailable);
-    } catch { if (live.current) setNotice(copy.unavailable); } finally { if (live.current) setBusy(false); }
+      if (result.ok) { onPending(null); setNotice("rejected"); } else setNotice("unavailable");
+    } catch { if (live.current) setNotice("unavailable"); } finally { if (live.current) setBusy(false); }
   }
   return <section className={styles.workspace} data-testid="same-trip-editor">
     <p className={styles.note}>{copy.localOnly}</p>
     <section className={styles.recorded}><h2>{data.confirmationState === "confirmed" ? copy.confirmed : data.confirmationState === "initial" ? copy.initial : copy.unknown} · v{data.trip.headVersion}</h2><SnapshotContent value={snapshotOf(data)} /><p>{copy.locks} · {copy.orders}</p><button type="button" onClick={() => void loadLatest()} disabled={busy}>{copy.reload}</button></section>
-    <div role="status" className={styles.note}>{stale ? copy.conflict : notice}</div>
+    <div role="status" className={styles.note}>{stale ? copy.conflict : notice ? copy[notice] : null}</div>
     <section className={styles.draft}><h2>{copy.draft}</h2><p>{copy.base} {base.version}</p>
       <label>{copy.tripTitle}<input value={draft.title} maxLength={160} disabled={busy} onChange={event => edit({ ...draft, title: event.target.value })} /></label>
       {draft.days.map((day, index) => <fieldset key={day.id}><legend>{copy.date} {index + 1}</legend><div className={styles.row}><label>{copy.date}<input type="date" value={day.date} disabled={busy} onChange={event => dayEdit(day.id, previous => ({ ...previous, date: event.target.value }))} /></label><button type="button" disabled={busy} onClick={() => edit({ ...draft, days: draft.days.filter(value => value.id !== day.id) })}>{copy.remove}</button></div>

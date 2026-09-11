@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "runs": [
+    {
+      "run": "native-diagnostic-en-1789149898",
+      "locale": "en",
+      "scope": "actual native Swift consumer on compiled exact Staging Preview; not button UI",
+      "exitCode": 0,
+      "result": "Passed",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "startTime": 1789149900.494,
+      "finishTime": 1789150012.165,
+      "transientCredentialFileRemoved": true
+    },
+    {
+      "run": "ui-en-1789149417",
+      "locale": "en",
+      "scope": "actual native UI on compiled exact Staging Preview",
+      "exitCode": 65,
+      "result": "Failed",
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "startTime": 1789149442.402,
+      "finishTime": 1789149687.279,
+      "transientCredentialFileRemoved": true
+    },
+    {
+      "run": "ui-en-1789150065",
+      "locale": "en",
+      "scope": "actual native UI on compiled exact Staging Preview",
+      "exitCode": 65,
+      "result": "Failed",
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "startTime": 1789150115.828,
+      "finishTime": 1789150426.634,
+      "transientCredentialFileRemoved": true
+    },
+    {
+      "run": "ui-zh-Hans-1789150546",
+      "locale": "zh-Hans",
+      "scope": "actual native UI on compiled exact Staging Preview",
+      "exitCode": 73,
+      "result": "Failed",
+      "passed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "startTime": 1789150553.17,
+      "finishTime": 1789150874.855,
+      "transientCredentialFileRemoved": true,
+      "scopeOutcome": "UNRUN",
+      "reason": "XCTest runner did not start a test case within five minutes; owned xcodebuild canceled, reported runner error"
+    }
+  ],
+  "appConfig": {
+    "CFBundleIdentifier": "space.go2china.VisePanda",
+    "CFBundleVersion": "1",
+    "VisePandaNativeEnvironment": "staging",
+    "VisePandaStagingAPIOrigin": "https://vp-v4-6gmyp6494-jtcao515s-projects.vercel.app"
+  },
+  "appSHA256": "9577ece42c9cc0d81855a5e308ae43a97c28f43cf65dad428c57679caded8b5c",
+  "backendSHA": "f5db769fbcca7b24fd6aeebf8dc004b63df1c2b8",
+  "applicationSource": "4b0cf6c plus the test-only active-session label correction",
+  "providerCalls": 0
+}

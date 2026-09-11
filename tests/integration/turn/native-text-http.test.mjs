@@ -23,6 +23,8 @@ test('real local Auth, native HTTP, consent, durable worker and recovery enforce
  const accepted=await Promise.all([call(base+'/turns',token,'POST',input),call(base+'/turns',token,'POST',input)]);assert.deepEqual(accepted.map(r=>r.status).sort(),[200,201]);
  await waitUntil(async()=>{const r=await call(base+'/turns',token);return r.body.turns?.some(t=>t.turnId===input.turnId&&t.outcome==='answered');},30000,'actual worker final answer');
  const final=(await call(base+'/turns',token)).body.turns[0];assert.equal(final.output,'Local synthetic answer: request completed.');assert.equal(e.counts.http,1);
+ assert.equal(e.counts.destinationReceipts,3,'configured/attempted/buffered metadata hooks ran');
+ assert.equal(e.sql(`select status||':'||actual_micros from public.model_budget_attempts where task_id='${input.turnId}';`),'settled:1','synthetic reviewed tariff rounds up once after model/usage validation');
  assert.equal((await call(base+'/turns',other)).body.turns.length,0);
  assert.equal((await call(base+'/turns',token,'POST',{...input,text:'Changed'})).status,409);
  assert.equal((await call(base+'/turns',token,'POST',{...input,reasoning:'forbidden extra field'})).status,400);

@@ -1,4 +1,6 @@
 import type { NextRequest } from "next/server";
+import { nativeRequestScope } from "../identity/native-request.ts";
+import { getNativeRuntimeConfig, isLocalNativeTarget } from "../identity/native-config.ts";
 import { getSupabasePublicConfig } from "../identity/user-data-adapter.ts";
 import { verifyNativeCredentials } from "../identity/native-credentials.ts";
 import { isUuid } from "../identity/request-guards.ts";
@@ -7,31 +9,36 @@ import { FAILURE_TAXONOMY, type FailureCode } from "../contracts/errors/index.ts
 type Action = "policy" | "history" | "accept" | "withdraw" | "submit" | "cancel";
 const response = (data: unknown, status = 200) => Response.json(data, { status, headers: { "Cache-Control": "private, no-store" } });
 const failure = (code: FailureCode) => response({ error: { code } }, FAILURE_TAXONOMY[code].httpStatus);
-export function getLocalNativeTextConfig() {
+export function getNativeTextConfig(request: Pick<Request, "url">) {
+  if (process.env.VISEPANDA_NATIVE_STAGING === "true") {
+    const config = getNativeRuntimeConfig(request, "trip"), policyId = process.env.VISEPANDA_NATIVE_STAGING_TEXT_POLICY;
+    return process.env.VISEPANDA_NATIVE_STAGING_TEXT === "true" && config?.environment === "staging" && uuid(policyId)
+      ? { ...config, policyId: policyId.toLowerCase() } : null;
+  }
   const config = getSupabasePublicConfig(), policyId = process.env.VISEPANDA_NATIVE_LOCAL_TEXT_POLICY;
-  if (process.env.VISEPANDA_NATIVE_LOCAL_TEXT !== "true" || !config || !uuid(policyId)) return null;
-  try {
-    const url = new URL(config.url);
-    return url.protocol === "http:" && ["localhost", "127.0.0.1"].includes(url.hostname) && !url.username && !url.password ? { ...config, policyId: policyId.toLowerCase() } : null;
-  } catch { return null; }
+  if (process.env.VERCEL_ENV || process.env.VISEPANDA_NATIVE_LOCAL_TEXT !== "true" || !config || !uuid(policyId)) return null;
+  return isLocalNativeTarget(config.url) ? { ...config, policyId: policyId.toLowerCase() } : null;
 }
 
 export async function nativeTextHTTP(request: NextRequest, action: Action, turnId?: string) {
-  const config = getLocalNativeTextConfig();
+  const config = getNativeTextConfig(request);
   if (!config) return failure("PROVIDER_UNAVAILABLE");
   if (request.headers.has("cookie") || request.headers.has("origin") || [...request.nextUrl.searchParams].length
     || (turnId !== undefined && !uuid(turnId))) return failure("INVALID_INPUT");
+  const scope = nativeRequestScope(request.signal);
   try {
-    const actor = await verifyNativeCredentials(request, config);
+    const actor = await scope.run(() => verifyNativeCredentials(request, config, scope.fetch, scope.unavailable));
     if (!actor) return failure("UNAUTHENTICATED");
-    const rpc = async (name: string, params: Readonly<Record<string, string | number>> = {}) => actor.client.rpc(name, params).abortSignal(AbortSignal.timeout(10_000));
+    const rpc = async (name: string, params: Readonly<Record<string, string | number>> = {}) => scope.run(() => actor.client.rpc(name, params).abortSignal(scope.signal));
     const session = await rpc("native_session_v2", { p_action: "session" });
-    if (session.error || session.data?.subject !== actor.subject || session.data?.sessionId !== actor.sessionId) return failure("UNAUTHENTICATED");
+    if (session.error) return failure(mapError(session.error.message));
+    if (!record(session.data) || !uuid(session.data.subject) || !uuid(session.data.sessionId)) return failure("PROVIDER_UNAVAILABLE");
+    if (session.data.subject !== actor.subject || session.data.sessionId !== actor.sessionId) return failure("UNAUTHENTICATED");
     let result;
     if (action === "policy") result = await rpc("read_text_policy", { p_policy_id: config.policyId });
     else if (action === "history") result = await rpc("list_text_turns", { p_policy_id: config.policyId, p_limit: 20 });
     else {
-      const input = await boundedBody(request);
+      const input = await scope.run(() => boundedBody(request, scope.signal));
       if (!record(input)) return failure("INVALID_INPUT");
       if (action === "accept" && exact(input,["policyId","noticeHash"]) && input.policyId === config.policyId && typeof input.noticeHash === "string" && /^[a-f0-9]{64}$/.test(input.noticeHash)) {
         result = await rpc("accept_text_policy", { p_policy_id: config.policyId, p_notice_hash: input.noticeHash });
@@ -53,6 +60,7 @@ export async function nativeTextHTTP(request: NextRequest, action: Action, turnI
     if (["blocked","unavailable"].includes(result.data.kind)) return failure("DATA_POLICY_BLOCKED");
     return response({ version: 1, ...result.data }, action === "submit" && result.data.reused !== true ? 201 : 200);
   } catch { return failure("PROVIDER_UNAVAILABLE"); }
+  finally { scope.dispose(); }
 }
 function mapError(message: string): FailureCode {
   if (/UNAUTHENTICATED|SESSION_REPLACED/.test(message)) return "UNAUTHENTICATED";
@@ -62,25 +70,27 @@ function mapError(message: string): FailureCode {
   if (message.includes("FORBIDDEN")) return "FORBIDDEN";
   return "PROVIDER_UNAVAILABLE";
 }
-async function boundedBody(request: NextRequest): Promise<unknown> {
+async function boundedBody(request: NextRequest, parentSignal: AbortSignal): Promise<unknown> {
   if (request.headers.get("content-type")?.split(";")[0].trim() !== "application/json" || !request.body) return null;
   const reader = request.body.getReader(), parts: Uint8Array[] = [];
   let bytes = 0;
-  const signal = AbortSignal.any([request.signal, AbortSignal.timeout(5000)]);
-  const cancel = () => { void reader.cancel().catch(() => {}); };
-  signal.addEventListener("abort", cancel, { once: true });
+  const scope = nativeRequestScope(parentSignal, 5000);
   try {
-    while (!signal.aborted) {
-      const next = await reader.read();
+    for (;;) {
+      const next = await scope.run(() => reader.read());
       if (next.done) break;
       bytes += next.value.byteLength;
       if (bytes > 32768) return null;
       parts.push(next.value);
     }
-    if (signal.aborted) return null;
-    return JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(Buffer.concat(parts)));
-  } catch { return null; }
-  finally { signal.removeEventListener("abort", cancel); await reader.cancel().catch(() => {}); reader.releaseLock(); }
+    scope.check();
+    try { return JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(Buffer.concat(parts))); }
+    catch { return null; }
+  } finally {
+    scope.dispose();
+    try { void reader.cancel().catch(() => {}); } catch { /* already closed */ }
+    try { reader.releaseLock(); } catch { /* pending read may retain its lock */ }
+  }
 }
 function record(value: unknown): value is Record<string, unknown> { return typeof value === "object" && value !== null && !Array.isArray(value); }
 function exact(value: Record<string, unknown>, keys: readonly string[]) { return Object.keys(value).length === keys.length && keys.every(key => Object.hasOwn(value,key)); }

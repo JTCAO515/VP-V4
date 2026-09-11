@@ -50,6 +50,43 @@ from that durable row. One lease may authorize one dispatch. C0's four-argument 
 entry still denies C2. Server-only RPC and transport dependencies are trusted; they are not user
 request parameters. Production transport/RPC identity wiring remains an activation prerequisite.
 
+### Scoped worker binding
+
+`createScopedTextWorker` binds one operator-selected owner, immutable policy and budget scope to
+the existing text worker. Its server RPC adapter has a10-second lifetime per request, a128KiB
+response limit, no redirect/retry, and generic failures without upstream bodies or credentials.
+Local databases must be root loopback origins; Staging is the fixed Staging Supabase origin.
+It rejects every Vercel execution environment: invocation belongs to a dedicated trusted process,
+not a public Next route. It obtains only an explicitly supplied server worker credential and
+provider binding; no environment secret, timer, policy or network job is automatically installed.
+
+The additive `claim_text_work(owner,policy)` capability is executable only by the existing service
+role. It filters before claiming, then repeats policy/consent checks under the established lock
+order. Other owners, other policies, hidden/revoked text and metadata-only work remain unclaimed.
+The legacy global claimer and scoped claimer share the same advisory lock and lease protocol;
+parallel processes and upgrades cannot lease one item twice. Token expiry, cancellation and
+terminal-once remain authoritative in SQL. No queue payload, owner scope or grant comes from a
+user request. Source, real SQL/HTTP checks and rollback evidence are in
+[scoped-worker verification](../../artifacts/VPJ-07/scoped-worker/verification.md).
+
+The dedicated `run-staging-text-worker.mjs` CLI composes the allowlisted HTTP transport with
+this scoped worker for one explicit poll. It requires an operator-owned closed JSON configuration,
+two explicit worker/provider environment credentials and a new private receipt file. It has no
+cron or automatic key discovery. Metadata receipts are fsynced; existing files are not overwritten.
+The job currently permits only pinned Qwen `qwen3.7-plus-2026-05-26`. Before claim or credential
+access, reservation must cover 1,048,576 input tokens at the greater input/cache rate plus the
+configured maximum output at its rate, rounded upward once using integer arithmetic. This
+conservative full-context bound avoids text/token guesses; operator-reviewed actual tariff in the
+budget currency remains mandatory. Other provider profiles require their own verified bounds
+before this entry can admit them; general protocol adapters remain available separately.
+
+This wiring still requires an approved runtime provider transport, actual price/configuration
+binding, durable scheduling and a qualified policy before remote activation. It is not evidence
+that a remote worker or provider has answered a user. Rollback stops the owned worker process;
+revoking service execution of the new scoped-claim capability additionally stops new scoped claims.
+Retain its migration, existing leases, content, receipts and pending charges. Do not use the legacy
+global claimer as a fallback or release unknown reservations during rollback.
+
 Each lease receives a distinct budget attempt through the existing durable reserve/dispatch/finish
 ledger. Unknown charges remain pending and consume reservation capacity; a provider failure or
 lost acknowledgment does not become free. Revocation between budget dispatch and text authorization
@@ -117,13 +154,23 @@ policy, retaining content, receipts and applied migration history. Do not drop r
 restore revoked/deleted visibility. An applied migration is never edited or removed.
 
 
-## Native text consumer v1 (local opt-in)
+## Native text consumer v1 (explicit test environment)
 
-The native `api/chat/native/v1` routes require `VISEPANDA_NATIVE_LOCAL_TEXT=true`, one explicit
-policy UUID and a loopback Supabase URL. Cookie/Origin ambiguity and query fields are rejected.
+The native `api/chat/native/v1` routes require an operator-selected environment and policy UUID.
+Local execution requires `VISEPANDA_NATIVE_LOCAL_TEXT=true`, `VISEPANDA_NATIVE_LOCAL_TEXT_POLICY`
+and a root loopback Supabase URL; any `VERCEL_ENV` prevents local activation. Staging requires
+`VISEPANDA_NATIVE_STAGING_TEXT=true`, `VISEPANDA_NATIVE_STAGING_TEXT_POLICY` and the existing
+native Staging identity/Trip configuration: exact generated Preview request origin, explicit
+Staging and Trip-v2 flags, and the fixed Staging database. Production, aliases and arbitrary
+hosts/databases cannot activate it. The shared Trip resolver supplies only the public key,
+never the password-proof key. Cookie/Origin ambiguity and query fields are rejected.
 The bearer credential is verified through the existing native session epoch authority; every
 sensitive SQL operation independently checks the live owner/session. Bodies are bounded to
-32KiB/5 seconds and closed request shapes; RPCs have a 10-second timeout. No service key enters
+32KiB/5 seconds and closed request shapes; credential verification, session checks, body reads and
+RPCs share one 10-second request lifetime. Cancellation/deadline/transport failure returns503,
+including a lost submit acknowledgment, without an automatic retry or a credential-clear signal.
+Only explicit credential/session rejection returns401. Late upstream replies cannot dispatch a
+later RPC. Malformed/oversize bodies remain400; policy denial remains403. No service key enters
 the native app. The migration installs no policy, and flags do not grant third-party permission.
 
 `read_text_policy` exposes the current immutable bilingual notice and the caller's consent state.
@@ -132,11 +179,12 @@ rejection rolls back an otherwise orphaned thread. `list_text_turns` returns the
 20 visible requests under the selected current policy and unwithdrawn consent. It includes the
 technical lifecycle separately from the five business outcomes. A changed deployment policy
 never inherits the previous recipient's permission. Existing withdrawal by policy UUID remains
-available while the local API is enabled, including for a previous selected policy.
+available while the selected test API is enabled, including for a previous selected policy.
 
-The local native Ask view displays the complete stored notice before an explicit unchecked
+The native Ask view displays the complete stored notice before an explicit unchecked
 agreement/accept action. It supports submit, same-request retry, cancel, withdrawal and history
-reload. The existing preview stays disabled unless the local Native API argument is supplied.
+reload. Its API uses the existing NativeSession endpoint: a local argument or the explicitly
+packaged Staging build configuration. No request can choose a different endpoint or policy.
 Controls and outcome labels are translated in all five existing native locales; notices are the
 approved Chinese/English texts. The result is plain text; no new Trip write or action execution.
 
@@ -161,3 +209,11 @@ it still executes both full test targets, never filters tests, and removes its o
 and temporary xctestrun. Its default CI mode remains unchanged. See
 [native evidence](../../artifacts/VPJ-07/native-text-verification.md). Physical-device, remote,
 real-recipient and provider-semantic acceptance remain separate; #195 stays open.
+
+The Staging entry gate adds no policy, worker, model credential or migration. Before activation,
+qualify the actual recipient/account/region/terms and install the immutable bilingual notice through
+the existing authorized policy path; a UUID alone cannot satisfy that registry or user consent.
+Bind the trusted worker and reviewed budget pricing, then verify ordinary-user final-answer reload
+against the exact deployed SHA. Disable only the owned branch's text activation to roll back;
+preserve consent history, retained content and receipts. S1 Staging identity evidence and synthetic
+local worker results do not establish remote S2 acceptance.

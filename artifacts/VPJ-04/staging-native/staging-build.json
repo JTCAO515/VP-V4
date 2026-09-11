@@ -1,0 +1,15 @@
+{
+  "sourceCommit": "a0848e31594863c542ef74525319e570e1f9b9d6",
+  "sourceMethod": "git archive HEAD ios into isolated cache",
+  "configuration": "Debug Simulator unsigned",
+  "buildResult": "PASS",
+  "plist": {
+    "VisePandaNativeEnvironment": "staging",
+    "VisePandaStagingAPIOrigin": "https://vp-v4-syntheticbuild-jtcao515s-projects.vercel.app",
+    "CFBundleIdentifier": "space.go2china.VisePanda",
+    "CFBundleVersion": "1"
+  },
+  "standardGeneratedKeysPreserved": true,
+  "endpointIsSynthetic": true,
+  "remoteCalls": 0
+}

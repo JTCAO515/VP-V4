@@ -16,10 +16,10 @@ struct NativeTripView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: VPSpacing.section) {
                 BrandHeader()
-                Text(text("Local synthetic trips", "本机合成行程"))
+                Text(text("Test trips", "测试行程"))
                     .font(.headline)
                 if session.dataScope == nil || store.scope != session.dataScope {
-                    Text(text("Sign in to a local test account in Profile to open your trips.", "请在「我的」登录本机测试账号，再打开行程。"))
+                    Text(text("Sign in to a test account in Profile to open your trips.", "请在「我的」登录测试账号，再打开行程。"))
                 } else {
                     tripList
                     if let notice = store.notice {

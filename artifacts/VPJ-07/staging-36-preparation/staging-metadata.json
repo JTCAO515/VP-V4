@@ -1,0 +1,152 @@
+{
+  "observedAt": "2026-09-11T07:59:49.723688+00:00",
+  "operation": "official CLI Management API; BEGIN READ ONLY / ROLLBACK",
+  "target": "existing VP - V4 ap-southeast-1 Staging",
+  "inventory": {
+    "authAccountCount": 3,
+    "enabledBudgetScopeCount": 0,
+    "knowledgeReviewSchemaPresent": false,
+    "liveWorkCount": 0,
+    "migrations": [
+      {
+        "name": "v4_baseline",
+        "version": "20260824101500"
+      },
+      {
+        "name": "plat_conf_connection_probes",
+        "version": "20260824104424"
+      },
+      {
+        "name": "plat_conf_ops_probe",
+        "version": "20260824104547"
+      },
+      {
+        "name": "plat_conf_worker_probe_grant",
+        "version": "20260824105759"
+      },
+      {
+        "name": "ai14_actor_rls_fault_probes",
+        "version": "20260825052328"
+      },
+      {
+        "name": "ai14_reviewer_separation_probe",
+        "version": "20260825153534"
+      },
+      {
+        "name": "ai14_reviewer_select_probe",
+        "version": "20260825153613"
+      },
+      {
+        "name": "ai10_durable_trip_proposals",
+        "version": "20260825160314"
+      },
+      {
+        "name": "ai10_confirm_outcomes",
+        "version": "20260825160458"
+      },
+      {
+        "name": "ai10_confirm_fault_triggers",
+        "version": "20260825161535"
+      },
+      {
+        "name": "ai13b_proposal_revision_lineage",
+        "version": "20260827030717"
+      },
+      {
+        "name": "v4_08_durable_chat_threads",
+        "version": "20260828153000"
+      },
+      {
+        "name": "v4_09_chat_feedback",
+        "version": "20260828160000"
+      },
+      {
+        "name": "v4_10_trip_version_snapshots",
+        "version": "20260828170000"
+      },
+      {
+        "name": "v4_11_trip_place_references",
+        "version": "20260828180000"
+      },
+      {
+        "name": "v4_12_trip_action_references",
+        "version": "20260828190000"
+      },
+      {
+        "name": "v4_13_memory_profile",
+        "version": "20260828193000"
+      },
+      {
+        "name": "v4_15_memory_consumer_receipts",
+        "version": "20260828194000"
+      },
+      {
+        "name": "v4_16_user_profiles",
+        "version": "20260828200000"
+      },
+      {
+        "name": "v4_17_privacy_lifecycle",
+        "version": "20260828210000"
+      },
+      {
+        "name": "v4_14_server_minted_memory_consent",
+        "version": "20260829191000"
+      },
+      {
+        "name": "launch_03_trip_content_snapshots",
+        "version": "20260830100000"
+      },
+      {
+        "name": "launch_11_trip_proposal_patch",
+        "version": "20260830210000"
+      },
+      {
+        "name": "launch_11_trip_proposal_patch_revision",
+        "version": "20260830211000"
+      },
+      {
+        "name": "vpj_02_repair_local_rpc_runtime",
+        "version": "20260909033302"
+      },
+      {
+        "name": "vpj_59_durable_model_budget",
+        "version": "20260909184816"
+      },
+      {
+        "name": "vpj_04_native_mobile_sessions",
+        "version": "20260909223841"
+      },
+      {
+        "name": "vpj_05_confirm_intent_authority",
+        "version": "20260910002858"
+      },
+      {
+        "name": "vpj_07_durable_turn_work",
+        "version": "20260910163426"
+      },
+      {
+        "name": "vpj_07_text_authorization",
+        "version": "20260910171836"
+      },
+      {
+        "name": "vpj_07_native_text_consumer",
+        "version": "20260910174748"
+      },
+      {
+        "name": "vpj_59_stop_model_budget",
+        "version": "20260910190526"
+      },
+      {
+        "name": "vpj_37_ops_scope_read_model",
+        "version": "20260910190658"
+      }
+    ],
+    "pendingBudgetAttemptCount": 0,
+    "scopedClaimPresent": false,
+    "textPolicyCount": 0,
+    "tripCount": 2
+  },
+  "remote33VersionNamesMatch": true,
+  "remoteMutations": 0,
+  "writeQuiescenceEstablished": false
+}

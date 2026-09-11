@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "vpj07-operator-source-hashes/1",
+  "sources": [
+    {
+      "file": "transport.mjs",
+      "sha256": "a59a60b5d8dba05cf82dd11b61ee2aea3654e0f42cf6873403c83c100699440c"
+    },
+    {
+      "file": "table-snapshot.mjs",
+      "sha256": "8570b023e25c19468a154802332c6e8856ba3b35c58fa0b12419445dd7530e4b"
+    },
+    {
+      "file": "schema-inventory.mjs",
+      "sha256": "0cc202589259ef20914ef59a4154a9a26c18ee1d067df59eae52acdd1e51f849"
+    },
+    {
+      "file": "backup.mjs",
+      "sha256": "b4852ab35b8febf685aa5e0859b3713973ca7dfdbe9af43fd2eaef55009368b2"
+    },
+    {
+      "file": "restore.mjs",
+      "sha256": "062b01e0760ec17d1eb0f65b915580fb276b34f213c9dd1b276dde32395bdce8"
+    },
+    {
+      "file": "migrate.mjs",
+      "sha256": "971542d56ed4997803d231895dfee1012c10a04f6f295cba426440ba89c40855"
+    },
+    {
+      "file": "maintenance.py",
+      "sha256": "4ba558d4122e065281f0ef1603d4da0b811469e8ea21e836ce1f4561db8c0c41"
+    },
+    {
+      "file": "publish-enter.py",
+      "sha256": "d119bb627741b858687db8b43c1f5c4040d27c8d7d41901eca02db0b8a307182"
+    },
+    {
+      "file": "probes.py",
+      "sha256": "e0f8cc0c198ce45ccc8f9b4b02807da7b4925a94568f997640b397564d3938f1"
+    },
+    {
+      "file": "probes-auth.py",
+      "sha256": "639935234a06a177a17fa5f6c0b1445aeaae793d2a2e73d7835268ae72bedb2f"
+    },
+    {
+      "file": "probes-restored.py",
+      "sha256": "13c7a1c1e7ff75c1282da050ffcd472e67c887a872beffcd8422b2c0fd15c8c2"
+    },
+    {
+      "file": "post-security.sql",
+      "sha256": "1b543b557d1ed65507c043076dcb1004a4be728f5d34a07a814c436d4954882c"
+    },
+    {
+      "file": "role-checks.mjs",
+      "sha256": "f50bcf33afed486fe4d9d9b74129bda645d034e676ac246669ab50da2ec46af7"
+    },
+    {
+      "file": "auth-checks.mjs",
+      "sha256": "fbce082b6e9a00a051a04e71f9d9ec70540c5e7bbc2ac069a1fc383f3d55644b"
+    }
+  ],
+  "privateExecutionMaterialNotPublished": true,
+  "containsNoCredentials": true
+}

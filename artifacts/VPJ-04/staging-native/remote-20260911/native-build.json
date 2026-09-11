@@ -1,0 +1,9 @@
+{
+  "sourceSHA": "c333d9b5619a92fd90fe0a4f76743022f3746a50",
+  "backendSHA": "f5db769fbcca7b24fd6aeebf8dc004b63df1c2b8",
+  "apiOrigin": "https://vp-v4-6gmyp6494-jtcao515s-projects.vercel.app",
+  "bundleId": "space.go2china.VisePanda",
+  "signature": "adhoc",
+  "buildExit": 0,
+  "app": "/Users/jtcao/Library/Caches/visepanda/s1-preview-lb66yfc6/native-derived/Build/Products/Debug-iphonesimulator/VisePanda.app"
+}

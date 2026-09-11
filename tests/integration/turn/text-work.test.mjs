@@ -7,6 +7,7 @@ import {randomUUID as uuid} from 'node:crypto';
 import {readFileSync,readdirSync} from 'node:fs';
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 import {PROTOCOL_MODELS} from '../../../lib/server/model-gateway/adapters/provider-protocol.ts';
+import {waitUntil} from '../identity/database-barrier.mjs';
 import {runTextWorker} from '../../../lib/server/turn/text-worker.ts';
 const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj07-text-'+uuid().slice(0,8);
 let created=false;
@@ -21,10 +22,10 @@ const rpc=(role,actor)=>async(name,p={})=>{
 };
 const service=rpc('service_role');
 const notice='a'.repeat(64);
-async function fixture(){
+async function fixture(policyLifetime='1 day'){
  const a={owner:uuid(),session:uuid(),thread:uuid(),policy:uuid(),turn:uuid(),idem:uuid(),scope:uuid()};
  await db(`insert into auth.users values('${a.owner}');insert into identity_private.mobile_accounts(owner_id) values('${a.owner}');insert into auth.sessions(id,user_id) values('${a.session}','${a.owner}');insert into public.chat_threads(id,owner_id) values('${a.thread}','${a.owner}');
- insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at) values('${a.policy}','qwen','synthetic-test-only','https://synthetic.invalid/inference','fixture-source','fixture-processing','fixture-storage','test-terms-v1','test-notice-v1','${notice}','合成测试告知','Synthetic test notice','retain_after_hide_v1',now()-interval '1 day',now()+interval '1 day',now()+interval '1 day');`);
+ insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at) values('${a.policy}','qwen','synthetic-test-only','https://synthetic.invalid/inference','fixture-source','fixture-processing','fixture-storage','test-terms-v1','test-notice-v1','${notice}','合成测试告知','Synthetic test notice','retain_after_hide_v1',now()-interval '1 day',now()+interval '${policyLifetime}',now()+interval '1 day');`);
  a.call=rpc('authenticated',a);
  a.start=()=>a.call('start_text_turn',{p_thread_id:a.thread,p_turn_id:a.turn,p_idempotency_key:a.idem,p_policy_id:a.policy,p_locale:'en',p_text:'Synthetic trip question'});
  a.accept=()=>a.call('accept_text_policy',{p_policy_id:a.policy,p_notice_hash:notice});
@@ -41,8 +42,21 @@ before(async()=>{
  assert.equal(r.code,0,r.stderr);created=true;
  let ready=false;for(let i=0;i<40;i++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0){ready=true;break;}await new Promise(r=>setTimeout(r,250));}assert.ok(ready);
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
- for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
+ const migrations=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort();
+ const scopedIndex=migrations.findIndex(f=>f.endsWith('_vpj_07_scoped_text_claim.sql'));assert.ok(scopedIndex>0);
+ const stagingIndex=migrations.findIndex(f=>f.endsWith('_vpj_37_ops_scope_read_model.sql'));assert.equal(stagingIndex,32);
+ for(const f of migrations.slice(0,stagingIndex+1))await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
  assert.equal(await db('select count(*) from turn_private.text_policies;'),'0');
+ const preserved=await fixture();await start(preserved);
+ const snapshot=()=>db(`select row_to_json(x) from turn_private.text_content x where turn_id='${preserved.turn}';select row_to_json(x) from turn_private.work x where turn_id='${preserved.turn}';select row_to_json(x) from public.turns x where id='${preserved.turn}';select row_to_json(x) from turn_private.text_policies x where id='${preserved.policy}';`);
+ const prior=await snapshot();
+ for(const f of migrations.slice(stagingIndex+1,scopedIndex+1))await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
+ assert.equal(await snapshot(),prior,'33 to 36 upgrade preserves existing policy, text, Turn and leased work');
+ assert.equal(await db('select enabled from knowledge_review_private.settings;'),'f','new candidate workflow stays disabled');
+ assert.equal(await db('select count(*) from knowledge_review_private.members;'),'0','upgrade grants no operator membership');
+ assert.equal(await db('select count(*) from knowledge_review_private.source_revisions;'),'0','upgrade creates no source or reviewed facts');
+ await clean();
+ for(const f of migrations.slice(scopedIndex+1))await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 run('durable owner consent gates input; exact retries reuse and changed text rejects',async()=>{
@@ -238,4 +252,56 @@ run('verified model charges survive business failures while unproved protocol fa
    assert.equal(await db(`select count(*) from public.chat_turn_events where turn_id='${a.turn}' and event_type='terminal';`),'1',sample.name);
   }
  }finally{server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
+});
+
+const scopedClaim=a=>service('claim_text_work',{p_owner_id:a.owner,p_policy_id:a.policy});
+run('scoped claimer leaves other owners, other policies and metadata-only work untouched',async()=>{
+ const a=await fixture(),b=await fixture();await b.accept();await b.start();await a.accept();await a.start();
+ const second=uuid(),metadata=uuid();
+ await a.call('accept_text_policy',{p_policy_id:b.policy,p_notice_hash:notice});
+ await a.call('start_text_turn',{p_thread_id:a.thread,p_turn_id:second,p_idempotency_key:uuid(),p_policy_id:b.policy,p_locale:'en',p_text:'Other policy synthetic'});
+ await db(`insert into public.turns(id,owner_id,thread_id,status) values('${metadata}','${a.owner}','${a.thread}','accepted');insert into public.chat_turn_events(owner_id,thread_id,turn_id,event_id,sequence,schema_version,event_type,state) values('${a.owner}','${a.thread}','${metadata}','accepted',1,'turn-sse-v1','accepted','accepted');`);
+ await service('enqueue_turn_work',{p_turn_id:metadata,p_owner_id:a.owner,p_session_id:a.session,p_lease_ms:120000,p_max_attempts:3});
+ const untouched=()=>db(`select jsonb_agg(to_jsonb(w) order by turn_id) from turn_private.work w where turn_id in ('${b.turn}','${second}','${metadata}');`);
+ const before=await untouched(),lease=await scopedClaim(a);
+ assert.equal(lease.kind,'leased');assert.equal(lease.turnId,a.turn);assert.equal(lease.ownerId,a.owner);
+ assert.equal((await scopedClaim(a)).kind,'empty');assert.equal(await untouched(),before);
+ await clean();
+});
+run('scoped and legacy claimers serialize; expired leases recover once and old tokens cannot dispatch',async()=>{
+ const a=await fixture();await a.accept();await a.start();
+ const simultaneous=await Promise.all([scopedClaim(a),service('claim_turn_work')]);
+ assert.deepEqual(simultaneous.map(x=>x.kind).sort(),['empty','leased']);const old=simultaneous.find(x=>x.kind==='leased');
+ await db(`update turn_private.work set expires_at=clock_timestamp()-interval '1 second' where turn_id='${a.turn}';`);
+ const recovered=await Promise.all([scopedClaim(a),scopedClaim(a)]);
+ assert.deepEqual(recovered.map(x=>x.kind).sort(),['empty','leased']);const fresh=recovered.find(x=>x.kind==='leased');
+ assert.equal(fresh.attempt,2);assert.notEqual(fresh.leaseToken,old.leaseToken);
+ assert.equal((await authorize(a,old)).kind,'blocked');assert.equal((await authorize(a,fresh)).kind,'authorized');
+ assert.equal((await complete(fresh)).kind,'finished');assert.equal((await scopedClaim(a)).kind,'empty');
+ assert.equal(await db(`select count(*) from public.chat_turn_events where turn_id='${a.turn}' and event_type='terminal';`),'1');
+});
+run('scoped claim refuses ordinary roles and leaves revoked or hidden content unleased',async()=>{
+ for(const mode of ['withdraw','revoke','hide','expired']){
+  const a=await fixture(mode==='expired'?'4 seconds':'1 day');await a.accept();await a.start();
+  for(const role of ['anon','authenticated'])assert.notEqual((await sql(container,`set role ${role};select public.claim_text_work('${a.owner}','${a.policy}');`)).code,0);
+  if(mode==='withdraw')await a.call('withdraw_text_policy',{p_policy_id:a.policy});
+  if(mode==='revoke')await db(`update turn_private.text_policies set revoked_at=clock_timestamp() where id='${a.policy}';`);
+  if(mode==='hide')await db(`update turn_private.text_content set hidden_at=clock_timestamp() where turn_id='${a.turn}';`);
+  if(mode==='expired')await waitUntil(async()=>await db(`select expires_at<=clock_timestamp() from turn_private.text_policies where id='${a.policy}';`)==='t',6000,'actual policy expiry');
+  const before=await db(`select row_to_json(w) from turn_private.work w where turn_id='${a.turn}';`);
+  assert.equal((await scopedClaim(a)).kind,'empty');assert.equal(await db(`select row_to_json(w) from turn_private.work w where turn_id='${a.turn}';`),before);
+  await clean();
+ }
+ await assert.rejects(service('claim_text_work',{p_owner_id:null,p_policy_id:uuid()}),/INVALID_INPUT/);
+});
+run('scoped claim rolls back on deletion lock contention and can be disabled without changing retained records',async()=>{
+ const a=await fixture();await a.accept();await a.start();
+ const barrier=await transaction(`select id from auth.users where id='${a.owner}' for update`);
+ try{await assert.rejects(scopedClaim(a),/could not obtain lock/);assert.equal(await db(`select state from turn_private.work where turn_id='${a.turn}';`),'queued');}
+ finally{await barrier.finish();}
+ const snapshot=()=>db(`select row_to_json(x) from turn_private.text_content x where turn_id='${a.turn}';select row_to_json(x) from turn_private.work x where turn_id='${a.turn}';`),prior=await snapshot();
+ await db('revoke execute on function public.claim_text_work(uuid,uuid) from service_role;');
+ try{await assert.rejects(scopedClaim(a),/permission denied/);assert.equal(await snapshot(),prior);}
+ finally{await db('grant execute on function public.claim_text_work(uuid,uuid) to service_role;');}
+ assert.equal((await scopedClaim(a)).kind,'leased');await clean();
 });

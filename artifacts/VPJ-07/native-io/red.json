@@ -1,0 +1,1 @@
+{"baseline":"7bf22fb","test":"Ask session transport outage is unavailable, not a credential rejection","transport":"synthetic ES256 JWT plus intercepted session RPC HTTP503","actualHTTP":401,"expectedHTTP":503,"failedAssertions":1,"remoteActions":0}

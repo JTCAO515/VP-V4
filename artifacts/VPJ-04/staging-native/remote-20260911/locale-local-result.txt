@@ -1,0 +1,15 @@
+✔ local native/Web share one immutable Trip with confirmed intent, CAS and ordinary-owner isolation (92806.0775ms)
+ℹ Browser zh 1280x800: ordinary cookie, visible diff/confirm and native same-ID persisted reload passed
+ℹ Browser zh 390x844: ordinary cookie, visible diff/confirm and native same-ID persisted reload passed
+ℹ Browser en 1280x800: ordinary cookie, visible diff/confirm and native same-ID persisted reload passed
+ℹ Browser en 390x844: ordinary cookie, visible diff/confirm and native same-ID persisted reload passed
+ℹ Synthetic browser screenshots: /Users/jtcao/Library/Caches/visepanda/s1-same-trip-browser-8bbe1564-3b7a-4f2c-bd7a-24f78920d690
+ℹ Native/Web same UUID and five atomic confirmed versions; raw authority attacks rejected; all exact synthetic users removed.
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 93396.117958
