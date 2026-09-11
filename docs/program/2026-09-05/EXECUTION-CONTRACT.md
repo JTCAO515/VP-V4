@@ -68,7 +68,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] 清楚给出中英告知、目的、保留期限、处理地域、第三方AI接收方、撤回、删除/备份和客服访问矩阵。
-- [ ] 由JT/相应责任人填写实际经营主体、期限和合同；Owner角色不自动授予跨用户普通读取。
+- [ ] 由JT/相应责任人确认实际经营主体；所有模型供应商的规则以公开条款、控制台和实际配置为依据，注明来源、核验日期与未确认项，不强制工单、书面答复、账号已接受合同回执或供应商精确TTL；Owner角色不自动授予跨用户普通读取。
 - [ ] 列出设备端/服务端材料两路径和不授权时可用功能；不要求用户提交密码、验证码、卡号。
 - [ ] Q36基础明确偏好的account/Trip/仅本次范围、来源、纠正版本、模型与人工接收方、撤回后队列/缓存/派生物处理进入数据政策；Free/Pass均不替代用户许可。
 

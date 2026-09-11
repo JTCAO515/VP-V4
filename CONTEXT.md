@@ -29,6 +29,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - JT于2026-09-11确认上海、北京、广州、重庆与入境/机场交通/支付/手机网络/地铁公交/出租车网约车/高铁/景点预约/酒店住宿/紧急求助十场景，并授权agent决定来源选择和事实冲突；不等于第三方素材或模型训练许可。首批研究见docs/knowledge-base/batches/2026-09-11-four-city/README.md。
 - JT随后明确：本轮完成后直接推GitHub main，不再新增审阅或验证，之后暂停开发。已完成的早期检查保留；未运行的业务验收不改写为PASS。
 - 2026-09-11 resumed: JT explicitly confirmed Preview native configuration/proof key, exact host WAF allowance and two synthetic-account/owned-Trip cleanup, then delegated development permission management. This supersedes the earlier pause for this scope; Production/real-user/provider/funds boundaries remain separate.
+- 2026-09-12 JT removed mandatory supplier support responses, account-contract receipts and precise supplier TTL evidence from VPJ-03 for ALL model providers, including Qwen, GLM, DeepSeek and future candidates. Public terms, console metadata and actual configuration suffice as documented sources with explicit unknowns. No supplier ticket blocks development; preserve truthful notice, user consent and runtime permissions.
 
 ## 未决与运行证据
 
@@ -89,7 +90,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Qwen support ticket000D0RX4LS was explicitly authorized and submitted on2026-09-12; assigned, automated acknowledgement only. Await the account-specific API terms/retention/processing response and qualify C2 before real Ask activation. Staging34–36 and PR325 runtime prerequisites remain verified; preserve Production and real-user gates.
+Continue S1 native creation/reload acceptance and S2 notice/runtime preparation from existing public Qwen evidence. Supplier tickets and written confirmations are optional for every model provider and no longer development prerequisites under VPJ03-JT-20260912-v2. Preserve the named Staging scope, ordinary consent/permissions and separate Production release gate.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
