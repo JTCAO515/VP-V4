@@ -1,0 +1,6 @@
+{"command": "node /Users/jtcao/Library/Caches/visepanda/staging33-20260911/migrate.mjs normalize", "result": "PASS after unchanged preconditions re-read"}
+{"command": "node /Users/jtcao/Library/Caches/visepanda/staging33-20260911/migrate.mjs dry-run", "result": "PASS exact7"}
+{"command": "node /Users/jtcao/Library/Caches/visepanda/staging33-20260911/migrate.mjs apply", "result": "EXIT0"}
+{"command": "node /Users/jtcao/Library/Caches/visepanda/staging33-20260911/migrate.mjs verify", "result": "PASS history33/old55tables"}
+{"command": "node /Users/jtcao/Library/Caches/visepanda/staging33-20260911/enable-web-v2.mjs", "result": "PASS"}
+{"command": "pnpm dlx vercel@59.15.1 firewall publish --yes --project prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2 --scope jtcao515s-projects", "result": "see firewall-publish.json"}

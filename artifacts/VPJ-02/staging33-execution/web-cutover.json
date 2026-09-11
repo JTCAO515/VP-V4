@@ -1,0 +1,57 @@
+{
+  "at": "2026-09-11T04:25:25.217Z",
+  "activeVersion": 2,
+  "draftPending": false,
+  "firewallEnabled": true,
+  "ruleId": "rule_vpj_02_staging_schema_maintenance_N0pDWD",
+  "conditionGroup": [
+    {
+      "conditions": [
+        {
+          "type": "host",
+          "op": "ninc",
+          "value": [
+            "go2china.space",
+            "vp-v4-b468sog8m-jtcao515s-projects.vercel.app",
+            "vp-v4-d6yc4thvq-jtcao515s-projects.vercel.app",
+            "vp-v4-git-main-jtcao515s-projects.vercel.app",
+            "vp-v4-jtcao515s-projects.vercel.app",
+            "vp-v4.vercel.app",
+            "www.go2china.space"
+          ]
+        }
+      ]
+    }
+  ],
+  "production": {
+    "id": "dpl_2nvFPcjEse9bv2PaVhgi4WsHfTn1",
+    "url": "vp-v4-b468sog8m-jtcao515s-projects.vercel.app",
+    "target": "production",
+    "readyState": "READY",
+    "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "commit": "8b65aa22585810b13c254263ee48aaba58f404dd",
+    "tripV2VariablePresent": true,
+    "configuredKeyNames": [
+      "NEXT_PUBLIC_JOTFORM_EARLY_ACCESS_URL",
+      "NEXT_PUBLIC_SUPABASE_URL",
+      "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "VISEPANDA_TRIP_PROTOCOL_V2",
+      "NEXT_PUBLIC_VERCEL_OBSERVABILITY_CLIENT_CONFIG"
+    ],
+    "aliases": [
+      "vp-v4.vercel.app",
+      "www.go2china.space",
+      "go2china.space",
+      "vp-v4-jtcao515s-projects.vercel.app",
+      "vp-v4-git-main-jtcao515s-projects.vercel.app"
+    ]
+  },
+  "preview": {
+    "id": "dpl_9mchFAH35ksF31Wg681ZuybhFbkm",
+    "url": "vp-v4-d6yc4thvq-jtcao515s-projects.vercel.app",
+    "commit": "8b65aa22585810b13c254263ee48aaba58f404dd"
+  },
+  "furtherBusinessAcceptance": "NOT_RUN_USER_WAIVED",
+  "temporaryAuthAccountsCreated": 0,
+  "temporaryTripsCreated": 0
+}

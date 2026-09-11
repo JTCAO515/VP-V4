@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-09-10T21:15:32.206Z",
+  "observedAt": "2026-09-11T03:01:18.900Z",
   "project": {
     "id": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
     "teamId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
@@ -137,8 +137,8 @@
   "deployments": [
     {
       "environment": "production",
-      "id": "dpl_BYMjENfmkBnqShHwWQ4MMHQNtDoT",
-      "url": "vp-v4-e29jvtfft-jtcao515s-projects.vercel.app",
+      "id": "dpl_3sriTXPUo7uAKq1xjhKaWy8SAAQc",
+      "url": "vp-v4-gp4qmagqg-jtcao515s-projects.vercel.app",
       "aliases": [
         "vp-v4.vercel.app",
         "vp-v4-jtcao515s-projects.vercel.app",
@@ -148,7 +148,7 @@
       "regions": [
         "iad1"
       ],
-      "commit": "1cbab642d2b2db64fd8827b2ca95d3821623ab78",
+      "commit": "8b65aa22585810b13c254263ee48aaba58f404dd",
       "branch": "main",
       "configuredKeyNames": [
         "NEXT_PUBLIC_JOTFORM_EARLY_ACCESS_URL",
@@ -161,17 +161,17 @@
     },
     {
       "environment": "preview",
-      "id": "dpl_EPWxrVqYbaq6Vj7xywbrnHWAReK2",
-      "url": "vp-v4-p0nu7ansk-jtcao515s-projects.vercel.app",
+      "id": "dpl_A1ofq2CandC7riP148wFUJYaBwZc",
+      "url": "vp-v4-g5qmyclo4-jtcao515s-projects.vercel.app",
       "aliases": [
-        "vp-v4-git-codex-ops-review-204-jtcao515s-projects.vercel.app"
+        "vp-v4-git-codex-final-handoff-320-jtcao515s-projects.vercel.app"
       ],
       "readyState": "READY",
       "regions": [
         "iad1"
       ],
-      "commit": "219fcbe4e410da7f29cec277d4d74ea5603dc74a",
-      "branch": "codex/ops-review-204",
+      "commit": "980f4cafa5780920d9e78ada45508a3c04ac0cb6",
+      "branch": "codex/final-handoff-320",
       "configuredKeyNames": [
         "NEXT_PUBLIC_JOTFORM_EARLY_ACCESS_URL",
         "NEXT_PUBLIC_SUPABASE_URL",

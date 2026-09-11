@@ -1,0 +1,17 @@
+{
+  "at": "2026-09-11T03:46:31.857Z",
+  "status": "PASS",
+  "history": 33,
+  "originalTablesPreserved": 55,
+  "backupRestore": "PASS",
+  "migrationFiles": [
+    "20260909223841_vpj_04_native_mobile_sessions.sql",
+    "20260910002858_vpj_05_confirm_intent_authority.sql",
+    "20260910163426_vpj_07_durable_turn_work.sql",
+    "20260910171836_vpj_07_text_authorization.sql",
+    "20260910174748_vpj_07_native_text_consumer.sql",
+    "20260910190526_vpj_59_stop_model_budget.sql",
+    "20260910190658_vpj_37_ops_scope_read_model.sql"
+  ],
+  "manifestHash": "306356890f50a356fff736949d5749e7deed0efa6b7261bd6fce1705025434c1"
+}

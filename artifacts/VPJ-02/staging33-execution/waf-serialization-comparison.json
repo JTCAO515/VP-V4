@@ -1,0 +1,29 @@
+{
+  "rawHashes": [
+    "223d7274d24e5d046881f6e38b855a4240199de42d177a9321505046e7aea5e3",
+    "9d8c11e2107706471869b010ed8773e0b56b7dee64cf11de11c9a2fe75bf935b",
+    "223d7274d24e5d046881f6e38b855a4240199de42d177a9321505046e7aea5e3",
+    "223d7274d24e5d046881f6e38b855a4240199de42d177a9321505046e7aea5e3"
+  ],
+  "canonicalHashes": [
+    "eab2a365aef5c6a60eaa55d977919e7aff88a692b47de19a7cd948bfe2715299",
+    "eab2a365aef5c6a60eaa55d977919e7aff88a692b47de19a7cd948bfe2715299",
+    "eab2a365aef5c6a60eaa55d977919e7aff88a692b47de19a7cd948bfe2715299",
+    "eab2a365aef5c6a60eaa55d977919e7aff88a692b47de19a7cd948bfe2715299"
+  ],
+  "exactOldPresent": true,
+  "equivalent": true,
+  "expectedFingerprint": "223d7274d24e5d046881f6e38b855a4240199de42d177a9321505046e7aea5e3",
+  "activeVersions": [
+    1,
+    1,
+    1,
+    1
+  ],
+  "updatedAt": [
+    "2026-09-11T03:15:27.867Z",
+    "2026-09-11T03:15:27.867Z",
+    "2026-09-11T03:15:27.867Z",
+    "2026-09-11T03:15:27.867Z"
+  ]
+}

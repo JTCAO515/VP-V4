@@ -29,7 +29,8 @@ try{
     publicUrls.push({target:one.target,gitBranch:one.gitBranch??null,origin:url.origin});
   }
   const firewall=get('/v1/security/firewall/config?projectId='+projectId);
-  const fingerprint=createHash('sha256').update(JSON.stringify(firewall.data)).digest('hex');
+  const canonical=value=>Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonical(value[key])])):value;
+  const fingerprint=createHash('sha256').update(JSON.stringify(canonical(firewall.data))).digest('hex');
   const fw=v=>v?{id:v.id,version:v.version,updatedAt:v.updatedAt,firewallEnabled:v.firewallEnabled,ruleCount:v.rules?.length??0,ipCount:v.ips?.length??0}:null;
   const firewallStatus=cli(['firewall','status','--json','--project',projectId,'--scope','jtcao515s-projects']).data;
   const team=get('/v2/teams/'+teamId).data;
@@ -47,7 +48,7 @@ try{
   const output={observedAt:new Date().toISOString(),project:{id:projectId,teamId,name:'vp-v4',teamSlug:'jtcao515s-projects',nodeVersion:project.nodeVersion,productionBranch:project.link?.productionBranch,
     ssoProtection:project.ssoProtection??null,passwordProtectionEnabled:!!project.passwordProtection,trustedIpsConfigured:!!project.trustedIps},
     team:{plan:team.billing?.plan,status:team.billing?.status},environmentVariables:keys,publicSupabaseUrls:publicUrls,
-    firewall:{active:fw(firewall.data.active),draft:fw(firewall.data.draft),versionCount:firewall.data.versions?.length??0,etag:firewall.etag,fingerprint,
+    firewall:{active:fw(firewall.data.active),draft:fw(firewall.data.draft),versionCount:firewall.data.versions?.length??0,etag:firewall.etag,fingerprint,fingerprintFormat:'canonical-json-sha256',
       firewallEnabled:firewallStatus.firewallEnabled,ruleCounts:firewallStatus.rules,draftChanges:firewallStatus.draftChanges,bypassCount:firewallStatus.bypass?.length??null},
     domains,deployments,inventoryScope:'current project variables and current production/preview targets; not an exhaustive historical deployment binding inventory',
     mutations:0,privateEnvironmentValuesRetrieved:false};

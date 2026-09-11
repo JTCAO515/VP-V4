@@ -1,0 +1,12 @@
+{
+  "at": "2026-09-11T03:49:58.360Z",
+  "status": "PASS",
+  "cliExit": 0,
+  "key": "VISEPANDA_TRIP_PROTOCOL_V2",
+  "value": "true",
+  "targets": [
+    "production",
+    "preview"
+  ],
+  "existingEnvironmentRecordsUnchanged": true
+}

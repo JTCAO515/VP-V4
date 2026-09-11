@@ -1,7 +1,7 @@
 # VPJ-02 Vercel维护与v2部署切换附录
 
 版本2026-09-11；Related to #189。补充[冻结26→33包](staging-26-to-33.md)，不改变其33文件manifest。
-状态：**只读核查/离线模板准备，未启用WAF、未设置变量、未重部署、未暂停项目、未执行DB写入**。
+状态：**本轮已执行维护停流、Staging27–33和Web v2配置/部署收尾**。见[执行记录](../../artifacts/VPJ-02/staging33-execution/verification.md)。下面的“当前”快照与待授权模板保留为执行前设计依据，不代表仍缺本轮授权。
 
 ## 真实绑定与受影响范围
 
@@ -53,7 +53,7 @@ node scripts/db/vercel-maintenance-metadata.mjs --read-only
 ```
 
 该固定目标工具只GET；仅PUBLIC Supabase URL可解密，其他环境变量只保留名称/target。
-读取config的active/draft版本、updatedAt、全响应fingerprint及ETag（如果响应提供），不自动修改任何内容。
+读取config的active/draft版本、updatedAt、对对象键排序、保留数组顺序的全响应canonical fingerprint及ETag（如果响应提供），不自动修改任何内容。
 当前响应**没有ETag**，官方[OpenAPI](https://openapi.vercel.sh)也未为这些写接口声明If-Match/CAS参数；
 **不能虚构`If-Match`已生效或把一次read→write说成原子比较交换**。
 
