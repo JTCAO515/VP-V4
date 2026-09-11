@@ -1,0 +1,994 @@
+{
+  "schemaVersion": "vpj15-city-source-research-v1",
+  "batch": "2026-09-11-four-city",
+  "baseCommit": "8b65aa22585810b13c254263ee48aaba58f404dd",
+  "researcher": "Codex native_audit",
+  "checkedAt": "2026-09-11",
+  "status": "private_research_candidates",
+  "userConfirmedCities": [
+    "上海",
+    "北京",
+    "广州",
+    "重庆"
+  ],
+  "userConfirmedScenes": [
+    "入境",
+    "机场交通",
+    "支付",
+    "手机与网络",
+    "地铁公交",
+    "出租车网约车",
+    "高铁",
+    "景点预约",
+    "酒店住宿",
+    "紧急求助"
+  ],
+  "ownedScenes": [
+    "机场交通",
+    "地铁公交",
+    "出租车网约车",
+    "景点预约"
+  ],
+  "independentReview": "pending_root_integration",
+  "candidateCount": 11,
+  "productionImportSupported": false,
+  "published": false,
+  "retrievalEligible": false,
+  "sources": [
+    {
+      "id": "SH-AIRPORT",
+      "title": "市域机场线",
+      "url": "https://www.shanghaiairport.com/syt/",
+      "publisher": "上海机场集团",
+      "sourceClass": "first_party_official",
+      "observedAt": "2026-09-11",
+      "publishedAt": null,
+      "effectiveFrom": null,
+      "locator": "机场交通→市域机场线→浦东机场；页面标示信息更新时间2026-06-15 12:28",
+      "excerpt": "浦东1号2号航站楼站",
+      "excerptSha256": "9ae9d8a96fdb54f65e172a2badea673add4267836cb45b23ecc6c33613054ea5",
+      "hashScope": "stored_short_locator_excerpt_only_not_full_document",
+      "dateAndScopeNotes": "Pudong section visibly updated2026-06-15; Hongqiao section has a separate2026-04-02 update. Only station/terminal association is selected; displayed timetable is explicitly reference-only.",
+      "rightsAssessment": {
+        "decision": "no_explicit_source_material_grant_observed",
+        "termsUrl": null,
+        "commercialSourceMaterialPermission": "not_established",
+        "originalFactDraft": "research_only_pending_independent_review",
+        "rawPageOrMediaStored": false,
+        "sourceToModelEmbeddingTtsGrant": false,
+        "termsReviewScope": "selected official page only; full-site terms not established"
+      },
+      "observationScope": "published guidance observed; no on-site transport or booking test",
+      "lastUpdatedAt": "2026-06-15T12:28:00+08:00"
+    },
+    {
+      "id": "SH-METRO",
+      "title": "How to take metro in Shanghai",
+      "url": "https://english.shanghai.gov.cn/en-Individuals-Transportation-Metro/20260813/f257d5c373db4da3a8bde717b9f46b27.html",
+      "publisher": "上海市政府英文门户公共交通服务指南",
+      "sourceClass": "first_party_official",
+      "observedAt": "2026-09-11",
+      "publishedAt": null,
+      "effectiveFrom": null,
+      "locator": "2. Single Journey Ticket→service-centre card-terminal paragraph",
+      "excerpt": "at the service centers",
+      "excerptSha256": "92ed8c2b29da2d402d0536aee3100b2bf9e52817b2c98feb7e8e72ce99c48eb0",
+      "hashScope": "stored_short_locator_excerpt_only_not_full_document",
+      "dateAndScopeNotes": "URL date segment2026-08-13; no separate visible publication label in extracted body. The selected point is counter ticket purchase, not a blanket tap-at-gate claim.",
+      "rightsAssessment": {
+        "decision": "no_explicit_source_material_grant_observed",
+        "termsUrl": null,
+        "commercialSourceMaterialPermission": "not_established",
+        "originalFactDraft": "research_only_pending_independent_review",
+        "rawPageOrMediaStored": false,
+        "sourceToModelEmbeddingTtsGrant": false,
+        "termsReviewScope": "selected official page only; full-site terms not established"
+      },
+      "observationScope": "published guidance observed; no on-site transport or booking test",
+      "urlDateHint": "2026-08-13"
+    },
+    {
+      "id": "SH-MUSEUM",
+      "title": "The Shanghai Museum East — Admission",
+      "url": "https://www.shanghaimuseum.cn/mu/frontend/pg/en/service/visit-east",
+      "publisher": "上海博物馆",
+      "sourceClass": "first_party_official",
+      "observedAt": "2026-09-11",
+      "publishedAt": null,
+      "effectiveFrom": null,
+      "locator": "Admission→Guidelines; individual entry and special-reservation exceptions",
+      "excerpt": "Reservation for individual visitors is not required.",
+      "excerptSha256": "867df71ae2cc8baa25c7283fb31ca7b48b25cf0de6965d06e525284ba227fd4d",
+      "hashScope": "stored_short_locator_excerpt_only_not_full_document",
+      "dateAndScopeNotes": "Live service page has no visible revision date. Museum homepage announces migration to shanghaimuseum.cn from2026-09-01; old .net retires2027-01-01. Limit to East branch/general individual admission, excluding specified interactive galleries, special exhibitions and groups.",
+      "rightsAssessment": {
+        "decision": "no_explicit_source_material_grant_observed",
+        "termsUrl": "https://www.shanghaimuseum.cn/mu/frontend/pg/en/infomation/download-claim",
+        "commercialSourceMaterialPermission": "not_established",
+        "originalFactDraft": "research_only_pending_independent_review",
+        "rawPageOrMediaStored": false,
+        "sourceToModelEmbeddingTtsGrant": false,
+        "termsReviewScope": "selected official page only; full-site terms not established"
+      },
+      "observationScope": "published guidance observed; no on-site transport or booking test"
+    },
+    {
+      "id": "BJ-RIDEHAIL",
+      "title": "网约车",
+      "url": "https://www.bcia.com.cn/jcwyc.html",
+      "publisher": "北京首都国际机场",
+      "sourceClass": "first_party_official",
+      "observedAt": "2026-09-11",
+      "publishedAt": null,
+      "effectiveFrom": null,
+      "locator": "网约车→3号航站楼→乘坐位置",
+      "excerpt": "3号停车楼B2层H区",
+      "excerptSha256": "c868458866c5629257e1a1767bdde27661312682e3f2e7a07f36614853063e95",
+      "hashScope": "stored_short_locator_excerpt_only_not_full_document",
+      "dateAndScopeNotes": "Undated current passenger service page. T3 is selected; T2 has a different pickup location. Does not cover Beijing Daxing Airport.",
+      "rightsAssessment": {
+        "decision": "no_explicit_source_material_grant_observed",
+        "termsUrl": null,
+        "commercialSourceMaterialPermission": "not_established",
+        "originalFactDraft": "research_only_pending_independent_review",
+        "rawPageOrMediaStored": false,
+        "sourceToModelEmbeddingTtsGrant": false,
+        "termsReviewScope": "selected official page only; full-site terms not established"
+      },
+      "observationScope": "published guidance observed; no on-site transport or booking test"
+    },
+    {
+      "id": "BJ-JCB",
+      "title": "JCB has launched contactless subway payment services in Shanghai and Beijing, marking the first such service in mainland China",
+      "url": "https://www.global.jcb/en/press/2025/202506301200_alliance.html",
+      "publisher": "JCB Co., Ltd.",
+      "sourceClass": "first_party_official",
+      "observedAt": "2026-09-11",
+      "publishedAt": "2025-06-30",
+      "effectiveFrom": null,
+      "locator": "Press release2025-06-30→service description paragraphs1–3",
+      "excerpt": "Airport routes are also included.",
+      "excerptSha256": "92466d0e3c9eadea09b57b5fb340fca051c37fcec5e780a39245f7a07fbe507d",
+      "hashScope": "stored_short_locator_excerpt_only_not_full_document",
+      "dateAndScopeNotes": "First-party card-network release. Do not carry2025 station/line counts into2026 or infer every future station/card/device is eligible.",
+      "rightsAssessment": {
+        "decision": "hold_commercial_source_material_explicit_terms",
+        "termsUrl": "https://www.global.jcb/en/term-of-use/",
+        "commercialSourceMaterialPermission": "not_established",
+        "originalFactDraft": "research_only_pending_independent_review",
+        "rawPageOrMediaStored": false,
+        "sourceToModelEmbeddingTtsGrant": false,
+        "termsReviewScope": "linked explicit terms sections"
+      },
+      "observationScope": "published guidance observed; no on-site transport or booking test"
+    },
+    {
+      "id": "BJ-PALACE",
+      "title": "故宫博物院参观须知",
+      "url": "https://www.dpm.org.cn/singles_detail/259831.html",
+      "publisher": "故宫博物院",
+      "sourceClass": "first_party_official",
+      "observedAt": "2026-09-11",
+      "publishedAt": null,
+      "effectiveFrom": null,
+      "locator": "（一）订票、检票须知→提示及第1–4条",
+      "excerpt": "参观前7日20:00",
+      "excerptSha256": "1366b8d474e4d21c573ce412ceb1c3afd536f05412021ceba687c93f5046d487",
+      "hashScope": "stored_short_locator_excerpt_only_not_full_document",
+      "dateAndScopeNotes": "Current detailed rules body has no visible revision date. It corroborates the active personal-booking block; do not import pandemic preambles or older international email-booking instructions.",
+      "rightsAssessment": {
+        "decision": "hold_commercial_source_material_explicit_terms",
+        "termsUrl": "https://www.dpm.org.cn/bottom/privacy/236341.html",
+        "commercialSourceMaterialPermission": "not_established",
+        "originalFactDraft": "research_only_pending_independent_review",
+        "rawPageOrMediaStored": false,
+        "sourceToModelEmbeddingTtsGrant": false,
+        "termsReviewScope": "linked explicit terms sections"
+      },
+      "observationScope": "published guidance observed; no on-site transport or booking test"
+    },
+    {
+      "id": "GZ-AIRPORT",
+      "title": "怎么坐广东城际去机场、高铁站？导航APP就能查！",
+      "url": "https://www.huadu.gov.cn/zfxxgkml/gzshdqjtysj/content/post_10775594.html",
+      "publisher": "广州市花都区交通运输局；文内来源广州交通",
+      "sourceClass": "first_party_official",
+      "observedAt": "2026-09-11",
+      "publishedAt": "2026-04-17",
+      "effectiveFrom": null,
+      "locator": "正文第2段：12306支付前提示对应航站楼",
+      "excerpt": "白云机场东站（T3）",
+      "excerptSha256": "1262798887e1e51f78c38d97cbc78be8418e4279012848bf696da4a7a2e4cd3c",
+      "hashScope": "stored_short_locator_excerpt_only_not_full_document",
+      "dateAndScopeNotes": "Official transport-department guidance. Select only East station↔T3. The same page mentions T1/South station historically; its current availability must not be inferred from this April document.",
+      "rightsAssessment": {
+        "decision": "no_explicit_source_material_grant_observed",
+        "termsUrl": null,
+        "commercialSourceMaterialPermission": "not_established",
+        "originalFactDraft": "research_only_pending_independent_review",
+        "rawPageOrMediaStored": false,
+        "sourceToModelEmbeddingTtsGrant": false,
+        "termsReviewScope": "selected official page only; full-site terms not established"
+      },
+      "observationScope": "published guidance observed; no on-site transport or booking test"
+    },
+    {
+      "id": "GZ-AMEX",
+      "title": "广州地铁支持美国运通卡“拍卡过闸”",
+      "url": "https://www.americanexpress.com.cn/news/BAT727172531656429568",
+      "publisher": "美国运通中国官网",
+      "sourceClass": "first_party_official",
+      "observedAt": "2026-09-11",
+      "publishedAt": "2025-10-14",
+      "effectiveFrom": "2025-10-12",
+      "locator": "正文自2025-10-12起段落及脚注1",
+      "excerpt": "符合条件的美国运通卡",
+      "excerptSha256": "39d9a9062381ba4446b49df8ed9213ea8ebc13698c8ca72a90dcdaeedaedb1c3",
+      "hashScope": "stored_short_locator_excerpt_only_not_full_document",
+      "dateAndScopeNotes": "Body announcement date2025-10-11 differs from site publication2025-10-14. Keep the footnote exclusions and Amex-marked gate condition; do not generalize to all Amex products or Guangzhou buses.",
+      "rightsAssessment": {
+        "decision": "no_explicit_source_material_grant_observed",
+        "termsUrl": null,
+        "commercialSourceMaterialPermission": "not_established",
+        "originalFactDraft": "research_only_pending_independent_review",
+        "rawPageOrMediaStored": false,
+        "sourceToModelEmbeddingTtsGrant": false,
+        "termsReviewScope": "selected official page only; full-site terms not established"
+      },
+      "observationScope": "published guidance observed; no on-site transport or booking test",
+      "retrievalMode": "official article content exposed by search; direct-open text extraction returned empty"
+    },
+    {
+      "id": "GZ-MUSEUM",
+      "title": "广东省博物馆参观须知",
+      "url": "https://www.gdmuseum.org.cn/col666/",
+      "publisher": "广东省博物馆",
+      "sourceClass": "first_party_official",
+      "observedAt": "2026-09-11",
+      "publishedAt": null,
+      "effectiveFrom": null,
+      "locator": "服务→参观指南→参观须知第1、5、9条",
+      "excerpt": "分时段实名制预约",
+      "excerptSha256": "f488fa5dddda0fe1cb75fa21dd1d7c8625e114a777034446399923eba4aadc48",
+      "hashScope": "stored_short_locator_excerpt_only_not_full_document",
+      "dateAndScopeNotes": "Undated live guidance. General reservation rule has specific on-site-registration exceptions. Current foreign-passport registration/entry mechanics are not established by this page; older pandemic FAQ is not promoted.",
+      "rightsAssessment": {
+        "decision": "no_explicit_source_material_grant_observed",
+        "termsUrl": null,
+        "commercialSourceMaterialPermission": "not_established",
+        "originalFactDraft": "research_only_pending_independent_review",
+        "rawPageOrMediaStored": false,
+        "sourceToModelEmbeddingTtsGrant": false,
+        "termsReviewScope": "selected official page only; full-site terms not established"
+      },
+      "observationScope": "published guidance observed; no on-site transport or booking test"
+    },
+    {
+      "id": "CQ-AIRPORT",
+      "title": "机场轨道交通",
+      "url": "https://www.cqa.cn/jtzn/25/",
+      "publisher": "重庆机场集团",
+      "sourceClass": "first_party_official",
+      "observedAt": "2026-09-11",
+      "publishedAt": null,
+      "effectiveFrom": null,
+      "locator": "交通指南→轨道交通→航站楼线路首行",
+      "excerpt": "T3航站楼：10号线",
+      "excerptSha256": "d4b22f072749b75155d2fafeeac40ec68c814e93a515ab18b7b68e9dc27e75d2",
+      "hashScope": "stored_short_locator_excerpt_only_not_full_document",
+      "dateAndScopeNotes": "Undated current airport service page. Timetables defer to Chongqing Rail Transit. No claim that Line3 serves T3, or that the rail station is inside T3B.",
+      "rightsAssessment": {
+        "decision": "no_explicit_source_material_grant_observed",
+        "termsUrl": null,
+        "commercialSourceMaterialPermission": "not_established",
+        "originalFactDraft": "research_only_pending_independent_review",
+        "rawPageOrMediaStored": false,
+        "sourceToModelEmbeddingTtsGrant": false,
+        "termsReviewScope": "selected official page only; full-site terms not established"
+      },
+      "observationScope": "published guidance observed; no on-site transport or booking test"
+    },
+    {
+      "id": "CQ-MUSEUM",
+      "title": "重庆中国三峡博物馆关于取消预约入馆的公告",
+      "url": "https://www.3gmuseum.cn/web/article/1430010139317059584/web/content_1430010139317059584.html",
+      "publisher": "重庆中国三峡博物馆",
+      "sourceClass": "first_party_official",
+      "observedAt": "2026-09-11",
+      "publishedAt": "2025-09-30",
+      "effectiveFrom": "2025-10-01",
+      "locator": "2025-09-30公告首段；客流预警段",
+      "excerpt": "自10月1日起实行免预约进馆",
+      "excerptSha256": "11bede6fb36249e4c47fdf63e7d964e4158249b0a6e74ee6665c6d07932e36d2",
+      "hashScope": "stored_short_locator_excerpt_only_not_full_document",
+      "dateAndScopeNotes": "Select the main museum only. The notice also names subsidiaries, some paid; no all-venues-free inference. Valid-ID wording does not establish the detailed foreign-passport verification route.",
+      "rightsAssessment": {
+        "decision": "no_explicit_source_material_grant_observed",
+        "termsUrl": null,
+        "commercialSourceMaterialPermission": "not_established",
+        "originalFactDraft": "research_only_pending_independent_review",
+        "rawPageOrMediaStored": false,
+        "sourceToModelEmbeddingTtsGrant": false,
+        "termsReviewScope": "selected official page only; full-site terms not established"
+      },
+      "observationScope": "published guidance observed; no on-site transport or booking test"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "SH01",
+      "city": "上海",
+      "scenes": [
+        "机场交通",
+        "地铁公交"
+      ],
+      "status": "researched_candidate_pending_independent_review",
+      "sourceId": "SH-AIRPORT",
+      "assertion": {
+        "predicate": "rail_station_serves_terminal",
+        "value": {
+          "line": "市域机场线",
+          "station": "浦东1号2号航站楼站",
+          "airport": "PVG",
+          "terminals": [
+            "T1",
+            "T2"
+          ]
+        }
+      },
+      "expression": {
+        "zh": "在浦东机场搭乘市域机场线，应寻找“浦东1号2号航站楼站”。",
+        "en": "At Pudong Airport, use the station labelled 浦东1号2号航站楼站 for the Airport Link Line."
+      },
+      "conditions": [
+        "PVG T1/T2 passengers; confirm current airport signs"
+      ],
+      "excludedInferences": [
+        "No travel-time, first/last-train, fare or missed-flight guarantee"
+      ],
+      "freshness": {
+        "checkedAt": "2026-09-11",
+        "recheckWithinDays": 7,
+        "travelDayOfficialRecheckRequired": true,
+        "notAValidityGuarantee": true
+      },
+      "runtimeImportSupported": false,
+      "published": false,
+      "retrievalEligible": false,
+      "policyReceiptId": null
+    },
+    {
+      "id": "SH02",
+      "city": "上海",
+      "scenes": [
+        "地铁公交"
+      ],
+      "status": "researched_candidate_pending_independent_review",
+      "sourceId": "SH-METRO",
+      "assertion": {
+        "predicate": "ticket_purchase_channel",
+        "value": {
+          "place": "metro station service centre",
+          "method": "bank-card terminal",
+          "overseasNetworks": [
+            "Visa",
+            "Mastercard",
+            "Discover",
+            "American Express",
+            "Diners Club",
+            "JCB"
+          ]
+        }
+      },
+      "expression": {
+        "zh": "上海地铁站服务中心设有银行卡购票终端；可受理官网列明的境外卡种。",
+        "en": "Shanghai metro service centres offer card terminals for buying tickets with the overseas networks listed in the official guide."
+      },
+      "conditions": [
+        "Use the staffed service-centre purchase channel; card/issuer approval still applies"
+      ],
+      "excludedInferences": [
+        "Not a promise that every foreign card taps directly through gates",
+        "No bus-wide acceptance inference"
+      ],
+      "freshness": {
+        "checkedAt": "2026-09-11",
+        "recheckWithinDays": 30,
+        "travelDayOfficialRecheckRequired": true,
+        "notAValidityGuarantee": true
+      },
+      "runtimeImportSupported": false,
+      "published": false,
+      "retrievalEligible": false,
+      "policyReceiptId": null
+    },
+    {
+      "id": "SH03",
+      "city": "上海",
+      "scenes": [
+        "景点预约"
+      ],
+      "status": "researched_candidate_pending_independent_review",
+      "sourceId": "SH-MUSEUM",
+      "assertion": {
+        "predicate": "ordinary_individual_reservation_required",
+        "value": {
+          "venue": "Shanghai Museum East",
+          "required": false
+        }
+      },
+      "expression": {
+        "zh": "上海博物馆东馆普通散客入馆目前免预约；部分互动展区、特展和团队另有安排。",
+        "en": "Ordinary individual entry at Shanghai Museum East currently needs no reservation; specified experiences, exhibitions and groups have separate rules."
+      },
+      "conditions": [
+        "East branch only; original valid identification and security screening",
+        "Curio-City and Digital Gallery still require special reservations"
+      ],
+      "excludedInferences": [
+        "Not the People’s Square branch rule",
+        "No guaranteed capacity or free access to every exhibition"
+      ],
+      "freshness": {
+        "checkedAt": "2026-09-11",
+        "recheckWithinDays": 7,
+        "travelDayOfficialRecheckRequired": true,
+        "notAValidityGuarantee": true
+      },
+      "runtimeImportSupported": false,
+      "published": false,
+      "retrievalEligible": false,
+      "policyReceiptId": null
+    },
+    {
+      "id": "BJ01",
+      "city": "北京",
+      "scenes": [
+        "机场交通",
+        "出租车网约车"
+      ],
+      "status": "researched_candidate_pending_independent_review",
+      "sourceId": "BJ-RIDEHAIL",
+      "assertion": {
+        "predicate": "ride_hailing_pickup_location",
+        "value": {
+          "airport": "PEK",
+          "terminal": "T3",
+          "parkingBuilding": "P3",
+          "level": "B2",
+          "zone": "H"
+        }
+      },
+      "expression": {
+        "zh": "首都机场T3的网约车候车点为3号停车楼B2层H区；以现场和订单提示复核。",
+        "en": "For a ride-hailing pickup at Capital Airport T3, go to Parking Building3, B2, Zone H, and recheck your app and signs."
+      },
+      "conditions": [
+        "PEK T3 only; an actual booking is still required"
+      ],
+      "excludedInferences": [
+        "Not T2 or Daxing",
+        "No fare or car-arrival guarantee"
+      ],
+      "freshness": {
+        "checkedAt": "2026-09-11",
+        "recheckWithinDays": 7,
+        "travelDayOfficialRecheckRequired": true,
+        "notAValidityGuarantee": true
+      },
+      "runtimeImportSupported": false,
+      "published": false,
+      "retrievalEligible": false,
+      "policyReceiptId": null
+    },
+    {
+      "id": "BJ02",
+      "city": "北京",
+      "scenes": [
+        "地铁公交"
+      ],
+      "status": "researched_candidate_pending_independent_review",
+      "sourceId": "BJ-JCB",
+      "assertion": {
+        "predicate": "contactless_card_network_available",
+        "value": {
+          "network": "JCB",
+          "mode": "subway gate payment",
+          "cardType": "contactless"
+        }
+      },
+      "expression": {
+        "zh": "JCB官方已公布北京地铁支持JCB非接触式卡支付过闸；需确认卡片和闸机支持。",
+        "en": "JCB reports contactless-card payment at Beijing subway gates; check that your card and the gate support it."
+      },
+      "conditions": [
+        "Physical contactless JCB card; operator/card conditions and present signage apply"
+      ],
+      "excludedInferences": [
+        "No2026 station-count guarantee",
+        "No automatic support for every phone wallet or bus"
+      ],
+      "freshness": {
+        "checkedAt": "2026-09-11",
+        "recheckWithinDays": 30,
+        "travelDayOfficialRecheckRequired": true,
+        "notAValidityGuarantee": true
+      },
+      "runtimeImportSupported": false,
+      "published": false,
+      "retrievalEligible": false,
+      "policyReceiptId": null
+    },
+    {
+      "id": "BJ03",
+      "city": "北京",
+      "scenes": [
+        "景点预约"
+      ],
+      "status": "researched_candidate_pending_independent_review",
+      "sourceId": "BJ-PALACE",
+      "assertion": {
+        "predicate": "advance_ticket_release_window",
+        "value": {
+          "venue": "Palace Museum",
+          "leadDays": 7,
+          "releaseLocalTime": "20:00",
+          "timeZone": "Asia/Shanghai",
+          "sameDaySale": false
+        }
+      },
+      "expression": {
+        "zh": "故宫门票按参观日前7天20:00开放预约，不售当日票；通过官方渠道实名预约。",
+        "en": "Palace Museum tickets open seven days before a visit at20:00 local time; there are no same-day sales. Use its official real-name booking channel."
+      },
+      "conditions": [
+        "Availability is not guaranteed; keep the original ID used for booking",
+        "Non-mainland visitors’ passport option is stated in the detailed rules"
+      ],
+      "excludedInferences": [
+        "No third-party booking authorization",
+        "Do not reuse obsolete pandemic or email-booking instructions"
+      ],
+      "freshness": {
+        "checkedAt": "2026-09-11",
+        "recheckWithinDays": 7,
+        "travelDayOfficialRecheckRequired": true,
+        "notAValidityGuarantee": true
+      },
+      "runtimeImportSupported": false,
+      "published": false,
+      "retrievalEligible": false,
+      "policyReceiptId": null
+    },
+    {
+      "id": "GZ01",
+      "city": "广州",
+      "scenes": [
+        "机场交通"
+      ],
+      "status": "researched_candidate_pending_independent_review",
+      "sourceId": "GZ-AIRPORT",
+      "assertion": {
+        "predicate": "intercity_station_terminal_mapping",
+        "value": {
+          "station": "白云机场东站",
+          "terminal": "CAN T3"
+        }
+      },
+      "expression": {
+        "zh": "前往白云机场T3的城际站名是“白云机场东站（T3）”；购票时核对航站楼提示。",
+        "en": "For Baiyun Airport T3, select the intercity station 白云机场东站（T3） and verify the terminal reminder before paying."
+      },
+      "conditions": [
+        "Intercity station mapping only; verify flight terminal and current train stopping pattern"
+      ],
+      "excludedInferences": [
+        "Not a claim that Metro Line3 directly serves T3",
+        "Do not infer current T1/South-station operation from the April source"
+      ],
+      "freshness": {
+        "checkedAt": "2026-09-11",
+        "recheckWithinDays": 7,
+        "travelDayOfficialRecheckRequired": true,
+        "notAValidityGuarantee": true
+      },
+      "runtimeImportSupported": false,
+      "published": false,
+      "retrievalEligible": false,
+      "policyReceiptId": null
+    },
+    {
+      "id": "GZ02",
+      "city": "广州",
+      "scenes": [
+        "地铁公交"
+      ],
+      "status": "researched_candidate_pending_independent_review",
+      "sourceId": "GZ-AMEX",
+      "assertion": {
+        "predicate": "contactless_card_network_available",
+        "value": {
+          "network": "American Express",
+          "mode": "marked metro gate",
+          "effectiveFrom": "2025-10-12"
+        }
+      },
+      "expression": {
+        "zh": "广州地铁有美国运通标识的闸机支持符合条件的运通卡拍卡过闸；卡种例外须保留。",
+        "en": "Eligible American Express cards can tap through Guangzhou metro gates bearing the Amex mark; the issuer’s product exclusions still apply."
+      },
+      "conditions": [
+        "Exclude mainland-partner single-brand foreign-currency Amex credit cards and dual-brand magnetic-stripe Amex credit cards listed in footnote1"
+      ],
+      "excludedInferences": [
+        "Not every Amex card or Guangzhou bus",
+        "No guaranteed issuer approval"
+      ],
+      "freshness": {
+        "checkedAt": "2026-09-11",
+        "recheckWithinDays": 30,
+        "travelDayOfficialRecheckRequired": true,
+        "notAValidityGuarantee": true
+      },
+      "runtimeImportSupported": false,
+      "published": false,
+      "retrievalEligible": false,
+      "policyReceiptId": null
+    },
+    {
+      "id": "GZ03",
+      "city": "广州",
+      "scenes": [
+        "景点预约"
+      ],
+      "status": "researched_candidate_pending_independent_review",
+      "sourceId": "GZ-MUSEUM",
+      "assertion": {
+        "predicate": "ordinary_individual_reservation_required",
+        "value": {
+          "venue": "Guangdong Museum",
+          "required": true,
+          "reservationType": "timed real-name"
+        }
+      },
+      "expression": {
+        "zh": "广东省博物馆普通观众采用分时段实名预约；列明的特殊人群可按馆方规定现场登记。",
+        "en": "Ordinary visitors to Guangdong Museum need a timed real-name reservation; specified exception groups may register on site."
+      },
+      "conditions": [
+        "General individual visits; check the current official booking channel",
+        "Current foreign-passport entry mechanics remain a gap"
+      ],
+      "excludedInferences": [
+        "Do not generalize the museum’s2024 temporary walk-in experiment",
+        "No ticket availability or passport-flow guarantee"
+      ],
+      "freshness": {
+        "checkedAt": "2026-09-11",
+        "recheckWithinDays": 7,
+        "travelDayOfficialRecheckRequired": true,
+        "notAValidityGuarantee": true
+      },
+      "runtimeImportSupported": false,
+      "published": false,
+      "retrievalEligible": false,
+      "policyReceiptId": null
+    },
+    {
+      "id": "CQ01",
+      "city": "重庆",
+      "scenes": [
+        "机场交通",
+        "地铁公交"
+      ],
+      "status": "researched_candidate_pending_independent_review",
+      "sourceId": "CQ-AIRPORT",
+      "assertion": {
+        "predicate": "rail_line_serves_terminal",
+        "value": {
+          "airport": "CKG",
+          "terminal": "T3",
+          "railLine": "10"
+        }
+      },
+      "expression": {
+        "zh": "重庆江北机场T3对应轨道交通10号线；不要把T2的3号线接入方式套到T3。",
+        "en": "Chongqing Jiangbei Airport T3 is served by Rail Transit Line10; the T2 Line3 connection must not be assumed for T3."
+      },
+      "conditions": [
+        "T3 airport complex; follow internal signs for the actual subterminal"
+      ],
+      "excludedInferences": [
+        "No T3B station-location, APM duration or service-hours guarantee"
+      ],
+      "freshness": {
+        "checkedAt": "2026-09-11",
+        "recheckWithinDays": 7,
+        "travelDayOfficialRecheckRequired": true,
+        "notAValidityGuarantee": true
+      },
+      "runtimeImportSupported": false,
+      "published": false,
+      "retrievalEligible": false,
+      "policyReceiptId": null
+    },
+    {
+      "id": "CQ02",
+      "city": "重庆",
+      "scenes": [
+        "景点预约"
+      ],
+      "status": "researched_candidate_pending_independent_review",
+      "sourceId": "CQ-MUSEUM",
+      "assertion": {
+        "predicate": "ordinary_individual_reservation_required",
+        "value": {
+          "venue": "Chongqing China Three Gorges Museum main museum",
+          "required": false,
+          "effectiveFrom": "2025-10-01"
+        }
+      },
+      "expression": {
+        "zh": "重庆中国三峡博物馆主馆自2025年10月1日起实行免预约入馆，仍需有效身份证件并服从客流安排。",
+        "en": "The main Three Gorges Museum in Chongqing has waived entry reservations since October1,2025; valid identification and crowd controls still apply."
+      },
+      "conditions": [
+        "Main museum only; check current closures and crowd notices"
+      ],
+      "excludedInferences": [
+        "Not a claim that every subsidiary is free",
+        "Current foreign-passport verification details are not specified"
+      ],
+      "freshness": {
+        "checkedAt": "2026-09-11",
+        "recheckWithinDays": 7,
+        "travelDayOfficialRecheckRequired": true,
+        "notAValidityGuarantee": true
+      },
+      "runtimeImportSupported": false,
+      "published": false,
+      "retrievalEligible": false,
+      "policyReceiptId": null
+    }
+  ],
+  "conflictDecisions": [
+    {
+      "id": "C-SH-MUSEUM",
+      "selectedSource": "SH-MUSEUM",
+      "olderUrls": [
+        "https://www.shanghaimuseum.net/mu/frontend/pg/service/admission",
+        "https://www.shanghaimuseum.net/mu/frontend/pg/article/id/I00004639",
+        "https://www.shanghaimuseum.net/mu/frontend/pg/m/article/id/I00004643"
+      ],
+      "decision": "Current branch-specific East service page wins over2023/2024 booking announcements; retain interactive/special/group exceptions. Do not merge branch hours or old reservation windows.",
+      "domainNotice": "https://www.shanghaimuseum.cn/mu/frontend/pg/index",
+      "domainChangeEffective": "2026-09-01",
+      "oldDomainRetirement": "2027-01-01"
+    },
+    {
+      "id": "C-CQ-MUSEUM",
+      "selectedSource": "CQ-MUSEUM",
+      "olderUrls": [
+        "https://www.3gmuseum.cn/web/article/1430006659180208128/web/content_1430006659180208128.html"
+      ],
+      "decision": "Dated2025-09-30 cancellation notice overrides the undated pandemic reopening reservation/health-code page. Only the main-museum rule is selected."
+    },
+    {
+      "id": "C-BJ-PALACE",
+      "selectedSource": "BJ-PALACE",
+      "olderUrls": [
+        "https://www.dpm.org.cn/subject_booking/",
+        "https://intl.dpm.org.cn/ticket_details.html?_wap=1"
+      ],
+      "decision": "Use the current detailed booking/check-in rules. Mixed historical pandemic preambles and older email flow are not carried forward. Third-party reservation agency is expressly unauthorized."
+    },
+    {
+      "id": "C-GZ-AIRPORT",
+      "selectedSource": "GZ-AIRPORT",
+      "olderUrls": [
+        "https://www.gz.gov.cn/zwfw/zxfw/jtfw/content/post_10690829.html",
+        "https://jtj.gz.gov.cn/hdjl/gjc/content/post_9622305.html"
+      ],
+      "decision": "Retain only the T3↔Airport East station mapping. Do not turn future rail construction into current service or an AprilT1 mapping into current T1 availability. Recent T1/airport-south closure and changed shuttle/pickup leads need exact current operator web evidence; news reposts alone are not promoted."
+    },
+    {
+      "id": "C-TIMETABLE",
+      "selectedSource": [
+        "SH-AIRPORT",
+        "CQ-AIRPORT"
+      ],
+      "decision": "Airport pages explicitly defer timetable changes to the rail operator. No live train times, trip durations or fares are selected; a schedule row does not establish a guaranteed connection."
+    }
+  ],
+  "rightsDecisions": [
+    {
+      "id": "R-BASE",
+      "decision": "Original fact drafts and minimal citations only; no runtime grant is created.",
+      "allowedCurrentTask": [
+        "private research metadata",
+        "our original zh/en factual summaries",
+        "short necessary locator excerpt"
+      ],
+      "notEstablished": [
+        "commercial copying/translation of source paragraphs",
+        "bulk scraping/database reuse",
+        "raw-source model input or embeddings",
+        "source TTS",
+        "photos/maps/logos/media redistribution"
+      ],
+      "note": "Public access and an official domain do not supply commercial or model-use permission. Source material and our independently written factual fields are distinct; this research decision does not set licenceAllowed or qualify a downstream recipient."
+    },
+    {
+      "id": "R-JCB",
+      "url": "https://www.global.jcb/en/term-of-use/",
+      "locator": "§3 Intellectual Property Rights; §4(1)–(3)",
+      "decision": "Explicit personal/noncommercial download limit and prior-written-consent requirement for public/commercial source-material use. Hold source text/media commercialization and automated corpus use; retain only this research candidate and link."
+    },
+    {
+      "id": "R-PALACE",
+      "url": "https://www.dpm.org.cn/bottom/privacy/236341.html",
+      "locator": "一、著作权声明；二、网站内容的使用和修改",
+      "decision": "Website content commercial use requires prior written permission; quoted/reproduced use requires attribution, and modification of reused content is restricted. No booking agency permission follows from a factual summary."
+    },
+    {
+      "id": "R-SH-MUSEUM",
+      "url": "https://www.shanghaimuseum.cn/mu/frontend/pg/en/infomation/download-claim",
+      "locator": "Copyright Statement link on the current East visitor page",
+      "decision": "The link was identified but its statement could not be retrieved by the web tool. The site footer reserves copyright. Do not invent a permissive licence from that inaccessible statement."
+    }
+  ],
+  "coverage": [
+    {
+      "city": "上海",
+      "scene": "机场交通",
+      "candidateIds": [
+        "SH01"
+      ],
+      "status": "scoped_candidate_only",
+      "remainingGap": "Only the named terminal/card/venue is covered; no citywide completeness."
+    },
+    {
+      "city": "上海",
+      "scene": "地铁公交",
+      "candidateIds": [
+        "SH01",
+        "SH02"
+      ],
+      "status": "scoped_candidate_only",
+      "remainingGap": "Only the named terminal/card/venue is covered; no citywide completeness."
+    },
+    {
+      "city": "上海",
+      "scene": "出租车网约车",
+      "candidateIds": [],
+      "status": "gap",
+      "remainingGap": "No sufficiently current first-party web fact selected in this bounded batch; do not infer pickup/fare/platform coverage."
+    },
+    {
+      "city": "上海",
+      "scene": "景点预约",
+      "candidateIds": [
+        "SH03"
+      ],
+      "status": "scoped_candidate_only",
+      "remainingGap": "Only the named terminal/card/venue is covered; no citywide completeness."
+    },
+    {
+      "city": "北京",
+      "scene": "机场交通",
+      "candidateIds": [
+        "BJ01"
+      ],
+      "status": "scoped_candidate_only",
+      "remainingGap": "Only the named terminal/card/venue is covered; no citywide completeness."
+    },
+    {
+      "city": "北京",
+      "scene": "地铁公交",
+      "candidateIds": [
+        "BJ02"
+      ],
+      "status": "scoped_candidate_only",
+      "remainingGap": "Only the named terminal/card/venue is covered; no citywide completeness."
+    },
+    {
+      "city": "北京",
+      "scene": "出租车网约车",
+      "candidateIds": [
+        "BJ01"
+      ],
+      "status": "scoped_candidate_only",
+      "remainingGap": "Only the named terminal/card/venue is covered; no citywide completeness."
+    },
+    {
+      "city": "北京",
+      "scene": "景点预约",
+      "candidateIds": [
+        "BJ03"
+      ],
+      "status": "scoped_candidate_only",
+      "remainingGap": "Only the named terminal/card/venue is covered; no citywide completeness."
+    },
+    {
+      "city": "广州",
+      "scene": "机场交通",
+      "candidateIds": [
+        "GZ01"
+      ],
+      "status": "scoped_candidate_only",
+      "remainingGap": "Only the named terminal/card/venue is covered; no citywide completeness."
+    },
+    {
+      "city": "广州",
+      "scene": "地铁公交",
+      "candidateIds": [
+        "GZ02"
+      ],
+      "status": "scoped_candidate_only",
+      "remainingGap": "Only the named terminal/card/venue is covered; no citywide completeness."
+    },
+    {
+      "city": "广州",
+      "scene": "出租车网约车",
+      "candidateIds": [],
+      "status": "gap",
+      "remainingGap": "No sufficiently current first-party web fact selected in this bounded batch; do not infer pickup/fare/platform coverage."
+    },
+    {
+      "city": "广州",
+      "scene": "景点预约",
+      "candidateIds": [
+        "GZ03"
+      ],
+      "status": "scoped_candidate_only",
+      "remainingGap": "Only the named terminal/card/venue is covered; no citywide completeness."
+    },
+    {
+      "city": "重庆",
+      "scene": "机场交通",
+      "candidateIds": [
+        "CQ01"
+      ],
+      "status": "scoped_candidate_only",
+      "remainingGap": "Only the named terminal/card/venue is covered; no citywide completeness."
+    },
+    {
+      "city": "重庆",
+      "scene": "地铁公交",
+      "candidateIds": [
+        "CQ01"
+      ],
+      "status": "scoped_candidate_only",
+      "remainingGap": "Only the named terminal/card/venue is covered; no citywide completeness."
+    },
+    {
+      "city": "重庆",
+      "scene": "出租车网约车",
+      "candidateIds": [],
+      "status": "gap",
+      "remainingGap": "No sufficiently current first-party web fact selected in this bounded batch; do not infer pickup/fare/platform coverage."
+    },
+    {
+      "city": "重庆",
+      "scene": "景点预约",
+      "candidateIds": [
+        "CQ02"
+      ],
+      "status": "scoped_candidate_only",
+      "remainingGap": "Only the named terminal/card/venue is covered; no citywide completeness."
+    }
+  ],
+  "knownGaps": [
+    "Shanghai/Guangzhou/Chongqing city-specific taxi and ride-hailing facts not selected; Beijing covers only PEK T3 pickup.",
+    "City bus detail is not established by metro or airport-rail rows.",
+    "Daxing/Hongqiao/CAN terminal changes and CKG subterminal ground transfer require additional scoped current evidence.",
+    "Guangdong/Three Gorges current foreign-passport booking or gate-processing detail is not established.",
+    "No current supplier licence authorizes raw-page/media redistribution or model corpus use; JCB/Palace impose explicit source-material restrictions."
+  ],
+  "retrievalNotes": [
+    "Only first-party operator/venue/card-network or official public-service/transport-department pages support selected candidates. Newspaper reposts, Wikipedia, travel blogs and social posts were discovery/conflict leads only.",
+    "Some successful pages intermittently timed out on later web re-open. Dates use explicit page labels where available, otherwise null plus URL/date notes; crawl timestamps are not publication dates.",
+    "No full-page or media copy was persisted or reproduced. No personal data, SDK, DB, worker, remote import, deployment or contact operation was used. Limited public HTML requests extracted navigation/copyright-link metadata in memory."
+  ],
+  "researchTimeZone": "Asia/Shanghai"
+}
