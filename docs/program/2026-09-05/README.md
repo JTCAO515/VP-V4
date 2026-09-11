@@ -6,6 +6,11 @@
 
 ## 从哪里开始
 
+日常只看[六个交付阶段](DELIVERY-STAGES.md)、当前阶段的里程碑和正在执行的 Issue。
+先完成一个可在指定环境亲手验证的用户结果，再扩大工作面；完整 73 项定义保留供按需查阅。
+阶段是现有任务的验收分组，不能代替单票完整验收。当前只开一条集成主线和一条独立准备线，
+已在执行的工作先安全交付或交接。后续扩展仍由各票的 activationEvidence 决定。
+
 首次进入或产品范围变化时读主报告；执行单项任务从根 [AGENTS.md](../../../AGENTS.md)、[CONTEXT.md](../../../CONTEXT.md)、[开发流程](../../agents/development-workflow.md)、当前 Issue/PR 及其[执行行](EXECUTION-CONTRACT.md)开始，再读受影响的接口、代码和测试。历史审计与无关模块按需读取。复制任务提示可用 [AGENT-KICKOFF.md](AGENT-KICKOFF.md)。
 
 | 要确认的内容 | 权威来源与用途 |

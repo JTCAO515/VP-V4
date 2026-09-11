@@ -6,27 +6,17 @@
 
 客户收到产品后的观察、支持与发布关账。
 
-至少72小时系统观察与7天机会相关用户跟踪；自助/人工帮助、拒绝/激活、sandbox/真实购买分开。
-
 ## 当前基线与开发入口
 
 历史规划基线：#253。当前执行读取 main 的合同，并核对实时依赖、可用接口和获准环境；本计划定义不代表任务已就绪或已验收。
-主报告：[完整统筹方案](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
-必须阅读：[本任务执行合同](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-45) 与 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)。
+任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-45)；按 [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)。
+验收阶段：[S6](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s6)；阶段演示不代替本票完整验收。
+首次进入或范围变化时读 [主报告](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
 
 ## Blocked by
 
 - [VPJ-42 #242](https://github.com/JTCAO515/VP-V4/issues/242)
 - [VPJ-44 #244](https://github.com/JTCAO515/VP-V4/issues/244)
-
-## Scope 与接口
-
-- `docs/acceptance/**`
-- `docs/runbooks/**`
-- `artifacts/VPJ-45/**`
-- `docs/handoff.json`
-
-只修改本用户故事需要的路径。接口在消费者接入前版本化，不能仅交fixture声称完成。
 
 ## Acceptance criteria
 
@@ -40,36 +30,5 @@
 - No secrets, original user worktree, old applied migrations, branch protection or production actions.
 - No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.
 - No archived research/test oracle deletion or invented runtime/provider/Store result.
-
-## 验证与证据
-
-- `pnpm docs:check`
-- `git diff --check`
-
-
-
-- `artifacts/VPJ-45/verification.md`
-- `artifacts/VPJ-45/unrun.md`
-- `artifacts/VPJ-45/commands.jsonl`
-
-真实DB/provider/设备/购买是验收条件时，skip或fixture只算部分完成。
-
-## Owner / 外部条件 / 观察
-
-Owner: operator。类型: acceptance。预估专注工作3日，外部等待另计；超5日必须再拆。
-
-- JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist.
-- Missing access is an explicit operator outcome, never fabricated completion.
-
-观察：72h系统观察+至少7天机会相关跟踪；实际旅行节点未到标not_observed
-
-## 文档与回滚
-
-- `docs/handoff.json`
-- `HANDOFF.md`
-- `CONTEXT.md`
-- `docs/contracts/vpj-45.md`
-
-Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 替代历史责任：#171

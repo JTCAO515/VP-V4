@@ -4,6 +4,34 @@ Effective when the governance PR adopting ADR-0024 merges. This is the shared wo
 VPJ work and explicitly requested maintenance. ADR-0023 still defines product scope and safety.
 Historical task tables and copied kickoff prompts cannot add current development gates.
 
+## Deliver a visible result in the current stage
+
+Use the six [delivery stages](../program/2026-09-05/DELIVERY-STAGES.md) to select work within
+VPJ-00; `issue-plan.json` remains the only task-definition source. Stages group existing Issues
+and acceptance, without deleting native dependencies or changing the product's final scope.
+A stage demonstration is evidence for its stated slice, not automatic closure of every Issue
+assigned to that stage. Complete Issue and release checks still apply at their own boundaries.
+
+At the start of a work unit, state the current stage, one observable user result, its owning
+Issue(s), the required environment and the next acceptance action. Prefer finishing a partially
+integrated result before starting another preparation PR. Keep at most one main integration
+lane and one independently useful preparation lane per product; subagents may investigate,
+implement disjoint pieces or review inside these lanes. Existing sessions finish or hand off
+their current changes safely before the coordinator selects more work.
+
+When an external prerequisite blocks integration, prepare its concrete action/evidence once.
+An additional preparation task must either remove a named stage blocker, deliver a separately
+testable part of the same user result, or fix an observed defect. Do not keep adding optional
+hardening or new research solely to keep an agent busy. Start later-stage procurement, account
+setup and customer discovery early when their own prerequisites allow; stages are acceptance
+groups, not a rule to wait for every earlier Issue to close before any preparation.
+
+Report progress as **implemented / observed in the target environment / accepted by the user**,
+with the relevant version and evidence. PR counts, generated documents and closed-Issue counts
+are activity indicators. For the next five comparable work units, record start-to-acceptance
+time, rework, external waiting and user-result evidence in the existing Issue/PR. Do not infer
+model efficiency or a percentage improvement without this comparison.
+
 ## 1. Start with the task
 
 Read `AGENTS.md`, `CONTEXT.md`, the current Issue/PR and its execution row; then read the
@@ -75,6 +103,24 @@ and must pass. Reuse CI evidence for the same tested code instead of repeating i
 | Visible Web UI | Above plus affected-route browser checks at desktop and 390×844, relevant interactions, console and claims |
 | Native UI/Swift | Affected native build/tests on an available Apple toolchain; device/accessibility evidence for affected behavior |
 | Auth/data/provider/commerce | Affected contract and adversarial tests; real integration/rollback evidence before claiming that capability complete |
+
+For local review, documentation and other small reversible changes normally need a diff review
+by the implementing agent and the direct checks above. Ordinary feature work does not require
+an additional independent agent on every increment. Use an independent review for permission,
+data integrity, money, migration/rollback, critical shared contracts or a concrete unresolved risk.
+Repository-required reviews remain in force; this does not authorize self-approval or bypass.
+
+Quality PR has a narrow documentation path for known navigation, workflow and task-definition
+files: source-policy lint, governance tests, contract tests and docs checks. Code, tests, CI,
+dependencies, ADRs, runtime data, unknown paths and manual runs retain the full existing check set.
+The same job/check name reports either applicable scope; its summary states what did not apply.
+The full path builds once and reuses that output for browser tests. A newer commit cancels an
+older run for the same PR. The standalone frontend-test command still builds when called alone.
+
+Reuse a successful check only when its tested code, relevant environment and test inputs still
+match. A documentation-only follow-up need not repeat unrelated local product checks; a change
+to behavior or the relevant environment requires the affected checks again. Do not skip a real
+integration gate merely because a local fixture or a different deployment passed.
 
 Changes to shared contracts, dependencies, global styles or architecture require broader
 regression coverage because their impact is broader. RTL/legacy locale checks apply to changed

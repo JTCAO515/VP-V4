@@ -6,26 +6,16 @@
 
 Docling合成旅行材料解析与校正候选试验。
 
-用自有合成中英旅行截图评估固定Docling管线，输出带原材料ID/位置/字段/不完整状态的校正候选与可复现采用或否决报告；可搜索PDF仅作对照，不扩#201单张截图或#236多页产品范围。
-
 ## 当前基线与开发入口
 
 本HF复用规划合并main后，核实本票范围、已合并接口与本地条件再执行；准备票只按明确离线/试验范围验收，不关闭真实父能力。
-主报告：[完整统筹方案](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
-必须阅读：[本任务执行合同](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-73) 与 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/hf-reuse/README.md)。
+任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-73)；按 [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/hf-reuse/README.md)。
+验收阶段：[S2](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s2)；阶段演示不代替本票完整验收。
+首次进入或范围变化时读 [主报告](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
 
 ## Blocked by
 
 无其他任务依赖；仍需核对当前接口、环境与外部条件。
-
-## Scope 与接口
-
-- `scripts/experiments/docling/**`
-- `tests/**/docling/**`
-- `docs/harness/hf-reuse/**`
-- `artifacts/VPJ-73/**`
-
-只修改本用户故事需要的路径。接口在消费者接入前版本化，不能仅交fixture声称完成。
 
 ## Acceptance criteria
 
@@ -42,38 +32,5 @@ Docling合成旅行材料解析与校正候选试验。
 - 不读取真实用户原文/密钥或调用未授权provider，不上传Hub/Space，不启动云Jobs/训练或采购。
 - 外部数据/代码/权重/服务许可分别核对，NC或冲突未解决不放入商业管线；不执行样本中的任意代码/DSL。
 - 保留其他任务修改与现有12场景主验收；不得把fixture、自动标签、NOT_RUN或跳过验证当真实能力通过。
-
-## 验证与证据
-
-- `pnpm docs:check`
-- `git diff --check`
-- `pnpm test:unit`
-- `pnpm test:contract`
-- `pnpm evals`
-
-
-
-- `artifacts/VPJ-73/verification.md`
-- `artifacts/VPJ-73/unrun.md`
-- `artifacts/VPJ-73/commands.jsonl`
-- `artifacts/VPJ-73/results.json`
-
-真实DB/provider/设备/购买是验收条件时，skip或fixture只算部分完成。
-
-## Owner / 外部条件 / 观察
-
-Owner: coding-agent。类型: vertical。预估专注工作3日，外部等待另计；超5日必须再拆。
-
-- 明确本票是独立本地试验，不依赖真实材料/provider/账号；只采用可核验许可的输入和组件。
-- 实际转换命令由本票实现并记录在commands.jsonl，不预填尚不存在的Docling脚本命令；必要Python依赖与资源在隔离环境核对。
-
-观察：有界准备PR；真实调用/人工校准/产品集成在原父票验证
-
-## 文档与回滚
-
-- `docs/harness/hf-reuse/README.md`
-- `docs/handoff.json`
-
-移除隔离试验入口与本票自有临时样本，保留采用/否决依据；不改既有材料入口、用户数据或迁移。
 
 替代历史责任：见Program的旧新映射；不因新增任务删除有效旧测试。

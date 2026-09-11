@@ -252,6 +252,10 @@
       "status": "archived"
     },
     {
+      "path": "docs/archive/2026-09-11/program-before-stages.md",
+      "status": "archived"
+    },
+    {
       "path": "docs/benchmarks/aviation/ai-39-provider-scorecard.md",
       "status": "document"
     },
@@ -512,11 +516,35 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/vpj-02.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-03.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/vpj-04.md",
       "status": "document"
     },
     {
       "path": "docs/contracts/vpj-05.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-07.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-14.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-15.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-37.md",
       "status": "document"
     },
     {
@@ -600,6 +628,10 @@
       "status": "document"
     },
     {
+      "path": "docs/maintenance/development-flow-2026-09-11.md",
+      "status": "document"
+    },
+    {
       "path": "docs/maintenance/development-rules-review-2026-09-08.md",
       "status": "document"
     },
@@ -620,7 +652,15 @@
       "status": "document"
     },
     {
+      "path": "docs/policy/vpj-03-provider-qualification.md",
+      "status": "document"
+    },
+    {
       "path": "docs/policy/vpj-03-text-decisions.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/policy/vpj-03-text-notice-review.md",
       "status": "document"
     },
     {
@@ -633,6 +673,10 @@
     },
     {
       "path": "docs/program/2026-09-05/BRAND-ALIGNMENT-EXECUTION.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/DELIVERY-STAGES.md",
       "status": "document"
     },
     {
@@ -1064,11 +1108,23 @@
       "status": "document"
     },
     {
+      "path": "docs/runbooks/ops-ledger-reconciliation.md",
+      "status": "document"
+    },
+    {
       "path": "docs/runbooks/privacy-lifecycle.md",
       "status": "document"
     },
     {
       "path": "docs/runbooks/rail-official-recheck.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/staging-26-to-33.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/staging-vercel-maintenance.md",
       "status": "document"
     },
     {

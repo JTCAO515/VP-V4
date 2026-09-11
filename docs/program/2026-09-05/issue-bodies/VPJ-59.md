@@ -6,29 +6,17 @@
 
 首个真实模型任务的预算预留与故障止损。
 
-真实调用前做server预算/并发预留，调用后usage结算，取消/超时/无usage尾包进入补偿/待核。
-
 ## 当前基线与开发入口
 
 原VPJ基线已合并；2026-09-10品牌增量以Q1-Q38报告的已确认方向为准，当前任务及新增规划契约需按合入main后的版本执行。已有可独立进行的准备范围继续；未决收费、数据许可和激活制不视为已批准，完整验收仍保留真实依赖。
-主报告：[完整统筹方案](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
-必须阅读：[本任务执行合同](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-59) 与 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)。
+任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-59)；按 [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)。
+验收阶段：[S2](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s2)；阶段演示不代替本票完整验收。
+首次进入或范围变化时读 [主报告](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
 
 ## Blocked by
 
 - [VPJ-02 #189](https://github.com/JTCAO515/VP-V4/issues/189)
 - [VPJ-06 #193](https://github.com/JTCAO515/VP-V4/issues/193)
-
-## Scope 与接口
-
-- `lib/server/model-gateway/budget/**`
-- `lib/server/jobs/**`
-- `lib/server/observability/**`
-- `lib/flags/**`
-- `supabase/migrations/**`
-- `tests/**/cost/**`
-
-只修改本用户故事需要的路径。接口在消费者接入前版本化，不能仅交fixture声称完成。
 
 ## Acceptance criteria
 
@@ -43,43 +31,5 @@
 - No secrets, original user worktree, old applied migrations, branch protection or production actions.
 - No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.
 - No archived research/test oracle deletion or invented runtime/provider/Store result.
-
-## 验证与证据
-
-- `pnpm docs:check`
-- `git diff --check`
-- `pnpm check`
-- `pnpm test:unit`
-- `pnpm test:contract`
-- `pnpm test:integration`
-- `pnpm test:security`
-- `pnpm db:verify`
-
-
-
-- `artifacts/VPJ-59/verification.md`
-- `artifacts/VPJ-59/unrun.md`
-- `artifacts/VPJ-59/commands.jsonl`
-
-真实DB/provider/设备/购买是验收条件时，skip或fixture只算部分完成。
-
-## Owner / 外部条件 / 观察
-
-Owner: coding-agent。类型: vertical。预估专注工作4日，外部等待另计；超5日必须再拆。
-
-- Baseline PR merged, all implementation blockers resolved and interfaces available.
-- Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
-
-观察：PR/实际任务验证窗口
-
-## 文档与回滚
-
-- `docs/handoff.json`
-- `HANDOFF.md`
-- `CONTEXT.md`
-- `docs/contracts/vpj-59.md`
-- `docs/contracts/service-task-metering.md`
-
-Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 替代历史责任：见Program的旧新映射；不因新增任务删除有效旧测试。

@@ -33,8 +33,39 @@ export function orderedTasks(tasks) {
   return ordered;
 }
 
+export function validateDeliveryStages(value) {
+  assert.ok(Array.isArray(value.deliveryStages) && value.deliveryStages.length, 'missing delivery stages');
+  const stages = new Map();
+  for (const [index, stage] of value.deliveryStages.entries()) {
+    assert.ok(typeof stage.id === 'string' && stage.id.trim(), 'missing delivery stage id');
+    assert.ok(!stages.has(stage.id), `duplicate delivery stage ${stage.id}`);
+    assert.ok(typeof stage.title === 'string' && stage.title.trim(), `${stage.id} missing delivery stage title`);
+    assert.ok(Array.isArray(stage.acceptance) && stage.acceptance.length &&
+      stage.acceptance.every(item => typeof item === 'string' && item.trim()), `${stage.id} missing stage acceptance`);
+    if (stage.ongoingIssueNumbers !== undefined) {
+      assert.ok(Array.isArray(stage.ongoingIssueNumbers) &&
+        stage.ongoingIssueNumbers.every(number => Number.isSafeInteger(number) && number > 0), `${stage.id} invalid ongoing Issue numbers`);
+    }
+    stages.set(stage.id, index);
+  }
+  if (stages.has('expand')) assert.equal(stages.get('expand'), stages.size - 1, 'expand must follow launch delivery stages');
+  const tasks = orderedTasks(value.tasks);
+  const index = new Map(tasks.map(task => [task.id, task]));
+  for (const task of tasks) {
+    assert.ok(typeof task.deliveryStage === 'string' && task.deliveryStage, `${task.id} missing delivery stage`);
+    assert.ok(stages.has(task.deliveryStage), `${task.id} unknown delivery stage ${task.deliveryStage}`);
+    if (task.track === 'expand') assert.equal(task.deliveryStage, 'expand', `${task.id} expand task must use expand stage`);
+    if (task.track === 'launch') assert.notEqual(task.deliveryStage, 'expand', `${task.id} launch task cannot use expand stage`);
+    for (const dependency of task.blockedBy) {
+      const upstream = index.get(dependency);
+      assert.ok(stages.get(upstream.deliveryStage) <= stages.get(task.deliveryStage),
+        `${task.id} delivery stage ${task.deliveryStage} precedes dependency ${dependency} in ${upstream.deliveryStage}`);
+    }
+  }
+}
+
 function validate() {
-  orderedTasks(plan.tasks);
+  validateDeliveryStages(plan);
   for (const key of ['number','databaseId']) {
     const values=plan.tasks.map(t=>t[key]).filter(v=>v!=null);
     assert.equal(new Set(values).size,values.length,`duplicate task ${key}`);
@@ -67,45 +98,64 @@ export function body(t) {
   const source = `https://github.com/${plan.repo}/blob/${t.sourceRef ?? 'main'}`;
   const baselineNote = t.baselineNote ?? `历史规划基线：${plan.baselinePr ? '#' + plan.baselinePr : '尚未登记'}。当前执行读取 main 的合同，并核对实时依赖、可用接口和获准环境；本计划定义不代表任务已就绪或已验收。`;
   return `## Program\n\n${link('VPJ-00')} · ${t.track === 'expand' ? '后续证据触发任务' : '首发交付任务'}\n\n` +
-    `## 用户结果\n\n${t.title}。\n\n${t.acceptance[0]}\n\n` +
+    `## 用户结果\n\n${t.title}。\n\n` +
     `## 当前基线与开发入口\n\n${baselineNote}\n` +
-    `主报告：[完整统筹方案](${source}/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。\n` +
-    `必须阅读：[本任务执行合同](${source}/${dir}/EXECUTION-CONTRACT.md#${t.id.toLowerCase()}) 与 [领域接口](${source}/${t.contract})。\n\n` +
+    `任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](${source}/${dir}/EXECUTION-CONTRACT.md#${t.id.toLowerCase()})；按 [开发流程](${source}/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](${source}/${t.contract})。\n` +
+    (t.deliveryStage ? `验收阶段：[${t.deliveryStage}](${source}/${dir}/DELIVERY-STAGES.md#${t.deliveryStage.toLowerCase()})；阶段演示不代替本票完整验收。\n` : '') +
+    `首次进入或范围变化时读 [主报告](${source}/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。\n\n` +
     `## Blocked by\n\n${t.blockedBy.length ? t.blockedBy.map(id => '- ' + link(id)).join('\n') : '无其他任务依赖；仍需核对当前接口、环境与外部条件。'}\n\n` +
-    `## Scope 与接口\n\n${t.allowedPaths.map(p => '- \u0060' + p + '\u0060').join('\n')}\n\n` +
-    `只修改本用户故事需要的路径。接口在消费者接入前版本化，不能仅交fixture声称完成。\n\n` +
     `## Acceptance criteria\n\n${t.acceptance.map(a => '- [ ] ' + a).join('\n')}\n\n` +
     `## 不得触碰\n\n${t.doNotTouch.map(s => '- ' + s).join('\n')}\n\n` +
-    `## 验证与证据\n\n${t.checks.map(s => '- \u0060' + s + '\u0060').join('\n')}\n\n` +
-    `${t.nativeVerification ?? ''}\n\n` +
-    `${t.artifactPaths.map(s => '- \u0060' + s + '\u0060').join('\n')}\n\n` +
-    `真实DB/provider/设备/购买是验收条件时，skip或fixture只算部分完成。\n\n` +
-    `## Owner / 外部条件 / 观察\n\nOwner: ${t.owner}。类型: ${t.kind}。预估专注工作${t.effortDays}日，外部等待另计；超5日必须再拆。\n\n${t.externalPrerequisites.map(s=>'- '+s).join('\n')}\n\n观察：${t.observationWindow}\n\n` +
     (t.activationEvidence ? `后续开启门：${t.activationEvidence}\n\n` : '') +
-    `## 文档与回滚\n\n${t.docsImpact.map(s => '- \u0060' + s + '\u0060').join('\n')}\n\n${t.rollback}\n\n` +
     `替代历史责任：${t.oldIssues.length ? t.oldIssues.map(n=>'#'+n).join(', ') : '见Program的旧新映射；不因新增任务删除有效旧测试。'}\n`;
+}
+
+export function renderDeliveryStages(value) {
+  validateDeliveryStages(value);
+  const tasks = orderedTasks(value.tasks);
+  const issueLink = number => `[#${number}](https://github.com/${value.repo}/issues/${number})`;
+  return '# VPJ 分阶段交付与验收\n\n生成自 `issue-plan.json`；复用既有 Issue，不建立第二套队列。阶段是用户可观察成果的归属，不是实时完成状态。\n\n' +
+    '阶段演示不等于整票验收或关闭；父 Issue 只有完整验收通过才关闭。独立准备可以跨阶段推进，仍保留实际依赖、运行条件和未验项；前一阶段的全部票不是后一阶段准备工作的额外阻塞。\n\n' +
+    '按 [开发流程](../../agents/development-workflow.md) 执行；每次验收记录版本、环境、实际用户结果及 PASS / FAIL / UNRUN，fixture 不替代运行或发布证据。\n\n' +
+    value.deliveryStages.map(stage => `## ${stage.id}\n\n**${stage.title}**\n\n` +
+      (stage.milestoneUrl ? `[GitHub 里程碑](${stage.milestoneUrl})\n\n` : '') +
+      '验收成果：\n\n' + stage.acceptance.map(item => `- ${item}`).join('\n') + '\n\n' +
+      '| 现有 Issue | 用户结果 |\n| --- | --- |\n' +
+      tasks.filter(task => task.deliveryStage === stage.id).map(task =>
+        `| ${issueLink(task.number)} · ${task.id} | ${task.title} |`).join('\n') + '\n\n' +
+      (stage.ongoingIssueNumbers?.length ? `持续配合：${stage.ongoingIssueNumbers.map(issueLink).join('、')}；这是跨阶段工作，不改变任务身份或依赖。\n\n` : '')
+    ).join('') + '后续 expand 仍需各票 activationEvidence；依赖完成不自动激活，也不纳入当前首发验收。\n';
+}
+
+export function executionContractRow(t) {
+  return `## ${t.id}\n\n${link(t.id)} — ${t.title}\n\n` +
+    `- Owner: ${t.owner}; ${t.kind}; ${t.effortDays}专注日，${t.observationWindow}\n` +
+    `- 验收阶段: ${t.deliveryStage}\n` +
+    `- Blocked by: ${t.blockedBy.map(link).join(', ') || '无任务依赖；核实际条件'}\n` +
+    `- Allowed: ${t.allowedPaths.map(p=>'\u0060'+p+'\u0060').join(', ')}\n` +
+    `- Checks: ${t.checks.map(p=>'\u0060'+p+'\u0060').join('; ')}\n` +
+    `- Evidence: ${t.artifactPaths.map(p=>'\u0060'+p+'\u0060').join(', ')}\n` +
+    `- 接口: ${t.contract}; Red lines: ${t.redLines.join(', ')}\n` +
+    `- 运行门: ${t.externalPrerequisites.join(' ')}\n` +
+    (t.nativeVerification ? `- Native: ${t.nativeVerification}\n`:'') +
+    `- 文档影响: ${t.docsImpact.map(p=>'\u0060'+p+'\u0060').join(', ')}\n` +
+    `- 不得触碰: ${t.doNotTouch.join('；')}\n` +
+    (t.activationEvidence ? `- 后续开启门: ${t.activationEvidence}\n` : '') +
+    `- Rollback: ${t.rollback}\n\n` +
+    t.acceptance.map(a=>'- [ ] '+a).join('\n') + '\n\n';
 }
 
 function render() {
   validate();
   const header = '# VPJ 任务定义与依赖\n\n生成自 `issue-plan.json`；不要手工改此表。这是计划定义，不是实时进度；执行状态以 GitHub、已合并接口和获准环境的当前证据为准。\n\n';
-  const table = '| 任务 | 交付 | 依赖 | Owner | 专注日/观察 | 阶段 |\n| --- | --- | --- | --- | --- | --- |\n' +
-    orderedTasks(plan.tasks).map(t=>`| ${link(t.id)} | ${t.title} | ${t.blockedBy.map(link).join(', ') || '无任务依赖；核实际条件'} | ${t.owner} | ${t.effortDays}日；${t.observationWindow} | ${t.track} |`).join('\n');
+  const table = '| 任务 | 交付 | 依赖 | Owner | 专注日/观察 | 验收阶段 | 范围 |\n| --- | --- | --- | --- | --- | --- | --- |\n' +
+    orderedTasks(plan.tasks).map(t=>`| ${link(t.id)} | ${t.title} | ${t.blockedBy.map(link).join(', ') || '无任务依赖；核实际条件'} | ${t.owner} | ${t.effortDays}日；${t.observationWindow} | [${t.deliveryStage}](DELIVERY-STAGES.md#${t.deliveryStage.toLowerCase()}) | ${t.track} |`).join('\n');
   save(`${dir}/ISSUES.md`, header + table + '\n\n后续expand必须另有activationEvidence，依赖完成不会自动开放。\n');
+  save(`${dir}/DELIVERY-STAGES.md`, renderDeliveryStages(plan));
   let contracts = executionContractHeader;
   for (const t of plan.tasks) {
     save(`${dir}/issue-bodies/${t.id}.md`, body(t));
-    contracts += `## ${t.id}\n\n${link(t.id)} — ${t.title}\n\n` +
-      `- Owner: ${t.owner}; ${t.effortDays}专注日，${t.observationWindow}\n` +
-      `- Blocked by: ${t.blockedBy.map(link).join(', ') || '无任务依赖；核实际条件'}\n` +
-      `- Allowed: ${t.allowedPaths.map(p=>'\u0060'+p+'\u0060').join(', ')}\n` +
-      `- Checks: ${t.checks.map(p=>'\u0060'+p+'\u0060').join('; ')}\n` +
-      `- Evidence: ${t.artifactPaths.map(p=>'\u0060'+p+'\u0060').join(', ')}\n` +
-      `- 接口: ${t.contract}; Red lines: ${t.redLines.join(', ')}\n` +
-      `- 运行门: ${t.externalPrerequisites.join(' ')}\n` +
-      (t.nativeVerification ? `- Native: ${t.nativeVerification}\n`:'') +
-      `- Rollback: ${t.rollback}\n\n` +
-      t.acceptance.map(a=>'- [ ] '+a).join('\n') + '\n\n';
+    contracts += executionContractRow(t);
   }
   save(`${dir}/EXECUTION-CONTRACT.md`, contracts.trimEnd()+'\n');
   const snap = json(plan.sourceSnapshot).issues;
@@ -114,7 +164,7 @@ function render() {
   const files = walk('docs').filter(p=>p.endsWith('.md') && p !== 'docs/INDEX.md');
   saveJson('docs/manifest.json',{schemaVersion:'vpj-docs/1',date:plan.date,authority:'docs/VISEPANDA-MASTER-PLAN-2026-09-05.md',files:files.map(p=>({path:p,status:p.startsWith('docs/archive/')?'archived':p.startsWith('docs/research/')?'evidence':'document'}))});
   save('docs/INDEX.md','# Documentation index\n\nGenerated by `node scripts/vpj-program.mjs render`; active entry: [VPJ Program](program/2026-09-05/README.md). Archives and old plans are historical, not execution authority.\n\n'+files.map(p=>`- [${p.slice(5)}](${p.slice(5)})${p.startsWith('docs/archive/')?' — archived':''}`).join('\n')+'\n');
-  console.log('Generated task bodies, execution contract, migration table and documentation index.');
+  console.log('Generated delivery stages, task bodies, execution contract, migration table and documentation index.');
 }
 
 function renderHandoff() {
@@ -401,8 +451,12 @@ function applyBodyUpdate(update) {
   if (latest.body !== update.body) api(`repos/${plan.repo}/issues/${update.issue.number}`, 'PATCH', { body: update.body });
 }
 
-function programBody() {
-  return read(`${dir}/program-body.md`) + '\n\n## 新队列\n\n' + plan.tasks.map(t => '- ' + link(t.id) + ' ' + t.title).join('\n');
+export function programBody() {
+  return read(`${dir}/program-body.md`) + '\n\n## 当前六阶段与后续扩展\n\n' +
+    '阶段演示不是整票完成；完整验收、原生依赖及后续激活条件保留。当前只推进一条集成主线与一条独立准备线。\n\n' +
+    '| 阶段 | 验收成果 | 现有任务数 |\n| --- | --- | --- |\n' +
+    plan.deliveryStages.map(stage => `| [${stage.id}](${stage.milestoneUrl ?? `https://github.com/${plan.repo}/blob/main/${dir}/DELIVERY-STAGES.md#${stage.id.toLowerCase()}`}) | ${stage.title} | ${plan.tasks.filter(task => task.deliveryStage === stage.id).length} |`).join('\n') +
+    `\n\n[逐阶段验收与现有 Issue](https://github.com/${plan.repo}/blob/main/${dir}/DELIVERY-STAGES.md) · [完整任务定义](https://github.com/${plan.repo}/blob/main/${dir}/ISSUES.md)\n`;
 }
 
 function publish(){

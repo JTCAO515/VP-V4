@@ -4,6 +4,10 @@ VisePanda 面向国际来华自由行旅客，围绕同一个 Trip 连接规划�
 
 [产品与任务入口](docs/program/2026-09-05/README.md) · [完整产品规划](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md) · [当前交接与证据](CONTEXT.md)
 
+开发与验收按[六个交付阶段](docs/program/2026-09-05/DELIVERY-STAGES.md)推进：同一 Trip 与真实环境 →
+真实有据 Ask → 共同计划与确认 → 旅途功能 → 完整 Beta → 正式客户交付。每阶段先验证一个完整用户行为，
+再扩大范围；后续扩展单独等待证据触发，现有 Issue 的验收和依赖继续有效。
+
 ## 代码与验证入口
 
 | 范围 | 位置与用途 |

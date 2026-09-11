@@ -59,6 +59,11 @@ After a relevant merge or dependency/ownership change, refresh the affected fron
 3. Choose the highest-priority independently actionable outcome. Product work uses its VPJ row;
    direct maintenance and bounded preparation use the scoped brief in `development-workflow.md`.
    Do not infer a frozen interface from a type name in a planning document.
+   Prefer the current delivery stage's user result and finish its existing integration first.
+   Apply the shared limit of one integration lane plus one independent preparation lane; a new
+   preparation increment must remove a named stage blocker, deliver a testable part of that result,
+   or fix an observed defect. A lack of eligible useful work is a valid stop, not a reason to
+   invent another hardening increment.
 4. Use a dedicated branch/checkout; add a worktree when needed for isolation. One coherent outcome
    per PR; an Issue may have incremental PRs without closing its remaining acceptance.
 5. Run task-relevant checks and preserve evidence. Browser/device checks apply to affected
@@ -122,4 +127,3 @@ During an actual AFK run, observe two independent work units when available; thi
 not a prerequisite for merging a documentation/tooling change. Session acceptance requires: no per-Issue
 confirmation pause, no stacked dependency PR, no hard-gate bypass, accurate queueing of operator work,
 and a truthful stop only when the safe frontier is empty.
-

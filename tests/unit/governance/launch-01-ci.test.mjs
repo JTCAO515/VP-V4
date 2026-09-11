@@ -7,27 +7,32 @@ import test from "node:test";
 
 const read = (path) => readFileSync(path, "utf8");
 
-test("LAUNCH-01 PR workflow runs every deterministic repository gate and the browser lane", () => {
+test("Quality PR preserves every full-scope gate and a bounded documentation path", () => {
   const workflow = read(".github/workflows/quality-pr.yml");
-
-  for (const command of [
-    "pnpm lint",
-    "pnpm typecheck",
-    "pnpm build",
-    "pnpm test",
-    "pnpm test:unit",
-    "pnpm test:contract",
-    "pnpm test:integration",
-    "pnpm test:security",
-    "pnpm test:e2e",
-    "pnpm test:e2e:frontend",
-    "pnpm evals",
-    "pnpm docs:check",
-    "pnpm check:flags",
-    "pnpm check:assets",
-  ]) {
-    assert.match(workflow, new RegExp(`- run: ${command.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}`));
+  const steps = workflow.split(/\n(?=      - )/).slice(1);
+  const commandSteps = new Map(steps.flatMap(step => {
+    const command = step.match(/^\s*(?:- )?run: (.+)$/m)?.[1];
+    return command ? [[command, step]] : [];
+  }));
+  for (const command of ["pnpm lint", "pnpm test:contract", "pnpm docs:check"]) {
+    assert.ok(commandSteps.has(command), command);
+    assert.ok(!commandSteps.get(command).includes("if:"), `${command} must run in both scopes`);
   }
+  for (const command of ["pnpm typecheck", "pnpm build", "pnpm test", "pnpm test:unit",
+    "pnpm test:integration", "pnpm test:security", "pnpm test:e2e", "pnpm evals",
+    "pnpm check:flags", "pnpm check:assets", "pnpm exec playwright install chromium",
+    "pnpm exec playwright test --config playwright.config.mjs --workers=1"]) {
+    assert.ok(commandSteps.has(command), command);
+    assert.ok(commandSteps.get(command).includes("if: steps.scope.outputs.scope != 'documentation'"),
+      `${command} must run for full or unknown scope`);
+  }
+  assert.ok(commandSteps.has("node scripts/ci-change-scope.mjs"));
+  assert.ok(commandSteps.get("node --test tests/unit/governance/*.test.mjs")
+    .includes("if: steps.scope.outputs.scope == 'documentation'"));
+  assert.equal(steps.filter(step => /^\s*(?:- )?run: pnpm build$/m.test(step)).length, 1);
+  assert.ok(!commandSteps.has("pnpm test:e2e:frontend"), "reuse the already verified build");
+  const standalone = JSON.parse(read("package.json")).scripts["test:e2e:frontend"];
+  assert.ok(standalone.startsWith("pnpm build &&"), "standalone browser tests still build");
 });
 
 test("LAUNCH-01 CI suite runner reports skipped tests as an explicit incomplete outcome", () => {

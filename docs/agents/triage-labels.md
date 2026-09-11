@@ -16,6 +16,10 @@ VPJ's native graph and current scope govern readiness. The old AI-01/15/21/29/34
 table is archived in `docs/archive/2026-09-05/baseline/triage-labels.md`; it adds no edges to VPJ.
 Use current task phase and dependencies, not an old milestone title, to schedule work.
 
+2026-09-11起，用户验收按 `issue-plan.json` 的 `deliveryStage` 与 GitHub 的 VPJ S1–S6
+里程碑查看；旧 `phase:R0`–`phase:R5` 标签保留作历史技术分组，不再代表新的阶段顺序。
+后续 expand 单列，不进入当前活跃清单。依赖及实际可执行性仍须单独核实，里程碑本身不授予就绪或完成状态。
+
 After a baseline/upstream merge, inspect interfaces, environment and ownership, then reconcile
 stale labels using normal tracker authority. A label is not an independent source of approval.
 Closed work must not retain `status:ready`, `status:in-progress` or `ready-for-*` labels.
