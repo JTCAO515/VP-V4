@@ -18,7 +18,7 @@ const rpc=(role,actor)=>async(name,p={})=>{
  assert.match(name,/^[a-z_]+$/);assert.ok(Object.keys(p).every(k=>/^p_[a-z_]+$/.test(k)));
  const claims=actor?`set request.jwt.claim.sub='${actor.owner}'; set request.jwt.claims='${JSON.stringify({session_id:actor.session})}';`:'';
  const value=await db(claims+'set role '+role+';select public.'+name+'('+Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')+');');
- return name==='cancel_chat_turn'?value:JSON.parse(value);
+ return ['cancel_chat_turn','start_chat_turn'].includes(name)?value:JSON.parse(value);
 };
 const service=rpc('service_role');
 const notice='a'.repeat(64);
@@ -56,7 +56,16 @@ before(async()=>{
  assert.equal(await db('select count(*) from knowledge_review_private.members;'),'0','upgrade grants no operator membership');
  assert.equal(await db('select count(*) from knowledge_review_private.source_revisions;'),'0','upgrade creates no source or reviewed facts');
  await clean();
- for(const f of migrations.slice(scopedIndex+1))await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
+ for(const f of migrations.slice(scopedIndex+1)){
+  const migration=readFileSync('supabase/migrations/'+f,'utf8');
+  if(f.endsWith('_vpj_07_service_task_records.sql')){
+   const beforeRollback=await snapshot();await db('begin;'+migration+'rollback;');
+   assert.equal(await snapshot(),beforeRollback,'transaction rollback preserves previously leased/retained data');
+   assert.equal(await db("select to_regclass('turn_private.service_tasks') is null;"),'t');
+   assert.equal(await db("select to_regprocedure('public.reserve_model_budget(uuid,uuid,uuid,uuid,text,text,text,bigint)') is not null;"),'t');
+  }
+  await db('begin;'+migration+'commit;');
+ }
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 run('durable owner consent gates input; exact retries reuse and changed text rejects',async()=>{
@@ -304,4 +313,84 @@ run('scoped claim rolls back on deletion lock contention and can be disabled wit
  try{await assert.rejects(scopedClaim(a),/permission denied/);assert.equal(await snapshot(),prior);}
  finally{await db('grant execute on function public.claim_text_work(uuid,uuid) to service_role;');}
  assert.equal((await scopedClaim(a)).kind,'leased');await clean();
+});
+
+async function taskFixture(){
+ const a=await fixture();a.task=uuid();await a.accept();
+ a.taskInput={p_thread_id:a.thread,p_turn_id:a.turn,p_idempotency_key:a.idem,p_policy_id:a.policy,p_locale:'en',p_text:'Synthetic scoped goal',p_task_id:a.task,p_scope_version:1,p_relationship:'new_goal',p_parent_turn_id:null};
+ a.submit=(patch={})=>a.call('submit_service_task_turn',{...a.taskInput,...patch});
+ a.next=(parent,relationship='clarification')=>({p_turn_id:uuid(),p_idempotency_key:uuid(),p_parent_turn_id:parent,p_relationship:relationship,p_text:'Synthetic continuation'});
+ a.finish=async(kind)=>{const l=await service('claim_text_work',{p_owner_id:a.owner,p_policy_id:a.policy});assert.equal(l.kind,'leased');await authorize(a,l);assert.equal((await complete(l,kind)).kind,'finished');};
+ return a;
+}
+run('ServiceTask records exact request replay and a latest-parent clarification/repair chain',async()=>{
+ const a=await taskFixture();const first=await a.submit();assert.equal(first.serviceTaskId,a.task);assert.equal(first.reused,false);
+ for(const patch of [{p_text:'Changed goal'},{p_turn_id:uuid()},{p_locale:'zh'},{p_relationship:'repair',p_parent_turn_id:a.turn}])await assert.rejects(a.submit(patch),/IDEMPOTENCY_KEY_REUSE/);
+ const second=a.next(a.turn);await assert.rejects(a.submit(second),/SERVICE_TASK_CONFLICT/);
+ await a.finish('clarification');const responses=await Promise.all([a.submit(second),a.submit(second)]);assert.deepEqual(responses.map(r=>r.reused).sort(),[false,true]);
+ assert.equal((await a.submit()).turnId,a.turn,'old exact request still replays after lastTurn advances');
+ await assert.rejects(a.submit(a.next(a.turn)),/SERVICE_TASK_CONFLICT/);
+ await a.finish('technical_failure');const third=a.next(second.p_turn_id,'repair');assert.equal((await a.submit(third)).reused,false);
+ await a.finish('answered');await assert.rejects(a.submit(a.next(third.p_turn_id)),/SERVICE_TASK_CONFLICT/);
+ const history=await a.call('list_service_task_turns',{p_policy_id:a.policy,p_limit:20});assert.equal(history.turns.length,3);assert.ok(history.turns.every(t=>t.serviceTaskId===a.task));
+ assert.equal(await db(`select count(*) from public.chat_turn_events where turn_id='${a.turn}' and event_type='terminal';`),'1');
+});
+run('ServiceTask competing continuations and legacy v1/state admissions cannot split the task',async()=>{
+ const a=await taskFixture();await a.submit();await a.finish('clarification');
+ const results=await Promise.allSettled([a.submit(a.next(a.turn)),a.submit(a.next(a.turn))]);assert.equal(results.filter(r=>r.status==='fulfilled').length,1);assert.match(results.find(r=>r.status==='rejected').reason.message,/SERVICE_TASK_CONFLICT/);
+ await assert.rejects(a.call('start_text_turn',{p_thread_id:a.thread,p_turn_id:uuid(),p_idempotency_key:uuid(),p_policy_id:a.policy,p_locale:'en',p_text:'Bypass'}),/SERVICE_TASK_CONFLICT/);
+ await assert.rejects(a.call('submit_text_turn',{p_thread_id:a.thread,p_turn_id:uuid(),p_idempotency_key:uuid(),p_policy_id:a.policy,p_locale:'en',p_text:'Bypass'}),/SERVICE_TASK_CONFLICT/);
+ await assert.rejects(a.call('start_chat_turn',{p_thread_id:a.thread,p_turn_id:uuid(),p_idempotency_key:uuid(),p_digest:'chat-state-control-v1'}),/SERVICE_TASK_CONFLICT/);
+ assert.equal((await a.call('start_text_turn',{p_thread_id:a.thread,p_turn_id:a.turn,p_idempotency_key:a.idem,p_policy_id:a.policy,p_locale:'en',p_text:a.taskInput.p_text})).reused,true);
+ const b=await taskFixture();await assert.rejects(b.submit({p_task_id:a.task,p_thread_id:a.thread}),/FORBIDDEN/);
+ await clean();
+});
+run('ServiceTask shared cost is canonical for old Turn workers, pinned across scope changes and denied to ordinary roles',async()=>{
+ const a=await taskFixture();await a.submit();await a.finish('clarification');const next=a.next(a.turn);await a.submit(next);
+ const secondScope=uuid();
+ for(const scope of [a.scope,secondScope])await db(`insert into public.model_budget_scopes(id,owner_id,currency,limit_micros,task_limit_micros,task_attempt_limit,concurrency_limit,enabled,expires_at) values('${scope}','${a.owner}','CNY',10000,1000,2,10,true,now()+interval '1 day');insert into public.model_budget_provider_limits(scope_id,provider,model,price_version,limit_micros,attempt_limit_micros,enabled) values('${scope}','qwen','${PROTOCOL_MODELS.qwen}','synthetic-v1',10000,1000,true);`);
+ const params={p_scope_id:a.scope,p_owner_id:a.owner,p_task_id:a.turn,p_attempt_id:uuid(),p_provider:'qwen',p_model:PROTOCOL_MODELS.qwen,p_price_version:'synthetic-v1',p_reserved_micros:600};
+ assert.equal((await service('reserve_model_budget',{...params,p_scope_id:uuid()})).kind,'unavailable');
+ assert.equal(await db(`select budget_scope_id is null from turn_private.service_tasks where id='${a.task}';`),'t');
+ assert.equal((await service('reserve_model_budget',params)).kind,'reserved');
+ assert.equal((await service('reserve_model_budget',{...params,p_task_id:a.task})).kind,'duplicate');
+ assert.equal((await service('reserve_model_budget',{...params,p_task_id:next.p_turn_id,p_attempt_id:uuid()})).kind,'exhausted','separate Turn shares money cap');
+ assert.equal((await service('reserve_model_budget',{...params,p_scope_id:secondScope,p_task_id:next.p_turn_id,p_attempt_id:uuid()})).kind,'conflict');
+ assert.equal((await service('finish_model_budget',{p_scope_id:a.scope,p_owner_id:a.owner,p_attempt_id:params.p_attempt_id,p_action:'release'})).kind,'released');
+ assert.equal((await service('reserve_model_budget',{...params,p_scope_id:secondScope,p_attempt_id:uuid()})).kind,'conflict','release never clears task scope');
+ assert.equal((await service('reserve_model_budget',{...params,p_task_id:next.p_turn_id,p_attempt_id:uuid(),p_reserved_micros:10})).kind,'reserved');
+ assert.equal((await service('reserve_model_budget',{...params,p_task_id:a.task,p_attempt_id:uuid(),p_reserved_micros:10})).kind,'exhausted','all turns share attempt limit including released');
+ assert.equal((await service('reserve_model_budget',{...params,p_owner_id:uuid(),p_attempt_id:uuid()})).kind,'unavailable');
+ for(const role of ['anon','authenticated','service_role']){
+  assert.notEqual((await sql(container,`set role ${role};select * from turn_private.service_tasks;`)).code,0);
+  assert.notEqual((await sql(container,`set role ${role};select turn_private.reserve_model_budget_unbound(null,null,null,null,null,null,null,null);`)).code,0);
+ }
+ for(const role of ['anon','authenticated'])assert.notEqual((await sql(container,`set role ${role};select public.reserve_model_budget(null,null,null,null,null,null,null,null);`)).code,0);
+ await clean();
+});
+run('ServiceTask withdrawal and physical deletion preserve hidden records but forbid continuation and dispatch',async()=>{
+ for(const mode of ['withdraw','root','thread','owner']){
+  const a=await taskFixture();await a.submit();await a.finish('clarification');const next=a.next(a.turn);await a.submit(next);
+  const l=await service('claim_text_work',{p_owner_id:a.owner,p_policy_id:a.policy});assert.equal(l.kind,'leased');
+  if(mode==='withdraw')await a.call('withdraw_text_policy',{p_policy_id:a.policy});
+  else await db(`delete from ${mode==='owner'?'auth.users':mode==='thread'?'public.chat_threads':'public.turns'} where id='${mode==='owner'?a.owner:mode==='thread'?a.thread:a.turn}';`);
+  assert.equal((await service('read_text_work',keys(l))).kind,'blocked');assert.equal((await authorize(a,l)).kind,'blocked');
+  assert.equal(await db(`select count(*) from turn_private.service_tasks where id='${a.task}';`),'1');
+  if(mode==='root'){
+   await assert.rejects(a.submit(),/DATA_POLICY_BLOCKED/);
+   assert.equal((await a.call('list_service_task_turns',{p_policy_id:a.policy,p_limit:20})).turns.length,0);
+  }
+  await clean();
+ }
+});
+run('ServiceTask and legacy Turn IDs cannot collide in either direction or concurrent creation',async()=>{
+ const a=await taskFixture(),legacy=await fixture();
+ await legacy.call('start_chat_turn',{p_thread_id:legacy.thread,p_turn_id:legacy.turn,p_idempotency_key:legacy.idem,p_digest:'chat-state-control-v1'});
+ await assert.rejects(a.submit({p_task_id:legacy.turn}),/SERVICE_TASK_CONFLICT/);
+ await a.submit();
+ await assert.rejects(legacy.call('start_chat_turn',{p_thread_id:legacy.thread,p_turn_id:a.task,p_idempotency_key:uuid(),p_digest:'chat-state-control-v1'}),/SERVICE_TASK_CONFLICT/);
+ const b=await taskFixture(),other=await fixture(),collision=uuid();
+ const results=await Promise.allSettled([b.submit({p_task_id:collision}),other.call('start_chat_turn',{p_thread_id:other.thread,p_turn_id:collision,p_idempotency_key:uuid(),p_digest:'chat-state-control-v1'})]);
+ assert.equal(results.filter(r=>r.status==='fulfilled').length,1);assert.match(results.find(r=>r.status==='rejected').reason.message,/SERVICE_TASK_CONFLICT/);
+ await clean();
 });

@@ -5,7 +5,7 @@ export const FAILURE_CODES = [
   "PROVIDER_UNAVAILABLE", "TIMEOUT_BEFORE_OUTPUT", "TIMEOUT_AFTER_OUTPUT",
   "MODEL_OUTPUT_INVALID", "SAFETY_BLOCKED", "BUDGET_EXHAUSTED", "CANCELLED",
   "STALE_TRIP_VERSION", "PROPOSAL_NOT_CONFIRMABLE", "IDEMPOTENCY_KEY_REUSE",
-  "PROJECTION_LAG", "INTERNAL_ERROR",
+  "SERVICE_TASK_CONFLICT", "PROJECTION_LAG", "INTERNAL_ERROR",
 ] as const;
 
 export type FailureCode = (typeof FAILURE_CODES)[number];
@@ -42,6 +42,7 @@ export const FAILURE_TAXONOMY: Readonly<Record<FailureCode, FailureSpec>> = {
   STALE_TRIP_VERSION: spec(409, "conflict", true, false, "stale_trip_version"),
   PROPOSAL_NOT_CONFIRMABLE: spec(409, "conflict", false, false, "proposal_not_confirmable"),
   IDEMPOTENCY_KEY_REUSE: spec(409, "conflict", false, false, "idempotency_key_reuse"),
+  SERVICE_TASK_CONFLICT: spec(409, "conflict", false, false, "service_task_conflict"),
   PROJECTION_LAG: spec(503, "unavailable", true, false, "projection_lag"),
   INTERNAL_ERROR: spec(500, "failure", true, false, "internal_error"),
 };
