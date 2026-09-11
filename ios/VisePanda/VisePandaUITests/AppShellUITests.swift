@@ -16,6 +16,10 @@ final class AppShellUITests: XCTestCase {
             largeText ? "UICTContentSizeCategoryAccessibilityXXXL" : "UICTContentSizeCategoryL"
         ]
         app.launch()
+        // A cold Simulator may return from launch before the accessibility target
+        // is available. Wait for the actual shell before starting an AX audit.
+        XCTAssertTrue(app.tabBars.buttons[locale == "zh-Hans" ? "问熊猫" : "Ask"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.staticTexts["ask-introduction"].waitForExistence(timeout: 10))
         return app
     }
 
