@@ -308,6 +308,21 @@
       "nextSafeIssue": 188,
       "resolvedAt": "2026-09-09T09:12:11.461930+08:00",
       "resolution": "JT在本会话明确修改要求为允许生产发布。已按普通权限合并PR258/259，允许其触发VP-V4 Vercel Production部署；未改变保护设置或执行生产迁移。"
+    },
+    {
+      "id": "OA-MAIN-PRODUCTION-GUARD",
+      "issue": 195,
+      "class": "C",
+      "status": "open",
+      "createdAt": "2026-09-12T06:41:00+08:00",
+      "action": "确认仅将 VP-V4 的 Vercel Ignored Build Step 设置为 production+main 时跳过构建、其余继续；保留当前线上 db5fb7b 和所有 Preview，然后合并已通过全部检查的 PR332。具体命令与四组本地验证已准备。",
+      "whyHuman": "当前 Goal 明确生产发布另行确认；实时发现 main 自动部署开启，改变发布配置需指定授权。此前 main 合并已经触发 Production，不再将合并当成无发布副作用。",
+      "prerequisites": "PR332 required CI passes at8ce9e7e; verify existing ignore command remains null and current production target before changing one field.",
+      "expectedResult": "Production main builds skipped; Preview builds continue; no env/domain/WAF/database changes or current-live rollback.",
+      "verify": "Read back commandForIgnoringBuildStep and unchanged production target; after ordinary merge inspect skipped main production build and retained Preview behavior.",
+      "dependencyEffect": "Pauses merges that automatically deploy to Production; existing Staging experiments and independent preparation remain allowed.",
+      "rollback": "Clear only commandForIgnoringBuildStep to its prior null value after authorization; do not trigger a production release or rewrite ledgers.",
+      "nextSafeIssue": 195
     }
   ]
 }
