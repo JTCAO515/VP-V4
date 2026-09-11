@@ -13,16 +13,16 @@
 test at tests/integration/trip/native-same-trip.test.mjs:12:1
 ✖ local native/Web share one immutable Trip with confirmed intent, CAS and ordinary-owner isolation (89097.4845ms)
   Error: expect(locator).toBeEnabled() failed
-  
+
   Locator:  getByTestId('same-trip-editor').getByRole('button', { name: '确认这些变更', exact: true })
   Expected: enabled
   Received: <element(s) not found>
   Timeout:  5000ms
-  
+
   Call log:
   [2m  - Expect "to.be.enabled" with timeout 5000ms[22m
   [2m  - waiting for getByTestId('same-trip-editor').getByRole('button', { name: '确认这些变更', exact: true })[22m
-  
+
       at Proxy.<anonymous> (/Users/jtcao/Documents/VP-V4-S1-S2-Resume/node_modules/.pnpm/playwright@1.55.0/node_modules/playwright/lib/matchers/expect.js:221:24)
       at exerciseSameTripBrowser (file:///Users/jtcao/Documents/VP-V4-S1-S2-Resume/tests/integration/trip/same-trip-browser.mjs:36:81)
       at runNextTicks (node:internal/process/task_queues:65:5)
