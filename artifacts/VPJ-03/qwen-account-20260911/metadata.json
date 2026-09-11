@@ -18,13 +18,24 @@
     "keyValueRead": false,
     "credentialsCreatedResetOrChanged": false,
     "paidRequestsExecuted": 0,
-    "keyToLocalRuntimeMatched": false,
+    "keyToLocalRuntimeMatched": "masked_segments_only",
     "keyToDefaultWorkspaceBindingVerified": false,
     "accountAcceptedTermsVersion": "unknown",
     "inputOutputRetentionAndDeletionArrangement": "unknown",
     "accountContractingPartyAndBusinessUseRelationship": "unknown",
-    "processingAndStorageScopeVerifiedForAccount": false
+    "processingAndStorageScopeVerifiedForAccount": false,
+    "keyValueReadScope": "complete console key; local Keychain read is separately recorded"
   },
   "qualification": "not_qualified",
-  "scope": "account SKU and enabled credential metadata only; not C2 permission or runtime acceptance"
+  "scope": "authenticated account metadata and masked credential correlation; not full-key equality, API-account validity, C2 permission or runtime acceptance",
+  "credentialComparison": {
+    "method": "compare console-visible masked prefix/suffix with existing macOS Keychain credential in protected process memory",
+    "prefixCharacters": 15,
+    "suffixCharacters": 15,
+    "visibleSegmentsMatched": true,
+    "fullKeyEqualityVerified": false,
+    "localKeychainValueReadInProcessMemory": true,
+    "secretValuePrintedOrPersisted": false,
+    "providerRequests": 0
+  }
 }
