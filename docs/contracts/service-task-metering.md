@@ -94,3 +94,22 @@ fixture 先验证语义与状态机；真实数据库并发/恢复、允许的 p
 - [PostgreSQL 显式锁](https://www.postgresql.org/docs/current/explicit-locking.html)：行锁用于同一容量状态的并发更新；事务中不持锁等待外部模型响应。
 - [Stripe 幂等请求](https://docs.stripe.com/api/idempotent_requests)：仅作 key、请求参数一致性与重放设计参考；不引入 Stripe，不假设模型供应商支持同样机制。
 - [Apple Transaction ID](https://developer.apple.com/documentation/storekit/transaction/id)、[currentEntitlements](https://developer.apple.com/documentation/storekit/transaction/currententitlements)：购买交易身份和权益读取不等于 VP 的服务消费记录，不可用任务重试或恢复购买重复发权益。
+
+## 2026-09-12 记录模式实施切片（开发中）
+
+本切片服务 #195/#194：同一明确声明的独立文本目标，其必要澄清和技术修复共享 ServiceTask 与内部成本上限。新任务、Turn、供应商 attempt 使用不同 ID；不启用用户扣次、商品额度、Trip 写入或历史内容外发。
+
+- 私有 `service_tasks` 保存 owner、唯一 thread、首个目标 Turn、policy/consent、固定 scopeVersion=1、成果类型 `text_answer`、目标正文 SHA-256、当前末尾 Turn、首次成功预留后固定的 budget scope。正文仍只有现有 text_content 一份。私有 Turn 关联保存 task、parent、关系、规范化完整请求摘要与幂等键；普通角色与 service_role 不直接读写这些表。
+- 新 native v2 提交在现有文本字段之外接收 `serviceTask:{id,scopeVersion,relationship,parentTurnId}`；关系仅 `new_goal/clarification/repair`。v1 提交、历史与 wire 保留，旧记录不追溯关联或收费。
+- 新目标只进入自己的新 thread；同一任务的后续请求必须 owner/thread/policy/原 consent/scopeVersion 全部一致。`clarification` 只能接在该任务最新的 clarification Turn；`repair` 只能接在最新 technical_failure Turn。不得接续已删除、撤权、非终态或其他任务/owner 的 Turn，不开启完成后改稿或 partial 续作策略。
+- 归属在此版本指服务端核验的显式目标链及权限，不声称能确定任意自然语言回复是否语义上属于原目标；不确定的业务分类不触发新用户收费。结果状态由既有 Turn/output 投影，不因 metadata ID 宣称任务完成。
+- 接纳与队列入列、关联与最新 Turn 推进在同一事务内完成。幂等请求摘要使用服务端 canonical JSON，覆盖正文、语言、对象和全部归属字段；同键不同参数拒绝。对最新 parent 的并发接续最多接纳一次，重放同请求返回原 Turn。
+- 接纳先获取现有 owner/session 授权，再按 UUID 顺序获取 Task/Turn 身份锁，随后 thread/task；预算只按 task → budget scope 加锁，不反向获取 account/thread。数据库预算入口把已关联 Turn ID 归一到 ServiceTask ID，旧 worker 也无法重置单任务预算。首次成功预留原子固定 budget scope；失败不绑定，释放不清除，切换 scope 拒绝。底层旧预算函数移入私有 schema 并收回直接执行权。
+- 不扩展原告知的上下文范围。worker 仍只发送本次输入；相关历史、记忆、Trip 不因 metadata 关联获得外发权限。多轮上下文消费须另行实现可见告知与服务端范围检查。
+- 验证包含真实本地 Auth/v2 HTTP/SQL/受控 worker 的新目标→澄清→技术失败→修复归属、共享 task 成本止损、跨 owner/错 parent/过期与撤权、幂等并发、v1 兼容与删除后不可复活。Staging、新 native UI 和完整业务归属验收分别记录，不以本地 fixture 代替。
+
+新接口：`POST /api/chat/native/v2/turns` 返回 `version:2`、既有 accepted/turnId/reused，加 `serviceTaskId/scopeVersion/relationship/parentTurnId`。`GET` 返回当前授权、可见的最近记录及相同关联字段；不返回内部金额或额外正文。历史数量沿用最近 20 条文本记录窗口，窗口中的未关联 v1 记录不出现在 v2 结果中。任务/parent 冲突返回 409 `SERVICE_TASK_CONFLICT`，完整请求幂等冲突仍为 409 `IDEMPOTENCY_KEY_REUSE`。
+
+Task/Turn UUID 共用接纳身份锁并双向拒绝碰撞。旧 v1 可重放已接纳文本，但不能向已绑定任务的 thread 加入无关联 Turn。元数据指向已有保留正文，不添加阻止账号/Turn 物理删除的外键；根记录隐藏或删除后，历史、续作与新派发均不可恢复。
+
+回退：撤回本切片 API 的部署即可停止 v2 接纳，保留追加迁移、任务关联和预算固定，继续对既有 worker 强制共享预算；已关联任务不自动降级到 v1。不得通过清除关联或解除 scope 来恢复额度。迁移事务回滚在独立数据库演练；不对已有环境执行破坏性 down migration。本切片未实现 SwiftUI 消费、多轮模型上下文或生产发布。
