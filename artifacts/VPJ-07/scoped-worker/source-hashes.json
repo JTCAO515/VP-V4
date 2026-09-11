@@ -1,0 +1,11 @@
+{
+  "lib/server/turn/scoped-text-worker.ts": "30a4866b5ba7835269adc692db362dd1abd10e37b2f754c5e97bf26d0e0bb1e9",
+  "supabase/migrations/20260911072414_vpj_07_scoped_text_claim.sql": "894b3664176648d7fb4370d4c9bc2a158da67b660b53526285c7cc48b853345c",
+  "tests/security/turn/scoped-text-worker.test.mjs": "efda6c669d125a3054d74d19bff2c190f80eea315db74fbaeef110b9dd726db7",
+  "tests/integration/turn/text-work.test.mjs": "30611fde72199abbc54a8b7aec87faa9603bb7beed548e9237c42bb7a8011973",
+  "tests/integration/turn/native-text-environment.mjs": "6951d63a9943f5c02f46ae97559fc83f52f2e7f3435a32d854a20c9da8192176",
+  "lib/server/jobs/staging-text-job.ts": "a0b46af3b3271e762508a5db12fd42da180ebc6b42ec88488db47063855b1e37",
+  "lib/server/jobs/run-staging-text-worker.mjs": "1921f632a822011fe3875e1387482d20a54daae7b84bdb1ebd768b86eb92298c",
+  "tests/security/turn/staging-text-job.test.mjs": "5a830ea7564f8675f6e8d2a28c421848d35797c7f90917470c91d13db9ca1e05",
+  "tests/integration/turn/native-text-http.test.mjs": "bab7698518b0da40ebabe4e9b84be7cb77fdaf81e05332f10de512d7b10a537a"
+}

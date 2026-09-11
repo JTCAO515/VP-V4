@@ -48,6 +48,43 @@ from that durable row. One lease may authorize one dispatch. C0's four-argument 
 entry still denies C2. Server-only RPC and transport dependencies are trusted; they are not user
 request parameters. Production transport/RPC identity wiring remains an activation prerequisite.
 
+### Scoped worker binding
+
+`createScopedTextWorker` binds one operator-selected owner, immutable policy and budget scope to
+the existing text worker. Its server RPC adapter has a10-second lifetime per request, a128KiB
+response limit, no redirect/retry, and generic failures without upstream bodies or credentials.
+Local databases must be root loopback origins; Staging is the fixed Staging Supabase origin.
+It rejects every Vercel execution environment: invocation belongs to a dedicated trusted process,
+not a public Next route. It obtains only an explicitly supplied server worker credential and
+provider binding; no environment secret, timer, policy or network job is automatically installed.
+
+The additive `claim_text_work(owner,policy)` capability is executable only by the existing service
+role. It filters before claiming, then repeats policy/consent checks under the established lock
+order. Other owners, other policies, hidden/revoked text and metadata-only work remain unclaimed.
+The legacy global claimer and scoped claimer share the same advisory lock and lease protocol;
+parallel processes and upgrades cannot lease one item twice. Token expiry, cancellation and
+terminal-once remain authoritative in SQL. No queue payload, owner scope or grant comes from a
+user request. Source, real SQL/HTTP checks and rollback evidence are in
+[scoped-worker verification](../../artifacts/VPJ-07/scoped-worker/verification.md).
+
+The dedicated `run-staging-text-worker.mjs` CLI composes the allowlisted HTTP transport with
+this scoped worker for one explicit poll. It requires an operator-owned closed JSON configuration,
+two explicit worker/provider environment credentials and a new private receipt file. It has no
+cron or automatic key discovery. Metadata receipts are fsynced; existing files are not overwritten.
+The job currently permits only pinned Qwen `qwen3.7-plus-2026-05-26`. Before claim or credential
+access, reservation must cover 1,048,576 input tokens at the greater input/cache rate plus the
+configured maximum output at its rate, rounded upward once using integer arithmetic. This
+conservative full-context bound avoids text/token guesses; operator-reviewed actual tariff in the
+budget currency remains mandatory. Other provider profiles require their own verified bounds
+before this entry can admit them; general protocol adapters remain available separately.
+
+This wiring still requires an approved runtime provider transport, actual price/configuration
+binding, durable scheduling and a qualified policy before remote activation. It is not evidence
+that a remote worker or provider has answered a user. Rollback stops the owned worker process;
+revoking service execution of the new scoped-claim capability additionally stops new scoped claims.
+Retain its migration, existing leases, content, receipts and pending charges. Do not use the legacy
+global claimer as a fallback or release unknown reservations during rollback.
+
 Each lease receives a distinct budget attempt through the existing durable reserve/dispatch/finish
 ledger. Unknown charges remain pending and consume reservation capacity; a provider failure or
 lost acknowledgment does not become free. Revocation between budget dispatch and text authorization

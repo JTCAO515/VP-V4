@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S1 scoped remote identity/same-Trip passed on backend f5db769/native c333d9b; PR324 d196da1 Quality and Native CI passed. PR325 integrates that source with explicit Staging Ask entry and verified local consent/worker/reload. Full S1/S2 acceptance remains open.
+状态：Single integration PR325 contains reviewed S1 native identity/same-Trip, explicit Staging Ask entry and locally verified owner/policy-scoped worker and bounded one-shot Qwen job. PR324 is superseded with its remote evidence and branch retained. Full S1/S2 and Production acceptance remain open.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -81,10 +81,11 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - Same-Trip locale follow-up: closed notice IDs render current locale; affected source8/8, lint/typecheck and fresh owned local Auth/PostgreSQL/Next/browser aggregate1/1 zero skip pass. Four zh/en desktop/390 cases switch stored status both ways without altering draft or server version. Disposable cleanup succeeds; fixed remote f5 host is unchanged. See artifacts/VPJ-04/staging-native/remote-20260911/locale-followup.md.
 - S2 Ask I/O on main7bf22fb: controlled session-RPC503 reproduced401 before fix. Reused request lifetime preserves503 and exact retry; directed10/10, full security109pass1explicit skip, actual owned local Auth/consent/worker/reload1/1zero skip and cleanup passed. Independent auth review0/0; CI remains separately tracked. No remote/provider/Swift changes.
 - PR325 Staging Ask entry:12 directed HTTP checks and34 turn contract/security checks passed with zero skips; actual owned local Auth/HTTP/consent/durable-worker/reload1pass0fail0skip and cleanup; lint/typecheck/build/flags and generic Simulator build passed. Independent permission review0/0; evidence artifacts/VPJ-07/native-staging-entry/verification.md. This adds no qualified policy, remote worker or production acceptance.
+- Scoped worker:real PostgreSQL28pass/0fail/0skip plus new real local Auth/HTTP/scoped-worker/final-answer reload1pass/0fail/0skip; worker/job security12/12, full contract241/241, full security124pass0fail1unrelated environment skip; local security advisor0ERROR/1pre-existing AI-10WARN. Permission/migration review0/0, priceVersion and fee-underreservation corrected/tested; final fee review0/0. All owned test stacks cleaned. Evidence artifacts/VPJ-07/scoped-worker/verification.md. PR325170e27f full CI passed before this server-only increment; PR324 superseded, not merged to Production.
 
 ## 下一动作与回滚
 
-Finish PR325 exact-head CI and bind the trusted durable text worker to a qualified single recipient/policy and reviewed pricing. Native Ask now has explicit Preview/DB/text-policy gates; no remote text activation or policy was installed. Verify actual account terms/processing facts before enabling C2, then run real final-answer reload on exact Preview/app source. Existing S1 remote remains f5db769/native c333d9b; preserve device/fault/UI-version gaps and separate Production release boundary.
+Finish exact-head PR325 CI for the scoped worker, then bind the qualified single recipient, approved pricing and dedicated trusted process/scheduler for remote Ask. New scoped-claim migration is local-only; no policy/model/worker was activated remotely. Account evidence could not be read because Qwen was signed out in the only connected browser. Preserve S1 device/fault/UI-version gaps and the Production release boundary.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
