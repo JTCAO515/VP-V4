@@ -1,0 +1,32 @@
+{
+  "observedAt": "2026-09-11T05:00:12.355091+00:00",
+  "operation": "anonymous GET only; no credentials, accounts or writes",
+  "probes": [
+    {
+      "host": "vp-v4-d6yc4thvq-jtcao515s-projects.vercel.app",
+      "path": "/auth/login",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "redirected": false
+    },
+    {
+      "host": "vp-v4-d6yc4thvq-jtcao515s-projects.vercel.app",
+      "path": "/api/auth/native/v2/session",
+      "status": 503,
+      "contentType": "application/json"
+    },
+    {
+      "host": "vp-v4.vercel.app",
+      "path": "/auth/login",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "redirected": false
+    },
+    {
+      "host": "vp-v4.vercel.app",
+      "path": "/api/auth/native/v2/session",
+      "status": 503,
+      "contentType": "application/json"
+    }
+  ]
+}

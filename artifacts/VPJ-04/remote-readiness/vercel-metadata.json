@@ -1,0 +1,220 @@
+{
+  "observedAt": "2026-09-11T05:00:01.320Z",
+  "project": {
+    "id": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+    "teamId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+    "name": "vp-v4",
+    "teamSlug": "jtcao515s-projects",
+    "nodeVersion": "24.x",
+    "productionBranch": "main",
+    "ssoProtection": null,
+    "passwordProtectionEnabled": false,
+    "trustedIpsConfigured": false
+  },
+  "team": {
+    "plan": "pro",
+    "status": "active"
+  },
+  "environmentVariables": [
+    {
+      "key": "VISEPANDA_TRIP_PROTOCOL_V2",
+      "target": [
+        "production",
+        "preview"
+      ],
+      "gitBranch": null,
+      "customEnvironmentIds": null,
+      "type": "encrypted"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "target": [
+        "development"
+      ],
+      "gitBranch": null,
+      "customEnvironmentIds": null,
+      "type": "encrypted"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": null,
+      "customEnvironmentIds": null,
+      "type": "encrypted"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": null,
+      "customEnvironmentIds": null,
+      "type": "encrypted"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null,
+      "customEnvironmentIds": null,
+      "type": "encrypted"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null,
+      "customEnvironmentIds": null,
+      "type": "encrypted"
+    },
+    {
+      "key": "NEXT_PUBLIC_SUPABASE_URL",
+      "target": [
+        "development"
+      ],
+      "gitBranch": null,
+      "customEnvironmentIds": null,
+      "type": "encrypted"
+    },
+    {
+      "key": "NEXT_PUBLIC_JOTFORM_EARLY_ACCESS_URL",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": null,
+      "customEnvironmentIds": null,
+      "type": "encrypted"
+    },
+    {
+      "key": "NEXT_PUBLIC_JOTFORM_EARLY_ACCESS_URL",
+      "target": [
+        "production"
+      ],
+      "gitBranch": null,
+      "customEnvironmentIds": null,
+      "type": "encrypted"
+    }
+  ],
+  "publicSupabaseUrls": [
+    {
+      "target": [
+        "preview"
+      ],
+      "gitBranch": null,
+      "origin": "https://dzqdzetcctkhbrhlxxgn.supabase.co"
+    },
+    {
+      "target": [
+        "production"
+      ],
+      "gitBranch": null,
+      "origin": "https://dzqdzetcctkhbrhlxxgn.supabase.co"
+    },
+    {
+      "target": [
+        "development"
+      ],
+      "gitBranch": null,
+      "origin": "https://dzqdzetcctkhbrhlxxgn.supabase.co"
+    }
+  ],
+  "firewall": {
+    "active": {
+      "id": "waf_OKTPcGgCAJEE",
+      "version": 2,
+      "updatedAt": "2026-09-11T04:22:33.559Z",
+      "firewallEnabled": true,
+      "ruleCount": 1,
+      "ipCount": 0
+    },
+    "draft": null,
+    "versionCount": 0,
+    "etag": null,
+    "fingerprint": "839b207015d3c6173dff9585241ddff571b73225c725aab262ea01d1e45c2b97",
+    "fingerprintFormat": "canonical-json-sha256",
+    "firewallEnabled": true,
+    "ruleCounts": {
+      "active": 1,
+      "inactive": 0,
+      "total": 1
+    },
+    "draftChanges": 0,
+    "bypassCount": 0
+  },
+  "domains": [
+    {
+      "name": "go2china.space",
+      "gitBranch": null,
+      "verified": true
+    },
+    {
+      "name": "www.go2china.space",
+      "gitBranch": null,
+      "verified": true
+    },
+    {
+      "name": "vp-v4.vercel.app",
+      "gitBranch": null,
+      "verified": true
+    }
+  ],
+  "deployments": [
+    {
+      "environment": "production",
+      "id": "dpl_5BfUUQZxrCXTUcTp8QMb9MQfLu64",
+      "url": "vp-v4-bwfpbr8dx-jtcao515s-projects.vercel.app",
+      "aliases": [
+        "vp-v4.vercel.app",
+        "www.go2china.space",
+        "go2china.space",
+        "vp-v4-jtcao515s-projects.vercel.app",
+        "vp-v4-git-main-jtcao515s-projects.vercel.app"
+      ],
+      "readyState": "READY",
+      "regions": [
+        "iad1"
+      ],
+      "commit": "7bf22fb29884d07714fd4eae3496f2857be98fdc",
+      "branch": "main",
+      "configuredKeyNames": [
+        "NEXT_PUBLIC_JOTFORM_EARLY_ACCESS_URL",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+        "VISEPANDA_TRIP_PROTOCOL_V2",
+        "NEXT_PUBLIC_VERCEL_OBSERVABILITY_CLIENT_CONFIG"
+      ],
+      "tripV2VariablePresent": true,
+      "valuesRetrieved": false
+    },
+    {
+      "environment": "preview",
+      "id": "dpl_BB2ssAgER4jYoaEna6EnyDgjd9we",
+      "url": "vp-v4-k9ba265lg-jtcao515s-projects.vercel.app",
+      "aliases": [
+        "vp-v4-git-codex-workflow-delivery-evi-8537cd-jtcao515s-projects.vercel.app"
+      ],
+      "readyState": "READY",
+      "regions": [
+        "iad1"
+      ],
+      "commit": "1b736c19c6feb563f012f1ecb573f7ef7adbc2a4",
+      "branch": "codex/workflow-delivery-evidence-20260911",
+      "configuredKeyNames": [
+        "NEXT_PUBLIC_JOTFORM_EARLY_ACCESS_URL",
+        "NEXT_PUBLIC_SUPABASE_URL",
+        "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+        "VISEPANDA_TRIP_PROTOCOL_V2",
+        "NEXT_PUBLIC_VERCEL_OBSERVABILITY_CLIENT_CONFIG"
+      ],
+      "tripV2VariablePresent": true,
+      "valuesRetrieved": false
+    }
+  ],
+  "inventoryScope": "current project variables and current production/preview targets; not an exhaustive historical deployment binding inventory",
+  "mutations": 0,
+  "privateEnvironmentValuesRetrieved": false
+}
