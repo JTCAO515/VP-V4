@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "vpj07-context-evaluation/1",
+  "scope": "Two synthetic accounts, two calls per language under existing pinned budget configuration; no repeat on semantic failure.",
+  "cases": [
+    {
+      "locale": "en",
+      "goal": "In a fictional square room, the exit is on the north wall and another door is on the south wall. Which way should I turn to face the other door?",
+      "clarification": "I'm facing north.",
+      "goalExpected": "clarification",
+      "finalExpected": "answered",
+      "semanticCriteria": "Ask for current facing direction, then say turn around / 180 degrees / face south. Do not ask for the room layout again or claim a real route/source/action."
+    },
+    {
+      "locale": "zh",
+      "goal": "在一个虚构的正方形房间里，出口在北墙，另一扇门在南墙。我应该往哪边转身才能面向另一扇门？",
+      "clarification": "我现在面向北。",
+      "goalExpected": "clarification",
+      "finalExpected": "answered",
+      "semanticCriteria": "先询问当前朝向，补充后回答转身180度或面向南；不再询问已经给出的房间布局，不编造真实路线、来源或已执行动作。"
+    }
+  ]
+}

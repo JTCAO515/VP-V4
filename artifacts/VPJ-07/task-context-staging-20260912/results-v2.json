@@ -1,0 +1,42 @@
+{
+  "apiSha": "b542eadff6a5057445c6d3311ebd5d166c0dad55",
+  "workerSha": "65baeb23563b74d3d73ff43f2802538ad6b582e6",
+  "casesDigest": "35cf2358f57526deed3c67dd33161c3213728e4ec2813785eca5221ef6fd5524",
+  "providerInvocations": 2,
+  "outcomeChecks": "FAIL",
+  "status": "FAIL",
+  "promptVersion": "vp-task-response-v2",
+  "noReroll": true,
+  "cases": [
+    {
+      "locale": "en",
+      "input": "In a fictional square room, the exit is on the north wall and another door is on the south wall. Which way should I turn to face the other door?",
+      "expected": "clarification",
+      "outcome": "answered",
+      "output": "To face the door on the south wall, you need to turn around. Since north and south are opposite directions, a 180-degree turn will align you with the other door.",
+      "semantic": "FAIL: missing initial orientation was not clarified; English assumes north, Chinese gives conditional options but concludes with an implied premise instead of asking",
+      "followupAdmitted": false,
+      "replayAfterCompletion": true,
+      "foreignOwnerHidden": true,
+      "prompt": {
+        "version": "vp-task-response-v2",
+        "digest": "bba64fe7c97f99e115d0da5de05ec641b3773ba40229f71a1125cce993211b9b"
+      }
+    },
+    {
+      "locale": "zh",
+      "input": "在一个虚构的正方形房间里，出口在北墙，另一扇门在南墙。我应该往哪边转身才能面向另一扇门？",
+      "expected": "clarification",
+      "outcome": "answered",
+      "output": "这取决于你当前面向的方向。\n\n假设你正站在房间中央或任意位置：\n1. 如果你面向北墙（出口），你需要向后转（左转或右转180度）才能面向南墙的门。\n2. 如果你面向南墙的门，你已经面向它了，无需转身。\n3. 如果你面向东墙或西墙，你需要向左或向右转90度，具体取决于哪边是南。\n\n通常这类谜题隐含的前提是你正面向其中一个目标。如果你正面向北墙的出口，那么“另一扇门”在南墙，你应该**向后转**（即向左或向右转180度）。",
+      "semantic": "FAIL: missing initial orientation was not clarified; English assumes north, Chinese gives conditional options but concludes with an implied premise instead of asking",
+      "followupAdmitted": false,
+      "replayAfterCompletion": true,
+      "foreignOwnerHidden": true,
+      "prompt": {
+        "version": "vp-task-response-v2",
+        "digest": "bba64fe7c97f99e115d0da5de05ec641b3773ba40229f71a1125cce993211b9b"
+      }
+    }
+  ]
+}

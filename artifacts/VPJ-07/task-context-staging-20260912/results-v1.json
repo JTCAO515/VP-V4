@@ -1,0 +1,42 @@
+{
+  "status": "FAIL",
+  "apiSha": "b542eadff6a5057445c6d3311ebd5d166c0dad55",
+  "workerSha": "b542eadff6a5057445c6d3311ebd5d166c0dad55",
+  "promptVersion": "vp-task-response-v1",
+  "casesDigest": "35cf2358f57526deed3c67dd33161c3213728e4ec2813785eca5221ef6fd5524",
+  "providerInvocations": 2,
+  "outcomeChecks": "FAIL",
+  "noReroll": true,
+  "cases": [
+    {
+      "locale": "en",
+      "input": "In a fictional square room, the exit is on the north wall and another door is on the south wall. Which way should I turn to face the other door?",
+      "expected": "clarification",
+      "outcome": "answered",
+      "output": "Turn 180 degrees (a half-turn). Since the exit is on the north wall and the other door is on the south wall, they are directly opposite each other.",
+      "semantic": "FAIL: definite 180-degree instruction assumes unstated initial orientation",
+      "followupAdmitted": false,
+      "replayAfterCompletion": true,
+      "foreignOwnerHidden": true,
+      "prompt": {
+        "version": "vp-task-response-v1",
+        "digest": "46e9f5390493c7e3f902bb5e032adaab5c62f8bf20071e69aa0c9c04d844afd2"
+      }
+    },
+    {
+      "locale": "zh",
+      "input": "在一个虚构的正方形房间里，出口在北墙，另一扇门在南墙。我应该往哪边转身才能面向另一扇门？",
+      "expected": "clarification",
+      "outcome": "answered",
+      "output": "你应该转身180度。因为出口在北墙，另一扇门在南墙，这两面墙是相对的。如果你面向北墙的出口，背对着的就是南墙的门，所以需要完全向后转才能面向它。",
+      "semantic": "FAIL: definite 180-degree instruction assumes unstated initial orientation",
+      "followupAdmitted": false,
+      "replayAfterCompletion": true,
+      "foreignOwnerHidden": true,
+      "prompt": {
+        "version": "vp-task-response-v1",
+        "digest": "46e9f5390493c7e3f902bb5e032adaab5c62f8bf20071e69aa0c9c04d844afd2"
+      }
+    }
+  ]
+}
