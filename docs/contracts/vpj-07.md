@@ -221,7 +221,7 @@ local worker results do not establish remote S2 acceptance.
 ### Versioned text response policy (2026-09-12 implementation)
 
 The existing protocol's `text_turn_v1` system message uses the server-owned
-`prompt/text-turn.ts` policy `vp-text-response-v1`. It defines the five business
+`prompt/text-turn.ts` policy `vp-text-response-v2`. It defines the five business
 outcomes, useful low-risk answers, partial coverage, necessary clarification and
 actual text-only capability limits. Current user input remains a separate untrusted
 message; no Trip, history, memory, evidence fetch or extra model call is added.
