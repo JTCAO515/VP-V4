@@ -29,12 +29,12 @@ jobs:
           persist-credentials: false
       - name: Build unsigned and test ad-hoc Simulator app
         shell: bash --noprofile --norc -eo pipefail "{0}"
-        run: python3 scripts/ios/ci.py --output "$RUNNER_TEMP/vpj-56"
+        run: python3 scripts/ios/ci.py --output "$RUNNER_TEMP/vpj-56-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
       - name: Preserve native evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: native-ios-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/vpj-56
+          path: ${{ runner.temp }}/vpj-56-${{ github.run_id }}-${{ github.run_attempt }}
           retention-days: 3
           if-no-files-found: error
