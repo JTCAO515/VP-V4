@@ -1,6 +1,6 @@
 # AI-44 Failure Taxonomy
 
-Status: accepted fixture-only contract for Issue #48. The closed set contains 21 product/domain failure codes; provider raw errors are never a UI contract.
+Status: accepted fixture-only contract for Issue #48. The closed set contains 22 product/domain failure codes; provider raw errors are never a UI contract.
 
 ## Invariants
 
@@ -19,3 +19,5 @@ Status: accepted fixture-only contract for Issue #48. The closed set contains 21
 | Trip and projection | `STALE_TRIP_VERSION`, `PROPOSAL_NOT_CONFIRMABLE`, `IDEMPOTENCY_KEY_REUSE`, `PROJECTION_LAG`, `INTERNAL_ERROR` | 409/409/409/503/500; conflict, unavailable, or failure |
 
 The authoritative machine-readable mapping is `lib/server/contracts/errors/index.ts`; `lib/i18n.ts` supplies a non-empty zh/en/es/ru/ar message for every code. Runtime maturity remains fixture-only. Rollback is a revert of this contract; callers must not fall back to raw provider strings.
+
+ServiceTask admission also returns `SERVICE_TASK_CONFLICT` (409, non-retryable, no provider fallback) when the supplied task/parent/scope no longer permits continuation. Reload current state; never retry as a new paid task automatically.
