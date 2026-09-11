@@ -240,3 +240,5 @@ Synthetic regression cases and criteria are fixed before the candidate run in
 to identify an earlier defect and is a regression, not blind quality calibration.
 Actual responses require semantic inspection; system-prompt separation tests alone
 cannot prove resistance to arbitrary model prompt injection or factual correctness.
+
+2026-09-12：PR328 的 native v2 ServiceTask 接纳/历史与共享成本已在真实 Staging 两语言四次 Qwen 调用验证，见[记录](../../artifacts/VPJ-07/service-task-staging-20260912/verification.md)。当前仍只外发本次输入；完整多轮上下文、SwiftUI v2 和持续 worker 运行另行完成。
