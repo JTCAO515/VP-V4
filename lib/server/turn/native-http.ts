@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { nativeRequestScope } from "../identity/native-request.ts";
+import { getNativeRuntimeConfig, isLocalNativeTarget } from "../identity/native-config.ts";
 import { getSupabasePublicConfig } from "../identity/user-data-adapter.ts";
 import { verifyNativeCredentials } from "../identity/native-credentials.ts";
 import { isUuid } from "../identity/request-guards.ts";
@@ -8,17 +9,19 @@ import { FAILURE_TAXONOMY, type FailureCode } from "../contracts/errors/index.ts
 type Action = "policy" | "history" | "accept" | "withdraw" | "submit" | "cancel";
 const response = (data: unknown, status = 200) => Response.json(data, { status, headers: { "Cache-Control": "private, no-store" } });
 const failure = (code: FailureCode) => response({ error: { code } }, FAILURE_TAXONOMY[code].httpStatus);
-export function getLocalNativeTextConfig() {
+export function getNativeTextConfig(request: Pick<Request, "url">) {
+  if (process.env.VISEPANDA_NATIVE_STAGING === "true") {
+    const config = getNativeRuntimeConfig(request, "trip"), policyId = process.env.VISEPANDA_NATIVE_STAGING_TEXT_POLICY;
+    return process.env.VISEPANDA_NATIVE_STAGING_TEXT === "true" && config?.environment === "staging" && uuid(policyId)
+      ? { ...config, policyId: policyId.toLowerCase() } : null;
+  }
   const config = getSupabasePublicConfig(), policyId = process.env.VISEPANDA_NATIVE_LOCAL_TEXT_POLICY;
-  if (process.env.VISEPANDA_NATIVE_LOCAL_TEXT !== "true" || !config || !uuid(policyId)) return null;
-  try {
-    const url = new URL(config.url);
-    return url.protocol === "http:" && ["localhost", "127.0.0.1"].includes(url.hostname) && !url.username && !url.password ? { ...config, policyId: policyId.toLowerCase() } : null;
-  } catch { return null; }
+  if (process.env.VERCEL_ENV || process.env.VISEPANDA_NATIVE_LOCAL_TEXT !== "true" || !config || !uuid(policyId)) return null;
+  return isLocalNativeTarget(config.url) ? { ...config, policyId: policyId.toLowerCase() } : null;
 }
 
 export async function nativeTextHTTP(request: NextRequest, action: Action, turnId?: string) {
-  const config = getLocalNativeTextConfig();
+  const config = getNativeTextConfig(request);
   if (!config) return failure("PROVIDER_UNAVAILABLE");
   if (request.headers.has("cookie") || request.headers.has("origin") || [...request.nextUrl.searchParams].length
     || (turnId !== undefined && !uuid(turnId))) return failure("INVALID_INPUT");

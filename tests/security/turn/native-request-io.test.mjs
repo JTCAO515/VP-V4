@@ -103,3 +103,35 @@ test('Ask claims outage is503 and pre-aborted requests never dispatch',async t=>
  const controller=new AbortController();controller.abort();
  assert.equal((await nativeTextHTTP(f.request({signal:controller.signal}),'history')).status,503);assert.equal(calls,1);
 });
+
+test('staging Ask uses ordinary JWT for policy and submit, and preserves registry denial',async t=>{
+ const f=await nativeFixture(t,'https://dzqdzetcctkhbrhlxxgn.supabase.co'),transport=globalThis.fetch;
+ const host='vp-v4-abc123-jtcao515s-projects.vercel.app';
+ const patch={NEXT_PUBLIC_SUPABASE_URL:f.config.url,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:f.config.publishableKey,VERCEL_ENV:'preview',VERCEL_URL:host,VISEPANDA_NATIVE_STAGING:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',VISEPANDA_NATIVE_STAGING_TEXT:'true',VISEPANDA_NATIVE_STAGING_TEXT_POLICY:policyId,VISEPANDA_NATIVE_STAGING_PROOF_KEY:'synthetic-proof-must-never-be-used'};
+ const prior=new Map(Object.keys(patch).map(key=>[key,process.env[key]]));
+ Object.assign(process.env,patch);t.after(()=>{for(const[key,value]of prior)value===undefined?delete process.env[key]:process.env[key]=value;});
+ const calls=[];let denied=false;
+ t.mock.method(globalThis,'fetch',async(input,init)=>{
+  const req=new Request(input,init),url=new URL(req.url);
+  assert.equal(url.origin,f.config.url,'every network hop stays in the intercepted fixture');
+  assert.equal(req.headers.get('apikey'),f.config.publishableKey);
+  if(!url.pathname.startsWith('/rest/v1/rpc/'))return transport(input,init);
+  assert.equal(req.headers.get('authorization'),'Bearer '+f.token);
+  const body=await req.json();calls.push({path:url.pathname,body});
+  if(url.pathname.endsWith('/native_session_v2'))return Response.json(session);
+  assert.equal(body.p_policy_id,policyId);
+  if(denied)return Response.json({kind:'blocked'});
+  if(url.pathname.endsWith('/read_text_policy'))return Response.json({kind:'policy',policyId});
+  if(url.pathname.endsWith('/submit_text_turn'))return Response.json({kind:'accepted',reused:false});
+  throw Error('unexpected RPC');
+ });
+ const req=(init={})=>new NextRequest('https://'+host+'/api/chat/native/v1/policy',{...init,headers:{Authorization:'Bearer '+f.token,...init.headers}});
+ assert.equal((await nativeTextHTTP(req(),'policy')).status,200);
+ const submit=()=>nativeTextHTTP(req({method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(prompt)}),'submit');
+ assert.equal((await submit()).status,201);
+ denied=true;
+ for(const result of [await nativeTextHTTP(req(),'policy'),await submit()]){assert.equal(result.status,403);assert.deepEqual(await result.json(),{error:{code:'DATA_POLICY_BLOCKED'}});}
+ assert.equal(calls.filter(call=>call.path.endsWith('/native_session_v2')).length,4);
+ assert.equal(calls.filter(call=>call.path.endsWith('/submit_text_turn')).length,2);
+ assert.equal(JSON.stringify(calls).includes('synthetic-proof'),false);
+});

@@ -114,10 +114,16 @@ policy, retaining content, receipts and applied migration history. Do not drop r
 restore revoked/deleted visibility. An applied migration is never edited or removed.
 
 
-## Native text consumer v1 (local opt-in)
+## Native text consumer v1 (explicit test environment)
 
-The native `api/chat/native/v1` routes require `VISEPANDA_NATIVE_LOCAL_TEXT=true`, one explicit
-policy UUID and a loopback Supabase URL. Cookie/Origin ambiguity and query fields are rejected.
+The native `api/chat/native/v1` routes require an operator-selected environment and policy UUID.
+Local execution requires `VISEPANDA_NATIVE_LOCAL_TEXT=true`, `VISEPANDA_NATIVE_LOCAL_TEXT_POLICY`
+and a root loopback Supabase URL; any `VERCEL_ENV` prevents local activation. Staging requires
+`VISEPANDA_NATIVE_STAGING_TEXT=true`, `VISEPANDA_NATIVE_STAGING_TEXT_POLICY` and the existing
+native Staging identity/Trip configuration: exact generated Preview request origin, explicit
+Staging and Trip-v2 flags, and the fixed Staging database. Production, aliases and arbitrary
+hosts/databases cannot activate it. The shared Trip resolver supplies only the public key,
+never the password-proof key. Cookie/Origin ambiguity and query fields are rejected.
 The bearer credential is verified through the existing native session epoch authority; every
 sensitive SQL operation independently checks the live owner/session. Bodies are bounded to
 32KiB/5 seconds and closed request shapes; credential verification, session checks, body reads and
@@ -133,11 +139,12 @@ rejection rolls back an otherwise orphaned thread. `list_text_turns` returns the
 20 visible requests under the selected current policy and unwithdrawn consent. It includes the
 technical lifecycle separately from the five business outcomes. A changed deployment policy
 never inherits the previous recipient's permission. Existing withdrawal by policy UUID remains
-available while the local API is enabled, including for a previous selected policy.
+available while the selected test API is enabled, including for a previous selected policy.
 
-The local native Ask view displays the complete stored notice before an explicit unchecked
+The native Ask view displays the complete stored notice before an explicit unchecked
 agreement/accept action. It supports submit, same-request retry, cancel, withdrawal and history
-reload. The existing preview stays disabled unless the local Native API argument is supplied.
+reload. Its API uses the existing NativeSession endpoint: a local argument or the explicitly
+packaged Staging build configuration. No request can choose a different endpoint or policy.
 Controls and outcome labels are translated in all five existing native locales; notices are the
 approved Chinese/English texts. The result is plain text; no new Trip write or action execution.
 
@@ -162,3 +169,11 @@ it still executes both full test targets, never filters tests, and removes its o
 and temporary xctestrun. Its default CI mode remains unchanged. See
 [native evidence](../../artifacts/VPJ-07/native-text-verification.md). Physical-device, remote,
 real-recipient and provider-semantic acceptance remain separate; #195 stays open.
+
+The Staging entry gate adds no policy, worker, model credential or migration. Before activation,
+qualify the actual recipient/account/region/terms and install the immutable bilingual notice through
+the existing authorized policy path; a UUID alone cannot satisfy that registry or user consent.
+Bind the trusted worker and reviewed budget pricing, then verify ordinary-user final-answer reload
+against the exact deployed SHA. Disable only the owned branch's text activation to roll back;
+preserve consent history, retained content and receipts. S1 Staging identity evidence and synthetic
+local worker results do not establish remote S2 acceptance.

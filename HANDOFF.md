@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S1 scoped Staging native identity/same-Trip execution passed on backend f5db769 + native c333d9b in PR324; two synthetic accounts/owned Trip and both Simulators cleaned. Full S1 acceptance remains open for recorded UI/device/fault gaps. S2 native Ask I/O fix PR325 is green with actual local integration proof.
+状态：S1 scoped remote identity/same-Trip passed on backend f5db769/native c333d9b; PR324 d196da1 Quality and Native CI passed. PR325 integrates that source with explicit Staging Ask entry and verified local consent/worker/reload. Full S1/S2 acceptance remains open.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -80,10 +80,11 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - 2026-09-11 real Staging S1: backend f5db769 + installed native c333d9b; remote Auth/ordinary RLS/CAS/replay/refusal and reciprocal same-Trip passed. Two iOS26.5 Simulators verify Keychain relaunch, refresh, B replacement/A denial and Web coexistence. Web-to-native confirm v3 and native-to-Web confirm v4 passed. Cleanup restores counts3 users/2 Trips and33 migrations; Production unchanged. Bilingual status and screenshot/device/fault limitations remain explicit. See artifacts/VPJ-04/staging-native/remote-20260911/verification.md.
 - Same-Trip locale follow-up: closed notice IDs render current locale; affected source8/8, lint/typecheck and fresh owned local Auth/PostgreSQL/Next/browser aggregate1/1 zero skip pass. Four zh/en desktop/390 cases switch stored status both ways without altering draft or server version. Disposable cleanup succeeds; fixed remote f5 host is unchanged. See artifacts/VPJ-04/staging-native/remote-20260911/locale-followup.md.
 - S2 Ask I/O on main7bf22fb: controlled session-RPC503 reproduced401 before fix. Reused request lifetime preserves503 and exact retry; directed10/10, full security109pass1explicit skip, actual owned local Auth/consent/worker/reload1/1zero skip and cleanup passed. Independent auth review0/0; CI remains separately tracked. No remote/provider/Swift changes.
+- PR325 Staging Ask entry:12 directed HTTP checks and34 turn contract/security checks passed with zero skips; actual owned local Auth/HTTP/consent/durable-worker/reload1pass0fail0skip and cleanup; lint/typecheck/build/flags and generic Simulator build passed. Independent permission review0/0; evidence artifacts/VPJ-07/native-staging-entry/verification.md. This adds no qualified policy, remote worker or production acceptance.
 
 ## 下一动作与回滚
 
-PR325 now integrates PR324 d196da1 and the checked Ask I/O repair. Wire native Ask through the same exact Preview config and an explicit text policy ID; retain ordinary JWT/consent checks and unavailable behavior when policy is absent. Then supply the actual qualified recipient and durable worker binding before a real answer claim. Existing S1 host remains f5db769/native c333d9b; no new remote activation is implied. Preserve S1 remaining device/fault/UI-version checks and separate Production release boundary.
+Finish PR325 exact-head CI and bind the trusted durable text worker to a qualified single recipient/policy and reviewed pricing. Native Ask now has explicit Preview/DB/text-policy gates; no remote text activation or policy was installed. Verify actual account terms/processing facts before enabling C2, then run real final-answer reload on exact Preview/app source. Existing S1 remote remains f5db769/native c333d9b; preserve device/fault/UI-version gaps and separate Production release boundary.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

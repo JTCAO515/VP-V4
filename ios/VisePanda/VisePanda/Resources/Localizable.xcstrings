@@ -2245,31 +2245,31 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Local text test"
+            "value": "Test Ask"
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "本机文本测试"
+            "value": "Ask 测试"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Prueba de texto local"
+            "value": "Prueba de Ask"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Локальный текстовый тест"
+            "value": "Тест Ask"
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "اختبار نص محلي"
+            "value": "اختبار Ask"
           }
         }
       }
@@ -2280,31 +2280,31 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sign in on Profile to use this local test."
+            "value": "Sign in on Profile to use Ask in this test environment."
           }
         },
         "zh-Hans": {
           "stringUnit": {
             "state": "translated",
-            "value": "请先在个人页登录，再使用本机测试。"
+            "value": "请先在个人页登录，再使用测试环境中的 Ask。"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Inicia sesión en Perfil para usar esta prueba local."
+            "value": "Inicia sesión en Perfil para usar Ask en este entorno de prueba."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Войдите в Профиле, чтобы использовать локальный тест."
+            "value": "Войдите в Профиле, чтобы использовать Ask в тестовой среде."
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "سجّل الدخول في الملف الشخصي لاستخدام هذا الاختبار المحلي."
+            "value": "سجّل الدخول في الملف الشخصي لاستخدام Ask في بيئة الاختبار هذه."
           }
         }
       }
