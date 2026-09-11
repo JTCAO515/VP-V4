@@ -1,0 +1,119 @@
+{
+  "attemptCount": 18,
+  "statuses": {
+    "settled": 18,
+    "unresolved": 0
+  },
+  "conservativeMicros": 93192,
+  "currency": "CNY",
+  "attempts": [
+    {
+      "attemptId": "78651b41-05d6-4c68-bf69-768f26afb8ea",
+      "taskId": "4d7cc61d-859f-4193-8318-912adf231d54",
+      "status": "settled",
+      "actualMicros": 6396
+    },
+    {
+      "attemptId": "12d6cb2e-868b-4277-91a4-245cb96fe7ce",
+      "taskId": "4ddcbb49-99f6-43ab-89d0-21ea1e499610",
+      "status": "settled",
+      "actualMicros": 5100
+    },
+    {
+      "attemptId": "2fe09047-b70a-47a6-af64-773ef8b8e084",
+      "taskId": "21bc1a73-abb7-4bfa-adfd-0e6bb67c3fb8",
+      "status": "settled",
+      "actualMicros": 6732
+    },
+    {
+      "attemptId": "a29fc81d-6c67-44fc-ab76-8aa4905a878a",
+      "taskId": "7ff877dd-a529-48c4-af39-a10b23e1fc3c",
+      "status": "settled",
+      "actualMicros": 3114
+    },
+    {
+      "attemptId": "fb787002-5e47-46e8-8b57-ca4ee9e6d5f8",
+      "taskId": "61612bfd-7364-4e14-97a3-de486161df7e",
+      "status": "settled",
+      "actualMicros": 2058
+    },
+    {
+      "attemptId": "0cc28f59-b0d9-45a6-aadf-76c68cb3367a",
+      "taskId": "d70d957d-11c5-49a7-8d63-9c51989a106e",
+      "status": "settled",
+      "actualMicros": 5862
+    },
+    {
+      "attemptId": "724a4a91-fd02-451a-a33c-b1d6a4add6a9",
+      "taskId": "96e4bf14-a412-44b9-8d20-337791411c61",
+      "status": "settled",
+      "actualMicros": 7680
+    },
+    {
+      "attemptId": "786e1c6f-cb09-4da8-b463-03fb008dedae",
+      "taskId": "355634da-c4c0-4837-84b5-5ddc3e7bb4fe",
+      "status": "settled",
+      "actualMicros": 4854
+    },
+    {
+      "attemptId": "2edddaa6-f911-44cf-8bc1-a4fce01da315",
+      "taskId": "afe5d15b-6566-43f0-adad-652cffc89f5d",
+      "status": "settled",
+      "actualMicros": 6894
+    },
+    {
+      "attemptId": "f40663de-5dfb-43af-a320-1923a3d0e1c7",
+      "taskId": "7f2111c1-d0d6-4590-967f-a1a239450540",
+      "status": "settled",
+      "actualMicros": 7818
+    },
+    {
+      "attemptId": "d0b90091-bb9d-4224-946f-9529d78512c5",
+      "taskId": "07e34055-ec48-4ea4-b1a9-247d05d7bfea",
+      "status": "settled",
+      "actualMicros": 4500
+    },
+    {
+      "attemptId": "435fa7b7-13ef-4cb1-bd0c-7f8164a85df8",
+      "taskId": "fd33dff3-ad63-4eb8-81f1-1117cbadfa63",
+      "status": "settled",
+      "actualMicros": 4086
+    },
+    {
+      "attemptId": "4185c2d8-4373-45c4-95ca-a838c79b498a",
+      "taskId": "7412e06e-7c10-4e7a-9a9c-ec830fa73e2f",
+      "status": "settled",
+      "actualMicros": 4290
+    },
+    {
+      "attemptId": "aaa39748-aebd-4ae6-8d8c-94e930663f3e",
+      "taskId": "529fe3ea-6c86-42ed-a039-2800245d2f8a",
+      "status": "settled",
+      "actualMicros": 4614
+    },
+    {
+      "attemptId": "c91a1403-8848-45c1-a92f-778745d0fef4",
+      "taskId": "a85c1f29-c58e-4c5c-b255-ae0481f5480e",
+      "status": "settled",
+      "actualMicros": 4824
+    },
+    {
+      "attemptId": "6b4db0b9-3a51-4e54-b406-e1f6bdb4b6c4",
+      "taskId": "03a16b71-e90e-4dde-8efb-aee998584a42",
+      "status": "settled",
+      "actualMicros": 4296
+    },
+    {
+      "attemptId": "d3e137c2-f56b-4f81-9067-bc602f9cb56e",
+      "taskId": "f57546df-7852-44e5-8ca3-ed4c9d463f09",
+      "status": "settled",
+      "actualMicros": 5244
+    },
+    {
+      "attemptId": "f1e4a6e4-d25b-4c7f-a061-6d8f0a91f5e7",
+      "taskId": "778a30c0-c4a5-48c4-86fc-7affb5d7c95e",
+      "status": "settled",
+      "actualMicros": 4830
+    }
+  ]
+}
