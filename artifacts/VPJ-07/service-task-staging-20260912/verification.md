@@ -14,7 +14,7 @@ The initial live checker incorrectly expected worker.result.kind rather than the
 
 ## Acceptance boundary
 
-This completes the first-model durable-cost/record-only integration evidence for #194 together with [local concurrency, kill and crash tests](../../VPJ-59/verification.md), [trusted stop tests](../../VPJ-59/stop-runtime-verification.md), [Staging budget/RPC checks](../../VPJ-59/staging-20260910.md), and [current SQL/HTTP/rollback tests](../service-task-records-20260912/verification.md).
+Independent acceptance review found all four #194 technical criteria covered, with no unresolved Critical/Important finding. This completes the first-model durable-cost/record-only integration evidence for #194 together with [local concurrency, kill and crash tests](../../VPJ-59/verification.md), [trusted stop tests](../../VPJ-59/stop-runtime-verification.md), [Staging budget/RPC checks](../../VPJ-59/staging-20260910.md), and [current SQL/HTTP/rollback tests](../service-task-records-20260912/verification.md).
 
 #195 remains incomplete: this is an explicit server-validated task/parent chain, not natural-language scope classification. The current model still receives only the current input; the follow-up deliberately repeats sufficient context. No new SwiftUI v2 consumer, general unattended worker service, streaming or phone acceptance is claimed. Existing response-policy courtesy/live-channel semantic failures remain FAIL; these four synthetic route results do not replace that regression. Production, IAP and user consumption remain unactivated by this work.
 
