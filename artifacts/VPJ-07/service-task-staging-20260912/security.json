@@ -1,0 +1,8 @@
+{
+  "privateTablesDenied": true,
+  "privateRls": true,
+  "legacyBudgetDenied": true,
+  "reserveOnlyService": true,
+  "v2OnlyAuthenticated": true,
+  "noPublicExecute": true
+}
