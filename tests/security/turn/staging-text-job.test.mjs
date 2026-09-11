@@ -5,6 +5,7 @@ import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {spawn} from 'node:child_process';
 import {createTextJobPrice,createStagingTextJob} from '../../../lib/server/jobs/staging-text-job.ts';
+import {TEXT_TURN_PROMPT_REF,TEXT_TURN_SYSTEM_PROMPT} from '../../../lib/server/model-gateway/prompt/text-turn.ts';
 const ownerId='11111111-1111-4111-8111-111111111111',policyId='22222222-2222-4222-8222-222222222222';
 const flat={mode:'flat',inputMicrosPerMillion:2000000,outputMicrosPerMillion:8000000,cachedInputMicrosPerMillion:null};
 const usage={inputTokens:10,outputTokens:5,totalTokens:15,cachedInputTokens:4,uncachedInputTokens:6,reasoningTokens:0,cost:'unknown'};
@@ -57,6 +58,9 @@ test('one-shot CLI fails closed, preserves existing files and writes only privat
  const result=await runChild(args,env);assert.equal(result.code,0,result.stderr);assert.equal(JSON.parse(result.stdout).result,'empty');
  const contents=await readFile(journal,'utf8'),rows=contents.trim().split('\n').map(JSON.parse);
  assert.deepEqual(rows.map(r=>r.phase),['started','returned']);assert.equal(rows[1].result,'empty');assert.match(rows[0].configurationDigest,/^[a-f0-9]{64}$/);
+ assert.ok(rows.every(row=>row.schemaVersion==='vpj07-worker-run/2'));
+ assert.deepEqual(rows.map(row=>row.prompt),[TEXT_TURN_PROMPT_REF,TEXT_TURN_PROMPT_REF]);
+ assert.equal(contents.includes(TEXT_TURN_SYSTEM_PROMPT),false,'journal retains the version reference, not raw prompt text');
  assert.equal((await stat(journal)).mode&0o777,0o600);assert.doesNotMatch(contents+result.stdout+result.stderr,/SYNTHETIC_.*_CANARY|11111111-1111|22222222-2222|inputTokens/);
  const duplicate=await runChild(args,env);assert.equal(duplicate.code,1);assert.equal(await readFile(journal,'utf8'),contents,'existing receipt file is never overwritten');
  await writeFile(input,JSON.stringify({...config(),secret:'SYNTHETIC_CONFIG_SECRET_CANARY'}));

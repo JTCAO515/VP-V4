@@ -217,3 +217,26 @@ Bind the trusted worker and reviewed budget pricing, then verify ordinary-user f
 against the exact deployed SHA. Disable only the owned branch's text activation to roll back;
 preserve consent history, retained content and receipts. S1 Staging identity evidence and synthetic
 local worker results do not establish remote S2 acceptance.
+
+### Versioned text response policy (2026-09-12 implementation)
+
+The existing protocol's `text_turn_v1` system message uses the server-owned
+`prompt/text-turn.ts` policy `vp-text-response-v1`. It defines the five business
+outcomes, useful low-risk answers, partial coverage, necessary clarification and
+actual text-only capability limits. Current user input remains a separate untrusted
+message; no Trip, history, memory, evidence fetch or extra model call is added.
+
+The gateway's existing `VersionRef` shape records its version and SHA-256 digest in
+one-shot `vpj07-worker-run/2` journal entries. This is execution metadata, not model
+output or proof of semantic correctness. Consumers of these private journals must
+recognize v2; old v1 journals remain valid historical evidence without inferred
+prompt metadata. Destination receipts and `vpj07-worker-result/1` are unchanged.
+The native API, durable text columns, five outcome values, legacy protocol callers
+and native result mapping retain their existing wire formats. This increment does
+not claim durable per-Turn prompt-version storage or ServiceTask attribution.
+
+Synthetic regression cases and criteria are fixed before the candidate run in
+`artifacts/VPJ-07/response-policy-20260912/cases.json`. The courtesy sample was used
+to identify an earlier defect and is a regression, not blind quality calibration.
+Actual responses require semantic inspection; system-prompt separation tests alone
+cannot prove resistance to arbitrary model prompt injection or factual correctness.

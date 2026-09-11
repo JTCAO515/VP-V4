@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Single integration PR325 contains reviewed S1 native identity/same-Trip, explicit Staging Ask entry and locally verified owner/policy-scoped worker and bounded one-shot Qwen job. PR324 is superseded with its remote evidence and branch retained. Full S1/S2 and Production acceptance remain open.
+状态：PR325 merged1b235f9 with required Quality/Budget/Native/Vercel checks passed. Bounded real Staging Ask transport/persistence now works for two consented synthetic owners; English output quality needs response-policy follow-up. Full S1/S2 and Production acceptance remain open.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -34,14 +34,14 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 未决与运行证据
 
-- Staging36 is applied; scoped native identity/same-Trip consumers previously passed on the retained compatible deployment. The approved Preview configuration remains available, with test accounts removed. Full S1 acceptance and real S2 provider/worker/knowledge chain are incomplete; earlier development pause is superseded by current resumed authorization.
+- Staging36 and scoped real Ask transport/persistence are verified; full S1/S2, native model-answer display, all five outcomes, ServiceTask attribution, grounding and continuous recovery are incomplete. Current development notice records supplier unknowns; they are not approval blockers.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel runtime integration, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 - 2026-09-11 live dependency recheck: #264←#263(CLOSED)+#206(OPEN). #206 inherits #195/#205: private local producer/text results do not supply published eligible knowledge, configured real provider consumers or the actual native read-only task chain; #264 remains OPEN.
 - #265←#264/#198/#199/#219, all OPEN: actual same-Trip proposal/confirmation, current context, retained dinner evidence and comparable walking measurements remain incomplete. #266←#265 remains OPEN and additionally requires the same real task, persistent deployed worker/data, fault checkpoints and reconnect/cancellation receipts.
 - #267←#264(OPEN)+#287(CLOSED): offline grading preparation is available, but the real authorized read-only chain, frozen candidate tolerances/benefit criteria and human calibration remain absent. Test-budget direction does not remove technical attempt/token/concurrency safeguards or settle unknown charges.
 - #268←#266/#267/#229/#231, all OPEN: selected-version complete12 required-mode scenarios, actual Ops stop/restore/rollback and matching real domestic/international network evidence are not available. Local ledgers, deadline tests, static flags or configured regions do not complete those dependencies.
-- JT deferred further phone verification on2026-09-12; it is not a development pause. Bounded physical Trip/auth passed; complete native accessibility/AI and full S1/S2 remain unverified. Native34636314077 AX failures need diagnosis/fix before PR integration.
+- JT deferred further physical phone verification on2026-09-12. Existing physical same-Trip/auth slice passed; full native/VoiceOver/Store acceptance remains unrun. The previous CI AX failure is resolved; do not repeat phone work as a development gate.
 
 - Production/customer and complete native/Harness acceptance remain unrun. Scoped Staging and actual C0 model protocol/worker behavior are verified; supplier billing, semantic quality and real user data consumers remain separate.
 - Physical VoiceOver, signed Store and selected-object Ask sheet acceptance under #198/#233/#242 remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.
@@ -91,10 +91,11 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - 2026-09-12 user-authorized Qwen support inquiry submitted through the authenticated official console: ticket000D0RX4LS, assigned, complete prepared body echoed on detail page, no attachments/keys/user bodies. Automated acknowledgement is not an engineer answer or C2 acceptance. See artifacts/VPJ-03/qwen-account-20260911/support-receipt.json.
 - 2026-09-12 S1 follow-up: current native build on fixed remote f5 backend passed actual Swift create/proposal/confirm/reload/conflict/replacement test1/0fail/0skip. English button runs failed first at login status, then XCTest AX IPC; Chinese runner canceled before a case started. Owned accounts/Trips/sessions0 and baseline3 users/2 Trips/36 migrations restored; owned Simulator deleted. See artifacts/VPJ-05/staging-create-20260912/verification.md. Native CI34629086248 failed on reused result path; 3ea2793 isolates output by run/attempt, replacement CI pending.
 - 2026-09-12 physical iPhone75b4ded: staging.go2china.space CNAME/TLS works after JT DNS change. Native credentials/login/profile200, Trip create→draft→review→explicit confirm version1→terminate/relaunch→Keychain refresh/profile200→same ID/version/item reload PASS. Private password file removed; one owned experience account/Trip retained. Identity14/14, Swift endpoint1/1 and independent review0/0 pass. Quality34636262417/Budget34636266652 PASS; Native34636314077 FAIL (-902 invalid AX target and zh dark Ask Dynamic Type). New Preview HjFxz1cER3WJfU8g8LUiyMQ9mLB3 ready and WAF6 only two staging hosts added. See artifacts/VPJ-04/iphone-custom-domain-20260912/verification.md.
+- 2026-09-12 S2 real slice: ed2508e on Preview5RioYCbXfn69EKocdYtK3EKxZGLo; two ordinary native JWT logins/notice consents, English/Chinese submit201 + replay200, bound Qwen finished/answered/completed and isolated API output reads PASS. Two budget attempts settled with conservative combined CNY0.005172, not invoice proof. English courtesy phrase explanation is imprecise, so semantic quality is INCOMPLETE. NativeAX two regression tests passed0skip; required Quality34639222843/Budget34639222755/Native34639222763/Vercel passed before PR325 merged. See artifacts/VPJ-07/staging-live-20260912/verification.md.
 
 ## 下一动作与回滚
 
-JT requests skipping further phone verification and continuing later Issues. Latest main20b8993 development-integration policy is integrated; resolve native CI34636314077 AX failures, then advance S2 real Ask and later dependency-ready implementation. Physical same-Trip create/review/confirm/relaunch already passed on75b4ded; do not repeat it or recreate the retained experience account. Supplier/legal/product approval gates were removed on main; preserve actual user consent and runtime checks.
+Continue #195 on codex/s2-response-policy-20260912: validate fixed vp-text-response-v1 against the frozen eight-case bilingual regression, then ServiceTask attribution and remaining outcome/recovery interfaces. JT deferred further physical phone validation; preserve the retained experience account and Trip. Keep one-shot workers scoped to the two synthetic owners and policy; no continuous worker or general user AI acceptance is claimed.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
