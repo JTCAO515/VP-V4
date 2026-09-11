@@ -1,0 +1,33 @@
+{
+  "at": "2026-09-11T21:27:33.113Z",
+  "status": "PASS",
+  "basis": "validated provider token usage times configured conservative tariff; not supplier invoice",
+  "currency": "CNY",
+  "tasks": [
+    {
+      "locale": "en",
+      "scopePinned": true,
+      "linkedTurns": 1,
+      "attempts": 1,
+      "settled": 1,
+      "unresolved": 0,
+      "actualMicros": 6138,
+      "allPinned": true,
+      "matchesInvocations": true,
+      "matchesTurns": true
+    },
+    {
+      "locale": "zh",
+      "scopePinned": true,
+      "linkedTurns": 1,
+      "attempts": 1,
+      "settled": 1,
+      "unresolved": 0,
+      "actualMicros": 8298,
+      "allPinned": true,
+      "matchesInvocations": true,
+      "matchesTurns": true
+    }
+  ],
+  "totalMicros": 14436
+}

@@ -285,3 +285,11 @@ task links, budget pins and cost receipts. Do not change an accepted policy's mo
 return context work to a legacy claimer, replay it as a fresh task or erase retained
 records. This API slice requires target Staging and a SwiftUI consumer before it can
 establish native multi-turn acceptance. It does not resolve earlier semantic failures.
+
+
+The real Staging task-context candidates v1 and v2 both failed the fixed bilingual
+facing-direction case. Neither entered clarification, so no continuation was
+admitted. Candidate v2's added prompt rule did not establish the required behavior
+and was withdrawn; the runtime remains v1. Both results and settled cost evidence
+are retained in `artifacts/VPJ-07/task-context-staging-20260912/verification.md`.
+Native context integration and semantic acceptance remain separate open work.
