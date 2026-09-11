@@ -280,8 +280,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = VisePanda;
-                INFOPLIST_KEY_VisePandaNativeEnvironment = "$(VP_NATIVE_ENVIRONMENT)";
-                INFOPLIST_KEY_VisePandaStagingAPIOrigin = "$(VP_NATIVE_STAGING_API_ORIGIN)";
+                INFOPLIST_FILE = VisePanda/NativeEnvironment.plist;
+                VP_NATIVE_ENVIRONMENT = "";
+                VP_NATIVE_STAGING_API_ORIGIN = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -308,8 +309,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = VisePanda;
-                INFOPLIST_KEY_VisePandaNativeEnvironment = "$(VP_NATIVE_ENVIRONMENT)";
-                INFOPLIST_KEY_VisePandaStagingAPIOrigin = "$(VP_NATIVE_STAGING_API_ORIGIN)";
+                INFOPLIST_FILE = VisePanda/NativeEnvironment.plist;
+                VP_NATIVE_ENVIRONMENT = "";
+                VP_NATIVE_STAGING_API_ORIGIN = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

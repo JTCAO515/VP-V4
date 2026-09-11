@@ -28,7 +28,7 @@ consequence of adding an environment variable name to source.
 
 An installed Staging app reads `VisePandaNativeEnvironment=staging` and
 `VisePandaStagingAPIOrigin=https://<exact deployed host>` from its generated Info.plist, supplied
-by build settings `VP_NATIVE_ENVIRONMENT` and `VP_NATIVE_STAGING_API_ORIGIN`. Both default unset.
+by build settings `VP_NATIVE_ENVIRONMENT` and `VP_NATIVE_STAGING_API_ORIGIN`. Both default empty. `NativeEnvironment.plist` supplies these custom keys and Xcode expands the build variables while merging generated standard keys; arbitrary `INFOPLIST_KEY_*` build settings are not used.
 Only a root HTTPS deployment origin in the same project hostname family is valid; explicit
 ports, path, query, fragment and userinfo are refused. Remote launch arguments never enable or
 override this endpoint. Partial/invalid build configuration stays disabled without local fallback.

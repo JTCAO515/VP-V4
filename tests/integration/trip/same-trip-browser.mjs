@@ -32,8 +32,18 @@ export async function exerciseSameTripBrowser({api,jar,n,t}) {
         await editor.getByRole('button',{name:copy.addItem,exact:true}).click();
         await editor.getByLabel(copy.itemTitle,{exact:true}).fill('Synthetic shared activity');
         assert.equal((await n('/'+id)).data.trip.headVersion,0,'browser draft never silently writes');
+        const proposalResponse=page.waitForResponse(r=>r.url()===`${api}/api/trips/${id}/proposal` && r.request().method()==='POST');
         await editor.getByRole('button',{name:copy.review,exact:true}).click();
-        await expect(editor.getByRole('button',{name:copy.confirm,exact:true})).toBeEnabled();
+        const proposed=await proposalResponse;
+        const receipt=await proposed.json();
+        assert.equal(proposed.status(),201,'browser proposal response '+JSON.stringify({error:receipt.error?.code??receipt.code??null}));
+        try {await expect(editor.getByRole('button',{name:copy.confirm,exact:true})).toBeEnabled({timeout:15000});}
+        catch(error){
+          await page.screenshot({path:`${directory}/${locale}-${viewport.width}-failure.png`,fullPage:true});
+          t.diagnostic('Synthetic browser failure screenshot: '+directory);
+          t.diagnostic('Editor state: '+await editor.innerText());
+          throw error;
+        }
         assert.equal((await n('/'+id)).data.trip.headVersion,0,'review still requires explicit confirmation');
         await editor.getByRole('button',{name:copy.confirm,exact:true}).click();
         await expect.poll(async()=>(await n('/'+id)).data.trip.headVersion).toBe(1);

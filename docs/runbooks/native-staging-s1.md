@@ -19,7 +19,7 @@ This is the concrete next integration operation, not a completed execution recor
    allow that exact reviewed host before requests; follow its existing concurrent-drift checks
    and preserve all other rules. Never use a wildcard or remove the maintenance rule.
 4. Build the app with `VP_NATIVE_ENVIRONMENT=staging` and
-   `VP_NATIVE_STAGING_API_ORIGIN=https://<verified deployment host>`. Inspect generated Info.plist
+   `VP_NATIVE_STAGING_API_ORIGIN=https://<verified deployment host>`. Inspect the final merged Info.plist
    and record its public origin and exact source SHA. No server secret belongs in the app.
    Existing Simulator signing is sufficient for Simulator evidence; physical/TestFlight evidence
    remains distinct. Do not publish Production or upload a Store build under this operation.
@@ -62,3 +62,5 @@ Disable only the owned branch activation and rebuild that Preview; for immediate
 only its exact host allowance using the current maintenance version. Preserve original rules and
 other approved hosts. Remove the app's Staging build configuration. Do not revert the database,
 revive revoked sessions, rotate public keys or alter Production to recover this test.
+
+Build reference: [Apple information-property-list guidance](https://developer.apple.com/documentation/bundleresources/managing-your-app-s-information-property-list) explicitly excludes arbitrary user-defined `INFOPLIST_KEY_*` settings from generation. The committed input plist is merged with the standard generated bundle settings; inspect the built values instead of assuming a custom build setting became a plist key.
