@@ -69,3 +69,8 @@ This is an account-evidence limitation, not proof of provider eligibility or key
 Rollback stops the owned worker and can revoke only the new service EXECUTE capability. Leave
 retained data, old migrations, consent history, lease receipts and unknown budget holds intact.
 No fallback to global claiming or other recipient is permitted. #191/#192/#195 and full S1/S2 remain open.
+
+The later [33→36 preparation rehearsal](../staging-36-preparation/verification.md) applies the
+same SQL from the currently observed remote baseline33 and passes18text-work checks. Its updated
+text-work test hash is included in source-hashes.json; earlier combined28-check evidence remains
+scoped to its recorded run. No remote upgrade is implied.

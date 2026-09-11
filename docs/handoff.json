@@ -8,7 +8,7 @@
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "JT owns product/commercial/provider/data/account/release decisions. Coding agents own each verified, bounded implementation contract.",
   "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree.",
-  "nextAction": "Finish exact-head PR325 CI for the scoped worker, then bind the qualified single recipient, approved pricing and dedicated trusted process/scheduler for remote Ask. New scoped-claim migration is local-only; no policy/model/worker was activated remotely. Account evidence could not be read because Qwen was signed out in the only connected browser. Preserve S1 device/fault/UI-version gaps and the Production release boundary.",
+  "nextAction": "Finish PR325 CI; exact Staging33→36 package and local18/18 upgrade rehearsal are ready. Obtain confirmation that direct writers are stopped for a new maintenance window before applying34–36 with a fresh encrypted backup/restore. Qwen remains signed out; recipient/account/tariff qualification and remote Ask binding are still pending. Preserve S1 remaining device/fault gaps and the Production boundary.",
   "program": {
     "id": "VPJ-00",
     "issue": 187,

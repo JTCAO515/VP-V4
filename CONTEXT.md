@@ -85,7 +85,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Finish exact-head PR325 CI for the scoped worker, then bind the qualified single recipient, approved pricing and dedicated trusted process/scheduler for remote Ask. New scoped-claim migration is local-only; no policy/model/worker was activated remotely. Account evidence could not be read because Qwen was signed out in the only connected browser. Preserve S1 device/fault/UI-version gaps and the Production release boundary.
+Finish PR325 CI; exact Staging33→36 package and local18/18 upgrade rehearsal are ready. Obtain confirmation that direct writers are stopped for a new maintenance window before applying34–36 with a fresh encrypted backup/restore. Qwen remains signed out; recipient/account/tariff qualification and remote Ask binding are still pending. Preserve S1 remaining device/fault gaps and the Production boundary.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
