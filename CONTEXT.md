@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PR328 merged06fabb5; Staging36→37 preserves70 tables/6accounts/3Trips. Two synthetic owners completed four real Qwen calls across two ServiceTasks, with pinned budgets and zero unresolved attempts. #194 cost scope has completion evidence; #195/full S1/S2 remain open.
+状态：#194 closed after PR328/329 and real Staging cost evidence. #195 now has a bounded v3 task-context API and job/2 worker, locally verified with actual SQL/Auth/HTTP; Staging remains migration37/current-input and native context acceptance is pending.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -95,10 +95,11 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - Response policy candidate v1 and v2 each ran eight actual Qwen cases on APIed2508e, workers3644d22/b5c836f. Both outcome classifications8/8 but semanticFAIL; all raw synthetic results and exact prompt-version receipts are retained under artifacts/VPJ-07/response-policy-20260912. An evaluation-only completed/unavailable mapping mistake was corrected by re-reading the finished Turn without replaying the provider. Current response-policy implementation CI passes; full answer quality remains incomplete.
 - ServiceTask record-only: SQL23/23 zero-skip incl full-chain migration/transaction rollback and five new attribution/cost/deletion/race cases; real disposable Auth/HTTP/unchanged worker three-Turn chain shares one task budget. Independent review Critical0/Important0; build/lint/typecheck/error contracts/docs pass. See artifacts/VPJ-07/service-task-records-20260912/verification.md. Staging and native consumer acceptance remain unrun.
 - ServiceTask Staging: migration37 preserves70 original table digests and expected permissions; restored encrypted backup passes. Existing Preview deployment a44823e is tree-identical to accepted main06fabb5. Ordinary native HTTP + actual Qwen: two tasks/four settled attempts, CNY0.018462 conservative debit, no invoice/user charge. Initial checker shape mistake corrected by read-only recovery, no repeated provider call. See artifacts/VPJ-07/service-task-staging-20260912/verification.md.
+- 2026-09-12 bounded task context: real SQL26/26 plus migration38 transaction rollback2/2, real disposable Auth/native HTTP/job2 chain1/1, protocol and worker safety49/49. Independent data/shared-contract review Critical0/Important0. v1/v2 remain compatible; v3 uses separate consent, four-Turn cap, mode-separated claim and dispatch context digest. See artifacts/VPJ-07/task-context-20260912/verification.md. No remote migration38/provider/native acceptance yet.
 
 ## 下一动作与回滚
 
-Finalize #194 first-model durable-cost acceptance from current live+fault evidence, then implement #195 bounded task context and its native consumer under explicit versioned notice/consent. Existing text mode sends current input only; no general unattended worker or semantic-quality acceptance. Keep JT phone validation deferred and preserve experience account/Trip.
+Merge the reviewed #195 context increment after CI; prepare migration38 backup/restore and scoped Staging new notice/consent, then verify short bilingual clarification with actual Qwen. Implement the matching SwiftUI consumer next. Keep JT phone validation deferred and preserve the experience account/Trip; full S1/S2 and semantic regression remain incomplete.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

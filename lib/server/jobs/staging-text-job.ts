@@ -10,7 +10,8 @@ export type TextJobPricing = Readonly<{
   cachedInputMicrosPerMillion: number | null;
 }>;
 export type StagingTextJobConfig = Readonly<{
-  schemaVersion: "vpj07-staging-text-job/1";
+  schemaVersion: "vpj07-staging-text-job/1" | "vpj07-staging-text-job/2";
+  inputMode?: "task_history_v1";
   ownerId: string;
   policyId: string;
   budget: ScopedTextWorkerConfig["budget"];
@@ -31,7 +32,9 @@ export type StagingTextJobDependencies = Readonly<{
  * or supplier invoice proof. No defaults, fallback, policy installation or timer.
  */
 export function createStagingTextJob(raw: unknown, dependencies: StagingTextJobDependencies) {
-  if (!record(raw) || Object.keys(raw).length !== 6 || raw.schemaVersion !== "vpj07-staging-text-job/1"
+  if (!record(raw) || (raw.schemaVersion === "vpj07-staging-text-job/1"
+      ? Object.keys(raw).length !== 6 || raw.inputMode !== undefined
+      : raw.schemaVersion !== "vpj07-staging-text-job/2" || Object.keys(raw).length !== 7 || raw.inputMode !== "task_history_v1")
     || !record(raw.budget) || !record(raw.provider) || raw.provider.timeoutMs !== raw.budget.timeoutMs
     || !validPricing(raw.pricing)) throw unavailable();
   const config = raw as StagingTextJobConfig;
@@ -54,7 +57,7 @@ export function createStagingTextJob(raw: unknown, dependencies: StagingTextJobD
   return createScopedTextWorker({ environment: "staging", databaseUrl: "https://dzqdzetcctkhbrhlxxgn.supabase.co",
     ownerId: config.ownerId, policyId: config.policyId, budget: config.budget }, {
     credential: dependencies.workerCredential,
-    provider: { provider: config.provider.provider, endpoint: config.provider.endpoint, transport, price },
+    provider: { inputMode: config.inputMode ?? "current_input_v1", provider: config.provider.provider, endpoint: config.provider.endpoint, transport, price },
     ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
   });
 }
