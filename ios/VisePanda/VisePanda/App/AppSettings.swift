@@ -29,12 +29,12 @@ enum SupportedLocale: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    static func launchLocale(arguments: [String] = ProcessInfo.processInfo.arguments) -> SupportedLocale {
+    static func launchLocale(arguments: [String] = ProcessInfo.processInfo.arguments, savedLocale: String? = nil) -> SupportedLocale {
         guard let flagIndex = arguments.firstIndex(of: "-VisePandaLocale"),
               arguments.indices.contains(flagIndex + 1),
               let locale = SupportedLocale(rawValue: arguments[flagIndex + 1])
         else {
-            return .zh
+            return savedLocale.flatMap(SupportedLocale.init(rawValue:)) ?? .zh
         }
 
         return locale
@@ -44,11 +44,19 @@ enum SupportedLocale: String, CaseIterable, Identifiable, Sendable {
 @MainActor
 @Observable
 final class AppSettings {
-    var selectedLocale: SupportedLocale
+    private static let localePreferenceKey = "visepanda.selectedLocale"
+    private let defaults: UserDefaults
+    var selectedLocale: SupportedLocale {
+        didSet { defaults.set(selectedLocale.rawValue, forKey: Self.localePreferenceKey) }
+    }
     let nativeSession: NativeSession
 
-    init(selectedLocale: SupportedLocale? = nil, nativeSession: NativeSession? = nil) {
+    init(selectedLocale: SupportedLocale? = nil, nativeSession: NativeSession? = nil,
+         defaults: UserDefaults = .standard, arguments: [String] = ProcessInfo.processInfo.arguments) {
+        self.defaults = defaults
         self.nativeSession = nativeSession ?? NativeSession()
-        self.selectedLocale = selectedLocale ?? SupportedLocale.launchLocale()
+        self.selectedLocale = selectedLocale ?? SupportedLocale.launchLocale(
+            arguments: arguments, savedLocale: defaults.string(forKey: Self.localePreferenceKey)
+        )
     }
 }

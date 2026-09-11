@@ -1,3 +1,4 @@
+import Foundation
 import Testing
 @testable import VisePanda
 
@@ -48,5 +49,20 @@ struct AppNavigationContractTests {
         #expect(SupportedLocale.launchLocale(arguments: ["VisePanda"]) == .zh)
         #expect(SupportedLocale.launchLocale(arguments: ["VisePanda", "-VisePandaLocale", "ar"]) == .ar)
         #expect(SupportedLocale.launchLocale(arguments: ["VisePanda", "-VisePandaLocale", "unknown"]) == .zh)
+    }
+
+    @Test("A chosen language survives a new app settings instance without launch overrides overwriting it")
+    @MainActor
+    func savedLanguage() throws {
+        let suite = "VP-Locale-Test-\(UUID().uuidString)"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let firstLaunch = AppSettings(defaults: defaults, arguments: [])
+        #expect(firstLaunch.selectedLocale == .zh)
+        firstLaunch.selectedLocale = .en
+        #expect(AppSettings(defaults: defaults, arguments: []).selectedLocale == .en)
+        #expect(AppSettings(defaults: defaults, arguments: ["-VisePandaLocale", "ar"]).selectedLocale == .ar)
+        #expect(AppSettings(defaults: defaults, arguments: []).selectedLocale == .en)
+        #expect(SupportedLocale.launchLocale(arguments: [], savedLocale: "unsupported") == .zh)
     }
 }
