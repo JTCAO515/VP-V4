@@ -6,9 +6,9 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Staging27–33 and the scoped three-function ACL normalization are executed, with55 original table records preserved. Web v2 configuration/deployment closeout and the four-city first-batch research are recorded. JT requested direct main push and no further review/test/development this round.
+状态：S1 PR324 prepares native identity/same-Trip Staging access and awaits bounded activation authority. S2 independent Ask I/O fix on main7bf22fb corrects reproduced503-to401 session loss; actual disposable local text integration passed.
 
-阶段：PAUSED_BY_USER after this round. Do not automatically start the next Issue, additional testing or review. Resume only on a new explicit user request.
+阶段：S1 main integration plus one S2 observed-defect preparation lane; remote native/Ask acceptance remains open.
 
 ## 读取顺序
 
@@ -76,10 +76,11 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - Private source/assertion producer PR319/a1990984b6449e7d86e1a29a06e912f57fe4c1ac: exact367921b47079a6357a819348fd035a0d569e6dd8 independent review0/0, Quality34535498536, Budget34535498513 and Vercel passed; merged tree matched and post-merge docs passed. Real local34→35/source/browser8/8 and original Ops8/8 passed with0skip. Source/locator/use remain unverified; candidates are private/unpublished/ineligible. #205 remains OPEN. See artifacts/VPJ-15/verification.md.
 - Native identity I/O PR320/74c7ed70ee050e36ec10f178d43b3bc90124b80f: exact31c72b7fb33765c1148df67fbea7ddfd71d8087d independent review0/0, Quality34535973071 and Vercel passed; merged treea1fb6976be32efe86bca9a931327326fa9e80fc8 and post-merge docs passed. Directed10/10, unit92/contract232, check22/sourceE2E40 passed; the final same-HEAD owned GoTrue/Next/PostgREST aggregate1/1 passed with0skip. Native request I/O is bounded; unavailable/unknown503 preserves the stored session/attempt, while explicit Auth/JWT denial retains401. The initial classification finding was fixed and independently rechecked. No Swift/remote profile or DB change; #191 remains OPEN. See artifacts/VPJ-04/native-io/verification.md.
 - 2026-09-11 authorized Staging execution: ACL18→15; exact27–33 native CLI exit0; history33 and all55 original-column record summaries preserved; fresh encrypted backup/isolated restore/cleanup passed. Before the later stop instruction,64 anonymous maintenance and42 existing automation probes were denied. Web v2 env true for Production/Preview. No new synthetic accounts/Trip were created; further Web/API/browser business acceptance NOT_RUN_USER_WAIVED. See artifacts/VPJ-02/staging33-execution/verification.md and final#189 operating comment.
+- S2 Ask I/O on main7bf22fb: controlled session-RPC503 reproduced401 before fix. Reused request lifetime preserves503 and exact retry; directed10/10, full security109pass1explicit skip, actual owned local Auth/consent/worker/reload1/1zero skip and cleanup passed. Independent auth review0/0; CI remains separately tracked. No remote/provider/Swift changes.
 
 ## 下一动作与回滚
 
-本轮收尾后暂停开发。JT已授权并执行Staging维护/迁移及直连停写；实际历史33，34/35未应用。Production/Preview设置Web v2，新部署入口按本轮维护记录恢复，旧部署host继续deny。用户后来明确停止新增审阅/验证、直接推main；未创建新测试账号或Trip，不声称Web业务验收通过。首批城市上海/北京/广州/重庆，十场景已落档，来源与事实冲突由agent负责；21条研究候选中19条进入首批、2条hold，C仅表示已有候选线索，不是产品覆盖。未导入、发布或赋予检索资格；不再追问已确认城市/授权，也不自动推进后续producer、Native远端或Harness任务。
+Finish required CI for S1 PR324 and the S2 Ask I/O preparation. Resolve the already requested Preview-only native activation/proof-key/exact-host/synthetic-account cleanup scope before remote use. Main merge triggers Production, excluded by current Goal until separately confirmed. Preserve schema33 and original accounts/Trips; no model/worker/knowledge activation. See artifacts/VPJ-07/native-io/verification.md for the independent Ask fix.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

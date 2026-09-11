@@ -120,7 +120,11 @@ The native `api/chat/native/v1` routes require `VISEPANDA_NATIVE_LOCAL_TEXT=true
 policy UUID and a loopback Supabase URL. Cookie/Origin ambiguity and query fields are rejected.
 The bearer credential is verified through the existing native session epoch authority; every
 sensitive SQL operation independently checks the live owner/session. Bodies are bounded to
-32KiB/5 seconds and closed request shapes; RPCs have a 10-second timeout. No service key enters
+32KiB/5 seconds and closed request shapes; credential verification, session checks, body reads and
+RPCs share one 10-second request lifetime. Cancellation/deadline/transport failure returns503,
+including a lost submit acknowledgment, without an automatic retry or a credential-clear signal.
+Only explicit credential/session rejection returns401. Late upstream replies cannot dispatch a
+later RPC. Malformed/oversize bodies remain400; policy denial remains403. No service key enters
 the native app. The migration installs no policy, and flags do not grant third-party permission.
 
 `read_text_policy` exposes the current immutable bilingual notice and the caller's consent state.
