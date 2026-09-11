@@ -1,0 +1,21 @@
+{
+  "at": "2026-09-11T21:10:13.279Z",
+  "status": "PASS",
+  "migrationCount": 38,
+  "originalTablesPreserved": 72,
+  "originalSchemaEntriesChecked": 230,
+  "expectedChangedFunctions": [
+    "public.claim_turn_work(",
+    "public.claim_text_work(",
+    "public.read_text_work(",
+    "public.authorize_text_dispatch(",
+    "turn_private.lock_text_work("
+  ],
+  "backupRestore": "PASS",
+  "authCount": 6,
+  "tripCount": 3,
+  "allExistingPoliciesCurrentOnly": true,
+  "privateHelperDenied": true,
+  "newClaimOnlyService": true,
+  "newDispatchOnlyService": true
+}

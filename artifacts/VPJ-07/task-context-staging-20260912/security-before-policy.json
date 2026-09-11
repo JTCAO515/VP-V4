@@ -1,0 +1,9 @@
+{
+  "privateTablesDenied": true,
+  "privateHelpersDenied": true,
+  "workerOnlyService": true,
+  "policyOnlyAuthenticated": true,
+  "noPublicExecute": true,
+  "bothTriggersEnabled": true,
+  "oldPoliciesCurrentOnly": true
+}
