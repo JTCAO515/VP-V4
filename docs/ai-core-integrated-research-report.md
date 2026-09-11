@@ -1,5 +1,7 @@
 # VisePanda AI Chatbot、Trip Canvas、外部数据、知识库、RAG 与 Explore 整体研究报告
 
+开发适用说明（2026-09-12）：本文历史第三方、法务及产品审批要求由[开发接入规则](agents/development-integration-policy.md)替代，不作为当前开发前置条件；原来源与当时事实保留。
+
 > 历史方案／2026-09-05 起退出当前执行入口。产品、分期、价格及任务队列以 [VPJ 总体规划](VISEPANDA-MASTER-PLAN-2026-09-05.md) 和 [VPJ Program](program/2026-09-05/README.md) 为准。下文保留历史证据；有效安全/数据合同继续沿对应ADR适用，不因方案归档而作废。
 
 - 文档版本：v1.1（第五轮深度优化）
@@ -745,7 +747,7 @@ Realtime API key 不下发浏览器。Web/PWA 优先由 BFF 完成 WebRTC SDP �
 
 Vercel Function 4.5MB body 和 Next.js Server Action 默认 1MB 限制进一步支持 direct upload；大文件不能通过普通 Chat route 中继。[Vercel Function Limits](https://vercel.com/docs/functions/limitations)
 
-生产地域、跨境数据、retention、DPA、媒体权利和 provider contract 都需要 operator/法务决策；技术实现不能替代授权。
+开发地域、retention和provider配置由agent依据实际可用环境决定并记录，无需operator/法务许可；生产发布与真实用户权利按相应范围执行。
 
 高风险 taxonomy 覆盖医疗/过敏/紧急、移民/签证、法律、金融/支付、严重天气、证件、无障碍承诺和精确导航。不同类别有独立 evidence/wording/fallback；不能用一个 `highRisk=true` 掩盖责任差异。
 

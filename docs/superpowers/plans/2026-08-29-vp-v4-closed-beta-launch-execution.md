@@ -1,5 +1,7 @@
 # VP-V4 Closed Beta Launch Execution Plan
 
+2026-09-12开发修订：本文涉及供应商、法务或产品许可的历史前置条件已由[开发接入规则](../../agents/development-integration-policy.md)取消；技术实现与实际验收继续按当前任务推进。
+
 > **For Codex/Claude:** Execute one accepted LAUNCH Issue per branch and PR. Read `AGENTS.md`, `CONTEXT.md`, `HANDOFF.md`, `docs/handoff.json`, `docs/vp-v4-closed-beta-launch-issue-plan.md`, and the Issue's row in `docs/agents/issue-execution-contract.md` before editing.
 
 **Goal:** Deliver an invitation-only, observable and rollback-safe closed beta in which a real user can sign in, create a Trip, chat with one real text model, review and confirm a complete itinerary Proposal, reload it, and use Today.

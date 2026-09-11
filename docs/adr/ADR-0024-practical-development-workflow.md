@@ -1,5 +1,7 @@
 # ADR-0024: Separate development preparation from capability acceptance
 
+2026-09-12修订：[开发接入规则](../agents/development-integration-policy.md)替代本文涉及开发阶段第三方、法务或产品审批的要求；其余产品范围及实际技术不变量继续适用。
+
 Status: proposed for review on 2026-09-08, following JT's request to inspect VP-V4 and optimize
 requirements that do not fit actual development. Effective on merge of the adopting PR.
 

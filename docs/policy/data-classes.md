@@ -1,5 +1,7 @@
 # AI-05 Data Classes and Purpose-Bound Policy Baseline
 
+Current VPJ development uses [the 2026-09-12 integration policy](../agents/development-integration-policy.md). The R0/R1-only posture and dedicated supplier/legal/product approval requirements below are historical. Development uses versioned configuration and actual end-user consent; supplier paperwork and undisclosed TTL/region details are not blocking gates. Runtime actor, data-scope and secret controls remain in force.
+
 Status: accepted architecture policy for [AI-05](https://github.com/JTCAO515/VP-V4/issues/7). This is an engineering control baseline, not legal advice, a production privacy notice, a DPA, or evidence that any provider/data flow is enabled.
 
 ## Default posture

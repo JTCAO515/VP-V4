@@ -1,5 +1,7 @@
 # VisePanda AI：RAG、Memory、Tool、Context Engineering 与 Agent Runtime 证据底稿
 
+开发适用说明（2026-09-12）：本文历史第三方、法务及产品审批要求由[开发接入规则](../agents/development-integration-policy.md)替代，不作为当前开发前置条件；原来源与当时事实保留。
+
 - 核验日期：2026-08-26（Asia/Shanghai；文件名沿用本轮研究计划日期 `2026-08-25`）
 - 适用仓库：`JTCAO515/VP-V4`
 - 状态：**研究证据与可逆架构建议，不代表相关 runtime、数据库、LangChain、LangGraph、MCP 或 durable workflow 已经开发、接入或验收**
@@ -208,7 +210,7 @@ Context   = 本次模型调用实际看到的最小组合，不是新的数据�
 - **来源：** [MemoryBank，AAAI 2024](https://ojs.aaai.org/index.php/AAAI/article/view/29946)
 - **来源声称：** 使用长期记忆与遗忘/更新机制改善长期对话个性化。
 - **限制：** 论文优化模型互动，不覆盖生产 privacy/RLS/retention；其心理学启发不能当作用户数据政策。
-- **VP 相关性：** 可参考 decay/supersession，但真实 retention、删除和 purpose limitation 由产品/法务合同决定。
+- **VP 相关性：** 可参考 decay/supersession，但开发retention、删除与purpose配置按用户已确认方向由agent实现，不等待产品/法务许可。
 
 ### M-05 VP Memory 数据模型建议（架构推论）
 

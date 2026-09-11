@@ -1,5 +1,7 @@
 # Issue tracker: GitHub
 
+开发调度以 [2026-09-12接入规则](development-integration-policy.md)为准：供应商工单、法务或产品许可缺失不得单独维持blocked/ready-for-human。依赖保留真实技术缺口，完成状态仍按实测判断。
+
 Use [JTCAO515/VP-V4 Issues](https://github.com/JTCAO515/VP-V4/issues) through an authenticated
 GitHub tool or `gh`. Current execution follows `development-workflow.md`.
 

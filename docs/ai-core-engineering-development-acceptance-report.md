@@ -1,5 +1,7 @@
 # VisePanda AI Core 软件工程开发、交付与验收报告
 
+开发适用说明（2026-09-12）：本文历史第三方、法务及产品审批要求由[开发接入规则](agents/development-integration-policy.md)替代，不作为当前开发前置条件；原来源与当时事实保留。
+
 > 历史方案／2026-09-05 起退出当前执行入口。产品、分期、价格及任务队列以 [VPJ 总体规划](VISEPANDA-MASTER-PLAN-2026-09-05.md) 和 [VPJ Program](program/2026-09-05/README.md) 为准。下文保留历史证据；有效安全/数据合同继续沿对应ADR适用，不因方案归档而作废。
 
 - 文档版本：v1.1（第五轮深模块与验收优化）
@@ -969,7 +971,7 @@ R1 不接真实模型、pgvector、queue、外部数据或 Ops UI。每个 >5 fo
 
 ## 17. Operator decisions and exact next action
 
-Before coding, operator decides the master Decision Register, including new-vs-existing Supabase project, authenticated-only beta, Ops deployment, model/data region and retention. Then create `SYS-00`:
+Historical kickoff below is superseded by the VPJ program. Current development starts from existing accounts, interfaces and confirmed decisions without another operator/product approval round:
 
 > Freeze Turn/Trip/Evidence/Knowledge/External/Media interfaces, actor/RLS paths, immutable Proposal semantics, validated SSE, shared eligibility, deployment/retention decisions, feature flags, acceptance matrix, and legacy disposition. No provider SDK or production data.
 

@@ -511,7 +511,7 @@
       "licensePolicyId": null,
       "status": "researched_draft",
       "retrievalEligible": false,
-      "blockingReasons": ["exact clauses and complaint channel not extracted", "legal/policy review missing", "licence policy missing"]
+      "blockingReasons": ["exact clauses and complaint channel not extracted"]
     },
     {
       "id": "draft-visa-free-transit-nia-2026-08-20",

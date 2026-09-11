@@ -1,5 +1,7 @@
 # Claude Code 知识库方案独立审计
 
+开发适用说明（2026-09-12）：本文历史第三方、法务及产品审批要求由[开发接入规则](../agents/development-integration-policy.md)替代，不作为当前开发前置条件；原来源与当时事实保留。
+
 - 审计日期：2026-08-24
 - 审计对象：`/Users/jtcao/Downloads/knowledgebaseplan.md`
 - 对照基线：VP-V4 五轮 AI Core 研究/工程报告、VP-Final Knowledge/Content AI/import/RLS 实现、2026-08-24 可访问的一手资料
