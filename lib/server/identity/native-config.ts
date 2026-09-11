@@ -19,7 +19,10 @@ function stagingRequest(request: Pick<Request, "url">): boolean {
       || !/^vp-v4-[a-z0-9]+-jtcao515s-projects\.vercel\.app$/.test(host)) return false;
   try {
     const url = new URL(request.url);
-    return url.origin === `https://${host}` && !url.username && !url.password;
+    const customOrigin = "https://staging.go2china.space";
+    const allowedOrigin = url.origin === `https://${host}`
+      || (process.env.VISEPANDA_NATIVE_STAGING_CUSTOM_ORIGIN === customOrigin && url.origin === customOrigin);
+    return allowedOrigin && !url.username && !url.password;
   } catch { return false; }
 }
 

@@ -14,7 +14,9 @@ The remote path is closed by default. `VISEPANDA_NATIVE_STAGING=true` and
 `VISEPANDA_TRIP_PROTOCOL_V2=true` must be configured on an explicitly selected Preview branch.
 `VERCEL_ENV` must be `preview`, `VERCEL_URL` must be an exact deployment hostname matching
 `vp-v4-<alphanumeric>-jtcao515s-projects.vercel.app`, and the incoming request origin must be
-`https://<that VERCEL_URL>`. Stable aliases, branch aliases, custom domains, HTTP, another
+`https://<that VERCEL_URL>`. The sole custom-origin exception is `https://staging.go2china.space`,
+enabled only by the exact Preview setting `VISEPANDA_NATIVE_STAGING_CUSTOM_ORIGIN=https://staging.go2china.space`.
+It retains every Preview/project/database gate. Other aliases, custom domains, HTTP, another
 project and Production are rejected. `NEXT_PUBLIC_SUPABASE_URL` must equal the named Staging
 `https://dzqdzetcctkhbrhlxxgn.supabase.co` exactly, with its ordinary public key. Request input
 never supplies an environment, database or credential. LOCAL flags cannot activate on Vercel.
@@ -29,7 +31,8 @@ consequence of adding an environment variable name to source.
 An installed Staging app reads `VisePandaNativeEnvironment=staging` and
 `VisePandaStagingAPIOrigin=https://<exact deployed host>` from its generated Info.plist, supplied
 by build settings `VP_NATIVE_ENVIRONMENT` and `VP_NATIVE_STAGING_API_ORIGIN`. Both default empty. `NativeEnvironment.plist` supplies these custom keys and Xcode expands the build variables while merging generated standard keys; arbitrary `INFOPLIST_KEY_*` build settings are not used.
-Only a root HTTPS deployment origin in the same project hostname family is valid; explicit
+Only a root HTTPS deployment origin in the same project hostname family or the exact owned
+`https://staging.go2china.space` origin is valid; explicit
 ports, path, query, fragment and userinfo are refused. Remote launch arguments never enable or
 override this endpoint. Partial/invalid build configuration stays disabled without local fallback.
 The existing Keychain and data scope include the canonical endpoint and account; switching

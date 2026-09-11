@@ -17,6 +17,13 @@ nonisolated final class NativeSessionIntegrationTests: XCTestCase {
         XCTAssertNil(NativeSession.resolveEndpoint(arguments: args, bundleConfiguration: ["VisePandaNativeEnvironment": "staging"]))
         XCTAssertNil(NativeSession.resolveEndpoint(arguments: args, bundleConfiguration: ["VisePandaNativeEnvironment": "production", "VisePandaStagingAPIOrigin": "https://" + host]))
         XCTAssertNotNil(NativeSession.resolveEndpoint(arguments: args, bundleConfiguration: [:]))
+        let custom = ["VisePandaNativeEnvironment": "staging", "VisePandaStagingAPIOrigin": "https://staging.go2china.space"]
+        XCTAssertEqual(NativeSession.resolveEndpoint(arguments: args, bundleConfiguration: custom)?.absoluteString, "https://staging.go2china.space")
+        for raw in ["https://go2china.space", "https://www.go2china.space", "https://staging.go2china.space.attacker.test", "http://staging.go2china.space", "https://user:secret@staging.go2china.space", "https://staging.go2china.space:443", "https://staging.go2china.space/path"] {
+            var invalid = custom
+            invalid["VisePandaStagingAPIOrigin"] = raw
+            XCTAssertNil(NativeSession.resolveEndpoint(arguments: args, bundleConfiguration: invalid), raw)
+        }
     }
 
     @MainActor

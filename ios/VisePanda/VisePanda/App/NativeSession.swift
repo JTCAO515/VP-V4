@@ -56,7 +56,7 @@ final class NativeSession {
                   url.user == nil, url.password == nil, url.query == nil, url.fragment == nil,
                   url.path.isEmpty || url.path == "/",
                   let host = url.host,
-                  host.range(of: #"^vp-v4-[a-z0-9]+-jtcao515s-projects\.vercel\.app$"#, options: .regularExpression) != nil
+                  (host == "staging.go2china.space" || host.range(of: #"^vp-v4-[a-z0-9]+-jtcao515s-projects\.vercel\.app$"#, options: .regularExpression) != nil)
             else { return nil }
             return URL(string: "https://" + host)
         }
@@ -245,6 +245,9 @@ final class NativeSession {
         else if case SessionError.storage(let code) = error { failureCode = "keychain:\(code)" }
         else if case SessionError.http(let code) = error { failureCode = "http:\(code)" }
         else { failureCode = "session" }
+        #if DEBUG
+        FileHandle.standardError.write(Data("VisePanda native session failed: \(failureCode ?? "session")\n".utf8))
+        #endif
         subject = nil
         mobileEpoch = nil
         displayName = nil
@@ -262,6 +265,9 @@ final class NativeSession {
         if action != "profile" { request.httpBody = try JSONEncoder().encode(body) }
         let (data, response) = try await transport.data(for: request)
         guard let http = response as? HTTPURLResponse else { throw SessionError.invalid }
+        #if DEBUG
+        FileHandle.standardError.write(Data("VisePanda native \(action) HTTP \(http.statusCode)\n".utf8))
+        #endif
         if http.statusCode == 401 || http.statusCode == 409 { throw SessionError.denied }
         guard http.statusCode == 200 else { throw SessionError.http(http.statusCode) }
         return data

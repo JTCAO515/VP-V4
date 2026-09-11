@@ -10,6 +10,7 @@ const settings = {
   VISEPANDA_TRIP_PROTOCOL_V2: 'true', NEXT_PUBLIC_SUPABASE_URL: 'https://dzqdzetcctkhbrhlxxgn.supabase.co',
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'synthetic-public', VISEPANDA_NATIVE_STAGING_PROOF_KEY: 'synthetic-proof',
   VISEPANDA_NATIVE_LOCAL_SESSION: 'true', VISEPANDA_NATIVE_LOCAL_TRIP: 'true',
+  VISEPANDA_NATIVE_STAGING_CUSTOM_ORIGIN: '',
 };
 function configure(t, patch = {}) {
   const before = Object.fromEntries(Object.keys(settings).map(key => [key, process.env[key]]));
@@ -53,6 +54,25 @@ test('LOCAL flags cannot activate a deployed target, and local credentials remai
   assert.equal(getNativeRuntimeConfig({url},'session'),null);
   delete process.env.VERCEL_ENV;
   assert.equal(getNativeRuntimeConfig({url:'http://127.0.0.1:3000'},'session').environment,undefined);
+});
+test('owned staging domain requires exact operator opt-in and retains Preview and database gates', t => {
+  configure(t);
+  const target = {url: 'https://staging.go2china.space/api/auth/native/v2/session'};
+  assert.equal(getNativeRuntimeConfig(target, 'session'), null);
+  process.env.VISEPANDA_NATIVE_STAGING_CUSTOM_ORIGIN = 'https://staging.go2china.space';
+  assert.equal(getNativeRuntimeConfig(target, 'session').environment, 'staging');
+  assert.equal(getNativeRuntimeConfig(target, 'trip').serviceRoleKey, undefined);
+  for (const invalid of ['http://staging.go2china.space', 'https://go2china.space',
+    'https://www.go2china.space', 'https://staging.go2china.space.attacker.test',
+    'https://user:password@staging.go2china.space', 'https://staging.go2china.space:444']) {
+    assert.equal(getNativeRuntimeConfig({url:invalid}, 'session'), null, invalid);
+  }
+  for (const patch of [{VERCEL_ENV:'production'}, {VERCEL_URL:'other.vercel.app'},
+    {NEXT_PUBLIC_SUPABASE_URL:'https://other.supabase.co'}, {VISEPANDA_NATIVE_STAGING:'false'},
+    {VISEPANDA_TRIP_PROTOCOL_V2:'false'}, {VISEPANDA_NATIVE_STAGING_CUSTOM_ORIGIN:'https://go2china.space'}]) {
+    Object.assign(process.env, settings, {VISEPANDA_NATIVE_STAGING_CUSTOM_ORIGIN:'https://staging.go2china.space'}, patch);
+    assert.equal(getNativeRuntimeConfig(target, 'session'), null, JSON.stringify(patch));
+  }
 });
 test('staging handler still rejects mixed credentials and missing JWT without outbound access', async t => {
   configure(t);
