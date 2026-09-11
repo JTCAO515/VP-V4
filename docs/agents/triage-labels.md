@@ -9,12 +9,12 @@
 | Not planned | `wontfix` | Explicitly not planned |
 
 Use `status:ready`, `status:blocked`, `status:in-progress` or `status:superseded` for task state;
-`phase:R0`–`phase:R5` for scheduling; and `priority:P0`/`P1`/`P2` for current outcome priority.
+`phase:R0`–`phase:R5` for the retained technical grouping; and `priority:P0`/`P1`/`P2` for current outcome priority.
 Priority is not permanently tied to a historical release: a blocking defect can be P0 in any phase.
 
 VPJ's native graph and current scope govern readiness. The old AI-01/15/21/29/34/41 release-gate
 table is archived in `docs/archive/2026-09-05/baseline/triage-labels.md`; it adds no edges to VPJ.
-Use current task phase and dependencies, not an old milestone title, to schedule work.
+Use current delivery-stage membership and actual dependencies to schedule work.
 
 2026-09-11起，用户验收按 `issue-plan.json` 的 `deliveryStage` 与 GitHub 的 VPJ S1–S6
 里程碑查看；旧 `phase:R0`–`phase:R5` 标签保留作历史技术分组，不再代表新的阶段顺序。
