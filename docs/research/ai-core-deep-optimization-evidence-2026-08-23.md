@@ -1,5 +1,7 @@
 # VisePanda AI Core 深度优化增量证据底稿
 
+开发适用说明（2026-09-12）：本文历史第三方、法务及产品审批要求由[开发接入规则](../agents/development-integration-policy.md)替代，不作为当前开发前置条件；原来源与当时事实保留。
+
 > 核验日期：2026-08-23（Asia/Shanghai）  
 > 研究范围：DeepSeek/Qwen/Kimi/GLM、必选多模态、Next.js/Vercel、Supabase/Postgres/RAG/Queues、外部数据许可  
 > 对照对象：[AI Core 整体研究报告](../ai-core-integrated-research-report.md)与[软件工程开发、交付与验收报告](../ai-core-engineering-development-acceptance-report.md)  
@@ -337,7 +339,7 @@ client asks server for one-time object path/token
 
 **事实。** 高德开放平台 2025-12-03 协议要求商业主体预先购买技术服务许可；除明确书面许可外，不得把内容用于模型/算法训练或数据集；只可按官方功能展示，不得直接存储、缓存、抓取内部 POI/图片等内容。[高德开放平台服务协议](https://lbs.amap.com/pages/terms/)
 
-**工程推论。** 高德也不能作为默认 Canonical POI 导入底库；需要工单/书面许可明确 production display、persist、LLM inference、embedding、translation 和 attribution。
+**工程推论。** 高德也不能作为默认 Canonical POI 导入底库；开发阶段依据公开文档与实际可用接口记录display、persist、LLM inference、embedding、translation和attribution行为，不要求工单或书面许可。生产使用另行核对实际范围。
 
 **事实。** Mapbox temporary geocoding 默认只允许 session use，不能持久保存坐标；permanent geocoding 需显式 `permanent=true` 并按相应价格/条款使用。[Mapbox temporary vs permanent geocoding](https://docs.mapbox.com/help/dive-deeper/understand-temporary-vs-permanent-geocoding/)
 

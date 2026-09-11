@@ -1,5 +1,7 @@
 # VisePanda V4 外部数据与 Chatbot / Trip Canvas 联动证据
 
+开发适用说明（2026-09-12）：本文历史第三方、法务及产品审批要求由[开发接入规则](../agents/development-integration-policy.md)替代，不作为当前开发前置条件；原来源与当时事实保留。
+
 - 研究日期：2026-08-23（Asia/Shanghai）
 - 研究对象：Claude 草案 `/Users/jtcao/Downloads/externaldataplan.md`
 - 目标：核验外部数据的当前可获得性、许可与产品边界，并给出可进入 Chatbot / Trip Canvas 的事实分级
@@ -528,7 +530,7 @@ type PublicExternalCitation = {
 ### Phase 2：地图/路线临时工具
 
 1. 优先上线 Amap URI 深链，不承担内容许可和存储复杂度。
-2. 若确需嵌入路线 API，先取得高德适用合同书面确认，再做 Single-turn Ephemeral 路线卡。
+2. 若确需嵌入路线 API，用现有可用高德接口验证Single-turn Ephemeral路线卡，不等待合同书面确认。
 3. OSM 只做小规模质量抽样和许可隔离，不直接依赖公共 Nominatim/tiles 做生产 SLA。
 
 ### Phase 3：航班状态影子评测
@@ -569,7 +571,7 @@ type PublicExternalCitation = {
 ## 9. 仍未核验、必须由 operator/账户实测的事项
 
 1. QWeather 境外手机号注册、账单支付和实际可用区域；公开文档不足以代替一次无密钥泄露的账户试用。
-2. QWeather Developer License 完整合同对 LLM 生成摘要/翻译的具体授权；预警来源必须原样展示已明确，但衍生文本边界仍需书面确认。
+2. QWeather Developer License 完整合同对 LLM 生成摘要/翻译的具体授权；预警来源必须原样展示已明确，但衍生文本未知项单列，开发不等待书面确认。
 3. 高德境外主体认证、面向中国大陆用户的商业许可、与 VisePanda 多地图/多 provider 架构是否可兼容。
 4. Google Places 中国大陆实际覆盖、可达性和合同实体；即使技术可用，也不能突破缓存/TTS/衍生内容限制。
 5. OSM 在目标城市中 POI、地址、`opening_hours` 的覆盖率与最近更新时间；需独立抽样报告。

@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Staging27–33 and the scoped three-function ACL normalization are executed, with55 original table records preserved. Web v2 configuration/deployment closeout and the four-city first-batch research are recorded. JT requested direct main push and no further review/test/development this round.
+状态：Development approval-gate cleanup authorized by JT on 2026-09-12; supplier/legal/product sign-off is no longer a development blocker. Existing runtime evidence and unrelated work are preserved.
 
-阶段：PAUSED_BY_USER after this round. Do not automatically start the next Issue, additional testing or review. Resume only on a new explicit user request.
+阶段：Explicit governance maintenance; subsequent product development follows current Issue/PR and the development integration policy. Historical pause does not block this requested cleanup.
 
 ## 读取顺序
 
@@ -28,13 +28,14 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - 已有同对象、环境、范围的授权继续有效；共享交接记录不扩展到新的环境、数据接收方、资金或生产动作。具体未决操作查对应Issue与operator-actions，不重复索取已明确授予的授权。
 - JT于2026-09-11确认上海、北京、广州、重庆与入境/机场交通/支付/手机网络/地铁公交/出租车网约车/高铁/景点预约/酒店住宿/紧急求助十场景，并授权agent决定来源选择和事实冲突；不等于第三方素材或模型训练许可。首批研究见docs/knowledge-base/batches/2026-09-11-four-city/README.md。
 - JT随后明确：本轮完成后直接推GitHub main，不再新增审阅或验证，之后暂停开发。已完成的早期检查保留；未运行的业务验收不改写为PASS。
+- 2026-09-12 JT取消全部开发阶段第三方、法务与产品许可前置要求；工单/书面回复/合同回执/精确供应商TTL缺失不再阻塞开发。agent按docs/agents/development-integration-policy.md以现有账号/API与实际配置推进，可逆参数自行决定；保留用户同意、RLS、确认、秘密及真实验证。
 
 ## 未决与运行证据
 
 - Staging actual history is33; the authorized maintenance/migration is no longer awaiting approval. Historical direct-host failure was not re-probed this round; deployed worker/native remote consumers and full business acceptance remain unrun. Further development is paused by JT, not automatically retried.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
-- Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
-- 2026-09-11 live dependency recheck: #264←#263(CLOSED)+#206(OPEN). #206 inherits #195/#205: private local producer/text results do not supply published eligible knowledge, qualified real recipients or the actual native read-only task chain; #264 remains OPEN.
+- Actual data retention, model/media regions, maps/hotel runtime integration, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
+- 2026-09-11 live dependency recheck: #264←#263(CLOSED)+#206(OPEN). #206 inherits #195/#205: private local producer/text results do not supply published eligible knowledge, configured real provider consumers or the actual native read-only task chain; #264 remains OPEN.
 - #265←#264/#198/#199/#219, all OPEN: actual same-Trip proposal/confirmation, current context, retained dinner evidence and comparable walking measurements remain incomplete. #266←#265 remains OPEN and additionally requires the same real task, persistent deployed worker/data, fault checkpoints and reconnect/cancellation receipts.
 - #267←#264(OPEN)+#287(CLOSED): offline grading preparation is available, but the real authorized read-only chain, frozen candidate tolerances/benefit criteria and human calibration remain absent. Test-budget direction does not remove technical attempt/token/concurrency safeguards or settle unknown charges.
 - #268←#266/#267/#229/#231, all OPEN: selected-version complete12 required-mode scenarios, actual Ops stop/restore/rollback and matching real domestic/international network evidence are not available. Local ledgers, deadline tests, static flags or configured regions do not complete those dependencies.
@@ -79,7 +80,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-本轮收尾后暂停开发。JT已授权并执行Staging维护/迁移及直连停写；实际历史33，34/35未应用。Production/Preview设置Web v2，新部署入口按本轮维护记录恢复，旧部署host继续deny。用户后来明确停止新增审阅/验证、直接推main；未创建新测试账号或Trip，不声称Web业务验收通过。首批城市上海/北京/广州/重庆，十场景已落档，来源与事实冲突由agent负责；21条研究候选中19条进入首批、2条hold，C仅表示已有候选线索，不是产品覆盖。未导入、发布或赋予检索资格；不再追问已确认城市/授权，也不自动推进后续producer、Native远端或Harness任务。
+Continue the active S1/S2 integration using actual accounts/APIs and current interfaces; do not wait for vendor tickets, legal approval, product sign-off or undisclosed supplier TTL. Re-read active PR325 and current runtime evidence before editing that lane.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

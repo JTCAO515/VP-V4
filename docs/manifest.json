@@ -160,6 +160,10 @@
       "status": "document"
     },
     {
+      "path": "docs/agents/development-integration-policy.md",
+      "status": "document"
+    },
+    {
       "path": "docs/agents/development-workflow.md",
       "status": "document"
     },
@@ -609,6 +613,18 @@
     },
     {
       "path": "docs/knowledge-base/README.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/knowledge-base/batches/2026-09-11-four-city/README.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/knowledge-base/batches/2026-09-11-four-city/city-sources.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/knowledge-base/batches/2026-09-11-four-city/national-sources.md",
       "status": "document"
     },
     {

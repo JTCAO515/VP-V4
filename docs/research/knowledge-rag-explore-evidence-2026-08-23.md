@@ -1,5 +1,7 @@
 # VisePanda 知识库、RAG、Explore 与 Trip Canvas 联动证据底稿
 
+开发适用说明（2026-09-12）：本文历史第三方、法务及产品审批要求由[开发接入规则](../agents/development-integration-policy.md)替代，不作为当前开发前置条件；原来源与当时事实保留。
+
 - 核验日期：2026-08-23（Asia/Shanghai）
 - 状态：**研究证据与架构建议，不代表功能已开发、数据已获许可、POI 已导入或内容已审核发布**
 - 适用仓库：`JTCAO515/VP-V4`
@@ -662,7 +664,7 @@ Fact 过期或新 Observation 变化时，Canvas 变为 `recheck_required/change
 
 ## 10. 待核验/待 operator 决定
 
-1. **数据源合同：** OSM derivative database 的具体 Share-Alike/attribution 落地；Google/Amap 是否完全排除或购买专门许可；这需要法务/合同 review。
+1. **数据源合同：** OSM derivative database 的具体 Share-Alike/attribution 落地；Google/Amap 是否完全排除或购买专门许可；开发不等待法务/合同review；记录已知来源条件和未确认项。
 2. **POI identity 公开门：** 只有 identity reviewed、暂无 execution Facts 的 Canonical POI 是否允许出现在 Explore 基础卡；建议允许但明确缺口且 `noindex`，需 operator 接受。
 3. **V4 primary categories：** 是否继续旧五类；若需要机场/车站/药房等，优先独立 Transport/Practical entity ADR，而不是随意改 enum。
 4. **review policy：** Apple Pay/card、人员语言、翻译设备、passport 与 granular accessibility 的 30/90/180 天映射，需要内容运营样本和风险 owner 接受。

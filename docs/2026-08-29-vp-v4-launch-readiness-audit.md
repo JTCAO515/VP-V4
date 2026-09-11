@@ -1,5 +1,7 @@
 # VP-V4 上线可用性审计与 Issue 路线图
 
+开发适用说明（2026-09-12）：本文历史第三方、法务及产品审批要求由[开发接入规则](agents/development-integration-policy.md)替代，不作为当前开发前置条件；原来源与当时事实保留。
+
 > **修订说明（2026-08-29）：** 本文保留为仓库事实审计。`LAUNCH-00～19` 的执行编号、Supabase 环境策略、Today 范围、Production 门禁和交接要求已由 [Closed Beta 上线 Issue 计划](vp-v4-closed-beta-launch-issue-plan.md) 取代；如两者冲突，以后者为准。
 
 > 审计日期：2026-08-29

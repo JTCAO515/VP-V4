@@ -1,5 +1,7 @@
 # VisePanda Draft Knowledge Base
 
+2026-09-12开发修订：本文涉及供应商、法务或产品许可的历史前置条件已由[开发接入规则](../agents/development-integration-policy.md)取消；技术实现与实际验收继续按当前任务推进。
+
 - Version: `draft-v0.1`
 - Date: 2026-08-24
 - Status: **research workbench only**

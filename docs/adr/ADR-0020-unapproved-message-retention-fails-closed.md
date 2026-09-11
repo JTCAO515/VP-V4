@@ -1,5 +1,7 @@
 # ADR-0020: Unapproved message retention fails closed
 
+2026-09-12开发修订：本文涉及供应商、法务或产品许可的历史前置条件已由[开发接入规则](../agents/development-integration-policy.md)取消；技术实现与实际验收继续按当前任务推进。
+
 Status: proposed on 2026-08-30. This ADR records an engineering boundary; it does not approve a retention duration, region, provider, or public privacy statement.
 
 ## Context
@@ -20,7 +22,7 @@ The retention decision remains an operator-owned action in `docs/operator-action
 
 Retry handling may compare an in-process request digest, but that digest is not a telemetry or persistence field. The existing Turn idempotency registry can reuse a Turn without putting the message text in Turn events.
 
-Before durable content storage is enabled, the operator must approve retention, deletion, backup, region, provider terms, and user-facing disclosure through the LAUNCH-15 decision path. A later ADR and migration must supply owner RLS, export/delete coverage, expiry behavior, and recovery evidence.
+Current development uses the later VPJ-03 retention decision and the 2026-09-12 integration policy; the agent implements retention, deletion, backup, provider configuration and user disclosure without further supplier/legal/product approval. A later ADR and migration must supply owner RLS, export/delete coverage, expiry behavior, and recovery evidence.
 
 ## Rollback
 

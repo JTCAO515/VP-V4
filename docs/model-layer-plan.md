@@ -1,5 +1,7 @@
 # VisePanda V4 模型层、Chatbot 与 Trip Canvas 最终研究及开发规划
 
+开发适用说明（2026-09-12）：本文历史第三方、法务及产品审批要求由[开发接入规则](agents/development-integration-policy.md)替代，不作为当前开发前置条件；原来源与当时事实保留。
+
 > 历史方案／2026-09-05 起退出当前执行入口。产品、分期、价格及任务队列以 [VPJ 总体规划](VISEPANDA-MASTER-PLAN-2026-09-05.md) 和 [VPJ Program](program/2026-09-05/README.md) 为准。下文保留历史证据；有效安全/数据合同继续沿对应ADR适用，不因方案归档而作废。
 
 - 文档版本：v2.2（第五轮 lifecycle/region/realtime/contract 修订）
@@ -931,7 +933,7 @@ Qwen 的 key、endpoint、价格和免费额度与地域相关。DeepSeek/Kimi/G
 | Provider | 当前一手资料能确认什么 | 首发处置 |
 | --- | --- | --- |
 | Alibaba Cloud Model Studio | 地域决定 endpoint/静态数据位置，部署范围决定推理边界；国际隐私说明不把客户数据用于模型训练 | 国际用户优先评估新加坡/global deployment，但仍需核对日志、删除与合同；同一会话不得静默跨地域 |
-| DeepSeek | 隐私政策覆盖 API，个人信息直接在中国境内处理/存储；输入输出在特定设置下可能用于改进服务 | 未书面确认 API/企业 opt-out 前，不发送护照、支付、精确轨迹、医疗原文或 raw media |
+| DeepSeek | 隐私政策覆盖 API，个人信息直接在中国境内处理/存储；输入输出在特定设置下可能用于改进服务 | 开发不等待API/企业opt-out书面确认；护照、支付、精确轨迹、医疗原文或raw media按实际用户同意和字段范围处理，秘密不进入模型 |
 | Kimi | 国内开放平台协议与普通隐私政策、国际隐私政策在业务数据/模型优化口径上需要结合账户与合同解释 | 只做非敏感文本 eval；真实图片/语音前取得适用企业条款或 DPA |
 | Zhipu | 用户协议声明上传数据归用户所有且不作未授权使用/披露，但公开页不足以冻结留存、删除与子处理者 | eval-only；真实数据前补充控制台/合同证据 |
 

@@ -8,6 +8,6 @@
 - [VPJ-07执行接口](vpj-07.md)：只对新policy同意后的新文本记录执行，不启用Trip/偏好/材料/训练/fallback。
 - [验证](../../artifacts/VPJ-03/verification.md)与[未验项](../../artifacts/VPJ-03/unrun.md)。
 
-本文不新增运行协议或授权。实际账号、地区、留存/备份、notice与相关资格完成后，按获准环境安装不可变policy；
-不能将文档、合成C0或控制HTTP证据替代真实C2许可。
+按[开发接入规则](../agents/development-integration-policy.md)，agent基于现有账号/API和实际配置安装版本化开发policy，供应商未披露字段如实记录；不等待工单、法务或产品许可。
+保留用户同意、服务端权限与实际C2运行验证，文档或合成C0结果不替代真实链路验收。
 回滚本次文档PR即可恢复前一材料版本；不删除既有证据，不更改已应用迁移，不恢复撤回/隐藏数据。

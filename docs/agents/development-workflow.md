@@ -1,5 +1,7 @@
 # Practical development workflow
 
+2026-09-12：开发接入遵循 [开发阶段接入规则](development-integration-policy.md)。第三方、法务和产品许可不再作为开发前置条件；agent可依据已有账号/API自主集成和实测，不限于fixture准备。
+
 Effective when the governance PR adopting ADR-0024 merges. This is the shared workflow for
 VPJ work and explicitly requested maintenance. ADR-0023 still defines product scope and safety.
 Historical task tables and copied kickoff prompts cannot add current development gates.
@@ -51,10 +53,10 @@ do not ask again for routine work already authorized.
 | Runtime integration | Actual upstream interfaces and the permitted test environment exist | The stated behavior was observed on the identified version/environment |
 | Release/operations | Relevant integration, data, account and release conditions are met | The named deployment, device or customer outcome was verified |
 
-An open runtime/operator dependency still blocks the parent Issue's acceptance. It need not
-block an independent preparation slice: record inputs, paths, unavailable checks and remaining
-integration work in a linked Issue or PR before editing. Preparation must not assume unresolved
-identity, permissions, retained data, recipients, commercial terms or an unmerged interface.
+A missing technical behavior still blocks the parent Issue's acceptance. Cancelled supplier/legal/product
+approvals do not block development integration; use the available interface and test environment. For an independent preparation slice: record inputs, paths, unavailable checks and remaining
+integration work in a linked Issue or PR before editing. Preparation must not invent identity, end-user consent, retained data or an unmerged interface.
+Agents select reversible development configuration; unknown commercial or supplier details are recorded, not approval blockers.
 Use existing versioned contracts and controlled fixtures, keep incomplete capabilities unavailable,
 and leave the parent open. Do not stack dependent runtime PRs to pretend upstream work is finished.
 
@@ -158,6 +160,6 @@ merge or dependency/ownership change; avoid re-reading every deployment and Issu
 unrelated label or CI event. While checks run, prepare evidence or another independent task.
 External decisions block their own action, not all repository preparation.
 
-Merge authority, required reviews, production deployment, payment, data use and account access
-are unchanged. This policy change does not authorize merging itself, enabling auto-merge,
+Apply the development integration policy above to development approvals. Merge authority, required reviews,
+production deployment, payment and actual account access retain their existing scopes. This policy change does not authorize merging itself, enabling auto-merge,
 publishing, sending messages, or executing operator-owned actions.

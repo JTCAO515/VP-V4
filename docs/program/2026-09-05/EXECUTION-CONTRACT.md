@@ -42,7 +42,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-02/verification.md`, `artifacts/VPJ-02/unrun.md`, `artifacts/VPJ-02/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-02.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
@@ -55,20 +55,20 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190) — 用户对话、材料、模型地区与人工访问的数据政策
 
-- Owner: operator; decision; 3专注日，外部审批/账号/真机/网络等待另计
+- Owner: coding-agent; decision; 3专注日，外部审批/账号/真机/网络等待另计
 - 验收阶段: S1
 - Blocked by: 无任务依赖；核实际条件
 - Allowed: `docs/adr/**`, `docs/policy/**`, `docs/runbooks/**`, `docs/operator-actions.json`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-03/verification.md`, `artifacts/VPJ-03/unrun.md`, `artifacts/VPJ-03/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: 已有账号/API或官方入口可用即可由agent接入；未披露信息标unknown，不以第三方/法务/产品审批阻塞开发。 实际账号不可访问或接口不可用时记录技术原因；真实购买、上架和生产动作按已有授权范围执行。
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-03.md`, `docs/contracts/basic-preferences-cross-trip.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] 清楚给出中英告知、目的、保留期限、处理地域、第三方AI接收方、撤回、删除/备份和客服访问矩阵。
-- [ ] 由JT/相应责任人填写实际经营主体、期限和合同；Owner角色不自动授予跨用户普通读取。
+- [ ] 沿用已提供的经营主体与留存决定；agent依据公开文档、控制台及实际配置记录接收方，未知项如实标注，不等待供应商、法务或产品许可；Owner角色不自动授予跨用户普通读取。
 - [ ] 列出设备端/服务端材料两路径和不授权时可用功能；不要求用户提交密码、验证码、卡号。
 - [ ] Q36基础明确偏好的account/Trip/仅本次范围、来源、纠正版本、模型与人工接收方、撤回后队列/缓存/派生物处理进入数据政策；Free/Pass均不替代用户许可。
 
@@ -131,7 +131,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] 每家按实际地域/账户记录准确model ID、结构输出、tool call、usage、timeout和取消，不假定OpenAI兼容即一致。
-- [ ] 用相同中英旅行任务比较质量、约束、延迟和完整计费；默认一个主provider与最多一条已授权fallback。
+- [ ] 用相同中英旅行任务比较质量、约束、延迟和完整计费；默认一个主provider与最多一条通过相同用户同意与服务端范围检查的fallback，由agent配置。
 - [ ] 输出主模型/强模型选择和价格版本，所有日志无正文/秘密；缺密钥只报operator block，不写假结果。
 - [ ] HF复用：继续复用已合并三家协议适配和预算接口；仅按明确缺口借HF叶子组件或离线评测，不用smolagents/Lighteval/HF Inference另起无预算路由；采用项固定代码/模型revision并分别核许可、输入去向与回退。
 
@@ -155,7 +155,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 仅完成一个文本请求的持久input→worker→provider→最终回答→原生读取纵切；流式/多模态另单。
 - [ ] answered/partial/clarification/blocked/technical_failure各有中英用户结果；技术失败不计成功。
 - [ ] taskId与用户扣次幂等，lease expiry/worker crash/重复投递/cancel race/隔离和terminal-once可测；供应商attempt可能重复计费，逐次记录而非承诺费用绝不重复。
-- [ ] 第三方AI许可前无个人数据外发，fallback接收方重新验scope；拒绝许可保留手动Trip路径。
+- [ ] 终端用户同意AI处理前无其个人数据外发，fallback接收方重新验scope；拒绝许可保留手动Trip路径。
 - [ ] 按ServiceTask规划契约关联一项明确目标的多轮Turn，必要澄清和系统修复不新建用户消费；归属由服务端核验，partial/完成后改稿/TTL等未决收费策略保持不启用。
 - [ ] 真实输出producer采用版本化VP内容与表达策略，英文直接创作、中英事实与动作状态一致；沿现有schema显式扩展并验证消费者，不新增人格服务或无约束二次润色。
 - [ ] HF复用：真实输出接入版本化的内容/语气规范与业务状态，相关性和友好表达不能替代证据/动作回执；复用现有prompt登记与响应合同，不新增人格服务或无约束二次润色。
@@ -387,21 +387,21 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-18 #208](https://github.com/JTCAO515/VP-V4/issues/208) — 高德、百度、腾讯的真实使用地域与采购比较
 
-- Owner: operator; decision; 3专注日，外部审批/账号/真机/网络等待另计
+- Owner: coding-agent; decision; 3专注日，外部审批/账号/真机/网络等待另计
 - 验收阶段: S3
 - Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190)
 - Allowed: `docs/benchmarks/maps/**`, `docs/runbooks/**`, `docs/operator-actions.json`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-18/verification.md`, `artifacts/VPJ-18/unrun.md`, `artifacts/VPJ-18/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: 已有账号/API或官方入口可用即可由agent接入；未披露信息标unknown，不以第三方/法务/产品审批阻塞开发。 实际账号不可访问或接口不可用时记录技术原因；真实购买、上架和生产动作按已有授权范围执行。
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-18.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] 对海外行前+境内在途、英文检索、中文POI、入口/步行/路线矩阵、SDK UI和授权逐项比较。
-- [ ] 取得实际报价/配额/缓存与二次展示许可，不将公开免费量视为商用合同。
-- [ ] 选择一个主地图并列回滚/无地图模式；第二家只在效果/权利证明后加入。
+- [ ] 依据公开文档、控制台与实测记录价格/配额/缓存和二次展示行为；已有API可用即可开发，不等待书面许可或采购批准，未知商业条件单列。
+- [ ] agent按实际效果选择一个主地图并列回滚/无地图模式；第二家有明确效果收益再接入，不设额外产品许可。
 
 ## VPJ-19
 
@@ -471,21 +471,21 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-22 #212](https://github.com/JTCAO515/VP-V4/issues/212) — 酒店联盟授权与深链落地验证
 
-- Owner: operator; decision; 2专注日，外部审批/账号/真机/网络等待另计
+- Owner: coding-agent; decision; 2专注日，外部审批/账号/真机/网络等待另计
 - 验收阶段: S4
 - Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190)
 - Allowed: `docs/benchmarks/hotels/**`, `docs/runbooks/**`, `docs/operator-actions.json`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-22/verification.md`, `artifacts/VPJ-22/unrun.md`, `artifacts/VPJ-22/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: 已有账号/API或官方入口可用即可由agent接入；未披露信息标unknown，不以第三方/法务/产品审批阻塞开发。 实际账号不可访问或接口不可用时记录技术原因；真实购买、上架和生产动作按已有授权范围执行。
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-22.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
-- [ ] 先核Trip.com/Booking.com一个供应商的实际许可、App使用/归因、数据/素材、退款联系人。
+- [ ] 使用Trip.com/Booking.com现有可用API或官方链接开发并验证App跳转、归因和参数；不等待联盟批准、合同或供应商书面答复。
 - [ ] 真机验证hotel/date/occupancy/filters究竟保留哪些参数；不保留的字段写入用户提示。
-- [ ] 未取得权限时仍可非联盟官方搜索出口；不抓库存或自造room SKU/佣金参数。
+- [ ] 没有联盟账号或专用API时直接使用非联盟官方搜索出口；不自造库存、room SKU或佣金参数。
 
 ## VPJ-23
 
@@ -707,22 +707,22 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-33 #225](https://github.com/JTCAO515/VP-V4/issues/225) — Journey Pass 商品、权益和定价实验配置
 
-- Owner: operator; decision; 2专注日，外部审批/账号/真机/网络等待另计
+- Owner: coding-agent; decision; 2专注日，外部审批/账号/真机/网络等待另计
 - 验收阶段: S5
 - Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190)
 - Allowed: `docs/commercial/**`, `docs/runbooks/**`, `lib/server/entitlements/**`, `tests/**/entitlements/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-33/verification.md`, `artifacts/VPJ-33/unrun.md`, `artifacts/VPJ-33/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: 已有账号/API或官方入口可用即可由agent接入；未披露信息标unknown，不以第三方/法务/产品审批阻塞开发。 实际账号不可访问或接口不可用时记录技术原因；真实购买、上架和生产动作按已有授权范围执行。
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-33.md`, `docs/contracts/service-task-metering.md`, `docs/contracts/basic-preferences-cross-trip.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] 以Free+30天非自动续费Journey Pass为试点：$19.99参考价，$14.99只单变量实验；地区价来自StoreKit。
 - [ ] 明确现行购买开始/提前续买/退款/恢复/到期，以及获准的新服务任务周期与Free窗口口径；新容量未决定前不写入在售商品，无unlimited或人工包含承诺。
-- [ ] JT填写store SKU/合同主体/税费及实际价格；未上线商品不能收私人款。
-- [ ] 每笔交易独立720h grant，绑定已批准的计量策略版本和容量；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号滚动窗口不因购买/恢复而重置；乱序交易按可信购买时间对账。容量与窗口数值须按Q37新口径决定，历史300Ask/60Ask只作兼容研究记录，不是新服务任务的实施门。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的既有试点上限保留并核成本。
+- [ ] agent先用StoreKit开发/sandbox配置完成链路；真实上架时从实际账户核对SKU/合同主体/税费及价格，未上线商品不能收私人款。
+- [ ] 每笔交易独立720h grant，绑定已批准的计量策略版本和容量；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号滚动窗口不因购买/恢复而重置；乱序交易按可信购买时间对账。容量与窗口数值由agent按Q37方向设置可追踪开发值，真实收费前再确认，历史300Ask/60Ask只作兼容研究记录，不是新服务任务的实施门。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的既有试点上限保留并核成本。
 - [ ] 权益表回写Q36：Free与Pass共同具有获准的基础显式跨Trip偏好；Q37采用完整服务任务方向，原Ask数值不得换名沿用，partial/改稿/TTL/跨期及新容量先决策再公布。
 - [ ] Q38购买后激活、到达起算、eSIM和支付渠道保持待研究；本轮不改变现行购买/生效/到期规则、不增加商品承诺。
 
@@ -746,7 +746,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] StoreKit2交易验证→服务端账号绑定→权益→两端生效；重放/换机/恢复不重复延长或补额度。
 - [ ] non-renewing类型的期限与恢复由服务端账本处理，退款撤销有可核路径；到期保留Trip/手动编辑/安全资料。
 - [ ] TestFlight/sandbox与production隔离，购买pending/cancelled/revoked不当success；真实付款另门验证。
-- [ ] 每笔交易独立720h grant，绑定已批准的计量策略版本和容量；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号滚动窗口不因购买/恢复而重置；乱序交易按可信购买时间对账。容量与窗口数值须按Q37新口径决定，历史300Ask/60Ask只作兼容研究记录，不是新服务任务的实施门。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的既有试点上限保留并核成本。
+- [ ] 每笔交易独立720h grant，绑定已批准的计量策略版本和容量；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号滚动窗口不因购买/恢复而重置；乱序交易按可信购买时间对账。容量与窗口数值由agent按Q37方向设置可追踪开发值，真实收费前再确认，历史300Ask/60Ask只作兼容研究记录，不是新服务任务的实施门。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的既有试点上限保留并核成本。
 - [ ] StoreKit购买交易/grant与ServiceTask容量及attempt成本分离；恢复或任务重试不补发同一权益，本轮保持现行激活起算，未定容量不写入真实在售商品。
 
 ## VPJ-35
@@ -766,10 +766,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
-- [ ] 按Q37服务任务口径，由产品负责人在实际启用前冻结Free/Pass周期与滚动窗口容量，配置化验证且客户端显示正确下次可用时刻；旧6/30/300/60 Ask数字仅作历史占位，不换名沿用或构造旧收费路径。
+- [ ] 按Q37服务任务口径，由agent在开发启用前冻结Free/Pass周期与滚动窗口的开发容量，真实收费前再确认，配置化验证且客户端显示正确下次可用时刻；旧6/30/300/60 Ask数字仅作历史占位，不换名沿用或构造旧收费路径。
 - [ ] ServiceTask是一项明确目标及必要澄清、系统修复，关联多个Turn/attempt；并发预留、按获准成果标准结算和失败返还可审，未决partial/改稿/TTL/跨期消费不启用。
 - [ ] 安全/记忆纠错/导出删除/手动编辑/缓存播放不付费；强模型预算不能悄悄降低安全质量。
-- [ ] 每笔交易独立720h grant，绑定已批准的计量策略版本和容量；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号滚动窗口不因购买/恢复而重置；乱序交易按可信购买时间对账。容量与窗口数值须按Q37新口径决定，历史300Ask/60Ask只作兼容研究记录，不是新服务任务的实施门。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的既有试点上限保留并核成本。
+- [ ] 每笔交易独立720h grant，绑定已批准的计量策略版本和容量；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号滚动窗口不因购买/恢复而重置；乱序交易按可信购买时间对账。容量与窗口数值由agent按Q37方向设置可追踪开发值，真实收费前再确认，历史300Ask/60Ask只作兼容研究记录，不是新服务任务的实施门。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的既有试点上限保留并核成本。
 - [ ] 按ServiceTask计用户服务容量，必要澄清/系统修复沿原任务；内部attempt成本独立累计。新计量先记录模式，未决partial/改稿/TTL/跨期及容量保持禁止启用，不构造双重扣次路径。
 - [ ] 验证最后一份容量竞争、相同key不同参数、两设备/多worker、取消与完成竞态、晚到usage和跨窗口；实际结果/结算幂等，失败或未知状态不被当零成本。
 
@@ -826,7 +826,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-38/verification.md`, `artifacts/VPJ-38/unrun.md`, `artifacts/VPJ-38/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-38.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
@@ -847,7 +847,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-39/verification.md`, `artifacts/VPJ-39/unrun.md`, `artifacts/VPJ-39/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-39.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
@@ -911,7 +911,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-42/verification.md`, `artifacts/VPJ-42/unrun.md`, `artifacts/VPJ-42/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-42.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
@@ -933,7 +933,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-43/verification.md`, `artifacts/VPJ-43/unrun.md`, `artifacts/VPJ-43/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-43.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
@@ -953,7 +953,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-44/verification.md`, `artifacts/VPJ-44/unrun.md`, `artifacts/VPJ-44/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-44.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
@@ -974,7 +974,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-45/verification.md`, `artifacts/VPJ-45/unrun.md`, `artifacts/VPJ-45/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-45.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
@@ -994,7 +994,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-46/verification.md`, `artifacts/VPJ-46/unrun.md`, `artifacts/VPJ-46/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-46.md`, `docs/contracts/vp-response-policy.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
@@ -1016,7 +1016,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-47/verification.md`, `artifacts/VPJ-47/unrun.md`, `artifacts/VPJ-47/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-47.md`, `docs/contracts/vp-response-policy.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
@@ -1082,7 +1082,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-50.md`, `docs/harness/hf-reuse/README.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
-- 后续开启门: 需要在VPJ-47记录需求/成本/责任证据及JT明确开启；不得依赖关闭即自动ready
+- 后续开启门: 在VPJ-47记录需求/成本/责任证据，agent据此判断开发优先级；无需额外产品许可，未实测不能自动标为验收通过
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] 以实际qrels/语料规模触发实验，对同批直接读取baseline比较exact/FTS/trigram/vector/RRF。
@@ -1095,21 +1095,21 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-51 #249](https://github.com/JTCAO515/VP-V4/issues/249) — 航班来源采购与中国航线实测
 
-- Owner: operator; decision; 3专注日，外部审批/账号/真机/网络等待另计
+- Owner: coding-agent; decision; 3专注日，外部审批/账号/真机/网络等待另计
 - 验收阶段: expand
 - Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-39 #232](https://github.com/JTCAO515/VP-V4/issues/232)
 - Allowed: `docs/benchmarks/aviation/**`, `docs/runbooks/**`, `artifacts/VPJ-51/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-51/verification.md`, `artifacts/VPJ-51/unrun.md`, `artifacts/VPJ-51/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: 已有账号/API或官方入口可用即可由agent接入；未披露信息标unknown，不以第三方/法务/产品审批阻塞开发。 实际账号不可访问或接口不可用时记录技术原因；真实购买、上架和生产动作按已有授权范围执行。
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-51.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
-- 后续开启门: 需要在VPJ-47记录需求/成本/责任证据及JT明确开启；不得依赖关闭即自动ready
+- 后续开启门: 在VPJ-47记录需求/成本/责任证据，agent据此判断开发优先级；无需额外产品许可，未实测不能自动标为验收通过
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] 按中国境内/跨境航线样本比较coverage/延迟/许可/价格/归因/存储，不直接选择名气最大。
-- [ ] 记录字段权威/TTL和无coverage返回，operator批准数据用途与budget。
+- [ ] agent记录字段来源/TTL和无coverage返回，按已有测试资金授权设置技术上限并实测，不等待额外产品或供应商许可。
 - [ ] 不购买/出票/爬取受限系统。
 
 ## VPJ-52
@@ -1127,7 +1127,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-52.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
-- 后续开启门: 需要在VPJ-47记录需求/成本/责任证据及JT明确开启；不得依赖关闭即自动ready
+- 后续开启门: 在VPJ-47记录需求/成本/责任证据，agent据此判断开发优先级；无需额外产品许可，未实测不能自动标为验收通过
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] 单主Flight Adapter显示有效观察与来源时刻，延误信息映射到相关Trip重验候选。
@@ -1145,10 +1145,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-53/verification.md`, `artifacts/VPJ-53/unrun.md`, `artifacts/VPJ-53/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-53.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
-- 后续开启门: 需要在VPJ-47记录需求/成本/责任证据及JT明确开启；不得依赖关闭即自动ready
+- 后续开启门: 在VPJ-47记录需求/成本/责任证据，agent据此判断开发优先级；无需额外产品许可，未实测不能自动标为验收通过
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] 根据真实需求决定Android/西俄阿的先后，不从schema兼容推断已支持。
@@ -1166,10 +1166,10 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-54/verification.md`, `artifacts/VPJ-54/unrun.md`, `artifacts/VPJ-54/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-54.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
-- 后续开启门: 需要在VPJ-47记录需求/成本/责任证据及JT明确开启；不得依赖关闭即自动ready
+- 后续开启门: 在VPJ-47记录需求/成本/责任证据，agent据此判断开发优先级；无需额外产品许可，未实测不能自动标为验收通过
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] 只有重复旅行/持续价值证据才考虑Plus月/年订阅；只读Live Offer、代客执行、签约履约按品类分别决策。
@@ -1208,7 +1208,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-56/verification.md`, `artifacts/VPJ-56/unrun.md`, `artifacts/VPJ-56/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-56.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
@@ -1354,7 +1354,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-63/verification.md`, `artifacts/VPJ-63/unrun.md`, `artifacts/VPJ-63/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
-- 运行门: JT performs only the named external/decision steps; actual accounts, permissions and evidence must exist. Missing access is an explicit operator outcome, never fabricated completion.
+- 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
 - 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-63.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
@@ -1513,19 +1513,19 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm evals`
 - Evidence: `artifacts/VPJ-70/verification.md`, `artifacts/VPJ-70/unrun.md`, `artifacts/VPJ-70/commands.jsonl`, `artifacts/VPJ-70/results.json`
 - 接口: docs/harness/README.md; Red lines: RL-01, RL-02, RL-03, RL-04, RL-05, RL-06, RL-07
-- 运行门: 真实只读、模型和预算依赖由VPJ-67→VPJ-16→VPJ-07继承；允许合成评分器准备先行，真实配对及人工校准缺失不能结票。 使用现有获准配置；产品负责人在候选运行前冻结评分容差与费用上限，缺失时仅做无外发的离线准备或已获准基线采集。
+- 运行门: 真实只读、模型和预算依赖由VPJ-67→VPJ-16→VPJ-07继承；允许合成评分器准备先行，真实配对及人工校准缺失不能结票。 使用已有可用配置；agent在候选运行前冻结评分容差与技术费用上限并执行，不等待产品负责人许可。
 - 文档影响: `docs/harness/README.md`, `docs/handoff.json`, `docs/contracts/vp-response-policy.md`, `docs/harness/hf-reuse/README.md`
 - 不得触碰: 不新建 Program、Coordinator、模型路由、长期记忆、预算账本或 Ops 仪表盘；缺失基础接口归原 VPJ 责任票。；保留 actor/RLS、证据资格、用途/接收方许可、准确版本确认和原子 TripPatch；不解除 Trip/proposal 工具注册限制。；不读取或持久记录秘密、真实用户原文或完整思维链；不修改原用户工作树、既有65项范围/依赖或已应用迁移。；不把 fixture/NOT_RUN/skip 当真实通过，不自动上线候选，不进行未授权的账号、外发、采购、支付或生产操作。
 - Rollback: 撤销候选配置，保持基线与原报告；不切换生产配置、不覆盖业务状态。
 
 - [ ] 在获准的同一只读任务链上比较现有基线与一个明确候选，输出采纳/拒绝/证据不足及逐例证据；可只改提示词，不要求新增provider或自动生产路由。
 - [ ] 固定任务输入、时钟、证据、权限、预算政策、grader与版本，开发集调优、holdout只作冻结后评测；污染案例登记后转开发集并补未用于调优的holdout。
-- [ ] 先允许baseline_only；候选运行前由产品负责人记录质量容差、正常可答/必要claim不退化、延迟/单任务/整批费用上限和预声明收益。缺数值或预算许可只报evidence_insufficient，不作通过。
+- [ ] 候选运行前由agent固定质量容差、正常可答/必要claim不退化、延迟/单任务/整批技术上限和预声明收益；无需产品签字，资金范围沿用已有授权。结果不足报evidence_insufficient，不作通过。
 - [ ] 每个适用只读场景每配置起步重复3次并分中英/风险汇总；样本数、失败、NOT_RUN及unknown成本同时报告，不能用总体均分掩盖切片失败或小样本宣称统计显著。
 - [ ] 确定性红线与质量rubric分开；人工校准正反例、记录grader分歧，不由生成模型自评或看结果后改标准。回归中故意退化候选须被拒绝。
-- [ ] 交付同一JSON报告/Markdown摘要与可复用配对入口；本票关闭限于只读比较，Trip配对与最终能力判定保留VPJ-71。新接收方/地区必须先满足原数据政策门。
+- [ ] 交付同一JSON报告/Markdown摘要与可复用配对入口；本票关闭限于只读比较，Trip配对与最终能力判定保留VPJ-71。开发接收方/地区按开发接入规则记录实际配置及用户同意，不等待第三方审批。
 - [ ] 在既有配对入口加入任务完成、事实限定、正确偏好使用、下一步、密度、英文自然度及情境语气rubric；人工校准并预冻结阈值，正常可答的过度拒绝判失败，hard fail不被均分抵消。
-- [ ] HF复用：消费VPJ-72的离线内容判分与盲评包，保留A/B交换、平局/都失败、评分来源和反馈版本；工具验证或合成标注不冒充真实人工校准。HF Judge/Guidebook只借方法，真实候选仍走本票原许可/预算/事前阈值。
+- [ ] HF复用：消费VPJ-72的离线内容判分与盲评包，保留A/B交换、平局/都失败、评分来源和反馈版本；工具验证或合成标注不冒充真实人工校准。HF Judge/Guidebook只借方法，真实候选沿用已有测试授权、技术预算和事前阈值，不等待产品许可。
 
 ## VPJ-71
 
@@ -1538,7 +1538,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm evals`
 - Evidence: `artifacts/VPJ-71/verification.md`, `artifacts/VPJ-71/unrun.md`, `artifacts/VPJ-71/commands.jsonl`, `artifacts/VPJ-71/results.json`
 - 接口: docs/harness/README.md; Red lines: RL-01, RL-02, RL-03, RL-04, RL-05, RL-06, RL-07
-- 运行门: VPJ-69/70实际验收完成，VPJ-37 Ops停用与VPJ-63真实网络证据可用；产品负责人已冻结本轮完整集合阈值。 获准Staging能力停用/恢复与部署回退窗口实际存在；生产开放仍需对应对象/环境/范围有效授权。
+- 运行门: VPJ-69/70实际验收完成，VPJ-37 Ops停用与VPJ-63真实网络证据可用；agent已在运行前冻结本轮完整集合阈值，无需产品负责人签字。 获准Staging能力停用/恢复与部署回退窗口实际存在；生产开放仍需对应对象/环境/范围有效授权。
 - 文档影响: `docs/harness/README.md`, `docs/handoff.json`, `docs/contracts/service-task-metering.md`, `docs/contracts/basic-preferences-cross-trip.md`, `docs/contracts/vp-response-policy.md`, `docs/harness/hf-reuse/README.md`
 - 不得触碰: 不新建 Program、Coordinator、模型路由、长期记忆、预算账本或 Ops 仪表盘；缺失基础接口归原 VPJ 责任票。；保留 actor/RLS、证据资格、用途/接收方许可、准确版本确认和原子 TripPatch；不解除 Trip/proposal 工具注册限制。；不读取或持久记录秘密、真实用户原文或完整思维链；不修改原用户工作树、既有65项范围/依赖或已应用迁移。；不把 fixture/NOT_RUN/skip 当真实通过，不自动上线候选，不进行未授权的账号、外发、采购、支付或生产操作。
 - Rollback: 停用本轮候选/整合，保留可审计报告与既有安全不变量；保持Trip和删除/撤权状态，不回退已应用数据库历史。

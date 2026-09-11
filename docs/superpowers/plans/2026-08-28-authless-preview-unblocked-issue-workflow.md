@@ -1,5 +1,7 @@
 # Authless Preview and Unblocked Issue Workflow Implementation Plan
 
+2026-09-12开发修订：本文涉及供应商、法务或产品许可的历史前置条件已由[开发接入规则](../../agents/development-integration-policy.md)取消；技术实现与实际验收继续按当前任务推进。
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Remove Supabase Magic Link acquisition while preserving fail-closed user-data APIs, then make all defined Issues locally schedulable without dependency-blocked execution.
