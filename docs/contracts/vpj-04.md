@@ -1,6 +1,6 @@
 # VPJ-04 — native session v2
 
-Related to #191. The disposable-local identity path has existing runtime evidence. The explicitly configured Staging Preview path below is implementation pending remote activation/acceptance. Production activation, C2/model calls and push registration remain unavailable. Native Trip uses the same identity under VPJ-05.
+Related to #191. The disposable-local identity path has existing runtime evidence. The explicitly configured Staging Preview path below has scoped real login/profile/refresh, two-Simulator replacement, Keychain and Web-coexistence evidence in the [2026-09-11 execution record](../../artifacts/VPJ-04/staging-native/remote-20260911/verification.md). Full #191 acceptance remains open. Production activation, C2/model calls and push registration remain unavailable. Native Trip uses the same identity under VPJ-05.
 
 ## Local activation and credentials
 
@@ -87,9 +87,9 @@ The read predicate is read-only because PostgREST GET transactions cannot acquir
 
 ## Native storage and boundaries
 
-Keychain service is dedicated to this local v2 integration and partitioned by endpoint and subject, with `WhenUnlockedThisDeviceOnly` accessibility. UserDefaults stores only the active subject pointer. Profile data exists only in the current account's memory and is cleared on account change, denial or logout. Network errors hide stale profile data while retaining the pending credential for retry. Async session operations serialize through the MainActor coordinator; scene activation revalidates the account. Expired logout first refreshes the same active epoch before revoking it.
+Keychain service is dedicated to this v2 integration and partitioned by endpoint and subject, with `WhenUnlockedThisDeviceOnly` accessibility. UserDefaults stores only the active subject pointer. Profile data exists only in the current account's memory and is cleared on account change, denial or logout. Network errors hide stale profile data while retaining the pending credential for retry. Async session operations serialize through the MainActor coordinator; scene activation revalidates the account. Expired logout first refreshes the same active epoch before revoking it.
 
-Unsigned simulator builds can compile but do not establish Keychain acceptance. Local runtime verification uses only ad-hoc simulator signing; no real signing identity or provisioning profile is required. Physical-device/VoiceOver, push-token binding and remote activation remain separate unrun acceptance.
+Unsigned simulator builds can compile but do not establish Keychain acceptance. Local runtime verification uses only ad-hoc simulator signing; no real signing identity or provisioning profile is required. Physical-device/VoiceOver and push-token binding remain separate unrun acceptance; the scoped remote Simulator result is linked above.
 
 ## Verification and rollback
 

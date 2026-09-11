@@ -35,7 +35,7 @@ Hard-lock and external-order states remain **unknown** in this slice; database t
 
 ## Deployment compatibility
 
-The Web data adapter selects the v2 database protocol only when `VISEPANDA_TRIP_PROTOCOL_V2=true`, or when the explicitly enabled native local Trip flag also points to loopback. Otherwise it keeps the existing legacy RPC/deny/reject contract and does not query the new receipt column or v2 read/reject RPCs. That branch is not v2 safety acceptance. Native `/api/trips/native/v2` has no legacy fallback and remains local-only.
+The Web data adapter selects the v2 database protocol only when `VISEPANDA_TRIP_PROTOCOL_V2=true`, or when the explicitly enabled native local Trip flag also points to loopback. Otherwise it keeps the existing legacy RPC/deny/reject contract and does not query the new receipt column or v2 read/reject RPCs. That branch is not v2 safety acceptance. Native `/api/trips/native/v2` has no legacy fallback; the explicit Staging exception below is the only remote activation path.
 
 Coordinate remote rollout separately: deploy compatible code with the default legacy protocol; obtain the named environment's migration authorization; apply and verify migration 28 with data preservation; then explicitly enable matching v2 callers. The upgraded database does not accept an arbitrary legacy digest even if a caller is misconfigured. Missing v2 proof support fails before v2 confirmation. This local result authorizes no remote migration or activation.
 
@@ -57,4 +57,4 @@ outages abort the scope and return503 rather than incorrectly clearing the sessi
 The existing64k UTF-16 body limit remains, with a192k UTF-8 preallocation ceiling. Explicit Auth
 rejection still returns401; an interrupted write is an unknown acknowledgement, never a rollback
 claim. No retry or replacement idempotency key is introduced. Proposal/digest/CAS/atomic Patch
-semantics and SQL remain unchanged. This increment is not remote acceptance; use the S1 runbook.
+semantics and SQL remain unchanged. Scoped real remote API, two-Simulator and reciprocal browser confirmation/reload results are recorded in the [2026-09-11 execution](../../artifacts/VPJ-04/staging-native/remote-20260911/verification.md). Full #192 acceptance and the listed UI/device/fault-injection gaps remain open.

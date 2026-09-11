@@ -6,9 +6,9 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S1 remote native identity/Trip implementation is prepared in PR324 (e104222, plist fix a0848e3), with real local Auth/RLS and same-Trip/browser verification. Remote Staging activation and user acceptance remain incomplete; no remote writes in this resumption.
+状态：S1 scoped Staging native identity/same-Trip execution passed on backend f5db769 + native c333d9b in PR324; two synthetic accounts/owned Trip and both Simulators cleaned. Full S1 acceptance remains open for recorded UI/device/fault gaps. S2 native Ask I/O fix PR325 is green with actual local integration proof.
 
-阶段：S1 integration: finalize exact-version checks and bounded Preview activation for native identity/same-Trip. S2 follows the verified chain; one main lane.
+阶段：S1 close remaining acceptance gaps; S2 remote Ask/worker/recipient readiness follows the verified same-Trip chain.
 
 ## 读取顺序
 
@@ -28,10 +28,11 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - 已有同对象、环境、范围的授权继续有效；共享交接记录不扩展到新的环境、数据接收方、资金或生产动作。具体未决操作查对应Issue与operator-actions，不重复索取已明确授予的授权。
 - JT于2026-09-11确认上海、北京、广州、重庆与入境/机场交通/支付/手机网络/地铁公交/出租车网约车/高铁/景点预约/酒店住宿/紧急求助十场景，并授权agent决定来源选择和事实冲突；不等于第三方素材或模型训练许可。首批研究见docs/knowledge-base/batches/2026-09-11-four-city/README.md。
 - JT随后明确：本轮完成后直接推GitHub main，不再新增审阅或验证，之后暂停开发。已完成的早期检查保留；未运行的业务验收不改写为PASS。
+- 2026-09-11 resumed: JT explicitly confirmed Preview native configuration/proof key, exact host WAF allowance and two synthetic-account/owned-Trip cleanup, then delegated development permission management. This supersedes the earlier pause for this scope; Production/real-user/provider/funds boundaries remain separate.
 
 ## 未决与运行证据
 
-- Staging actual history is33; the authorized maintenance/migration is no longer awaiting approval. Historical direct-host failure was not re-probed this round; deployed worker/native remote consumers and full business acceptance remain unrun. Further development is paused by JT, not automatically retried.
+- Staging33 is applied and scoped native identity/same-Trip consumers now pass. The approved Preview configuration remains available, with test accounts removed. Full S1 acceptance and real S2 provider/worker/knowledge chain are incomplete; earlier development pause is superseded by current resumed authorization.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel contracts, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 - 2026-09-11 live dependency recheck: #264←#263(CLOSED)+#206(OPEN). #206 inherits #195/#205: private local producer/text results do not supply published eligible knowledge, qualified real recipients or the actual native read-only task chain; #264 remains OPEN.
@@ -42,9 +43,9 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - Production/customer and complete native/Harness acceptance remain unrun. Scoped Staging and actual C0 model protocol/worker behavior are verified; supplier billing, semantic quality and real user data consumers remain separate.
 - Physical VoiceOver, signed Store and selected-object Ask sheet acceptance under #198/#233/#242 remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.
 - VPJ-66 offline preparation is merged and accepted; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.
-- VPJ-05 hard-lock protection is explicitly deferred by JT on 2026-09-11; the compatible DTO and external order status remain unknown. Native27/Trip28 have now been applied within33, but native remote consumers are not activated; local reciprocal consumers do not close#192 or grant real-user processing permission.
+- VPJ-05 hard-lock protection is explicitly deferred by JT on 2026-09-11; the compatible DTO and external order status remain unknown. Native27/Trip28 have now been applied within33, and scoped synthetic Staging reciprocal consumers now pass; full#192 and real-user processing remain separate.
 - VPJ-15/#205 real10–20 content selection, source rights, expert semantic review, publication, request-level eligibility and product read remain open. Migrations34/35 are local-only and outside the separate Staging26→33 package; no remote execution or real membership activation occurred.
-- 本轮按用户要求不追加两账号Web/API/browser验收或新独立审阅，不关闭#189/#191/#205或Harness父票。首批城市/场景已确认，研究候选不等于授权发布和request-eligible知识。
+- S1 remote run: physical/iOS17/VoiceOver/maximum text, natural token expiry, deliberate network-loss/unknown-ack UI and Swift Create-button remote cases remain unrun. Web locale switching retains old status text and defaults zh on reload. Full-page/desktop panel-clipped captures do not establish complete remote visual acceptance.
 
 ## 验证
 
@@ -76,10 +77,11 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - Private source/assertion producer PR319/a1990984b6449e7d86e1a29a06e912f57fe4c1ac: exact367921b47079a6357a819348fd035a0d569e6dd8 independent review0/0, Quality34535498536, Budget34535498513 and Vercel passed; merged tree matched and post-merge docs passed. Real local34→35/source/browser8/8 and original Ops8/8 passed with0skip. Source/locator/use remain unverified; candidates are private/unpublished/ineligible. #205 remains OPEN. See artifacts/VPJ-15/verification.md.
 - Native identity I/O PR320/74c7ed70ee050e36ec10f178d43b3bc90124b80f: exact31c72b7fb33765c1148df67fbea7ddfd71d8087d independent review0/0, Quality34535973071 and Vercel passed; merged treea1fb6976be32efe86bca9a931327326fa9e80fc8 and post-merge docs passed. Directed10/10, unit92/contract232, check22/sourceE2E40 passed; the final same-HEAD owned GoTrue/Next/PostgREST aggregate1/1 passed with0skip. Native request I/O is bounded; unavailable/unknown503 preserves the stored session/attempt, while explicit Auth/JWT denial retains401. The initial classification finding was fixed and independently rechecked. No Swift/remote profile or DB change; #191 remains OPEN. See artifacts/VPJ-04/native-io/verification.md.
 - 2026-09-11 authorized Staging execution: ACL18→15; exact27–33 native CLI exit0; history33 and all55 original-column record summaries preserved; fresh encrypted backup/isolated restore/cleanup passed. Before the later stop instruction,64 anonymous maintenance and42 existing automation probes were denied. Web v2 env true for Production/Preview. No new synthetic accounts/Trip were created; further Web/API/browser business acceptance NOT_RUN_USER_WAIVED. See artifacts/VPJ-02/staging33-execution/verification.md and final#189 operating comment.
+- 2026-09-11 real Staging S1: backend f5db769 + installed native c333d9b; remote Auth/ordinary RLS/CAS/replay/refusal and reciprocal same-Trip passed. Two iOS26.5 Simulators verify Keychain relaunch, refresh, B replacement/A denial and Web coexistence. Web-to-native confirm v3 and native-to-Web confirm v4 passed. Cleanup restores counts3 users/2 Trips and33 migrations; Production unchanged. Bilingual status and screenshot/device/fault limitations remain explicit. See artifacts/VPJ-04/staging-native/remote-20260911/verification.md.
 
 ## 下一动作与回滚
 
-Complete final PR324 packaging/CI evidence, then resolve the exact Preview-only proof-key configuration, exact new host allowlist and two synthetic-account/own-Trip cleanup scope in docs/runbooks/native-staging-s1.md. Core local Auth/RLS1/1 and same-Trip/browser1/1 zero skip passed; native25pass0fail11environment skips. Preserve original staging accounts/Trips and schema33. Main targets Vercel Production, excluded by current Goal until separately confirmed; do not merge under older release authorization. No provider/worker/knowledge activation; S1/S2 remain unaccepted.
+Read artifacts/VPJ-04/staging-native/remote-20260911/verification.md. Preview host vp-v4-6gmyp6494-jtcao515s-projects.vercel.app and three branch-scoped native variables are authorized and active; WAF3/no draft. Do not retest with deleted credentials or confuse later automatic Preview URLs with the accepted host. Fix the observed Web locale/status gap and complete remaining selected S1 UI/device/fault cases; then integrate S2 PR325 under its existing checks and real recipient/policy/worker gates. No Production merge or provider activation occurred; do not infer release authority from development permission management.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

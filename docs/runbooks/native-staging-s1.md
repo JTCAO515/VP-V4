@@ -1,7 +1,7 @@
 # S1 native and same-Trip Staging acceptance
 
 Related to #191/#192, baseline main7bf22fb plus the reviewed native Preview increment.
-This is the concrete next integration operation, not a completed execution record.
+This is the repeatable integration runbook. The [2026-09-11 execution record](../../artifacts/VPJ-04/staging-native/remote-20260911/verification.md) records the authorized exact Preview version, real results, failures, limitations and completed synthetic cleanup.
 
 ## Deployment and configuration
 
@@ -24,11 +24,11 @@ This is the concrete next integration operation, not a completed execution recor
    Existing Simulator signing is sufficient for Simulator evidence; physical/TestFlight evidence
    remains distinct. Do not publish Production or upload a Store build under this operation.
 
-The current Goal permits preparation and staging work within existing authorization. Earlier
-maintenance explicitly excluded native activation. Before executing new privileged-key provisioning
-or expanding remote activation, resolve the exact configuration/account scope against the current
-operator authorization. Repository merge currently triggers Vercel Production and requires the
-separate release boundary resolved. Neither issue prevents code/testing/PR preparation.
+JT confirmed this exact Preview-only configuration, host allowance, two synthetic accounts and
+owned-data cleanup on 2026-09-11, then delegated development permission management. That scope
+has been executed and does not require repeat approval. Existing maintenance restrictions still
+apply to unrelated hosts/data. Repository merge currently triggers Vercel Production and remains
+a separate release boundary; no Production merge/release happened in this execution.
 
 ## Ordinary-account user result
 
