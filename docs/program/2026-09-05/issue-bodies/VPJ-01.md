@@ -6,25 +6,16 @@
 
 原生 iOS 五入口、中英文与可访问的首个 Trip 页面。
 
-审计并移植本地 IOS-01 壳的允许行为到 main，保留原始未跟踪文件；原生 SwiftUI，默认 Ask，Trip/Explore/Ask/Tools/Profile。
-
 ## 当前基线与开发入口
 
 原VPJ基线已合并；2026-09-10品牌增量以Q1-Q38报告的已确认方向为准，当前任务及新增规划契约需按合入main后的版本执行。已有可独立进行的准备范围继续；未决收费、数据许可和激活制不视为已批准，完整验收仍保留真实依赖。
-主报告：[完整统筹方案](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
-必须阅读：[本任务执行合同](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-01) 与 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)。
+任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-01)；按 [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)。
+验收阶段：[S1](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s1)；阶段演示不代替本票完整验收。
+首次进入或范围变化时读 [主报告](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
 
 ## Blocked by
 
 无其他任务依赖；仍需核对当前接口、环境与外部条件。
-
-## Scope 与接口
-
-- `ios/**`
-- `lib/i18n.ts`
-- `tests/**/locale/**`
-
-只修改本用户故事需要的路径。接口在消费者接入前版本化，不能仅交fixture声称完成。
 
 ## Acceptance criteria
 
@@ -41,43 +32,5 @@
 - No secrets, original user worktree, old applied migrations, branch protection or production actions.
 - No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.
 - No archived research/test oracle deletion or invented runtime/provider/Store result.
-
-## 验证与证据
-
-- `pnpm docs:check`
-- `git diff --check`
-- `pnpm check`
-- `pnpm test:unit`
-- `pnpm test:contract`
-- `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`
-- `xcrun simctl list devices available`
-- `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
-
-工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-
-- `artifacts/VPJ-01/verification.md`
-- `artifacts/VPJ-01/unrun.md`
-- `artifacts/VPJ-01/commands.jsonl`
-
-真实DB/provider/设备/购买是验收条件时，skip或fixture只算部分完成。
-
-## Owner / 外部条件 / 观察
-
-Owner: coding-agent。类型: vertical。预估专注工作4日，外部等待另计；超5日必须再拆。
-
-- Baseline PR merged, all implementation blockers resolved and interfaces available.
-- Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
-
-观察：PR/实际任务验证窗口
-
-## 文档与回滚
-
-- `docs/handoff.json`
-- `HANDOFF.md`
-- `CONTEXT.md`
-- `docs/contracts/vpj-01.md`
-- `docs/contracts/vp-response-policy.md`
-
-Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 替代历史责任：#135

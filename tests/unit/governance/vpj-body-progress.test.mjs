@@ -209,7 +209,7 @@ test('a recognized generated prefix retains checked items and the entire opaque 
 
 test('unknown edits inside the template and changes to a checked clause require a scoped update', () => {
   const previous = body(task);
-  assert.throws(() => preserveIssueProgress(previous.replace('## Scope 与接口', '## Changed scope'), previous, previous, task.id), /unknown body drift/);
+  assert.throws(() => preserveIssueProgress(previous.replace('## 当前基线与开发入口', '## Changed entry'), previous, previous, task.id), /unknown body drift/);
   const current = previous.replace('- [ ] A real result', '- [x] A real result');
   const next = body({ ...task, acceptance: ['A different result can be read.', task.acceptance[1]] });
   assert.throws(() => preserveIssueProgress(current, previous, next, task.id), /checked acceptance would be removed or changed/);
@@ -227,7 +227,7 @@ test('promoting an appended criterion into the generated checklist retains its c
 test('batch preparation is pure and refuses unknown drift anywhere in the selected batch', () => {
   const second = { ...task, id: 'VPJ-02', number: 189, databaseId: 99 };
   const firstIssue = { number: task.number, id: task.databaseId, title: `[${task.id}] ${task.title}`, body: body(task), labels: ['status:in-progress'], state: 'open' };
-  const secondIssue = { number: second.number, id: second.databaseId, title: `[${second.id}] ${second.title}`, body: body(second).replace('## Scope 与接口', '## Unknown scope') };
+  const secondIssue = { number: second.number, id: second.databaseId, title: `[${second.id}] ${second.title}`, body: body(second).replace('## 当前基线与开发入口', '## Unknown entry') };
   const before = structuredClone([firstIssue, secondIssue]);
   assert.throws(() => prepareBodyUpdates([task, second], [firstIssue, secondIssue]), /VPJ-02 body preflight failed before batch writes/);
   assert.deepEqual([firstIssue, secondIssue], before);
@@ -257,7 +257,7 @@ function commandFixture(t, command, { parentDrift = false, successfulPublish = f
   }
   const existing = tasks.filter(entry => entry.number != null).map(entry => ({ number: entry.number, id: entry.databaseId, title: `[${entry.id}] ${entry.title}`, body: body(entry), state: 'closed', state_reason: 'completed', labels: [{ name: 'enhancement' }] }));
   if (successfulPublish) existing[0].body = existing[0].body.replace('- [ ] ', '- [x] ') + '\n## Progress\nReviewed run retained.\n';
-  else if (!parentDrift) existing[1].body = existing[1].body.replace('## Scope 与接口', '## Unknown scope');
+  else if (!parentDrift) existing[1].body = existing[1].body.replace('## 当前基线与开发入口', '## Unknown entry');
   writeFileSync(path.join(fixtureRoot, 'issues.json'), JSON.stringify(existing));
   writeFileSync(path.join(fixtureRoot, `${planDir}/program-body.md`), '# Program\n');
   writeFileSync(path.join(fixtureRoot, 'parent.json'), JSON.stringify({ number: plan.parentNumber, id: 1, title: 'Program', body: successfulPublish ? '# Program\n' : '# Unexpected parent changes\n' }));
@@ -310,7 +310,9 @@ process.stdout.write(JSON.stringify(result));
     assert.equal(after[1].number, 999);
     assert.equal(after[1].title, `[${tasks[1].id}] ${tasks[1].title}`);
     const finalParent = JSON.parse(readFileSync(path.join(fixtureRoot, 'parent.json'), 'utf8'));
-    assert.ok(finalParent.body.includes('issues/999'));
+    assert.ok(finalParent.body.includes('/DELIVERY-STAGES.md'), 'Program links the grouped task view');
+    assert.ok(readFileSync(path.join(fixtureRoot, `${planDir}/DELIVERY-STAGES.md`), 'utf8')
+      .includes('issues/999'), 'the new Issue remains discoverable through its generated stage');
     assert.equal(calls.filter(call => call.method === 'POST').length, 1);
   } else {
     assert.notEqual(result.status, 0);

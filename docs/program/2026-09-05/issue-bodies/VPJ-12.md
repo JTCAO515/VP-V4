@@ -6,13 +6,12 @@
 
 单张旅行截图导入、校正与加入 Trip。
 
-只做Photo Picker单张旅行截图→私有收件箱→受控解析→关键日期金额原文定位→用户确认；Share Extension/多页文件由VPJ-55承接。
-
 ## 当前基线与开发入口
 
 历史规划基线：#253。当前执行读取 main 的合同，并核对实时依赖、可用接口和获准环境；本计划定义不代表任务已就绪或已验收。
-主报告：[完整统筹方案](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
-必须阅读：[本任务执行合同](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-12) 与 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)。
+任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-12)；按 [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)。
+验收阶段：[S4](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s4)；阶段演示不代替本票完整验收。
+首次进入或范围变化时读 [主报告](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
 
 ## Blocked by
 
@@ -21,17 +20,6 @@
 - [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191)
 - [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195)
 - [VPJ-60 #200](https://github.com/JTCAO515/VP-V4/issues/200)
-
-## Scope 与接口
-
-- `ios/**`
-- `lib/server/artifacts/**`
-- `lib/server/media/**`
-- `app/api/artifacts/**`
-- `supabase/migrations/**`
-- `tests/**/artifacts/**`
-
-只修改本用户故事需要的路径。接口在消费者接入前版本化，不能仅交fixture声称完成。
 
 ## Acceptance criteria
 
@@ -46,47 +34,5 @@
 - No secrets, original user worktree, old applied migrations, branch protection or production actions.
 - No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.
 - No archived research/test oracle deletion or invented runtime/provider/Store result.
-
-## 验证与证据
-
-- `pnpm docs:check`
-- `git diff --check`
-- `pnpm check`
-- `pnpm test:unit`
-- `pnpm test:contract`
-- `pnpm test:integration`
-- `pnpm test:security`
-- `pnpm db:verify`
-- `pnpm test:e2e`
-- `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`
-- `xcrun simctl list devices available`
-- `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
-
-工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-
-- `artifacts/VPJ-12/verification.md`
-- `artifacts/VPJ-12/unrun.md`
-- `artifacts/VPJ-12/commands.jsonl`
-
-真实DB/provider/设备/购买是验收条件时，skip或fixture只算部分完成。
-
-## Owner / 外部条件 / 观察
-
-Owner: coding-agent。类型: vertical。预估专注工作5日，外部等待另计；超5日必须再拆。
-
-- Baseline PR merged, all implementation blockers resolved and interfaces available.
-- Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
-
-观察：PR/实际任务验证窗口
-
-## 文档与回滚
-
-- `docs/handoff.json`
-- `HANDOFF.md`
-- `CONTEXT.md`
-- `docs/contracts/vpj-12.md`
-- `docs/harness/hf-reuse/README.md`
-
-Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 替代历史责任：见Program的旧新映射；不因新增任务删除有效旧测试。

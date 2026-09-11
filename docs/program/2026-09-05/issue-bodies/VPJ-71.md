@@ -6,13 +6,12 @@
 
 Harness：核心任务发布判定与能力停用恢复验收。
 
-使用同一选定commit/config与预冻结grader/阈值整合两条任务；选定配置可为达到门槛的原基线，仅对拟采纳候选复用VPJ-70入口扩充Trip配对。候选被拒可保留基线，不强制新增候选；完整回归与停用责任仍必需。
-
 ## 当前基线与开发入口
 
 原VPJ基线已合并；2026-09-10品牌增量以Q1-Q38报告的已确认方向为准，当前任务及新增规划契约需按合入main后的版本执行。已有可独立进行的准备范围继续；未决收费、数据许可和激活制不视为已批准，完整验收仍保留真实依赖。
-主报告：[完整统筹方案](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
-必须阅读：[本任务执行合同](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-71) 与 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md)。
+任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-71)；按 [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md)。
+验收阶段：[S5](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s5)；阶段演示不代替本票完整验收。
+首次进入或范围变化时读 [主报告](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
 
 ## Blocked by
 
@@ -20,20 +19,6 @@ Harness：核心任务发布判定与能力停用恢复验收。
 - [VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267)
 - [VPJ-37 #229](https://github.com/JTCAO515/VP-V4/issues/229)
 - [VPJ-63 #231](https://github.com/JTCAO515/VP-V4/issues/231)
-
-## Scope 与接口
-
-- `evals/harness/**`
-- `tests/**/harness/**`
-- `lib/server/observability/**`
-- `lib/flags/**`
-- `docs/acceptance/**`
-- `docs/runbooks/**`
-- `docs/benchmarks/**`
-- `docs/harness/**`
-- `artifacts/VPJ-71/**`
-
-只修改本用户故事需要的路径。接口在消费者接入前版本化，不能仅交fixture声称完成。
 
 ## Acceptance criteria
 
@@ -53,45 +38,5 @@ Harness：核心任务发布判定与能力停用恢复验收。
 - 保留 actor/RLS、证据资格、用途/接收方许可、准确版本确认和原子 TripPatch；不解除 Trip/proposal 工具注册限制。
 - 不读取或持久记录秘密、真实用户原文或完整思维链；不修改原用户工作树、既有65项范围/依赖或已应用迁移。
 - 不把 fixture/NOT_RUN/skip 当真实通过，不自动上线候选，不进行未授权的账号、外发、采购、支付或生产操作。
-
-## 验证与证据
-
-- `pnpm docs:check`
-- `git diff --check`
-- `pnpm check`
-- `pnpm test:unit`
-- `pnpm test:contract`
-- `pnpm test:integration`
-- `pnpm test:security`
-- `pnpm evals`
-
-
-
-- `artifacts/VPJ-71/verification.md`
-- `artifacts/VPJ-71/unrun.md`
-- `artifacts/VPJ-71/commands.jsonl`
-- `artifacts/VPJ-71/results.json`
-
-真实DB/provider/设备/购买是验收条件时，skip或fixture只算部分完成。
-
-## Owner / 外部条件 / 观察
-
-Owner: coding-agent。类型: vertical。预估专注工作3日，外部等待另计；超5日必须再拆。
-
-- VPJ-69/70实际验收完成，VPJ-37 Ops停用与VPJ-63真实网络证据可用；产品负责人已冻结本轮完整集合阈值。
-- 获准Staging能力停用/恢复与部署回退窗口实际存在；生产开放仍需对应对象/环境/范围有效授权。
-
-观察：有界PR验证；真实环境/人工校准等待另计
-
-## 文档与回滚
-
-- `docs/harness/README.md`
-- `docs/handoff.json`
-- `docs/contracts/service-task-metering.md`
-- `docs/contracts/basic-preferences-cross-trip.md`
-- `docs/contracts/vp-response-policy.md`
-- `docs/harness/hf-reuse/README.md`
-
-停用本轮候选/整合，保留可审计报告与既有安全不变量；保持Trip和删除/撤权状态，不回退已应用数据库历史。
 
 替代历史责任：见Program的旧新映射；不因新增任务删除有效旧测试。

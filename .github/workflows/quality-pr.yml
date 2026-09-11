@@ -4,6 +4,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: quality-pr-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deterministic-pr-gates:
     runs-on: ubuntu-latest
@@ -20,20 +24,42 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      - name: Select checks from the actual changed paths
+        id: scope
+        env:
+          VP_CI_EVENT: ${{ github.event_name }}
+          VP_CI_BASE: ${{ github.event.pull_request.base.sha }}
+          VP_CI_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/ci-change-scope.mjs
       - run: pnpm install --frozen-lockfile
       - run: 'echo "| Suite | Outcome | Skipped | Test files |" >> "$GITHUB_STEP_SUMMARY"'
       - run: 'echo "| --- | --- | ---: | ---: |" >> "$GITHUB_STEP_SUMMARY"'
       - run: pnpm lint
-      - run: pnpm typecheck
-      - run: pnpm build
-      - run: pnpm test
-      - run: pnpm test:unit
+      - if: steps.scope.outputs.scope == 'documentation'
+        run: node --test tests/unit/governance/*.test.mjs
+      - if: steps.scope.outputs.scope != 'documentation'
+        run: pnpm typecheck
+      - if: steps.scope.outputs.scope != 'documentation'
+        run: pnpm build
+      - if: steps.scope.outputs.scope != 'documentation'
+        run: pnpm test
+      - if: steps.scope.outputs.scope != 'documentation'
+        run: pnpm test:unit
       - run: pnpm test:contract
-      - run: pnpm test:integration
-      - run: pnpm test:security
-      - run: pnpm test:e2e
-      - run: pnpm test:e2e:frontend
-      - run: pnpm evals
-      - run: pnpm check:flags
-      - run: pnpm check:assets
+      - if: steps.scope.outputs.scope != 'documentation'
+        run: pnpm test:integration
+      - if: steps.scope.outputs.scope != 'documentation'
+        run: pnpm test:security
+      - if: steps.scope.outputs.scope != 'documentation'
+        run: pnpm test:e2e
+      - if: steps.scope.outputs.scope != 'documentation'
+        run: pnpm exec playwright install chromium
+      - if: steps.scope.outputs.scope != 'documentation'
+        run: pnpm exec playwright test --config playwright.config.mjs --workers=1
+      - if: steps.scope.outputs.scope != 'documentation'
+        run: pnpm evals
+      - if: steps.scope.outputs.scope != 'documentation'
+        run: pnpm check:flags
+      - if: steps.scope.outputs.scope != 'documentation'
+        run: pnpm check:assets
       - run: pnpm docs:check

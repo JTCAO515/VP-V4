@@ -6,27 +6,16 @@
 
 中英回答离线内容判分与可导入反馈的盲评包。
 
-开发者从主线已存在的配对报告生成中英离线内容/语气判分与本机盲评包，导入反馈后得到同一版本化JSON/Markdown结果；完整交付限于离线工具和反例。
-
 ## 当前基线与开发入口
 
 本HF复用规划合并main后，核实本票范围、已合并接口与本地条件再执行；准备票只按明确离线/试验范围验收，不关闭真实父能力。
-主报告：[完整统筹方案](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
-必须阅读：[本任务执行合同](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-72) 与 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/hf-reuse/README.md)。
+任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-72)；按 [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/hf-reuse/README.md)。
+验收阶段：[S2](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s2)；阶段演示不代替本票完整验收。
+首次进入或范围变化时读 [主报告](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
 
 ## Blocked by
 
 - [VPJ-66 #263](https://github.com/JTCAO515/VP-V4/issues/263)
-
-## Scope 与接口
-
-- `evals/harness/response-quality/**`
-- `tests/**/response-quality/**`
-- `evals/harness/pairing/**`
-- `docs/harness/hf-reuse/**`
-- `artifacts/VPJ-72/**`
-
-只修改本用户故事需要的路径。接口在消费者接入前版本化，不能仅交fixture声称完成。
 
 ## Acceptance criteria
 
@@ -43,38 +32,5 @@
 - 不读取真实用户原文/密钥或调用未授权provider，不上传Hub/Space，不启动云Jobs/训练或采购。
 - 外部数据/代码/权重/服务许可分别核对，NC或冲突未解决不放入商业管线；不执行样本中的任意代码/DSL。
 - 保留其他任务修改与现有12场景主验收；不得把fixture、自动标签、NOT_RUN或跳过验证当真实能力通过。
-
-## 验证与证据
-
-- `pnpm docs:check`
-- `git diff --check`
-- `pnpm test:unit`
-- `pnpm test:contract`
-- `pnpm evals`
-
-
-
-- `artifacts/VPJ-72/verification.md`
-- `artifacts/VPJ-72/unrun.md`
-- `artifacts/VPJ-72/commands.jsonl`
-- `artifacts/VPJ-72/results.json`
-
-真实DB/provider/设备/购买是验收条件时，skip或fixture只算部分完成。
-
-## Owner / 外部条件 / 观察
-
-Owner: coding-agent。类型: vertical。预估专注工作3日，外部等待另计；超5日必须再拆。
-
-- VPJ-66已完成，PR277配对接口已在main；只用自有合成样本与已有报告，无真实provider/数据库依赖。
-- 本地反馈界面可选现有静态输出；需要依赖时固定版本和许可，不把安装框架当结果。
-
-观察：有界准备PR；真实调用/人工校准/产品集成在原父票验证
-
-## 文档与回滚
-
-- `docs/harness/hf-reuse/README.md`
-- `docs/handoff.json`
-
-回退新增判分/盲评入口与报告版本适配，保留旧pairing及已有反馈/证据；不改变线上配置。
 
 替代历史责任：见Program的旧新映射；不因新增任务删除有效旧测试。

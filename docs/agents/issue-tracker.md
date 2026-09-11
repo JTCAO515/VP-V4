@@ -22,6 +22,12 @@ GitHub tool or `gh`. Current execution follows `development-workflow.md`.
 - Future expand tasks require `activationEvidence` even after dependencies complete.
 
 Full VPJ bodies are generated from `issue-plan.json`; do not replace them with title-only tasks.
+The compact body keeps the user result, complete acceptance, blockers and task-specific red lines;
+the linked execution row owns scope, commands, evidence, external prerequisites and rollback.
+GitHub delivery milestones mirror `deliveryStage` in that same manifest. Use the current stage
+to filter the queue; keep later-stage and evidence-triggered work outside the active work list.
+Grouping or shortening a body never marks unfinished work complete, replaces Issue identities,
+discards checked progress/comments, or removes native dependency edges.
 Tracker migration modes are separate from ordinary development and retain their explicit authority.
 External PRs are not a feature-request triage surface; collaborator PRs receive normal review.
 
