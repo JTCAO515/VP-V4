@@ -50,6 +50,14 @@ export async function exerciseSameTripBrowser({api,jar,n,t}) {
         const confirmed=(await n('/'+id)).data;
         assert.equal(confirmed.trip.title,title+' confirmed');
         assert.equal(confirmed.content.days[0].items[0].title,'Synthetic shared activity');
+        await expect(editor.getByRole('status')).toHaveText(copy.stored);
+        const otherLocale=locale==='zh'?'en':'zh',otherCopy=tripLocalEditorCopy[otherLocale];
+        await page.locator('select').first().selectOption(otherLocale);
+        await expect(editor.getByRole('status')).toHaveText(otherCopy.stored);
+        await expect(editor.getByLabel(otherCopy.itemTitle,{exact:true})).toHaveValue('Synthetic shared activity');
+        assert.equal((await n('/'+id)).data.trip.headVersion,1,'language switch must not apply another change');
+        await page.locator('select').first().selectOption(locale);
+        await expect(editor.getByRole('status')).toHaveText(copy.stored);
         await page.reload({waitUntil:'domcontentloaded'});
         await expect(page.getByTestId('same-trip-editor').getByRole('heading',{name:/v1$/}).first()).toBeVisible();
         assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'no horizontal overflow');
