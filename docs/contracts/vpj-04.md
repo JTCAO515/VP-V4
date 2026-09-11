@@ -1,12 +1,46 @@
-# VPJ-04 — native local session v2
+# VPJ-04 — native session v2
 
-Related to #191. This contract enables a real **disposable local** iOS → Next.js → Supabase identity path. Remote accounts, production activation, native Trip writes, C2/model calls and push registration remain unavailable.
+Related to #191. The disposable-local identity path has existing runtime evidence. The explicitly configured Staging Preview path below has scoped real login/profile/refresh, two-Simulator replacement, Keychain and Web-coexistence evidence in the [2026-09-11 execution record](../../artifacts/VPJ-04/staging-native/remote-20260911/verification.md). Full #191 acceptance remains open. Production activation, C2/model calls and push registration remain unavailable. Native Trip uses the same identity under VPJ-05.
 
-## Activation and credentials
+## Local activation and credentials
 
 The server requires `VISEPANDA_NATIVE_LOCAL_SESSION=true`, a loopback HTTP Supabase URL, its public key and the server-only `VISEPANDA_NATIVE_LOCAL_SERVICE_KEY`. Missing activation/configuration returns 503. No request chooses the Auth host/key. The app requires `-VisePandaNativeAPI http://127.0.0.1:<port>` (or localhost); remote URLs are rejected. There is no embedded provider/server secret or default API URL in Swift.
 
 Every native route rejects any Cookie or Origin header. Native paths do not write cookies, emit permissive CORS, or modify Web same-origin/CSRF checks. Ordinary access JWTs are verified with the existing `verifyNativeCredentials` SDK path. The privileged key is used only for the fixed fresh-password proof RPC after successful ordinary password authentication; it never handles user data reads/writes or supplies actor identity.
+
+## Staging Preview configuration
+
+The remote path is closed by default. `VISEPANDA_NATIVE_STAGING=true` and
+`VISEPANDA_TRIP_PROTOCOL_V2=true` must be configured on an explicitly selected Preview branch.
+`VERCEL_ENV` must be `preview`, `VERCEL_URL` must be an exact deployment hostname matching
+`vp-v4-<alphanumeric>-jtcao515s-projects.vercel.app`, and the incoming request origin must be
+`https://<that VERCEL_URL>`. Stable aliases, branch aliases, custom domains, HTTP, another
+project and Production are rejected. `NEXT_PUBLIC_SUPABASE_URL` must equal the named Staging
+`https://dzqdzetcctkhbrhlxxgn.supabase.co` exactly, with its ordinary public key. Request input
+never supplies an environment, database or credential. LOCAL flags cannot activate on Vercel.
+
+Only password-proof creation uses server-only `VISEPANDA_NATIVE_STAGING_PROOF_KEY`, with the
+same already-applied `native_prepare_v2` RPC contract. It is never returned to the app or passed
+to the Trip adapter. A missing proof key leaves password credentials unavailable; it does not
+permit a weaker login. Existing JWT/profile/RLS operations still use the ordinary user's token.
+Provisioning this Preview key is a separately reviewed configuration action, not an implied
+consequence of adding an environment variable name to source.
+
+An installed Staging app reads `VisePandaNativeEnvironment=staging` and
+`VisePandaStagingAPIOrigin=https://<exact deployed host>` from its generated Info.plist, supplied
+by build settings `VP_NATIVE_ENVIRONMENT` and `VP_NATIVE_STAGING_API_ORIGIN`. Both default empty. `NativeEnvironment.plist` supplies these custom keys and Xcode expands the build variables while merging generated standard keys; arbitrary `INFOPLIST_KEY_*` build settings are not used.
+Only a root HTTPS deployment origin in the same project hostname family is valid; explicit
+ports, path, query, fragment and userinfo are refused. Remote launch arguments never enable or
+override this endpoint. Partial/invalid build configuration stays disabled without local fallback.
+The existing Keychain and data scope include the canonical endpoint and account; switching
+Preview deployment cannot reuse another endpoint's stored credentials or drafts. Redirects remain
+blocked before a second request. The local app path and its stored endpoint spelling are preserved.
+
+Rollback disables the Preview activation flag and rebuilds/redeploys that Preview, and removes
+the Staging app build settings. Remove its host from the maintenance allowlist if access must stop
+immediately. No production setting, applied migration, mobile tombstone or user data is reverted.
+Actual activation and owner/other/replacement/Web-coexistence evidence are required before calling
+this a working remote identity capability. See [Staging native acceptance](../runbooks/native-staging-s1.md).
 
 ## HTTP contract
 
@@ -53,9 +87,9 @@ The read predicate is read-only because PostgREST GET transactions cannot acquir
 
 ## Native storage and boundaries
 
-Keychain service is dedicated to this local v2 integration and partitioned by endpoint and subject, with `WhenUnlockedThisDeviceOnly` accessibility. UserDefaults stores only the active subject pointer. Profile data exists only in the current account's memory and is cleared on account change, denial or logout. Network errors hide stale profile data while retaining the pending credential for retry. Async session operations serialize through the MainActor coordinator; scene activation revalidates the account. Expired logout first refreshes the same active epoch before revoking it.
+Keychain service is dedicated to this v2 integration and partitioned by endpoint and subject, with `WhenUnlockedThisDeviceOnly` accessibility. UserDefaults stores only the active subject pointer. Profile data exists only in the current account's memory and is cleared on account change, denial or logout. Network errors hide stale profile data while retaining the pending credential for retry. Async session operations serialize through the MainActor coordinator; scene activation revalidates the account. Expired logout first refreshes the same active epoch before revoking it.
 
-Unsigned simulator builds can compile but do not establish Keychain acceptance. Local runtime verification uses only ad-hoc simulator signing; no real signing identity or provisioning profile is required. Physical-device/VoiceOver, push-token binding and remote activation remain separate unrun acceptance.
+Unsigned simulator builds can compile but do not establish Keychain acceptance. Local runtime verification uses only ad-hoc simulator signing; no real signing identity or provisioning profile is required. Physical-device/VoiceOver and push-token binding remain separate unrun acceptance; the scoped remote Simulator result is linked above.
 
 ## Verification and rollback
 

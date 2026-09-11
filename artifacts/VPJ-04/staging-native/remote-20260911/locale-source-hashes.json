@@ -1,0 +1,6 @@
+{
+  "components/canvas/TripCanvas.tsx": "8bc8086490483a5417fef3b8911bbda308e467ea614874e8b39af923c5e52835",
+  "components/canvas/TripContentEditor.tsx": "06879e69a100ee6aef48e58c19af4cfb81a427a1ef0366233aa957028d05ada1",
+  "tests/integration/trip/same-trip-browser.mjs": "1e46e821267e0cb923c20852a007a9de27fb6744a0fdf0cc0a69b07506d3690b",
+  "tests/e2e/canvas/ai-13-proposal-loop.test.mjs": "b66fa3885b062738b635fdb46aa08374f4b546c2094dff2c786b4b09a69a7c1b"
+}

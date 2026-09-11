@@ -1,0 +1,26 @@
+[
+  {
+    "file": "/Users/jtcao/Library/Caches/visepanda/s1-same-trip-browser-1a20e6f5-d8fa-40f5-93ef-856974f33a4a/en-390.png",
+    "sha256": "5bb545a3b0473c3520cc97d6a9596bc0dccd3bc63595a60a923786c36ef810b8",
+    "capture": "after reload; existing Web locale resets to zh on reload",
+    "syntheticDataOnly": true
+  },
+  {
+    "file": "/Users/jtcao/Library/Caches/visepanda/s1-same-trip-browser-1a20e6f5-d8fa-40f5-93ef-856974f33a4a/en-1280.png",
+    "sha256": "158259f6dcbd2846e37a0048542079deabb2a46d958cc384b99a90f6d0f5d725",
+    "capture": "after reload; existing Web locale resets to zh on reload",
+    "syntheticDataOnly": true
+  },
+  {
+    "file": "/Users/jtcao/Library/Caches/visepanda/s1-same-trip-browser-1a20e6f5-d8fa-40f5-93ef-856974f33a4a/zh-1280.png",
+    "sha256": "c8fb3dd0161396962fe0c9fb680fff7d0dd45b85d974588ad586a530bab1c4ec",
+    "capture": "after reload; existing Web locale resets to zh on reload",
+    "syntheticDataOnly": true
+  },
+  {
+    "file": "/Users/jtcao/Library/Caches/visepanda/s1-same-trip-browser-1a20e6f5-d8fa-40f5-93ef-856974f33a4a/zh-390.png",
+    "sha256": "94d9ccc2f284ae74b9d399d6c60af1f809c59f19f70c79ec68094d5bac6a0559",
+    "capture": "after reload; existing Web locale resets to zh on reload",
+    "syntheticDataOnly": true
+  }
+]

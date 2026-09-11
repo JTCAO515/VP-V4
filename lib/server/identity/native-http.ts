@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { verifyNativeCredentials, nativeAuthRejected } from "./native-credentials.ts";
 import { isUuid } from "./request-guards.ts";
 
-type Config = Readonly<{ url: string; publishableKey: string; serviceRoleKey?: string }>;
+import { nativeTargetAllowed, type NativeConfig as Config } from "./native-config.ts";
 const json = (data: unknown, status = 200) => Response.json(data, { status, headers: { "Cache-Control": "no-store" } });
 const failure = (code: string, status = 401) => json({ error: { code } }, status);
 const rpcFailure = (message: string) => {
@@ -16,11 +16,7 @@ const tokenRequest = (token: string) => ({ headers: new Headers({ Authorization:
 
 /** Dedicated native protocol. No cookie fallback, Origin exception, service credential or CORS. */
 export async function nativeIdentityHTTP(request: Request, action: string, config: Config | null): Promise<Response> {
-  if (!config) return failure("UNAVAILABLE", 503);
-  try {
-    const target = new URL(config.url);
-    if (target.protocol !== "http:" || !["127.0.0.1", "localhost"].includes(target.hostname) || target.username || target.password) return failure("UNAVAILABLE", 503);
-  } catch { return failure("UNAVAILABLE", 503); }
+  if (!config || !nativeTargetAllowed(config, request)) return failure("UNAVAILABLE", 503);
   if (request.headers.has("cookie") || request.headers.has("origin")) return failure("AMBIGUOUS_CREDENTIALS", 400);
   if (request.method !== (["session", "profile"].includes(action) ? "GET" : "POST")) return failure("METHOD_NOT_ALLOWED", 405);
   const scope = nativeRequestScope(request.signal);

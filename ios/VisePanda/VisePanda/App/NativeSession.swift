@@ -38,20 +38,35 @@ final class NativeSession {
     private let storageKey: String
     private let keychainService = "com.visepanda.native.local-session.v2"
 
-    init(arguments: [String] = ProcessInfo.processInfo.arguments, defaults: UserDefaults = .standard, configuration: URLSessionConfiguration = .ephemeral) {
-        // This slice is explicitly local integration. No remote endpoint can be enabled by arguments.
-        let flag = arguments.firstIndex(of: "-VisePandaNativeAPI")
-        let raw = flag.flatMap { arguments.indices.contains($0 + 1) ? arguments[$0 + 1] : nil }
-        let url = raw.flatMap(URL.init(string:))
-        if let url, url.scheme == "http", ["localhost", "127.0.0.1"].contains(url.host ?? ""), url.user == nil, url.password == nil {
-            endpoint = url
-        } else { endpoint = nil }
+    init(arguments: [String] = ProcessInfo.processInfo.arguments, defaults: UserDefaults = .standard, configuration: URLSessionConfiguration = .ephemeral, bundleConfiguration: [String: String] = Bundle.main.infoDictionary?.compactMapValues { $0 as? String } ?? [:]) {
+        endpoint = Self.resolveEndpoint(arguments: arguments, bundleConfiguration: bundleConfiguration)
         self.defaults = defaults
         storageKey = "native.v2.activeSubject.\(endpoint?.absoluteString ?? "disabled")"
         configuration.httpCookieStorage = nil
         configuration.httpShouldSetCookies = false
         configuration.urlCache = nil
         transport = URLSession(configuration: configuration, delegate: NativeRedirectBlocker(), delegateQueue: nil)
+    }
+
+    /// Remote destinations come only from the installed build, never launch arguments or user input.
+    static func resolveEndpoint(arguments: [String], bundleConfiguration: [String: String]) -> URL? {
+        if let raw = bundleConfiguration["VisePandaStagingAPIOrigin"], !raw.isEmpty {
+            guard bundleConfiguration["VisePandaNativeEnvironment"] == "staging",
+                  let url = URL(string: raw), url.scheme == "https", url.port == nil,
+                  url.user == nil, url.password == nil, url.query == nil, url.fragment == nil,
+                  url.path.isEmpty || url.path == "/",
+                  let host = url.host,
+                  host.range(of: #"^vp-v4-[a-z0-9]+-jtcao515s-projects\.vercel\.app$"#, options: .regularExpression) != nil
+            else { return nil }
+            return URL(string: "https://" + host)
+        }
+        // An incomplete build configuration must not fall back to a local credential destination.
+        guard bundleConfiguration["VisePandaNativeEnvironment", default: ""].isEmpty else { return nil }
+        guard let index = arguments.firstIndex(of: "-VisePandaNativeAPI"), arguments.indices.contains(index + 1),
+              let url = URL(string: arguments[index + 1]), url.scheme == "http",
+              ["localhost", "127.0.0.1"].contains(url.host ?? ""), url.user == nil, url.password == nil,
+              url.query == nil, url.fragment == nil, url.path.isEmpty || url.path == "/" else { return nil }
+        return url
     }
 
     var enabled: Bool { endpoint != nil }

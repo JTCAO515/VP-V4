@@ -55,7 +55,8 @@ export function nativeRequestScope(requestSignal: AbortSignal, milliseconds = 10
       return response;
     });
   };
-  async function body(request: Request): Promise<string | null> {
+  async function body(request: Request, maximumBytes = 60_000): Promise<string | null> {
+    if (!Number.isSafeInteger(maximumBytes) || maximumBytes < 1 || maximumBytes > 192_000) throw new Error("Native request unavailable.");
     check();
     const reader = request.body?.getReader();
     if (!reader) return "";
@@ -66,8 +67,8 @@ export function nativeRequestScope(requestSignal: AbortSignal, milliseconds = 10
         const next = await run(() => reader.read());
         if (next.done) break;
         bytes += next.value.byteLength;
-        // Any valid UTF-8 representation of the existing20k UTF-16 limit fits here.
-        if (bytes > 60_000) return null;
+        // Identity uses60k bytes; Trip uses192k for its existing64k UTF-16 limit.
+        if (bytes > maximumBytes) return null;
         chunks.push(next.value);
       }
       return new TextDecoder().decode(Buffer.concat(chunks));

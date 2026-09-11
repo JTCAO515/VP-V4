@@ -3,6 +3,23 @@ import XCTest
 
 nonisolated final class NativeSessionIntegrationTests: XCTestCase {
     @MainActor
+    func testStagingEndpointIsBuildBoundAndRejectsFallbackOrCredentialDestinations() {
+        let host = "vp-v4-syntheticonly-jtcao515s-projects.vercel.app"
+        let configured = ["VisePandaNativeEnvironment": "staging", "VisePandaStagingAPIOrigin": "https://" + host]
+        let args = ["-VisePandaNativeAPI", "http://127.0.0.1:59731"]
+        XCTAssertEqual(NativeSession.resolveEndpoint(arguments: args, bundleConfiguration: configured)?.absoluteString, "https://" + host)
+        XCTAssertNil(NativeSession.resolveEndpoint(arguments: ["-VisePandaNativeAPI", "https://" + host], bundleConfiguration: [:]))
+        for raw in ["http://" + host, "https://user:secret@" + host, "https://" + host + ":443", "https://" + host + "/path", "https://" + host + "?q=1", "https://" + host + "#fragment", "https://" + host + ".attacker.test", "https://vp-v4.vercel.app"] {
+            var invalid = configured
+            invalid["VisePandaStagingAPIOrigin"] = raw
+            XCTAssertNil(NativeSession.resolveEndpoint(arguments: args, bundleConfiguration: invalid), raw)
+        }
+        XCTAssertNil(NativeSession.resolveEndpoint(arguments: args, bundleConfiguration: ["VisePandaNativeEnvironment": "staging"]))
+        XCTAssertNil(NativeSession.resolveEndpoint(arguments: args, bundleConfiguration: ["VisePandaNativeEnvironment": "production", "VisePandaStagingAPIOrigin": "https://" + host]))
+        XCTAssertNotNil(NativeSession.resolveEndpoint(arguments: args, bundleConfiguration: [:]))
+    }
+
+    @MainActor
     func testLocalLoginProfileRefreshReplacementLogoutAndAccountIsolation() async throws {
         guard ProcessInfo.processInfo.environment["VP_NATIVE_LOCAL_UI"] == "1" else {
             throw XCTSkip("UNRUN: explicit disposable local identity environment is not configured")

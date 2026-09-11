@@ -1,0 +1,14 @@
+{
+  "id": "dpl_56idbPzmqHx1Qsq4eRbKm8yiZSyX",
+  "url": "vp-v4-58orf9xpi-jtcao515s-projects.vercel.app",
+  "target": null,
+  "readyState": "READY",
+  "projectId": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2",
+  "regions": [
+    "iad1"
+  ],
+  "commit": "e10422201f19fd6c22395cacf7df71098f12e3ca",
+  "branch": "codex/s1-s2-resume-20260911",
+  "nativeConfiguredKeyNames": [],
+  "remoteWrites": 0
+}

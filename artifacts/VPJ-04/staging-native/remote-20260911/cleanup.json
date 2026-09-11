@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "ownedAccountsDeleted": 2,
+  "ownedRecordsRemaining": {
+    "owned_accounts_remaining": 0,
+    "owned_trips_remaining": 0
+  },
+  "after": {
+    "account_count": 3,
+    "latest_migration": "20260910190658",
+    "migration_count": 33,
+    "trip_count": 2
+  },
+  "originalCountsAndMigrationHistoryPreserved": true
+}

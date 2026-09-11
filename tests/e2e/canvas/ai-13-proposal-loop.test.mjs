@@ -52,7 +52,8 @@ test("AI-13 keeps the canonical Trip visible when Proposal read degrades and ign
   assert.match(canvas, /const requestGeneration = useRef\(0\);/);
   assert.match(canvas, /if \(generation !== requestGeneration\.current\) return null;/);
   assert.match(canvas, /setPendingProposal\(null\);/);
-  assert.match(canvas, /setNotice\(tripProposalNoticeCopy\[locale\]\);/);
+  assert.match(canvas, /setNotice\("proposalUnavailable"\);/);
+  assert.match(canvas, /notice === "proposalUnavailable" \? tripProposalNoticeCopy\[locale\]/);
   assert.match(canvas, /async function refreshAfterMutation\(response: Response, generation: number\)/);
   assert.match(canvas, /const current = await reloadAll\(generation\)\.catch/);
   assert.match(canvas, /setNotice\(null\);\s+setMutation\(null\);\s+setState\("loading"\);/);
