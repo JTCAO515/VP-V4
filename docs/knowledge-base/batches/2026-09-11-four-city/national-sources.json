@@ -1,0 +1,610 @@
+{
+  "schemaVersion": "research-national-sources/1",
+  "batch": "2026-09-11-four-city",
+  "sourceBaseline": "8b65aa22585810b13c254263ee48aaba58f404dd",
+  "relatedIssue": 205,
+  "status": "research_workbench_only",
+  "productionImportSupported": false,
+  "published": false,
+  "retrievalEligible": false,
+  "selectedCities": [
+    "上海",
+    "北京",
+    "广州",
+    "重庆"
+  ],
+  "selectedNationalScenes": [
+    "入境",
+    "支付",
+    "手机与网络",
+    "高铁",
+    "酒店住宿",
+    "紧急求助"
+  ],
+  "recordCount": 10,
+  "sourceUseDecision": {
+    "chosenBy": "delegated source research",
+    "allowedInThisBatch": "Original neutral factual summaries and source links for internal candidate review.",
+    "notGranted": [
+      "whole-page/PDF/snippet-corpus reproduction",
+      "media, logos, QR codes or screenshots",
+      "public publication or runtime retrieval activation"
+    ],
+    "sourceLicenceStatus": "Per-source notes; public availability is not a licence. No blanket licence approval is asserted."
+  },
+  "modelGap": "VPJ15 runtime currently supports address assertions only. These procedures, obligations and contact records must not be coerced into address values or directly imported.",
+  "sources": [
+    {
+      "id": "N-S01",
+      "publisher": "国家移民管理局 NIA",
+      "title": "警惕不法分子设置虚假外国人入境卡网上填报网站骗取钱财",
+      "url": "https://www.nia.gov.cn/n741440/n741577/c1755806/content.html",
+      "publishedAt": "2025-12-02",
+      "locator": "正文第1–2段及“网上填报官方网址”行",
+      "rights": "Footer: NIA copyright. No general copying/media licence established.",
+      "retrievedAt": "2026-09-11"
+    },
+    {
+      "id": "N-S02",
+      "publisher": "中国人民银行 PBOC",
+      "title": "在华支付指南",
+      "url": "https://www.pbc.gov.cn/goutongjiaoliu/attachDir/2025/12/2025123019292710592.pdf",
+      "publishedAt": null,
+      "locator": "19-page PDF; printed03=PDF page4, printed04–09=PDF pages5–10, printed15=PDF page16",
+      "rights": "Official public guide; no general reproduction/media licence identified. No logos, screenshots or QR images copied.",
+      "retrievedAt": "2026-09-11",
+      "retrievedDocumentSha256": "691eafcd9d53c5fb339e59edf207e451cfb985d78fa6261635f22df68d520fee",
+      "dateNote": "2025/12 is the URL storage path, not a claimed publication/effective date. N-S11 publicly links this file on2026-07-09.",
+      "accessNote": "web PDF parser refused24,891,919-byte file; direct public HTTPS download succeeded and pypdf extracted selected pages. Original PDF is temporary only, not committed."
+    },
+    {
+      "id": "N-S03",
+      "publisher": "中国政府网；《外国商务人士在华工作生活指引（2025版）》",
+      "title": "A Guide to Working and Living in China as Business Expatriates (2025 edition)",
+      "url": "https://english.www.gov.cn/2025special/bizexpatsinchina2025",
+      "publishedAt": null,
+      "edition": "2025; no exact publication date shown in extracted page",
+      "locator": "Daily services: I.SIM card; VI.Transportation/(I)Train/Ticket purchase/2.Identity verification",
+      "rights": "Public government guide; no blanket reuse licence established in this research.",
+      "retrievedAt": "2026-09-11"
+    },
+    {
+      "id": "N-S04",
+      "publisher": "China Railway 12306",
+      "title": "12306 English FAQ",
+      "url": "https://www.12306.cn/en/faq.html",
+      "publishedAt": null,
+      "locator": "Ticketing Q2/Q11; Miscellaneous Q8",
+      "rights": "Official operator information; no general full-text, database or media reuse licence established.",
+      "retrievedAt": "2026-09-11"
+    },
+    {
+      "id": "N-S05",
+      "publisher": "国家移民管理局 NIA",
+      "title": "关于推行网上办理外国人旅馆以外住宿登记政策解读",
+      "url": "https://www.nia.gov.cn/n741440/n741577/c1771556/content.html",
+      "publishedAt": "2026-03-20",
+      "locator": "Q1 statutory registration responsibilities; Q3/Q4 eligible online users and repeat-registration exceptions; Q5 pilot scope; Q6 assistance",
+      "rights": "Policy explanation with NIA copyright footer; do not treat the whole explanation/translation as freely licensed.",
+      "retrievedAt": "2026-09-11"
+    },
+    {
+      "id": "N-S06",
+      "publisher": "国家移民管理局 NIA",
+      "title": "2026年第1号：试点推行网上办理外国人旅馆以外住宿登记的公告",
+      "url": "https://www.nia.gov.cn/n794014/n1050181/n1050489/c1771531/content.html",
+      "publishedAt": "2026-03-20",
+      "locator": "First substantive paragraph and second paragraph; seven named pilot regions and retained offline channel",
+      "rights": "Official administrative announcement; this batch does not decide blanket copyright status for the webpage, explanation or media.",
+      "retrievedAt": "2026-09-11"
+    },
+    {
+      "id": "N-S07",
+      "publisher": "国家移民管理局 NIA",
+      "title": "2026年上半年移民管理工作主要数据和成效新闻发布会",
+      "url": "https://www.nia.gov.cn/n741435/n1194535/n1789284/index.html",
+      "publishedAt": "2026-07-10",
+      "locator": "央视记者关于网上住宿登记试点范围的问题及随后林勇胜答复",
+      "rights": "Public press-conference transcript; only a short original scope interpretation is retained, no transcript copy.",
+      "retrievedAt": "2026-09-11"
+    },
+    {
+      "id": "N-S08",
+      "publisher": "商务部；北京市政府英文门户转载",
+      "title": "How to Get Help in Case of Emergencies",
+      "url": "https://english.beijing.gov.cn/specials/aguidetoworkingandlivinginchinaasbusinessexpatriates2024/notes/202404/t20240424_3635054.html",
+      "publishedAt": "2024-04-24",
+      "locator": "Three emergency-number paragraphs: police, fire, first aid",
+      "rights": "Official government-hosted Ministry of Commerce guidance; no media or blanket copying permission inferred.",
+      "retrievedAt": "2026-09-11"
+    },
+    {
+      "id": "N-S09",
+      "publisher": "UK Foreign, Commonwealth & Development Office",
+      "title": "China travel advice — Getting help",
+      "url": "https://www.gov.uk/foreign-travel-advice/china/getting-help",
+      "publishedAt": null,
+      "locator": "Emergency services in China; footer OGL notice",
+      "rights": "Footer states Open Government Licence v3.0 except otherwise stated; full licence URL returned403 in this run, so terms/exclusions not fully revalidated. Use only for number corroboration; no logos/media.",
+      "licenceReference": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+      "retrievedAt": "2026-09-11"
+    },
+    {
+      "id": "N-S10",
+      "publisher": "天津市通信管理局（工信部系统）",
+      "title": "外籍来华人员办理电话卡业务指南",
+      "url": "https://tjca.miit.gov.cn/bsfw/bszn/art/2026/art_4cdc69ee883e409990033d44b49e0fab.html",
+      "publishedAt": "2026-04-14",
+      "locator": "一、业务介绍；二、机卡准备；六、问题1–3",
+      "rights": "Local regulator guidance; not a national telecom licence or proof of every branch/device. No media copied.",
+      "retrievedAt": "2026-09-11"
+    },
+    {
+      "id": "N-S11",
+      "publisher": "中华人民共和国驻马里共和国大使馆",
+      "title": "外籍来华人员支付指南",
+      "url": "https://ml.china-embassy.gov.cn/lsfw/202607/t20260709_11978105.htm",
+      "publishedAt": "2026-07-09",
+      "locator": "Paragraph linking the PBOC guide PDF",
+      "rights": "Official distribution pointer only; not a licence grant for the linked PDF.",
+      "retrievedAt": "2026-09-11"
+    }
+  ],
+  "records": [
+    {
+      "id": "N-01",
+      "scenario": "入境",
+      "title": "外国人入境卡：官方免费渠道",
+      "kind": "procedure",
+      "scope": {
+        "country": "CN",
+        "territory": "mainland_only",
+        "cities": [
+          "上海",
+          "北京",
+          "广州",
+          "重庆"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "assertion": {
+        "zh": "如需填写外国人入境卡，可在国家移民管理局官方渠道免费填报；无法提前网办时，可在口岸用现场设备或填写纸质卡。",
+        "en": "Where a foreign arrival card is required, use the free NIA channel. If advance online completion is unavailable, use port facilities or a paper card."
+      },
+      "evidence": [
+        {
+          "sourceId": "N-S01",
+          "locator": "正文第1–2段；官方网址行"
+        }
+      ],
+      "conditions": [
+        "Only travelers required to complete the foreign arrival card; exemptions require individual verification.",
+        "Online service introduced2025-11-20; no sunset specified in this notice."
+      ],
+      "notClaimed": [
+        "Not a visa, visa-free eligibility decision or guarantee of admission.",
+        "No claim that online completion is the only permitted route."
+      ],
+      "risk": "high",
+      "editorialDisposition": "include_in_first_batch_candidate_review",
+      "expressionOrigin": "original_parallel_summaries; not official translations",
+      "reviewStatus": "research_draft",
+      "published": false,
+      "retrievalEligible": false,
+      "productionImportSupported": false,
+      "retrievedAt": "2026-09-11",
+      "recheck": "Before user-facing release/use; sooner if authority or operational notices change",
+      "verbatimExcerpt": null,
+      "actionUrl": "https://s.nia.gov.cn/ArrivalCardFillingPC/"
+    },
+    {
+      "id": "N-02",
+      "scenario": "支付",
+      "title": "外卡刷卡：先核受理标识",
+      "kind": "conditional_procedure",
+      "scope": {
+        "country": "CN",
+        "territory": "mainland_only",
+        "cities": [
+          "上海",
+          "北京",
+          "广州",
+          "重庆"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "assertion": {
+        "zh": "刷境外银行卡前，先看商户是否有相应卡组织受理标识；没有标识时，向收银员确认。",
+        "en": "Check that a merchant accepts your card network before paying. If no acceptance logo is displayed, ask the cashier."
+      },
+      "evidence": [
+        {
+          "sourceId": "N-S02",
+          "locator": "印刷页03（PDF第4页）“银行卡”"
+        }
+      ],
+      "conditions": [
+        "The specific card, issuer and merchant must support the transaction."
+      ],
+      "notClaimed": [
+        "No universal merchant acceptance, fee, FX-rate or successful-payment guarantee."
+      ],
+      "risk": "medium",
+      "editorialDisposition": "include_in_first_batch_candidate_review",
+      "expressionOrigin": "original_parallel_summaries; not official translations",
+      "reviewStatus": "research_draft",
+      "published": false,
+      "retrievalEligible": false,
+      "productionImportSupported": false,
+      "retrievedAt": "2026-09-11",
+      "recheck": "Before user-facing release/use; sooner if authority or operational notices change",
+      "verbatimExcerpt": null
+    },
+    {
+      "id": "N-03",
+      "scenario": "支付",
+      "title": "移动支付：注册、绑卡与扫码",
+      "kind": "procedure",
+      "scope": {
+        "country": "CN",
+        "territory": "mainland_only",
+        "cities": [
+          "上海",
+          "北京",
+          "广州",
+          "重庆"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "assertion": {
+        "zh": "可按支付宝或微信支付应用提示注册、绑定受支持银行卡，再扫描兼容商家码或出示付款码。",
+        "en": "Follow Alipay or Weixin Pay prompts to register and link a supported card, then scan a compatible merchant code or show your payment code."
+      },
+      "evidence": [
+        {
+          "sourceId": "N-S02",
+          "locator": "印刷页04–09（PDF第5–10页）；印刷页13条码产品提示"
+        }
+      ],
+      "conditions": [
+        "Card support, issuer verification and app terms apply at transaction time."
+      ],
+      "notClaimed": [
+        "No fixed200-yuan fee threshold, fee-free guarantee, payment limit or personal-transfer support."
+      ],
+      "risk": "medium",
+      "editorialDisposition": "include_in_first_batch_candidate_review",
+      "expressionOrigin": "original_parallel_summaries; not official translations",
+      "reviewStatus": "research_draft",
+      "published": false,
+      "retrievalEligible": false,
+      "productionImportSupported": false,
+      "retrievedAt": "2026-09-11",
+      "recheck": "Before user-facing release/use; sooner if authority or operational notices change",
+      "verbatimExcerpt": null
+    },
+    {
+      "id": "N-04",
+      "scenario": "支付",
+      "title": "人民币现金：ATM与兑换",
+      "kind": "procedure",
+      "scope": {
+        "country": "CN",
+        "territory": "mainland_only",
+        "cities": [
+          "上海",
+          "北京",
+          "广州",
+          "重庆"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "assertion": {
+        "zh": "需要人民币现金时，可选支持国际卡的ATM取现，或到有兑换标识的机构兑换外币。",
+        "en": "Obtain RMB cash from an ATM accepting international cards or an exchange outlet displaying a currency-exchange sign."
+      },
+      "evidence": [
+        {
+          "sourceId": "N-S02",
+          "locator": "印刷页15（PDF第16页）“现金”"
+        }
+      ],
+      "conditions": [
+        "Confirm available services, opening hours and charges with the particular operator."
+      ],
+      "notClaimed": [
+        "No guarantee every ATM/hotel provides exchange; no rate or cash-import allowance advice."
+      ],
+      "risk": "medium",
+      "editorialDisposition": "include_in_first_batch_candidate_review",
+      "expressionOrigin": "original_parallel_summaries; not official translations",
+      "reviewStatus": "research_draft",
+      "published": false,
+      "retrievalEligible": false,
+      "productionImportSupported": false,
+      "retrievedAt": "2026-09-11",
+      "recheck": "Before user-facing release/use; sooner if authority or operational notices change",
+      "verbatimExcerpt": null
+    },
+    {
+      "id": "N-05",
+      "scenario": "手机与网络",
+      "title": "中国运营商SIM卡申请",
+      "kind": "procedure",
+      "scope": {
+        "country": "CN",
+        "territory": "mainland_only",
+        "cities": [
+          "上海",
+          "北京",
+          "广州",
+          "重庆"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "assertion": {
+        "zh": "申请中国运营商SIM卡，可带护照或外国人永久居留身份证到中国电信、中国移动或中国联通营业厅；网点办理能力、手机兼容和套餐需向运营商确认。",
+        "en": "For a Chinese carrier SIM, take your passport or Foreign Permanent Resident ID Card to a China Telecom, China Mobile or China Unicom outlet. Confirm branch capability, handset compatibility and plan details."
+      },
+      "evidence": [
+        {
+          "sourceId": "N-S03",
+          "locator": "Daily services / I.SIM card (I)–(II)"
+        },
+        {
+          "sourceId": "N-S10",
+          "locator": "一、业务介绍；二、机卡准备；六、问题1–3（仅地区性补充）"
+        }
+      ],
+      "conditions": [
+        "National baseline comes from N-S03; N-S10 is corroborative local guidance, not a nationwide device rule."
+      ],
+      "notClaimed": [
+        "No guarantee of eSIM availability, unrestricted internet, instant activation, all-branch service or a fixed tariff."
+      ],
+      "risk": "medium",
+      "editorialDisposition": "include_in_first_batch_candidate_review",
+      "expressionOrigin": "original_parallel_summaries; not official translations",
+      "reviewStatus": "research_draft",
+      "published": false,
+      "retrievalEligible": false,
+      "productionImportSupported": false,
+      "retrievedAt": "2026-09-11",
+      "recheck": "Before user-facing release/use; sooner if authority or operational notices change",
+      "verbatimExcerpt": null
+    },
+    {
+      "id": "N-06",
+      "scenario": "高铁",
+      "title": "线上身份核验未完成：到车站核验",
+      "kind": "conditional_procedure",
+      "scope": {
+        "country": "CN",
+        "territory": "mainland_only",
+        "cities": [
+          "上海",
+          "北京",
+          "广州",
+          "重庆"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "assertion": {
+        "zh": "12306线上身份核验未完成时，可持有效护照到铁路车站售票窗口办理身份核验。",
+        "en": "If online identity verification is not completed, take a valid passport to a railway-station ticket office for identity verification."
+      },
+      "evidence": [
+        {
+          "sourceId": "N-S03",
+          "locator": "VI.Transportation / (I)Train / Ticket purchase / 2.Identity verification"
+        }
+      ],
+      "conditions": [
+        "Adult foreign-passport scenario; exact current verification state and required documents must be checked with12306."
+      ],
+      "notClaimed": [
+        "No promise of instant verification, ticket availability or that every pending state blocks all purchases."
+      ],
+      "risk": "medium",
+      "editorialDisposition": "include_in_first_batch_candidate_review",
+      "expressionOrigin": "original_parallel_summaries; not official translations",
+      "reviewStatus": "research_draft",
+      "published": false,
+      "retrievalEligible": false,
+      "productionImportSupported": false,
+      "retrievedAt": "2026-09-11",
+      "recheck": "Before user-facing release/use; sooner if authority or operational notices change",
+      "verbatimExcerpt": null
+    },
+    {
+      "id": "N-07",
+      "scenario": "高铁",
+      "title": "乘车证件与进站时间",
+      "kind": "procedure",
+      "scope": {
+        "country": "CN",
+        "territory": "mainland_only",
+        "cities": [
+          "上海",
+          "北京",
+          "广州",
+          "重庆"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "assertion": {
+        "zh": "乘车时携带购票所用有效证件原件；行程信息单不能作为车票。检票会在发车前停止，具体时间看车站公告。",
+        "en": "Carry the original valid ID used for the booking; an itinerary sheet is not a ticket. Ticket checks stop before departure at the time announced by the station."
+      },
+      "evidence": [
+        {
+          "sourceId": "N-S04",
+          "locator": "Ticketing Q2/Q11; Miscellaneous Q8"
+        },
+        {
+          "sourceId": "N-S03",
+          "locator": "VI.Transportation / (I)Train / Railway station entry/exit and train boarding"
+        }
+      ],
+      "conditions": [
+        "Domestic railway e-ticket journey; follow the actual station, train and document-handling instructions."
+      ],
+      "notClaimed": [
+        "No universal5/15/30-minute cutoff; no child-fare, refund/change or baggage-rule assertion."
+      ],
+      "risk": "medium",
+      "editorialDisposition": "include_in_first_batch_candidate_review",
+      "expressionOrigin": "original_parallel_summaries; not official translations",
+      "reviewStatus": "research_draft",
+      "published": false,
+      "retrievalEligible": false,
+      "productionImportSupported": false,
+      "retrievedAt": "2026-09-11",
+      "recheck": "Before user-facing release/use; sooner if authority or operational notices change",
+      "verbatimExcerpt": null
+    },
+    {
+      "id": "N-08",
+      "scenario": "酒店住宿",
+      "title": "酒店办理外国客人住宿登记",
+      "kind": "legal_obligation_summary",
+      "scope": {
+        "country": "CN",
+        "territory": "mainland_only",
+        "cities": [
+          "上海",
+          "北京",
+          "广州",
+          "重庆"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "assertion": {
+        "zh": "外国人在旅馆住宿时，住宿登记由旅馆办理并报送所在地公安机关；入住时可向前台确认办理情况。",
+        "en": "Hotels register foreign guests’ accommodation and report it to local public-security authorities. Ask reception to confirm the registration."
+      },
+      "evidence": [
+        {
+          "sourceId": "N-S05",
+          "locator": "Q1：出境入境管理法第39条的旅馆责任"
+        }
+      ],
+      "conditions": [
+        "Foreign guest staying in a hotel; administrative duty does not prove an individual property complied."
+      ],
+      "notClaimed": [
+        "No inventory, acceptance or compliance guarantee for a named hotel; no claim that registration grants lawful stay."
+      ],
+      "risk": "high",
+      "editorialDisposition": "include_in_first_batch_candidate_review",
+      "expressionOrigin": "original_parallel_summaries; not official translations",
+      "reviewStatus": "research_draft",
+      "published": false,
+      "retrievalEligible": false,
+      "productionImportSupported": false,
+      "retrievedAt": "2026-09-11",
+      "recheck": "Before user-facing release/use; sooner if authority or operational notices change",
+      "verbatimExcerpt": null
+    },
+    {
+      "id": "N-09",
+      "scenario": "酒店住宿",
+      "title": "非酒店住所首次住宿登记",
+      "kind": "legal_procedure_summary",
+      "scope": {
+        "country": "CN",
+        "territory": "mainland_only",
+        "cities": [
+          "上海",
+          "北京",
+          "广州",
+          "重庆"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "assertion": {
+        "zh": "在旅馆以外住所首次住宿，应在入住后24小时内由本人或留宿人向住所地公安机关办理住宿登记；线上渠道与再次入住的简化条件另核。",
+        "en": "For a first stay at a non-hotel address, you or your host must register with local public-security authorities within 24 hours of arrival. Check online channels and repeat-stay exceptions separately."
+      },
+      "evidence": [
+        {
+          "sourceId": "N-S05",
+          "locator": "Q1、Q3–Q6"
+        },
+        {
+          "sourceId": "N-S06",
+          "locator": "第1–2段"
+        },
+        {
+          "sourceId": "N-S07",
+          "locator": "央视记者试点范围问答"
+        }
+      ],
+      "conditions": [
+        "First registration at the current non-hotel address; repeat-stay exceptions are outside this concise assertion.",
+        "The examined NIA national online pilot names seven regions including Chongqing; do not infer the same NIA service is operational in Shanghai/Beijing/Guangzhou.",
+        "Other local online services may exist; this research did not test submission."
+      ],
+      "notClaimed": [
+        "No nationwide-online claim, guaranteed registration acceptance or personal legal-status assessment."
+      ],
+      "risk": "high",
+      "editorialDisposition": "include_in_first_batch_candidate_review",
+      "expressionOrigin": "original_parallel_summaries; not official translations",
+      "reviewStatus": "research_draft",
+      "published": false,
+      "retrievalEligible": false,
+      "productionImportSupported": false,
+      "retrievedAt": "2026-09-11",
+      "recheck": "Before user-facing release/use; sooner if authority or operational notices change",
+      "verbatimExcerpt": null
+    },
+    {
+      "id": "N-10",
+      "scenario": "紧急求助",
+      "title": "大陆紧急号码",
+      "kind": "emergency_contact_directory",
+      "scope": {
+        "country": "CN",
+        "territory": "mainland_only",
+        "cities": [
+          "上海",
+          "北京",
+          "广州",
+          "重庆"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "assertion": {
+        "zh": "中国大陆：报警110、火警119、急救120。",
+        "en": "Mainland China emergency numbers: police 110, fire 119 and ambulance 120."
+      },
+      "evidence": [
+        {
+          "sourceId": "N-S08",
+          "locator": "Three emergency-number paragraphs"
+        },
+        {
+          "sourceId": "N-S09",
+          "locator": "Emergency services in China"
+        }
+      ],
+      "conditions": [
+        "Mainland scope only, including the four selected cities; Hong Kong/Macao/Taiwan are excluded."
+      ],
+      "notClaimed": [
+        "No diagnosis, treatment, clinical triage, English availability, no-SIM/roaming connectivity, free ambulance or response-time guarantee."
+      ],
+      "risk": "high",
+      "editorialDisposition": "include_in_first_batch_candidate_review",
+      "expressionOrigin": "original_parallel_summaries; not official translations",
+      "reviewStatus": "research_draft",
+      "published": false,
+      "retrievalEligible": false,
+      "productionImportSupported": false,
+      "retrievedAt": "2026-09-11",
+      "recheck": "Before user-facing release/use; sooner if authority or operational notices change",
+      "verbatimExcerpt": null
+    }
+  ]
+}
