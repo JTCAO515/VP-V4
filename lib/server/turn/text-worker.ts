@@ -2,10 +2,10 @@ import { textTurnFailureCopy, type Locale } from "../../i18n.ts";
 import { randomUUID } from "node:crypto";
 import { CostGuard } from "../model-gateway/budget/index.ts";
 import { runWithDurableBudget, type BudgetAttempt, type BudgetRpc } from "../model-gateway/budget/durable.ts";
-import { invokeTextProviderProtocol, PROTOCOL_MODELS, type ProtocolTransport, type ProtocolUsage } from "../model-gateway/adapters/provider-protocol.ts";
+import { invokeTextProviderProtocol, validTextTaskHistory, PROTOCOL_MODELS, type ProtocolTransport, type ProtocolUsage } from "../model-gateway/adapters/provider-protocol.ts";
 import { runDurableTurnWork, type TurnWorkRpc } from "./durable-worker.ts";
 
-export type TextWorkRpc = (name: "read_text_work" | "authorize_text_dispatch" | "complete_text_work", params: Readonly<Record<string, string>>) => Promise<unknown>;
+export type TextWorkRpc = (name: "read_text_work" | "authorize_text_dispatch" | "authorize_text_task_dispatch" | "complete_text_work", params: Readonly<Record<string, string>>) => Promise<unknown>;
 export type TextWorkerConfig = Readonly<{
   scopeId: string;
   priceVersion: string;
@@ -15,6 +15,7 @@ export type TextWorkerConfig = Readonly<{
 }>;
 /** Trusted deployment binding must match the registry endpoint exactly. No default network transport. */
 export type TextProviderBinding = Readonly<{
+  inputMode?: "current_input_v1" | "task_history_v1";
   provider: keyof typeof PROTOCOL_MODELS;
   endpoint: string;
   transport: ProtocolTransport;
@@ -33,7 +34,9 @@ export async function runTextWorker(
   return runDurableTurnWork(workRpc, async (lease, leaseSignal) => {
     const keys = { p_turn_id: lease.turnId, p_lease_token: lease.leaseToken };
     const input = await textRpc("read_text_work", keys);
-    if (!record(input) || input.kind !== "input" || typeof input.text !== "string" || !input.text.trim() || input.text.length > 4000
+    const taskMode = binding.inputMode === "task_history_v1";
+    if (!record(input) || input.kind !== (taskMode ? "task_input" : "input")
+      || (taskMode && !validTextTaskHistory(input.history)) || typeof input.text !== "string" || !input.text.trim() || input.text.length > 4000
       || typeof input.policyId !== "string" || input.provider !== binding.provider || input.endpoint !== binding.endpoint
       || typeof input.locale !== "string" || !["zh","en","es","ru","ar"].includes(input.locale)) return "validation_failure";
     const guard = new CostGuard({ windowMs: 120000, perUserAttempts: 1, perTaskAttempts: 1, turnDeadlineMs: 120000, maxModelSteps: 1, maxToolSteps: 1 }).startTurn({ userId: lease.ownerId, taskId: lease.turnId });
@@ -44,7 +47,7 @@ export async function runTextWorker(
       reservedMicros: config.reservedMicros, timeoutMs: config.timeoutMs,
     };
     const result = await runWithDurableBudget(attempt, budgetRpc, async budgetSignal => {
-      const value = await invokeTextProviderProtocol(lease, { provider: binding.provider, endpoint: binding.endpoint, maxOutputTokens: config.maxOutputTokens, timeoutMs: config.timeoutMs }, textRpc, guard, binding.transport, budgetSignal);
+      const value = await invokeTextProviderProtocol(lease, { inputMode: binding.inputMode, provider: binding.provider, endpoint: binding.endpoint, maxOutputTokens: config.maxOutputTokens, timeoutMs: config.timeoutMs }, textRpc, guard, binding.transport, budgetSignal);
       // Usage alone does not prove the model used for pricing. The normalizer can
       // retain usage on MODEL_OUTPUT_INVALID, including a mismatched model. Only
       // these outcomes establish model + usage; SAFETY_BLOCKED is emitted after

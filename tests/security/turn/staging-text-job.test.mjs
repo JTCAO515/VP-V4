@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {spawn} from 'node:child_process';
 import {createTextJobPrice,createStagingTextJob} from '../../../lib/server/jobs/staging-text-job.ts';
-import {TEXT_TURN_PROMPT_REF,TEXT_TURN_SYSTEM_PROMPT} from '../../../lib/server/model-gateway/prompt/text-turn.ts';
+import {TEXT_TURN_PROMPT_REF,TEXT_TURN_SYSTEM_PROMPT,TEXT_TASK_PROMPT_REF} from '../../../lib/server/model-gateway/prompt/text-turn.ts';
 const ownerId='11111111-1111-4111-8111-111111111111',policyId='22222222-2222-4222-8222-222222222222';
 const flat={mode:'flat',inputMicrosPerMillion:2000000,outputMicrosPerMillion:8000000,cachedInputMicrosPerMillion:null};
 const usage={inputTokens:10,outputTokens:5,totalTokens:15,cachedInputTokens:4,uncachedInputTokens:6,reasoningTokens:0,cost:'unknown'};
@@ -65,4 +65,17 @@ test('one-shot CLI fails closed, preserves existing files and writes only privat
  const duplicate=await runChild(args,env);assert.equal(duplicate.code,1);assert.equal(await readFile(journal,'utf8'),contents,'existing receipt file is never overwritten');
  await writeFile(input,JSON.stringify({...config(),secret:'SYNTHETIC_CONFIG_SECRET_CANARY'}));
  const invalid=await runChild([...args.slice(0,-1),join(dir,'rejected.jsonl')],env);assert.equal(invalid.code,1);assert.doesNotMatch(invalid.stderr,/SYNTHETIC_CONFIG_SECRET_CANARY/);await assert.rejects(stat(join(dir,'rejected.jsonl')),{code:'ENOENT'});
+});
+
+test('job/2 explicitly binds the context claimer and records its distinct prompt reference',{timeout:10000},async t=>{
+ const dir=await mkdtemp(join(tmpdir(),'vpj07-context-cli-'));t.after(()=>rm(dir,{recursive:true,force:true}));
+ const input=join(dir,'config.json'),journal=join(dir,'receipts.jsonl'),mapper=join(dir,'closed-fetch.mjs');
+ const value={...config(),schemaVersion:'vpj07-staging-text-job/2',inputMode:'task_history_v1'};
+ const deps={workerCredential:()=> 'synthetic',providerCredential:()=> 'synthetic',recordDestination:async()=>{}};
+ for(const candidate of [{...config(),inputMode:'task_history_v1'},{...value,inputMode:undefined},{...value,inputMode:'current_input_v1'}])assert.throws(()=>createStagingTextJob(candidate,deps));
+ await writeFile(input,JSON.stringify(value),{mode:0o600});
+ await writeFile(mapper,`globalThis.fetch=async(url,options)=>{if(url!=='https://dzqdzetcctkhbrhlxxgn.supabase.co/rest/v1/rpc/claim_text_task_work'||options.redirect!=='manual')throw Error('Wrong mode');return Response.json({kind:'empty'});};`);
+ const result=await runChild(['--experimental-strip-types','--import',mapper,resolve('lib/server/jobs/run-staging-text-worker.mjs'),'--config',input,'--receipts',journal],{...process.env,NODE_OPTIONS:'',VERCEL_ENV:'',VISEPANDA_STAGING_TEXT_WORKER:'true',VISEPANDA_STAGING_TEXT_WORKER_KEY:'synthetic-worker',VISEPANDA_STAGING_TEXT_PROVIDER_KEY:'synthetic-provider'});
+ assert.equal(result.code,0,result.stderr);assert.equal(JSON.parse(result.stdout).result,'empty');
+ const rows=(await readFile(journal,'utf8')).trim().split('\n').map(JSON.parse);assert.deepEqual(rows.map(r=>r.prompt),[TEXT_TASK_PROMPT_REF,TEXT_TASK_PROMPT_REF]);
 });

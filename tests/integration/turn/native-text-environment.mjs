@@ -17,10 +17,14 @@ export async function createNativeTextEnvironment(){
  const literal=s=>"'"+s.replaceAll("'","''")+"'";
  const key=e.PUBLISHABLE_KEY||e.ANON_KEY;
  const users=[],pendingResponses=new Set();let next,model,timer,stopping=false,active=Promise.resolve();
- const controller=new AbortController(),policyId=randomUUID(),api='http://127.0.0.1:59651';
+ const controller=new AbortController(),policyId=randomUUID(),taskPolicyId=randomUUID(),api='http://127.0.0.1:59651';
  const noticeZh='仅用于本机合成测试，不向外部模型发送数据。测试输入和回答保存在本次独立数据库中；删除对话或账号会隐藏正文，正文保留到此测试实例销毁。可随时撤回新处理授权，仍可手动编辑行程。';
  const noticeEn='Local synthetic test only. No data goes to an external model. Test inputs and answers remain in this disposable database; deleting a conversation or account hides content until this test instance is destroyed. You may withdraw permission for new processing and continue editing Trip manually.';
  const noticeHash=createHash('sha256').update(JSON.stringify({version:'local-text-v1',zh:noticeZh,en:noticeEn})).digest('hex');
+ const taskNoticeZh=noticeZh+'本策略还使用同一服务任务内最多三组较早的输入和回答。';
+ const taskNoticeEn=noticeEn+' This policy also uses up to three earlier input/answer pairs from the same service task.';
+ const taskNoticeHash=createHash('sha256').update(JSON.stringify({version:'local-task-v1',zh:taskNoticeZh,en:taskNoticeEn})).digest('hex');
+ const requests=[];
  const counts={http:0,finished:0,destinationReceipts:0};
  const releaseModels=()=>{for(const deliver of pendingResponses)deliver();pendingResponses.clear();};
  async function cleanup(){
@@ -31,6 +35,7 @@ export async function createNativeTextEnvironment(){
  }
  try{
   sql(`insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at) values('${policyId}','qwen','Controlled local fixture','https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','local fixture','local fixture','disposable local database','synthetic-v1','local-text-v1','${noticeHash}',${literal(noticeZh)},${literal(noticeEn)},'retain_after_hide_v1',now()-interval '1 minute',now()+interval '1 day',now()+interval '1 day');`);
+  sql(`insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at,context_mode) select '${taskPolicyId}',provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,'local-task-v1','${taskNoticeHash}',${literal(taskNoticeZh)},${literal(taskNoticeEn)},retention,effective_at,expires_at,terms_recheck_at,'task_history_v1' from turn_private.text_policies where id='${policyId}';`);
   for(const label of ['a','b','ui-en','ui-zh']){
    const email='vpj07-'+label+'-'+randomUUID()+'@example.test',password='VPJ07-Local-Synthetic-Only-195!';
    const client=createClient(e.API_URL,key,{auth:{persistSession:false,autoRefreshToken:false}}),signup=await client.auth.signUp({email,password});
@@ -42,14 +47,14 @@ export async function createNativeTextEnvironment(){
    if(req.url==='/release'){req.resume();releaseModels();res.end('{}');return;}
    const chunks=[];for await(const c of req)chunks.push(c);
    const body=JSON.parse(Buffer.concat(chunks).toString()),input=body.messages?.at(-1)?.content ?? '';
-   counts.http++;
+   counts.http++;requests.push(body);
    const kind=['partial','clarification','blocked','technical_failure'].find(k=>input.includes('kind='+k)) ?? 'answered';
    const deliver=()=>{if(res.destroyed)return;res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({model:PROTOCOL_MODELS.qwen,choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({outcome:kind,text:input.includes('中文')?'本机合成回答：请求已完成。':'Local synthetic answer: request completed.'})}}],usage:{prompt_tokens:10,completion_tokens:10,total_tokens:20}}));};
    if(input.includes('HOLD'))pendingResponses.add(deliver);else deliver();
   });
   model.listen(0,'127.0.0.1');await once(model,'listening');const modelURL='http://127.0.0.1:'+model.address().port;
   const log=createWriteStream('/tmp/vpj07-native-text-api.log',{mode:0o600});
-  next=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port','59651'],{env:{...process.env,NEXT_PUBLIC_SUPABASE_URL:e.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:key,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:e.SERVICE_ROLE_KEY,VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_NATIVE_LOCAL_TEXT:'true',VISEPANDA_NATIVE_LOCAL_TEXT_POLICY:policyId},stdio:['ignore','pipe','pipe']});
+  next=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port','59651'],{env:{...process.env,NEXT_PUBLIC_SUPABASE_URL:e.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:key,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:e.SERVICE_ROLE_KEY,VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_NATIVE_LOCAL_TEXT:'true',VISEPANDA_NATIVE_LOCAL_TEXT_POLICY:policyId,VISEPANDA_NATIVE_LOCAL_TASK_POLICY:taskPolicyId},stdio:['ignore','pipe','pipe']});
   next.stdout.pipe(log);next.stderr.pipe(log);next.once('exit',()=>log.end());
   await waitForNativeAPI(api,next);
   // Exercise the exact Staging job composition through an explicit closed test
@@ -62,11 +67,11 @@ export async function createNativeTextEnvironment(){
    if(url===providerEndpoint)return fetch(modelURL,init);
    throw Error('Unexpected synthetic job destination');
   };
-  const workers=users.map(owner=>createStagingTextJob({schemaVersion:'vpj07-staging-text-job/1',ownerId:owner.id,policyId,
+  const workers=users.flatMap(owner=>[false,true].map(taskMode=>createStagingTextJob({schemaVersion:taskMode?'vpj07-staging-text-job/2':'vpj07-staging-text-job/1',...(taskMode?{inputMode:'task_history_v1'}:{}),ownerId:owner.id,policyId:taskMode?taskPolicyId:policyId,
    budget:{scopeId:owner.scopeId,priceVersion:'synthetic-v1',reservedMicros:1000,maxOutputTokens:512,timeoutMs:60000},
    provider:{provider:'qwen',endpoint:providerEndpoint,configurationId:randomUUID(),configurationVersion:1,timeoutMs:60000},
    pricing:{mode:'flat',inputMicrosPerMillion:1,outputMicrosPerMillion:1,cachedInputMicrosPerMillion:null}},
-   {workerCredential:()=>e.SERVICE_ROLE_KEY,providerCredential:()=> 'synthetic-local-provider-only',recordDestination:async()=>{counts.destinationReceipts++;},fetch:mappedFetch}));
+   {workerCredential:()=>e.SERVICE_ROLE_KEY,providerCredential:()=> 'synthetic-local-provider-only',recordDestination:async()=>{counts.destinationReceipts++;},fetch:mappedFetch})));
   let busy=false;
   timer=setInterval(()=>{if(busy||stopping)return;busy=true;active=(async()=>{
    for(const worker of workers){
@@ -75,6 +80,6 @@ export async function createNativeTextEnvironment(){
     if(result==='finished')counts.finished++;
    }
   })().catch(()=>{}).finally(()=>{busy=false;});},500);
-  return {api,policyId,noticeHash,users,sql,counts,releaseModels,controlURL:modelURL+'/release',cleanup};
+  return {api,policyId,noticeHash,taskPolicyId,taskNoticeHash,requests,users,sql,counts,releaseModels,controlURL:modelURL+'/release',cleanup};
  }catch(error){await cleanup();throw error;}
 }
