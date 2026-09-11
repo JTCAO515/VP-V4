@@ -64,9 +64,9 @@ Screenshots show local synthetic data: [English](task-context-en.png),
 
 Local controlled-provider tests do not establish model semantics. Both retained
 real Qwen fixed-case failures remain in
-[Staging evidence](../task-context-staging-20260912/verification.md). Remote native
-v3 operation, persistent unattended worker operation and full #195/S2 acceptance
-remain open. The accepted contract keeps pending retry state in memory only;
+[Staging evidence](../task-context-staging-20260912/verification.md). A later [remote native read/relaunch observation](../native-staging-read-20260912/verification.md)
+verifies retained real answers only. Native-submitted real clarification continuation,
+persistent unattended worker operation and full #195/S2 acceptance remain open. The accepted contract keeps pending retry state in memory only;
 relaunch coverage is for already server-accepted history, not cross-process
 uncertain-submit deduplication. Physical-phone validation remains deferred at JT's request.
 
