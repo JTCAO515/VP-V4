@@ -1,0 +1,18 @@
+{
+  "at": "2026-09-11T23:04:25.908208+00:00",
+  "nativeSha": "8ce9e7e",
+  "apiSha": "b542eadff6a5057445c6d3311ebd5d166c0dad55",
+  "locales": [
+    "en",
+    "zh"
+  ],
+  "exactThinkingAnswersMatched": 2,
+  "relaunchAnswerSetsMatched": 2,
+  "answersPerOwner": 3,
+  "ownerAnswerSetsDisjoint": true,
+  "signOutHidesHistory": true,
+  "newProviderCalls": 0,
+  "localePersistence": "FAIL: English picker selection reverts to Chinese on relaunch; patch pending",
+  "realClarificationContinuation": "UNRUN; prior fixed model criterion remains FAIL",
+  "finalSignedOut": true
+}
