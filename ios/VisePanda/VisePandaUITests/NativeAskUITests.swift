@@ -26,7 +26,7 @@ nonisolated final class NativeAskUITests: XCTestCase {
         let password = app.secureTextFields["native.login.password"]
         reveal(password, app); password.tap(); password.typeText("VPJ07-Local-Synthetic-Only-195!")
         let login = app.buttons["native.login.submit"]; reveal(login, app); login.tap()
-        expectation(for: NSPredicate(format: "label == %@", chinese ? "本机会话有效" : "Local session active"), evaluatedWith: app.staticTexts["native.session.status"])
+        expectation(for: NSPredicate(format: "label == %@", chinese ? "会话有效" : "Session active"), evaluatedWith: app.staticTexts["native.session.status"])
         waitForExpectations(timeout: 30)
         app.tabBars.buttons[chinese ? "问熊猫" : "Ask"].tap()
         let agree = app.switches["native-ask.agree"]
