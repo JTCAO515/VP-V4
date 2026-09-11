@@ -22,6 +22,8 @@ export type ProtocolRequest = Readonly<{
   task: ModelTask | "tool_candidate" | "text_turn_v1" | "text_task_v2";
   history?: readonly Readonly<{ role: "user" | "assistant"; content: string }>[];
   tool?: ProtocolTool;
+  /** Optional bounded Qwen task-context experiment; output cap includes reasoning. */
+  thinkingBudgetTokens?: number;
   maxOutputTokens: number;
   timeoutMs: number;
 }>;
@@ -76,7 +78,7 @@ export type TextAuthorizationRpc = (name: "read_text_work" | "authorize_text_dis
  */
 export async function invokeTextProviderProtocol(
   lease: Readonly<{ turnId: string; leaseToken: string }>,
-  binding: Readonly<{ provider: ProtocolProvider; endpoint: string; maxOutputTokens: number; timeoutMs: number; inputMode?: "current_input_v1" | "task_history_v1" }>,
+  binding: Readonly<{ provider: ProtocolProvider; endpoint: string; maxOutputTokens: number; timeoutMs: number; thinkingBudgetTokens?: number; inputMode?: "current_input_v1" | "task_history_v1" }>,
   rpc: TextAuthorizationRpc, budget: BudgetTurn, transport: ProtocolTransport, signal: AbortSignal,
 ): Promise<ProtocolOutcome> {
   if (signal.aborted) return cancelled();
@@ -88,7 +90,7 @@ export async function invokeTextProviderProtocol(
     || typeof raw.policyId !== "string" || typeof raw.text !== "string" || raw.text.length > 4000
     || (taskMode && (!validTextTaskHistory(raw.history) || typeof raw.contextDigest !== "string" || !/^[a-f0-9]{64}$/.test(raw.contextDigest)))) return unavailable("DATA_POLICY_BLOCKED");
   const policyId = raw.policyId;
-  return invokeProtocol({ requestId: lease.leaseToken, provider: binding.provider, dataClass: "c2_sensitive", input: raw.text, task: taskMode ? "text_task_v2" : "text_turn_v1", ...(taskMode ? { history: raw.history as ProtocolRequest["history"] } : {}), maxOutputTokens: binding.maxOutputTokens, timeoutMs: binding.timeoutMs }, budget, transport, signal, async () => {
+  return invokeProtocol({ requestId: lease.leaseToken, provider: binding.provider, dataClass: "c2_sensitive", input: raw.text, task: taskMode ? "text_task_v2" : "text_turn_v1", ...(taskMode ? { history: raw.history as ProtocolRequest["history"] } : {}), thinkingBudgetTokens: binding.thinkingBudgetTokens, maxOutputTokens: binding.maxOutputTokens, timeoutMs: binding.timeoutMs }, budget, transport, signal, async () => {
     const decision = await rpc(taskMode ? "authorize_text_task_dispatch" : "authorize_text_dispatch", { ...keys, p_policy_id: policyId, p_provider: binding.provider, ...(taskMode ? { p_context_digest: raw.contextDigest as string } : {}) });
     return record(decision) && decision.kind === "authorized";
   }, binding.endpoint);
@@ -162,10 +164,12 @@ function requestBody(request: ProtocolRequest): Record<string, unknown> {
       { role: "user", content: request.input },
     ],
     stream: false,
-    max_tokens: request.maxOutputTokens,
+    ...(request.thinkingBudgetTokens === undefined
+      ? { max_tokens: request.maxOutputTokens }
+      : { max_completion_tokens: request.maxOutputTokens, thinking_budget: request.thinkingBudgetTokens }),
     // GLM-5.3-Flash rejects thinking: disabled (observed HTTP400/1210).
     // Preserve its native default; reasoning text still never leaves normalization.
-    ...(request.provider === "qwen" ? { enable_thinking: false } : request.provider === "deepseek" ? { thinking: { type: "disabled" } } : {}),
+    ...(request.provider === "qwen" ? { enable_thinking: request.thinkingBudgetTokens !== undefined } : request.provider === "deepseek" ? { thinking: { type: "disabled" } } : {}),
     ...(["strict_known_unknown", "text_turn_v1", "text_task_v2"].includes(request.task) ? { response_format: { type: "json_object" } } : {}),
     ...(request.task === "tool_candidate" && request.tool ? {
       tools: [{ type: "function", function: { name: request.tool.name, parameters: request.tool.parameters } }],
@@ -178,6 +182,7 @@ function normalizeResponse(request: ProtocolRequest, value: unknown): ProtocolOu
   if (!record(value)) return unavailable("MODEL_OUTPUT_INVALID");
   const usage = normalizeUsage(request.provider, value.usage);
   if (value.error || !usage || value.model !== PROTOCOL_MODELS[request.provider] || !Array.isArray(value.choices) || value.choices.length !== 1) return unavailable("MODEL_OUTPUT_INVALID", usage);
+  if (request.thinkingBudgetTokens !== undefined && usage.outputTokens > request.maxOutputTokens) return unavailable("MODEL_OUTPUT_INVALID", usage);
   const choice = value.choices[0];
   if (!record(choice) || choice.index !== 0 || !record(choice.message) || choice.message.role !== "assistant") return unavailable("MODEL_OUTPUT_INVALID", usage);
   const message = choice.message;
@@ -257,6 +262,8 @@ function validRequest(value: ProtocolRequest): boolean {
     && typeof value.input === "string" && value.input.trim().length > 0 && value.input.length <= 32768
     && ["c0_synthetic", "c1_user", "c2_sensitive", "c3_restricted", "c4_secret"].includes(value.dataClass)
     && count(value.maxOutputTokens) && value.maxOutputTokens > 0 && value.maxOutputTokens <= 8192
+    && (value.thinkingBudgetTokens === undefined || (value.provider === "qwen" && value.task === "text_task_v2"
+      && validThinkingBudget(value.thinkingBudgetTokens, value.maxOutputTokens)))
     && count(value.timeoutMs) && value.timeoutMs > 0 && value.timeoutMs <= 60000
     && (value.task === "tool_candidate"
       ? record(value.tool) && typeof value.tool.name === "string" && /^[A-Za-z_][A-Za-z0-9_]{0,63}$/.test(value.tool.name) && record(value.tool.parameters) && value.tool.parameters.type === "object" && typeof value.tool.validateArguments === "function"
@@ -273,4 +280,9 @@ export function validTextTaskHistory(value: unknown): value is NonNullable<Proto
     && value.every((item, i) => record(item) && Object.keys(item).length === 2
       && item.role === (i % 2 === 0 ? "user" : "assistant") && typeof item.content === "string"
       && item.content.trim().length > 0 && item.content.length <= (i % 2 === 0 ? 4000 : 8000));
+}
+
+/** Total generation is capped separately; reserve against the complete output cap. */
+export function validThinkingBudget(value: unknown, total: number): value is number {
+  return count(value) && value > 0 && value <= 2048 && count(total) && total <= 4096 && value < total;
 }

@@ -123,3 +123,38 @@ test("GLM preserves its native thinking default instead of sending the rejected 
   assert.equal(result.kind, "protocol_validated");
   assert.equal(JSON.stringify(result).includes("private synthetic reasoning"), false);
 });
+
+test("bounded Qwen task thinking caps complete output and never exposes reasoning", async () => {
+  const candidate = request("qwen", { task: "text_task_v2", history: [], thinkingBudgetTokens: 64 });
+  const result = await invokeProviderProtocol(candidate, budget(), async wire => {
+    const body = JSON.parse(wire.body);
+    assert.equal(body.enable_thinking, true);
+    assert.equal(body.max_completion_tokens, 128);
+    assert.equal(body.thinking_budget, 64);
+    assert.equal(body.max_tokens, undefined);
+    const response = completion("qwen", { role: "assistant", reasoning_content: "PRIVATE_REASONING_CANARY", content: '{"outcome":"clarification","text":"Which direction are you facing?"}' });
+    response.usage.completion_tokens_details.reasoning_tokens = 2;
+    return Response.json(response);
+  }, signal());
+  assert.equal(result.kind, "protocol_validated");
+  assert.doesNotMatch(JSON.stringify(result), /PRIVATE_REASONING_CANARY/);
+  assert.equal(result.usage?.outputTokens, 4, "reasoning is part of completion usage, not added twice");
+  for (const finish of ["length", "stop"]) {
+    const response = completion("qwen", { role: "assistant", content: '{"outcome":"answered","text":"Synthetic"}' }, finish);
+    response.usage.completion_tokens = 129; response.usage.total_tokens = 139;
+    const rejected = await invokeProviderProtocol(candidate, budget(), async () => Response.json(response), signal());
+    assert.equal(rejected.kind, "unavailable");
+    if (rejected.kind === "unavailable") assert.equal(rejected.code, "MODEL_OUTPUT_INVALID");
+  }
+});
+
+test("thinking experiment rejects invalid bounds, legacy tasks and other providers before egress", async () => {
+  const base = request("qwen", { task: "text_task_v2", history: [], thinkingBudgetTokens: 64 });
+  let calls = 0;
+  for (const patch of [{ thinkingBudgetTokens: 0 }, { thinkingBudgetTokens: 128 }, { thinkingBudgetTokens: 64.5 }, { thinkingBudgetTokens: 2049, maxOutputTokens: 4096 }, { thinkingBudgetTokens: 1024, maxOutputTokens: 4097 }, { provider: "glm" as const }, { task: "text_turn_v1" as const, history: undefined }]) {
+    const result = await invokeProviderProtocol({ ...base, ...patch }, budget(), async () => { calls++; return Response.json(completion("qwen")); }, signal());
+    assert.equal(result.kind, "unavailable");
+    if (result.kind === "unavailable") assert.equal(result.code, "INVALID_INPUT");
+  }
+  assert.equal(calls, 0);
+});

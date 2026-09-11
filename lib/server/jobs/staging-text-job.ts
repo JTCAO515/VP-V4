@@ -1,6 +1,6 @@
 import { createScopedTextWorker, type ScopedTextWorkerConfig } from "../turn/scoped-text-worker.ts";
 import { createProviderHttpTransport, type HttpProviderConfiguration, type HttpTransportDependencies } from "../model-gateway/adapters/http-transport.ts";
-import { PROTOCOL_MODELS } from "../model-gateway/adapters/provider-protocol.ts";
+import { PROTOCOL_MODELS, validThinkingBudget } from "../model-gateway/adapters/provider-protocol.ts";
 import type { ProtocolUsage } from "../model-gateway/adapters/provider-protocol.ts";
 
 export type TextJobPricing = Readonly<{
@@ -10,7 +10,8 @@ export type TextJobPricing = Readonly<{
   cachedInputMicrosPerMillion: number | null;
 }>;
 export type StagingTextJobConfig = Readonly<{
-  schemaVersion: "vpj07-staging-text-job/1" | "vpj07-staging-text-job/2";
+  schemaVersion: "vpj07-staging-text-job/1" | "vpj07-staging-text-job/2" | "vpj07-staging-text-job/3";
+  thinkingBudgetTokens?: number;
   inputMode?: "task_history_v1";
   ownerId: string;
   policyId: string;
@@ -32,11 +33,13 @@ export type StagingTextJobDependencies = Readonly<{
  * or supplier invoice proof. No defaults, fallback, policy installation or timer.
  */
 export function createStagingTextJob(raw: unknown, dependencies: StagingTextJobDependencies) {
-  if (!record(raw) || (raw.schemaVersion === "vpj07-staging-text-job/1"
-      ? Object.keys(raw).length !== 6 || raw.inputMode !== undefined
-      : raw.schemaVersion !== "vpj07-staging-text-job/2" || Object.keys(raw).length !== 7 || raw.inputMode !== "task_history_v1")
-    || !record(raw.budget) || !record(raw.provider) || raw.provider.timeoutMs !== raw.budget.timeoutMs
-    || !validPricing(raw.pricing)) throw unavailable();
+  if (!record(raw) || !record(raw.budget) || !record(raw.provider)
+    || raw.provider.timeoutMs !== raw.budget.timeoutMs || !validPricing(raw.pricing)) throw unavailable();
+  const schema = raw.schemaVersion;
+  if (schema === "vpj07-staging-text-job/1" ? Object.keys(raw).length !== 6 || raw.inputMode !== undefined || raw.thinkingBudgetTokens !== undefined
+    : schema === "vpj07-staging-text-job/2" ? Object.keys(raw).length !== 7 || raw.inputMode !== "task_history_v1" || raw.thinkingBudgetTokens !== undefined
+    : schema !== "vpj07-staging-text-job/3" || Object.keys(raw).length !== 8 || raw.inputMode !== "task_history_v1"
+      || !validThinkingBudget(raw.thinkingBudgetTokens, raw.budget.maxOutputTokens as number)) throw unavailable();
   const config = raw as StagingTextJobConfig;
   // This entry is qualified only for the pinned Qwen profile. The full-context
   // bound deliberately over-reserves input instead of estimating tokens from text.
@@ -46,6 +49,7 @@ export function createStagingTextJob(raw: unknown, dependencies: StagingTextJobD
     || !Number.isSafeInteger(config.budget.reservedMicros) || config.budget.reservedMicros < 1) throw unavailable();
   const inputRate = Math.max(config.pricing.inputMicrosPerMillion, config.pricing.cachedInputMicrosPerMillion ?? 0);
   const numerator = BigInt(1_048_576) * BigInt(inputRate)
+    // For job/3 maxOutputTokens caps reasoning plus final text (max_completion_tokens).
     + BigInt(config.budget.maxOutputTokens) * BigInt(config.pricing.outputMicrosPerMillion);
   const requiredMicros = (numerator + BigInt(999999)) / BigInt(1000000);
   if (requiredMicros > BigInt(1_000_000_000_000) || BigInt(config.budget.reservedMicros) < requiredMicros) throw unavailable();
@@ -57,7 +61,7 @@ export function createStagingTextJob(raw: unknown, dependencies: StagingTextJobD
   return createScopedTextWorker({ environment: "staging", databaseUrl: "https://dzqdzetcctkhbrhlxxgn.supabase.co",
     ownerId: config.ownerId, policyId: config.policyId, budget: config.budget }, {
     credential: dependencies.workerCredential,
-    provider: { inputMode: config.inputMode ?? "current_input_v1", provider: config.provider.provider, endpoint: config.provider.endpoint, transport, price },
+    provider: { thinkingBudgetTokens: config.thinkingBudgetTokens, inputMode: config.inputMode ?? "current_input_v1", provider: config.provider.provider, endpoint: config.provider.endpoint, transport, price },
     ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
   });
 }
