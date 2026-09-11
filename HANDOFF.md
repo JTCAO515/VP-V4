@@ -6,9 +6,9 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Staging27–33 and the scoped three-function ACL normalization are executed, with55 original table records preserved. Web v2 configuration/deployment closeout and the four-city first-batch research are recorded. JT requested direct main push and no further review/test/development this round.
+状态：Goal resumed by explicit JT request: S1 to S2 integration first. Live main 7bf22fb and authorized Preview return login200/native session503; native remote wiring remains unavailable. No remote mutations performed in this resumption.
 
-阶段：PAUSED_BY_USER after this round. Do not automatically start the next Issue, additional testing or review. Resume only on a new explicit user request.
+阶段：S1 integration: remote native identity and same-Trip; S2 follows the verified identity/Trip chain. One main lane; no independent preparation lane selected.
 
 ## 读取顺序
 
@@ -79,7 +79,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-本轮收尾后暂停开发。JT已授权并执行Staging维护/迁移及直连停写；实际历史33，34/35未应用。Production/Preview设置Web v2，新部署入口按本轮维护记录恢复，旧部署host继续deny。用户后来明确停止新增审阅/验证、直接推main；未创建新测试账号或Trip，不声称Web业务验收通过。首批城市上海/北京/广州/重庆，十场景已落档，来源与事实冲突由agent负责；21条研究候选中19条进入首批、2条hold，C仅表示已有候选线索，不是产品覆盖。未导入、发布或赋予检索资格；不再追问已确认城市/授权，也不自动推进后续producer、Native远端或Harness任务。
+Implement and review the bounded remote native identity/Trip configuration under #191/#192, preserving ordinary JWT/RLS, mobile replacement, Web coexistence, redirect denial and endpoint-scoped Keychain. Current Swift, identity handler and Trip activation only accept loopback. Do not enable LOCAL flags on Vercel. Existing authorized Preview login200/session503 observed; see artifacts/VPJ-04/remote-readiness/verification.md. Prepare a reviewed Preview activation and ordinary-account acceptance before remote activation. Main currently targets Vercel Production; current goal excludes production release without separate confirmation, so do not merge a PR that triggers it merely on older authorization. Staging33 is historical executed evidence;34/35/provider/worker/knowledge activation and user acceptance remain incomplete.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
