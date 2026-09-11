@@ -1,3 +1,4 @@
+import { nativeFetch } from "./native-fetch.ts";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { verifyNativeCredentials } from "./native-credentials.ts";
@@ -219,10 +220,10 @@ export async function createNativeUserDataAdapter(request: NextRequest, current 
   );
 }
 
-/** Local native Trip consumer only. Other native data consumers remain closed. */
-export async function createNativeTripDataAdapter(request: Pick<NextRequest, "headers">, current = getSupabasePublicConfig()) {
+/** Explicitly activated native Trip consumer; ordinary JWT and mobile epoch remain authoritative. */
+export async function createNativeTripDataAdapter(request: Pick<NextRequest, "headers">, current = getSupabasePublicConfig(), transport: typeof fetch = nativeFetch, onUnavailable?: () => void) {
   if (!current) return null;
-  const credentials = await verifyNativeCredentials(request, current);
+  const credentials = await verifyNativeCredentials(request, current, transport, onUnavailable);
   if (!credentials) return null;
   const authenticated = async (): Promise<AdapterResult<string>> => {
     const state = await credentials.client.rpc("native_session_v2", { p_action: "session" });

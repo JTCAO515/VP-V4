@@ -10,8 +10,9 @@ import { identityLocalEnv } from '../identity/local-supabase.mjs';
 import { waitForNativeAPI } from '../identity/native-api-readiness.mjs';
 
 test('local native/Web share one immutable Trip with confirmed intent, CAS and ordinary-owner isolation', {skip:process.env.VP_LOCAL_SAME_TRIP!=='true',timeout:180000},async t=>{
- const e=identityLocalEnv();assert.equal(e?.API_URL,'http://127.0.0.1:59821');assert.equal(e.DB_CONTAINER,'supabase_db_vp-native-session-replay-20260910');
- const api='http://127.0.0.1:59931',key=e.PUBLISHABLE_KEY||e.ANON_KEY,users=[];
+ const e=identityLocalEnv();assert.ok(e?.API_URL && e.DB_CONTAINER,'explicit disposable target required');
+ const port=process.env.VP_NATIVE_API_PORT ?? '59931';assert.match(port,/^[1-9][0-9]{3,4}$/);
+ const api='http://127.0.0.1:'+port,key=e.PUBLISHABLE_KEY||e.ANON_KEY,users=[];
  await waitForNativeAPI(api,null);
  const sql=input=>execFileSync('docker',['exec','-i',e.DB_CONTAINER,'psql','-U','postgres','-d','postgres','-v','ON_ERROR_STOP=1','-Atq'],{input,encoding:'utf8',stdio:['pipe','pipe','pipe']}).trim();
  t.after(()=>{if(users.length){const ids=users.map(u=>"'"+u.id+"'").join(',');assert.equal(sql(`delete from public.trip_events where owner_id in (${ids}); delete from public.trip_audit_events where owner_id in (${ids}); delete from auth.users where id in (${ids}); select count(*) from auth.users where id in (${ids});`),'0','exact synthetic cleanup');}});
@@ -92,6 +93,10 @@ test('local native/Web share one immutable Trip with confirmed intent, CAS and o
  await n('/'+otherTrip+'/proposal/reject',{proposalId:race.data.proposalId});
  const rollback=await w('/'+tripId+'/rollback',{targetVersion:0});assert.equal(rollback.status,201);assert.match(rollback.data.digest,/^trip-v2:/);const rollbackRead=await w('/'+tripId+'/proposal?proposalId='+rollback.data.proposalId);assert.equal(rollbackRead.data.proposal.after.days.length,0,'rollback displays actual full snapshot effect');
  const rollbackConfirm={proposalId:rollback.data.proposalId,idempotencyKey:randomUUID(),digest:rollback.data.digest};assert.equal((await w('/'+tripId+'/confirm',rollbackConfirm)).data.resultingVersion,5);assert.equal((await w('/'+tripId+'/confirm',rollbackConfirm)).data.outcome,'already_applied');assert.deepEqual((await n('/'+tripId)).data.content.days,[]);
+ if(process.env.VP_S1_BROWSER==='true') {
+  const {exerciseSameTripBrowser}=await import('./same-trip-browser.mjs');
+  await exerciseSameTripBrowser({api,jar,n,t});
+ }
  const otherToken=await login(users[1]);assert.equal((await call('/api/trips/native/v2/'+tripId,{token:otherToken})).status,403);assert.equal((await call('/api/trips/native/v2/'+tripId+'/proposal?proposalId='+third.data.proposalId,{token:otherToken})).status,403);
  assert.ok((await users[1].sdk.from('trip_proposals').insert({owner_id:users[1].id,trip_id:tripId,revision:200,base_trip_version:5,status:'pending',patch:{title:'foreign'},expires_at:'2099-01-01T00:00:00Z'})).error,'foreign Trip pending insert denied');
  await login(users[0]);assert.equal((await n('/'+tripId)).status,401,'replaced mobile read denied');const oldReplay=await owner.rpc('confirm_and_apply_trip_proposal',{p_proposal_id:confirm.proposalId,p_idempotency_key:confirm.idempotencyKey,p_digest:confirm.digest});assert.ok(oldReplay.error,'replaced mobile raw replay denied');assert.equal((await w('/'+tripId)).status,200,'Web Cookie survives');

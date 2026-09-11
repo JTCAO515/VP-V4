@@ -1,28 +1,24 @@
+import { nativeRequestScope } from "../identity/native-request.ts";
+import { getNativeRuntimeConfig } from "../identity/native-config.ts";
 import type { NextRequest } from "next/server";
-import { createNativeTripDataAdapter, getSupabasePublicConfig } from "../identity/user-data-adapter.ts";
+import { createNativeTripDataAdapter } from "../identity/user-data-adapter.ts";
 import { isUuid, isTripCreateInput, parseTripListInput, isTripProposalInput, isTripProposalRevisionInput, isProposalRejectInput, isConfirmInput } from "../identity/request-guards.ts";
 import { FAILURE_TAXONOMY, type FailureCode } from "../contracts/errors/index.ts";
 
 type Action = "list" | "create" | "read" | "proposal_read" | "proposal_create" | "revise" | "reject" | "confirm";
 const response = (value: unknown, status = 200) => Response.json(value, { status, headers: { "Cache-Control": "private, no-store" } });
 const failure = (code: FailureCode) => response({ error: { code } }, FAILURE_TAXONOMY[code].httpStatus);
-export function getLocalNativeTripConfig() {
-  const config = getSupabasePublicConfig();
-  if (process.env.VISEPANDA_NATIVE_LOCAL_TRIP !== "true" || !config) return null;
-  try {
-    const url = new URL(config.url);
-    return url.protocol === "http:" && ["localhost", "127.0.0.1"].includes(url.hostname) && !url.username && !url.password ? config : null;
-  } catch { return null; }
-}
-
 export async function nativeTripHTTP(request: NextRequest, action: Action, tripId?: string) {
-  const config = getLocalNativeTripConfig();
+  const config = getNativeRuntimeConfig(request, "trip");
   if (!config) return failure("PROVIDER_UNAVAILABLE");
   if (request.headers.has("cookie") || request.headers.has("origin")) return failure("INVALID_INPUT");
   if (tripId !== undefined && !isUuid(tripId)) return failure("INVALID_INPUT");
   tripId = tripId?.toLowerCase();
+  const scope = nativeRequestScope(request.signal);
   try {
-    const adapter = await createNativeTripDataAdapter(request, config);
+    return await scope.run(async () => {
+    const adapter = await createNativeTripDataAdapter(request, config, scope.fetch, scope.unavailable);
+    scope.check();
     if (!adapter) return failure("UNAUTHENTICATED");
     const actor = await adapter.authenticated();
     if ("error" in actor) return failure(actor.error);
@@ -44,8 +40,8 @@ export async function nativeTripHTTP(request: NextRequest, action: Action, tripI
       if (!("error" in result)) return response({ version: 2, ...result.data });
     } else {
       if ([...params].length) return failure("INVALID_INPUT");
-      const raw = await request.text();
-      if (raw.length > 64000) return failure("INVALID_INPUT");
+      const raw = await scope.body(request, 192_000);
+      if (raw === null || raw.length > 64000) return failure("INVALID_INPUT");
       let input: unknown;
       try { input = JSON.parse(raw); } catch { return failure("INVALID_INPUT"); }
       if (action === "create" && isTripCreateInput(input)) {
@@ -68,5 +64,7 @@ export async function nativeTripHTTP(request: NextRequest, action: Action, tripI
     // A concurrent phone replacement can happen after the first gate. Keep its failure distinct.
     const stillActive = await adapter.authenticated();
     return failure("error" in stillActive ? stillActive.error : result.error);
-  } catch { return failure("INTERNAL_ERROR"); }
+    });
+  } catch { return failure("PROVIDER_UNAVAILABLE"); }
+  finally { scope.dispose(); }
 }

@@ -1,8 +1,7 @@
 import { nativeIdentityHTTP } from "@/lib/server/identity/native-http";
-import { getSupabasePublicConfig } from "@/lib/server/identity/user-data-adapter";
+import { getNativeRuntimeConfig } from "@/lib/server/identity/native-config";
 
 export const runtime = "nodejs";
 export async function GET(request: Request) {
-  const config = getSupabasePublicConfig();
-  return nativeIdentityHTTP(request, "session", process.env.VISEPANDA_NATIVE_LOCAL_SESSION === "true" && config ? { ...config, serviceRoleKey: process.env.VISEPANDA_NATIVE_LOCAL_SERVICE_KEY } : null);
+  return nativeIdentityHTTP(request, "session", getNativeRuntimeConfig(request, "session"));
 }

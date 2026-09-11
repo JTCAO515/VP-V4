@@ -42,3 +42,19 @@ Coordinate remote rollout separately: deploy compatible code with the default le
 The v2 SHA256 field set is frozen: proposal ID, owner, Trip ID, revision, base version, patch, rollback target, parent proposal, expiry and creation time, serialized with UTC. Unrelated future columns do not change existing digests; new intent semantics require a versioned change. The read RPC returns the proposal and digest from the same row. Optional `before`/`after` objects show the immutable base and the proposed TripPatch projection; `after` is not committed state.
 
 Snapshot responses also include `confirmationState: "initial"|"confirmed"|"unknown"`. A new Trip starts at version zero. Only a server-bound receipt, matching applied proposal/Trip/base, event and immutable snapshot establish `confirmed`. Unbound legacy history is not guessed or deleted. Audit rows have no unique producer binding, so v2 audit metadata is explicitly `verification:"unknown"`; it is not confirmation authority. Creation retries compare the original immutable version-zero title, even after another client renames the Trip.
+
+## Staging Preview integration increment
+
+The remote identity configuration in [VPJ-04](vpj-04.md) also gates native Trip routes and the
+existing Web Day/Item editor on the exact Preview deployment host. The Web page still requires
+its normal cookie session and all Web mutations retain their Origin/CSRF checks. The historical
+`localTripEnabled` component prop is a UI availability switch; it grants no write authority.
+Production and unrelated aliases do not acquire this editor switch through the new configuration.
+
+Native Trip passes the existing ordinary JWT and mobile-epoch adapter a shared10-second request
+scope, including body reads and SDK requests. Redirects are refused; Auth transport/protocol
+outages abort the scope and return503 rather than incorrectly clearing the session via401.
+The existing64k UTF-16 body limit remains, with a192k UTF-8 preallocation ceiling. Explicit Auth
+rejection still returns401; an interrupted write is an unknown acknowledgement, never a rollback
+claim. No retry or replacement idempotency key is introduced. Proposal/digest/CAS/atomic Patch
+semantics and SQL remain unchanged. This increment is not remote acceptance; use the S1 runbook.
