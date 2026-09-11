@@ -1,0 +1,898 @@
+{
+  "schemaVersion": "vpj15-four-city-selection-v1",
+  "batch": "2026-09-11-four-city",
+  "baseCommit": "8b65aa22585810b13c254263ee48aaba58f404dd",
+  "relatedIssue": 205,
+  "scopeDecision": {
+    "cities": [
+      "上海",
+      "北京",
+      "广州",
+      "重庆"
+    ],
+    "scenes": [
+      "入境",
+      "机场交通",
+      "支付",
+      "手机与网络",
+      "地铁公交",
+      "出租车网约车",
+      "高铁",
+      "景点预约",
+      "酒店住宿",
+      "紧急求助"
+    ],
+    "chosenBy": "user",
+    "sourceSelectionAndConflictResolution": "delegated_to_agent"
+  },
+  "selectionScope": "private_first_batch_research_review_only",
+  "selectionBy": "Codex batch integration",
+  "independentReview": "pending",
+  "sourceCommits": [
+    "cc85830b7ef2b3953ffcb86f125092134a7eaae2",
+    "f9d3f085"
+  ],
+  "candidateCount": 21,
+  "selectedCount": 19,
+  "holdCount": 2,
+  "published": false,
+  "retrievalEligible": false,
+  "productionImportSupported": false,
+  "runtimeGrant": false,
+  "policyReceiptId": null,
+  "selectionIsRuntimePermission": false,
+  "sourceMaterialPolicy": "原创事实摘要和出处用于研究；既有极短定位摘录仍属第三方表达，不扩量复制；公开可见和未发现禁止条款均不构成运行许可。",
+  "conflictPolicy": [
+    "同对象同事项优先主管机关/实际运营主体的一手具体证据；卡组织声明仅约束其卡种。",
+    "同一主体较新专项公告优先于旧通用页面；主体、对象、版本或日期不同不能直接互相替代。",
+    "冲突与日期未知保留到原记录；不能消解时保守排除冲突命题或记缺口。",
+    "不复制页面/PDF/图片/地图/标识/二维码，不将原创摘要误当来源模型用途授权。"
+  ],
+  "records": [
+    {
+      "candidateId": "N-01",
+      "recordFile": "national-sources.json",
+      "sourceIds": [
+        "N-S01"
+      ],
+      "cities": [
+        "上海",
+        "北京",
+        "广州",
+        "重庆"
+      ],
+      "scenes": [
+        "入境"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "只选官方免费入境卡入口；不判断准入或免签资格。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "N-02",
+      "recordFile": "national-sources.json",
+      "sourceIds": [
+        "N-S02"
+      ],
+      "cities": [
+        "上海",
+        "北京",
+        "广州",
+        "重庆"
+      ],
+      "scenes": [
+        "支付"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "先核具体卡组织与商户受理，避免全商户可用推论。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "N-03",
+      "recordFile": "national-sources.json",
+      "sourceIds": [
+        "N-S02"
+      ],
+      "cities": [
+        "上海",
+        "北京",
+        "广州",
+        "重庆"
+      ],
+      "scenes": [
+        "支付"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "保留应用与发卡方条件，不固定费率、限额或支付成功。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "N-04",
+      "recordFile": "national-sources.json",
+      "sourceIds": [
+        "N-S02"
+      ],
+      "cities": [
+        "上海",
+        "北京",
+        "广州",
+        "重庆"
+      ],
+      "scenes": [
+        "支付"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "补充现金备选，具体网点、费率和服务可用性另核。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "N-05",
+      "recordFile": "national-sources.json",
+      "sourceIds": [
+        "N-S03",
+        "N-S10"
+      ],
+      "cities": [
+        "上海",
+        "北京",
+        "广州",
+        "重庆"
+      ],
+      "scenes": [
+        "手机与网络"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "只选持证到运营商网点的全国基线；天津设备细则不得全国化。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "N-06",
+      "recordFile": "national-sources.json",
+      "sourceIds": [
+        "N-S03"
+      ],
+      "cities": [
+        "上海",
+        "北京",
+        "广州",
+        "重庆"
+      ],
+      "scenes": [
+        "高铁"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "只选护照身份核验备选渠道，不保证即时核验或购票。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "N-07",
+      "recordFile": "national-sources.json",
+      "sourceIds": [
+        "N-S04",
+        "N-S03"
+      ],
+      "cities": [
+        "上海",
+        "北京",
+        "广州",
+        "重庆"
+      ],
+      "scenes": [
+        "高铁"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "只取证件、行程单与车站截止提示；排除混杂儿童与退改旧规则。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "N-08",
+      "recordFile": "national-sources.json",
+      "sourceIds": [
+        "N-S05"
+      ],
+      "cities": [
+        "上海",
+        "北京",
+        "广州",
+        "重庆"
+      ],
+      "scenes": [
+        "酒店住宿"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "保留旅馆登记职责及个别旅馆履行未知，不证明酒店接待资格。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "N-09",
+      "recordFile": "national-sources.json",
+      "sourceIds": [
+        "N-S05",
+        "N-S06",
+        "N-S07"
+      ],
+      "cities": [
+        "上海",
+        "北京",
+        "广州",
+        "重庆"
+      ],
+      "scenes": [
+        "酒店住宿"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "保留非旅馆首次住宿登记义务；网上试点与再次入住条件不可全国化。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "N-10",
+      "recordFile": "national-sources.json",
+      "sourceIds": [
+        "N-S08",
+        "N-S09"
+      ],
+      "cities": [
+        "上海",
+        "北京",
+        "广州",
+        "重庆"
+      ],
+      "scenes": [
+        "紧急求助"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "仅保留报警、消防、急救号码；不承诺接通、语言、费用或响应时间。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "SH01",
+      "recordFile": "city-sources.json",
+      "sourceIds": [
+        "SH-AIRPORT"
+      ],
+      "cities": [
+        "上海"
+      ],
+      "scenes": [
+        "机场交通",
+        "地铁公交"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "仅浦东T1/T2市域机场线站名，不推及全机场或地铁公交全覆盖。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "SH02",
+      "recordFile": "city-sources.json",
+      "sourceIds": [
+        "SH-METRO"
+      ],
+      "cities": [
+        "上海"
+      ],
+      "scenes": [
+        "地铁公交"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "保留服务中心银行卡购票渠道；不得扩成全部外卡直接拍闸。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "SH03",
+      "recordFile": "city-sources.json",
+      "sourceIds": [
+        "SH-MUSEUM"
+      ],
+      "cities": [
+        "上海"
+      ],
+      "scenes": [
+        "景点预约"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "当前东馆普通散客规则，保留特展、团队和特殊展区例外；版权页未读成功。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "BJ01",
+      "recordFile": "city-sources.json",
+      "sourceIds": [
+        "BJ-RIDEHAIL"
+      ],
+      "cities": [
+        "北京"
+      ],
+      "scenes": [
+        "机场交通",
+        "出租车网约车"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "仅首都机场T3网约车候车点；大兴、其他航站楼与一般出租车仍缺。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "BJ02",
+      "recordFile": "city-sources.json",
+      "sourceIds": [
+        "BJ-JCB"
+      ],
+      "cities": [
+        "北京"
+      ],
+      "scenes": [
+        "地铁公交"
+      ],
+      "disposition": "hold",
+      "reason": "JCB条款存在明确个人/非商业及书面同意限制，本轮不纳入首批；未据此否定事实。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "BJ03",
+      "recordFile": "city-sources.json",
+      "sourceIds": [
+        "BJ-PALACE"
+      ],
+      "cities": [
+        "北京"
+      ],
+      "scenes": [
+        "景点预约"
+      ],
+      "disposition": "hold",
+      "reason": "故宫声明对商业内容使用要求事先书面许可，本轮不纳入首批；不提供代预约或素材权利。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "GZ01",
+      "recordFile": "city-sources.json",
+      "sourceIds": [
+        "GZ-AIRPORT"
+      ],
+      "cities": [
+        "广州"
+      ],
+      "scenes": [
+        "机场交通"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "只选白云T3对应城际东站事实；T1/机场南站及接驳变动不带入。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "GZ02",
+      "recordFile": "city-sources.json",
+      "sourceIds": [
+        "GZ-AMEX"
+      ],
+      "cities": [
+        "广州"
+      ],
+      "scenes": [
+        "地铁公交"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "只选运通标识闸机及符合条件卡种，保留脚注排除；公交与其他卡种仍缺。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "GZ03",
+      "recordFile": "city-sources.json",
+      "sourceIds": [
+        "GZ-MUSEUM"
+      ],
+      "cities": [
+        "广州"
+      ],
+      "scenes": [
+        "景点预约"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "只选普通观众预约规则；当前外籍护照实际预约/入馆流程仍缺。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "CQ01",
+      "recordFile": "city-sources.json",
+      "sourceIds": [
+        "CQ-AIRPORT"
+      ],
+      "cities": [
+        "重庆"
+      ],
+      "scenes": [
+        "机场交通",
+        "地铁公交"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "仅江北T3与10号线对应；T3B具体位置、APM和营业时间仍缺。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    },
+    {
+      "candidateId": "CQ02",
+      "recordFile": "city-sources.json",
+      "sourceIds": [
+        "CQ-MUSEUM"
+      ],
+      "cities": [
+        "重庆"
+      ],
+      "scenes": [
+        "景点预约"
+      ],
+      "disposition": "selected_for_first_batch_research_review",
+      "reason": "采用较新主馆取消预约公告，保留证件与客流条件；分馆与护照实操仍缺。",
+      "conditionsAndExclusions": "inherit_all_from_referenced_record_without_loosening",
+      "sourceMaterialPermission": "not_established",
+      "runtimeGrant": false
+    }
+  ],
+  "coverageLegend": {
+    "C": "至少一条入选研究候选；不是已审核Fact或场景全覆盖",
+    "G": "首批研究缺口，包括仅存在hold候选的格子"
+  },
+  "coverageCounts": {
+    "cells": 40,
+    "C": 35,
+    "G": 5
+  },
+  "coverage": [
+    {
+      "city": "上海",
+      "scene": "入境",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-01"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "北京",
+      "scene": "入境",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-01"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "广州",
+      "scene": "入境",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-01"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "重庆",
+      "scene": "入境",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-01"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "上海",
+      "scene": "机场交通",
+      "status": "C",
+      "selectedCandidateIds": [
+        "SH01"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "北京",
+      "scene": "机场交通",
+      "status": "C",
+      "selectedCandidateIds": [
+        "BJ01"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "广州",
+      "scene": "机场交通",
+      "status": "C",
+      "selectedCandidateIds": [
+        "GZ01"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "重庆",
+      "scene": "机场交通",
+      "status": "C",
+      "selectedCandidateIds": [
+        "CQ01"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "上海",
+      "scene": "支付",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-02",
+        "N-03",
+        "N-04"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "北京",
+      "scene": "支付",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-02",
+        "N-03",
+        "N-04"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "广州",
+      "scene": "支付",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-02",
+        "N-03",
+        "N-04"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "重庆",
+      "scene": "支付",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-02",
+        "N-03",
+        "N-04"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "上海",
+      "scene": "手机与网络",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-05"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "北京",
+      "scene": "手机与网络",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-05"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "广州",
+      "scene": "手机与网络",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-05"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "重庆",
+      "scene": "手机与网络",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-05"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "上海",
+      "scene": "地铁公交",
+      "status": "C",
+      "selectedCandidateIds": [
+        "SH01",
+        "SH02"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "北京",
+      "scene": "地铁公交",
+      "status": "G",
+      "selectedCandidateIds": [],
+      "heldCandidateIds": [
+        "BJ02"
+      ],
+      "meaning": "首批无候选；hold不计覆盖"
+    },
+    {
+      "city": "广州",
+      "scene": "地铁公交",
+      "status": "C",
+      "selectedCandidateIds": [
+        "GZ02"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "重庆",
+      "scene": "地铁公交",
+      "status": "C",
+      "selectedCandidateIds": [
+        "CQ01"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "上海",
+      "scene": "出租车网约车",
+      "status": "G",
+      "selectedCandidateIds": [],
+      "heldCandidateIds": [],
+      "meaning": "首批无候选；hold不计覆盖"
+    },
+    {
+      "city": "北京",
+      "scene": "出租车网约车",
+      "status": "C",
+      "selectedCandidateIds": [
+        "BJ01"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "广州",
+      "scene": "出租车网约车",
+      "status": "G",
+      "selectedCandidateIds": [],
+      "heldCandidateIds": [],
+      "meaning": "首批无候选；hold不计覆盖"
+    },
+    {
+      "city": "重庆",
+      "scene": "出租车网约车",
+      "status": "G",
+      "selectedCandidateIds": [],
+      "heldCandidateIds": [],
+      "meaning": "首批无候选；hold不计覆盖"
+    },
+    {
+      "city": "上海",
+      "scene": "高铁",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-06",
+        "N-07"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "北京",
+      "scene": "高铁",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-06",
+        "N-07"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "广州",
+      "scene": "高铁",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-06",
+        "N-07"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "重庆",
+      "scene": "高铁",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-06",
+        "N-07"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "上海",
+      "scene": "景点预约",
+      "status": "C",
+      "selectedCandidateIds": [
+        "SH03"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "北京",
+      "scene": "景点预约",
+      "status": "G",
+      "selectedCandidateIds": [],
+      "heldCandidateIds": [
+        "BJ03"
+      ],
+      "meaning": "首批无候选；hold不计覆盖"
+    },
+    {
+      "city": "广州",
+      "scene": "景点预约",
+      "status": "C",
+      "selectedCandidateIds": [
+        "GZ03"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "重庆",
+      "scene": "景点预约",
+      "status": "C",
+      "selectedCandidateIds": [
+        "CQ02"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "上海",
+      "scene": "酒店住宿",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-08",
+        "N-09"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "北京",
+      "scene": "酒店住宿",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-08",
+        "N-09"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "广州",
+      "scene": "酒店住宿",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-08",
+        "N-09"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "重庆",
+      "scene": "酒店住宿",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-08",
+        "N-09"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "上海",
+      "scene": "紧急求助",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-10"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "北京",
+      "scene": "紧急求助",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-10"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "广州",
+      "scene": "紧急求助",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-10"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    },
+    {
+      "city": "重庆",
+      "scene": "紧急求助",
+      "status": "C",
+      "selectedCandidateIds": [
+        "N-10"
+      ],
+      "heldCandidateIds": [],
+      "meaning": "仅限候选记录中的具体事实；场景其余部分仍缺"
+    }
+  ],
+  "runtimeGates": [
+    "独立语义与来源权利复核",
+    "行前/发布前按原记录重新核对来源版本和条件",
+    "现有producer仅address，类型兼容尚未实现",
+    "尚无发布、请求级eligibility或真实产品检索证据"
+  ],
+  "stopBoundary": "本轮只完成研究整合和审阅；不扩producer，不发布/导入，不关闭#205；完成后暂停。"
+}
