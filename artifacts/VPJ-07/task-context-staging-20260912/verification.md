@@ -48,3 +48,19 @@ worker operation and physical-phone follow-up are not accepted here.
 
 Rollback disables v3/context worker while preserving migrations, consent history,
 task records and budget pins. It must never replay these Turns as new user goals.
+
+## Candidate v2: FAIL, withdrawn
+
+Worker `65baeb23563b74d3d73ff43f2802538ad6b582e6` used the explicit missing-condition
+rule in `vp-task-response-v2`, against the same API, policy and byte-identical cases.
+English still asserted a180-degree turn. Chinese described conditional directions
+but selected `answered` and appealed to an implied starting premise instead of
+asking for it. Neither second Turn was admitted. Exact replay and other-owner
+exclusion passed, but neither establishes semantic or multi-turn acceptance.
+
+Both attempts settled without unresolved cost: CNY0.014436 at the conservative
+configured tariff, not supplier invoice or user charge. Across both candidates:
+four attempts, CNY0.025212. The ineffective prompt change was withdrawn. Runtime
+remains v1; this PR retains observed failures and does not claim a quality fix.
+Further provider evaluation requires a distinct bounded change and retained cases;
+no same-version retry or changed expected outcome is justified by these results.

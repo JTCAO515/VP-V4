@@ -274,7 +274,7 @@ No separate conversation service, queue, recipient, billing policy or Trip acces
   and terminalize it as a protocol error. No legacy unassociated admission or old
   dispatch authorization can send a context-policy Turn.
 - `vpj07-staging-text-job/2` requires `inputMode=task_history_v1`; job/1 remains
-  current-input only. The existing worker journal records `vp-task-response-v2`
+  current-input only. The existing worker journal records `vp-task-response-v1`
   instead of the legacy prompt reference for job/2. The provider uses `text_task_v2`
   with fixed user/assistant history roles and a server-owned system prompt. Complete
   serialized RPC/provider payloads are bounded at 262144 bytes. C2 still requires
@@ -287,10 +287,9 @@ records. This API slice requires target Staging and a SwiftUI consumer before it
 establish native multi-turn acceptance. It does not resolve earlier semantic failures.
 
 
-The first real Staging task-context candidate (`vp-task-response-v1`) failed the
-fixed bilingual facing-direction case: both languages supplied a 180-degree turn
-without a stated initial orientation. Two attempts settled; neither continuation
-was admitted and no same-version reroll occurred. Candidate v2 adds explicit
-missing-condition clarification, while preserving the same policy/recipient/data
-scope and previously supplied task context. Its semantic result must be observed,
-not inferred from this prompt change.
+The real Staging task-context candidates v1 and v2 both failed the fixed bilingual
+facing-direction case. Neither entered clarification, so no continuation was
+admitted. Candidate v2's added prompt rule did not establish the required behavior
+and was withdrawn; the runtime remains v1. Both results and settled cost evidence
+are retained in `artifacts/VPJ-07/task-context-staging-20260912/verification.md`.
+Native context integration and semantic acceptance remain separate open work.

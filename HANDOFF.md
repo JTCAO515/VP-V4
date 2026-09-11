@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：#194 closed after PR328/329 and real Staging cost evidence. #195 now has a bounded v3 task-context API and job/2 worker, locally verified with actual SQL/Auth/HTTP; Staging remains migration37/current-input and native context acceptance is pending.
+状态：#194 closed. #195 migration38/context policy and v3 API observed in Staging; bilingual fixed cases failed both prompt candidates. Candidate v2 withdrawn; runtime v1 retained. Native task-context consumer and semantic acceptance remain open.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -99,7 +99,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Merge the reviewed #195 context increment after CI; prepare migration38 backup/restore and scoped Staging new notice/consent, then verify short bilingual clarification with actual Qwen. Implement the matching SwiftUI consumer next. Keep JT phone validation deferred and preserve the experience account/Trip; full S1/S2 and semantic regression remain incomplete.
+Implement explicitly enabled SwiftUI v3 same-task clarification/repair with reliable recovery and notice binding; test on simulator, preserving legacy v1. Retain both failed semantic candidates; do not reroll or claim S2 acceptance. JT phone validation remains deferred.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
