@@ -1,5 +1,7 @@
 # AI-01 Decision Register — operator worksheet
 
+2026-09-12开发修订：本文涉及供应商、法务或产品许可的历史前置条件已由[开发接入规则](../agents/development-integration-policy.md)取消；技术实现与实际验收继续按当前任务推进。
+
 - Issue: [#3 AI-01](https://github.com/JTCAO515/VP-V4/issues/3)
 - Status: accepted by explicit operator delegation in the Codex conversation on 2026-08-24. The choices below are now the R0 execution baseline.
 - Delegated decision owner: Codex, acting under the operator's explicit instruction to take responsibility for DEC and path selection.

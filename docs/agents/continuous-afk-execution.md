@@ -1,5 +1,7 @@
 # Continuous AFK execution
 
+2026-09-12：[开发接入规则](development-integration-policy.md)优先。供应商/法务/产品许可等待不属于C类人工阻塞；agent完成开发配置、集成和实测，未知信息如实记录。
+
 This policy governs a long-running development session that works across multiple GitHub Issues.
 Use `development-workflow.md` / ADR-0024 for work units, preparation scope, local checks and
 reading. This policy retains existing merge and operator authority.
@@ -29,7 +31,7 @@ When authority or data safety is uncertain, preserve the more restrictive bounda
 | --- | --- | --- | --- |
 | `A — autonomous` | reversible repo-only D0/D1 code, tests, docs or UI with frozen contracts | implement, verify, open PR, address CI | enable repository auto-merge when branch protection permits, then continue |
 | `B — prepare-only` | auth, RLS, permissions, schema/migration, retention, deletion, data policy, provider region, release controls | implement only the accepted contract, add rollback and adversarial evidence, open PR | absent an active explicit operator instruction, leave the PR ready; otherwise use the restricted repository-only auto-merge rule below |
-| `C — operator-owned` | unresolved product/architecture choice, legal/licence/DPA, secret/account provisioning, payment, production migration/cutover, destructive or irreversible action | prepare evidence/options/runbook only | enqueue the exact operator action, mark/retain `ready-for-human` or `needs-info`, then skip |
+| `C — operator-owned` | material architecture/scope change, unavailable account access requiring a person, payment outside existing authority, production migration/cutover, destructive or irreversible action | prepare evidence/options/runbook only | enqueue the exact operator action, mark/retain `ready-for-human` or `needs-info`, then skip |
 
 Class A auto-merge is permitted only when all PR-applicable Issue checks under development-workflow.md and repository required checks are
 successful, the PR is mergeable and not draft, no unresolved review or security finding exists, the
@@ -89,7 +91,7 @@ The session may replace a human confirmation with automation only when the obser
 - browser automation on affected routes/viewports, relevant RTL paths, console, network and claims;
 - CI, Preview smoke, logs and trace identifiers for deployed behavior that the agent may access.
 
-Automation is not equivalent to legal approval, commercial acceptance, subjective brand approval,
+Development requires no separate legal or product approval. Automation does not establish commercial rights, public brand acceptance,
 real-user consent, production data access, production migration execution or an unavailable external
 account. Record those as Class C rather than claiming success.
 

@@ -1,6 +1,6 @@
 # VPJ-03 文本Ask留存语义与双语告知审阅稿
 
-版本 `VPJ03-NOTICE-REVIEW-20260911-v1`。不可发布、不可灌入运行policy；未含合格的实际接收方与地区。
+版本 `VPJ03-NOTICE-REVIEW-20260912-v2`。agent依据实际配置填写后可用于开发policy；供应商未披露的信息如实说明，不等待第三方、法务或产品许可。模板不是已激活配置或生产发布证据。
 承接 [JT决定](vpj-03-text-decisions.md)、[接收方矩阵](vpj-03-provider-qualification.md)及
 [VPJ-07已合并本地契约](../contracts/vpj-07.md)。本文补齐已确认语义，不更改其执行权限。
 
@@ -18,7 +18,7 @@
 | 删除聊天/Turn/账号 | 隐藏已留存正文，停止对应可见访问 | 已有本地实现设置永久hidden_at，正文不级联删除；恢复相同ID也不恢复可见。账号删除仍受现有账本约束，不能承诺任意时刻删除成功 |
 | 撤回文本AI同意 | 停止后续授权、输出落库与读取 | 已提交的dispatch授权可能已有在途请求，不能召回；不承诺立即停止供应商计算。该版本撤回不可重新启用，后续需新policy/新同意；已存正文仍保留 |
 | 实际彻底删除申请 | 另行核验与隐私生命周期处理 | 不把隐藏回执说成彻底删除回执；正文擦除/供应商删除/备份清理执行尚未交付，不能给虚构完成时限 |
-| 供应商输入/输出、日志与备份 | 经资格核验的单一接收方推理 | TTL、训练、撤回限制按公开条款、控制台及实际配置如实说明；未知不要求书面补证，也不能继承VisePanda长期留存方向；见接收方矩阵 |
+| 供应商输入/输出、日志与备份 | 当前配置及用户同意覆盖的单一接收方推理 | TTL、训练、撤回限制依供应商实际合同，不能继承VisePanda长期留存方向；见接收方矩阵 |
 | VisePanda备份/灾备 | 恢复服务与保留记录 | 实际周期/地区/访问证据待补；恢复必须保留撤回与hidden状态，不复活旧删除数据。本文不授予读取备份正文 |
 | 团队/客服 | 已决定全体受控团队成员长期跨用户CRUD | 运行未开启；需身份来源、服务端能力、审计及退出撤权。普通客户仍owner隔离；成员不能伪造用户Proposal确认、账本或删除回执 |
 | 设备/服务端材料 | 照片、音频、OCR、上传 | 本文本版本均不开启；设备同意不继承为上传同意，拒绝时不得fallback绕过 |
@@ -69,19 +69,14 @@ audit and offboarding controls are verified. Other customers cannot view your da
 processing, we do not submit your question to AI. Locally verified manual Trip viewing, editing and
 confirmation do not depend on this permission; availability in the release environment must be verified.
 
-Before publication, identify and review the exact recipient, service/endpoint, source/processing/storage
-regions, supplier training and retention arrangements for input/output, backup arrangements and known limits,
-retention purpose and applicable basis, working withdrawal/erasure-request channels, and effective/recheck dates.
-Use public terms, console evidence and actual configuration. Supplier details that are not disclosed may be
-identified as unknown or not promised; exact retention periods, support tickets, written replies and proof of
-account-level contract acceptance are not prerequisites for any model provider. Do not infer zero retention,
-no training or completed deletion. The actual recipient and processing scope must still be identified.
-This paragraph is an editorial requirement, not copy for a consent screen; copy must be completed truthfully
-and reviewed before activation.
+Before development use, the agent fills in the actual provider/endpoint, observed environment configuration,
+known handling limits, withdrawal controls and configuration dates. Supplier training, retention or internal
+regions that are not disclosed are stated as unknown, without waiting for supplier, legal or product approval.
+This is an editorial instruction; the resulting user notice must accurately describe the configured behavior.
 
 ## 同意与拒绝验收
 
-实际启用须把完整中英告知和上述补齐字段生成不可变policy及notice hash；明确未预选的同意动作绑定owner/session。
+开发启用时由agent依据上述实际配置及已说明的未知项生成中英告知、不可变policy及notice hash；明确未预选的同意动作绑定owner/session。
 拒绝不创建正文或调用；变更provider不沿用旧同意；Free/Pass都不代替许可。
 本地原生呈现/撤回已验证，但此审阅稿没有被发布或写入任何真实policy。
 

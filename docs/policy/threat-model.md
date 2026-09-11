@@ -1,5 +1,7 @@
 # AI-05 Security and Privacy Threat Model
 
+2026-09-12开发修订：本文涉及供应商、法务或产品许可的历史前置条件已由[开发接入规则](../agents/development-integration-policy.md)取消；技术实现与实际验收继续按当前任务推进。
+
 Status: accepted architecture threat baseline for [AI-05](https://github.com/JTCAO515/VP-V4/issues/7). Controls listed as “later” are requirements for their owning implementation issue, not current production protections.
 
 ## Trust boundaries
@@ -56,6 +58,6 @@ Current maturity is fixture-only: there is no V4 database, provider, model, uplo
 | Performance | not applicable | no running request path |
 | UX | not applicable | no UI changes |
 | Observability | deferred | future traces/alerts must use allowlisted metadata and an owner/cadence |
-| Compliance | applicable | no legal claim; policy/region/retention/rights remain explicit gates |
+| Compliance | applicable | record actual policy/region/retention and user consent; no development legal/product sign-off |
 
 L1–L3 documentation/build checks are run for this issue. L4 security, L5 device, L6 staging, and L7 production evidence remain unrun until the relevant runtime components exist.

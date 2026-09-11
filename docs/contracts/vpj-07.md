@@ -1,5 +1,7 @@
 # VPJ-07 durable text backend v1
 
+Development integration follows [the 2026-09-12 policy](../agents/development-integration-policy.md): agents may configure versioned development policies within existing environment authority without supplier, legal or product approval. Unknown supplier details must be represented honestly; authenticated user consent and server enforcement remain required.
+
 Status: local backend and native consumer preparation for #195. No real policy rows, recipient
 configuration, remote migration, production scheduler or customer traffic are activated.
 The SQL/controlled HTTP tests prove execution of the backend, not real-user/provider acceptance.
@@ -22,8 +24,8 @@ C2 is the default classification; no C3/C4 field envelope is accepted. Free text
 PII/secret detection guarantee; real activation still needs the approved field/notice safeguards.
 
 The empty registry is private, has no public management RPC and is not writable by service_role.
-Only a separately authorized operator migration/configuration may install the actual qualified
-agreement. No placeholder row is seeded by application migrations. Policy definitions cannot be
+An agent may install the development agreement through the scoped migration/configuration path
+within existing environment authority; no separate supplier/legal/product sign-off is required. No placeholder row is seeded by application migrations. Policy definitions cannot be
 updated/deleted; the only allowed update is terminal revocation. Expired/revoked versions require
 a new reviewed policy ID and new consent. Caller-supplied booleans cannot enable the C0 protocol.
 
@@ -144,7 +146,8 @@ PostgreSQL with all application migrations, minimal SQL auth fixtures, ordinary 
 HTTP, cancellation/deletion barriers, and existing worker crash recovery. They do not prove GoTrue,
 remote Auth, an actual supplier, a deployed worker or native UI acceptance. #195 remains open.
 
-Before remote activation, complete recipient/region/terms/notice qualification, configure trusted
+Before remote development activation, record actual recipient/endpoint configuration and user notice,
+represent undisclosed supplier details honestly under the development policy, and configure trusted
 RPC/transport and reviewed budget pricing, apply migrations under scoped environment authorization,
 and verify the deployed clients including native final-answer reload. Local native evidence does not establish remote acceptance. Rollback disables the consumer and
 policy, retaining content, receipts and applied migration history. Do not drop retained records or

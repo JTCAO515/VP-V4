@@ -1,5 +1,7 @@
 # VP-V4 Engineering Instructions
 
+Current development integration follows `docs/agents/development-integration-policy.md` (JT, 2026-09-12): no supplier ticket/written reply, legal or product sign-off gate. Available accounts/APIs and observed behavior drive development; record unknown supplier details honestly. This supersedes conflicting historical approval requirements.
+
 Active product: VPJ-00 #187 / ADR-0023. Native SwiftUI iOS is the complete product;
 Web is a lightweight same-Trip Planning Studio. Start with `CONTEXT.md` and the current task.
 Product entry: `docs/program/2026-09-05/README.md`.
