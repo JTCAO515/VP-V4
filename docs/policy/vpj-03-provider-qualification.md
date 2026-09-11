@@ -56,7 +56,8 @@
 也不自动覆盖百炼专项协议。公开来源核对见 [补证](../../artifacts/VPJ-03/qwen-account-20260911/public-evidence.md)。
 平台隐私政策区分业务数据与智能对话服务，具体按量API的适用范围仍需确认；不把对话优化规则
 套到全部API，也不把通用业务数据条款写成零留存承诺。模型页面最高档标准价格与既有C0上界一致。
-[供应商咨询稿](qwen-account-support-draft.md)已备好，尚未发送；无需在咨询中提供Key或用户正文。
+[供应商咨询稿](qwen-account-support-draft.md)已按用户授权发送，工单 `000D0RX4LS` 已分派；仅自动受理，工程师回复待取得。
+[提交回执](../../artifacts/VPJ-03/qwen-account-20260911/support-receipt.json)不代表资格通过；未附Key或用户正文。
 
 ## 最少账号补证：只对准备启用的一家提交
 
