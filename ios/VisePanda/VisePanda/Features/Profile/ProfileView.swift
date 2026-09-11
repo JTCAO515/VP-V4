@@ -9,18 +9,18 @@ struct ProfileView: View {
     private var chinese: Bool { settings.selectedLocale == .zh }
 
     private var accountCaption: Text {
-        settings.nativeSession.enabled ? Text(verbatim: chinese ? "本机身份测试" : "Local identity test") : Text("profile.preview_account")
+        settings.nativeSession.enabled ? Text(verbatim: chinese ? "测试环境身份" : "Test environment identity") : Text("profile.preview_account")
     }
     private var storageCaption: Text {
         settings.nativeSession.enabled ? Text(verbatim: chinese ? "凭据保存在本机钥匙串" : "Credentials stored in this device’s Keychain") : Text("profile.none")
     }
     private var foundationCaption: Text {
-        settings.nativeSession.enabled ? Text(verbatim: chinese ? "仅用于本机合成测试；行程可与本机网页同步，AI和推送尚未接入。" : "Local synthetic testing only. Trips can sync with the local web app. AI and push are not connected.") : Text("profile.foundation_note")
+        settings.nativeSession.enabled ? Text(verbatim: chinese ? "仅用于测试账号；行程可与测试网页同步，AI和推送尚未接入。" : "Test accounts only. Trips can sync with the test web app. AI and push are not connected.") : Text("profile.foundation_note")
     }
 
     private var sessionStatus: String {
         switch settings.nativeSession.status {
-        case "active": chinese ? "本机会话有效" : "Local session active"
+        case "active": chinese ? "会话有效" : "Session active"
         case "expiredOrReplaced": chinese ? "会话已过期或已在另一手机登录，请重新登录" : "Session expired or replaced on another phone. Sign in again."
         case "retry": chinese ? "连接未完成，请重试会话" : "Connection incomplete. Retry the session."
         case "storageError": chinese ? "无法读取本机凭据，请重新登录" : "Cannot read local credentials. Sign in again."
@@ -53,7 +53,7 @@ struct ProfileView: View {
             }
 
             if settings.nativeSession.enabled {
-                Section(chinese ? "本机测试账号" : "Local test account") {
+                Section(chinese ? "测试账号" : "Test account") {
                     Text(sessionStatus)
                         .accessibilityIdentifier("native.session.status")
                     if let subject = settings.nativeSession.subject {
