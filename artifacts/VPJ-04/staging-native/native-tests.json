@@ -1,0 +1,10 @@
+{
+  "testedSwiftTree": "9f1dc44718c1fb04d6eed68b3776d3ff9c4e3273",
+  "configuration": "default app, actual ad-hoc signing, owned Simulator",
+  "passed": 25,
+  "failed": 0,
+  "skipped": 11,
+  "total": 36,
+  "remoteAcceptance": false,
+  "laterPackagingChange": "a0848e3 explicit plist; separately built with default and staging config; final CI required"
+}

@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：Goal resumed by explicit JT request: S1 to S2 integration first. Live main 7bf22fb and authorized Preview return login200/native session503; native remote wiring remains unavailable. No remote mutations performed in this resumption.
+状态：S1 remote native identity/Trip implementation is prepared in PR324 (e104222, plist fix a0848e3), with real local Auth/RLS and same-Trip/browser verification. Remote Staging activation and user acceptance remain incomplete; no remote writes in this resumption.
 
-阶段：S1 integration: remote native identity and same-Trip; S2 follows the verified identity/Trip chain. One main lane; no independent preparation lane selected.
+阶段：S1 integration: finalize exact-version checks and bounded Preview activation for native identity/same-Trip. S2 follows the verified chain; one main lane.
 
 ## 读取顺序
 
@@ -79,7 +79,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Implement and review the bounded remote native identity/Trip configuration under #191/#192, preserving ordinary JWT/RLS, mobile replacement, Web coexistence, redirect denial and endpoint-scoped Keychain. Current Swift, identity handler and Trip activation only accept loopback. Do not enable LOCAL flags on Vercel. Existing authorized Preview login200/session503 observed; see artifacts/VPJ-04/remote-readiness/verification.md. Prepare a reviewed Preview activation and ordinary-account acceptance before remote activation. Main currently targets Vercel Production; current goal excludes production release without separate confirmation, so do not merge a PR that triggers it merely on older authorization. Staging33 is historical executed evidence;34/35/provider/worker/knowledge activation and user acceptance remain incomplete.
+Complete final PR324 packaging/CI evidence, then resolve the exact Preview-only proof-key configuration, exact new host allowlist and two synthetic-account/own-Trip cleanup scope in docs/runbooks/native-staging-s1.md. Core local Auth/RLS1/1 and same-Trip/browser1/1 zero skip passed; native25pass0fail11environment skips. Preserve original staging accounts/Trips and schema33. Main targets Vercel Production, excluded by current Goal until separately confirmed; do not merge under older release authorization. No provider/worker/knowledge activation; S1/S2 remain unaccepted.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
