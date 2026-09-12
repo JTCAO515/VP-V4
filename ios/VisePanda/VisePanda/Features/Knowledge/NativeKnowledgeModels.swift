@@ -26,11 +26,13 @@ struct NativeKnowledgeRead: Decodable {
     let territory: String
     let status: String
     let statements: [NativeKnowledgeStatement]
+    let answer: NativeKnowledgeAnswer?
 
     /// A snapshot may live at most30 seconds and never beyond the server's expiry.
     /// Subtract the full request duration conservatively; wall-clock rollback cannot extend it.
-    func lifetime(for selection: NativeKnowledgeSelection, elapsed: TimeInterval) throws -> TimeInterval {
-        guard selection.valid, scope == selection, schemaVersion == "knowledge-read/1",
+    func lifetime(for selection: NativeKnowledgeSelection, elapsed: TimeInterval, question: Bool = false) throws -> TimeInterval {
+        guard selection.valid, scope == selection, schemaVersion == (question ? "knowledge-answer/1" : "knowledge-read/1"),
+              question ? (selection.scene == "rail" && answer?.valid(statements: statements) == true) : answer == nil,
               purpose == "trip_planning", recipient == "first_party", territory == "CN-mainland",
               statements.count <= 50, Set(statements.map(\.id)).count == statements.count,
               status == (statements.isEmpty ? "no_eligible_content" : "available"),
@@ -56,6 +58,46 @@ struct NativeKnowledgeRead: Decodable {
         if let result = formatter.date(from: value) { return result }
         formatter.formatOptions = [.withInternetDateTime]
         return formatter.date(from: value)
+    }
+}
+
+struct NativeKnowledgeAnswer: Decodable {
+    let questionId: String
+    let questionVersion: Int
+    let outcome: String
+    let claims: [Claim]
+    static let required = ["original_valid_booking_id", "valid_ticket_not_itinerary_or_receipt"]
+    struct Claim: Decodable, Identifiable {
+        let id: String
+        let status: String
+        let reasons: [String]
+        let factIds: [String]
+    }
+    func valid(statements: [NativeKnowledgeStatement]) -> Bool {
+        guard questionId == "rail_boarding_documents", questionVersion == 1,
+              claims.map(\.id) == Self.required else { return false }
+        let ids = claims.flatMap(\.factIds)
+        guard Set(ids).count == ids.count, Set(ids) == Set(statements.map(\.id)),
+              outcome == (claims.allSatisfy { $0.status == "covered" } ? "answered" : statements.isEmpty ? "no_answer" : "partial") else { return false }
+        for claim in claims {
+            switch claim.status {
+            case "covered":
+                guard !claim.factIds.isEmpty, claim.reasons.isEmpty else { return false }
+                for id in claim.factIds {
+                    guard let row = statements.first(where: { $0.id == id }),
+                          row.assertion.subjectId == "rail_eticket_boarding", row.assertion.predicate == "requires_document",
+                          row.assertion.objectId == claim.id else { return false }
+                }
+            case "unresolved_variants":
+                guard claim.factIds.isEmpty, claim.reasons == ["unresolved_variants"] else { return false }
+            case "unavailable":
+                guard claim.factIds.isEmpty, !claim.reasons.isEmpty, Set(claim.reasons).count == claim.reasons.count,
+                      claim.reasons.allSatisfy({ ["missing", "expired", "revoked", "unreviewed"].contains($0) }),
+                      !claim.reasons.contains("missing") || claim.reasons.count == 1 else { return false }
+            default: return false
+            }
+        }
+        return true
     }
 }
 

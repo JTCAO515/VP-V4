@@ -1,12 +1,14 @@
 import SwiftUI
 
 struct NativeAskView: View {
+    var isActive: Bool
     @Environment(AppSettings.self) private var settings
     @State private var store = NativeAskStore()
     @State private var reviewed = false
     @State private var showNotice = true
+    @State private var showReviewedQuestion = false
     @FocusState private var composing: Bool
-    init(store: NativeAskStore = NativeAskStore()) { _store = State(initialValue: store) }
+    init(store: NativeAskStore = NativeAskStore(), isActive: Bool = true) { _store = State(initialValue: store); self.isActive = isActive }
 
     private var session: NativeSession { settings.nativeSession }
     private var active: Bool { session.dataScope != nil && store.scope == session.dataScope }
@@ -40,6 +42,11 @@ struct NativeAskView: View {
             if active && store.policy?.consentState == .accepted { composer }
         }
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button { showReviewedQuestion = true } label: {
+                    Text(settings.selectedLocale == .zh ? "乘车证件" : "Boarding documents")
+                }.accessibilityIdentifier("native-ask.reviewed-question")
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button("ask.local.reload") { Task { await store.reload(using: session) } }
                     .disabled(store.busy || session.dataScope == nil)
@@ -49,6 +56,9 @@ struct NativeAskView: View {
                 Spacer()
                 Button("ask.done") { composing = false }
             }
+        }
+        .navigationDestination(isPresented: $showReviewedQuestion) {
+            NativeKnowledgeView(isActive: isActive && showReviewedQuestion, question: true)
         }
         .vpNavigationTitle("tab.ask")
         .navigationBarTitleDisplayMode(.inline)

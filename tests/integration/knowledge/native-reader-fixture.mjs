@@ -1,19 +1,31 @@
 /** Explicit loopback UI regression only; never a knowledge or identity service. */
 import http from 'node:http';
-let refreshes=0, reads=0, revoked=false, disabled=false;
+let refreshes=0, reads=0, revoked=false, disabled=false, expired=false;
 const fixture=http.createServer(async(req,res)=>{
  const u=new URL(req.url,'http://127.0.0.1:59654');
  const reply=(body,status=200)=>{res.writeHead(status,{'content-type':'application/json','cache-control':'no-store'});res.end(JSON.stringify(body));};
  if(u.pathname==='/control'){
   let body='';for await(const part of req)body+=part;
-  const input=JSON.parse(body||'{}');if(input.reset){refreshes=0;reads=0;revoked=false;disabled=false;}
-  if(input.revoked)revoked=true;if(input.disabled)disabled=true;
+  const input=JSON.parse(body||'{}');if(input.reset){refreshes=0;reads=0;revoked=false;disabled=false;expired=false;}
+  if(input.revoked)revoked=true;if(input.disabled)disabled=true;if(input.expired)expired=true;
   return reply({refreshes,reads,revoked,disabled});
  }
  if(u.pathname.endsWith('/credentials')){refreshes=0;reads=0;return reply({subject:'knowledge-ui-only',accessToken:'synthetic-near-expiry',refreshToken:'synthetic-refresh',expiresAt:Date.now()/1000+5});}
  if(u.pathname.endsWith('/refresh')){refreshes++;await new Promise(r=>setTimeout(r,350));return reply({subject:'knowledge-ui-only',accessToken:'synthetic-refreshed',refreshToken:'synthetic-refresh',expiresAt:Date.now()/1000+5,mobileEpoch:1});}
  if(u.pathname.endsWith('/profile'))return reply({subject:'knowledge-ui-only',displayName:'Knowledge UI fixture'});
  if(u.pathname.startsWith('/api/auth/native/v2/'))return reply({subject:'knowledge-ui-only',mobileEpoch:1});
+ if(u.pathname==='/api/knowledge/native/v1/answer'){
+  reads++;if(disabled)return reply({error:{code:'KNOWLEDGE_DISABLED'}},503);
+  if(req.headers.authorization!=='Bearer synthetic-refreshed'||req.headers.cookie||req.headers.origin)return reply({error:{code:'UNAUTHENTICATED'}},401);
+  const query=Object.fromEntries(u.searchParams),zh=query.locale==='zh';
+  if(query.questionId!=='rail_boarding_documents'||query.questionVersion!=='1'||Object.keys(query).length!==4)return reply({error:{code:'INVALID_INPUT'}},400);
+  const scope={city:query.city,scene:'rail',locale:query.locale},required=['original_valid_booking_id','valid_ticket_not_itinerary_or_receipt'];
+  const ids=['11111111-1111-4111-8111-111111111111','44444444-4444-4444-8444-444444444444'];
+  const rows=required.map((objectId,i)=>({factId:ids[i],version:1,assertionId:i===0?'22222222-2222-4222-8222-222222222222':'55555555-5555-4555-8555-555555555555',assertionRevision:1,assertion:{subjectId:'rail_eticket_boarding',predicate:'requires_document',objectId,conditions:['adult_foreign_passport'],exclusions:['no_guarantee']},text:zh?(i===0?'合成回答：携带购票证件原件。':'合成回答：行程单不能作为车票。'):(i===0?'Synthetic answer: carry the original booking ID.':'Synthetic answer: an itinerary is not a ticket.'),conditions:[zh?'仅限成年外籍护照测试。':'Adult foreign-passport test only.'],exclusions:[zh?'不保证真实乘车。':'No real boarding guarantee.'],reviewedAt:new Date(Date.now()-2000).toISOString(),publishedAt:new Date(Date.now()-1000).toISOString(),expiresAt:new Date(Date.now()+60000).toISOString(),sources:[{sourceRevisionId:'33333333-3333-4333-8333-333333333333',publisher:'Synthetic fixture source',uri:'https://example.test/fixture',locator:'UI regression only'}]}));
+  const statements=rows.filter((_,i)=>!(i===0?revoked:expired));
+  const claims=required.map((id,i)=>({id,status:(i===0?revoked:expired)?'unavailable':'covered',reasons:(i===0?revoked:expired)?[i===0?'revoked':'expired']:[],factIds:(i===0?revoked:expired)?[]:[ids[i]]}));
+  return reply({data:{schemaVersion:'knowledge-answer/1',evaluatedAt:new Date().toISOString(),scope,purpose:'trip_planning',recipient:'first_party',territory:'CN-mainland',status:statements.length?'available':'no_eligible_content',statements,answer:{questionId:'rail_boarding_documents',questionVersion:1,outcome:statements.length===2?'answered':statements.length?'partial':'no_answer',claims}}});
+ }
  if(u.pathname==='/api/knowledge/native/v1'){
   reads++;if(disabled)return reply({error:{code:'KNOWLEDGE_DISABLED'}},503);
   if(req.headers.authorization!=='Bearer synthetic-refreshed'||req.headers.cookie||req.headers.origin)return reply({error:{code:'UNAUTHENTICATED'}},401);

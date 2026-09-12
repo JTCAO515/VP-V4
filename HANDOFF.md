@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 #205/#206: PR339 merged d2360fc after Native34708671075, Quality34708671157 and Preview PASS; final-header knowledge UI2/2 also PASS. Actual Staging publication/read/revoke/native restart/logout evidence retained; Ops/read disabled, WAF restored. PR340 selection renderer merged657d882; actual Ask grounding still pending. Production build CANCELED and all aliases/staging unchanged.
+状态：S2 #206: PR339/d2360fc and PR340/657d882 merged. New read-only native Ask boarding-document question implemented on codex/s2-knowledge-intent-20260913; PostgreSQL9, real local credential/API9, native8 unit and4 bilingual UI, contract253/static22 passed. No model call or saved ServiceTask/history is claimed. Staging remains39/read+Ops off; fresh encrypted backup/isolated restore PASS. PR/CI and actual Staging question integration pending; Production unchanged.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -53,6 +53,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- Reviewed-question local: SQL9/9 including post-base publication revocation barrier and50→51 capacity; actual GoTrue/native credential/Next API9/9; native Knowledge8/8 unit and4/4 bilingual UI incl32s hidden-tab no-refresh; final navigation-title English question1/1; contracts253/253, static22, build/lint/typecheck pass. SQL and native independent review0Critical/0Important after two fixes. Raw logs/xcresults remain recorded. No model/ServiceTask/remote question acceptance. See artifacts/VPJ-16/reviewed-question-20260913/verification.md.
 - PR339/d2360fc delivery: head2cfbb44 Native34708671075 and Quality34708671157/Preview PASS; default CI XCTest33/5skip/0fail,9Swift Testing and8standard UI pass,13opt-in UI skips. Separate final knowledge UI2/2 PASS. Header-fit corrects newly enlarged brand footprint without asset changes/cropping or audit exemptions. Production attempt dpl_9ia35mAVctgu781miJaUxt8js4rC CANCELED, aliases and shared staging preserved. See artifacts/VPJ-16/native-knowledge-20260913/delivery/verification.md.
 - Delivery: PR301/28a2d44 exactHEADafa83a5 independent review0/0; Native34471256512, Quality34471256572, Budget34471256522 and Vercel passed, merged tree matched and post-merge docs passed. Simulator CI now uses complete ad-hoc test signing plus an owned fresh device and explicit boot readiness; assertions/audit types are unchanged. Local full runner21pass/0fail/8API-environment skips; separate real API evidence remains underVPJ-05. Initial Keychain, audit-service, launch and destination-format failures remain recorded.
 - Foundation evidence: PR302/8175e39 exactHEAD5459c01 review0/0 and Quality/Vercel passed. iOS17 CJK comparison hadproduction2FAIL/SwiftUI2FAIL/UIKit2PASS; element captures showed complete text, with duplicated full-screen capture limitations disclosed. No production UI was changed or original audit failure waived.
@@ -111,7 +112,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Continue #206 from main d2360fc in /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage on codex/s2-knowledge-intent-20260913. Build a bounded explicitly chosen knowledge-question flow: freeze scope/idempotency, model intent only, server-owned first-party retrieval and deterministic facts, completion/history revalidation and <=30s display lifetime. Keep facts out of model input/history and generic text Ask separate. No new knowledge model-recipient grant is needed for this first-party route; existing user consent and ServiceTask budget remain enforced.
+Finish this #206 question slice: commit/PR required CI, guarded Staging39→40 additive RPC and actual first-party source/native answer verification, then preserve cleanup and continue broader Ask ServiceTask/history grounding. Do not call a model to repeat an explicitly selected question, reuse a fake provider policy, or treat this non-persistent question as full Ask acceptance. Current workspace /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

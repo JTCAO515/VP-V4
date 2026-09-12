@@ -123,7 +123,26 @@ test('real protected statement producer → independent review/publication → s
   const path=api+'/api/knowledge/native/v1?city=shanghai&scene=payment&locale=en';
   const r=await fetch(path,{headers:{Authorization:'Bearer '+tokens.accessToken}});assert.equal(r.status,200);assert.equal((await r.json()).data.statements.length,1);
   assert.equal((await fetch(path,{headers:{Cookie:owner.cookie(),Authorization:'Bearer '+tokens.accessToken}})).status,400);
-  const logout=await fetch(api+'/api/auth/native/v2/logout',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tokens.accessToken},body:'{}'});assert.equal(logout.status,200);assert.equal((await fetch(path,{headers:{Authorization:'Bearer '+tokens.accessToken}})).status,401);
+  const questionPath=api+'/api/knowledge/native/v1/answer?questionId=rail_boarding_documents&questionVersion=1&city=shanghai&locale=en';
+  const question=async(path=questionPath)=>{const r=await fetch(path,{headers:{Authorization:'Bearer '+tokens.accessToken}});return {status:r.status,body:await r.json()};};
+  assert.equal((await question()).body.data.answer.outcome,'no_answer','payment notes cannot cover a rail question');
+  const railIds=[];
+  for(const objectId of ['original_valid_booking_id','valid_ticket_not_itinerary_or_receipt']){
+   const rail=structuredClone(statement);rail.scope.scene='rail';rail.assertion={...rail.assertion,subjectId:'rail_eticket_boarding',predicate:'requires_document',objectId};
+   const cid=randomUUID();railIds.push(cid);
+   assert.equal((await ops(a,{...submission,candidateId:cid,operationId:randomUUID(),statement:rail})).status,200);
+   assert.equal((await ops(b,review(cid))).status,200);assert.equal((await ops(b,publish(cid))).status,200);
+  }
+  for(const locale of ['en','zh']){const r=await question(questionPath.replace('locale=en','locale='+locale));assert.equal(r.status,200);assert.equal(r.body.data.answer.outcome,'answered');assert.equal(r.body.data.statements.length,2);assert.deepEqual(r.body.data.statements[0].conditions,statement.expressions[locale].conditions);assert.equal(r.body.data.statements[0].sources.length,2);assert.ok(!JSON.stringify(r.body).includes(source.snippet));}
+  for(const extra of ['&text=book+my+train','&locale=zh','&scene=rail'])assert.equal((await question(questionPath+extra)).status,400);
+  assert.equal((await fetch(questionPath,{headers:{Authorization:'Bearer '+tokens.accessToken,Origin:api}})).status,400);
+  assert.equal((await fetch(questionPath,{headers:{Authorization:'Bearer '+tokens.accessToken,Cookie:owner.cookie()}})).status,400);
+  assert.equal((await ops(b,{action:'revoke_statement',operationId:randomUUID(),candidateId:railIds[0],expectedPublicationVersion:1,note:'Question API withdrawal'})).status,200);
+  const partial=await question();assert.equal(partial.body.data.answer.outcome,'partial');assert.deepEqual(partial.body.data.answer.claims[0].reasons,['revoked']);assert.equal(partial.body.data.statements.length,1);
+  sql(`update knowledge_review_private.publications set expires_at=published_at+interval '1 millisecond' where candidate_id='${railIds[1]}';`);
+  const expired=await question();assert.equal(expired.body.data.answer.outcome,'no_answer');assert.deepEqual(expired.body.data.answer.claims[1].reasons,['expired']);assert.equal(expired.body.data.statements.length,0);
+  sql('update knowledge_review_private.publication_settings set enabled=false;');assert.equal((await question()).status,503);sql('update knowledge_review_private.publication_settings set enabled=true;');
+  const logout=await fetch(api+'/api/auth/native/v2/logout',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tokens.accessToken},body:'{}'});assert.equal(logout.status,200);assert.equal((await fetch(path,{headers:{Authorization:'Bearer '+tokens.accessToken}})).status,401);assert.equal((await question()).status,401);
  });
  await t.test('atomic publication audit failure rolls back status and receipt',async()=>{
   const next={...submission,candidateId:randomUUID(),operationId:randomUUID()};assert.equal((await ops(a,next)).status,200);assert.equal((await ops(b,review(next.candidateId))).status,200);
