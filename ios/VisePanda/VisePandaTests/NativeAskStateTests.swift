@@ -10,6 +10,82 @@ nonisolated final class NativeAskStateTests: XCTestCase {
         let defaults = try XCTUnwrap(UserDefaults(suiteName: "vpj07.state.\(UUID().uuidString)"))
         return NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:59651"], defaults: defaults, configuration: configuration)
     }
+    @MainActor func testTaskChainRejectsMissingRootForkAndCrossThread() throws {
+        func turn(_ id: String, parent: String?, relationship: String, thread: String = "10000000-0000-0000-0000-000000000001") throws -> NativeTextTurn {
+            let data = try JSONSerialization.data(withJSONObject: ["turnId": id, "threadId": thread, "locale": "en", "input": "test", "outcome": "clarification", "output": "Which one?", "status": "completed", "createdAt": "2026-09-12", "serviceTaskId": "20000000-0000-0000-0000-000000000001", "scopeVersion": 1, "relationship": relationship, "parentTurnId": parent as Any? ?? NSNull()])
+            return try JSONDecoder().decode(NativeTextTurn.self, from: data)
+        }
+        let root = try turn("30000000-0000-0000-0000-000000000001", parent: nil, relationship: "new_goal")
+        let child = try turn("30000000-0000-0000-0000-000000000002", parent: root.id, relationship: "clarification")
+        XCTAssertEqual(NativeTaskChain(containing: child, history: [child, root])?.turns.map(\.id), [root.id, child.id])
+        XCTAssertNil(NativeTaskChain(containing: child, history: [child]))
+        let fork = try turn("30000000-0000-0000-0000-000000000003", parent: root.id, relationship: "clarification")
+        XCTAssertNil(NativeTaskChain(containing: child, history: [root, child, fork]))
+        let foreign = try turn(child.id, parent: root.id, relationship: "clarification", thread: "10000000-0000-0000-0000-000000000002")
+        XCTAssertNil(NativeTaskChain(containing: foreign, history: [root, foreign]))
+        let repair = try turn(child.id, parent: root.id, relationship: "repair")
+        XCTAssertNil(NativeTaskChain(containing: repair, history: [root, repair]))
+        let link = NativeServiceTaskLink(id: root.serviceTaskId!, scopeVersion: 1, relationship: "new_goal", parentTurnId: nil)
+        let encoded = try JSONSerialization.jsonObject(with: JSONEncoder().encode(link)) as? [String: Any]
+        XCTAssertTrue(encoded?["parentTurnId"] is NSNull)
+    }
+
+    @MainActor func testAcceptedTurnSurvivesFailedHistoryRefresh() async throws {
+        ObsoleteTaskProtocol.reset(acknowledge: true)
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [ObsoleteTaskProtocol.self]
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:59651", "-VisePandaTaskContext"], defaults: try XCTUnwrap(UserDefaults(suiteName: "vpj07.ack.\(UUID().uuidString)")), configuration: configuration)
+        await session.login(email: "fixture", password: "fixture")
+        let store = NativeAskStore(mode: .taskContext)
+        await store.reload(using: session)
+        store.draft = "Acknowledged synthetic request"
+        await store.send(locale: "en", using: session)
+        XCTAssertNil(store.pending)
+        XCTAssertNil(store.policy)
+        guard case .awaiting(let id) = store.intent else { XCTFail("Lost acknowledged task after refresh failure"); return }
+        XCTAssertFalse(store.canStartNew)
+        XCTAssertFalse(store.canSend)
+        await store.reload(using: session)
+        let restored = try XCTUnwrap(store.turns.first)
+        XCTAssertEqual(restored.id, id)
+        XCTAssertEqual(store.intent, .continuation(restored))
+        await session.logout()
+    }
+
+    @MainActor func testLostReceiptPolicyChangeRequiresStoppingOldSharingBeforeNewQuestion() async throws {
+        ObsoleteTaskProtocol.reset()
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [ObsoleteTaskProtocol.self]
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:59651", "-VisePandaTaskContext"], defaults: try XCTUnwrap(UserDefaults(suiteName: "vpj07.obsolete.\(UUID().uuidString)")), configuration: configuration)
+        await session.login(email: "fixture", password: "fixture")
+        let store = NativeAskStore(mode: .taskContext)
+        await store.reload(using: session)
+        store.draft = "Uncertain synthetic request"
+        await store.send(locale: "en", using: session)
+        let original = try XCTUnwrap(store.pending)
+        XCTAssertNil(store.policy)
+        await store.reload(using: session)
+        XCTAssertTrue(store.canSend)
+        ObsoleteTaskProtocol.changePolicy()
+        await store.reload(using: session)
+        XCTAssertTrue(store.hasObsoletePending)
+        XCTAssertFalse(store.canSend); XCTAssertFalse(store.canStartNew)
+        XCTAssertEqual(store.pending?.turnId, original.turnId)
+        // Another reload must not silently rebind the original text to the new notice.
+        await store.reload(using: session)
+        XCTAssertFalse(store.canSend)
+        await store.withdraw(using: session)
+        XCTAssertNotEqual(ObsoleteTaskProtocol.withdrawnPolicy, original.policyId)
+        XCTAssertEqual(store.pending?.turnId, original.turnId)
+        XCTAssertTrue(store.hasObsoletePending)
+        await store.stopPreviousRequest(using: session)
+        XCTAssertEqual(ObsoleteTaskProtocol.withdrawnPolicy, original.policyId)
+        XCTAssertNil(store.pending)
+        XCTAssertFalse(store.canSend) // Current policy was also deliberately withdrawn.
+        XCTAssertTrue(store.draft.isEmpty)
+        await session.logout()
+    }
+
     @MainActor func testTemporaryAuthLossKeepsHiddenDraftAndLogoutClearsIt() async throws {
         let session = try session()
         await session.login(email: "text-owner-a", password: "unit-only")
@@ -107,6 +183,73 @@ nonisolated private final class TextStateProtocol: URLProtocol, @unchecked Senda
     }
     private func reply(_ value: [String: Any]) {
         guard let url = request.url, let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: ["Content-Type": "application/json"]), let data = try? JSONSerialization.data(withJSONObject: value) else { return }
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: data); client?.urlProtocolDidFinishLoading(self)
+    }
+}
+
+/// Controlled transport: the original POST loses its receipt; no actual provider call.
+nonisolated private final class ObsoleteTaskProtocol: URLProtocol, @unchecked Sendable {
+    private static let lock = NSLock()
+    nonisolated(unsafe) private static var changed = false
+    nonisolated(unsafe) private static var withdrawn: String?
+    nonisolated(unsafe) private static var withdrawnIDs: Set<String> = []
+    nonisolated(unsafe) private static var acknowledge = false
+    nonisolated(unsafe) private static var failNextHistory = false
+    nonisolated(unsafe) private static var stored: [String: Any]?
+    static var withdrawnPolicy: String? { lock.withLock { withdrawn } }
+    static func reset(acknowledge: Bool = false) { lock.withLock { changed = false; withdrawn = nil; withdrawnIDs = []; Self.acknowledge = acknowledge; failNextHistory = false; stored = nil } }
+    static func changePolicy() { lock.withLock { changed = true } }
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func stopLoading() {}
+    override func startLoading() {
+        let path = request.url?.path ?? ""
+        let newPolicy = Self.lock.withLock { Self.changed }
+        let activeID = newPolicy ? "22222222-2222-4222-8222-222222222222" : "11111111-1111-4111-8111-111111111111"
+        let state = Self.lock.withLock { Self.withdrawnIDs.contains(activeID) ? "withdrawn" : "accepted" }
+        if path.hasSuffix("/turns") && request.httpMethod == "POST" {
+            if Self.lock.withLock({ Self.acknowledge }), let body = requestBody(),
+               let input = (try? JSONSerialization.jsonObject(with: body)) as? [String: Any],
+               let task = input["serviceTask"] as? [String: Any] {
+                Self.lock.withLock { Self.stored = input; Self.failNextHistory = true }
+                reply(["version": 3, "kind": "accepted", "reused": false, "turnId": input["turnId"]!, "serviceTaskId": task["id"]!, "scopeVersion": task["scopeVersion"]!, "relationship": task["relationship"]!, "parentTurnId": task["parentTurnId"]!])
+            } else { client?.urlProtocol(self, didFailWithError: URLError(.networkConnectionLost)) }
+            return
+        }
+        if path.hasSuffix("/turns"), Self.lock.withLock({ let fail = Self.failNextHistory; Self.failNextHistory = false; return fail }) {
+            client?.urlProtocol(self, didFailWithError: URLError(.networkConnectionLost)); return
+        }
+        var result: [String: Any]
+        if path.hasSuffix("/policy") {
+            result = ["version": 3, "kind": "policy", "policy": ["id": newPolicy ? "22222222-2222-4222-8222-222222222222" : "11111111-1111-4111-8111-111111111111", "provider": "qwen", "recipient": "fixture", "sourceRegion": "fixture", "processingRegion": "fixture", "storageRegion": "fixture", "termsVersion": "fixture", "noticeVersion": newPolicy ? "new" : "old", "noticeHash": String(repeating: newPolicy ? "b" : "a", count: 64), "noticeZh": "合成同意条款", "noticeEn": "Synthetic terms", "retention": "retain_after_hide_v1", "expiresAt": "2099-01-01", "consentState": state]]
+        } else if path.hasSuffix("/turns") {
+            var turns: [[String: Any]] = []
+            if let input = Self.lock.withLock({ Self.stored }), let task = input["serviceTask"] as? [String: Any] {
+                turns = [["turnId": input["turnId"]!, "threadId": input["threadId"]!, "locale": input["locale"]!, "input": input["text"]!, "outcome": "clarification", "output": "Which direction?", "status": "completed", "createdAt": "2026-09-12", "serviceTaskId": task["id"]!, "scopeVersion": task["scopeVersion"]!, "relationship": task["relationship"]!, "parentTurnId": task["parentTurnId"]!]]
+            }
+            result = ["version": 3, "kind": "history", "turns": turns]
+        }
+        else if path.hasSuffix("/consent") && request.httpMethod == "DELETE" {
+            let parsed = requestBody().flatMap { try? JSONSerialization.jsonObject(with: $0) as? [String: String] }
+            Self.lock.withLock { Self.withdrawn = parsed?["policyId"]; if let id = parsed?["policyId"] { Self.withdrawnIDs.insert(id) } }
+            result = ["version": 3, "kind": "withdrawn"]
+        } else if path.hasSuffix("/credentials") || path.hasSuffix("/refresh") {
+            result = ["subject": "task-fixture-owner", "accessToken": "task-fixture-owner", "refreshToken": "fixture", "expiresAt": Date().timeIntervalSince1970 + 3600, "mobileEpoch": 1]
+        } else if path.hasSuffix("/profile") { result = ["subject": "task-fixture-owner", "displayName": "fixture"] }
+        else { result = ["subject": "task-fixture-owner", "mobileEpoch": 1] }
+        reply(result)
+    }
+    private func requestBody() -> Data? {
+        if let data = request.httpBody { return data }
+        guard let stream = request.httpBodyStream else { return nil }
+        stream.open(); defer { stream.close() }
+        var data = Data(); var buffer = [UInt8](repeating: 0, count: 1024)
+        while stream.hasBytesAvailable { let n = stream.read(&buffer, maxLength: buffer.count); if n <= 0 { break }; data.append(buffer, count: n) }
+        return data
+    }
+    private func reply(_ result: [String: Any]) {
+        guard let url = request.url, let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: ["Content-Type": "application/json"]), let data = try? JSONSerialization.data(withJSONObject: result) else { return }
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         client?.urlProtocol(self, didLoad: data); client?.urlProtocolDidFinishLoading(self)
     }

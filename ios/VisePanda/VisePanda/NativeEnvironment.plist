@@ -6,5 +6,7 @@
     <string>$(VP_NATIVE_ENVIRONMENT)</string>
     <key>VisePandaStagingAPIOrigin</key>
     <string>$(VP_NATIVE_STAGING_API_ORIGIN)</string>
+    <key>VisePandaNativeTaskContext</key>
+    <string>$(VP_NATIVE_TASK_CONTEXT)</string>
 </dict>
 </plist>

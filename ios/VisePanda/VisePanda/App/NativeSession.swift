@@ -33,6 +33,7 @@ final class NativeSession {
     private(set) var dataGeneration = 0
     private var credential: NativeCredential?
     private let endpoint: URL?
+    let askMode: NativeAskMode
     private let transport: URLSession
     private let defaults: UserDefaults
     private let storageKey: String
@@ -40,6 +41,10 @@ final class NativeSession {
 
     init(arguments: [String] = ProcessInfo.processInfo.arguments, defaults: UserDefaults = .standard, configuration: URLSessionConfiguration = .ephemeral, bundleConfiguration: [String: String] = Bundle.main.infoDictionary?.compactMapValues { $0 as? String } ?? [:]) {
         endpoint = Self.resolveEndpoint(arguments: arguments, bundleConfiguration: bundleConfiguration)
+        let installed = bundleConfiguration["VisePandaNativeTaskContext", default: ""]
+        if !installed.isEmpty { askMode = NativeAskMode(rawValue: installed) ?? .unavailable }
+        else if endpoint?.scheme == "http", arguments.contains("-VisePandaTaskContext") { askMode = .taskContext }
+        else { askMode = .currentInput }
         self.defaults = defaults
         storageKey = "native.v2.activeSubject.\(endpoint?.absoluteString ?? "disabled")"
         configuration.httpCookieStorage = nil
@@ -92,7 +97,13 @@ final class NativeSession {
 
     /// Local Ask shares identity fencing, never credentials, with the Trip consumer.
     func askRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
-        let data = try await dataRequest(prefix: "api/chat/native/v1", path: path, method: method, body: body)
+        guard askMode != .unavailable else { throw NativeDataError.invalidResponse }
+        let cancelPrefix = "api/chat/native/v1/turns/"
+        let cancelID = path.hasPrefix(cancelPrefix) && path.hasSuffix("/cancel")
+            ? String(path.dropFirst(cancelPrefix.count).dropLast("/cancel".count)) : ""
+        let cancellation = method == "POST" && UUID(uuidString: cancelID) != nil
+        let prefix = askMode == .taskContext && cancellation ? "api/chat/native/v1" : askMode.base
+        let data = try await dataRequest(prefix: prefix, path: path, method: method, body: body)
         guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
         return data
     }

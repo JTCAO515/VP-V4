@@ -1,0 +1,14 @@
+{
+  "at": "2026-09-11T21:55:42.801742+00:00",
+  "scope": "owned disposable local fixture before first task/attempt/content",
+  "container": "supabase_db_vp-native-ask-3e54195e",
+  "priorTaskCount": 0,
+  "priorAttemptCount": 0,
+  "priorContentCount": 0,
+  "adjustment": "3 to 4 attempts to exercise four-Turn chain",
+  "result": {
+    "scopes": 4,
+    "minAttempts": 4,
+    "maxAttempts": 4
+  }
+}

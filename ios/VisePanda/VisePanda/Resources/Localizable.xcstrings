@@ -2938,6 +2938,125 @@
           }
         }
       }
+    },
+    "ask.task.clarification": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue this question"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "补充当前问题"
+          }
+        }
+      }
+    },
+    "ask.task.finished": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start a new question to continue."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请点击“新问题”继续。"
+          }
+        }
+      }
+    },
+    "ask.task.new": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New question"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新问题"
+          }
+        }
+      }
+    },
+    "ask.task.repair": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retry this question"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重试当前问题"
+          }
+        }
+      }
+    },
+    "ask.task.restoring": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restoring your question…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在恢复你的问题…"
+          }
+        }
+      }
+    },
+    "ask.task.uncertain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The previous request has an unverified result under earlier sharing terms. Stop further processing under those terms before starting again. Any completed result is retained."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上次请求的结果尚未核实，且使用旧版共享条款。请先停止旧条款下的后续处理，再开始新问题。已完成的结果会保留。"
+          }
+        }
+      }
+    },
+    "ask.task.stop_previous": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop processing under previous terms"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "停止旧条款下的处理"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

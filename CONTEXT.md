@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：#194 closed. #195 migration38/context policy and v3 API observed in Staging; bilingual fixed cases failed both prompt candidates. Candidate v2 withdrawn; runtime v1 retained. Native task-context consumer and semantic acceptance remain open.
+状态：#194 closed. Native v3 Staging read/relaunch/owner isolation verified in Simulator; language persistence fixed locally. Real Qwen clarification-first cases still fail. PR332/333 await production merge guard approval; full S2 open.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -42,6 +42,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - #267←#264(OPEN)+#287(CLOSED): offline grading preparation is available, but the real authorized read-only chain, frozen candidate tolerances/benefit criteria and human calibration remain absent. Test-budget direction does not remove technical attempt/token/concurrency safeguards or settle unknown charges.
 - #268←#266/#267/#229/#231, all OPEN: selected-version complete12 required-mode scenarios, actual Ops stop/restore/rollback and matching real domestic/international network evidence are not available. Local ledgers, deadline tests, static flags or configured regions do not complete those dependencies.
 - JT deferred further physical phone verification on2026-09-12. Existing physical same-Trip/auth slice passed; full native/VoiceOver/Store acceptance remains unrun. The previous CI AX failure is resolved; do not repeat phone work as a development gate.
+- Live Vercel main auto-deploys Production. PR332/333 merges are held pending JT approval of the prepared main-only ignored-build guard; preserve current Production and Preview. No approval was inferred from Goal continuation.
 
 - Production/customer and complete native/Harness acceptance remain unrun. Scoped Staging and actual C0 model protocol/worker behavior are verified; supplier billing, semantic quality and real user data consumers remain separate.
 - Physical VoiceOver, signed Store and selected-object Ask sheet acceptance under #198/#233/#242 remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.
@@ -96,10 +97,12 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - ServiceTask record-only: SQL23/23 zero-skip incl full-chain migration/transaction rollback and five new attribution/cost/deletion/race cases; real disposable Auth/HTTP/unchanged worker three-Turn chain shares one task budget. Independent review Critical0/Important0; build/lint/typecheck/error contracts/docs pass. See artifacts/VPJ-07/service-task-records-20260912/verification.md. Staging and native consumer acceptance remain unrun.
 - ServiceTask Staging: migration37 preserves70 original table digests and expected permissions; restored encrypted backup passes. Existing Preview deployment a44823e is tree-identical to accepted main06fabb5. Ordinary native HTTP + actual Qwen: two tasks/four settled attempts, CNY0.018462 conservative debit, no invoice/user charge. Initial checker shape mistake corrected by read-only recovery, no repeated provider call. See artifacts/VPJ-07/service-task-staging-20260912/verification.md.
 - 2026-09-12 bounded task context: real SQL26/26 plus migration38 transaction rollback2/2, real disposable Auth/native HTTP/job2 chain1/1, protocol and worker safety49/49. Independent data/shared-contract review Critical0/Important0. v1/v2 remain compatible; v3 uses separate consent, four-Turn cap, mode-separated claim and dispatch context digest. See artifacts/VPJ-07/task-context-20260912/verification.md. No remote migration38/provider/native acceptance yet.
+- Native task context: runtime64b4651 independently reviewed Critical0/Important0; local actual Auth/SQL/controller core8pass and final bilingual UI4pass0skip at ef775ea. Four-Turn clarification restoration, same-task repair, policy withdrawal and explicit new-goal behavior verified with controlled local provider. Initial fixture-capacity and stale login-assertion failures retained. Pending requests remain process-local; restart covers server-confirmed history only. See artifacts/VPJ-07/native-task-context-20260912/verification.md; required PR CI and remote/native semantic acceptance separate.
+- 2026-09-12 native Staging consumer: PR332 8ce9e7e reads three retained real Qwen answers per synthetic owner, matches latest thinking outputs exactly, survives relaunch and clears history on sign-out; zero new model calls. Observed English reset fixed at b561bf9; native9pass0skip and actual zh/en relaunch plus Arabic override/RTL pass. See artifacts/VPJ-07/native-staging-read-20260912/verification.md. Full real clarification continuation remains unrun.
 
 ## 下一动作与回滚
 
-Implement explicitly enabled SwiftUI v3 same-task clarification/repair with reliable recovery and notice binding; test on simulator, preserving legacy v1. Retain both failed semantic candidates; do not reroll or claim S2 acceptance. JT phone validation remains deferred.
+Complete final PR332 CI after the observed language-persistence fix. Apply the prepared main-only Production build guard only after JT approves; then integrate PR332 and PR333, preserving both evidence histories. Continue deliberate model-semantic and persistent-worker work; physical-phone validation remains deferred.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
