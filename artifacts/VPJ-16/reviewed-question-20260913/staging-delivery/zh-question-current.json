@@ -1,0 +1,638 @@
+[
+  {
+    "AXUniqueId": null,
+    "AXLabel": "VisePanda",
+    "type": "Application",
+    "frame": {
+      "x": 0,
+      "height": 874,
+      "width": 402,
+      "y": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "main-tab-view",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "x": 0,
+      "width": 402,
+      "height": 874,
+      "y": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "问熊猫",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "x": 0,
+      "y": 62,
+      "height": 54,
+      "width": 402
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "BackButton",
+    "AXLabel": "问熊猫",
+    "type": "Button",
+    "frame": {
+      "x": 16,
+      "width": 44,
+      "height": 44,
+      "y": 62
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "问熊猫",
+    "type": "Heading",
+    "frame": {
+      "x": 175.66666666666666,
+      "y": 73.66666666666666,
+      "height": 20.66666666666667,
+      "width": 50.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "AdditionalDimmingOverlay",
+    "AXLabel": null,
+    "type": "Image",
+    "frame": {
+      "x": -120,
+      "width": 642,
+      "height": 286,
+      "y": 731
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Vise Panda. 你的中国旅行伙伴",
+    "type": "StaticText",
+    "frame": {
+      "x": 16,
+      "width": 168,
+      "height": 52.33332824707031,
+      "y": 132
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "PandaMark",
+    "type": "Image",
+    "frame": {
+      "x": 16,
+      "y": 134.33333333333334,
+      "height": 47.99999999999997,
+      "width": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "BrandWordmark",
+    "type": "Image",
+    "frame": {
+      "x": 76,
+      "width": 108,
+      "height": 36,
+      "y": 132
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "你的中国旅行伙伴",
+    "type": "StaticText",
+    "frame": {
+      "x": 76,
+      "y": 170,
+      "height": 14.333333333333314,
+      "width": 95.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "乘车需要哪些证件？",
+    "type": "StaticText",
+    "frame": {
+      "x": 16,
+      "y": 208.33333333333331,
+      "height": 40.666666666666686,
+      "width": 274
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用于持外国护照的成年旅客、境内铁路电子客票行程。这里只回答购票证件和车票凭证问题；请阅读全部条件，并核对车站最新指引。本次只读回答不保存到对话。",
+    "type": "StaticText",
+    "frame": {
+      "x": 16,
+      "y": 273,
+      "height": 86.33333333333331,
+      "width": 354.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.city",
+    "AXLabel": "城市、上海",
+    "type": "PopUpButton",
+    "frame": {
+      "y": 383.3333333333333,
+      "x": 16,
+      "height": 34.333333333333314,
+      "width": 74.33333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "上海",
+    "type": "StaticText",
+    "frame": {
+      "width": 34,
+      "x": 27.666666666666664,
+      "height": 20.333333333333314,
+      "y": 390.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.refresh",
+    "AXLabel": "刷新",
+    "type": "Button",
+    "frame": {
+      "y": 441.66666666666663,
+      "x": 16,
+      "height": 34.333333333333314,
+      "width": 58
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "两个证件要点均有已审核依据。",
+    "type": "StaticText",
+    "frame": {
+      "y": 499.99999999999994,
+      "x": 87.16666666666667,
+      "width": 227.66666666666663,
+      "height": 20.333333333333314
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.c9e670d6-89cc-4b11-b8e6-f9a6b10dd530",
+    "AXLabel": "乘车时携带购票所用有效证件原件，用于进出站和乘车核验。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333337,
+      "width": 337.3333333333333,
+      "y": 546.9757486979165,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "y": 601.3090820312499,
+      "width": 59.66666666666666,
+      "x": 32,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333337,
+      "width": 332.66666666666663,
+      "y": 625.3090820312499,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "y": 673.6424153645833,
+      "width": 324,
+      "height": 20.33333333333337,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 限成年外籍旅客有效护照场景；具体证件要求以12306及车站当前规定为准。",
+    "type": "StaticText",
+    "frame": {
+      "y": 699.9757486979166,
+      "x": 32,
+      "height": 42.33333333333337,
+      "width": 315.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 限境内铁路电子客票行程，遵守实际车站、车次和证件处理指引。",
+    "type": "StaticText",
+    "frame": {
+      "y": 748.30908203125,
+      "width": 332.66666666666663,
+      "x": 32,
+      "height": 42.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "y": 802.6424153645833,
+      "width": 44.66666666666666,
+      "x": 32,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 本条不能确定具体车站或车次的检票截止时间。",
+    "type": "StaticText",
+    "frame": {
+      "y": 826.6424153645833,
+      "height": 42.33333333333337,
+      "width": 315.3333333333333,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "y": 880.9757486979166,
+      "width": 150.66666666666666,
+      "x": 32,
+      "height": 14.333333333333371
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "height": 28.33333333333337,
+      "y": 907.3333333333333,
+      "x": 32,
+      "width": 338
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "y": 907.3333333333333,
+      "x": 32,
+      "width": 338,
+      "height": 28.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "y": 915.3333333333333,
+      "width": 7,
+      "height": 12,
+      "x": 362.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.6638fa9a-6476-4f66-918a-40af67cc66fc",
+    "AXLabel": "行程信息提示单及报销凭证不能作为车票使用。",
+    "type": "StaticText",
+    "frame": {
+      "y": 975.6424153645831,
+      "x": 32,
+      "width": 303.3333333333333,
+      "height": 42.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "y": 1029.9757486979165,
+      "width": 59.66666666666666,
+      "x": 32,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.333333333333485,
+      "width": 332.66666666666663,
+      "x": 32,
+      "y": 1053.9757486979165
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "y": 1102.30908203125,
+      "width": 324,
+      "height": 20.333333333333258,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 限成年外籍旅客有效护照场景；具体证件要求以12306及车站当前规定为准。",
+    "type": "StaticText",
+    "frame": {
+      "y": 1128.6424153645833,
+      "x": 32,
+      "width": 315.66666666666663,
+      "height": 42.33333333333326
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 限境内铁路电子客票行程，遵守实际车站、车次和证件处理指引。",
+    "type": "StaticText",
+    "frame": {
+      "y": 1176.9757486979165,
+      "width": 332.66666666666663,
+      "x": 32,
+      "height": 42.33333333333326
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "y": 1231.3090820312498,
+      "x": 32,
+      "width": 44.66666666666666,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 本条不能确定具体车站或车次的检票截止时间。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333326,
+      "y": 1255.3090820312498,
+      "width": 315.3333333333333,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "height": 14.333333333333258,
+      "y": 1309.642415364583,
+      "width": 150.66666666666666,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "height": 28.333333333333258,
+      "x": 32,
+      "y": 1336,
+      "width": 338
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "y": 1336,
+      "x": 32,
+      "height": 28.333333333333258,
+      "width": 338
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "y": 1344,
+      "width": 7,
+      "height": 12,
+      "x": 362.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 2页",
+    "type": "Slider",
+    "frame": {
+      "height": 675,
+      "x": 369,
+      "width": 30,
+      "y": 116
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 2页",
+    "type": "Slider",
+    "frame": {
+      "y": 116,
+      "width": 30,
+      "height": 675,
+      "x": 369
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "标签页栏",
+    "type": "Group",
+    "frame": {
+      "height": 83,
+      "x": 0,
+      "y": 791,
+      "width": 402
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map",
+    "AXLabel": "行程",
+    "type": "RadioButton",
+    "frame": {
+      "height": 54,
+      "x": 25,
+      "y": 795,
+      "width": 77
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map.fill",
+    "AXLabel": "显示地图",
+    "type": "Image",
+    "frame": {
+      "height": 26.33333333333337,
+      "x": 49,
+      "y": 801.6666666666666,
+      "width": 29.66666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari",
+    "AXLabel": "探索",
+    "type": "RadioButton",
+    "frame": {
+      "height": 54,
+      "x": 93.75,
+      "y": 795,
+      "width": 77
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari.fill",
+    "AXLabel": "Safari浏览器",
+    "type": "Image",
+    "frame": {
+      "height": 27.33333333333337,
+      "x": 118.75,
+      "width": 27.333333333333343,
+      "y": 801.3333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "问熊猫",
+    "type": "RadioButton",
+    "frame": {
+      "height": 54,
+      "x": 162.5,
+      "y": 795,
+      "width": 77
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "闪光",
+    "type": "Image",
+    "frame": {
+      "height": 30,
+      "x": 188.5,
+      "width": 26,
+      "y": 799
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "工具",
+    "type": "RadioButton",
+    "frame": {
+      "height": 54,
+      "x": 231.25,
+      "width": 77,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "wrench.and.screwdriver",
+    "type": "Image",
+    "frame": {
+      "height": 31.66666666666663,
+      "x": 253.25,
+      "width": 32.666666666666686,
+      "y": 799.3333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle",
+    "AXLabel": "我的",
+    "type": "RadioButton",
+    "frame": {
+      "height": 54,
+      "x": 300,
+      "width": 77,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle.fill",
+    "AXLabel": "账户",
+    "type": "Image",
+    "frame": {
+      "height": 27.33333333333337,
+      "x": 325,
+      "width": 27.333333333333314,
+      "y": 801.3333333333334
+    },
+    "enabled": true
+  }
+]

@@ -1,0 +1,338 @@
+[
+  {
+    "AXUniqueId": null,
+    "AXLabel": "VisePanda",
+    "type": "Application",
+    "frame": {
+      "width": 402,
+      "height": 874,
+      "x": 0,
+      "y": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "main-tab-view",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "width": 402,
+      "height": 874,
+      "x": 0,
+      "y": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "Ask",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "width": 402,
+      "height": 54,
+      "y": 62,
+      "x": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "BackButton",
+    "AXLabel": "Ask",
+    "type": "Button",
+    "frame": {
+      "width": 44,
+      "height": 44,
+      "y": 62,
+      "x": 16
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Ask",
+    "type": "Heading",
+    "frame": {
+      "width": 30,
+      "height": 20.66666666666667,
+      "y": 73.66666666666666,
+      "x": 186
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Vise Panda. Your China travel companion",
+    "type": "StaticText",
+    "frame": {
+      "width": 221.6666717529297,
+      "height": 52.33332824707031,
+      "y": 132,
+      "x": 16
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "PandaMark",
+    "type": "Image",
+    "frame": {
+      "width": 48,
+      "height": 47.99999999999997,
+      "x": 16,
+      "y": 134.33333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "BrandWordmark",
+    "type": "Image",
+    "frame": {
+      "width": 108,
+      "height": 36,
+      "y": 132,
+      "x": 76
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Your China travel companion",
+    "type": "StaticText",
+    "frame": {
+      "width": 161.66666666666666,
+      "height": 14.333333333333314,
+      "y": 170,
+      "x": 76
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Which documents do I need to board?",
+    "type": "StaticText",
+    "frame": {
+      "width": 300.3333333333333,
+      "height": 81.66666666666669,
+      "x": 16,
+      "y": 208.33333333333331
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "For adults travelling with a foreign passport on a domestic mainland China railway e-ticket. This answers only the booking ID and ticket-proof question. Read all conditions and check current station guidance. This read-only answer is not saved in your conversation.",
+    "type": "StaticText",
+    "frame": {
+      "width": 369,
+      "height": 130.33333333333331,
+      "x": 16,
+      "y": 314
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.city",
+    "AXLabel": "City, Shanghai",
+    "type": "PopUpButton",
+    "frame": {
+      "width": 111,
+      "height": 34.333333333333314,
+      "y": 468.3333333333333,
+      "x": 16
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Shanghai",
+    "type": "StaticText",
+    "frame": {
+      "width": 70.66666666666667,
+      "height": 20.333333333333314,
+      "x": 28,
+      "y": 475.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.refresh",
+    "AXLabel": "Refresh",
+    "type": "Button",
+    "frame": {
+      "width": 82.66666666666666,
+      "height": 34.33333333333337,
+      "y": 526.6666666666666,
+      "x": 16
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.signedOut",
+    "AXLabel": "Sign in in Profile to read travel notes.",
+    "type": "StaticText",
+    "frame": {
+      "width": 277.3333333333333,
+      "height": 20.333333333333258,
+      "x": 16,
+      "y": 585
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 1页",
+    "type": "Slider",
+    "frame": {
+      "width": 30,
+      "height": 675,
+      "y": 116,
+      "x": 369
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 1页",
+    "type": "Slider",
+    "frame": {
+      "width": 30,
+      "height": 675,
+      "x": 369,
+      "y": 116
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "标签页栏",
+    "type": "Group",
+    "frame": {
+      "height": 83,
+      "width": 402,
+      "y": 791,
+      "x": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map",
+    "AXLabel": "Trip",
+    "type": "RadioButton",
+    "frame": {
+      "height": 54,
+      "width": 77,
+      "y": 795,
+      "x": 25
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map.fill",
+    "AXLabel": "显示地图",
+    "type": "Image",
+    "frame": {
+      "height": 26.33333333333337,
+      "width": 29.66666666666667,
+      "y": 801.6666666666666,
+      "x": 49
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari",
+    "AXLabel": "Explore",
+    "type": "RadioButton",
+    "frame": {
+      "height": 54,
+      "width": 77,
+      "y": 795,
+      "x": 93.75
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari.fill",
+    "AXLabel": "Safari浏览器",
+    "type": "Image",
+    "frame": {
+      "height": 27.33333333333337,
+      "width": 27.333333333333343,
+      "y": 801.3333333333334,
+      "x": 118.75
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "Ask",
+    "type": "RadioButton",
+    "frame": {
+      "height": 54,
+      "width": 77,
+      "y": 795,
+      "x": 162.5
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "闪光",
+    "type": "Image",
+    "frame": {
+      "height": 30,
+      "width": 26,
+      "y": 799,
+      "x": 188.5
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "Tools",
+    "type": "RadioButton",
+    "frame": {
+      "height": 54,
+      "width": 77,
+      "y": 795,
+      "x": 231.25
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "wrench.and.screwdriver",
+    "type": "Image",
+    "frame": {
+      "height": 31.66666666666663,
+      "width": 32.666666666666686,
+      "y": 799.3333333333334,
+      "x": 253.25
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle",
+    "AXLabel": "Profile",
+    "type": "RadioButton",
+    "frame": {
+      "height": 54,
+      "width": 77,
+      "y": 795,
+      "x": 300
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle.fill",
+    "AXLabel": "账户",
+    "type": "Image",
+    "frame": {
+      "height": 27.33333333333337,
+      "width": 27.333333333333314,
+      "y": 801.3333333333334,
+      "x": 325
+    },
+    "enabled": true
+  }
+]

@@ -1,0 +1,26 @@
+{"mode": "allow", "activeVersion": 13, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{
+  opsEnabled: false,
+  readEnabled: true,
+  activeMembers: 0,
+  statements: 12,
+  published: 11,
+  revoked: 1,
+  authUsers: 6,
+  trips: 3
+}
+
+Native reading window ready; automatic cleanup after completion or20minutes
+{
+  opsEnabled: false,
+  readEnabled: false,
+  activeMembers: 0,
+  statements: 12,
+  published: 11,
+  revoked: 1,
+  authUsers: 6,
+  trips: 3
+}
+
+{"mode": "remove", "activeVersion": 14, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}

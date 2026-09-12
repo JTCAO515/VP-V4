@@ -1,0 +1,1400 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -derivedDataPath "/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/_temp/vpj-56-34711647883-1-derived" -destination "platform=iOS Simulator,id=3663791C-896E-4654-8A58-C2F6C86149FC" CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -parallel-testing-enabled NO -resultBundlePath "/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/_temp/vpj-56-34711647883-1/tests.xcresult"
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+Writing result bundle at path:
+	/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/_temp/vpj-56-34711647883-1/tests.xcresult
+
+2026-09-13 02:38:36.643565+0800 VisePanda[46520:644116] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-09-13 02:38:36.994407+0800 VisePanda[46520:644117] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+Test Suite 'All tests' started at 2026-09-13 上午2:38:38.111.
+Test Suite 'VisePandaTests.xctest' started at 2026-09-13 上午2:38:38.112.
+Test Suite 'NativeAskIntegrationTests' started at 2026-09-13 上午2:38:38.112.
+Test Case '-[VisePandaTests.NativeAskIntegrationTests testRealLocalConsentPersistenceCancelWithdrawalAndAccountIsolation]' started.
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaTests/NativeAskIntegrationTests.swift:8: -[VisePandaTests.NativeAskIntegrationTests testRealLocalConsentPersistenceCancelWithdrawalAndAccountIsolation] : Test skipped - UNRUN: explicit disposable native text environment is not configured
+Test Case '-[VisePandaTests.NativeAskIntegrationTests testRealLocalConsentPersistenceCancelWithdrawalAndAccountIsolation]' skipped (0.030 seconds).
+Test Case '-[VisePandaTests.NativeAskIntegrationTests testRealLocalTaskClarificationRestorationAndFourTurnLimit]' started.
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaTests/NativeAskIntegrationTests.swift:61: -[VisePandaTests.NativeAskIntegrationTests testRealLocalTaskClarificationRestorationAndFourTurnLimit] : Test skipped - UNRUN: explicit local text environment required
+Test Case '-[VisePandaTests.NativeAskIntegrationTests testRealLocalTaskClarificationRestorationAndFourTurnLimit]' skipped (0.003 seconds).
+Test Suite 'NativeAskIntegrationTests' passed at 2026-09-13 上午2:38:38.156.
+	 Executed 2 tests, with 2 tests skipped and 0 failures (0 unexpected) in 0.033 (0.044) seconds
+Test Suite 'NativeAskPersistenceTests' started at 2026-09-13 上午2:38:38.157.
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testAbsentHistoryKeepsOriginalPayloadAndTaskOnExplicitRetry]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+2026-09-13 02:38:38.296447+0800 VisePanda[46520:644117] [Default] Task <9427F68F-ADAB-47F0-BE36-2893AF3D2FB6>.<6> finished with error [-1005] Error Domain=NSURLErrorDomain Code=-1005 "(null)" UserInfo={_NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <9427F68F-ADAB-47F0-BE36-2893AF3D2FB6>.<6>"
+), _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <9427F68F-ADAB-47F0-BE36-2893AF3D2FB6>.<6>}
+VisePanda native refresh HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testAbsentHistoryKeepsOriginalPayloadAndTaskOnExplicitRetry]' passed (0.165 seconds).
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testAcknowledgedRequestSurvivesEmptyHistoryAfterRestart]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native refresh HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testAcknowledgedRequestSurvivesEmptyHistoryAfterRestart]' passed (0.156 seconds).
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testActualDeviceOnlyKeychainPersistsAcrossSessionRecreation]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native refresh HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testActualDeviceOnlyKeychainPersistsAcrossSessionRecreation]' passed (0.108 seconds).
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testChangedModeAndNoticeCannotRebindPersistedRequest]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+2026-09-13 02:38:38.604594+0800 VisePanda[46520:644117] [Default] Task <5B2C5515-534B-43AC-8A98-6733CDDA2926>.<6> finished with error [-1005] Error Domain=NSURLErrorDomain Code=-1005 "(null)" UserInfo={_NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <5B2C5515-534B-43AC-8A98-6733CDDA2926>.<6>"
+), _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <5B2C5515-534B-43AC-8A98-6733CDDA2926>.<6>}
+VisePanda native refresh HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testChangedModeAndNoticeCannotRebindPersistedRequest]' passed (0.052 seconds).
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testFailedRemovalAfterAcknowledgementPreservesRecoveryRecord]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native refresh HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testFailedRemovalAfterAcknowledgementPreservesRecoveryRecord]' passed (0.082 seconds).
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testLockedVaultAndFailedLogoutDoNotSilentlyDiscardPending]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native refresh HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+VisePanda native logout HTTP 200
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testLockedVaultAndFailedLogoutDoNotSilentlyDiscardPending]' passed (0.053 seconds).
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testLostReceiptReconcilesHistoryWithoutAnotherPost]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+2026-09-13 02:38:38.820471+0800 VisePanda[46520:644128] [Default] Task <89B01996-FB45-42A3-B9C1-31765519386E>.<6> finished with error [-1005] Error Domain=NSURLErrorDomain Code=-1005 "(null)" UserInfo={_NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <89B01996-FB45-42A3-B9C1-31765519386E>.<6>"
+), _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <89B01996-FB45-42A3-B9C1-31765519386E>.<6>}
+VisePanda native refresh HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testLostReceiptReconcilesHistoryWithoutAnotherPost]' passed (0.069 seconds).
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testUnsupportedStoredSchemaBlocksRestoreWithoutErasingIt]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testUnsupportedStoredSchemaBlocksRestoreWithoutErasingIt]' passed (0.054 seconds).
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testWriteFailurePreventsNetworkAndLeavesDraftEditable]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testWriteFailurePreventsNetworkAndLeavesDraftEditable]' passed (0.051 seconds).
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testWrittenButUnsentRequestRestoresWithoutAutomaticPost]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native refresh HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAskPersistenceTests testWrittenButUnsentRequestRestoresWithoutAutomaticPost]' passed (0.061 seconds).
+Test Suite 'NativeAskPersistenceTests' passed at 2026-09-13 上午2:38:39.016.
+	 Executed 10 tests, with 0 failures (0 unexpected) in 0.851 (0.859) seconds
+Test Suite 'NativeAskStateTests' started at 2026-09-13 上午2:38:39.017.
+Test Case '-[VisePandaTests.NativeAskStateTests testAcceptedTurnSurvivesFailedHistoryRefresh]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+2026-09-13 02:38:39.375778+0800 VisePanda[46520:644129] [Default] Task <37968D3B-E1A7-4827-A4F2-ED44F447232C>.<8> finished with error [-1005] Error Domain=NSURLErrorDomain Code=-1005 "(null)" UserInfo={_NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <37968D3B-E1A7-4827-A4F2-ED44F447232C>.<8>"
+), _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <37968D3B-E1A7-4827-A4F2-ED44F447232C>.<8>}
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAskStateTests testAcceptedTurnSurvivesFailedHistoryRefresh]' passed (0.378 seconds).
+Test Case '-[VisePandaTests.NativeAskStateTests testLatePolicyCannotEnterAnotherAccount]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAskStateTests testLatePolicyCannotEnterAnotherAccount]' passed (0.060 seconds).
+Test Case '-[VisePandaTests.NativeAskStateTests testLostReceiptPolicyChangeRequiresStoppingOldSharingBeforeNewQuestion]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+2026-09-13 02:38:39.555207+0800 VisePanda[46520:644129] [Default] Task <43924A59-ACCE-452C-A272-723425069AAD>.<6> finished with error [-1005] Error Domain=NSURLErrorDomain Code=-1005 "(null)" UserInfo={_NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <43924A59-ACCE-452C-A272-723425069AAD>.<6>"
+), _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <43924A59-ACCE-452C-A272-723425069AAD>.<6>}
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAskStateTests testLostReceiptPolicyChangeRequiresStoppingOldSharingBeforeNewQuestion]' passed (0.070 seconds).
+Test Case '-[VisePandaTests.NativeAskStateTests testTaskChainRejectsMissingRootForkAndCrossThread]' started.
+Test Case '-[VisePandaTests.NativeAskStateTests testTaskChainRejectsMissingRootForkAndCrossThread]' passed (0.002 seconds).
+Test Case '-[VisePandaTests.NativeAskStateTests testTemporaryAuthLossKeepsHiddenDraftAndLogoutClearsIt]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+2026-09-13 02:38:39.606972+0800 VisePanda[46520:644129] [Default] Task <D3C96CD3-48BB-4A9E-AC1F-D70380C7FB9C>.<4> finished with error [-1009] Error Domain=NSURLErrorDomain Code=-1009 "(null)" UserInfo={_NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <D3C96CD3-48BB-4A9E-AC1F-D70380C7FB9C>.<4>"
+), _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <D3C96CD3-48BB-4A9E-AC1F-D70380C7FB9C>.<4>}
+VisePanda native session failed: network:-1009
+VisePanda native refresh HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAskStateTests testTemporaryAuthLossKeepsHiddenDraftAndLogoutClearsIt]' passed (0.057 seconds).
+Test Case '-[VisePandaTests.NativeAskStateTests testViewObservesPermanentClearAfterActiveScopeIsAlreadyNil]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+2026-09-13 02:38:39.695158+0800 VisePanda[46520:643200] [Invalid Configuration] The `navigationDestination` modifier only works inside a `NavigationStack` or `NavigationSplitView`. There's a misplaced `navigationDestination(isPresented:destination:)` modifier presenting `NativeKnowledgeView`. It will be ignored.
+2026-09-13 02:38:39.945743+0800 VisePanda[46520:644117] [Default] Task <B5EF97B9-EF8B-4C78-9978-821B7D3E440E>.<6> finished with error [-1009] Error Domain=NSURLErrorDomain Code=-1009 "(null)" UserInfo={_NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <B5EF97B9-EF8B-4C78-9978-821B7D3E440E>.<6>"
+), _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <B5EF97B9-EF8B-4C78-9978-821B7D3E440E>.<6>}
+VisePanda native session failed: network:-1009
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeAskStateTests testViewObservesPermanentClearAfterActiveScopeIsAlreadyNil]' passed (0.566 seconds).
+Test Suite 'NativeAskStateTests' passed at 2026-09-13 上午2:38:40.208.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 1.132 (1.191) seconds
+Test Suite 'NativeKnowledgeTests' started at 2026-09-13 上午2:38:40.209.
+Test Case '-[VisePandaTests.NativeKnowledgeTests testAccountLossAndBackgroundClearRejectOutstandingResponse]' started.
+Test Case '-[VisePandaTests.NativeKnowledgeTests testAccountLossAndBackgroundClearRejectOutstandingResponse]' passed (0.033 seconds).
+Test Case '-[VisePandaTests.NativeKnowledgeTests testEmptyEligibleResultIsHonestAndRefreshIsBounded]' started.
+Test Case '-[VisePandaTests.NativeKnowledgeTests testEmptyEligibleResultIsHonestAndRefreshIsBounded]' passed (0.021 seconds).
+Test Case '-[VisePandaTests.NativeKnowledgeTests testExplicitQuestionKeepsPartialFactsAndWithdrawalReason]' started.
+Test Case '-[VisePandaTests.NativeKnowledgeTests testExplicitQuestionKeepsPartialFactsAndWithdrawalReason]' passed (0.020 seconds).
+Test Case '-[VisePandaTests.NativeKnowledgeTests testLateSelectionResponseCannotReplaceNewContent]' started.
+Test Case '-[VisePandaTests.NativeKnowledgeTests testLateSelectionResponseCannotReplaceNewContent]' passed (0.007 seconds).
+Test Case '-[VisePandaTests.NativeKnowledgeTests testQuestionRejectsFalseCompletenessWrongRelationAndUnboundFacts]' started.
+Test Case '-[VisePandaTests.NativeKnowledgeTests testQuestionRejectsFalseCompletenessWrongRelationAndUnboundFacts]' passed (0.012 seconds).
+Test Case '-[VisePandaTests.NativeKnowledgeTests testRefreshFailureNeverKeepsPreviouslyReadableText]' started.
+Test Case '-[VisePandaTests.NativeKnowledgeTests testRefreshFailureNeverKeepsPreviouslyReadableText]' passed (0.012 seconds).
+Test Case '-[VisePandaTests.NativeKnowledgeTests testScopeLanguageRecipientAndConditionsAreValidated]' started.
+Test Case '-[VisePandaTests.NativeKnowledgeTests testScopeLanguageRecipientAndConditionsAreValidated]' passed (0.009 seconds).
+Test Case '-[VisePandaTests.NativeKnowledgeTests testServerExpiryUsesMonotonicLifetimeAndIncludesRequestDuration]' started.
+Test Case '-[VisePandaTests.NativeKnowledgeTests testServerExpiryUsesMonotonicLifetimeAndIncludesRequestDuration]' passed (0.009 seconds).
+Test Suite 'NativeKnowledgeTests' passed at 2026-09-13 上午2:38:40.337.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 0.123 (0.129) seconds
+Test Suite 'NativeSessionIntegrationTests' started at 2026-09-13 上午2:38:40.338.
+Test Case '-[VisePandaTests.NativeSessionIntegrationTests testLocalLoginProfileRefreshReplacementLogoutAndAccountIsolation]' started.
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaTests/NativeSessionIntegrationTests.swift:32: -[VisePandaTests.NativeSessionIntegrationTests testLocalLoginProfileRefreshReplacementLogoutAndAccountIsolation] : Test skipped - UNRUN: explicit disposable local identity environment is not configured
+Test Case '-[VisePandaTests.NativeSessionIntegrationTests testLocalLoginProfileRefreshReplacementLogoutAndAccountIsolation]' skipped (0.004 seconds).
+Test Case '-[VisePandaTests.NativeSessionIntegrationTests testRedirectsNeverForwardCredentialsAndRefreshCanRecover]' started.
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaTests/NativeSessionIntegrationTests.swift:73: -[VisePandaTests.NativeSessionIntegrationTests testRedirectsNeverForwardCredentialsAndRefreshCanRecover] : Test skipped - UNRUN: controlled loopback redirect probe is not configured
+Test Case '-[VisePandaTests.NativeSessionIntegrationTests testRedirectsNeverForwardCredentialsAndRefreshCanRecover]' skipped (0.196 seconds).
+Test Case '-[VisePandaTests.NativeSessionIntegrationTests testRemoteAndMissingConfigurationRemainUnavailable]' started.
+Test Case '-[VisePandaTests.NativeSessionIntegrationTests testRemoteAndMissingConfigurationRemainUnavailable]' passed (0.002 seconds).
+Test Case '-[VisePandaTests.NativeSessionIntegrationTests testStagingEndpointIsBuildBoundAndRejectsFallbackOrCredentialDestinations]' started.
+Test Case '-[VisePandaTests.NativeSessionIntegrationTests testStagingEndpointIsBuildBoundAndRejectsFallbackOrCredentialDestinations]' passed (0.004 seconds).
+Test Suite 'NativeSessionIntegrationTests' passed at 2026-09-13 上午2:38:40.546.
+	 Executed 4 tests, with 2 tests skipped and 0 failures (0 unexpected) in 0.205 (0.208) seconds
+Test Suite 'NativeTripIntegrationTests' started at 2026-09-13 上午2:38:40.546.
+Test Case '-[VisePandaTests.NativeTripIntegrationTests testRealLocalCreateConfirmReloadConflictAndReplacedSession]' started.
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaTests/NativeTripIntegrationTests.swift:8: -[VisePandaTests.NativeTripIntegrationTests testRealLocalCreateConfirmReloadConflictAndReplacedSession] : Test skipped - UNRUN: explicit local synthetic Trip environment is not configured
+Test Case '-[VisePandaTests.NativeTripIntegrationTests testRealLocalCreateConfirmReloadConflictAndReplacedSession]' skipped (0.003 seconds).
+Test Suite 'NativeTripIntegrationTests' passed at 2026-09-13 上午2:38:40.553.
+	 Executed 1 test, with 1 test skipped and 0 failures (0 unexpected) in 0.003 (0.007) seconds
+Test Suite 'NativeTripStateTests' started at 2026-09-13 上午2:38:40.553.
+Test Case '-[VisePandaTests.NativeTripStateTests testAccountChangeRejectsAnAlreadyInFlightTripReply]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeTripStateTests testAccountChangeRejectsAnAlreadyInFlightTripReply]' passed (0.350 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testDraftOnlyChangesRequestedFieldsAndKeepsConfirmedContent]' started.
+Test Case '-[VisePandaTests.NativeTripStateTests testDraftOnlyChangesRequestedFieldsAndKeepsConfirmedContent]' passed (0.016 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testLateRefreshCannotReviveSessionAfterTripDenial]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native session failed: session
+VisePanda native refresh HTTP 200
+Test Case '-[VisePandaTests.NativeTripStateTests testLateRefreshCannotReviveSessionAfterTripDenial]' passed (0.056 seconds).
+Test Case '-[VisePandaTests.NativeTripStateTests testTemporaryAuthenticationFailureKeepsDraftHiddenAndLogoutClearsIt]' started.
+VisePanda native credentials HTTP 200
+VisePanda native login HTTP 200
+VisePanda native profile HTTP 200
+2026-09-13 02:38:41.069018+0800 VisePanda[46520:644117] [Default] Task <AF5B2BCE-DCD3-435E-BFF5-AAC9AF30D5B8>.<4> finished with error [-1009] Error Domain=NSURLErrorDomain Code=-1009 "(null)" UserInfo={_NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalDataTask <AF5B2BCE-DCD3-435E-BFF5-AAC9AF30D5B8>.<4>"
+), _NSURLErrorFailingURLSessionTaskErrorKey=LocalDataTask <AF5B2BCE-DCD3-435E-BFF5-AAC9AF30D5B8>.<4>}
+VisePanda native session failed: network:-1009
+VisePanda native refresh HTTP 200
+VisePanda native profile HTTP 200
+VisePanda native logout HTTP 200
+Test Case '-[VisePandaTests.NativeTripStateTests testTemporaryAuthenticationFailureKeepsDraftHiddenAndLogoutClearsIt]' passed (0.061 seconds).
+Test Suite 'NativeTripStateTests' passed at 2026-09-13 上午2:38:41.088.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.484 (0.535) seconds
+Test Suite 'VisePandaTests.xctest' passed at 2026-09-13 上午2:38:41.089.
+	 Executed 35 tests, with 5 tests skipped and 0 failures (0 unexpected) in 2.831 (2.977) seconds
+Test Suite 'All tests' passed at 2026-09-13 上午2:38:41.135.
+	 Executed 35 tests, with 5 tests skipped and 0 failures (0 unexpected) in 2.831 (3.025) seconds
+◇ Test run started.
+↳ Testing Library Version: 1902
+↳ Target Platform: arm64-apple-ios13.0-simulator
+◇ Suite AppNavigationContractTests started.
+◇ Test "Top-level tabs keep the operator-approved order" started.
+✔ Test "Top-level tabs keep the operator-approved order" passed after 0.001 seconds.
+◇ Test "Ask is the default launch destination" started.
+✔ Test "Ask is the default launch destination" passed after 0.001 seconds.
+◇ Test "Tab localization keys remain stable" started.
+✔ Test "Tab localization keys remain stable" passed after 0.001 seconds.
+◇ Test "Every first-version capability is explicitly preview-only" started.
+✔ Test "Every first-version capability is explicitly preview-only" passed after 0.014 seconds.
+◇ Test "Release picker offers only Chinese and English" started.
+✔ Test "Release picker offers only Chinese and English" passed after 0.001 seconds.
+◇ Test "Legacy selection stays representable until switching to a release locale" started.
+✔ Test "Legacy selection stays representable until switching to a release locale" passed after 0.001 seconds.
+◇ Test "Five supported locales include an RTL Arabic option" started.
+✔ Test "Five supported locales include an RTL Arabic option" passed after 0.001 seconds.
+◇ Test "Launch locale override is explicit and defaults to Chinese" started.
+✔ Test "Launch locale override is explicit and defaults to Chinese" passed after 0.001 seconds.
+◇ Test "A chosen language survives a new app settings instance without launch overrides overwriting it" started.
+✔ Test "A chosen language survives a new app settings instance without launch overrides overwriting it" passed after 0.013 seconds.
+✔ Suite AppNavigationContractTests passed after 0.058 seconds.
+✔ Test run with 9 tests in 1 suite passed after 0.059 seconds.
+2026-09-13 02:38:45.254019+0800 VisePandaUITests-Runner[46567:644540] [Default] Running tests...
+objc[46567]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x109e0c310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x109300398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'All tests' started at 2026-09-13 上午2:38:55.278.
+Test Suite 'VisePandaUITests.xctest' started at 2026-09-13 上午2:38:55.279.
+Test Suite 'AppShellUITests' started at 2026-09-13 上午2:38:55.279.
+Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:38:55.283
+    t =     0.85s Set Up
+    t =     0.86s Setting appearance mode to Light
+    t =     0.95s     Wait for com.apple.springboard to idle
+    t =     1.12s Open space.go2china.VisePanda
+    t =     1.12s     Launch space.go2china.VisePanda
+2026-09-13 02:38:57.588 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:38:57.589 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     3.61s         Setting up automation session
+    t =     6.79s         Wait for space.go2china.VisePanda to idle
+    t =     9.48s Waiting 10.0s for "Ask" Button to exist
+    t =    10.49s     Checking `Expect predicate `existsNoRetry == 1` for object "Ask" Button`
+    t =    10.49s         Checking existence of `"Ask" Button`
+    t =    10.78s Waiting 10.0s for "ask-introduction" StaticText to exist
+    t =    11.85s     Checking `Expect predicate `existsNoRetry == 1` for object "ask-introduction" StaticText`
+    t =    11.85s         Checking existence of `"ask-introduction" StaticText`
+    t =    20.16s Checking existence of `"ask-composer" Other`
+    t =    20.29s Find the ScrollView (First Match)
+    t =    20.36s Find the NavigationBar (First Match)
+    t =    20.42s Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    20.50s Find the "ask-composer" Other
+    t =    20.61s Find the "ask-availability-notice" StaticText
+    t =    20.73s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    20.73s     Wait for space.go2china.VisePanda to idle
+    t =    20.73s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    20.83s     Check for interrupting elements affecting ScrollView
+    t =    20.90s     Synthesize event
+    t =    20.90s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    21.00s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    21.10s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    21.19s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    21.29s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    23.05s     Wait for space.go2china.VisePanda to idle
+    t =    23.54s Find the "ask-availability-notice" StaticText
+    t =    23.62s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    23.62s     Wait for space.go2china.VisePanda to idle
+    t =    23.63s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    23.68s     Check for interrupting elements affecting ScrollView
+    t =    23.74s     Synthesize event
+    t =    23.74s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    23.80s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    23.87s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    23.93s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    24.01s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    25.89s     Wait for space.go2china.VisePanda to idle
+    t =    26.61s Find the "ask-availability-notice" StaticText
+    t =    26.77s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    26.77s     Wait for space.go2china.VisePanda to idle
+    t =    26.96s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    27.07s     Check for interrupting elements affecting ScrollView
+    t =    27.17s     Synthesize event
+    t =    27.17s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    27.27s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    27.37s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    27.49s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    27.59s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    29.12s     Wait for space.go2china.VisePanda to idle
+    t =    29.93s Find the "ask-availability-notice" StaticText
+    t =    30.02s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    30.02s     Wait for space.go2china.VisePanda to idle
+    t =    30.17s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    30.32s     Check for interrupting elements affecting ScrollView
+    t =    30.43s     Synthesize event
+    t =    30.43s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    30.63s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    30.79s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    30.89s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    30.98s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    32.48s     Wait for space.go2china.VisePanda to idle
+    t =    32.49s Find the "ask-availability-notice" StaticText
+    t =    32.65s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    32.65s     Wait for space.go2china.VisePanda to idle
+    t =    33.22s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    33.55s     Check for interrupting elements affecting ScrollView
+    t =    33.67s     Synthesize event
+    t =    33.67s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    33.84s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    34.08s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    34.27s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    34.58s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    36.25s     Wait for space.go2china.VisePanda to idle
+    t =    36.65s Find the "ask-availability-notice" StaticText
+    t =    36.87s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -84.3) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    36.87s     Wait for space.go2china.VisePanda to idle
+    t =    36.89s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    37.64s     Check for interrupting elements affecting ScrollView
+    t =    37.77s     Synthesize event
+    t =    37.77s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    38.26s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    38.64s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    38.80s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    38.87s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    39.81s     Wait for space.go2china.VisePanda to idle
+    t =    39.82s Find the "ask-availability-notice" StaticText
+    t =    39.93s Find the "ask-availability-notice" StaticText
+    t =    40.04s Find the "ask-availability-notice" StaticText
+    t =    40.17s Find the "ask-availability-notice" StaticText
+    t =    43.78s Find the Target Application 'space.go2china.VisePanda'
+    t =    44.08s Added attachment named 'Ask-largest-en-1'
+    t =    44.08s Tap "Trip" Button
+    t =    44.08s     Wait for space.go2china.VisePanda to idle
+    t =    44.09s     Find the "Trip" Button
+    t =    44.20s     Check for interrupting elements affecting "map" Button
+    t =    44.28s     Synthesize event
+    t =    44.60s     Wait for space.go2china.VisePanda to idle
+    t =    46.00s Waiting 3.0s for "Trip" NavigationBar to exist
+    t =    47.08s     Checking `Expect predicate `existsNoRetry == 1` for object "Trip" NavigationBar`
+    t =    47.08s         Checking existence of `"Trip" NavigationBar`
+    t =    50.05s Find the Target Application 'space.go2china.VisePanda'
+    t =    50.42s Added attachment named 'Trip-largest-en-1'
+    t =    50.42s Terminate space.go2china.VisePanda:46588
+    t =    51.44s Open space.go2china.VisePanda
+    t =    51.44s     Launch space.go2china.VisePanda
+2026-09-13 02:39:47.095 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:39:47.096 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    52.51s         Setting up automation session
+    t =    56.03s         Wait for space.go2china.VisePanda to idle
+    t =    59.56s Waiting 10.0s for "问熊猫" Button to exist
+    t =    60.60s     Checking `Expect predicate `existsNoRetry == 1` for object "问熊猫" Button`
+    t =    60.61s         Checking existence of `"问熊猫" Button`
+    t =    61.04s Waiting 10.0s for "ask-introduction" StaticText to exist
+    t =    62.12s     Checking `Expect predicate `existsNoRetry == 1` for object "ask-introduction" StaticText`
+    t =    62.13s         Checking existence of `"ask-introduction" StaticText`
+    t =    66.96s Checking existence of `"ask-composer" Other`
+    t =    67.13s Find the ScrollView (First Match)
+    t =    67.25s Find the NavigationBar (First Match)
+    t =    67.44s Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    67.64s Find the "ask-composer" Other
+    t =    67.94s Find the "ask-availability-notice" StaticText
+    t =    68.13s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    68.13s     Wait for space.go2china.VisePanda to idle
+    t =    68.14s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    68.26s     Check for interrupting elements affecting ScrollView
+    t =    68.37s     Synthesize event
+    t =    68.37s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    68.56s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    68.80s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    68.89s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    69.09s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    70.60s     Wait for space.go2china.VisePanda to idle
+    t =    70.76s Find the "ask-availability-notice" StaticText
+    t =    71.06s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    71.07s     Wait for space.go2china.VisePanda to idle
+    t =    71.64s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    71.75s     Check for interrupting elements affecting ScrollView
+    t =    71.87s     Synthesize event
+    t =    71.87s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    72.04s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    72.19s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    72.44s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    72.68s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    74.55s     Wait for space.go2china.VisePanda to idle
+    t =    74.56s Find the "ask-availability-notice" StaticText
+    t =    74.67s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -130.3) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    74.67s     Wait for space.go2china.VisePanda to idle
+    t =    74.68s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    74.77s     Check for interrupting elements affecting ScrollView
+    t =    74.88s     Synthesize event
+    t =    74.88s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    75.00s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    75.20s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    75.52s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    75.83s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =    77.08s     Wait for space.go2china.VisePanda to idle
+    t =    77.61s Find the "ask-availability-notice" StaticText
+    t =    77.78s Find the "ask-availability-notice" StaticText
+    t =    77.92s Find the "ask-availability-notice" StaticText
+    t =    78.07s Find the "ask-availability-notice" StaticText
+    t =    82.08s Find the Target Application 'space.go2china.VisePanda'
+    t =    82.41s Added attachment named 'Ask-largest-zh-Hans-1'
+    t =    82.41s Tap "行程" Button
+    t =    82.41s     Wait for space.go2china.VisePanda to idle
+    t =    82.43s     Find the "行程" Button
+    t =    82.52s     Check for interrupting elements affecting "map" Button
+    t =    82.60s     Synthesize event
+    t =    83.09s     Wait for space.go2china.VisePanda to idle
+    t =    84.81s Waiting 3.0s for "行程" NavigationBar to exist
+    t =    85.87s     Checking `Expect predicate `existsNoRetry == 1` for object "行程" NavigationBar`
+    t =    85.87s         Checking existence of `"行程" NavigationBar`
+    t =    89.10s Find the Target Application 'space.go2china.VisePanda'
+    t =    89.52s Added attachment named 'Trip-largest-zh-Hans-1'
+    t =    89.53s Terminate space.go2china.VisePanda:46648
+    t =    90.68s Setting appearance mode to Dark
+    t =    92.71s     Wait for com.apple.springboard to idle
+    t =    92.72s Open space.go2china.VisePanda
+    t =    92.72s     Launch space.go2china.VisePanda
+2026-09-13 02:40:28.022 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:40:28.022 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    93.17s         Setting up automation session
+    t =    96.28s         Wait for space.go2china.VisePanda to idle
+    t =    98.65s Waiting 10.0s for "Ask" Button to exist
+    t =    99.68s     Checking `Expect predicate `existsNoRetry == 1` for object "Ask" Button`
+    t =    99.68s         Checking existence of `"Ask" Button`
+    t =    99.99s Waiting 10.0s for "ask-introduction" StaticText to exist
+    t =   101.04s     Checking `Expect predicate `existsNoRetry == 1` for object "ask-introduction" StaticText`
+    t =   101.04s         Checking existence of `"ask-introduction" StaticText`
+    t =   104.34s Checking existence of `"ask-composer" Other`
+    t =   104.51s Find the ScrollView (First Match)
+    t =   104.64s Find the NavigationBar (First Match)
+    t =   104.73s Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   104.83s Find the "ask-composer" Other
+    t =   104.94s Find the "ask-availability-notice" StaticText
+    t =   105.09s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   105.09s     Wait for space.go2china.VisePanda to idle
+    t =   105.09s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   105.24s     Check for interrupting elements affecting ScrollView
+    t =   105.29s     Synthesize event
+    t =   105.29s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   105.35s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   105.40s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   105.46s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   105.51s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   106.99s     Wait for space.go2china.VisePanda to idle
+    t =   107.31s Find the "ask-availability-notice" StaticText
+    t =   107.60s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   107.60s     Wait for space.go2china.VisePanda to idle
+    t =   107.61s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   107.79s     Check for interrupting elements affecting ScrollView
+    t =   107.92s     Synthesize event
+    t =   107.92s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   108.22s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   108.52s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   108.89s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   108.97s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   110.46s     Wait for space.go2china.VisePanda to idle
+    t =   111.51s Find the "ask-availability-notice" StaticText
+    t =   111.63s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   111.63s     Wait for space.go2china.VisePanda to idle
+    t =   111.63s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   111.69s     Check for interrupting elements affecting ScrollView
+    t =   111.76s     Synthesize event
+    t =   111.76s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   111.85s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   111.95s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   112.20s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   112.46s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   114.05s     Wait for space.go2china.VisePanda to idle
+    t =   114.54s Find the "ask-availability-notice" StaticText
+    t =   114.80s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   114.80s     Wait for space.go2china.VisePanda to idle
+    t =   114.81s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   115.08s     Check for interrupting elements affecting ScrollView
+    t =   115.26s     Synthesize event
+    t =   115.26s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   115.48s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   115.71s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   115.79s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   115.99s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   117.51s     Wait for space.go2china.VisePanda to idle
+    t =   117.87s Find the "ask-availability-notice" StaticText
+    t =   117.95s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   117.95s     Wait for space.go2china.VisePanda to idle
+    t =   117.96s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   118.05s     Check for interrupting elements affecting ScrollView
+    t =   118.13s     Synthesize event
+    t =   118.13s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   118.26s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   118.35s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   118.42s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   118.53s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   120.16s     Wait for space.go2china.VisePanda to idle
+    t =   120.66s Find the "ask-availability-notice" StaticText
+    t =   120.80s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -84.3) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   120.80s     Wait for space.go2china.VisePanda to idle
+    t =   120.81s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   121.13s     Check for interrupting elements affecting ScrollView
+    t =   121.20s     Synthesize event
+    t =   121.20s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   121.28s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   121.36s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   121.45s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   121.57s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   122.80s     Wait for space.go2china.VisePanda to idle
+    t =   123.08s Find the "ask-availability-notice" StaticText
+    t =   123.24s Find the "ask-availability-notice" StaticText
+    t =   123.40s Find the "ask-availability-notice" StaticText
+    t =   123.59s Find the "ask-availability-notice" StaticText
+    t =   127.08s Find the Target Application 'space.go2china.VisePanda'
+    t =   127.47s Added attachment named 'Ask-largest-en-2'
+    t =   127.48s Tap "Trip" Button
+    t =   127.48s     Wait for space.go2china.VisePanda to idle
+    t =   127.48s     Find the "Trip" Button
+    t =   127.63s     Check for interrupting elements affecting "map" Button
+    t =   127.73s     Synthesize event
+    t =   128.06s     Wait for space.go2china.VisePanda to idle
+    t =   129.72s Waiting 3.0s for "Trip" NavigationBar to exist
+    t =   130.78s     Checking `Expect predicate `existsNoRetry == 1` for object "Trip" NavigationBar`
+    t =   130.78s         Checking existence of `"Trip" NavigationBar`
+    t =   133.91s Find the Target Application 'space.go2china.VisePanda'
+    t =   134.28s Added attachment named 'Trip-largest-en-2'
+    t =   134.28s Terminate space.go2china.VisePanda:46694
+    t =   135.37s Open space.go2china.VisePanda
+    t =   135.37s     Launch space.go2china.VisePanda
+2026-09-13 02:41:10.712 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:41:10.712 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =   136.40s         Setting up automation session
+    t =   138.67s         Wait for space.go2china.VisePanda to idle
+    t =   141.91s Waiting 10.0s for "问熊猫" Button to exist
+    t =   142.95s     Checking `Expect predicate `existsNoRetry == 1` for object "问熊猫" Button`
+    t =   142.95s         Checking existence of `"问熊猫" Button`
+    t =   143.28s Waiting 10.0s for "ask-introduction" StaticText to exist
+    t =   144.33s     Checking `Expect predicate `existsNoRetry == 1` for object "ask-introduction" StaticText`
+    t =   144.33s         Checking existence of `"ask-introduction" StaticText`
+    t =   148.21s Checking existence of `"ask-composer" Other`
+    t =   148.35s Find the ScrollView (First Match)
+    t =   149.55s Find the NavigationBar (First Match)
+    t =   149.65s Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   149.74s Find the "ask-composer" Other
+    t =   149.90s Find the "ask-availability-notice" StaticText
+    t =   150.07s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   150.07s     Wait for space.go2china.VisePanda to idle
+    t =   150.08s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   150.25s     Check for interrupting elements affecting ScrollView
+    t =   150.33s     Synthesize event
+    t =   150.34s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   150.47s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   150.69s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   150.78s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   150.87s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   152.38s     Wait for space.go2china.VisePanda to idle
+    t =   152.42s Find the "ask-availability-notice" StaticText
+    t =   152.64s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   152.64s     Wait for space.go2china.VisePanda to idle
+    t =   152.65s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   152.94s     Check for interrupting elements affecting ScrollView
+    t =   153.20s     Synthesize event
+    t =   153.20s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   153.99s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   154.31s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   154.53s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   154.67s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   156.20s     Wait for space.go2china.VisePanda to idle
+    t =   156.32s Find the "ask-availability-notice" StaticText
+    t =   156.58s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -130.3) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   156.58s     Wait for space.go2china.VisePanda to idle
+    t =   156.59s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   157.25s     Check for interrupting elements affecting ScrollView
+    t =   157.46s     Synthesize event
+    t =   157.50s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   157.69s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   157.86s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   157.94s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   158.03s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
+    t =   159.21s     Wait for space.go2china.VisePanda to idle
+    t =   159.84s Find the "ask-availability-notice" StaticText
+    t =   159.97s Find the "ask-availability-notice" StaticText
+    t =   160.16s Find the "ask-availability-notice" StaticText
+    t =   160.26s Find the "ask-availability-notice" StaticText
+    t =   163.71s Find the Target Application 'space.go2china.VisePanda'
+    t =   163.95s Added attachment named 'Ask-largest-zh-Hans-2'
+    t =   163.95s Tap "行程" Button
+    t =   163.95s     Wait for space.go2china.VisePanda to idle
+    t =   164.33s     Find the "行程" Button
+    t =   164.40s     Check for interrupting elements affecting "map" Button
+    t =   164.45s     Synthesize event
+    t =   164.81s     Wait for space.go2china.VisePanda to idle
+    t =   166.37s Waiting 3.0s for "行程" NavigationBar to exist
+    t =   167.43s     Checking `Expect predicate `existsNoRetry == 1` for object "行程" NavigationBar`
+    t =   167.43s         Checking existence of `"行程" NavigationBar`
+    t =   170.12s Find the Target Application 'space.go2china.VisePanda'
+    t =   170.40s Added attachment named 'Trip-largest-zh-Hans-2'
+    t =   170.41s Terminate space.go2china.VisePanda:46768
+    t =   171.50s Setting appearance mode to Light
+    t =   173.52s     Wait for com.apple.springboard to idle
+    t =   173.54s Tear Down
+Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize]' passed (173.989 seconds).
+Test Case '-[VisePandaUITests.AppShellUITests testAskAndTripFullAccessibilityInDarkMode]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:41:49.274
+    t =     0.06s Set Up
+    t =     0.06s Setting appearance mode to Dark
+    t =     2.07s     Wait for com.apple.springboard to idle
+    t =     2.08s Open space.go2china.VisePanda
+    t =     2.08s     Launch space.go2china.VisePanda
+2026-09-13 02:41:51.354 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:41:51.355 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     2.30s         Setting up automation session
+    t =     4.21s         Wait for space.go2china.VisePanda to idle
+    t =     6.81s Waiting 10.0s for "Ask" Button to exist
+    t =     7.85s     Checking `Expect predicate `existsNoRetry == 1` for object "Ask" Button`
+    t =     7.85s         Checking existence of `"Ask" Button`
+    t =     8.12s Waiting 10.0s for "ask-introduction" StaticText to exist
+    t =     9.16s     Checking `Expect predicate `existsNoRetry == 1` for object "ask-introduction" StaticText`
+    t =     9.16s         Checking existence of `"ask-introduction" StaticText`
+    t =     9.24s Find the Target Application 'space.go2china.VisePanda'
+    t =     9.43s Added attachment named 'Ask-dark-top-en'
+    t =    13.40s Find the "ask-availability-notice" StaticText
+    t =    13.51s Find the Target Application 'space.go2china.VisePanda'
+    t =    13.79s Added attachment named 'Ask-dark-en'
+    t =    13.79s Tap "Trip" Button
+    t =    13.79s     Wait for space.go2china.VisePanda to idle
+    t =    13.80s     Find the "Trip" Button
+    t =    13.91s     Check for interrupting elements affecting "map" Button
+    t =    13.98s     Synthesize event
+    t =    14.30s     Wait for space.go2china.VisePanda to idle
+    t =    15.81s Waiting 3.0s for "Trip" NavigationBar to exist
+    t =    16.83s     Checking `Expect predicate `existsNoRetry == 1` for object "Trip" NavigationBar`
+    t =    16.84s         Checking existence of `"Trip" NavigationBar`
+    t =    20.26s Find the Target Application 'space.go2china.VisePanda'
+    t =    20.55s Added attachment named 'Trip-dark-en'
+    t =    20.55s Terminate space.go2china.VisePanda:46856
+    t =    21.56s Open space.go2china.VisePanda
+    t =    21.57s     Launch space.go2china.VisePanda
+2026-09-13 02:42:10.985 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:42:10.985 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    22.34s         Setting up automation session
+    t =    25.75s         Wait for space.go2china.VisePanda to idle
+    t =    28.22s Waiting 10.0s for "问熊猫" Button to exist
+    t =    29.23s     Checking `Expect predicate `existsNoRetry == 1` for object "问熊猫" Button`
+    t =    29.24s         Checking existence of `"问熊猫" Button`
+    t =    29.71s Waiting 10.0s for "ask-introduction" StaticText to exist
+    t =    30.80s     Checking `Expect predicate `existsNoRetry == 1` for object "ask-introduction" StaticText`
+    t =    30.80s         Checking existence of `"ask-introduction" StaticText`
+    t =    31.01s Find the Target Application 'space.go2china.VisePanda'
+    t =    31.38s Added attachment named 'Ask-dark-top-zh-Hans'
+    t =    36.55s Find the "ask-availability-notice" StaticText
+    t =    36.86s Find the Target Application 'space.go2china.VisePanda'
+    t =    37.19s Added attachment named 'Ask-dark-zh-Hans'
+    t =    37.23s Tap "行程" Button
+    t =    37.24s     Wait for space.go2china.VisePanda to idle
+    t =    37.31s     Find the "行程" Button
+    t =    37.45s     Check for interrupting elements affecting "map" Button
+    t =    37.60s     Synthesize event
+    t =    37.97s     Wait for space.go2china.VisePanda to idle
+    t =    39.74s Waiting 3.0s for "行程" NavigationBar to exist
+    t =    40.83s     Checking `Expect predicate `existsNoRetry == 1` for object "行程" NavigationBar`
+    t =    40.87s         Checking existence of `"行程" NavigationBar`
+    t =    45.61s Find the Target Application 'space.go2china.VisePanda'
+    t =    45.91s Added attachment named 'Trip-dark-zh-Hans'
+    t =    45.91s Terminate space.go2china.VisePanda:46900
+    t =    46.97s Setting appearance mode to Light
+    t =    49.00s     Wait for com.apple.springboard to idle
+    t =    49.04s Tear Down
+Test Case '-[VisePandaUITests.AppShellUITests testAskAndTripFullAccessibilityInDarkMode]' passed (49.209 seconds).
+Test Case '-[VisePandaUITests.AppShellUITests testAskAndTripFullAccessibilityInReleaseLanguages]' started.
+    t =     0.02s Start Test at 2026-09-13 上午2:42:38.502
+    t =     0.10s Set Up
+    t =     0.10s Setting appearance mode to Light
+    t =     0.13s     Wait for com.apple.springboard to idle
+    t =     0.15s Open space.go2china.VisePanda
+    t =     0.15s     Launch space.go2china.VisePanda
+2026-09-13 02:42:39.186 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:42:39.186 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.48s         Setting up automation session
+    t =     4.67s         Wait for space.go2china.VisePanda to idle
+    t =     6.98s Waiting 10.0s for "Ask" Button to exist
+    t =     8.02s     Checking `Expect predicate `existsNoRetry == 1` for object "Ask" Button`
+    t =     8.02s         Checking existence of `"Ask" Button`
+    t =     8.66s Waiting 10.0s for "ask-introduction" StaticText to exist
+    t =     9.73s     Checking `Expect predicate `existsNoRetry == 1` for object "ask-introduction" StaticText`
+    t =     9.73s         Checking existence of `"ask-introduction" StaticText`
+    t =     9.97s Find the "ask-availability-notice" StaticText
+    t =    14.90s Tap "Trip" Button
+    t =    14.91s     Wait for space.go2china.VisePanda to idle
+    t =    14.91s     Find the "Trip" Button
+    t =    15.23s     Check for interrupting elements affecting "map" Button
+    t =    15.48s     Synthesize event
+    t =    15.93s     Wait for space.go2china.VisePanda to idle
+    t =    17.53s Waiting 3.0s for "Trip" NavigationBar to exist
+    t =    18.62s     Checking `Expect predicate `existsNoRetry == 1` for object "Trip" NavigationBar`
+    t =    18.62s         Checking existence of `"Trip" NavigationBar`
+    t =    23.34s Find the Target Application 'space.go2china.VisePanda'
+    t =    23.91s Added attachment named 'Trip-full-AX-en'
+    t =    23.91s Terminate space.go2china.VisePanda:46954
+    t =    24.96s Open space.go2china.VisePanda
+    t =    24.96s     Launch space.go2china.VisePanda
+2026-09-13 02:43:03.480 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:43:03.480 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    25.78s         Setting up automation session
+    t =    28.99s         Wait for space.go2china.VisePanda to idle
+    t =    31.38s Waiting 10.0s for "问熊猫" Button to exist
+    t =    32.39s     Checking `Expect predicate `existsNoRetry == 1` for object "问熊猫" Button`
+    t =    32.39s         Checking existence of `"问熊猫" Button`
+    t =    32.81s Waiting 10.0s for "ask-introduction" StaticText to exist
+    t =    33.82s     Checking `Expect predicate `existsNoRetry == 1` for object "ask-introduction" StaticText`
+    t =    33.83s         Checking existence of `"ask-introduction" StaticText`
+    t =    33.94s Find the "ask-availability-notice" StaticText
+    t =    38.90s Tap "行程" Button
+    t =    38.90s     Wait for space.go2china.VisePanda to idle
+    t =    38.93s     Find the "行程" Button
+    t =    39.09s     Check for interrupting elements affecting "map" Button
+    t =    39.21s     Synthesize event
+    t =    39.56s     Wait for space.go2china.VisePanda to idle
+    t =    40.90s Waiting 3.0s for "行程" NavigationBar to exist
+    t =    41.97s     Checking `Expect predicate `existsNoRetry == 1` for object "行程" NavigationBar`
+    t =    41.97s         Checking existence of `"行程" NavigationBar`
+    t =    44.70s Find the Target Application 'space.go2china.VisePanda'
+    t =    44.85s Added attachment named 'Trip-full-AX-zh-Hans'
+    t =    44.85s Terminate space.go2china.VisePanda:46982
+    t =    45.93s Setting appearance mode to Light
+    t =    45.94s     Wait for com.apple.springboard to idle
+    t =    45.95s Tear Down
+Test Case '-[VisePandaUITests.AppShellUITests testAskAndTripFullAccessibilityInReleaseLanguages]' passed (46.099 seconds).
+Test Case '-[VisePandaUITests.AppShellUITests testChineseReleaseLanguagePickerAndEnglishSwitch]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:43:24.597
+    t =     0.05s Set Up
+    t =     0.05s Open space.go2china.VisePanda
+    t =     0.05s     Launch space.go2china.VisePanda
+2026-09-13 02:43:24.691 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:43:24.691 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.54s         Setting up automation session
+    t =     2.42s         Wait for space.go2china.VisePanda to idle
+    t =     4.27s Waiting 10.0s for "问熊猫" Button to exist
+    t =     5.34s     Checking `Expect predicate `existsNoRetry == 1` for object "问熊猫" Button`
+    t =     5.34s         Checking existence of `"问熊猫" Button`
+    t =     5.49s Waiting 10.0s for "ask-introduction" StaticText to exist
+    t =     6.56s     Checking `Expect predicate `existsNoRetry == 1` for object "ask-introduction" StaticText`
+    t =     6.56s         Checking existence of `"ask-introduction" StaticText`
+    t =     6.62s Find the "问熊猫" Button
+    t =     6.65s Find the Target Application 'space.go2china.VisePanda'
+    t =     6.76s Added attachment named 'Ask-Chinese'
+    t =     6.76s Checking existence of `TextView (First Match)`
+    t =     6.80s Tap TextField (First Match)
+    t =     6.80s     Wait for space.go2china.VisePanda to idle
+    t =     6.80s     Find the TextField (First Match)
+    t =     6.83s     Check for interrupting elements affecting "告诉 VisePanda 你需要什么……" TextField
+    t =     6.86s     Synthesize event
+    t =     7.15s     Wait for space.go2china.VisePanda to idle
+    t =     8.43s Type 'Keep this draft' into "告诉 VisePanda 你需要什么……" TextField
+    t =     8.43s     Wait for space.go2china.VisePanda to idle
+    t =     9.17s     Find the "告诉 VisePanda 你需要什么……" TextField
+    t =     9.57s     Check for interrupting elements affecting "告诉 VisePanda 你需要什么……" TextField
+    t =     9.69s     Synthesize event
+    t =    10.15s     Wait for space.go2china.VisePanda to idle
+    t =    10.16s Checking existence of `"Quickly Change Keyboards" StaticText`
+    t =    10.62s Tap "完成" Button
+    t =    10.62s     Wait for space.go2china.VisePanda to idle
+    t =    10.65s     Find the "完成" Button
+    t =    10.96s     Check for interrupting elements affecting "完成" Button
+    t =    11.09s     Synthesize event
+    t =    11.45s     Wait for space.go2china.VisePanda to idle
+    t =    12.54s Waiting 3.0s for Keyboard (First Match) to not exist
+    t =    13.61s     Checking `Expect predicate `existsNoRetry == 0` for object Keyboard (First Match)`
+    t =    13.61s         Checking existence of `Keyboard (First Match)`
+    t =    13.90s Tap "行程" Button
+    t =    13.91s     Wait for space.go2china.VisePanda to idle
+    t =    13.91s     Find the "行程" Button
+    t =    13.98s     Check for interrupting elements affecting "map" Button
+    t =    14.04s     Synthesize event
+    t =    14.35s     Wait for space.go2china.VisePanda to idle
+    t =    16.03s Waiting 3.0s for "行程" NavigationBar to exist
+    t =    17.12s     Checking `Expect predicate `existsNoRetry == 1` for object "行程" NavigationBar`
+    t =    17.13s         Checking existence of `"行程" NavigationBar`
+    t =    17.27s Tap "探索" Button
+    t =    17.27s     Wait for space.go2china.VisePanda to idle
+    t =    17.28s     Find the "探索" Button
+    t =    17.39s     Check for interrupting elements affecting "safari" Button
+    t =    17.48s     Synthesize event
+    t =    17.82s     Wait for space.go2china.VisePanda to idle
+    t =    19.49s Waiting 3.0s for "探索" NavigationBar to exist
+    t =    20.56s     Checking `Expect predicate `existsNoRetry == 1` for object "探索" NavigationBar`
+    t =    20.56s         Checking existence of `"探索" NavigationBar`
+    t =    20.70s Tap "问熊猫" Button
+    t =    20.70s     Wait for space.go2china.VisePanda to idle
+    t =    20.71s     Find the "问熊猫" Button
+    t =    20.83s     Check for interrupting elements affecting "sparkles" Button
+    t =    20.90s     Synthesize event
+    t =    21.21s     Wait for space.go2china.VisePanda to idle
+    t =    22.60s Waiting 3.0s for "问熊猫" NavigationBar to exist
+    t =    23.63s     Checking `Expect predicate `existsNoRetry == 1` for object "问熊猫" NavigationBar`
+    t =    23.63s         Checking existence of `"问熊猫" NavigationBar`
+    t =    23.76s Tap "工具" Button
+    t =    23.76s     Wait for space.go2china.VisePanda to idle
+    t =    23.76s     Find the "工具" Button
+    t =    23.87s     Check for interrupting elements affecting "wrench.and.screwdriver" Button
+    t =    23.93s     Synthesize event
+    t =    24.22s     Wait for space.go2china.VisePanda to idle
+    t =    26.02s Waiting 3.0s for "工具" NavigationBar to exist
+    t =    27.10s     Checking `Expect predicate `existsNoRetry == 1` for object "工具" NavigationBar`
+    t =    27.10s         Checking existence of `"工具" NavigationBar`
+    t =    27.27s Tap "我的" Button
+    t =    27.27s     Wait for space.go2china.VisePanda to idle
+    t =    27.27s     Find the "我的" Button
+    t =    27.37s     Check for interrupting elements affecting "person.crop.circle" Button
+    t =    27.45s     Synthesize event
+    t =    27.78s     Wait for space.go2china.VisePanda to idle
+    t =    29.42s Waiting 3.0s for "我的" NavigationBar to exist
+    t =    30.47s     Checking `Expect predicate `existsNoRetry == 1` for object "我的" NavigationBar`
+    t =    30.47s         Checking existence of `"我的" NavigationBar`
+    t =    30.64s Tap Button (First Match)
+    t =    30.64s     Wait for space.go2china.VisePanda to idle
+    t =    30.65s     Find the Button (First Match)
+    t =    31.06s     Check for interrupting elements affecting "语言" Button
+    t =    31.17s     Synthesize event
+    t =    31.51s     Wait for space.go2china.VisePanda to idle
+    t =    32.73s Waiting 3.0s for "English" Button to exist
+    t =    33.81s     Checking `Expect predicate `existsNoRetry == 1` for object "English" Button`
+    t =    33.81s         Checking existence of `"English" Button`
+    t =    34.22s Checking existence of `"中文" Button`
+    t =    34.60s Checking existence of `"Español" Button`
+    t =    34.78s Checking existence of `"Русский" Button`
+    t =    34.87s Checking existence of `"العربية" Button`
+    t =    34.94s Tap "English" Button
+    t =    34.94s     Wait for space.go2china.VisePanda to idle
+    t =    34.94s     Find the "English" Button
+    t =    35.26s     Check for interrupting elements affecting "English" Button
+    t =    35.33s     Synthesize event
+    t =    35.76s     Wait for space.go2china.VisePanda to idle
+    t =    36.55s Waiting 3.0s for "Profile" Button to exist
+    t =    37.59s     Checking `Expect predicate `existsNoRetry == 1` for object "Profile" Button`
+    t =    37.59s         Checking existence of `"Profile" Button`
+    t =    37.99s Tap "Ask" Button
+    t =    37.99s     Wait for space.go2china.VisePanda to idle
+    t =    38.00s     Find the "Ask" Button
+    t =    38.42s     Check for interrupting elements affecting "sparkles" Button
+    t =    38.68s     Synthesize event
+    t =    39.05s     Wait for space.go2china.VisePanda to idle
+    t =    40.39s Waiting 5.0s for "Ask" NavigationBar to exist
+    t =    41.43s     Checking `Expect predicate `existsNoRetry == 1` for object "Ask" NavigationBar`
+    t =    41.43s         Checking existence of `"Ask" NavigationBar`
+    t =    41.53s Find the "告诉 VisePanda 你需要什么……" TextField
+    t =    41.79s Find the "Send" Button
+    t =    41.94s Tear Down
+Test Case '-[VisePandaUITests.AppShellUITests testChineseReleaseLanguagePickerAndEnglishSwitch]' passed (42.290 seconds).
+Test Case '-[VisePandaUITests.AppShellUITests testEnglishTabsTodayAndTranslationRoute]' started.
+    t =     0.01s Start Test at 2026-09-13 上午2:44:06.894
+    t =     0.09s Set Up
+    t =     0.10s Open space.go2china.VisePanda
+    t =     0.10s     Launch space.go2china.VisePanda
+    t =     0.10s         Terminate space.go2china.VisePanda:47048
+2026-09-13 02:44:08.162 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:44:08.162 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     3.21s         Setting up automation session
+    t =     6.38s         Wait for space.go2china.VisePanda to idle
+    t =     9.52s Waiting 10.0s for "Ask" Button to exist
+    t =    10.62s     Checking `Expect predicate `existsNoRetry == 1` for object "Ask" Button`
+    t =    10.62s         Checking existence of `"Ask" Button`
+    t =    10.97s Waiting 10.0s for "ask-introduction" StaticText to exist
+    t =    12.00s     Checking `Expect predicate `existsNoRetry == 1` for object "ask-introduction" StaticText`
+    t =    12.01s         Checking existence of `"ask-introduction" StaticText`
+    t =    12.13s Find the "Ask" Button
+    t =    12.28s Get number of matches for: Descendants matching type Button
+    t =    12.34s Find the Target Application 'space.go2china.VisePanda'
+    t =    12.66s Added attachment named 'Ask-English'
+    t =    12.66s Find the "Send" Button
+    t =    12.79s Tap "Trip" Button
+    t =    12.79s     Wait for space.go2china.VisePanda to idle
+    t =    12.80s     Find the "Trip" Button
+    t =    12.94s     Check for interrupting elements affecting "map" Button
+    t =    13.15s     Synthesize event
+    t =    13.49s     Wait for space.go2china.VisePanda to idle
+    t =    15.20s Waiting 3.0s for "Trip" NavigationBar to exist
+    t =    16.23s     Checking `Expect predicate `existsNoRetry == 1` for object "Trip" NavigationBar`
+    t =    16.23s         Checking existence of `"Trip" NavigationBar`
+    t =    16.35s Tap "Explore" Button
+    t =    16.36s     Wait for space.go2china.VisePanda to idle
+    t =    16.36s     Find the "Explore" Button
+    t =    16.55s     Check for interrupting elements affecting "safari" Button
+    t =    16.66s     Synthesize event
+    t =    16.97s     Wait for space.go2china.VisePanda to idle
+    t =    18.60s Waiting 3.0s for "Explore" NavigationBar to exist
+    t =    19.64s     Checking `Expect predicate `existsNoRetry == 1` for object "Explore" NavigationBar`
+    t =    19.64s         Checking existence of `"Explore" NavigationBar`
+    t =    19.96s Tap "Ask" Button
+    t =    19.96s     Wait for space.go2china.VisePanda to idle
+    t =    19.97s     Find the "Ask" Button
+    t =    20.14s     Check for interrupting elements affecting "sparkles" Button
+    t =    20.25s     Synthesize event
+    t =    20.68s     Wait for space.go2china.VisePanda to idle
+    t =    21.84s Waiting 3.0s for "Ask" NavigationBar to exist
+    t =    22.88s     Checking `Expect predicate `existsNoRetry == 1` for object "Ask" NavigationBar`
+    t =    22.88s         Checking existence of `"Ask" NavigationBar`
+    t =    23.29s Tap "Tools" Button
+    t =    23.29s     Wait for space.go2china.VisePanda to idle
+    t =    23.30s     Find the "Tools" Button
+    t =    23.44s     Check for interrupting elements affecting "wrench.and.screwdriver" Button
+    t =    23.65s     Synthesize event
+    t =    24.03s     Wait for space.go2china.VisePanda to idle
+    t =    25.58s Waiting 3.0s for "Tools" NavigationBar to exist
+    t =    26.64s     Checking `Expect predicate `existsNoRetry == 1` for object "Tools" NavigationBar`
+    t =    26.64s         Checking existence of `"Tools" NavigationBar`
+    t =    26.92s Tap "Profile" Button
+    t =    26.92s     Wait for space.go2china.VisePanda to idle
+    t =    26.93s     Find the "Profile" Button
+    t =    27.15s     Check for interrupting elements affecting "person.crop.circle" Button
+    t =    27.34s     Synthesize event
+    t =    27.83s     Wait for space.go2china.VisePanda to idle
+    t =    29.53s Waiting 3.0s for "Profile" NavigationBar to exist
+    t =    30.59s     Checking `Expect predicate `existsNoRetry == 1` for object "Profile" NavigationBar`
+    t =    30.59s         Checking existence of `"Profile" NavigationBar`
+    t =    30.83s Tap "Trip" Button
+    t =    30.83s     Wait for space.go2china.VisePanda to idle
+    t =    30.83s     Find the "Trip" Button
+    t =    30.98s     Check for interrupting elements affecting "map" Button
+    t =    31.23s     Synthesize event
+    t =    31.56s     Wait for space.go2china.VisePanda to idle
+    t =    32.93s Checking existence of `"No saved trip yet" StaticText`
+    t =    33.21s Tap "Today" Button
+    t =    33.21s     Wait for space.go2china.VisePanda to idle
+    t =    33.22s     Find the "Today" Button
+    t =    33.82s     Check for interrupting elements affecting "Today" Button
+    t =    34.03s     Synthesize event
+    t =    34.40s     Wait for space.go2china.VisePanda to idle
+    t =    34.49s Waiting 3.0s for "Today" NavigationBar to exist
+    t =    35.55s     Checking `Expect predicate `existsNoRetry == 1` for object "Today" NavigationBar`
+    t =    35.56s         Checking existence of `"Today" NavigationBar`
+    t =    35.92s Tap "Ask" Button
+    t =    35.92s     Wait for space.go2china.VisePanda to idle
+    t =    36.04s     Find the "Ask" Button
+    t =    36.50s     Check for interrupting elements affecting "sparkles" Button
+    t =    36.69s     Synthesize event
+    t =    37.11s     Wait for space.go2china.VisePanda to idle
+    t =    38.35s Tap "Help me prepare a bilingual address" Button
+    t =    38.35s     Wait for space.go2china.VisePanda to idle
+    t =    38.35s     Find the "Help me prepare a bilingual address" Button
+    t =    38.68s     Check for interrupting elements affecting "Help me prepare a bilingual address" Button
+    t =    38.92s     Synthesize event
+    t =    39.30s     Wait for space.go2china.VisePanda to idle
+    t =    40.19s Waiting 3.0s for "Translation" NavigationBar to exist
+    t =    41.25s     Checking `Expect predicate `existsNoRetry == 1` for object "Translation" NavigationBar`
+    t =    41.25s         Checking existence of `"Translation" NavigationBar`
+    t =    41.31s Checking existence of `"Translation" StaticText`
+    t =    41.38s Checking existence of `"Planned bilingual text, speech, and image assistance." StaticText`
+    t =    41.50s Checking existence of `"Preview only" StaticText`
+    t =    41.57s Tap "Trip" Button
+    t =    41.57s     Wait for space.go2china.VisePanda to idle
+    t =    41.58s     Find the "Trip" Button
+    t =    41.65s     Check for interrupting elements affecting "map" Button
+    t =    41.73s     Synthesize event
+    t =    42.06s     Wait for space.go2china.VisePanda to idle
+    t =    43.50s Checking existence of `"Today" NavigationBar`
+    t =    43.74s Tear Down
+Test Case '-[VisePandaUITests.AppShellUITests testEnglishTabsTodayAndTranslationRoute]' passed (44.133 seconds).
+Test Case '-[VisePandaUITests.AppShellUITests testTodayAccessibilityAtLargestTextSize]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:44:51.022
+    t =     0.04s Set Up
+    t =     0.05s Open space.go2china.VisePanda
+    t =     0.05s     Launch space.go2china.VisePanda
+    t =     0.05s         Terminate space.go2china.VisePanda:47300
+2026-09-13 02:44:52.142 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:44:52.143 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.55s         Setting up automation session
+    t =     4.29s         Wait for space.go2china.VisePanda to idle
+    t =     6.22s Waiting 10.0s for "Ask" Button to exist
+    t =     7.27s     Checking `Expect predicate `existsNoRetry == 1` for object "Ask" Button`
+    t =     7.27s         Checking existence of `"Ask" Button`
+    t =     7.41s Waiting 10.0s for "ask-introduction" StaticText to exist
+    t =     8.48s     Checking `Expect predicate `existsNoRetry == 1` for object "ask-introduction" StaticText`
+    t =     8.48s         Checking existence of `"ask-introduction" StaticText`
+    t =     8.54s Tap "Trip" Button
+    t =     8.54s     Wait for space.go2china.VisePanda to idle
+    t =     8.54s     Find the "Trip" Button
+    t =     8.58s     Check for interrupting elements affecting "Trip" Button
+    t =     8.60s     Synthesize event
+    t =     8.89s     Wait for space.go2china.VisePanda to idle
+    t =    10.33s Find the "Today" Button
+    t =    10.42s Swipe up Target Application 'space.go2china.VisePanda'
+    t =    10.42s     Wait for space.go2china.VisePanda to idle
+    t =    10.42s     Find the Target Application 'space.go2china.VisePanda'
+    t =    10.47s     Check for interrupting elements affecting "VisePanda" Application
+    t =    10.51s     Synthesize event
+    t =    10.94s     Wait for space.go2china.VisePanda to idle
+    t =    13.04s Find the "Today" Button
+    t =    13.10s Swipe up Target Application 'space.go2china.VisePanda'
+    t =    13.10s     Wait for space.go2china.VisePanda to idle
+    t =    13.58s     Find the Target Application 'space.go2china.VisePanda'
+    t =    13.62s     Check for interrupting elements affecting "VisePanda" Application
+    t =    13.66s     Synthesize event
+    t =    14.09s     Wait for space.go2china.VisePanda to idle
+    t =    16.19s Find the "Today" Button
+    t =    16.28s Find the "Today" Button
+    t =    16.35s Find the "Today" Button
+    t =    16.41s Find the "Today" Button
+    t =    16.48s Tap "Today" Button
+    t =    16.48s     Wait for space.go2china.VisePanda to idle
+    t =    16.49s     Find the "Today" Button
+    t =    16.55s     Check for interrupting elements affecting "Today" Button
+    t =    16.61s     Synthesize event
+    t =    16.92s     Wait for space.go2china.VisePanda to idle
+    t =    17.81s Checking existence of `"Today" NavigationBar`
+    t =    21.13s Find the Target Application 'space.go2china.VisePanda'
+    t =    21.51s Added attachment named 'Today-largest-accessibility-text'
+    t =    21.52s Tear Down
+Test Case '-[VisePandaUITests.AppShellUITests testTodayAccessibilityAtLargestTextSize]' passed (21.854 seconds).
+Test Case '-[VisePandaUITests.AppShellUITests testToolsAccessibilityAtLargestTextSize]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:45:12.880
+    t =     0.04s Set Up
+    t =     0.04s Open space.go2china.VisePanda
+    t =     0.04s     Launch space.go2china.VisePanda
+    t =     0.04s         Terminate space.go2china.VisePanda:47458
+2026-09-13 02:45:13.948 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:45:13.948 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.71s         Setting up automation session
+    t =     5.64s         Wait for space.go2china.VisePanda to idle
+    t =     8.05s Waiting 10.0s for "Ask" Button to exist
+    t =     9.12s     Checking `Expect predicate `existsNoRetry == 1` for object "Ask" Button`
+    t =     9.12s         Checking existence of `"Ask" Button`
+    t =     9.35s Waiting 10.0s for "ask-introduction" StaticText to exist
+    t =    10.42s     Checking `Expect predicate `existsNoRetry == 1` for object "ask-introduction" StaticText`
+    t =    10.43s         Checking existence of `"ask-introduction" StaticText`
+    t =    10.51s Tap "Tools" Button
+    t =    10.51s     Wait for space.go2china.VisePanda to idle
+    t =    10.53s     Find the "Tools" Button
+    t =    10.62s     Check for interrupting elements affecting "wrench.and.screwdriver" Button
+    t =    10.70s     Synthesize event
+    t =    11.02s     Wait for space.go2china.VisePanda to idle
+    t =    12.59s Find the "Translation" Button
+    t =    12.85s Find the "Translation" Button
+    t =    13.26s Find the "Translation" Button
+    t =    13.37s Find the "Translation" Button
+    t =    13.46s Find the "Translation" Button
+    t =    13.54s Find the "Translation" Button
+    t =    13.63s Find the "Translation" Button
+    t =    13.69s Find the NavigationBar (First Match)
+    t =    13.73s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    13.73s     Wait for space.go2china.VisePanda to idle
+    t =    13.73s     Find the Target Application 'space.go2china.VisePanda'
+    t =    13.77s     Check for interrupting elements affecting "VisePanda" Application
+    t =    13.82s     Synthesize event
+    t =    13.82s         Find the Target Application 'space.go2china.VisePanda'
+    t =    13.85s         Find the Target Application 'space.go2china.VisePanda'
+    t =    13.89s         Find the Target Application 'space.go2china.VisePanda'
+    t =    13.93s         Find the Target Application 'space.go2china.VisePanda'
+    t =    13.97s         Find the Target Application 'space.go2china.VisePanda'
+    t =    15.30s     Wait for space.go2china.VisePanda to idle
+    t =    15.40s Find the "Translation" Button
+    t =    15.45s Find the NavigationBar (First Match)
+    t =    15.53s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    15.53s     Wait for space.go2china.VisePanda to idle
+    t =    15.54s     Find the Target Application 'space.go2china.VisePanda'
+    t =    15.57s     Check for interrupting elements affecting "VisePanda" Application
+    t =    15.61s     Synthesize event
+    t =    15.61s         Find the Target Application 'space.go2china.VisePanda'
+    t =    15.65s         Find the Target Application 'space.go2china.VisePanda'
+    t =    15.68s         Find the Target Application 'space.go2china.VisePanda'
+    t =    15.71s         Find the Target Application 'space.go2china.VisePanda'
+    t =    15.75s         Find the Target Application 'space.go2china.VisePanda'
+    t =    17.07s     Wait for space.go2china.VisePanda to idle
+    t =    17.42s Find the "Translation" Button
+    t =    17.47s Find the NavigationBar (First Match)
+    t =    17.50s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    17.50s     Wait for space.go2china.VisePanda to idle
+    t =    17.50s     Find the Target Application 'space.go2china.VisePanda'
+    t =    17.55s     Check for interrupting elements affecting "VisePanda" Application
+    t =    17.64s     Synthesize event
+    t =    17.65s         Find the Target Application 'space.go2china.VisePanda'
+    t =    17.69s         Find the Target Application 'space.go2china.VisePanda'
+    t =    17.73s         Find the Target Application 'space.go2china.VisePanda'
+    t =    17.77s         Find the Target Application 'space.go2china.VisePanda'
+    t =    17.81s         Find the Target Application 'space.go2china.VisePanda'
+    t =    19.14s     Wait for space.go2china.VisePanda to idle
+    t =    19.54s Find the "Translation" Button
+    t =    19.59s Find the NavigationBar (First Match)
+    t =    19.60s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    19.60s     Wait for space.go2china.VisePanda to idle
+    t =    19.60s     Find the Target Application 'space.go2china.VisePanda'
+    t =    19.62s     Check for interrupting elements affecting "VisePanda" Application
+    t =    19.64s     Synthesize event
+    t =    19.64s         Find the Target Application 'space.go2china.VisePanda'
+    t =    19.66s         Find the Target Application 'space.go2china.VisePanda'
+    t =    19.68s         Find the Target Application 'space.go2china.VisePanda'
+    t =    19.69s         Find the Target Application 'space.go2china.VisePanda'
+    t =    19.71s         Find the Target Application 'space.go2china.VisePanda'
+    t =    21.02s     Wait for space.go2china.VisePanda to idle
+    t =    21.44s Find the "Translation" Button
+    t =    21.87s Find the NavigationBar (First Match)
+    t =    22.23s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    22.23s     Wait for space.go2china.VisePanda to idle
+    t =    22.23s     Find the Target Application 'space.go2china.VisePanda'
+    t =    22.39s     Check for interrupting elements affecting "VisePanda" Application
+    t =    22.49s     Synthesize event
+    t =    22.50s         Find the Target Application 'space.go2china.VisePanda'
+    t =    22.67s         Find the Target Application 'space.go2china.VisePanda'
+    t =    22.77s         Find the Target Application 'space.go2china.VisePanda'
+    t =    22.83s         Find the Target Application 'space.go2china.VisePanda'
+    t =    22.90s         Find the Target Application 'space.go2china.VisePanda'
+    t =    24.25s     Wait for space.go2china.VisePanda to idle
+    t =    24.64s Find the "Translation" Button
+    t =    24.69s Find the NavigationBar (First Match)
+    t =    24.72s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    24.72s     Wait for space.go2china.VisePanda to idle
+    t =    24.73s     Find the Target Application 'space.go2china.VisePanda'
+    t =    24.77s     Check for interrupting elements affecting "VisePanda" Application
+    t =    24.81s     Synthesize event
+    t =    24.82s         Find the Target Application 'space.go2china.VisePanda'
+    t =    24.85s         Find the Target Application 'space.go2china.VisePanda'
+    t =    24.90s         Find the Target Application 'space.go2china.VisePanda'
+    t =    24.94s         Find the Target Application 'space.go2china.VisePanda'
+    t =    24.98s         Find the Target Application 'space.go2china.VisePanda'
+    t =    26.32s     Wait for space.go2china.VisePanda to idle
+    t =    26.71s Find the "Translation" Button
+    t =    26.77s Find the NavigationBar (First Match)
+    t =    26.81s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    26.81s     Wait for space.go2china.VisePanda to idle
+    t =    26.81s     Find the Target Application 'space.go2china.VisePanda'
+    t =    26.85s     Check for interrupting elements affecting "VisePanda" Application
+    t =    26.90s     Synthesize event
+    t =    26.90s         Find the Target Application 'space.go2china.VisePanda'
+    t =    26.94s         Find the Target Application 'space.go2china.VisePanda'
+    t =    26.98s         Find the Target Application 'space.go2china.VisePanda'
+    t =    27.01s         Find the Target Application 'space.go2china.VisePanda'
+    t =    27.06s         Find the Target Application 'space.go2china.VisePanda'
+    t =    28.38s     Wait for space.go2china.VisePanda to idle
+    t =    28.78s Find the "Translation" Button
+    t =    28.82s Find the NavigationBar (First Match)
+    t =    28.84s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    28.84s     Wait for space.go2china.VisePanda to idle
+    t =    28.84s     Find the Target Application 'space.go2china.VisePanda'
+    t =    28.86s     Check for interrupting elements affecting "VisePanda" Application
+    t =    28.88s     Synthesize event
+    t =    28.88s         Find the Target Application 'space.go2china.VisePanda'
+    t =    28.90s         Find the Target Application 'space.go2china.VisePanda'
+    t =    28.92s         Find the Target Application 'space.go2china.VisePanda'
+    t =    28.93s         Find the Target Application 'space.go2china.VisePanda'
+    t =    28.95s         Find the Target Application 'space.go2china.VisePanda'
+    t =    30.26s     Wait for space.go2china.VisePanda to idle
+    t =    30.66s Find the "Translation" Button
+    t =    33.35s Find the Target Application 'space.go2china.VisePanda'
+    t =    33.57s Added attachment named 'Tools-largest-accessibility-text'
+    t =    33.57s Tear Down
+Test Case '-[VisePandaUITests.AppShellUITests testToolsAccessibilityAtLargestTextSize]' passed (33.886 seconds).
+Test Case '-[VisePandaUITests.AppShellUITests testWorkflowBadgeBackgroundAtSystemTextSize]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:45:46.766
+    t =     0.03s Set Up
+    t =     0.03s Setting appearance mode to Light
+    t =     0.04s     Wait for space.go2china.VisePanda to idle
+    t =     0.04s Open space.go2china.VisePanda
+    t =     0.04s     Launch space.go2china.VisePanda
+    t =     0.04s         Terminate space.go2china.VisePanda:47554
+2026-09-13 02:45:47.822 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:45:47.822 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     1.50s         Setting up automation session
+    t =     4.72s         Wait for space.go2china.VisePanda to idle
+    t =     6.81s Tap "Trip" Button
+    t =     6.82s     Wait for space.go2china.VisePanda to idle
+    t =     6.82s     Find the "Trip" Button
+    t =     7.11s     Check for interrupting elements affecting "Trip" Button
+    t =     7.23s     Synthesize event
+    t =     7.59s     Wait for space.go2china.VisePanda to idle
+    t =     9.07s Find the "3" StaticText
+    t =     9.26s Find the "3" StaticText
+    t =     9.36s Find the "3" StaticText
+    t =     9.47s Find the "3" StaticText
+    t =     9.57s Find the "3" StaticText
+    t =     9.68s Find the "3" StaticText
+    t =     9.79s Find the "3" StaticText
+    t =     9.89s Find the "3" StaticText
+    t =    10.01s Swipe up Target Application 'space.go2china.VisePanda'
+    t =    10.01s     Wait for space.go2china.VisePanda to idle
+    t =    10.01s     Find the Target Application 'space.go2china.VisePanda'
+    t =    10.06s     Check for interrupting elements affecting "VisePanda" Application
+    t =    10.11s     Synthesize event
+    t =    10.54s     Wait for space.go2china.VisePanda to idle
+    t =    11.21s Find the Target Application 'space.go2china.VisePanda'
+    t =    11.42s Added attachment named 'Workflow-system-text-en'
+    t =    11.43s Find the Target Application 'space.go2china.VisePanda'
+    t =    11.78s Find the Target Application 'space.go2china.VisePanda'
+    t =    11.82s Find the "1" StaticText
+    t =    11.88s Find the "1" StaticText
+Badge background passed: en 1, text frame (26.833333333333332, 673.1666666666667, 6.333333333333339, 14.333333333333371)
+    t =    11.95s Find the "2" StaticText
+    t =    12.03s Find the "2" StaticText
+Badge background passed: en 2, text frame (26.0, 713.1666666666666, 8.0, 14.333333333333485)
+    t =    12.08s Find the "3" StaticText
+    t =    12.15s Find the "3" StaticText
+Badge background passed: en 3, text frame (25.833333333333332, 753.1666666666666, 8.33333333333334, 14.333333333333485)
+    t =    12.20s Terminate space.go2china.VisePanda:47639
+    t =    13.23s Open space.go2china.VisePanda
+    t =    13.23s     Launch space.go2china.VisePanda
+2026-09-13 02:45:59.998 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:45:59.998 xcodebuild[46330:639053] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =    13.44s         Setting up automation session
+    t =    14.67s         Wait for space.go2china.VisePanda to idle
+    t =    16.70s Tap "行程" Button
+    t =    16.71s     Wait for space.go2china.VisePanda to idle
+    t =    16.71s     Find the "行程" Button
+    t =    16.91s     Check for interrupting elements affecting "行程" Button
+    t =    16.98s     Synthesize event
+    t =    17.30s     Wait for space.go2china.VisePanda to idle
+    t =    19.15s Find the "3" StaticText
+    t =    19.34s Find the "3" StaticText
+    t =    19.47s Find the "3" StaticText
+    t =    19.60s Find the "3" StaticText
+    t =    19.69s Find the "3" StaticText
+    t =    19.77s Find the "3" StaticText
+    t =    19.86s Find the "3" StaticText
+    t =    19.94s Find the "3" StaticText
+    t =    20.02s Swipe up Target Application 'space.go2china.VisePanda'
+    t =    20.02s     Wait for space.go2china.VisePanda to idle
+    t =    20.02s     Find the Target Application 'space.go2china.VisePanda'
+    t =    20.06s     Check for interrupting elements affecting "VisePanda" Application
+    t =    20.11s     Synthesize event
+    t =    20.54s     Wait for space.go2china.VisePanda to idle
+    t =    21.21s Find the Target Application 'space.go2china.VisePanda'
+    t =    21.37s Added attachment named 'Workflow-system-text-zh-Hans'
+    t =    21.37s Find the Target Application 'space.go2china.VisePanda'
+    t =    21.59s Find the Target Application 'space.go2china.VisePanda'
+    t =    21.62s Find the "1" StaticText
+    t =    21.69s Find the "1" StaticText
+Badge background passed: zh-Hans 1, text frame (26.833333333333332, 655.1666666666667, 6.333333333333339, 14.333333333333371)
+    t =    21.74s Find the "2" StaticText
+    t =    21.81s Find the "2" StaticText
+Badge background passed: zh-Hans 2, text frame (26.0, 695.1666666666666, 8.0, 14.333333333333485)
+    t =    21.87s Find the "3" StaticText
+    t =    21.94s Find the "3" StaticText
+Badge background passed: zh-Hans 3, text frame (25.833333333333332, 735.1666666666666, 8.33333333333334, 14.333333333333485)
+    t =    22.01s Terminate space.go2china.VisePanda:47658
+    t =    23.08s Setting appearance mode to Light
+    t =    23.09s     Wait for com.apple.springboard to idle
+    t =    23.10s Tear Down
+Test Case '-[VisePandaUITests.AppShellUITests testWorkflowBadgeBackgroundAtSystemTextSize]' passed (23.159 seconds).
+Test Suite 'AppShellUITests' passed at 2026-09-13 上午2:46:09.925.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 434.619 (434.646) seconds
+Test Suite 'NativeAskProcessRecoveryUITests' started at 2026-09-13 上午2:46:09.926.
+Test Case '-[VisePandaUITests.NativeAskProcessRecoveryUITests testChineseAcknowledgedButHiddenHistoryAcrossProcessRestart]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:09.927
+    t =     0.02s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeAskUITests.swift:90: -[VisePandaUITests.NativeAskProcessRecoveryUITests testChineseAcknowledgedButHiddenHistoryAcrossProcessRestart] : Test skipped - UNRUN: synthetic loopback process-recovery fixture is not configured
+    t =     0.05s Tear Down
+Test Case '-[VisePandaUITests.NativeAskProcessRecoveryUITests testChineseAcknowledgedButHiddenHistoryAcrossProcessRestart]' skipped (0.062 seconds).
+Test Case '-[VisePandaUITests.NativeAskProcessRecoveryUITests testEnglishLostReceiptAcrossProcessRestart]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:09.989
+    t =     0.02s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeAskUITests.swift:90: -[VisePandaUITests.NativeAskProcessRecoveryUITests testEnglishLostReceiptAcrossProcessRestart] : Test skipped - UNRUN: synthetic loopback process-recovery fixture is not configured
+    t =     0.02s Tear Down
+Test Case '-[VisePandaUITests.NativeAskProcessRecoveryUITests testEnglishLostReceiptAcrossProcessRestart]' skipped (0.048 seconds).
+Test Suite 'NativeAskProcessRecoveryUITests' passed at 2026-09-13 上午2:46:10.037.
+	 Executed 2 tests, with 2 tests skipped and 0 failures (0 unexpected) in 0.110 (0.111) seconds
+Test Suite 'NativeAskUITests' started at 2026-09-13 上午2:46:10.037.
+Test Case '-[VisePandaUITests.NativeAskUITests testChineseConsentSendAndRelaunch]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:10.037
+    t =     0.02s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeAskUITests.swift:12: -[VisePandaUITests.NativeAskUITests testChineseConsentSendAndRelaunch] : Test skipped - UNRUN: explicit local native text UI environment is not configured
+    t =     0.02s Tear Down
+Test Case '-[VisePandaUITests.NativeAskUITests testChineseConsentSendAndRelaunch]' skipped (0.053 seconds).
+Test Case '-[VisePandaUITests.NativeAskUITests testChineseTaskClarificationAndRelaunch]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:10.091
+    t =     0.07s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeAskUITests.swift:12: -[VisePandaUITests.NativeAskUITests testChineseTaskClarificationAndRelaunch] : Test skipped - UNRUN: explicit local native text UI environment is not configured
+    t =     0.07s Tear Down
+Test Case '-[VisePandaUITests.NativeAskUITests testChineseTaskClarificationAndRelaunch]' skipped (0.102 seconds).
+Test Case '-[VisePandaUITests.NativeAskUITests testEnglishConsentSendAndRelaunch]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:10.193
+    t =     0.03s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeAskUITests.swift:12: -[VisePandaUITests.NativeAskUITests testEnglishConsentSendAndRelaunch] : Test skipped - UNRUN: explicit local native text UI environment is not configured
+    t =     0.03s Tear Down
+Test Case '-[VisePandaUITests.NativeAskUITests testEnglishConsentSendAndRelaunch]' skipped (0.062 seconds).
+Test Case '-[VisePandaUITests.NativeAskUITests testEnglishTaskClarificationAndRelaunch]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:10.256
+    t =     0.03s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeAskUITests.swift:12: -[VisePandaUITests.NativeAskUITests testEnglishTaskClarificationAndRelaunch] : Test skipped - UNRUN: explicit local native text UI environment is not configured
+    t =     0.03s Tear Down
+Test Case '-[VisePandaUITests.NativeAskUITests testEnglishTaskClarificationAndRelaunch]' skipped (0.064 seconds).
+Test Suite 'NativeAskUITests' passed at 2026-09-13 上午2:46:10.320.
+	 Executed 4 tests, with 4 tests skipped and 0 failures (0 unexpected) in 0.281 (0.283) seconds
+Test Suite 'NativeIdentityUITests' started at 2026-09-13 上午2:46:10.321.
+Test Case '-[VisePandaUITests.NativeIdentityUITests testLoginShowsRealOwnerProfile]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:10.322
+    t =     0.02s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeIdentityUITests.swift:7: -[VisePandaUITests.NativeIdentityUITests testLoginShowsRealOwnerProfile] : Test skipped - UNRUN: explicit disposable local identity environment is not configured
+    t =     0.02s Tear Down
+Test Case '-[VisePandaUITests.NativeIdentityUITests testLoginShowsRealOwnerProfile]' skipped (0.051 seconds).
+Test Case '-[VisePandaUITests.NativeIdentityUITests testLogoutClearsAccount]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:10.373
+    t =     0.02s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeIdentityUITests.swift:7: -[VisePandaUITests.NativeIdentityUITests testLogoutClearsAccount] : Test skipped - UNRUN: explicit disposable local identity environment is not configured
+    t =     0.02s Tear Down
+Test Case '-[VisePandaUITests.NativeIdentityUITests testLogoutClearsAccount]' skipped (0.051 seconds).
+Test Case '-[VisePandaUITests.NativeIdentityUITests testReplacedPhoneCannotRestoreOldSession]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:10.424
+    t =     0.02s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeIdentityUITests.swift:7: -[VisePandaUITests.NativeIdentityUITests testReplacedPhoneCannotRestoreOldSession] : Test skipped - UNRUN: explicit disposable local identity environment is not configured
+    t =     0.02s Tear Down
+Test Case '-[VisePandaUITests.NativeIdentityUITests testReplacedPhoneCannotRestoreOldSession]' skipped (0.050 seconds).
+Test Suite 'NativeIdentityUITests' passed at 2026-09-13 上午2:46:10.475.
+	 Executed 3 tests, with 3 tests skipped and 0 failures (0 unexpected) in 0.152 (0.154) seconds
+Test Suite 'NativeKnowledgeUITests' started at 2026-09-13 上午2:46:10.476.
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testChineseRefreshCredentialsReadAndWithdraw]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:10.477
+    t =     0.02s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeKnowledgeUITests.swift:19: -[VisePandaUITests.NativeKnowledgeUITests testChineseRefreshCredentialsReadAndWithdraw] : Test skipped - UNRUN: explicit loopback knowledge UI fixture not configured
+    t =     0.03s Tear Down
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testChineseRefreshCredentialsReadAndWithdraw]' skipped (0.055 seconds).
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testChineseReviewedQuestionCoverage]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:10.533
+    t =     0.02s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeKnowledgeUITests.swift:19: -[VisePandaUITests.NativeKnowledgeUITests testChineseReviewedQuestionCoverage] : Test skipped - UNRUN: explicit loopback knowledge UI fixture not configured
+    t =     0.02s Tear Down
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testChineseReviewedQuestionCoverage]' skipped (0.045 seconds).
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testEnglishRefreshCredentialsReadAndWithdraw]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:10.579
+    t =     0.02s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeKnowledgeUITests.swift:19: -[VisePandaUITests.NativeKnowledgeUITests testEnglishRefreshCredentialsReadAndWithdraw] : Test skipped - UNRUN: explicit loopback knowledge UI fixture not configured
+    t =     0.02s Tear Down
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testEnglishRefreshCredentialsReadAndWithdraw]' skipped (0.049 seconds).
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testEnglishReviewedQuestionCoverage]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:10.629
+    t =     0.02s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeKnowledgeUITests.swift:19: -[VisePandaUITests.NativeKnowledgeUITests testEnglishReviewedQuestionCoverage] : Test skipped - UNRUN: explicit loopback knowledge UI fixture not configured
+    t =     0.02s Tear Down
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testEnglishReviewedQuestionCoverage]' skipped (0.050 seconds).
+Test Suite 'NativeKnowledgeUITests' passed at 2026-09-13 上午2:46:10.679.
+	 Executed 4 tests, with 4 tests skipped and 0 failures (0 unexpected) in 0.199 (0.203) seconds
+Test Suite 'NativeTripUITests' started at 2026-09-13 上午2:46:10.680.
+Test Case '-[VisePandaUITests.NativeTripUITests testRealLocalTripDraftReviewConfirmAndRelaunch]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:10.681
+    t =     0.02s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeTripUITests.swift:39: -[VisePandaUITests.NativeTripUITests testRealLocalTripDraftReviewConfirmAndRelaunch] : Test skipped - UNRUN: explicit local synthetic Trip environment is not configured
+    t =     0.02s Tear Down
+Test Case '-[VisePandaUITests.NativeTripUITests testRealLocalTripDraftReviewConfirmAndRelaunch]' skipped (0.049 seconds).
+Test Case '-[VisePandaUITests.NativeTripUITests testReloadSameTripAfterWebConfirmation]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:46:10.731
+    t =     0.02s Set Up
+/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/VP-V4/VP-V4/ios/VisePanda/VisePandaUITests/NativeTripUITests.swift:9: -[VisePandaUITests.NativeTripUITests testReloadSameTripAfterWebConfirmation] : Test skipped - UNRUN: browser-confirmed shared Trip is not configured
+    t =     0.02s Tear Down
+Test Case '-[VisePandaUITests.NativeTripUITests testReloadSameTripAfterWebConfirmation]' skipped (0.051 seconds).
+Test Suite 'NativeTripUITests' passed at 2026-09-13 上午2:46:10.782.
+	 Executed 2 tests, with 2 tests skipped and 0 failures (0 unexpected) in 0.100 (0.102) seconds
+Test Suite 'VisePandaUITests.xctest' passed at 2026-09-13 上午2:46:10.783.
+	 Executed 23 tests, with 15 tests skipped and 0 failures (0 unexpected) in 435.460 (435.504) seconds
+Test Suite 'All tests' passed at 2026-09-13 上午2:46:10.784.
+	 Executed 23 tests, with 15 tests skipped and 0 failures (0 unexpected) in 435.460 (435.506) seconds
+2026-09-13 02:46:11.311 xcodebuild[46330:660291]  IDETestOperationsObserverDebug: Failure collecting diagnostics from simulator: Process exited with error 72:
+ xcrun: error: unable to find utility "simctl", not a developer tool or in PATH
+
+2026-09-13 02:46:11.382 xcodebuild[46330:639053] [MT] IDETestOperationsObserverDebug: 505.832 elapsed -- Testing started completed.
+2026-09-13 02:46:11.382 xcodebuild[46330:639053] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-13 02:46:11.382 xcodebuild[46330:639053] [MT] IDETestOperationsObserverDebug: 505.832 sec, +505.832 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/jtcao/Library/Application Support/VP-V4/actions-runner/_work/_temp/vpj-56-34711647883-1/tests.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
