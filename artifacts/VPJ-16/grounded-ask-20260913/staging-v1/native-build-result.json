@@ -1,0 +1,7 @@
+{
+  "VisePandaNativeEnvironment": "staging",
+  "VisePandaNativeTaskContext": "knowledge_intent_v1",
+  "VisePandaStagingAPIOrigin": "https://vp-v4-isot46ks0-jtcao515s-projects.vercel.app",
+  "sha": "688b9bd27d77ebfd063acd69f5e5046e9ecffc37",
+  "executableSha256": "8d17eb4bf015a1f6db9ad835739151da682321ce99ed7bea9237cd124b6a5006"
+}

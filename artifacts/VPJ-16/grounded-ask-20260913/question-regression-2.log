@@ -1,0 +1,18 @@
+▶ first-party reviewed question: real PostgreSQL eligibility, coverage and isolation
+  ✔ rollback, disabled switch, closed question scope and RPC roles (1540.737584ms)
+  ✔ missing support is honest; a single supported obligation stays partial (1040.4195ms)
+  ✔ complete bilingual answers preserve exact qualifiers and source context (1060.132542ms)
+  ✔ corroboration is retained; incompatible wording cannot become a ranked complete answer (1492.861042ms)
+  ✔ a publication appearing after the base read is frozen behind its own revocation lock (2138.481625ms)
+  ✔ revocation and expiry suppress text and identify observed causes (1704.112083ms)
+  ✔ capacity overflow fails instead of hiding evidence behind a retrieval limit (35831.351208ms)
+  ✔ switch and session loss never masquerade as knowledge gaps; no task or model receipt (331.541584ms)
+✔ first-party reviewed question: real PostgreSQL eligibility, coverage and isolation (117363.98475ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 117666.804709

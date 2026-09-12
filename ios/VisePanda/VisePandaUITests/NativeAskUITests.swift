@@ -7,15 +7,20 @@ nonisolated final class NativeAskUITests: XCTestCase {
     @MainActor func testEnglishTaskClarificationAndRelaunch() throws { try exercise(locale: "en", userKey: "VP_NATIVE_TEXT_UI_EN_EMAIL", taskContext: true) }
     @MainActor func testChineseTaskClarificationAndRelaunch() throws { try exercise(locale: "zh-Hans", userKey: "VP_NATIVE_TEXT_UI_ZH_EMAIL", taskContext: true) }
 
-    @MainActor private func exercise(locale: String, userKey: String, taskContext: Bool = false) throws {
+    @MainActor func testEnglishGroundedAnswerAndRelaunch() throws { try exercise(locale: "en", userKey: "VP_NATIVE_TEXT_UI_EN_EMAIL", grounded: true) }
+    @MainActor func testChineseGroundedAnswerAndRelaunch() throws { try exercise(locale: "zh-Hans", userKey: "VP_NATIVE_TEXT_UI_ZH_EMAIL", grounded: true) }
+
+    @MainActor private func exercise(locale: String, userKey: String, taskContext: Bool = false, grounded: Bool = false) throws {
         let environment = ProcessInfo.processInfo.environment
         guard environment["VP_NATIVE_TEXT_TEST"] == "1" else { throw XCTSkip("UNRUN: explicit local native text UI environment is not configured") }
+        if grounded && environment["VP_NATIVE_GROUNDED_TEST"] != "1" { throw XCTSkip("UNRUN: grounded native fixture not configured") }
         continueAfterFailure = false
         let api = try XCTUnwrap(environment["VP_NATIVE_TEXT_API_URL"])
         let email = try XCTUnwrap(environment[userKey])
         let chinese = locale == "zh-Hans"
         let app = XCUIApplication()
         app.launchArguments = ["-VisePandaNativeAPI", api, "-VisePandaLocale", locale, "-AppleLanguages", "(\(locale))", "-AppleLocale", chinese ? "zh_CN" : "en_US"]
+        if grounded { app.launchArguments += ["-VisePandaGroundedMode"] }
         if taskContext { app.launchArguments += ["-VisePandaTaskContext"] }
         app.launch()
         app.tabBars.buttons[chinese ? "我的" : "Profile"].tap()
@@ -39,6 +44,37 @@ nonisolated final class NativeAskUITests: XCTestCase {
         XCTAssertTrue(input.waitForExistence(timeout: 20)); reveal(input, app); input.tap()
         input.typeText((chinese ? "中文合成请求" : "Synthetic UI request") + (taskContext ? " kind=clarification" : ""))
         let send = app.buttons["native-ask.send"]; send.tap()
+        if grounded {
+            let answer = app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH %@", "knowledge.note.")).firstMatch
+            XCTAssertTrue(answer.waitForExistence(timeout: 30)); reveal(answer, app)
+            XCTAssertTrue(answer.label.contains(chinese ? "合成审核" : "Synthetic reviewed"))
+            let identifier = answer.identifier
+            capture("Grounded-answer-\(locale)", app)
+            app.terminate(); app.launch()
+            let restored = app.staticTexts[identifier]
+            XCTAssertTrue(restored.waitForExistence(timeout: 30)); reveal(restored, app)
+            XCTAssertTrue(restored.label.contains(chinese ? "合成审核" : "Synthetic reviewed"))
+            XCTAssertFalse(app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH %@", "native-ask.answer.")).firstMatch.exists)
+            capture("Grounded-recovered-\(locale)", app)
+            // Cross the real 30-second evidence deadline while reading a scrolled
+            // answer. Refresh may hide expired facts, but must not move the reader.
+            let readingY = restored.frame.minY
+            let refreshDeadline = ProcessInfo.processInfo.systemUptime + 36
+            while ProcessInfo.processInfo.systemUptime < refreshDeadline {
+                if restored.exists {
+                    XCTAssertEqual(restored.frame.minY, readingY, accuracy: 3)
+                }
+                RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.5))
+            }
+            XCTAssertTrue(restored.waitForExistence(timeout: 10))
+            XCTAssertEqual(restored.frame.minY, readingY, accuracy: 3)
+            capture("Grounded-reading-refresh-\(locale)", app)
+            app.tabBars.buttons[chinese ? "我的" : "Profile"].tap()
+            XCTAssertFalse(app.staticTexts[identifier].exists)
+            app.tabBars.buttons[chinese ? "问熊猫" : "Ask"].tap()
+            XCTAssertTrue(app.staticTexts[identifier].waitForExistence(timeout: 30))
+            return
+        }
         let answer = app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH %@", "native-ask.answer.")).firstMatch
         XCTAssertTrue(answer.waitForExistence(timeout: 30)); reveal(answer, app)
         XCTAssertEqual(answer.label, chinese ? "本机合成回答：请求已完成。" : "Local synthetic answer: request completed.")

@@ -3,13 +3,28 @@ import SwiftUI
 @testable import VisePanda
 
 nonisolated final class NativeAskStateTests: XCTestCase {
-    @MainActor private func session() throws -> NativeSession {
+    @MainActor private func session(grounded: Bool = false) throws -> NativeSession {
         TextStateProtocol.reset()
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [TextStateProtocol.self]
         let defaults = try XCTUnwrap(UserDefaults(suiteName: "vpj07.state.\(UUID().uuidString)"))
-        return NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:59651"], defaults: defaults, configuration: configuration)
+        return NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:59651"] + (grounded ? ["-VisePandaGroundedMode"] : []), defaults: defaults, configuration: configuration)
     }
+    @MainActor func testGroundedConsentScreenDoesNotPollEverySecond() async throws {
+        let session = try session(grounded: true)
+        TextStateProtocol.immediatePolicy()
+        await session.login(email: "text-owner-a", password: "unit-only")
+        let store = NativeAskStore(mode: .grounded)
+        await store.reload(using: session)
+        XCTAssertEqual(store.policy?.consentState, .notAccepted)
+        XCTAssertGreaterThan(store.groundedRefreshDelay, 25)
+        XCTAssertLessThanOrEqual(store.groundedRefreshDelay, 30)
+        XCTAssertFalse(store.busy); XCTAssertFalse(store.canSend)
+        store.suspendReads()
+        XCTAssertFalse(store.groundedCurrent); XCTAssertNil(store.policy)
+        await session.logout()
+    }
+
     @MainActor func testTaskChainRejectsMissingRootForkAndCrossThread() throws {
         func turn(_ id: String, parent: String?, relationship: String, thread: String = "10000000-0000-0000-0000-000000000001") throws -> NativeTextTurn {
             let data = try JSONSerialization.data(withJSONObject: ["turnId": id, "threadId": thread, "locale": "en", "input": "test", "outcome": "clarification", "output": "Which one?", "status": "completed", "createdAt": "2026-09-12", "serviceTaskId": "20000000-0000-0000-0000-000000000001", "scopeVersion": 1, "relationship": relationship, "parentTurnId": parent as Any? ?? NSNull()])
@@ -166,10 +181,18 @@ nonisolated private final class TextStateProtocol: URLProtocol, @unchecked Senda
         let owner = request.value(forHTTPHeaderField: "Authorization")?.contains("text-owner-b") == true ? "text-owner-b" : "text-owner-a"
         if path.hasSuffix("/policy") {
             if Self.lock.withLock({ Self.holdPolicy }) { Self.lock.withLock { Self.pending = self } }
-            else { reply(Self.policyReply()) }
+            else {
+                var response = Self.policyReply()
+                if path.contains("/v4/") {
+                    response["version"] = 4
+                    var policy = response["policy"] as! [String: Any]
+                    policy["consentState"] = "not_accepted"; response["policy"] = policy
+                }
+                reply(response)
+            }
             return
         }
-        if path.hasSuffix("/turns") { reply(["version": 1, "kind": "history", "turns": []]); return }
+        if path.hasSuffix("/turns") { reply(["version": path.contains("/v4/") ? 4 : 1, "kind": path.contains("/v4/") ? "grounded_history" : "history", "turns": []]); return }
         if path.hasSuffix("/refresh") && Self.lock.withLock({ Self.refreshFails }) { client?.urlProtocol(self, didFailWithError: URLError(.notConnectedToInternet)); return }
         if path.hasSuffix("/credentials") || path.hasSuffix("/refresh") {
             let subject = Self.hasPending ? "text-owner-b" : owner

@@ -1,0 +1,34 @@
+✔ durable owner consent gates input; exact retries reuse and changed text rejects (5583.085667ms)
+✔ cross-owner/session and ordinary roles cannot access private text or service dispatch (702.976375ms)
+✔ withdrawal persists across new clients and denies new attempts, late write and owner reads (602.134583ms)
+✔ recipient substitution, replay and policy revocation fail closed (653.772292ms)
+✔ atomic output maps all five business outcomes to correct terminal, once (2731.573417ms)
+✔ cancel and expired leases prevent late output; cancellation race has one terminal (1346.485834ms)
+✔ UTF-16 input/output limits and secret-bearing envelope alternatives are rejected (547.523542ms)
+✔ deletion hides but retains consented content without resurrecting recreated IDs (996.887416ms)
+✔ complete worker uses real SQL budget + controlled HTTP, persists validated outcomes and retains unknown charges (4269.182709ms)
+✔ thread/user deletion lock barriers roll back busy work without deadlock or false cancellation (1024.180625ms)
+✔ withdrawal at the final egress gate prevents HTTP even after budget dispatch (849.453125ms)
+✔ cancel while provider is in flight rejects late answer; unknown extra fields never persist (1626.22875ms)
+✔ unverified model usage retains the full budget hold instead of using the configured tariff (1007.84275ms)
+✔ verified model charges survive business failures while unproved protocol failures remain pending (14041.422125ms)
+✔ scoped claimer leaves other owners, other policies and metadata-only work untouched (887.943791ms)
+✔ scoped and legacy claimers serialize; expired leases recover once and old tokens cannot dispatch (618.719125ms)
+✔ scoped claim refuses ordinary roles and leaves revoked or hidden content unleased (21821.9335ms)
+✔ scoped claim rolls back on deletion lock contention and can be disabled without changing retained records (6258.439375ms)
+✔ ServiceTask records exact request replay and a latest-parent clarification/repair chain (11116.890958ms)
+✔ ServiceTask competing continuations and legacy v1/state admissions cannot split the task (2710.615208ms)
+✔ ServiceTask shared cost is canonical for old Turn workers, pinned across scope changes and denied to ordinary roles (4924.009333ms)
+✔ ServiceTask withdrawal and physical deletion preserve hidden records but forbid continuation and dispatch (21305.821041ms)
+✔ ServiceTask and legacy Turn IDs cannot collide in either direction or concurrent creation (3134.779333ms)
+✔ task history requires a new immutable policy and consent; legacy claimers leave it recoverable (3461.499334ms)
+✔ task history is ordered and capped at four turns with exact replay at the bound (4303.118917ms)
+✔ task dispatch rejects a deleted intermediate ancestor or withdrawn consent after reading (8972.552ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 125981.587083

@@ -75,3 +75,60 @@ durable ServiceTask integration and historical evidence revalidation remain inco
 Rollback: remove the new UI/endpoint entry or keep the first-party read switch disabled.
 Existing knowledge-read/1 and text Ask remain compatible. If the additive RPC is later removed,
 use a new migration after removing its consumer; do not rewrite applied migration history.
+
+## Bounded natural-language Ask and durable results
+
+The opt-in `knowledge_intent_v1` policy adds native `/api/chat/native/v4` policy,
+consent and turns endpoints. This is a separate recipient notice/consent from the
+current-input and task-history policies. A request includes a canonical city,
+zh/en locale and existing ServiceTask link; city and locale stay fixed throughout
+at most four turns. Exact retries reuse the original turn, while a changed city
+under the same idempotency key is a conflict. Existing modes remain compatible.
+
+The existing scoped worker, leases, provider gateway and task budget process the
+request. Only the current user message goes to the classifier. The server owns a
+versioned prompt and accepts two closed fields: `intent` and `requestScope`.
+`rail_boarding_documents` permits `single` or `additional_needs`; `clarification`
+and `unsupported` require `unknown`. No evidence ID, citation, factual prose,
+previous input/output, Trip or source snippet is accepted from or sent to this
+model exit. Parsing failure is a technical failure; it does not trigger repair or
+another model call. Verified usage still settles the original attempt.
+
+The classifier's interpretation is displayed explicitly. It supports only the
+adult foreign-passport domestic railway question described above. Additional
+needs remain visibly unanswered and cannot yield a complete task outcome. A
+vague follow-up requires a restatement because this mode does not send history.
+Classifier semantic accuracy requires separate real-provider evidence; a closed
+JSON schema alone cannot establish that the interpretation is correct.
+
+A private first-party resolver runs after lease/owner/consent checks, then those
+checks run again after any publication lock wait and before completion. Saved
+`grounded_turns` bind the original claims and actual publication/revision/hash
+references. Generic output contains only `reviewed-answer-v1`, never factual text.
+Legacy completion, reads, history and claimers cannot consume this mode. Private
+resolver/results are inaccessible to ordinary database roles or direct worker
+queries; service-role RPCs retain scoped lease authorization.
+
+History returns `grounded_history` and a structured `reviewed_answer` result.
+The immutable original outcome is separate from the current factual projection.
+Reads recheck original support and all current matching variants. Withdrawal,
+expiry or a new conflict suppresses the affected text. Newly published support
+cannot silently replace an original fact, and removing an old conflict cannot
+upgrade an originally uncovered claim. Read-disabled/capacity/technical failure
+returns an unavailable projection with no factual content, not a knowledge gap.
+
+Native v4 validates the structured projection and reuses the reviewed knowledge
+cards with all qualifiers and source locators. Full read duration is subtracted
+from the monotonic lifetime, capped at30 seconds. Hidden/background tabs cannot
+display the cached facts; they recheck on return. Pending request IDs, policy,
+city and task binding survive in the existing endpoint/owner/epoch Keychain
+record before sending. Acknowledged requests remain non-sendable until their
+history restores. Factual answers are not saved in Keychain.
+
+Activation is separate from migration: no policy, account membership or reader
+switch is enabled by migration41. Native local/Staging configuration requires
+`VISEPANDA_NATIVE_{LOCAL|STAGING}_GROUNDED=true` and the corresponding
+`..._GROUNDED_POLICY`; the installed native mode is `knowledge_intent_v1`.
+Rollback disables this entry/worker and the first-party read switch, retaining
+consented history and budget records. An applied migration is not rewritten.
+Full #206/S2, physical-device and production acceptance remain separate.

@@ -45,6 +45,7 @@ final class NativeSession {
         endpoint = Self.resolveEndpoint(arguments: arguments, bundleConfiguration: bundleConfiguration)
         let installed = bundleConfiguration["VisePandaNativeTaskContext", default: ""]
         if !installed.isEmpty { askMode = NativeAskMode(rawValue: installed) ?? .unavailable }
+        else if endpoint?.scheme == "http", arguments.contains("-VisePandaGroundedMode") { askMode = .grounded }
         else if endpoint?.scheme == "http", arguments.contains("-VisePandaTaskContext") { askMode = .taskContext }
         else { askMode = .currentInput }
         self.defaults = defaults
@@ -161,7 +162,7 @@ final class NativeSession {
         let cancelID = path.hasPrefix(cancelPrefix) && path.hasSuffix("/cancel")
             ? String(path.dropFirst(cancelPrefix.count).dropLast("/cancel".count)) : ""
         let cancellation = method == "POST" && UUID(uuidString: cancelID) != nil
-        let prefix = askMode == .taskContext && cancellation ? "api/chat/native/v1" : askMode.base
+        let prefix = askMode.usesTask && cancellation ? "api/chat/native/v1" : askMode.base
         let data = try await dataRequest(prefix: prefix, path: path, method: method, body: body)
         guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
         return data

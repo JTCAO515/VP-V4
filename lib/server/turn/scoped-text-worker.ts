@@ -5,6 +5,7 @@ import { PROTOCOL_MODELS, validThinkingBudget } from "../model-gateway/adapters/
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const RPCS = new Set(["claim_text_task_work", "authorize_text_task_dispatch", "claim_text_work", "finish_turn_work", "read_text_work", "authorize_text_dispatch", "complete_text_work",
+  "claim_grounded_work", "read_grounded_work", "authorize_grounded_dispatch", "complete_grounded_work",
   "reserve_model_budget", "dispatch_model_budget", "finish_model_budget"]);
 export type ScopedTextWorkerConfig = Readonly<{
   environment: "local" | "staging";
@@ -29,7 +30,7 @@ export type ScopedTextWorkerDependencies = Readonly<{
 export function createScopedTextWorker(config: ScopedTextWorkerConfig, dependencies: ScopedTextWorkerDependencies) {
   if (typeof window !== "undefined" || !valid(config) || typeof dependencies?.credential !== "function"
     || !dependencies.provider || !Object.hasOwn(PROTOCOL_MODELS, dependencies.provider.provider)
-    || (dependencies.provider.inputMode !== undefined && !["current_input_v1", "task_history_v1"].includes(dependencies.provider.inputMode))
+    || (dependencies.provider.inputMode !== undefined && !["current_input_v1", "task_history_v1", "knowledge_intent_v1"].includes(dependencies.provider.inputMode))
     || (dependencies.provider.thinkingBudgetTokens !== undefined && (dependencies.provider.provider !== "qwen"
       || dependencies.provider.inputMode !== "task_history_v1"
       || !validThinkingBudget(dependencies.provider.thinkingBudgetTokens, config.budget.maxOutputTokens)))
@@ -82,13 +83,13 @@ export function createScopedTextWorker(config: ScopedTextWorkerConfig, dependenc
     };
     return runTextWorker(async (name, params) => {
       if (name !== "claim_turn_work") return rpc(name, params);
-      const value = await rpc(provider.inputMode === "task_history_v1" ? "claim_text_task_work" : "claim_text_work", { p_owner_id: binding.ownerId, p_policy_id: binding.policyId });
+      const value = await rpc(provider.inputMode === "knowledge_intent_v1" ? "claim_grounded_work" : provider.inputMode === "task_history_v1" ? "claim_text_task_work" : "claim_text_work", { p_owner_id: binding.ownerId, p_policy_id: binding.policyId });
       if (record(value) && value.kind === "leased" && value.ownerId !== binding.ownerId) throw unavailable();
       return value;
     }, async (name, params) => {
-      if (["authorize_text_dispatch", "authorize_text_task_dispatch"].includes(name) && params.p_policy_id !== binding.policyId) throw unavailable();
+      if (["authorize_text_dispatch", "authorize_text_task_dispatch", "authorize_grounded_dispatch"].includes(name) && params.p_policy_id !== binding.policyId) throw unavailable();
       const value = await rpc(name, params);
-      if (name === "read_text_work" && record(value) && ["input", "task_input"].includes(String(value.kind)) && value.policyId !== binding.policyId) throw unavailable();
+      if (["read_text_work", "read_grounded_work"].includes(name) && record(value) && ["input", "task_input", "intent_input"].includes(String(value.kind)) && value.policyId !== binding.policyId) throw unavailable();
       return value;
     }, async (name, params) => {
       if (params.p_owner_id !== binding.ownerId || params.p_scope_id !== binding.budget.scopeId) throw unavailable();

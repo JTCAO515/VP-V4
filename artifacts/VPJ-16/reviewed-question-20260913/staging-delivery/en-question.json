@@ -1,0 +1,638 @@
+[
+  {
+    "AXUniqueId": null,
+    "AXLabel": "VisePanda",
+    "type": "Application",
+    "frame": {
+      "width": 402,
+      "y": 0,
+      "height": 874,
+      "x": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "main-tab-view",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "width": 402,
+      "y": 0,
+      "x": 0,
+      "height": 874
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "Ask",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "y": 62,
+      "x": 0,
+      "height": 54,
+      "width": 402
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "BackButton",
+    "AXLabel": "Ask",
+    "type": "Button",
+    "frame": {
+      "y": 62,
+      "x": 16,
+      "height": 44,
+      "width": 44
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Ask",
+    "type": "Heading",
+    "frame": {
+      "y": 73.66666666666666,
+      "x": 186,
+      "height": 20.66666666666667,
+      "width": 30
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "AdditionalDimmingOverlay",
+    "AXLabel": null,
+    "type": "Image",
+    "frame": {
+      "y": 731,
+      "x": -120,
+      "height": 286,
+      "width": 642
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Vise Panda. Your China travel companion",
+    "type": "StaticText",
+    "frame": {
+      "y": 132,
+      "x": 16,
+      "height": 52.33332824707031,
+      "width": 221.6666717529297
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "PandaMark",
+    "type": "Image",
+    "frame": {
+      "y": 134.33333333333334,
+      "x": 16,
+      "height": 47.99999999999997,
+      "width": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "BrandWordmark",
+    "type": "Image",
+    "frame": {
+      "y": 132,
+      "x": 76,
+      "height": 36,
+      "width": 108
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Your China travel companion",
+    "type": "StaticText",
+    "frame": {
+      "y": 170,
+      "x": 76,
+      "height": 14.333333333333314,
+      "width": 161.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Which documents do I need to board?",
+    "type": "StaticText",
+    "frame": {
+      "y": 208.33333333333331,
+      "x": 16,
+      "height": 81.66666666666669,
+      "width": 300.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "For adults travelling with a foreign passport on a domestic mainland China railway e-ticket. This answers only the booking ID and ticket-proof question. Read all conditions and check current station guidance. This read-only answer is not saved in your conversation.",
+    "type": "StaticText",
+    "frame": {
+      "y": 314,
+      "x": 16,
+      "height": 130.33333333333331,
+      "width": 369
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.city",
+    "AXLabel": "City, Shanghai",
+    "type": "PopUpButton",
+    "frame": {
+      "y": 468.3333333333333,
+      "x": 16,
+      "height": 34.333333333333314,
+      "width": 111
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Shanghai",
+    "type": "StaticText",
+    "frame": {
+      "y": 475.3333333333333,
+      "x": 28,
+      "height": 20.333333333333314,
+      "width": 70.66666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.refresh",
+    "AXLabel": "Refresh",
+    "type": "Button",
+    "frame": {
+      "y": 526.6666666666666,
+      "x": 16,
+      "height": 34.33333333333337,
+      "width": 82.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "Both document points have reviewed support.",
+    "type": "StaticText",
+    "frame": {
+      "y": 585,
+      "x": 18.333333333333343,
+      "height": 20.333333333333258,
+      "width": 365.33333333333326
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.c9e670d6-89cc-4b11-b8e6-f9a6b10dd530",
+    "AXLabel": "Carry the original valid booking ID for station and boarding checks.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333337,
+      "width": 298.66666666666663,
+      "y": 631.9757486979165,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "width": 96,
+      "x": 32,
+      "y": 686.3090820312499
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333337,
+      "width": 338,
+      "y": 710.3090820312499,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333337,
+      "width": 284.3333333333333,
+      "x": 32,
+      "y": 758.6424153645833
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Adult foreign-passport scenario only; confirm current document requirements with 12306 and the station.",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333337,
+      "width": 308.3333333333333,
+      "y": 806.9757486979166,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Domestic railway e-ticket journeys only; follow actual station, train and document-handling instructions.",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333337,
+      "width": 277.3333333333333,
+      "x": 32,
+      "y": 877.30908203125
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "width": 87,
+      "x": 32,
+      "y": 953.6424153645833
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• This statement does not establish the check-in cutoff for your station or train.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333337,
+      "width": 302,
+      "y": 977.6424153645833,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: 2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "height": 14.333333333333485,
+      "width": 151.66666666666666,
+      "x": 32,
+      "y": 1031.9757486979165
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "height": 28.333333333333258,
+      "width": 338,
+      "y": 1058.3333333333333,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "height": 28.333333333333258,
+      "width": 338,
+      "y": 1058.3333333333333,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "height": 12,
+      "width": 7,
+      "y": 1066.3333333333333,
+      "x": 362.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.6638fa9a-6476-4f66-918a-40af67cc66fc",
+    "AXLabel": "Itinerary sheets and reimbursement receipts cannot serve as tickets.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.333333333333485,
+      "width": 287.66666666666663,
+      "y": 1126.642415364583,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "width": 96,
+      "x": 32,
+      "y": 1180.9757486979165
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333326,
+      "width": 338,
+      "y": 1204.9757486979165,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333326,
+      "width": 284.3333333333333,
+      "y": 1253.3090820312498,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Adult foreign-passport scenario only; confirm current document requirements with 12306 and the station.",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333326,
+      "width": 308.3333333333333,
+      "x": 32,
+      "y": 1301.642415364583
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Domestic railway e-ticket journeys only; follow actual station, train and document-handling instructions.",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333326,
+      "width": 277.3333333333333,
+      "x": 32,
+      "y": 1371.9757486979163
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "width": 87,
+      "y": 1448.3090820312498,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• This statement does not establish the check-in cutoff for your station or train.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333326,
+      "width": 302,
+      "x": 32,
+      "y": 1472.3090820312498
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: 2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "height": 14.333333333333258,
+      "width": 151.66666666666666,
+      "y": 1526.642415364583,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "height": 28.333333333333258,
+      "width": 338,
+      "x": 32,
+      "y": 1553
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "height": 28.333333333333258,
+      "width": 338,
+      "y": 1553,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "height": 12,
+      "width": 7,
+      "y": 1561,
+      "x": 362.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 3页",
+    "type": "Slider",
+    "frame": {
+      "height": 675,
+      "width": 30,
+      "y": 116,
+      "x": 369
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 3页",
+    "type": "Slider",
+    "frame": {
+      "height": 675,
+      "width": 30,
+      "x": 369,
+      "y": 116
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "标签页栏",
+    "type": "Group",
+    "frame": {
+      "y": 791,
+      "height": 83,
+      "x": 0,
+      "width": 402
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map",
+    "AXLabel": "Trip",
+    "type": "RadioButton",
+    "frame": {
+      "y": 795,
+      "height": 54,
+      "x": 25,
+      "width": 77
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map.fill",
+    "AXLabel": "显示地图",
+    "type": "Image",
+    "frame": {
+      "y": 801.6666666666666,
+      "height": 26.33333333333337,
+      "x": 49,
+      "width": 29.66666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari",
+    "AXLabel": "Explore",
+    "type": "RadioButton",
+    "frame": {
+      "y": 795,
+      "height": 54,
+      "x": 93.75,
+      "width": 77
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari.fill",
+    "AXLabel": "Safari浏览器",
+    "type": "Image",
+    "frame": {
+      "y": 801.3333333333334,
+      "height": 27.33333333333337,
+      "x": 118.75,
+      "width": 27.333333333333343
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "Ask",
+    "type": "RadioButton",
+    "frame": {
+      "y": 795,
+      "height": 54,
+      "x": 162.5,
+      "width": 77
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "闪光",
+    "type": "Image",
+    "frame": {
+      "y": 799,
+      "height": 30,
+      "x": 188.5,
+      "width": 26
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "Tools",
+    "type": "RadioButton",
+    "frame": {
+      "y": 795,
+      "height": 54,
+      "x": 231.25,
+      "width": 77
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "wrench.and.screwdriver",
+    "type": "Image",
+    "frame": {
+      "y": 799.3333333333334,
+      "height": 31.66666666666663,
+      "x": 253.25,
+      "width": 32.666666666666686
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle",
+    "AXLabel": "Profile",
+    "type": "RadioButton",
+    "frame": {
+      "y": 795,
+      "height": 54,
+      "x": 300,
+      "width": 77
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle.fill",
+    "AXLabel": "账户",
+    "type": "Image",
+    "frame": {
+      "y": 801.3333333333334,
+      "height": 27.33333333333337,
+      "x": 325,
+      "width": 27.333333333333314
+    },
+    "enabled": true
+  }
+]

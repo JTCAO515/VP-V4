@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/Users/jtcao/Library/Caches/visepanda/grounded-staging-20260913/candidate-v2/native-flow.py", line 38, in <module>
+    assert any(n.get('AXValue')==question or n.get('value')==question for n in inputs),'Visible input does not match intended question; do not send'
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Visible input does not match intended question; do not send

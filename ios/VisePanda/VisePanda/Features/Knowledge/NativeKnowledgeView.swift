@@ -67,12 +67,11 @@ struct NativeKnowledgeView: View {
             Text(text("Sign in in Profile to read travel notes.", "请在「我的」登录后阅读旅途参考。"))
                 .accessibilityIdentifier("knowledge.signedOut")
         } else if isActive && scenePhase == .active && store.isCurrent(scope: session.dataScope, selection: selection) {
-            if let answer = store.answer { coverage(answer) }
             if store.state == .empty && !question {
                 Text(text("No eligible reviewed information is available for this selection.", "当前城市和场景暂无适用的已审核信息。"))
                     .accessibilityIdentifier("knowledge.empty")
             } else {
-                ForEach(store.rows) { row in note(row) }
+                NativeKnowledgeCards(rows: store.rows, answer: store.answer, chinese: chinese)
             }
         } else if store.state == .unavailable {
             Text(text("Information is unavailable. Check your sign-in and try again.", "信息暂不可用，请检查登录状态后重试。"))
@@ -82,6 +81,31 @@ struct NativeKnowledgeView: View {
         }
     }
 
+    private func selectionBinding(_ value: Binding<String>) -> Binding<String> {
+        Binding(get: { value.wrappedValue }, set: { store.clear(); value.wrappedValue = $0 })
+    }
+
+    private struct LoadKey: Equatable {
+        let scope: NativeDataScope?
+        let selection: NativeKnowledgeSelection
+        let active: Bool
+        let refresh: UUID
+    }
+}
+
+
+/// Shared deterministic renderer; caller owns session, lifetime and visibility fences.
+struct NativeKnowledgeCards: View {
+    let rows: [NativeKnowledgeStatement]
+    let answer: NativeKnowledgeAnswer?
+    let chinese: Bool
+    private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
+    var body: some View {
+        VStack(alignment: .leading, spacing: VPSpacing.section) {
+            if let answer { coverage(answer) }
+            ForEach(rows) { row in note(row) }
+        }
+    }
     private func coverage(_ answer: NativeKnowledgeAnswer) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(answer.outcome == "answered" ? text("Both document points have reviewed support.", "两个证件要点均有已审核依据。") : answer.outcome == "partial" ? text("Part of the answer is available.", "目前可回答其中一部分。") : text("This question cannot be answered from current reviewed information.", "当前已审核信息不足以回答这个问题。"))
@@ -141,14 +165,4 @@ struct NativeKnowledgeView: View {
         }
     }
 
-    private func selectionBinding(_ value: Binding<String>) -> Binding<String> {
-        Binding(get: { value.wrappedValue }, set: { store.clear(); value.wrappedValue = $0 })
-    }
-
-    private struct LoadKey: Equatable {
-        let scope: NativeDataScope?
-        let selection: NativeKnowledgeSelection
-        let active: Bool
-        let refresh: UUID
-    }
 }

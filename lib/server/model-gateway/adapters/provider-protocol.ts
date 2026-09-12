@@ -2,6 +2,7 @@ import { MODEL_PROFILES, validateKnownUnknownOutput, type KnownUnknownOutput, ty
 import type { CostGuard } from "../budget/index.ts";
 import type { FailureCode } from "../../contracts/errors/index.ts";
 import { TEXT_TURN_SYSTEM_PROMPT, TEXT_TASK_SYSTEM_PROMPT } from "../prompt/text-turn.ts";
+import { KNOWLEDGE_INTENT_SYSTEM_PROMPT } from "../prompt/knowledge-intent.ts";
 
 export const PROTOCOL_MODELS = Object.freeze({
   qwen: MODEL_PROFILES.qwen_37_strict.providerModelId,
@@ -19,7 +20,7 @@ export type ProtocolRequest = Readonly<{
   provider: ProtocolProvider;
   dataClass: ModelDataClass;
   input: string;
-  task: ModelTask | "tool_candidate" | "text_turn_v1" | "text_task_v2";
+  task: ModelTask | "tool_candidate" | "text_turn_v1" | "text_task_v2" | "knowledge_intent_v1";
   history?: readonly Readonly<{ role: "user" | "assistant"; content: string }>[];
   tool?: ProtocolTool;
   /** Optional bounded Qwen task-context experiment; output cap includes reasoning. */
@@ -71,6 +72,32 @@ export async function invokeProviderProtocol(
 
 /** Trusted service RPC transport; must impose a finite database timeout. */
 export type TextAuthorizationRpc = (name: "read_text_work" | "authorize_text_dispatch" | "authorize_text_task_dispatch", params: Readonly<Record<string, string>>) => Promise<unknown>;
+export type KnowledgeAuthorizationRpc = (name: "read_grounded_work" | "authorize_grounded_dispatch", params: Readonly<Record<string, string>>) => Promise<unknown>;
+
+/** A separate C2 exit accepts current input only; it cannot consume a history or evidence envelope. */
+export async function invokeKnowledgeIntentProtocol(
+  lease: Readonly<{ turnId: string; leaseToken: string }>,
+  binding: Readonly<{ provider: ProtocolProvider; endpoint: string; maxOutputTokens: number; timeoutMs: number }>,
+  rpc: KnowledgeAuthorizationRpc, budget: BudgetTurn, transport: ProtocolTransport, signal: AbortSignal,
+): Promise<ProtocolOutcome> {
+  if (signal.aborted) return cancelled();
+  const keys = { p_turn_id: lease.turnId, p_lease_token: lease.leaseToken };
+  let raw: unknown;
+  try { raw = await rpc("read_grounded_work", keys); } catch { return unavailable("DATA_POLICY_BLOCKED"); }
+  if (!record(raw) || Object.keys(raw).length !== 7 || raw.kind !== "intent_input"
+    || raw.provider !== binding.provider || raw.endpoint !== binding.endpoint
+    || typeof raw.policyId !== "string" || typeof raw.text !== "string" || !raw.text.trim() || raw.text.length > 4000
+    || !["zh", "en"].includes(String(raw.locale))
+    || typeof raw.contextDigest !== "string" || !/^[a-f0-9]{64}$/.test(raw.contextDigest)) return unavailable("DATA_POLICY_BLOCKED");
+  const policyId = raw.policyId, digest = raw.contextDigest;
+  return invokeProtocol({ requestId: lease.leaseToken, provider: binding.provider, dataClass: "c2_sensitive",
+    input: raw.text, task: "knowledge_intent_v1", maxOutputTokens: binding.maxOutputTokens, timeoutMs: binding.timeoutMs },
+  budget, transport, signal, async () => {
+    const decision = await rpc("authorize_grounded_dispatch", { ...keys, p_policy_id: policyId,
+      p_provider: binding.provider, p_context_digest: digest });
+    return record(decision) && decision.kind === "authorized";
+  }, binding.endpoint);
+}
 /**
  * The sole C2 exit owns both SQL checks and builds input from the durable row.
  * Caller binds an approved deployment transport; it cannot provide prompt content
@@ -103,7 +130,7 @@ async function invokeProtocol(
 ): Promise<ProtocolOutcome> {
   if (!validRequest(request)) return unavailable("INVALID_INPUT");
   if (signal.aborted) return cancelled();
-  if (request.dataClass !== "c0_synthetic" && (request.dataClass !== "c2_sensitive" || !["text_turn_v1", "text_task_v2"].includes(request.task) || !authorizeText)) return unavailable("DATA_POLICY_BLOCKED");
+  if (request.dataClass !== "c0_synthetic" && (request.dataClass !== "c2_sensitive" || !["text_turn_v1", "text_task_v2", "knowledge_intent_v1"].includes(request.task) || !authorizeText)) return unavailable("DATA_POLICY_BLOCKED");
   let body: string;
   try { body = JSON.stringify(requestBody(request)); } catch { return unavailable("INVALID_INPUT"); }
   if (Buffer.byteLength(body) > MAX_RESPONSE_BYTES) return unavailable("INVALID_INPUT");
@@ -160,6 +187,7 @@ function requestBody(request: ProtocolRequest): Record<string, unknown> {
     messages: [
       ...(request.task === "text_turn_v1" ? [{ role: "system", content: TEXT_TURN_SYSTEM_PROMPT }] : []),
       ...(request.task === "text_task_v2" ? [{ role: "system", content: TEXT_TASK_SYSTEM_PROMPT }, ...request.history!] : []),
+      ...(request.task === "knowledge_intent_v1" ? [{ role: "system", content: KNOWLEDGE_INTENT_SYSTEM_PROMPT }] : []),
       ...(request.task === "strict_known_unknown" ? [{ role: "system", content: 'Return only JSON: {"kind":"known","value":"nonempty text"} or {"kind":"unknown","reason":"fixture_no_evidence"}. Do not add fields.' }] : []),
       { role: "user", content: request.input },
     ],
@@ -170,7 +198,7 @@ function requestBody(request: ProtocolRequest): Record<string, unknown> {
     // GLM-5.3-Flash rejects thinking: disabled (observed HTTP400/1210).
     // Preserve its native default; reasoning text still never leaves normalization.
     ...(request.provider === "qwen" ? { enable_thinking: request.thinkingBudgetTokens !== undefined } : request.provider === "deepseek" ? { thinking: { type: "disabled" } } : {}),
-    ...(["strict_known_unknown", "text_turn_v1", "text_task_v2"].includes(request.task) ? { response_format: { type: "json_object" } } : {}),
+    ...(["strict_known_unknown", "text_turn_v1", "text_task_v2", "knowledge_intent_v1"].includes(request.task) ? { response_format: { type: "json_object" } } : {}),
     ...(request.task === "tool_candidate" && request.tool ? {
       tools: [{ type: "function", function: { name: request.tool.name, parameters: request.tool.parameters } }],
       tool_choice: "auto",
@@ -257,7 +285,7 @@ async function readBoundedJson(response: Response, signal: AbortSignal): Promise
 
 function validRequest(value: ProtocolRequest): boolean {
   return record(value) && typeof value.requestId === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(value.requestId) && Object.hasOwn(PROTOCOL_MODELS, value.provider)
-    && ["ordinary_text", "strict_known_unknown", "tool_candidate", "text_turn_v1", "text_task_v2"].includes(value.task)
+    && ["ordinary_text", "strict_known_unknown", "tool_candidate", "text_turn_v1", "text_task_v2", "knowledge_intent_v1"].includes(value.task)
     && (value.task === "text_task_v2" ? validTextTaskHistory(value.history) : value.history === undefined)
     && typeof value.input === "string" && value.input.trim().length > 0 && value.input.length <= 32768
     && ["c0_synthetic", "c1_user", "c2_sensitive", "c3_restricted", "c4_secret"].includes(value.dataClass)

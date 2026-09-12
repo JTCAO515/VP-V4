@@ -9,18 +9,21 @@ import { FAILURE_TAXONOMY, type FailureCode } from "../contracts/errors/index.ts
 type Action = "policy" | "history" | "accept" | "withdraw" | "submit" | "submit-task" | "task-history" | "cancel";
 const response = (data: unknown, status = 200) => Response.json(data, { status, headers: { "Cache-Control": "private, no-store" } });
 const failure = (code: FailureCode) => response({ error: { code } }, FAILURE_TAXONOMY[code].httpStatus);
-export function getNativeTextConfig(request: Pick<Request, "url">, taskContext = false) {
+export function getNativeTextConfig(request: Pick<Request, "url">, taskContext: boolean | "grounded" = false) {
   if (process.env.VISEPANDA_NATIVE_STAGING === "true") {
-    const config = getNativeRuntimeConfig(request, "trip"), policyId = taskContext ? process.env.VISEPANDA_NATIVE_STAGING_TASK_POLICY : process.env.VISEPANDA_NATIVE_STAGING_TEXT_POLICY;
-    return process.env.VISEPANDA_NATIVE_STAGING_TEXT === "true" && config?.environment === "staging" && uuid(policyId)
+    const config = getNativeRuntimeConfig(request, "trip"), policyId = taskContext === "grounded" ? process.env.VISEPANDA_NATIVE_STAGING_GROUNDED_POLICY : taskContext ? process.env.VISEPANDA_NATIVE_STAGING_TASK_POLICY : process.env.VISEPANDA_NATIVE_STAGING_TEXT_POLICY;
+    const enabled = taskContext === "grounded" ? process.env.VISEPANDA_NATIVE_STAGING_GROUNDED : process.env.VISEPANDA_NATIVE_STAGING_TEXT;
+    return enabled === "true" && config?.environment === "staging" && uuid(policyId)
       ? { ...config, policyId: policyId.toLowerCase() } : null;
   }
-  const config = getSupabasePublicConfig(), policyId = taskContext ? process.env.VISEPANDA_NATIVE_LOCAL_TASK_POLICY : process.env.VISEPANDA_NATIVE_LOCAL_TEXT_POLICY;
-  if (process.env.VERCEL_ENV || process.env.VISEPANDA_NATIVE_LOCAL_TEXT !== "true" || !config || !uuid(policyId)) return null;
+  const config = getSupabasePublicConfig(), policyId = taskContext === "grounded" ? process.env.VISEPANDA_NATIVE_LOCAL_GROUNDED_POLICY : taskContext ? process.env.VISEPANDA_NATIVE_LOCAL_TASK_POLICY : process.env.VISEPANDA_NATIVE_LOCAL_TEXT_POLICY;
+  const enabled = taskContext === "grounded" ? process.env.VISEPANDA_NATIVE_LOCAL_GROUNDED : process.env.VISEPANDA_NATIVE_LOCAL_TEXT;
+  if (process.env.VERCEL_ENV || enabled !== "true" || !config || !uuid(policyId)) return null;
   return isLocalNativeTarget(config.url) ? { ...config, policyId: policyId.toLowerCase() } : null;
 }
 
-export async function nativeTextHTTP(request: NextRequest, action: Action, turnId?: string, taskContext = false) {
+export async function nativeTextHTTP(request: NextRequest, action: Action, turnId?: string, taskContext: boolean | "grounded" = false) {
+  const grounded = taskContext === "grounded";
   const config = getNativeTextConfig(request, taskContext);
   if (!config) return failure("PROVIDER_UNAVAILABLE");
   if (request.headers.has("cookie") || request.headers.has("origin") || [...request.nextUrl.searchParams].length
@@ -36,11 +39,11 @@ export async function nativeTextHTTP(request: NextRequest, action: Action, turnI
     if (session.data.subject !== actor.subject || session.data.sessionId !== actor.sessionId) return failure("UNAUTHENTICATED");
     let result;
     if (taskContext && action !== "withdraw" && action !== "cancel") {
-      const policy = await rpc("read_text_task_policy", { p_policy_id: config.policyId });
+      const policy = await rpc(grounded ? "read_grounded_policy" : "read_text_task_policy", { p_policy_id: config.policyId });
       if (policy.error || !record(policy.data) || policy.data.kind !== "policy") return failure("DATA_POLICY_BLOCKED");
     }
-    if (action === "policy") result = await rpc(taskContext ? "read_text_task_policy" : "read_text_policy", { p_policy_id: config.policyId });
-    else if (action === "task-history") result = await rpc("list_service_task_turns", { p_policy_id: config.policyId, p_limit: 20 });
+    if (action === "policy") result = await rpc(grounded ? "read_grounded_policy" : taskContext ? "read_text_task_policy" : "read_text_policy", { p_policy_id: config.policyId });
+    else if (action === "task-history") result = await rpc(grounded ? "list_grounded_turns" : "list_service_task_turns", { p_policy_id: config.policyId, p_limit: 20 });
     else if (action === "history") result = await rpc("list_text_turns", { p_policy_id: config.policyId, p_limit: 20 });
     else {
       const input = await scope.run(() => boundedBody(request, scope.signal));
@@ -55,17 +58,19 @@ export async function nativeTextHTTP(request: NextRequest, action: Action, turnI
         && typeof input.locale === "string" && ["zh","en","es","ru","ar"].includes(input.locale)
         && typeof input.text === "string" && input.text.trim().length > 0 && input.text.length <= 4000) {
         result = await rpc("submit_text_turn", { p_thread_id: input.threadId, p_turn_id: input.turnId, p_idempotency_key: input.idempotencyKey, p_policy_id: config.policyId, p_locale: input.locale, p_text: input.text });
-      } else if (action === "submit-task" && exact(input,["threadId","turnId","idempotencyKey","policyId","locale","text","serviceTask"])
+      } else if (action === "submit-task" && exact(input,["threadId","turnId","idempotencyKey","policyId","locale","text","serviceTask", ...(grounded ? ["city"] : [])])
         && uuid(input.threadId) && uuid(input.turnId) && uuid(input.idempotencyKey) && input.policyId === config.policyId
-        && typeof input.locale === "string" && ["zh","en","es","ru","ar"].includes(input.locale)
+        && typeof input.locale === "string" && (grounded ? ["zh", "en"] : ["zh","en","es","ru","ar"]).includes(input.locale)
+        && (!grounded || (typeof input.city === "string" && ["shanghai", "beijing", "guangzhou", "chongqing"].includes(input.city)))
         && typeof input.text === "string" && input.text.trim().length > 0 && input.text.length <= 4000
         && record(input.serviceTask) && exact(input.serviceTask,["id","scopeVersion","relationship","parentTurnId"])
         && uuid(input.serviceTask.id) && input.serviceTask.scopeVersion === 1
         && typeof input.serviceTask.relationship === "string" && ["new_goal","clarification","repair"].includes(input.serviceTask.relationship)
         && (input.serviceTask.parentTurnId === null || uuid(input.serviceTask.parentTurnId))) {
-        result = await rpc("submit_service_task_turn", { p_thread_id: input.threadId, p_turn_id: input.turnId, p_idempotency_key: input.idempotencyKey,
+        result = await rpc(grounded ? "submit_grounded_turn" : "submit_service_task_turn", { p_thread_id: input.threadId, p_turn_id: input.turnId, p_idempotency_key: input.idempotencyKey,
           p_policy_id: config.policyId, p_locale: input.locale, p_text: input.text, p_task_id: input.serviceTask.id,
-          p_scope_version: 1, p_relationship: input.serviceTask.relationship, p_parent_turn_id: input.serviceTask.parentTurnId });
+          p_scope_version: 1, p_relationship: input.serviceTask.relationship, p_parent_turn_id: input.serviceTask.parentTurnId,
+          ...(grounded ? { p_city: input.city as string } : {}) });
       } else if (action === "cancel" && turnId && exact(input,[])) {
         result = await rpc("cancel_chat_turn", { p_turn_id: turnId });
         if (!result.error) return response({ version: 1, kind: "cancelled" });
@@ -74,7 +79,7 @@ export async function nativeTextHTTP(request: NextRequest, action: Action, turnI
     if (result.error) return failure(mapError(result.error.message));
     if (!record(result.data) || typeof result.data.kind !== "string") return failure("INTERNAL_ERROR");
     if (["blocked","unavailable"].includes(result.data.kind)) return failure("DATA_POLICY_BLOCKED");
-    return response({ version: taskContext ? 3 : action === "submit-task" || action === "task-history" ? 2 : 1, ...result.data }, (action === "submit" || action === "submit-task") && result.data.reused !== true ? 201 : 200);
+    return response({ version: grounded ? 4 : taskContext ? 3 : action === "submit-task" || action === "task-history" ? 2 : 1, ...result.data }, (action === "submit" || action === "submit-task") && result.data.reused !== true ? 201 : 200);
   } catch { return failure("PROVIDER_UNAVAILABLE"); }
   finally { scope.dispose(); }
 }

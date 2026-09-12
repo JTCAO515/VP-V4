@@ -1,0 +1,105 @@
+
+> vp-v4@0.0.0 build /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage
+> pnpm generate:design-tokens && next build --webpack
+
+
+> vp-v4@0.0.0 generate:design-tokens /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage
+> node scripts/generate-design-tokens.mjs
+
+▲ Next.js 16.2.6 (webpack)
+
+  Creating an optimized production build ...
+(node:55958) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+✓ Compiled successfully in 3.9s
+  Running TypeScript ...
+  Finished TypeScript in 11.6s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/43) ...
+  Generating static pages using 7 workers (10/43)
+  Generating static pages using 7 workers (21/43)
+  Generating static pages using 7 workers (32/43)
+✓ Generating static pages using 7 workers (43/43) in 928ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /[city]/[poi]
+├ ƒ /api/auth/native/v2/credentials
+├ ƒ /api/auth/native/v2/login
+├ ƒ /api/auth/native/v2/logout
+├ ƒ /api/auth/native/v2/profile
+├ ƒ /api/auth/native/v2/refresh
+├ ƒ /api/auth/native/v2/session
+├ ƒ /api/chat/native/v1/consent
+├ ƒ /api/chat/native/v1/policy
+├ ƒ /api/chat/native/v1/turns
+├ ƒ /api/chat/native/v1/turns/[turnId]/cancel
+├ ƒ /api/chat/native/v2/turns
+├ ƒ /api/chat/native/v3/consent
+├ ƒ /api/chat/native/v3/policy
+├ ƒ /api/chat/native/v3/turns
+├ ƒ /api/chat/native/v4/consent
+├ ƒ /api/chat/native/v4/policy
+├ ƒ /api/chat/native/v4/turns
+├ ƒ /api/chat/threads
+├ ƒ /api/chat/threads/[threadId]
+├ ƒ /api/chat/threads/[threadId]/turns
+├ ƒ /api/chat/turns/[turnId]/cancel
+├ ƒ /api/chat/turns/[turnId]/events
+├ ƒ /api/chat/turns/[turnId]/feedback
+├ ƒ /api/knowledge
+├ ƒ /api/knowledge/native/v1
+├ ƒ /api/knowledge/native/v1/answer
+├ ƒ /api/memory
+├ ƒ /api/memory/[memoryId]
+├ ƒ /api/memory/consent
+├ ƒ /api/ops/review
+├ ƒ /api/privacy
+├ ƒ /api/profile
+├ ƒ /api/trips
+├ ƒ /api/trips/[tripId]
+├ ƒ /api/trips/[tripId]/actions
+├ ƒ /api/trips/[tripId]/confirm
+├ ƒ /api/trips/[tripId]/places
+├ ƒ /api/trips/[tripId]/proposal
+├ ƒ /api/trips/[tripId]/proposal/reject
+├ ƒ /api/trips/[tripId]/proposal/revision
+├ ƒ /api/trips/[tripId]/rollback
+├ ƒ /api/trips/native/v2
+├ ƒ /api/trips/native/v2/[tripId]
+├ ƒ /api/trips/native/v2/[tripId]/confirm
+├ ƒ /api/trips/native/v2/[tripId]/proposal
+├ ƒ /api/trips/native/v2/[tripId]/proposal/reject
+├ ƒ /api/trips/native/v2/[tripId]/proposal/revision
+├ ƒ /auth/sign-in
+├ ○ /explore
+├ ƒ /explore/[city]
+├ ○ /homepage
+├ ○ /journey
+├ ○ /journey/knowledge
+├ ○ /journey/plan
+├ ƒ /ops/review
+├ ○ /translate
+├ ƒ /visepanda
+├ ƒ /visepanda/ask/[[...thread]]
+├ ƒ /visepanda/copilot
+├ ○ /visepanda/import
+├ ○ /visepanda/import/conflicts
+├ ○ /visepanda/offline
+├ ƒ /visepanda/profile
+├ ƒ /visepanda/today
+├ ○ /visepanda/tools
+├ ○ /visepanda/tools/handoff
+├ ○ /visepanda/tools/network
+├ ○ /visepanda/tools/ride
+├ ○ /visepanda/tools/safe-phrase
+├ ○ /visepanda/tools/visa
+├ ƒ /visepanda/trips
+└ ƒ /visepanda/trips/[tripId]
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand

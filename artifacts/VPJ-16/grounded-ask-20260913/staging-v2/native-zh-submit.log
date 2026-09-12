@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/jtcao/Library/Caches/visepanda/grounded-staging-20260913/candidate-v2/native-flow.py", line 28, in <module>
+    ui.axe(['tap','--id','native-ask.input']);ui.axe(['type','--stdin'],question)
+                                              ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/jtcao/Library/Caches/visepanda/grounded-staging-20260913/candidate-v2/ui.py", line 8, in axe
+    if r.returncode: raise RuntimeError('AXe failed '+str(r.returncode))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: AXe failed 1
