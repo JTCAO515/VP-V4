@@ -1,0 +1,21 @@
+{
+  "at": "2026-09-12T20:52:20.874Z",
+  "row": {
+    "city": "shanghai",
+    "intent": "clarification",
+    "locale": "zh",
+    "task_id": "e9561b6c-472b-4dac-8439-018e137ebd14",
+    "turn_id": "99bf5bed-678a-4c64-a742-ee10bd8c55fb",
+    "created_at": "2026-09-12T20:51:58.40321+00:00",
+    "input_text": "那我需要带什么？",
+    "output_kind": "clarification",
+    "output_text": "reviewed-answer-v1",
+    "completed_at": "2026-09-12T20:52:07.755202+00:00",
+    "relationship": "new_goal",
+    "request_scope": "unknown",
+    "task_attempts": 1,
+    "parent_turn_id": null,
+    "original_outcome": "clarification",
+    "settled_attempts": 1
+  }
+}

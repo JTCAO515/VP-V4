@@ -1,0 +1,176 @@
+{
+  "status": "PASS",
+  "initialReadingY": -49.333333333333485,
+  "expiredAccessibleFactsAbsentObserved": true,
+  "observations": [
+    {
+      "elapsed": 0.7719395000021905,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 2.047098499999265,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 3.3571070420002798,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 4.5898245419994055,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 5.8826758329996665,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 7.10713429200041,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 8.425506083000073,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 9.680890708001243,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 10.911931708000338,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 12.344615417001478,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 13.652923000001465,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 15.04119058300057,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 16.75497570800144,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 17.971792708001885,
+      "factCount": 0,
+      "rechecking": true,
+      "readingY": null
+    },
+    {
+      "elapsed": 18.982132417000685,
+      "factCount": 0,
+      "rechecking": true,
+      "readingY": null
+    },
+    {
+      "elapsed": 19.99015275000056,
+      "factCount": 0,
+      "rechecking": true,
+      "readingY": null
+    },
+    {
+      "elapsed": 20.930152832999738,
+      "factCount": 0,
+      "rechecking": true,
+      "readingY": null
+    },
+    {
+      "elapsed": 22.16394187500191,
+      "factCount": 0,
+      "rechecking": true,
+      "readingY": null
+    },
+    {
+      "elapsed": 23.669494707999547,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 25.10783279200041,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 26.905365250000614,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 30.291354375000083,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 31.986184417000914,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 33.66767075000098,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 35.555425541999284,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 36.88564091700027,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 38.40457262500058,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    },
+    {
+      "elapsed": 39.836846583002625,
+      "factCount": 8,
+      "rechecking": false,
+      "readingY": -49.333333333333485
+    }
+  ],
+  "sourceExpandedAfterRefresh": true
+}

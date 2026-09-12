@@ -1,0 +1,8 @@
+{
+  status: 'PASS',
+  attempts: 4,
+  settled: 4,
+  unresolved: 0,
+  actualMicros: 15876,
+  taskCount: 2
+}

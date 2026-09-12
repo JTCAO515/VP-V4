@@ -1,0 +1,32 @@
+{
+  "at": "2026-09-12T20:40:08.413621+00:00",
+  "mainSha": "2aa489d1b0ff4b03d9d4c12d8808059c69d4ed0a",
+  "productionAttempt": "dpl_53Rymvhr3BpNWdESE4vQdnXYSPzR",
+  "productionState": "CANCELED",
+  "guardMatches": true,
+  "allProductionAliasesPreserved": true,
+  "productionAliases": [
+    {
+      "alias": "vp-v4.vercel.app",
+      "deploymentId": "dpl_AEcvPbiv2tcX5k8uGRtmBp3PPZPv"
+    },
+    {
+      "alias": "www.go2china.space",
+      "deploymentId": "dpl_AEcvPbiv2tcX5k8uGRtmBp3PPZPv"
+    },
+    {
+      "alias": "vp-v4-git-main-jtcao515s-projects.vercel.app",
+      "deploymentId": "dpl_AEcvPbiv2tcX5k8uGRtmBp3PPZPv"
+    },
+    {
+      "alias": "go2china.space",
+      "deploymentId": "dpl_AEcvPbiv2tcX5k8uGRtmBp3PPZPv"
+    },
+    {
+      "alias": "vp-v4-jtcao515s-projects.vercel.app",
+      "deploymentId": "dpl_AEcvPbiv2tcX5k8uGRtmBp3PPZPv"
+    }
+  ],
+  "stagingPreserved": true,
+  "stagingDeployment": "dpl_5eBh1Exfo4W8rXEh1T3AazJnUjXW"
+}
