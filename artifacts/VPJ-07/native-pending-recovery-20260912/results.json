@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "baseline": "c638afe",
+  "environment": "owned iOS 26.5 Simulator; local synthetic HTTP; real device-only Keychain",
+  "unit": {
+    "xctestPassed": 22,
+    "xctestSkipped": 5,
+    "swiftTestingPassed": 9,
+    "failed": 0,
+    "pendingRecoveryPassed": 10
+  },
+  "processUI": {
+    "passed": 2,
+    "failed": 0,
+    "cases": [
+      {
+        "locale": "en",
+        "fault": "lost POST receipt then terminate/relaunch",
+        "posts": 1
+      },
+      {
+        "locale": "zh",
+        "fault": "acknowledged POST with hidden history then terminate/relaunch",
+        "posts": 1,
+        "sendAndNewQuestionBlockedWhileHidden": true
+      }
+    ]
+  },
+  "review": {
+    "critical": 0,
+    "important": 0
+  },
+  "cleanup": {
+    "fixtureStopped": true,
+    "ownedSimulatorDeleted": true
+  },
+  "remoteActions": 0,
+  "providerCalls": 0,
+  "productionActions": 0
+}

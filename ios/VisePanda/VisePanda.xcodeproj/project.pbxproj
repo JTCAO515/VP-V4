@@ -41,6 +41,7 @@
 		200000000000000000000043 = {isa = PBXBuildFile; fileRef = 300000000000000000000043; };
 		200000000000000000000044 = {isa = PBXBuildFile; fileRef = 300000000000000000000044; };
 		200000000000000000000045 = {isa = PBXBuildFile; fileRef = 300000000000000000000045; };
+		200000000000000000000046 = {isa = PBXBuildFile; fileRef = 300000000000000000000046; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +92,7 @@
 		300000000000000000000043 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAskIntegrationTests.swift; sourceTree = "<group>"; };
 		300000000000000000000044 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAskUITests.swift; sourceTree = "<group>"; };
 		300000000000000000000045 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAskStateTests.swift; sourceTree = "<group>"; };
+		300000000000000000000046 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeAskPersistenceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,7 +136,7 @@
 		60000000000000000000000B /* Explore */ = {isa = PBXGroup; children = (30000000000000000000000E); path = Explore; sourceTree = "<group>"; };
 		60000000000000000000000C /* Profile */ = {isa = PBXGroup; children = (30000000000000000000000F); path = Profile; sourceTree = "<group>"; };
 		60000000000000000000000E /* Resources */ = {isa = PBXGroup; children = (300000000000000000000010, 300000000000000000000011); path = Resources; sourceTree = "<group>"; };
-		60000000000000000000000F /* VisePandaTests */ = {isa = PBXGroup; children = (300000000000000000000045, 300000000000000000000043, 300000000000000000000034, 300000000000000000000033, 300000000000000000000012, 300000000000000000000021); path = VisePandaTests; sourceTree = "<group>"; };
+		60000000000000000000000F /* VisePandaTests */ = {isa = PBXGroup; children = (300000000000000000000046, 300000000000000000000045, 300000000000000000000043, 300000000000000000000034, 300000000000000000000033, 300000000000000000000012, 300000000000000000000021); path = VisePandaTests; sourceTree = "<group>"; };
 		600000000000000000000010 /* Products */ = {isa = PBXGroup; children = (300000000000000000000013, 300000000000000000000014, 300000000000000000000016); name = Products; sourceTree = "<group>"; };
 		600000000000000000000011 = {isa = PBXGroup; children = (300000000000000000000044, 300000000000000000000035, 300000000000000000000015, 300000000000000000000022); path = VisePandaUITests; sourceTree = "<group>"; };
 /* End PBXGroup section */
@@ -223,7 +225,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000045, 200000000000000000000043, 200000000000000000000034, 200000000000000000000033, 200000000000000000000012, 200000000000000000000021); runOnlyForDeploymentPostprocessing = 0; };
+		800000000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000046, 200000000000000000000045, 200000000000000000000043, 200000000000000000000034, 200000000000000000000033, 200000000000000000000012, 200000000000000000000021); runOnlyForDeploymentPostprocessing = 0; };
 		800000000000000000000005 = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (200000000000000000000044, 200000000000000000000035, 200000000000000000000015, 200000000000000000000022); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 

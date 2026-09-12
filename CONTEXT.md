@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PR334 runtime49e0b4f: scoped Staging native submission → continuous worker → real Qwen → native final answer/relaunch observed in zh/en, including an English clarification after an input-method error and worker restart. Three provider attempts settled; fixed missing-direction semantic failures remain. Full S2 is open.
+状态：S2 submitted-Ask process recovery implemented on c638afe: owner/epoch Keychain, durable ack, exact retry. Local 10 persistence tests and 2 actual process-restart UI cases pass; required PR CI pending. Real Staging worker/Qwen slice remains observed; full S2 semantic acceptance is open.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -102,10 +102,11 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - PR332 at8ce9e7e: local core8/UI4 passed; Quality34653592174/Budget34653592093/Native34653592185/Vercel passed. Native CI28pass/14 explicit API-environment skips is not full capability acceptance. Main auto-deploy was verified enabled; Production currentlydb5fb7b, so merging is paused pending the prepared deployment-setting decision. Previous non-production wording did not account for automatic main deployments.
 - Bounded thinking source ddc8077, workerdf6ee24: explicit job3 keeps prior defaults; independent review0/0, contract244pass, security136pass1existingDBskip, loopbackHTTP4pass. Two actual Qwen calls at thinking512/total1024 returned valid JSON but failed frozen clarification-first outcome; no follow-up or reroll. Both settled CNY0.034992 conservative tariff, zero unresolved, not invoice. See artifacts/VPJ-07/bounded-thinking-20260912/verification.md.
 - 2026-09-12 bounded service: source49e0b4f, actual Staging APIb542ead. Native zh final and English same-task clarification/final survived relaunch; owner history isolated. Three attempts across two ServiceTasks settled at conservative CNY0.015516, no unknown holds for these attempts; not supplier invoice. English IME corrupted initial input (fixture FAIL retained), corrected once as native clarification in same task. Restart retained service expiry/config digest. Services stopped and owned Simulator deleted. See artifacts/VPJ-07/worker-service-20260912/verification.md; full fixed semantic criterion stays FAIL.
+- Native pending recovery 2026-09-12: build PASS; 22 XCTest +9 Swift Testing PASS with5 existing API skips; all10 new persistence tests PASS; actual English lost-receipt and Chinese ack/empty-history process-restart UI2/2 PASS, one POST each. Independent review0/0; owned fixture/simulator cleaned. See artifacts/VPJ-07/native-pending-recovery-20260912/verification.md. Required PR CI pending.
 
 ## 下一动作与回滚
 
-Finish PR334 evidence CI and merge with the approved main-only Production guard; verify live aliases. Continue the retained bilingual clarification-first semantic criterion and remaining #195/S2 acceptance. Do not substitute the successful fully specified direction case or repeat phone validation.
+Finish native pending-recovery PR CI and merge under the existing Production build guard, then resume real S2 outcome/semantic acceptance against the retained failures. Do not substitute the synthetic crash fixture for supplier/worker/billing acceptance.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

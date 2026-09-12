@@ -19,6 +19,7 @@ struct NativeCredential: Codable {
     var expiresAt: Double
     var attemptId: String
     var mobileEpoch: Int?
+    var pendingAsk: NativePendingAsk? = nil
 }
 
 @MainActor
@@ -36,16 +37,18 @@ final class NativeSession {
     let askMode: NativeAskMode
     private let transport: URLSession
     private let defaults: UserDefaults
+    private let vault: any NativeCredentialVault
     private let storageKey: String
     private let keychainService = "com.visepanda.native.local-session.v2"
 
-    init(arguments: [String] = ProcessInfo.processInfo.arguments, defaults: UserDefaults = .standard, configuration: URLSessionConfiguration = .ephemeral, bundleConfiguration: [String: String] = Bundle.main.infoDictionary?.compactMapValues { $0 as? String } ?? [:]) {
+    init(arguments: [String] = ProcessInfo.processInfo.arguments, defaults: UserDefaults = .standard, configuration: URLSessionConfiguration = .ephemeral, bundleConfiguration: [String: String] = Bundle.main.infoDictionary?.compactMapValues { $0 as? String } ?? [:], vault: any NativeCredentialVault = NativeKeychainVault()) {
         endpoint = Self.resolveEndpoint(arguments: arguments, bundleConfiguration: bundleConfiguration)
         let installed = bundleConfiguration["VisePandaNativeTaskContext", default: ""]
         if !installed.isEmpty { askMode = NativeAskMode(rawValue: installed) ?? .unavailable }
         else if endpoint?.scheme == "http", arguments.contains("-VisePandaTaskContext") { askMode = .taskContext }
         else { askMode = .currentInput }
         self.defaults = defaults
+        self.vault = vault
         storageKey = "native.v2.activeSubject.\(endpoint?.absoluteString ?? "disabled")"
         configuration.httpCookieStorage = nil
         configuration.httpShouldSetCookies = false
@@ -88,6 +91,49 @@ final class NativeSession {
         guard status == "active", let subject, let mobileEpoch,
               let retained = retainedDataScope, retained.subject == subject, retained.mobileEpoch == mobileEpoch else { return nil }
         return retained
+    }
+
+    /// Reading the durable request does not authorize sending it. The Ask store
+    /// must independently refresh and match the current consent/notice first.
+    func retainedPendingAsk() throws -> NativePendingAsk? {
+        guard dataScope != nil, let credential else { throw NativeDataError.sessionUnavailable }
+        guard let pending = credential.pendingAsk else { return nil }
+        guard pending.valid, pending.mobileEpoch == credential.mobileEpoch else { throw NativeDataError.invalidResponse }
+        return pending
+    }
+
+    func retainPendingAsk(_ request: NativeTextSubmission, policy: NativeTextPolicy, mode: NativeAskMode) throws -> NativePendingAsk {
+        guard dataScope != nil, mode == askMode, policy.valid, policy.consentState == .accepted,
+              request.policyId == policy.id, var updated = credential, let epoch = updated.mobileEpoch else { throw NativeDataError.sessionUnavailable }
+        let pending = NativePendingAsk(schemaVersion: 1, mobileEpoch: epoch, mode: mode,
+                                       noticeVersion: policy.noticeVersion, noticeHash: policy.noticeHash, request: request)
+        guard pending.valid else { throw NativeDataError.invalidResponse }
+        if let existing = updated.pendingAsk {
+            guard existing == pending else { throw NativeDataError.staleSessionResponse }
+            return existing
+        }
+        updated.pendingAsk = pending
+        try save(updated) // Synchronous Keychain success must precede any POST.
+        credential = updated
+        return pending
+    }
+
+    func acknowledgePendingAsk(matching request: NativeTextSubmission) throws {
+        guard dataScope != nil, var updated = credential, var pending = updated.pendingAsk,
+              pending.request == request else { throw NativeDataError.staleSessionResponse }
+        pending.acknowledged = true
+        updated.pendingAsk = pending
+        try save(updated)
+        credential = updated
+    }
+
+    func clearPendingAsk(matching request: NativeTextSubmission) throws {
+        guard dataScope != nil, var updated = credential else { throw NativeDataError.sessionUnavailable }
+        guard let existing = updated.pendingAsk else { return }
+        guard existing.request == request else { throw NativeDataError.staleSessionResponse }
+        updated.pendingAsk = nil
+        try save(updated)
+        credential = updated
     }
 
     /// The Trip consumer receives response bytes, never the Keychain credential.
@@ -144,7 +190,12 @@ final class NativeSession {
         do {
             credential = try read(owner: owner)
             await validate()
-        } catch { clear(); status = "storageError" }
+        } catch {
+            // A locked/unreadable vault is not proof that no request was sent.
+            // Preserve the record for a later restore; never silently discard it.
+            credential = nil; subject = nil; mobileEpoch = nil; displayName = nil
+            status = "storageError"
+        }
     }
 
     func login(email: String, password: String) async {
@@ -152,7 +203,7 @@ final class NativeSession {
         busy = true
         defer { busy = false }
         // A deliberate account change clears all old account data before sending the new request.
-        clear()
+        guard clear() else { return }
         let attempt = UUID().uuidString
         let generation = dataGeneration
         do {
@@ -222,8 +273,7 @@ final class NativeSession {
                 try ensureCurrent(generation)
             } catch { if dataGeneration == generation { handle(error) }; return }
         }
-        clear()
-        status = "signedOut"
+        if clear() { status = "signedOut" }
     }
 
     private func loadProfile() async throws {
@@ -237,7 +287,8 @@ final class NativeSession {
     }
 
     private func accept(_ reply: TokenReply, attempt: String) throws {
-        let value = NativeCredential(subject: reply.subject, accessToken: reply.accessToken, refreshToken: reply.refreshToken, expiresAt: reply.expiresAt, attemptId: attempt, mobileEpoch: reply.mobileEpoch)
+        let retained = credential?.subject == reply.subject && credential?.mobileEpoch == reply.mobileEpoch ? credential?.pendingAsk : nil
+        let value = NativeCredential(subject: reply.subject, accessToken: reply.accessToken, refreshToken: reply.refreshToken, expiresAt: reply.expiresAt, attemptId: attempt, mobileEpoch: reply.mobileEpoch, pendingAsk: retained)
         try save(value)
         credential = value
         subject = value.subject
@@ -262,7 +313,7 @@ final class NativeSession {
         subject = nil
         mobileEpoch = nil
         displayName = nil
-        if case SessionError.denied = error { clear(); status = "expiredOrReplaced" }
+        if case SessionError.denied = error { if clear() { status = "expiredOrReplaced" } }
         else { status = "retry" }
     }
 
@@ -284,41 +335,39 @@ final class NativeSession {
         return data
     }
 
-    private func query(owner: String) -> [String: Any] {
-        [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: keychainService + "." + (endpoint?.absoluteString ?? "disabled"), kSecAttrAccount as String: owner]
-    }
+    private var vaultService: String { keychainService + "." + (endpoint?.absoluteString ?? "disabled") }
     private func save(_ value: NativeCredential) throws {
         let bytes = try JSONEncoder().encode(value)
-        let lookup = query(owner: value.subject)
-        let update = SecItemUpdate(lookup as CFDictionary, [kSecValueData: bytes] as CFDictionary)
-        if update == errSecItemNotFound {
-            var insert = lookup
-            insert[kSecValueData as String] = bytes
-            insert[kSecAttrAccessible as String] = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
-            let inserted = SecItemAdd(insert as CFDictionary, nil)
-            guard inserted == errSecSuccess else { throw SessionError.storage(inserted) }
-        } else if update != errSecSuccess { throw SessionError.storage(update) }
+        guard bytes.count <= 64_000 else { throw SessionError.storage(errSecParam) }
+        let result = vault.write(bytes, service: vaultService, owner: value.subject)
+        guard result == errSecSuccess else { throw SessionError.storage(result) }
         defaults.set(value.subject, forKey: storageKey)
     }
     private func read(owner: String) throws -> NativeCredential {
-        var lookup = query(owner: owner)
-        lookup[kSecReturnData as String] = true
-        lookup[kSecMatchLimit as String] = kSecMatchLimitOne
-        var result: CFTypeRef?
-        let found = SecItemCopyMatching(lookup as CFDictionary, &result)
-        guard found == errSecSuccess, let data = result as? Data else { throw SessionError.storage(found) }
+        let (found, bytes) = vault.read(service: vaultService, owner: owner)
+        guard found == errSecSuccess else { throw SessionError.storage(found) }
+        guard let data = bytes, data.count <= 64_000 else { throw SessionError.storage(errSecDecode) }
         let value = try JSONDecoder().decode(NativeCredential.self, from: data)
-        guard value.subject == owner else { throw SessionError.storage(errSecDecode) }
+        guard value.subject == owner,
+              value.pendingAsk == nil || (value.pendingAsk?.valid == true && value.pendingAsk?.mobileEpoch == value.mobileEpoch) else { throw SessionError.storage(errSecDecode) }
         return value
     }
-    private func clear() {
+    @discardableResult private func clear() -> Bool {
         dataGeneration += 1
-        if let owner = credential?.subject ?? defaults.string(forKey: storageKey) { SecItemDelete(query(owner: owner) as CFDictionary) }
+        if let owner = credential?.subject ?? defaults.string(forKey: storageKey) {
+            let result = vault.remove(service: vaultService, owner: owner)
+            guard result == errSecSuccess || result == errSecItemNotFound else {
+                subject = nil; mobileEpoch = nil; displayName = nil
+                failureCode = "keychain:\(result)"; status = "storageError"
+                return false
+            }
+        }
         defaults.removeObject(forKey: storageKey)
         credential = nil
         subject = nil
         mobileEpoch = nil
         displayName = nil
+        return true
     }
     private enum SessionError: Error { case denied, invalid, superseded, storage(OSStatus), http(Int) }
     private struct TokenReply: Decodable {
@@ -347,4 +396,39 @@ enum NativeDataError: Error {
 private struct NativeDataFailure: Decodable {
     struct Failure: Decodable { let code: String }
     let error: Failure
+}
+
+/// A synchronous storage boundary keeps write-before-send testable. Production
+/// always uses the existing owner/endpoint Keychain item, never UserDefaults text.
+@MainActor
+protocol NativeCredentialVault {
+    func write(_ data: Data, service: String, owner: String) -> OSStatus
+    func read(service: String, owner: String) -> (OSStatus, Data?)
+    func remove(service: String, owner: String) -> OSStatus
+}
+
+struct NativeKeychainVault: NativeCredentialVault {
+    private func query(service: String, owner: String) -> [String: Any] {
+        [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service, kSecAttrAccount as String: owner]
+    }
+    func write(_ data: Data, service: String, owner: String) -> OSStatus {
+        let lookup = query(service: service, owner: owner)
+        let result = SecItemUpdate(lookup as CFDictionary, [kSecValueData: data] as CFDictionary)
+        guard result == errSecItemNotFound else { return result }
+        var insert = lookup
+        insert[kSecValueData as String] = data
+        insert[kSecAttrAccessible as String] = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+        return SecItemAdd(insert as CFDictionary, nil)
+    }
+    func read(service: String, owner: String) -> (OSStatus, Data?) {
+        var lookup = query(service: service, owner: owner)
+        lookup[kSecReturnData as String] = true
+        lookup[kSecMatchLimit as String] = kSecMatchLimitOne
+        var data: CFTypeRef?
+        let result = SecItemCopyMatching(lookup as CFDictionary, &data)
+        return (result, data as? Data)
+    }
+    func remove(service: String, owner: String) -> OSStatus {
+        SecItemDelete(query(service: service, owner: owner) as CFDictionary)
+    }
 }
