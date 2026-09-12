@@ -1,0 +1,22 @@
+{
+  "format": "VPB1-AES-256-GCM",
+  "createdAt": "2026-09-12T10:54:39.802Z",
+  "targetName": "VP - V4",
+  "region": "ap-southeast-1",
+  "bytes": 542014,
+  "ciphertextSha256": "26c02e7a3ddf56bd13079186a30bfd09efb4de8a767f42d430b5308dc4c28717",
+  "restoreRehearsal": "PASS",
+  "restoreVerifiedAt": "2026-09-12T10:55:06.666Z",
+  "restoreImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+  "restoreNetwork": "none",
+  "restorePublishedPorts": 0,
+  "restoreTableDigestsMatched": 72,
+  "restoreSchemaInventoryMatched": 237,
+  "restoreContainerCleaned": true,
+  "beforeCounts": {
+    "authCount": 6,
+    "tripCount": 3,
+    "migrationCount": 38
+  },
+  "sourceStable": true
+}

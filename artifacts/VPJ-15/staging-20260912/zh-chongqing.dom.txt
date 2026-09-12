@@ -1,0 +1,81 @@
+- alert: VisePanda｜来华自由行的 AI 规划与执行工作台
+- main:
+  - paragraph: VisePanda
+  - heading "旅途参考" [level=1]
+  - text: 语言
+  - combobox "语言":
+    - option "English"
+    - option "中文" [selected]
+  - paragraph: 按所选城市和场景提供已审核信息。请阅读每条内容的适用条件，行动前核对来源；这里不代表完整城市覆盖。
+  - navigation:
+    - link "登录":
+      - /url: /auth/sign-in?returnTo=/journey/knowledge
+    - button "刷新"
+  - text: 城市
+  - combobox "城市":
+    - option "上海"
+    - option "北京"
+    - option "广州"
+    - option "重庆" [selected]
+  - text: 场景
+  - combobox "场景":
+    - option "入境"
+    - option "机场交通"
+    - option "支付"
+    - option "手机与网络"
+    - option "公共交通"
+    - option "出租车"
+    - option "高铁"
+    - option "景点" [selected]
+    - option "住宿"
+    - option "紧急求助"
+  - status
+  - region "旅途参考":
+    - article:
+      - paragraph: 三峡博物馆主馆自2025年10月1日起免预约入馆，仍须有效身份证件。
+      - heading "适用条件" [level=2]
+      - list:
+        - listitem: 仅限重庆中国三峡博物馆主馆，非分馆或全部景点。
+        - listitem: 入馆仍须有效身份证件。
+        - listitem: 参观前检查当前闭馆、客流及官方通知，服从现场引导。
+      - heading "不包含" [level=2]
+      - list:
+        - listitem: 免预约不表示所有分馆免费，部分分馆仍须购票。
+        - listitem: 公告未说明当前外籍护照登记或闸机核验细节。
+        - listitem: 不保证到场即可入馆或不受客流安排影响。
+      - paragraph:
+        - text: "审核日期:"
+        - time: 2026/9/13
+      - generic "来源与上下文"
+    - article:
+      - paragraph: 三峡博物馆主馆按实时客流发布预警，参观前查看官方通知并服从现场引导。
+      - heading "适用条件" [level=2]
+      - list:
+        - listitem: 仅限重庆中国三峡博物馆主馆，非分馆或全部景点。
+        - listitem: 入馆仍须有效身份证件。
+        - listitem: 参观前检查当前闭馆、客流及官方通知，服从现场引导。
+      - heading "不包含" [level=2]
+      - list:
+        - listitem: 免预约不表示所有分馆免费，部分分馆仍须购票。
+        - listitem: 公告未说明当前外籍护照登记或闸机核验细节。
+        - listitem: 不保证到场即可入馆或不受客流安排影响。
+      - paragraph:
+        - text: "审核日期:"
+        - time: 2026/9/13
+      - generic "来源与上下文"
+    - article:
+      - paragraph: 三峡博物馆主馆入馆须凭有效身份证件；公告未说明外籍护照核验细节。
+      - heading "适用条件" [level=2]
+      - list:
+        - listitem: 仅限重庆中国三峡博物馆主馆，非分馆或全部景点。
+        - listitem: 入馆仍须有效身份证件。
+        - listitem: 参观前检查当前闭馆、客流及官方通知，服从现场引导。
+      - heading "不包含" [level=2]
+      - list:
+        - listitem: 免预约不表示所有分馆免费，部分分馆仍须购票。
+        - listitem: 公告未说明当前外籍护照登记或闸机核验细节。
+        - listitem: 不保证到场即可入馆或不受客流安排影响。
+      - paragraph:
+        - text: "审核日期:"
+        - time: 2026/9/13
+      - generic "来源与上下文"

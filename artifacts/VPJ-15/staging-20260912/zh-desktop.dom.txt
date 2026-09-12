@@ -1,0 +1,101 @@
+- alert: VisePanda｜来华自由行的 AI 规划与执行工作台
+- main:
+  - paragraph: VisePanda
+  - heading "旅途参考" [level=1]
+  - text: 语言
+  - combobox "语言":
+    - option "English"
+    - option "中文" [selected]
+  - paragraph: 按所选城市和场景提供已审核信息。请阅读每条内容的适用条件，行动前核对来源；这里不代表完整城市覆盖。
+  - navigation:
+    - link "登录":
+      - /url: /auth/sign-in?returnTo=/journey/knowledge
+    - button "刷新"
+  - text: 城市
+  - combobox "城市":
+    - option "上海" [selected]
+    - option "北京"
+    - option "广州"
+    - option "重庆"
+  - text: 场景
+  - combobox "场景":
+    - option "入境"
+    - option "机场交通"
+    - option "支付" [selected]
+    - option "手机与网络"
+    - option "公共交通"
+    - option "出租车"
+    - option "高铁"
+    - option "景点"
+    - option "住宿"
+    - option "紧急求助"
+  - status
+  - region "旅途参考":
+    - article:
+      - paragraph: 支付宝或微信支付可按应用提示绑受支持的卡，再扫描兼容商家码或出示付款码。
+      - heading "适用条件" [level=2]
+      - list:
+        - listitem: 中国大陆通用指引，具体服务以当前运营方为准。
+        - listitem: 使用前查看主管机关或运营方的最新指引。
+        - listitem: 具体银行卡、发卡行和商户须支持该交易。
+        - listitem: 银行卡支持、发卡行核验及应用条款以交易时为准。
+        - listitem: 手续费和支付额度以应用当前提示及服务条款为准。
+      - heading "不包含" [level=2]
+      - list:
+        - listitem: 不保证任何商户均受理，也不保证交易成功。
+        - listitem: 不保证免手续费或特定汇率。
+        - listitem: 不推断境外卡支持个人转账。
+      - paragraph:
+        - text: "审核日期:"
+        - time: 2026/9/13
+      - generic "来源与上下文" [active]
+      - list:
+        - link "中国人民银行 / People’s Bank of China":
+          - /url: https://www.pbc.gov.cn/goutongjiaoliu/attachDir/2025/12/2025123019292710592.pdf
+        - paragraph: Printed pages 04–09 / PDF pages 5–10, 支付宝 and 微信支付
+    - article:
+      - paragraph: 需要人民币现金时，可选择受理所持国际卡的ATM。
+      - heading "适用条件" [level=2]
+      - list:
+        - listitem: 中国大陆通用指引，具体服务以当前运营方为准。
+        - listitem: 使用前查看主管机关或运营方的最新指引。
+        - listitem: 向具体经营方确认服务可用性、营业时间和费用。
+        - listitem: ATM及发卡行须支持所持银行卡取现。
+      - heading "不包含" [level=2]
+      - list:
+        - listitem: 不保证每台ATM或酒店均提供所需取现或兑换服务。
+        - listitem: 不保证固定兑换汇率，请向经营方确认。
+      - paragraph:
+        - text: "审核日期:"
+        - time: 2026/9/13
+      - generic "来源与上下文"
+    - article:
+      - paragraph: 刷境外卡前核对商户受理标识；未见标识时询问收银员。
+      - heading "适用条件" [level=2]
+      - list:
+        - listitem: 中国大陆通用指引，具体服务以当前运营方为准。
+        - listitem: 使用前查看主管机关或运营方的最新指引。
+        - listitem: 具体银行卡、发卡行和商户须支持该交易。
+      - heading "不包含" [level=2]
+      - list:
+        - listitem: 不保证任何商户均受理，也不保证交易成功。
+        - listitem: 不保证免手续费或特定汇率。
+      - paragraph:
+        - text: "审核日期:"
+        - time: 2026/9/13
+      - generic "来源与上下文"
+    - article:
+      - paragraph: 外币兑换可查找有兑换标识的网点，并向经营方确认服务。
+      - heading "适用条件" [level=2]
+      - list:
+        - listitem: 中国大陆通用指引，具体服务以当前运营方为准。
+        - listitem: 使用前查看主管机关或运营方的最新指引。
+        - listitem: 向具体经营方确认服务可用性、营业时间和费用。
+      - heading "不包含" [level=2]
+      - list:
+        - listitem: 不保证每台ATM或酒店均提供所需取现或兑换服务。
+        - listitem: 不保证固定兑换汇率，请向经营方确认。
+      - paragraph:
+        - text: "审核日期:"
+        - time: 2026/9/13
+      - generic "来源与上下文"

@@ -1,0 +1,16 @@
+{
+  "at": "2026-09-12T16:17:44.166Z",
+  "authUsers": 6,
+  "trips": 3,
+  "migrations": 39,
+  "opsEnabled": false,
+  "readEnabled": false,
+  "activeMembers": 0,
+  "candidates": 13,
+  "statements": 12,
+  "publications": 12,
+  "publicationStates": {
+    "published": 11,
+    "revoked": 1
+  }
+}

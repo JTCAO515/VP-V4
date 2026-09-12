@@ -1,0 +1,5 @@
+{
+  "status": "UNRUN",
+  "reason": "Supabase connector returned no permission for advisory retrieval. No permissions were changed to obtain it.",
+  "targetedSQLChecks": "PASS: private table/function access and authenticated-only entrypoint checks in migration.json"
+}

@@ -1,0 +1,15 @@
+{
+  "sourceCommit": "1db3578e7e447e9c38e4c43a338b16cb466f8d94",
+  "deployment": "dpl_6F4Kga71kMDjLvezKMnavVZwHWmw",
+  "environment": "isolated Preview / existing Staging database",
+  "host": "vp-v4-kp697ojds-jtcao515s-projects.vercel.app",
+  "firewallVersion": 10,
+  "originalRulesRestored": true,
+  "ownHostRemoved": true,
+  "noDraft": true,
+  "productionTargetUnchanged": true,
+  "browserArticlesAfterDisable": 0,
+  "browserConsoleErrors": 0,
+  "viewportReset": true,
+  "ownedTabClosed": true
+}
