@@ -1,0 +1,14 @@
+✔ projects identical reviewed assertions in both languages with every qualifier (7.172625ms)
+✔ keeps reliable partial content and does not count background as required coverage (0.49375ms)
+✔ rejects false refusal or partial that drops available required evidence (2.477875ms)
+✔ rejects model-written prose, qualifiers, outcomes and invented citations (1.3535ms)
+✔ rejects wrong scope, missing qualifiers, duplicate entries and vacuous completeness (0.578083ms)
+✔ returned text and qualifiers cannot change through later input mutation (0.201375ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 351.080875
