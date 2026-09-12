@@ -62,3 +62,20 @@ Contract and rollback: docs/contracts/vpj-16.md. Ordinary modes use their existi
 policies and RPCs. This mode requires separate notice/consent and opt-in runtime
 configuration; disable that entry/worker to stop new processing while retaining
 history and budget records. Applied migrations are append-only.
+
+## Real classifier v1 findings
+
+Staging41 and dedicated Preview on688b9bd were observed. Twelve real Qwen calls
+completed once each. Ten expected classifications matched; two failed: a Chinese
+prompt injection whose actual question concerned a six-year-old, and an English
+lost-passport/photo exception were incorrectly labelled additional_needs and
+showed ordinary adult boarding facts. Their complete first-run evidence is in
+staging-v1/evaluation.json. This is a semantic FAIL, not accepted partial support.
+The read window is being closed; native model submission has not been performed.
+
+Prompt v2 now first separates actual questions from format/intent instructions,
+prioritizes exception-only unsupported topics and requires an independent ordinary
+document question before adding a supported portion. Revalidation on the original
+cases and new contrasting cases is PENDING; schema tests cannot establish semantic
+success. No factual resolver, eligibility, permission, budget or SQL contract was
+changed by this prompt correction.
