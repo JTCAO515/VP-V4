@@ -1,0 +1,11 @@
+{
+  "critical": 0,
+  "important": 0,
+  "review": "Independent read-only authority review plus observed metadata-lifecycle fix follow-up",
+  "files": {
+    "components/chat/ChatThreadWorkspace.tsx": "d98778068017b223a07c68575e30ca34f0012422b809373142e4be15dfc8fbc9",
+    "components/chat/SavedAnswers.tsx": "b78926d4914f6c3fbcefb2ac682399c108465c4aff2c8026ad3bae5527bb39d5",
+    "lib/grounded/read-model.ts": "8eb3110e5ecedaa7eaeb498ccfffd617c838026a5217dd1b322b3b96532764ec",
+    "app/api/chat/grounded/route.ts": "becff7cc4fb7407fa255484698849e5f760b9b0f37f1367baa3b8a32b582d48d"
+  }
+}
