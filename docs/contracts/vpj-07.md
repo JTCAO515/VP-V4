@@ -362,3 +362,38 @@ text. Disabling the option uses the existing job/2 configuration; retained task,
 consent and cost records are not reset. This code is experiment preparation, not
 proof that the provider honors the parameters or that the retained failed semantic
 cases now pass. Live evaluation must keep those cases and record a distinct result.
+
+## Bounded continuous Staging worker
+
+`run-staging-text-service.mjs` continuously invokes the existing scoped job for one
+immutable owner, policy and budget configuration. It accepts only
+`vpj07-staging-text-service/1` with exactly `schemaVersion`, `job`,
+`pollIntervalMs` (5000–60000) and canonical ISO `expiresAt` (future, at most 24 hours).
+The nested job retains the existing job/1, job/2 or job/3 contract. Each poll
+rechecks SQL authority; a service configuration cannot grant consent or budget.
+
+Activation requires `VISEPANDA_STAGING_TEXT_SERVICE=true`, no `VERCEL_ENV`, and the
+existing worker/provider credential environment variables. Invoke with
+`node --experimental-strip-types lib/server/jobs/run-staging-text-service.mjs --config <private-json> --receipts <new-private-jsonl>`.
+No route, scheduler, launch agent or account is installed. The journal is created
+exclusively with mode0600 and records configuration digest, prompt/generation
+reference, absolute expiry, poll outcomes and existing destination metadata; it
+never records input, answer, reasoning or credentials. Journal failure stops work.
+
+Polling is sequential. Empty, finished and queued results permit the next poll;
+`unavailable` stops with exit1, including an in-flight cancellation reported by the
+underlying worker. The operator must inspect the journal and ledger before an
+explicit restart. No automatic restart or semantic reroll is provided. SIGTERM
+and SIGINT propagate abort; absolute expiry and a 150-second per-poll deadline
+also abort work. Filesystem writes and remote settlement are not hard realtime.
+Restarting with the same file cannot extend expiry or reset database budgets.
+After a crash, SQL leases and unresolved cost holds remain authoritative; killing
+the process is not evidence that the supplier request was never sent or charged.
+
+The disposable integration command
+`node tests/integration/turn/run-native-http.mjs --service` uses actual CLI child
+processes, real local Auth/SQL/native HTTP, and an explicitly mapped synthetic
+provider. It checks later input consumption, process restart without rebilling,
+task clarification/repair and cancellation stopping the processor. This local
+controlled-provider result does not establish real Staging operation, native UI
+submission, the retained bilingual semantic criteria, or full #195/S2 acceptance.

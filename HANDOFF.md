@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PR332 merged at938f597 after final CI; native Staging history/relaunch/isolation and local language persistence verified. PR333 integration retains the failed bounded-thinking clarification criterion. Full S2 remains open.
+状态：PR332 and PR333 merged; main bddd301. Approved main Production ignored-build guard preserved live aliases. Bounded continuous Staging worker implementation is under verification; full S2 remains open.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -104,7 +104,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Finish PR333 required integration checks and merge with the approved main-only Production ignored-build guard in force. Recheck canceled production attempt and retained live aliases. Then continue real semantic/worker acceptance; phone validation remains deferred.
+Validate and merge the bounded continuous Staging worker for #195 with required CI and the approved Production guard. Then verify native input through the running worker and real provider in the existing scoped Staging environment. Retain failed clarification cases; phone validation remains deferred.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
