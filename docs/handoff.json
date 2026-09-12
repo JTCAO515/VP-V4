@@ -3,12 +3,12 @@
   "projectId": "visepanda-vp-v4",
   "lastUpdated": "2026-09-13",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
-  "status": "S2 #206/#195: PR342/2aa489d delivered bounded grounded Ask. Additional real native zh/en clarification→restatement now auto-processes through the existing bounded service, retains one task through stopped-service/App-restart queue recovery, and completes exactly4 settled attempts across2 tasks. All services stopped; read/Ops off, members0, WAF22 restored. Production guard/aliases preserved. Full S1–S6 remains incomplete.",
+  "status": "S2 #195/#206: PR344 final code3278ed8 adds cookie-authenticated same-native-task Web readback. Real zh/en sources, expiry, reader-disable, logout/owner switch, offline/online and page-return passed; observed old metadata retention fixed. Final read/Ops off, members0, WAF26 restored. No new model work; production guard/aliases preserved. Full S1–S6 remains incomplete.",
   "currentPhase": "S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "Codex — S2 grounded Ask and same-chain Web readback",
   "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree.",
-  "nextAction": "Continue S2 #195/#206 with the existing Web Ask same-chain gap: inspect accepted browser-cookie identity and grounded read RPCs, then expose a bounded owner-scoped readback of the native task without borrowing native credentials or weakening evidence/consent/session checks. Reuse PR342 and grounded-service evidence. Physical phone verification remains deferred by JT, not a development gate.",
+  "nextAction": "Continue S2 #195/#206/#196 with the remaining real technical-failure/system-repair and crash/lease recovery acceptance on the same durable ServiceTask; inspect current fault/recovery hooks and reuse existing native, Web-read and service evidence. Do not equate graceful idle service restart with crash-during-provider. Keep outcomes/attempts/unknown supplier cost explicit. Physical phone verification remains deferred by JT.",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
@@ -84,6 +84,7 @@
     "tests/integration/identity/**"
   ],
   "verification": [
+    "PR344 code3278ed8: dedicated Staging41 Web reads original native English/Chinese Task/Turn and 12306 sources; 36s expiry samples hide stale facts without scroll/source-state loss; reader-off observation27.665s. Actual cross-tab logout/owner switch clears all answers, old30-row metadata list and Trip selector; offline/online and page-return passed, zh/en desktop390px and Arabic legacy checked. Quality34720232265, Budget34720232303 and Preview passed; authority review0/0; no model calls made. Actual OS freeze/background remains UNRUN. See artifacts/VPJ-07/grounded-web-read-20260913/verification.md.",
     "Real grounded service on main2aa489d/native318f83d/backend8022b5a: zh/en each1 clarification+1 full restatement on one ServiceTask; queued Turn/task/parent IDs retained across native process restart with service stopped, then identical-config service restart auto-processed answer. Exactly4 real Qwen attempts settled/0 unresolved,15876micros CNY at conservative tariff; all four service runs stopped after idle polls. read/Ops off, members0, WAF22 cleanup, users6/Trips3 preserved. See artifacts/VPJ-07/grounded-service-20260913/verification.md.",
     "PR342/2aa489d: exact318f83d Native34717138599, Quality34717138686, Budget34717138621 and Preview passed. Real Staging41 preserved77 original tables/data and declared schema invariants, users6/Trips3/published11/revoked1. v1 semantic2/12 failures retained and its policy revoked; v2 passed16/16 once each. Native zh/en answered/relaunch,40second source/scroll continuity and expired AX hiding passed; disable within16.76s, logout and cleanup/WAF20 passed. All18 v2+native attempts settled,0 unresolved; Production CANCELED. See artifacts/VPJ-16/grounded-ask-20260913/staging-delivery/verification.md.",
     "PR341/e132baf delivery and real native Staging40 PASS at exactfc3f15d; read-switch removed facts by30s, logout cleared data; cleanup0/WAF14 and production CANCELED. See artifacts/VPJ-16/reviewed-question-20260913/staging-delivery/verification.md. Full grounded Ask and S1–S6 remain incomplete.",

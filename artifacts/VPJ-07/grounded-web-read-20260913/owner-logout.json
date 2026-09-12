@@ -1,0 +1,7 @@
+{
+  "at": "2026-09-12T21:37:09.387Z",
+  "articles": 0,
+  "threadButtons": 0,
+  "tripSelectors": 0,
+  "snapshot": "- alert: 聊天线程 | VisePanda\n- main:\n  - link \"VisePanda home\":\n    - /url: /\n    - img \"VisePanda.\":\n  - link \"返回工作台\":\n    - /url: /visepanda\n  - text: 界面语言\n  - combobox \"界面语言\":\n    - option \"🇨🇳 中文\" [selected]\n    - option \"🇺🇸 English\"\n  - region \"聊天线程\":\n    - paragraph: 咨询 · 私有历史\n    - heading \"聊天线程\" [level=1]\n    - paragraph: 仅登录用户可查看自己的线程元数据。状态控制不会提交提示词、调用 AI 或写入行程。\n    - link \"登录后查看私有线程\":\n      - /url: /auth/sign-in?returnTo=/visepanda"
+}

@@ -10,6 +10,8 @@ import { replayTurnSse, turnEventsFromHistory } from "./turn-stream-client";
 import { initialTurnStreamState, turnStreamReducer } from "./turn-stream-reducer";
 import { parseLocale } from "@/lib/navigation/workspace-entry";
 import styles from "./ChatThreadWorkspace.module.css";
+import { SavedAnswers } from "./SavedAnswers";
+import { createPasswordAuthClient } from "@/lib/server/identity/browser-auth-client";
 
 type Thread = { id: string; tripId: string | null; status: "active" | "archived"; createdAt: string; updatedAt: string };
 type Turn = { id: string; status: string; createdAt: string; updatedAt: string; events: readonly { eventId: string; sequence: number; type: string; state: string; createdAt: string }[]; feedback: readonly { id: string; kind: TurnFeedbackKind; reason: TurnFeedbackReason; createdAt: string }[]; memoryReceipts: readonly { memoryId: string; sourceReceiptId: string; constraintKind: "preference" | "hard_constraint" }[] };
@@ -22,7 +24,24 @@ const asUuid = (value: string | null): string | undefined =>
     ? value
     : undefined;
 
-export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: { initialThreadId?: string; initialPlaceCandidate?: Readonly<{ tripId: string; poiId: string }> }) {
+type WorkspaceProps = { initialThreadId?: string; initialPlaceCandidate?: Readonly<{ tripId: string; poiId: string }>; groundedRead?: boolean };
+
+export function ChatThreadWorkspace(props: WorkspaceProps) {
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  useEffect(() => {
+    const client = createPasswordAuthClient();
+    if (!client) { setSessionId("unavailable"); return; }
+    const { data } = client.auth.onAuthStateChange((_event, session) => {
+      // Destroy all private page state on logout/owner changes, including
+      // metadata and in-flight component closures. The API remains authority.
+      setSessionId(session?.user.id ?? "signed-out");
+    });
+    return () => data.subscription.unsubscribe();
+  }, []);
+  return sessionId === null ? null : <AuthenticatedWorkspace key={sessionId} {...props} />;
+}
+
+function AuthenticatedWorkspace({ initialThreadId, initialPlaceCandidate, groundedRead = false }: WorkspaceProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [locale, setLocale] = useState<Locale>(() => parseLocale(searchParams.get("locale")));
@@ -210,6 +229,7 @@ export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: 
       {state === "ready" ? <>
         <label className={styles.tripScope}>{copy.tripScope}<select value={selectedTripId ?? ""} onChange={(event) => setSelectedTripId(event.target.value || null)}><option value="">{copy.noTripScope}</option>{trips.map((trip) => <option key={trip.id} value={trip.id}>{trip.title}</option>)}</select></label>
         <button className={styles.primary} type="button" onClick={createThread} disabled={creating}>{copy.create}</button>
+        {groundedRead && (locale === "zh" || locale === "en") ? <SavedAnswers locale={locale} /> : null}
         <div className={styles.grid}>
           <section aria-label={copy.title}>{threads.length === 0 ? <p className={styles.empty}>{copy.empty}</p> : <ul>{threads.map((thread) => <li key={thread.id}><button type="button" onClick={() => void selectThread(thread)}>{statusName(thread.status)} · {new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(thread.createdAt))}</button></li>)}</ul>}</section>
           <section aria-label={copy.state}>{selected ? <>
