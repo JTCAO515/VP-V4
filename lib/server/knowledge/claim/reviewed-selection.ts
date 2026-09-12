@@ -67,5 +67,5 @@ function closed(value: unknown, keys: readonly string[]): value is Record<string
 }
 function ids(value: unknown): value is readonly string[] {
   return Array.isArray(value) && value.length <= 50 && new Set(value).size === value.length
-    && value.every(id => typeof id === "string" && idPattern.test(id));
+    && Array.from(value).every(id => typeof id === "string" && idPattern.test(id));
 }
