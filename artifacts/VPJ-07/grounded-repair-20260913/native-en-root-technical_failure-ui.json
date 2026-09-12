@@ -1,0 +1,54 @@
+{
+  "scope": "bounded latest question AX rows and composer; raw full snapshot retained privately",
+  "rawSha256": "0613c6ab47ce98cce7d40f3a29cd4a2c371f7aaa186a127ee4b4b4479296d5f0",
+  "rows": [
+    {
+      "AXUniqueId": null,
+      "AXLabel": "For an adult with a foreign passport on a domestic mainland China train with an e-ticket, which original booking ID and ticket proof are needed to board?",
+      "type": "StaticText",
+      "frame": {
+        "x": 32,
+        "width": 338,
+        "height": 86.33333333333326,
+        "y": 1474.333333333333
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "grounded.status",
+      "AXLabel": "Could not complete",
+      "type": "StaticText",
+      "frame": {
+        "y": 1570.6666666666663,
+        "width": 149.33333333333331,
+        "height": 20.333333333333258,
+        "x": 32
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "native-ask.intent",
+      "AXLabel": "Retry this question",
+      "type": "StaticText",
+      "frame": {
+        "x": 16,
+        "y": 522.6666666666667,
+        "height": 14.333333333333371,
+        "width": 106.33333333333333
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "native-ask.send",
+      "AXLabel": "Send",
+      "type": "Button",
+      "frame": {
+        "x": 322.66666666666663,
+        "height": 34.33333333333337,
+        "y": 740.6666666666666,
+        "width": 63.333333333333314
+      },
+      "enabled": true
+    }
+  ]
+}

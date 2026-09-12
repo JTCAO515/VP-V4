@@ -1,0 +1,19 @@
+{
+  "at": "2026-09-12T22:12:51.030Z",
+  "foreignPresent": false,
+  "rows": [
+    {
+      "lang": "en",
+      "taskId": "d484a8ef-a1e8-43d5-87bf-44b35831077e",
+      "text": "Shanghai · English · Follow-up questionFor an adult with a foreign passport on a domestic mainland China train with an e-ticket, which original booking ID and ticket proof are needed to board?Carry the original valid booking ID for station and boarding checks.Applies whenGeneral mainland China guidance; confirm the specific service with its current operator.Check the latest official or operator guidance before use.Adult foreign-passport scenario only; confirm current document requirements with 12306 and the station.Domestic railway e-ticket journeys only; follow actual station, train and document-handling instructions.Does not coverThis statement does not establish the check-in cutoff for your station or train.Sources and context中国铁路12306 / China Railway 12306 · Ticketing Q2, E-tickets paragraphItinerary sheets and reimbursement receipts cannot serve as tickets.Applies whenGeneral mainland China guidance; confirm the specific service with its current operator.Check the latest official or operator guidance before use.Adult foreign-passport scenario only; confirm current document requirements with 12306 and the station.Domestic railway e-ticket journeys only; follow actual station, train and document-handling instructions.Does not coverThis statement does not establish the check-in cutoff for your station or train.Sources and context中国铁路12306 / China Railway 12306 · Ticketing Q11, itinerary sheet and reimbursement receipt",
+      "turnId": "b0007442-3b06-48b9-9262-1dd94014dcbf"
+    },
+    {
+      "lang": "en",
+      "taskId": "d484a8ef-a1e8-43d5-87bf-44b35831077e",
+      "text": "Shanghai · English · Original questionFor an adult with a foreign passport on a domestic mainland China train with an e-ticket, which original booking ID and ticket proof are needed to board?This question could not be completed. Continue in the app.",
+      "turnId": "2c6f23d2-7809-4a1a-90e7-3d5803a16654"
+    }
+  ],
+  "url": "https://vp-v4-g6lv1t022-jtcao515s-projects.vercel.app/visepanda?locale=en"
+}

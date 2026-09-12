@@ -1,0 +1,246 @@
+{
+  "scope": "bounded latest question AX rows and composer; raw full snapshot retained privately",
+  "rawSha256": "6f9fef5b5c28898e33d671491c4081f73d264ea9ef264ea40ab2b51928217ad6",
+  "rows": [
+    {
+      "AXUniqueId": null,
+      "AXLabel": "For an adult with a foreign passport on a domestic mainland China train with an e-ticket, which original booking ID and ticket proof are needed to board?",
+      "type": "StaticText",
+      "frame": {
+        "height": 86.33333333333331,
+        "x": 32,
+        "y": 82.66666666666663,
+        "width": 338
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "grounded.interpreted",
+      "AXLabel": "Interpreted question: Which documents do I need to board?",
+      "type": "StaticText",
+      "frame": {
+        "height": 38,
+        "y": 178.99999999999994,
+        "x": 32,
+        "width": 318
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+      "type": "StaticText",
+      "frame": {
+        "y": 226.99999999999994,
+        "x": 32,
+        "height": 30.333333333333314,
+        "width": 320
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "knowledge.answer.answered",
+      "AXLabel": "Both document points have reviewed support.",
+      "type": "StaticText",
+      "frame": {
+        "x": 32,
+        "y": 267.33333333333326,
+        "width": 221.66666666666666,
+        "height": 42.33333333333326
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "knowledge.note.c9e670d6-89cc-4b11-b8e6-f9a6b10dd530",
+      "AXLabel": "Carry the original valid booking ID for station and boarding checks.",
+      "type": "StaticText",
+      "frame": {
+        "y": 349.66666666666663,
+        "x": 48,
+        "width": 298.66666666666663,
+        "height": 42.33333333333337
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "Applies when",
+      "type": "StaticText",
+      "frame": {
+        "y": 404,
+        "x": 48,
+        "width": 96,
+        "height": 18
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+      "type": "StaticText",
+      "frame": {
+        "y": 428,
+        "x": 48,
+        "width": 275.66666666666663,
+        "height": 64.33333333333326
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "• Check the latest official or operator guidance before use.",
+      "type": "StaticText",
+      "frame": {
+        "y": 498.33333333333337,
+        "x": 48,
+        "width": 284.3333333333333,
+        "height": 42.33333333333337
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "• Adult foreign-passport scenario only; confirm current document requirements with 12306 and the station.",
+      "type": "StaticText",
+      "frame": {
+        "y": 546.6666666666667,
+        "x": 48,
+        "width": 306,
+        "height": 64.33333333333337
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "• Domestic railway e-ticket journeys only; follow actual station, train and document-handling instructions.",
+      "type": "StaticText",
+      "frame": {
+        "y": 617.0000000000001,
+        "x": 48,
+        "width": 277.3333333333333,
+        "height": 64.33333333333337
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "Not covered",
+      "type": "StaticText",
+      "frame": {
+        "x": 48,
+        "y": 693.3333333333333,
+        "width": 87,
+        "height": 18
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "• This statement does not establish the check-in cutoff for your station or train.",
+      "type": "StaticText",
+      "frame": {
+        "x": 48,
+        "y": 717.3333333333333,
+        "width": 302,
+        "height": 42.33333333333337
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "Reviewed: Sep 13, 2026",
+      "type": "StaticText",
+      "frame": {
+        "x": 48,
+        "y": 771.6666666666666,
+        "width": 135.66666666666666,
+        "height": 14.333333333333371
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "Sources and context",
+      "type": "Button",
+      "frame": {
+        "x": 48,
+        "y": 798,
+        "width": 306,
+        "height": 28.333333333333485
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "Sources and context",
+      "type": "StaticText",
+      "frame": {
+        "y": 798,
+        "x": 48,
+        "width": 306,
+        "height": 28.333333333333485
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "collapsed",
+      "AXLabel": "",
+      "type": "Image",
+      "frame": {
+        "y": 806.3333333333333,
+        "x": 346.3333333333333,
+        "width": 7,
+        "height": 12
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "knowledge.note.6638fa9a-6476-4f66-918a-40af67cc66fc",
+      "AXLabel": "Itinerary sheets and reimbursement receipts cannot serve as tickets.",
+      "type": "StaticText",
+      "frame": {
+        "y": 882.3333333333333,
+        "x": 48,
+        "width": 287.66666666666663,
+        "height": 42.33333333333326
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "Applies when",
+      "type": "StaticText",
+      "frame": {
+        "y": 936.6666666666665,
+        "x": 48,
+        "width": 96,
+        "height": 18
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "native-ask.intent",
+      "AXLabel": "Start a new question to continue.",
+      "type": "StaticText",
+      "frame": {
+        "y": 588.6666666666667,
+        "x": 16,
+        "height": 14.333333333333371,
+        "width": 187.33333333333331
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "native-ask.send",
+      "AXLabel": "Send",
+      "type": "Button",
+      "frame": {
+        "y": 740.6666666666666,
+        "x": 322.66666666666663,
+        "height": 34.33333333333337,
+        "width": 63.333333333333314
+      },
+      "enabled": false
+    }
+  ]
+}

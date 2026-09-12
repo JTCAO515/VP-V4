@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/Users/jtcao/Library/Caches/visepanda/grounded-repair-20260913/observe.py", line 10, in <module>
+    assert any(x.get('AXUniqueId')=='native-ask.intent' and x.get('AXLabel')==('重试当前问题' if ch else 'Retry this question') for x in r)
+           ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
