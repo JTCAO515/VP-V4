@@ -77,6 +77,7 @@ export async function createNativeTextEnvironment({continuous=false,grounded=fal
    sql('update knowledge_review_private.settings set enabled=false;update knowledge_review_private.members set active=false;');
   }
   model=createServer(async(req,res)=>{
+   if(req.url==='/pending'){req.resume();res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({count:pendingResponses.size}));return;}
    if(req.url==='/release'){req.resume();releaseModels();res.end('{}');return;}
    const chunks=[];for await(const c of req)chunks.push(c);
    const body=JSON.parse(Buffer.concat(chunks).toString()),input=body.messages?.at(-1)?.content ?? '';

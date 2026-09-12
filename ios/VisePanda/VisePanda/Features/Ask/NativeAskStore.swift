@@ -16,6 +16,8 @@ final class NativeAskStore {
     var groundedCurrent: Bool { mode != .grounded || ProcessInfo.processInfo.systemUptime < groundedDeadline }
     var groundedRefreshDelay: TimeInterval { max(1, groundedDeadline - ProcessInfo.processInfo.systemUptime) }
     private var operation: UUID?
+    private var eventRead: UUID?
+    private var eventCursors: [String: Int] = [:]
     let mode: NativeAskMode
     private var base: String { mode.base }
     enum Intent: Equatable {
@@ -70,6 +72,7 @@ final class NativeAskStore {
         if case .awaiting(let id) = intent { return id }
         return turns.filter(\.waiting).map(\.id).sorted().joined(separator: ":")
     }
+    var hasWaitingTurn: Bool { turns.contains(where: \.waiting) }
     private var permitsSubmission: Bool {
         if mode == .currentInput && pending == nil { return true }
         if pending != nil { return pending?.policyId == policy?.id && pendingNotice == noticeIdentity }
@@ -85,6 +88,7 @@ final class NativeAskStore {
         guard scope != next else { return }
         intent = mode.usesTask ? .restoring : .newGoal; boundNotice = nil; pendingNotice = nil; pendingAcknowledged = false
         groundedDeadline = 0
+        eventRead = nil; eventCursors = [:]
         scope = next; operation = nil; policy = nil; turns = []; pending = nil; draft = ""; busy = false; notice = nil
     }
 
@@ -92,11 +96,55 @@ final class NativeAskStore {
     /// a same-account unsent draft during temporary authentication loss.
     func suspendReads() {
         groundedDeadline = 0
+        eventRead = nil
         operation = nil; busy = false; policy = nil; turns = []; notice = nil
     }
 
     func reload(using session: NativeSession) async {
         await perform(session) { current in try await self.load(session, current) }
+    }
+
+    /// Keep foreground waiting answers live without locking the Cancel action.
+    /// A state-changing operation invalidates this read before its first await.
+    func receiveEvents(using session: NativeSession) async {
+        guard mode == .grounded, !busy, policy?.consentState == .accepted,
+              let current = scope, session.dataScope == current,
+              let selected = turns.first(where: \.waiting), let identity = noticeIdentity else { return }
+        let token = UUID(); eventRead = token
+        defer { if eventRead == token { eventRead = nil } }
+        do {
+            try await session.askEvents(turnId: selected.id, after: eventCursors[selected.id] ?? 0) { frame, elapsed in
+                guard !Task.isCancelled, self.eventRead == token, !self.busy,
+                      self.scope == current, session.dataScope == current, self.noticeIdentity == identity else { throw NativeDataError.staleSessionResponse }
+                if frame.name == "unavailable" { throw NativeDataError.server(code: "DATA_POLICY_BLOCKED") }
+                if frame.name == "heartbeat" {
+                    struct Heartbeat: Decodable { let afterSequence: Int }
+                    let value = try JSONDecoder().decode(Heartbeat.self, from: frame.data)
+                    guard frame.id == nil, value.afterSequence == (self.eventCursors[selected.id] ?? 0) else { throw NativeDataError.invalidResponse }
+                    return
+                }
+                let value = try JSONDecoder().decode(NativeAskEvent.self, from: frame.data)
+                let cursor = try value.validate(frame: frame, expected: selected.id, cursor: self.eventCursors[selected.id] ?? 0)
+                if let turn = value.turn {
+                    guard turn.valid, turn.validTask, turn.threadId == selected.threadId,
+                          turn.serviceTaskId == selected.serviceTaskId, turn.scopeVersion == selected.scopeVersion,
+                          turn.relationship == selected.relationship, turn.parentTurnId == selected.parentTurnId,
+                          turn.input == selected.input, turn.locale == selected.locale, turn.result?.city == selected.result?.city,
+                          let result = turn.result,
+                          let index = self.turns.firstIndex(where: { $0.id == turn.id }) else { throw NativeDataError.invalidResponse }
+                    let lifetime = try result.lifetime(for: turn, elapsed: elapsed)
+                    // A new card never extends the lease of other visible cards.
+                    self.groundedDeadline = min(self.groundedDeadline, ProcessInfo.processInfo.systemUptime + lifetime)
+                    self.turns[index] = turn
+                    self.reconcileIntent(changed: false)
+                }
+                // Acknowledge only after complete parsing, validation and atomic application.
+                self.eventCursors[selected.id] = cursor
+            }
+        } catch {
+            guard !Task.isCancelled, eventRead == token, scope == current, session.dataScope == current else { return }
+            groundedDeadline = 0; policy = nil; turns = []; notice = "retry"
+        }
     }
 
     func accept(reviewed: NativeTextPolicy, using session: NativeSession) async {
@@ -231,6 +279,10 @@ final class NativeAskStore {
                 return
             }
         }
+        reconcileIntent(changed: changed)
+    }
+
+    private func reconcileIntent(changed: Bool) {
         guard mode.usesTask else { return }
         // A deliberate new question is not replaced by a late result from an old task.
         if intent == .newGoal || changed { return }
@@ -265,7 +317,7 @@ final class NativeAskStore {
         guard mode == session.askMode, mode != .unavailable else { notice = "unavailable"; return }
         guard session.dataScope != nil else { suspendReads(); return }
         guard !busy, let current = scope, session.dataScope == current else { return }
-        let token = UUID(); operation = token; busy = true; notice = nil
+        let token = UUID(); eventRead = nil; operation = token; busy = true; notice = nil
         defer { if operation == token { busy = false; operation = nil } }
         do {
             if pending == nil, let retained = try session.retainedPendingAsk() {

@@ -199,6 +199,47 @@ final class NativeSession {
         return data
     }
 
+    /// Read one bounded live connection. Reconnection never sends an Ask request.
+    func askEvents(turnId: String, after: Int, receive: (NativeAskEventDecoder.Frame, TimeInterval) throws -> Void) async throws {
+        guard askMode == .grounded, enabled, !busy, UUID(uuidString: turnId) != nil,
+              after >= 0, after <= 999_999_999_999_999, let initial = dataScope else { throw NativeDataError.sessionUnavailable }
+        if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 15 { await validate() }
+        guard dataScope == initial, let credential, let endpoint else { throw NativeDataError.sessionUnavailable }
+        let url = endpoint.appendingPathComponent("api/chat/native/v4/turns/\(turnId)/events")
+        var request = URLRequest(url: url)
+        request.httpShouldHandleCookies = false
+        request.timeoutInterval = 15
+        request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
+        request.setValue("Bearer \(credential.accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue(String(after), forHTTPHeaderField: "Last-Event-ID")
+        let started = ProcessInfo.processInfo.systemUptime
+        let (bytes, response) = try await transport.bytes(for: request)
+        defer { bytes.task.cancel() }
+        let remaining = max(0, 15 - (ProcessInfo.processInfo.systemUptime - started))
+        let deadline = Task {
+            try await Task.sleep(for: .seconds(remaining))
+            bytes.task.cancel()
+        }
+        defer { deadline.cancel() }
+        guard dataScope == initial else { throw NativeDataError.staleSessionResponse }
+        guard let http = response as? HTTPURLResponse else { throw NativeDataError.invalidResponse }
+        if http.statusCode == 401 { handle(SessionError.denied); throw NativeDataError.sessionUnavailable }
+        guard http.statusCode == 200,
+              http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("text/event-stream") == true else { throw NativeDataError.invalidResponse }
+        var parser = NativeAskEventDecoder()
+        var count = 0
+        for try await byte in bytes {
+            try Task.checkCancellation()
+            count += 1
+            guard dataScope == initial else { throw NativeDataError.staleSessionResponse }
+            guard count <= 2_097_152, ProcessInfo.processInfo.systemUptime - started < 15 else { throw NativeDataError.invalidResponse }
+            if let frame = try parser.append(byte) { try receive(frame, ProcessInfo.processInfo.systemUptime - started) }
+        }
+        try Task.checkCancellation()
+        guard dataScope == initial else { throw NativeDataError.staleSessionResponse }
+        try parser.finish()
+    }
+
     func restore() async {
         guard enabled, !busy, credential == nil, let owner = defaults.string(forKey: storageKey) else { return }
         do {

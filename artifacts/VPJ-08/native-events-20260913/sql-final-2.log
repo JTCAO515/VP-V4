@@ -1,0 +1,44 @@
+▶ grounded Turn: durable scope, private results and historical eligibility
+  ✔ scope participates in exact retry and unsupported legacy admission is denied (1860.560833ms)
+  ✔ leased current input and intent completion persist references, never factual generic output (7882.762542ms)
+  ✔ events replay is stable, owner and selected-policy scoped with atomic current card (4388.202625ms)
+  ✔ history rechecks original evidence and cannot silently replace withdrawn support (5171.282708ms)
+  ✔ new conflicting publication suppresses saved factual text without rewriting original outcome (1803.11625ms)
+  ✔ additional needs stay partial; missing or disabled knowledge is not a complete answer (3746.870541ms)
+  ✔ clarification continuation retains task and scope without sending earlier turns (2301.005291ms)
+  ✔ four-turn cap preserves exact retries but rejects new clarification work (4779.580875ms)
+  ✖ publication wait cannot commit after the lease expires (2558.634333ms)
+  ✔ ordinary roles cannot execute resolver or mutate results; revoked consent fences reads (2504.329333ms)
+✖ grounded Turn: durable scope, private results and historical eligibility (74939.654167ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 9
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 75322.878375
+
+✖ failing tests:
+
+test at tests/integration/knowledge/grounded-turn.test.mjs:111:10
+✖ publication wait cannot commit after the lease expires (2558.634333ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'blocked'
+  - 'intent_input'
+  
+      at authorize (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/grounded-turn.test.mjs:32:91)
+      at async TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/grounded-turn.test.mjs:113:25)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/grounded-turn.test.mjs:111:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'blocked',
+    expected: 'intent_input',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

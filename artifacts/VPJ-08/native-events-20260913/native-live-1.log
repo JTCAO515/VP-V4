@@ -1,0 +1,10 @@
+file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/turn/run-native-grounded-events.mjs:15
+ if(code!==0)throw Error(name+' failed: '+code);
+                   ^
+
+Error: build failed: 65
+    at run (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/turn/run-native-grounded-events.mjs:15:20)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/turn/run-native-grounded-events.mjs:19:2
+
+Node.js v26.7.0

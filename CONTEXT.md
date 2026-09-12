@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 #195/#196: real zh/en worker SIGKILL after lease claim/before provider dispatch now recovers the same Turn after natural120s lease expiry. Native process restart and owner-scoped Web readback passed; each has2 leases/1 settled model call/1 terminal event. Services/sessions/locks cleaned, read/Ops off,members0,WAF34 restored. Full S1–S6 remains incomplete.
+状态：S2 #196 native grounded live event/reconnect implementation: atomic current card and stable cursor, same-task read-only recovery, scope/cancellation/expiry guards. Local real HTTP and native transport plus zh/en UI passed; final SQL/PR/CI and Staging42 integration in progress. Full S1–S6 remains incomplete.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -118,7 +118,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Continue S2 #196 with native event-stream/reconnect integration on the existing stable owner-scoped Turn/task/event interfaces; inspect the current cookie-only SSE replay route and native gap, record the scoped contract, then implement and validate the actual native consumer. Reuse real before-dispatch crash, system repair and Web evidence. Post-dispatch unknown-cost recovery, cancel race, broader knowledge/semantic scope and full acceptance remain open; physical phone work stays deferred.
+Finish selected-version #196 native event delivery: final local SQL evidence, PR/required CI, additive Staging41→42 with verified backup/restore, exact native Preview build and real reconnect receipts, then cleanup/production guard verification. Reuse PR344/345/346 within their original scope. Full post-dispatch unknown usage, cancel/Trip recovery and wider S2 remain open; physical phone work deferred.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

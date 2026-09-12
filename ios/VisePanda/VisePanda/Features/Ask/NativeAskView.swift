@@ -104,7 +104,11 @@ struct NativeAskView: View {
             guard visible, session.dataScope != nil else { store.suspendReads(); return }
             let initial = session.dataScope
             repeat {
-                if !store.busy && !session.busy { await store.reload(using: session) }
+                if !store.busy && !session.busy {
+                    if store.policy != nil && store.groundedCurrent && store.hasWaitingTurn {
+                        await store.receiveEvents(using: session)
+                    } else { await store.reload(using: session) }
+                }
                 guard !Task.isCancelled, visible, session.dataScope == initial else { return }
                 let delay = !store.pollKey.isEmpty || store.busy || session.busy ? 1 : store.policy == nil ? 30 : store.groundedRefreshDelay
                 do { try await Task.sleep(for: .seconds(delay)) } catch { return }

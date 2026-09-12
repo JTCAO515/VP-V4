@@ -59,8 +59,22 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   assert.equal((await user('list_text_turns',{p_policy_id:policy})).kind,'unavailable');assert.equal((await user('read_text_turn',{p_turn_id:root.p_turn_id})).kind,'unavailable');
   assert.equal((await complete(l)).kind,'blocked','terminal is immutable');
  });
+ await t.test('events replay is stable, owner and selected-policy scoped with atomic current card',async()=>{
+  const params={p_policy_id:policy,p_turn_id:root.p_turn_id,p_after_sequence:0};
+  const a=await user('read_grounded_events',params),b=await user('read_grounded_events',params);
+  assert.equal(a.kind,'grounded_events');assert.deepEqual(a.events,b.events);
+  assert.equal(a.turn.turnId,root.p_turn_id);assert.equal(a.turn.serviceTaskId,root.p_task_id);
+  assert.equal(a.events.at(-1).type,'terminal');assert.equal(a.turn.result.knowledge.statements.length,2);
+  const end=await user('read_grounded_events',{...params,p_after_sequence:a.lastSequence});
+  assert.deepEqual(end.events,[]);assert.equal(end.turn.turnId,root.p_turn_id,'cursor is not a fact cache');
+  assert.equal((await foreign('read_grounded_events',params)).kind,'unavailable');
+  assert.equal((await user('read_grounded_events',{...params,p_policy_id:uuid()})).kind,'unavailable');
+  for(const cursor of [-1,a.lastSequence+1,null])await assert.rejects(user('read_grounded_events',{...params,p_after_sequence:cursor}),/INVALID_INPUT/);
+  await assert.rejects(service('read_grounded_events',params),/permission denied/);
+  await assert.rejects(rpc('anon')('read_grounded_events',params),/permission denied/);
+ });
  await t.test('history rechecks original evidence and cannot silently replace withdrawn support',async()=>{
-  await revoke(first);const revoked=await read(root);assert.equal(revoked.result.originalOutcome,'answered');assert.equal(revoked.result.knowledge.answer.outcome,'partial');assert.deepEqual(revoked.result.knowledge.answer.claims[0].reasons,['revoked']);
+  await revoke(first);const replay=await user('read_grounded_events',{p_policy_id:policy,p_turn_id:root.p_turn_id});assert.equal(replay.turn.result.knowledge.answer.outcome,'partial');assert.equal(replay.turn.result.knowledge.statements.length,1);const revoked=await read(root);assert.equal(revoked.result.originalOutcome,'answered');assert.equal(revoked.result.knowledge.answer.outcome,'partial');assert.deepEqual(revoked.result.knowledge.answer.claims[0].reasons,['revoked']);
   await publish(statement(required[0]));const replaced=await read(root);assert.equal(replaced.result.knowledge.answer.outcome,'partial');assert.equal(replaced.result.knowledge.statements.length,1);
   const newTurn=fresh();await user('submit_grounded_turn',newTurn);const l=await lease();await authorize(l);await complete(l);assert.equal((await read(newTurn)).result.knowledge.answer.outcome,'answered');
  });
@@ -118,5 +132,8 @@ test('grounded Turn: durable scope, private results and historical eligibility',
    assert.notEqual((await sql(container,`set role ${role};select knowledge_review_private.resolve_question('{}');`)).code,0);
   }
   await user('withdraw_text_policy',{p_policy_id:policy});assert.equal((await read(root)).kind,'unavailable');
+  assert.equal((await user('read_grounded_events',{p_policy_id:policy,p_turn_id:root.p_turn_id})).kind,'unavailable');
+  await db(`delete from auth.sessions where id='${owner.session}';`);
+  await assert.rejects(user('read_grounded_events',{p_policy_id:policy,p_turn_id:root.p_turn_id}),/UNAUTHENTICATED|SESSION_REPLACED/);
  });
 });

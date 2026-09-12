@@ -1,0 +1,15 @@
+{
+  "scope": "actual local native/Auth/HTTP/SQL; synthetic model only",
+  "counts": {
+    "http": 4,
+    "finished": 3,
+    "destinationReceipts": 12
+  },
+  "inputs": [
+    "Synthetic HOLD native stream document question",
+    "Synthetic HOLD native stream cancelled question",
+    "中文合成请求",
+    "Synthetic UI request"
+  ],
+  "onlyCurrentInput": true
+}

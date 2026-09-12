@@ -1,0 +1,12 @@
+Independent permission/data review: 0 Critical / 0 Important.
+Reviewer: /root/knowledge_security_review. Read-only, no tests or Staging changes.
+Scope: new RPC, native SSE route/encoding, Swift transport/parser/store/view.
+SQL: 95572557f24ed329aa95ab72a8c02fbf19e46fded15468036888292f2a9ac1a4
+Encoder: 36be6d37659788fef9ab0fcfdbb0f921020cf271f8eacd9e4bb560cac0495f56
+HTTP initial: 459bd35057d92132425336a3c4681588b79c57534415c61f965aeeafa5a05093
+Store: 64423ba2b2eebec1c2c116ca1fa4f2088d5b7244a3f47418d3358516f933a0ec
+Parser: 14fb02de97352922af9f81e1ab17c537197e95307d9b8e850f65347f1b5d1af1
+View: 30dae080ae0e14793402efb79bc33fc63978dcdcf0ca168d9621b85989ff68db
+Follow-up checked managed connection cancellation/deadline, 0 C/I.
+NativeSession after deadline: 5f5016e1107c33c2f9e06bfa90770e40f0948ce4fcd31186d00a1200d2d0a92f
+Final HTTP malformed-session envelope guard reviewed 0 C/I. Hash e923f45cf2953ab49b87a1263623ab04827e8b884dd54eb6d5e6169035da73e3.

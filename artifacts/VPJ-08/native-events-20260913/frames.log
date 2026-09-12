@@ -1,0 +1,10 @@
+✔ canonical terminal frame contains one whole card; reconnect restores current projection without a new event (2.6325ms)
+✔ invalid ownership envelope, cursor and terminal combinations cannot be encoded (0.266625ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 118.906375
