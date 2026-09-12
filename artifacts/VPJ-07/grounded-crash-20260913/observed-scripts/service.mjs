@@ -1,0 +1,17 @@
+import {execFileSync,spawn} from 'node:child_process';import fs from 'node:fs';import assert from 'node:assert/strict';import {createHash} from 'node:crypto';
+const root='/Users/jtcao/Library/Caches/visepanda/grounded-crash-20260913';const [locale,phase]=process.argv.slice(2);assert.ok(['en','zh'].includes(locale)&&['crash','recovery'].includes(phase));const tag=locale+'-'+phase;
+assert.equal(JSON.parse(fs.readFileSync(root+'/budget-preflight.json')).status,'PASS');assert.ok(fs.existsSync(root+'/window-ready'));assert.ok(!fs.existsSync(root+'/service-'+tag+'-intent.json'));
+const configPath=root+'/service-'+locale+'.json';
+if(phase==='crash')fs.writeFileSync(configPath,JSON.stringify({schemaVersion:'vpj07-staging-text-service/1',job:JSON.parse(fs.readFileSync(root+'/worker-'+locale+'.json')),pollIntervalMs:5000,expiresAt:new Date(Date.now()+20*60000).toISOString()},null,2)+'\n',{mode:0o600,flag:'wx'});
+else assert.equal(JSON.parse(fs.readFileSync(root+'/service-'+locale+'-crash-result.json')).signal,'SIGKILL');
+assert.ok(Date.parse(JSON.parse(fs.readFileSync(configPath)).expiresAt)>Date.now()+3*60000);
+const keys=JSON.parse(execFileSync('supabase',['projects','api-keys','--project-ref','dzqdzetcctkhbrhlxxgn','--reveal','--output-format','json'],{encoding:'utf8',stdio:['ignore','pipe','pipe']})).keys;
+const key=keys.find(k=>k.name==='service_role'&&k.type==='legacy')?.api_key;assert.ok(key);const p=JSON.parse(Buffer.from(key.split('.')[1],'base64url'));assert.equal(p.ref,'dzqdzetcctkhbrhlxxgn');assert.equal(p.role,'service_role');
+const provider=execFileSync('security',['find-generic-password','-a','VP-V4','-s','VP-V4.QWEN_API_KEY','-w'],{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();assert.ok(provider);
+const intent={at:new Date().toISOString(),locale,phase,configurationDigest:createHash('sha256').update(fs.readFileSync(configPath)).digest('hex')};fs.writeFileSync(root+'/service-'+tag+'-intent.json',JSON.stringify(intent)+'\n',{mode:0o600,flag:'wx'});
+const child=spawn(process.execPath,['--experimental-strip-types',root+'/frozen/lib/server/jobs/run-staging-text-service.mjs','--config',configPath,'--receipts',root+'/service-'+tag+'.jsonl'],{cwd:root+'/frozen',env:{...process.env,NODE_OPTIONS:'',VERCEL_ENV:'',VISEPANDA_STAGING_TEXT_SERVICE:'true',VISEPANDA_STAGING_TEXT_WORKER_KEY:key,VISEPANDA_STAGING_TEXT_PROVIDER_KEY:provider},stdio:['ignore','pipe','pipe']});
+fs.writeFileSync(root+'/service-'+tag+'-process.json',JSON.stringify({pid:child.pid,parentPid:process.pid,...intent})+'\n',{mode:0o600,flag:'wx'});
+let out='',requested=false;child.stdout.on('data',x=>out+=x);child.stderr.resume();const stop=()=>{if(!requested){requested=true;child.kill('SIGTERM');}};process.once('SIGINT',stop);process.once('SIGTERM',stop);
+const timer=setInterval(()=>{if(fs.existsSync(root+'/service-'+tag+'-stop'))stop();},250);const result=await new Promise((resolve,reject)=>{child.once('error',reject);child.once('close',(code,signal)=>resolve({code,signal}));});clearInterval(timer);
+const receipt={at:new Date().toISOString(),exitCode:result.code,signal:result.signal,stopRequested:requested,result:out.trim()?JSON.parse(out):null};fs.writeFileSync(root+'/service-'+tag+'-result.json',JSON.stringify(receipt,null,2)+'\n',{mode:0o600});console.log({exitCode:result.code,signal:result.signal,reason:receipt.result?.reason??null});
+if(phase==='crash')assert.equal(result.signal,'SIGKILL');else{assert.equal(result.code,0);assert.equal(receipt.result?.reason,'stopped');}

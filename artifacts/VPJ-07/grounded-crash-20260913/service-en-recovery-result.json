@@ -1,0 +1,12 @@
+{
+  "at": "2026-09-12T22:34:56.937Z",
+  "exitCode": 0,
+  "signal": null,
+  "stopRequested": true,
+  "result": {
+    "schemaVersion": "vpj07-service-result/1",
+    "configurationDigest": "9c95a044a6a7208ce5d6e4ea807c5bc3d75d286262a67394503d8cefda9668ce",
+    "reason": "stopped",
+    "polls": 22
+  }
+}

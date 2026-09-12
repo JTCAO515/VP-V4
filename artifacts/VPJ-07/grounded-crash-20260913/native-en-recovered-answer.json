@@ -1,0 +1,221 @@
+{
+  "at": 1789252462.711961,
+  "rows": [
+    {
+      "AXUniqueId": null,
+      "AXLabel": "For an adult with a foreign passport on a domestic mainland China train with an e-ticket, which original booking ID and ticket proof are needed to board?",
+      "type": "StaticText",
+      "frame": {
+        "width": 338,
+        "height": 86.33333333333326,
+        "y": 1474.333333333333,
+        "x": 32
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "grounded.interpreted",
+      "AXLabel": "Interpreted question: Which documents do I need to board?",
+      "type": "StaticText",
+      "frame": {
+        "x": 32,
+        "y": 1570.6666666666663,
+        "height": 38,
+        "width": 318
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+      "type": "StaticText",
+      "frame": {
+        "x": 32,
+        "height": 30.333333333333258,
+        "y": 1618.6666666666663,
+        "width": 320
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "knowledge.answer.answered",
+      "AXLabel": "Both document points have reviewed support.",
+      "type": "StaticText",
+      "frame": {
+        "width": 221.66666666666666,
+        "y": 1658.9999999999995,
+        "height": 42.33333333333326,
+        "x": 32
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "knowledge.note.c9e670d6-89cc-4b11-b8e6-f9a6b10dd530",
+      "AXLabel": "Carry the original valid booking ID for station and boarding checks.",
+      "type": "StaticText",
+      "frame": {
+        "x": 48,
+        "y": 1741.3333333333328,
+        "height": 42.33333333333326,
+        "width": 298.66666666666663
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "Applies when",
+      "type": "StaticText",
+      "frame": {
+        "width": 96,
+        "y": 1795.666666666666,
+        "height": 18,
+        "x": 48
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+      "type": "StaticText",
+      "frame": {
+        "width": 275.66666666666663,
+        "y": 1819.666666666666,
+        "height": 64.33333333333326,
+        "x": 48
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "• Check the latest official or operator guidance before use.",
+      "type": "StaticText",
+      "frame": {
+        "width": 284.3333333333333,
+        "y": 1889.9999999999993,
+        "height": 42.33333333333326,
+        "x": 48
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "• Adult foreign-passport scenario only; confirm current document requirements with 12306 and the station.",
+      "type": "StaticText",
+      "frame": {
+        "x": 48,
+        "height": 64.33333333333348,
+        "y": 1938.3333333333326,
+        "width": 306
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "• Domestic railway e-ticket journeys only; follow actual station, train and document-handling instructions.",
+      "type": "StaticText",
+      "frame": {
+        "x": 48,
+        "height": 64.33333333333326,
+        "y": 2008.6666666666658,
+        "width": 277.3333333333333
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "Not covered",
+      "type": "StaticText",
+      "frame": {
+        "width": 87,
+        "height": 18,
+        "y": 2084.999999999999,
+        "x": 48
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "• This statement does not establish the check-in cutoff for your station or train.",
+      "type": "StaticText",
+      "frame": {
+        "width": 302,
+        "y": 2108.999999999999,
+        "height": 42.333333333333485,
+        "x": 48
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "Reviewed: Sep 13, 2026",
+      "type": "StaticText",
+      "frame": {
+        "width": 135.66666666666666,
+        "y": 2163.3333333333326,
+        "height": 14.333333333333485,
+        "x": 48
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "Sources and context",
+      "type": "Button",
+      "frame": {
+        "x": 48,
+        "height": 28.333333333333485,
+        "y": 2189.6666666666665,
+        "width": 306
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "Sources and context",
+      "type": "StaticText",
+      "frame": {
+        "width": 306,
+        "y": 2189.6666666666665,
+        "height": 28.333333333333485,
+        "x": 48
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "collapsed",
+      "AXLabel": "",
+      "type": "Image",
+      "frame": {
+        "width": 7,
+        "height": 12,
+        "y": 2197.6666666666665,
+        "x": 346.3333333333333
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "knowledge.note.6638fa9a-6476-4f66-918a-40af67cc66fc",
+      "AXLabel": "Itinerary sheets and reimbursement receipts cannot serve as tickets.",
+      "type": "StaticText",
+      "frame": {
+        "width": 287.66666666666663,
+        "y": 2273.9999999999995,
+        "height": 42.333333333333485,
+        "x": 48
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "Applies when",
+      "type": "StaticText",
+      "frame": {
+        "x": 48,
+        "height": 18,
+        "y": 2328.333333333333,
+        "width": 96
+      },
+      "enabled": true
+    }
+  ]
+}

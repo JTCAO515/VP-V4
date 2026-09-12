@@ -1,0 +1,21 @@
+{
+  "at": "2026-09-12T22:32:13.766Z",
+  "work": {
+    "turnId": "a322cdb9-f559-49fc-90bf-ae1a0de278f7",
+    "state": "leased",
+    "attempt": 1,
+    "expiresAt": "2026-09-12T22:34:11.576632+00:00",
+    "expired": false
+  },
+  "blockers": [
+    {
+      "pid": 2072236,
+      "budgetRpc": true,
+      "waitEvent": "transactionid"
+    }
+  ],
+  "attempts": 0,
+  "childPid": 80286,
+  "parentPid": 80274,
+  "providerInvocations": 0
+}

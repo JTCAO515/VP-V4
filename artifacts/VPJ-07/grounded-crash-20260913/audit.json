@@ -1,0 +1,43 @@
+{
+  "at": "2026-09-12T22:38:26.737Z",
+  "status": "PASS",
+  "scope": "real unmodified worker CLI killed after lease claim while budget reservation blocked; native restart and natural lease recovery, not post-dispatch crash",
+  "locales": [
+    {
+      "locale": "en",
+      "taskId": "bc0bce26-1fc1-46fe-9a30-d67a318b1578",
+      "turnId": "a322cdb9-f559-49fc-90bf-ae1a0de278f7",
+      "workLeases": 2,
+      "modelCalls": 1,
+      "nativeProcessRestart": true
+    },
+    {
+      "locale": "zh",
+      "taskId": "334d4e50-5c15-46be-a46e-6f6b7c11e002",
+      "turnId": "41d903b1-7bbc-4f85-ad96-ba78929125f5",
+      "workLeases": 2,
+      "modelCalls": 1,
+      "nativeProcessRestart": true
+    }
+  ],
+  "budget": {
+    "attempts": 2,
+    "settled": 2,
+    "unresolved": 0,
+    "actualMicros": 8124,
+    "terminalEvents": [
+      {
+        "turnId": "a322cdb9-f559-49fc-90bf-ae1a0de278f7",
+        "eventId": "worker-terminal-2",
+        "state": "completed"
+      },
+      {
+        "turnId": "41d903b1-7bbc-4f85-ad96-ba78929125f5",
+        "eventId": "worker-terminal-2",
+        "state": "completed"
+      }
+    ]
+  },
+  "currency": "CNY",
+  "costBasis": "conservative tariff, not invoice"
+}

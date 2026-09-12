@@ -1,0 +1,8 @@
+{
+  "at": "2026-09-12T22:35:37.170Z",
+  "state": "queued",
+  "attempt": 0,
+  "task_id": "334d4e50-5c15-46be-a46e-6f6b7c11e002",
+  "turn_id": "41d903b1-7bbc-4f85-ad96-ba78929125f5",
+  "lease_ms": 120000
+}

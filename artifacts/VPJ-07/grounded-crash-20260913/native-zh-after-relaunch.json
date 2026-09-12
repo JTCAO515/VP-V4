@@ -1,0 +1,77 @@
+{
+  "at": 1789252589.331542,
+  "rows": [
+    {
+      "AXUniqueId": null,
+      "AXLabel": "我是持外国护照的成年人，乘坐中国内地境内铁路电子客票列车，进站乘车需要什么购票身份证件和车票凭证？",
+      "type": "StaticText",
+      "frame": {
+        "y": 1086.6666666666665,
+        "width": 337.3333333333333,
+        "x": 32,
+        "height": 64.33333333333348
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "grounded.status",
+      "AXLabel": "等待结果",
+      "type": "StaticText",
+      "frame": {
+        "y": 1161,
+        "width": 67.66666666666666,
+        "x": 32,
+        "height": 20.333333333333258
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "native-ask.cancel.41d903b1-7bbc-4f85-ad96-ba78929125f5",
+      "AXLabel": "取消请求",
+      "type": "Button",
+      "frame": {
+        "y": 1191.3333333333333,
+        "width": 67.66666666666666,
+        "x": 32,
+        "height": 20.333333333333258
+      },
+      "enabled": false
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "我是持外国护照的成年人，乘坐中国内地境内铁路电子客票列车，进站乘车需要什么购票身份证件和车票凭证？",
+      "type": "StaticText",
+      "frame": {
+        "height": 64.33333333333326,
+        "width": 337.3333333333333,
+        "x": 32,
+        "y": 1267.6666666666665
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "grounded.interpreted",
+      "AXLabel": "识别的问题：乘车需要哪些证件？",
+      "type": "StaticText",
+      "frame": {
+        "height": 18,
+        "width": 216.33333333333331,
+        "x": 32,
+        "y": 1341.9999999999998
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+      "type": "StaticText",
+      "frame": {
+        "y": 1369.9999999999998,
+        "width": 286.3333333333333,
+        "x": 32,
+        "height": 30.333333333333258
+      },
+      "enabled": true
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "at": "2026-09-12T22:35:51.479Z",
+  "work": {
+    "turnId": "41d903b1-7bbc-4f85-ad96-ba78929125f5",
+    "state": "leased",
+    "attempt": 1,
+    "expiresAt": "2026-09-12T22:37:42.457566+00:00",
+    "expired": false
+  },
+  "blockers": [],
+  "attempts": 0
+}

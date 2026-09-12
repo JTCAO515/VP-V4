@@ -1,0 +1,23 @@
+{
+  "roleTimeouts": [
+    {
+      "role": "authenticated",
+      "timeout": "statement_timeout=8s"
+    },
+    {
+      "role": "authenticator",
+      "timeout": "statement_timeout=8s"
+    },
+    {
+      "role": "authenticator",
+      "timeout": "lock_timeout=8s"
+    }
+  ],
+  "currentStatementTimeout": "2min",
+  "workDefaults": [
+    {
+      "leaseMs": 120000,
+      "maxAttempts": 3
+    }
+  ]
+}

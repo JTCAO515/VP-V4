@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 #195/#206: PR344 merged1a539e1; real native zh/en knowledge-dependency failure→same-task repair now returns reviewed answers and Web reads both chains. Exactly4 settled attempts/0 unresolved; all services stopped, sessions logged out, read/Ops off, members0, WAF30 restored. Full S1–S6 remains incomplete.
+状态：S2 #195/#196: real zh/en worker SIGKILL after lease claim/before provider dispatch now recovers the same Turn after natural120s lease expiry. Native process restart and owner-scoped Web readback passed; each has2 leases/1 settled model call/1 terminal event. Services/sessions/locks cleaned, read/Ops off,members0,WAF34 restored. Full S1–S6 remains incomplete.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -35,7 +35,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 未决与运行证据
 
-- Staging41 scoped grounded Ask and bilingual same-task graceful service stop/queue restart are now observed. Full S1/S2, all five native outcomes, broader semantic coverage, Web same-chain integration and crash-in-flight/complete operational recovery remain incomplete. Supplier unknowns remain disclosed, not approval blockers.
+- Staging41 bounded grounded Ask, same-task clarification/repair, Web owner readback and real pre-dispatch worker crash/natural-lease recovery are observed. Full S1/S2, supported product-wide five-outcome/knowledge/semantic coverage, native streaming, post-dispatch unknown-cost recovery, cancel race and complete operational acceptance remain incomplete. Supplier unknowns are disclosed, not approval blockers.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel runtime integration, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 - #264 depends on #206, which remains OPEN: PR342 now supplies a real bounded reviewed-fact/native task chain, but wider knowledge coverage and complete Harness runtime acceptance remain outstanding. Preserve #263 offline evidence within its original scope.
@@ -53,6 +53,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- Real Staging41 crash checkpoint: main21b2086/frozen runtime1a539e1 unchanged, native318f83d/backend8022b5a. Each zh/en normal worker was SIGKILLed after lease1 while its budget reserve RPC waited; no provider/budget attempt persisted. Same-config service waited for real120s lease expiry, completed sameTurn with lease2 and exactly1 settled Qwen call/worker-terminal-2. Native App restart retained pending question and final answer; Web3278 owner readback matched. Total2 settled/0 unresolved,8124microsCNY conservative tariff;71controlled Turns/attempts. All services/sessions/locks cleaned,read/Opsfalse,members0,WAF34. See artifacts/VPJ-07/grounded-crash-20260913/verification.md.
 - Real Staging41 on main1a539e1/worker unchanged, native318f83d/backend8022b5a and Web3278ed8: each zh/en technical_failure root→repair answered keeps Task/parent and question; owner-scoped Web reads same2 chains. Four Qwen calls settled/0 unresolved,16440micros CNY conservative tariff, no user charge or invoice claim. Native/browser logout, clean service stop, read/Ops off, members0,WAF30 cleanup,users6/Trips3 and69 controlled Turns/attempts observed. Retain AX click/observer and SQL-login failures. See artifacts/VPJ-07/grounded-repair-20260913/verification.md.
 - PR344 merged1a539e1; actual browser code3278ed8: dedicated Staging41 Web reads original native English/Chinese Task/Turn and 12306 sources; 36s expiry samples hide stale facts without scroll/source-state loss; reader-off observation27.665s. Actual cross-tab logout/owner switch clears all answers, old30-row metadata list and Trip selector; offline/online and page-return passed, zh/en desktop390px and Arabic legacy checked. Final head3a6ee6f Quality34721215655, Budget34721215647 and Preview passed; authority review0/0; no model calls made. Actual OS freeze/background remains UNRUN. See artifacts/VPJ-07/grounded-web-read-20260913/verification.md.
 - Real grounded service on main2aa489d/native318f83d/backend8022b5a: zh/en each1 clarification+1 full restatement on one ServiceTask; queued Turn/task/parent IDs retained across native process restart with service stopped, then identical-config service restart auto-processed answer. Exactly4 real Qwen attempts settled/0 unresolved,15876micros CNY at conservative tariff; all four service runs stopped after idle polls. read/Ops off, members0, WAF22 cleanup, users6/Trips3 preserved. See artifacts/VPJ-07/grounded-service-20260913/verification.md.
@@ -117,7 +118,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Continue S2 #195/#196 with bounded real worker crash/lease recovery on controlled existing ServiceTasks and budgets. Inspect actual claim/lease/attempt checkpoints before execution; preserve unknown provider costs and verify terminal-once/cancel race within current contracts. Reuse grounded repair/native/Web evidence. Physical phone work remains deferred by JT; no Production release.
+Continue S2 #196 with native event-stream/reconnect integration on the existing stable owner-scoped Turn/task/event interfaces; inspect the current cookie-only SSE replay route and native gap, record the scoped contract, then implement and validate the actual native consumer. Reuse real before-dispatch crash, system repair and Web evidence. Post-dispatch unknown-cost recovery, cancel race, broader knowledge/semantic scope and full acceptance remain open; physical phone work stays deferred.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

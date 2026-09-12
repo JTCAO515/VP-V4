@@ -1,0 +1,1 @@
+{"scope":"Web readiness observation","initial":"A 3-second heading wait after English login timed out while navigation was still completing.","resolution":"Read the same live tab again; authenticated workspace and14 articles were present. No login, request or worker was restarted due to this timeout.","claim":"No instantaneous navigation timing guarantee."}

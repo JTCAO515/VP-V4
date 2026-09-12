@@ -1,0 +1,2 @@
+{"schemaVersion":"vpj07-service-run/1","configurationDigest":"9c95a044a6a7208ce5d6e4ea807c5bc3d75d286262a67394503d8cefda9668ce","prompt":{"version":"vp-knowledge-intent-v2","digest":"afcec73b0acd5a9018d285c8dff39b84cf4aeab1fce5a3d4006189f135ddc60f"},"phase":"started","expiresAt":"2026-09-12T22:52:05.540Z","pollIntervalMs":5000,"observedAt":"2026-09-12T22:32:10.198Z"}
+{"schemaVersion":"vpj07-service-run/1","configurationDigest":"9c95a044a6a7208ce5d6e4ea807c5bc3d75d286262a67394503d8cefda9668ce","phase":"poll-started","poll":1,"observedAt":"2026-09-12T22:32:10.206Z"}

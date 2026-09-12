@@ -1,0 +1,18 @@
+{
+  "at": "2026-09-12T22:37:57.805Z",
+  "status": "PASS",
+  "databaseNow": "2026-09-12T22:37:57.742343+00:00",
+  "turnId": "41d903b1-7bbc-4f85-ad96-ba78929125f5",
+  "turnState": "completed",
+  "taskId": "334d4e50-5c15-46be-a46e-6f6b7c11e002",
+  "relationship": "new_goal",
+  "workState": "completed",
+  "workAttempt": 2,
+  "leaseExpiresAt": null,
+  "originalOutcome": "answered",
+  "completedAt": "2026-09-12T22:37:51.243581+00:00",
+  "attempts": 1,
+  "settled": 1,
+  "unresolved": 0,
+  "terminalEvents": 1
+}
