@@ -6,6 +6,7 @@ import Observation
 final class NativeKnowledgeStore {
     enum State { case idle, loading, ready, empty, unavailable }
     private(set) var rows: [NativeKnowledgeStatement] = []
+    private(set) var answer: NativeKnowledgeAnswer?
     private(set) var state = State.idle
     private(set) var scope: NativeDataScope?
     private(set) var selection: NativeKnowledgeSelection?
@@ -17,7 +18,7 @@ final class NativeKnowledgeStore {
 
     func clear() {
         generation = UUID()
-        rows = []; state = .idle; scope = nil; selection = nil; deadline = 0
+        rows = []; answer = nil; state = .idle; scope = nil; selection = nil; deadline = 0
     }
 
     func isCurrent(scope: NativeDataScope?, selection: NativeKnowledgeSelection) -> Bool {
@@ -26,7 +27,7 @@ final class NativeKnowledgeStore {
 
     var refreshDelay: TimeInterval { max(0, deadline - uptime()) }
 
-    func load(scope: NativeDataScope?, selection: NativeKnowledgeSelection, fetch: () async throws -> Data) async {
+    func load(scope: NativeDataScope?, selection: NativeKnowledgeSelection, question: Bool = false, fetch: () async throws -> Data) async {
         clear()
         guard let scope, selection.valid, !Task.isCancelled else { return }
         self.scope = scope; self.selection = selection; state = .loading
@@ -36,12 +37,12 @@ final class NativeKnowledgeStore {
             guard generation == own, !Task.isCancelled else { return }
             guard bytes.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
             let reply = try JSONDecoder().decode(NativeKnowledgeReply.self, from: bytes).data
-            let lifetime = try reply.lifetime(for: selection, elapsed: uptime() - started)
-            rows = reply.statements; deadline = uptime() + lifetime
+            let lifetime = try reply.lifetime(for: selection, elapsed: uptime() - started, question: question)
+            rows = reply.statements; answer = reply.answer; deadline = uptime() + lifetime
             state = rows.isEmpty ? .empty : .ready
         } catch {
             guard generation == own else { return }
-            rows = []; deadline = 0
+            rows = []; answer = nil; deadline = 0
             state = Task.isCancelled ? .idle : .unavailable
         }
     }

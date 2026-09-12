@@ -142,8 +142,15 @@ final class NativeSession {
     }
 
     /// First-party read only: fixed endpoint and typed scope share the current identity fence.
-    func knowledgeRequest(selection: NativeKnowledgeSelection) async throws -> Data {
+    func knowledgeRequest(selection: NativeKnowledgeSelection, question: Bool = false) async throws -> Data {
         guard selection.valid else { throw NativeDataError.invalidResponse }
+        if question {
+            guard selection.scene == "rail" else { throw NativeDataError.invalidResponse }
+            return try await dataRequest(prefix: "api/knowledge/native/v1/answer", path: "api/knowledge/native/v1/answer", method: "GET", queryItems: [
+                .init(name: "questionId", value: "rail_boarding_documents"), .init(name: "questionVersion", value: "1"),
+                .init(name: "city", value: selection.city), .init(name: "locale", value: selection.locale)
+            ])
+        }
         return try await dataRequest(prefix: "api/knowledge/native/v1", path: "api/knowledge/native/v1", method: "GET", queryItems: selection.queryItems)
     }
 

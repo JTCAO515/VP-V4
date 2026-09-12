@@ -1,0 +1,150 @@
+▶ first-party reviewed question: real PostgreSQL eligibility, coverage and isolation
+  ✔ rollback, disabled switch, closed question scope and RPC roles (396.690708ms)
+  ✖ missing support is honest; a single supported obligation stays partial (123.602292ms)
+  ✖ complete bilingual answers preserve exact qualifiers and source context (57.203ms)
+  ✖ corroboration is retained; incompatible wording cannot become a ranked complete answer (54.124291ms)
+  ✖ revocation and expiry suppress text and identify observed causes (56.148166ms)
+  ✖ switch and session loss never masquerade as knowledge gaps; no task or model receipt (231.988125ms)
+✖ first-party reviewed question: real PostgreSQL eligibility, coverage and isolation (5031.573875ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 1
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5085.946292
+
+✖ failing tests:
+
+test at tests/integration/knowledge/question.test.mjs:43:10
+✖ missing support is honest; a single supported obligation stays partial (123.602292ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  schema "extensions" does not exist
+  LINE 2: ...rc->>'sourceKey',src->>'revisionLabel',src,encode(extensions...
+                                                               ^
+  QUERY:  insert into knowledge_review_private.source_revisions(source_key,revision_label,declaration,snippet_hash,submitted_by)
+     values(src->>'sourceKey',src->>'revisionLabel',src,encode(extensions.digest(convert_to(src->>'snippet','UTF8'),'sha256'),'hex'),u) on conflict(source_key,revision_label) do nothing
+  CONTEXT:  PL/pgSQL function public.ops_review_workspace(jsonb) line 35 at SQL statement
+
+
+  3 !== 0
+
+      at db (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:12:64)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async publish (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:40:44)
+      at async TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:45:9)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:43:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/knowledge/question.test.mjs:47:10
+✖ complete bilingual answers preserve exact qualifiers and source context (57.203ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  schema "extensions" does not exist
+  LINE 2: ...rc->>'sourceKey',src->>'revisionLabel',src,encode(extensions...
+                                                               ^
+  QUERY:  insert into knowledge_review_private.source_revisions(source_key,revision_label,declaration,snippet_hash,submitted_by)
+     values(src->>'sourceKey',src->>'revisionLabel',src,encode(extensions.digest(convert_to(src->>'snippet','UTF8'),'sha256'),'hex'),u) on conflict(source_key,revision_label) do nothing
+  CONTEXT:  PL/pgSQL function public.ops_review_workspace(jsonb) line 35 at SQL statement
+
+
+  3 !== 0
+
+      at db (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:12:64)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async publish (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:40:44)
+      at async TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:48:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:47:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/knowledge/question.test.mjs:52:10
+✖ corroboration is retained; incompatible wording cannot become a ranked complete answer (54.124291ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  schema "extensions" does not exist
+  LINE 2: ...rc->>'sourceKey',src->>'revisionLabel',src,encode(extensions...
+                                                               ^
+  QUERY:  insert into knowledge_review_private.source_revisions(source_key,revision_label,declaration,snippet_hash,submitted_by)
+     values(src->>'sourceKey',src->>'revisionLabel',src,encode(extensions.digest(convert_to(src->>'snippet','UTF8'),'sha256'),'hex'),u) on conflict(source_key,revision_label) do nothing
+  CONTEXT:  PL/pgSQL function public.ops_review_workspace(jsonb) line 35 at SQL statement
+
+
+  3 !== 0
+
+      at db (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:12:64)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async publish (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:40:44)
+      at async TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:53:106)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:52:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/knowledge/question.test.mjs:59:10
+✖ revocation and expiry suppress text and identify observed causes (56.148166ms)
+  AssertionError [ERR_ASSERTION]: ERROR:  INVALID_INPUT
+  CONTEXT:  PL/pgSQL function public.ops_review_workspace(jsonb) line 10 at RAISE
+
+
+  3 !== 0
+
+      at db (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:12:64)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:60:3)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:59:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/knowledge/question.test.mjs:65:10
+✖ switch and session loss never masquerade as knowledge gaps; no task or model receipt (231.988125ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /UNAUTHENTICATED/. Input:
+
+  'ERROR:  SESSION_REPLACED\n' +
+    'CONTEXT:  PL/pgSQL function identity_private.guard_mobile_rpc_v2() line 4 at RAISE\n' +
+    'SQL statement "SELECT identity_private.guard_mobile_rpc_v2()"\n' +
+    'PL/pgSQL function public.knowledge_read_v1(jsonb) line 8 at PERFORM\n' +
+    'SQL statement "SELECT public.knowledge_read_v1(scope)"\n' +
+    'PL/pgSQL function public.knowledge_answer_v1(jsonb) line 11 at PERFORM\n'
+
+      at rejects (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:31:188)
+      at async TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:67:71)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:65:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'ERROR:  SESSION_REPLACED\nCONTEXT:  PL/pgSQL function identity_private.guard_mobile_rpc_v2() line 4 at RAISE\nSQL statement "SELECT identity_private.guard_mobile_rpc_v2()"\nPL/pgSQL function public.knowledge_read_v1(jsonb) line 8 at PERFORM\nSQL statement "SELECT public.knowledge_read_v1(scope)"\nPL/pgSQL function public.knowledge_answer_v1(jsonb) line 11 at PERFORM\n',
+    expected: /UNAUTHENTICATED/,
+    operator: 'match',
+    diff: 'simple'
+  }

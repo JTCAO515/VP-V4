@@ -48,7 +48,7 @@ struct TabRootView: View {
         switch tab {
         case .tools: ToolsView()
         case .trip: TripView()
-        case .ask: AskView()
+        case .ask: AskView(isActive: isActive)
         case .explore: ExploreView(isActive: isActive)
         case .profile: ProfileView()
         }

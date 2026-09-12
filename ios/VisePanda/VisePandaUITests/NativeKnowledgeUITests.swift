@@ -4,6 +4,9 @@ nonisolated final class NativeKnowledgeUITests: XCTestCase, @unchecked Sendable 
     @MainActor func testEnglishRefreshCredentialsReadAndWithdraw() async throws { try await exercise(chinese: false) }
     @MainActor func testChineseRefreshCredentialsReadAndWithdraw() async throws { try await exercise(chinese: true) }
 
+    @MainActor func testEnglishReviewedQuestionCoverage() async throws { try await exercise(chinese: false, question: true) }
+    @MainActor func testChineseReviewedQuestionCoverage() async throws { try await exercise(chinese: true, question: true) }
+
     private func control(_ values: [String: Bool]) async throws -> [String: Any] {
         var request = URLRequest(url: URL(string: "http://127.0.0.1:59654/control")!)
         request.httpMethod = "POST"; request.httpBody = try JSONEncoder().encode(values)
@@ -11,7 +14,7 @@ nonisolated final class NativeKnowledgeUITests: XCTestCase, @unchecked Sendable 
         return try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
     }
 
-    @MainActor private func exercise(chinese: Bool) async throws {
+    @MainActor private func exercise(chinese: Bool, question: Bool = false) async throws {
         guard ProcessInfo.processInfo.environment["VP_NATIVE_KNOWLEDGE_UI_TEST"] == "1" else {
             throw XCTSkip("UNRUN: explicit loopback knowledge UI fixture not configured")
         }
@@ -34,6 +37,42 @@ nonisolated final class NativeKnowledgeUITests: XCTestCase, @unchecked Sendable 
         XCTAssertTrue(app.staticTexts[chinese ? "会话有效" : "Session active"].waitForExistence(timeout: 20))
         let before = try await control([:])
         XCTAssertEqual(before["reads"] as? Int, 0, "Hidden Explore must not read knowledge")
+        if question {
+            app.tabBars.buttons[chinese ? "问熊猫" : "Ask"].tap()
+            let entry = app.buttons["native-ask.reviewed-question"]
+            XCTAssertTrue(entry.waitForExistence(timeout: 10))
+            let unopened = try await control([:]); XCTAssertEqual(unopened["reads"] as? Int, 0, "An unselected question must not load")
+            entry.tap()
+            XCTAssertTrue(app.staticTexts["knowledge.answer.answered"].waitForExistence(timeout: 20))
+            XCTAssertFalse(app.buttons["knowledge.scene"].exists)
+            let note = app.staticTexts["knowledge.note.11111111-1111-4111-8111-111111111111"]
+            reveal(note, app)
+            XCTAssertTrue(app.staticTexts[chinese ? "适用条件" : "Applies when"].exists)
+            capture("question-\(locale)-answered", app)
+            if !chinese {
+                app.tabBars.buttons["Profile"].tap()
+                let paused = try await control([:])
+                try await Task.sleep(for: .seconds(32))
+                let hidden = try await control([:])
+                XCTAssertEqual(hidden["reads"] as? Int, paused["reads"] as? Int, "Hidden question must not refresh after its snapshot expires")
+                app.tabBars.buttons["Ask"].tap()
+                XCTAssertTrue(app.staticTexts["knowledge.answer.answered"].waitForExistence(timeout: 20))
+            }
+            _ = try await control(["revoked": true])
+            for _ in 0..<6 where !app.buttons["knowledge.refresh"].isHittable { app.swipeDown() }
+            app.buttons["knowledge.refresh"].tap()
+            XCTAssertTrue(app.staticTexts["knowledge.answer.partial"].waitForExistence(timeout: 20))
+            XCTAssertTrue(app.staticTexts["knowledge.gap.revoked"].exists); XCTAssertFalse(note.exists)
+            capture("question-\(locale)-partial", app)
+            _ = try await control(["expired": true]); app.buttons["knowledge.refresh"].tap()
+            XCTAssertTrue(app.staticTexts["knowledge.answer.no_answer"].waitForExistence(timeout: 20))
+            XCTAssertTrue(app.staticTexts["knowledge.gap.expired"].exists)
+            _ = try await control(["disabled": true]); app.buttons["knowledge.refresh"].tap()
+            XCTAssertTrue(app.staticTexts["knowledge.unavailable"].waitForExistence(timeout: 20))
+            XCTAssertFalse(app.staticTexts["knowledge.answer.no_answer"].exists)
+            capture("question-\(locale)-disabled", app)
+            app.terminate(); return
+        }
         app.tabBars.buttons[chinese ? "探索" : "Explore"].tap()
         XCTAssertTrue(app.staticTexts["knowledge.empty"].waitForExistence(timeout: 20))
         let state = try await control([:])

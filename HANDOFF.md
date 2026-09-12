@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 #205/#206: actual Staging39 publication and native bilingual reader/restart/logout observed; read/Ops disabled and WAF restored. PR339 Native CI initially failed shared-header contrast; minimal wordmark-height fix passes original en/zh light/dark Ask/Trip audits locally, fresh CI pending. PR340 reviewed-selection preparation merged657d882; actual Ask grounding remains pending.
+状态：S2 #206: PR339/d2360fc and PR340/657d882 merged. New read-only native Ask boarding-document question implemented on codex/s2-knowledge-intent-20260913; PostgreSQL9, real local credential/API9, native8 unit and4 bilingual UI, contract253/static22 passed. No model call or saved ServiceTask/history is claimed. Staging remains39/read+Ops off; fresh encrypted backup/isolated restore PASS. PR/CI and actual Staging question integration pending; Production unchanged.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -53,6 +53,8 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- Reviewed-question local: SQL9/9 including post-base publication revocation barrier and50→51 capacity; actual GoTrue/native credential/Next API9/9; native Knowledge8/8 unit and4/4 bilingual UI incl32s hidden-tab no-refresh; final navigation-title English question1/1; contracts253/253, static22, build/lint/typecheck pass. SQL and native independent review0Critical/0Important after two fixes. Raw logs/xcresults remain recorded. No model/ServiceTask/remote question acceptance. See artifacts/VPJ-16/reviewed-question-20260913/verification.md.
+- PR339/d2360fc delivery: head2cfbb44 Native34708671075 and Quality34708671157/Preview PASS; default CI XCTest33/5skip/0fail,9Swift Testing and8standard UI pass,13opt-in UI skips. Separate final knowledge UI2/2 PASS. Header-fit corrects newly enlarged brand footprint without asset changes/cropping or audit exemptions. Production attempt dpl_9ia35mAVctgu781miJaUxt8js4rC CANCELED, aliases and shared staging preserved. See artifacts/VPJ-16/native-knowledge-20260913/delivery/verification.md.
 - Delivery: PR301/28a2d44 exactHEADafa83a5 independent review0/0; Native34471256512, Quality34471256572, Budget34471256522 and Vercel passed, merged tree matched and post-merge docs passed. Simulator CI now uses complete ad-hoc test signing plus an owned fresh device and explicit boot readiness; assertions/audit types are unchanged. Local full runner21pass/0fail/8API-environment skips; separate real API evidence remains underVPJ-05. Initial Keychain, audit-service, launch and destination-format failures remain recorded.
 - Foundation evidence: PR302/8175e39 exactHEAD5459c01 review0/0 and Quality/Vercel passed. iOS17 CJK comparison hadproduction2FAIL/SwiftUI2FAIL/UIKit2PASS; element captures showed complete text, with duplicated full-screen capture limitations disclosed. No production UI was changed or original audit failure waived.
 - VPJ-05 local same-Trip: real Swift/API persistence, reciprocal Web/iOS Trip IDs, bilingual normal/maximum UI and desktop/390px browser checks passed. Unit92/contract199/evals25/security99/E2E40 and build/static22 passed. Both local identity/Trip integration opt-ins ran:31pass/0fail/10budget-environment skips, aggregate INCOMPLETE. A fixed-sleep identity observation failed first; a controlled backend-PID lock barrier corrected the test and passed. Real27→28 data-preserving upgrade passed. See artifacts/VPJ-05/verification.md; hard locks/external orders and remote/full product acceptance remain unknown/unrun.
@@ -110,7 +112,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Finish PR339 fresh CI/ordinary merge under the production build guard, then #206 first-party grounded Ask: persist scope and explicit intent, use bounded server retrieval and deterministic reviewed blocks, revalidate completion/history. Prefer model intent classification without sending first-party facts to the model; preserve actual user consent and ServiceTask budget boundaries.
+Finish this #206 question slice: commit/PR required CI, guarded Staging39→40 additive RPC and actual first-party source/native answer verification, then preserve cleanup and continue broader Ask ServiceTask/history grounding. Do not call a model to repeat an explicitly selected question, reuse a fake provider policy, or treat this non-persistent question as full Ask acceptance. Current workspace /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

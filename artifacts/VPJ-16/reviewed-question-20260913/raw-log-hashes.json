@@ -1,0 +1,58 @@
+{
+  "db-fixture-initial-failure.log": {
+    "rawSha256": "26cf35eb79155385dbc72c4917a4e8c56a9e67bb9e8b79139319f185f9307c03",
+    "source": "/Users/jtcao/Library/Caches/visepanda/claim-selection-merge-20260913/question-db-1.log"
+  },
+  "db-barrier-initial-failure.log": {
+    "rawSha256": "18b96688ccb2ec4a3ae51aa5d514936515832926341b69dca9f5a171921212f0",
+    "source": "/Users/jtcao/Library/Caches/visepanda/claim-selection-merge-20260913/question-db-3.log"
+  },
+  "database.log": {
+    "rawSha256": "5e455d1e469b52297c1af971eab309fd95ce9b115e18a6498e004fc4b0405be7",
+    "source": "/Users/jtcao/Library/Caches/visepanda/claim-selection-merge-20260913/question-db-5.log"
+  },
+  "api.log": {
+    "rawSha256": "b35c33d32619d6e023c49a5c8543cd5f669138c5797c94f81454d3533f97cc4a",
+    "source": "/Users/jtcao/Library/Caches/visepanda/claim-selection-merge-20260913/question-api-1.log"
+  },
+  "native-unit.log": {
+    "rawSha256": "2e988233aed1bd55e2ec5f38db76bb42264332744d7124a212cf0cbd29ddfd7f",
+    "source": "/Users/jtcao/Library/Caches/visepanda/claim-selection-merge-20260913/question-native-unit-1.log"
+  },
+  "native-ui.log": {
+    "rawSha256": "6730688523e8aa03ca8c5010ea889724ce88535b7b37b57d3d6809d1bf7f81e6",
+    "source": "/Users/jtcao/Library/Caches/visepanda/claim-selection-merge-20260913/question-native-ui-2.log"
+  },
+  "contracts.log": {
+    "rawSha256": "6296df5bc283fbcc647b62c631176d84df529c78e09a5d75a817f4439debeeab",
+    "source": "/Users/jtcao/Library/Caches/visepanda/claim-selection-merge-20260913/question-contract-suite.log"
+  },
+  "static.log": {
+    "rawSha256": "da5cf0f063f61dd38d889cc4be46cbe2c891334a105199a0f1a4fd363c82fd09",
+    "source": "/Users/jtcao/Library/Caches/visepanda/claim-selection-merge-20260913/question-static.log"
+  },
+  "web-build.log": {
+    "rawSha256": "f0aee93cb0133ece9986bf95fffac182850f1e9cee0f547e9be80ffeef4c3ab2",
+    "source": "/Users/jtcao/Library/Caches/visepanda/claim-selection-merge-20260913/question-web-build.log"
+  },
+  "lint.log": {
+    "rawSha256": "f3a187e3d5e81785f7d41090855d52ba18d395777a7d8d9f9da11ce22b77ae1a",
+    "source": "/Users/jtcao/Library/Caches/visepanda/claim-selection-merge-20260913/question-lint-final.log"
+  },
+  "typecheck.log": {
+    "rawSha256": "6f18026581a6e3c57cf66ae86ee01550d14d5a25c7c3a2ceb557c10093e6e24a",
+    "source": "/Users/jtcao/Library/Caches/visepanda/claim-selection-merge-20260913/question-typecheck-final.log"
+  },
+  "native-ui-final.log": {
+    "rawSha256": "0f17222344058fcb58497e182e24b2a26ec2c1b9464adcea7d3ad4176ce72f99",
+    "source": "/Users/jtcao/Library/Caches/visepanda/claim-selection-merge-20260913/question-native-ui-final.log"
+  },
+  "native-build-final.log": {
+    "rawSha256": "3a5d6f27a4f00ff82c8dcc36fd4d0b7fd66804666fe98ff6057591a7b7402823",
+    "source": "/Users/jtcao/Library/Caches/visepanda/claim-selection-merge-20260913/question-native-build-final.log"
+  },
+  "docs.log": {
+    "rawSha256": "e1ae5733dbede372742c25a31423cc525a17d251104f7b0d1d3113e27cc7aa6a",
+    "source": "/Users/jtcao/Library/Caches/visepanda/claim-selection-merge-20260913/question-docs-final.log"
+  }
+}
