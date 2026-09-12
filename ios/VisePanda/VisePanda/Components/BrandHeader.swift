@@ -11,7 +11,9 @@ struct BrandHeader: View {
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
-                BrandWordmark(width: 156)
+                // Keep the established header height across asset aspect ratios.
+                // Fit the complete image; never stretch or crop the approved mark.
+                BrandWordmark(width: 156, maxHeight: 36)
 
                 Text("brand.tagline")
                     .font(.caption)
@@ -28,12 +30,13 @@ struct BrandHeader: View {
 // The heart wordmark uses a complete 3:1 transparent canvas.
 struct BrandWordmark: View {
     let width: CGFloat
+    var maxHeight: CGFloat? = nil
 
     var body: some View {
         Image("BrandWordmark")
             .resizable()
             .scaledToFit()
-            .frame(width: width, height: width / 3)
+            .frame(width: width, height: maxHeight ?? width / 3, alignment: .leading)
             .environment(\.layoutDirection, .leftToRight)
             .accessibilityHidden(true)
     }

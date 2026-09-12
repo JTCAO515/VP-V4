@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 #205/#206: actual Staging39 and12-source publication/read/revoke verified (PR337/338 merged). Native SwiftUI first-party reader implemented; six state tests and bilingual UI2/2 pass, actual Staging en/zh IDs/source/restart/logout observed. Reader/Ops disabled,0active members, WAF restored(version12). Native consumer delivery CI and Ask grounding remain pending.
+状态：S2 #205/#206: actual Staging39 publication and native bilingual reader/restart/logout observed; read/Ops disabled and WAF restored. PR339 Native CI initially failed shared-header contrast; minimal wordmark-height fix passes original en/zh light/dark Ask/Trip audits locally, fresh CI pending. PR340 reviewed-selection preparation merged657d882; actual Ask grounding remains pending.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -110,7 +110,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Complete native knowledge consumer required CI and guarded merge, then integrate request-scoped Ask evidence/claim coverage and honest partial/gap outcomes. Reuse Staging39 and retained12 publications (11published/1revoked); preserve disabled defaults, existing S2 semantic FAIL and incomplete Issue acceptance. No production release.
+Finish PR339 fresh CI/ordinary merge under the production build guard, then #206 first-party grounded Ask: persist scope and explicit intent, use bounded server retrieval and deterministic reviewed blocks, revalidate completion/history. Prefer model intent classification without sending first-party facts to the model; preserve actual user consent and ServiceTask budget boundaries.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

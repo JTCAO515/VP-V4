@@ -43,3 +43,7 @@ This is real Staging data through a native Simulator UI, not a physical iPhone o
 - Manual source observation initially hit a refresh/loading interval, an obsolete scroll position, and the AX tool's `-x/-y` syntax requirement. These were observation failures, not new content writes. Fresh accessibility positions and a ready-state observation produced the saved source screenshot.
 - Periodic refresh currently clears/recreates cards and may reset scroll/disclosure position. Snapshot lifetime is at most30seconds; withdrawal is not instantaneous push. This UI limitation is retained, not hidden as seamless live updates.
 - No natural server token-expiry, physical device/VoiceOver/maximum-text, source-link external navigation, payment/SIM/rail/museum operation, Ask claim coverage or production acceptance in this run. JT deferred further physical-device checks. Existing S2 semantic FAIL remains unchanged.
+
+## Delivery CI regression
+
+Native34706592620 exposed offscreen contrast after the concurrently merged brand asset increased the shared header height. The final7-line BrandHeader change fits the full image into the established height; original bilingual light/dark Ask/Trip full audits pass locally. No audit filtering or experimental navigation changes were retained. See [regression evidence](ax-regression/verification.md). Fresh full CI remains required.
