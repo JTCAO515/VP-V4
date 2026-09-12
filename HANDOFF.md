@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 #195/#206: PR344 final code3278ed8 adds cookie-authenticated same-native-task Web readback. Real zh/en sources, expiry, reader-disable, logout/owner switch, offline/online and page-return passed; observed old metadata retention fixed. Final read/Ops off, members0, WAF26 restored. No new model work; production guard/aliases preserved. Full S1–S6 remains incomplete.
+状态：S2 #195/#206: PR344 merged1a539e1; real native zh/en knowledge-dependency failure→same-task repair now returns reviewed answers and Web reads both chains. Exactly4 settled attempts/0 unresolved; all services stopped, sessions logged out, read/Ops off, members0, WAF30 restored. Full S1–S6 remains incomplete.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -53,7 +53,8 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
-- PR344 code3278ed8: dedicated Staging41 Web reads original native English/Chinese Task/Turn and 12306 sources; 36s expiry samples hide stale facts without scroll/source-state loss; reader-off observation27.665s. Actual cross-tab logout/owner switch clears all answers, old30-row metadata list and Trip selector; offline/online and page-return passed, zh/en desktop390px and Arabic legacy checked. Quality34720232265, Budget34720232303 and Preview passed; authority review0/0; no model calls made. Actual OS freeze/background remains UNRUN. See artifacts/VPJ-07/grounded-web-read-20260913/verification.md.
+- Real Staging41 on main1a539e1/worker unchanged, native318f83d/backend8022b5a and Web3278ed8: each zh/en technical_failure root→repair answered keeps Task/parent and question; owner-scoped Web reads same2 chains. Four Qwen calls settled/0 unresolved,16440micros CNY conservative tariff, no user charge or invoice claim. Native/browser logout, clean service stop, read/Ops off, members0,WAF30 cleanup,users6/Trips3 and69 controlled Turns/attempts observed. Retain AX click/observer and SQL-login failures. See artifacts/VPJ-07/grounded-repair-20260913/verification.md.
+- PR344 merged1a539e1; actual browser code3278ed8: dedicated Staging41 Web reads original native English/Chinese Task/Turn and 12306 sources; 36s expiry samples hide stale facts without scroll/source-state loss; reader-off observation27.665s. Actual cross-tab logout/owner switch clears all answers, old30-row metadata list and Trip selector; offline/online and page-return passed, zh/en desktop390px and Arabic legacy checked. Final head3a6ee6f Quality34721215655, Budget34721215647 and Preview passed; authority review0/0; no model calls made. Actual OS freeze/background remains UNRUN. See artifacts/VPJ-07/grounded-web-read-20260913/verification.md.
 - Real grounded service on main2aa489d/native318f83d/backend8022b5a: zh/en each1 clarification+1 full restatement on one ServiceTask; queued Turn/task/parent IDs retained across native process restart with service stopped, then identical-config service restart auto-processed answer. Exactly4 real Qwen attempts settled/0 unresolved,15876micros CNY at conservative tariff; all four service runs stopped after idle polls. read/Ops off, members0, WAF22 cleanup, users6/Trips3 preserved. See artifacts/VPJ-07/grounded-service-20260913/verification.md.
 - PR342/2aa489d: exact318f83d Native34717138599, Quality34717138686, Budget34717138621 and Preview passed. Real Staging41 preserved77 original tables/data and declared schema invariants, users6/Trips3/published11/revoked1. v1 semantic2/12 failures retained and its policy revoked; v2 passed16/16 once each. Native zh/en answered/relaunch,40second source/scroll continuity and expired AX hiding passed; disable within16.76s, logout and cleanup/WAF20 passed. All18 v2+native attempts settled,0 unresolved; Production CANCELED. See artifacts/VPJ-16/grounded-ask-20260913/staging-delivery/verification.md.
 - PR341/e132baf delivery and real native Staging40 PASS at exactfc3f15d; read-switch removed facts by30s, logout cleared data; cleanup0/WAF14 and production CANCELED. See artifacts/VPJ-16/reviewed-question-20260913/staging-delivery/verification.md. Full grounded Ask and S1–S6 remain incomplete.
@@ -116,7 +117,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Continue S2 #195/#206/#196 with the remaining real technical-failure/system-repair and crash/lease recovery acceptance on the same durable ServiceTask; inspect current fault/recovery hooks and reuse existing native, Web-read and service evidence. Do not equate graceful idle service restart with crash-during-provider. Keep outcomes/attempts/unknown supplier cost explicit. Physical phone verification remains deferred by JT.
+Continue S2 #195/#196 with bounded real worker crash/lease recovery on controlled existing ServiceTasks and budgets. Inspect actual claim/lease/attempt checkpoints before execution; preserve unknown provider costs and verify terminal-once/cancel race within current contracts. Reuse grounded repair/native/Web evidence. Physical phone work remains deferred by JT; no Production release.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

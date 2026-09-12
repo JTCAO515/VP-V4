@@ -1,0 +1,54 @@
+{
+  "scope": "bounded latest question AX rows and composer; raw full snapshot retained privately",
+  "rawSha256": "75a1d13e8ba24ff3de2235dd317108f57e6aba10f8056d216b76beb5f7767d28",
+  "rows": [
+    {
+      "AXUniqueId": null,
+      "AXLabel": "我是持外国护照的成年人，乘坐中国内地境内铁路电子客票列车，进站乘车需要什么购票身份证件和车票凭证？",
+      "type": "StaticText",
+      "frame": {
+        "height": 64.33333333333348,
+        "y": 1086.6666666666665,
+        "width": 337.3333333333333,
+        "x": 32
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "grounded.status",
+      "AXLabel": "未能完成",
+      "type": "StaticText",
+      "frame": {
+        "height": 20.333333333333258,
+        "y": 1161,
+        "width": 67.66666666666666,
+        "x": 32
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "native-ask.intent",
+      "AXLabel": "重试当前问题",
+      "type": "StaticText",
+      "frame": {
+        "y": 559.6666666666667,
+        "height": 14.333333333333371,
+        "width": 71.66666666666666,
+        "x": 16
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "native-ask.send",
+      "AXLabel": "发送",
+      "type": "Button",
+      "frame": {
+        "y": 740.6666666666666,
+        "height": 34.33333333333337,
+        "width": 58,
+        "x": 328
+      },
+      "enabled": false
+    }
+  ]
+}

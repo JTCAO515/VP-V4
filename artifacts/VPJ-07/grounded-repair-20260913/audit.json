@@ -1,0 +1,40 @@
+{
+  "at": "2026-09-12T22:10:46.256Z",
+  "status": "PASS",
+  "scope": "actual native controlled knowledge-reader dependency failure followed by same-task repair; not worker crash or vendor failure",
+  "locales": [
+    {
+      "locale": "en",
+      "taskId": "d484a8ef-a1e8-43d5-87bf-44b35831077e",
+      "failedTurnId": "2c6f23d2-7809-4a1a-90e7-3d5803a16654",
+      "repairTurnId": "b0007442-3b06-48b9-9262-1dd94014dcbf",
+      "sameQuestion": true,
+      "relationship": "repair",
+      "serviceStopped": true
+    },
+    {
+      "locale": "zh",
+      "taskId": "937a9fb4-5c56-46a0-8cc9-ad3fe303efc2",
+      "failedTurnId": "89dcf8ae-80ea-46cc-91ef-26857a8aa2d2",
+      "repairTurnId": "8090f432-9059-49fa-8cb5-1d76ad5130a7",
+      "sameQuestion": true,
+      "relationship": "repair",
+      "serviceStopped": true
+    }
+  ],
+  "budget": {
+    "attempts": 4,
+    "settled": 4,
+    "unresolved": 0,
+    "actualMicros": 16440,
+    "taskCount": 2
+  },
+  "currency": "CNY",
+  "costBasis": "validated usage and conservative tariff, not supplier invoice or user charge",
+  "invocations": [
+    "07e10b1d-f6c7-4565-b5b1-33dd67d56993",
+    "18ddcc53-c2c9-48da-b7e7-4c3302e8d4a6",
+    "00853b2b-ea81-4582-97e1-69c84cba3567",
+    "9762b19c-ef60-4d62-b736-bcfc8332001d"
+  ]
+}

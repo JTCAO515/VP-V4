@@ -1,0 +1,21 @@
+{
+  "at": "2026-09-12T22:02:53.303Z",
+  "row": {
+    "city": "shanghai",
+    "intent": "technical_failure",
+    "locale": "en",
+    "task_id": "d484a8ef-a1e8-43d5-87bf-44b35831077e",
+    "turn_id": "2c6f23d2-7809-4a1a-90e7-3d5803a16654",
+    "created_at": "2026-09-12T22:02:18.311477+00:00",
+    "input_text": "For an adult with a foreign passport on a domestic mainland China train with an e-ticket, which original booking ID and ticket proof are needed to board?",
+    "output_kind": "technical_failure",
+    "output_text": "reviewed-answer-v1",
+    "completed_at": "2026-09-12T22:02:28.240998+00:00",
+    "relationship": "new_goal",
+    "request_scope": "unknown",
+    "task_attempts": 1,
+    "parent_turn_id": null,
+    "original_outcome": "technical_failure",
+    "settled_attempts": 1
+  }
+}
