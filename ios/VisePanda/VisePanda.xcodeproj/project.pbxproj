@@ -282,6 +282,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = VisePanda;
                 INFOPLIST_FILE = VisePanda/NativeEnvironment.plist;
                 VP_NATIVE_ENVIRONMENT = "";
+                VP_NATIVE_TASK_CONTEXT = "";
                 VP_NATIVE_STAGING_API_ORIGIN = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -311,6 +312,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = VisePanda;
                 INFOPLIST_FILE = VisePanda/NativeEnvironment.plist;
                 VP_NATIVE_ENVIRONMENT = "";
+                VP_NATIVE_TASK_CONTEXT = "";
                 VP_NATIVE_STAGING_API_ORIGIN = "";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

@@ -32,7 +32,7 @@ nonisolated final class NativeIdentityUITests: XCTestCase {
         evidence.name = "Real local owner profile"
         evidence.lifetime = .keepAlways
         add(evidence)
-        XCTAssertEqual(application.staticTexts["native.session.status"].label, "Local session active")
+        XCTAssertEqual(application.staticTexts["native.session.status"].label, "Session active")
     }
 
     @MainActor

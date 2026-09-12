@@ -41,7 +41,7 @@ export async function createNativeTextEnvironment(){
    const client=createClient(e.API_URL,key,{auth:{persistSession:false,autoRefreshToken:false}}),signup=await client.auth.signUp({email,password});
    if(!signup.data.user || !signup.data.session || signup.error)throw Error('Synthetic local account creation failed');
    const user={id:signup.data.user.id,email,password,scopeId:randomUUID()};users.push(user);
-   sql(`insert into public.model_budget_scopes(id,owner_id,currency,limit_micros,task_limit_micros,task_attempt_limit,concurrency_limit,enabled,expires_at) values('${user.scopeId}','${user.id}','CNY',1000000,10000,3,2,true,now()+interval '1 day');insert into public.model_budget_provider_limits(scope_id,provider,model,price_version,limit_micros,attempt_limit_micros,enabled) values('${user.scopeId}','qwen','${PROTOCOL_MODELS.qwen}','synthetic-v1',1000000,1000,true);`);
+   sql(`insert into public.model_budget_scopes(id,owner_id,currency,limit_micros,task_limit_micros,task_attempt_limit,concurrency_limit,enabled,expires_at) values('${user.scopeId}','${user.id}','CNY',1000000,10000,4,2,true,now()+interval '1 day');insert into public.model_budget_provider_limits(scope_id,provider,model,price_version,limit_micros,attempt_limit_micros,enabled) values('${user.scopeId}','qwen','${PROTOCOL_MODELS.qwen}','synthetic-v1',1000000,1000,true);`);
   }
   model=createServer(async(req,res)=>{
    if(req.url==='/release'){req.resume();releaseModels();res.end('{}');return;}

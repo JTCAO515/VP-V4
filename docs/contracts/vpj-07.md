@@ -294,6 +294,45 @@ and was withdrawn; the runtime remains v1. Both results and settled cost evidenc
 are retained in `artifacts/VPJ-07/task-context-staging-20260912/verification.md`.
 Native context integration and semantic acceptance remain separate open work.
 
+## Native task-context consumer (implementation under verification)
+
+The installed `VisePandaNativeTaskContext=task_history_v1` value, supplied through
+`VP_NATIVE_TASK_CONTEXT`, selects the v3 policy/consent/history/submission API.
+Empty defaults keep v1; unknown values fail closed. A launch flag selects v3 only
+for an already validated loopback API. Remote launch arguments cannot activate it.
+Cancellation remains the exact POST v1 Turn cancellation route and v1 response.
+
+Each root has a fresh ServiceTask and each clarification/repair keeps that task,
+thread and locale, referencing the confirmed parent. Acknowledgement moves the
+composer to awaiting before refreshing history. During a running app session, unknown POST results retain the
+exact pending request; recovery matches thread, input, locale and task relation
+under the same notice/policy, not only Turn ID. An explicit new-question action
+cannot discard an uncertain pending request.
+
+A complete chain has one root, no missing parent, no fork/cycle, consistent task
+and thread, legal predecessor outcomes and at most four Turns. A20-row history
+window is not proof of completeness. The latest incomplete task blocks restoration
+instead of selecting an older complete chain. A fourth clarification is displayed
+but cannot automatically create another Turn or reset the budget.
+
+The consent review binds mode, policy ID, notice version and hash. Temporary refresh
+failure hides read bodies while preserving recovery intent. On a changed notice,
+an old uncertain request cannot be resent under the new policy. The UI offers an
+explicit action to withdraw sharing under the old policy; only a confirmed response
+releases that pending request. Completed results remain retained. Logout/account
+changes clear local state and late responses remain fenced by NativeDataScope.
+
+This consumer does not fix the retained real-provider semantic failures. Local
+controlled-provider integration proves transport/SQL/UI behavior only; remote
+semantic acceptance, persistent worker operation and full #195/S2 remain open.
+
+The existing process-lifetime boundary above still applies to v3: local pending
+requests are not persisted across termination. Restart restores server-accepted,
+visible history without automatically resending an unacknowledged request. An empty
+history response is not proof that a prior in-flight POST cannot still commit;
+cross-process uncertain-submit deduplication is not established by this slice.
+Closing that window requires a separate persistence/consent and crash-recovery
+increment, not a claim inferred from ordinary relaunch tests.
 
 ## Explicit bounded-thinking experiment (2026-09-12)
 

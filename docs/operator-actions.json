@@ -313,7 +313,7 @@
       "id": "OA-MAIN-PRODUCTION-GUARD",
       "issue": 195,
       "class": "C",
-      "status": "open",
+      "status": "done",
       "createdAt": "2026-09-12T06:41:00+08:00",
       "action": "确认仅将 VP-V4 的 Vercel Ignored Build Step 设置为 production+main 时跳过构建、其余继续；保留当前线上 db5fb7b 和所有 Preview，然后合并已通过全部检查的 PR332。具体命令与四组本地验证已准备。",
       "whyHuman": "当前 Goal 明确生产发布另行确认；实时发现 main 自动部署开启，改变发布配置需指定授权。此前 main 合并已经触发 Production，不再将合并当成无发布副作用。",
@@ -322,7 +322,9 @@
       "verify": "Read back commandForIgnoringBuildStep and unchanged production target; after ordinary merge inspect skipped main production build and retained Preview behavior.",
       "dependencyEffect": "Pauses merges that automatically deploy to Production; existing Staging experiments and independent preparation remain allowed.",
       "rollback": "Clear only commandForIgnoringBuildStep to its prior null value after authorization; do not trigger a production release or rewrite ledgers.",
-      "nextSafeIssue": 195
+      "nextSafeIssue": 195,
+      "resolvedAt": "2026-09-12T02:07:52.614369+00:00",
+      "resolution": "JT明确回复“同意方案”。仅修改commandForIgnoringBuildStep；前后环境元数据、域名分支、WAF和Preview配置一致。PR332合并938f597后production构建dpl_BML4hHj6EqzoL3xJeJYRBrbRkCSL为CANCELED，全部五个既有生产alias仍指向db5fb7b/dpl_AEcvPbiv2tcX5k8uGRtmBp3PPZPv，Staging仍指向b542ead。项目targets.production可指向最新取消尝试，不代表线上alias变化。"
     }
   ]
 }
