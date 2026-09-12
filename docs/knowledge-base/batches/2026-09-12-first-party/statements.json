@@ -1,0 +1,930 @@
+{
+  "schemaVersion": "editorial-statement-batch/1",
+  "batch": "2026-09-12-first-party",
+  "status": "editorial_content_not_published",
+  "sourceReviewDate": "2026-09-12",
+  "recordCount": 12,
+  "sourceMetadata": [
+    {
+      "sourceKey": "n-s02",
+      "priorSourceId": "N-S02",
+      "publishedAt": null,
+      "dateNote": "URL storage date is not a publication date.",
+      "observedAt": "2026-09-12",
+      "retrievalMethod": "Direct official HTTPS; PDF extracted in memory with pypdf after web parser failure.",
+      "documentBytes": 24891919,
+      "documentSha256": "691eafcd9d53c5fb339e59edf207e451cfb985d78fa6261635f22df68d520fee",
+      "changeAssessment": "Hash identical to 2026-09-11 research; selected pages unchanged."
+    },
+    {
+      "sourceKey": "n-s03",
+      "priorSourceId": "N-S03",
+      "publishedAt": null,
+      "edition": "2025",
+      "observedAt": "2026-09-12",
+      "changeAssessment": "Selected SIM and station-verification guidance remains supported; no full-site change search."
+    },
+    {
+      "sourceKey": "n-s04",
+      "priorSourceId": "N-S04",
+      "publishedAt": null,
+      "observedAt": "2026-09-12",
+      "changeAssessment": "Selected Q2/Q11 remain supported; mixed historical FAQ rules are not expanded."
+    },
+    {
+      "sourceKey": "cq-museum",
+      "priorSourceId": "CQ-MUSEUM",
+      "publishedAt": "2025-09-30",
+      "effectiveFrom": "2025-10-01",
+      "observedAt": "2026-09-12",
+      "changeAssessment": "Selected notice remains accessible and supports retained conditions; no on-site validation."
+    }
+  ],
+  "records": [
+    {
+      "editorialId": "PAY-01",
+      "parent": "N-02",
+      "sourceObservedAt": "2026-09-12",
+      "title": "外卡受理标识核对",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "international_card_payment",
+          "predicate": "requires_action",
+          "objectId": "merchant_acceptance_check",
+          "conditions": [
+            "mainland_guidance",
+            "current_operator_check",
+            "card_issuer_merchant_support"
+          ],
+          "exclusions": [
+            "no_acceptance_success_guarantee",
+            "no_fee_fx_guarantee"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "shanghai",
+            "beijing",
+            "guangzhou",
+            "chongqing"
+          ],
+          "scene": "payment",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "zh": {
+            "text": "刷境外卡前核对商户受理标识；未见标识时询问收银员。",
+            "conditions": [
+              "中国大陆通用指引，具体服务以当前运营方为准。",
+              "使用前查看主管机关或运营方的最新指引。",
+              "具体银行卡、发卡行和商户须支持该交易。"
+            ],
+            "exclusions": [
+              "不保证任何商户均受理，也不保证交易成功。",
+              "不保证免手续费或特定汇率。"
+            ]
+          },
+          "en": {
+            "text": "Check merchant card acceptance; ask the cashier if no network sign is shown.",
+            "conditions": [
+              "General mainland China guidance; confirm the specific service with its current operator.",
+              "Check the latest official or operator guidance before use.",
+              "The specific card, issuer and merchant must support the transaction."
+            ],
+            "exclusions": [
+              "No universal merchant acceptance or transaction-success guarantee.",
+              "No fee-free or exchange-rate guarantee."
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "n-s02",
+            "revisionLabel": "20260912-pdf-p4",
+            "publisher": "中国人民银行 / People’s Bank of China",
+            "uri": "https://www.pbc.gov.cn/goutongjiaoliu/attachDir/2025/12/2025123019292710592.pdf",
+            "locator": "Printed page 03 / PDF page 4, 银行卡",
+            "snippet": "Editorial synopsis (not a quotation): Check the merchant’s acceptance sign or ask its cashier about the card.",
+            "usageDeclaration": "Original editorial factual synopsis and citation metadata only; not a source quotation or official translation. No blanket licence, raw-page, media, corpus, embedding or TTS permission is asserted. Public accessibility is not a licence."
+          }
+        ]
+      },
+      "useBasis": "original_factual_summary",
+      "useNote": "Editorial proposal for our original bilingual fact statements and source metadata only. Source synopsis is not a quotation. No blanket commercial, media, raw-page, embedding or TTS licence is claimed. Publication and request eligibility have not been performed; applicable development policy and source-specific restrictions remain in force."
+    },
+    {
+      "editorialId": "PAY-02",
+      "parent": "N-03",
+      "sourceObservedAt": "2026-09-12",
+      "title": "移动支付绑卡与商户扫码",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "alipay_weixin_pay",
+          "predicate": "offers_procedure",
+          "objectId": "supported_card_merchant_qr_payment",
+          "conditions": [
+            "mainland_guidance",
+            "current_operator_check",
+            "card_issuer_merchant_support",
+            "app_issuer_terms_apply",
+            "current_app_fees_and_limits"
+          ],
+          "exclusions": [
+            "no_acceptance_success_guarantee",
+            "no_fee_fx_guarantee",
+            "no_personal_transfer_support"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "shanghai",
+            "beijing",
+            "guangzhou",
+            "chongqing"
+          ],
+          "scene": "payment",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "zh": {
+            "text": "支付宝或微信支付可按应用提示绑受支持的卡，再扫描兼容商家码或出示付款码。",
+            "conditions": [
+              "中国大陆通用指引，具体服务以当前运营方为准。",
+              "使用前查看主管机关或运营方的最新指引。",
+              "具体银行卡、发卡行和商户须支持该交易。",
+              "银行卡支持、发卡行核验及应用条款以交易时为准。",
+              "手续费和支付额度以应用当前提示及服务条款为准。"
+            ],
+            "exclusions": [
+              "不保证任何商户均受理，也不保证交易成功。",
+              "不保证免手续费或特定汇率。",
+              "不推断境外卡支持个人转账。"
+            ]
+          },
+          "en": {
+            "text": "Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.",
+            "conditions": [
+              "General mainland China guidance; confirm the specific service with its current operator.",
+              "Check the latest official or operator guidance before use.",
+              "The specific card, issuer and merchant must support the transaction.",
+              "Card support, issuer verification and app terms apply at transaction time.",
+              "Check current app prompts and service terms for fees and payment limits."
+            ],
+            "exclusions": [
+              "No universal merchant acceptance or transaction-success guarantee.",
+              "No fee-free or exchange-rate guarantee.",
+              "Do not infer personal-transfer support for overseas cards."
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "n-s02",
+            "revisionLabel": "20260912-pdf-p5-10",
+            "publisher": "中国人民银行 / People’s Bank of China",
+            "uri": "https://www.pbc.gov.cn/goutongjiaoliu/attachDir/2025/12/2025123019292710592.pdf",
+            "locator": "Printed pages 04–09 / PDF pages 5–10, 支付宝 and 微信支付",
+            "snippet": "Editorial synopsis (not a quotation): Alipay and Weixin Pay describe registration, supported-card linking and merchant-code payment.",
+            "usageDeclaration": "Original editorial factual synopsis and citation metadata only; not a source quotation or official translation. No blanket licence, raw-page, media, corpus, embedding or TTS permission is asserted. Public accessibility is not a licence."
+          }
+        ]
+      },
+      "useBasis": "original_factual_summary",
+      "useNote": "Editorial proposal for our original bilingual fact statements and source metadata only. Source synopsis is not a quotation. No blanket commercial, media, raw-page, embedding or TTS licence is claimed. Publication and request eligibility have not been performed; applicable development policy and source-specific restrictions remain in force."
+    },
+    {
+      "editorialId": "PAY-03",
+      "parent": "N-04",
+      "sourceObservedAt": "2026-09-12",
+      "title": "国际卡ATM取人民币",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "rmb_cash_access",
+          "predicate": "offers_procedure",
+          "objectId": "international_card_atm_withdrawal",
+          "conditions": [
+            "mainland_guidance",
+            "current_operator_check",
+            "operator_service_hours_charges",
+            "atm_card_supported"
+          ],
+          "exclusions": [
+            "no_every_atm_hotel_exchange",
+            "no_fixed_exchange_rate"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "shanghai",
+            "beijing",
+            "guangzhou",
+            "chongqing"
+          ],
+          "scene": "payment",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "zh": {
+            "text": "需要人民币现金时，可选择受理所持国际卡的ATM。",
+            "conditions": [
+              "中国大陆通用指引，具体服务以当前运营方为准。",
+              "使用前查看主管机关或运营方的最新指引。",
+              "向具体经营方确认服务可用性、营业时间和费用。",
+              "ATM及发卡行须支持所持银行卡取现。"
+            ],
+            "exclusions": [
+              "不保证每台ATM或酒店均提供所需取现或兑换服务。",
+              "不保证固定兑换汇率，请向经营方确认。"
+            ]
+          },
+          "en": {
+            "text": "For RMB cash, use an ATM that accepts your international card.",
+            "conditions": [
+              "General mainland China guidance; confirm the specific service with its current operator.",
+              "Check the latest official or operator guidance before use.",
+              "Confirm available services, opening hours and charges with the specific operator.",
+              "The ATM and issuer must support withdrawals with your card."
+            ],
+            "exclusions": [
+              "No guarantee that every ATM or hotel offers the required withdrawal or exchange service.",
+              "No fixed exchange-rate guarantee; confirm with the operator."
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "n-s02",
+            "revisionLabel": "20260912-pdf-p16",
+            "publisher": "中国人民银行 / People’s Bank of China",
+            "uri": "https://www.pbc.gov.cn/goutongjiaoliu/attachDir/2025/12/2025123019292710592.pdf",
+            "locator": "Printed page 15 / PDF page 16, 现金",
+            "snippet": "Editorial synopsis (not a quotation): International-card ATMs and marked exchange services are ways to obtain RMB cash; check the specific operator.",
+            "usageDeclaration": "Original editorial factual synopsis and citation metadata only; not a source quotation or official translation. No blanket licence, raw-page, media, corpus, embedding or TTS permission is asserted. Public accessibility is not a licence."
+          }
+        ]
+      },
+      "useBasis": "original_factual_summary",
+      "useNote": "Editorial proposal for our original bilingual fact statements and source metadata only. Source synopsis is not a quotation. No blanket commercial, media, raw-page, embedding or TTS licence is claimed. Publication and request eligibility have not been performed; applicable development policy and source-specific restrictions remain in force."
+    },
+    {
+      "editorialId": "PAY-04",
+      "parent": "N-04",
+      "sourceObservedAt": "2026-09-12",
+      "title": "有兑换标识的外币兑换服务",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "rmb_cash_access",
+          "predicate": "offers_procedure",
+          "objectId": "marked_currency_exchange",
+          "conditions": [
+            "mainland_guidance",
+            "current_operator_check",
+            "operator_service_hours_charges"
+          ],
+          "exclusions": [
+            "no_every_atm_hotel_exchange",
+            "no_fixed_exchange_rate"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "shanghai",
+            "beijing",
+            "guangzhou",
+            "chongqing"
+          ],
+          "scene": "payment",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "zh": {
+            "text": "外币兑换可查找有兑换标识的网点，并向经营方确认服务。",
+            "conditions": [
+              "中国大陆通用指引，具体服务以当前运营方为准。",
+              "使用前查看主管机关或运营方的最新指引。",
+              "向具体经营方确认服务可用性、营业时间和费用。"
+            ],
+            "exclusions": [
+              "不保证每台ATM或酒店均提供所需取现或兑换服务。",
+              "不保证固定兑换汇率，请向经营方确认。"
+            ]
+          },
+          "en": {
+            "text": "Find a marked currency-exchange outlet and confirm its service.",
+            "conditions": [
+              "General mainland China guidance; confirm the specific service with its current operator.",
+              "Check the latest official or operator guidance before use.",
+              "Confirm available services, opening hours and charges with the specific operator."
+            ],
+            "exclusions": [
+              "No guarantee that every ATM or hotel offers the required withdrawal or exchange service.",
+              "No fixed exchange-rate guarantee; confirm with the operator."
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "n-s02",
+            "revisionLabel": "20260912-pdf-p16",
+            "publisher": "中国人民银行 / People’s Bank of China",
+            "uri": "https://www.pbc.gov.cn/goutongjiaoliu/attachDir/2025/12/2025123019292710592.pdf",
+            "locator": "Printed page 15 / PDF page 16, 现金",
+            "snippet": "Editorial synopsis (not a quotation): International-card ATMs and marked exchange services are ways to obtain RMB cash; check the specific operator.",
+            "usageDeclaration": "Original editorial factual synopsis and citation metadata only; not a source quotation or official translation. No blanket licence, raw-page, media, corpus, embedding or TTS permission is asserted. Public accessibility is not a licence."
+          }
+        ]
+      },
+      "useBasis": "original_factual_summary",
+      "useNote": "Editorial proposal for our original bilingual fact statements and source metadata only. Source synopsis is not a quotation. No blanket commercial, media, raw-page, embedding or TTS licence is claimed. Publication and request eligibility have not been performed; applicable development policy and source-specific restrictions remain in force."
+    },
+    {
+      "editorialId": "SIM-01",
+      "parent": "N-05",
+      "sourceObservedAt": "2026-09-12",
+      "title": "中国运营商SIM卡申请证件",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "china_carrier_sim_application",
+          "predicate": "requires_document",
+          "objectId": "passport_or_foreign_permanent_resident_id",
+          "conditions": [
+            "mainland_guidance",
+            "current_operator_check",
+            "branch_device_plan_check"
+          ],
+          "exclusions": [
+            "no_esim_or_unrestricted_internet",
+            "no_instant_all_branch_fixed_tariff"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "shanghai",
+            "beijing",
+            "guangzhou",
+            "chongqing"
+          ],
+          "scene": "connectivity",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "zh": {
+            "text": "可带护照或外国人永久居留身份证到电信、移动或联通营业厅申请SIM卡。",
+            "conditions": [
+              "中国大陆通用指引，具体服务以当前运营方为准。",
+              "使用前查看主管机关或运营方的最新指引。",
+              "营业厅办理能力、手机兼容性和套餐细节须向运营商确认。"
+            ],
+            "exclusions": [
+              "不保证eSIM可用或互联网不受限制。",
+              "不保证即时开通、所有营业厅均可办理或固定资费。"
+            ]
+          },
+          "en": {
+            "text": "Apply for a SIM at a China Telecom, China Mobile or China Unicom outlet with a passport or Foreign Permanent Resident ID Card.",
+            "conditions": [
+              "General mainland China guidance; confirm the specific service with its current operator.",
+              "Check the latest official or operator guidance before use.",
+              "Confirm branch capability, handset compatibility and plan details with the carrier."
+            ],
+            "exclusions": [
+              "No eSIM availability or unrestricted-internet guarantee.",
+              "No instant activation, all-branch service or fixed-tariff guarantee."
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "n-s03",
+            "revisionLabel": "20260912-sim",
+            "publisher": "商务部；中国政府网 / Ministry of Commerce; State Council portal",
+            "uri": "https://english.www.gov.cn/2025special/bizexpatsinchina2025",
+            "locator": "Daily Life Services / I. SIM card, paragraphs (I)–(II) and data-plan note",
+            "snippet": "Editorial synopsis (not a quotation): Carrier outlets accept passport or permanent-resident ID applications; plans and data allowances vary.",
+            "usageDeclaration": "Original editorial factual synopsis and citation metadata only; not a source quotation or official translation. No blanket licence, raw-page, media, corpus, embedding or TTS permission is asserted. Public accessibility is not a licence."
+          }
+        ]
+      },
+      "useBasis": "original_factual_summary",
+      "useNote": "Editorial proposal for our original bilingual fact statements and source metadata only. Source synopsis is not a quotation. No blanket commercial, media, raw-page, embedding or TTS licence is claimed. Publication and request eligibility have not been performed; applicable development policy and source-specific restrictions remain in force."
+    },
+    {
+      "editorialId": "SIM-02",
+      "parent": "N-05",
+      "sourceObservedAt": "2026-09-12",
+      "title": "通信套餐额度核对",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "china_carrier_sim_application",
+          "predicate": "requires_action",
+          "objectId": "plan_allowance_check",
+          "conditions": [
+            "mainland_guidance",
+            "current_operator_check",
+            "branch_device_plan_check"
+          ],
+          "exclusions": [
+            "no_esim_or_unrestricted_internet",
+            "no_instant_all_branch_fixed_tariff"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "shanghai",
+            "beijing",
+            "guangzhou",
+            "chongqing"
+          ],
+          "scene": "connectivity",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "zh": {
+            "text": "通信套餐因运营商而异，申请时核对通话和流量额度。",
+            "conditions": [
+              "中国大陆通用指引，具体服务以当前运营方为准。",
+              "使用前查看主管机关或运营方的最新指引。",
+              "营业厅办理能力、手机兼容性和套餐细节须向运营商确认。"
+            ],
+            "exclusions": [
+              "不保证eSIM可用或互联网不受限制。",
+              "不保证即时开通、所有营业厅均可办理或固定资费。"
+            ]
+          },
+          "en": {
+            "text": "Plans vary by carrier; check call and data allowances.",
+            "conditions": [
+              "General mainland China guidance; confirm the specific service with its current operator.",
+              "Check the latest official or operator guidance before use.",
+              "Confirm branch capability, handset compatibility and plan details with the carrier."
+            ],
+            "exclusions": [
+              "No eSIM availability or unrestricted-internet guarantee.",
+              "No instant activation, all-branch service or fixed-tariff guarantee."
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "n-s03",
+            "revisionLabel": "20260912-sim",
+            "publisher": "商务部；中国政府网 / Ministry of Commerce; State Council portal",
+            "uri": "https://english.www.gov.cn/2025special/bizexpatsinchina2025",
+            "locator": "Daily Life Services / I. SIM card, paragraphs (I)–(II) and data-plan note",
+            "snippet": "Editorial synopsis (not a quotation): Carrier outlets accept passport or permanent-resident ID applications; plans and data allowances vary.",
+            "usageDeclaration": "Original editorial factual synopsis and citation metadata only; not a source quotation or official translation. No blanket licence, raw-page, media, corpus, embedding or TTS permission is asserted. Public accessibility is not a licence."
+          }
+        ]
+      },
+      "useBasis": "original_factual_summary",
+      "useNote": "Editorial proposal for our original bilingual fact statements and source metadata only. Source synopsis is not a quotation. No blanket commercial, media, raw-page, embedding or TTS licence is claimed. Publication and request eligibility have not been performed; applicable development policy and source-specific restrictions remain in force."
+    },
+    {
+      "editorialId": "RAIL-01",
+      "parent": "N-06",
+      "sourceObservedAt": "2026-09-12",
+      "title": "车站护照身份核验",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "foreign_passport_rail_verification",
+          "predicate": "offers_procedure",
+          "objectId": "station_ticket_office_identity_check",
+          "conditions": [
+            "mainland_guidance",
+            "current_operator_check",
+            "adult_foreign_passport"
+          ],
+          "exclusions": [
+            "no_instant_verification_or_ticket_guarantee",
+            "no_all_pending_states_block_purchase"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "shanghai",
+            "beijing",
+            "guangzhou",
+            "chongqing"
+          ],
+          "scene": "rail",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "zh": {
+            "text": "线上核验未完成时，可持有效护照到铁路车站售票窗口核验。",
+            "conditions": [
+              "中国大陆通用指引，具体服务以当前运营方为准。",
+              "使用前查看主管机关或运营方的最新指引。",
+              "限成年外籍旅客有效护照场景；具体证件要求以12306及车站当前规定为准。"
+            ],
+            "exclusions": [
+              "不保证即时核验或有票。",
+              "不认定所有待核验状态均阻止购票。"
+            ]
+          },
+          "en": {
+            "text": "If online verification is incomplete, take a valid passport to a station ticket office for verification.",
+            "conditions": [
+              "General mainland China guidance; confirm the specific service with its current operator.",
+              "Check the latest official or operator guidance before use.",
+              "Adult foreign-passport scenario only; confirm current document requirements with 12306 and the station."
+            ],
+            "exclusions": [
+              "No instant verification or ticket-availability guarantee.",
+              "Do not infer that every pending verification state prevents purchase."
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "n-s03",
+            "revisionLabel": "20260912-train-verification",
+            "publisher": "商务部；中国政府网 / Ministry of Commerce; State Council portal",
+            "uri": "https://english.www.gov.cn/2025special/bizexpatsinchina2025",
+            "locator": "Daily Life Services / VI. Transportation / (I) Train / Ticket purchase / 2. Identity verification",
+            "snippet": "Editorial synopsis (not a quotation): A station ticket office offers passport identity verification; online state details require current 12306 guidance.",
+            "usageDeclaration": "Original editorial factual synopsis and citation metadata only; not a source quotation or official translation. No blanket licence, raw-page, media, corpus, embedding or TTS permission is asserted. Public accessibility is not a licence."
+          }
+        ]
+      },
+      "useBasis": "original_factual_summary",
+      "useNote": "Editorial proposal for our original bilingual fact statements and source metadata only. Source synopsis is not a quotation. No blanket commercial, media, raw-page, embedding or TTS licence is claimed. Publication and request eligibility have not been performed; applicable development policy and source-specific restrictions remain in force."
+    },
+    {
+      "editorialId": "RAIL-02",
+      "parent": "N-07",
+      "sourceObservedAt": "2026-09-12",
+      "title": "乘车使用购票证件原件",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "rail_eticket_boarding",
+          "predicate": "requires_document",
+          "objectId": "original_valid_booking_id",
+          "conditions": [
+            "mainland_guidance",
+            "current_operator_check",
+            "adult_foreign_passport",
+            "domestic_eticket_station_train_instructions"
+          ],
+          "exclusions": [
+            "no_universal_checkin_cutoff"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "shanghai",
+            "beijing",
+            "guangzhou",
+            "chongqing"
+          ],
+          "scene": "rail",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "zh": {
+            "text": "乘车时携带购票所用有效证件原件，用于进出站和乘车核验。",
+            "conditions": [
+              "中国大陆通用指引，具体服务以当前运营方为准。",
+              "使用前查看主管机关或运营方的最新指引。",
+              "限成年外籍旅客有效护照场景；具体证件要求以12306及车站当前规定为准。",
+              "限境内铁路电子客票行程，遵守实际车站、车次和证件处理指引。"
+            ],
+            "exclusions": [
+              "本条不能确定具体车站或车次的检票截止时间。"
+            ]
+          },
+          "en": {
+            "text": "Carry the original valid booking ID for station and boarding checks.",
+            "conditions": [
+              "General mainland China guidance; confirm the specific service with its current operator.",
+              "Check the latest official or operator guidance before use.",
+              "Adult foreign-passport scenario only; confirm current document requirements with 12306 and the station.",
+              "Domestic railway e-ticket journeys only; follow actual station, train and document-handling instructions."
+            ],
+            "exclusions": [
+              "This statement does not establish the check-in cutoff for your station or train."
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "n-s04",
+            "revisionLabel": "20260912-ticketing-q2",
+            "publisher": "中国铁路12306 / China Railway 12306",
+            "uri": "https://www.12306.cn/en/faq.html",
+            "locator": "Ticketing Q2, E-tickets paragraph",
+            "snippet": "Editorial synopsis (not a quotation): Carry the valid ID used to buy the e-ticket for station and boarding checks.",
+            "usageDeclaration": "Original editorial factual synopsis and citation metadata only; not a source quotation or official translation. No blanket licence, raw-page, media, corpus, embedding or TTS permission is asserted. Public accessibility is not a licence."
+          }
+        ]
+      },
+      "useBasis": "original_factual_summary",
+      "useNote": "Editorial proposal for our original bilingual fact statements and source metadata only. Source synopsis is not a quotation. No blanket commercial, media, raw-page, embedding or TTS licence is claimed. Publication and request eligibility have not been performed; applicable development policy and source-specific restrictions remain in force."
+    },
+    {
+      "editorialId": "RAIL-03",
+      "parent": "N-07",
+      "sourceObservedAt": "2026-09-12",
+      "title": "行程单和报销凭证不作车票",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "rail_eticket_boarding",
+          "predicate": "requires_document",
+          "objectId": "valid_ticket_not_itinerary_or_receipt",
+          "conditions": [
+            "mainland_guidance",
+            "current_operator_check",
+            "adult_foreign_passport",
+            "domestic_eticket_station_train_instructions"
+          ],
+          "exclusions": [
+            "no_universal_checkin_cutoff"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "shanghai",
+            "beijing",
+            "guangzhou",
+            "chongqing"
+          ],
+          "scene": "rail",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "zh": {
+            "text": "行程信息提示单及报销凭证不能作为车票使用。",
+            "conditions": [
+              "中国大陆通用指引，具体服务以当前运营方为准。",
+              "使用前查看主管机关或运营方的最新指引。",
+              "限成年外籍旅客有效护照场景；具体证件要求以12306及车站当前规定为准。",
+              "限境内铁路电子客票行程，遵守实际车站、车次和证件处理指引。"
+            ],
+            "exclusions": [
+              "本条不能确定具体车站或车次的检票截止时间。"
+            ]
+          },
+          "en": {
+            "text": "Itinerary sheets and reimbursement receipts cannot serve as tickets.",
+            "conditions": [
+              "General mainland China guidance; confirm the specific service with its current operator.",
+              "Check the latest official or operator guidance before use.",
+              "Adult foreign-passport scenario only; confirm current document requirements with 12306 and the station.",
+              "Domestic railway e-ticket journeys only; follow actual station, train and document-handling instructions."
+            ],
+            "exclusions": [
+              "This statement does not establish the check-in cutoff for your station or train."
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "n-s04",
+            "revisionLabel": "20260912-ticketing-q11",
+            "publisher": "中国铁路12306 / China Railway 12306",
+            "uri": "https://www.12306.cn/en/faq.html",
+            "locator": "Ticketing Q11, itinerary sheet and reimbursement receipt",
+            "snippet": "Editorial synopsis (not a quotation): An itinerary sheet or reimbursement receipt does not function as a train ticket.",
+            "usageDeclaration": "Original editorial factual synopsis and citation metadata only; not a source quotation or official translation. No blanket licence, raw-page, media, corpus, embedding or TTS permission is asserted. Public accessibility is not a licence."
+          }
+        ]
+      },
+      "useBasis": "original_factual_summary",
+      "useNote": "Editorial proposal for our original bilingual fact statements and source metadata only. Source synopsis is not a quotation. No blanket commercial, media, raw-page, embedding or TTS licence is claimed. Publication and request eligibility have not been performed; applicable development policy and source-specific restrictions remain in force."
+    },
+    {
+      "editorialId": "CQ-01",
+      "parent": "CQ02",
+      "sourceObservedAt": "2026-09-12",
+      "title": "三峡博物馆主馆免预约入馆",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "chongqing_three_gorges_main_museum",
+          "predicate": "permits_admission",
+          "objectId": "entry_without_reservation",
+          "conditions": [
+            "main_museum_only",
+            "valid_id_required",
+            "current_closure_and_crowd_check"
+          ],
+          "exclusions": [
+            "no_all_subsidiaries_free",
+            "passport_processing_unknown",
+            "no_entry_availability_guarantee"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "chongqing"
+          ],
+          "scene": "attraction",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "zh": {
+            "text": "三峡博物馆主馆自2025年10月1日起免预约入馆，仍须有效身份证件。",
+            "conditions": [
+              "仅限重庆中国三峡博物馆主馆，非分馆或全部景点。",
+              "入馆仍须有效身份证件。",
+              "参观前检查当前闭馆、客流及官方通知，服从现场引导。"
+            ],
+            "exclusions": [
+              "免预约不表示所有分馆免费，部分分馆仍须购票。",
+              "公告未说明当前外籍护照登记或闸机核验细节。",
+              "不保证到场即可入馆或不受客流安排影响。"
+            ]
+          },
+          "en": {
+            "text": "The main Three Gorges Museum waives reservations from October 1, 2025; valid ID remains required.",
+            "conditions": [
+              "Only the main Chongqing China Three Gorges Museum, not its subsidiaries or other attractions.",
+              "Valid identification remains required for entry.",
+              "Check current closures, crowd notices and official guidance before visiting; follow staff instructions."
+            ],
+            "exclusions": [
+              "Reservation waiver does not mean all subsidiaries are free; some still require tickets.",
+              "The notice does not specify current foreign-passport registration or gate-processing details.",
+              "No immediate-entry or freedom-from-crowd-controls guarantee."
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "cq-museum",
+            "revisionLabel": "20260912-entry-paragraph",
+            "publisher": "重庆中国三峡博物馆 / Chongqing China Three Gorges Museum",
+            "uri": "https://www.3gmuseum.cn/web/article/1430010139317059584/web/content_1430010139317059584.html",
+            "locator": "Notice dated 2025-09-30, first substantive paragraph after greeting",
+            "snippet": "Editorial synopsis (not a quotation): The main museum waives reservations from October 1, 2025, with valid ID required; this does not make every subsidiary free.",
+            "usageDeclaration": "Original editorial factual synopsis and citation metadata only; not a source quotation or official translation. No blanket licence, raw-page, media, corpus, embedding or TTS permission is asserted. Public accessibility is not a licence."
+          }
+        ]
+      },
+      "useBasis": "original_factual_summary",
+      "useNote": "Editorial proposal for our original bilingual fact statements and source metadata only. Source synopsis is not a quotation. No blanket commercial, media, raw-page, embedding or TTS licence is claimed. Publication and request eligibility have not been performed; applicable development policy and source-specific restrictions remain in force."
+    },
+    {
+      "editorialId": "CQ-02",
+      "parent": "CQ02",
+      "sourceObservedAt": "2026-09-12",
+      "title": "三峡博物馆主馆入馆证件",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "chongqing_three_gorges_main_museum",
+          "predicate": "requires_document",
+          "objectId": "valid_identity_document",
+          "conditions": [
+            "main_museum_only",
+            "valid_id_required",
+            "current_closure_and_crowd_check"
+          ],
+          "exclusions": [
+            "no_all_subsidiaries_free",
+            "passport_processing_unknown",
+            "no_entry_availability_guarantee"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "chongqing"
+          ],
+          "scene": "attraction",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "zh": {
+            "text": "三峡博物馆主馆入馆须凭有效身份证件；公告未说明外籍护照核验细节。",
+            "conditions": [
+              "仅限重庆中国三峡博物馆主馆，非分馆或全部景点。",
+              "入馆仍须有效身份证件。",
+              "参观前检查当前闭馆、客流及官方通知，服从现场引导。"
+            ],
+            "exclusions": [
+              "免预约不表示所有分馆免费，部分分馆仍须购票。",
+              "公告未说明当前外籍护照登记或闸机核验细节。",
+              "不保证到场即可入馆或不受客流安排影响。"
+            ]
+          },
+          "en": {
+            "text": "Main-museum entry requires valid ID; the notice does not detail foreign-passport processing.",
+            "conditions": [
+              "Only the main Chongqing China Three Gorges Museum, not its subsidiaries or other attractions.",
+              "Valid identification remains required for entry.",
+              "Check current closures, crowd notices and official guidance before visiting; follow staff instructions."
+            ],
+            "exclusions": [
+              "Reservation waiver does not mean all subsidiaries are free; some still require tickets.",
+              "The notice does not specify current foreign-passport registration or gate-processing details.",
+              "No immediate-entry or freedom-from-crowd-controls guarantee."
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "cq-museum",
+            "revisionLabel": "20260912-entry-paragraph",
+            "publisher": "重庆中国三峡博物馆 / Chongqing China Three Gorges Museum",
+            "uri": "https://www.3gmuseum.cn/web/article/1430010139317059584/web/content_1430010139317059584.html",
+            "locator": "Notice dated 2025-09-30, first substantive paragraph after greeting",
+            "snippet": "Editorial synopsis (not a quotation): The main museum waives reservations from October 1, 2025, with valid ID required; this does not make every subsidiary free.",
+            "usageDeclaration": "Original editorial factual synopsis and citation metadata only; not a source quotation or official translation. No blanket licence, raw-page, media, corpus, embedding or TTS permission is asserted. Public accessibility is not a licence."
+          }
+        ]
+      },
+      "useBasis": "original_factual_summary",
+      "useNote": "Editorial proposal for our original bilingual fact statements and source metadata only. Source synopsis is not a quotation. No blanket commercial, media, raw-page, embedding or TTS licence is claimed. Publication and request eligibility have not been performed; applicable development policy and source-specific restrictions remain in force."
+    },
+    {
+      "editorialId": "CQ-03",
+      "parent": "CQ02",
+      "sourceObservedAt": "2026-09-12",
+      "title": "三峡博物馆客流通知与现场引导",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "chongqing_three_gorges_main_museum",
+          "predicate": "requires_action",
+          "objectId": "current_crowd_notice_and_staff_guidance",
+          "conditions": [
+            "main_museum_only",
+            "valid_id_required",
+            "current_closure_and_crowd_check"
+          ],
+          "exclusions": [
+            "no_all_subsidiaries_free",
+            "passport_processing_unknown",
+            "no_entry_availability_guarantee"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "chongqing"
+          ],
+          "scene": "attraction",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "zh": {
+            "text": "三峡博物馆主馆按实时客流发布预警，参观前查看官方通知并服从现场引导。",
+            "conditions": [
+              "仅限重庆中国三峡博物馆主馆，非分馆或全部景点。",
+              "入馆仍须有效身份证件。",
+              "参观前检查当前闭馆、客流及官方通知，服从现场引导。"
+            ],
+            "exclusions": [
+              "免预约不表示所有分馆免费，部分分馆仍须购票。",
+              "公告未说明当前外籍护照登记或闸机核验细节。",
+              "不保证到场即可入馆或不受客流安排影响。"
+            ]
+          },
+          "en": {
+            "text": "Check main-museum crowd notices before visiting and follow staff guidance.",
+            "conditions": [
+              "Only the main Chongqing China Three Gorges Museum, not its subsidiaries or other attractions.",
+              "Valid identification remains required for entry.",
+              "Check current closures, crowd notices and official guidance before visiting; follow staff instructions."
+            ],
+            "exclusions": [
+              "Reservation waiver does not mean all subsidiaries are free; some still require tickets.",
+              "The notice does not specify current foreign-passport registration or gate-processing details.",
+              "No immediate-entry or freedom-from-crowd-controls guarantee."
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "cq-museum",
+            "revisionLabel": "20260912-crowd-paragraph",
+            "publisher": "重庆中国三峡博物馆 / Chongqing China Three Gorges Museum",
+            "uri": "https://www.3gmuseum.cn/web/article/1430010139317059584/web/content_1430010139317059584.html",
+            "locator": "Notice dated 2025-09-30, second substantive paragraph (crowd warnings)",
+            "snippet": "Editorial synopsis (not a quotation): The museum issues crowd warnings and directs visitors to current official notices and staff guidance.",
+            "usageDeclaration": "Original editorial factual synopsis and citation metadata only; not a source quotation or official translation. No blanket licence, raw-page, media, corpus, embedding or TTS permission is asserted. Public accessibility is not a licence."
+          }
+        ]
+      },
+      "useBasis": "original_factual_summary",
+      "useNote": "Editorial proposal for our original bilingual fact statements and source metadata only. Source synopsis is not a quotation. No blanket commercial, media, raw-page, embedding or TTS licence is claimed. Publication and request eligibility have not been performed; applicable development policy and source-specific restrictions remain in force."
+    }
+  ],
+  "editorialScopeMetadata": {
+    "nationalGuidanceReuse": "National mainland guidance is reused only in Shanghai, Beijing, Guangzhou and Chongqing; this is retrieval scope, not four-city on-site service validation.",
+    "verificationBoundary": "Published source guidance was reviewed; no merchant transaction, ATM/exchange visit, SIM activation, train journey, passport processing or museum entry was tested.",
+    "historicalScope": "The 2025 government guide and mixed historical 12306 FAQ are used only for cited sections; no current visa, child-fare, refund/change, baggage, sales-hours or universal check-in-cutoff rule is inferred.",
+    "unusedLocalSupplement": "N-S10 Tianjin guidance is not cited in this batch and establishes no national device or branch rule.",
+    "paymentScope": "No fixed monetary fee threshold, personal-transfer capability, universal acceptance, payment success or fixed limit is inferred.",
+    "priorEditorialBoundaries": "Internal preparation and research boundaries are recorded here and in README rather than presented as traveler conditions. Statements remain unpublished.",
+    "cashBoundary": "No cash-import allowance is provided; this batch only describes access to RMB cash."
+  }
+}

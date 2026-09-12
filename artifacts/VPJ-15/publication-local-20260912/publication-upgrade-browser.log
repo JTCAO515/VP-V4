@@ -1,0 +1,20 @@
+▶ real protected statement producer → independent review/publication → scoped product read → revocation
+  ✔ CLI upgrade38 to39 preserves existing candidate and exact legacy receipt (2099.084042ms)
+  ✔ default off and nonmember cannot publish; strict identity/input (198.766458ms)
+  ✔ immutable multi-source statement, exact replay, separate review and publication (138.553708ms)
+  ✔ publish and eligible bilingual product read preserve conditions without leaking private material (52.576125ms)
+  ✔ browser statement submission, independent publication, bilingual reading and withdrawal (9611.518709ms)
+  ✔ actual native credential proof and current session read the same first-party projection (1047.896708ms)
+  ✔ atomic publication audit failure rolls back status and receipt (337.133542ms)
+  ✔ source revision conflict rolls back entire candidate; SQL rejects forged assertion (87.797459ms)
+  ✔ concurrent publication and revocation each commit exactly one state and audit (120.348666ms)
+  ✔ expiry, committed revocation and current authority invalidate product reads and retries (243.1405ms)
+✔ real protected statement producer → independent review/publication → scoped product read → revocation (18787.65725ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18878.193583
