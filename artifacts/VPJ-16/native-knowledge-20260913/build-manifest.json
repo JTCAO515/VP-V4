@@ -1,0 +1,15 @@
+{
+  "base": "c31fd0bbf67836793d28527184a50e4503b5bff8",
+  "bundleIdentifier": "space.go2china.VisePanda",
+  "backendOrigin": "https://vp-v4-kp697ojds-jtcao515s-projects.vercel.app",
+  "signing": "ad-hoc Simulator only",
+  "sources": {
+    "ios/VisePanda/VisePanda/App/AppShellView.swift": "827c6301ba5a92ed19b759e85c7db5de08ef5b92dc680245f734a35abe4406fc",
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "4ce61d53bb5f6b16484f5de4075243b1c3a082418565548e7d2787d85ffeb525",
+    "ios/VisePanda/VisePanda/Navigation/AppRoute.swift": "35526d83ee604e362f86e929366238163a837432974dc867c1b0317ab70e6388",
+    "ios/VisePanda/VisePanda/Features/Explore/ExploreView.swift": "819f7c149bc085e5a68301cc2e3c607d65e42ede205d888161a9e7a0e0ec3d2d",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift": "0dfc68bb93638261672e51bb7fad1a3d5d4550cfffafef45637cb41a2a97cae9",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeStore.swift": "5a5576f4cd3b91d6704281c5506541308c87d7bca0aa0c39925383d8a97eba29",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift": "cf7eb15895239685f129a72f08e5f53d23d1cf5832d3f64e019819172408ceb1"
+  }
+}

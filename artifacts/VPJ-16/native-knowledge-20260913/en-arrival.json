@@ -1,0 +1,350 @@
+[
+  {
+    "AXUniqueId": null,
+    "AXLabel": "VisePanda",
+    "type": "Application",
+    "frame": {
+      "x": 0,
+      "width": 402,
+      "height": 874,
+      "y": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "main-tab-view",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "x": 0,
+      "width": 402,
+      "height": 874,
+      "y": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "Explore",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "x": 0,
+      "width": 402,
+      "height": 54,
+      "y": 62
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Explore",
+    "type": "Heading",
+    "frame": {
+      "x": 171,
+      "width": 59.66666666666666,
+      "height": 20.66666666666667,
+      "y": 73.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Vise Panda. Your China travel companion",
+    "type": "StaticText",
+    "frame": {
+      "x": 16,
+      "width": 221.6666717529297,
+      "height": 68.33332824707031,
+      "y": 132
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "PandaMark",
+    "type": "Image",
+    "frame": {
+      "x": 16,
+      "width": 48,
+      "height": 47.99999999999997,
+      "y": 142.33333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "BrandWordmark",
+    "type": "Image",
+    "frame": {
+      "x": 76,
+      "width": 156,
+      "height": 52,
+      "y": 132
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Your China travel companion",
+    "type": "StaticText",
+    "frame": {
+      "x": 76,
+      "width": 161.66666666666666,
+      "height": 14.333333333333314,
+      "y": 186
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Travel notes",
+    "type": "StaticText",
+    "frame": {
+      "x": 16,
+      "width": 192,
+      "height": 40.666666666666686,
+      "y": 224.33333333333331
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed information for your selected city and situation. Read each note's conditions and check its source before taking action. This is not complete city coverage.",
+    "type": "StaticText",
+    "frame": {
+      "x": 16,
+      "width": 370,
+      "height": 86.33333333333331,
+      "y": 289
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.city",
+    "AXLabel": "City, Shanghai",
+    "type": "PopUpButton",
+    "frame": {
+      "x": 16,
+      "width": 111,
+      "height": 34.333333333333314,
+      "y": 399.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Shanghai",
+    "type": "StaticText",
+    "frame": {
+      "x": 28,
+      "width": 70.66666666666667,
+      "height": 20.333333333333314,
+      "y": 406.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.scene",
+    "AXLabel": "Situation, Arrival",
+    "type": "PopUpButton",
+    "frame": {
+      "x": 16,
+      "width": 88.66666666666666,
+      "height": 34.333333333333314,
+      "y": 457.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Arrival",
+    "type": "StaticText",
+    "frame": {
+      "x": 27.666666666666668,
+      "width": 48.33333333333333,
+      "height": 20.333333333333314,
+      "y": 464.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.refresh",
+    "AXLabel": "Refresh",
+    "type": "Button",
+    "frame": {
+      "x": 16,
+      "width": 82.66666666666666,
+      "height": 34.33333333333326,
+      "y": 516
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.empty",
+    "AXLabel": "No eligible reviewed information is available for this selection.",
+    "type": "StaticText",
+    "frame": {
+      "x": 16,
+      "width": 360,
+      "height": 42.33333333333326,
+      "y": 574.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Vertical scroll bar, 1 page",
+    "type": "Slider",
+    "frame": {
+      "x": 369,
+      "width": 30,
+      "height": 675,
+      "y": 116
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Vertical scroll bar, 1 page",
+    "type": "Slider",
+    "frame": {
+      "width": 30,
+      "height": 675,
+      "x": 369,
+      "y": 116
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Tab Bar",
+    "type": "Group",
+    "frame": {
+      "width": 402,
+      "height": 83,
+      "x": 0,
+      "y": 791
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map",
+    "AXLabel": "Trip",
+    "type": "RadioButton",
+    "frame": {
+      "width": 77,
+      "height": 54,
+      "x": 25,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map.fill",
+    "AXLabel": "show map",
+    "type": "Image",
+    "frame": {
+      "width": 29.66666666666667,
+      "height": 26.33333333333337,
+      "x": 49,
+      "y": 801.6666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari",
+    "AXLabel": "Explore",
+    "type": "RadioButton",
+    "frame": {
+      "width": 77,
+      "height": 54,
+      "x": 93.75,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari.fill",
+    "AXLabel": "safari",
+    "type": "Image",
+    "frame": {
+      "width": 27.333333333333343,
+      "height": 27.33333333333337,
+      "x": 118.75,
+      "y": 801.3333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "Ask",
+    "type": "RadioButton",
+    "frame": {
+      "width": 77,
+      "height": 54,
+      "x": 162.5,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "sparkle",
+    "type": "Image",
+    "frame": {
+      "width": 26,
+      "height": 30,
+      "x": 188.5,
+      "y": 799
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "Tools",
+    "type": "RadioButton",
+    "frame": {
+      "width": 77,
+      "height": 54,
+      "x": 231.25,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "wrench.and.screwdriver",
+    "type": "Image",
+    "frame": {
+      "width": 32.666666666666686,
+      "height": 31.66666666666663,
+      "x": 253.25,
+      "y": 799.3333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle",
+    "AXLabel": "Profile",
+    "type": "RadioButton",
+    "frame": {
+      "width": 77,
+      "height": 54,
+      "x": 300,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle.fill",
+    "AXLabel": "account",
+    "type": "Image",
+    "frame": {
+      "width": 27.333333333333314,
+      "height": 27.33333333333337,
+      "x": 325,
+      "y": 801.3333333333334
+    },
+    "enabled": true
+  }
+]

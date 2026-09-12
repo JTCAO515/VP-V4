@@ -9,7 +9,7 @@ struct AppShellView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             ForEach(AppTab.allCases) { tab in
-                TabRootView(tab: tab)
+                TabRootView(tab: tab, isActive: selectedTab == tab)
                     .tabItem {
                         tab.label
                     }

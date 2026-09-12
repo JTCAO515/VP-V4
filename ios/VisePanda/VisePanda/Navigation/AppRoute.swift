@@ -23,6 +23,7 @@ final class RouterPath {
 @MainActor
 struct TabRootView: View {
     let tab: AppTab
+    var isActive = true
     @State private var router = RouterPath()
 
     var body: some View {
@@ -48,7 +49,7 @@ struct TabRootView: View {
         case .tools: ToolsView()
         case .trip: TripView()
         case .ask: AskView()
-        case .explore: ExploreView()
+        case .explore: ExploreView(isActive: isActive)
         case .profile: ProfileView()
         }
     }

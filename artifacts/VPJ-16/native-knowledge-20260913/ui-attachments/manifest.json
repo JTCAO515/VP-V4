@@ -1,0 +1,50 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "104BDF82-166D-44BD-9E58-0610BEBF15A1",
+        "deviceName" : "VP-Knowledge-20260913",
+        "exportedFileName" : "F649C7E7-3DBA-402C-BA46-0979DCA7F46B.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "knowledge-zh-Hans-disabled_0_9B8F4417-C32D-4EB4-80FC-8556EBE5158C.png",
+        "timestamp" : 1789231315.855
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "104BDF82-166D-44BD-9E58-0610BEBF15A1",
+        "deviceName" : "VP-Knowledge-20260913",
+        "exportedFileName" : "CCD3F12B-75B8-4AC8-A424-045A717AAFD8.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "knowledge-zh-Hans-read_0_7C99F6A1-05E3-490A-9071-8B6490F092DA.png",
+        "timestamp" : 1789231310.831
+      }
+    ],
+    "testIdentifier" : "NativeKnowledgeUITests/testChineseRefreshCredentialsReadAndWithdraw()",
+    "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeKnowledgeUITests/testChineseRefreshCredentialsReadAndWithdraw"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "104BDF82-166D-44BD-9E58-0610BEBF15A1",
+        "deviceName" : "VP-Knowledge-20260913",
+        "exportedFileName" : "4BC300D9-644D-40E4-B68F-F0F597E5F288.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "knowledge-en-disabled_0_9E49FF44-DD51-4E10-9805-B39578909D10.png",
+        "timestamp" : 1789231350.902
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "104BDF82-166D-44BD-9E58-0610BEBF15A1",
+        "deviceName" : "VP-Knowledge-20260913",
+        "exportedFileName" : "34384C55-63D6-41CF-A082-B6B4F5DDFCC6.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "knowledge-en-read_0_6BE83604-D2FF-49FC-86F9-2A43D4037665.png",
+        "timestamp" : 1789231346.323
+      }
+    ],
+    "testIdentifier" : "NativeKnowledgeUITests/testEnglishRefreshCredentialsReadAndWithdraw()",
+    "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeKnowledgeUITests/testEnglishRefreshCredentialsReadAndWithdraw"
+  }
+]

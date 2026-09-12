@@ -1,0 +1,18 @@
+{
+  "normalization": "Trailing whitespace and final blank lines removed only; original logs retained in task cache",
+  "sha256": {
+    "ui.log": "92b7e6418205369683e408aeaeb24c2689d186fe73a40464fe51712ffc03aceb",
+    "docs-check.log": "0f95fc69ad4e3b4ed8b1acccad26dcdb3d8ba348d85ae89b450b70f826a6ef10",
+    "native-test-2.log": "bcd81d3419a0c3b28fd611385229c33eab37d7af9a38ce3ce2b62849e9561fc0",
+    "ui-4.log": "f413d7c69d63440a21ac87235ad23397ee9278eb9e1f23aaaad972babc1e0d30",
+    "native-ui-build.log": "61cdfd71a990f8879afac9bdbc0dee78b8e24e87f03e55a884207af95d355706",
+    "ui-2.log": "d3280ee06975cf263ae857b9156bfafa233d452355a2a547f8056015b82a2c0b",
+    "ui-3.log": "84e19edcbc84533dc3b17d88ff0df81260a6b77cb17bc97f5d10d80692bff35e",
+    "build-2.log": "ea6088a5f898e7074ebe4f1fd905af3771603ed2885f4aba241056446aa019c7",
+    "native-ui-build-4.log": "2074d0effcd9d50ebc12f47d99a32f91ce53557d1518b3671e1b3a9c619c2c1a",
+    "native-ui-build-3.log": "e5ae58027915ff6e2d817e4af3474582d1041f3e5e227b20cf9e8ea2d6b59b49",
+    "native-build.log": "b9cd8394781029028928217da63616584ed7e41a8b71425f9fde546e81c0524c",
+    "native-test.log": "96c6480baa1ddf0bc5ce4b527b2ec8937e528fe59d7cdd352475b96183e4a84f",
+    "native-ui-build-2.log": "ff0c5612701880986400e7ec2e4649525284af8963de3e404a016f92993b28a4"
+  }
+}
