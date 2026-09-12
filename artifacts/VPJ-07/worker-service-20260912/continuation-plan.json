@@ -1,0 +1,12 @@
+{
+  "schemaVersion":"vpj07-native-service-continuation/1",
+  "reason":"The original English UI automation used a Chinese IME and submitted corrupted text. Preserve that failed fixture and actual clarification outcome; supply one verified correction in the same server ServiceTask.",
+  "parentTurnId":"0c5c4fa4-1f46-4453-9f07-60b6380b5e71",
+  "taskId":"703a2b0d-8e94-4a62-a320-b016085d9a77",
+  "relationship":"clarification",
+  "text":"My earlier message was mistyped. In a fictional navigation exercise, I am facing north and turn right by 90 degrees. Which direction am I facing now? Answer in one English sentence; no location or live information is needed.",
+  "maximumAdditionalSubmissions":1,
+  "maximumTotalSubmissionsIncludingInputError":3,
+  "newRootOrSemanticRerollAllowed":false,
+  "retainedMissingDirectionCriterion":"Unchanged and still failed; this input includes direction."
+}

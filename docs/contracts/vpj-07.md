@@ -397,3 +397,10 @@ provider. It checks later input consumption, process restart without rebilling,
 task clarification/repair and cancellation stopping the processor. This local
 controlled-provider result does not establish real Staging operation, native UI
 submission, the retained bilingual semantic criteria, or full #195/S2 acceptance.
+
+The scoped real Staging/native run at runtime49e0b4f is recorded in
+`artifacts/VPJ-07/worker-service-20260912/verification.md`: native zh answer and
+English same-task clarification/final, real Qwen, worker restart with unchanged
+expiry, relaunch recovery and owner isolation. An initial IME-corrupted English
+fixture is explicitly retained as failed. This is bounded operation evidence;
+continuous unattended deployment and the retained semantic criterion remain open.

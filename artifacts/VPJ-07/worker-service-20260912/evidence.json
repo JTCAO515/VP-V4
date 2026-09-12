@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "vpj07-native-service-evidence/1",
+  "observedAt": "2026-09-12T02:49:19.303Z",
+  "sourceSha": "49e0b4febd61c4cd4cb765ba38b303f0df13a0a6",
+  "apiSha": "b542eadff6a5057445c6d3311ebd5d166c0dad55",
+  "status": "scoped-integration-pass",
+  "initialEnglishFixture": "FAIL: Chinese IME changed intended input; original and actual clarification retained",
+  "frozenMissingDirectionCriterion": "STILL FAILED; not rerun or replaced",
+  "turns": [
+    {
+      "locale": "en",
+      "status": "completed",
+      "task_id": "703a2b0d-8e94-4a62-a320-b016085d9a77",
+      "turn_id": "0c5c4fa4-1f46-4453-9f07-60b6380b5e71",
+      "input_text": "I那股长腿那里拿不发育one心二次的，I安达信更别提邯郸突然那个和田白玉90的喝热水。Whi吃第二次托班I发性别？A你是我微博呢English森特内侧；玻璃擦推介live in for吗蜕变而得到。",
+      "output_kind": "clarification",
+      "output_text": "I'm having trouble understanding your message as it seems to contain mixed languages and unclear phrases. Could you please rephrase your question or request in either English or Chinese? I'm here to help with travel-related inquiries.",
+      "relationship": "new_goal",
+      "parent_turn_id": null
+    },
+    {
+      "locale": "zh",
+      "status": "completed",
+      "task_id": "c21bd148-9a73-412a-81f7-aac7c327af43",
+      "turn_id": "3c37cfcd-abeb-4644-be7b-5cb899c2e672",
+      "input_text": "在一次虚构的方向练习中，我面朝北，向右转90度后朝哪个方向？请用一句中文回答，不需要地点或实时信息。",
+      "output_kind": "answered",
+      "output_text": "面朝东。",
+      "relationship": "new_goal",
+      "parent_turn_id": null
+    },
+    {
+      "locale": "en",
+      "status": "completed",
+      "task_id": "703a2b0d-8e94-4a62-a320-b016085d9a77",
+      "turn_id": "1d919be9-aa1c-4db7-9b16-00b2dc437bbd",
+      "input_text": "My earlier message was mistyped. In a fictional navigation exercise, I am facing north and turn right by 90 degrees. Which direction am I facing now? Answer in one English sentence; no location or live information is needed.",
+      "output_kind": "answered",
+      "output_text": "You are now facing east.",
+      "relationship": "clarification",
+      "parent_turn_id": "0c5c4fa4-1f46-4453-9f07-60b6380b5e71"
+    }
+  ],
+  "attempts": [
+    {
+      "status": "settled",
+      "taskId": "703a2b0d-8e94-4a62-a320-b016085d9a77",
+      "actualMicros": 5658
+    },
+    {
+      "status": "settled",
+      "taskId": "c21bd148-9a73-412a-81f7-aac7c327af43",
+      "actualMicros": 4512
+    },
+    {
+      "status": "settled",
+      "taskId": "703a2b0d-8e94-4a62-a320-b016085d9a77",
+      "actualMicros": 5346
+    }
+  ],
+  "serviceRuns": [
+    {
+      "name": "service-en",
+      "configurationDigest": "d6d5463c28abe44560c570acc196fcb2edba62e8d795413d746f0bfc65d1287b",
+      "expiresAt": "2026-09-12T02:53:18.874Z",
+      "prompt": {
+        "version": "vp-task-response-v1",
+        "digest": "46e9f5390493c7e3f902bb5e032adaab5c62f8bf20071e69aa0c9c04d844afd2"
+      },
+      "providerAttempts": 1,
+      "polls": 15,
+      "reason": "stopped"
+    },
+    {
+      "name": "service-zh",
+      "configurationDigest": "ad461853216a6e84dd4b1f39197ac9f7d1cf7bf3badcd0759d619ceec32e7438",
+      "expiresAt": "2026-09-12T02:57:19.560Z",
+      "prompt": {
+        "version": "vp-task-response-v1",
+        "digest": "46e9f5390493c7e3f902bb5e032adaab5c62f8bf20071e69aa0c9c04d844afd2"
+      },
+      "providerAttempts": 1,
+      "polls": 14,
+      "reason": "stopped"
+    },
+    {
+      "name": "service-en-resumed",
+      "configurationDigest": "d6d5463c28abe44560c570acc196fcb2edba62e8d795413d746f0bfc65d1287b",
+      "expiresAt": "2026-09-12T02:53:18.874Z",
+      "prompt": {
+        "version": "vp-task-response-v1",
+        "digest": "46e9f5390493c7e3f902bb5e032adaab5c62f8bf20071e69aa0c9c04d844afd2"
+      },
+      "providerAttempts": 1,
+      "polls": 11,
+      "reason": "stopped"
+    }
+  ],
+  "currency": "CNY",
+  "calculatedActualMicros": 15516,
+  "tariffNote": "Existing conservative versioned tariff; not supplier invoice proof"
+}

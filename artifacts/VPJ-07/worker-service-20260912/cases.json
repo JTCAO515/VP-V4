@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "vpj07-native-service-connectivity/1",
+  "purpose": "Native UI submission through automatically polling Staging service to a real provider and recovered native answer. Separate from the retained missing-direction clarification criterion.",
+  "cases": [
+    {"locale":"en","text":"In a fictional navigation exercise, I am facing north and turn right by 90 degrees. Which direction am I facing now? Answer in one English sentence; no location or live information is needed.","expectedOutcome":"answered","expectedMeaning":"Facing east"},
+    {"locale":"zh","text":"在一次虚构的方向练习中，我面朝北，向右转90度后朝哪个方向？请用一句中文回答，不需要地点或实时信息。","expectedOutcome":"answered","expectedMeaning":"面朝东"}
+  ],
+  "maximumNewSubmissions": 2,
+  "rerollAllowed": false
+}

@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PR332 and PR333 merged; main bddd301. Approved main Production ignored-build guard preserved live aliases. Bounded continuous Staging worker implementation is under verification; full S2 remains open.
+状态：PR334 runtime49e0b4f: scoped Staging native submission → continuous worker → real Qwen → native final answer/relaunch observed in zh/en, including an English clarification after an input-method error and worker restart. Three provider attempts settled; fixed missing-direction semantic failures remain. Full S2 is open.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -35,7 +35,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 未决与运行证据
 
-- Staging36 and scoped real Ask transport/persistence are verified; full S1/S2, native model-answer display, all five outcomes, ServiceTask attribution, grounding and continuous recovery are incomplete. Current development notice records supplier unknowns; they are not approval blockers.
+- Staging36 and scoped real Ask transport/persistence are verified; full S1/S2, all five outcomes, complete semantic acceptance, grounding and operational continuous recovery are incomplete; scoped native display and same-task clarification with a bounded service are now observed. Current development notice records supplier unknowns; they are not approval blockers.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel runtime integration, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 - 2026-09-11 live dependency recheck: #264←#263(CLOSED)+#206(OPEN). #206 inherits #195/#205: private local producer/text results do not supply published eligible knowledge, configured real provider consumers or the actual native read-only task chain; #264 remains OPEN.
@@ -101,10 +101,11 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - 2026-09-12 native Staging consumer: PR332 8ce9e7e reads three retained real Qwen answers per synthetic owner, matches latest thinking outputs exactly, survives relaunch and clears history on sign-out; zero new model calls. Observed English reset fixed at b561bf9; native9pass0skip and actual zh/en relaunch plus Arabic override/RTL pass. See artifacts/VPJ-07/native-staging-read-20260912/verification.md. Full real clarification continuation remains unrun.
 - PR332 at8ce9e7e: local core8/UI4 passed; Quality34653592174/Budget34653592093/Native34653592185/Vercel passed. Native CI28pass/14 explicit API-environment skips is not full capability acceptance. Main auto-deploy was verified enabled; Production currentlydb5fb7b, so merging is paused pending the prepared deployment-setting decision. Previous non-production wording did not account for automatic main deployments.
 - Bounded thinking source ddc8077, workerdf6ee24: explicit job3 keeps prior defaults; independent review0/0, contract244pass, security136pass1existingDBskip, loopbackHTTP4pass. Two actual Qwen calls at thinking512/total1024 returned valid JSON but failed frozen clarification-first outcome; no follow-up or reroll. Both settled CNY0.034992 conservative tariff, zero unresolved, not invoice. See artifacts/VPJ-07/bounded-thinking-20260912/verification.md.
+- 2026-09-12 bounded service: source49e0b4f, actual Staging APIb542ead. Native zh final and English same-task clarification/final survived relaunch; owner history isolated. Three attempts across two ServiceTasks settled at conservative CNY0.015516, no unknown holds for these attempts; not supplier invoice. English IME corrupted initial input (fixture FAIL retained), corrected once as native clarification in same task. Restart retained service expiry/config digest. Services stopped and owned Simulator deleted. See artifacts/VPJ-07/worker-service-20260912/verification.md; full fixed semantic criterion stays FAIL.
 
 ## 下一动作与回滚
 
-Validate and merge the bounded continuous Staging worker for #195 with required CI and the approved Production guard. Then verify native input through the running worker and real provider in the existing scoped Staging environment. Retain failed clarification cases; phone validation remains deferred.
+Finish PR334 evidence CI and merge with the approved main-only Production guard; verify live aliases. Continue the retained bilingual clarification-first semantic criterion and remaining #195/S2 acceptance. Do not substitute the successful fully specified direction case or repeat phone validation.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
