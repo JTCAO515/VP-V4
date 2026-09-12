@@ -22,6 +22,8 @@ facts. Only the source list folds. A read lasts at most 30 seconds, shortened by
 expiry and the full request duration. Hidden/background, page exit, offline and auth
 events invalidate presentation. Owner changes and logout discard records. Expiry
 rechecks preserve layout while hiding inaccessible stale facts.
+The outer workspace also remounts on logout or owner change, discarding its existing
+thread/Trip metadata and pending component state rather than retaining a prior account's list.
 
 Validation for this slice: pure projection adversarial tests, existing local native
 HTTP harness extended with real GoTrue/SSR-cookie read/isolation/revocation checks,

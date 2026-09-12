@@ -11,6 +11,7 @@ import { initialTurnStreamState, turnStreamReducer } from "./turn-stream-reducer
 import { parseLocale } from "@/lib/navigation/workspace-entry";
 import styles from "./ChatThreadWorkspace.module.css";
 import { SavedAnswers } from "./SavedAnswers";
+import { createPasswordAuthClient } from "@/lib/server/identity/browser-auth-client";
 
 type Thread = { id: string; tripId: string | null; status: "active" | "archived"; createdAt: string; updatedAt: string };
 type Turn = { id: string; status: string; createdAt: string; updatedAt: string; events: readonly { eventId: string; sequence: number; type: string; state: string; createdAt: string }[]; feedback: readonly { id: string; kind: TurnFeedbackKind; reason: TurnFeedbackReason; createdAt: string }[]; memoryReceipts: readonly { memoryId: string; sourceReceiptId: string; constraintKind: "preference" | "hard_constraint" }[] };
@@ -23,7 +24,24 @@ const asUuid = (value: string | null): string | undefined =>
     ? value
     : undefined;
 
-export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate, groundedRead = false }: { initialThreadId?: string; initialPlaceCandidate?: Readonly<{ tripId: string; poiId: string }>; groundedRead?: boolean }) {
+type WorkspaceProps = { initialThreadId?: string; initialPlaceCandidate?: Readonly<{ tripId: string; poiId: string }>; groundedRead?: boolean };
+
+export function ChatThreadWorkspace(props: WorkspaceProps) {
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  useEffect(() => {
+    const client = createPasswordAuthClient();
+    if (!client) { setSessionId("unavailable"); return; }
+    const { data } = client.auth.onAuthStateChange((_event, session) => {
+      // Destroy all private page state on logout/owner changes, including
+      // metadata and in-flight component closures. The API remains authority.
+      setSessionId(session?.user.id ?? "signed-out");
+    });
+    return () => data.subscription.unsubscribe();
+  }, []);
+  return sessionId === null ? null : <AuthenticatedWorkspace key={sessionId} {...props} />;
+}
+
+function AuthenticatedWorkspace({ initialThreadId, initialPlaceCandidate, groundedRead = false }: WorkspaceProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [locale, setLocale] = useState<Locale>(() => parseLocale(searchParams.get("locale")));
