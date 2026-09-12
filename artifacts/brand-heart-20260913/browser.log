@@ -1,0 +1,23 @@
+(node:24020) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m(node:24026) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+[2m[WebServer] [22m(node:24027) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[2m[WebServer] [22m(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 7 tests using 1 worker
+
+(node:24033) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24033) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(node:24033) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 tests/e2e/frontend/journey-preview.spec.mjs:9:3 › Journey preview preserves local choices and keeps external services off at 1280 (1.6s)
+  ✓  2 tests/e2e/frontend/journey-preview.spec.mjs:9:3 › Journey preview preserves local choices and keeps external services off at 390 (1.2s)
+  ✓  3 tests/e2e/frontend/journey-preview.spec.mjs:127:1 › Journey landing keeps the signup link and Chinese preview route (207ms)
+  ✓  4 tests/e2e/frontend/journey-preview.spec.mjs:137:1 › Explore requires note confirmation and tool requests are consumed once (751ms)
+  ✓  5 tests/e2e/frontend/web-10-viewport.spec.mjs:22:1 › WEB-10: core surfaces fit the required viewport matrix (16.5s)
+  ✓  6 tests/e2e/frontend/web-10-viewport.spec.mjs:45:1 › LAUNCH-10: canonical workspace supports keyboard focus and RTL locale direction (722ms)
+  ✓  7 tests/e2e/frontend/web-10-viewport.spec.mjs:67:1 › WEB-10: sign-in keeps an announced error region and password controls (674ms)
+
+  7 passed (23.4s)

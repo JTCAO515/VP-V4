@@ -1,3 +1,7 @@
+# 当前正式 Logo
+
+已切换为 [VisePanda. 爱心金属版](../assets/brand/vise-panda/official-heart-20260913/README.md)。下方为历史素材与既有品牌资料；旧 Logo 源文件保留，不再作为当前产品标识。
+
 # VisePanda Brand Delivery
 
 This directory is the digital-first VisePanda visual-identity delivery for international visitors travelling in China. It is English-first and implements the approved direction: **Your warm local friend in China.**

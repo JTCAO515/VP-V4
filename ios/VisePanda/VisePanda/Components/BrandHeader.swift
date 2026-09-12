@@ -25,17 +25,15 @@ struct BrandHeader: View {
     }
 }
 
-// Crop only the display viewport; retain the original supplied PNG in the catalog.
+// The heart wordmark uses a complete 3:1 transparent canvas.
 struct BrandWordmark: View {
     let width: CGFloat
 
     var body: some View {
         Image("BrandWordmark")
             .resizable()
-            .frame(width: width * 1448 / 1356, height: width * 1086 / 1356)
-            .offset(x: -width * 64 / 1356, y: -width * 398 / 1356)
-            .frame(width: width, height: width * 308 / 1356, alignment: .topLeading)
-            .clipped()
+            .scaledToFit()
+            .frame(width: width, height: width / 3)
             .environment(\.layoutDirection, .leftToRight)
             .accessibilityHidden(true)
     }

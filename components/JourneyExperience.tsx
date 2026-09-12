@@ -133,7 +133,7 @@ export function JourneyExperience() {
       <section className="j-ask" id="ask" aria-labelledby="j-ask-title">
         <div className="j-ask-intro" data-reveal><Chapter n="02" text={c.askLabel} /><h2 id="j-ask-title">{c.askTitle.map((line, i) => <span key={i}>{line}</span>)}</h2><div className="j-short-rule" /><p>{c.askBody}</p><div className="j-prompts">{c.prompts.map((prompt, i) => <button key={i} onClick={() => send(i)}>{prompt}<Arrow /></button>)}</div></div>
         <div className="j-chat-panel" data-reveal>
-          <div className="j-chat-header"><span className="j-avatar"><Image src="/assets/visepanda/brand/logo-20260909.png" width={40} height={40} alt="VisePanda" style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: "50%" }} /></span><span>{c.companion}</span><small><i />{c.preview}</small></div>
+          <div className="j-chat-header"><span className="j-avatar"><Image src="/assets/visepanda/brand/icon-heart-20260913.png" width={40} height={40} alt="VisePanda" style={{ width: "100%", height: "100%", objectFit: "contain", borderRadius: "50%" }} /></span><span>{c.companion}</span><small><i />{c.preview}</small></div>
           <div className="j-chat-messages" ref={chat} role="log" aria-label={c.companion} aria-live="polite" tabIndex={0}>
             <div className="j-welcome"><span className="j-star" aria-hidden="true">✳</span><h3>{c.welcome}</h3><p>{c.welcomeBody}</p></div>
             {messages.map((message, i) => <div className="j-exchange" key={i}>

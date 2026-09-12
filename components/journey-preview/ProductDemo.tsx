@@ -160,7 +160,7 @@ export default function ProductDemo({ lang, fullscreen, onFullscreen = NOOP_FULL
 
             <div className="demo-app-shell">
               <aside className="demo-sidebar">
-                <span className="demo-brand"><Image className="demo-brand-logo" src="/assets/visepanda/brand/logo-20260909.png" width={30} height={30} alt="" aria-hidden="true" /><span>{lang === "zh" ? "旅途，有你。" : "Make it yours."}</span></span>
+                <span className="demo-brand"><Image className="demo-brand-logo" src="/assets/visepanda/brand/icon-heart-20260913.png" width={30} height={30} alt="" aria-hidden="true" /><span>{lang === "zh" ? "旅途，有你。" : "Make it yours."}</span></span>
 
                 <nav className="demo-main-nav">
                   {NAV.map((item) => (

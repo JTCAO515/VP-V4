@@ -27,6 +27,30 @@
     {
       "path": "public/assets/visepanda/brand/wordmark-20260909.png",
       "sha256": "923d49a1465920b501643148e74c2997442ffeda1ce3c00bb27af820a231240e"
+    },
+    {
+      "path": "public/assets/visepanda/brand/primary-heart-20260913.png",
+      "sha256": "2f8b37a44674b0c0f633c2cb5c4eef99822ee32beddf2bafbddc59e4e8da8e54"
+    },
+    {
+      "path": "public/assets/visepanda/brand/icon-heart-20260913.png",
+      "sha256": "5f6977b17d95701f7368b9eec518770f276a012262f82a599c06d51c919ba94d"
+    },
+    {
+      "path": "public/assets/visepanda/brand/wordmark-heart-20260913.png",
+      "sha256": "de8a756a156e57ad8e9993051827dcd8328c2de4ef8d5601e61d6310ce7486a2"
+    },
+    {
+      "path": "public/assets/visepanda/brand/horizontal-heart-20260913.png",
+      "sha256": "82bde83b6abfb5e4144674f2eb61ba08a58e4f04220eaab6e85df86e7b9b6dba"
+    },
+    {
+      "path": "public/assets/visepanda/brand/favicon-heart-20260913.png",
+      "sha256": "2e521b15bc45dd98778fe1b5d4c3f45c4f1585bf47b69fd4989f7d4dfd42703d"
+    },
+    {
+      "path": "public/assets/visepanda/brand/apple-touch-heart-20260913.png",
+      "sha256": "d1fa5e71e9ac62da46d82a970cab36f9d9b10a6a70ea7e7c6e335eb451efde18"
     }
   ],
   "additionalApprovals": [
@@ -36,6 +60,13 @@
       "request": "替换之前的logo",
       "scope": "The two supplied brand PNGs in this replacement only",
       "sourceRecord": "assets/brand/vise-panda/README.md"
+    },
+    {
+      "approvedBy": "JT (VisePanda operator)",
+      "approvedAt": "2026-09-13",
+      "request": "确认爱心版本为正式logo，制作四种透明版本、8K增强版，传到GitHub写说明并替换之前logo",
+      "scope": "Listed heart-logo derivatives for repository, Web and native branding; no production deployment",
+      "sourceRecord": "assets/brand/vise-panda/official-heart-20260913/README.md"
     }
   ]
 }

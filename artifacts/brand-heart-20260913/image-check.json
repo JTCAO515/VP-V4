@@ -1,0 +1,112 @@
+[
+  {
+    "path": "assets/brand/vise-panda/official-heart-20260913/VisePanda-horizontal-8K.png",
+    "size": [
+      8192,
+      2738
+    ],
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  {
+    "path": "assets/brand/vise-panda/official-heart-20260913/VisePanda-primary-8K.png",
+    "size": [
+      8192,
+      8192
+    ],
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  {
+    "path": "assets/brand/vise-panda/official-heart-20260913/VisePanda-icon-8K.png",
+    "size": [
+      8192,
+      8192
+    ],
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  {
+    "path": "assets/brand/vise-panda/official-heart-20260913/VisePanda-wordmark-8K.png",
+    "size": [
+      8192,
+      2730
+    ],
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  {
+    "path": "public/assets/visepanda/brand/wordmark-heart-20260913.png",
+    "size": [
+      1200,
+      400
+    ],
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  {
+    "path": "public/assets/visepanda/brand/apple-touch-heart-20260913.png",
+    "size": [
+      180,
+      180
+    ],
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  {
+    "path": "public/assets/visepanda/brand/favicon-heart-20260913.png",
+    "size": [
+      64,
+      64
+    ],
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  {
+    "path": "public/assets/visepanda/brand/icon-heart-20260913.png",
+    "size": [
+      512,
+      512
+    ],
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  {
+    "path": "public/assets/visepanda/brand/horizontal-heart-20260913.png",
+    "size": [
+      1600,
+      535
+    ],
+    "alphaRange": [
+      0,
+      255
+    ]
+  },
+  {
+    "path": "public/assets/visepanda/brand/primary-heart-20260913.png",
+    "size": [
+      1024,
+      1024
+    ],
+    "alphaRange": [
+      0,
+      255
+    ]
+  }
+]

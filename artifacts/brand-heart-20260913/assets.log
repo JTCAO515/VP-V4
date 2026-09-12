@@ -1,0 +1,5 @@
+
+> vp-v4@0.0.0 check:assets /Users/jtcao/Documents/VP-V4-Heart-Logo
+> node scripts/check-assets.mjs
+
+Asset policy passed (49 ledger records; 9 blocked preview files; mode=preview).

@@ -10,7 +10,8 @@ Arabic still uses RTL. The Web locale migration is separate.
 All screens are development preview: no account, AI, network, Trip write, booking or payment.
 Draft text and language selection are session-only. Sending remains disabled.
 
-The bundled icon and wordmark use the operator-supplied artwork integrated by PR274.
+The bundled icon and wordmark use the operator-confirmed heart logo; see
+[the current source and runtime export notes](../../assets/brand/vise-panda/official-heart-20260913/README.md).
 [Asset provenance and permitted surfaces](../../docs/licenses/asset-rights-ledger.json) remain
 authoritative; replacement approval does not establish signed Store or complete app acceptance.
 

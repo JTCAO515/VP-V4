@@ -1,3 +1,7 @@
+# 当前正式 Logo
+
+已切换为 [VisePanda. 爱心金属版](official-heart-20260913/README.md)。下方为历史素材与既有品牌资料；旧 Logo 源文件保留，不再作为当前产品标识。
+
 # VisePanda 品牌素材
 
 本目录保存项目方提供的 VisePanda 品牌设计稿。主 Logo 提供 4K PNG 与 SVG 两种格式，便于后续设计、文档和产品使用。

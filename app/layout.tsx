@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  icons: { icon: "/assets/visepanda/brand/logo-20260909.png", apple: "/assets/visepanda/brand/logo-20260909.png" },
+  icons: { icon: "/assets/visepanda/brand/favicon-heart-20260913.png", apple: "/assets/visepanda/brand/apple-touch-heart-20260913.png" },
   title: "VisePanda｜来华自由行的 AI 规划与执行工作台",
   description:
     "VisePanda 将对话式规划、Trip Canvas 与旅途中的 Today 执行恢复组织在同一个前端产品预览中。",
