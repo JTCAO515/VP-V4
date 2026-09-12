@@ -80,3 +80,26 @@ test('unknown completion acknowledgment is not retried or converted to another t
  assert.equal(await createScopedTextWorker(config(),f.deps)(new AbortController().signal),'unavailable');
  assert.equal(completions,1);assert.equal(f.sent.length,1);assert.equal(f.calls.some(c=>c.name==='finish_turn_work'),false);
 });
+
+test('bounded thinking stays task-policy bound through claim, fresh authorization, budget and completion',async()=>{
+ for(const authorized of [true,false]){
+  const f=fixture(),transport=f.deps.fetch;
+  f.deps.provider.inputMode='task_history_v1';f.deps.provider.thinkingBudgetTokens=256;
+  f.deps.fetch=async(url,options)=>{
+   const name=new URL(url).pathname.split('/').at(-1),params=JSON.parse(options.body);
+   if(name==='claim_text_task_work'){f.calls.push({name,params});return Response.json(lease);}
+   if(name==='read_text_work'){f.calls.push({name,params});return Response.json({...input,kind:'task_input',history:[],contextDigest:'a'.repeat(64)});}
+   if(name==='authorize_text_task_dispatch'){f.calls.push({name,params});return Response.json({kind:authorized?'authorized':'denied'});}
+   return transport(url,options);
+  };
+  assert.equal(await createScopedTextWorker(config(),f.deps)(new AbortController().signal),'finished');
+  assert.equal(f.calls[0].name,'claim_text_task_work');
+  assert.equal(f.calls.find(c=>c.name==='authorize_text_task_dispatch').params.p_policy_id,policyId);
+  assert.equal(f.sent.length,authorized?1:0);
+  if(authorized){const body=JSON.parse(f.sent[0].body);assert.equal(body.max_completion_tokens,512);assert.equal(body.thinking_budget,256);assert.equal(body.max_tokens,undefined);}
+  const terminal=f.calls.find(c=>c.name==='complete_text_work');assert.equal(terminal.params.p_kind,authorized?'answered':'blocked');
+ }
+ const f=fixture();
+ for(const patch of [{thinkingBudgetTokens:256},{inputMode:'task_history_v1',thinkingBudgetTokens:512},{inputMode:'task_history_v1',thinkingBudgetTokens:256,provider:'glm'}])assert.throws(()=>createScopedTextWorker(config(),{...f.deps,provider:{...f.deps.provider,...patch}}));
+ assert.equal(f.calls.length,0);
+});

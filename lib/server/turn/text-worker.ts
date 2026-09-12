@@ -15,6 +15,7 @@ export type TextWorkerConfig = Readonly<{
 }>;
 /** Trusted deployment binding must match the registry endpoint exactly. No default network transport. */
 export type TextProviderBinding = Readonly<{
+  thinkingBudgetTokens?: number;
   inputMode?: "current_input_v1" | "task_history_v1";
   provider: keyof typeof PROTOCOL_MODELS;
   endpoint: string;
@@ -47,7 +48,7 @@ export async function runTextWorker(
       reservedMicros: config.reservedMicros, timeoutMs: config.timeoutMs,
     };
     const result = await runWithDurableBudget(attempt, budgetRpc, async budgetSignal => {
-      const value = await invokeTextProviderProtocol(lease, { inputMode: binding.inputMode, provider: binding.provider, endpoint: binding.endpoint, maxOutputTokens: config.maxOutputTokens, timeoutMs: config.timeoutMs }, textRpc, guard, binding.transport, budgetSignal);
+      const value = await invokeTextProviderProtocol(lease, { thinkingBudgetTokens: binding.thinkingBudgetTokens, inputMode: binding.inputMode, provider: binding.provider, endpoint: binding.endpoint, maxOutputTokens: config.maxOutputTokens, timeoutMs: config.timeoutMs }, textRpc, guard, binding.transport, budgetSignal);
       // Usage alone does not prove the model used for pricing. The normalizer can
       // retain usage on MODEL_OUTPUT_INVALID, including a mismatched model. Only
       // these outcomes establish model + usage; SAFETY_BLOCKED is emitted after

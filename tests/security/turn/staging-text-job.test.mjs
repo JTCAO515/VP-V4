@@ -79,3 +79,23 @@ test('job/2 explicitly binds the context claimer and records its distinct prompt
  assert.equal(result.code,0,result.stderr);assert.equal(JSON.parse(result.stdout).result,'empty');
  const rows=(await readFile(journal,'utf8')).trim().split('\n').map(JSON.parse);assert.deepEqual(rows.map(r=>r.prompt),[TEXT_TASK_PROMPT_REF,TEXT_TASK_PROMPT_REF]);
 });
+
+test('job/3 explicitly bounds total generation and rejects under-reservation before I/O',()=>{
+ let touched=0;const deps={workerCredential:()=>{touched++;},providerCredential:()=>{touched++;},recordDestination:async()=>{touched++;}};
+ const value={...config(),schemaVersion:'vpj07-staging-text-job/3',inputMode:'task_history_v1',thinkingBudgetTokens:256};
+ assert.doesNotThrow(()=>createStagingTextJob(value,deps));
+ for(const patch of [{thinkingBudgetTokens:0},{thinkingBudgetTokens:512},{thinkingBudgetTokens:1.5},{thinkingBudgetTokens:undefined},{inputMode:'current_input_v1'},{schemaVersion:'vpj07-staging-text-job/2'},{budget:{...value.budget,reservedMicros:value.budget.reservedMicros-1}},{budget:{...value.budget,maxOutputTokens:513}}])assert.throws(()=>createStagingTextJob({...value,...patch},deps));
+ assert.equal(touched,0);
+});
+
+test('job/3 CLI journals explicit generation limits with unchanged task prompt',{timeout:10000},async t=>{
+ const dir=await mkdtemp(join(tmpdir(),'vpj07-thinking-cli-'));t.after(()=>rm(dir,{recursive:true,force:true}));
+ const input=join(dir,'config.json'),journal=join(dir,'receipts.jsonl'),mapper=join(dir,'closed-fetch.mjs');
+ await writeFile(input,JSON.stringify({...config(),schemaVersion:'vpj07-staging-text-job/3',inputMode:'task_history_v1',thinkingBudgetTokens:256}),{mode:0o600});
+ await writeFile(mapper,`globalThis.fetch=async(url)=>{if(!url.endsWith('/claim_text_task_work'))throw Error('Wrong mode');return Response.json({kind:'empty'});};`);
+ const result=await runChild(['--experimental-strip-types','--import',mapper,resolve('lib/server/jobs/run-staging-text-worker.mjs'),'--config',input,'--receipts',journal],{...process.env,NODE_OPTIONS:'',VERCEL_ENV:'',VISEPANDA_STAGING_TEXT_WORKER:'true',VISEPANDA_STAGING_TEXT_WORKER_KEY:'synthetic-worker',VISEPANDA_STAGING_TEXT_PROVIDER_KEY:'synthetic-provider'});
+ assert.equal(result.code,0,result.stderr);
+ const rows=(await readFile(journal,'utf8')).trim().split('\n').map(JSON.parse);
+ assert.equal(rows.length,2);
+ for(const row of rows){assert.equal(row.schemaVersion,'vpj07-worker-run/3');assert.deepEqual(row.prompt,TEXT_TASK_PROMPT_REF);assert.deepEqual(row.generation,{mode:'qwen-bounded-thinking-v1',maxCompletionTokens:512,thinkingBudgetTokens:256});}
+});

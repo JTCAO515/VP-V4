@@ -333,3 +333,32 @@ history response is not proof that a prior in-flight POST cannot still commit;
 cross-process uncertain-submit deduplication is not established by this slice.
 Closing that window requires a separate persistence/consent and crash-recovery
 increment, not a claim inferred from ordinary relaunch tests.
+
+## Explicit bounded-thinking experiment (2026-09-12)
+
+`vpj07-staging-text-job/3` adds a required `thinkingBudgetTokens` integer to the
+job/2 task-history configuration. It is Qwen-only, between1 and2048, and strictly
+below `budget.maxOutputTokens` (at most4096). Job/1 and job/2 keep their existing
+non-thinking Qwen requests. No HTTP/native input can select this deployment option.
+
+For job/3 only, the provider request sets `enable_thinking=true`,
+`thinking_budget=thinkingBudgetTokens`, and
+`max_completion_tokens=budget.maxOutputTokens`; it does not send `max_tokens`.
+The [provider's documentation](https://help.aliyun.com/en/model-studio/deep-thinking)
+distinguishes the combined reasoning/answer limit from the final-answer-only limit.
+The existing reservation therefore covers the complete output cap plus the full
+input context at the configured conservative tariffs. Reasoning tokens are already
+part of completion usage and are not charged a second time by the calculator.
+
+The same recipient policy, fresh context authorization, task budget, timeout,
+response-byte cap and strict JSON validator remain authoritative. A truncated or
+above-cap completion is invalid and retains unknown-cost treatment; reasoning
+content is never returned, persisted as an answer or placed in history. There is
+no automatic JSON repair or semantic reroll.
+
+Worker-run/3 journals retain the configuration hash, unchanged task prompt reference
+and explicit generation mode/limits. They contain no input, output or reasoning
+text. Disabling the option uses the existing job/2 configuration; retained task,
+consent and cost records are not reset. This code is experiment preparation, not
+proof that the provider honors the parameters or that the retained failed semantic
+cases now pass. Live evaluation must keep those cases and record a distinct result.

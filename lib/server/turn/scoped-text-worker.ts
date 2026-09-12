@@ -1,7 +1,7 @@
 import { nativeRequestScope } from "../identity/native-request.ts";
 import { isLocalNativeTarget } from "../identity/native-config.ts";
 import { runTextWorker, type TextProviderBinding, type TextWorkerConfig } from "./text-worker.ts";
-import { PROTOCOL_MODELS } from "../model-gateway/adapters/provider-protocol.ts";
+import { PROTOCOL_MODELS, validThinkingBudget } from "../model-gateway/adapters/provider-protocol.ts";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const RPCS = new Set(["claim_text_task_work", "authorize_text_task_dispatch", "claim_text_work", "finish_turn_work", "read_text_work", "authorize_text_dispatch", "complete_text_work",
@@ -30,6 +30,9 @@ export function createScopedTextWorker(config: ScopedTextWorkerConfig, dependenc
   if (typeof window !== "undefined" || !valid(config) || typeof dependencies?.credential !== "function"
     || !dependencies.provider || !Object.hasOwn(PROTOCOL_MODELS, dependencies.provider.provider)
     || (dependencies.provider.inputMode !== undefined && !["current_input_v1", "task_history_v1"].includes(dependencies.provider.inputMode))
+    || (dependencies.provider.thinkingBudgetTokens !== undefined && (dependencies.provider.provider !== "qwen"
+      || dependencies.provider.inputMode !== "task_history_v1"
+      || !validThinkingBudget(dependencies.provider.thinkingBudgetTokens, config.budget.maxOutputTokens)))
     || typeof dependencies.provider.endpoint !== "string" || !/^https:\/\/[^/?#@]+\/[^?#]*$/.test(dependencies.provider.endpoint)
     || typeof dependencies.provider.price !== "function" || typeof dependencies.provider.transport !== "function"
     || (dependencies.fetch !== undefined && typeof dependencies.fetch !== "function")) throw unavailable();

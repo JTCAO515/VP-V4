@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：#194 closed. Native v3 Staging read/relaunch/owner isolation verified in Simulator; language persistence fixed locally. Real Qwen clarification-first cases still fail. PR332/333 await production merge guard approval; full S2 open.
+状态：PR332 merged at938f597 after final CI; native Staging history/relaunch/isolation and local language persistence verified. PR333 integration retains the failed bounded-thinking clarification criterion. Full S2 remains open.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -31,6 +31,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - 2026-09-11 resumed: JT explicitly confirmed Preview native configuration/proof key, exact host WAF allowance and two synthetic-account/owned-Trip cleanup, then delegated development permission management. This supersedes the earlier pause for this scope; Production/real-user/provider/funds boundaries remain separate.
 - 2026-09-12 JT removed mandatory supplier support responses, account-contract receipts and precise supplier TTL evidence from VPJ-03 for ALL model providers, including Qwen, GLM, DeepSeek and future candidates. Public terms, console metadata and actual configuration suffice as documented sources with explicit unknowns. No supplier ticket blocks development; preserve truthful notice, user consent and runtime permissions.
 - 2026-09-12 JT取消全部开发阶段第三方、法务与产品许可前置要求；工单/书面回复/合同回执/精确供应商TTL缺失不再阻塞开发。agent按docs/agents/development-integration-policy.md以现有账号/API与实际配置推进，可逆参数自行决定；保留用户同意、RLS、确认、秘密及真实验证。
+- 2026-09-12 JT明确同意仅暂停main自动Production构建。单字段guard已应用，PR332合并后真实Production构建CANCELED且全部线上alias保留db5fb7b；Preview/Staging不变。此授权不包含新的Production发布或解除guard。
 
 ## 未决与运行证据
 
@@ -42,7 +43,6 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - #267←#264(OPEN)+#287(CLOSED): offline grading preparation is available, but the real authorized read-only chain, frozen candidate tolerances/benefit criteria and human calibration remain absent. Test-budget direction does not remove technical attempt/token/concurrency safeguards or settle unknown charges.
 - #268←#266/#267/#229/#231, all OPEN: selected-version complete12 required-mode scenarios, actual Ops stop/restore/rollback and matching real domestic/international network evidence are not available. Local ledgers, deadline tests, static flags or configured regions do not complete those dependencies.
 - JT deferred further physical phone verification on2026-09-12. Existing physical same-Trip/auth slice passed; full native/VoiceOver/Store acceptance remains unrun. The previous CI AX failure is resolved; do not repeat phone work as a development gate.
-- Live Vercel main auto-deploys Production. PR332/333 merges are held pending JT approval of the prepared main-only ignored-build guard; preserve current Production and Preview. No approval was inferred from Goal continuation.
 
 - Production/customer and complete native/Harness acceptance remain unrun. Scoped Staging and actual C0 model protocol/worker behavior are verified; supplier billing, semantic quality and real user data consumers remain separate.
 - Physical VoiceOver, signed Store and selected-object Ask sheet acceptance under #198/#233/#242 remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.
@@ -99,10 +99,12 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - 2026-09-12 bounded task context: real SQL26/26 plus migration38 transaction rollback2/2, real disposable Auth/native HTTP/job2 chain1/1, protocol and worker safety49/49. Independent data/shared-contract review Critical0/Important0. v1/v2 remain compatible; v3 uses separate consent, four-Turn cap, mode-separated claim and dispatch context digest. See artifacts/VPJ-07/task-context-20260912/verification.md. No remote migration38/provider/native acceptance yet.
 - Native task context: runtime64b4651 independently reviewed Critical0/Important0; local actual Auth/SQL/controller core8pass and final bilingual UI4pass0skip at ef775ea. Four-Turn clarification restoration, same-task repair, policy withdrawal and explicit new-goal behavior verified with controlled local provider. Initial fixture-capacity and stale login-assertion failures retained. Pending requests remain process-local; restart covers server-confirmed history only. See artifacts/VPJ-07/native-task-context-20260912/verification.md; required PR CI and remote/native semantic acceptance separate.
 - 2026-09-12 native Staging consumer: PR332 8ce9e7e reads three retained real Qwen answers per synthetic owner, matches latest thinking outputs exactly, survives relaunch and clears history on sign-out; zero new model calls. Observed English reset fixed at b561bf9; native9pass0skip and actual zh/en relaunch plus Arabic override/RTL pass. See artifacts/VPJ-07/native-staging-read-20260912/verification.md. Full real clarification continuation remains unrun.
+- PR332 at8ce9e7e: local core8/UI4 passed; Quality34653592174/Budget34653592093/Native34653592185/Vercel passed. Native CI28pass/14 explicit API-environment skips is not full capability acceptance. Main auto-deploy was verified enabled; Production currentlydb5fb7b, so merging is paused pending the prepared deployment-setting decision. Previous non-production wording did not account for automatic main deployments.
+- Bounded thinking source ddc8077, workerdf6ee24: explicit job3 keeps prior defaults; independent review0/0, contract244pass, security136pass1existingDBskip, loopbackHTTP4pass. Two actual Qwen calls at thinking512/total1024 returned valid JSON but failed frozen clarification-first outcome; no follow-up or reroll. Both settled CNY0.034992 conservative tariff, zero unresolved, not invoice. See artifacts/VPJ-07/bounded-thinking-20260912/verification.md.
 
 ## 下一动作与回滚
 
-Complete final PR332 CI after the observed language-persistence fix. Apply the prepared main-only Production build guard only after JT approves; then integrate PR332 and PR333, preserving both evidence histories. Continue deliberate model-semantic and persistent-worker work; physical-phone validation remains deferred.
+Finish PR333 required integration checks and merge with the approved main-only Production ignored-build guard in force. Recheck canceled production attempt and retained live aliases. Then continue real semantic/worker acceptance; phone validation remains deferred.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

@@ -1,0 +1,53 @@
+{
+  "apiSha": "b542eadff6a5057445c6d3311ebd5d166c0dad55",
+  "workerSha": "df6ee24739029d6bb33584e129e6d73eaa7a4f41",
+  "casesDigest": "35cf2358f57526deed3c67dd33161c3213728e4ec2813785eca5221ef6fd5524",
+  "providerInvocations": 2,
+  "outcomeChecks": "FAIL",
+  "status": "FAIL_FROZEN_CRITERION",
+  "noReroll": true,
+  "cases": [
+    {
+      "locale": "en",
+      "input": "In a fictional square room, the exit is on the north wall and another door is on the south wall. Which way should I turn to face the other door?",
+      "expected": "clarification",
+      "outcome": "answered",
+      "output": "If you are facing the exit on the north wall, you should turn around 180 degrees to face the other door on the south wall.",
+      "generation": {
+        "mode": "qwen-bounded-thinking-v1",
+        "maxCompletionTokens": 1024,
+        "thinkingBudgetTokens": 512
+      },
+      "prompt": {
+        "version": "vp-task-response-v1",
+        "digest": "46e9f5390493c7e3f902bb5e032adaab5c62f8bf20071e69aa0c9c04d844afd2"
+      },
+      "replay": 200,
+      "foreignOwnerHidden": true,
+      "followupAdmitted": false,
+      "criterionResult": "FAIL",
+      "assessment": "Conditional 180-degree instruction if facing north; does not ask for the missing orientation."
+    },
+    {
+      "locale": "zh",
+      "input": "在一个虚构的正方形房间里，出口在北墙，另一扇门在南墙。我应该往哪边转身才能面向另一扇门？",
+      "expected": "clarification",
+      "outcome": "answered",
+      "output": "你应该面向北墙（出口），然后向后转180度，这样你就面向南墙的另一扇门了。",
+      "generation": {
+        "mode": "qwen-bounded-thinking-v1",
+        "maxCompletionTokens": 1024,
+        "thinkingBudgetTokens": 512
+      },
+      "prompt": {
+        "version": "vp-task-response-v1",
+        "digest": "46e9f5390493c7e3f902bb5e032adaab5c62f8bf20071e69aa0c9c04d844afd2"
+      },
+      "replay": 200,
+      "foreignOwnerHidden": true,
+      "followupAdmitted": false,
+      "criterionResult": "FAIL",
+      "assessment": "Adds face-north then turn-around sequence, which can reach the stated target, but does not satisfy the frozen clarification-first outcome or exercise the continuation chain."
+    }
+  ]
+}
