@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 #205/#206: PR337 merged; actual Staging38→39 backup/restore/upgrade PASS. Twelve real-source bilingual statements published through independent controlled accounts; scoped web/native API reads and revoke PASS. Temporary Ops/read access and WAF host removed; native SwiftUI consumer and Ask grounding remain pending.
+状态：S2 #205/#206: Staging39 publication/read/revoke verified. PR339 native reader implemented and actual bilingual Staging reads/restart/logout observed, but remains OPEN after Native34706592620 full Ask accessibility contrast FAIL. Three unsuccessful layout experiments reverted; no waiver. PR340 reviewed-selection preparation merged657d882 with Quality/Preview PASS; no active Ask caller. Production guard and aliases unchanged.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -35,6 +35,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 未决与运行证据
 
+- PR339 Native34706592620 FAIL: two full Ask accessibility audits report offscreen third-prompt contrast; three layout/visibility/lazy experiments also FAIL and were reverted. Bilingual scroll/open diagnostic PASS does not waive audits. See artifacts/VPJ-16/native-knowledge-20260913/ax-regression/verification.md; actual reader evidence remains on PR339, not yet merged.
 - Staging36 and scoped real Ask transport/persistence are verified; full S1/S2, all five outcomes, complete semantic acceptance, grounding and operational continuous recovery are incomplete; scoped native display and same-task clarification with a bounded service are now observed. Current development notice records supplier unknowns; they are not approval blockers.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel runtime integration, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
@@ -53,6 +54,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 验证
 
+- 2026-09-13: PR340/b7a7301 merged657d882 after selection6/6, lint/typecheck, Quality34707359480 and Preview PASS. Actual Production attempt dpl_E9oNSx3iFrS1VJXKci4r9Wk6DDiZ CANCELED;5aliases remain dpl_AEcvPbiv2tcX5k8uGRtmBp3PPZPv and shared Staging5eBh1Exfo4W8rXEh1T3AazJnUjXW unchanged. No actual Ask integration or new Issue acceptance.
 - Delivery: PR301/28a2d44 exactHEADafa83a5 independent review0/0; Native34471256512, Quality34471256572, Budget34471256522 and Vercel passed, merged tree matched and post-merge docs passed. Simulator CI now uses complete ad-hoc test signing plus an owned fresh device and explicit boot readiness; assertions/audit types are unchanged. Local full runner21pass/0fail/8API-environment skips; separate real API evidence remains underVPJ-05. Initial Keychain, audit-service, launch and destination-format failures remain recorded.
 - Foundation evidence: PR302/8175e39 exactHEAD5459c01 review0/0 and Quality/Vercel passed. iOS17 CJK comparison hadproduction2FAIL/SwiftUI2FAIL/UIKit2PASS; element captures showed complete text, with duplicated full-screen capture limitations disclosed. No production UI was changed or original audit failure waived.
 - VPJ-05 local same-Trip: real Swift/API persistence, reciprocal Web/iOS Trip IDs, bilingual normal/maximum UI and desktop/390px browser checks passed. Unit92/contract199/evals25/security99/E2E40 and build/static22 passed. Both local identity/Trip integration opt-ins ran:31pass/0fail/10budget-environment skips, aggregate INCOMPLETE. A fixed-sleep identity observation failed first; a controlled backend-PID lock barrier corrected the test and passed. Real27→28 data-preserving upgrade passed. See artifacts/VPJ-05/verification.md; hard locks/external orders and remote/full product acceptance remain unknown/unrun.
@@ -109,7 +111,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Integrate the current-session native SwiftUI knowledge reader using the published first-party contract, then implement request-scoped Ask evidence/coverage. Reuse Staging39 and retained12 publication records (11published/1revoked); keep disabled defaults, historical semantic FAIL and incomplete Issue acceptance. No production release.
+Continue #206 actual Ask grounding on codex/s2-knowledge-task-20260913: durable request scope/idempotency, exact recipient eligibility, snapshot-bound dispatch and completion/history revalidation. Keep PR339 unmerged until full native CI is resolved; reuse retained offscreen contrast diagnostics instead of repeating failed layout experiments. Do not reopen completed Staging39 publication writes or infer model-recipient use from first-party publication.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
