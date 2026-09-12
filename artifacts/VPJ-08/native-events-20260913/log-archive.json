@@ -1,0 +1,107 @@
+[
+  {
+    "file": "build-initial.log.gz",
+    "uncompressedBytes": 148732,
+    "uncompressedSha256": "94b763e47ed7082c78249ec0a79986e2f0b6693161507e2c8505995a0efe0a51"
+  },
+  {
+    "file": "docs.log.gz",
+    "uncompressedBytes": 247,
+    "uncompressedSha256": "e1ae5733dbede372742c25a31423cc525a17d251104f7b0d1d3113e27cc7aa6a"
+  },
+  {
+    "file": "frames-final.log.gz",
+    "uncompressedBytes": 334,
+    "uncompressedSha256": "6eaeb868b789a0386ce3fe91ed4519b5b1e4b4eb7e952037207af6cb199281ec"
+  },
+  {
+    "file": "frames.log.gz",
+    "uncompressedBytes": 334,
+    "uncompressedSha256": "eea4befe3e5b26169345f2e770dce52f2463466b3ed6ca4d7901cd530bb97de5"
+  },
+  {
+    "file": "http-initial.log.gz",
+    "uncompressedBytes": 235,
+    "uncompressedSha256": "10615658dca7aa1383f5cb6164ce805f30495f7f990aedd93867ddfdd850e28b"
+  },
+  {
+    "file": "lint.log.gz",
+    "uncompressedBytes": 139,
+    "uncompressedSha256": "9d7701fcc3b1225d4e38980c80965833f5d5a17db73ad6732caa8c033bf577c6"
+  },
+  {
+    "file": "native-live-1-build.log.gz",
+    "uncompressedBytes": 150198,
+    "uncompressedSha256": "a68721fe133e121ba118cd6355002764d1005564ab5708e45913c0103e13bda4"
+  },
+  {
+    "file": "native-live-1.log.gz",
+    "uncompressedBytes": 559,
+    "uncompressedSha256": "a3b831b6e2afbb1a1a61634dbcee4b103c4e02c20addd4f52810d06d729ed8de"
+  },
+  {
+    "file": "native-live-2-build.log.gz",
+    "uncompressedBytes": 227575,
+    "uncompressedSha256": "7923a682c1124d6389b916cf3735959ee9f268ec45661d9340f59485d7c800c1"
+  },
+  {
+    "file": "native-live-2-tests.log.gz",
+    "uncompressedBytes": 65434,
+    "uncompressedSha256": "1bef160203530874a6374d8a98126670f31871d983c796fc9eb573f44b05cffa"
+  },
+  {
+    "file": "native-live-2.log.gz",
+    "uncompressedBytes": 0,
+    "uncompressedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "file": "native-live-3-build.log.gz",
+    "uncompressedBytes": 227580,
+    "uncompressedSha256": "d8914acc305803a9b63ef39330345eb6383d1aba8cc42099053037b89e082b08"
+  },
+  {
+    "file": "native-live-3-tests.log.gz",
+    "uncompressedBytes": 8451,
+    "uncompressedSha256": "bfe9d14ef30304d39fe971d4bb563ca8be5a0b0712bc8f0d7eba72d7e509333b"
+  },
+  {
+    "file": "native-live-3.log.gz",
+    "uncompressedBytes": 0,
+    "uncompressedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "file": "native-state-initial.log.gz",
+    "uncompressedBytes": 228311,
+    "uncompressedSha256": "5fb665611562aaf8e80e9e5b5b14ca27907bbe01af3f1aeccd3c96cf6a04d335"
+  },
+  {
+    "file": "sql-final-2.log.gz",
+    "uncompressedBytes": 2421,
+    "uncompressedSha256": "df6b22d4da74655f3efea3e91a380b1ec4061c1487bad84e99949c62dead7a2b"
+  },
+  {
+    "file": "sql-final-3.log.gz",
+    "uncompressedBytes": 1311,
+    "uncompressedSha256": "afd01a9bc41e94d6f81312ee96e449fde4bdcc7fe004d3fd5672df948cafbf78"
+  },
+  {
+    "file": "sql-final.log.gz",
+    "uncompressedBytes": 4241,
+    "uncompressedSha256": "c881642737bfd5737af57ec4e4ae56a7341922bdd419fb726e054855e5da85b8"
+  },
+  {
+    "file": "sql-initial.log.gz",
+    "uncompressedBytes": 1312,
+    "uncompressedSha256": "7eb82775d9a920b8f3ccf01530aaeaa2cbb160b1bf5df8e074c1dace98e496de"
+  },
+  {
+    "file": "typecheck.log.gz",
+    "uncompressedBytes": 88,
+    "uncompressedSha256": "6f18026581a6e3c57cf66ae86ee01550d14d5a25c7c3a2ceb557c10093e6e24a"
+  },
+  {
+    "file": "web-build.log.gz",
+    "uncompressedBytes": 3491,
+    "uncompressedSha256": "5962df7712b1a2e7df4b103babeea881688fdac921f69c6ecf9cc190cfe90aef"
+  }
+]

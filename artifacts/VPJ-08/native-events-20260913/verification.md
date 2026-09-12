@@ -11,3 +11,5 @@ Retained failures: native-live1 test compile failed because async let captured X
 Final native transport deadline/cancellation build and targeted tests passed10/10 (nine state and one actual local native event test), with two synthetic calls; no duplicate send. The same UI layout/consumer behavior is reused from live2; no new full UI claim for later transport-only cleanup. Final SQL passed11/11; PR/CI and Staging42/native observation remain pending. Staging41 backup and offline restore verified, no remote migration or runtime window yet.
 
 Broader #196 gaps remain: real remote event delivery/reconnect, post-dispatch unknown usage, complete background/offline/cancel/Trip recovery. Physical phone deferred; production release unrun and guarded. Prior PR344/345/346 evidence remains valid only within its recorded scope.
+
+Raw command logs are retained losslessly as `.log.gz`; `log-archive.json` records original byte counts and SHA256. Compression removes generated-log whitespace from the source diff without altering evidence.
