@@ -1,6 +1,6 @@
 {
   "brand": "VisePanda",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "sourceAssets": [
     "assets/brand/vise-panda/VP-Logo-20260909.png",
     "assets/brand/vise-panda/VP-Wordmark-20260909.png",
@@ -23,6 +23,15 @@
     {"id": "guide-celebrate", "path": "brand/ip/celebrate.png", "format": "png", "dimensions": "1024x1024", "transparent": true, "alt": "VisePanda Guide celebrating a travel moment."},
     {"id": "guide-gentle-alert", "path": "brand/ip/gentle-alert.png", "format": "png", "dimensions": "1024x1024", "transparent": true, "alt": "VisePanda Guide giving a gentle travel reminder."},
     {"id": "guide-rest", "path": "brand/ip/rest.png", "format": "png", "dimensions": "1024x1024", "transparent": true, "alt": "VisePanda Guide resting while content loads."},
+    {"id": "ip-original-v1.1-readme", "path": "brand/ip/original-v1.1/README.md", "format": "md", "alt": "Usage and provenance notes for VisePanda IP Original v1.1."},
+    {"id": "ip-original-v1.1-front", "path": "brand/ip/original-v1.1/01-front.png", "format": "png", "dimensions": "1254x1254", "alt": "VisePanda IP Original v1.1 front turnaround reference."},
+    {"id": "ip-original-v1.1-back", "path": "brand/ip/original-v1.1/02-back.png", "format": "png", "dimensions": "1254x1254", "alt": "VisePanda IP Original v1.1 back turnaround reference."},
+    {"id": "ip-original-v1.1-left", "path": "brand/ip/original-v1.1/03-left.png", "format": "png", "dimensions": "1254x1254", "alt": "VisePanda IP Original v1.1 left turnaround reference."},
+    {"id": "ip-original-v1.1-right", "path": "brand/ip/original-v1.1/04-right.png", "format": "png", "dimensions": "1254x1254", "alt": "VisePanda IP Original v1.1 right turnaround reference."},
+    {"id": "ip-original-v1.1-prompt", "path": "brand/ip/original-v1.1/VP-IP-original-prompt.txt", "format": "txt", "alt": "Reusable VisePanda IP Original v1.1 generation prompt."},
+    {"id": "ip-original-v1.1-design", "path": "brand/ip/original-v1.1/VP-IP-original-design.md", "format": "md", "alt": "VisePanda IP Original v1.1 design notes."},
+    {"id": "ip-original-v1.1-generation-prompts", "path": "brand/ip/original-v1.1/generation-prompts.json", "format": "json", "alt": "Recorded generation prompts for VisePanda IP Original v1.1."},
+    {"id": "ip-original-v1.1-revision-prompts", "path": "brand/ip/original-v1.1/revision-prompts.json", "format": "json", "alt": "Recorded v1.1 revision prompts for VisePanda IP Original."},
     {"id": "social-avatar", "path": "brand/social/avatar-1080.png", "format": "png", "dimensions": "1080x1080", "alt": "VisePanda social avatar."},
     {"id": "social-beijing", "path": "brand/social/beijing-48-hours-1080.png", "format": "png", "dimensions": "1080x1080", "alt": "First 48 hours in Beijing social post."},
     {"id": "social-train", "path": "brand/social/china-train-cheat-sheet-1080x1350.png", "format": "png", "dimensions": "1080x1350", "alt": "China train cheat sheet social post."},

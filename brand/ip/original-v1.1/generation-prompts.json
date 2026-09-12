@@ -1,0 +1,31 @@
+{
+  "name": "VP-IP Original v1.1",
+  "generation_method": "built-in image_gen",
+  "reference_policy": "原版裸毛身体；右耳单边蓝光耳麦；偏白浅肉色手脚肉垫；服装可按需替换",
+  "assets": [
+    {
+      "file": "01-front.png",
+      "label": "正面",
+      "source": "/Users/jtcao/.codex/generated_images/01a09538-9fa6-7ba1-b66e-3b71f069b4cc/exec-31dd208d-1340-4c4b-a95d-c1ff9cbd3f04.png",
+      "generation_prompt": "VisePanda / VP IP 原版三维角色标准设计。参考1用于锁定熊猫原有裸毛身体的体型、脸和比例，参考2用于锁定最新批准的大号单边蓝光智能耳麦，以及偏白浅肉色的手脚肉垫。它们是同一只熊猫。角色是温暖、机灵、可靠的中国旅行伙伴。严格保留大圆头、宽圆脸、圆耳朵、棕色眼睛、柔和黑眼斑、小黑鼻子、自然微笑、圆肚子和短粗四肢，柔软精致的短绒毛3D动画质感。体型仍以参考图为准：含耳头部约占站立总高40%，短圆躯干约占38%，裆部至脚底约22%，这些为约略视觉比例；不要拉长腿或躯干，不要瘦身，不要巨大婴儿眼。奶白头部、奶白圆肚子、黑色肩臂、黑色耳朵和黑色短腿。完整自然毛皮覆盖身体，没有衣服、鞋子、背包、手机或手持道具。只有耳麦是固定随身装备。所有手掌肉垫和指肚、脚掌肉垫和脚趾肚统一偏白的浅肉色，奶白带极淡桃粉，近似#F2DED4，柔软哑光，不是纯白、不是棕黑、不是鲜粉。四肢周围毛发仍为黑色。\n耳麦固定在熊猫自身的右耳，正面看是画面左侧，不可在转向时左右镜像。完全保留参考2批准的大号深石墨灰听筒、蓝色环形灯带和蓝光麦克风胶囊的视觉尺寸。耳挂真实扣住黑色右耳的上缘和后侧，模块由耳挂支撑，不能贴在白脸。加粗弧形麦克风杆从听筒下方悬空伸出至熊猫右侧嘴角旁，清楚地与白色脸颊、嘴巴隔开，不压毛、不遮挡眼鼻嘴。保留可读的空气间隙、立体支架和自然分离的投影。只有右侧这一副单耳耳麦，左耳不佩戴设备，不能多出第二个听筒。\n这是一套设计转面图的一帧，同一角色固定比例、固定耳麦、固定配色。纯暖白背景、柔和中性摄影棚光线、极轻微落地阴影，近似正交投影、无透视夸张，单只完整全身角色居中。身体站直，头部竖直不歪头，两脚平行略分开，双臂自然斜向下，略微离开躯干约15度以便读清轮廓，两手放松，掌心略朝前。不是招手、不是走路。方形画布，角色耳顶至脚底约占画布高度86%，上下留白，不裁切任何耳挂、手指或脚。无文字、无边框、不拼图、无尺寸标记、无标志。\n当前必须输出：严格正面 FRONT VIEW。相机在熊猫正前方，鼻子位于脸部水平中心，两眼都完整可见，肩膀和双脚左右对称。双臂略离开身体，双手掌心朝向前方，因此两手的大掌心肉垫与指肚均清晰可见，全部是偏白浅肉色。两脚前端自然可见的脚趾肚同色。耳麦仅在画面左侧，即熊猫自己的右耳。请制作最终原版角色的正面标准设计图。"
+    },
+    {
+      "file": "02-back.png",
+      "label": "背面",
+      "source": "/Users/jtcao/.codex/generated_images/01a09538-9fa6-7ba1-b66e-3b71f069b4cc/exec-4a655079-2241-4ee2-bb29-8e2e53809c61.png",
+      "generation_prompt": "精准修正图片1这张VP熊猫背面图的耳麦。图片1是编辑目标，图片2是正面身份参考，图片3是右侧耳麦安装结构参考。只改耳麦的空间位置、朝向与遮挡，熊猫身体、头、毛色、无衣服、姿势、背景、尺寸全部保持图片1。该耳麦固定在熊猫自身右耳的外侧，严格背面图中是画面右边。当前背面设备角度不准确，像把正面耳机转贴在耳朵后面。请按图片3的安装方式真正从后方观察：右侧黑耳的外侧安装大号深石墨灰耳机，模块在黑色耳廓的画面右外缘，中心高度与原版正面及右侧相符，不向内滑到白色后脑。严格从正后方只能看到耳机外壳的后缘和厚度的窄侧面，不应看到完整朝向镜头的蓝色圆环。蓝灯仅可在最右外缘露一条很窄的光线。软C形挂耳结构绕过右黑耳上缘、固定在耳后，体现后方支架和接触关系，不跨越整个头顶。麦克风从耳机的前下方沿脸侧向前伸，因此背面视角被头部遮住，不能垂到后脑或脖子上，不能出现一截朝后垂落的麦克风。仅外侧铰接点可合理显露。背面只展示正确的耳机后缘/边缘、耳挂和支架，圆耳和设备明显分层。设备大小保持与参考一致，没有第二只耳机。保持严格正后方、对称站姿、无脸部、无字、无拼图。"
+    },
+    {
+      "file": "03-left.png",
+      "label": "左侧面",
+      "source": "/Users/jtcao/.codex/generated_images/01a09538-9fa6-7ba1-b66e-3b71f069b4cc/exec-5d18a17c-ab16-43eb-93a7-9cf371929b71.png",
+      "generation_prompt": "精准修正图片1这张VP熊猫左侧面图的耳麦可见性。图片1是编辑目标，图片2是正面身份参考，图片3是右侧耳麦结构参考。只修正缺失的远侧耳麦轮廓和遮挡，不修改熊猫身体、脸、身材、毛色、肉白色肉垫、姿势、视角、背景和构图。图片1是熊猫自身左侧的严格侧面，鼻子朝画面左，近侧左黑耳不戴耳机。固定的单边大号蓝光耳麦仍然在远侧的熊猫自身右耳，绝不能把它镜像搬到近侧左耳。原图把整副固定装备完全省略了，请根据耳麦的大号尺寸和离脸悬空结构，补出合理可见的远侧轮廓：远侧右耳的深石墨灰耳挂顶部，在近侧黑耳上缘后方露出一小段独立轮廓，主耳机绝大部分被近侧耳朵和头部遮住，不能在近侧出现完整蓝光圆环；麦克风长杆在头部远侧大部分隐藏，只有前端大号麦克风胶囊在嘴旁的前方轮廓之外稍微露出，位于鼻子下方、嘴角同高度，带一个很小的蓝色状态光，胶囊与嘴边留空气间隙。这是绕到头部另一侧观察同一件设备，不是卸掉耳麦，不是另一副耳机。不要把完整耳机叠在可见左耳上，不要把麦克风画成悬在头顶的装置，不要露出贯穿头部的杆。仅添加最少但清晰的远侧耳挂边缘和悬空麦克风前端，准确遮挡。其余完全保留图片1。单张完整全身严格左侧设计图，无文字无拼图。"
+    },
+    {
+      "file": "04-right.png",
+      "label": "右侧面",
+      "source": "/Users/jtcao/.codex/generated_images/01a09538-9fa6-7ba1-b66e-3b71f069b4cc/exec-4a114f44-a527-4fcc-88ea-d5ef58ff634c.png",
+      "generation_prompt": "Generate a precise character turnaround view of the EXACT SAME VisePanda panda shown in the attached FRONT master design. This reference is the sole master for face, anatomy, proportions, fur pattern, headset size, colors, surface materials and lighting. Rotate the SAME character, do not redesign it. Maintain the same large round head, rounded plump belly, short thick legs, arm lengths, ear shapes, friendly subtle smile, brown eyes, compact silhouette, soft short fur and polished stylized 3D appearance. No clothing, shoes, phone, backpack or props. The fixed large graphite single-ear smart headset is attached ONLY TO THE PANDA'S ANATOMICAL RIGHT EAR (the ear on viewer's LEFT in the attached front view). Never mirror it to the left ear. The same blue ring and blue microphone tip, sturdy curved ear hook and hovering boom must remain attached to that anatomical right ear regardless of camera position. Ear hook mechanically supports the headset; boom and capsule are suspended away from face, tip near right mouth corner, do not press into fur. All palm, finger, sole and toe pads, IF anatomically visible, are very pale warm peach flesh-colored, nearly ivory #F2DED4. Never place paw pads on the back of a hand or top of a foot merely to show them. Black furry ears, arms, shoulder band and legs; cream-white head and belly, cream-white lower back and small unobtrusive cream tail, black shoulder band wraps consistently across upper back. Same relaxed neutral standing pose as master: head upright, feet planted parallel, arms slightly separated from torso, palms facing character's forward direction. Full figure, nearly orthographic camera, no perspective exaggeration, plain warm white seamless background and soft ground shadow. Same square canvas, identical character scale with ear top roughly y=5% and soles y=92%; entire headset and all paws visible inside canvas. Single standalone view only, no collage, no inset, no text, no labels.\nVIEW: STRICT ANATOMICAL RIGHT SIDE PROFILE, camera directly to panda's own right side, 90 degree profile, panda NOSE POINTS TO IMAGE RIGHT. This is the HEADSET SIDE, so the full round graphite ear module with blue luminous ring is clearly visible on the near-side right black ear. Ear hook wraps up and behind this ear, not across the top of skull. Curved boom projects outward away from cheek in depth then forward toward mouth, with clear separation and softly offset shadow, capsule held near right mouth corner. Keep same headset scale as master, not enlarged. Show a true side silhouette, one eye, side nose, rounded protruding belly and short legs, no three-quarter face, no turning head toward camera. Keep arms and stance geometrically consistent with front."
+    }
+  ]
+}

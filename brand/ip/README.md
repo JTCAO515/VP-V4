@@ -33,3 +33,7 @@ antique-gold accents. The source visual reference is
 - Do not recolour, trace, add clothing, add words, or convert the poses into
   an authority badge. Keep the supplied file names stable for UI and social
   integrations.
+
+## Original character reference
+
+[`original-v1.1/`](./original-v1.1/) holds the four-view, un-clothed base-character reference and its generation notes. It is separate from the pose library above and is restricted to `brand-reference` and `design-review`; see its README before deriving new artwork.
