@@ -1,0 +1,10 @@
+{
+  "at": "2026-09-12T22:32:21.090Z",
+  "status": "PASS",
+  "taskId": "bc0bce26-1fc1-46fe-9a30-d67a318b1578",
+  "turnId": "a322cdb9-f559-49fc-90bf-ae1a0de278f7",
+  "realProcessKilled": true,
+  "providerInvocations": 0,
+  "modelBudgetAttempts": 0,
+  "leaseNotModified": true
+}

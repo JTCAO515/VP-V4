@@ -1,0 +1,77 @@
+{
+  "at": 1789252397.005903,
+  "rows": [
+    {
+      "AXUniqueId": null,
+      "AXLabel": "For an adult with a foreign passport on a domestic mainland China train with an e-ticket, which original booking ID and ticket proof are needed to board?",
+      "type": "StaticText",
+      "frame": {
+        "x": 32,
+        "width": 338,
+        "y": 1474.333333333333,
+        "height": 86.33333333333326
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "grounded.status",
+      "AXLabel": "Waiting for result",
+      "type": "StaticText",
+      "frame": {
+        "x": 32,
+        "width": 129.33333333333331,
+        "y": 1570.6666666666663,
+        "height": 20.333333333333258
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "native-ask.cancel.a322cdb9-f559-49fc-90bf-ae1a0de278f7",
+      "AXLabel": "Cancel request",
+      "type": "Button",
+      "frame": {
+        "width": 114.66666666666666,
+        "x": 32,
+        "y": 1601,
+        "height": 20.333333333333258
+      },
+      "enabled": false
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "For an adult with a foreign passport on a domestic mainland China train with an e-ticket, which original booking ID and ticket proof are needed to board?",
+      "type": "StaticText",
+      "frame": {
+        "width": 338,
+        "x": 32,
+        "y": 1677.333333333333,
+        "height": 86.33333333333326
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": "grounded.interpreted",
+      "AXLabel": "Interpreted question: Which documents do I need to board?",
+      "type": "StaticText",
+      "frame": {
+        "x": 32,
+        "width": 318,
+        "y": 1773.6666666666663,
+        "height": 38
+      },
+      "enabled": true
+    },
+    {
+      "AXUniqueId": null,
+      "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+      "type": "StaticText",
+      "frame": {
+        "x": 32,
+        "width": 320,
+        "y": 1821.6666666666663,
+        "height": 30.333333333333258
+      },
+      "enabled": true
+    }
+  ]
+}
