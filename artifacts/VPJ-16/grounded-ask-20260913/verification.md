@@ -34,7 +34,7 @@ and polled every second, racing acceptance. No provider call occurred. That
 failure and interrupted-run exit73 remain recorded. Initializing the consent
 refresh interval fixed it. A subsequent change also wakes polling when a new
 pending turn appears, instead of waiting for the previous idle snapshot deadline;
-final UI rerun is PENDING at this checkpoint. Simulator diagnostic collection
+final UI rerun passed2/2 on the same native source, with two calls total. Simulator diagnostic collection
 reported an xcrun/simctl path warning after the successful UI tests; the xcresult
 and screenshots were exported successfully. Manual VoiceOver/max-text and a
 physical-device run are UNRUN.
@@ -49,14 +49,22 @@ both are implemented and tested. Four-turn admission was reviewed separately.
 
 ## Integration boundary
 
-Real Staging migration41, dedicated Preview, real Qwen classification, target
-native history/restart and final required CI are PENDING. Migration40 remains the
-observed shared Staging baseline. A fresh encrypted backup and isolated full
-restore passed before any migration41 application. An initial backup's final
-connection check failed and was retained; a new complete backup was verified.
-No production deployment, alias movement, real booking/payment or Issue closure
-is part of this checkpoint. Existing read/Ops switches remain disabled until an
-explicit bounded validation window.
+Real Staging migration41 was applied after a fresh encrypted backup and full
+isolated restore passed. The first backup connection-check failure is retained.
+Original77 tables/data and249 pre-existing schema entries were checked, with only
+the declared function changes; users6/Trips3, published11/revoked1 preserved.
+Dedicated Preview on8022b5a and real Qwen prompt v2 passed16/16 semantic cases.
+Actual zh/en native submissions and process restart reads passed; two native
+requests produced exactly two settled attempts. Turning reading off hid all facts
+and returned unavailable within9.17seconds. Read/Ops are off, active members0,
+WAF returned to its previous host set at version18. See staging-v2/README.md.
+
+A native reading defect was observed: deadline rechecking collapsed the history
+and reset the scroll position. The follow-up keeps layout while hiding expired
+rows from rendering, accessibility and interaction. Its cross-deadline native
+zh/en regression passed2/2 (native-ui-4.log), with two synthetic calls total.
+Final Staging read-only verification of the scroll correction remains pending. Physical
+phones, full S2 and production release are not accepted by this evidence.
 
 Contract and rollback: docs/contracts/vpj-16.md. Ordinary modes use their existing
 policies and RPCs. This mode requires separate notice/consent and opt-in runtime
@@ -71,11 +79,12 @@ prompt injection whose actual question concerned a six-year-old, and an English
 lost-passport/photo exception were incorrectly labelled additional_needs and
 showed ordinary adult boarding facts. Their complete first-run evidence is in
 staging-v1/evaluation.json. This is a semantic FAIL, not accepted partial support.
-The read window is being closed; native model submission has not been performed.
+That v1 read window was closed and its policy revoked. No native model submission
+was performed under v1.
 
 Prompt v2 now first separates actual questions from format/intent instructions,
 prioritizes exception-only unsupported topics and requires an independent ordinary
 document question before adding a supported portion. Revalidation on the original
-cases and new contrasting cases is PENDING; schema tests cannot establish semantic
-success. No factual resolver, eligibility, permission, budget or SQL contract was
+cases and four new contrasting cases passed16/16 once each; see staging-v2.
+Schema tests alone do not establish semantic success. No factual resolver, eligibility, permission, budget or SQL contract was
 changed by this prompt correction.

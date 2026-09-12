@@ -56,6 +56,19 @@ nonisolated final class NativeAskUITests: XCTestCase {
             XCTAssertTrue(restored.label.contains(chinese ? "合成审核" : "Synthetic reviewed"))
             XCTAssertFalse(app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH %@", "native-ask.answer.")).firstMatch.exists)
             capture("Grounded-recovered-\(locale)", app)
+            // Cross the real 30-second evidence deadline while reading a scrolled
+            // answer. Refresh may hide expired facts, but must not move the reader.
+            let readingY = restored.frame.minY
+            let refreshDeadline = ProcessInfo.processInfo.systemUptime + 36
+            while ProcessInfo.processInfo.systemUptime < refreshDeadline {
+                if restored.exists {
+                    XCTAssertEqual(restored.frame.minY, readingY, accuracy: 3)
+                }
+                RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.5))
+            }
+            XCTAssertTrue(restored.waitForExistence(timeout: 10))
+            XCTAssertEqual(restored.frame.minY, readingY, accuracy: 3)
+            capture("Grounded-reading-refresh-\(locale)", app)
             app.tabBars.buttons[chinese ? "我的" : "Profile"].tap()
             XCTAssertFalse(app.staticTexts[identifier].exists)
             app.tabBars.buttons[chinese ? "问熊猫" : "Ask"].tap()

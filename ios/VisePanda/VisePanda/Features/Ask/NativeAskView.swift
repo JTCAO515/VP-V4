@@ -34,11 +34,20 @@ struct NativeAskView: View {
                     if store.notice != nil { Text("ask.local.retry_hint").font(.footnote).accessibilityIdentifier("native-ask.error") }
                     Text("ask.local.history").font(.title2.bold())
                     TimelineView(.periodic(from: .now, by: 1)) { _ in
-                        if store.mode != .grounded || (visible && store.groundedCurrent) {
+                        let readable = store.mode != .grounded || (visible && store.groundedCurrent)
+                        // Keep the layout while evidence expires and is rechecked. Removing
+                        // the entire history collapses the scroll view to its beginning.
+                        VStack(alignment: .leading, spacing: VPSpacing.section) {
                             ForEach(store.turns) { turn in result(turn) }
-                        } else if store.mode == .grounded {
-                            Text(settings.selectedLocale == .zh ? "正在重新核对已保存答案的依据。" : "Rechecking the evidence for saved answers.")
-                                .accessibilityIdentifier("grounded.rechecking")
+                        }
+                        .opacity(readable ? 1 : 0)
+                        .accessibilityHidden(!readable)
+                        .allowsHitTesting(readable)
+                        .overlay(alignment: .topLeading) {
+                            if !readable {
+                                Text(settings.selectedLocale == .zh ? "正在重新核对已保存答案的依据。" : "Rechecking the evidence for saved answers.")
+                                    .accessibilityIdentifier("grounded.rechecking")
+                            }
                         }
                     }
                 }

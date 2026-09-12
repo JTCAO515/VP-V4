@@ -1,0 +1,48 @@
+{
+  "status": "PASS",
+  "commandStarted": 1789244482.058523,
+  "disableReturned": 1789244490.124989,
+  "observations": [
+    {
+      "at": 1789244490.797298,
+      "facts": 8,
+      "unavailable": 0
+    },
+    {
+      "at": 1789244492.201888,
+      "facts": 8,
+      "unavailable": 0
+    },
+    {
+      "at": 1789244493.567977,
+      "facts": 8,
+      "unavailable": 0
+    },
+    {
+      "at": 1789244494.952013,
+      "facts": 8,
+      "unavailable": 0
+    },
+    {
+      "at": 1789244496.009859,
+      "facts": 0,
+      "unavailable": 0
+    },
+    {
+      "at": 1789244497.082937,
+      "facts": 0,
+      "unavailable": 0
+    },
+    {
+      "at": 1789244498.156877,
+      "facts": 0,
+      "unavailable": 0
+    },
+    {
+      "at": 1789244499.291498,
+      "facts": 0,
+      "unavailable": 4
+    }
+  ],
+  "observedAfterSeconds": 9.167290925979614
+}

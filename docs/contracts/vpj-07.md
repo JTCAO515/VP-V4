@@ -428,7 +428,7 @@ continuous unattended deployment and the retained semantic criterion remain open
 ## Current-input knowledge intent mode
 
 Job/4 adds `inputMode: knowledge_intent_v1` to the existing closed seven-field
-job/2 shape, with no thinking option. It uses `vp-knowledge-intent-v1` and separate
+job/2 shape, with no thinking option. It uses `vp-knowledge-intent-v2` and separate
 claim/read/authorize/complete-grounded RPCs in the same durable worker and shared
 ServiceTask budget. The continuous service also accepts this nested job version.
 Only the current input crosses the model boundary; the structured result and
