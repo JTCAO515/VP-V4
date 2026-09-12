@@ -73,3 +73,71 @@ nonisolated final class NativeAskUITests: XCTestCase {
         let attachment = XCTAttachment(screenshot: app.screenshot()); attachment.name = name; attachment.lifetime = .keepAlways; add(attachment)
     }
 }
+
+/// Actual application termination with the fixture running outside its process.
+nonisolated final class NativeAskProcessRecoveryUITests: XCTestCase, @unchecked Sendable {
+    @MainActor func testEnglishLostReceiptAcrossProcessRestart() async throws { try await exercise(drop: true, chinese: false) }
+    @MainActor func testChineseAcknowledgedButHiddenHistoryAcrossProcessRestart() async throws { try await exercise(drop: false, chinese: true) }
+
+    private func control(_ body: [String: Bool]? = nil) async throws -> Int {
+        var request = URLRequest(url: URL(string: "http://127.0.0.1:59653/" + (body == nil ? "state" : "control"))!)
+        if let body { request.httpMethod = "POST"; request.httpBody = try JSONEncoder().encode(body) }
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try XCTUnwrap((JSONSerialization.jsonObject(with: data) as? [String: Int])?["posts"])
+    }
+    @MainActor private func exercise(drop: Bool, chinese: Bool) async throws {
+        guard ProcessInfo.processInfo.environment["VP_NATIVE_PENDING_UI_TEST"] == "1" else {
+            throw XCTSkip("UNRUN: synthetic loopback process-recovery fixture is not configured")
+        }
+        continueAfterFailure = false
+        _ = try await control(["reset": true, "drop": drop])
+        let app = XCUIApplication(), locale = chinese ? "zh-Hans" : "en"
+        app.launchArguments = ["-VisePandaNativeAPI", "http://127.0.0.1:59653", "-VisePandaTaskContext", "-VisePandaLocale", locale,
+                               "-AppleLanguages", "(\(locale))", "-AppleLocale", chinese ? "zh_CN" : "en_US"]
+        app.launch()
+        app.tabBars.buttons[chinese ? "我的" : "Profile"].tap()
+        let signOut = app.buttons[chinese ? "退出登录" : "Sign out"]
+        if signOut.waitForExistence(timeout: 2) { signOut.tap() }
+        let email = app.textFields["native.login.email"]
+        XCTAssertTrue(email.waitForExistence(timeout: 10)); email.tap(); email.typeText("synthetic@example.test")
+        let password = app.secureTextFields["native.login.password"]
+        password.tap(); password.typeText("SyntheticOnly!")
+        app.buttons["native.login.submit"].tap()
+        let status = app.staticTexts["native.session.status"]
+        let active = NSPredicate(format: "label == %@", chinese ? "会话有效" : "Session active")
+        await fulfillment(of: [expectation(for: active, evaluatedWith: status)], timeout: 15)
+        app.tabBars.buttons[chinese ? "问熊猫" : "Ask"].tap()
+        let input = app.descendants(matching: .any).matching(identifier: "native-ask.input").firstMatch
+        XCTAssertTrue(input.waitForExistence(timeout: 15)); input.tap(); input.typeText("Synthetic process recovery")
+        app.buttons["native-ask.send"].tap()
+        for _ in 0..<50 {
+            if try await control() == 1 { break }
+            try await Task.sleep(for: .milliseconds(100))
+        }
+        let postsBefore = try await control(); XCTAssertEqual(postsBefore, 1)
+        if !drop {
+            // Store is not busy once its first post-ack history read has completed.
+            let reload = app.buttons["native-ask.reload"]
+            await fulfillment(of: [expectation(for: NSPredicate(format: "enabled == true"), evaluatedWith: reload)], timeout: 10)
+        }
+        app.terminate(); app.launch()
+        XCTAssertTrue(app.buttons["native-ask.reload"].waitForExistence(timeout: 15))
+        if !drop {
+            XCTAssertTrue(input.waitForExistence(timeout: 15))
+            XCTAssertFalse(app.buttons["native-ask.send"].isEnabled)
+            XCTAssertFalse(app.buttons["native-ask.new-question"].isEnabled)
+        }
+        let postsAfter = try await control(); XCTAssertEqual(postsAfter, 1)
+        _ = try await control(["release": true])
+        app.buttons["native-ask.reload"].tap()
+        let answer = app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH %@", "native-ask.answer.")).firstMatch
+        XCTAssertTrue(answer.waitForExistence(timeout: 20))
+        XCTAssertEqual(answer.label, "Synthetic recovered answer")
+        let finalPosts = try await control(); XCTAssertEqual(finalPosts, 1)
+        let attachment = XCTAttachment(screenshot: app.screenshot())
+        attachment.name = chinese ? "pending-ack-recovered-zh" : "pending-receipt-recovered-en"
+        attachment.lifetime = .keepAlways; add(attachment)
+        app.tabBars.buttons[chinese ? "我的" : "Profile"].tap()
+        XCTAssertTrue(signOut.waitForExistence(timeout: 10)); signOut.tap()
+    }
+}

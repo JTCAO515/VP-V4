@@ -87,6 +87,9 @@ struct NativeAskView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, 8)
                     .accessibilityIdentifier("native-ask.notice")
+                Text("ask.local.recovery")
+                    .font(.footnote)
+                    .accessibilityIdentifier("native-ask.recovery-notice")
             }
             switch policy.consentState {
             case .notAccepted:

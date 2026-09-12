@@ -193,13 +193,13 @@ allowlist. Asynchronous store operations additionally bind an operation UUID and
 Late responses cannot publish after account changes or operation invalidation. The View observes
 both active and retained identity and the end of session restoration: cold login/restore reloads
 without a manual button; permanent clear removes draft/pending state even if active scope was
-already nil. Temporary authentication loss hides reads and keeps only the same-owner unsent
-in-memory draft/request for recovery. No new on-device content file or outbox is created.
+already nil. Temporary authentication loss hides reads. Unsent drafts remain in memory;
+submitted recovery records use the existing endpoint/owner Keychain item as described below.
 
 During a running app session, an uncertain submit retains its original IDs/body for retry.
 After app restart, the consumer reloads server-accepted requests; it never automatically
-resubmits an unacknowledged prompt. Unsent drafts and local retry state do not survive process
-termination. Polling is bounded to 60 iterations and stops with view/task or identity changes;
+resubmits an unacknowledged prompt. Unsent drafts do not survive process termination.
+Submitted recovery records now survive under the bounded contract below. Polling is bounded to 60 iterations and stops with view/task or identity changes;
 the manual Reload action remains available. This is not a streaming or background execution SLA.
 
 Local evidence uses a separate disposable Supabase instance with real GoTrue, native JWTs,
@@ -326,13 +326,33 @@ This consumer does not fix the retained real-provider semantic failures. Local
 controlled-provider integration proves transport/SQL/UI behavior only; remote
 semantic acceptance, persistent worker operation and full #195/S2 remain open.
 
-The existing process-lifetime boundary above still applies to v3: local pending
-requests are not persisted across termination. Restart restores server-accepted,
-visible history without automatically resending an unacknowledged request. An empty
-history response is not proof that a prior in-flight POST cannot still commit;
-cross-process uncertain-submit deduplication is not established by this slice.
-Closing that window requires a separate persistence/consent and crash-recovery
-increment, not a claim inferred from ordinary relaunch tests.
+### Submitted-request recovery across process termination
+
+Before the first POST, synchronously persist one bounded request in the existing
+`WhenUnlockedThisDeviceOnly` Keychain credential item. Endpoint, subject and mobile
+session epoch scope it; mode, policy UUID, notice version/hash, original IDs, text,
+locale and ServiceTask relation cannot be rebound. A failed write prevents POST.
+Unsent drafts are not saved. No shared file, cloud synchronization or new data recipient
+is introduced. The native notice explains this local retention in all five locales.
+
+A valid acknowledgement atomically marks the record acknowledged before history is
+loaded. An acknowledged record prohibits POST and new-question creation even when
+history is empty after restart; bounded GET polling/manual reload remains available.
+An uncertain record can only be explicitly retried with its original payload and IDs
+under the matching, freshly loaded consent. Restoration itself never sends a POST.
+
+Only matching policy-scoped history (including body/thread/locale/task relation),
+confirmed withdrawal of that record's policy, or explicit session clearing removes
+it. The bounded body remains until this reconciliation, including after ack, so a
+truncated history window cannot silently release an in-flight question. Successful
+same-epoch token refresh preserves it. Logout, account replacement and explicit
+auth denial clear the owner record; failed Keychain deletion blocks login to a new
+account. Locked, malformed or unsupported stored records fail closed without silent
+loss. Signing out cannot recall an already transmitted request.
+
+Tests distinguish in-process object recreation, actual Keychain behavior and actual
+application termination against a synthetic loopback server. None establishes real
+supplier crash recovery, billing acceptance or full S2 acceptance.
 
 ## Explicit bounded-thinking experiment (2026-09-12)
 

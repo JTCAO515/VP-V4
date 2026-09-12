@@ -3057,6 +3057,41 @@
           }
         }
       }
+    },
+    "ask.local.recovery": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When you send, this device securely keeps the request so a retry can continue it after an interruption. It is cleared when the request is recovered from your history, when its sharing permission is withdrawn, or when you sign out. Unsent drafts are not saved. Signing out cannot recall a request already sent."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "发送时，本机会安全保存这条请求，以便中断后重试时继续原请求。从历史记录恢复该请求、撤回对应的共享授权或退出登录后会清除本地记录。未发送的草稿不会保存。退出登录不能撤回已发送的请求。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Al enviar, este dispositivo guarda la solicitud de forma segura para poder continuarla tras una interrupción. Se elimina al recuperar la solicitud del historial, al retirar su permiso para compartir o al cerrar sesión. Los borradores sin enviar no se guardan. Cerrar sesión no retira una solicitud ya enviada."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "При отправке запрос безопасно сохраняется на этом устройстве, чтобы продолжить его после сбоя. Запись удаляется после восстановления запроса из истории, отзыва разрешения на передачу этого запроса или выхода из аккаунта. Неотправленные черновики не сохраняются. Выход не отменяет уже отправленный запрос."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "عند الإرسال، يحفظ هذا الجهاز الطلب بأمان لمتابعته عند إعادة المحاولة بعد انقطاع. يُحذف السجل المحلي بعد استعادة الطلب من السجل، أو سحب إذن مشاركة الطلب، أو تسجيل الخروج. لا تُحفظ المسودات غير المرسلة. تسجيل الخروج لا يسترجع طلبًا أُرسل بالفعل."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

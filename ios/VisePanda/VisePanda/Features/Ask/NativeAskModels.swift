@@ -84,7 +84,7 @@ struct NativeTextAccepted: Decodable {
 }
 struct NativeTextAction: Decodable { let version: Int; let kind: String }
 
-struct NativeTextSubmission: Encodable {
+struct NativeTextSubmission: Codable, Equatable {
     let threadId: String
     let turnId: String
     let idempotencyKey: String
@@ -100,7 +100,7 @@ struct NativeTextSubmission: Encodable {
     }
 }
 
-struct NativeServiceTaskLink: Encodable, Equatable {
+struct NativeServiceTaskLink: Codable, Equatable {
     let id: String
     let scopeVersion: Int
     let relationship: String
@@ -115,10 +115,39 @@ struct NativeServiceTaskLink: Encodable, Equatable {
     private enum CodingKeys: String, CodingKey { case id, scopeVersion, relationship, parentTurnId }
 }
 
-enum NativeAskMode: String {
+enum NativeAskMode: String, Codable {
     case currentInput = "", taskContext = "task_history_v1", unavailable
     var version: Int { self == .taskContext ? 3 : 1 }
     var base: String { "api/chat/native/v\(version)" }
+}
+
+/// One submitted request, not an unsent draft or a conversation cache. Stored
+/// inside the endpoint/owner Keychain credential and bound to its mobile epoch.
+struct NativePendingAsk: Codable, Equatable {
+    let schemaVersion: Int
+    var acknowledged: Bool = false
+    let mobileEpoch: Int
+    let mode: NativeAskMode
+    let noticeVersion: String
+    let noticeHash: String
+    let request: NativeTextSubmission
+
+    var noticeIdentity: String { "\(mode.rawValue):\(request.policyId):\(noticeVersion):\(noticeHash)" }
+    var valid: Bool {
+        guard schemaVersion == 1, mobileEpoch > 0, mode != .unavailable,
+              !noticeVersion.isEmpty, noticeVersion.utf16.count <= 256,
+              noticeHash.range(of: "^[a-f0-9]{64}$", options: .regularExpression) != nil,
+              [request.threadId, request.turnId, request.idempotencyKey, request.policyId].allSatisfy({ UUID(uuidString: $0) != nil }),
+              ["zh", "en", "es", "ru", "ar"].contains(request.locale),
+              !request.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              request.text.utf16.count <= 4000, !request.text.contains("\u{0000}") else { return false }
+        if mode == .currentInput { return request.serviceTask == nil }
+        guard let task = request.serviceTask, UUID(uuidString: task.id) != nil, task.scopeVersion == 1 else { return false }
+        if task.relationship == "new_goal" { return task.parentTurnId == nil }
+        return ["clarification", "repair"].contains(task.relationship)
+            && task.parentTurnId.flatMap(UUID.init(uuidString:)) != nil
+            && task.parentTurnId != request.turnId
+    }
 }
 
 /// A bounded response window is not proof that a task's entire chain is present.

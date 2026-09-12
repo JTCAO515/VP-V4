@@ -40,7 +40,8 @@ nonisolated final class NativeAskStateTests: XCTestCase {
         await store.reload(using: session)
         store.draft = "Acknowledged synthetic request"
         await store.send(locale: "en", using: session)
-        XCTAssertNil(store.pending)
+        XCTAssertNotNil(store.pending)
+        XCTAssertEqual(try session.retainedPendingAsk()?.acknowledged, true)
         XCTAssertNil(store.policy)
         guard case .awaiting(let id) = store.intent else { XCTFail("Lost acknowledged task after refresh failure"); return }
         XCTAssertFalse(store.canStartNew)
@@ -48,6 +49,8 @@ nonisolated final class NativeAskStateTests: XCTestCase {
         await store.reload(using: session)
         let restored = try XCTUnwrap(store.turns.first)
         XCTAssertEqual(restored.id, id)
+        XCTAssertNil(store.pending)
+        XCTAssertNil(try session.retainedPendingAsk())
         XCTAssertEqual(store.intent, .continuation(restored))
         await session.logout()
     }

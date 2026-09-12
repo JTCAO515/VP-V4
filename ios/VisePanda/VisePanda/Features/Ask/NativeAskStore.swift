@@ -20,6 +20,7 @@ final class NativeAskStore {
     private(set) var intent: Intent
     private var boundNotice: String?
     private var pendingNotice: String?
+    private var pendingAcknowledged = false
     init(mode: NativeAskMode = .currentInput) {
         self.mode = mode
         intent = mode == .taskContext ? .restoring : .newGoal
@@ -41,7 +42,8 @@ final class NativeAskStore {
         await perform(session) { current in
             let reply: NativeTextAction = try await self.call(session, current, suffix: "/consent", method: "DELETE", body: ["policyId": pending.policyId])
             guard reply.version == self.mode.version, reply.kind == "withdrawn" else { throw NativeDataError.invalidResponse }
-            self.pending = nil; self.pendingNotice = nil; self.draft = ""; self.intent = .blocked
+            try session.clearPendingAsk(matching: pending)
+            self.pending = nil; self.pendingNotice = nil; self.pendingAcknowledged = false; self.draft = ""; self.intent = .blocked
             try await self.load(session, current)
         }
     }
@@ -70,14 +72,14 @@ final class NativeAskStore {
         switch intent { case .newGoal, .continuation: return true; default: return false }
     }
     var canSend: Bool {
-        mode != .unavailable && permitsSubmission && policy?.consentState == .accepted && !busy
+        !pendingAcknowledged && mode != .unavailable && permitsSubmission && policy?.consentState == .accepted && !busy
         && !(pending?.text ?? draft).trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         && (pending?.text ?? draft).utf16.count <= 4000
     }
 
     func reset(for next: NativeDataScope?) {
         guard scope != next else { return }
-        intent = mode == .taskContext ? .restoring : .newGoal; boundNotice = nil; pendingNotice = nil
+        intent = mode == .taskContext ? .restoring : .newGoal; boundNotice = nil; pendingNotice = nil; pendingAcknowledged = false
         scope = next; operation = nil; policy = nil; turns = []; pending = nil; draft = ""; busy = false; notice = nil
     }
 
@@ -108,7 +110,10 @@ final class NativeAskStore {
             let reply: NativeTextAction = try await self.call(session, current, suffix: "/consent", method: "DELETE", body: ["policyId": policy.id])
             guard reply.version == self.mode.version && reply.kind == "withdrawn" else { throw NativeDataError.invalidResponse }
             self.turns = []; self.draft = ""; self.intent = .restoring
-            if self.pending?.policyId == policy.id { self.pending = nil; self.pendingNotice = nil }
+            if let pending = self.pending, pending.policyId == policy.id {
+                try session.clearPendingAsk(matching: pending)
+                self.pending = nil; self.pendingNotice = nil; self.pendingAcknowledged = false
+            }
             try await self.load(session, current)
         }
     }
@@ -131,17 +136,22 @@ final class NativeAskStore {
                     default: throw NativeDataError.invalidResponse
                     }
                 }
-                self.pendingNotice = self.noticeIdentity
+                let retained = try session.retainPendingAsk(request, policy: policy, mode: self.mode)
+                self.pendingNotice = retained.noticeIdentity
                 self.pending = request
             }
-            guard let pending = self.pending, pending.policyId == policy.id else { throw NativeDataError.invalidResponse }
+            guard let pending = self.pending, pending.policyId == policy.id,
+                  self.pendingNotice == self.noticeIdentity else { throw NativeDataError.invalidResponse }
+            _ = try session.retainPendingAsk(pending, policy: policy, mode: self.mode)
             let body = try JSONEncoder().encode(pending)
             let data = try await session.askRequest(path: self.base + "/turns", method: "POST", body: body)
             try self.ensure(session, current)
             let accepted = try JSONDecoder().decode(NativeTextAccepted.self, from: data)
             guard accepted.matches(pending, version: self.mode.version) else { throw NativeDataError.invalidResponse }
-            if self.mode == .taskContext { self.intent = .awaiting(pending.turnId) }
-            self.pending = nil; self.draft = ""
+            try session.acknowledgePendingAsk(matching: pending)
+            self.pendingAcknowledged = true
+            self.intent = .awaiting(pending.turnId)
+            self.draft = ""
             try await self.load(session, current)
         }
     }
@@ -173,7 +183,10 @@ final class NativeAskStore {
         if policy.policy.consentState != .accepted {
             turns = []
             if policy.policy.consentState == .withdrawn {
-                if pending?.policyId == policy.policy.id { pending = nil; pendingNotice = nil }
+                if let pending, pending.policyId == policy.policy.id {
+                    try session.clearPendingAsk(matching: pending)
+                    self.pending = nil; pendingNotice = nil; pendingAcknowledged = false
+                }
                 draft = ""; intent = .blocked
             }
             return
@@ -182,12 +195,17 @@ final class NativeAskStore {
         turns = history.turns
         if let pending {
             // History is scoped by the current policy RPC, never by turn ID alone.
-            guard !changed, pendingNotice == identity, pending.policyId == policy.policy.id else { intent = .blocked; return }
+            guard !changed, pendingNotice == identity, pending.policyId == policy.policy.id else { draft = ""; intent = .blocked; return }
             if let recovered = turns.first(where: { $0.id == pending.turnId }) {
                 guard pending.matches(recovered) else { throw NativeDataError.invalidResponse }
-                self.pending = nil; draft = ""
-                if mode == .taskContext { intent = .awaiting(recovered.id) }
-            } else { return }
+                try session.clearPendingAsk(matching: pending)
+                self.pending = nil; pendingNotice = nil; pendingAcknowledged = false; draft = ""
+                intent = mode == .taskContext ? .awaiting(recovered.id) : .newGoal
+            } else {
+                draft = pendingAcknowledged ? "" : pending.text
+                if pendingAcknowledged { intent = .awaiting(pending.turnId) }
+                return
+            }
         }
         guard mode == .taskContext else { return }
         // A deliberate new question is not replaced by a late result from an old task.
@@ -224,7 +242,12 @@ final class NativeAskStore {
         guard !busy, let current = scope, session.dataScope == current else { return }
         let token = UUID(); operation = token; busy = true; notice = nil
         defer { if operation == token { busy = false; operation = nil } }
-        do { try await action(Context(scope: current, token: token)) }
+        do {
+            if pending == nil, let retained = try session.retainedPendingAsk() {
+                pending = retained.request; pendingNotice = retained.noticeIdentity; pendingAcknowledged = retained.acknowledged
+            }
+            try await action(Context(scope: current, token: token))
+        }
         catch {
             guard operation == token, scope == current else { return }
             guard session.dataScope == current else { reset(for: session.retainedDataScope); suspendReads(); return }
