@@ -21,10 +21,28 @@ export function isOpsInput(value: unknown): value is OpsInput {
     || (v.action === "review" && Object.keys(v).length === 6 && v.expectedVersion === 1 && (v.decision === "reviewed" || v.decision === "rejected") && bounded(v.note, 400));
 }
 export function opsLocalConfig(env: NodeJS.ProcessEnv = process.env) {
-  if (env.OPS_LOCAL_REVIEW !== "1" || !env.NEXT_PUBLIC_SUPABASE_URL || !env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) return null;
+  if (env.VERCEL_ENV || env.OPS_LOCAL_REVIEW !== "1" || !env.NEXT_PUBLIC_SUPABASE_URL || !env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) return null;
   try {
     const url = new URL(env.NEXT_PUBLIC_SUPABASE_URL);
     if (url.protocol !== "http:" || !["localhost", "127.0.0.1", "[::1]"].includes(url.hostname) || url.username || url.password || url.pathname !== "/" || url.search || url.hash) return null;
     return { url: url.origin, publishableKey: env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY };
+  } catch { return null; }
+}
+
+/** Deployment configuration selects the database; request headers never select authority. */
+export function opsRuntimeConfig(request: Pick<Request, "url">, env: NodeJS.ProcessEnv = process.env) {
+  if (env.OPS_STAGING_REVIEW !== "1") return opsLocalConfig(env);
+  const host = env.VERCEL_URL;
+  if (env.OPS_LOCAL_REVIEW === "1" || env.VERCEL_ENV !== "preview" || !host
+      || !/^vp-v4-[a-z0-9]+-jtcao515s-projects\.vercel\.app$/.test(host)
+      || env.NEXT_PUBLIC_SUPABASE_URL !== "https://dzqdzetcctkhbrhlxxgn.supabase.co"
+      || !env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) return null;
+  try {
+    const url = new URL(request.url);
+    const custom = "https://staging.go2china.space";
+    const allowed = url.origin === `https://${host}`
+      || (env.OPS_STAGING_CUSTOM_ORIGIN === custom && url.origin === custom);
+    if (!allowed || url.username || url.password) return null;
+    return { url: env.NEXT_PUBLIC_SUPABASE_URL, publishableKey: env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY };
   } catch { return null; }
 }
