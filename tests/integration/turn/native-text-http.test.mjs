@@ -5,7 +5,8 @@ import {createNativeTextEnvironment} from './native-text-environment.mjs';
 import {waitUntil} from '../identity/database-barrier.mjs';
 
 test('real local Auth, native HTTP, consent, durable worker and recovery enforce owner/session boundaries',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
- const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
+ const continuous=process.env.VP_NATIVE_TEXT_SERVICE_INTEGRATION==='true';
+ const e=await createNativeTextEnvironment({continuous});t.after(()=>e.cleanup());
  const call=async(path,token,method='GET',body,headers={})=>{
   const r=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body===undefined?{}:{'Content-Type':'application/json'}),...headers},...(body===undefined?{}:{body:JSON.stringify(body)})});return {status:r.status,body:await r.json()};
  };
@@ -23,11 +24,17 @@ test('real local Auth, native HTTP, consent, durable worker and recovery enforce
  const accepted=await Promise.all([call(base+'/turns',token,'POST',input),call(base+'/turns',token,'POST',input)]);assert.deepEqual(accepted.map(r=>r.status).sort(),[200,201]);
  await waitUntil(async()=>{const r=await call(base+'/turns',token);return r.body.turns?.some(t=>t.turnId===input.turnId&&t.outcome==='answered');},30000,'actual worker final answer');
  const final=(await call(base+'/turns',token)).body.turns[0];assert.equal(final.output,'Local synthetic answer: request completed.');assert.equal(e.counts.http,1);
- assert.equal(e.counts.destinationReceipts,3,'configured/attempted/buffered metadata hooks ran');
+ const receiptCount=continuous?e.serviceEvidence().runs.flat().filter(r=>r.schemaVersion==='provider-destination/1').length:e.counts.destinationReceipts;
+ assert.equal(receiptCount,3,'configured/attempted/buffered metadata hooks ran');
  assert.equal(e.sql(`select status||':'||actual_micros from public.model_budget_attempts where task_id='${input.turnId}';`),'settled:1','synthetic reviewed tariff rounds up once after model/usage validation');
  assert.equal((await call(base+'/turns',other)).body.turns.length,0);
  assert.equal((await call(base+'/turns',token,'POST',{...input,text:'Changed'})).status,409);
  assert.equal((await call(base+'/turns',token,'POST',{...input,reasoning:'forbidden extra field'})).status,400);
+ if(continuous){
+  await e.restartServiceWorkers();
+  assert.equal(e.sql(`select status||':'||actual_micros from public.model_budget_attempts where task_id='${input.turnId}';`),'settled:1','process restart retains the settled ledger');
+  assert.equal((await call(base+'/turns',token,'POST',input)).status,200);
+ }
  const taskBase='/api/chat/native/v2',taskId=randomUUID();
  const goal={...input,threadId:randomUUID(),turnId:randomUUID(),idempotencyKey:randomUUID(),text:'Synthetic kind=clarification',serviceTask:{id:taskId,scopeVersion:1,relationship:'new_goal',parentTurnId:null}};
  const submit=body=>call(taskBase+'/turns',token,'POST',body);
@@ -61,6 +68,7 @@ test('real local Auth, native HTTP, consent, durable worker and recovery enforce
  assert.equal((await submit(goal)).status,200,'v2 original policy replay still works after v3 use');
  assert.equal((await call(contextBase+'/consent',token,'DELETE',{policyId:e.taskPolicyId})).status,200);
  assert.equal((await call(contextBase+'/turns',token)).body.turns.length,0);
+ if(continuous)assert.deepEqual(e.serviceEvidence().failures,[],'normal processing and restart have no failed exits');
  const beforeHeld=e.counts.http;
  const held={...input,threadId:randomUUID(),turnId:randomUUID(),idempotencyKey:randomUUID(),text:'Synthetic HOLD request'};
  assert.equal((await call(base+'/turns',token,'POST',held)).status,201);
@@ -73,4 +81,14 @@ test('real local Auth, native HTTP, consent, durable worker and recovery enforce
  assert.equal((await call(base+'/policy',token)).body.policy.consentState,'withdrawn');
  assert.equal((await call(base+'/consent',token,'POST',{policyId:e.policyId,noticeHash:e.noticeHash})).status,403);
  await login(e.users[0]);assert.equal((await call(base+'/policy',token)).status,401,'replaced mobile token rejected');
+ if(continuous){
+  await waitUntil(()=>e.serviceEvidence().failures.length===1,5000,'cancelled in-flight poll stops service');
+  const evidence=e.serviceEvidence();assert.deepEqual(evidence.failures,['service-exit-1']);assert.equal(evidence.runs.length,4);
+  assert.equal(evidence.runs[2].at(-1).reason,'unavailable','cancelled work cannot trigger automatic retries');
+  assert.equal(e.counts.http,beforeHeld+1,'cancelled request was sent only once');
+  assert.equal(evidence.runs[0][0].expiresAt,evidence.runs[2][0].expiresAt,'restart cannot renew expiry');
+  assert.equal(evidence.runs[1][0].expiresAt,evidence.runs[3][0].expiresAt);
+  assert.ok(evidence.runs[2].some(r=>r.phase==='poll-returned'&&r.result==='finished'),'new process consumes later requests');
+  assert.ok(evidence.runs[3].some(r=>r.phase==='poll-returned'&&r.result==='finished'),'task mode continues after process restart');
+ }
 });
