@@ -10,9 +10,10 @@ import {createClient} from '@supabase/supabase-js';
 import {identityLocalEnv} from '../identity/local-supabase.mjs';
 import {waitForNativeAPI} from '../identity/native-api-readiness.mjs';
 import {createStagingTextJob} from '../../../lib/server/jobs/staging-text-job.ts';
+import {KNOWLEDGE_INTENT_SYSTEM_PROMPT} from '../../../lib/server/model-gateway/prompt/knowledge-intent.ts';
 import {PROTOCOL_MODELS} from '../../../lib/server/model-gateway/adapters/provider-protocol.ts';
 
-export async function createNativeTextEnvironment({continuous=false}={}){
+export async function createNativeTextEnvironment({continuous=false,grounded=false}={}){
  const e=identityLocalEnv();
  if(!e || e.API_URL!=='http://127.0.0.1:59641' || !/^supabase_db_vp-native-ask-[a-z0-9]+$/.test(e.DB_CONTAINER))throw Error('Only an explicit disposable native Ask instance is allowed');
  const sql=q=>execFileSync('docker',['exec','-i',e.DB_CONTAINER,'psql','-U','postgres','-d','postgres','-X','-Atq','-v','ON_ERROR_STOP=1'],{input:"set statement_timeout='10s';"+q,encoding:'utf8',stdio:['pipe','pipe','pipe']}).trim();
@@ -20,13 +21,16 @@ export async function createNativeTextEnvironment({continuous=false}={}){
  const key=e.PUBLISHABLE_KEY||e.ANON_KEY;
  const users=[],pendingResponses=new Set();let next,model,timer,stopping=false,active=Promise.resolve();
  let serviceDirectory;const serviceChildren=[],serviceJournals=[],serviceFailures=[];
- const controller=new AbortController(),policyId=randomUUID(),taskPolicyId=randomUUID(),api='http://127.0.0.1:59651';
+ const controller=new AbortController(),policyId=randomUUID(),taskPolicyId=randomUUID(),groundedPolicyId=randomUUID(),api='http://127.0.0.1:59651';
  const noticeZh='仅用于本机合成测试，不向外部模型发送数据。测试输入和回答保存在本次独立数据库中；删除对话或账号会隐藏正文，正文保留到此测试实例销毁。可随时撤回新处理授权，仍可手动编辑行程。';
  const noticeEn='Local synthetic test only. No data goes to an external model. Test inputs and answers remain in this disposable database; deleting a conversation or account hides content until this test instance is destroyed. You may withdraw permission for new processing and continue editing Trip manually.';
  const noticeHash=createHash('sha256').update(JSON.stringify({version:'local-text-v1',zh:noticeZh,en:noticeEn})).digest('hex');
  const taskNoticeZh=noticeZh+'本策略还使用同一服务任务内最多三组较早的输入和回答。';
  const taskNoticeEn=noticeEn+' This policy also uses up to three earlier input/answer pairs from the same service task.';
  const taskNoticeHash=createHash('sha256').update(JSON.stringify({version:'local-task-v1',zh:taskNoticeZh,en:taskNoticeEn})).digest('hex');
+ const groundedNoticeZh=noticeZh+'仅使用本次输入识别有限乘车证件问题；事实仅由第一方审核内容提供，历史读取重新核对原依据。';
+ const groundedNoticeEn=noticeEn+' Only this message is used to identify a limited boarding-document question; factual evidence remains first-party and saved answers are rechecked on reading.';
+ const groundedNoticeHash=createHash('sha256').update(JSON.stringify({version:'local-grounded-v1',zh:groundedNoticeZh,en:groundedNoticeEn})).digest('hex');
  const requests=[];
  const counts={http:0,finished:0,destinationReceipts:0};
  const releaseModels=()=>{for(const deliver of pendingResponses)deliver();pendingResponses.clear();};
@@ -49,6 +53,7 @@ export async function createNativeTextEnvironment({continuous=false}={}){
  try{
   sql(`insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at) values('${policyId}','qwen','Controlled local fixture','https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions','local fixture','local fixture','disposable local database','synthetic-v1','local-text-v1','${noticeHash}',${literal(noticeZh)},${literal(noticeEn)},'retain_after_hide_v1',now()-interval '1 minute',now()+interval '1 day',now()+interval '1 day');`);
   sql(`insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at,context_mode) select '${taskPolicyId}',provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,'local-task-v1','${taskNoticeHash}',${literal(taskNoticeZh)},${literal(taskNoticeEn)},retention,effective_at,expires_at,terms_recheck_at,'task_history_v1' from turn_private.text_policies where id='${policyId}';`);
+  if(grounded)sql(`insert into turn_private.text_policies(id,provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,notice_version,notice_hash,notice_zh,notice_en,retention,effective_at,expires_at,terms_recheck_at,context_mode) select '${groundedPolicyId}',provider,recipient,endpoint,source_region,processing_region,storage_region,terms_version,'local-grounded-v1','${groundedNoticeHash}',${literal(groundedNoticeZh)},${literal(groundedNoticeEn)},retention,effective_at,expires_at,terms_recheck_at,'knowledge_intent_v1' from turn_private.text_policies where id='${policyId}';`);
   for(const label of ['a','b','ui-en','ui-zh']){
    const email='vpj07-'+label+'-'+randomUUID()+'@example.test',password='VPJ07-Local-Synthetic-Only-195!';
    const client=createClient(e.API_URL,key,{auth:{persistSession:false,autoRefreshToken:false}}),signup=await client.auth.signUp({email,password});
@@ -56,18 +61,36 @@ export async function createNativeTextEnvironment({continuous=false}={}){
    const user={id:signup.data.user.id,email,password,scopeId:randomUUID()};users.push(user);
    sql(`insert into public.model_budget_scopes(id,owner_id,currency,limit_micros,task_limit_micros,task_attempt_limit,concurrency_limit,enabled,expires_at) values('${user.scopeId}','${user.id}','CNY',1000000,10000,4,2,true,now()+interval '1 day');insert into public.model_budget_provider_limits(scope_id,provider,model,price_version,limit_micros,attempt_limit_micros,enabled) values('${user.scopeId}','qwen','${PROTOCOL_MODELS.qwen}','synthetic-v1',1000000,1000,true);`);
   }
+  const groundedPublications=[];
+  if(grounded){
+   sql(`update knowledge_review_private.settings set enabled=true;update knowledge_review_private.publication_settings set enabled=true;insert into knowledge_review_private.members(actor_id,active) values('${users[0].id}',true),('${users[1].id}',true);`);
+   const clients=await Promise.all(users.slice(0,2).map(async user=>{const client=createClient(e.API_URL,key,{auth:{persistSession:false,autoRefreshToken:false}});const r=await client.auth.signInWithPassword({email:user.email,password:user.password});if(r.error)throw Error('Synthetic Ops login failed');return client;}));
+   const op=async(i,input)=>{const r=await clients[i].rpc('ops_review_workspace',{p_input:input});if(r.error)throw Error('Synthetic publication failed');};
+   for(const objectId of ['original_valid_booking_id','valid_ticket_not_itinerary_or_receipt']){
+    const candidateId=randomUUID();
+    const statement={schemaVersion:'knowledge-statement/1',assertion:{subjectId:'rail_eticket_boarding',predicate:'requires_document',objectId,conditions:['adult_foreign_passport'],exclusions:['no_guarantee']},scope:{cities:['shanghai','beijing','guangzhou','chongqing'],scene:'rail',audience:'international_independent_traveler'},expressions:{en:{text:'Synthetic reviewed '+objectId,conditions:['Synthetic adult foreign-passport case only.'],exclusions:['No real railway guarantee.']},zh:{text:'合成审核 '+objectId,conditions:['仅限合成成年外籍护照场景。'],exclusions:['不保证真实铁路服务。']}},sources:[{sourceKey:'grounded-native-fixture',revisionLabel:'one',publisher:'Synthetic author',uri:'urn:vpj15:synthetic:grounded-native',locator:'Local fixture only',snippet:'PRIVATE SOURCE NEVER SENT',usageDeclaration:'Synthetic private use only'}]};
+    await op(0,{action:'submit_statement',operationId:randomUUID(),candidateId,title:'Synthetic native question',statement});
+    await op(1,{action:'review',operationId:randomUUID(),candidateId,expectedVersion:1,decision:'reviewed',note:'Synthetic independent review'});
+    await op(1,{action:'publish_statement',operationId:randomUUID(),candidateId,expectedVersion:2,expiresAt:new Date(Date.now()+3600000).toISOString(),useBasis:'original_factual_summary',useNote:'Synthetic local summary'});
+    groundedPublications.push(candidateId);
+   }
+   sql('update knowledge_review_private.settings set enabled=false;update knowledge_review_private.members set active=false;');
+  }
   model=createServer(async(req,res)=>{
    if(req.url==='/release'){req.resume();releaseModels();res.end('{}');return;}
    const chunks=[];for await(const c of req)chunks.push(c);
    const body=JSON.parse(Buffer.concat(chunks).toString()),input=body.messages?.at(-1)?.content ?? '';
    counts.http++;requests.push(body);
    const kind=['partial','clarification','blocked','technical_failure'].find(k=>input.includes('kind='+k)) ?? 'answered';
-   const deliver=()=>{if(res.destroyed)return;res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({model:PROTOCOL_MODELS.qwen,choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({outcome:kind,text:input.includes('中文')?'本机合成回答：请求已完成。':'Local synthetic answer: request completed.'})}}],usage:{prompt_tokens:10,completion_tokens:10,total_tokens:20}}));};
+   const isGrounded=body.messages?.[0]?.content===KNOWLEDGE_INTENT_SYSTEM_PROMPT;
+   const intent=input.includes('kind=clarification')?'clarification':input.includes('kind=unsupported')?'unsupported':'rail_boarding_documents';
+   const groundedReply={intent,requestScope:intent==='rail_boarding_documents'?(input.includes('extra-needs')?'additional_needs':'single'):'unknown'};
+   const deliver=()=>{if(res.destroyed)return;res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({model:PROTOCOL_MODELS.qwen,choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify(isGrounded?groundedReply:{outcome:kind,text:input.includes('中文')?'本机合成回答：请求已完成。':'Local synthetic answer: request completed.'})}}],usage:{prompt_tokens:10,completion_tokens:10,total_tokens:20}}));};
    if(input.includes('HOLD'))pendingResponses.add(deliver);else deliver();
   });
   model.listen(0,'127.0.0.1');await once(model,'listening');const modelURL='http://127.0.0.1:'+model.address().port;
   const log=createWriteStream('/tmp/vpj07-native-text-api.log',{mode:0o600});
-  next=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port','59651'],{env:{...process.env,NEXT_PUBLIC_SUPABASE_URL:e.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:key,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:e.SERVICE_ROLE_KEY,VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_NATIVE_LOCAL_TEXT:'true',VISEPANDA_NATIVE_LOCAL_TEXT_POLICY:policyId,VISEPANDA_NATIVE_LOCAL_TASK_POLICY:taskPolicyId},stdio:['ignore','pipe','pipe']});
+  next=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port','59651'],{env:{...process.env,NEXT_PUBLIC_SUPABASE_URL:e.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:key,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:e.SERVICE_ROLE_KEY,VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_NATIVE_LOCAL_TEXT:'true',VISEPANDA_NATIVE_LOCAL_TEXT_POLICY:policyId,VISEPANDA_NATIVE_LOCAL_TASK_POLICY:taskPolicyId,...(grounded?{VISEPANDA_NATIVE_LOCAL_GROUNDED:'true',VISEPANDA_NATIVE_LOCAL_GROUNDED_POLICY:groundedPolicyId}:{})},stdio:['ignore','pipe','pipe']});
   next.stdout.pipe(log);next.stderr.pipe(log);next.once('exit',()=>log.end());
   await waitForNativeAPI(api,next);
   // Exercise the exact Staging job composition through an explicit closed test
@@ -80,19 +103,19 @@ export async function createNativeTextEnvironment({continuous=false}={}){
    if(url===providerEndpoint)return fetch(modelURL,init);
    throw Error('Unexpected synthetic job destination');
   };
-  const jobConfig=(owner,taskMode)=>({schemaVersion:taskMode?'vpj07-staging-text-job/2':'vpj07-staging-text-job/1',...(taskMode?{inputMode:'task_history_v1'}:{}),ownerId:owner.id,policyId:taskMode?taskPolicyId:policyId,
+  const jobConfig=(owner,taskMode)=>({schemaVersion:taskMode==='grounded'?'vpj07-staging-text-job/4':taskMode?'vpj07-staging-text-job/2':'vpj07-staging-text-job/1',...(taskMode?{inputMode:taskMode==='grounded'?'knowledge_intent_v1':'task_history_v1'}:{}),ownerId:owner.id,policyId:taskMode==='grounded'?groundedPolicyId:taskMode?taskPolicyId:policyId,
    budget:{scopeId:owner.scopeId,priceVersion:'synthetic-v1',reservedMicros:1000,maxOutputTokens:512,timeoutMs:60000},
    provider:{provider:'qwen',endpoint:providerEndpoint,configurationId:randomUUID(),configurationVersion:1,timeoutMs:60000},
    pricing:{mode:'flat',inputMicrosPerMillion:1,outputMicrosPerMillion:1,cachedInputMicrosPerMillion:null}});
-  const workers=continuous?[]:users.flatMap(owner=>[false,true].map(taskMode=>createStagingTextJob(jobConfig(owner,taskMode),
+  const workers=continuous?[]:users.flatMap(owner=>(grounded?[false,true,'grounded']:[false,true]).map(taskMode=>createStagingTextJob(jobConfig(owner,taskMode),
    {workerCredential:()=>e.SERVICE_ROLE_KEY,providerCredential:()=> 'synthetic-local-provider-only',recordDestination:async()=>{counts.destinationReceipts++;},fetch:mappedFetch})));
   const serviceConfigs=[];
   if(continuous){
    serviceDirectory=mkdtempSync(join(tmpdir(),'vp-native-service-'));
    const mapper=join(serviceDirectory,'closed-fetch.mjs');
    writeFileSync(mapper,`const original=globalThis.fetch;globalThis.fetch=async(input,init)=>{const url=typeof input==='string'?input:input.url??String(input);if(url.startsWith(${JSON.stringify(stagedDatabase+'/rest/v1/rpc/')}))return original(${JSON.stringify(e.API_URL)}+new URL(url).pathname,init);if(url===${JSON.stringify(providerEndpoint)})return original(${JSON.stringify(modelURL)},init);throw Error('Unexpected local destination');};`,{mode:0o600});
-   for(const taskMode of [false,true]){
-    const path=join(serviceDirectory,taskMode?'task.json':'single.json');
+   for(const taskMode of (grounded?[false,true,'grounded']:[false,true])){
+    const path=join(serviceDirectory,taskMode==='grounded'?'grounded.json':taskMode?'task.json':'single.json');
     writeFileSync(path,JSON.stringify({schemaVersion:'vpj07-staging-text-service/1',job:jobConfig(users[0],taskMode),pollIntervalMs:5000,expiresAt:new Date(Date.now()+600000).toISOString()}),{mode:0o600});serviceConfigs.push(path);
    }
   }
@@ -114,6 +137,6 @@ export async function createNativeTextEnvironment({continuous=false}={}){
     if(result==='finished')counts.finished++;
    }
   })().catch(()=>{}).finally(()=>{busy=false;});},500);
-  return {api,policyId,noticeHash,taskPolicyId,taskNoticeHash,requests,users,sql,counts,releaseModels,controlURL:modelURL+'/release',cleanup,restartServiceWorkers,serviceEvidence};
+  return {api,policyId,noticeHash,taskPolicyId,taskNoticeHash,groundedPolicyId,groundedNoticeHash,groundedPublications,requests,users,sql,counts,releaseModels,controlURL:modelURL+'/release',cleanup,restartServiceWorkers,serviceEvidence};
  }catch(error){await cleanup();throw error;}
 }

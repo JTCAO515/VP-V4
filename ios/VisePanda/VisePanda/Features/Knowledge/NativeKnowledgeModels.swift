@@ -17,7 +17,7 @@ struct NativeKnowledgeReply: Decodable {
     let data: NativeKnowledgeRead
 }
 
-struct NativeKnowledgeRead: Decodable {
+struct NativeKnowledgeRead: Decodable, Equatable {
     let schemaVersion: String
     let evaluatedAt: String
     let scope: NativeKnowledgeSelection
@@ -61,13 +61,13 @@ struct NativeKnowledgeRead: Decodable {
     }
 }
 
-struct NativeKnowledgeAnswer: Decodable {
+struct NativeKnowledgeAnswer: Decodable, Equatable {
     let questionId: String
     let questionVersion: Int
     let outcome: String
     let claims: [Claim]
     static let required = ["original_valid_booking_id", "valid_ticket_not_itinerary_or_receipt"]
-    struct Claim: Decodable, Identifiable {
+    struct Claim: Decodable, Equatable, Identifiable {
         let id: String
         let status: String
         let reasons: [String]
@@ -101,7 +101,7 @@ struct NativeKnowledgeAnswer: Decodable {
     }
 }
 
-struct NativeKnowledgeStatement: Decodable, Identifiable {
+struct NativeKnowledgeStatement: Decodable, Equatable, Identifiable {
     let factId: String
     let version: Int
     let assertionId: String
@@ -116,14 +116,14 @@ struct NativeKnowledgeStatement: Decodable, Identifiable {
     let sources: [Source]
     var id: String { factId }
 
-    struct Assertion: Decodable {
+    struct Assertion: Decodable, Equatable {
         let subjectId: String
         let predicate: String
         let objectId: String
         let conditions: [String]
         let exclusions: [String]
     }
-    struct Source: Decodable, Identifiable {
+    struct Source: Decodable, Equatable, Identifiable {
         let sourceRevisionId: String
         let publisher: String
         let uri: String

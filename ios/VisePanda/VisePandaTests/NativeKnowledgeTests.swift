@@ -150,6 +150,65 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         XCTAssertEqual(store.state, .unavailable, "Generic notes cannot be silently promoted to a question answer")
     }
 
+
+    @MainActor private func groundedTurn(partial: Bool = false, compound: Bool = false) throws -> NativeTextTurn {
+        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: questionPayload(partial: partial)) as? [String: Any])
+        let knowledge = try XCTUnwrap(root["data"])
+        let result: [String: Any] = ["type": "reviewed_answer", "city": "shanghai", "intent": "rail_boarding_documents",
+            "requestScope": compound ? "additional_needs" : "single", "originalOutcome": partial || compound ? "partial" : "answered",
+            "completedAt": "2026-09-13T00:00:00Z", "projection": "current", "knowledge": knowledge]
+        let data: [String: Any] = ["turnId": UUID().uuidString, "threadId": UUID().uuidString, "locale": "en",
+            "input": "What documents do I need?", "outcome": partial || compound ? "partial" : "answered",
+            "output": "reviewed-answer-v1", "status": "completed", "createdAt": "2026-09-13T00:00:00Z",
+            "serviceTaskId": UUID().uuidString, "scopeVersion": 1, "relationship": "new_goal", "result": result]
+        return try JSONDecoder().decode(NativeTextTurn.self, from: JSONSerialization.data(withJSONObject: data))
+    }
+
+    @MainActor func testGroundedProjectionHasBoundedLifetimeAndKeepsCompoundIncomplete() throws {
+        for turn in [try groundedTurn(), try groundedTurn(partial: true), try groundedTurn(compound: true)] {
+            XCTAssertTrue(turn.valid)
+            XCTAssertEqual(try XCTUnwrap(turn.result).lifetime(for: turn, elapsed: 2), 28)
+            XCTAssertThrowsError(try XCTUnwrap(turn.result).lifetime(for: turn, elapsed: 30))
+        }
+        var turn = try groundedTurn()
+        let old = try XCTUnwrap(turn.result)
+        turn.result = NativeGroundedResult(type: old.type, city: "beijing", intent: old.intent, requestScope: old.requestScope,
+            originalOutcome: old.originalOutcome, completedAt: old.completedAt, projection: old.projection, knowledge: old.knowledge)
+        XCTAssertThrowsError(try XCTUnwrap(turn.result).lifetime(for: turn, elapsed: 0))
+        turn.result = NativeGroundedResult(type: old.type, city: old.city, intent: old.intent, requestScope: "additional_needs",
+            originalOutcome: old.originalOutcome, completedAt: old.completedAt, projection: old.projection, knowledge: old.knowledge)
+        XCTAssertThrowsError(try XCTUnwrap(turn.result).lifetime(for: turn, elapsed: 0))
+    }
+
+    @MainActor func testGroundedUnavailableHidesFactsWithoutChangingSavedOutcome() throws {
+        var turn = try groundedTurn()
+        let old = try XCTUnwrap(turn.result)
+        for retainedFacts in [false, true] {
+            turn.result = NativeGroundedResult(type: old.type, city: old.city, intent: old.intent, requestScope: old.requestScope,
+                originalOutcome: old.originalOutcome, completedAt: old.completedAt, projection: "unavailable",
+                knowledge: retainedFacts ? old.knowledge : nil)
+            if retainedFacts { XCTAssertThrowsError(try XCTUnwrap(turn.result).lifetime(for: turn, elapsed: 0)) }
+            else { XCTAssertEqual(try XCTUnwrap(turn.result).lifetime(for: turn, elapsed: 3), 27) }
+            XCTAssertEqual(turn.outcome, .answered)
+        }
+    }
+
+    @MainActor func testGroundedPendingRequestRetainsExactCityAcrossEncodingAndRejectsOtherMode() throws {
+        let turn = try groundedTurn()
+        var request = NativeTextSubmission(threadId: turn.threadId, turnId: turn.turnId, idempotencyKey: UUID().uuidString,
+            policyId: UUID().uuidString, locale: turn.locale, text: turn.input,
+            serviceTask: .init(id: try XCTUnwrap(turn.serviceTaskId), scopeVersion: 1, relationship: "new_goal", parentTurnId: nil), city: "shanghai")
+        func pending(_ mode: NativeAskMode) -> NativePendingAsk {
+            .init(schemaVersion: 1, mobileEpoch: 1, mode: mode, noticeVersion: "grounded-v1", noticeHash: String(repeating: "a", count: 64), request: request)
+        }
+        XCTAssertTrue(request.matches(turn)); XCTAssertTrue(pending(.grounded).valid)
+        let restored = try JSONDecoder().decode(NativePendingAsk.self, from: JSONEncoder().encode(pending(.grounded)))
+        XCTAssertEqual(restored.request, request)
+        XCTAssertFalse(pending(.taskContext).valid)
+        request.city = "beijing"; XCTAssertFalse(request.matches(turn))
+        request.city = nil; XCTAssertFalse(pending(.grounded).valid)
+    }
+
 }
 
 private actor KnowledgeReadBarrier {

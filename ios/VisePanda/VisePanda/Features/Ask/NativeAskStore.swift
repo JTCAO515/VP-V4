@@ -11,6 +11,10 @@ final class NativeAskStore {
     private(set) var scope: NativeDataScope?
     private(set) var pending: NativeTextSubmission?
     var draft = ""
+    var city = "shanghai"
+    private var groundedDeadline: TimeInterval = 0
+    var groundedCurrent: Bool { mode != .grounded || ProcessInfo.processInfo.systemUptime < groundedDeadline }
+    var groundedRefreshDelay: TimeInterval { max(1, groundedDeadline - ProcessInfo.processInfo.systemUptime) }
     private var operation: UUID?
     let mode: NativeAskMode
     private var base: String { mode.base }
@@ -23,13 +27,13 @@ final class NativeAskStore {
     private var pendingAcknowledged = false
     init(mode: NativeAskMode = .currentInput) {
         self.mode = mode
-        intent = mode == .taskContext ? .restoring : .newGoal
+        intent = mode.usesTask ? .restoring : .newGoal
     }
     var noticeIdentity: String? {
         policy.map { "\(mode.rawValue):\($0.id):\($0.noticeVersion):\($0.noticeHash)" }
     }
     var canStartNew: Bool {
-        guard mode == .taskContext, !busy, pending == nil, policy?.consentState == .accepted else { return false }
+        guard mode.usesTask, !busy, pending == nil, policy?.consentState == .accepted else { return false }
         if case .awaiting = intent { return false }
         return intent != .restoring
     }
@@ -79,13 +83,15 @@ final class NativeAskStore {
 
     func reset(for next: NativeDataScope?) {
         guard scope != next else { return }
-        intent = mode == .taskContext ? .restoring : .newGoal; boundNotice = nil; pendingNotice = nil; pendingAcknowledged = false
+        intent = mode.usesTask ? .restoring : .newGoal; boundNotice = nil; pendingNotice = nil; pendingAcknowledged = false
+        groundedDeadline = 0
         scope = next; operation = nil; policy = nil; turns = []; pending = nil; draft = ""; busy = false; notice = nil
     }
 
     /// Hide read results and invalidate in-flight operations without discarding
     /// a same-account unsent draft during temporary authentication loss.
     func suspendReads() {
+        groundedDeadline = 0
         operation = nil; busy = false; policy = nil; turns = []; notice = nil
     }
 
@@ -124,7 +130,7 @@ final class NativeAskStore {
             guard self.policy == policy else { throw NativeDataError.staleSessionResponse }
             if self.pending == nil {
                 var request = NativeTextSubmission(threadId: UUID().uuidString.lowercased(), turnId: UUID().uuidString.lowercased(), idempotencyKey: UUID().uuidString.lowercased(), policyId: policy.id, locale: locale, text: self.draft)
-                if self.mode == .taskContext {
+                if self.mode.usesTask {
                     switch self.intent {
                     case .newGoal:
                         request.serviceTask = NativeServiceTaskLink(id: UUID().uuidString.lowercased(), scopeVersion: 1, relationship: "new_goal", parentTurnId: nil)
@@ -135,6 +141,11 @@ final class NativeAskStore {
                             serviceTask: NativeServiceTaskLink(id: taskID, scopeVersion: 1, relationship: parent.outcome == .clarification ? "clarification" : "repair", parentTurnId: parent.id))
                     default: throw NativeDataError.invalidResponse
                     }
+                }
+                if self.mode == .grounded {
+                    if case .continuation(let parent) = self.intent { request.city = parent.result?.city }
+                    else { request.city = self.city }
+                    guard request.city.map(NativeKnowledgeSelection.cities.contains) == true else { throw NativeDataError.invalidResponse }
                 }
                 let retained = try session.retainPendingAsk(request, policy: policy, mode: self.mode)
                 self.pendingNotice = retained.noticeIdentity
@@ -171,8 +182,9 @@ final class NativeAskStore {
     private func load(_ session: NativeSession, _ current: Context) async throws {
         let policy: NativeTextPolicyReply = try await call(session, current, suffix: "/policy", method: "GET")
         guard policy.version == mode.version && policy.kind == "policy" && policy.policy.valid else { throw NativeDataError.invalidResponse }
+        let started = ProcessInfo.processInfo.systemUptime
         let history: NativeTextHistory = try await call(session, current, suffix: "/turns", method: "GET")
-        guard history.version == mode.version && history.kind == "history" && history.turns.count <= 20
+        guard history.version == mode.version && history.kind == (mode == .grounded ? "grounded_history" : "history") && history.turns.count <= 20
             && history.turns.allSatisfy(\.valid) && Set(history.turns.map(\.id)).count == history.turns.count else { throw NativeDataError.invalidResponse }
         try ensure(session, current)
         let identity = "\(mode.rawValue):\(policy.policy.id):\(policy.policy.noticeVersion):\(policy.policy.noticeHash)"
@@ -181,6 +193,9 @@ final class NativeAskStore {
         boundNotice = identity
         if changed { draft = ""; intent = .blocked }
         if policy.policy.consentState != .accepted {
+            // Consent screens also need a bounded refresh interval. A zero deadline
+            // otherwise polls every second and races the user's acceptance tap.
+            if mode == .grounded { groundedDeadline = ProcessInfo.processInfo.systemUptime + max(1, 30 - (ProcessInfo.processInfo.systemUptime - started)) }
             turns = []
             if policy.policy.consentState == .withdrawn {
                 if let pending, pending.policyId == policy.policy.id {
@@ -191,7 +206,16 @@ final class NativeAskStore {
             }
             return
         }
-        guard mode != .taskContext || history.turns.allSatisfy(\.validTask) else { throw NativeDataError.invalidResponse }
+        guard !mode.usesTask || history.turns.allSatisfy(\.validTask) else { throw NativeDataError.invalidResponse }
+        if mode == .grounded {
+            var lifetime: TimeInterval = 30
+            let elapsed = ProcessInfo.processInfo.systemUptime - started
+            for turn in history.turns {
+                guard let result = turn.result else { throw NativeDataError.invalidResponse }
+                lifetime = min(lifetime, try result.lifetime(for: turn, elapsed: elapsed))
+            }
+            groundedDeadline = ProcessInfo.processInfo.systemUptime + lifetime
+        } else if history.turns.contains(where: { $0.result != nil }) { throw NativeDataError.invalidResponse }
         turns = history.turns
         if let pending {
             // History is scoped by the current policy RPC, never by turn ID alone.
@@ -200,14 +224,14 @@ final class NativeAskStore {
                 guard pending.matches(recovered) else { throw NativeDataError.invalidResponse }
                 try session.clearPendingAsk(matching: pending)
                 self.pending = nil; pendingNotice = nil; pendingAcknowledged = false; draft = ""
-                intent = mode == .taskContext ? .awaiting(recovered.id) : .newGoal
+                intent = mode.usesTask ? .awaiting(recovered.id) : .newGoal
             } else {
                 draft = pendingAcknowledged ? "" : pending.text
                 if pendingAcknowledged { intent = .awaiting(pending.turnId) }
                 return
             }
         }
-        guard mode == .taskContext else { return }
+        guard mode.usesTask else { return }
         // A deliberate new question is not replaced by a late result from an old task.
         if intent == .newGoal || changed { return }
         let latest: NativeTextTurn?
@@ -218,6 +242,7 @@ final class NativeAskStore {
             latest = turns.max { ($0.createdAt, $0.id) < ($1.createdAt, $1.id) }
         }
         guard let latest else { intent = .newGoal; return }
+        if mode == .grounded, let city = latest.result?.city { self.city = city }
         guard let chain = NativeTaskChain(containing: latest, history: turns) else { intent = .blocked; return }
         if latest.waiting { intent = .awaiting(latest.id) }
         else if chain.turns.count < 4 && [.clarification, .technicalFailure].contains(latest.outcome) {
@@ -244,6 +269,7 @@ final class NativeAskStore {
         defer { if operation == token { busy = false; operation = nil } }
         do {
             if pending == nil, let retained = try session.retainedPendingAsk() {
+                if mode == .grounded, let city = retained.request.city { self.city = city }
                 pending = retained.request; pendingNotice = retained.noticeIdentity; pendingAcknowledged = retained.acknowledged
             }
             try await action(Context(scope: current, token: token))
@@ -253,6 +279,7 @@ final class NativeAskStore {
             guard session.dataScope == current else { reset(for: session.retainedDataScope); suspendReads(); return }
             guard !Task.isCancelled else { return }
             // Hide previously returned bodies after any failed policy/session refresh.
+            groundedDeadline = 0
             policy = nil; turns = []
             if case NativeDataError.server(let code) = error { notice = code } else { notice = "retry" }
         }

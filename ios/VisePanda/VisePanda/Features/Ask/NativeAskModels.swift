@@ -40,6 +40,7 @@ struct NativeTextTurn: Decodable, Identifiable, Equatable {
     var scopeVersion: Int? = nil
     var relationship: String? = nil
     var parentTurnId: String? = nil
+    var result: NativeGroundedResult? = nil
     var id: String { turnId }
     var validTask: Bool {
         guard let serviceTaskId, UUID(uuidString: serviceTaskId) != nil,
@@ -92,8 +93,10 @@ struct NativeTextSubmission: Codable, Equatable {
     let locale: String
     let text: String
     var serviceTask: NativeServiceTaskLink? = nil
+    var city: String? = nil
     func matches(_ turn: NativeTextTurn) -> Bool {
         turnId == turn.turnId && threadId == turn.threadId && locale == turn.locale && text == turn.input
+        && city == turn.result?.city
         && (serviceTask == nil || (serviceTask?.id == turn.serviceTaskId
             && serviceTask?.scopeVersion == turn.scopeVersion && serviceTask?.relationship == turn.relationship
             && serviceTask?.parentTurnId == turn.parentTurnId))
@@ -116,8 +119,9 @@ struct NativeServiceTaskLink: Codable, Equatable {
 }
 
 enum NativeAskMode: String, Codable {
-    case currentInput = "", taskContext = "task_history_v1", unavailable
-    var version: Int { self == .taskContext ? 3 : 1 }
+    case currentInput = "", taskContext = "task_history_v1", grounded = "knowledge_intent_v1", unavailable
+    var usesTask: Bool { self == .taskContext || self == .grounded }
+    var version: Int { self == .grounded ? 4 : self == .taskContext ? 3 : 1 }
     var base: String { "api/chat/native/v\(version)" }
 }
 
@@ -141,6 +145,9 @@ struct NativePendingAsk: Codable, Equatable {
               ["zh", "en", "es", "ru", "ar"].contains(request.locale),
               !request.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
               request.text.utf16.count <= 4000, !request.text.contains("\u{0000}") else { return false }
+        if mode == .grounded {
+            guard request.city.map(NativeKnowledgeSelection.cities.contains) == true, ["zh", "en"].contains(request.locale) else { return false }
+        } else if request.city != nil { return false }
         if mode == .currentInput { return request.serviceTask == nil }
         guard let task = request.serviceTask, UUID(uuidString: task.id) != nil, task.scopeVersion == 1 else { return false }
         if task.relationship == "new_goal" { return task.parentTurnId == nil }
@@ -172,5 +179,49 @@ struct NativeTaskChain {
         }
         guard ordered.last?.id == latest.id else { return nil }
         turns = ordered
+    }
+}
+
+
+/// The saved task outcome is immutable; factual projection is revalidated on each read.
+struct NativeGroundedResult: Decodable, Equatable {
+    let type: String
+    let city: String
+    let intent: String?
+    let requestScope: String?
+    let originalOutcome: String?
+    let completedAt: String?
+    let projection: String
+    let knowledge: NativeKnowledgeRead?
+
+    func lifetime(for turn: NativeTextTurn, elapsed: TimeInterval) throws -> TimeInterval {
+        guard type == "reviewed_answer", NativeKnowledgeSelection.cities.contains(city),
+              ["zh", "en"].contains(turn.locale), turn.validTask,
+              originalOutcome == turn.outcome?.rawValue, elapsed.isFinite, elapsed >= 0, elapsed < 30 else {
+            throw NativeDataError.invalidResponse
+        }
+        if completedAt == nil {
+            guard intent == nil, requestScope == nil, originalOutcome == nil, knowledge == nil,
+                  projection == "pending", turn.output == nil else { throw NativeDataError.invalidResponse }
+            return 30 - elapsed
+        }
+        guard completedAt.flatMap(NativeKnowledgeRead.date) != nil, turn.output == "reviewed-answer-v1",
+              ["current", "unavailable"].contains(projection) else { throw NativeDataError.invalidResponse }
+        if intent == "rail_boarding_documents" {
+            guard ["single", "additional_needs"].contains(requestScope ?? ""),
+                  ["answered", "partial", "blocked"].contains(originalOutcome ?? ""),
+                  requestScope != "additional_needs" || originalOutcome != "answered" else { throw NativeDataError.invalidResponse }
+            if projection == "unavailable" {
+                guard knowledge == nil else { throw NativeDataError.invalidResponse }
+                return 30 - elapsed
+            }
+            guard let knowledge else { throw NativeDataError.invalidResponse }
+            return try knowledge.lifetime(for: .init(city: city, scene: "rail", locale: turn.locale), elapsed: elapsed, question: true)
+        }
+        let expected = intent == "clarification" ? "clarification" : intent == "technical_failure" ? "technical_failure" : "blocked"
+        guard ["clarification", "unsupported", "technical_failure", "blocked"].contains(intent ?? ""),
+              requestScope == "unknown", originalOutcome == expected, knowledge == nil,
+              projection == "current" else { throw NativeDataError.invalidResponse }
+        return 30 - elapsed
     }
 }

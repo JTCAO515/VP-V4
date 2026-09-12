@@ -37,8 +37,11 @@ test('one shared deadline covers auth plus body; dispatched hung RPC is acknowle
  let calls=0;
  const r=await handleOpsRequest(request({getReader:()=>({read:never,cancel:never})}),options({authenticate:async()=>{await pause(15);return "author";},call:async()=>{calls++;return{data:{},error:null};}}));
  assert.equal(r.status,503);assert.equal(calls,0);
- const start=Date.now();const unknown=await handleOpsRequest(request(stream()),options({...good,call:never}));
- assert.equal(unknown.body.error,'OPS_ACK_UNKNOWN');assert.ok(Date.now()-start<500);
+ // Cancel only after the RPC has started: scheduler load must not turn this
+ // acknowledgement test into a pre-dispatch deadline test.
+ const controller=new AbortController();let dispatched=false;
+ const unknown=await handleOpsRequest(request(stream(),controller),options({...good,call:()=>{dispatched=true;controller.abort();return never();}},{milliseconds:5000}));
+ assert.equal(dispatched,true);assert.equal(unknown.body.error,'OPS_ACK_UNKNOWN');
 });
 test('lifetime prevents delayed fetch/refresh work even if its dependency ignores abort',async()=>{
  const lifetime=requestLifetime(new AbortController().signal,20);let sends=0;

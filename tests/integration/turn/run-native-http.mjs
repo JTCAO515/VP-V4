@@ -7,7 +7,7 @@ import { randomUUID } from 'node:crypto';
 import net from 'node:net';
 const repo=process.cwd();
 const args=process.argv.slice(2);
-if(args.length>1 || (args.length===1 && args[0]!=='--service'))throw Error('Unknown native HTTP test option');
+if(args.length>1 || (args.length===1 && !['--service','--grounded'].includes(args[0])))throw Error('Unknown native HTTP test option');
 const base=59620;
 if(!Number.isInteger(base)||base<1024||base>65000)throw new Error('Invalid disposable port base');
 for(const offset of [20,21,22,23,24,27,29,31])await new Promise((ok,fail)=>{const socket=net.createServer();socket.once('error',()=>fail(new Error('Disposable test port unavailable')));socket.listen(base+offset,'127.0.0.1',()=>socket.close(ok));});
@@ -30,7 +30,7 @@ let exit=1;
 try{
   const started=await run('supabase',['start','--workdir',target,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor']);
   if(started!==0)throw new Error('Disposable native Ask stack failed to start; credential-bearing output suppressed');
-  exit=await run(process.execPath,['--test','tests/integration/turn/native-text-http.test.mjs'],true,{...process.env,VP_NATIVE_TEXT_INTEGRATION:'true',VP_NATIVE_TEXT_SERVICE_INTEGRATION:args[0]==='--service'?'true':'false',VISEPANDA_TRIP_PROTOCOL_V2:'true',VP_IDENTITY_SUPABASE_WORKDIR:target,VP_IDENTITY_SUPABASE_API_URL:`http://127.0.0.1:${base+21}`,VP_NATIVE_API_PORT:String(base+31)});
+  exit=await run(process.execPath,['--experimental-strip-types','--test',args[0]==='--grounded'?'tests/integration/turn/native-grounded-http.test.mjs':'tests/integration/turn/native-text-http.test.mjs'],true,{...process.env,VP_NATIVE_TEXT_INTEGRATION:'true',VP_NATIVE_GROUNDED_INTEGRATION:args[0]==='--grounded'?'true':'false',VP_NATIVE_TEXT_SERVICE_INTEGRATION:args[0]==='--service'?'true':'false',VISEPANDA_TRIP_PROTOCOL_V2:'true',VP_IDENTITY_SUPABASE_WORKDIR:target,VP_IDENTITY_SUPABASE_API_URL:`http://127.0.0.1:${base+21}`,VP_NATIVE_API_PORT:String(base+31)});
 }finally{
   const stopped=await run('supabase',['stop','--workdir',target,'--no-backup']);
   if(stopped!==0){console.error('Disposable native Ask cleanup failed for '+project);exit=1;}else rmSync(target,{recursive:true});

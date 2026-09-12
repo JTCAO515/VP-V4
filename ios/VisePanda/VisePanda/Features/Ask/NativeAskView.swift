@@ -3,6 +3,7 @@ import SwiftUI
 struct NativeAskView: View {
     var isActive: Bool
     @Environment(AppSettings.self) private var settings
+    @Environment(\.scenePhase) private var scenePhase
     @State private var store = NativeAskStore()
     @State private var reviewed = false
     @State private var showNotice = true
@@ -11,6 +12,8 @@ struct NativeAskView: View {
     init(store: NativeAskStore = NativeAskStore(), isActive: Bool = true) { _store = State(initialValue: store); self.isActive = isActive }
 
     private var session: NativeSession { settings.nativeSession }
+    private var visible: Bool { isActive && !showReviewedQuestion && scenePhase == .active }
+    private var groundedReadKey: String { "\(visible):\(String(describing: session.dataScope)):\(store.pollKey)" }
     private var active: Bool { session.dataScope != nil && store.scope == session.dataScope }
 
     var body: some View {
@@ -30,7 +33,14 @@ struct NativeAskView: View {
                     }
                     if store.notice != nil { Text("ask.local.retry_hint").font(.footnote).accessibilityIdentifier("native-ask.error") }
                     Text("ask.local.history").font(.title2.bold())
-                    ForEach(store.turns) { turn in result(turn) }
+                    TimelineView(.periodic(from: .now, by: 1)) { _ in
+                        if store.mode != .grounded || (visible && store.groundedCurrent) {
+                            ForEach(store.turns) { turn in result(turn) }
+                        } else if store.mode == .grounded {
+                            Text(settings.selectedLocale == .zh ? "正在重新核对已保存答案的依据。" : "Rechecking the evidence for saved answers.")
+                                .accessibilityIdentifier("grounded.rechecking")
+                        }
+                    }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -63,12 +73,14 @@ struct NativeAskView: View {
         .vpNavigationTitle("tab.ask")
         .navigationBarTitleDisplayMode(.inline)
         .task(id: session.dataScope) {
+            guard store.mode != .grounded else { return }
             reviewed = false
             store.reset(for: session.retainedDataScope)
             if session.dataScope == nil { store.suspendReads() }
             else if !session.busy { await store.reload(using: session) }
         }
         .task(id: store.pollKey) {
+            guard store.mode != .grounded else { return }
             guard !store.pollKey.isEmpty else { return }
             let initial = session.dataScope
             for _ in 0..<60 {
@@ -77,12 +89,24 @@ struct NativeAskView: View {
                 if !store.busy { await store.reload(using: session) }
             }
         }
+        .task(id: groundedReadKey) {
+            guard store.mode == .grounded else { return }
+            store.reset(for: session.retainedDataScope)
+            guard visible, session.dataScope != nil else { store.suspendReads(); return }
+            let initial = session.dataScope
+            repeat {
+                if !store.busy && !session.busy { await store.reload(using: session) }
+                guard !Task.isCancelled, visible, session.dataScope == initial else { return }
+                let delay = !store.pollKey.isEmpty || store.busy || session.busy ? 1 : store.policy == nil ? 30 : store.groundedRefreshDelay
+                do { try await Task.sleep(for: .seconds(delay)) } catch { return }
+            } while !Task.isCancelled && visible && session.dataScope == initial
+        }
         .onChange(of: session.retainedDataScope) { _, retained in
             store.reset(for: retained)
             reviewed = false
         }
         .onChange(of: session.busy) { wasBusy, busy in
-            if wasBusy && !busy && session.dataScope != nil {
+            if store.mode != .grounded && wasBusy && !busy && session.dataScope != nil {
                 Task { await store.reload(using: session) }
             }
         }
@@ -124,8 +148,12 @@ struct NativeAskView: View {
     private func result(_ turn: NativeTextTurn) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(turn.input).font(.headline)
-            Text(LocalizedStringKey(label(turn))).font(.caption.bold()).foregroundStyle(Color.vpSecondaryText)
-            if let output = turn.output {
+            if store.mode == .grounded, let result = turn.result {
+                groundedResult(turn, result)
+            } else {
+                Text(LocalizedStringKey(label(turn))).font(.caption.bold()).foregroundStyle(Color.vpSecondaryText)
+            }
+            if store.mode != .grounded, let output = turn.output {
                 Text(output).textSelection(.enabled).accessibilityIdentifier("native-ask.answer.\(turn.id)")
             }
             if turn.waiting {
@@ -139,9 +167,36 @@ struct NativeAskView: View {
         .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
     }
 
+    @ViewBuilder private func groundedResult(_ turn: NativeTextTurn, _ result: NativeGroundedResult) -> some View {
+        let chinese = turn.locale == "zh"
+        if result.intent == "rail_boarding_documents" {
+            Text(chinese ? "识别的问题：乘车需要哪些证件？" : "Interpreted question: Which documents do I need to board?")
+                .font(.subheadline.bold()).accessibilityIdentifier("grounded.interpreted")
+            Text(chinese ? "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。" : "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.").font(.caption)
+            if result.requestScope == "additional_needs" {
+                Text(chinese ? "你的问题还包含范围外的需求，这部分尚未回答。" : "Your question also includes needs outside this scope; those remain unanswered.")
+                    .accessibilityIdentifier("grounded.additional-needs")
+            }
+            if let knowledge = result.knowledge {
+                NativeKnowledgeCards(rows: knowledge.statements, answer: knowledge.answer, chinese: chinese)
+            } else {
+                Text(chinese ? "当前无法重新核对原答案，已隐藏事实内容，请稍后重试。" : "The saved evidence cannot be rechecked right now. Factual content is hidden; try again later.")
+                    .accessibilityIdentifier("grounded.unavailable")
+            }
+        } else if result.intent == "clarification" {
+            Text(chinese ? "请完整重述你想核对的乘车证件问题。本模式不读取上一轮内容。" : "Please restate the complete boarding-document question. This mode does not read earlier messages.")
+                .accessibilityIdentifier("grounded.clarification")
+        } else if result.intent == "unsupported" {
+            Text(chinese ? "这个问题超出当前乘车证件范围，尚未提供答案。你可以核对铁路官方渠道或车站指引。" : "This question is outside the current boarding-document scope and has not been answered. Check railway or station guidance.")
+                .accessibilityIdentifier("grounded.unsupported")
+        } else {
+            Text(LocalizedStringKey(label(turn))).accessibilityIdentifier("grounded.status")
+        }
+    }
+
     private var composer: some View {
         VStack(spacing: 8) {
-            if store.mode == .taskContext {
+            if store.mode.usesTask {
                 HStack {
                     Text(LocalizedStringKey(store.intentLabel)).font(.caption)
                         .accessibilityIdentifier("native-ask.intent")
@@ -150,6 +205,16 @@ struct NativeAskView: View {
                         .disabled(!store.canStartNew)
                         .accessibilityIdentifier("native-ask.new-question")
                 }
+            }
+            if store.mode == .grounded {
+                Text(settings.selectedLocale == .zh ? "当前支持：成年外籍护照旅客的境内铁路乘车证件。模型只识别本次问题；其他需求会明确保留为范围外。" : "Currently supports domestic railway boarding documents for adult foreign-passport travellers. The model classifies only this message; other needs remain outside this answer.")
+                    .font(.caption).accessibilityIdentifier("grounded.scope")
+                Picker(settings.selectedLocale == .zh ? "城市" : "City", selection: $store.city) {
+                    ForEach(Array(NativeKnowledgeSelection.cities.enumerated()), id: \.element) { index, city in
+                        Text(settings.selectedLocale == .zh ? ["上海", "北京", "广州", "重庆"][index] : city.capitalized).tag(city)
+                    }
+                }.disabled(store.pending != nil || store.busy || store.intent != .newGoal)
+                    .accessibilityIdentifier("grounded.city")
             }
             TextField("ask.placeholder", text: $store.draft, axis: .vertical)
                 .lineLimit(1...5).focused($composing)

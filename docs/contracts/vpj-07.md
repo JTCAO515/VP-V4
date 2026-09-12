@@ -424,3 +424,13 @@ English same-task clarification/final, real Qwen, worker restart with unchanged
 expiry, relaunch recovery and owner isolation. An initial IME-corrupted English
 fixture is explicitly retained as failed. This is bounded operation evidence;
 continuous unattended deployment and the retained semantic criterion remain open.
+
+## Current-input knowledge intent mode
+
+Job/4 adds `inputMode: knowledge_intent_v1` to the existing closed seven-field
+job/2 shape, with no thinking option. It uses `vp-knowledge-intent-v1` and separate
+claim/read/authorize/complete-grounded RPCs in the same durable worker and shared
+ServiceTask budget. The continuous service also accepts this nested job version.
+Only the current input crosses the model boundary; the structured result and
+historical evidence eligibility follow [VPJ-16](vpj-16.md#bounded-natural-language-ask-and-durable-results).
+No new queue, automatic retry or recipient grant is introduced.

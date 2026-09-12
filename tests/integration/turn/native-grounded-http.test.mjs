@@ -1,0 +1,45 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {randomUUID} from 'node:crypto';
+import {createNativeTextEnvironment} from './native-text-environment.mjs';
+import {waitUntil} from '../identity/database-barrier.mjs';
+
+test('grounded native HTTP preserves scope, consent, current-input egress and revalidated durable results',{skip:process.env.VP_NATIVE_GROUNDED_INTEGRATION!=='true',timeout:180000},async t=>{
+ const e=await createNativeTextEnvironment({grounded:true});t.after(()=>e.cleanup());
+ const call=async(path,token,method='GET',body)=>{
+  const r=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)})});
+  return {status:r.status,body:await r.json()};
+ };
+ const login=async user=>{const attemptId=randomUUID();const r=await call('/api/auth/native/v2/credentials',null,'POST',{email:user.email,password:user.password,attemptId});assert.equal(r.status,200);assert.equal((await call('/api/auth/native/v2/login',r.body.accessToken,'POST',{attemptId})).status,200);return r.body.accessToken;};
+ const token=await login(e.users[0]),other=await login(e.users[1]),base='/api/chat/native/v4';
+ assert.equal((await call(base+'/policy')).status,401);
+ const policy=await call(base+'/policy',token);assert.equal(policy.status,200);assert.equal(policy.body.version,4);assert.equal(policy.body.policy.id,e.groundedPolicyId);
+ const input={threadId:randomUUID(),turnId:randomUUID(),idempotencyKey:randomUUID(),policyId:e.groundedPolicyId,locale:'en',city:'shanghai',text:'Synthetic adult passport boarding document question',serviceTask:{id:randomUUID(),scopeVersion:1,relationship:'new_goal',parentTurnId:null}};
+ const submit=body=>call(base+'/turns',token,'POST',body);
+ assert.equal((await submit(input)).status,403);
+ assert.equal((await call(base+'/consent',token,'POST',{policyId:e.groundedPolicyId,noticeHash:e.taskNoticeHash})).status,403);
+ assert.equal((await call(base+'/consent',token,'POST',{policyId:e.groundedPolicyId,noticeHash:e.groundedNoticeHash})).status,200);
+ assert.equal((await submit({...input,city:'paris'})).status,400);
+ assert.equal((await submit({...input,facts:[]})).status,400);
+ assert.deepEqual((await Promise.all([submit(input),submit(input)])).map(r=>r.status).sort(),[200,201]);
+ const read=async()=>{const r=await call(base+'/turns',token);assert.equal(r.status,200);assert.equal(r.body.version,4);assert.equal(r.body.kind,'grounded_history');return r.body.turns;};
+ const waitTurn=async(id,outcome)=>{await waitUntil(async()=> (await read()).some(x=>x.turnId===id&&x.outcome===outcome),30000,'grounded durable completion');return (await read()).find(x=>x.turnId===id);};
+ const final=await waitTurn(input.turnId,'answered');
+ assert.equal(final.output,'reviewed-answer-v1');assert.equal(final.result.city,'shanghai');assert.equal(final.result.knowledge.statements.length,2);
+ assert.equal(e.counts.http,1);assert.equal(e.requests[0].messages.length,2);assert.equal(e.requests[0].messages[1].content,input.text);
+ assert.ok(!JSON.stringify(e.requests).includes('PRIVATE SOURCE NEVER SENT'));assert.ok(!JSON.stringify(e.requests).includes('Synthetic reviewed'));
+ assert.equal(e.sql(`select status||':'||actual_micros from public.model_budget_attempts where task_id='${input.serviceTask.id}';`),'settled:1');
+ assert.equal((await submit(input)).status,200);assert.equal((await submit({...input,city:'beijing'})).status,409);
+ assert.equal((await call(base+'/turns',other)).body.turns.length,0);
+ const compound={...input,threadId:randomUUID(),turnId:randomUUID(),idempotencyKey:randomUUID(),text:'Synthetic passport question extra-needs',serviceTask:{...input.serviceTask,id:randomUUID()}};
+ assert.equal((await submit(compound)).status,201);assert.equal((await waitTurn(compound.turnId,'partial')).result.requestScope,'additional_needs');
+ const vague={...compound,threadId:randomUUID(),turnId:randomUUID(),idempotencyKey:randomUUID(),text:'Synthetic kind=clarification',serviceTask:{...compound.serviceTask,id:randomUUID()}};
+ assert.equal((await submit(vague)).status,201);await waitTurn(vague.turnId,'clarification');
+ const next={...vague,turnId:randomUUID(),idempotencyKey:randomUUID(),text:'Synthetic restated adult passport question',serviceTask:{...vague.serviceTask,relationship:'clarification',parentTurnId:vague.turnId}};
+ assert.equal((await submit(next)).status,201);await waitTurn(next.turnId,'answered');
+ const dispatched=e.requests.find(r=>r.messages.at(-1).content===next.text);assert.equal(dispatched.messages.length,2,'prior turns and evidence never enter classifier');
+ e.sql('update knowledge_review_private.publication_settings set enabled=false;');
+ const hidden=(await read()).find(x=>x.turnId===input.turnId);assert.equal(hidden.result.projection,'unavailable');assert.equal(hidden.result.knowledge,null);assert.equal(hidden.outcome,'answered');
+ assert.equal((await call(base+'/consent',token,'DELETE',{policyId:e.groundedPolicyId})).status,200);assert.deepEqual(await read(),[]);
+ assert.equal(e.counts.http,4,'replay and history do not dispatch or charge');
+});

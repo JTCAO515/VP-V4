@@ -2,10 +2,11 @@ import { textTurnFailureCopy, type Locale } from "../../i18n.ts";
 import { randomUUID } from "node:crypto";
 import { CostGuard } from "../model-gateway/budget/index.ts";
 import { runWithDurableBudget, type BudgetAttempt, type BudgetRpc } from "../model-gateway/budget/durable.ts";
-import { invokeTextProviderProtocol, validTextTaskHistory, PROTOCOL_MODELS, type ProtocolTransport, type ProtocolUsage } from "../model-gateway/adapters/provider-protocol.ts";
+import { invokeTextProviderProtocol, invokeKnowledgeIntentProtocol, validTextTaskHistory, PROTOCOL_MODELS, type ProtocolTransport, type ProtocolUsage } from "../model-gateway/adapters/provider-protocol.ts";
+import { knowledgeIntent } from "../knowledge/claim/intent.ts";
 import { runDurableTurnWork, type TurnWorkRpc } from "./durable-worker.ts";
 
-export type TextWorkRpc = (name: "read_text_work" | "authorize_text_dispatch" | "authorize_text_task_dispatch" | "complete_text_work", params: Readonly<Record<string, string>>) => Promise<unknown>;
+export type TextWorkRpc = (name: "read_text_work" | "authorize_text_dispatch" | "authorize_text_task_dispatch" | "complete_text_work" | "read_grounded_work" | "authorize_grounded_dispatch" | "complete_grounded_work", params: Readonly<Record<string, string>>) => Promise<unknown>;
 export type TextWorkerConfig = Readonly<{
   scopeId: string;
   priceVersion: string;
@@ -16,7 +17,7 @@ export type TextWorkerConfig = Readonly<{
 /** Trusted deployment binding must match the registry endpoint exactly. No default network transport. */
 export type TextProviderBinding = Readonly<{
   thinkingBudgetTokens?: number;
-  inputMode?: "current_input_v1" | "task_history_v1";
+  inputMode?: "current_input_v1" | "task_history_v1" | "knowledge_intent_v1";
   provider: keyof typeof PROTOCOL_MODELS;
   endpoint: string;
   transport: ProtocolTransport;
@@ -34,9 +35,10 @@ export async function runTextWorker(
 ): Promise<"empty" | "finished" | "queued" | "unavailable"> {
   return runDurableTurnWork(workRpc, async (lease, leaseSignal) => {
     const keys = { p_turn_id: lease.turnId, p_lease_token: lease.leaseToken };
-    const input = await textRpc("read_text_work", keys);
+    const grounded = binding.inputMode === "knowledge_intent_v1";
+    const input = await textRpc(grounded ? "read_grounded_work" : "read_text_work", keys);
     const taskMode = binding.inputMode === "task_history_v1";
-    if (!record(input) || input.kind !== (taskMode ? "task_input" : "input")
+    if (!record(input) || input.kind !== (grounded ? "intent_input" : taskMode ? "task_input" : "input")
       || (taskMode && !validTextTaskHistory(input.history)) || typeof input.text !== "string" || !input.text.trim() || input.text.length > 4000
       || typeof input.policyId !== "string" || input.provider !== binding.provider || input.endpoint !== binding.endpoint
       || typeof input.locale !== "string" || !["zh","en","es","ru","ar"].includes(input.locale)) return "validation_failure";
@@ -48,7 +50,9 @@ export async function runTextWorker(
       reservedMicros: config.reservedMicros, timeoutMs: config.timeoutMs,
     };
     const result = await runWithDurableBudget(attempt, budgetRpc, async budgetSignal => {
-      const value = await invokeTextProviderProtocol(lease, { thinkingBudgetTokens: binding.thinkingBudgetTokens, inputMode: binding.inputMode, provider: binding.provider, endpoint: binding.endpoint, maxOutputTokens: config.maxOutputTokens, timeoutMs: config.timeoutMs }, textRpc, guard, binding.transport, budgetSignal);
+      const value = grounded
+        ? await invokeKnowledgeIntentProtocol(lease, { provider: binding.provider, endpoint: binding.endpoint, maxOutputTokens: config.maxOutputTokens, timeoutMs: config.timeoutMs }, textRpc, guard, binding.transport, budgetSignal)
+        : await invokeTextProviderProtocol(lease, { thinkingBudgetTokens: binding.thinkingBudgetTokens, inputMode: binding.inputMode === "task_history_v1" ? "task_history_v1" : "current_input_v1", provider: binding.provider, endpoint: binding.endpoint, maxOutputTokens: config.maxOutputTokens, timeoutMs: config.timeoutMs }, textRpc, guard, binding.transport, budgetSignal);
       // Usage alone does not prove the model used for pricing. The normalizer can
       // retain usage on MODEL_OUTPUT_INVALID, including a mismatched model. Only
       // these outcomes establish model + usage; SAFETY_BLOCKED is emitted after
@@ -61,6 +65,17 @@ export async function runTextWorker(
     // with a separate budget attempt, subject to its bounded retry count.
     if (result.kind !== "completed") return "provider_failure";
     const output = result.value;
+    if (grounded) {
+      let intent = null;
+      if (output.kind === "protocol_validated" && typeof output.output === "string") {
+        try { intent = knowledgeIntent(JSON.parse(output.output)); } catch { /* Never persist arbitrary model text. */ }
+      }
+      const denied = output.kind === "unavailable" && ["SAFETY_BLOCKED", "DATA_POLICY_BLOCKED"].includes(output.code);
+      const persisted = await textRpc("complete_grounded_work", { ...keys,
+        p_intent: intent?.intent ?? (denied ? "blocked" : "technical_failure"), p_request_scope: intent?.requestScope ?? "unknown" });
+      if (!record(persisted) || persisted.kind !== "finished") throw new Error("Write rejected");
+      return "persisted";
+    }
     let answer: { outcome: string; text: string } | null = null;
     if (output.kind === "protocol_validated" && typeof output.output === "string") {
       try {

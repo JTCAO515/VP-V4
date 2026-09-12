@@ -10,9 +10,9 @@ export type TextJobPricing = Readonly<{
   cachedInputMicrosPerMillion: number | null;
 }>;
 export type StagingTextJobConfig = Readonly<{
-  schemaVersion: "vpj07-staging-text-job/1" | "vpj07-staging-text-job/2" | "vpj07-staging-text-job/3";
+  schemaVersion: "vpj07-staging-text-job/1" | "vpj07-staging-text-job/2" | "vpj07-staging-text-job/3" | "vpj07-staging-text-job/4";
   thinkingBudgetTokens?: number;
-  inputMode?: "task_history_v1";
+  inputMode?: "task_history_v1" | "knowledge_intent_v1";
   ownerId: string;
   policyId: string;
   budget: ScopedTextWorkerConfig["budget"];
@@ -38,6 +38,7 @@ export function createStagingTextJob(raw: unknown, dependencies: StagingTextJobD
   const schema = raw.schemaVersion;
   if (schema === "vpj07-staging-text-job/1" ? Object.keys(raw).length !== 6 || raw.inputMode !== undefined || raw.thinkingBudgetTokens !== undefined
     : schema === "vpj07-staging-text-job/2" ? Object.keys(raw).length !== 7 || raw.inputMode !== "task_history_v1" || raw.thinkingBudgetTokens !== undefined
+    : schema === "vpj07-staging-text-job/4" ? Object.keys(raw).length !== 7 || raw.inputMode !== "knowledge_intent_v1" || raw.thinkingBudgetTokens !== undefined
     : schema !== "vpj07-staging-text-job/3" || Object.keys(raw).length !== 8 || raw.inputMode !== "task_history_v1"
       || !validThinkingBudget(raw.thinkingBudgetTokens, raw.budget.maxOutputTokens as number)) throw unavailable();
   const config = raw as StagingTextJobConfig;
