@@ -1,0 +1,33 @@
+- alert: VisePanda｜来华自由行的 AI 规划与执行工作台
+- main:
+  - paragraph: VisePanda
+  - heading "Travel notes" [level=1]
+  - text: Language
+  - combobox "Language":
+    - option "English" [selected]
+    - option "中文"
+  - paragraph: Reviewed information for your selected city and situation. Read the conditions in each note and check the source before taking action. This is not complete city coverage.
+  - navigation:
+    - link "Sign in":
+      - /url: /auth/sign-in?returnTo=/journey/knowledge
+    - button "Refresh" [active]
+  - text: City
+  - combobox "City":
+    - option "Shanghai" [selected]
+    - option "Beijing"
+    - option "Guangzhou"
+    - option "Chongqing"
+  - text: Situation
+  - combobox "Situation":
+    - option "Arrival"
+    - option "Airport transport"
+    - option "Payment" [selected]
+    - option "Phone and internet"
+    - option "Public transport"
+    - option "Taxis"
+    - option "Rail"
+    - option "Attractions"
+    - option "Accommodation"
+    - option "Emergency help"
+  - status: Information is unavailable. Check your sign-in and try again.
+  - region "Travel notes"

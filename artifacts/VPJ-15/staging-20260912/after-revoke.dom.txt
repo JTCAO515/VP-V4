@@ -1,0 +1,82 @@
+- alert: VisePanda｜来华自由行的 AI 规划与执行工作台
+- main:
+  - paragraph: VisePanda
+  - heading "Travel notes" [level=1]
+  - text: Language
+  - combobox "Language":
+    - option "English" [selected]
+    - option "中文"
+  - paragraph: Reviewed information for your selected city and situation. Read the conditions in each note and check the source before taking action. This is not complete city coverage.
+  - navigation:
+    - link "Sign in":
+      - /url: /auth/sign-in?returnTo=/journey/knowledge
+    - button "Refresh" [active]
+  - text: City
+  - combobox "City":
+    - option "Shanghai" [selected]
+    - option "Beijing"
+    - option "Guangzhou"
+    - option "Chongqing"
+  - text: Situation
+  - combobox "Situation":
+    - option "Arrival"
+    - option "Airport transport"
+    - option "Payment" [selected]
+    - option "Phone and internet"
+    - option "Public transport"
+    - option "Taxis"
+    - option "Rail"
+    - option "Attractions"
+    - option "Accommodation"
+    - option "Emergency help"
+  - status
+  - region "Travel notes":
+    - article:
+      - paragraph: Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.
+      - heading "Applies when" [level=2]
+      - list:
+        - listitem: General mainland China guidance; confirm the specific service with its current operator.
+        - listitem: Check the latest official or operator guidance before use.
+        - listitem: The specific card, issuer and merchant must support the transaction.
+        - listitem: Card support, issuer verification and app terms apply at transaction time.
+        - listitem: Check current app prompts and service terms for fees and payment limits.
+      - heading "Not covered" [level=2]
+      - list:
+        - listitem: No universal merchant acceptance or transaction-success guarantee.
+        - listitem: No fee-free or exchange-rate guarantee.
+        - listitem: Do not infer personal-transfer support for overseas cards.
+      - paragraph:
+        - text: "Reviewed:"
+        - time: 9/13/2026
+      - generic "Sources and context"
+    - article:
+      - paragraph: For RMB cash, use an ATM that accepts your international card.
+      - heading "Applies when" [level=2]
+      - list:
+        - listitem: General mainland China guidance; confirm the specific service with its current operator.
+        - listitem: Check the latest official or operator guidance before use.
+        - listitem: Confirm available services, opening hours and charges with the specific operator.
+        - listitem: The ATM and issuer must support withdrawals with your card.
+      - heading "Not covered" [level=2]
+      - list:
+        - listitem: No guarantee that every ATM or hotel offers the required withdrawal or exchange service.
+        - listitem: No fixed exchange-rate guarantee; confirm with the operator.
+      - paragraph:
+        - text: "Reviewed:"
+        - time: 9/13/2026
+      - generic "Sources and context"
+    - article:
+      - paragraph: Find a marked currency-exchange outlet and confirm its service.
+      - heading "Applies when" [level=2]
+      - list:
+        - listitem: General mainland China guidance; confirm the specific service with its current operator.
+        - listitem: Check the latest official or operator guidance before use.
+        - listitem: Confirm available services, opening hours and charges with the specific operator.
+      - heading "Not covered" [level=2]
+      - list:
+        - listitem: No guarantee that every ATM or hotel offers the required withdrawal or exchange service.
+        - listitem: No fixed exchange-rate guarantee; confirm with the operator.
+      - paragraph:
+        - text: "Reviewed:"
+        - time: 9/13/2026
+      - generic "Sources and context"

@@ -1,0 +1,11 @@
+{
+  "scope": "transaction-local existing administration role only",
+  "critical": 0,
+  "important": 0,
+  "reviewMode": "independent read-only; prior full review reused",
+  "scripts": {
+    "activate.sql": "8695ad9648ec88afc7b576b38f0dc7cd8e79d4843ca763dc029e7dde49b4baf3",
+    "cleanup.sql": "b36ab40a2441a79f2b9415c9a56fc1f088835196de07f589f00894eb10bc6db4",
+    "check-content.mjs": "ea5b69debeab2936130d386b246bf3d0572918d8d6bafdb89737e86c3ab26576"
+  }
+}

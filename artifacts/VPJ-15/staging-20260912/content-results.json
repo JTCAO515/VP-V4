@@ -1,0 +1,229 @@
+[
+  {
+    "at": "2026-09-12T16:13:10.876Z",
+    "name": "ordinary identity and request boundaries",
+    "pass": true,
+    "anonymousStatus": 401,
+    "crossOriginStatus": 403,
+    "wrongActorStatus": 403
+  },
+  {
+    "at": "2026-09-12T16:13:17.273Z",
+    "name": "published original source statement",
+    "editorialId": "PAY-01",
+    "status": 200,
+    "independentReviewer": true,
+    "exactReplay": true
+  },
+  {
+    "at": "2026-09-12T16:13:20.865Z",
+    "name": "published original source statement",
+    "editorialId": "PAY-02",
+    "status": 200,
+    "independentReviewer": true,
+    "exactReplay": true
+  },
+  {
+    "at": "2026-09-12T16:13:25.029Z",
+    "name": "published original source statement",
+    "editorialId": "PAY-03",
+    "status": 200,
+    "independentReviewer": true,
+    "exactReplay": true
+  },
+  {
+    "at": "2026-09-12T16:13:28.701Z",
+    "name": "published original source statement",
+    "editorialId": "PAY-04",
+    "status": 200,
+    "independentReviewer": true,
+    "exactReplay": true
+  },
+  {
+    "at": "2026-09-12T16:13:32.372Z",
+    "name": "published original source statement",
+    "editorialId": "SIM-01",
+    "status": 200,
+    "independentReviewer": true,
+    "exactReplay": true
+  },
+  {
+    "at": "2026-09-12T16:13:35.647Z",
+    "name": "published original source statement",
+    "editorialId": "SIM-02",
+    "status": 200,
+    "independentReviewer": true,
+    "exactReplay": true
+  },
+  {
+    "at": "2026-09-12T16:13:38.805Z",
+    "name": "published original source statement",
+    "editorialId": "RAIL-01",
+    "status": 200,
+    "independentReviewer": true,
+    "exactReplay": true
+  },
+  {
+    "at": "2026-09-12T16:13:42.856Z",
+    "name": "published original source statement",
+    "editorialId": "RAIL-02",
+    "status": 200,
+    "independentReviewer": true,
+    "exactReplay": true
+  },
+  {
+    "at": "2026-09-12T16:13:46.244Z",
+    "name": "published original source statement",
+    "editorialId": "RAIL-03",
+    "status": 200,
+    "independentReviewer": true,
+    "exactReplay": true
+  },
+  {
+    "at": "2026-09-12T16:13:50.012Z",
+    "name": "published original source statement",
+    "editorialId": "CQ-01",
+    "status": 200,
+    "independentReviewer": true,
+    "exactReplay": true
+  },
+  {
+    "at": "2026-09-12T16:13:53.216Z",
+    "name": "published original source statement",
+    "editorialId": "CQ-02",
+    "status": 200,
+    "independentReviewer": true,
+    "exactReplay": true
+  },
+  {
+    "at": "2026-09-12T16:13:57.114Z",
+    "name": "published original source statement",
+    "editorialId": "CQ-03",
+    "status": 200,
+    "independentReviewer": true,
+    "exactReplay": true
+  },
+  {
+    "at": "2026-09-12T16:14:20.894Z",
+    "name": "four-city bilingual scope and evidence preservation",
+    "pass": true,
+    "requests": 32,
+    "scoped": [
+      {
+        "city": "shanghai",
+        "scene": "payment",
+        "count": 4
+      },
+      {
+        "city": "shanghai",
+        "scene": "connectivity",
+        "count": 2
+      },
+      {
+        "city": "shanghai",
+        "scene": "rail",
+        "count": 3
+      },
+      {
+        "city": "shanghai",
+        "scene": "attraction",
+        "count": 0
+      },
+      {
+        "city": "beijing",
+        "scene": "payment",
+        "count": 4
+      },
+      {
+        "city": "beijing",
+        "scene": "connectivity",
+        "count": 2
+      },
+      {
+        "city": "beijing",
+        "scene": "rail",
+        "count": 3
+      },
+      {
+        "city": "beijing",
+        "scene": "attraction",
+        "count": 0
+      },
+      {
+        "city": "guangzhou",
+        "scene": "payment",
+        "count": 4
+      },
+      {
+        "city": "guangzhou",
+        "scene": "connectivity",
+        "count": 2
+      },
+      {
+        "city": "guangzhou",
+        "scene": "rail",
+        "count": 3
+      },
+      {
+        "city": "guangzhou",
+        "scene": "attraction",
+        "count": 0
+      },
+      {
+        "city": "chongqing",
+        "scene": "payment",
+        "count": 4
+      },
+      {
+        "city": "chongqing",
+        "scene": "connectivity",
+        "count": 2
+      },
+      {
+        "city": "chongqing",
+        "scene": "rail",
+        "count": 3
+      },
+      {
+        "city": "chongqing",
+        "scene": "attraction",
+        "count": 3
+      }
+    ],
+    "emptyIsHonest": true,
+    "externalRecipientRejected": true
+  },
+  {
+    "at": "2026-09-12T16:14:25.340Z",
+    "name": "actual native credential login read and logout",
+    "pass": true,
+    "statements": 4,
+    "staleStatus": 401
+  },
+  {
+    "at": "2026-09-12T16:14:25.341Z",
+    "name": "awaiting browser reading",
+    "publications": 12
+  },
+  {
+    "at": "2026-09-12T16:15:45.233Z",
+    "name": "revocation excludes subsequent read and old receipt grants nothing",
+    "pass": true,
+    "published": 11,
+    "revoked": 1
+  },
+  {
+    "at": "2026-09-12T16:16:50.336Z",
+    "name": "same cookie loses Ops but retains ordinary first-party read",
+    "pass": true,
+    "opsStatus": 403,
+    "readStatus": 200
+  },
+  {
+    "at": "2026-09-12T16:16:54.621Z",
+    "name": "cleanup disables test entrypoints and removes active membership",
+    "pass": true,
+    "readStatus": 503,
+    "opsStatus": 503
+  }
+]
