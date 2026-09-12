@@ -1,0 +1,17 @@
+▶ real GoTrue Cookie → controlled Ops → separate reviewer → atomic audit → restart/revocation
+  ✔ default disabled; real cookies and membership required; metadata is not membership (247.6825ms)
+  ✔ strict input, cross-origin, idempotency and author separation (52.166875ms)
+  ✔ different reviewer; reviewed remains unpublished; restart read (6318.226625ms)
+  ✔ actual injected audit failure rolls back candidate/review and receipt (432.496ms)
+  ✔ concurrent opposing reviews have exactly one committed audit (72.442417ms)
+  ✔ real browser lost acknowledgement retries original operation without second candidate (5399.041209ms)
+  ✔ current member, session and global disable checked before successful receipt replay (357.6705ms)
+✔ real GoTrue Cookie → controlled Ops → separate reviewer → atomic audit → restart/revocation (18384.054791ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18477.997875

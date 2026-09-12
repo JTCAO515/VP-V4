@@ -1,0 +1,9 @@
+{
+  "supabase/migrations/20260912042452_vpj_15_knowledge_publication.sql": "6c4a29f57d4c0fc42fe8698295aee19e12ce881d4629e4e785f1a4938dc993cb",
+  "lib/server/knowledge/publication/statement.ts": "be3f52fd090ea61bba8899ffb3351ec8fc62705e19836392f28f2b8356da78df",
+  "app/ops/review/workspace.tsx": "efbbe53a2ea5e89029f81cd2db8644450834ea0fb9a6484da4e17870e0a49526",
+  "app/ops/review/statement-fields.tsx": "06167d6db58cefe101e2a489976ff9da3c9719571949d7e2e3f9e1fef8dfc062",
+  "app/journey/knowledge/reader.tsx": "f2656bc7a1765fc645f5816856c9564ee7ede1b449a16e3c05f4622c0f8a055c",
+  "app/api/knowledge/native/v1/route.ts": "6916126c624e2d610782f683e243aea1931714c3fe4de5d51a0d0c9790c2e662",
+  "tests/integration/knowledge/publication.test.mjs": "98e7a50924a8dd7488c75d5035aefecea9f6d9b7763f9e727ddbee6a9293a758"
+}

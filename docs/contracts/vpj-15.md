@@ -1,4 +1,24 @@
-# VPJ-15 — Private source and candidate assertion producer
+# VPJ-15 — Source statements and controlled first-party publication
+
+## Statement publication v1 (migration39)
+
+Related to #205/#206. This increment adds a typed travel-statement path alongside the existing private address producer below. It does not complete the real-content batch, native SwiftUI consumer, Ask coverage/retrieval, or full S2 acceptance.
+
+`knowledge-statement/1` binds one immutable language-neutral subject/relation/object assertion to four-city/scene scope, condition and exclusion identifiers, corresponding zh/en text, and one to three immutable source revisions. Each translation must contain exactly one localized condition/exclusion for each identifier in order. Reviewers remain responsible for semantic equivalence and source support; validation does not prove factual truth. The editor currently exposes one source, while the API supports three. All complete inputs retain the 24KB UTF-8 limit. Source declarations retain the provenance limitations below.
+
+`submit_statement` enters the current protected candidate/review workflow. Review is a separate action from `publish_statement`: only the independent reviewer of candidate version2 can publish it. Publication requires an explicit use decision (`original_factual_summary` or `explicit_licence`), a retained note and a future expiry no more than90days away. Original factual summary describes the selected first-party editorial use; it is not a blanket source licence or permission for source corpora, media, embeddings or external model processing. No generic supplier/legal/product sign-off is required for development under the current integration policy. An explicit source restriction must still be respected.
+
+The private publication row, audit entry and idempotency receipt commit atomically. Publication version1 may be revoked once by a current Ops member, creating version2 and an audit entry. Revocation is terminal; a replacement requires a new candidate/review. Exact operation replay revalidates the current identity before returning its historical result. A receipt reporting `operationOutcome:published` never establishes current eligibility. Existing address/text receipts and probe `fact_records` remain unchanged.
+
+`knowledge_read_v1` is the request-scoped first-party consumer. It authenticates the current session, checks the separate default-off `publication_settings`, locks candidate publications for a consistent read, then filters current reviewed/published state, server-clock expiry, selected city and scene. Input is closed to `{city,scene,locale}`. Output `knowledge-read/1` contains up to50 current statements, preserving localized conditions/exclusions and citation metadata while excluding private snippets/use notes. Its purpose is `trip_planning`, recipient is `first_party`, and `CN-mainland` denotes content territory, not a promise about processing region. This bounded read does not replace the general PolicyRegistry or authorize external AI recipients. Empty results report no eligible content without claiming complete coverage.
+
+Web `/api/knowledge` uses the existing Cookie identity and an8second shared request deadline; native `/api/knowledge/native/v1` requires a current v2 native session, rejects Cookie/Origin mixing, and uses a10second deadline. Local and staging opt-ins are `KNOWLEDGE_LOCAL_READ=1` and `KNOWLEDGE_STAGING_READ=1`, checked with the same environment restrictions as Ops. No production activation is added. `/journey/knowledge` displays zh/en scoped results, source context and explicit limitations. It clears rows on selection, auth and visibility changes, and refreshes at the nearest expiry or30seconds. A committed revocation excludes subsequent reads; an already-visible card can remain until that refresh. Native API evidence does not establish a native UI or real-device pass.
+
+Migration39 is additive and preserves previous helper OIDs and public RPC signatures while delegating legacy actions. Tables are private with RLS and revoked direct access. Stop reads through the publication setting and environment opt-in; stop editor mutations through the existing Ops setting. Retain immutable source, review and audit history; do not remove applied migrations to roll back.
+
+Verification uses `VP_OPS_TEST_FILE=tests/integration/knowledge/publication.test.mjs node tests/integration/ops/run-local.mjs`. The uniquely owned disposable database covers actual GoTrue sessions, independent review/publication, atomic fault rollback, concurrent state transitions, scoped bilingual reading, expiry, revocation and native logout invalidation. Set `VP_OPS_BROWSER_EXECUTABLE` for actual editor and reader interactions. These synthetic records are implementation evidence, not real travel knowledge or staging acceptance.
+
+## Historical private address producer (migration35)
 
 Related to #205; this bounded increment does not complete its 10–20 real contents, supported-city selection, source-rights, publication or product eligibility acceptance.
 
