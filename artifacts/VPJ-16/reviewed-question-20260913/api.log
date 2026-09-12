@@ -1,0 +1,18 @@
+▶ real protected statement producer → independent review/publication → scoped product read → revocation
+  ✔ default off and nonmember cannot publish; strict identity/input (1057.668292ms)
+  ✔ immutable multi-source statement, exact replay, separate review and publication (242.386166ms)
+  ✔ publish and eligible bilingual product read preserve conditions without leaking private material (78.0895ms)
+  ✔ actual native credential proof and current session read the same first-party projection (2222.725125ms)
+  ✔ atomic publication audit failure rolls back status and receipt (604.760375ms)
+  ✔ source revision conflict rolls back entire candidate; SQL rejects forged assertion (182.410417ms)
+  ✔ concurrent publication and revocation each commit exactly one state and audit (193.208291ms)
+  ✔ expiry, committed revocation and current authority invalidate product reads and retries (442.102458ms)
+✔ real protected statement producer → independent review/publication → scoped product read → revocation (11363.179666ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11495.044458

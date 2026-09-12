@@ -1,0 +1,35 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "BC1F6687-C868-41AE-87F5-4CF1E4ED2543",
+        "deviceName" : "VPJ16 Question 20260913",
+        "exportedFileName" : "11B23BFF-67F0-49F9-B705-7A67CDDBDA78.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "question-en-disabled_0_ECF5FF38-CBF9-4B13-BBF0-5C589C879957.png",
+        "timestamp" : 1789237937.012
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "BC1F6687-C868-41AE-87F5-4CF1E4ED2543",
+        "deviceName" : "VPJ16 Question 20260913",
+        "exportedFileName" : "5EE10848-689D-48DB-97F3-64192F1A67B9.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "question-en-partial_0_38A2BC55-2C7E-4F8E-BC7B-3BFF75F439DD.png",
+        "timestamp" : 1789237933.896
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "BC1F6687-C868-41AE-87F5-4CF1E4ED2543",
+        "deviceName" : "VPJ16 Question 20260913",
+        "exportedFileName" : "D2C63AAB-5B13-45CA-ADBC-439FD8B30890.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "question-en-answered_0_836B5BCD-BAC8-4D77-ABA2-77C21A531125.png",
+        "timestamp" : 1789237893.799
+      }
+    ],
+    "testIdentifier" : "NativeKnowledgeUITests/testEnglishReviewedQuestionCoverage()",
+    "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeKnowledgeUITests/testEnglishReviewedQuestionCoverage"
+  }
+]

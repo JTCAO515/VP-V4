@@ -1,0 +1,30 @@
+▶ first-party reviewed question: real PostgreSQL eligibility, coverage and isolation
+  ✔ rollback, disabled switch, closed question scope and RPC roles (1374.394541ms)
+  ✔ missing support is honest; a single supported obligation stays partial (793.651542ms)
+  ✔ complete bilingual answers preserve exact qualifiers and source context (899.709709ms)
+  ✔ corroboration is retained; incompatible wording cannot become a ranked complete answer (4426.844791ms)
+  ✖ a publication appearing after the base read is frozen behind its own revocation lock (736.421ms)
+  ✔ revocation and expiry suppress text and identify observed causes (765.699666ms)
+  ✔ switch and session loss never masquerade as knowledge gaps; no task or model receipt (672.955667ms)
+✖ first-party reviewed question: real PostgreSQL eligibility, coverage and isolation (41101.428458ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 6
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 41595.299583
+
+✖ failing tests:
+
+test at tests/integration/knowledge/question.test.mjs:63:10
+✖ a publication appearing after the base read is frozen behind its own revocation lock (736.421ms)
+  Error: Timed out waiting for undefined
+      at waitUntil (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/identity/database-barrier.mjs:39:9)
+      at TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:75:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/integration/knowledge/question.test.mjs:63:2)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)

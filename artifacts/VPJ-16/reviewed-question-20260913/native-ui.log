@@ -1,0 +1,750 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /Users/jtcao/Library/Caches/visepanda/reviewed-question-20260913/build/Build/Products/QuestionUI.xctestrun -destination "platform=iOS Simulator,id=BC1F6687-C868-41AE-87F5-4CF1E4ED2543" -resultBundlePath /Users/jtcao/Library/Caches/visepanda/reviewed-question-20260913/ui-2.xcresult "-only-testing:VisePandaUITests/NativeKnowledgeUITests"
+
+2026-09-13 02:23:34.117 xcodebuild[44075:610285] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+Writing result bundle at path:
+	/Users/jtcao/Library/Caches/visepanda/reviewed-question-20260913/ui-2.xcresult
+
+2026-09-13 02:23:34.123 xcodebuild[44075:610285] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-09-13 02:23:35.483 xcodebuild[44075:610285] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-09-13 02:23:35.851 xcodebuild[44075:610285] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+2026-09-13 02:23:38.560879+0800 VisePandaUITests-Runner[44088:610771] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-09-13 上午2:23:40.038.
+Test Suite 'VisePandaUITests.xctest' started at 2026-09-13 上午2:23:40.040.
+Test Suite 'NativeKnowledgeUITests' started at 2026-09-13 上午2:23:40.040.
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testChineseRefreshCredentialsReadAndWithdraw]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:23:40.043
+    t =     0.10s Set Up
+    t =     0.38s Open space.go2china.VisePanda
+    t =     0.38s     Launch space.go2china.VisePanda
+2026-09-13 02:23:40.695 xcodebuild[44075:610285] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:23:40.695 xcodebuild[44075:610285] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[44088]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10b1e0310) and /Library/Developer/CoreSimulator/Volumes/iOS_23F77/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 26.5.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10a6f8398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     1.94s         Setting up automation session
+    t =     3.10s         Wait for space.go2china.VisePanda to idle
+    t =     5.43s Tap "我的" Button
+    t =     5.43s     Wait for space.go2china.VisePanda to idle
+    t =     5.43s     Find the "我的" Button
+    t =     5.54s     Check for interrupting elements affecting "我的" Button
+    t =     5.58s     Synthesize event
+    t =     5.88s     Wait for space.go2china.VisePanda to idle
+    t =     7.63s Waiting 2.0s for "退出登录" Button to exist
+    t =     8.70s     Checking `Expect predicate `existsNoRetry == 1` for object "退出登录" Button`
+    t =     8.70s         Checking existence of `"退出登录" Button`
+    t =     8.80s Find the "退出登录" Button
+    t =     8.84s Find the "退出登录" Button
+    t =     8.89s Find the "退出登录" Button
+    t =     8.93s Find the "退出登录" Button
+    t =     8.98s Find the "退出登录" Button
+    t =     9.04s Find the "退出登录" Button
+    t =     9.09s Find the "退出登录" Button
+    t =     9.13s Find the "退出登录" Button
+    t =     9.18s Find the "退出登录" Button
+    t =     9.22s Tap "退出登录" Button
+    t =     9.22s     Wait for space.go2china.VisePanda to idle
+    t =     9.22s     Find the "退出登录" Button
+    t =     9.26s     Check for interrupting elements affecting "退出登录" Button
+    t =     9.29s     Synthesize event
+    t =     9.59s     Wait for space.go2china.VisePanda to idle
+    t =     9.86s Waiting 10.0s for "native.login.email" TextField to exist
+    t =    10.93s     Checking `Expect predicate `existsNoRetry == 1` for object "native.login.email" TextField`
+    t =    10.93s         Checking existence of `"native.login.email" TextField`
+    t =    11.02s Find the "native.login.email" TextField
+    t =    11.06s Find the "native.login.email" TextField
+    t =    11.11s Find the "native.login.email" TextField
+    t =    11.15s Find the "native.login.email" TextField
+    t =    11.19s Find the "native.login.email" TextField
+    t =    11.23s Find the "native.login.email" TextField
+    t =    11.27s Find the "native.login.email" TextField
+    t =    11.31s Find the "native.login.email" TextField
+    t =    11.36s Find the "native.login.email" TextField
+    t =    11.39s Tap "native.login.email" TextField
+    t =    11.40s     Wait for space.go2china.VisePanda to idle
+    t =    11.40s     Find the "native.login.email" TextField
+    t =    11.43s     Check for interrupting elements affecting "native.login.email" TextField
+    t =    11.46s     Synthesize event
+    t =    11.75s     Wait for space.go2china.VisePanda to idle
+    t =    11.96s Type 'knowledge-ui@examp...' into "native.login.email" TextField
+    t =    11.96s     Wait for space.go2china.VisePanda to idle
+    t =    12.33s     Find the "native.login.email" TextField
+    t =    12.42s     Check for interrupting elements affecting "native.login.email" TextField
+    t =    12.46s     Synthesize event
+    t =    13.08s     Wait for space.go2china.VisePanda to idle
+    t =    13.09s Find the "native.login.password" SecureTextField
+    t =    13.17s Find the "native.login.password" SecureTextField
+    t =    13.23s Find the "native.login.password" SecureTextField
+    t =    13.28s Find the "native.login.password" SecureTextField
+    t =    13.34s Find the "native.login.password" SecureTextField
+    t =    13.39s Find the "native.login.password" SecureTextField
+    t =    13.44s Find the "native.login.password" SecureTextField
+    t =    13.49s Find the "native.login.password" SecureTextField
+    t =    13.55s Find the "native.login.password" SecureTextField
+    t =    13.60s Tap "native.login.password" SecureTextField
+    t =    13.60s     Wait for space.go2china.VisePanda to idle
+    t =    13.60s     Find the "native.login.password" SecureTextField
+    t =    13.65s     Check for interrupting elements affecting "native.login.password" SecureTextField
+    t =    13.68s     Synthesize event
+    t =    13.97s     Wait for space.go2china.VisePanda to idle
+    t =    14.81s Type '<redacted>' into "native.login.password" SecureTextField
+    t =    14.82s     Wait for space.go2china.VisePanda to idle
+    t =    14.82s     Find the "native.login.password" SecureTextField
+    t =    14.89s     Check for interrupting elements affecting "native.login.password" SecureTextField
+    t =    14.93s     Synthesize event
+    t =    15.38s     Wait for space.go2china.VisePanda to idle
+    t =    15.39s Find the "native.login.submit" Button
+    t =    15.47s Find the "native.login.submit" Button
+    t =    15.53s Find the "native.login.submit" Button
+    t =    15.58s Find the "native.login.submit" Button
+    t =    15.64s Find the "native.login.submit" Button
+    t =    15.69s Find the "native.login.submit" Button
+    t =    15.74s Find the "native.login.submit" Button
+    t =    15.79s Find the "native.login.submit" Button
+    t =    15.84s Find the "native.login.submit" Button
+    t =    15.89s Tap "native.login.submit" Button
+    t =    15.89s     Wait for space.go2china.VisePanda to idle
+    t =    15.90s     Find the "native.login.submit" Button
+    t =    15.94s     Check for interrupting elements affecting "native.login.submit" Button
+    t =    15.98s     Synthesize event
+    t =    16.26s     Wait for space.go2china.VisePanda to idle
+    t =    17.57s Checking `Expect predicate `label == "会话有效"` for object "native.session.status" StaticText`
+    t =    17.57s     Find the "native.session.status" StaticText
+    t =    17.61s Waiting 20.0s for "会话有效" StaticText to exist
+    t =    18.69s     Checking `Expect predicate `existsNoRetry == 1` for object "会话有效" StaticText`
+    t =    18.69s         Checking existence of `"会话有效" StaticText`
+    t =    18.75s Tap "探索" Button
+    t =    18.75s     Wait for space.go2china.VisePanda to idle
+    t =    18.75s     Find the "探索" Button
+    t =    18.79s     Check for interrupting elements affecting "safari" Button
+    t =    18.83s     Synthesize event
+    t =    19.13s     Wait for space.go2china.VisePanda to idle
+    t =    20.70s Waiting 20.0s for "knowledge.empty" StaticText to exist
+    t =    21.77s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.empty" StaticText`
+    t =    21.77s         Checking existence of `"knowledge.empty" StaticText`
+    t =    21.82s         Capturing element debug description
+    t =    22.79s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.empty" StaticText`
+    t =    22.79s         Checking existence of `"knowledge.empty" StaticText`
+    t =    22.83s         Capturing element debug description
+    t =    23.79s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.empty" StaticText`
+    t =    23.80s         Checking existence of `"knowledge.empty" StaticText`
+    t =    23.83s Checking existence of `"knowledge.scene" Button`
+    t =    23.85s Tap "knowledge.scene" Button
+    t =    23.85s     Wait for space.go2china.VisePanda to idle
+    t =    23.86s     Find the "knowledge.scene" Button
+    t =    23.88s     Check for interrupting elements affecting "knowledge.scene" Button
+    t =    23.90s     Synthesize event
+    t =    24.19s     Wait for space.go2china.VisePanda to idle
+    t =    40.46s Tap "支付" Button
+    t =    40.46s     Wait for space.go2china.VisePanda to idle
+    t =    40.46s     Find the "支付" Button
+    t =    40.51s     Check for interrupting elements affecting "支付" Button
+    t =    40.54s     Synthesize event
+    t =    40.84s     Wait for space.go2china.VisePanda to idle
+    t =    42.28s Waiting 20.0s for "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText to exist
+    t =    43.34s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText`
+    t =    43.34s         Checking existence of `"knowledge.note.11111111-1111-4111-8111-111111111111" StaticText`
+    t =    43.37s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    43.41s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    43.44s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    43.47s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    43.51s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    43.54s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    43.57s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    43.60s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    43.63s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    43.66s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    43.69s Checking existence of `"适用条件" StaticText`
+    t =    43.72s Checking existence of `"不包含" StaticText`
+    t =    43.74s Find the Target Application 'space.go2china.VisePanda'
+    t =    43.85s Added attachment named 'knowledge-zh-Hans-read'
+    t =    43.85s Find the "knowledge.refresh" Button
+    t =    43.88s Find the "knowledge.refresh" Button
+    t =    43.91s Find the "knowledge.refresh" Button
+    t =    43.95s Find the "knowledge.refresh" Button
+    t =    43.98s Find the "knowledge.refresh" Button
+    t =    44.01s Find the "knowledge.refresh" Button
+    t =    44.04s Find the "knowledge.refresh" Button
+    t =    44.08s Find the "knowledge.refresh" Button
+    t =    44.11s Find the "knowledge.refresh" Button
+    t =    44.14s Tap "knowledge.refresh" Button
+    t =    44.14s     Wait for space.go2china.VisePanda to idle
+    t =    44.14s     Find the "knowledge.refresh" Button
+    t =    44.16s     Check for interrupting elements affecting "knowledge.refresh" Button
+    t =    44.18s     Synthesize event
+    t =    44.48s     Wait for space.go2china.VisePanda to idle
+    t =    44.48s Waiting 20.0s for "knowledge.empty" StaticText to exist
+    t =    45.53s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.empty" StaticText`
+    t =    45.53s         Checking existence of `"knowledge.empty" StaticText`
+    t =    45.58s Checking existence of `"knowledge.note.11111111-1111-4111-8111-111111111111" StaticText`
+    t =    45.61s Tap "knowledge.refresh" Button
+    t =    45.61s     Wait for space.go2china.VisePanda to idle
+    t =    45.61s     Find the "knowledge.refresh" Button
+    t =    45.63s     Check for interrupting elements affecting "knowledge.refresh" Button
+    t =    45.65s     Synthesize event
+    t =    45.95s     Wait for space.go2china.VisePanda to idle
+    t =    45.96s Waiting 20.0s for "knowledge.unavailable" StaticText to exist
+    t =    47.00s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.unavailable" StaticText`
+    t =    47.00s         Checking existence of `"knowledge.unavailable" StaticText`
+    t =    47.04s Checking existence of `"knowledge.note.11111111-1111-4111-8111-111111111111" StaticText`
+    t =    47.07s Find the Target Application 'space.go2china.VisePanda'
+    t =    47.17s Added attachment named 'knowledge-zh-Hans-disabled'
+    t =    47.17s Terminate space.go2china.VisePanda:44104
+    t =    48.26s Tear Down
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testChineseRefreshCredentialsReadAndWithdraw]' passed (48.731 seconds).
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testChineseReviewedQuestionCoverage]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:24:28.778
+    t =     0.10s Set Up
+    t =     0.10s Open space.go2china.VisePanda
+    t =     0.10s     Launch space.go2china.VisePanda
+2026-09-13 02:24:28.892 xcodebuild[44075:610285] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:24:28.892 xcodebuild[44075:610285] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.32s         Setting up automation session
+    t =     1.42s         Wait for space.go2china.VisePanda to idle
+    t =     2.87s Tap "我的" Button
+    t =     2.87s     Wait for space.go2china.VisePanda to idle
+    t =     2.87s     Find the "我的" Button
+    t =     2.97s     Check for interrupting elements affecting "我的" Button
+    t =     3.00s     Synthesize event
+    t =     3.30s     Wait for space.go2china.VisePanda to idle
+    t =     4.75s Waiting 2.0s for "退出登录" Button to exist
+    t =     5.79s     Checking `Expect predicate `existsNoRetry == 1` for object "退出登录" Button`
+    t =     5.79s         Checking existence of `"退出登录" Button`
+    t =     5.88s Find the "退出登录" Button
+    t =     5.93s Find the "退出登录" Button
+    t =     5.97s Find the "退出登录" Button
+    t =     6.01s Find the "退出登录" Button
+    t =     6.06s Find the "退出登录" Button
+    t =     6.10s Find the "退出登录" Button
+    t =     6.15s Find the "退出登录" Button
+    t =     6.19s Find the "退出登录" Button
+    t =     6.23s Find the "退出登录" Button
+    t =     6.27s Tap "退出登录" Button
+    t =     6.27s     Wait for space.go2china.VisePanda to idle
+    t =     6.28s     Find the "退出登录" Button
+    t =     6.31s     Check for interrupting elements affecting "退出登录" Button
+    t =     6.35s     Synthesize event
+    t =     6.64s     Wait for space.go2china.VisePanda to idle
+    t =     7.52s Waiting 10.0s for "native.login.email" TextField to exist
+    t =     8.59s     Checking `Expect predicate `existsNoRetry == 1` for object "native.login.email" TextField`
+    t =     8.59s         Checking existence of `"native.login.email" TextField`
+    t =     8.66s Find the "native.login.email" TextField
+    t =     8.71s Find the "native.login.email" TextField
+    t =     8.75s Find the "native.login.email" TextField
+    t =     8.80s Find the "native.login.email" TextField
+    t =     8.84s Find the "native.login.email" TextField
+    t =     8.89s Find the "native.login.email" TextField
+    t =     8.93s Find the "native.login.email" TextField
+    t =     8.97s Find the "native.login.email" TextField
+    t =     9.02s Find the "native.login.email" TextField
+    t =     9.06s Tap "native.login.email" TextField
+    t =     9.06s     Wait for space.go2china.VisePanda to idle
+    t =     9.06s     Find the "native.login.email" TextField
+    t =     9.09s     Check for interrupting elements affecting "native.login.email" TextField
+    t =     9.12s     Synthesize event
+    t =     9.41s     Wait for space.go2china.VisePanda to idle
+    t =     9.46s Type 'knowledge-ui@examp...' into "native.login.email" TextField
+    t =     9.46s     Wait for space.go2china.VisePanda to idle
+    t =     9.84s     Find the "native.login.email" TextField
+    t =     9.90s     Check for interrupting elements affecting "native.login.email" TextField
+    t =     9.94s     Synthesize event
+    t =    10.56s     Wait for space.go2china.VisePanda to idle
+    t =    10.57s Find the "native.login.password" SecureTextField
+    t =    10.65s Find the "native.login.password" SecureTextField
+    t =    10.70s Find the "native.login.password" SecureTextField
+    t =    10.76s Find the "native.login.password" SecureTextField
+    t =    10.84s Find the "native.login.password" SecureTextField
+    t =    10.90s Find the "native.login.password" SecureTextField
+    t =    10.95s Find the "native.login.password" SecureTextField
+    t =    11.00s Find the "native.login.password" SecureTextField
+    t =    11.06s Find the "native.login.password" SecureTextField
+    t =    11.11s Tap "native.login.password" SecureTextField
+    t =    11.11s     Wait for space.go2china.VisePanda to idle
+    t =    11.11s     Find the "native.login.password" SecureTextField
+    t =    11.16s     Check for interrupting elements affecting "native.login.password" SecureTextField
+    t =    11.20s     Synthesize event
+    t =    11.48s     Wait for space.go2china.VisePanda to idle
+    t =    12.32s Type '<redacted>' into "native.login.password" SecureTextField
+    t =    12.32s     Wait for space.go2china.VisePanda to idle
+    t =    12.32s     Find the "native.login.password" SecureTextField
+    t =    12.39s     Check for interrupting elements affecting "native.login.password" SecureTextField
+    t =    12.43s     Synthesize event
+    t =    12.89s     Wait for space.go2china.VisePanda to idle
+    t =    12.90s Find the "native.login.submit" Button
+    t =    12.97s Find the "native.login.submit" Button
+    t =    13.03s Find the "native.login.submit" Button
+    t =    13.08s Find the "native.login.submit" Button
+    t =    13.14s Find the "native.login.submit" Button
+    t =    13.19s Find the "native.login.submit" Button
+    t =    13.24s Find the "native.login.submit" Button
+    t =    13.31s Find the "native.login.submit" Button
+    t =    13.36s Find the "native.login.submit" Button
+    t =    13.41s Tap "native.login.submit" Button
+    t =    13.41s     Wait for space.go2china.VisePanda to idle
+    t =    13.41s     Find the "native.login.submit" Button
+    t =    13.46s     Check for interrupting elements affecting "native.login.submit" Button
+    t =    13.50s     Synthesize event
+    t =    13.79s     Wait for space.go2china.VisePanda to idle
+    t =    15.15s Checking `Expect predicate `label == "会话有效"` for object "native.session.status" StaticText`
+    t =    15.15s     Find the "native.session.status" StaticText
+    t =    15.22s Waiting 20.0s for "会话有效" StaticText to exist
+    t =    16.29s     Checking `Expect predicate `existsNoRetry == 1` for object "会话有效" StaticText`
+    t =    16.29s         Checking existence of `"会话有效" StaticText`
+    t =    16.36s Tap "问熊猫" Button
+    t =    16.36s     Wait for space.go2china.VisePanda to idle
+    t =    16.37s     Find the "问熊猫" Button
+    t =    16.41s     Check for interrupting elements affecting "sparkles" Button
+    t =    16.44s     Synthesize event
+    t =    16.73s     Wait for space.go2china.VisePanda to idle
+    t =    18.06s Waiting 10.0s for "native-ask.reviewed-question" Button to exist
+    t =    19.13s     Checking `Expect predicate `existsNoRetry == 1` for object "native-ask.reviewed-question" Button`
+    t =    19.14s         Checking existence of `"native-ask.reviewed-question" Button`
+    t =    19.19s Tap "native-ask.reviewed-question" Button
+    t =    19.19s     Wait for space.go2china.VisePanda to idle
+    t =    19.19s     Find the "native-ask.reviewed-question" Button
+    t =    19.23s     Check for interrupting elements affecting "native-ask.reviewed-question" Button
+    t =    19.25s     Synthesize event
+    t =    19.54s     Wait for space.go2china.VisePanda to idle
+    t =    20.43s Waiting 20.0s for "knowledge.answer.answered" StaticText to exist
+    t =    21.47s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.answer.answered" StaticText`
+    t =    21.47s         Checking existence of `"knowledge.answer.answered" StaticText`
+    t =    21.51s Checking existence of `"knowledge.scene" Button`
+    t =    21.54s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    21.58s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    21.62s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    21.66s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    21.70s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    21.75s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    21.79s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    21.83s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    21.87s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    21.91s Checking existence of `"适用条件" StaticText`
+    t =    21.94s Find the Target Application 'space.go2china.VisePanda'
+    t =    22.04s Added attachment named 'question-zh-Hans-answered'
+    t =    22.04s Find the "knowledge.refresh" Button
+    t =    22.08s Find the "knowledge.refresh" Button
+    t =    22.13s Find the "knowledge.refresh" Button
+    t =    22.17s Find the "knowledge.refresh" Button
+    t =    22.20s Find the "knowledge.refresh" Button
+    t =    22.25s Find the "knowledge.refresh" Button
+    t =    22.29s Tap "knowledge.refresh" Button
+    t =    22.29s     Wait for space.go2china.VisePanda to idle
+    t =    22.29s     Find the "knowledge.refresh" Button
+    t =    22.32s     Check for interrupting elements affecting "knowledge.refresh" Button
+    t =    22.35s     Synthesize event
+    t =    22.64s     Wait for space.go2china.VisePanda to idle
+    t =    23.10s Waiting 20.0s for "knowledge.answer.partial" StaticText to exist
+    t =    24.13s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.answer.partial" StaticText`
+    t =    24.13s         Checking existence of `"knowledge.answer.partial" StaticText`
+    t =    24.18s Checking existence of `"knowledge.gap.revoked" StaticText`
+    t =    24.21s Checking existence of `"knowledge.note.11111111-1111-4111-8111-111111111111" StaticText`
+    t =    24.24s Find the Target Application 'space.go2china.VisePanda'
+    t =    24.35s Added attachment named 'question-zh-Hans-partial'
+    t =    24.35s Tap "knowledge.refresh" Button
+    t =    24.35s     Wait for space.go2china.VisePanda to idle
+    t =    24.35s     Find the "knowledge.refresh" Button
+    t =    24.39s     Check for interrupting elements affecting "knowledge.refresh" Button
+    t =    24.43s     Synthesize event
+    t =    24.72s     Wait for space.go2china.VisePanda to idle
+    t =    25.18s Waiting 20.0s for "knowledge.answer.no_answer" StaticText to exist
+    t =    26.20s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.answer.no_answer" StaticText`
+    t =    26.20s         Checking existence of `"knowledge.answer.no_answer" StaticText`
+    t =    26.26s Checking existence of `"knowledge.gap.expired" StaticText`
+    t =    26.29s Tap "knowledge.refresh" Button
+    t =    26.29s     Wait for space.go2china.VisePanda to idle
+    t =    26.29s     Find the "knowledge.refresh" Button
+    t =    26.32s     Check for interrupting elements affecting "knowledge.refresh" Button
+    t =    26.35s     Synthesize event
+    t =    26.65s     Wait for space.go2china.VisePanda to idle
+    t =    26.66s Waiting 20.0s for "knowledge.unavailable" StaticText to exist
+    t =    27.68s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.unavailable" StaticText`
+    t =    27.69s         Checking existence of `"knowledge.unavailable" StaticText`
+    t =    27.74s         Capturing element debug description
+    t =    28.67s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.unavailable" StaticText`
+    t =    28.67s         Checking existence of `"knowledge.unavailable" StaticText`
+    t =    28.69s Checking existence of `"knowledge.answer.no_answer" StaticText`
+    t =    28.72s Find the Target Application 'space.go2china.VisePanda'
+    t =    28.82s Added attachment named 'question-zh-Hans-disabled'
+    t =    28.83s Terminate space.go2china.VisePanda:44188
+    t =    29.90s Tear Down
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testChineseReviewedQuestionCoverage]' passed (29.968 seconds).
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testEnglishRefreshCredentialsReadAndWithdraw]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:24:58.746
+    t =     0.02s Set Up
+    t =     0.03s Open space.go2china.VisePanda
+    t =     0.03s     Launch space.go2china.VisePanda
+2026-09-13 02:24:58.775 xcodebuild[44075:610285] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:24:58.775 xcodebuild[44075:610285] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.24s         Setting up automation session
+    t =     1.00s         Wait for space.go2china.VisePanda to idle
+    t =     2.54s Tap "Profile" Button
+    t =     2.54s     Wait for space.go2china.VisePanda to idle
+    t =     2.59s     Find the "Profile" Button
+    t =     3.85s     Check for interrupting elements affecting "Profile" Button
+    t =     3.98s     Synthesize event
+    t =     4.31s     Wait for space.go2china.VisePanda to idle
+    t =     6.20s Waiting 2.0s for "Sign out" Button to exist
+    t =     7.23s     Checking `Expect predicate `existsNoRetry == 1` for object "Sign out" Button`
+    t =     7.23s         Checking existence of `"Sign out" Button`
+    t =     7.37s Find the "Sign out" Button
+    t =     7.46s Find the "Sign out" Button
+    t =     7.55s Find the "Sign out" Button
+    t =     7.65s Find the "Sign out" Button
+    t =     7.77s Find the "Sign out" Button
+    t =     7.89s Find the "Sign out" Button
+    t =     8.07s Find the "Sign out" Button
+    t =     8.25s Find the "Sign out" Button
+    t =     8.46s Find the "Sign out" Button
+    t =     8.67s Tap "Sign out" Button
+    t =     8.67s     Wait for space.go2china.VisePanda to idle
+    t =     8.68s     Find the "Sign out" Button
+    t =     8.83s     Check for interrupting elements affecting "Sign out" Button
+    t =     8.96s     Synthesize event
+    t =     9.29s     Wait for space.go2china.VisePanda to idle
+    t =     9.76s Waiting 10.0s for "native.login.email" TextField to exist
+    t =    10.82s     Checking `Expect predicate `existsNoRetry == 1` for object "native.login.email" TextField`
+    t =    10.83s         Checking existence of `"native.login.email" TextField`
+    t =    10.97s Find the "native.login.email" TextField
+    t =    11.16s Find the "native.login.email" TextField
+    t =    11.33s Find the "native.login.email" TextField
+    t =    11.50s Find the "native.login.email" TextField
+    t =    11.68s Find the "native.login.email" TextField
+    t =    11.85s Find the "native.login.email" TextField
+    t =    12.07s Find the "native.login.email" TextField
+    t =    12.43s Find the "native.login.email" TextField
+    t =    12.62s Find the "native.login.email" TextField
+    t =    12.77s Tap "native.login.email" TextField
+    t =    12.77s     Wait for space.go2china.VisePanda to idle
+    t =    12.78s     Find the "native.login.email" TextField
+    t =    12.90s     Check for interrupting elements affecting "native.login.email" TextField
+    t =    13.02s     Synthesize event
+    t =    13.35s     Wait for space.go2china.VisePanda to idle
+    t =    14.14s Type 'knowledge-ui@examp...' into "native.login.email" TextField
+    t =    14.14s     Wait for space.go2china.VisePanda to idle
+    t =    14.50s     Find the "native.login.email" TextField
+    t =    14.85s     Check for interrupting elements affecting "native.login.email" TextField
+    t =    15.07s     Synthesize event
+    t =    15.70s     Wait for space.go2china.VisePanda to idle
+    t =    15.72s Find the "native.login.password" SecureTextField
+    t =    15.94s Find the "native.login.password" SecureTextField
+    t =    16.16s Find the "native.login.password" SecureTextField
+    t =    16.40s Find the "native.login.password" SecureTextField
+    t =    16.62s Find the "native.login.password" SecureTextField
+    t =    16.88s Find the "native.login.password" SecureTextField
+    t =    17.09s Find the "native.login.password" SecureTextField
+    t =    17.39s Find the "native.login.password" SecureTextField
+    t =    17.58s Find the "native.login.password" SecureTextField
+    t =    17.82s Tap "native.login.password" SecureTextField
+    t =    17.82s     Wait for space.go2china.VisePanda to idle
+    t =    17.83s     Find the "native.login.password" SecureTextField
+    t =    17.97s     Check for interrupting elements affecting "native.login.password" SecureTextField
+    t =    18.12s     Synthesize event
+    t =    18.45s     Wait for space.go2china.VisePanda to idle
+    t =    18.86s Type '<redacted>' into "native.login.password" SecureTextField
+    t =    18.86s     Wait for space.go2china.VisePanda to idle
+    t =    19.73s     Find the "native.login.password" SecureTextField
+    t =    19.99s     Check for interrupting elements affecting "native.login.password" SecureTextField
+    t =    20.18s     Synthesize event
+    t =    20.78s     Wait for space.go2china.VisePanda to idle
+    t =    20.84s Find the "native.login.submit" Button
+    t =    21.11s Find the "native.login.submit" Button
+    t =    21.36s Find the "native.login.submit" Button
+    t =    21.64s Find the "native.login.submit" Button
+    t =    21.85s Find the "native.login.submit" Button
+    t =    22.06s Find the "native.login.submit" Button
+    t =    22.23s Find the "native.login.submit" Button
+    t =    22.40s Find the "native.login.submit" Button
+    t =    22.57s Find the "native.login.submit" Button
+    t =    22.75s Tap "native.login.submit" Button
+    t =    22.75s     Wait for space.go2china.VisePanda to idle
+    t =    22.75s     Find the "native.login.submit" Button
+    t =    22.91s     Check for interrupting elements affecting "native.login.submit" Button
+    t =    23.09s     Synthesize event
+    t =    23.46s     Wait for space.go2china.VisePanda to idle
+    t =    25.47s Checking `Expect predicate `label == "Session active"` for object "native.session.status" StaticText`
+    t =    25.47s     Find the "native.session.status" StaticText
+    t =    25.67s Waiting 20.0s for "Session active" StaticText to exist
+    t =    26.72s     Checking `Expect predicate `existsNoRetry == 1` for object "Session active" StaticText`
+    t =    26.72s         Checking existence of `"Session active" StaticText`
+    t =    26.88s Tap "Explore" Button
+    t =    26.88s     Wait for space.go2china.VisePanda to idle
+    t =    26.88s     Find the "Explore" Button
+    t =    27.17s     Check for interrupting elements affecting "safari" Button
+    t =    27.35s     Synthesize event
+    t =    27.68s     Wait for space.go2china.VisePanda to idle
+    t =    29.79s Waiting 20.0s for "knowledge.empty" StaticText to exist
+    t =    30.81s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.empty" StaticText`
+    t =    30.81s         Checking existence of `"knowledge.empty" StaticText`
+    t =    30.92s Checking existence of `"knowledge.scene" Button`
+    t =    31.04s Tap "knowledge.scene" Button
+    t =    31.04s     Wait for space.go2china.VisePanda to idle
+    t =    31.05s     Find the "knowledge.scene" Button
+    t =    31.19s     Check for interrupting elements affecting "knowledge.scene" Button
+    t =    31.29s     Synthesize event
+    t =    31.61s     Wait for space.go2china.VisePanda to idle
+    t =    32.32s Tap "Payment" Button
+    t =    32.32s     Wait for space.go2china.VisePanda to idle
+    t =    33.34s     Find the "Payment" Button
+    t =    33.62s     Check for interrupting elements affecting "Payment" Button
+    t =    33.86s     Synthesize event
+    t =    34.22s     Wait for space.go2china.VisePanda to idle
+    t =    35.75s Waiting 20.0s for "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText to exist
+    t =    36.79s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText`
+    t =    36.79s         Checking existence of `"knowledge.note.11111111-1111-4111-8111-111111111111" StaticText`
+    t =    37.05s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    37.27s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    37.48s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    37.73s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    37.97s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    38.21s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    38.44s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    38.63s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    38.85s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    39.16s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    39.28s Checking existence of `"Applies when" StaticText`
+    t =    39.41s Checking existence of `"Not covered" StaticText`
+    t =    39.54s Find the Target Application 'space.go2china.VisePanda'
+    t =    39.87s Added attachment named 'knowledge-en-read'
+    t =    39.88s Find the "knowledge.refresh" Button
+    t =    40.01s Find the "knowledge.refresh" Button
+    t =    40.13s Find the "knowledge.refresh" Button
+    t =    40.25s Find the "knowledge.refresh" Button
+    t =    40.39s Find the "knowledge.refresh" Button
+    t =    40.53s Find the "knowledge.refresh" Button
+    t =    40.65s Find the "knowledge.refresh" Button
+    t =    40.75s Find the "knowledge.refresh" Button
+    t =    40.89s Find the "knowledge.refresh" Button
+    t =    40.99s Tap "knowledge.refresh" Button
+    t =    40.99s     Wait for space.go2china.VisePanda to idle
+    t =    41.00s     Find the "knowledge.refresh" Button
+    t =    41.08s     Check for interrupting elements affecting "knowledge.refresh" Button
+    t =    41.20s     Synthesize event
+    t =    41.56s     Wait for space.go2china.VisePanda to idle
+    t =    42.08s Waiting 20.0s for "knowledge.empty" StaticText to exist
+    t =    43.11s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.empty" StaticText`
+    t =    43.11s         Checking existence of `"knowledge.empty" StaticText`
+    t =    43.22s Checking existence of `"knowledge.note.11111111-1111-4111-8111-111111111111" StaticText`
+    t =    43.31s Tap "knowledge.refresh" Button
+    t =    43.31s     Wait for space.go2china.VisePanda to idle
+    t =    43.32s     Find the "knowledge.refresh" Button
+    t =    43.42s     Check for interrupting elements affecting "knowledge.refresh" Button
+    t =    43.55s     Synthesize event
+    t =    43.89s     Wait for space.go2china.VisePanda to idle
+    t =    43.89s Waiting 20.0s for "knowledge.unavailable" StaticText to exist
+    t =    44.91s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.unavailable" StaticText`
+    t =    44.91s         Checking existence of `"knowledge.unavailable" StaticText`
+    t =    44.96s Checking existence of `"knowledge.note.11111111-1111-4111-8111-111111111111" StaticText`
+    t =    45.01s Find the Target Application 'space.go2china.VisePanda'
+    t =    45.23s Added attachment named 'knowledge-en-disabled'
+    t =    45.23s Terminate space.go2china.VisePanda:44240
+    t =    46.32s Tear Down
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testEnglishRefreshCredentialsReadAndWithdraw]' passed (46.462 seconds).
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testEnglishReviewedQuestionCoverage]' started.
+    t =     0.00s Start Test at 2026-09-13 上午2:25:45.210
+    t =     0.03s Set Up
+    t =     0.03s Open space.go2china.VisePanda
+    t =     0.04s     Launch space.go2china.VisePanda
+2026-09-13 02:25:45.246 xcodebuild[44075:610285] [MT] IDELaunchParametersSnapshot: The operation couldn’t be completed. (DebuggerLLDB.DebuggerVersionStore.StoreError error 0.)
+2026-09-13 02:25:45.246 xcodebuild[44075:610285] [MT] IDELaunchParametersSnapshot: no debugger version
+    t =     0.25s         Setting up automation session
+    t =     2.50s         Wait for space.go2china.VisePanda to idle
+    t =     4.67s Tap "Profile" Button
+    t =     4.67s     Wait for space.go2china.VisePanda to idle
+    t =     4.68s     Find the "Profile" Button
+    t =     5.30s     Check for interrupting elements affecting "Profile" Button
+    t =     5.41s     Synthesize event
+    t =     5.74s     Wait for space.go2china.VisePanda to idle
+    t =     7.60s Waiting 2.0s for "Sign out" Button to exist
+    t =     8.65s     Checking `Expect predicate `existsNoRetry == 1` for object "Sign out" Button`
+    t =     8.65s         Checking existence of `"Sign out" Button`
+    t =     8.75s Find the "Sign out" Button
+    t =     8.82s Find the "Sign out" Button
+    t =     8.88s Find the "Sign out" Button
+    t =     8.95s Find the "Sign out" Button
+    t =     9.01s Find the "Sign out" Button
+    t =     9.07s Find the "Sign out" Button
+    t =     9.14s Find the "Sign out" Button
+    t =     9.21s Find the "Sign out" Button
+    t =     9.28s Find the "Sign out" Button
+    t =     9.35s Tap "Sign out" Button
+    t =     9.35s     Wait for space.go2china.VisePanda to idle
+    t =     9.35s     Find the "Sign out" Button
+    t =     9.41s     Check for interrupting elements affecting "Sign out" Button
+    t =     9.51s     Synthesize event
+    t =     9.81s     Wait for space.go2china.VisePanda to idle
+    t =    10.07s Waiting 10.0s for "native.login.email" TextField to exist
+    t =    11.10s     Checking `Expect predicate `existsNoRetry == 1` for object "native.login.email" TextField`
+    t =    11.10s         Checking existence of `"native.login.email" TextField`
+    t =    11.16s Find the "native.login.email" TextField
+    t =    11.21s Find the "native.login.email" TextField
+    t =    11.26s Find the "native.login.email" TextField
+    t =    11.32s Find the "native.login.email" TextField
+    t =    11.38s Find the "native.login.email" TextField
+    t =    11.45s Find the "native.login.email" TextField
+    t =    11.52s Find the "native.login.email" TextField
+    t =    11.59s Find the "native.login.email" TextField
+    t =    11.68s Find the "native.login.email" TextField
+    t =    11.75s Tap "native.login.email" TextField
+    t =    11.75s     Wait for space.go2china.VisePanda to idle
+    t =    11.76s     Find the "native.login.email" TextField
+    t =    11.82s     Check for interrupting elements affecting "native.login.email" TextField
+    t =    11.89s     Synthesize event
+    t =    12.19s     Wait for space.go2china.VisePanda to idle
+    t =    12.46s Type 'knowledge-ui@examp...' into "native.login.email" TextField
+    t =    12.46s     Wait for space.go2china.VisePanda to idle
+    t =    12.94s     Find the "native.login.email" TextField
+    t =    13.24s     Check for interrupting elements affecting "native.login.email" TextField
+    t =    13.41s     Synthesize event
+    t =    14.04s     Wait for space.go2china.VisePanda to idle
+    t =    14.05s Find the "native.login.password" SecureTextField
+    t =    14.24s Find the "native.login.password" SecureTextField
+    t =    14.45s Find the "native.login.password" SecureTextField
+    t =    14.63s Find the "native.login.password" SecureTextField
+    t =    14.83s Find the "native.login.password" SecureTextField
+    t =    15.06s Find the "native.login.password" SecureTextField
+    t =    15.25s Find the "native.login.password" SecureTextField
+    t =    15.38s Find the "native.login.password" SecureTextField
+    t =    15.50s Find the "native.login.password" SecureTextField
+    t =    15.62s Tap "native.login.password" SecureTextField
+    t =    15.62s     Wait for space.go2china.VisePanda to idle
+    t =    15.62s     Find the "native.login.password" SecureTextField
+    t =    15.73s     Check for interrupting elements affecting "native.login.password" SecureTextField
+    t =    15.82s     Synthesize event
+    t =    16.13s     Wait for space.go2china.VisePanda to idle
+    t =    16.17s Type '<redacted>' into "native.login.password" SecureTextField
+    t =    16.17s     Wait for space.go2china.VisePanda to idle
+    t =    17.08s     Find the "native.login.password" SecureTextField
+    t =    17.20s     Check for interrupting elements affecting "native.login.password" SecureTextField
+    t =    17.35s     Synthesize event
+    t =    17.81s     Wait for space.go2china.VisePanda to idle
+    t =    17.81s Find the "native.login.submit" Button
+    t =    17.97s Find the "native.login.submit" Button
+    t =    18.16s Find the "native.login.submit" Button
+    t =    18.37s Find the "native.login.submit" Button
+    t =    18.59s Find the "native.login.submit" Button
+    t =    18.77s Find the "native.login.submit" Button
+    t =    18.95s Find the "native.login.submit" Button
+    t =    19.11s Find the "native.login.submit" Button
+    t =    19.27s Find the "native.login.submit" Button
+    t =    19.43s Tap "native.login.submit" Button
+    t =    19.43s     Wait for space.go2china.VisePanda to idle
+    t =    19.44s     Find the "native.login.submit" Button
+    t =    19.63s     Check for interrupting elements affecting "native.login.submit" Button
+    t =    19.77s     Synthesize event
+    t =    20.10s     Wait for space.go2china.VisePanda to idle
+    t =    22.37s Checking `Expect predicate `label == "Session active"` for object "native.session.status" StaticText`
+    t =    22.37s     Find the "native.session.status" StaticText
+    t =    22.46s Waiting 20.0s for "Session active" StaticText to exist
+    t =    23.48s     Checking `Expect predicate `existsNoRetry == 1` for object "Session active" StaticText`
+    t =    23.48s         Checking existence of `"Session active" StaticText`
+    t =    23.56s Tap "Ask" Button
+    t =    23.56s     Wait for space.go2china.VisePanda to idle
+    t =    23.56s     Find the "Ask" Button
+    t =    23.64s     Check for interrupting elements affecting "sparkles" Button
+    t =    23.70s     Synthesize event
+    t =    24.03s     Wait for space.go2china.VisePanda to idle
+    t =    25.60s Waiting 10.0s for "native-ask.reviewed-question" Button to exist
+    t =    26.65s     Checking `Expect predicate `existsNoRetry == 1` for object "native-ask.reviewed-question" Button`
+    t =    26.65s         Checking existence of `"native-ask.reviewed-question" Button`
+    t =    26.74s Tap "native-ask.reviewed-question" Button
+    t =    26.74s     Wait for space.go2china.VisePanda to idle
+    t =    26.75s     Find the "native-ask.reviewed-question" Button
+    t =    26.83s     Check for interrupting elements affecting "native-ask.reviewed-question" Button
+    t =    26.92s     Synthesize event
+    t =    27.25s     Wait for space.go2china.VisePanda to idle
+    t =    28.31s Waiting 20.0s for "knowledge.answer.answered" StaticText to exist
+    t =    29.35s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.answer.answered" StaticText`
+    t =    29.35s         Checking existence of `"knowledge.answer.answered" StaticText`
+    t =    29.44s Checking existence of `"knowledge.scene" Button`
+    t =    29.51s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    29.64s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    29.76s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    29.91s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    30.01s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    30.11s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    30.23s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    30.34s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    30.45s Find the "knowledge.note.11111111-1111-4111-8111-111111111111" StaticText
+    t =    30.54s Checking existence of `"Applies when" StaticText`
+    t =    30.61s Find the Target Application 'space.go2china.VisePanda'
+    t =    30.82s Added attachment named 'question-en-answered'
+    t =    30.82s Tap "Profile" Button
+    t =    30.82s     Wait for space.go2china.VisePanda to idle
+    t =    30.83s     Find the "Profile" Button
+    t =    30.89s     Check for interrupting elements affecting "person.crop.circle" Button
+    t =    30.93s     Synthesize event
+    t =    31.23s     Wait for space.go2china.VisePanda to idle
+    t =    64.68s Tap "Ask" Button
+    t =    64.69s     Wait for space.go2china.VisePanda to idle
+    t =    64.69s     Find the "Ask" Button
+    t =    64.75s     Check for interrupting elements affecting "sparkles" Button
+    t =    64.79s     Synthesize event
+    t =    65.07s     Wait for space.go2china.VisePanda to idle
+    t =    66.43s Waiting 20.0s for "knowledge.answer.answered" StaticText to exist
+    t =    67.49s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.answer.answered" StaticText`
+    t =    67.49s         Checking existence of `"knowledge.answer.answered" StaticText`
+    t =    67.54s Find the "knowledge.refresh" Button
+    t =    67.60s Find the "knowledge.refresh" Button
+    t =    67.63s Find the "knowledge.refresh" Button
+    t =    67.67s Find the "knowledge.refresh" Button
+    t =    67.71s Find the "knowledge.refresh" Button
+    t =    67.75s Find the "knowledge.refresh" Button
+    t =    67.79s Tap "knowledge.refresh" Button
+    t =    67.79s     Wait for space.go2china.VisePanda to idle
+    t =    67.79s     Find the "knowledge.refresh" Button
+    t =    67.82s     Check for interrupting elements affecting "knowledge.refresh" Button
+    t =    67.85s     Synthesize event
+    t =    68.14s     Wait for space.go2china.VisePanda to idle
+    t =    68.62s Waiting 20.0s for "knowledge.answer.partial" StaticText to exist
+    t =    69.68s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.answer.partial" StaticText`
+    t =    69.68s         Checking existence of `"knowledge.answer.partial" StaticText`
+    t =    69.71s         Capturing element debug description
+    t =    70.66s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.answer.partial" StaticText`
+    t =    70.66s         Checking existence of `"knowledge.answer.partial" StaticText`
+    t =    70.71s Checking existence of `"knowledge.gap.revoked" StaticText`
+    t =    70.74s Checking existence of `"knowledge.note.11111111-1111-4111-8111-111111111111" StaticText`
+    t =    70.76s Find the Target Application 'space.go2china.VisePanda'
+    t =    70.87s Added attachment named 'question-en-partial'
+    t =    70.87s Tap "knowledge.refresh" Button
+    t =    70.87s     Wait for space.go2china.VisePanda to idle
+    t =    70.87s     Find the "knowledge.refresh" Button
+    t =    70.90s     Check for interrupting elements affecting "knowledge.refresh" Button
+    t =    70.93s     Synthesize event
+    t =    71.22s     Wait for space.go2china.VisePanda to idle
+    t =    71.22s Waiting 20.0s for "knowledge.answer.no_answer" StaticText to exist
+    t =    72.27s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.answer.no_answer" StaticText`
+    t =    72.27s         Checking existence of `"knowledge.answer.no_answer" StaticText`
+    t =    72.32s         Capturing element debug description
+    t =    73.26s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.answer.no_answer" StaticText`
+    t =    73.26s         Checking existence of `"knowledge.answer.no_answer" StaticText`
+    t =    73.31s Checking existence of `"knowledge.gap.expired" StaticText`
+    t =    73.35s Tap "knowledge.refresh" Button
+    t =    73.35s     Wait for space.go2china.VisePanda to idle
+    t =    73.35s     Find the "knowledge.refresh" Button
+    t =    73.38s     Check for interrupting elements affecting "knowledge.refresh" Button
+    t =    73.41s     Synthesize event
+    t =    73.70s     Wait for space.go2china.VisePanda to idle
+    t =    73.71s Waiting 20.0s for "knowledge.unavailable" StaticText to exist
+    t =    74.73s     Checking `Expect predicate `existsNoRetry == 1` for object "knowledge.unavailable" StaticText`
+    t =    74.73s         Checking existence of `"knowledge.unavailable" StaticText`
+    t =    74.78s Checking existence of `"knowledge.answer.no_answer" StaticText`
+    t =    74.80s Find the Target Application 'space.go2china.VisePanda'
+    t =    74.91s Added attachment named 'question-en-disabled'
+    t =    74.91s Terminate space.go2china.VisePanda:44381
+    t =    76.00s Tear Down
+Test Case '-[VisePandaUITests.NativeKnowledgeUITests testEnglishReviewedQuestionCoverage]' passed (76.128 seconds).
+Test Suite 'NativeKnowledgeUITests' passed at 2026-09-13 上午2:27:01.338.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 201.289 (201.298) seconds
+Test Suite 'VisePandaUITests.xctest' passed at 2026-09-13 上午2:27:01.339.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 201.289 (201.299) seconds
+Test Suite 'Selected tests' passed at 2026-09-13 上午2:27:01.339.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 201.289 (201.302) seconds
+2026-09-13 02:27:01.746 xcodebuild[44075:610285] [MT] IDETestOperationsObserverDebug: 206.237 elapsed -- Testing started completed.
+2026-09-13 02:27:01.746 xcodebuild[44075:610285] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-13 02:27:01.746 xcodebuild[44075:610285] [MT] IDETestOperationsObserverDebug: 206.237 sec, +206.237 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/jtcao/Library/Caches/visepanda/reviewed-question-20260913/ui-2.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
