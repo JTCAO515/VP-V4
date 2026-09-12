@@ -175,11 +175,12 @@ export function usesTripProtocolV2(config = getSupabasePublicConfig()): boolean 
   try { const url = new URL(config.url); return url.protocol === "http:" && ["127.0.0.1", "localhost"].includes(url.hostname) && !url.username && !url.password; } catch { return false; }
 }
 
-export function createUserDataAdapter(request: NextRequest, current = getSupabasePublicConfig()) {
+export function createUserDataAdapter(request: NextRequest, current = getSupabasePublicConfig(), transport?: typeof fetch) {
   if (!current) return null;
   const hasAuthorization = request.headers.has("authorization");
   const pendingCookies: PendingCookie[] = [];
   const client = createServerClient(current.url, current.publishableKey, {
+    ...(transport ? { global: { fetch: transport } } : {}),
     cookies: {
       getAll: () => hasAuthorization ? [] : request.cookies.getAll(),
       setAll: (cookies) => {
@@ -1254,6 +1255,15 @@ function createDataOperations(
   return {
     applyCookies,
     authenticated,
+    async readGroundedHistory(policyId: string) {
+      const actor = await authenticated();
+      if ("error" in actor) return { error: "UNAUTHENTICATED" as const };
+      const policy = await client.rpc("read_grounded_policy", { p_policy_id: policyId });
+      if (policy.error) return { error: mapRpcFailure(policy.error.message) };
+      const history = await client.rpc("list_grounded_turns", { p_policy_id: policyId, p_limit: 20 });
+      if (history.error) return { error: mapRpcFailure(history.error.message) };
+      return { data: { ownerId: actor.data, policy: policy.data as unknown, history: history.data as unknown } };
+    },
     getUserProfile,
     saveUserProfile,
     listPrivacyRequests,

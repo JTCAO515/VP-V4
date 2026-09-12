@@ -10,6 +10,7 @@ import { replayTurnSse, turnEventsFromHistory } from "./turn-stream-client";
 import { initialTurnStreamState, turnStreamReducer } from "./turn-stream-reducer";
 import { parseLocale } from "@/lib/navigation/workspace-entry";
 import styles from "./ChatThreadWorkspace.module.css";
+import { SavedAnswers } from "./SavedAnswers";
 
 type Thread = { id: string; tripId: string | null; status: "active" | "archived"; createdAt: string; updatedAt: string };
 type Turn = { id: string; status: string; createdAt: string; updatedAt: string; events: readonly { eventId: string; sequence: number; type: string; state: string; createdAt: string }[]; feedback: readonly { id: string; kind: TurnFeedbackKind; reason: TurnFeedbackReason; createdAt: string }[]; memoryReceipts: readonly { memoryId: string; sourceReceiptId: string; constraintKind: "preference" | "hard_constraint" }[] };
@@ -22,7 +23,7 @@ const asUuid = (value: string | null): string | undefined =>
     ? value
     : undefined;
 
-export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: { initialThreadId?: string; initialPlaceCandidate?: Readonly<{ tripId: string; poiId: string }> }) {
+export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate, groundedRead = false }: { initialThreadId?: string; initialPlaceCandidate?: Readonly<{ tripId: string; poiId: string }>; groundedRead?: boolean }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [locale, setLocale] = useState<Locale>(() => parseLocale(searchParams.get("locale")));
@@ -210,6 +211,7 @@ export function ChatThreadWorkspace({ initialThreadId, initialPlaceCandidate }: 
       {state === "ready" ? <>
         <label className={styles.tripScope}>{copy.tripScope}<select value={selectedTripId ?? ""} onChange={(event) => setSelectedTripId(event.target.value || null)}><option value="">{copy.noTripScope}</option>{trips.map((trip) => <option key={trip.id} value={trip.id}>{trip.title}</option>)}</select></label>
         <button className={styles.primary} type="button" onClick={createThread} disabled={creating}>{copy.create}</button>
+        {groundedRead && (locale === "zh" || locale === "en") ? <SavedAnswers locale={locale} /> : null}
         <div className={styles.grid}>
           <section aria-label={copy.title}>{threads.length === 0 ? <p className={styles.empty}>{copy.empty}</p> : <ul>{threads.map((thread) => <li key={thread.id}><button type="button" onClick={() => void selectThread(thread)}>{statusName(thread.status)} · {new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(new Date(thread.createdAt))}</button></li>)}</ul>}</section>
           <section aria-label={copy.state}>{selected ? <>

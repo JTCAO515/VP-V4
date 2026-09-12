@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {createNativeTextEnvironment} from './native-text-environment.mjs';
 import {waitUntil} from '../identity/database-barrier.mjs';
+import {createServerClient} from '@supabase/ssr';
+import {identityLocalEnv} from '../identity/local-supabase.mjs';
 
 test('grounded native HTTP preserves scope, consent, current-input egress and revalidated durable results',{skip:process.env.VP_NATIVE_GROUNDED_INTEGRATION!=='true',timeout:180000},async t=>{
  const e=await createNativeTextEnvironment({grounded:true});t.after(()=>e.cleanup());
@@ -12,6 +14,20 @@ test('grounded native HTTP preserves scope, consent, current-input egress and re
  };
  const login=async user=>{const attemptId=randomUUID();const r=await call('/api/auth/native/v2/credentials',null,'POST',{email:user.email,password:user.password,attemptId});assert.equal(r.status,200);assert.equal((await call('/api/auth/native/v2/login',r.body.accessToken,'POST',{attemptId})).status,200);return r.body.accessToken;};
  const token=await login(e.users[0]),other=await login(e.users[1]),base='/api/chat/native/v4';
+ const local=identityLocalEnv();
+ const browserLogin=async user=>{
+  const jar=new Map();
+  const client=createServerClient(local.API_URL,local.PUBLISHABLE_KEY||local.ANON_KEY,{cookies:{getAll:()=>[...jar].map(([name,value])=>({name,value})),setAll:values=>values.forEach(({name,value})=>jar.set(name,value))}});
+  assert.equal((await client.auth.signInWithPassword({email:user.email,password:user.password})).error,null);
+  return {client,cookie:()=>[...jar].map(([name,value])=>name+'='+value).join('; ')};
+ };
+ const browser=await browserLogin(e.users[0]),foreignBrowser=await browserLogin(e.users[1]);
+ const web=async(cookie=browser.cookie(),suffix='',headers={})=>{const r=await fetch(e.api+'/api/chat/grounded'+suffix,{headers:{...(cookie?{cookie}:{}),...headers}});return {status:r.status,body:await r.json()};};
+ assert.equal((await web('')).status,401);
+ assert.equal((await web()).status,503,'read cannot accept consent');
+ assert.equal((await web(browser.cookie(),'?policyId='+e.groundedPolicyId)).status,400);
+ assert.equal((await web(browser.cookie(),'',{Authorization:'Bearer '+token})).status,400);
+ assert.equal((await web(browser.cookie(),'',{Origin:'https://foreign.example'})).status,400);
  assert.equal((await call(base+'/policy')).status,401);
  const policy=await call(base+'/policy',token);assert.equal(policy.status,200);assert.equal(policy.body.version,4);assert.equal(policy.body.policy.id,e.groundedPolicyId);
  const input={threadId:randomUUID(),turnId:randomUUID(),idempotencyKey:randomUUID(),policyId:e.groundedPolicyId,locale:'en',city:'shanghai',text:'Synthetic adult passport boarding document question',serviceTask:{id:randomUUID(),scopeVersion:1,relationship:'new_goal',parentTurnId:null}};
@@ -25,6 +41,14 @@ test('grounded native HTTP preserves scope, consent, current-input egress and re
  const read=async()=>{const r=await call(base+'/turns',token);assert.equal(r.status,200);assert.equal(r.body.version,4);assert.equal(r.body.kind,'grounded_history');return r.body.turns;};
  const waitTurn=async(id,outcome)=>{await waitUntil(async()=> (await read()).some(x=>x.turnId===id&&x.outcome===outcome),30000,'grounded durable completion');return (await read()).find(x=>x.turnId===id);};
  const final=await waitTurn(input.turnId,'answered');
+ const browserRead=await web();assert.equal(browserRead.status,200);assert.equal(browserRead.body.data.ownerId,e.users[0].id);
+ const saved=browserRead.body.data.turns.find(turn=>turn.id===input.turnId);
+ assert.equal(saved.taskId,input.serviceTask.id);assert.equal(saved.facts.length,2);assert.equal(saved.city,'shanghai');
+ assert.ok(browserRead.body.data.lifetimeMs>0&&browserRead.body.data.lifetimeMs<=30000);
+ assert.ok(!JSON.stringify(browserRead.body).includes('_basis'));
+ assert.equal((await web(foreignBrowser.cookie())).status,503,'other owner has no accepted consent');
+ assert.equal((await call(base+'/consent',other,'POST',{policyId:e.groundedPolicyId,noticeHash:e.groundedNoticeHash})).status,200);
+ const foreignRead=await web(foreignBrowser.cookie());assert.equal(foreignRead.status,200);assert.deepEqual(foreignRead.body.data.turns,[],'accepted foreign owner cannot see original owner');
  assert.equal(final.output,'reviewed-answer-v1');assert.equal(final.result.city,'shanghai');assert.equal(final.result.knowledge.statements.length,2);
  assert.equal(e.counts.http,1);assert.equal(e.requests[0].messages.length,2);assert.equal(e.requests[0].messages[1].content,input.text);
  assert.ok(!JSON.stringify(e.requests).includes('PRIVATE SOURCE NEVER SENT'));assert.ok(!JSON.stringify(e.requests).includes('Synthetic reviewed'));
@@ -40,6 +64,9 @@ test('grounded native HTTP preserves scope, consent, current-input egress and re
  const dispatched=e.requests.find(r=>r.messages.at(-1).content===next.text);assert.equal(dispatched.messages.length,2,'prior turns and evidence never enter classifier');
  e.sql('update knowledge_review_private.publication_settings set enabled=false;');
  const hidden=(await read()).find(x=>x.turnId===input.turnId);assert.equal(hidden.result.projection,'unavailable');assert.equal(hidden.result.knowledge,null);assert.equal(hidden.outcome,'answered');
+ const webHidden=(await web()).body.data.turns.find(turn=>turn.id===input.turnId);assert.deepEqual(webHidden.facts,[]);assert.equal(webHidden.projection,'unavailable');
  assert.equal((await call(base+'/consent',token,'DELETE',{policyId:e.groundedPolicyId})).status,200);assert.deepEqual(await read(),[]);
+ assert.equal((await web()).status,503,'withdrawn consent hides browser read');
+ const oldCookie=browser.cookie();await browser.client.auth.signOut();assert.equal((await web(oldCookie)).status,401,'deleted session cannot reuse its cookie');
  assert.equal(e.counts.http,4,'replay and history do not dispatch or charge');
 });
