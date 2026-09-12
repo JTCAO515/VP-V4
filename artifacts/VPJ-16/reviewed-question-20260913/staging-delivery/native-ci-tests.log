@@ -296,7 +296,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =    20.42s Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    20.50s Find the "ask-composer" Other
     t =    20.61s Find the "ask-availability-notice" StaticText
-    t =    20.73s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    20.73s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    20.73s     Wait for space.go2china.VisePanda to idle
     t =    20.73s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    20.83s     Check for interrupting elements affecting ScrollView
@@ -308,7 +308,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =    21.29s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    23.05s     Wait for space.go2china.VisePanda to idle
     t =    23.54s Find the "ask-availability-notice" StaticText
-    t =    23.62s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    23.62s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    23.62s     Wait for space.go2china.VisePanda to idle
     t =    23.63s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    23.68s     Check for interrupting elements affecting ScrollView
@@ -320,7 +320,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =    24.01s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    25.89s     Wait for space.go2china.VisePanda to idle
     t =    26.61s Find the "ask-availability-notice" StaticText
-    t =    26.77s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    26.77s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    26.77s     Wait for space.go2china.VisePanda to idle
     t =    26.96s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    27.07s     Check for interrupting elements affecting ScrollView
@@ -332,7 +332,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =    27.59s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    29.12s     Wait for space.go2china.VisePanda to idle
     t =    29.93s Find the "ask-availability-notice" StaticText
-    t =    30.02s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    30.02s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    30.02s     Wait for space.go2china.VisePanda to idle
     t =    30.17s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    30.32s     Check for interrupting elements affecting ScrollView
@@ -344,7 +344,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =    30.98s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    32.48s     Wait for space.go2china.VisePanda to idle
     t =    32.49s Find the "ask-availability-notice" StaticText
-    t =    32.65s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    32.65s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    32.65s     Wait for space.go2china.VisePanda to idle
     t =    33.22s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    33.55s     Check for interrupting elements affecting ScrollView
@@ -356,7 +356,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =    34.58s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    36.25s     Wait for space.go2china.VisePanda to idle
     t =    36.65s Find the "ask-availability-notice" StaticText
-    t =    36.87s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -84.3) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    36.87s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -84.3) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    36.87s     Wait for space.go2china.VisePanda to idle
     t =    36.89s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    37.64s     Check for interrupting elements affecting ScrollView
@@ -403,7 +403,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =    67.44s Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    67.64s Find the "ask-composer" Other
     t =    67.94s Find the "ask-availability-notice" StaticText
-    t =    68.13s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    68.13s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    68.13s     Wait for space.go2china.VisePanda to idle
     t =    68.14s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    68.26s     Check for interrupting elements affecting ScrollView
@@ -415,7 +415,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =    69.09s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    70.60s     Wait for space.go2china.VisePanda to idle
     t =    70.76s Find the "ask-availability-notice" StaticText
-    t =    71.06s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    71.06s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    71.07s     Wait for space.go2china.VisePanda to idle
     t =    71.64s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    71.75s     Check for interrupting elements affecting ScrollView
@@ -427,7 +427,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =    72.68s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    74.55s     Wait for space.go2china.VisePanda to idle
     t =    74.56s Find the "ask-availability-notice" StaticText
-    t =    74.67s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -130.3) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    74.67s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -130.3) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    74.67s     Wait for space.go2china.VisePanda to idle
     t =    74.68s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =    74.77s     Check for interrupting elements affecting ScrollView
@@ -476,7 +476,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =   104.73s Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   104.83s Find the "ask-composer" Other
     t =   104.94s Find the "ask-availability-notice" StaticText
-    t =   105.09s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   105.09s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =   105.09s     Wait for space.go2china.VisePanda to idle
     t =   105.09s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   105.24s     Check for interrupting elements affecting ScrollView
@@ -488,7 +488,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =   105.51s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   106.99s     Wait for space.go2china.VisePanda to idle
     t =   107.31s Find the "ask-availability-notice" StaticText
-    t =   107.60s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   107.60s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =   107.60s     Wait for space.go2china.VisePanda to idle
     t =   107.61s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   107.79s     Check for interrupting elements affecting ScrollView
@@ -500,7 +500,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =   108.97s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   110.46s     Wait for space.go2china.VisePanda to idle
     t =   111.51s Find the "ask-availability-notice" StaticText
-    t =   111.63s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   111.63s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =   111.63s     Wait for space.go2china.VisePanda to idle
     t =   111.63s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   111.69s     Check for interrupting elements affecting ScrollView
@@ -512,7 +512,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =   112.46s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   114.05s     Wait for space.go2china.VisePanda to idle
     t =   114.54s Find the "ask-availability-notice" StaticText
-    t =   114.80s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   114.80s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =   114.80s     Wait for space.go2china.VisePanda to idle
     t =   114.81s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   115.08s     Check for interrupting elements affecting ScrollView
@@ -524,7 +524,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =   115.99s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   117.51s     Wait for space.go2china.VisePanda to idle
     t =   117.87s Find the "ask-availability-notice" StaticText
-    t =   117.95s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   117.95s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =   117.95s     Wait for space.go2china.VisePanda to idle
     t =   117.96s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   118.05s     Check for interrupting elements affecting ScrollView
@@ -536,7 +536,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =   118.53s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   120.16s     Wait for space.go2china.VisePanda to idle
     t =   120.66s Find the "ask-availability-notice" StaticText
-    t =   120.80s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -84.3) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   120.80s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -84.3) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =   120.80s     Wait for space.go2china.VisePanda to idle
     t =   120.81s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   121.13s     Check for interrupting elements affecting ScrollView
@@ -583,7 +583,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =   149.65s Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   149.74s Find the "ask-composer" Other
     t =   149.90s Find the "ask-availability-notice" StaticText
-    t =   150.07s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   150.07s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =   150.07s     Wait for space.go2china.VisePanda to idle
     t =   150.08s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   150.25s     Check for interrupting elements affecting ScrollView
@@ -595,7 +595,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =   150.87s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   152.38s     Wait for space.go2china.VisePanda to idle
     t =   152.42s Find the "ask-availability-notice" StaticText
-    t =   152.64s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   152.64s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -227.6) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =   152.64s     Wait for space.go2china.VisePanda to idle
     t =   152.65s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   152.94s     Check for interrupting elements affecting ScrollView
@@ -607,7 +607,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testAccessibilityAtLargestTextSize
     t =   154.67s         Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   156.20s     Wait for space.go2china.VisePanda to idle
     t =   156.32s Find the "ask-availability-notice" StaticText
-    t =   156.58s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -130.3) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =   156.58s Press ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] for 0.1 seconds, then drag to ScrollView at {{0.0, 0.0}, {402.0, 874.0}}[0.50, 0.50] -> (0.0, -130.3) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =   156.58s     Wait for space.go2china.VisePanda to idle
     t =   156.59s     Find the ScrollView at {{0.0, 0.0}, {402.0, 874.0}}
     t =   157.25s     Check for interrupting elements affecting ScrollView
@@ -1077,7 +1077,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testToolsAccessibilityAtLargestTex
     t =    13.54s Find the "Translation" Button
     t =    13.63s Find the "Translation" Button
     t =    13.69s Find the NavigationBar (First Match)
-    t =    13.73s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    13.73s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    13.73s     Wait for space.go2china.VisePanda to idle
     t =    13.73s     Find the Target Application 'space.go2china.VisePanda'
     t =    13.77s     Check for interrupting elements affecting "VisePanda" Application
@@ -1090,7 +1090,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testToolsAccessibilityAtLargestTex
     t =    15.30s     Wait for space.go2china.VisePanda to idle
     t =    15.40s Find the "Translation" Button
     t =    15.45s Find the NavigationBar (First Match)
-    t =    15.53s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    15.53s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    15.53s     Wait for space.go2china.VisePanda to idle
     t =    15.54s     Find the Target Application 'space.go2china.VisePanda'
     t =    15.57s     Check for interrupting elements affecting "VisePanda" Application
@@ -1103,7 +1103,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testToolsAccessibilityAtLargestTex
     t =    17.07s     Wait for space.go2china.VisePanda to idle
     t =    17.42s Find the "Translation" Button
     t =    17.47s Find the NavigationBar (First Match)
-    t =    17.50s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    17.50s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    17.50s     Wait for space.go2china.VisePanda to idle
     t =    17.50s     Find the Target Application 'space.go2china.VisePanda'
     t =    17.55s     Check for interrupting elements affecting "VisePanda" Application
@@ -1116,7 +1116,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testToolsAccessibilityAtLargestTex
     t =    19.14s     Wait for space.go2china.VisePanda to idle
     t =    19.54s Find the "Translation" Button
     t =    19.59s Find the NavigationBar (First Match)
-    t =    19.60s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    19.60s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    19.60s     Wait for space.go2china.VisePanda to idle
     t =    19.60s     Find the Target Application 'space.go2china.VisePanda'
     t =    19.62s     Check for interrupting elements affecting "VisePanda" Application
@@ -1129,7 +1129,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testToolsAccessibilityAtLargestTex
     t =    21.02s     Wait for space.go2china.VisePanda to idle
     t =    21.44s Find the "Translation" Button
     t =    21.87s Find the NavigationBar (First Match)
-    t =    22.23s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    22.23s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    22.23s     Wait for space.go2china.VisePanda to idle
     t =    22.23s     Find the Target Application 'space.go2china.VisePanda'
     t =    22.39s     Check for interrupting elements affecting "VisePanda" Application
@@ -1142,7 +1142,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testToolsAccessibilityAtLargestTex
     t =    24.25s     Wait for space.go2china.VisePanda to idle
     t =    24.64s Find the "Translation" Button
     t =    24.69s Find the NavigationBar (First Match)
-    t =    24.72s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    24.72s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    24.72s     Wait for space.go2china.VisePanda to idle
     t =    24.73s     Find the Target Application 'space.go2china.VisePanda'
     t =    24.77s     Check for interrupting elements affecting "VisePanda" Application
@@ -1155,7 +1155,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testToolsAccessibilityAtLargestTex
     t =    26.32s     Wait for space.go2china.VisePanda to idle
     t =    26.71s Find the "Translation" Button
     t =    26.77s Find the NavigationBar (First Match)
-    t =    26.81s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    26.81s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    26.81s     Wait for space.go2china.VisePanda to idle
     t =    26.81s     Find the Target Application 'space.go2china.VisePanda'
     t =    26.85s     Check for interrupting elements affecting "VisePanda" Application
@@ -1168,7 +1168,7 @@ Test Case '-[VisePandaUITests.AppShellUITests testToolsAccessibilityAtLargestTex
     t =    28.38s     Wait for space.go2china.VisePanda to idle
     t =    28.78s Find the "Translation" Button
     t =    28.82s Find the NavigationBar (First Match)
-    t =    28.84s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds 
+    t =    28.84s Press Target Application 'space.go2china.VisePanda'[0.50, 0.60] for 0.1 seconds, then drag to Target Application 'space.go2china.VisePanda'[0.50, 0.60] -> (0.0, -200.0) with velocity of 250.00 pixels per second, and then hold for 0.2 seconds
     t =    28.84s     Wait for space.go2china.VisePanda to idle
     t =    28.84s     Find the Target Application 'space.go2china.VisePanda'
     t =    28.86s     Check for interrupting elements affecting "VisePanda" Application

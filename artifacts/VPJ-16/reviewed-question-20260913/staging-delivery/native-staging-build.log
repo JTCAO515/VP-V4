@@ -171,13 +171,13 @@ MkDir /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Buil
 
 ProcessProductPackaging "" /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
     Entitlements:
-    
+
     {
     "application-identifier" = "NLD68762GG.space.go2china.VisePanda";
 }
-    
+
     builtin-productPackagingUtility -entitlements -format xml -o /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent
 
 ProcessProductPackagingDER /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent.der (in target 'VisePanda' from project 'VisePanda')
@@ -485,95 +485,95 @@ SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/
 SwiftEmitModule normal x86_64 Emitting\ module\ for\ VisePanda (in target 'VisePanda' from project 'VisePanda')
 EmitSwiftModule normal x86_64 (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 Compiling\ TodayView.swift,\ AskView.swift,\ TripView.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Today/TodayView.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/AskView.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/TripView.swift (in target 'VisePanda' from project 'VisePanda')
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Today/TodayView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/AskView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/TripView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 Compiling\ BrandHeader.swift,\ PreviewStatusBanner.swift,\ CapabilityCard.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Components/BrandHeader.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Components/CapabilityCard.swift (in target 'VisePanda' from project 'VisePanda')
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Components/BrandHeader.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Components/CapabilityCard.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 Compiling\ NativeAskModels.swift,\ NativeAskStore.swift,\ NativeTripModels.swift,\ NativeTripStore.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/NativeTripModels.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift (in target 'VisePanda' from project 'VisePanda')
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/NativeTripModels.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 Compiling\ NativeTripView.swift,\ NativeSession.swift,\ VisePandaApp.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/App/NativeSession.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/App/VisePandaApp.swift (in target 'VisePanda' from project 'VisePanda')
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/App/NativeSession.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/App/VisePandaApp.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 Compiling\ ExploreView.swift,\ ProfileView.swift,\ GeneratedAssetSymbols.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Explore/ExploreView.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Profile/ProfileView.swift /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Explore/ExploreView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Profile/ProfileView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 Compiling\ NativeKnowledgeModels.swift,\ NativeKnowledgeStore.swift,\ NativeKnowledgeView.swift,\ NativeAskView.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeStore.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift (in target 'VisePanda' from project 'VisePanda')
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeStore.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/ModuleCache.noindex/SwiftUI-4J722DO7N989I89GB3CSJGDRS.pcm
 
@@ -588,24 +588,24 @@ SwiftEmitModule normal arm64 Emitting\ module\ for\ VisePanda (in target 'VisePa
 
 EmitSwiftModule normal arm64 (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 Compiling\ NativeKnowledgeModels.swift,\ NativeKnowledgeStore.swift,\ NativeKnowledgeView.swift,\ NativeAskView.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeStore.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift (in target 'VisePanda' from project 'VisePanda')
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeStore.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftDriverJobDiscovery normal x86_64 Emitting module for VisePanda (in target 'VisePanda' from project 'VisePanda')
 
@@ -623,15 +623,15 @@ SwiftCompile normal arm64 Compiling\ AppRoute.swift,\ Capability.swift,\ VisePan
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Navigation/AppRoute.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Navigation/Capability.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/DesignSystem/VisePandaTheme.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftMergeGeneratedHeaders /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/VisePanda-Swift.h /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-Swift.h /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-Swift.h (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
@@ -680,33 +680,33 @@ ProcessInfoPlistFile /Users/jtcao/Library/Caches/visepanda/question-staging-2026
 SwiftCompile normal arm64 Compiling\ NativeAskModels.swift,\ NativeAskStore.swift,\ NativeTripModels.swift,\ NativeTripStore.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/NativeTripModels.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift (in target 'VisePanda' from project 'VisePanda')
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/NativeTripModels.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 Compiling\ TodayView.swift,\ AskView.swift,\ TripView.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Today/TodayView.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/AskView.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/TripView.swift (in target 'VisePanda' from project 'VisePanda')
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Today/TodayView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Ask/AskView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/TripView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftDriverJobDiscovery normal x86_64 Compiling BrandHeader.swift, PreviewStatusBanner.swift, CapabilityCard.swift (in target 'VisePanda' from project 'VisePanda')
 
@@ -714,29 +714,29 @@ SwiftCompile normal arm64 Compiling\ AppSettings.swift,\ AppShellView.swift,\ Ap
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/App/AppSettings.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/App/AppShellView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Navigation/AppTab.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 Compiling\ ExploreView.swift,\ ProfileView.swift,\ GeneratedAssetSymbols.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Explore/ExploreView.swift /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Profile/ProfileView.swift /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Explore/ExploreView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Profile/ProfileView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftDriverJobDiscovery normal x86_64 Compiling ExploreView.swift, ProfileView.swift, GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
 
@@ -744,15 +744,15 @@ SwiftCompile normal arm64 Compiling\ NativeTripView.swift,\ NativeSession.swift,
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/App/NativeSession.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/App/VisePandaApp.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftDriverJobDiscovery normal x86_64 Compiling NativeTripView.swift, NativeSession.swift, VisePandaApp.swift (in target 'VisePanda' from project 'VisePanda')
 
@@ -760,15 +760,15 @@ SwiftCompile normal arm64 Compiling\ BrandHeader.swift,\ PreviewStatusBanner.swi
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Components/BrandHeader.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Components/CapabilityCard.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftDriverJobDiscovery normal x86_64 Compiling NativeKnowledgeModels.swift, NativeKnowledgeStore.swift, NativeKnowledgeView.swift, NativeAskView.swift (in target 'VisePanda' from project 'VisePanda')
 
@@ -776,15 +776,15 @@ SwiftCompile normal x86_64 Compiling\ AppRoute.swift,\ Capability.swift,\ VisePa
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Navigation/AppRoute.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Navigation/Capability.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/DesignSystem/VisePandaTheme.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftDriverJobDiscovery normal arm64 Compiling ExploreView.swift, ProfileView.swift, GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
 
@@ -792,15 +792,15 @@ SwiftCompile normal x86_64 Compiling\ AppSettings.swift,\ AppShellView.swift,\ A
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/App/AppSettings.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/App/AppShellView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftCompile normal x86_64 /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda/VisePanda/Navigation/AppTab.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
 
 SwiftDriverJobDiscovery normal arm64 Compiling AppRoute.swift, Capability.swift, VisePandaTheme.swift (in target 'VisePanda' from project 'VisePanda')
 
@@ -881,23 +881,23 @@ AppIntentsSSUTraining (in target 'VisePanda' from project 'VisePanda')
 
 CodeSign /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
     Signing Identity:     "Sign to Run Locally"
-    
+
     /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib
 
 CodeSign /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Products/Debug-iphonesimulator/VisePanda.app/__preview.dylib (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
     Signing Identity:     "Sign to Run Locally"
-    
+
     /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Products/Debug-iphonesimulator/VisePanda.app/__preview.dylib
 
 CodeSign /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Products/Debug-iphonesimulator/VisePanda.app (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/ios/VisePanda
-    
+
     Signing Identity:     "Sign to Run Locally"
-    
+
     /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Products/Debug-iphonesimulator/VisePanda.app
 
 RegisterExecutionPolicyException /Users/jtcao/Library/Caches/visepanda/question-staging-20260913/build/Build/Products/Debug-iphonesimulator/VisePanda.app (in target 'VisePanda' from project 'VisePanda')
