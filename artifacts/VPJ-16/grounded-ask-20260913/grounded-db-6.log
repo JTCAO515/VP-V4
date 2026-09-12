@@ -1,0 +1,19 @@
+▶ grounded Turn: durable scope, private results and historical eligibility
+  ✔ scope participates in exact retry and unsupported legacy admission is denied (1196.59975ms)
+  ✔ leased current input and intent completion persist references, never factual generic output (7224.119291ms)
+  ✔ history rechecks original evidence and cannot silently replace withdrawn support (2738.838958ms)
+  ✔ new conflicting publication suppresses saved factual text without rewriting original outcome (2198.153208ms)
+  ✔ additional needs stay partial; missing or disabled knowledge is not a complete answer (3103.766209ms)
+  ✔ clarification continuation retains task and scope without sending earlier turns (3679.67575ms)
+  ✔ four-turn cap preserves exact retries but rejects new clarification work (3975.57075ms)
+  ✔ publication wait cannot commit after the lease expires (2970.963625ms)
+  ✔ ordinary roles cannot execute resolver or mutate results; revoked consent fences reads (3314.683959ms)
+✔ grounded Turn: durable scope, private results and historical eligibility (108690.953ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 108864.688959

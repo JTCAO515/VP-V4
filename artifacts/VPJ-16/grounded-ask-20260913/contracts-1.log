@@ -1,0 +1,1571 @@
+
+> vp-v4@0.0.0 test:contract /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage
+> node scripts/run-ci-suite.mjs contract
+
+TAP version 13
+# Subtest: V4-31 records every Demo action, eight dimensions, unrun evidence, and a non-release verdict
+ok 1 - V4-31 records every Demo action, eight dimensions, unrun evidence, and a non-release verdict
+  ---
+  duration_ms: 12.098417
+  type: 'test'
+  ...
+# Subtest: AI-37 confirms a fully redacted user segment once and emits a receipt-backed pending Proposal
+ok 2 - AI-37 confirms a fully redacted user segment once and emits a receipt-backed pending Proposal
+  ---
+  duration_ms: 3.141417
+  type: 'test'
+  ...
+# Subtest: AI-37 replays an identical import but rejects redaction failures and conflicting repeats
+ok 3 - AI-37 replays an identical import but rejects redaction failures and conflicting repeats
+  ---
+  duration_ms: 0.194458
+  type: 'test'
+  ...
+# Subtest: LAUNCH-08 resumes canonical replay from Last-Event-ID or the matching sequence query
+ok 4 - LAUNCH-08 resumes canonical replay from Last-Event-ID or the matching sequence query
+  ---
+  duration_ms: 9.09125
+  type: 'test'
+  ...
+# Subtest: LAUNCH-08 emits ordered content-free SSE events then a bounded degraded heartbeat
+ok 5 - LAUNCH-08 emits ordered content-free SSE events then a bounded degraded heartbeat
+  ---
+  duration_ms: 3.435834
+  type: 'test'
+  ...
+# Subtest: LAUNCH-08 terminal replay closes without a heartbeat and rejects invalid canonical history
+ok 6 - LAUNCH-08 terminal replay closes without a heartbeat and rejects invalid canonical history
+  ---
+  duration_ms: 0.327375
+  type: 'test'
+  ...
+# Subtest: LAUNCH-08 rejects a replay that moves a non-terminal phase backwards
+ok 7 - LAUNCH-08 rejects a replay that moves a non-terminal phase backwards
+  ---
+  duration_ms: 0.1585
+  type: 'test'
+  ...
+# Subtest: assembles eligible projections in stable source order and omits cross-actor context
+ok 8 - assembles eligible projections in stable source order and omits cross-actor context
+  ---
+  duration_ms: 6.019
+  type: 'test'
+  ...
+# Subtest: rejects raw artifacts and raw tool payloads while delimitating a safe tool projection
+ok 9 - rejects raw artifacts and raw tool payloads while delimitating a safe tool projection
+  ---
+  duration_ms: 1.182708
+  type: 'test'
+  ...
+# Subtest: prevents a tool projection from closing its own untrusted-data boundary
+ok 10 - prevents a tool projection from closing its own untrusted-data boundary
+  ---
+  duration_ms: 0.182333
+  type: 'test'
+  ...
+# Subtest: requires every user-domain source to carry the requesting actor scope
+ok 11 - requires every user-domain source to carry the requesting actor scope
+  ---
+  duration_ms: 0.539
+  type: 'test'
+  ...
+# Subtest: rejects an injected tool reference instead of rendering it as an attribute
+ok 12 - rejects an injected tool reference instead of rendering it as an attribute
+  ---
+  duration_ms: 0.835041
+  type: 'test'
+  ...
+# Subtest: derives the budget from actual text length
+ok 13 - derives the budget from actual text length
+  ---
+  duration_ms: 6.139667
+  type: 'test'
+  ...
+# Subtest: counts escaped tool output and its untrusted-data wrapper against the tool budget
+ok 14 - counts escaped tool output and its untrusted-data wrapper against the tool budget
+  ---
+  duration_ms: 0.231792
+  type: 'test'
+  ...
+# Subtest: fails closed when the complete eligible hard-constraint set exceeds its budget
+ok 15 - fails closed when the complete eligible hard-constraint set exceeds its budget
+  ---
+  duration_ms: 0.101958
+  type: 'test'
+  ...
+# Subtest: fails closed when eligibility filtering removes a required source
+ok 16 - fails closed when eligibility filtering removes a required source
+  ---
+  duration_ms: 0.088708
+  type: 'test'
+  ...
+# Subtest: keeps selected source token counts within each policy budget
+ok 17 - keeps selected source token counts within each policy budget
+  ---
+  duration_ms: 0.163125
+  type: 'test'
+  ...
+# Subtest: counts separators between candidates against each final section budget
+ok 18 - counts separators between candidates against each final section budget
+  ---
+  duration_ms: 0.364958
+  type: 'test'
+  ...
+# Subtest: creates a high-risk trip plan with stable required boundaries and no tools
+ok 19 - creates a high-risk trip plan with stable required boundaries and no tools
+  ---
+  duration_ms: 0.939292
+  type: 'test'
+  ...
+# Subtest: rejects a task profile outside the frozen ContextPlan contract
+ok 20 - rejects a task profile outside the frozen ContextPlan contract
+  ---
+  duration_ms: 0.198291
+  type: 'test'
+  ...
+# Subtest: invalid and pre-cancelled attempts never reserve or invoke
+ok 21 - invalid and pre-cancelled attempts never reserve or invoke
+  ---
+  duration_ms: 14.393666
+  type: 'test'
+  ...
+# Subtest: uncertain reserve or dispatch acknowledgments fail closed without releasing possible spend
+ok 22 - uncertain reserve or dispatch acknowledgments fail closed without releasing possible spend
+  ---
+  duration_ms: 1.420625
+  type: 'test'
+  ...
+# Subtest: transport failures and invalid costs retain uncertainty without exposing raw errors
+ok 23 - transport failures and invalid costs retain uncertainty without exposing raw errors
+  ---
+  duration_ms: 0.530667
+  type: 'test'
+  ...
+# Subtest: cancel while settlement commits suppresses output without reverting accounted cost
+ok 24 - cancel while settlement commits suppresses output without reverting accounted cost
+  ---
+  duration_ms: 0.852458
+  type: 'test'
+  ...
+# Subtest: cancel or timeout while unknown-cost pending commits never returns late output
+ok 25 - cancel or timeout while unknown-cost pending commits never returns late output
+  ---
+  duration_ms: 32.4385
+  type: 'test'
+  ...
+# Subtest: Supabase RPC adapter sends only named budget parameters through an injected client
+ok 26 - Supabase RPC adapter sends only named budget parameters through an injected client
+  ---
+  duration_ms: 24.667834
+  type: 'test'
+  ...
+# Subtest: Supabase RPC errors redact provider response details
+ok 27 - Supabase RPC errors redact provider response details
+  ---
+  duration_ms: 2.556333
+  type: 'test'
+  ...
+# Subtest: stop consumer uses scoped server RPC and redacts uncertain acknowledgments
+ok 28 - stop consumer uses scoped server RPC and redacts uncertain acknowledgments
+  ---
+  duration_ms: 2.05575
+  type: 'test'
+  ...
+# Subtest: freezes only validated immutable pending proposal revisions
+ok 29 - freezes only validated immutable pending proposal revisions
+  ---
+  duration_ms: 7.227958
+  type: 'test'
+  ...
+# Subtest: partial selection creates a child revision and preserves the parent
+ok 30 - partial selection creates a child revision and preserves the parent
+  ---
+  duration_ms: 0.293416
+  type: 'test'
+  ...
+# Subtest: rejects arbitrary JSON Patch-like changes before a proposal can become pending
+ok 31 - rejects arbitrary JSON Patch-like changes before a proposal can become pending
+  ---
+  duration_ms: 0.079416
+  type: 'test'
+  ...
+# Subtest: rejects absent, expired, or non-receipt grounded evidence
+ok 32 - rejects absent, expired, or non-receipt grounded evidence
+  ---
+  duration_ms: 0.166875
+  type: 'test'
+  ...
+# Subtest: requires typed execution values and propagates claim evidence into cards
+ok 33 - requires typed execution values and propagates claim evidence into cards
+  ---
+  duration_ms: 0.184625
+  type: 'test'
+  ...
+# Subtest: records the fixed consumer boundary without provider-owned types
+ok 34 - records the fixed consumer boundary without provider-owned types
+  ---
+  duration_ms: 0.64525
+  type: 'test'
+  ...
+# Subtest: freezes exactly the 22 registered failure codes with unique metric labels
+ok 35 - freezes exactly the 22 registered failure codes with unique metric labels
+  ---
+  duration_ms: 0.409417
+  type: 'test'
+  ...
+# Subtest: never retries policy or safety blocks through another provider
+ok 36 - never retries policy or safety blocks through another provider
+  ---
+  duration_ms: 0.07825
+  type: 'test'
+  ...
+# Subtest: has a non-empty snapshot for every code in all five locales, including RTL Arabic
+ok 37 - has a non-empty snapshot for every code in all five locales, including RTL Arabic
+  ---
+  duration_ms: 0.232167
+  type: 'test'
+  ...
+# Subtest: AI-28 carries only exact UUIDs into Ask and never creates a Trip write
+ok 38 - AI-28 carries only exact UUIDs into Ask and never creates a Trip write
+  ---
+  duration_ms: 0.8945
+  type: 'test'
+  ...
+# Subtest: AI-38 exposes confirmed user rail times only with an official recheck action
+ok 39 - AI-38 exposes confirmed user rail times only with an official recheck action
+  ---
+  duration_ms: 2.027625
+  type: 'test'
+  ...
+# Subtest: AI-38 never invents a schedule when no confirmed artifact exists
+ok 40 - AI-38 never invents a schedule when no confirmed artifact exists
+  ---
+  duration_ms: 0.086583
+  type: 'test'
+  ...
+# Subtest: returns a typed fresh weather observation only with an allow receipt
+ok 41 - returns a typed fresh weather observation only with an allow receipt
+  ---
+  duration_ms: 5.435792
+  type: 'test'
+  ...
+# Subtest: fails closed before a denied or expired observation can become a claim
+ok 42 - fails closed before a denied or expired observation can become a claim
+  ---
+  duration_ms: 0.438042
+  type: 'test'
+  ...
+# Subtest: AI-36 projects only typed fresh weather, AQ, and alert values with its receipt attribution
+ok 43 - AI-36 projects only typed fresh weather, AQ, and alert values with its receipt attribution
+  ---
+  duration_ms: 5.562416
+  type: 'test'
+  ...
+# Subtest: AI-36 fails closed for disabled, denied, expired, or high-risk free-form weather input
+ok 44 - AI-36 fails closed for disabled, denied, expired, or high-risk free-form weather input
+  ---
+  duration_ms: 0.265
+  type: 'test'
+  ...
+# Subtest: RL-06 2/2 rejects provider and raw-payload keys before a weather result exists
+ok 45 - RL-06 2/2 rejects provider and raw-payload keys before a weather result exists
+  ---
+  duration_ms: 0.088
+  type: 'test'
+  ...
+# Subtest: JSON and Markdown preserve planned Chinese and live modes as NOT_RUN
+ok 46 - JSON and Markdown preserve planned Chinese and live modes as NOT_RUN
+  ---
+  duration_ms: 24.562375
+  type: 'test'
+  ...
+# Subtest: report projection drops arbitrary payloads, raw assertions and untrusted metadata
+ok 47 - report projection drops arbitrary payloads, raw assertions and untrusted metadata
+  ---
+  duration_ms: 2.305125
+  type: 'test'
+  ...
+# Subtest: LAUNCH-04 keeps only exact internal private deep links after sign-in
+ok 48 - LAUNCH-04 keeps only exact internal private deep links after sign-in
+  ---
+  duration_ms: 7.058792
+  type: 'test'
+  ...
+# Subtest: LAUNCH-04 private data pages invoke the server session guard before rendering
+ok 49 - LAUNCH-04 private data pages invoke the server session guard before rendering
+  ---
+  duration_ms: 1.286417
+  type: 'test'
+  ...
+# Subtest: SDK verifies the signed ordinary user JWT and binds the identical JWT to from/rpc
+ok 50 - SDK verifies the signed ordinary user JWT and binds the identical JWT to from/rpc
+  ---
+  duration_ms: 112.294875
+  type: 'test'
+  ...
+# Subtest: verified JWT does not open native data operations without mobile epoch authority
+ok 51 - verified JWT does not open native data operations without mobile epoch authority
+  ---
+  duration_ms: 175.620458
+  type: 'test'
+  ...
+# Subtest: cookie-only Web authentication and existing data adapter behavior remain available
+ok 52 - cookie-only Web authentication and existing data adapter behavior remain available
+  ---
+  duration_ms: 72.159708
+  type: 'test'
+  ...
+# Subtest: Web mutation guard never exempts Bearer, missing Origin or hostile Origin
+ok 53 - Web mutation guard never exempts Bearer, missing Origin or hostile Origin
+  ---
+  duration_ms: 0.928625
+  type: 'test'
+  ...
+# Subtest: Web cookie refresh still queues writes for applyCookies through the shared adapter
+ok 54 - Web cookie refresh still queues writes for applyCookies through the shared adapter
+  ---
+  duration_ms: 33.158833
+  type: 'test'
+  ...
+# Subtest: native API is unavailable without explicit local configuration
+ok 55 - native API is unavailable without explicit local configuration
+  ---
+  duration_ms: 127.354333
+  type: 'test'
+  ...
+# Subtest: native cookie and Origin ambiguity fails before credentials are accessed
+ok 56 - native cookie and Origin ambiguity fails before credentials are accessed
+  ---
+  duration_ms: 0.879709
+  type: 'test'
+  ...
+# Subtest: native requests reject unknown fields and malformed attempts
+ok 57 - native requests reject unknown fields and malformed attempts
+  ---
+  duration_ms: 12.533042
+  type: 'test'
+  ...
+# Subtest: native request cancellation stops an unfinished body without clearing the session
+ok 58 - native request cancellation stops an unfinished body without clearing the session
+  ---
+  duration_ms: 144.387709
+  type: 'test'
+  ...
+# Subtest: shared native deadline bounds hostile body/cancel and prevents late work
+ok 59 - shared native deadline bounds hostile body/cancel and prevents late work
+  ---
+  duration_ms: 24.046041
+  type: 'test'
+  ...
+# Subtest: byte cap rejects before unbounded buffering while old UTF16 validation remains
+ok 60 - byte cap rejects before unbounded buffering while old UTF16 validation remains
+  ---
+  duration_ms: 1.793666
+  type: 'test'
+  ...
+# Subtest: late token result after cancellation cannot continue native authentication
+ok 61 - late token result after cancellation cannot continue native authentication
+  ---
+  duration_ms: 39.574291
+  type: 'test'
+  ...
+# Subtest: late jwks result after cancellation cannot continue native authentication
+ok 62 - late jwks result after cancellation cannot continue native authentication
+  ---
+  duration_ms: 26.44925
+  type: 'test'
+  ...
+# Subtest: late prepare result after cancellation cannot continue native authentication
+ok 63 - late prepare result after cancellation cannot continue native authentication
+  ---
+  duration_ms: 24.42375
+  type: 'test'
+  ...
+# Subtest: unknown login acknowledgement retains the original session and attempt for exact retry
+ok 64 - unknown login acknowledgement retains the original session and attempt for exact retry
+  ---
+  duration_ms: 88.679083
+  type: 'test'
+  ...
+# Subtest: actual Auth denial remains401 while a rejected transport is503 with no retry
+ok 65 - actual Auth denial remains401 while a rejected transport is503 with no retry
+  ---
+  duration_ms: 31.551292
+  type: 'test'
+  ...
+# Subtest: upstream Auth outages and protocol failures are503 rather than credential denial
+ok 66 - upstream Auth outages and protocol failures are503 rather than credential denial
+  ---
+  duration_ms: 37.316041
+  type: 'test'
+  ...
+# Subtest: claim transport failures are503 while malformed expired and forged JWTs remain401
+ok 67 - claim transport failures are503 while malformed expired and forged JWTs remain401
+  ---
+  duration_ms: 64.001208
+  type: 'test'
+  ...
+# Subtest: Preview Trip uses ordinary JWT with epoch authority and redirect denial
+ok 68 - Preview Trip uses ordinary JWT with epoch authority and redirect denial
+  ---
+  duration_ms: 202.668667
+  type: 'test'
+  ...
+# Subtest: Trip claims outage is503, not a credential-clearing401
+ok 69 - Trip claims outage is503, not a credential-clearing401
+  ---
+  duration_ms: 24.487292
+  type: 'test'
+  ...
+# Subtest: Trip epoch outage is503, not a credential-clearing401
+ok 70 - Trip epoch outage is503, not a credential-clearing401
+  ---
+  duration_ms: 17.332417
+  type: 'test'
+  ...
+# Subtest: Trip read outage is503, not a credential-clearing401
+ok 71 - Trip read outage is503, not a credential-clearing401
+  ---
+  duration_ms: 23.265625
+  type: 'test'
+  ...
+# Subtest: Trip cancellation releases held transport and never creates another operation
+ok 72 - Trip cancellation releases held transport and never creates another operation
+  ---
+  duration_ms: 59.117667
+  type: 'test'
+  ...
+# Subtest: Trip body byte ceiling preserves64k UTF16 input budget and cancels oversized streams
+ok 73 - Trip body byte ceiling preserves64k UTF16 input budget and cancels oversized streams
+  ---
+  duration_ms: 15.407917
+  type: 'test'
+  ...
+# Subtest: AI-51b retires Magic Link and owns one password-login path
+ok 74 - AI-51b retires Magic Link and owns one password-login path
+  ---
+  duration_ms: 1.009334
+  type: 'test'
+  ...
+# Subtest: AI-51b exposes password sign-in/sign-out without signup or recovery
+ok 75 - AI-51b exposes password sign-in/sign-out without signup or recovery
+  ---
+  duration_ms: 0.95825
+  type: 'test'
+  ...
+# Subtest: AI-51b keeps complete login copy in all five locales
+ok 76 - AI-51b keeps complete login copy in all five locales
+  ---
+  duration_ms: 0.14
+  type: 'test'
+  ...
+# Subtest: AI-13a projects one pending title diff with explicit missing provenance
+ok 77 - AI-13a projects one pending title diff with explicit missing provenance
+  ---
+  duration_ms: 3.272791
+  type: 'test'
+  ...
+# Subtest: AI-13a does not project expired, resolved, or malformed pending rows
+ok 78 - AI-13a does not project expired, resolved, or malformed pending rows
+  ---
+  duration_ms: 1.423334
+  type: 'test'
+  ...
+# Subtest: AI-13a exposes only owner-scoped pending Proposal reads and the LAUNCH-11 patch boundary
+ok 79 - AI-13a exposes only owner-scoped pending Proposal reads and the LAUNCH-11 patch boundary
+  ---
+  duration_ms: 3.155292
+  type: 'test'
+  ...
+# Subtest: LAUNCH-11 returns a structured patch only to the owner-scoped pending Proposal reader
+ok 80 - LAUNCH-11 returns a structured patch only to the owner-scoped pending Proposal reader
+  ---
+  duration_ms: 3.271167
+  type: 'test'
+  ...
+# Subtest: AI-51 accepts only bounded confirm inputs and UUID resource identifiers
+ok 81 - AI-51 accepts only bounded confirm inputs and UUID resource identifiers
+  ---
+  duration_ms: 0.594958
+  type: 'test'
+  ...
+# Subtest: AI-51 rejects cross-origin mutations and maps only frozen failures
+ok 82 - AI-51 rejects cross-origin mutations and maps only frozen failures
+  ---
+  duration_ms: 0.422167
+  type: 'test'
+  ...
+# Subtest: V4-10 accepts only an exact non-negative rollback version
+ok 83 - V4-10 accepts only an exact non-negative rollback version
+  ---
+  duration_ms: 0.083292
+  type: 'test'
+  ...
+# Subtest: permits only reviewed current licensed facts
+ok 84 - permits only reviewed current licensed facts
+  ---
+  duration_ms: 2.950208
+  type: 'test'
+  ...
+# Subtest: grounded execution consistently uses its explicit clock while default contract checks use wall time
+ok 85 - grounded execution consistently uses its explicit clock while default contract checks use wall time
+  ---
+  duration_ms: 20.555125
+  type: 'test'
+  ...
+# Subtest: builds an evidence-exact deterministic card from typed execution claims
+ok 86 - builds an evidence-exact deterministic card from typed execution claims
+  ---
+  duration_ms: 7.333
+  type: 'test'
+  ...
+# Subtest: keeps low-risk explanations outside the execution-card channel
+ok 87 - keeps low-risk explanations outside the execution-card channel
+  ---
+  duration_ms: 0.113292
+  type: 'test'
+  ...
+# Subtest: keeps an eligible exact hit ahead of a higher ranked vector-only hit
+ok 88 - keeps an eligible exact hit ahead of a higher ranked vector-only hit
+  ---
+  duration_ms: 10.291916
+  type: 'test'
+  ...
+# Subtest: explicit question binds version, city and language without accepting free text or extra scope
+ok 89 - explicit question binds version, city and language without accepting free text or extra scope
+  ---
+  duration_ms: 1.968208
+  type: 'test'
+  ...
+# Subtest: projects identical reviewed assertions in both languages with every qualifier
+ok 90 - projects identical reviewed assertions in both languages with every qualifier
+  ---
+  duration_ms: 62.580625
+  type: 'test'
+  ...
+# Subtest: keeps reliable partial content and does not count background as required coverage
+ok 91 - keeps reliable partial content and does not count background as required coverage
+  ---
+  duration_ms: 6.41
+  type: 'test'
+  ...
+# Subtest: rejects false refusal or partial that drops available required evidence
+ok 92 - rejects false refusal or partial that drops available required evidence
+  ---
+  duration_ms: 20.362625
+  type: 'test'
+  ...
+# Subtest: rejects model-written prose, qualifiers, outcomes and invented citations
+ok 93 - rejects model-written prose, qualifiers, outcomes and invented citations
+  ---
+  duration_ms: 0.965959
+  type: 'test'
+  ...
+# Subtest: rejects wrong scope, missing qualifiers, duplicate entries and vacuous completeness
+ok 94 - rejects wrong scope, missing qualifiers, duplicate entries and vacuous completeness
+  ---
+  duration_ms: 0.618417
+  type: 'test'
+  ...
+# Subtest: returned text and qualifiers cannot change through later input mutation
+ok 95 - returned text and qualifiers cannot change through later input mutation
+  ---
+  duration_ms: 0.1965
+  type: 'test'
+  ...
+# Subtest: one source-backed pending address assertion fits the existing Ops input union
+ok 96 - one source-backed pending address assertion fits the existing Ops input union
+  ---
+  duration_ms: 1.942834
+  type: 'test'
+  ...
+# Subtest: source declarations cannot inject grants, server hashes, publication or unrelated claim types
+ok 97 - source declarations cannot inject grants, server hashes, publication or unrelated claim types
+  ---
+  duration_ms: 0.388792
+  type: 'test'
+  ...
+# Subtest: closed bounded source/locator/address and both expressions are mandatory
+ok 98 - closed bounded source/locator/address and both expressions are mandatory
+  ---
+  duration_ms: 0.63825
+  type: 'test'
+  ...
+# Subtest: AI-31 preserves missing confidence and rejects arbitrary content
+ok 99 - AI-31 preserves missing confidence and rejects arbitrary content
+  ---
+  duration_ms: 0.800708
+  type: 'test'
+  ...
+# Subtest: AI-31 correction supersedes only a closed synthetic revision
+ok 100 - AI-31 correction supersedes only a closed synthetic revision
+  ---
+  duration_ms: 0.374458
+  type: 'test'
+  ...
+# Subtest: AI-32 REALTIME-00 normalizes tentative and confirmed events as non-terminal
+ok 101 - AI-32 REALTIME-00 normalizes tentative and confirmed events as non-terminal
+  ---
+  duration_ms: 2.116375
+  type: 'test'
+  ...
+# Subtest: AI-32 REALTIME-00 records cancellation as the only disconnect terminal
+ok 102 - AI-32 REALTIME-00 records cancellation as the only disconnect terminal
+  ---
+  duration_ms: 0.268917
+  type: 'test'
+  ...
+# Subtest: AI-32 REALTIME-00 rejects real session creation and expired fixture credentials without exposing a secret
+ok 103 - AI-32 REALTIME-00 rejects real session creation and expired fixture credentials without exposing a secret
+  ---
+  duration_ms: 0.429459
+  type: 'test'
+  ...
+# Subtest: V4-15 creates privacy-safe receipts only for the owner-scoped active memory projection
+ok 104 - V4-15 creates privacy-safe receipts only for the owner-scoped active memory projection
+  ---
+  duration_ms: 7.910417
+  type: 'test'
+  ...
+# Subtest: V4-15 rejects cross-owner consumption and gives active hard constraints precedence
+ok 105 - V4-15 rejects cross-owner consumption and gives active hard constraints precedence
+  ---
+  duration_ms: 0.345333
+  type: 'test'
+  ...
+# Subtest: V4-13 excludes paused, rejected, deleted, and revoked-consent memory from retrieval
+ok 106 - V4-13 excludes paused, rejected, deleted, and revoked-consent memory from retrieval
+  ---
+  duration_ms: 22.146167
+  type: 'test'
+  ...
+# Subtest: V4-13 rejects inferred hard constraints and projects eligible hard constraints first
+ok 107 - V4-13 rejects inferred hard constraints and projects eligible hard constraints first
+  ---
+  duration_ms: 1.406542
+  type: 'test'
+  ...
+# Subtest: V4-13 requires an owner, consent, source receipt, bounded summary, and a valid timestamp
+ok 108 - V4-13 requires an owner, consent, source receipt, bounded summary, and a valid timestamp
+  ---
+  duration_ms: 0.926958
+  type: 'test'
+  ...
+# Subtest: AI-43 rejects unverified condition claims and retains thin HTTP adapters
+ok 109 - AI-43 rejects unverified condition claims and retains thin HTTP adapters
+  ---
+  duration_ms: 14.439625
+  type: 'test'
+  ...
+# Subtest: records DeepSeek candidate lifecycles and only submits the Flash API model id
+ok 110 - records DeepSeek candidate lifecycles and only submits the Flash API model id
+  ---
+  duration_ms: 0.510958
+  type: 'test'
+  ...
+# Subtest: returns a validated strict known result only for the Qwen fixture
+ok 111 - returns a validated strict known result only for the Qwen fixture
+  ---
+  duration_ms: 7.148833
+  type: 'test'
+  ...
+# Subtest: rejects malformed strict output, forbidden data, and unsupported vision before output
+ok 112 - rejects malformed strict output, forbidden data, and unsupported vision before output
+  ---
+  duration_ms: 2.855333
+  type: 'test'
+  ...
+# Subtest: honors an already-aborted signal before producing fixture output
+ok 113 - honors an already-aborted signal before producing fixture output
+  ---
+  duration_ms: 0.472875
+  type: 'test'
+  ...
+# Subtest: fails closed for malformed runtime requests and signals
+ok 114 - fails closed for malformed runtime requests and signals
+  ---
+  duration_ms: 0.297958
+  type: 'test'
+  ...
+# Subtest: identifies the registry-only vision profile as non-fixture
+ok 115 - identifies the registry-only vision profile as non-fixture
+  ---
+  duration_ms: 0.142208
+  type: 'test'
+  ...
+# Subtest: explicit HTTP bindings preserve all three protocol dialects and closed destination evidence
+ok 116 - explicit HTTP bindings preserve all three protocol dialects and closed destination evidence
+  ---
+  duration_ms: 230.601792
+  type: 'test'
+  ...
+# Subtest: provider, exact endpoint and model mismatches fail before credentials or HTTP
+ok 117 - provider, exact endpoint and model mismatches fail before credentials or HTTP
+  ---
+  duration_ms: 1.767
+  type: 'test'
+  ...
+# Subtest: existing C0 policy/budget and C2 policy-endpoint authority remain ahead of HTTP
+ok 118 - existing C0 policy/budget and C2 policy-endpoint authority remain ahead of HTTP
+  ---
+  duration_ms: 20.289959
+  type: 'test'
+  ...
+# Subtest: credential and receipt exceptions are redacted; unavailable preparation sends nothing
+ok 119 - credential and receipt exceptions are redacted; unavailable preparation sends nothing
+  ---
+  duration_ms: 0.869
+  type: 'test'
+  ...
+# Subtest: ignored credential or configured-sink cancellation never causes late HTTP
+ok 120 - ignored credential or configured-sink cancellation never causes late HTTP
+  ---
+  duration_ms: 20.701917
+  type: 'test'
+  ...
+# Subtest: failed post-dispatch sink cancels HTTP and does not emit successful destination evidence
+ok 121 - failed post-dispatch sink cancels HTTP and does not emit successful destination evidence
+  ---
+  duration_ms: 1.80475
+  type: 'test'
+  ...
+# Subtest: bounded transport strips error details, redirects, raw headers and oversized streams
+ok 122 - bounded transport strips error details, redirects, raw headers and oversized streams
+  ---
+  duration_ms: 0.836292
+  type: 'test'
+  ...
+# Subtest: late ignored fetch responses are cancelled after the factory deadline
+ok 123 - late ignored fetch responses are cancelled after the factory deadline
+  ---
+  duration_ms: 11.993333
+  type: 'test'
+  ...
+# Subtest: post-response receipt failure leaves existing durable budget accounting unknown
+ok 124 - post-response receipt failure leaves existing durable budget accounting unknown
+  ---
+  duration_ms: 6.844542
+  type: 'test'
+  ...
+# Subtest: intent C2 sends only current user input after fresh digest-bound authorization
+ok 125 - intent C2 sends only current user input after fresh digest-bound authorization
+  ---
+  duration_ms: 65.93775
+  type: 'test'
+  ...
+# Subtest: history, evidence, recipient mismatch and stale authorization never reach intent transport
+ok 126 - history, evidence, recipient mismatch and stale authorization never reach intent transport
+  ---
+  duration_ms: 0.966333
+  type: 'test'
+  ...
+# Subtest: routing parser rejects prose, invented evidence and false complete coverage
+ok 127 - routing parser rejects prose, invented evidence and false complete coverage
+  ---
+  duration_ms: 0.515209
+  type: 'test'
+  ...
+# Subtest: text response policy stays server-owned and user instructions remain a separate message
+ok 128 - text response policy stays server-owned and user instructions remain a separate message
+  ---
+  duration_ms: 53.497541
+  type: 'test'
+  ...
+# Subtest: qwen: serializes provider-specific HTTP dialect and normalizes usage
+ok 129 - qwen: serializes provider-specific HTTP dialect and normalizes usage
+  ---
+  duration_ms: 0.878291
+  type: 'test'
+  ...
+# Subtest: qwen: JSON object mode reuses the existing closed known/unknown validator
+ok 130 - qwen: JSON object mode reuses the existing closed known/unknown validator
+  ---
+  duration_ms: 4.820333
+  type: 'test'
+  ...
+# Subtest: qwen: tool calls are bounded candidates and require caller argument validation
+ok 131 - qwen: tool calls are bounded candidates and require caller argument validation
+  ---
+  duration_ms: 0.9555
+  type: 'test'
+  ...
+# Subtest: qwen: rejects incomplete finish reasons, missing usage and model mismatches
+ok 132 - qwen: rejects incomplete finish reasons, missing usage and model mismatches
+  ---
+  duration_ms: 3.796833
+  type: 'test'
+  ...
+# Subtest: glm: serializes provider-specific HTTP dialect and normalizes usage
+ok 133 - glm: serializes provider-specific HTTP dialect and normalizes usage
+  ---
+  duration_ms: 1.856834
+  type: 'test'
+  ...
+# Subtest: glm: JSON object mode reuses the existing closed known/unknown validator
+ok 134 - glm: JSON object mode reuses the existing closed known/unknown validator
+  ---
+  duration_ms: 3.316583
+  type: 'test'
+  ...
+# Subtest: glm: tool calls are bounded candidates and require caller argument validation
+ok 135 - glm: tool calls are bounded candidates and require caller argument validation
+  ---
+  duration_ms: 1.703125
+  type: 'test'
+  ...
+# Subtest: glm: rejects incomplete finish reasons, missing usage and model mismatches
+ok 136 - glm: rejects incomplete finish reasons, missing usage and model mismatches
+  ---
+  duration_ms: 1.713125
+  type: 'test'
+  ...
+# Subtest: deepseek: serializes provider-specific HTTP dialect and normalizes usage
+ok 137 - deepseek: serializes provider-specific HTTP dialect and normalizes usage
+  ---
+  duration_ms: 0.403458
+  type: 'test'
+  ...
+# Subtest: deepseek: JSON object mode reuses the existing closed known/unknown validator
+ok 138 - deepseek: JSON object mode reuses the existing closed known/unknown validator
+  ---
+  duration_ms: 2.887
+  type: 'test'
+  ...
+# Subtest: deepseek: tool calls are bounded candidates and require caller argument validation
+ok 139 - deepseek: tool calls are bounded candidates and require caller argument validation
+  ---
+  duration_ms: 2.227167
+  type: 'test'
+  ...
+# Subtest: deepseek: rejects incomplete finish reasons, missing usage and model mismatches
+ok 140 - deepseek: rejects incomplete finish reasons, missing usage and model mismatches
+  ---
+  duration_ms: 2.768208
+  type: 'test'
+  ...
+# Subtest: unknown optional billing dimensions stay unknown; inconsistent cache usage fails closed
+ok 141 - unknown optional billing dimensions stay unknown; inconsistent cache usage fails closed
+  ---
+  duration_ms: 1.006958
+  type: 'test'
+  ...
+# Subtest: GLM preserves its native thinking default instead of sending the rejected disable flag
+ok 142 - GLM preserves its native thinking default instead of sending the rejected disable flag
+  ---
+  duration_ms: 0.3045
+  type: 'test'
+  ...
+# Subtest: bounded Qwen task thinking caps complete output and never exposes reasoning
+ok 143 - bounded Qwen task thinking caps complete output and never exposes reasoning
+  ---
+  duration_ms: 1.648583
+  type: 'test'
+  ...
+# Subtest: thinking experiment rejects invalid bounds, legacy tasks and other providers before egress
+ok 144 - thinking experiment rejects invalid bounds, legacy tasks and other providers before egress
+  ---
+  duration_ms: 0.144875
+  type: 'test'
+  ...
+# Subtest: routes only synthetic ordinary and strict fixture tasks to their frozen baseline profiles
+ok 145 - routes only synthetic ordinary and strict fixture tasks to their frozen baseline profiles
+  ---
+  duration_ms: 1.83375
+  type: 'test'
+  ...
+# Subtest: fails closed before route selection for policy, safety, data class, region, vision, and malformed input
+ok 146 - fails closed before route selection for policy, safety, data class, region, vision, and malformed input
+  ---
+  duration_ms: 0.776458
+  type: 'test'
+  ...
+# Subtest: rejects raw-content keys at the route and fallback boundaries
+ok 147 - rejects raw-content keys at the route and fallback boundaries
+  ---
+  duration_ms: 0.394042
+  type: 'test'
+  ...
+# Subtest: never falls back after output or across policy, safety, auth, or cancellation terminals
+ok 148 - never falls back after output or across policy, safety, auth, or cancellation terminals
+  ---
+  duration_ms: 5.109
+  type: 'test'
+  ...
+# Subtest: opens a profile circuit after bounded pre-output provider failures and recovers only after cooldown
+ok 149 - opens a profile circuit after bounded pre-output provider failures and recovers only after cooldown
+  ---
+  duration_ms: 19.215792
+  type: 'test'
+  ...
+# Subtest: rejects a circuit cooldown that would exceed the safe clock range without opening state
+ok 150 - rejects a circuit cooldown that would exceed the safe clock range without opening state
+  ---
+  duration_ms: 1.638292
+  type: 'test'
+  ...
+# Subtest: keeps stable prompt metadata separate from untrusted variable descriptors
+ok 151 - keeps stable prompt metadata separate from untrusted variable descriptors
+  ---
+  duration_ms: 1.879791
+  type: 'test'
+  ...
+# Subtest: records every versioned attempt and holds promotion when the returned model or observed version drifts
+ok 152 - records every versioned attempt and holds promotion when the returned model or observed version drifts
+  ---
+  duration_ms: 0.37
+  type: 'test'
+  ...
+# Subtest: rejects raw prompt, reasoning, or unknown attempt fields
+ok 153 - rejects raw prompt, reasoning, or unknown attempt fields
+  ---
+  duration_ms: 0.07775
+  type: 'test'
+  ...
+# Subtest: LAUNCH-14 correlates API, Turn, worker, and provider metadata without accepting caller trace IDs
+ok 154 - LAUNCH-14 correlates API, Turn, worker, and provider metadata without accepting caller trace IDs
+  ---
+  duration_ms: 26.544541
+  type: 'test'
+  ...
+# Subtest: LAUNCH-14 produces a bounded alert decision for synthetic SLO faults only
+ok 155 - LAUNCH-14 produces a bounded alert decision for synthetic SLO faults only
+  ---
+  duration_ms: 0.186
+  type: 'test'
+  ...
+# Subtest: builds an allowlisted completed trace with fixed content-recording booleans and integer cost
+ok 156 - builds an allowlisted completed trace with fixed content-recording booleans and integer cost
+  ---
+  duration_ms: 1.388958
+  type: 'test'
+  ...
+# Subtest: rejects six raw-content keys, invalid prices, and negative counters
+ok 157 - rejects six raw-content keys, invalid prices, and negative counters
+  ---
+  duration_ms: 0.729375
+  type: 'test'
+  ...
+# Subtest: consumer preserves unknown holds without floating-point loss and separates partial from terminal completion
+ok 158 - consumer preserves unknown holds without floating-point loss and separates partial from terminal completion
+  ---
+  duration_ms: 59.538125
+  type: 'test'
+  ...
+# Subtest: unavailable transport or a malformed scope returns no row or raw error
+ok 159 - unavailable transport or a malformed scope returns no row or raw error
+  ---
+  duration_ms: 0.246417
+  type: 'test'
+  ...
+# Subtest: allowlist and reconciliation reject content, invented zeros, duplicated providers and inconsistent joins
+ok 160 - allowlist and reconciliation reject content, invented zeros, duplicated providers and inconsistent joins
+  ---
+  duration_ms: 17.16875
+  type: 'test'
+  ...
+# Subtest: Ops local switch is fail closed and rejects remote or credential-bearing targets
+ok 161 - Ops local switch is fail closed and rejects remote or credential-bearing targets
+  ---
+  duration_ms: 13.077333
+  type: 'test'
+  ...
+# Subtest: Ops input rejects caller-selected authority, publication and invalid review versions
+ok 162 - Ops input rejects caller-selected authority, publication and invalid review versions
+  ---
+  duration_ms: 28.018041
+  type: 'test'
+  ...
+# Subtest: Ops login returns only to the exact private review route
+ok 163 - Ops login returns only to the exact private review route
+  ---
+  duration_ms: 24.060375
+  type: 'test'
+  ...
+# Subtest: Ops staging accepts only the pinned database and owned Preview or explicitly selected staging origin
+ok 164 - Ops staging accepts only the pinned database and owned Preview or explicitly selected staging origin
+  ---
+  duration_ms: 66.254584
+  type: 'test'
+  ...
+# Subtest: Ops local flags cannot activate a deployed environment or serve as a staging fallback
+ok 165 - Ops local flags cannot activate a deployed environment or serve as a staging fallback
+  ---
+  duration_ms: 3.620416
+  type: 'test'
+  ...
+# Subtest: disabled, bearer, origin and failed auth reject before body reader acquisition
+ok 166 - disabled, bearer, origin and failed auth reject before body reader acquisition
+  ---
+  duration_ms: 34.966708
+  type: 'test'
+  ...
+# Subtest: never-ending body and hostile cancel are bounded; no RPC starts
+ok 167 - never-ending body and hostile cancel are bounded; no RPC starts
+  ---
+  duration_ms: 26.036708
+  type: 'test'
+  ...
+# Subtest: late auth resolution after timeout/abort cannot acquire body or dispatch RPC
+ok 168 - late auth resolution after timeout/abort cannot acquire body or dispatch RPC
+  ---
+  duration_ms: 54.121625
+  type: 'test'
+  ...
+# Subtest: one shared deadline covers auth plus body; dispatched hung RPC is acknowledgement unknown
+not ok 169 - one shared deadline covers auth plus body; dispatched hung RPC is acknowledgement unknown
+  ---
+  duration_ms: 62.153292
+  type: 'test'
+  location: '/Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/contract/ops/request-deadline.test.mjs:36:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + 'OPS_UNAVAILABLE'
+    - 'OPS_ACK_UNKNOWN'
+           ^
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'OPS_ACK_UNKNOWN'
+  actual: 'OPS_UNAVAILABLE'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///Users/jtcao/Documents/VP-V4-S2-Claim-Coverage/tests/contract/ops/request-deadline.test.mjs:41:9)
+    async Test.run (node:internal/test_runner/test:1404:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+  ...
+# Subtest: lifetime prevents delayed fetch/refresh work even if its dependency ignores abort
+ok 170 - lifetime prevents delayed fetch/refresh work even if its dependency ignores abort
+  ---
+  duration_ms: 41.423333
+  type: 'test'
+  ...
+# Subtest: lost acknowledgement replays exact input once; actor changes and stale completions cannot replay
+ok 171 - lost acknowledgement replays exact input once; actor changes and stale completions cannot replay
+  ---
+  duration_ms: 36.7805
+  type: 'test'
+  ...
+# Subtest: credential actor assertion rejects Cookie-switch drift before reading body
+ok 172 - credential actor assertion rejects Cookie-switch drift before reading body
+  ---
+  duration_ms: 7.513375
+  type: 'test'
+  ...
+# Subtest: creates an immutable allow receipt only for one registered field-purpose-region-action grant
+ok 173 - creates an immutable allow receipt only for one registered field-purpose-region-action grant
+  ---
+  duration_ms: 4.217167
+  type: 'test'
+  ...
+# Subtest: does not form an allowlist cartesian product across grants
+ok 174 - does not form an allowlist cartesian product across grants
+  ---
+  duration_ms: 0.167959
+  type: 'test'
+  ...
+# Subtest: enforces derivative, redistribution, and durable-retention grants separately from an atomic grant
+ok 175 - enforces derivative, redistribution, and durable-retention grants separately from an atomic grant
+  ---
+  duration_ms: 0.5265
+  type: 'test'
+  ...
+# Subtest: revokes a registered policy so the exact prior request is denied after its cascade plan
+ok 176 - revokes a registered policy so the exact prior request is denied after its cascade plan
+  ---
+  duration_ms: 0.212834
+  type: 'test'
+  ...
+# Subtest: V4-17 freezes an all-data privacy export request into a closed receipt shape
+ok 177 - V4-17 freezes an all-data privacy export request into a closed receipt shape
+  ---
+  duration_ms: 1.311542
+  type: 'test'
+  ...
+# Subtest: V4-17 rejects partial, reordered, or unknown privacy scopes
+ok 178 - V4-17 rejects partial, reordered, or unknown privacy scopes
+  ---
+  duration_ms: 0.424375
+  type: 'test'
+  ...
+# Subtest: V4-17 fails closed for malformed privacy request input
+ok 179 - V4-17 fails closed for malformed privacy request input
+  ---
+  duration_ms: 0.086417
+  type: 'test'
+  ...
+# Subtest: existing pairing JSON -> bilingual blind package -> fixture feedback import -> same-version JSON/Markdown
+ok 180 - existing pairing JSON -> bilingual blind package -> fixture feedback import -> same-version JSON/Markdown
+  ---
+  duration_ms: 1928.082958
+  type: 'test'
+  ...
+# Subtest: CLI rejects incorrect case/version/source without publishing a replacement report
+ok 181 - CLI rejects incorrect case/version/source without publishing a replacement report
+  ---
+  duration_ms: 770.439459
+  type: 'test'
+  ...
+# Subtest: CLI rejects cumulative state overflow before replacing any existing review file
+ok 182 - CLI rejects cumulative state overflow before replacing any existing review file
+  ---
+  duration_ms: 1119.427875
+  type: 'test'
+  ...
+# Subtest: V4-20 creates a pending delay proposal without changing the Trip
+ok 183 - V4-20 creates a pending delay proposal without changing the Trip
+  ---
+  duration_ms: 1.13175
+  type: 'test'
+  ...
+# Subtest: V4-20 requests a recheck when disruption evidence has expired
+ok 184 - V4-20 requests a recheck when disruption evidence has expired
+  ---
+  duration_ms: 0.087
+  type: 'test'
+  ...
+# Subtest: V4-20 records user acceptance without writing the Trip
+ok 185 - V4-20 records user acceptance without writing the Trip
+  ---
+  duration_ms: 0.146666
+  type: 'test'
+  ...
+# Subtest: V4-20 records user rejection without writing the Trip
+ok 186 - V4-20 records user rejection without writing the Trip
+  ---
+  duration_ms: 2.323208
+  type: 'test'
+  ...
+# Subtest: V4-20 prevents acceptance after the Trip version has changed
+ok 187 - V4-20 prevents acceptance after the Trip version has changed
+  ---
+  duration_ms: 0.102042
+  type: 'test'
+  ...
+# Subtest: V4-20 requests a recheck when evidence expires after a proposal is created
+ok 188 - V4-20 requests a recheck when evidence expires after a proposal is created
+  ---
+  duration_ms: 0.075125
+  type: 'test'
+  ...
+# Subtest: V4-20 fails closed for an unknown recovery decision
+ok 189 - V4-20 fails closed for an unknown recovery decision
+  ---
+  duration_ms: 0.065959
+  type: 'test'
+  ...
+# Subtest: V4-20 fails closed for a forged recovery proposal
+ok 190 - V4-20 fails closed for a forged recovery proposal
+  ---
+  duration_ms: 0.059208
+  type: 'test'
+  ...
+# Subtest: V4-20 fails closed without current delay or closure evidence
+ok 191 - V4-20 fails closed without current delay or closure evidence
+  ---
+  duration_ms: 0.068084
+  type: 'test'
+  ...
+# Subtest: V4-20 accepts a closure proposal but rejects malformed Trip or evidence
+ok 192 - V4-20 accepts a closure proposal but rejects malformed Trip or evidence
+  ---
+  duration_ms: 0.124125
+  type: 'test'
+  ...
+# Subtest: V4-20 fails closed for unknown or future disruption evidence
+ok 193 - V4-20 fails closed for unknown or future disruption evidence
+  ---
+  duration_ms: 0.08375
+  type: 'test'
+  ...
+# Subtest: V4-20 fails closed instead of throwing for malformed runtime proposal input
+ok 194 - V4-20 fails closed instead of throwing for malformed runtime proposal input
+  ---
+  duration_ms: 0.067667
+  type: 'test'
+  ...
+# Subtest: V4-20 requests a recheck when disruption evidence expires at evaluation time
+ok 195 - V4-20 requests a recheck when disruption evidence expires at evaluation time
+  ---
+  duration_ms: 0.048
+  type: 'test'
+  ...
+# Subtest: V4-20 fails closed instead of throwing for malformed recovery decisions
+ok 196 - V4-20 fails closed instead of throwing for malformed recovery decisions
+  ---
+  duration_ms: 0.073667
+  type: 'test'
+  ...
+# Subtest: V4-20 rejects timezone-less and calendar-invalid recovery evidence
+ok 197 - V4-20 rejects timezone-less and calendar-invalid recovery evidence
+  ---
+  duration_ms: 0.053916
+  type: 'test'
+  ...
+# Subtest: V4-21 turns queue evidence into a pending recovery Proposal without changing the Trip
+ok 198 - V4-21 turns queue evidence into a pending recovery Proposal without changing the Trip
+  ---
+  duration_ms: 0.091125
+  type: 'test'
+  ...
+# Subtest: V4-21 prioritizes a recorded official channel for high-risk unwell evidence
+ok 199 - V4-21 prioritizes a recorded official channel for high-risk unwell evidence
+  ---
+  duration_ms: 0.096875
+  type: 'test'
+  ...
+# Subtest: V4-21 leaves ordinary unwell recovery as a user-confirmed Proposal
+ok 200 - V4-21 leaves ordinary unwell recovery as a user-confirmed Proposal
+  ---
+  duration_ms: 0.066417
+  type: 'test'
+  ...
+# Subtest: V4-21 fails closed when high-risk unwell evidence lacks a valid official channel
+ok 201 - V4-21 fails closed when high-risk unwell evidence lacks a valid official channel
+  ---
+  duration_ms: 7.6165
+  type: 'test'
+  ...
+# Subtest: V4-21 rejects non-opaque and calendar-invalid official channel records
+ok 202 - V4-21 rejects non-opaque and calendar-invalid official channel records
+  ---
+  duration_ms: 2.311459
+  type: 'test'
+  ...
+# Subtest: V4-21 rejects unwell input through the generic recovery API
+ok 203 - V4-21 rejects unwell input through the generic recovery API
+  ---
+  duration_ms: 0.145542
+  type: 'test'
+  ...
+# Subtest: V4-21 fails closed instead of throwing for malformed safety recovery input
+ok 204 - V4-21 fails closed instead of throwing for malformed safety recovery input
+  ---
+  duration_ms: 0.090042
+  type: 'test'
+  ...
+# Subtest: V4-18 makes one eligible fact the deterministic NextAction and returns nine closed checks
+ok 205 - V4-18 makes one eligible fact the deterministic NextAction and returns nine closed checks
+  ---
+  duration_ms: 14.449125
+  type: 'test'
+  ...
+# Subtest: V4-18 fails closed when the one fact is not eligible
+ok 206 - V4-18 fails closed when the one fact is not eligible
+  ---
+  duration_ms: 0.144958
+  type: 'test'
+  ...
+# Subtest: V4-18 fails closed for an unregistered check kind or empty Fact identity
+ok 207 - V4-18 fails closed for an unregistered check kind or empty Fact identity
+  ---
+  duration_ms: 0.092125
+  type: 'test'
+  ...
+# Subtest: V4-18 fails closed when the current Trip identity or timestamp is invalid
+ok 208 - V4-18 fails closed when the current Trip identity or timestamp is invalid
+  ---
+  duration_ms: 0.082416
+  type: 'test'
+  ...
+# Subtest: V4-18 fails closed for malformed runtime input
+ok 209 - V4-18 fails closed for malformed runtime input
+  ---
+  duration_ms: 0.105417
+  type: 'test'
+  ...
+# Subtest: V4-18 rejects timezone-less or calendar-invalid Fact expiry
+ok 210 - V4-18 rejects timezone-less or calendar-invalid Fact expiry
+  ---
+  duration_ms: 0.070625
+  type: 'test'
+  ...
+# Subtest: V4-18 rejects forged Fact eligibility fields
+ok 211 - V4-18 rejects forged Fact eligibility fields
+  ---
+  duration_ms: 0.061917
+  type: 'test'
+  ...
+# Subtest: V4-19 preserves observation timestamps and never presents a cached observation as live
+ok 212 - V4-19 preserves observation timestamps and never presents a cached observation as live
+  ---
+  duration_ms: 4.435125
+  type: 'test'
+  ...
+# Subtest: V4-19 marks expired cache stale and missing/provider-failed observations unavailable with recheck
+ok 213 - V4-19 marks expired cache stale and missing/provider-failed observations unavailable with recheck
+  ---
+  duration_ms: 0.610708
+  type: 'test'
+  ...
+# Subtest: V4-19 rejects malformed timestamps and unregistered observation kinds
+ok 214 - V4-19 rejects malformed timestamps and unregistered observation kinds
+  ---
+  duration_ms: 0.239
+  type: 'test'
+  ...
+# Subtest: V4-19 rejects timezone-less or calendar-invalid timestamps and malformed input
+ok 215 - V4-19 rejects timezone-less or calendar-invalid timestamps and malformed input
+  ---
+  duration_ms: 0.184959
+  type: 'test'
+  ...
+# Subtest: executes only an allowlisted policy-valid intent and returns no raw output
+ok 216 - executes only an allowlisted policy-valid intent and returns no raw output
+  ---
+  duration_ms: 2.779708
+  type: 'test'
+  ...
+# Subtest: rejects unknown, feature-disabled, license-invalid, and sensitive active intent data before execution
+ok 217 - rejects unknown, feature-disabled, license-invalid, and sensitive active intent data before execution
+  ---
+  duration_ms: 0.997792
+  type: 'test'
+  ...
+# Subtest: rejects unsafe registration and external/proposal execution until typed persistent capabilities exist
+ok 218 - rejects unsafe registration and external/proposal execution until typed persistent capabilities exist
+  ---
+  duration_ms: 0.333958
+  type: 'test'
+  ...
+# Subtest: requires a non-expired actor/call/source-bound approval when a registered tool needs approval
+ok 219 - requires a non-expired actor/call/source-bound approval when a registered tool needs approval
+  ---
+  duration_ms: 2.412208
+  type: 'test'
+  ...
+# Subtest: rejects replay, releases definite read failures, times out reads, and counts the final projection budget
+ok 220 - rejects replay, releases definite read failures, times out reads, and counts the final projection budget
+  ---
+  duration_ms: 40.74475
+  type: 'test'
+  ...
+# Subtest: LAUNCH-09 closes the Trip-create input boundary
+ok 221 - LAUNCH-09 closes the Trip-create input boundary
+  ---
+  duration_ms: 1.02625
+  type: 'test'
+  ...
+# Subtest: LAUNCH-09 rejects malformed creates and unbounded Trip-list ranges
+ok 222 - LAUNCH-09 rejects malformed creates and unbounded Trip-list ranges
+  ---
+  duration_ms: 1.789291
+  type: 'test'
+  ...
+# Subtest: LAUNCH-09 keeps Trip creation and recency reads inside the owner adapter
+ok 223 - LAUNCH-09 keeps Trip creation and recency reads inside the owner adapter
+  ---
+  duration_ms: 3.69175
+  type: 'test'
+  ...
+# Subtest: LAUNCH-09 exposes a private, same-origin Trip collection route
+ok 224 - LAUNCH-09 exposes a private, same-origin Trip collection route
+  ---
+  duration_ms: 4.840875
+  type: 'test'
+  ...
+# Subtest: LAUNCH-09 gives signed-in users a Trip entry route without a client table write
+ok 225 - LAUNCH-09 gives signed-in users a Trip entry route without a client table write
+  ---
+  duration_ms: 1.006209
+  type: 'test'
+  ...
+# Subtest: default Web protocol does not call unavailable v2 database seams
+ok 226 - default Web protocol does not call unavailable v2 database seams
+  ---
+  duration_ms: 83.536125
+  type: 'test'
+  ...
+# Subtest: a local draft retains its base and uses only TripPatch operations
+ok 227 - a local draft retains its base and uses only TripPatch operations
+  ---
+  duration_ms: 1.023625
+  type: 'test'
+  ...
+# Subtest: stored snapshot title/version must remain internally coherent
+ok 228 - stored snapshot title/version must remain internally coherent
+  ---
+  duration_ms: 0.403
+  type: 'test'
+  ...
+# Subtest: requires a versioned closed patch operation set
+ok 229 - requires a versioned closed patch operation set
+  ---
+  duration_ms: 18.728917
+  type: 'test'
+  ...
+# Subtest: applies day and item edits deterministically and keeps legacy title/day snapshots readable
+ok 230 - applies day and item edits deterministically and keeps legacy title/day snapshots readable
+  ---
+  duration_ms: 89.995917
+  type: 'test'
+  ...
+# Subtest: fails closed for stale patches, illegal day/item order, duplicate dates, and invalid time windows
+ok 231 - fails closed for stale patches, illegal day/item order, duplicate dates, and invalid time windows
+  ---
+  duration_ms: 0.435208
+  type: 'test'
+  ...
+# Subtest: LAUNCH-11 derives immutable day and item changes from a validated TripPatch
+ok 232 - LAUNCH-11 derives immutable day and item changes from a validated TripPatch
+  ---
+  duration_ms: 41.455792
+  type: 'test'
+  ...
+# Subtest: AI-13c accepts only an exact Proposal UUID
+ok 233 - AI-13c accepts only an exact Proposal UUID
+  ---
+  duration_ms: 0.545917
+  type: 'test'
+  ...
+# Subtest: AI-13c reject route is same-origin POST only
+ok 234 - AI-13c reject route is same-origin POST only
+  ---
+  duration_ms: 0.404291
+  type: 'test'
+  ...
+# Subtest: AI-13c accepts only a configured forwarded public origin and rejects attacker headers
+ok 235 - AI-13c accepts only a configured forwarded public origin and rejects attacker headers
+  ---
+  duration_ms: 0.259458
+  type: 'test'
+  ...
+# Subtest: AI-13c accepts the browser origin when Next normalizes the local request URL
+ok 236 - AI-13c accepts the browser origin when Next normalizes the local request URL
+  ---
+  duration_ms: 4.681667
+  type: 'test'
+  ...
+# Subtest: AI-13b accepts only bounded owner revision input
+ok 237 - AI-13b accepts only bounded owner revision input
+  ---
+  duration_ms: 4.556667
+  type: 'test'
+  ...
+# Subtest: AI-13b revision route is same-origin POST only
+ok 238 - AI-13b revision route is same-origin POST only
+  ---
+  duration_ms: 0.424958
+  type: 'test'
+  ...
+# Subtest: V4-11 keeps canonical and user place identities disjoint
+ok 239 - V4-11 keeps canonical and user place identities disjoint
+  ---
+  duration_ms: 0.383208
+  type: 'test'
+  ...
+# Subtest: V4-12 preserves Trip provenance and degrades missing external links
+ok 240 - V4-12 preserves Trip provenance and degrades missing external links
+  ---
+  duration_ms: 1.766708
+  type: 'test'
+  ...
+# Subtest: applies once and preserves conflict outcomes
+ok 241 - applies once and preserves conflict outcomes
+  ---
+  duration_ms: 0.633917
+  type: 'test'
+  ...
+# Subtest: buffers a fake reviewed fact turn and fails closed otherwise
+ok 242 - buffers a fake reviewed fact turn and fails closed otherwise
+  ---
+  duration_ms: 8.306083
+  type: 'test'
+  ...
+# Subtest: V4-09 stores structured feedback once per actor and never accepts free text
+ok 243 - V4-09 stores structured feedback once per actor and never accepts free text
+  ---
+  duration_ms: 6.306333
+  type: 'test'
+  ...
+# Subtest: V4-09 keeps result types closed and feedback cannot change a Trip or Turn result
+ok 244 - V4-09 keeps result types closed and feedback cannot change a Trip or Turn result
+  ---
+  duration_ms: 0.308792
+  type: 'test'
+  ...
+# Subtest: LAUNCH-05 accepts only bounded five-locale user messages and emits content-free telemetry
+ok 245 - LAUNCH-05 accepts only bounded five-locale user messages and emits content-free telemetry
+  ---
+  duration_ms: 2.075917
+  type: 'test'
+  ...
+# Subtest: LAUNCH-05 validates a closed assistant envelope and rejects raw provider fields
+ok 246 - LAUNCH-05 validates a closed assistant envelope and rejects raw provider fields
+  ---
+  duration_ms: 1.057291
+  type: 'test'
+  ...
+# Subtest: LAUNCH-05 keeps content persistence fail-closed until a retention decision exists
+ok 247 - LAUNCH-05 keeps content persistence fail-closed until a retention decision exists
+  ---
+  duration_ms: 2.722041
+  type: 'test'
+  ...
+# Subtest: LAUNCH-07 claims one accepted turn once and retries an expired lease without changing its owner
+ok 248 - LAUNCH-07 claims one accepted turn once and retries an expired lease without changing its owner
+  ---
+  duration_ms: 3.414208
+  type: 'test'
+  ...
+# Subtest: LAUNCH-07 terminalizes exactly once and quarantines an exhausted provider failure
+ok 249 - LAUNCH-07 terminalizes exactly once and quarantines an exhausted provider failure
+  ---
+  duration_ms: 0.533041
+  type: 'test'
+  ...
+# Subtest: LAUNCH-07 makes validation failure terminal without a Trip write or retry
+ok 250 - LAUNCH-07 makes validation failure terminal without a Trip write or retry
+  ---
+  duration_ms: 0.167792
+  type: 'test'
+  ...
+# Subtest: V4-08 reuses one durable turn for a matching thread idempotency key
+ok 251 - V4-08 reuses one durable turn for a matching thread idempotency key
+  ---
+  duration_ms: 4.230041
+  type: 'test'
+  ...
+# Subtest: V4-08 replays recorded events without starting a second turn and enforces owner scope
+ok 252 - V4-08 replays recorded events without starting a second turn and enforces owner scope
+  ---
+  duration_ms: 1.848333
+  type: 'test'
+  ...
+# Subtest: V4-08 cancellation appends the only terminal event and closes the turn
+ok 253 - V4-08 cancellation appends the only terminal event and closes the turn
+  ---
+  duration_ms: 0.333709
+  type: 'test'
+  ...
+# Subtest: replays ordered buffered events and permits one terminal
+ok 254 - replays ordered buffered events and permits one terminal
+  ---
+  duration_ms: 1.766167
+  type: 'test'
+  ...
+# Subtest: reuses the same key and rejects a changed digest
+ok 255 - reuses the same key and rejects a changed digest
+  ---
+  duration_ms: 0.633667
+  type: 'test'
+  ...
+# Subtest: V4-16 accepts only a complete, bounded explicit Profile preference payload
+ok 256 - V4-16 accepts only a complete, bounded explicit Profile preference payload
+  ---
+  duration_ms: 1.014166
+  type: 'test'
+  ...
+1..256
+# tests 256
+# suites 0
+# pass 255
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 26859.202459
+VP_CI_SUITE_RESULT {"suite":"contract","outcome":"failed","skipped":0,"testFiles":68}
+ ELIFECYCLE  Command failed with exit code 1.

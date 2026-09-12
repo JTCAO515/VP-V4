@@ -1,0 +1,11 @@
+{
+  "scope": "local synthetic model with actual Auth/HTTP/DB/native process restart",
+  "code": 73,
+  "counts": {
+    "http": 0,
+    "finished": 0,
+    "destinationReceipts": 0
+  },
+  "onlyCurrentInput": true,
+  "noPrivateSource": true
+}
