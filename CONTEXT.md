@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 #205/#206: actual Staging39 publication and native bilingual reader/restart/logout observed; read/Ops disabled and WAF restored. PR339 Native CI initially failed shared-header contrast; minimal wordmark-height fix passes original en/zh light/dark Ask/Trip audits locally, fresh CI pending. PR340 reviewed-selection preparation merged657d882; actual Ask grounding remains pending.
+状态：S2 #205/#206: PR339 merged d2360fc after Native34708671075, Quality34708671157 and Preview PASS; final-header knowledge UI2/2 also PASS. Actual Staging publication/read/revoke/native restart/logout evidence retained; Ops/read disabled, WAF restored. PR340 selection renderer merged657d882; actual Ask grounding still pending. Production build CANCELED and all aliases/staging unchanged.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -53,6 +53,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 验证
 
+- PR339/d2360fc delivery: head2cfbb44 Native34708671075 and Quality34708671157/Preview PASS; default CI XCTest33/5skip/0fail,9Swift Testing and8standard UI pass,13opt-in UI skips. Separate final knowledge UI2/2 PASS. Header-fit corrects newly enlarged brand footprint without asset changes/cropping or audit exemptions. Production attempt dpl_9ia35mAVctgu781miJaUxt8js4rC CANCELED, aliases and shared staging preserved. See artifacts/VPJ-16/native-knowledge-20260913/delivery/verification.md.
 - Delivery: PR301/28a2d44 exactHEADafa83a5 independent review0/0; Native34471256512, Quality34471256572, Budget34471256522 and Vercel passed, merged tree matched and post-merge docs passed. Simulator CI now uses complete ad-hoc test signing plus an owned fresh device and explicit boot readiness; assertions/audit types are unchanged. Local full runner21pass/0fail/8API-environment skips; separate real API evidence remains underVPJ-05. Initial Keychain, audit-service, launch and destination-format failures remain recorded.
 - Foundation evidence: PR302/8175e39 exactHEAD5459c01 review0/0 and Quality/Vercel passed. iOS17 CJK comparison hadproduction2FAIL/SwiftUI2FAIL/UIKit2PASS; element captures showed complete text, with duplicated full-screen capture limitations disclosed. No production UI was changed or original audit failure waived.
 - VPJ-05 local same-Trip: real Swift/API persistence, reciprocal Web/iOS Trip IDs, bilingual normal/maximum UI and desktop/390px browser checks passed. Unit92/contract199/evals25/security99/E2E40 and build/static22 passed. Both local identity/Trip integration opt-ins ran:31pass/0fail/10budget-environment skips, aggregate INCOMPLETE. A fixed-sleep identity observation failed first; a controlled backend-PID lock barrier corrected the test and passed. Real27→28 data-preserving upgrade passed. See artifacts/VPJ-05/verification.md; hard locks/external orders and remote/full product acceptance remain unknown/unrun.
@@ -110,7 +111,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Finish PR339 fresh CI/ordinary merge under the production build guard, then #206 first-party grounded Ask: persist scope and explicit intent, use bounded server retrieval and deterministic reviewed blocks, revalidate completion/history. Prefer model intent classification without sending first-party facts to the model; preserve actual user consent and ServiceTask budget boundaries.
+Continue #206 from main d2360fc in /Users/jtcao/Documents/VP-V4-S2-Claim-Coverage on codex/s2-knowledge-intent-20260913. Build a bounded explicitly chosen knowledge-question flow: freeze scope/idempotency, model intent only, server-owned first-party retrieval and deterministic facts, completion/history revalidation and <=30s display lifetime. Keep facts out of model input/history and generic text Ask separate. No new knowledge model-recipient grant is needed for this first-party route; existing user consent and ServiceTask budget remain enforced.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
