@@ -1,6 +1,6 @@
 # 首批原创事实内容草案
 
-2026-09-12；服务 #205/#206。[statements.json](statements.json) 含12条 `knowledge-statement/1` 内容：支付4条、通信2条、铁路3条、重庆景点3条。仅为内容准备，未提交候选、发布、检索或现场验证；无自动发布脚本或运行操作ID。
+2026-09-12；服务 #205/#206。[statements.json](statements.json) 含12条 `knowledge-statement/1` 内容：支付4条、通信2条、铁路3条、重庆景点3条。该文件保留原创编辑输入，不含运行操作ID。2026-09-13已在限定Staging完成12条独立审核发布和PAY-01撤回；最终11published/1revoked，读取开关关闭。真实Web/native读取证据见[Staging记录](../../../../artifacts/VPJ-15/staging-20260912/verification.md)与[原生记录](../../../../artifacts/VPJ-16/native-knowledge-20260913/verification.md)，不代表现场验证、完整Ask覆盖或生产发布。
 
 产品条件、排除项只呈现影响旅客选择的范围与限制，按 assertion ID 数组顺序提供 zh/en 表达；四城复用、未作现场验证及历史材料范围保存在顶层 editorialScopeMetadata 和本说明中。全国指引仅限上海、北京、广州、重庆复用，不代表四城现场可用性。天津地方补充材料未作为本批来源，不据其推断全国规则；不引入固定金额手续费门槛。三峡博物馆条目仅限重庆主馆。免预约条目仍附有效证件条件，避免单独检索后漏掉入馆限制；证件问题另有专门条目。
 

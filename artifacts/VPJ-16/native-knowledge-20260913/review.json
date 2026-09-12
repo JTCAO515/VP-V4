@@ -1,0 +1,8 @@
+{
+  "critical": 0,
+  "important": 0,
+  "resolvedImportant": "Credential refresh must not cancel its own SwiftUI task through session.busy identity",
+  "followup": "Explicit selected-tab activity reaches knowledge task and render guard",
+  "reviewMode": "independent read-only, runtime tests by coordinator",
+  "viewSha256": "cf7eb15895239685f129a72f08e5f53d23d1cf5832d3f64e019819172408ceb1"
+}

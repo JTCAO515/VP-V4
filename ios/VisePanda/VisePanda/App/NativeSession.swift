@@ -141,6 +141,12 @@ final class NativeSession {
         try await dataRequest(prefix: "api/trips/native/v2", path: path, method: method, body: body, queryItems: queryItems)
     }
 
+    /// First-party read only: fixed endpoint and typed scope share the current identity fence.
+    func knowledgeRequest(selection: NativeKnowledgeSelection) async throws -> Data {
+        guard selection.valid else { throw NativeDataError.invalidResponse }
+        return try await dataRequest(prefix: "api/knowledge/native/v1", path: "api/knowledge/native/v1", method: "GET", queryItems: selection.queryItems)
+    }
+
     /// Local Ask shares identity fencing, never credentials, with the Trip consumer.
     func askRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
         guard askMode != .unavailable else { throw NativeDataError.invalidResponse }

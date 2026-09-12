@@ -8,6 +8,8 @@ private struct PreviewPlace: Identifiable {
 }
 
 struct ExploreView: View {
+    var isActive = true
+    @Environment(AppSettings.self) private var settings
     private let places = [
         PreviewPlace(id: "beijing", title: "explore.beijing", subtitle: "explore.beijing.subtitle", imageName: "building.columns"),
         PreviewPlace(id: "shanghai", title: "explore.shanghai", subtitle: "explore.shanghai.subtitle", imageName: "water.waves"),
@@ -15,6 +17,10 @@ struct ExploreView: View {
     ]
 
     var body: some View {
+        if settings.nativeSession.enabled { NativeKnowledgeView(isActive: isActive) } else { previewBody }
+    }
+
+    private var previewBody: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: VPSpacing.section) {
                 BrandHeader()

@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 #205/#206: PR337 merged; actual Staging38→39 backup/restore/upgrade PASS. Twelve real-source bilingual statements published through independent controlled accounts; scoped web/native API reads and revoke PASS. Temporary Ops/read access and WAF host removed; native SwiftUI consumer and Ask grounding remain pending.
+状态：S2 #205/#206: actual Staging39 and12-source publication/read/revoke verified (PR337/338 merged). Native SwiftUI first-party reader implemented; six state tests and bilingual UI2/2 pass, actual Staging en/zh IDs/source/restart/logout observed. Reader/Ops disabled,0active members, WAF restored(version12). Native consumer delivery CI and Ask grounding remain pending.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -48,7 +48,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - Physical VoiceOver, signed Store and selected-object Ask sheet acceptance under #198/#233/#242 remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.
 - VPJ-66 offline preparation is merged and accepted; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.
 - VPJ-05 hard-lock protection is explicitly deferred by JT on 2026-09-11; the compatible DTO and external order status remain unknown. Native27/Trip28 have now been applied within33, and scoped synthetic Staging reciprocal consumers now pass; full#192 and real-user processing remain separate.
-- VPJ-15/#205/#206: actual Staging39 and first-party12-source publication/scoped bilingual reads/revoke passed on1db3578e. Native SwiftUI knowledge reader, Ask coverage and complete city/scenario product acceptance remain unrun; reader currently disabled after cleanup. Evidence: artifacts/VPJ-15/staging-20260912/verification.md.
+- VPJ-15/#205/#206: actual Staging39 publication/read/revoke and native SwiftUI en/zh/source/process-restart/logout slice passed; full Ask coverage, ten-scene product acceptance and physical/VoiceOver remain unrun. Reader disabled after cleanup. See artifacts/VPJ-16/native-knowledge-20260913/verification.md.
 - S1 scope beyond the recorded physical create/review/confirm/relaunch remains unrun: iOS17/VoiceOver/maximum text, natural token expiry and deliberate network-loss/unknown-ack UI. JT deferred further phone verification; continue development. Earlier remote status/locale/browser limitations remain recorded with their original versions.
 
 ## 验证
@@ -106,10 +106,11 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - Ops Staging runtime337550e: contract246 pass, security142 pass/1 existing DB skip, real disposable GoTrue/SQL7 pass. Actual deployed Cookie review/replay/conflict/revocation pass; desktop zh/mobile en and browser cleanup observed. One synthetic private candidate, two audits/receipts retained; zero active members and switch false; own WAF host removed. Independent review0/0. Evidence: artifacts/VPJ-14/staging-20260912/verification.md. PR336 merged after required CI passed; real Fact/retrieval and full S2 remain open.
 - Publication v1: local upgrade38→39 and actual browser/API11/11, Ops8/8, contracts246, build/static22 and lint/typecheck/docs pass. Security142pass/1 existing DB skip. Independent permission/data review0/0. Twelve source statements prepared, no remote publication. See artifacts/VPJ-15/publication-local-20260912/verification.md.
 - Knowledge Staging 2026-09-13: encrypted backup/isolated restore and38→39 upgrade preserved72tables/237schema entries and6users/3Trips. Twelve source statements passed ordinary independent submit/review/publish and32 scoped bilingual reads; actual nativev2 login/read/logout passed. Web zh1280/en390 showed conditions/sources and exact PAY-01 withdrawal;11published/1revoked retained. Both switches false,0activeOps,ownWAFhost removed(version10),production target unchanged. See artifacts/VPJ-15/staging-20260912/verification.md; full native/Ask acceptance pending.
+- Native knowledge2026-09-13: typed current-session first-party reader;6new state tests pass, XCTest33/0fail/5existingAPI skips plus9Swift Testing pass. Final bilingual actual SwiftUI loopback UI2/2 pass with near-expiry refresh/hidden-tab/revoke/disable. Actual Staging12-record backend read showed3 payment notes with identical en/zhfactIDs, source locator, process restart and logout clearing. Scope/busy lifecycle review findings fixed; independent0/0. Both switches false,0Ops,ownWAFremoved(version12),Simulator deleted. Evidence: artifacts/VPJ-16/native-knowledge-20260913/verification.md. CI pending; full Ask/native release acceptance separate.
 
 ## 下一动作与回滚
 
-Integrate the current-session native SwiftUI knowledge reader using the published first-party contract, then implement request-scoped Ask evidence/coverage. Reuse Staging39 and retained12 publication records (11published/1revoked); keep disabled defaults, historical semantic FAIL and incomplete Issue acceptance. No production release.
+Complete native knowledge consumer required CI and guarded merge, then integrate request-scoped Ask evidence/claim coverage and honest partial/gap outcomes. Reuse Staging39 and retained12 publications (11published/1revoked); preserve disabled defaults, existing S2 semantic FAIL and incomplete Issue acceptance. No production release.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

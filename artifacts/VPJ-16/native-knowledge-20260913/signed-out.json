@@ -1,0 +1,350 @@
+[
+  {
+    "AXUniqueId": null,
+    "AXLabel": "VisePanda",
+    "type": "Application",
+    "frame": {
+      "height": 874,
+      "width": 402,
+      "x": 0,
+      "y": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "main-tab-view",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "y": 0,
+      "width": 402,
+      "x": 0,
+      "height": 874
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "探索",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "y": 62,
+      "width": 402,
+      "x": 0,
+      "height": 54
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "探索",
+    "type": "Heading",
+    "frame": {
+      "y": 73.66666666666666,
+      "width": 34,
+      "x": 184,
+      "height": 20.66666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Vise Panda. 你的中国旅行伙伴",
+    "type": "StaticText",
+    "frame": {
+      "y": 132,
+      "width": 216,
+      "x": 16,
+      "height": 68.33332824707031
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "PandaMark",
+    "type": "Image",
+    "frame": {
+      "y": 142.33333333333334,
+      "width": 48,
+      "x": 16,
+      "height": 47.99999999999997
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "BrandWordmark",
+    "type": "Image",
+    "frame": {
+      "y": 132,
+      "width": 156,
+      "x": 76,
+      "height": 52
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "你的中国旅行伙伴",
+    "type": "StaticText",
+    "frame": {
+      "y": 186,
+      "width": 95.66666666666666,
+      "x": 76,
+      "height": 14.333333333333314
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "旅途参考",
+    "type": "StaticText",
+    "frame": {
+      "y": 224.33333333333331,
+      "width": 129,
+      "x": 16,
+      "height": 40.666666666666686
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "按所选城市和场景提供已审核信息。请阅读每条内容的适用条件，行动前核对来源；这里不代表完整城市覆盖。",
+    "type": "StaticText",
+    "frame": {
+      "y": 289,
+      "width": 354.66666666666663,
+      "x": 16,
+      "height": 64.33333333333331
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.city",
+    "AXLabel": "城市、上海",
+    "type": "PopUpButton",
+    "frame": {
+      "y": 377.3333333333333,
+      "width": 74.33333333333333,
+      "x": 16,
+      "height": 34.333333333333314
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "上海",
+    "type": "StaticText",
+    "frame": {
+      "y": 384.3333333333333,
+      "width": 34,
+      "x": 27.666666666666664,
+      "height": 20.333333333333314
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.scene",
+    "AXLabel": "场景、支付",
+    "type": "PopUpButton",
+    "frame": {
+      "y": 435.66666666666663,
+      "width": 74.33333333333333,
+      "x": 16,
+      "height": 34.333333333333314
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "支付",
+    "type": "StaticText",
+    "frame": {
+      "y": 442.66666666666663,
+      "width": 34,
+      "x": 27.666666666666664,
+      "height": 20.333333333333314
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.refresh",
+    "AXLabel": "刷新",
+    "type": "Button",
+    "frame": {
+      "y": 494,
+      "width": 58,
+      "x": 16,
+      "height": 34.33333333333326
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.signedOut",
+    "AXLabel": "请在「我的」登录后阅读旅途参考。",
+    "type": "StaticText",
+    "frame": {
+      "y": 552.3333333333333,
+      "width": 253.33333333333331,
+      "x": 16,
+      "height": 20.333333333333258
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 1页",
+    "type": "Slider",
+    "frame": {
+      "y": 116,
+      "width": 30,
+      "x": 369,
+      "height": 675
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 1页",
+    "type": "Slider",
+    "frame": {
+      "y": 116,
+      "width": 30,
+      "x": 369,
+      "height": 675
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "标签页栏",
+    "type": "Group",
+    "frame": {
+      "width": 402,
+      "height": 83,
+      "x": 0,
+      "y": 791
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "行程",
+    "type": "RadioButton",
+    "frame": {
+      "height": 54,
+      "width": 77,
+      "x": 25,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map.fill",
+    "AXLabel": "显示地图",
+    "type": "Image",
+    "frame": {
+      "height": 26.33333333333337,
+      "width": 29.66666666666667,
+      "x": 49,
+      "y": 801.6666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "探索",
+    "type": "RadioButton",
+    "frame": {
+      "width": 77,
+      "height": 54,
+      "x": 93.75,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari.fill",
+    "AXLabel": "Safari浏览器",
+    "type": "Image",
+    "frame": {
+      "width": 27.333333333333343,
+      "height": 27.33333333333337,
+      "x": 118.75,
+      "y": 801.3333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "问熊猫",
+    "type": "RadioButton",
+    "frame": {
+      "width": 77,
+      "height": 54,
+      "x": 162.5,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "闪光",
+    "type": "Image",
+    "frame": {
+      "height": 30,
+      "width": 26,
+      "x": 188.5,
+      "y": 799
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "工具",
+    "type": "RadioButton",
+    "frame": {
+      "width": 77,
+      "height": 54,
+      "x": 231.25,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "wrench.and.screwdriver",
+    "type": "Image",
+    "frame": {
+      "height": 31.66666666666663,
+      "width": 32.666666666666686,
+      "x": 253.25,
+      "y": 799.3333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "我的",
+    "type": "RadioButton",
+    "frame": {
+      "width": 77,
+      "height": 54,
+      "x": 300,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle.fill",
+    "AXLabel": "账户",
+    "type": "Image",
+    "frame": {
+      "width": 27.333333333333314,
+      "height": 27.33333333333337,
+      "x": 325,
+      "y": 801.3333333333334
+    },
+    "enabled": true
+  }
+]

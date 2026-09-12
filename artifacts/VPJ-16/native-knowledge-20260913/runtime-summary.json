@@ -1,0 +1,20 @@
+{
+  "environment": "owned iOS26.5 Simulator and existing Staging via isolated Preview",
+  "backendCommit": "1db3578e7e447e9c38e4c43a338b16cb466f8d94",
+  "nativeBase": "c31fd0bbf67836793d28527184a50e4503b5bff8",
+  "englishAndChineseFactIDsMatch": true,
+  "paymentNotes": 3,
+  "previouslyRevokedPAY01Absent": true,
+  "emptyArrivalHonest": true,
+  "sourcesExpanded": true,
+  "processRestartRead": true,
+  "logoutClearsVisibleNotes": true,
+  "opsNeverEnabled": true,
+  "readDisabledAfterward": true,
+  "activeOpsMembers": 0,
+  "originalWAFRulesRestored": true,
+  "WAFVersion": 12,
+  "productionTargetUnchanged": true,
+  "ownedSimulatorDeleted": true,
+  "realPhysicalDevice": "UNRUN - JT deferred further physical checks"
+}
