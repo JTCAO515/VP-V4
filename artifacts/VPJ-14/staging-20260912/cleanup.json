@@ -1,0 +1,21 @@
+{
+  "database": {
+    "activeMembers": 0,
+    "auditCount": 2,
+    "candidateCount": 1,
+    "candidateStates": [
+      {
+        "status": "reviewed",
+        "version": 2
+      }
+    ],
+    "enabled": false,
+    "migrationCount": 38,
+    "receiptCount": 2
+  },
+  "firewall": {
+    "version": 8,
+    "allOriginalRulesRestored": true
+  },
+  "browserHostBlockedAgain": true
+}

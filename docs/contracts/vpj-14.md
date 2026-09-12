@@ -18,7 +18,7 @@ Every RPC, including list and successful receipt replay, checks the live `auth.s
 
 Members submit immutable title/text candidates, then another active member reviews or rejects with a bounded note and expected version 1. Actor IDs come from `auth.uid()`. Self-review is rejected. Candidate row locking permits one terminal review, with version 2 and an audit row. Submission and review each write their candidate transition, audit and idempotency receipt in one database transaction. A failed audit insert rolls all three back.
 
-An operation UUID is scoped to its authenticated actor. Exact JSON replay returns the committed receipt only after current identity checks; payload drift conflicts. A later different operation cannot overwrite a terminal review. Audit entries include actor, action, candidate, version and timestamp; candidate text is not copied into audit entries. Private receipts retain the original operation input for exact replay. This is a private local candidate store with no automatic ingestion from `docs/knowledge-base/`, no runtime retrieval, no public Fact rows, and no external publication. `reviewed`, publication and retrieval eligibility remain separate: this slice always returns `published:false` and `retrievalEligible:false`.
+An operation UUID is scoped to its authenticated actor. Exact JSON replay returns the committed receipt only after current identity checks; payload drift conflicts. A later different operation cannot overwrite a terminal review. Audit entries include actor, action, candidate, version and timestamp; candidate text is not copied into audit entries. Private receipts retain the original operation input for exact replay. This is a private candidate store with no automatic ingestion from `docs/knowledge-base/`, no runtime retrieval, no public Fact rows, and no external publication. `reviewed`, publication and retrieval eligibility remain separate: this slice always returns `published:false` and `retrievalEligible:false`.
 
 ## Web scope
 
@@ -36,12 +36,14 @@ The optional `VP_OPS_BROWSER_EXECUTABLE` points to an installed test Chromium/he
 
 ## Staging validation scope (2026-09-12)
 
-The planned test reuses two existing synthetic Staging accounts for author and
-independent reviewer, activates only their controlled member rows and the existing
-private workflow switch, then deactivates both and restores the switch to false.
-It submits one synthetic text candidate and verifies self-review rejection,
+The completed bounded test reused two existing synthetic Staging accounts for author and
+independent reviewer, activated only their controlled member rows and the existing
+private workflow switch, then deactivated both and restored the switch to false.
+It submitted one synthetic text candidate and verified self-review rejection,
 separate review, exact-operation replay/conflict, audit, member revocation and
 final disable. Retain the synthetic candidate/audit/receipts and inactive member
 rows as evidence; do not delete unrelated accounts, Trips, content or audit rows.
 The test does not publish a Fact or enable retrieval. Record actual completion and
 remaining scope in the owning Issue; preparation alone does not close #204.
+
+Actual Staging result and cleanup: [verification](../../artifacts/VPJ-14/staging-20260912/verification.md). Required PR CI and full content/retrieval acceptance remain separate.

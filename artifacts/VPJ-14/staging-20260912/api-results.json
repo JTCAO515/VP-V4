@@ -1,0 +1,59 @@
+[
+  {
+    "name": "anonymous blocked",
+    "status": 401
+  },
+  {
+    "name": "cross origin blocked",
+    "status": 403
+  },
+  {
+    "name": "wrong actor blocked",
+    "status": 403
+  },
+  {
+    "name": "real cookie membership list",
+    "status": 200
+  },
+  {
+    "name": "submit and same operation replay",
+    "status": 200,
+    "auditCount": 1
+  },
+  {
+    "name": "changed replay blocked",
+    "status": 409
+  },
+  {
+    "name": "self review blocked",
+    "status": 403
+  },
+  {
+    "name": "independent review and replay",
+    "status": 200,
+    "auditCount": 2,
+    "published": false,
+    "retrievalEligible": false
+  },
+  {
+    "name": "conflicting review blocked",
+    "status": 409
+  },
+  {
+    "name": "fresh request durable read",
+    "status": 200
+  },
+  {
+    "name": "complete",
+    "pass": true,
+    "scope": "real staging API, synthetic unpublished candidate"
+  },
+  {
+    "name": "revoked reviewer stale cookie and receipt denied",
+    "status": 403
+  },
+  {
+    "name": "global disable old cookies denied",
+    "status": 503
+  }
+]
