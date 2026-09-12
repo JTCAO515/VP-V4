@@ -1,0 +1,326 @@
+[
+  {
+    "AXUniqueId": null,
+    "AXLabel": "VisePanda",
+    "type": "Application",
+    "frame": {
+      "x": 0,
+      "width": 402,
+      "y": 0,
+      "height": 874
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "main-tab-view",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "x": 0,
+      "width": 402,
+      "y": 0,
+      "height": 874
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "问熊猫",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "y": 62,
+      "x": 0,
+      "width": 402,
+      "height": 54
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.reviewed-question",
+    "AXLabel": "乘车证件",
+    "type": "Group",
+    "frame": {
+      "y": 66,
+      "x": 20.00000000000001,
+      "width": 91.66666666666667,
+      "height": 36
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.reviewed-question",
+    "AXLabel": "乘车证件",
+    "type": "Button",
+    "frame": {
+      "y": 66,
+      "x": 20.00000000000001,
+      "width": 91.66666666666666,
+      "height": 36
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "问熊猫",
+    "type": "Heading",
+    "frame": {
+      "y": 73.66666666666666,
+      "x": 175.66666666666666,
+      "width": 50.66666666666666,
+      "height": 20.66666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.reload",
+    "AXLabel": "重载",
+    "type": "Group",
+    "frame": {
+      "y": 66,
+      "x": 324,
+      "width": 58,
+      "height": 36
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.reload",
+    "AXLabel": "重载",
+    "type": "Button",
+    "frame": {
+      "y": 66,
+      "x": 324,
+      "width": 58,
+      "height": 36
+    },
+    "enabled": false
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Vise Panda. 你的中国旅行伙伴",
+    "type": "StaticText",
+    "frame": {
+      "y": 132,
+      "x": 16,
+      "width": 168,
+      "height": 52.33332824707031
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "PandaMark",
+    "type": "Image",
+    "frame": {
+      "y": 134.33333333333334,
+      "x": 16,
+      "width": 48,
+      "height": 47.99999999999997
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "BrandWordmark",
+    "type": "Image",
+    "frame": {
+      "y": 132,
+      "x": 76,
+      "width": 108,
+      "height": 36
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "你的中国旅行伙伴",
+    "type": "StaticText",
+    "frame": {
+      "y": 170,
+      "x": 76,
+      "width": 95.66666666666666,
+      "height": 14.333333333333314
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Ask 测试",
+    "type": "StaticText",
+    "frame": {
+      "y": 208.33333333333331,
+      "x": 16,
+      "width": 67.66666666666666,
+      "height": 20.333333333333343
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "请先在个人页登录，再使用测试环境中的 Ask。",
+    "type": "StaticText",
+    "frame": {
+      "y": 252.66666666666666,
+      "x": 16,
+      "width": 344.66666666666663,
+      "height": 20.333333333333343
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 1页",
+    "type": "Slider",
+    "frame": {
+      "y": 116,
+      "x": 369,
+      "width": 30,
+      "height": 675
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 1页",
+    "type": "Slider",
+    "frame": {
+      "y": 116,
+      "x": 369,
+      "width": 30,
+      "height": 675
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "标签页栏",
+    "type": "Group",
+    "frame": {
+      "x": 0,
+      "width": 402,
+      "y": 791,
+      "height": 83
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map",
+    "AXLabel": "行程",
+    "type": "RadioButton",
+    "frame": {
+      "width": 77,
+      "height": 54,
+      "x": 25,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map.fill",
+    "AXLabel": "显示地图",
+    "type": "Image",
+    "frame": {
+      "width": 29.66666666666667,
+      "x": 49,
+      "height": 26.33333333333337,
+      "y": 801.6666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari",
+    "AXLabel": "探索",
+    "type": "RadioButton",
+    "frame": {
+      "width": 77,
+      "height": 54,
+      "x": 93.75,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari.fill",
+    "AXLabel": "Safari浏览器",
+    "type": "Image",
+    "frame": {
+      "width": 27.333333333333343,
+      "x": 118.75,
+      "height": 27.33333333333337,
+      "y": 801.3333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "问熊猫",
+    "type": "RadioButton",
+    "frame": {
+      "width": 77,
+      "x": 162.5,
+      "height": 54,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "闪光",
+    "type": "Image",
+    "frame": {
+      "width": 26,
+      "x": 188.5,
+      "height": 30,
+      "y": 799
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "工具",
+    "type": "RadioButton",
+    "frame": {
+      "width": 77,
+      "height": 54,
+      "x": 231.25,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "wrench.and.screwdriver",
+    "type": "Image",
+    "frame": {
+      "width": 32.666666666666686,
+      "x": 253.25,
+      "height": 31.66666666666663,
+      "y": 799.3333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle",
+    "AXLabel": "我的",
+    "type": "RadioButton",
+    "frame": {
+      "width": 77,
+      "height": 54,
+      "x": 300,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle.fill",
+    "AXLabel": "账户",
+    "type": "Image",
+    "frame": {
+      "width": 27.333333333333314,
+      "x": 325,
+      "height": 27.33333333333337,
+      "y": 801.3333333333334
+    },
+    "enabled": true
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "at": "2026-09-12T20:54:12.172Z",
+  "row": {
+    "city": "shanghai",
+    "intent": "rail_boarding_documents",
+    "locale": "zh",
+    "task_id": "e9561b6c-472b-4dac-8439-018e137ebd14",
+    "turn_id": "abba340c-8737-4dfb-87d9-642caa7d1ad3",
+    "created_at": "2026-09-12T20:53:05.151092+00:00",
+    "input_text": "我是持外国护照的成年人，乘坐中国内地境内铁路电子客票列车，进站乘车需要什么购票身份证件和车票凭证？",
+    "output_kind": "answered",
+    "output_text": "reviewed-answer-v1",
+    "completed_at": "2026-09-12T20:53:59.825011+00:00",
+    "relationship": "clarification",
+    "request_scope": "single",
+    "task_attempts": 2,
+    "parent_turn_id": "99bf5bed-678a-4c64-a742-ee10bd8c55fb",
+    "original_outcome": "answered",
+    "settled_attempts": 2
+  }
+}

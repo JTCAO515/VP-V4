@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "vpj07-staging-text-service/1",
+  "job": {
+    "schemaVersion": "vpj07-staging-text-job/4",
+    "ownerId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+    "policyId": "79ea6a3e-1fa7-4caf-b55d-2d375f95f4c5",
+    "budget": {
+      "scopeId": "3ed90d4d-11d4-4693-8c6d-fa1eb0bfdc6e",
+      "priceVersion": "qwen-public-upper-20260912-v1",
+      "reservedMicros": 7000000,
+      "maxOutputTokens": 1024,
+      "timeoutMs": 60000
+    },
+    "provider": {
+      "provider": "qwen",
+      "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "configurationId": "89780cb0-a6f8-4ef6-b2f9-34a3eca544cf",
+      "configurationVersion": 1,
+      "timeoutMs": 60000
+    },
+    "pricing": {
+      "mode": "flat",
+      "inputMicrosPerMillion": 6000000,
+      "outputMicrosPerMillion": 24000000,
+      "cachedInputMicrosPerMillion": null
+    },
+    "inputMode": "knowledge_intent_v1"
+  },
+  "pollIntervalMs": 5000,
+  "expiresAt": "2026-09-12T21:07:12.021Z"
+}

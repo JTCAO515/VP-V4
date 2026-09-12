@@ -1,0 +1,68 @@
+{
+  "at": "2026-09-12T20:55:40.532Z",
+  "status": "PASS",
+  "scope": "actual controlled native UI plus bounded Staging service, Qwen and persisted SQL; graceful idle service stop then queued-work restart, not crash-during-provider acceptance",
+  "locales": [
+    {
+      "locale": "en",
+      "taskId": "cb563c5f-709a-4cb3-a72b-3cdc22ad505c",
+      "rootTurnId": "9f289e5e-6bba-412e-87bc-f5217bb473ae",
+      "followupTurnId": "c129e9c3-6d68-4de6-af51-4c229c8c484b",
+      "queuedTurnRetainedAcrossAppAndServiceRestart": true,
+      "runs": [
+        {
+          "phase": "first",
+          "polls": 15,
+          "configurationDigest": "b64c2ee54fa1b9c5c4cfcb2a9f8be3f6a2377e30931193e88caba13a09b1e1a4",
+          "oneFinishedThenAtLeastTwoIdlePolls": true,
+          "reason": "stopped"
+        },
+        {
+          "phase": "restart",
+          "polls": 3,
+          "configurationDigest": "b64c2ee54fa1b9c5c4cfcb2a9f8be3f6a2377e30931193e88caba13a09b1e1a4",
+          "oneFinishedThenAtLeastTwoIdlePolls": true,
+          "reason": "stopped"
+        }
+      ]
+    },
+    {
+      "locale": "zh",
+      "taskId": "e9561b6c-472b-4dac-8439-018e137ebd14",
+      "rootTurnId": "99bf5bed-678a-4c64-a742-ee10bd8c55fb",
+      "followupTurnId": "abba340c-8737-4dfb-87d9-642caa7d1ad3",
+      "queuedTurnRetainedAcrossAppAndServiceRestart": true,
+      "runs": [
+        {
+          "phase": "first",
+          "polls": 8,
+          "configurationDigest": "8141ee68eca193130b9035b9dbdd0423e8177c0270d6aeaff4b4f6332fd6445f",
+          "oneFinishedThenAtLeastTwoIdlePolls": true,
+          "reason": "stopped"
+        },
+        {
+          "phase": "restart",
+          "polls": 3,
+          "configurationDigest": "8141ee68eca193130b9035b9dbdd0423e8177c0270d6aeaff4b4f6332fd6445f",
+          "oneFinishedThenAtLeastTwoIdlePolls": true,
+          "reason": "stopped"
+        }
+      ]
+    }
+  ],
+  "budget": {
+    "attempts": 4,
+    "settled": 4,
+    "unresolved": 0,
+    "actualMicros": 15876,
+    "taskCount": 2
+  },
+  "currency": "CNY",
+  "costBasis": "validated provider usage times existing conservative tariff; not invoice",
+  "providerInvocationIds": [
+    "2db9a3c9-c4a6-4805-8555-d96c6c0c62cf",
+    "859f5a42-b8dd-4454-9e4d-2c5591f4205b",
+    "7ca7fada-4fc5-4160-a942-a527af4d63f8",
+    "c1926e17-b374-44a2-8dd9-0ea2a26d686e"
+  ]
+}

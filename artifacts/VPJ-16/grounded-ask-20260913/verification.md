@@ -63,7 +63,8 @@ A native reading defect was observed: deadline rechecking collapsed the history
 and reset the scroll position. The follow-up keeps layout while hiding expired
 rows from rendering, accessibility and interaction. Its cross-deadline native
 zh/en regression passed2/2 (native-ui-4.log), with two synthetic calls total.
-Final Staging read-only verification of the scroll correction remains pending. Physical
+Final Staging zh/en source expansion,40second scroll continuity and expiry
+AX hiding passed on318f83d against unchanged backend8022b5a; see staging-delivery. Physical
 phones, full S2 and production release are not accepted by this evidence.
 
 Contract and rollback: docs/contracts/vpj-16.md. Ordinary modes use their existing

@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/Users/jtcao/Library/Caches/visepanda/grounded-staging-20260913/native-scroll-v3/read-scroll.py", line 23, in <module>
+    r=ui.snapshot();publishers=[x for x in r if '12306' in (x.get('AXLabel')or'') and not (x.get('AXLabel')or'').startswith('•')];assert publishers,'Source publisher not exposed'
+                                                                                                                                         ^^^^^^^^^^
+AssertionError: Source publisher not exposed

@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/Users/jtcao/Library/Caches/visepanda/grounded-staging-20260913/native-scroll-v3/read-scroll.py", line 20, in <module>
+    dy=max(-160,min(160,320-a['frame']['y'])) if a else -100
+  File "/Users/jtcao/Library/Caches/visepanda/grounded-staging-20260913/native-scroll-v3/ui.py", line 7, in axe
+    r=subprocess.run([AXE,*args,'--udid',UDID],env=ENV,input=stdin,text=True,capture_output=True,timeout=45)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 557, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 1221, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py", line 2153, in _communicate
+    ready = selector.select(timeout)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.7/Frameworks/Python.framework/Versions/3.14/lib/python3.14/selectors.py", line 398, in select
+    fd_event_list = self._selector.poll(timeout)
+KeyboardInterrupt

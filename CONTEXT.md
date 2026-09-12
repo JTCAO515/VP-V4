@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 #206: PR341/e132baf merged after all required CI and real Staging40 native zh/en boarding-question/source/read-disable/logout verification. Original77 tables and248 schema entries preserved; users6/Trips3, published11/revoked1. Read/Ops off, active members0, WAF restored14, production attempt canceled and aliases preserved. This read-only question has no model/ServiceTask/history; broader goal incomplete.
+状态：S2 #206/#195: PR342/2aa489d delivered bounded grounded Ask. Additional real native zh/en clarification→restatement now auto-processes through the existing bounded service, retains one task through stopped-service/App-restart queue recovery, and completes exactly4 settled attempts across2 tasks. All services stopped; read/Ops off, members0, WAF22 restored. Production guard/aliases preserved. Full S1–S6 remains incomplete.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -35,12 +35,12 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 未决与运行证据
 
-- Staging36 and scoped real Ask transport/persistence are verified; full S1/S2, all five outcomes, complete semantic acceptance, grounding and operational continuous recovery are incomplete; scoped native display and same-task clarification with a bounded service are now observed. Current development notice records supplier unknowns; they are not approval blockers.
+- Staging41 scoped grounded Ask and bilingual same-task graceful service stop/queue restart are now observed. Full S1/S2, all five native outcomes, broader semantic coverage, Web same-chain integration and crash-in-flight/complete operational recovery remain incomplete. Supplier unknowns remain disclosed, not approval blockers.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel runtime integration, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
-- 2026-09-11 live dependency recheck: #264←#263(CLOSED)+#206(OPEN). #206 inherits #195/#205: private local producer/text results do not supply published eligible knowledge, configured real provider consumers or the actual native read-only task chain; #264 remains OPEN.
+- #264 depends on #206, which remains OPEN: PR342 now supplies a real bounded reviewed-fact/native task chain, but wider knowledge coverage and complete Harness runtime acceptance remain outstanding. Preserve #263 offline evidence within its original scope.
 - #265←#264/#198/#199/#219, all OPEN: actual same-Trip proposal/confirmation, current context, retained dinner evidence and comparable walking measurements remain incomplete. #266←#265 remains OPEN and additionally requires the same real task, persistent deployed worker/data, fault checkpoints and reconnect/cancellation receipts.
-- #267←#264(OPEN)+#287(CLOSED): offline grading preparation is available, but the real authorized read-only chain, frozen candidate tolerances/benefit criteria and human calibration remain absent. Test-budget direction does not remove technical attempt/token/concurrency safeguards or settle unknown charges.
+- #267 depends on #264 and completed offline #287: the bounded rail-document chain now runs, but complete real-task coverage, frozen benefit/tolerance criteria and human calibration remain outstanding. Test-budget direction does not remove attempt/token/concurrency safeguards or settle unknown charges.
 - #268←#266/#267/#229/#231, all OPEN: selected-version complete12 required-mode scenarios, actual Ops stop/restore/rollback and matching real domestic/international network evidence are not available. Local ledgers, deadline tests, static flags or configured regions do not complete those dependencies.
 - JT deferred further physical phone verification on2026-09-12. Existing physical same-Trip/auth slice passed; full native/VoiceOver/Store acceptance remains unrun. The previous CI AX failure is resolved; do not repeat phone work as a development gate.
 
@@ -53,6 +53,8 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 验证
 
+- Real grounded service on main2aa489d/native318f83d/backend8022b5a: zh/en each1 clarification+1 full restatement on one ServiceTask; queued Turn/task/parent IDs retained across native process restart with service stopped, then identical-config service restart auto-processed answer. Exactly4 real Qwen attempts settled/0 unresolved,15876micros CNY at conservative tariff; all four service runs stopped after idle polls. read/Ops off, members0, WAF22 cleanup, users6/Trips3 preserved. See artifacts/VPJ-07/grounded-service-20260913/verification.md.
+- PR342/2aa489d: exact318f83d Native34717138599, Quality34717138686, Budget34717138621 and Preview passed. Real Staging41 preserved77 original tables/data and declared schema invariants, users6/Trips3/published11/revoked1. v1 semantic2/12 failures retained and its policy revoked; v2 passed16/16 once each. Native zh/en answered/relaunch,40second source/scroll continuity and expired AX hiding passed; disable within16.76s, logout and cleanup/WAF20 passed. All18 v2+native attempts settled,0 unresolved; Production CANCELED. See artifacts/VPJ-16/grounded-ask-20260913/staging-delivery/verification.md.
 - PR341/e132baf delivery and real native Staging40 PASS at exactfc3f15d; read-switch removed facts by30s, logout cleared data; cleanup0/WAF14 and production CANCELED. See artifacts/VPJ-16/reviewed-question-20260913/staging-delivery/verification.md. Full grounded Ask and S1–S6 remain incomplete.
 - Reviewed-question local: SQL9/9 including post-base publication revocation barrier and50→51 capacity; actual GoTrue/native credential/Next API9/9; native Knowledge8/8 unit and4/4 bilingual UI incl32s hidden-tab no-refresh; final navigation-title English question1/1; contracts253/253, static22, build/lint/typecheck pass. SQL and native independent review0Critical/0Important after two fixes. Raw logs/xcresults remain recorded. No model/ServiceTask/remote question acceptance. See artifacts/VPJ-16/reviewed-question-20260913/verification.md.
 - PR339/d2360fc delivery: head2cfbb44 Native34708671075 and Quality34708671157/Preview PASS; default CI XCTest33/5skip/0fail,9Swift Testing and8standard UI pass,13opt-in UI skips. Separate final knowledge UI2/2 PASS. Header-fit corrects newly enlarged brand footprint without asset changes/cropping or audit exemptions. Production attempt dpl_9ia35mAVctgu781miJaUxt8js4rC CANCELED, aliases and shared staging preserved. See artifacts/VPJ-16/native-knowledge-20260913/delivery/verification.md.
@@ -113,7 +115,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Continue S2 #206/#195 on codex/s2-grounded-ask-20260913: integrate bounded natural-language intent and first-party reviewed answer without externalizing first-party-only facts; fix producer/history evidence revalidation before claiming durable grounded Ask. Reuse completed PR341 evidence, retain original checkout, default-off Staging and production guard.
+Continue S2 #195/#206 with the existing Web Ask same-chain gap: inspect accepted browser-cookie identity and grounded read RPCs, then expose a bounded owner-scoped readback of the native task without borrowing native credentials or weakening evidence/consent/session checks. Reuse PR342 and grounded-service evidence. Physical phone verification remains deferred by JT, not a development gate.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
