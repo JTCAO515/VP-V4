@@ -24,3 +24,31 @@ test('Ops login returns only to the exact private review route',()=>{
  assert.equal(safeReturnTo('/ops/review'),'/ops/review');
  for(const value of ['/ops/review?actor=admin','/ops/review#secret','//evil.example/ops/review','https://evil.example/ops/review','/ops/review/other','/ops/%72eview','/ops\\review','/%2fops/review'])assert.equal(safeReturnTo(value),'/visepanda');
 });
+
+const {opsRuntimeConfig}=await import('../../../lib/server/knowledge/review/local-workspace.ts');
+const previewHost='vp-v4-synthetic123-jtcao515s-projects.vercel.app';
+const staging={OPS_STAGING_REVIEW:'1',VERCEL_ENV:'preview',VERCEL_URL:previewHost,
+ NEXT_PUBLIC_SUPABASE_URL:'https://dzqdzetcctkhbrhlxxgn.supabase.co',NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:'synthetic-public-key'};
+const request=(origin)=>({url:origin+'/api/ops/review'});
+test('Ops staging accepts only the pinned database and owned Preview or explicitly selected staging origin',()=>{
+ assert.deepEqual(opsRuntimeConfig(request('https://'+previewHost),staging),{url:staging.NEXT_PUBLIC_SUPABASE_URL,publishableKey:staging.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY});
+ assert.equal(opsRuntimeConfig(request('https://staging.go2china.space'),staging),null);
+ assert.ok(opsRuntimeConfig(request('https://staging.go2china.space'),{...staging,OPS_STAGING_CUSTOM_ORIGIN:'https://staging.go2china.space'}));
+ for(const origin of ['https://go2china.space','https://www.go2china.space','https://vp-v4.vercel.app','https://other.vercel.app',
+  'https://'+previewHost+'.evil.example','http://'+previewHost,'https://user:password@'+previewHost,'http://127.0.0.1:59651'])
+  assert.equal(opsRuntimeConfig(request(origin),staging),null,origin);
+ for(const change of [{VERCEL_ENV:'production'},{VERCEL_ENV:'development'},{VERCEL_ENV:''},{VERCEL_URL:'vp-v4-git-main-jtcao515s-projects.vercel.app'},
+  {VERCEL_URL:'other-project-synthetic123.vercel.app'},{OPS_LOCAL_REVIEW:'1'},{OPS_STAGING_REVIEW:'0'},
+  {NEXT_PUBLIC_SUPABASE_URL:'https://other.supabase.co'},{NEXT_PUBLIC_SUPABASE_URL:staging.NEXT_PUBLIC_SUPABASE_URL+'/'},
+  {NEXT_PUBLIC_SUPABASE_URL:'http://127.0.0.1:56921'},{NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:''}])
+  assert.equal(opsRuntimeConfig(request('https://'+previewHost),{...staging,...change}),null,JSON.stringify(change));
+});
+test('Ops local flags cannot activate a deployed environment or serve as a staging fallback',()=>{
+ assert.ok(opsRuntimeConfig(request('http://localhost:3000'),base));
+ for(const VERCEL_ENV of ['preview','production','development']) {
+  assert.equal(opsLocalConfig({...base,VERCEL_ENV}),null);
+  assert.equal(opsRuntimeConfig(request('https://'+previewHost),{...base,VERCEL_ENV}),null);
+ }
+ assert.equal(opsRuntimeConfig(request('http://localhost:3000'),{...base,OPS_STAGING_REVIEW:'1'}),null);
+ assert.equal(opsRuntimeConfig({url:'invalid'},staging),null);
+});

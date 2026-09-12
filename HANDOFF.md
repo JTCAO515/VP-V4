@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 submitted-Ask process recovery implemented on c638afe: owner/epoch Keychain, durable ack, exact retry. Local 10 persistence tests and 2 actual process-restart UI cases pass; required PR CI pending. Real Staging worker/Qwen slice remains observed; full S2 semantic acceptance is open.
+状态：S2 Ops staging runtime337550e observed: real Cookie/SQL separate review, replay/conflict and revocation pass with one synthetic unpublished candidate. Temporary members/switch/host cleaned. PR CI pending; full grounded-content and S2 semantic acceptance open.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -102,11 +102,12 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - PR332 at8ce9e7e: local core8/UI4 passed; Quality34653592174/Budget34653592093/Native34653592185/Vercel passed. Native CI28pass/14 explicit API-environment skips is not full capability acceptance. Main auto-deploy was verified enabled; Production currentlydb5fb7b, so merging is paused pending the prepared deployment-setting decision. Previous non-production wording did not account for automatic main deployments.
 - Bounded thinking source ddc8077, workerdf6ee24: explicit job3 keeps prior defaults; independent review0/0, contract244pass, security136pass1existingDBskip, loopbackHTTP4pass. Two actual Qwen calls at thinking512/total1024 returned valid JSON but failed frozen clarification-first outcome; no follow-up or reroll. Both settled CNY0.034992 conservative tariff, zero unresolved, not invoice. See artifacts/VPJ-07/bounded-thinking-20260912/verification.md.
 - 2026-09-12 bounded service: source49e0b4f, actual Staging APIb542ead. Native zh final and English same-task clarification/final survived relaunch; owner history isolated. Three attempts across two ServiceTasks settled at conservative CNY0.015516, no unknown holds for these attempts; not supplier invoice. English IME corrupted initial input (fixture FAIL retained), corrected once as native clarification in same task. Restart retained service expiry/config digest. Services stopped and owned Simulator deleted. See artifacts/VPJ-07/worker-service-20260912/verification.md; full fixed semantic criterion stays FAIL.
-- Native pending recovery 2026-09-12: build PASS; 22 XCTest +9 Swift Testing PASS with5 existing API skips; all10 new persistence tests PASS; actual English lost-receipt and Chinese ack/empty-history process-restart UI2/2 PASS, one POST each. Independent review0/0; owned fixture/simulator cleaned. See artifacts/VPJ-07/native-pending-recovery-20260912/verification.md. Required PR CI pending.
+- Native pending recovery 2026-09-12: build PASS; 22 XCTest +9 Swift Testing PASS with5 existing API skips; all10 new persistence tests PASS; actual English lost-receipt and Chinese ack/empty-history process-restart UI2/2 PASS, one POST each. Independent review0/0; owned fixture/simulator cleaned. See artifacts/VPJ-07/native-pending-recovery-20260912/verification.md. PR335 merged bc082fb; all required CI passed and Production build canceled with aliases preserved.
+- Ops Staging runtime337550e: contract246 pass, security142 pass/1 existing DB skip, real disposable GoTrue/SQL7 pass. Actual deployed Cookie review/replay/conflict/revocation pass; desktop zh/mobile en and browser cleanup observed. One synthetic private candidate, two audits/receipts retained; zero active members and switch false; own WAF host removed. Independent review0/0. Evidence: artifacts/VPJ-14/staging-20260912/verification.md. PR CI pending; real Fact/retrieval and full S2 remain open.
 
 ## 下一动作与回滚
 
-Finish native pending-recovery PR CI and merge under the existing Production build guard, then resume real S2 outcome/semantic acceptance against the retained failures. Do not substitute the synthetic crash fixture for supplier/worker/billing acceptance.
+Finish Ops Staging PR required CI and merge under existing Production build guard, then progress #205/#206 real sourced eligible knowledge. Preserve retained S2 semantic failures and do not count synthetic candidate review as Fact publication.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
