@@ -1,12 +1,13 @@
-✔ read preserves stored identity, city and source while subtracting full elapsed request (1.531875ms)
-✔ reject mismatched claims, scope, provenance and consent (0.536917ms)
-✔ revalidated partial coverage does not rewrite the original outcome (0.112416ms)
-✔ projection excludes private fields and disables unsafe source URLs (0.150459ms)
-ℹ tests 4
+✔ read preserves stored identity, city and source while subtracting full elapsed request (1.586333ms)
+✔ reject mismatched claims, scope, provenance and consent (0.611666ms)
+✔ revalidated partial coverage does not rewrite the original outcome (0.123833ms)
+✔ projection excludes private fields and disables unsafe source URLs (0.162333ms)
+✔ terminal queue rows without a completed answer never appear to be processing (0.960166ms)
+ℹ tests 5
 ℹ suites 0
-ℹ pass 4
+ℹ pass 5
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 76.401333
+ℹ duration_ms 93.823875

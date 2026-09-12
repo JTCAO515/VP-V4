@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPasswordAuthClient } from "@/lib/server/identity/browser-auth-client";
-import { savedAnswerCopy } from "@/lib/grounded/copy";
+import { savedAnswerCopy, savedAnswerNotice } from "@/lib/grounded/copy";
 import type { SavedHistory } from "@/lib/grounded/read-model";
 import styles from "./SavedAnswers.module.css";
 
@@ -74,12 +74,11 @@ export function SavedAnswers({ locale }: { locale: "zh" | "en" }) {
         {history?.turns.length === 0 ? <p>{copy.empty}</p> : null}
         {history?.turns.map(turn => {
           const language = savedAnswerCopy[turn.locale];
+          const notice = savedAnswerNotice(turn);
           return <article key={turn.id} lang={turn.locale} dir="ltr" data-turn-id={turn.id} data-task-id={turn.taskId}>
             <small>{language.cities[turn.city as keyof typeof language.cities]} · {turn.locale === "zh" ? "中文" : "English"} · {turn.parentId ? language.parent : language.original}</small>
             <h3>{turn.input}</h3>
-            {turn.projection === "pending" ? <p>{language.pending}</p> : turn.projection === "unavailable" ? <p>{language.blocked}</p>
-              : turn.outcome === "clarification" ? <p>{language.clarification}</p> : turn.outcome === "technical_failure" ? <p>{language.failed}</p>
-              : turn.outcome === "blocked" || !turn.facts.length ? <p>{language.blocked}</p> : turn.outcome === "partial" || turn.coverage === "partial" ? <p>{language.partial}</p> : null}
+            {notice ? <p>{language[notice]}</p> : null}
             {turn.facts.map(fact => <div key={fact.id} className={styles.fact}>
               <p>{fact.text}</p>
               {fact.conditions.length ? <><strong>{language.conditions}</strong><ul>{fact.conditions.map((text, index) => <li key={index}>{text}</li>)}</ul></> : null}

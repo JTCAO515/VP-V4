@@ -1,11 +1,12 @@
 {
   "critical": 0,
   "important": 0,
-  "review": "Independent read-only authority review plus observed metadata-lifecycle fix follow-up",
+  "review": "Independent authority review plus metadata-lifecycle and terminal-state incremental reviews; no additional Staging claim for terminal-only correction",
   "files": {
     "components/chat/ChatThreadWorkspace.tsx": "d98778068017b223a07c68575e30ca34f0012422b809373142e4be15dfc8fbc9",
-    "components/chat/SavedAnswers.tsx": "b78926d4914f6c3fbcefb2ac682399c108465c4aff2c8026ad3bae5527bb39d5",
-    "lib/grounded/read-model.ts": "8eb3110e5ecedaa7eaeb498ccfffd617c838026a5217dd1b322b3b96532764ec",
-    "app/api/chat/grounded/route.ts": "becff7cc4fb7407fa255484698849e5f760b9b0f37f1367baa3b8a32b582d48d"
+    "components/chat/SavedAnswers.tsx": "af963253fa86ba54a103ebef4bccd3fa37eff238ab0c0b284962a2937d5ae9fb",
+    "lib/grounded/read-model.ts": "1f9cd4f50cbe4b643f6b18cd4a951394e6c6a30d915871efef77547d409334b0",
+    "app/api/chat/grounded/route.ts": "becff7cc4fb7407fa255484698849e5f760b9b0f37f1367baa3b8a32b582d48d",
+    "lib/grounded/copy.ts": "19f25558d8410ef091cd881513a4207838a4a67c0955c5b8c2994a4d818b8564"
   }
 }

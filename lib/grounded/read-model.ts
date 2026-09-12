@@ -4,7 +4,7 @@ export type SavedFact = { id: string; text: string; conditions: string[]; exclus
 export type SavedTurn = {
   id: string; taskId: string; parentId: string | null; threadId: string; relationship: string;
   input: string; city: string; locale: "zh" | "en"; createdAt: string;
-  outcome: string | null; coverage: string | null; projection: string; facts: SavedFact[];
+  status: string; outcome: string | null; coverage: string | null; projection: string; facts: SavedFact[];
 };
 export type SavedHistory = { ownerId: string; turns: SavedTurn[]; lifetimeMs: number };
 const cities = ["shanghai", "beijing", "guangzhou", "chongqing"];
@@ -110,7 +110,7 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
         requireValue(outcome === (result.intent === "clarification" ? "clarification" : result.intent === "technical_failure" ? "technical_failure" : "blocked"));
       }
     }
-    return { id: turnId, taskId, parentId, threadId, relationship, input: string(turn.input), city, locale: turn.locale as "zh" | "en", createdAt: string(turn.createdAt, 40), outcome, coverage, projection: String(result.projection), facts };
+    return { id: turnId, taskId, parentId, threadId, relationship, input: string(turn.input), city, locale: turn.locale as "zh" | "en", createdAt: string(turn.createdAt, 40), status: String(turn.status), outcome, coverage, projection: String(result.projection), facts };
   });
   unique(turns.map(turn => turn.id));
   requireValue(lifetimeMs > elapsedMs);

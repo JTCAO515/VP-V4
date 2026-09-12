@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { randomUUID } from "node:crypto";
 import { parseGroundedHistory, sourceLink } from "../../../lib/grounded/read-model.ts";
+import { savedAnswerNotice } from "../../../lib/grounded/copy.ts";
 
 function fixture() {
   const owner = randomUUID(), policyId = randomUUID();
@@ -53,4 +54,16 @@ test("projection excludes private fields and disables unsafe source URLs", () =>
   const f = fixture(); Object.assign(f.knowledge, { _basis: "private-binding" }); Object.assign(f.turn, { secret: "private-content" });
   const json = JSON.stringify(f.read()); assert.ok(!json.includes("private-binding") && !json.includes("private-content"));
   for (const uri of ["javascript:alert(1)", "https://name:password@example.test", "urn:fixture:test", "/relative"]) assert.equal(sourceLink(uri), null);
+});
+
+test("terminal queue rows without a completed answer never appear to be processing", () => {
+  for (const status of ["cancelled", "failed", "accepted"]) {
+    const f = fixture();
+    Object.assign(f.turn, { status, outcome: null, output: null });
+    Object.assign(f.turn.result, { completedAt: null, originalOutcome: null, intent: null, requestScope: null, knowledge: null, projection: "pending" });
+    const turn = f.read().turns[0];
+    assert.equal(turn.status, status);
+    assert.equal(savedAnswerNotice(turn), status === "accepted" ? "pending" : status);
+    assert.deepEqual(turn.facts, []);
+  }
 });
