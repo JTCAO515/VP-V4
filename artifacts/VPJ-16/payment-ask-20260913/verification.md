@@ -58,3 +58,8 @@ Rollback disables the existing scoped reader/worker integration before reverting
 Keep publications, revoked state and saved answer/budget records. Do not rewrite migration42 or
 silently convert payment histories to rail. Any applied database rollback requires a new reviewed
 forward migration; ordinary old rail history remains readable by the new candidate.
+
+Pre-deployment preflight caught an ordering error: the first candidate filename sorted before
+already-applied grounded-events migration42. No Staging migration was attempted. Renamed the
+unapplied payment migration to `20260913090000_vpj_16_payment_questions.sql`, after migration42;
+rerun both actual PostgreSQL suites in that order before deployment. Original evidence is retained.
