@@ -1,0 +1,14 @@
+{
+  "reviewer": "knowledge_security_review",
+  "critical": 0,
+  "important": 0,
+  "scope": "132-call v7 API window; fresh normally reviewed published material before mixed cases; original failures retained; old unchanged UI observed scope only; expiry-only renewal and per-candidate/ownership cleanup",
+  "hashes": {
+    "scenario.json": "9609e985acd1c7734d31dc9b639b2276b3280b54d9379762126cc304c9333689",
+    "place-run.mjs": "e26fad6bbf32cbecb15599c0034a263e1e11eb2e847ac0d320b803d9408b7bbd",
+    "window-state.mjs": "fdf4817629765485c494f1e7d18ab2f538b32d7455106cc34f1491287789331b",
+    "renew-budget-window.mjs": "2bfa9ce4b5a9a3ee89a284c23681f3e416bce778e98ac0e7b8c545c7b05a0227",
+    "preflight-budget.mjs": "2c8565a6c6f466fd9856ca99fd22ee9a84cb1de918f353b2f1829e33fae7f012",
+    "firewall-scope.py": "2bbc98da8c9b0667d4e913a23efa35b4964277d77e27219a42b9d7eff0e5be83"
+  }
+}

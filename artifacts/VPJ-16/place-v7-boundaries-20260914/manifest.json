@@ -1,0 +1,156 @@
+{
+  "schemaVersion": "place-v7-boundaries/1",
+  "status": "FAIL",
+  "calls": 5,
+  "expectedPasses": 4,
+  "unrun": 1,
+  "tariffCnyMicros": 81318,
+  "invoice": "unknown",
+  "files": [
+    {
+      "file": "scenario.json",
+      "sha256": "20ff07829f38ed8d9c9b988c4b55eed0a436c6774c5874dcc2a2c1d128d33758",
+      "bytes": 2822
+    },
+    {
+      "file": "scenario.sha256",
+      "sha256": "fd08f526c28a0ece29af505de5808747825018251ac3da0605d3b120c55d97b5",
+      "bytes": 65
+    },
+    {
+      "file": "boundary-run.mjs",
+      "sha256": "32aa3b5a8e5c86e0083be7bad69899fd1d0f5e9ab4e4bdb5593f245dbdabd170",
+      "bytes": 9616
+    },
+    {
+      "file": "window-state.mjs",
+      "sha256": "624761ecc927f2e4c8dd3409b1bfafa61002eff827502ebcf9d82fb6fbe3a066",
+      "bytes": 9321
+    },
+    {
+      "file": "preflight-budget.mjs",
+      "sha256": "fb0725917922834a9ecc92aa4e54cee80a0da24fdcf1431f5119fea419accbce",
+      "bytes": 2431
+    },
+    {
+      "file": "firewall-scope.py",
+      "sha256": "2bbc98da8c9b0667d4e913a23efa35b4964277d77e27219a42b9d7eff0e5be83",
+      "bytes": 2966
+    },
+    {
+      "file": "window-review.json",
+      "sha256": "748a1114b0e7e674022d881247852aaeeed1446caa0f70ad639575673c9b69d7",
+      "bytes": 953
+    },
+    {
+      "file": "window-prepare.log",
+      "sha256": "6e03916ffb1166af025fb21e29c8ac5c7d61819f331dcf70e37e31c12d82b1e6",
+      "bytes": 235
+    },
+    {
+      "file": "budget-preflight.json",
+      "sha256": "8dc7b549be45ff92da62b11309a80ca0d7b2721731575fe3f50681f26ebe5ec6",
+      "bytes": 1205
+    },
+    {
+      "file": "budget-preflight.log",
+      "sha256": "2bb40971ccb83eabe98840518b41a114826a3de4922feab89c6db65d3255f662",
+      "bytes": 171
+    },
+    {
+      "file": "before.json",
+      "sha256": "68918c854e1261fc820962e9a9c8824d982765bb9acf1dd895a7f35c174d8a04",
+      "bytes": 141578
+    },
+    {
+      "file": "after-disable.json",
+      "sha256": "c32d371573d8c5d5aa19877a42b5ba3ccc92c6c4c30070d4e71edeb78fd03a00",
+      "bytes": 143434
+    },
+    {
+      "file": "activated.json",
+      "sha256": "1cd6dcaccb88eb1afe3d2657da9e38bd52c9e3d187d2d0d0e0a0ee152902dadf",
+      "bytes": 475
+    },
+    {
+      "file": "disabled.json",
+      "sha256": "6c4ee9a2e7fc4cdc9ec35ff165975f6b00e773daed6f14638b92ad73a842c51c",
+      "bytes": 527
+    },
+    {
+      "file": "activation-intent.json",
+      "sha256": "bd11c07b4ddb4bbaa59fb34d0f5ee55ac5d9d7adfbbfdc65feef91d922f44401",
+      "bytes": 633
+    },
+    {
+      "file": "activation-transaction.json",
+      "sha256": "7a33b3855e5610154401d0f4e022b1d3e34e0a2b4725c90b71dd35ed6de52156",
+      "bytes": 651
+    },
+    {
+      "file": "firewall-before.json",
+      "sha256": "a04a349a428487394a833a8dbf854940dda54cfbb76094d5ee03b077bb3032ef",
+      "bytes": 2482
+    },
+    {
+      "file": "firewall-allow-after.json",
+      "sha256": "32dcb6b57fac3a3628f66c70638f9e60028d1319741d756b1bf66903f241b617",
+      "bytes": 2549
+    },
+    {
+      "file": "firewall-remove-after.json",
+      "sha256": "558e72a07f3bf2412d4f369cb30cc6c6f3d1de9d2224cf5982d443461117557f",
+      "bytes": 2482
+    },
+    {
+      "file": "preview-state.json",
+      "sha256": "aff0847b287c4989b83bd770686aff72a9f7bd5f3a9175dad4846f61d41b5f54",
+      "bytes": 5231
+    },
+    {
+      "file": "place-run.json",
+      "sha256": "c792a99d92dcfbb8d8e4c2cbb71a8c2f610c0442ca3d2fe40b4f69e230f5b921",
+      "bytes": 15783
+    },
+    {
+      "file": "boundary-run.log",
+      "sha256": "dcb7a6e7bf4bc97a85e961d392aecd4bb56ccd6e6e7562639852f6c274396c68",
+      "bytes": 1491
+    },
+    {
+      "file": "worker-en.json",
+      "sha256": "1e1a9be59568539587ad5ba4d06c96d33c3626f53a7d8e470c5e886954689673",
+      "bytes": 811
+    },
+    {
+      "file": "worker-zh.json",
+      "sha256": "202292776dc8bcf5d6c74ba4ea9eedaa5210e5aa5b9aceef695d122e56949d6b",
+      "bytes": 811
+    },
+    {
+      "file": "worker-4.jsonl",
+      "sha256": "afb0e8ac9e8b28984e0e6d1dd6a243632718e533dbfd0aec209c6e9379c6517b",
+      "bytes": 2876
+    },
+    {
+      "file": "worker-2.jsonl",
+      "sha256": "2ee2beaa18523895487d91ef5a72e42257a3748e0ddfc622710bf5e1f3c71b42",
+      "bytes": 2873
+    },
+    {
+      "file": "worker-5.jsonl",
+      "sha256": "c16220cffbef7f44fde85efd0723e3a0f9798bdec04de66bd2d94238088cf415",
+      "bytes": 2876
+    },
+    {
+      "file": "worker-3.jsonl",
+      "sha256": "4494378a1ff8f98008a87a6cf94f924f55d6003a92920b86579f5bb3dc82a3a8",
+      "bytes": 2876
+    },
+    {
+      "file": "worker-1.jsonl",
+      "sha256": "eef2a0a2d383d63fb83fe69563b4682c00c90993602f76b3c10dd48a09b7729b",
+      "bytes": 2873
+    }
+  ]
+}

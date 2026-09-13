@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "vpj07-staging-text-job/4",
+  "ownerId": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+  "policyId": "015d6710-82ec-4fc1-bb4f-a817b3f62873",
+  "budget": {
+    "scopeId": "18049e34-eae0-4877-bd84-08978b298aab",
+    "priceVersion": "qwen-public-upper-20260912-v1",
+    "reservedMicros": 7000000,
+    "maxOutputTokens": 1024,
+    "timeoutMs": 60000
+  },
+  "provider": {
+    "provider": "qwen",
+    "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+    "configurationId": "c6f69967-1ef6-457b-a098-255967a77e4e",
+    "configurationVersion": 1,
+    "timeoutMs": 60000
+  },
+  "pricing": {
+    "mode": "flat",
+    "inputMicrosPerMillion": 6000000,
+    "outputMicrosPerMillion": 24000000,
+    "cachedInputMicrosPerMillion": null
+  },
+  "inputMode": "knowledge_intent_v1"
+}

@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "place-v7-api-window/1",
+  "status": "RUNNING_PLAN_SNAPSHOT",
+  "files": [
+    {
+      "file": "scenario.json",
+      "sha256": "9609e985acd1c7734d31dc9b639b2276b3280b54d9379762126cc304c9333689",
+      "bytes": 51090
+    },
+    {
+      "file": "scenario.sha256",
+      "sha256": "9a916609a401702dfd3afba7cb7e765e61cceb0b7d3a76bff99c8bcc937c1998",
+      "bytes": 65
+    },
+    {
+      "file": "source-sha",
+      "sha256": "e4a8b49e349f55fc131125a2a4fabe0ecec939aebd755a051788dc10e22440fe",
+      "bytes": 41
+    },
+    {
+      "file": "place-run.mjs",
+      "sha256": "e26fad6bbf32cbecb15599c0034a263e1e11eb2e847ac0d320b803d9408b7bbd",
+      "bytes": 19139
+    },
+    {
+      "file": "window-state.mjs",
+      "sha256": "fdf4817629765485c494f1e7d18ab2f538b32d7455106cc34f1491287789331b",
+      "bytes": 9970
+    },
+    {
+      "file": "firewall-scope.py",
+      "sha256": "2bbc98da8c9b0667d4e913a23efa35b4964277d77e27219a42b9d7eff0e5be83",
+      "bytes": 2966
+    },
+    {
+      "file": "preflight-budget.mjs",
+      "sha256": "2c8565a6c6f466fd9856ca99fd22ee9a84cb1de918f353b2f1829e33fae7f012",
+      "bytes": 2440
+    },
+    {
+      "file": "renew-budget-window.mjs",
+      "sha256": "2bfa9ce4b5a9a3ee89a284c23681f3e416bce778e98ac0e7b8c545c7b05a0227",
+      "bytes": 3303
+    },
+    {
+      "file": "window-review.json",
+      "sha256": "59844ef6b306d5bf9851a08398362dca38272e058ac489ec17bce359686d6fbd",
+      "bytes": 880
+    },
+    {
+      "file": "budget-window-before.json",
+      "sha256": "e6e77a81ce6e0c8b5af490339c41e6f8f5dfa97c670a8f2a9fc2cf600572adfa",
+      "bytes": 1564
+    },
+    {
+      "file": "budget-window-result.json",
+      "sha256": "cadb26c95b2e6af7f89418703e4e512053a1c891c75d86ebf88e761cb285e1bb",
+      "bytes": 317
+    },
+    {
+      "file": "budget-renewal.log",
+      "sha256": "1caf51906669068543e51437f007b11f7b0d9234ea6a6071c1e6d40d99dc8829",
+      "bytes": 280
+    },
+    {
+      "file": "budget-preflight.json",
+      "sha256": "52b378bdc752b1beef131429ecccbe59fcb1242609c75820b0ea92aef65058b8",
+      "bytes": 1206
+    },
+    {
+      "file": "budget-preflight.log",
+      "sha256": "16ef129f5de14a107423968111d3f4db928a55bba364ec62a62785b4f4bae634",
+      "bytes": 182
+    },
+    {
+      "file": "before.json",
+      "sha256": "290e37e9583d61b697691bd35bf2ff1260827b1dc629e709b98c6c54dd1498fb",
+      "bytes": 143468
+    },
+    {
+      "file": "preview-state.json",
+      "sha256": "261b1b544ad2282c5e6793f451bcd85ee8c564f1cd79a788206efdbedc814ea3",
+      "bytes": 5231
+    },
+    {
+      "file": "firewall-before.json",
+      "sha256": "c101dc1934ade4976cf5c36e1081a7f460b315177f98d11c0e8811d22c3a64a5",
+      "bytes": 2482
+    },
+    {
+      "file": "worker-en.json",
+      "sha256": "1e1a9be59568539587ad5ba4d06c96d33c3626f53a7d8e470c5e886954689673",
+      "bytes": 811
+    },
+    {
+      "file": "worker-zh.json",
+      "sha256": "202292776dc8bcf5d6c74ba4ea9eedaa5210e5aa5b9aceef695d122e56949d6b",
+      "bytes": 811
+    }
+  ]
+}
