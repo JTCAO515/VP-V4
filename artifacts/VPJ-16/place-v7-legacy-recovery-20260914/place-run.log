@@ -1,0 +1,123 @@
+{
+  mode: 'activate',
+  status: 'PASS',
+  state: {
+    ops: false,
+    trips: 3,
+    users: 6,
+    reader: true,
+    members: [ [Object], [Object] ],
+    attempts: 406,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 0
+  }
+}
+
+{"mode": "allow", "activeVersion": 97, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{"group":"legacy","id":"sim-documents-zh","locale":"zh","status":"PASS","calls":1}
+{"group":"legacy","id":"sim-outlets-en","locale":"en","status":"PASS","calls":2}
+{"group":"legacy","id":"sim-outlets-zh","locale":"zh","status":"PASS","calls":3}
+{"group":"legacy","id":"sim-allowances-en","locale":"en","status":"PASS","calls":4}
+{"group":"legacy","id":"sim-allowances-zh","locale":"zh","status":"PASS","calls":5}
+{"group":"legacy","id":"sim-overview-en","locale":"en","status":"PASS","calls":6}
+{"group":"legacy","id":"sim-overview-zh","locale":"zh","status":"PASS","calls":7}
+{"group":"legacy","id":"sim-both-en","locale":"en","status":"PASS","calls":8}
+{"group":"legacy","id":"sim-both-zh","locale":"zh","status":"PASS","calls":9}
+{"group":"legacy","id":"sim-esim-en","locale":"en","status":"PASS","calls":10}
+{"group":"legacy","id":"sim-esim-zh","locale":"zh","status":"PASS","calls":11}
+{"group":"legacy","id":"sim-price-en","locale":"en","status":"PASS","calls":12}
+{"group":"legacy","id":"sim-price-zh","locale":"zh","status":"PASS","calls":13}
+{"group":"legacy","id":"sim-exact-data-en","locale":"en","status":"PASS","calls":14}
+{"group":"legacy","id":"sim-exact-data-zh","locale":"zh","status":"PASS","calls":15}
+{"group":"legacy","id":"sim-open-branch-en","locale":"en","status":"PASS","calls":16}
+{"group":"legacy","id":"sim-open-branch-zh","locale":"zh","status":"PASS","calls":17}
+{"group":"legacy","id":"sim-activation-action-en","locale":"en","status":"PASS","calls":18}
+{"group":"legacy","id":"sim-activation-action-zh","locale":"zh","status":"PASS","calls":19}
+{"group":"legacy","id":"sim-lost-id-en","locale":"en","status":"PASS","calls":20}
+{"group":"legacy","id":"sim-lost-id-zh","locale":"zh","status":"PASS","calls":21}
+{"group":"legacy","id":"sim-internet-access-en","locale":"en","status":"PASS","calls":22}
+{"group":"legacy","id":"sim-internet-access-zh","locale":"zh","status":"PASS","calls":23}
+{"group":"legacy","id":"sim-handset-en","locale":"en","status":"PASS","calls":24}
+{"group":"legacy","id":"sim-handset-zh","locale":"zh","status":"PASS","calls":25}
+{"group":"legacy","id":"sim-documents-esim-en","locale":"en","status":"PASS","calls":26}
+{"group":"legacy","id":"sim-documents-esim-zh","locale":"zh","status":"PASS","calls":27}
+{"group":"legacy","id":"sim-allowances-price-en","locale":"en","status":"PASS","calls":28}
+{"group":"legacy","id":"sim-allowances-price-zh","locale":"zh","status":"PASS","calls":29}
+{"group":"legacy","id":"sim-overview-internet-en","locale":"en","status":"PASS","calls":30}
+{"group":"legacy","id":"sim-overview-internet-zh","locale":"zh","status":"PASS","calls":31}
+{"group":"legacy","id":"sim-injection-esim-en","locale":"en","status":"PASS","calls":32}
+{"group":"legacy","id":"sim-injection-esim-zh","locale":"zh","status":"PASS","calls":33}
+{"group":"legacy","id":"sim-injection-document-en","locale":"en","status":"PASS","calls":34}
+{"group":"legacy","id":"sim-injection-document-zh","locale":"zh","status":"PASS","calls":35}
+{"group":"legacy","id":"sim-vague-en","locale":"en","status":"PASS","calls":36}
+{"group":"legacy","id":"sim-vague-zh","locale":"zh","status":"PASS","calls":37}
+{"group":"legacy","id":"sim-rail-and-sim-en","locale":"en","status":"PASS","calls":38}
+{"group":"legacy","id":"sim-rail-and-sim-zh","locale":"zh","status":"PASS","calls":39}
+{"group":"legacy","id":"sim-card-and-sim-en","locale":"en","status":"PASS","calls":40}
+{"group":"legacy","id":"sim-card-and-sim-zh","locale":"zh","status":"PASS","calls":41}
+{"group":"legacy","id":"sim-exclude-esim-en","locale":"en","status":"PASS","calls":42}
+{"group":"legacy","id":"sim-exclude-esim-zh","locale":"zh","status":"PASS","calls":43}
+{"group":"legacy","id":"legacy-rail-single","locale":"en","status":"PASS","calls":44}
+{"group":"legacy","id":"legacy-rail-single","locale":"zh","status":"PASS","calls":45}
+{"group":"legacy","id":"legacy-rail-compound","locale":"en","status":"PASS","calls":46}
+{"group":"legacy","id":"legacy-rail-compound","locale":"zh","status":"PASS","calls":47}
+{"group":"legacy","id":"legacy-rail-unsupported","locale":"en","status":"PASS","calls":48}
+{"group":"legacy","id":"legacy-rail-unsupported","locale":"zh","status":"PASS","calls":49}
+{"group":"legacy","id":"legacy-rail-anaphora","locale":"en","status":"PASS","calls":50}
+{"group":"legacy","id":"legacy-rail-anaphora","locale":"zh","status":"PASS","calls":51}
+{"group":"legacy","id":"legacy-rail-injection","locale":"en","status":"PASS","calls":52}
+{"group":"legacy","id":"legacy-rail-injection","locale":"zh","status":"PASS","calls":53}
+{"group":"legacy","id":"legacy-rail-lost-document","locale":"en","status":"PASS","calls":54}
+{"group":"legacy","id":"legacy-rail-cross-border","locale":"zh","status":"PASS","calls":55}
+{"group":"legacy","id":"legacy-rail-child-instruction-transfer","locale":"en","status":"PASS","calls":56}
+{"group":"legacy","id":"legacy-rail-stolen-copy-transfer","locale":"zh","status":"PASS","calls":57}
+{"group":"legacy","id":"legacy-rail-ordinary-plus-loss-transfer","locale":"en","status":"PASS","calls":58}
+{"group":"legacy","id":"legacy-rail-ordinary-plus-child-transfer","locale":"zh","status":"PASS","calls":59}
+{"group":"legacy","id":"legacy-card","locale":"en","status":"PASS","calls":60}
+{"group":"legacy","id":"legacy-card","locale":"zh","status":"PASS","calls":61}
+{"group":"legacy","id":"legacy-mobile","locale":"en","status":"PASS","calls":62}
+{"group":"legacy","id":"legacy-mobile","locale":"zh","status":"PASS","calls":63}
+{"group":"legacy","id":"legacy-cash","locale":"en","status":"PASS","calls":64}
+{"group":"legacy","id":"legacy-cash","locale":"zh","status":"PASS","calls":65}
+{"group":"legacy","id":"legacy-card-mobile","locale":"en","status":"PASS","calls":66}
+{"group":"legacy","id":"legacy-card-mobile","locale":"zh","status":"PASS","calls":67}
+{"group":"legacy","id":"legacy-card-cash","locale":"en","status":"PASS","calls":68}
+{"group":"legacy","id":"legacy-card-cash","locale":"zh","status":"PASS","calls":69}
+{"group":"legacy","id":"legacy-mobile-cash","locale":"en","status":"PASS","calls":70}
+{"group":"legacy","id":"legacy-mobile-cash","locale":"zh","status":"PASS","calls":71}
+{"group":"legacy","id":"legacy-overview","locale":"en","status":"PASS","calls":72}
+{"group":"legacy","id":"legacy-overview","locale":"zh","status":"PASS","calls":73}
+{"group":"legacy","id":"legacy-fee-only","locale":"en","status":"PASS","calls":74}
+{"group":"legacy","id":"legacy-fee-only","locale":"zh","status":"PASS","calls":75}
+{"group":"legacy","id":"legacy-transfer-only","locale":"en","status":"PASS","calls":76}
+{"group":"legacy","id":"legacy-transfer-only","locale":"zh","status":"PASS","calls":77}
+{"group":"legacy","id":"legacy-nearby-atm","locale":"en","status":"PASS","calls":78}
+{"group":"legacy","id":"legacy-nearby-atm","locale":"zh","status":"PASS","calls":79}
+{"group":"legacy","id":"legacy-mobile-fee","locale":"en","status":"PASS","calls":80}
+{"group":"legacy","id":"legacy-mobile-fee","locale":"zh","status":"PASS","calls":81}
+{"group":"legacy","id":"legacy-injection-transfer","locale":"en","status":"PASS","calls":82}
+{"group":"legacy","id":"legacy-injection-transfer","locale":"zh","status":"PASS","calls":83}
+{"group":"legacy","id":"legacy-vague","locale":"en","status":"PASS","calls":84}
+{"group":"legacy","id":"legacy-vague","locale":"zh","status":"PASS","calls":85}
+{
+  mode: 'disable',
+  status: 'PASS',
+  windowClosed: true,
+  state: {
+    ops: false,
+    trips: 3,
+    users: 6,
+    reader: false,
+    members: [ [Object], [Object] ],
+    attempts: 491,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 0
+  }
+}
+
+{"mode": "remove", "activeVersion": 98, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{"status":"PASS","workerLaunches":85,"cleanup":[{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"cookieLogout","locale":"en","status":"PASS"},{"operation":"cookieLogout","locale":"zh","status":"PASS"},{"operation":"disable","status":"PASS"},{"operation":"removeOwnHost","status":"PASS"}]}

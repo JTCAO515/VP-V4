@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "place-combined-regression/1",
+  "coverage": "PASS",
+  "cases": 132,
+  "placeCases": 26,
+  "legacyCases": 106,
+  "modelCalls": 132,
+  "uniqueModelAttempts": 132,
+  "recoveredReadsWithoutModel": 2,
+  "tariffCnyMicros": 2158206,
+  "supplierInvoice": "unknown",
+  "runtimeCommit": "2f7664222c316f1fca4582e497d743f17ea6e747",
+  "apiCommit": "e19bd584ba86604047c9216e50c5329e8881dcf8",
+  "promptDigest": "4b810e4e36f2c3d4ffc3693b39eb50235462686beff48146f20612bacc3b6bf6",
+  "priorControllerFailuresPreserved": true,
+  "userRequestedPauseAfterThisRound": true,
+  "evidence": [
+    {
+      "run": "/Users/jtcao/Library/Caches/visepanda/place-v7-isolated-20260914/place-run.json",
+      "sha256": "377e86834dd0d28336162159670f456ec2f1e2b0ba6518764e274a384cec7057"
+    },
+    {
+      "run": "/Users/jtcao/Library/Caches/visepanda/place-v7-legacy-continuation-20260914/place-run.json",
+      "sha256": "b681460d5e647e238b66084bb31d7f404387a81275dcc0a43a7761a831c1aaf1"
+    },
+    {
+      "run": "/Users/jtcao/Library/Caches/visepanda/place-v7-legacy-recovery-20260914/place-run.json",
+      "sha256": "8b531750e5d4b037f680d8f8974e95270b0234798a668dfd90b4ebc67f176883"
+    }
+  ]
+}

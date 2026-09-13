@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 PR374: 85-case remaining legacy window RUNNING session12742 in cache place-v7-legacy-recovery-20260914, runtime2f/v7/APIe19 frozen. Recover existing paid sim-documents-en by normal API/foreign-owner read, then only original legacy.slice(21); max3 bounded session replacements for transport read failures, no model reroll. Baseline406attempts0unresolved,WAF96; reader-only. Prior zero-model diagnostic/cleanup PASS,rootcauseunknown. Native359d6f2 CI34788077423 running;Quality/Budget PASS. MapsPR372 soleprep.
+状态：PAUSED AT USER REQUEST after current round. PR374 frozen runtime2f/v7/APIe19 regression: current85/85PASS, combined132/132 expected outcomes (26place+106legacy),132unique model attempts,two zero-model read recoveries. Final491attempts0unresolved,all132work terminal exactly as expected/all leases cleared,owned mobile sessions null,reader/Ops/members closed,WAF98 restored. No live Staging process. Native/Quality/Budget359d6f2PASS; later evidence commits local. MapsPR372 remains soleprep, untouched.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -142,7 +142,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Follow existing12742 via place-run.json/log; never restart it or prior73158/41119/37021. Started2026-09-13T23:15:14.396Z,65min/85newcalls cap. Existing budgetexpiry2026-09-14T00:26:40.762Z unchanged; no active renewal. Inspect safe transportErrors/readRecoveries and each saved result before further model calls; preserve first semantic failure. Final-accounting.py terminal guard, reader/WAFcleanup and session logout verification required. Hold evidence push while Native34788077423 runs, batch afterwards and require final-headCI. No Production/fullS2claim.
+WAIT FOR USER TO RESUME. User explicitly requested pause after this round; do not launch another regression, implementation, merge, or fresh CI cycle. Final evidence in artifacts/VPJ-16/place-v7-legacy-recovery-20260914; original failures retained. On explicit resume: review final evidence, push pending local evidence commits, require actual final-head CI/current base/ordinary review before PR374 merge; preserve Production guard. FullS2 and physical-device acceptance remain incomplete. Budgetexpiry2026-09-14T00:26:40.762Z is not permission to keep running while paused.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

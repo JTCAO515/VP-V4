@@ -1,0 +1,22 @@
+{
+  "at": "2026-09-13T23:51:23.422Z",
+  "status": "PASS",
+  "ownedMobileSessionsClosed": true,
+  "workRows": 132,
+  "allWorkTerminalAsExpected": true,
+  "workStateCounts": {
+    "completed": 84,
+    "failed": 48
+  },
+  "allLeasesCleared": true,
+  "attempts": 491,
+  "unresolved": 0,
+  "reader": false,
+  "ops": false,
+  "activeMembers": 0,
+  "initialVerifierMismatch": "All-completed assumption incorrectly included expected blocked/unavailable outcomes; original observation and verifier preserved.",
+  "contractSources": [
+    "supabase/migrations/20260914041000_vpj_16_place_questions.sql:166",
+    "supabase/migrations/20260910171836_vpj_07_text_authorization.sql:214"
+  ]
+}

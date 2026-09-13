@@ -1,0 +1,935 @@
+{
+  "at": "2026-09-13T23:51:23.418Z",
+  "ops": false,
+  "work": [
+    {
+      "turnId": "0095c68a-bf15-48a5-ba52-f93bb6b6a0b2",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "04c6d83f-39b9-4814-897d-f2d27b903a3a",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "05568b20-4241-4032-9c98-7f68682a06fe",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "08a95266-3475-4cd9-91fa-e0ea1decbf3c",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "0a2d88eb-f736-4723-baf9-ec42ef91649a",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "0a756431-4f29-4e0b-af81-d47083dcfece",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "0a7c7b36-30bc-4bde-837c-991238194dd5",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "0f0504b6-9714-49b4-9e0d-ade233190bb0",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "12dfafa6-c0d0-46c4-9fde-2cd41e1056ee",
+      "outcome": "clarification",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "13388327-1785-4fdc-8572-478ae9bb3d0e",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "144d1257-55a5-4554-a1c2-855db87d1bc2",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "14eae9d4-98bf-43a6-8e98-390a206d0a26",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "1d0cf1bb-d08e-4f69-a26a-7601f324cd4a",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "1d912961-bac7-42ab-97e1-e8efbaded13c",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "2202d926-d208-40d3-94c4-d3583d1208da",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "227e4db1-21e2-4423-b387-193115361ea2",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "2417a32f-29d1-42f8-8eb3-0599a87c21b1",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "286a5301-6e57-4309-9003-f5190fc0e2cf",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "2caaa200-5c1b-4fa7-b084-8a90e54fcfc3",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "2d1e725f-dfa2-4e4d-8730-decec4ab1af6",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "2d2fbc33-c915-493d-a349-a930b283c188",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "2e8cb451-d932-4c63-ad86-12156290e647",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "2f257b9c-80a2-41e6-9d9b-0adacb4cd023",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "3128b1ac-a2cc-4ede-a6b2-feb90a800b91",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "347432b1-d83a-4900-b7f1-00694c2d29ba",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "34a35cd6-49ce-4d43-9618-47da3d4a8f26",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "38dbd622-92be-456e-b6d1-a86d635f16bd",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "3a500cdf-f928-4309-b0f5-e4fd961d4272",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "3b1050f5-9329-4733-be41-dfef54af8f35",
+      "outcome": "clarification",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "3fd0d97b-a44c-42ec-8351-90024bdb304b",
+      "outcome": "clarification",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "41505145-86e1-44fc-bd57-900ecbb3ab8a",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "4181fea1-9584-477e-8e63-8c2cae7c9a85",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "4290df1f-fc75-4e35-a515-2c9e1c30fd99",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "468f6a7f-ae02-40a0-9ab8-0a5ef685d8f3",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "4a3de3ee-19e2-4e10-ab9c-351bf4581d08",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "4b3429a7-53d3-4e19-89d7-01c3113dd6c6",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "4d2cd32a-f243-41c6-b166-d4e0f8164fd7",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "5056c63f-541a-4caf-8849-73b97aa27a53",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "52191fe4-1ca8-4ad1-ba19-29ee0ab802c9",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "524a57c5-af83-4616-adf3-b55e47fa1cd8",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "5287fc27-6ae2-47d4-8261-e316acc8d83f",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "58b60c3d-da75-4960-a2c6-e83ed0cf8075",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "5abdf3aa-5e3f-4171-a366-d2f2122cbba0",
+      "outcome": "clarification",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "5fa07778-223c-48a2-ac1b-aa9b14c1f6a2",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "651ed477-20ff-4ded-a284-815bc4bea731",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "6aa0b6c8-ccd5-458c-9a0b-db31a0b2ce1d",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "6aa5c8b6-3ac8-4a30-9c85-ff78948d32a8",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "6bde92bb-88b5-4e74-b14d-ca14a0376af9",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "6c5bddf0-ed11-47a5-a06d-c57355f419ab",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "6f86b1bf-efcb-408a-bb90-c275d66f905e",
+      "outcome": "clarification",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "710dc6a6-2fdc-490c-b1e0-9218bb2b7d5b",
+      "outcome": "clarification",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "7361e87b-1f72-4823-a6c6-4ab92db46534",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "75f42394-b713-4edc-a612-9bfe27fe838a",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "796d2bfb-9c82-4e0f-98e4-3de96d1aa3db",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "7b773f79-bf2f-4b29-86fc-bdc9c90ef7be",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "7eb4fa67-5b13-4549-b24b-fa9ec00190e9",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "7f4cc2b6-8a4b-4c38-88bb-50544ae248e3",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "7fddaee4-dcd0-485c-b908-dc92fd64edd4",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "8090f2a8-9d2a-46e9-818e-05e1f3a33040",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "83539fa0-f22f-47fd-99ee-9d14d066be44",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "83f466e3-38b4-4cbc-8987-edf6fe5be84a",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "84522d1d-09e1-4595-bc45-0cea5ca8db2a",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "849d2cfe-277b-442c-aa1e-14804e77ee3d",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "851f7e16-fda5-49c5-8822-f9bcbc96b60a",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "861879f9-519f-47cf-8715-ad9527b92fd3",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "8a637eca-77c8-406e-955f-5622b00ffb1d",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "8a708054-e9de-4c7f-9e15-a253d23441a9",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "8d33e91b-73eb-47ea-8d1f-413ebde7a6f1",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "8d4e8a7c-88a8-43a0-96e0-d5373925db7a",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "8fd260c3-03a5-4eac-97f2-dc0434d87615",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "9097c92e-e101-4e6c-b51b-5fc8d5d4fda5",
+      "outcome": "clarification",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "9139c650-442c-47a3-a487-ca8cf8b9a58d",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "9145465b-48da-4da3-9966-0e4b91cdf9e6",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "92df299d-004b-408c-bd2c-0cb91476f34c",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "92e962d9-983c-4632-b3a0-4d55fb262be1",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "93ef3638-08a2-4ab7-a48a-7b4e665767ee",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "94c87658-88fe-4517-8e3f-1e3b099bba53",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "96c6814e-8474-435a-be30-35b087d33648",
+      "outcome": "clarification",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "97efa500-9d5a-460c-8aef-b374fd5fcf0e",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "990cde8a-8c53-4127-a3af-d14c9deaaeec",
+      "outcome": "clarification",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "99a64bde-17b5-4a49-97d9-010ffd6f685a",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "9c07176d-7026-4f72-8313-e731b7ea47b6",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "9e0796c3-a01d-4e23-819e-bf36138b09b8",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "9e2c5286-6596-4546-9c1b-962fe152d8bc",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "a0ae7e83-24b2-4088-ac28-a63fdaadbd30",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "a13d8250-6271-4a6d-a77b-c438a6d44979",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "a328f6d5-a795-4e8b-9b04-7cd0e16b4871",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "a51b5c12-45ad-44cf-ae28-77d9009d3f6b",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "a72779a7-ac6a-465c-8937-c7829bf263a8",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "a72a7b11-0954-4b9b-bb41-88c971a7a3eb",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "a9a9f9ca-47de-4b64-a20a-80278e998aaa",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "aeb8fd59-539f-4fd4-a517-5d60fdec7725",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "b5b3433c-2b9e-4e7c-bd42-506d2904c231",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "be1768f7-a288-42cf-8b80-0d8dbbce107a",
+      "outcome": "clarification",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "bf760050-961c-47e5-a8df-9501daf38bb1",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "c0f3dead-8db7-47c3-8068-46e9950a7dd2",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "c106ab8f-5a88-46c1-8743-04301557e6f7",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "c216a29a-7178-4e6e-92a5-7ac6331590b0",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "c2494a04-102b-45e6-81ff-60cfcf7c901f",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "c5ceed1f-6ea7-489f-a8d3-f0c88202456d",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "c71ec32e-bceb-456e-ae94-43a12ab734a5",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "c780d865-47f9-4e8a-bb00-f1bf77161156",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "cb27aa23-52a3-46a3-a72f-17459a79b6b6",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "cba6e0da-6e82-4e00-9a4d-b9eb3b567eb7",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "cd13a1c4-1f47-4c58-b2d0-a76e611d49d0",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "ce53cc77-e3cd-48e2-ac65-941ff193af4a",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "d0a338d3-45e3-4487-8e5d-77cf7f658247",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "d181ba0b-1618-42d7-8cff-cc7b6c185357",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "d5f47f47-7406-45e1-add1-52a36d6b76f7",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "d755db9a-9916-4c03-903a-da439806b562",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "d7e5cac1-153e-4274-8df3-bf748257e1c8",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "d80ad14c-60e6-4ddc-a279-b2fbfdf7154b",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "dc16e585-99ed-4468-91fb-5cd3a3039c9a",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "dc312ad8-5256-4918-bcf7-7c04c1ffceb4",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "df7ffb66-3c17-43d5-ae1c-d93c9e3cee76",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "e00598e6-4e28-4ba4-b02b-e55a7aca7e0a",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "e0385652-eb6c-4ca4-bb0c-0f5adb10edc6",
+      "outcome": "clarification",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "e0396ae7-52e8-4a78-854a-4433c6fd0b17",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "e12be127-179b-48b7-ab3f-545f452ee71e",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "e39771bb-3a46-4133-9b18-3946b91d2535",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "e3d3ce71-2712-49cd-8cdd-a1f6930d106b",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "e5c4ce6b-92b9-4732-801b-b2c8edaba841",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "e98b19cd-b550-48b4-9cef-d439b48493d6",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "ebf2265e-827b-434f-9ae8-65e266f54549",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "eca7b1f6-0508-48aa-9597-f9b436b35a0a",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "ee1c88c8-3cae-4c0b-8418-3725e431a133",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "efb45a05-07e4-4df5-857c-8a994e3b346c",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "f08b8b36-e54f-4aac-a529-119c5635535a",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "f1867b68-f906-4569-aa77-ef68a8b89392",
+      "outcome": "blocked",
+      "turnState": "unavailable",
+      "workState": "failed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "f9e9a18d-6814-4e74-a064-20c1c944bd89",
+      "outcome": "clarification",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "fbc7e47a-6b80-4a82-99b1-880f21b0b418",
+      "outcome": "partial",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    },
+    {
+      "turnId": "fd114c78-53cf-4a64-85a8-0819253329ef",
+      "outcome": "answered",
+      "turnState": "completed",
+      "workState": "completed",
+      "leaseCleared": true
+    }
+  ],
+  "reader": false,
+  "attempts": 491,
+  "unresolved": 0,
+  "activeMembers": 0,
+  "ownedMobileSessionsClosed": true
+}
