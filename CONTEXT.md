@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PR348 validated-usage recovery observed on frozen5b5f72c/Staging42: real fsync→SIGKILL, same attempt settled once and exact replay already_settled;74attempts/0unresolved,reader/Ops off,WAF38. Final evidence CI/merge pending. Native cancellation returned503 on grounded-only Preview; original accepted task retained for immediate repair. Full S1–S6 incomplete.
+状态：PR348 merged9e24faa: real validated usage recovered once, exact replay idempotent; actual Production CANCELED and aliases preserved. Native grounded-only cancellation503 fix is implemented with local HTTP regression passing and independent permission review0/0; local grounded/legacy HTTP1+1,request security19/19,lint/typecheck/build pass; exact Staging/native cancellation and CI remain pending. Full S1–S6 incomplete.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -54,6 +54,8 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 验证
 
+- Native cancellation config fix: grounded-only real local HTTP suite1/1 and existing legacy HTTP1/1,request/security19/19,lint/typecheck/build passed; independent permission review0/0. Owner cancellation with reader disabled is idempotent and foreign/logged-out sessions rejected; completed answers remain terminal. Synthetic local model only. Three earlier fixture/regression failures retained. Exact fixed Preview/native same-task cancellation pending. See artifacts/VPJ-08/native-cancel-mode-20260913/verification.md.
+- PR348 delivered9e24faa at2026-09-13T01:20:06Z; final head733ef86 Quality34730096688/Budget34730096678/Vercel passed. Actual Production attempt dpl_33XDuBQmjnF3cTuSWHA5zZXHZags CANCELED; all5production aliases and shared Staging preserved. Reuse the real usage-only recovery and recorded cancellation503 evidence; no completed-answer/cancel/fullS2 claim.
 - Real Staging usage recovery on frozen5b5f72c/API-native2717bf9: one native request, one real Qwen call, fsynced validated usage then SIGKILL; original dispatched hold observed, unmodified reconciliation settled once, exact replay already_settled. Final74Turns/74attempts/342228CNYmicros/0unresolved;users6Trips3/migrations42 unchanged,reader/Opsfalse/members0,WAF36→38,owned Simulator deleted and API session logged out. Cancellation API returned503 after valid owner login, so native cancel/empty worker remain pending and the original accepted task is retained. See artifacts/VPJ-59/staging-usage-live-20260913/verification.md.
 - Validated usage recovery:14/14 actual local PostgreSQL cost tests including fsync→SIGKILL, retained dispatched hold, lost settlement acknowledgement, exact repeat and conflicting cost refusal.26/26 worker/security, final12/12 cost/CLI tests, build/lint/typecheck/docs pass. Independent review initial1Important (thinking-journal version) fixed; final0/0. A real cancellation-cause overwrite during slow pending accounting was fixed and tested. The separately recorded real Staging reconciliation now passed its usage-only slice; cancellation remains blocked by the observed endpoint503. See artifacts/VPJ-59/staging-usage-reconciliation-20260913/verification.md.
 - Native event reconnect2717bf9: local SQL11/11, real HTTP1/1, native transport/state10/10, bilingual UI2/2 and independent permission review0/0; required CI passed. Staging41→42 backup/restore and original78tables/259schema entries preserved. Native en tab return/zh process restart same-task event delivery observed, two real Qwen calls settled8382 CNY micros;73 total Turns/attempts, users6/Trips3 unchanged. Reader/Ops false,0members, WAF restored36 and Simulator deleted. See artifacts/VPJ-08/native-events-staging-20260913/verification.md. Full#196/S2 open.
@@ -122,7 +124,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Finish PR348 evidence CI and guarded merge, then fix native v1 cancellation configuration for grounded-only Preview. Reuse original Turn6069d41c-40eb-456c-99a1-970aaa69ad7d/Taska8a2c345-fb24-41b1-a367-8e2a0d2b3ee2: its single model attempt is already settled4308micros but Turn remains accepted. Keep both controlled owners workers stopped until cancellation succeeds; no duplicate model call. Verify normal owner cancellation, native readback and empty worker after the fix. Broader #195/#196/S2 remains open.
+Finish native cancellation local checks/CI, deploy fixed nonproduction Preview, and cancel the original retained Turn6069d41c-40eb-456c-99a1-970aaa69ad7d/Taska8a2c345-fb24-41b1-a367-8e2a0d2b3ee2 through the native UI. Its single attempt is already settled4308micros. Verify terminal-once, native readback, zero additional model calls and empty worker; clean only owned test window. Keep controlled workers stopped until cancellation succeeds. Broader #195/#196/S2 remains open.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

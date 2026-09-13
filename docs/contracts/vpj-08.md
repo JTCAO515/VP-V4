@@ -57,6 +57,19 @@ other cards' leases. Expired facts remain inaccessible until current history rea
 revalidate them. Withdrawing policy/source authority never replays historical fact
 text merely because an event ID was valid in the past.
 
+## Cancellation without an enabled generation mode
+
+The shared native v1 cancellation route selects the existing native runtime rather
+than a legacy text/generation policy. It still requires a valid credential, the
+current mobile session, a UUID Turn and an empty JSON body; cookie, Origin and
+query inputs remain rejected. The unchanged `cancel_chat_turn` RPC verifies the
+original owner/active thread and enforces one cancelled terminal; completed
+answers cannot become cancelled. No generation, provider call, Trip mutation or
+budget settlement is performed by cancellation. Local cancellation requires the
+native Trip runtime flag; deployed access remains limited to the configured
+Staging Preview. This keeps stopping existing work available when a generation
+mode or source reader is disabled.
+
 ## Evidence and rollback
 
 See `artifacts/VPJ-08/native-events-20260913/verification.md` for exact versions,
