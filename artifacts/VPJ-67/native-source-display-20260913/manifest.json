@@ -1,0 +1,14 @@
+{
+  "current-eligibility.json": "08d2c09a4e4897fca88c08608478fdf37c2f6a75a9d4e51eef63303421c058d8",
+  "location-recovery.log": "d5f204118687bdb7402cd770cef2b258378c474dc18f66fbc5f902f59f009c8e",
+  "logout.json": "e1a1b589e9667fd8d6fb53028a87753b82efb78779163b27bd4e88c0520aeafb",
+  "postflight.json": "f3ee0443d4094275886232f26179dc2431888ce8aa6c9f8fa8e154968d7b13eb",
+  "preflight.json": "084a925f3ad13a27a8154df97ae54540b08398fb644bf410b4638cc459d25414",
+  "simulator-boot.log.gz": "ab479fdca63419b4b20fc6ee9ca3e127c73325c392ac5001b0268ca5c36fd378",
+  "verification.md": "15666e55fee2ba45ddb5355bf20717cfcb19e87d7a5f3900145e3c1a943eb011",
+  "visible-source-binding.json": "a7dac77ec74ec3dd0a9312a504b5857da9a53a8784f745e9a45865ea61497efa",
+  "window-finished.json": "aa33ed06fe734c57adfb3ba969864a8f125faf65e5fdc17b8bad5de1d635a51b",
+  "window.log.gz": "a8c1e2cf6de2d54edf04e89f50f31767c09177ecc026c3855bd7762b7acf38b7",
+  "zh-source-open.json": "09895733064fd7710712b6ec615948882d5340de5651cc6c68f1e0fa54e4694b",
+  "zh-source-open.png": "ccad0c66afb6f621ab83308246fa2208ba1f3f397e09d7af8c59f3405deef945"
+}

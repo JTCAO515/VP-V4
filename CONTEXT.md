@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PR352 merged5716b9e after final Native/Quality/Budget/Preview passes; actual Production attempt CANCELED, production aliases/shared Staging preserved. Scoped payment Staging: frozen42 real cases plus2 native UI tasks,44 settled attempts/0 unresolved; reader/Ops off, members0, owned resources cleaned. #264 offline recorded-usage trace preparation passes six tests and two historical native recordings; full S1–S6 incomplete.
+状态：PR353 merged ac67deb with recorded usage checks. Actual native Staging saved-payment sources now visibly expanded in zh/en on unchanged product runtime d15baf7; no new model calls. English interrupted cleanup recovered, fresh retry exited0, reader/Ops off and owned WAF allowance removed. Full S1–S6 incomplete.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -128,7 +128,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Deliver the #264 offline recorded-usage trace PR from /Users/jtcao/Documents/VP-V4-S2-Harness-Readonly with exact-head CI and the production guard. Evidence: artifacts/VPJ-67/recorded-usage-20260913/verification.md. Continue genuinely missing named real Harness cases with frozen expectations; do not rerun the44 settled payment calls or treat historical trace consistency as current authorization/factual/consumer acceptance. Physical payment UI and expanded native source links remain unrun; full #195/#206/#264/S2 stay open.
+Deliver bilingual native source evidence with exact-head CI and production guard. Then fix the observed English Reviewed date using device Chinese locale, and continue named missing Harness/consumer cases. Do not rerun the44 settled payment calls. External source PDF opening and physical-device payment acceptance remain unrun; full #195/#206/#264/S2 stay open. Evidence: artifacts/VPJ-67/native-source-display-20260913/verification.md.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
