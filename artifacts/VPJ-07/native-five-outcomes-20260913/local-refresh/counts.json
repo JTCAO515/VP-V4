@@ -1,0 +1,45 @@
+{
+  "scope": "actual local native/Auth/HTTP/SQL; synthetic model only",
+  "counts": {
+    "http": 4,
+    "finished": 3,
+    "destinationReceipts": 12
+  },
+  "tasks": [
+    {
+      "turnId": "ed7fc8ae-1d98-417d-98e1-ed84ae7c004c",
+      "taskId": "4a06488f-6cc0-46db-b6f5-ca4f803be0d1",
+      "status": "completed",
+      "events": 2,
+      "attempts": 1
+    },
+    {
+      "turnId": "2fd22e40-8222-4508-8493-85a4d27c5678",
+      "taskId": "f2e8b20c-e29f-48d3-ae7f-f18a0cef9b32",
+      "status": "cancelled",
+      "events": 2,
+      "attempts": 1
+    },
+    {
+      "turnId": "1f7a5a8a-d93e-4321-ae2b-bd8b1bdc6769",
+      "taskId": "c5b9c5b0-7ee1-4686-8f95-03dafa5acbdf",
+      "status": "completed",
+      "events": 2,
+      "attempts": 1
+    },
+    {
+      "turnId": "1bc441b8-5cfa-4dce-a689-12f6cba547dc",
+      "taskId": "f58c8526-3aea-4d1c-8c65-1163e36acfa0",
+      "status": "completed",
+      "events": 2,
+      "attempts": 1
+    }
+  ],
+  "inputs": [
+    "Synthetic HOLD native stream document question",
+    "Synthetic HOLD native stream cancelled question",
+    "中文合成请求",
+    "Synthetic UI request"
+  ],
+  "onlyCurrentInput": true
+}

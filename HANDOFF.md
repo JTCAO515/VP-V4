@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PR348 merged9e24faa with real usage recovery and guarded Production cancellation. PR349 cancellation fix now observed on API3a79573/Staging42: original native task cancelled once, original settled cost unchanged, normal worker empty/no provider call. Reader/Ops off,WAF40,owned Simulator deleted. Final evidence CI/merge pending; full S1–S6 incomplete.
+状态：PR349 merged a9c8b57 with required checks passed and Production attempt CANCELED. S2 bilingual saved-outcome readback on API/Web a9c8b57 reproduced a scrolled native recheck blank viewport. Fix a7ec7b1 anchors the notice to the viewport; actual local HTTP/event1/1 and bilingual native UI2/2 passed. Final-version Staging/CI delivery in progress; full S1–S6 incomplete.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -124,7 +124,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Finish PR349 evidence CI and guarded merge. Continue S2 native/Web five-outcome acceptance: reuse valid answered/clarification/technical-failure evidence, and inspect remaining real bilingual partial/blocked gaps before one bounded test window. The former retained Turn6069d41c-40eb-456c-99a1-970aaa69ad7d is now cancelled with one terminal and its original settled4308micros attempt; normal worker empty. Wider knowledge/semantic coverage, deliberate offline/background and full#195/#196/S2 remain open.
+Finish the current native viewport-notice fix Staging readback, evidence and guarded PR delivery. Then address observed Web unsupported next-step parity and specific partial-gap explanations under #195/#206; wider knowledge/semantic coverage and full S2 remain open. Reuse existing real tasks without new provider calls for display-only work.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

@@ -1,0 +1,9 @@
+{
+  "nativeSource": "2717bf947cf31edd3ce5021e7e361413859ad9b8",
+  "apiSource": "a9c8b5734e5389bf7e445ce5d78a232e721cdbbf",
+  "apiOrigin": "https://vp-v4-6pabqr58p-jtcao515s-projects.vercel.app",
+  "unsignedMachOSha256": "a95bed2a2f7e33c647f049f3228c4541f98bf21b838dc2b199626c3dca52a617",
+  "unsignedMachOIdentical": true,
+  "configurationChangedOnly": "VisePandaStagingAPIOrigin",
+  "signature": "ad-hoc verified"
+}
