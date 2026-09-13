@@ -1,0 +1,1 @@
+{"status": "PASS", "nativeSignedOut": true, "webSignedOut": true, "locales": ["en", "zh"], "webSizes": [[1365, 900], [390, 844]], "observed": "Native latest saved partial retains conflict gap; second original answer restores answered. Web declared old task has two facts, new task card-only. No model calls or publication date changes."}

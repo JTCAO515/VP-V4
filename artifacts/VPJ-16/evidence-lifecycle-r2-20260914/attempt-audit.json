@@ -1,0 +1,172 @@
+{
+  "at": "2026-09-13T18:39:03.582Z",
+  "status": "PASS",
+  "runOutcome": "FAIL",
+  "scope": "Four accepted tasks settled once; lifecycle acceptance is separately recorded",
+  "receipts": [
+    {
+      "schemaVersion": "validated-model-usage/1",
+      "turnId": "327149bb-df64-4026-8eae-3a78dbb9d3d0",
+      "policyId": "015d6710-82ec-4fc1-bb4f-a817b3f62873",
+      "attempt": {
+        "scopeId": "3ed90d4d-11d4-4693-8c6d-fa1eb0bfdc6e",
+        "ownerId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+        "taskId": "327149bb-df64-4026-8eae-3a78dbb9d3d0",
+        "attemptId": "a46cab3c-4688-4c7a-943b-95f719f25af7",
+        "provider": "qwen",
+        "model": "qwen3.7-plus-2026-05-26",
+        "priceVersion": "qwen-public-upper-20260912-v1",
+        "reservedMicros": 7000000,
+        "timeoutMs": 60000
+      },
+      "usage": {
+        "inputTokens": 1764,
+        "outputTokens": 31,
+        "totalTokens": 1795,
+        "cachedInputTokens": 0,
+        "uncachedInputTokens": null,
+        "reasoningTokens": null,
+        "cost": "unknown"
+      },
+      "actualMicros": 11328,
+      "observedAt": "2026-09-13T18:18:10.397Z"
+    },
+    {
+      "schemaVersion": "validated-model-usage/1",
+      "turnId": "39600ecc-60fb-4ff5-9e78-0dbe0b986fe1",
+      "policyId": "015d6710-82ec-4fc1-bb4f-a817b3f62873",
+      "attempt": {
+        "scopeId": "18049e34-eae0-4877-bd84-08978b298aab",
+        "ownerId": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+        "taskId": "39600ecc-60fb-4ff5-9e78-0dbe0b986fe1",
+        "attemptId": "1fe93b1c-7663-4b49-9b27-e53a7b6a9085",
+        "provider": "qwen",
+        "model": "qwen3.7-plus-2026-05-26",
+        "priceVersion": "qwen-public-upper-20260912-v1",
+        "reservedMicros": 7000000,
+        "timeoutMs": 60000
+      },
+      "usage": {
+        "inputTokens": 1761,
+        "outputTokens": 31,
+        "totalTokens": 1792,
+        "cachedInputTokens": 0,
+        "uncachedInputTokens": null,
+        "reasoningTokens": null,
+        "cost": "unknown"
+      },
+      "actualMicros": 11310,
+      "observedAt": "2026-09-13T18:18:31.514Z"
+    },
+    {
+      "schemaVersion": "validated-model-usage/1",
+      "turnId": "27047448-c146-4c58-9854-5e072beff73b",
+      "policyId": "015d6710-82ec-4fc1-bb4f-a817b3f62873",
+      "attempt": {
+        "scopeId": "3ed90d4d-11d4-4693-8c6d-fa1eb0bfdc6e",
+        "ownerId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+        "taskId": "27047448-c146-4c58-9854-5e072beff73b",
+        "attemptId": "7fb77c1b-cf86-4f85-844f-2ff3854df4eb",
+        "provider": "qwen",
+        "model": "qwen3.7-plus-2026-05-26",
+        "priceVersion": "qwen-public-upper-20260912-v1",
+        "reservedMicros": 7000000,
+        "timeoutMs": 60000
+      },
+      "usage": {
+        "inputTokens": 1764,
+        "outputTokens": 31,
+        "totalTokens": 1795,
+        "cachedInputTokens": 0,
+        "uncachedInputTokens": null,
+        "reasoningTokens": null,
+        "cost": "unknown"
+      },
+      "actualMicros": 11328,
+      "observedAt": "2026-09-13T18:22:13.687Z"
+    },
+    {
+      "schemaVersion": "validated-model-usage/1",
+      "turnId": "30883389-ffa0-41f0-9c37-b2e4b80d18c6",
+      "policyId": "015d6710-82ec-4fc1-bb4f-a817b3f62873",
+      "attempt": {
+        "scopeId": "18049e34-eae0-4877-bd84-08978b298aab",
+        "ownerId": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+        "taskId": "30883389-ffa0-41f0-9c37-b2e4b80d18c6",
+        "attemptId": "7ee2c945-6e14-4ae2-a7a1-9f26a0a2e241",
+        "provider": "qwen",
+        "model": "qwen3.7-plus-2026-05-26",
+        "priceVersion": "qwen-public-upper-20260912-v1",
+        "reservedMicros": 7000000,
+        "timeoutMs": 60000
+      },
+      "usage": {
+        "inputTokens": 1761,
+        "outputTokens": 31,
+        "totalTokens": 1792,
+        "cachedInputTokens": 0,
+        "uncachedInputTokens": null,
+        "reasoningTokens": null,
+        "cost": "unknown"
+      },
+      "actualMicros": 11310,
+      "observedAt": "2026-09-13T18:22:35.726Z"
+    }
+  ],
+  "rows": [
+    {
+      "model": "qwen3.7-plus-2026-05-26",
+      "status": "settled",
+      "task_id": "e9ffddfc-1825-4ea3-9930-3b14c67675d7",
+      "provider": "qwen",
+      "scope_id": "18049e34-eae0-4877-bd84-08978b298aab",
+      "attempt_id": "1fe93b1c-7663-4b49-9b27-e53a7b6a9085",
+      "created_at": "2026-09-13T18:18:30.586728+00:00",
+      "updated_at": "2026-09-13T18:18:33.93761+00:00",
+      "actual_micros": 11310,
+      "price_version": "qwen-public-upper-20260912-v1",
+      "reserved_micros": 7000000
+    },
+    {
+      "model": "qwen3.7-plus-2026-05-26",
+      "status": "settled",
+      "task_id": "0024580f-66b0-4628-8ecc-f6b0066f056d",
+      "provider": "qwen",
+      "scope_id": "18049e34-eae0-4877-bd84-08978b298aab",
+      "attempt_id": "7ee2c945-6e14-4ae2-a7a1-9f26a0a2e241",
+      "created_at": "2026-09-13T18:22:34.73555+00:00",
+      "updated_at": "2026-09-13T18:22:38.135337+00:00",
+      "actual_micros": 11310,
+      "price_version": "qwen-public-upper-20260912-v1",
+      "reserved_micros": 7000000
+    },
+    {
+      "model": "qwen3.7-plus-2026-05-26",
+      "status": "settled",
+      "task_id": "aae62ed7-5e93-4f04-9730-00c6f4de815a",
+      "provider": "qwen",
+      "scope_id": "3ed90d4d-11d4-4693-8c6d-fa1eb0bfdc6e",
+      "attempt_id": "7fb77c1b-cf86-4f85-844f-2ff3854df4eb",
+      "created_at": "2026-09-13T18:22:13.245371+00:00",
+      "updated_at": "2026-09-13T18:22:16.100017+00:00",
+      "actual_micros": 11328,
+      "price_version": "qwen-public-upper-20260912-v1",
+      "reserved_micros": 7000000
+    },
+    {
+      "model": "qwen3.7-plus-2026-05-26",
+      "status": "settled",
+      "task_id": "79e2ef9d-0aa2-479b-889c-40e25b9fe0cb",
+      "provider": "qwen",
+      "scope_id": "3ed90d4d-11d4-4693-8c6d-fa1eb0bfdc6e",
+      "attempt_id": "a46cab3c-4688-4c7a-943b-95f719f25af7",
+      "created_at": "2026-09-13T18:18:09.871871+00:00",
+      "updated_at": "2026-09-13T18:18:12.801461+00:00",
+      "actual_micros": 11328,
+      "price_version": "qwen-public-upper-20260912-v1",
+      "reserved_micros": 7000000
+    }
+  ],
+  "configuredPriceEstimateMicros": 45276,
+  "billedCost": "unknown"
+}
