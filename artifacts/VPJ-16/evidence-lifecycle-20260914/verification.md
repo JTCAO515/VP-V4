@@ -16,10 +16,12 @@ Cleanup PASS: own card publication revoked through normal reviewer API; original
 
 The operator controller persists the DB-assigned xid8 before activation, then checks locked row xmins/revisions before cleanup. Local PostgreSQL tests4/4 cover own close, lost commit receipt, foreign takeover refusal and retention failure after close. Independent permission/data review0 Critical/0 Important. Initial review defects and local test setup failures were repaired before Staging activation; no remote schema change. Observed operator scripts are evidence, not portable repository runtime.
 
-## Corrected frozen v2: prepared, UNRUN
+## Corrected frozen v2: historical preparation (now FAIL)
 
 Keep v1 unchanged as failure evidence. v2 uses fresh candidate IDs and valid lowercase source keys/URIs. The real Ops admission validator now runs against every statement in a contract test, and preserves a reproduction of the v1 rejection;2/2 PASS. Questions, classifications and lifecycle expectations are unchanged. Four fresh tasks are needed because the first run's original card publication has been revoked and saved answers must not acquire replacement evidence. Maximum remaining calls4, aggregate slice maximum6 including the two retained first-run tasks; each task permits one model attempt. No question tuning or selective replacement of failed semantic outcomes.
 
 Before a v2 window, capture a fresh317-attempt/13-statement baseline, validate both fixtures with the real Ops validator before activation, recheck existing budget/policy validity and freeze the exact runner. At most28 million CNY micros reservation and35minutes in the new window. Card TTL20minutes and conflict TTL5minutes; do not rewrite publication dates. Preserve the original12 and v1 retained records. Revoke only v2's two candidates in cleanup.
 
 This additional payment scenario does not fulfill frozen museum/ferry H07/H08 or complete12-case Harness. H08 was visible during readiness review; do not claim it remained blind to this executor. Physical/VoiceOver, source injection, provider-unavailable, full S2 and Production acceptance remain UNRUN. Maps draftPR372 remains the only independent preparation lane and has not made actual provider calls.
+
+V2 was subsequently executed and failed its final reason assertion; see [v2 evidence](../evidence-lifecycle-r2-20260914/verification.md). Its three full stages passed, cleanup completed, and all six aggregate model calls are consumed. The preparation text above records the pre-run plan, not current readiness.

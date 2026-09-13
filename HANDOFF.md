@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2: main integration draftPR373 v1 lifecycle window FAIL at invalid synthetic conflict submission; initial en/zh answered tasks observed, both settled. Cleanup PASS:317 attempts/0unresolved, original data retained, switches off/members0/WAF72. Corrected frozen v2 Ops-input contract2/2 PASS, live run UNRUN. Maps draftPR372 remains sole prep lane.
+状态：S2: draftPR373 lifecycle v2 FAIL at final reason assertion (expired actual vs expired+revoked expected); three full native/Web stages passed. Cleanup PASS:321 attempts/0 unresolved, original rows and four completions unchanged, switches off/members0/WAF74. Both v1 and v2 retained as FAIL;6 total calls consumed. Maps draftPR372 remains sole prep lane.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -138,7 +138,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Continue PR373 with corrected frozen evidence-lifecycle-v2.json. Keep v1 failure and its2 tasks/publication retained; fresh baseline317attempts/13statements,4 remaining calls (slice total max6). Validate every statement through actual Ops validator before activation. Reuse reviewed controller with DB-bound transaction ownership and cleanup; observe conflict and natural expiry with native/Web. No Production release.
+Finish PR373 diagnosis/regression evidence. Saved-answer expiry reasons exclude unrelated revoked publications; preserve frozen v1/v2 and their six calls. A separately bounded follow-up is needed for pure-expiry native/Web final-stage acceptance, using new publication IDs and a declared new budget; do not rerun or relabel failed runs. No Production release.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

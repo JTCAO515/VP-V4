@@ -235,6 +235,8 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   };
   const card=payment('international_card_payment','requires_action','merchant_acceptance_check');
   const mobile=payment('alipay_weixin_pay','offers_procedure','supported_card_merchant_qr_payment');
+  // An unrelated revoked publication must not become a saved answer's reason.
+  const unrelatedCardId=await publish(card);await revoke(unrelatedCardId);
   const cardId=await publish(card,25000);await publish(mobile);
   const submit=async()=>{
    const a=fresh({p_city:'beijing',p_text:'How do I check card acceptance and get started with mobile merchant payment?'});
