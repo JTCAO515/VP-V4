@@ -44,13 +44,24 @@ no provider reroll. Initial native audit queried budget by Turn instead of attem
 read-only query passed, with the original checker failure preserved.
 
 Actual en/zh desktop and390x844 Web readback passed for API-generated native-protocol tasks,
-including content, sources, owner isolation and reload. Web readback of these two new actual UI
-submissions remains UNRUN. Native source disclosure content was read in accessibility snapshots;
+including content, sources, owner isolation and reload. Web readback of these two actual native UI submissions now passed in both locales,
+at1365x900 and390x844, with original language/claims/sources/reload and Chinese-owner
+English-request exclusion. Both Web accounts signed out; temporary viewport reset and tab closed.
+See web-native-acceptance.json. Native source disclosure content was read in accessibility snapshots;
 a stable visible source view was interrupted by periodic evidence rechecking. Screenshot names
 are raw capture points, not assertions that all source details were visible.
 
 Observed defects: cancelled stale work still projects accepted/pending (#264), and native periodic
-rechecking temporarily removes answer content and disrupts source expansion. These remain unresolved.
+rechecking temporarily removed answer content and disrupted source expansion at8de8c9b.
+The native-only follow-up begins accepted-consent refresh5s before the existing deadline, without
+extending that deadline.22 focused native tests passed after recovering a Simulator launch failure;
+signed staging build/codesign passed.40.76s live source reading produced18 successful AX samples
+and stable before/after screenshots (not continuous-frame proof), no new model calls.
+The cancelled-work status defect remains unresolved; independent pre-review identifies the necessary
+SQL+SSE correction and adversarial cases in cancelled-read-pre-review.md.
 No full SIM experience acceptance claim. Full #206/#264/S2 and physical-device/release checks remain open.
 Cleanup: reader/Opsfalse,0 active members,12statements/11published/1revoked unchanged; owned WAF host
 removed at version60, window exit0. Two native users signed out. Runtime remains frozen8de8c9b.
+
+Follow-up cleanup: native/Web accounts signed out, reader/Opsfalse,0 active members;
+owned WAF removed at version62, readback window exit0. Existing publications/users/Trips unchanged.

@@ -1,0 +1,240 @@
+{
+  "duration": 40.754514499999914,
+  "samples": [
+    {
+      "elapsed": 1.588,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "x": 48,
+          "height": 30.333333333333485,
+          "width": 287.3333333333333,
+          "y": 397.33333333333337
+        }
+      ]
+    },
+    {
+      "elapsed": 3.79,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "width": 287.3333333333333,
+          "height": 30.333333333333485,
+          "x": 48,
+          "y": 397.33333333333337
+        }
+      ]
+    },
+    {
+      "elapsed": 6.015,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "y": 397.33333333333337,
+          "height": 30.333333333333485,
+          "x": 48,
+          "width": 287.3333333333333
+        }
+      ]
+    },
+    {
+      "elapsed": 8.222,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "height": 30.333333333333485,
+          "y": 397.33333333333337,
+          "width": 287.3333333333333,
+          "x": 48
+        }
+      ]
+    },
+    {
+      "elapsed": 10.446,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "width": 287.3333333333333,
+          "x": 48,
+          "y": 397.33333333333337,
+          "height": 30.333333333333485
+        }
+      ]
+    },
+    {
+      "elapsed": 12.78,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "y": 397.33333333333337,
+          "width": 287.3333333333333,
+          "x": 48,
+          "height": 30.333333333333485
+        }
+      ]
+    },
+    {
+      "elapsed": 15.033,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "width": 287.3333333333333,
+          "y": 397.33333333333337,
+          "x": 48,
+          "height": 30.333333333333485
+        }
+      ]
+    },
+    {
+      "elapsed": 17.238,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "x": 48,
+          "height": 30.333333333333485,
+          "width": 287.3333333333333,
+          "y": 397.33333333333337
+        }
+      ]
+    },
+    {
+      "elapsed": 19.443,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "height": 30.333333333333485,
+          "x": 48,
+          "width": 287.3333333333333,
+          "y": 397.33333333333337
+        }
+      ]
+    },
+    {
+      "elapsed": 21.682,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "height": 30.333333333333485,
+          "x": 48,
+          "width": 287.3333333333333,
+          "y": 397.33333333333337
+        }
+      ]
+    },
+    {
+      "elapsed": 23.893,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "x": 48,
+          "width": 287.3333333333333,
+          "height": 30.333333333333485,
+          "y": 397.33333333333337
+        }
+      ]
+    },
+    {
+      "elapsed": 26.24,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "height": 30.333333333333485,
+          "width": 287.3333333333333,
+          "y": 397.33333333333337,
+          "x": 48
+        }
+      ]
+    },
+    {
+      "elapsed": 28.435,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "y": 397.33333333333337,
+          "x": 48,
+          "width": 287.3333333333333,
+          "height": 30.333333333333485
+        }
+      ]
+    },
+    {
+      "elapsed": 30.647,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "width": 287.3333333333333,
+          "y": 397.33333333333337,
+          "x": 48,
+          "height": 30.333333333333485
+        }
+      ]
+    },
+    {
+      "elapsed": 32.864,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "y": 397.33333333333337,
+          "width": 287.3333333333333,
+          "height": 30.333333333333485,
+          "x": 48
+        }
+      ]
+    },
+    {
+      "elapsed": 35.058,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "x": 48,
+          "width": 287.3333333333333,
+          "y": 397.33333333333337,
+          "height": 30.333333333333485
+        }
+      ]
+    },
+    {
+      "elapsed": 37.309,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "width": 287.3333333333333,
+          "height": 30.333333333333485,
+          "x": 48,
+          "y": 397.33333333333337
+        }
+      ]
+    },
+    {
+      "elapsed": 39.533,
+      "rechecking": false,
+      "sourceCount": 1,
+      "visibleSourceFrames": [
+        {
+          "height": 30.333333333333485,
+          "width": 287.3333333333333,
+          "x": 48,
+          "y": 397.33333333333337
+        }
+      ]
+    }
+  ],
+  "method": "AX samples approximately each1-2seconds; screenshots start/end; no provider calls"
+}
