@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "at": "2026-09-13T21:16:39.327402+00:00",
+  "nativeSignedOut": true,
+  "webSignedOut": true,
+  "observation": "revoked-ui-observation.json",
+  "scope": "Native zh fresh saved-answer read; Web en/zh desktop1365x900 and390x844. No additional model call.",
+  "evidence": [
+    "native-revoked-zh-logout.log",
+    "web-revoked-en-signedout.txt",
+    "web-revoked-zh-signedout.txt"
+  ],
+  "limits": "Native revoked-English and continuously signed-in native on-screen cache expiry were not separately observed."
+}

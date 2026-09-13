@@ -1,0 +1,1020 @@
+{
+  "devices" : [
+    {
+      "architecture" : "arm64",
+      "deviceId" : "97921183-9CB9-45B2-B1F6-EF90CDAA1023",
+      "deviceName" : "VP-CI-440fbc9da50040f7b32e4815af406b97",
+      "modelName" : "iPhone 17 Pro",
+      "osBuildNumber" : "23F77",
+      "osVersion" : "26.5",
+      "platform" : "iOS Simulator"
+    }
+  ],
+  "testNodes" : [
+    {
+      "children" : [
+        {
+          "children" : [
+            {
+              "children" : [
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit disposable grounded environment required",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.024s",
+                  "durationInSeconds" : 0.024490952491760254,
+                  "name" : "testGroundedEventDisconnectResumesSameTaskAndCancelRemainsAvailable()",
+                  "nodeIdentifier" : "NativeAskIntegrationTests/testGroundedEventDisconnectResumesSameTaskAndCancelRemainsAvailable()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskIntegrationTests/testGroundedEventDisconnectResumesSameTaskAndCancelRemainsAvailable",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit disposable native text environment is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.57s",
+                  "durationInSeconds" : 0.5700830221176147,
+                  "name" : "testRealLocalConsentPersistenceCancelWithdrawalAndAccountIsolation()",
+                  "nodeIdentifier" : "NativeAskIntegrationTests/testRealLocalConsentPersistenceCancelWithdrawalAndAccountIsolation()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskIntegrationTests/testRealLocalConsentPersistenceCancelWithdrawalAndAccountIsolation",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit local text environment required",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.0032s",
+                  "durationInSeconds" : 0.0032320022583007812,
+                  "name" : "testRealLocalTaskClarificationRestorationAndFourTurnLimit()",
+                  "nodeIdentifier" : "NativeAskIntegrationTests/testRealLocalTaskClarificationRestorationAndFourTurnLimit()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskIntegrationTests/testRealLocalTaskClarificationRestorationAndFourTurnLimit",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                }
+              ],
+              "name" : "NativeAskIntegrationTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskIntegrationTests",
+              "nodeType" : "Test Suite",
+              "result" : "Skipped"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.13s",
+                  "durationInSeconds" : 0.12860000133514404,
+                  "name" : "testAbsentHistoryKeepsOriginalPayloadAndTaskOnExplicitRetry()",
+                  "nodeIdentifier" : "NativeAskPersistenceTests/testAbsentHistoryKeepsOriginalPayloadAndTaskOnExplicitRetry()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskPersistenceTests/testAbsentHistoryKeepsOriginalPayloadAndTaskOnExplicitRetry",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.11s",
+                  "durationInSeconds" : 0.11391007900238037,
+                  "name" : "testAcknowledgedRequestSurvivesEmptyHistoryAfterRestart()",
+                  "nodeIdentifier" : "NativeAskPersistenceTests/testAcknowledgedRequestSurvivesEmptyHistoryAfterRestart()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskPersistenceTests/testAcknowledgedRequestSurvivesEmptyHistoryAfterRestart",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.14s",
+                  "durationInSeconds" : 0.13560998439788818,
+                  "name" : "testActualDeviceOnlyKeychainPersistsAcrossSessionRecreation()",
+                  "nodeIdentifier" : "NativeAskPersistenceTests/testActualDeviceOnlyKeychainPersistsAcrossSessionRecreation()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskPersistenceTests/testActualDeviceOnlyKeychainPersistsAcrossSessionRecreation",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.17s",
+                  "durationInSeconds" : 0.17464900016784668,
+                  "name" : "testChangedModeAndNoticeCannotRebindPersistedRequest()",
+                  "nodeIdentifier" : "NativeAskPersistenceTests/testChangedModeAndNoticeCannotRebindPersistedRequest()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskPersistenceTests/testChangedModeAndNoticeCannotRebindPersistedRequest",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.27s",
+                  "durationInSeconds" : 0.2699470520019531,
+                  "name" : "testFailedRemovalAfterAcknowledgementPreservesRecoveryRecord()",
+                  "nodeIdentifier" : "NativeAskPersistenceTests/testFailedRemovalAfterAcknowledgementPreservesRecoveryRecord()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskPersistenceTests/testFailedRemovalAfterAcknowledgementPreservesRecoveryRecord",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.25s",
+                  "durationInSeconds" : 0.24725401401519775,
+                  "name" : "testLockedVaultAndFailedLogoutDoNotSilentlyDiscardPending()",
+                  "nodeIdentifier" : "NativeAskPersistenceTests/testLockedVaultAndFailedLogoutDoNotSilentlyDiscardPending()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskPersistenceTests/testLockedVaultAndFailedLogoutDoNotSilentlyDiscardPending",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.18s",
+                  "durationInSeconds" : 0.17550909519195557,
+                  "name" : "testLostReceiptReconcilesHistoryWithoutAnotherPost()",
+                  "nodeIdentifier" : "NativeAskPersistenceTests/testLostReceiptReconcilesHistoryWithoutAnotherPost()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskPersistenceTests/testLostReceiptReconcilesHistoryWithoutAnotherPost",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.034s",
+                  "durationInSeconds" : 0.0338970422744751,
+                  "name" : "testUnsupportedStoredSchemaBlocksRestoreWithoutErasingIt()",
+                  "nodeIdentifier" : "NativeAskPersistenceTests/testUnsupportedStoredSchemaBlocksRestoreWithoutErasingIt()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskPersistenceTests/testUnsupportedStoredSchemaBlocksRestoreWithoutErasingIt",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.089s",
+                  "durationInSeconds" : 0.08944106101989746,
+                  "name" : "testWriteFailurePreventsNetworkAndLeavesDraftEditable()",
+                  "nodeIdentifier" : "NativeAskPersistenceTests/testWriteFailurePreventsNetworkAndLeavesDraftEditable()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskPersistenceTests/testWriteFailurePreventsNetworkAndLeavesDraftEditable",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.071s",
+                  "durationInSeconds" : 0.07066094875335693,
+                  "name" : "testWrittenButUnsentRequestRestoresWithoutAutomaticPost()",
+                  "nodeIdentifier" : "NativeAskPersistenceTests/testWrittenButUnsentRequestRestoresWithoutAutomaticPost()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskPersistenceTests/testWrittenButUnsentRequestRestoresWithoutAutomaticPost",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "NativeAskPersistenceTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskPersistenceTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.0018s",
+                  "durationInSeconds" : 0.0017521381378173828,
+                  "name" : "Top-level tabs keep the operator-approved order",
+                  "nodeIdentifier" : "AppNavigationContractTests/tabOrder()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/AppNavigationContractTests/tabOrder()",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00085s",
+                  "durationInSeconds" : 0.0008490085601806641,
+                  "name" : "Ask is the default launch destination",
+                  "nodeIdentifier" : "AppNavigationContractTests/defaultTab()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/AppNavigationContractTests/defaultTab()",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0023s",
+                  "durationInSeconds" : 0.002254009246826172,
+                  "name" : "Tab localization keys remain stable",
+                  "nodeIdentifier" : "AppNavigationContractTests/tabLocalizationKeys()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/AppNavigationContractTests/tabLocalizationKeys()",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00056s",
+                  "durationInSeconds" : 0.0005588531494140625,
+                  "name" : "Every first-version capability is explicitly preview-only",
+                  "nodeIdentifier" : "AppNavigationContractTests/capabilityMaturity()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/AppNavigationContractTests/capabilityMaturity()",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00089s",
+                  "durationInSeconds" : 0.0008938312530517578,
+                  "name" : "Release picker offers only Chinese and English",
+                  "nodeIdentifier" : "AppNavigationContractTests/releaseLocales()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/AppNavigationContractTests/releaseLocales()",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.004s",
+                  "durationInSeconds" : 0.003973960876464844,
+                  "name" : "Legacy selection stays representable until switching to a release locale",
+                  "nodeIdentifier" : "AppNavigationContractTests/legacySelection()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/AppNavigationContractTests/legacySelection()",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00041s",
+                  "durationInSeconds" : 0.0004050731658935547,
+                  "name" : "Five supported locales include an RTL Arabic option",
+                  "nodeIdentifier" : "AppNavigationContractTests/localeContract()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/AppNavigationContractTests/localeContract()",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.00048s",
+                  "durationInSeconds" : 0.0004780292510986328,
+                  "name" : "Launch locale override is explicit and defaults to Chinese",
+                  "nodeIdentifier" : "AppNavigationContractTests/launchLocale()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/AppNavigationContractTests/launchLocale()",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0069s",
+                  "durationInSeconds" : 0.006922006607055664,
+                  "name" : "A chosen language survives a new app settings instance without launch overrides overwriting it",
+                  "nodeIdentifier" : "AppNavigationContractTests/savedLanguage()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/AppNavigationContractTests/savedLanguage()",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "AppNavigationContractTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/AppNavigationContractTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.24s",
+                  "durationInSeconds" : 0.23532593250274658,
+                  "name" : "testAcceptedTurnSurvivesFailedHistoryRefresh()",
+                  "nodeIdentifier" : "NativeAskStateTests/testAcceptedTurnSurvivesFailedHistoryRefresh()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskStateTests/testAcceptedTurnSurvivesFailedHistoryRefresh",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.16s",
+                  "durationInSeconds" : 0.15604901313781738,
+                  "name" : "testEventParserRejectsOversizedOrAmbiguousFrames()",
+                  "nodeIdentifier" : "NativeAskStateTests/testEventParserRejectsOversizedOrAmbiguousFrames()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskStateTests/testEventParserRejectsOversizedOrAmbiguousFrames",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0041s",
+                  "durationInSeconds" : 0.004118084907531738,
+                  "name" : "testEventParserRequiresCompleteFrameAndMonotonicMatchingCursor()",
+                  "nodeIdentifier" : "NativeAskStateTests/testEventParserRequiresCompleteFrameAndMonotonicMatchingCursor()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskStateTests/testEventParserRequiresCompleteFrameAndMonotonicMatchingCursor",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.048s",
+                  "durationInSeconds" : 0.04750704765319824,
+                  "name" : "testGroundedAcceptedReadRefreshesBeforeLeaseExpires()",
+                  "nodeIdentifier" : "NativeAskStateTests/testGroundedAcceptedReadRefreshesBeforeLeaseExpires()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskStateTests/testGroundedAcceptedReadRefreshesBeforeLeaseExpires",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.1s",
+                  "durationInSeconds" : 0.10448193550109863,
+                  "name" : "testGroundedConsentScreenDoesNotPollEverySecond()",
+                  "nodeIdentifier" : "NativeAskStateTests/testGroundedConsentScreenDoesNotPollEverySecond()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskStateTests/testGroundedConsentScreenDoesNotPollEverySecond",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.093s",
+                  "durationInSeconds" : 0.09321999549865723,
+                  "name" : "testLatePolicyCannotEnterAnotherAccount()",
+                  "nodeIdentifier" : "NativeAskStateTests/testLatePolicyCannotEnterAnotherAccount()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskStateTests/testLatePolicyCannotEnterAnotherAccount",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.2s",
+                  "durationInSeconds" : 0.2002110481262207,
+                  "name" : "testLostReceiptPolicyChangeRequiresStoppingOldSharingBeforeNewQuestion()",
+                  "nodeIdentifier" : "NativeAskStateTests/testLostReceiptPolicyChangeRequiresStoppingOldSharingBeforeNewQuestion()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskStateTests/testLostReceiptPolicyChangeRequiresStoppingOldSharingBeforeNewQuestion",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0056s",
+                  "durationInSeconds" : 0.005595088005065918,
+                  "name" : "testTaskChainRejectsMissingRootForkAndCrossThread()",
+                  "nodeIdentifier" : "NativeAskStateTests/testTaskChainRejectsMissingRootForkAndCrossThread()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskStateTests/testTaskChainRejectsMissingRootForkAndCrossThread",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.38s",
+                  "durationInSeconds" : 0.3825409412384033,
+                  "name" : "testTemporaryAuthLossKeepsHiddenDraftAndLogoutClearsIt()",
+                  "nodeIdentifier" : "NativeAskStateTests/testTemporaryAuthLossKeepsHiddenDraftAndLogoutClearsIt()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskStateTests/testTemporaryAuthLossKeepsHiddenDraftAndLogoutClearsIt",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "3秒",
+                  "durationInSeconds" : 3.7745989561080933,
+                  "name" : "testViewObservesPermanentClearAfterActiveScopeIsAlreadyNil()",
+                  "nodeIdentifier" : "NativeAskStateTests/testViewObservesPermanentClearAfterActiveScopeIsAlreadyNil()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskStateTests/testViewObservesPermanentClearAfterActiveScopeIsAlreadyNil",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "NativeAskStateTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeAskStateTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.016s",
+                  "durationInSeconds" : 0.015506982803344727,
+                  "name" : "testAccountLossAndBackgroundClearRejectOutstandingResponse()",
+                  "nodeIdentifier" : "NativeKnowledgeTests/testAccountLossAndBackgroundClearRejectOutstandingResponse()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests/testAccountLossAndBackgroundClearRejectOutstandingResponse",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.031s",
+                  "durationInSeconds" : 0.03055405616760254,
+                  "name" : "testEmptyEligibleResultIsHonestAndRefreshIsBounded()",
+                  "nodeIdentifier" : "NativeKnowledgeTests/testEmptyEligibleResultIsHonestAndRefreshIsBounded()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests/testEmptyEligibleResultIsHonestAndRefreshIsBounded",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.022s",
+                  "durationInSeconds" : 0.022300004959106445,
+                  "name" : "testExplicitQuestionKeepsPartialFactsAndWithdrawalReason()",
+                  "nodeIdentifier" : "NativeKnowledgeTests/testExplicitQuestionKeepsPartialFactsAndWithdrawalReason()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests/testExplicitQuestionKeepsPartialFactsAndWithdrawalReason",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0048s",
+                  "durationInSeconds" : 0.004818081855773926,
+                  "name" : "testGroundedPendingRequestRetainsExactCityAcrossEncodingAndRejectsOtherMode()",
+                  "nodeIdentifier" : "NativeKnowledgeTests/testGroundedPendingRequestRetainsExactCityAcrossEncodingAndRejectsOtherMode()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests/testGroundedPendingRequestRetainsExactCityAcrossEncodingAndRejectsOtherMode",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.028s",
+                  "durationInSeconds" : 0.027616024017333984,
+                  "name" : "testGroundedProjectionHasBoundedLifetimeAndKeepsCompoundIncomplete()",
+                  "nodeIdentifier" : "NativeKnowledgeTests/testGroundedProjectionHasBoundedLifetimeAndKeepsCompoundIncomplete()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests/testGroundedProjectionHasBoundedLifetimeAndKeepsCompoundIncomplete",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.004s",
+                  "durationInSeconds" : 0.004037976264953613,
+                  "name" : "testGroundedUnavailableHidesFactsWithoutChangingSavedOutcome()",
+                  "nodeIdentifier" : "NativeKnowledgeTests/testGroundedUnavailableHidesFactsWithoutChangingSavedOutcome()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests/testGroundedUnavailableHidesFactsWithoutChangingSavedOutcome",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.008s",
+                  "durationInSeconds" : 0.00801992416381836,
+                  "name" : "testLateSelectionResponseCannotReplaceNewContent()",
+                  "nodeIdentifier" : "NativeKnowledgeTests/testLateSelectionResponseCannotReplaceNewContent()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests/testLateSelectionResponseCannotReplaceNewContent",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.071s",
+                  "durationInSeconds" : 0.07073104381561279,
+                  "name" : "testPaymentAndSIMRelationsAndExplicitRailSelectionStayBound()",
+                  "nodeIdentifier" : "NativeKnowledgeTests/testPaymentAndSIMRelationsAndExplicitRailSelectionStayBound()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests/testPaymentAndSIMRelationsAndExplicitRailSelectionStayBound",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.056s",
+                  "durationInSeconds" : 0.05601394176483154,
+                  "name" : "testPlaceSelectionTypedValuesAndLocalDateAreBoundToSavedTask()",
+                  "nodeIdentifier" : "NativeKnowledgeTests/testPlaceSelectionTypedValuesAndLocalDateAreBoundToSavedTask()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests/testPlaceSelectionTypedValuesAndLocalDateAreBoundToSavedTask",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.005s",
+                  "durationInSeconds" : 0.004989027976989746,
+                  "name" : "testQuestionRejectsFalseCompletenessWrongRelationAndUnboundFacts()",
+                  "nodeIdentifier" : "NativeKnowledgeTests/testQuestionRejectsFalseCompletenessWrongRelationAndUnboundFacts()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests/testQuestionRejectsFalseCompletenessWrongRelationAndUnboundFacts",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0055s",
+                  "durationInSeconds" : 0.005504965782165527,
+                  "name" : "testRefreshFailureNeverKeepsPreviouslyReadableText()",
+                  "nodeIdentifier" : "NativeKnowledgeTests/testRefreshFailureNeverKeepsPreviouslyReadableText()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests/testRefreshFailureNeverKeepsPreviouslyReadableText",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0079s",
+                  "durationInSeconds" : 0.007912993431091309,
+                  "name" : "testScopeLanguageRecipientAndConditionsAreValidated()",
+                  "nodeIdentifier" : "NativeKnowledgeTests/testScopeLanguageRecipientAndConditionsAreValidated()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests/testScopeLanguageRecipientAndConditionsAreValidated",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0093s",
+                  "durationInSeconds" : 0.009338021278381348,
+                  "name" : "testServerExpiryUsesMonotonicLifetimeAndIncludesRequestDuration()",
+                  "nodeIdentifier" : "NativeKnowledgeTests/testServerExpiryUsesMonotonicLifetimeAndIncludesRequestDuration()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests/testServerExpiryUsesMonotonicLifetimeAndIncludesRequestDuration",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0079s",
+                  "durationInSeconds" : 0.007943034172058105,
+                  "name" : "testSpecificGapsMustBeBoundedExcerptsFromThisTurn()",
+                  "nodeIdentifier" : "NativeKnowledgeTests/testSpecificGapsMustBeBoundedExcerptsFromThisTurn()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests/testSpecificGapsMustBeBoundedExcerptsFromThisTurn",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "NativeKnowledgeTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeKnowledgeTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit disposable local identity environment is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.0041s",
+                  "durationInSeconds" : 0.004148006439208984,
+                  "name" : "testLocalLoginProfileRefreshReplacementLogoutAndAccountIsolation()",
+                  "nodeIdentifier" : "NativeSessionIntegrationTests/testLocalLoginProfileRefreshReplacementLogoutAndAccountIsolation()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeSessionIntegrationTests/testLocalLoginProfileRefreshReplacementLogoutAndAccountIsolation",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: controlled loopback redirect probe is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "2秒",
+                  "durationInSeconds" : 2.3993290662765503,
+                  "name" : "testRedirectsNeverForwardCredentialsAndRefreshCanRecover()",
+                  "nodeIdentifier" : "NativeSessionIntegrationTests/testRedirectsNeverForwardCredentialsAndRefreshCanRecover()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeSessionIntegrationTests/testRedirectsNeverForwardCredentialsAndRefreshCanRecover",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "duration" : "0.0037s",
+                  "durationInSeconds" : 0.0036770105361938477,
+                  "name" : "testRemoteAndMissingConfigurationRemainUnavailable()",
+                  "nodeIdentifier" : "NativeSessionIntegrationTests/testRemoteAndMissingConfigurationRemainUnavailable()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeSessionIntegrationTests/testRemoteAndMissingConfigurationRemainUnavailable",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.0057s",
+                  "durationInSeconds" : 0.0056830644607543945,
+                  "name" : "testStagingEndpointIsBuildBoundAndRejectsFallbackOrCredentialDestinations()",
+                  "nodeIdentifier" : "NativeSessionIntegrationTests/testStagingEndpointIsBuildBoundAndRejectsFallbackOrCredentialDestinations()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeSessionIntegrationTests/testStagingEndpointIsBuildBoundAndRejectsFallbackOrCredentialDestinations",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "NativeSessionIntegrationTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeSessionIntegrationTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit local synthetic Trip environment is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.009s",
+                  "durationInSeconds" : 0.009001016616821289,
+                  "name" : "testRealLocalCreateConfirmReloadConflictAndReplacedSession()",
+                  "nodeIdentifier" : "NativeTripIntegrationTests/testRealLocalCreateConfirmReloadConflictAndReplacedSession()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeTripIntegrationTests/testRealLocalCreateConfirmReloadConflictAndReplacedSession",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                }
+              ],
+              "name" : "NativeTripIntegrationTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeTripIntegrationTests",
+              "nodeType" : "Test Suite",
+              "result" : "Skipped"
+            },
+            {
+              "children" : [
+                {
+                  "duration" : "0.22s",
+                  "durationInSeconds" : 0.22286200523376465,
+                  "name" : "testAccountChangeRejectsAnAlreadyInFlightTripReply()",
+                  "nodeIdentifier" : "NativeTripStateTests/testAccountChangeRejectsAnAlreadyInFlightTripReply()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeTripStateTests/testAccountChangeRejectsAnAlreadyInFlightTripReply",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.011s",
+                  "durationInSeconds" : 0.010922074317932129,
+                  "name" : "testDraftOnlyChangesRequestedFieldsAndKeepsConfirmedContent()",
+                  "nodeIdentifier" : "NativeTripStateTests/testDraftOnlyChangesRequestedFieldsAndKeepsConfirmedContent()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeTripStateTests/testDraftOnlyChangesRequestedFieldsAndKeepsConfirmedContent",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "0.16s",
+                  "durationInSeconds" : 0.16486597061157227,
+                  "name" : "testLateRefreshCannotReviveSessionAfterTripDenial()",
+                  "nodeIdentifier" : "NativeTripStateTests/testLateRefreshCannotReviveSessionAfterTripDenial()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeTripStateTests/testLateRefreshCannotReviveSessionAfterTripDenial",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "1秒",
+                  "durationInSeconds" : 1.0487619638442993,
+                  "name" : "testTemporaryAuthenticationFailureKeepsDraftHiddenAndLogoutClearsIt()",
+                  "nodeIdentifier" : "NativeTripStateTests/testTemporaryAuthenticationFailureKeepsDraftHiddenAndLogoutClearsIt()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeTripStateTests/testTemporaryAuthenticationFailureKeepsDraftHiddenAndLogoutClearsIt",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "NativeTripStateTests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests/NativeTripStateTests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            }
+          ],
+          "name" : "VisePandaTests",
+          "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaTests",
+          "nodeType" : "Unit test bundle",
+          "result" : "Passed"
+        },
+        {
+          "children" : [
+            {
+              "children" : [
+                {
+                  "duration" : "6分钟58秒",
+                  "durationInSeconds" : 418.94787895679474,
+                  "name" : "testAccessibilityAtLargestTextSize()",
+                  "nodeIdentifier" : "AppShellUITests/testAccessibilityAtLargestTextSize()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testAccessibilityAtLargestTextSize",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "1分钟39秒",
+                  "durationInSeconds" : 99.35678803920746,
+                  "name" : "testAskAndTripFullAccessibilityInDarkMode()",
+                  "nodeIdentifier" : "AppShellUITests/testAskAndTripFullAccessibilityInDarkMode()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testAskAndTripFullAccessibilityInDarkMode",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "1分钟14秒",
+                  "durationInSeconds" : 74.90419399738312,
+                  "name" : "testAskAndTripFullAccessibilityInReleaseLanguages()",
+                  "nodeIdentifier" : "AppShellUITests/testAskAndTripFullAccessibilityInReleaseLanguages()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testAskAndTripFullAccessibilityInReleaseLanguages",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Invalid frame dimension (negative or non-finite).",
+                      "nodeType" : "Runtime Warning"
+                    }
+                  ],
+                  "duration" : "1分钟56秒",
+                  "durationInSeconds" : 116.10516095161438,
+                  "name" : "testChineseReleaseLanguagePickerAndEnglishSwitch()",
+                  "nodeIdentifier" : "AppShellUITests/testChineseReleaseLanguagePickerAndEnglishSwitch()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testChineseReleaseLanguagePickerAndEnglishSwitch",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "56秒",
+                  "durationInSeconds" : 56.81463408470154,
+                  "name" : "testEnglishTabsTodayAndTranslationRoute()",
+                  "nodeIdentifier" : "AppShellUITests/testEnglishTabsTodayAndTranslationRoute()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testEnglishTabsTodayAndTranslationRoute",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "33秒",
+                  "durationInSeconds" : 33.83949601650238,
+                  "name" : "testTodayAccessibilityAtLargestTextSize()",
+                  "nodeIdentifier" : "AppShellUITests/testTodayAccessibilityAtLargestTextSize()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testTodayAccessibilityAtLargestTextSize",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "49秒",
+                  "durationInSeconds" : 49.69684600830078,
+                  "name" : "testToolsAccessibilityAtLargestTextSize()",
+                  "nodeIdentifier" : "AppShellUITests/testToolsAccessibilityAtLargestTextSize()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testToolsAccessibilityAtLargestTextSize",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                },
+                {
+                  "duration" : "43秒",
+                  "durationInSeconds" : 43.18201303482056,
+                  "name" : "testWorkflowBadgeBackgroundAtSystemTextSize()",
+                  "nodeIdentifier" : "AppShellUITests/testWorkflowBadgeBackgroundAtSystemTextSize()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testWorkflowBadgeBackgroundAtSystemTextSize",
+                  "nodeType" : "Test Case",
+                  "result" : "Passed"
+                }
+              ],
+              "name" : "AppShellUITests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests",
+              "nodeType" : "Test Suite",
+              "result" : "Passed"
+            },
+            {
+              "children" : [
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: synthetic loopback process-recovery fixture is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.19s",
+                  "durationInSeconds" : 0.19021296501159668,
+                  "name" : "testChineseAcknowledgedButHiddenHistoryAcrossProcessRestart()",
+                  "nodeIdentifier" : "NativeAskProcessRecoveryUITests/testChineseAcknowledgedButHiddenHistoryAcrossProcessRestart()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeAskProcessRecoveryUITests/testChineseAcknowledgedButHiddenHistoryAcrossProcessRestart",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: synthetic loopback process-recovery fixture is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.17s",
+                  "durationInSeconds" : 0.16699600219726562,
+                  "name" : "testEnglishLostReceiptAcrossProcessRestart()",
+                  "nodeIdentifier" : "NativeAskProcessRecoveryUITests/testEnglishLostReceiptAcrossProcessRestart()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeAskProcessRecoveryUITests/testEnglishLostReceiptAcrossProcessRestart",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                }
+              ],
+              "name" : "NativeAskProcessRecoveryUITests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeAskProcessRecoveryUITests",
+              "nodeType" : "Test Suite",
+              "result" : "Skipped"
+            },
+            {
+              "children" : [
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit local native text UI environment is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.46s",
+                  "durationInSeconds" : 0.46095502376556396,
+                  "name" : "testChineseConsentSendAndRelaunch()",
+                  "nodeIdentifier" : "NativeAskUITests/testChineseConsentSendAndRelaunch()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeAskUITests/testChineseConsentSendAndRelaunch",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit local native text UI environment is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.093s",
+                  "durationInSeconds" : 0.09343206882476807,
+                  "name" : "testChineseGroundedAnswerAndRelaunch()",
+                  "nodeIdentifier" : "NativeAskUITests/testChineseGroundedAnswerAndRelaunch()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeAskUITests/testChineseGroundedAnswerAndRelaunch",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit local native text UI environment is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.45s",
+                  "durationInSeconds" : 0.4477609395980835,
+                  "name" : "testChineseTaskClarificationAndRelaunch()",
+                  "nodeIdentifier" : "NativeAskUITests/testChineseTaskClarificationAndRelaunch()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeAskUITests/testChineseTaskClarificationAndRelaunch",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit local native text UI environment is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.14s",
+                  "durationInSeconds" : 0.14032506942749023,
+                  "name" : "testEnglishConsentSendAndRelaunch()",
+                  "nodeIdentifier" : "NativeAskUITests/testEnglishConsentSendAndRelaunch()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeAskUITests/testEnglishConsentSendAndRelaunch",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit local native text UI environment is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.37s",
+                  "durationInSeconds" : 0.3747069835662842,
+                  "name" : "testEnglishGroundedAnswerAndRelaunch()",
+                  "nodeIdentifier" : "NativeAskUITests/testEnglishGroundedAnswerAndRelaunch()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeAskUITests/testEnglishGroundedAnswerAndRelaunch",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit local native text UI environment is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.08s",
+                  "durationInSeconds" : 0.08017897605895996,
+                  "name" : "testEnglishTaskClarificationAndRelaunch()",
+                  "nodeIdentifier" : "NativeAskUITests/testEnglishTaskClarificationAndRelaunch()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeAskUITests/testEnglishTaskClarificationAndRelaunch",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                }
+              ],
+              "name" : "NativeAskUITests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeAskUITests",
+              "nodeType" : "Test Suite",
+              "result" : "Skipped"
+            },
+            {
+              "children" : [
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit disposable local identity environment is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.096s",
+                  "durationInSeconds" : 0.09617698192596436,
+                  "name" : "testLoginShowsRealOwnerProfile()",
+                  "nodeIdentifier" : "NativeIdentityUITests/testLoginShowsRealOwnerProfile()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeIdentityUITests/testLoginShowsRealOwnerProfile",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit disposable local identity environment is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.13s",
+                  "durationInSeconds" : 0.1297299861907959,
+                  "name" : "testLogoutClearsAccount()",
+                  "nodeIdentifier" : "NativeIdentityUITests/testLogoutClearsAccount()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeIdentityUITests/testLogoutClearsAccount",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit disposable local identity environment is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.095s",
+                  "durationInSeconds" : 0.09542500972747803,
+                  "name" : "testReplacedPhoneCannotRestoreOldSession()",
+                  "nodeIdentifier" : "NativeIdentityUITests/testReplacedPhoneCannotRestoreOldSession()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeIdentityUITests/testReplacedPhoneCannotRestoreOldSession",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                }
+              ],
+              "name" : "NativeIdentityUITests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeIdentityUITests",
+              "nodeType" : "Test Suite",
+              "result" : "Skipped"
+            },
+            {
+              "children" : [
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit loopback knowledge UI fixture not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.29s",
+                  "durationInSeconds" : 0.28943097591400146,
+                  "name" : "testChineseRefreshCredentialsReadAndWithdraw()",
+                  "nodeIdentifier" : "NativeKnowledgeUITests/testChineseRefreshCredentialsReadAndWithdraw()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeKnowledgeUITests/testChineseRefreshCredentialsReadAndWithdraw",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit loopback knowledge UI fixture not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.17s",
+                  "durationInSeconds" : 0.16870903968811035,
+                  "name" : "testChineseReviewedQuestionCoverage()",
+                  "nodeIdentifier" : "NativeKnowledgeUITests/testChineseReviewedQuestionCoverage()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeKnowledgeUITests/testChineseReviewedQuestionCoverage",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit loopback knowledge UI fixture not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.12s",
+                  "durationInSeconds" : 0.11707198619842529,
+                  "name" : "testEnglishRefreshCredentialsReadAndWithdraw()",
+                  "nodeIdentifier" : "NativeKnowledgeUITests/testEnglishRefreshCredentialsReadAndWithdraw()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeKnowledgeUITests/testEnglishRefreshCredentialsReadAndWithdraw",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit loopback knowledge UI fixture not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.1s",
+                  "durationInSeconds" : 0.10282504558563232,
+                  "name" : "testEnglishReviewedQuestionCoverage()",
+                  "nodeIdentifier" : "NativeKnowledgeUITests/testEnglishReviewedQuestionCoverage()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeKnowledgeUITests/testEnglishReviewedQuestionCoverage",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                }
+              ],
+              "name" : "NativeKnowledgeUITests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeKnowledgeUITests",
+              "nodeType" : "Test Suite",
+              "result" : "Skipped"
+            },
+            {
+              "children" : [
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: explicit local synthetic Trip environment is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.11s",
+                  "durationInSeconds" : 0.11404705047607422,
+                  "name" : "testRealLocalTripDraftReviewConfirmAndRelaunch()",
+                  "nodeIdentifier" : "NativeTripUITests/testRealLocalTripDraftReviewConfirmAndRelaunch()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeTripUITests/testRealLocalTripDraftReviewConfirmAndRelaunch",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                },
+                {
+                  "children" : [
+                    {
+                      "name" : "Test skipped - UNRUN: browser-confirmed shared Trip is not configured",
+                      "nodeType" : "Failure Message"
+                    }
+                  ],
+                  "duration" : "0.11s",
+                  "durationInSeconds" : 0.11322402954101562,
+                  "name" : "testReloadSameTripAfterWebConfirmation()",
+                  "nodeIdentifier" : "NativeTripUITests/testReloadSameTripAfterWebConfirmation()",
+                  "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeTripUITests/testReloadSameTripAfterWebConfirmation",
+                  "nodeType" : "Test Case",
+                  "result" : "Skipped"
+                }
+              ],
+              "name" : "NativeTripUITests",
+              "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeTripUITests",
+              "nodeType" : "Test Suite",
+              "result" : "Skipped"
+            }
+          ],
+          "name" : "VisePandaUITests",
+          "nodeIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests",
+          "nodeType" : "UI test bundle",
+          "result" : "Passed"
+        }
+      ],
+      "name" : "VisePanda",
+      "nodeType" : "Test Plan",
+      "result" : "Passed"
+    }
+  ],
+  "testPlanConfigurations" : [
+    {
+      "configurationId" : "1",
+      "configurationName" : "Test Scheme Action"
+    }
+  ]
+}

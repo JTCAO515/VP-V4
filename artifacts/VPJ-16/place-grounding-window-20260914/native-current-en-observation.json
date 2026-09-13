@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "at": "2026-09-13T21:00:30.359813+00:00",
+  "locale": "en",
+  "turnId": "5a8188fc-f2e5-4e5f-b259-d2aba6de6616",
+  "input": "What are Cedar Moon Gallery's address and today's opening hours?",
+  "coverage": "answered",
+  "observations": [
+    "First actual native question matches unique native worker result",
+    "Typed address visually present with conditions/exclusions",
+    "Current-date Shanghai time range visually present",
+    "Address and today-hours sources each expanded and visually inspected"
+  ],
+  "evidence": [
+    "native-current-en.json",
+    "native-current-en.png",
+    "native-current-en-source-address.json",
+    "native-current-en-source-address.png",
+    "native-current-en-source-hours.json",
+    "native-current-en-source-hours.png",
+    "native-current-en-logout.log",
+    "native-current-en-logout.log"
+  ],
+  "logoutPending": false,
+  "signedOut": true
+}

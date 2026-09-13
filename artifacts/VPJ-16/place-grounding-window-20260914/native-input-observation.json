@@ -1,0 +1,15 @@
+{
+  "status": "CORRECTED_AND_SUBMITTED",
+  "at": "2026-09-13T20:52:37.531565+00:00",
+  "observed": "AXe HID typing converted both ASCII apostrophes to smart punctuation. First Send activation produced no pending/accepted question and draft remained. Read-only AX inspection confirmed different draft text. Correcting unsent draft through ordinary simulator clipboard paste and dismissing keyboard; no model worker launched or case rerolled.",
+  "modelCallsBefore": 10,
+  "resolution": "Refocused input, selected all and pasted exact frozen text via owned simulator pasteboard, dismissed keyboard, verified AXValue exact, then physical Send tap. UI Waiting for result observed and worker ran once. Simulator pasteboard cleared.",
+  "turnId": "5a8188fc-f2e5-4e5f-b259-d2aba6de6616",
+  "retainedFailures": [
+    "native-en-corrected-draft.json contains first unsuccessful paste observation",
+    "Source disclosure batch returned AXe exit1; fresh UI inspection before next action"
+  ],
+  "chinesePreparation": "Initial new-question taps overlapped background reads and left blocked intent; subsequent paste duplicated the unsent draft. Waited for enabled control, used observed coordinates, verified New question intent, cleared/replaced draft and confirmed exact AXValue. Then waited for Send enabled and tapped once. Admission label was 等待结果; observer initially expected extra characters, corrected by checking bundled locale text. One worker requested after actual UI admission.",
+  "chineseTurnId": "0486006e-203a-480b-b4c2-5d4eb91ee591",
+  "totalNativeCalls": 2
+}

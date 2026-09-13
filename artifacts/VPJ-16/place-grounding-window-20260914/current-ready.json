@@ -1,0 +1,80 @@
+{
+  "stage": "current",
+  "deadline": "2026-09-13T21:40:30.251Z",
+  "nativeQuestions": {
+    "en": "What are Cedar Moon Gallery's address and today's opening hours?",
+    "zh": "杉月展馆的地址和今天开放时间是什么？"
+  },
+  "tasks": [
+    {
+      "group": "before",
+      "locale": "en",
+      "id": "ef558cf7-0b01-4712-bb54-9b103c9c5dc2",
+      "taskId": "7ab49ea0-2def-4c5b-a7ad-444669d62410",
+      "input": "What is the street address of Cedar Moon Gallery?"
+    },
+    {
+      "group": "before",
+      "locale": "zh",
+      "id": "b7511a56-08cb-4402-825b-284963cd04c6",
+      "taskId": "b649724e-c32f-4a45-91f4-ad3b62d9393e",
+      "input": "杉月展馆的街道地址是什么？"
+    },
+    {
+      "group": "before",
+      "locale": "en",
+      "id": "696eda83-66f8-42d6-8c79-4b6c42c31fa3",
+      "taskId": "db7fb225-c493-4301-ada6-98a5c6b8420e",
+      "input": "What are Cedar Moon Gallery's address and today's opening hours?"
+    },
+    {
+      "group": "before",
+      "locale": "zh",
+      "id": "2ba546d5-123e-4277-909e-b744afe78d85",
+      "taskId": "51c04fb2-84eb-47ff-bb7b-9202a1786e4a",
+      "input": "杉月展馆的地址和今天开放时间是什么？"
+    },
+    {
+      "group": "current",
+      "locale": "en",
+      "id": "4d18de4c-ec4e-486c-bf14-972c976c5c83",
+      "taskId": "c79ee14c-d2e7-4e18-9b42-f5cc16431b27",
+      "input": "What are Cedar Moon Gallery's address and today's opening hours?"
+    },
+    {
+      "group": "current",
+      "locale": "zh",
+      "id": "ac888f4a-be13-4db8-918d-8403419357e2",
+      "taskId": "be9d53db-5765-438b-8902-420d4c577c3c",
+      "input": "杉月展馆的地址和今天开放时间是什么？"
+    },
+    {
+      "group": "current",
+      "locale": "en",
+      "id": "ccc74f14-9505-4172-bd52-20dafeea6b9e",
+      "taskId": "1f3527c4-212e-4009-8ca5-7818f82598fd",
+      "input": "What are Cedar Moon Gallery's opening hours today?"
+    },
+    {
+      "group": "current",
+      "locale": "zh",
+      "id": "27d411a2-4ab9-45b0-9b30-e6ee6dd0c2de",
+      "taskId": "7ad82dcd-fbff-4aed-aacb-de2a957fea62",
+      "input": "杉月展馆今天几点开放？"
+    },
+    {
+      "group": "current",
+      "locale": "en",
+      "id": "8d544550-fb16-46e4-ad0f-a1399408cf70",
+      "taskId": "2db07e27-cec2-4b53-8bc4-325444b11661",
+      "input": "What is Cedar Moon Gallery's address, and can you book a ticket?"
+    },
+    {
+      "group": "current",
+      "locale": "zh",
+      "id": "7df59525-94a7-4978-aef9-0975b8ecb457",
+      "taskId": "8ed3a2e3-6c03-4818-85b0-50306343c319",
+      "input": "杉月展馆的地址是什么？另外能帮我订票吗？"
+    }
+  ]
+}

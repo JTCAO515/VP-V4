@@ -1,0 +1,69 @@
+{
+  "status": "PASS",
+  "turn": {
+    "unansweredNeeds": [],
+    "placeName": "Cedar Moon Gallery",
+    "placeResolution": "matched",
+    "missingClaims": [],
+    "questionId": "place_address_and_hours",
+    "id": "5a8188fc-f2e5-4e5f-b259-d2aba6de6616",
+    "taskId": "116f31e0-674d-4447-8b65-eb312d68d97a",
+    "parentId": null,
+    "threadId": "dfb8501e-6fc5-40ca-a911-cd0280461b6b",
+    "relationship": "new_goal",
+    "input": "What are Cedar Moon Gallery's address and today's opening hours?",
+    "city": "shanghai",
+    "locale": "en",
+    "createdAt": "2026-09-13T20:54:57.494217+00:00",
+    "status": "completed",
+    "outcome": "answered",
+    "coverage": "answered",
+    "projection": "current",
+    "facts": [
+      {
+        "id": "759b1e5a-8b43-4ef8-a673-eac7962825e5",
+        "text": "Synthetic reviewed address shown below; not a real venue.",
+        "placeDetails": [
+          "18 Cedar Moon Test Road",
+          "Synthetic Shanghai venue",
+          "China"
+        ],
+        "conditions": [
+          "Controlled Staging only."
+        ],
+        "exclusions": [
+          "No real travel guidance."
+        ],
+        "sources": [
+          {
+            "id": "67c88298-1757-4ebc-a2a8-9b5b37fd0df5",
+            "publisher": "VisePanda synthetic acceptance fixture",
+            "locator": "Owned synthetic address assertion",
+            "href": null
+          }
+        ]
+      },
+      {
+        "id": "f533448b-19d7-4bbc-a78b-e69fc6ff0f28",
+        "text": "Synthetic reviewed opening window shown below; not real visitor guidance.",
+        "placeDetails": [
+          "2026-09-14 09:00:00 – 2026-09-14 17:00:00 (Asia/Shanghai, UTC+08:00)"
+        ],
+        "conditions": [
+          "Controlled Staging only."
+        ],
+        "exclusions": [
+          "No real travel guidance."
+        ],
+        "sources": [
+          {
+            "id": "d93ab412-8c91-4317-b296-fdaf54e5f31b",
+            "publisher": "VisePanda synthetic acceptance fixture",
+            "locator": "Owned synthetic today-hours assertion",
+            "href": null
+          }
+        ]
+      }
+    ]
+  }
+}

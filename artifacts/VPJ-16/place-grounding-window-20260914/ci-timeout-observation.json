@@ -1,0 +1,13 @@
+{
+  "status": "CI_CANCELLED_AFTER_TEST_PASS",
+  "run": 34780420974,
+  "head": "de6d50256def4dd9108561758b76df478c6a9172",
+  "annotation": "The job has exceeded the maximum execution time of 30m0s",
+  "testSummary": {
+    "passed": 57,
+    "skipped": 23,
+    "failed": 0
+  },
+  "steps": "Build/test, evidence upload and cleanup all recorded success; job status remains cancelled.",
+  "change": "Native job timeout30 to45 minutes only; no test suppression. Next CI required."
+}

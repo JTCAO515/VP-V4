@@ -1,0 +1,43 @@
+{
+  "status": "PASS",
+  "at": "2026-09-13T20:48:35.935562+00:00",
+  "sourceCommit": "e19bd584ba86604047c9216e50c5329e8881dcf8",
+  "deployment": "dpl_GpoHKRw74ZjEXVd7RfCVP1TmPVB5",
+  "scope": "Web current reads only; native and revoked acceptance pending",
+  "locales": [
+    "en",
+    "zh"
+  ],
+  "viewports": [
+    [
+      1365,
+      900
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "observations": [
+    "Typed address rendered with conditions and exclusions",
+    "Shanghai current-date hours rendered with date and UTC+08:00",
+    "Both fact source disclosures expanded and visually checked",
+    "Prior partial answer remains without hours after new publication",
+    "Booking request preserves explicit unanswered need",
+    "Mobile document scrollWidth equals390"
+  ],
+  "artifacts": [
+    "web-current-en-signedout.txt",
+    "web-current-en-mobile.txt",
+    "web-current-en-mobile-address.png",
+    "web-current-zh-mobile-address.png",
+    "web-current-en-mobile.png",
+    "web-current-zh-dom.json",
+    "web-current-zh-desktop.png",
+    "web-current-en-desktop.txt",
+    "web-current-zh-mobile.png",
+    "web-current-zh-desktop.txt",
+    "web-current-en-desktop.png",
+    "web-current-zh-mobile.txt"
+  ]
+}

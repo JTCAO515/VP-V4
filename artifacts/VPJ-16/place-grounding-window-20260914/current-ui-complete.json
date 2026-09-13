@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "at": "2026-09-13T21:11:39.363939+00:00",
+  "nativeSignedOut": true,
+  "webSignedOut": true,
+  "sourceCommit": "e19bd584ba86604047c9216e50c5329e8881dcf8",
+  "observations": [
+    "Native en/zh each submitted exact frozen input once and received one real worker answer",
+    "Same native turn identities visible in normal Web owner session",
+    "Native and Web typed address and date/time displayed with conditions/exclusions",
+    "Native and Web both fact source disclosures expanded and visually inspected",
+    "Web desktop1365x900 and390x844 current/gap/additional-need reads; no horizontal overflow",
+    "Prior missing hours not retroactively filled",
+    "Normal client signout for both locales"
+  ],
+  "evidence": [
+    "web-current-observation.json",
+    "native-current-en-observation.json",
+    "native-current-zh-observation.json",
+    "web-native-current-en.json",
+    "web-native-current-zh.json",
+    "native-input-observation.json"
+  ]
+}

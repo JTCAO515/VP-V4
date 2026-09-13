@@ -1,0 +1,24 @@
+[
+  {
+    "AXUniqueId": "native-ask.input",
+    "AXLabel": null,
+    "AXValue": "杉月展馆的地址和今天开放时间是什么？",
+    "frame": {
+      "width": 370,
+      "x": 16,
+      "height": 23,
+      "y": 709.6666666666666
+    }
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "完成",
+    "AXValue": null,
+    "frame": {
+      "width": 56,
+      "x": 325,
+      "y": 798,
+      "height": 36
+    }
+  }
+]

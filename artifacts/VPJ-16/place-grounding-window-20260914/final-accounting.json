@@ -1,0 +1,15 @@
+{
+  "status": "FAIL",
+  "modelCalls": 25,
+  "expectedPasses": 24,
+  "unexpectedResults": 1,
+  "unrunCases": 107,
+  "distinctValidatedUsageReceipts": 25,
+  "tariffCnyMicros": 363678,
+  "invoiceCost": "unknown",
+  "originalHashesPreserved": true,
+  "firewallConfigurationRestored": true,
+  "attemptsBefore": 325,
+  "attemptsAfter": 350,
+  "unresolvedAfter": 0
+}

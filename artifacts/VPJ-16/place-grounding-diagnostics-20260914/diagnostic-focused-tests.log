@@ -1,0 +1,32 @@
+✔ intent C2 sends only current user input after fresh digest-bound authorization (891.179375ms)
+✔ history, evidence, recipient mismatch and stale authorization never reach intent transport (3.816875ms)
+✔ routing parser rejects prose, invented evidence and false complete coverage (5.829875ms)
+✔ new intent schema binds unanswered excerpts to the current request, preserving the legacy shape (16.766375ms)
+✔ excerpts cannot split a Unicode scalar even if a UTF16 substring matches (0.930333ms)
+✔ place routing only forwards literal user names, never model-selected identities (1.575208ms)
+✔ v5 worker never downgrades missing gaps into a new legacy partial (541.610417ms)
+✔ grounded validation diagnostics are content-free and cannot retry settled work (27.6475ms)
+✔ scoped worker binds claim, policy and budget; snapshots operator configuration (423.197583ms)
+✔ scoped worker rejects wrong environment, open config shapes and invalid bounds before I/O (1.589417ms)
+✔ missing credential, deployed process and pre-aborted invocation never fetch (12.631167ms)
+✔ wrong claim owner or changed policy never reserves budget or sends content (4.851334ms)
+✔ RPC redirects, error bodies, oversized bodies and malformed UTF-8 are unavailable without retry (71.499583ms)
+✔ cancellation while credentials or claim reply is pending prevents late continuation (165.768667ms)
+✔ cancellation of hostile response body returns without awaiting reader cancellation (1.70125ms)
+✔ unknown completion acknowledgment is not retried or converted to another terminal (5.277542ms)
+✔ bounded thinking stays task-policy bound through claim, fresh authorization, budget and completion (23.295167ms)
+✔ explicit integer pricing rounds once and leaves incomplete or excessive usage unknown (115.796333ms)
+✔ job config requires fixed shape, matching deadlines and allowlisted provider before I/O (194.189ms)
+✔ reservation covers full-context input, capped output and the highest cache tariff before credentials or I/O (2.666042ms)
+✔ one-shot CLI fails closed, preserves existing files and writes only private metadata (1934.254125ms)
+✔ job/2 explicitly binds the context claimer and records its distinct prompt reference (353.541833ms)
+✔ job/3 explicitly bounds total generation and rejects under-reservation before I/O (0.762916ms)
+✔ job/3 CLI journals explicit generation limits with unchanged task prompt (273.393125ms)
+ℹ tests 24
+ℹ suites 0
+ℹ pass 24
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4055.029375

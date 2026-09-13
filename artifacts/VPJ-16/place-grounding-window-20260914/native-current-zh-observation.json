@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "at": "2026-09-13T21:11:01.245084+00:00",
+  "locale": "zh",
+  "turnId": "0486006e-203a-480b-b4c2-5d4eb91ee591",
+  "input": "杉月展馆的地址和今天开放时间是什么？",
+  "coverage": "answered",
+  "observations": [
+    "First actual native question matches unique native worker result",
+    "Typed address visually present with conditions/exclusions",
+    "Current-date Shanghai time range visually present",
+    "Address and today-hours sources each expanded and visually inspected"
+  ],
+  "evidence": [
+    "native-current-zh.json",
+    "native-current-zh.png",
+    "native-current-zh-source-address.json",
+    "native-current-zh-source-address.png",
+    "native-current-zh-source-hours.json",
+    "native-current-zh-source-hours.png",
+    "native-current-zh-logout.log"
+  ],
+  "logoutPending": false,
+  "signedOut": true
+}

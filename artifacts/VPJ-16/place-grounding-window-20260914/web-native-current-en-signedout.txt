@@ -1,0 +1,23 @@
+- main:
+  - region "VisePanda":
+    - link "VisePanda.":
+      - /url: /
+      - img "VisePanda.":
+    - paragraph: 仅限受邀测试用户
+    - heading "登录 VisePanda" [level=1]
+    - paragraph: 请使用 closed beta 账户对应的邮箱和独立应用密码。
+    - paragraph: Invitation-only closed beta
+  - generic: 界面语言
+  - combobox "界面语言":
+    - option "🇨🇳 中文" [selected]
+    - option "🇺🇸 English"
+  - generic: 邮箱
+  - textbox "邮箱":
+    - /placeholder: you@example.com
+  - generic: 密码
+  - textbox "密码":
+    - /placeholder: 应用密码
+  - button "登录"
+  - paragraph
+  - paragraph: 此处不开放公众注册或密码找回。
+- alert

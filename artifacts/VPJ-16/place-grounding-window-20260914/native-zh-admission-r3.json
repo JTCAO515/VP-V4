@@ -1,0 +1,4826 @@
+[
+  {
+    "AXUniqueId": null,
+    "AXLabel": "VisePanda",
+    "type": "Application",
+    "frame": {
+      "x": 0,
+      "width": 402,
+      "height": 874,
+      "y": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "main-tab-view",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "x": 0,
+      "width": 402,
+      "height": 874,
+      "y": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "问熊猫",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "x": 0,
+      "width": 402,
+      "y": 62,
+      "height": 54
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.reviewed-question",
+    "AXLabel": "乘车证件",
+    "type": "Group",
+    "frame": {
+      "x": 20.00000000000001,
+      "width": 91.66666666666667,
+      "y": 66,
+      "height": 36
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.reviewed-question",
+    "AXLabel": "乘车证件",
+    "type": "Button",
+    "frame": {
+      "x": 20.00000000000001,
+      "width": 91.66666666666666,
+      "height": 36,
+      "y": 66
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "问熊猫",
+    "type": "Heading",
+    "frame": {
+      "x": 175.66666666666666,
+      "width": 50.66666666666666,
+      "height": 20.66666666666667,
+      "y": 73.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.reload",
+    "AXLabel": "重载",
+    "type": "Group",
+    "frame": {
+      "x": 324,
+      "width": 58,
+      "y": 66,
+      "height": 36
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.reload",
+    "AXLabel": "重载",
+    "type": "Button",
+    "frame": {
+      "x": 324,
+      "width": 58,
+      "y": 66,
+      "height": 36
+    },
+    "enabled": false
+  },
+  {
+    "AXUniqueId": "AdditionalDimmingOverlay",
+    "AXLabel": null,
+    "type": "Image",
+    "frame": {
+      "x": -120,
+      "width": 642,
+      "height": 286,
+      "y": 731
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Vise Panda. 你的中国旅行伙伴",
+    "type": "StaticText",
+    "frame": {
+      "x": 16,
+      "width": 168,
+      "height": 52.33332824707031,
+      "y": 132
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "PandaMark",
+    "type": "Image",
+    "frame": {
+      "x": 16,
+      "width": 48,
+      "height": 47.99999999999997,
+      "y": 134.33333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "BrandWordmark",
+    "type": "Image",
+    "frame": {
+      "x": 76,
+      "width": 108,
+      "y": 132,
+      "height": 36
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "你的中国旅行伙伴",
+    "type": "StaticText",
+    "frame": {
+      "x": 76,
+      "width": 95.66666666666666,
+      "y": 170,
+      "height": 14.333333333333314
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Ask 测试",
+    "type": "StaticText",
+    "frame": {
+      "x": 16,
+      "width": 67.66666666666666,
+      "y": 208.33333333333331,
+      "height": 20.333333333333343
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "使用AI之前",
+    "type": "Button",
+    "frame": {
+      "x": 32,
+      "width": 338,
+      "y": 268.66666666666663,
+      "height": 28.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "使用AI之前",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 338,
+      "y": 268.66666666666663,
+      "height": 28.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 362.3333333333333,
+      "y": 276.66666666666663,
+      "width": 7,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.withdraw",
+    "AXLabel": "撤回授权",
+    "type": "Button",
+    "frame": {
+      "x": 32,
+      "y": 309,
+      "width": 67.66666666666666,
+      "height": 20.333333333333314
+    },
+    "enabled": false
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "最近的请求",
+    "type": "StaticText",
+    "frame": {
+      "x": 16,
+      "y": 369.3333333333333,
+      "width": 105,
+      "height": 26.333333333333314
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "杉月展馆的地址是什么？另外能帮我订票吗？",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "y": 435.66666666666663,
+      "width": 329,
+      "height": 20.333333333333314
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "杉月展馆",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 59.66666666666666,
+      "y": 465.99999999999994,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：所问景点的地址在哪里？",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 246,
+      "y": 493.99999999999994,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "y": 522,
+      "width": 286.3333333333333,
+      "height": 30.333333333333258
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.additional-needs",
+    "AXLabel": "当前已审核指引尚未回答以下需求，请向相关官方渠道或服务方核对。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 337.3333333333333,
+      "y": 562.3333333333333,
+      "height": 42.33333333333326
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.additional-needs",
+    "AXLabel": "“能帮我订票吗”",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 117.33333333333331,
+      "y": 610.6666666666665,
+      "height": 20.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "所问景点详情有已审核依据。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "y": 640.9999999999999,
+      "width": 211,
+      "height": 20.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.759b1e5a-8b43-4ef8-a673-eac7962825e5",
+    "AXLabel": "下列结构化信息为合成验收示例，不是真实场馆指引。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 701.3333333333333,
+      "width": 287,
+      "height": 42.33333333333326
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "18 Cedar Moon Test Road",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 195.66666666666666,
+      "y": 755.6666666666666,
+      "height": 20.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Synthetic Shanghai venue",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 197.33333333333331,
+      "y": 788,
+      "height": 20.333333333333258
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "中国",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 820.3333333333334,
+      "width": 34,
+      "height": 20.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 59.66666666666666,
+      "y": 852.6666666666667,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 仅限受控Staging验收。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 876.6666666666667,
+      "width": 184.33333333333331,
+      "height": 20.333333333333258
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 44.66666666666666,
+      "y": 909.0000000000001,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不作为真实旅行指引。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 933.0000000000001,
+      "width": 172.33333333333331,
+      "height": 20.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月14日",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 965.3333333333335,
+      "width": 150.66666666666666,
+      "height": 14.333333333333371
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "x": 48,
+      "y": 991.6666666666666,
+      "width": 306,
+      "height": 28.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 991.6666666666666,
+      "width": 306,
+      "height": 28.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 346.3333333333333,
+      "y": 1000,
+      "width": 7,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "杉月展馆今天几点开放？",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "y": 1092,
+      "width": 177.33333333333331,
+      "height": 20.333333333333258
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "杉月展馆",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "y": 1122.3333333333333,
+      "width": 59.66666666666666,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：所问景点今天何时开放？",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 246,
+      "y": 1150.3333333333333,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 286.3333333333333,
+      "y": 1178.3333333333333,
+      "height": 30.333333333333258
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "所问景点详情有已审核依据。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "y": 1218.6666666666665,
+      "width": 211,
+      "height": 20.333333333333258
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.f533448b-19d7-4bbc-a78b-e69fc6ff0f28",
+    "AXLabel": "下列结构化信息为合成验收示例，不是真实场馆指引。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 1278.9999999999998,
+      "width": 287,
+      "height": 42.33333333333326
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "2026-09-14 09:00:00 – 2026-09-14 17:00:00 (Asia/Shanghai, UTC+08:00)",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 289.66666666666663,
+      "y": 1333.333333333333,
+      "height": 42.33333333333326
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 1387.6666666666663,
+      "width": 59.66666666666666,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 仅限受控Staging验收。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 1411.6666666666663,
+      "width": 184.33333333333331,
+      "height": 20.333333333333258
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 1443.9999999999995,
+      "width": 44.66666666666666,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不作为真实旅行指引。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.333333333333258,
+      "y": 1467.9999999999995,
+      "width": 172.33333333333331,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月14日",
+    "type": "StaticText",
+    "frame": {
+      "height": 14.333333333333258,
+      "y": 1500.3333333333328,
+      "width": 150.66666666666666,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "height": 28.333333333333258,
+      "width": 306,
+      "y": 1526.6666666666665,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "height": 28.333333333333258,
+      "y": 1526.6666666666665,
+      "width": 306,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "height": 12,
+      "width": 7,
+      "y": 1534.6666666666665,
+      "x": 346.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "杉月展馆的地址和今天开放时间是什么？",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.333333333333258,
+      "width": 295.3333333333333,
+      "y": 1627,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "杉月展馆",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 1657.3333333333333,
+      "width": 59.66666666666666,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：所问景点的地址和今天开放时间是什么？",
+    "type": "StaticText",
+    "frame": {
+      "height": 38,
+      "y": 1685.3333333333333,
+      "width": 298,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "height": 30.333333333333258,
+      "width": 286.3333333333333,
+      "y": 1733.3333333333333,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "所问景点详情有已审核依据。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.333333333333258,
+      "y": 1773.6666666666665,
+      "width": 211,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.759b1e5a-8b43-4ef8-a673-eac7962825e5",
+    "AXLabel": "下列结构化信息为合成验收示例，不是真实场馆指引。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333326,
+      "y": 1833.9999999999998,
+      "width": 287,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "18 Cedar Moon Test Road",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.333333333333258,
+      "y": 1888.333333333333,
+      "width": 195.66666666666666,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Synthetic Shanghai venue",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.333333333333258,
+      "y": 1920.6666666666663,
+      "width": 197.33333333333331,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "中国",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.333333333333258,
+      "width": 34,
+      "y": 1952.9999999999995,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 1985.3333333333328,
+      "width": 59.66666666666666,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 仅限受控Staging验收。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.333333333333258,
+      "width": 184.33333333333331,
+      "y": 2009.3333333333328,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "width": 44.66666666666666,
+      "y": 2041.666666666666,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不作为真实旅行指引。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333303,
+      "y": 2065.666666666666,
+      "width": 172.33333333333331,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月14日",
+    "type": "StaticText",
+    "frame": {
+      "height": 14.333333333333485,
+      "y": 2097.999999999999,
+      "width": 150.66666666666666,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "height": 28.333333333333485,
+      "y": 2124.333333333333,
+      "width": 306,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "height": 28.333333333333485,
+      "y": 2124.333333333333,
+      "width": 306,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "height": 12,
+      "y": 2132.333333333333,
+      "width": 7,
+      "x": 346.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.f533448b-19d7-4bbc-a78b-e69fc6ff0f28",
+    "AXLabel": "下列结构化信息为合成验收示例，不是真实场馆指引。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.333333333333485,
+      "y": 2208.6666666666665,
+      "width": 287,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "2026-09-14 09:00:00 – 2026-09-14 17:00:00 (Asia/Shanghai, UTC+08:00)",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.333333333333485,
+      "width": 289.66666666666663,
+      "y": 2263,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 2317.3333333333335,
+      "width": 59.66666666666666,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 仅限受控Staging验收。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.333333333333485,
+      "y": 2341.3333333333335,
+      "width": 184.33333333333331,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 2373.666666666667,
+      "width": 44.66666666666666,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不作为真实旅行指引。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.333333333333485,
+      "y": 2397.666666666667,
+      "width": 172.33333333333331,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月14日",
+    "type": "StaticText",
+    "frame": {
+      "height": 14.333333333333485,
+      "width": 150.66666666666666,
+      "y": 2430.0000000000005,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "y": 2456.333333333333,
+      "height": 28.333333333333485,
+      "x": 48,
+      "width": 306
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "height": 28.333333333333485,
+      "width": 306,
+      "y": 2456.333333333333,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "height": 12,
+      "width": 7,
+      "y": 2464.6666666666665,
+      "x": 346.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "杉月展馆的地址和今天开放时间是什么？",
+    "type": "StaticText",
+    "frame": {
+      "y": 2556.6666666666665,
+      "height": 20.333333333333485,
+      "x": 32,
+      "width": 295.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "杉月展馆",
+    "type": "StaticText",
+    "frame": {
+      "width": 59.66666666666666,
+      "height": 18,
+      "x": 32,
+      "y": 2587
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：所问景点的地址和今天开放时间是什么？",
+    "type": "StaticText",
+    "frame": {
+      "y": 2615,
+      "height": 38,
+      "x": 32,
+      "width": 298
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "y": 2663,
+      "height": 30.333333333333485,
+      "x": 32,
+      "width": 286.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.partial",
+    "AXLabel": "目前可回答其中一部分。",
+    "type": "StaticText",
+    "frame": {
+      "y": 2703.3333333333335,
+      "height": 20.333333333333485,
+      "x": 32,
+      "width": 177.33333333333331
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "今日开放时间",
+    "type": "StaticText",
+    "frame": {
+      "y": 2735.666666666667,
+      "height": 18,
+      "x": 32,
+      "width": 89.33333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.not_current_date",
+    "AXLabel": "已发布开放时段对应其他日期，今日开放时间尚未核实。",
+    "type": "StaticText",
+    "frame": {
+      "width": 337.3333333333333,
+      "height": 42.333333333333485,
+      "x": 32,
+      "y": 2759.666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "到访前请向场馆核对缺少的地址或今日开放信息。",
+    "type": "StaticText",
+    "frame": {
+      "width": 320.3333333333333,
+      "height": 42.333333333333485,
+      "x": 32,
+      "y": 2814.0000000000005
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.759b1e5a-8b43-4ef8-a673-eac7962825e5",
+    "AXLabel": "下列结构化信息为合成验收示例，不是真实场馆指引。",
+    "type": "StaticText",
+    "frame": {
+      "width": 287,
+      "height": 42.333333333333485,
+      "x": 48,
+      "y": 2896.3333333333335
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "18 Cedar Moon Test Road",
+    "type": "StaticText",
+    "frame": {
+      "width": 195.66666666666666,
+      "height": 20.333333333333485,
+      "x": 48,
+      "y": 2950.666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Synthetic Shanghai venue",
+    "type": "StaticText",
+    "frame": {
+      "y": 2983.0000000000005,
+      "height": 20.333333333333485,
+      "x": 48,
+      "width": 197.33333333333331
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "中国",
+    "type": "StaticText",
+    "frame": {
+      "y": 3015.333333333334,
+      "height": 20.333333333333485,
+      "x": 48,
+      "width": 34
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "y": 3047.6666666666674,
+      "height": 18,
+      "x": 48,
+      "width": 59.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 仅限受控Staging验收。",
+    "type": "StaticText",
+    "frame": {
+      "width": 184.33333333333331,
+      "height": 20.333333333333485,
+      "x": 48,
+      "y": 3071.6666666666674
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "width": 44.66666666666666,
+      "height": 18,
+      "x": 48,
+      "y": 3104.000000000001
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不作为真实旅行指引。",
+    "type": "StaticText",
+    "frame": {
+      "width": 172.33333333333331,
+      "height": 20.333333333333485,
+      "x": 48,
+      "y": 3128.000000000001
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月14日",
+    "type": "StaticText",
+    "frame": {
+      "width": 150.66666666666666,
+      "height": 14.333333333333485,
+      "x": 48,
+      "y": 3160.3333333333344
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "width": 306,
+      "height": 28.333333333333485,
+      "x": 48,
+      "y": 3186.6666666666665
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "y": 3186.6666666666665,
+      "height": 28.333333333333485,
+      "x": 48,
+      "width": 306
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "width": 7,
+      "height": 12,
+      "x": 346.3333333333333,
+      "y": 3195
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "杉月展馆的街道地址是什么？",
+    "type": "StaticText",
+    "frame": {
+      "width": 211,
+      "height": 20.333333333333485,
+      "x": 32,
+      "y": 3286.9999999999995
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "杉月展馆",
+    "type": "StaticText",
+    "frame": {
+      "width": 59.66666666666666,
+      "height": 18,
+      "x": 32,
+      "y": 3317.333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：所问景点的地址在哪里？",
+    "type": "StaticText",
+    "frame": {
+      "width": 246,
+      "height": 18,
+      "x": 32,
+      "y": 3345.333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "y": 3373.333333333333,
+      "height": 30.333333333333485,
+      "x": 32,
+      "width": 286.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "所问景点详情有已审核依据。",
+    "type": "StaticText",
+    "frame": {
+      "y": 3413.6666666666665,
+      "height": 20.333333333333485,
+      "x": 32,
+      "width": 211
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.759b1e5a-8b43-4ef8-a673-eac7962825e5",
+    "AXLabel": "下列结构化信息为合成验收示例，不是真实场馆指引。",
+    "type": "StaticText",
+    "frame": {
+      "width": 287,
+      "height": 42.333333333333485,
+      "x": 48,
+      "y": 3474
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "18 Cedar Moon Test Road",
+    "type": "StaticText",
+    "frame": {
+      "width": 195.66666666666666,
+      "height": 20.333333333333485,
+      "x": 48,
+      "y": 3528.3333333333335
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Synthetic Shanghai venue",
+    "type": "StaticText",
+    "frame": {
+      "width": 197.33333333333331,
+      "height": 20.333333333333485,
+      "x": 48,
+      "y": 3560.666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "中国",
+    "type": "StaticText",
+    "frame": {
+      "width": 34,
+      "height": 20.333333333333485,
+      "x": 48,
+      "y": 3593.0000000000005
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "width": 59.66666666666666,
+      "height": 18,
+      "x": 48,
+      "y": 3625.333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 仅限受控Staging验收。",
+    "type": "StaticText",
+    "frame": {
+      "width": 184.33333333333331,
+      "height": 20.333333333333485,
+      "x": 48,
+      "y": 3649.333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "y": 3681.6666666666674,
+      "x": 48,
+      "width": 44.66666666666666,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不作为真实旅行指引。",
+    "type": "StaticText",
+    "frame": {
+      "y": 3705.6666666666674,
+      "x": 48,
+      "width": 172.33333333333331,
+      "height": 20.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月14日",
+    "type": "StaticText",
+    "frame": {
+      "y": 3738.000000000001,
+      "x": 48,
+      "width": 150.66666666666666,
+      "height": 14.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "y": 3764.333333333333,
+      "x": 48,
+      "width": 306,
+      "height": 28.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "y": 3764.333333333333,
+      "x": 48,
+      "width": 306,
+      "height": 28.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "y": 3772.6666666666665,
+      "x": 346.3333333333333,
+      "height": 12,
+      "width": 7
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "在中国大陆，怎样核对商户是否受理境外银行卡，以及怎样开始使用手机商户支付？",
+    "type": "StaticText",
+    "frame": {
+      "y": 3864.666666666666,
+      "x": 32,
+      "height": 42.333333333333485,
+      "width": 312.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：如何核对外卡受理并开始使用手机支付？",
+    "type": "StaticText",
+    "frame": {
+      "y": 3916.9999999999995,
+      "x": 32,
+      "height": 38,
+      "width": 313
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "y": 3964.9999999999995,
+      "x": 32,
+      "height": 30.333333333333485,
+      "width": 286.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.no_answer",
+    "AXLabel": "当前已审核信息不足以回答这个问题。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4005.333333333333,
+      "x": 32,
+      "width": 278.3333333333333,
+      "height": 20.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "核对外卡受理",
+    "type": "StaticText",
+    "frame": {
+      "y": 4037.6666666666665,
+      "x": 32,
+      "height": 18,
+      "width": 89.33333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.revoked",
+    "AXLabel": "相关依据已撤回。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4061.6666666666665,
+      "x": 32,
+      "height": 20.333333333333485,
+      "width": 126.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "手机商户支付",
+    "type": "StaticText",
+    "frame": {
+      "y": 4094,
+      "x": 32,
+      "height": 18,
+      "width": 89.33333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.unresolved_variants",
+    "AXLabel": "已审核版本存在差异，尚未完成核对。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4118,
+      "x": 32,
+      "height": 20.33333333333394,
+      "width": 278.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "请查看应用当前提示，或向发卡行及相关经营方核对缺少的信息。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4150.333333333334,
+      "x": 32,
+      "width": 303.66666666666663,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "在中国大陆，怎样核对商户是否受理境外银行卡，以及怎样开始使用手机商户支付？",
+    "type": "StaticText",
+    "frame": {
+      "y": 4248.666666666666,
+      "x": 32,
+      "width": 312.3333333333333,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：如何核对外卡受理并开始使用手机支付？",
+    "type": "StaticText",
+    "frame": {
+      "y": 4300.999999999999,
+      "x": 32,
+      "width": 313,
+      "height": 38
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4348.999999999999,
+      "x": 32,
+      "height": 30.33333333333303,
+      "width": 286.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.partial",
+    "AXLabel": "目前可回答其中一部分。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4389.333333333332,
+      "x": 32,
+      "width": 177.33333333333331,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "核对外卡受理",
+    "type": "StaticText",
+    "frame": {
+      "y": 4421.666666666665,
+      "x": 32,
+      "width": 89.33333333333333,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.revoked",
+    "AXLabel": "相关依据已撤回。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4445.666666666665,
+      "x": 32,
+      "height": 20.33333333333303,
+      "width": 126.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "请查看应用当前提示，或向发卡行及相关经营方核对缺少的信息。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4477.999999999998,
+      "x": 32,
+      "width": 303.66666666666663,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+    "AXLabel": "支付宝或微信支付可按应用提示绑受支持的卡，再扫描兼容商家码或出示付款码。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4560.333333333332,
+      "x": 48,
+      "height": 64.33333333333303,
+      "width": 270
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "y": 4636.666666666665,
+      "x": 48,
+      "height": 18,
+      "width": 59.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4660.666666666665,
+      "x": 48,
+      "height": 42.33333333333303,
+      "width": 282
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4708.999999999998,
+      "x": 48,
+      "height": 42.33333333333303,
+      "width": 281.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 具体银行卡、发卡行和商户须支持该交易。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4757.333333333331,
+      "x": 48,
+      "width": 282,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 银行卡支持、发卡行核验及应用条款以交易时为准。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4805.666666666664,
+      "x": 48,
+      "width": 298.66666666666663,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 手续费和支付额度以应用当前提示及服务条款为准。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4853.999999999997,
+      "x": 48,
+      "width": 281.66666666666663,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "y": 4908.333333333332,
+      "x": 48,
+      "height": 18,
+      "width": 44.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证任何商户均受理，也不保证交易成功。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4932.333333333332,
+      "x": 48,
+      "width": 298.66666666666663,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证免手续费或特定汇率。",
+    "type": "StaticText",
+    "frame": {
+      "y": 4980.666666666665,
+      "x": 48,
+      "width": 223,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不推断境外卡支持个人转账。",
+    "type": "StaticText",
+    "frame": {
+      "y": 5006.999999999998,
+      "width": 223,
+      "x": 48,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "y": 5039.333333333332,
+      "width": 150.66666666666666,
+      "x": 48,
+      "height": 14.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "y": 5065.666666666666,
+      "width": 306,
+      "x": 48,
+      "height": 28.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "y": 5065.666666666666,
+      "width": 306,
+      "x": 48,
+      "height": 28.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "y": 5073.666666666666,
+      "width": 7,
+      "x": 346.3333333333333,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "在中国大陆，怎样核对商户是否受理境外银行卡，以及怎样开始使用手机商户支付？",
+    "type": "StaticText",
+    "frame": {
+      "y": 5165.999999999999,
+      "width": 312.3333333333333,
+      "x": 32,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：如何核对外卡受理并开始使用手机支付？",
+    "type": "StaticText",
+    "frame": {
+      "y": 5218.333333333332,
+      "width": 313,
+      "x": 32,
+      "height": 38
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "y": 5266.333333333332,
+      "width": 286.3333333333333,
+      "x": 32,
+      "height": 30.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.no_answer",
+    "AXLabel": "当前已审核信息不足以回答这个问题。",
+    "type": "StaticText",
+    "frame": {
+      "y": 5306.666666666665,
+      "width": 278.3333333333333,
+      "x": 32,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "核对外卡受理",
+    "type": "StaticText",
+    "frame": {
+      "y": 5338.999999999998,
+      "width": 89.33333333333333,
+      "x": 32,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.revoked",
+    "AXLabel": "相关依据已撤回。",
+    "type": "StaticText",
+    "frame": {
+      "y": 5362.999999999998,
+      "width": 126.66666666666666,
+      "x": 32,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "手机商户支付",
+    "type": "StaticText",
+    "frame": {
+      "y": 5395.333333333331,
+      "width": 89.33333333333333,
+      "x": 32,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.unresolved_variants",
+    "AXLabel": "已审核版本存在差异，尚未完成核对。",
+    "type": "StaticText",
+    "frame": {
+      "y": 5419.333333333331,
+      "width": 278.66666666666663,
+      "x": 32,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "请查看应用当前提示，或向发卡行及相关经营方核对缺少的信息。",
+    "type": "StaticText",
+    "frame": {
+      "y": 5451.666666666664,
+      "width": 303.66666666666663,
+      "x": 32,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "在中国大陆，怎样核对商户是否受理境外银行卡，以及怎样开始使用手机商户支付？",
+    "type": "StaticText",
+    "frame": {
+      "y": 5549.999999999999,
+      "width": 312.3333333333333,
+      "x": 32,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：如何核对外卡受理并开始使用手机支付？",
+    "type": "StaticText",
+    "frame": {
+      "y": 5602.333333333332,
+      "width": 313,
+      "x": 32,
+      "height": 38
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "y": 5650.333333333332,
+      "width": 286.3333333333333,
+      "x": 32,
+      "height": 30.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.partial",
+    "AXLabel": "目前可回答其中一部分。",
+    "type": "StaticText",
+    "frame": {
+      "y": 5690.666666666665,
+      "width": 177.33333333333331,
+      "x": 32,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "核对外卡受理",
+    "type": "StaticText",
+    "frame": {
+      "y": 5722.999999999998,
+      "width": 89.33333333333333,
+      "x": 32,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.revoked",
+    "AXLabel": "相关依据已撤回。",
+    "type": "StaticText",
+    "frame": {
+      "y": 5746.999999999998,
+      "width": 126.66666666666666,
+      "x": 32,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "请查看应用当前提示，或向发卡行及相关经营方核对缺少的信息。",
+    "type": "StaticText",
+    "frame": {
+      "y": 5779.333333333331,
+      "width": 303.66666666666663,
+      "x": 32,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+    "AXLabel": "支付宝或微信支付可按应用提示绑受支持的卡，再扫描兼容商家码或出示付款码。",
+    "type": "StaticText",
+    "frame": {
+      "y": 5861.666666666665,
+      "width": 270,
+      "x": 48,
+      "height": 64.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "y": 5937.999999999998,
+      "width": 59.66666666666666,
+      "x": 48,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "y": 5961.999999999998,
+      "width": 282,
+      "x": 48,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "y": 6010.333333333331,
+      "width": 281.66666666666663,
+      "x": 48,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 具体银行卡、发卡行和商户须支持该交易。",
+    "type": "StaticText",
+    "frame": {
+      "y": 6058.666666666664,
+      "width": 282,
+      "x": 48,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 银行卡支持、发卡行核验及应用条款以交易时为准。",
+    "type": "StaticText",
+    "frame": {
+      "y": 6106.999999999997,
+      "width": 298.66666666666663,
+      "x": 48,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 手续费和支付额度以应用当前提示及服务条款为准。",
+    "type": "StaticText",
+    "frame": {
+      "y": 6155.33333333333,
+      "width": 281.66666666666663,
+      "x": 48,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "y": 6209.666666666665,
+      "width": 44.66666666666666,
+      "x": 48,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证任何商户均受理，也不保证交易成功。",
+    "type": "StaticText",
+    "frame": {
+      "y": 6233.666666666665,
+      "width": 298.66666666666663,
+      "x": 48,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证免手续费或特定汇率。",
+    "type": "StaticText",
+    "frame": {
+      "y": 6281.999999999998,
+      "width": 223,
+      "x": 48,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不推断境外卡支持个人转账。",
+    "type": "StaticText",
+    "frame": {
+      "y": 6308.333333333331,
+      "width": 223,
+      "x": 48,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 150.66666666666666,
+      "y": 6340.666666666665,
+      "height": 14.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "x": 48,
+      "width": 306,
+      "y": 6367,
+      "height": 28.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 306,
+      "y": 6367,
+      "height": 28.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 346.3333333333333,
+      "width": 7,
+      "y": 6375,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "在中国大陆，怎样核对商户是否受理境外银行卡，以及怎样开始使用手机商户支付？",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 312.3333333333333,
+      "y": 6467.333333333332,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：如何核对外卡受理并开始使用手机支付？",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 313,
+      "y": 6519.666666666665,
+      "height": 38
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 286.3333333333333,
+      "y": 6567.666666666665,
+      "height": 30.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.partial",
+    "AXLabel": "目前可回答其中一部分。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 177.33333333333331,
+      "y": 6607.999999999998,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "核对外卡受理",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 89.33333333333333,
+      "y": 6640.333333333331,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.revoked",
+    "AXLabel": "相关依据已撤回。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 126.66666666666666,
+      "y": 6664.333333333331,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "请查看应用当前提示，或向发卡行及相关经营方核对缺少的信息。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 303.66666666666663,
+      "y": 6696.666666666664,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+    "AXLabel": "支付宝或微信支付可按应用提示绑受支持的卡，再扫描兼容商家码或出示付款码。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 270,
+      "y": 6778.999999999998,
+      "height": 64.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 59.66666666666666,
+      "y": 6855.333333333331,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 282,
+      "y": 6879.333333333331,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 281.66666666666663,
+      "y": 6927.666666666664,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 具体银行卡、发卡行和商户须支持该交易。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 282,
+      "y": 6975.999999999997,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 银行卡支持、发卡行核验及应用条款以交易时为准。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 298.66666666666663,
+      "y": 7024.33333333333,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 手续费和支付额度以应用当前提示及服务条款为准。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 281.66666666666663,
+      "y": 7072.666666666663,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 44.66666666666666,
+      "y": 7126.999999999998,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证任何商户均受理，也不保证交易成功。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 298.66666666666663,
+      "y": 7150.999999999998,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证免手续费或特定汇率。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 223,
+      "y": 7199.333333333331,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不推断境外卡支持个人转账。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 223,
+      "y": 7225.666666666664,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 150.66666666666666,
+      "y": 7257.999999999998,
+      "height": 14.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "x": 48,
+      "width": 306,
+      "y": 7284.333333333333,
+      "height": 28.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 306,
+      "y": 7284.333333333333,
+      "height": 28.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 346.3333333333333,
+      "width": 7,
+      "y": 7292.333333333333,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "怎样开始使用支付宝向商户付款？今天我的准确手续费是多少？还能给朋友转账吗？",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 320.66666666666663,
+      "y": 7384.666666666665,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：如何开始使用手机商户支付？",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 276,
+      "y": 7436.999999999998,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 286.3333333333333,
+      "y": 7464.999999999998,
+      "height": 30.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.additional-needs",
+    "AXLabel": "当前已审核指引尚未回答以下需求，请向相关官方渠道或服务方核对。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 337.3333333333333,
+      "y": 7505.333333333331,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.additional-needs",
+    "AXLabel": "“今天我的准确手续费是多少？”",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 229.33333333333331,
+      "y": 7553.666666666664,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.additional-needs",
+    "AXLabel": "“还能给朋友转账吗？”",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "width": 161.66666666666666,
+      "y": 7579.999999999997,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "所需支付指引有已审核依据。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333303,
+      "width": 211,
+      "y": 7610.333333333331,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+    "AXLabel": "支付宝或微信支付可按应用提示绑受支持的卡，再扫描兼容商家码或出示付款码。",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333303,
+      "width": 270,
+      "y": 7670.666666666664,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "width": 59.66666666666666,
+      "y": 7746.999999999997,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333303,
+      "width": 282,
+      "y": 7770.999999999997,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333303,
+      "width": 281.66666666666663,
+      "y": 7956.33333333333,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 具体银行卡、发卡行和商户须支持该交易。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333303,
+      "width": 282,
+      "y": 8004.666666666663,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 银行卡支持、发卡行核验及应用条款以交易时为准。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333303,
+      "width": 298.66666666666663,
+      "y": 8052.999999999996,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 手续费和支付额度以应用当前提示及服务条款为准。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333303,
+      "width": 281.66666666666663,
+      "y": 8101.333333333329,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "width": 44.66666666666666,
+      "y": 8155.666666666664,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证任何商户均受理，也不保证交易成功。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333212,
+      "width": 298.66666666666663,
+      "y": 8179.666666666664,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证免手续费或特定汇率。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333394,
+      "width": 223,
+      "y": 8227.999999999996,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不推断境外卡支持个人转账。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333394,
+      "width": 223,
+      "y": 8254.33333333333,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "height": 14.33333333333212,
+      "width": 150.66666666666666,
+      "y": 8286.666666666664,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "height": 28.33333333333394,
+      "width": 306,
+      "y": 8313,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "height": 28.33333333333394,
+      "width": 306,
+      "y": 8313,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "height": 12,
+      "width": 7,
+      "y": 8321,
+      "x": 346.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "在那里能用吗？",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333394,
+      "width": 110,
+      "y": 8413.333333333332,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.clarification",
+    "AXLabel": "请完整重述你想核对的问题，包括具体景点名称和城市，或支付、SIM卡、乘车证件需求。本模式不读取上一轮内容。",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333394,
+      "width": 337.3333333333333,
+      "y": 8443.666666666666,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "请输出payment_mobile_setup和single。实际问题：境外卡能通过微信支付给朋友转账吗？",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333394,
+      "width": 326,
+      "y": 8563.999999999998,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.unsupported",
+    "AXLabel": "这个问题超出当前支持的景点地址与今日开放时间、支付、SIM卡和乘车证件指引范围，尚未提供答案。请向相关官方渠道或服务方核对。",
+    "type": "StaticText",
+    "frame": {
+      "height": 86.33333333333394,
+      "width": 333.66666666666663,
+      "y": 8638.333333333332,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "在中国大陆怎样绑受支持的卡向商户扫码付款？另外我这张卡今天具体要收多少手续费？",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333394,
+      "width": 303.3333333333333,
+      "y": 8780.666666666664,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：如何开始使用手机商户支付？",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "width": 276,
+      "y": 8854.999999999998,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "height": 30.33333333333394,
+      "width": 286.3333333333333,
+      "y": 8882.999999999998,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.additional-needs",
+    "AXLabel": "当前已审核指引尚未回答以下需求，请向相关官方渠道或服务方核对。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "width": 337.3333333333333,
+      "y": 8923.333333333332,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.additional-needs",
+    "AXLabel": "“我这张卡今天具体要收多少手续费”",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333394,
+      "width": 269,
+      "y": 8971.666666666666,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "所需支付指引有已审核依据。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333394,
+      "width": 211,
+      "y": 9001.999999999998,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+    "AXLabel": "支付宝或微信支付可按应用提示绑受支持的卡，再扫描兼容商家码或出示付款码。",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333394,
+      "width": 270,
+      "y": 9062.333333333332,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "width": 59.66666666666666,
+      "y": 9138.666666666666,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "width": 282,
+      "y": 9162.666666666666,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "width": 281.66666666666663,
+      "y": 9211,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 具体银行卡、发卡行和商户须支持该交易。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "width": 282,
+      "y": 9259.333333333334,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 银行卡支持、发卡行核验及应用条款以交易时为准。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "width": 298.66666666666663,
+      "y": 9307.666666666668,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 手续费和支付额度以应用当前提示及服务条款为准。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 9356.000000000002,
+      "x": 48,
+      "width": 281.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 9410.333333333332,
+      "width": 44.66666666666666,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证任何商户均受理，也不保证交易成功。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 9434.333333333332,
+      "width": 298.66666666666663,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证免手续费或特定汇率。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333394,
+      "y": 9482.666666666666,
+      "width": 223,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不推断境外卡支持个人转账。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333394,
+      "y": 9509,
+      "x": 48,
+      "width": 223
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "height": 14.33333333333394,
+      "y": 9541.333333333332,
+      "x": 48,
+      "width": 150.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "height": 28.33333333333394,
+      "y": 9567.666666666666,
+      "x": 48,
+      "width": 306
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "height": 28.33333333333394,
+      "y": 9567.666666666666,
+      "width": 306,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "height": 12,
+      "y": 9575.666666666666,
+      "x": 346.3333333333333,
+      "width": 7
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "外滩附近现在营业并且受理我这张境外银行卡的ATM是哪台？",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 9667.999999999998,
+      "x": 32,
+      "width": 286.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.unsupported",
+    "AXLabel": "这个问题超出当前支持的景点地址与今日开放时间、支付、SIM卡和乘车证件指引范围，尚未提供答案。请向相关官方渠道或服务方核对。",
+    "type": "StaticText",
+    "frame": {
+      "height": 86.33333333333394,
+      "y": 9720.333333333332,
+      "width": 333.66666666666663,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "微信支付绑定境外银行卡后能给朋友转账吗？",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333394,
+      "y": 9862.666666666664,
+      "width": 329,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.unsupported",
+    "AXLabel": "这个问题超出当前支持的景点地址与今日开放时间、支付、SIM卡和乘车证件指引范围，尚未提供答案。请向相关官方渠道或服务方核对。",
+    "type": "StaticText",
+    "frame": {
+      "height": 86.33333333333394,
+      "y": 9892.999999999998,
+      "x": 32,
+      "width": 333.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "今天用境外银行卡在支付宝支付300元，具体收多少手续费？",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 10035.33333333333,
+      "x": 32,
+      "width": 306.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.unsupported",
+    "AXLabel": "这个问题超出当前支持的景点地址与今日开放时间、支付、SIM卡和乘车证件指引范围，尚未提供答案。请向相关官方渠道或服务方核对。",
+    "type": "StaticText",
+    "frame": {
+      "height": 86.33333333333394,
+      "y": 10087.666666666664,
+      "width": 333.66666666666663,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "外国游客在中国大陆使用银行卡、手机钱包及现金支付，有哪些一般步骤？",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 10229.999999999996,
+      "x": 32,
+      "width": 337.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：在中国大陆旅游有哪些支付方式？",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 10282.33333333333,
+      "width": 305.66666666666663,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "height": 30.33333333333394,
+      "y": 10310.33333333333,
+      "x": 32,
+      "width": 286.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.partial",
+    "AXLabel": "目前可回答其中一部分。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333394,
+      "y": 10350.666666666664,
+      "width": 177.33333333333331,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "核对外卡受理",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 10382.999999999998,
+      "x": 32,
+      "width": 89.33333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.revoked",
+    "AXLabel": "相关依据已撤回。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333394,
+      "y": 10406.999999999998,
+      "x": 32,
+      "width": 126.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "请查看应用当前提示，或向发卡行及相关经营方核对缺少的信息。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 10439.333333333332,
+      "width": 303.66666666666663,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+    "AXLabel": "支付宝或微信支付可按应用提示绑受支持的卡，再扫描兼容商家码或出示付款码。",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333394,
+      "y": 10521.666666666664,
+      "x": 48,
+      "width": 270
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 10597.999999999998,
+      "x": 48,
+      "width": 59.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 10621.999999999998,
+      "x": 48,
+      "width": 282
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 10670.333333333332,
+      "width": 281.66666666666663,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 具体银行卡、发卡行和商户须支持该交易。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 10718.666666666666,
+      "x": 48,
+      "width": 282
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 银行卡支持、发卡行核验及应用条款以交易时为准。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 10767,
+      "x": 48,
+      "width": 298.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 手续费和支付额度以应用当前提示及服务条款为准。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 10815.333333333334,
+      "x": 48,
+      "width": 281.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 10869.666666666664,
+      "width": 44.66666666666666,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证任何商户均受理，也不保证交易成功。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 10893.666666666664,
+      "x": 48,
+      "width": 298.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证免手续费或特定汇率。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333394,
+      "y": 10941.999999999998,
+      "width": 223,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不推断境外卡支持个人转账。",
+    "type": "StaticText",
+    "frame": {
+      "width": 223,
+      "x": 48,
+      "height": 20.33333333333394,
+      "y": 10968.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "width": 150.66666666666666,
+      "x": 48,
+      "height": 14.33333333333394,
+      "y": 11000.666666666664
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "height": 28.33333333333394,
+      "y": 11027
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "height": 28.33333333333394,
+      "y": 11027
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "width": 7,
+      "x": 346.3333333333333,
+      "height": 12,
+      "y": 11035
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0702a0bd-073e-47c2-9102-74e9438653ef",
+    "AXLabel": "需要人民币现金时，可选择受理所持国际卡的ATM。",
+    "type": "StaticText",
+    "frame": {
+      "width": 303.66666666666663,
+      "x": 48,
+      "height": 42.33333333333394,
+      "y": 11111.33333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "width": 59.66666666666666,
+      "x": 48,
+      "height": 18,
+      "y": 11165.666666666664
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "width": 282,
+      "x": 48,
+      "height": 42.33333333333394,
+      "y": 11189.666666666664
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "width": 281.66666666666663,
+      "x": 48,
+      "height": 42.33333333333394,
+      "y": 11237.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 向具体经营方确认服务可用性、营业时间和费用。",
+    "type": "StaticText",
+    "frame": {
+      "width": 282,
+      "x": 48,
+      "height": 42.33333333333394,
+      "y": 11286.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• ATM及发卡行须支持所持银行卡取现。",
+    "type": "StaticText",
+    "frame": {
+      "width": 293,
+      "x": 48,
+      "height": 20.33333333333394,
+      "y": 11334.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "width": 44.66666666666666,
+      "x": 48,
+      "height": 18,
+      "y": 11366.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证每台ATM或酒店均提供所需取现或兑换服务。",
+    "type": "StaticText",
+    "frame": {
+      "width": 303.66666666666663,
+      "x": 48,
+      "height": 42.33333333333394,
+      "y": 11390.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证固定兑换汇率，请向经营方确认。",
+    "type": "StaticText",
+    "frame": {
+      "width": 265,
+      "x": 48,
+      "height": 42.33333333333394,
+      "y": 11439.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "width": 150.66666666666666,
+      "x": 48,
+      "height": 14.33333333333394,
+      "y": 11493.666666666664
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "height": 28.33333333333394,
+      "y": 11520
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "height": 28.33333333333394,
+      "y": 11520
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "width": 7,
+      "x": 346.3333333333333,
+      "height": 12,
+      "y": 11528
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.bb6a61a4-ffa4-41f1-8af4-25bb3d352dda",
+    "AXLabel": "外币兑换可查找有兑换标识的网点，并向经营方确认服务。",
+    "type": "StaticText",
+    "frame": {
+      "width": 303.66666666666663,
+      "x": 48,
+      "height": 42.33333333333394,
+      "y": 11604.33333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "width": 59.66666666666666,
+      "x": 48,
+      "height": 18,
+      "y": 11658.666666666664
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "width": 282,
+      "x": 48,
+      "height": 42.33333333333394,
+      "y": 11682.666666666664
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "width": 281.66666666666663,
+      "x": 48,
+      "height": 42.33333333333394,
+      "y": 11730.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 向具体经营方确认服务可用性、营业时间和费用。",
+    "type": "StaticText",
+    "frame": {
+      "width": 282,
+      "x": 48,
+      "height": 42.33333333333394,
+      "y": 11779.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "width": 44.66666666666666,
+      "x": 48,
+      "height": 18,
+      "y": 11833.666666666664
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证每台ATM或酒店均提供所需取现或兑换服务。",
+    "type": "StaticText",
+    "frame": {
+      "width": 303.66666666666663,
+      "x": 48,
+      "height": 42.33333333333394,
+      "y": 11857.666666666664
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证固定兑换汇率，请向经营方确认。",
+    "type": "StaticText",
+    "frame": {
+      "width": 265,
+      "x": 48,
+      "height": 42.33333333333394,
+      "y": 11905.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "width": 150.66666666666666,
+      "x": 48,
+      "height": 14.33333333333394,
+      "y": 11960.33333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "height": 28.33333333333394,
+      "y": 11986.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "height": 28.33333333333394,
+      "y": 11986.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "width": 7,
+      "x": 346.3333333333333,
+      "height": 12,
+      "y": 11994.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "在中国大陆怎样开始使用手机商户支付，以及如何取得人民币现金？",
+    "type": "StaticText",
+    "frame": {
+      "width": 337.3333333333333,
+      "x": 32,
+      "height": 42.33333333333394,
+      "y": 12086.999999999996
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：如何开始使用手机支付并取得人民币现金？",
+    "type": "StaticText",
+    "frame": {
+      "width": 327.66666666666663,
+      "x": 32,
+      "height": 38,
+      "y": 12139.33333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "y": 12187.33333333333,
+      "height": 30.33333333333394,
+      "x": 32,
+      "width": 286.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "所需支付指引有已审核依据。",
+    "type": "StaticText",
+    "frame": {
+      "y": 12227.666666666664,
+      "height": 20.33333333333394,
+      "x": 32,
+      "width": 211
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+    "AXLabel": "支付宝或微信支付可按应用提示绑受支持的卡，再扫描兼容商家码或出示付款码。",
+    "type": "StaticText",
+    "frame": {
+      "y": 12287.999999999998,
+      "height": 64.33333333333394,
+      "x": 48,
+      "width": 270
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 12364.333333333332,
+      "x": 48,
+      "width": 59.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "y": 12388.333333333332,
+      "height": 42.33333333333394,
+      "x": 48,
+      "width": 282
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "y": 12436.666666666666,
+      "height": 42.33333333333394,
+      "x": 48,
+      "width": 281.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 具体银行卡、发卡行和商户须支持该交易。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 12485,
+      "x": 48,
+      "width": 282
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 银行卡支持、发卡行核验及应用条款以交易时为准。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 12533.333333333334,
+      "x": 48,
+      "width": 298.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 手续费和支付额度以应用当前提示及服务条款为准。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 12581.666666666668,
+      "x": 48,
+      "width": 281.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "y": 12635.999999999998,
+      "height": 18,
+      "x": 48,
+      "width": 44.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证任何商户均受理，也不保证交易成功。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 12659.999999999998,
+      "x": 48,
+      "width": 298.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证免手续费或特定汇率。",
+    "type": "StaticText",
+    "frame": {
+      "y": 12708.333333333332,
+      "height": 20.33333333333394,
+      "x": 48,
+      "width": 223
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不推断境外卡支持个人转账。",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333394,
+      "y": 12734.666666666666,
+      "x": 48,
+      "width": 223
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "y": 12766.999999999998,
+      "height": 14.33333333333394,
+      "x": 48,
+      "width": 150.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "y": 12793.333333333332,
+      "height": 28.33333333333394,
+      "x": 48,
+      "width": 306
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "height": 28.33333333333394,
+      "y": 12793.333333333332,
+      "x": 48,
+      "width": 306
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "y": 12801.333333333332,
+      "height": 12,
+      "x": 346.3333333333333,
+      "width": 7
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0702a0bd-073e-47c2-9102-74e9438653ef",
+    "AXLabel": "需要人民币现金时，可选择受理所持国际卡的ATM。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 12877.666666666664,
+      "x": 48,
+      "width": 303.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "y": 12931.999999999998,
+      "height": 18,
+      "x": 48,
+      "width": 59.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 12955.999999999998,
+      "x": 48,
+      "width": 282
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "y": 13004.333333333332,
+      "height": 42.33333333333394,
+      "x": 48,
+      "width": 281.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 向具体经营方确认服务可用性、营业时间和费用。",
+    "type": "StaticText",
+    "frame": {
+      "y": 13052.666666666666,
+      "height": 42.33333333333394,
+      "x": 48,
+      "width": 282
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• ATM及发卡行须支持所持银行卡取现。",
+    "type": "StaticText",
+    "frame": {
+      "y": 13101,
+      "height": 20.33333333333394,
+      "x": 48,
+      "width": 293
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "y": 13133.333333333332,
+      "height": 18,
+      "x": 48,
+      "width": 44.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证每台ATM或酒店均提供所需取现或兑换服务。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 13157.333333333332,
+      "x": 48,
+      "width": 303.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证固定兑换汇率，请向经营方确认。",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 13205.666666666666,
+      "x": 48,
+      "width": 265
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "y": 13259.999999999998,
+      "height": 14.33333333333394,
+      "x": 48,
+      "width": 150.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "height": 28.33333333333394,
+      "y": 13286.333333333332,
+      "x": 48,
+      "width": 306
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "height": 28.33333333333394,
+      "y": 13286.333333333332,
+      "x": 48,
+      "width": 306
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "y": 13294.333333333332,
+      "height": 12,
+      "x": 346.3333333333333,
+      "width": 7
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.bb6a61a4-ffa4-41f1-8af4-25bb3d352dda",
+    "AXLabel": "外币兑换可查找有兑换标识的网点，并向经营方确认服务。",
+    "type": "StaticText",
+    "frame": {
+      "y": 13370.666666666664,
+      "height": 42.33333333333394,
+      "x": 48,
+      "width": 303.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 13424.999999999998,
+      "x": 48,
+      "width": 59.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 282,
+      "y": 13448.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 281.66666666666663,
+      "y": 13497.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 向具体经营方确认服务可用性、营业时间和费用。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 282,
+      "y": 13545.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 18,
+      "width": 44.66666666666666,
+      "y": 13599.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证每台ATM或酒店均提供所需取现或兑换服务。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 303.66666666666663,
+      "y": 13623.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证固定兑换汇率，请向经营方确认。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 265,
+      "y": 13672.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 14.33333333333394,
+      "width": 150.66666666666666,
+      "y": 13726.666666666664
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "x": 48,
+      "height": 28.33333333333394,
+      "width": 306,
+      "y": 13753
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 28.33333333333394,
+      "width": 306,
+      "y": 13753
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 346.3333333333333,
+      "height": 12,
+      "width": 7,
+      "y": 13761
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "在中国大陆怎样核对商户是否受理境外银行卡，以及如何取得人民币现金？",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "height": 42.33333333333394,
+      "width": 286.66666666666663,
+      "y": 13716.33333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "识别的问题：如何核对外卡受理并取得人民币现金？",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "height": 18,
+      "width": 335.3333333333333,
+      "y": 13768.666666666664
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "height": 30.33333333333394,
+      "width": 286.3333333333333,
+      "y": 13796.666666666664
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.partial",
+    "AXLabel": "目前可回答其中一部分。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "height": 20.33333333333394,
+      "width": 177.33333333333331,
+      "y": 13836.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "核对外卡受理",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "height": 18,
+      "width": 89.33333333333333,
+      "y": 13869.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.revoked",
+    "AXLabel": "相关依据已撤回。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "height": 20.33333333333394,
+      "width": 126.66666666666666,
+      "y": 13893.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "请查看应用当前提示，或向发卡行及相关经营方核对缺少的信息。",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "height": 42.33333333333394,
+      "width": 303.66666666666663,
+      "y": 13925.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0702a0bd-073e-47c2-9102-74e9438653ef",
+    "AXLabel": "需要人民币现金时，可选择受理所持国际卡的ATM。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 303.66666666666663,
+      "y": 14007.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 18,
+      "width": 59.66666666666666,
+      "y": 14062.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 282,
+      "y": 14086.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 281.66666666666663,
+      "y": 14134.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 向具体经营方确认服务可用性、营业时间和费用。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 282,
+      "y": 14183
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• ATM及发卡行须支持所持银行卡取现。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 20.33333333333394,
+      "width": 293,
+      "y": 14231.333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 18,
+      "width": 44.66666666666666,
+      "y": 14263.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证每台ATM或酒店均提供所需取现或兑换服务。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 303.66666666666663,
+      "y": 14287.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证固定兑换汇率，请向经营方确认。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 265,
+      "y": 14336
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 14.33333333333394,
+      "width": 150.66666666666666,
+      "y": 14390.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "x": 48,
+      "height": 28.33333333333394,
+      "width": 306,
+      "y": 14416.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 28.33333333333394,
+      "width": 306,
+      "y": 14416.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 346.3333333333333,
+      "height": 12,
+      "width": 7,
+      "y": 14425
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.bb6a61a4-ffa4-41f1-8af4-25bb3d352dda",
+    "AXLabel": "外币兑换可查找有兑换标识的网点，并向经营方确认服务。",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 303.66666666666663,
+      "y": 14500.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "适用条件",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 18,
+      "width": 59.66666666666666,
+      "y": 14555.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 中国大陆通用指引，具体服务以当前运营方为准。",
+    "type": "StaticText",
+    "frame": {
+      "y": 14579.333333333332,
+      "x": 48,
+      "width": 282,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 使用前查看主管机关或运营方的最新指引。",
+    "type": "StaticText",
+    "frame": {
+      "y": 14627.666666666666,
+      "x": 48,
+      "width": 281.66666666666663,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 向具体经营方确认服务可用性、营业时间和费用。",
+    "type": "StaticText",
+    "frame": {
+      "y": 14676,
+      "x": 48,
+      "width": 282,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "不包含",
+    "type": "StaticText",
+    "frame": {
+      "y": 14730.333333333332,
+      "x": 48,
+      "width": 44.66666666666666,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证每台ATM或酒店均提供所需取现或兑换服务。",
+    "type": "StaticText",
+    "frame": {
+      "y": 14754.333333333332,
+      "x": 48,
+      "width": 303.66666666666663,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• 不保证固定兑换汇率，请向经营方确认。",
+    "type": "StaticText",
+    "frame": {
+      "y": 14802.666666666666,
+      "x": 48,
+      "width": 265,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "审核日期：2026年9月13日",
+    "type": "StaticText",
+    "frame": {
+      "y": 14856.999999999998,
+      "x": 48,
+      "width": 150.66666666666666,
+      "height": 14.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "Button",
+    "frame": {
+      "y": 14883.333333333332,
+      "x": 48,
+      "width": 306,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "来源与上下文",
+    "type": "StaticText",
+    "frame": {
+      "y": 14883.333333333332,
+      "x": 48,
+      "width": 306,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "y": 14891.333333333332,
+      "x": 346.3333333333333,
+      "width": 7,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 32页",
+    "type": "Slider",
+    "frame": {
+      "y": 116,
+      "x": 369,
+      "width": 30,
+      "height": 428.66666666666674
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 32页",
+    "type": "Slider",
+    "frame": {
+      "y": 116,
+      "x": 369,
+      "width": 30,
+      "height": 428.66666666666674
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.intent",
+    "AXLabel": "等待结果",
+    "type": "StaticText",
+    "frame": {
+      "y": 571.6666666666667,
+      "x": 16,
+      "width": 48,
+      "height": 14.333333333333371
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.new-question",
+    "AXLabel": "新问题",
+    "type": "Button",
+    "frame": {
+      "y": 568.6666666666666,
+      "x": 335.3333333333333,
+      "width": 50.666666666666686,
+      "height": 20.33333333333337
+    },
+    "enabled": false
+  },
+  {
+    "AXUniqueId": "grounded.scope",
+    "AXLabel": "当前支持：指定城市中具名景点的已审核地址与今日开放时间、中国大陆旅游支付、SIM卡申请证件与套餐额度核对，以及成年外籍护照旅客的境内铁路乘车证件。模型只识别本次问题；费用、受理和服务可用性须向当前服务方核对。",
+    "type": "StaticText",
+    "frame": {
+      "y": 597.0000000000001,
+      "x": 16,
+      "width": 370,
+      "height": 62.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.city",
+    "AXLabel": "城市、上海",
+    "type": "PopUpButton",
+    "frame": {
+      "y": 667.3333333333333,
+      "x": 164,
+      "width": 74.33333333333331,
+      "height": 34.33333333333337
+    },
+    "enabled": false
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "上海",
+    "type": "StaticText",
+    "frame": {
+      "y": 674.3333333333333,
+      "x": 175.66666666666666,
+      "width": 34,
+      "height": 20.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.input",
+    "AXLabel": null,
+    "type": "TextField",
+    "frame": {
+      "y": 709.6666666666666,
+      "x": 16,
+      "width": 370,
+      "height": 23
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "_UITextSelectionRangeAdjustmentContainerView",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "y": 709.6666666666666,
+      "x": 16,
+      "width": 0,
+      "height": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "com.apple.text.grabber.leading",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "y": 709.6666666666666,
+      "x": 16,
+      "width": 0,
+      "height": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "com.apple.text.grabber.leading",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "y": 709.6666666666666,
+      "x": 16,
+      "width": 0,
+      "height": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "水平滚动条, 1页",
+    "type": "Slider",
+    "frame": {
+      "y": 718.1666666666666,
+      "x": 16,
+      "width": 370,
+      "height": 11.5
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "0/4000",
+    "type": "StaticText",
+    "frame": {
+      "y": 750.6666666666669,
+      "x": 16,
+      "width": 41.666666666666664,
+      "height": 14.333333333333371
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.send",
+    "AXLabel": "发送",
+    "type": "Button",
+    "frame": {
+      "y": 740.6666666666666,
+      "x": 328,
+      "width": 58,
+      "height": 34.33333333333337
+    },
+    "enabled": false
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "标签页栏",
+    "type": "Group",
+    "frame": {
+      "y": 791,
+      "height": 83,
+      "width": 402,
+      "x": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map",
+    "AXLabel": "行程",
+    "type": "RadioButton",
+    "frame": {
+      "x": 25,
+      "height": 54,
+      "y": 795,
+      "width": 77
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map.fill",
+    "AXLabel": "显示地图",
+    "type": "Image",
+    "frame": {
+      "y": 801.6666666666666,
+      "height": 26.33333333333337,
+      "width": 29.66666666666667,
+      "x": 49
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari",
+    "AXLabel": "探索",
+    "type": "RadioButton",
+    "frame": {
+      "x": 93.75,
+      "height": 54,
+      "y": 795,
+      "width": 77
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari.fill",
+    "AXLabel": "Safari浏览器",
+    "type": "Image",
+    "frame": {
+      "x": 118.75,
+      "height": 27.33333333333337,
+      "y": 801.3333333333334,
+      "width": 27.333333333333343
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "问熊猫",
+    "type": "RadioButton",
+    "frame": {
+      "x": 162.5,
+      "y": 795,
+      "width": 77,
+      "height": 54
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "闪光",
+    "type": "Image",
+    "frame": {
+      "x": 188.5,
+      "y": 799,
+      "height": 30,
+      "width": 26
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "工具",
+    "type": "RadioButton",
+    "frame": {
+      "y": 795,
+      "height": 54,
+      "width": 77,
+      "x": 231.25
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "wrench.and.screwdriver",
+    "type": "Image",
+    "frame": {
+      "x": 253.25,
+      "height": 31.66666666666663,
+      "y": 799.3333333333334,
+      "width": 32.666666666666686
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle",
+    "AXLabel": "我的",
+    "type": "RadioButton",
+    "frame": {
+      "y": 795,
+      "x": 300,
+      "width": 77,
+      "height": 54
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle.fill",
+    "AXLabel": "账户",
+    "type": "Image",
+    "frame": {
+      "y": 801.3333333333334,
+      "height": 27.33333333333337,
+      "width": 27.333333333333314,
+      "x": 325
+    },
+    "enabled": true
+  }
+]
