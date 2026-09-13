@@ -3,6 +3,11 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
+import { mkdtemp,readFile,rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { stagingUsageReconciliation } from '../../../lib/server/jobs/staging-usage-reconciliation.ts';
+import { PROTOCOL_MODELS } from '../../../lib/server/model-gateway/adapters/provider-protocol.ts';
 import { runWithDurableBudget } from '../../../lib/server/model-gateway/budget/durable.ts';
 import { stopDurableBudget } from '../../../lib/server/model-gateway/budget/stop.ts';
 import { command, sql, rpc } from './fixtures/postgres-rpc.mjs';
@@ -18,7 +23,8 @@ const dispatch = a => call('dispatch_model_budget',identity(a));
 const finish = (a,action,actual=null) => call('finish_model_budget',{...identity(a),p_action:action,p_actual_micros:actual});
 async function fixture({limit=1000,task=1000,provider=1000,attempt=1000,concurrency=10,attempts=10}={}) {
   attempt=Math.min(attempt,provider);
-  const a={scopeId:uuid(),ownerId:uuid(),taskId:uuid(),attemptId:uuid(),provider:'deepseek',model:'test-model',priceVersion:'test-price',reservedMicros:100,timeoutMs:200};
+  // Ordinary cases include real Docker/SQL settlement latency. Deadline tests override this.
+  const a={scopeId:uuid(),ownerId:uuid(),taskId:uuid(),attemptId:uuid(),provider:'deepseek',model:'test-model',priceVersion:'test-price',reservedMicros:100,timeoutMs:10000};
   await db(`insert into auth.users values ('${a.ownerId}'); insert into public.model_budget_scopes(id,owner_id,currency,limit_micros,task_limit_micros,task_attempt_limit,concurrency_limit,enabled,expires_at) values ('${a.scopeId}','${a.ownerId}','CNY',${limit},${task},${attempts},${concurrency},true,now()+interval '1 hour'); insert into public.model_budget_provider_limits values ('${a.scopeId}','deepseek','test-model','test-price',${provider},${attempt},true);`);
   return a;
 }
@@ -79,9 +85,12 @@ run('consumer settles actual usage and returns duplicate without invoking again'
   assert.equal((await runWithDurableBudget(a,call,invoke,new AbortController().signal)).kind,'unavailable');assert.equal(invoked,1);assert.equal((await state(a)).actual,20);
 });
 run('unknown usage, timeout and cancellation retain reservations; late results do not settle',async()=>{
-  const a=await fixture({concurrency:1});assert.equal((await runWithDurableBudget(a,call,async()=>({value:'synthetic',actualMicros:null}),new AbortController().signal)).accounting,'pending');assert.equal((await state(a)).reserved,100);assert.equal((await reserve({...a,attemptId:uuid()})).kind,'exhausted');
+  const a=await fixture({concurrency:1});
+  assert.deepEqual(await runWithDurableBudget(a,call,async()=>({value:'synthetic',actualMicros:null}),new AbortController().signal),{kind:'completed',value:'synthetic',accounting:'pending'});assert.equal((await state(a)).reserved,100);assert.equal((await reserve({...a,attemptId:uuid()})).kind,'exhausted');
   const b=await fixture();b.timeoutMs=10;const result=await runWithDurableBudget(b,call,async()=>{await new Promise(r=>setTimeout(r,50));return {value:'late',actualMicros:2};},new AbortController().signal);assert.deepEqual(result,{kind:'unavailable',reason:'timeout'});await new Promise(r=>setTimeout(r,60));assert.equal((await state(b)).status,'pending');
-  const c=await fixture(),controller=new AbortController();const cancelled=await runWithDurableBudget(c,call,async()=>{controller.abort();return new Promise(()=>{});},controller.signal);assert.deepEqual(cancelled,{kind:'unavailable',reason:'cancelled'});assert.equal((await state(c)).status,'pending');
+  const c=await fixture(),controller=new AbortController();c.timeoutMs=10;
+  const slowPending=async(name,p)=>{if(name==='finish_model_budget')await new Promise(r=>setTimeout(r,30));return call(name,p);};
+  const cancelled=await runWithDurableBudget(c,slowPending,async()=>{controller.abort();return new Promise(()=>{});},controller.signal);assert.deepEqual(cancelled,{kind:'unavailable',reason:'cancelled'});assert.equal((await state(c)).status,'pending');
 });
 run('killed worker retains dispatched cost across a fresh worker process',async()=>{
   const a=await fixture({concurrency:1});a.timeoutMs=300000;
@@ -90,6 +99,32 @@ run('killed worker retains dispatched cost across a fresh worker process',async(
   const stopped=new Promise(resolve=>child.once('exit',resolve));child.kill('SIGKILL');await stopped;
   assert.equal((await state(a)).status,'dispatched');assert.equal((await reserve(a)).kind,'duplicate');assert.equal((await reserve({...a,attemptId:uuid()})).kind,'exhausted');
   assert.deepEqual(await stopDurableBudget({scopeId:a.scopeId,ownerId:a.ownerId},call),{kind:'stopped',released:0,pending:1});assert.equal((await state(a)).reserved,100);assert.equal((await finish(a,'settle',30)).kind,'settled');assert.equal((await reserve({...a,attemptId:uuid()})).kind,'disabled');
+});
+run('fsynced usage survives SIGKILL and reconciles exactly once after a lost settlement acknowledgement',async()=>{
+ const a=await fixture({limit:10000000,task:10000000,provider:10000000,attempt:3000000,concurrency:1});
+ await db(`insert into public.model_budget_provider_limits values ('${a.scopeId}','qwen','${PROTOCOL_MODELS.qwen}','test-price',10000000,3000000,true);`);
+ const job={schemaVersion:'vpj07-staging-text-job/1',ownerId:a.ownerId,policyId:uuid(),budget:{scopeId:a.scopeId,priceVersion:'test-price',reservedMicros:2101248,maxOutputTokens:512,timeoutMs:60000},
+  provider:{provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:uuid(),configurationVersion:1,timeoutMs:60000},
+  pricing:{mode:'flat',inputMicrosPerMillion:2000000,outputMicrosPerMillion:8000000,cachedInputMicrosPerMillion:null}};
+ const dir=await mkdtemp(join(tmpdir(),'vp-usage-crash-')),journal=join(dir,'usage.json');let child;
+ try{
+  child=spawn(process.execPath,['--experimental-strip-types','tests/integration/cost/fixtures/usage-crash-worker.mjs',container,JSON.stringify({job,turnId:a.taskId,leaseToken:uuid()}),journal],{stdio:['ignore','pipe','pipe']});
+  await new Promise((resolve,reject)=>{let seen='';const timer=setTimeout(()=>reject(Error('Usage receipt not reached')),15000);child.stdout.on('data',b=>{seen+=b;if(seen.includes('DURABLE_USAGE')){clearTimeout(timer);resolve();}});child.once('error',e=>{clearTimeout(timer);reject(e);});child.once('exit',code=>{if(!seen.includes('DURABLE_USAGE')){clearTimeout(timer);reject(Error('Worker exited '+code));}});});
+  const exited=new Promise(resolve=>child.once('exit',resolve));child.kill('SIGKILL');await exited;
+  const receipt=JSON.parse(await readFile(journal,'utf8')),identity={...a,attemptId:receipt.attempt.attemptId};
+  assert.deepEqual(await state(identity),{status:'dispatched',actual:null,reserved:2101248});
+  assert.equal((await reserve({...a,attemptId:uuid()})).kind,'exhausted','unknown attempt retains its concurrency slot');
+  const recovery=stagingUsageReconciliation(job,[receipt]),r=recovery.receipts[0];
+  const lost=async(name,p)=>{await call(name,p);throw Error('lost settlement ack');};
+  assert.equal(await recovery.settle(r,lost,new AbortController().signal),'unavailable');
+  assert.deepEqual(await state(identity),{status:'settled',actual:60,reserved:2101248});
+  const fresh=stagingUsageReconciliation(job,[JSON.parse(await readFile(journal,'utf8'))]);
+  assert.equal(await fresh.settle(fresh.receipts[0],call,new AbortController().signal),'already_settled');
+  assert.equal(await db(`select count(*) from public.model_budget_attempts where scope_id='${a.scopeId}';`),'1');
+  const conflicting={...receipt,usage:{...receipt.usage,inputTokens:11,totalTokens:16},actualMicros:62};
+  const conflict=stagingUsageReconciliation(job,[conflicting]);assert.equal(await conflict.settle(conflict.receipts[0],call,new AbortController().signal),'unavailable');
+  assert.equal((await state(identity)).actual,60);
+ }finally{child?.kill('SIGKILL');await rm(dir,{recursive:true,force:true});}
 });
 run('atomic stop releases only unsent work and retains unknown charge across repeat stop',async()=>{
   const a=await fixture(),b={...a,attemptId:uuid()},c={...a,attemptId:uuid()},d={...a,attemptId:uuid()};

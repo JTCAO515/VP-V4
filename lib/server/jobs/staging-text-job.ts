@@ -2,6 +2,7 @@ import { createScopedTextWorker, type ScopedTextWorkerConfig } from "../turn/sco
 import { createProviderHttpTransport, type HttpProviderConfiguration, type HttpTransportDependencies } from "../model-gateway/adapters/http-transport.ts";
 import { PROTOCOL_MODELS, validThinkingBudget } from "../model-gateway/adapters/provider-protocol.ts";
 import type { ProtocolUsage } from "../model-gateway/adapters/provider-protocol.ts";
+import type { RecordValidatedUsage } from "../model-gateway/budget/usage-receipt.ts";
 
 export type TextJobPricing = Readonly<{
   mode: "flat" | "cache_split";
@@ -23,6 +24,7 @@ export type StagingTextJobDependencies = Readonly<{
   workerCredential: HttpTransportDependencies["credential"];
   providerCredential: HttpTransportDependencies["credential"];
   recordDestination: HttpTransportDependencies["recordDestination"];
+  recordUsage?: RecordValidatedUsage;
   /** Test-only closed destination mapper; CLI uses real fetch without an override. */
   fetch?: typeof globalThis.fetch;
 }>;
@@ -62,7 +64,7 @@ export function createStagingTextJob(raw: unknown, dependencies: StagingTextJobD
   return createScopedTextWorker({ environment: "staging", databaseUrl: "https://dzqdzetcctkhbrhlxxgn.supabase.co",
     ownerId: config.ownerId, policyId: config.policyId, budget: config.budget }, {
     credential: dependencies.workerCredential,
-    provider: { thinkingBudgetTokens: config.thinkingBudgetTokens, inputMode: config.inputMode ?? "current_input_v1", provider: config.provider.provider, endpoint: config.provider.endpoint, transport, price },
+    provider: { thinkingBudgetTokens: config.thinkingBudgetTokens, inputMode: config.inputMode ?? "current_input_v1", provider: config.provider.provider, endpoint: config.provider.endpoint, transport, price, recordUsage: dependencies.recordUsage },
     ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
   });
 }

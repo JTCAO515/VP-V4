@@ -5,6 +5,7 @@ import { runWithDurableBudget, type BudgetAttempt, type BudgetRpc } from "../mod
 import { invokeTextProviderProtocol, invokeKnowledgeIntentProtocol, validTextTaskHistory, PROTOCOL_MODELS, type ProtocolTransport, type ProtocolUsage } from "../model-gateway/adapters/provider-protocol.ts";
 import { knowledgeIntent } from "../knowledge/claim/intent.ts";
 import { runDurableTurnWork, type TurnWorkRpc } from "./durable-worker.ts";
+import { validatedUsageReceipt, type RecordValidatedUsage } from "../model-gateway/budget/usage-receipt.ts";
 
 export type TextWorkRpc = (name: "read_text_work" | "authorize_text_dispatch" | "authorize_text_task_dispatch" | "complete_text_work" | "read_grounded_work" | "authorize_grounded_dispatch" | "complete_grounded_work", params: Readonly<Record<string, string>>) => Promise<unknown>;
 export type TextWorkerConfig = Readonly<{
@@ -22,6 +23,8 @@ export type TextProviderBinding = Readonly<{
   endpoint: string;
   transport: ProtocolTransport;
   price: (usage: ProtocolUsage) => number | null;
+  /** Persist validated usage before settlement; failure retains unknown-cost treatment. */
+  recordUsage?: RecordValidatedUsage;
 }>;
 
 /**
@@ -58,7 +61,14 @@ export async function runTextWorker(
       // these outcomes establish model + usage; SAFETY_BLOCKED is emitted after
       // both checks. Business failure/refusal can still incur verified model cost.
       const priceable = value.kind === "protocol_validated" || (value.kind === "unavailable" && value.code === "SAFETY_BLOCKED");
-      return { value, actualMicros: priceable && value.usage ? binding.price(value.usage) : null };
+      const actualMicros = priceable && value.usage ? binding.price(value.usage) : null;
+      if (actualMicros !== null && value.usage && binding.recordUsage) {
+        if (budgetSignal.aborted) throw new Error("Interrupted");
+        await binding.recordUsage(validatedUsageReceipt({ schemaVersion: "validated-model-usage/1", attempt,
+          turnId: lease.turnId, policyId: input.policyId, usage: value.usage, actualMicros, observedAt: new Date().toISOString() }), budgetSignal);
+        if (budgetSignal.aborted) throw new Error("Interrupted");
+      }
+      return { value, actualMicros };
     }, leaseSignal);
     if (leaseSignal.aborted) throw new Error("Interrupted");
     // A transport failure may have incurred charges. Let the durable queue retry
