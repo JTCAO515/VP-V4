@@ -154,7 +154,7 @@ struct NativeKnowledgeCards: View {
                 if !row.conditions.isEmpty { lines(text("Applies when", "适用条件"), row.conditions) }
                 if !row.exclusions.isEmpty { lines(text("Not covered", "不包含"), row.exclusions) }
                 if let date = NativeKnowledgeRead.date(row.reviewedAt) {
-                    Text(text("Reviewed: ", "审核日期：") + date.formatted(date: .abbreviated, time: .omitted))
+                    Text(text("Reviewed: ", "审核日期：") + date.formatted(.dateTime.year().month(.abbreviated).day().locale((chinese ? SupportedLocale.zh : .en).locale)))
                         .font(.caption).foregroundStyle(Color.vpSecondaryText)
                 }
                 DisclosureGroup(text("Sources and context", "来源与上下文")) {
