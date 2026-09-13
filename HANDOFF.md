@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PR348 merged9e24faa: real validated usage recovered once, exact replay idempotent; actual Production CANCELED and aliases preserved. Native grounded-only cancellation503 fix is implemented with local HTTP regression passing and independent permission review0/0; local grounded/legacy HTTP1+1,request security19/19,lint/typecheck/build pass; exact Staging/native cancellation and CI remain pending. Full S1–S6 incomplete.
+状态：PR348 merged9e24faa with real usage recovery and guarded Production cancellation. PR349 cancellation fix now observed on API3a79573/Staging42: original native task cancelled once, original settled cost unchanged, normal worker empty/no provider call. Reader/Ops off,WAF40,owned Simulator deleted. Final evidence CI/merge pending; full S1–S6 incomplete.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -35,8 +35,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 未决与运行证据
 
-- Observed cancellation defect: grounded-only Preview2717bf9 accepts native v4 Ask but v1 cancel selects disabled legacy text configuration and returns503 PROVIDER_UNAVAILABLE. Valid credentials/login/logout succeeded; two native clicks did not establish cancellation. Keep the retained accepted task and stopped workers until the immediate configuration/route fix is verified; do not call it cancelled or rerun its provider.
-- Staging42 bounded grounded Ask, same-task clarification/repair, Web owner readback, pre-dispatch worker crash/natural-lease recovery and native event reconnect are observed. Full S1/S2, wider five-outcome/knowledge/semantic coverage, deliberate offline/background/cancel races, post-dispatch unknown-cost recovery and complete operational acceptance remain incomplete. Supplier unknowns are disclosed, not approval blockers.
+- Staging42 bounded grounded Ask, same-task clarification/repair, Web owner readback, pre-dispatch worker crash/natural-lease recovery and native event reconnect are observed. Full S1/S2, wider five-outcome/knowledge/semantic coverage, deliberate offline/background/cancel races, usage missing before durable recording and lost-answer recovery and complete operational acceptance remain incomplete. Supplier unknowns are disclosed, not approval blockers.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel runtime integration, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 - #264 depends on #206, which remains OPEN: PR342 now supplies a real bounded reviewed-fact/native task chain, but wider knowledge coverage and complete Harness runtime acceptance remain outstanding. Preserve #263 offline evidence within its original scope.
@@ -54,6 +53,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- Real native cancellation on exact API3a79573/Preview dpl_Emirsx1QdFApzyvGUCKqHGkDeJSd, native2717bf9 with API-origin-only reconfiguration/re-signing and matching unsigned code: legacy policy503, unauthenticated cancel401, normal owner native Cancel200, exact original question shows Cancelled. Same Task/Turn/attempt, one cancelled terminal,4308micros unchanged. Normal worker empty/provider0; final74Turns/74attempts/342228micros/0unresolved,users6Trips3/migrations42 unchanged. Native logout,owned Simulator deletion,reader/Opsfalse/members0,WAF38→40 cleanup PASS. Initial PR349CI passed; final evidence checks pending. See artifacts/VPJ-08/native-cancel-staging-20260913/verification.md.
 - Native cancellation config fix: grounded-only real local HTTP suite1/1 and existing legacy HTTP1/1,request/security19/19,lint/typecheck/build passed; independent permission review0/0. Owner cancellation with reader disabled is idempotent and foreign/logged-out sessions rejected; completed answers remain terminal. Synthetic local model only. Three earlier fixture/regression failures retained. Exact fixed Preview/native same-task cancellation pending. See artifacts/VPJ-08/native-cancel-mode-20260913/verification.md.
 - PR348 delivered9e24faa at2026-09-13T01:20:06Z; final head733ef86 Quality34730096688/Budget34730096678/Vercel passed. Actual Production attempt dpl_33XDuBQmjnF3cTuSWHA5zZXHZags CANCELED; all5production aliases and shared Staging preserved. Reuse the real usage-only recovery and recorded cancellation503 evidence; no completed-answer/cancel/fullS2 claim.
 - Real Staging usage recovery on frozen5b5f72c/API-native2717bf9: one native request, one real Qwen call, fsynced validated usage then SIGKILL; original dispatched hold observed, unmodified reconciliation settled once, exact replay already_settled. Final74Turns/74attempts/342228CNYmicros/0unresolved;users6Trips3/migrations42 unchanged,reader/Opsfalse/members0,WAF36→38,owned Simulator deleted and API session logged out. Cancellation API returned503 after valid owner login, so native cancel/empty worker remain pending and the original accepted task is retained. See artifacts/VPJ-59/staging-usage-live-20260913/verification.md.
@@ -124,7 +124,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Finish native cancellation local checks/CI, deploy fixed nonproduction Preview, and cancel the original retained Turn6069d41c-40eb-456c-99a1-970aaa69ad7d/Taska8a2c345-fb24-41b1-a367-8e2a0d2b3ee2 through the native UI. Its single attempt is already settled4308micros. Verify terminal-once, native readback, zero additional model calls and empty worker; clean only owned test window. Keep controlled workers stopped until cancellation succeeds. Broader #195/#196/S2 remains open.
+Finish PR349 evidence CI and guarded merge. Continue S2 native/Web five-outcome acceptance: reuse valid answered/clarification/technical-failure evidence, and inspect remaining real bilingual partial/blocked gaps before one bounded test window. The former retained Turn6069d41c-40eb-456c-99a1-970aaa69ad7d is now cancelled with one terminal and its original settled4308micros attempt; normal worker empty. Wider knowledge/semantic coverage, deliberate offline/background and full#195/#196/S2 remain open.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

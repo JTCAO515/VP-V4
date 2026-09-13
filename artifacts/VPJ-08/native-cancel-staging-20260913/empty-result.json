@@ -1,0 +1,10 @@
+{
+  "at": "2026-09-13T01:35:48.976Z",
+  "exitCode": 0,
+  "result": {
+    "schemaVersion": "vpj07-worker-result/1",
+    "configurationDigest": "ef73328088c92a12a50c6f7dcb420d6243e67fa252dd79ff5283dd8a2f7b5519",
+    "result": "empty"
+  },
+  "providerAttempts": 0
+}

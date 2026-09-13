@@ -1,0 +1,80 @@
+[
+  {
+    "file": "capture-final.log",
+    "archive": "logs/capture-final.log.gz",
+    "sha256": "44181076b3d36e9507ce24b917bb62d8658afb32fed39a0b51605593e4224fbc",
+    "bytes": 54
+  },
+  {
+    "file": "deploy-native.log",
+    "archive": "logs/deploy-native.log.gz",
+    "sha256": "863c2a1a3ff6c458294c3986095388c33e39266ed62d9f45550731faf24e2c6a",
+    "bytes": 175
+  },
+  {
+    "file": "empty-worker.log",
+    "archive": "logs/empty-worker.log.gz",
+    "sha256": "0545596f8541fb8f4c7c986ebbc3b168b62372d158bbc19edc65dc7f74f05988",
+    "bytes": 41
+  },
+  {
+    "file": "native-after-cancel.log",
+    "archive": "logs/native-after-cancel.log.gz",
+    "sha256": "bbe119d7c5bd6f6ed9517b672f2d44630c5e1e69ff9693f0a945ed515179d908",
+    "bytes": 62888
+  },
+  {
+    "file": "native-cancel.log",
+    "archive": "logs/native-cancel.log.gz",
+    "sha256": "29ceb85bace0ff2a3f6dfa9c8c5e4031fb64badcadb6813ad2a585c7cae63bac",
+    "bytes": 39
+  },
+  {
+    "file": "native-login-retry.log",
+    "archive": "logs/native-login-retry.log.gz",
+    "sha256": "1e4b5d1173e4e560c4fe5be82cdcc123f1b1fa75780bedfafd7826a8ce929c95",
+    "bytes": 52
+  },
+  {
+    "file": "native-login.log",
+    "archive": "logs/native-login.log.gz",
+    "sha256": "5089100094fcd1ab0f72c7b5e3503dcf235af28af3ff724d67b007f0acfe67f1",
+    "bytes": 806
+  },
+  {
+    "file": "native-logout.log",
+    "archive": "logs/native-logout.log.gz",
+    "sha256": "3f7b109eacfd4a5edd5115b5cca00aecb719b1044ee18adacf9affe9dbcc7f5b",
+    "bytes": 26
+  },
+  {
+    "file": "settled.log",
+    "archive": "logs/settled.log.gz",
+    "sha256": "33e0076d8b489b2e1f00213163c993594f1de005a73b004550ae674294d03a50",
+    "bytes": 161
+  },
+  {
+    "file": "snapshot-after.log",
+    "archive": "logs/snapshot-after.log.gz",
+    "sha256": "96aa1234b54e2d5272a45eb07234cf41facc6a1eec1d05db1614d7d260c481cb",
+    "bytes": 172
+  },
+  {
+    "file": "snapshot-before.log",
+    "archive": "logs/snapshot-before.log.gz",
+    "sha256": "96aa1234b54e2d5272a45eb07234cf41facc6a1eec1d05db1614d7d260c481cb",
+    "bytes": 172
+  },
+  {
+    "file": "window.log",
+    "archive": "logs/window.log.gz",
+    "sha256": "53c2d56e7562f27f0390ee727c419c1dba73ecd4636684d44b06993d86b2cbb2",
+    "bytes": 522
+  },
+  {
+    "file": "empty-worker.jsonl",
+    "archive": "logs/empty-worker.jsonl.gz",
+    "sha256": "c37d6b7159630619ee70bb4c7a17cfd2ec11c67b6897f8a4f966f2b55f4baf19",
+    "bytes": 634
+  }
+]
