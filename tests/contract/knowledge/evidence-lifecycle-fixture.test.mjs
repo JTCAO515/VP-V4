@@ -18,3 +18,14 @@ test('every frozen v2 lifecycle statement passes the real Ops admission validato
  assert.equal(current.maxNewModelAttempts+current.priorRun.modelAttempts,current.maxSliceModelAttempts);
  assert.deepEqual(current.questions,previous.questions,'the format repair does not tune classifier questions');
 });
+
+test('v3 supplement preserves failed runs and admits fresh valid statements without tuning questions',()=>{
+ const previous=[fixture(1),fixture(2)],current=fixture(3);
+ for(const item of current.statements){assert.equal(isOpsInput(submit(item)),true,item.key);assert.ok(previous.every(p=>p.statements.every(x=>x.candidateId!==item.candidateId)));}
+ assert.equal(current.priorRun.modelAttempts,6);
+ assert.equal(current.maxNewModelAttempts,4);
+ assert.equal(current.maxSliceModelAttempts,10);
+ assert.deepEqual(current.questions,previous[1].questions);
+ const stages=structuredClone(previous[1].stages);stages[3].oldCardReasons=['expired'];
+ assert.deepEqual(current.stages,stages,'only the diagnosed saved-fact reason expectation changes');
+});
