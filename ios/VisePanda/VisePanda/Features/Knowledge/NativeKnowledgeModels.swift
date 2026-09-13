@@ -78,6 +78,8 @@ struct NativeKnowledgeAnswer: Decodable, Equatable {
         let cash = ["international_card_atm_withdrawal", "marked_currency_exchange"].map {
             Obligation(subject: "rmb_cash_access", predicate: "offers_procedure", object: $0)
         }
+        let simDocuments = Obligation(subject: "china_carrier_sim_application", predicate: "requires_document", object: "passport_or_foreign_permanent_resident_id")
+        let simPlan = Obligation(subject: "china_carrier_sim_application", predicate: "requires_action", object: "plan_allowance_check")
         switch id {
         case "rail_boarding_documents": return ("rail", required.map { Obligation(subject: "rail_eticket_boarding", predicate: "requires_document", object: $0) })
         case "payment_card_acceptance": return ("payment", [card])
@@ -87,6 +89,9 @@ struct NativeKnowledgeAnswer: Decodable, Equatable {
         case "payment_card_and_cash": return ("payment", [card] + cash)
         case "payment_mobile_and_cash": return ("payment", [mobile] + cash)
         case "payment_getting_started": return ("payment", [card, mobile] + cash)
+        case "connectivity_sim_documents": return ("connectivity", [simDocuments])
+        case "connectivity_plan_allowances": return ("connectivity", [simPlan])
+        case "connectivity_getting_started": return ("connectivity", [simDocuments, simPlan])
         default: return nil
         }
     }

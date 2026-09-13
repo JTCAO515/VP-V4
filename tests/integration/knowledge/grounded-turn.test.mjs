@@ -118,6 +118,27 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   assert.deepEqual(withdrawn.result.knowledge.answer.claims[0].reasons,['revoked']);
   assert.equal((await complete(l,'payment_mobile_and_cash')).kind,'blocked','terminal result cannot be replaced');
  });
+ await t.test('SIM task uses the same dispatch boundary and keeps original missing and revoked claims',async()=>{
+  const sim=(objectId,predicate)=>{const s=statement(objectId);s.assertion={...s.assertion,subjectId:'china_carrier_sim_application',predicate};s.scope.scene='connectivity';return s;};
+  const document=await publish(sim('passport_or_foreign_permanent_resident_id','requires_document'));
+  const a=fresh({p_text:'What ID do I bring for a local SIM and what call and data allowances should I check?'});
+  await user('submit_grounded_turn',a);const l=await lease();
+  assert.equal((await complete(l,'connectivity_getting_started')).kind,'blocked');
+  await authorize(l);assert.equal((await complete(l,'connectivity_getting_started')).kind,'finished');
+  const saved=await read(a);assert.equal(saved.result.originalOutcome,'partial');assert.equal(saved.result.knowledge.scope.scene,'connectivity');
+  assert.deepEqual(saved.result.knowledge.answer.claims.map(c=>c.reasons),[[],['missing']]);
+  assert.equal((await foreign('read_grounded_turn',{p_turn_id:a.p_turn_id})).kind,'unavailable');
+  await publish(sim('plan_allowance_check','requires_action'));
+  assert.equal((await read(a)).result.knowledge.statements.length,1,'new SIM support cannot fill a saved gap');
+  await revoke(document);
+  const withdrawn=await read(a);assert.equal(withdrawn.result.originalOutcome,'partial');assert.equal(withdrawn.result.knowledge.answer.outcome,'no_answer');
+  assert.deepEqual(withdrawn.result.knowledge.answer.claims.map(c=>c.reasons),[['revoked'],['missing']]);
+  assert.equal((await complete(l,'connectivity_plan_allowances')).kind,'blocked','a saved intent cannot be replaced');
+  const b=fresh({p_text:'Which call and data allowances should I check for a SIM plan?'});await user('submit_grounded_turn',b);const next=await lease();await authorize(next);
+  await complete(next,'connectivity_plan_allowances','additional_needs');
+  const mixed=await read(b);assert.equal(mixed.result.originalOutcome,'partial');assert.equal(mixed.result.knowledge.answer.outcome,'answered','covered selected domain does not answer additional needs');
+ });
+
  await t.test('four-turn cap preserves exact retries but rejects new clarification work',async()=>{
   let a=fresh();
   for(let i=0;i<4;i++){

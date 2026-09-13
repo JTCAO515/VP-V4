@@ -1,0 +1,15 @@
+{
+  "testResult": "PASS",
+  "tests": 22,
+  "failures": 0,
+  "stagingBuild": "PASS",
+  "codesignVerified": true,
+  "baseRuntime": "8de8c9b110e1067f675c74994717cac86392dee7",
+  "changedFileHashes": {
+    "ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift": "568ee1110af5576eb0c932b315c95e3dc82a3f00f316a2659ebffa22b3ad8e4c",
+    "ios/VisePanda/VisePandaTests/NativeAskStateTests.swift": "05e6b561c2043ef0ccdf348f6acafd5b4bba2e310b3366866af1b0f22330a7c0"
+  },
+  "initialFailures": "boot timeout then sampled CoreSimulator app-launch hang; own processes stopped, service restarted, same compiled tests passed",
+  "visibilityInvariant": "Existing expiry and failure hiding remain unchanged; accepted consent refresh starts5s before deadline; consent screen keeps30s interval",
+  "stagingObservation": "PASS:40.76s,18 AX samples all source-visible/no rechecking overlay, identical reading position in before/after screenshots; sampling does not prove every intervening frame. No new model calls."
+}

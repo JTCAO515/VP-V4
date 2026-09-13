@@ -1,0 +1,38 @@
+{
+  "at": "2026-09-13T14:36:56.677Z",
+  "status": "PASS",
+  "runtimeSha": "8de8c9b110e1067f675c74994717cac86392dee7",
+  "actualNativeTurnIds": [
+    "6d92846e-9ad1-4286-ae1f-aa737094073c",
+    "021ae5c5-cc78-48f2-b3f1-eefa8bbbc54a"
+  ],
+  "locales": [
+    "en",
+    "zh"
+  ],
+  "viewports": [
+    [
+      1365,
+      900
+    ],
+    [
+      390,
+      844
+    ]
+  ],
+  "englishClaims": 2,
+  "chineseClaims": 1,
+  "chineseAdditionalScopeUnanswered": true,
+  "chineseOwnerEnglishNativeMatches": 0,
+  "reloadBoth": true,
+  "sourceDisclosures": true,
+  "normalLogoutsBoth": true,
+  "viewportReset": true,
+  "ownedTabClosed": true,
+  "consoleErrors": [],
+  "limitations": [
+    "Initial navigation before WAF allowance returned403; after allowance normal reload succeeded.",
+    "Vercel preview toolbar remains visible.",
+    "No additional model calls; saved answers only."
+  ]
+}

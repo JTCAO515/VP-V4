@@ -127,8 +127,8 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         return try JSONSerialization.data(withJSONObject: root)
     }
 
-    @MainActor func testPaymentQuestionRelationsAndExplicitRailSelectionStayBound() throws {
-        let ids = ["payment_card_acceptance", "payment_mobile_setup", "payment_cash_access", "payment_card_and_mobile", "payment_card_and_cash", "payment_mobile_and_cash", "payment_getting_started"]
+    @MainActor func testPaymentAndSIMRelationsAndExplicitRailSelectionStayBound() throws {
+        let ids = ["payment_card_acceptance", "payment_mobile_setup", "payment_cash_access", "payment_card_and_mobile", "payment_card_and_cash", "payment_mobile_and_cash", "payment_getting_started", "connectivity_sim_documents", "connectivity_plan_allowances", "connectivity_getting_started"]
         for id in ids {
             var root = try XCTUnwrap(JSONSerialization.jsonObject(with: questionPayload()) as? [String: Any])
             var data = try XCTUnwrap(root["data"] as? [String: Any])
@@ -144,13 +144,13 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
                 row["assertion"] = assertion; rows.append(row)
                 claims.append(["id": obligation.object, "status": "covered", "reasons": [], "factIds": [factId]])
             }
-            data["statements"] = rows; data["scope"] = ["city": "shanghai", "scene": "payment", "locale": "en"]
+            data["statements"] = rows; data["scope"] = ["city": "shanghai", "scene": definition.scene, "locale": "en"]
             data["answer"] = ["questionId": id, "questionVersion": 1, "outcome": "answered", "claims": claims]
             root["data"] = data
             let read = try JSONDecoder().decode(NativeKnowledgeReply.self, from: JSONSerialization.data(withJSONObject: root)).data
-            let selection = NativeKnowledgeSelection(city: "shanghai", scene: "payment", locale: "en")
+            let selection = NativeKnowledgeSelection(city: "shanghai", scene: definition.scene, locale: "en")
             XCTAssertGreaterThan(try read.lifetime(for: selection, elapsed: 0, question: true, questionId: id), 0)
-            XCTAssertThrowsError(try read.lifetime(for: selection, elapsed: 0, question: true), "The explicit rail question cannot consume a payment answer")
+            XCTAssertThrowsError(try read.lifetime(for: selection, elapsed: 0, question: true), "The explicit rail question cannot consume another domain")
             var first = rows[0]
             var assertion = try XCTUnwrap(first["assertion"] as? [String: Any]); assertion["subjectId"] = "wrong_subject"
             first["assertion"] = assertion; rows[0] = first; data["statements"] = rows; root["data"] = data

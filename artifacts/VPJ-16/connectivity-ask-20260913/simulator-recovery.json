@@ -1,0 +1,7 @@
+{
+  "initialTest": "exit65 simulator boot timeout; no assertions ran",
+  "retry": "terminated143 after process sample showed CoreSimulator launch wait",
+  "oldHeadCI": "cancel requested34762751161; its child test terminated, cleanup removed CI simulator",
+  "recovery": "stopped own test simulator; restarted identified CoreSimulator service after affected test processes exited; no device erasure",
+  "pending": "retry same compiled tests, then staging source-reading observation"
+}

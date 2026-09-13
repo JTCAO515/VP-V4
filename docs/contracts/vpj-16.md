@@ -149,3 +149,19 @@ old clients cannot consume unknown payment intents. Keep the scoped integration 
 that candidate combination is verified. No migration or source publication is implied by this
 contract. Current implementation, local evidence and pending real acceptance are recorded in
 `artifacts/VPJ-16/payment-ask-20260913/verification.md`.
+
+## Bounded SIM questions (implementation; Staging integration pending)
+
+`connectivity_sim_documents`, `connectivity_plan_allowances` and
+`connectivity_getting_started` use the existing `knowledge-answer/1` and grounded task
+interfaces with scene `connectivity`. Their obligations match SIM-01/02 relations, never
+publication IDs. They do not answer eSIM availability, device compatibility, specific plan
+prices/allowances, live branches, substitute-ID exceptions or execute purchases/activation.
+
+The classifier is version `vp-knowledge-intent-v4`; only the current question is sent. An
+independently requested second domain or unsupported need remains `additional_needs`. The
+existing publication, consent, authorization, budget, immutable history and owner boundaries
+apply unchanged. Old rail/payment definitions remain exact. Native and Web use SIM-specific
+missing-information guidance while retaining their existing scope and interfaces.
+
+Validation and remaining real checks: [SIM evidence](../../artifacts/VPJ-16/connectivity-ask-20260913/verification.md).

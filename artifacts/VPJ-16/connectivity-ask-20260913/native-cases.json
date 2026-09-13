@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "native-connectivity-acceptance/1",
+  "rule": "Frozen before native submission; synthetic inputs only",
+  "cases": [
+    {
+      "locale": "en",
+      "text": "As a foreign traveller, what identification should I bring to apply for a mainland China SIM card, and what should I check about call and data allowances?",
+      "intent": "connectivity_getting_started",
+      "scope": "single",
+      "outcome": "answered",
+      "statements": 2
+    },
+    {
+      "locale": "zh",
+      "text": "外籍游客在中国大陆办理普通SIM卡应带什么证件？另外，我的手机是否支持eSIM？",
+      "intent": "connectivity_sim_documents",
+      "scope": "additional_needs",
+      "outcome": "partial",
+      "statements": 1
+    }
+  ]
+}

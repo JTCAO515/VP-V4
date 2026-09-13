@@ -198,6 +198,9 @@ struct NativeAskView: View {
         case "payment_card_and_cash": return chinese ? "识别的问题：如何核对外卡受理并取得人民币现金？" : "Interpreted question: How do I check card acceptance and obtain RMB cash?"
         case "payment_mobile_and_cash": return chinese ? "识别的问题：如何开始使用手机支付并取得人民币现金？" : "Interpreted question: How do I get started with mobile payments and obtain RMB cash?"
         case "payment_getting_started": return chinese ? "识别的问题：在中国大陆旅游有哪些支付方式？" : "Interpreted question: What payment options can I use in mainland China?"
+        case "connectivity_sim_documents": return chinese ? "识别的问题：办理本地SIM卡需什么证件、可去哪些运营商？" : "Interpreted question: What ID and carrier outlets are used for a local SIM application?"
+        case "connectivity_plan_allowances": return chinese ? "识别的问题：选择SIM套餐时需核对哪些通话和流量额度？" : "Interpreted question: What call and data allowances should I check for a SIM plan?"
+        case "connectivity_getting_started": return chinese ? "识别的问题：如何开始办理本地SIM卡并核对套餐？" : "Interpreted question: How do I get started with a local SIM and check its plan?"
         default: return chinese ? "识别的问题：乘车需要哪些证件？" : "Interpreted question: Which documents do I need to board?"
         }
     }
@@ -219,10 +222,10 @@ struct NativeAskView: View {
                     .accessibilityIdentifier("grounded.unavailable")
             }
         } else if result.intent == "clarification" {
-            Text(chinese ? "请完整重述你想核对的问题，包括支付或乘车证件需求。本模式不读取上一轮内容。" : "Please restate your complete payment or boarding-document question. This mode does not read earlier messages.")
+            Text(chinese ? "请完整重述你想核对的问题，包括支付、SIM卡或乘车证件需求。本模式不读取上一轮内容。" : "Please restate your complete payment, SIM-card or boarding-document question. This mode does not read earlier messages.")
                 .accessibilityIdentifier("grounded.clarification")
         } else if result.intent == "unsupported" {
-            Text(chinese ? "这个问题超出当前支持的支付和乘车证件指引范围，尚未提供答案。请向相关官方渠道或服务方核对。" : "This question is outside the supported payment and boarding-document guidance and has not been answered. Check the relevant official or service provider guidance.")
+            Text(chinese ? "这个问题超出当前支持的支付、SIM卡和乘车证件指引范围，尚未提供答案。请向相关官方渠道或服务方核对。" : "This question is outside the supported payment, SIM-card and boarding-document guidance and has not been answered. Check the relevant official or service provider guidance.")
                 .accessibilityIdentifier("grounded.unsupported")
         } else {
             Text(LocalizedStringKey(label(turn))).accessibilityIdentifier("grounded.status")
@@ -242,7 +245,7 @@ struct NativeAskView: View {
                 }
             }
             if store.mode == .grounded {
-                Text(settings.selectedLocale == .zh ? "当前支持：中国大陆旅游支付的一般步骤，以及成年外籍护照旅客的境内铁路乘车证件。模型只识别本次问题；费用、受理和服务可用性须向当前服务方核对。" : "Supports general mainland China payment procedures and domestic railway boarding documents for adult foreign-passport travellers. The model classifies only this message; confirm fees, acceptance and availability with the current service provider.")
+                Text(settings.selectedLocale == .zh ? "当前支持：中国大陆旅游支付、SIM卡申请证件与套餐额度核对，以及成年外籍护照旅客的境内铁路乘车证件。模型只识别本次问题；费用、受理和服务可用性须向当前服务方核对。" : "Supports general mainland China payments, SIM application documents and plan-allowance checks, and domestic railway boarding documents for adult foreign-passport travellers. The model classifies only this message; confirm fees, acceptance and availability with the current service provider.")
                     .font(.caption).accessibilityIdentifier("grounded.scope")
                 Picker(settings.selectedLocale == .zh ? "城市" : "City", selection: $store.city) {
                     ForEach(Array(NativeKnowledgeSelection.cities.enumerated()), id: \.element) { index, city in

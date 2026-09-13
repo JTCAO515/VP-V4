@@ -1,0 +1,5 @@
+{
+  "at": "2026-09-13T08:29:11.882908+00:00",
+  "status": "UNAVAILABLE",
+  "reason": "Supabase connector refused security advisor retrieval; no permission changes made. Direct migration ACL/RLS and private-helper checks are recorded separately."
+}

@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "newImmutablePolicyOnly": true,
+  "priorPoliciesConsentsAndBudgetsUnchanged": true,
+  "newPolicyId": "015d6710-82ec-4fc1-bb4f-a817b3f62873",
+  "newUserConsentInstalled": false,
+  "recipientUnchanged": true,
+  "developmentWindowHours": 24,
+  "oldExpiryNotModified": true,
+  "at": "2026-09-13T08:35:43.067Z"
+}

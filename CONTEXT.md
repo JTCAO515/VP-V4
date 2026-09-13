@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PR354/355 merged through bddeaf3. Actual current native Staging English review date, publisher-to-PBC PDF navigation and return-to-app observed; historical bilingual source disclosures retained. No new model calls; reader/Ops off and owned WAF removed, window exit0. Production aliases/shared Staging preserved after both merges. Full S1–S6 incomplete.
+状态：SIM PR357 pending current-head CI. Staging44:86 frozen unique cases matched across87 attempts including one paid interruption; native en/zh2 UI submissions completed/settled and same actual tasks read on Web en/zh desktop/390. Native early-refresh fix built,22 tests passed,41s sampled source-reading observation passed; no extra model calls. Cancelled stale work still projects pending; full S1-S6 incomplete.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -128,7 +128,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Continue S2 beyond payment/rail: assess the two already published SIM statements for bounded phone-connectivity Ask obligations and frozen zh/en cases, preserving claim gaps and current-source eligibility. Reuse existing payment/rail evidence; no phone Ask support is claimed yet. Physical-device acceptance and full #195/#206/#264/S2 stay open. Latest actual source-navigation evidence: artifacts/VPJ-67/native-source-navigation-20260913/verification.md.
+Finish cleanup/current-head CI and guarded merge of PR357; then implement the independently pre-reviewed cancelled-work SQL+SSE projection repair under#264 with actual old-task Native/Web verification. Preserve interrupted/failed evidence. Maps#362-367 are already planned and merged by PR368 at acc75ec; after safe current-slice closure, use docs/agents/maps-integration-development.md to start#362 secure credential discovery and public synthetic probes, without duplicating tickets or production/funds actions. Evidence artifacts/VPJ-16/connectivity-ask-20260913/verification.md.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

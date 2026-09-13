@@ -1,0 +1,77 @@
+{
+  "at": "2026-09-13T09:04:13.203662+00:00",
+  "status": "PASS",
+  "apiSha": "8de8c9b110e1067f675c74994717cac86392dee7",
+  "deploymentId": "dpl_Bpyz4iXEom8KyJbkTQkCpDaSa7ik",
+  "auth": "existing synthetic accounts through normal password UI; both signed out",
+  "source": "https://english.www.gov.cn/2025special/bizexpatsinchina2025",
+  "viewports": [
+    {
+      "width": 1365,
+      "height": 900
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "languages": [
+    "en",
+    "zh"
+  ],
+  "observed": [
+    "actual saved answer content",
+    "supported and unanswered scope retained",
+    "conditions and exclusions visible",
+    "source disclosure opens and href matches",
+    "390 document width equals viewport width",
+    "Chinese owner excludes English synthetic questions",
+    "normal reload preserves Chinese partial answer",
+    "viewport reset and owned tabs closed"
+  ],
+  "cases": [
+    {
+      "caseId": "sim-both-en",
+      "turnId": "cf39fea8-3ec5-4e87-8ce2-17a2484eb21c",
+      "serviceTaskId": "ccb46a79-7f6f-474e-803e-fc6ca02ed2ed",
+      "intent": "connectivity_getting_started",
+      "scope": "single",
+      "outcome": "answered"
+    },
+    {
+      "caseId": "sim-allowances-price-en",
+      "turnId": "744bb0cf-6c6b-465e-90c0-aa6ff955e893",
+      "serviceTaskId": "07bbbf89-665e-4eb0-8bab-72a37500bc85",
+      "intent": "connectivity_plan_allowances",
+      "scope": "additional_needs",
+      "outcome": "partial"
+    },
+    {
+      "caseId": "sim-overview-internet-zh",
+      "turnId": "6b5c0f6d-d90d-45bf-a778-52f64fab965d",
+      "serviceTaskId": "35795906-172d-4d75-bee9-b90da872d7cb",
+      "intent": "connectivity_getting_started",
+      "scope": "additional_needs",
+      "outcome": "partial"
+    }
+  ],
+  "limitations": [
+    "Vercel preview toolbar visible; not a production UI review",
+    "Web readback is from API-driven synthetic native-protocol tasks; actual native UI submission remains separate",
+    "Source href and disclosure inspected; external source page navigation not exercised here"
+  ],
+  "files": {
+    "web-cleanup.json": "2437841593a28d76917ef341e216accba82543ea981e5d5bf1c7bcd34cb76e71",
+    "web-en-390-partial.png": "2f658dab1397c0a45fd6d865e73f6d7c637344171411262622cec1e33c44f8c4",
+    "web-en-390-source.png": "c2b08ca325cdd74e486065af4c2a46bb9357d191d8570916a81b72d958a9e0d5",
+    "web-en-390.png": "b16ce3d4ce0560f9220c8a6e33d83f034535dd383293609ee64ffc1a480bf87e",
+    "web-en-desktop.png": "ff85fc428d5705e0f3cdaedfc34d01fceff1bfad4f3e3978198219177095e541",
+    "web-en-dom.txt": "7c65be0a6282d394901d8c99f512bf1cb175412ffc047b199f096e6670e63d29",
+    "web-en-partial-dom.txt": "d9c8c4a102fc9677cdac7d0560956bb607da2b43886736358ce6cb3cc3385c98",
+    "web-owner-isolation.json": "2d423ba8cb1c5278b0a6008b9ec37a1574ae1a1aa00cf165bcc76b4a725d52c5",
+    "web-zh-390.png": "d7d1deedee6b56bd17b5744da705443edb32408ff904717038e4ac9e76ff2c06",
+    "web-zh-desktop.png": "cadeecbd0a0af551cda592f28d5789a08136f2a5a5d41347df2389b9e123d97e",
+    "web-zh-dom.txt": "bce33ec9644d02f291adf0ad709a29bbf827e5661328cc66476d4715bec56e1d",
+    "web-zh-reload-dom.txt": "4d49edb6fa3b3d3d60db5b6a57ec26d553ebc8f2bafdc1dcb5d8daf5f6b5e7b6"
+  }
+}

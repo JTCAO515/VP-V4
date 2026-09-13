@@ -14,7 +14,12 @@ final class NativeAskStore {
     var city = "shanghai"
     private var groundedDeadline: TimeInterval = 0
     var groundedCurrent: Bool { mode != .grounded || ProcessInfo.processInfo.systemUptime < groundedDeadline }
-    var groundedRefreshDelay: TimeInterval { max(1, groundedDeadline - ProcessInfo.processInfo.systemUptime) }
+    var groundedRefreshDelay: TimeInterval {
+        // Revalidate before the read lease ends so ordinary network latency does
+        // not blank a card being read. This never extends its visibility deadline.
+        let lead: TimeInterval = policy?.consentState == .accepted ? 5 : 0
+        return max(1, groundedDeadline - ProcessInfo.processInfo.systemUptime - lead)
+    }
     private var operation: UUID?
     private var eventRead: UUID?
     private var eventCursors: [String: Int] = [:]

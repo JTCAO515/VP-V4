@@ -1,0 +1,10 @@
+{
+  "sourceSha": "8de8c9b110e1067f675c74994717cac86392dee7",
+  "build": "PASS",
+  "codesign": "PASS",
+  "environment": {
+    "VisePandaNativeEnvironment": "staging",
+    "VisePandaNativeTaskContext": "knowledge_intent_v1",
+    "VisePandaStagingAPIOrigin": "https://vp-v4-7v8kfo8ah-jtcao515s-projects.vercel.app"
+  }
+}

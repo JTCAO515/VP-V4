@@ -108,7 +108,7 @@ struct NativeKnowledgeCards: View {
     }
     private func coverage(_ answer: NativeKnowledgeAnswer) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(answer.outcome == "answered" ? (answer.questionId == "rail_boarding_documents" ? text("Both document points have reviewed support.", "两个证件要点均有已审核依据。") : text("The requested payment guidance has reviewed support.", "所需支付指引有已审核依据。")) : answer.outcome == "partial" ? text("Part of the answer is available.", "目前可回答其中一部分。") : text("This question cannot be answered from current reviewed information.", "当前已审核信息不足以回答这个问题。"))
+            Text(answer.outcome == "answered" ? (answer.questionId == "rail_boarding_documents" ? text("Both document points have reviewed support.", "两个证件要点均有已审核依据。") : answer.questionId.hasPrefix("connectivity_") ? text("The requested SIM guidance has reviewed support.", "所需SIM卡指引有已审核依据。") : text("The requested payment guidance has reviewed support.", "所需支付指引有已审核依据。")) : answer.outcome == "partial" ? text("Part of the answer is available.", "目前可回答其中一部分。") : text("This question cannot be answered from current reviewed information.", "当前已审核信息不足以回答这个问题。"))
                 .font(.headline).accessibilityIdentifier("knowledge.answer.\(answer.outcome)")
             ForEach(answer.claims.filter { $0.status != "covered" }) { claim in
                 VStack(alignment: .leading, spacing: 6) {
@@ -120,7 +120,7 @@ struct NativeKnowledgeCards: View {
                 }
             }
             if answer.outcome != "answered" {
-                Text(answer.questionId == "rail_boarding_documents" ? text("Check the missing point with 12306 or your departure station before travelling.", "出发前请向12306或出发车站核对尚缺的要点。") : text("Check current app prompts, your card issuer or the relevant operator for the missing information.", "请查看应用当前提示，或向发卡行及相关经营方核对缺少的信息。"))
+                Text(answer.questionId == "rail_boarding_documents" ? text("Check the missing point with 12306 or your departure station before travelling.", "出发前请向12306或出发车站核对尚缺的要点。") : answer.questionId.hasPrefix("connectivity_") ? text("Check the missing information with your mobile carrier before applying or choosing a plan.", "办理或选择套餐前，请向通信运营商核对缺少的信息。") : text("Check current app prompts, your card issuer or the relevant operator for the missing information.", "请查看应用当前提示，或向发卡行及相关经营方核对缺少的信息。"))
             }
         }
     }
@@ -133,6 +133,8 @@ struct NativeKnowledgeCards: View {
         case "supported_card_merchant_qr_payment": return text("Mobile merchant payments", "手机商户支付")
         case "international_card_atm_withdrawal": return text("RMB cash from an ATM", "ATM取人民币现金")
         case "marked_currency_exchange": return text("Currency-exchange outlets", "外币兑换网点")
+        case "passport_or_foreign_permanent_resident_id": return text("SIM application documents", "SIM卡申请证件")
+        case "plan_allowance_check": return text("Checking call and data allowances", "核对通话和流量额度")
         default: return text("Requested information", "所需信息")
         }
     }

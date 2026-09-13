@@ -55,6 +55,23 @@ nonisolated final class NativeAskStateTests: XCTestCase {
         await session.logout()
     }
 
+    @MainActor func testGroundedAcceptedReadRefreshesBeforeLeaseExpires() async throws {
+        let session = try session(grounded: true)
+        TextStateProtocol.immediatePolicy()
+        TextStateProtocol.acceptGroundedPolicy()
+        await session.login(email: "text-owner-a", password: "unit-only")
+        let store = NativeAskStore(mode: .grounded)
+        await store.reload(using: session)
+        XCTAssertEqual(store.policy?.consentState, .accepted)
+        XCTAssertTrue(store.groundedCurrent)
+        XCTAssertGreaterThan(store.groundedRefreshDelay, 20)
+        XCTAssertLessThanOrEqual(store.groundedRefreshDelay, 25)
+        store.suspendReads()
+        XCTAssertFalse(store.groundedCurrent)
+        XCTAssertNil(store.policy)
+        await session.logout()
+    }
+
     @MainActor func testTaskChainRejectsMissingRootForkAndCrossThread() throws {
         func turn(_ id: String, parent: String?, relationship: String, thread: String = "10000000-0000-0000-0000-000000000001") throws -> NativeTextTurn {
             let data = try JSONSerialization.data(withJSONObject: ["turnId": id, "threadId": thread, "locale": "en", "input": "test", "outcome": "clarification", "output": "Which one?", "status": "completed", "createdAt": "2026-09-12", "serviceTaskId": "20000000-0000-0000-0000-000000000001", "scopeVersion": 1, "relationship": relationship, "parentTurnId": parent as Any? ?? NSNull()])
@@ -199,9 +216,11 @@ nonisolated private final class TextStateProtocol: URLProtocol, @unchecked Senda
     nonisolated(unsafe) private static var pending: TextStateProtocol?
     nonisolated(unsafe) private static var refreshFails = false
     nonisolated(unsafe) private static var holdPolicy = true
+    nonisolated(unsafe) private static var groundedAccepted = false
     static var hasPending: Bool { lock.withLock { pending != nil } }
     static func failRefresh(_ value: Bool) { lock.withLock { refreshFails = value } }
-    static func reset() { lock.withLock { pending = nil; refreshFails = false; holdPolicy = true } }
+    static func reset() { lock.withLock { pending = nil; refreshFails = false; holdPolicy = true; groundedAccepted = false } }
+    static func acceptGroundedPolicy() { lock.withLock { groundedAccepted = true } }
     static func immediatePolicy() { lock.withLock { holdPolicy = false } }
     override class func canInit(with request: URLRequest) -> Bool { true }
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
@@ -216,7 +235,7 @@ nonisolated private final class TextStateProtocol: URLProtocol, @unchecked Senda
                 if path.contains("/v4/") {
                     response["version"] = 4
                     var policy = response["policy"] as! [String: Any]
-                    policy["consentState"] = "not_accepted"; response["policy"] = policy
+                    policy["consentState"] = Self.lock.withLock({ Self.groundedAccepted }) ? "accepted" : "not_accepted"; response["policy"] = policy
                 }
                 reply(response)
             }
