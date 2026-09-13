@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PR350/351 merged; main c533922. Payment Ask extension implemented in isolated codex/payment-ask-20260913, with local SQL10+12, contract12 and native model12 passing and independent contract re-review0/0. Actual Staging payment inventory verified read-only; migration42/reader off. Candidate migration, real classifier/Ask outcomes, rendered native/Web and final CI/merge remain pending. Full S1–S6 incomplete.
+状态：PR352 payment Ask scoped Staging acceptance passed at d15baf7: migration43, frozen42 real cases and2 native UI submissions, Web zh/en desktop390px,44 settled attempts/0 unresolved. Reader/Ops off, members0, owned resources cleaned. Evidence delivery CI/merge pending; full S1–S6 incomplete.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -35,7 +35,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 未决与运行证据
 
-- Staging42 bounded grounded Ask, same-task clarification/repair, Web owner readback, pre-dispatch worker crash/natural-lease recovery and native event reconnect are observed. Full S1/S2, wider five-outcome/knowledge/semantic coverage, deliberate offline/background/cancel races, usage missing before durable recording and lost-answer recovery and complete operational acceptance remain incomplete. Supplier unknowns are disclosed, not approval blockers.
+- Staging43 bounded rail and payment Ask, same-task clarification/repair, Web owner readback, worker recovery and native event reconnect are observed. Full S1/S2, wider knowledge/semantic coverage, physical-device payment acceptance, unobserved fault cases and complete operational acceptance remain incomplete. Supplier unknowns are disclosed, not approval blockers.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel runtime integration, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 - #264 depends on #206, which remains OPEN: PR342 now supplies a real bounded reviewed-fact/native task chain, but wider knowledge coverage and complete Harness runtime acceptance remain outstanding. Preserve #263 offline evidence within its original scope.
@@ -53,6 +53,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- Payment Ask d15baf7: local46 checks; real frozen42/42 plus native en/zh2/2 submissions; Web en/zh1280x900 and390x844. Staging43;44 distinct Tasks/44 settled attempts/308118 CNYmicros delta,0 unresolved; total118/118/650346,users6/Trips3. Reader/Opsfalse,members0,WAF48 cleanup. Native signing failure and expanded-source limitation retained. See artifacts/VPJ-16/payment-ask-20260913/verification.md.
 - Payment Ask implementation and local evidence: artifacts/VPJ-16/payment-ask-20260913/verification.md. Actual read-only Staging03:07Z: schema42,reader off,three payment publications current,card revoked. No model call/migration in this window. Full real payment Ask pending.
 - PR351 saved-answer guidance runtime7974fc7/Preview dpl_41pLhQPptZa1hZpkCRzbaybdkMsz: en/zh partial and blocked notices now name supported booking-ID/ticket-proof scope and current railway/station next steps. Actual1280×900/390×844 browser readback, existing contracts5/5 and source lint passed. No model/Trip writes;74Turns/74attempts/342228micros/0unresolved,users6Trips3/migrations42 unchanged,reader/Opsfalse,members0,WAF46,browser logout/tab cleanup. No specific-extra-need identification or fullS2 claim. Source/consumer code is unchanged after merging main5c20c92 into this branch. See artifacts/VPJ-07/saved-answer-guidance-20260913/verification.md.
 - PR350 native a7ec7b1: actual local HTTP/event1/1 and bilingual SwiftUI2/2 passed with delayed history, real expiry, hidden facts, viewport notice and unchanged reading position. Real Staging API/Web a9c8b57 bilingual saved outcomes read back; native blank-viewport defect retained and fixed. English fixed-build notice/fact-return observed; Chinese readback observed but short notice not captured. Zero new provider calls;74Turns/74attempts/342228micros/0unresolved,users6Trips3/migrations42,reader/Opsfalse,members0,WAF44,owned Simulator deleted. Delivered PR350 at5c20c92 on2026-09-13T02:44:22Z; final ccd636b Native34732926703/Quality34732926697/Budget34732926700/Vercel passed. Production attempt dpl_4NXC7w6hmfauNeXWL5dyiUXqcATv CANCELED; all5production aliases and shared Staging preserved. See artifacts/VPJ-07/native-five-outcomes-20260913/verification.md.
@@ -127,7 +128,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Finish payment Ask candidate builds and CI; freeze payment plus rail-regression semantic acceptance before real calls. Apply append-only payment migration only to authorized Staging after matching-client readiness, then run actual zh/en Ask and native/Web readback. PAY-01 remains revoked. Worktree /Users/jtcao/Documents/VP-V4-S2-Payment-Ask; private logs payment-ask-20260913; owned Simulator FD335619-A706-4614-A8C7-6931E5D8D0A1 is Shutdown. Do not enable old clients or claim full S2/Production.
+Finish PR352 documentation/evidence checks, verify production guard, merge exact passing head and confirm actual Production attempt cancelled with aliases/shared Staging preserved. Continue S2 against current remaining acceptance; physical payment UI and expanded native source links in this window remain unrun. Worktree /Users/jtcao/Documents/VP-V4-S2-Payment-Ask; evidence artifacts/VPJ-16/payment-ask-20260913/verification.md. Do not restart settled calls or close full #195/#206/S2.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
