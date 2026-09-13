@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2: PR373 merged6e3a128; lifecycle scoped behavior PASS and recovered cleanup. Place grounding now implemented locally through typed publication, exact-name resolution, saved subject, v6 classifier, lease-bound completion and native/Web typed display. Contracts291/291, PG19/19 and Web9/9 PASS; independent SQL and consumer reviews each final0/0. Staging migrations/model/client observations remain UNRUN. Maps draftPR372 remains sole preparation lane.
+状态：S2: PR373 merged6e3a128; lifecycle scoped behavior PASS and recovered cleanup. DraftPR374 (candidate aaf35fe) created; CI running. Place grounding now implemented locally through typed publication, exact-name resolution, saved subject, v6 classifier, lease-bound completion and native/Web typed display. Contracts291/291, PG19/19 and Web9/9 PASS; independent SQL and consumer reviews each final0/0. Staging migrations/model/client observations remain UNRUN. Maps draftPR372 remains sole preparation lane.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -141,7 +141,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Continue /Users/jtcao/Documents/VP-V4-S2-Place-Grounding on codex/place-address-grounding-20260914. Complete required CI and create draft PR, then freeze the candidate and perform a fresh encrypted Staging46 backup/isolated restore+rollback before migrations47/48. Run bounded v6 place and legacy real-model regression plus native/Web observations with retained data/usage and cleanup proof. See artifacts/VPJ-16/place-grounding-20260914/verification.md. New migrations20260914040000/20260914041000 are local only; do not claim live acceptance. Preserve publication review, consent/RLS, immutable saved gaps and Production guard.
+Continue /Users/jtcao/Documents/VP-V4-S2-Place-Grounding on codex/place-address-grounding-20260914. Inspect PR374 CI for candidate aaf35feb5858d2dee3f2f9aa0f312bee678984eb, then freeze the verified candidate and perform a fresh encrypted Staging46 backup/isolated restore+rollback before migrations47/48. Run bounded v6 place and legacy real-model regression plus native/Web observations with retained data/usage and cleanup proof. See artifacts/VPJ-16/place-grounding-20260914/verification.md. New migrations20260914040000/20260914041000 are local only; do not claim live acceptance. Preserve publication review, consent/RLS, immutable saved gaps and Production guard.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
