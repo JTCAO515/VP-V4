@@ -43,12 +43,6 @@ struct NativeAskView: View {
                         .opacity(readable ? 1 : 0)
                         .accessibilityHidden(!readable)
                         .allowsHitTesting(readable)
-                        .overlay(alignment: .topLeading) {
-                            if !readable {
-                                Text(settings.selectedLocale == .zh ? "正在重新核对已保存答案的依据。" : "Rechecking the evidence for saved answers.")
-                                    .accessibilityIdentifier("grounded.rechecking")
-                            }
-                        }
                     }
                 }
             }
@@ -59,6 +53,21 @@ struct NativeAskView: View {
         .scrollDismissesKeyboard(.interactively)
         .safeAreaInset(edge: .bottom) {
             if active && store.policy?.consentState == .accepted { composer }
+        }
+        .overlay(alignment: .top) {
+            TimelineView(.periodic(from: .now, by: 1)) { _ in
+                if active && visible && store.mode == .grounded && !store.groundedCurrent && !store.turns.isEmpty {
+                    // Anchor the notice to the viewport, not the beginning of a
+                    // long history. Evidence remains hidden without moving it.
+                    Text(settings.selectedLocale == .zh ? "正在重新核对已保存答案的依据。" : "Rechecking the evidence for saved answers.")
+                        .padding(VPSpacing.standard)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
+                        .padding(VPSpacing.standard)
+                        .accessibilityIdentifier("grounded.rechecking")
+                }
+            }
+            .allowsHitTesting(false)
         }
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
