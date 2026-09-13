@@ -1,0 +1,9 @@
+# One instrumented diagnostic — original acceptance remains failed
+
+A separately frozen, independently reviewed one-call diagnostic ran21:38:36–21:42:25 UTC on2026-09-13. Worker d0b5d35 uses promptv6 unchanged; the dedicated native-auth read-only Preview remains API e19bd58 because the new increment changes only worker diagnostics. This was an explicitly recorded reproduction for diagnosis, not a replacement acceptance result or sampling until success.
+
+The same English injection question again produced technical_failure. Turn be42ac58-103f-4ec3-b39d-4c08689c15bb has fixed reason unanswered_needs_invalid. This proves the diagnostic reproduction failed the unanswered-needs validation branch; it does not reconstruct the original failed model output or identify which inner gap predicate failed. No raw provider output was retained.
+
+Cleanup PASS: normal API logout200, reader false, Ops false, activeMembers0,351 attempts (350+1),0 unresolved,6 users/3 Trips/48 migrations. Reader-only activation changed no Ops/member grants. Before/after original-row preservation passed. Firewall84 restores baseline82 configuration after only its own host exemption. No publication, migration, budget-limit change, native simulator, or Production release occurred.
+
+Promptv7 now clarifies that unsupported-only requests have no supported scope beside which to list gaps, so unansweredNeeds must be empty. Full JSON examples contrast output-label injection, an unsupported hotel-only action, and a real supported address plus hotel request. All strict parser predicates remain. The exact model subcause remains unknown; prompt ambiguity is a hypothesis until new-version real validation. Focused existing protocol/worker tests8/8 and lint pass; these do not prove real prompt behavior. Original25-call acceptance remains FAIL with107 unrun cases.

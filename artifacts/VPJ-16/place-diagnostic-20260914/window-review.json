@@ -1,0 +1,13 @@
+{
+  "reviewer": "knowledge_security_review",
+  "critical": 0,
+  "important": 0,
+  "scope": "Static review only; one diagnostic invocation, reader-only ownership checked cleanup, original acceptance remains FAIL",
+  "hashes": {
+    "scenario.json": "4ac74ff55027a3890f01796c27770fe89a25cdc7111c7dc22d53538aec7b1f29",
+    "diagnostic-run.mjs": "44d86b539bcb8c680111bbe00e7e711e0b016be678282e3d5f3682e902b0499e",
+    "window-state.mjs": "7ff76a50fd1753849a8244e3217916742a8aa33d33a2ea57bc130d35f47a48ea",
+    "firewall-scope.py": "2bbc98da8c9b0667d4e913a23efa35b4964277d77e27219a42b9d7eff0e5be83",
+    "preflight-budget.mjs": "e5cadc47d54a6602b3cb09141544e96629f2c32b1fd3aae2336a085f503170bf"
+  }
+}

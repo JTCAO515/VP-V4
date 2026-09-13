@@ -1,0 +1,51 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {query,env,dockerArgs} from './transport.mjs';
+import {spawn} from 'node:child_process';
+import {createHash,randomUUID} from 'node:crypto';
+const root=new URL('./',import.meta.url),mode=process.argv[2];assert.ok(['prepare','inspect','activate','disable'].includes(mode));
+const file=n=>new URL(n,root),read=n=>JSON.parse(fs.readFileSync(file(n),'utf8'));
+const owners=['fe70fac7-d312-494c-bde1-4c37c3942722','7d063756-e5d8-4a6b-94a3-5134b0b04443'];
+const tables=['public.trips','public.turns','public.chat_turn_events','public.model_budget_attempts','turn_private.text_content','turn_private.service_tasks','turn_private.service_task_turns','turn_private.grounded_turns','turn_private.work','knowledge_review_private.candidates','knowledge_review_private.statements','knowledge_review_private.statement_sources','knowledge_review_private.source_revisions','knowledge_review_private.publications','knowledge_review_private.audit','knowledge_review_private.publication_audit','knowledge_review_private.receipts'];
+const summary=`jsonb_build_object('users',(select count(*) from auth.users),'trips',(select count(*) from public.trips),'migrations',(select count(*) from supabase_migrations.schema_migrations),'attempts',(select count(*) from public.model_budget_attempts),'unresolved',(select count(*) from public.model_budget_attempts where status not in ('settled','released')),'ops',(select enabled from knowledge_review_private.settings),'reader',(select enabled from knowledge_review_private.publication_settings),'activeMembers',(select count(*) from knowledge_review_private.members where active),'members',(select jsonb_agg(jsonb_build_object('id',actor_id,'revision',revision,'active',active) order by actor_id) from knowledge_review_private.members where actor_id in ('${owners.join("','")}')))`;
+const snapshot=()=>JSON.parse(query(`set role postgres;begin isolation level repeatable read read only;select jsonb_build_object('state',${summary},'original',jsonb_build_object(${tables.map(t=>`'${t}',(select coalesce(jsonb_agg(md5(to_jsonb(x)::text) order by md5(to_jsonb(x)::text)),'[]') from ${t} x)`).join(',')}));rollback;`));
+const save=(n,v,exclusive=false)=>fs.writeFileSync(file(n),JSON.stringify(v,null,2)+'\n',{mode:0o600,flag:exclusive?'wx':'w'});
+const intact=(before,after)=>{for(const [table,hashes] of Object.entries(before.original)){const current=new Map();for(const h of after.original[table])current.set(h,(current.get(h)||0)+1);for(const h of hashes){if(mode==='disable'&&table==='knowledge_review_private.publications'&&before.allowedPublicationHashes.includes(h))continue;assert.ok(current.get(h)>0,'Original row changed: '+table);current.set(h,current.get(h)-1);}}};
+const durableSave=(n,v)=>{const fd=fs.openSync(file(n),'wx',0o600);try{fs.writeFileSync(fd,JSON.stringify(v,null,2)+'\n');fs.fsyncSync(fd);}finally{fs.closeSync(fd);}const dir=fs.openSync(root,'r');try{fs.fsyncSync(dir);}finally{fs.closeSync(dir);}};
+const locks=`begin;set local role postgres;set local lock_timeout='5s';set local idle_in_transaction_session_timeout='30s';select pg_advisory_xact_lock(20520260912);select singleton from knowledge_review_private.settings for update;select singleton from knowledge_review_private.publication_settings for update;select actor_id from knowledge_review_private.members where actor_id in ('${owners.join("','")}') order by actor_id for update;`;
+const ownershipSql=xid=>`(select count(*) from knowledge_review_private.publication_settings where xmin::text='${BigInt(xid)%4294967296n}')=1 and pg_current_xact_id()::text::numeric>=${xid} and pg_current_xact_id()::text::numeric-${xid}<2147483648`;
+const mutate=(before,activation,xid)=>{
+ const members=before.state.members.map(m=>`(actor_id='${m.id}' and revision=${m.revision} and not active)`).join(' or ');
+ return `do $$ begin if (select count(*) from knowledge_review_private.members where ${members})<>2 or (select count(*) from knowledge_review_private.members where active)<>0 or (select enabled from knowledge_review_private.settings) is distinct from false or (select enabled from knowledge_review_private.publication_settings) is distinct from ${activation?'false':'true'} ${activation?'':`or not (${ownershipSql(xid)})`} then raise exception 'WINDOW_OWNERSHIP_CHANGED';end if;end $$;update knowledge_review_private.publication_settings set enabled=${activation};select ${summary};commit;`;
+};
+// Journal the DB-assigned transaction before any mutation. A lost commit response remains
+// recoverable by matching the reader row xmin, even when activated.json was never written.
+const activate=before=>new Promise((resolve,reject)=>{
+ const runId=randomUUID(),binding={project:'dzqdzetcctkhbrhlxxgn',owners,rows:['knowledge_review_private.publication_settings:singleton'],members:before.state.members,beforeHash:createHash('sha256').update(fs.readFileSync(file('before.json'))).digest('hex')};durableSave('activation-intent.json',{at:new Date().toISOString(),runId,...binding});
+ const child=spawn('docker',dockerArgs('psql',['-X','-q','-At','-v','ON_ERROR_STOP=1']),{env,stdio:['pipe','pipe','pipe']});
+ let buffer='',result,allocation=false,failure;const timer=setTimeout(()=>{failure=Error('Activation timed out; use ownership-checked disable');child.kill('SIGTERM');},60000);
+ child.stderr.on('data',()=>{}); // Private transport details never enter evidence.
+ child.stdin.on('error',()=>{});
+ child.stdout.on('data',chunk=>{buffer+=chunk.toString();let n;while((n=buffer.indexOf('\n'))>=0){const line=buffer.slice(0,n);buffer=buffer.slice(n+1);if(!line.startsWith('{'))continue;try{const value=JSON.parse(line);if(value.activationXid){assert.ok(!allocation);assert.match(value.activationXid,/^[0-9]+$/);durableSave('activation-transaction.json',{at:new Date().toISOString(),runId,...binding,xid:value.activationXid});allocation=true;child.stdin.end(mutate(before,true,value.activationXid)+'\n');}else result=value;}catch(e){failure=e;child.kill('SIGTERM');}}});
+ child.on('error',()=>{failure=Error('Activation process failed');});
+ child.on('close',code=>{clearTimeout(timer);if(failure||code!==0||!allocation||!result)reject(failure??Error('Activation uncertain; use ownership-checked disable'));else resolve(result);});
+ child.stdin.write(locks+`select jsonb_build_object('activationXid',pg_current_xact_id()::text);\n`);
+});
+try {
+ if(mode==='prepare'){
+  assert.ok(!fs.existsSync(file('activation-intent.json')));const s=snapshot();assert.equal(s.state.migrations,48);assert.equal(s.state.users,6);assert.equal(s.state.trips,3);assert.equal(s.state.attempts,350);assert.equal(s.state.unresolved,0);assert.equal(s.state.ops,false);assert.equal(s.state.reader,false);assert.equal(s.state.activeMembers,0);assert.equal(s.state.members.length,2);assert.ok(s.state.members.every(x=>!x.active));const allowedPublicationHashes=[];save('before.json',{at:new Date().toISOString(),...s,allowedPublicationHashes},true);console.log({mode,status:'PASS',state:s.state});
+ }else if(mode==='inspect'){
+  const s=snapshot();if(fs.existsSync(file('before.json')))intact(read('before.json'),s);save('inspected.json',{at:new Date().toISOString(),...s});console.log({mode,status:'PASS',state:s.state});
+ }else if(mode==='activate'){
+  const before=read('before.json'),s=snapshot();intact(before,s);assert.deepEqual(s.state,before.state);
+  const result=await activate(before);save('activated.json',{at:new Date().toISOString(),state:result});console.log({mode,status:'PASS',state:result});
+ }else {
+  const before=read('before.json');
+  // Retention assertions follow cleanup. They must never strand confirmed-owned grants.
+  const intent=read('activation-intent.json'),tx=read('activation-transaction.json');assert.equal(tx.runId,intent.runId);assert.equal(tx.project,'dzqdzetcctkhbrhlxxgn');assert.deepEqual(tx.owners,owners);assert.deepEqual(tx.members,before.state.members);assert.deepEqual(tx.rows,intent.rows);assert.equal(tx.beforeHash,createHash('sha256').update(fs.readFileSync(file('before.json'))).digest('hex'));assert.match(tx.xid,/^[0-9]+$/);
+  const closed=JSON.parse(query(`set role postgres;select ${summary};`));
+  const result=(!closed.ops&&!closed.reader&&closed.activeMembers===0)?closed:JSON.parse(query(locks+mutate(before,false,tx.xid)).split('\n').findLast(x=>x.startsWith('{')));
+  save('disabled.json',{at:new Date().toISOString(),runId:intent.runId,state:result});
+  const after=snapshot();save('after-disable.json',{at:new Date().toISOString(),...after});assert.equal(after.state.ops,false);assert.equal(after.state.reader,false);assert.equal(after.state.activeMembers,0);try{intact(before,after);assert.equal(after.state.users,before.state.users);assert.equal(after.state.trips,before.state.trips);}catch(e){save('retention-failure.json',{at:new Date().toISOString(),windowClosed:true,error:e.message});console.error({mode,status:'FAIL',windowClosed:true,retention:'FAIL',error:e.message});process.exitCode=1;}if(!process.exitCode)console.log({mode,status:'PASS',windowClosed:true,state:result});
+ }
+}catch(e){console.error({mode,status:'STOPPED',errorType:e.name,message:e.name==='AssertionError'?e.message:'Operation failed; private transport details suppressed; inspect ownership journal before retry'});process.exitCode=1;}

@@ -1,0 +1,17 @@
+{
+  "ownerMatches": true,
+  "enabled": true,
+  "frozen": false,
+  "unexpired": true,
+  "currency": "CNY",
+  "scopeLimit": 70000000,
+  "taskLimit": 21000000,
+  "taskAttempts": 3,
+  "providerEnabled": true,
+  "model": "qwen3.7-plus-2026-05-26",
+  "priceVersion": "qwen-public-upper-20260912-v1",
+  "providerLimit": 70000000,
+  "attemptLimit": 7000000,
+  "used": 1647618,
+  "unresolved": 0
+}
