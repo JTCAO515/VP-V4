@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { CostGuard } from "../model-gateway/budget/index.ts";
 import { runWithDurableBudget, type BudgetAttempt, type BudgetRpc } from "../model-gateway/budget/durable.ts";
 import { invokeTextProviderProtocol, invokeKnowledgeIntentProtocol, validTextTaskHistory, PROTOCOL_MODELS, type ProtocolTransport, type ProtocolUsage } from "../model-gateway/adapters/provider-protocol.ts";
-import { knowledgeIntent } from "../knowledge/claim/intent.ts";
+import { validateKnowledgeIntent, type KnowledgeIntent, type KnowledgeIntentRejection } from "../knowledge/claim/intent.ts";
 import { runDurableTurnWork, type TurnWorkRpc } from "./durable-worker.ts";
 import { validatedUsageReceipt, type RecordValidatedUsage } from "../model-gateway/budget/usage-receipt.ts";
 
@@ -15,6 +15,12 @@ export type TextWorkerConfig = Readonly<{
   maxOutputTokens: number;
   timeoutMs: number;
 }>;
+export type KnowledgeValidationReceipt = Readonly<{
+  schemaVersion: "knowledge-validation/1";
+  turnId: string;
+  reason: KnowledgeIntentRejection | "valid" | "invalid_json" | "missing_unanswered_needs" | "protocol_unavailable";
+}>;
+export type RecordKnowledgeValidation = (receipt: KnowledgeValidationReceipt) => Promise<void>;
 /** Trusted deployment binding must match the registry endpoint exactly. No default network transport. */
 export type TextProviderBinding = Readonly<{
   thinkingBudgetTokens?: number;
@@ -25,6 +31,8 @@ export type TextProviderBinding = Readonly<{
   price: (usage: ProtocolUsage) => number | null;
   /** Persist validated usage before settlement; failure retains unknown-cost treatment. */
   recordUsage?: RecordValidatedUsage;
+  /** Optional content-free observation after durable completion; cannot cause a model retry. */
+  recordKnowledgeValidation?: RecordKnowledgeValidation;
 }>;
 
 /**
@@ -76,13 +84,16 @@ export async function runTextWorker(
     if (result.kind !== "completed") return "provider_failure";
     const output = result.value;
     if (grounded) {
-      let intent = null;
+      let intent: KnowledgeIntent | null = null;
+      let reason: KnowledgeValidationReceipt["reason"] = "protocol_unavailable";
       if (output.kind === "protocol_validated" && typeof output.output === "string") {
         try {
-          intent = knowledgeIntent(JSON.parse(output.output), input.text as string);
+          const validation = validateKnowledgeIntent(JSON.parse(output.output), input.text as string);
+          reason = validation.kind === "valid" ? "valid" : validation.reason;
+          intent = validation.kind === "valid" ? validation.value : null;
           // v5 output must identify gaps explicitly; compatibility is for old workers, not new missing fields.
-          if (intent?.unansweredNeeds === undefined) intent = null;
-        } catch { /* Never persist arbitrary model text. */ }
+          if (intent && intent.unansweredNeeds === undefined) { intent = null; reason = "missing_unanswered_needs"; }
+        } catch { reason = "invalid_json"; /* Never persist arbitrary model text. */ }
       }
       const denied = output.kind === "unavailable" && ["SAFETY_BLOCKED", "DATA_POLICY_BLOCKED"].includes(output.code);
       const persisted = await textRpc(intent?.placeName ? "complete_grounded_place_work" : intent?.unansweredNeeds ? "complete_grounded_work_with_needs" : "complete_grounded_work", { ...keys,
@@ -90,6 +101,9 @@ export async function runTextWorker(
         ...(intent?.unansweredNeeds ? { p_unanswered_needs: JSON.stringify(intent.unansweredNeeds) } : {}),
         p_intent: intent?.intent ?? (denied ? "blocked" : "technical_failure"), p_request_scope: intent?.requestScope ?? "unknown" });
       if (!record(persisted) || persisted.kind !== "finished") throw new Error("Write rejected");
+      try {
+        await binding.recordKnowledgeValidation?.({ schemaVersion: "knowledge-validation/1", turnId: lease.turnId, reason });
+      } catch { /* Observation failure cannot retry a completed, charged request. */ }
       return "persisted";
     }
     let answer: { outcome: string; text: string } | null = null;

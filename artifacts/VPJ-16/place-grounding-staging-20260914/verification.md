@@ -9,3 +9,6 @@ First and second migration dry-run controllers STOPPED before CLI/apply at a boo
 Next: dedicated compatible Preview/native build, frozen-budget v6 real place/legacy routing and actual native/Web read observations. Preserve original data/usage and restore off-state afterward. Production remains outside this scope.
 
 Dedicated Preview `dpl_HseVd4NP2Yrd9RzC9edxGDpu8qQw` READY at frozen e19bd58; URL https://vp-v4-8hmu9lkqj-jtcao515s-projects.vercel.app. Matching native Staging build PASS with exact endpoint/context and verified ad-hoc signature (`native-build-result.json`). This is build/deployment evidence only; no place model or authenticated native/Web user observation yet. Original native build log remains in the local cache; committed copy trims trailing whitespace. Native CI34779732089 remains in progress; Quality34779732010/Budget34779732028 and PR Preview passed for e19bd58.
+
+
+Continuation: the actual Ops-capable window and client observations are recorded in ../place-grounding-window-20260914/verification.md. The original read-only Preview receipt above is preserved as preparation history; it is not the active acceptance deployment.

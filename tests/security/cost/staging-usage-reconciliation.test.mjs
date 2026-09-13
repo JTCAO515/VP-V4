@@ -58,7 +58,8 @@ test('explicit CLI checks private journal/config before I/O, ignores only torn t
  const dir=await mkdtemp(join(tmpdir(),'vpj-usage-'));t.after(()=>rm(dir,{recursive:true,force:true}));
  const {job,receipt}=fixture(),config=join(dir,'config.json'),journal=join(dir,'journal.jsonl'),out=join(dir,'out.jsonl'),mapper=join(dir,'mapper.mjs'),calls=join(dir,'calls.jsonl');
  const contents=JSON.stringify(job),digest=createHash('sha256').update(contents).digest('hex');await writeFile(config,contents,{mode:0o600});
- const lines=[{schemaVersion:'vpj07-worker-run/2',configurationDigest:digest,phase:'started'},{schemaVersion:'vpj07-usage-journal/1',configurationDigest:digest,receipt}];
+ const diagnostic={schemaVersion:'vpj07-knowledge-validation-journal/1',configurationDigest:digest,receipt:{schemaVersion:'knowledge-validation/1',turnId:receipt.turnId,reason:'place_name_presence'}};
+ const lines=[{schemaVersion:'vpj07-worker-run/2',configurationDigest:digest,phase:'started'},diagnostic,{schemaVersion:'vpj07-usage-journal/1',configurationDigest:digest,receipt}];
  await writeFile(journal,lines.map(JSON.stringify).join('\n')+'\n{"torn":',{mode:0o600});
  await writeFile(mapper,`import {appendFileSync} from 'node:fs';globalThis.fetch=async(url,options)=>{if(String(url)!=='https://dzqdzetcctkhbrhlxxgn.supabase.co/rest/v1/rpc/finish_model_budget'||options.redirect!=='manual')throw Error('Unexpected destination');const p=JSON.parse(options.body);if(p.p_action!=='settle')throw Error('Unexpected action');appendFileSync(${JSON.stringify(calls)},JSON.stringify(p)+'\\n');return Response.json({kind:'settled',overrun:false});};`);
  const args=['--experimental-strip-types','--import',mapper,resolve('lib/server/jobs/reconcile-staging-text-usage.mjs'),'--config',config,'--journal',journal,'--receipts',out];
@@ -67,11 +68,21 @@ test('explicit CLI checks private journal/config before I/O, ignores only torn t
  assert.equal((await readFile(calls,'utf8')).trim().split('\n').length,1);assert.equal((await child(args,env)).code,1,'existing output is not overwritten');
  await chmod(journal,0o644);assert.equal((await child([...args.slice(0,-1),join(dir,'public-rejected.jsonl')],env)).code,1);assert.equal((await readFile(calls,'utf8')).trim().split('\n').length,1);
  await chmod(journal,0o600);
+ for(const [i,invalid] of [
+  {...diagnostic,configurationDigest:'0'.repeat(64)},
+  {...diagnostic,receipt:{...diagnostic.receipt,text:'private content'}},
+  {...diagnostic,receipt:{...diagnostic.receipt,reason:'arbitrary model output'}},
+  {...diagnostic,receipt:{...diagnostic.receipt,turnId:'unbound'}},
+ ].entries()){
+  await writeFile(journal,[lines[0],invalid,lines[2]].map(JSON.stringify).join('\n')+'\n');
+  assert.equal((await child([...args.slice(0,-1),join(dir,'invalid-'+i+'.jsonl')],env)).code,1);
+  assert.equal((await readFile(calls,'utf8')).trim().split('\n').length,1,'invalid diagnostic fails before settlement');
+ }
  for(const mode of ['thinking','service']){
   const thinking={...job,schemaVersion:'vpj07-staging-text-job/3',inputMode:'task_history_v1',thinkingBudgetTokens:256};
   const value=mode==='thinking'?thinking:{schemaVersion:'vpj07-staging-text-service/1',job,expiresAt:'2026-01-01T00:00:00.000Z',pollIntervalMs:5000};
   const body=JSON.stringify(value),hash=createHash('sha256').update(body).digest('hex'),schema=mode==='thinking'?'vpj07-worker-run/3':'vpj07-service-run/1';
-  await writeFile(config,body);await writeFile(journal,[{schemaVersion:schema,configurationDigest:hash,phase:'started'},{schemaVersion:'vpj07-usage-journal/1',configurationDigest:hash,receipt},{schemaVersion:schema,configurationDigest:hash,phase:'returned'}].map(JSON.stringify).join('\n')+'\n');
+  await writeFile(config,body);await writeFile(journal,[{schemaVersion:schema,configurationDigest:hash,phase:'started'},{...diagnostic,configurationDigest:hash},{schemaVersion:'vpj07-usage-journal/1',configurationDigest:hash,receipt},{schemaVersion:schema,configurationDigest:hash,phase:'returned'}].map(JSON.stringify).join('\n')+'\n');
   const replay=await child([...args.slice(0,-1),join(dir,mode+'.jsonl')],env);assert.equal(replay.code,0,replay.stderr);assert.equal(JSON.parse(replay.stdout).settled,1);
  }
 });
