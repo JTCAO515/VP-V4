@@ -3,12 +3,12 @@
   "projectId": "visepanda-vp-v4",
   "lastUpdated": "2026-09-13",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
-  "status": "S2: PR357 merged; PR369 cancellation read repair observed on frozen c8a12c8 Staging45/API/SSE/Native/Web. All retained record digests unchanged; read window closed. Final CI/merge pending; Web revalidation blank viewport remains observed.",
+  "status": "S2: PR369 merged at37e7700; PR370 Web refresh fix observed on frozen d056ec5 dedicated Preview with Staging45. Bilingual desktop/mobile reading stays visible across refresh; exact-head final evidence gates/merge pending.",
   "currentPhase": "S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "Codex — S2 Ask acceptance and VPJ-67 recorded usage trace",
   "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree.",
-  "nextAction": "Finish exact-head PR369 gates and protected merge. Then repair observed SavedAnswers revalidation blank viewport without extending evidence lifetime; maps #362 remains the one approved independent preparation queue. Keep #206/#264 and full S2 open.",
+  "nextAction": "Finish PR370 exact-head gates and protected merge; then continue S2 acceptance and approved maps #362 preparation. Keep #206/#264 and full S2 open.",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
@@ -84,6 +84,7 @@
     "tests/integration/identity/**"
   ],
   "verification": [
+    "PR370 frozen d056ec5: lint266/typecheck/contracts278 PASS; independent review0Critical/Important; actual en/zh1365×900/390×844 browser observations36seconds each,667 samples all visible/open/fixed position. No network fault injection: deterministic actual-effect tests cover expiry and auth/offline races. artifacts/VPJ-16/web-read-refresh-20260913/verification.md.",
     "PR369 frozen c8a12c8: Staging44→45 preserved78tables/261schema+ACL; actual cancelled read/SSE0+1/foreign denial and completed SSE pass; Web1365/390 plus en/zh sources and native cancelled/reload/source date pass.207Turns/207attempts/1549974micros/0unresolved and Turn/event/work/grounded/budget/Trip digests unchanged. Reader/Opsfalse,members0,WAF64,normal logouts and Simulator shutdown. artifacts/VPJ-16/cancelled-read-20260913/verification.md.",
     "PR357 merged a352c7e after Quality34763806205, Budget34763806427, Native34763806245 and Preview passed. Auto-Production dpl_DkKqpJ9Qzecxb4xBm5c7KCmUZgYH canceled; five production aliases and shared Staging unchanged.",
     "Cancelled read repair: database15/15 incl session replacement/claim/rollback/ACL, contracts274/274, security146 pass+1 existing skip, lint/typecheck and independent review0/0. Encrypted Staging44 backup+isolated restore passed; migration45 and actual client acceptance UNRUN. artifacts/VPJ-16/cancelled-read-20260913/verification.md.",
