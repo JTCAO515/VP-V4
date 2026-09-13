@@ -1,0 +1,14 @@
+{
+  "format": "VPB1-AES-256-GCM",
+  "createdAt": "2026-09-13T08:23:46.367Z",
+  "bytes": 734202,
+  "ciphertextSha256": "527859c5ac84f9c1fcd8004f5f5cf228a380dad0181de0719467b25659682013",
+  "restoreRehearsal": "PASS",
+  "restoreVerifiedAt": "2026-09-13T08:24:35.205Z",
+  "restoreImage": "public.ecr.aws/supabase/postgres:17.6.1.159",
+  "restoreNetwork": "none",
+  "restorePublishedPorts": 0,
+  "restoreTableDigestsMatched": 78,
+  "restoreSchemaInventoryMatched": 261,
+  "restoreContainerCleaned": true
+}

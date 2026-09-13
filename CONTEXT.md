@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PR356 merged a848c50 with actual current native date/PBC PDF navigation and guarded production cancellation. SIM Ask local implementation adds three exact obligations: isolated SQL question11/11 and grounded13/13, native knowledge12/12, full contract273 pass; independent migration/shared-contract review0/0. Staging remains43; no SIM Ask runtime acceptance yet. Full S1–S6 incomplete.
+状态：PR357 open at frozen runtime8de8c9b. Staging44 backup/restore/migration verified.86 unique frozen cases matched (44 SIM +42 legacy),87 attempts including one recorded paid session-replacement interruption. Native Simulator en/zh2 UI submissions completed and settled; Web protocol-task readback passed. Native source reading disrupted by periodic refresh; cancelled stale work still reads pending. Reader/Ops off, WAF60 own-host cleanup exit0. Full S1-S6 incomplete.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -128,7 +128,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Finish connectivity Ask through real Staging43→44 backup/restore/upgrade, fixed44 new zh/en cases plus affected legacy payment/rail regression, signed native SIM tasks and owner Web readback at desktop/390. Preserve old publications, production guard and budgets; do not treat local tests as runtime acceptance. Worktree /Users/jtcao/Documents/VP-V4-S2-Connectivity-Ask; evidence artifacts/VPJ-16/connectivity-ask-20260913/verification.md.
+Finish actual-native-task Web readback and resolve observed cancelled-work read projection (#264) and native periodic evidence-refresh reading disruption. Preserve failed/interrupted evidence; package PR357 within guarded merge authority after checks. No production release. Worktree /Users/jtcao/Documents/VP-V4-S2-Connectivity-Ask; evidence artifacts/VPJ-16/connectivity-ask-20260913/verification.md.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

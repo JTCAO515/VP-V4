@@ -1,0 +1,93 @@
+{
+  "at": "2026-09-13T14:26:36.627Z",
+  "status": "PASS",
+  "rows": [
+    {
+      "turnId": "021ae5c5-cc78-48f2-b3f1-eefa8bbbc54a",
+      "taskId": "34120cec-2ad3-4fd2-990b-c94a22097970",
+      "locale": "zh",
+      "intent": "connectivity_sim_documents",
+      "scope": "additional_needs",
+      "outcome": "partial",
+      "completed": true,
+      "workState": "completed",
+      "basis": {
+        "claims": [
+          {
+            "id": "passport_or_foreign_permanent_resident_id",
+            "status": "covered",
+            "factIds": [
+              "b1556c6f-f791-4a00-85cb-868fdcadc2fe"
+            ],
+            "reasons": []
+          }
+        ],
+        "publications": [
+          {
+            "factId": "b1556c6f-f791-4a00-85cb-868fdcadc2fe",
+            "revision": 1,
+            "assertionId": "87b77eec-1975-484e-b63c-eed583e42cdc",
+            "payloadHash": "d78e8366f18ceac3d5bbb0d71e8b22dd8741988a99788fb6497ecce69ca1c70d"
+          }
+        ]
+      }
+    },
+    {
+      "turnId": "6d92846e-9ad1-4286-ae1f-aa737094073c",
+      "taskId": "5f62ea75-0b68-4834-bc32-987ecac63cca",
+      "locale": "en",
+      "intent": "connectivity_getting_started",
+      "scope": "single",
+      "outcome": "answered",
+      "completed": true,
+      "workState": "completed",
+      "basis": {
+        "claims": [
+          {
+            "id": "passport_or_foreign_permanent_resident_id",
+            "status": "covered",
+            "factIds": [
+              "b1556c6f-f791-4a00-85cb-868fdcadc2fe"
+            ],
+            "reasons": []
+          },
+          {
+            "id": "plan_allowance_check",
+            "status": "covered",
+            "factIds": [
+              "b0c29421-59fc-4d77-b4b2-581fc7b1e1e0"
+            ],
+            "reasons": []
+          }
+        ],
+        "publications": [
+          {
+            "factId": "b0c29421-59fc-4d77-b4b2-581fc7b1e1e0",
+            "revision": 1,
+            "assertionId": "75f0b635-f1a0-4156-b3e9-260816ffac36",
+            "payloadHash": "e26d4b3611ce1245bc6939fd0b0cccafabbe2dda115e0874ecee53bdcaa23415"
+          },
+          {
+            "factId": "b1556c6f-f791-4a00-85cb-868fdcadc2fe",
+            "revision": 1,
+            "assertionId": "87b77eec-1975-484e-b63c-eed583e42cdc",
+            "payloadHash": "d78e8366f18ceac3d5bbb0d71e8b22dd8741988a99788fb6497ecce69ca1c70d"
+          }
+        ]
+      }
+    }
+  ],
+  "budgets": [
+    {
+      "attemptId": "7a6fabf0-e8e9-4fbe-aed4-e8c57766a675",
+      "state": "settled",
+      "actualMicros": 10410
+    },
+    {
+      "attemptId": "f2ede733-8f9b-4d94-836b-6d63ef5884af",
+      "state": "settled",
+      "actualMicros": 10146
+    }
+  ],
+  "unresolvedAttempts": 0
+}

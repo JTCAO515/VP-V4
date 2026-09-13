@@ -1,0 +1,19 @@
+{
+  "at": "2026-09-13T14:05:07.244Z",
+  "turnStatus": "accepted",
+  "workState": "cancelled",
+  "workAttempts": 1,
+  "leaseExpired": null,
+  "originalSessionExists": false,
+  "mobileSessionReplaced": true,
+  "currentMobileEpoch": 33,
+  "originalMobileEpoch": 32,
+  "newMobileSessionCreatedAt": "2026-09-13T09:06:03.939369+00:00",
+  "groundedCompleted": false,
+  "intent": null,
+  "budgetStatus": "settled",
+  "actualMicros": 10314,
+  "reservedMicros": 7000000,
+  "readerEnabled": false,
+  "unresolvedAttempts": 0
+}

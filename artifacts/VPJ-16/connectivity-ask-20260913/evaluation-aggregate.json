@@ -1,0 +1,46 @@
+{
+  "at": "2026-09-13T14:15:18.173Z",
+  "status": "PASS_WITH_RECORDED_SESSION_INTERRUPTION",
+  "sourceSha": "8de8c9b110e1067f675c74994717cac86392dee7",
+  "workerSha": "8de8c9b110e1067f675c74994717cac86392dee7",
+  "uniqueCases": 86,
+  "simCases": 44,
+  "legacyCases": 42,
+  "matched": 86,
+  "initialMatched": 70,
+  "continuationMatched": 16,
+  "providerAttempts": 87,
+  "recordedActualMicros": 879072,
+  "interruptedPaidAttempts": 1,
+  "interruptedTurnId": "73ea2ef0-5aca-4993-b3c1-8662cc48fdaf",
+  "interruptedActualMicros": 10314,
+  "uninterruptedRun": false,
+  "originalLogouts": [
+    {
+      "locale": "en",
+      "status": 401
+    },
+    {
+      "locale": "zh",
+      "status": 200
+    }
+  ],
+  "continuationLogouts": [
+    {
+      "locale": "en",
+      "status": 200
+    },
+    {
+      "locale": "zh",
+      "status": 200
+    }
+  ],
+  "knownReadStateDefect": "Cancelled stale work still projects accepted/pending; tracked on #264 comment5653778718",
+  "files": {
+    "evaluation.json": "ccd77e44722131cd26c60456e18952fb5a60fe3a2a53637275b2102aa5f8c4ce",
+    "evaluation-continuation.json": "28813d52f3705cbc00dd59168e1ec82f2b44013bd0855f76e5aed539536fc400",
+    "evaluation-cases.json": "02aa57b6b9c427b8ac99e4f203706e538db2b2d26a60a0708cd9f4c9a305ebfa",
+    "remaining-cases.json": "c43e43a5dc3552b4d21d2988067c6d585bdbf6a81ea47aacac9767d00a907223",
+    "interruption-audit.json": "521fb57b6a42de29ec009813b2e462bbf4258c9daa7758221509c26e163240ae"
+  }
+}

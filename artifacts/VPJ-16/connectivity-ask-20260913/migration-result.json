@@ -1,0 +1,23 @@
+{
+  "at": "2026-09-13T08:28:58.592Z",
+  "status": "PASS",
+  "migrationCount": 44,
+  "originalTablesPreserved": 78,
+  "originalSchemaEntriesChecked": 261,
+  "expectedChangedFunctions": [
+    "knowledge_review_private.question_definition("
+  ],
+  "backupRestore": "PASS",
+  "authCount": 6,
+  "tripCount": 3,
+  "defaultReadDisabled": true,
+  "opsDisabled": true,
+  "noActiveMembers": true,
+  "publicationsPreserved": true,
+  "privateHelpersDenied": true,
+  "privateTablesDenied": true,
+  "groundedPrivate": true,
+  "groundedRls": true,
+  "groundedRpcAcl": true,
+  "readOnlyAuthenticated": true
+}
