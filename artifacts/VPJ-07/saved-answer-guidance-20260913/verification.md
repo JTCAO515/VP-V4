@@ -11,3 +11,5 @@ Both normal browser sessions logged out, owned tab closed and viewport reset. Re
 Retained setup/check corrections: `eslint` is not a repository executable; the actual source-policy `pnpm lint` passed. After resizing the Chinese browser, the first desktop screenshot was at the retained scroll offset rather than the target card; the target heading was repositioned and its final screenshot inspected. This is not evidence of the original offscreen card. Full private evidence: `/Users/jtcao/Library/Caches/visepanda/saved-answer-guidance-20260913`.
 
 Rollback: revert the four display strings. No schema, API, producer, permission or native change.
+
+Main PR350 was merged into this branch after its guarded delivery. `git diff 7974fc7 HEAD -- app components lib public package.json pnpm-lock.yaml` is empty, so the tested Web/API/display code is identical; no repeated provider or browser run is needed for the native/docs-only base update. Final CI and guarded merge remain pending in this snapshot.
