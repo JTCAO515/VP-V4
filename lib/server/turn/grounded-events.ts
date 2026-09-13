@@ -18,7 +18,16 @@ export function groundedEventFrames(value: unknown, turnId: string, after: numbe
   if (events.some(event => event.sequence <= after) || (events.at(-1)?.sequence ?? after) !== value.lastSequence) throw new Error("Invalid grounded cursor");
   const done = terminal.includes(String(value.turn.status));
   const last = events.at(-1);
-  if (last && ((last.type === "terminal") !== done || (done && last.state !== value.turn.status))) throw new Error("Invalid grounded terminal");
+  // A failed/cancelled lease can finish without a persisted Turn terminal when
+  // its original session lost authority. Only the empty unfinished projection
+  // may end that stream; the replay cursor and stored history remain unchanged.
+  const result = value.turn.result;
+  const unfinishedTerminal = ["cancelled", "failed"].includes(String(value.turn.status))
+    && value.turn.outcome === null && value.turn.output === null && record(result)
+    && result.projection === "pending" && result.completedAt === null
+    && result.intent === null && result.requestScope === null
+    && result.originalOutcome === null && result.knowledge === null;
+  if (last && !(unfinishedTerminal && last.type !== "terminal") && ((last.type === "terminal") !== done || (done && last.state !== value.turn.status))) throw new Error("Invalid grounded terminal");
   const frame = (event: string, data: unknown, sequence?: number) => `${sequence === undefined ? "" : `id: ${sequence}\n`}event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
   let text = events.map(event => frame("turn", {
     schemaVersion: "grounded-events/1", turnId, ...event,

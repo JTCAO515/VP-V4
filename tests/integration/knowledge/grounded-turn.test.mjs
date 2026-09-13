@@ -7,6 +7,8 @@ import {randomUUID as uuid} from 'node:crypto';
 import {readFileSync,readdirSync} from 'node:fs';
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 
+import {groundedEventFrames} from '../../../lib/server/turn/grounded-events.ts';
+
 const enabled=process.env.VP_GROUNDED_TURN_DB_TEST==='1';
 test('grounded Turn: durable scope, private results and historical eligibility',{skip:!enabled,timeout:180000},async t=>{
  const container='vpj16-grounded-'+uuid().slice(0,8);
@@ -18,7 +20,14 @@ test('grounded Turn: durable scope, private results and historical eligibility',
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));
  await db('create schema extensions;create extension pgcrypto with schema extensions;');
  const migrations=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort();
- for(const f of migrations){const content=readFileSync('supabase/migrations/'+f,'utf8');if(f.endsWith('_vpj_16_grounded_turn.sql')){await db('begin;'+content+'rollback;');assert.equal(await db("select to_regclass('turn_private.grounded_turns') is null;"),'t');}await db('begin;'+content+'commit;');}
+ for(const f of migrations){const content=readFileSync('supabase/migrations/'+f,'utf8');if(f.endsWith('_vpj_16_grounded_turn.sql')){await db('begin;'+content+'rollback;');assert.equal(await db("select to_regclass('turn_private.grounded_turns') is null;"),'t');}if(f.endsWith('_vpj_16_cancelled_work_projection.sql')){
+  const previous=await db("select pg_get_functiondef('public.read_grounded_turn(uuid)'::regprocedure);");
+  const acl=await db("select proacl::text from pg_proc where oid='public.read_grounded_turn(uuid)'::regprocedure;");
+  await db('begin;'+content+'rollback;');
+  assert.equal(await db("select pg_get_functiondef('public.read_grounded_turn(uuid)'::regprocedure);"),previous,'migration rollback restores exact function');
+  await db('begin;'+content+'commit;');
+  assert.equal(await db("select proacl::text from pg_proc where oid='public.read_grounded_turn(uuid)'::regprocedure;"),acl,'migration preserves RPC grants');
+ }else await db('begin;'+content+'commit;');}
  const actor=async()=>{const a={owner:uuid(),session:uuid()};await db(`insert into auth.users values('${a.owner}');insert into auth.sessions(id,user_id) values('${a.session}','${a.owner}');`);return a;};
  const owner=await actor(),other=await actor(),author=await actor(),reviewer=await actor();
  const rpc=(role,a)=>async(name,params={})=>{assert.match(name,/^[a-z_]+$/);const claims=a?`set request.jwt.claim.sub='${a.owner}';set request.jwt.claims='${JSON.stringify({session_id:a.session})}';`:'';return JSON.parse(await db(claims+`set role ${role};select public.${name}(`+Object.entries(params).map(([k,v])=>k+'=>'+lit(v)).join(',')+');'));};
@@ -72,6 +81,62 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   for(const cursor of [-1,a.lastSequence+1,null])await assert.rejects(user('read_grounded_events',{...params,p_after_sequence:cursor}),/INVALID_INPUT/);
   await assert.rejects(service('read_grounded_events',params),/permission denied/);
   await assert.rejects(rpc('anon')('read_grounded_events',params),/permission denied/);
+ });
+ await t.test('session replacement cancels expired work and reads end without changing durable history',async()=>{
+  const a=await actor();
+  const login=async actor=>{
+   const attempt=uuid();
+   await db(`set request.jwt.claims='{"role":"service_role"}';set role service_role;select public.native_prepare_v2('${actor.owner}','${actor.session}','${attempt}');`);
+   return JSON.parse(await db(`set request.jwt.claim.sub='${actor.owner}';set request.jwt.claims='${JSON.stringify({role:'authenticated',is_anonymous:false,session_id:actor.session})}';set role authenticated;select identity_private.mobile_session_v2('login','${attempt}');`));
+  };
+  await login(a);const old=rpc('authenticated',a);await old('accept_text_policy',{p_policy_id:policy,p_notice_hash:notice});
+  const task=fresh();await old('submit_grounded_turn',task);
+  const l=await service('claim_grounded_work',{p_owner_id:a.owner,p_policy_id:policy});assert.equal(l.turnId,task.p_turn_id);
+  const replacement={owner:a.owner,session:uuid()};await db(`insert into auth.sessions(id,user_id) values('${replacement.session}','${a.owner}');`);
+  assert.equal((await login(replacement)).mobileEpoch,2);
+  // Fault injection advances only lease expiry; normal claim performs cancellation.
+  await db(`update turn_private.work set expires_at=clock_timestamp()-interval '1 second' where turn_id='${task.p_turn_id}';`);
+  assert.equal((await service('claim_grounded_work',{p_owner_id:a.owner,p_policy_id:policy})).kind,'empty');
+  const current=rpc('authenticated',replacement),params={p_policy_id:policy,p_turn_id:task.p_turn_id,p_after_sequence:0};
+  const durable=()=>db(`select jsonb_build_object('turn',(select to_jsonb(t) from public.turns t where id='${task.p_turn_id}'),'events',(select jsonb_agg(to_jsonb(e) order by sequence) from public.chat_turn_events e where turn_id='${task.p_turn_id}'),'grounded',(select to_jsonb(g) from turn_private.grounded_turns g where turn_id='${task.p_turn_id}'),'work',(select to_jsonb(w) from turn_private.work w where turn_id='${task.p_turn_id}'),'content',(select to_jsonb(c) from turn_private.text_content c where turn_id='${task.p_turn_id}'));`);
+  const budgets=()=>db("select coalesce(jsonb_agg(to_jsonb(b) order by scope_id,attempt_id),'[]') from public.model_budget_attempts b;");
+  const budgetBefore=await budgets();
+  const before=await durable(),value=await current('read_grounded_turn',{p_turn_id:task.p_turn_id});
+  assert.equal(value.status,'cancelled');assert.equal(value.result.projection,'pending');
+  for(const key of ['intent','requestScope','originalOutcome','completedAt','knowledge'])assert.equal(value.result[key],null);
+  assert.equal(value.outcome,null);assert.equal(value.output,null);
+  assert.equal((await current('list_grounded_turns',{p_policy_id:policy})).turns.find(t=>t.turnId===task.p_turn_id).status,'cancelled');
+  const replay=await current('read_grounded_events',params);assert.equal(replay.lastSequence,1);assert.equal(replay.events.length,1);
+  for(const after of [0,1]){
+   const snapshot=await current('read_grounded_events',{...params,p_after_sequence:after});
+   const frames=groundedEventFrames(snapshot,task.p_turn_id,after);assert.equal(frames.terminal,true);assert.equal(frames.cursor,1);assert.ok(!frames.text.includes('heartbeat'));
+  }
+  assert.equal(await durable(),before,'reads never rewrite Turn, events, work or answer records');
+  assert.equal(await budgets(),budgetBefore,'reads preserve budget records');
+  assert.equal(JSON.parse(before).turn.status,'accepted');assert.equal(JSON.parse(before).work.state,'cancelled');
+  assert.equal((await foreign('read_grounded_turn',{p_turn_id:task.p_turn_id})).kind,'unavailable');
+  await assert.rejects(old('read_grounded_turn',{p_turn_id:task.p_turn_id}),/UNAUTHENTICATED|SESSION_REPLACED/);
+  assert.equal((await current('read_grounded_events',{...params,p_policy_id:uuid()})).kind,'unavailable');
+  await db(`update turn_private.text_content set hidden_at=now() where turn_id='${task.p_turn_id}';`);
+  assert.equal((await current('read_grounded_turn',{p_turn_id:task.p_turn_id})).kind,'unavailable');
+  await db(`update turn_private.text_content set hidden_at=null where turn_id='${task.p_turn_id}';`);
+  await current('withdraw_text_policy',{p_policy_id:policy});
+  assert.equal((await current('read_grounded_turn',{p_turn_id:task.p_turn_id})).kind,'unavailable');
+ });
+ await t.test('only unfinished same-owner failed or cancelled work projects a terminal status',async()=>{
+  const a=fresh();await user('submit_grounded_turn',a);assert.equal((await read(a)).status,'accepted');
+  const l=await lease();assert.equal(l.turnId,a.p_turn_id);assert.equal((await read(a)).status,'accepted');
+  for(const [state,status] of [['failed','failed'],['quarantined','failed'],['cancelled','cancelled'],['completed','accepted']]){
+   await db(`update turn_private.work set state='${state}',lease_token=null,expires_at=null where turn_id='${a.p_turn_id}';`);
+   assert.equal((await read(a)).status,status);
+  }
+  await db(`update turn_private.work set state='cancelled',owner_id='${other.owner}' where turn_id='${a.p_turn_id}';`);
+  assert.equal((await read(a)).status,'accepted');
+  await db(`update turn_private.work set owner_id='${owner.owner}' where turn_id='${a.p_turn_id}';update public.turns set status='unavailable' where id='${a.p_turn_id}';`);
+  assert.equal((await read(a)).status,'unavailable','existing public terminal wins');
+  await db(`update turn_private.work set state='cancelled' where turn_id='${root.p_turn_id}';`);
+  assert.equal((await read(root)).status,'completed','completed grounded answer wins');
+  await db(`update turn_private.work set state='completed' where turn_id='${root.p_turn_id}';`);
  });
  await t.test('history rechecks original evidence and cannot silently replace withdrawn support',async()=>{
   await revoke(first);const replay=await user('read_grounded_events',{p_policy_id:policy,p_turn_id:root.p_turn_id});assert.equal(replay.turn.result.knowledge.answer.outcome,'partial');assert.equal(replay.turn.result.knowledge.statements.length,1);const revoked=await read(root);assert.equal(revoked.result.originalOutcome,'answered');assert.equal(revoked.result.knowledge.answer.outcome,'partial');assert.deepEqual(revoked.result.knowledge.answer.claims[0].reasons,['revoked']);
@@ -151,7 +216,7 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   assert.equal(await db(`select count(*) from turn_private.grounded_turns where task_id='${a.p_task_id}';`),'4');
  });
  await t.test('publication wait cannot commit after the lease expires',async()=>{
-  const a=fresh();await user('submit_grounded_turn',a);await db(`update turn_private.work set lease_ms=1500 where turn_id='${a.p_turn_id}';`);
+  const a=fresh();await user('submit_grounded_turn',a);await db(`update turn_private.work set lease_ms=5000 where turn_id='${a.p_turn_id}';`);
   const l=await lease();await authorize(l);
   const gate=spawn('docker',['exec','-i',container,'psql','-h','/tmp/vpj59-socket','-U','postgres','-X','-Atq','-v','ON_ERROR_STOP=1'],{stdio:['pipe','pipe','pipe']});
   let output='';const done=once(gate,'close');gate.stdout.on('data',b=>output+=b);gate.stderr.resume();
@@ -159,9 +224,9 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   try {
    gate.stdin.write(`begin;select candidate_id from knowledge_review_private.publications where candidate_id='${second}' for update;select 'gate-ready';\n`);
    await waitUntil(async()=>output.includes('gate-ready'),5000,'publication gate');
-   finishing=sql(container,`set application_name='grounded-expired-finisher';set role service_role;select public.complete_grounded_work('${a.p_turn_id}','${l.leaseToken}','rail_boarding_documents','single');`);
+   finishing=sql(container,`set statement_timeout='15s';set application_name='grounded-expired-finisher';set role service_role;select public.complete_grounded_work('${a.p_turn_id}','${l.leaseToken}','rail_boarding_documents','single');`);
    await waitUntil(async()=>(await db("select count(*) from pg_stat_activity where application_name='grounded-expired-finisher' and cardinality(pg_blocking_pids(pid))>0;"))==='1',5000,'completion waiting on publication');
-   await waitUntil(async()=>(await db(`select expires_at<=clock_timestamp() from turn_private.work where turn_id='${a.p_turn_id}';`))==='t',5000,'actual lease deadline');
+   await waitUntil(async()=>(await db(`select expires_at<=clock_timestamp() from turn_private.work where turn_id='${a.p_turn_id}';`))==='t',10000,'actual lease deadline');
    gate.stdin.end('commit;\n');await done;
    const result=await finishing;assert.equal(result.code,0,result.stderr);assert.equal(JSON.parse(result.stdout.trim()).kind,'blocked');
    assert.equal(await db(`select completed_at is null from turn_private.grounded_turns where turn_id='${a.p_turn_id}';`),'t');

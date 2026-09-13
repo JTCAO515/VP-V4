@@ -1,0 +1,7 @@
+{
+  status: 'PASS',
+  reads: 3,
+  completedSse: true,
+  foreignDenied: true,
+  logouts: [ { locale: 'en', status: 200 }, { locale: 'zh', status: 200 } ]
+}

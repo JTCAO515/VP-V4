@@ -165,3 +165,19 @@ apply unchanged. Old rail/payment definitions remain exact. Native and Web use S
 missing-information guidance while retaining their existing scope and interfaces.
 
 Validation and remaining real checks: [SIM evidence](../../artifacts/VPJ-16/connectivity-ask-20260913/verification.md).
+
+## Unfinished work terminal read projection
+
+When the original mobile session is replaced, normal worker claiming can cancel
+its expired lease while the public Turn and accepted event remain unchanged.
+An authorized grounded read projects `cancelled` (or `failed` for failed or
+quarantined work) only for same-owner work whose grounded result is unfinished
+and public Turn is still processing. Existing public terminal states and completed
+answers win; work marked completed never implies a successful answer.
+
+The result remains `projection=pending` with null completion, intent, scope,
+original outcome, knowledge and output. SSE sends the existing events and an
+id-less current projection, stops heartbeat and preserves the replay cursor.
+It never manufactures a terminal history event or changes consent, budget or
+answer records. This is a read repair, not a recovery or refund operation.
+Staging migration and actual client acceptance are tracked separately.

@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：SIM PR357 pending current-head CI. Staging44:86 frozen unique cases matched across87 attempts including one paid interruption; native en/zh2 UI submissions completed/settled and same actual tasks read on Web en/zh desktop/390. Native early-refresh fix built,22 tests passed,41s sampled source-reading observation passed; no extra model calls. Cancelled stale work still projects pending; full S1-S6 incomplete.
+状态：S2: PR357 merged; PR369 cancellation read repair observed on frozen c8a12c8 Staging45/API/SSE/Native/Web. All retained record digests unchanged; read window closed. Final CI/merge pending; Web revalidation blank viewport remains observed.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -53,6 +53,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 验证
 
+- PR369 frozen c8a12c8: Staging44→45 preserved78tables/261schema+ACL; actual cancelled read/SSE0+1/foreign denial and completed SSE pass; Web1365/390 plus en/zh sources and native cancelled/reload/source date pass.207Turns/207attempts/1549974micros/0unresolved and Turn/event/work/grounded/budget/Trip digests unchanged. Reader/Opsfalse,members0,WAF64,normal logouts and Simulator shutdown. artifacts/VPJ-16/cancelled-read-20260913/verification.md.
+- PR357 merged a352c7e after Quality34763806205, Budget34763806427, Native34763806245 and Preview passed. Auto-Production dpl_DkKqpJ9Qzecxb4xBm5c7KCmUZgYH canceled; five production aliases and shared Staging unchanged.
+- Cancelled read repair: database15/15 incl session replacement/claim/rollback/ACL, contracts274/274, security146 pass+1 existing skip, lint/typecheck and independent review0/0. Encrypted Staging44 backup+isolated restore passed; migration45 and actual client acceptance UNRUN. artifacts/VPJ-16/cancelled-read-20260913/verification.md.
 - Payment Ask d15baf7: local46 checks; real frozen42/42 plus native en/zh2/2 submissions; Web en/zh1280x900 and390x844. Staging43;44 distinct Tasks/44 settled attempts/308118 CNYmicros delta,0 unresolved; total118/118/650346,users6/Trips3. Reader/Opsfalse,members0,WAF48 cleanup. Native signing failure and expanded-source limitation retained. See artifacts/VPJ-16/payment-ask-20260913/verification.md.
 - Payment Ask implementation and local evidence: artifacts/VPJ-16/payment-ask-20260913/verification.md. Actual read-only Staging03:07Z: schema42,reader off,three payment publications current,card revoked. No model call/migration in this window. Full real payment Ask pending.
 - PR351 saved-answer guidance runtime7974fc7/Preview dpl_41pLhQPptZa1hZpkCRzbaybdkMsz: en/zh partial and blocked notices now name supported booking-ID/ticket-proof scope and current railway/station next steps. Actual1280×900/390×844 browser readback, existing contracts5/5 and source lint passed. No model/Trip writes;74Turns/74attempts/342228micros/0unresolved,users6Trips3/migrations42 unchanged,reader/Opsfalse,members0,WAF46,browser logout/tab cleanup. No specific-extra-need identification or fullS2 claim. Source/consumer code is unchanged after merging main5c20c92 into this branch. See artifacts/VPJ-07/saved-answer-guidance-20260913/verification.md.
@@ -128,7 +131,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Finish cleanup/current-head CI and guarded merge of PR357; then implement the independently pre-reviewed cancelled-work SQL+SSE projection repair under#264 with actual old-task Native/Web verification. Preserve interrupted/failed evidence. Maps#362-367 are already planned and merged by PR368 at acc75ec; after safe current-slice closure, use docs/agents/maps-integration-development.md to start#362 secure credential discovery and public synthetic probes, without duplicating tickets or production/funds actions. Evidence artifacts/VPJ-16/connectivity-ask-20260913/verification.md.
+Finish exact-head PR369 gates and protected merge. Then repair observed SavedAnswers revalidation blank viewport without extending evidence lifetime; maps #362 remains the one approved independent preparation queue. Keep #206/#264 and full S2 open.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

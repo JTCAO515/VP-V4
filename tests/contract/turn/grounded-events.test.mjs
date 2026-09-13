@@ -19,3 +19,19 @@ test('invalid ownership envelope, cursor and terminal combinations cannot be enc
  assert.throws(()=>groundedEventFrames(snapshot(),id,1));
  assert.throws(()=>groundedEventFrames(snapshot([]),id,3));
 });
+
+test('unfinished cancelled and failed work ends replay without inventing a terminal event or cursor',()=>{
+ for(const status of ['cancelled','failed']){
+  const value={...turn,status,outcome:null,output:null,result:{projection:'pending',completedAt:null,intent:null,requestScope:null,originalOutcome:null,knowledge:null}};
+  for(const after of [0,1]){
+   const result=groundedEventFrames({...snapshot(after?[]:[accepted],value),lastSequence:1},id,after);
+   assert.equal(result.terminal,true);assert.equal(result.cursor,1);assert.match(result.text,/event: projection/);
+   assert.ok(!result.text.includes('heartbeat'));assert.ok(!result.text.includes('"type":"terminal"'));
+   const frame=result.text.split('event: projection\ndata: ')[1];assert.deepEqual(JSON.parse(frame),{schemaVersion:'grounded-events/1',turnId:id,afterSequence:1,turn:value});
+  }
+  for(const patch of [{status:'completed'},{output:'invented'},{outcome:'answered'},...['completedAt','intent','requestScope','originalOutcome','knowledge'].map(key=>({result:{...value.result,[key]:'invented'}})),{result:{...value.result,projection:'current'}}]){
+   assert.throws(()=>groundedEventFrames({...snapshot([accepted],{...value,...patch}),lastSequence:1},id,0));
+  }
+  assert.throws(()=>groundedEventFrames(snapshot([accepted,terminal],value),id,0));
+ }
+});
