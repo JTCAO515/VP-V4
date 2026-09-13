@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 PR374 runtime2f76642/v7: isolated regression stopped after46calls/45fully matched (26place+19legacy). Case46 needs-meta-output-zh model valid/completed; normal history fetch TypeError. DB-only inspection matches expected unsupported/unknown/blocked, not API acceptance.86unrun. Cleanup recovery PASS:4own publications revoked, reader/Ops/members closed,405attempts0unresolved,WAF92 restored. Native34785363426 attempt2 on b82c8da PASS; Quality/Budget PASS. No live model/controller. Maps PR372 sole prep lane.
+状态：S2 PR374: frozen runtime2f76642/v7/APIe19 legacy continuation RUNNING session73158, cache place-v7-legacy-continuation-20260914; recover existing case46 via API GET/no model, then only86remaining exact legacy cases. Reader-only,Ops/members off. Prior isolated46calls/45fully matched and cleanup PASS preserved at359d6f2. New-head Quality/Budget PASS; Native34788077423 still running. MapsPR372 sole prep.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -142,7 +142,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Preserve artifacts/VPJ-16/place-v7-isolated-20260914 failed controller and successful cleanup. Prepare bounded continuation of only86remaining frozen legacy cases on runtime2f76642/APIe19; recover case46 by normal API GET without a model reroll. Keep26place/19legacy valid evidence. Existing budgetexpiry2026-09-13T23:26:03.470Z remains; do not bypass expiry, add amount, or restart old controllers37021/95888/96440/43991. No Production release. Push final evidence and require new-head CI before ordinary merge; no full S2 acceptance claim.
+Follow live73158 place-run.json/log; never restart it or prior controllers.65min cap from2026-09-13T22:57:57.122Z,86new calls max, same frozenworker2f/APIe19. Existing budget expiry-only renewal before activation to2026-09-14T00:26:40.762Z preserves two70CNYlimits/history/providerlimits; no active renewal. Preserve recoveryGET outcome, first failure and final usage/reader/WAFcleanup. Cache final-accounting.py guarded byfinishedAt. Hold plan/evidence push while Native34788077423 runs, then batch and require final-head CI. No Production release/full S2 claim.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

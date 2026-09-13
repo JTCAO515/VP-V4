@@ -1,0 +1,51 @@
+{
+  "scopes": [
+    {
+      "id": "18049e34-eae0-4877-bd84-08978b298aab",
+      "frozen": false,
+      "enabled": true,
+      "currency": "CNY",
+      "owner_id": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+      "created_at": "2026-09-11T19:31:33.517479+00:00",
+      "expires_at": "2026-09-13T23:26:03.47+00:00",
+      "limit_micros": 70000000,
+      "concurrency_limit": 1,
+      "task_limit_micros": 21000000,
+      "task_attempt_limit": 3
+    },
+    {
+      "id": "3ed90d4d-11d4-4693-8c6d-fa1eb0bfdc6e",
+      "frozen": false,
+      "enabled": true,
+      "currency": "CNY",
+      "owner_id": "fe70fac7-d312-494c-bde1-4c37c3942722",
+      "created_at": "2026-09-11T19:31:33.517479+00:00",
+      "expires_at": "2026-09-13T23:26:03.47+00:00",
+      "limit_micros": 70000000,
+      "concurrency_limit": 1,
+      "task_limit_micros": 21000000,
+      "task_attempt_limit": 3
+    }
+  ],
+  "providers": [
+    {
+      "model": "qwen3.7-plus-2026-05-26",
+      "enabled": true,
+      "provider": "qwen",
+      "scope_id": "18049e34-eae0-4877-bd84-08978b298aab",
+      "limit_micros": 70000000,
+      "price_version": "qwen-public-upper-20260912-v1",
+      "attempt_limit_micros": 7000000
+    },
+    {
+      "model": "qwen3.7-plus-2026-05-26",
+      "enabled": true,
+      "provider": "qwen",
+      "scope_id": "3ed90d4d-11d4-4693-8c6d-fa1eb0bfdc6e",
+      "limit_micros": 70000000,
+      "price_version": "qwen-public-upper-20260912-v1",
+      "attempt_limit_micros": 7000000
+    }
+  ],
+  "attempts": "6c7c56d80bbcb98f8d284e54928fc20d30e4833fa212b6e3abf51683255462e7"
+}
