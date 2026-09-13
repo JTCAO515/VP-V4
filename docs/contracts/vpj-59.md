@@ -71,3 +71,41 @@ operator identity and deployed scheduling remain separately gated.
 Migration37 resolves an associated old-worker Turn ID or a ServiceTask ID to the same task before applying the existing cost arithmetic. It pins the first successfully reserved budget scope atomically; denial does not pin, release does not clear, and a different scope rejects. Unassociated legacy Turns retain their original budgets. Identity locks prevent Task/Turn UUID collisions, and bound threads reject legacy unassociated appends. The underlying unbound function is private and has no direct worker/client execute grant.
 
 The 2026-09-12 two-language real provider run observed four settled attempts under two tasks, with no unknown hold and no duplicate dispatch from exact replay. Multi-worker crash/timeout/stop adversarial evidence remains the actual controlled PostgreSQL/transport suite, not a claim of a real supplier outage. Record-only supports no user consumption or invoice truth; #227 owns later commercial policy.
+
+## Validated usage journal and explicit Staging reconciliation
+
+The dedicated one-shot and service workers now fsync a closed
+`vpj07-usage-journal/1` record after protocol/model/usage validation and trusted
+integer pricing, before their existing SQL settlement. The nested
+`validated-model-usage/1` receipt binds the original attempt, Turn, owner, scope,
+policy, pinned model/price, reservation and normalized usage. It contains no input,
+answer, evidence text, credentials or supplier invoice claim. The worker's supplied
+Turn ID is resolved to its existing ServiceTask by the unchanged reserve RPC.
+
+If journaling or settlement is interrupted, the original hold remains. Missing,
+invalid or unpriceable usage produces no validated receipt and is never reconstructed.
+A later caller timeout cannot replace an earlier cancellation cause while the
+pending-cost write drains; both paths still retain the unknown hold.
+
+An explicit trusted operator may run `lib/server/jobs/reconcile-staging-text-usage.mjs`
+with `VISEPANDA_STAGING_USAGE_RECONCILE=true`, the existing worker credential, and
+`--config <original-job-or-service-file> --journal <original-journal> --receipts <new-file>`.
+It accepts the exact configuration digest, private regular files owned by the current
+OS user, and the matching ordinary/thinking/service journal version. An expired
+service configuration can reconcile already incurred usage; it cannot start new work.
+All complete records are validated before any settlement I/O. A torn final append is ignored,
+never repaired into invented usage. Conflicting records stop the run.
+
+The command performs only `finish_model_budget(..., 'settle', observedMicros)` against
+the fixed Staging project. Exact repeat acknowledgements are successful; a lost
+acknowledgement can safely be replayed. Different settled costs are never overwritten,
+unknown attempts never released, overrun freezing remains authoritative in SQL,
+and ordinary-user grants are unchanged. Recovery never reserves or dispatches,
+invokes a model, restarts an answer, submits a Turn or changes a Trip.
+
+This is a trusted worker/operator evidence file, not a cryptographically signed
+supplier receipt or a new public upload surface. Keep it private and retain the
+original configuration and journal. A process lost before durable validated usage
+still needs authoritative usage evidence; no time-based refund exists. Restoring a
+budget attempt does not itself restore a lost answer or establish customer Ask/IAP
+consumption. Rollback removes the sink/command while preserving journals and ledger.

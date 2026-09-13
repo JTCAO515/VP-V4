@@ -1,0 +1,52 @@
+[
+  {
+    "file": "worker-security-initial.log.gz",
+    "originalBytes": 2775,
+    "originalSha256": "2165e199786c32d4e5b9fc72c7ce8c7129dac1ce4c509805d3a7ff068512ad53"
+  },
+  {
+    "file": "usage-security-final.log.gz",
+    "originalBytes": 551,
+    "originalSha256": "2f417e143dc952e3ce4b514b1b3229ae8c56f54553339f67d0df02ceacaaf62d"
+  },
+  {
+    "file": "cost-contract-final.log.gz",
+    "originalBytes": 1302,
+    "originalSha256": "3dcecb4b577937affa37d3af4a9b5a704e39278226c92cfe2268d99e619e394d"
+  },
+  {
+    "file": "budget-sql-initial.log.gz",
+    "originalBytes": 2360,
+    "originalSha256": "e8d3e6853efcf65c4b37efed718f870a31b4265078b3a8b4bd5a2e35759794ea"
+  },
+  {
+    "file": "budget-sql-final.log.gz",
+    "originalBytes": 3538,
+    "originalSha256": "1332a501a23fe45f8b67e11b673f85911b7d3cd432995cdc6e0a7002b85c18f8"
+  },
+  {
+    "file": "budget-sql-final-2.log.gz",
+    "originalBytes": 1511,
+    "originalSha256": "c7dd5f042a481515ba6e8b8d2699dfb6636c5be41ac4d73d9bd5cc4f1510ffec"
+  },
+  {
+    "file": "typecheck-final-2.log.gz",
+    "originalBytes": 94,
+    "originalSha256": "a37850e425d977a71e7b312cee547676e9c53f49acfc8e58b8bf92524add53ed"
+  },
+  {
+    "file": "lint-initial.log.gz",
+    "originalBytes": 145,
+    "originalSha256": "52a90e5c94e4e4f412ee7bc887c3be62e7699a078235985056b1768e7985d3d7"
+  },
+  {
+    "file": "build.log.gz",
+    "originalBytes": 3693,
+    "originalSha256": "50e42ec4746ac0fb5cb292f449106b23a0da546d57b1f843643b8c918fcba78e"
+  },
+  {
+    "file": "docs.log.gz",
+    "originalBytes": 253,
+    "originalSha256": "88cf2090b459147ffafb3cffdd3bf1e35fe74f3470477da1b1f7af2cecc1e858"
+  }
+]

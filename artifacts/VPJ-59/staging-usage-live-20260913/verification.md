@@ -1,0 +1,15 @@
+# Real Staging validated usage recovery
+
+Runtime: frozen worker/reconciliation source5b5f72c; API/native2717bf9 on exact nonproduction Preview dpl_Hm8aLRK8V6JAqPg4zrkAX4p2mSPs, existing Staging42. Native Simulator uses the previously verified build. Provider is the configured Qwen endpoint/model; no synthetic provider response is used here.
+
+Fault injection is explicit: a test-only filesystem preload pauses the service immediately after the real usage journal fsync and before SQL settlement. It does not alter provider response/usage/pricing/ledger. A separate observer checks the same original attempt, then SIGKILLs only the owned service. This is a controlled process fault, not an observed supplier outage.
+
+Observed: one native request admitted with zero initial budget attempts; one real provider invocation; validated usage journal durable; original attempt remained dispatched with7000000micros reserved and actual cost unknown; no terminal event. SIGKILL confirmed at2026-09-13T01:01:02.006Z. Receipt records4308CNYmicros at the existing conservative tariff, not an invoice or customer charge.
+
+PASS: unmodified selected-version recovery CLI settled the original attempt once; a fresh invocation reading the same private journal returned already_settled. Both recovery processes had no provider credential and the command only permits the existing finish_model_budget endpoint. Follow-up SQL confirmed the same single attempt settled4308micros, with the original Task/Turn still accepted and no terminal event. No additional worker/provider was started.
+
+Observed blocker: two native cancellation interactions did not establish server cancellation. Normal owner authentication through credentials/login succeeded, but the same native v1 cancellation endpoint returned503 PROVIDER_UNAVAILABLE; API logout then returned200. The endpoint selects legacy text configuration while the exact Preview enables grounded-only mode. Native disclosure/scroll reset and AX timing observations are retained without claiming they caused the server503. Cancellation and empty-worker acceptance are NOT_RUN/PENDING; one accepted task is deliberately retained for the immediate follow-up fix. Keep both controlled owners' workers stopped until that task is cancelled or explicitly resumed.
+
+Cleanup PASS: reader/Ops disabled,0active members, WAF36→37→38 with only the owned Preview exception added/removed and production target unchanged; owned process SIGKILL confirmed, API recovery session logged out and owned Simulator deleted. Final Staging42/users6/Trips3 unchanged;74controlled Turns and74attempts,342228CNYmicros total,0unresolved holds. The one original accepted task remains for the cancellation fix; no completed-answer/cancel/empty-worker claim.
+
+This recovers only complete validated usage already fsynced. It does not recover the lost answer or usage absent before durable recording, prove a supplier invoice/customer charge, complete native cancellation or full#195/#196/S2, or release production. No new migration, budget setting, model price or permission grant. Earlier local SQL/security evidence remains in the adjacent reconciliation artifact.

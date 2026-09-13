@@ -49,7 +49,10 @@ export async function runWithDurableBudget<T>(
   let timedOut = false;
   const abort = () => controller.abort();
   signal.addEventListener("abort", abort, { once: true });
-  const timer = setTimeout(() => { timedOut = true; controller.abort(); }, attempt.timeoutMs);
+  const timer = setTimeout(() => {
+    // Preserve an earlier caller cancellation while its pending-cost write drains.
+    if (!controller.signal.aborted) { timedOut = true; controller.abort(); }
+  }, attempt.timeoutMs);
   let onAbort: () => void = () => {};
   const interrupted = new Promise<{ kind: "interrupted" }>((resolve) => {
     onAbort = () => resolve({ kind: "interrupted" });

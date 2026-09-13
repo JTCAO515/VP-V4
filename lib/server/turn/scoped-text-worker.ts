@@ -36,6 +36,7 @@ export function createScopedTextWorker(config: ScopedTextWorkerConfig, dependenc
       || !validThinkingBudget(dependencies.provider.thinkingBudgetTokens, config.budget.maxOutputTokens)))
     || typeof dependencies.provider.endpoint !== "string" || !/^https:\/\/[^/?#@]+\/[^?#]*$/.test(dependencies.provider.endpoint)
     || typeof dependencies.provider.price !== "function" || typeof dependencies.provider.transport !== "function"
+    || (dependencies.provider.recordUsage !== undefined && typeof dependencies.provider.recordUsage !== "function")
     || (dependencies.fetch !== undefined && typeof dependencies.fetch !== "function")) throw unavailable();
   const binding = Object.freeze({ ...config, budget: Object.freeze({ ...config.budget }) });
   const provider = Object.freeze({ ...dependencies.provider });

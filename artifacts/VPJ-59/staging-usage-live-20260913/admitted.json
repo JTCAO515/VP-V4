@@ -1,0 +1,17 @@
+{
+  "at": "2026-09-13T00:59:47.240Z",
+  "phase": "admitted",
+  "turnId": "6069d41c-40eb-456c-99a1-970aaa69ad7d",
+  "taskId": "a8a2c345-fb24-41b1-a367-8e2a0d2b3ee2",
+  "status": "accepted",
+  "outcome": null,
+  "attempts": [],
+  "events": [
+    {
+      "eventId": "accepted",
+      "sequence": 1,
+      "type": "accepted",
+      "state": "accepted"
+    }
+  ]
+}
