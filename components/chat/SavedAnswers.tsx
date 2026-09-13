@@ -15,13 +15,18 @@ export function SavedAnswers({ locale }: { locale: "zh" | "en" }) {
     const auth = createPasswordAuthClient();
     let alive = true, generation = 0, owner: string | null = null;
     let controller: AbortController | undefined, expiry: ReturnType<typeof setTimeout> | undefined;
+    let earlyRefresh: ReturnType<typeof setTimeout> | undefined, validUntil = 0;
     function invalidate(clear = false) {
-      generation++; controller?.abort(); clearTimeout(expiry);
+      generation++; controller?.abort(); clearTimeout(expiry); clearTimeout(earlyRefresh); validUntil = 0;
       if (alive) { setState("checking"); if (clear) setHistory(null); }
     }
-    async function load() {
-      invalidate();
-      if (!alive || document.visibilityState !== "visible" || !navigator.onLine || !auth) return;
+    async function load(keepCurrent = false) {
+      // A refresh may retain only the current owner's still-valid answer. Keep
+      // its hard expiry armed until a complete authorized replacement arrives.
+      const retained = keepCurrent && performance.now() < validUntil;
+      if (retained) { generation++; controller?.abort(); clearTimeout(earlyRefresh); }
+      else invalidate();
+      if (!alive || document.visibilityState !== "visible" || !navigator.onLine || !auth) { invalidate(); return; }
       const revision = generation, started = performance.now();
       const requestController = new AbortController(); controller = requestController;
       const signal = requestController.signal, timeout = setTimeout(() => requestController.abort(), 10_000);
@@ -34,13 +39,19 @@ export function SavedAnswers({ locale }: { locale: "zh" | "en" }) {
         if (!response.ok) throw new Error("Read unavailable");
         const body: { data?: SavedHistory } = await response.json();
         const data = body.data;
-        const remaining = Math.min(30_000, data?.lifetimeMs ?? 0) - (performance.now() - started);
+        const deadline = started + Math.min(30_000, data?.lifetimeMs ?? 0);
+        const remaining = deadline - performance.now();
         if (!data || data.ownerId !== subject || !Array.isArray(data.turns) || data.turns.length > 20 || !Number.isFinite(remaining) || remaining <= 0) throw new Error("Invalid read");
         if (!alive || revision !== generation || signal.aborted || document.visibilityState !== "visible") return;
+        clearTimeout(expiry); clearTimeout(earlyRefresh);
+        validUntil = deadline;
         setHistory(data); setState("ready");
-        expiry = setTimeout(() => { invalidate(); void load(); }, remaining);
+        expiry = setTimeout(() => { invalidate(); void load(); }, Math.max(0, deadline - performance.now()));
+        // Short-lived reads get one refresh at their deadline, avoiding a tight
+        // request loop. Longer reads refresh five seconds before that deadline.
+        if (remaining > 5_000) earlyRefresh = setTimeout(() => void load(true), Math.max(1_000, remaining - 5_000));
       } catch {
-        if (alive && revision === generation) { setHistory(null); setState("unavailable"); }
+        if (alive && revision === generation) { invalidate(true); setState("unavailable"); }
       } finally { clearTimeout(timeout); }
     }
     const visibility = () => { invalidate(); if (document.visibilityState === "visible") void load(); };

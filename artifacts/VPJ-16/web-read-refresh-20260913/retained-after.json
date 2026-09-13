@@ -1,0 +1,16 @@
+{
+  "at": "2026-09-13T15:52:50.647Z",
+  "value": {
+    "turns": 207,
+    "attempts": 207,
+    "actualMicros": 1549974,
+    "unresolved": 0,
+    "tripDigest": "8c1f808df30fc55ba7987001450d725d",
+    "turnDigest": "318c460dc6da7fbfac4aa35d7d58a71f",
+    "eventDigest": "7bb1d2f53cf55f22337d00808d5a3154",
+    "groundedDigest": "6676537a562518e0d1d39051a95e0803",
+    "budgetDigest": "94930cf180c8e77a734436cd3aaac0f5",
+    "workDigest": "b87d50bb2192be035e6c91f9e9d03a98"
+  },
+  "status": "PASS"
+}

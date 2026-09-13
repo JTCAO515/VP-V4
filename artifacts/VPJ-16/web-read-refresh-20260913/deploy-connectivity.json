@@ -1,0 +1,9 @@
+{
+  "status": "ok",
+  "deployment": {
+    "id": "dpl_EPnctYkGXsrLEqpGiKntxubWy1cM",
+    "url": "https://vp-v4-24uzu273x-jtcao515s-projects.vercel.app",
+    "readyState": "INITIALIZING",
+    "target": null
+  }
+}
