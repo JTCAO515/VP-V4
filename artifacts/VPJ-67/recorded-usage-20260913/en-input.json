@@ -1,0 +1,74 @@
+{
+  "schemaVersion": "vpj67-recorded-usage-input/1",
+  "recordedAt": "2026-09-13T04:39:37.372Z",
+  "apiSha": "d15baf7a94a4740e6c2a801bb5bd2d58e3fd3059",
+  "workerSha": "d15baf7a94a4740e6c2a801bb5bd2d58e3fd3059",
+  "configurationDigest": "ad6b472b9e5ad859c921639517ebf9c556c0030c16e8102ff20c2c6369beb4cd",
+  "prompt": {
+    "version": "vp-knowledge-intent-v3",
+    "digest": "4a3427e25de778c9fb7edaabb872ae7c02a26a24a6cf49869c0ccd129d442a7e"
+  },
+  "binding": {
+    "ownerId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+    "serviceTaskId": "d57d7a0e-b80e-41c0-bc2c-42af166e6e41",
+    "turnId": "f96139fd-98f7-4f2a-8ff7-e2a917bc7e6e",
+    "policyId": "6e1c3992-053e-434c-978b-8dca62f08f66"
+  },
+  "taskRecord": {
+    "id": "d57d7a0e-b80e-41c0-bc2c-42af166e6e41",
+    "ownerId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+    "policyId": "6e1c3992-053e-434c-978b-8dca62f08f66"
+  },
+  "turnLink": {
+    "turnId": "f96139fd-98f7-4f2a-8ff7-e2a917bc7e6e",
+    "taskId": "d57d7a0e-b80e-41c0-bc2c-42af166e6e41",
+    "ownerId": "fe70fac7-d312-494c-bde1-4c37c3942722"
+  },
+  "budgetScopes": [
+    {
+      "id": "3ed90d4d-11d4-4693-8c6d-fa1eb0bfdc6e",
+      "ownerId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+      "currency": "CNY"
+    }
+  ],
+  "attempts": [
+    {
+      "attemptId": "b26fa0ab-120e-421e-a79c-2f1855957f6d",
+      "scopeId": "3ed90d4d-11d4-4693-8c6d-fa1eb0bfdc6e",
+      "ledgerTaskId": "d57d7a0e-b80e-41c0-bc2c-42af166e6e41",
+      "status": "settled",
+      "actualMicros": 6972,
+      "provider": "qwen",
+      "model": "qwen3.7-plus-2026-05-26",
+      "priceVersion": "qwen-public-upper-20260912-v1",
+      "reservedMicros": 7000000,
+      "usageReceipt": {
+        "schemaVersion": "validated-model-usage/1",
+        "turnId": "f96139fd-98f7-4f2a-8ff7-e2a917bc7e6e",
+        "policyId": "6e1c3992-053e-434c-978b-8dca62f08f66",
+        "attempt": {
+          "scopeId": "3ed90d4d-11d4-4693-8c6d-fa1eb0bfdc6e",
+          "ownerId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+          "taskId": "f96139fd-98f7-4f2a-8ff7-e2a917bc7e6e",
+          "attemptId": "b26fa0ab-120e-421e-a79c-2f1855957f6d",
+          "provider": "qwen",
+          "model": "qwen3.7-plus-2026-05-26",
+          "priceVersion": "qwen-public-upper-20260912-v1",
+          "reservedMicros": 7000000,
+          "timeoutMs": 60000
+        },
+        "usage": {
+          "inputTokens": 1110,
+          "outputTokens": 13,
+          "totalTokens": 1123,
+          "cachedInputTokens": 0,
+          "uncachedInputTokens": null,
+          "reasoningTokens": null,
+          "cost": "unknown"
+        },
+        "actualMicros": 6972,
+        "observedAt": "2026-09-13T03:57:25.347Z"
+      }
+    }
+  ]
+}

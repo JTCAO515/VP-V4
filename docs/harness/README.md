@@ -6,6 +6,8 @@
 
 离线种子的运行方式、复用接缝和未接通边界见 [VPJ-66 离线种子](OFFLINE-SEEDS.md)；运行证据见 [结果](../../artifacts/VPJ-66/results.json)。真实服务验收仍按下述阶段门。
 
+#264 的[历史真实 usage 回执关联工具](../../evals/harness/recorded/README.md)只验证已记录的 ServiceTask/Turn/owner/policy/attempt 与账本、usage 是否一致。`recorded-staging` 不代表新运行、当前授权或知识/客户端验收，不改变原12案例的 fixture/NOT_RUN 状态。
+
 ## 1. 目标与停点
 
 2026-09-10 [品牌工程增量](../research/VISEPANDA-BRAND-ENGINEERING-ADJUSTMENTS-2026-09-10.md)补充：在既有场景中验证Free基础跨Trip偏好、ServiceTask必要澄清/修复不重复消费，以及有用、直接、中英一致的输出。相关契约见[偏好](../contracts/basic-preferences-cross-trip.md)、[计量](../contracts/service-task-metering.md)、[响应](../contracts/vp-response-policy.md)。原12场景、已完成离线准备和真实运行门保持；新增收费数值、partial/TTL/激活不自行补成决定。

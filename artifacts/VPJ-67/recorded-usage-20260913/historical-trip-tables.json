@@ -1,0 +1,169 @@
+{
+  "at": "2026-09-13T04:15:21.436Z",
+  "status": "PASS",
+  "scope": "10 actual Trip tables before migration/44 calls vs after cleanup; full original columns and row digests",
+  "tables": [
+    {
+      "count": 0,
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "schema": "public",
+      "columns": [
+        "id",
+        "trip_id",
+        "owner_id",
+        "action_kind",
+        "source_kind",
+        "action_status",
+        "label",
+        "external_link_url",
+        "created_at"
+      ],
+      "table_name": "trip_action_references",
+      "missingColumns": 0
+    },
+    {
+      "count": 2,
+      "digest": "63025d3ca05454401e2fcda0b7309fc529d709e11411cb2b7b8defb71de3084e",
+      "schema": "public",
+      "columns": [
+        "id",
+        "owner_id",
+        "action",
+        "trip_id",
+        "proposal_id",
+        "created_at"
+      ],
+      "table_name": "trip_audit_events",
+      "missingColumns": 0
+    },
+    {
+      "count": 1,
+      "digest": "cfb50f062ea67a11100ee955f11db8b4a76724b076e3e3fc8b8cee3f6eee05f4",
+      "schema": "public",
+      "columns": [
+        "trip_id",
+        "owner_id",
+        "day_id",
+        "trip_date",
+        "time_zone"
+      ],
+      "table_name": "trip_days",
+      "missingColumns": 0
+    },
+    {
+      "count": 2,
+      "digest": "d28b057a99c44498f26119dd6bec3b61f92d721a4ab412c709ddb3b8fbe990fa",
+      "schema": "public",
+      "columns": [
+        "id",
+        "trip_id",
+        "owner_id",
+        "resulting_version",
+        "proposal_id",
+        "event_type",
+        "created_at"
+      ],
+      "table_name": "trip_events",
+      "missingColumns": 0
+    },
+    {
+      "count": 2,
+      "digest": "167aa91eb4ecdda8512842caff5382a2a78d2bb02c226d69f301333ec46dadc2",
+      "schema": "public",
+      "columns": [
+        "owner_id",
+        "idempotency_key",
+        "digest",
+        "outcome",
+        "resulting_version",
+        "created_at",
+        "proposal_id"
+      ],
+      "table_name": "trip_idempotency",
+      "missingColumns": 0
+    },
+    {
+      "count": 1,
+      "digest": "8e73e823ab079866f0485bd83f1e756d1f29fed0b33b283232bef2b8d5a4d83c",
+      "schema": "public",
+      "columns": [
+        "trip_id",
+        "day_id",
+        "owner_id",
+        "item_id",
+        "title",
+        "starts_at",
+        "ends_at"
+      ],
+      "table_name": "trip_items",
+      "missingColumns": 0
+    },
+    {
+      "count": 0,
+      "digest": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "schema": "public",
+      "columns": [
+        "id",
+        "trip_id",
+        "owner_id",
+        "reference_kind",
+        "canonical_poi_id",
+        "user_label",
+        "freshness",
+        "created_at"
+      ],
+      "table_name": "trip_place_references",
+      "missingColumns": 0
+    },
+    {
+      "count": 3,
+      "digest": "1348059bb6f1ec7c5ddace3930b8fbf4bb74eb840c318408c71b63bf2ac6ba04",
+      "schema": "public",
+      "columns": [
+        "id",
+        "owner_id",
+        "trip_id",
+        "revision",
+        "base_trip_version",
+        "status",
+        "patch",
+        "expires_at",
+        "created_at",
+        "parent_proposal_id",
+        "rollback_snapshot_version"
+      ],
+      "table_name": "trip_proposals",
+      "missingColumns": 0
+    },
+    {
+      "count": 4,
+      "digest": "5346e615f1af12cf7116694c9bdc64109b0aafbb18021196ab2af66ec947efb4",
+      "schema": "public",
+      "columns": [
+        "trip_id",
+        "owner_id",
+        "version",
+        "title",
+        "created_at",
+        "content"
+      ],
+      "table_name": "trip_version_snapshots",
+      "missingColumns": 0
+    },
+    {
+      "count": 3,
+      "digest": "c102c33d8c68836464933f3a2cc778d86d3a72bffa2ab3bb3c950c1719d65083",
+      "schema": "public",
+      "columns": [
+        "id",
+        "owner_id",
+        "head_version",
+        "title",
+        "created_at",
+        "updated_at"
+      ],
+      "table_name": "trips",
+      "missingColumns": 0
+    }
+  ]
+}
