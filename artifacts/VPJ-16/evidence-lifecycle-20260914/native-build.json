@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "sourceSha": "1218c76904cc6d085bf9cbd460dfe1babae594ea",
+  "runtimeEquivalentTo": "8e95279417a0a1147f7e81a5a857b0fbdb72d0de",
+  "environment": "Staging, ad-hoc Simulator build",
+  "origin": "https://vp-v4-jnrkin9gw-jtcao515s-projects.vercel.app",
+  "taskContext": "knowledge_intent_v1",
+  "codesignVerified": true,
+  "UI": "UNRUN"
+}
