@@ -1,0 +1,10 @@
+{
+  "wafVersion": 44,
+  "foreignDraft": false,
+  "ownedHostRemoved": true,
+  "readerOff": true,
+  "opsOff": true,
+  "members": 0,
+  "noWorkerStarted": true,
+  "noProviderCalls": true
+}

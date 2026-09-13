@@ -20,6 +20,14 @@ The native recheck notice moves to the viewport overlay. Existing evidence opaci
 
 The real local Auth/HTTP/SQL and bilingual SwiftUI suite uses a loopback-only history-read delay gate. It holds the existing history request across its real deadline, checks that facts disappear and the notice lies in the visible viewport, then releases the unchanged request and checks the same reading position. Synthetic local model only; no Staging provider call.
 
-Validation and final-version Staging observations are appended after execution. Original baseline/failure evidence is retained.
+Validation PASS on native source `a7ec7b1c159b868944f31f9eb9f1d2cbc1917196`: build, real local event/HTTP/SQL test 1/1, bilingual actual SwiftUI tests 2/2, JS syntax and docs checks. The local fixture made four synthetic model requests, with three completed tasks and one cancelled; this is not a real-provider result. Exported English/Chinese expiry-notice attachments were visually inspected. Xcode reported a nonfatal diagnostics-collection `simctl` lookup warning after all tests passed; full logs and xcresult are retained.
+
+Final native Staging build uses the same unchanged API/Web a9c8b57 Preview. Normal English login/read observed factual AX content disappear, the new notice at viewport y=132, and factual content return after revalidation. `fixed-staging/en-rechecking.png` was visually inspected. Chinese normal login and repeated fact readback passed; its brief expiry notice was NOT CAPTURED in the 72-second sampling window, so no Chinese real-expiry-visual claim is made. Both languages' deterministic visibility/scroll tests above passed.
+
+Final cleanup completed at 02:21:58Z: both native owners logged out, only owned Simulator deleted, reader/Ops false, zero active members, WAF 42→43→44 and only the owned Preview host removed. Final SQL snapshot at 02:22:03Z remains exactly 74 Turns/74 attempts/342228 CNY micros/0 unresolved, users6/Trips3/migrations42. Zero new Staging model calls across both windows.
+
+Retained setup/rework: first fresh AX lookup failed; invalid AXe tap flag corrected before a tap; fast scrolling snapshots were not treated as simultaneous visuals; post-XCTest AX discovery required owned-Simulator restart; first fixed-build install used an unresolved relative parent and stopped before install, then absolute path was verified. A direct diagnostic missing command-scoped DEVELOPER_DIR failed without changing global Xcode selection. These do not become runtime PASS evidence.
+
+Initial PR350 head94e1683 Quality34732450114, Budget34732450097 and Vercel Preview passed. Final evidence commit and native/required CI delivery are still pending at this documentation snapshot. No production release. Rollback is to revert the viewport-notice source change; evidence eligibility and applied migrations are unchanged.
 
 Private raw logs, full screenshots and build/xcresult files: `/Users/jtcao/Library/Caches/visepanda/native-five-outcomes-20260913`. Credentials are excluded from committed artifacts.
