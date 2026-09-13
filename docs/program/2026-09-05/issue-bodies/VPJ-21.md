@@ -18,6 +18,7 @@
 - [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198)
 - [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206)
 - [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209)
+- [VPJ-74 #358](https://github.com/JTCAO515/VP-V4/issues/358)
 
 ## Acceptance criteria
 
@@ -25,6 +26,8 @@
 - [ ] 日期从相对变精确时重核相关证据；建议不改用户计划，未知不当通过。
 - [ ] 每个缺口一项可操作下一步与依据/适用范围；非适用项目不制造焦虑。
 - [ ] 准备检查以可执行下一步呈现：获准资料、核实入口、条件性候选与修改提案分开；不要把review_fact标签或提示文字作为真实问题已解决。
+- [ ] 知识升级：用版本化Ontology对象/关系/条件和获准用户状态计算knowledgeAvailability/userReadiness/actionTiming；相同证据下unknown/满足/不满足/不适用/未到时间均有中英原生实际结果，未知不能当false或已准备。
+- [ ] 知识升级：每个可做下一步绑定task/trip scope及evidence/rule versions；需改Trip时复用Proposal/diff/exact-version确认/原子Patch，拒绝、撤权、旧版本和重试无误写，原生与同Trip Web重载一致。
 
 ## 不得触碰
 

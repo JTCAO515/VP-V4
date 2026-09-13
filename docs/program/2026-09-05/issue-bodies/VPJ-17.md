@@ -18,12 +18,15 @@
 - [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192)
 - [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204)
 - [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206)
+- [VPJ-75 #359](https://github.com/JTCAO515/VP-V4/issues/359)
 
 ## Acceptance criteria
 
 - [ ] SourceRevision→影响候选→独立复核→outbox→索引/投影ack可重试；不是仅返回cascade意图。
 - [ ] TripItemSupport绑定claim版本，旧证据失效不删除用户已确认意图。
 - [ ] 404/页面样式变动不当政策反转；撤权立即停新检索/外发，保留允许的审计。
+- [ ] 知识升级：来源变化生成有版本的影响集，覆盖Wiki页面、statement、检索索引/缓存、历史答案和TripItemSupport；outbox逐消费者ack可重试，记录延迟/乱序/失败与恢复，删除旧索引未完成时当前资格gate仍阻止失效知识外发。
+- [ ] 知识升级：规范化缺口与来源更新只进入有界Wiki草稿/复核任务，区分资料变动、解析差异、404和真正政策反转；记录每次刷新成本/unknown及受影响知识数，不收集私人对话原文、不无限自动抓取或自动发布。
 
 ## 不得触碰
 

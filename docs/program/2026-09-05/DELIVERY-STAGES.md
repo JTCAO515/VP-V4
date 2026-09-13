@@ -51,7 +51,10 @@
 | [#204](https://github.com/JTCAO515/VP-V4/issues/204) · VPJ-14 | 受保护 Ops 登录与一条候选内容工作流 |
 | [#205](https://github.com/JTCAO515/VP-V4/issues/205) · VPJ-15 | 首批旅程内容从来源登记到已审核可用 |
 | [#206](https://github.com/JTCAO515/VP-V4/issues/206) · VPJ-16 | 有依据的回答、诚实部分答案与知识缺口 |
+| [#358](https://github.com/JTCAO515/VP-V4/issues/358) · VPJ-74 | 运营可追溯查看来源版本、原文与知识本体关系 |
+| [#359](https://github.com/JTCAO515/VP-V4/issues/359) · VPJ-75 | 新来源经LLM Wiki整理为可审查并可发布的知识变更 |
 | [#231](https://github.com/JTCAO515/VP-V4/issues/231) · VPJ-63 | 登录、Ask 与 Trip 的境内外网络首轮探针 |
+| [#360](https://github.com/JTCAO515/VP-V4/issues/360) · VPJ-76 | Ask检索已发布Wiki与原子声明并返回完整证据和具体缺口 |
 | [#263](https://github.com/JTCAO515/VP-V4/issues/263) · VPJ-66 | Harness：两条离线旅行任务可运行、判分并定位失败 |
 | [#264](https://github.com/JTCAO515/VP-V4/issues/264) · VPJ-67 | Harness：真实只读问答产生有依据的结果与回执 |
 | [#287](https://github.com/JTCAO515/VP-V4/issues/287) · VPJ-72 | 中英回答离线内容判分与可导入反馈的盲评包 |
