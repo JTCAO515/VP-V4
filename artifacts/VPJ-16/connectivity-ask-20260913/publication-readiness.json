@@ -1,0 +1,63 @@
+{
+  "observedAt": "2026-09-13T07:50:37.536Z",
+  "rows": [
+    {
+      "scope": {
+        "scene": "connectivity",
+        "cities": [
+          "shanghai",
+          "beijing",
+          "guangzhou",
+          "chongqing"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "state": "published",
+      "factId": "b1556c6f-f791-4a00-85cb-868fdcadc2fe",
+      "assertion": {
+        "objectId": "passport_or_foreign_permanent_resident_id",
+        "predicate": "requires_document",
+        "subjectId": "china_carrier_sim_application",
+        "conditions": [
+          "mainland_guidance",
+          "current_operator_check",
+          "branch_device_plan_check"
+        ],
+        "exclusions": [
+          "no_esim_or_unrestricted_internet",
+          "no_instant_all_branch_fixed_tariff"
+        ]
+      },
+      "expiresAt": "2026-09-19T11:01:51.337+00:00"
+    },
+    {
+      "scope": {
+        "scene": "connectivity",
+        "cities": [
+          "shanghai",
+          "beijing",
+          "guangzhou",
+          "chongqing"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "state": "published",
+      "factId": "b0c29421-59fc-4d77-b4b2-581fc7b1e1e0",
+      "assertion": {
+        "objectId": "plan_allowance_check",
+        "predicate": "requires_action",
+        "subjectId": "china_carrier_sim_application",
+        "conditions": [
+          "mainland_guidance",
+          "current_operator_check",
+          "branch_device_plan_check"
+        ],
+        "exclusions": [
+          "no_esim_or_unrestricted_internet",
+          "no_instant_all_branch_fixed_tariff"
+        ]
+      },
+      "expiresAt": "2026-09-19T11:01:51.337+00:00"
+    }
+  ]
+}

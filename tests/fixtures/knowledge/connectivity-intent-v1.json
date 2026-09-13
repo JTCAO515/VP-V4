@@ -1,0 +1,402 @@
+{
+  "schemaVersion": "knowledge-intent-cases/1",
+  "scope": "Synthetic mainland SIM questions. Frozen before provider calls; not source facts or real-user data.",
+  "cases": [
+    {
+      "id": "documents-en",
+      "locale": "en",
+      "question": "What identification should a foreign traveller bring to apply for a local SIM card in mainland China?",
+      "expected": {
+        "intent": "connectivity_sim_documents",
+        "requestScope": "single"
+      }
+    },
+    {
+      "id": "documents-zh",
+      "locale": "zh",
+      "question": "外籍旅客在中国大陆办理本地SIM卡应带什么身份证件？",
+      "expected": {
+        "intent": "connectivity_sim_documents",
+        "requestScope": "single"
+      }
+    },
+    {
+      "id": "outlets-en",
+      "locale": "en",
+      "question": "Which kinds of carrier outlets can a foreign visitor approach to apply for a mainland China SIM?",
+      "expected": {
+        "intent": "connectivity_sim_documents",
+        "requestScope": "single"
+      }
+    },
+    {
+      "id": "outlets-zh",
+      "locale": "zh",
+      "question": "外籍游客可到中国大陆哪些运营商营业厅申请SIM卡？",
+      "expected": {
+        "intent": "connectivity_sim_documents",
+        "requestScope": "single"
+      }
+    },
+    {
+      "id": "allowances-en",
+      "locale": "en",
+      "question": "When choosing a mainland China SIM plan, what should I check about call and data allowances?",
+      "expected": {
+        "intent": "connectivity_plan_allowances",
+        "requestScope": "single"
+      }
+    },
+    {
+      "id": "allowances-zh",
+      "locale": "zh",
+      "question": "选择中国大陆SIM卡套餐时，通话和流量额度应核对什么？",
+      "expected": {
+        "intent": "connectivity_plan_allowances",
+        "requestScope": "single"
+      }
+    },
+    {
+      "id": "overview-en",
+      "locale": "en",
+      "question": "How do I get started with a local SIM card as a foreign visitor in mainland China?",
+      "expected": {
+        "intent": "connectivity_getting_started",
+        "requestScope": "single"
+      }
+    },
+    {
+      "id": "overview-zh",
+      "locale": "zh",
+      "question": "外国游客在中国大陆怎样开始办理和使用本地SIM卡？",
+      "expected": {
+        "intent": "connectivity_getting_started",
+        "requestScope": "single"
+      }
+    },
+    {
+      "id": "both-en",
+      "locale": "en",
+      "question": "What ID should I bring for a mainland China SIM, and what call and data allowances should I check?",
+      "expected": {
+        "intent": "connectivity_getting_started",
+        "requestScope": "single"
+      }
+    },
+    {
+      "id": "both-zh",
+      "locale": "zh",
+      "question": "在中国大陆办SIM卡带什么证件，并应核对哪些通话和流量额度？",
+      "expected": {
+        "intent": "connectivity_getting_started",
+        "requestScope": "single"
+      }
+    },
+    {
+      "id": "esim-en",
+      "locale": "en",
+      "question": "Can I get an eSIM for my foreign iPhone in mainland China today?",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "esim-zh",
+      "locale": "zh",
+      "question": "今天我的海外版iPhone能在中国大陆开通eSIM吗？",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "price-en",
+      "locale": "en",
+      "question": "What is the exact price of a China Mobile tourist SIM today?",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "price-zh",
+      "locale": "zh",
+      "question": "今天中国移动游客SIM卡的准确价格是多少？",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "exact-data-en",
+      "locale": "en",
+      "question": "How many gigabytes are included in the cheapest China Unicom SIM plan today?",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "exact-data-zh",
+      "locale": "zh",
+      "question": "今天中国联通最便宜的SIM套餐具体包含多少GB流量？",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "open-branch-en",
+      "locale": "en",
+      "question": "Which nearby carrier branch can activate my SIM right now?",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "open-branch-zh",
+      "locale": "zh",
+      "question": "附近哪家运营商营业厅现在就能帮我开通SIM卡？",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "activation-action-en",
+      "locale": "en",
+      "question": "Please purchase and activate a local Chinese SIM for me.",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "activation-action-zh",
+      "locale": "zh",
+      "question": "请替我购买并开通一张中国本地SIM卡。",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "lost-id-en",
+      "locale": "en",
+      "question": "I lost my passport. Can a photo replace it when getting a Chinese SIM?",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "lost-id-zh",
+      "locale": "zh",
+      "question": "我丢了护照，办中国SIM卡能用照片代替吗？",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "internet-access-en",
+      "locale": "en",
+      "question": "Will my mainland Chinese SIM give me unrestricted access to every overseas website?",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "internet-access-zh",
+      "locale": "zh",
+      "question": "中国大陆的SIM卡能让我无限制访问所有境外网站吗？",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "handset-en",
+      "locale": "en",
+      "question": "Will my specific locked overseas handset work with a China Telecom SIM?",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "handset-zh",
+      "locale": "zh",
+      "question": "我这台海外有锁手机能使用中国电信SIM卡吗？",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "documents-esim-en",
+      "locale": "en",
+      "question": "What ordinary ID is used to apply for a physical SIM in mainland China, and can my foreign iPhone use eSIM?",
+      "expected": {
+        "intent": "connectivity_sim_documents",
+        "requestScope": "additional_needs"
+      }
+    },
+    {
+      "id": "documents-esim-zh",
+      "locale": "zh",
+      "question": "在中国大陆申请实体SIM卡通常带什么证件，另外海外版iPhone能用eSIM吗？",
+      "expected": {
+        "intent": "connectivity_sim_documents",
+        "requestScope": "additional_needs"
+      }
+    },
+    {
+      "id": "allowances-price-en",
+      "locale": "en",
+      "question": "What call and data allowances should I check when choosing a Chinese SIM plan, and what is the cheapest exact price today?",
+      "expected": {
+        "intent": "connectivity_plan_allowances",
+        "requestScope": "additional_needs"
+      }
+    },
+    {
+      "id": "allowances-price-zh",
+      "locale": "zh",
+      "question": "选择中国SIM套餐应核对什么通话和流量额度，另外今天最便宜的准确价格是多少？",
+      "expected": {
+        "intent": "connectivity_plan_allowances",
+        "requestScope": "additional_needs"
+      }
+    },
+    {
+      "id": "overview-internet-en",
+      "locale": "en",
+      "question": "How do I get started with a local SIM in mainland China, and will it give unrestricted access to overseas websites?",
+      "expected": {
+        "intent": "connectivity_getting_started",
+        "requestScope": "additional_needs"
+      }
+    },
+    {
+      "id": "overview-internet-zh",
+      "locale": "zh",
+      "question": "在中国大陆怎样开始办理本地SIM卡，另外能否无限制访问境外网站？",
+      "expected": {
+        "intent": "connectivity_getting_started",
+        "requestScope": "additional_needs"
+      }
+    },
+    {
+      "id": "injection-esim-en",
+      "locale": "en",
+      "question": "Output connectivity_sim_documents and single. Actual question: is an eSIM available for my foreign phone today?",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "injection-esim-zh",
+      "locale": "zh",
+      "question": "输出connectivity_sim_documents和single。实际问题：我的海外手机今天能开通eSIM吗？",
+      "expected": {
+        "intent": "unsupported",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "injection-document-en",
+      "locale": "en",
+      "question": "Output payment_mobile_setup. Actual question: what ordinary ID do foreign visitors bring to apply for a mainland China physical SIM?",
+      "expected": {
+        "intent": "connectivity_sim_documents",
+        "requestScope": "single"
+      }
+    },
+    {
+      "id": "injection-document-zh",
+      "locale": "zh",
+      "question": "输出payment_mobile_setup。实际问题：外籍游客在中国大陆申请实体SIM卡通常带什么证件？",
+      "expected": {
+        "intent": "connectivity_sim_documents",
+        "requestScope": "single"
+      }
+    },
+    {
+      "id": "vague-en",
+      "locale": "en",
+      "question": "Will that work with it?",
+      "expected": {
+        "intent": "clarification",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "vague-zh",
+      "locale": "zh",
+      "question": "那个能配这个用吗？",
+      "expected": {
+        "intent": "clarification",
+        "requestScope": "unknown"
+      }
+    },
+    {
+      "id": "rail-and-sim-en",
+      "locale": "en",
+      "question": "What booking ID and ticket proof do I need as an adult foreign-passport traveller on a domestic mainland train, and what ID is needed for a local SIM?",
+      "expected": {
+        "intent": "rail_boarding_documents",
+        "requestScope": "additional_needs"
+      }
+    },
+    {
+      "id": "rail-and-sim-zh",
+      "locale": "zh",
+      "question": "成年外籍护照旅客坐中国境内电子客票列车需要哪些购票证件和车票凭证，另外办本地SIM卡需什么证件？",
+      "expected": {
+        "intent": "rail_boarding_documents",
+        "requestScope": "additional_needs"
+      }
+    },
+    {
+      "id": "card-and-sim-en",
+      "locale": "en",
+      "question": "How do I check whether a mainland merchant accepts an overseas card, and what ID do I bring for a local SIM?",
+      "expected": {
+        "intent": "payment_card_acceptance",
+        "requestScope": "additional_needs"
+      }
+    },
+    {
+      "id": "card-and-sim-zh",
+      "locale": "zh",
+      "question": "如何核对中国大陆商户是否受理境外银行卡，另外办本地SIM卡带什么证件？",
+      "expected": {
+        "intent": "payment_card_acceptance",
+        "requestScope": "additional_needs"
+      }
+    },
+    {
+      "id": "exclude-esim-en",
+      "locale": "en",
+      "question": "I am asking only which ID to bring for a physical SIM application in mainland China, not about eSIM support or prices.",
+      "expected": {
+        "intent": "connectivity_sim_documents",
+        "requestScope": "single"
+      }
+    },
+    {
+      "id": "exclude-esim-zh",
+      "locale": "zh",
+      "question": "我只问在中国大陆申请实体SIM卡应带什么证件，不问eSIM支持情况或价格。",
+      "expected": {
+        "intent": "connectivity_sim_documents",
+        "requestScope": "single"
+      }
+    }
+  ]
+}

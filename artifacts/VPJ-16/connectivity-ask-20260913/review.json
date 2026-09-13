@@ -1,0 +1,15 @@
+{
+  "review": "Independent read-only migration and shared-contract review",
+  "critical": 0,
+  "important": 0,
+  "testsIndependentlyRerun": false,
+  "files": {
+    "supabase/migrations/20260913100000_vpj_16_connectivity_questions.sql": "430c8523e2fe3f5e832c9581e1418484b444b0c45e45fa5a0116b0e1c63b98e7",
+    "lib/server/knowledge/claim/questions.ts": "dda76f814f08cd3bd841c9b3a461258368702784aace3f61bb1d508531a7f95f",
+    "lib/server/model-gateway/prompt/knowledge-intent.ts": "d50e784834f7c4b19efaab8e4a2b82e2387b46a5819a3bf021fdbf99dc5215a8",
+    "lib/grounded/copy.ts": "c67c27cc311d4efc8e022d1791b584e0a38cfddeb13a503733d0b8c6d4b6932d",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift": "b77721cf3cd404177ede328716a4e98609186c00e77aa9b0d139680d6e3bb627",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift": "c6883c903e224d9decf10bf9d58c643a9071315b687e117cd496e27630319e10",
+    "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift": "3f8cfe460852d8c83f27fc3febf58f808fcd28b09ffd5a827f62583ec45db191"
+  }
+}

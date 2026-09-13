@@ -24,6 +24,12 @@ test('first-party reviewed question: real PostgreSQL eligibility, coverage and i
    await db('begin;'+content+'rollback;');
    assert.equal(await db("select to_regprocedure('knowledge_review_private.question_definition(text)') is null;"),'t');
   }
+  if(f.endsWith('_vpj_16_connectivity_questions.sql')){
+   const prior=await db("select knowledge_review_private.question_definition('payment_getting_started')::text;");
+   await db('begin;'+content+'rollback;');
+   assert.equal(await db("select knowledge_review_private.question_definition('connectivity_getting_started') is null;"),'t');
+   assert.equal(await db("select knowledge_review_private.question_definition('payment_getting_started')::text;"),prior);
+  }
   if(f.endsWith('_vpj_16_reviewed_question.sql')){
    await db('begin;'+content+'rollback;');
    assert.equal(await db("select to_regprocedure('public.knowledge_answer_v1(jsonb)') is null;"),'t');
@@ -129,6 +135,42 @@ test('first-party reviewed question: real PostgreSQL eligibility, coverage and i
   await publish(impostor);
   assert.equal((await answer({questionId:'payment_mobile_setup'})).statements.length,1,'same object ID under the wrong subject cannot qualify');
   for(const role of ['anon','authenticated','service_role'])assert.notEqual((await sql(container,`set role ${role};select knowledge_review_private.question_definition('payment_mobile_setup');`)).code,0);
+ });
+ await t.test('SIM claims bind exact scope and preserve missing, revoked and conflicting support in zh/en',async()=>{
+  const definition=JSON.parse(await db("select knowledge_review_private.question_definition('connectivity_getting_started');"));
+  assert.equal(definition.scene,'connectivity');
+  assert.deepEqual(definition.claims,[
+   {subjectId:'china_carrier_sim_application',predicate:'requires_document',objectId:'passport_or_foreign_permanent_resident_id'},
+   {subjectId:'china_carrier_sim_application',predicate:'requires_action',objectId:'plan_allowance_check'}
+  ]);
+  const query={questionId:'connectivity_getting_started'};
+  assert.deepEqual((await answer(query)).answer.claims.map(c=>c.reasons),[['missing'],['missing']]);
+  const rows=definition.claims.map(relation=>{const s=statement(relation.objectId);s.assertion={...s.assertion,...relation};s.scope.scene='connectivity';return s;});
+  const document=await publish(rows[0]);
+  assert.equal((await answer(query)).answer.outcome,'partial');
+  const plan=await publish(rows[1]);
+  for(const locale of ['en','zh']){
+   const result=await answer({...query,locale});assert.equal(result.answer.outcome,'answered');assert.equal(result.statements.length,2);
+   for(const r of result.statements){assert.equal(r.conditions.length,1);assert.equal(r.exclusions.length,1);assert.ok(r.text.startsWith(locale==='en'?'Synthetic ':'合成 '));}
+   assert.equal((await answer({questionId:'connectivity_sim_documents',locale})).statements.length,1);
+   assert.equal((await answer({questionId:'connectivity_plan_allowances',locale})).statements.length,1);
+  }
+  const impostor=structuredClone(rows[0]);impostor.assertion.predicate='offers_procedure';await publish(impostor);
+  assert.equal((await answer({questionId:'connectivity_sim_documents'})).statements.length,1,'wrong predicate with same object is not support');
+  const wrongScene=structuredClone(rows[0]);wrongScene.scope.scene='payment';await publish(wrongScene);
+  assert.equal((await answer(query)).statements.length,2,'another scene cannot enter this answer');
+  assert.equal((await answer({...query,city:'guangzhou'})).answer.outcome,'no_answer');
+  await revoke(document);
+  for(const locale of ['en','zh']){
+   const partial=await answer({...query,locale});assert.equal(partial.answer.outcome,'partial');assert.deepEqual(partial.answer.claims[0].reasons,['revoked']);
+   assert.equal((await answer({questionId:'connectivity_sim_documents',locale})).answer.outcome,'no_answer');
+   assert.equal((await answer({questionId:'connectivity_plan_allowances',locale})).answer.outcome,'answered','unrequested document withdrawal cannot downgrade plan checks');
+  }
+  const variant=structuredClone(rows[1]);variant.expressions.en.text='Different synthetic plan statement';await publish(variant);
+  assert.equal((await answer(query)).answer.outcome,'no_answer');
+  assert.deepEqual((await answer(query)).answer.claims[1].reasons,['unresolved_variants']);
+  await rejects(reader,{...input,questionId:'connectivity_esim'},/INVALID_INPUT/);
+  for(const role of ['anon','authenticated','service_role'])assert.notEqual((await sql(container,`set role ${role};select knowledge_review_private.question_definition('connectivity_getting_started');`)).code,0);
  });
  await t.test('capacity overflow fails instead of hiding evidence behind a retrieval limit',async()=>{
   const support=statement(required[0]);support.scope.cities=['beijing'];

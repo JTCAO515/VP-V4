@@ -68,14 +68,14 @@ test("terminal queue rows without a completed answer never appear to be processi
   }
 });
 
-test("payment history binds exact requested relations and uses payment guidance for withdrawn support", async () => {
+test("payment and SIM history bind requested relations and route withdrawal guidance by domain", async () => {
   const { QUESTION_DEFINITIONS } = await import("../../../lib/server/knowledge/claim/questions.ts");
   for (const [questionId, definition] of Object.entries(QUESTION_DEFINITIONS)) {
-    if (definition.scene !== "payment") continue;
+    if (definition.scene === "rail") continue;
     const f = fixture(), template = f.knowledge.statements[0];
     f.turn.result.intent = questionId;
     f.knowledge.answer.questionId = questionId;
-    f.knowledge.scope.scene = "payment";
+    f.knowledge.scope.scene = definition.scene;
     f.knowledge.statements = definition.claims.map(claim => ({ ...structuredClone(template), factId: randomUUID(), assertionId: randomUUID(), assertion: { ...template.assertion, ...claim } }));
     f.knowledge.answer.claims = definition.claims.map((claim, index) => ({ id: claim.objectId, status: "covered", factIds: [f.knowledge.statements[index].factId], reasons: [] }));
     const full = f.read();
@@ -91,8 +91,8 @@ test("payment history binds exact requested relations and uses payment guidance 
     f.knowledge.answer.outcome = partial ? "partial" : "no_answer";
     f.turn.outcome = f.turn.result.originalOutcome = partial ? "partial" : "blocked";
     f.turn.status = partial ? "completed" : "unavailable";
-    assert.equal(savedAnswerNotice(f.read().turns[0]), partial ? "paymentPartial" : "paymentBlocked");
+    assert.equal(savedAnswerNotice(f.read().turns[0]), definition.scene === "connectivity" ? partial ? "connectivityPartial" : "connectivityBlocked" : partial ? "paymentPartial" : "paymentBlocked");
     f.knowledge.answer.questionId = "rail_boarding_documents";
-    assert.throws(() => f.read(), "payment result cannot be relabelled as rail");
+    assert.throws(() => f.read(), "another domain cannot be relabelled as rail");
   }
 });
