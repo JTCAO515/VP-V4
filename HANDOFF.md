@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 #196 native grounded live event/reconnect implementation: atomic current card and stable cursor, same-task read-only recovery, scope/cancellation/expiry guards. Local real HTTP and native transport plus zh/en UI passed; final SQL/PR/CI and Staging42 integration in progress. Full S1–S6 remains incomplete.
+状态：S2 #196 native grounded event reconnect implemented and observed on2717bf9/Staging42: English tab return and Chinese process restart preserve the same task; two real calls settled once each, native event delivery observed. Reader/Ops disabled and WAF restored. PR347 documentation/evidence CI and merge guard verification in progress; full S1–S6 incomplete.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -35,7 +35,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 未决与运行证据
 
-- Staging41 bounded grounded Ask, same-task clarification/repair, Web owner readback and real pre-dispatch worker crash/natural-lease recovery are observed. Full S1/S2, supported product-wide five-outcome/knowledge/semantic coverage, native streaming, post-dispatch unknown-cost recovery, cancel race and complete operational acceptance remain incomplete. Supplier unknowns are disclosed, not approval blockers.
+- Staging42 bounded grounded Ask, same-task clarification/repair, Web owner readback, pre-dispatch worker crash/natural-lease recovery and native event reconnect are observed. Full S1/S2, wider five-outcome/knowledge/semantic coverage, deliberate offline/background/cancel races, post-dispatch unknown-cost recovery and complete operational acceptance remain incomplete. Supplier unknowns are disclosed, not approval blockers.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel runtime integration, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 - #264 depends on #206, which remains OPEN: PR342 now supplies a real bounded reviewed-fact/native task chain, but wider knowledge coverage and complete Harness runtime acceptance remain outstanding. Preserve #263 offline evidence within its original scope.
@@ -53,6 +53,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- Native event reconnect2717bf9: local SQL11/11, real HTTP1/1, native transport/state10/10, bilingual UI2/2 and independent permission review0/0; required CI passed. Staging41→42 backup/restore and original78tables/259schema entries preserved. Native en tab return/zh process restart same-task event delivery observed, two real Qwen calls settled8382 CNY micros;73 total Turns/attempts, users6/Trips3 unchanged. Reader/Ops false,0members, WAF restored36 and Simulator deleted. See artifacts/VPJ-08/native-events-staging-20260913/verification.md. Full#196/S2 open.
 - Real Staging41 crash checkpoint: main21b2086/frozen runtime1a539e1 unchanged, native318f83d/backend8022b5a. Each zh/en normal worker was SIGKILLed after lease1 while its budget reserve RPC waited; no provider/budget attempt persisted. Same-config service waited for real120s lease expiry, completed sameTurn with lease2 and exactly1 settled Qwen call/worker-terminal-2. Native App restart retained pending question and final answer; Web3278 owner readback matched. Total2 settled/0 unresolved,8124microsCNY conservative tariff;71controlled Turns/attempts. All services/sessions/locks cleaned,read/Opsfalse,members0,WAF34. See artifacts/VPJ-07/grounded-crash-20260913/verification.md.
 - Real Staging41 on main1a539e1/worker unchanged, native318f83d/backend8022b5a and Web3278ed8: each zh/en technical_failure root→repair answered keeps Task/parent and question; owner-scoped Web reads same2 chains. Four Qwen calls settled/0 unresolved,16440micros CNY conservative tariff, no user charge or invoice claim. Native/browser logout, clean service stop, read/Ops off, members0,WAF30 cleanup,users6/Trips3 and69 controlled Turns/attempts observed. Retain AX click/observer and SQL-login failures. See artifacts/VPJ-07/grounded-repair-20260913/verification.md.
 - PR344 merged1a539e1; actual browser code3278ed8: dedicated Staging41 Web reads original native English/Chinese Task/Turn and 12306 sources; 36s expiry samples hide stale facts without scroll/source-state loss; reader-off observation27.665s. Actual cross-tab logout/owner switch clears all answers, old30-row metadata list and Trip selector; offline/online and page-return passed, zh/en desktop390px and Arabic legacy checked. Final head3a6ee6f Quality34721215655, Budget34721215647 and Preview passed; authority review0/0; no model calls made. Actual OS freeze/background remains UNRUN. See artifacts/VPJ-07/grounded-web-read-20260913/verification.md.
@@ -118,7 +119,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Finish selected-version #196 native event delivery: final local SQL evidence, PR/required CI, additive Staging41→42 with verified backup/restore, exact native Preview build and real reconnect receipts, then cleanup/production guard verification. Reuse PR344/345/346 within their original scope. Full post-dispatch unknown usage, cancel/Trip recovery and wider S2 remain open; physical phone work deferred.
+Finish PR347 required CI/merge and verify actual Production attempt canceled with aliases preserved. Continue #195/#196 post-dispatch unknown usage and cancellation/reconnect gaps on the same task; retain current reviewed-source/session/Trip boundaries. Reuse prior evidence within its recorded scope; physical phone work deferred.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

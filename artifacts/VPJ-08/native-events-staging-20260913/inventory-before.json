@@ -1,0 +1,12 @@
+{
+  "at": "2026-09-12T23:32:52.595Z",
+  "migrationCount": 42,
+  "users": 6,
+  "trips": 3,
+  "turns": 71,
+  "attempts": 71,
+  "actualMicros": 329538,
+  "readEnabled": true,
+  "opsEnabled": false,
+  "members": 0
+}

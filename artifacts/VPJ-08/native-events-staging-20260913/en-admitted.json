@@ -1,0 +1,24 @@
+{
+  "at": "2026-09-12T23:44:07.609Z",
+  "phase": "admitted",
+  "turnId": "a902443b-d920-43f7-ac63-58f9100ade9b",
+  "taskId": "f8ef2d59-b4f0-4f43-b9f6-8964db7a1068",
+  "ownerId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+  "locale": "en",
+  "input": "For my domestic train in mainland China, what original booking ID and e-ticket proof must I bring to board as an adult travelling on a foreign passport?",
+  "status": "accepted",
+  "outcome": null,
+  "createdAt": "2026-09-12T23:43:45.572727+00:00",
+  "attempts": 0,
+  "settled": 0,
+  "unresolved": 0,
+  "actualMicros": 0,
+  "events": [
+    {
+      "eventId": "accepted",
+      "sequence": 1,
+      "type": "accepted",
+      "state": "accepted"
+    }
+  ]
+}

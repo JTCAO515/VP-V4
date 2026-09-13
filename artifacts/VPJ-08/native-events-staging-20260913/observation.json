@@ -1,0 +1,32 @@
+{
+  "sourceSha": "2717bf947cf31edd3ce5021e7e361413859ad9b8",
+  "previewId": "dpl_Hm8aLRK8V6JAqPg4zrkAX4p2mSPs",
+  "nativeAndApiSameSource": true,
+  "migration": 42,
+  "qwenModel": "qwen3.7-plus-2026-05-26",
+  "newTurns": 2,
+  "newAttempts": 2,
+  "settledAttempts": 2,
+  "unresolvedAttempts": 0,
+  "actualMicros": 8382,
+  "currency": "CNY",
+  "tariff": "qwen-public-upper-20260912-v1",
+  "supplierInvoice": false,
+  "englishTabReturnSameTask": true,
+  "chineseProcessRestartSameTask": true,
+  "chineseAnswerObservedBeforeNextHistoryRead": true,
+  "timeline": {
+    "restartEpochSeconds": 1789256933.534078,
+    "lastHistoryBeforeWorkerEpochSeconds": 1789256941.515,
+    "workerStarted": "2026-09-12T23:49:25.508Z",
+    "nativeAnswerObservedEpochSeconds": 1789256969.523469,
+    "nextHistoryEpochSeconds": 1789256974.109
+  },
+  "uniqueEventRequests": {
+    "en": 6,
+    "zh": 6
+  },
+  "remoteCursorHeadersRecorded": false,
+  "networkAirplaneModeTested": false,
+  "productionRelease": false
+}
