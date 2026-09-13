@@ -65,13 +65,13 @@ SwiftEmitModule normal arm64 Emitting\ module\ for\ VisePanda (in target 'VisePa
 
 EmitSwiftModule normal arm64 (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 Compiling\ GeneratedAssetSymbols.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
 
 SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftDriverJobDiscovery normal arm64 Compiling GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
 
@@ -156,12 +156,12 @@ SwiftEmitModule normal arm64 Emitting\ module\ for\ VisePandaTests (in target 'V
 
 EmitSwiftModule normal arm64 (in target 'VisePandaTests' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 Compiling\ NativeKnowledgeTests.swift /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePandaTests/NativeKnowledgeTests.swift (in target 'VisePandaTests' from project 'VisePanda')
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePandaTests/NativeKnowledgeTests.swift (in target 'VisePandaTests' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftDriverJobDiscovery normal arm64 Compiling NativeKnowledgeTests.swift (in target 'VisePandaTests' from project 'VisePanda')
 

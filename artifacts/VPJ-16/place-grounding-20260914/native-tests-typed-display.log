@@ -42,18 +42,18 @@ SwiftCompile normal arm64 Compiling\ NativeKnowledgeView.swift /Users/jtcao/Docu
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftEmitModule normal arm64 Emitting\ module\ for\ VisePanda (in target 'VisePanda' from project 'VisePanda')
 EmitSwiftModule normal arm64 (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 Compiling\ NativeKnowledgeModels.swift /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift (in target 'VisePanda' from project 'VisePanda')
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftDriverJobDiscovery normal arm64 Compiling NativeKnowledgeView.swift (in target 'VisePanda' from project 'VisePanda')
 
@@ -63,36 +63,36 @@ SwiftCompile normal arm64 Compiling\ NativeKnowledgeStore.swift /Users/jtcao/Doc
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeStore.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 Compiling\ NativeAskEvents.swift /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePanda/Features/Ask/NativeAskEvents.swift (in target 'VisePanda' from project 'VisePanda')
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePanda/Features/Ask/NativeAskEvents.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 Compiling\ NativeAskView.swift /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift (in target 'VisePanda' from project 'VisePanda')
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 Compiling\ AskView.swift /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePanda/Features/Ask/AskView.swift (in target 'VisePanda' from project 'VisePanda')
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePanda/Features/Ask/AskView.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 Compiling\ NativeAskModels.swift /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift (in target 'VisePanda' from project 'VisePanda')
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 Compiling\ NativeAskStore.swift /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift (in target 'VisePanda' from project 'VisePanda')
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift (in target 'VisePanda' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftDriverJobDiscovery normal arm64 Compiling NativeAskEvents.swift (in target 'VisePanda' from project 'VisePanda')
 
@@ -160,19 +160,19 @@ SwiftCompile normal arm64 Compiling\ NativeKnowledgeTests.swift /Users/jtcao/Doc
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePandaTests/NativeKnowledgeTests.swift (in target 'VisePandaTests' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftEmitModule normal arm64 Emitting\ module\ for\ VisePandaTests (in target 'VisePandaTests' from project 'VisePanda')
 
 EmitSwiftModule normal arm64 (in target 'VisePandaTests' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftCompile normal arm64 Compiling\ NativeAskIntegrationTests.swift /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePandaTests/NativeAskIntegrationTests.swift (in target 'VisePandaTests' from project 'VisePanda')
 
 SwiftCompile normal arm64 /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda/VisePandaTests/NativeAskIntegrationTests.swift (in target 'VisePandaTests' from project 'VisePanda')
     cd /Users/jtcao/Documents/VP-V4-S2-Place-Grounding/ios/VisePanda
-    
+
 
 SwiftDriverJobDiscovery normal arm64 Emitting module for VisePandaTests (in target 'VisePandaTests' from project 'VisePanda')
 
