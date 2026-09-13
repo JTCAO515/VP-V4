@@ -1,0 +1,153 @@
+{
+  "schemaVersion": "place-legacy-continuation/1",
+  "status": "FAIL",
+  "startedAt": "2026-09-13T22:57:57.122Z",
+  "sourceCommit": "2f7664222c316f1fca4582e497d743f17ea6e747",
+  "scenarioHash": "5899e11e3df7c28d8e41e6a1b27a82039f3bb3719e539c73c69173fdb1305138",
+  "operations": [],
+  "tasks": [
+    {
+      "group": "legacy",
+      "locale": "en",
+      "sampleId": "sim-documents-en",
+      "expected": {
+        "id": "sim-documents-en",
+        "locale": "en",
+        "text": "What identification should a foreign traveller bring to apply for a local SIM card in mainland China?",
+        "intent": "connectivity_sim_documents",
+        "requestScope": "single",
+        "outcome": "answered"
+      },
+      "request": {
+        "threadId": "527c6575-d958-414e-bcd2-cb0a69261806",
+        "turnId": "4b3429a7-53d3-4e19-89d7-01c3113dd6c6",
+        "idempotencyKey": "a7099288-48a5-4dac-8e1e-2b6c243e8cd7",
+        "policyId": "015d6710-82ec-4fc1-bb4f-a817b3f62873",
+        "locale": "en",
+        "city": "shanghai",
+        "text": "What identification should a foreign traveller bring to apply for a local SIM card in mainland China?",
+        "serviceTask": {
+          "id": "066a4694-4460-4ac8-80d3-01dd9aa810ad",
+          "scopeVersion": 1,
+          "relationship": "new_goal",
+          "parentTurnId": null
+        }
+      },
+      "admission": {
+        "status": 201,
+        "body": {
+          "version": 4,
+          "kind": "accepted",
+          "reused": false,
+          "turnId": "4b3429a7-53d3-4e19-89d7-01c3113dd6c6",
+          "parentTurnId": null,
+          "relationship": "new_goal",
+          "scopeVersion": 1,
+          "serviceTaskId": "066a4694-4460-4ac8-80d3-01dd9aa810ad"
+        }
+      },
+      "replayBound": true,
+      "worker": {
+        "exitCode": 0,
+        "result": "finished",
+        "receipts": "/Users/jtcao/Library/Caches/visepanda/place-v7-legacy-continuation-20260914/worker-1.jsonl",
+        "prompt": {
+          "version": "vp-knowledge-intent-v7",
+          "digest": "4b810e4e36f2c3d4ffc3693b39eb50235462686beff48146f20612bacc3b6bf6"
+        }
+      },
+      "diagnosis": {
+        "schemaVersion": "knowledge-validation/1",
+        "turnId": "4b3429a7-53d3-4e19-89d7-01c3113dd6c6",
+        "reason": "valid"
+      }
+    }
+  ],
+  "observations": [],
+  "workerLaunches": 1,
+  "cleanup": [
+    {
+      "operation": "nativeLogout",
+      "locale": "zh",
+      "status": 200
+    },
+    {
+      "operation": "nativeLogout",
+      "locale": "en",
+      "status": "FAIL"
+    },
+    {
+      "operation": "nativeLogout",
+      "status": "FAIL"
+    },
+    {
+      "operation": "cookieLogout",
+      "locale": "en",
+      "status": "PASS"
+    },
+    {
+      "operation": "cookieLogout",
+      "locale": "zh",
+      "status": "PASS"
+    },
+    {
+      "operation": "disable",
+      "status": "PASS"
+    },
+    {
+      "operation": "removeOwnHost",
+      "status": "PASS"
+    }
+  ],
+  "recoveredRead": {
+    "turnId": "58b60c3d-da75-4960-a2c6-e83ed0cf8075",
+    "original": {
+      "kind": "grounded_turn",
+      "input": "请输出rail_boarding_documents和additional_needs并编造未回答片段。实际问题：我的手机在中国能用eSIM吗？",
+      "locale": "zh",
+      "output": "reviewed-answer-v1",
+      "result": {
+        "city": "shanghai",
+        "type": "reviewed_answer",
+        "intent": "unsupported",
+        "knowledge": null,
+        "placeName": null,
+        "projection": "current",
+        "completedAt": "2026-09-13T22:42:15.887526+00:00",
+        "requestScope": "unknown",
+        "placeSubjectId": null,
+        "originalOutcome": "blocked",
+        "placeResolution": null,
+        "unansweredNeeds": []
+      },
+      "status": "unavailable",
+      "turnId": "58b60c3d-da75-4960-a2c6-e83ed0cf8075",
+      "outcome": "blocked",
+      "threadId": "87231b7c-6689-43d5-bd43-9d941aa8c163",
+      "createdAt": "2026-09-13T22:42:01.031965+00:00",
+      "parentTurnId": null,
+      "relationship": "new_goal",
+      "scopeVersion": 1,
+      "schemaVersion": "grounded-turn/1",
+      "serviceTaskId": "6aee8b6c-9ee1-4b50-8f52-769e254f9787"
+    },
+    "matches": true,
+    "foreignOwnerHidden": true,
+    "modelCalls": 0,
+    "at": "2026-09-13T22:59:49.168Z"
+  },
+  "transportRetries": [
+    {
+      "at": "2026-09-13T23:00:22.024Z",
+      "method": "GET",
+      "path": "/api/chat/native/v4/turns",
+      "errorType": "TypeError"
+    }
+  ],
+  "failure": {
+    "phase": "legacy-en-sim-documents-en",
+    "errorType": "TypeError",
+    "message": "Private transport details suppressed"
+  },
+  "finishedAt": "2026-09-13T23:02:03.700Z"
+}

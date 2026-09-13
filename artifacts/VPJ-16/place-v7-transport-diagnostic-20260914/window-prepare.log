@@ -1,0 +1,15 @@
+{
+  mode: 'prepare',
+  status: 'PASS',
+  state: {
+    ops: false,
+    trips: 3,
+    users: 6,
+    reader: false,
+    members: [ [Object], [Object] ],
+    attempts: 406,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 0
+  }
+}

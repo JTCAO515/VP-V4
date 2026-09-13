@@ -1,7 +1,29 @@
 {
-  "schemaVersion": "place-legacy-continuation-plan/1",
-  "status": "RUNNING",
+  "schemaVersion": "place-legacy-continuation-evidence/1",
+  "status": "FAIL",
+  "modelCalls": 1,
+  "unrun": 85,
   "files": [
+    {
+      "file": "activated.json",
+      "bytes": 475,
+      "sha256": "a873cbbc7df4ef42cf5202fd8a21b329a83331bc043f6c0e002efe24bf2a6803"
+    },
+    {
+      "file": "activation-intent.json",
+      "bytes": 633,
+      "sha256": "909bd498a0d52c3196ee896aab15eb6885e30efd91f5fccffe07db7d70c082de"
+    },
+    {
+      "file": "activation-transaction.json",
+      "bytes": 651,
+      "sha256": "fe703714f596ed80184358fa00692860638ca80103827c146e25c7f9a538beff"
+    },
+    {
+      "file": "after-disable.json",
+      "bytes": 165610,
+      "sha256": "874f2f5824f55ca2b6cb300a674bb3290fe6faec8aa0ff4d1cf0ddc8324e7800"
+    },
     {
       "file": "before.json",
       "bytes": 165266,
@@ -33,9 +55,29 @@
       "sha256": "3f27fc3235680e0b2c16e304633544963309f6f7d4efd004450d716b759de423"
     },
     {
+      "file": "disabled.json",
+      "bytes": 527,
+      "sha256": "6774d554ab25e844bb72d71e0308879dbdb766641f22a103c2924214c16de76c"
+    },
+    {
+      "file": "final-accounting.json",
+      "bytes": 564,
+      "sha256": "784c929504540dc1e27fff589c0d78255ea3f228762ca131b147c370359b8e9d"
+    },
+    {
       "file": "final-accounting.py",
       "bytes": 3274,
       "sha256": "38ace05662611ed3d2f93d185dc202fd173fabb819a75fa101a1ce8ccd7c29a2"
+    },
+    {
+      "file": "firewall-allow-after.json",
+      "bytes": 2549,
+      "sha256": "e0e96d2e5e377387577f6bf3c00d5e5a66f67d836de9c976224fa591f49f4216"
+    },
+    {
+      "file": "firewall-allow-plan.json",
+      "bytes": 2665,
+      "sha256": "81d93e3ff8bf9cf549e9e6e61db264ce0e0f7df346e98258da891e4a66165102"
     },
     {
       "file": "firewall-before.json",
@@ -43,9 +85,29 @@
       "sha256": "90499a7b265f90b8836ab2eabe08233bc4e9a8b9f64e8ff71758bded7dc95bc8"
     },
     {
+      "file": "firewall-remove-after.json",
+      "bytes": 2482,
+      "sha256": "faf35fb9d7364488b1522c8c66c71ab973aecc48106bf52b9c50160eee467b27"
+    },
+    {
+      "file": "firewall-remove-plan.json",
+      "bytes": 2598,
+      "sha256": "2d20be5454f404a6ef22fd33a8543babd93419df3990b68d228cb842f6531770"
+    },
+    {
       "file": "firewall-scope.py",
       "bytes": 2966,
       "sha256": "2bbc98da8c9b0667d4e913a23efa35b4964277d77e27219a42b9d7eff0e5be83"
+    },
+    {
+      "file": "place-run.json",
+      "bytes": 4612,
+      "sha256": "b681460d5e647e238b66084bb31d7f404387a81275dcc0a43a7761a831c1aaf1"
+    },
+    {
+      "file": "place-run.log",
+      "bytes": 1196,
+      "sha256": "f1cdaad09b761912e100f53629fcc5e85a2fdf378dbf4c57d8a6d70c1904cfbf"
     },
     {
       "file": "place-run.mjs",
@@ -84,8 +146,8 @@
     },
     {
       "file": "verification.md",
-      "bytes": 1174,
-      "sha256": "809b87bc525f4fe1a8f46fb33b4ca6c7f5f2fdc8ca0c135366e5eb01e223f392"
+      "bytes": 1667,
+      "sha256": "4fc0404bbb4c19134f3e3b1335c89a671574549a0396a715aba7ddb8e58a9dc5"
     },
     {
       "file": "window-review.json",
@@ -96,6 +158,11 @@
       "file": "window-state.mjs",
       "bytes": 9321,
       "sha256": "d6e0b980dddb2e5c43844d3f81e853c2d46bd2c2c9c0593b58e067e813294bbe"
+    },
+    {
+      "file": "worker-1.jsonl",
+      "bytes": 2873,
+      "sha256": "dd307914d3b49b8645f0d93c60c416acf1443f4e76b505719b4c99047e337ce8"
     }
   ]
 }

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "place-continuation-accounting/1",
+  "runStatus": "FAIL",
+  "workerCalls": 1,
+  "matchedCases": 0,
+  "unrunCases": 85,
+  "tariffCnyMicros": 16272,
+  "tariffByOwner": {
+    "fe70fac7-d312-494c-bde1-4c37c3942722": 16272
+  },
+  "supplierInvoice": "unknown",
+  "originalRowHashesPreserved": true,
+  "unresolved": 0,
+  "readerOpsMembersClosed": true,
+  "firewallRestoredVersion": 94,
+  "originalAcceptanceFailuresRemain": true,
+  "recoveredReadMatched": true,
+  "startedAt": "2026-09-13T22:57:57.122Z",
+  "finishedAt": "2026-09-13T23:02:03.700Z"
+}

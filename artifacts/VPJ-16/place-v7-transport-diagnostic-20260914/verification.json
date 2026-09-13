@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "at": "2026-09-13T23:08:57.886Z",
+  "modelCalls": 0,
+  "normalReads": 4,
+  "normalLogouts": 2,
+  "ownedNativeSessionsClosed": true,
+  "originalRowsPreserved": true,
+  "permissionsClosed": true,
+  "attempts": 406,
+  "unresolved": 0,
+  "firewallVersion": 96,
+  "transportFailureReproduced": false,
+  "rootCause": "unknown"
+}

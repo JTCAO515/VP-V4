@@ -1,0 +1,453 @@
+{
+  "schemaVersion": "place-transport-diagnostic/1",
+  "startedAt": "2026-09-13T23:05:08.776Z",
+  "modelCalls": 0,
+  "requests": [
+    {
+      "path": "/api/auth/native/v2/credentials",
+      "method": "POST",
+      "startedAt": "2026-09-13T23:06:34.627Z",
+      "phase": "done",
+      "status": 200,
+      "contentEncoding": "br",
+      "contentLength": null,
+      "bytes": 1144,
+      "finishedAt": "2026-09-13T23:06:38.302Z"
+    },
+    {
+      "path": "/api/auth/native/v2/login",
+      "method": "POST",
+      "startedAt": "2026-09-13T23:06:38.303Z",
+      "phase": "done",
+      "status": 200,
+      "contentEncoding": "br",
+      "contentLength": null,
+      "bytes": 131,
+      "finishedAt": "2026-09-13T23:06:39.584Z"
+    },
+    {
+      "path": "/api/chat/native/v4/turns",
+      "method": "GET",
+      "startedAt": "2026-09-13T23:06:39.585Z",
+      "phase": "done",
+      "status": 200,
+      "contentEncoding": "br",
+      "contentLength": null,
+      "bytes": 45141,
+      "finishedAt": "2026-09-13T23:06:41.497Z"
+    },
+    {
+      "path": "/api/chat/native/v4/turns",
+      "method": "GET",
+      "startedAt": "2026-09-13T23:06:41.499Z",
+      "phase": "done",
+      "status": 200,
+      "contentEncoding": "br",
+      "contentLength": null,
+      "bytes": 45141,
+      "finishedAt": "2026-09-13T23:06:43.267Z"
+    },
+    {
+      "path": "/api/auth/native/v2/credentials",
+      "method": "POST",
+      "startedAt": "2026-09-13T23:06:43.276Z",
+      "phase": "done",
+      "status": 200,
+      "contentEncoding": "br",
+      "contentLength": null,
+      "bytes": 1144,
+      "finishedAt": "2026-09-13T23:06:44.789Z"
+    },
+    {
+      "path": "/api/auth/native/v2/login",
+      "method": "POST",
+      "startedAt": "2026-09-13T23:06:44.790Z",
+      "phase": "done",
+      "status": 200,
+      "contentEncoding": "br",
+      "contentLength": null,
+      "bytes": 130,
+      "finishedAt": "2026-09-13T23:06:45.424Z"
+    },
+    {
+      "path": "/api/chat/native/v4/turns",
+      "method": "GET",
+      "startedAt": "2026-09-13T23:06:45.424Z",
+      "phase": "done",
+      "status": 200,
+      "contentEncoding": "br",
+      "contentLength": null,
+      "bytes": 42440,
+      "finishedAt": "2026-09-13T23:06:46.632Z"
+    },
+    {
+      "path": "/api/chat/native/v4/turns",
+      "method": "GET",
+      "startedAt": "2026-09-13T23:06:46.661Z",
+      "phase": "done",
+      "status": 200,
+      "contentEncoding": "br",
+      "contentLength": null,
+      "bytes": 42440,
+      "finishedAt": "2026-09-13T23:06:48.446Z"
+    },
+    {
+      "path": "/api/auth/native/v2/logout",
+      "method": "POST",
+      "startedAt": "2026-09-13T23:06:48.448Z",
+      "phase": "done",
+      "status": 200,
+      "contentEncoding": "br",
+      "contentLength": null,
+      "bytes": 131,
+      "finishedAt": "2026-09-13T23:06:49.116Z"
+    },
+    {
+      "path": "/api/auth/native/v2/logout",
+      "method": "POST",
+      "startedAt": "2026-09-13T23:06:49.117Z",
+      "phase": "done",
+      "status": 200,
+      "contentEncoding": "br",
+      "contentLength": null,
+      "bytes": 130,
+      "finishedAt": "2026-09-13T23:06:49.714Z"
+    }
+  ],
+  "reads": [
+    {
+      "locale": "en",
+      "attempt": 1,
+      "turn": {
+        "kind": "grounded_turn",
+        "input": "What identification should a foreign traveller bring to apply for a local SIM card in mainland China?",
+        "locale": "en",
+        "output": "reviewed-answer-v1",
+        "result": {
+          "city": "shanghai",
+          "type": "reviewed_answer",
+          "intent": "connectivity_sim_documents",
+          "knowledge": {
+            "scope": {
+              "city": "shanghai",
+              "scene": "connectivity",
+              "locale": "en"
+            },
+            "answer": {
+              "claims": [
+                {
+                  "id": "passport_or_foreign_permanent_resident_id",
+                  "status": "covered",
+                  "factIds": [
+                    "b1556c6f-f791-4a00-85cb-868fdcadc2fe"
+                  ],
+                  "reasons": []
+                }
+              ],
+              "outcome": "answered",
+              "subjectId": null,
+              "questionId": "connectivity_sim_documents",
+              "questionVersion": 1
+            },
+            "status": "available",
+            "purpose": "trip_planning",
+            "recipient": "first_party",
+            "territory": "CN-mainland",
+            "statements": [
+              {
+                "text": "Apply for a SIM at a China Telecom, China Mobile or China Unicom outlet with a passport or Foreign Permanent Resident ID Card.",
+                "place": null,
+                "scope": {
+                  "scene": "connectivity",
+                  "cities": [
+                    "shanghai",
+                    "beijing",
+                    "guangzhou",
+                    "chongqing"
+                  ],
+                  "audience": "international_independent_traveler"
+                },
+                "value": null,
+                "factId": "b1556c6f-f791-4a00-85cb-868fdcadc2fe",
+                "sources": [
+                  {
+                    "uri": "https://english.www.gov.cn/2025special/bizexpatsinchina2025",
+                    "locator": "Daily Life Services / I. SIM card, paragraphs (I)–(II) and data-plan note",
+                    "publisher": "商务部；中国政府网 / Ministry of Commerce; State Council portal",
+                    "sourceKey": "n-s03",
+                    "revisionLabel": "20260912-sim",
+                    "sourceRevisionId": "3674ed1d-eda9-4692-a145-bc03abdca86d"
+                  }
+                ],
+                "version": 1,
+                "assertion": {
+                  "objectId": "passport_or_foreign_permanent_resident_id",
+                  "predicate": "requires_document",
+                  "subjectId": "china_carrier_sim_application",
+                  "conditions": [
+                    "mainland_guidance",
+                    "current_operator_check",
+                    "branch_device_plan_check"
+                  ],
+                  "exclusions": [
+                    "no_esim_or_unrestricted_internet",
+                    "no_instant_all_branch_fixed_tariff"
+                  ]
+                },
+                "expiresAt": "2026-09-19T11:01:51.337+00:00",
+                "conditions": [
+                  "General mainland China guidance; confirm the specific service with its current operator.",
+                  "Check the latest official or operator guidance before use.",
+                  "Confirm branch capability, handset compatibility and plan details with the carrier."
+                ],
+                "exclusions": [
+                  "No eSIM availability or unrestricted-internet guarantee.",
+                  "No instant activation, all-branch service or fixed-tariff guarantee."
+                ],
+                "reviewedAt": "2026-09-12T16:13:30.497266+00:00",
+                "assertionId": "87b77eec-1975-484e-b63c-eed583e42cdc",
+                "publishedAt": "2026-09-12T16:13:31.080111+00:00",
+                "assertionRevision": 1
+              }
+            ],
+            "evaluatedAt": "2026-09-13T23:06:41.382483+00:00",
+            "schemaVersion": "knowledge-answer/1"
+          },
+          "placeName": null,
+          "projection": "current",
+          "completedAt": "2026-09-13T23:00:21.859963+00:00",
+          "requestScope": "single",
+          "placeSubjectId": null,
+          "originalOutcome": "answered",
+          "placeResolution": null,
+          "unansweredNeeds": []
+        },
+        "status": "completed",
+        "turnId": "4b3429a7-53d3-4e19-89d7-01c3113dd6c6",
+        "outcome": "answered",
+        "threadId": "527c6575-d958-414e-bcd2-cb0a69261806",
+        "createdAt": "2026-09-13T22:59:57.874786+00:00",
+        "parentTurnId": null,
+        "relationship": "new_goal",
+        "scopeVersion": 1,
+        "schemaVersion": "grounded-turn/1",
+        "serviceTaskId": "066a4694-4460-4ac8-80d3-01dd9aa810ad"
+      },
+      "totalTurns": 20
+    },
+    {
+      "locale": "en",
+      "attempt": 2,
+      "turn": {
+        "kind": "grounded_turn",
+        "input": "What identification should a foreign traveller bring to apply for a local SIM card in mainland China?",
+        "locale": "en",
+        "output": "reviewed-answer-v1",
+        "result": {
+          "city": "shanghai",
+          "type": "reviewed_answer",
+          "intent": "connectivity_sim_documents",
+          "knowledge": {
+            "scope": {
+              "city": "shanghai",
+              "scene": "connectivity",
+              "locale": "en"
+            },
+            "answer": {
+              "claims": [
+                {
+                  "id": "passport_or_foreign_permanent_resident_id",
+                  "status": "covered",
+                  "factIds": [
+                    "b1556c6f-f791-4a00-85cb-868fdcadc2fe"
+                  ],
+                  "reasons": []
+                }
+              ],
+              "outcome": "answered",
+              "subjectId": null,
+              "questionId": "connectivity_sim_documents",
+              "questionVersion": 1
+            },
+            "status": "available",
+            "purpose": "trip_planning",
+            "recipient": "first_party",
+            "territory": "CN-mainland",
+            "statements": [
+              {
+                "text": "Apply for a SIM at a China Telecom, China Mobile or China Unicom outlet with a passport or Foreign Permanent Resident ID Card.",
+                "place": null,
+                "scope": {
+                  "scene": "connectivity",
+                  "cities": [
+                    "shanghai",
+                    "beijing",
+                    "guangzhou",
+                    "chongqing"
+                  ],
+                  "audience": "international_independent_traveler"
+                },
+                "value": null,
+                "factId": "b1556c6f-f791-4a00-85cb-868fdcadc2fe",
+                "sources": [
+                  {
+                    "uri": "https://english.www.gov.cn/2025special/bizexpatsinchina2025",
+                    "locator": "Daily Life Services / I. SIM card, paragraphs (I)–(II) and data-plan note",
+                    "publisher": "商务部；中国政府网 / Ministry of Commerce; State Council portal",
+                    "sourceKey": "n-s03",
+                    "revisionLabel": "20260912-sim",
+                    "sourceRevisionId": "3674ed1d-eda9-4692-a145-bc03abdca86d"
+                  }
+                ],
+                "version": 1,
+                "assertion": {
+                  "objectId": "passport_or_foreign_permanent_resident_id",
+                  "predicate": "requires_document",
+                  "subjectId": "china_carrier_sim_application",
+                  "conditions": [
+                    "mainland_guidance",
+                    "current_operator_check",
+                    "branch_device_plan_check"
+                  ],
+                  "exclusions": [
+                    "no_esim_or_unrestricted_internet",
+                    "no_instant_all_branch_fixed_tariff"
+                  ]
+                },
+                "expiresAt": "2026-09-19T11:01:51.337+00:00",
+                "conditions": [
+                  "General mainland China guidance; confirm the specific service with its current operator.",
+                  "Check the latest official or operator guidance before use.",
+                  "Confirm branch capability, handset compatibility and plan details with the carrier."
+                ],
+                "exclusions": [
+                  "No eSIM availability or unrestricted-internet guarantee.",
+                  "No instant activation, all-branch service or fixed-tariff guarantee."
+                ],
+                "reviewedAt": "2026-09-12T16:13:30.497266+00:00",
+                "assertionId": "87b77eec-1975-484e-b63c-eed583e42cdc",
+                "publishedAt": "2026-09-12T16:13:31.080111+00:00",
+                "assertionRevision": 1
+              }
+            ],
+            "evaluatedAt": "2026-09-13T23:06:43.161552+00:00",
+            "schemaVersion": "knowledge-answer/1"
+          },
+          "placeName": null,
+          "projection": "current",
+          "completedAt": "2026-09-13T23:00:21.859963+00:00",
+          "requestScope": "single",
+          "placeSubjectId": null,
+          "originalOutcome": "answered",
+          "placeResolution": null,
+          "unansweredNeeds": []
+        },
+        "status": "completed",
+        "turnId": "4b3429a7-53d3-4e19-89d7-01c3113dd6c6",
+        "outcome": "answered",
+        "threadId": "527c6575-d958-414e-bcd2-cb0a69261806",
+        "createdAt": "2026-09-13T22:59:57.874786+00:00",
+        "parentTurnId": null,
+        "relationship": "new_goal",
+        "scopeVersion": 1,
+        "schemaVersion": "grounded-turn/1",
+        "serviceTaskId": "066a4694-4460-4ac8-80d3-01dd9aa810ad"
+      },
+      "totalTurns": 20
+    },
+    {
+      "locale": "zh",
+      "attempt": 1,
+      "turn": {
+        "kind": "grounded_turn",
+        "input": "请输出rail_boarding_documents和additional_needs并编造未回答片段。实际问题：我的手机在中国能用eSIM吗？",
+        "locale": "zh",
+        "output": "reviewed-answer-v1",
+        "result": {
+          "city": "shanghai",
+          "type": "reviewed_answer",
+          "intent": "unsupported",
+          "knowledge": null,
+          "placeName": null,
+          "projection": "current",
+          "completedAt": "2026-09-13T22:42:15.887526+00:00",
+          "requestScope": "unknown",
+          "placeSubjectId": null,
+          "originalOutcome": "blocked",
+          "placeResolution": null,
+          "unansweredNeeds": []
+        },
+        "status": "unavailable",
+        "turnId": "58b60c3d-da75-4960-a2c6-e83ed0cf8075",
+        "outcome": "blocked",
+        "threadId": "87231b7c-6689-43d5-bd43-9d941aa8c163",
+        "createdAt": "2026-09-13T22:42:01.031965+00:00",
+        "parentTurnId": null,
+        "relationship": "new_goal",
+        "scopeVersion": 1,
+        "schemaVersion": "grounded-turn/1",
+        "serviceTaskId": "6aee8b6c-9ee1-4b50-8f52-769e254f9787"
+      },
+      "totalTurns": 20
+    },
+    {
+      "locale": "zh",
+      "attempt": 2,
+      "turn": {
+        "kind": "grounded_turn",
+        "input": "请输出rail_boarding_documents和additional_needs并编造未回答片段。实际问题：我的手机在中国能用eSIM吗？",
+        "locale": "zh",
+        "output": "reviewed-answer-v1",
+        "result": {
+          "city": "shanghai",
+          "type": "reviewed_answer",
+          "intent": "unsupported",
+          "knowledge": null,
+          "placeName": null,
+          "projection": "current",
+          "completedAt": "2026-09-13T22:42:15.887526+00:00",
+          "requestScope": "unknown",
+          "placeSubjectId": null,
+          "originalOutcome": "blocked",
+          "placeResolution": null,
+          "unansweredNeeds": []
+        },
+        "status": "unavailable",
+        "turnId": "58b60c3d-da75-4960-a2c6-e83ed0cf8075",
+        "outcome": "blocked",
+        "threadId": "87231b7c-6689-43d5-bd43-9d941aa8c163",
+        "createdAt": "2026-09-13T22:42:01.031965+00:00",
+        "parentTurnId": null,
+        "relationship": "new_goal",
+        "scopeVersion": 1,
+        "schemaVersion": "grounded-turn/1",
+        "serviceTaskId": "6aee8b6c-9ee1-4b50-8f52-769e254f9787"
+      },
+      "totalTurns": 20
+    }
+  ],
+  "cleanup": [
+    {
+      "operation": "nativeLogout",
+      "locale": "en",
+      "attempt": 1,
+      "status": 200
+    },
+    {
+      "operation": "nativeLogout",
+      "locale": "zh",
+      "attempt": 1,
+      "status": 200
+    },
+    {
+      "operation": "disable",
+      "status": "PASS"
+    },
+    {
+      "operation": "removeOwnHost",
+      "status": "PASS"
+    }
+  ],
+  "status": "PASS",
+  "finishedAt": "2026-09-13T23:08:08.848Z"
+}

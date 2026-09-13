@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "place-transport-diagnostic-evidence/1",
+  "status": "PASS",
+  "modelCalls": 0,
+  "files": [
+    {
+      "file": "activated.json",
+      "bytes": 475,
+      "sha256": "6ac423b44c79941477d1be2823ae1c3d6913e199cfb613a33c0efc7baef2b86a"
+    },
+    {
+      "file": "activation-intent.json",
+      "bytes": 633,
+      "sha256": "70f195cf51aeef74f8cc2994e8c9ccdac0f2d6402786e92358a0b3caa22eb445"
+    },
+    {
+      "file": "activation-transaction.json",
+      "bytes": 651,
+      "sha256": "fcf3afbe353056e0d093c311028844c8a9a840653bfe0ef1434003fd070119ae"
+    },
+    {
+      "file": "after-disable.json",
+      "bytes": 165610,
+      "sha256": "9fbd764b1b763bb296160ab00690f978aa5c79a1a28b8a471098788a5bef7563"
+    },
+    {
+      "file": "before.json",
+      "bytes": 165644,
+      "sha256": "42de09edbed435296670f9b68e3f5aeb3007bea65b0e9d3d151b8c1d4324ad88"
+    },
+    {
+      "file": "diagnostic.json",
+      "bytes": 15998,
+      "sha256": "d89e7ffb05a8a733f6ed450522c6feca7ca127823e178b9dbfadf18c5090dcd1"
+    },
+    {
+      "file": "diagnostic.log",
+      "bytes": 2460,
+      "sha256": "637f318020b2eaf7c8ecac389e7c979954f02c893684e6f14a3ea33352a66867"
+    },
+    {
+      "file": "diagnostic.mjs",
+      "bytes": 4382,
+      "sha256": "8cb11e303b5910d257ce38adb4a774daade325b06e1051583ab705fa83103a78"
+    },
+    {
+      "file": "disabled.json",
+      "bytes": 527,
+      "sha256": "10ad83e1f8f0636cfd60c9a729fe4ac7aa86b0035e9163fcdd741b6a050dc741"
+    },
+    {
+      "file": "firewall-allow-after.json",
+      "bytes": 2549,
+      "sha256": "c84284619f5cc4db1ec8b9aae0e4713f926c1df34fc862c807ce90f274e61749"
+    },
+    {
+      "file": "firewall-allow-plan.json",
+      "bytes": 2665,
+      "sha256": "d21e8b310c532fbfa6c39a98054eab7e0c7d078ae2f1ac79b36666fd6a408d71"
+    },
+    {
+      "file": "firewall-allow-staged.json",
+      "bytes": 6564,
+      "sha256": "61ef0d017efa2fd061b93f7cea3017d9157f932dcd79001a9861c3b22d00fe7b"
+    },
+    {
+      "file": "firewall-before.json",
+      "bytes": 2482,
+      "sha256": "df0b43b5f548a49e29ce11238cd4b494cc309ca1b6631b0dd56b26b4bee37f4a"
+    },
+    {
+      "file": "firewall-remove-after.json",
+      "bytes": 2482,
+      "sha256": "a1f1191bc6dffa7eeb54ea4ad9193594ca5e09a129f3e905f3a95d76dce32b3a"
+    },
+    {
+      "file": "firewall-remove-plan.json",
+      "bytes": 2598,
+      "sha256": "8d1b495f87e25d47ad4844600e829da084cd0444d05ba3643662c9749b8d3e91"
+    },
+    {
+      "file": "firewall-remove-staged.json",
+      "bytes": 6495,
+      "sha256": "9f4f7577ae603e118081d4e63be2fc0f7bd23484507913c338ceff154af0d7d9"
+    },
+    {
+      "file": "firewall-scope.py",
+      "bytes": 2966,
+      "sha256": "2bbc98da8c9b0667d4e913a23efa35b4964277d77e27219a42b9d7eff0e5be83"
+    },
+    {
+      "file": "preview-state.json",
+      "bytes": 5231,
+      "sha256": "261b1b544ad2282c5e6793f451bcd85ee8c564f1cd79a788206efdbedc814ea3"
+    },
+    {
+      "file": "verification.json",
+      "bytes": 347,
+      "sha256": "15c81da3060eac55dcd8b362f16aa69f35813e0a9f42d76880d46033f12a2123"
+    },
+    {
+      "file": "verification.md",
+      "bytes": 1200,
+      "sha256": "63461b36ca7ef2311436962380fa894f9e5d9a192e1bb80a5148f023e6422404"
+    },
+    {
+      "file": "verify.mjs",
+      "bytes": 2180,
+      "sha256": "c40ba96892095817a377a9a5cb85c2266f111915e0a56430c47c8338395c7aaf"
+    },
+    {
+      "file": "window-prepare.log",
+      "bytes": 235,
+      "sha256": "16ea8c8a4f3edaa79dd493230777621bd697b927af0192d102bc06cc27b1d57b"
+    },
+    {
+      "file": "window-state.mjs",
+      "bytes": 9321,
+      "sha256": "50bb4314c777bcc8d195bd8eda546ce135982e935447ffceb267344c4b1aa6f3"
+    }
+  ]
+}

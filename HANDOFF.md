@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 PR374: frozen runtime2f76642/v7/APIe19 legacy continuation RUNNING session73158, cache place-v7-legacy-continuation-20260914; recover existing case46 via API GET/no model, then only86remaining exact legacy cases. Reader-only,Ops/members off. Prior isolated46calls/45fully matched and cleanup PASS preserved at359d6f2. New-head Quality/Budget PASS; Native34788077423 still running. MapsPR372 sole prep.
+状态：S2 PR374 runtime2f/v7/APIe19: no live Staging process.86-case continuation73158 stopped after1settled call because history GET failed twice;85unrun. Earlier case46 normal API/foreign-owner recovery PASS without model. Zero-model diagnostic41119 PASS:4history reads/2logouts;mobile session pointers null;reader/Ops/members closed;406attempts0unresolved,WAF96 restored. Root cause unknown, no runtime fix. Native359d6f2 CI34788077423 running;Quality/Budget PASS. MapsPR372 soleprep.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -142,7 +142,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Follow live73158 place-run.json/log; never restart it or prior controllers.65min cap from2026-09-13T22:57:57.122Z,86new calls max, same frozenworker2f/APIe19. Existing budget expiry-only renewal before activation to2026-09-14T00:26:40.762Z preserves two70CNYlimits/history/providerlimits; no active renewal. Preserve recoveryGET outcome, first failure and final usage/reader/WAFcleanup. Cache final-accounting.py guarded byfinishedAt. Hold plan/evidence push while Native34788077423 runs, then batch and require final-head CI. No Production release/full S2 claim.
+Prepare only85remaining original legacy.slice(21) on frozenruntime2f/APIe19, recover saved sim-documents-en via normal API/foreign-owner check with zero model. Add fetch/body/JSON safe diagnostics and bounded session/read recovery before next model admission; do not repeat paid cases or restart73158/41119/37021. Current budgetexpiry2026-09-14T00:26:40.762Z; preflight before next window, no active renewal. Prior failures preserved in isolated/legacy-continuation/transport-diagnostic artifacts. Hold next evidence push until Native34788077423 finishes, then final-headCI required. No Production/fullS2claim.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
