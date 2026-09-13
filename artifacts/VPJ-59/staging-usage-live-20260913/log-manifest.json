@@ -1,0 +1,140 @@
+[
+  {
+    "file": "admitted.log",
+    "archive": "logs/admitted.log.gz",
+    "sha256": "f128d14dd975ce2e07e85e9433e65e8bc09fb8071a210b61854ae4e04b804b3e",
+    "bytes": 161
+  },
+  {
+    "file": "api-cancel.log",
+    "archive": "logs/api-cancel.log.gz",
+    "sha256": "089ef7c8fe72f4fbdc0be8e800ebe7e48802fb8e606fc9550db1b0b29969d9b3",
+    "bytes": 743
+  },
+  {
+    "file": "cancelled-retry.log",
+    "archive": "logs/cancelled-retry.log.gz",
+    "sha256": "6993546736a342b27a578b9b080af459d4812ed2b437b908cff09dca1c93abce",
+    "bytes": 655
+  },
+  {
+    "file": "cancelled.log",
+    "archive": "logs/cancelled.log.gz",
+    "sha256": "6993546736a342b27a578b9b080af459d4812ed2b437b908cff09dca1c93abce",
+    "bytes": 655
+  },
+  {
+    "file": "checkpoint.log",
+    "archive": "logs/checkpoint.log.gz",
+    "sha256": "da775ec489ee1363cc34e133d8e75cf781ff8d09d08e14def2d7227195e9ff5b",
+    "bytes": 157
+  },
+  {
+    "file": "fault-process.log",
+    "archive": "logs/fault-process.log.gz",
+    "sha256": "4fb1625138fe4533a802ff64bb8a1ab062581b49acc7b56272715717963769c8",
+    "bytes": 63
+  },
+  {
+    "file": "fault-service.jsonl",
+    "archive": "logs/fault-service.jsonl.gz",
+    "sha256": "22318c04bf2fc656dca0c2b9adacf8c89b2f3f942c04864c8bd8542a440cd8f0",
+    "bytes": 2540
+  },
+  {
+    "file": "native-admitted-stdout.log",
+    "archive": "logs/native-admitted-stdout.log.gz",
+    "sha256": "e2e8cfad2727bb7e1fba6bf36e3f85980adcbd692b76b78970e5a650cf793f2e",
+    "bytes": 66002
+  },
+  {
+    "file": "native-after-cancel-stdout.log",
+    "archive": "logs/native-after-cancel-stdout.log.gz",
+    "sha256": "70bb17ade7054fd1168174101b93354518a7075fecf747e67a0c95a43dee2d51",
+    "bytes": 65478
+  },
+  {
+    "file": "native-cancel-retry-stdout.log",
+    "archive": "logs/native-cancel-retry-stdout.log.gz",
+    "sha256": "5730fe5c3e0cbfa81124842ee19b78e1968d204df4a4543c171dc29f59f9e44c",
+    "bytes": 65478
+  },
+  {
+    "file": "native-cancel.log",
+    "archive": "logs/native-cancel.log.gz",
+    "sha256": "56955e83888f9c34887b371ec7f7c23e89ddb8272bb687755ab5010804a92717",
+    "bytes": 37
+  },
+  {
+    "file": "native-login-retry.log",
+    "archive": "logs/native-login-retry.log.gz",
+    "sha256": "1e4b5d1173e4e560c4fe5be82cdcc123f1b1fa75780bedfafd7826a8ce929c95",
+    "bytes": 52
+  },
+  {
+    "file": "native-login.log",
+    "archive": "logs/native-login.log.gz",
+    "sha256": "4939578b7b8a5a05d8bf16b5bd2f5a98372372f84359ea9f52b3318bee450957",
+    "bytes": 797
+  },
+  {
+    "file": "native-send.log",
+    "archive": "logs/native-send.log.gz",
+    "sha256": "da10d3a88309e45ffdc1c27e8e058c4ff8254ce0e32c7b41b129066b8382f41a",
+    "bytes": 27
+  },
+  {
+    "file": "preflight-budget.log",
+    "archive": "logs/preflight-budget.log.gz",
+    "sha256": "db6754469951e21440d9998476ddee6de30ee6b5208db6b4f06dd492479bf791",
+    "bytes": 109
+  },
+  {
+    "file": "reconcile-process.log",
+    "archive": "logs/reconcile-process.log.gz",
+    "sha256": "f0f68e42495f123fedae55f79c3d205b914052144c6f82afee3c58afca31d29b",
+    "bytes": 195
+  },
+  {
+    "file": "reconcile-receipts.jsonl",
+    "archive": "logs/reconcile-receipts.jsonl.gz",
+    "sha256": "546d88cf9bd1e0b204e8a4f1efb02935c48cd962bf095970cce8b85e904ba36d",
+    "bytes": 786
+  },
+  {
+    "file": "reconciled.log",
+    "archive": "logs/reconciled.log.gz",
+    "sha256": "eaf82a6e1d95869b651f7c2523de28221fc2706480c22823c4a632b7fd072d72",
+    "bytes": 163
+  },
+  {
+    "file": "replay-process.log",
+    "archive": "logs/replay-process.log.gz",
+    "sha256": "0265a6b741d67e425441c20c3916fe9b18e4323b9be2c038d63da9026de6a06c",
+    "bytes": 192
+  },
+  {
+    "file": "replay-receipts.jsonl",
+    "archive": "logs/replay-receipts.jsonl.gz",
+    "sha256": "1cccae1b6c614193d8bb368b8fed02a5b5e5c6f9615e3b5f85140457f14fc664",
+    "bytes": 794
+  },
+  {
+    "file": "snapshot-after.log",
+    "archive": "logs/snapshot-after.log.gz",
+    "sha256": "96aa1234b54e2d5272a45eb07234cf41facc6a1eec1d05db1614d7d260c481cb",
+    "bytes": 172
+  },
+  {
+    "file": "snapshot-before.log",
+    "archive": "logs/snapshot-before.log.gz",
+    "sha256": "1809f940df265c6c563f02b391b2c675f3a6da4204a4156fcfc67a5b645315be",
+    "bytes": 172
+  },
+  {
+    "file": "window.log",
+    "archive": "logs/window.log.gz",
+    "sha256": "a7c60a2fafc67832c9f40b957d73d8bda273a099139c0f8e4d401c95580ec090",
+    "bytes": 522
+  }
+]

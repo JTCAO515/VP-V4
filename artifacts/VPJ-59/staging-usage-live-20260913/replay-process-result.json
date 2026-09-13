@@ -1,0 +1,12 @@
+{
+  "at": "2026-09-13T01:12:09.506Z",
+  "mode": "replay",
+  "code": 0,
+  "signal": null,
+  "result": {
+    "schemaVersion": "vpj07-usage-reconciliation-result/1",
+    "settled": 0,
+    "alreadySettled": 1,
+    "partialTailIgnored": false
+  }
+}

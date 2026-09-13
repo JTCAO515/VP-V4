@@ -1,0 +1,5 @@
+{
+  "reason": "Normal authenticated cancellation endpoint returned503 in grounded-only Preview; native clicks did not establish cancellation.",
+  "continue": "Reconcile original durable usage and exact replay without starting any worker/provider. Preserve accepted original task for cancellation fix.",
+  "excluded": "No empty-worker run or native cancelled claim until actual cancellation succeeds."
+}

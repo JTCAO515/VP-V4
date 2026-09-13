@@ -1,0 +1,34 @@
+{
+  "turnId": "6069d41c-40eb-456c-99a1-970aaa69ad7d",
+  "owner": "fe70fac7-d312-494c-bde1-4c37c3942722",
+  "receipts": [
+    {
+      "at": "2026-09-13T01:10:55.870Z",
+      "path": "/api/auth/native/v2/credentials",
+      "status": 200,
+      "kind": null,
+      "error": null
+    },
+    {
+      "at": "2026-09-13T01:10:56.686Z",
+      "path": "/api/auth/native/v2/login",
+      "status": 200,
+      "kind": null,
+      "error": null
+    },
+    {
+      "at": "2026-09-13T01:10:56.973Z",
+      "path": "/api/chat/native/v1/turns/6069d41c-40eb-456c-99a1-970aaa69ad7d/cancel",
+      "status": 503,
+      "kind": null,
+      "error": "PROVIDER_UNAVAILABLE"
+    },
+    {
+      "at": "2026-09-13T01:10:57.607Z",
+      "path": "/api/auth/native/v2/logout",
+      "status": 200,
+      "kind": null,
+      "error": null
+    }
+  ]
+}

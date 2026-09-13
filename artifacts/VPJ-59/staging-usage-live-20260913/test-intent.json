@@ -1,0 +1,11 @@
+{
+  "workerSource": "5b5f72c13387aa9b4baca63d9868736017f732b7",
+  "apiAndNativeSource": "2717bf947cf31edd3ce5021e7e361413859ad9b8",
+  "previewId": "dpl_Hm8aLRK8V6JAqPg4zrkAX4p2mSPs",
+  "scope": "One controlled English native task; real validated usage fsync then worker SIGKILL, native cancellation and exact-attempt reconciliation/replay; no second model invocation",
+  "modelCallLimit": 1,
+  "existingTariffAndBudget": true,
+  "migration": 42,
+  "newMigration": false,
+  "productionRelease": false
+}
