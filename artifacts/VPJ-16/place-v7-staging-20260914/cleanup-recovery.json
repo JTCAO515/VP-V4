@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "originalControllerStatus": "FAIL",
+  "reason": "Initial removal did not produce a plan; cause not retained. Fresh read showed no draft and only owned host exemption still present. Retried removal only.",
+  "firewallVersion": 88,
+  "baselineConfigurationRestored": true,
+  "noModelRetry": true
+}

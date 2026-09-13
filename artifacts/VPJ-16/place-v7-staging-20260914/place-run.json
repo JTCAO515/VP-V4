@@ -1,0 +1,1235 @@
+{
+  "schemaVersion": "place-staging-observation/1",
+  "status": "FAIL",
+  "startedAt": "2026-09-13T21:56:49.153Z",
+  "sourceCommit": "2f7664222c316f1fca4582e497d743f17ea6e747",
+  "scenarioHash": "9609e985acd1c7734d31dc9b639b2276b3280b54d9379762126cc304c9333689",
+  "operations": [
+    {
+      "actor": "fe70fac7-d312-494c-bde1-4c37c3942722",
+      "request": {
+        "action": "submit_statement",
+        "operationId": "4a8bce4b-628d-4312-80dd-23363656e99a",
+        "candidateId": "d703c3cc-c94e-4665-a79e-00dd9e90d3ef",
+        "title": "Synthetic place address",
+        "statement": {
+          "schemaVersion": "knowledge-statement/2",
+          "assertion": {
+            "subjectId": "cedar_moon_gallery",
+            "predicate": "located_at",
+            "objectId": "place_address",
+            "conditions": [
+              "synthetic_place_only"
+            ],
+            "exclusions": [
+              "no_real_travel_guidance"
+            ]
+          },
+          "scope": {
+            "cities": [
+              "shanghai"
+            ],
+            "scene": "attraction",
+            "audience": "international_independent_traveler"
+          },
+          "place": {
+            "names": {
+              "en": "Cedar Moon Gallery",
+              "zh": "杉月展馆"
+            }
+          },
+          "value": {
+            "lines": [
+              "18 Cedar Moon Test Road"
+            ],
+            "locality": "Synthetic Shanghai venue",
+            "countryCode": "CN"
+          },
+          "expressions": {
+            "en": {
+              "text": "Synthetic reviewed address shown below; not a real venue.",
+              "conditions": [
+                "Controlled Staging only."
+              ],
+              "exclusions": [
+                "No real travel guidance."
+              ]
+            },
+            "zh": {
+              "text": "下列结构化信息为合成验收示例，不是真实场馆指引。",
+              "conditions": [
+                "仅限受控Staging验收。"
+              ],
+              "exclusions": [
+                "不作为真实旅行指引。"
+              ]
+            }
+          },
+          "sources": [
+            {
+              "sourceKey": "place-v7-20260914-address",
+              "revisionLabel": "synthetic-v1",
+              "publisher": "VisePanda synthetic acceptance fixture",
+              "uri": "urn:vpj15:synthetic:place-v7-20260914-address",
+              "locator": "Owned synthetic address assertion",
+              "snippet": "Synthetic private Staging place test value, not real visitor information.",
+              "usageDeclaration": "Owned synthetic material for private first-party Staging acceptance only."
+            }
+          ]
+        }
+      },
+      "startedAt": "2026-09-13T21:57:42.818Z",
+      "status": 200,
+      "finishedAt": "2026-09-13T21:57:43.912Z",
+      "result": {
+        "id": "d703c3cc-c94e-4665-a79e-00dd9e90d3ef",
+        "audit": [
+          {
+            "id": "5755e886-b473-409a-a1c1-64756e6a76d0",
+            "action": "submitted",
+            "actorId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+            "version": 1,
+            "createdAt": "2026-09-13T21:57:45.481316+00:00"
+          }
+        ],
+        "title": "Synthetic place address",
+        "status": "pending",
+        "content": "Synthetic reviewed address shown below; not a real venue.",
+        "version": 1,
+        "authorId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+        "createdAt": "2026-09-13T21:57:45.479602+00:00",
+        "published": false,
+        "statement": {
+          "place": {
+            "names": {
+              "en": "Cedar Moon Gallery",
+              "zh": "杉月展馆"
+            }
+          },
+          "scope": {
+            "scene": "attraction",
+            "cities": [
+              "shanghai"
+            ],
+            "audience": "international_independent_traveler"
+          },
+          "value": {
+            "lines": [
+              "18 Cedar Moon Test Road"
+            ],
+            "locality": "Synthetic Shanghai venue",
+            "countryCode": "CN"
+          },
+          "sources": [
+            {
+              "uri": "urn:vpj15:synthetic:place-v7-20260914-address",
+              "locator": "Owned synthetic address assertion",
+              "snippet": "Synthetic private Staging place test value, not real visitor information.",
+              "publisher": "VisePanda synthetic acceptance fixture",
+              "sourceKey": "place-v7-20260914-address",
+              "revisionLabel": "synthetic-v1",
+              "usageDeclaration": "Owned synthetic material for private first-party Staging acceptance only."
+            }
+          ],
+          "assertion": {
+            "objectId": "place_address",
+            "predicate": "located_at",
+            "subjectId": "cedar_moon_gallery",
+            "conditions": [
+              "synthetic_place_only"
+            ],
+            "exclusions": [
+              "no_real_travel_guidance"
+            ]
+          },
+          "expressions": {
+            "en": {
+              "text": "Synthetic reviewed address shown below; not a real venue.",
+              "conditions": [
+                "Controlled Staging only."
+              ],
+              "exclusions": [
+                "No real travel guidance."
+              ]
+            },
+            "zh": {
+              "text": "下列结构化信息为合成验收示例，不是真实场馆指引。",
+              "conditions": [
+                "仅限受控Staging验收。"
+              ],
+              "exclusions": [
+                "不作为真实旅行指引。"
+              ]
+            }
+          },
+          "schemaVersion": "knowledge-statement/2"
+        },
+        "reviewNote": null,
+        "reviewedAt": null,
+        "reviewerId": null,
+        "retrievalEligible": false
+      }
+    },
+    {
+      "actor": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+      "request": {
+        "action": "review",
+        "operationId": "e80f3b5c-b348-4b3a-b900-d9f27e8c8d0c",
+        "candidateId": "d703c3cc-c94e-4665-a79e-00dd9e90d3ef",
+        "expectedVersion": 1,
+        "decision": "reviewed",
+        "note": "Independent identity review of owned synthetic place test material only."
+      },
+      "startedAt": "2026-09-13T21:57:43.916Z",
+      "status": 200,
+      "finishedAt": "2026-09-13T21:57:45.345Z",
+      "result": {
+        "id": "d703c3cc-c94e-4665-a79e-00dd9e90d3ef",
+        "audit": [
+          {
+            "id": "5755e886-b473-409a-a1c1-64756e6a76d0",
+            "action": "submitted",
+            "actorId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+            "version": 1,
+            "createdAt": "2026-09-13T21:57:45.481316+00:00"
+          },
+          {
+            "id": "5c47a97f-76e7-44bb-9a0c-f3f088b07b3a",
+            "action": "reviewed",
+            "actorId": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+            "version": 2,
+            "createdAt": "2026-09-13T21:57:46.970306+00:00"
+          }
+        ],
+        "title": "Synthetic place address",
+        "status": "reviewed",
+        "content": "Synthetic reviewed address shown below; not a real venue.",
+        "version": 2,
+        "authorId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+        "createdAt": "2026-09-13T21:57:45.479602+00:00",
+        "published": false,
+        "statement": {
+          "place": {
+            "names": {
+              "en": "Cedar Moon Gallery",
+              "zh": "杉月展馆"
+            }
+          },
+          "scope": {
+            "scene": "attraction",
+            "cities": [
+              "shanghai"
+            ],
+            "audience": "international_independent_traveler"
+          },
+          "value": {
+            "lines": [
+              "18 Cedar Moon Test Road"
+            ],
+            "locality": "Synthetic Shanghai venue",
+            "countryCode": "CN"
+          },
+          "sources": [
+            {
+              "uri": "urn:vpj15:synthetic:place-v7-20260914-address",
+              "locator": "Owned synthetic address assertion",
+              "snippet": "Synthetic private Staging place test value, not real visitor information.",
+              "publisher": "VisePanda synthetic acceptance fixture",
+              "sourceKey": "place-v7-20260914-address",
+              "revisionLabel": "synthetic-v1",
+              "usageDeclaration": "Owned synthetic material for private first-party Staging acceptance only."
+            }
+          ],
+          "assertion": {
+            "objectId": "place_address",
+            "predicate": "located_at",
+            "subjectId": "cedar_moon_gallery",
+            "conditions": [
+              "synthetic_place_only"
+            ],
+            "exclusions": [
+              "no_real_travel_guidance"
+            ]
+          },
+          "expressions": {
+            "en": {
+              "text": "Synthetic reviewed address shown below; not a real venue.",
+              "conditions": [
+                "Controlled Staging only."
+              ],
+              "exclusions": [
+                "No real travel guidance."
+              ]
+            },
+            "zh": {
+              "text": "下列结构化信息为合成验收示例，不是真实场馆指引。",
+              "conditions": [
+                "仅限受控Staging验收。"
+              ],
+              "exclusions": [
+                "不作为真实旅行指引。"
+              ]
+            }
+          },
+          "schemaVersion": "knowledge-statement/2"
+        },
+        "reviewNote": "Independent identity review of owned synthetic place test material only.",
+        "reviewedAt": "2026-09-13T21:57:46.970046+00:00",
+        "reviewerId": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+        "retrievalEligible": false
+      }
+    },
+    {
+      "actor": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+      "request": {
+        "action": "publish_statement",
+        "operationId": "64c67ecf-298b-4ece-8509-739c420a0469",
+        "candidateId": "d703c3cc-c94e-4665-a79e-00dd9e90d3ef",
+        "expectedVersion": 2,
+        "expiresAt": "2026-09-13T23:02:45.350Z",
+        "useBasis": "original_factual_summary",
+        "useNote": "Owned synthetic private Staging place test. No real travel claim."
+      },
+      "startedAt": "2026-09-13T21:57:45.350Z",
+      "status": 200,
+      "finishedAt": "2026-09-13T21:57:46.267Z",
+      "result": {
+        "candidateId": "d703c3cc-c94e-4665-a79e-00dd9e90d3ef",
+        "operationId": "64c67ecf-298b-4ece-8509-739c420a0469",
+        "operationOutcome": "published",
+        "publicationVersion": 1
+      }
+    },
+    {
+      "actor": "fe70fac7-d312-494c-bde1-4c37c3942722",
+      "request": {
+        "action": "submit_statement",
+        "operationId": "32f8721e-ff0c-44af-8e2c-94951c96700c",
+        "candidateId": "63303f55-4bfe-48d4-98b4-577511a429b4",
+        "title": "Synthetic place prior-hours",
+        "statement": {
+          "schemaVersion": "knowledge-statement/2",
+          "assertion": {
+            "subjectId": "cedar_moon_gallery",
+            "predicate": "opens_during",
+            "objectId": "opening_hours",
+            "conditions": [
+              "synthetic_place_only"
+            ],
+            "exclusions": [
+              "no_real_travel_guidance"
+            ]
+          },
+          "scope": {
+            "cities": [
+              "shanghai"
+            ],
+            "scene": "attraction",
+            "audience": "international_independent_traveler"
+          },
+          "place": {
+            "names": {
+              "en": "Cedar Moon Gallery",
+              "zh": "杉月展馆"
+            }
+          },
+          "value": {
+            "startsAt": "2026-09-13T01:00:00Z",
+            "endsAt": "2026-09-13T09:00:00Z",
+            "timeZone": "Asia/Shanghai"
+          },
+          "expressions": {
+            "en": {
+              "text": "Synthetic reviewed opening window shown below; not real visitor guidance.",
+              "conditions": [
+                "Controlled Staging only."
+              ],
+              "exclusions": [
+                "No real travel guidance."
+              ]
+            },
+            "zh": {
+              "text": "下列结构化信息为合成验收示例，不是真实场馆指引。",
+              "conditions": [
+                "仅限受控Staging验收。"
+              ],
+              "exclusions": [
+                "不作为真实旅行指引。"
+              ]
+            }
+          },
+          "sources": [
+            {
+              "sourceKey": "place-v7-20260914-prior-hours",
+              "revisionLabel": "synthetic-v1",
+              "publisher": "VisePanda synthetic acceptance fixture",
+              "uri": "urn:vpj15:synthetic:place-v7-20260914-prior-hours",
+              "locator": "Owned synthetic prior-hours assertion",
+              "snippet": "Synthetic private Staging place test value, not real visitor information.",
+              "usageDeclaration": "Owned synthetic material for private first-party Staging acceptance only."
+            }
+          ]
+        }
+      },
+      "startedAt": "2026-09-13T21:57:46.276Z",
+      "status": 200,
+      "finishedAt": "2026-09-13T21:57:47.803Z",
+      "result": {
+        "id": "63303f55-4bfe-48d4-98b4-577511a429b4",
+        "audit": [
+          {
+            "id": "2ee8035e-73bd-4c38-bf68-9179a2d309e5",
+            "action": "submitted",
+            "actorId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+            "version": 1,
+            "createdAt": "2026-09-13T21:57:49.386536+00:00"
+          }
+        ],
+        "title": "Synthetic place prior-hours",
+        "status": "pending",
+        "content": "Synthetic reviewed opening window shown below; not real visitor guidance.",
+        "version": 1,
+        "authorId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+        "createdAt": "2026-09-13T21:57:49.386278+00:00",
+        "published": false,
+        "statement": {
+          "place": {
+            "names": {
+              "en": "Cedar Moon Gallery",
+              "zh": "杉月展馆"
+            }
+          },
+          "scope": {
+            "scene": "attraction",
+            "cities": [
+              "shanghai"
+            ],
+            "audience": "international_independent_traveler"
+          },
+          "value": {
+            "endsAt": "2026-09-13T09:00:00Z",
+            "startsAt": "2026-09-13T01:00:00Z",
+            "timeZone": "Asia/Shanghai"
+          },
+          "sources": [
+            {
+              "uri": "urn:vpj15:synthetic:place-v7-20260914-prior-hours",
+              "locator": "Owned synthetic prior-hours assertion",
+              "snippet": "Synthetic private Staging place test value, not real visitor information.",
+              "publisher": "VisePanda synthetic acceptance fixture",
+              "sourceKey": "place-v7-20260914-prior-hours",
+              "revisionLabel": "synthetic-v1",
+              "usageDeclaration": "Owned synthetic material for private first-party Staging acceptance only."
+            }
+          ],
+          "assertion": {
+            "objectId": "opening_hours",
+            "predicate": "opens_during",
+            "subjectId": "cedar_moon_gallery",
+            "conditions": [
+              "synthetic_place_only"
+            ],
+            "exclusions": [
+              "no_real_travel_guidance"
+            ]
+          },
+          "expressions": {
+            "en": {
+              "text": "Synthetic reviewed opening window shown below; not real visitor guidance.",
+              "conditions": [
+                "Controlled Staging only."
+              ],
+              "exclusions": [
+                "No real travel guidance."
+              ]
+            },
+            "zh": {
+              "text": "下列结构化信息为合成验收示例，不是真实场馆指引。",
+              "conditions": [
+                "仅限受控Staging验收。"
+              ],
+              "exclusions": [
+                "不作为真实旅行指引。"
+              ]
+            }
+          },
+          "schemaVersion": "knowledge-statement/2"
+        },
+        "reviewNote": null,
+        "reviewedAt": null,
+        "reviewerId": null,
+        "retrievalEligible": false
+      }
+    },
+    {
+      "actor": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+      "request": {
+        "action": "review",
+        "operationId": "19f20db9-29e2-4e3d-8f68-9ad3b9d71851",
+        "candidateId": "63303f55-4bfe-48d4-98b4-577511a429b4",
+        "expectedVersion": 1,
+        "decision": "reviewed",
+        "note": "Independent identity review of owned synthetic place test material only."
+      },
+      "startedAt": "2026-09-13T21:57:47.807Z",
+      "status": 200,
+      "finishedAt": "2026-09-13T21:57:48.939Z",
+      "result": {
+        "id": "63303f55-4bfe-48d4-98b4-577511a429b4",
+        "audit": [
+          {
+            "id": "2ee8035e-73bd-4c38-bf68-9179a2d309e5",
+            "action": "submitted",
+            "actorId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+            "version": 1,
+            "createdAt": "2026-09-13T21:57:49.386536+00:00"
+          },
+          {
+            "id": "2472ba84-c69e-41db-8f1b-4a37a27e00e9",
+            "action": "reviewed",
+            "actorId": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+            "version": 2,
+            "createdAt": "2026-09-13T21:57:50.604354+00:00"
+          }
+        ],
+        "title": "Synthetic place prior-hours",
+        "status": "reviewed",
+        "content": "Synthetic reviewed opening window shown below; not real visitor guidance.",
+        "version": 2,
+        "authorId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+        "createdAt": "2026-09-13T21:57:49.386278+00:00",
+        "published": false,
+        "statement": {
+          "place": {
+            "names": {
+              "en": "Cedar Moon Gallery",
+              "zh": "杉月展馆"
+            }
+          },
+          "scope": {
+            "scene": "attraction",
+            "cities": [
+              "shanghai"
+            ],
+            "audience": "international_independent_traveler"
+          },
+          "value": {
+            "endsAt": "2026-09-13T09:00:00Z",
+            "startsAt": "2026-09-13T01:00:00Z",
+            "timeZone": "Asia/Shanghai"
+          },
+          "sources": [
+            {
+              "uri": "urn:vpj15:synthetic:place-v7-20260914-prior-hours",
+              "locator": "Owned synthetic prior-hours assertion",
+              "snippet": "Synthetic private Staging place test value, not real visitor information.",
+              "publisher": "VisePanda synthetic acceptance fixture",
+              "sourceKey": "place-v7-20260914-prior-hours",
+              "revisionLabel": "synthetic-v1",
+              "usageDeclaration": "Owned synthetic material for private first-party Staging acceptance only."
+            }
+          ],
+          "assertion": {
+            "objectId": "opening_hours",
+            "predicate": "opens_during",
+            "subjectId": "cedar_moon_gallery",
+            "conditions": [
+              "synthetic_place_only"
+            ],
+            "exclusions": [
+              "no_real_travel_guidance"
+            ]
+          },
+          "expressions": {
+            "en": {
+              "text": "Synthetic reviewed opening window shown below; not real visitor guidance.",
+              "conditions": [
+                "Controlled Staging only."
+              ],
+              "exclusions": [
+                "No real travel guidance."
+              ]
+            },
+            "zh": {
+              "text": "下列结构化信息为合成验收示例，不是真实场馆指引。",
+              "conditions": [
+                "仅限受控Staging验收。"
+              ],
+              "exclusions": [
+                "不作为真实旅行指引。"
+              ]
+            }
+          },
+          "schemaVersion": "knowledge-statement/2"
+        },
+        "reviewNote": "Independent identity review of owned synthetic place test material only.",
+        "reviewedAt": "2026-09-13T21:57:50.604147+00:00",
+        "reviewerId": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+        "retrievalEligible": false
+      }
+    },
+    {
+      "actor": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+      "request": {
+        "action": "publish_statement",
+        "operationId": "20484e0f-723a-4678-9f64-3d6e53e1a5dd",
+        "candidateId": "63303f55-4bfe-48d4-98b4-577511a429b4",
+        "expectedVersion": 2,
+        "expiresAt": "2026-09-13T23:02:48.944Z",
+        "useBasis": "original_factual_summary",
+        "useNote": "Owned synthetic private Staging place test. No real travel claim."
+      },
+      "startedAt": "2026-09-13T21:57:48.944Z",
+      "status": 200,
+      "finishedAt": "2026-09-13T21:57:49.818Z",
+      "result": {
+        "candidateId": "63303f55-4bfe-48d4-98b4-577511a429b4",
+        "operationId": "20484e0f-723a-4678-9f64-3d6e53e1a5dd",
+        "operationOutcome": "published",
+        "publicationVersion": 1
+      }
+    },
+    {
+      "actor": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+      "request": {
+        "action": "revoke_statement",
+        "operationId": "3be26e4a-0508-4aa8-a7f4-1bb5a892db2f",
+        "candidateId": "d703c3cc-c94e-4665-a79e-00dd9e90d3ef",
+        "expectedPublicationVersion": 1,
+        "note": "End of owned synthetic place test."
+      },
+      "startedAt": "2026-09-13T21:59:00.177Z",
+      "status": 200,
+      "finishedAt": "2026-09-13T21:59:00.774Z",
+      "result": {
+        "candidateId": "d703c3cc-c94e-4665-a79e-00dd9e90d3ef",
+        "operationId": "3be26e4a-0508-4aa8-a7f4-1bb5a892db2f",
+        "operationOutcome": "revoked",
+        "publicationVersion": 2
+      }
+    },
+    {
+      "actor": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+      "request": {
+        "action": "revoke_statement",
+        "operationId": "8b5618f0-1e7c-406d-b268-155041640eaa",
+        "candidateId": "63303f55-4bfe-48d4-98b4-577511a429b4",
+        "expectedPublicationVersion": 1,
+        "note": "End of owned synthetic place test."
+      },
+      "startedAt": "2026-09-13T21:59:02.491Z",
+      "status": 200,
+      "finishedAt": "2026-09-13T21:59:03.328Z",
+      "result": {
+        "candidateId": "63303f55-4bfe-48d4-98b4-577511a429b4",
+        "operationId": "8b5618f0-1e7c-406d-b268-155041640eaa",
+        "operationOutcome": "revoked",
+        "publicationVersion": 2
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "group": "before",
+      "locale": "en",
+      "sampleId": "address-en",
+      "expected": {
+        "id": "address-en",
+        "locale": "en",
+        "text": "What is the street address of Cedar Moon Gallery?",
+        "intent": "place_address",
+        "outcome": "answered",
+        "requestScope": "single",
+        "city": "shanghai",
+        "placeResolution": "matched"
+      },
+      "request": {
+        "threadId": "303650e2-0ce4-4b7c-a7db-4e9757cebe46",
+        "turnId": "29607710-25d5-4f7c-9833-37e8411b8041",
+        "idempotencyKey": "edc9454e-8e04-4d8e-99af-f9b64ccbafac",
+        "policyId": "015d6710-82ec-4fc1-bb4f-a817b3f62873",
+        "locale": "en",
+        "city": "shanghai",
+        "text": "What is the street address of Cedar Moon Gallery?",
+        "serviceTask": {
+          "id": "e6df9142-22ee-40b0-8618-c6b970c56c11",
+          "scopeVersion": 1,
+          "relationship": "new_goal",
+          "parentTurnId": null
+        }
+      },
+      "admission": {
+        "status": 201,
+        "body": {
+          "version": 4,
+          "kind": "accepted",
+          "reused": false,
+          "turnId": "29607710-25d5-4f7c-9833-37e8411b8041",
+          "parentTurnId": null,
+          "relationship": "new_goal",
+          "scopeVersion": 1,
+          "serviceTaskId": "e6df9142-22ee-40b0-8618-c6b970c56c11"
+        }
+      },
+      "replayBound": true,
+      "worker": {
+        "exitCode": 0,
+        "result": "finished",
+        "receipts": "/Users/jtcao/Library/Caches/visepanda/place-v7-staging-20260914/worker-1.jsonl",
+        "prompt": {
+          "version": "vp-knowledge-intent-v7",
+          "digest": "4b810e4e36f2c3d4ffc3693b39eb50235462686beff48146f20612bacc3b6bf6"
+        }
+      },
+      "diagnosis": {
+        "schemaVersion": "knowledge-validation/1",
+        "turnId": "29607710-25d5-4f7c-9833-37e8411b8041",
+        "reason": "valid"
+      },
+      "original": {
+        "kind": "grounded_turn",
+        "input": "What is the street address of Cedar Moon Gallery?",
+        "locale": "en",
+        "output": "reviewed-answer-v1",
+        "result": {
+          "city": "shanghai",
+          "type": "reviewed_answer",
+          "intent": "place_address",
+          "knowledge": {
+            "scope": {
+              "city": "shanghai",
+              "scene": "attraction",
+              "locale": "en"
+            },
+            "answer": {
+              "claims": [
+                {
+                  "id": "place_address",
+                  "status": "covered",
+                  "factIds": [
+                    "071e495b-8345-4863-a85d-0df7f023ce59"
+                  ],
+                  "reasons": []
+                }
+              ],
+              "outcome": "answered",
+              "subjectId": "cedar_moon_gallery",
+              "questionId": "place_address",
+              "questionVersion": 1
+            },
+            "status": "available",
+            "purpose": "trip_planning",
+            "recipient": "first_party",
+            "territory": "CN-mainland",
+            "statements": [
+              {
+                "text": "Synthetic reviewed address shown below; not a real venue.",
+                "place": {
+                  "names": {
+                    "en": "Cedar Moon Gallery",
+                    "zh": "杉月展馆"
+                  }
+                },
+                "scope": {
+                  "scene": "attraction",
+                  "cities": [
+                    "shanghai"
+                  ],
+                  "audience": "international_independent_traveler"
+                },
+                "value": {
+                  "lines": [
+                    "18 Cedar Moon Test Road"
+                  ],
+                  "locality": "Synthetic Shanghai venue",
+                  "countryCode": "CN"
+                },
+                "factId": "071e495b-8345-4863-a85d-0df7f023ce59",
+                "sources": [
+                  {
+                    "uri": "urn:vpj15:synthetic:place-v7-20260914-address",
+                    "locator": "Owned synthetic address assertion",
+                    "publisher": "VisePanda synthetic acceptance fixture",
+                    "sourceKey": "place-v7-20260914-address",
+                    "revisionLabel": "synthetic-v1",
+                    "sourceRevisionId": "ad6da47f-dd19-4c60-ad46-4e1c416e7670"
+                  }
+                ],
+                "version": 1,
+                "assertion": {
+                  "objectId": "place_address",
+                  "predicate": "located_at",
+                  "subjectId": "cedar_moon_gallery",
+                  "conditions": [
+                    "synthetic_place_only"
+                  ],
+                  "exclusions": [
+                    "no_real_travel_guidance"
+                  ]
+                },
+                "expiresAt": "2026-09-13T23:02:45.35+00:00",
+                "conditions": [
+                  "Controlled Staging only."
+                ],
+                "exclusions": [
+                  "No real travel guidance."
+                ],
+                "reviewedAt": "2026-09-13T21:57:46.970046+00:00",
+                "assertionId": "d0dbbf23-abd6-45df-a855-49539303b2e7",
+                "publishedAt": "2026-09-13T21:57:47.886118+00:00",
+                "assertionRevision": 1
+              }
+            ],
+            "evaluatedAt": "2026-09-13T21:58:13.190402+00:00",
+            "schemaVersion": "knowledge-answer/1"
+          },
+          "placeName": "Cedar Moon Gallery",
+          "projection": "current",
+          "completedAt": "2026-09-13T21:58:11.753815+00:00",
+          "requestScope": "single",
+          "placeSubjectId": "cedar_moon_gallery",
+          "originalOutcome": "answered",
+          "placeResolution": "matched",
+          "unansweredNeeds": []
+        },
+        "status": "completed",
+        "turnId": "29607710-25d5-4f7c-9833-37e8411b8041",
+        "outcome": "answered",
+        "threadId": "303650e2-0ce4-4b7c-a7db-4e9757cebe46",
+        "createdAt": "2026-09-13T21:57:59.03624+00:00",
+        "parentTurnId": null,
+        "relationship": "new_goal",
+        "scopeVersion": 1,
+        "schemaVersion": "grounded-turn/1",
+        "serviceTaskId": "e6df9142-22ee-40b0-8618-c6b970c56c11"
+      },
+      "matches": true,
+      "foreignOwnerHidden": true
+    },
+    {
+      "group": "before",
+      "locale": "zh",
+      "sampleId": "address-zh",
+      "expected": {
+        "id": "address-zh",
+        "locale": "zh",
+        "text": "杉月展馆的街道地址是什么？",
+        "intent": "place_address",
+        "outcome": "answered",
+        "requestScope": "single",
+        "city": "shanghai",
+        "placeResolution": "matched"
+      },
+      "request": {
+        "threadId": "a36c1f9b-f867-4792-a617-e92c5172506b",
+        "turnId": "d083d43e-ca06-4737-a0c7-4832874a9fe4",
+        "idempotencyKey": "69c14ec2-849d-4157-b1df-d4deae668cfa",
+        "policyId": "015d6710-82ec-4fc1-bb4f-a817b3f62873",
+        "locale": "zh",
+        "city": "shanghai",
+        "text": "杉月展馆的街道地址是什么？",
+        "serviceTask": {
+          "id": "9ac556d5-4605-491b-b189-8a6487272bbf",
+          "scopeVersion": 1,
+          "relationship": "new_goal",
+          "parentTurnId": null
+        }
+      },
+      "admission": {
+        "status": 201,
+        "body": {
+          "version": 4,
+          "kind": "accepted",
+          "reused": false,
+          "turnId": "d083d43e-ca06-4737-a0c7-4832874a9fe4",
+          "parentTurnId": null,
+          "relationship": "new_goal",
+          "scopeVersion": 1,
+          "serviceTaskId": "9ac556d5-4605-491b-b189-8a6487272bbf"
+        }
+      },
+      "replayBound": true,
+      "worker": {
+        "exitCode": 0,
+        "result": "finished",
+        "receipts": "/Users/jtcao/Library/Caches/visepanda/place-v7-staging-20260914/worker-2.jsonl",
+        "prompt": {
+          "version": "vp-knowledge-intent-v7",
+          "digest": "4b810e4e36f2c3d4ffc3693b39eb50235462686beff48146f20612bacc3b6bf6"
+        }
+      },
+      "diagnosis": {
+        "schemaVersion": "knowledge-validation/1",
+        "turnId": "d083d43e-ca06-4737-a0c7-4832874a9fe4",
+        "reason": "valid"
+      },
+      "original": {
+        "kind": "grounded_turn",
+        "input": "杉月展馆的街道地址是什么？",
+        "locale": "zh",
+        "output": "reviewed-answer-v1",
+        "result": {
+          "city": "shanghai",
+          "type": "reviewed_answer",
+          "intent": "place_address",
+          "knowledge": {
+            "scope": {
+              "city": "shanghai",
+              "scene": "attraction",
+              "locale": "zh"
+            },
+            "answer": {
+              "claims": [
+                {
+                  "id": "place_address",
+                  "status": "covered",
+                  "factIds": [
+                    "071e495b-8345-4863-a85d-0df7f023ce59"
+                  ],
+                  "reasons": []
+                }
+              ],
+              "outcome": "answered",
+              "subjectId": "cedar_moon_gallery",
+              "questionId": "place_address",
+              "questionVersion": 1
+            },
+            "status": "available",
+            "purpose": "trip_planning",
+            "recipient": "first_party",
+            "territory": "CN-mainland",
+            "statements": [
+              {
+                "text": "下列结构化信息为合成验收示例，不是真实场馆指引。",
+                "place": {
+                  "names": {
+                    "en": "Cedar Moon Gallery",
+                    "zh": "杉月展馆"
+                  }
+                },
+                "scope": {
+                  "scene": "attraction",
+                  "cities": [
+                    "shanghai"
+                  ],
+                  "audience": "international_independent_traveler"
+                },
+                "value": {
+                  "lines": [
+                    "18 Cedar Moon Test Road"
+                  ],
+                  "locality": "Synthetic Shanghai venue",
+                  "countryCode": "CN"
+                },
+                "factId": "071e495b-8345-4863-a85d-0df7f023ce59",
+                "sources": [
+                  {
+                    "uri": "urn:vpj15:synthetic:place-v7-20260914-address",
+                    "locator": "Owned synthetic address assertion",
+                    "publisher": "VisePanda synthetic acceptance fixture",
+                    "sourceKey": "place-v7-20260914-address",
+                    "revisionLabel": "synthetic-v1",
+                    "sourceRevisionId": "ad6da47f-dd19-4c60-ad46-4e1c416e7670"
+                  }
+                ],
+                "version": 1,
+                "assertion": {
+                  "objectId": "place_address",
+                  "predicate": "located_at",
+                  "subjectId": "cedar_moon_gallery",
+                  "conditions": [
+                    "synthetic_place_only"
+                  ],
+                  "exclusions": [
+                    "no_real_travel_guidance"
+                  ]
+                },
+                "expiresAt": "2026-09-13T23:02:45.35+00:00",
+                "conditions": [
+                  "仅限受控Staging验收。"
+                ],
+                "exclusions": [
+                  "不作为真实旅行指引。"
+                ],
+                "reviewedAt": "2026-09-13T21:57:46.970046+00:00",
+                "assertionId": "d0dbbf23-abd6-45df-a855-49539303b2e7",
+                "publishedAt": "2026-09-13T21:57:47.886118+00:00",
+                "assertionRevision": 1
+              }
+            ],
+            "evaluatedAt": "2026-09-13T21:58:36.154485+00:00",
+            "schemaVersion": "knowledge-answer/1"
+          },
+          "placeName": "杉月展馆",
+          "projection": "current",
+          "completedAt": "2026-09-13T21:58:33.644406+00:00",
+          "requestScope": "single",
+          "placeSubjectId": "cedar_moon_gallery",
+          "originalOutcome": "answered",
+          "placeResolution": "matched",
+          "unansweredNeeds": []
+        },
+        "status": "completed",
+        "turnId": "d083d43e-ca06-4737-a0c7-4832874a9fe4",
+        "outcome": "answered",
+        "threadId": "a36c1f9b-f867-4792-a617-e92c5172506b",
+        "createdAt": "2026-09-13T21:58:22.568693+00:00",
+        "parentTurnId": null,
+        "relationship": "new_goal",
+        "scopeVersion": 1,
+        "schemaVersion": "grounded-turn/1",
+        "serviceTaskId": "9ac556d5-4605-491b-b189-8a6487272bbf"
+      },
+      "matches": true,
+      "foreignOwnerHidden": true
+    },
+    {
+      "group": "before",
+      "locale": "en",
+      "sampleId": "partial-en",
+      "expected": {
+        "id": "partial-en",
+        "locale": "en",
+        "text": "What are Cedar Moon Gallery's address and today's opening hours?",
+        "intent": "place_address_and_hours",
+        "outcome": "partial",
+        "requestScope": "single",
+        "city": "shanghai",
+        "placeResolution": "matched",
+        "missing": [
+          "opening_hours"
+        ]
+      },
+      "request": {
+        "threadId": "a0205842-0b0a-4f95-b120-77f0ff766d63",
+        "turnId": "3f9fb6f9-f9ca-4fe6-983a-94979fe0fbe5",
+        "idempotencyKey": "680464d4-2d24-44e6-ab38-ea3aa5897aa8",
+        "policyId": "015d6710-82ec-4fc1-bb4f-a817b3f62873",
+        "locale": "en",
+        "city": "shanghai",
+        "text": "What are Cedar Moon Gallery's address and today's opening hours?",
+        "serviceTask": {
+          "id": "7c35646a-9ec0-4591-951e-e55beb1294d6",
+          "scopeVersion": 1,
+          "relationship": "new_goal",
+          "parentTurnId": null
+        }
+      },
+      "admission": {
+        "status": 201,
+        "body": {
+          "version": 4,
+          "kind": "accepted",
+          "reused": false,
+          "turnId": "3f9fb6f9-f9ca-4fe6-983a-94979fe0fbe5",
+          "parentTurnId": null,
+          "relationship": "new_goal",
+          "scopeVersion": 1,
+          "serviceTaskId": "7c35646a-9ec0-4591-951e-e55beb1294d6"
+        }
+      },
+      "replayBound": true,
+      "worker": {
+        "exitCode": 0,
+        "result": "finished",
+        "receipts": "/Users/jtcao/Library/Caches/visepanda/place-v7-staging-20260914/worker-3.jsonl",
+        "prompt": {
+          "version": "vp-knowledge-intent-v7",
+          "digest": "4b810e4e36f2c3d4ffc3693b39eb50235462686beff48146f20612bacc3b6bf6"
+        }
+      },
+      "diagnosis": {
+        "schemaVersion": "knowledge-validation/1",
+        "turnId": "3f9fb6f9-f9ca-4fe6-983a-94979fe0fbe5",
+        "reason": "valid"
+      },
+      "original": {
+        "kind": "grounded_turn",
+        "input": "What are Cedar Moon Gallery's address and today's opening hours?",
+        "locale": "en",
+        "output": "reviewed-answer-v1",
+        "result": {
+          "city": "shanghai",
+          "type": "reviewed_answer",
+          "intent": "place_address_and_hours",
+          "knowledge": {
+            "scope": {
+              "city": "shanghai",
+              "scene": "attraction",
+              "locale": "en"
+            },
+            "answer": {
+              "claims": [
+                {
+                  "id": "place_address",
+                  "status": "covered",
+                  "factIds": [
+                    "071e495b-8345-4863-a85d-0df7f023ce59"
+                  ],
+                  "reasons": []
+                },
+                {
+                  "id": "opening_hours",
+                  "status": "unavailable",
+                  "factIds": [],
+                  "reasons": [
+                    "not_current_date",
+                    "revoked"
+                  ]
+                }
+              ],
+              "outcome": "partial",
+              "subjectId": "cedar_moon_gallery",
+              "questionId": "place_address_and_hours",
+              "questionVersion": 1
+            },
+            "status": "available",
+            "purpose": "trip_planning",
+            "recipient": "first_party",
+            "territory": "CN-mainland",
+            "statements": [
+              {
+                "text": "Synthetic reviewed address shown below; not a real venue.",
+                "place": {
+                  "names": {
+                    "en": "Cedar Moon Gallery",
+                    "zh": "杉月展馆"
+                  }
+                },
+                "scope": {
+                  "scene": "attraction",
+                  "cities": [
+                    "shanghai"
+                  ],
+                  "audience": "international_independent_traveler"
+                },
+                "value": {
+                  "lines": [
+                    "18 Cedar Moon Test Road"
+                  ],
+                  "locality": "Synthetic Shanghai venue",
+                  "countryCode": "CN"
+                },
+                "factId": "071e495b-8345-4863-a85d-0df7f023ce59",
+                "sources": [
+                  {
+                    "uri": "urn:vpj15:synthetic:place-v7-20260914-address",
+                    "locator": "Owned synthetic address assertion",
+                    "publisher": "VisePanda synthetic acceptance fixture",
+                    "sourceKey": "place-v7-20260914-address",
+                    "revisionLabel": "synthetic-v1",
+                    "sourceRevisionId": "ad6da47f-dd19-4c60-ad46-4e1c416e7670"
+                  }
+                ],
+                "version": 1,
+                "assertion": {
+                  "objectId": "place_address",
+                  "predicate": "located_at",
+                  "subjectId": "cedar_moon_gallery",
+                  "conditions": [
+                    "synthetic_place_only"
+                  ],
+                  "exclusions": [
+                    "no_real_travel_guidance"
+                  ]
+                },
+                "expiresAt": "2026-09-13T23:02:45.35+00:00",
+                "conditions": [
+                  "Controlled Staging only."
+                ],
+                "exclusions": [
+                  "No real travel guidance."
+                ],
+                "reviewedAt": "2026-09-13T21:57:46.970046+00:00",
+                "assertionId": "d0dbbf23-abd6-45df-a855-49539303b2e7",
+                "publishedAt": "2026-09-13T21:57:47.886118+00:00",
+                "assertionRevision": 1
+              }
+            ],
+            "evaluatedAt": "2026-09-13T21:59:00.166946+00:00",
+            "schemaVersion": "knowledge-answer/1"
+          },
+          "placeName": "Cedar Moon Gallery",
+          "projection": "current",
+          "completedAt": "2026-09-13T21:58:58.814225+00:00",
+          "requestScope": "single",
+          "placeSubjectId": "cedar_moon_gallery",
+          "originalOutcome": "partial",
+          "placeResolution": "matched",
+          "unansweredNeeds": []
+        },
+        "status": "completed",
+        "turnId": "3f9fb6f9-f9ca-4fe6-983a-94979fe0fbe5",
+        "outcome": "partial",
+        "threadId": "a0205842-0b0a-4f95-b120-77f0ff766d63",
+        "createdAt": "2026-09-13T21:58:46.410622+00:00",
+        "parentTurnId": null,
+        "relationship": "new_goal",
+        "scopeVersion": 1,
+        "schemaVersion": "grounded-turn/1",
+        "serviceTaskId": "7c35646a-9ec0-4591-951e-e55beb1294d6"
+      }
+    }
+  ],
+  "observations": [],
+  "workerLaunches": 3,
+  "cleanup": [
+    {
+      "operation": "nativeLogout",
+      "locale": "en",
+      "status": 200
+    },
+    {
+      "operation": "nativeLogout",
+      "locale": "zh",
+      "status": 200
+    },
+    {
+      "operation": "revokeOwned",
+      "candidateId": "d703c3cc-c94e-4665-a79e-00dd9e90d3ef",
+      "operationId": "3be26e4a-0508-4aa8-a7f4-1bb5a892db2f",
+      "status": "PASS",
+      "attempts": 1
+    },
+    {
+      "operation": "revokeOwned",
+      "candidateId": "63303f55-4bfe-48d4-98b4-577511a429b4",
+      "operationId": "8b5618f0-1e7c-406d-b268-155041640eaa",
+      "status": "PASS",
+      "attempts": 1
+    },
+    {
+      "operation": "nativeLogout",
+      "locale": "en",
+      "status": 200
+    },
+    {
+      "operation": "cookieLogout",
+      "locale": "en",
+      "status": "PASS"
+    },
+    {
+      "operation": "cookieLogout",
+      "locale": "zh",
+      "status": "PASS"
+    },
+    {
+      "operation": "disable",
+      "status": "PASS",
+      "windowClosed": true
+    },
+    {
+      "operation": "removeOwnHost",
+      "status": "FAIL"
+    }
+  ],
+  "candidateIdsInitiallyAbsent": true,
+  "addressExpiresAt": "2026-09-13T23:02:45.350Z",
+  "prior-hoursExpiresAt": "2026-09-13T23:02:48.944Z",
+  "failure": {
+    "phase": "before-en-partial-en",
+    "errorType": "AssertionError",
+    "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    'not_current_date',\n+   'revoked'\n  ]\n"
+  },
+  "finishedAt": "2026-09-13T21:59:53.655Z"
+}

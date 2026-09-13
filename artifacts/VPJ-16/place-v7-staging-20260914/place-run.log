@@ -1,0 +1,39 @@
+{
+  mode: 'activate',
+  status: 'PASS',
+  state: {
+    ops: true,
+    trips: 3,
+    users: 6,
+    reader: true,
+    members: [ [Object], [Object] ],
+    attempts: 356,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 2
+  }
+}
+
+{"mode": "allow", "activeVersion": 87, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{"group":"before","id":"address-en","locale":"en","status":"PASS","calls":1}
+{"group":"before","id":"address-zh","locale":"zh","status":"PASS","calls":2}
+{"status":"STOPPED","phase":"before-en-partial-en","errorType":"AssertionError"}
+{
+  mode: 'disable',
+  status: 'PASS',
+  windowClosed: true,
+  state: {
+    ops: false,
+    trips: 3,
+    users: 6,
+    reader: false,
+    members: [ [Object], [Object] ],
+    attempts: 359,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 0
+  }
+}
+
+{"status":"FAIL","workerLaunches":3,"cleanup":[{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"revokeOwned","candidateId":"d703c3cc-c94e-4665-a79e-00dd9e90d3ef","operationId":"3be26e4a-0508-4aa8-a7f4-1bb5a892db2f","status":"PASS","attempts":1},{"operation":"revokeOwned","candidateId":"63303f55-4bfe-48d4-98b4-577511a429b4","operationId":"8b5618f0-1e7c-406d-b268-155041640eaa","status":"PASS","attempts":1},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"cookieLogout","locale":"en","status":"PASS"},{"operation":"cookieLogout","locale":"zh","status":"PASS"},{"operation":"disable","status":"PASS","windowClosed":true},{"operation":"removeOwnHost","status":"FAIL"}]}

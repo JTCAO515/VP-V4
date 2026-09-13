@@ -1,0 +1,9 @@
+# Isolated v7 API window — running
+
+Controller37021 started2026-09-13T22:21:00.976Z in the private place-v7-isolated-20260914 cache. Do not restart it. Worker2f76642/promptv7, API/UIe19bd58 unchanged.132 calls and65-minute first-failure/deadline cap. This is a frozen plan/preflight snapshot, not final acceptance. Existing budget expiry23:26:03Z stays authoritative and may stop admission near the deadline; do not bypass it.
+
+Four new candidates/source keys now use Willow Dawn Gallery/柳晓展馆 with new main and duplicate-name server subject IDs. Preflight queries all historical statement payloads and finds0 matching subjects and0 matching bilingual names. The controller requires that observation to be less than10 minutes old before activation. This isolates prior revoked evidence while preserving the original strict missing-reason assertions. Normal submit/review/publish/revoke,26 place cases (including mixed hotel requests under eligible publication) and106 legacy cases remain. Original failed runs are retained; no runtime/prompt tweak was made for fixture problems.
+
+Initial state359attempts/0unresolved, reader/Opsfalse, members0,6users/3Trips/48migrations. Independent static review0/0. Current and final results, exact usage and cleanup pending. Earlier native/Web UI evidence is reused only for unchanged code in its original observation scope; no new v7 native UI submission claimed. No Production release.
+
+CI: d0b5 all checks passed. Latest b82c8da Native run34785363426 attempt1 failed because GitHub reported the self-hosted runner lost communication; remote step logs were unavailable. The runner subsequently reports online/idle, with no active Worker or xcodebuild process. Retried only that failed workflow at the same head; attempt2 job103803237929 is in progress. This is not a test pass. Quality and Budget checks passed and were not retried.
