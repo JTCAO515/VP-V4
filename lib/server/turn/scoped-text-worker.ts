@@ -5,7 +5,7 @@ import { PROTOCOL_MODELS, validThinkingBudget } from "../model-gateway/adapters/
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const RPCS = new Set(["claim_text_task_work", "authorize_text_task_dispatch", "claim_text_work", "finish_turn_work", "read_text_work", "authorize_text_dispatch", "complete_text_work",
-  "claim_grounded_work", "read_grounded_work", "authorize_grounded_dispatch", "complete_grounded_work",
+  "claim_grounded_work", "read_grounded_work", "authorize_grounded_dispatch", "complete_grounded_work", "complete_grounded_work_with_needs",
   "reserve_model_budget", "dispatch_model_budget", "finish_model_budget"]);
 export type ScopedTextWorkerConfig = Readonly<{
   environment: "local" | "staging";

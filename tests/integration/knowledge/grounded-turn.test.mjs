@@ -27,6 +27,12 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   assert.equal(await db("select pg_get_functiondef('public.read_grounded_turn(uuid)'::regprocedure);"),previous,'migration rollback restores exact function');
   await db('begin;'+content+'commit;');
   assert.equal(await db("select proacl::text from pg_proc where oid='public.read_grounded_turn(uuid)'::regprocedure;"),acl,'migration preserves RPC grants');
+ }else if(f.endsWith('_vpj_16_unanswered_needs.sql')) {
+  const previous=await db("select pg_get_functiondef('public.read_grounded_turn(uuid)'::regprocedure);");
+  await db('begin;'+content+'rollback;');
+  assert.equal(await db("select pg_get_functiondef('public.read_grounded_turn(uuid)'::regprocedure);"),previous);
+  assert.equal(await db("select to_regprocedure('public.complete_grounded_work_with_needs(uuid,uuid,text,text,text)') is null;"),'t');
+  await db('begin;'+content+'commit;');
  }else await db('begin;'+content+'commit;');}
  const actor=async()=>{const a={owner:uuid(),session:uuid()};await db(`insert into auth.users values('${a.owner}');insert into auth.sessions(id,user_id) values('${a.session}','${a.owner}');`);return a;};
  const owner=await actor(),other=await actor(),author=await actor(),reviewer=await actor();
@@ -67,6 +73,23 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   assert.equal(await db(`select turn_private.task_history('${root.p_turn_id}') is null;`),'t');
   assert.equal((await user('list_text_turns',{p_policy_id:policy})).kind,'unavailable');assert.equal((await user('read_text_turn',{p_turn_id:root.p_turn_id})).kind,'unavailable');
   assert.equal((await complete(l)).kind,'blocked','terminal is immutable');
+ });
+ await t.test('specific gaps are current-input excerpts, private, atomic and immutable',async()=>{
+  const quote='how early should I arrive?';const a=fresh({p_text:'Which ordinary booking ID do I need, and '+quote});
+  await user('submit_grounded_turn',a);const l=await lease();await authorize(l);
+  const params={...keys(l),p_intent:'rail_boarding_documents',p_request_scope:'additional_needs',p_unanswered_needs:JSON.stringify([quote])};
+  for(const value of ['null','{}','[1]',JSON.stringify(['Invented gap']),JSON.stringify([quote,quote]),'[]',JSON.stringify(['\t'])]) {
+   await assert.rejects(service('complete_grounded_work_with_needs',{...params,p_unanswered_needs:value}));
+   assert.equal((await read(a)).result.completedAt,null);
+  }
+  await assert.rejects(user('complete_grounded_work_with_needs',params),/permission denied/);
+  assert.equal((await service('complete_grounded_work_with_needs',{...params,p_lease_token:uuid()})).kind,'blocked');
+  assert.equal((await service('complete_grounded_work_with_needs',params)).kind,'finished');
+  const r=await read(a);assert.equal(r.outcome,'partial');assert.deepEqual(r.result.unansweredNeeds,[quote]);assert.equal(r.result.knowledge.answer.outcome,'answered');
+  assert.deepEqual((await user('read_grounded_events',{p_policy_id:policy,p_turn_id:a.p_turn_id,p_after_sequence:0})).turn.result.unansweredNeeds,[quote]);
+  assert.equal((await foreign('read_grounded_turn',{p_turn_id:a.p_turn_id})).kind,'unavailable');
+  assert.equal((await service('complete_grounded_work_with_needs',params)).kind,'blocked');
+  assert.deepEqual((await read(a)).result.unansweredNeeds,[quote]);
  });
  await t.test('events replay is stable, owner and selected-policy scoped with atomic current card',async()=>{
   const params={p_policy_id:policy,p_turn_id:root.p_turn_id,p_after_sequence:0};
@@ -224,7 +247,7 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   try {
    gate.stdin.write(`begin;select candidate_id from knowledge_review_private.publications where candidate_id='${second}' for update;select 'gate-ready';\n`);
    await waitUntil(async()=>output.includes('gate-ready'),5000,'publication gate');
-   finishing=sql(container,`set statement_timeout='15s';set application_name='grounded-expired-finisher';set role service_role;select public.complete_grounded_work('${a.p_turn_id}','${l.leaseToken}','rail_boarding_documents','single');`);
+   finishing=sql(container,`set statement_timeout='15s';set application_name='grounded-expired-finisher';set role service_role;select public.complete_grounded_work_with_needs('${a.p_turn_id}','${l.leaseToken}','rail_boarding_documents','single','[]');`);
    await waitUntil(async()=>(await db("select count(*) from pg_stat_activity where application_name='grounded-expired-finisher' and cardinality(pg_blocking_pids(pid))>0;"))==='1',5000,'completion waiting on publication');
    await waitUntil(async()=>(await db(`select expires_at<=clock_timestamp() from turn_private.work where turn_id='${a.p_turn_id}';`))==='t',10000,'actual lease deadline');
    gate.stdin.end('commit;\n');await done;

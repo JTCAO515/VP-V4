@@ -7,7 +7,7 @@ import { knowledgeIntent } from "../knowledge/claim/intent.ts";
 import { runDurableTurnWork, type TurnWorkRpc } from "./durable-worker.ts";
 import { validatedUsageReceipt, type RecordValidatedUsage } from "../model-gateway/budget/usage-receipt.ts";
 
-export type TextWorkRpc = (name: "read_text_work" | "authorize_text_dispatch" | "authorize_text_task_dispatch" | "complete_text_work" | "read_grounded_work" | "authorize_grounded_dispatch" | "complete_grounded_work", params: Readonly<Record<string, string>>) => Promise<unknown>;
+export type TextWorkRpc = (name: "read_text_work" | "authorize_text_dispatch" | "authorize_text_task_dispatch" | "complete_text_work" | "read_grounded_work" | "authorize_grounded_dispatch" | "complete_grounded_work" | "complete_grounded_work_with_needs", params: Readonly<Record<string, string>>) => Promise<unknown>;
 export type TextWorkerConfig = Readonly<{
   scopeId: string;
   priceVersion: string;
@@ -78,10 +78,15 @@ export async function runTextWorker(
     if (grounded) {
       let intent = null;
       if (output.kind === "protocol_validated" && typeof output.output === "string") {
-        try { intent = knowledgeIntent(JSON.parse(output.output)); } catch { /* Never persist arbitrary model text. */ }
+        try {
+          intent = knowledgeIntent(JSON.parse(output.output), input.text as string);
+          // v5 output must identify gaps explicitly; compatibility is for old workers, not new missing fields.
+          if (intent?.unansweredNeeds === undefined) intent = null;
+        } catch { /* Never persist arbitrary model text. */ }
       }
       const denied = output.kind === "unavailable" && ["SAFETY_BLOCKED", "DATA_POLICY_BLOCKED"].includes(output.code);
-      const persisted = await textRpc("complete_grounded_work", { ...keys,
+      const persisted = await textRpc(intent?.unansweredNeeds ? "complete_grounded_work_with_needs" : "complete_grounded_work", { ...keys,
+        ...(intent?.unansweredNeeds ? { p_unanswered_needs: JSON.stringify(intent.unansweredNeeds) } : {}),
         p_intent: intent?.intent ?? (denied ? "blocked" : "technical_failure"), p_request_scope: intent?.requestScope ?? "unknown" });
       if (!record(persisted) || persisted.kind !== "finished") throw new Error("Write rejected");
       return "persisted";

@@ -1,0 +1,9 @@
+# Specific unanswered needs — implementation candidate
+
+S2, #206/#264. New partial answers must identify the actual unsupported requests instead of a generic sentence. Prompt v5 extracts bounded exact excerpts from the current question in the existing classification call. Worker, SQL and consumers verify those excerpts against the original input. They are displayed as user quotations, never published evidence. Existing completion RPC/old clients remain compatible; the v5 worker requires all three output fields. Missing new fields produce technical failure, not a new legacy partial.
+
+Local PASS: lint266/typecheck;281 contracts;isolated PostgreSQL16 tests including transaction rollback, dispatch/role/owner guards, forged excerpts, immutable completion and expiry while waiting on publication. Native ad-hoc Simulator build and13 knowledge XCTest cases passed (no failures/skips). Security146pass/1existing dedicated database-target skip; not full security acceptance.
+
+Independent review found and fixed one Important: v5 worker initially accepted old two-field output. A real worker behavioral test now verifies rejection, current-input binding and the new RPC path. Follow-up review:0Critical/Important. Current SQL hash fccd414ce79d6850fa0b5947158fbc49cb1e95ff60df9108ffd195172c220f5a; worker1d55c89ae72ba2c69d6736117784cf471db8729afe70f176d2f67e41e9fcc19f; worker test1eba861a2f3e31b60c0a3ed686f1869e764528534ed72b538913943f4a23bd0b.
+
+Twenty synthetic en/zh cases in tests/fixtures/knowledge/unanswered-needs-v1.json are frozen before live calls; they check exact missing needs, multiple needs, negation, mixed domains and output-label injection. Prior86 routing cases will be reused for prompt regression. Actual provider evaluation, Staging46 migration/rollback rehearsal and native/Web rendered acceptance are UNRUN. No production release, new publication or Trip write is authorized by this artifact. Keep #206/#264/fullS2 open.

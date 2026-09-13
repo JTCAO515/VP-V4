@@ -85,7 +85,7 @@ export async function createNativeTextEnvironment({continuous=false,grounded=fal
    const kind=['partial','clarification','blocked','technical_failure'].find(k=>input.includes('kind='+k)) ?? 'answered';
    const isGrounded=body.messages?.[0]?.content===KNOWLEDGE_INTENT_SYSTEM_PROMPT;
    const intent=input.includes('kind=clarification')?'clarification':input.includes('kind=unsupported')?'unsupported':'rail_boarding_documents';
-   const groundedReply={intent,requestScope:intent==='rail_boarding_documents'?(input.includes('extra-needs')?'additional_needs':'single'):'unknown'};
+   const groundedReply={unansweredNeeds:intent==='rail_boarding_documents'&&input.includes('extra-needs')?['extra-needs']:[],intent,requestScope:intent==='rail_boarding_documents'?(input.includes('extra-needs')?'additional_needs':'single'):'unknown'};
    const deliver=()=>{if(res.destroyed)return;res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({model:PROTOCOL_MODELS.qwen,choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify(isGrounded?groundedReply:{outcome:kind,text:input.includes('中文')?'本机合成回答：请求已完成。':'Local synthetic answer: request completed.'})}}],usage:{prompt_tokens:10,completion_tokens:10,total_tokens:20}}));};
    if(input.includes('HOLD'))pendingResponses.add(deliver);else deliver();
   });

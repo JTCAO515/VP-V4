@@ -196,6 +196,19 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         return try JSONDecoder().decode(NativeTextTurn.self, from: JSONSerialization.data(withJSONObject: data))
     }
 
+    @MainActor func testSpecificGapsMustBeBoundedExcerptsFromThisTurn() throws {
+        let turn = try groundedTurn(compound: true)
+        let old = try XCTUnwrap(turn.result)
+        for needs in [["What documents do I need?"], [], ["Invented question"], ["What", "What"], ["\t"]] {
+            let result = NativeGroundedResult(type: old.type, city: old.city, intent: old.intent,
+                requestScope: old.requestScope, unansweredNeeds: needs, originalOutcome: old.originalOutcome,
+                completedAt: old.completedAt, projection: old.projection, knowledge: old.knowledge)
+            if needs == ["What documents do I need?"] {
+                XCTAssertEqual(try result.lifetime(for: turn, elapsed: 2), 28)
+            } else { XCTAssertThrowsError(try result.lifetime(for: turn, elapsed: 2)) }
+        }
+    }
+
     @MainActor func testGroundedProjectionHasBoundedLifetimeAndKeepsCompoundIncomplete() throws {
         for turn in [try groundedTurn(), try groundedTurn(partial: true), try groundedTurn(compound: true)] {
             XCTAssertTrue(turn.valid)
@@ -204,10 +217,10 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         }
         var turn = try groundedTurn()
         let old = try XCTUnwrap(turn.result)
-        turn.result = NativeGroundedResult(type: old.type, city: "beijing", intent: old.intent, requestScope: old.requestScope,
+        turn.result = NativeGroundedResult(type: old.type, city: "beijing", intent: old.intent, requestScope: old.requestScope, unansweredNeeds: old.unansweredNeeds,
             originalOutcome: old.originalOutcome, completedAt: old.completedAt, projection: old.projection, knowledge: old.knowledge)
         XCTAssertThrowsError(try XCTUnwrap(turn.result).lifetime(for: turn, elapsed: 0))
-        turn.result = NativeGroundedResult(type: old.type, city: old.city, intent: old.intent, requestScope: "additional_needs",
+        turn.result = NativeGroundedResult(type: old.type, city: old.city, intent: old.intent, requestScope: "additional_needs", unansweredNeeds: nil,
             originalOutcome: old.originalOutcome, completedAt: old.completedAt, projection: old.projection, knowledge: old.knowledge)
         XCTAssertThrowsError(try XCTUnwrap(turn.result).lifetime(for: turn, elapsed: 0))
     }
@@ -216,7 +229,7 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         var turn = try groundedTurn()
         let old = try XCTUnwrap(turn.result)
         for retainedFacts in [false, true] {
-            turn.result = NativeGroundedResult(type: old.type, city: old.city, intent: old.intent, requestScope: old.requestScope,
+            turn.result = NativeGroundedResult(type: old.type, city: old.city, intent: old.intent, requestScope: old.requestScope, unansweredNeeds: old.unansweredNeeds,
                 originalOutcome: old.originalOutcome, completedAt: old.completedAt, projection: "unavailable",
                 knowledge: retainedFacts ? old.knowledge : nil)
             if retainedFacts { XCTAssertThrowsError(try XCTUnwrap(turn.result).lifetime(for: turn, elapsed: 0)) }

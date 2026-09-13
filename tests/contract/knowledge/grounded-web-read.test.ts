@@ -96,3 +96,15 @@ test("payment and SIM history bind requested relations and route withdrawal guid
     assert.throws(() => f.read(), "another domain cannot be relabelled as rail");
   }
 });
+
+
+test("saved excerpts identify a partial request without accepting invented text or making it evidence", () => {
+  const f = fixture();f.turn.input = "Which ordinary booking ID is needed, and what if I lose my passport?";
+  f.turn.outcome = "partial";f.turn.result.originalOutcome = "partial";f.turn.result.requestScope = "additional_needs";
+  Object.assign(f.turn.result,{unansweredNeeds:["what if I lose my passport?"]});
+  const r=f.read();assert.deepEqual(r.turns[0].unansweredNeeds,["what if I lose my passport?"]);
+  assert.equal(r.turns[0].facts.length,2);assert.equal(r.turns[0].coverage,"answered");
+  for(const needs of [[],["not in the question"],["what if I lose my passport?","what if I lose my passport?"],[1]]) {
+    Object.assign(f.turn.result,{unansweredNeeds:needs});assert.throws(()=>f.read());
+  }
+});
