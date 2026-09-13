@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2 #196 native grounded event reconnect implemented and observed on2717bf9/Staging42: English tab return and Chinese process restart preserve the same task; two real calls settled once each, native event delivery observed. Reader/Ops disabled and WAF restored. PR347 documentation/evidence CI and merge guard verification in progress; full S1–S6 incomplete.
+状态：PR347 merged a9368da: native grounded event reconnect observed on2717bf9/Staging42, two real calls settled once each, reader/Ops off and WAF restored36. S2 usage-journal reconciliation is implemented and locally verified; PR/real Staging recovery still pending. Full S1–S6 incomplete.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -53,6 +53,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 验证
 
+- Validated usage recovery:14/14 actual local PostgreSQL cost tests including fsync→SIGKILL, retained dispatched hold, lost settlement acknowledgement, exact repeat and conflicting cost refusal.26/26 worker/security, final12/12 cost/CLI tests, build/lint/typecheck/docs pass. Independent review initial1Important (thinking-journal version) fixed; final0/0. A real cancellation-cause overwrite during slow pending accounting was fixed and tested. Real Staging reconciliation not yet run. See artifacts/VPJ-59/staging-usage-reconciliation-20260913/verification.md.
 - Native event reconnect2717bf9: local SQL11/11, real HTTP1/1, native transport/state10/10, bilingual UI2/2 and independent permission review0/0; required CI passed. Staging41→42 backup/restore and original78tables/259schema entries preserved. Native en tab return/zh process restart same-task event delivery observed, two real Qwen calls settled8382 CNY micros;73 total Turns/attempts, users6/Trips3 unchanged. Reader/Ops false,0members, WAF restored36 and Simulator deleted. See artifacts/VPJ-08/native-events-staging-20260913/verification.md. Full#196/S2 open.
 - Real Staging41 crash checkpoint: main21b2086/frozen runtime1a539e1 unchanged, native318f83d/backend8022b5a. Each zh/en normal worker was SIGKILLed after lease1 while its budget reserve RPC waited; no provider/budget attempt persisted. Same-config service waited for real120s lease expiry, completed sameTurn with lease2 and exactly1 settled Qwen call/worker-terminal-2. Native App restart retained pending question and final answer; Web3278 owner readback matched. Total2 settled/0 unresolved,8124microsCNY conservative tariff;71controlled Turns/attempts. All services/sessions/locks cleaned,read/Opsfalse,members0,WAF34. See artifacts/VPJ-07/grounded-crash-20260913/verification.md.
 - Real Staging41 on main1a539e1/worker unchanged, native318f83d/backend8022b5a and Web3278ed8: each zh/en technical_failure root→repair answered keeps Task/parent and question; owner-scoped Web reads same2 chains. Four Qwen calls settled/0 unresolved,16440micros CNY conservative tariff, no user charge or invoice claim. Native/browser logout, clean service stop, read/Ops off, members0,WAF30 cleanup,users6/Trips3 and69 controlled Turns/attempts observed. Retain AX click/observer and SQL-login failures. See artifacts/VPJ-07/grounded-repair-20260913/verification.md.
@@ -119,7 +120,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Finish PR347 required CI/merge and verify actual Production attempt canceled with aliases preserved. Continue #195/#196 post-dispatch unknown usage and cancellation/reconnect gaps on the same task; retain current reviewed-source/session/Trip boundaries. Reuse prior evidence within its recorded scope; physical phone work deferred.
+Finish required CI and selected-version real Staging usage recovery: kill only the owned worker after durable validated usage, retain the original hold, reconcile the same attempt and verify exact repeat without a provider call. Keep unknown evidence unknown, preserve task/cancel/Trip boundaries, clean owned runtime window and verify merge Production cancellation. PR347 native event evidence is reusable within its scope; broader #195/#196/S2 remains open.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
