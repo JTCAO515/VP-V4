@@ -1,0 +1,8 @@
+{
+  "source": "2717bf947cf31edd3ce5021e7e361413859ad9b8",
+  "udid": "EB511BC6-4141-40D3-A669-364E1CAA5167",
+  "environment": "staging",
+  "api": "https://vp-v4-jrr8btxgv-jtcao515s-projects.vercel.app",
+  "mode": "knowledge_intent_v1",
+  "installed": true
+}

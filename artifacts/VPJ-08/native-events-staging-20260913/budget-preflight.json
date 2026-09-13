@@ -1,0 +1,43 @@
+{
+  "at": "2026-09-12T23:27:51.270Z",
+  "status": "PASS",
+  "scope": "read-only existing budget; no mutation",
+  "rows": [
+    {
+      "locale": "en",
+      "ownerMatches": true,
+      "enabled": true,
+      "frozen": false,
+      "unexpired": true,
+      "currency": "CNY",
+      "scopeLimit": 70000000,
+      "taskLimit": 21000000,
+      "taskAttempts": 3,
+      "providerEnabled": true,
+      "model": "qwen3.7-plus-2026-05-26",
+      "priceVersion": "qwen-public-upper-20260912-v1",
+      "providerLimit": 70000000,
+      "attemptLimit": 7000000,
+      "used": 168264,
+      "unresolved": 0
+    },
+    {
+      "locale": "zh",
+      "ownerMatches": true,
+      "enabled": true,
+      "frozen": false,
+      "unexpired": true,
+      "currency": "CNY",
+      "scopeLimit": 70000000,
+      "taskLimit": 21000000,
+      "taskAttempts": 3,
+      "providerEnabled": true,
+      "model": "qwen3.7-plus-2026-05-26",
+      "priceVersion": "qwen-public-upper-20260912-v1",
+      "providerLimit": 70000000,
+      "attemptLimit": 7000000,
+      "used": 161274,
+      "unresolved": 0
+    }
+  ]
+}

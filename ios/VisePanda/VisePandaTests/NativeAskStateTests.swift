@@ -3,6 +3,36 @@ import SwiftUI
 @testable import VisePanda
 
 nonisolated final class NativeAskStateTests: XCTestCase {
+    @MainActor func testEventParserRequiresCompleteFrameAndMonotonicMatchingCursor() throws {
+        let id = "30000000-0000-4000-8000-000000000001"
+        let json = "{\"schemaVersion\":\"grounded-events/1\",\"turnId\":\"\(id)\",\"sequence\":1,\"eventId\":\"accepted\",\"type\":\"accepted\",\"state\":\"accepted\",\"turn\":null}"
+        let wire = "id: 1\nevent: turn\ndata: \(json)\n\n"
+        var parser = NativeAskEventDecoder()
+        var frames: [NativeAskEventDecoder.Frame] = []
+        for byte in wire.utf8 { if let frame = try parser.append(byte) { frames.append(frame) } }
+        try parser.finish()
+        XCTAssertEqual(frames.count, 1)
+        let frame = try XCTUnwrap(frames.first)
+        let event = try JSONDecoder().decode(NativeAskEvent.self, from: frame.data)
+        XCTAssertEqual(try event.validate(frame: frame, expected: id, cursor: 0), 1)
+        XCTAssertThrowsError(try event.validate(frame: frame, expected: id, cursor: 1))
+        XCTAssertThrowsError(try event.validate(frame: frame, expected: UUID().uuidString, cursor: 0))
+        for length in [1, 8, wire.utf8.count - 1] {
+            var truncated = NativeAskEventDecoder()
+            for byte in wire.utf8.prefix(length) { XCTAssertNil(try truncated.append(byte)) }
+            XCTAssertThrowsError(try truncated.finish())
+        }
+    }
+
+    @MainActor func testEventParserRejectsOversizedOrAmbiguousFrames() throws {
+        for wire in ["id: 01\n", "id: 1\nid: 2\n", "event: turn\nevent: projection\n", "data: {}\ndata: {}\n", "event: invented\n"] {
+            var parser = NativeAskEventDecoder()
+            XCTAssertThrowsError(try wire.utf8.forEach { _ = try parser.append($0) })
+        }
+        var parser = NativeAskEventDecoder()
+        XCTAssertThrowsError(try (0...262_144).forEach { _ in _ = try parser.append(65) })
+    }
+
     @MainActor private func session(grounded: Bool = false) throws -> NativeSession {
         TextStateProtocol.reset()
         let configuration = URLSessionConfiguration.ephemeral

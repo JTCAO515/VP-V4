@@ -1,0 +1,18 @@
+{
+  "at": "2026-09-12T23:24:56.432Z",
+  "status": "PASS",
+  "migrationCount": 42,
+  "originalTablesPreserved": 78,
+  "originalSchemaEntriesChecked": 259,
+  "expectedChangedFunctions": [],
+  "backupRestore": "PASS",
+  "authCount": 6,
+  "tripCount": 3,
+  "defaultReadDisabled": true,
+  "opsDisabled": true,
+  "noActiveMembers": true,
+  "publicationsPreserved": true,
+  "privateHelpersDenied": true,
+  "privateTablesDenied": true,
+  "readOnlyAuthenticated": true
+}

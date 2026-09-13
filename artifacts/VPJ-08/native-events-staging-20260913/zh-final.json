@@ -1,0 +1,30 @@
+{
+  "at": "2026-09-12T23:49:32.729Z",
+  "phase": "final",
+  "turnId": "92ae28e2-7b80-49dc-91fb-8ca4ab8f8557",
+  "taskId": "9991a306-aed1-4abd-801d-7d1a2de0e4e3",
+  "ownerId": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+  "locale": "zh",
+  "input": "我是使用外国护照的成年旅客。乘坐中国内地境内火车电子客票时，进站上车须带哪些购票身份证件和车票凭证？",
+  "status": "completed",
+  "outcome": "answered",
+  "createdAt": "2026-09-12T23:48:25.267573+00:00",
+  "attempts": 1,
+  "settled": 1,
+  "unresolved": 0,
+  "actualMicros": 4308,
+  "events": [
+    {
+      "eventId": "accepted",
+      "sequence": 1,
+      "type": "accepted",
+      "state": "accepted"
+    },
+    {
+      "eventId": "worker-terminal-1",
+      "sequence": 2,
+      "type": "terminal",
+      "state": "completed"
+    }
+  ]
+}

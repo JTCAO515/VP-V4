@@ -1,0 +1,112 @@
+[
+  {
+    "file": "restore.log.gz",
+    "originalBytes": 164,
+    "originalSha256": "edae4be555ed557f09fa438943c800986e8cf1037fc2ea17000bcf6978a1c318"
+  },
+  {
+    "file": "migration-dry-run.log.gz",
+    "originalBytes": 149,
+    "originalSha256": "9c2572ff201783087219d2cd2b4798e94ae672e63de8873dbb9397e2f87339f7"
+  },
+  {
+    "file": "migration-apply.log.gz",
+    "originalBytes": 199,
+    "originalSha256": "199875323984b70f0178fe6fac0f0326e65e9455decd980a5db3c80531097d66"
+  },
+  {
+    "file": "migration-verify.log.gz",
+    "originalBytes": 397,
+    "originalSha256": "d5f7d86709cad3fde209b17ce126f523307dfe54301b3765e8b7a6f595f0b9e1"
+  },
+  {
+    "file": "native-build.log.gz",
+    "originalBytes": 101436,
+    "originalSha256": "e0032990b3c50af5dfcddcacc76ca08d39c8d27a62857ff4f275e257cdeaaba4"
+  },
+  {
+    "file": "native-en-login.log.gz",
+    "originalBytes": 561,
+    "originalSha256": "b382f3ca26fefe2cb41cd9bc23c5323e4e1c6069d31e05dcd7655ae32c840e1f"
+  },
+  {
+    "file": "native-en-login-2.log.gz",
+    "originalBytes": 636,
+    "originalSha256": "5fc9977adf3a362be0a0661716d65ef719988480faa81a06864879d5096c1cbc"
+  },
+  {
+    "file": "native-en-root.log.gz",
+    "originalBytes": 27,
+    "originalSha256": "da10d3a88309e45ffdc1c27e8e058c4ff8254ce0e32c7b41b129066b8382f41a"
+  },
+  {
+    "file": "native-zh-root.log.gz",
+    "originalBytes": 938,
+    "originalSha256": "537f9c4c36261e8f1819e1fb962590232a272b9b1a5f558053b8b101565f8694"
+  },
+  {
+    "file": "native-zh-login.log.gz",
+    "originalBytes": 52,
+    "originalSha256": "1e4b5d1173e4e560c4fe5be82cdcc123f1b1fa75780bedfafd7826a8ce929c95"
+  },
+  {
+    "file": "native-en-readback-login.log.gz",
+    "originalBytes": 52,
+    "originalSha256": "1e4b5d1173e4e560c4fe5be82cdcc123f1b1fa75780bedfafd7826a8ce929c95"
+  },
+  {
+    "file": "native-en-final-logout.log.gz",
+    "originalBytes": 26,
+    "originalSha256": "3f7b109eacfd4a5edd5115b5cca00aecb719b1044ee18adacf9affe9dbcc7f5b"
+  },
+  {
+    "file": "native-zh-logout.log.gz",
+    "originalBytes": 26,
+    "originalSha256": "d5bfbbb89fc12d187a3e804ba8c3e449e4f806b377dcde4b9bf4463b0172432f"
+  },
+  {
+    "file": "simulator-reboot.log.gz",
+    "originalBytes": 623,
+    "originalSha256": "63a5c741a1b2cea56a990f5709fd02535a2ff88bf69c8074b89c648b97299e0e"
+  },
+  {
+    "file": "window.log.gz",
+    "originalBytes": 544,
+    "originalSha256": "e95d5f774493516ab1e825e41a9977b629cb431a2c1dab9fe503518b36e6703f"
+  },
+  {
+    "file": "native-en-live-result.json.gz",
+    "originalBytes": 80587,
+    "originalSha256": "bdd8f9d7c42654ba26cb43e9915adb8fba5d0736a3f94dcfb6775a5bd90efb8b"
+  },
+  {
+    "file": "native-en-reconnected-pending.json.gz",
+    "originalBytes": 7405,
+    "originalSha256": "fcf8153a1d4003a9929c558e48f3322be7aefa400e63c84261ae59e27357bd16"
+  },
+  {
+    "file": "native-zh-restart-intent.json.gz",
+    "originalBytes": 79463,
+    "originalSha256": "78a5fc703f530a888ec3b2506eec3086be81b117565a66c469ddc2e0c13dff33"
+  },
+  {
+    "file": "native-zh-restart-restored.json.gz",
+    "originalBytes": 78666,
+    "originalSha256": "95118384d399f199ca70e7da5f949e13ab82984c6d0eae84153f05f3166b6b65"
+  },
+  {
+    "file": "native-zh-live-result.json.gz",
+    "originalBytes": 78639,
+    "originalSha256": "a41c0c9aa976ca3e395ef382abebbe4a74a682c201b8a1977b5aea5005e7086a"
+  },
+  {
+    "file": "native-en-owner-readback.json.gz",
+    "originalBytes": 87483,
+    "originalSha256": "ff20a43feffe42e317010934dd868656aafd577ba6df6757e6b1e0881978a320"
+  },
+  {
+    "file": "native-zh-scrolled.json.gz",
+    "originalBytes": 79726,
+    "originalSha256": "c724cfe428267e21d984faa5ea2c3901eded67f56f4c4f68289d96a946908714"
+  }
+]

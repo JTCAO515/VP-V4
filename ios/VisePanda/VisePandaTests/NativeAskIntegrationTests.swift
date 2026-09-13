@@ -3,6 +3,78 @@ import XCTest
 
 nonisolated final class NativeAskIntegrationTests: XCTestCase {
     @MainActor
+    func testGroundedEventDisconnectResumesSameTaskAndCancelRemainsAvailable() async throws {
+        let env = ProcessInfo.processInfo.environment
+        guard env["VP_NATIVE_GROUNDED_TEST"] == "1" else { throw XCTSkip("UNRUN: explicit disposable grounded environment required") }
+        let api = try XCTUnwrap(env["VP_NATIVE_TEXT_API_URL"])
+        let control = try XCTUnwrap(URL(string: try XCTUnwrap(env["VP_NATIVE_TEXT_CONTROL_URL"])))
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "vpj08.stream.\(UUID().uuidString)"))
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", api, "-VisePandaGroundedMode"], defaults: defaults)
+        await session.login(email: try XCTUnwrap(env["VP_NATIVE_TEXT_EMAIL"]), password: "VPJ07-Local-Synthetic-Only-195!")
+        let store = NativeAskStore(mode: .grounded)
+        await store.reload(using: session)
+        await store.accept(reviewed: try XCTUnwrap(store.policy), using: session)
+        store.draft = "Synthetic HOLD native stream document question"
+        await store.send(locale: "en", using: session)
+        let original = try XCTUnwrap(store.turns.first)
+        XCTAssertTrue(original.waiting); XCTAssertNil(store.pending)
+        var cursor = 0
+        do {
+            try await session.askEvents(turnId: original.id, after: 0) { frame, _ in
+                if frame.name == "turn" {
+                    let value = try JSONDecoder().decode(NativeAskEvent.self, from: frame.data)
+                    cursor = try value.validate(frame: frame, expected: original.id, cursor: cursor)
+                    throw URLError(.networkConnectionLost)
+                }
+            }
+            XCTFail("Connection was not interrupted")
+        } catch let error as URLError { XCTAssertEqual(error.code, .networkConnectionLost) }
+        XCTAssertGreaterThan(cursor, 0)
+        // Reopen the real native byte transport with exactly the acknowledged cursor.
+        var projectionSeen = false
+        do {
+            try await session.askEvents(turnId: original.id, after: cursor) { frame, _ in
+                XCTAssertNil(frame.id, "Accepted event must not be replayed")
+                if frame.name == "projection" { projectionSeen = true; throw URLError(.cancelled) }
+            }
+        } catch let error as URLError { XCTAssertEqual(error.code, .cancelled) }
+        XCTAssertTrue(projectionSeen)
+        async let release: Void = Self.releaseHeld(control)
+        await store.receiveEvents(using: session)
+        try await release
+        let answer = try XCTUnwrap(store.turns.first)
+        XCTAssertEqual(answer.id, original.id); XCTAssertEqual(answer.serviceTaskId, original.serviceTaskId)
+        XCTAssertEqual(answer.outcome, .answered); XCTAssertTrue(store.groundedCurrent)
+        XCTAssertEqual(answer.result?.knowledge?.statements.count, 2)
+        store.startNewQuestion(); store.draft = "Synthetic HOLD native stream cancelled question"
+        await store.send(locale: "en", using: session)
+        let held = try XCTUnwrap(store.turns.first(where: \.waiting))
+        let reading = Task { await store.receiveEvents(using: session) }
+        await Task.yield()
+        XCTAssertFalse(store.busy, "Live read must leave generation cancellation available")
+        await store.cancel(held, using: session)
+        reading.cancel(); await reading.value
+        XCTAssertEqual(store.turns.first(where: { $0.id == held.id })?.status, "cancelled")
+        _ = try await URLSession.shared.data(from: control)
+        await session.logout(); store.reset(for: session.retainedDataScope)
+        XCTAssertTrue(store.turns.isEmpty)
+    }
+
+    @MainActor private static func releaseHeld(_ control: URL) async throws {
+        let pending = control.deletingLastPathComponent().appendingPathComponent("pending")
+        for _ in 0..<100 {
+            let (data, _) = try await URLSession.shared.data(from: pending)
+            let value = try JSONSerialization.jsonObject(with: data) as? [String: Int]
+            if (value?["count"] ?? 0) > 0 {
+                _ = try await URLSession.shared.data(from: control)
+                return
+            }
+            try await Task.sleep(for: .milliseconds(100))
+        }
+        throw URLError(.timedOut)
+    }
+
+    @MainActor
     func testRealLocalConsentPersistenceCancelWithdrawalAndAccountIsolation() async throws {
         let environment = ProcessInfo.processInfo.environment
         guard environment["VP_NATIVE_TEXT_TEST"] == "1" else { throw XCTSkip("UNRUN: explicit disposable native text environment is not configured") }
