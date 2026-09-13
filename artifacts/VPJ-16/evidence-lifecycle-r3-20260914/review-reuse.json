@@ -1,0 +1,46 @@
+{
+  "status": "PASS",
+  "scope": "Reuse prior independent permission/data controller review; only expected retained baseline counters changed",
+  "reviewedControllerSHA256": "5ba47f67bf936a68ff05c7629e4e1fddcef5603317a8a37517685091ebad3a1b",
+  "currentControllerSHA256": "5b8221cc1d424be4a8008b29d87670d915d080467a18f18e40009020a8f1e6c3",
+  "originalBaseline": {
+    "attempts": 315,
+    "statements": 12
+  },
+  "currentBaseline": {
+    "attempts": 321,
+    "statements": 15
+  },
+  "ownershipAndCleanupLogicUnchanged": true,
+  "priorReviewArtifact": "../evidence-lifecycle-20260914/review.json",
+  "priorReview": {
+    "scope": "operator window and bounded lifecycle runner",
+    "critical": 0,
+    "important": 0,
+    "windowSha256": "5ba47f67bf936a68ff05c7629e4e1fddcef5603317a8a37517685091ebad3a1b",
+    "runnerSha256": "eb3f82ff38d88922d9d004ab61264277b3fd373f48c3596673f5aa2f14d98d44",
+    "localTransactionTests": {
+      "environment": "isolated-local-postgres",
+      "checks": [
+        {
+          "case": "owned",
+          "status": "PASS"
+        },
+        {
+          "case": "lost_commit_receipt",
+          "status": "PASS"
+        },
+        {
+          "case": "foreign_takeover",
+          "status": "PASS"
+        },
+        {
+          "case": "retention_changed",
+          "status": "PASS"
+        }
+      ]
+    },
+    "reviewer": "knowledge_security_review",
+    "stagingAcceptance": "NOT_CLAIMED"
+  }
+}

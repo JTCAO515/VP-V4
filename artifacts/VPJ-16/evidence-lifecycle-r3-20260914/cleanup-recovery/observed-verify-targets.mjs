@@ -1,0 +1,5 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import {query} from '../specific-gaps-20260914/transport.mjs';
+const before=JSON.parse(fs.readFileSync('targets.json','utf8')),ids=before.rows.map(x=>x.candidateId);assert.ok(ids.every(x=>/^[a-f0-9-]{36}$/.test(x)));
+const rows=JSON.parse(query(`set role postgres;begin read only;select jsonb_agg(to_jsonb(p)) from knowledge_review_private.publications p where p.candidate_id in ('${ids.join("','")}');rollback;`));assert.equal(rows.length,2);const strip=p=>{const x=structuredClone(p);delete x.state;delete x.version;delete x.revoked_at;return x;};
+for(const row of rows){const old=before.rows.find(x=>x.candidateId===row.candidate_id).publication;assert.equal(row.state,'revoked');assert.equal(row.version,2);assert.ok(Date.parse(row.revoked_at)>=Date.parse(before.at));assert.deepEqual(strip(row),strip(old));}
+fs.writeFileSync('publication-verification.json',JSON.stringify({at:new Date().toISOString(),status:'PASS',onlyExpectedPublicationFieldsChanged:true,rows},null,2)+'\n');console.log({status:'PASS',revoked:2,otherPublicationFieldsUnchanged:true});

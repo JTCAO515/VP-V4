@@ -3,12 +3,12 @@
   "projectId": "visepanda-vp-v4",
   "lastUpdated": "2026-09-14",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
-  "status": "S2: draftPR373 lifecycle v2 FAIL at final reason assertion (expired actual vs expired+revoked expected); three full native/Web stages passed. Cleanup PASS:321 attempts/0 unresolved, original rows and four completions unchanged, switches off/members0/WAF74. Both v1 and v2 retained as FAIL;6 total calls consumed. Maps draftPR372 remains sole prep lane.",
+  "status": "S2: PR373 v3 lifecycle behavior passed all four bilingual native/API/Web stages. Raw run remains FAIL at automatic revoke cleanup; targeted recovery succeeded with zero model calls. Final325 attempts/0 unresolved, four saved completions and Trips unchanged, owned publications revoked, reader/Ops off/members0/WAF80. v1/v2 failures retained;10 aggregate calls. Maps draftPR372 remains sole prep lane.",
   "currentPhase": "S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "Codex — S2 Ask acceptance and VPJ-67 recorded usage trace",
   "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree.",
-  "nextAction": "Finish PR373 diagnosis/regression evidence. Saved-answer expiry reasons exclude unrelated revoked publications; preserve frozen v1/v2 and their six calls. A separately bounded follow-up is needed for pure-expiry native/Web final-stage acceptance, using new publication IDs and a declared new budget; do not rerun or relabel failed runs. No Production release.",
+  "nextAction": "Finish PR373 final CI and authorized merge with Production guard and alias verification. Then implement the existing reviewed-evidence producer bridge for place address and honest opening-hours gaps under #206/#264; use accepted contracts, no second engine or hardcoded Harness inputs. No additional lifecycle model calls needed. Maps PR372 remains independent preparation; no Production release.",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
@@ -66,9 +66,13 @@
     "CONTEXT.md",
     "HANDOFF.md",
     "tests/fixtures/knowledge/evidence-lifecycle-v2.json",
-    "tests/contract/knowledge/evidence-lifecycle-fixture.test.mjs"
+    "tests/contract/knowledge/evidence-lifecycle-fixture.test.mjs",
+    "tests/fixtures/knowledge/evidence-lifecycle-v3.json",
+    "artifacts/VPJ-16/evidence-lifecycle-r2-20260914/**",
+    "artifacts/VPJ-16/evidence-lifecycle-r3-20260914/**"
   ],
   "verification": [
+    "PR373 v3: four natural support/conflict/expiry stages PASS for en/zh native/API/Web1365 and390. Raw automatic run FAIL at revokeOwned; first cleanup recovery FAIL before POST; second reviewed recovery PASS with0 model calls, both own publications revoked, all other fields and four saved completion hashes unchanged. Final325 attempts/0 unresolved,6users/3Trips/46migrations, reader/Opsfalse/members0/WAF80. Four v3 settled calls estimated45276CNYmicros;10 aggregate/invoiceunknown. Original failures retained. See artifacts/VPJ-16/evidence-lifecycle-r3-20260914/verification.md.",
     "PR373 v1 actual Staging: English/Chinese answered2/2 before conflict; next synthetic submit400INVALID_INPUT because uppercase sourceKey/URI. OverallFAIL; conflict and natural expiryUNRUN. Both tasks settled22638CNYmicros estimated/actualbillingunknown;317attempts/0unresolved,original records/Trips retained,reader/Opsfalse/members0/WAF72,normallogout/Simulator shutdown. Correctedv2 fixtureOpscontract2/2PASS; windowtransaction tests4/4PASS; independentpermission review0/0. See artifacts/VPJ-16/evidence-lifecycle-20260914/verification.md.",
     "PR373 initial1218c76: isolated PostgreSQL17/17 zero skips includes natural expiry/conflict, reliable partial and immutable saved gaps; lint266/docs/syntax/diff PASS. Staging preflight46migrations/315attempts/0unresolved/6users/3Trips; reader/Ops off, members0. Dedicated Preview8e95279 READY; native ad-hoc Staging build/codesign PASS. Frozen4-call/35minute scenario; actual fault window UNRUN. artifacts/VPJ-16/evidence-lifecycle-20260914/verification.md.",
     "PR371 merged8e95279417a0a1147f7e81a5a857b0fbdb72d0de at2026-09-13T17:29:58Z, tree matches finalc66f936. Quality34771205900/Budget34771205904/Native34771205917/Preview PASS. Production dpl_ERpRhq9Xof67LwqKcvrsN9mgsJMm cancelled; all5Production aliases and sharedStaging unchanged at17:30:24Z. Prior runtime196e30b evidence remains valid within its recorded scope.",

@@ -1,0 +1,40 @@
+{
+  "startedAt": "2026-09-13T19:19:27.978Z",
+  "status": "FAIL",
+  "modelCalls": 0,
+  "operations": [
+    {
+      "candidateId": "9844292d-f96e-4caf-be69-18809f4490bf",
+      "operationId": "65f60fbd-3b1a-4fe3-b654-44d578c892f9",
+      "attempts": []
+    },
+    {
+      "candidateId": "7c72836b-5d9a-4242-a6e5-a810d91b5dfb",
+      "operationId": "0c7b4980-16de-4983-be44-79da6f4f8a9c",
+      "attempts": []
+    }
+  ],
+  "cleanup": [
+    {
+      "operation": "cookieLogout",
+      "status": "PASS"
+    },
+    {
+      "operation": "disable",
+      "status": "PASS"
+    },
+    {
+      "operation": "removeOwnHost",
+      "status": "PASS"
+    }
+  ],
+  "activation": "{\n  mode: 'activate',\n  status: 'PASS',\n  state: {\n    ops: true,\n    trips: 3,\n    users: 6,\n    reader: true,\n    members: [ [Object], [Object] ],\n    attempts: 325,\n    migrations: 46,\n    unresolved: 0,\n    activeMembers: 2\n  }\n}\n",
+  "hostAllowance": "{\"mode\": \"allow\", \"activeVersion\": 77, \"onlyOwnHostChanged\": true, \"productionTargetUnchanged\": true}\n",
+  "error": {
+    "name": "TypeError",
+    "message": "fetch failed"
+  },
+  "disable": "{\n  mode: 'disable',\n  status: 'PASS',\n  windowClosed: true,\n  state: {\n    ops: false,\n    trips: 3,\n    users: 6,\n    reader: false,\n    members: [ [Object], [Object] ],\n    attempts: 325,\n    migrations: 46,\n    unresolved: 0,\n    activeMembers: 0\n  }\n}\n",
+  "firewall": "{\"mode\": \"remove\", \"activeVersion\": 78, \"onlyOwnHostChanged\": true, \"productionTargetUnchanged\": true}\n",
+  "finishedAt": "2026-09-13T19:20:30.521Z"
+}

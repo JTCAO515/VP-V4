@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "nativeBuildSource": "1218c76904cc6d085bf9cbd460dfe1babae594ea",
+  "runtimeSource": "8e95279417a0a1147f7e81a5a857b0fbdb72d0de",
+  "testedScenarioCommit": "41120ed2e792cd33b436fcb3c34e5d350adbdbd6",
+  "iosDiffEmpty": true,
+  "runtimeAndMigrationDiffEmpty": true,
+  "buildEvidence": "../evidence-lifecycle-20260914/native-build.json",
+  "nativeUI": "Observed on owned iOS26.5 Simulator; final UI signed out and Simulator shut down"
+}

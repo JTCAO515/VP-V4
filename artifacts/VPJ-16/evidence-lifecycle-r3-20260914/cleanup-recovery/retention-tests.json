@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "checks": 5,
+  "cases": [
+    "only two declared publication hashes may change on disable",
+    "activation still requires all original publications",
+    "duplicate foreign publication hashes retain multiplicity",
+    "Trip changes cannot use publication exemptions",
+    "unchanged activation baseline passes"
+  ]
+}

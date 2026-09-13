@@ -1,0 +1,25 @@
+{
+  "at": "2026-09-13T18:44:29.661Z",
+  "state": {
+    "ops": true,
+    "trips": 3,
+    "users": 6,
+    "reader": true,
+    "members": [
+      {
+        "id": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+        "active": true,
+        "revision": 9
+      },
+      {
+        "id": "fe70fac7-d312-494c-bde1-4c37c3942722",
+        "active": true,
+        "revision": 9
+      }
+    ],
+    "attempts": 321,
+    "migrations": 46,
+    "unresolved": 0,
+    "activeMembers": 2
+  }
+}

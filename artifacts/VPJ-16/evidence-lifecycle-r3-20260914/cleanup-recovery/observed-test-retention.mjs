@@ -1,0 +1,10 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import vm from 'node:vm';
+const source=fs.readFileSync('window-state.mjs','utf8');const fn=source.slice(source.indexOf('const intact='),source.indexOf('const durableSave='));
+const call=(mode,b,a)=>vm.runInNewContext(fn+'intact(before,after);',{assert,mode,before:b,after:a});
+const before={allowedPublicationHashes:['owned-a','owned-b'],original:{'knowledge_review_private.publications':['owned-a','owned-b','foreign','foreign'],'public.trips':['trip']}};
+const after={original:{'knowledge_review_private.publications':['revoked-a','revoked-b','foreign','foreign'],'public.trips':['trip']}};
+call('disable',before,after);assert.throws(()=>call('activate',before,after));
+const missingForeign=structuredClone(after);missingForeign.original['knowledge_review_private.publications'].pop();assert.throws(()=>call('disable',before,missingForeign));
+const changedTrip=structuredClone(after);changedTrip.original['public.trips']=['owned-a'];assert.throws(()=>call('disable',before,changedTrip));
+const original=structuredClone(before);delete original.allowedPublicationHashes;call('activate',original,{original:before.original});
+const out={status:'PASS',checks:5,cases:['only two declared publication hashes may change on disable','activation still requires all original publications','duplicate foreign publication hashes retain multiplicity','Trip changes cannot use publication exemptions','unchanged activation baseline passes']};fs.writeFileSync('retention-tests.json',JSON.stringify(out,null,2)+'\n');console.log(out);

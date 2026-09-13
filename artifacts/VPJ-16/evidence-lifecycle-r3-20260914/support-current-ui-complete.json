@@ -1,0 +1,1 @@
+{"status": "PASS", "nativeSignedOut": true, "webSignedOut": true, "locales": ["en", "zh"], "webSizes": [[1365, 900], [390, 844]], "observed": "Original answered tasks contain card and mobile facts. Native screenshots and AX matched; Web DOM turn/task IDs matched current run. No extra model submissions."}

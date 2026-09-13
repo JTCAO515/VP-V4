@@ -1,0 +1,290 @@
+[
+  {
+    "locale": "en",
+    "stage": "support-current",
+    "identityMethod": "Native ordered exact-question/fact matching; API and Web carry explicit task IDs",
+    "answers": [
+      {
+        "outcome": "answered",
+        "label": "The requested payment guidance has reviewed support.",
+        "facts": [
+          {
+            "id": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+            "text": "Synthetic acceptance fixture: check the example merchant's international-card support. This is not real merchant guidance."
+          },
+          {
+            "id": "0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+            "text": "Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code."
+          }
+        ],
+        "gaps": [],
+        "apiTurnId": "4534e93b-4a1d-44f0-ab0f-46491c0976d1"
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "stage": "conflict-current",
+    "identityMethod": "Native ordered exact-question/fact matching; API and Web carry explicit task IDs",
+    "answers": [
+      {
+        "outcome": "partial",
+        "label": "Part of the answer is available.",
+        "facts": [
+          {
+            "id": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+            "text": "Synthetic acceptance fixture: check the example merchant's international-card support. This is not real merchant guidance."
+          }
+        ],
+        "gaps": [
+          {
+            "reason": "unresolved_variants",
+            "text": "Reviewed versions differ and have not been reconciled."
+          }
+        ],
+        "apiTurnId": "11863601-80f8-4423-9670-fc71abd82b6b"
+      },
+      {
+        "outcome": "partial",
+        "label": "Part of the answer is available.",
+        "facts": [
+          {
+            "id": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+            "text": "Synthetic acceptance fixture: check the example merchant's international-card support. This is not real merchant guidance."
+          }
+        ],
+        "gaps": [
+          {
+            "reason": "unresolved_variants",
+            "text": "Reviewed versions differ and have not been reconciled."
+          }
+        ],
+        "apiTurnId": "4534e93b-4a1d-44f0-ab0f-46491c0976d1"
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "stage": "conflict-naturally-expired",
+    "identityMethod": "Native ordered exact-question/fact matching; API and Web carry explicit task IDs",
+    "answers": [
+      {
+        "outcome": "partial",
+        "label": "Part of the answer is available.",
+        "facts": [
+          {
+            "id": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+            "text": "Synthetic acceptance fixture: check the example merchant's international-card support. This is not real merchant guidance."
+          }
+        ],
+        "gaps": [
+          {
+            "reason": "unresolved_variants",
+            "text": "Reviewed versions differ and have not been reconciled."
+          }
+        ],
+        "apiTurnId": "11863601-80f8-4423-9670-fc71abd82b6b"
+      },
+      {
+        "outcome": "answered",
+        "label": "The requested payment guidance has reviewed support.",
+        "facts": [
+          {
+            "id": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+            "text": "Synthetic acceptance fixture: check the example merchant's international-card support. This is not real merchant guidance."
+          },
+          {
+            "id": "0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+            "text": "Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code."
+          }
+        ],
+        "gaps": [],
+        "apiTurnId": "4534e93b-4a1d-44f0-ab0f-46491c0976d1"
+      }
+    ]
+  },
+  {
+    "locale": "en",
+    "stage": "card-naturally-expired",
+    "identityMethod": "Native ordered exact-question/fact matching; API and Web carry explicit task IDs",
+    "answers": [
+      {
+        "outcome": "no_answer",
+        "label": "This question cannot be answered from current reviewed information.",
+        "facts": [],
+        "gaps": [
+          {
+            "reason": "expired",
+            "text": "The supporting publication has expired."
+          },
+          {
+            "reason": "unresolved_variants",
+            "text": "Reviewed versions differ and have not been reconciled."
+          }
+        ],
+        "apiTurnId": "11863601-80f8-4423-9670-fc71abd82b6b"
+      },
+      {
+        "outcome": "partial",
+        "label": "Part of the answer is available.",
+        "facts": [
+          {
+            "id": "0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+            "text": "Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code."
+          }
+        ],
+        "gaps": [
+          {
+            "reason": "expired",
+            "text": "The supporting publication has expired."
+          }
+        ],
+        "apiTurnId": "4534e93b-4a1d-44f0-ab0f-46491c0976d1"
+      }
+    ]
+  },
+  {
+    "locale": "zh",
+    "stage": "support-current",
+    "identityMethod": "Native ordered exact-question/fact matching; API and Web carry explicit task IDs",
+    "answers": [
+      {
+        "outcome": "answered",
+        "label": "所需支付指引有已审核依据。",
+        "facts": [
+          {
+            "id": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+            "text": "合成验收示例：先核对示例商户是否支持境外卡。本条不是实际商户指引。"
+          },
+          {
+            "id": "0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+            "text": "支付宝或微信支付可按应用提示绑受支持的卡，再扫描兼容商家码或出示付款码。"
+          }
+        ],
+        "gaps": [],
+        "apiTurnId": "c50327fd-6958-47a3-8cbf-7ad0d17a3fb1"
+      }
+    ]
+  },
+  {
+    "locale": "zh",
+    "stage": "conflict-current",
+    "identityMethod": "Native ordered exact-question/fact matching; API and Web carry explicit task IDs",
+    "answers": [
+      {
+        "outcome": "partial",
+        "label": "目前可回答其中一部分。",
+        "facts": [
+          {
+            "id": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+            "text": "合成验收示例：先核对示例商户是否支持境外卡。本条不是实际商户指引。"
+          }
+        ],
+        "gaps": [
+          {
+            "reason": "unresolved_variants",
+            "text": "已审核版本存在差异，尚未完成核对。"
+          }
+        ],
+        "apiTurnId": "b4fcf0a8-ed52-4f02-a6e3-df2c58425f66"
+      },
+      {
+        "outcome": "partial",
+        "label": "目前可回答其中一部分。",
+        "facts": [
+          {
+            "id": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+            "text": "合成验收示例：先核对示例商户是否支持境外卡。本条不是实际商户指引。"
+          }
+        ],
+        "gaps": [
+          {
+            "reason": "unresolved_variants",
+            "text": "已审核版本存在差异，尚未完成核对。"
+          }
+        ],
+        "apiTurnId": "c50327fd-6958-47a3-8cbf-7ad0d17a3fb1"
+      }
+    ]
+  },
+  {
+    "locale": "zh",
+    "stage": "conflict-naturally-expired",
+    "identityMethod": "Native ordered exact-question/fact matching; API and Web carry explicit task IDs",
+    "answers": [
+      {
+        "outcome": "partial",
+        "label": "目前可回答其中一部分。",
+        "facts": [
+          {
+            "id": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+            "text": "合成验收示例：先核对示例商户是否支持境外卡。本条不是实际商户指引。"
+          }
+        ],
+        "gaps": [
+          {
+            "reason": "unresolved_variants",
+            "text": "已审核版本存在差异，尚未完成核对。"
+          }
+        ],
+        "apiTurnId": "b4fcf0a8-ed52-4f02-a6e3-df2c58425f66"
+      },
+      {
+        "outcome": "answered",
+        "label": "所需支付指引有已审核依据。",
+        "facts": [
+          {
+            "id": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+            "text": "合成验收示例：先核对示例商户是否支持境外卡。本条不是实际商户指引。"
+          },
+          {
+            "id": "0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+            "text": "支付宝或微信支付可按应用提示绑受支持的卡，再扫描兼容商家码或出示付款码。"
+          }
+        ],
+        "gaps": [],
+        "apiTurnId": "c50327fd-6958-47a3-8cbf-7ad0d17a3fb1"
+      }
+    ]
+  },
+  {
+    "locale": "zh",
+    "stage": "card-naturally-expired",
+    "identityMethod": "Native ordered exact-question/fact matching; API and Web carry explicit task IDs",
+    "answers": [
+      {
+        "outcome": "no_answer",
+        "label": "当前已审核信息不足以回答这个问题。",
+        "facts": [],
+        "gaps": [
+          {
+            "reason": "expired",
+            "text": "相关依据已超过有效期。"
+          },
+          {
+            "reason": "unresolved_variants",
+            "text": "已审核版本存在差异，尚未完成核对。"
+          }
+        ],
+        "apiTurnId": "b4fcf0a8-ed52-4f02-a6e3-df2c58425f66"
+      },
+      {
+        "outcome": "partial",
+        "label": "目前可回答其中一部分。",
+        "facts": [
+          {
+            "id": "0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+            "text": "支付宝或微信支付可按应用提示绑受支持的卡，再扫描兼容商家码或出示付款码。"
+          }
+        ],
+        "gaps": [
+          {
+            "reason": "expired",
+            "text": "相关依据已超过有效期。"
+          }
+        ],
+        "apiTurnId": "c50327fd-6958-47a3-8cbf-7ad0d17a3fb1"
+      }
+    ]
+  }
+]

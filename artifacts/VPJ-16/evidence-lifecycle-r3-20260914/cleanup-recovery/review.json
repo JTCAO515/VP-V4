@@ -1,0 +1,28 @@
+{
+  "reviewer": "/root/knowledge_security_review",
+  "at": "2026-09-13T19:19:27.927668+00:00",
+  "scope": "Owned two-publication revoke and temporary permission cleanup, no model calls",
+  "initialRunnerReview": {
+    "critical": 0,
+    "important": 1,
+    "finding": "Missing SIGINT/SIGTERM handling could skip cleanup",
+    "sha256": "0b4f8aa8e8a0870395fe1d20d2b87ef1f980e5ca509b9f7eacc7ffd18908b157"
+  },
+  "finalRunnerReview": {
+    "at": "2026-09-13T19:21:42.900281+00:00",
+    "critical": 0,
+    "important": 0,
+    "sha256": "2a00e6cc5ca7d3c1c6fa35c92afb53030a8b677905de3dc4cc86aca17e310d8e",
+    "result": "GET maximum two transport attempts; stop signal blocks retry; POST idempotency bounds and finally cleanup unchanged; no credentials recorded"
+  },
+  "targetAndRetentionReview": {
+    "critical": 0,
+    "important": 0,
+    "sha256": {
+      "prepare-targets.mjs": "c07899901008b74a31be331954cee7bbcd4e4763642eccde3c50c1af89914789",
+      "window-state.mjs": "e87d7941208a054b636b17800ee27a6fa55936d9e2dbf0dee9eb577c9427cbe7",
+      "verify-targets.mjs": "02d1d4127acf3624e5749bf8361f5b21ecb0f41870be594e9d493990fc737bcb"
+    }
+  },
+  "previousRecovery": "../evidence-lifecycle-r3-cleanup-20260914/recovery.json: FAIL fetch failed before any revoke POST; cleanup PASS"
+}
