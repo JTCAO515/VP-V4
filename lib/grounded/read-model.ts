@@ -1,14 +1,15 @@
+import { questionDefinition } from "../server/knowledge/claim/questions.ts";
 /** Browser projection of the existing grounded-turn/1 contract. No inference or persistence. */
 export type SavedSource = { id: string; publisher: string; locator: string; href: string | null };
 export type SavedFact = { id: string; text: string; conditions: string[]; exclusions: string[]; sources: SavedSource[] };
 export type SavedTurn = {
   id: string; taskId: string; parentId: string | null; threadId: string; relationship: string;
-  input: string; city: string; locale: "zh" | "en"; createdAt: string;
+  questionId?: string | null; input: string; city: string; locale: "zh" | "en"; createdAt: string;
   status: string; outcome: string | null; coverage: string | null; projection: string; facts: SavedFact[];
 };
 export type SavedHistory = { ownerId: string; turns: SavedTurn[]; lifetimeMs: number };
 const cities = ["shanghai", "beijing", "guangzhou", "chongqing"];
-const requiredClaims = ["original_valid_booking_id", "valid_ticket_not_itinerary_or_receipt"];
+
 function requireValue(value: unknown): asserts value { if (!value) throw new Error("Invalid saved answer"); }
 function record(value: unknown): Record<string, unknown> {
   requireValue(value && typeof value === "object" && !Array.isArray(value));
@@ -65,19 +66,21 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
     } else {
       date(result.completedAt);
       requireValue(turn.output === "reviewed-answer-v1" && ["current", "unavailable"].includes(String(result.projection)));
-      if (result.intent === "rail_boarding_documents") {
+      const definition = questionDefinition(result.intent);
+      if (definition) {
+        const requiredClaims = definition.claims.map(claim => claim.objectId);
         requireValue(["single", "additional_needs"].includes(String(result.requestScope)) && ["answered", "partial", "blocked"].includes(outcome ?? "") && !(result.requestScope === "additional_needs" && outcome === "answered"));
         if (result.projection === "unavailable") requireValue(result.knowledge === null);
         else {
           const knowledge = record(result.knowledge), scope = record(knowledge.scope), answer = record(knowledge.answer);
           requireValue(knowledge.schemaVersion === "knowledge-answer/1" && knowledge.purpose === "trip_planning" && knowledge.recipient === "first_party" && knowledge.territory === "CN-mainland");
-          requireValue(scope.city === city && scope.locale === turn.locale && scope.scene === "rail");
+          requireValue(scope.city === city && scope.locale === turn.locale && scope.scene === definition.scene);
           const evaluated = date(knowledge.evaluatedAt), assertions = new Map<string, string>();
           for (const rawFact of list(knowledge.statements, 50)) {
             const fact = record(rawFact), assertion = record(fact.assertion);
             const factId = id(fact.factId); id(fact.assertionId);
             requireValue(fact.version === 1 && fact.assertionRevision === 1 && !assertions.has(factId));
-            requireValue(assertion.subjectId === "rail_eticket_boarding" && assertion.predicate === "requires_document");
+            requireValue(definition.claims.some(claim => assertion.subjectId === claim.subjectId && assertion.predicate === claim.predicate && assertion.objectId === claim.objectId));
             assertions.set(factId, string(assertion.objectId, 128));
             const conditions = strings(fact.conditions), exclusions = strings(fact.exclusions);
             requireValue(conditions.length === strings(assertion.conditions).length && exclusions.length === strings(assertion.exclusions).length);
@@ -91,9 +94,9 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
             facts.push({ id: factId, text: string(fact.text, 1000), conditions, exclusions, sources });
           }
           requireValue(knowledge.status === (facts.length ? "available" : "no_eligible_content"));
-          requireValue(answer.questionId === "rail_boarding_documents" && answer.questionVersion === 1);
-          const claims = list(answer.claims, 2).map(record), allIds: string[] = [];
-          requireValue(claims.length === 2);
+          requireValue(answer.questionId === result.intent && answer.questionVersion === 1);
+          const claims = list(answer.claims, requiredClaims.length).map(record), allIds: string[] = [];
+          requireValue(claims.length === requiredClaims.length);
           claims.forEach((claim, index) => {
             requireValue(claim.id === requiredClaims[index]);
             const ids = list(claim.factIds, 50).map(id), reasons = strings(claim.reasons); unique(reasons); allIds.push(...ids);
@@ -110,7 +113,7 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
         requireValue(outcome === (result.intent === "clarification" ? "clarification" : result.intent === "technical_failure" ? "technical_failure" : "blocked"));
       }
     }
-    return { id: turnId, taskId, parentId, threadId, relationship, input: string(turn.input), city, locale: turn.locale as "zh" | "en", createdAt: string(turn.createdAt, 40), status: String(turn.status), outcome, coverage, projection: String(result.projection), facts };
+    return { questionId: questionDefinition(result.intent) ? String(result.intent) : null, id: turnId, taskId, parentId, threadId, relationship, input: string(turn.input), city, locale: turn.locale as "zh" | "en", createdAt: string(turn.createdAt, 40), status: String(turn.status), outcome, coverage, projection: String(result.projection), facts };
   });
   unique(turns.map(turn => turn.id));
   requireValue(lifetimeMs > elapsedMs);

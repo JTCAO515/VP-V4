@@ -97,6 +97,27 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   await user('submit_grounded_turn',b);l=await lease();const input=await service('read_grounded_work',keys(l));assert.equal(input.text,b.p_text);assert.equal(input.history,undefined);
   await authorize(l);await complete(l);assert.equal((await read(b)).serviceTaskId,a.p_task_id);
  });
+ await t.test('payment task requires dispatch, freezes missing claims and rechecks withdrawn original facts',async()=>{
+  const relation={subjectId:'alipay_weixin_pay',predicate:'offers_procedure',objectId:'supported_card_merchant_qr_payment'};
+  const payment=()=>{const s=statement(relation.objectId);s.assertion={...s.assertion,...relation};s.scope.scene='payment';return s;};
+  const mobile=await publish(payment());
+  const a=fresh({p_text:'How do I start using mobile payments and get RMB cash?'});
+  await user('submit_grounded_turn',a);const l=await lease();
+  assert.equal((await complete(l,'payment_mobile_and_cash')).kind,'blocked','classification cannot complete before dispatch');
+  await authorize(l);assert.equal((await complete(l,'payment_mobile_and_cash')).kind,'finished');
+  const saved=await read(a);assert.equal(saved.result.originalOutcome,'partial');assert.equal(saved.result.knowledge.statements.length,1);
+  assert.equal(saved.result.knowledge.answer.claims.length,3);
+  assert.equal((await foreign('read_grounded_turn',{p_turn_id:a.p_turn_id})).kind,'unavailable');
+  for(const objectId of ['international_card_atm_withdrawal','marked_currency_exchange']){
+   const s=statement(objectId);s.scope.scene='payment';s.assertion={...s.assertion,subjectId:'rmb_cash_access',predicate:'offers_procedure'};await publish(s);
+  }
+  const unchanged=await read(a);assert.equal(unchanged.result.knowledge.statements.length,1,'later publications must not fill historical missing claims');
+  await revoke(mobile);
+  const withdrawn=await read(a);assert.equal(withdrawn.result.knowledge.statements.length,0);assert.equal(withdrawn.result.knowledge.answer.outcome,'no_answer');
+  assert.equal(withdrawn.result.originalOutcome,'partial','withdrawal never rewrites the original outcome');
+  assert.deepEqual(withdrawn.result.knowledge.answer.claims[0].reasons,['revoked']);
+  assert.equal((await complete(l,'payment_mobile_and_cash')).kind,'blocked','terminal result cannot be replaced');
+ });
  await t.test('four-turn cap preserves exact retries but rejects new clarification work',async()=>{
   let a=fresh();
   for(let i=0;i<4;i++){

@@ -52,7 +52,7 @@ test("history, evidence, recipient mismatch and stale authorization never reach 
 });
 
 test("routing parser rejects prose, invented evidence and false complete coverage", () => {
-  for (const value of [null, [], { intent: "rail_boarding_documents", requestScope: "single", facts: [] },
+  for (const value of [null, [], { intent: "payment_mobile_setup", requestScope: ["single"] }, { intent: ["unsupported"], requestScope: "unknown" }, { intent: "rail_boarding_documents", requestScope: "single", facts: [] },
     { intent: "rail_boarding_documents", requestScope: "complete" }, { intent: "answered", requestScope: "single" },
     { intent: "clarification", requestScope: "single" }, { intent: "unsupported", requestScope: "additional_needs" }]) {
     assert.equal(knowledgeIntent(value), null);

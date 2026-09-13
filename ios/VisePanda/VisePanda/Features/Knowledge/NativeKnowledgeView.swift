@@ -108,11 +108,11 @@ struct NativeKnowledgeCards: View {
     }
     private func coverage(_ answer: NativeKnowledgeAnswer) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(answer.outcome == "answered" ? text("Both document points have reviewed support.", "两个证件要点均有已审核依据。") : answer.outcome == "partial" ? text("Part of the answer is available.", "目前可回答其中一部分。") : text("This question cannot be answered from current reviewed information.", "当前已审核信息不足以回答这个问题。"))
+            Text(answer.outcome == "answered" ? (answer.questionId == "rail_boarding_documents" ? text("Both document points have reviewed support.", "两个证件要点均有已审核依据。") : text("The requested payment guidance has reviewed support.", "所需支付指引有已审核依据。")) : answer.outcome == "partial" ? text("Part of the answer is available.", "目前可回答其中一部分。") : text("This question cannot be answered from current reviewed information.", "当前已审核信息不足以回答这个问题。"))
                 .font(.headline).accessibilityIdentifier("knowledge.answer.\(answer.outcome)")
             ForEach(answer.claims.filter { $0.status != "covered" }) { claim in
                 VStack(alignment: .leading, spacing: 6) {
-                    Text(claim.id == "original_valid_booking_id" ? text("Booking ID", "购票证件") : text("Itinerary and receipt as ticket proof", "行程单和报销凭证是否可作车票"))
+                    Text(claimLabel(claim.id))
                         .font(.subheadline.bold())
                     ForEach(claim.reasons, id: \.self) { reason in
                         Text(gap(reason)).accessibilityIdentifier("knowledge.gap.\(reason)")
@@ -120,8 +120,20 @@ struct NativeKnowledgeCards: View {
                 }
             }
             if answer.outcome != "answered" {
-                Text(text("Check the missing point with 12306 or your departure station before travelling.", "出发前请向12306或出发车站核对尚缺的要点。"))
+                Text(answer.questionId == "rail_boarding_documents" ? text("Check the missing point with 12306 or your departure station before travelling.", "出发前请向12306或出发车站核对尚缺的要点。") : text("Check current app prompts, your card issuer or the relevant operator for the missing information.", "请查看应用当前提示，或向发卡行及相关经营方核对缺少的信息。"))
             }
+        }
+    }
+
+    private func claimLabel(_ id: String) -> String {
+        switch id {
+        case "original_valid_booking_id": return text("Booking ID", "购票证件")
+        case "valid_ticket_not_itinerary_or_receipt": return text("Itinerary and receipt as ticket proof", "行程单和报销凭证是否可作车票")
+        case "merchant_acceptance_check": return text("Checking card acceptance", "核对外卡受理")
+        case "supported_card_merchant_qr_payment": return text("Mobile merchant payments", "手机商户支付")
+        case "international_card_atm_withdrawal": return text("RMB cash from an ATM", "ATM取人民币现金")
+        case "marked_currency_exchange": return text("Currency-exchange outlets", "外币兑换网点")
+        default: return text("Requested information", "所需信息")
         }
     }
 
