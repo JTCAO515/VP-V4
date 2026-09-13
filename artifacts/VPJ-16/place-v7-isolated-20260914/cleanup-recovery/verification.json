@@ -1,0 +1,42 @@
+{
+  "at": "2026-09-13T22:50:26.624Z",
+  "status": "PASS",
+  "modelCalls": 0,
+  "allFourRevoked": true,
+  "onlyRevokeFieldsChanged": true,
+  "publications": [
+    {
+      "state": "revoked",
+      "version": 2,
+      "revokedAt": "2026-09-13T22:48:54.168337+00:00",
+      "candidateId": "9f2074cc-7d7b-4f78-8940-ad72083ace27",
+      "preRevokeHash": "430060e495fb829640c12eef34c5b49f"
+    },
+    {
+      "state": "revoked",
+      "version": 2,
+      "revokedAt": "2026-09-13T22:48:56.857776+00:00",
+      "candidateId": "4ff2f6e9-7182-48f1-b843-8d24e021aa76",
+      "preRevokeHash": "ded2a85e569dbe674c91453d1fab39b1"
+    },
+    {
+      "state": "revoked",
+      "version": 2,
+      "revokedAt": "2026-09-13T22:43:06.378004+00:00",
+      "candidateId": "a67fef11-668a-4723-987f-e5fb0c8d9248",
+      "preRevokeHash": "17da4fe650f8d1f852dde1c4ea3b5fb3"
+    },
+    {
+      "state": "revoked",
+      "version": 2,
+      "revokedAt": "2026-09-13T22:28:13.676935+00:00",
+      "candidateId": "ce56f3d5-6120-4aa5-b115-af973d7789af",
+      "preRevokeHash": "97a1e6b12551646bb9e1487ce4ecdeec"
+    }
+  ],
+  "permissionsClosed": true,
+  "unresolved": 0,
+  "attempts": 405,
+  "firewallRestoredVersion": 92,
+  "originalControllerStatus": "FAIL"
+}

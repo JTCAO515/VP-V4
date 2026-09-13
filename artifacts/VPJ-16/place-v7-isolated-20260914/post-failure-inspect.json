@@ -1,0 +1,37 @@
+{
+  "at": "2026-09-13T22:45:28.967Z",
+  "turn": {
+    "intent": "unsupported",
+    "turnId": "58b60c3d-da75-4960-a2c6-e83ed0cf8075",
+    "outcome": "blocked",
+    "completedAt": "2026-09-13T22:42:15.887526+00:00",
+    "requestScope": "unknown",
+    "unansweredNeeds": []
+  },
+  "publications": [
+    {
+      "state": "published",
+      "version": 1,
+      "revokedAt": null,
+      "candidateId": "9f2074cc-7d7b-4f78-8940-ad72083ace27"
+    },
+    {
+      "state": "published",
+      "version": 1,
+      "revokedAt": null,
+      "candidateId": "4ff2f6e9-7182-48f1-b843-8d24e021aa76"
+    },
+    {
+      "state": "revoked",
+      "version": 2,
+      "revokedAt": "2026-09-13T22:43:06.378004+00:00",
+      "candidateId": "a67fef11-668a-4723-987f-e5fb0c8d9248"
+    },
+    {
+      "state": "revoked",
+      "version": 2,
+      "revokedAt": "2026-09-13T22:28:13.676935+00:00",
+      "candidateId": "ce56f3d5-6120-4aa5-b115-af973d7789af"
+    }
+  ]
+}

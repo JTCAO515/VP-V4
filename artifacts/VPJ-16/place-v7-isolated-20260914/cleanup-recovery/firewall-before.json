@@ -1,0 +1,100 @@
+{
+  "active": {
+    "id": "waf_OKTPcGgCAJEE",
+    "firewallEnabled": true,
+    "ownerId": "team_vLT8SL2mQJJSnXbD9GzVLP4K",
+    "crs": {
+      "gen": {
+        "active": false,
+        "action": "log"
+      },
+      "sd": {
+        "active": false,
+        "action": "log"
+      },
+      "java": {
+        "active": false,
+        "action": "log"
+      },
+      "sf": {
+        "active": false,
+        "action": "log"
+      },
+      "ma": {
+        "active": false,
+        "action": "log"
+      },
+      "rfi": {
+        "active": false,
+        "action": "log"
+      },
+      "rce": {
+        "action": "log",
+        "active": false
+      },
+      "xss": {
+        "action": "log",
+        "active": false
+      },
+      "php": {
+        "action": "log",
+        "active": false
+      },
+      "lfi": {
+        "active": false,
+        "action": "log"
+      },
+      "sqli": {
+        "action": "log",
+        "active": false
+      }
+    },
+    "version": 90,
+    "updatedAt": "2026-09-13T22:44:28.184Z",
+    "ips": [],
+    "projectKey": "prj_XwsjEc8YnYNeDVAqBrcdmbJXEqA2#active",
+    "changes": [],
+    "rules": [
+      {
+        "name": "VPJ02 Staging schema maintenance",
+        "description": "Approved maintenance window: deny all project deployments until verified v2 hosts are released",
+        "action": {
+          "mitigate": {
+            "redirect": null,
+            "action": "deny",
+            "rateLimit": null,
+            "actionDuration": null
+          }
+        },
+        "active": true,
+        "id": "rule_vpj_02_staging_schema_maintenance_N0pDWD",
+        "conditionGroup": [
+          {
+            "conditions": [
+              {
+                "type": "host",
+                "value": [
+                  "go2china.space",
+                  "vp-v4-b468sog8m-jtcao515s-projects.vercel.app",
+                  "vp-v4-d6yc4thvq-jtcao515s-projects.vercel.app",
+                  "vp-v4-git-main-jtcao515s-projects.vercel.app",
+                  "vp-v4-jtcao515s-projects.vercel.app",
+                  "vp-v4.vercel.app",
+                  "www.go2china.space",
+                  "vp-v4-6gmyp6494-jtcao515s-projects.vercel.app",
+                  "vp-v4-7rftlyb4r-jtcao515s-projects.vercel.app",
+                  "staging.go2china.space"
+                ],
+                "op": "ninc"
+              }
+            ]
+          }
+        ],
+        "valid": true,
+        "validationErrors": null
+      }
+    ]
+  },
+  "draft": null,
+  "versions": []
+}

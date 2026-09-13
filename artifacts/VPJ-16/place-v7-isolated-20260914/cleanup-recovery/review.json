@@ -1,0 +1,8 @@
+{
+  "scope": "Cleanup-only window-state increment",
+  "reviewer": "knowledge_security_review",
+  "critical": 0,
+  "important": 0,
+  "sha256": "3ee3631b8d5ca78d402270de6351f26160f3cd3d1f7d815def5b979a6debcd1a",
+  "limitation": "Final normal-API revocation and immutable-field preservation require actual verification."
+}

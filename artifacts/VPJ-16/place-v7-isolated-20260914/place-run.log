@@ -1,0 +1,84 @@
+{
+  mode: 'activate',
+  status: 'PASS',
+  state: {
+    ops: true,
+    trips: 3,
+    users: 6,
+    reader: true,
+    members: [ [Object], [Object] ],
+    attempts: 359,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 2
+  }
+}
+
+{"mode": "allow", "activeVersion": 89, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{"group":"before","id":"address-en","locale":"en","status":"PASS","calls":1}
+{"group":"before","id":"address-zh","locale":"zh","status":"PASS","calls":2}
+{"group":"before","id":"partial-en","locale":"en","status":"PASS","calls":3}
+{"group":"before","id":"partial-zh","locale":"zh","status":"PASS","calls":4}
+{"group":"current","id":"both-en","locale":"en","status":"PASS","calls":5}
+{"group":"current","id":"both-zh","locale":"zh","status":"PASS","calls":6}
+{"group":"current","id":"hours-en","locale":"en","status":"PASS","calls":7}
+{"group":"current","id":"hours-zh","locale":"zh","status":"PASS","calls":8}
+{"group":"current","id":"extra-en","locale":"en","status":"PASS","calls":9}
+{"group":"current","id":"extra-zh","locale":"zh","status":"PASS","calls":10}
+{"group":"current","id":"hotel-extra-en","locale":"en","status":"PASS","calls":11}
+{"group":"current","id":"hotel-extra-zh","locale":"zh","status":"PASS","calls":12}
+{"group":"ambiguous","id":"ambiguous-en","locale":"en","status":"PASS","calls":13}
+{"group":"ambiguous","id":"ambiguous-zh","locale":"zh","status":"PASS","calls":14}
+{"group":"limits","id":"unknown-en","locale":"en","status":"PASS","calls":15}
+{"group":"limits","id":"unknown-zh","locale":"zh","status":"PASS","calls":16}
+{"group":"limits","id":"city-en","locale":"en","status":"PASS","calls":17}
+{"group":"limits","id":"city-zh","locale":"zh","status":"PASS","calls":18}
+{"group":"limits","id":"vague-en","locale":"en","status":"PASS","calls":19}
+{"group":"limits","id":"vague-zh","locale":"zh","status":"PASS","calls":20}
+{"group":"limits","id":"multiple-en","locale":"en","status":"PASS","calls":21}
+{"group":"limits","id":"multiple-zh","locale":"zh","status":"PASS","calls":22}
+{"group":"limits","id":"now-en","locale":"en","status":"PASS","calls":23}
+{"group":"limits","id":"now-zh","locale":"zh","status":"PASS","calls":24}
+{"group":"limits","id":"injection-en","locale":"en","status":"PASS","calls":25}
+{"group":"limits","id":"injection-zh","locale":"zh","status":"PASS","calls":26}
+{"group":"legacy","id":"needs-rail-arrival-en","locale":"en","status":"PASS","calls":27}
+{"group":"legacy","id":"needs-rail-arrival-zh","locale":"zh","status":"PASS","calls":28}
+{"group":"legacy","id":"needs-rail-lost-en","locale":"en","status":"PASS","calls":29}
+{"group":"legacy","id":"needs-rail-lost-zh","locale":"zh","status":"PASS","calls":30}
+{"group":"legacy","id":"needs-rail-payment-en","locale":"en","status":"PASS","calls":31}
+{"group":"legacy","id":"needs-rail-payment-zh","locale":"zh","status":"PASS","calls":32}
+{"group":"legacy","id":"needs-payment-fee-en","locale":"en","status":"PASS","calls":33}
+{"group":"legacy","id":"needs-payment-fee-zh","locale":"zh","status":"PASS","calls":34}
+{"group":"legacy","id":"needs-payment-two-needs-en","locale":"en","status":"PASS","calls":35}
+{"group":"legacy","id":"needs-payment-two-needs-zh","locale":"zh","status":"PASS","calls":36}
+{"group":"legacy","id":"needs-payment-negated-en","locale":"en","status":"PASS","calls":37}
+{"group":"legacy","id":"needs-payment-negated-zh","locale":"zh","status":"PASS","calls":38}
+{"group":"legacy","id":"needs-sim-esim-en","locale":"en","status":"PASS","calls":39}
+{"group":"legacy","id":"needs-sim-esim-zh","locale":"zh","status":"PASS","calls":40}
+{"group":"legacy","id":"needs-sim-two-needs-en","locale":"en","status":"PASS","calls":41}
+{"group":"legacy","id":"needs-sim-two-needs-zh","locale":"zh","status":"PASS","calls":42}
+{"group":"legacy","id":"needs-sim-negated-en","locale":"en","status":"PASS","calls":43}
+{"group":"legacy","id":"needs-sim-negated-zh","locale":"zh","status":"PASS","calls":44}
+{"group":"legacy","id":"needs-meta-output-en","locale":"en","status":"PASS","calls":45}
+{"status":"STOPPED","phase":"legacy-zh-needs-meta-output-zh","errorType":"TypeError"}
+{
+  mode: 'disable',
+  status: 'PASS',
+  windowClosed: true,
+  state: {
+    ops: false,
+    trips: 3,
+    users: 6,
+    reader: false,
+    members: [ [Object], [Object] ],
+    attempts: 405,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 0
+  }
+}
+
+{"mode": "remove", "activeVersion": 90, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{"status":"FAIL","workerLaunches":46,"cleanup":[{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"revokeOwned","candidateId":"ce56f3d5-6120-4aa5-b115-af973d7789af","operationId":"8a54c453-6d27-4905-a2f7-2406c69ce56e","status":"FAIL","attempts":2,"errorType":"TypeError"},{"operation":"revokeOwned","candidateId":"9f2074cc-7d7b-4f78-8940-ad72083ace27","operationId":"ef2de275-3685-4236-a303-2864a39c0dc0","status":"FAIL","attempts":2,"errorType":"TypeError"},{"operation":"revokeOwned","candidateId":"4ff2f6e9-7182-48f1-b843-8d24e021aa76","operationId":"86d0f02e-91eb-439e-9aee-ebe39709317d","status":"FAIL","attempts":2,"errorType":"TypeError"},{"operation":"revokeOwned","candidateId":"a67fef11-668a-4723-987f-e5fb0c8d9248","operationId":"26d99cc1-be68-4bb1-aaa3-80db69549283","status":"PASS","attempts":1},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"cookieLogout","locale":"en","status":"PASS"},{"operation":"cookieLogout","locale":"zh","status":"PASS"},{"operation":"disable","status":"PASS","windowClosed":true},{"operation":"removeOwnHost","status":"PASS"}]}

@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2: draftPR374 place grounding candidate e19bd58. Fresh encrypted Staging46 backup, isolated restore/rollback and migration47/48 postcheck PASS; all78 original table projections and expected schema/ACL preserved,6 accounts/3 Trips unchanged, reader/Ops off and members0. Quality/Budget/PR Preview PASS; Native CI running. Dedicated Preview dpl_HseVd4NP2Yrd9RzC9edxGDpu8qQw READY and matching native Staging build/signature PASS. Real v6 place/model/client acceptance UNRUN. Maps draftPR372 remains sole preparation lane.
+状态：S2 PR374 runtime2f76642/v7: isolated regression stopped after46calls/45fully matched (26place+19legacy). Case46 needs-meta-output-zh model valid/completed; normal history fetch TypeError. DB-only inspection matches expected unsupported/unknown/blocked, not API acceptance.86unrun. Cleanup recovery PASS:4own publications revoked, reader/Ops/members closed,405attempts0unresolved,WAF92 restored. Native34785363426 attempt2 on b82c8da PASS; Quality/Budget PASS. No live model/controller. Maps PR372 sole prep lane.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -142,7 +142,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Continue /Users/jtcao/Documents/VP-V4-S2-Place-Grounding, draftPR374. Frozen runtime e19bd584ba86604047c9216e50c5329e8881dcf8 in /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen; controller/evidence root is its parent. Preview/native build PASS; inspect Native CI34779732089, then prepare frozen-budget real v6 place plus legacy regression and native/Web observations through ordinary producer/review/publication. Migration48 already applied and verified: do not reapply. Reader/Ops still off; no place model calls yet. Retain prior rows/usage, cleanup and Production guard. See artifacts/VPJ-16/place-grounding-staging-20260914/verification.md.
+Preserve artifacts/VPJ-16/place-v7-isolated-20260914 failed controller and successful cleanup. Prepare bounded continuation of only86remaining frozen legacy cases on runtime2f76642/APIe19; recover case46 by normal API GET without a model reroll. Keep26place/19legacy valid evidence. Existing budgetexpiry2026-09-13T23:26:03.470Z remains; do not bypass expiry, add amount, or restart old controllers37021/95888/96440/43991. No Production release. Push final evidence and require new-head CI before ordinary merge; no full S2 acceptance claim.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
