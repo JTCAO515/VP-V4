@@ -1,0 +1,6 @@
+{
+  "question": "在中国大陆如何核对商户是否受理境外银行卡，以及怎样开始使用手机向商户付款？",
+  "via": "native UI paste",
+  "expectedIntent": "payment_card_and_mobile",
+  "expectedOutcome": "partial"
+}
