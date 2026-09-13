@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2: PR373 merged6e3a128 with lifecycle behavior PASS and recovered cleanup, Production unchanged. Place grounding mainline in progress: local v2 typed publication and private exact-name/city lookup implemented; contracts3/3 and isolated PG18/18 PASS, initial permission review0/0. Ask completion/readback bridge and actual Staging place validation remain unimplemented/unrun. Maps draftPR372 remains sole preparation lane.
+状态：S2: PR373 merged6e3a128; lifecycle scoped behavior PASS and recovered cleanup. Place grounding now implemented locally through typed publication, exact-name resolution, saved subject, v6 classifier, lease-bound completion and native/Web typed display. Contracts291/291, PG19/19 and Web9/9 PASS; independent SQL and consumer reviews each final0/0. Staging migrations/model/client observations remain UNRUN. Maps draftPR372 remains sole preparation lane.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -53,7 +53,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
-- Place mainline local foundation: typecheck/lint267, Ops contracts3/3 and isolated PostgreSQL18/18 zero skips PASS; migration rollback and exact-name/city/ambiguity/revoke/private-role checks included. Initial independent permission review0/0. No Staging/place model/Ask consumer acceptance. artifacts/VPJ-16/place-grounding-20260914/verification.md.
+- Place mainline: local contracts291/291, PG19/19 zero skips, Web read9/9, lint267/typecheck and Web build PASS. Native14/14 PASS again after typed-display fix; static tests22/22 PASS. Two independent review findings fixed, final SQL and consumer0/0; see artifacts/VPJ-16/place-grounding-20260914/verification.md.
 - PR373 merged6e3a1289f4db048f0d3f87dfd9cb57795ec55782 at2026-09-13T19:29:33Z, tree matches finalb236ecf. Quality34777633596 and Preview PASS. Production dpl_GvX3EbWwjvjM3RD74euphUZj9wvx CANCELED; five Production aliases and shared Staging unchanged at19:29:57Z. artifacts/VPJ-16/evidence-lifecycle-r3-20260914/postmerge-deployment.json.
 - PR373 v3: four natural support/conflict/expiry stages PASS for en/zh native/API/Web1365 and390. Raw automatic run FAIL at revokeOwned; first cleanup recovery FAIL before POST; second reviewed recovery PASS with0 model calls, both own publications revoked, all other fields and four saved completion hashes unchanged. Final325 attempts/0 unresolved,6users/3Trips/46migrations, reader/Opsfalse/members0/WAF80. Four v3 settled calls estimated45276CNYmicros;10 aggregate/invoiceunknown. Original failures retained. See artifacts/VPJ-16/evidence-lifecycle-r3-20260914/verification.md.
 - PR373 v1 actual Staging: English/Chinese answered2/2 before conflict; next synthetic submit400INVALID_INPUT because uppercase sourceKey/URI. OverallFAIL; conflict and natural expiryUNRUN. Both tasks settled22638CNYmicros estimated/actualbillingunknown;317attempts/0unresolved,original records/Trips retained,reader/Opsfalse/members0/WAF72,normallogout/Simulator shutdown. Correctedv2 fixtureOpscontract2/2PASS; windowtransaction tests4/4PASS; independentpermission review0/0. See artifacts/VPJ-16/evidence-lifecycle-20260914/verification.md.
@@ -141,7 +141,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Continue /Users/jtcao/Documents/VP-V4-S2-Place-Grounding, codex/place-address-grounding-20260914. Implement dynamic place question definitions and shared resolver, existing classifier exact-name extraction and lease-bound completion with saved subject, then native/Web validation and bounded Staging observation. Read artifacts/VPJ-16/place-grounding-20260914/verification.md for implemented scope and remaining work. New migration20260914040000 is local only; do not claim live acceptance or deliver as a completed address feature. Preserve ordinary review/publication, actor/RLS/consent/recipient/expiry, immutable saved gaps and Production guard.
+Continue /Users/jtcao/Documents/VP-V4-S2-Place-Grounding on codex/place-address-grounding-20260914. Complete required CI and create draft PR, then freeze the candidate and perform a fresh encrypted Staging46 backup/isolated restore+rollback before migrations47/48. Run bounded v6 place and legacy real-model regression plus native/Web observations with retained data/usage and cleanup proof. See artifacts/VPJ-16/place-grounding-20260914/verification.md. New migrations20260914040000/20260914041000 are local only; do not claim live acceptance. Preserve publication review, consent/RLS, immutable saved gaps and Production guard.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

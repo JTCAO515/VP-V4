@@ -85,3 +85,16 @@ test("excerpts cannot split a Unicode scalar even if a UTF16 substring matches",
   assert.equal(knowledgeIntent(value,"ordinary ID, then 😀?"),null);
   assert.deepEqual(knowledgeIntent({...value,unansweredNeeds:["😀?"]},"ordinary ID, then 😀?"),{...value,unansweredNeeds:["😀?"]});
 });
+
+test("place routing only forwards literal user names, never model-selected identities", () => {
+  const input="Where is River Art Hall and what is today's opening time?";
+  const value={intent:"place_address_and_hours",requestScope:"single",unansweredNeeds:[],placeName:"River Art Hall"};
+  assert.deepEqual(knowledgeIntent(value,input),value);
+  for(const mutate of [
+    {placeName:"河畔艺术馆"},{placeName:""},{placeName:"River Art Hall",subjectId:"river_hall"},
+    {placeName:"Other Museum"},{intent:"payment_mobile_setup"},{placeName:null},
+  ])assert.equal(knowledgeIntent({...value,...mutate},input),null);
+  const {placeName,...withoutName}=value;
+  assert.equal(knowledgeIntent(withoutName,input),null);
+  assert.equal(knowledgeIntent(value),null);
+});

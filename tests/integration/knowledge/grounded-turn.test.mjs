@@ -39,6 +39,12 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   assert.equal(await db("select pg_get_functiondef('knowledge_review_private.statement_valid(jsonb)'::regprocedure);"),previous);
   assert.equal(await db("select to_regprocedure('knowledge_review_private.place_subject(text,text)') is null;"),'t');
   await db('begin;'+content+'commit;');
+ }else if(f.endsWith('_vpj_16_place_questions.sql')) {
+  const previous=await db("select pg_get_functiondef('public.read_grounded_turn(uuid)'::regprocedure);");
+  await db('begin;'+content+'rollback;');
+  assert.equal(await db("select pg_get_functiondef('public.read_grounded_turn(uuid)'::regprocedure);"),previous);
+  assert.equal(await db("select to_regprocedure('public.complete_grounded_place_work(uuid,uuid,text,text,text,text)') is null;"),'t');
+  await db('begin;'+content+'commit;');
  }else await db('begin;'+content+'commit;');}
  const actor=async()=>{const a={owner:uuid(),session:uuid()};await db(`insert into auth.users values('${a.owner}');insert into auth.sessions(id,user_id) values('${a.session}','${a.owner}');`);return a;};
  const owner=await actor(),other=await actor(),author=await actor(),reviewer=await actor();
@@ -313,6 +319,69 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   const invalid=structuredClone(value);invalid.value.countryCode='US';
   await assert.rejects(op(author,{action:'submit_statement',operationId:uuid(),candidateId:uuid(),title:'Invalid country',statement:invalid}),/INVALID_INPUT/);
   await revoke(cid);assert.deepEqual(await resolve('Test Riverside Gallery'),{kind:'unavailable'});
+ });
+
+ await t.test('place completion binds literal input and current city, then preserves subject and original gaps',async()=>{
+  const value=statement('place_address');value.schemaVersion='knowledge-statement/2';
+  value.assertion={subjectId:'test_lake_pavilion',predicate:'located_at',objectId:'place_address',conditions:[],exclusions:[]};
+  value.scope={cities:['guangzhou'],scene:'attraction',audience:'international_independent_traveler'};
+  value.place={names:{en:'Test Lake Pavilion',zh:'测试湖亭'}};value.value={lines:['3 Test Lake Road'],countryCode:'CN'};
+  value.expressions={en:{text:'Synthetic address: 3 Test Lake Road.',conditions:[],exclusions:[]},zh:{text:'合成地址：测试湖路3号。',conditions:[],exclusions:[]}};
+  const addressId=await publish(value),hours=structuredClone(value);
+  hours.assertion.predicate='opens_during';hours.assertion.objectId='opening_hours';
+  const date=offset=>new Date(Date.now()+8*3600000+offset*86400000).toISOString().slice(0,10);
+  hours.value={startsAt:date(-1)+'T01:00:00Z',endsAt:date(-1)+'T09:00:00Z',timeZone:'Asia/Shanghai'};
+  const oldHoursId=await publish(hours);
+  const request=()=>fresh({p_city:'guangzhou',p_text:'What is the Test Lake Pavilion address and today opening time?'});
+  const finish=l=>service('complete_grounded_place_work',{...keys(l),p_intent:'place_address_and_hours',p_request_scope:'single',p_unanswered_needs:'[]',p_place_name:'Test Lake Pavilion'});
+  const first=request();await user('submit_grounded_turn',first);let l=await lease();
+  assert.equal((await finish(l)).kind,'blocked','a matching name does not replace provider dispatch authority');
+  assert.equal(await db(`select place_subject_id is null and place_name is null and completed_at is null from turn_private.grounded_turns where turn_id='${first.p_turn_id}';`),'t');
+  await authorize(l);
+  await assert.rejects(complete(l,'place_address_and_hours'),/INVALID_INPUT/,'legacy completion cannot invent a selected place');
+  await assert.rejects(service('complete_grounded_place_work',{...keys(l),p_intent:'place_address',p_request_scope:'single',p_unanswered_needs:'[]',p_place_name:'Different Place'}),/INVALID_INPUT/);
+  assert.equal((await finish(l)).kind,'finished');
+  const result=(await read(first)).result;assert.equal(result.originalOutcome,'partial');
+  assert.equal(result.placeSubjectId,'test_lake_pavilion');assert.equal(result.knowledge.answer.subjectId,result.placeSubjectId);
+  assert.deepEqual(result.knowledge.answer.claims[1].reasons,['not_current_date']);
+  assert.deepEqual(result.knowledge.statements[0].value,value.value);
+  const frozen=await db(`select md5(to_jsonb(g)::text) from turn_private.grounded_turns g where turn_id='${first.p_turn_id}';`);
+  hours.value={startsAt:date(0)+'T01:00:00Z',endsAt:date(0)+'T09:00:00Z',timeZone:'Asia/Shanghai'};
+  const currentHoursId=await publish(hours);
+  assert.equal((await read(first)).result.knowledge.answer.outcome,'partial','new current hours cannot fill a saved gap');
+  const second=request();await user('submit_grounded_turn',second);l=await lease();await authorize(l);await finish(l);
+  assert.equal((await read(second)).result.knowledge.answer.outcome,'answered');
+  const duplicate=structuredClone(value);duplicate.assertion.subjectId='other_lake_pavilion';const otherId=uuid();
+  await op(author,{action:'submit_statement',operationId:uuid(),candidateId:otherId,title:'Same-name place',statement:duplicate});
+  await op(reviewer,{action:'review',operationId:uuid(),candidateId:otherId,expectedVersion:1,decision:'reviewed',note:'Independent synthetic review'});
+  const concurrent=request();await user('submit_grounded_turn',concurrent);const concurrentLease=await lease();await authorize(concurrentLease);
+  const gate=spawn('docker',['exec','-i',container,'psql','-h','/tmp/vpj59-socket','-U','postgres','-X','-Atq','-v','ON_ERROR_STOP=1'],{stdio:['pipe','pipe','pipe']});
+  let output='';const done=once(gate,'close');gate.stdout.on('data',b=>output+=b);gate.stderr.resume();let completing,publishing;
+  try {
+   gate.stdin.write(`begin;select candidate_id from knowledge_review_private.publications where candidate_id='${addressId}' for update;select 'place-gate-ready';\n`);
+   await waitUntil(async()=>output.includes('place-gate-ready'),5000,'place publication row gate');
+   completing=sql(container,`set statement_timeout='15s';set application_name='place-name-finisher';set role service_role;select public.complete_grounded_place_work('${concurrentLease.turnId}','${concurrentLease.leaseToken}','place_address_and_hours','single','[]','Test Lake Pavilion');`);
+   await waitUntil(async()=>(await db("select count(*) from pg_stat_activity where application_name='place-name-finisher' and cardinality(pg_blocking_pids(pid))>0;"))==='1',5000,'place resolver holds name barrier while waiting on address');
+   const operation={action:'publish_statement',operationId:uuid(),candidateId:otherId,expectedVersion:2,expiresAt:new Date(Date.now()+3600000).toISOString(),useBasis:'original_factual_summary',useNote:'Concurrent synthetic place'};
+   publishing=sql(container,`set statement_timeout='15s';set application_name='place-name-publisher';set request.jwt.claim.sub='${reviewer.owner}';set request.jwt.claims='${JSON.stringify({session_id:reviewer.session})}';set role authenticated;select public.ops_review_workspace(${lit(JSON.stringify(operation))}::jsonb);`);
+   await waitUntil(async()=>(await db("select count(*) from pg_stat_activity where application_name='place-name-publisher' and wait_event='advisory' and cardinality(pg_blocking_pids(pid))>0;"))==='1',5000,'same-name publication waits for selection transaction');
+   assert.equal(await db(`select count(*) from knowledge_review_private.publications where candidate_id='${otherId}';`),'0','new same-name mapping cannot appear during the current selection');
+   gate.stdin.end('commit;\n');await done;
+   const finished=await completing;assert.equal(finished.code,0,finished.stderr);assert.equal(JSON.parse(finished.stdout.trim()).kind,'finished');
+   const published=await publishing;assert.equal(published.code,0,published.stderr);
+   assert.equal((await read(concurrent)).result.originalOutcome,'answered');
+  }finally{if(!gate.stdin.writableEnded)gate.stdin.end('rollback;\n');await done;if(completing)await completing;if(publishing)await publishing;}
+
+  const ambiguous=request();await user('submit_grounded_turn',ambiguous);l=await lease();await authorize(l);await finish(l);
+  assert.equal((await read(ambiguous)).result.originalOutcome,'clarification');
+  assert.equal((await read(ambiguous)).result.placeResolution,'ambiguous');
+  assert.equal((await read(second)).result.placeSubjectId,'test_lake_pavilion','later same-name place never retargets saved answers');
+  await revoke(addressId);assert.equal((await read(second)).result.knowledge.answer.outcome,'partial');
+  assert.equal((await read(first)).result.knowledge.answer.outcome,'no_answer');
+  assert.equal(await db(`select md5(to_jsonb(g)::text) from turn_private.grounded_turns g where turn_id='${first.p_turn_id}';`),frozen);
+  assert.equal((await foreign('read_grounded_turn',{p_turn_id:second.p_turn_id})).kind,'unavailable');
+  await assert.rejects(db(`set role service_role;select turn_private.complete_selected_grounded_work('${l.turnId}','${l.leaseToken}','place_address','single','test_lake_pavilion');`),/permission denied/);
+  for(const id of [oldHoursId,currentHoursId,otherId])await revoke(id);
  });
 
  await t.test('four-turn cap preserves exact retries but rejects new clarification work',async()=>{

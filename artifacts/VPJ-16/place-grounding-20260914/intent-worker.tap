@@ -1,0 +1,15 @@
+✔ intent C2 sends only current user input after fresh digest-bound authorization (18.519875ms)
+✔ history, evidence, recipient mismatch and stale authorization never reach intent transport (0.478875ms)
+✔ routing parser rejects prose, invented evidence and false complete coverage (0.180625ms)
+✔ new intent schema binds unanswered excerpts to the current request, preserving the legacy shape (0.179375ms)
+✔ excerpts cannot split a Unicode scalar even if a UTF16 substring matches (0.079958ms)
+✔ place routing only forwards literal user names, never model-selected identities (0.131709ms)
+✔ v5 worker never downgrades missing gaps into a new legacy partial (17.618042ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 124.441334

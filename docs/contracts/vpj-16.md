@@ -196,3 +196,36 @@ id-less current projection, stops heartbeat and preserves the replay cursor.
 It never manufactures a terminal history event or changes consent, budget or
 answer records. This is a read repair, not a recovery or refund operation.
 Staging migration and actual client acceptance are tracked separately.
+
+
+## Named-attraction address and today's hours (local implementation)
+
+`knowledge-statement/2` adds reviewed bilingual place names plus a typed CN address
+or an explicit UTC opening window with `Asia/Shanghai` timezone (at most24 hours).
+Admission is limited to one city and attraction scope. v1 statements remain valid;
+existing pending address candidates are not promoted automatically.
+
+Classifier `vp-knowledge-intent-v6` may return `place_address`, `place_opening_hours`
+or `place_address_and_hours`, with a literal current-question `placeName` excerpt.
+The server resolves exact reviewed names within the selected city, normalizing only
+ASCII case/spacing. It supplies the subject and required claims; the model supplies
+no facts or identifiers. Unknown names are unavailable; names shared by different
+subjects require clarification. Multi-place, unnamed and unsupported requests retain
+explicit limits. The legacy unbound question GET does not accept these new intents.
+
+The service-only place completion RPC retains lease, dispatch, consent and policy
+checks. A shared transaction barrier covers name selection and completion; normal
+publication/revocation takes the corresponding exclusive barrier before row locks.
+The saved subject, evidence basis and original gaps remain immutable. Historical
+reads recheck original evidence without rematching names or filling old gaps.
+Conflicts compare typed values as well as assertion/text. Hours must start on the
+current Shanghai date; other dates yield `not_current_date`, independently of expiry.
+Native/Web validate the saved identity and typed projection, preserve sources and
+qualifiers, and cap hours-cache lifetime at Shanghai midnight and publication expiry.
+
+Migrations20260914040000/20260914041000 add no content, membership or activation.
+They and compatible consumers require one verified scoped rollout; older clients
+fail closed on unknown intents. Rollback disables the scoped worker/read entry and
+retains history and usage; applied migrations are append-only. Local rollback tests
+do not establish Staging recovery. Current evidence and remaining integration:
+[place verification](../../artifacts/VPJ-16/place-grounding-20260914/verification.md).

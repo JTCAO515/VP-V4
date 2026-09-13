@@ -96,6 +96,7 @@ export function SavedAnswers({ locale }: { locale: "zh" | "en" }) {
             </div> : null}
             {turn.facts.map(fact => <div key={fact.id} className={styles.fact}>
               <p>{fact.text}</p>
+              {fact.placeDetails?.map((detail, index) => <p key={index}>{detail}</p>)}
               {fact.conditions.length ? <><strong>{language.conditions}</strong><ul>{fact.conditions.map((text, index) => <li key={index}>{text}</li>)}</ul></> : null}
               {fact.exclusions.length ? <><strong>{language.exclusions}</strong><ul>{fact.exclusions.map((text, index) => <li key={index}>{text}</li>)}</ul></> : null}
               <details><summary>{language.sources}</summary>

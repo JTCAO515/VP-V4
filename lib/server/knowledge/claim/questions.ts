@@ -28,11 +28,23 @@ export const QUESTION_DEFINITIONS = {
   connectivity_plan_allowances: { scene: "connectivity", claims: [simPlan] },
   connectivity_getting_started: { scene: "connectivity", claims: [simDocuments, simPlan] },
 } as const;
-export type ReviewedQuestionId = keyof typeof QUESTION_DEFINITIONS;
-export function reviewedQuestionId(value: unknown): ReviewedQuestionId | null {
-  return typeof value === "string" && Object.hasOwn(QUESTION_DEFINITIONS, value) ? value as ReviewedQuestionId : null;
+export const PLACE_QUESTION_IDS = ["place_address", "place_opening_hours", "place_address_and_hours"] as const;
+export type PlaceQuestionId = typeof PLACE_QUESTION_IDS[number];
+export function isPlaceQuestionId(value: unknown): value is PlaceQuestionId {
+  return typeof value === "string" && (PLACE_QUESTION_IDS as readonly string[]).includes(value);
 }
-export function questionDefinition(value: unknown): Readonly<{ scene: "rail" | "payment" | "connectivity"; claims: readonly QuestionClaim[] }> | null {
+export type ReviewedQuestionId = keyof typeof QUESTION_DEFINITIONS | PlaceQuestionId;
+export function reviewedQuestionId(value: unknown): ReviewedQuestionId | null {
+  return typeof value === "string" && (Object.hasOwn(QUESTION_DEFINITIONS, value) || isPlaceQuestionId(value)) ? value as ReviewedQuestionId : null;
+}
+export function questionDefinition(value: unknown, subjectId?: unknown): Readonly<{ scene: "rail" | "payment" | "connectivity" | "attraction"; claims: readonly QuestionClaim[] }> | null {
   const id = reviewedQuestionId(value);
+  if (isPlaceQuestionId(id)) {
+    if (typeof subjectId !== "string" || !/^[a-z][a-z0-9_-]{0,127}$/.test(subjectId)) return null;
+    return { scene: "attraction", claims: [
+      ...(id !== "place_opening_hours" ? [{ subjectId, predicate: "located_at", objectId: "place_address" }] : []),
+      ...(id !== "place_address" ? [{ subjectId, predicate: "opens_during", objectId: "opening_hours" }] : []),
+    ] };
+  }
   return id ? QUESTION_DEFINITIONS[id] : null;
 }

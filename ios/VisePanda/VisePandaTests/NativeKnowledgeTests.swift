@@ -196,12 +196,76 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         return try JSONDecoder().decode(NativeTextTurn.self, from: JSONSerialization.data(withJSONObject: data))
     }
 
+    @MainActor private func placeTurn(mode: String = "current") throws -> NativeTextTurn {
+        let root = try XCTUnwrap(JSONSerialization.jsonObject(with: questionPayload()) as? [String: Any])
+        var knowledge = try XCTUnwrap(root["data"] as? [String: Any])
+        var rows = try XCTUnwrap(knowledge["statements"] as? [[String: Any]])
+        let subject = "test_lake_pavilion"
+        for index in rows.indices {
+            var assertion = try XCTUnwrap(rows[index]["assertion"] as? [String: Any])
+            assertion["subjectId"] = mode == "wrong_subject" ? "different_place" : subject
+            assertion["predicate"] = index == 0 ? "located_at" : "opens_during"
+            assertion["objectId"] = index == 0 ? "place_address" : "opening_hours"
+            rows[index]["assertion"] = assertion
+            rows[index]["scope"] = ["cities": ["shanghai"], "scene": "attraction", "audience": "international_independent_traveler"]
+            rows[index]["text"] = "See the reviewed structured value."
+            rows[index]["place"] = ["names": ["en": "Test Lake Pavilion", "zh": "测试湖亭"]]
+            rows[index]["value"] = index == 0 ? ["lines": ["3 Test Lake Road"], "countryCode": "CN"] :
+                ["startsAt": mode == "wrong_date" ? "2026-09-12T01:00:00Z" : "2026-09-13T01:00:00Z",
+                 "endsAt": mode == "wrong_date" ? "2026-09-12T09:00:00Z" : "2026-09-13T09:00:00Z", "timeZone": "Asia/Shanghai"]
+            rows[index]["reviewedAt"] = "2026-09-01T00:00:00Z"
+            rows[index]["publishedAt"] = "2026-09-02T00:00:00Z"
+            rows[index]["expiresAt"] = "2026-09-14T15:00:00Z"
+        }
+        var claims: [[String: Any]] = try rows.enumerated().map { index, row in
+            ["id": index == 0 ? "place_address" : "opening_hours", "status": "covered", "reasons": [], "factIds": [try XCTUnwrap(row["factId"] as? String)]]
+        }
+        if mode == "partial" {
+            rows.removeLast(); claims[1] = ["id": "opening_hours", "status": "unavailable", "reasons": ["not_current_date"], "factIds": []]
+        }
+        knowledge["statements"] = rows
+        knowledge["evaluatedAt"] = mode == "midnight" ? "2026-09-13T15:59:59Z" : "2026-09-13T00:00:00Z"
+        knowledge["scope"] = ["city": "shanghai", "scene": "attraction", "locale": "en"]
+        knowledge["answer"] = ["questionId": "place_address_and_hours", "questionVersion": 1, "subjectId": subject,
+            "outcome": mode == "partial" ? "partial" : "answered", "claims": claims]
+        let outcome = mode == "ambiguous" ? "clarification" : mode == "partial" ? "partial" : "answered"
+        let result: [String: Any] = ["type": "reviewed_answer", "city": "shanghai", "intent": mode == "ambiguous" ? "clarification" : "place_address_and_hours",
+            "requestScope": mode == "ambiguous" ? "unknown" : "single", "unansweredNeeds": [], "originalOutcome": outcome,
+            "placeName": mode == "invented_name" ? "Other Museum" : "Test Lake Pavilion", "placeSubjectId": mode == "ambiguous" ? NSNull() : subject,
+            "placeResolution": mode == "ambiguous" ? "ambiguous" : "matched", "completedAt": "2026-09-13T00:00:00Z",
+            "projection": "current", "knowledge": mode == "ambiguous" ? NSNull() : knowledge]
+        let data: [String: Any] = ["turnId": UUID().uuidString, "threadId": UUID().uuidString, "locale": "en",
+            "input": "What are Test Lake Pavilion’s address and opening time today?", "outcome": outcome,
+            "output": "reviewed-answer-v1", "status": "completed", "createdAt": "2026-09-13T00:00:00Z",
+            "serviceTaskId": UUID().uuidString, "scopeVersion": 1, "relationship": "new_goal", "result": result]
+        return try JSONDecoder().decode(NativeTextTurn.self, from: JSONSerialization.data(withJSONObject: data))
+    }
+
+    @MainActor func testPlaceSelectionTypedValuesAndLocalDateAreBoundToSavedTask() throws {
+        for mode in ["current", "partial", "ambiguous"] {
+            let turn = try placeTurn(mode: mode)
+            XCTAssertEqual(try XCTUnwrap(turn.result).lifetime(for: turn, elapsed: 2), 28)
+        }
+        for mode in ["wrong_subject", "wrong_date", "invented_name"] {
+            let turn = try placeTurn(mode: mode)
+            XCTAssertThrowsError(try XCTUnwrap(turn.result).lifetime(for: turn, elapsed: 0))
+        }
+        let current = try placeTurn()
+        let facts = try XCTUnwrap(current.result?.knowledge?.statements)
+        XCTAssertEqual(facts[0].placeDetails(chinese: false), ["3 Test Lake Road", "China"])
+        XCTAssertEqual(facts[0].placeDetails(chinese: true), ["3 Test Lake Road", "中国"])
+        XCTAssertEqual(facts[1].placeDetails(chinese: false), ["2026-09-13 09:00:00 – 2026-09-13 17:00:00 (Asia/Shanghai, UTC+08:00)"])
+        let midnight = try placeTurn(mode: "midnight")
+        XCTAssertEqual(try XCTUnwrap(midnight.result).lifetime(for: midnight, elapsed: 0.25), 0.75)
+        XCTAssertThrowsError(try XCTUnwrap(midnight.result).lifetime(for: midnight, elapsed: 1))
+    }
+
     @MainActor func testSpecificGapsMustBeBoundedExcerptsFromThisTurn() throws {
         let turn = try groundedTurn(compound: true)
         let old = try XCTUnwrap(turn.result)
         for needs in [["What documents do I need?"], [], ["Invented question"], ["What", "What"], ["\t"]] {
             let result = NativeGroundedResult(type: old.type, city: old.city, intent: old.intent,
-                requestScope: old.requestScope, unansweredNeeds: needs, originalOutcome: old.originalOutcome,
+                requestScope: old.requestScope, unansweredNeeds: needs, placeSubjectId: nil, placeName: nil, placeResolution: nil, originalOutcome: old.originalOutcome,
                 completedAt: old.completedAt, projection: old.projection, knowledge: old.knowledge)
             if needs == ["What documents do I need?"] {
                 XCTAssertEqual(try result.lifetime(for: turn, elapsed: 2), 28)
@@ -217,10 +281,10 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         }
         var turn = try groundedTurn()
         let old = try XCTUnwrap(turn.result)
-        turn.result = NativeGroundedResult(type: old.type, city: "beijing", intent: old.intent, requestScope: old.requestScope, unansweredNeeds: old.unansweredNeeds,
+        turn.result = NativeGroundedResult(type: old.type, city: "beijing", intent: old.intent, requestScope: old.requestScope, unansweredNeeds: old.unansweredNeeds, placeSubjectId: nil, placeName: nil, placeResolution: nil,
             originalOutcome: old.originalOutcome, completedAt: old.completedAt, projection: old.projection, knowledge: old.knowledge)
         XCTAssertThrowsError(try XCTUnwrap(turn.result).lifetime(for: turn, elapsed: 0))
-        turn.result = NativeGroundedResult(type: old.type, city: old.city, intent: old.intent, requestScope: "additional_needs", unansweredNeeds: nil,
+        turn.result = NativeGroundedResult(type: old.type, city: old.city, intent: old.intent, requestScope: "additional_needs", unansweredNeeds: nil, placeSubjectId: nil, placeName: nil, placeResolution: nil,
             originalOutcome: old.originalOutcome, completedAt: old.completedAt, projection: old.projection, knowledge: old.knowledge)
         XCTAssertThrowsError(try XCTUnwrap(turn.result).lifetime(for: turn, elapsed: 0))
     }
@@ -229,7 +293,7 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         var turn = try groundedTurn()
         let old = try XCTUnwrap(turn.result)
         for retainedFacts in [false, true] {
-            turn.result = NativeGroundedResult(type: old.type, city: old.city, intent: old.intent, requestScope: old.requestScope, unansweredNeeds: old.unansweredNeeds,
+            turn.result = NativeGroundedResult(type: old.type, city: old.city, intent: old.intent, requestScope: old.requestScope, unansweredNeeds: old.unansweredNeeds, placeSubjectId: nil, placeName: nil, placeResolution: nil,
                 originalOutcome: old.originalOutcome, completedAt: old.completedAt, projection: "unavailable",
                 knowledge: retainedFacts ? old.knowledge : nil)
             if retainedFacts { XCTAssertThrowsError(try XCTUnwrap(turn.result).lifetime(for: turn, elapsed: 0)) }

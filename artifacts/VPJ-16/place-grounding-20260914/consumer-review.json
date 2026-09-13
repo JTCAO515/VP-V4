@@ -1,0 +1,24 @@
+{
+  "reviewer": "/root/knowledge_security_review",
+  "initial": {
+    "critical": 0,
+    "important": 1,
+    "finding": "Validated typed address/time values were not actually displayed by either consumer; valid explanatory-only text could show answered without the requested information.",
+    "hashes": {
+      "lib/grounded/read-model.ts": "eb091acf74414ecc3631263b2dad804b69a38742e73188f0667c9f9a93e43128",
+      "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift": "7d06d9759ce4b9a66348cf6d808058ae39bcd9f912e4829d0317fc5a7a2f083d",
+      "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift": "9778ffbe0d1b154048d92574770a98d95c81eb13bea0f44953670cf0ef9864a4"
+    }
+  },
+  "fix": "Both consumers now display address lines/locality/country or dated Shanghai opening endpoints, retaining all reviewed text and qualifiers. Final read-only re-review passed.",
+  "final": {
+    "critical": 0,
+    "important": 0,
+    "hashes": {
+      "lib/grounded/read-model.ts": "38f9483478818bfb79751e8e8af5ce06bde659127d0d414f66001ded908ec316",
+      "components/chat/SavedAnswers.tsx": "46e5a4f0b6453d26f93dca4e1045d0b9b81a835a57616c0be851363c345767e6",
+      "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift": "ac780fa713856c7090f35949b5a2b787953e374f7fdc005c66ee6f660b7a6a55",
+      "ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift": "be6b3c03cca5074ed32d44c1a91466a0b76e84e45f4125848a9ec6e532112db9"
+    }
+  }
+}

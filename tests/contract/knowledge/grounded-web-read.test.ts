@@ -108,3 +108,40 @@ test("saved excerpts identify a partial request without accepting invented text 
     Object.assign(f.turn.result,{unansweredNeeds:needs});assert.throws(()=>f.read());
   }
 });
+
+function placeFixture() {
+  const f=fixture(), subjectId="test_lake_pavilion";
+  f.turn.input="What is Test Lake Pavilion's address and today's opening time?";
+  f.turn.result.intent="place_address_and_hours";
+  Object.assign(f.turn.result,{placeSubjectId:subjectId,placeName:"Test Lake Pavilion",placeResolution:"matched",unansweredNeeds:[]});
+  Object.assign(f.knowledge.answer,{questionId:"place_address_and_hours",subjectId});
+  f.knowledge.scope.scene="attraction";
+  f.knowledge.statements.forEach((fact,i)=>{
+    Object.assign(fact.assertion,{subjectId,predicate:i===0?"located_at":"opens_during",objectId:i===0?"place_address":"opening_hours"});
+    Object.assign(fact,{text:"See the reviewed structured value.",place:{names:{en:"Test Lake Pavilion",zh:"测试湖亭"}},scope:{cities:["shanghai"],scene:"attraction",audience:"international_independent_traveler"},
+      value:i===0?{lines:["3 Test Lake Road"],countryCode:"CN"}:{startsAt:"2026-09-13T01:00:00Z",endsAt:"2026-09-13T09:00:00Z",timeZone:"Asia/Shanghai"}});
+    f.knowledge.answer.claims[i].id=fact.assertion.objectId;
+  });
+  return f;
+}
+test("place history binds selected subject and typed date-aware facts",()=>{
+  const f=placeFixture();assert.equal(f.read().turns[0].questionId,"place_address_and_hours");
+  assert.deepEqual(f.read().turns[0].facts[0].placeDetails,["3 Test Lake Road","China"]);
+  assert.deepEqual(f.read().turns[0].facts[1].placeDetails,["2026-09-13 09:00:00 – 2026-09-13 17:00:00 (Asia/Shanghai, UTC+08:00)"]);
+  for(const mutate of [
+    (x:ReturnType<typeof placeFixture>)=>Object.assign(x.turn.result,{placeSubjectId:"another_place"}),
+    (x:ReturnType<typeof placeFixture>)=>Object.assign(x.turn.result,{placeName:"Invented name"}),
+    (x:ReturnType<typeof placeFixture>)=>Object.assign(x.knowledge.answer,{subjectId:"another_place"}),
+    (x:ReturnType<typeof placeFixture>)=>Object.assign(x.knowledge.statements[0],{value:{lines:["Other country"],countryCode:"US"}}),
+    (x:ReturnType<typeof placeFixture>)=>Object.assign(x.knowledge.statements[0],{scope:{cities:["beijing"],scene:"attraction",audience:"international_independent_traveler"}}),
+    (x:ReturnType<typeof placeFixture>)=>Object.assign(x.knowledge.statements[1],{value:{startsAt:"2026-09-12T01:00:00Z",endsAt:"2026-09-12T09:00:00Z",timeZone:"Asia/Shanghai"}}),
+  ]){const bad=placeFixture();mutate(bad);assert.throws(()=>bad.read());}
+});
+test("place hours gaps are explicit and a visible hours lease cannot cross local midnight",()=>{
+  const f=placeFixture();f.knowledge.statements.pop();f.knowledge.answer.outcome="partial";
+  Object.assign(f.knowledge.answer.claims[1],{status:"unavailable",factIds:[],reasons:["not_current_date"]});
+  assert.equal(savedAnswerNotice(f.read().turns[0]),"placeHoursMissing");
+  const midnight=placeFixture();midnight.knowledge.evaluatedAt="2026-09-13T15:59:59Z";
+  midnight.knowledge.statements.forEach(fact=>fact.expiresAt="2026-09-14T15:00:00Z");
+  assert.equal(midnight.read(250).lifetimeMs,750);assert.throws(()=>midnight.read(1000));
+});

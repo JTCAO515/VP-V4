@@ -190,6 +190,9 @@ struct NativeGroundedResult: Decodable, Equatable {
     let intent: String?
     let requestScope: String?
     let unansweredNeeds: [String]?
+    let placeSubjectId: String?
+    let placeName: String?
+    let placeResolution: String?
     let originalOutcome: String?
     let completedAt: String?
     let projection: String
@@ -200,6 +203,14 @@ struct NativeGroundedResult: Decodable, Equatable {
               ["zh", "en"].contains(turn.locale), turn.validTask,
               originalOutcome == turn.outcome?.rawValue, elapsed.isFinite, elapsed >= 0, elapsed < 30 else {
             throw NativeDataError.invalidResponse
+        }
+        if placeSubjectId != nil || placeName != nil || placeResolution != nil {
+            guard let placeName, !placeName.isEmpty, placeName.utf16.count <= 160, turn.input.contains(placeName), completedAt != nil else { throw NativeDataError.invalidResponse }
+            if placeResolution == "matched" {
+                guard let intent, NativeKnowledgeAnswer.isPlace(intent), NativeKnowledgeAnswer.definition(intent, subjectId: placeSubjectId) != nil else { throw NativeDataError.invalidResponse }
+            } else {
+                guard placeSubjectId == nil, (placeResolution == "ambiguous" && intent == "clarification") || (placeResolution == "unavailable" && intent == "unsupported") else { throw NativeDataError.invalidResponse }
+            }
         }
         if let unansweredNeeds {
             guard completedAt != nil, unansweredNeeds.count <= 6,
@@ -217,7 +228,7 @@ struct NativeGroundedResult: Decodable, Equatable {
         }
         guard completedAt.flatMap(NativeKnowledgeRead.date) != nil, turn.output == "reviewed-answer-v1",
               ["current", "unavailable"].contains(projection) else { throw NativeDataError.invalidResponse }
-        if let intent, let definition = NativeKnowledgeAnswer.definition(intent) {
+        if let intent, let definition = NativeKnowledgeAnswer.definition(intent, subjectId: placeSubjectId) {
             guard ["single", "additional_needs"].contains(requestScope ?? ""),
                   ["answered", "partial", "blocked"].contains(originalOutcome ?? ""),
                   requestScope != "additional_needs" || originalOutcome != "answered" else { throw NativeDataError.invalidResponse }
@@ -225,8 +236,8 @@ struct NativeGroundedResult: Decodable, Equatable {
                 guard knowledge == nil else { throw NativeDataError.invalidResponse }
                 return 30 - elapsed
             }
-            guard let knowledge else { throw NativeDataError.invalidResponse }
-            return try knowledge.lifetime(for: .init(city: city, scene: definition.scene, locale: turn.locale), elapsed: elapsed, question: true, questionId: intent)
+            guard let knowledge, !NativeKnowledgeAnswer.isPlace(intent) || placeResolution == "matched" else { throw NativeDataError.invalidResponse }
+            return try knowledge.lifetime(for: .init(city: city, scene: definition.scene, locale: turn.locale), elapsed: elapsed, question: true, questionId: intent, subjectId: placeSubjectId)
         }
         let expected = intent == "clarification" ? "clarification" : intent == "technical_failure" ? "technical_failure" : "blocked"
         guard ["clarification", "unsupported", "technical_failure", "blocked"].contains(intent ?? ""),

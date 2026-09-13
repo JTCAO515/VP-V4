@@ -1,10 +1,11 @@
-import { questionDefinition } from "../server/knowledge/claim/questions.ts";
+import { isPlaceQuestionId, questionDefinition } from "../server/knowledge/claim/questions.ts";
+import { validPlaceFields } from "../server/knowledge/publication/place.ts";
 /** Browser projection of the existing grounded-turn/1 contract. No inference or persistence. */
 export type SavedSource = { id: string; publisher: string; locator: string; href: string | null };
-export type SavedFact = { id: string; text: string; conditions: string[]; exclusions: string[]; sources: SavedSource[] };
+export type SavedFact = { id: string; text: string; placeDetails?: string[]; conditions: string[]; exclusions: string[]; sources: SavedSource[] };
 export type SavedTurn = {
   id: string; taskId: string; parentId: string | null; threadId: string; relationship: string;
-  unansweredNeeds?: string[]; questionId?: string | null; input: string; city: string; locale: "zh" | "en"; createdAt: string;
+  unansweredNeeds?: string[]; questionId?: string | null; placeName?: string; placeResolution?: "matched" | "ambiguous" | "unavailable"; missingClaims?: string[]; input: string; city: string; locale: "zh" | "en"; createdAt: string;
   status: string; outcome: string | null; coverage: string | null; projection: string; facts: SavedFact[];
 };
 export type SavedHistory = { ownerId: string; turns: SavedTurn[]; lifetimeMs: number };
@@ -46,6 +47,13 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
   let lifetimeMs = 30_000;
   const turns = list(history.turns, 20).map(raw => {
     const turn = record(raw), result = record(turn.result);
+    const placeResolution = result.placeResolution == null ? undefined : string(result.placeResolution, 20);
+    const placeName = result.placeName == null ? undefined : string(result.placeName, 160);
+    if (placeResolution !== undefined || placeName !== undefined || result.placeSubjectId != null) {
+      requireValue(placeName && typeof turn.input === "string" && turn.input.includes(placeName) && result.completedAt !== null);
+      requireValue(placeResolution === "matched" ? isPlaceQuestionId(result.intent) && questionDefinition(result.intent, result.placeSubjectId) !== null
+        : result.placeSubjectId == null && (placeResolution === "ambiguous" ? result.intent === "clarification" : placeResolution === "unavailable" && result.intent === "unsupported"));
+    }
     const unansweredNeeds = result.unansweredNeeds == null ? undefined : list(result.unansweredNeeds, 6).map(v => {
       const excerpt = string(v, 480);
       requireValue([...excerpt].length <= 240 && !/[\uD800-\uDFFF]/u.test(excerpt) && typeof turn.input === "string" && turn.input.includes(excerpt));
@@ -70,12 +78,13 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
       : turn.status === ({ answered: "completed", partial: "completed", clarification: "completed", blocked: "unavailable", technical_failure: "failed" } as Record<string, string>)[outcome]);
     const facts: SavedFact[] = [];
     let coverage: string | null = null;
+    let missingClaims: string[] | undefined;
     if (result.completedAt === null) {
       requireValue(result.intent === null && result.requestScope === null && outcome === null && turn.output === null && result.knowledge === null && result.projection === "pending");
     } else {
       date(result.completedAt);
       requireValue(turn.output === "reviewed-answer-v1" && ["current", "unavailable"].includes(String(result.projection)));
-      const definition = questionDefinition(result.intent);
+      const definition = questionDefinition(result.intent, result.placeSubjectId);
       if (definition) {
         const requiredClaims = definition.claims.map(claim => claim.objectId);
         requireValue(["single", "additional_needs"].includes(String(result.requestScope)) && ["answered", "partial", "blocked"].includes(outcome ?? "") && !(result.requestScope === "additional_needs" && outcome === "answered"));
@@ -90,6 +99,17 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
             const factId = id(fact.factId); id(fact.assertionId);
             requireValue(fact.version === 1 && fact.assertionRevision === 1 && !assertions.has(factId));
             requireValue(definition.claims.some(claim => assertion.subjectId === claim.subjectId && assertion.predicate === claim.predicate && assertion.objectId === claim.objectId));
+            if (isPlaceQuestionId(result.intent)) {
+              requireValue(placeResolution === "matched" && validPlaceFields(fact.place, fact.value, assertion.predicate, assertion.objectId));
+              const factScope = record(fact.scope);
+              requireValue(factScope.scene === "attraction" && factScope.audience === "international_independent_traveler"
+                && Array.isArray(factScope.cities) && factScope.cities.length === 1 && factScope.cities[0] === city);
+              if (assertion.predicate === "opens_during") {
+                const startsAt = date(record(fact.value).startsAt), localDay = (t: number) => Math.floor((t + 8 * 3600000) / 86400000);
+                requireValue(localDay(startsAt) === localDay(evaluated));
+                lifetimeMs = Math.min(lifetimeMs, (localDay(evaluated) + 1) * 86400000 - 8 * 3600000 - evaluated);
+              }
+            }
             assertions.set(factId, string(assertion.objectId, 128));
             const conditions = strings(fact.conditions), exclusions = strings(fact.exclusions);
             requireValue(conditions.length === strings(assertion.conditions).length && exclusions.length === strings(assertion.exclusions).length);
@@ -100,10 +120,19 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
               return { id: id(source.sourceRevisionId), publisher: string(source.publisher, 160), locator: string(source.locator, 240), href: sourceLink(source.uri) };
             });
             requireValue(sources.length); unique(sources.map(source => source.id));
-            facts.push({ id: factId, text: string(fact.text, 1000), conditions, exclusions, sources });
+            let placeDetails: string[] | undefined;
+            if (isPlaceQuestionId(result.intent)) {
+              const value = record(fact.value);
+              const localTime = (instant: unknown) => new Date(date(instant) + 8 * 3600000).toISOString().slice(0, 19).replace("T", " ");
+              placeDetails = assertion.predicate === "located_at"
+                ? [...strings(value.lines), ...(value.locality ? [string(value.locality, 120)] : []), turn.locale === "zh" ? "中国" : "China"]
+                : [`${localTime(value.startsAt)} – ${localTime(value.endsAt)} (Asia/Shanghai, UTC+08:00)`];
+            }
+            facts.push({ id: factId, text: string(fact.text, 1000), ...(placeDetails ? { placeDetails } : {}), conditions, exclusions, sources });
           }
           requireValue(knowledge.status === (facts.length ? "available" : "no_eligible_content"));
           requireValue(answer.questionId === result.intent && answer.questionVersion === 1);
+          if (isPlaceQuestionId(result.intent)) requireValue(placeResolution === "matched" && answer.subjectId === result.placeSubjectId);
           const claims = list(answer.claims, requiredClaims.length).map(record), allIds: string[] = [];
           requireValue(claims.length === requiredClaims.length);
           claims.forEach((claim, index) => {
@@ -111,9 +140,10 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
             const ids = list(claim.factIds, 50).map(id), reasons = strings(claim.reasons); unique(reasons); allIds.push(...ids);
             if (claim.status === "covered") requireValue(ids.length && !reasons.length && ids.every(factId => assertions.get(factId) === claim.id));
             else if (claim.status === "unresolved_variants") requireValue(!ids.length && reasons.length === 1 && reasons[0] === "unresolved_variants");
-            else requireValue(claim.status === "unavailable" && !ids.length && reasons.length && reasons.every(reason => ["missing", "expired", "revoked", "unreviewed"].includes(reason)) && (!reasons.includes("missing") || reasons.length === 1));
+            else requireValue(claim.status === "unavailable" && !ids.length && reasons.length && reasons.every(reason => ["missing", "expired", "revoked", "unreviewed", ...(isPlaceQuestionId(result.intent) ? ["not_current_date"] : [])].includes(reason)) && (!reasons.includes("missing") || reasons.length === 1));
           });
           unique(allIds); requireValue(allIds.length === facts.length && allIds.every(factId => assertions.has(factId)));
+          if (isPlaceQuestionId(result.intent)) missingClaims = claims.filter(claim => claim.status !== "covered").map(claim => String(claim.id));
           requireValue(answer.outcome === (claims.every(claim => claim.status === "covered") ? "answered" : facts.length ? "partial" : "no_answer"));
           coverage = String(answer.outcome);
         }
@@ -122,7 +152,7 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
         requireValue(outcome === (result.intent === "clarification" ? "clarification" : result.intent === "technical_failure" ? "technical_failure" : "blocked"));
       }
     }
-    return { ...(unansweredNeeds ? { unansweredNeeds } : {}), questionId: questionDefinition(result.intent) ? String(result.intent) : null, id: turnId, taskId, parentId, threadId, relationship, input: string(turn.input), city, locale: turn.locale as "zh" | "en", createdAt: string(turn.createdAt, 40), status: String(turn.status), outcome, coverage, projection: String(result.projection), facts };
+    return { ...(unansweredNeeds ? { unansweredNeeds } : {}), ...(placeName ? { placeName, placeResolution: placeResolution as SavedTurn["placeResolution"] } : {}), ...(missingClaims ? { missingClaims } : {}), questionId: questionDefinition(result.intent, result.placeSubjectId) ? String(result.intent) : null, id: turnId, taskId, parentId, threadId, relationship, input: string(turn.input), city, locale: turn.locale as "zh" | "en", createdAt: string(turn.createdAt, 40), status: String(turn.status), outcome, coverage, projection: String(result.projection), facts };
   });
   unique(turns.map(turn => turn.id));
   requireValue(lifetimeMs > elapsedMs);
