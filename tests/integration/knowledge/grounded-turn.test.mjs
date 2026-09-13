@@ -33,6 +33,12 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   assert.equal(await db("select pg_get_functiondef('public.read_grounded_turn(uuid)'::regprocedure);"),previous);
   assert.equal(await db("select to_regprocedure('public.complete_grounded_work_with_needs(uuid,uuid,text,text,text)') is null;"),'t');
   await db('begin;'+content+'commit;');
+ }else if(f.endsWith('_vpj_16_place_statements.sql')) {
+  const previous=await db("select pg_get_functiondef('knowledge_review_private.statement_valid(jsonb)'::regprocedure);");
+  await db('begin;'+content+'rollback;');
+  assert.equal(await db("select pg_get_functiondef('knowledge_review_private.statement_valid(jsonb)'::regprocedure);"),previous);
+  assert.equal(await db("select to_regprocedure('knowledge_review_private.place_subject(text,text)') is null;"),'t');
+  await db('begin;'+content+'commit;');
  }else await db('begin;'+content+'commit;');}
  const actor=async()=>{const a={owner:uuid(),session:uuid()};await db(`insert into auth.users values('${a.owner}');insert into auth.sessions(id,user_id) values('${a.session}','${a.owner}');`);return a;};
  const owner=await actor(),other=await actor(),author=await actor(),reviewer=await actor();
@@ -277,6 +283,36 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   assert.equal(empty.result.knowledge.statements.length,0);
   assert.equal(await snapshot(),frozen,'read-time eligibility must not rewrite completion or work state');
   assert.equal((await foreign('read_grounded_turn',{p_turn_id:before.p_turn_id})).kind,'unavailable');
+ });
+
+ await t.test('typed place publications use ordinary review, exact city/name scope and private helpers',async()=>{
+  const value=statement('place_address');value.schemaVersion='knowledge-statement/2';
+  value.assertion={subjectId:'test_riverside_gallery',predicate:'located_at',objectId:'place_address',conditions:[],exclusions:[]};
+  value.scope={cities:['guangzhou'],scene:'attraction',audience:'international_independent_traveler'};
+  value.place={names:{en:'Test Riverside Gallery',zh:'测试河畔画廊'}};
+  value.value={lines:['2 Test River Road'],locality:'Guangzhou',countryCode:'CN'};
+  value.expressions={en:{text:'Synthetic gallery address: 2 Test River Road.',conditions:[],exclusions:[]},zh:{text:'合成画廊地址：测试河路2号。',conditions:[],exclusions:[]}};
+  const resolve=(name,city='guangzhou')=>db(`select knowledge_review_private.place_subject(${lit(name)},${lit(city)});`).then(JSON.parse);
+  const cid=uuid();await op(author,{action:'submit_statement',operationId:uuid(),candidateId:cid,title:'Synthetic gallery',statement:value});
+  assert.deepEqual(await resolve('Test Riverside Gallery'),{kind:'unavailable'},'pending source is not identity authority');
+  await assert.rejects(op(author,{action:'publish_statement',operationId:uuid(),candidateId:cid,expectedVersion:2,expiresAt:new Date(Date.now()+3600000).toISOString(),useBasis:'original_factual_summary',useNote:'Self publication denied'}));
+  await op(reviewer,{action:'review',operationId:uuid(),candidateId:cid,expectedVersion:1,decision:'reviewed',note:'Synthetic independent review'});
+  await op(reviewer,{action:'publish_statement',operationId:uuid(),candidateId:cid,expectedVersion:2,expiresAt:new Date(Date.now()+3600000).toISOString(),useBasis:'original_factual_summary',useNote:'Synthetic typed address'});
+  assert.deepEqual(await resolve(' test  RIVERSIDE gallery '),{kind:'matched',subjectId:'test_riverside_gallery'});
+  assert.deepEqual(await resolve('测试河畔画廊'),{kind:'matched',subjectId:'test_riverside_gallery'});
+  assert.deepEqual(await resolve('Test Riverside Gallery','shanghai'),{kind:'unavailable'});
+  assert.deepEqual(await resolve('Riverside'),{kind:'unavailable'},'no fuzzy name guess');
+  assert.deepEqual(JSON.parse(await db(`select payload from knowledge_review_private.statements where candidate_id='${cid}';`)),value,'v2 typed content is never rewritten into legacy payload');
+  const second=structuredClone(value);second.assertion.subjectId='another_gallery';const duplicate=await publish(second);
+  assert.deepEqual(await resolve('Test Riverside Gallery'),{kind:'ambiguous'},'same-name places never resolve by rank');
+  await revoke(duplicate);assert.equal((await resolve('Test Riverside Gallery')).subjectId,'test_riverside_gallery');
+  for(const role of ['anon','authenticated','service_role']){
+   await assert.rejects(db(`set role ${role};select knowledge_review_private.place_subject('Test Riverside Gallery','guangzhou');`),/permission denied/);
+   await assert.rejects(db(`set role ${role};select knowledge_review_private.statement_valid('{}');`),/permission denied/);
+  }
+  const invalid=structuredClone(value);invalid.value.countryCode='US';
+  await assert.rejects(op(author,{action:'submit_statement',operationId:uuid(),candidateId:uuid(),title:'Invalid country',statement:invalid}),/INVALID_INPUT/);
+  await revoke(cid);assert.deepEqual(await resolve('Test Riverside Gallery'),{kind:'unavailable'});
  });
 
  await t.test('four-turn cap preserves exact retries but rejects new clarification work',async()=>{

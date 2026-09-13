@@ -1,0 +1,11 @@
+{
+  "reviewer": "/root/knowledge_security_review",
+  "critical": 0,
+  "important": 0,
+  "scope": "v2 admission and private exact-name lookup only; not the unfinished Ask completion bridge",
+  "files": {
+    "supabase/migrations/20260914040000_vpj_16_place_statements.sql": "399bb7ae2be20cf27e90392e931e3c4d3151988eb02489a6b52dea098e227160",
+    "lib/server/knowledge/publication/statement.ts": "1ec3e6ff85a3dcd1bbb23798479070d4ea1e4c8f4f11a081570fcc2ab14d3989",
+    "lib/server/knowledge/publication/place.ts": "ac351ad28c2ea5b55e2a1859b28cc1225995bbd71e2ca3c100523854eb502749"
+  }
+}
