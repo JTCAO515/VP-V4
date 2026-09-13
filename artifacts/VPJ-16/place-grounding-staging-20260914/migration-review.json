@@ -1,0 +1,10 @@
+{
+  "reviewer": "/root/knowledge_security_review",
+  "critical": 0,
+  "important": 0,
+  "scope": "frozen migration application and verification controller",
+  "initialMigrateSha256": "e1697824c334730867cf5bc13d1ac4465f3913d9e2ce381e7eda07fca1a66c3c",
+  "finalMigrateSha256": "b62a035ef604b6954918960a8b16b42431ed62f171d36050de4759312cec01a0",
+  "placeShapeSha256": "2c3e4881abcb1854265fd391434173ffe9b2224fb87c6a51b028af300d96c7d2",
+  "correction": "Emit to_json(enabled) before JSON.parse; still requires disabled reader."
+}

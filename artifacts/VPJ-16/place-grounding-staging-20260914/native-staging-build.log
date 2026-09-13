@@ -1,0 +1,932 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination "generic/platform=iOS Simulator" -derivedDataPath /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native -resultBundlePath /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native-staging-build.xcresult CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- VP_NATIVE_ENVIRONMENT=staging VP_NATIVE_TASK_CONTEXT=knowledge_intent_v1 "VP_NATIVE_STAGING_API_ORIGIN=https://vp-v4-8hmu9lkqj-jtcao515s-projects.vercel.app"
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+    VP_NATIVE_ENVIRONMENT = staging
+    VP_NATIVE_STAGING_API_ORIGIN = https://vp-v4-8hmu9lkqj-jtcao515s-projects.vercel.app
+    VP_NATIVE_TASK_CONTEXT = knowledge_intent_v1
+
+Writing result bundle at path:
+	/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native-staging-build.xcresult
+
+note: Using codesigning identity override: -
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'VisePanda' in project 'VisePanda' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/xcstringstool compile --dry-run --output-directory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Resources/Localizable.xcstrings
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Resources/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: 57fc81956fbff0221866f0bdc329ba45
+Build description path: /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/XCBuildData/57fc81956fbff0221866f0bdc329ba45.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-6cfe768891a92b912361537c460fe42b.sdkstatcache
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -o /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-6cfe768891a92b912361537c460fe42b.sdkstatcache
+
+CreateBuildDirectory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda.xcodeproj
+    builtin-create-build-directory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products
+
+CreateBuildDirectory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda.xcodeproj
+    builtin-create-build-directory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex
+
+CreateBuildDirectory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda.xcodeproj
+    builtin-create-build-directory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator
+
+CreateBuildDirectory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda.xcodeproj
+    builtin-create-build-directory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+CreateBuildDirectory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/ExplicitPrecompiledModules
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda.xcodeproj
+    builtin-create-build-directory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda-97c7769df369d917a11b704107fd7f24-VFS-iphonesimulator/all-product-headers.yaml
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda.xcodeproj
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda-97c7769df369d917a11b704107fd7f24-VFS-iphonesimulator/all-product-headers.yaml
+
+CreateBuildDirectory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda.xcodeproj
+    builtin-create-build-directory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.DependencyStaticMetadataFileList (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.hmap (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.hmap
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.DependencyMetadataFileList (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-project-headers.hmap (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-project-headers.hmap
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-own-target-headers.hmap (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-generated-files.hmap (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-generated-files.hmap
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-target-headers.hmap (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-non-framework-target-headers.hmap (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibPath-normal-x86_64.txt (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibPath-normal-x86_64.txt
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibPath-normal-arm64.txt (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibPath-normal-arm64.txt
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibInstallName-normal-x86_64.txt (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibInstallName-normal-x86_64.txt
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibInstallName-normal-arm64.txt (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibInstallName-normal-arm64.txt
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_const_extract_protocols.json (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftFileList (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftFileList
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftConstValuesFileList (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.LinkFileList (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.LinkFileList
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-OutputFileMap.json (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_const_extract_protocols.json (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftFileList (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftFileList
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftConstValuesFileList (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.LinkFileList (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.LinkFileList
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-OutputFileMap.json (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-OutputFileMap.json
+
+MkDir /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /bin/mkdir -p /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app
+
+WriteAuxiliaryFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/Entitlements-Simulated.plist (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    write-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/Entitlements-Simulated.plist
+
+ProcessProductPackaging "" /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+    Entitlements:
+
+    {
+    "application-identifier" = "NLD68762GG.space.go2china.VisePanda";
+}
+
+    builtin-productPackagingUtility -entitlements -format xml -o /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent
+
+ProcessProductPackagingDER /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent.der (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /usr/bin/derq query -f xml -i /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent -o /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent.der --raw
+
+GenerateAssetSymbols /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Resources/Assets.xcassets (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/usr/bin/actool /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Resources/Assets.xcassets --compile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app --output-format human-readable-text --notices --warnings --export-dependency-info /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_dependencies --output-partial-info-plist /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_generated_info.plist --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --minimum-deployment-target 17.0 --platform iphonesimulator --bundle-identifier space.go2china.VisePanda --generate-swift-asset-symbols /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols.swift --generate-objc-asset-symbols /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/* com.apple.actool.compilation-results */
+/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols.h
+/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols.swift
+
+
+Ld /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/__preview.dylib normal x86_64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-ios17.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -O0 -L/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -F/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -install_name @rpath/VisePanda.debug.dylib -Xlinker -dead_strip -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_dependency_info.dat -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/__preview.dylib
+
+MkDir /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_output/unthinned (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /bin/mkdir -p /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_output/unthinned
+
+MkDir /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_output/thinned (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /bin/mkdir -p /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_output/thinned
+
+Ld /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/__preview.dylib normal arm64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -O0 -L/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -F/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -install_name @rpath/VisePanda.debug.dylib -Xlinker -dead_strip -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_dependency_info.dat -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/__preview.dylib
+
+CompileXCStrings /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/ /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Resources/Localizable.xcstrings (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcstringstool compile --output-directory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Resources/Localizable.xcstrings
+
+CompileAssetCatalogVariant thinned /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Resources/Assets.xcassets (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/usr/bin/actool /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Resources/Assets.xcassets --compile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --minimum-deployment-target 17.0 --platform iphonesimulator
+/* com.apple.actool.compilation-results */
+/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_generated_info.plist_thinned
+/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_output/thinned/AppIcon60x60@2x.png
+/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_output/thinned/AppIcon76x76@2x~ipad.png
+/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_output/thinned/Assets.car
+
+
+CopyStringsFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/ru.lproj/Localizable.strings /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/ru.lproj/Localizable.strings (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-copyStrings --validate --outputencoding binary --outfilename Localizable.strings --outdir /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/ru.lproj -- /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/ru.lproj/Localizable.strings
+/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/ru.lproj/Localizable.strings:1:1: note: detected encoding of input file as Unicode (UTF-8) (in target 'VisePanda' from project 'VisePanda')
+
+CopyStringsFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/es.lproj/Localizable.strings /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/es.lproj/Localizable.strings (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-copyStrings --validate --outputencoding binary --outfilename Localizable.strings --outdir /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/es.lproj -- /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/es.lproj/Localizable.strings
+/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/es.lproj/Localizable.strings:1:1: note: detected encoding of input file as Unicode (UTF-8) (in target 'VisePanda' from project 'VisePanda')
+
+CopyStringsFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/zh-Hans.lproj/Localizable.strings /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/zh-Hans.lproj/Localizable.strings (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-copyStrings --validate --outputencoding binary --outfilename Localizable.strings --outdir /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/zh-Hans.lproj -- /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/zh-Hans.lproj/Localizable.strings
+/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/zh-Hans.lproj/Localizable.strings:1:1: note: detected encoding of input file as Unicode (UTF-8) (in target 'VisePanda' from project 'VisePanda')
+
+CopyStringsFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/en.lproj/Localizable.strings /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/en.lproj/Localizable.strings (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-copyStrings --validate --outputencoding binary --outfilename Localizable.strings --outdir /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/en.lproj -- /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/en.lproj/Localizable.strings
+/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/en.lproj/Localizable.strings:1:1: note: detected encoding of input file as Unicode (UTF-8) (in target 'VisePanda' from project 'VisePanda')
+
+CopyStringsFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/ar.lproj/Localizable.strings /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/ar.lproj/Localizable.strings (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-copyStrings --validate --outputencoding binary --outfilename Localizable.strings --outdir /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/ar.lproj -- /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/ar.lproj/Localizable.strings
+/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/ar.lproj/Localizable.strings:1:1: note: detected encoding of input file as Unicode (UTF-8) (in target 'VisePanda' from project 'VisePanda')
+
+CreateUniversalBinary /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/__preview.dylib normal arm64\ x86_64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/__preview.dylib /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/__preview.dylib -output /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/__preview.dylib
+
+SwiftDriver VisePanda normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePanda -Onone @/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -target x86_64-apple-ios17.0-simulator -g -module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -F /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-6cfe768891a92b912361537c460fe42b.sdkstatcache -output-file-map /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -sdk-module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_const_extract_protocols.json -Xcc -iquote -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-generated-files.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-own-target-headers.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-target-headers.hmap -Xcc -iquote -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-project-headers.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources-normal/x86_64 -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/x86_64 -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-Swift.h -working-directory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver VisePanda normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePanda -Onone @/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -F /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-6cfe768891a92b912361537c460fe42b.sdkstatcache -output-file-map /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -sdk-module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_const_extract_protocols.json -Xcc -iquote -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-generated-files.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-own-target-headers.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-target-headers.hmap -Xcc -iquote -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-project-headers.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources-normal/arm64 -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/arm64 -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-Swift.h -working-directory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_SwiftConcurrencyShims-DGQWWMZLB1AG39WVJTB6NG4L7.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_stdbool-7N3UNEODRZPSC6Y72TRVFBSB3.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_stdarg-130IG9XG6OPGU3KYXUGH7JYEH.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/SwiftShims-79EV65GGD9VEWM7T316UR0FWR.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_float-7OZAMS95CTYM544TLGG1VTZ95.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/ptrauth-6JII6EAGEHLLOPFNM15Z6LO13.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_stddef-80NWWPMMNKWT165703FBRVQAN.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_SwiftConcurrencyShims-DZWJKM3VD16H49AZLPYMRAQX8.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/ptrauth-34GX0PM3BSZOA68WZF4LUAALO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_AvailabilityInternal-CH33KMZ7IPQAFDDZO9NXEL7HF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_stddef-C49XAPJDXIZG0DKKOO7BO48UF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_float-DMHG8AI4ALUV976576TYG70BN.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/ptrcheck-1405NPSOYF3WI214UJ30TD98C.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_stdbool-ACZTUXX04Y7BTRWV71R3EGGZ7.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/SwiftShims-7G3FMVXTHRC70XWM0Z1IHFAAD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_stdarg-A3VODW3HYWIK3E5AQ346SWCKM.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_AvailabilityInternal-1K9TO8I06Y927AR35V5W90E3U.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/DeveloperToolsSupport-C08P4S0C1FKDSZZFV5ELKESA7.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/ptrcheck-3GW984MTDHG0G13FEZIECFONU.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/DeveloperToolsSupport-52JS8OH4JDS2G2GJ7JDRKM4WW.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_DarwinFoundation1-2MN3HTJESO85L0G819T0M8KFU.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_DarwinFoundation1-BANG0OYAMN5P6EFRCFDNXH8PF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_limits-4XYNNFHSLHFB3XTK964NATPHN.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_DarwinFoundation2-5APDTIGUPZLAPXIJWB9Q56BVQ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_DarwinFoundation2-C6DA65DFX2J8FMMKKCYTSTNHO.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_limits-CSDUO8PDSTY8A1XCIE07ZS6FO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/sys_types-CTCK0UV3WAMDGNIYHO3GHYALN.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_stdint-DXV0IPUJE2RLJS5IM7IQRRO9B.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_tgmath-28ON4BELSHGFDVAIA0D75374P.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/sys_types-4XGLMN76OCCENDJ19L24YA56W.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_stdint-7TUBJ748S5UXGPVB8OR3FGT1M.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_tgmath-7R0KONRQAQ4A3FWKQG45HDJIE.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_stdatomic-EJVTXEL3Q74LBTILB861ZXDHP.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_intrinsics-DGOW29IC0N3BJ39R72YXE1MOS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_DarwinFoundation3-2T3ZFA4VDHLCJ3F9A7ZVNZD3D.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_stdatomic-5IE21A4DE7IDC4IOSBMJKZHAZ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_DarwinFoundation3-6GL95MARPW99DI5F0HDFRGQRL.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_inttypes-AKEYIR21DF288J1JP4VPF4BJU.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_inttypes-2M51LTHW0RBJAYCXTM09LVNMY.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/_Builtin_intrinsics-5FZ133SSSG1ZRQ08F91BZ8SXI.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Darwin-380QEM3MPS0RCTBQW8OMTGCX1.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Darwin-COWWWPHQ9BFH7YPN27MANTY8J.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/simd-49NP5LQ8ROMHVN0ZI1BT9ZRCL.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/MachO-2N5F6XQZLBUQIU0CNHTVW09VQ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/ObjectiveC-7Y6KAJC56P2TOO07TMXETA82I.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/MachO-8OGMYN72FWRCUTUZ6Z6AW2K6C.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/ObjectiveC-HK6DD79382Z1HH8DO42IXQMV.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/simd-TI1QJKCJJMCY3AXG7EWH20B3.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/os_object-5KI8DMZIF72WWGWR9BIYZSDCW.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/os_object-DBFK2U0LQFWSIDUJ4O5EEHQV9.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/os_workgroup-D91XMM5T4508VJUBFA6ES2P6Q.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/os_workgroup-ENYDSYKKP89OJNDXIHJ66BH3A.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Dispatch-3TYNOVZINPAHEP3PECDN65W80.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Dispatch-2BQ5Y035I2YA8SXVGRM8ZYAUQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Spatial-5CMM06FPMDAYQY4QPOF7EOVQ1.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CoreFoundation-E77ZNKLLPVR833P9LVAU2P5T5.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/XPC-AF2V8O5GLRNXKSBDQ5I3KJBHU.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/XPC-2UTMJRJQ2V4PGXASR3I04M06T.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CoreFoundation-CW4T4WA8K4GF4HWR5W7EWW42.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/os-9FJ9O85K61WTLQ1QXHU8O8NV1.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/os-3GKG9FXIBU4K522Z9LV3OPTGX.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CoreGraphics-3JNUSI2WT031HWFFW30KAO9FT.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CFNetwork-7ZRQYEUJCG53EUBA4S3RDEK2F.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Security-1M20BOMBX23OK47LLZ6QRDWC2.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Security-6K68XXFSCVBP1WER2TKOROKGQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CoreGraphics-AZWQKH4VJVHL5RA5G62NRQIIW.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CFNetwork-DKTI0IXWKE9EVF9PP7MO09Q3C.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Foundation-2CQ20ZUVAD3A8ACS1VZ2VW2WM.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Spatial-B92R3ES1U8GQ67RYJAX1I7HH7.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CoreText-AC5YG9UTOUAJLAEOBCIYGW6ET.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/ImageIO-V26C12PAAENF2CMA06HXPMLH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Foundation-2I7A8BJDATKR40K6OBIDA6WD5.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/ImageIO-6DDH4MDX352B5OCLLDHBA0H9Y.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CoreText-DJNG3HJ82L7ZJ74QPMECVIX79.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/FileProvider-3A3DZILH21NXCZITLLS4QPUQQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/OpenGLES-4Q4780EJ68IUYR732UVPN7VQ1.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/UniformTypeIdentifiers-CGTJKWE4W0BYVLSOD8BVPDPJH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CoreTransferable-735PHIP5XH6RH1358MND2ZJTF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Accessibility-B3FVCKCSUG5QPELMHI2VDVMXY.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Symbols-7XB6DHD0MT7A00L5LPJD8JHT8.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/OSLog-DY1KTQ0LYASVOQF5L16LW14QY.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/OpenGLES-1XGGT6DTFXXL46QV23LOQSNRF.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Symbols-BPB6HW7Y01CHO2GUQXUG1GWR7.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/FileProvider-5VAE0TZBO94UA5KVQPJ4JB5TJ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/UniformTypeIdentifiers-8ZFI7M155X0W35GJHO807NJWS.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/UserNotifications-EJUO1N735RLWUBSCKB7JPFUFM.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Accessibility-1GCYAM3QV4YG3UZYWBRS319LU.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CoreData-8N7O3KJWKAKHYT18UT57283CP.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CoreData-4QT8YQ28SJA3D79KKS6T4WT00.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/IOSurface-C0DHMHNMLPSIA5OO1ZZ62CZHS.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/UserNotifications-E4PBSIXQ6VASVAAKH4S30A806.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/DataDetection-BHX784FH2NRRBEQS2VOO6ORQ8.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/UIUtilities-ABT1CI2V7YMRINUQ4O51Y9ZVN.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CoreTransferable-2SUIQYI950O97LHHXAS8XTDMJ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/IOSurface-5GABKZK1B6CXZYWK53L0DFLUR.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/UIUtilities-5SAVUTZ1V3LKASCP692EUN6QQ.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/OSLog-2G6K2LX2URLH8I9YSZV3ACUMT.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/DataDetection-CW89GELW6IBRRFHIM896JJ6SS.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Metal-CXIZ119MUEYR3DF6TGRQM3ZP7.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Metal-7TS8XO735RL2JSGL5G1OMTM8T.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CoreVideo-5I9RVV6JV5UMPWYJU0EFLJDX6.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CoreVideo-5SGL3WH4X5789N1UA3JNT5MK6.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/QuartzCore-8XVS0ZBFVFE6RR6JMJMYB7ZO9.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CoreImage-8AK5EZ9SXJGDN7N2AVYIPKS3G.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/CoreImage-5CA8W03HJB2XMNYV2NJ4TDG6V.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/QuartzCore-CIIW5H9IS49BQZNYEJJS7D2TP.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/SwiftUICore-C1R0VKJQD48C04IA86ZRTV0EI.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/UIKit-59TKBNQ32M0DYI86WVK1KDWNT.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/SwiftUICore-1SWHMO09OQ6XQ1TQ3J2Q38QH6.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/UIKit-8BI0BI1EMFFXVCLE67L6CIBMI.pcm
+
+SwiftExplicitDependencyGeneratePcm x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/SwiftUI-4ETKSBDC9GQ4VN0YSOXPTJYVH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/SwiftUI-94LPC49JNSN213NR1GD5H41WQ.pcm
+
+SwiftCompile normal x86_64 Compiling\ AppRoute.swift,\ Capability.swift,\ VisePandaTheme.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Navigation/AppRoute.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Navigation/Capability.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/DesignSystem/VisePandaTheme.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Navigation/AppRoute.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Navigation/Capability.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/DesignSystem/VisePandaTheme.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 Compiling\ BrandHeader.swift,\ PreviewStatusBanner.swift,\ CapabilityCard.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Components/BrandHeader.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Components/CapabilityCard.swift (in target 'VisePanda' from project 'VisePanda')
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Components/BrandHeader.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Components/CapabilityCard.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 Compiling\ AppSettings.swift,\ AppShellView.swift,\ AppTab.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/AppSettings.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/AppShellView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Navigation/AppTab.swift (in target 'VisePanda' from project 'VisePanda')
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/AppSettings.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/AppShellView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Navigation/AppTab.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 Compiling\ NativeTripStore.swift,\ NativeTripView.swift,\ NativeSession.swift,\ VisePandaApp.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/NativeSession.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/VisePandaApp.swift (in target 'VisePanda' from project 'VisePanda')
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/NativeSession.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/VisePandaApp.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 Compiling\ NativeAskView.swift,\ NativeAskModels.swift,\ NativeAskStore.swift,\ NativeTripModels.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/NativeTripModels.swift (in target 'VisePanda' from project 'VisePanda')
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/NativeTripModels.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftEmitModule normal x86_64 Emitting\ module\ for\ VisePanda (in target 'VisePanda' from project 'VisePanda')
+
+EmitSwiftModule normal x86_64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 Compiling\ ExploreView.swift,\ ProfileView.swift,\ GeneratedAssetSymbols.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Explore/ExploreView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Profile/ProfileView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Explore/ExploreView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Profile/ProfileView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ VisePanda (in target 'VisePanda' from project 'VisePanda')
+
+EmitSwiftModule normal arm64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 Compiling\ BrandHeader.swift,\ PreviewStatusBanner.swift,\ CapabilityCard.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Components/BrandHeader.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Components/CapabilityCard.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Components/BrandHeader.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Components/PreviewStatusBanner.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Components/CapabilityCard.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftDriverJobDiscovery normal x86_64 Emitting module for VisePanda (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriver\ Compilation\ Requirements VisePanda normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePanda -Onone @/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -target x86_64-apple-ios17.0-simulator -g -module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -F /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-6cfe768891a92b912361537c460fe42b.sdkstatcache -output-file-map /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -sdk-module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_const_extract_protocols.json -Xcc -iquote -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-generated-files.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-own-target-headers.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-target-headers.hmap -Xcc -iquote -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-project-headers.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources-normal/x86_64 -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/x86_64 -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-Swift.h -working-directory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for VisePanda (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriver\ Compilation\ Requirements VisePanda normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePanda -Onone @/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -F /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-6cfe768891a92b912361537c460fe42b.sdkstatcache -output-file-map /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -sdk-module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_const_extract_protocols.json -Xcc -iquote -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-generated-files.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-own-target-headers.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-target-headers.hmap -Xcc -iquote -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-project-headers.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources-normal/arm64 -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/arm64 -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-Swift.h -working-directory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ AppRoute.swift,\ Capability.swift,\ VisePandaTheme.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Navigation/AppRoute.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Navigation/Capability.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/DesignSystem/VisePandaTheme.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Navigation/AppRoute.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Navigation/Capability.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/DesignSystem/VisePandaTheme.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftMergeGeneratedHeaders /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/VisePanda-Swift.h /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-Swift.h /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-Swift.h (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-swiftHeaderTool -arch arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-Swift.h -arch x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-Swift.h -o /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/VisePanda-Swift.h
+
+SwiftDriverJobDiscovery normal x86_64 Compiling AppRoute.swift, Capability.swift, VisePandaTheme.swift (in target 'VisePanda' from project 'VisePanda')
+
+Copy /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/x86_64-apple-ios-simulator.swiftmodule /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftmodule (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftmodule /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/x86_64-apple-ios-simulator.swiftmodule
+
+Copy /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/x86_64-apple-ios-simulator.swiftdoc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftdoc (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftdoc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/x86_64-apple-ios-simulator.swiftdoc
+
+SwiftDriverJobDiscovery normal x86_64 Compiling BrandHeader.swift, PreviewStatusBanner.swift, CapabilityCard.swift (in target 'VisePanda' from project 'VisePanda')
+
+Copy /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/x86_64-apple-ios-simulator.abi.json /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.abi.json (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.abi.json /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/x86_64-apple-ios-simulator.abi.json
+
+Copy /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/arm64-apple-ios-simulator.swiftmodule /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftmodule (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftmodule /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/arm64-apple-ios-simulator.swiftdoc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftdoc (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftdoc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/arm64-apple-ios-simulator.swiftdoc
+
+Copy /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.abi.json (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.abi.json /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Copy /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftsourceinfo (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftsourceinfo /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo
+
+Copy /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftsourceinfo (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftsourceinfo /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+SwiftCompile normal arm64 Compiling\ NativeTripStore.swift,\ NativeTripView.swift,\ NativeSession.swift,\ VisePandaApp.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/NativeSession.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/VisePandaApp.swift (in target 'VisePanda' from project 'VisePanda')
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/NativeTripStore.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/NativeSession.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/VisePandaApp.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftDriverJobDiscovery normal x86_64 Compiling ExploreView.swift, ProfileView.swift, GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal arm64 Compiling\ ExploreView.swift,\ ProfileView.swift,\ GeneratedAssetSymbols.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Explore/ExploreView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Profile/ProfileView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Explore/ExploreView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Profile/ProfileView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+LinkAssetCatalog /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Resources/Assets.xcassets (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-linkAssetCatalog --thinned /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_output/thinned --thinned-dependencies /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_dependencies_thinned --thinned-info-plist-content /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_generated_info.plist_thinned --unthinned /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_output/unthinned --unthinned-dependencies /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_dependencies_unthinned --unthinned-info-plist-content /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_generated_info.plist_unthinned --output /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app --plist-output /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_generated_info.plist
+note: Emplaced /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/Assets.car (in target 'VisePanda' from project 'VisePanda')
+note: Emplaced /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/AppIcon76x76@2x~ipad.png (in target 'VisePanda' from project 'VisePanda')
+note: Emplaced /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/AppIcon60x60@2x.png (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal arm64 Compiling\ TodayView.swift,\ AskView.swift,\ TripView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Today/TodayView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/AskView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/TripView.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Today/TodayView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/AskView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/TripView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftDriverJobDiscovery normal x86_64 Compiling AppSettings.swift, AppShellView.swift, AppTab.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal arm64 Compiling\ NativeAskView.swift,\ NativeAskModels.swift,\ NativeAskStore.swift,\ NativeTripModels.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/NativeTripModels.swift (in target 'VisePanda' from project 'VisePanda')
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskModels.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskStore.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/NativeTripModels.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+ProcessInfoPlistFile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/Info.plist /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/NativeEnvironment.plist (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-infoPlistUtility /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/NativeEnvironment.plist -producttype com.apple.product-type.application -genpkginfo /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/assetcatalog_generated_info.plist -o /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/Info.plist
+
+SwiftDriverJobDiscovery normal x86_64 Compiling NativeTripStore.swift, NativeTripView.swift, NativeSession.swift, VisePandaApp.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal x86_64 Compiling\ NativeAskEvents.swift,\ NativeKnowledgeModels.swift,\ NativeKnowledgeStore.swift,\ NativeKnowledgeView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskEvents.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeStore.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskEvents.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeStore.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 Compiling\ NativeAskEvents.swift,\ NativeKnowledgeModels.swift,\ NativeKnowledgeStore.swift,\ NativeKnowledgeView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskEvents.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeStore.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/NativeAskEvents.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeModels.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeStore.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Knowledge/NativeKnowledgeView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftDriverJobDiscovery normal arm64 Compiling BrandHeader.swift, PreviewStatusBanner.swift, CapabilityCard.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal arm64 Compiling\ AppSettings.swift,\ AppShellView.swift,\ AppTab.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/AppSettings.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/AppShellView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Navigation/AppTab.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/AppSettings.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/App/AppShellView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal arm64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Navigation/AppTab.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftDriverJobDiscovery normal arm64 Compiling AppRoute.swift, Capability.swift, VisePandaTheme.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal x86_64 Compiling\ TodayView.swift,\ AskView.swift,\ TripView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Today/TodayView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/AskView.swift /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/TripView.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Today/TodayView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Ask/AskView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftCompile normal x86_64 /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda/VisePanda/Features/Trip/TripView.swift (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+
+SwiftDriverJobDiscovery normal arm64 Compiling ExploreView.swift, ProfileView.swift, GeneratedAssetSymbols.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriverJobDiscovery normal arm64 Compiling TodayView.swift, AskView.swift, TripView.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriverJobDiscovery normal arm64 Compiling AppSettings.swift, AppShellView.swift, AppTab.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling NativeAskView.swift, NativeAskModels.swift, NativeAskStore.swift, NativeTripModels.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling TodayView.swift, AskView.swift, TripView.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling NativeAskEvents.swift, NativeKnowledgeModels.swift, NativeKnowledgeStore.swift, NativeKnowledgeView.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriver\ Compilation VisePanda normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePanda -Onone @/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -target x86_64-apple-ios17.0-simulator -g -module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -F /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-6cfe768891a92b912361537c460fe42b.sdkstatcache -output-file-map /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -sdk-module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_const_extract_protocols.json -Xcc -iquote -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-generated-files.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-own-target-headers.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-target-headers.hmap -Xcc -iquote -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-project-headers.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources-normal/x86_64 -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/x86_64 -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-Swift.h -working-directory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda.debug.dylib normal x86_64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-ios17.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -O0 -L/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -F/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -filelist /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.LinkFileList -install_name @rpath/VisePanda.debug.dylib -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.swiftmodule @/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda-linker-args.resp -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -Xlinker -no_adhoc_codesign -o /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda.debug.dylib
+
+SwiftDriverJobDiscovery normal arm64 Compiling NativeAskEvents.swift, NativeKnowledgeModels.swift, NativeKnowledgeStore.swift, NativeKnowledgeView.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriverJobDiscovery normal arm64 Compiling NativeTripStore.swift, NativeTripView.swift, NativeSession.swift, VisePandaApp.swift (in target 'VisePanda' from project 'VisePanda')
+
+ConstructStubExecutorLinkFileList /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-ExecutorLinkFileList-normal-x86_64.txt (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    construct-stub-executor-link-file-list /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-ExecutorLinkFileList-normal-x86_64.txt
+note: Using stub executor library with Swift entry point. (in target 'VisePanda' from project 'VisePanda')
+
+Ld /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda normal x86_64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-ios17.0-simulator -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -O0 -L/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -F/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -Xlinker -rpath -Xlinker @executable_path -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibPath-normal-x86_64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibInstallName-normal-x86_64.txt -Xlinker -filelist -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-ExecutorLinkFileList-normal-x86_64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent.der /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda
+
+SwiftDriverJobDiscovery normal arm64 Compiling NativeAskView.swift, NativeAskModels.swift, NativeAskStore.swift, NativeTripModels.swift (in target 'VisePanda' from project 'VisePanda')
+
+SwiftDriver\ Compilation VisePanda normal arm64 com.apple.xcode.tools.swift.compiler (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name VisePanda -Onone @/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftFileList -DDEBUG -default-isolation\=MainActor -enable-upcoming-feature InferIsolatedConformances -enable-upcoming-feature NonisolatedNonsendingByDefault -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -F /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-6cfe768891a92b912361537c460fe42b.sdkstatcache -output-file-map /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -sdk-module-cache-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_const_extract_protocols.json -Xcc -iquote -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-generated-files.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-own-target-headers.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-all-target-headers.hmap -Xcc -iquote -Xcc /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-project-headers.hmap -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources-normal/arm64 -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources/arm64 -Xcc -I/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-Swift.h -working-directory /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda.debug.dylib normal arm64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -O0 -L/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -F/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -filelist /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.LinkFileList -install_name @rpath/VisePanda.debug.dylib -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.swiftmodule @/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda-linker-args.resp -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -Xlinker -no_adhoc_codesign -o /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda.debug.dylib
+
+ConstructStubExecutorLinkFileList /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-ExecutorLinkFileList-normal-arm64.txt (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    construct-stub-executor-link-file-list /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-ExecutorLinkFileList-normal-arm64.txt
+note: Using stub executor library with Swift entry point. (in target 'VisePanda' from project 'VisePanda')
+
+CreateUniversalBinary /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib normal arm64\ x86_64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda.debug.dylib /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda.debug.dylib -output /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib
+
+Ld /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda normal arm64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -O0 -L/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -F/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator -Xlinker -rpath -Xlinker @executable_path -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibPath-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-DebugDylibInstallName-normal-arm64.txt -Xlinker -filelist -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda-ExecutorLinkFileList-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.app-Simulated.xcent.der /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda
+
+CreateUniversalBinary /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda normal arm64\ x86_64 (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/Binary/VisePanda /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/Binary/VisePanda -output /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda
+
+CopySwiftLibs /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib --scan-folder /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/Frameworks --scan-folder /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/PlugIns --scan-folder /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/SystemExtensions --scan-folder /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+
+ExtractAppIntentsMetadata (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name VisePanda --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk --xcode-version 17F113 --platform-family iOS --deployment-target 17.0 --bundle-identifier space.go2china.VisePanda --output /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app --target-triple arm64-apple-ios17.0-simulator --target-triple x86_64-apple-ios17.0-simulator --binary-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda --dependency-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda_dependency_info.dat --dependency-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda_dependency_info.dat --stringsdata-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --stringsdata-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftFileList --source-file-list /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftFileList --metadata-file-list /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.DependencyMetadataFileList --static-metadata-file-list /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.DependencyStaticMetadataFileList --swift-const-vals-list /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/arm64/VisePanda.SwiftConstValuesFileList --swift-const-vals-list /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/Objects-normal/x86_64/VisePanda.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-09-14 04:18:34.074 appintentsmetadataprocessor[64620:783872] Starting appintentsmetadataprocessor export
+2026-09-14 04:18:34.097 appintentsmetadataprocessor[64620:783872] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+AppIntentsSSUTraining (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/Info.plist --temp-dir-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/ssu --bundle-id space.go2china.VisePanda --product-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app --extracted-metadata-path /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/Metadata.appintents --metadata-file-list /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Intermediates.noindex/VisePanda.build/Debug-iphonesimulator/VisePanda.build/VisePanda.DependencyMetadataFileList --source-file /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/Info.plist --archive-ssu-assets
+2026-09-14 04:18:34.202 appintentsnltrainingprocessor[64621:783883] Parsing options for appintentsnltrainingprocessor
+2026-09-14 04:18:34.204 appintentsnltrainingprocessor[64621:783883] Starting AppIntents SSU YAML Generation
+2026-09-14 04:18:34.208 appintentsnltrainingprocessor[64621:783883] No AppShortcuts found - Skipping.
+
+CodeSign /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+    Signing Identity:     "Sign to Run Locally"
+
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/VisePanda.debug.dylib
+
+CodeSign /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/__preview.dylib (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+    Signing Identity:     "Sign to Run Locally"
+
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app/__preview.dylib
+
+CodeSign /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+
+    Signing Identity:     "Sign to Run Locally"
+
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app
+
+RegisterExecutionPolicyException /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-RegisterExecutionPolicyException /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app
+
+Validate /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    builtin-validationUtility /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app -shallow-bundle -infoplist-subpath Info.plist
+
+Touch /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app (in target 'VisePanda' from project 'VisePanda')
+    cd /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/frozen/ios/VisePanda
+    /usr/bin/touch -c /Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native/Build/Products/Debug-iphonesimulator/VisePanda.app
+
+
+Result bundle written to path:
+	/Users/jtcao/Library/Caches/visepanda/place-grounding-staging-20260914/Native-staging-build.xcresult
+
+** BUILD SUCCEEDED **

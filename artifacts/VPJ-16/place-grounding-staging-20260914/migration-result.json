@@ -1,0 +1,26 @@
+{
+  "at": "2026-09-13T20:14:50.595Z",
+  "status": "PASS",
+  "migrationCount": 48,
+  "originalTablesPreserved": 78,
+  "originalSchemaEntriesChecked": 262,
+  "expectedChangedFunctions": [
+    "function:knowledge_review_private.question_definition(p_id text)",
+    "function:knowledge_review_private.resolve_question(p_input jsonb, p_basi",
+    "function:knowledge_review_private.statement_valid(v jsonb)",
+    "function:public.complete_grounded_work(p_turn_id uuid, p_lease_token uui",
+    "function:public.ops_review_workspace(p_input jsonb)",
+    "function:public.read_grounded_turn(p_turn_id uuid)"
+  ],
+  "backupRestore": "PASS",
+  "authCount": 6,
+  "tripCount": 3,
+  "defaultReadDisabled": true,
+  "opsDisabled": true,
+  "noActiveMembers": true,
+  "privateHelpersDenied": true,
+  "privateTablesDenied": true,
+  "groundedPrivate": true,
+  "groundedRls": true,
+  "placeCompletionAcl": true
+}

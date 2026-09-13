@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "source": "e19bd584ba86604047c9216e50c5329e8881dcf8",
+  "bundleId": "space.go2china.VisePanda",
+  "configuration": {
+    "VisePandaNativeEnvironment": "staging",
+    "VisePandaNativeTaskContext": "knowledge_intent_v1",
+    "VisePandaStagingAPIOrigin": "https://vp-v4-8hmu9lkqj-jtcao515s-projects.vercel.app"
+  },
+  "signature": "ad-hoc",
+  "signatureVerified": true,
+  "physicalDevice": false,
+  "appSha256": "69618c6993920817d926bf3c20a2e9232bfd38a80af998acdee572362296cfc3"
+}
