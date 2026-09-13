@@ -1,0 +1,23 @@
+{
+  "at": "2026-09-13T04:39:40.331Z",
+  "sourceRuntime": "d15baf7a94a4740e6c2a801bb5bd2d58e3fd3059",
+  "mode": "read-only historical record collection",
+  "providerCalls": 0,
+  "dbWrites": 0,
+  "rows": [
+    {
+      "locale": "en",
+      "turnId": "f96139fd-98f7-4f2a-8ff7-e2a917bc7e6e",
+      "taskId": "d57d7a0e-b80e-41c0-bc2c-42af166e6e41",
+      "workerJournalSha256": "bed8b8d7cb05e504170107031665fa43bd6c0b0cf623df3d108827c827198da2",
+      "currentAuthorizationChecked": false
+    },
+    {
+      "locale": "zh",
+      "turnId": "4e5c4554-3c02-443b-9777-4ca4f481529c",
+      "taskId": "5e25666e-2e69-48b7-aeb9-55a2004de242",
+      "workerJournalSha256": "5c7fc8059f1f56afc9743ebdd8d1781894d847387fa992d7cb60703e73262000",
+      "currentAuthorizationChecked": false
+    }
+  ]
+}

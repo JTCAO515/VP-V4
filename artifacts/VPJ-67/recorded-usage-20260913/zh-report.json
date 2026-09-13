@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "vpj67-recorded-usage-trace/1",
+  "mode": "recorded-staging",
+  "recordedAt": "2026-09-13T04:39:40.329Z",
+  "provenance": "Operator-supplied records; cross-record consistency does not authenticate their origin.",
+  "versions": {
+    "apiSha": "d15baf7a94a4740e6c2a801bb5bd2d58e3fd3059",
+    "workerSha": "d15baf7a94a4740e6c2a801bb5bd2d58e3fd3059",
+    "configurationDigest": "3a2697a16ccd039571573a23a4bfac47dd75925023eaf4cc7518758f9aeff044",
+    "promptVersion": "vp-knowledge-intent-v3",
+    "promptDigest": "4a3427e25de778c9fb7edaabb872ae7c02a26a24a6cf49869c0ccd129d442a7e"
+  },
+  "binding": {
+    "ownerId": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+    "serviceTaskId": "5e25666e-2e69-48b7-aeb9-55a2004de242",
+    "turnId": "4e5c4554-3c02-443b-9777-4ca4f481529c",
+    "policyId": "6e1c3992-053e-434c-978b-8dca62f08f66"
+  },
+  "taskOwnerLinked": true,
+  "turnTaskLinked": true,
+  "attempts": [
+    {
+      "attemptId": "11706e35-649f-4a72-88cc-3e15bde883fe",
+      "scopeId": "18049e34-eae0-4877-bd84-08978b298aab",
+      "ledgerTaskId": "5e25666e-2e69-48b7-aeb9-55a2004de242",
+      "workerTaskId": "4e5c4554-3c02-443b-9777-4ca4f481529c",
+      "status": "settled",
+      "provider": "qwen",
+      "model": "qwen3.7-plus-2026-05-26",
+      "priceVersion": "qwen-public-upper-20260912-v1",
+      "reservedMicros": 7000000,
+      "scopeOwnerLinked": true,
+      "usage": {
+        "inputTokens": 1111,
+        "outputTokens": 13,
+        "totalTokens": 1124,
+        "cachedInputTokens": 0,
+        "uncachedInputTokens": null,
+        "reasoningTokens": null,
+        "cost": "unknown"
+      },
+      "tariffMicros": 6978,
+      "currency": "CNY",
+      "vendorCost": "unknown",
+      "usageObservedAt": "2026-09-13T04:01:42.884Z"
+    }
+  ],
+  "traceValidation": "PASS",
+  "attemptSetCompleteness": "NOT_VERIFIED",
+  "currentAuthorization": "NOT_RECHECKED",
+  "factualValidation": "NOT_RUN",
+  "tripInvariance": "NOT_CHECKED",
+  "nativeConsumer": "NOT_CHECKED",
+  "webConsumer": "NOT_CHECKED",
+  "fullAcceptance": "NOT_RUN",
+  "providerCallsMade": 0,
+  "databaseWritesMade": 0,
+  "recordingSha256": "b2d90ff749112123b6acbaff0bffd444335abfce55ed66330fd6ed4d1118f764"
+}
