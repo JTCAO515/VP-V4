@@ -90,6 +90,10 @@ export function SavedAnswers({ locale }: { locale: "zh" | "en" }) {
             <small>{language.cities[turn.city as keyof typeof language.cities]} · {turn.locale === "zh" ? "中文" : "English"} · {turn.parentId ? language.parent : language.original}</small>
             <h3>{turn.input}</h3>
             {notice ? <p>{language[notice]}</p> : null}
+            {turn.unansweredNeeds?.length ? <div>
+              <strong>{language.unanswered}</strong><p>{language.outsideScope}</p>
+              <ul>{turn.unansweredNeeds.map(need => <li key={need}><q>{need}</q></li>)}</ul>
+            </div> : null}
             {turn.facts.map(fact => <div key={fact.id} className={styles.fact}>
               <p>{fact.text}</p>
               {fact.conditions.length ? <><strong>{language.conditions}</strong><ul>{fact.conditions.map((text, index) => <li key={index}>{text}</li>)}</ul></> : null}

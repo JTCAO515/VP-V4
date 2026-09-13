@@ -212,8 +212,14 @@ struct NativeAskView: View {
                 .font(.subheadline.bold()).accessibilityIdentifier("grounded.interpreted")
             Text(chinese ? "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。" : "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.").font(.caption)
             if result.requestScope == "additional_needs" {
-                Text(chinese ? "你的问题还包含范围外的需求，这部分尚未回答。" : "Your question also includes needs outside this scope; those remain unanswered.")
-                    .accessibilityIdentifier("grounded.additional-needs")
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(chinese ? "当前已审核指引尚未回答以下需求，请向相关官方渠道或服务方核对。" : "The current reviewed guidance does not cover these needs. Check them with the relevant official or service provider.")
+                    if let needs = result.unansweredNeeds, !needs.isEmpty {
+                        ForEach(needs, id: \.self) { need in Text(verbatim: "“\(need)”") }
+                    } else {
+                        Text(chinese ? "此历史答案未记录具体的未回答问题。" : "This older answer did not record the specific unanswered questions.")
+                    }
+                }.accessibilityIdentifier("grounded.additional-needs")
             }
             if let knowledge = result.knowledge {
                 NativeKnowledgeCards(rows: knowledge.statements, answer: knowledge.answer, chinese: chinese)

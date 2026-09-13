@@ -2,6 +2,7 @@ import type { SavedTurn } from "./read-model.ts";
 
 export const savedAnswerCopy = {
   en: {
+    unanswered: "Not answered by this guidance", outsideScope: "The current reviewed guidance does not cover these parts of your question. Check them with the relevant official or service provider.",
     title: "Your saved answers", description: "Read questions saved in the app, with their original language and sources.",
     refresh: "Refresh answers", checking: "Checking access and sources…", unavailable: "Saved answers are unavailable. Please sign in again or try later.",
     empty: "No saved answers are available.", sources: "Sources and context", conditions: "Applies when", exclusions: "Does not cover",
@@ -15,6 +16,7 @@ export const savedAnswerCopy = {
     parent: "Follow-up question", original: "Original question", cities: { shanghai: "Shanghai", beijing: "Beijing", guangzhou: "Guangzhou", chongqing: "Chongqing" },
   },
   zh: {
+    unanswered: "本次指引尚未回答", outsideScope: "当前已审核指引不涵盖你所问的以下内容，请向相关官方渠道或服务方核对。",
     title: "已保存的回答", description: "查看在 App 中保存的问题，保留原始语言和来源。",
     refresh: "刷新回答", checking: "正在核对访问权限和来源…", unavailable: "暂时无法读取已保存的回答，请重新登录或稍后再试。",
     empty: "暂无可读取的已保存回答。", sources: "来源与上下文", conditions: "适用条件", exclusions: "不包含",

@@ -189,6 +189,7 @@ struct NativeGroundedResult: Decodable, Equatable {
     let city: String
     let intent: String?
     let requestScope: String?
+    let unansweredNeeds: [String]?
     let originalOutcome: String?
     let completedAt: String?
     let projection: String
@@ -199,6 +200,15 @@ struct NativeGroundedResult: Decodable, Equatable {
               ["zh", "en"].contains(turn.locale), turn.validTask,
               originalOutcome == turn.outcome?.rawValue, elapsed.isFinite, elapsed >= 0, elapsed < 30 else {
             throw NativeDataError.invalidResponse
+        }
+        if let unansweredNeeds {
+            guard completedAt != nil, unansweredNeeds.count <= 6,
+                  Set(unansweredNeeds).count == unansweredNeeds.count,
+                  (requestScope == "additional_needs") == !unansweredNeeds.isEmpty,
+                  unansweredNeeds.allSatisfy({ !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                      && $0.unicodeScalars.count <= 240 && !$0.contains("\0") && turn.input.contains($0) }) else {
+                throw NativeDataError.invalidResponse
+            }
         }
         if completedAt == nil {
             guard intent == nil, requestScope == nil, originalOutcome == nil, knowledge == nil,

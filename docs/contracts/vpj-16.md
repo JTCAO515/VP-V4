@@ -87,7 +87,13 @@ under the same idempotency key is a conflict. Existing modes remain compatible.
 
 The existing scoped worker, leases, provider gateway and task budget process the
 request. Only the current user message goes to the classifier. The server owns a
-versioned prompt and accepts two closed fields: `intent` and `requestScope`.
+versioned prompt. Current v5 output has exactly three fields: `intent`,
+`requestScope` and `unansweredNeeds`. The last field contains at most six distinct,
+nonblank excerpts of at most240 Unicode scalars each, copied exactly from the
+current input. It is nonempty only for `additional_needs`; all other scopes use
+an empty array. These are quoted requests, never factual prose or evidence.
+The v5 worker rejects missing excerpts rather than treating new output as legacy.
+The older two-field parser/completion remains available to older workers.
 `rail_boarding_documents` permits `single` or `additional_needs`; `clarification`
 and `unsupported` require `unknown`. No evidence ID, citation, factual prose,
 previous input/output, Trip or source snippet is accepted from or sent to this
@@ -95,11 +101,20 @@ model exit. Parsing failure is a technical failure; it does not trigger repair o
 another model call. Verified usage still settles the original attempt.
 
 The classifier's interpretation is displayed explicitly. It supports only the
-adult foreign-passport domestic railway question described above. Additional
+current reviewed-question catalogue (ordinary railway, payment and SIM scopes). Additional
 needs remain visibly unanswered and cannot yield a complete task outcome. A
 vague follow-up requires a restatement because this mode does not send history.
 Classifier semantic accuracy requires separate real-provider evidence; a closed
 JSON schema alone cannot establish that the interpretation is correct.
+
+An additive private `unanswered_needs` column is written through
+`complete_grounded_work_with_needs` in the same transaction as the existing
+completion. The service-only wrapper rechecks each excerpt against stored current
+input; it cannot supply new facts or overwrite a finished answer. The original
+RPC remains compatible. Read replies carry optional/null `unansweredNeeds` for
+old records; new native/Web consumers validate bounds, scope and input binding,
+then render literal quotations with the unsupported-scope reason and official or
+service-provider next step. Legacy records keep an explicit generic notice.
 
 A private first-party resolver runs after lease/owner/consent checks, then those
 checks run again after any publication lock wait and before completion. Saved

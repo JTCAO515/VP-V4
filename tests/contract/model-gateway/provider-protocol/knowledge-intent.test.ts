@@ -63,3 +63,25 @@ test("routing parser rejects prose, invented evidence and false complete coverag
     assert.deepEqual(knowledgeIntent(value), value);
   }
 });
+
+
+test("new intent schema binds unanswered excerpts to the current request, preserving the legacy shape", () => {
+  const input = "普通购票要什么证件？另外，遗失护照后可以用照片吗？";
+  const value = { intent: "rail_boarding_documents", requestScope: "additional_needs", unansweredNeeds: ["遗失护照后可以用照片吗？"] };
+  assert.deepEqual(knowledgeIntent(value, input), value);
+  for (const needs of [null, {}, [], [1], ["an invented question"], ["\t"], ["遗失护照后可以用照片吗？", "遗失护照后可以用照片吗？"]]) {
+    assert.equal(knowledgeIntent({ ...value, unansweredNeeds: needs }, input), null);
+  }
+  assert.equal(knowledgeIntent(value), null, "no unbound current-input excerpts");
+  assert.equal(knowledgeIntent({ ...value, requestScope: "single" }, input), null);
+  assert.deepEqual(knowledgeIntent({ intent: "clarification", requestScope: "unknown", unansweredNeeds: [] }, input),
+    { intent: "clarification", requestScope: "unknown", unansweredNeeds: [] });
+  assert.equal(knowledgeIntent({ ...value, facts: [] }, input), null);
+});
+
+
+test("excerpts cannot split a Unicode scalar even if a UTF16 substring matches", () => {
+  const value={intent:"rail_boarding_documents",requestScope:"additional_needs",unansweredNeeds:["\ud83d"]};
+  assert.equal(knowledgeIntent(value,"ordinary ID, then 😀?"),null);
+  assert.deepEqual(knowledgeIntent({...value,unansweredNeeds:["😀?"]},"ordinary ID, then 😀?"),{...value,unansweredNeeds:["😀?"]});
+});

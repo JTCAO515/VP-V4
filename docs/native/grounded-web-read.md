@@ -18,7 +18,10 @@ Rollback is to disable the Web flag or remove the dedicated Preview allowance.
 The existing `/visepanda` Ask workspace shows saved answers for zh/en. Each record
 retains its original language, city, task and parent identifiers; legacy locales keep
 their existing workspace behavior. Conditions and exclusions remain visible beside
-facts. Only the source list folds. A read lasts at most 30 seconds, shortened by source
+facts. Validated `unansweredNeeds` are quoted as the user's unanswered requests,
+with an unsupported-scope explanation and official/service-provider next step;
+these excerpts never become reviewed facts. Older records remain readable.
+Only the source list folds. A read lasts at most 30 seconds, shortened by source
 expiry and the full request duration. Hidden/background, page exit, offline and auth
 events invalidate presentation. Owner changes and logout discard records. Expiry
 rechecks preserve layout while hiding inaccessible stale facts.

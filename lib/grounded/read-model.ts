@@ -4,7 +4,7 @@ export type SavedSource = { id: string; publisher: string; locator: string; href
 export type SavedFact = { id: string; text: string; conditions: string[]; exclusions: string[]; sources: SavedSource[] };
 export type SavedTurn = {
   id: string; taskId: string; parentId: string | null; threadId: string; relationship: string;
-  questionId?: string | null; input: string; city: string; locale: "zh" | "en"; createdAt: string;
+  unansweredNeeds?: string[]; questionId?: string | null; input: string; city: string; locale: "zh" | "en"; createdAt: string;
   status: string; outcome: string | null; coverage: string | null; projection: string; facts: SavedFact[];
 };
 export type SavedHistory = { ownerId: string; turns: SavedTurn[]; lifetimeMs: number };
@@ -46,6 +46,15 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
   let lifetimeMs = 30_000;
   const turns = list(history.turns, 20).map(raw => {
     const turn = record(raw), result = record(turn.result);
+    const unansweredNeeds = result.unansweredNeeds == null ? undefined : list(result.unansweredNeeds, 6).map(v => {
+      const excerpt = string(v, 480);
+      requireValue([...excerpt].length <= 240 && !/[\uD800-\uDFFF]/u.test(excerpt) && typeof turn.input === "string" && turn.input.includes(excerpt));
+      return excerpt;
+    });
+    if (unansweredNeeds) {
+      unique(unansweredNeeds);
+      requireValue(result.completedAt !== null && (result.requestScope === "additional_needs") === (unansweredNeeds.length > 0));
+    }
     const turnId = id(turn.turnId), taskId = id(turn.serviceTaskId), threadId = id(turn.threadId);
     requireValue(turn.kind === "grounded_turn" && turn.schemaVersion === "grounded-turn/1" && turn.scopeVersion === 1);
     const parentId = turn.parentTurnId === null ? null : id(turn.parentTurnId);
@@ -113,7 +122,7 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
         requireValue(outcome === (result.intent === "clarification" ? "clarification" : result.intent === "technical_failure" ? "technical_failure" : "blocked"));
       }
     }
-    return { questionId: questionDefinition(result.intent) ? String(result.intent) : null, id: turnId, taskId, parentId, threadId, relationship, input: string(turn.input), city, locale: turn.locale as "zh" | "en", createdAt: string(turn.createdAt, 40), status: String(turn.status), outcome, coverage, projection: String(result.projection), facts };
+    return { ...(unansweredNeeds ? { unansweredNeeds } : {}), questionId: questionDefinition(result.intent) ? String(result.intent) : null, id: turnId, taskId, parentId, threadId, relationship, input: string(turn.input), city, locale: turn.locale as "zh" | "en", createdAt: string(turn.createdAt, 40), status: String(turn.status), outcome, coverage, projection: String(result.projection), facts };
   });
   unique(turns.map(turn => turn.id));
   requireValue(lifetimeMs > elapsedMs);
