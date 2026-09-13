@@ -1,14 +1,14 @@
 {
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
-  "lastUpdated": "2026-09-13",
+  "lastUpdated": "2026-09-13T15:09:36.825003+00:00",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
-  "status": "SIM PR357 pending current-head CI. Staging44:86 frozen unique cases matched across87 attempts including one paid interruption; native en/zh2 UI submissions completed/settled and same actual tasks read on Web en/zh desktop/390. Native early-refresh fix built,22 tests passed,41s sampled source-reading observation passed; no extra model calls. Cancelled stale work still projects pending; full S1-S6 incomplete.",
+  "status": "S2: SIM PR357 merged after all gates passed; cancelled-work SQL/SSE repair locally verified, Staging44 backup/restore passed; migration45 and actual client acceptance pending.",
   "currentPhase": "S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "Codex — S2 Ask acceptance and VPJ-67 recorded usage trace",
   "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree.",
-  "nextAction": "Finish cleanup/current-head CI and guarded merge of PR357; then implement the independently pre-reviewed cancelled-work SQL+SSE projection repair under#264 with actual old-task Native/Web verification. Preserve interrupted/failed evidence. Maps#362-367 are already planned and merged by PR368 at acc75ec; after safe current-slice closure, use docs/agents/maps-integration-development.md to start#362 secure credential discovery and public synthetic probes, without duplicating tickets or production/funds actions. Evidence artifacts/VPJ-16/connectivity-ask-20260913/verification.md.",
+  "nextAction": "Freeze the cancelled-read candidate, verify Preview and scoped Staging44→45 migration, then read the existing cancelled synthetic Turn through API/SSE/Native/Web without new model calls. After safe slice closure, continue maps #362 in the existing approved queue. Keep #206/#264 open and Production guarded.",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
@@ -84,6 +84,8 @@
     "tests/integration/identity/**"
   ],
   "verification": [
+    "PR357 merged a352c7e after Quality34763806205, Budget34763806427, Native34763806245 and Preview passed. Auto-Production dpl_DkKqpJ9Qzecxb4xBm5c7KCmUZgYH canceled; five production aliases and shared Staging unchanged.",
+    "Cancelled read repair: database15/15 incl session replacement/claim/rollback/ACL, contracts274/274, security146 pass+1 existing skip, lint/typecheck and independent review0/0. Encrypted Staging44 backup+isolated restore passed; migration45 and actual client acceptance UNRUN. artifacts/VPJ-16/cancelled-read-20260913/verification.md.",
     "Payment Ask d15baf7: local46 checks; real frozen42/42 plus native en/zh2/2 submissions; Web en/zh1280x900 and390x844. Staging43;44 distinct Tasks/44 settled attempts/308118 CNYmicros delta,0 unresolved; total118/118/650346,users6/Trips3. Reader/Opsfalse,members0,WAF48 cleanup. Native signing failure and expanded-source limitation retained. See artifacts/VPJ-16/payment-ask-20260913/verification.md.",
     "Payment Ask implementation and local evidence: artifacts/VPJ-16/payment-ask-20260913/verification.md. Actual read-only Staging03:07Z: schema42,reader off,three payment publications current,card revoked. No model call/migration in this window. Full real payment Ask pending.",
     "PR351 saved-answer guidance runtime7974fc7/Preview dpl_41pLhQPptZa1hZpkCRzbaybdkMsz: en/zh partial and blocked notices now name supported booking-ID/ticket-proof scope and current railway/station next steps. Actual1280×900/390×844 browser readback, existing contracts5/5 and source lint passed. No model/Trip writes;74Turns/74attempts/342228micros/0unresolved,users6Trips3/migrations42 unchanged,reader/Opsfalse,members0,WAF46,browser logout/tab cleanup. No specific-extra-need identification or fullS2 claim. Source/consumer code is unchanged after merging main5c20c92 into this branch. See artifacts/VPJ-07/saved-answer-guidance-20260913/verification.md.",
