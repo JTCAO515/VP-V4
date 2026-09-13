@@ -1,0 +1,189 @@
+{
+  "schemaVersion": "knowledge-lifecycle-scenario/1",
+  "sourceCommit": "8e95279417a0a1147f7e81a5a857b0fbdb72d0de",
+  "mode": "staging-synthetic-fault-injection",
+  "city": "shanghai",
+  "questionId": "payment_card_and_mobile",
+  "policyId": "015d6710-82ec-4fc1-bb4f-a817b3f62873",
+  "maxNewModelAttempts": 4,
+  "maxWindowMinutes": 35,
+  "publicationLifetimesSeconds": {
+    "card": 1200,
+    "mobileConflict": 300
+  },
+  "statements": [
+    {
+      "key": "card",
+      "candidateId": "c6dee5ad-904d-4fad-8f10-0e205845172c",
+      "title": "Lifecycle synthetic card",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "international_card_payment",
+          "predicate": "requires_action",
+          "objectId": "merchant_acceptance_check",
+          "conditions": [
+            "synthetic_lifecycle_only"
+          ],
+          "exclusions": [
+            "no_real_travel_guidance"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "shanghai"
+          ],
+          "scene": "payment",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "en": {
+            "text": "Synthetic acceptance fixture: check the example merchant's international-card support. This is not real merchant guidance.",
+            "conditions": [
+              "Only for controlled Staging lifecycle acceptance."
+            ],
+            "exclusions": [
+              "Not real travel or payment guidance."
+            ]
+          },
+          "zh": {
+            "text": "合成验收示例：先核对示例商户是否支持境外卡。本条不是实际商户指引。",
+            "conditions": [
+              "仅限受控Staging生命周期验收。"
+            ],
+            "exclusions": [
+              "不作为真实旅行或支付指引。"
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "lifecycle-card-20260914-r2",
+            "revisionLabel": "synthetic-v2",
+            "publisher": "VisePanda synthetic acceptance fixture",
+            "uri": "urn:vpj15:synthetic:lifecycle-card-20260914-r2",
+            "locator": "Synthetic lifecycle assertion only",
+            "snippet": "Owned synthetic lifecycle test material. No real provider or merchant claim.",
+            "usageDeclaration": "Owned synthetic test material, private first-party Staging acceptance only."
+          }
+        ]
+      }
+    },
+    {
+      "key": "mobileConflict",
+      "candidateId": "a70bf9c0-3d8c-4e3b-87e4-d34ac9357d9a",
+      "title": "Lifecycle synthetic mobileConflict",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "alipay_weixin_pay",
+          "predicate": "offers_procedure",
+          "objectId": "supported_card_merchant_qr_payment",
+          "conditions": [
+            "synthetic_lifecycle_only"
+          ],
+          "exclusions": [
+            "no_real_travel_guidance"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "shanghai"
+          ],
+          "scene": "payment",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "en": {
+            "text": "Synthetic conflict fixture for mobile merchant payment; no real payment procedure is established.",
+            "conditions": [
+              "Only for controlled Staging lifecycle acceptance."
+            ],
+            "exclusions": [
+              "Not real travel or payment guidance."
+            ]
+          },
+          "zh": {
+            "text": "手机商户支付的合成冲突示例；不表示已核实真实支付流程。",
+            "conditions": [
+              "仅限受控Staging生命周期验收。"
+            ],
+            "exclusions": [
+              "不作为真实旅行或支付指引。"
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "lifecycle-mobile-conflict-20260914-r2",
+            "revisionLabel": "synthetic-v2",
+            "publisher": "VisePanda synthetic acceptance fixture",
+            "uri": "urn:vpj15:synthetic:lifecycle-mobile-conflict-20260914-r2",
+            "locator": "Synthetic lifecycle assertion only",
+            "snippet": "Owned synthetic lifecycle test material. No real provider or merchant claim.",
+            "usageDeclaration": "Owned synthetic test material, private first-party Staging acceptance only."
+          }
+        ]
+      }
+    }
+  ],
+  "questions": {
+    "en": "How can I check whether a merchant accepts my international card and get started with mobile merchant payments in mainland China?",
+    "zh": "在中国大陆，怎样核对商户是否受理境外银行卡，以及怎样开始使用手机商户支付？"
+  },
+  "stages": [
+    {
+      "id": "support-current",
+      "oldAnswer": "answered",
+      "facts": [
+        "merchant_acceptance_check",
+        "supported_card_merchant_qr_payment"
+      ]
+    },
+    {
+      "id": "conflict-current",
+      "oldAnswer": "partial",
+      "newAnswer": "partial",
+      "facts": [
+        "merchant_acceptance_check"
+      ],
+      "mobileReason": "unresolved_variants"
+    },
+    {
+      "id": "conflict-naturally-expired",
+      "oldAnswer": "answered",
+      "newAnswer": "partial",
+      "newMobileReason": "unresolved_variants"
+    },
+    {
+      "id": "card-naturally-expired",
+      "oldAnswer": "partial",
+      "oldFacts": [
+        "supported_card_merchant_qr_payment"
+      ],
+      "oldCardReasons": [
+        "revoked",
+        "expired"
+      ],
+      "newAnswer": "no_answer",
+      "newFacts": []
+    }
+  ],
+  "limits": [
+    "No new claim of real travel accuracy for synthetic statements.",
+    "Keep original12 statements/publications untouched; revoke only the two new candidates during cleanup.",
+    "No new native submission after API task admission; read those actual task IDs through native and Web.",
+    "One worker attempt per each of4 declared tasks, no semantic reroll.",
+    "HoldoutH08 was visible during readiness review; do not claim blindness.",
+    "Do not mark the original12 Harness cases complete with these additional scenarios."
+  ],
+  "maxReservedMicros": 28000000,
+  "fixtureRevision": 2,
+  "priorRun": {
+    "fixture": "evidence-lifecycle-v1.json",
+    "status": "FAIL",
+    "modelAttempts": 2,
+    "reason": "Conflict sourceKey and synthetic URI contained an uppercase C; normal Ops rejected INVALID_INPUT before publication. Both completed tasks and all failure evidence retained."
+  },
+  "maxSliceModelAttempts": 6
+}

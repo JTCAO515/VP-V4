@@ -1,0 +1,26 @@
+{
+  "status": "READ_ONLY_READINESS",
+  "sourceCommit": "8e95279417a0a1147f7e81a5a857b0fbdb72d0de",
+  "nextUserResult": "Original H01/H07 reviewed place-address and honest opening-time gap through native Ask, without Trip creation",
+  "observedGaps": [
+    {
+      "path": "lib/server/knowledge/claim/questions.ts",
+      "finding": "Live reviewed-question catalogue is limited to railway, payment and SIM; it has no place-address or opening-time question."
+    },
+    {
+      "path": "lib/server/knowledge/review/source-assertion.ts",
+      "finding": "Typed address candidate producer exists but explicitly remains pending content, not GroundedClaim/EvidenceReceipt."
+    },
+    {
+      "path": "supabase/migrations/20260912042452_vpj_15_knowledge_publication.sql",
+      "finding": "Publication reader joins statements; pending address assertions are not a completed live address-consumption chain."
+    }
+  ],
+  "constraints": [
+    "Extend existing source/publication/claim/worker/native seams after current PR; do not hardcode an answer to an individual Harness input.",
+    "Do not count additional payment lifecycle coverage as original H01/H07/H08/H12 acceptance.",
+    "H03/H06/H08/H12 contents were visible in current readiness inspection. Do not claim blind holdout evaluation by this executor."
+  ],
+  "implementation": "NOT_STARTED",
+  "architectureDecision": "NOT_MADE"
+}

@@ -1,0 +1,73 @@
+{
+  "startedAt": "2026-09-13T19:21:46.759Z",
+  "status": "PASS",
+  "modelCalls": 0,
+  "operations": [
+    {
+      "candidateId": "9844292d-f96e-4caf-be69-18809f4490bf",
+      "operationId": "0449b453-64a8-4ffa-8b10-936783756a83",
+      "attempts": [
+        {
+          "at": "2026-09-13T19:22:21.088Z",
+          "request": {
+            "action": "revoke_statement",
+            "operationId": "0449b453-64a8-4ffa-8b10-936783756a83",
+            "candidateId": "9844292d-f96e-4caf-be69-18809f4490bf",
+            "expectedPublicationVersion": 1,
+            "note": "Complete owned lifecycle v3 cleanup after failed automatic listing; no model calls."
+          },
+          "status": 200,
+          "result": {
+            "candidateId": "9844292d-f96e-4caf-be69-18809f4490bf",
+            "operationId": "0449b453-64a8-4ffa-8b10-936783756a83",
+            "operationOutcome": "revoked",
+            "publicationVersion": 2
+          }
+        }
+      ]
+    },
+    {
+      "candidateId": "7c72836b-5d9a-4242-a6e5-a810d91b5dfb",
+      "operationId": "68d9489c-2684-4901-98ca-bc063f6cc6ae",
+      "attempts": [
+        {
+          "at": "2026-09-13T19:22:22.227Z",
+          "request": {
+            "action": "revoke_statement",
+            "operationId": "68d9489c-2684-4901-98ca-bc063f6cc6ae",
+            "candidateId": "7c72836b-5d9a-4242-a6e5-a810d91b5dfb",
+            "expectedPublicationVersion": 1,
+            "note": "Complete owned lifecycle v3 cleanup after failed automatic listing; no model calls."
+          },
+          "status": 200,
+          "result": {
+            "candidateId": "7c72836b-5d9a-4242-a6e5-a810d91b5dfb",
+            "operationId": "68d9489c-2684-4901-98ca-bc063f6cc6ae",
+            "operationOutcome": "revoked",
+            "publicationVersion": 2
+          }
+        }
+      ]
+    }
+  ],
+  "cleanup": [
+    {
+      "operation": "cookieLogout",
+      "status": "PASS"
+    },
+    {
+      "operation": "disable",
+      "status": "PASS"
+    },
+    {
+      "operation": "removeOwnHost",
+      "status": "PASS"
+    }
+  ],
+  "activation": "{\n  mode: 'activate',\n  status: 'PASS',\n  state: {\n    ops: true,\n    trips: 3,\n    users: 6,\n    reader: true,\n    members: [ [Object], [Object] ],\n    attempts: 325,\n    migrations: 46,\n    unresolved: 0,\n    activeMembers: 2\n  }\n}\n",
+  "hostAllowance": "{\"mode\": \"allow\", \"activeVersion\": 79, \"onlyOwnHostChanged\": true, \"productionTargetUnchanged\": true}\n",
+  "listingStatus": 200,
+  "disable": "{\n  mode: 'disable',\n  status: 'PASS',\n  windowClosed: true,\n  state: {\n    ops: false,\n    trips: 3,\n    users: 6,\n    reader: false,\n    members: [ [Object], [Object] ],\n    attempts: 325,\n    migrations: 46,\n    unresolved: 0,\n    activeMembers: 0\n  }\n}\n",
+  "firewall": "{\"mode\": \"remove\", \"activeVersion\": 80, \"onlyOwnHostChanged\": true, \"productionTargetUnchanged\": true}\n",
+  "finishedAt": "2026-09-13T19:22:49.358Z"
+}

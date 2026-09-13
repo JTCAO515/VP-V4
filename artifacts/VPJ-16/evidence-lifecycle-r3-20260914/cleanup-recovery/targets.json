@@ -1,0 +1,40 @@
+{
+  "at": "2026-09-13T19:21:22.703Z",
+  "sourceRun": "../evidence-lifecycle-r3-20260914/lifecycle.json",
+  "rows": [
+    {
+      "authorId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+      "candidateId": "9844292d-f96e-4caf-be69-18809f4490bf",
+      "publication": {
+        "state": "published",
+        "fact_id": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+        "version": 1,
+        "use_note": "Owned synthetic private Staging lifecycle test. No real travel claim.",
+        "use_basis": "original_factual_summary",
+        "expires_at": "2026-09-13T19:05:00.102+00:00",
+        "revoked_at": null,
+        "candidate_id": "9844292d-f96e-4caf-be69-18809f4490bf",
+        "published_at": "2026-09-13T18:45:02.681844+00:00",
+        "published_by": "7d063756-e5d8-4a6b-94a3-5134b0b04443"
+      },
+      "publicationHash": "69a1a86df2009488a1c3c32b9c0c7f02"
+    },
+    {
+      "authorId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+      "candidateId": "7c72836b-5d9a-4242-a6e5-a810d91b5dfb",
+      "publication": {
+        "state": "published",
+        "fact_id": "60e1dc60-73ac-47b4-b507-a4d797f7838e",
+        "version": 1,
+        "use_note": "Owned synthetic private Staging lifecycle test. No real travel claim.",
+        "use_basis": "original_factual_summary",
+        "expires_at": "2026-09-13T18:53:31.298+00:00",
+        "revoked_at": null,
+        "candidate_id": "7c72836b-5d9a-4242-a6e5-a810d91b5dfb",
+        "published_at": "2026-09-13T18:48:34.395087+00:00",
+        "published_by": "7d063756-e5d8-4a6b-94a3-5134b0b04443"
+      },
+      "publicationHash": "06f7c273b063e66f45005c7aa8cd6d2c"
+    }
+  ]
+}

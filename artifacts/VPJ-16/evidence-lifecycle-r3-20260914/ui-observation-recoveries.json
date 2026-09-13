@@ -1,0 +1,23 @@
+{
+  "modelCallsAdded": 0,
+  "items": [
+    {
+      "stage": "support-current",
+      "surface": "Web harness",
+      "failure": "Old helper retained the closed prior tab9 binding.",
+      "recovery": "Bound new helper to observed current tab10 before credentials were submitted; actual login and capture succeeded."
+    },
+    {
+      "stage": "card-naturally-expired",
+      "surface": "Web harness",
+      "failure": "First capture locator deadline while answer headings were not yet matched.",
+      "recovery": "Read rendered DOM showing current tasks, then captured the same tasks. No login or model retry."
+    },
+    {
+      "stage": "card-naturally-expired",
+      "surface": "Native capture harness",
+      "failure": "Chinese second-answer capture had an assertion failure during scrolling; failed instantaneous AX payload was not retained, cause unproven.",
+      "recovery": "Subsequent saved AX snapshot confirmed first no_answer and second partial at y305; capture-only retry succeeded without login, new question or model call. Original failure remains recorded."
+    }
+  ]
+}

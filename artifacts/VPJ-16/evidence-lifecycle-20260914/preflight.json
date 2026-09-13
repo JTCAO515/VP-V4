@@ -1,0 +1,133 @@
+{
+  "at": "2026-09-13T17:35:48.291Z",
+  "migrations": 46,
+  "users": 6,
+  "trips": 3,
+  "attempts": 315,
+  "unresolved": 0,
+  "opsEnabled": false,
+  "readerEnabled": false,
+  "activeMembers": 0,
+  "payment": [
+    {
+      "scope": {
+        "scene": "payment",
+        "cities": [
+          "shanghai",
+          "beijing",
+          "guangzhou",
+          "chongqing"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "state": "published",
+      "assertion": {
+        "objectId": "marked_currency_exchange",
+        "predicate": "offers_procedure",
+        "subjectId": "rmb_cash_access",
+        "conditions": [
+          "mainland_guidance",
+          "current_operator_check",
+          "operator_service_hours_charges"
+        ],
+        "exclusions": [
+          "no_every_atm_hotel_exchange",
+          "no_fixed_exchange_rate"
+        ]
+      },
+      "expiresAt": "2026-09-19T11:01:51.337+00:00",
+      "candidateId": "07a8373c-85cb-4700-8801-1b0c422b791e"
+    },
+    {
+      "scope": {
+        "scene": "payment",
+        "cities": [
+          "shanghai",
+          "beijing",
+          "guangzhou",
+          "chongqing"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "state": "published",
+      "assertion": {
+        "objectId": "international_card_atm_withdrawal",
+        "predicate": "offers_procedure",
+        "subjectId": "rmb_cash_access",
+        "conditions": [
+          "mainland_guidance",
+          "current_operator_check",
+          "operator_service_hours_charges",
+          "atm_card_supported"
+        ],
+        "exclusions": [
+          "no_every_atm_hotel_exchange",
+          "no_fixed_exchange_rate"
+        ]
+      },
+      "expiresAt": "2026-09-19T11:01:51.337+00:00",
+      "candidateId": "5e1fcd26-ef3a-41b9-9d54-4f06098939d5"
+    },
+    {
+      "scope": {
+        "scene": "payment",
+        "cities": [
+          "shanghai",
+          "beijing",
+          "guangzhou",
+          "chongqing"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "state": "published",
+      "assertion": {
+        "objectId": "supported_card_merchant_qr_payment",
+        "predicate": "offers_procedure",
+        "subjectId": "alipay_weixin_pay",
+        "conditions": [
+          "mainland_guidance",
+          "current_operator_check",
+          "card_issuer_merchant_support",
+          "app_issuer_terms_apply",
+          "current_app_fees_and_limits"
+        ],
+        "exclusions": [
+          "no_acceptance_success_guarantee",
+          "no_fee_fx_guarantee",
+          "no_personal_transfer_support"
+        ]
+      },
+      "expiresAt": "2026-09-19T11:01:51.337+00:00",
+      "candidateId": "5f5e6eed-fab0-4b55-b425-6230ea5b85fc"
+    },
+    {
+      "scope": {
+        "scene": "payment",
+        "cities": [
+          "shanghai",
+          "beijing",
+          "guangzhou",
+          "chongqing"
+        ],
+        "audience": "international_independent_traveler"
+      },
+      "state": "revoked",
+      "assertion": {
+        "objectId": "merchant_acceptance_check",
+        "predicate": "requires_action",
+        "subjectId": "international_card_payment",
+        "conditions": [
+          "mainland_guidance",
+          "current_operator_check",
+          "card_issuer_merchant_support"
+        ],
+        "exclusions": [
+          "no_acceptance_success_guarantee",
+          "no_fee_fx_guarantee"
+        ]
+      },
+      "expiresAt": "2026-09-19T11:01:51.337+00:00",
+      "candidateId": "b82567bd-a712-4c60-acb6-66e7f199e617"
+    }
+  ]
+}

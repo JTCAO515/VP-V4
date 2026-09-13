@@ -1,0 +1,1 @@
+{"status": "PASS", "nativeSignedOut": true, "webSignedOut": true, "locales": ["en", "zh"], "webSizes": [[1365, 900], [390, 844]], "observed": "Both new and old v2 answers partial/card only. Native displays unresolved reviewed-version differences, and no mobile fact. API and DOM retain declared task IDs."}

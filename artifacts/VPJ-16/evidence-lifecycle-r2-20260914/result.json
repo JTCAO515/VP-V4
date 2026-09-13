@@ -1,0 +1,110 @@
+{
+  "status": "FAIL",
+  "failure": {
+    "phase": "card-naturally-expired",
+    "errorType": "AssertionError",
+    "message": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n  [\n    'expired',\n-   'revoked'\n  ]\n"
+  },
+  "modelCalls": 4,
+  "priorFailedRunCalls": 2,
+  "configuredPriceEstimateMicros": 45276,
+  "billedCost": "unknown",
+  "completeStages": [
+    "support-current",
+    "conflict-current",
+    "conflict-naturally-expired"
+  ],
+  "finalStage": {
+    "webAPI": "4 projections matched coverage and fact counts",
+    "nativeAPI": "English before task matched partial/mobile-only; reason assertion failed",
+    "nativeAndWebUI": "UNRUN"
+  },
+  "cleanup": [
+    {
+      "operation": "nativeLogout",
+      "locale": "en",
+      "status": 200
+    },
+    {
+      "operation": "nativeLogout",
+      "locale": "zh",
+      "status": 200
+    },
+    {
+      "operation": "nativeLogout",
+      "locale": "en",
+      "status": 200
+    },
+    {
+      "operation": "nativeLogout",
+      "locale": "zh",
+      "status": 200
+    },
+    {
+      "operation": "nativeLogout",
+      "locale": "en",
+      "status": 200
+    },
+    {
+      "operation": "nativeLogout",
+      "locale": "zh",
+      "status": 200
+    },
+    {
+      "operation": "nativeLogout",
+      "locale": "en",
+      "status": 200
+    },
+    {
+      "operation": "nativeLogout",
+      "locale": "zh",
+      "status": 200
+    },
+    {
+      "operation": "nativeLogout",
+      "locale": "en",
+      "status": 200
+    },
+    {
+      "operation": "nativeLogout",
+      "locale": "zh",
+      "status": 200
+    },
+    {
+      "operation": "revokeOwned",
+      "status": "PASS"
+    },
+    {
+      "operation": "nativeLogout",
+      "locale": "en",
+      "status": 200
+    },
+    {
+      "operation": "cookieLogout",
+      "locale": "en",
+      "status": "PASS"
+    },
+    {
+      "operation": "cookieLogout",
+      "locale": "zh",
+      "status": "PASS"
+    },
+    {
+      "operation": "disable",
+      "status": "PASS",
+      "windowClosed": true
+    },
+    {
+      "operation": "removeOwnHost",
+      "status": "PASS"
+    }
+  ],
+  "savedCompletionsUnchanged": true,
+  "correctedExpectation": {
+    "cardReasons": [
+      "expired"
+    ],
+    "basis": "Only original covered factIds contribute historical reasons; unrelated revoked publications are excluded. Existing local DB assertion agrees."
+  },
+  "productionRelease": false
+}

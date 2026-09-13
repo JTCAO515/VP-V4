@@ -1,0 +1,1 @@
+{"status": "PASS", "nativeSignedOut": true, "webSignedOut": true, "locales": ["en", "zh"], "webSizes": [[1365, 900], [390, 844]], "observed": "Current v2 answers show both card and mobile facts; native first fact ID eb13e090-d4ce-44cf-aef2-ca87d43570d5 differs from revoked v1, original questions/DOM task IDs match. Source labels explicitly synthetic."}

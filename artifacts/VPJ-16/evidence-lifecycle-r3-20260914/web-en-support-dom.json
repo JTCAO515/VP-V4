@@ -1,0 +1,7 @@
+[
+  {
+    "taskId": "fe711696-3d9b-415b-aa55-35090e50f2c5",
+    "text": "Shanghai · English · Original question\nHow can I check whether a merchant accepts my international card and get started with mobile merchant payments in mainland China?\n\nSynthetic acceptance fixture: check the example merchant's international-card support. This is not real merchant guidance.\n\nApplies when\nOnly for controlled Staging lifecycle acceptance.\nDoes not cover\nNot real travel or payment guidance.\nSources and context\n\nFollow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.\n\nApplies when\nGeneral mainland China guidance; confirm the specific service with its current operator.\nCheck the latest official or operator guidance before use.\nThe specific card, issuer and merchant must support the transaction.\nCard support, issuer verification and app terms apply at transaction time.\nCheck current app prompts and service terms for fees and payment limits.\nDoes not cover\nNo universal merchant acceptance or transaction-success guarantee.\nNo fee-free or exchange-rate guarantee.\nDo not infer personal-transfer support for overseas cards.\nSources and context",
+    "turnId": "4534e93b-4a1d-44f0-ab0f-46491c0976d1"
+  }
+]

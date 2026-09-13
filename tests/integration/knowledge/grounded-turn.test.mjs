@@ -51,7 +51,7 @@ test('grounded Turn: durable scope, private results and historical eligibility',
  const op=(a,input)=>rpc('authenticated',a)('ops_review_workspace',{p_input:JSON.stringify(input)});
  const source={sourceKey:'grounded-fixture',revisionLabel:'one',publisher:'Synthetic author',uri:'urn:vpj15:synthetic:grounded',locator:'Fixture only',snippet:'PRIVATE FACT SOURCE MUST NOT ENTER MODEL',usageDeclaration:'Synthetic use only'};
  const statement=objectId=>({schemaVersion:'knowledge-statement/1',assertion:{subjectId:'rail_eticket_boarding',predicate:'requires_document',objectId,conditions:['adult_foreign_passport'],exclusions:['no_guarantee']},scope:{cities:['shanghai'],scene:'rail',audience:'international_independent_traveler'},expressions:{en:{text:'Synthetic '+objectId,conditions:['Test condition.'],exclusions:['No real guarantee.']},zh:{text:'合成 '+objectId,conditions:['测试条件。'],exclusions:['不保证真实服务。']}},sources:[source]});
- const publish=async s=>{const cid=uuid();await op(author,{action:'submit_statement',operationId:uuid(),candidateId:cid,title:'Grounded synthetic statement',statement:s});await op(reviewer,{action:'review',operationId:uuid(),candidateId:cid,expectedVersion:1,decision:'reviewed',note:'Synthetic independent review'});await op(reviewer,{action:'publish_statement',operationId:uuid(),candidateId:cid,expectedVersion:2,expiresAt:new Date(Date.now()+3600000).toISOString(),useBasis:'original_factual_summary',useNote:'Synthetic private summary'});return cid;};
+ const publish=async(s,lifetimeMs=3600000)=>{const cid=uuid();await op(author,{action:'submit_statement',operationId:uuid(),candidateId:cid,title:'Grounded synthetic statement',statement:s});await op(reviewer,{action:'review',operationId:uuid(),candidateId:cid,expectedVersion:1,decision:'reviewed',note:'Synthetic independent review'});await op(reviewer,{action:'publish_statement',operationId:uuid(),candidateId:cid,expectedVersion:2,expiresAt:new Date(Date.now()+lifetimeMs).toISOString(),useBasis:'original_factual_summary',useNote:'Synthetic private summary'});return cid;};
  const revoke=cid=>op(reviewer,{action:'revoke_statement',operationId:uuid(),candidateId:cid,expectedPublicationVersion:1,note:'Synthetic withdrawal'});
  const required=['original_valid_booking_id','valid_ticket_not_itinerary_or_receipt'];let root,first,second;
  await t.test('scope participates in exact retry and unsupported legacy admission is denied',async()=>{
@@ -225,6 +225,58 @@ test('grounded Turn: durable scope, private results and historical eligibility',
   const b=fresh({p_text:'Which call and data allowances should I check for a SIM plan?'});await user('submit_grounded_turn',b);const next=await lease();await authorize(next);
   await complete(next,'connectivity_plan_allowances','additional_needs');
   const mixed=await read(b);assert.equal(mixed.result.originalOutcome,'partial');assert.equal(mixed.result.knowledge.answer.outcome,'answered','covered selected domain does not answer additional needs');
+ });
+
+ await t.test('natural publication expiry removes support and conflicts without expanding historical gaps',async()=>{
+  // Separate city keeps every earlier publication and saved result intact.
+  const payment=(subjectId,predicate,objectId)=>{
+   const value=statement(objectId);value.scope={...value.scope,cities:['beijing'],scene:'payment'};
+   value.assertion={...value.assertion,subjectId,predicate};return value;
+  };
+  const card=payment('international_card_payment','requires_action','merchant_acceptance_check');
+  const mobile=payment('alipay_weixin_pay','offers_procedure','supported_card_merchant_qr_payment');
+  // An unrelated revoked publication must not become a saved answer's reason.
+  const unrelatedCardId=await publish(card);await revoke(unrelatedCardId);
+  const cardId=await publish(card,25000);await publish(mobile);
+  const submit=async()=>{
+   const a=fresh({p_city:'beijing',p_text:'How do I check card acceptance and get started with mobile merchant payment?'});
+   await user('submit_grounded_turn',a);const l=await lease();await authorize(l);
+   assert.equal((await complete(l,'payment_card_and_mobile')).kind,'finished');return a;
+  };
+  const before=await submit();
+  assert.equal((await read(before)).result.knowledge.answer.outcome,'answered');
+  const conflict=structuredClone(mobile);
+  conflict.expressions.en.conditions=['Different synthetic condition.'];
+  conflict.expressions.zh.conditions=['不同的合成测试条件。'];
+  const conflictId=await publish(conflict,8000);
+  const during=await submit();
+  const snapshot=()=>db(`select jsonb_agg(jsonb_build_array(to_jsonb(g),to_jsonb(t),to_jsonb(w)) order by g.turn_id)::text from turn_private.grounded_turns g join public.turns t on t.id=g.turn_id join turn_private.work w on w.turn_id=g.turn_id where g.turn_id in ('${before.p_turn_id}','${during.p_turn_id}');`);
+  const frozen=await snapshot();
+  for(const a of [before,during]){
+   const r=await read(a);assert.equal(r.result.knowledge.answer.outcome,'partial');
+   assert.equal(r.result.knowledge.statements.length,1);
+   assert.equal(r.result.knowledge.statements[0].assertion.objectId,'merchant_acceptance_check');
+   assert.equal(r.result.knowledge.answer.claims[1].status,'unresolved_variants');
+  }
+  const expired=cid=>waitUntil(async()=>(await db(`select expires_at<=clock_timestamp() from knowledge_review_private.publications where candidate_id='${cid}';`))==='t',30000,'natural publication expiry');
+  await expired(conflictId);
+  const restored=await read(before);assert.equal(restored.result.originalOutcome,'answered');
+  assert.equal(restored.result.knowledge.answer.outcome,'answered');
+  assert.equal(restored.result.knowledge.statements.length,2);
+  const stillPartial=await read(during);assert.equal(stillPartial.result.originalOutcome,'partial');
+  assert.equal(stillPartial.result.knowledge.answer.outcome,'partial');
+  assert.equal(stillPartial.result.knowledge.answer.claims[1].status,'unresolved_variants','resolved conflict cannot expand a saved gap');
+  await expired(cardId);
+  const partial=await read(before);assert.equal(partial.result.originalOutcome,'answered');
+  assert.equal(partial.result.knowledge.answer.outcome,'partial');
+  assert.deepEqual(partial.result.knowledge.answer.claims[0].reasons,['expired']);
+  assert.equal(partial.result.knowledge.statements.length,1);
+  assert.equal(partial.result.knowledge.statements[0].assertion.objectId,'supported_card_merchant_qr_payment');
+  const empty=await read(during);assert.equal(empty.result.originalOutcome,'partial');
+  assert.equal(empty.result.knowledge.answer.outcome,'no_answer');
+  assert.equal(empty.result.knowledge.statements.length,0);
+  assert.equal(await snapshot(),frozen,'read-time eligibility must not rewrite completion or work state');
+  assert.equal((await foreign('read_grounded_turn',{p_turn_id:before.p_turn_id})).kind,'unavailable');
  });
 
  await t.test('four-turn cap preserves exact retries but rejects new clarification work',async()=>{

@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2: PR370 merged6df00f7. PR371 code196e30b passed Staging46 provider106/106, native2/2 and en/zh Web desktop/mobile; all108 attempts settled, prior207 retained rows and Trips unchanged. Reader/Ops disabled and own WAF allowance removed. Final evidence commit/checks and protected merge pending.
+状态：S2: PR373 v3 lifecycle behavior passed all four bilingual native/API/Web stages. Raw run remains FAIL at automatic revoke cleanup; targeted recovery succeeded with zero model calls. Final325 attempts/0 unresolved, four saved completions and Trips unchanged, owned publications revoked, reader/Ops off/members0/WAF80. v1/v2 failures retained;10 aggregate calls. Maps draftPR372 remains sole prep lane.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -53,6 +53,10 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 验证
 
+- PR373 v3: four natural support/conflict/expiry stages PASS for en/zh native/API/Web1365 and390. Raw automatic run FAIL at revokeOwned; first cleanup recovery FAIL before POST; second reviewed recovery PASS with0 model calls, both own publications revoked, all other fields and four saved completion hashes unchanged. Final325 attempts/0 unresolved,6users/3Trips/46migrations, reader/Opsfalse/members0/WAF80. Four v3 settled calls estimated45276CNYmicros;10 aggregate/invoiceunknown. Original failures retained. See artifacts/VPJ-16/evidence-lifecycle-r3-20260914/verification.md.
+- PR373 v1 actual Staging: English/Chinese answered2/2 before conflict; next synthetic submit400INVALID_INPUT because uppercase sourceKey/URI. OverallFAIL; conflict and natural expiryUNRUN. Both tasks settled22638CNYmicros estimated/actualbillingunknown;317attempts/0unresolved,original records/Trips retained,reader/Opsfalse/members0/WAF72,normallogout/Simulator shutdown. Correctedv2 fixtureOpscontract2/2PASS; windowtransaction tests4/4PASS; independentpermission review0/0. See artifacts/VPJ-16/evidence-lifecycle-20260914/verification.md.
+- PR373 initial1218c76: isolated PostgreSQL17/17 zero skips includes natural expiry/conflict, reliable partial and immutable saved gaps; lint266/docs/syntax/diff PASS. Staging preflight46migrations/315attempts/0unresolved/6users/3Trips; reader/Ops off, members0. Dedicated Preview8e95279 READY; native ad-hoc Staging build/codesign PASS. Frozen4-call/35minute scenario; actual fault window UNRUN. artifacts/VPJ-16/evidence-lifecycle-20260914/verification.md.
+- PR371 merged8e95279417a0a1147f7e81a5a857b0fbdb72d0de at2026-09-13T17:29:58Z, tree matches finalc66f936. Quality34771205900/Budget34771205904/Native34771205917/Preview PASS. Production dpl_ERpRhq9Xof67LwqKcvrsN9mgsJMm cancelled; all5Production aliases and sharedStaging unchanged at17:30:24Z. Prior runtime196e30b evidence remains valid within its recorded scope.
 - PR371 code196e30b: database16/16, native knowledge13/13 and Quality34767965402/Budget34767965434/Native34767965393 PASS. Staging45 backup/restore/rollback and migration46 PASS. Real provider106/106 (20 new+86 prior), native producer2/2 and Web en/zh1365×900/390×844 PASS. All108 new attempts settled (configured estimate1231188 CNY micros); prior207 rows/Trips unchanged; users6/Trips3, reader/Ops off, members0, ownWAF removed70. Physical/VoiceOver/invoice/fullS2 UNRUN. artifacts/VPJ-16/specific-gaps-20260914/verification.md.
 - PR370 merged6df00f7 at2026-09-13T15:58:32Z; final395f8d8 Quality34766955731/Vercel PASS. Auto-Production dpl_CpePkAHhBe5LRBbzMR7D8hnHHPoD CANCELED; all5production aliases and sharedStaging unchanged at15:59:22Z. Prior667 real browser samples and cleanup remain valid.
 - Maps #362 independent preparation: draftPR372/e748b23 includes bounded public search+walking probes and secret-free template;6 local tests/lint/typecheck/docs/syntax/diff PASS. Account/API, four-city comparison and actual network/device results UNRUN. Official AMap login/secure credential location pending; no provider call. artifacts/VPJ-18/initial-probe-20260914/verification.md (in draftPR372).
@@ -135,7 +139,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Finish PR371 final-head CI and protected repository merge; preserve Production build guard and verify unchanged aliases. Then inspect remaining S2 coverage under #206/#264. Maps draftPR372 has local and CI PASS, but needs an existing secure Web Service Key or official console login before actual probes.
+Finish PR373 final CI and authorized merge with Production guard and alias verification. Then implement the existing reviewed-evidence producer bridge for place address and honest opening-hours gaps under #206/#264; use accepted contracts, no second engine or hardcoded Harness inputs. No additional lifecycle model calls needed. Maps PR372 remains independent preparation; no Production release.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

@@ -1,0 +1,1 @@
+{"status": "PASS", "nativeSignedOut": true, "webSignedOut": true, "locales": ["en", "zh"], "webSizes": [[1365, 900], [390, 844]], "observed": "Native newest partial retains conflict gap; second original answer restored to answered. Web exact old task has two facts and new task is card-only. No new model call or publication timestamp rewrite."}

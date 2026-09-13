@@ -1,0 +1,12 @@
+[
+  {
+    "taskId": "aae62ed7-5e93-4f04-9730-00c6f4de815a",
+    "text": "Shanghai · English · Original question\nHow can I check whether a merchant accepts my international card and get started with mobile merchant payments in mainland China?\n\nThe supported payment guidance is shown below. Other requested details remain unanswered. Check current app prompts, your card issuer or the relevant operator for the missing information.\n\nSynthetic acceptance fixture: check the example merchant's international-card support. This is not real merchant guidance.\n\nApplies when\nOnly for controlled Staging lifecycle acceptance.\nDoes not cover\nNot real travel or payment guidance.\nSources and context",
+    "turnId": "27047448-c146-4c58-9854-5e072beff73b"
+  },
+  {
+    "taskId": "79e2ef9d-0aa2-479b-889c-40e25b9fe0cb",
+    "text": "Shanghai · English · Original question\nHow can I check whether a merchant accepts my international card and get started with mobile merchant payments in mainland China?\n\nSynthetic acceptance fixture: check the example merchant's international-card support. This is not real merchant guidance.\n\nApplies when\nOnly for controlled Staging lifecycle acceptance.\nDoes not cover\nNot real travel or payment guidance.\nSources and context\n\nFollow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.\n\nApplies when\nGeneral mainland China guidance; confirm the specific service with its current operator.\nCheck the latest official or operator guidance before use.\nThe specific card, issuer and merchant must support the transaction.\nCard support, issuer verification and app terms apply at transaction time.\nCheck current app prompts and service terms for fees and payment limits.\nDoes not cover\nNo universal merchant acceptance or transaction-success guarantee.\nNo fee-free or exchange-rate guarantee.\nDo not infer personal-transfer support for overseas cards.\nSources and context",
+    "turnId": "327149bb-df64-4026-8eae-3a78dbb9d3d0"
+  }
+]

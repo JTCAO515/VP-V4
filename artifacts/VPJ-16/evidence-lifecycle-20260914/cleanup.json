@@ -1,0 +1,18 @@
+{
+  "at": "2026-09-13T18:10:02.024Z",
+  "status": "PASS",
+  "reader": false,
+  "ops": false,
+  "activeMembers": 0,
+  "attempts": 317,
+  "unresolved": 0,
+  "users": 6,
+  "trips": 3,
+  "originalRowsRetained": true,
+  "ownPublicationRevoked": true,
+  "conflictCandidateNeverPublished": true,
+  "firewallVersion": 72,
+  "productionTargetUnchanged": true,
+  "nativeSignedOutAndShutdown": true,
+  "browserSignedOutAndClosed": true
+}

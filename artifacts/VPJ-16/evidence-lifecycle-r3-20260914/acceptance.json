@@ -1,0 +1,730 @@
+{
+  "schemaVersion": "knowledge-lifecycle-acceptance/1",
+  "scope": "Staging synthetic payment evidence lifecycle, not complete S2/Harness",
+  "status": "PASS",
+  "businessValidation": "PASS",
+  "automaticRunStatus": "FAIL",
+  "automaticCleanupFailure": "revokeOwned TypeError; exact cause unproven",
+  "cleanupRecovery": "PASS",
+  "priorCleanupRecovery": "FAIL before revoke POST; permission and WAF cleanup PASS",
+  "recoveryModelCalls": 0,
+  "sourceCommit": "8e95279417a0a1147f7e81a5a857b0fbdb72d0de",
+  "startedAt": "2026-09-13T18:44:17.863Z",
+  "businessRunFinishedAt": "2026-09-13T19:09:11.693Z",
+  "finishedAt": "2026-09-13T19:22:49.358Z",
+  "modelCalls": 4,
+  "priorFailedRunCalls": 6,
+  "sliceModelCalls": 10,
+  "configuredPriceEstimateMicros": 45276,
+  "billedCost": "unknown",
+  "naturalExpiries": {
+    "card": "2026-09-13T19:05:00.102Z",
+    "mobileConflict": "2026-09-13T18:53:31.298Z"
+  },
+  "stages": [
+    {
+      "id": "support-current",
+      "at": "2026-09-13T18:45:42.353Z",
+      "api": [
+        {
+          "locale": "en",
+          "group": "before",
+          "turnId": "4534e93b-4a1d-44f0-ab0f-46491c0976d1",
+          "originalOutcome": "answered",
+          "currentCoverage": "answered",
+          "claims": [
+            {
+              "id": "merchant_acceptance_check",
+              "status": "covered",
+              "factIds": [
+                "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+              ],
+              "reasons": []
+            },
+            {
+              "id": "supported_card_merchant_qr_payment",
+              "status": "covered",
+              "factIds": [
+                "0630a027-ed13-4a3f-857f-6b23ee1f2f45"
+              ],
+              "reasons": []
+            }
+          ],
+          "facts": [
+            {
+              "factId": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+              "objectId": "merchant_acceptance_check",
+              "expiresAt": "2026-09-13T19:05:00.102+00:00",
+              "sourceIds": [
+                "39a3fe48-fea9-4fd0-800e-1340e58425c1"
+              ]
+            },
+            {
+              "factId": "0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+              "objectId": "supported_card_merchant_qr_payment",
+              "expiresAt": "2026-09-19T11:01:51.337+00:00",
+              "sourceIds": [
+                "dfc57139-d26c-4b9b-912b-8ba1de491564"
+              ]
+            }
+          ]
+        },
+        {
+          "locale": "zh",
+          "group": "before",
+          "turnId": "c50327fd-6958-47a3-8cbf-7ad0d17a3fb1",
+          "originalOutcome": "answered",
+          "currentCoverage": "answered",
+          "claims": [
+            {
+              "id": "merchant_acceptance_check",
+              "status": "covered",
+              "factIds": [
+                "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+              ],
+              "reasons": []
+            },
+            {
+              "id": "supported_card_merchant_qr_payment",
+              "status": "covered",
+              "factIds": [
+                "0630a027-ed13-4a3f-857f-6b23ee1f2f45"
+              ],
+              "reasons": []
+            }
+          ],
+          "facts": [
+            {
+              "factId": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+              "objectId": "merchant_acceptance_check",
+              "expiresAt": "2026-09-13T19:05:00.102+00:00",
+              "sourceIds": [
+                "39a3fe48-fea9-4fd0-800e-1340e58425c1"
+              ]
+            },
+            {
+              "factId": "0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+              "objectId": "supported_card_merchant_qr_payment",
+              "expiresAt": "2026-09-19T11:01:51.337+00:00",
+              "sourceIds": [
+                "dfc57139-d26c-4b9b-912b-8ba1de491564"
+              ]
+            }
+          ]
+        }
+      ],
+      "web": [
+        {
+          "locale": "en",
+          "group": "before",
+          "turnId": "4534e93b-4a1d-44f0-ab0f-46491c0976d1",
+          "taskId": "fe711696-3d9b-415b-aa55-35090e50f2c5",
+          "currentCoverage": "answered",
+          "facts": [
+            "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+            "0630a027-ed13-4a3f-857f-6b23ee1f2f45"
+          ]
+        },
+        {
+          "locale": "zh",
+          "group": "before",
+          "turnId": "c50327fd-6958-47a3-8cbf-7ad0d17a3fb1",
+          "taskId": "a98b0c10-cfca-4835-9d65-968d987987e7",
+          "currentCoverage": "answered",
+          "facts": [
+            "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+            "0630a027-ed13-4a3f-857f-6b23ee1f2f45"
+          ]
+        }
+      ],
+      "ui": "PASS"
+    },
+    {
+      "id": "conflict-current",
+      "at": "2026-09-13T18:49:14.612Z",
+      "api": [
+        {
+          "locale": "en",
+          "group": "before",
+          "turnId": "4534e93b-4a1d-44f0-ab0f-46491c0976d1",
+          "originalOutcome": "answered",
+          "currentCoverage": "partial",
+          "claims": [
+            {
+              "id": "merchant_acceptance_check",
+              "status": "covered",
+              "factIds": [
+                "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+              ],
+              "reasons": []
+            },
+            {
+              "id": "supported_card_merchant_qr_payment",
+              "status": "unresolved_variants",
+              "factIds": [],
+              "reasons": [
+                "unresolved_variants"
+              ]
+            }
+          ],
+          "facts": [
+            {
+              "factId": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+              "objectId": "merchant_acceptance_check",
+              "expiresAt": "2026-09-13T19:05:00.102+00:00",
+              "sourceIds": [
+                "39a3fe48-fea9-4fd0-800e-1340e58425c1"
+              ]
+            }
+          ]
+        },
+        {
+          "locale": "en",
+          "group": "during",
+          "turnId": "11863601-80f8-4423-9670-fc71abd82b6b",
+          "originalOutcome": "partial",
+          "currentCoverage": "partial",
+          "claims": [
+            {
+              "id": "merchant_acceptance_check",
+              "status": "covered",
+              "factIds": [
+                "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+              ],
+              "reasons": []
+            },
+            {
+              "id": "supported_card_merchant_qr_payment",
+              "status": "unresolved_variants",
+              "factIds": [],
+              "reasons": [
+                "unresolved_variants"
+              ]
+            }
+          ],
+          "facts": [
+            {
+              "factId": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+              "objectId": "merchant_acceptance_check",
+              "expiresAt": "2026-09-13T19:05:00.102+00:00",
+              "sourceIds": [
+                "39a3fe48-fea9-4fd0-800e-1340e58425c1"
+              ]
+            }
+          ]
+        },
+        {
+          "locale": "zh",
+          "group": "before",
+          "turnId": "c50327fd-6958-47a3-8cbf-7ad0d17a3fb1",
+          "originalOutcome": "answered",
+          "currentCoverage": "partial",
+          "claims": [
+            {
+              "id": "merchant_acceptance_check",
+              "status": "covered",
+              "factIds": [
+                "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+              ],
+              "reasons": []
+            },
+            {
+              "id": "supported_card_merchant_qr_payment",
+              "status": "unresolved_variants",
+              "factIds": [],
+              "reasons": [
+                "unresolved_variants"
+              ]
+            }
+          ],
+          "facts": [
+            {
+              "factId": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+              "objectId": "merchant_acceptance_check",
+              "expiresAt": "2026-09-13T19:05:00.102+00:00",
+              "sourceIds": [
+                "39a3fe48-fea9-4fd0-800e-1340e58425c1"
+              ]
+            }
+          ]
+        },
+        {
+          "locale": "zh",
+          "group": "during",
+          "turnId": "b4fcf0a8-ed52-4f02-a6e3-df2c58425f66",
+          "originalOutcome": "partial",
+          "currentCoverage": "partial",
+          "claims": [
+            {
+              "id": "merchant_acceptance_check",
+              "status": "covered",
+              "factIds": [
+                "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+              ],
+              "reasons": []
+            },
+            {
+              "id": "supported_card_merchant_qr_payment",
+              "status": "unresolved_variants",
+              "factIds": [],
+              "reasons": [
+                "unresolved_variants"
+              ]
+            }
+          ],
+          "facts": [
+            {
+              "factId": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+              "objectId": "merchant_acceptance_check",
+              "expiresAt": "2026-09-13T19:05:00.102+00:00",
+              "sourceIds": [
+                "39a3fe48-fea9-4fd0-800e-1340e58425c1"
+              ]
+            }
+          ]
+        }
+      ],
+      "web": [
+        {
+          "locale": "en",
+          "group": "before",
+          "turnId": "4534e93b-4a1d-44f0-ab0f-46491c0976d1",
+          "taskId": "fe711696-3d9b-415b-aa55-35090e50f2c5",
+          "currentCoverage": "partial",
+          "facts": [
+            "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+          ]
+        },
+        {
+          "locale": "en",
+          "group": "during",
+          "turnId": "11863601-80f8-4423-9670-fc71abd82b6b",
+          "taskId": "efcf728f-1afb-42e9-aaaf-3791b0bc95d8",
+          "currentCoverage": "partial",
+          "facts": [
+            "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+          ]
+        },
+        {
+          "locale": "zh",
+          "group": "before",
+          "turnId": "c50327fd-6958-47a3-8cbf-7ad0d17a3fb1",
+          "taskId": "a98b0c10-cfca-4835-9d65-968d987987e7",
+          "currentCoverage": "partial",
+          "facts": [
+            "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+          ]
+        },
+        {
+          "locale": "zh",
+          "group": "during",
+          "turnId": "b4fcf0a8-ed52-4f02-a6e3-df2c58425f66",
+          "taskId": "2dba1294-829b-4111-be9d-752756c47e9b",
+          "currentCoverage": "partial",
+          "facts": [
+            "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+          ]
+        }
+      ],
+      "ui": "PASS"
+    },
+    {
+      "id": "conflict-naturally-expired",
+      "at": "2026-09-13T18:53:34.136Z",
+      "api": [
+        {
+          "locale": "en",
+          "group": "before",
+          "turnId": "4534e93b-4a1d-44f0-ab0f-46491c0976d1",
+          "originalOutcome": "answered",
+          "currentCoverage": "answered",
+          "claims": [
+            {
+              "id": "merchant_acceptance_check",
+              "status": "covered",
+              "factIds": [
+                "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+              ],
+              "reasons": []
+            },
+            {
+              "id": "supported_card_merchant_qr_payment",
+              "status": "covered",
+              "factIds": [
+                "0630a027-ed13-4a3f-857f-6b23ee1f2f45"
+              ],
+              "reasons": []
+            }
+          ],
+          "facts": [
+            {
+              "factId": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+              "objectId": "merchant_acceptance_check",
+              "expiresAt": "2026-09-13T19:05:00.102+00:00",
+              "sourceIds": [
+                "39a3fe48-fea9-4fd0-800e-1340e58425c1"
+              ]
+            },
+            {
+              "factId": "0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+              "objectId": "supported_card_merchant_qr_payment",
+              "expiresAt": "2026-09-19T11:01:51.337+00:00",
+              "sourceIds": [
+                "dfc57139-d26c-4b9b-912b-8ba1de491564"
+              ]
+            }
+          ]
+        },
+        {
+          "locale": "en",
+          "group": "during",
+          "turnId": "11863601-80f8-4423-9670-fc71abd82b6b",
+          "originalOutcome": "partial",
+          "currentCoverage": "partial",
+          "claims": [
+            {
+              "id": "merchant_acceptance_check",
+              "status": "covered",
+              "factIds": [
+                "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+              ],
+              "reasons": []
+            },
+            {
+              "id": "supported_card_merchant_qr_payment",
+              "status": "unresolved_variants",
+              "factIds": [],
+              "reasons": [
+                "unresolved_variants"
+              ]
+            }
+          ],
+          "facts": [
+            {
+              "factId": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+              "objectId": "merchant_acceptance_check",
+              "expiresAt": "2026-09-13T19:05:00.102+00:00",
+              "sourceIds": [
+                "39a3fe48-fea9-4fd0-800e-1340e58425c1"
+              ]
+            }
+          ]
+        },
+        {
+          "locale": "zh",
+          "group": "before",
+          "turnId": "c50327fd-6958-47a3-8cbf-7ad0d17a3fb1",
+          "originalOutcome": "answered",
+          "currentCoverage": "answered",
+          "claims": [
+            {
+              "id": "merchant_acceptance_check",
+              "status": "covered",
+              "factIds": [
+                "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+              ],
+              "reasons": []
+            },
+            {
+              "id": "supported_card_merchant_qr_payment",
+              "status": "covered",
+              "factIds": [
+                "0630a027-ed13-4a3f-857f-6b23ee1f2f45"
+              ],
+              "reasons": []
+            }
+          ],
+          "facts": [
+            {
+              "factId": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+              "objectId": "merchant_acceptance_check",
+              "expiresAt": "2026-09-13T19:05:00.102+00:00",
+              "sourceIds": [
+                "39a3fe48-fea9-4fd0-800e-1340e58425c1"
+              ]
+            },
+            {
+              "factId": "0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+              "objectId": "supported_card_merchant_qr_payment",
+              "expiresAt": "2026-09-19T11:01:51.337+00:00",
+              "sourceIds": [
+                "dfc57139-d26c-4b9b-912b-8ba1de491564"
+              ]
+            }
+          ]
+        },
+        {
+          "locale": "zh",
+          "group": "during",
+          "turnId": "b4fcf0a8-ed52-4f02-a6e3-df2c58425f66",
+          "originalOutcome": "partial",
+          "currentCoverage": "partial",
+          "claims": [
+            {
+              "id": "merchant_acceptance_check",
+              "status": "covered",
+              "factIds": [
+                "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+              ],
+              "reasons": []
+            },
+            {
+              "id": "supported_card_merchant_qr_payment",
+              "status": "unresolved_variants",
+              "factIds": [],
+              "reasons": [
+                "unresolved_variants"
+              ]
+            }
+          ],
+          "facts": [
+            {
+              "factId": "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+              "objectId": "merchant_acceptance_check",
+              "expiresAt": "2026-09-13T19:05:00.102+00:00",
+              "sourceIds": [
+                "39a3fe48-fea9-4fd0-800e-1340e58425c1"
+              ]
+            }
+          ]
+        }
+      ],
+      "web": [
+        {
+          "locale": "en",
+          "group": "before",
+          "turnId": "4534e93b-4a1d-44f0-ab0f-46491c0976d1",
+          "taskId": "fe711696-3d9b-415b-aa55-35090e50f2c5",
+          "currentCoverage": "answered",
+          "facts": [
+            "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+            "0630a027-ed13-4a3f-857f-6b23ee1f2f45"
+          ]
+        },
+        {
+          "locale": "en",
+          "group": "during",
+          "turnId": "11863601-80f8-4423-9670-fc71abd82b6b",
+          "taskId": "efcf728f-1afb-42e9-aaaf-3791b0bc95d8",
+          "currentCoverage": "partial",
+          "facts": [
+            "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+          ]
+        },
+        {
+          "locale": "zh",
+          "group": "before",
+          "turnId": "c50327fd-6958-47a3-8cbf-7ad0d17a3fb1",
+          "taskId": "a98b0c10-cfca-4835-9d65-968d987987e7",
+          "currentCoverage": "answered",
+          "facts": [
+            "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d",
+            "0630a027-ed13-4a3f-857f-6b23ee1f2f45"
+          ]
+        },
+        {
+          "locale": "zh",
+          "group": "during",
+          "turnId": "b4fcf0a8-ed52-4f02-a6e3-df2c58425f66",
+          "taskId": "2dba1294-829b-4111-be9d-752756c47e9b",
+          "currentCoverage": "partial",
+          "facts": [
+            "3a21c4ac-7d0d-4b77-9ea4-5c07d2bd3b7d"
+          ]
+        }
+      ],
+      "ui": "PASS"
+    },
+    {
+      "id": "card-naturally-expired",
+      "at": "2026-09-13T19:05:03.030Z",
+      "api": [
+        {
+          "locale": "en",
+          "group": "before",
+          "turnId": "4534e93b-4a1d-44f0-ab0f-46491c0976d1",
+          "originalOutcome": "answered",
+          "currentCoverage": "partial",
+          "claims": [
+            {
+              "id": "merchant_acceptance_check",
+              "status": "unavailable",
+              "factIds": [],
+              "reasons": [
+                "expired"
+              ]
+            },
+            {
+              "id": "supported_card_merchant_qr_payment",
+              "status": "covered",
+              "factIds": [
+                "0630a027-ed13-4a3f-857f-6b23ee1f2f45"
+              ],
+              "reasons": []
+            }
+          ],
+          "facts": [
+            {
+              "factId": "0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+              "objectId": "supported_card_merchant_qr_payment",
+              "expiresAt": "2026-09-19T11:01:51.337+00:00",
+              "sourceIds": [
+                "dfc57139-d26c-4b9b-912b-8ba1de491564"
+              ]
+            }
+          ]
+        },
+        {
+          "locale": "en",
+          "group": "during",
+          "turnId": "11863601-80f8-4423-9670-fc71abd82b6b",
+          "originalOutcome": "partial",
+          "currentCoverage": "no_answer",
+          "claims": [
+            {
+              "id": "merchant_acceptance_check",
+              "status": "unavailable",
+              "factIds": [],
+              "reasons": [
+                "expired"
+              ]
+            },
+            {
+              "id": "supported_card_merchant_qr_payment",
+              "status": "unresolved_variants",
+              "factIds": [],
+              "reasons": [
+                "unresolved_variants"
+              ]
+            }
+          ],
+          "facts": []
+        },
+        {
+          "locale": "zh",
+          "group": "before",
+          "turnId": "c50327fd-6958-47a3-8cbf-7ad0d17a3fb1",
+          "originalOutcome": "answered",
+          "currentCoverage": "partial",
+          "claims": [
+            {
+              "id": "merchant_acceptance_check",
+              "status": "unavailable",
+              "factIds": [],
+              "reasons": [
+                "expired"
+              ]
+            },
+            {
+              "id": "supported_card_merchant_qr_payment",
+              "status": "covered",
+              "factIds": [
+                "0630a027-ed13-4a3f-857f-6b23ee1f2f45"
+              ],
+              "reasons": []
+            }
+          ],
+          "facts": [
+            {
+              "factId": "0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+              "objectId": "supported_card_merchant_qr_payment",
+              "expiresAt": "2026-09-19T11:01:51.337+00:00",
+              "sourceIds": [
+                "dfc57139-d26c-4b9b-912b-8ba1de491564"
+              ]
+            }
+          ]
+        },
+        {
+          "locale": "zh",
+          "group": "during",
+          "turnId": "b4fcf0a8-ed52-4f02-a6e3-df2c58425f66",
+          "originalOutcome": "partial",
+          "currentCoverage": "no_answer",
+          "claims": [
+            {
+              "id": "merchant_acceptance_check",
+              "status": "unavailable",
+              "factIds": [],
+              "reasons": [
+                "expired"
+              ]
+            },
+            {
+              "id": "supported_card_merchant_qr_payment",
+              "status": "unresolved_variants",
+              "factIds": [],
+              "reasons": [
+                "unresolved_variants"
+              ]
+            }
+          ],
+          "facts": []
+        }
+      ],
+      "web": [
+        {
+          "locale": "en",
+          "group": "before",
+          "turnId": "4534e93b-4a1d-44f0-ab0f-46491c0976d1",
+          "taskId": "fe711696-3d9b-415b-aa55-35090e50f2c5",
+          "currentCoverage": "partial",
+          "facts": [
+            "0630a027-ed13-4a3f-857f-6b23ee1f2f45"
+          ]
+        },
+        {
+          "locale": "en",
+          "group": "during",
+          "turnId": "11863601-80f8-4423-9670-fc71abd82b6b",
+          "taskId": "efcf728f-1afb-42e9-aaaf-3791b0bc95d8",
+          "currentCoverage": "no_answer",
+          "facts": []
+        },
+        {
+          "locale": "zh",
+          "group": "before",
+          "turnId": "c50327fd-6958-47a3-8cbf-7ad0d17a3fb1",
+          "taskId": "a98b0c10-cfca-4835-9d65-968d987987e7",
+          "currentCoverage": "partial",
+          "facts": [
+            "0630a027-ed13-4a3f-857f-6b23ee1f2f45"
+          ]
+        },
+        {
+          "locale": "zh",
+          "group": "during",
+          "turnId": "b4fcf0a8-ed52-4f02-a6e3-df2c58425f66",
+          "taskId": "2dba1294-829b-4111-be9d-752756c47e9b",
+          "currentCoverage": "no_answer",
+          "facts": []
+        }
+      ],
+      "ui": "PASS"
+    }
+  ],
+  "savedCompletionsUnchanged": true,
+  "priorRowsRetained": true,
+  "state": {
+    "ops": false,
+    "trips": 3,
+    "users": 6,
+    "reader": false,
+    "members": [
+      {
+        "id": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+        "active": false,
+        "revision": 14
+      },
+      {
+        "id": "fe70fac7-d312-494c-bde1-4c37c3942722",
+        "active": false,
+        "revision": 14
+      }
+    ],
+    "attempts": 325,
+    "migrations": 46,
+    "unresolved": 0,
+    "activeMembers": 0
+  }
+}

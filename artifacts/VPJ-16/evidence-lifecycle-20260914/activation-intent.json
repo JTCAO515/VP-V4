@@ -1,0 +1,28 @@
+{
+  "at": "2026-09-13T18:03:00.571Z",
+  "runId": "6e5f05aa-a55d-4455-a1d5-ee5ced021d5c",
+  "project": "dzqdzetcctkhbrhlxxgn",
+  "owners": [
+    "fe70fac7-d312-494c-bde1-4c37c3942722",
+    "7d063756-e5d8-4a6b-94a3-5134b0b04443"
+  ],
+  "rows": [
+    "knowledge_review_private.settings:singleton",
+    "knowledge_review_private.publication_settings:singleton",
+    "knowledge_review_private.members:fe70fac7-d312-494c-bde1-4c37c3942722",
+    "knowledge_review_private.members:7d063756-e5d8-4a6b-94a3-5134b0b04443"
+  ],
+  "members": [
+    {
+      "id": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+      "active": false,
+      "revision": 4
+    },
+    {
+      "id": "fe70fac7-d312-494c-bde1-4c37c3942722",
+      "active": false,
+      "revision": 4
+    }
+  ],
+  "beforeHash": "00eb75c6d129386ea90d5c94d1a867558f1b2975de7e123e54d898a2cfec5c75"
+}
