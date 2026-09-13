@@ -5758,5 +5758,144 @@
       "milestoneNumber": 13,
       "milestoneUrl": "https://github.com/JTCAO515/VP-V4/milestone/13"
     }
-  ]
+  ],
+  "deliverySupplements": {
+    "maps-20260913": {
+      "approvedAt": "2026-09-13",
+      "status": "planned",
+      "purpose": "Existing VPJ-18/19/20 delivery slices; no new program identity or parent acceptance replacement.",
+      "executionGuide": "docs/agents/maps-integration-development.md",
+      "slices": [
+        {
+          "key": "maps-01",
+          "parent": 208,
+          "stage": "S3",
+          "title": "[VPJ-18 切片] 高德/腾讯开发配置与四城真实接口对照",
+          "result": "开发者用同一可复现命令在开发/获准Staging环境完成两家地点搜索和路线查询，得到脱敏结果、调用成本与明确主供应商建议。",
+          "acceptance": [
+            "配置两家独立服务端凭据与无秘密模板、启停开关、固定官方域名、超时/重试上限、请求/矩阵元素预算；不安装两套完整地图SDK，不暴露服务端Key。",
+            "只使用公开地点和合成起终点进行初始探针，避免依赖尚未确认的用户位置外发；账号访问或权限缺失写清技术原因，通过官方登录/安全配置交接。",
+            "冻结上海/北京/广州/重庆每城10个地点的中/英/拼音120条查询，以及每城10条适用交通方式路线；包含航站楼、站口、同名分店、景区入口和重庆复杂步行。至少先完成每家一条搜索+一条路线，再受预算约束运行完整对照。",
+            "英文实体命中、入口、路线可执行性、错误合并、延迟和成本有逐项结果；两家一致不等于事实正确。关键地点用独立官方资料或现场证据校准。",
+            "区分海外客户端地图加载、境内客户端使用和服务端API；缺少真实网络/设备时明确UNRUN。记录账号可用字段、价格/配额和用途限制，不虚构已配置/已验收。",
+            "提交主候选/补充/无地图模式选择与失败分类。高级能力仅列已验证权限；公开文档能力不作为账号可用证明。"
+          ],
+          "number": 362,
+          "blockedByNumbers": [],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/362",
+          "status": "planned",
+          "parentTaskId": "VPJ-18",
+          "executionGuide": "docs/agents/maps-integration-development.md"
+        },
+        {
+          "key": "maps-02",
+          "parent": 209,
+          "stage": "S3",
+          "title": "[VPJ-19 切片] 中英地点搜索、准确实体与地图同选中闭环",
+          "result": "游客用英文/拼音/中文搜索，在原生App和轻量Web确认同一个准确地点、中文地址与可识别入口。",
+          "acceptance": [
+            "统一地点身份与provider ID映射；城市/分店歧义让用户选择，机场/航站楼/站口/入口表达父子关系；名称或向量相似不能触发自动合并。",
+            "关键词/输入提示/周边/详情/地址解析走统一适配；地图、列表、详情共享选中ID；保留中文原名、英文别名来源和城市。周边厕所/便利店/餐饮/药店/ATM分类可查，特殊服务未知不推断。",
+            "坐标明确WGS/GCJ等来源与转换记录、经纬顺序；禁止双转和把建筑中心当入口。来源缺少入口时明确未知。",
+            "仅接一个主地图展示SDK；原生/服务端/Web分别配置应用或域名限制；客户端只接必要展示凭据。拒绝定位可手动选起点/城市，失效数据不伪装实时。",
+            "查询观察与已审核Fact分开；保存、重载与跨账号隔离沿既有权限契约，供应商字段逐用途控制，不整库复制。"
+          ],
+          "number": 363,
+          "blockedByNumbers": [
+            362
+          ],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/363",
+          "status": "planned",
+          "parentTaskId": "VPJ-19",
+          "executionGuide": "docs/agents/maps-integration-development.md"
+        },
+        {
+          "key": "maps-03",
+          "parent": 209,
+          "stage": "S3",
+          "title": "[VPJ-19 切片] 步行公交驾车比较与准确目的地导航交接",
+          "result": "游客选定起终点后比较两三个有效方案，看到路线时效和费用估算，并能把准确地点交给地图App。",
+          "acceptance": [
+            "展示总耗时、步行距离、换乘、分段、出发/到达时间、来源及查询时间；区分当前/指定未来出发，不将当前拥堵当明日预测。",
+            "路线同一方案保持单供应商完整结果，费用估算不当实际报价；公交规划不当实时到站，驾车规划不当叫车成功；缺少电梯/楼梯等数据不承诺无障碍。",
+            "入口可确认时使用准确入口；机场/站场首次到访给中文地址卡。导航跳转验证坐标、ID、目标App已装/未装、打开失败和回到VP；失败时可复制地址/使用可用网页出口。",
+            "真实两端演示包含定位拒权、无路线、超时、过期、起终点错误；不自动发送持续位置，不绕过权限或预算。"
+          ],
+          "number": 364,
+          "blockedByNumbers": [
+            363
+          ],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/364",
+          "status": "planned",
+          "parentTaskId": "VPJ-19",
+          "executionGuide": "docs/agents/maps-integration-development.md"
+        },
+        {
+          "key": "maps-04",
+          "parent": 210,
+          "stage": "S3",
+          "title": "[VPJ-20 切片] 地点Save/Ask/Add与真实路程驱动的Trip候选调整",
+          "result": "游客收藏地点、问VP并加入同一Trip；系统结合路程和已有时间约束说明当天是否可行，确认后才调整。",
+          "acceptance": [
+            "衔接#197/#198/#205/#207的真实可用接口；开始集成前核实所需Proposal/Confirm、知识和Trip行为，保留父票完整依赖，不以本文代替前置验收。",
+            "Save/Ask/Add共享canonical ID；到期、已撤回、找不到地点及身份映射变化都有明确状态。",
+            "矩阵按真实供应商能力归一化并核对计费单位；先筛候选再计算少量相关有向路段，限制组合数和并发，修改一处只重算受影响路段。",
+            "交通耗时结合有来源的停留/预约/开放时段和明确缓冲；模型解释但不编造距离/ETA，不将未来预测作保证。",
+            "所有建议生成带Trip版本与路线观察时间的Proposal；查看diff、确认、持久重载闭环可见，版本冲突拒绝静默覆盖，来源变化不自动改已确认Trip。"
+          ],
+          "number": 365,
+          "blockedByNumbers": [
+            364
+          ],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/365",
+          "status": "planned",
+          "parentTaskId": "VPJ-20",
+          "executionGuide": "docs/agents/maps-integration-development.md"
+        },
+        {
+          "key": "maps-05",
+          "parent": 209,
+          "stage": "S4",
+          "title": "[VPJ-19 切片] 在途交通变化与前台重新规划",
+          "result": "用户在前台检查即将出发或当前路线时，看到可验证的交通变化和替代方案。",
+          "acceptance": [
+            "按实际账号能力接路况/交通事件；区分观测、预测、过期和未覆盖，记录供应商与时间；公交实时到站需独立验证才能展示。",
+            "只刷新用户正在查看的路线或显式重新检查，设置移动/时间阈值、节流、预算和停止开关；本票不启用后台定位或推送。",
+            "交通变化有意义时解释替代方案；不拼接供应商路线、不自动改变已确认Trip，改变行程仍走现有确认链。",
+            "验证路况变化、过期、封路数据缺失、网络中断恢复和无变化场景，保留调用记录；不能提供可信替代时保持中文地址和手动导航出口。"
+          ],
+          "number": 366,
+          "blockedByNumbers": [
+            364
+          ],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/366",
+          "status": "planned",
+          "parentTaskId": "VPJ-19",
+          "executionGuide": "docs/agents/maps-integration-development.md"
+        },
+        {
+          "key": "maps-06",
+          "parent": 208,
+          "stage": "S3",
+          "title": "[VPJ-18 切片] 腾讯补查与双供应商受控降级",
+          "result": "主供应商在明确场景失败时，用户获得有来源的腾讯补充结果，或清楚的无地图降级。",
+          "acceptance": [
+            "用maps-01对照证据明确启用的城市/能力/触发条件及收益标准；正常请求不默认双调用。无显著收益则保持腾讯开发可用但运行关闭，记录原因。",
+            "超时/无覆盖可按策略有限切换；鉴权/配额错误进入明确配置或运维状态，不无限重试，不静默突破预算。",
+            "用户位置/查询外发接收方在既有同意范围内；未同意第二家时不外发，验证撤回、超时及并发。",
+            "新供应商重新生成完整路线、保留源和ID映射；不能跨底图混用未经确定用途的字段或平均两家ETA。",
+            "验证两家均不可用、实体冲突、坐标边界与额外成本上限；高级矩阵/室内/可达圈只启用已证实改善具体任务的能力，其余保留后续项。"
+          ],
+          "number": 367,
+          "blockedByNumbers": [
+            364
+          ],
+          "url": "https://github.com/JTCAO515/VP-V4/issues/367",
+          "status": "planned",
+          "parentTaskId": "VPJ-18",
+          "executionGuide": "docs/agents/maps-integration-development.md"
+        }
+      ]
+    }
+  }
 }
