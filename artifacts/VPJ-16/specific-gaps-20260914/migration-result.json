@@ -1,0 +1,23 @@
+{
+  "at": "2026-09-13T16:20:33.962Z",
+  "status": "PASS",
+  "migrationCount": 46,
+  "originalTablesPreserved": 78,
+  "originalSchemaEntriesChecked": 261,
+  "expectedChangedFunctions": [
+    "public.read_grounded_turn("
+  ],
+  "backupRestore": "PASS",
+  "authCount": 6,
+  "tripCount": 3,
+  "defaultReadDisabled": true,
+  "opsDisabled": true,
+  "noActiveMembers": true,
+  "publicationsPreserved": true,
+  "privateHelpersDenied": true,
+  "privateTablesDenied": true,
+  "groundedPrivate": true,
+  "groundedRls": true,
+  "groundedRpcAcl": true,
+  "readOnlyAuthenticated": true
+}

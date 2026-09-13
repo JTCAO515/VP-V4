@@ -1,0 +1,34 @@
+{
+  "purpose": "Two distinct native UI producer/readback submissions after the frozen API evaluation ends; not rerolls",
+  "cases": [
+    {
+      "id": "needs-rail-arrival-en",
+      "locale": "en",
+      "text": "What ordinary booking ID and ticket proof do I need for a mainland train, and how early should I arrive at the station?",
+      "intent": "rail_boarding_documents",
+      "requestScope": "additional_needs",
+      "outcome": "partial",
+      "requiredFragments": [
+        "how early"
+      ],
+      "forbiddenFragments": [
+        "What ordinary booking"
+      ]
+    },
+    {
+      "id": "needs-payment-two-needs-zh",
+      "locale": "zh",
+      "text": "怎样开始使用支付宝向商户付款？今天我的准确手续费是多少？还能给朋友转账吗？",
+      "intent": "payment_mobile_setup",
+      "requestScope": "additional_needs",
+      "outcome": "partial",
+      "requiredFragments": [
+        "准确手续费",
+        "给朋友转账"
+      ],
+      "forbiddenFragments": [
+        "怎样开始使用"
+      ]
+    }
+  ]
+}

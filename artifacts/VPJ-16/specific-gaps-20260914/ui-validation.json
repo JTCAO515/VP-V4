@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "specific-needs-ui/1",
+  "status": "PASS",
+  "sourceSha": "196e30b02f953e3e5eca245f99fedfd0a47d241b",
+  "preview": "vp-v4-1wvpjcqqq-jtcao515s-projects.vercel.app",
+  "native": {
+    "environment": "owned iOS Simulator, ad-hoc Staging build",
+    "realProducerCases": 2,
+    "dbAudit": "native-audit.json",
+    "screenshots": [
+      "native-en-gap-visible.png",
+      "native-zh-gap-visible.png"
+    ],
+    "observed": "Exact unsupported requests visible before reviewed facts in en/zh; source sections retained; both sessions signed out; owned Simulator shut down.",
+    "attemptLimitations": [
+      "First English Send tap left draft; Done then Send admitted one actual task. No duplicate worker call.",
+      "Chinese AXE typing rejected unsupported keycodes before submission; Simulator paste entered the synthetic question and stored input matched.",
+      "Earlier English capture clipped the quote; final slow-scroll screenshot shows complete quote."
+    ]
+  },
+  "web": {
+    "viewports": [
+      [
+        1365,
+        900
+      ],
+      [
+        390,
+        844
+      ]
+    ],
+    "locales": [
+      "en",
+      "zh"
+    ],
+    "matchingNativeTurnIds": [
+      "71464278-361b-4111-93d7-f3e215ebfaef",
+      "89e1a9de-610e-4761-a46f-2ace9356affa"
+    ],
+    "observed": "Quotes visible, separate from reviewed facts and qualifiers; no horizontal overflow; console errors empty; normal sign-out in both locales; QA tab closed and viewport reset."
+  },
+  "cleanup": {
+    "readerEnabled": false,
+    "opsEnabled": false,
+    "activeMembers": 0,
+    "ownWafAllowanceRemoved": true,
+    "wafVersion": 70,
+    "productionTargetUnchanged": true,
+    "users": 6,
+    "trips": 3
+  },
+  "unrun": [
+    "Physical device, VoiceOver and full S2 acceptance",
+    "Supplier invoice reconciliation",
+    "New network fault injection"
+  ]
+}

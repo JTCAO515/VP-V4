@@ -1,0 +1,40 @@
+{
+  "at": "2026-09-13T17:07:24.789Z",
+  "status": "PASS",
+  "rows": [
+    {
+      "turnId": "71464278-361b-4111-93d7-f3e215ebfaef",
+      "taskId": "b3592b7d-6b92-46a1-b567-bb563751d101",
+      "locale": "en",
+      "intent": "rail_boarding_documents",
+      "scope": "additional_needs",
+      "outcome": "partial",
+      "needs": [
+        "how early should I arrive at the station"
+      ],
+      "input": "What ordinary booking ID and ticket proof do I need for a mainland train, and how early should I arrive at the station?",
+      "workState": "completed",
+      "completed": true
+    },
+    {
+      "turnId": "89e1a9de-610e-4761-a46f-2ace9356affa",
+      "taskId": "90152d4f-11ec-4125-bad9-8abd2c9d4c60",
+      "locale": "zh",
+      "intent": "payment_mobile_setup",
+      "scope": "additional_needs",
+      "outcome": "partial",
+      "needs": [
+        "今天我的准确手续费是多少？",
+        "还能给朋友转账吗？"
+      ],
+      "input": "怎样开始使用支付宝向商户付款？今天我的准确手续费是多少？还能给朋友转账吗？",
+      "workState": "completed",
+      "completed": true
+    }
+  ],
+  "turns": 2,
+  "attempts": [
+    "84604dbe-35a2-4006-8ce9-603fa0805659",
+    "b3978464-1b78-4ad0-bf4f-7e6387a56aa7"
+  ]
+}

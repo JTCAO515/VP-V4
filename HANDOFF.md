@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2: PR369 merged at37e7700; PR370 Web refresh fix observed on frozen d056ec5 dedicated Preview with Staging45. Bilingual desktop/mobile reading stays visible across refresh; exact-head final evidence gates/merge pending.
+状态：S2: PR370 merged6df00f7. PR371 code196e30b passed Staging46 provider106/106, native2/2 and en/zh Web desktop/mobile; all108 attempts settled, prior207 retained rows and Trips unchanged. Reader/Ops disabled and own WAF allowance removed. Final evidence commit/checks and protected merge pending.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -35,7 +35,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 未决与运行证据
 
-- Staging43 bounded rail and payment Ask, same-task clarification/repair, Web owner readback, worker recovery and native event reconnect are observed. Full S1/S2, wider knowledge/semantic coverage, physical-device payment acceptance, unobserved fault cases and complete operational acceptance remain incomplete. Supplier unknowns are disclosed, not approval blockers.
+- Staging46 bounded rail/payment/SIM Ask, specific unanswered requests, same-task clarification/repair, Web owner readback, worker recovery and native event reconnect are observed. Full S1/S2, wider knowledge coverage, physical/VoiceOver, unobserved fault cases and complete operational acceptance remain incomplete.
 - VPJ-41 real same-Trip dependencies remain open; this explicitly authorized fixture migration is not their completion.
 - Actual data retention, model/media regions, maps/hotel runtime integration, Apple signing/store product and Production actions remain owned by corresponding operator Issues.
 - #264 depends on #206, which remains OPEN: PR342 now supplies a real bounded reviewed-fact/native task chain, but wider knowledge coverage and complete Harness runtime acceptance remain outstanding. Preserve #263 offline evidence within its original scope.
@@ -53,6 +53,9 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- PR371 code196e30b: database16/16, native knowledge13/13 and Quality34767965402/Budget34767965434/Native34767965393 PASS. Staging45 backup/restore/rollback and migration46 PASS. Real provider106/106 (20 new+86 prior), native producer2/2 and Web en/zh1365×900/390×844 PASS. All108 new attempts settled (configured estimate1231188 CNY micros); prior207 rows/Trips unchanged; users6/Trips3, reader/Ops off, members0, ownWAF removed70. Physical/VoiceOver/invoice/fullS2 UNRUN. artifacts/VPJ-16/specific-gaps-20260914/verification.md.
+- PR370 merged6df00f7 at2026-09-13T15:58:32Z; final395f8d8 Quality34766955731/Vercel PASS. Auto-Production dpl_CpePkAHhBe5LRBbzMR7D8hnHHPoD CANCELED; all5production aliases and sharedStaging unchanged at15:59:22Z. Prior667 real browser samples and cleanup remain valid.
+- Maps #362 independent preparation: draftPR372/e748b23 includes bounded public search+walking probes and secret-free template;6 local tests/lint/typecheck/docs/syntax/diff PASS. Account/API, four-city comparison and actual network/device results UNRUN. Official AMap login/secure credential location pending; no provider call. artifacts/VPJ-18/initial-probe-20260914/verification.md (in draftPR372).
 - PR370 frozen d056ec5: lint266/typecheck/contracts278 PASS; independent review0Critical/Important; actual en/zh1365×900/390×844 browser observations36seconds each,667 samples all visible/open/fixed position. No network fault injection: deterministic actual-effect tests cover expiry and auth/offline races. artifacts/VPJ-16/web-read-refresh-20260913/verification.md.
 - PR369 frozen c8a12c8: Staging44→45 preserved78tables/261schema+ACL; actual cancelled read/SSE0+1/foreign denial and completed SSE pass; Web1365/390 plus en/zh sources and native cancelled/reload/source date pass.207Turns/207attempts/1549974micros/0unresolved and Turn/event/work/grounded/budget/Trip digests unchanged. Reader/Opsfalse,members0,WAF64,normal logouts and Simulator shutdown. artifacts/VPJ-16/cancelled-read-20260913/verification.md.
 - PR357 merged a352c7e after Quality34763806205, Budget34763806427, Native34763806245 and Preview passed. Auto-Production dpl_DkKqpJ9Qzecxb4xBm5c7KCmUZgYH canceled; five production aliases and shared Staging unchanged.
@@ -132,7 +135,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Finish PR370 exact-head gates and protected merge; then continue S2 acceptance and approved maps #362 preparation. Keep #206/#264 and full S2 open.
+Finish PR371 final-head CI and protected repository merge; preserve Production build guard and verify unchanged aliases. Then inspect remaining S2 coverage under #206/#264. Maps draftPR372 has local and CI PASS, but needs an existing secure Web Service Key or official console login before actual probes.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
