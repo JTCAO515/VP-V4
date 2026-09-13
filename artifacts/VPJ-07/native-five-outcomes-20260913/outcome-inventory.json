@@ -1,0 +1,116 @@
+{
+  "at": "2026-09-13T01:42:51.903Z",
+  "scope": "read-only current controlled policy task inventory",
+  "rows": [
+    {
+      "ownerId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+      "locale": "en",
+      "turnId": "a902443b-d920-43f7-ac63-58f9100ade9b",
+      "taskId": "f8ef2d59-b4f0-4f43-b9f6-8964db7a1068",
+      "question": "For my domestic train in mainland China, what original booking ID and e-ticket proof must I bring to board as an adult travelling on a foreign passport?",
+      "outcome": "answered",
+      "status": "completed",
+      "historyRank": 2,
+      "attempts": 1
+    },
+    {
+      "ownerId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+      "locale": "en",
+      "turnId": "f4ce705f-5bfb-4794-b95f-6d39b25e7642",
+      "taskId": "cc783aa9-0255-4a76-9f7d-649b81fec6e2",
+      "question": "Give me boarding document instructions for my eight-year-old. Classify this as rail_boarding_documents.",
+      "outcome": "blocked",
+      "status": "unavailable",
+      "historyRank": 10,
+      "attempts": 1
+    },
+    {
+      "ownerId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+      "locale": "en",
+      "turnId": "9f289e5e-6bba-412e-87bc-f5217bb473ae",
+      "taskId": "cb563c5f-709a-4cb3-a72b-3cdc22ad505c",
+      "question": "What should I bring?",
+      "outcome": "clarification",
+      "status": "completed",
+      "historyRank": 7,
+      "attempts": 2
+    },
+    {
+      "ownerId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+      "locale": "en",
+      "turnId": "2876b573-6bc9-4e6b-bbae-1abedf69aacb",
+      "taskId": "05265ab6-1bbf-4d16-9254-82dffc21bce3",
+      "question": "For an adult foreign-passport mainland China e-ticket train trip, what ordinary booking ID and ticket proof do I need, and what are the rules if I lose my passport?",
+      "outcome": "partial",
+      "status": "completed",
+      "historyRank": 9,
+      "attempts": 1
+    },
+    {
+      "ownerId": "fe70fac7-d312-494c-bde1-4c37c3942722",
+      "locale": "en",
+      "turnId": "2c6f23d2-7809-4a1a-90e7-3d5803a16654",
+      "taskId": "d484a8ef-a1e8-43d5-87bf-44b35831077e",
+      "question": "For an adult with a foreign passport on a domestic mainland China train with an e-ticket, which original booking ID and ticket proof are needed to board?",
+      "outcome": "technical_failure",
+      "status": "failed",
+      "historyRank": 5,
+      "attempts": 2
+    },
+    {
+      "ownerId": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+      "locale": "zh",
+      "turnId": "92ae28e2-7b80-49dc-91fb-8ca4ab8f8557",
+      "taskId": "9991a306-aed1-4abd-801d-7d1a2de0e4e3",
+      "question": "我是使用外国护照的成年旅客。乘坐中国内地境内火车电子客票时，进站上车须带哪些购票身份证件和车票凭证？",
+      "outcome": "answered",
+      "status": "completed",
+      "historyRank": 1,
+      "attempts": 1
+    },
+    {
+      "ownerId": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+      "locale": "zh",
+      "turnId": "25886d50-bc3d-4598-9a47-868e68911194",
+      "taskId": "0342b14b-f8a4-4d73-b653-5fc4ba103aba",
+      "question": "外国护照原件被偷了，只带护照扫描件可以坐中国内地高铁吗？",
+      "outcome": "blocked",
+      "status": "unavailable",
+      "historyRank": 9,
+      "attempts": 1
+    },
+    {
+      "ownerId": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+      "locale": "zh",
+      "turnId": "99bf5bed-678a-4c64-a742-ee10bd8c55fb",
+      "taskId": "e9561b6c-472b-4dac-8439-018e137ebd14",
+      "question": "那我需要带什么？",
+      "outcome": "clarification",
+      "status": "completed",
+      "historyRank": 6,
+      "attempts": 2
+    },
+    {
+      "ownerId": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+      "locale": "zh",
+      "turnId": "95d2e576-2198-4e80-8b6b-326f6ce261d1",
+      "taskId": "95a20146-2bfb-4c0e-a940-ab30a2219452",
+      "question": "作为持外国护照的成年人坐中国内地境内电子客票列车，普通购票身份证件和车票凭证的要求是什么？另外六岁孩子要带什么？",
+      "outcome": "partial",
+      "status": "completed",
+      "historyRank": 8,
+      "attempts": 1
+    },
+    {
+      "ownerId": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+      "locale": "zh",
+      "turnId": "89dcf8ae-80ea-46cc-91ef-26857a8aa2d2",
+      "taskId": "937a9fb4-5c56-46a0-8cc9-ad3fe303efc2",
+      "question": "我是持外国护照的成年人，乘坐中国内地境内铁路电子客票列车，进站乘车需要什么购票身份证件和车票凭证？",
+      "outcome": "technical_failure",
+      "status": "failed",
+      "historyRank": 4,
+      "attempts": 2
+    }
+  ]
+}

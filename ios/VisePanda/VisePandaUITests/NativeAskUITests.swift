@@ -56,16 +56,21 @@ nonisolated final class NativeAskUITests: XCTestCase {
             XCTAssertTrue(restored.label.contains(chinese ? "合成审核" : "Synthetic reviewed"))
             XCTAssertFalse(app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH %@", "native-ask.answer.")).firstMatch.exists)
             capture("Grounded-recovered-\(locale)", app)
-            // Cross the real 30-second evidence deadline while reading a scrolled
-            // answer. Refresh may hide expired facts, but must not move the reader.
+            // Hold only the loopback history read across its real evidence
+            // deadline. The notice must remain in the viewport while the old
+            // facts are hidden, then the same answer resumes at the same offset.
             let readingY = restored.frame.minY
-            let refreshDeadline = ProcessInfo.processInfo.systemUptime + 36
-            while ProcessInfo.processInfo.systemUptime < refreshDeadline {
-                if restored.exists {
-                    XCTAssertEqual(restored.frame.minY, readingY, accuracy: 3)
-                }
-                RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.5))
-            }
+            let control = try XCTUnwrap(environment["VP_NATIVE_GROUNDED_READ_CONTROL_URL"])
+            setReadGate("hold", url: control)
+            defer { setReadGate("release", url: control) }
+            let rechecking = app.staticTexts["grounded.rechecking"]
+            XCTAssertTrue(rechecking.waitForExistence(timeout: 40))
+            XCTAssertFalse(restored.exists)
+            XCTAssertGreaterThanOrEqual(rechecking.frame.minY, 100)
+            XCTAssertLessThan(rechecking.frame.maxY, app.frame.height / 2)
+            XCTAssertTrue(rechecking.label.contains(chinese ? "重新核对" : "Rechecking"))
+            capture("Grounded-expired-visible-notice-\(locale)", app)
+            setReadGate("release", url: control)
             XCTAssertTrue(restored.waitForExistence(timeout: 10))
             XCTAssertEqual(restored.frame.minY, readingY, accuracy: 3)
             capture("Grounded-reading-refresh-\(locale)", app)
@@ -100,6 +105,17 @@ nonisolated final class NativeAskUITests: XCTestCase {
             XCTAssertEqual(app.staticTexts["native-ask.intent"].label, chinese ? "新问题" : "New question")
             capture("Native-Ask-task-context-\(locale)", app)
         }
+    }
+    @MainActor private func setReadGate(_ command: String, url: String) {
+        let completed = expectation(description: "Local history gate \(command)")
+        var request = URLRequest(url: URL(string: url)!)
+        request.httpMethod = "POST"; request.httpBody = Data(command.utf8)
+        URLSession.shared.dataTask(with: request) { _, response, error in
+            XCTAssertNil(error)
+            XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
+            completed.fulfill()
+        }.resume()
+        wait(for: [completed], timeout: 5)
     }
     @MainActor private func reveal(_ element: XCUIElement, _ app: XCUIApplication) {
         for _ in 0..<12 where !element.isHittable { app.swipeUp() }

@@ -1,0 +1,56 @@
+{
+  "records": [
+    {
+      "at": 1789265919.010119,
+      "factsInAX": 16,
+      "notice": []
+    },
+    {
+      "at": 1789265923.001222,
+      "factsInAX": 16,
+      "notice": []
+    },
+    {
+      "at": 1789265929.972268,
+      "factsInAX": 16,
+      "notice": []
+    },
+    {
+      "at": 1789265937.7417998,
+      "factsInAX": 16,
+      "notice": []
+    },
+    {
+      "at": 1789265946.093024,
+      "factsInAX": 16,
+      "notice": []
+    },
+    {
+      "at": 1789265954.530642,
+      "factsInAX": 16,
+      "notice": []
+    },
+    {
+      "at": 1789265964.383195,
+      "factsInAX": 16,
+      "notice": []
+    },
+    {
+      "at": 1789265975.9396951,
+      "factsInAX": 16,
+      "notice": []
+    },
+    {
+      "at": 1789265982.7921112,
+      "factsInAX": 16,
+      "notice": []
+    },
+    {
+      "at": 1789265990.204934,
+      "factsInAX": 16,
+      "notice": []
+    }
+  ],
+  "noticeSeen": false,
+  "providerCalls": 0
+}
