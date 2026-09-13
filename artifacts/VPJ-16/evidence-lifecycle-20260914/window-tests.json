@@ -1,0 +1,21 @@
+{
+  "environment": "isolated-local-postgres",
+  "checks": [
+    {
+      "case": "owned",
+      "status": "PASS"
+    },
+    {
+      "case": "lost_commit_receipt",
+      "status": "PASS"
+    },
+    {
+      "case": "foreign_takeover",
+      "status": "PASS"
+    },
+    {
+      "case": "retention_changed",
+      "status": "PASS"
+    }
+  ]
+}

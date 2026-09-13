@@ -1,0 +1,30 @@
+{
+  "scope": "operator window and bounded lifecycle runner",
+  "critical": 0,
+  "important": 0,
+  "windowSha256": "5ba47f67bf936a68ff05c7629e4e1fddcef5603317a8a37517685091ebad3a1b",
+  "runnerSha256": "eb3f82ff38d88922d9d004ab61264277b3fd373f48c3596673f5aa2f14d98d44",
+  "localTransactionTests": {
+    "environment": "isolated-local-postgres",
+    "checks": [
+      {
+        "case": "owned",
+        "status": "PASS"
+      },
+      {
+        "case": "lost_commit_receipt",
+        "status": "PASS"
+      },
+      {
+        "case": "foreign_takeover",
+        "status": "PASS"
+      },
+      {
+        "case": "retention_changed",
+        "status": "PASS"
+      }
+    ]
+  },
+  "reviewer": "knowledge_security_review",
+  "stagingAcceptance": "NOT_CLAIMED"
+}

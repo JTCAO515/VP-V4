@@ -6,7 +6,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2: PR371 merged8e95279 with provider106/106, native2/2, Web en/zh desktop/mobile and all final CI PASS; Production deployment cancelled, aliases unchanged. Main integration is draftPR373: real-clock database17/17 and dedicated Preview/native build PASS; Staging expiry/conflict fault run UNRUN. Maps draftPR372 remains the sole independent preparation lane.
+状态：S2: main integration draftPR373 v1 lifecycle window FAIL at invalid synthetic conflict submission; initial en/zh answered tasks observed, both settled. Cleanup PASS:317 attempts/0unresolved, original data retained, switches off/members0/WAF72. Corrected frozen v2 Ops-input contract2/2 PASS, live run UNRUN. Maps draftPR372 remains sole prep lane.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -53,6 +53,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 验证
 
+- PR373 v1 actual Staging: English/Chinese answered2/2 before conflict; next synthetic submit400INVALID_INPUT because uppercase sourceKey/URI. OverallFAIL; conflict and natural expiryUNRUN. Both tasks settled22638CNYmicros estimated/actualbillingunknown;317attempts/0unresolved,original records/Trips retained,reader/Opsfalse/members0/WAF72,normallogout/Simulator shutdown. Correctedv2 fixtureOpscontract2/2PASS; windowtransaction tests4/4PASS; independentpermission review0/0. See artifacts/VPJ-16/evidence-lifecycle-20260914/verification.md.
 - PR373 initial1218c76: isolated PostgreSQL17/17 zero skips includes natural expiry/conflict, reliable partial and immutable saved gaps; lint266/docs/syntax/diff PASS. Staging preflight46migrations/315attempts/0unresolved/6users/3Trips; reader/Ops off, members0. Dedicated Preview8e95279 READY; native ad-hoc Staging build/codesign PASS. Frozen4-call/35minute scenario; actual fault window UNRUN. artifacts/VPJ-16/evidence-lifecycle-20260914/verification.md.
 - PR371 merged8e95279417a0a1147f7e81a5a857b0fbdb72d0de at2026-09-13T17:29:58Z, tree matches finalc66f936. Quality34771205900/Budget34771205904/Native34771205917/Preview PASS. Production dpl_ERpRhq9Xof67LwqKcvrsN9mgsJMm cancelled; all5Production aliases and sharedStaging unchanged at17:30:24Z. Prior runtime196e30b evidence remains valid within its recorded scope.
 - PR371 code196e30b: database16/16, native knowledge13/13 and Quality34767965402/Budget34767965434/Native34767965393 PASS. Staging45 backup/restore/rollback and migration46 PASS. Real provider106/106 (20 new+86 prior), native producer2/2 and Web en/zh1365×900/390×844 PASS. All108 new attempts settled (configured estimate1231188 CNY micros); prior207 rows/Trips unchanged; users6/Trips3, reader/Ops off, members0, ownWAF removed70. Physical/VoiceOver/invoice/fullS2 UNRUN. artifacts/VPJ-16/specific-gaps-20260914/verification.md.
@@ -137,7 +138,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Complete draftPR373 bounded Staging evidence lifecycle runner and cleanup before activation; use the frozen4-call synthetic scenario, existing protected author/reviewer APIs and original-record digests. Observe natural conflict/support expiry in native/Web; preserve all original12 publications including the revoked card. No Production release. Maps needs secure Web Service Key/console login.
+Continue PR373 with corrected frozen evidence-lifecycle-v2.json. Keep v1 failure and its2 tasks/publication retained; fresh baseline317attempts/13statements,4 remaining calls (slice total max6). Validate every statement through actual Ops validator before activation. Reuse reviewed controller with DB-bound transaction ownership and cleanup; observe conflict and natural expiry with native/Web. No Production release.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

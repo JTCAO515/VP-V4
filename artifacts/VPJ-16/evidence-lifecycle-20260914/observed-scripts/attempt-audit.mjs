@@ -1,0 +1,7 @@
+import fs from 'node:fs';import assert from 'node:assert/strict';import {query} from '../specific-gaps-20260914/transport.mjs';
+const root=new URL('./',import.meta.url),read=n=>JSON.parse(fs.readFileSync(new URL(n,root),'utf8'));
+const run=read('lifecycle.json');const receipts=[1,2].map(n=>fs.readFileSync(new URL(`worker-${n}.jsonl`,root),'utf8').trim().split('\n').map(JSON.parse).find(r=>r.schemaVersion==='vpj07-usage-journal/1').receipt);
+const ids=receipts.map(r=>r.attempt.attemptId);assert.ok(ids.every(x=>/^[a-f0-9-]{36}$/.test(x)));
+const rows=JSON.parse(query(`set role postgres;begin read only;select jsonb_agg(to_jsonb(a)) from public.model_budget_attempts a where attempt_id in ('${ids.join("','")}');rollback;`));assert.equal(rows.length,2);
+for(const r of receipts){const row=rows.find(x=>x.attempt_id===r.attempt.attemptId);assert.equal(row.status,'settled');assert.equal(row.actual_micros,r.actualMicros);assert.equal(r.attempt.taskId,r.turnId);assert.ok(run.tasks.some(t=>t.request.turnId===r.turnId&&t.request.serviceTask.id===row.task_id));}
+const out={at:new Date().toISOString(),status:'PASS',runOutcome:'FAIL',scope:'Both accepted tasks settled once; not lifecycle acceptance',receipts,rows,configuredPriceEstimateMicros:rows.reduce((n,r)=>n+r.actual_micros,0),billedCost:'unknown'};fs.writeFileSync(new URL('attempt-audit.json',root),JSON.stringify(out,null,2)+'\n',{mode:0o600});console.log({status:'PASS',tasks:2,configuredPriceEstimateMicros:out.configuredPriceEstimateMicros,billedCost:'unknown'});
