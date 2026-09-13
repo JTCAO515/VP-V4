@@ -1,0 +1,17 @@
+{
+  "sourceElement": {
+    "AXUniqueId": null,
+    "AXLabel": "中国人民银行 / People’s Bank of China",
+    "type": "Button",
+    "frame": {
+      "width": 288.66666666666663,
+      "x": 48,
+      "height": 20.333333333333485,
+      "y": 371.66666666666606
+    },
+    "enabled": true
+  },
+  "matchedCase": "mobile-fee",
+  "turnId": "8390985a-7820-46d6-82cb-ee4b5289c277",
+  "serviceTaskId": "1c18afbf-203f-40ad-8991-f3c607abffa8"
+}

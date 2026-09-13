@@ -1,0 +1,27 @@
+{"mode": "allow", "activeVersion": 49, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{
+  opsEnabled: false,
+  readEnabled: true,
+  activeMembers: 0,
+  statements: 12,
+  published: 11,
+  revoked: 1,
+  authUsers: 6,
+  trips: 3
+}
+
+{ window: 'STOPPED', errorType: 'Error' }
+{
+  opsEnabled: false,
+  readEnabled: false,
+  activeMembers: 0,
+  statements: 12,
+  published: 11,
+  revoked: 1,
+  authUsers: 6,
+  trips: 3
+}
+
+{"mode": "remove", "activeVersion": 50, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
