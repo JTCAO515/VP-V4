@@ -1,0 +1,11 @@
+{
+  "reviewer": "knowledge_security_review",
+  "critical": 0,
+  "important": 0,
+  "scope": "85 exact remaining cases; zero-model recovery; at most3 session replacements; reader-only window",
+  "files": {
+    "place-run.mjs": "9a8dbc5b05c5bccc6c644d9021e17503de02c4bab3a818185b235b8e30a7bf46",
+    "scenario.json": "5e1603408b72966ba5324b16f28221afa96e3940a4c5fed0eb8de05bbcf32d45",
+    "window-state.mjs": "50bb4314c777bcc8d195bd8eda546ce135982e935447ffceb267344c4b1aa6f3"
+  }
+}
