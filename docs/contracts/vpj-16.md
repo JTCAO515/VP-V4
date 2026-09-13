@@ -132,3 +132,20 @@ switch is enabled by migration41. Native local/Staging configuration requires
 Rollback disables this entry/worker and the first-party read switch, retaining
 consented history and budget records. An applied migration is not rewritten.
 Full #206/S2, physical-device and production acceptance remain separate.
+
+## Payment Ask extension (candidate, not yet Staging accepted)
+
+`vp-knowledge-intent-v3` adds general card-acceptance checking, mobile merchant setup and RMB
+cash access, their exact pairs and an all-options overview. Server-owned question definitions
+bind each request to its scene and required assertion relations; the model supplies no facts.
+A revoked card-acceptance publication remains a required gap for card/overview requests and is
+not an obligation for mobile+cash. Exact fee/rate, individual acceptance, transfers and execution
+are unsupported unless separately asked alongside an independently supported general procedure,
+in which case that extra need remains unanswered.
+
+Payment uses the existing first-party snapshots, saved-result invariants and <=30-second
+client lifetime. The appended migration and matching native/Web consumers are one rollout;
+old clients cannot consume unknown payment intents. Keep the scoped integration disabled until
+that candidate combination is verified. No migration or source publication is implied by this
+contract. Current implementation, local evidence and pending real acceptance are recorded in
+`artifacts/VPJ-16/payment-ask-20260913/verification.md`.

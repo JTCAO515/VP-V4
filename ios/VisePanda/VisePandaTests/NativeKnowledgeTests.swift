@@ -127,6 +127,38 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         return try JSONSerialization.data(withJSONObject: root)
     }
 
+    @MainActor func testPaymentQuestionRelationsAndExplicitRailSelectionStayBound() throws {
+        let ids = ["payment_card_acceptance", "payment_mobile_setup", "payment_cash_access", "payment_card_and_mobile", "payment_card_and_cash", "payment_mobile_and_cash", "payment_getting_started"]
+        for id in ids {
+            var root = try XCTUnwrap(JSONSerialization.jsonObject(with: questionPayload()) as? [String: Any])
+            var data = try XCTUnwrap(root["data"] as? [String: Any])
+            let template = try XCTUnwrap((data["statements"] as? [[String: Any]])?.first)
+            let definition = try XCTUnwrap(NativeKnowledgeAnswer.definition(id))
+            var rows: [[String: Any]] = [], claims: [[String: Any]] = []
+            for obligation in definition.claims {
+                var row = template
+                let factId = UUID().uuidString
+                row["factId"] = factId
+                var assertion = try XCTUnwrap(row["assertion"] as? [String: Any])
+                assertion["subjectId"] = obligation.subject; assertion["predicate"] = obligation.predicate; assertion["objectId"] = obligation.object
+                row["assertion"] = assertion; rows.append(row)
+                claims.append(["id": obligation.object, "status": "covered", "reasons": [], "factIds": [factId]])
+            }
+            data["statements"] = rows; data["scope"] = ["city": "shanghai", "scene": "payment", "locale": "en"]
+            data["answer"] = ["questionId": id, "questionVersion": 1, "outcome": "answered", "claims": claims]
+            root["data"] = data
+            let read = try JSONDecoder().decode(NativeKnowledgeReply.self, from: JSONSerialization.data(withJSONObject: root)).data
+            let selection = NativeKnowledgeSelection(city: "shanghai", scene: "payment", locale: "en")
+            XCTAssertGreaterThan(try read.lifetime(for: selection, elapsed: 0, question: true, questionId: id), 0)
+            XCTAssertThrowsError(try read.lifetime(for: selection, elapsed: 0, question: true), "The explicit rail question cannot consume a payment answer")
+            var first = rows[0]
+            var assertion = try XCTUnwrap(first["assertion"] as? [String: Any]); assertion["subjectId"] = "wrong_subject"
+            first["assertion"] = assertion; rows[0] = first; data["statements"] = rows; root["data"] = data
+            let invalid = try JSONDecoder().decode(NativeKnowledgeReply.self, from: JSONSerialization.data(withJSONObject: root)).data
+            XCTAssertThrowsError(try invalid.lifetime(for: selection, elapsed: 0, question: true, questionId: id))
+        }
+    }
+
     @MainActor func testExplicitQuestionKeepsPartialFactsAndWithdrawalReason() async throws {
         let store = NativeKnowledgeStore(), rail = NativeKnowledgeSelection(city: "shanghai", scene: "rail", locale: "en")
         await store.load(scope: owner, selection: rail, question: true) { try questionPayload() }

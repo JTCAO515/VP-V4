@@ -67,3 +67,32 @@ test("terminal queue rows without a completed answer never appear to be processi
     assert.deepEqual(turn.facts, []);
   }
 });
+
+test("payment history binds exact requested relations and uses payment guidance for withdrawn support", async () => {
+  const { QUESTION_DEFINITIONS } = await import("../../../lib/server/knowledge/claim/questions.ts");
+  for (const [questionId, definition] of Object.entries(QUESTION_DEFINITIONS)) {
+    if (definition.scene !== "payment") continue;
+    const f = fixture(), template = f.knowledge.statements[0];
+    f.turn.result.intent = questionId;
+    f.knowledge.answer.questionId = questionId;
+    f.knowledge.scope.scene = "payment";
+    f.knowledge.statements = definition.claims.map(claim => ({ ...structuredClone(template), factId: randomUUID(), assertionId: randomUUID(), assertion: { ...template.assertion, ...claim } }));
+    f.knowledge.answer.claims = definition.claims.map((claim, index) => ({ id: claim.objectId, status: "covered", factIds: [f.knowledge.statements[index].factId], reasons: [] }));
+    const full = f.read();
+    assert.equal(full.turns[0].facts.length, definition.claims.length);
+    assert.equal(full.turns[0].questionId, questionId);
+    assert.equal(savedAnswerNotice(full.turns[0]), null);
+    f.knowledge.statements[0].assertion.subjectId = "unrelated_subject";
+    assert.throws(() => f.read(), "a matching object alone is insufficient");
+    f.knowledge.statements.shift();
+    f.knowledge.answer.claims[0] = { ...f.knowledge.answer.claims[0], status: "unavailable", factIds: [], reasons: ["revoked"] };
+    const partial = f.knowledge.statements.length > 0;
+    f.knowledge.status = partial ? "available" : "no_eligible_content";
+    f.knowledge.answer.outcome = partial ? "partial" : "no_answer";
+    f.turn.outcome = f.turn.result.originalOutcome = partial ? "partial" : "blocked";
+    f.turn.status = partial ? "completed" : "unavailable";
+    assert.equal(savedAnswerNotice(f.read().turns[0]), partial ? "paymentPartial" : "paymentBlocked");
+    f.knowledge.answer.questionId = "rail_boarding_documents";
+    assert.throws(() => f.read(), "payment result cannot be relabelled as rail");
+  }
+});

@@ -207,7 +207,7 @@ struct NativeGroundedResult: Decodable, Equatable {
         }
         guard completedAt.flatMap(NativeKnowledgeRead.date) != nil, turn.output == "reviewed-answer-v1",
               ["current", "unavailable"].contains(projection) else { throw NativeDataError.invalidResponse }
-        if intent == "rail_boarding_documents" {
+        if let intent, let definition = NativeKnowledgeAnswer.definition(intent) {
             guard ["single", "additional_needs"].contains(requestScope ?? ""),
                   ["answered", "partial", "blocked"].contains(originalOutcome ?? ""),
                   requestScope != "additional_needs" || originalOutcome != "answered" else { throw NativeDataError.invalidResponse }
@@ -216,7 +216,7 @@ struct NativeGroundedResult: Decodable, Equatable {
                 return 30 - elapsed
             }
             guard let knowledge else { throw NativeDataError.invalidResponse }
-            return try knowledge.lifetime(for: .init(city: city, scene: "rail", locale: turn.locale), elapsed: elapsed, question: true)
+            return try knowledge.lifetime(for: .init(city: city, scene: definition.scene, locale: turn.locale), elapsed: elapsed, question: true, questionId: intent)
         }
         let expected = intent == "clarification" ? "clarification" : intent == "technical_failure" ? "technical_failure" : "blocked"
         guard ["clarification", "unsupported", "technical_failure", "blocked"].contains(intent ?? ""),

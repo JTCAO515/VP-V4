@@ -189,10 +189,23 @@ struct NativeAskView: View {
         .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
     }
 
+    private func interpretedQuestion(_ intent: String, chinese: Bool) -> String {
+        switch intent {
+        case "payment_card_acceptance": return chinese ? "识别的问题：如何核对外卡受理？" : "Interpreted question: How do I check card acceptance?"
+        case "payment_mobile_setup": return chinese ? "识别的问题：如何开始使用手机商户支付？" : "Interpreted question: How do I get started with mobile merchant payments?"
+        case "payment_cash_access": return chinese ? "识别的问题：如何取得人民币现金？" : "Interpreted question: How can I obtain RMB cash?"
+        case "payment_card_and_mobile": return chinese ? "识别的问题：如何核对外卡受理并开始使用手机支付？" : "Interpreted question: How do I check card acceptance and get started with mobile payments?"
+        case "payment_card_and_cash": return chinese ? "识别的问题：如何核对外卡受理并取得人民币现金？" : "Interpreted question: How do I check card acceptance and obtain RMB cash?"
+        case "payment_mobile_and_cash": return chinese ? "识别的问题：如何开始使用手机支付并取得人民币现金？" : "Interpreted question: How do I get started with mobile payments and obtain RMB cash?"
+        case "payment_getting_started": return chinese ? "识别的问题：在中国大陆旅游有哪些支付方式？" : "Interpreted question: What payment options can I use in mainland China?"
+        default: return chinese ? "识别的问题：乘车需要哪些证件？" : "Interpreted question: Which documents do I need to board?"
+        }
+    }
+
     @ViewBuilder private func groundedResult(_ turn: NativeTextTurn, _ result: NativeGroundedResult) -> some View {
         let chinese = turn.locale == "zh"
-        if result.intent == "rail_boarding_documents" {
-            Text(chinese ? "识别的问题：乘车需要哪些证件？" : "Interpreted question: Which documents do I need to board?")
+        if let intent = result.intent, NativeKnowledgeAnswer.definition(intent) != nil {
+            Text(interpretedQuestion(intent, chinese: chinese))
                 .font(.subheadline.bold()).accessibilityIdentifier("grounded.interpreted")
             Text(chinese ? "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。" : "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.").font(.caption)
             if result.requestScope == "additional_needs" {
@@ -206,10 +219,10 @@ struct NativeAskView: View {
                     .accessibilityIdentifier("grounded.unavailable")
             }
         } else if result.intent == "clarification" {
-            Text(chinese ? "请完整重述你想核对的乘车证件问题。本模式不读取上一轮内容。" : "Please restate the complete boarding-document question. This mode does not read earlier messages.")
+            Text(chinese ? "请完整重述你想核对的问题，包括支付或乘车证件需求。本模式不读取上一轮内容。" : "Please restate your complete payment or boarding-document question. This mode does not read earlier messages.")
                 .accessibilityIdentifier("grounded.clarification")
         } else if result.intent == "unsupported" {
-            Text(chinese ? "这个问题超出当前乘车证件范围，尚未提供答案。你可以核对铁路官方渠道或车站指引。" : "This question is outside the current boarding-document scope and has not been answered. Check railway or station guidance.")
+            Text(chinese ? "这个问题超出当前支持的支付和乘车证件指引范围，尚未提供答案。请向相关官方渠道或服务方核对。" : "This question is outside the supported payment and boarding-document guidance and has not been answered. Check the relevant official or service provider guidance.")
                 .accessibilityIdentifier("grounded.unsupported")
         } else {
             Text(LocalizedStringKey(label(turn))).accessibilityIdentifier("grounded.status")
@@ -229,7 +242,7 @@ struct NativeAskView: View {
                 }
             }
             if store.mode == .grounded {
-                Text(settings.selectedLocale == .zh ? "当前支持：成年外籍护照旅客的境内铁路乘车证件。模型只识别本次问题；其他需求会明确保留为范围外。" : "Currently supports domestic railway boarding documents for adult foreign-passport travellers. The model classifies only this message; other needs remain outside this answer.")
+                Text(settings.selectedLocale == .zh ? "当前支持：中国大陆旅游支付的一般步骤，以及成年外籍护照旅客的境内铁路乘车证件。模型只识别本次问题；费用、受理和服务可用性须向当前服务方核对。" : "Supports general mainland China payment procedures and domestic railway boarding documents for adult foreign-passport travellers. The model classifies only this message; confirm fees, acceptance and availability with the current service provider.")
                     .font(.caption).accessibilityIdentifier("grounded.scope")
                 Picker(settings.selectedLocale == .zh ? "城市" : "City", selection: $store.city) {
                     ForEach(Array(NativeKnowledgeSelection.cities.enumerated()), id: \.element) { index, city in

@@ -20,6 +20,10 @@ test('first-party reviewed question: real PostgreSQL eligibility, coverage and i
  const migrations=readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort();
  for(const f of migrations){
   const content=readFileSync('supabase/migrations/'+f,'utf8');
+  if(f.endsWith('_vpj_16_payment_questions.sql')){
+   await db('begin;'+content+'rollback;');
+   assert.equal(await db("select to_regprocedure('knowledge_review_private.question_definition(text)') is null;"),'t');
+  }
   if(f.endsWith('_vpj_16_reviewed_question.sql')){
    await db('begin;'+content+'rollback;');
    assert.equal(await db("select to_regprocedure('public.knowledge_answer_v1(jsonb)') is null;"),'t');
@@ -96,6 +100,35 @@ test('first-party reviewed question: real PostgreSQL eligibility, coverage and i
   const revoked=await answer();assert.equal(revoked.answer.outcome,'partial');assert.deepEqual(revoked.answer.claims[0].reasons,['revoked']);assert.equal(revoked.statements.length,1);
   await db(`update knowledge_review_private.publications set published_at=clock_timestamp()-interval '2 hours',expires_at=clock_timestamp()-interval '1 hour' where candidate_id='${second}';`);
   const expired=await answer();assert.equal(expired.answer.outcome,'no_answer');assert.deepEqual(expired.answer.claims[1].reasons,['expired']);assert.equal(expired.statements.length,0);
+ });
+ await t.test('payment coverage preserves revoked obligations, exact relations and bilingual qualifiers',async()=>{
+  const definitions=JSON.parse(await db("select jsonb_object_agg(k,knowledge_review_private.question_definition(k)) from unnest(array['payment_card_acceptance','payment_mobile_setup','payment_cash_access','payment_getting_started']) k;"));
+  const overview=definitions.payment_getting_started;
+  assert.equal(overview.claims.length,4);
+  const published=[];
+  for(const relation of overview.claims){
+   const s=statement(relation.objectId);s.assertion={...s.assertion,...relation};s.scope.scene='payment';
+   published.push(await publish(s));
+  }
+  const full=await answer({questionId:'payment_getting_started'});
+  assert.equal(full.answer.outcome,'answered');assert.equal(full.scope.scene,'payment');assert.equal(full.statements.length,4);
+  await revoke(published[0]);
+  for(const locale of ['en','zh']){
+   const partial=await answer({questionId:'payment_getting_started',locale});
+   assert.equal(partial.answer.outcome,'partial');assert.equal(partial.statements.length,3);
+   assert.deepEqual(partial.answer.claims[0].reasons,['revoked']);
+   assert.ok(partial.statements.every(s=>s.conditions.length===1&&s.exclusions.length===1&&s.text.startsWith(locale==='en'?'Synthetic ':'合成 ')));
+   assert.equal((await answer({questionId:'payment_card_acceptance',locale})).answer.outcome,'no_answer');
+   assert.equal((await answer({questionId:'payment_mobile_setup',locale})).statements.length,1);
+   assert.equal((await answer({questionId:'payment_cash_access',locale})).statements.length,2);
+  }
+  const mobileAndCash=await answer({questionId:'payment_mobile_and_cash'});
+  assert.equal(mobileAndCash.answer.outcome,'answered','unrequested revoked card relation cannot downgrade mobile+cash');
+  assert.equal(mobileAndCash.statements.length,3);
+  const impostor=statement(overview.claims[1].objectId);impostor.scope.scene='payment';
+  await publish(impostor);
+  assert.equal((await answer({questionId:'payment_mobile_setup'})).statements.length,1,'same object ID under the wrong subject cannot qualify');
+  for(const role of ['anon','authenticated','service_role'])assert.notEqual((await sql(container,`set role ${role};select knowledge_review_private.question_definition('payment_mobile_setup');`)).code,0);
  });
  await t.test('capacity overflow fails instead of hiding evidence behind a retrieval limit',async()=>{
   const support=statement(required[0]);support.scope.cities=['beijing'];
