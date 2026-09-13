@@ -1,4 +1,4 @@
-# Cancelled grounded work read repair — local verified, Staging pending
+# Cancelled grounded work read repair — local and bounded Staging verified
 
 Related to #206 / #264. Baseline PR357 merged at a352c7e.
 
@@ -34,12 +34,50 @@ and stops heartbeat. No worker, budget, consent, Trip or provider changes.
   requires observed blocking, actual expiry and denied completion. Failure logs
   retained; final full database suite passes.
 
-## Remaining / rollout and rollback
+## Actual Staging observation
 
-Migration45 is not applied to Staging. Exact candidate Preview, real old cancelled
-record API/SSE/Native/Web and completed source/date regression remain UNRUN.
-Apply only after the reviewed candidate is frozen and scoped backup/restore
-checks pass. Preserve current policy/consent and default-disabled reader/Ops.
-Rollback by closing the scoped entry and using an appended function repair;
-never rewrite applied migration, public history, attempts or completed answers.
-No Production release or full S2 acceptance is claimed.
+Frozen API/native c8a12c86e2fff1432dbc866e319200d22d9c10d6; dedicated Preview
+dpl_GQ7ixe8EFGxt9d6vBvLzEF1mRXSU, vp-v4-evh5ltzbs-jtcao515s-projects.vercel.app.
+The ad8d087 follow-up changes only the handoff date to its accepted YYYY-MM-DD
+format; original Quality34764821307 failed that date assertion. The targeted
+governance test2/2 passes after correction; fresh CI remains required.
+
+- PASS: Staging44→45 through official CLI, exactly one pending migration.
+  All78 original table digests and261 schema entries verified, only expected
+  read_grounded_turn definition changed. Exact candidate definition and ACL
+  matched isolated apply/rollback. All role/RLS and default-disabled checks pass.
+- PASS: actual native-v2 credentials/login → existing consent → read history,
+  cancelled SSE cursor0/1, completed SSE and foreign-owner denial. Both API
+  sessions logged out200. No new consent or worker dispatch.
+- PASS: Web English cancelled question at1365×900 and390×844, reload retained
+  it, completed English/Chinese SIM sources retained, foreign account could not
+  see the English task. Both normal UI logouts observed, console errors empty,
+  viewport reset and owned tab closed.
+- PASS: ad-hoc signed native Staging build/codesign; actual existing English
+  question shows 已取消 in Chinese UI. Reload retains cancellation; adjacent
+  completed payment card retains Reviewed date and expandable PBOC page locator.
+  Native logout observed; owned simulator shut down. No new UI submission.
+- PASS:207 Turns/207 budget attempts/1549974 CNYmicros estimate/0 unresolved
+  unchanged. Exact before/after digests match for all Turns, events, grounded
+  answers, work, budgets and Trips. These are global staging totals, not charges
+  or a new evaluation.
+- Cleanup PASS: reader/Ops false,0 active members,6 users/3 Trips, own WAF host
+  removed(version64), window process exit0. Shared/Production targets unchanged.
+
+## Observed remaining display defect
+
+Web currently hides the entire retained card container while revalidating every
+read lifetime. At deep scroll, two screenshots captured a blank viewport before
+content returned at the same position. Ready-state cancellation/source screenshots
+are separate; no continuous-reading pass is claimed. Source inspection points to
+SavedAnswers.tsx load→invalidate and the state-controlled hidden container.
+Address this observed rendering interruption in a separate focused slice while
+preserving the30-second evidence deadline and immediate permission invalidation.
+
+## Remaining / rollback
+
+Final-head CI/merge pending. Native cancellation was observed with Chinese UI
+and the existing English question; a separate English-native UI run, physical
+VoiceOver, full S2 and Production remain unrun. Rollback closes scoped entry and
+uses an appended function repair; never rewrite applied migration/history/budget
+records. No new provider call, payment or Production release occurred.

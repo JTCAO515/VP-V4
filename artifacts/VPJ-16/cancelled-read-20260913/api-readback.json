@@ -1,0 +1,228 @@
+{
+  "at": "2026-09-13T15:18:40.037Z",
+  "status": "PASS",
+  "providerCalls": 0,
+  "reads": [
+    {
+      "locale": "en",
+      "cancelled": {
+        "kind": "grounded_turn",
+        "input": "How do I get started with mobile merchant payments and obtain RMB cash in mainland China?",
+        "locale": "en",
+        "output": null,
+        "result": {
+          "city": "shanghai",
+          "type": "reviewed_answer",
+          "intent": null,
+          "knowledge": null,
+          "projection": "pending",
+          "completedAt": null,
+          "requestScope": null,
+          "originalOutcome": null
+        },
+        "status": "cancelled",
+        "turnId": "73ea2ef0-5aca-4993-b3c1-8662cc48fdaf",
+        "outcome": null,
+        "threadId": "9acbada8-0990-42d2-acc0-6276341f8971",
+        "createdAt": "2026-09-13T09:05:55.886025+00:00",
+        "parentTurnId": null,
+        "relationship": "new_goal",
+        "scopeVersion": 1,
+        "schemaVersion": "grounded-turn/1",
+        "serviceTaskId": "601cff47-e0aa-46ca-8e23-e9868bea2da0"
+      },
+      "completed": {
+        "kind": "grounded_turn",
+        "input": "As a foreign traveller, what identification should I bring to apply for a mainland China SIM card, and what should I check about call and data allowances?",
+        "locale": "en",
+        "output": "reviewed-answer-v1",
+        "result": {
+          "city": "shanghai",
+          "type": "reviewed_answer",
+          "intent": "connectivity_getting_started",
+          "knowledge": {
+            "scope": {
+              "city": "shanghai",
+              "scene": "connectivity",
+              "locale": "en"
+            },
+            "answer": {
+              "claims": [
+                {
+                  "id": "passport_or_foreign_permanent_resident_id",
+                  "status": "covered",
+                  "factIds": [
+                    "b1556c6f-f791-4a00-85cb-868fdcadc2fe"
+                  ],
+                  "reasons": []
+                },
+                {
+                  "id": "plan_allowance_check",
+                  "status": "covered",
+                  "factIds": [
+                    "b0c29421-59fc-4d77-b4b2-581fc7b1e1e0"
+                  ],
+                  "reasons": []
+                }
+              ],
+              "outcome": "answered",
+              "questionId": "connectivity_getting_started",
+              "questionVersion": 1
+            },
+            "status": "available",
+            "purpose": "trip_planning",
+            "recipient": "first_party",
+            "territory": "CN-mainland",
+            "statements": [
+              {
+                "text": "Apply for a SIM at a China Telecom, China Mobile or China Unicom outlet with a passport or Foreign Permanent Resident ID Card.",
+                "scope": {
+                  "scene": "connectivity",
+                  "cities": [
+                    "shanghai",
+                    "beijing",
+                    "guangzhou",
+                    "chongqing"
+                  ],
+                  "audience": "international_independent_traveler"
+                },
+                "factId": "b1556c6f-f791-4a00-85cb-868fdcadc2fe",
+                "sources": [
+                  {
+                    "uri": "https://english.www.gov.cn/2025special/bizexpatsinchina2025",
+                    "locator": "Daily Life Services / I. SIM card, paragraphs (I)–(II) and data-plan note",
+                    "publisher": "商务部；中国政府网 / Ministry of Commerce; State Council portal",
+                    "sourceKey": "n-s03",
+                    "revisionLabel": "20260912-sim",
+                    "sourceRevisionId": "3674ed1d-eda9-4692-a145-bc03abdca86d"
+                  }
+                ],
+                "version": 1,
+                "assertion": {
+                  "objectId": "passport_or_foreign_permanent_resident_id",
+                  "predicate": "requires_document",
+                  "subjectId": "china_carrier_sim_application",
+                  "conditions": [
+                    "mainland_guidance",
+                    "current_operator_check",
+                    "branch_device_plan_check"
+                  ],
+                  "exclusions": [
+                    "no_esim_or_unrestricted_internet",
+                    "no_instant_all_branch_fixed_tariff"
+                  ]
+                },
+                "expiresAt": "2026-09-19T11:01:51.337+00:00",
+                "conditions": [
+                  "General mainland China guidance; confirm the specific service with its current operator.",
+                  "Check the latest official or operator guidance before use.",
+                  "Confirm branch capability, handset compatibility and plan details with the carrier."
+                ],
+                "exclusions": [
+                  "No eSIM availability or unrestricted-internet guarantee.",
+                  "No instant activation, all-branch service or fixed-tariff guarantee."
+                ],
+                "reviewedAt": "2026-09-12T16:13:30.497266+00:00",
+                "assertionId": "87b77eec-1975-484e-b63c-eed583e42cdc",
+                "publishedAt": "2026-09-12T16:13:31.080111+00:00",
+                "assertionRevision": 1
+              },
+              {
+                "text": "Plans vary by carrier; check call and data allowances.",
+                "scope": {
+                  "scene": "connectivity",
+                  "cities": [
+                    "shanghai",
+                    "beijing",
+                    "guangzhou",
+                    "chongqing"
+                  ],
+                  "audience": "international_independent_traveler"
+                },
+                "factId": "b0c29421-59fc-4d77-b4b2-581fc7b1e1e0",
+                "sources": [
+                  {
+                    "uri": "https://english.www.gov.cn/2025special/bizexpatsinchina2025",
+                    "locator": "Daily Life Services / I. SIM card, paragraphs (I)–(II) and data-plan note",
+                    "publisher": "商务部；中国政府网 / Ministry of Commerce; State Council portal",
+                    "sourceKey": "n-s03",
+                    "revisionLabel": "20260912-sim",
+                    "sourceRevisionId": "3674ed1d-eda9-4692-a145-bc03abdca86d"
+                  }
+                ],
+                "version": 1,
+                "assertion": {
+                  "objectId": "plan_allowance_check",
+                  "predicate": "requires_action",
+                  "subjectId": "china_carrier_sim_application",
+                  "conditions": [
+                    "mainland_guidance",
+                    "current_operator_check",
+                    "branch_device_plan_check"
+                  ],
+                  "exclusions": [
+                    "no_esim_or_unrestricted_internet",
+                    "no_instant_all_branch_fixed_tariff"
+                  ]
+                },
+                "expiresAt": "2026-09-19T11:01:51.337+00:00",
+                "conditions": [
+                  "General mainland China guidance; confirm the specific service with its current operator.",
+                  "Check the latest official or operator guidance before use.",
+                  "Confirm branch capability, handset compatibility and plan details with the carrier."
+                ],
+                "exclusions": [
+                  "No eSIM availability or unrestricted-internet guarantee.",
+                  "No instant activation, all-branch service or fixed-tariff guarantee."
+                ],
+                "reviewedAt": "2026-09-12T16:13:34.143254+00:00",
+                "assertionId": "75f0b635-f1a0-4156-b3e9-260816ffac36",
+                "publishedAt": "2026-09-12T16:13:34.971846+00:00",
+                "assertionRevision": 1
+              }
+            ],
+            "evaluatedAt": "2026-09-13T15:18:51.306184+00:00",
+            "schemaVersion": "knowledge-answer/1"
+          },
+          "projection": "current",
+          "completedAt": "2026-09-13T14:19:16.174074+00:00",
+          "requestScope": "single",
+          "originalOutcome": "answered"
+        },
+        "status": "completed",
+        "turnId": "6d92846e-9ad1-4286-ae1f-aa737094073c",
+        "outcome": "answered",
+        "threadId": "67b347a2-8f6b-4721-8d98-f340b8288b16",
+        "createdAt": "2026-09-13T14:19:00.629112+00:00",
+        "parentTurnId": null,
+        "relationship": "new_goal",
+        "scopeVersion": 1,
+        "schemaVersion": "grounded-turn/1",
+        "serviceTaskId": "5f62ea75-0b68-4834-bc32-987ecac63cca"
+      }
+    },
+    {
+      "cursor": 0,
+      "httpStatus": 200,
+      "sse": "id: 1\nevent: turn\ndata: {\"schemaVersion\":\"grounded-events/1\",\"turnId\":\"73ea2ef0-5aca-4993-b3c1-8662cc48fdaf\",\"type\":\"accepted\",\"state\":\"accepted\",\"eventId\":\"accepted\",\"sequence\":1,\"turn\":null}\n\nevent: projection\ndata: {\"schemaVersion\":\"grounded-events/1\",\"turnId\":\"73ea2ef0-5aca-4993-b3c1-8662cc48fdaf\",\"afterSequence\":1,\"turn\":{\"kind\":\"grounded_turn\",\"input\":\"How do I get started with mobile merchant payments and obtain RMB cash in mainland China?\",\"locale\":\"en\",\"output\":null,\"result\":{\"city\":\"shanghai\",\"type\":\"reviewed_answer\",\"intent\":null,\"knowledge\":null,\"projection\":\"pending\",\"completedAt\":null,\"requestScope\":null,\"originalOutcome\":null},\"status\":\"cancelled\",\"turnId\":\"73ea2ef0-5aca-4993-b3c1-8662cc48fdaf\",\"outcome\":null,\"threadId\":\"9acbada8-0990-42d2-acc0-6276341f8971\",\"createdAt\":\"2026-09-13T09:05:55.886025+00:00\",\"parentTurnId\":null,\"relationship\":\"new_goal\",\"scopeVersion\":1,\"schemaVersion\":\"grounded-turn/1\",\"serviceTaskId\":\"601cff47-e0aa-46ca-8e23-e9868bea2da0\"}}\n\n"
+    },
+    {
+      "cursor": 1,
+      "httpStatus": 200,
+      "sse": "event: projection\ndata: {\"schemaVersion\":\"grounded-events/1\",\"turnId\":\"73ea2ef0-5aca-4993-b3c1-8662cc48fdaf\",\"afterSequence\":1,\"turn\":{\"kind\":\"grounded_turn\",\"input\":\"How do I get started with mobile merchant payments and obtain RMB cash in mainland China?\",\"locale\":\"en\",\"output\":null,\"result\":{\"city\":\"shanghai\",\"type\":\"reviewed_answer\",\"intent\":null,\"knowledge\":null,\"projection\":\"pending\",\"completedAt\":null,\"requestScope\":null,\"originalOutcome\":null},\"status\":\"cancelled\",\"turnId\":\"73ea2ef0-5aca-4993-b3c1-8662cc48fdaf\",\"outcome\":null,\"threadId\":\"9acbada8-0990-42d2-acc0-6276341f8971\",\"createdAt\":\"2026-09-13T09:05:55.886025+00:00\",\"parentTurnId\":null,\"relationship\":\"new_goal\",\"scopeVersion\":1,\"schemaVersion\":\"grounded-turn/1\",\"serviceTaskId\":\"601cff47-e0aa-46ca-8e23-e9868bea2da0\"}}\n\n"
+    }
+  ],
+  "logouts": [
+    {
+      "locale": "en",
+      "status": 200
+    },
+    {
+      "locale": "zh",
+      "status": 200
+    }
+  ],
+  "completedSse": true,
+  "foreignDenied": true,
+  "finishedAt": "2026-09-13T15:19:02.538Z"
+}
