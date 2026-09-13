@@ -1,0 +1,31 @@
+{
+  "at": "2026-09-13T01:35:11.918Z",
+  "phase": "settled",
+  "turnId": "6069d41c-40eb-456c-99a1-970aaa69ad7d",
+  "taskId": "a8a2c345-fb24-41b1-a367-8e2a0d2b3ee2",
+  "status": "cancelled",
+  "outcome": null,
+  "attempts": [
+    {
+      "attemptId": "e405e177-de3b-4e44-8035-78800b45aa34",
+      "status": "settled",
+      "reservedMicros": 7000000,
+      "actualMicros": 4308
+    }
+  ],
+  "events": [
+    {
+      "eventId": "accepted",
+      "sequence": 1,
+      "type": "accepted",
+      "state": "accepted"
+    },
+    {
+      "eventId": "cancelled",
+      "sequence": 2,
+      "type": "terminal",
+      "state": "cancelled"
+    }
+  ],
+  "validatedMicros": 4308
+}

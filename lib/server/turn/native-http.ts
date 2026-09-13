@@ -24,7 +24,10 @@ export function getNativeTextConfig(request: Pick<Request, "url">, taskContext: 
 
 export async function nativeTextHTTP(request: NextRequest, action: Action, turnId?: string, taskContext: boolean | "grounded" = false) {
   const grounded = taskContext === "grounded";
-  const config = getNativeTextConfig(request, taskContext);
+  const textConfig = action === "cancel" ? null : getNativeTextConfig(request, taskContext);
+  // Stopping an existing Turn does not require an enabled generation mode/policy.
+  // The native runtime, active session and cancel_chat_turn still enforce authority.
+  const config = action === "cancel" ? getNativeRuntimeConfig(request, "trip") : textConfig;
   if (!config) return failure("PROVIDER_UNAVAILABLE");
   if (request.headers.has("cookie") || request.headers.has("origin") || [...request.nextUrl.searchParams].length
     || (turnId !== undefined && !uuid(turnId))) return failure("INVALID_INPUT");
@@ -37,29 +40,36 @@ export async function nativeTextHTTP(request: NextRequest, action: Action, turnI
     if (session.error) return failure(mapError(session.error.message));
     if (!record(session.data) || !uuid(session.data.subject) || !uuid(session.data.sessionId)) return failure("PROVIDER_UNAVAILABLE");
     if (session.data.subject !== actor.subject || session.data.sessionId !== actor.sessionId) return failure("UNAUTHENTICATED");
+    if (action === "cancel") {
+      const input = await scope.run(() => boundedBody(request, scope.signal));
+      if (!turnId || !record(input) || !exact(input, [])) return failure("INVALID_INPUT");
+      const cancelled = await rpc("cancel_chat_turn", { p_turn_id: turnId });
+      return cancelled.error ? failure(mapError(cancelled.error.message)) : response({ version: 1, kind: "cancelled" });
+    }
+    if (!textConfig) return failure("PROVIDER_UNAVAILABLE");
     let result;
-    if (taskContext && action !== "withdraw" && action !== "cancel") {
-      const policy = await rpc(grounded ? "read_grounded_policy" : "read_text_task_policy", { p_policy_id: config.policyId });
+    if (taskContext && action !== "withdraw") {
+      const policy = await rpc(grounded ? "read_grounded_policy" : "read_text_task_policy", { p_policy_id: textConfig.policyId });
       if (policy.error || !record(policy.data) || policy.data.kind !== "policy") return failure("DATA_POLICY_BLOCKED");
     }
-    if (action === "policy") result = await rpc(grounded ? "read_grounded_policy" : taskContext ? "read_text_task_policy" : "read_text_policy", { p_policy_id: config.policyId });
-    else if (action === "task-history") result = await rpc(grounded ? "list_grounded_turns" : "list_service_task_turns", { p_policy_id: config.policyId, p_limit: 20 });
-    else if (action === "history") result = await rpc("list_text_turns", { p_policy_id: config.policyId, p_limit: 20 });
+    if (action === "policy") result = await rpc(grounded ? "read_grounded_policy" : taskContext ? "read_text_task_policy" : "read_text_policy", { p_policy_id: textConfig.policyId });
+    else if (action === "task-history") result = await rpc(grounded ? "list_grounded_turns" : "list_service_task_turns", { p_policy_id: textConfig.policyId, p_limit: 20 });
+    else if (action === "history") result = await rpc("list_text_turns", { p_policy_id: textConfig.policyId, p_limit: 20 });
     else {
       const input = await scope.run(() => boundedBody(request, scope.signal));
       if (!record(input)) return failure("INVALID_INPUT");
-      if (action === "accept" && exact(input,["policyId","noticeHash"]) && input.policyId === config.policyId && typeof input.noticeHash === "string" && /^[a-f0-9]{64}$/.test(input.noticeHash)) {
-        result = await rpc("accept_text_policy", { p_policy_id: config.policyId, p_notice_hash: input.noticeHash });
+      if (action === "accept" && exact(input,["policyId","noticeHash"]) && input.policyId === textConfig.policyId && typeof input.noticeHash === "string" && /^[a-f0-9]{64}$/.test(input.noticeHash)) {
+        result = await rpc("accept_text_policy", { p_policy_id: textConfig.policyId, p_notice_hash: input.noticeHash });
       } else if (action === "withdraw" && exact(input,["policyId"]) && uuid(input.policyId)) {
         // Withdrawal remains available even when the deployment's selected policy changes.
         result = await rpc("withdraw_text_policy", { p_policy_id: input.policyId });
       } else if (action === "submit" && exact(input,["threadId","turnId","idempotencyKey","policyId","locale","text"])
-        && uuid(input.threadId) && uuid(input.turnId) && uuid(input.idempotencyKey) && input.policyId === config.policyId
+        && uuid(input.threadId) && uuid(input.turnId) && uuid(input.idempotencyKey) && input.policyId === textConfig.policyId
         && typeof input.locale === "string" && ["zh","en","es","ru","ar"].includes(input.locale)
         && typeof input.text === "string" && input.text.trim().length > 0 && input.text.length <= 4000) {
-        result = await rpc("submit_text_turn", { p_thread_id: input.threadId, p_turn_id: input.turnId, p_idempotency_key: input.idempotencyKey, p_policy_id: config.policyId, p_locale: input.locale, p_text: input.text });
+        result = await rpc("submit_text_turn", { p_thread_id: input.threadId, p_turn_id: input.turnId, p_idempotency_key: input.idempotencyKey, p_policy_id: textConfig.policyId, p_locale: input.locale, p_text: input.text });
       } else if (action === "submit-task" && exact(input,["threadId","turnId","idempotencyKey","policyId","locale","text","serviceTask", ...(grounded ? ["city"] : [])])
-        && uuid(input.threadId) && uuid(input.turnId) && uuid(input.idempotencyKey) && input.policyId === config.policyId
+        && uuid(input.threadId) && uuid(input.turnId) && uuid(input.idempotencyKey) && input.policyId === textConfig.policyId
         && typeof input.locale === "string" && (grounded ? ["zh", "en"] : ["zh","en","es","ru","ar"]).includes(input.locale)
         && (!grounded || (typeof input.city === "string" && ["shanghai", "beijing", "guangzhou", "chongqing"].includes(input.city)))
         && typeof input.text === "string" && input.text.trim().length > 0 && input.text.length <= 4000
@@ -68,12 +78,9 @@ export async function nativeTextHTTP(request: NextRequest, action: Action, turnI
         && typeof input.serviceTask.relationship === "string" && ["new_goal","clarification","repair"].includes(input.serviceTask.relationship)
         && (input.serviceTask.parentTurnId === null || uuid(input.serviceTask.parentTurnId))) {
         result = await rpc(grounded ? "submit_grounded_turn" : "submit_service_task_turn", { p_thread_id: input.threadId, p_turn_id: input.turnId, p_idempotency_key: input.idempotencyKey,
-          p_policy_id: config.policyId, p_locale: input.locale, p_text: input.text, p_task_id: input.serviceTask.id,
+          p_policy_id: textConfig.policyId, p_locale: input.locale, p_text: input.text, p_task_id: input.serviceTask.id,
           p_scope_version: 1, p_relationship: input.serviceTask.relationship, p_parent_turn_id: input.serviceTask.parentTurnId,
           ...(grounded ? { p_city: input.city as string } : {}) });
-      } else if (action === "cancel" && turnId && exact(input,[])) {
-        result = await rpc("cancel_chat_turn", { p_turn_id: turnId });
-        if (!result.error) return response({ version: 1, kind: "cancelled" });
       } else return failure("INVALID_INPUT");
     }
     if (result.error) return failure(mapError(result.error.message));

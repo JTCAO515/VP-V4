@@ -1,0 +1,8 @@
+{
+  "scope": "Cancel original retained native task after API configuration repair; no new question/provider call",
+  "apiSource": "3a7957348732178ebc926003f5d1f575e8f3dac3",
+  "nativeSource": "2717bf947cf31edd3ce5021e7e361413859ad9b8",
+  "nativeChanges": "API origin only; executable unchanged; re-sign owned copy",
+  "turnId": "6069d41c-40eb-456c-99a1-970aaa69ad7d",
+  "expected": "One cancelled terminal, original settled4308micros attempt unchanged, normal worker empty"
+}
