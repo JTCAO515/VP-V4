@@ -1,0 +1,34 @@
+{
+  "records": [
+    {
+      "at": 1789265775.403462,
+      "factsInAX": 16,
+      "notice": []
+    },
+    {
+      "at": 1789265779.773525,
+      "factsInAX": 0,
+      "notice": [
+        {
+          "AXUniqueId": "grounded.rechecking",
+          "AXLabel": "Rechecking the evidence for saved answers.",
+          "type": "StaticText",
+          "frame": {
+            "width": 370,
+            "height": 52.333333333333314,
+            "x": 16,
+            "y": 132
+          },
+          "enabled": true
+        }
+      ]
+    },
+    {
+      "at": 1789265788.426743,
+      "factsInAX": 16,
+      "notice": []
+    }
+  ],
+  "noticeSeen": true,
+  "providerCalls": 0
+}

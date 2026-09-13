@@ -1,0 +1,10 @@
+{
+  "wafVersion": 42,
+  "foreignDraft": false,
+  "onlyOwnedHostRemoved": true,
+  "browserLoggedOut": true,
+  "ownedTabClosed": true,
+  "viewportRestored": true,
+  "noWorkerStarted": true,
+  "noProviderCalls": true
+}

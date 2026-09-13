@@ -1,0 +1,10 @@
+{
+  "nativeSource": "a7ec7b1c159b868944f31f9eb9f1d2cbc1917196",
+  "apiSource": "a9c8b5734e5389bf7e445ce5d78a232e721cdbbf",
+  "apiOrigin": "https://vp-v4-6pabqr58p-jtcao515s-projects.vercel.app",
+  "executableSha256": "828578fd3fbef299f2ce99af388c059fadb115c62fe779de8aa8c500a98ec1d8",
+  "environment": "staging",
+  "taskContext": "knowledge_intent_v1",
+  "builtWithStagingConfiguration": true,
+  "retainedSetupFailure": "First install script used unresolved relative parent and stopped before install; absolute path fixed."
+}
