@@ -1,4 +1,4 @@
-# Native saved-payment source display — actual Staging, partial acceptance
+# Native saved-payment source display — actual bilingual Staging evidence
 
 At 2026-09-13 05:21 UTC, the signed native Staging app visibly expanded the Chinese
 saved payment answer source. Screenshot `zh-source-open.png` shows the People’s Bank of
@@ -35,6 +35,34 @@ An early availability placeholder cleared after the normal policy/history load. 
 and snapshots during refresh did not prove source expansion; only the final image does.
 
 Chinese source expansion: PASS for this saved historical payment answer. English source
-expansion: UNRUN; full #206/#264/S2 remain open. Next: reuse the owned initialized Simulator
-and a fresh bounded read window to validate the English saved-answer source without model calls.
+expansion subsequently passed as recorded below; full #206/#264/S2 remain open.
 Checks for this evidence-only increment: docs check and diff check; no product tests repeated.
+
+## English follow-up and interrupted-window cleanup
+
+At 2026-09-13 07:05 UTC the same signed Staging build showed the English saved partial
+payment answer and expanded its source. `en-source-open.png` visibly shows the People’s
+Bank of China publisher and printed/PDF page locator. `en-source-open.json` records the
+first partial answer, withdrawn-publication gap and PAY-02 fact. The historical native
+Turn is `f96139fd-98f7-4f2a-8ff7-e2a917bc7e6e`, ServiceTask
+`d57d7a0e-b80e-41c0-bc2c-42af166e6e41`; association uses the exact synthetic question and
+prior `artifacts/VPJ-16/payment-ask-20260913/staging/scoped-audit.json` recording. No new
+question/model call or consent change was performed. Normal Profile sign-out subsequently
+showed `Signed out`; the owned Simulator was shut down and retained.
+
+An earlier English window ended at 06:26 UTC with both cleanup commands failing. WAF
+removal retry succeeded (version 52); reader shutdown retry failed because the local Docker
+daemon was stopped. Starting Docker and retrying the same reader-disable operation succeeded:
+reader/Ops false, zero active members, 12 statements / 11 published / 1 revoked. The initial
+failed window remains FAIL; cleanup recovery does not rewrite it to a clean pass.
+
+The fresh English retry window completed at 07:08 UTC with exit 0. WAF 52→53→54 changed only
+the owned Preview host and preserved the production target. Pre/post SQL recorded 43
+migrations, 118 attempts / zero unresolved, 650346 CNY micros and 3 Trips; reader/Ops off and
+zero active members after cleanup. Counts are unchanged, not full-row invariance proof.
+
+Both source disclosures are now observed in the actual native Staging app. External PDF
+opening, physical-device payment acceptance and full #206/#264/S2 remain NOT_RUN/incomplete.
+The English screenshot also exposes a formatting issue: the Reviewed date follows the device
+Chinese locale despite English app selection. This does not invalidate visible source
+provenance; localized date formatting remains a separate observed UI defect.

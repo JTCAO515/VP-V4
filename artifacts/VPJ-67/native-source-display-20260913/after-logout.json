@@ -1,0 +1,446 @@
+[
+  {
+    "AXUniqueId": null,
+    "AXLabel": "VisePanda",
+    "type": "Application",
+    "frame": {
+      "y": 0,
+      "height": 874,
+      "width": 402,
+      "x": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "main-tab-view",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "y": 0,
+      "width": 402,
+      "height": 874,
+      "x": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "Profile",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "y": 62,
+      "width": 402,
+      "height": 106,
+      "x": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Profile",
+    "type": "Heading",
+    "frame": {
+      "y": 119.66666666666667,
+      "height": 40.66666666666667,
+      "width": 102.33333333333331,
+      "x": 15.999999999999993
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "AdditionalDimmingOverlay",
+    "AXLabel": null,
+    "type": "Image",
+    "frame": {
+      "y": 731,
+      "height": 286,
+      "width": 642,
+      "x": -120
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Vise Panda. Test environment identity",
+    "type": "StaticText",
+    "frame": {
+      "y": 168,
+      "width": 370,
+      "height": 102,
+      "x": 16
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "PandaMark",
+    "type": "Image",
+    "frame": {
+      "y": 190,
+      "height": 58,
+      "width": 58,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "BrandWordmark",
+    "type": "Image",
+    "frame": {
+      "y": 183,
+      "width": 150,
+      "height": 50,
+      "x": 104
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Test environment identity",
+    "type": "StaticText",
+    "frame": {
+      "y": 237,
+      "height": 18,
+      "width": 173.33333333333331,
+      "x": 104
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Test account",
+    "type": "Heading",
+    "frame": {
+      "y": 287.6666666666667,
+      "x": 16,
+      "width": 370,
+      "height": 40.333333333333314
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native.session.status",
+    "AXLabel": "Signed out",
+    "type": "StaticText",
+    "frame": {
+      "height": 52.333333333333314,
+      "x": 16,
+      "width": 370,
+      "y": 328
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native.login.email",
+    "AXLabel": null,
+    "type": "TextField",
+    "frame": {
+      "y": 395.33333333333337,
+      "x": 32,
+      "width": 338,
+      "height": 22
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native.login.password",
+    "AXLabel": null,
+    "type": "TextField",
+    "frame": {
+      "y": 448.33333333333337,
+      "x": 32,
+      "width": 338,
+      "height": 21
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native.login.submit",
+    "AXLabel": "Sign in",
+    "type": "Button",
+    "frame": {
+      "height": 52.33333333333337,
+      "x": 16,
+      "width": 370,
+      "y": 485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Retry session",
+    "type": "Button",
+    "frame": {
+      "height": 52.33333333333337,
+      "x": 16,
+      "width": 370,
+      "y": 537.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Language",
+    "type": "Heading",
+    "frame": {
+      "y": 607,
+      "x": 16,
+      "width": 370,
+      "height": 40.33333333333337
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Language",
+    "type": "Button",
+    "frame": {
+      "x": 16,
+      "y": 647.3333333333333,
+      "height": 52.33333333333337,
+      "width": 370
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Language",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "y": 663.3333129882812,
+      "height": 20.33331298828125,
+      "width": 316
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "chevron.forward",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 360.6666666666667,
+      "y": 667.6666666666666,
+      "height": 12,
+      "width": 7
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Connection status",
+    "type": "Heading",
+    "frame": {
+      "x": 16,
+      "y": 717.3333333333334,
+      "height": 40.33333333333337,
+      "width": 370
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle.badge.xmark",
+    "AXLabel": "person.crop.circle.badge.xmark",
+    "type": "Image",
+    "frame": {
+      "x": 28,
+      "y": 772.3333333333333,
+      "height": 23.33333396911621,
+      "width": 27
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "No account connected",
+    "type": "StaticText",
+    "frame": {
+      "x": 16,
+      "y": 757.6666666666666,
+      "height": 52.33333333333337,
+      "width": 370
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "network.slash",
+    "AXLabel": "network.slash",
+    "type": "Image",
+    "frame": {
+      "x": 32,
+      "y": 824.3333333333334,
+      "height": 24,
+      "width": 24
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "No live services",
+    "type": "StaticText",
+    "frame": {
+      "x": 16,
+      "y": 810,
+      "height": 52.33333333333337,
+      "width": 370
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 2页",
+    "type": "Slider",
+    "frame": {
+      "x": 369,
+      "y": 116,
+      "height": 675,
+      "width": 30
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 2页",
+    "type": "Slider",
+    "frame": {
+      "x": 369,
+      "y": 116,
+      "height": 675,
+      "width": 30
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "标签页栏",
+    "type": "Group",
+    "frame": {
+      "height": 83,
+      "y": 791,
+      "width": 402,
+      "x": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map",
+    "AXLabel": "Trip",
+    "type": "RadioButton",
+    "frame": {
+      "y": 795,
+      "height": 54,
+      "width": 77,
+      "x": 25
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map.fill",
+    "AXLabel": "显示地图",
+    "type": "Image",
+    "frame": {
+      "height": 26.33333333333337,
+      "y": 801.6666666666666,
+      "width": 29.66666666666667,
+      "x": 49
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari",
+    "AXLabel": "Explore",
+    "type": "RadioButton",
+    "frame": {
+      "height": 54,
+      "y": 795,
+      "width": 77,
+      "x": 93.75
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari.fill",
+    "AXLabel": "Safari浏览器",
+    "type": "Image",
+    "frame": {
+      "height": 27.33333333333337,
+      "y": 801.3333333333334,
+      "width": 27.333333333333343,
+      "x": 118.75
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "Ask",
+    "type": "RadioButton",
+    "frame": {
+      "y": 795,
+      "height": 54,
+      "width": 77,
+      "x": 162.5
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "闪光",
+    "type": "Image",
+    "frame": {
+      "height": 30,
+      "y": 799,
+      "width": 26,
+      "x": 188.5
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "Tools",
+    "type": "RadioButton",
+    "frame": {
+      "y": 795,
+      "height": 54,
+      "width": 77,
+      "x": 231.25
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "wrench.and.screwdriver",
+    "type": "Image",
+    "frame": {
+      "y": 799.3333333333334,
+      "height": 31.66666666666663,
+      "width": 32.666666666666686,
+      "x": 253.25
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle",
+    "AXLabel": "Profile",
+    "type": "RadioButton",
+    "frame": {
+      "y": 795,
+      "height": 54,
+      "width": 77,
+      "x": 300
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle.fill",
+    "AXLabel": "账户",
+    "type": "Image",
+    "frame": {
+      "y": 801.3333333333334,
+      "height": 27.33333333333337,
+      "width": 27.333333333333314,
+      "x": 325
+    },
+    "enabled": true
+  }
+]

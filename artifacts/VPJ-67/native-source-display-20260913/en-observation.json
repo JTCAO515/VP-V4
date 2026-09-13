@@ -1,0 +1,17 @@
+{
+  "locale": "en",
+  "turnId": "f96139fd-98f7-4f2a-8ff7-e2a917bc7e6e",
+  "serviceTaskId": "d57d7a0e-b80e-41c0-bc2c-42af166e6e41",
+  "association": "Exact synthetic question in accessibility hierarchy matches prior native recording, with source under its first partial answer",
+  "factId": "0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+  "sourceDisplay": "PASS",
+  "externalPDFOpen": "NOT_RUN",
+  "newTaskSubmitted": false,
+  "logout": "Signed out",
+  "ownedSimulator": "shutdown and retained",
+  "wafVersions": [
+    52,
+    53,
+    54
+  ]
+}
