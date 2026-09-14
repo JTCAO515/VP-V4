@@ -6,12 +6,14 @@
   shared Staging project, with a schema+data backup taken first and all
   test data cleaned up afterward (verified byte-for-byte back to the
   pre-test baseline row counts).
-- **Isolated backup/restore *rehearsal*** (an actual restore drill, not
-  just taking a backup) remains not run — slice 3 took a real backup but
-  never needed to restore from it, since the push succeeded cleanly.
-  `docs/runbooks/backup-restore.md`'s full rehearsal protocol (separate
-  isolated project, RPO/RTO targets, PITR) is still a separate, larger
-  exercise this slice did not attempt.
+- ~~Isolated backup/restore rehearsal~~ **DONE** — see
+  `restore-rehearsal-20260914.md`. A new disposable isolated Supabase
+  project (deleted afterward), all three exercises
+  (database_restore/roll_forward_pitr/compensation) run for real and
+  passed, including a genuine finding (full-history migration replay
+  onto a fresh project fails a mid-history self-check; worked around via
+  schema+data dump/restore instead, which is the more faithful test of
+  "database_restore" anyway).
 - ~~`apps/ops/**` UI surface~~ **DONE in slice 4** — see `ops-ui-slice4.md`.
   `/ops/provenance` (page + API route) built, real-browser-verified locally
   (sign-in → lookup a real published fact → correct render; not-found
