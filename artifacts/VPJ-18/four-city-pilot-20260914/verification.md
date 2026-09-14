@@ -20,6 +20,12 @@ entrances or a second confirmed landmark — same "public synthetic"
 framing `probe.mjs`'s own Beijing fixture already uses. Entrance/entity
 accuracy stays `UNRUN`, exactly as before.
 
+**Final status: both providers pass the full pilot — see "Final result"
+below.** The sections immediately following record the real
+troubleshooting history (Tencent's initial `code 121` failures and their
+resolution) rather than skipping to the ending, per this repo's evidence
+convention of not rewriting failed runs into a clean success narrative.
+
 ## AMap result — 6/6 fixtures, 12/12 requests observed
 
 | City | Category | Query | Search count | Walking distance/duration |
@@ -61,15 +67,20 @@ the Tencent console (服务开通状态、IP白名单、Key类型/平台限制) 
 No further automated retries were run against the real API pending that
 check, to avoid spending more calls on an unexplained failure mode.
 
-## Root cause found: code 121 = daily call quota, not throttling or signing
+## Root cause confirmed and resolved: per-endpoint daily quota
 
-Per Tencent's own status-code documentation and matching independent
-developer reports for this exact code/message pairing, **`status 121`
-means "此key每日调用量已达到上限"** — the key's daily call quota is
-exhausted (new keys default to a 0/unallocated daily quota in the console
-until the operator explicitly assigns one per key). This is unrelated to
-request cadence (already ruled out above) and unrelated to domain/IP
-whitelisting.
+Per Tencent's own status-code documentation, **`status 121` means "此key
+每日调用量已达到上限"** — daily call quota exhausted/unallocated. This
+was unrelated to request cadence (ruled out earlier) and unrelated to
+domain/IP whitelisting or signing. The console assigns quota
+**per endpoint**, not per key as a whole: after the operator allocated
+quota, `/ws/place/v1/search` started returning `observed` immediately,
+while `/ws/direction/v1/walking` still returned `code 121` for one more
+call — the operator's own console screenshot at that moment showed
+`0/300000 已用 0%` for walking, i.e. quota was configured but the change
+had not yet propagated to the API gateway. A second retry ~2 minutes
+later succeeded on both operations, and the full 6-fixture/12-request
+pilot then passed end to end.
 
 Separately, the operator enabled "签名校验" (SN/sig verification) on this
 key and supplied its SK. `scripts/maps/probe.mjs` and
@@ -78,16 +89,30 @@ per lbs.qq.com's own documented algorithm — `md5(path + "?" +
 ascending-sorted-by-name unencoded params + SK)` — verified in
 `tests/contract/maps/*.test.mjs` against the documentation's own worked
 example (`90da272bfa19122547298e2b0bcc0e50`) before use on any real key.
-A signed real call still returned `code 121`, confirming quota — not
-signature validity — is the actual blocker; the signing code is correct
-and kept regardless, since it is a real security setting now active on
-this key.
+This was not the fix for `121` (quota was), but it is real, kept
+capability now that signing is active on this key.
+
+## Final result — both providers, 6/6 fixtures, 24/24 requests observed
+
+| City | Category | Query | AMap search / walking | Tencent search / walking |
+| --- | --- | --- | --- | --- |
+| 上海市 | airport_terminal | 上海虹桥国际机场2号航站楼 | 3 / 5781m,4625s | 3 / 5835m,5280s |
+| 北京市 | station_exit | 北京西站 | 3 / 1118m,894s | 3 / 744m,660s |
+| 广州市 | scenic_entrance | 广州塔 | 3 / 1878m,1502s | 3 / 1903m,1740s |
+| 广州市 | duplicate_name_branch | 星巴克 | 3 / 1020m,816s | 3 / 806m,720s |
+| 重庆市 | scenic_entrance | 解放碑 | 3 / 394m,315s | 3 / 464m,420s |
+| 重庆市 | chongqing_complex_walking | 李子坝轻轨站 | 3 / 700m,560s | 3 / 715m,660s |
+
+Both providers return a similar-shaped result on every fixture; distances
+and durations differ per fixture because each engine computes its own
+route. This is still not agreement on ground truth and not a provider
+selection — per #362's own acceptance text, "两家一致不等于事实正确" —
+entity-match/entrance-accuracy stay `UNRUN`.
 
 ## Still UNRUN / not decided here
 
-- Awaiting operator to assign this Tencent key a daily call quota in the
-  console, then a real re-run to confirm the fix.
-- Full 120-query (10 places × zh/en/pinyin × 4 cities) / 40-route matrix.
+- Full 120-query (10 places × zh/en/pinyin × 4 cities) / 40-route matrix
+  — this pilot covers 6 of the ~40 landmarks the full spec calls for.
 - Entity-match / entrance-accuracy calibration against independent
   ground truth.
 - Account price/quota reconciliation for either provider.
@@ -95,5 +120,5 @@ this key.
   requires this only after the full budget-constrained comparison.
 
 #362/#208 remain open. This is a bounded pilot demonstrating the batch
-mechanism end-to-end for AMap and surfacing a real, undiagnosed Tencent
-throttling signal — not a provider-selection result.
+mechanism end-to-end for both providers — not a provider-selection
+result.
