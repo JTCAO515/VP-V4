@@ -34,31 +34,39 @@ accuracy stays `UNRUN`, exactly as before.
 Request spacing ~100-360ms; all returned `observed` with no
 transport/timeout/http error.
 
-## Tencent result — 0/6 fixtures, 0/12 requests observed
+## Tencent result — 0/6 fixtures, 0/12 requests observed (two runs)
 
-All 12 requests (both search and walking, all 6 fixtures) returned
-`provider_rejected`, `code: "121"`. Per the script's redaction policy,
-the provider's raw error message is never retained, so the human-readable
-reason for code 121 is not captured here and is **not guessed** in this
-document.
+**Run 1** (no delay, ~25-130ms between requests): all 12 requests
+returned `provider_rejected`, `code: "121"`.
 
-Request spacing in this run was ~25-130ms — noticeably tighter than the
-single successful Tencent probe run earlier the same day
-(`artifacts/VPJ-18/tencent-first-probe-20260914/verification.md`, two
-requests ~470ms apart). The leading hypothesis is per-second rate
-limiting on this Tencent account/plan tier triggered by the batch's
-tighter cadence, not a key or parameter regression — the exact same
-request-building code path (`requestsForFixture`) that works for AMap on
-the same fixtures, and Tencent's own earlier single-fixture run with the
-same key succeeded. This is a hypothesis, not a diagnosed root cause.
+**Run 2** (`delayMs=800`, added specifically to test the rate-limit
+hypothesis; actual observed elapsed time between admissions ranged
+36ms-3230ms, well past any plausible per-second QPS window): **still all
+12 requests `provider_rejected code "121"`**, same as run 1.
+
+This rules out simple request-cadence/QPS throttling as the explanation —
+spacing varied by two orders of magnitude across the two runs with an
+identical result. Per the script's redaction policy, the provider's raw
+error message is never retained, so code 121's exact meaning is not
+captured here and is **not guessed** as fact. The pattern (100% rejection
+regardless of timing, on every fixture/operation, with the same key that
+worked for one single-fixture run earlier the same day —
+`artifacts/VPJ-18/tencent-first-probe-20260914/verification.md`) is more
+consistent with an account/key-configuration issue than a rate limit:
+candidates include an IP allowlist bound to the key, the WebService
+capability not being fully enabled alongside the iOS SDK capability on
+this key, or a delay between enabling a service and it taking effect.
+None of these are verifiable from here — they need the operator to check
+the Tencent console (服务开通状态、IP白名单、Key类型/平台限制) directly.
+No further automated retries were run against the real API pending that
+check, to avoid spending more calls on an unexplained failure mode.
 
 ## Still UNRUN / not decided here
 
-- Root cause of Tencent code 121 (rate limit vs quota vs something else)
-  — needs either an inter-request delay added to `batch-probe.mjs` and a
-  re-run, or the operator's own account dashboard showing the QPS/quota
-  terms for this key. Not attempted further in this round to avoid
-  additional unexplained real API calls without a plan.
+- Root cause of Tencent code 121 — rate limiting is now ruled out by the
+  delayed re-run; needs the operator to check the Tencent console (key
+  enablement/platform restriction/IP allowlist) before another real-call
+  attempt is worth making.
 - Full 120-query (10 places × zh/en/pinyin × 4 cities) / 40-route matrix.
 - Entity-match / entrance-accuracy calibration against independent
   ground truth.
