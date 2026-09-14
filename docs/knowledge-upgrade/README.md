@@ -84,6 +84,8 @@ SourceRevision/EvidenceSpan 可先映射现有字段；需要新持久化时做�
 - RuleDefinition 用受限、版本化条件表达式；不执行 Wiki 中的任意脚本/DSL。实体、关系、规则分别校验，链接存在不等于证据成立。
 - 首轮使用现有 TypeScript/Postgres；不引入 Palantir 平台、图数据库、通用 OWL 推理器、第二协调器或第二记忆库。新增独立基础设施须有具体性能/表达缺口与另行范围记录。
 
+**2026-09-15 VPJ-75声明候选关联本地实现**（[契约](../contracts/wiki-statement-review.md)、[验证](../../artifacts/VPJ-75/wiki-statement-review/verification.md)）：指定Wiki版本可进入现有Ops声明表单，选择不可改写的原始来源，原子创建候选、来源关联和回执；重复语义输入去重，伪造来源或版本漂移拒绝。复用异人审核/发布/中英普通读取/撤回。该增量是运营整理桥接，非自动声明抽取；真实GoTrue、模型、Staging与整票验收仍UNRUN。
+
 **2026-09-14 VPJ-75切片3本地实现**（[正文契约](../contracts/wiki-draft-content.md)、[验证](../../artifacts/VPJ-75/verification.md)）：追加完整 `draft_content`、completion 消费器及现有 `/ops/wiki` 草稿/差异/来源入口。真实本机 PostgreSQL 验证迁移、全文、重启、回执回放、故障回滚、并发和拒权；Auth/模型为 fixture。指定 Staging 当前连接器拒权，真实模型→Staging→Ops 全链仍 UNRUN；未发布、未合并、未关闭 #359。下述切片1/2保留历史范围，其正文存储缺口已在本地实现，但不等于真实环境验收完成。
 
 **2026-09-14 VPJ-75切片2已落地**（[docs/contracts/wiki-generation-dispatch.md](../contracts/wiki-generation-dispatch.md)、[artifacts/VPJ-75](../../artifacts/VPJ-75/)）：新增`ops_wiki_generation_v1`（claim/complete两段式dispatcher，Postgres不能发外部HTTP，claim预定job后应用层真实调用LLM再回写complete）；expectedVersion冲突拒绝覆盖、job运行中重复claim拒绝、失败后重试复用同一行而非新建，均用真实本地Supabase+真实GoTrue会话验证。首次真实LLM调用落地：`lib/server/jobs/wiki-generation-job.ts`（独立于#357在用的`staging-text-job.ts`，不改动不复用那个文件）真实调用Qwen API两次（operator授权小额探针预算，真实key存本地gitignore文件未入库未回显），输出经闭合schema校验（summary+gaps），全链路claim→真实调用→complete→数据库行验证通过。过程中发现真实schema缺口：`wiki_page_revisions`目前没有字段存生成的正文内容（只有change_note≤400字），已如实记录待后续切片补。#359仍OPEN，Ops审查UI/正文持久化/statement抽取/矛盾处理/Docling集成均未做。
