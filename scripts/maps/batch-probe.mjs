@@ -62,9 +62,12 @@ async function boundedJson(response) {
   } finally { await reader.cancel().catch(() => {}); }
 }
 
-export async function runBatchProbe({ provider, env, fixtures, record, fetcher = fetch }) {
+export const MAX_DELAY_MS = 5000;
+
+export async function runBatchProbe({ provider, env, fixtures, record, fetcher = fetch, delayMs = 0, sleep = ms => new Promise(r => setTimeout(r, ms)) }) {
   const c = Object.hasOwn(config, provider) ? config[provider] : null;
   if (!c) throw new Error("invalid_provider");
+  if (!Number.isFinite(delayMs) || delayMs < 0 || delayMs > MAX_DELAY_MS) throw new Error("invalid_delay");
   if (env[c.flag] !== "true" || !env[c.key]?.trim()) {
     record({ status: "UNRUN", reason: env[c.flag] !== "true" ? "disabled" : "missing_secure_credential", requests: 0 });
     return false;
@@ -75,6 +78,7 @@ export async function runBatchProbe({ provider, env, fixtures, record, fetcher =
   let allObserved = true;
   for (const request of allRequests) {
     count += 1;
+    if (count > 1 && delayMs > 0) await sleep(delayMs);
     const started = Date.now();
     record({ phase: "admitted", provider, operation: request.operation, city: request.city, category: request.category,
       requestNumber: count, of: allRequests.length, at: new Date().toISOString() });
@@ -87,7 +91,7 @@ export async function runBatchProbe({ provider, env, fixtures, record, fetcher =
       result = { status: error?.name === "TimeoutError" ? "timeout" : "transport_or_response_error" };
     }
     record({ phase: "returned", provider, operation: request.operation, city: request.city, category: request.category,
-      requestNumber: count, of: allRequests.length, elapsedMs: Date.now() - started,
+      requestNumber: count, of: allRequests.length, elapsedMs: Date.now() - started, delayMs,
       ...result, charge: "unknown; reconcile account usage", retainedRawResponse: false });
     if (result.status !== "observed") allObserved = false;
   }
@@ -97,20 +101,22 @@ export async function runBatchProbe({ provider, env, fixtures, record, fetcher =
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   let fd;
   try {
-    const [provider, ledger, fixturesPath, ...extra] = process.argv.slice(2);
+    const [provider, ledger, fixturesPath, delayArg, ...extra] = process.argv.slice(2);
     if (!Object.hasOwn(config, provider) || !ledger || !fixturesPath || extra.length) throw new Error("usage");
+    const delayMs = delayArg === undefined ? 0 : Number(delayArg);
+    if (!Number.isFinite(delayMs) || delayMs < 0 || delayMs > MAX_DELAY_MS) throw new Error("invalid_delay");
     const fixtures = loadFixtures(readFileSync(fixturesPath, "utf8"));
     if (fixtures.length * 2 > HARD_CAP_REQUESTS) throw new Error("fixture_budget_exceeds_hard_cap");
     fd = openSync(ledger, "wx", 0o600);
     const record = value => { writeSync(fd, JSON.stringify(value) + "\n"); fsyncSync(fd); };
     record({ schemaVersion: "map-batch-probe/1", scriptSha256: createHash("sha256").update(readFileSync(new URL(import.meta.url))).digest("hex"),
-      fixturesPath, fixtureCount: fixtures.length, coordinateSystem: "GCJ-02", hardCapRequests: HARD_CAP_REQUESTS,
+      fixturesPath, fixtureCount: fixtures.length, coordinateSystem: "GCJ-02", hardCapRequests: HARD_CAP_REQUESTS, delayMs,
       scope: "named public landmarks; synthetic from/to offsets; server API only", clientMapLoading: "UNRUN" });
-    const ok = await runBatchProbe({ provider, env: process.env, fixtures, record });
+    const ok = await runBatchProbe({ provider, env: process.env, fixtures, record, delayMs });
     console.log(JSON.stringify({ status: ok ? "ALL_OBSERVED" : "INCOMPLETE", provider, fixtureCount: fixtures.length, rawOutput: "suppressed" }));
     if (!ok) process.exitCode = 1;
   } catch {
-    console.error("Batch probe stopped. Inspect the existing ledger; do not rerun an uncertain dispatch. Usage: node scripts/maps/batch-probe.mjs <amap|tencent> <new-ledger-path> <fixtures.json>");
+    console.error("Batch probe stopped. Inspect the existing ledger; do not rerun an uncertain dispatch. Usage: node scripts/maps/batch-probe.mjs <amap|tencent> <new-ledger-path> <fixtures.json> [delayMs<=5000]");
     process.exitCode = 1;
   } finally { if (fd !== undefined) closeSync(fd); }
 }

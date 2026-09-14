@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
-import { loadFixtures, requestsForFixture, runBatchProbe, HARD_CAP_REQUESTS } from "../../../scripts/maps/batch-probe.mjs";
+import { loadFixtures, requestsForFixture, runBatchProbe, HARD_CAP_REQUESTS, MAX_DELAY_MS } from "../../../scripts/maps/batch-probe.mjs";
 
 const okFixtures = [
   { city: "上海市", category: "airport_terminal", query: "上海虹桥国际机场2号航站楼", from: { lat: 31.1975, lng: 121.3364 }, to: { lat: 31.2, lng: 121.34 } },
@@ -61,6 +61,24 @@ test("one non-observed result marks the batch incomplete but does not stop remai
     fetcher: async () => { calls += 1; return calls === 1 ? Response.json({ status: "0", infocode: "10001" }) : Response.json({ status: "1", infocode: "10000", pois: [] }); } });
   assert.equal(ok, false);
   assert.equal(calls, okFixtures.length * 2);
+});
+
+test("delayMs sleeps between requests but never before the first, and rejects out-of-range values", async () => {
+  const sleeps = [];
+  const fakeSleep = ms => { sleeps.push(ms); return Promise.resolve(); };
+  let calls = 0;
+  const ok = await runBatchProbe({ provider: "amap", env: { AMAP_PROBE_ENABLED: "true", AMAP_WEB_SERVICE_KEY: "secret" },
+    fixtures: okFixtures, delayMs: 500, sleep: fakeSleep, record: () => {},
+    fetcher: async () => Response.json(++calls % 2 === 1
+      ? { status: "1", infocode: "10000", pois: [{ id: "1", name: "p" }] }
+      : { status: "1", infocode: "10000", route: { paths: [{ distance: "100", cost: { duration: "60" } }] } }) });
+  assert.equal(ok, true);
+  assert.deepEqual(sleeps, [500, 500, 500]);
+
+  await assert.rejects(() => runBatchProbe({ provider: "amap", env: { AMAP_PROBE_ENABLED: "true", AMAP_WEB_SERVICE_KEY: "secret" },
+    fixtures: okFixtures, delayMs: MAX_DELAY_MS + 1, record: () => {}, fetcher: () => { throw new Error("must not call"); } }));
+  await assert.rejects(() => runBatchProbe({ provider: "amap", env: { AMAP_PROBE_ENABLED: "true", AMAP_WEB_SERVICE_KEY: "secret" },
+    fixtures: okFixtures, delayMs: -1, record: () => {}, fetcher: () => { throw new Error("must not call"); } }));
 });
 
 test("CLI refuses ledger reuse and an oversized fixtures file", () => {

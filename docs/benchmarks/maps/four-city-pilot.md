@@ -33,14 +33,20 @@ coordinates are approximate synthetic offsets from memory — not verified
 precise entrances — same framing as the single-fixture script's own
 Beijing point pair.
 
-2026-09-14 pilot result: AMap 6/6 fixtures observed; Tencent 0/6, all
-`provider_rejected code 121` — see
+2026-09-14 pilot result: AMap 6/6 fixtures observed across two runs;
+Tencent 0/6 across two runs (no delay, then `delayMs=800`), both
+`provider_rejected code 121` regardless of request spacing — see
 `artifacts/VPJ-18/four-city-pilot-20260914/verification.md` for the full
-table and the (undiagnosed, hypothesized rate-limit) explanation. Do not
-infer a provider preference from this alone.
+table. The delayed re-run rules out simple QPS throttling; the pattern
+now points at an account/key-configuration issue (IP allowlist, platform
+restriction, or enablement delay) that needs the operator's own Tencent
+console. Do not infer a provider preference from this alone.
 
-Scaling to the full 120/40 matrix needs: (1) resolving the Tencent code
-121 signal first (an inter-request delay is the obvious next experiment,
-not yet run), (2) the remaining ~34 landmarks and ~34 routes per #362's
-spec, and (3) an explicit go-ahead on real-call volume before firing that
-many requests against both accounts.
+`runBatchProbe`/the CLI now accept an optional `delayMs` (capped at
+`MAX_DELAY_MS = 5000`) to sleep between requests — added for this
+diagnostic, available for any future run that wants deliberate spacing.
+
+Scaling to the full 120/40 matrix needs: (1) the operator resolving the
+Tencent code 121 signal via their console, (2) the remaining ~34
+landmarks and ~34 routes per #362's spec, and (3) an explicit go-ahead on
+real-call volume before firing that many requests against both accounts.
