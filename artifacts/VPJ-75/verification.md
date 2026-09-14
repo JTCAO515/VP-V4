@@ -108,3 +108,15 @@ PR CI remains separately visible on the PR. Do not equate green default CI skips
 with complete target-environment acceptance. Roll back by disabling this consumer;
 retain stored body data, all historical records and receipts. Applied migrations
 receive compatible forward repairs only.
+
+## 2026-09-15 continuation
+
+[Staging readiness and native evidence](staging-readiness-20260915.md) supersedes
+only the earlier browser-access gap: the user completed official sign-in, and
+read-only SQL confirmed the correct target at50 migrations, latest20260914090000,
+Wiki tables/RPC absent, Ops disabled. The separate connector is still a different
+account. Three-Wiki-migration atomic rollback now passes from this precise baseline
+with an existing source row preserved; map identity migration remains outside scope.
+Native CI script on exact3fb381f completed57pass/0fail/23 explicit environment skips,
+with owned simulator deleted. Remote schema/permission changes await explicit
+named-target authorization and fresh backup/restore proof. No paid call or merge.

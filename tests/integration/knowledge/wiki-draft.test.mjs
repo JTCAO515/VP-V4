@@ -27,6 +27,15 @@ test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACL
   await db('create schema extensions; create extension pgcrypto with schema extensions;');
   const migration='20260914130000_vpj_75_wiki_draft_content.sql';
   for(const file of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f<migration).sort()){
+    if(file==='20260914100000_vpj_19_363_place_identity.sql'){
+      const batch=['20260914110000_vpj_75_359_wiki_schema.sql','20260914120000_vpj_75_359_wiki_dispatcher.sql',migration].map(f=>readFileSync('supabase/migrations/'+f,'utf8')).join('\n');
+      await db(`insert into knowledge_review_private.source_revisions(source_key,revision_label,declaration,snippet_hash,submitted_by) values('wiki_preupgrade','r1','{"snippet":"Preserve this synthetic historical material"}','${'b'.repeat(64)}','${uuid()}');`);
+      const before=await db("select row_to_json(s) as source from knowledge_review_private.source_revisions s order by id;");
+      await db('begin;'+batch+'rollback;');
+      assert.equal((await db("select to_regclass('knowledge_review_private.wiki_pages') is null as absent;"))[0].absent,true);
+      assert.deepEqual(await db("select row_to_json(s) as source from knowledge_review_private.source_revisions s order by id;"),before);
+      console.log('Staging 50-to-53 combined three-migration rollback PASS');
+    }
     try{await db('begin;'+readFileSync('supabase/migrations/'+file,'utf8')+'commit;');}catch(error){throw new Error('Migration failed: '+file+': '+error.message);}
   }
   const actor=async(member)=>{const a={id:uuid(),session:uuid()};await db(`insert into auth.users values('${a.id}');insert into auth.sessions(id,user_id) values('${a.session}','${a.id}');${member?`insert into knowledge_review_private.members(actor_id,active) values('${a.id}',true);`:''}`);return a;};

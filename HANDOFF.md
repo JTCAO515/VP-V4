@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：VPJ-75 #359 slice 3 implemented locally: full draft_content + authenticated Ops draft/diff/source reader. PostgreSQL17.6 migration/restart/rollback/concurrency/ACL8/8 PASS using existing SQL Auth fixture and mocked provider. Staging and paid model chain remain UNRUN. PR delivery in progress; parent stays open.
+状态：PR397 open at3fb381f: Wiki body/diff/source implementation and Quality/Budget/Vercel passed. Native CI remains queued; identical local native script57pass0fail23environment skips, owned simulator cleaned. User restored browser Staging login: actual50 migrations, Wiki table/RPC absent, Ops disabled. Bounded Wiki rollout prepared and awaiting named-target schema/Ops authorization plus fresh backup/restore.
 
 阶段：S2: finish #359 draft persistence and Ops review delivery, then statement/span publication and job recovery in dependency order. This device is independently verified; historical key paths are not available credentials.
 
@@ -45,7 +45,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - #268←#266/#267/#229/#231, all OPEN: selected-version complete12 required-mode scenarios, actual Ops stop/restore/rollback and matching real domestic/international network evidence are not available. Local ledgers, deadline tests, static flags or configured regions do not complete those dependencies.
 - JT deferred further physical phone verification on2026-09-12. Existing physical same-Trip/auth slice passed; full native/VoiceOver/Store acceptance remains unrun. The previous CI AX failure is resolved; do not repeat phone work as a development gate.
 
-- #359 slice3 real target integration UNRUN: designated Staging dzqdzetcctkhbrhlxxgn denied by current Supabase connector; local GoTrue/Docker/Supabase CLI and model credentials not available. Native PostgreSQL proof does not establish those capabilities or a live paid-call budget.
+- #359 real target integration remains UNRUN. Browser Staging login restored; current50 lacks all three Wiki migrations. Remote schema/Ops test-window authorization, fresh encrypted backup/restore and secure runtime provider access remain prerequisites. Separate connector still lacks target access; hosted Native CI queued; local57pass23skip does not change GitHub status.
 - Production/customer and complete native/Harness acceptance remain unrun. Scoped Staging and actual C0 model protocol/worker behavior are verified; supplier billing, semantic quality and real user data consumers remain separate.
 - Physical VoiceOver, signed Store and selected-object Ask sheet acceptance under #198/#233/#242 remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.
 - VPJ-66 offline preparation is merged and accepted; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.
@@ -55,6 +55,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- 2026-09-15 continuation: exact3fb381f unchanged native CI script/Xcode26.6/iOS26.5 completes57pass0fail23environment skips; actual simulator deleted. Browser official login restored, read-only Staging50 and Wiki absence/Ops-off observed. Three-Wiki-migration rollback from50 preserves prior source and native SQL8/8passes. See artifacts/VPJ-75/staging-readiness-20260915.md.
 - 2026-09-14 new-device #359 slice3: native PostgreSQL17.6 full migration replay, upgrade rollback, exact 600-character body, process restart, receipt rollback/replay, concurrency and ACL8/8; contracts368/368; security146pass1existing skip; generic integration23pass76environment skips. Browser uses synthetic DB-readback proxy, not GoTrue or provider. See artifacts/VPJ-75/verification.md.
 - 2026-09-14 VPJ-74 slice 3: real Staging deployment via supabase db push --linked, zero migration drift before/after, schema+data backup taken and later deleted (never needed), full submit->review->publish->provenance-read flow plus OPS_FORBIDDEN negative case run against real Staging, all synthetic test data (3 users, sessions, members, one candidate chain) deleted afterward, feature flags restored to false, final row counts matched pre-test baseline exactly across every table. See artifacts/VPJ-74/staging-verification-slice3.md.
 - 2026-09-14 #362 full matrix: AMap 160/160 (120 search + 40 route), Tencent 159/160 (1 genuine no_results, English query for a minor viewpoint). Full variant/city breakdown in artifacts/VPJ-18/full-matrix-20260914/verification.md. Mid-run AMap OVER_DIRECTION_RANGE (code 20803) found and fixed (route redesign, short synthetic offsets instead of long-distance real-place pairs).
@@ -150,7 +151,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Finish this slice PR/CI, obtain only outstanding environment access through secure login, and run real GoTrue/model/Staging restart readback when available. Then #359 statement publication and recovery, followed by #360 with actual upstream contracts. Merge/production remain separately authorized.
+Complete PR397 follow-up and named Staging rollout only after the pending authorization and backup/restore prerequisites. Three Wiki migrations only; do not include independent map migration or stack dependent runtime PRs. Real model budget/credential and GitHub runner remain separate. Then continue #359 statement/span publication and recovery before #360.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
