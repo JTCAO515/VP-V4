@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PR397 open at3fb381f: Wiki body/diff/source implementation and Quality/Budget/Vercel passed. Native CI remains queued; identical local native script57pass0fail23environment skips, owned simulator cleaned. User restored browser Staging login: actual50 migrations, Wiki table/RPC absent, Ops disabled. Bounded Wiki rollout prepared and awaiting named-target schema/Ops authorization plus fresh backup/restore.
+状态：VPJ-75 #359 editorial statement bridge implemented on merged main4dc09d4 in isolated codex/wiki-statement-review: exact Wiki/source lineage, atomic/deduplicated existing Ops candidate submission, separate review/publication/read/withdrawal. Local PostgreSQL14/14 and contracts373/373 pass; real target/LLM extraction remains UNRUN. PR/CI closeout next.
 
-阶段：S2: finish #359 draft persistence and Ops review delivery, then statement/span publication and job recovery in dependency order. This device is independently verified; historical key paths are not available credentials.
+阶段：S2 #359: source-linked operator statement candidates; keep automatic extraction, exact spans, source/procedure/topic and real Staging acceptance separate.
 
 ## 读取顺序
 
@@ -55,6 +55,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 验证
 
+- #359 statement bridge: native PostgreSQL14pass0skip covers linkage rollback/concurrency/source/version/ACL and existing separate-review publication/read/revoke; contracts373pass; security146pass1skip; integration23pass76skip. Built browser→real handlers→SQL (fixture identity) submission and post-commit503 retry preserve exactly1 candidate. Independent review no must-fix findings. Evidence artifacts/VPJ-75/wiki-statement-review/verification.md.
 - 2026-09-15 continuation: exact3fb381f unchanged native CI script/Xcode26.6/iOS26.5 completes57pass0fail23environment skips; actual simulator deleted. Browser official login restored, read-only Staging50 and Wiki absence/Ops-off observed. Three-Wiki-migration rollback from50 preserves prior source and native SQL8/8passes. See artifacts/VPJ-75/staging-readiness-20260915.md.
 - 2026-09-14 new-device #359 slice3: native PostgreSQL17.6 full migration replay, upgrade rollback, exact 600-character body, process restart, receipt rollback/replay, concurrency and ACL8/8; contracts368/368; security146pass1existing skip; generic integration23pass76environment skips. Browser uses synthetic DB-readback proxy, not GoTrue or provider. See artifacts/VPJ-75/verification.md.
 - 2026-09-14 VPJ-74 slice 3: real Staging deployment via supabase db push --linked, zero migration drift before/after, schema+data backup taken and later deleted (never needed), full submit->review->publish->provenance-read flow plus OPS_FORBIDDEN negative case run against real Staging, all synthetic test data (3 users, sessions, members, one candidate chain) deleted afterward, feature flags restored to false, final row counts matched pre-test baseline exactly across every table. See artifacts/VPJ-74/staging-verification-slice3.md.
@@ -151,7 +152,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-Complete PR397 follow-up and named Staging rollout only after the pending authorization and backup/restore prerequisites. Three Wiki migrations only; do not include independent map migration or stack dependent runtime PRs. Real model budget/credential and GitHub runner remain separate. Then continue #359 statement/span publication and recovery before #360.
+Finish this statement-bridge PR/CI. Then implement bounded model statement proposals and precise evidence spans using the accepted source/review contracts; perform Staging only within explicit authorization and backup/restore. #397 merged under its one-round CI waiver; no automatic extension to later PRs.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

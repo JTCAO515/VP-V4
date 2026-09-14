@@ -1,3 +1,7 @@
+import http from "node:http";
+import {Readable} from "node:stream";
+import {handleOpsRequest} from "../../../lib/server/knowledge/review/http-workspace.ts";
+import {handleWikiRequest} from "../../../lib/server/knowledge/wiki/http-wiki.ts";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
@@ -12,7 +16,7 @@ import {runWikiGenerationJob} from '../../../lib/server/jobs/wiki-generation-job
 // Native local PostgreSQL alternative when Docker is unavailable. Never accepts a
 // remote connection string. Auth tables/claims are the existing SQL fixture, not GoTrue.
 const enabled=!!process.env.VP_WIKI_PG_BIN && !!process.env.VP_WIKI_PG_MODULE;
-test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACLs and restart', {skip:!enabled,timeout:180000},async t=>{
+test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACLs and restart', {skip:!enabled,timeout:process.env.VP_WIKI_BROWSER_FIXTURE==='1'?900000:180000},async t=>{
   const bin=process.env.VP_WIKI_PG_BIN;
   const {default:pg}=await import(pathToFileURL(process.env.VP_WIKI_PG_MODULE).href);
   const root=mkdtempSync(join(tmpdir(),'vpwiki-db-'));
@@ -121,4 +125,95 @@ test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACL
     await db(`update knowledge_review_private.members set active=true where actor_id='${author.id}';update knowledge_review_private.settings set enabled=false;`);
     await assert.rejects(call(author,'ops_wiki_read_v1',{}),/OPS_DISABLED/);
   });
+  const linkSql=readFileSync('supabase/migrations/20260914140000_vpj_75_wiki_statement_review.sql','utf8');
+  await t.test('statement-link migration rollback preserves prior reader and receipts',async()=>{
+    await db('begin;'+linkSql+'rollback;');
+    assert.equal((await db("select to_regclass('knowledge_review_private.wiki_statement_candidates') is null as absent;"))[0].absent,true);
+    await db('begin;'+linkSql+'commit;');
+    await db('update knowledge_review_private.settings set enabled=true;');
+    assert.deepEqual(await completeWikiGenerationJob(rpc,completion,outcome),saved);
+  });
+  const currentWiki=await call(author,'ops_wiki_read_v1',{pageKey});
+  const currentRevision=currentWiki.revisions[0];
+  const statement={schemaVersion:'knowledge-statement/1',assertion:{subjectId:'synthetic_museum',predicate:'requires_document',objectId:'identity_document',conditions:['entry'],exclusions:['exempt']},scope:{cities:['shanghai'],scene:'attraction',audience:'international_independent_traveler'},expressions:{zh:{text:'需提供身份证明。',conditions:['入场时'],exclusions:['豁免者除外']},en:{text:'Bring ID.',conditions:['On entry'],exclusions:['Unless exempt']}},sources:[source]};
+  const input={action:'submit_wiki_statement',operationId:uuid(),candidateId:uuid(),wikiRevisionId:currentRevision.id,expectedWikiVersion:currentWiki.version,title:'Wiki-based synthetic statement',statement};
+  let candidate;
+  await t.test('exact source/version + identical input dedup under new operation IDs',async()=>{
+    candidate=await call(author,'ops_review_workspace',input);
+    assert.equal(candidate.status,'pending');assert.equal(candidate.published,false);
+    assert.deepEqual(candidate.wikiOrigin,{pageKey,revisionId:currentRevision.id,version:3,method:'operator_statement'});
+    assert.deepEqual(await call(author,'ops_review_workspace',input),candidate);
+    const duplicate=await call(author,'ops_review_workspace',{...input,operationId:uuid(),candidateId:uuid()});
+    assert.equal(duplicate.id,candidate.id);
+    assert.equal((await db('select count(*)::int n from knowledge_review_private.wiki_statement_candidates;'))[0].n,1);
+    for(const change of [{expectedWikiVersion:2},{wikiRevisionId:currentWiki.revisions[1].id},{statement:{...statement,sources:[{...source,snippet:'Invented source text'}]}},{statement:{...statement,sources:[{...source,sourceKey:'invented_source'}]}}])await assert.rejects(call(author,'ops_review_workspace',{...input,operationId:uuid(),candidateId:uuid(),...change}),/OPS_CONFLICT/);
+    await assert.rejects(call(author,'ops_review_workspace',{...input,title:'Changed same receipt'}),/OPS_CONFLICT/);
+  });
+  await t.test('concurrent equivalent submissions create one candidate across operation IDs',async()=>{
+    const concurrent={...input,statement:{...statement,assertion:{...statement.assertion,objectId:'parallel_document'}}};
+    const results=await Promise.all([call(author,'ops_review_workspace',{...concurrent,operationId:uuid(),candidateId:uuid()}),call(author,'ops_review_workspace',{...concurrent,operationId:uuid(),candidateId:uuid()})]);
+    assert.equal(results[0].id,results[1].id);
+    assert.equal((await db(`select count(*)::int n from knowledge_review_private.wiki_statement_candidates where candidate_id='${results[0].id}';`))[0].n,1);
+  });
+  await t.test('link failure rolls back candidate, statement, audit and receipt together',async()=>{
+    await db("create function knowledge_review_private.wiki_link_fail() returns trigger language plpgsql as $$begin raise exception 'injected link failure';end$$;create trigger wiki_link_fail before insert on knowledge_review_private.wiki_statement_candidates for each row execute function knowledge_review_private.wiki_link_fail();");
+    const broken={...input,operationId:uuid(),candidateId:uuid(),statement:{...statement,assertion:{...statement.assertion,objectId:'other_document'}}};
+    try{await assert.rejects(call(author,'ops_review_workspace',broken),/injected link failure/);}finally{await db('drop trigger wiki_link_fail on knowledge_review_private.wiki_statement_candidates;drop function knowledge_review_private.wiki_link_fail();');}
+    for(const table of ['candidates','statements','audit'])assert.equal((await db(`select count(*)::int n from knowledge_review_private.${table} where ${table==='candidates'?'id':'candidate_id'}='${broken.candidateId}';`))[0].n,0);
+    assert.equal((await db(`select count(*)::int n from knowledge_review_private.receipts where operation_id='${broken.operationId}';`))[0].n,0);
+  });
+  const reviewer=await actor(true);
+  await t.test('existing independent review/publication/reader/revocation keeps exact source and conditions',async()=>{
+    const review={action:'review',operationId:uuid(),candidateId:candidate.id,expectedVersion:1,decision:'reviewed',note:'Synthetic independent review'};
+    await assert.rejects(call(author,'ops_review_workspace',review),/OPS_SELF_REVIEW/);
+    const reviewed=await call(reviewer,'ops_review_workspace',review);assert.equal(reviewed.status,'reviewed');assert.deepEqual(reviewed.wikiOrigin,candidate.wikiOrigin);
+    const publish={action:'publish_statement',operationId:uuid(),candidateId:candidate.id,expectedVersion:2,expiresAt:new Date(Date.now()+3600000).toISOString(),useBasis:'original_factual_summary',useNote:'Synthetic review only'};
+    await assert.rejects(call(author,'ops_review_workspace',publish),/OPS_SELF_REVIEW/);
+    await db('update knowledge_review_private.publication_settings set enabled=true;');
+    assert.equal((await call(outsider,'knowledge_read_v1',{city:'shanghai',scene:'attraction',locale:'en'})).statements.length,0);
+    const published=await call(reviewer,'ops_review_workspace',publish);assert.equal(published.operationOutcome,'published');
+    for(const locale of ['zh','en']){
+      const read=await call(outsider,'knowledge_read_v1',{city:'shanghai',scene:'attraction',locale});
+      assert.equal(read.statements.length,1);assert.equal(read.statements[0].text,statement.expressions[locale].text);
+      assert.deepEqual(read.statements[0].conditions,statement.expressions[locale].conditions);
+      assert.deepEqual(read.statements[0].exclusions,statement.expressions[locale].exclusions);
+      assert.equal(read.statements[0].sources[0].sourceRevisionId,sourceId);
+    }
+    await call(reviewer,'ops_review_workspace',{action:'revoke_statement',operationId:uuid(),candidateId:candidate.id,expectedPublicationVersion:1,note:'Synthetic withdrawal'});
+    assert.equal((await call(outsider,'knowledge_read_v1',{city:'shanghai',scene:'attraction',locale:'en'})).statements.length,0);
+  });
+  await t.test('new route denies outsider, revoked membership and direct/private bypass',async()=>{
+    await assert.rejects(call(outsider,'ops_review_workspace',input),/OPS_FORBIDDEN/);
+    await db(`update knowledge_review_private.members set active=false where actor_id='${author.id}';`);
+    await assert.rejects(call(author,'ops_review_workspace',input),/OPS_FORBIDDEN/);
+    for(const role of ['anon','authenticated','service_role']){
+      await assert.rejects(db(`set role ${role};select * from knowledge_review_private.wiki_statement_candidates;`),/permission denied/);
+      await assert.rejects(db(`set role ${role};select knowledge_review_private.ops_review_workspace_before_wiki_v1('{}');`),/permission denied/);
+    }
+  });
+
+  if(process.env.VP_WIKI_BROWSER_FIXTURE==='1') {
+    await db(`update knowledge_review_private.members set active=true where actor_id='${author.id}';`);
+    await new Promise((resolve,reject)=>{
+      let dropNext=false;
+      const server=http.createServer(async(req,res)=>{
+        try {
+          if(req.url==='/fixture/drop-next' && req.method==='POST'){dropNext=true;res.end('armed');return;}
+          if(req.url==='/fixture/stop' && req.method==='POST'){res.end('stopped');server.close(resolve);return;}
+          if(req.url.startsWith('/api/ops/')) {
+            const request=new Request('http://127.0.0.1:3197'+req.url,{method:req.method,headers:req.headers,...(req.method==='POST'?{body:Readable.toWeb(req),duplex:'half'}:{})});
+            const createRpc=()=>({authenticate:async()=>author.id,call:async(name,{p_input})=>{try{return {data:await call(author,name,p_input),error:null};}catch(error){return {data:null,error:{message:error.message}};}}});
+            const result=req.url.startsWith('/api/ops/wiki')?await handleWikiRequest(request,{enabled:true,createRpc}):await handleOpsRequest(request,{enabled:true,sameOrigin:request.headers.get('origin')==='http://127.0.0.1:3197',createRpc});
+            if(dropNext && req.method==='POST'){dropNext=false;res.writeHead(503,{'content-type':'application/json','cache-control':'no-store'});res.end(JSON.stringify({error:'OPS_ACK_UNKNOWN'}));return;}
+            res.writeHead(result.status,{'content-type':'application/json','cache-control':'private, no-store','x-vp-fixture':'SQL claims, not GoTrue'});res.end(JSON.stringify(result.body));return;
+          }
+          const forward=http.request({hostname:'127.0.0.1',port:3196,path:req.url,method:req.method,headers:{...req.headers,host:'127.0.0.1:3196'}},up=>{res.writeHead(up.statusCode,up.headers);up.pipe(res);});
+          forward.on('error',()=>{res.writeHead(502);res.end();});req.pipe(forward);
+        }catch(error){res.writeHead(500);res.end('fixture failure');}
+      });
+      server.on('error',reject);server.listen(3197,'127.0.0.1',()=>console.log('BROWSER_FIXTURE_READY http://127.0.0.1:3197/ops/wiki'));
+      t.after(()=>server.close());
+    });
+  }
+
 });

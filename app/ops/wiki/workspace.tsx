@@ -50,6 +50,7 @@ export function OpsWikiWorkspace() {
     {!result && status === "idle" && <section className={styles.panel}><h2>{c.recent}</h2>{pages.length ? pages.map(p => <p key={p.pageKey}><button onClick={() => void load(p.pageKey)}>{p.pageKey} · v{p.version}</button></p>) : <p>{c.empty}</p>}</section>}
     {result && <section className={styles.list}>
       <h2 style={{ overflowWrap: "anywhere" }}>{result.pageKey} · v{result.version}</h2>
+      {current?.draftContent && current.validationStatus !== "rejected" && <Link href={`/ops/review?wikiPageKey=${encodeURIComponent(result.pageKey)}&wikiRevisionId=${current.id}&wikiVersion=${current.version}`}>{locale === "zh" ? "根据此版本整理声明" : "Prepare a statement from this version"}</Link>}
       <p>{c.changes}: {!previous ? c.noPrevious : !current?.draftContent || !previous.draftContent ? c.unknownDiff : JSON.stringify(current.draftContent) === JSON.stringify(previous.draftContent) ? c.same : c.changed}</p>
       {current?.draftContent && previous?.draftContent && <article className={styles.panel}>
         {current.draftContent.summary !== previous.draftContent.summary && <>

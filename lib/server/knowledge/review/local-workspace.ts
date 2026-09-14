@@ -1,3 +1,4 @@
+import { isWikiStatementSubmit, type WikiStatementSubmit } from "../wiki/statement-submit.ts";
 import { isKnowledgeOperation, type KnowledgeOperation, type KnowledgeStatement } from "../publication/statement.ts";
 import { isSourcedCandidateInput, type SourcedCandidateInput, type SourcedCandidateRead } from "./source-assertion.ts";
 export type OpsCandidate = Readonly<{
@@ -6,16 +7,17 @@ export type OpsCandidate = Readonly<{
   reviewerId: string | null; reviewNote: string | null; createdAt: string; reviewedAt: string | null;
   published: boolean; retrievalEligible: false;
   statement?: KnowledgeStatement;
+  wikiOrigin?: { revisionId: string; pageKey: string; version: number; method: "operator_statement" };
   publication?: { state: "published" | "revoked"; version: 1 | 2; expiresAt: string };
   structured?: SourcedCandidateRead;
   audit: readonly { id: string; actorId: string; action: "submitted" | "reviewed" | "rejected"; version: number; createdAt: string }[];
 }>;
 export type OpsWorkspace = Readonly<{ actorId: string; candidates: readonly OpsCandidate[] }>;
-export type OpsInput = KnowledgeOperation | SourcedCandidateInput | { action: "submit"; operationId: string; candidateId: string; title: string; content: string }
+export type OpsInput = WikiStatementSubmit | KnowledgeOperation | SourcedCandidateInput | { action: "submit"; operationId: string; candidateId: string; title: string; content: string }
   | { action: "review"; operationId: string; candidateId: string; expectedVersion: 1; decision: "reviewed" | "rejected"; note: string };
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export function isOpsInput(value: unknown): value is OpsInput {
-  if (isKnowledgeOperation(value) || isSourcedCandidateInput(value)) return true;
+  if (isWikiStatementSubmit(value) || isKnowledgeOperation(value) || isSourcedCandidateInput(value)) return true;
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const v = value as Record<string, unknown>;
   if (typeof v.operationId !== "string" || !uuid.test(v.operationId) || typeof v.candidateId !== "string" || !uuid.test(v.candidateId)) return false;
