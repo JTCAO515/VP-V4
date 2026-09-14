@@ -1,0 +1,1082 @@
+[
+  {
+    "city": "上海市",
+    "category": "airport_terminal",
+    "variant": "zh",
+    "query": "上海虹桥国际机场2号航站楼",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "airport_terminal",
+    "variant": "en",
+    "query": "Shanghai Hongqiao Airport Terminal 2",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "airport_terminal",
+    "variant": "pinyin",
+    "query": "Shanghai Hongqiao Guoji Jichang 2 Hao Hangzhanlou",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "station_exit",
+    "variant": "zh",
+    "query": "上海站",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "station_exit",
+    "variant": "en",
+    "query": "Shanghai Railway Station",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "station_exit",
+    "variant": "pinyin",
+    "query": "Shanghai Zhan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "station_exit",
+    "variant": "zh",
+    "query": "人民广场地铁站",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "station_exit",
+    "variant": "en",
+    "query": "People's Square Metro Station",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "station_exit",
+    "variant": "pinyin",
+    "query": "Renmin Guangchang Ditie Zhan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "duplicate_name_branch",
+    "variant": "zh",
+    "query": "星巴克南京东路店",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "duplicate_name_branch",
+    "variant": "en",
+    "query": "Starbucks",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "duplicate_name_branch",
+    "variant": "pinyin",
+    "query": "Xingbake",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "外滩",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "The Bund",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Waitan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "东方明珠广播电视塔",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "Oriental Pearl Tower",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Dongfang Mingzhu Guangbo Dianshi Ta",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "豫园",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "Yu Garden",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Yu Yuan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "上海迪士尼乐园",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "Shanghai Disneyland",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Shanghai Dishini Leyuan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "landmark",
+    "variant": "zh",
+    "query": "静安寺",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "landmark",
+    "variant": "en",
+    "query": "Jing'an Temple",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "landmark",
+    "variant": "pinyin",
+    "query": "Jing'an Si",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "attraction",
+    "variant": "zh",
+    "query": "上海博物馆",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "attraction",
+    "variant": "en",
+    "query": "Shanghai Museum",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "attraction",
+    "variant": "pinyin",
+    "query": "Shanghai Bowuguan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "airport_terminal",
+    "variant": "zh",
+    "query": "北京首都国际机场3号航站楼",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "airport_terminal",
+    "variant": "en",
+    "query": "Beijing Capital Airport Terminal 3",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "airport_terminal",
+    "variant": "pinyin",
+    "query": "Beijing Shoudu Guoji Jichang 3 Hao Hangzhanlou",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "station_exit",
+    "variant": "zh",
+    "query": "北京西站",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "station_exit",
+    "variant": "en",
+    "query": "Beijing West Railway Station",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "station_exit",
+    "variant": "pinyin",
+    "query": "Beijing Xi Zhan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "station_exit",
+    "variant": "zh",
+    "query": "天安门东地铁站",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "station_exit",
+    "variant": "en",
+    "query": "Tiananmen East Metro Station",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "station_exit",
+    "variant": "pinyin",
+    "query": "Tian'anmen Dong Ditie Zhan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "duplicate_name_branch",
+    "variant": "zh",
+    "query": "麦当劳王府井店",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "duplicate_name_branch",
+    "variant": "en",
+    "query": "McDonald's",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "duplicate_name_branch",
+    "variant": "pinyin",
+    "query": "Maidanglao",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "天安门广场",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "Tiananmen Square",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Tian'anmen Guangchang",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "故宫博物院",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "The Palace Museum",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Gugong Bowuyuan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "颐和园",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "Summer Palace",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Yiheyuan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "长城八达岭",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "Great Wall at Badaling",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Changcheng Badaling",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "天坛公园",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "Temple of Heaven",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Tiantan Gongyuan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "landmark",
+    "variant": "zh",
+    "query": "王府井大街",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "landmark",
+    "variant": "en",
+    "query": "Wangfujing Street",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "landmark",
+    "variant": "pinyin",
+    "query": "Wangfujing Dajie",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "airport_terminal",
+    "variant": "zh",
+    "query": "广州白云国际机场2号航站楼",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "airport_terminal",
+    "variant": "en",
+    "query": "Guangzhou Baiyun Airport Terminal 2",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "airport_terminal",
+    "variant": "pinyin",
+    "query": "Guangzhou Baiyun Guoji Jichang 2 Hao Hangzhanlou",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "station_exit",
+    "variant": "zh",
+    "query": "广州南站",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "station_exit",
+    "variant": "en",
+    "query": "Guangzhou South Railway Station",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "station_exit",
+    "variant": "pinyin",
+    "query": "Guangzhou Nan Zhan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "station_exit",
+    "variant": "zh",
+    "query": "体育西路地铁站",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "station_exit",
+    "variant": "en",
+    "query": "Tiyu Xilu Metro Station",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "station_exit",
+    "variant": "pinyin",
+    "query": "Tiyu Xilu Ditie Zhan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "duplicate_name_branch",
+    "variant": "zh",
+    "query": "星巴克体育中心店",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "duplicate_name_branch",
+    "variant": "en",
+    "query": "Starbucks",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "duplicate_name_branch",
+    "variant": "pinyin",
+    "query": "Xingbake",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "广州塔",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "Canton Tower",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Guangzhou Ta",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "沙面岛",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "Shamian Island",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Shamian Dao",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "陈家祠",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "Chen Clan Academy",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Chenjiaci",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "白云山",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "Baiyun Mountain",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Baiyun Shan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "landmark",
+    "variant": "zh",
+    "query": "上下九步行街",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "landmark",
+    "variant": "en",
+    "query": "Shangxiajiu Pedestrian Street",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "landmark",
+    "variant": "pinyin",
+    "query": "Shangxiajiu Bu Xingjie",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "attraction",
+    "variant": "zh",
+    "query": "长隆野生动物世界",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "attraction",
+    "variant": "en",
+    "query": "Chimelong Safari Park",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "attraction",
+    "variant": "pinyin",
+    "query": "Changlong Yesheng Dongwu Shijie",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "airport_terminal",
+    "variant": "zh",
+    "query": "重庆江北国际机场T3A航站楼",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "airport_terminal",
+    "variant": "en",
+    "query": "Chongqing Jiangbei Airport Terminal 3A",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "airport_terminal",
+    "variant": "pinyin",
+    "query": "Chongqing Jiangbei Guoji Jichang T3A Hangzhanlou",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "station_exit",
+    "variant": "zh",
+    "query": "重庆北站",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "station_exit",
+    "variant": "en",
+    "query": "Chongqing North Railway Station",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "station_exit",
+    "variant": "pinyin",
+    "query": "Chongqing Bei Zhan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "variant": "zh",
+    "query": "李子坝轻轨站",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "variant": "en",
+    "query": "Liziba Monorail Station",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "variant": "pinyin",
+    "query": "Lizi Ba Qinggui Zhan",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "duplicate_name_branch",
+    "variant": "zh",
+    "query": "星巴克解放碑店",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "duplicate_name_branch",
+    "variant": "en",
+    "query": "Starbucks",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "duplicate_name_branch",
+    "variant": "pinyin",
+    "query": "Xingbake",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "解放碑",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "Jiefangbei",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Jiefangbei",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "variant": "zh",
+    "query": "洪崖洞",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "variant": "en",
+    "query": "Hongya Cave",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "variant": "pinyin",
+    "query": "Hongyadong",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "scenic_entrance",
+    "variant": "zh",
+    "query": "磁器口古镇",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "scenic_entrance",
+    "variant": "en",
+    "query": "Ciqikou Ancient Town",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "scenic_entrance",
+    "variant": "pinyin",
+    "query": "Ciqikou Guzhen",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "variant": "zh",
+    "query": "长江索道",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "variant": "en",
+    "query": "Yangtze River Cableway",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "variant": "pinyin",
+    "query": "Changjiang Suodao",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "landmark",
+    "variant": "zh",
+    "query": "三峡广场",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "landmark",
+    "variant": "en",
+    "query": "Sanxia Square",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "landmark",
+    "variant": "pinyin",
+    "query": "Sanxia Guangchang",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "variant": "zh",
+    "query": "南山一棵树观景台",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "variant": "en",
+    "query": "Nanshan Yikeshu Viewpoint",
+    "operations": [
+      "search"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "variant": "pinyin",
+    "query": "Nanshan Yikeshu Guanjingtai",
+    "operations": [
+      "search"
+    ]
+  }
+]

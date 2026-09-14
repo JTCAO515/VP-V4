@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
-import { loadFixtures, requestsForFixture, runBatchProbe, HARD_CAP_REQUESTS, MAX_DELAY_MS } from "../../../scripts/maps/batch-probe.mjs";
+import { loadFixtures, requestsForFixture, runBatchProbe, HARD_CAP_REQUESTS, MAX_DELAY_MS, fixtureRequestCount } from "../../../scripts/maps/batch-probe.mjs";
 
 const okFixtures = [
   { city: "上海市", category: "airport_terminal", query: "上海虹桥国际机场2号航站楼", from: { lat: 31.1975, lng: 121.3364 }, to: { lat: 31.2, lng: 121.34 } },
@@ -36,6 +36,32 @@ test("requestsForFixture signs tencent requests only when an sk is passed", () =
   assert.equal(signed.url.searchParams.get("sig").length, 32);
   const [amapWithSk] = requestsForFixture("amap", "secret", okFixtures[0], "sk-value");
   assert.equal(amapWithSk.url.searchParams.has("sig"), false, "amap never signs");
+});
+
+test("operations field selects a search-only or walking-only fixture", () => {
+  const searchOnly = { city: "上海市", category: "search_variant", query: "上海博物馆", operations: ["search"] };
+  const walkingOnly = { city: "上海市", category: "route", from: { lat: 31.1, lng: 121.4 }, to: { lat: 31.2, lng: 121.5 }, operations: ["walking"] };
+  assert.equal(loadFixtures(JSON.stringify([searchOnly, walkingOnly])).length, 2);
+  const [only] = requestsForFixture("amap", "secret", searchOnly);
+  assert.equal(only.operation, "search");
+  assert.equal(requestsForFixture("amap", "secret", searchOnly).length, 1);
+  const [walk] = requestsForFixture("amap", "secret", walkingOnly);
+  assert.equal(walk.operation, "walking");
+  assert.equal(requestsForFixture("amap", "secret", walkingOnly).length, 1);
+  // search-only needs no coordinates; walking-only needs no query.
+  assert.throws(() => loadFixtures(JSON.stringify([{ city: "x", category: "y", operations: ["search"] }])));
+  assert.throws(() => loadFixtures(JSON.stringify([{ city: "x", category: "y", operations: ["walking"] }])));
+  assert.throws(() => loadFixtures(JSON.stringify([{ city: "x", category: "y", query: "q", operations: [] }])));
+  assert.throws(() => loadFixtures(JSON.stringify([{ city: "x", category: "y", query: "q", operations: ["search", "search"] }])));
+  assert.throws(() => loadFixtures(JSON.stringify([{ city: "x", category: "y", query: "q", operations: ["flying"] }])));
+});
+
+test("fixtureRequestCount sums operations across mixed fixture shapes", () => {
+  const searchOnly = { city: "上海市", category: "search_variant", query: "上海博物馆", operations: ["search"] };
+  const walkingOnly = { city: "上海市", category: "route", from: { lat: 31.1, lng: 121.4 }, to: { lat: 31.2, lng: 121.5 }, operations: ["walking"] };
+  assert.equal(fixtureRequestCount([searchOnly, walkingOnly]), 2);
+  assert.equal(fixtureRequestCount(okFixtures), okFixtures.length * 2);
+  assert.equal(fixtureRequestCount([]), 0);
 });
 
 test("hard cap rejects a fixture list that would exceed it", async () => {
