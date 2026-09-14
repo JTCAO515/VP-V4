@@ -3,7 +3,12 @@
 Slice 1 (schema/idempotency data model) — see
 `359-wiki-schema-slice1-20260914/verification.md`. Slice 2 (dispatcher RPC
 + real LLM wiring) — see `359-wiki-dispatch-slice2-20260914/verification.md`
-and `docs/contracts/wiki-generation-dispatch.md`.
+and `docs/contracts/wiki-generation-dispatch.md`. Slice 3 (durable draft
+content column) — see `359-wiki-draft-content-slice3-20260915/verification.md`
+and `docs/contracts/wiki-generation-draft-content.md`: verified against a
+real standalone (non-Docker) local Postgres 16 with a hand-built `auth`
+stand-in, not the project's own Supabase CLI local stack, and **not yet
+pushed to GitHub or opened as a PR**.
 
 - ~~Generation dispatcher RPC~~ **DONE in slice 2.**
   `public.ops_wiki_generation_v1` (claim/complete) reserves jobs
@@ -20,12 +25,16 @@ and `docs/contracts/wiki-generation-dispatch.md`.
   crash was not reproduced for real (see the new gap below).
 - **Ops diff review UI.** Still not started — no page shows a
   claimed/completed job to a human reviewer.
-- **Durable storage of the generated draft content.** A real gap found
-  while running slice 2's full loop for real: `wiki_page_revisions` has no
-  column to hold the model's actual `{summary, gaps}` output — only a
-  ≤400-char `change_note`. The real Qwen output was only ever in the
-  caller's memory; a follow-up slice needs a `draft_content` column (or
-  equivalent) before any Ops review UI can show a real draft.
+- ~~Durable storage of the generated draft content~~ **DONE in slice 3, on
+  branch `feat/vpj-75-359-wiki-draft-content` (not yet pushed/PR'd).**
+  `wiki_page_revisions.draft_content jsonb` exists, is backfilled and
+  shape-checked, and `ops_wiki_generation_v1`'s `complete` path requires
+  and persists it. Verified with real INSERT/UPDATE/RPC calls (constraint
+  counterexamples, backfill, and a real authenticated claim→complete round
+  trip) against a real, standalone local Postgres 16 — not the project's
+  own Docker-based Supabase CLI stack (unavailable in this sandbox), so a
+  real session should still re-run this on the actual local stack before
+  fully trusting it at the same bar as slice 1/2.
 - **Stale-`running`-job reclaim/sweep.** A worker crash between `claim`
   and `complete` leaves a job permanently `running` — no automated or
   manual recovery path exists yet. Not reproduced with a real crash this
@@ -49,6 +58,9 @@ and `docs/contracts/wiki-generation-dispatch.md`.
 - **Actual per-call RMB cost reconciliation** against Qwen's billing
   console — token counts are real; price is not independently confirmed.
 
-#359 remains OPEN. Two slices done (schema, dispatcher+real-LLM-probe);
-Ops UI, durable draft storage, statement extraction, contradiction
-handling, and Docling integration remain.
+#359 remains OPEN. Three slices done and verified (schema,
+dispatcher+real-LLM-probe, durable draft storage — the last against a
+hand-built non-Docker Postgres stand-in, not the project's own local
+Supabase stack, and not yet pushed to GitHub); Ops UI, statement
+extraction, contradiction handling, and Docling integration remain not
+started.

@@ -57,11 +57,14 @@ test("a known cost must carry a non-negative token count", () => {
   }), false, "unknown:false requires tokens");
 });
 
+const DRAFT_CONTENT = Object.freeze({ summary: "The museum has daily hours.", gaps: [] });
+
 test("valid revision passes and requires at least one source", () => {
   const revision = {
     id: UUID_A, pageId: UUID_B, version: 1, sourceRevisionIds: [UUID_C], statementRefs: [],
     jobId: UUID_B, promptVersion: "wiki-v1", configDigest: DIGEST, inputDigest: DIGEST,
     generatedAt: "2026-09-14T00:00:00Z", validationStatus: "draft", changeNote: "initial draft",
+    draftContent: DRAFT_CONTENT,
   };
   assert.equal(isValidWikiPageRevision(revision), true);
   assert.equal(isValidWikiPageRevision({ ...revision, sourceRevisionIds: [] }), false, "must link at least one source revision");
@@ -72,9 +75,26 @@ test("revision version must be a positive integer", () => {
     id: UUID_A, pageId: UUID_B, jobId: UUID_B, sourceRevisionIds: [UUID_C], statementRefs: [],
     promptVersion: "wiki-v1", configDigest: DIGEST, inputDigest: DIGEST,
     generatedAt: "2026-09-14T00:00:00Z", validationStatus: "draft", changeNote: "x",
+    draftContent: DRAFT_CONTENT,
   };
   assert.equal(isValidWikiPageRevision({ ...base, version: 0 }), false);
   assert.equal(isValidWikiPageRevision({ ...base, version: 1 }), true);
+});
+
+test("revision requires a durable draftContent matching {summary, gaps} (VPJ-75 slice 3)", () => {
+  const base = {
+    id: UUID_A, pageId: UUID_B, version: 1, jobId: UUID_B, sourceRevisionIds: [UUID_C], statementRefs: [],
+    promptVersion: "wiki-v1", configDigest: DIGEST, inputDigest: DIGEST,
+    generatedAt: "2026-09-14T00:00:00Z", validationStatus: "draft", changeNote: "x",
+  };
+  assert.equal(isValidWikiPageRevision({ ...base, draftContent: DRAFT_CONTENT }), true);
+  assert.equal(isValidWikiPageRevision({ ...base, draftContent: undefined }), false, "draftContent is required, not optional");
+  assert.equal(isValidWikiPageRevision({ ...base, draftContent: { summary: "ok" } }), false, "gaps is required");
+  assert.equal(
+    isValidWikiPageRevision({ ...base, draftContent: { ...DRAFT_CONTENT, extra: "not allowed" } }),
+    false,
+    "draftContent stays a closed {summary, gaps} object -- the caller's old changeNote text does not substitute for it",
+  );
 });
 
 test("derivePageKey is deterministic and rejects an unknown page type", () => {
