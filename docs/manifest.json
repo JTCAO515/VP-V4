@@ -540,6 +540,10 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/vpj-08.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/vpj-14.md",
       "status": "document"
     },
@@ -644,6 +648,14 @@
       "status": "document"
     },
     {
+      "path": "docs/knowledge-upgrade/DELIVERY.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/knowledge-upgrade/README.md",
+      "status": "document"
+    },
+    {
       "path": "docs/licenses/NOTICE.md",
       "status": "document"
     },
@@ -664,11 +676,19 @@
       "status": "document"
     },
     {
+      "path": "docs/native/grounded-web-read.md",
+      "status": "document"
+    },
+    {
       "path": "docs/operations/operator-quickstart-2026-09-09.md",
       "status": "document"
     },
     {
       "path": "docs/policy/data-classes.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/policy/qwen-account-support-draft.md",
       "status": "document"
     },
     {
@@ -1024,6 +1044,18 @@
       "status": "document"
     },
     {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-74.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-75.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-76.md",
+      "status": "document"
+    },
+    {
       "path": "docs/program/2026-09-05/program-body.md",
       "status": "document"
     },
@@ -1132,6 +1164,10 @@
       "status": "document"
     },
     {
+      "path": "docs/runbooks/native-staging-s1.md",
+      "status": "document"
+    },
+    {
       "path": "docs/runbooks/ops-ledger-reconciliation.md",
       "status": "document"
     },
@@ -1145,6 +1181,10 @@
     },
     {
       "path": "docs/runbooks/staging-26-to-33.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/staging-33-to-36.md",
       "status": "document"
     },
     {

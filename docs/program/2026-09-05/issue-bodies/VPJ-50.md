@@ -17,6 +17,7 @@
 
 - [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206)
 - [VPJ-17 #207](https://github.com/JTCAO515/VP-V4/issues/207)
+- [VPJ-76 #360](https://github.com/JTCAO515/VP-V4/issues/360)
 
 ## Acceptance criteria
 
@@ -25,6 +26,8 @@
 - [ ] 只有质量/延迟/成本净收益才开放；extension版本/许可/恢复失败可回滚直接lookup。
 - [ ] HF复用：真实激活门保持；明确契约与范围后可先用公开/自有合成数据作有界离线加载、格式和对照准备，不视为本票激活或真实收益。先判定缺内容/别名、排名或召回问题；每轮最多两个候选、只改一个检索变量。
 - [ ] HF复用：优先Sentence Transformers验证，收益成立后再评估TEI；精确核Qwen/BGE各权重许可与revision及运行后端支持，不由embedding支持推定reranker兼容。模型库不替代RLS，主线保留原Postgres/直接lookup回退。
+- [ ] 知识升级：以VPJ-76同批真实baseline/问题族/qrels区分缺内容、别名、排名与召回失误，再依现有activationEvidence触发；产品RLS/时效/范围在检索前、外发前和展示前保持，研究与产品语料不能串用。
+- [ ] 知识升级：每轮比较至多两个候选且只变一项，事前冻结质量改进、p95延迟与单任务费用上限；中文分词和中英别名实测，失败/无净收益保留原路径与完整证据，不因安装pgvector/reranker或公开论文收益而称采用成立。
 
 ## 不得触碰
 

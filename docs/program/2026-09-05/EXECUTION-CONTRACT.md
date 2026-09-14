@@ -369,19 +369,21 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S3
-- Blocked by: [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206)
+- Blocked by: [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-75 #359](https://github.com/JTCAO515/VP-V4/issues/359)
 - Allowed: `lib/server/knowledge/report/**`, `lib/server/jobs/**`, `lib/server/trip/**`, `apps/ops/**`, `supabase/migrations/**`, `tests/**/takedown/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`
 - Evidence: `artifacts/VPJ-17/verification.md`, `artifacts/VPJ-17/unrun.md`, `artifacts/VPJ-17/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-17.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-17.md`, `docs/knowledge-upgrade/README.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] SourceRevision→影响候选→独立复核→outbox→索引/投影ack可重试；不是仅返回cascade意图。
 - [ ] TripItemSupport绑定claim版本，旧证据失效不删除用户已确认意图。
 - [ ] 404/页面样式变动不当政策反转；撤权立即停新检索/外发，保留允许的审计。
+- [ ] 知识升级：来源变化生成有版本的影响集，覆盖Wiki页面、statement、检索索引/缓存、历史答案和TripItemSupport；outbox逐消费者ack可重试，记录延迟/乱序/失败与恢复，删除旧索引未完成时当前资格gate仍阻止失效知识外发。
+- [ ] 知识升级：规范化缺口与来源更新只进入有界Wiki草稿/复核任务，区分资料变动、解析差异、404和真正政策反转；记录每次刷新成本/unknown及受影响知识数，不收集私人对话原文、不无限自动抓取或自动发布。
 
 ## VPJ-18
 
@@ -451,14 +453,14 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S3
-- Blocked by: [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209)
+- Blocked by: [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209), [VPJ-74 #358](https://github.com/JTCAO515/VP-V4/issues/358)
 - Allowed: `ios/**`, `lib/server/readiness/**`, `lib/server/trip/**`, `tests/**/readiness/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-21/verification.md`, `artifacts/VPJ-21/unrun.md`, `artifacts/VPJ-21/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-21.md`, `docs/contracts/vp-response-policy.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-21.md`, `docs/contracts/vp-response-policy.md`, `docs/knowledge-upgrade/README.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
@@ -466,6 +468,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 日期从相对变精确时重核相关证据；建议不改用户计划，未知不当通过。
 - [ ] 每个缺口一项可操作下一步与依据/适用范围；非适用项目不制造焦虑。
 - [ ] 准备检查以可执行下一步呈现：获准资料、核实入口、条件性候选与修改提案分开；不要把review_fact标签或提示文字作为真实问题已解决。
+- [ ] 知识升级：用版本化Ontology对象/关系/条件和获准用户状态计算knowledgeAvailability/userReadiness/actionTiming；相同证据下unknown/满足/不满足/不适用/未到时间均有中英原生实际结果，未知不能当false或已准备。
+- [ ] 知识升级：每个可做下一步绑定task/trip scope及evidence/rule versions；需改Trip时复用Proposal/diff/exact-version确认/原子Patch，拒绝、撤权、旧版本和重试无误写，原生与同Trip Web重载一致。
 
 ## VPJ-22
 
@@ -1074,13 +1078,13 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: expand
-- Blocked by: [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-17 #207](https://github.com/JTCAO515/VP-V4/issues/207)
+- Blocked by: [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-17 #207](https://github.com/JTCAO515/VP-V4/issues/207), [VPJ-76 #360](https://github.com/JTCAO515/VP-V4/issues/360)
 - Allowed: `lib/server/knowledge/retrieval/**`, `evals/**`, `docs/benchmarks/**`, `supabase/migrations/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `pnpm evals`
 - Evidence: `artifacts/VPJ-50/verification.md`, `artifacts/VPJ-50/unrun.md`, `artifacts/VPJ-50/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-50.md`, `docs/harness/hf-reuse/README.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-50.md`, `docs/harness/hf-reuse/README.md`, `docs/knowledge-upgrade/README.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - 后续开启门: 在VPJ-47记录需求/成本/责任证据，agent据此判断开发优先级；无需额外产品许可，未实测不能自动标为验收通过
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
@@ -1090,6 +1094,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 只有质量/延迟/成本净收益才开放；extension版本/许可/恢复失败可回滚直接lookup。
 - [ ] HF复用：真实激活门保持；明确契约与范围后可先用公开/自有合成数据作有界离线加载、格式和对照准备，不视为本票激活或真实收益。先判定缺内容/别名、排名或召回问题；每轮最多两个候选、只改一个检索变量。
 - [ ] HF复用：优先Sentence Transformers验证，收益成立后再评估TEI；精确核Qwen/BGE各权重许可与revision及运行后端支持，不由embedding支持推定reranker兼容。模型库不替代RLS，主线保留原Postgres/直接lookup回退。
+- [ ] 知识升级：以VPJ-76同批真实baseline/问题族/qrels区分缺内容、别名、排名与召回失误，再依现有activationEvidence触发；产品RLS/时效/范围在检索前、外发前和展示前保持，研究与产品语料不能串用。
+- [ ] 知识升级：每轮比较至多两个候选且只变一项，事前冻结质量改进、p95延迟与单任务费用上限；中文分词和中英别名实测，失败/无净收益保留原路径与完整证据，不因安装pgvector/reranker或公开论文收益而称采用成立。
 
 ## VPJ-51
 
@@ -1598,3 +1604,74 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 可运行分支验证文件限额、取消/超时、重复材料与材料内恶意指令只作内容；不连接真实用户、数据库、provider或Trip writer。保留实际资源/耗时、命令与失败，不编造中文效果。
 - [ ] 结论为有据ADOPT或REJECT：可运行分支按事前冻结样本/真值/判据判断；不可运行分支仅在固定组件/版本的具体许可或兼容阻断证据充分且已评估替代路线后作REJECT，明确转换/性能UNRUN。仅未安装/缺环境或证据不足时保持OPEN/UNRUN。
 - [ ] 有采用价值时提供到现有材料候选合同的差异和后续#201/#236集成清单；否决不阻塞这些父票采用其他合格实现，不宣称材料已审核或全部格式/真实产品通过。
+
+## VPJ-74
+
+[VPJ-74 #358](https://github.com/JTCAO515/VP-V4/issues/358) — 运营可追溯查看来源版本、原文与知识本体关系
+
+- Owner: coding-agent; vertical; 3专注日，估算专注日仅供排程；逐PR交付有界结果，整票以实际Staging生产者/消费者及故障验证为准
+- 验收阶段: S2
+- Blocked by: 无任务依赖；核实际条件
+- Allowed: `apps/ops/**`, `lib/server/knowledge/**`, `supabase/migrations/**`, `tests/**/knowledge/**`, `tests/**/ops/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm lint`; `pnpm typecheck`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`
+- Evidence: `artifacts/VPJ-74/verification.md`, `artifacts/VPJ-74/unrun.md`, `artifacts/VPJ-74/commands.jsonl`, `artifacts/VPJ-74/results.json`
+- 接口: docs/knowledge-upgrade/README.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
+- 运行门: 本规划已合并；核对当前Task执行行、已有Ops/发布/Ask真实接口。上游父票OPEN不单独阻止可独立准备，但未具备实际输入不能伪造整票验收。 实际DB/worker/provider/UI验收使用指定获准环境，必要版本化告知和明确用户同意匹配外发数据；本票不新增生产发布或资金授权。
+- 文档影响: `docs/knowledge-upgrade/README.md`, `docs/handoff.json`
+- 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
+- Rollback: 关闭本票新增worker/reader能力并恢复兼容的既有直接读取；新投影可重建，数据采用兼容前向迁移，不改已应用迁移、不复活撤回内容。保留操作/预算/审计回执。
+
+- [ ] 以一个已发布支付/铁路/SIM声明为纵切：普通获准Ops从声明读到稳定对象/关系、source revision与原文locator；新旧版本可并列核查，未授权actor无法读取私有候选。
+- [ ] 将现有subjectId/predicate/objectId/条件和例外映射到版本化类型/关系domain-range与zh/en别名；复用ID，无破坏性重命名；未注册关系只产生候选且不能执行。
+- [ ] 建立或兼容映射SourceRevision/EvidenceSpan的hash、获取时间、生效时间或unknown和原位置；旧记录缺血缘如实标legacy，重放同源幂等且不伪造时间/reviewer。
+- [ ] 实际Staging API/Ops读回通过；有界解析保留定位和错误，覆盖URL/重定向/内网请求限制、输入限额和资料注入，抓取与解析错误不变成政策变化。
+- [ ] 受影响数据库追加迁移、隔离恢复及权限/撤回反例验证通过，记录同一版本环境；原发布流程、旧客户端、publications和Trip无非预期改变。
+- [ ] 提供给VPJ-75/76/#211可消费的版本化契约与真实样本；文档/schema或fixture单独通过不能关闭本票。
+
+## VPJ-75
+
+[VPJ-75 #359](https://github.com/JTCAO515/VP-V4/issues/359) — 新来源经LLM Wiki整理为可审查并可发布的知识变更
+
+- Owner: coding-agent; vertical; 5专注日，估算专注日仅供排程；逐PR交付有界结果，整票以实际Staging生产者/消费者及故障验证为准
+- 验收阶段: S2
+- Blocked by: [VPJ-74 #358](https://github.com/JTCAO515/VP-V4/issues/358)
+- Allowed: `apps/ops/**`, `lib/server/knowledge/**`, `lib/server/jobs/**`, `lib/server/model-gateway/**`, `supabase/migrations/**`, `tests/**/knowledge/**`, `tests/**/ops/**`, `evals/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm lint`; `pnpm typecheck`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`
+- Evidence: `artifacts/VPJ-75/verification.md`, `artifacts/VPJ-75/unrun.md`, `artifacts/VPJ-75/commands.jsonl`, `artifacts/VPJ-75/results.json`
+- 接口: docs/knowledge-upgrade/README.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
+- 运行门: 本规划已合并；核对当前Task执行行、已有Ops/发布/Ask真实接口。上游父票OPEN不单独阻止可独立准备，但未具备实际输入不能伪造整票验收。 实际DB/worker/provider/UI验收使用指定获准环境，必要版本化告知和明确用户同意匹配外发数据；本票不新增生产发布或资金授权。
+- 文档影响: `docs/knowledge-upgrade/README.md`, `docs/handoff.json`
+- 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
+- Rollback: 关闭本票新增worker/reader能力并恢复兼容的既有直接读取；新投影可重建，数据采用兼容前向迁移，不改已应用迁移、不复活撤回内容。保留操作/预算/审计回执。
+
+- [ ] 一份获准来源通过实际有界LLM worker生成source/procedure/topic Wiki草稿与statement变更，运营查看差异后经现有异人审查和发布，普通允许reader读到正确版本。
+- [ ] 每条关键声明链接原source revision/span；生成摘要、关系与缺口标draft，模型不能创建来源、reviewer、TTL或发布资格，不把旧模型输出当外部证据。
+- [ ] 页面版本记录source依赖、statement引用、job/prompt/config/input digest和变更理由；重复输入不重复建页或发布，expectedVersion冲突拒绝覆盖，并发/跨页变更不暴露半更新。
+- [ ] 实际worker超时/取消/进程重启可恢复或明确终态；重试幂等，provider调用有配置、费用/unknown和预算回执；拒权或来源撤回后不继续外发/发布。
+- [ ] 固定中英材料覆盖相互矛盾、条件/例外、跨城市差异及注入；新增证据只增加或挑战候选，旧发布事实只有按原流程变更；正文与审查UI能定位原文。
+- [ ] 沿既有可靠解析路径；#288 Docling REJECT保留，候选重评须明确新缺口和事前判据。实际Ops/worker/发布/读回链与失败结果留证，不以自动标签或本地fixture结票。
+
+## VPJ-76
+
+[VPJ-76 #360](https://github.com/JTCAO515/VP-V4/issues/360) — Ask检索已发布Wiki与原子声明并返回完整证据和具体缺口
+
+- Owner: coding-agent; vertical; 5专注日，估算专注日仅供排程；逐PR交付有界结果，整票以实际Staging生产者/消费者及故障验证为准
+- 验收阶段: S2
+- Blocked by: [VPJ-75 #359](https://github.com/JTCAO515/VP-V4/issues/359)
+- Allowed: `lib/server/knowledge/**`, `lib/server/turn/**`, `lib/server/model-gateway/**`, `lib/grounded/**`, `components/chat/**`, `ios/**`, `supabase/migrations/**`, `tests/**/knowledge/**`, `evals/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm lint`; `pnpm typecheck`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm evals`
+- Evidence: `artifacts/VPJ-76/verification.md`, `artifacts/VPJ-76/unrun.md`, `artifacts/VPJ-76/commands.jsonl`, `artifacts/VPJ-76/results.json`
+- 接口: docs/knowledge-upgrade/README.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
+- 运行门: 本规划已合并；核对当前Task执行行、已有Ops/发布/Ask真实接口。上游父票OPEN不单独阻止可独立准备，但未具备实际输入不能伪造整票验收。 实际DB/worker/provider/UI验收使用指定获准环境，必要版本化告知和明确用户同意匹配外发数据；本票不新增生产发布或资金授权。
+- Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
+- 文档影响: `docs/knowledge-upgrade/README.md`, `docs/handoff.json`
+- 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
+- Rollback: 关闭本票新增worker/reader能力并恢复兼容的既有直接读取；新投影可重建，数据采用兼容前向迁移，不改已应用迁移、不复活撤回内容。保留操作/预算/审计回执。
+
+- [ ] 复用#206/#264生产者消费者：自然语言请求按明确对象、别名、required claims和完整短文/关键词检索已发布投影，输出EvidencePack并在原生zh/en与已有Web读到对应答案、限定和来源。
+- [ ] 研究索引和产品索引按用途/actor隔离；在召回、模型外发、展示及历史重载前执行当前资格。旧索引命中已撤回/过期/错范围知识也无法被外发或展示为事实。
+- [ ] EvidencePack记录required/background/missing/conflicts及statement/publication/source/span和检索/ontology版本；关键遗漏、错误引用和证据充足时全拒答均判失败，不由相关度决定完整性。
+- [ ] 分开missing_content/retrieval_miss/user_input_missing/capability_unsupported/policy_denied/provider_failure；retrieval miss先有界直接lookup，真正缺口仅保留脱敏规范化模式，不保留私人原文。
+- [ ] 沿用当前只分类输入的数据边界；如外发知识片段/上下文需版本化实际数据流配置与对应告知/同意及旧模式兼容，不静默改变现有policy。
+- [ ] 冻结复用加新增的中英问题族与qrels/必要claim真值，调参和保留集按来源版本/问题族隔离；跑实际查询、普通账号owner隔离、撤回和故障，并报告覆盖/过拒答、p50/p95与成本分母。
+- [ ] 记录同批结构化/直接读取baseline和本路径实测差异；向量化/重排仍归#248的真实召回和净收益激活门。iOS/Web实际读回、原Trip不变、历史证据和回退通过后才完成本票。
