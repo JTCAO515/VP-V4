@@ -85,3 +85,6 @@ no remote schema/permissions changed, no automatic publication or parent closure
 #359 stays open. This PR requires its own CI and merge authorization; previous
 one-round CI waiver is not reused. Disable the new entry on rollback, retain all
 stored versions/candidate links/receipts and forward-repair applied migrations.
+
+JT requested pause after this round on2026-09-15. Complete only this PR/CI closeout,
+then stop; no next-round implementation or recurring continuation was scheduled.

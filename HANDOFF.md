@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PR399 merged55c21bc with all checks passing; production ignored build confirmed, live db5fb7b unchanged. Next #359 C0-only model proposal increment implemented locally: exact source quotes/code-point binding, wiki-draft/2 atomic persistence and Ops prefill/index lineage. PostgreSQL18/18 and contracts378/378 pass using fixture model/Auth; actual provider and Staging remain UNRUN. PR/CI closeout next.
+状态：#359 bounded model proposal increment implemented and locally verified; current PR/CI closeout only. JT requested pause after this round on2026-09-15. No next-round work is authorized to start before a new resume request. #399 merged55c21bc, production unchanged; real provider/Staging remain UNRUN.
 
 阶段：S2 #359 bounded model statement proposals, preserving manual review and source qualification. No non-C0 egress or automatic publication.
 
@@ -33,6 +33,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - 2026-09-12 JT取消全部开发阶段第三方、法务与产品许可前置要求；工单/书面回复/合同回执/精确供应商TTL缺失不再阻塞开发。agent按docs/agents/development-integration-policy.md以现有账号/API与实际配置推进，可逆参数自行决定；保留用户同意、RLS、确认、秘密及真实验证。
 - 2026-09-12 JT明确同意仅暂停main自动Production构建。单字段guard已应用，PR332合并后真实Production构建CANCELED且全部线上alias保留db5fb7b；Preview/Staging不变。此授权不包含新的Production发布或解除guard。
 - 2026-09-14 JT authorizes unblocking Issues as actual dependencies permit and developing in order; labels are not an additional gate. Preserve unmet acceptance, production protection and complete parent tracking.
+- 2026-09-15 JT要求：当前模型提案这一轮处理完成后暂停。完成当前PR/CI与证据收尾，不启动下一轮，不建立继续开发的自动化。
 
 ## 未决与运行证据
 
@@ -153,7 +154,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Finish proposal increment PR/CI. Then continue #359 persistent worker/source authorization and exact edited-claim evidence checks; real provider/Staging requires existing explicit scope plus frozen budget and backup/restore. Do not equate quote identity with semantic correctness or close parent from fixtures.
+Finish this proposal PR CI and evidence, then PAUSE at JT request. Do not merge this new PR without its own explicit authorization or start another round. On a future resume, refresh live main/PR and continue the recorded #359 real-source/worker/semantic gaps; prior check evidence retains its scope.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
