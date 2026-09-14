@@ -73,13 +73,20 @@ should never crash on data it can already see.
 (no live session), `OPS_FORBIDDEN` (not an active member — from
 `current_actor()`), `OPS_NOT_FOUND` (no publication with that `factId`).
 
-## Verified against real Postgres (disposable local instance)
+## Verified against real Postgres — disposable local, then real Staging
 
-See `artifacts/VPJ-74/results.json` and `verification.md` for the full
-scenario: a real author→reviewer→publish flow followed by a provenance read,
-plus four negative cases (non-member, anon role, extra input field,
-non-existent `factId`) — all behaved as specified. Staging deployment and an
-isolated backup/restore rehearsal remain unrun; see `artifacts/VPJ-74/unrun.md`.
+Slice 1/2: a disposable local instance. See `artifacts/VPJ-74/results.json`
+and `verification.md` for the full scenario: a real author→reviewer→publish
+flow followed by a provenance read, plus four negative cases (non-member,
+anon role, extra input field, non-existent `factId`) — all behaved as
+specified.
+
+Slice 3: the same flow, run for real against the actual shared Staging
+project (schema+data backup taken first, all test data cleaned up after,
+verified back to the exact pre-test row counts). See
+`artifacts/VPJ-74/staging-verification-slice3.md`. A full isolated
+backup/restore *rehearsal* (an actual restore drill) remains unrun; see
+`artifacts/VPJ-74/unrun.md`.
 
 ## Consumers
 
