@@ -18,14 +18,12 @@ and `docs/contracts/wiki-generation-dispatch.md`.
   real token usage recorded. Cost/timeout/cancel paths are exercised by
   contract tests with an injected transport; an actual mid-call process
   crash was not reproduced for real (see the new gap below).
-- **Ops diff review UI.** Still not started — no page shows a
-  claimed/completed job to a human reviewer.
-- **Durable storage of the generated draft content.** A real gap found
-  while running slice 2's full loop for real: `wiki_page_revisions` has no
-  column to hold the model's actual `{summary, gaps}` output — only a
-  ≤400-char `change_note`. The real Qwen output was only ever in the
-  caller's memory; a follow-up slice needs a `draft_content` column (or
-  equivalent) before any Ops review UI can show a real draft.
+- **Slice 3 target-environment acceptance remains UNRUN.** Full body storage and
+  `/ops/wiki` UI are now implemented, with native PostgreSQL and synthetic browser
+  readback evidence in [verification](verification.md). Current connector denies
+  the designated Staging project; this machine has no available model key or newly
+  confirmed paid-call budget. Full GoTrue/worker/provider/Staging/browser chain,
+  full Supabase cold replay/advisors and target rollback remain separate.
 - **Stale-`running`-job reclaim/sweep.** A worker crash between `claim`
   and `complete` leaves a job permanently `running` — no automated or
   manual recovery path exists yet. Not reproduced with a real crash this

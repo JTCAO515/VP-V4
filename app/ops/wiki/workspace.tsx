@@ -1,0 +1,75 @@
+"use client";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import type { WikiRead, WikiPageList } from "@/lib/server/knowledge/wiki/read-model";
+import styles from "../review/workspace.module.css";
+
+const copy = {
+  zh: { heading: "Wiki 草稿", boundary: "生成内容供运营核对，尚未成为已发布事实。声明审核与发布仍使用现有流程。", login: "登录", review: "声明审核", language: "语言", key: "页面标识", lookup: "查看", recent: "最近 50 个页面", refresh: "刷新列表", busy: "读取中…", unavailable: "暂时无法读取，请检查登录与 Ops 权限后重试。", missing: "没有找到页面。", empty: "暂无页面。", current: "当前版本", previous: "上一版本", noPrevious: "没有上一版本，无法比较。", noBody: "此历史版本未保存正文，无法还原或比较。", noRevision: "尚无完成的草稿版本。", gaps: "待核实缺口", sources: "来源与原文位置", absentSource: "来源记录缺失，无法核实", changes: "正文差异", same: "正文未变化", changed: "正文已变化，请对照两个版本", unknownDiff: "正文缺失，差异未知", added: "新增", removed: "移除", jobs: "最近 10 个生成任务", tokens: "记录的 token 数（非账单）", unknown: "未知", metadata: "生成记录", draft: "草稿", validated: "已校验（不代表发布）", rejected: "已拒绝" },
+  en: { heading: "Wiki drafts", boundary: "Generated content is for operator review and is not a published fact. Statements use the existing review and publication process.", login: "Sign in", review: "Statement review", language: "Language", key: "Page key", lookup: "View", recent: "Latest 50 pages", refresh: "Refresh list", busy: "Loading…", unavailable: "Unable to read. Check your session and Ops access, then retry.", missing: "Page not found.", empty: "No pages yet.", current: "Current version", previous: "Previous version", noPrevious: "No previous version to compare.", noBody: "This historical revision has no stored body; it cannot be reconstructed or compared.", noRevision: "No completed draft revision yet.", gaps: "Gaps to verify", sources: "Sources and original location", absentSource: "Source record missing; cannot verify", changes: "Body differences", same: "Body unchanged", changed: "Body changed; compare both versions", unknownDiff: "Body missing; differences unknown", added: "Added", removed: "Removed", jobs: "Latest 10 generation jobs", tokens: "Recorded tokens (not an invoice)", unknown: "Unknown", metadata: "Generation record", draft: "Draft", validated: "Validated (not published)", rejected: "Rejected" },
+};
+
+export function OpsWikiWorkspace() {
+  const [locale, setLocale] = useState<"zh" | "en">("zh");
+  const [pages, setPages] = useState<WikiPageList["pages"]>([]);
+  const [result, setResult] = useState<WikiRead | null>(null);
+  const [status, setStatus] = useState<"idle" | "busy" | "unavailable" | "missing">("idle");
+  const selected = useRef<string | null>(null);
+  const request = useRef<AbortController | null>(null);
+  const c = copy[locale];
+  const load = useCallback(async (pageKey: string | null, background = false) => {
+    request.current?.abort();
+    const controller = new AbortController(); request.current = controller;
+    selected.current = pageKey;
+    if (!background) { setResult(null); setPages([]); setStatus("busy"); }
+    try {
+      const response = await fetch(`/api/ops/wiki${pageKey ? `?pageKey=${encodeURIComponent(pageKey)}` : ""}`, { cache: "no-store", signal: AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]) });
+      const body = await response.json();
+      if (controller.signal.aborted) return;
+      if (!response.ok) { setResult(null); setPages([]); setStatus(response.status === 404 ? "missing" : "unavailable"); return; }
+      if (pageKey) setResult(body.data as WikiRead); else setPages((body.data as WikiPageList).pages);
+      setStatus("idle");
+    } catch { if (!controller.signal.aborted) { setResult(null); setPages([]); setStatus("unavailable"); } }
+  }, []);
+  useEffect(() => {
+    void load(null);
+    const refresh = () => { if (document.visibilityState === "visible") void load(selected.current, true); else { request.current?.abort(); setResult(null); setPages([]); } };
+    const interval = setInterval(refresh, 25000);
+    document.addEventListener("visibilitychange", refresh);
+    window.addEventListener("pageshow", refresh);
+    return () => { request.current?.abort(); clearInterval(interval); document.removeEventListener("visibilitychange", refresh); window.removeEventListener("pageshow", refresh); };
+  }, [load]);
+  function lookup(event: FormEvent<HTMLFormElement>) { event.preventDefault(); void load(String(new FormData(event.currentTarget).get("pageKey") ?? "").trim()); }
+  const current = result?.revisions[0]; const previous = result?.revisions[1];
+  return <main className={styles.workspace} lang={locale}>
+    <header className={styles.header}><h1>{c.heading}</h1><label>{c.language}<select value={locale} onChange={e => setLocale(e.target.value as "zh" | "en")}><option value="zh">中文</option><option value="en">English</option></select></label></header>
+    <p className={styles.boundary}>{c.boundary}</p>
+    <nav className={styles.actions}><Link href="/auth/sign-in?returnTo=/ops/wiki">{c.login}</Link><Link href="/ops/review">{c.review}</Link><button onClick={() => void load(null)}>{c.refresh}</button></nav>
+    <form className={styles.panel} onSubmit={lookup}><label>{c.key}<input name="pageKey" required maxLength={200} /></label><button>{c.lookup}</button></form>
+    <p role="status">{status === "idle" ? "" : c[status]}</p>
+    {!result && status === "idle" && <section className={styles.panel}><h2>{c.recent}</h2>{pages.length ? pages.map(p => <p key={p.pageKey}><button onClick={() => void load(p.pageKey)}>{p.pageKey} · v{p.version}</button></p>) : <p>{c.empty}</p>}</section>}
+    {result && <section className={styles.list}>
+      <h2 style={{ overflowWrap: "anywhere" }}>{result.pageKey} · v{result.version}</h2>
+      <p>{c.changes}: {!previous ? c.noPrevious : !current?.draftContent || !previous.draftContent ? c.unknownDiff : JSON.stringify(current.draftContent) === JSON.stringify(previous.draftContent) ? c.same : c.changed}</p>
+      {current?.draftContent && previous?.draftContent && <article className={styles.panel}>
+        {current.draftContent.summary !== previous.draftContent.summary && <>
+          <p className={styles.content}>{c.removed}: <del>{previous.draftContent.summary}</del></p>
+          <p className={styles.content}>{c.added}: <ins>{current.draftContent.summary}</ins></p>
+        </>}
+        {previous.draftContent.gaps.filter(gap => !current.draftContent!.gaps.includes(gap)).map((gap, n) => <p key={`removed-${n}`}>{c.removed}: <del>{gap}</del></p>)}
+        {current.draftContent.gaps.filter(gap => !previous.draftContent!.gaps.includes(gap)).map((gap, n) => <p key={`added-${n}`}>{c.added}: <ins>{gap}</ins></p>)}
+      </article>}
+      {!current && <p>{c.noRevision}</p>}
+      {result.revisions.map((revision, i) => <article className={styles.panel} key={revision.id}>
+        <h3>{i === 0 ? c.current : c.previous} · v{revision.version} · {c[revision.validationStatus]}</h3>
+        <p>{revision.changeNote}</p>
+        {revision.draftContent ? <><p className={styles.content}>{revision.draftContent.summary}</p><h4>{c.gaps}</h4><ul>{revision.draftContent.gaps.map((gap, n) => <li key={n}>{gap}</li>)}</ul></> : <p>{c.noBody}</p>}
+        <details><summary>{c.sources} ({revision.sources.length})</summary>{revision.sources.map((source, n) => <section key={`${source.id}:${n}`} className={styles.content}>
+          <p>{source.id}</p>{source.missing ? <p>{c.absentSource}</p> : <><p>{source.declaration?.publisher} · {source.declaration?.revisionLabel}</p><p>{source.declaration?.uri}</p><p>{source.declaration?.locator}</p><blockquote>{source.declaration?.snippet}</blockquote></>}
+        </section>)}</details>
+        <details><summary>{c.metadata}</summary><p className={styles.content}>{revision.jobId}<br />{revision.generatedAt}<br />{revision.promptVersion}<br />{revision.configDigest}<br />{revision.inputDigest}</p></details>
+      </article>)}
+      <article className={styles.panel}><h3>{c.jobs}</h3>{result.jobs.map(job => <p key={job.id} className={styles.content}>{job.id} · {job.status} {job.errorCode}<br />{c.tokens}: {job.costUnknown ? c.unknown : job.costTokens}</p>)}</article>
+    </section>}
+  </main>;
+}

@@ -1,6 +1,9 @@
 # VPJ-75 slice 2 (#359) — generation dispatcher + real LLM wiring
 
-Status: accepted, first real end-to-end path. `public.ops_wiki_generation_v1`
+Status: historical slice 2 evidence follows. Slice 3 extends completion with full
+body persistence and an Ops reader; see [draft persistence](wiki-draft-content.md).
+
+Slice 2 supplied the first real end-to-end path. `public.ops_wiki_generation_v1`
 is a claim/complete dispatcher RPC over slice 1's schema, and
 `lib/server/jobs/wiki-generation-job.ts` is the first real LLM call in this
 codebase for wiki generation — verified against the real Qwen API, not a

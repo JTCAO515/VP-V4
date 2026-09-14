@@ -106,7 +106,7 @@ export function OpsReviewWorkspace() {
       <label>{c.language}<select value={locale} onChange={(event) => setLocale(event.target.value as Locale)}>{localeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
     </header>
     <p className={styles.boundary}>{k.boundary}</p>
-    <nav className={styles.actions}><Link href="/auth/sign-in?returnTo=/ops/review">{c.login}</Link><button type="button" disabled={busy || pending !== null} onClick={() => { setMessage(null); void refresh(); }}>{c.refresh}</button><Link href="/journey/knowledge">{k.preview}</Link></nav>
+    <nav className={styles.actions}><Link href="/auth/sign-in?returnTo=/ops/review">{c.login}</Link><button type="button" disabled={busy || pending !== null} onClick={() => { setMessage(null); void refresh(); }}>{c.refresh}</button><Link href="/journey/knowledge">{k.preview}</Link><Link href="/ops/wiki">{locale === "zh" ? "Wiki 草稿" : "Wiki drafts"}</Link></nav>
     <p role="status" aria-live="polite">{busy ? c.busy : message ? c[message] : ""}</p>
     {pending && !busy && <button type="button" onClick={() => { void mutate(pending); }}>{c.retry}</button>}
     {workspace && !pending && <><form ref={form} className={styles.panel} onSubmit={submit}>

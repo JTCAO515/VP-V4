@@ -3,12 +3,12 @@
   "projectId": "visepanda-vp-v4",
   "lastUpdated": "2026-09-14",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
-  "status": "VPJ-75 (#359) slice 2 done: ops_wiki_generation_v1 claim/complete dispatcher (idempotent, expectedVersion-conflict-checked, job-state-machine enforced) verified against real local Supabase with real GoTrue session. First real LLM call in this codebase for wiki generation: lib/server/jobs/wiki-generation-job.ts made 2 real Qwen API calls under operator-authorized real spend (small probe budget), separate from #357s staging-text-job.ts (not touched). Real schema gap found: wiki_page_revisions has no column for actual generated content, only a short change_note -- flagged for a follow-up slice. VPJ-19 (#363) and VPJ-75 slice 1 also done this session; #362/#358 closed by operator.",
-  "currentPhase": "VPJ-75 needs: draft_content column + Ops review UI (slice 3) before any acceptance bullet fully closes. Real LLM API keys (Qwen/DeepSeek/GLM) now available locally in lib/server/jobs/.local/.env (gitignored) for future real-infra work.",
+  "status": "VPJ-75 #359 slice 3 implemented locally: full draft_content + authenticated Ops draft/diff/source reader. PostgreSQL17.6 migration/restart/rollback/concurrency/ACL8/8 PASS using existing SQL Auth fixture and mocked provider. Staging and paid model chain remain UNRUN. PR delivery in progress; parent stays open.",
+  "currentPhase": "S2: finish #359 draft persistence and Ops review delivery, then statement/span publication and job recovery in dependency order. This device is independently verified; historical key paths are not available credentials.",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
-  "owner": "Claude (this session) — VPJ-74 slice 1 (ontology/provenance) and #362 maps pilot, by explicit user override of the default Claude=architect/Codex=implement split.",
-  "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree. Operator-supplied AMap/Tencent keys live only in local git-ignored scripts/maps/.env on this machine — re-request from operator if working elsewhere, never reconstruct or guess them.",
-  "nextAction": "Pick VPJ-75 slice 3 (add draft_content storage + minimal Ops review UI showing a claimed/completed job) or #364 (maps client-side route comparison) per operator direction.",
+  "owner": "Codex — #359 draft persistence and Ops reader",
+  "intendedNextAgent": "Read live origin/main, PR/Issue and execution row; preserve the user plan file. Use existing secure credentials/official login, never request secrets in chat or assume old-device files exist.",
+  "nextAction": "Finish this slice PR/CI, obtain only outstanding environment access through secure login, and run real GoTrue/model/Staging restart readback when available. Then #359 statement publication and recovery, followed by #360 with actual upstream contracts. Merge/production remain separately authorized.",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
@@ -56,7 +56,8 @@
     "2026-09-11 resumed: JT explicitly confirmed Preview native configuration/proof key, exact host WAF allowance and two synthetic-account/owned-Trip cleanup, then delegated development permission management. This supersedes the earlier pause for this scope; Production/real-user/provider/funds boundaries remain separate.",
     "2026-09-12 JT removed mandatory supplier support responses, account-contract receipts and precise supplier TTL evidence from VPJ-03 for ALL model providers, including Qwen, GLM, DeepSeek and future candidates. Public terms, console metadata and actual configuration suffice as documented sources with explicit unknowns. No supplier ticket blocks development; preserve truthful notice, user consent and runtime permissions.",
     "2026-09-12 JT取消全部开发阶段第三方、法务与产品许可前置要求；工单/书面回复/合同回执/精确供应商TTL缺失不再阻塞开发。agent按docs/agents/development-integration-policy.md以现有账号/API与实际配置推进，可逆参数自行决定；保留用户同意、RLS、确认、秘密及真实验证。",
-    "2026-09-12 JT明确同意仅暂停main自动Production构建。单字段guard已应用，PR332合并后真实Production构建CANCELED且全部线上alias保留db5fb7b；Preview/Staging不变。此授权不包含新的Production发布或解除guard。"
+    "2026-09-12 JT明确同意仅暂停main自动Production构建。单字段guard已应用，PR332合并后真实Production构建CANCELED且全部线上alias保留db5fb7b；Preview/Staging不变。此授权不包含新的Production发布或解除guard。",
+    "2026-09-14 JT authorizes unblocking Issues as actual dependencies permit and developing in order; labels are not an additional gate. Preserve unmet acceptance, production protection and complete parent tracking."
   ],
   "changedFiles": [
     "docs/policy/vpj-03-data-disclosure.md",
@@ -66,6 +67,7 @@
     "docs/handoff.json"
   ],
   "verification": [
+    "2026-09-14 new-device #359 slice3: native PostgreSQL17.6 full migration replay, upgrade rollback, exact 600-character body, process restart, receipt rollback/replay, concurrency and ACL8/8; contracts368/368; security146pass1existing skip; generic integration23pass76environment skips. Browser uses synthetic DB-readback proxy, not GoTrue or provider. See artifacts/VPJ-75/verification.md.",
     "2026-09-14 VPJ-74 slice 3: real Staging deployment via supabase db push --linked, zero migration drift before/after, schema+data backup taken and later deleted (never needed), full submit->review->publish->provenance-read flow plus OPS_FORBIDDEN negative case run against real Staging, all synthetic test data (3 users, sessions, members, one candidate chain) deleted afterward, feature flags restored to false, final row counts matched pre-test baseline exactly across every table. See artifacts/VPJ-74/staging-verification-slice3.md.",
     "2026-09-14 #362 full matrix: AMap 160/160 (120 search + 40 route), Tencent 159/160 (1 genuine no_results, English query for a minor viewpoint). Full variant/city breakdown in artifacts/VPJ-18/full-matrix-20260914/verification.md. Mid-run AMap OVER_DIRECTION_RANGE (code 20803) found and fixed (route redesign, short synthetic offsets instead of long-distance real-place pairs).",
     "2026-09-14 VPJ-74 slice 1: docs:check/lint(267)/typecheck/test:contract(313/313) all PASS. Real disposable-local-Postgres scenario (project_id vp-v4-ai-08): full submit->review->publish->provenance-read flow plus OPS_FORBIDDEN/anon-permission-denied/INVALID_INPUT/OPS_NOT_FOUND negative cases all behaved as specified. See artifacts/VPJ-74/verification.md, results.json, commands.jsonl, unrun.md.",
@@ -159,6 +161,7 @@
     "Native knowledge2026-09-13: typed current-session first-party reader;6new state tests pass, XCTest33/0fail/5existingAPI skips plus9Swift Testing pass. Final bilingual actual SwiftUI loopback UI2/2 pass with near-expiry refresh/hidden-tab/revoke/disable. Actual Staging12-record backend read showed3 payment notes with identical en/zhfactIDs, source locator, process restart and logout clearing. Scope/busy lifecycle review findings fixed; independent0/0. Both switches false,0Ops,ownWAFremoved(version12),Simulator deleted. Evidence: artifacts/VPJ-16/native-knowledge-20260913/verification.md. CI pending; full Ask/native release acceptance separate."
   ],
   "unrun": [
+    "#359 slice3 real target integration UNRUN: designated Staging dzqdzetcctkhbrhlxxgn denied by current Supabase connector; local GoTrue/Docker/Supabase CLI and model credentials not available. Native PostgreSQL proof does not establish those capabilities or a live paid-call budget.",
     "Production/customer and complete native/Harness acceptance remain unrun. Scoped Staging and actual C0 model protocol/worker behavior are verified; supplier billing, semantic quality and real user data consumers remain separate.",
     "Physical VoiceOver, signed Store and selected-object Ask sheet acceptance under #198/#233/#242 remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.",
     "VPJ-66 offline preparation is merged and accepted; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.",
