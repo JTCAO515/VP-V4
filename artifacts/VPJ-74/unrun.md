@@ -1,13 +1,17 @@
-# VPJ-74 slice 1 — explicitly UNRUN
+# VPJ-74 — explicitly UNRUN
 
-- **Staging deployment and read-back.** Verified against a disposable local
-  Postgres instance only (project_id `vp-v4-ai-08`), not the shared Staging
-  project. The ticket's own acceptance requires "实际Staging API/Ops读回通过"
-  — not satisfied by this slice.
-- **Isolated backup/restore rehearsal.** Not run in this session. The
-  migration's own reversibility (dropping the new function/tables/columns)
-  was reasoned about, not exercised as an actual backup→migrate→restore
-  drill against a snapshot.
+- ~~Staging deployment and read-back~~ **DONE in slice 3** — see
+  `staging-verification-slice3.md`. Real submit→review→publish→provenance-
+  read flow plus an `OPS_FORBIDDEN` negative case, run against the actual
+  shared Staging project, with a schema+data backup taken first and all
+  test data cleaned up afterward (verified byte-for-byte back to the
+  pre-test baseline row counts).
+- **Isolated backup/restore *rehearsal*** (an actual restore drill, not
+  just taking a backup) remains not run — slice 3 took a real backup but
+  never needed to restore from it, since the push succeeded cleanly.
+  `docs/runbooks/backup-restore.md`'s full rehearsal protocol (separate
+  isolated project, RPO/RTO targets, PITR) is still a separate, larger
+  exercise this slice did not attempt.
 - **`apps/ops/**` UI surface.** No Ops-facing UI was built or touched in
   this slice — verification used direct RPC calls (`psql`) against real
   Postgres, not an HTTP/UI path. The allowed-paths list in
