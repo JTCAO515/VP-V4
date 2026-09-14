@@ -15,8 +15,9 @@ export function safeReturnTo(candidate: string | undefined): string {
   if (parsed.origin !== "https://visepanda.invalid" || parsed.hash) return "/visepanda";
   if (parsed.search) {
     const q = parsed.searchParams;
-    if (parsed.pathname !== "/ops/review" || q.size !== 3
+    if (parsed.pathname !== "/ops/review" || (q.size !== 3 && !(q.size === 4 && q.has("wikiProposalIndex")))
       || !["wikiPageKey", "wikiRevisionId", "wikiVersion"].every(key => q.has(key))
+      || (q.has("wikiProposalIndex") && !/^[0-4]$/.test(q.get("wikiProposalIndex") ?? ""))
       || !new RegExp(`^${UUID}$`, "i").test(q.get("wikiRevisionId") ?? "")
       || !/^[1-9][0-9]{0,9}$/.test(q.get("wikiVersion") ?? "")
       || Number(q.get("wikiVersion")) > 2147483647) return "/visepanda";

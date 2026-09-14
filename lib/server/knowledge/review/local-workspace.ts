@@ -7,7 +7,7 @@ export type OpsCandidate = Readonly<{
   reviewerId: string | null; reviewNote: string | null; createdAt: string; reviewedAt: string | null;
   published: boolean; retrievalEligible: false;
   statement?: KnowledgeStatement;
-  wikiOrigin?: { revisionId: string; pageKey: string; version: number; method: "operator_statement" };
+  wikiOrigin?: { revisionId: string; pageKey: string; version: number; method: "operator_statement"; proposalIndex?: number };
   publication?: { state: "published" | "revoked"; version: 1 | 2; expiresAt: string };
   structured?: SourcedCandidateRead;
   audit: readonly { id: string; actorId: string; action: "submitted" | "reviewed" | "rejected"; version: number; createdAt: string }[];

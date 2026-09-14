@@ -3,12 +3,12 @@
   "projectId": "visepanda-vp-v4",
   "lastUpdated": "2026-09-15",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
-  "status": "VPJ-75 #359 editorial statement bridge implemented on merged main4dc09d4 in isolated codex/wiki-statement-review: exact Wiki/source lineage, atomic/deduplicated existing Ops candidate submission, separate review/publication/read/withdrawal. Local PostgreSQL14/14 and contracts373/373 pass; real target/LLM extraction remains UNRUN. PR/CI closeout next.",
-  "currentPhase": "S2 #359: source-linked operator statement candidates; keep automatic extraction, exact spans, source/procedure/topic and real Staging acceptance separate.",
+  "status": "PR399 merged55c21bc with all checks passing; production ignored build confirmed, live db5fb7b unchanged. Next #359 C0-only model proposal increment implemented locally: exact source quotes/code-point binding, wiki-draft/2 atomic persistence and Ops prefill/index lineage. PostgreSQL18/18 and contracts378/378 pass using fixture model/Auth; actual provider and Staging remain UNRUN. PR/CI closeout next.",
+  "currentPhase": "S2 #359 bounded model statement proposals, preserving manual review and source qualification. No non-C0 egress or automatic publication.",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "Codex — #359 draft persistence and Ops reader",
   "intendedNextAgent": "Read live origin/main, PR/Issue and execution row; preserve the user plan file. Use existing secure credentials/official login, never request secrets in chat or assume old-device files exist.",
-  "nextAction": "Finish this statement-bridge PR/CI. Then implement bounded model statement proposals and precise evidence spans using the accepted source/review contracts; perform Staging only within explicit authorization and backup/restore. #397 merged under its one-round CI waiver; no automatic extension to later PRs.",
+  "nextAction": "Finish proposal increment PR/CI. Then continue #359 persistent worker/source authorization and exact edited-claim evidence checks; real provider/Staging requires existing explicit scope plus frozen budget and backup/restore. Do not equate quote identity with semantic correctness or close parent from fixtures.",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
@@ -67,6 +67,7 @@
     "docs/handoff.json"
   ],
   "verification": [
+    "#359 proposals: PostgreSQL18pass0skip includes Unicode quote binding/storage/restart/rejection, contracts378pass, security146pass1skip, integration23pass76skip. Built Ops browser edits prefilled proposal and preserves source/revision/index in pending candidate. Provider and Auth are fixtures,0paid calls. Independent review no must-fix findings; repaired one SQL alias ambiguity and one incomplete provider fixture. See artifacts/VPJ-75/wiki-statement-proposals/verification.md.",
     "#359 statement bridge: native PostgreSQL14pass0skip covers linkage rollback/concurrency/source/version/ACL and existing separate-review publication/read/revoke; contracts373pass; security146pass1skip; integration23pass76skip. Built browser→real handlers→SQL (fixture identity) submission and post-commit503 retry preserve exactly1 candidate. Independent review no must-fix findings. Evidence artifacts/VPJ-75/wiki-statement-review/verification.md.",
     "2026-09-15 continuation: exact3fb381f unchanged native CI script/Xcode26.6/iOS26.5 completes57pass0fail23environment skips; actual simulator deleted. Browser official login restored, read-only Staging50 and Wiki absence/Ops-off observed. Three-Wiki-migration rollback from50 preserves prior source and native SQL8/8passes. See artifacts/VPJ-75/staging-readiness-20260915.md.",
     "2026-09-14 new-device #359 slice3: native PostgreSQL17.6 full migration replay, upgrade rollback, exact 600-character body, process restart, receipt rollback/replay, concurrency and ACL8/8; contracts368/368; security146pass1existing skip; generic integration23pass76environment skips. Browser uses synthetic DB-readback proxy, not GoTrue or provider. See artifacts/VPJ-75/verification.md.",

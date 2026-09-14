@@ -20,3 +20,12 @@ test('sign-in preserves only a closed pinned Wiki target, never an external redi
  assert.equal(safeReturnTo(route),route);assert.equal(safeReturnTo('/ops/wiki'),'/ops/wiki');
  for(const bad of [route+'&next=https://evil.example',route+'&wikiVersion=3',route.replace('wikiVersion=2','wikiVersion=-1'),route.replace(id,'fake'),route+'#fragment','//evil.example/ops/review',route.replace('/ops/review','/visepanda')])assert.equal(safeReturnTo(bad),'/visepanda');
 });
+test('model proposal index survives login and pre-fills only the exact stored revision',()=>{
+ const selected={...target,proposalIndex:0};
+ const statement={schemaVersion:'knowledge-statement/1',sources:[source.declaration]};
+ const structured={...read,revisions:[{...read.revisions[0],draftContent:{schemaVersion:'wiki-draft/2',summary:'Summary',gaps:[],statementProposals:[{statement,evidence:[{sourceRevisionId:id,quote:'Original text',startOffset:0,endOffset:13}]}]}}]};
+ const ctx=wikiReviewContext(structured,selected);assert.deepEqual(ctx.proposalStatement,statement);assert.equal(ctx.proposalIndex,0);
+ assert.equal(wikiReviewContext(read,selected),null);assert.equal(wikiReviewContext(structured,{...selected,proposalIndex:4}),null);
+ const route=`/ops/review?wikiPageKey=source%3Ax&wikiRevisionId=${id}&wikiVersion=2&wikiProposalIndex=0`;
+ assert.equal(safeReturnTo(route),route);assert.equal(safeReturnTo(route.replace('Index=0','Index=5')),'/visepanda');assert.equal(safeReturnTo(route+'&wikiProposalIndex=1'),'/visepanda');
+});

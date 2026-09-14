@@ -1,10 +1,11 @@
+import type {StructuredWikiDraft} from "./proposals";
 import type { WikiGenerationDraftOutput } from "../../model-gateway/prompt/wiki-generation";
 import type { PageType, ValidationStatus, JobStatus } from "./contract";
 export type WikiPageList = { pages: { pageKey: string; pageType: PageType; version: number }[] };
 export type WikiRead = {
   pageKey: string; pageType: PageType; version: number;
   revisions: {
-    id: string; version: number; draftContent: WikiGenerationDraftOutput | null;
+    id: string; version: number; draftContent: WikiGenerationDraftOutput | StructuredWikiDraft | null;
     validationStatus: ValidationStatus; changeNote: string; jobId: string;
     promptVersion: string; configDigest: string; inputDigest: string; generatedAt: string;
     sourceRevisionIds: string[]; statementRefs: string[];

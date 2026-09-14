@@ -2,21 +2,21 @@ import styles from "./workspace.module.css";
 import type { SourceDeclaration } from "@/lib/server/knowledge/review/source-assertion";
 import { knowledgeEditorCopy, opsSourceCopy, type Locale } from "@/lib/i18n";
 import { KNOWLEDGE_CITIES, KNOWLEDGE_SCENES, type KnowledgeStatement, type TravelAssertion } from "@/lib/server/knowledge/publication/statement";
-export function StatementFields({locale,disabled,wikiSources}:{locale:Locale;disabled:boolean;wikiSources?:readonly {id:string;declaration:SourceDeclaration}[]}){
+export function StatementFields({locale,disabled,wikiSources,initial}:{locale:Locale;disabled:boolean;initial?:KnowledgeStatement;wikiSources?:readonly {id:string;declaration:SourceDeclaration}[]}){
  const c=knowledgeEditorCopy[locale],s=opsSourceCopy[locale];
  return <fieldset disabled={disabled}><legend>{c.mode}</legend>
   {wikiSources ? <section>
     <p>{locale === 'zh' ? '选择 1–3 份原始来源；来源内容按已有版本保留。' : 'Select 1–3 original sources. Existing source versions are preserved.'}</p>
-    {wikiSources.map((source,i)=><label className={styles.content} key={source.id}><input className={styles.modeCheckbox} type="checkbox" name="wikiSource" value={source.id} defaultChecked={i<3}/>{source.declaration.publisher} · {source.declaration.sourceKey} · {source.declaration.revisionLabel}<span>{source.declaration.locator}</span><blockquote>{source.declaration.snippet}</blockquote></label>)}
+    {wikiSources.map((source,i)=><label className={styles.content} key={source.id}><input className={styles.modeCheckbox} type="checkbox" name="wikiSource" value={source.id} defaultChecked={initial?initial.sources.some(s=>s.sourceKey===source.declaration.sourceKey&&s.revisionLabel===source.declaration.revisionLabel):i<3}/>{source.declaration.publisher} · {source.declaration.sourceKey} · {source.declaration.revisionLabel}<span>{source.declaration.locator}</span><blockquote>{source.declaration.snippet}</blockquote></label>)}
   </section> : <>
   {([['sourceKey',128],['revisionLabel',120],['publisher',160],['uri',1000],['locator',240]] as const).map(([name,max])=><label key={name}>{s[name]}<input name={name} required maxLength={max}/></label>)}
   <label>{s.snippet}<textarea name="snippet" required maxLength={2000} rows={3}/></label><label>{s.usageDeclaration}<textarea name="usageDeclaration" required maxLength={500} rows={2}/></label>
   </>}
-  <label>{s.subjectId}<input name="subjectId" required maxLength={128}/></label><label>{c.predicate}<select name="predicate">{['offers_procedure','accepts_method','requires_document','requires_action','connects_to','provides_contact','permits_admission'].map(p=><option key={p}>{p}</option>)}</select></label><label>{c.object}<input name="objectId" required maxLength={128}/></label>
-  <label>{c.conditions}<textarea name="conditions" rows={2} maxLength={1547}/></label><label>{c.exclusions}<textarea name="exclusions" rows={2} maxLength={1547}/></label>
-  <label>{c.cities}<select name="cities" multiple required defaultValue={['shanghai']}>{KNOWLEDGE_CITIES.map(v=><option key={v}>{v}</option>)}</select></label><label>{c.scene}<select name="scene">{KNOWLEDGE_SCENES.map(v=><option key={v}>{v}</option>)}</select></label>
-  {([['conditionsZh',c.conditions+' · '+s.zh],['conditionsEn',c.conditions+' · '+s.en],['exclusionsZh',c.exclusions+' · '+s.zh],['exclusionsEn',c.exclusions+' · '+s.en]] as const).map(([name,label])=><label key={name}>{label}<textarea name={name} maxLength={2891} rows={2}/></label>)}
-  <label>{s.zh}<textarea name="expressionZh" required maxLength={1000} rows={3}/></label><label>{s.en}<textarea name="expressionEn" required maxLength={1000} rows={3}/></label>
+  <label>{s.subjectId}<input name="subjectId" defaultValue={initial?.assertion.subjectId} required maxLength={128}/></label><label>{c.predicate}<select name="predicate" defaultValue={initial?.assertion.predicate}>{['offers_procedure','accepts_method','requires_document','requires_action','connects_to','provides_contact','permits_admission'].map(p=><option key={p}>{p}</option>)}</select></label><label>{c.object}<input name="objectId" defaultValue={initial?.assertion.objectId} required maxLength={128}/></label>
+  <label>{c.conditions}<textarea name="conditions" defaultValue={initial?.assertion.conditions.join("\n")} rows={2} maxLength={1547}/></label><label>{c.exclusions}<textarea name="exclusions" defaultValue={initial?.assertion.exclusions.join("\n")} rows={2} maxLength={1547}/></label>
+  <label>{c.cities}<select name="cities" multiple required defaultValue={initial?[...initial.scope.cities]:['shanghai']}>{KNOWLEDGE_CITIES.map(v=><option key={v}>{v}</option>)}</select></label><label>{c.scene}<select name="scene" defaultValue={initial?.scope.scene}>{KNOWLEDGE_SCENES.map(v=><option key={v}>{v}</option>)}</select></label>
+  {([['conditionsZh',c.conditions+' · '+s.zh],['conditionsEn',c.conditions+' · '+s.en],['exclusionsZh',c.exclusions+' · '+s.zh],['exclusionsEn',c.exclusions+' · '+s.en]] as const).map(([name,label])=><label key={name}>{label}<textarea name={name} defaultValue={initial?.expressions[name.endsWith("Zh")?"zh":"en"][name.startsWith("conditions")?"conditions":"exclusions"].join("\n")} maxLength={2891} rows={2}/></label>)}
+  <label>{s.zh}<textarea name="expressionZh" defaultValue={initial?.expressions.zh.text} required maxLength={1000} rows={3}/></label><label>{s.en}<textarea name="expressionEn" defaultValue={initial?.expressions.en.text} required maxLength={1000} rows={3}/></label>
  </fieldset>;
 }
 export function statementFields(values:FormData):KnowledgeStatement{
