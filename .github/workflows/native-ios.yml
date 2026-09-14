@@ -20,7 +20,8 @@ concurrency:
 jobs:
   simulator:
     runs-on: [self-hosted, macOS, ARM64, vp-v4-ios]
-    timeout-minutes: 30
+    # Full simulator suite can use 30 minutes; leave time for evidence and cleanup.
+    timeout-minutes: 45
     env:
       DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
     steps:

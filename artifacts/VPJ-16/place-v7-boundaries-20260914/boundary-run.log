@@ -1,0 +1,43 @@
+{
+  mode: 'activate',
+  status: 'PASS',
+  state: {
+    ops: false,
+    trips: 3,
+    users: 6,
+    reader: true,
+    members: [ [Object], [Object] ],
+    attempts: 351,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 0
+  }
+}
+
+{"mode": "allow", "activeVersion": 85, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{"case":"injection-en","status":"PASS","calls":1}
+{"case":"injection-zh","status":"PASS","calls":2}
+{"case":"hotel-en","status":"PASS","calls":3}
+{"case":"hotel-zh","status":"PASS","calls":4}
+{"status":"STOPPED","phase":"read-result","errorType":"AssertionError"}
+{
+  mode: 'disable',
+  status: 'PASS',
+  windowClosed: true,
+  state: {
+    ops: false,
+    trips: 3,
+    users: 6,
+    reader: false,
+    members: [ [Object], [Object] ],
+    attempts: 356,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 0
+  }
+}
+
+{"mode": "remove", "activeVersion": 86, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{"status":"FAIL","calls":5,"diagnosis":{"schemaVersion":"knowledge-validation/1","turnId":"6461dbc5-d872-43d2-8365-4f5933bfa4b2","reason":"valid"},"cleanup":[{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"disable","status":"PASS"},{"operation":"removeOwnHost","status":"PASS"}]}

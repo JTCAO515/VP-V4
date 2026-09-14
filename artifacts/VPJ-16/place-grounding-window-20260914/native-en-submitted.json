@@ -1,0 +1,4922 @@
+[
+  {
+    "AXUniqueId": null,
+    "AXLabel": "VisePanda",
+    "type": "Application",
+    "frame": {
+      "x": 0,
+      "width": 402,
+      "y": 0,
+      "height": 874
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "main-tab-view",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "height": 874,
+      "width": 402,
+      "x": 0,
+      "y": 0
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "Ask",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "x": 0,
+      "width": 402,
+      "y": 62,
+      "height": 54
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.reviewed-question",
+    "AXLabel": "Boarding documents",
+    "type": "Group",
+    "frame": {
+      "x": 19.999999999999993,
+      "width": 182.33333333333334,
+      "y": 66,
+      "height": 36
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.reviewed-question",
+    "AXLabel": "Boarding documents",
+    "type": "Button",
+    "frame": {
+      "x": 19.999999999999993,
+      "width": 182.33333333333331,
+      "y": 66,
+      "height": 36
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Ask",
+    "type": "Heading",
+    "frame": {
+      "x": 218.33333333333334,
+      "width": 30,
+      "y": 73.66666666666666,
+      "height": 20.66666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.reload",
+    "AXLabel": "Reload",
+    "type": "Group",
+    "frame": {
+      "x": 305.6666666666667,
+      "width": 76.33333333333331,
+      "y": 66,
+      "height": 36
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.reload",
+    "AXLabel": "Reload",
+    "type": "Button",
+    "frame": {
+      "x": 305.6666666666667,
+      "width": 76.33333333333331,
+      "y": 66,
+      "height": 36
+    },
+    "enabled": false
+  },
+  {
+    "AXUniqueId": "AdditionalDimmingOverlay",
+    "AXLabel": null,
+    "type": "Image",
+    "frame": {
+      "x": -120,
+      "width": 642,
+      "y": 731,
+      "height": 286
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Vise Panda. Your China travel companion",
+    "type": "StaticText",
+    "frame": {
+      "x": 16,
+      "width": 221.6666717529297,
+      "y": 132,
+      "height": 52.33332824707031
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "PandaMark",
+    "type": "Image",
+    "frame": {
+      "x": 16,
+      "width": 48,
+      "y": 134.33333333333334,
+      "height": 47.99999999999997
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "BrandWordmark",
+    "type": "Image",
+    "frame": {
+      "x": 76,
+      "width": 108,
+      "y": 132,
+      "height": 36
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Your China travel companion",
+    "type": "StaticText",
+    "frame": {
+      "y": 170,
+      "width": 161.66666666666666,
+      "height": 14.333333333333314,
+      "x": 76
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Test Ask",
+    "type": "StaticText",
+    "frame": {
+      "y": 208.33333333333331,
+      "width": 67.66666666666666,
+      "height": 20.333333333333343,
+      "x": 16
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Before using AI",
+    "type": "Button",
+    "frame": {
+      "y": 268.66666666666663,
+      "width": 338,
+      "height": 28.33333333333337,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Before using AI",
+    "type": "StaticText",
+    "frame": {
+      "width": 338,
+      "y": 268.66666666666663,
+      "height": 28.33333333333337,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "width": 7,
+      "y": 276.66666666666663,
+      "height": 12,
+      "x": 362.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.withdraw",
+    "AXLabel": "Withdraw permission",
+    "type": "Button",
+    "frame": {
+      "y": 309,
+      "width": 160,
+      "height": 20.333333333333314,
+      "x": 32
+    },
+    "enabled": false
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Recent requests",
+    "type": "StaticText",
+    "frame": {
+      "y": 369.3333333333333,
+      "width": 167.66666666666666,
+      "height": 26.333333333333314,
+      "x": 16
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "What is Cedar Moon Gallery's address, and can you book a ticket?",
+    "type": "StaticText",
+    "frame": {
+      "width": 311.66666666666663,
+      "y": 435.66666666666663,
+      "height": 42.333333333333314,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Cedar Moon Gallery",
+    "type": "StaticText",
+    "frame": {
+      "width": 141.33333333333331,
+      "y": 487.99999999999994,
+      "height": 18,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: What is the named attraction's address?",
+    "type": "StaticText",
+    "frame": {
+      "y": 516,
+      "width": 292,
+      "height": 38,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "width": 320,
+      "y": 564,
+      "height": 30.333333333333258,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.additional-needs",
+    "AXLabel": "The current reviewed guidance does not cover these needs. Check them with the relevant official or service provider.",
+    "type": "StaticText",
+    "frame": {
+      "width": 311.3333333333333,
+      "y": 604.3333333333333,
+      "height": 64.33333333333326,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.additional-needs",
+    "AXLabel": "“can you book a ticket?”",
+    "type": "StaticText",
+    "frame": {
+      "y": 674.6666666666666,
+      "width": 186,
+      "height": 20.33333333333337,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "The requested attraction details have reviewed support.",
+    "type": "StaticText",
+    "frame": {
+      "width": 300.3333333333333,
+      "y": 704.9999999999999,
+      "height": 42.33333333333337,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.759b1e5a-8b43-4ef8-a673-eac7962825e5",
+    "AXLabel": "Synthetic reviewed address shown below; not a real venue.",
+    "type": "StaticText",
+    "frame": {
+      "y": 787.3333333333333,
+      "width": 280.3333333333333,
+      "height": 42.33333333333326,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "18 Cedar Moon Test Road",
+    "type": "StaticText",
+    "frame": {
+      "width": 195.66666666666666,
+      "y": 841.6666666666666,
+      "height": 20.33333333333337,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Synthetic Shanghai venue",
+    "type": "StaticText",
+    "frame": {
+      "width": 197.33333333333331,
+      "y": 874,
+      "height": 20.333333333333258,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "China",
+    "type": "StaticText",
+    "frame": {
+      "y": 906.3333333333334,
+      "width": 43.66666666666666,
+      "height": 20.33333333333337,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "width": 96,
+      "y": 938.6666666666667,
+      "height": 18,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Controlled Staging only.",
+    "type": "StaticText",
+    "frame": {
+      "width": 193,
+      "y": 962.6666666666667,
+      "height": 20.33333333333337,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "y": 995.0000000000001,
+      "width": 87,
+      "height": 18,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No real travel guidance.",
+    "type": "StaticText",
+    "frame": {
+      "y": 1019.0000000000001,
+      "width": 191.33333333333331,
+      "height": 20.33333333333337,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 14, 2026",
+    "type": "StaticText",
+    "frame": {
+      "y": 1051.3333333333335,
+      "width": 135.66666666666666,
+      "height": 14.333333333333485,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "y": 1077.6666666666665,
+      "width": 306,
+      "height": 28.333333333333485,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "y": 1077.6666666666665,
+      "width": 306,
+      "height": 28.333333333333485,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "width": 7,
+      "y": 1086,
+      "height": 12,
+      "x": 346.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "What are Cedar Moon Gallery's opening hours today?",
+    "type": "StaticText",
+    "frame": {
+      "y": 1178,
+      "width": 319.3333333333333,
+      "height": 42.33333333333326,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Cedar Moon Gallery",
+    "type": "StaticText",
+    "frame": {
+      "y": 1230.3333333333333,
+      "width": 141.33333333333331,
+      "height": 18,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: What are the named attraction's opening hours today?",
+    "type": "StaticText",
+    "frame": {
+      "width": 303,
+      "y": 1258.3333333333333,
+      "height": 38,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "y": 1306.3333333333333,
+      "width": 320,
+      "height": 30.333333333333258,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "The requested attraction details have reviewed support.",
+    "type": "StaticText",
+    "frame": {
+      "y": 1346.6666666666665,
+      "width": 300.3333333333333,
+      "height": 42.33333333333326,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.f533448b-19d7-4bbc-a78b-e69fc6ff0f28",
+    "AXLabel": "Synthetic reviewed opening window shown below; not real visitor guidance.",
+    "type": "StaticText",
+    "frame": {
+      "width": 289.66666666666663,
+      "y": 1428.9999999999998,
+      "height": 64.33333333333326,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "2026-09-14 09:00:00 – 2026-09-14 17:00:00 (Asia/Shanghai, UTC+08:00)",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 1505.333333333333,
+      "width": 289.66666666666663,
+      "height": 42.33333333333326
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 1559.6666666666663,
+      "width": 96,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Controlled Staging only.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 1583.6666666666663,
+      "width": 193,
+      "height": 20.333333333333258
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 1615.9999999999995,
+      "width": 87,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No real travel guidance.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 1639.9999999999995,
+      "width": 191.33333333333331,
+      "height": 20.333333333333258
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 14, 2026",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 1672.3333333333328,
+      "width": 135.66666666666666,
+      "height": 14.333333333333258
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "x": 48,
+      "y": 1698.6666666666665,
+      "width": 306,
+      "height": 28.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 1698.6666666666665,
+      "width": 306,
+      "height": 28.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 346.3333333333333,
+      "y": 1706.6666666666665,
+      "width": 7,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "What are Cedar Moon Gallery's address and today's opening hours?",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "y": 1799,
+      "width": 319,
+      "height": 42.33333333333326
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Cedar Moon Gallery",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "y": 1851.3333333333333,
+      "width": 141.33333333333331,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: What are the named attraction's address and today's opening hours?",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "y": 1879.3333333333333,
+      "width": 303,
+      "height": 58
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "y": 1947.3333333333333,
+      "width": 320,
+      "height": 30.333333333333258
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "The requested attraction details have reviewed support.",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "y": 1987.6666666666665,
+      "width": 300.3333333333333,
+      "height": 42.33333333333326
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.759b1e5a-8b43-4ef8-a673-eac7962825e5",
+    "AXLabel": "Synthetic reviewed address shown below; not a real venue.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2070,
+      "width": 280.3333333333333,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "18 Cedar Moon Test Road",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2124.333333333333,
+      "width": 195.66666666666666,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Synthetic Shanghai venue",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2156.666666666666,
+      "width": 197.33333333333331,
+      "height": 20.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "China",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2188.9999999999995,
+      "width": 43.66666666666666,
+      "height": 20.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2221.333333333333,
+      "width": 96,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Controlled Staging only.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2245.333333333333,
+      "width": 193,
+      "height": 20.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2277.6666666666665,
+      "width": 87,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No real travel guidance.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2301.6666666666665,
+      "width": 191.33333333333331,
+      "height": 20.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 14, 2026",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2334,
+      "width": 135.66666666666666,
+      "height": 14.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "x": 48,
+      "y": 2360.333333333333,
+      "width": 306,
+      "height": 28.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2360.333333333333,
+      "width": 306,
+      "height": 28.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 346.3333333333333,
+      "y": 2368.6666666666665,
+      "width": 7,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.f533448b-19d7-4bbc-a78b-e69fc6ff0f28",
+    "AXLabel": "Synthetic reviewed opening window shown below; not real visitor guidance.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2444.6666666666665,
+      "width": 289.66666666666663,
+      "height": 64.33333333333348
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "2026-09-14 09:00:00 – 2026-09-14 17:00:00 (Asia/Shanghai, UTC+08:00)",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2521,
+      "width": 289.66666666666663,
+      "height": 42.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2575.3333333333335,
+      "width": 96,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Controlled Staging only.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2599.3333333333335,
+      "width": 193,
+      "height": 20.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2631.666666666667,
+      "width": 87,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No real travel guidance.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 2655.666666666667,
+      "width": 191.33333333333331,
+      "height": 20.333333333333485
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 14, 2026",
+    "type": "StaticText",
+    "frame": {
+      "width": 135.66666666666666,
+      "x": 48,
+      "height": 14.333333333333485,
+      "y": 2688.0000000000005
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "width": 306,
+      "height": 28.333333333333485,
+      "x": 48,
+      "y": 2714.333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "width": 306,
+      "height": 28.333333333333485,
+      "x": 48,
+      "y": 2714.333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "width": 7,
+      "x": 346.3333333333333,
+      "height": 12,
+      "y": 2722.6666666666665
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "What are Cedar Moon Gallery's address and today's opening hours?",
+    "type": "StaticText",
+    "frame": {
+      "width": 319,
+      "height": 42.333333333333485,
+      "x": 32,
+      "y": 2814.6666666666665
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Cedar Moon Gallery",
+    "type": "StaticText",
+    "frame": {
+      "width": 141.33333333333331,
+      "height": 18,
+      "x": 32,
+      "y": 2867
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: What are the named attraction's address and today's opening hours?",
+    "type": "StaticText",
+    "frame": {
+      "width": 303,
+      "height": 58,
+      "x": 32,
+      "y": 2895
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "width": 320,
+      "height": 30.333333333333485,
+      "x": 32,
+      "y": 2963
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.partial",
+    "AXLabel": "Part of the answer is available.",
+    "type": "StaticText",
+    "frame": {
+      "width": 240.66666666666663,
+      "height": 20.333333333333485,
+      "x": 32,
+      "y": 3003.3333333333335
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Today’s opening time",
+    "type": "StaticText",
+    "frame": {
+      "width": 151.66666666666666,
+      "height": 18,
+      "x": 32,
+      "y": 3035.666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.not_current_date",
+    "AXLabel": "The published opening window is for another date; today’s hours are unverified.",
+    "type": "StaticText",
+    "frame": {
+      "width": 320.3333333333333,
+      "x": 32,
+      "height": 42.333333333333485,
+      "y": 3059.666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Confirm the missing address or today’s opening details with the venue before visiting.",
+    "type": "StaticText",
+    "frame": {
+      "width": 301,
+      "x": 32,
+      "height": 64.33333333333348,
+      "y": 3114.0000000000005
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.759b1e5a-8b43-4ef8-a673-eac7962825e5",
+    "AXLabel": "Synthetic reviewed address shown below; not a real venue.",
+    "type": "StaticText",
+    "frame": {
+      "width": 280.3333333333333,
+      "x": 48,
+      "height": 42.333333333333485,
+      "y": 3218.3333333333335
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "18 Cedar Moon Test Road",
+    "type": "StaticText",
+    "frame": {
+      "width": 195.66666666666666,
+      "x": 48,
+      "height": 20.333333333333485,
+      "y": 3272.666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Synthetic Shanghai venue",
+    "type": "StaticText",
+    "frame": {
+      "width": 197.33333333333331,
+      "height": 20.333333333333485,
+      "x": 48,
+      "y": 3305.0000000000005
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "China",
+    "type": "StaticText",
+    "frame": {
+      "width": 43.66666666666666,
+      "x": 48,
+      "height": 20.333333333333485,
+      "y": 3337.333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "width": 96,
+      "x": 48,
+      "height": 18,
+      "y": 3369.6666666666674
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Controlled Staging only.",
+    "type": "StaticText",
+    "frame": {
+      "width": 193,
+      "height": 20.333333333333485,
+      "x": 48,
+      "y": 3393.6666666666674
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "width": 87,
+      "height": 18,
+      "x": 48,
+      "y": 3426.000000000001
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No real travel guidance.",
+    "type": "StaticText",
+    "frame": {
+      "width": 191.33333333333331,
+      "x": 48,
+      "height": 20.333333333333485,
+      "y": 3450.000000000001
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 14, 2026",
+    "type": "StaticText",
+    "frame": {
+      "width": 135.66666666666666,
+      "x": 48,
+      "height": 14.333333333333485,
+      "y": 3482.3333333333344
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "height": 28.333333333333485,
+      "y": 3508.6666666666665
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "height": 28.333333333333485,
+      "y": 3508.6666666666665
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "width": 7,
+      "x": 346.3333333333333,
+      "height": 12,
+      "y": 3517
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "What is the street address of Cedar Moon Gallery?",
+    "type": "StaticText",
+    "frame": {
+      "width": 333.66666666666663,
+      "height": 42.333333333333485,
+      "x": 32,
+      "y": 3608.9999999999995
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Cedar Moon Gallery",
+    "type": "StaticText",
+    "frame": {
+      "width": 141.33333333333331,
+      "height": 18,
+      "x": 32,
+      "y": 3661.333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: What is the named attraction's address?",
+    "type": "StaticText",
+    "frame": {
+      "width": 292,
+      "height": 38,
+      "x": 32,
+      "y": 3689.333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "width": 320,
+      "x": 32,
+      "height": 30.333333333333485,
+      "y": 3737.333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "The requested attraction details have reviewed support.",
+    "type": "StaticText",
+    "frame": {
+      "width": 300.3333333333333,
+      "height": 42.333333333333485,
+      "x": 32,
+      "y": 3777.6666666666665
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.759b1e5a-8b43-4ef8-a673-eac7962825e5",
+    "AXLabel": "Synthetic reviewed address shown below; not a real venue.",
+    "type": "StaticText",
+    "frame": {
+      "width": 280.3333333333333,
+      "x": 48,
+      "height": 42.333333333333485,
+      "y": 3860
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "18 Cedar Moon Test Road",
+    "type": "StaticText",
+    "frame": {
+      "width": 195.66666666666666,
+      "x": 48,
+      "height": 20.333333333333485,
+      "y": 3914.3333333333335
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Synthetic Shanghai venue",
+    "type": "StaticText",
+    "frame": {
+      "width": 197.33333333333331,
+      "height": 20.333333333333485,
+      "x": 48,
+      "y": 3946.666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "China",
+    "type": "StaticText",
+    "frame": {
+      "width": 43.66666666666666,
+      "x": 48,
+      "height": 20.333333333333485,
+      "y": 3979.0000000000005
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "width": 96,
+      "height": 18,
+      "x": 48,
+      "y": 4011.333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Controlled Staging only.",
+    "type": "StaticText",
+    "frame": {
+      "width": 193,
+      "height": 20.333333333333485,
+      "x": 48,
+      "y": 4035.333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "width": 87,
+      "height": 18,
+      "x": 48,
+      "y": 4067.6666666666674
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No real travel guidance.",
+    "type": "StaticText",
+    "frame": {
+      "width": 191.33333333333331,
+      "x": 48,
+      "height": 20.333333333333485,
+      "y": 4091.6666666666674
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 14, 2026",
+    "type": "StaticText",
+    "frame": {
+      "width": 135.66666666666666,
+      "height": 14.33333333333303,
+      "x": 48,
+      "y": 4283
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "width": 306,
+      "height": 28.33333333333303,
+      "x": 48,
+      "y": 4309.333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "height": 28.33333333333303,
+      "y": 4309.333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "width": 7,
+      "x": 346.3333333333333,
+      "height": 12,
+      "y": 4317.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "How can I check whether a merchant accepts my international card and get started with mobile merchant payments in mainland China?",
+    "type": "StaticText",
+    "frame": {
+      "width": 338,
+      "height": 86.33333333333303,
+      "x": 32,
+      "y": 4409.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: How do I check card acceptance and get started with mobile payments?",
+    "type": "StaticText",
+    "frame": {
+      "width": 303.3333333333333,
+      "height": 58,
+      "x": 32,
+      "y": 4505.999999999999
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "width": 320,
+      "height": 30.33333333333303,
+      "x": 32,
+      "y": 4573.999999999999
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.no_answer",
+    "AXLabel": "This question cannot be answered from current reviewed information.",
+    "type": "StaticText",
+    "frame": {
+      "width": 317.3333333333333,
+      "height": 42.33333333333303,
+      "x": 32,
+      "y": 4614.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Checking card acceptance",
+    "type": "StaticText",
+    "frame": {
+      "width": 190,
+      "height": 18,
+      "x": 32,
+      "y": 4668.666666666665
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.revoked",
+    "AXLabel": "The supporting publication has been withdrawn.",
+    "type": "StaticText",
+    "frame": {
+      "width": 282.3333333333333,
+      "x": 32,
+      "height": 42.33333333333303,
+      "y": 4692.666666666665
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Mobile merchant payments",
+    "type": "StaticText",
+    "frame": {
+      "width": 194.33333333333331,
+      "height": 18,
+      "x": 32,
+      "y": 4746.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.unresolved_variants",
+    "AXLabel": "Reviewed versions differ and have not been reconciled.",
+    "type": "StaticText",
+    "frame": {
+      "width": 334.66666666666663,
+      "x": 32,
+      "height": 42.33333333333303,
+      "y": 4770.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Check current app prompts, your card issuer or the relevant operator for the missing information.",
+    "type": "StaticText",
+    "frame": {
+      "width": 294.3333333333333,
+      "height": 64.33333333333303,
+      "x": 32,
+      "y": 4825.333333333331
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "How can I check whether a merchant accepts my international card and get started with mobile merchant payments in mainland China?",
+    "type": "StaticText",
+    "frame": {
+      "width": 338,
+      "height": 86.33333333333303,
+      "x": 32,
+      "y": 4945.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: How do I check card acceptance and get started with mobile payments?",
+    "type": "StaticText",
+    "frame": {
+      "width": 303.3333333333333,
+      "x": 32,
+      "height": 58,
+      "y": 5041.999999999999
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "width": 320,
+      "x": 32,
+      "height": 30.33333333333303,
+      "y": 5109.999999999999
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.partial",
+    "AXLabel": "Part of the answer is available.",
+    "type": "StaticText",
+    "frame": {
+      "width": 240.66666666666663,
+      "x": 32,
+      "height": 20.33333333333303,
+      "y": 5150.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Checking card acceptance",
+    "type": "StaticText",
+    "frame": {
+      "width": 190,
+      "height": 18,
+      "x": 32,
+      "y": 5182.666666666665
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.revoked",
+    "AXLabel": "The supporting publication has been withdrawn.",
+    "type": "StaticText",
+    "frame": {
+      "width": 282.3333333333333,
+      "x": 32,
+      "height": 42.33333333333303,
+      "y": 5206.666666666665
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Check current app prompts, your card issuer or the relevant operator for the missing information.",
+    "type": "StaticText",
+    "frame": {
+      "width": 294.3333333333333,
+      "x": 32,
+      "height": 64.33333333333303,
+      "y": 5260.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+    "AXLabel": "Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.",
+    "type": "StaticText",
+    "frame": {
+      "width": 292.3333333333333,
+      "height": 86.33333333333303,
+      "x": 48,
+      "y": 5365.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "width": 96,
+      "height": 18,
+      "x": 48,
+      "y": 5463.666666666665
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "width": 275.66666666666663,
+      "x": 48,
+      "height": 64.33333333333303,
+      "y": 5487.666666666665
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "width": 284.3333333333333,
+      "x": 48,
+      "height": 42.33333333333303,
+      "y": 5557.999999999998
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• The specific card, issuer and merchant must support the transaction.",
+    "type": "StaticText",
+    "frame": {
+      "width": 302,
+      "x": 48,
+      "height": 42.33333333333303,
+      "y": 5606.333333333331
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Card support, issuer verification and app terms apply at transaction time.",
+    "type": "StaticText",
+    "frame": {
+      "width": 291.66666666666663,
+      "height": 42.33333333333303,
+      "x": 48,
+      "y": 5654.666666666664
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check current app prompts and service terms for fees and payment limits.",
+    "type": "StaticText",
+    "frame": {
+      "width": 273,
+      "x": 48,
+      "height": 64.33333333333303,
+      "y": 5702.999999999997
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "y": 5779.333333333332,
+      "width": 87,
+      "x": 48,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No universal merchant acceptance or transaction-success guarantee.",
+    "type": "StaticText",
+    "frame": {
+      "y": 5803.333333333332,
+      "height": 42.33333333333303,
+      "x": 48,
+      "width": 300
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No fee-free or exchange-rate guarantee.",
+    "type": "StaticText",
+    "frame": {
+      "y": 5851.666666666665,
+      "width": 239,
+      "height": 42.33333333333303,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Do not infer personal-transfer support for overseas cards.",
+    "type": "StaticText",
+    "frame": {
+      "y": 5899.999999999998,
+      "width": 305.66666666666663,
+      "x": 48,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 13, 2026",
+    "type": "StaticText",
+    "frame": {
+      "y": 5954.333333333332,
+      "width": 135.66666666666666,
+      "height": 14.33333333333303,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "y": 5980.666666666666,
+      "width": 306,
+      "x": 48,
+      "height": 28.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "y": 5980.666666666666,
+      "width": 306,
+      "x": 48,
+      "height": 28.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "y": 5989,
+      "height": 12,
+      "x": 346.3333333333333,
+      "width": 7
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "How can I check whether a merchant accepts my international card and get started with mobile merchant payments in mainland China?",
+    "type": "StaticText",
+    "frame": {
+      "y": 6081,
+      "width": 338,
+      "x": 32,
+      "height": 86.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: How do I check card acceptance and get started with mobile payments?",
+    "type": "StaticText",
+    "frame": {
+      "y": 6177.333333333333,
+      "width": 303.3333333333333,
+      "x": 32,
+      "height": 58
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "y": 6245.333333333333,
+      "width": 320,
+      "height": 30.33333333333303,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.no_answer",
+    "AXLabel": "This question cannot be answered from current reviewed information.",
+    "type": "StaticText",
+    "frame": {
+      "y": 6285.666666666666,
+      "width": 317.3333333333333,
+      "x": 32,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Checking card acceptance",
+    "type": "StaticText",
+    "frame": {
+      "y": 6339.999999999999,
+      "width": 190,
+      "x": 32,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.revoked",
+    "AXLabel": "The supporting publication has been withdrawn.",
+    "type": "StaticText",
+    "frame": {
+      "y": 6363.999999999999,
+      "width": 282.3333333333333,
+      "height": 42.33333333333303,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Mobile merchant payments",
+    "type": "StaticText",
+    "frame": {
+      "y": 6418.333333333332,
+      "height": 18,
+      "x": 32,
+      "width": 194.33333333333331
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.unresolved_variants",
+    "AXLabel": "Reviewed versions differ and have not been reconciled.",
+    "type": "StaticText",
+    "frame": {
+      "y": 6442.333333333332,
+      "height": 42.33333333333303,
+      "x": 32,
+      "width": 334.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Check current app prompts, your card issuer or the relevant operator for the missing information.",
+    "type": "StaticText",
+    "frame": {
+      "y": 6496.666666666665,
+      "width": 294.3333333333333,
+      "x": 32,
+      "height": 64.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "How can I check whether a merchant accepts my international card and get started with mobile merchant payments in mainland China?",
+    "type": "StaticText",
+    "frame": {
+      "y": 6617,
+      "width": 338,
+      "x": 32,
+      "height": 86.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: How do I check card acceptance and get started with mobile payments?",
+    "type": "StaticText",
+    "frame": {
+      "y": 6713.333333333333,
+      "width": 303.3333333333333,
+      "height": 58,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "y": 6781.333333333333,
+      "width": 320,
+      "height": 30.33333333333303,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.partial",
+    "AXLabel": "Part of the answer is available.",
+    "type": "StaticText",
+    "frame": {
+      "y": 6821.666666666666,
+      "width": 240.66666666666663,
+      "x": 32,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Checking card acceptance",
+    "type": "StaticText",
+    "frame": {
+      "y": 6853.999999999999,
+      "width": 190,
+      "x": 32,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.revoked",
+    "AXLabel": "The supporting publication has been withdrawn.",
+    "type": "StaticText",
+    "frame": {
+      "y": 6877.999999999999,
+      "width": 282.3333333333333,
+      "x": 32,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Check current app prompts, your card issuer or the relevant operator for the missing information.",
+    "type": "StaticText",
+    "frame": {
+      "y": 6932.333333333332,
+      "width": 294.3333333333333,
+      "x": 32,
+      "height": 64.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+    "AXLabel": "Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.",
+    "type": "StaticText",
+    "frame": {
+      "y": 7036.666666666666,
+      "height": 86.33333333333303,
+      "x": 48,
+      "width": 292.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "y": 7134.999999999999,
+      "height": 18,
+      "x": 48,
+      "width": 96
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "y": 7158.999999999999,
+      "height": 64.33333333333303,
+      "x": 48,
+      "width": 275.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "y": 7229.333333333332,
+      "width": 284.3333333333333,
+      "height": 42.33333333333303,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• The specific card, issuer and merchant must support the transaction.",
+    "type": "StaticText",
+    "frame": {
+      "y": 7277.666666666665,
+      "width": 302,
+      "height": 42.33333333333303,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Card support, issuer verification and app terms apply at transaction time.",
+    "type": "StaticText",
+    "frame": {
+      "y": 7325.999999999998,
+      "width": 291.66666666666663,
+      "height": 42.33333333333303,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check current app prompts and service terms for fees and payment limits.",
+    "type": "StaticText",
+    "frame": {
+      "y": 7374.333333333331,
+      "width": 273,
+      "x": 48,
+      "height": 64.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "y": 7450.666666666666,
+      "width": 87,
+      "x": 48,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No universal merchant acceptance or transaction-success guarantee.",
+    "type": "StaticText",
+    "frame": {
+      "width": 300,
+      "x": 48,
+      "y": 7474.666666666666,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No fee-free or exchange-rate guarantee.",
+    "type": "StaticText",
+    "frame": {
+      "width": 239,
+      "x": 48,
+      "y": 7522.999999999999,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Do not infer personal-transfer support for overseas cards.",
+    "type": "StaticText",
+    "frame": {
+      "width": 305.66666666666663,
+      "x": 48,
+      "y": 7571.333333333332,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 13, 2026",
+    "type": "StaticText",
+    "frame": {
+      "width": 135.66666666666666,
+      "x": 48,
+      "y": 7625.666666666666,
+      "height": 14.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "y": 7652,
+      "height": 28.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "y": 7652,
+      "height": 28.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "width": 7,
+      "x": 346.3333333333333,
+      "y": 7660.333333333333,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "How can I check whether a merchant accepts my international card and get started with mobile merchant payments in mainland China?",
+    "type": "StaticText",
+    "frame": {
+      "width": 338,
+      "x": 32,
+      "y": 7752.333333333334,
+      "height": 86.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: How do I check card acceptance and get started with mobile payments?",
+    "type": "StaticText",
+    "frame": {
+      "width": 303.3333333333333,
+      "x": 32,
+      "y": 7848.666666666667,
+      "height": 58
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "width": 320,
+      "x": 32,
+      "y": 7916.666666666667,
+      "height": 30.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.partial",
+    "AXLabel": "Part of the answer is available.",
+    "type": "StaticText",
+    "frame": {
+      "width": 240.66666666666663,
+      "x": 32,
+      "y": 7957,
+      "height": 20.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Checking card acceptance",
+    "type": "StaticText",
+    "frame": {
+      "width": 190,
+      "x": 32,
+      "y": 7989.333333333333,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.revoked",
+    "AXLabel": "The supporting publication has been withdrawn.",
+    "type": "StaticText",
+    "frame": {
+      "width": 282.3333333333333,
+      "x": 32,
+      "y": 8013.333333333333,
+      "height": 42.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Check current app prompts, your card issuer or the relevant operator for the missing information.",
+    "type": "StaticText",
+    "frame": {
+      "width": 294.3333333333333,
+      "x": 32,
+      "y": 8067.666666666666,
+      "height": 64.33333333333303
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+    "AXLabel": "Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.",
+    "type": "StaticText",
+    "frame": {
+      "width": 292.3333333333333,
+      "x": 48,
+      "y": 8172,
+      "height": 86.33333333333212
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "width": 96,
+      "x": 48,
+      "y": 8270.333333333332,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "width": 275.66666666666663,
+      "x": 48,
+      "y": 8294.333333333332,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "width": 284.3333333333333,
+      "x": 48,
+      "y": 8364.666666666666,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• The specific card, issuer and merchant must support the transaction.",
+    "type": "StaticText",
+    "frame": {
+      "width": 302,
+      "x": 48,
+      "y": 8413,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Card support, issuer verification and app terms apply at transaction time.",
+    "type": "StaticText",
+    "frame": {
+      "width": 291.66666666666663,
+      "x": 48,
+      "y": 8461.333333333334,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check current app prompts and service terms for fees and payment limits.",
+    "type": "StaticText",
+    "frame": {
+      "width": 273,
+      "x": 48,
+      "y": 8509.666666666668,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "width": 87,
+      "x": 48,
+      "y": 8586,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No universal merchant acceptance or transaction-success guarantee.",
+    "type": "StaticText",
+    "frame": {
+      "width": 300,
+      "x": 48,
+      "y": 8610,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No fee-free or exchange-rate guarantee.",
+    "type": "StaticText",
+    "frame": {
+      "width": 239,
+      "x": 48,
+      "y": 8658.333333333334,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Do not infer personal-transfer support for overseas cards.",
+    "type": "StaticText",
+    "frame": {
+      "width": 305.66666666666663,
+      "x": 48,
+      "y": 8706.666666666668,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 13, 2026",
+    "type": "StaticText",
+    "frame": {
+      "width": 135.66666666666666,
+      "x": 48,
+      "y": 8761,
+      "height": 14.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "y": 8787.333333333332,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "y": 8787.333333333332,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "width": 7,
+      "x": 346.3333333333333,
+      "y": 8795.666666666666,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "What ordinary booking ID and ticket proof do I need for a mainland train, and how early should I arrive at the station?",
+    "type": "StaticText",
+    "frame": {
+      "width": 335.66666666666663,
+      "x": 32,
+      "y": 8887.666666666668,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: Which documents do I need to board?",
+    "type": "StaticText",
+    "frame": {
+      "width": 318,
+      "x": 32,
+      "y": 8962.000000000002,
+      "height": 38
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "width": 320,
+      "x": 32,
+      "y": 9010.000000000002,
+      "height": 30.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.additional-needs",
+    "AXLabel": "The current reviewed guidance does not cover these needs. Check them with the relevant official or service provider.",
+    "type": "StaticText",
+    "frame": {
+      "width": 311.3333333333333,
+      "x": 32,
+      "y": 9050.333333333336,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.additional-needs",
+    "AXLabel": "“how early should I arrive at the station”",
+    "type": "StaticText",
+    "frame": {
+      "width": 304,
+      "x": 32,
+      "y": 9120.66666666667,
+      "height": 20.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "Both document points have reviewed support.",
+    "type": "StaticText",
+    "frame": {
+      "width": 297.66666666666663,
+      "x": 32,
+      "y": 9151.000000000002,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.c9e670d6-89cc-4b11-b8e6-f9a6b10dd530",
+    "AXLabel": "Carry the original valid booking ID for station and boarding checks.",
+    "type": "StaticText",
+    "frame": {
+      "width": 298.66666666666663,
+      "x": 48,
+      "y": 9233.333333333336,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "width": 96,
+      "x": 48,
+      "y": 9287.66666666667,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "width": 275.66666666666663,
+      "x": 48,
+      "y": 9311.66666666667,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "width": 284.3333333333333,
+      "x": 48,
+      "y": 9382.000000000004,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Adult foreign-passport scenario only; confirm current document requirements with 12306 and the station.",
+    "type": "StaticText",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "y": 9430.333333333338,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Domestic railway e-ticket journeys only; follow actual station, train and document-handling instructions.",
+    "type": "StaticText",
+    "frame": {
+      "width": 277.3333333333333,
+      "x": 48,
+      "y": 9500.666666666672,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "width": 87,
+      "x": 48,
+      "y": 9577.000000000004,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• This statement does not establish the check-in cutoff for your station or train.",
+    "type": "StaticText",
+    "frame": {
+      "width": 302,
+      "x": 48,
+      "y": 9601.000000000004,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 13, 2026",
+    "type": "StaticText",
+    "frame": {
+      "width": 135.66666666666666,
+      "x": 48,
+      "y": 9655.333333333338,
+      "height": 14.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "y": 9681.666666666666,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "y": 9681.666666666666,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "width": 7,
+      "x": 346.3333333333333,
+      "y": 9690,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.6638fa9a-6476-4f66-918a-40af67cc66fc",
+    "AXLabel": "Itinerary sheets and reimbursement receipts cannot serve as tickets.",
+    "type": "StaticText",
+    "frame": {
+      "width": 287.66666666666663,
+      "x": 48,
+      "y": 9766.000000000002,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "width": 96,
+      "x": 48,
+      "y": 9820.333333333336,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "width": 275.66666666666663,
+      "x": 48,
+      "y": 9844.333333333336,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "width": 284.3333333333333,
+      "x": 48,
+      "y": 9914.66666666667,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Adult foreign-passport scenario only; confirm current document requirements with 12306 and the station.",
+    "type": "StaticText",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "y": 9963.000000000004,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Domestic railway e-ticket journeys only; follow actual station, train and document-handling instructions.",
+    "type": "StaticText",
+    "frame": {
+      "width": 277.3333333333333,
+      "x": 48,
+      "y": 10033.333333333338,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "width": 87,
+      "x": 48,
+      "y": 10109.66666666667,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• This statement does not establish the check-in cutoff for your station or train.",
+    "type": "StaticText",
+    "frame": {
+      "width": 302,
+      "x": 48,
+      "y": 10133.66666666667,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 13, 2026",
+    "type": "StaticText",
+    "frame": {
+      "width": 135.66666666666666,
+      "x": 48,
+      "y": 10188.000000000004,
+      "height": 14.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "y": 10214.333333333332,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "width": 306,
+      "x": 48,
+      "y": 10214.333333333332,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "width": 7,
+      "x": 346.3333333333333,
+      "y": 10222.666666666666,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Will it work there?",
+    "type": "StaticText",
+    "frame": {
+      "width": 142,
+      "x": 32,
+      "y": 10314.666666666668,
+      "height": 20.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.clarification",
+    "AXLabel": "Please restate your complete question, including an attraction name and city or your payment, SIM-card or boarding-document need. This mode does not read earlier messages.",
+    "type": "StaticText",
+    "frame": {
+      "width": 322,
+      "x": 32,
+      "y": 10345.000000000002,
+      "height": 108.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Return payment_mobile_setup and single. Actual question: can I transfer money to a friend using an overseas card?",
+    "type": "StaticText",
+    "frame": {
+      "width": 338,
+      "x": 32,
+      "y": 10509.333333333334,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.unsupported",
+    "AXLabel": "This question is outside the supported attraction-address/today-hours, payment, SIM-card and boarding-document guidance and has not been answered. Check the relevant official or service provider guidance.",
+    "type": "StaticText",
+    "frame": {
+      "width": 338,
+      "x": 32,
+      "y": 10583.666666666668,
+      "height": 130.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "How do I link a supported card for merchant QR payments in mainland China, and what exact fee will my card incur today?",
+    "type": "StaticText",
+    "frame": {
+      "width": 338,
+      "x": 32,
+      "y": 10770,
+      "height": 86.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: How do I get started with mobile merchant payments?",
+    "type": "StaticText",
+    "frame": {
+      "height": 38,
+      "x": 32,
+      "width": 338,
+      "y": 10866.333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "height": 30.33333333333394,
+      "width": 320,
+      "y": 10914.333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.additional-needs",
+    "AXLabel": "The current reviewed guidance does not cover these needs. Check them with the relevant official or service provider.",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333394,
+      "x": 32,
+      "width": 311.3333333333333,
+      "y": 10954.666666666668
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.additional-needs",
+    "AXLabel": "“what exact fee will my card incur today”",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "height": 20.33333333333394,
+      "width": 310.3333333333333,
+      "y": 11025.000000000002
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "The requested payment guidance has reviewed support.",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "height": 42.33333333333394,
+      "width": 303,
+      "y": 11055.333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+    "AXLabel": "Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 86.33333333333394,
+      "width": 292.3333333333333,
+      "y": 11137.666666666668
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "x": 48,
+      "width": 96,
+      "y": 11236.000000000002
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333394,
+      "x": 48,
+      "width": 275.66666666666663,
+      "y": 11260.000000000002
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "x": 48,
+      "width": 284.3333333333333,
+      "y": 11330.333333333336
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• The specific card, issuer and merchant must support the transaction.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "x": 48,
+      "width": 302,
+      "y": 11378.66666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Card support, issuer verification and app terms apply at transaction time.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 291.66666666666663,
+      "y": 11427.000000000004
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check current app prompts and service terms for fees and payment limits.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 64.33333333333394,
+      "width": 273,
+      "y": 11475.333333333338
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "x": 48,
+      "width": 87,
+      "y": 11551.666666666668
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No universal merchant acceptance or transaction-success guarantee.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 300,
+      "y": 11575.666666666668
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No fee-free or exchange-rate guarantee.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 239,
+      "y": 11624.000000000002
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Do not infer personal-transfer support for overseas cards.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "x": 48,
+      "width": 305.66666666666663,
+      "y": 11672.333333333336
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 13, 2026",
+    "type": "StaticText",
+    "frame": {
+      "height": 14.33333333333394,
+      "x": 48,
+      "width": 135.66666666666666,
+      "y": 11726.666666666668
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "height": 28.33333333333394,
+      "x": 48,
+      "width": 306,
+      "y": 11753
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 28.33333333333394,
+      "width": 306,
+      "y": 11753
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 346.3333333333333,
+      "height": 12,
+      "width": 7,
+      "y": 11761.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Which ATM near the Bund is open now and will accept my particular overseas card?",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "height": 42.33333333333394,
+      "width": 338,
+      "y": 11853.333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.unsupported",
+    "AXLabel": "This question is outside the supported attraction-address/today-hours, payment, SIM-card and boarding-document guidance and has not been answered. Check the relevant official or service provider guidance.",
+    "type": "StaticText",
+    "frame": {
+      "height": 130.33333333333394,
+      "x": 32,
+      "width": 338,
+      "y": 11905.666666666668
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Can I send money to a friend using my overseas card through Weixin Pay?",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "x": 32,
+      "width": 305.66666666666663,
+      "y": 12092
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.unsupported",
+    "AXLabel": "This question is outside the supported attraction-address/today-hours, payment, SIM-card and boarding-document guidance and has not been answered. Check the relevant official or service provider guidance.",
+    "type": "StaticText",
+    "frame": {
+      "height": 130.33333333333394,
+      "x": 32,
+      "width": 338,
+      "y": 12144.333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "What exact fee will Alipay charge my overseas card for a 300 RMB payment today?",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333394,
+      "x": 32,
+      "width": 306.3333333333333,
+      "y": 12330.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.unsupported",
+    "AXLabel": "This question is outside the supported attraction-address/today-hours, payment, SIM-card and boarding-document guidance and has not been answered. Check the relevant official or service provider guidance.",
+    "type": "StaticText",
+    "frame": {
+      "height": 130.33333333333394,
+      "x": 32,
+      "width": 338,
+      "y": 12405
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "What are the general card, mobile-wallet and cash payment options for an international traveller in mainland China?",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "height": 64.33333333333394,
+      "width": 326.66666666666663,
+      "y": 12591.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: What payment options can I use in mainland China?",
+    "type": "StaticText",
+    "frame": {
+      "height": 38,
+      "x": 32,
+      "width": 320.3333333333333,
+      "y": 12665.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "height": 30.33333333333394,
+      "x": 32,
+      "width": 320,
+      "y": 12713.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.partial",
+    "AXLabel": "Part of the answer is available.",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333394,
+      "x": 32,
+      "width": 240.66666666666663,
+      "y": 12754
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Checking card acceptance",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "height": 18,
+      "width": 190,
+      "y": 12786.333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.revoked",
+    "AXLabel": "The supporting publication has been withdrawn.",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "height": 42.33333333333394,
+      "width": 282.3333333333333,
+      "y": 12810.333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Check current app prompts, your card issuer or the relevant operator for the missing information.",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "y": 12864.666666666668,
+      "width": 294.3333333333333,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+    "AXLabel": "Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 12969,
+      "width": 292.3333333333333,
+      "height": 86.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13067.333333333334,
+      "width": 96,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13091.333333333334,
+      "width": 275.66666666666663,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13161.666666666668,
+      "width": 284.3333333333333,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• The specific card, issuer and merchant must support the transaction.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13210.000000000002,
+      "width": 302,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Card support, issuer verification and app terms apply at transaction time.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13258.333333333336,
+      "width": 291.66666666666663,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check current app prompts and service terms for fees and payment limits.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13306.66666666667,
+      "width": 273,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13383,
+      "width": 87,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No universal merchant acceptance or transaction-success guarantee.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13407,
+      "width": 300,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No fee-free or exchange-rate guarantee.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13455.333333333334,
+      "width": 239,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Do not infer personal-transfer support for overseas cards.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13503.666666666668,
+      "width": 305.66666666666663,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 13, 2026",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13558,
+      "width": 135.66666666666666,
+      "height": 14.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "x": 48,
+      "y": 13584.333333333332,
+      "width": 306,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13584.333333333332,
+      "width": 306,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 346.3333333333333,
+      "y": 13592.666666666666,
+      "width": 7,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0702a0bd-073e-47c2-9102-74e9438653ef",
+    "AXLabel": "For RMB cash, use an ATM that accepts your international card.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13668.666666666666,
+      "width": 252,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13723,
+      "width": 96,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13747,
+      "width": 275.66666666666663,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13817.333333333334,
+      "width": 284.3333333333333,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Confirm available services, opening hours and charges with the specific operator.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13865.666666666668,
+      "width": 285.66666666666663,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• The ATM and issuer must support withdrawals with your card.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13936.000000000002,
+      "width": 273,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 13990.333333333334,
+      "width": 87,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No guarantee that every ATM or hotel offers the required withdrawal or exchange service.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 14014.333333333334,
+      "width": 293.66666666666663,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No fixed exchange-rate guarantee; confirm with the operator.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 14084.666666666668,
+      "width": 280.66666666666663,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 13, 2026",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 14139,
+      "width": 135.66666666666666,
+      "height": 14.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "x": 48,
+      "y": 14165.333333333332,
+      "width": 306,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 14165.333333333332,
+      "width": 306,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 346.3333333333333,
+      "y": 14173.666666666666,
+      "width": 7,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.bb6a61a4-ffa4-41f1-8af4-25bb3d352dda",
+    "AXLabel": "Find a marked currency-exchange outlet and confirm its service.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 14249.666666666666,
+      "width": 274.66666666666663,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 14304,
+      "width": 96,
+      "height": 18
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 14328,
+      "width": 275.66666666666663,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "y": 14398.333333333334,
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 284.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Confirm available services, opening hours and charges with the specific operator.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 285.66666666666663,
+      "height": 64.33333333333394,
+      "y": 14446.666666666668
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "x": 48,
+      "width": 87,
+      "y": 14523
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No guarantee that every ATM or hotel offers the required withdrawal or exchange service.",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333394,
+      "width": 293.66666666666663,
+      "x": 48,
+      "y": 14547
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No fixed exchange-rate guarantee; confirm with the operator.",
+    "type": "StaticText",
+    "frame": {
+      "y": 14617.333333333334,
+      "width": 280.66666666666663,
+      "height": 42.33333333333394,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 13, 2026",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 135.66666666666666,
+      "height": 14.33333333333394,
+      "y": 14671.666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "x": 48,
+      "width": 306,
+      "y": 14698,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 306,
+      "height": 28.33333333333394,
+      "y": 14698
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 346.3333333333333,
+      "width": 7,
+      "height": 12,
+      "y": 14706.333333333332
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "How do I get started with mobile merchant payments and obtain RMB cash in mainland China?",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333394,
+      "y": 14798.333333333332,
+      "width": 338,
+      "x": 32
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: How do I get started with mobile payments and obtain RMB cash?",
+    "type": "StaticText",
+    "frame": {
+      "y": 14872.666666666666,
+      "height": 38,
+      "x": 32,
+      "width": 338
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "y": 14920.666666666666,
+      "height": 30.33333333333394,
+      "x": 32,
+      "width": 320
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.answered",
+    "AXLabel": "The requested payment guidance has reviewed support.",
+    "type": "StaticText",
+    "frame": {
+      "x": 32,
+      "y": 14961,
+      "width": 303,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0630a027-ed13-4a3f-857f-6b23ee1f2f45",
+    "AXLabel": "Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 15043.333333333334,
+      "width": 292.3333333333333,
+      "height": 86.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "width": 96,
+      "x": 48,
+      "y": 15141.666666666668
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 15165.666666666668,
+      "width": 275.66666666666663,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 284.3333333333333,
+      "y": 15236.000000000002,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• The specific card, issuer and merchant must support the transaction.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 302,
+      "y": 15284.333333333336
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Card support, issuer verification and app terms apply at transaction time.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 15332.66666666667,
+      "width": 291.66666666666663,
+      "height": 42.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check current app prompts and service terms for fees and payment limits.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 64.33333333333394,
+      "y": 15381.000000000004,
+      "width": 273
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "y": 15457.333333333334,
+      "height": 18,
+      "width": 87,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No universal merchant acceptance or transaction-success guarantee.",
+    "type": "StaticText",
+    "frame": {
+      "y": 15481.333333333334,
+      "width": 300,
+      "height": 42.33333333333394,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No fee-free or exchange-rate guarantee.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "x": 48,
+      "width": 239,
+      "y": 15529.666666666668
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Do not infer personal-transfer support for overseas cards.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 305.66666666666663,
+      "height": 42.33333333333394,
+      "y": 15578.000000000002
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 13, 2026",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 135.66666666666666,
+      "y": 15632.333333333334,
+      "height": 14.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "y": 15658.666666666666,
+      "width": 306,
+      "x": 48,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "y": 15658.666666666666,
+      "x": 48,
+      "width": 306,
+      "height": 28.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 346.3333333333333,
+      "y": 15667,
+      "width": 7,
+      "height": 12
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0702a0bd-073e-47c2-9102-74e9438653ef",
+    "AXLabel": "For RMB cash, use an ATM that accepts your international card.",
+    "type": "StaticText",
+    "frame": {
+      "y": 15743,
+      "height": 42.33333333333394,
+      "width": 252,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "y": 15797.333333333334,
+      "height": 18,
+      "width": 96,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 15821.333333333334,
+      "width": 275.66666666666663,
+      "height": 64.33333333333394
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "y": 15891.666666666668,
+      "x": 48,
+      "height": 42.33333333333394,
+      "width": 284.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Confirm available services, opening hours and charges with the specific operator.",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333394,
+      "y": 15940.000000000002,
+      "x": 48,
+      "width": 285.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• The ATM and issuer must support withdrawals with your card.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 16010.333333333336,
+      "x": 48,
+      "width": 273
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 16064.666666666668,
+      "x": 48,
+      "width": 87
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No guarantee that every ATM or hotel offers the required withdrawal or exchange service.",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333394,
+      "y": 16088.666666666668,
+      "x": 48,
+      "width": 293.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No fixed exchange-rate guarantee; confirm with the operator.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 16159.000000000002,
+      "x": 48,
+      "width": 280.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 13, 2026",
+    "type": "StaticText",
+    "frame": {
+      "y": 16213.333333333334,
+      "height": 14.33333333333394,
+      "x": 48,
+      "width": 135.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "y": 16239.666666666666,
+      "height": 28.33333333333394,
+      "x": 48,
+      "width": 306
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "y": 16239.666666666666,
+      "height": 28.33333333333394,
+      "x": 48,
+      "width": 306
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "height": 12,
+      "y": 16248,
+      "x": 346.3333333333333,
+      "width": 7
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.bb6a61a4-ffa4-41f1-8af4-25bb3d352dda",
+    "AXLabel": "Find a marked currency-exchange outlet and confirm its service.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333394,
+      "y": 16324,
+      "x": 48,
+      "width": 274.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "y": 16378.333333333334,
+      "height": 18.00000000000182,
+      "x": 48,
+      "width": 96
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "y": 16402.333333333336,
+      "height": 64.33333333333212,
+      "x": 48,
+      "width": 275.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333212,
+      "y": 16472.666666666668,
+      "x": 48,
+      "width": 284.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Confirm available services, opening hours and charges with the specific operator.",
+    "type": "StaticText",
+    "frame": {
+      "y": 16521,
+      "height": 64.33333333333212,
+      "x": 48,
+      "width": 285.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 16597.333333333336,
+      "x": 48,
+      "width": 87
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No guarantee that every ATM or hotel offers the required withdrawal or exchange service.",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333212,
+      "y": 16621.333333333336,
+      "x": 48,
+      "width": 293.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No fixed exchange-rate guarantee; confirm with the operator.",
+    "type": "StaticText",
+    "frame": {
+      "y": 16691.666666666668,
+      "height": 42.33333333333212,
+      "x": 48,
+      "width": 280.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 13, 2026",
+    "type": "StaticText",
+    "frame": {
+      "y": 16746.000000000004,
+      "height": 14.33333333333212,
+      "x": 48,
+      "width": 135.66666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "height": 28.33333333333212,
+      "y": 16772.333333333332,
+      "x": 48,
+      "width": 306
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "height": 28.33333333333212,
+      "y": 16772.333333333332,
+      "x": 48,
+      "width": 306
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "y": 16780.666666666664,
+      "height": 12,
+      "x": 346.3333333333333,
+      "width": 7
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "How do I check merchant acceptance of my overseas card and obtain RMB cash in mainland China?",
+    "type": "StaticText",
+    "frame": {
+      "y": 16713.666666666664,
+      "height": 64.33333333333212,
+      "x": 32,
+      "width": 332.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.interpreted",
+    "AXLabel": "Interpreted question: How do I check card acceptance and obtain RMB cash?",
+    "type": "StaticText",
+    "frame": {
+      "y": 16787.999999999996,
+      "height": 38,
+      "x": 32,
+      "width": 303.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.",
+    "type": "StaticText",
+    "frame": {
+      "height": 30.33333333333212,
+      "y": 16835.999999999996,
+      "x": 32,
+      "width": 320
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.answer.partial",
+    "AXLabel": "Part of the answer is available.",
+    "type": "StaticText",
+    "frame": {
+      "height": 20.33333333333212,
+      "y": 16876.33333333333,
+      "x": 32,
+      "width": 240.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Checking card acceptance",
+    "type": "StaticText",
+    "frame": {
+      "y": 16908.66666666666,
+      "height": 18,
+      "x": 32,
+      "width": 190
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.gap.revoked",
+    "AXLabel": "The supporting publication has been withdrawn.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333212,
+      "y": 16932.66666666666,
+      "x": 32,
+      "width": 282.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Check current app prompts, your card issuer or the relevant operator for the missing information.",
+    "type": "StaticText",
+    "frame": {
+      "y": 16986.999999999993,
+      "height": 64.33333333333212,
+      "x": 32,
+      "width": 294.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.0702a0bd-073e-47c2-9102-74e9438653ef",
+    "AXLabel": "For RMB cash, use an ATM that accepts your international card.",
+    "type": "StaticText",
+    "frame": {
+      "height": 42.33333333333212,
+      "y": 17091.33333333333,
+      "x": 48,
+      "width": 252
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "height": 18,
+      "y": 17145.66666666666,
+      "x": 48,
+      "width": 96
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "height": 64.33333333333212,
+      "y": 17169.66666666666,
+      "x": 48,
+      "width": 275.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "y": 17239.999999999993,
+      "height": 42.33333333333212,
+      "x": 48,
+      "width": 284.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Confirm available services, opening hours and charges with the specific operator.",
+    "type": "StaticText",
+    "frame": {
+      "y": 17288.333333333325,
+      "height": 64.33333333333212,
+      "x": 48,
+      "width": 285.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• The ATM and issuer must support withdrawals with your card.",
+    "type": "StaticText",
+    "frame": {
+      "y": 17358.666666666657,
+      "height": 42.33333333333212,
+      "width": 273,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 18,
+      "width": 87,
+      "y": 17412.999999999993
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No guarantee that every ATM or hotel offers the required withdrawal or exchange service.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 17436.999999999993,
+      "height": 64.33333333333212,
+      "width": 293.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No fixed exchange-rate guarantee; confirm with the operator.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 280.66666666666663,
+      "y": 17507.333333333325,
+      "height": 42.33333333333212
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 13, 2026",
+    "type": "StaticText",
+    "frame": {
+      "width": 135.66666666666666,
+      "height": 14.33333333333212,
+      "x": 48,
+      "y": 17561.66666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "width": 306,
+      "height": 28.33333333333212,
+      "x": 48,
+      "y": 17588
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "width": 306,
+      "height": 28.33333333333212,
+      "x": 48,
+      "y": 17588
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 346.3333333333333,
+      "height": 12,
+      "width": 7,
+      "y": 17596
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "knowledge.note.bb6a61a4-ffa4-41f1-8af4-25bb3d352dda",
+    "AXLabel": "Find a marked currency-exchange outlet and confirm its service.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 42.33333333333212,
+      "width": 274.66666666666663,
+      "y": 17672.33333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Applies when",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "height": 18,
+      "width": 96,
+      "y": 17726.66666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• General mainland China guidance; confirm the specific service with its current operator.",
+    "type": "StaticText",
+    "frame": {
+      "y": 17750.66666666666,
+      "x": 48,
+      "width": 275.66666666666663,
+      "height": 64.33333333333212
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Check the latest official or operator guidance before use.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "y": 17820.999999999993,
+      "height": 42.33333333333212,
+      "width": 284.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• Confirm available services, opening hours and charges with the specific operator.",
+    "type": "StaticText",
+    "frame": {
+      "y": 17869.333333333325,
+      "x": 48,
+      "height": 64.33333333333212,
+      "width": 285.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Not covered",
+    "type": "StaticText",
+    "frame": {
+      "y": 17945.66666666666,
+      "height": 18,
+      "width": 87,
+      "x": 48
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No guarantee that every ATM or hotel offers the required withdrawal or exchange service.",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 293.66666666666663,
+      "y": 17969.66666666666,
+      "height": 64.33333333333212
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "• No fixed exchange-rate guarantee; confirm with the operator.",
+    "type": "StaticText",
+    "frame": {
+      "y": 18039.999999999993,
+      "height": 42.33333333333212,
+      "x": 48,
+      "width": 280.66666666666663
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Reviewed: Sep 13, 2026",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 135.66666666666666,
+      "y": 18094.33333333333,
+      "height": 14.33333333333212
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "Button",
+    "frame": {
+      "x": 48,
+      "y": 18120.666666666664,
+      "width": 306,
+      "height": 28.33333333333212
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Sources and context",
+    "type": "StaticText",
+    "frame": {
+      "x": 48,
+      "width": 306,
+      "height": 28.33333333333212,
+      "y": 18120.666666666664
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "collapsed",
+    "AXLabel": "",
+    "type": "Image",
+    "frame": {
+      "x": 346.3333333333333,
+      "height": 12,
+      "y": 18128.666666666664,
+      "width": 7
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 44页",
+    "type": "Slider",
+    "frame": {
+      "x": 369,
+      "y": 116,
+      "height": 380.6666666666667,
+      "width": 30
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "垂直滚动条, 44页",
+    "type": "Slider",
+    "frame": {
+      "y": 116,
+      "x": 369,
+      "width": 30,
+      "height": 380.6666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.intent",
+    "AXLabel": "Waiting for result",
+    "type": "StaticText",
+    "frame": {
+      "y": 523.6666666666667,
+      "height": 14.333333333333371,
+      "x": 16,
+      "width": 97
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.new-question",
+    "AXLabel": "New question",
+    "type": "Button",
+    "frame": {
+      "y": 520.6666666666666,
+      "x": 281.66666666666663,
+      "width": 104.33333333333331,
+      "height": 20.33333333333337
+    },
+    "enabled": false
+  },
+  {
+    "AXUniqueId": "grounded.scope",
+    "AXLabel": "Supports reviewed addresses and today’s opening hours for named attractions in the selected city, general mainland China payments, SIM application documents and plan-allowance checks, and domestic railway boarding documents for adult foreign-passport travellers. The model classifies only this message; confirm fees, acceptance and availability with the current service provider.",
+    "type": "StaticText",
+    "frame": {
+      "width": 355.33333333333326,
+      "x": 23.333333333333343,
+      "height": 110.33333333333337,
+      "y": 549.0000000000001
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "grounded.city",
+    "AXLabel": "City, Shanghai",
+    "type": "PopUpButton",
+    "frame": {
+      "y": 667.3333333333333,
+      "height": 34.33333333333337,
+      "width": 110.99999999999997,
+      "x": 145.66666666666666
+    },
+    "enabled": false
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "Shanghai",
+    "type": "StaticText",
+    "frame": {
+      "width": 70.66666666666666,
+      "height": 20.33333333333337,
+      "x": 157.66666666666666,
+      "y": 674.3333333333333
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.input",
+    "AXLabel": null,
+    "type": "TextField",
+    "frame": {
+      "y": 709.6666666666666,
+      "width": 370,
+      "x": 16,
+      "height": 23
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "_UITextSelectionRangeAdjustmentContainerView",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "x": 16,
+      "height": 45,
+      "width": 370,
+      "y": 709.6666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "com.apple.text.grabber.leading",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "x": 16,
+      "height": 23,
+      "width": 16.5,
+      "y": 708.6666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "com.apple.text.grabber.trailing",
+    "AXLabel": null,
+    "type": "Group",
+    "frame": {
+      "x": 191.33333333333334,
+      "height": 22.66666666666663,
+      "width": 16.5,
+      "y": 731.6666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "水平滚动条, 1页",
+    "type": "Slider",
+    "frame": {
+      "x": 16,
+      "height": 11.5,
+      "width": 370,
+      "y": 718.1666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "0/4000",
+    "type": "StaticText",
+    "frame": {
+      "x": 16,
+      "height": 14.333333333333371,
+      "width": 41.666666666666664,
+      "y": 750.6666666666669
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.send",
+    "AXLabel": "Send",
+    "type": "Button",
+    "frame": {
+      "x": 322.66666666666663,
+      "height": 34.33333333333337,
+      "width": 63.333333333333314,
+      "y": 740.6666666666666
+    },
+    "enabled": false
+  },
+  {
+    "AXUniqueId": null,
+    "AXLabel": "标签页栏",
+    "type": "Group",
+    "frame": {
+      "x": 0,
+      "height": 83,
+      "width": 402,
+      "y": 791
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map",
+    "AXLabel": "Trip",
+    "type": "RadioButton",
+    "frame": {
+      "x": 25,
+      "height": 54,
+      "width": 77,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "map.fill",
+    "AXLabel": "显示地图",
+    "type": "Image",
+    "frame": {
+      "x": 49,
+      "height": 26.33333333333337,
+      "width": 29.66666666666667,
+      "y": 801.6666666666666
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari",
+    "AXLabel": "Explore",
+    "type": "RadioButton",
+    "frame": {
+      "x": 93.75,
+      "height": 54,
+      "width": 77,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "safari.fill",
+    "AXLabel": "Safari浏览器",
+    "type": "Image",
+    "frame": {
+      "x": 118.75,
+      "height": 27.33333333333337,
+      "width": 27.333333333333343,
+      "y": 801.3333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "Ask",
+    "type": "RadioButton",
+    "frame": {
+      "x": 162.5,
+      "height": 54,
+      "width": 77,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "sparkles",
+    "AXLabel": "闪光",
+    "type": "Image",
+    "frame": {
+      "x": 188.5,
+      "height": 30,
+      "width": 26,
+      "y": 799
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "Tools",
+    "type": "RadioButton",
+    "frame": {
+      "x": 231.25,
+      "height": 54,
+      "width": 77,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "wrench.and.screwdriver",
+    "AXLabel": "wrench.and.screwdriver",
+    "type": "Image",
+    "frame": {
+      "x": 253.25,
+      "height": 31.66666666666663,
+      "width": 32.666666666666686,
+      "y": 799.3333333333334
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle",
+    "AXLabel": "Profile",
+    "type": "RadioButton",
+    "frame": {
+      "x": 300,
+      "height": 54,
+      "width": 77,
+      "y": 795
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "person.crop.circle.fill",
+    "AXLabel": "账户",
+    "type": "Image",
+    "frame": {
+      "height": 27.33333333333337,
+      "width": 27.333333333333314,
+      "x": 325,
+      "y": 801.3333333333334
+    },
+    "enabled": true
+  }
+]

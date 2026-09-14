@@ -1,0 +1,12 @@
+✔ reconciliation only settles the original attempt; exact repeat is safe and conflicts stay unavailable (8.386917ms)
+✔ owner/config/price/usage conflicts and arbitrary fields fail before any I/O (2.116708ms)
+✔ worker persists validated usage before settlement; a receipt failure retains a hold (55.401792ms)
+✔ explicit CLI checks private journal/config before I/O, ignores only torn tail and never dispatches (3837.883ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4185.80125

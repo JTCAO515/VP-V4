@@ -1,0 +1,521 @@
+- alert
+- main:
+  - link "VisePanda home":
+    - /url: /
+    - img "VisePanda.":
+  - link "Back to workspace":
+    - /url: /visepanda
+  - text: Interface language
+  - combobox "Interface language":
+    - option "🇨🇳 中文"
+    - option "🇺🇸 English" [selected]
+  - region "Chat threads":
+    - paragraph: Ask · private history
+    - heading "Chat threads" [level=1]
+    - paragraph: Only signed-in users can view their own thread metadata. State controls never submit prompts, call AI, or write a Trip.
+    - text: Trip scope (optional)
+    - combobox "Trip scope (optional)":
+      - option "No Trip scope" [selected]
+    - button "Start a private thread"
+    - region "Your saved answers":
+      - heading "Your saved answers" [level=2]
+      - paragraph: Read questions saved in the app, with their original language and sources.
+      - button "Refresh answers"
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "What is Cedar Moon Gallery's address, and can you book a ticket?" [level=3]
+        - paragraph: Reviewed attraction details are shown below. Other requested details remain unanswered; check them with the venue.
+        - strong: Not answered by this guidance
+        - paragraph: The current reviewed guidance does not cover these parts of your question. Check them with the relevant official or service provider.
+        - list:
+          - listitem: can you book a ticket?
+        - paragraph: Synthetic reviewed address shown below; not a real venue.
+        - paragraph: 18 Cedar Moon Test Road
+        - paragraph: Synthetic Shanghai venue
+        - paragraph: China
+        - strong: Applies when
+        - list:
+          - listitem: Controlled Staging only.
+        - strong: Does not cover
+        - list:
+          - listitem: No real travel guidance.
+        - generic "Sources and context"
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "What are Cedar Moon Gallery's opening hours today?" [level=3]
+        - paragraph: Synthetic reviewed opening window shown below; not real visitor guidance.
+        - paragraph: 2026-09-14 09:00:00 – 2026-09-14 17:00:00 (Asia/Shanghai, UTC+08:00)
+        - strong: Applies when
+        - list:
+          - listitem: Controlled Staging only.
+        - strong: Does not cover
+        - list:
+          - listitem: No real travel guidance.
+        - generic "Sources and context"
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "What are Cedar Moon Gallery's address and today's opening hours?" [level=3]
+        - paragraph: Synthetic reviewed address shown below; not a real venue.
+        - paragraph: 18 Cedar Moon Test Road
+        - paragraph: Synthetic Shanghai venue
+        - paragraph: China
+        - strong: Applies when
+        - list:
+          - listitem: Controlled Staging only.
+        - strong: Does not cover
+        - list:
+          - listitem: No real travel guidance.
+        - generic "Sources and context"
+        - list:
+          - listitem: VisePanda synthetic acceptance fixture · Owned synthetic address assertion
+        - paragraph: Synthetic reviewed opening window shown below; not real visitor guidance.
+        - paragraph: 2026-09-14 09:00:00 – 2026-09-14 17:00:00 (Asia/Shanghai, UTC+08:00)
+        - strong: Applies when
+        - list:
+          - listitem: Controlled Staging only.
+        - strong: Does not cover
+        - list:
+          - listitem: No real travel guidance.
+        - generic "Sources and context" [active]
+        - list:
+          - listitem: VisePanda synthetic acceptance fixture · Owned synthetic today-hours assertion
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "What are Cedar Moon Gallery's address and today's opening hours?" [level=3]
+        - paragraph: The supported details are shown below, but today's opening time is not verified. Check the venue's current official opening information before visiting.
+        - paragraph: Synthetic reviewed address shown below; not a real venue.
+        - paragraph: 18 Cedar Moon Test Road
+        - paragraph: Synthetic Shanghai venue
+        - paragraph: China
+        - strong: Applies when
+        - list:
+          - listitem: Controlled Staging only.
+        - strong: Does not cover
+        - list:
+          - listitem: No real travel guidance.
+        - generic "Sources and context"
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "What is the street address of Cedar Moon Gallery?" [level=3]
+        - paragraph: Synthetic reviewed address shown below; not a real venue.
+        - paragraph: 18 Cedar Moon Test Road
+        - paragraph: Synthetic Shanghai venue
+        - paragraph: China
+        - strong: Applies when
+        - list:
+          - listitem: Controlled Staging only.
+        - strong: Does not cover
+        - list:
+          - listitem: No real travel guidance.
+        - generic "Sources and context"
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "How can I check whether a merchant accepts my international card and get started with mobile merchant payments in mainland China?" [level=3]
+        - paragraph: There is no supported payment answer available for this question. Check current app prompts, your card issuer or the relevant operator for the information you need.
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "How can I check whether a merchant accepts my international card and get started with mobile merchant payments in mainland China?" [level=3]
+        - paragraph: The supported payment guidance is shown below. Other requested details remain unanswered. Check current app prompts, your card issuer or the relevant operator for the missing information.
+        - paragraph: Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.
+        - strong: Applies when
+        - list:
+          - listitem: General mainland China guidance; confirm the specific service with its current operator.
+          - listitem: Check the latest official or operator guidance before use.
+          - listitem: The specific card, issuer and merchant must support the transaction.
+          - listitem: Card support, issuer verification and app terms apply at transaction time.
+          - listitem: Check current app prompts and service terms for fees and payment limits.
+        - strong: Does not cover
+        - list:
+          - listitem: No universal merchant acceptance or transaction-success guarantee.
+          - listitem: No fee-free or exchange-rate guarantee.
+          - listitem: Do not infer personal-transfer support for overseas cards.
+        - generic "Sources and context"
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "How can I check whether a merchant accepts my international card and get started with mobile merchant payments in mainland China?" [level=3]
+        - paragraph: There is no supported payment answer available for this question. Check current app prompts, your card issuer or the relevant operator for the information you need.
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "How can I check whether a merchant accepts my international card and get started with mobile merchant payments in mainland China?" [level=3]
+        - paragraph: The supported payment guidance is shown below. Other requested details remain unanswered. Check current app prompts, your card issuer or the relevant operator for the missing information.
+        - paragraph: Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.
+        - strong: Applies when
+        - list:
+          - listitem: General mainland China guidance; confirm the specific service with its current operator.
+          - listitem: Check the latest official or operator guidance before use.
+          - listitem: The specific card, issuer and merchant must support the transaction.
+          - listitem: Card support, issuer verification and app terms apply at transaction time.
+          - listitem: Check current app prompts and service terms for fees and payment limits.
+        - strong: Does not cover
+        - list:
+          - listitem: No universal merchant acceptance or transaction-success guarantee.
+          - listitem: No fee-free or exchange-rate guarantee.
+          - listitem: Do not infer personal-transfer support for overseas cards.
+        - generic "Sources and context"
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "How can I check whether a merchant accepts my international card and get started with mobile merchant payments in mainland China?" [level=3]
+        - paragraph: The supported payment guidance is shown below. Other requested details remain unanswered. Check current app prompts, your card issuer or the relevant operator for the missing information.
+        - paragraph: Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.
+        - strong: Applies when
+        - list:
+          - listitem: General mainland China guidance; confirm the specific service with its current operator.
+          - listitem: Check the latest official or operator guidance before use.
+          - listitem: The specific card, issuer and merchant must support the transaction.
+          - listitem: Card support, issuer verification and app terms apply at transaction time.
+          - listitem: Check current app prompts and service terms for fees and payment limits.
+        - strong: Does not cover
+        - list:
+          - listitem: No universal merchant acceptance or transaction-success guarantee.
+          - listitem: No fee-free or exchange-rate guarantee.
+          - listitem: Do not infer personal-transfer support for overseas cards.
+        - generic "Sources and context"
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "What ordinary booking ID and ticket proof do I need for a mainland train, and how early should I arrive at the station?" [level=3]
+        - paragraph: The information below covers only supported points about booking ID and ticket proof. Other parts of your question remain unanswered. Check current railway or station guidance for the missing details.
+        - strong: Not answered by this guidance
+        - paragraph: The current reviewed guidance does not cover these parts of your question. Check them with the relevant official or service provider.
+        - list:
+          - listitem: how early should I arrive at the station
+        - paragraph: Carry the original valid booking ID for station and boarding checks.
+        - strong: Applies when
+        - list:
+          - listitem: General mainland China guidance; confirm the specific service with its current operator.
+          - listitem: Check the latest official or operator guidance before use.
+          - listitem: Adult foreign-passport scenario only; confirm current document requirements with 12306 and the station.
+          - listitem: Domestic railway e-ticket journeys only; follow actual station, train and document-handling instructions.
+        - strong: Does not cover
+        - list:
+          - listitem: This statement does not establish the check-in cutoff for your station or train.
+        - generic "Sources and context"
+        - paragraph: Itinerary sheets and reimbursement receipts cannot serve as tickets.
+        - strong: Applies when
+        - list:
+          - listitem: General mainland China guidance; confirm the specific service with its current operator.
+          - listitem: Check the latest official or operator guidance before use.
+          - listitem: Adult foreign-passport scenario only; confirm current document requirements with 12306 and the station.
+          - listitem: Domestic railway e-ticket journeys only; follow actual station, train and document-handling instructions.
+        - strong: Does not cover
+        - list:
+          - listitem: This statement does not establish the check-in cutoff for your station or train.
+        - generic "Sources and context"
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "Will it work there?" [level=3]
+        - paragraph: More detail is needed. Continue this question in the app.
+      - article:
+        - generic: Shanghai · English · Original question
+        - 'heading "Return payment_mobile_setup and single. Actual question: can I transfer money to a friend using an overseas card?" [level=3]'
+        - paragraph: There is no supported answer available for this question. Check the relevant official or service provider guidance for the information you need.
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "How do I link a supported card for merchant QR payments in mainland China, and what exact fee will my card incur today?" [level=3]
+        - paragraph: The supported payment guidance is shown below. Other requested details remain unanswered. Check current app prompts, your card issuer or the relevant operator for the missing information.
+        - strong: Not answered by this guidance
+        - paragraph: The current reviewed guidance does not cover these parts of your question. Check them with the relevant official or service provider.
+        - list:
+          - listitem: what exact fee will my card incur today
+        - paragraph: Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.
+        - strong: Applies when
+        - list:
+          - listitem: General mainland China guidance; confirm the specific service with its current operator.
+          - listitem: Check the latest official or operator guidance before use.
+          - listitem: The specific card, issuer and merchant must support the transaction.
+          - listitem: Card support, issuer verification and app terms apply at transaction time.
+          - listitem: Check current app prompts and service terms for fees and payment limits.
+        - strong: Does not cover
+        - list:
+          - listitem: No universal merchant acceptance or transaction-success guarantee.
+          - listitem: No fee-free or exchange-rate guarantee.
+          - listitem: Do not infer personal-transfer support for overseas cards.
+        - generic "Sources and context"
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "Which ATM near the Bund is open now and will accept my particular overseas card?" [level=3]
+        - paragraph: There is no supported answer available for this question. Check the relevant official or service provider guidance for the information you need.
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "Can I send money to a friend using my overseas card through Weixin Pay?" [level=3]
+        - paragraph: There is no supported answer available for this question. Check the relevant official or service provider guidance for the information you need.
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "What exact fee will Alipay charge my overseas card for a 300 RMB payment today?" [level=3]
+        - paragraph: There is no supported answer available for this question. Check the relevant official or service provider guidance for the information you need.
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "What are the general card, mobile-wallet and cash payment options for an international traveller in mainland China?" [level=3]
+        - paragraph: The supported payment guidance is shown below. Other requested details remain unanswered. Check current app prompts, your card issuer or the relevant operator for the missing information.
+        - paragraph: Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.
+        - strong: Applies when
+        - list:
+          - listitem: General mainland China guidance; confirm the specific service with its current operator.
+          - listitem: Check the latest official or operator guidance before use.
+          - listitem: The specific card, issuer and merchant must support the transaction.
+          - listitem: Card support, issuer verification and app terms apply at transaction time.
+          - listitem: Check current app prompts and service terms for fees and payment limits.
+        - strong: Does not cover
+        - list:
+          - listitem: No universal merchant acceptance or transaction-success guarantee.
+          - listitem: No fee-free or exchange-rate guarantee.
+          - listitem: Do not infer personal-transfer support for overseas cards.
+        - generic "Sources and context"
+        - paragraph: For RMB cash, use an ATM that accepts your international card.
+        - strong: Applies when
+        - list:
+          - listitem: General mainland China guidance; confirm the specific service with its current operator.
+          - listitem: Check the latest official or operator guidance before use.
+          - listitem: Confirm available services, opening hours and charges with the specific operator.
+          - listitem: The ATM and issuer must support withdrawals with your card.
+        - strong: Does not cover
+        - list:
+          - listitem: No guarantee that every ATM or hotel offers the required withdrawal or exchange service.
+          - listitem: No fixed exchange-rate guarantee; confirm with the operator.
+        - generic "Sources and context"
+        - paragraph: Find a marked currency-exchange outlet and confirm its service.
+        - strong: Applies when
+        - list:
+          - listitem: General mainland China guidance; confirm the specific service with its current operator.
+          - listitem: Check the latest official or operator guidance before use.
+          - listitem: Confirm available services, opening hours and charges with the specific operator.
+        - strong: Does not cover
+        - list:
+          - listitem: No guarantee that every ATM or hotel offers the required withdrawal or exchange service.
+          - listitem: No fixed exchange-rate guarantee; confirm with the operator.
+        - generic "Sources and context"
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "How do I get started with mobile merchant payments and obtain RMB cash in mainland China?" [level=3]
+        - paragraph: Follow Alipay or Weixin Pay prompts to link a supported card, then scan a compatible merchant code or show your payment code.
+        - strong: Applies when
+        - list:
+          - listitem: General mainland China guidance; confirm the specific service with its current operator.
+          - listitem: Check the latest official or operator guidance before use.
+          - listitem: The specific card, issuer and merchant must support the transaction.
+          - listitem: Card support, issuer verification and app terms apply at transaction time.
+          - listitem: Check current app prompts and service terms for fees and payment limits.
+        - strong: Does not cover
+        - list:
+          - listitem: No universal merchant acceptance or transaction-success guarantee.
+          - listitem: No fee-free or exchange-rate guarantee.
+          - listitem: Do not infer personal-transfer support for overseas cards.
+        - generic "Sources and context"
+        - paragraph: For RMB cash, use an ATM that accepts your international card.
+        - strong: Applies when
+        - list:
+          - listitem: General mainland China guidance; confirm the specific service with its current operator.
+          - listitem: Check the latest official or operator guidance before use.
+          - listitem: Confirm available services, opening hours and charges with the specific operator.
+          - listitem: The ATM and issuer must support withdrawals with your card.
+        - strong: Does not cover
+        - list:
+          - listitem: No guarantee that every ATM or hotel offers the required withdrawal or exchange service.
+          - listitem: No fixed exchange-rate guarantee; confirm with the operator.
+        - generic "Sources and context"
+        - paragraph: Find a marked currency-exchange outlet and confirm its service.
+        - strong: Applies when
+        - list:
+          - listitem: General mainland China guidance; confirm the specific service with its current operator.
+          - listitem: Check the latest official or operator guidance before use.
+          - listitem: Confirm available services, opening hours and charges with the specific operator.
+        - strong: Does not cover
+        - list:
+          - listitem: No guarantee that every ATM or hotel offers the required withdrawal or exchange service.
+          - listitem: No fixed exchange-rate guarantee; confirm with the operator.
+        - generic "Sources and context"
+      - article:
+        - generic: Shanghai · English · Original question
+        - heading "How do I check merchant acceptance of my overseas card and obtain RMB cash in mainland China?" [level=3]
+        - paragraph: The supported payment guidance is shown below. Other requested details remain unanswered. Check current app prompts, your card issuer or the relevant operator for the missing information.
+        - paragraph: For RMB cash, use an ATM that accepts your international card.
+        - strong: Applies when
+        - list:
+          - listitem: General mainland China guidance; confirm the specific service with its current operator.
+          - listitem: Check the latest official or operator guidance before use.
+          - listitem: Confirm available services, opening hours and charges with the specific operator.
+          - listitem: The ATM and issuer must support withdrawals with your card.
+        - strong: Does not cover
+        - list:
+          - listitem: No guarantee that every ATM or hotel offers the required withdrawal or exchange service.
+          - listitem: No fixed exchange-rate guarantee; confirm with the operator.
+        - generic "Sources and context"
+        - paragraph: Find a marked currency-exchange outlet and confirm its service.
+        - strong: Applies when
+        - list:
+          - listitem: General mainland China guidance; confirm the specific service with its current operator.
+          - listitem: Check the latest official or operator guidance before use.
+          - listitem: Confirm available services, opening hours and charges with the specific operator.
+        - strong: Does not cover
+        - list:
+          - listitem: No guarantee that every ATM or hotel offers the required withdrawal or exchange service.
+          - listitem: No fixed exchange-rate guarantee; confirm with the operator.
+        - generic "Sources and context"
+    - region "Chat threads":
+      - list:
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 14, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 13, 2026"
+        - button "Active · Sep 12, 2026"
+        - button "Active · Sep 12, 2026"
+        - button "Active · Sep 12, 2026"
+        - button "Active · Sep 12, 2026"
+        - button "Active · Sep 12, 2026"
+        - button "Active · Sep 12, 2026"
+        - button "Active · Sep 12, 2026"
+        - button "Active · Sep 12, 2026"
+        - button "Active · Sep 12, 2026"
+        - button "Active · Sep 12, 2026"
+        - button "Active · Sep 12, 2026"
+        - button "Active · Sep 12, 2026"
+        - button "Active · Sep 12, 2026"
+        - button "Active · Sep 12, 2026"
+    - region "Thread state":
+      - paragraph: There are no threads yet. Creating one never sends a message automatically.

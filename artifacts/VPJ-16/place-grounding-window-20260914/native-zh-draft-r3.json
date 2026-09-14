@@ -1,0 +1,38 @@
+[
+  {
+    "AXUniqueId": "native-ask.intent",
+    "AXLabel": "新问题",
+    "AXValue": null,
+    "frame": {
+      "x": 16,
+      "width": 36,
+      "height": 14.333333333333371,
+      "y": 571.6666666666667
+    },
+    "enabled": true
+  },
+  {
+    "AXUniqueId": "native-ask.input",
+    "AXLabel": null,
+    "AXValue": "杉月展馆的地址和今天开放时间是什么？",
+    "frame": {
+      "width": 370,
+      "x": 16,
+      "height": 23,
+      "y": 709.6666666666666
+    },
+    "enabled": false
+  },
+  {
+    "AXUniqueId": "native-ask.send",
+    "AXLabel": "发送",
+    "AXValue": null,
+    "frame": {
+      "y": 740.6666666666666,
+      "width": 58,
+      "x": 328,
+      "height": 34.33333333333337
+    },
+    "enabled": false
+  }
+]

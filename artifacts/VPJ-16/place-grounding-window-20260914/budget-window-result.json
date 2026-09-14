@@ -1,0 +1,11 @@
+{
+  "at": "2026-09-13T20:34:17.528Z",
+  "status": "PASS",
+  "scope": "two existing controlled test budgets; expiry only",
+  "expiresAt": "2026-09-13T22:04:06.292Z",
+  "limitsUnchanged": true,
+  "spendingHistoryUnchanged": true,
+  "providerLimitsUnchanged": true,
+  "noAdditionalFunds": true,
+  "noUserCharge": true
+}

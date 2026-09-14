@@ -1,0 +1,20 @@
+{
+  "format": "VPB1-AES-256-GCM",
+  "createdAt": "2026-09-13T20:08:17.685Z",
+  "bytes": 927518,
+  "ciphertextSha256": "fd80848fd393b9f798d98508d79beed4d48837e209f948ce2497d49aa2e8a02f",
+  "restoreRehearsal": "PASS",
+  "restoreVerifiedAt": "2026-09-13T20:09:08.381Z",
+  "restoreTableDigestsMatched": 78,
+  "restoreSchemaInventoryMatched": 262,
+  "candidateRollbackExact": true,
+  "restoreContainerCleaned": true,
+  "restoreNetwork": "none",
+  "restorePublishedPorts": 0,
+  "originalCounts": {
+    "authCount": 6,
+    "tripCount": 3,
+    "migrationCount": 46
+  },
+  "candidate": "e19bd584ba86604047c9216e50c5329e8881dcf8"
+}

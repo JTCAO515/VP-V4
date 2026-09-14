@@ -5,7 +5,7 @@ import { PROTOCOL_MODELS, validThinkingBudget } from "../model-gateway/adapters/
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const RPCS = new Set(["claim_text_task_work", "authorize_text_task_dispatch", "claim_text_work", "finish_turn_work", "read_text_work", "authorize_text_dispatch", "complete_text_work",
-  "claim_grounded_work", "read_grounded_work", "authorize_grounded_dispatch", "complete_grounded_work", "complete_grounded_work_with_needs",
+  "claim_grounded_work", "read_grounded_work", "authorize_grounded_dispatch", "complete_grounded_work", "complete_grounded_work_with_needs", "complete_grounded_place_work",
   "reserve_model_budget", "dispatch_model_budget", "finish_model_budget"]);
 export type ScopedTextWorkerConfig = Readonly<{
   environment: "local" | "staging";
@@ -37,6 +37,7 @@ export function createScopedTextWorker(config: ScopedTextWorkerConfig, dependenc
     || typeof dependencies.provider.endpoint !== "string" || !/^https:\/\/[^/?#@]+\/[^?#]*$/.test(dependencies.provider.endpoint)
     || typeof dependencies.provider.price !== "function" || typeof dependencies.provider.transport !== "function"
     || (dependencies.provider.recordUsage !== undefined && typeof dependencies.provider.recordUsage !== "function")
+    || (dependencies.provider.recordKnowledgeValidation !== undefined && typeof dependencies.provider.recordKnowledgeValidation !== "function")
     || (dependencies.fetch !== undefined && typeof dependencies.fetch !== "function")) throw unavailable();
   const binding = Object.freeze({ ...config, budget: Object.freeze({ ...config.budget }) });
   const provider = Object.freeze({ ...dependencies.provider });

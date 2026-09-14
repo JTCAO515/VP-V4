@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：S2: PR373 v3 lifecycle behavior passed all four bilingual native/API/Web stages. Raw run remains FAIL at automatic revoke cleanup; targeted recovery succeeded with zero model calls. Final325 attempts/0 unresolved, four saved completions and Trips unchanged, owned publications revoked, reader/Ops off/members0/WAF80. v1/v2 failures retained;10 aggregate calls. Maps draftPR372 remains sole prep lane.
+状态：PAUSED AT USER REQUEST after current round. PR374 frozen runtime2f/v7/APIe19 regression: current85/85PASS, combined132/132 expected outcomes (26place+106legacy),132unique model attempts,two zero-model read recoveries. Final491attempts0unresolved,all132work terminal exactly as expected/all leases cleared,owned mobile sessions null,reader/Ops/members closed,WAF98 restored. No live Staging process. Native/Quality/Budget359d6f2PASS; later evidence commits local. MapsPR372 remains soleprep, untouched.
 
 阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
 
@@ -53,6 +53,9 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- Place Staging candidate e19bd58: encrypted backup46+offline full restore+two-migration rollback PASS,78 tables/262 schema entries; actual migration48 postcheck PASS,6users3Trips preserved, reader/Opsfalse,members0. First two dry-runs STOPPED on boolean parsing before CLI/apply; corrected r3 PASS. Controllers independently reviewed0/0. Dedicated Preview/native build and model/client acceptance pending. artifacts/VPJ-16/place-grounding-staging-20260914/verification.md.
+- Place mainline: local contracts291/291, PG19/19 zero skips, Web read9/9, lint267/typecheck and Web build PASS. Native14/14 PASS again after typed-display fix; static tests22/22 PASS. Two independent review findings fixed, final SQL and consumer0/0; see artifacts/VPJ-16/place-grounding-20260914/verification.md.
+- PR373 merged6e3a1289f4db048f0d3f87dfd9cb57795ec55782 at2026-09-13T19:29:33Z, tree matches finalb236ecf. Quality34777633596 and Preview PASS. Production dpl_GvX3EbWwjvjM3RD74euphUZj9wvx CANCELED; five Production aliases and shared Staging unchanged at19:29:57Z. artifacts/VPJ-16/evidence-lifecycle-r3-20260914/postmerge-deployment.json.
 - PR373 v3: four natural support/conflict/expiry stages PASS for en/zh native/API/Web1365 and390. Raw automatic run FAIL at revokeOwned; first cleanup recovery FAIL before POST; second reviewed recovery PASS with0 model calls, both own publications revoked, all other fields and four saved completion hashes unchanged. Final325 attempts/0 unresolved,6users/3Trips/46migrations, reader/Opsfalse/members0/WAF80. Four v3 settled calls estimated45276CNYmicros;10 aggregate/invoiceunknown. Original failures retained. See artifacts/VPJ-16/evidence-lifecycle-r3-20260914/verification.md.
 - PR373 v1 actual Staging: English/Chinese answered2/2 before conflict; next synthetic submit400INVALID_INPUT because uppercase sourceKey/URI. OverallFAIL; conflict and natural expiryUNRUN. Both tasks settled22638CNYmicros estimated/actualbillingunknown;317attempts/0unresolved,original records/Trips retained,reader/Opsfalse/members0/WAF72,normallogout/Simulator shutdown. Correctedv2 fixtureOpscontract2/2PASS; windowtransaction tests4/4PASS; independentpermission review0/0. See artifacts/VPJ-16/evidence-lifecycle-20260914/verification.md.
 - PR373 initial1218c76: isolated PostgreSQL17/17 zero skips includes natural expiry/conflict, reliable partial and immutable saved gaps; lint266/docs/syntax/diff PASS. Staging preflight46migrations/315attempts/0unresolved/6users/3Trips; reader/Ops off, members0. Dedicated Preview8e95279 READY; native ad-hoc Staging build/codesign PASS. Frozen4-call/35minute scenario; actual fault window UNRUN. artifacts/VPJ-16/evidence-lifecycle-20260914/verification.md.
@@ -139,7 +142,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Finish PR373 final CI and authorized merge with Production guard and alias verification. Then implement the existing reviewed-evidence producer bridge for place address and honest opening-hours gaps under #206/#264; use accepted contracts, no second engine or hardcoded Harness inputs. No additional lifecycle model calls needed. Maps PR372 remains independent preparation; no Production release.
+WAIT FOR USER TO RESUME. User explicitly requested pause after this round; do not launch another regression, implementation, merge, or fresh CI cycle. Final evidence in artifacts/VPJ-16/place-v7-legacy-recovery-20260914; original failures retained. On explicit resume: review final evidence, push pending local evidence commits, require actual final-head CI/current base/ordinary review before PR374 merge; preserve Production guard. FullS2 and physical-device acceptance remain incomplete. Budgetexpiry2026-09-14T00:26:40.762Z is not permission to keep running while paused.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

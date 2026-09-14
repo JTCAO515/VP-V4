@@ -1,0 +1,29 @@
+{
+  "status": "PASS",
+  "at": "2026-09-13T21:15:57.585818+00:00",
+  "scope": "Native zh post-login saved-answer recheck; Web en/zh desktop and390x844 recheck",
+  "observations": [
+    "Revoked address absent from native current read tree and seven owned Web place turns",
+    "Same native/Web saved identities preserved with partial hours-only answer",
+    "Native explicitly labels address support withdrawn",
+    "Current-date hours and own today-hours source remain visible",
+    "Saved before-publication partial and address-only turns show no answer",
+    "Ambiguous name new turns remain clarification after revoke; no reassignment to duplicate subject"
+  ],
+  "nativeEvidence": [
+    "native-revoked-zh.json",
+    "native-revoked-zh.png",
+    "native-revoked-zh-source-hours.json",
+    "native-revoked-zh-source-hours.png"
+  ],
+  "webEvidence": [
+    "web-revoked-zh-desktop.json",
+    "web-revoked-zh-desktop.png",
+    "web-revoked-zh-mobile.png",
+    "web-revoked-en-mobile.json",
+    "web-revoked-en-mobile.png",
+    "web-revoked-en-desktop.txt",
+    "web-revoked-en-desktop.png"
+  ],
+  "limits": "Does not claim automatic on-screen native expiry while continuously signed in; native observed a fresh signed-in read. Native revoked-English screen not separately observed."
+}

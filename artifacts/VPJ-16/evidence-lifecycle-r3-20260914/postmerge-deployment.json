@@ -1,0 +1,15 @@
+{
+  "at": "2026-09-13T19:29:57.446451+00:00",
+  "mainSha": "6e3a1289f4db048f0d3f87dfd9cb57795ec55782",
+  "productionAliasesUnchanged": true,
+  "stagingAliasUnchanged": true,
+  "deployments": [
+    {
+      "id": "dpl_GvX3EbWwjvjM3RD74euphUZj9wvx",
+      "sha": "6e3a1289f4db048f0d3f87dfd9cb57795ec55782",
+      "target": "production",
+      "state": "CANCELED",
+      "cancellationRequested": true
+    }
+  ]
+}

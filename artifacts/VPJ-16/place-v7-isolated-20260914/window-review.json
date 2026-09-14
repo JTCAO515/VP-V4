@@ -1,0 +1,14 @@
+{
+  "reviewer": "knowledge_security_review",
+  "critical": 0,
+  "important": 0,
+  "scope": "132 calls with new absent historical identities/names, unchanged v7 and strict oracles, per-candidate/ownership cleanup; no inference of model refusal from old unavailable-place fixture failure",
+  "hashes": {
+    "scenario.json": "6913c51021f5e74dedac2af2fa358ca05d269a9ac1f05c47f4279f55a28ba76d",
+    "place-run.mjs": "90536d74df546e46bc1bedeec51f5531c802b99e8fc54d0cd8c3b925f25d4528",
+    "fixture-isolation.mjs": "5e2a1dce9e04fdf3e72560425ab4edf5c125a2086abbbc0b39665a9ac62b9c0e",
+    "window-state.mjs": "327d3a4e96d105833f2bcd5f4dd8accdb92c418348c4043e009e50993db42a3d",
+    "preflight-budget.mjs": "038b55c83cf6722d3870a90bc06ec09fbebd9597ebe40c33b31f04f4fe3d43bf",
+    "firewall-scope.py": "2bbc98da8c9b0667d4e913a23efa35b4964277d77e27219a42b9d7eff0e5be83"
+  }
+}

@@ -1,0 +1,27 @@
+▶ grounded Turn: durable scope, private results and historical eligibility
+  ✔ scope participates in exact retry and unsupported legacy admission is denied (370.421292ms)
+  ✔ leased current input and intent completion persist references, never factual generic output (1145.17575ms)
+  ✔ specific gaps are current-input excerpts, private, atomic and immutable (1356.527083ms)
+  ✔ events replay is stable, owner and selected-policy scoped with atomic current card (610.748291ms)
+  ✔ session replacement cancels expired work and reads end without changing durable history (1467.427375ms)
+  ✔ only unfinished same-owner failed or cancelled work projects a terminal status (1008.843ms)
+  ✔ history rechecks original evidence and cannot silently replace withdrawn support (774.614375ms)
+  ✔ new conflicting publication suppresses saved factual text without rewriting original outcome (712.900416ms)
+  ✔ additional needs stay partial; missing or disabled knowledge is not a complete answer (953.07675ms)
+  ✔ clarification continuation retains task and scope without sending earlier turns (829.951875ms)
+  ✔ payment task requires dispatch, freezes missing claims and rechecks withdrawn original facts (1252.745041ms)
+  ✔ SIM task uses the same dispatch boundary and keeps original missing and revoked claims (1399.901666ms)
+  ✔ natural publication expiry removes support and conflicts without expanding historical gaps (25631.529416ms)
+  ✔ typed place publications use ordinary review, exact city/name scope and private helpers (1328.053333ms)
+  ✔ four-turn cap preserves exact retries but rejects new clarification work (1356.974458ms)
+  ✔ publication wait cannot commit after the lease expires (5335.073167ms)
+  ✔ ordinary roles cannot execute resolver or mutate results; revoked consent fences reads (615.564209ms)
+✔ grounded Turn: durable scope, private results and historical eligibility (51223.047625ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 51307.064958

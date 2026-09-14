@@ -1,0 +1,79 @@
+{
+  "id": 103786506111,
+  "run_id": 34780420974,
+  "workflow_name": "Native iOS",
+  "head_branch": "codex/place-address-grounding-20260914",
+  "run_url": "https://api.github.com/repos/JTCAO515/VP-V4/actions/runs/34780420974",
+  "run_attempt": 1,
+  "node_id": "CR_kwDOT_h9k88AAAAYKihnfw",
+  "head_sha": "de6d50256def4dd9108561758b76df478c6a9172",
+  "url": "https://api.github.com/repos/JTCAO515/VP-V4/actions/jobs/103786506111",
+  "html_url": "https://github.com/JTCAO515/VP-V4/actions/runs/34780420974/job/103786506111",
+  "status": "completed",
+  "conclusion": "cancelled",
+  "created_at": "2026-09-13T20:21:10Z",
+  "started_at": "2026-09-13T20:22:37Z",
+  "completed_at": "2026-09-13T20:52:53Z",
+  "name": "simulator",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2026-09-13T20:22:37Z",
+      "completed_at": "2026-09-13T20:22:42Z"
+    },
+    {
+      "name": "Run actions/checkout@v4",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2026-09-13T20:22:42Z",
+      "completed_at": "2026-09-13T20:22:46Z"
+    },
+    {
+      "name": "Build unsigned and test ad-hoc Simulator app",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2026-09-13T20:22:46Z",
+      "completed_at": "2026-09-13T20:52:02Z"
+    },
+    {
+      "name": "Preserve native evidence",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4,
+      "started_at": "2026-09-13T20:52:02Z",
+      "completed_at": "2026-09-13T20:52:11Z"
+    },
+    {
+      "name": "Post Run actions/checkout@v4",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 8,
+      "started_at": "2026-09-13T20:52:11Z",
+      "completed_at": "2026-09-13T20:52:13Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 9,
+      "started_at": "2026-09-13T20:52:13Z",
+      "completed_at": "2026-09-13T20:52:44Z"
+    }
+  ],
+  "check_run_url": "https://api.github.com/repos/JTCAO515/VP-V4/check-runs/103786506111",
+  "labels": [
+    "self-hosted",
+    "macOS",
+    "ARM64",
+    "vp-v4-ios"
+  ],
+  "runner_id": 21,
+  "runner_name": "vp-v4-ios-local",
+  "runner_group_id": 1,
+  "runner_group_name": "Default"
+}

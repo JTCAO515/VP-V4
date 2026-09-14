@@ -1,0 +1,27 @@
+{
+  "articles": [
+    {
+      "id": "7df59525-94a7-4978-aef9-0975b8ecb457",
+      "text": "上海 · 中文 · 原始问题\n杉月展馆的地址是什么？另外能帮我订票吗？\n\n以下是有依据的景点信息，其他所问内容尚未回答，请向场馆核对。\n\n本次指引尚未回答\n\n当前已审核指引不涵盖你所问的以下内容，请向相关官方渠道或服务方核对。\n\n能帮我订票吗\n\n下列结构化信息为合成验收示例，不是真实场馆指引。\n\n18 Cedar Moon Test Road\n\nSynthetic Shanghai venue\n\n中国\n\n适用条件\n仅限受控Staging验收。\n不包含\n不作为真实旅行指引。\n来源与上下文"
+    },
+    {
+      "id": "27d411a2-4ab9-45b0-9b30-e6ee6dd0c2de",
+      "text": "上海 · 中文 · 原始问题\n杉月展馆今天几点开放？\n\n下列结构化信息为合成验收示例，不是真实场馆指引。\n\n2026-09-14 09:00:00 – 2026-09-14 17:00:00 (Asia/Shanghai, UTC+08:00)\n\n适用条件\n仅限受控Staging验收。\n不包含\n不作为真实旅行指引。\n来源与上下文"
+    },
+    {
+      "id": "ac888f4a-be13-4db8-918d-8403419357e2",
+      "text": "上海 · 中文 · 原始问题\n杉月展馆的地址和今天开放时间是什么？\n\n下列结构化信息为合成验收示例，不是真实场馆指引。\n\n18 Cedar Moon Test Road\n\nSynthetic Shanghai venue\n\n中国\n\n适用条件\n仅限受控Staging验收。\n不包含\n不作为真实旅行指引。\n来源与上下文\nVisePanda synthetic acceptance fixture · Owned synthetic address assertion\n\n下列结构化信息为合成验收示例，不是真实场馆指引。\n\n2026-09-14 09:00:00 – 2026-09-14 17:00:00 (Asia/Shanghai, UTC+08:00)\n\n适用条件\n仅限受控Staging验收。\n不包含\n不作为真实旅行指引。\n来源与上下文\nVisePanda synthetic acceptance fixture · Owned synthetic today-hours assertion"
+    },
+    {
+      "id": "2ba546d5-123e-4277-909e-b744afe78d85",
+      "text": "上海 · 中文 · 原始问题\n杉月展馆的地址和今天开放时间是什么？\n\n以下是有依据的信息，但今天的开放时间尚未核实。到访前请查看场馆当前的官方开放信息。\n\n下列结构化信息为合成验收示例，不是真实场馆指引。\n\n18 Cedar Moon Test Road\n\nSynthetic Shanghai venue\n\n中国\n\n适用条件\n仅限受控Staging验收。\n不包含\n不作为真实旅行指引。\n来源与上下文"
+    },
+    {
+      "id": "b7511a56-08cb-4402-825b-284963cd04c6",
+      "text": "上海 · 中文 · 原始问题\n杉月展馆的街道地址是什么？\n\n下列结构化信息为合成验收示例，不是真实场馆指引。\n\n18 Cedar Moon Test Road\n\nSynthetic Shanghai venue\n\n中国\n\n适用条件\n仅限受控Staging验收。\n不包含\n不作为真实旅行指引。\n来源与上下文"
+    }
+  ],
+  "at": "2026-09-13T20:48:00.839Z",
+  "scrollWidth": 1365,
+  "width": 1365
+}

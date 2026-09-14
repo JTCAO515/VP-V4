@@ -1,0 +1,16 @@
+{
+  "reviewer": "/root/knowledge_security_review",
+  "scope": "SQL completion, publication concurrency, permissions and historical identity",
+  "initial": {
+    "critical": 0,
+    "important": 1,
+    "sqlSha256": "2f579e381cf29735b5ab3dce5d7765adcca6439a0a565eeedbc5a0ab4f5a1049",
+    "finding": "Name lookup could miss a concurrent publication for a different subject sharing the selected name while completion waited on row locks."
+  },
+  "final": {
+    "critical": 0,
+    "important": 0,
+    "sqlSha256": "1ff7ef254e9d88d51840a4a6c3b0b176d98d5307cea761fdbb382b576a7fe618",
+    "fix": "Shared transaction name barrier for lookup/completion; exclusive barrier before normal publish/revoke row locks. db-name-barrier.tap verifies serialization and immutable history."
+  }
+}

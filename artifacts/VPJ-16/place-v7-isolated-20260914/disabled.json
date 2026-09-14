@@ -1,0 +1,26 @@
+{
+  "at": "2026-09-13T22:43:32.722Z",
+  "runId": "06d46cee-2006-49de-a99f-6c56d50974e5",
+  "state": {
+    "ops": false,
+    "trips": 3,
+    "users": 6,
+    "reader": false,
+    "members": [
+      {
+        "id": "7d063756-e5d8-4a6b-94a3-5134b0b04443",
+        "active": false,
+        "revision": 20
+      },
+      {
+        "id": "fe70fac7-d312-494c-bde1-4c37c3942722",
+        "active": false,
+        "revision": 20
+      }
+    ],
+    "attempts": 405,
+    "migrations": 48,
+    "unresolved": 0,
+    "activeMembers": 0
+  }
+}

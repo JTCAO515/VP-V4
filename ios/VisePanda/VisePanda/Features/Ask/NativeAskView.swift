@@ -191,6 +191,9 @@ struct NativeAskView: View {
 
     private func interpretedQuestion(_ intent: String, chinese: Bool) -> String {
         switch intent {
+        case "place_address": return chinese ? "识别的问题：所问景点的地址在哪里？" : "Interpreted question: What is the named attraction's address?"
+        case "place_opening_hours": return chinese ? "识别的问题：所问景点今天何时开放？" : "Interpreted question: What are the named attraction's opening hours today?"
+        case "place_address_and_hours": return chinese ? "识别的问题：所问景点的地址和今天开放时间是什么？" : "Interpreted question: What are the named attraction's address and today's opening hours?"
         case "payment_card_acceptance": return chinese ? "识别的问题：如何核对外卡受理？" : "Interpreted question: How do I check card acceptance?"
         case "payment_mobile_setup": return chinese ? "识别的问题：如何开始使用手机商户支付？" : "Interpreted question: How do I get started with mobile merchant payments?"
         case "payment_cash_access": return chinese ? "识别的问题：如何取得人民币现金？" : "Interpreted question: How can I obtain RMB cash?"
@@ -207,7 +210,8 @@ struct NativeAskView: View {
 
     @ViewBuilder private func groundedResult(_ turn: NativeTextTurn, _ result: NativeGroundedResult) -> some View {
         let chinese = turn.locale == "zh"
-        if let intent = result.intent, NativeKnowledgeAnswer.definition(intent) != nil {
+        if let intent = result.intent, NativeKnowledgeAnswer.definition(intent, subjectId: result.placeSubjectId) != nil {
+            if let placeName = result.placeName { Text(verbatim: placeName).font(.subheadline.bold()) }
             Text(interpretedQuestion(intent, chinese: chinese))
                 .font(.subheadline.bold()).accessibilityIdentifier("grounded.interpreted")
             Text(chinese ? "下面仅核对已保存答案原有依据，不扩展为其他问题的完整回答。" : "This rechecks the saved answer's original evidence. It is not a complete answer to other questions.").font(.caption)
@@ -227,11 +231,17 @@ struct NativeAskView: View {
                 Text(chinese ? "当前无法重新核对原答案，已隐藏事实内容，请稍后重试。" : "The saved evidence cannot be rechecked right now. Factual content is hidden; try again later.")
                     .accessibilityIdentifier("grounded.unavailable")
             }
+        } else if result.placeResolution == "ambiguous" {
+            Text(chinese ? "这个名称匹配到多个已审核景点。请提供完整官方名称，并核对所选城市；本模式不读取上一轮内容。" : "More than one reviewed attraction matches this name. Please provide its full official name and check the selected city; this mode does not read earlier messages.")
+                .accessibilityIdentifier("grounded.place-ambiguous")
+        } else if result.placeResolution == "unavailable" {
+            Text(chinese ? "在所选城市的当前已审核信息中，尚未匹配到这个景点名称。请核对完整名称、城市及场馆官方信息。" : "This name could not be matched to current reviewed attraction information in the selected city. Check its full name, city and the venue's official information.")
+                .accessibilityIdentifier("grounded.place-unavailable")
         } else if result.intent == "clarification" {
-            Text(chinese ? "请完整重述你想核对的问题，包括支付、SIM卡或乘车证件需求。本模式不读取上一轮内容。" : "Please restate your complete payment, SIM-card or boarding-document question. This mode does not read earlier messages.")
+            Text(chinese ? "请完整重述你想核对的问题，包括具体景点名称和城市，或支付、SIM卡、乘车证件需求。本模式不读取上一轮内容。" : "Please restate your complete question, including an attraction name and city or your payment, SIM-card or boarding-document need. This mode does not read earlier messages.")
                 .accessibilityIdentifier("grounded.clarification")
         } else if result.intent == "unsupported" {
-            Text(chinese ? "这个问题超出当前支持的支付、SIM卡和乘车证件指引范围，尚未提供答案。请向相关官方渠道或服务方核对。" : "This question is outside the supported payment, SIM-card and boarding-document guidance and has not been answered. Check the relevant official or service provider guidance.")
+            Text(chinese ? "这个问题超出当前支持的景点地址与今日开放时间、支付、SIM卡和乘车证件指引范围，尚未提供答案。请向相关官方渠道或服务方核对。" : "This question is outside the supported attraction-address/today-hours, payment, SIM-card and boarding-document guidance and has not been answered. Check the relevant official or service provider guidance.")
                 .accessibilityIdentifier("grounded.unsupported")
         } else {
             Text(LocalizedStringKey(label(turn))).accessibilityIdentifier("grounded.status")
@@ -251,7 +261,7 @@ struct NativeAskView: View {
                 }
             }
             if store.mode == .grounded {
-                Text(settings.selectedLocale == .zh ? "当前支持：中国大陆旅游支付、SIM卡申请证件与套餐额度核对，以及成年外籍护照旅客的境内铁路乘车证件。模型只识别本次问题；费用、受理和服务可用性须向当前服务方核对。" : "Supports general mainland China payments, SIM application documents and plan-allowance checks, and domestic railway boarding documents for adult foreign-passport travellers. The model classifies only this message; confirm fees, acceptance and availability with the current service provider.")
+                Text(settings.selectedLocale == .zh ? "当前支持：指定城市中具名景点的已审核地址与今日开放时间、中国大陆旅游支付、SIM卡申请证件与套餐额度核对，以及成年外籍护照旅客的境内铁路乘车证件。模型只识别本次问题；费用、受理和服务可用性须向当前服务方核对。" : "Supports reviewed addresses and today’s opening hours for named attractions in the selected city, general mainland China payments, SIM application documents and plan-allowance checks, and domestic railway boarding documents for adult foreign-passport travellers. The model classifies only this message; confirm fees, acceptance and availability with the current service provider.")
                     .font(.caption).accessibilityIdentifier("grounded.scope")
                 Picker(settings.selectedLocale == .zh ? "城市" : "City", selection: $store.city) {
                     ForEach(Array(NativeKnowledgeSelection.cities.enumerated()), id: \.element) { index, city in

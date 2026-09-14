@@ -1,0 +1,39 @@
+{
+  mode: 'activate',
+  status: 'PASS',
+  state: {
+    ops: false,
+    trips: 3,
+    users: 6,
+    reader: true,
+    members: [ [Object], [Object] ],
+    attempts: 405,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 0
+  }
+}
+
+{"mode": "allow", "activeVersion": 93, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{"status":"STOPPED","phase":"legacy-en-sim-documents-en","errorType":"TypeError"}
+{
+  mode: 'disable',
+  status: 'PASS',
+  windowClosed: true,
+  state: {
+    ops: false,
+    trips: 3,
+    users: 6,
+    reader: false,
+    members: [ [Object], [Object] ],
+    attempts: 406,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 0
+  }
+}
+
+{"mode": "remove", "activeVersion": 94, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{"status":"FAIL","workerLaunches":1,"cleanup":[{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":"FAIL"},{"operation":"nativeLogout","status":"FAIL"},{"operation":"cookieLogout","locale":"en","status":"PASS"},{"operation":"cookieLogout","locale":"zh","status":"PASS"},{"operation":"disable","status":"PASS"},{"operation":"removeOwnHost","status":"PASS"}]}

@@ -1,0 +1,63 @@
+{
+  mode: 'activate',
+  status: 'PASS',
+  state: {
+    ops: true,
+    trips: 3,
+    users: 6,
+    reader: true,
+    members: [ [Object], [Object] ],
+    attempts: 325,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 2
+  }
+}
+
+{"mode": "allow", "activeVersion": 81, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{"group":"before","id":"address-en","locale":"en","status":"PASS","calls":1}
+{"group":"before","id":"address-zh","locale":"zh","status":"PASS","calls":2}
+{"group":"before","id":"partial-en","locale":"en","status":"PASS","calls":3}
+{"group":"before","id":"partial-zh","locale":"zh","status":"PASS","calls":4}
+{"group":"current","id":"both-en","locale":"en","status":"PASS","calls":5}
+{"group":"current","id":"both-zh","locale":"zh","status":"PASS","calls":6}
+{"group":"current","id":"hours-en","locale":"en","status":"PASS","calls":7}
+{"group":"current","id":"hours-zh","locale":"zh","status":"PASS","calls":8}
+{"group":"current","id":"extra-en","locale":"en","status":"PASS","calls":9}
+{"group":"current","id":"extra-zh","locale":"zh","status":"PASS","calls":10}
+{"stage":"current","status":"READY_FOR_UI"}
+{"group":"ambiguous","id":"ambiguous-en","locale":"en","status":"PASS","calls":13}
+{"group":"ambiguous","id":"ambiguous-zh","locale":"zh","status":"PASS","calls":14}
+{"stage":"revoked","status":"READY_FOR_UI"}
+{"group":"limits","id":"unknown-en","locale":"en","status":"PASS","calls":15}
+{"group":"limits","id":"unknown-zh","locale":"zh","status":"PASS","calls":16}
+{"group":"limits","id":"city-en","locale":"en","status":"PASS","calls":17}
+{"group":"limits","id":"city-zh","locale":"zh","status":"PASS","calls":18}
+{"group":"limits","id":"vague-en","locale":"en","status":"PASS","calls":19}
+{"group":"limits","id":"vague-zh","locale":"zh","status":"PASS","calls":20}
+{"group":"limits","id":"multiple-en","locale":"en","status":"PASS","calls":21}
+{"group":"limits","id":"multiple-zh","locale":"zh","status":"PASS","calls":22}
+{"group":"limits","id":"now-en","locale":"en","status":"PASS","calls":23}
+{"group":"limits","id":"now-zh","locale":"zh","status":"PASS","calls":24}
+{"status":"STOPPED","phase":"limits-en-injection-en","errorType":"AssertionError"}
+{
+  mode: 'disable',
+  status: 'PASS',
+  windowClosed: true,
+  state: {
+    ops: false,
+    trips: 3,
+    users: 6,
+    reader: false,
+    members: [ [Object], [Object] ],
+    attempts: 350,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 0
+  }
+}
+
+{"mode": "remove", "activeVersion": 82, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{"status":"FAIL","workerLaunches":25,"cleanup":[{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"nativeLogout","locale":"zh","status":200},{"operation":"revokeOwned","candidateId":"535c1130-fdce-4f22-84a9-29d9914260f7","operationId":"3d46b758-c28e-49ac-adbc-63b5cd65b561","status":"PASS","attempts":1},{"operation":"revokeOwned","candidateId":"3e038102-a0d4-4fb8-825a-62b468d4830f","operationId":"879f313a-ae34-4c19-a13f-80cd13384a9b","status":"PASS","attempts":1},{"operation":"revokeOwned","candidateId":"93a721e4-1ceb-41ac-9547-5c80e409669f","operationId":"4d0002a6-1414-4e94-a4bb-13b6031310a1","status":"PASS","attempts":1},{"operation":"revokeOwned","candidateId":"f7b2bbd1-04b6-4a28-9be3-d8d8af937d7f","operationId":"89f2bb7c-faa6-4bcc-9f2e-baa38608d307","status":"PASS","attempts":1},{"operation":"nativeLogout","locale":"en","status":200},{"operation":"cookieLogout","locale":"en","status":"PASS"},{"operation":"cookieLogout","locale":"zh","status":"PASS"},{"operation":"disable","status":"PASS","windowClosed":true},{"operation":"removeOwnHost","status":"PASS"}]}

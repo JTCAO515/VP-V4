@@ -1,0 +1,24 @@
+{
+  "reviewer": "knowledge_security_review",
+  "initial": {
+    "critical": 0,
+    "important": 1,
+    "finding": "New diagnostic journal row rejected by existing usage recovery CLI"
+  },
+  "final": {
+    "critical": 0,
+    "important": 0,
+    "resolution": "Strict schema/digest/UUID/reason validation accepts diagnostic metadata without interpreting it as usage; mixed journal recovery and rejection tests added"
+  },
+  "files": {
+    "lib/server/knowledge/claim/intent.ts": "4f8369136c45bc978ed2c23e29766684957aaee9fe14d297cb2493d9420c6c4f",
+    "lib/server/turn/text-worker.ts": "adad4678fb7659b308672c71b7c7425039e29aa0f7135b51371dd91f8eda2db8",
+    "lib/server/turn/scoped-text-worker.ts": "5b04c843b0b45f21774e35c7ff553dbebeab209bb94bae313e8c10d7eb9c5569",
+    "lib/server/jobs/staging-text-job.ts": "2911e281305ddd2b5598c76f2e85ede6349e73f78bdaa0eb7e1281f2bf073bec",
+    "lib/server/jobs/run-staging-text-worker.mjs": "9ee687601fbf232b8527ef8a5475cfff05ee7d5fdf13fe70913433b0b02f2d33",
+    "lib/server/jobs/run-staging-text-service.mjs": "56b382fe79beb3f5c8d6aff98793ef2d0b823fbfb4e1e9ab21495e6893f9d22b",
+    "lib/server/jobs/reconcile-staging-text-usage.mjs": "040557767ac51deb9091bcc91fc7004674fbfdf8ebbdf7406f8484fad339a673",
+    "tests/contract/turn/grounded-needs-worker.test.mjs": "123bb1eacd22e39b2d60d85cf8f94c277a3eca8f54e8cbccbf5d27ded27a0253",
+    "tests/security/cost/staging-usage-reconciliation.test.mjs": "88eff9eeaaa8f7b4b71f5284f2ec3f83ce11b9111d4d0da1f9858766d4cd37b6"
+  }
+}

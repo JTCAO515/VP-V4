@@ -1,0 +1,12 @@
+{
+  "reviewer": "knowledge_security_review",
+  "critical": 0,
+  "important": 0,
+  "scope": "Combined132case/attempt accounting and final per-case expected terminal-state evidence",
+  "resolved": "84completed and48expected blocked map exactly to existing terminal contract; all leases/session pointers/permissions closed",
+  "files": {
+    "combined-accounting.json": "8aee3d8f84c6cb72348ec8ee604a94e5cebfe12175901cc44f8151c961413ab8",
+    "final-state-verification.json": "062e37d243430d2ea50304af50e8dd102752424dec28dac12d9275e767202099",
+    "final-state-observation.json": "d190ed1c9f8f05275df8dc2aa548dd503220165d2af6d768dc75dbe1ce1118e4"
+  }
+}

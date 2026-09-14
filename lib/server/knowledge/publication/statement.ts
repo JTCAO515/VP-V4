@@ -1,4 +1,5 @@
 import { isSourceUri, type SourceDeclaration } from "../review/source-assertion.ts";
+import { validPlaceFields, type PlaceIdentity, type PlaceValue } from "./place.ts";
 
 export const KNOWLEDGE_CITIES = ["shanghai", "beijing", "guangzhou", "chongqing"] as const;
 export const KNOWLEDGE_SCENES = ["arrival", "airport_transport", "payment", "connectivity", "public_transport", "taxi", "rail", "attraction", "accommodation", "emergency"] as const;
@@ -7,13 +8,13 @@ export type KnowledgeScene = typeof KNOWLEDGE_SCENES[number];
 /** Identifiers describe one atomic relation. Localized wording cannot change its scope. */
 export type TravelAssertion = Readonly<{
   subjectId: string;
-  predicate: "offers_procedure" | "accepts_method" | "requires_document" | "requires_action" | "connects_to" | "provides_contact" | "permits_admission";
+  predicate: "offers_procedure" | "accepts_method" | "requires_document" | "requires_action" | "connects_to" | "provides_contact" | "permits_admission" | "located_at" | "opens_during";
   objectId: string;
   conditions: readonly string[];
   exclusions: readonly string[];
 }>;
-export type KnowledgeStatement = Readonly<{
-  schemaVersion: "knowledge-statement/1";
+export type KnowledgeStatement = Readonly<({ schemaVersion: "knowledge-statement/1" }
+  | { schemaVersion: "knowledge-statement/2"; place: PlaceIdentity; value: PlaceValue }) & {
   assertion: TravelAssertion;
   scope: Readonly<{ cities: readonly KnowledgeCity[]; scene: KnowledgeScene; audience: "international_independent_traveler" }>;
   expressions: Readonly<Record<"zh" | "en", Readonly<{ text: string; conditions: readonly string[]; exclusions: readonly string[] }>>>;
@@ -37,10 +38,14 @@ const bounded = (v: unknown, max: number): v is string => typeof v === "string" 
 function record(v: unknown, keys: string[]): v is Record<string, unknown> { return !!v && typeof v === "object" && !Array.isArray(v) && Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v, k)); }
 function identifiers(v: unknown): v is readonly string[] { return Array.isArray(v) && v.length <= 12 && new Set(v).size === v.length && v.every(x => typeof x === "string" && token.test(x)); }
 export function isKnowledgeStatement(v: unknown): v is KnowledgeStatement {
-  if (!record(v, ["schemaVersion", "assertion", "scope", "expressions", "sources"]) || v.schemaVersion !== "knowledge-statement/1") return false;
+  if (!v || typeof v !== "object" || Array.isArray(v)) return false;
+  const version = (v as Record<string, unknown>).schemaVersion;
+  const place = version === "knowledge-statement/2";
+  if ((!place && version !== "knowledge-statement/1") || !record(v, ["schemaVersion", "assertion", "scope", "expressions", "sources", ...(place ? ["place", "value"] : [])])) return false;
   const a=v.assertion, s=v.scope, e=v.expressions;
-  if (!record(a,["subjectId","predicate","objectId","conditions","exclusions"]) || typeof a.subjectId!=="string" || !token.test(a.subjectId) || typeof a.objectId!=="string" || !token.test(a.objectId) || !predicates.includes(a.predicate as string) || !identifiers(a.conditions) || !identifiers(a.exclusions)) return false;
+  if (!record(a,["subjectId","predicate","objectId","conditions","exclusions"]) || typeof a.subjectId!=="string" || !token.test(a.subjectId) || typeof a.objectId!=="string" || !token.test(a.objectId) || !(place ? validPlaceFields(v.place, v.value, a.predicate, a.objectId) : predicates.includes(a.predicate as string)) || !identifiers(a.conditions) || !identifiers(a.exclusions)) return false;
   if (!record(s,["cities","scene","audience"]) || s.audience!=="international_independent_traveler" || !KNOWLEDGE_SCENES.includes(s.scene as KnowledgeScene) || !Array.isArray(s.cities) || s.cities.length<1 || s.cities.length>4 || new Set(s.cities).size!==s.cities.length || !s.cities.every(c=>KNOWLEDGE_CITIES.includes(c))) return false;
+  if (place && (s.scene !== "attraction" || s.cities.length !== 1)) return false;
   if (!record(e,["zh","en"]) || !Array.isArray(v.sources) || v.sources.length<1 || v.sources.length>3) return false;
   for (const language of ["zh","en"] as const) {
     const projection=e[language];

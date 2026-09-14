@@ -1,0 +1,23 @@
+{
+  "reviewer": "/root/knowledge_security_review",
+  "initial": {
+    "critical": 0,
+    "important": 1,
+    "finding": "One failed owned revoke skipped every remaining candidate.",
+    "placeRunSha256": "efa4708011b303c0b3de9678c330e7c7e80d707312e8361afceb53db313db4ec"
+  },
+  "final": {
+    "critical": 0,
+    "important": 0,
+    "fix": "Independent per-candidate cleanup, two attempts using same journaled operationId, final readback, remaining permission/WAF cleanup regardless.",
+    "files": {
+      "place-run.mjs": "b3443fe3a385105d390667de78d416849424145302aa9de71507c56dbc5e9e07",
+      "preflight-budget.mjs": "07aada4bbf3d65f1a2219ab60bae6a78c950c640547a52392d93c074b5c2cef1",
+      "renew-budget-window.mjs": "701137bbca7539a6305c39743fe0eb281b79d5298db67955df55ee7f7ecf61a3",
+      "scenario.json": "88124b5ae5cc6a4e09f7c3658a903514b8837ebbe4302cd7ead0563b7a95cd30",
+      "window-state.mjs": "eba181130d428a4a51a89b4ab06a000584094573314dee0ed2efb31b497249d1",
+      "firewall-scope.py": "2bbc98da8c9b0667d4e913a23efa35b4964277d77e27219a42b9d7eff0e5be83"
+    }
+  },
+  "budgetScope": "Unchanged existing DB funds cap; next-admission headroom only, not full worst-case132-reservation funding. Expiry-only90minute renewal."
+}

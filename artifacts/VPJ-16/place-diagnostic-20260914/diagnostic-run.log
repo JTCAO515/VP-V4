@@ -1,0 +1,38 @@
+{
+  mode: 'activate',
+  status: 'PASS',
+  state: {
+    ops: false,
+    trips: 3,
+    users: 6,
+    reader: true,
+    members: [ [Object], [Object] ],
+    attempts: 350,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 0
+  }
+}
+
+{"mode": "allow", "activeVersion": 83, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{
+  mode: 'disable',
+  status: 'PASS',
+  windowClosed: true,
+  state: {
+    ops: false,
+    trips: 3,
+    users: 6,
+    reader: false,
+    members: [ [Object], [Object] ],
+    attempts: 351,
+    migrations: 48,
+    unresolved: 0,
+    activeMembers: 0
+  }
+}
+
+{"mode": "remove", "activeVersion": 84, "onlyOwnHostChanged": true, "productionTargetUnchanged": true}
+
+{"status":"DIAGNOSIS_CAPTURED","calls":1,"diagnosis":{"schemaVersion":"knowledge-validation/1","turnId":"be42ac58-103f-4ec3-b39d-4c08689c15bb","reason":"unanswered_needs_invalid"},"cleanup":[{"operation":"nativeLogout","locale":"en","status":200},{"operation":"disable","status":"PASS"},{"operation":"removeOwnHost","status":"PASS"}]}

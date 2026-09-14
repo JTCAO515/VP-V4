@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "place-final-accounting/1",
+  "runStatus": "FAIL",
+  "workerCalls": 46,
+  "matchedCases": 45,
+  "unrunCases": 86,
+  "tariffCnyMicros": 758052,
+  "tariffByOwner": {
+    "fe70fac7-d312-494c-bde1-4c37c3942722": 379272,
+    "7d063756-e5d8-4a6b-94a3-5134b0b04443": 378780
+  },
+  "supplierInvoice": "unknown",
+  "originalRowHashesPreserved": true,
+  "unresolved": 0,
+  "readerOpsMembersClosed": true,
+  "firewallRestoredVersion": 90,
+  "originalAcceptanceFailuresRemain": true,
+  "startedAt": "2026-09-13T22:21:00.976Z",
+  "finishedAt": "2026-09-13T22:44:40.810Z"
+}

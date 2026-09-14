@@ -1,0 +1,28 @@
+▶ grounded Turn: durable scope, private results and historical eligibility
+  ✔ scope participates in exact retry and unsupported legacy admission is denied (408.963667ms)
+  ✔ leased current input and intent completion persist references, never factual generic output (1145.018834ms)
+  ✔ specific gaps are current-input excerpts, private, atomic and immutable (1392.403208ms)
+  ✔ events replay is stable, owner and selected-policy scoped with atomic current card (524.868583ms)
+  ✔ session replacement cancels expired work and reads end without changing durable history (1535.131667ms)
+  ✔ only unfinished same-owner failed or cancelled work projects a terminal status (990.320166ms)
+  ✔ history rechecks original evidence and cannot silently replace withdrawn support (767.58575ms)
+  ✔ new conflicting publication suppresses saved factual text without rewriting original outcome (656.559167ms)
+  ✔ additional needs stay partial; missing or disabled knowledge is not a complete answer (898.721542ms)
+  ✔ clarification continuation retains task and scope without sending earlier turns (739.115667ms)
+  ✔ payment task requires dispatch, freezes missing claims and rechecks withdrawn original facts (1238.984125ms)
+  ✔ SIM task uses the same dispatch boundary and keeps original missing and revoked claims (1293.68775ms)
+  ✔ natural publication expiry removes support and conflicts without expanding historical gaps (25550.158208ms)
+  ✔ typed place publications use ordinary review, exact city/name scope and private helpers (1346.48175ms)
+  ✔ place completion binds literal input and current city, then preserves subject and original gaps (3309.338208ms)
+  ✔ four-turn cap preserves exact retries but rejects new clarification work (1309.239375ms)
+  ✔ publication wait cannot commit after the lease expires (5347.997083ms)
+  ✔ ordinary roles cannot execute resolver or mutate results; revoked consent fences reads (650.697209ms)
+✔ grounded Turn: durable scope, private results and historical eligibility (54334.735708ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 54447.610917

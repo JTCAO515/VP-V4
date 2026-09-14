@@ -1,0 +1,11 @@
+{
+  "reviewer": "knowledge_security_review",
+  "critical": 0,
+  "important": 0,
+  "scope": "86-case exact legacy continuation; no-model recovery GET; reader-only ownership window",
+  "files": {
+    "place-run.mjs": "d7664f8025ff26abfafe82f8f324a4516d9a5b46c0a19d1d772498ef8e427027",
+    "scenario.json": "5899e11e3df7c28d8e41e6a1b27a82039f3bb3719e539c73c69173fdb1305138",
+    "window-state.mjs": "d6e0b980dddb2e5c43844d3f81e853c2d46bd2c2c9c0593b58e067e813294bbe"
+  }
+}

@@ -1,0 +1,17 @@
+✔ read preserves stored identity, city and source while subtracting full elapsed request (2.817958ms)
+✔ reject mismatched claims, scope, provenance and consent (0.627333ms)
+✔ revalidated partial coverage does not rewrite the original outcome (0.126ms)
+✔ projection excludes private fields and disables unsafe source URLs (0.202459ms)
+✔ terminal queue rows without a completed answer never appear to be processing (0.492625ms)
+✔ payment and SIM history bind requested relations and route withdrawal guidance by domain (1.910208ms)
+✔ saved excerpts identify a partial request without accepting invented text or making it evidence (0.358709ms)
+✔ place history binds selected subject and typed date-aware facts (2.078958ms)
+✔ place hours gaps are explicit and a visible hours lease cannot cross local midnight (0.254416ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 94.229584

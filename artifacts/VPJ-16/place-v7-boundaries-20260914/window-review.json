@@ -1,0 +1,13 @@
+{
+  "reviewer": "knowledge_security_review",
+  "critical": 0,
+  "important": 0,
+  "scope": "Six fixed cases,3 per owner, reader-only, original failures immutable; initial exact-excerpt oracle adjusted before invocation to permit conjunctions while preserving complete unsupported clause and excluding supported address/name. Preflight console inherited one-call wording; actual plannedCallsPerOwner3 and two checked rows plus >=3 reservations govern this six-call plan.",
+  "hashes": {
+    "scenario.json": "20ff07829f38ed8d9c9b988c4b55eed0a436c6774c5874dcc2a2c1d128d33758",
+    "boundary-run.mjs": "32aa3b5a8e5c86e0083be7bad69899fd1d0f5e9ab4e4bdb5593f245dbdabd170",
+    "window-state.mjs": "624761ecc927f2e4c8dd3409b1bfafa61002eff827502ebcf9d82fb6fbe3a066",
+    "preflight-budget.mjs": "fb0725917922834a9ecc92aa4e54cee80a0da24fdcf1431f5119fea419accbce",
+    "firewall-scope.py": "2bbc98da8c9b0667d4e913a23efa35b4964277d77e27219a42b9d7eff0e5be83"
+  }
+}

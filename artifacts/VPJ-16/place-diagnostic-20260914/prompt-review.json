@@ -1,0 +1,7 @@
+{
+  "reviewer": "knowledge_security_review",
+  "critical": 0,
+  "important": 0,
+  "sha256": "dd62252f457f9f312e165e6bff937b5e0cb06dd9cb79c2b90cdf686c60641474",
+  "conclusion": "Scope/priority/mixed-needs/privacy unchanged; strict parser unchanged; prompt ambiguity remains a hypothesis pending real tests"
+}

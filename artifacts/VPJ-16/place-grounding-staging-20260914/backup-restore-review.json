@@ -1,0 +1,13 @@
+{
+  "reviewer": "/root/knowledge_security_review",
+  "critical": 0,
+  "important": 0,
+  "scope": "encrypted backup, complete isolated restore and transaction rollback only",
+  "files": {
+    "backup.mjs": "3f42da05386998916c6aeb411c1689332f580035cd609edad70b490cb8bf9bf3",
+    "restore.mjs": "066a611bf85fa3bbd7f754e77e984adc8ca3410d506c6eaaded20272375aad38",
+    "transport.mjs": "755b8d2f7f75a4b836bb79e2a5c92045ded6c541806ef377238169020bf9d2c3",
+    "table-snapshot.mjs": "026ca9d704b61d4a208238c27e40c8ee7e827f851fe1ab4bd00a4b6e8bacc9da",
+    "schema-inventory.mjs": "0a1716ad914dcf1b8e19370df5287739d97841b3e4b4de42a9db50afd32c9575"
+  }
+}

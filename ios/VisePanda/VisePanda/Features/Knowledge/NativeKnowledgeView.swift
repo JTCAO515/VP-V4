@@ -108,7 +108,7 @@ struct NativeKnowledgeCards: View {
     }
     private func coverage(_ answer: NativeKnowledgeAnswer) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(answer.outcome == "answered" ? (answer.questionId == "rail_boarding_documents" ? text("Both document points have reviewed support.", "两个证件要点均有已审核依据。") : answer.questionId.hasPrefix("connectivity_") ? text("The requested SIM guidance has reviewed support.", "所需SIM卡指引有已审核依据。") : text("The requested payment guidance has reviewed support.", "所需支付指引有已审核依据。")) : answer.outcome == "partial" ? text("Part of the answer is available.", "目前可回答其中一部分。") : text("This question cannot be answered from current reviewed information.", "当前已审核信息不足以回答这个问题。"))
+            Text(answer.outcome == "answered" ? (answer.questionId == "rail_boarding_documents" ? text("Both document points have reviewed support.", "两个证件要点均有已审核依据。") : NativeKnowledgeAnswer.isPlace(answer.questionId) ? text("The requested attraction details have reviewed support.", "所问景点详情有已审核依据。") : answer.questionId.hasPrefix("connectivity_") ? text("The requested SIM guidance has reviewed support.", "所需SIM卡指引有已审核依据。") : text("The requested payment guidance has reviewed support.", "所需支付指引有已审核依据。")) : answer.outcome == "partial" ? text("Part of the answer is available.", "目前可回答其中一部分。") : text("This question cannot be answered from current reviewed information.", "当前已审核信息不足以回答这个问题。"))
                 .font(.headline).accessibilityIdentifier("knowledge.answer.\(answer.outcome)")
             ForEach(answer.claims.filter { $0.status != "covered" }) { claim in
                 VStack(alignment: .leading, spacing: 6) {
@@ -120,13 +120,15 @@ struct NativeKnowledgeCards: View {
                 }
             }
             if answer.outcome != "answered" {
-                Text(answer.questionId == "rail_boarding_documents" ? text("Check the missing point with 12306 or your departure station before travelling.", "出发前请向12306或出发车站核对尚缺的要点。") : answer.questionId.hasPrefix("connectivity_") ? text("Check the missing information with your mobile carrier before applying or choosing a plan.", "办理或选择套餐前，请向通信运营商核对缺少的信息。") : text("Check current app prompts, your card issuer or the relevant operator for the missing information.", "请查看应用当前提示，或向发卡行及相关经营方核对缺少的信息。"))
+                Text(answer.questionId == "rail_boarding_documents" ? text("Check the missing point with 12306 or your departure station before travelling.", "出发前请向12306或出发车站核对尚缺的要点。") : NativeKnowledgeAnswer.isPlace(answer.questionId) ? text("Confirm the missing address or today’s opening details with the venue before visiting.", "到访前请向场馆核对缺少的地址或今日开放信息。") : answer.questionId.hasPrefix("connectivity_") ? text("Check the missing information with your mobile carrier before applying or choosing a plan.", "办理或选择套餐前，请向通信运营商核对缺少的信息。") : text("Check current app prompts, your card issuer or the relevant operator for the missing information.", "请查看应用当前提示，或向发卡行及相关经营方核对缺少的信息。"))
             }
         }
     }
 
     private func claimLabel(_ id: String) -> String {
         switch id {
+        case "place_address": return text("Attraction address", "景点地址")
+        case "opening_hours": return text("Today’s opening time", "今日开放时间")
         case "original_valid_booking_id": return text("Booking ID", "购票证件")
         case "valid_ticket_not_itinerary_or_receipt": return text("Itinerary and receipt as ticket proof", "行程单和报销凭证是否可作车票")
         case "merchant_acceptance_check": return text("Checking card acceptance", "核对外卡受理")
@@ -141,6 +143,7 @@ struct NativeKnowledgeCards: View {
 
     private func gap(_ reason: String) -> String {
         switch reason {
+        case "not_current_date": return text("The published opening window is for another date; today’s hours are unverified.", "已发布开放时段对应其他日期，今日开放时间尚未核实。")
         case "expired": return text("The supporting publication has expired.", "相关依据已超过有效期。")
         case "revoked": return text("The supporting publication has been withdrawn.", "相关依据已撤回。")
         case "unreviewed": return text("The publication is not currently reviewed.", "相关发布内容当前不满足审核条件。")
@@ -153,6 +156,9 @@ struct NativeKnowledgeCards: View {
         VisePandaCard {
             VStack(alignment: .leading, spacing: 12) {
                 Text(row.text).font(.headline).accessibilityIdentifier("knowledge.note.\(row.id)")
+                ForEach(Array(row.placeDetails(chinese: chinese).enumerated()), id: \.offset) { _, detail in
+                    Text(detail).fixedSize(horizontal: false, vertical: true)
+                }
                 if !row.conditions.isEmpty { lines(text("Applies when", "适用条件"), row.conditions) }
                 if !row.exclusions.isEmpty { lines(text("Not covered", "不包含"), row.exclusions) }
                 if let date = NativeKnowledgeRead.date(row.reviewedAt) {
