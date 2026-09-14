@@ -1,0 +1,44 @@
+[
+  {
+    "city": "上海市",
+    "category": "airport_terminal",
+    "query": "上海虹桥国际机场2号航站楼",
+    "from": { "lat": 31.1975, "lng": 121.3364 },
+    "to": { "lat": 31.2000, "lng": 121.3400 }
+  },
+  {
+    "city": "北京市",
+    "category": "station_exit",
+    "query": "北京西站",
+    "from": { "lat": 39.8952, "lng": 116.3226 },
+    "to": { "lat": 39.8990, "lng": 116.3270 }
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "query": "广州塔",
+    "from": { "lat": 23.1066, "lng": 113.3245 },
+    "to": { "lat": 23.1100, "lng": 113.3280 }
+  },
+  {
+    "city": "广州市",
+    "category": "duplicate_name_branch",
+    "query": "星巴克",
+    "from": { "lat": 23.1315, "lng": 113.3238 },
+    "to": { "lat": 23.1350, "lng": 113.3270 }
+  },
+  {
+    "city": "重庆市",
+    "category": "scenic_entrance",
+    "query": "解放碑",
+    "from": { "lat": 29.5566, "lng": 106.5762 },
+    "to": { "lat": 29.5590, "lng": 106.5790 }
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "query": "李子坝轻轨站",
+    "from": { "lat": 29.5615, "lng": 106.5334 },
+    "to": { "lat": 29.5640, "lng": 106.5360 }
+  }
+]
