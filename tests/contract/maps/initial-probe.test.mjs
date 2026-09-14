@@ -4,7 +4,7 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
-import { requests, runProbe, summarize, limits } from "../../../scripts/maps/probe.mjs";
+import { requests, runProbe, summarize, limits, tencentSig } from "../../../scripts/maps/probe.mjs";
 
 test("fixed official endpoints keep provider coordinate order and city restriction", () => {
   const a = requests("amap", "secret"), t = requests("tencent", "secret");
@@ -14,8 +14,22 @@ test("fixed official endpoints keep provider coordinate order and city restricti
   assert.equal(t[0].url.searchParams.get("boundary"), "region(北京市,0)");
   assert.equal(a[1].url.searchParams.get("origin"), "116.307535,39.984042");
   assert.equal(t[1].url.searchParams.get("from"), "39.984042,116.307535");
+  assert.equal(t[0].url.searchParams.has("sig"), false, "no sig without an sk");
   assert.throws(() => requests("https://evil.example", "secret"));
   assert.throws(() => requests("constructor", "secret"));
+});
+
+test("tencentSig matches the documented worked example and is only applied for tencent+sk", () => {
+  // lbs.qq.com's own sn-guide worked example: md5(path + "?" + sorted params + SK).
+  const params = { key: "5Q5BZ-5EVWJ-SN5F3-K6QBZ-B3FAO-RVBWM", location: "28.7033487,115.8660847" };
+  const sig = tencentSig("/ws/geocoder/v1", params, "SWvT26ypwq5Nwb5RvS8cLi6NSoH8HlJX");
+  assert.equal(sig, "90da272bfa19122547298e2b0bcc0e50");
+
+  const signed = requests("tencent", "secret", "sk-value");
+  assert.equal(signed[0].url.searchParams.has("sig"), true);
+  assert.equal(signed[0].url.searchParams.get("sig").length, 32);
+  const unsigned = requests("amap", "secret", "sk-value");
+  assert.equal(unsigned[0].url.searchParams.has("sig"), false, "amap never signs, even if an sk is passed");
 });
 
 test("CLI refuses ledger reuse without overwriting a prior admission", () => {

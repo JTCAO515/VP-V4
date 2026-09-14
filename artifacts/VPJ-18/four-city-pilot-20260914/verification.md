@@ -61,12 +61,32 @@ the Tencent console (服务开通状态、IP白名单、Key类型/平台限制) 
 No further automated retries were run against the real API pending that
 check, to avoid spending more calls on an unexplained failure mode.
 
+## Root cause found: code 121 = daily call quota, not throttling or signing
+
+Per Tencent's own status-code documentation and matching independent
+developer reports for this exact code/message pairing, **`status 121`
+means "此key每日调用量已达到上限"** — the key's daily call quota is
+exhausted (new keys default to a 0/unallocated daily quota in the console
+until the operator explicitly assigns one per key). This is unrelated to
+request cadence (already ruled out above) and unrelated to domain/IP
+whitelisting.
+
+Separately, the operator enabled "签名校验" (SN/sig verification) on this
+key and supplied its SK. `scripts/maps/probe.mjs` and
+`scripts/maps/batch-probe.mjs` now compute and send the `sig` parameter
+per lbs.qq.com's own documented algorithm — `md5(path + "?" +
+ascending-sorted-by-name unencoded params + SK)` — verified in
+`tests/contract/maps/*.test.mjs` against the documentation's own worked
+example (`90da272bfa19122547298e2b0bcc0e50`) before use on any real key.
+A signed real call still returned `code 121`, confirming quota — not
+signature validity — is the actual blocker; the signing code is correct
+and kept regardless, since it is a real security setting now active on
+this key.
+
 ## Still UNRUN / not decided here
 
-- Root cause of Tencent code 121 — rate limiting is now ruled out by the
-  delayed re-run; needs the operator to check the Tencent console (key
-  enablement/platform restriction/IP allowlist) before another real-call
-  attempt is worth making.
+- Awaiting operator to assign this Tencent key a daily call quota in the
+  console, then a real re-run to confirm the fix.
 - Full 120-query (10 places × zh/en/pinyin × 4 cities) / 40-route matrix.
 - Entity-match / entrance-accuracy calibration against independent
   ground truth.

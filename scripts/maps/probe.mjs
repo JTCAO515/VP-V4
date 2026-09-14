@@ -11,10 +11,18 @@ export const fixture = Object.freeze({
 export const limits = Object.freeze({ requests: 2, retries: 0, matrixElements: 0, timeoutMs: 15000, responseBytes: 262144 });
 const config = {
   amap: { key: "AMAP_WEB_SERVICE_KEY", flag: "AMAP_PROBE_ENABLED", host: "restapi.amap.com" },
-  tencent: { key: "TENCENT_MAP_WEB_SERVICE_KEY", flag: "TENCENT_MAP_PROBE_ENABLED", host: "apis.map.qq.com" },
+  tencent: { key: "TENCENT_MAP_WEB_SERVICE_KEY", flag: "TENCENT_MAP_PROBE_ENABLED", host: "apis.map.qq.com", sk: "TENCENT_MAP_SK" },
 };
 
-export function requests(provider, key) {
+// Tencent WebService "sig" (SN) verification, per lbs.qq.com's own documented
+// algorithm: md5(path + "?" + ascending-sorted-by-name unencoded params + SK).
+// Verified against the docs' own worked example before use on any real key.
+export function tencentSig(path, params, sk) {
+  const sorted = Object.keys(params).sort().map(k => `${k}=${params[k]}`).join("&");
+  return createHash("md5").update(`${path}?${sorted}${sk}`, "utf8").digest("hex");
+}
+
+export function requests(provider, key, sk) {
   const c = Object.hasOwn(config, provider) ? config[provider] : null;
   if (!c || typeof key !== "string" || !key.trim()) throw new Error("invalid_config");
   const coordinate = p => provider === "amap" ? `${p.lng},${p.lat}` : `${p.lat},${p.lng}`;
@@ -25,8 +33,10 @@ export function requests(provider, key) {
     ? ["/v5/direction/walking", { origin: coordinate(fixture.from), destination: coordinate(fixture.to), show_fields: "cost", alternative_route: "1" }]
     : ["/ws/direction/v1/walking", { from: coordinate(fixture.from), to: coordinate(fixture.to) }];
   return [search, walking].map(([path, params], i) => {
+    const allParams = { ...params, key, output: "json" };
+    if (provider === "tencent" && sk) allParams.sig = tencentSig(path, allParams, sk);
     const url = new URL(`https://${c.host}${path}`);
-    url.search = new URLSearchParams({ ...params, key, output: "json" }).toString();
+    url.search = new URLSearchParams(allParams).toString();
     return { operation: i === 0 ? "search" : "walking", url };
   });
 }
@@ -83,7 +93,7 @@ export async function runProbe({ provider, env, record, fetcher = fetch }) {
     return false;
   }
   let count = 0;
-  for (const request of requests(provider, env[c.key])) {
+  for (const request of requests(provider, env[c.key], c.sk ? env[c.sk] : undefined)) {
     count += 1;
     if (count > limits.requests) throw new Error("request_budget");
     const started = Date.now();
@@ -111,7 +121,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     if (!Object.hasOwn(config, provider) || !ledger || extra.length) throw new Error("usage");
     fd = openSync(ledger, "wx", 0o600);
     const record = value => { writeSync(fd, JSON.stringify(value) + "\n"); fsyncSync(fd); };
+    const c = config[provider];
     record({ schemaVersion: "map-initial-probe/1", scriptSha256: createHash("sha256").update(readFileSync(new URL(import.meta.url))).digest("hex"), fixture, coordinateSystem: "GCJ-02", limits,
+      signed: Boolean(c.sk && process.env[c.sk]?.trim()),
       scope: "public synthetic inputs; server API only", clientMapLoading: "UNRUN" });
     const ok = await runProbe({ provider, env: process.env, record });
     console.log(JSON.stringify({ status: ok ? "API_OBSERVED" : "INCOMPLETE", provider, rawOutput: "suppressed" }));

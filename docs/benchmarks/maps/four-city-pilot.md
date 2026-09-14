@@ -33,20 +33,27 @@ coordinates are approximate synthetic offsets from memory — not verified
 precise entrances — same framing as the single-fixture script's own
 Beijing point pair.
 
-2026-09-14 pilot result: AMap 6/6 fixtures observed across two runs;
-Tencent 0/6 across two runs (no delay, then `delayMs=800`), both
-`provider_rejected code 121` regardless of request spacing — see
-`artifacts/VPJ-18/four-city-pilot-20260914/verification.md` for the full
-table. The delayed re-run rules out simple QPS throttling; the pattern
-now points at an account/key-configuration issue (IP allowlist, platform
-restriction, or enablement delay) that needs the operator's own Tencent
-console. Do not infer a provider preference from this alone.
+2026-09-14 pilot result: AMap 6/6 fixtures observed; Tencent 0/6 across
+three real runs (no delay, `delayMs=800`, then signed) all
+`provider_rejected code 121` — see
+`artifacts/VPJ-18/four-city-pilot-20260914/verification.md`. Root cause
+found: **`121` = the key's daily call quota is exhausted/unallocated**,
+per Tencent's own status-code docs — unrelated to cadence, signing, or
+domain/IP whitelisting. Fix is the operator assigning this key a daily
+quota in the Tencent console; no further code change needed here. Do not
+infer a provider preference from this alone.
 
 `runBatchProbe`/the CLI now accept an optional `delayMs` (capped at
-`MAX_DELAY_MS = 5000`) to sleep between requests — added for this
-diagnostic, available for any future run that wants deliberate spacing.
+`MAX_DELAY_MS = 5000`) to sleep between requests, and both `probe.mjs`
+and `batch-probe.mjs` compute Tencent's `sig` (SN) parameter when a
+`TENCENT_MAP_SK` is supplied, per lbs.qq.com's documented algorithm
+(verified against its own worked example in the test suite). Neither was
+the actual fix for `121`, but both are real, kept capabilities — signing
+in particular reflects a security setting the operator has now enabled
+on this key.
 
-Scaling to the full 120/40 matrix needs: (1) the operator resolving the
-Tencent code 121 signal via their console, (2) the remaining ~34
-landmarks and ~34 routes per #362's spec, and (3) an explicit go-ahead on
-real-call volume before firing that many requests against both accounts.
+Scaling to the full 120/40 matrix needs: (1) the operator's quota
+allocation to take effect and a real re-run confirming it, (2) the
+remaining ~34 landmarks and ~34 routes per #362's spec, and (3) an
+explicit go-ahead on real-call volume before firing that many requests
+against both accounts.
