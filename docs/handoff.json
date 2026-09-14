@@ -3,12 +3,12 @@
   "projectId": "visepanda-vp-v4",
   "lastUpdated": "2026-09-14",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
-  "status": "PAUSED AT USER REQUEST after current round. PR374 frozen runtime2f/v7/APIe19 regression: current85/85PASS, combined132/132 expected outcomes (26place+106legacy),132unique model attempts,two zero-model read recoveries. Final491attempts0unresolved,all132work terminal exactly as expected/all leases cleared,owned mobile sessions null,reader/Ops/members closed,WAF98 restored. No live Staging process. Native/Quality/Budget359d6f2PASS; later evidence commits local. MapsPR372 remains soleprep, untouched.",
+  "status": "RESUMED AT USER REQUEST on 2026-09-14; pause lifted. PR374 (place address/hours grounding, #206/#264) pending evidence pushed and merged to main at ac53b3c-range. PR372 (maps probe scaffold, secret-free) merged. PR375 (VPJ-03 #190 data disclosure matrix, docs-only, operator-reserved items marked TBD not decided) merged. PR376 (root .gitignore had NO .env pattern at all before this session — fixed; plus first real AMap probe with operator-supplied key) merged. PR377 (first real Tencent Maps probe, same fixture) merged. #362 acceptance's 'at least one search + one route per provider' bullet is now satisfied for both AMap and Tencent (see artifacts/VPJ-18/amap-first-probe-20260914 and tencent-first-probe-20260914); full four-city/120-query comparison, entity/entrance calibration, and provider selection remain open and unrun. No production deploy, no account-price/quota reconciliation, no client SDK integration in this round.",
   "currentPhase": "S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
-  "owner": "Codex — S2 Ask acceptance and VPJ-67 recorded usage trace",
-  "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree.",
-  "nextAction": "WAIT FOR USER TO RESUME. User explicitly requested pause after this round; do not launch another regression, implementation, merge, or fresh CI cycle. Final evidence in artifacts/VPJ-16/place-v7-legacy-recovery-20260914; original failures retained. On explicit resume: review final evidence, push pending local evidence commits, require actual final-head CI/current base/ordinary review before PR374 merge; preserve Production guard. FullS2 and physical-device acceptance remain incomplete. Budgetexpiry2026-09-14T00:26:40.762Z is not permission to keep running while paused.",
+  "owner": "Claude (this session, by explicit user override of the default Claude=architect/Codex=implement split) — resumed PR374, merged PR372/374/375/376/377, ran first real AMap/Tencent probes with operator-supplied keys.",
+  "intendedNextAgent": "Read the VPJ entry, current Issue and execution row; verify baseline PR and dependencies before choosing a task. Preserve valid existing contracts and original user worktree. Operator-supplied AMap/Tencent keys live only in local git-ignored scripts/maps/.env on this machine — re-request from operator if working elsewhere, never reconstruct or guess them.",
+  "nextAction": "No blocking pause. Candidates, none credential-blocked: (1) #362 full four-city (Shanghai/Beijing/Guangzhou/Chongqing) 120-query/40-route comparison within probe.mjs's existing bounded-request design — needs explicit budget/rate-limit plan before scaling past the 2-request-per-run cap; (2) #360/#359/#358 Wiki/RAG knowledge pipeline (status:blocked on dependency review, check current blockers before starting); (3) #206/#264 remaining wider knowledge coverage beyond the merged PR374 slice. #190 data policy done as an internal disclosure-matrix doc only; turning it into a published privacy policy page still needs operator decisions on retention days, Supabase region, and production model-route approval (marked TBD in docs/policy/vpj-03-data-disclosure.md) — do not publish it as a live commitment without that.",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
@@ -59,19 +59,15 @@
     "2026-09-12 JT明确同意仅暂停main自动Production构建。单字段guard已应用，PR332合并后真实Production构建CANCELED且全部线上alias保留db5fb7b；Preview/Staging不变。此授权不包含新的Production发布或解除guard。"
   ],
   "changedFiles": [
-    "tests/integration/knowledge/grounded-turn.test.mjs",
-    "tests/fixtures/knowledge/evidence-lifecycle-v1.json",
-    "artifacts/VPJ-16/evidence-lifecycle-20260914/**",
-    "docs/handoff.json",
-    "CONTEXT.md",
-    "HANDOFF.md",
-    "tests/fixtures/knowledge/evidence-lifecycle-v2.json",
-    "tests/contract/knowledge/evidence-lifecycle-fixture.test.mjs",
-    "tests/fixtures/knowledge/evidence-lifecycle-v3.json",
-    "artifacts/VPJ-16/evidence-lifecycle-r2-20260914/**",
-    "artifacts/VPJ-16/evidence-lifecycle-r3-20260914/**"
+    "docs/policy/vpj-03-data-disclosure.md",
+    ".gitignore",
+    "artifacts/VPJ-18/amap-first-probe-20260914/**",
+    "artifacts/VPJ-18/tencent-first-probe-20260914/**",
+    "docs/handoff.json"
   ],
   "verification": [
+    "AMap real probe 2026-09-14T05:36:28Z: search observed count=3, walking observed 1541m/1233s, both API_OBSERVED, no raw response/key retained. Tencent real probe 2026-09-14T05:38:09Z: search observed count=3, walking observed 1589m/1440s, both API_OBSERVED. Both used scripts/maps/probe.mjs unmodified, keys only in local git-ignored scripts/maps/.env. See artifacts/VPJ-18/amap-first-probe-20260914/verification.md and artifacts/VPJ-18/tencent-first-probe-20260914/verification.md.",
+    "2026-09-14 session: docs:check + lint (267 files) PASS on PR375 (docs-only) and PR376/377 (docs+.gitignore only). PR374 CI (deterministic-pr-gates, durable-budget, simulator, Vercel) all PASS on final-head after pushing the 4 pending evidence commits; merged. PR372 CI (deterministic-pr-gates, Vercel) PASS; merged, secret-free (no keys/env committed).",
     "Place Staging candidate e19bd58: encrypted backup46+offline full restore+two-migration rollback PASS,78 tables/262 schema entries; actual migration48 postcheck PASS,6users3Trips preserved, reader/Opsfalse,members0. First two dry-runs STOPPED on boolean parsing before CLI/apply; corrected r3 PASS. Controllers independently reviewed0/0. Dedicated Preview/native build and model/client acceptance pending. artifacts/VPJ-16/place-grounding-staging-20260914/verification.md.",
     "Place mainline: local contracts291/291, PG19/19 zero skips, Web read9/9, lint267/typecheck and Web build PASS. Native14/14 PASS again after typed-display fix; static tests22/22 PASS. Two independent review findings fixed, final SQL and consumer0/0; see artifacts/VPJ-16/place-grounding-20260914/verification.md.",
     "PR373 merged6e3a1289f4db048f0d3f87dfd9cb57795ec55782 at2026-09-13T19:29:33Z, tree matches finalb236ecf. Quality34777633596 and Preview PASS. Production dpl_GvX3EbWwjvjM3RD74euphUZj9wvx CANCELED; five Production aliases and shared Staging unchanged at19:29:57Z. artifacts/VPJ-16/evidence-lifecycle-r3-20260914/postmerge-deployment.json.",
