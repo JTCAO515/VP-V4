@@ -84,7 +84,7 @@ SourceRevision/EvidenceSpan 可先映射现有字段；需要新持久化时做�
 - RuleDefinition 用受限、版本化条件表达式；不执行 Wiki 中的任意脚本/DSL。实体、关系、规则分别校验，链接存在不等于证据成立。
 - 首轮使用现有 TypeScript/Postgres；不引入 Palantir 平台、图数据库、通用 OWL 推理器、第二协调器或第二记忆库。新增独立基础设施须有具体性能/表达缺口与另行范围记录。
 
-**2026-09-14 VPJ-74 切片1+2+3已落地**（[docs/contracts/knowledge-provenance.md](../contracts/knowledge-provenance.md)、[artifacts/VPJ-74](../../artifacts/VPJ-74/)）：`ontology_relations`/`ontology_types` 登记现有9个predicate的domain/range/zh/en别名；`source_revisions`新增`fetched_at`/`effective_at`/`lineage_status`；只读RPC `ops_knowledge_provenance_read_v1` 复用既有VPJ-14 `current_actor()`鉴权；切片2给写路径打真实`fetched_at`+`lineage_status='tracked'`（旧记录仍诚实标`legacy`，`effective_at`语义仍未定义不伪造）；切片3在operator授权下把两个migration实际部署到真实共享Staging（先备份，推送前后行数比对一致），跑通真实提交→审核→发布→溯源读取全链路+`OPS_FORBIDDEN`反例，测试数据全部清理干净、开关状态恢复。apps/ops UI仍未做，隔离备份恢复演练仍未做，#358整票未关闭。
+**2026-09-14 VPJ-74 切片1-4已落地**（[docs/contracts/knowledge-provenance.md](../contracts/knowledge-provenance.md)、[artifacts/VPJ-74](../../artifacts/VPJ-74/)）：`ontology_relations`/`ontology_types` 登记现有9个predicate的domain/range/zh/en别名；`source_revisions`新增`fetched_at`/`effective_at`/`lineage_status`；只读RPC `ops_knowledge_provenance_read_v1` 复用既有VPJ-14 `current_actor()`鉴权；切片2给写路径打真实`fetched_at`+`lineage_status='tracked'`（旧记录仍诚实标`legacy`，`effective_at`语义仍未定义不伪造）；切片3在operator授权下把两个migration实际部署到真实共享Staging（先备份，推送前后行数比对一致），跑通真实提交→审核→发布→溯源读取全链路+`OPS_FORBIDDEN`反例，测试数据全部清理干净、开关状态恢复；切片4新增`/ops/provenance`页面+API路由，本地真实浏览器验证登录→查询→渲染→not-found态→中英切换全部正常，测试数据清理干净。隔离备份恢复演练仍未做，#358整票未关闭。
 
 ### Wiki 更新与发布
 

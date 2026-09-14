@@ -88,6 +88,15 @@ verified back to the exact pre-test row counts). See
 backup/restore *rehearsal* (an actual restore drill) remains unrun; see
 `artifacts/VPJ-74/unrun.md`.
 
+## UI
+
+`/ops/provenance` (`app/ops/provenance/`) is a read-only lookup form —
+enter a `factId`, see the rendered relation/sources/source-history/audit
+trail. Backed by `app/api/ops/provenance/route.ts` and
+`lib/server/knowledge/provenance/http-provenance.ts`, reusing the same
+`createWebRpc`/`opsRuntimeConfig` auth boundary as `/ops/review`. See
+`artifacts/VPJ-74/ops-ui-slice4.md` for real-browser verification.
+
 ## Consumers
 
 VPJ-75/76 and #211 may read this shape once accepted; they must not assume

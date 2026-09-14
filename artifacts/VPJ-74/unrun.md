@@ -12,12 +12,13 @@
   `docs/runbooks/backup-restore.md`'s full rehearsal protocol (separate
   isolated project, RPO/RTO targets, PITR) is still a separate, larger
   exercise this slice did not attempt.
-- **`apps/ops/**` UI surface.** No Ops-facing UI was built or touched in
-  this slice — verification used direct RPC calls (`psql`) against real
-  Postgres, not an HTTP/UI path. The allowed-paths list in
-  EXECUTION-CONTRACT.md includes `apps/ops/**`; this slice did not need it
-  and did not add one, since the read-only RPC was independently verifiable
-  without a UI.
+- ~~`apps/ops/**` UI surface~~ **DONE in slice 4** — see `ops-ui-slice4.md`.
+  `/ops/provenance` (page + API route) built, real-browser-verified locally
+  (sign-in → lookup a real published fact → correct render; not-found
+  error state; locale switch), all test data cleaned up. Not separately
+  click-through-verified against Staging (slice 3 already verified the
+  underlying RPC there; the route code path is identical regardless of
+  environment).
 - **`effective_at` semantics.** `fetched_at`/`lineage_status='tracked'` are
   now stamped on new source revisions (slice 2, see
   `lineage-tracking-slice2.md`), but `effective_at` is still never set for
