@@ -15,11 +15,27 @@ const config = {
   tencent: { key: "TENCENT_MAP_WEB_SERVICE_KEY", flag: "TENCENT_MAP_PROBE_ENABLED", host: "apis.map.qq.com", sk: "TENCENT_MAP_SK" },
 };
 
+const ALL_OPERATIONS = ["search", "walking"];
+
+/**
+ * `operations` selects which of search/walking this fixture dispatches —
+ * defaults to both (the original paired pilot shape) for backward
+ * compatibility with scripts/maps/pilot-fixtures.json. A search-only
+ * fixture needs no from/to; a walking-only fixture needs no query/city
+ * beyond what search would otherwise require. This lets a full
+ * search-name matrix (many language variants, no route) and a separate
+ * route matrix (place-to-place walking, no repeated search) share one
+ * fixture file format without wasting the other half of each pair.
+ */
 function isFixture(f) {
-  return f && typeof f === "object" && typeof f.city === "string" && typeof f.category === "string" &&
-    typeof f.query === "string" && f.query.trim() &&
-    Number.isFinite(f?.from?.lat) && Number.isFinite(f?.from?.lng) &&
-    Number.isFinite(f?.to?.lat) && Number.isFinite(f?.to?.lng);
+  if (!f || typeof f !== "object" || typeof f.city !== "string" || typeof f.category !== "string") return false;
+  const operations = f.operations ?? ALL_OPERATIONS;
+  if (!Array.isArray(operations) || operations.length === 0 || !operations.every(o => ALL_OPERATIONS.includes(o))
+    || new Set(operations).size !== operations.length) return false;
+  if (operations.includes("search") && !(typeof f.query === "string" && f.query.trim())) return false;
+  if (operations.includes("walking") && !(Number.isFinite(f?.from?.lat) && Number.isFinite(f?.from?.lng)
+    && Number.isFinite(f?.to?.lat) && Number.isFinite(f?.to?.lng))) return false;
+  return true;
 }
 
 export function loadFixtures(raw) {
@@ -28,24 +44,30 @@ export function loadFixtures(raw) {
   return list;
 }
 
+export function fixtureRequestCount(fixtures) {
+  return fixtures.reduce((n, f) => n + (f.operations ?? ALL_OPERATIONS).length, 0);
+}
+
 export function requestsForFixture(provider, key, fx, sk) {
   const c = Object.hasOwn(config, provider) ? config[provider] : null;
   if (!c || typeof key !== "string" || !key.trim()) throw new Error("invalid_config");
   if (!isFixture(fx)) throw new Error("invalid_fixtures");
   const coordinate = p => provider === "amap" ? `${p.lng},${p.lat}` : `${p.lat},${p.lng}`;
-  const search = provider === "amap"
-    ? ["/v5/place/text", { keywords: fx.query, region: fx.city, city_limit: "true", page_size: "3", page_num: "1" }]
-    : ["/ws/place/v1/search", { keyword: fx.query, boundary: `region(${fx.city},0)`, page_size: "3", page_index: "1" }];
-  const walking = provider === "amap"
-    ? ["/v5/direction/walking", { origin: coordinate(fx.from), destination: coordinate(fx.to), show_fields: "cost", alternative_route: "1" }]
-    : ["/ws/direction/v1/walking", { from: coordinate(fx.from), to: coordinate(fx.to) }];
-  return [search, walking].map(([path, params], i) => {
+  const build = op => {
+    const [path, params] = op === "search"
+      ? (provider === "amap"
+        ? ["/v5/place/text", { keywords: fx.query, region: fx.city, city_limit: "true", page_size: "3", page_num: "1" }]
+        : ["/ws/place/v1/search", { keyword: fx.query, boundary: `region(${fx.city},0)`, page_size: "3", page_index: "1" }])
+      : (provider === "amap"
+        ? ["/v5/direction/walking", { origin: coordinate(fx.from), destination: coordinate(fx.to), show_fields: "cost", alternative_route: "1" }]
+        : ["/ws/direction/v1/walking", { from: coordinate(fx.from), to: coordinate(fx.to) }]);
     const allParams = { ...params, key, output: "json" };
     if (provider === "tencent" && sk) allParams.sig = tencentSig(path, allParams, sk);
     const url = new URL(`https://${c.host}${path}`);
     url.search = new URLSearchParams(allParams).toString();
-    return { operation: i === 0 ? "search" : "walking", url, city: fx.city, category: fx.category, query: fx.query };
-  });
+    return { operation: op, url, city: fx.city, category: fx.category, query: fx.query };
+  };
+  return (fx.operations ?? ALL_OPERATIONS).map(build);
 }
 
 async function boundedJson(response) {
@@ -109,7 +131,7 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     const delayMs = delayArg === undefined ? 0 : Number(delayArg);
     if (!Number.isFinite(delayMs) || delayMs < 0 || delayMs > MAX_DELAY_MS) throw new Error("invalid_delay");
     const fixtures = loadFixtures(readFileSync(fixturesPath, "utf8"));
-    if (fixtures.length * 2 > HARD_CAP_REQUESTS) throw new Error("fixture_budget_exceeds_hard_cap");
+    if (fixtureRequestCount(fixtures) > HARD_CAP_REQUESTS) throw new Error("fixture_budget_exceeds_hard_cap");
     fd = openSync(ledger, "wx", 0o600);
     const record = value => { writeSync(fd, JSON.stringify(value) + "\n"); fsyncSync(fd); };
     const c = config[provider];

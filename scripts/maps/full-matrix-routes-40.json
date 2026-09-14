@@ -1,0 +1,602 @@
+[
+  {
+    "city": "上海市",
+    "category": "airport_terminal",
+    "from": {
+      "lat": 31.1975,
+      "lng": 121.3364
+    },
+    "to": {
+      "lat": 31.201500000000003,
+      "lng": 121.3404
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "station_exit",
+    "from": {
+      "lat": 31.2497,
+      "lng": 121.4556
+    },
+    "to": {
+      "lat": 31.253700000000002,
+      "lng": 121.45960000000001
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "station_exit",
+    "from": {
+      "lat": 31.2323,
+      "lng": 121.4759
+    },
+    "to": {
+      "lat": 31.2363,
+      "lng": 121.4799
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "duplicate_name_branch",
+    "from": {
+      "lat": 31.24,
+      "lng": 121.485
+    },
+    "to": {
+      "lat": 31.244,
+      "lng": 121.489
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 31.2397,
+      "lng": 121.49
+    },
+    "to": {
+      "lat": 31.2437,
+      "lng": 121.494
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 31.2397,
+      "lng": 121.4998
+    },
+    "to": {
+      "lat": 31.2437,
+      "lng": 121.5038
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 31.2273,
+      "lng": 121.492
+    },
+    "to": {
+      "lat": 31.2313,
+      "lng": 121.49600000000001
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 31.1433,
+      "lng": 121.658
+    },
+    "to": {
+      "lat": 31.1473,
+      "lng": 121.662
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "landmark",
+    "from": {
+      "lat": 31.2249,
+      "lng": 121.4457
+    },
+    "to": {
+      "lat": 31.228900000000003,
+      "lng": 121.4497
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "上海市",
+    "category": "attraction",
+    "from": {
+      "lat": 31.2286,
+      "lng": 121.4757
+    },
+    "to": {
+      "lat": 31.2326,
+      "lng": 121.47970000000001
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "airport_terminal",
+    "from": {
+      "lat": 40.064,
+      "lng": 116.6039
+    },
+    "to": {
+      "lat": 40.068,
+      "lng": 116.6079
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "station_exit",
+    "from": {
+      "lat": 39.8952,
+      "lng": 116.3226
+    },
+    "to": {
+      "lat": 39.8992,
+      "lng": 116.3266
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "station_exit",
+    "from": {
+      "lat": 39.9075,
+      "lng": 116.4008
+    },
+    "to": {
+      "lat": 39.9115,
+      "lng": 116.40480000000001
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "duplicate_name_branch",
+    "from": {
+      "lat": 39.9139,
+      "lng": 116.4108
+    },
+    "to": {
+      "lat": 39.917899999999996,
+      "lng": 116.4148
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 39.9055,
+      "lng": 116.3976
+    },
+    "to": {
+      "lat": 39.9095,
+      "lng": 116.4016
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 39.9163,
+      "lng": 116.3972
+    },
+    "to": {
+      "lat": 39.9203,
+      "lng": 116.4012
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 39.9999,
+      "lng": 116.2755
+    },
+    "to": {
+      "lat": 40.003899999999994,
+      "lng": 116.2795
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 40.3584,
+      "lng": 116.0138
+    },
+    "to": {
+      "lat": 40.3624,
+      "lng": 116.01780000000001
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 39.8822,
+      "lng": 116.4066
+    },
+    "to": {
+      "lat": 39.886199999999995,
+      "lng": 116.4106
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "北京市",
+    "category": "landmark",
+    "from": {
+      "lat": 39.9142,
+      "lng": 116.4114
+    },
+    "to": {
+      "lat": 39.9182,
+      "lng": 116.4154
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "airport_terminal",
+    "from": {
+      "lat": 23.3924,
+      "lng": 113.2988
+    },
+    "to": {
+      "lat": 23.3964,
+      "lng": 113.3028
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "station_exit",
+    "from": {
+      "lat": 22.991,
+      "lng": 113.2686
+    },
+    "to": {
+      "lat": 22.995,
+      "lng": 113.27260000000001
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "station_exit",
+    "from": {
+      "lat": 23.1315,
+      "lng": 113.3238
+    },
+    "to": {
+      "lat": 23.1355,
+      "lng": 113.32780000000001
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "duplicate_name_branch",
+    "from": {
+      "lat": 23.133,
+      "lng": 113.325
+    },
+    "to": {
+      "lat": 23.137,
+      "lng": 113.32900000000001
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 23.1066,
+      "lng": 113.3245
+    },
+    "to": {
+      "lat": 23.1106,
+      "lng": 113.3285
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 23.1055,
+      "lng": 113.2412
+    },
+    "to": {
+      "lat": 23.1095,
+      "lng": 113.24520000000001
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 23.1275,
+      "lng": 113.2503
+    },
+    "to": {
+      "lat": 23.131500000000003,
+      "lng": 113.2543
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 23.1745,
+      "lng": 113.2985
+    },
+    "to": {
+      "lat": 23.1785,
+      "lng": 113.30250000000001
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "landmark",
+    "from": {
+      "lat": 23.117,
+      "lng": 113.25
+    },
+    "to": {
+      "lat": 23.121000000000002,
+      "lng": 113.254
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "广州市",
+    "category": "attraction",
+    "from": {
+      "lat": 22.9022,
+      "lng": 113.3298
+    },
+    "to": {
+      "lat": 22.906200000000002,
+      "lng": 113.33380000000001
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "airport_terminal",
+    "from": {
+      "lat": 29.7192,
+      "lng": 106.6417
+    },
+    "to": {
+      "lat": 29.723200000000002,
+      "lng": 106.6457
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "station_exit",
+    "from": {
+      "lat": 29.6011,
+      "lng": 106.5313
+    },
+    "to": {
+      "lat": 29.6051,
+      "lng": 106.5353
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "from": {
+      "lat": 29.5615,
+      "lng": 106.5334
+    },
+    "to": {
+      "lat": 29.5655,
+      "lng": 106.5374
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "duplicate_name_branch",
+    "from": {
+      "lat": 29.558,
+      "lng": 106.5775
+    },
+    "to": {
+      "lat": 29.562,
+      "lng": 106.5815
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 29.5566,
+      "lng": 106.5762
+    },
+    "to": {
+      "lat": 29.5606,
+      "lng": 106.5802
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "from": {
+      "lat": 29.5628,
+      "lng": 106.5789
+    },
+    "to": {
+      "lat": 29.5668,
+      "lng": 106.58290000000001
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "scenic_entrance",
+    "from": {
+      "lat": 29.5687,
+      "lng": 106.4573
+    },
+    "to": {
+      "lat": 29.5727,
+      "lng": 106.46130000000001
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "from": {
+      "lat": 29.5537,
+      "lng": 106.5843
+    },
+    "to": {
+      "lat": 29.5577,
+      "lng": 106.5883
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "landmark",
+    "from": {
+      "lat": 29.5462,
+      "lng": 106.5089
+    },
+    "to": {
+      "lat": 29.5502,
+      "lng": 106.5129
+    },
+    "operations": [
+      "walking"
+    ]
+  },
+  {
+    "city": "重庆市",
+    "category": "chongqing_complex_walking",
+    "from": {
+      "lat": 29.5289,
+      "lng": 106.6089
+    },
+    "to": {
+      "lat": 29.5329,
+      "lng": 106.61290000000001
+    },
+    "operations": [
+      "walking"
+    ]
+  }
+]
