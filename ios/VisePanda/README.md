@@ -7,8 +7,17 @@ Trip, Explore, Ask, Tools, Profile remain stable; Ask opens by default; Today li
 The release picker offers zh-Hans/en. Legacy es/ru/ar resources and explicit launch overrides
 remain compatible; an active legacy selection keeps its picker label until switching to zh/en.
 Arabic still uses RTL. The Web locale migration is separate.
-All screens are development preview: no account, AI, network, Trip write, booking or payment.
-Draft text and language selection are session-only. Sending remains disabled.
+Without an enabled endpoint, screens remain development previews. The accepted
+`NativeSession` also supports a loopback `-VisePandaNativeAPI` for local integration,
+and an installed Staging build configuration (`VisePandaNativeEnvironment=staging`,
+`VisePandaStagingAPIOrigin`) restricted to the allowed first-party hosts. Remote
+endpoints cannot be selected through launch arguments. `VisePandaNativeTaskContext`
+selects the installed Ask mode; local tests can use `-VisePandaGroundedMode`.
+
+Configured consumers implement identity, same-Trip reads/writes and bounded Ask;
+capability still depends on the actual backend, session, consent and worker. Refer
+to [current handoff](../../docs/handoff.json) for version-specific observed results
+and UNRUN items. This is not complete native, Store, booking or payment acceptance.
 
 The bundled icon and wordmark use the operator-confirmed heart logo; see
 [the current source and runtime export notes](../../assets/brand/vise-panda/official-heart-20260913/README.md).

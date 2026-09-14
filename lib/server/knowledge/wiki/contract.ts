@@ -1,9 +1,7 @@
-/**
- * TS mirror of 20260914110000_vpj_75_359_wiki_schema.sql. Pure closed-schema
- * types and validators only -- no fetch, no LLM call, no persistence. This
- * slice is the data model; the generation dispatcher, worker, and Ops diff
- * review are later slices.
- */
+import { isValidWikiGenerationDraftOutput, type WikiGenerationDraftOutput } from "../../model-gateway/prompt/wiki-generation.ts";
+
+/** Wiki page/job contract and compatible revision reader. Historical revisions
+ * may omit draftContent; new successful completions require the complete body. */
 
 export type PageType = "source_summary" | "entity_procedure" | "topic" | "comparison_gap";
 export type JobStatus = "queued" | "running" | "succeeded" | "failed" | "cancelled";
@@ -35,6 +33,8 @@ export type WikiPageRevision = Readonly<{
   generatedAt: string;
   validationStatus: ValidationStatus;
   changeNote: string;
+  /** Absent/null on historical revisions; never reconstruct from changeNote. */
+  draftContent?: WikiGenerationDraftOutput | null;
 }>;
 
 const PAGE_TYPES: readonly PageType[] = ["source_summary", "entity_procedure", "topic", "comparison_gap"];
@@ -99,7 +99,8 @@ export function isValidWikiPageRevision(value: unknown): value is WikiPageRevisi
   if (!boundedText(v.promptVersion, 60) || !digest(v.configDigest) || !digest(v.inputDigest)) return false;
   if (!isoInstant(v.generatedAt)) return false;
   if (!VALIDATION_STATUSES.includes(v.validationStatus as ValidationStatus)) return false;
-  return boundedText(v.changeNote, 400);
+  return boundedText(v.changeNote, 400)
+    && (v.draftContent == null || isValidWikiGenerationDraftOutput(v.draftContent));
 }
 
 /**

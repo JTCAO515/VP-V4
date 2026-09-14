@@ -6,9 +6,9 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：PAUSED AT USER REQUEST after current round. PR374 frozen runtime2f/v7/APIe19 regression: current85/85PASS, combined132/132 expected outcomes (26place+106legacy),132unique model attempts,two zero-model read recoveries. Final491attempts0unresolved,all132work terminal exactly as expected/all leases cleared,owned mobile sessions null,reader/Ops/members closed,WAF98 restored. No live Staging process. Native/Quality/Budget359d6f2PASS; later evidence commits local. MapsPR372 remains soleprep, untouched.
+状态：PR397 open at3fb381f: Wiki body/diff/source implementation and Quality/Budget/Vercel passed. Native CI remains queued; identical local native script57pass0fail23environment skips, owned simulator cleaned. User restored browser Staging login: actual50 migrations, Wiki table/RPC absent, Ops disabled. Bounded Wiki rollout prepared and awaiting named-target schema/Ops authorization plus fresh backup/restore.
 
-阶段：S2 main integration on the verified S1 code and scoped Staging result; close S1 remaining acceptance gaps without recreating completed preparation.
+阶段：S2: finish #359 draft persistence and Ops review delivery, then statement/span publication and job recovery in dependency order. This device is independently verified; historical key paths are not available credentials.
 
 ## 读取顺序
 
@@ -32,6 +32,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - 2026-09-12 JT removed mandatory supplier support responses, account-contract receipts and precise supplier TTL evidence from VPJ-03 for ALL model providers, including Qwen, GLM, DeepSeek and future candidates. Public terms, console metadata and actual configuration suffice as documented sources with explicit unknowns. No supplier ticket blocks development; preserve truthful notice, user consent and runtime permissions.
 - 2026-09-12 JT取消全部开发阶段第三方、法务与产品许可前置要求；工单/书面回复/合同回执/精确供应商TTL缺失不再阻塞开发。agent按docs/agents/development-integration-policy.md以现有账号/API与实际配置推进，可逆参数自行决定；保留用户同意、RLS、确认、秘密及真实验证。
 - 2026-09-12 JT明确同意仅暂停main自动Production构建。单字段guard已应用，PR332合并后真实Production构建CANCELED且全部线上alias保留db5fb7b；Preview/Staging不变。此授权不包含新的Production发布或解除guard。
+- 2026-09-14 JT authorizes unblocking Issues as actual dependencies permit and developing in order; labels are not an additional gate. Preserve unmet acceptance, production protection and complete parent tracking.
 
 ## 未决与运行证据
 
@@ -44,6 +45,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - #268←#266/#267/#229/#231, all OPEN: selected-version complete12 required-mode scenarios, actual Ops stop/restore/rollback and matching real domestic/international network evidence are not available. Local ledgers, deadline tests, static flags or configured regions do not complete those dependencies.
 - JT deferred further physical phone verification on2026-09-12. Existing physical same-Trip/auth slice passed; full native/VoiceOver/Store acceptance remains unrun. The previous CI AX failure is resolved; do not repeat phone work as a development gate.
 
+- #359 real target integration remains UNRUN. Browser Staging login restored; current50 lacks all three Wiki migrations. Remote schema/Ops test-window authorization, fresh encrypted backup/restore and secure runtime provider access remain prerequisites. Separate connector still lacks target access; hosted Native CI queued; local57pass23skip does not change GitHub status.
 - Production/customer and complete native/Harness acceptance remain unrun. Scoped Staging and actual C0 model protocol/worker behavior are verified; supplier billing, semantic quality and real user data consumers remain separate.
 - Physical VoiceOver, signed Store and selected-object Ask sheet acceptance under #198/#233/#242 remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.
 - VPJ-66 offline preparation is merged and accepted; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.
@@ -53,6 +55,13 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 验证
 
+- 2026-09-15 continuation: exact3fb381f unchanged native CI script/Xcode26.6/iOS26.5 completes57pass0fail23environment skips; actual simulator deleted. Browser official login restored, read-only Staging50 and Wiki absence/Ops-off observed. Three-Wiki-migration rollback from50 preserves prior source and native SQL8/8passes. See artifacts/VPJ-75/staging-readiness-20260915.md.
+- 2026-09-14 new-device #359 slice3: native PostgreSQL17.6 full migration replay, upgrade rollback, exact 600-character body, process restart, receipt rollback/replay, concurrency and ACL8/8; contracts368/368; security146pass1existing skip; generic integration23pass76environment skips. Browser uses synthetic DB-readback proxy, not GoTrue or provider. See artifacts/VPJ-75/verification.md.
+- 2026-09-14 VPJ-74 slice 3: real Staging deployment via supabase db push --linked, zero migration drift before/after, schema+data backup taken and later deleted (never needed), full submit->review->publish->provenance-read flow plus OPS_FORBIDDEN negative case run against real Staging, all synthetic test data (3 users, sessions, members, one candidate chain) deleted afterward, feature flags restored to false, final row counts matched pre-test baseline exactly across every table. See artifacts/VPJ-74/staging-verification-slice3.md.
+- 2026-09-14 #362 full matrix: AMap 160/160 (120 search + 40 route), Tencent 159/160 (1 genuine no_results, English query for a minor viewpoint). Full variant/city breakdown in artifacts/VPJ-18/full-matrix-20260914/verification.md. Mid-run AMap OVER_DIRECTION_RANGE (code 20803) found and fixed (route redesign, short synthetic offsets instead of long-distance real-place pairs).
+- 2026-09-14 VPJ-74 slice 1: docs:check/lint(267)/typecheck/test:contract(313/313) all PASS. Real disposable-local-Postgres scenario (project_id vp-v4-ai-08): full submit->review->publish->provenance-read flow plus OPS_FORBIDDEN/anon-permission-denied/INVALID_INPUT/OPS_NOT_FOUND negative cases all behaved as specified. See artifacts/VPJ-74/verification.md, results.json, commands.jsonl, unrun.md.
+- AMap real probe 2026-09-14T05:36:28Z: search observed count=3, walking observed 1541m/1233s, both API_OBSERVED, no raw response/key retained. Tencent real probe 2026-09-14T05:38:09Z: search observed count=3, walking observed 1589m/1440s, both API_OBSERVED. Both used scripts/maps/probe.mjs unmodified, keys only in local git-ignored scripts/maps/.env. See artifacts/VPJ-18/amap-first-probe-20260914/verification.md and artifacts/VPJ-18/tencent-first-probe-20260914/verification.md.
+- 2026-09-14 session: docs:check + lint (267 files) PASS on PR375 (docs-only) and PR376/377 (docs+.gitignore only). PR374 CI (deterministic-pr-gates, durable-budget, simulator, Vercel) all PASS on final-head after pushing the 4 pending evidence commits; merged. PR372 CI (deterministic-pr-gates, Vercel) PASS; merged, secret-free (no keys/env committed).
 - Place Staging candidate e19bd58: encrypted backup46+offline full restore+two-migration rollback PASS,78 tables/262 schema entries; actual migration48 postcheck PASS,6users3Trips preserved, reader/Opsfalse,members0. First two dry-runs STOPPED on boolean parsing before CLI/apply; corrected r3 PASS. Controllers independently reviewed0/0. Dedicated Preview/native build and model/client acceptance pending. artifacts/VPJ-16/place-grounding-staging-20260914/verification.md.
 - Place mainline: local contracts291/291, PG19/19 zero skips, Web read9/9, lint267/typecheck and Web build PASS. Native14/14 PASS again after typed-display fix; static tests22/22 PASS. Two independent review findings fixed, final SQL and consumer0/0; see artifacts/VPJ-16/place-grounding-20260914/verification.md.
 - PR373 merged6e3a1289f4db048f0d3f87dfd9cb57795ec55782 at2026-09-13T19:29:33Z, tree matches finalb236ecf. Quality34777633596 and Preview PASS. Production dpl_GvX3EbWwjvjM3RD74euphUZj9wvx CANCELED; five Production aliases and shared Staging unchanged at19:29:57Z. artifacts/VPJ-16/evidence-lifecycle-r3-20260914/postmerge-deployment.json.
@@ -142,7 +151,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 
 ## 下一动作与回滚
 
-WAIT FOR USER TO RESUME. User explicitly requested pause after this round; do not launch another regression, implementation, merge, or fresh CI cycle. Final evidence in artifacts/VPJ-16/place-v7-legacy-recovery-20260914; original failures retained. On explicit resume: review final evidence, push pending local evidence commits, require actual final-head CI/current base/ordinary review before PR374 merge; preserve Production guard. FullS2 and physical-device acceptance remain incomplete. Budgetexpiry2026-09-14T00:26:40.762Z is not permission to keep running while paused.
+Complete PR397 follow-up and named Staging rollout only after the pending authorization and backup/restore prerequisites. Three Wiki migrations only; do not include independent map migration or stack dependent runtime PRs. Real model budget/credential and GitHub runner remain separate. Then continue #359 statement/span publication and recovery before #360.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
