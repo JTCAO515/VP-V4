@@ -3,6 +3,7 @@ import type { CostGuard } from "../budget/index.ts";
 import type { FailureCode } from "../../contracts/errors/index.ts";
 import { TEXT_TURN_SYSTEM_PROMPT, TEXT_TASK_SYSTEM_PROMPT } from "../prompt/text-turn.ts";
 import { KNOWLEDGE_INTENT_SYSTEM_PROMPT } from "../prompt/knowledge-intent.ts";
+import { WIKI_GENERATION_SYSTEM_PROMPT, isValidWikiGenerationDraftOutput, type WikiGenerationDraftOutput } from "../prompt/wiki-generation.ts";
 
 export const PROTOCOL_MODELS = Object.freeze({
   qwen: MODEL_PROFILES.qwen_37_strict.providerModelId,
@@ -20,7 +21,7 @@ export type ProtocolRequest = Readonly<{
   provider: ProtocolProvider;
   dataClass: ModelDataClass;
   input: string;
-  task: ModelTask | "tool_candidate" | "text_turn_v1" | "text_task_v2" | "knowledge_intent_v1";
+  task: ModelTask | "tool_candidate" | "text_turn_v1" | "text_task_v2" | "knowledge_intent_v1" | "wiki_generation_v1";
   history?: readonly Readonly<{ role: "user" | "assistant"; content: string }>[];
   tool?: ProtocolTool;
   /** Optional bounded Qwen task-context experiment; output cap includes reasoning. */
@@ -42,7 +43,7 @@ export type ProtocolOutcome =
       kind: "protocol_validated";
       provider: ProtocolProvider;
       model: string;
-      output: string | KnownUnknownOutput | Readonly<{ kind: "tool_candidate"; id: string; name: string; arguments: Record<string, unknown> }>;
+      output: string | KnownUnknownOutput | WikiGenerationDraftOutput | Readonly<{ kind: "tool_candidate"; id: string; name: string; arguments: Record<string, unknown> }>;
       usage: ProtocolUsage;
     }>
   | Readonly<{ kind: "unavailable"; code: FailureCode; usage: ProtocolUsage | null; cost: "unknown" }>
@@ -188,6 +189,7 @@ function requestBody(request: ProtocolRequest): Record<string, unknown> {
       ...(request.task === "text_turn_v1" ? [{ role: "system", content: TEXT_TURN_SYSTEM_PROMPT }] : []),
       ...(request.task === "text_task_v2" ? [{ role: "system", content: TEXT_TASK_SYSTEM_PROMPT }, ...request.history!] : []),
       ...(request.task === "knowledge_intent_v1" ? [{ role: "system", content: KNOWLEDGE_INTENT_SYSTEM_PROMPT }] : []),
+      ...(request.task === "wiki_generation_v1" ? [{ role: "system", content: WIKI_GENERATION_SYSTEM_PROMPT }] : []),
       ...(request.task === "strict_known_unknown" ? [{ role: "system", content: 'Return only JSON: {"kind":"known","value":"nonempty text"} or {"kind":"unknown","reason":"fixture_no_evidence"}. Do not add fields.' }] : []),
       { role: "user", content: request.input },
     ],
@@ -198,7 +200,7 @@ function requestBody(request: ProtocolRequest): Record<string, unknown> {
     // GLM-5.3-Flash rejects thinking: disabled (observed HTTP400/1210).
     // Preserve its native default; reasoning text still never leaves normalization.
     ...(request.provider === "qwen" ? { enable_thinking: request.thinkingBudgetTokens !== undefined } : request.provider === "deepseek" ? { thinking: { type: "disabled" } } : {}),
-    ...(["strict_known_unknown", "text_turn_v1", "text_task_v2", "knowledge_intent_v1"].includes(request.task) ? { response_format: { type: "json_object" } } : {}),
+    ...(["strict_known_unknown", "text_turn_v1", "text_task_v2", "knowledge_intent_v1", "wiki_generation_v1"].includes(request.task) ? { response_format: { type: "json_object" } } : {}),
     ...(request.task === "tool_candidate" && request.tool ? {
       tools: [{ type: "function", function: { name: request.tool.name, parameters: request.tool.parameters } }],
       tool_choice: "auto",
@@ -233,6 +235,12 @@ function normalizeResponse(request: ProtocolRequest, value: unknown): ProtocolOu
       try {
         const parsed: unknown = JSON.parse(message.content);
         if (!validateKnownUnknownOutput(parsed)) return unavailable("MODEL_OUTPUT_INVALID", usage);
+        output = parsed;
+      } catch { return unavailable("MODEL_OUTPUT_INVALID", usage); }
+    } else if (request.task === "wiki_generation_v1") {
+      try {
+        const parsed: unknown = JSON.parse(message.content);
+        if (!isValidWikiGenerationDraftOutput(parsed)) return unavailable("MODEL_OUTPUT_INVALID", usage);
         output = parsed;
       } catch { return unavailable("MODEL_OUTPUT_INVALID", usage); }
     } else output = message.content;
@@ -285,7 +293,7 @@ async function readBoundedJson(response: Response, signal: AbortSignal): Promise
 
 function validRequest(value: ProtocolRequest): boolean {
   return record(value) && typeof value.requestId === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(value.requestId) && Object.hasOwn(PROTOCOL_MODELS, value.provider)
-    && ["ordinary_text", "strict_known_unknown", "tool_candidate", "text_turn_v1", "text_task_v2", "knowledge_intent_v1"].includes(value.task)
+    && ["ordinary_text", "strict_known_unknown", "tool_candidate", "text_turn_v1", "text_task_v2", "knowledge_intent_v1", "wiki_generation_v1"].includes(value.task)
     && (value.task === "text_task_v2" ? validTextTaskHistory(value.history) : value.history === undefined)
     && typeof value.input === "string" && value.input.trim().length > 0 && value.input.length <= 32768
     && ["c0_synthetic", "c1_user", "c2_sensitive", "c3_restricted", "c4_secret"].includes(value.dataClass)

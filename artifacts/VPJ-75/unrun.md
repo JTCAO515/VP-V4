@@ -1,33 +1,54 @@
 # VPJ-75 (#359) — explicitly UNRUN
 
-Slice 1 (schema/idempotency data model) is done — see
-`359-wiki-schema-slice1-20260914/verification.md`. Everything else in
-#359's acceptance is not started:
+Slice 1 (schema/idempotency data model) — see
+`359-wiki-schema-slice1-20260914/verification.md`. Slice 2 (dispatcher RPC
++ real LLM wiring) — see `359-wiki-dispatch-slice2-20260914/verification.md`
+and `docs/contracts/wiki-generation-dispatch.md`.
 
-- **Generation dispatcher RPC.** No `ops_wiki_generate_*` function exists
-  yet — `wiki_generation_jobs`/`wiki_page_revisions` can only be written by
-  direct SQL right now (used only for this slice's own verification
-  inserts, immediately rolled back with `supabase db reset`). No app code
-  path writes them.
-- **Real bounded LLM worker.** No call to `lib/server/model-gateway/**` or
-  any provider has been made for wiki generation. Cost/budget/timeout/
-  cancel/resume behavior for an actual worker is entirely unverified.
-- **Ops diff review UI.** No page shows a generated draft changeset for
-  human review before publish.
+- ~~Generation dispatcher RPC~~ **DONE in slice 2.**
+  `public.ops_wiki_generation_v1` (claim/complete) reserves jobs
+  idempotently, enforces expectedVersion on write, rejects a duplicate
+  claim while a job is `running`, and reopens the same job row (not a new
+  one) on retry after failure. Verified against a real local Supabase
+  instance with a real GoTrue session, not just direct SQL.
+- ~~Real bounded LLM worker~~ **DONE in slice 2, for the summary+gaps
+  probe scope only.** `lib/server/jobs/wiki-generation-job.ts` made two
+  real calls to the Qwen API (not a fixture), under explicit operator
+  authorization for real spend, with a validated closed-schema output and
+  real token usage recorded. Cost/timeout/cancel paths are exercised by
+  contract tests with an injected transport; an actual mid-call process
+  crash was not reproduced for real (see the new gap below).
+- **Ops diff review UI.** Still not started — no page shows a
+  claimed/completed job to a human reviewer.
+- **Durable storage of the generated draft content.** A real gap found
+  while running slice 2's full loop for real: `wiki_page_revisions` has no
+  column to hold the model's actual `{summary, gaps}` output — only a
+  ≤400-char `change_note`. The real Qwen output was only ever in the
+  caller's memory; a follow-up slice needs a `draft_content` column (or
+  equivalent) before any Ops review UI can show a real draft.
+- **Stale-`running`-job reclaim/sweep.** A worker crash between `claim`
+  and `complete` leaves a job permanently `running` — no automated or
+  manual recovery path exists yet. Not reproduced with a real crash this
+  slice; the state-machine design was verified by direct RPC calls
+  simulating the stuck state, not an actual killed process.
 - **Statement-level source linking.** `statement_refs` exists as a column
   but nothing populates or validates that every key claim actually links
-  to a real EvidenceSpan.
+  to a real EvidenceSpan — the probe's `{summary, gaps}` output has no
+  statement extraction at all yet.
 - **Docling/parser integration**, per #288's existing REJECT — not
-  attempted this slice, not silently assumed fine.
+  attempted, not silently assumed fine.
 - **Contradiction/conflict handling** between competing source material —
   no logic exists to surface "these two sources disagree" to a reviewer.
-- **expectedVersion conflict rejection on write** — the `version` column
-  exists on `wiki_pages`, but no RPC yet implements the
-  reject-on-mismatch check (pattern already established in
-  `ops_review_workspace_publication_v1`).
-- **Prompt-injection resistance** against fixed zh/en adversarial source
-  material — no fixture set exists yet.
+- **Multi-source synthesis.** Every real call so far used exactly one
+  source text; nothing combines multiple sources into one page.
+- **Prompt-injection resistance** against a fixed zh/en adversarial
+  fixture set — the wiki-generation system prompt explicitly instructs the
+  model to treat embedded instructions as ordinary content, but this has
+  not been tested against a real adversarial input, only asserted in the
+  prompt text.
+- **Actual per-call RMB cost reconciliation** against Qwen's billing
+  console — token counts are real; price is not independently confirmed.
 
-#359 remains OPEN. This slice does not claim any acceptance bullet as
-fully done — only that the underlying data model exists and is verified
-sound (including one real bug found and fixed during verification).
+#359 remains OPEN. Two slices done (schema, dispatcher+real-LLM-probe);
+Ops UI, durable draft storage, statement extraction, contradiction
+handling, and Docling integration remain.
