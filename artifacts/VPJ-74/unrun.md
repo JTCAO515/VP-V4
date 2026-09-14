@@ -14,12 +14,12 @@
   EXECUTION-CONTRACT.md includes `apps/ops/**`; this slice did not need it
   and did not add one, since the read-only RPC was independently verifiable
   without a UI.
-- **Write-path lineage tracking.** `source_revisions.fetched_at`/
-  `effective_at` are added but `ops_review_workspace`'s `submit_statement`
-  branch is intentionally NOT changed to stamp them — every row, old and
-  new, stays `lineage_status = 'legacy'`. Teaching the write path to record
-  a real fetch/effective time (and deciding what "effective time" even
-  means for a manually-submitted synthetic source) is deferred.
+- **`effective_at` semantics.** `fetched_at`/`lineage_status='tracked'` are
+  now stamped on new source revisions (slice 2, see
+  `lineage-tracking-slice2.md`), but `effective_at` is still never set for
+  any row — deciding what "effective time" means for a manually-submitted
+  source (a business fact about the source, not the submission moment) is
+  still deferred to a later slice.
 - **Crawl/parse error handling.** The acceptance bullet "抓取与解析错误不变成
   政策变化" targets an ingestion/crawling path this slice does not have —
   it belongs to VPJ-75 (LLM Wiki ingestion), not to this pure read view.

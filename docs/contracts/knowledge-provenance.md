@@ -25,10 +25,21 @@ exactly the closed predicate list, not a subset or superset.
 
 `source_revisions` gains `fetched_at`, `effective_at` (both nullable
 timestamptz) and `lineage_status` (`'legacy' | 'tracked'`, default
-`'legacy'`). This slice does not teach the write path to stamp real
-fetch/effective time, so every existing and new row stays `legacy` with null
-`fetched_at`/`effective_at` until a later slice changes that — an honest
-`legacy` beats a fabricated timestamp.
+`'legacy'`). Slice 2
+(`20260914090000_vpj_74_lineage_tracking.sql`) taught the existing
+`submit_statement` write path (`ops_review_workspace_publication_v1`) to
+stamp `fetched_at = clock_timestamp()` and `lineage_status = 'tracked'`
+on a genuinely **new** source_revisions row — an existing revision hit via
+`ON CONFLICT DO NOTHING` keeps whatever lineage it already had, never
+gets rewritten. Every row created before slice 2 stays `legacy` with null
+`fetched_at`/`effective_at` forever, honestly.
+
+`effective_at` is still never set by any slice: it is a business fact
+about the underlying source (e.g. when a price or rule took effect), not
+the moment an ops reviewer typed it in. Stamping it with submission time
+would be a fabricated fact, not a real one — it stays null until a later
+slice has an actual basis for it (e.g. an explicit field the submitter
+provides, or metadata from an automated crawl in VPJ-75).
 
 ## `public.ops_knowledge_provenance_read_v1(p_input jsonb)`
 
