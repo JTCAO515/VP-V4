@@ -84,6 +84,8 @@ SourceRevision/EvidenceSpan 可先映射现有字段；需要新持久化时做�
 - RuleDefinition 用受限、版本化条件表达式；不执行 Wiki 中的任意脚本/DSL。实体、关系、规则分别校验，链接存在不等于证据成立。
 - 首轮使用现有 TypeScript/Postgres；不引入 Palantir 平台、图数据库、通用 OWL 推理器、第二协调器或第二记忆库。新增独立基础设施须有具体性能/表达缺口与另行范围记录。
 
+**2026-09-14 VPJ-74 切片1已落地**（[docs/contracts/knowledge-provenance.md](../contracts/knowledge-provenance.md)、[artifacts/VPJ-74](../../artifacts/VPJ-74/)）：`ontology_relations`/`ontology_types` 登记现有9个predicate的domain/range/zh/en别名；`source_revisions`新增`fetched_at`/`effective_at`/`lineage_status`（本轮不改写路径，全部诚实标`legacy`）；新只读RPC `ops_knowledge_provenance_read_v1` 复用既有VPJ-14 `current_actor()`鉴权。已用真实本地Postgres跑通"提交→审核→发布→溯源读取"全链路及4个反例。Staging验收、apps/ops UI、写路径血缘追踪仍未做，#358整票未关闭。
+
 ### Wiki 更新与发布
 
 WikiPageRevision 包含 page ID/type、schemaVersion、源 revision 集、statement references、生成 job/config/prompt 版本、input digest、generatedAt、验证结果与变更说明。
