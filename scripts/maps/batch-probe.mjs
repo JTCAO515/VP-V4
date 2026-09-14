@@ -1,7 +1,7 @@
 import { openSync, writeSync, closeSync, fsyncSync, readFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { pathToFileURL } from "node:url";
-import { summarize, limits as singleLimits } from "./probe.mjs";
+import { summarize, limits as singleLimits, tencentSig } from "./probe.mjs";
 
 // Four-city pilot slice toward #362's full 120-query/40-route acceptance.
 // Query text names real, well-known public landmarks. from/to coordinates
@@ -12,7 +12,7 @@ export const HARD_CAP_REQUESTS = 40;
 
 const config = {
   amap: { key: "AMAP_WEB_SERVICE_KEY", flag: "AMAP_PROBE_ENABLED", host: "restapi.amap.com" },
-  tencent: { key: "TENCENT_MAP_WEB_SERVICE_KEY", flag: "TENCENT_MAP_PROBE_ENABLED", host: "apis.map.qq.com" },
+  tencent: { key: "TENCENT_MAP_WEB_SERVICE_KEY", flag: "TENCENT_MAP_PROBE_ENABLED", host: "apis.map.qq.com", sk: "TENCENT_MAP_SK" },
 };
 
 function isFixture(f) {
@@ -28,7 +28,7 @@ export function loadFixtures(raw) {
   return list;
 }
 
-export function requestsForFixture(provider, key, fx) {
+export function requestsForFixture(provider, key, fx, sk) {
   const c = Object.hasOwn(config, provider) ? config[provider] : null;
   if (!c || typeof key !== "string" || !key.trim()) throw new Error("invalid_config");
   if (!isFixture(fx)) throw new Error("invalid_fixtures");
@@ -40,8 +40,10 @@ export function requestsForFixture(provider, key, fx) {
     ? ["/v5/direction/walking", { origin: coordinate(fx.from), destination: coordinate(fx.to), show_fields: "cost", alternative_route: "1" }]
     : ["/ws/direction/v1/walking", { from: coordinate(fx.from), to: coordinate(fx.to) }];
   return [search, walking].map(([path, params], i) => {
+    const allParams = { ...params, key, output: "json" };
+    if (provider === "tencent" && sk) allParams.sig = tencentSig(path, allParams, sk);
     const url = new URL(`https://${c.host}${path}`);
-    url.search = new URLSearchParams({ ...params, key, output: "json" }).toString();
+    url.search = new URLSearchParams(allParams).toString();
     return { operation: i === 0 ? "search" : "walking", url, city: fx.city, category: fx.category, query: fx.query };
   });
 }
@@ -72,7 +74,8 @@ export async function runBatchProbe({ provider, env, fixtures, record, fetcher =
     record({ status: "UNRUN", reason: env[c.flag] !== "true" ? "disabled" : "missing_secure_credential", requests: 0 });
     return false;
   }
-  const allRequests = fixtures.flatMap(fx => requestsForFixture(provider, env[c.key], fx));
+  const sk = c.sk ? env[c.sk] : undefined;
+  const allRequests = fixtures.flatMap(fx => requestsForFixture(provider, env[c.key], fx, sk));
   if (allRequests.length > HARD_CAP_REQUESTS) throw new Error("fixture_budget_exceeds_hard_cap");
   let count = 0;
   let allObserved = true;
@@ -109,8 +112,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     if (fixtures.length * 2 > HARD_CAP_REQUESTS) throw new Error("fixture_budget_exceeds_hard_cap");
     fd = openSync(ledger, "wx", 0o600);
     const record = value => { writeSync(fd, JSON.stringify(value) + "\n"); fsyncSync(fd); };
+    const c = config[provider];
     record({ schemaVersion: "map-batch-probe/1", scriptSha256: createHash("sha256").update(readFileSync(new URL(import.meta.url))).digest("hex"),
       fixturesPath, fixtureCount: fixtures.length, coordinateSystem: "GCJ-02", hardCapRequests: HARD_CAP_REQUESTS, delayMs,
+      signed: Boolean(c.sk && process.env[c.sk]?.trim()),
       scope: "named public landmarks; synthetic from/to offsets; server API only", clientMapLoading: "UNRUN" });
     const ok = await runBatchProbe({ provider, env: process.env, fixtures, record, delayMs });
     console.log(JSON.stringify({ status: ok ? "ALL_OBSERVED" : "INCOMPLETE", provider, fixtureCount: fixtures.length, rawOutput: "suppressed" }));

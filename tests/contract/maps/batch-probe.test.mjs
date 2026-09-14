@@ -26,7 +26,16 @@ test("requestsForFixture keeps fixed official endpoints and coordinate order", (
   const [tSearch] = requestsForFixture("tencent", "secret", okFixtures[1]);
   assert.equal(tSearch.url.hostname, "apis.map.qq.com");
   assert.equal(tSearch.url.searchParams.get("boundary"), "region(北京市,0)");
+  assert.equal(tSearch.url.searchParams.has("sig"), false, "no sig without an sk");
   assert.throws(() => requestsForFixture("evil", "secret", okFixtures[0]));
+});
+
+test("requestsForFixture signs tencent requests only when an sk is passed", () => {
+  const [signed] = requestsForFixture("tencent", "secret", okFixtures[0], "sk-value");
+  assert.equal(signed.url.searchParams.has("sig"), true);
+  assert.equal(signed.url.searchParams.get("sig").length, 32);
+  const [amapWithSk] = requestsForFixture("amap", "secret", okFixtures[0], "sk-value");
+  assert.equal(amapWithSk.url.searchParams.has("sig"), false, "amap never signs");
 });
 
 test("hard cap rejects a fixture list that would exceed it", async () => {
