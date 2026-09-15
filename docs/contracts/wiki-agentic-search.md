@@ -504,6 +504,46 @@ Not built: a real model call exercising the new `conflicts` field (no
 live provider credential configured in any environment, consistent with
 every other slice).
 
+## Slice 11 (2026-09-15): the frozen zh/en evaluation set
+
+VPJ-76's own acceptance criteria's last unbuilt items: "冻结复用加新增的
+中英问题族与qrels/必要claim真值...跑实际查询...并报告覆盖/过拒答、
+p50/p95与成本分母。记录同批结构化/直接读取baseline和本路径实测差异。"
+JT chose fixture-first (a real-model pass over this set stays a
+deliberate, separate, explicitly-authorized follow-up rather than
+automatically spending the configured API key budget), and "every
+`QuestionDefinition` gets tested" for scale.
+
+New directory `evals/wiki-agentic-search/` (34 scenarios: one zh + one en
+per real question definition, plus 6 diversity cases covering every
+non-gate terminal). It does not claim to establish `AI-42`'s general
+qrels infrastructure (`evals/qrels/README.md`, `evals/runners/README.md`
+both say that's out of scope for those directories today) — ground truth
+is imported directly from `questions.ts`, never re-typed. The runner
+calls the real `runGroundedWikiSearch` against a fixture RPC/model
+transport (this thread's established "real query, fixture transport"
+convention) and writes a report every run.
+
+The structured/direct-lookup baseline comparison: `knowledge_read_v1`
+already scopes its response before this module runs, so a direct lookup
+trivially "finds" anything in that corpus — the real, reported comparison
+is whether the *agentic search loop* actually reached that same content.
+`retrieval_miss` and `budget_exhausted` are exactly the two terminals
+where that divergence happens; the report lists them explicitly.
+
+Real fixture-mode run this session: 34/34 scenarios matched ground truth
+(verdict PASS), 90.9% coverage, 9.1% over-refusal (3 deliberately
+constructed divergence cases), p50/p95 0.16ms/2.49ms (fixture-mechanism
+overhead, explicitly labeled as not real latency). Full detail, including
+every deliberate limitation of a fixture-only, self-authored eval:
+`artifacts/VPJ-76/wiki-frozen-eval-20260915/verification.md`.
+
+With this slice, every item VPJ-76's acceptance criteria lists is now
+built and evidenced (`artifacts/VPJ-76/unrun.md`). Two deliberate scope
+cuts remain open, carried forward from earlier slices, not oversights: a
+real-model pass over this frozen set, and persistence of the AI-assisted
+result.
+
 ## Verification
 
 Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),
@@ -515,14 +555,17 @@ Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),
 `wiki-grounded-turn-integration-20260915/` (slice 7),
 `wiki-grounded-ai-assist-web-20260915/` (slice 8),
 `wiki-grounded-ai-assist-ios-20260915/` (slice 9),
-`wiki-evidence-pack-v2-20260915/` (slice 10, above). As of slice 10:
-453/453 full TS contract suite, no regressions; `pnpm lint`/`typecheck`/
-`docs:check` clean; iOS app + test targets build with zero errors and a
-real, run-to-completion XCTest pass (51/51 + 25/25, both with their
-existing skip counts).
+`wiki-evidence-pack-v2-20260915/` (slice 10),
+`wiki-frozen-eval-20260915/` (slice 11, above). As of slice 11: 453/453
+full TS contract suite + 27/27 evals suite, no regressions; `pnpm
+lint`/`typecheck`/`docs:check` clean; iOS app + test targets build with
+zero errors and a real, run-to-completion XCTest pass (51/51 + 25/25,
+both with their existing skip counts, as of slice 10 -- slice 11 touches
+no iOS code).
 Slices 7, 8 and 10 add a migration or schema change of note — slice 7 one
 new read-only RPC, slice 8 one new table plus dispatcher RPC (both
 verified against a real Postgres instance), slice 10 a new corpus field
 (no migration, `knowledge_read_v1` already returned this data). Slice 9
-adds no migration, only a client for slice 8's job. Every other slice
-remained migration-free.
+adds no migration, only a client for slice 8's job. Slice 11 adds no
+production code, only a new eval directory. Every other slice remained
+migration-free.

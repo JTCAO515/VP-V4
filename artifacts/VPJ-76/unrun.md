@@ -139,13 +139,33 @@ First slice (agentic search loop mechanism) — see
   coverage. 453/453 contract suite; iOS verified with a real,
   run-to-completion run of `scripts/ios/ci.py` (51/51 + 25/25 tests, both
   at existing skip counts).
-- **Frozen zh/en question-family/qrels evaluation set** — VPJ-76's own
-  required acceptance step, not started.
+- ~~Frozen zh/en question-family/qrels evaluation set~~ **DONE (slice 11).**
+  See `wiki-frozen-eval-20260915/verification.md`. New
+  `evals/wiki-agentic-search/`: 34 scenarios (one zh + one en per real
+  `QUESTION_DEFINITIONS`/`PLACE_QUESTION_IDS` entry, plus 6 diversity
+  cases covering every non-gate terminal), `development`/`holdout` split
+  17/17, claim ground truth imported directly from `questions.ts` (never
+  re-typed). Runs the real `runGroundedWikiSearch` against a fixture
+  RPC/model transport and writes a report every run. Real fixture-mode
+  run: 34/34 matched ground truth, 90.9% coverage, 9.1% over-refusal (3
+  deliberately constructed divergence cases against the
+  structured/direct-lookup baseline: `retrieval_miss` and
+  `budget_exhausted`, the two terminals where a correctly-scoped corpus
+  existed yet the agentic path did not answer from it). Deliberately
+  fixture-only this slice (no real model call, no real database) — JT's
+  own choice, to avoid spending the configured API key budget without a
+  separate explicit go-ahead. Does not claim to establish `AI-42`'s
+  general qrels infrastructure (out of scope per `evals/qrels/README.md`,
+  `evals/runners/README.md`).
 
-#360 remains OPEN. The retrieval/loop mechanism, real product-knowledge
-connection, intent→search glue, the required six-way reason taxonomy, and
-a real research-knowledge connection all exist and are tested; both Web
-and iOS now have real, database-verified/real-XCTest-verified trigger
-paths (slices 8 and 9), though no deployment has wired a live model
-credential to either yet, and evaluation work that VPJ-76 requires for
-closure has not started.
+#360's acceptance criteria are now all built and evidenced. The
+retrieval/loop mechanism, real product-knowledge connection, intent→search
+glue, the required six-way reason taxonomy, a real research-knowledge
+connection, real Web and iOS trigger paths (slices 8-9), EvidencePack v2
+(slice 10), and the frozen evaluation set (slice 11, above) all exist and
+are tested. Two deliberate scope cuts remain, carried forward explicitly
+from earlier slices rather than oversights: **a real-model pass** over
+the frozen evaluation set (no live provider credential configured in any
+environment), and **persistence of the AI-assisted result** (unchanged
+from slice 7's own decision). Closing #360 itself is an operator/JT call,
+not something this thread can self-certify.
