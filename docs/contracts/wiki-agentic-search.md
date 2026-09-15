@@ -292,6 +292,53 @@ traveler's question (which, in free text, already names the place) rather
 than requiring the place be pre-resolved to a canonical ID before search
 even starts.
 
+## Slice 7 (2026-09-15): real grounded-turn/1 integration
+
+The user-facing question this session had to answer before writing any
+code: `grounded-turn/1`'s answer is never LLM-generated --
+`resolve_question()` matches fixed `{subjectId,predicate,objectId}` claims
+against published statements with zero generation, by design (see "Why a
+round-based loop" at the top of this doc for the parallel decision about
+the search loop itself; this is the analogous decision about the resolver
+it now supplements). Introducing agentic search into that flow risks
+introducing exactly the failure mode it was designed to prevent, unless
+scoped very carefully. Three options were laid out, in increasing order of
+risk:
+
+1. **Supplement only when the fixed-claims resolver found nothing**
+   (`original_outcome = 'blocked'`) -- never a bypass of an
+   answered/partial result.
+2. A parallel, independent free-text Ask channel.
+3. Technical plumbing only, no UI.
+
+JT chose (1). What got built:
+
+- `public.read_grounded_ai_assist_context_v1(p_turn_id uuid)`
+  (new migration): read-only, reuses `read_grounded_turn()`'s exact
+  owner/session/policy authorization chain, and **refuses to return
+  anything unless `original_outcome = 'blocked'`** -- the one real gate.
+  Does not touch `resolve_question()` or
+  `complete_selected_grounded_work()` at all.
+- `lib/server/knowledge/wiki/grounded-ai-assist.ts`, `runGroundedAiAssist`:
+  calls that RPC, builds a `GroundedSearchInput`, hands off to
+  `runGroundedWikiSearch` (slices 1-6). Real-time, user-triggered,
+  **not persisted** -- a deliberate scope cut for this slice, not a
+  finished decision either way.
+
+Verified against a **real database** (native PostgreSQL 16, all 56
+migrations replayed, a full real `submit_grounded_turn` →
+`claim_grounded_work` → `authorize_grounded_dispatch` →
+`complete_grounded_work` round trip driven end to end): a real blocked
+turn's owner gets real context back; a different actor gets nothing; a
+second real turn with a real non-blocked outcome (`clarification`) gets
+`not_applicable` -- the safety property this whole slice exists to
+guarantee, proven against the real resolver's real judgement, not asserted
+in a fixture. Full detail:
+`artifacts/VPJ-76/wiki-grounded-turn-integration-20260915/verification.md`.
+
+Not built: any UI/product caller (iOS, Web, the durable text worker),
+persistence of the AI-assisted result.
+
 ## Verification
 
 Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),
@@ -299,7 +346,9 @@ Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),
 (slice 3), `wiki-reason-codes-20260915/` (slice 4), `wiki-research-corpus-20260915/`
 (slice 5), `wiki-real-model-probe-20260915/` (real model probe),
 `wiki-search-convergence-20260915/` (convergence + CJK fix),
-`wiki-place-questions-20260915/` (slice 6, above). As of slice 6: 431/431
-full contract suite, no regressions; `pnpm lint`/`typecheck`/`docs:check`
-clean. No database migration in any slice — nothing built so far is
-persisted.
+`wiki-place-questions-20260915/` (slice 6),
+`wiki-grounded-turn-integration-20260915/` (slice 7, above). As of slice
+7: 437/437 full contract suite, no regressions;
+`pnpm lint`/`typecheck`/`docs:check` clean. Slice 7 is the first migration
+in this thread of work — one new read-only RPC, verified against a real
+Postgres instance; every other slice remained migration-free.
