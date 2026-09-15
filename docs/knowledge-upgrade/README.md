@@ -84,6 +84,8 @@ SourceRevision/EvidenceSpan 可先映射现有字段；需要新持久化时做�
 - RuleDefinition 用受限、版本化条件表达式；不执行 Wiki 中的任意脚本/DSL。实体、关系、规则分别校验，链接存在不等于证据成立。
 - 首轮使用现有 TypeScript/Postgres；不引入 Palantir 平台、图数据库、通用 OWL 推理器、第二协调器或第二记忆库。新增独立基础设施须有具体性能/表达缺口与另行范围记录。
 
+**2026-09-15 VPJ-76 agentic search首个切片**（[契约](../contracts/wiki-agentic-search.md)、[验证](../../artifacts/VPJ-76/wiki-agentic-search-20260915/verification.md)）：JT确认知识体系是RAG(agentic search)+LLM Wiki+ontology三层架构，这块由本线程独立负责（并行codex线程避让）。新增`wiki_search_v1`协议task+闭合schema（`{action:"search",query}`或`{action:"answer",coverage,summary,citations,gaps}`）、一个独立的确定性词法检索原语`searchWikiCorpus`（区别于#248的hybrid/RRF和地点消歧的lexical baseline）、以及核心多轮循环`runWikiSearchJob`——每轮复用同一个CostGuard turn（maxModelSteps即轮数上限），重复query不重复检索但会告知模型换角度，达到轮数上限未给出answer则budget_exhausted。全部17个新测试(fixture模型)+395个既有contract测试通过。未做：真实模型调用、接入真实已发布Wiki内容（含资格/撤回过滤、研究/产品索引隔离）、接入现有Ask链路(grounded-turn/1)、完整六类原因码、EvidencePack v2完整字段、冻结评测集。
+
 **2026-09-15 VPJ-75陈旧running job回收**（[契约](../contracts/wiki-job-reclaim.md)、[验证](../../artifacts/VPJ-75/359-wiki-job-reclaim-20260915/verification.md)）：`wiki_generation_jobs`新增`claim_token`防护令牌，worker在claim与complete之间崩溃导致job永久卡在running的缺口现已解决——running超过5分钟视为陈旧可被重新claim（同一job行、新token），但迟到的旧worker complete请求会因token不匹配被拒绝(OPS_CONFLICT)，不会与新worker竞态或覆盖其结果。用本仓库自己的原生PostgreSQL测试基座（无Docker环境）验证，含真实场景：陈旧回收、旧token被拒、新token成功、历史receipt重放不受影响。全部20个集成测试+378个contract测试通过。未验证：真实杀进程崩溃（用回拨started_at模拟）、自动化定期扫描、Ops可见的"卡住任务"列表均未做。
 
 **2026-09-15 VPJ-75有界声明提案本地实现**（[契约](../contracts/wiki-statement-proposals.md)、[验证](../../artifacts/VPJ-75/wiki-statement-proposals/verification.md)）：新增显式C0-only提案任务，模型只选来源ID和逐字引文；程序计算位置并补齐真实来源，数据库二次校验后完整保存wiki-draft/2。Ops显示提案、引文并预填现有人工审核表单；旧草稿兼容。模型响应仍为fixture，真实付费模型/语义质量/Staging全链UNRUN，引用匹配不等于声明正确。
