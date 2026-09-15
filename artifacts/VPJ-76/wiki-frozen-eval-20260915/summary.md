@@ -2,9 +2,9 @@
 
 34 个场景：中文17条，英文17条；development 17条，holdout 17条。
 
-覆盖率 90.9%，过拒答率 9.1%（相对同批结构化/直接读取baseline，共3条分歧，均为刻意构造的 retrieval_miss/budget_exhausted 场景）。p50 0.156ms / p95 1.05ms（fixture transport，非真实网络/模型延迟）。累计 usage token：960（fixture声明值，非真实计费）。
+覆盖率 90.9%，过拒答率 9.1%（相对同批结构化/直接读取baseline，共3条分歧，均为刻意构造的 retrieval_miss/budget_exhausted 场景）。p50 0.099ms / p95 0.689ms（fixture transport，非真实网络/模型延迟）。累计 usage token：960（fixture声明值，非真实计费）。
 
-判定：PASS。真实模型/真实数据库一轮尚未做，见本目录 README。
+判定：PASS。真实模型一轮已做（GLM，见 ../wiki-frozen-eval-real-model-20260916/verification.md）；真实数据库一轮仍未做，见本目录 README。
 
 - rail_boarding_documents-zh [development]: full_coverage → answered (covered 2/2)
 - rail_boarding_documents-en [holdout]: full_coverage → answered (covered 2/2)

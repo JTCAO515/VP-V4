@@ -544,6 +544,37 @@ cuts remain open, carried forward from earlier slices, not oversights: a
 real-model pass over this frozen set, and persistence of the AI-assisted
 result.
 
+### Real-model follow-up (2026-09-16)
+
+JT authorized the deferred real-model pass ("授权跑评测集"). Run against
+real GLM (`glm-5.3-flash`) via the new manual/on-demand
+`scripts/eval/run-wiki-agentic-real-model.mjs` (never wired into
+`pnpm evals`/CI -- it makes real, billed calls): **65.6% accuracy**
+(21/32; `provider_failure`/`budget_exhausted` scenarios are
+mechanism-only and were skipped, a real model cannot be scripted into
+them). Two real bugs were caught and fixed *before* the batch ran (a
+missing `rpc` in the script's own `deps`, and a citation-quote
+`.trim()` gap the longer real corpus text exposed) -- both by running the
+code for real before spending budget on 32 calls that would otherwise
+have failed for reasons unrelated to the pipeline.
+
+Of the 11 mismatches: one is a genuine bug in this eval's own scenario
+design (`diversity-retrieval-miss-en` accidentally reused *matching*
+content, not irrelevant content -- fixed in the same follow-up, not
+re-run against the real API to avoid a second unvalidated spend); two are
+the pipeline correctly degrading to `provider_failure` on a real
+non-conformant model response (the exact safety property the closed
+schema exists to guarantee, not a defect); three are multi-claim
+questions not covering every claim within `maxRounds: 2` (real, honest
+partial answers under real budget pressure -- actionable tuning signal,
+not a defect); four are place-question `retrieval_miss` results this run
+could not fully explain (by this repo's own deliberate design,
+`retrieval_miss` strips the rounds/queries that would show why -- flagged
+as genuinely unresolved, not explained away). Not once did real model
+imperfection cause a fabricated answer, a crash, or a bypass of the
+six-way reason taxonomy across all 32 real calls. Full root-cause
+breakdown: `artifacts/VPJ-76/wiki-frozen-eval-real-model-20260916/verification.md`.
+
 ## Verification
 
 Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),

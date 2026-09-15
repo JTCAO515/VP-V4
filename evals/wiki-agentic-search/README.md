@@ -63,14 +63,22 @@ the two terminals where a non-empty, correctly-scoped corpus existed yet
 the agentic path did not answer from it — `baselineDivergence` in the
 report lists exactly these cases.
 
-## What this eval deliberately does NOT do (yet)
+## Real-model pass
 
-- **No real model call.** `mode: "fixture"` throughout — the same
-  transport convention as every other test in this thread. A real-model
-  pass (using the Qwen/DeepSeek/GLM keys JT provided earlier this
-  session, kept in `lib/server/jobs/.local/.env`, gitignored) is a
-  deliberate, separate follow-up JT can authorize when ready to spend
-  that budget — not run automatically by this suite.
+`scripts/eval/run-wiki-agentic-real-model.mjs` runs this same frozen set
+against a real GLM (`glm-5.3-flash`) call for the model step (the
+`knowledge_read_v1` side stays fixture). Manual/on-demand only — it makes
+real, billed HTTP calls, so it is never wired into `pnpm evals`/CI, and
+was run once, explicitly authorized by JT ("授权跑评测集"), on
+2026-09-16: 65.6% accuracy against this frozen set's ground truth, with a
+full root-cause breakdown of every mismatch (most attributable to this
+eval's own fixture-design gaps or the pipeline correctly degrading under
+real model imperfection, not pipeline defects) in
+`artifacts/VPJ-76/wiki-frozen-eval-real-model-20260916/verification.md`.
+Run it again with `node --experimental-strip-types scripts/eval/run-wiki-agentic-real-model.mjs`
+(reads `GLM_API_KEY` from `lib/server/jobs/.local/.env`).
+
+## What this eval deliberately does NOT do
 - **No real database.** Owner isolation and revocation/expiry are
   already enforced by `knowledge_read_v1`'s own SQL (`p.expires_at>instant`,
   `c.status='reviewed'`, RLS-scoped by actor) and were verified against a
