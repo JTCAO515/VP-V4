@@ -12,10 +12,16 @@ First slice (agentic search loop mechanism) — see
 - **Real model call.** No real Qwen/GLM/DeepSeek call has been made
   against `wiki_search_v1` yet — semantic quality (does the model search
   sensibly, cite correctly, know when to stop) is entirely unverified.
-- **Connection to real published Wiki content.** `runWikiSearchJob` takes
-  a caller-supplied `corpus`; nothing queries actual publication tables,
-  applies eligibility/expiry/withdrawal gating, or separates a research
-  index from a product index.
+- ~~Connection to real published Wiki content~~ **PARTIALLY DONE.**
+  `buildPublishedWikiCorpus` (`lib/server/knowledge/wiki/published-corpus.ts`)
+  turns a real `knowledge_read_v1` response into a search corpus, reusing
+  that RPC's existing eligibility filtering (published/not-expired/
+  reviewed) rather than adding a second read path. Still missing: the
+  caller must already know which `{city, scene, locale}` to ask for --
+  there is no free-text "identify the object/city/scene" step yet (that
+  is intent recognition, out of scope here), and there is still no
+  research-index-vs-product-index separation (this only ever reads the
+  product-eligible path).
 - **Ask-path integration.** Not wired into `grounded-turn/1`,
   `knowledge_intent_v1`, iOS, or the lightweight Web reader.
 - **Full reason-code taxonomy** (missing_content/retrieval_miss/
@@ -29,6 +35,7 @@ First slice (agentic search loop mechanism) — see
   required acceptance step, not started.
 - **Real iOS/Web readback** of any answer this loop produces.
 
-#360 remains OPEN. The retrieval/loop mechanism exists and is tested; the
-knowledge-connection, product integration, and evaluation work that VPJ-76
+#360 remains OPEN. The retrieval/loop mechanism exists and is tested and
+now has a real (though scope-requires-a-known-city/scene) connection to
+published knowledge; product integration and evaluation work that VPJ-76
 actually requires for closure have not started.
