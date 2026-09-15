@@ -12,16 +12,24 @@ First slice (agentic search loop mechanism) — see
 - **Real model call.** No real Qwen/GLM/DeepSeek call has been made
   against `wiki_search_v1` yet — semantic quality (does the model search
   sensibly, cite correctly, know when to stop) is entirely unverified.
-- ~~Connection to real published Wiki content~~ **PARTIALLY DONE.**
-  `buildPublishedWikiCorpus` (`lib/server/knowledge/wiki/published-corpus.ts`)
+- ~~Connection to real published Wiki content~~ **DONE for the product
+  path.** `buildPublishedWikiCorpus` (`lib/server/knowledge/wiki/published-corpus.ts`)
   turns a real `knowledge_read_v1` response into a search corpus, reusing
   that RPC's existing eligibility filtering (published/not-expired/
   reviewed) rather than adding a second read path. Still missing: the
   caller must already know which `{city, scene, locale}` to ask for --
   there is no free-text "identify the object/city/scene" step yet (that
-  is intent recognition, out of scope here), and there is still no
-  research-index-vs-product-index separation (this only ever reads the
-  product-eligible path).
+  is intent recognition, out of scope here).
+- ~~Research-index-vs-product-index separation~~ **DONE.**
+  `buildResearchWikiCorpus` (`lib/server/knowledge/wiki/research-corpus.ts`)
+  reads the same underlying pages through the existing Ops-only
+  `ops_wiki_read_v1` RPC instead of `knowledge_read_v1` -- draft/
+  unpublished/rejected content included, gated by that RPC's own
+  `current_actor()` Ops-membership check, not a UI label. No new
+  migration/RPC; reuses what VPJ-75 slice 3 already built for `/ops/wiki`.
+  Not yet wired to `runGroundedWikiSearch` or exposed anywhere an operator
+  could actually trigger a research search -- this is the corpus adapter
+  only.
 - ~~Ask-path integration~~ **PARTIALLY DONE.** `runGroundedWikiSearch`
   (`lib/server/knowledge/wiki/grounded-search.ts`) takes an already-
   recognized `KnowledgeIntent` (from the existing `knowledge_intent_v1`
@@ -54,7 +62,8 @@ First slice (agentic search loop mechanism) — see
   required acceptance step, not started.
 - **Real iOS/Web readback** of any answer this loop produces.
 
-#360 remains OPEN. The retrieval/loop mechanism, real published-knowledge
-connection, and intent→search glue all exist and are tested; none of it is
-actually invoked by any real product surface yet, and evaluation work that
-VPJ-76 requires for closure has not started.
+#360 remains OPEN. The retrieval/loop mechanism, real product-knowledge
+connection, intent→search glue, the required six-way reason taxonomy, and
+a real research-knowledge connection all exist and are tested; none of it
+is actually invoked by any real product or Ops surface yet, and evaluation
+work that VPJ-76 requires for closure has not started.
