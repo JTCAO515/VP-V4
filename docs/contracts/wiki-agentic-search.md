@@ -81,6 +81,26 @@ here. There is also still no research-index-vs-product-index separation:
 this always reads the product-eligible path, never an unpublished/research
 view.
 
+## Slice 3 (2026-09-15): intent → scene → corpus → search glue
+
+`lib/server/knowledge/wiki/grounded-search.ts`, `runGroundedWikiSearch`:
+takes an already-recognized `KnowledgeIntent` (from the existing
+`knowledge_intent_v1` path -- not re-implemented here) plus a `city`
+(from existing Trip context -- never free-text-recognized) and drives the
+full chain: `questionDefinition(intent)` → scene → `buildPublishedWikiCorpus`
+→ short-circuit to `no_content` if nothing is published (no wasted model
+call) → `runWikiSearchJob`.
+
+Place questions (`place_address`, `place_opening_hours`,
+`place_address_and_hours`) return `unsupported_intent`: `questionDefinition`
+needs a resolved `placeSubjectId` from place disambiguation (VPJ-19) that
+this module does not perform. Extending to place questions is a follow-up,
+not attempted here.
+
+This is glue, not wiring: nothing in `grounded-turn/1`, the durable text
+worker, iOS, or the Web reader calls `runGroundedWikiSearch` yet. That
+integration is the next slice.
+
 ## What this slice deliberately does not do
 
 - **No real LLM call.** Every test uses an injected `fetch`; the loop
@@ -89,13 +109,15 @@ view.
   DeepSeek model actually search well" — that needs an operator-authorized
   real-provider run, same as VPJ-75's slices did before claiming semantic
   quality.
-- **No free-text object/city/scene identification.** Slice 2 (below)
-  connects the loop to real published content, but only given an already-
-  known `{city, scene, locale}` -- turning a free-text question into that
-  triple is intent recognition, not built here.
+- **No place-question support.** Slice 3 (below) maps a recognized intent
+  to a scene, but place questions need place disambiguation (VPJ-19) this
+  module doesn't perform.
 - **No research-index-vs-product-index separation** (required by VPJ-76's
   acceptance criteria) -- the corpus adapter always reads the
   product-eligible path.
+- **No actual wiring into any product surface** -- `grounded-turn/1`, the
+  durable text worker, iOS, and the Web reader do not call any of this
+  yet.
 - **No Ask-path integration.** This is not wired into `grounded-turn/1`,
   `knowledge_intent_v1`, iOS, or the lightweight Web reader. VPJ-76's
   eventual acceptance needs a real zh/en round trip through those existing

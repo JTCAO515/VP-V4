@@ -22,8 +22,17 @@ First slice (agentic search loop mechanism) — see
   is intent recognition, out of scope here), and there is still no
   research-index-vs-product-index separation (this only ever reads the
   product-eligible path).
-- **Ask-path integration.** Not wired into `grounded-turn/1`,
-  `knowledge_intent_v1`, iOS, or the lightweight Web reader.
+- ~~Ask-path integration~~ **PARTIALLY DONE.** `runGroundedWikiSearch`
+  (`lib/server/knowledge/wiki/grounded-search.ts`) takes an already-
+  recognized `KnowledgeIntent` (from the existing `knowledge_intent_v1`
+  path) plus a `city` (from existing Trip context) and drives the whole
+  chain: intent → scene → published corpus → search loop. Still not
+  actually called from `grounded-turn/1`, the durable text worker, iOS, or
+  the Web reader -- this is the glue function, not the wiring into any of
+  those. Place questions (`place_address`/`place_opening_hours`/
+  `place_address_and_hours`) are `unsupported_intent` here: they need a
+  resolved `placeSubjectId` from place disambiguation (VPJ-19), which this
+  module does not perform.
 - **Full reason-code taxonomy** (missing_content/retrieval_miss/
   user_input_missing/capability_unsupported/policy_denied/
   provider_failure) — the current outcome shape is a smaller first cut.
@@ -35,7 +44,7 @@ First slice (agentic search loop mechanism) — see
   required acceptance step, not started.
 - **Real iOS/Web readback** of any answer this loop produces.
 
-#360 remains OPEN. The retrieval/loop mechanism exists and is tested and
-now has a real (though scope-requires-a-known-city/scene) connection to
-published knowledge; product integration and evaluation work that VPJ-76
-actually requires for closure have not started.
+#360 remains OPEN. The retrieval/loop mechanism, real published-knowledge
+connection, and intent→search glue all exist and are tested; none of it is
+actually invoked by any real product surface yet, and evaluation work that
+VPJ-76 requires for closure has not started.
