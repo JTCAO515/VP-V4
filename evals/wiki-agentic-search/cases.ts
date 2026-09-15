@@ -62,6 +62,28 @@ const QUESTION_TEXT: Readonly<Record<string, Readonly<{ zh: string; en: string }
   place_address_and_hours: { zh: "这个景点的地址和今天开放时间是？", en: "Where is the named attraction and what are today's hours?" },
 };
 
+// Natural-language statement text per claim objectId. A real model searches
+// with natural-language queries against these via the plain lexical
+// primitive (search-index.ts) -- an underscored-identifier placeholder like
+// "satisfying the merchant_acceptance_check requirement" is not real
+// findable prose and was found, in an early real-model smoke run against
+// this eval, to produce false retrieval_miss results having nothing to do
+// with the pipeline's own correctness. Kept close to (not copied from) the
+// phrasing already used elsewhere in this codebase's own real-model-probe
+// fixtures (wiki-search-convergence-20260915) for consistency.
+const STATEMENT_TEXT: Readonly<Record<string, Readonly<{ zh: string; en: string }>>> = {
+  original_valid_booking_id: { zh: "乘车须出示原始有效的订票号码，复印件或截图不予认可。", en: "Boarding requires presenting the original valid booking ID; a copy or screenshot is not accepted." },
+  valid_ticket_not_itinerary_or_receipt: { zh: "乘车仅认可有效车票本身，行程单或购票凭证不能作为乘车凭证。", en: "Only the valid ticket itself is accepted for boarding, not an itinerary printout or purchase receipt." },
+  merchant_acceptance_check: { zh: "该地区多数大型商户接受国际信用卡，使用前建议先向商户确认是否受理外卡。", en: "Most large merchants in this area accept international credit cards; travelers should confirm card acceptance with the merchant before relying on it." },
+  supported_card_merchant_qr_payment: { zh: "支付宝和微信支付均支持扫描商户二维码，为已绑定的支持卡种完成付款。", en: "Both Alipay and WeChat Pay support scanning a merchant's QR code to complete payment for a linked, supported card." },
+  international_card_atm_withdrawal: { zh: "持国际银行卡可在带有银联或对应网络标识的ATM机提取人民币现金。", en: "Travelers holding an international bank card can withdraw RMB cash at ATMs marked with the matching card network logo." },
+  marked_currency_exchange: { zh: "可在机场、酒店或银行网点带有外币兑换标识的柜台兑换人民币现金。", en: "RMB cash can be exchanged at marked currency exchange counters in airports, hotels, or bank branches." },
+  passport_or_foreign_permanent_resident_id: { zh: "境外旅客办理本地SIM卡需出示有效护照或外国人永久居留身份证。", en: "Foreign travelers must present a valid passport or a foreign permanent resident ID card to apply for a local SIM card." },
+  plan_allowance_check: { zh: "购买SIM套餐前应核实其通话分钟数与流量额度是否满足实际使用需求。", en: "Before purchasing a SIM plan, travelers should verify its call-minute and data allowances meet their actual needs." },
+  place_address: { zh: "该场馆的官方地址已在入口标识及官方信息渠道公布，建议出发前再次核对。", en: "The venue's official address is posted at its entrance and through official information channels; confirm it again before setting out." },
+  opening_hours: { zh: "该场馆今日的官方开放时间已在入口标识及官方信息渠道公布，节假日可能调整。", en: "The venue's official opening hours for today are posted at its entrance and through official information channels; holidays may change them." },
+};
+
 function corpusFor(questionId: string, claims: readonly QuestionClaim[], index: number): readonly CorpusStatement[] {
   if (claims.length === 0) {
     // Place questions: this module never resolves a placeSubjectId (slice 6), so there
@@ -72,13 +94,13 @@ function corpusFor(questionId: string, claims: readonly QuestionClaim[], index: 
     return [{
       factId: `fact-${questionId}-${index}`, assertionId: `assertion-${questionId}-${index}`, predicate, objectId,
       sourceId: `source-${questionId}-${index}`,
-      text: { zh: "已审核信息：地址与开放时间见官方标识。", en: "Reviewed information: see official signage for address and opening hours." },
+      text: STATEMENT_TEXT[objectId],
     }];
   }
   return claims.map((claim, claimIndex) => ({
     factId: `fact-${questionId}-${index}-${claimIndex}`, assertionId: `assertion-${questionId}-${index}-${claimIndex}`,
     predicate: claim.predicate, objectId: claim.objectId, sourceId: `source-${questionId}-${index}-${claimIndex}`,
-    text: { zh: `已审核信息：满足 ${claim.objectId} 的具体要求。`, en: `Reviewed information satisfying the ${claim.objectId} requirement.` },
+    text: STATEMENT_TEXT[claim.objectId] ?? { zh: `已审核信息：满足 ${claim.objectId} 的具体要求。`, en: `Reviewed information satisfying the ${claim.objectId} requirement.` },
   }));
 }
 
@@ -114,7 +136,14 @@ const diversity: readonly Scenario[] = [
   {
     id: "diversity-retrieval-miss-en", group: "holdout", questionId: "payment_card_acceptance", locale: "en", city: "beijing",
     question: QUESTION_TEXT.payment_card_acceptance.en, kind: "retrieval_miss", claims: cardClaim,
-    corpus: corpusFor("payment_card_acceptance", cardClaim, 100), citedFactIds: [],
+    // Genuinely off-topic content (rail boarding documents), not a payment
+    // statement -- an earlier version of this scenario reused the real
+    // payment_card_acceptance statement itself (matching, not irrelevant), so
+    // a real model correctly found and cited it, which is not what a
+    // "retrieval miss" scenario is supposed to exercise (see
+    // wiki-frozen-eval-real-model-20260916/verification.md, "self-authored
+    // eval bug" for the real run that caught this).
+    corpus: corpusFor("rail_boarding_documents", railClaims, 100), citedFactIds: [],
     expected: { kind: "unavailable", reason: "retrieval_miss" },
   },
   {

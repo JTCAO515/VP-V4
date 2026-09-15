@@ -158,14 +158,56 @@ First slice (agentic search loop mechanism) — see
   general qrels infrastructure (out of scope per `evals/qrels/README.md`,
   `evals/runners/README.md`).
 
-#360's acceptance criteria are now all built and evidenced. The
-retrieval/loop mechanism, real product-knowledge connection, intent→search
-glue, the required six-way reason taxonomy, a real research-knowledge
-connection, real Web and iOS trigger paths (slices 8-9), EvidencePack v2
-(slice 10), and the frozen evaluation set (slice 11, above) all exist and
-are tested. Two deliberate scope cuts remain, carried forward explicitly
-from earlier slices rather than oversights: **a real-model pass** over
-the frozen evaluation set (no live provider credential configured in any
-environment), and **persistence of the AI-assisted result** (unchanged
-from slice 7's own decision). Closing #360 itself is an operator/JT call,
-not something this thread can self-certify.
+- ~~A real-model pass over the frozen evaluation set~~ **DONE
+  (2026-09-16).** JT authorized it explicitly. Real GLM run: 65.6%
+  accuracy (21/32; `provider_failure`/`budget_exhausted` skipped as
+  mechanism-only). Two real script bugs caught and fixed before the batch
+  ran (a missing `rpc` in `deps`, a citation-quote `.trim()` gap).
+  Root-caused every mismatch: 1 is this eval's own scenario-design bug
+  (fixed in the same follow-up), 2 are the pipeline correctly degrading
+  to `provider_failure` on non-conformant real model output (the safety
+  property the closed schema exists to guarantee, not a defect), 3 are
+  multi-claim questions not fully covered within `maxRounds: 2` (real,
+  honest partial answers -- a tuning signal, not a defect), 4 are
+  place-question `retrieval_miss` results this run could not fully
+  explain (flagged genuinely unresolved -- `retrieval_miss` deliberately
+  strips rounds/queries by design, so this run cannot reconstruct why).
+  Not once did real model imperfection cause a fabricated answer, a
+  crash, or a taxonomy bypass. Full detail:
+  `wiki-frozen-eval-real-model-20260916/verification.md`.
+
+## Decisions (2026-09-16, JT delegated: "第二件事你来决定。#360你来决定，后续的方向你来决定")
+
+**Persistence of the AI-assisted result: staying real-time/non-persisted,
+unchanged from slice 7's own decision.** The real-model pass's 65.6%
+accuracy and four genuinely unresolved place-question mismatches are
+direct evidence against building user-facing persisted history for this
+feature right now -- doing so would present a real, lower-confidence,
+partially-unexplained result with the same permanence as the reviewed
+answer it supplements, contradicting the whole feature's own design
+principle (real-time, heavily disclaimed, explicitly "AI-generated, not
+reviewed"). The existing job row (`grounded_ai_assist_jobs`) already
+retains a result for the lifetime of that row, which is all the current
+poll-driven mechanism needs; no new persistence surface is being added.
+
+**#360: staying OPEN, not recommended for closure yet.** VPJ-76's
+acceptance criteria are all structurally built and evidenced, but its own
+final line requires "iOS/Web实际读回...通过后才完成本票" -- and no
+environment has a live provider credential configured (every slice from
+7 through 11 says so honestly), so no one has actually read back a real
+AI-assisted answer through the real product UI end to end. Combined with
+the real-model pass's own accuracy gap, closing #360 now would overstate
+readiness. Recommended before closure: (1) configure a live provider
+credential in a real deployment and confirm one real end-to-end readback
+through Web and iOS, (2) decide, as an operator/product call rather than
+an engineering one, whether 65.6% real accuracy is acceptable to expose
+in production as-is or needs the tuning work below first.
+
+**Recommended follow-up work (not started, for whoever picks this up
+next):** (a) tune `maxRounds` relative to a question's required-claim
+count (category 3 above), (b) name the specific place in the place-fixture
+corpus text so the place-question retrieval gap (category 4) can be
+re-tested and actually diagnosed, (c) log raw model responses on
+`MODEL_OUTPUT_INVALID` for real diagnosability (a gap this very pass
+hit and noted). None of these are done in this thread; they are handed
+off as concrete, evidenced next steps, not vague TODOs.
