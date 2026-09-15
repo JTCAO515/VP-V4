@@ -157,18 +157,59 @@ Not yet wired to `runGroundedWikiSearch` or exposed anywhere an operator
 could actually trigger a research search -- this is the corpus adapter
 only, same status slice 2's product corpus had before slice 3 wired it up.
 
-## Current overall status (as of slice 5)
+## Real model probe (2026-09-15, after slice 5)
+
+Not a numbered slice (no code changed in the product path -- the probe
+used a raised `maxOutputTokens` parameter, not a new default). JT supplied
+real Qwen/DeepSeek/GLM API keys for this. Full detail:
+`artifacts/VPJ-76/wiki-real-model-probe-20260915/verification.md`.
+
+Headline results:
+- **Qwen unreachable from this sandbox** -- `dashscope.aliyuncs.com` is not
+  on this environment's outbound network allowlist (TLS handshake fails
+  even through the configured proxy). DeepSeek and GLM domains are
+  reachable.
+- **Real finding: `MODEL_PROFILES.deepseek_flash.providerModelId`
+  (`lib/server/model-gateway/index.ts`) is stale.** A real DeepSeek call
+  with the configured `"deepseek-v4-flash"` succeeds, but the response's
+  own `model` field comes back `"deepseek-flash"` -- correctly rejected by
+  `normalizeResponse`'s exact-match check. Not fixed here: that constant is
+  shared well beyond `wiki_search_v1`, changing it is outside this slice's
+  scope based on one probe. Flagged for a maintainer to confirm separately.
+- **Real finding: GLM-5.3-flash needs a much larger `maxOutputTokens` than
+  this slice's fixture tests happened to use.** At `400`, GLM's own
+  `reasoning_content` (observed up to 399 tokens) consumed the entire
+  budget before emitting any of the required JSON, producing
+  `finish_reason: "length"` and an empty `content` -- indistinguishable
+  from a protocol failure unless you look at the raw response. This
+  sharpens the known GLM-thinking issue already recorded in
+  `wiki-generation-dispatch.md`. **Caller guidance, not a code change:**
+  a real GLM caller of this search loop should budget `maxOutputTokens`
+  generously (2000 worked; 400 did not) to leave room for GLM's mandatory
+  reasoning output.
+- **Real end-to-end success at `maxOutputTokens: 2000`**: GLM searched
+  (round 1), then answered from the real retrieved passage (round 2) with
+  accurate `summary`, verbatim-verified `citations`, and a genuine
+  (non-hallucinated) `gaps` entry. First non-fixture evidence that the
+  `wiki_search_v1` prompt contract is actually followable by a real model.
+- Only tested in English, only one question, only one relevant corpus
+  entry, no Chinese call, no adversarial input, no real published-Wiki
+  content (still a hand-written fixture corpus) -- one anecdote, not the
+  frozen evaluation set VPJ-76 still requires.
+
+## Current overall status (as of slice 5 + the real model probe)
 
 What exists and is fixture-tested: the search loop (slice 1), a real
 product-knowledge corpus adapter (slice 2), the intent-to-search glue
 (slice 3), VPJ-76's required six-way reason taxonomy (slice 4), and a
-research-knowledge corpus adapter (slice 5).
+research-knowledge corpus adapter (slice 5). The loop's core prompt
+contract has now also been exercised once, successfully, against a real
+model (above).
 
 What's still not done, in roughly the order a next slice would tackle it:
-- **No real LLM call anywhere in this chain.** Every test across all five
-  slices uses an injected `fetch`/`rpc`; whether a real Qwen/GLM/DeepSeek
-  model actually searches well, cites correctly, and knows when to stop is
-  entirely unverified.
+- **Real LLM verification is a single anecdote, not a benchmark.** See
+  above -- one English question, one provider that actually worked (GLM),
+  Qwen untested (unreachable), DeepSeek untested (stale model id).
 - **No place-question support.** `questionDefinition` needs a resolved
   `placeSubjectId` from place disambiguation (VPJ-19), which nothing here
   performs -- place questions are `capability_unsupported`.
@@ -193,6 +234,7 @@ What's still not done, in roughly the order a next slice would tackle it:
 Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),
 `wiki-published-corpus-20260915/` (slice 2), `wiki-grounded-search-20260915/`
 (slice 3), `wiki-reason-codes-20260915/` (slice 4), `wiki-research-corpus-20260915/`
-(slice 5). As of slice 5: 423/423 full contract suite, no regressions;
+(slice 5), `wiki-real-model-probe-20260915/` (real model probe, above). As
+of slice 5: 423/423 full contract suite, no regressions;
 `pnpm lint`/`typecheck`/`docs:check` clean. No database migration in any
 slice — nothing built so far is persisted.

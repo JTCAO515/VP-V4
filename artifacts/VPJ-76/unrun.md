@@ -9,9 +9,17 @@ First slice (agentic search loop mechanism) — see
   detects and reports duplicate queries without re-searching, accumulates
   usage, and returns a closed-schema outcome. Not verified against a real
   model.
-- **Real model call.** No real Qwen/GLM/DeepSeek call has been made
-  against `wiki_search_v1` yet — semantic quality (does the model search
-  sensibly, cite correctly, know when to stop) is entirely unverified.
+- ~~Real model call~~ **ONE REAL SUCCESS, not a benchmark.** See
+  `wiki-real-model-probe-20260915/verification.md`. A real GLM-5.3-flash
+  run (with `maxOutputTokens` raised to 2000 -- GLM's own reasoning output
+  starves a smaller budget) searched then answered correctly from real
+  retrieved content, with verbatim-verified citations and a genuine gap.
+  Qwen was unreachable from this sandbox (network allowlist); a real
+  DeepSeek call failed on a stale configured model id
+  (`MODEL_PROFILES.deepseek_flash.providerModelId`, flagged separately,
+  not fixed here). One English question against one provider is real
+  evidence the prompt contract works, not the frozen zh/en evaluation set
+  VPJ-76 still requires.
 - ~~Connection to real published Wiki content~~ **DONE for the product
   path.** `buildPublishedWikiCorpus` (`lib/server/knowledge/wiki/published-corpus.ts`)
   turns a real `knowledge_read_v1` response into a search corpus, reusing
