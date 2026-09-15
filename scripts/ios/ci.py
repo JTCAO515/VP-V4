@@ -13,7 +13,7 @@ import sys
 import uuid
 
 PROJECT = "ios/VisePanda/VisePanda.xcodeproj"
-XCODE = "Xcode 26.6\nBuild version 17F113"
+XCODE = "Xcode 27.0\nBuild version 27A266a"
 RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-26-5"
 DEVICE = "iPhone 17 Pro"
 

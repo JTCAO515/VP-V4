@@ -231,6 +231,7 @@ struct NativeAskView: View {
                 Text(chinese ? "当前无法重新核对原答案，已隐藏事实内容，请稍后重试。" : "The saved evidence cannot be rechecked right now. Factual content is hidden; try again later.")
                     .accessibilityIdentifier("grounded.unavailable")
             }
+            if result.originalOutcome == "blocked" { aiAssistPanel(turn, chinese: chinese) }
         } else if result.placeResolution == "ambiguous" {
             Text(chinese ? "这个名称匹配到多个已审核景点。请提供完整官方名称，并核对所选城市；本模式不读取上一轮内容。" : "More than one reviewed attraction matches this name. Please provide its full official name and check the selected city; this mode does not read earlier messages.")
                 .accessibilityIdentifier("grounded.place-ambiguous")
@@ -245,6 +246,83 @@ struct NativeAskView: View {
                 .accessibilityIdentifier("grounded.unsupported")
         } else {
             Text(LocalizedStringKey(label(turn))).accessibilityIdentifier("grounded.status")
+        }
+    }
+
+    /// VPJ-76 (#360) slice 9: offered only under a turn the reviewed resolver
+    /// itself judged 'blocked' -- see NativeAskStore.runAiAssist. The result
+    /// is always labeled "AI-generated, not reviewed", visually and
+    /// textually distinct from the reviewed cards above it, mirroring the
+    /// Web counterpart (components/chat/SavedAnswers.tsx, slice 8).
+    @ViewBuilder private func aiAssistPanel(_ turn: NativeTextTurn, chinese: Bool) -> some View {
+        switch store.aiAssist[turn.id] {
+        case nil:
+            Button(chinese ? "用 AI 深度搜索（未经审核）" : "Search further with AI (unreviewed)") {
+                Task { await store.runAiAssist(turn.id, using: session) }
+            }.accessibilityIdentifier("grounded.ai-assist.start.\(turn.id)")
+        case .loading:
+            Text(chinese ? "正在深入搜索…" : "Searching further…").accessibilityIdentifier("grounded.ai-assist.loading.\(turn.id)")
+        case .error:
+            HStack {
+                Text(chinese ? "AI 搜索暂时不可用。" : "AI search is unavailable right now.")
+                Button(chinese ? "重试" : "Try again") { Task { await store.runAiAssist(turn.id, using: session) } }
+                    .accessibilityIdentifier("grounded.ai-assist.retry.\(turn.id)")
+            }.accessibilityIdentifier("grounded.ai-assist.error.\(turn.id)")
+        case .done(let reply):
+            aiAssistResult(turn, reply, chinese: chinese)
+        }
+    }
+
+    @ViewBuilder private func aiAssistResult(_ turn: NativeTextTurn, _ reply: NativeAiAssistStatus, chinese: Bool) -> some View {
+        switch reply.status {
+        case "not_offered":
+            Text(chinese ? "此问题暂不支持 AI 搜索。" : "AI search is not available for this question.")
+                .accessibilityIdentifier("grounded.ai-assist.not-offered.\(turn.id)")
+        case "cancelled":
+            Text(chinese ? "AI 搜索已取消。" : "AI search was cancelled.").accessibilityIdentifier("grounded.ai-assist.cancelled.\(turn.id)")
+        case "failed":
+            HStack {
+                Text(chinese ? "AI 搜索暂时不可用。" : "AI search is unavailable right now.")
+                Button(chinese ? "重试" : "Try again") { Task { await store.runAiAssist(turn.id, using: session) } }
+                    .accessibilityIdentifier("grounded.ai-assist.retry.\(turn.id)")
+            }.accessibilityIdentifier("grounded.ai-assist.failed.\(turn.id)")
+        default:
+            if let outcome = reply.outcome {
+                switch outcome.kind {
+                case "budget_exhausted":
+                    Text(chinese ? "AI 搜索未能在限定轮次内找到明确答案。" : "AI search ran out of time without finding a clear answer.")
+                        .accessibilityIdentifier("grounded.ai-assist.budget-exhausted.\(turn.id)")
+                case "cancelled":
+                    Text(chinese ? "AI 搜索已取消。" : "AI search was cancelled.").accessibilityIdentifier("grounded.ai-assist.cancelled.\(turn.id)")
+                case "unavailable":
+                    Text(reasonCopy(outcome.reason, chinese: chinese)).accessibilityIdentifier("grounded.ai-assist.unavailable.\(turn.id)")
+                default:
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(outcome.summary ?? "").textSelection(.enabled)
+                        if let gaps = outcome.gaps, !gaps.isEmpty {
+                            Text(chinese ? "本次搜索未涵盖" : "Not covered by this search").font(.caption.bold())
+                            ForEach(gaps, id: \.self) { gap in Text(verbatim: gap).font(.caption) }
+                        }
+                        Text(chinese ? "此内容由 AI 从已发布指引中检索生成，未经过人工审核，请在使用前自行核实。" : "AI-generated from published guidance, not reviewed like the answer above. Verify before relying on it.")
+                            .font(.caption).foregroundStyle(Color.vpSecondaryText)
+                    }
+                    .padding(12)
+                    .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Color.vpSecondaryText.opacity(0.4), style: StrokeStyle(lineWidth: 1, dash: [4])))
+                    .accessibilityIdentifier("grounded.ai-assist.answered.\(turn.id)")
+                }
+            }
+        }
+    }
+
+    private func reasonCopy(_ reason: String?, chinese: Bool) -> String {
+        switch reason {
+        case "missing_content": return chinese ? "目前还没有相关的已发布指引。" : "No published guidance exists yet for this topic."
+        case "retrieval_miss": return chinese ? "AI 搜索未在已发布指引中找到相关内容。" : "The AI search did not find anything relevant in published guidance."
+        case "user_input_missing": return chinese ? "需要更多信息才能进行 AI 搜索，请在 App 中继续这个问题。" : "More detail is needed before an AI search can run. Continue this question in the app."
+        case "capability_unsupported": return chinese ? "AI 搜索暂不支持这类问题。" : "AI search does not cover this kind of question yet."
+        case "policy_denied": return chinese ? "此问题暂不支持 AI 搜索。" : "AI search is not available for this question."
+        case "provider_failure": return chinese ? "AI 搜索目前无法完成。" : "AI search could not complete right now."
+        default: return chinese ? "AI 搜索暂时不可用。" : "AI search is unavailable right now."
         }
     }
 

@@ -74,9 +74,25 @@ First slice (agentic search loop mechanism) — see
   (`VISEPANDA_GROUNDED_AI_ASSIST` + provider/credential env vars) is
   unset in every environment -- no deployment has wired a live model
   credential to this path yet, matching every other real-model call in
-  this codebase. **iOS wiring is still not done** -- deliberately, per
-  JT's own instruction to do Web first this round. Not persisted by
-  design, unchanged from slice 7.
+  this codebase. Not persisted by design, unchanged from slice 7.
+- ~~iOS wiring~~ **DONE (slice 9).** See
+  `wiki-grounded-ai-assist-ios-20260915/verification.md`. Same job as
+  slice 8, reached over the app's separate Bearer/native-session identity
+  (`nativeGroundedAiAssist`, copying `nativeGroundedEvents`'s exact auth
+  pattern) instead of the Web cookie session. `NativeAskStore.runAiAssist`
+  polls outside the store's single `busy` operation slot (like
+  `receiveEvents` already does) so it never freezes other Ask actions; a
+  SwiftUI panel appears only under `originalOutcome == "blocked"`, always
+  disclosed as AI-generated and unreviewed. Verified by a real,
+  run-to-completion XCTest pass in this session's own sandbox (after JT
+  switched `xcode-select` to full Xcode and accepted its license): the
+  first "BUILD SUCCEEDED" was a false positive (the new test file was
+  never actually registered in `project.pbxproj`'s `VisePandaTests`
+  target, so the compiler never saw it -- caught by "Executed 0 tests"
+  once the sandbox's CoreSimulator self-recovered from an initial version
+  mismatch), fixed alongside a second real bug (missing `@MainActor` on
+  the test methods). After both fixes, 5/5 new tests and 51/51 (6 skipped)
+  of the full existing suite passed for real on a booted simulator.
 - ~~Place question support~~ **DONE.** See
   `wiki-place-questions-20260915/verification.md`.
   `place_address`/`place_opening_hours`/`place_address_and_hours` route
@@ -108,13 +124,11 @@ First slice (agentic search loop mechanism) — see
   is intentionally smaller.
 - **Frozen zh/en question-family/qrels evaluation set** — VPJ-76's own
   required acceptance step, not started.
-- **Real iOS readback** of any answer this loop produces (slice 8 did Web
-  only, deliberately).
 
 #360 remains OPEN. The retrieval/loop mechanism, real product-knowledge
 connection, intent→search glue, the required six-way reason taxonomy, and
-a real research-knowledge connection all exist and are tested; the Web
-surface now has a real, database-verified trigger path (slice 8), though
-no deployment has wired a live model credential to it yet. iOS is not
-wired, and evaluation work that VPJ-76 requires for closure has not
-started.
+a real research-knowledge connection all exist and are tested; both Web
+and iOS now have real, database-verified/real-XCTest-verified trigger
+paths (slices 8 and 9), though no deployment has wired a live model
+credential to either yet, and evaluation work that VPJ-76 requires for
+closure has not started.

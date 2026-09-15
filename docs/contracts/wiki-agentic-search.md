@@ -410,6 +410,51 @@ another traveler's turn. Full detail:
 Not built: iOS UI wiring (a deliberate next step, not this slice),
 persistence of the AI-assisted result (unchanged from slice 7's decision).
 
+## Slice 9 (2026-09-15): the real iOS trigger
+
+Slice 8 deliberately stopped at Web; JT asked to finish iOS next. No new
+product decision was needed here -- slice 8 already settled execution
+model (queued/pull-driven) and disclosure (always labeled AI-generated,
+not reviewed); this slice is the same job reached over the app's separate
+Bearer/native-session identity instead of the Web cookie session.
+
+What got built: `lib/server/turn/native-ai-assist-http.ts`
+(`nativeGroundedAiAssist`), a thin wrapper around the same
+`runGroundedAiAssistJob` slice 8 built, authenticated by copying
+`nativeGroundedEvents`'s exact pattern; a matching route
+(`app/api/chat/native/v4/turns/[turnId]/ai-assist/route.ts`); Swift models
+(`NativeAiAssistStatus`/`Outcome`/`Reply`); `NativeAskStore.runAiAssist`,
+polling outside the store's single `busy` operation slot (the same design
+`receiveEvents` already uses, so a multi-second AI search never freezes
+send/cancel/reload); and a SwiftUI panel in `NativeAskView` appearing only
+when `result.originalOutcome == "blocked"`, always disclosed as
+AI-generated and unreviewed.
+
+Verified by a real, run-to-completion XCTest pass in this session's own
+sandbox: JT ran `sudo xcode-select -s /Applications/Xcode.app` and
+accepted the Xcode license on request. The first `xcodebuild build`/
+`build-for-testing` reported success, but that was misleading -- the new
+`NativeAiAssistStateTests.swift` had never actually been added to
+`project.pbxproj`'s `VisePandaTests` target (dropping a file on disk does
+not register it with this project's explicit, non-synchronized target
+membership), so the compiler never saw it. Caught by running the tests
+once this sandbox's initially-hung CoreSimulator self-recovered:
+`-only-testing:...NativeAiAssistStateTests` reported "Executed 0 tests" --
+the tell. Fixed by adding the missing `PBXFileReference`/`PBXBuildFile`/
+group/Sources-phase entries, which then surfaced a second real bug (the
+five test methods lacked `@MainActor`, required to read the store's
+main-actor-isolated state inside an `XCTAssert`). After both fixes: 5/5
+new tests and 51/51 (6 skipped) of the full existing `VisePandaTests`
+target passed on a real booted simulator, no regressions. Full detail,
+including why the record keeps the initial false-positive rather than
+quietly erasing it:
+`artifacts/VPJ-76/wiki-grounded-ai-assist-ios-20260915/verification.md`.
+
+Not built: persistence of the AI-assisted result (unchanged from slices
+7-8); a real native integration test mirroring
+`tests/integration/turn/native-grounded-http.test.mjs` (judged lower
+value than the coverage this route's dependencies already have).
+
 ## Verification
 
 Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),
@@ -419,9 +464,13 @@ Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),
 `wiki-search-convergence-20260915/` (convergence + CJK fix),
 `wiki-place-questions-20260915/` (slice 6),
 `wiki-grounded-turn-integration-20260915/` (slice 7),
-`wiki-grounded-ai-assist-web-20260915/` (slice 8, above). As of slice 8:
-446/446 full contract suite, no regressions; `pnpm lint`/`typecheck`/
-`docs:check` clean. Slices 7 and 8 are the only two in this thread of work
-that add a migration — one new read-only RPC (7) and one new table plus
-dispatcher RPC (8), both verified against a real Postgres instance; every
-other slice remained migration-free.
+`wiki-grounded-ai-assist-web-20260915/` (slice 8),
+`wiki-grounded-ai-assist-ios-20260915/` (slice 9, above). As of slice 9:
+446/446 full TS contract suite, no regressions (slice 9 added no new TS
+contract tests, only a thin route wrapper); `pnpm lint`/`typecheck`/
+`docs:check` clean; iOS app + test targets build with zero errors.
+Slices 7 and 8 are the only two in this thread of work that add a
+migration — one new read-only RPC (7) and one new table plus dispatcher
+RPC (8), both verified against a real Postgres instance; slice 9 adds no
+migration, only a client for the same job. Every other slice remained
+migration-free.
