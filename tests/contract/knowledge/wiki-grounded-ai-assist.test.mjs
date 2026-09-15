@@ -38,8 +38,8 @@ test("an RPC-level error or thrown call is not_offered/context_unavailable, not 
 test("a real context flows through to a real grounded search: scene mapped, question passed through, real answer returned", async () => {
   let seenScope;
   const contextRpc = async () => ({ data: contextRow, error: null });
-  const rpc = async (name, params) => { seenScope = params.p_input; return { data: knowledgeReadResponse([{ factId: "f1", text: "Most large merchants accept international cards.", conditions: [], exclusions: [] }]), error: null }; };
-  const answer = { action: "answer", coverage: "answered", summary: "Most large merchants accept international cards.", citations: [{ pageKey: "f1", quote: "accept international cards" }], gaps: [] };
+  const rpc = async (name, params) => { seenScope = params.p_input; return { data: knowledgeReadResponse([{ factId: "f1", assertionId: "assertion-1", assertion: { subjectId: "international_card_payment", predicate: "requires_action", objectId: "merchant_acceptance_check" }, sources: [{ sourceRevisionId: "11111111-1111-1111-1111-111111111111" }], text: "Most large merchants accept international cards.", conditions: [], exclusions: [] }]), error: null }; };
+  const answer = { action: "answer", coverage: "answered", summary: "Most large merchants accept international cards.", citations: [{ pageKey: "f1", quote: "accept international cards" }], gaps: [] , conflicts: [] };
   const outcome = await runGroundedAiAssist(baseInput, { ...jobDeps, contextRpc, rpc, fetch: async () => chatResponse(answer) }, new AbortController().signal);
   assert.deepEqual(seenScope, { city: "shanghai", scene: "payment", locale: "en" });
   assert.equal(outcome.kind, "answered");

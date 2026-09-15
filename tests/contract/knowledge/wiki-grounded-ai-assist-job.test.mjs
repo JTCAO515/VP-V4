@@ -16,7 +16,7 @@ function knowledgeReadResponse(statements, status = "available") {
   return { schemaVersion: "knowledge-read/1", evaluatedAt: "2026-09-15T00:00:00Z", scope: { city: "shanghai", scene: "payment", locale: "en" }, purpose: "trip_planning", recipient: "first_party", territory: "CN-mainland", status, statements };
 }
 const contextRow = Object.freeze({ kind: "context", turnId, city: "shanghai", locale: "en", intent: "payment_card_acceptance", inputText: "Can I pay by card in Shanghai?", placeName: null });
-const answer = { action: "answer", coverage: "answered", summary: "Most large merchants accept international cards.", citations: [{ pageKey: "f1", quote: "accept international cards" }], gaps: [] };
+const answer = { action: "answer", coverage: "answered", summary: "Most large merchants accept international cards.", citations: [{ pageKey: "f1", quote: "accept international cards" }], gaps: [] , conflicts: [] };
 
 test("ensure kind:unavailable is not_offered/unauthorized, never runs a search or completes", async () => {
   const jobRpc = async (name, params) => {
@@ -65,7 +65,7 @@ test("ensure kind:claimed runs the real search loop and completes the job with a
     return { data: { kind: "succeeded", jobId }, error: null };
   };
   const contextRpc = async () => ({ data: contextRow, error: null });
-  const rpc = async () => ({ data: knowledgeReadResponse([{ factId: "f1", text: "Most large merchants accept international cards.", conditions: [], exclusions: [] }]), error: null });
+  const rpc = async () => ({ data: knowledgeReadResponse([{ factId: "f1", assertionId: "assertion-1", assertion: { subjectId: "international_card_payment", predicate: "requires_action", objectId: "merchant_acceptance_check" }, sources: [{ sourceRevisionId: "11111111-1111-1111-1111-111111111111" }], text: "Most large merchants accept international cards.", conditions: [], exclusions: [] }]), error: null });
   const outcome = await runGroundedAiAssistJob(turnId, jobRpc, searchInput, { ...jobDeps, rpc, contextRpc, fetch: async () => chatResponse(answer) }, new AbortController().signal);
   assert.equal(outcome.status, "succeeded");
   assert.equal(outcome.outcome.kind, "answered");
@@ -99,7 +99,7 @@ test("a claimed job whose complete() call itself fails to reach the server still
     throw new Error("network down");
   };
   const contextRpc = async () => ({ data: contextRow, error: null });
-  const rpc = async () => ({ data: knowledgeReadResponse([{ factId: "f1", text: "Most large merchants accept international cards.", conditions: [], exclusions: [] }]), error: null });
+  const rpc = async () => ({ data: knowledgeReadResponse([{ factId: "f1", assertionId: "assertion-1", assertion: { subjectId: "international_card_payment", predicate: "requires_action", objectId: "merchant_acceptance_check" }, sources: [{ sourceRevisionId: "11111111-1111-1111-1111-111111111111" }], text: "Most large merchants accept international cards.", conditions: [], exclusions: [] }]), error: null });
   const outcome = await runGroundedAiAssistJob(turnId, jobRpc, searchInput, { ...jobDeps, rpc, contextRpc, fetch: async () => chatResponse(answer) }, new AbortController().signal);
   assert.equal(outcome.status, "succeeded");
   assert.equal(outcome.outcome.kind, "answered");

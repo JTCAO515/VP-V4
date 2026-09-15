@@ -1,5 +1,7 @@
 /** Server-owned obligations. Definitions route reviewed relations; they contain no facts or publication IDs. */
 export type QuestionClaim = Readonly<{ subjectId: string; predicate: string; objectId: string }>;
+/** Bumped only when a claim's {subjectId,predicate,objectId} triple, not just its coverage, changes meaning. */
+export const QUESTION_ONTOLOGY_VERSION = "questions/1";
 const rail = [
   { subjectId: "rail_eticket_boarding", predicate: "requires_document", objectId: "original_valid_booking_id" },
   { subjectId: "rail_eticket_boarding", predicate: "requires_document", objectId: "valid_ticket_not_itinerary_or_receipt" },

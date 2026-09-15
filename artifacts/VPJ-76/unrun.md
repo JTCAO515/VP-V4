@@ -118,10 +118,27 @@ First slice (agentic search loop mechanism) — see
   `no_content`). `budget_exhausted` and `cancelled` stay their own
   terminal kinds rather than being force-fit into one of the six --
   they're process outcomes, not failure reasons.
-- **EvidencePack v2 schema** (required/background/missing/conflicts,
-  statement/publication/source/span, retrieval/ontology version, reason
-  code, safe trace ID) — not built; current `citations`/`gaps`/`coverage`
-  is intentionally smaller.
+- ~~EvidencePack v2 schema~~ **DONE (slice 10).** See
+  `wiki-evidence-pack-v2-20260915/verification.md`. New
+  `lib/server/knowledge/wiki/evidence-pack.ts`: `required` (per-claim
+  `covered`/`unresolved`, decided in code by matching a citation's real
+  published `{predicate,objectId}` against the claim's own triple, never
+  by the model's self-report), `background` (citations matching no
+  required claim), `missing`/`conflicts` (the model's own gaps/conflicts,
+  now a first-class field split out of the previous overloaded `gaps`),
+  `statement`/`publication`/`source`/`span` refs (real `factId`/
+  `assertionId`/`sourceRevisionId`s/quote, read from fields
+  `knowledge_read_v1` always returned but `published-corpus.ts`
+  previously discarded), `retrievalVersion`/`ontologyVersion`, and a
+  fresh `safeTraceId` per pack. Additive to the already-shipped
+  `summary`/`citations`/`gaps` (Web/iOS keep rendering those unchanged);
+  `evidence` and a flat `conflicts` field are new on
+  `GroundedSearchOutcome`'s "answered" variant. Place questions'
+  `evidence.required` stays empty (unchanged from slice 6's decision that
+  this module never resolves a placeSubjectId) rather than fabricating
+  coverage. 453/453 contract suite; iOS verified with a real,
+  run-to-completion run of `scripts/ios/ci.py` (51/51 + 25/25 tests, both
+  at existing skip counts).
 - **Frozen zh/en question-family/qrels evaluation set** — VPJ-76's own
   required acceptance step, not started.
 

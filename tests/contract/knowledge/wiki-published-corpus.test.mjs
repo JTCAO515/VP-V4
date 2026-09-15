@@ -17,15 +17,16 @@ const statement = Object.freeze({
   sources: [{ sourceRevisionId: "11111111-1111-1111-1111-111111111111", sourceKey: "museum_source", revisionLabel: "r1", publisher: "Museum", uri: "urn:x", locator: "p1" }],
 });
 
-test("converts a real knowledge_read_v1 response into a search corpus, folding conditions/exclusions into the text", async () => {
+test("converts a real knowledge_read_v1 response into a search corpus, folding conditions/exclusions into the text, and keeps real provenance for EvidencePack v2", async () => {
   const rpc = async (name, params) => { assert.equal(name, "knowledge_read_v1"); assert.deepEqual(params, { p_input: scope }); return { data: readResponse([statement]), error: null }; };
   const outcome = await buildPublishedWikiCorpus(rpc, scope);
-  assert.deepEqual(outcome, { kind: "corpus", entries: [{ pageKey: "fact-1", text: "Bring ID for entry.. On entry. Unless exempt" }] });
+  assert.deepEqual(outcome.entries, [{ pageKey: "fact-1", text: "Bring ID for entry.. On entry. Unless exempt" }]);
+  assert.deepEqual(outcome.provenance, new Map([["fact-1", { predicate: "requires_document", objectId: "identity_document", publicationId: "a1", sourceIds: ["11111111-1111-1111-1111-111111111111"] }]]));
 });
 
 test("no_eligible_content is an empty corpus, not an error", async () => {
   const outcome = await buildPublishedWikiCorpus(async () => ({ data: readResponse([], "no_eligible_content"), error: null }), scope);
-  assert.deepEqual(outcome, { kind: "corpus", entries: [] });
+  assert.deepEqual(outcome, { kind: "corpus", entries: [], provenance: new Map() });
 });
 
 test("an RPC-level error surfaces its code without throwing", async () => {
@@ -53,6 +54,12 @@ test("a malformed response (wrong schemaVersion, missing fields, or an invalid s
     readResponse([{ ...statement, factId: "" }]),
     readResponse([{ ...statement, conditions: "not an array" }]),
     readResponse([statement, statement]),
+    // Provenance fields (slice 10): a statement missing any of assertionId/assertion.{predicate,objectId}/sources
+    // is rejected wholesale, not silently kept searchable without provenance.
+    readResponse([{ ...statement, assertionId: undefined }]),
+    readResponse([{ ...statement, assertion: { subjectId: "museum", predicate: "requires_document" } }]),
+    readResponse([{ ...statement, sources: [] }]),
+    readResponse([{ ...statement, sources: [{ ...statement.sources[0], sourceRevisionId: "" }] }]),
   ];
   for (const data of cases) {
     assert.deepEqual(await buildPublishedWikiCorpus(async () => ({ data, error: null }), scope), { kind: "unavailable", code: "KNOWLEDGE_UNAVAILABLE" });
@@ -61,5 +68,5 @@ test("a malformed response (wrong schemaVersion, missing fields, or an invalid s
 
 test("status available with zero statements is a valid empty corpus", async () => {
   const outcome = await buildPublishedWikiCorpus(async () => ({ data: readResponse([]), error: null }), scope);
-  assert.deepEqual(outcome, { kind: "corpus", entries: [] });
+  assert.deepEqual(outcome, { kind: "corpus", entries: [], provenance: new Map() });
 });

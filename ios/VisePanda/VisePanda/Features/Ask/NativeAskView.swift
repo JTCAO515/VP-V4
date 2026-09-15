@@ -303,6 +303,10 @@ struct NativeAskView: View {
                             Text(chinese ? "本次搜索未涵盖" : "Not covered by this search").font(.caption.bold())
                             ForEach(gaps, id: \.self) { gap in Text(verbatim: gap).font(.caption) }
                         }
+                        if let conflicts = outcome.conflicts, !conflicts.isEmpty {
+                            Text(chinese ? "搜索结果存在分歧" : "Search results disagreed").font(.caption.bold())
+                            ForEach(conflicts, id: \.self) { conflict in Text(verbatim: conflict).font(.caption) }
+                        }
                         Text(chinese ? "此内容由 AI 从已发布指引中检索生成，未经过人工审核，请在使用前自行核实。" : "AI-generated from published guidance, not reviewed like the answer above. Verify before relying on it.")
                             .font(.caption).foregroundStyle(Color.vpSecondaryText)
                     }

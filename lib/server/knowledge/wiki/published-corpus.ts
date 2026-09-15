@@ -16,13 +16,27 @@ import type { WikiSearchCorpusEntry } from "./search-index.ts";
  * knowledge_intent_v1 path), out of scope here: the caller supplies the
  * scope, this module only turns its published statements into search
  * candidates.
+ *
+ * Slice 10: `knowledge_read_v1` (supabase/migrations/20260912042452_...sql)
+ * has always returned `assertionId`, `assertion.{predicate,objectId}` and
+ * `sources[].sourceRevisionId` per statement -- this module previously
+ * discarded all three, keeping only factId/text/conditions/exclusions for
+ * the lexical search primitive. EvidencePack v2 (evidence-pack.ts) needs
+ * real provenance to build `statement/publication/source` refs and to
+ * decide which required claim a citation actually covers, so this now
+ * also returns a `provenance` map alongside the search entries -- read
+ * from the same already-authorized response, nothing new fetched or
+ * exposed.
  */
 
 export type PublishedCorpusScope = Readonly<{ city: string; scene: string; locale: "zh" | "en" }>;
 export type KnowledgeReadRpc = (name: "knowledge_read_v1", params: Readonly<{ p_input: PublishedCorpusScope }>) => Promise<Readonly<{ data: unknown; error: { message: string } | null }>>;
 
+/** One published statement's provenance chain: which claim it can cover, and where it came from. */
+export type StatementProvenance = Readonly<{ predicate: string; objectId: string; publicationId: string; sourceIds: readonly string[] }>;
+
 export type PublishedCorpusOutcome =
-  | Readonly<{ kind: "corpus"; entries: readonly WikiSearchCorpusEntry[] }>
+  | Readonly<{ kind: "corpus"; entries: readonly WikiSearchCorpusEntry[]; provenance: ReadonlyMap<string, StatementProvenance> }>
   | Readonly<{ kind: "unavailable"; code: string }>;
 
 const CITIES = new Set(["shanghai", "beijing", "guangzhou", "chongqing"]);
@@ -41,26 +55,37 @@ export async function buildPublishedWikiCorpus(rpc: KnowledgeReadRpc, scope: Pub
   if (raw.error) return { kind: "unavailable", code: raw.error.message || "KNOWLEDGE_UNAVAILABLE" };
   const parsed = parseKnowledgeRead(raw.data);
   if (!parsed) return { kind: "unavailable", code: "KNOWLEDGE_UNAVAILABLE" };
-  return { kind: "corpus", entries: parsed };
+  return { kind: "corpus", entries: parsed.entries, provenance: parsed.provenance };
 }
 
-function parseKnowledgeRead(value: unknown): readonly WikiSearchCorpusEntry[] | null {
+function parseKnowledgeRead(value: unknown): Readonly<{ entries: readonly WikiSearchCorpusEntry[]; provenance: ReadonlyMap<string, StatementProvenance> }> | null {
   if (!record(value) || value.schemaVersion !== "knowledge-read/1" || !Array.isArray(value.statements)) return null;
-  if (value.status === "no_eligible_content") return value.statements.length === 0 ? [] : null;
+  if (value.status === "no_eligible_content") return value.statements.length === 0 ? { entries: [], provenance: new Map() } : null;
   if (value.status !== "available") return null;
   const seen = new Set<string>();
   const entries: WikiSearchCorpusEntry[] = [];
+  const provenance = new Map<string, StatementProvenance>();
   for (const raw of value.statements) {
     if (!record(raw) || typeof raw.factId !== "string" || raw.factId.length === 0 || raw.factId.length > 200) return null;
     if (typeof raw.text !== "string" || raw.text.trim().length === 0) return null;
     if (!Array.isArray(raw.conditions) || !raw.conditions.every((v: unknown) => typeof v === "string")) return null;
     if (!Array.isArray(raw.exclusions) || !raw.exclusions.every((v: unknown) => typeof v === "string")) return null;
+    if (typeof raw.assertionId !== "string" || raw.assertionId.length === 0) return null;
+    if (!record(raw.assertion) || typeof raw.assertion.predicate !== "string" || raw.assertion.predicate.length === 0
+      || typeof raw.assertion.objectId !== "string" || raw.assertion.objectId.length === 0) return null;
+    if (!Array.isArray(raw.sources) || raw.sources.length === 0) return null;
+    const sourceIds: string[] = [];
+    for (const source of raw.sources) {
+      if (!record(source) || typeof source.sourceRevisionId !== "string" || source.sourceRevisionId.length === 0) return null;
+      sourceIds.push(source.sourceRevisionId);
+    }
     if (seen.has(raw.factId)) return null;
     seen.add(raw.factId);
     const text = [raw.text, ...raw.conditions, ...raw.exclusions].join(". ").slice(0, 4000);
     entries.push({ pageKey: raw.factId, text });
+    provenance.set(raw.factId, { predicate: raw.assertion.predicate, objectId: raw.assertion.objectId, publicationId: raw.assertionId, sourceIds });
   }
-  return entries;
+  return { entries, provenance };
 }
 
 function record(value: unknown): value is Record<string, unknown> {
