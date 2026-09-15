@@ -33,10 +33,32 @@ test("an unsupported intent is capability_unsupported, distinct from a missing u
   assert.deepEqual(outcome, { kind: "unavailable", reason: "capability_unsupported" });
 });
 
-test("a place-question intent is capability_unsupported here (no place disambiguation performed by this module)", async () => {
-  const rpc = () => { throw new Error("must not call"); };
-  const outcome = await runGroundedWikiSearch({ ...baseInput, intent: { intent: "place_opening_hours", requestScope: "single", placeName: "Shanghai Museum" } }, { ...jobDeps, rpc }, new AbortController().signal);
-  assert.deepEqual(outcome, { kind: "unavailable", reason: "capability_unsupported" });
+test("a place-question intent is supported: it queries scene 'attraction' without needing a resolved placeSubjectId", async () => {
+  let seenScope;
+  const rpc = async (name, params) => { seenScope = params.p_input; return { data: knowledgeReadResponse([], "no_eligible_content"), error: null }; };
+  const placeIntent = { intent: "place_opening_hours", requestScope: "single", placeName: "Shanghai Museum" };
+  const outcome = await runGroundedWikiSearch({ ...baseInput, intent: placeIntent, city: "shanghai" }, { ...jobDeps, rpc }, new AbortController().signal);
+  assert.deepEqual(seenScope, { city: "shanghai", scene: "attraction", locale: "en" });
+  assert.deepEqual(outcome, { kind: "unavailable", reason: "missing_content" });
+});
+
+test("all three place question ids resolve to scene 'attraction'", async () => {
+  for (const intent of ["place_address", "place_opening_hours", "place_address_and_hours"]) {
+    let seenScope;
+    const rpc = async (name, params) => { seenScope = params.p_input; return { data: knowledgeReadResponse([], "no_eligible_content"), error: null }; };
+    await runGroundedWikiSearch({ ...baseInput, intent: { intent, requestScope: "single", placeName: "x" } }, { ...jobDeps, rpc }, new AbortController().signal);
+    assert.equal(seenScope.scene, "attraction", `${intent} should resolve to scene "attraction"`);
+  }
+});
+
+test("a real published place statement flows through to a real answer, same as any other supported intent", async () => {
+  const placeStatement = Object.freeze({ factId: "fact-museum", text: "Shanghai Museum opens at 9am and closes at 5pm.", conditions: [], exclusions: [] });
+  const placeAnswer = { action: "answer", coverage: "answered", summary: "Shanghai Museum opens at 9am.", citations: [{ pageKey: "fact-museum", quote: "opens at 9am" }], gaps: [] };
+  const rpc = async () => ({ data: knowledgeReadResponse([placeStatement]), error: null });
+  const placeIntent = { intent: "place_opening_hours", requestScope: "single", placeName: "Shanghai Museum" };
+  const outcome = await runGroundedWikiSearch({ ...baseInput, intent: placeIntent, question: "When does Shanghai Museum open?" }, { ...jobDeps, rpc, fetch: async () => chatResponse(placeAnswer) }, new AbortController().signal);
+  assert.equal(outcome.kind, "answered");
+  assert.equal(outcome.summary, placeAnswer.summary);
 });
 
 test("maps the intent's question definition to the correct scene when calling knowledge_read_v1", async () => {

@@ -91,11 +91,8 @@ full chain: `questionDefinition(intent)` → scene → `buildPublishedWikiCorpus
 `runWikiSearchJob`. (Slice 4, below, is what actually names these
 outcomes with VPJ-76's required reason codes.)
 
-Place questions (`place_address`, `place_opening_hours`,
-`place_address_and_hours`) are unsupported here: `questionDefinition`
-needs a resolved `placeSubjectId` from place disambiguation (VPJ-19) that
-this module does not perform. Extending to place questions is a follow-up,
-not attempted here.
+(Slice 6, below, is what actually makes place questions work -- as
+originally written here, they were treated as unsupported.)
 
 This is glue, not wiring: nothing in `grounded-turn/1`, the durable text
 worker, iOS, or the Web reader calls `runGroundedWikiSearch` yet. That
@@ -115,10 +112,11 @@ Mapping decisions, and why:
 - `intent.intent === "clarification"` → `user_input_missing`. The
   traveler's own question didn't give the intent classifier enough to
   work with.
-- Any other unrecognized `questionDefinition` result (`unsupported`, or a
-  place question pending VPJ-19) → `capability_unsupported`. This
-  capability doesn't cover that kind of question yet -- a different
-  reason from the traveler needing to say more.
+- Any other unrecognized intent (`unsupported`) → `capability_unsupported`.
+  This capability doesn't cover that kind of question at all -- a
+  different reason from the traveler needing to say more. (Place
+  questions are handled separately -- see slice 6 -- and no longer fall
+  into this bucket.)
 - Empty corpus (`buildPublishedWikiCorpus` returns zero entries) →
   `missing_content`. Nothing has ever been published for this scope.
 - The search loop actually ran, over a *non-empty* corpus, but returned
@@ -222,9 +220,6 @@ What's still not done, in roughly the order a next slice would tackle it:
 - **Real LLM verification is a single anecdote, not a benchmark.** See
   above -- one English question, one provider that actually worked (GLM),
   Qwen untested (unreachable), DeepSeek untested (stale model id).
-- **No place-question support.** `questionDefinition` needs a resolved
-  `placeSubjectId` from place disambiguation (VPJ-19), which nothing here
-  performs -- place questions are `capability_unsupported`.
 - **The research corpus (slice 5) isn't connected to anything.** Nothing
   calls `buildResearchWikiCorpus` + `runWikiSearchJob` together the way
   `runGroundedWikiSearch` does for the product path.
@@ -276,13 +271,35 @@ originally failed. Full detail:
   bigram overlap is intentionally coarse-grained, not eliminated).
   429/429 full contract suite, no regressions.
 
+## Slice 6 (2026-09-15): place questions
+
+Place questions (`place_address`/`place_opening_hours`/
+`place_address_and_hours`) were `capability_unsupported` through slice 5,
+reasoned as needing a resolved `placeSubjectId` from place disambiguation
+(VPJ-19) -- true for `questionDefinition()`'s own claims-coverage path
+(`grounded-turn/1`, a stricter, different consumer that constructs
+per-subject assertions), but not actually true for this module:
+`questionDefinition()` returns a **hardcoded** `scene: "attraction"` for
+every place question regardless of `subjectId` -- it only *requires* one
+to build its `claims` array, which `runGroundedWikiSearch` never uses.
+
+So place questions are now supported directly: `isPlaceQuestionId(intent)`
+routes straight to `scene: "attraction"`, bypassing
+`questionDefinition()`'s subjectId requirement entirely. This works
+*because* it's agentic search, not exact-match lookup: the loop finds
+whichever published attraction content is actually relevant to the
+traveler's question (which, in free text, already names the place) rather
+than requiring the place be pre-resolved to a canonical ID before search
+even starts.
+
 ## Verification
 
 Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),
 `wiki-published-corpus-20260915/` (slice 2), `wiki-grounded-search-20260915/`
 (slice 3), `wiki-reason-codes-20260915/` (slice 4), `wiki-research-corpus-20260915/`
 (slice 5), `wiki-real-model-probe-20260915/` (real model probe),
-`wiki-search-convergence-20260915/` (convergence + CJK fix, above). As of
-the convergence fix: 429/429 full contract suite, no regressions;
-`pnpm lint`/`typecheck`/`docs:check` clean. No database migration in any
-slice — nothing built so far is persisted.
+`wiki-search-convergence-20260915/` (convergence + CJK fix),
+`wiki-place-questions-20260915/` (slice 6, above). As of slice 6: 431/431
+full contract suite, no regressions; `pnpm lint`/`typecheck`/`docs:check`
+clean. No database migration in any slice — nothing built so far is
+persisted.

@@ -52,18 +52,27 @@ First slice (agentic search loop mechanism) — see
   chain: intent → scene → published corpus → search loop. Still not
   actually called from `grounded-turn/1`, the durable text worker, iOS, or
   the Web reader -- this is the glue function, not the wiring into any of
-  those. Place questions (`place_address`/`place_opening_hours`/
-  `place_address_and_hours`) are `capability_unsupported` here: they need a
-  resolved `placeSubjectId` from place disambiguation (VPJ-19), which this
-  module does not perform.
+  those.
+- ~~Place question support~~ **DONE.** See
+  `wiki-place-questions-20260915/verification.md`.
+  `place_address`/`place_opening_hours`/`place_address_and_hours` route
+  directly to `scene: "attraction"` -- `questionDefinition()` only needs a
+  resolved `placeSubjectId` (from VPJ-19 place disambiguation, still not
+  performed anywhere in this session's work) to build its `claims` array
+  for `grounded-turn/1`'s stricter per-subject checks, a value this module
+  never reads. The search loop finds relevant content itself rather than
+  requiring it be pre-identified, so no place disambiguation was actually
+  needed for this consumer. `grounded-turn/1`'s own claims-coverage path
+  is unchanged and still needs a resolved subject.
 - ~~Full reason-code taxonomy~~ **DONE.** `GroundedSearchOutcome`'s
   `unavailable` kind carries exactly one of VPJ-76's required
   `missing_content`/`retrieval_miss`/`user_input_missing`/
   `capability_unsupported`/`policy_denied`/`provider_failure`. Notably:
   `clarification` → `user_input_missing` (the traveler's own input was
-  insufficient) is distinguished from `unsupported`/place questions →
+  insufficient) is distinguished from `unsupported` →
   `capability_unsupported` (this capability doesn't cover that question
-  kind yet); "no published content exists" (`missing_content`) is
+  kind at all; place questions no longer fall in this bucket -- see
+  below); "no published content exists" (`missing_content`) is
   distinguished from "content exists but the search loop found nothing
   relevant" (`retrieval_miss`, when the loop's own `coverage` comes back
   `no_content`). `budget_exhausted` and `cancelled` stay their own
