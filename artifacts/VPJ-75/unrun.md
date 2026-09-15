@@ -24,11 +24,17 @@ and `docs/contracts/wiki-generation-dispatch.md`.
   the designated Staging project; this machine has no available model key or newly
   confirmed paid-call budget. Full GoTrue/worker/provider/Staging/browser chain,
   full Supabase cold replay/advisors and target rollback remain separate.
-- **Stale-`running`-job reclaim/sweep.** A worker crash between `claim`
-  and `complete` leaves a job permanently `running` — no automated or
-  manual recovery path exists yet. Not reproduced with a real crash this
-  slice; the state-machine design was verified by direct RPC calls
-  simulating the stuck state, not an actual killed process.
+- ~~Stale-`running`-job reclaim/sweep~~ **DONE**, see
+  `359-wiki-job-reclaim-20260915/verification.md` and
+  `docs/contracts/wiki-generation-dispatch.md`. A `running` job whose
+  `started_at` is more than 5 minutes old can be reclaimed by a fresh
+  `claim` (same page/input, new `claim_token`); a completion carrying the
+  superseded `claim_token` is rejected `OPS_CONFLICT` instead of racing or
+  overwriting the reclaimer. Verified against real native PostgreSQL 17,
+  including the actual race this exists to prevent (a fenced-off "late"
+  completion from the original claim holder). Not reproduced with an
+  actual killed OS process — the crash is simulated by back-dating
+  `started_at`, not by SIGKILLing a real worker.
 - **Statement-level source linking.** `statement_refs` exists as a column
   but nothing populates or validates that every key claim actually links
   to a real EvidenceSpan — the probe's `{summary, gaps}` output has no
@@ -47,6 +53,10 @@ and `docs/contracts/wiki-generation-dispatch.md`.
 - **Actual per-call RMB cost reconciliation** against Qwen's billing
   console — token counts are real; price is not independently confirmed.
 
-#359 remains OPEN. Two slices done (schema, dispatcher+real-LLM-probe);
-Ops UI, durable draft storage, statement extraction, contradiction
-handling, and Docling integration remain.
+#359 remains OPEN. Schema, dispatcher+real-LLM-probe, durable draft
+storage, the `/ops/wiki` review UI, statement-candidate linking, structured
+statement proposals, and stale-job reclaim are done (see each item above
+and `docs/knowledge-upgrade/README.md`'s dated log for what each one
+actually covers and what it does not). Contradiction handling,
+multi-source synthesis, prompt-injection adversarial testing, real
+per-call RMB reconciliation, and Docling integration remain not started.

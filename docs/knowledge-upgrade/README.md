@@ -84,6 +84,8 @@ SourceRevision/EvidenceSpan 可先映射现有字段；需要新持久化时做�
 - RuleDefinition 用受限、版本化条件表达式；不执行 Wiki 中的任意脚本/DSL。实体、关系、规则分别校验，链接存在不等于证据成立。
 - 首轮使用现有 TypeScript/Postgres；不引入 Palantir 平台、图数据库、通用 OWL 推理器、第二协调器或第二记忆库。新增独立基础设施须有具体性能/表达缺口与另行范围记录。
 
+**2026-09-15 VPJ-75陈旧running job回收**（[契约](../contracts/wiki-job-reclaim.md)、[验证](../../artifacts/VPJ-75/359-wiki-job-reclaim-20260915/verification.md)）：`wiki_generation_jobs`新增`claim_token`防护令牌，worker在claim与complete之间崩溃导致job永久卡在running的缺口现已解决——running超过5分钟视为陈旧可被重新claim（同一job行、新token），但迟到的旧worker complete请求会因token不匹配被拒绝(OPS_CONFLICT)，不会与新worker竞态或覆盖其结果。用本仓库自己的原生PostgreSQL测试基座（无Docker环境）验证，含真实场景：陈旧回收、旧token被拒、新token成功、历史receipt重放不受影响。全部20个集成测试+378个contract测试通过。未验证：真实杀进程崩溃（用回拨started_at模拟）、自动化定期扫描、Ops可见的"卡住任务"列表均未做。
+
 **2026-09-15 VPJ-75有界声明提案本地实现**（[契约](../contracts/wiki-statement-proposals.md)、[验证](../../artifacts/VPJ-75/wiki-statement-proposals/verification.md)）：新增显式C0-only提案任务，模型只选来源ID和逐字引文；程序计算位置并补齐真实来源，数据库二次校验后完整保存wiki-draft/2。Ops显示提案、引文并预填现有人工审核表单；旧草稿兼容。模型响应仍为fixture，真实付费模型/语义质量/Staging全链UNRUN，引用匹配不等于声明正确。
 
 **2026-09-15 VPJ-75声明候选关联本地实现**（[契约](../contracts/wiki-statement-review.md)、[验证](../../artifacts/VPJ-75/wiki-statement-review/verification.md)）：指定Wiki版本可进入现有Ops声明表单，选择不可改写的原始来源，原子创建候选、来源关联和回执；重复语义输入去重，伪造来源或版本漂移拒绝。复用异人审核/发布/中英普通读取/撤回。该增量是运营整理桥接，非自动声明抽取；真实GoTrue、模型、Staging与整票验收仍UNRUN。

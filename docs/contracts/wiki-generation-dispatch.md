@@ -40,6 +40,11 @@ processes to race on the same generation. **A staleness sweep to actually
 reclaim a truly-dead `running` job is not built in this slice** — see
 Non-goals.
 
+**Update 2026-09-15**: reclaim is now built, with a fencing token to
+close the race a naive "just let claim proceed after a timeout" fix would
+have (a late completion from the original, now-superseded holder). See
+[wiki-job-reclaim.md](wiki-job-reclaim.md).
+
 ## Real verification performed
 
 All of the following used a real local Supabase instance (real GoTrue
@@ -72,9 +77,8 @@ API key stored only in a local, git-ignored file
 
 ## Non-goals of this slice
 
-- **No stale-`running`-job reclaim/sweep.** A worker that crashes after
-  `claim` but before `complete` leaves its job permanently `running` until
-  a human or a future automated sweep intervenes.
+- ~~No stale-`running`-job reclaim/sweep~~ **DONE 2026-09-15**, see
+  [wiki-job-reclaim.md](wiki-job-reclaim.md).
 - **No structured statement/relation extraction.** The model only produces
   `{summary, gaps}` — no subject/predicate/object statements, no linking
   individual claims to spans. `statement_refs` exists in the schema but

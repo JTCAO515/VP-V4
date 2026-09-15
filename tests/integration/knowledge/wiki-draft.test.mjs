@@ -55,7 +55,7 @@ test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACL
   const pageKey='source_summary:synthetic';
   const claim=(digest)=>({action:'claim',operationId:uuid(),pageType:'source_summary',pageKey,sourceRevisionIds:[sourceId],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),inputDigest:digest});
   const legacyClaim=await call(author,'ops_wiki_generation_v1',claim('1'.repeat(64)));
-  const metadata=job=>({operationId:uuid(),jobId:job.jobId,expectedVersion:job.expectedVersion,sourceRevisionIds:[sourceId],statementRefs:[],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),generatedAt:'2026-09-14T00:00:00Z',changeNote:'Short change note, not the body'});
+  const metadata=job=>({operationId:uuid(),jobId:job.jobId,claimToken:job.claimToken,expectedVersion:job.expectedVersion,sourceRevisionIds:[sourceId],statementRefs:[],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),generatedAt:'2026-09-14T00:00:00Z',changeNote:'Short change note, not the body'});
   const old=metadata(legacyClaim);const {operationId,jobId,...fields}=old;
   const oldInput={action:'complete',operationId,jobId,outcome:{kind:'succeeded',costTokens:10,...fields}};
   const oldReceipt=await call(author,'ops_wiki_generation_v1',oldInput);
@@ -240,6 +240,65 @@ test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACL
     await assert.rejects(call(author,'ops_review_workspace',{...selected,operationId:uuid(),candidateId:uuid(),wikiProposalIndex:4}),/OPS_CONFLICT/);
     await assert.rejects(call(author,'ops_review_workspace',{...selected,operationId:uuid(),candidateId:uuid(),wikiRevisionId:currentRevision.id,expectedWikiVersion:3}),/OPS_CONFLICT/);
   });
+
+  const reclaimSql=readFileSync('supabase/migrations/20260915180000_vpj_75_wiki_job_reclaim.sql','utf8');
+  await t.test('job-reclaim migration rolls back cleanly and preserves prior receipt replay',async()=>{
+    await db('begin;'+reclaimSql+'rollback;');
+    assert.equal((await db("select count(*)::int n from information_schema.columns where table_schema='knowledge_review_private' and table_name='wiki_generation_jobs' and column_name='claim_token';"))[0].n,0);
+    await db('begin;'+reclaimSql+'commit;');
+    assert.equal((await db("select count(*)::int n from information_schema.columns where table_schema='knowledge_review_private' and table_name='wiki_generation_jobs' and column_name='claim_token';"))[0].n,1);
+    // Pre-existing rows (claimed before this migration existed, so `completion`
+    // carries no claimToken) must still replay their exact stored receipt --
+    // the new fencing check must not retroactively invalidate old completions.
+    assert.deepEqual(await completeWikiGenerationJob(rpc,completion,outcome),saved);
+  });
+  await t.test('a stale running job is reclaimed with a fresh claimToken; the old holder\'s late completion is fenced off, the new holder\'s succeeds',async()=>{
+    const reclaimSourceId=uuid();
+    const reclaimSource={...source,sourceKey:'reclaim_source',snippet:'Synthetic reclaim source material.'};
+    await db(`insert into knowledge_review_private.source_revisions(id,source_key,revision_label,declaration,snippet_hash,submitted_by) values('${reclaimSourceId}','reclaim_source','r1',${lit(JSON.stringify(reclaimSource))},'${'e'.repeat(64)}','${author.id}');`);
+    const reclaimPageKey='source_summary:reclaim-fixture';
+    const reclaimClaim=(digest)=>({action:'claim',operationId:uuid(),pageType:'source_summary',pageKey:reclaimPageKey,sourceRevisionIds:[reclaimSourceId],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),inputDigest:digest});
+    const digest='f'.repeat(64);
+
+    const firstClaim=await call(author,'ops_wiki_generation_v1',reclaimClaim(digest));
+    assert.equal(firstClaim.kind,'claimed');
+    assert.match(firstClaim.claimToken,/^[0-9a-f-]{36}$/);
+
+    // Fresh running job: reclaiming the exact same (pageKey, inputDigest)
+    // immediately must still conflict -- 5 minutes have not passed.
+    await assert.rejects(call(author,'ops_wiki_generation_v1',reclaimClaim(digest)),/OPS_CONFLICT/);
+
+    // Simulate an abandoned worker: back-date started_at past the reclaim
+    // threshold without touching claim_token, exactly what a real crash
+    // between claim() and complete() would leave behind.
+    await db(`update knowledge_review_private.wiki_generation_jobs set started_at=clock_timestamp()-interval '6 minutes' where id='${firstClaim.jobId}';`);
+    const secondClaim=await call(author,'ops_wiki_generation_v1',reclaimClaim(digest));
+    assert.equal(secondClaim.kind,'claimed');
+    assert.equal(secondClaim.jobId,firstClaim.jobId,'reclaim reopens the same job row, not a new one');
+    assert.notEqual(secondClaim.claimToken,firstClaim.claimToken,'reclaim mints a fresh fencing token');
+    assert.equal((await db(`select status from knowledge_review_private.wiki_generation_jobs where id='${firstClaim.jobId}';`))[0].status,'running');
+
+    const reclaimOutcome=await runWikiGenerationJob({pageType:'source_summary',pageKey:reclaimPageKey,sourceText:reclaimSource.snippet,promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),maxOutputTokens:1024,timeoutMs:5000,provider:{provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:uuid(),configurationVersion:1,timeoutMs:5000}}, {credential:()=> 'synthetic',recordDestination:async()=>{},fetch:async()=>Response.json({model:'qwen3.7-plus-2026-05-26',choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({summary:'Reclaim fixture summary.',gaps:[]})}}],usage:{prompt_tokens:5,completion_tokens:5,total_tokens:10}})},new AbortController().signal);
+    assert.equal(reclaimOutcome.kind,'succeeded');
+    const staleHolderCompletion={operationId:uuid(),jobId:firstClaim.jobId,claimToken:firstClaim.claimToken,expectedVersion:firstClaim.expectedVersion,sourceRevisionIds:[reclaimSourceId],statementRefs:[],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),generatedAt:new Date().toISOString(),changeNote:'Late completion from the reclaimed-away worker'};
+    // The original claim holder finally responds after being reclaimed --
+    // its stale token must be fenced off, not race or overwrite the reclaimer.
+    await assert.rejects(completeWikiGenerationJob(rpc,staleHolderCompletion,reclaimOutcome),/OPS_CONFLICT/);
+    assert.equal((await call(author,'ops_wiki_read_v1',{pageKey:reclaimPageKey})).version,0,'the fenced-off completion must not have written a revision');
+    assert.equal((await db(`select status from knowledge_review_private.wiki_generation_jobs where id='${firstClaim.jobId}';`))[0].status,'running','a rejected completion must not change job status');
+
+    // A completion missing claimToken entirely is INVALID_INPUT, not silently
+    // accepted -- checked while the job is still running (a terminal job would
+    // fail on the status check first, masking this).
+    const {claimToken:_omit,...withoutToken}=staleHolderCompletion;
+    await assert.rejects(completeWikiGenerationJob(rpc,{...withoutToken,operationId:uuid()},reclaimOutcome),/INVALID_INPUT/);
+
+    const newHolderCompletion={...staleHolderCompletion,operationId:uuid(),claimToken:secondClaim.claimToken};
+    const reclaimedResult=await completeWikiGenerationJob(rpc,newHolderCompletion,reclaimOutcome);
+    assert.equal(reclaimedResult.data.kind,'succeeded');
+    assert.equal((await call(author,'ops_wiki_read_v1',{pageKey:reclaimPageKey})).version,1);
+  });
+
   if(process.env.VP_WIKI_BROWSER_FIXTURE==='1') {
     await db(`update knowledge_review_private.members set active=true where actor_id='${author.id}';`);
     await new Promise((resolve,reject)=>{
