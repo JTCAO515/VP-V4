@@ -67,7 +67,7 @@ function fetchFor(scenario: Scenario): typeof globalThis.fetch {
     return (async () => { round += 1; return chatResponse({ action: "search", query: `attempt ${round}` }); }) as typeof globalThis.fetch;
   }
   const cited = scenario.corpus.filter((entry) => scenario.citedFactIds.includes(entry.factId));
-  const citations = cited.map((entry) => ({ pageKey: entry.factId, quote: entry.text[scenario.locale].slice(0, 60) }));
+  const citations = cited.map((entry) => ({ pageKey: entry.factId, quote: entry.text[scenario.locale].slice(0, 60).trim() }));
   const coverage = scenario.kind === "retrieval_miss" ? "no_content" : citations.length === scenario.corpus.length ? "answered" : "partial";
   const summary = scenario.locale === "zh" ? "已根据引用信息作答。" : "Answered from the cited evidence.";
   const gaps = coverage === "partial" ? [scenario.locale === "zh" ? "部分要求尚未在已发布信息中找到。" : "Some requirements were not found in published information."] : [];
@@ -159,6 +159,6 @@ test("real pipeline run over the frozen set: every scenario's outcome matches it
   mkdirSync(outputDirectory, { recursive: true });
   writeFileSync(new URL("results.json", outputDirectory), `${JSON.stringify(report, null, 2)}\n`);
   const zh = rows.filter((r) => r.locale === "zh").length, en = rows.filter((r) => r.locale === "en").length;
-  writeFileSync(new URL("summary.md", outputDirectory), `# VPJ-76 冻结评测集（fixture 模式）\n\n34 个场景：中文${zh}条，英文${en}条；development ${report.counts.development}条，holdout ${report.counts.holdout}条。\n\n覆盖率 ${coverageRate}%，过拒答率 ${overRefusalRate}%（相对同批结构化/直接读取baseline，共${overRefused.length}条分歧，均为刻意构造的 retrieval_miss/budget_exhausted 场景）。p50 ${percentile(50)}ms / p95 ${percentile(95)}ms（fixture transport，非真实网络/模型延迟）。累计 usage token：${totalTokens}（fixture声明值，非真实计费）。\n\n判定：${report.verdict}。真实模型/真实数据库一轮尚未做，见本目录 README。\n\n${rows.map((r) => `- ${r.id} [${r.group}]: ${r.kind} → ${r.outcomeKind}${r.reason ? "/" + r.reason : ""}${r.requiredTotal ? ` (covered ${r.requiredCovered}/${r.requiredTotal})` : ""}`).join("\n")}\n`);
+  writeFileSync(new URL("summary.md", outputDirectory), `# VPJ-76 冻结评测集（fixture 模式）\n\n34 个场景：中文${zh}条，英文${en}条；development ${report.counts.development}条，holdout ${report.counts.holdout}条。\n\n覆盖率 ${coverageRate}%，过拒答率 ${overRefusalRate}%（相对同批结构化/直接读取baseline，共${overRefused.length}条分歧，均为刻意构造的 retrieval_miss/budget_exhausted 场景）。p50 ${percentile(50)}ms / p95 ${percentile(95)}ms（fixture transport，非真实网络/模型延迟）。累计 usage token：${totalTokens}（fixture声明值，非真实计费）。\n\n判定：${report.verdict}。真实模型一轮已做（GLM，见 ../wiki-frozen-eval-real-model-20260916/verification.md）；真实数据库一轮仍未做，见本目录 README。\n\n${rows.map((r) => `- ${r.id} [${r.group}]: ${r.kind} → ${r.outcomeKind}${r.reason ? "/" + r.reason : ""}${r.requiredTotal ? ` (covered ${r.requiredCovered}/${r.requiredTotal})` : ""}`).join("\n")}\n`);
   assert.equal(report.verdict, "PASS");
 });
