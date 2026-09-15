@@ -60,6 +60,27 @@ the same lexical lookup forever. Reaching `maxRounds` without an `answer`
 returns `budget_exhausted`. Token usage is accumulated across every real
 model call in the run, not just the last one.
 
+## Slice 2 (2026-09-15): real published-knowledge corpus
+
+`lib/server/knowledge/wiki/published-corpus.ts`, `buildPublishedWikiCorpus`:
+adapts a real `knowledge_read_v1` response into a `WikiSearchCorpusEntry[]`
+the loop can search. Deliberately reuses that existing, already-authorized
+RPC rather than adding a second read path against publication tables --
+every eligibility check (`published`, not expired, `reviewed`), the
+authentication requirement, and the `{city, scene, locale}` scope
+filtering stay exactly where they already are, enforced by that RPC's own
+SQL. This module only reshapes an already-filtered response (folding each
+statement's `conditions`/`exclusions` into its searchable text) and
+validates its shape defensively -- it grants no new access and repeats no
+eligibility logic of its own.
+
+This still requires the caller to already know which `{city, scene,
+locale}` to ask for. Identifying that from a free-text question is intent
+recognition (the existing `knowledge_intent_v1` path) and is not built
+here. There is also still no research-index-vs-product-index separation:
+this always reads the product-eligible path, never an unpublished/research
+view.
+
 ## What this slice deliberately does not do
 
 - **No real LLM call.** Every test uses an injected `fetch`; the loop
@@ -68,12 +89,13 @@ model call in the run, not just the last one.
   DeepSeek model actually search well" — that needs an operator-authorized
   real-provider run, same as VPJ-75's slices did before claiming semantic
   quality.
-- **No connection to actually-published Wiki content.** `runWikiSearchJob`
-  takes a `corpus` the caller supplies; nothing here queries
-  `knowledge_review_private`/publication tables for real published
-  revisions, applies eligibility/expiry/withdrawal gating, or separates a
-  research index from a product index (both required by VPJ-76's
-  acceptance criteria). That wiring is the next slice.
+- **No free-text object/city/scene identification.** Slice 2 (below)
+  connects the loop to real published content, but only given an already-
+  known `{city, scene, locale}` -- turning a free-text question into that
+  triple is intent recognition, not built here.
+- **No research-index-vs-product-index separation** (required by VPJ-76's
+  acceptance criteria) -- the corpus adapter always reads the
+  product-eligible path.
 - **No Ask-path integration.** This is not wired into `grounded-turn/1`,
   `knowledge_intent_v1`, iOS, or the lightweight Web reader. VPJ-76's
   eventual acceptance needs a real zh/en round trip through those existing
