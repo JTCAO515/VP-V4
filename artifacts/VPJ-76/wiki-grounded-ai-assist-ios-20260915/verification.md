@@ -85,6 +85,34 @@ wrong is left in this record deliberately, as a reminder that a green
 build without an actual test-count sanity check (`Executed N tests`) can
 hide a file that was never really part of the target.
 
+### The repo's own real native CI script, run locally end to end
+
+This PR's own "simulator" GitHub Actions check (self-hosted runner,
+`.github/workflows/native-ios.yml` → `scripts/ios/ci.py`) failed, but not
+from anything in the diff: `ci.py` pinned `XCODE = "Xcode 26.6\nBuild
+version 17F113"`, and the self-hosted Mac's own Xcode install had since
+moved to 27.0 with "no automatic fallback" -- this would fail identically
+on any PR touching `ios/` right now, not just this one. JT asked to bump
+the pin. Fixed by updating `XCODE` to `"Xcode 27.0\nBuild version
+27A266a"` (the exact string this session's own `xcodebuild -version`
+reports, matching the failing job's own error message) and the matching
+line in `docs/contracts/vpj-56.md`. `RUNTIME`
+(`com.apple.CoreSimulator.SimRuntime.iOS-26-5`) and `DEVICE`
+(`iPhone 17 Pro`) needed no change -- this Xcode 27.0 install still ships
+iOS 26.5 simulators.
+
+Verified by running `scripts/ios/ci.py` itself locally, end to end,
+exactly as the self-hosted runner would (`DEVELOPER_DIR=/Applications/
+Xcode.app/Contents/Developer python3 scripts/ios/ci.py --output ...`,
+no `--preflight`): build, build-for-testing, ad-hoc signature and
+verification, an owned fresh simulator created/booted/deleted, and
+`test-without-building` against the **entire** shared scheme -- every
+step exited 0. The full evidence trail this script itself produces
+(`tests.log`) shows every suite: `VisePandaTests` 51/51 (6 skipped),
+`VisePandaUITests` 25/25 (17 skipped, real network-gated UI suites) --
+0 failures anywhere in this repo's real native CI, not just the one new
+test file.
+
 ### What was NOT verified
 
 - **No real model call.** The route reuses the same env-based provider
