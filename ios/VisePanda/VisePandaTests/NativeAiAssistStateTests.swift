@@ -25,7 +25,7 @@ nonisolated final class NativeAiAssistStateTests: XCTestCase {
         return (session, store)
     }
 
-    func testImmediateAnsweredOutcomeIsStoredAsDone() async throws {
+    @MainActor func testImmediateAnsweredOutcomeIsStoredAsDone() async throws {
         let (session, store) = try await groundedStore()
         AiAssistProtocol.enqueue(["data": ["status": "succeeded", "outcome": ["kind": "answered", "summary": "Most large merchants accept international cards.", "gaps": []]]])
         await store.runAiAssist(Self.turnId, using: session)
@@ -36,7 +36,7 @@ nonisolated final class NativeAiAssistStateTests: XCTestCase {
         await session.logout()
     }
 
-    func testNotOfferedOutcomeIsStoredAsDoneNotError() async throws {
+    @MainActor func testNotOfferedOutcomeIsStoredAsDoneNotError() async throws {
         let (session, store) = try await groundedStore()
         AiAssistProtocol.enqueue(["data": ["status": "not_offered", "reason": "not_blocked"]])
         await store.runAiAssist(Self.turnId, using: session)
@@ -46,7 +46,7 @@ nonisolated final class NativeAiAssistStateTests: XCTestCase {
         await session.logout()
     }
 
-    func testPendingThenSucceededPollsOnceMoreBeforeSettling() async throws {
+    @MainActor func testPendingThenSucceededPollsOnceMoreBeforeSettling() async throws {
         let (session, store) = try await groundedStore()
         AiAssistProtocol.enqueue(["data": ["status": "pending"]])
         AiAssistProtocol.enqueue(["data": ["status": "succeeded", "outcome": ["kind": "unavailable", "reason": "retrieval_miss"]]])
@@ -58,7 +58,7 @@ nonisolated final class NativeAiAssistStateTests: XCTestCase {
         await session.logout()
     }
 
-    func testMalformedReplyIsErrorNotCrash() async throws {
+    @MainActor func testMalformedReplyIsErrorNotCrash() async throws {
         let (session, store) = try await groundedStore()
         AiAssistProtocol.enqueue(["data": ["status": "succeeded"]]) // "succeeded" with no outcome fails NativeAiAssistStatus.valid
         await store.runAiAssist(Self.turnId, using: session)
@@ -66,7 +66,7 @@ nonisolated final class NativeAiAssistStateTests: XCTestCase {
         await session.logout()
     }
 
-    func testUnknownTurnIsANoOp() async throws {
+    @MainActor func testUnknownTurnIsANoOp() async throws {
         let (session, store) = try await groundedStore()
         await store.runAiAssist(UUID().uuidString.lowercased(), using: session)
         XCTAssertTrue(store.aiAssist.isEmpty)

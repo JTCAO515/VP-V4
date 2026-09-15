@@ -83,13 +83,16 @@ First slice (agentic search loop mechanism) — see
   polls outside the store's single `busy` operation slot (like
   `receiveEvents` already does) so it never freezes other Ask actions; a
   SwiftUI panel appears only under `originalOutcome == "blocked"`, always
-  disclosed as AI-generated and unreviewed. Verified by real
-  `xcodebuild build`/`build-for-testing` in this session's own sandbox
-  (zero errors, app + test targets, after JT switched `xcode-select` to
-  full Xcode and accepted its license) -- but this sandbox's CoreSimulator
-  is version-mismatched against its Xcode install and `xcrun simctl`
-  hangs here, so the 5 new XCTest cases compiled but were **never
-  actually run**; run them locally before merging.
+  disclosed as AI-generated and unreviewed. Verified by a real,
+  run-to-completion XCTest pass in this session's own sandbox (after JT
+  switched `xcode-select` to full Xcode and accepted its license): the
+  first "BUILD SUCCEEDED" was a false positive (the new test file was
+  never actually registered in `project.pbxproj`'s `VisePandaTests`
+  target, so the compiler never saw it -- caught by "Executed 0 tests"
+  once the sandbox's CoreSimulator self-recovered from an initial version
+  mismatch), fixed alongside a second real bug (missing `@MainActor` on
+  the test methods). After both fixes, 5/5 new tests and 51/51 (6 skipped)
+  of the full existing suite passed for real on a booted simulator.
 - ~~Place question support~~ **DONE.** See
   `wiki-place-questions-20260915/verification.md`.
   `place_address`/`place_opening_hours`/`place_address_and_hours` route
@@ -121,14 +124,11 @@ First slice (agentic search loop mechanism) — see
   is intentionally smaller.
 - **Frozen zh/en question-family/qrels evaluation set** — VPJ-76's own
   required acceptance step, not started.
-- **A real simulator/device run of the iOS XCTest suite** for this
-  feature — compiled but never executed in this session's own sandbox
-  (CoreSimulator/Xcode version mismatch); run locally to confirm.
 
 #360 remains OPEN. The retrieval/loop mechanism, real product-knowledge
 connection, intent→search glue, the required six-way reason taxonomy, and
 a real research-knowledge connection all exist and are tested; both Web
-and iOS now have real, compiled/database-verified trigger paths (slices 8
-and 9), though no deployment has wired a live model credential to either
-yet, and evaluation work that VPJ-76 requires for closure has not
-started.
+and iOS now have real, database-verified/real-XCTest-verified trigger
+paths (slices 8 and 9), though no deployment has wired a live model
+credential to either yet, and evaluation work that VPJ-76 requires for
+closure has not started.

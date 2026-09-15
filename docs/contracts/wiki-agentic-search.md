@@ -430,15 +430,24 @@ send/cancel/reload); and a SwiftUI panel in `NativeAskView` appearing only
 when `result.originalOutcome == "blocked"`, always disclosed as
 AI-generated and unreviewed.
 
-Verified by real compilation in this session's own sandbox: JT ran
-`sudo xcode-select -s /Applications/Xcode.app` and accepted the Xcode
-license on request, after which `xcodebuild build` and
-`build-for-testing` both succeeded with zero errors for the full app and
-test targets, including the new `NativeAiAssistStateTests.swift` (5
-cases). **Not verified**: this sandbox's CoreSimulator is
-version-mismatched against its Xcode install and `xcrun simctl` hangs
-here, so the new XCTest cases compiled but were never actually run --
-run them locally before merging. Full detail:
+Verified by a real, run-to-completion XCTest pass in this session's own
+sandbox: JT ran `sudo xcode-select -s /Applications/Xcode.app` and
+accepted the Xcode license on request. The first `xcodebuild build`/
+`build-for-testing` reported success, but that was misleading -- the new
+`NativeAiAssistStateTests.swift` had never actually been added to
+`project.pbxproj`'s `VisePandaTests` target (dropping a file on disk does
+not register it with this project's explicit, non-synchronized target
+membership), so the compiler never saw it. Caught by running the tests
+once this sandbox's initially-hung CoreSimulator self-recovered:
+`-only-testing:...NativeAiAssistStateTests` reported "Executed 0 tests" --
+the tell. Fixed by adding the missing `PBXFileReference`/`PBXBuildFile`/
+group/Sources-phase entries, which then surfaced a second real bug (the
+five test methods lacked `@MainActor`, required to read the store's
+main-actor-isolated state inside an `XCTAssert`). After both fixes: 5/5
+new tests and 51/51 (6 skipped) of the full existing `VisePandaTests`
+target passed on a real booted simulator, no regressions. Full detail,
+including why the record keeps the initial false-positive rather than
+quietly erasing it:
 `artifacts/VPJ-76/wiki-grounded-ai-assist-ios-20260915/verification.md`.
 
 Not built: persistence of the AI-assisted result (unchanged from slices

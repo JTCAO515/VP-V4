@@ -39,33 +39,54 @@ the Web cookie session.
 
 ## What was verified
 
-### Real compilation (this session's own environment, not simulated)
+### Real compilation, then a real caught bug, then a real test run
 
 This sandbox's `xcode-select` initially pointed at Command Line Tools only
 (`xcodebuild` refuses to build against that). JT ran
 `sudo xcode-select -s /Applications/Xcode.app` and accepted the Xcode
-license (`sudo xcodebuild -license`) on request, at which point:
+license (`sudo xcodebuild -license`) on request, at which point
+`xcodebuild build` and `build-for-testing` both reported success with
+zero errors.
 
-- `xcodebuild build -scheme VisePanda -destination "generic/platform=iOS Simulator"` — **BUILD SUCCEEDED**, zero errors, for the full app target including every file this slice touched.
-- `xcodebuild build-for-testing` (same destination) — **TEST BUILD SUCCEEDED**, zero errors, including the new `NativeAiAssistStateTests.swift`.
+That first "success" was misleading and is worth recording exactly why:
+**`NativeAiAssistStateTests.swift` had never been added to
+`VisePanda.xcodeproj/project.pbxproj`'s `VisePandaTests` target** (this
+project uses explicit `PBXFileReference`/`PBXBuildFile`/
+`PBXSourcesBuildPhase` entries, not synchronized folder groups) --
+dropping a new file on disk does not add it to any Xcode target on its
+own. The build "succeeded" because the compiler never saw the file at
+all. This was caught by actually running the tests once this session's
+CoreSimulator self-recovered from an initial version mismatch
+(`xcrun simctl` had hung; a later retry succeeded, listing real booted-
+capable simulators) -- `-only-testing:VisePandaTests/NativeAiAssistStateTests`
+reported **"Executed 0 tests"**, the tell that the filter matched nothing
+because the class was never compiled into the target.
 
-This is real `swiftc` type-checking and compilation against the actual
-project, not a syntax read-through.
+Fixed by adding the file's `PBXFileReference` (id `...55`), its
+`PBXBuildFile` entry, and its membership in both the `VisePandaTests`
+`PBXGroup` and that target's `PBXSourcesBuildPhase`, mirroring the
+existing `NativeAskStateTests.swift` entries exactly. Rebuilding then
+surfaced a **second** real bug: the five test methods lacked `@MainActor`
+(only the shared `groundedStore()` helper had it), which
+`NativeAskStateTests.swift`'s own tests all carry -- without it, Swift's
+strict concurrency checker correctly refused to let a nonisolated test
+method read `@MainActor`-isolated `NativeAskStore.aiAssist` inside an
+`XCTAssert` autoclosure. Fixed by adding `@MainActor` to each test
+method.
+
+After both fixes:
+
+- `xcodebuild test -only-testing:VisePandaTests/NativeAiAssistStateTests -destination "id=<a real booted iPhone 17 Pro simulator>"` — **Executed 5 tests, with 0 failures** (all five: immediate `answered`, `not_offered`, a real `pending → succeeded` two-poll transition with a real 1.5s `Task.sleep` between polls, a malformed-reply `.error` path, and an unknown turn id being a no-op).
+- `xcodebuild test -only-testing:VisePandaTests` (the whole existing target, same destination) — **Executed 51 tests, 6 skipped (network-gated integration tests, consistent with this repo's existing skip convention), 0 failures** — no regressions from this slice's changes to `NativeAskModels.swift`/`NativeAskStore.swift`/`NativeAskView.swift`.
+
+This is a real, run-to-completion XCTest pass on a real simulator, not a
+compile-only check -- and the fact that the first "BUILD SUCCEEDED" was
+wrong is left in this record deliberately, as a reminder that a green
+build without an actual test-count sanity check (`Executed N tests`) can
+hide a file that was never really part of the target.
 
 ### What was NOT verified
 
-- **The new XCTest cases were never actually run.** This sandbox's
-  CoreSimulator is version-mismatched against this Xcode install
-  (`CoreSimulator is out of date. Current version (1051.55.0) is older
-  than build version (1171.7.0)`), and `xcrun simctl list devices`
-  itself hangs indefinitely here — an environment defect, not something
-  introduced by this slice. `NativeAiAssistStateTests.swift` (5 cases:
-  immediate `answered`, `not_offered`, a real `pending → succeeded`
-  two-poll transition, a malformed-reply `.error` path, and an unknown
-  turn id being a no-op) compiles and links against the real
-  `NativeAskStore`/`NativeSession`/model types, but no simulator in this
-  session actually executed them. **Run
-  `xcodebuild test -scheme VisePanda -only-testing:VisePandaTests/NativeAiAssistStateTests -destination "platform=iOS Simulator,name=<a booted simulator>"` locally before merging** to get a real pass/fail, the way every other iOS test in this repo would be confirmed.
 - **No real model call.** The route reuses the same env-based provider
   gate as the Web route (`VISEPANDA_GROUNDED_AI_ASSIST` +
   provider/credential env vars), unset in every environment — consistent
