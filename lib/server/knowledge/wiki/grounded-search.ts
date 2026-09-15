@@ -1,4 +1,4 @@
-import { questionDefinition } from "../claim/questions.ts";
+import { questionDefinition, isPlaceQuestionId } from "../claim/questions.ts";
 import type { KnowledgeIntent } from "../claim/intent.ts";
 import { buildPublishedWikiCorpus, type KnowledgeReadRpc } from "./published-corpus.ts";
 import { runWikiSearchJob, type WikiSearchJobDependencies } from "../../jobs/wiki-search-job.ts";
@@ -15,8 +15,14 @@ import type { HttpProviderConfiguration } from "../../model-gateway/adapters/htt
  * loop.
  *
  * Place questions (place_address / place_opening_hours /
- * place_address_and_hours) need a resolved placeSubjectId from place
- * disambiguation (VPJ-19), which this module does not perform. city comes
+ * place_address_and_hours) ARE supported (slice 6), despite needing a
+ * resolved placeSubjectId for questionDefinition()'s own claims-coverage
+ * path (grounded-turn/1, a different and stricter consumer) -- this
+ * module only needs the *scene* ("attraction", hardcoded for every place
+ * question in questionDefinition() regardless of subjectId), not a
+ * resolved subject, because the search loop finds the relevant published
+ * content itself rather than requiring it be pre-identified. See slice 6
+ * in docs/contracts/wiki-agentic-search.md for the reasoning. city comes
  * from the caller's existing Trip context, never from free-text
  * recognition.
  *
@@ -67,15 +73,19 @@ export async function runGroundedWikiSearch(
   input: GroundedSearchInput, dependencies: GroundedSearchDependencies, signal: AbortSignal,
 ): Promise<GroundedSearchOutcome> {
   // clarification means the traveler's own input didn't give the intent
-  // classifier enough to work with; unsupported (and any place question,
-  // pending VPJ-19 place disambiguation) means this capability doesn't
-  // cover that kind of question yet -- two different reasons, not one
-  // generic "can't handle this".
+  // classifier enough to work with; unsupported means this capability
+  // doesn't cover that kind of question at all -- two different reasons,
+  // not one generic "can't handle this".
   if (input.intent.intent === "clarification") return { kind: "unavailable", reason: "user_input_missing" };
-  const definition = questionDefinition(input.intent.intent);
-  if (!definition) return { kind: "unavailable", reason: "capability_unsupported" };
+  // Place questions bypass questionDefinition() entirely: that function
+  // requires a resolved placeSubjectId (for grounded-turn/1's own
+  // claims-coverage checks) and returns null without one, but the scene it
+  // would return is a hardcoded "attraction" regardless of subjectId --
+  // the only piece this module actually needs.
+  const scene = isPlaceQuestionId(input.intent.intent) ? "attraction" : questionDefinition(input.intent.intent)?.scene;
+  if (!scene) return { kind: "unavailable", reason: "capability_unsupported" };
 
-  const corpusOutcome = await buildPublishedWikiCorpus(dependencies.rpc, { city: input.city, scene: definition.scene, locale: input.locale });
+  const corpusOutcome = await buildPublishedWikiCorpus(dependencies.rpc, { city: input.city, scene, locale: input.locale });
   if (corpusOutcome.kind === "unavailable") {
     return { kind: "unavailable", reason: corpusOutcome.code === "KNOWLEDGE_DISABLED" ? "policy_denied" : "provider_failure", providerCode: corpusOutcome.code };
   }
