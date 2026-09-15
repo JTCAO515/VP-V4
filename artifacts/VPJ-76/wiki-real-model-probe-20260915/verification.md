@@ -91,16 +91,61 @@ by a real model, not just satisfiable by a scripted fixture: the model
 searched before answering, cited real (not invented) passages, and flagged
 a real, unaddressed gap instead of overclaiming coverage.
 
+## Real finding #3: Chinese-language runs, over multiple candidate entries, tend to exhaust the round budget instead of answering
+
+Two follow-up real GLM runs, both `locale: "zh"`, both against the same
+2-entry corpus (SIM card + metro payment text), `maxRounds: 3`,
+`maxOutputTokens: 2000`:
+
+- **上海买地铁票能用外国信用卡吗** ("Can I use a foreign credit card to buy a
+  Shanghai metro ticket") -- the metro entry directly answers this
+  ("外国银行卡在自助售票机上不能使用" / "foreign bank cards cannot be used at
+  self-service ticket machines"). Real queries issued: `上海地铁 购票 外国信用卡`
+  → `上海地铁 外卡 支付` → `上海地铁 单程票 支付方式 信用卡`. All three rounds
+  were genuine `search` actions, never an `answer` -- `budget_exhausted`
+  after 3 rounds, 2181 real tokens spent, despite the corpus containing a
+  directly relevant passage from round 1 onward.
+- **重庆坐轻轨需要提前实名预约吗** ("Does Chongqing light rail need advance
+  real-name booking") -- deliberately asked against a corpus with zero
+  Chongqing/light-rail content, to see whether the model would correctly
+  answer `no_content`. Real queries issued: `重庆轨道交通 购票 实名 预约` →
+  `重庆轨道交通` → `重庆轻轨` -- also `budget_exhausted` after 3 rounds
+  (2343 tokens), never reaching an `answer` action (correct or otherwise).
+
+**Read on this, not a fix:** in both cases the model kept rephrasing its
+query (different wording each round) rather than either answering from
+what it already had, or reaching the same query twice and being told
+"duplicate, no new search was run" by this loop's own duplicate-detection.
+This loop's dedup check (`wiki-search-job.ts`) does exact
+case-insensitive string matching -- a genuine limitation against a model
+that varies its Chinese phrasing round to round without changing intent.
+The system prompt (`wiki-search.ts`) already tells the model "if results
+don't change between rounds, stop searching and answer" -- but from the
+model's own vantage point each of its queries *was* different, so that
+instruction never triggered. This is a real, reproducible quality gap
+distinct from the earlier findings (those were protocol/config issues;
+this is a prompt-and-loop-design issue that surfaces specifically when
+there's more than one candidate corpus entry and/or the query is in
+Chinese). Not fixed here -- flagging it honestly rather than tuning the
+probe's corpus/prompt until it happened to succeed, which would have
+hidden the finding instead of reporting it.
+
 ## What was NOT verified
 
 - **Qwen was not reachable from this sandbox** (network allowlist, see
   above) -- the key JT provided for it was never exercised.
-- **Only one real question was tested**, once against DeepSeek (failed on
-  the stale model id before reaching any semantic behavior) and twice
-  against GLM (once underfunded, once successful). This is not the frozen
-  zh/en evaluation set VPJ-76 still requires -- one anecdote, not a
-  benchmark.
-- **No Chinese-language real call was made.**
+- **Four real questions total, all against GLM (DeepSeek failed on the
+  stale model id before reaching any semantic behavior; Qwen unreachable):
+  one English success, two Chinese `budget_exhausted` (finding #3, above),
+  one earlier English underfunded-budget failure.** This is not the frozen
+  zh/en evaluation set VPJ-76 still requires -- four anecdotes, not a
+  benchmark, and the real success rate so far is 1 of 4 (25%), not
+  something to read as "the loop works," any more than finding #3 alone
+  means "it doesn't" -- both are real, both matter, neither is the whole
+  picture.
+- **The two Chinese real runs never actually answered** (see finding #3)
+  -- VPJ-76's "at least one zh/en answered/partial pair" requirement is
+  not yet met on the zh side by this session's real evidence.
 - **No adversarial/prompt-injection real input was tested.**
 - **No multi-source or contradictory-source real scenario was tested** --
   the corpus only ever had one relevant entry for the question asked.

@@ -9,17 +9,20 @@ First slice (agentic search loop mechanism) — see
   detects and reports duplicate queries without re-searching, accumulates
   usage, and returns a closed-schema outcome. Not verified against a real
   model.
-- ~~Real model call~~ **ONE REAL SUCCESS, not a benchmark.** See
-  `wiki-real-model-probe-20260915/verification.md`. A real GLM-5.3-flash
-  run (with `maxOutputTokens` raised to 2000 -- GLM's own reasoning output
-  starves a smaller budget) searched then answered correctly from real
-  retrieved content, with verbatim-verified citations and a genuine gap.
-  Qwen was unreachable from this sandbox (network allowlist); a real
-  DeepSeek call failed on a stale configured model id
-  (`MODEL_PROFILES.deepseek_flash.providerModelId`, flagged separately,
-  not fixed here). One English question against one provider is real
-  evidence the prompt contract works, not the frozen zh/en evaluation set
-  VPJ-76 still requires.
+- ~~Real model call~~ **REAL EVIDENCE, mixed results, not a benchmark.**
+  See `wiki-real-model-probe-20260915/verification.md`. 1 real success out
+  of 4 real GLM-5.3-flash runs (Qwen unreachable from this sandbox --
+  network allowlist; DeepSeek failed on a stale configured model id,
+  `MODEL_PROFILES.deepseek_flash.providerModelId`, flagged separately, not
+  fixed here): one English question searched then answered correctly from
+  real retrieved content, with verbatim-verified citations and a genuine
+  gap. Two Chinese questions both `budget_exhausted` instead of
+  answering -- the model kept rephrasing its query each round rather than
+  answering from sufficient evidence or triggering this loop's
+  exact-string duplicate detection, a real quality gap distinct from the
+  protocol/config findings. VPJ-76's "at least one zh/en answered/partial
+  pair" is met on the English side, not the Chinese side, by real evidence
+  so far.
 - ~~Connection to real published Wiki content~~ **DONE for the product
   path.** `buildPublishedWikiCorpus` (`lib/server/knowledge/wiki/published-corpus.ts`)
   turns a real `knowledge_read_v1` response into a search corpus, reusing

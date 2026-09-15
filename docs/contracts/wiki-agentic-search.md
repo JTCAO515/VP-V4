@@ -187,15 +187,27 @@ Headline results:
   a real GLM caller of this search loop should budget `maxOutputTokens`
   generously (2000 worked; 400 did not) to leave room for GLM's mandatory
   reasoning output.
-- **Real end-to-end success at `maxOutputTokens: 2000`**: GLM searched
-  (round 1), then answered from the real retrieved passage (round 2) with
-  accurate `summary`, verbatim-verified `citations`, and a genuine
-  (non-hallucinated) `gaps` entry. First non-fixture evidence that the
-  `wiki_search_v1` prompt contract is actually followable by a real model.
-- Only tested in English, only one question, only one relevant corpus
-  entry, no Chinese call, no adversarial input, no real published-Wiki
-  content (still a hand-written fixture corpus) -- one anecdote, not the
-  frozen evaluation set VPJ-76 still requires.
+- **Real end-to-end success at `maxOutputTokens: 2000`** (English): GLM
+  searched (round 1), then answered from the real retrieved passage
+  (round 2) with accurate `summary`, verbatim-verified `citations`, and a
+  genuine (non-hallucinated) `gaps` entry. First non-fixture evidence that
+  the `wiki_search_v1` prompt contract is actually followable by a real
+  model.
+- **Real finding: two Chinese real runs both exhausted their round budget
+  without ever answering** -- the model kept rephrasing its query each
+  round (different wording, same intent) rather than answering from
+  already-sufficient evidence or hitting this loop's exact-string
+  duplicate-detection. A real, reproducible quality gap, not a protocol
+  failure -- distinct from findings #1/#2 above. Full detail and the exact
+  queries issued: `wiki-real-model-probe-20260915/verification.md`.
+- **Net read: 1 real success out of 4 real runs (English only).** Real,
+  not fixture, evidence -- but neither "the loop works" nor "it doesn't"
+  is the honest summary; both the success and the two exhaustions are real
+  and both matter. VPJ-76's "at least one zh/en answered/partial pair"
+  requirement is met on the English side, not yet on the Chinese side, by
+  this session's real evidence. No adversarial input, no multi-relevant-
+  source scenario, and no real published-Wiki content (still a
+  hand-written fixture corpus) has been tried.
 
 ## Current overall status (as of slice 5 + the real model probe)
 
