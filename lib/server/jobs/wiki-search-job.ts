@@ -55,7 +55,7 @@ const MAX_ROUNDS_IN_TRANSCRIPT = 4;
 const EVIDENCE_TEXT_EXCERPT = 500;
 const MAX_PROMPT_LENGTH = 24000;
 
-type RoundLog = Readonly<{ query: string; duplicate: boolean; hits: readonly WikiSearchHit[] }>;
+type RoundLog = Readonly<{ query: string; duplicate: boolean; hits: readonly WikiSearchHit[]; novel: boolean }>;
 
 function validInput(value: WikiSearchJobInput): boolean {
   return !!value && typeof value === "object"
@@ -87,12 +87,13 @@ export async function runWikiSearchJob(
 
   const seenQueries = new Set<string>();
   const orderedQueries: string[] = [];
+  const seenPageKeys = new Set<string>();
   const rounds: RoundLog[] = [];
   const usage = { inputTokens: 0, outputTokens: 0, totalTokens: 0 };
 
   for (let round = 1; round <= input.maxRounds; round += 1) {
     if (signal.aborted) return { kind: "cancelled", rounds: round - 1, usage };
-    const prompt = buildRoundPrompt(input.question, input.locale, rounds);
+    const prompt = buildRoundPrompt(input.question, input.locale, rounds, round === input.maxRounds);
     const outcome = await invokeProviderProtocol(
       { requestId: randomUUID(), provider: input.provider.provider, dataClass: "c0_synthetic", input: prompt, task: "wiki_search_v1", maxOutputTokens: input.maxOutputTokens, timeoutMs: input.timeoutMs },
       turn, transport, signal,
@@ -113,7 +114,16 @@ export async function runWikiSearchJob(
     const duplicate = seenQueries.has(normalizedQuery.toLowerCase());
     if (!duplicate) { seenQueries.add(normalizedQuery.toLowerCase()); orderedQueries.push(normalizedQuery); }
     const hits = duplicate ? [] : searchWikiCorpus(input.corpus, normalizedQuery, MAX_EVIDENCE_PER_ROUND);
-    rounds.push({ query: normalizedQuery, duplicate, hits });
+    // Distinct from `duplicate` (identical query string): a *rephrased*
+    // query that still surfaces zero pageKeys not already seen in an
+    // earlier round -- the real failure mode a live GLM probe hit
+    // (VPJ-76, wiki-real-model-probe-20260915), where the model kept
+    // varying its Chinese wording each round without ever landing on a
+    // query the model itself would recognize as "the same," so the
+    // duplicate check never fired and it never converged on an answer.
+    const novel = hits.some((hit) => !seenPageKeys.has(hit.pageKey));
+    hits.forEach((hit) => seenPageKeys.add(hit.pageKey));
+    rounds.push({ query: normalizedQuery, duplicate, hits, novel });
   }
   return { kind: "budget_exhausted", rounds: input.maxRounds, queries: orderedQueries, usage };
 }
@@ -122,7 +132,7 @@ function addUsage(total: { inputTokens: number; outputTokens: number; totalToken
   total.inputTokens += usage.inputTokens; total.outputTokens += usage.outputTokens; total.totalTokens += usage.totalTokens;
 }
 
-function buildRoundPrompt(question: string, locale: "zh" | "en", rounds: readonly RoundLog[]): string {
+function buildRoundPrompt(question: string, locale: "zh" | "en", rounds: readonly RoundLog[], isFinalRound: boolean): string {
   const lines: string[] = [`Traveler's question (locale: ${locale}): ${JSON.stringify(question)}`];
   const recent = rounds.slice(-MAX_ROUNDS_IN_TRANSCRIPT);
   if (rounds.length > recent.length) lines.push(`(${rounds.length - recent.length} earlier round(s) omitted from this transcript; do not repeat their queries.)`);
@@ -132,6 +142,11 @@ function buildRoundPrompt(question: string, locale: "zh" | "en", rounds: readonl
       lines.push(`Round ${roundNumber} search: query=${JSON.stringify(entry.query)} -- duplicate of an earlier query in this session, no new search was run.`);
     } else if (entry.hits.length === 0) {
       lines.push(`Round ${roundNumber} search: query=${JSON.stringify(entry.query)} -- no results found.`);
+    } else if (!entry.novel) {
+      lines.push(`Round ${roundNumber} search: query=${JSON.stringify(entry.query)} -- every result was already surfaced by an earlier round's search, nothing new here even though the query wording differs:`);
+      entry.hits.forEach((hit, hitIndex) => {
+        lines.push(`  [${hitIndex + 1}] pageKey=${hit.pageKey}: ${excerpt(hit.text)}`);
+      });
     } else {
       lines.push(`Round ${roundNumber} search: query=${JSON.stringify(entry.query)} -- results:`);
       entry.hits.forEach((hit, hitIndex) => {
@@ -139,9 +154,16 @@ function buildRoundPrompt(question: string, locale: "zh" | "en", rounds: readonl
       });
     }
   });
-  lines.push(rounds.length === 0
-    ? "Decide: search first, or answer now only if you are certain no search is needed."
-    : "Decide: search again with a new query, or give your final answer now.");
+  const lastRoundHadNoNewEvidence = rounds.length > 0 && !rounds[rounds.length - 1].novel;
+  if (isFinalRound) {
+    lines.push("This is your final round -- there is no round after this one. Rephrasing the query again risks running out of rounds without ever answering the traveler at all. Strongly prefer answering now (coverage \"partial\" or \"no_content\" is an honest, complete answer; running out of rounds is not) over one more search.");
+  } else if (lastRoundHadNoNewEvidence) {
+    lines.push("Your last search (even with different wording) surfaced no page you haven't already seen. Rephrasing again is unlikely to help -- consider answering now with what you have, rather than continuing to vary the query.");
+  } else {
+    lines.push(rounds.length === 0
+      ? "Decide: search first, or answer now only if you are certain no search is needed."
+      : "Decide: search again with a new query, or give your final answer now.");
+  }
   const prompt = lines.join("\n");
   return prompt.length > MAX_PROMPT_LENGTH ? prompt.slice(0, MAX_PROMPT_LENGTH) : prompt;
 }

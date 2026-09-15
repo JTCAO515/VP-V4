@@ -104,3 +104,38 @@ test("usage accumulates across multiple rounds", async () => {
   assert.equal(outcome.kind, "answered");
   assert.equal(outcome.usage.totalTokens, 60);
 });
+
+test("a rephrased (non-identical) query that surfaces no page beyond what's already been seen is flagged as no-new-evidence, distinct from an exact duplicate", async () => {
+  // maxRounds: 4 so the no-new-evidence round (round 3) is not itself the
+  // final round -- final-round guidance takes priority when both apply,
+  // exercised separately below.
+  let thirdRoundBody;
+  let call = 0;
+  const fetch = async (_url, options) => {
+    call += 1;
+    if (call === 3) { thirdRoundBody = JSON.parse(options.body); return chatResponse(answer); }
+    // Different wording each round, but both hit the same (only) corpus entry -- no exact duplicate, but no new evidence either.
+    return chatResponse({ action: "search", query: call === 1 ? "museum hours" : "museum opening time" });
+  };
+  const outcome = await runWikiSearchJob({ ...baseInput, maxRounds: 4 }, { ...deps, fetch }, new AbortController().signal);
+  assert.equal(outcome.kind, "answered");
+  assert.equal(outcome.rounds, 3);
+  assert.deepEqual(outcome.queries, ["museum hours", "museum opening time"]);
+  assert.match(thirdRoundBody.messages[1].content, /every result was already surfaced by an earlier round's search/, "the round-2 entry itself is labeled as no-new-evidence");
+  assert.doesNotMatch(thirdRoundBody.messages[1].content, /duplicate of an earlier query/, "not an exact duplicate -- a different message should explain the lack of new evidence");
+  assert.match(thirdRoundBody.messages[1].content, /Rephrasing again is unlikely to help/);
+});
+
+test("the final round's prompt tells the model there is no round after this one, distinct from an ordinary mid-loop round", async () => {
+  let finalRoundBody;
+  const fetch = async (_url, options) => {
+    const body = JSON.parse(options.body);
+    if (body.messages[1].content.includes("final round")) { finalRoundBody = body; return chatResponse(answer); }
+    return chatResponse({ action: "search", query: "x" });
+  };
+  const outcome = await runWikiSearchJob({ ...baseInput, maxRounds: 2 }, { ...deps, fetch }, new AbortController().signal);
+  assert.equal(outcome.kind, "answered");
+  assert.equal(outcome.rounds, 2);
+  assert.match(finalRoundBody.messages[1].content, /This is your final round/);
+  assert.match(finalRoundBody.messages[1].content, /running out of rounds is not/);
+});

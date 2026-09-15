@@ -241,12 +241,48 @@ What's still not done, in roughly the order a next slice would tackle it:
 - **No frozen zh/en question-family or qrels evaluation set** — VPJ-76's
   own required acceptance step, not started.
 
+## Search loop convergence + CJK retrieval fix (2026-09-15, after the real model probe)
+
+Two real, distinct bugs the real model probe (above) found, both fixed
+and both re-verified against a real model on the exact questions that
+originally failed. Full detail:
+`artifacts/VPJ-76/wiki-search-convergence-20260915/verification.md`.
+
+- **Loop convergence** (`wiki-search-job.ts`): duplicate-query detection
+  only caught an *exact* repeated query string. A real GLM probe kept
+  rephrasing its Chinese query every round without ever repeating one
+  verbatim, so the "stop and answer" signal never fired. Fixed by
+  tracking which corpus pages have been surfaced across *all* rounds
+  (`seenPageKeys`), independent of exact query matching -- a round that
+  surfaces no page beyond what's already seen is now labeled distinctly
+  from an exact duplicate, and the final round explicitly tells the model
+  there's no round after it.
+- **CJK retrieval** (`search-index.ts`): `tokenize()` used to
+  `split(/\s+/)`. Chinese has no spaces, so an entire Chinese passage
+  became one giant token that could never match a short query --
+  independent of the loop bug, and it's why the *first* real retest of the
+  loop fix still came back `no_content` on a question the corpus could
+  answer. Fixed with adjacent-character bigram tokenization for CJK text
+  (the same lightweight approach Lucene's `CJKAnalyzer` uses); the
+  exact-phrase bonus stays English-only by design (documented, not
+  silently broken).
+- **Real re-verification**: the same two Chinese questions that hit
+  `budget_exhausted` in the original probe now both converge to a real,
+  honest answer (`partial` with 3 verbatim-verified citations and 2 honest
+  gaps; `no_content` with an honest "nothing relevant found," not a
+  fabricated or misapplied answer) within the round budget.
+- Fixture regressions: `wiki-search-job.test.mjs` 12/12 (2 new),
+  `wiki-search-index.test.mjs` 11/11 (4 new, including one that documents
+  bigram overlap is intentionally coarse-grained, not eliminated).
+  429/429 full contract suite, no regressions.
+
 ## Verification
 
 Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),
 `wiki-published-corpus-20260915/` (slice 2), `wiki-grounded-search-20260915/`
 (slice 3), `wiki-reason-codes-20260915/` (slice 4), `wiki-research-corpus-20260915/`
-(slice 5), `wiki-real-model-probe-20260915/` (real model probe, above). As
-of slice 5: 423/423 full contract suite, no regressions;
+(slice 5), `wiki-real-model-probe-20260915/` (real model probe),
+`wiki-search-convergence-20260915/` (convergence + CJK fix, above). As of
+the convergence fix: 429/429 full contract suite, no regressions;
 `pnpm lint`/`typecheck`/`docs:check` clean. No database migration in any
 slice — nothing built so far is persisted.
