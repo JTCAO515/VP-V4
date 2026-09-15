@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { completeWikiGenerationJob } from '../../../lib/server/jobs/wiki-generation-complete.ts';
 import { runWikiGenerationJob } from '../../../lib/server/jobs/wiki-generation-job.ts';
-const metadata = {operationId:'11111111-1111-4111-8111-111111111111',jobId:'22222222-2222-4222-8222-222222222222',expectedVersion:2,sourceRevisionIds:['33333333-3333-4333-8333-333333333333'],statementRefs:[],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),generatedAt:'2026-09-14T00:00:00Z',changeNote:'A new draft'};
+const metadata = {operationId:'11111111-1111-4111-8111-111111111111',jobId:'22222222-2222-4222-8222-222222222222',claimToken:'44444444-4444-4444-8444-444444444444',expectedVersion:2,sourceRevisionIds:['33333333-3333-4333-8333-333333333333'],statementRefs:[],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),generatedAt:'2026-09-14T00:00:00Z',changeNote:'A new draft'};
 test('worker output including >400 character body and all gaps reaches complete intact; retry keeps original receipt identity', async () => {
   const output={summary:'中'.repeat(600),gaps:['甲'.repeat(160),'An unresolved condition.']};
   let network=0;
@@ -17,9 +17,9 @@ test('worker output including >400 character body and all gaps reaches complete 
   assert.equal(calls[0].input.p_input.outcome.costTokens,210);
   assert.equal(calls[0].input.p_input.outcome.changeNote,metadata.changeNote);
 });
-test('failure/cancel outcomes do not manufacture body or known cost',async()=>{
+test('failure/cancel outcomes do not manufacture body or known cost, but do carry the fencing claimToken',async()=>{
   for(const outcome of [{kind:'failed',errorCode:'MODEL_OUTPUT_INVALID'},{kind:'cancelled'}]){
-    await completeWikiGenerationJob({call:async(_name,input)=>{assert.deepEqual(input.p_input.outcome,outcome);return {data:null,error:null};}},metadata,outcome);
+    await completeWikiGenerationJob({call:async(_name,input)=>{assert.deepEqual(input.p_input.outcome,{...outcome,claimToken:metadata.claimToken});return {data:null,error:null};}},metadata,outcome);
   }
 });
 test('invalid output cannot reach persistence even through an untyped caller',()=>{
