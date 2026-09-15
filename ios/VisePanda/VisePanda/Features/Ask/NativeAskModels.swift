@@ -246,3 +246,42 @@ struct NativeGroundedResult: Decodable, Equatable {
         return 30 - elapsed
     }
 }
+
+/// VPJ-76 (#360) slice 9: the reply shape of `POST .../turns/{turnId}/ai-assist`
+/// (lib/server/turn/native-ai-assist-http.ts), the iOS counterpart of the Web
+/// route built in slice 8. This is a non-authoritative, real-time,
+/// user-triggered supplement offered only when the reviewed answer above it
+/// is genuinely `blocked` -- it is never persisted and never as reliable as
+/// `NativeGroundedResult`, so validation here stays lighter than that
+/// model's closed-schema checks.
+struct NativeAiAssistReply: Decodable { let data: NativeAiAssistStatus }
+
+struct NativeAiAssistOutcome: Decodable, Equatable {
+    let kind: String
+    var summary: String? = nil
+    var gaps: [String]? = nil
+    var reason: String? = nil
+}
+
+struct NativeAiAssistStatus: Decodable, Equatable {
+    let status: String
+    var reason: String? = nil
+    var errorCode: String? = nil
+    var outcome: NativeAiAssistOutcome? = nil
+    var valid: Bool {
+        switch status {
+        case "not_offered": return ["unauthorized", "not_blocked", "job_unavailable"].contains(reason ?? "") && outcome == nil && errorCode == nil
+        case "pending", "cancelled": return reason == nil && outcome == nil && errorCode == nil
+        case "failed": return reason == nil && outcome == nil
+        case "succeeded":
+            guard let outcome, reason == nil, errorCode == nil else { return false }
+            switch outcome.kind {
+            case "answered": return outcome.summary != nil && !(outcome.summary?.isEmpty ?? true)
+            case "unavailable": return ["missing_content", "retrieval_miss", "user_input_missing", "capability_unsupported", "policy_denied", "provider_failure"].contains(outcome.reason ?? "")
+            case "budget_exhausted", "cancelled": return true
+            default: return false
+            }
+        default: return false
+        }
+    }
+}

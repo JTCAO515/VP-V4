@@ -23,6 +23,9 @@ final class NativeAskStore {
     private var operation: UUID?
     private var eventRead: UUID?
     private var eventCursors: [String: Int] = [:]
+    enum AiAssistState: Equatable { case loading, done(NativeAiAssistStatus), error }
+    private(set) var aiAssist: [String: AiAssistState] = [:]
+    private var aiAssistTokens: [String: UUID] = [:]
     let mode: NativeAskMode
     private var base: String { mode.base }
     enum Intent: Equatable {
@@ -94,6 +97,7 @@ final class NativeAskStore {
         intent = mode.usesTask ? .restoring : .newGoal; boundNotice = nil; pendingNotice = nil; pendingAcknowledged = false
         groundedDeadline = 0
         eventRead = nil; eventCursors = [:]
+        aiAssist = [:]; aiAssistTokens = [:]
         scope = next; operation = nil; policy = nil; turns = []; pending = nil; draft = ""; busy = false; notice = nil
     }
 
@@ -102,7 +106,43 @@ final class NativeAskStore {
     func suspendReads() {
         groundedDeadline = 0
         eventRead = nil
+        aiAssist = [:]; aiAssistTokens = [:]
         operation = nil; busy = false; policy = nil; turns = []; notice = nil
+    }
+
+    /// Real-time, non-persisted, user-triggered supplement (VPJ-76 slice 9),
+    /// offered only under a turn the reviewed resolver itself judged
+    /// 'blocked'. Deliberately outside `perform()` -- like `receiveEvents`,
+    /// it must not hold the store's single `busy` operation slot for the
+    /// several seconds a real agentic search round trip can take, or every
+    /// other Ask action (send, cancel, reload) would freeze for its duration.
+    /// One in-flight run per turn, fenced by its own token map rather than
+    /// `operation`/`ensure()`, exactly like `eventRead` fences `receiveEvents`.
+    func runAiAssist(_ turnId: String, using session: NativeSession) async {
+        guard mode == .grounded, !busy, UUID(uuidString: turnId) != nil,
+              turns.contains(where: { $0.id == turnId }), let current = scope, session.dataScope == current else { return }
+        let token = UUID(); aiAssistTokens[turnId] = token
+        aiAssist[turnId] = .loading
+        for _ in 0..<20 {
+            guard !Task.isCancelled, aiAssistTokens[turnId] == token, scope == current, session.dataScope == current else { return }
+            do {
+                let data = try await session.askRequest(path: base + "/turns/\(turnId)/ai-assist", method: "POST", body: Data("{}".utf8))
+                guard aiAssistTokens[turnId] == token, scope == current, session.dataScope == current else { return }
+                let reply = try JSONDecoder().decode(NativeAiAssistReply.self, from: data)
+                guard reply.data.valid else { aiAssist[turnId] = .error; return }
+                if reply.data.status == "pending" {
+                    try await Task.sleep(for: .seconds(1.5))
+                    continue
+                }
+                aiAssist[turnId] = .done(reply.data)
+                return
+            } catch {
+                guard !Task.isCancelled, aiAssistTokens[turnId] == token else { return }
+                aiAssist[turnId] = .error
+                return
+            }
+        }
+        if aiAssistTokens[turnId] == token { aiAssist[turnId] = .error }
     }
 
     func reload(using session: NativeSession) async {
