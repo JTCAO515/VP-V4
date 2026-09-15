@@ -339,6 +339,77 @@ in a fixture. Full detail:
 Not built: any UI/product caller (iOS, Web, the durable text worker),
 persistence of the AI-assisted result.
 
+## Slice 8 (2026-09-15): the real Web trigger
+
+Slice 7 built the integration point but wired it to nothing -- no real
+request could ever reach `runGroundedAiAssist`. JT asked to connect UI next
+(iOS and/or Web), and settled two real decisions before any code was
+written:
+
+1. **Execution model**: queued + polling/SSE, not a single synchronous
+   request. The agentic search loop can take several rounds and tens of
+   seconds; holding one HTTP request open for that long risks a timeout
+   and loses all progress on a dropped connection.
+2. **Scope**: Web first, iOS as a deliberate follow-up -- the two clients
+   need separate loading/error/copy design and shouldn't be built, and
+   tested, in one pass.
+
+**No cron or worker process exists anywhere in this codebase** (the one
+exception, `lib/server/jobs/run-staging-text-worker.mjs`, is a manually
+invoked local script). Rather than inventing one, this slice uses a
+pull-driven job: whichever request first observes a job as claimable
+(freshly created, or `running` past a 2-minute staleness window) claims it
+and runs the search itself before responding. A concurrent second request
+sees `pending` and polls again rather than double-running the search. This
+reuses the exact `claim_token` fencing pattern VPJ-75 added for
+`wiki_generation_jobs` (`supabase/migrations/20260915180000_vpj_75_wiki_job_reclaim.sql`):
+a completion must present the exact token its own claim returned, so a
+reclaimed-away attempt can never overwrite a fresher one.
+
+What got built:
+
+- `turn_private.grounded_ai_assist_jobs` (new migration): one row per
+  turn, `status` in `queued|running|succeeded|failed|cancelled`,
+  `claim_token`, `started_at`/`finished_at`, `outcome` jsonb.
+- `public.grounded_ai_assist_work_v1(p_input jsonb)`: single dispatcher,
+  action-routed (`ensure` / `complete`), mirroring
+  `ops_wiki_generation_v1`'s claim/complete shape. Authorization is
+  **`turn_private.text_owner()` / `turn_private.lock_turn()`** -- the same
+  chain `read_grounded_ai_assist_context_v1` already uses -- deliberately
+  not `knowledge_review_private.current_actor()` (Ops-only, raises
+  `OPS_FORBIDDEN` for anyone not staff). The caller here is the traveler
+  who owns the turn, not an operator.
+- `lib/server/knowledge/wiki/grounded-ai-assist-job.ts`,
+  `runGroundedAiAssistJob`: calls `ensure`, and if it claimed the job,
+  runs `runGroundedAiAssist` (slice 7) and calls `complete` with the real
+  outcome (or a `failed` outcome if the search loop itself throws) --
+  never losing a claim on an unexpected error.
+- `app/api/chat/grounded/ai-assist/route.ts`: cookie-identity Web route,
+  mirroring `app/api/chat/grounded/route.ts`'s auth exactly. The client
+  (`SavedAnswers.tsx`) calls this repeatedly until it sees a terminal
+  status.
+- `SavedAnswers.tsx`: a button appears only under a `blocked`-family
+  notice (the reviewed answer itself found nothing). Its result is always
+  labeled "AI-generated, not reviewed" -- visually and textually distinct
+  from the reviewed answer above it, never presented as an equally
+  authoritative result.
+
+Verified against a **real database** (native PostgreSQL 16, all 59
+migrations replayed, a full real `submit_grounded_turn` →
+`claim_grounded_work` → `authorize_grounded_dispatch` →
+`complete_grounded_work` round trip building a genuinely blocked turn): 10
+real scenarios -- first claim, concurrent pending, non-owner denial
+(no jobId/claimToken leaked), wrong-claimToken rejection, correct
+completion, post-completion replay without re-running the search, a
+forced-stale reclaim minting a fresh token, the reclaimed-away token's
+late completion rejected, a real non-blocked (`clarification`) turn never
+creating a job row, and Ops membership granting no special access to
+another traveler's turn. Full detail:
+`artifacts/VPJ-76/wiki-grounded-ai-assist-web-20260915/verification.md`.
+
+Not built: iOS UI wiring (a deliberate next step, not this slice),
+persistence of the AI-assisted result (unchanged from slice 7's decision).
+
 ## Verification
 
 Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),
@@ -347,8 +418,10 @@ Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),
 (slice 5), `wiki-real-model-probe-20260915/` (real model probe),
 `wiki-search-convergence-20260915/` (convergence + CJK fix),
 `wiki-place-questions-20260915/` (slice 6),
-`wiki-grounded-turn-integration-20260915/` (slice 7, above). As of slice
-7: 437/437 full contract suite, no regressions;
-`pnpm lint`/`typecheck`/`docs:check` clean. Slice 7 is the first migration
-in this thread of work — one new read-only RPC, verified against a real
-Postgres instance; every other slice remained migration-free.
+`wiki-grounded-turn-integration-20260915/` (slice 7),
+`wiki-grounded-ai-assist-web-20260915/` (slice 8, above). As of slice 8:
+446/446 full contract suite, no regressions; `pnpm lint`/`typecheck`/
+`docs:check` clean. Slices 7 and 8 are the only two in this thread of work
+that add a migration — one new read-only RPC (7) and one new table plus
+dispatcher RPC (8), both verified against a real Postgres instance; every
+other slice remained migration-free.

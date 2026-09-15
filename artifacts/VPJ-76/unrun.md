@@ -45,22 +45,38 @@ First slice (agentic search loop mechanism) — see
   Not yet wired to `runGroundedWikiSearch` or exposed anywhere an operator
   could actually trigger a research search -- this is the corpus adapter
   only.
-- ~~Ask-path integration~~ **DONE at the database level (slice 7), not
-  wired into any UI.** `public.read_grounded_ai_assist_context_v1` (new
-  migration) is a real, database-verified integration point into
-  `grounded-turn/1`: it reuses `read_grounded_turn()`'s exact owner/
-  session/policy authorization chain and only returns real context when
-  the fixed-claims resolver's own `original_outcome` is genuinely
-  `'blocked'` -- never as a bypass of an answered/partial result. Verified
-  against a real Postgres instance (56 migrations, a full real
-  submit→claim→authorize→complete round trip) that this gate holds for
-  both a real blocked turn and a real non-blocked one (`clarification`),
-  and that a non-owner gets nothing. `runGroundedAiAssist`
-  (`lib/server/knowledge/wiki/grounded-ai-assist.ts`) calls that RPC and
-  hands off to `runGroundedWikiSearch`. Still not called from iOS, the Web
-  reader, or the durable text worker -- this is the integration point a
-  future UI action would invoke, not the UI wiring itself. Not persisted
-  by design for this slice.
+- ~~Ask-path integration~~ **DONE at the database level (slice 7).**
+  `public.read_grounded_ai_assist_context_v1` (new migration) is a real,
+  database-verified integration point into `grounded-turn/1`: it reuses
+  `read_grounded_turn()`'s exact owner/session/policy authorization chain
+  and only returns real context when the fixed-claims resolver's own
+  `original_outcome` is genuinely `'blocked'` -- never as a bypass of an
+  answered/partial result. Verified against a real Postgres instance (56
+  migrations, a full real submit→claim→authorize→complete round trip)
+  that this gate holds for both a real blocked turn and a real
+  non-blocked one (`clarification`), and that a non-owner gets nothing.
+  `runGroundedAiAssist` (`lib/server/knowledge/wiki/grounded-ai-assist.ts`)
+  calls that RPC and hands off to `runGroundedWikiSearch`.
+- ~~Web UI wiring~~ **DONE (slice 8).** See
+  `wiki-grounded-ai-assist-web-20260915/verification.md`. A durable,
+  owner-scoped, pull-driven job (`turn_private.grounded_ai_assist_jobs` +
+  `public.grounded_ai_assist_work_v1`, fenced by `claim_token` exactly
+  like VPJ-75's job reclaim) plus a cookie-authenticated Web route
+  (`app/api/chat/grounded/ai-assist/route.ts`) and a button in
+  `SavedAnswers.tsx` that appears only under a `blocked`-family notice,
+  polls to a terminal status, and renders the result with an explicit
+  "AI-generated, not reviewed" disclaimer. 10 real-database scenarios
+  verified: claim, concurrent-poller pending, non-owner denial, wrong-
+  and correct-claimToken completion, a forced stale reclaim with a fresh
+  fencing token and the old token's late completion rejected, a real
+  non-blocked turn never creating a job row, and Ops membership granting
+  no special access. The route's env-based provider gate
+  (`VISEPANDA_GROUNDED_AI_ASSIST` + provider/credential env vars) is
+  unset in every environment -- no deployment has wired a live model
+  credential to this path yet, matching every other real-model call in
+  this codebase. **iOS wiring is still not done** -- deliberately, per
+  JT's own instruction to do Web first this round. Not persisted by
+  design, unchanged from slice 7.
 - ~~Place question support~~ **DONE.** See
   `wiki-place-questions-20260915/verification.md`.
   `place_address`/`place_opening_hours`/`place_address_and_hours` route
@@ -92,10 +108,13 @@ First slice (agentic search loop mechanism) — see
   is intentionally smaller.
 - **Frozen zh/en question-family/qrels evaluation set** — VPJ-76's own
   required acceptance step, not started.
-- **Real iOS/Web readback** of any answer this loop produces.
+- **Real iOS readback** of any answer this loop produces (slice 8 did Web
+  only, deliberately).
 
 #360 remains OPEN. The retrieval/loop mechanism, real product-knowledge
 connection, intent→search glue, the required six-way reason taxonomy, and
-a real research-knowledge connection all exist and are tested; none of it
-is actually invoked by any real product or Ops surface yet, and evaluation
-work that VPJ-76 requires for closure has not started.
+a real research-knowledge connection all exist and are tested; the Web
+surface now has a real, database-verified trigger path (slice 8), though
+no deployment has wired a live model credential to it yet. iOS is not
+wired, and evaluation work that VPJ-76 requires for closure has not
+started.
