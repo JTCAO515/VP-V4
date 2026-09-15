@@ -45,14 +45,22 @@ First slice (agentic search loop mechanism) — see
   Not yet wired to `runGroundedWikiSearch` or exposed anywhere an operator
   could actually trigger a research search -- this is the corpus adapter
   only.
-- ~~Ask-path integration~~ **PARTIALLY DONE.** `runGroundedWikiSearch`
-  (`lib/server/knowledge/wiki/grounded-search.ts`) takes an already-
-  recognized `KnowledgeIntent` (from the existing `knowledge_intent_v1`
-  path) plus a `city` (from existing Trip context) and drives the whole
-  chain: intent → scene → published corpus → search loop. Still not
-  actually called from `grounded-turn/1`, the durable text worker, iOS, or
-  the Web reader -- this is the glue function, not the wiring into any of
-  those.
+- ~~Ask-path integration~~ **DONE at the database level (slice 7), not
+  wired into any UI.** `public.read_grounded_ai_assist_context_v1` (new
+  migration) is a real, database-verified integration point into
+  `grounded-turn/1`: it reuses `read_grounded_turn()`'s exact owner/
+  session/policy authorization chain and only returns real context when
+  the fixed-claims resolver's own `original_outcome` is genuinely
+  `'blocked'` -- never as a bypass of an answered/partial result. Verified
+  against a real Postgres instance (56 migrations, a full real
+  submit→claim→authorize→complete round trip) that this gate holds for
+  both a real blocked turn and a real non-blocked one (`clarification`),
+  and that a non-owner gets nothing. `runGroundedAiAssist`
+  (`lib/server/knowledge/wiki/grounded-ai-assist.ts`) calls that RPC and
+  hands off to `runGroundedWikiSearch`. Still not called from iOS, the Web
+  reader, or the durable text worker -- this is the integration point a
+  future UI action would invoke, not the UI wiring itself. Not persisted
+  by design for this slice.
 - ~~Place question support~~ **DONE.** See
   `wiki-place-questions-20260915/verification.md`.
   `place_address`/`place_opening_hours`/`place_address_and_hours` route
