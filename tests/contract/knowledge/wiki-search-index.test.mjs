@@ -46,3 +46,37 @@ test("rejects an empty or overlong query", () => {
 test("empty corpus returns no results without throwing", () => {
   assert.deepEqual(searchWikiCorpus([], "metro"), []);
 });
+
+// CJK text has no spaces to split on -- these reproduce the real gap a real
+// GLM probe hit (VPJ-76, wiki-real-model-probe-20260915): a query and a
+// passage that both plainly discuss the same thing, in Chinese, matched
+// nothing before adjacent-character bigram tokenization was added.
+const zhCorpus = Object.freeze([
+  { pageKey: "source_summary:metro", text: "上海地铁车票可以在车站自助售票机购买单程纸质票，也可以充值到可重复使用的上海公共交通卡。外国银行卡在自助售票机上不能使用。" },
+  { pageKey: "source_summary:museum", text: "上海博物馆参观需要出示有效身份证件，12岁以下儿童可以豁免。" },
+]);
+
+test("a real multi-word Chinese query (as an actual model produced, VPJ-76 probe) matches the relevant Chinese passage", () => {
+  const hits = searchWikiCorpus(zhCorpus, "上海地铁 购票 外国信用卡");
+  assert.equal(hits.length > 0, true);
+  assert.equal(hits[0].pageKey, "source_summary:metro");
+});
+
+test("a short Chinese query still ranks the passage that actually discusses it above an unrelated one", () => {
+  const hits = searchWikiCorpus(zhCorpus, "身份证件", 2);
+  assert.equal(hits[0].pageKey, "source_summary:museum");
+});
+
+test("an unrelated Chinese query against a Chinese corpus returns no results, not a spurious whole-sentence match", () => {
+  assert.deepEqual(searchWikiCorpus(zhCorpus, "火山爆发预警系统"), []);
+});
+
+test("bigram overlap is coarse-grained by design: sharing one common two-character word (e.g. 交通) produces a low-scoring hit, not silence and not a false top rank", () => {
+  // Real-world edge case found while writing this test: "重庆轨道交通" and "上海公共交通卡"
+  // share the bigram "交通" even though the topics are unrelated -- an accepted
+  // limitation of unigram/bigram CJK tokenization, not a bug to suppress here.
+  const hits = searchWikiCorpus(zhCorpus, "重庆轨道交通实名预约");
+  assert.equal(hits.length, 1);
+  assert.equal(hits[0].pageKey, "source_summary:metro");
+  assert.equal(hits[0].score, 1);
+});

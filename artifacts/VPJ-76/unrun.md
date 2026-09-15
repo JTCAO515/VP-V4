@@ -4,25 +4,29 @@ First slice (agentic search loop mechanism) — see
 `wiki-agentic-search-20260915/verification.md` and
 `docs/contracts/wiki-agentic-search.md`.
 
-- ~~Round-based agentic search loop mechanism~~ **DONE, fixture-verified
-  only.** `runWikiSearchJob` correctly bounds rounds via `CostGuard`,
-  detects and reports duplicate queries without re-searching, accumulates
-  usage, and returns a closed-schema outcome. Not verified against a real
-  model.
-- ~~Real model call~~ **REAL EVIDENCE, mixed results, not a benchmark.**
-  See `wiki-real-model-probe-20260915/verification.md`. 1 real success out
-  of 4 real GLM-5.3-flash runs (Qwen unreachable from this sandbox --
-  network allowlist; DeepSeek failed on a stale configured model id,
-  `MODEL_PROFILES.deepseek_flash.providerModelId`, flagged separately, not
-  fixed here): one English question searched then answered correctly from
-  real retrieved content, with verbatim-verified citations and a genuine
-  gap. Two Chinese questions both `budget_exhausted` instead of
-  answering -- the model kept rephrasing its query each round rather than
-  answering from sufficient evidence or triggering this loop's
-  exact-string duplicate detection, a real quality gap distinct from the
-  protocol/config findings. VPJ-76's "at least one zh/en answered/partial
-  pair" is met on the English side, not the Chinese side, by real evidence
-  so far.
+- ~~Round-based agentic search loop mechanism~~ **DONE.** `runWikiSearchJob`
+  correctly bounds rounds via `CostGuard`, detects and reports both exact
+  duplicate queries and rephrased-but-no-new-evidence queries without
+  re-searching, tells the model explicitly when it's on the final round,
+  accumulates usage, and returns a closed-schema outcome. Fixture-verified
+  and now also real-model-verified (below).
+- ~~Real model call~~ **REAL EVIDENCE, both original findings fixed and
+  re-verified.** See `wiki-real-model-probe-20260915/verification.md` and
+  `wiki-search-convergence-20260915/verification.md`. Original probe: 1
+  real success out of 4 real GLM-5.3-flash runs (Qwen unreachable from
+  this sandbox -- network allowlist; DeepSeek failed on a stale configured
+  model id, `MODEL_PROFILES.deepseek_flash.providerModelId`, flagged
+  separately, not fixed here) -- one English question answered correctly;
+  two Chinese questions both `budget_exhausted`, exposing two real bugs:
+  (1) this loop's duplicate detection only caught exact-string repeats,
+  not a model rephrasing its query every round, and (2) `search-index.ts`'s
+  CJK tokenization was broken (whitespace-split on text with no
+  whitespace), so Chinese retrieval silently returned nothing regardless
+  of (1). Both fixed; the same two Chinese questions that originally
+  failed now both converge to a real, honest answer (`partial` with real
+  verbatim citations; `no_content` with an honest "nothing found," not a
+  fabrication) within the round budget. VPJ-76's "at least one zh/en
+  answered/partial pair" is now met on both sides by real evidence.
 - ~~Connection to real published Wiki content~~ **DONE for the product
   path.** `buildPublishedWikiCorpus` (`lib/server/knowledge/wiki/published-corpus.ts`)
   turns a real `knowledge_read_v1` response into a search corpus, reusing

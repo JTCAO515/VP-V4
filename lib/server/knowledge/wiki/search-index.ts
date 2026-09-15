@@ -43,12 +43,41 @@ function scoreEntry(text: string, terms: readonly string[]): number {
   // Exact-phrase bonus rewards a query that appears verbatim (normalized), not
   // just a bag-of-words overlap -- keeps a precise multi-word query from
   // scoring equally against a passage that merely shares one common word.
+  // Only meaningful for space-delimited (non-CJK) queries: CJK terms are
+  // bigrams joined with a space that never appears in the original
+  // unspaced text, so this is always 0 for a CJK query -- an accepted gap,
+  // not a bug; CJK ranking still works via the bigram-overlap count above.
   const phraseBonus = normalize(text).includes(normalize(terms.join(" "))) ? terms.length : 0;
   return matched.length + phraseBonus;
 }
 
+// CJK text has no spaces between words, so a plain split(/\s+/) turns an
+// entire Chinese sentence into one giant token that never matches a short
+// query -- a real gap found running a real GLM probe against real Chinese
+// questions (VPJ-76, wiki-real-model-probe-20260915): the corpus had the
+// answer, but every query came back with zero hits. Adjacent-character
+// bigrams (a common lightweight CJK tokenization, e.g. Lucene's
+// CJKAnalyzer) let a short multi-character query overlap with a longer
+// CJK passage without a real segmenter; ASCII/other text keeps the
+// original whitespace-delimited tokenization.
+const CJK = /[㐀-䶿一-鿿豈-﫿]/;
+
 function tokenize(value: string): readonly string[] {
-  return normalize(value).split(/\s+/).filter((token) => token.length > 1);
+  const tokens: string[] = [];
+  let ascii = "";
+  let cjk = "";
+  const flushAscii = () => { if (ascii) { tokens.push(...ascii.split(/\s+/).filter((token) => token.length > 1)); ascii = ""; } };
+  const flushCjk = () => {
+    if (cjk.length === 1) tokens.push(cjk);
+    else for (let i = 0; i < cjk.length - 1; i += 1) tokens.push(cjk.slice(i, i + 2));
+    cjk = "";
+  };
+  for (const ch of normalize(value)) {
+    if (CJK.test(ch)) { flushAscii(); cjk += ch; } else { flushCjk(); ascii += ch; }
+  }
+  flushAscii();
+  flushCjk();
+  return tokens;
 }
 
 function normalize(value: string): string {
