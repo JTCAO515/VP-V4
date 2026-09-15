@@ -88,11 +88,12 @@ takes an already-recognized `KnowledgeIntent` (from the existing
 `knowledge_intent_v1` path -- not re-implemented here) plus a `city`
 (from existing Trip context -- never free-text-recognized) and drives the
 full chain: `questionDefinition(intent)` → scene → `buildPublishedWikiCorpus`
-→ short-circuit to `no_content` if nothing is published (no wasted model
-call) → `runWikiSearchJob`.
+→ short-circuit if nothing is published (no wasted model call) →
+`runWikiSearchJob`. (Slice 4, below, is what actually names these
+outcomes with VPJ-76's required reason codes.)
 
 Place questions (`place_address`, `place_opening_hours`,
-`place_address_and_hours`) return `unsupported_intent`: `questionDefinition`
+`place_address_and_hours`) are unsupported here: `questionDefinition`
 needs a resolved `placeSubjectId` from place disambiguation (VPJ-19) that
 this module does not perform. Extending to place questions is a follow-up,
 not attempted here.
@@ -100,6 +101,44 @@ not attempted here.
 This is glue, not wiring: nothing in `grounded-turn/1`, the durable text
 worker, iOS, or the Web reader calls `runGroundedWikiSearch` yet. That
 integration is the next slice.
+
+## Slice 4 (2026-09-15): the required six-way reason taxonomy
+
+`GroundedSearchOutcome` now has exactly four top-level kinds: `answered`,
+`unavailable` (carrying `reason: missing_content | retrieval_miss |
+user_input_missing | capability_unsupported | policy_denied |
+provider_failure`), `budget_exhausted`, and `cancelled`. This replaces
+slice 3's ad-hoc `unsupported_intent`/`no_content`/`corpus_unavailable`
+kinds — a deliberate breaking change to a type this session introduced,
+with no real caller yet to break.
+
+Mapping decisions, and why:
+- `intent.intent === "clarification"` → `user_input_missing`. The
+  traveler's own question didn't give the intent classifier enough to
+  work with.
+- Any other unrecognized `questionDefinition` result (`unsupported`, or a
+  place question pending VPJ-19) → `capability_unsupported`. This
+  capability doesn't cover that kind of question yet -- a different
+  reason from the traveler needing to say more.
+- Empty corpus (`buildPublishedWikiCorpus` returns zero entries) →
+  `missing_content`. Nothing has ever been published for this scope.
+- The search loop actually ran, over a *non-empty* corpus, but returned
+  `coverage: "no_content"` → `retrieval_miss`, not `missing_content`.
+  Content exists; the loop didn't find anything relevant to this specific
+  question. This is the one case where an `answered`-shaped loop outcome
+  gets reclassified rather than passed through, since an empty-citation
+  "answer" isn't a real answer.
+- `knowledge_read_v1` returning the specific error `KNOWLEDGE_DISABLED` →
+  `policy_denied` (an operator switch, not a fault). Any other RPC error
+  or thrown exception → `provider_failure`.
+- A `failed` loop outcome (provider HTTP failure, malformed model output)
+  → `provider_failure`, with the underlying `errorCode` preserved as
+  `providerCode`.
+- `budget_exhausted` and `cancelled` are **not** folded into the six --
+  they're process outcomes (ran out of rounds; caller aborted), not
+  reasons a question can't be answered, and VPJ-76's taxonomy doesn't
+  claim to be exhaustive over every possible terminal state, only to keep
+  the six failure reasons themselves distinct.
 
 ## What this slice deliberately does not do
 
