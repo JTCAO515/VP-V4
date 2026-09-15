@@ -77,9 +77,8 @@ eligibility logic of its own.
 This still requires the caller to already know which `{city, scene,
 locale}` to ask for. Identifying that from a free-text question is intent
 recognition (the existing `knowledge_intent_v1` path) and is not built
-here. There is also still no research-index-vs-product-index separation:
-this always reads the product-eligible path, never an unpublished/research
-view.
+here. (Slice 5, below, is what actually adds the research-side counterpart
+to this product-side corpus.)
 
 ## Slice 3 (2026-09-15): intent → scene → corpus → search glue
 
@@ -140,48 +139,60 @@ Mapping decisions, and why:
   claim to be exhaustive over every possible terminal state, only to keep
   the six failure reasons themselves distinct.
 
-## What this slice deliberately does not do
+## Slice 5 (2026-09-15): research-index counterpart
 
-- **No real LLM call.** Every test uses an injected `fetch`; the loop
-  mechanism (rounds, duplicate handling, budget exhaustion, usage
-  accumulation, cancellation) is proven, but not "does a real Qwen/GLM/
-  DeepSeek model actually search well" — that needs an operator-authorized
-  real-provider run, same as VPJ-75's slices did before claiming semantic
-  quality.
-- **No place-question support.** Slice 3 (below) maps a recognized intent
-  to a scene, but place questions need place disambiguation (VPJ-19) this
-  module doesn't perform.
-- **No research-index-vs-product-index separation** (required by VPJ-76's
-  acceptance criteria) -- the corpus adapter always reads the
-  product-eligible path.
-- **No actual wiring into any product surface** -- `grounded-turn/1`, the
-  durable text worker, iOS, and the Web reader do not call any of this
-  yet.
-- **No Ask-path integration.** This is not wired into `grounded-turn/1`,
-  `knowledge_intent_v1`, iOS, or the lightweight Web reader. VPJ-76's
-  eventual acceptance needs a real zh/en round trip through those existing
-  consumers; this slice only builds the search primitive underneath.
-- **No missing_content/retrieval_miss/user_input_missing/capability_unsupported/
-  policy_denied/provider_failure reason-code separation** at the outcome
-  level — `WikiSearchJobOutcome` currently distinguishes `answered`
-  (with a `coverage` field covering the content-side cases),
-  `budget_exhausted`, `failed` (with a provider `errorCode`), and
-  `cancelled`. Mapping these onto VPJ-76's full six-way reason taxonomy is
-  a deliberate follow-up, not done here.
+`lib/server/knowledge/wiki/research-corpus.ts`, `buildResearchWikiCorpus`:
+the research-side counterpart to slice 2's product-side
+`buildPublishedWikiCorpus`, completing "一套知识，两个检索用途" (one set of
+knowledge, two retrieval purposes) from `docs/knowledge-upgrade/README.md`.
+Reads the same underlying pages through the existing Ops-only
+`ops_wiki_read_v1` RPC (VPJ-75 slice 3, already used by `/ops/wiki`)
+instead of `knowledge_read_v1` -- draft/unpublished/rejected content
+included, gated by that RPC's own `current_actor()` Ops-membership check,
+not a UI label. No new migration/RPC. Two calls per page (list, then each
+page's detail, since the list mode intentionally omits `draftContent`) --
+acceptable at the current small page count, not optimized here.
+
+Not yet wired to `runGroundedWikiSearch` or exposed anywhere an operator
+could actually trigger a research search -- this is the corpus adapter
+only, same status slice 2's product corpus had before slice 3 wired it up.
+
+## Current overall status (as of slice 5)
+
+What exists and is fixture-tested: the search loop (slice 1), a real
+product-knowledge corpus adapter (slice 2), the intent-to-search glue
+(slice 3), VPJ-76's required six-way reason taxonomy (slice 4), and a
+research-knowledge corpus adapter (slice 5).
+
+What's still not done, in roughly the order a next slice would tackle it:
+- **No real LLM call anywhere in this chain.** Every test across all five
+  slices uses an injected `fetch`/`rpc`; whether a real Qwen/GLM/DeepSeek
+  model actually searches well, cites correctly, and knows when to stop is
+  entirely unverified.
+- **No place-question support.** `questionDefinition` needs a resolved
+  `placeSubjectId` from place disambiguation (VPJ-19), which nothing here
+  performs -- place questions are `capability_unsupported`.
+- **The research corpus (slice 5) isn't connected to anything.** Nothing
+  calls `buildResearchWikiCorpus` + `runWikiSearchJob` together the way
+  `runGroundedWikiSearch` does for the product path.
+- **No actual wiring into any product or Ops surface** -- `grounded-turn/1`,
+  the durable text worker, iOS, the Web reader, and `/ops/wiki` do not call
+  any of this yet. VPJ-76's eventual acceptance needs a real zh/en round
+  trip through an existing consumer.
 - **No EvidencePack v2 schema** (required/background/missing/conflicts,
-  statement/publication/source/span, retrieval/ontology version, reason
-  code, safe trace ID) — `citations`/`gaps`/`coverage` here are a smaller,
+  statement/publication/source/span, retrieval/ontology version, safe
+  trace ID) — `citations`/`gaps`/`coverage`/`reason` here are a smaller,
   first-cut shape. Do not treat this as the final EvidencePack — see
   `docs/knowledge-upgrade/README.md`'s "产品检索与 EvidencePack v2" section
   for the full target shape.
-- **No frozen zh/en question-family or qrels evaluation set** — that is
-  VPJ-76's own required acceptance step once there is something real to
-  evaluate.
+- **No frozen zh/en question-family or qrels evaluation set** — VPJ-76's
+  own required acceptance step, not started.
 
 ## Verification
 
-See `artifacts/VPJ-76/wiki-agentic-search-20260915/verification.md`. Summary:
-17 new tests (`tests/contract/knowledge/wiki-search-index.test.mjs`,
-`tests/contract/knowledge/wiki-search-job.test.mjs`), all passing;
-395/395 full contract suite, no regressions; `pnpm lint`/`typecheck`/`docs:check`
-clean. No database migration in this slice — nothing here is persisted.
+Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),
+`wiki-published-corpus-20260915/` (slice 2), `wiki-grounded-search-20260915/`
+(slice 3), `wiki-reason-codes-20260915/` (slice 4), `wiki-research-corpus-20260915/`
+(slice 5). As of slice 5: 423/423 full contract suite, no regressions;
+`pnpm lint`/`typecheck`/`docs:check` clean. No database migration in any
+slice — nothing built so far is persisted.
