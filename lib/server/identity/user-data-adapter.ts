@@ -1264,6 +1264,20 @@ function createDataOperations(
       if (history.error) return { error: mapRpcFailure(history.error.message) };
       return { data: { ownerId: actor.data, policy: policy.data as unknown, history: history.data as unknown } };
     },
+    /**
+     * A single generic RPC seam bound to this cookie-authenticated user,
+     * handed to the caller rather than a named per-feature method -- the
+     * grounded-ai-assist job (VPJ-76 slice 8) is the one caller, and it
+     * needs to invoke several different RPCs (job dispatch, turn context,
+     * published-knowledge read) under the same authenticated actor rather
+     * than one fixed pair like every other method here.
+     */
+    async runGroundedAiAssist<T>(run: (rpc: (name: string, params: Record<string, unknown>) => Promise<{ data: unknown; error: { message: string } | null }>) => Promise<T>): Promise<AdapterResult<T>> {
+      const actor = await authenticated();
+      if ("error" in actor) return { error: "UNAUTHENTICATED" as const };
+      try { return { data: await run((name, params) => Promise.resolve(client.rpc(name, params))) }; }
+      catch { return { error: "INTERNAL_ERROR" as const }; }
+    },
     getUserProfile,
     saveUserProfile,
     listPrivacyRequests,

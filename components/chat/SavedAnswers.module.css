@@ -3,3 +3,4 @@
 .panel button{min-height:44px;padding:8px 18px;border:1px solid var(--vp-plum-900);border-radius:999px;background:var(--vp-cream-50);color:inherit;font:inherit;cursor:pointer}
 .panel article{padding-block:24px;border-bottom:1px solid var(--vp-butter-100)}.panel article:last-child{border-bottom:0}.panel summary{padding-block:10px;cursor:pointer}.panel a{color:inherit;text-decoration:underline}.panel ul{padding-inline-start:24px}.fact{padding-block:6px}.fact p{margin-block:8px}
 .body{position:relative;min-height:72px}.notice{position:absolute;inset-block-start:0;inset-inline:0}.hidden{visibility:hidden;pointer-events:none}
+.aiAssist{margin-block-start:8px;padding:12px 16px;border:1px dashed var(--vp-plum-700);border-radius:12px}.aiAssist small{color:var(--vp-plum-700)}

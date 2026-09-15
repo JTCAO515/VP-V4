@@ -6,6 +6,71 @@ import { savedAnswerCopy, savedAnswerNotice } from "@/lib/grounded/copy";
 import type { SavedHistory } from "@/lib/grounded/read-model";
 import styles from "./SavedAnswers.module.css";
 
+/** VPJ-76 (#360) slice 8: only offered where the reviewed answer itself found nothing. */
+const AI_ASSIST_NOTICES = new Set(["blocked", "placeBlocked", "connectivityBlocked", "paymentBlocked"]);
+type AiAssistOutcome =
+  | { kind: "answered"; coverage: "answered" | "partial"; summary: string; gaps: readonly string[] }
+  | { kind: "unavailable"; reason: string }
+  | { kind: "budget_exhausted" }
+  | { kind: "cancelled" };
+type AiAssistJobStatus =
+  | { status: "not_offered"; reason: string }
+  | { status: "pending" }
+  | { status: "succeeded"; outcome: AiAssistOutcome }
+  | { status: "failed"; errorCode: string | null }
+  | { status: "cancelled" };
+const REASON_COPY_KEY: Record<string, "aiAssistMissingContent" | "aiAssistRetrievalMiss" | "aiAssistUserInputMissing" | "aiAssistCapabilityUnsupported" | "aiAssistPolicyDenied" | "aiAssistProviderFailure"> = {
+  missing_content: "aiAssistMissingContent", retrieval_miss: "aiAssistRetrievalMiss", user_input_missing: "aiAssistUserInputMissing",
+  capability_unsupported: "aiAssistCapabilityUnsupported", policy_denied: "aiAssistPolicyDenied", provider_failure: "aiAssistProviderFailure",
+};
+
+function AiAssistPanel({ turnId, locale }: { turnId: string; locale: "zh" | "en" }) {
+  const language = savedAnswerCopy[locale];
+  const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const [result, setResult] = useState<AiAssistJobStatus | null>(null);
+  const alive = useRef(true);
+  useEffect(() => () => { alive.current = false; }, []);
+  async function run() {
+    setState("loading"); setResult(null);
+    for (let poll = 0; poll < 20; poll += 1) {
+      if (!alive.current) return;
+      let body: { data?: AiAssistJobStatus; error?: string } | null = null;
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 20_000);
+        const response = await fetch("/api/chat/grounded/ai-assist", {
+          method: "POST", credentials: "same-origin", cache: "no-store", signal: controller.signal,
+          headers: { "Content-Type": "application/json" }, body: JSON.stringify({ turnId }),
+        });
+        clearTimeout(timeout);
+        if (!response.ok && response.status !== 401 && response.status !== 503) throw new Error("request failed");
+        body = await response.json();
+      } catch { /* transient network error: keep polling within the loop budget */ }
+      if (!alive.current) return;
+      if (!body || body.error || !body.data) { setState("error"); return; }
+      if (body.data.status === "pending") { await new Promise(resolve => setTimeout(resolve, 1500)); continue; }
+      setResult(body.data); setState("done"); return;
+    }
+    if (alive.current) setState("error");
+  }
+  if (state === "idle") return <button type="button" onClick={() => void run()}>{language.aiAssistPrompt}</button>;
+  if (state === "loading") return <p role="status">{language.aiAssistLoading}</p>;
+  if (state === "error" || !result) return <p>{language.aiAssistUnavailable} <button type="button" onClick={() => void run()}>{language.aiAssistRetry}</button></p>;
+  if (result.status === "not_offered") return <p>{language.aiAssistNotOffered}</p>;
+  if (result.status === "cancelled") return <p>{language.aiAssistCancelled}</p>;
+  if (result.status === "failed") return <p>{language.aiAssistUnavailable} <button type="button" onClick={() => void run()}>{language.aiAssistRetry}</button></p>;
+  if (result.status !== "succeeded") return null;
+  const outcome = result.outcome;
+  if (outcome.kind === "budget_exhausted") return <p>{language.aiAssistBudgetExhausted}</p>;
+  if (outcome.kind === "cancelled") return <p>{language.aiAssistCancelled}</p>;
+  if (outcome.kind === "unavailable") return <p>{language[REASON_COPY_KEY[outcome.reason] ?? "aiAssistUnavailable"]}</p>;
+  return <div className={styles.aiAssist}>
+    <p>{outcome.summary}</p>
+    {outcome.gaps.length ? <><strong>{language.aiAssistGaps}</strong><ul>{outcome.gaps.map((gap, index) => <li key={index}>{gap}</li>)}</ul></> : null}
+    <small>{language.aiAssistDisclaimer}</small>
+  </div>;
+}
+
 export function SavedAnswers({ locale }: { locale: "zh" | "en" }) {
   const copy = savedAnswerCopy[locale];
   const [history, setHistory] = useState<SavedHistory | null>(null);
@@ -90,6 +155,7 @@ export function SavedAnswers({ locale }: { locale: "zh" | "en" }) {
             <small>{language.cities[turn.city as keyof typeof language.cities]} · {turn.locale === "zh" ? "中文" : "English"} · {turn.parentId ? language.parent : language.original}</small>
             <h3>{turn.input}</h3>
             {notice ? <p>{language[notice]}</p> : null}
+            {notice && AI_ASSIST_NOTICES.has(notice) ? <AiAssistPanel turnId={turn.id} locale={turn.locale} /> : null}
             {turn.unansweredNeeds?.length ? <div>
               <strong>{language.unanswered}</strong><p>{language.outsideScope}</p>
               <ul>{turn.unansweredNeeds.map(need => <li key={need}><q>{need}</q></li>)}</ul>
