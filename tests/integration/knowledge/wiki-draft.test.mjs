@@ -1,3 +1,4 @@
+import {runWikiStatementProposalJob} from "../../../lib/server/jobs/wiki-statement-proposal-job.ts";
 import http from "node:http";
 import {Readable} from "node:stream";
 import {handleOpsRequest} from "../../../lib/server/knowledge/review/http-workspace.ts";
@@ -192,6 +193,53 @@ test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACL
     }
   });
 
+  const proposalMigration=readFileSync('supabase/migrations/20260914150000_vpj_75_wiki_statement_proposals.sql','utf8');
+  await t.test('structured proposal migration rolls back without changing legacy bodies/receipts',async()=>{
+    await db(`update knowledge_review_private.members set active=true where actor_id='${author.id}';`);
+    const before=await call(author,'ops_wiki_read_v1',{pageKey});
+    await db('begin;'+proposalMigration+'rollback;');
+    assert.deepEqual(await call(author,'ops_wiki_read_v1',{pageKey}),before);
+    await db('begin;'+proposalMigration+'commit;');
+    assert.deepEqual(await completeWikiGenerationJob(rpc,completion,outcome),saved);
+  });
+  const proposalSourceId=uuid();const proposalSource={...source,sourceKey:'proposal_source',snippet:'😀 Shanghai museum: bring ID on entry unless exempt.'};
+  await db(`insert into knowledge_review_private.source_revisions(id,source_key,revision_label,declaration,snippet_hash,submitted_by) values('${proposalSourceId}','proposal_source','r1',${lit(JSON.stringify(proposalSource))},'${'d'.repeat(64)}','${author.id}');`);
+  const {sources:ignoredSources,...modelStatement}=statement;
+  const rawProposal={summary:'Synthetic museum entry requirements.',gaps:['Other cities are not covered.'],proposals:[{statement:modelStatement,evidence:[{sourceRevisionId:proposalSourceId,quote:'bring ID on entry unless exempt.'}]}]};
+  const proposalResult=await runWikiStatementProposalJob({dataClass:'c0_synthetic',sources:[{id:proposalSourceId,declaration:proposalSource}],configDigest:'a'.repeat(64),provider:{provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:uuid(),configurationVersion:1,timeoutMs:5000},maxOutputTokens:2048,timeoutMs:5000},{credential:()=> 'synthetic',recordDestination:async()=>{},fetch:async()=>Response.json({model:'qwen3.7-plus-2026-05-26',choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify(rawProposal)}}],usage:{prompt_tokens:30,completion_tokens:60,total_tokens:90}})},new AbortController().signal);
+  assert.equal(proposalResult.kind,'succeeded');
+  const proposalPageKey='source_summary:proposal_fixture';
+  const proposalClaim=await call(author,'ops_wiki_generation_v1',{...claim(proposalResult.inputDigest),pageKey:proposalPageKey,sourceRevisionIds:[proposalSourceId],promptVersion:'vp-wiki-statement-proposals-v1'});
+  const proposalCompletion={...metadata(proposalClaim),sourceRevisionIds:[proposalSourceId],promptVersion:'vp-wiki-statement-proposals-v1'};
+  await t.test('database rejects invented proposal source metadata, quote and Unicode offsets atomically',async()=>{
+    const base=proposalResult.output;const p=base.statementProposals[0];
+    for(const change of [
+      {...p,statement:{...p.statement,sources:[{...proposalSource,publisher:'Invented publisher'}]}},
+      {...p,evidence:p.evidence.map(e=>({...e,startOffset:e.startOffset+1,endOffset:e.endOffset+1}))},
+      {...p,evidence:p.evidence.map(e=>({...e,sourceRevisionId:sourceId}))},
+    ]){
+      const invalid={...proposalResult,output:{...base,statementProposals:[change]}};
+      await assert.rejects(completeWikiGenerationJob(rpc,{...proposalCompletion,operationId:uuid()},invalid),/INVALID_INPUT/);
+    }
+    assert.equal((await call(author,'ops_wiki_read_v1',{pageKey:proposalPageKey})).version,0);
+  });
+  let proposalRead;
+  await t.test('model protocol → exact quote binding → complete → restart → full proposal readback',async()=>{
+    const completed=await completeWikiGenerationJob(rpc,proposalCompletion,proposalResult);
+    assert.deepEqual(await completeWikiGenerationJob(rpc,proposalCompletion,proposalResult),completed);
+    control('stop','-m','fast','-w');running=false;start();
+    proposalRead=await call(author,'ops_wiki_read_v1',{pageKey:proposalPageKey});
+    assert.deepEqual(proposalRead.revisions[0].draftContent,proposalResult.output);
+    assert.equal(proposalRead.revisions[0].validationStatus,'draft');
+  });
+  await t.test('operator-edited model proposal retains its index and exact source without publication',async()=>{
+    const selected={...input,operationId:uuid(),candidateId:uuid(),wikiRevisionId:proposalRead.revisions[0].id,expectedWikiVersion:1,wikiProposalIndex:0,statement:proposalResult.output.statementProposals[0].statement,title:'Generated proposal for operator review'};
+    const submitted=await call(author,'ops_review_workspace',selected);
+    assert.equal(submitted.wikiOrigin.proposalIndex,0);assert.equal(submitted.wikiOrigin.method,'operator_statement');assert.equal(submitted.published,false);
+    assert.deepEqual(submitted.statement.sources,[proposalSource]);
+    await assert.rejects(call(author,'ops_review_workspace',{...selected,operationId:uuid(),candidateId:uuid(),wikiProposalIndex:4}),/OPS_CONFLICT/);
+    await assert.rejects(call(author,'ops_review_workspace',{...selected,operationId:uuid(),candidateId:uuid(),wikiRevisionId:currentRevision.id,expectedWikiVersion:3}),/OPS_CONFLICT/);
+  });
   if(process.env.VP_WIKI_BROWSER_FIXTURE==='1') {
     await db(`update knowledge_review_private.members set active=true where actor_id='${author.id}';`);
     await new Promise((resolve,reject)=>{

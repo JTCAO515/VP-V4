@@ -1,3 +1,4 @@
+import {isStructuredWikiDraft, type StructuredWikiDraft} from "./proposals.ts";
 import { isValidWikiGenerationDraftOutput, type WikiGenerationDraftOutput } from "../../model-gateway/prompt/wiki-generation.ts";
 
 /** Wiki page/job contract and compatible revision reader. Historical revisions
@@ -34,7 +35,7 @@ export type WikiPageRevision = Readonly<{
   validationStatus: ValidationStatus;
   changeNote: string;
   /** Absent/null on historical revisions; never reconstruct from changeNote. */
-  draftContent?: WikiGenerationDraftOutput | null;
+  draftContent?: WikiGenerationDraftOutput | StructuredWikiDraft | null;
 }>;
 
 const PAGE_TYPES: readonly PageType[] = ["source_summary", "entity_procedure", "topic", "comparison_gap"];
@@ -100,7 +101,7 @@ export function isValidWikiPageRevision(value: unknown): value is WikiPageRevisi
   if (!isoInstant(v.generatedAt)) return false;
   if (!VALIDATION_STATUSES.includes(v.validationStatus as ValidationStatus)) return false;
   return boundedText(v.changeNote, 400)
-    && (v.draftContent == null || isValidWikiGenerationDraftOutput(v.draftContent));
+    && (v.draftContent == null || isValidWikiGenerationDraftOutput(v.draftContent) || isStructuredWikiDraft(v.draftContent));
 }
 
 /**

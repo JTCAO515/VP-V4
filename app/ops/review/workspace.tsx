@@ -34,7 +34,7 @@ export function OpsReviewWorkspace() {
     const current = ++generation.current;
     setWorkspace(null); setWikiDraft(null); setWikiError(false);
     const wikiTarget = wikiReviewTarget(window.location.search);
-    if (wikiTarget) setSignInTarget("/ops/review?" + new URLSearchParams({wikiPageKey:wikiTarget.pageKey,wikiRevisionId:wikiTarget.revisionId,wikiVersion:String(wikiTarget.version)}));
+    if (wikiTarget) setSignInTarget("/ops/review?" + new URLSearchParams({wikiPageKey:wikiTarget.pageKey,wikiRevisionId:wikiTarget.revisionId,wikiVersion:String(wikiTarget.version),...(wikiTarget.proposalIndex===undefined?{}:{wikiProposalIndex:String(wikiTarget.proposalIndex)})}));
     if (wikiTarget === null) { setWikiError(true); return; }
     try {
       const response = await fetch("/api/ops/review", { cache: "no-store", signal: AbortSignal.timeout(10000) });
@@ -107,7 +107,7 @@ export function OpsReviewWorkspace() {
       const sources = wikiDraft?.sources.filter(s=>values.getAll("wikiSource").includes(s.id)).map(s=>s.declaration);
       if (sources && (sources.length<1 || sources.length>3)) { setMessage("unavailable"); return; }
       const input: OpsInput = wikiDraft
-        ? {action:"submit_wiki_statement",operationId:crypto.randomUUID(),candidateId:crypto.randomUUID(),title:String(values.get("title")),wikiRevisionId:wikiDraft.revisionId,expectedWikiVersion:wikiDraft.version,statement:{...statement,sources:sources!}}
+        ? {action:"submit_wiki_statement",operationId:crypto.randomUUID(),candidateId:crypto.randomUUID(),title:String(values.get("title")),wikiRevisionId:wikiDraft.revisionId,expectedWikiVersion:wikiDraft.version,...(wikiDraft.proposalIndex===undefined?{}:{wikiProposalIndex:wikiDraft.proposalIndex}),statement:{...statement,sources:sources!}}
         : {action:"submit_statement",operationId:crypto.randomUUID(),candidateId:crypto.randomUUID(),title:String(values.get("title")),statement};
       void mutate({actorId:workspace.actorId,input},target); return;
     }
@@ -135,12 +135,13 @@ export function OpsReviewWorkspace() {
     {pending && !busy && <button type="button" onClick={() => { void mutate(pending); }}>{c.retry}</button>}
     {workspace && !pending && <><form ref={form} className={styles.panel} onSubmit={submit}>
       {wikiDraft && <section><h2>{locale === "zh" ? "根据 Wiki 草稿整理声明" : "Prepare a statement from a Wiki draft"}</h2><p className={styles.meta}>{wikiDraft.pageKey} · v{wikiDraft.version}</p><p className={styles.content}>{wikiDraft.summary}</p><ul>{wikiDraft.gaps.map((gap,i)=><li key={i}>{gap}</li>)}</ul><p>{locale === "zh" ? "请逐条保留适用条件、例外与未解决矛盾，填写中英声明。提交后仍须由他人审核和发布。" : "Preserve conditions, exceptions and unresolved contradictions in both languages. Submission still requires another reviewer and the existing publication process."}</p></section>}
-      <label>{c.title}<input name="title" required maxLength={160} disabled={busy} /></label>
+      {wikiDraft?.proposalStatement && <section><h3>{locale==="zh"?"模型提案，待人工核对":"Model proposal — verify before submitting"}</h3>{wikiDraft.evidence?.map((e,i)=><blockquote className={styles.content} key={i}>{e.quote}<p className={styles.meta}>{e.sourceRevisionId} · {e.startOffset}–{e.endOffset}</p></blockquote>)}</section>}
+      <label>{c.title}<input name="title" defaultValue={wikiDraft?.proposalStatement?.expressions[locale==="zh"?"zh":"en"].text.slice(0,160)} required maxLength={160} disabled={busy} /></label>
       {!wikiDraft && <>
       <label><input className={styles.modeCheckbox} type="checkbox" checked={withSource} onChange={(event) => {setWithSource(event.target.checked);setWithStatement(false);}} disabled={busy || wikiDraft !== null} />{sourceCopy.mode}</label>
       <label><input className={styles.modeCheckbox} type="checkbox" checked={withStatement} onChange={event=>{setWithStatement(event.target.checked);setWithSource(false);}} disabled={busy || wikiDraft !== null}/>{k.mode}</label>
       </>}
-      {withStatement ? <StatementFields locale={locale} disabled={busy} wikiSources={wikiDraft?.sources}/> : withSource ? <SourceAssertionFields locale={locale} disabled={busy} /> : <label>{c.content}<textarea name="content" required maxLength={4000} rows={5} disabled={busy} /></label>}
+      {withStatement ? <StatementFields locale={locale} disabled={busy} wikiSources={wikiDraft?.sources} initial={wikiDraft?.proposalStatement}/> : withSource ? <SourceAssertionFields locale={locale} disabled={busy} /> : <label>{c.content}<textarea name="content" required maxLength={4000} rows={5} disabled={busy} /></label>}
       <button disabled={busy} type="submit">{c.submit}</button>
     </form>
     <section className={styles.list} aria-label={c.heading}>{workspace.candidates.length === 0 && <p>{c.empty}</p>}

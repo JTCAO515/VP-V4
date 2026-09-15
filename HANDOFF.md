@@ -6,9 +6,9 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：VPJ-75 #359 editorial statement bridge implemented on merged main4dc09d4 in isolated codex/wiki-statement-review: exact Wiki/source lineage, atomic/deduplicated existing Ops candidate submission, separate review/publication/read/withdrawal. Local PostgreSQL14/14 and contracts373/373 pass; real target/LLM extraction remains UNRUN. PR/CI closeout next.
+状态：#359 bounded model proposal increment implemented and locally verified; current PR/CI closeout only. JT requested pause after this round on2026-09-15. No next-round work is authorized to start before a new resume request. #399 merged55c21bc, production unchanged; real provider/Staging remain UNRUN.
 
-阶段：S2 #359: source-linked operator statement candidates; keep automatic extraction, exact spans, source/procedure/topic and real Staging acceptance separate.
+阶段：S2 #359 bounded model statement proposals, preserving manual review and source qualification. No non-C0 egress or automatic publication.
 
 ## 读取顺序
 
@@ -33,6 +33,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - 2026-09-12 JT取消全部开发阶段第三方、法务与产品许可前置要求；工单/书面回复/合同回执/精确供应商TTL缺失不再阻塞开发。agent按docs/agents/development-integration-policy.md以现有账号/API与实际配置推进，可逆参数自行决定；保留用户同意、RLS、确认、秘密及真实验证。
 - 2026-09-12 JT明确同意仅暂停main自动Production构建。单字段guard已应用，PR332合并后真实Production构建CANCELED且全部线上alias保留db5fb7b；Preview/Staging不变。此授权不包含新的Production发布或解除guard。
 - 2026-09-14 JT authorizes unblocking Issues as actual dependencies permit and developing in order; labels are not an additional gate. Preserve unmet acceptance, production protection and complete parent tracking.
+- 2026-09-15 JT要求：当前模型提案这一轮处理完成后暂停。完成当前PR/CI与证据收尾，不启动下一轮，不建立继续开发的自动化。
 
 ## 未决与运行证据
 
@@ -55,6 +56,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 验证
 
+- #359 proposals: PostgreSQL18pass0skip includes Unicode quote binding/storage/restart/rejection, contracts378pass, security146pass1skip, integration23pass76skip. Built Ops browser edits prefilled proposal and preserves source/revision/index in pending candidate. Provider and Auth are fixtures,0paid calls. Independent review no must-fix findings; repaired one SQL alias ambiguity and one incomplete provider fixture. See artifacts/VPJ-75/wiki-statement-proposals/verification.md.
 - #359 statement bridge: native PostgreSQL14pass0skip covers linkage rollback/concurrency/source/version/ACL and existing separate-review publication/read/revoke; contracts373pass; security146pass1skip; integration23pass76skip. Built browser→real handlers→SQL (fixture identity) submission and post-commit503 retry preserve exactly1 candidate. Independent review no must-fix findings. Evidence artifacts/VPJ-75/wiki-statement-review/verification.md.
 - 2026-09-15 continuation: exact3fb381f unchanged native CI script/Xcode26.6/iOS26.5 completes57pass0fail23environment skips; actual simulator deleted. Browser official login restored, read-only Staging50 and Wiki absence/Ops-off observed. Three-Wiki-migration rollback from50 preserves prior source and native SQL8/8passes. See artifacts/VPJ-75/staging-readiness-20260915.md.
 - 2026-09-14 new-device #359 slice3: native PostgreSQL17.6 full migration replay, upgrade rollback, exact 600-character body, process restart, receipt rollback/replay, concurrency and ACL8/8; contracts368/368; security146pass1existing skip; generic integration23pass76environment skips. Browser uses synthetic DB-readback proxy, not GoTrue or provider. See artifacts/VPJ-75/verification.md.
@@ -152,7 +154,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Finish this statement-bridge PR/CI. Then implement bounded model statement proposals and precise evidence spans using the accepted source/review contracts; perform Staging only within explicit authorization and backup/restore. #397 merged under its one-round CI waiver; no automatic extension to later PRs.
+Finish this proposal PR CI and evidence, then PAUSE at JT request. Do not merge this new PR without its own explicit authorization or start another round. On a future resume, refresh live main/PR and continue the recorded #359 real-source/worker/semantic gaps; prior check evidence retains its scope.
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 

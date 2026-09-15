@@ -51,6 +51,11 @@ export function OpsWikiWorkspace() {
     {result && <section className={styles.list}>
       <h2 style={{ overflowWrap: "anywhere" }}>{result.pageKey} · v{result.version}</h2>
       {current?.draftContent && current.validationStatus !== "rejected" && <Link href={`/ops/review?wikiPageKey=${encodeURIComponent(result.pageKey)}&wikiRevisionId=${current.id}&wikiVersion=${current.version}`}>{locale === "zh" ? "根据此版本整理声明" : "Prepare a statement from this version"}</Link>}
+      {current?.draftContent && 'schemaVersion' in current.draftContent && current.draftContent.schemaVersion==='wiki-draft/2' && <section className={styles.panel}>
+        <h3>{locale==='zh'?'模型声明提案（待核对）':'Model statement proposals (unreviewed)'}</h3>
+        {current.draftContent.statementProposals.length===0 && <p>{locale==='zh'?'没有声明提案，请核对来源与缺口。':'No statement proposals; review the sources and gaps.'}</p>}
+        {current.draftContent.statementProposals.map((p,i)=><article key={i}><p className={styles.content}>{p.statement.expressions[locale].text}</p>{p.evidence.map((e,n)=><blockquote className={styles.content} key={n}>{e.quote}</blockquote>)}{current.validationStatus!=='rejected' && <Link href={`/ops/review?wikiPageKey=${encodeURIComponent(result.pageKey)}&wikiRevisionId=${current.id}&wikiVersion=${current.version}&wikiProposalIndex=${i}`}>{locale==='zh'?'核对并编辑此提案':'Verify and edit this proposal'}</Link>}</article>)}
+      </section>}
       <p>{c.changes}: {!previous ? c.noPrevious : !current?.draftContent || !previous.draftContent ? c.unknownDiff : JSON.stringify(current.draftContent) === JSON.stringify(previous.draftContent) ? c.same : c.changed}</p>
       {current?.draftContent && previous?.draftContent && <article className={styles.panel}>
         {current.draftContent.summary !== previous.draftContent.summary && <>
@@ -60,11 +65,13 @@ export function OpsWikiWorkspace() {
         {previous.draftContent.gaps.filter(gap => !current.draftContent!.gaps.includes(gap)).map((gap, n) => <p key={`removed-${n}`}>{c.removed}: <del>{gap}</del></p>)}
         {current.draftContent.gaps.filter(gap => !previous.draftContent!.gaps.includes(gap)).map((gap, n) => <p key={`added-${n}`}>{c.added}: <ins>{gap}</ins></p>)}
       </article>}
+      {current?.draftContent && previous?.draftContent && ('schemaVersion' in current.draftContent || 'schemaVersion' in previous.draftContent) && <p>{locale==='zh'?'声明提案请在下方两个版本的详情中逐项对照；摘要和缺口不代表完整提案差异。':'Compare statement proposals in both revision details below; summary and gap changes do not represent all proposal changes.'}</p>}
       {!current && <p>{c.noRevision}</p>}
       {result.revisions.map((revision, i) => <article className={styles.panel} key={revision.id}>
         <h3>{i === 0 ? c.current : c.previous} · v{revision.version} · {c[revision.validationStatus]}</h3>
         <p>{revision.changeNote}</p>
         {revision.draftContent ? <><p className={styles.content}>{revision.draftContent.summary}</p><h4>{c.gaps}</h4><ul>{revision.draftContent.gaps.map((gap, n) => <li key={n}>{gap}</li>)}</ul></> : <p>{c.noBody}</p>}
+        {revision.draftContent && 'schemaVersion' in revision.draftContent && <details><summary>{locale==='zh'?'此版本的声明提案':'Statement proposals in this revision'} ({revision.draftContent.statementProposals.length})</summary>{revision.draftContent.statementProposals.map((p,i)=><section key={i}><p className={styles.content}>{p.statement.expressions[locale].text}</p><ul>{p.statement.expressions[locale].conditions.map((v,n)=><li key={`c${n}`}>{v}</li>)}{p.statement.expressions[locale].exclusions.map((v,n)=><li key={`e${n}`}>{v}</li>)}</ul>{p.evidence.map((e,n)=><blockquote className={styles.content} key={n}>{e.quote}<p className={styles.meta}>{e.sourceRevisionId} · {e.startOffset}–{e.endOffset}</p></blockquote>)}</section>)}</details>}
         <details><summary>{c.sources} ({revision.sources.length})</summary>{revision.sources.map((source, n) => <section key={`${source.id}:${n}`} className={styles.content}>
           <p>{source.id}</p>{source.missing ? <p>{c.absentSource}</p> : <><p>{source.declaration?.publisher} · {source.declaration?.revisionLabel}</p><p>{source.declaration?.uri}</p><p>{source.declaration?.locator}</p><blockquote>{source.declaration?.snippet}</blockquote></>}
         </section>)}</details>
