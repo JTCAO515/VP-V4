@@ -13,13 +13,13 @@ const jobDeps = Object.freeze({ credential: () => "secret-key", recordDestinatio
 function knowledgeReadResponse(statements, status = "available") {
   return { schemaVersion: "knowledge-read/1", evaluatedAt: "2026-09-15T00:00:00Z", scope: { city: "shanghai", scene: "payment", locale: "en" }, purpose: "trip_planning", recipient: "first_party", territory: "CN-mainland", status, statements };
 }
-const publishedStatement = Object.freeze({ factId: "fact-1", text: "Most large merchants accept international cards.", conditions: [], exclusions: [] });
+const publishedStatement = Object.freeze({ factId: "fact-1", assertionId: "assertion-1", assertion: { subjectId: "international_card_payment", predicate: "requires_action", objectId: "merchant_acceptance_check" }, sources: [{ sourceRevisionId: "11111111-1111-1111-1111-111111111111" }], text: "Most large merchants accept international cards.", conditions: [], exclusions: [] });
 
 function chatResponse(content) {
   return Response.json({ model: "qwen3.7-plus-2026-05-26", choices: [{ index: 0, finish_reason: "stop", message: { role: "assistant", content: JSON.stringify(content) } }], usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 } });
 }
-const answer = { action: "answer", coverage: "answered", summary: "Most large merchants accept international cards.", citations: [{ pageKey: "fact-1", quote: "accept international cards" }], gaps: [] };
-const noContentAnswer = { action: "answer", coverage: "no_content", summary: "Nothing in the search results addressed this.", citations: [], gaps: ["Not covered by any published statement."] };
+const answer = { action: "answer", coverage: "answered", summary: "Most large merchants accept international cards.", citations: [{ pageKey: "fact-1", quote: "accept international cards" }], gaps: [] , conflicts: [] };
+const noContentAnswer = { action: "answer", coverage: "no_content", summary: "Nothing in the search results addressed this.", citations: [], gaps: ["Not covered by any published statement."] , conflicts: [] };
 
 test("a clarification intent -- the traveler's own input was insufficient -- is user_input_missing, and never calls the RPC", async () => {
   const rpc = () => { throw new Error("must not call"); };
@@ -52,8 +52,8 @@ test("all three place question ids resolve to scene 'attraction'", async () => {
 });
 
 test("a real published place statement flows through to a real answer, same as any other supported intent", async () => {
-  const placeStatement = Object.freeze({ factId: "fact-museum", text: "Shanghai Museum opens at 9am and closes at 5pm.", conditions: [], exclusions: [] });
-  const placeAnswer = { action: "answer", coverage: "answered", summary: "Shanghai Museum opens at 9am.", citations: [{ pageKey: "fact-museum", quote: "opens at 9am" }], gaps: [] };
+  const placeStatement = Object.freeze({ factId: "fact-museum", assertionId: "assertion-museum", assertion: { subjectId: "shanghai_museum", predicate: "opens_during", objectId: "opening_hours" }, sources: [{ sourceRevisionId: "22222222-2222-2222-2222-222222222222" }], text: "Shanghai Museum opens at 9am and closes at 5pm.", conditions: [], exclusions: [] });
+  const placeAnswer = { action: "answer", coverage: "answered", summary: "Shanghai Museum opens at 9am.", citations: [{ pageKey: "fact-museum", quote: "opens at 9am" }], gaps: [] , conflicts: [] };
   const rpc = async () => ({ data: knowledgeReadResponse([placeStatement]), error: null });
   const placeIntent = { intent: "place_opening_hours", requestScope: "single", placeName: "Shanghai Museum" };
   const outcome = await runGroundedWikiSearch({ ...baseInput, intent: placeIntent, question: "When does Shanghai Museum open?" }, { ...jobDeps, rpc, fetch: async () => chatResponse(placeAnswer) }, new AbortController().signal);
@@ -98,12 +98,31 @@ test("a provider/model failure is provider_failure with the underlying error cod
   assert.deepEqual(outcome, { kind: "unavailable", reason: "provider_failure", providerCode: "PROVIDER_UNAVAILABLE" });
 });
 
-test("a real published statement flows all the way through to a real answer", async () => {
+test("a real published statement flows all the way through to a real answer, and its EvidencePack v2 covers the real required claim with real provenance", async () => {
   const rpc = async () => ({ data: knowledgeReadResponse([publishedStatement]), error: null });
   const outcome = await runGroundedWikiSearch(baseInput, { ...jobDeps, rpc, fetch: async () => chatResponse(answer) }, new AbortController().signal);
   assert.equal(outcome.kind, "answered");
   assert.equal(outcome.summary, answer.summary);
   assert.deepEqual(outcome.citations, answer.citations);
+  assert.equal(outcome.evidence.schemaVersion, "evidence-pack/2");
+  assert.deepEqual(outcome.evidence.required, [{
+    claimId: "merchant_acceptance_check", status: "covered",
+    refs: [{ statementId: "fact-1", publicationId: "assertion-1", sourceIds: ["11111111-1111-1111-1111-111111111111"], span: "accept international cards" }],
+  }]);
+  assert.deepEqual(outcome.evidence.background, []);
+  assert.deepEqual(outcome.evidence.missing, []);
+  assert.deepEqual(outcome.evidence.conflicts, []);
+});
+
+test("a place-question answer never fabricates required-claim coverage: EvidencePack v2's required stays empty since this module resolves no subject", async () => {
+  const placeStatement = Object.freeze({ factId: "fact-museum-2", assertionId: "assertion-museum-2", assertion: { subjectId: "shanghai_museum", predicate: "opens_during", objectId: "opening_hours" }, sources: [{ sourceRevisionId: "33333333-3333-3333-3333-333333333333" }], text: "Shanghai Museum opens at 9am.", conditions: [], exclusions: [] });
+  const placeAnswer = { action: "answer", coverage: "answered", summary: "Shanghai Museum opens at 9am.", citations: [{ pageKey: "fact-museum-2", quote: "opens at 9am" }], gaps: [], conflicts: [] };
+  const rpc = async () => ({ data: knowledgeReadResponse([placeStatement]), error: null });
+  const placeIntent = { intent: "place_opening_hours", requestScope: "single", placeName: "Shanghai Museum" };
+  const outcome = await runGroundedWikiSearch({ ...baseInput, intent: placeIntent, question: "When does Shanghai Museum open?" }, { ...jobDeps, rpc, fetch: async () => chatResponse(placeAnswer) }, new AbortController().signal);
+  assert.equal(outcome.kind, "answered");
+  assert.deepEqual(outcome.evidence.required, []);
+  assert.deepEqual(outcome.evidence.background, [{ statementId: "fact-museum-2", publicationId: "assertion-museum-2", sourceIds: ["33333333-3333-3333-3333-333333333333"], span: "opens at 9am" }]);
 });
 
 test("budget_exhausted and cancelled pass through as their own terminal kinds, not folded into the six reason codes", async () => {

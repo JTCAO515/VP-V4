@@ -9,7 +9,7 @@ import styles from "./SavedAnswers.module.css";
 /** VPJ-76 (#360) slice 8: only offered where the reviewed answer itself found nothing. */
 const AI_ASSIST_NOTICES = new Set(["blocked", "placeBlocked", "connectivityBlocked", "paymentBlocked"]);
 type AiAssistOutcome =
-  | { kind: "answered"; coverage: "answered" | "partial"; summary: string; gaps: readonly string[] }
+  | { kind: "answered"; coverage: "answered" | "partial"; summary: string; gaps: readonly string[]; conflicts: readonly string[] }
   | { kind: "unavailable"; reason: string }
   | { kind: "budget_exhausted" }
   | { kind: "cancelled" };
@@ -67,6 +67,7 @@ function AiAssistPanel({ turnId, locale }: { turnId: string; locale: "zh" | "en"
   return <div className={styles.aiAssist}>
     <p>{outcome.summary}</p>
     {outcome.gaps.length ? <><strong>{language.aiAssistGaps}</strong><ul>{outcome.gaps.map((gap, index) => <li key={index}>{gap}</li>)}</ul></> : null}
+    {outcome.conflicts.length ? <><strong>{language.aiAssistConflicts}</strong><ul>{outcome.conflicts.map((conflict, index) => <li key={index}>{conflict}</li>)}</ul></> : null}
     <small>{language.aiAssistDisclaimer}</small>
   </div>;
 }

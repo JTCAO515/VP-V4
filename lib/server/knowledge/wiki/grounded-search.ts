@@ -4,6 +4,7 @@ import { buildPublishedWikiCorpus, type KnowledgeReadRpc } from "./published-cor
 import { runWikiSearchJob, type WikiSearchJobDependencies } from "../../jobs/wiki-search-job.ts";
 import type { WikiSearchCitation } from "../../model-gateway/prompt/wiki-search.ts";
 import type { HttpProviderConfiguration } from "../../model-gateway/adapters/http-transport.ts";
+import { buildEvidencePack, type EvidencePack } from "./evidence-pack.ts";
 
 /**
  * VPJ-76 (#360) slice 3: the glue between an already-recognized
@@ -57,6 +58,8 @@ export type GroundedSearchOutcome =
       summary: string;
       citations: readonly WikiSearchCitation[];
       gaps: readonly string[];
+      conflicts: readonly string[];
+      evidence: EvidencePack;
       rounds: number;
       queries: readonly string[];
       usage: GroundedSearchUsage;
@@ -82,7 +85,14 @@ export async function runGroundedWikiSearch(
   // claims-coverage checks) and returns null without one, but the scene it
   // would return is a hardcoded "attraction" regardless of subjectId --
   // the only piece this module actually needs.
-  const scene = isPlaceQuestionId(input.intent.intent) ? "attraction" : questionDefinition(input.intent.intent)?.scene;
+  // Required-claim coverage (EvidencePack v2) needs a fixed claim set. Place
+  // questions have none here -- their claims are only resolvable once a
+  // subject is chosen, which (per the comment above) this module never
+  // does; their EvidencePack.required stays empty, matching that same
+  // existing scope decision rather than inventing subject resolution here.
+  const isPlace = isPlaceQuestionId(input.intent.intent);
+  const definition = isPlace ? null : questionDefinition(input.intent.intent);
+  const scene = isPlace ? "attraction" : definition?.scene;
   if (!scene) return { kind: "unavailable", reason: "capability_unsupported" };
 
   const corpusOutcome = await buildPublishedWikiCorpus(dependencies.rpc, { city: input.city, scene, locale: input.locale });
@@ -100,9 +110,12 @@ export async function runGroundedWikiSearch(
       // Real content existed (corpus was non-empty) but the search loop
       // itself came up empty -- that's a retrieval miss, not "no content
       // exists" (missing_content) and not a real answer (empty citations).
-      return outcome.coverage === "no_content"
-        ? { kind: "unavailable", reason: "retrieval_miss" }
-        : { kind: "answered", coverage: outcome.coverage, summary: outcome.summary, citations: outcome.citations, gaps: outcome.gaps, rounds: outcome.rounds, queries: outcome.queries, usage: outcome.usage };
+      if (outcome.coverage === "no_content") return { kind: "unavailable", reason: "retrieval_miss" };
+      return {
+        kind: "answered", coverage: outcome.coverage, summary: outcome.summary, citations: outcome.citations, gaps: outcome.gaps, conflicts: outcome.conflicts,
+        evidence: buildEvidencePack(outcome.citations, corpusOutcome.provenance, definition?.claims ?? [], outcome.gaps, outcome.conflicts),
+        rounds: outcome.rounds, queries: outcome.queries, usage: outcome.usage,
+      };
     case "budget_exhausted":
       return { kind: "budget_exhausted", rounds: outcome.rounds, queries: outcome.queries, usage: outcome.usage };
     case "cancelled":

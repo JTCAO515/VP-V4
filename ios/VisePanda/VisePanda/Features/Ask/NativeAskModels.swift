@@ -260,6 +260,7 @@ struct NativeAiAssistOutcome: Decodable, Equatable {
     let kind: String
     var summary: String? = nil
     var gaps: [String]? = nil
+    var conflicts: [String]? = nil
     var reason: String? = nil
 }
 

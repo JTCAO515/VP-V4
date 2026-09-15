@@ -20,7 +20,7 @@ function queuedFetch(actions) {
   return async () => { const action = actions[Math.min(call, actions.length - 1)]; call += 1; return chatResponse(action); };
 }
 
-const answer = { action: "answer", coverage: "answered", summary: "The museum opens at 9am.", citations: [{ pageKey: "source_summary:museum", quote: "opens at 9am" }], gaps: [] };
+const answer = { action: "answer", coverage: "answered", summary: "The museum opens at 9am.", citations: [{ pageKey: "source_summary:museum", quote: "opens at 9am" }], gaps: [] , conflicts: [] };
 
 test("answers in round 1 without searching when the model is already confident", async () => {
   const outcome = await runWikiSearchJob(baseInput, { ...deps, fetch: queuedFetch([answer]) }, new AbortController().signal);
@@ -75,7 +75,7 @@ test("a model response outside the closed action schema fails as MODEL_OUTPUT_IN
 });
 
 test("no_content coverage cannot carry citations; answered/partial cannot have zero citations", async () => {
-  const bad = { action: "answer", coverage: "no_content", summary: "Nothing found.", citations: [{ pageKey: "x", quote: "y" }], gaps: [] };
+  const bad = { action: "answer", coverage: "no_content", summary: "Nothing found.", citations: [{ pageKey: "x", quote: "y" }], gaps: [] , conflicts: [] };
   const outcome = await runWikiSearchJob(baseInput, { ...deps, fetch: queuedFetch([bad]) }, new AbortController().signal);
   assert.equal(outcome.kind, "failed");
   assert.equal(outcome.errorCode, "MODEL_OUTPUT_INVALID");

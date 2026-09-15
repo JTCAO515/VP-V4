@@ -455,6 +455,55 @@ Not built: persistence of the AI-assisted result (unchanged from slices
 `tests/integration/turn/native-grounded-http.test.mjs` (judged lower
 value than the coverage this route's dependencies already have).
 
+## Slice 10 (2026-09-15): EvidencePack v2
+
+VPJ-76's own acceptance criteria requires the search loop's answer carry
+"required/background/missing/conflicts 及 statement/publication/source/span
+和检索/ontology版本" and that "关键遗漏、错误引用和证据充足时全拒答均判失败，
+不由相关度决定完整性" -- completeness decided structurally, not by the
+model's own self-report. Slices 1-9 shipped a much simpler
+`summary`/`citations`/`gaps` shape that satisfied none of this.
+
+`knowledge_read_v1` has always returned `assertionId`,
+`assertion.{predicate,objectId}` and `sources[].sourceRevisionId` per
+statement -- `published-corpus.ts` previously discarded all three,
+keeping only `factId`/`text` for the lexical search primitive. It now
+also returns a `provenance` map alongside the search entries, read from
+the same already-authorized response. `lib/server/knowledge/wiki/evidence-pack.ts`
+(new) uses that provenance to decide, in code, whether a citation's real
+underlying `{predicate,objectId}` actually matches a required claim's own
+triple -- the exact check `grounded-turn/1`'s resolver already uses --
+rather than trusting the model's claim that it answered fully. The
+model's judgement is kept only where code genuinely cannot substitute for
+it: whether two cited passages disagree, now a first-class `conflicts`
+field split out of `gaps` in the model's own answer schema
+(`wiki-search.ts`).
+
+Additive: `summary`/`citations`/`gaps` (what Web/iOS already render)
+stay unchanged from slices 7-9; `evidence: EvidencePack` and a flat
+`conflicts` field are new on `GroundedSearchOutcome`'s "answered"
+variant. Place questions get `evidence.required: []` (unchanged from
+slice 6's decision that this module never resolves a placeSubjectId) --
+their citations land in `background` instead of fabricated coverage.
+
+Verified: 6 new `wiki-evidence-pack.test.mjs` cases for `buildEvidencePack`
+itself, plus new/extended assertions in `wiki-grounded-search.test.mjs`
+(a real end-to-end "covered" required claim with real provenance; a
+place-question answer's `required` staying empty) and
+`wiki-published-corpus.test.mjs` (the real provenance map's exact
+contents; four new malformed-provenance rejection cases). 453/453 full
+contract suite, no regressions. iOS: `scripts/ios/ci.py` run locally end
+to end (real build, real signature, a real owned simulator,
+`test-without-building` against the entire shared scheme) -- every step
+exited 0, `VisePandaTests` 51/51 (6 skipped), `VisePandaUITests` 25/25
+(17 skipped), confirming the additive `conflicts` rendering in
+`NativeAskView.swift` introduced no regression. Full detail:
+`artifacts/VPJ-76/wiki-evidence-pack-v2-20260915/verification.md`.
+
+Not built: a real model call exercising the new `conflicts` field (no
+live provider credential configured in any environment, consistent with
+every other slice).
+
 ## Verification
 
 Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),
@@ -465,12 +514,15 @@ Per-slice evidence: `artifacts/VPJ-76/wiki-agentic-search-20260915/` (slice 1),
 `wiki-place-questions-20260915/` (slice 6),
 `wiki-grounded-turn-integration-20260915/` (slice 7),
 `wiki-grounded-ai-assist-web-20260915/` (slice 8),
-`wiki-grounded-ai-assist-ios-20260915/` (slice 9, above). As of slice 9:
-446/446 full TS contract suite, no regressions (slice 9 added no new TS
-contract tests, only a thin route wrapper); `pnpm lint`/`typecheck`/
-`docs:check` clean; iOS app + test targets build with zero errors.
-Slices 7 and 8 are the only two in this thread of work that add a
-migration — one new read-only RPC (7) and one new table plus dispatcher
-RPC (8), both verified against a real Postgres instance; slice 9 adds no
-migration, only a client for the same job. Every other slice remained
-migration-free.
+`wiki-grounded-ai-assist-ios-20260915/` (slice 9),
+`wiki-evidence-pack-v2-20260915/` (slice 10, above). As of slice 10:
+453/453 full TS contract suite, no regressions; `pnpm lint`/`typecheck`/
+`docs:check` clean; iOS app + test targets build with zero errors and a
+real, run-to-completion XCTest pass (51/51 + 25/25, both with their
+existing skip counts).
+Slices 7, 8 and 10 add a migration or schema change of note — slice 7 one
+new read-only RPC, slice 8 one new table plus dispatcher RPC (both
+verified against a real Postgres instance), slice 10 a new corpus field
+(no migration, `knowledge_read_v1` already returned this data). Slice 9
+adds no migration, only a client for slice 8's job. Every other slice
+remained migration-free.

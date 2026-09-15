@@ -36,6 +36,7 @@ export type WikiSearchJobOutcome =
       summary: string;
       citations: readonly WikiSearchCitation[];
       gaps: readonly string[];
+      conflicts: readonly string[];
       rounds: number;
       queries: readonly string[];
       usage: WikiSearchJobUsage;
@@ -108,7 +109,7 @@ export async function runWikiSearchJob(
     addUsage(usage, outcome.usage);
     const action = outcome.output as WikiSearchAction;
     if (action.action === "answer") {
-      return { kind: "answered", coverage: action.coverage, summary: action.summary, citations: action.citations, gaps: action.gaps, rounds: round, queries: orderedQueries, usage };
+      return { kind: "answered", coverage: action.coverage, summary: action.summary, citations: action.citations, gaps: action.gaps, conflicts: action.conflicts, rounds: round, queries: orderedQueries, usage };
     }
     const normalizedQuery = action.query.trim();
     const duplicate = seenQueries.has(normalizedQuery.toLowerCase());
