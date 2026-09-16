@@ -24,10 +24,17 @@ export function TestingChat({ signInFallback }: { signInFallback: ReactNode }) {
     const client = createPasswordAuthClient();
     if (!client) { setAuth("signedOut"); return; }
     let active = true;
+    let authChanged = false;
+    const { data: { subscription } } = client.auth.onAuthStateChange((_event, session) => {
+      if (!active) return;
+      authChanged = true;
+      // UI routing only; every testing-chat API still authenticates on the server.
+      setAuth(session?.user?.id ? "signedIn" : "signedOut");
+    });
     void client.auth.getClaims().then(({ data, error }) => {
-      if (active) setAuth(!error && data?.claims?.sub ? "signedIn" : "signedOut");
-    }).catch(() => { if (active) setAuth("signedOut"); });
-    return () => { active = false; };
+      if (active && !authChanged) setAuth(!error && data?.claims?.sub ? "signedIn" : "signedOut");
+    }).catch(() => { if (active && !authChanged) setAuth("signedOut"); });
+    return () => { active = false; subscription.unsubscribe(); };
   }, []);
 
   if (auth === "checking") return <main style={{ padding: 24 }}>Loading…</main>;
