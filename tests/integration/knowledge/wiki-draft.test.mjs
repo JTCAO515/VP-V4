@@ -299,6 +299,110 @@ test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACL
     assert.equal((await call(author,'ops_wiki_read_v1',{pageKey:reclaimPageKey})).version,1);
   });
 
+  const withdrawalMigration=readFileSync('supabase/migrations/20260916120000_vpj_75_359_wiki_source_withdrawal.sql','utf8');
+  await t.test('source-withdrawal migration rolls back cleanly and preserves prior receipt replay',async()=>{
+    const before=await call(author,'ops_wiki_read_v1',{pageKey});
+    await db('begin;'+withdrawalMigration+'rollback;');
+    assert.equal((await db("select count(*)::int n from information_schema.columns where table_schema='knowledge_review_private' and table_name='source_revisions' and column_name='withdrawn_at';"))[0].n,0);
+    assert.deepEqual(await call(author,'ops_wiki_read_v1',{pageKey}),before);
+    await db('begin;'+withdrawalMigration+'commit;');
+    assert.equal((await db("select count(*)::int n from information_schema.columns where table_schema='knowledge_review_private' and table_name='source_revisions' and column_name='withdrawn_at';"))[0].n,1);
+    assert.deepEqual(await completeWikiGenerationJob(rpc,completion,outcome),saved);
+  });
+
+  const withdraw=(a,sourceRevisionId,reason)=>call(a,'ops_source_revision_withdraw_v1',{operationId:uuid(),sourceRevisionId,reason});
+  await t.test('withdraw RPC: real actor authorization, idempotent replay/state, not-found and malformed input',async()=>{
+    const targetSourceId=uuid();
+    const targetSource={...source,sourceKey:'withdraw_target',snippet:'Synthetic withdrawal-target source material.'};
+    await db(`insert into knowledge_review_private.source_revisions(id,source_key,revision_label,declaration,snippet_hash,submitted_by) values('${targetSourceId}','withdraw_target','r1',${lit(JSON.stringify(targetSource))},'${'1'.repeat(64)}','${author.id}');`);
+
+    await assert.rejects(withdraw(outsider,targetSourceId,'Outsider attempt'),/OPS_FORBIDDEN/);
+    await assert.rejects(call(author,'ops_source_revision_withdraw_v1',{operationId:uuid(),sourceRevisionId:targetSourceId,reason:''}),/INVALID_INPUT/);
+    await assert.rejects(call(author,'ops_source_revision_withdraw_v1',{operationId:uuid(),sourceRevisionId:uuid(),reason:'No such source'}),/OPS_NOT_FOUND/);
+
+    const first=await withdraw(author,targetSourceId,'Publisher issued a retraction notice.');
+    assert.equal(first.sourceRevisionId,targetSourceId);
+    assert.equal(first.withdrawnBy,author.id);
+    assert.equal(first.withdrawalReason,'Publisher issued a retraction notice.');
+    assert.ok(first.withdrawnAt);
+
+    // Re-withdrawing under a brand-new operationId (not a receipt replay) is
+    // an idempotent no-op: it must not overwrite who/why/when.
+    const second=await withdraw(author,targetSourceId,'A different later reason must not overwrite the original.');
+    assert.deepEqual(second,first);
+
+    const row=(await db(`select withdrawal_reason from knowledge_review_private.source_revisions where id='${targetSourceId}';`))[0];
+    assert.equal(row.withdrawal_reason,'Publisher issued a retraction notice.');
+  });
+
+  await t.test('dispatch barrier: claim() rejects a source withdrawn before claim, creating no page or job row',async()=>{
+    const claimBarrierSourceId=uuid();
+    const claimBarrierSource={...source,sourceKey:'claim_barrier_source',snippet:'Synthetic pre-withdrawn source material.'};
+    await db(`insert into knowledge_review_private.source_revisions(id,source_key,revision_label,declaration,snippet_hash,submitted_by) values('${claimBarrierSourceId}','claim_barrier_source','r1',${lit(JSON.stringify(claimBarrierSource))},'${'2'.repeat(64)}','${author.id}');`);
+    await withdraw(author,claimBarrierSourceId,'Withdrawn before any claim was ever attempted.');
+
+    const barrierPageKey='source_summary:claim-barrier-fixture';
+    const barrierClaim={action:'claim',operationId:uuid(),pageType:'source_summary',pageKey:barrierPageKey,sourceRevisionIds:[claimBarrierSourceId],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),inputDigest:'5'.repeat(64)};
+    await assert.rejects(call(author,'ops_wiki_generation_v1',barrierClaim),/OPS_SOURCE_WITHDRAWN/);
+
+    assert.equal((await db(`select count(*)::int n from knowledge_review_private.wiki_pages where page_key='${barrierPageKey}';`))[0].n,0,'a withdrawn-source claim must not even create the page row');
+    assert.equal((await db(`select count(*)::int n from knowledge_review_private.wiki_generation_jobs where page_key='${barrierPageKey}';`))[0].n,0,'a withdrawn-source claim must not create a job row -- the application never dispatches to the real provider');
+  });
+
+  await t.test('dispatch barrier: complete(succeeded) rejects a source withdrawn during the claim-to-complete window; job stays running; failed/cancelled recovery is not blocked',async()=>{
+    const raceSourceId=uuid();
+    const raceSource={...source,sourceKey:'complete_barrier_source',snippet:'Synthetic race-window source material.'};
+    await db(`insert into knowledge_review_private.source_revisions(id,source_key,revision_label,declaration,snippet_hash,submitted_by) values('${raceSourceId}','complete_barrier_source','r1',${lit(JSON.stringify(raceSource))},'${'3'.repeat(64)}','${author.id}');`);
+
+    const racePageKey='source_summary:complete-barrier-fixture';
+    const raceClaimInput={action:'claim',operationId:uuid(),pageType:'source_summary',pageKey:racePageKey,sourceRevisionIds:[raceSourceId],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),inputDigest:'6'.repeat(64)};
+    const raceClaimed=await call(author,'ops_wiki_generation_v1',raceClaimInput);
+    assert.equal(raceClaimed.kind,'claimed');
+
+    const raceOutcome=await runWikiGenerationJob({pageType:'source_summary',pageKey:racePageKey,sourceText:raceSource.snippet,promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),maxOutputTokens:1024,timeoutMs:5000,provider:{provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:uuid(),configurationVersion:1,timeoutMs:5000}}, {credential:()=> 'synthetic',recordDestination:async()=>{},fetch:async()=>Response.json({model:'qwen3.7-plus-2026-05-26',choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({summary:'Race-window fixture summary.',gaps:[]})}}],usage:{prompt_tokens:5,completion_tokens:5,total_tokens:10}})},new AbortController().signal);
+    assert.equal(raceOutcome.kind,'succeeded');
+
+    // The real provider call above stands in for real wall-clock time; the
+    // source is withdrawn only *after* the model already produced output,
+    // reproducing the actual race this barrier exists to close.
+    await withdraw(author,raceSourceId,'Withdrawn while the real provider call was in flight.');
+
+    const raceCompletion={operationId:uuid(),jobId:raceClaimed.jobId,claimToken:raceClaimed.claimToken,expectedVersion:raceClaimed.expectedVersion,sourceRevisionIds:[raceSourceId],statementRefs:[],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),generatedAt:new Date().toISOString(),changeNote:'Should never be persisted -- source withdrawn mid-flight'};
+    await assert.rejects(completeWikiGenerationJob(rpc,raceCompletion,raceOutcome),/OPS_SOURCE_WITHDRAWN/);
+    assert.equal((await call(author,'ops_wiki_read_v1',{pageKey:racePageKey})).version,0,'the rejected completion must not have written a revision');
+    assert.equal((await db(`select status from knowledge_review_private.wiki_generation_jobs where id='${raceClaimed.jobId}';`))[0].status,'running','a rejected completion must not change job status, same idiom as a stale-expectedVersion OPS_CONFLICT');
+
+    // Recovery: the barrier only blocks 'succeeded' (persisting a draft
+    // built from a now-ineligible source); a graceful 'cancelled' close
+    // remains available so the job does not have to sit until the 5-minute
+    // reclaim window.
+    const cancelInput={action:'complete',operationId:uuid(),jobId:raceClaimed.jobId,outcome:{kind:'cancelled',claimToken:raceClaimed.claimToken}};
+    const cancelled=await call(author,'ops_wiki_generation_v1',cancelInput);
+    assert.equal(cancelled.kind,'cancelled');
+    assert.equal((await db(`select status from knowledge_review_private.wiki_generation_jobs where id='${raceClaimed.jobId}';`))[0].status,'cancelled');
+  });
+
+  await t.test('dispatch barrier applies identically to the structured statement-proposal (wiki-draft/2) payload',async()=>{
+    const proposalBarrierSourceId=uuid();
+    const proposalBarrierSource={...source,sourceKey:'proposal_barrier_source',snippet:'😀 Synthetic proposal barrier source: bring ID on entry unless exempt.'};
+    await db(`insert into knowledge_review_private.source_revisions(id,source_key,revision_label,declaration,snippet_hash,submitted_by) values('${proposalBarrierSourceId}','proposal_barrier_source','r1',${lit(JSON.stringify(proposalBarrierSource))},'${'7'.repeat(64)}','${author.id}');`);
+    const {sources:_ignored,...proposalStatement}=statement;
+    const barrierRawProposal={summary:'Synthetic barrier museum entry requirements.',gaps:['Other cities are not covered.'],proposals:[{statement:proposalStatement,evidence:[{sourceRevisionId:proposalBarrierSourceId,quote:'bring ID on entry unless exempt.'}]}]};
+    const barrierProposalResult=await runWikiStatementProposalJob({dataClass:'c0_synthetic',sources:[{id:proposalBarrierSourceId,declaration:proposalBarrierSource}],configDigest:'a'.repeat(64),provider:{provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:uuid(),configurationVersion:1,timeoutMs:5000},maxOutputTokens:2048,timeoutMs:5000},{credential:()=> 'synthetic',recordDestination:async()=>{},fetch:async()=>Response.json({model:'qwen3.7-plus-2026-05-26',choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify(barrierRawProposal)}}],usage:{prompt_tokens:30,completion_tokens:60,total_tokens:90}})},new AbortController().signal);
+    assert.equal(barrierProposalResult.kind,'succeeded');
+
+    const barrierProposalPageKey='source_summary:proposal-barrier-fixture';
+    const barrierProposalClaimInput={action:'claim',operationId:uuid(),pageType:'source_summary',pageKey:barrierProposalPageKey,sourceRevisionIds:[proposalBarrierSourceId],promptVersion:'vp-wiki-statement-proposals-v1',configDigest:'a'.repeat(64),inputDigest:barrierProposalResult.inputDigest};
+    const barrierProposalClaimed=await call(author,'ops_wiki_generation_v1',barrierProposalClaimInput);
+    assert.equal(barrierProposalClaimed.kind,'claimed');
+
+    await withdraw(author,proposalBarrierSourceId,'Withdrawn before the structured proposal was completed.');
+
+    const barrierProposalCompletion={operationId:uuid(),jobId:barrierProposalClaimed.jobId,claimToken:barrierProposalClaimed.claimToken,expectedVersion:barrierProposalClaimed.expectedVersion,sourceRevisionIds:[proposalBarrierSourceId],statementRefs:[],promptVersion:'vp-wiki-statement-proposals-v1',configDigest:'a'.repeat(64),generatedAt:new Date().toISOString(),changeNote:'Should never be persisted -- source withdrawn before completion'};
+    await assert.rejects(completeWikiGenerationJob(rpc,barrierProposalCompletion,barrierProposalResult),/OPS_SOURCE_WITHDRAWN/);
+    assert.equal((await call(author,'ops_wiki_read_v1',{pageKey:barrierProposalPageKey})).version,0,'the rejected structured-proposal completion must not have written a revision');
+  });
+
   if(process.env.VP_WIKI_BROWSER_FIXTURE==='1') {
     await db(`update knowledge_review_private.members set active=true where actor_id='${author.id}';`);
     await new Promise((resolve,reject)=>{
