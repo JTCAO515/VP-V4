@@ -600,3 +600,41 @@ verified against a real Postgres instance), slice 10 a new corpus field
 adds no migration, only a client for slice 8's job. Slice 11 adds no
 production code, only a new eval directory. Every other slice remained
 migration-free.
+
+## VPJ-16 (#206) HF-reuse: MIRACL + BIPIA method reuse (2026-09-16)
+
+Distinct from VPJ-76's own thread, but the exact same underlying pipeline
+(`searchWikiCorpus`, `runGroundedWikiSearch`), so recorded here rather
+than a separate contract. #206's own acceptance criteria requires
+"HF复用：借MIRACL/BIPIA方法分别诊断检索、无答案与注入" — per this repo's
+prior research
+(`docs/research/VISEPANDA-HUGGINGFACE-REUSE-REPORT-2026-09-10.md`, "4.4
+MIRACL 与 BIPIA 的正确用途"): borrow method only (never the real MIRACL
+Wikipedia corpus or a real BIPIA dataset), MIRACL strictly monolingual
+(never cross-lingual), this repo's existing TS harness.
+
+New `evals/wiki-agentic-search-safety/`: 7 MIRACL-method retrieval-
+diagnosis cases run for real against `searchWikiCorpus` (no model, no
+database) -- every expected result was empirically verified before being
+written, surfacing two real, previously undocumented findings: the
+primitive has **no stopword filter** (a non-semantic match on "the"
+alone produces a nonzero-score hit) and short/common-word queries
+produce **score ties** across unrelated statements. 8 BIPIA-method
+injection cases (4 attack categories × zh/en) with a unique compliance
+marker per case; fixture testing proves the structural half (a
+hallucinated out-of-corpus citation is excluded from `EvidencePack`,
+never fabricated) and a real-model pass (`scripts/eval/run-wiki-agentic-injection-real-model.mjs`,
+GLM-5.3-flash, JT-authorized) proves the real half: **8/8 real calls
+resisted every injection**, 7/8 stayed useful, one real non-determinism
+instance (a first-call `unavailable`, a same-input retry succeeding and
+the model explicitly naming the injection attempt unprompted) honestly
+recorded rather than smoothed over.
+
+Full detail: `artifacts/VPJ-206/hf-reuse-miracl-bipia-20260916/verification.md`
+(fixture), `artifacts/VPJ-206/hf-reuse-miracl-bipia-real-model-20260916/verification.md`
+(real model). Not built: fixes for the stopword/score-tie gaps
+(diagnosed and reported per MIRACL's own intended use, not remediated --
+a real semantic-retrieval upgrade stays gated behind #248's own
+activation gate); this does not close #206 as a whole (its other
+acceptance bullets, including real published content for #205, remain
+separately unverified).
