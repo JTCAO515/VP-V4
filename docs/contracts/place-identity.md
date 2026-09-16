@@ -171,18 +171,73 @@ reverse geocode remain future slices, not this one.
   not `not_found`, which detail/geocode use for "the one thing you asked
   for doesn't exist").
 
+## Nearby-category search (added 2026-09-16)
+
+`lib/server/maps/provider-nearby-adapter.ts`'s `nearbySearch()` fills in the
+"周边厕所/便利店/餐饮/药店/ATM分类可查，特殊服务未知不推断" acceptance
+bullet and the execution row's remaining "nearby-category" half of "统一
+服务端适配搜索/详情/地址/建议" — search, detail, forward geocode and
+suggest already existed; route/matrix, nav-handoff and reverse geocode
+remain future slices, not this one.
+
+- Same shape as the other adapters: one provider per call, no
+  cross-provider fallback/retry (#367), no persistence. Reuses
+  `provider-search-adapter.ts`'s `boundedJson` response-size guard and
+  `tencentSig` signing function rather than duplicating security-relevant
+  transport code. Unlike suggest, a nearby result is a real POI hit (same
+  as search), so it reuses `lookupMapping` the same way search does.
+- `category` is a closed 5-value enum (`restroom`/`convenience_store`/
+  `dining`/`pharmacy`/`atm`) matching the acceptance bullet's named list
+  exactly — no free-text category, and no other amenity type is browsable
+  ("特殊服务未知不推断": an unlisted special-service category is never
+  inferred or approximated by the closest known category). Each category
+  maps to a plain Chinese keyword, not a provider-specific POI type code —
+  AMap/Tencent's numeric category-code taxonomies are unverified against
+  this environment's actual account access, so a misremembered code could
+  silently under/over-match; a keyword carries no such risk and is the same
+  mechanism the search adapter already uses.
+- The query `location` must already be in the providers' documented default
+  coordinate system (GCJ02) — this module never converts a caller-supplied
+  WGS84 point itself; combining sources still requires
+  `coordinate-conversion.ts`'s explicit, non-double-applying conversion
+  before calling in here.
+- Returns `distanceMeters` (meters from the query location), nullable: a
+  provider response that omits it (AMap's `distance` string, Tencent's
+  `_distance` number) yields `null`, never an estimate derived from the
+  query radius.
+- A caller-supplied `radiusMeters` is clamped into a conservative
+  module-declared bound (`limits.radiusMetersMax`, default
+  `limits.radiusMetersDefault` when omitted or invalid) rather than
+  rejected — this module still never fabricates a provider-documented
+  maximum it has not verified.
+- Its own explicit enable flag per provider (`AMAP_NEARBY_ENABLED`/
+  `TENCENT_MAP_NEARBY_ENABLED`), reusing the same account web-service
+  key/sk as search/detail/geocode/suggest — advanced capabilities stay
+  explicitly declared, never implicitly turned on because the provider
+  itself is enabled.
+- Same closed failure-classification set as search (`no_results` for an
+  empty result list).
+
 ## Non-goals of this slice
 
 - No client SDK selection/integration (native or Web map display).
 - No location-permission-denied fallback UX.
 - No cross-provider controlled degrade (timeout/quota-triggered switching) —
   that is #367.
-- No POI category browsing (restrooms/ATMs/etc.) beyond the closed
-  `category` enum needed for entrance disambiguation — nearby-category
-  search remains future #363 work.
+- No POI category browsing beyond the closed 5-category `NearbyCategory`
+  enum (restroom/convenience_store/dining/pharmacy/atm) needed for the
+  acceptance bullet — any other amenity type remains unbrowsable by design,
+  not a future extension of this slice.
 - No reverse geocode (coordinate to address) — search, detail, forward
-  geocode and suggest are now implemented; nearby-category search and
-  reverse geocode remain future #363 work.
+  geocode, suggest and nearby-category search are now implemented; reverse
+  geocode remains future #363 work, as does route/matrix/nav-handoff.
+- No client-side consumption of the shared selected-place id across
+  map/list/detail — that is #364/#365/#366's scope, not this server-side
+  adapter slice.
+- No single primary map-display SDK selection, credential domain
+  separation, or observation-vs-Fact permission isolation — those
+  remaining VPJ-19 acceptance bullets are still open, not addressed by any
+  adapter slice to date.
 - No authoritative geodetic ground-truth verification of the GCJ02
   conversion (see above) — UNRUN, not fabricated.
 
