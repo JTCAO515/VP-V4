@@ -73,13 +73,28 @@ and `docs/contracts/wiki-generation-dispatch.md`.
   fixture.
 - **Actual per-call RMB cost reconciliation** against Qwen's billing
   console — token counts are real; price is not independently confirmed.
+- ~~Withdrawn-source dispatch barrier~~ **DONE 2026-09-16**, see
+  `wiki-source-withdrawal-20260916/verification.md` and
+  `docs/contracts/wiki-source-withdrawal.md`. `source_revisions` gained an
+  explicit `withdrawn_at`/`withdrawn_by`/`withdrawal_reason` state plus a
+  new `ops_source_revision_withdraw_v1` RPC; `ops_wiki_generation_v1` now
+  refuses to `claim` a job citing an already-withdrawn source (never
+  dispatches to the real provider) and refuses to `complete(succeeded)` if
+  a cited source was withdrawn during the claim-to-complete window (never
+  persists the draft) — verified against real native PostgreSQL, for both
+  the plain generation job and the structured statement-proposal payload,
+  which share this one dispatcher. Not done: no cascading revocation of a
+  `wiki_page_revisions` row that already cites a source withdrawn *after*
+  that revision was created, no `/ops/wiki` UI for withdrawal, no automated
+  scan of in-flight jobs against newly-withdrawn sources.
 
 #359 remains OPEN. Schema, dispatcher+real-LLM-probe, durable draft
 storage, the `/ops/wiki` review UI, statement-candidate linking, structured
-statement proposals, and stale-job reclaim are done (see each item above
-and `docs/knowledge-upgrade/README.md`'s dated log for what each one
-actually covers and what it does not). Structural conflict detection and
-fixture-only injection/multi-source-binding coverage are now partially done
-(2026-09-16, statement-proposal job only); real-model injection resistance,
-UI wiring for conflict flags, true multi-source page synthesis, real
+statement proposals, stale-job reclaim, and the withdrawn-source dispatch
+barrier are done (see each item above and `docs/knowledge-upgrade/README.md`'s
+dated log for what each one actually covers and what it does not).
+Structural conflict detection and fixture-only injection/multi-source-binding
+coverage are partially done (2026-09-16, statement-proposal job only);
+real-model injection resistance, UI wiring for conflict flags, true
+multi-source page synthesis, cascading source-withdrawal revocation, real
 per-call RMB reconciliation, and Docling integration remain not started.

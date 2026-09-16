@@ -98,6 +98,11 @@ API key stored only in a local, git-ignored file
   integration** — unchanged from slice 1's non-goals.
 - **No production route/dispatch schedule** — `ops_wiki_generation_v1` is
   callable but nothing invokes it outside this slice's manual verification.
+- ~~No withdrawn-source dispatch barrier~~ **DONE 2026-09-16**, see
+  [wiki-source-withdrawal.md](wiki-source-withdrawal.md). A source withdrawn
+  before `claim` is never claimed (never dispatched to the real provider); a
+  source withdrawn between `claim` and `complete` blocks that completion
+  from being persisted (never published as a draft revision).
 
 ## Real cost
 
