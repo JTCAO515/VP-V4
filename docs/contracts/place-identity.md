@@ -138,6 +138,39 @@ slices, not this one.
 - No reverse geocode (coordinate to address) — this module only resolves an
   address string to a location, not the other direction.
 
+## Input-tip suggest (added 2026-09-16)
+
+`lib/server/maps/provider-suggest-adapter.ts`'s `suggestPlaces()` fills in
+the "suggest" (input-tip/autocomplete) half of the execution row's "统一
+服务端适配搜索/详情/地址/建议" bullet — search, detail and forward geocode
+already existed; nearby-category search, route/matrix, nav-handoff and
+reverse geocode remain future slices, not this one.
+
+- Same shape as the other adapters: one provider per call, no cross-provider
+  fallback/retry (#367), no persistence. Unlike search, this module takes no
+  `lookupMapping` and performs no canonical-matching decision at all,
+  because a provider's input-tip response can legitimately carry no backing
+  POI id (a plain keyword/history suggestion, not yet a specific place) —
+  there is nothing to match against a canonical place for those rows.
+  Reuses `provider-search-adapter.ts`'s `boundedJson` response-size guard
+  and `tencentSig` signing function rather than duplicating
+  security-relevant transport code.
+- Returns `providerPoiId` and `location`, both nullable: AMap's own
+  `inputtips` documentation describes tips with no backing POI (empty `id`
+  and empty `location` string) — this module preserves that as `null`
+  rather than dropping the row or inventing an id/coordinate. A row missing
+  even its display name is dropped, matching the search adapter's handling
+  of unusable rows.
+- Its own explicit enable flag per provider
+  (`AMAP_SUGGEST_ENABLED`/`TENCENT_MAP_SUGGEST_ENABLED`), reusing the same
+  account web-service key/sk as search/detail/geocode — advanced
+  capabilities stay explicitly declared, never implicitly turned on because
+  the provider itself is enabled.
+- Same closed failure-classification set as search (`no_results` for an
+  empty tip list, matching search's "zero of many candidates" semantics —
+  not `not_found`, which detail/geocode use for "the one thing you asked
+  for doesn't exist").
+
 ## Non-goals of this slice
 
 - No client SDK selection/integration (native or Web map display).
@@ -147,9 +180,9 @@ slices, not this one.
 - No POI category browsing (restrooms/ATMs/etc.) beyond the closed
   `category` enum needed for entrance disambiguation — nearby-category
   search remains future #363 work.
-- No unified suggest (input-tip/autocomplete) adapter or reverse geocode —
-  those remain future #363 work (search, detail and forward geocode are now
-  implemented).
+- No reverse geocode (coordinate to address) — search, detail, forward
+  geocode and suggest are now implemented; nearby-category search and
+  reverse geocode remain future #363 work.
 - No authoritative geodetic ground-truth verification of the GCJ02
   conversion (see above) — UNRUN, not fabricated.
 
@@ -164,11 +197,14 @@ slices, not this one.
   `tests/contract/maps/provider-search-adapter.test.mjs` (7 tests, including
   an independent re-verification of `tencentSig` against lbs.qq.com's own
   worked example), `tests/contract/maps/provider-detail-adapter.test.mjs`
-  (9 tests), and `tests/contract/maps/provider-geocode-adapter.test.mjs`
-  (8 tests) — all passing alongside the existing suite, no regressions.
-- The detail and geocode adapters' provider request/response shapes
-  (`/v3/place/detail`, `/ws/place/v1/detail`, `/v3/geocode/geo`,
-  `/ws/geocoder/v1/`) are taken from AMap POI 2.0/Geocoding API and Tencent
+  (9 tests), `tests/contract/maps/provider-geocode-adapter.test.mjs`
+  (8 tests), and `tests/contract/maps/provider-suggest-adapter.test.mjs`
+  (9 tests) — all passing alongside the existing suite, no regressions
+  (`pnpm test:contract`: 486 tests, 0 failures).
+- The detail, geocode and suggest adapters' provider request/response
+  shapes (`/v3/place/detail`, `/ws/place/v1/detail`, `/v3/geocode/geo`,
+  `/ws/geocoder/v1/`, `/v3/assistant/inputtips`, `/ws/place/v1/suggestion`)
+  are taken from AMap POI 2.0/Geocoding/Input Tips API and Tencent
   WebService's public documentation (see
   `docs/agents/maps-integration-development.md`'s source list); no real
   account call against these specific endpoints has been made in this
