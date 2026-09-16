@@ -70,7 +70,8 @@ function normalizeCandidates(provider: Provider, body: Record<string, unknown>, 
   return candidates.length > 0 ? { status: "observed", candidates: Object.freeze(candidates) } : { status: "invalid_response" };
 }
 
-async function boundedJson(response: Response): Promise<unknown> {
+/** Exported for reuse by sibling adapters (e.g. provider-detail-adapter.ts) that need the same bounded-read guard. */
+export async function boundedJson(response: Response): Promise<unknown> {
   if (!response.body) throw new Error("invalid_response");
   const reader = response.body.getReader();
   const chunks: Uint8Array[] = [];
