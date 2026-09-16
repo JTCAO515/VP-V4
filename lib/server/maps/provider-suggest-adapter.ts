@@ -32,6 +32,7 @@
  */
 
 import type { CoordinateSystem, Provider } from "./place-identity.ts";
+import { isValidSystemedCoordinate } from "./coordinate-conversion.ts";
 import { boundedJson, limits, tencentSig } from "./provider-search-adapter.ts";
 
 export type SuggestCandidate = Readonly<{
@@ -93,22 +94,29 @@ function buildRequest(provider: Provider, key: string, sk: string | undefined, q
 /**
  * AMap's `location` is a `"lng,lat"` string that can be an empty string for
  * a tip with no backing POI; Tencent's is a `{lat,lng}` object. Both parsed
- * defensively — no throw on malformed or absent input.
+ * defensively — no throw on malformed or absent input; instead the shared
+ * `isValidSystemedCoordinate` runtime check (coordinate-conversion.ts)
+ * rejects a NaN/Infinity, swapped, or out-of-range lat/lng (not just
+ * non-finite) rather than only trusting `Number.isFinite`.
  */
 function parseLocation(provider: Provider, raw: unknown): SuggestCandidate["location"] {
+  let lat: number, lng: number;
   if (provider === "amap") {
     if (typeof raw !== "string" || raw.length === 0) return null;
     const parts = raw.split(",");
     if (parts.length !== 2) return null;
-    const lng = Number(parts[0]);
-    const lat = Number(parts[1]);
-    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
-    return Object.freeze({ lat, lng, coordinateSystem: DEFAULT_LOCATION_SYSTEM });
+    lng = Number(parts[0]);
+    lat = Number(parts[1]);
+  } else {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+    const r = raw as Record<string, unknown>;
+    if (typeof r.lat !== "number" || typeof r.lng !== "number") return null;
+    lat = r.lat;
+    lng = r.lng;
   }
-  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
-  const r = raw as Record<string, unknown>;
-  if (typeof r.lat !== "number" || typeof r.lng !== "number" || !Number.isFinite(r.lat) || !Number.isFinite(r.lng)) return null;
-  return Object.freeze({ lat: r.lat, lng: r.lng, coordinateSystem: DEFAULT_LOCATION_SYSTEM });
+  const candidate = { lat, lng, system: DEFAULT_LOCATION_SYSTEM };
+  if (!isValidSystemedCoordinate(candidate)) return null;
+  return Object.freeze({ lat, lng, coordinateSystem: DEFAULT_LOCATION_SYSTEM });
 }
 
 function normalizeCandidates(provider: Provider, body: Record<string, unknown>): { status: "observed" | "no_results" | "invalid_response"; candidates?: readonly SuggestCandidate[] } {

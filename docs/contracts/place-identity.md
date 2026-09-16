@@ -76,6 +76,39 @@ implements the VPJ-19 execution row's other named acceptance bullet —
   not alter how `canonical_pois.coordinate_system` is recorded at
   ingestion — that field is still set once and never silently mutated.
 
+### Runtime enforcement of coordinate validity (added 2026-09-16, round 10)
+
+Until this addition, `convertCoordinateSystem()` and the detail/geocode/
+suggest adapters trusted a caller's `{ lat, lng, system }` unconditionally —
+correct at the type level, but a NaN/Infinity from a bad numeric parse, a
+swapped or out-of-range lat/lng, or a `system` tag outside the closed
+`gcj02`/`wgs84` set would previously pass through untouched. This closes
+that gap without expanding scope into client-side selected-ID sharing or
+any other #364/#365/#366/#367 territory:
+
+- `isValidSystemedCoordinate()` (exported from `coordinate-conversion.ts`)
+  is the single runtime check: `lat`/`lng` must be finite numbers within
+  `[-90,90]`/`[-180,180]`, and `system` must be `"gcj02"` or `"wgs84"`.
+- `convertCoordinateSystem()` now calls it on both `input` and
+  `targetSystem` before doing anything else, throwing
+  `InvalidSystemedCoordinateError` instead of silently converting or
+  passing through a malformed coordinate. This is the conversion module's
+  single entry point, so every caller gets the same enforcement rather than
+  each adapter re-implementing its own check.
+- `provider-detail-adapter.ts`, `provider-geocode-adapter.ts`, and
+  `provider-suggest-adapter.ts` (the three adapters that parse a provider-
+  returned `location`) now route their parsed `{ lat, lng }` through the
+  same `isValidSystemedCoordinate()` predicate before returning it, so an
+  out-of-range or non-finite provider value yields `location: null` (the
+  adapters' existing "never a fabricated location" contract) instead of an
+  unchecked pass-through. These call sites use the non-throwing predicate,
+  not the throwing assert, because the adapters' documented contract is to
+  never throw on malformed provider input.
+- `provider-search-adapter.ts` and `provider-nearby-adapter.ts` do not
+  parse or return a `location` field at all (their `PlaceSearchCandidate`/
+  `NearbyResult` shapes carry no coordinate), so there is nothing for this
+  change to touch there.
+
 ## Place detail lookup (added 2026-09-16)
 
 `lib/server/maps/provider-detail-adapter.ts`'s `getPlaceDetail()` fills in
@@ -266,3 +299,12 @@ remain future slices, not this one.
   environment — that live verification is UNRUN, tracked the same way the
   #362 probe work already distinguishes documented-shape from
   observed-response evidence.
+- Round 10 (coordinate-system runtime enforcement, 2026-09-16): added 6
+  `coordinate-conversion.test.mjs` cases for `isValidSystemedCoordinate()`
+  and `convertCoordinateSystem()`'s new throw path, plus one "out-of-range
+  provider location is rejected as null" case in each of
+  `provider-detail-adapter.test.mjs`, `provider-geocode-adapter.test.mjs`,
+  and `provider-suggest-adapter.test.mjs` (2 assertions each, AMap and
+  Tencent shapes). `pnpm test:contract`: 505 tests, 0 failures, 0 skips
+  (104 test files) after this change; `pnpm typecheck`/`pnpm lint`/
+  `pnpm build` all clean.

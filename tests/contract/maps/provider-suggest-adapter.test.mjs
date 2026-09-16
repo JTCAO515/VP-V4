@@ -70,6 +70,32 @@ test("a tip with no backing POI keeps a null providerPoiId and null location, ne
   assert.equal(outcome.candidates[0].location, null);
 });
 
+test("an out-of-range provider location is rejected as null, not silently accepted (#363 runtime coordinate guard)", async () => {
+  const amapOutOfRange = await suggestPlaces({
+    provider: "amap", query: "阅江西路",
+    env: { AMAP_SUGGEST_ENABLED: "true", AMAP_WEB_SERVICE_KEY: "secret" },
+    // lat 990 is not a valid latitude -- a corrupted/garbage provider value.
+    fetcher: async () => Response.json({
+      status: "1", info: "OK", infocode: "10000", count: "1",
+      tips: [{ id: "B0FFG9L9V7", name: "损坏坐标点", district: "广州市海珠区", location: "113.324,990" }],
+    }),
+  });
+  assert.equal(amapOutOfRange.status, "observed");
+  assert.equal(amapOutOfRange.candidates[0].location, null);
+
+  const tencentOutOfRange = await suggestPlaces({
+    provider: "tencent", query: "世纪大道",
+    env: { TENCENT_MAP_SUGGEST_ENABLED: "true", TENCENT_MAP_WEB_SERVICE_KEY: "secret", TENCENT_MAP_SK: "sk-value" },
+    // lng 999 is not a valid longitude -- a corrupted/garbage provider value.
+    fetcher: async () => Response.json({
+      status: 0, message: "query ok", count: 1,
+      data: [{ id: "tencent-poi-2", title: "损坏坐标点", location: { lat: 31.2397, lng: 999 } }],
+    }),
+  });
+  assert.equal(tencentOutOfRange.status, "observed");
+  assert.equal(tencentOutOfRange.candidates[0].location, null);
+});
+
 test("empty result set is no_results, not an error", async () => {
   const amapEmpty = await suggestPlaces({
     provider: "amap", query: "不存在的关键字",
