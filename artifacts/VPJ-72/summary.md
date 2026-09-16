@@ -1,6 +1,6 @@
 # VP response-quality observations
 
-Schema: vp-response-quality-v1; rubric: vp-response-rubric-v1; bundle: b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997
+Schema: vp-response-quality-v1; rubric: vp-response-rubric-v1; bundle: 614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb
 
 Samples 20; failures 10; semantics NOT_RUN 0; fixture feedback 20; human-declared feedback 0.
 Canonical suite remains 12 cases / 8 development / 4 holdout. Variants do not increase independent case count. Real provider pairing, human calibration and adoption: UNRUN.
@@ -31,16 +31,16 @@ Canonical suite remains 12 cases / 8 development / 4 holdout. Variants do not in
 | owned-zh-refusal-baseline | zh | baseline | NOT_RUN | PASS | fixture_annotations_only | evidence_insufficient |
 | owned-zh-refusal-candidate | zh | candidate | NOT_RUN | FAIL | fixture_annotations_only | FAIL |
 
-- a3cf484611100f97f2233ecb: evidence_insufficient; preference tie; votes 2; complete order checks 1; order disagreements 0.
-- bcadebf9fd4e7a17aaed3988: reject_candidate; preference owned-en-typed-error-baseline; votes 2; complete order checks 1; order disagreements 0.
-- d10d5138ee96fa72518521b2: reject_candidate; preference owned-en-semantic-error-baseline; votes 2; complete order checks 1; order disagreements 0.
-- 3fb5c9f5feab05ffa4fb97c2: both_fail; preference both_fail; votes 2; complete order checks 1; order disagreements 0.
-- beb8cf1342b72c58b5b40175: reject_candidate; preference owned-en-refusal-baseline; votes 2; complete order checks 1; order disagreements 0.
-- 3cf082b668d0baec586f4771: evidence_insufficient; preference tie; votes 2; complete order checks 1; order disagreements 0.
-- f22e5fea4b8a1f109c855d77: reject_candidate; preference owned-zh-typed-error-baseline; votes 2; complete order checks 1; order disagreements 0.
-- 0c328a93515833b5f520f7f3: reject_candidate; preference owned-zh-semantic-error-baseline; votes 2; complete order checks 1; order disagreements 0.
-- b80e8e6573a955cdeae97f4d: both_fail; preference both_fail; votes 2; complete order checks 1; order disagreements 0.
-- 8f71df775f1917b42db0a678: reject_candidate; preference owned-zh-refusal-baseline; votes 2; complete order checks 1; order disagreements 0.
+- a43384475dea19685692a793: evidence_insufficient; preference tie; votes 2; complete order checks 1; order disagreements 0.
+- f81d8cb9b286ff6c5965714c: reject_candidate; preference owned-en-typed-error-baseline; votes 2; complete order checks 1; order disagreements 0.
+- 325a7c8892813cc074c9e028: reject_candidate; preference owned-en-semantic-error-baseline; votes 2; complete order checks 1; order disagreements 0.
+- 1e5ba018d75c2ae551d66634: both_fail; preference both_fail; votes 2; complete order checks 1; order disagreements 0.
+- 2ba92d890ec8b63da0e29103: reject_candidate; preference owned-en-refusal-baseline; votes 2; complete order checks 1; order disagreements 0.
+- b181436d505065a7324c2223: evidence_insufficient; preference tie; votes 2; complete order checks 1; order disagreements 0.
+- 2237eff22b410a34b02f9732: reject_candidate; preference owned-zh-typed-error-baseline; votes 2; complete order checks 1; order disagreements 0.
+- 53f0bad1fc831cd3e03cc9c3: reject_candidate; preference owned-zh-semantic-error-baseline; votes 2; complete order checks 1; order disagreements 0.
+- 34a76b2f8bed59520f3eb5cf: both_fail; preference both_fail; votes 2; complete order checks 1; order disagreements 0.
+- c58e229f1881a94d6b9c723c: reject_candidate; preference owned-zh-refusal-baseline; votes 2; complete order checks 1; order disagreements 0.
 
 ## Rubric observations
 

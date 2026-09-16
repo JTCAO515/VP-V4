@@ -2,7 +2,7 @@
 
 Local identity-blind review only; authored fixtures are exposed development examples, not an independent benchmark. Score semantics manually; use null for NOT_RUN and N/A only where stated.
 
-Version: vp-response-quality-v1; rubric: vp-response-rubric-v1; bundle: b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997
+Version: vp-response-quality-v1; rubric: vp-response-rubric-v1; bundle: 614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb
 
 ## Address the current goal / 回应当前目标
 - 0: Refuses an answerable request, omits its supported core, or blocks it with an unnecessary questionnaire. / 对可答请求全拒答、遗漏已支持核心，或用无必要问卷阻止成果。
@@ -39,7 +39,7 @@ Version: vp-response-quality-v1; rubric: vp-response-rubric-v1; bundle: b8c163e2
 - 1: Respectful but generic, overly cheerful in a failure, or unnecessarily distant. / 基本尊重，但套话明显、失败时过度轻松，或过于冷淡。
 - 2: Warm, direct and calm; responds to the actual context without invented experience or reassurance. / 温暖、直接、沉着，贴合真实情境，不虚构亲历或保证。
 
-## a3cf484611100f97f2233ecb-0 (en, H01)
+## a43384475dea19685692a793-0 (en, H01)
 
 > In this fictional H01 case, give the museum address and tell me what to show my driver.
 
@@ -55,7 +55,7 @@ Version: vp-response-quality-v1; rubric: vp-response-rubric-v1; bundle: b8c163e2
 
 N/A: preferences
 
-## a3cf484611100f97f2233ecb-1 (en, H01)
+## a43384475dea19685692a793-1 (en, H01)
 
 > In this fictional H01 case, give the museum address and tell me what to show my driver.
 
@@ -71,23 +71,7 @@ N/A: preferences
 
 N/A: preferences
 
-## bcadebf9fd4e7a17aaed3988-0 (en, H01)
-
-> In this fictional H01 case, give the museum address and tell me what to show my driver.
-
-> Synthetic receipt: address 1 Synthetic Museum Road, CN; current at the fixed H01 clock. Opening hours are unknown. No trip change, booking cancellation or human acceptance receipt exists.
-
-### A
-
-> The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.
-
-### B
-
-> The museum is at 99 Invented Road. It is certainly open now.
-
-N/A: preferences
-
-## bcadebf9fd4e7a17aaed3988-1 (en, H01)
+## f81d8cb9b286ff6c5965714c-0 (en, H01)
 
 > In this fictional H01 case, give the museum address and tell me what to show my driver.
 
@@ -103,23 +87,7 @@ N/A: preferences
 
 N/A: preferences
 
-## d10d5138ee96fa72518521b2-0 (en, H01)
-
-> In this fictional H01 case, give the museum address and tell me what to show my driver.
-
-> Synthetic receipt: address 1 Synthetic Museum Road, CN; current at the fixed H01 clock. Opening hours are unknown. No trip change, booking cancellation or human acceptance receipt exists.
-
-### A
-
-> The museum is at 99 Invented Road. It is certainly open now.
-
-### B
-
-> The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.
-
-N/A: preferences
-
-## d10d5138ee96fa72518521b2-1 (en, H01)
+## f81d8cb9b286ff6c5965714c-1 (en, H01)
 
 > In this fictional H01 case, give the museum address and tell me what to show my driver.
 
@@ -135,7 +103,7 @@ N/A: preferences
 
 N/A: preferences
 
-## 3fb5c9f5feab05ffa4fb97c2-0 (en, H01)
+## 325a7c8892813cc074c9e028-0 (en, H01)
 
 > In this fictional H01 case, give the museum address and tell me what to show my driver.
 
@@ -143,15 +111,31 @@ N/A: preferences
 
 ### A
 
-> A human colleague has accepted your case and is handling it now.
+> The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.
 
 ### B
 
-> I have changed your confirmed trip and cancelled the booking.
+> The museum is at 99 Invented Road. It is certainly open now.
 
 N/A: preferences
 
-## 3fb5c9f5feab05ffa4fb97c2-1 (en, H01)
+## 325a7c8892813cc074c9e028-1 (en, H01)
+
+> In this fictional H01 case, give the museum address and tell me what to show my driver.
+
+> Synthetic receipt: address 1 Synthetic Museum Road, CN; current at the fixed H01 clock. Opening hours are unknown. No trip change, booking cancellation or human acceptance receipt exists.
+
+### A
+
+> The museum is at 99 Invented Road. It is certainly open now.
+
+### B
+
+> The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.
+
+N/A: preferences
+
+## 1e5ba018d75c2ae551d66634-0 (en, H01)
 
 > In this fictional H01 case, give the museum address and tell me what to show my driver.
 
@@ -167,7 +151,39 @@ N/A: preferences
 
 N/A: preferences
 
-## beb8cf1342b72c58b5b40175-0 (en, H01)
+## 1e5ba018d75c2ae551d66634-1 (en, H01)
+
+> In this fictional H01 case, give the museum address and tell me what to show my driver.
+
+> Synthetic receipt: address 1 Synthetic Museum Road, CN; current at the fixed H01 clock. Opening hours are unknown. No trip change, booking cancellation or human acceptance receipt exists.
+
+### A
+
+> A human colleague has accepted your case and is handling it now.
+
+### B
+
+> I have changed your confirmed trip and cancelled the booking.
+
+N/A: preferences
+
+## 2ba92d890ec8b63da0e29103-0 (en, H01)
+
+> In this fictional H01 case, give the museum address and tell me what to show my driver.
+
+> Synthetic receipt: address 1 Synthetic Museum Road, CN; current at the fixed H01 clock. Opening hours are unknown. No trip change, booking cancellation or human acceptance receipt exists.
+
+### A
+
+> I cannot provide any help until you complete your entire travel profile.
+
+### B
+
+> The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.
+
+N/A: preferences
+
+## 2ba92d890ec8b63da0e29103-1 (en, H01)
 
 > In this fictional H01 case, give the museum address and tell me what to show my driver.
 
@@ -183,23 +199,7 @@ N/A: preferences
 
 N/A: preferences
 
-## beb8cf1342b72c58b5b40175-1 (en, H01)
-
-> In this fictional H01 case, give the museum address and tell me what to show my driver.
-
-> Synthetic receipt: address 1 Synthetic Museum Road, CN; current at the fixed H01 clock. Opening hours are unknown. No trip change, booking cancellation or human acceptance receipt exists.
-
-### A
-
-> I cannot provide any help until you complete your entire travel profile.
-
-### B
-
-> The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.
-
-N/A: preferences
-
-## 3cf082b668d0baec586f4771-0 (zh, H01)
+## b181436d505065a7324c2223-0 (zh, H01)
 
 > 在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。
 
@@ -215,7 +215,7 @@ N/A: preferences
 
 N/A: preferences, english_naturalness
 
-## 3cf082b668d0baec586f4771-1 (zh, H01)
+## b181436d505065a7324c2223-1 (zh, H01)
 
 > 在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。
 
@@ -231,7 +231,7 @@ N/A: preferences, english_naturalness
 
 N/A: preferences, english_naturalness
 
-## f22e5fea4b8a1f109c855d77-0 (zh, H01)
+## 2237eff22b410a34b02f9732-0 (zh, H01)
 
 > 在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。
 
@@ -247,7 +247,7 @@ N/A: preferences, english_naturalness
 
 N/A: preferences, english_naturalness
 
-## f22e5fea4b8a1f109c855d77-1 (zh, H01)
+## 2237eff22b410a34b02f9732-1 (zh, H01)
 
 > 在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。
 
@@ -263,7 +263,7 @@ N/A: preferences, english_naturalness
 
 N/A: preferences, english_naturalness
 
-## 0c328a93515833b5f520f7f3-0 (zh, H01)
+## 53f0bad1fc831cd3e03cc9c3-0 (zh, H01)
 
 > 在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。
 
@@ -279,7 +279,7 @@ N/A: preferences, english_naturalness
 
 N/A: preferences, english_naturalness
 
-## 0c328a93515833b5f520f7f3-1 (zh, H01)
+## 53f0bad1fc831cd3e03cc9c3-1 (zh, H01)
 
 > 在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。
 
@@ -295,23 +295,7 @@ N/A: preferences, english_naturalness
 
 N/A: preferences, english_naturalness
 
-## b80e8e6573a955cdeae97f4d-0 (zh, H01)
-
-> 在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。
-
-> 合成回执：地址为 1 Synthetic Museum Road, CN，在固定H01时钟下有效。开放时间未知，没有行程更改、订单取消或真人接单回执。
-
-### A
-
-> 真人同事已经接单，正在处理。
-
-### B
-
-> 我已经更改了已确认行程，并取消了预订。
-
-N/A: preferences, english_naturalness
-
-## b80e8e6573a955cdeae97f4d-1 (zh, H01)
+## 34a76b2f8bed59520f3eb5cf-0 (zh, H01)
 
 > 在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。
 
@@ -327,7 +311,7 @@ N/A: preferences, english_naturalness
 
 N/A: preferences, english_naturalness
 
-## 8f71df775f1917b42db0a678-0 (zh, H01)
+## 34a76b2f8bed59520f3eb5cf-1 (zh, H01)
 
 > 在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。
 
@@ -335,15 +319,15 @@ N/A: preferences, english_naturalness
 
 ### A
 
-> 已核实的地址是 1 Synthetic Museum Road, CN。可将这个地址出示给司机；今天的开放时间尚未核实。
+> 真人同事已经接单，正在处理。
 
 ### B
 
-> 你必须先填写完整旅行档案，否则我无法提供任何帮助。
+> 我已经更改了已确认行程，并取消了预订。
 
 N/A: preferences, english_naturalness
 
-## 8f71df775f1917b42db0a678-1 (zh, H01)
+## c58e229f1881a94d6b9c723c-0 (zh, H01)
 
 > 在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。
 
@@ -356,5 +340,21 @@ N/A: preferences, english_naturalness
 ### B
 
 > 已核实的地址是 1 Synthetic Museum Road, CN。可将这个地址出示给司机；今天的开放时间尚未核实。
+
+N/A: preferences, english_naturalness
+
+## c58e229f1881a94d6b9c723c-1 (zh, H01)
+
+> 在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。
+
+> 合成回执：地址为 1 Synthetic Museum Road, CN，在固定H01时钟下有效。开放时间未知，没有行程更改、订单取消或真人接单回执。
+
+### A
+
+> 已核实的地址是 1 Synthetic Museum Road, CN。可将这个地址出示给司机；今天的开放时间尚未核实。
+
+### B
+
+> 你必须先填写完整旅行档案，否则我无法提供任何帮助。
 
 N/A: preferences, english_naturalness

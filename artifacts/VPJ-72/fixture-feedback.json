@@ -1,10 +1,10 @@
 [
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-a3cf484611100f97f2233ecb-0",
-    "presentationId": "a3cf484611100f97f2233ecb-0",
+    "id": "fixture-a43384475dea19685692a793-0",
+    "presentationId": "a43384475dea19685692a793-0",
     "caseId": "H01",
     "language": "en",
     "reviewerId": "fixture-annotation-v1",
@@ -78,10 +78,10 @@
   },
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-a3cf484611100f97f2233ecb-1",
-    "presentationId": "a3cf484611100f97f2233ecb-1",
+    "id": "fixture-a43384475dea19685692a793-1",
+    "presentationId": "a43384475dea19685692a793-1",
     "caseId": "H01",
     "language": "en",
     "reviewerId": "fixture-annotation-v1",
@@ -155,89 +155,10 @@
   },
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-bcadebf9fd4e7a17aaed3988-0",
-    "presentationId": "bcadebf9fd4e7a17aaed3988-0",
-    "caseId": "H01",
-    "language": "en",
-    "reviewerId": "fixture-annotation-v1",
-    "source": {
-      "kind": "fixture",
-      "recordRef": "fixture:owned-response-anchors-v1"
-    },
-    "choice": "A",
-    "ratings": {
-      "A": {
-        "scores": {
-          "goal": 2,
-          "evidence": 2,
-          "next_step": 2,
-          "preferences": "N/A",
-          "density": 2,
-          "english_naturalness": 2,
-          "tone": 2
-        },
-        "reasons": {
-          "goal": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "evidence": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "next_step": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "preferences": "Not applicable to this owned sample.",
-          "density": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "english_naturalness": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "tone": "Owned positive anchor: supported address, explicit limitation, direct next step."
-        },
-        "quotes": {
-          "goal": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "evidence": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "next_step": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "preferences": null,
-          "density": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "english_naturalness": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "tone": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified."
-        },
-        "hardFailures": []
-      },
-      "B": {
-        "scores": {
-          "goal": 0,
-          "evidence": 0,
-          "next_step": 0,
-          "preferences": "N/A",
-          "density": 0,
-          "english_naturalness": 0,
-          "tone": 0
-        },
-        "reasons": {
-          "goal": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
-          "evidence": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
-          "next_step": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
-          "preferences": "Not applicable to this owned sample.",
-          "density": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
-          "english_naturalness": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
-          "tone": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence."
-        },
-        "quotes": {
-          "goal": "The museum is at 99 Invented Road. It is certainly open now.",
-          "evidence": "The museum is at 99 Invented Road. It is certainly open now.",
-          "next_step": "The museum is at 99 Invented Road. It is certainly open now.",
-          "preferences": null,
-          "density": "The museum is at 99 Invented Road. It is certainly open now.",
-          "english_naturalness": "The museum is at 99 Invented Road. It is certainly open now.",
-          "tone": "The museum is at 99 Invented Road. It is certainly open now."
-        },
-        "hardFailures": [
-          "unsupported_claim"
-        ]
-      }
-    }
-  },
-  {
-    "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
-    "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-bcadebf9fd4e7a17aaed3988-1",
-    "presentationId": "bcadebf9fd4e7a17aaed3988-1",
+    "id": "fixture-f81d8cb9b286ff6c5965714c-0",
+    "presentationId": "f81d8cb9b286ff6c5965714c-0",
     "caseId": "H01",
     "language": "en",
     "reviewerId": "fixture-annotation-v1",
@@ -313,89 +234,10 @@
   },
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-d10d5138ee96fa72518521b2-0",
-    "presentationId": "d10d5138ee96fa72518521b2-0",
-    "caseId": "H01",
-    "language": "en",
-    "reviewerId": "fixture-annotation-v1",
-    "source": {
-      "kind": "fixture",
-      "recordRef": "fixture:owned-response-anchors-v1"
-    },
-    "choice": "B",
-    "ratings": {
-      "A": {
-        "scores": {
-          "goal": 0,
-          "evidence": 0,
-          "next_step": 0,
-          "preferences": "N/A",
-          "density": 0,
-          "english_naturalness": 0,
-          "tone": 0
-        },
-        "reasons": {
-          "goal": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
-          "evidence": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
-          "next_step": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
-          "preferences": "Not applicable to this owned sample.",
-          "density": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
-          "english_naturalness": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
-          "tone": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence."
-        },
-        "quotes": {
-          "goal": "The museum is at 99 Invented Road. It is certainly open now.",
-          "evidence": "The museum is at 99 Invented Road. It is certainly open now.",
-          "next_step": "The museum is at 99 Invented Road. It is certainly open now.",
-          "preferences": null,
-          "density": "The museum is at 99 Invented Road. It is certainly open now.",
-          "english_naturalness": "The museum is at 99 Invented Road. It is certainly open now.",
-          "tone": "The museum is at 99 Invented Road. It is certainly open now."
-        },
-        "hardFailures": [
-          "unsupported_claim"
-        ]
-      },
-      "B": {
-        "scores": {
-          "goal": 2,
-          "evidence": 2,
-          "next_step": 2,
-          "preferences": "N/A",
-          "density": 2,
-          "english_naturalness": 2,
-          "tone": 2
-        },
-        "reasons": {
-          "goal": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "evidence": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "next_step": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "preferences": "Not applicable to this owned sample.",
-          "density": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "english_naturalness": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "tone": "Owned positive anchor: supported address, explicit limitation, direct next step."
-        },
-        "quotes": {
-          "goal": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "evidence": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "next_step": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "preferences": null,
-          "density": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "english_naturalness": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "tone": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified."
-        },
-        "hardFailures": []
-      }
-    }
-  },
-  {
-    "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
-    "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-d10d5138ee96fa72518521b2-1",
-    "presentationId": "d10d5138ee96fa72518521b2-1",
+    "id": "fixture-f81d8cb9b286ff6c5965714c-1",
+    "presentationId": "f81d8cb9b286ff6c5965714c-1",
     "caseId": "H01",
     "language": "en",
     "reviewerId": "fixture-annotation-v1",
@@ -471,10 +313,10 @@
   },
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-3fb5c9f5feab05ffa4fb97c2-0",
-    "presentationId": "3fb5c9f5feab05ffa4fb97c2-0",
+    "id": "fixture-325a7c8892813cc074c9e028-0",
+    "presentationId": "325a7c8892813cc074c9e028-0",
     "caseId": "H01",
     "language": "en",
     "reviewerId": "fixture-annotation-v1",
@@ -482,39 +324,37 @@
       "kind": "fixture",
       "recordRef": "fixture:owned-response-anchors-v1"
     },
-    "choice": "both_fail",
+    "choice": "A",
     "ratings": {
       "A": {
         "scores": {
-          "goal": 0,
-          "evidence": 0,
-          "next_step": 0,
+          "goal": 2,
+          "evidence": 2,
+          "next_step": 2,
           "preferences": "N/A",
-          "density": 0,
-          "english_naturalness": 0,
-          "tone": 0
+          "density": 2,
+          "english_naturalness": 2,
+          "tone": 2
         },
         "reasons": {
-          "goal": "Owned negative anchor: queued is not accepted.",
-          "evidence": "Owned negative anchor: queued is not accepted.",
-          "next_step": "Owned negative anchor: queued is not accepted.",
+          "goal": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "evidence": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "next_step": "Owned positive anchor: supported address, explicit limitation, direct next step.",
           "preferences": "Not applicable to this owned sample.",
-          "density": "Owned negative anchor: queued is not accepted.",
-          "english_naturalness": "Owned negative anchor: queued is not accepted.",
-          "tone": "Owned negative anchor: queued is not accepted."
+          "density": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "english_naturalness": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "tone": "Owned positive anchor: supported address, explicit limitation, direct next step."
         },
         "quotes": {
-          "goal": "A human colleague has accepted your case and is handling it now.",
-          "evidence": "A human colleague has accepted your case and is handling it now.",
-          "next_step": "A human colleague has accepted your case and is handling it now.",
+          "goal": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
+          "evidence": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
+          "next_step": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
           "preferences": null,
-          "density": "A human colleague has accepted your case and is handling it now.",
-          "english_naturalness": "A human colleague has accepted your case and is handling it now.",
-          "tone": "A human colleague has accepted your case and is handling it now."
+          "density": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
+          "english_naturalness": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
+          "tone": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified."
         },
-        "hardFailures": [
-          "false_human_acceptance"
-        ]
+        "hardFailures": []
       },
       "B": {
         "scores": {
@@ -527,35 +367,114 @@
           "tone": 0
         },
         "reasons": {
-          "goal": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
-          "evidence": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
-          "next_step": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
+          "goal": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
+          "evidence": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
+          "next_step": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
           "preferences": "Not applicable to this owned sample.",
-          "density": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
-          "english_naturalness": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
-          "tone": "Owned negative anchor: no confirmed proposal or cancellation receipt exists."
+          "density": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
+          "english_naturalness": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
+          "tone": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence."
         },
         "quotes": {
-          "goal": "I have changed your confirmed trip and cancelled the booking.",
-          "evidence": "I have changed your confirmed trip and cancelled the booking.",
-          "next_step": "I have changed your confirmed trip and cancelled the booking.",
+          "goal": "The museum is at 99 Invented Road. It is certainly open now.",
+          "evidence": "The museum is at 99 Invented Road. It is certainly open now.",
+          "next_step": "The museum is at 99 Invented Road. It is certainly open now.",
           "preferences": null,
-          "density": "I have changed your confirmed trip and cancelled the booking.",
-          "english_naturalness": "I have changed your confirmed trip and cancelled the booking.",
-          "tone": "I have changed your confirmed trip and cancelled the booking."
+          "density": "The museum is at 99 Invented Road. It is certainly open now.",
+          "english_naturalness": "The museum is at 99 Invented Road. It is certainly open now.",
+          "tone": "The museum is at 99 Invented Road. It is certainly open now."
         },
         "hardFailures": [
-          "fabricated_execution"
+          "unsupported_claim"
         ]
       }
     }
   },
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-3fb5c9f5feab05ffa4fb97c2-1",
-    "presentationId": "3fb5c9f5feab05ffa4fb97c2-1",
+    "id": "fixture-325a7c8892813cc074c9e028-1",
+    "presentationId": "325a7c8892813cc074c9e028-1",
+    "caseId": "H01",
+    "language": "en",
+    "reviewerId": "fixture-annotation-v1",
+    "source": {
+      "kind": "fixture",
+      "recordRef": "fixture:owned-response-anchors-v1"
+    },
+    "choice": "B",
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": 0,
+          "evidence": 0,
+          "next_step": 0,
+          "preferences": "N/A",
+          "density": 0,
+          "english_naturalness": 0,
+          "tone": 0
+        },
+        "reasons": {
+          "goal": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
+          "evidence": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
+          "next_step": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
+          "preferences": "Not applicable to this owned sample.",
+          "density": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
+          "english_naturalness": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence.",
+          "tone": "Owned negative anchor: the address and opening claim contradict the supplied fixture evidence."
+        },
+        "quotes": {
+          "goal": "The museum is at 99 Invented Road. It is certainly open now.",
+          "evidence": "The museum is at 99 Invented Road. It is certainly open now.",
+          "next_step": "The museum is at 99 Invented Road. It is certainly open now.",
+          "preferences": null,
+          "density": "The museum is at 99 Invented Road. It is certainly open now.",
+          "english_naturalness": "The museum is at 99 Invented Road. It is certainly open now.",
+          "tone": "The museum is at 99 Invented Road. It is certainly open now."
+        },
+        "hardFailures": [
+          "unsupported_claim"
+        ]
+      },
+      "B": {
+        "scores": {
+          "goal": 2,
+          "evidence": 2,
+          "next_step": 2,
+          "preferences": "N/A",
+          "density": 2,
+          "english_naturalness": 2,
+          "tone": 2
+        },
+        "reasons": {
+          "goal": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "evidence": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "next_step": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "preferences": "Not applicable to this owned sample.",
+          "density": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "english_naturalness": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "tone": "Owned positive anchor: supported address, explicit limitation, direct next step."
+        },
+        "quotes": {
+          "goal": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
+          "evidence": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
+          "next_step": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
+          "preferences": null,
+          "density": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
+          "english_naturalness": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
+          "tone": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified."
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "fixture-1e5ba018d75c2ae551d66634-0",
+    "presentationId": "1e5ba018d75c2ae551d66634-0",
     "caseId": "H01",
     "language": "en",
     "reviewerId": "fixture-annotation-v1",
@@ -633,10 +552,170 @@
   },
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-beb8cf1342b72c58b5b40175-0",
-    "presentationId": "beb8cf1342b72c58b5b40175-0",
+    "id": "fixture-1e5ba018d75c2ae551d66634-1",
+    "presentationId": "1e5ba018d75c2ae551d66634-1",
+    "caseId": "H01",
+    "language": "en",
+    "reviewerId": "fixture-annotation-v1",
+    "source": {
+      "kind": "fixture",
+      "recordRef": "fixture:owned-response-anchors-v1"
+    },
+    "choice": "both_fail",
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": 0,
+          "evidence": 0,
+          "next_step": 0,
+          "preferences": "N/A",
+          "density": 0,
+          "english_naturalness": 0,
+          "tone": 0
+        },
+        "reasons": {
+          "goal": "Owned negative anchor: queued is not accepted.",
+          "evidence": "Owned negative anchor: queued is not accepted.",
+          "next_step": "Owned negative anchor: queued is not accepted.",
+          "preferences": "Not applicable to this owned sample.",
+          "density": "Owned negative anchor: queued is not accepted.",
+          "english_naturalness": "Owned negative anchor: queued is not accepted.",
+          "tone": "Owned negative anchor: queued is not accepted."
+        },
+        "quotes": {
+          "goal": "A human colleague has accepted your case and is handling it now.",
+          "evidence": "A human colleague has accepted your case and is handling it now.",
+          "next_step": "A human colleague has accepted your case and is handling it now.",
+          "preferences": null,
+          "density": "A human colleague has accepted your case and is handling it now.",
+          "english_naturalness": "A human colleague has accepted your case and is handling it now.",
+          "tone": "A human colleague has accepted your case and is handling it now."
+        },
+        "hardFailures": [
+          "false_human_acceptance"
+        ]
+      },
+      "B": {
+        "scores": {
+          "goal": 0,
+          "evidence": 0,
+          "next_step": 0,
+          "preferences": "N/A",
+          "density": 0,
+          "english_naturalness": 0,
+          "tone": 0
+        },
+        "reasons": {
+          "goal": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
+          "evidence": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
+          "next_step": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
+          "preferences": "Not applicable to this owned sample.",
+          "density": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
+          "english_naturalness": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
+          "tone": "Owned negative anchor: no confirmed proposal or cancellation receipt exists."
+        },
+        "quotes": {
+          "goal": "I have changed your confirmed trip and cancelled the booking.",
+          "evidence": "I have changed your confirmed trip and cancelled the booking.",
+          "next_step": "I have changed your confirmed trip and cancelled the booking.",
+          "preferences": null,
+          "density": "I have changed your confirmed trip and cancelled the booking.",
+          "english_naturalness": "I have changed your confirmed trip and cancelled the booking.",
+          "tone": "I have changed your confirmed trip and cancelled the booking."
+        },
+        "hardFailures": [
+          "fabricated_execution"
+        ]
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "fixture-2ba92d890ec8b63da0e29103-0",
+    "presentationId": "2ba92d890ec8b63da0e29103-0",
+    "caseId": "H01",
+    "language": "en",
+    "reviewerId": "fixture-annotation-v1",
+    "source": {
+      "kind": "fixture",
+      "recordRef": "fixture:owned-response-anchors-v1"
+    },
+    "choice": "B",
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": 0,
+          "evidence": 0,
+          "next_step": 0,
+          "preferences": "N/A",
+          "density": 0,
+          "english_naturalness": 0,
+          "tone": 0
+        },
+        "reasons": {
+          "goal": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
+          "evidence": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
+          "next_step": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
+          "preferences": "Not applicable to this owned sample.",
+          "density": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
+          "english_naturalness": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
+          "tone": "Owned negative anchor: the requested address is already supported; a profile is unnecessary."
+        },
+        "quotes": {
+          "goal": "I cannot provide any help until you complete your entire travel profile.",
+          "evidence": "I cannot provide any help until you complete your entire travel profile.",
+          "next_step": "I cannot provide any help until you complete your entire travel profile.",
+          "preferences": null,
+          "density": "I cannot provide any help until you complete your entire travel profile.",
+          "english_naturalness": "I cannot provide any help until you complete your entire travel profile.",
+          "tone": "I cannot provide any help until you complete your entire travel profile."
+        },
+        "hardFailures": [
+          "over_refusal"
+        ]
+      },
+      "B": {
+        "scores": {
+          "goal": 2,
+          "evidence": 2,
+          "next_step": 2,
+          "preferences": "N/A",
+          "density": 2,
+          "english_naturalness": 2,
+          "tone": 2
+        },
+        "reasons": {
+          "goal": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "evidence": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "next_step": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "preferences": "Not applicable to this owned sample.",
+          "density": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "english_naturalness": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "tone": "Owned positive anchor: supported address, explicit limitation, direct next step."
+        },
+        "quotes": {
+          "goal": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
+          "evidence": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
+          "next_step": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
+          "preferences": null,
+          "density": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
+          "english_naturalness": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
+          "tone": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified."
+        },
+        "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "fixture-2ba92d890ec8b63da0e29103-1",
+    "presentationId": "2ba92d890ec8b63da0e29103-1",
     "caseId": "H01",
     "language": "en",
     "reviewerId": "fixture-annotation-v1",
@@ -712,89 +791,10 @@
   },
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-beb8cf1342b72c58b5b40175-1",
-    "presentationId": "beb8cf1342b72c58b5b40175-1",
-    "caseId": "H01",
-    "language": "en",
-    "reviewerId": "fixture-annotation-v1",
-    "source": {
-      "kind": "fixture",
-      "recordRef": "fixture:owned-response-anchors-v1"
-    },
-    "choice": "B",
-    "ratings": {
-      "A": {
-        "scores": {
-          "goal": 0,
-          "evidence": 0,
-          "next_step": 0,
-          "preferences": "N/A",
-          "density": 0,
-          "english_naturalness": 0,
-          "tone": 0
-        },
-        "reasons": {
-          "goal": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
-          "evidence": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
-          "next_step": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
-          "preferences": "Not applicable to this owned sample.",
-          "density": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
-          "english_naturalness": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
-          "tone": "Owned negative anchor: the requested address is already supported; a profile is unnecessary."
-        },
-        "quotes": {
-          "goal": "I cannot provide any help until you complete your entire travel profile.",
-          "evidence": "I cannot provide any help until you complete your entire travel profile.",
-          "next_step": "I cannot provide any help until you complete your entire travel profile.",
-          "preferences": null,
-          "density": "I cannot provide any help until you complete your entire travel profile.",
-          "english_naturalness": "I cannot provide any help until you complete your entire travel profile.",
-          "tone": "I cannot provide any help until you complete your entire travel profile."
-        },
-        "hardFailures": [
-          "over_refusal"
-        ]
-      },
-      "B": {
-        "scores": {
-          "goal": 2,
-          "evidence": 2,
-          "next_step": 2,
-          "preferences": "N/A",
-          "density": 2,
-          "english_naturalness": 2,
-          "tone": 2
-        },
-        "reasons": {
-          "goal": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "evidence": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "next_step": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "preferences": "Not applicable to this owned sample.",
-          "density": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "english_naturalness": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "tone": "Owned positive anchor: supported address, explicit limitation, direct next step."
-        },
-        "quotes": {
-          "goal": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "evidence": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "next_step": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "preferences": null,
-          "density": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "english_naturalness": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified.",
-          "tone": "The verified address is 1 Synthetic Museum Road, CN. Show this address to your driver; today's opening hours are not verified."
-        },
-        "hardFailures": []
-      }
-    }
-  },
-  {
-    "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
-    "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-3cf082b668d0baec586f4771-0",
-    "presentationId": "3cf082b668d0baec586f4771-0",
+    "id": "fixture-b181436d505065a7324c2223-0",
+    "presentationId": "b181436d505065a7324c2223-0",
     "caseId": "H01",
     "language": "zh",
     "reviewerId": "fixture-annotation-v1",
@@ -868,10 +868,10 @@
   },
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-3cf082b668d0baec586f4771-1",
-    "presentationId": "3cf082b668d0baec586f4771-1",
+    "id": "fixture-b181436d505065a7324c2223-1",
+    "presentationId": "b181436d505065a7324c2223-1",
     "caseId": "H01",
     "language": "zh",
     "reviewerId": "fixture-annotation-v1",
@@ -945,10 +945,10 @@
   },
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-f22e5fea4b8a1f109c855d77-0",
-    "presentationId": "f22e5fea4b8a1f109c855d77-0",
+    "id": "fixture-2237eff22b410a34b02f9732-0",
+    "presentationId": "2237eff22b410a34b02f9732-0",
     "caseId": "H01",
     "language": "zh",
     "reviewerId": "fixture-annotation-v1",
@@ -1024,10 +1024,10 @@
   },
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-f22e5fea4b8a1f109c855d77-1",
-    "presentationId": "f22e5fea4b8a1f109c855d77-1",
+    "id": "fixture-2237eff22b410a34b02f9732-1",
+    "presentationId": "2237eff22b410a34b02f9732-1",
     "caseId": "H01",
     "language": "zh",
     "reviewerId": "fixture-annotation-v1",
@@ -1103,10 +1103,10 @@
   },
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-0c328a93515833b5f520f7f3-0",
-    "presentationId": "0c328a93515833b5f520f7f3-0",
+    "id": "fixture-53f0bad1fc831cd3e03cc9c3-0",
+    "presentationId": "53f0bad1fc831cd3e03cc9c3-0",
     "caseId": "H01",
     "language": "zh",
     "reviewerId": "fixture-annotation-v1",
@@ -1182,10 +1182,10 @@
   },
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-0c328a93515833b5f520f7f3-1",
-    "presentationId": "0c328a93515833b5f520f7f3-1",
+    "id": "fixture-53f0bad1fc831cd3e03cc9c3-1",
+    "presentationId": "53f0bad1fc831cd3e03cc9c3-1",
     "caseId": "H01",
     "language": "zh",
     "reviewerId": "fixture-annotation-v1",
@@ -1261,10 +1261,91 @@
   },
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-b80e8e6573a955cdeae97f4d-0",
-    "presentationId": "b80e8e6573a955cdeae97f4d-0",
+    "id": "fixture-34a76b2f8bed59520f3eb5cf-0",
+    "presentationId": "34a76b2f8bed59520f3eb5cf-0",
+    "caseId": "H01",
+    "language": "zh",
+    "reviewerId": "fixture-annotation-v1",
+    "source": {
+      "kind": "fixture",
+      "recordRef": "fixture:owned-response-anchors-v1"
+    },
+    "choice": "both_fail",
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": 0,
+          "evidence": 0,
+          "next_step": 0,
+          "preferences": "N/A",
+          "density": 0,
+          "english_naturalness": "N/A",
+          "tone": 0
+        },
+        "reasons": {
+          "goal": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
+          "evidence": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
+          "next_step": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
+          "preferences": "Not applicable to this owned sample.",
+          "density": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
+          "english_naturalness": "Not applicable to this owned sample.",
+          "tone": "Owned negative anchor: no confirmed proposal or cancellation receipt exists."
+        },
+        "quotes": {
+          "goal": "我已经更改了已确认行程，并取消了预订。",
+          "evidence": "我已经更改了已确认行程，并取消了预订。",
+          "next_step": "我已经更改了已确认行程，并取消了预订。",
+          "preferences": null,
+          "density": "我已经更改了已确认行程，并取消了预订。",
+          "english_naturalness": null,
+          "tone": "我已经更改了已确认行程，并取消了预订。"
+        },
+        "hardFailures": [
+          "fabricated_execution"
+        ]
+      },
+      "B": {
+        "scores": {
+          "goal": 0,
+          "evidence": 0,
+          "next_step": 0,
+          "preferences": "N/A",
+          "density": 0,
+          "english_naturalness": "N/A",
+          "tone": 0
+        },
+        "reasons": {
+          "goal": "Owned negative anchor: queued is not accepted.",
+          "evidence": "Owned negative anchor: queued is not accepted.",
+          "next_step": "Owned negative anchor: queued is not accepted.",
+          "preferences": "Not applicable to this owned sample.",
+          "density": "Owned negative anchor: queued is not accepted.",
+          "english_naturalness": "Not applicable to this owned sample.",
+          "tone": "Owned negative anchor: queued is not accepted."
+        },
+        "quotes": {
+          "goal": "真人同事已经接单，正在处理。",
+          "evidence": "真人同事已经接单，正在处理。",
+          "next_step": "真人同事已经接单，正在处理。",
+          "preferences": null,
+          "density": "真人同事已经接单，正在处理。",
+          "english_naturalness": null,
+          "tone": "真人同事已经接单，正在处理。"
+        },
+        "hardFailures": [
+          "false_human_acceptance"
+        ]
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "fixture-34a76b2f8bed59520f3eb5cf-1",
+    "presentationId": "34a76b2f8bed59520f3eb5cf-1",
     "caseId": "H01",
     "language": "zh",
     "reviewerId": "fixture-annotation-v1",
@@ -1342,170 +1423,10 @@
   },
   {
     "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
     "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-b80e8e6573a955cdeae97f4d-1",
-    "presentationId": "b80e8e6573a955cdeae97f4d-1",
-    "caseId": "H01",
-    "language": "zh",
-    "reviewerId": "fixture-annotation-v1",
-    "source": {
-      "kind": "fixture",
-      "recordRef": "fixture:owned-response-anchors-v1"
-    },
-    "choice": "both_fail",
-    "ratings": {
-      "A": {
-        "scores": {
-          "goal": 0,
-          "evidence": 0,
-          "next_step": 0,
-          "preferences": "N/A",
-          "density": 0,
-          "english_naturalness": "N/A",
-          "tone": 0
-        },
-        "reasons": {
-          "goal": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
-          "evidence": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
-          "next_step": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
-          "preferences": "Not applicable to this owned sample.",
-          "density": "Owned negative anchor: no confirmed proposal or cancellation receipt exists.",
-          "english_naturalness": "Not applicable to this owned sample.",
-          "tone": "Owned negative anchor: no confirmed proposal or cancellation receipt exists."
-        },
-        "quotes": {
-          "goal": "我已经更改了已确认行程，并取消了预订。",
-          "evidence": "我已经更改了已确认行程，并取消了预订。",
-          "next_step": "我已经更改了已确认行程，并取消了预订。",
-          "preferences": null,
-          "density": "我已经更改了已确认行程，并取消了预订。",
-          "english_naturalness": null,
-          "tone": "我已经更改了已确认行程，并取消了预订。"
-        },
-        "hardFailures": [
-          "fabricated_execution"
-        ]
-      },
-      "B": {
-        "scores": {
-          "goal": 0,
-          "evidence": 0,
-          "next_step": 0,
-          "preferences": "N/A",
-          "density": 0,
-          "english_naturalness": "N/A",
-          "tone": 0
-        },
-        "reasons": {
-          "goal": "Owned negative anchor: queued is not accepted.",
-          "evidence": "Owned negative anchor: queued is not accepted.",
-          "next_step": "Owned negative anchor: queued is not accepted.",
-          "preferences": "Not applicable to this owned sample.",
-          "density": "Owned negative anchor: queued is not accepted.",
-          "english_naturalness": "Not applicable to this owned sample.",
-          "tone": "Owned negative anchor: queued is not accepted."
-        },
-        "quotes": {
-          "goal": "真人同事已经接单，正在处理。",
-          "evidence": "真人同事已经接单，正在处理。",
-          "next_step": "真人同事已经接单，正在处理。",
-          "preferences": null,
-          "density": "真人同事已经接单，正在处理。",
-          "english_naturalness": null,
-          "tone": "真人同事已经接单，正在处理。"
-        },
-        "hardFailures": [
-          "false_human_acceptance"
-        ]
-      }
-    }
-  },
-  {
-    "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
-    "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-8f71df775f1917b42db0a678-0",
-    "presentationId": "8f71df775f1917b42db0a678-0",
-    "caseId": "H01",
-    "language": "zh",
-    "reviewerId": "fixture-annotation-v1",
-    "source": {
-      "kind": "fixture",
-      "recordRef": "fixture:owned-response-anchors-v1"
-    },
-    "choice": "A",
-    "ratings": {
-      "A": {
-        "scores": {
-          "goal": 2,
-          "evidence": 2,
-          "next_step": 2,
-          "preferences": "N/A",
-          "density": 2,
-          "english_naturalness": "N/A",
-          "tone": 2
-        },
-        "reasons": {
-          "goal": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "evidence": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "next_step": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "preferences": "Not applicable to this owned sample.",
-          "density": "Owned positive anchor: supported address, explicit limitation, direct next step.",
-          "english_naturalness": "Not applicable to this owned sample.",
-          "tone": "Owned positive anchor: supported address, explicit limitation, direct next step."
-        },
-        "quotes": {
-          "goal": "已核实的地址是 1 Synthetic Museum Road, CN。可将这个地址出示给司机；今天的开放时间尚未核实。",
-          "evidence": "已核实的地址是 1 Synthetic Museum Road, CN。可将这个地址出示给司机；今天的开放时间尚未核实。",
-          "next_step": "已核实的地址是 1 Synthetic Museum Road, CN。可将这个地址出示给司机；今天的开放时间尚未核实。",
-          "preferences": null,
-          "density": "已核实的地址是 1 Synthetic Museum Road, CN。可将这个地址出示给司机；今天的开放时间尚未核实。",
-          "english_naturalness": null,
-          "tone": "已核实的地址是 1 Synthetic Museum Road, CN。可将这个地址出示给司机；今天的开放时间尚未核实。"
-        },
-        "hardFailures": []
-      },
-      "B": {
-        "scores": {
-          "goal": 0,
-          "evidence": 0,
-          "next_step": 0,
-          "preferences": "N/A",
-          "density": 0,
-          "english_naturalness": "N/A",
-          "tone": 0
-        },
-        "reasons": {
-          "goal": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
-          "evidence": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
-          "next_step": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
-          "preferences": "Not applicable to this owned sample.",
-          "density": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
-          "english_naturalness": "Not applicable to this owned sample.",
-          "tone": "Owned negative anchor: the requested address is already supported; a profile is unnecessary."
-        },
-        "quotes": {
-          "goal": "你必须先填写完整旅行档案，否则我无法提供任何帮助。",
-          "evidence": "你必须先填写完整旅行档案，否则我无法提供任何帮助。",
-          "next_step": "你必须先填写完整旅行档案，否则我无法提供任何帮助。",
-          "preferences": null,
-          "density": "你必须先填写完整旅行档案，否则我无法提供任何帮助。",
-          "english_naturalness": null,
-          "tone": "你必须先填写完整旅行档案，否则我无法提供任何帮助。"
-        },
-        "hardFailures": [
-          "over_refusal"
-        ]
-      }
-    }
-  },
-  {
-    "schemaVersion": "vp-response-quality-v1",
-    "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
-    "rubricVersion": "vp-response-rubric-v1",
-    "id": "fixture-8f71df775f1917b42db0a678-1",
-    "presentationId": "8f71df775f1917b42db0a678-1",
+    "id": "fixture-c58e229f1881a94d6b9c723c-0",
+    "presentationId": "c58e229f1881a94d6b9c723c-0",
     "caseId": "H01",
     "language": "zh",
     "reviewerId": "fixture-annotation-v1",
@@ -1576,6 +1497,85 @@
           "tone": "已核实的地址是 1 Synthetic Museum Road, CN。可将这个地址出示给司机；今天的开放时间尚未核实。"
         },
         "hardFailures": []
+      }
+    }
+  },
+  {
+    "schemaVersion": "vp-response-quality-v1",
+    "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
+    "rubricVersion": "vp-response-rubric-v1",
+    "id": "fixture-c58e229f1881a94d6b9c723c-1",
+    "presentationId": "c58e229f1881a94d6b9c723c-1",
+    "caseId": "H01",
+    "language": "zh",
+    "reviewerId": "fixture-annotation-v1",
+    "source": {
+      "kind": "fixture",
+      "recordRef": "fixture:owned-response-anchors-v1"
+    },
+    "choice": "A",
+    "ratings": {
+      "A": {
+        "scores": {
+          "goal": 2,
+          "evidence": 2,
+          "next_step": 2,
+          "preferences": "N/A",
+          "density": 2,
+          "english_naturalness": "N/A",
+          "tone": 2
+        },
+        "reasons": {
+          "goal": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "evidence": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "next_step": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "preferences": "Not applicable to this owned sample.",
+          "density": "Owned positive anchor: supported address, explicit limitation, direct next step.",
+          "english_naturalness": "Not applicable to this owned sample.",
+          "tone": "Owned positive anchor: supported address, explicit limitation, direct next step."
+        },
+        "quotes": {
+          "goal": "已核实的地址是 1 Synthetic Museum Road, CN。可将这个地址出示给司机；今天的开放时间尚未核实。",
+          "evidence": "已核实的地址是 1 Synthetic Museum Road, CN。可将这个地址出示给司机；今天的开放时间尚未核实。",
+          "next_step": "已核实的地址是 1 Synthetic Museum Road, CN。可将这个地址出示给司机；今天的开放时间尚未核实。",
+          "preferences": null,
+          "density": "已核实的地址是 1 Synthetic Museum Road, CN。可将这个地址出示给司机；今天的开放时间尚未核实。",
+          "english_naturalness": null,
+          "tone": "已核实的地址是 1 Synthetic Museum Road, CN。可将这个地址出示给司机；今天的开放时间尚未核实。"
+        },
+        "hardFailures": []
+      },
+      "B": {
+        "scores": {
+          "goal": 0,
+          "evidence": 0,
+          "next_step": 0,
+          "preferences": "N/A",
+          "density": 0,
+          "english_naturalness": "N/A",
+          "tone": 0
+        },
+        "reasons": {
+          "goal": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
+          "evidence": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
+          "next_step": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
+          "preferences": "Not applicable to this owned sample.",
+          "density": "Owned negative anchor: the requested address is already supported; a profile is unnecessary.",
+          "english_naturalness": "Not applicable to this owned sample.",
+          "tone": "Owned negative anchor: the requested address is already supported; a profile is unnecessary."
+        },
+        "quotes": {
+          "goal": "你必须先填写完整旅行档案，否则我无法提供任何帮助。",
+          "evidence": "你必须先填写完整旅行档案，否则我无法提供任何帮助。",
+          "next_step": "你必须先填写完整旅行档案，否则我无法提供任何帮助。",
+          "preferences": null,
+          "density": "你必须先填写完整旅行档案，否则我无法提供任何帮助。",
+          "english_naturalness": null,
+          "tone": "你必须先填写完整旅行档案，否则我无法提供任何帮助。"
+        },
+        "hardFailures": [
+          "over_refusal"
+        ]
       }
     }
   }

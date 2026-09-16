@@ -1,14 +1,14 @@
 {
   "schemaVersion": "vp-response-quality-v1",
   "mode": "owned-synthetic-offline-review",
-  "bundleHash": "b8c163e2daf68133d6cbc333668cd8ae79d1ae73fa70973290736139083e1997",
+  "bundleHash": "614297384951f66ecd4f9442cd91555251ac756ccec96b85883c444182f7aceb",
   "rubricVersion": "vp-response-rubric-v1",
   "pairing": {
-    "reportHash": "0fa5a8f8147d0a58562c7a11695ea1172e708dcfb234017cb90f76c2fada61e4",
+    "reportHash": "f9dd088137439493819c978e5af3c76462edc612abfcd15e70a44d87b9967be8",
     "schemaVersion": 1,
     "graderVersion": "vpj70-h01-offline-v1",
     "graderHash": "117a41ceb39a73a9614911f2bee397c5f51f428db020d152ba50914c735ec6e6",
-    "inputHash": "1e023081359525f5a91454de529b8ec045514e6cd0980dfe5a8d6f6f9507d8a6",
+    "inputHash": "c054956e1c8237992337a9baed68b88982cef8338af2603675ecce824adc862b",
     "verdict": "evidence_insufficient",
     "finalAcceptance": "NOT_RUN"
   },
@@ -183,7 +183,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-a3cf484611100f97f2233ecb-0",
+            "id": "fixture-a43384475dea19685692a793-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -219,7 +219,7 @@
             "hardFailures": []
           },
           {
-            "id": "fixture-a3cf484611100f97f2233ecb-1",
+            "id": "fixture-a43384475dea19685692a793-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -290,7 +290,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-a3cf484611100f97f2233ecb-0",
+            "id": "fixture-a43384475dea19685692a793-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -326,7 +326,7 @@
             "hardFailures": []
           },
           {
-            "id": "fixture-a3cf484611100f97f2233ecb-1",
+            "id": "fixture-a43384475dea19685692a793-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -397,7 +397,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-bcadebf9fd4e7a17aaed3988-0",
+            "id": "fixture-f81d8cb9b286ff6c5965714c-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -433,7 +433,7 @@
             "hardFailures": []
           },
           {
-            "id": "fixture-bcadebf9fd4e7a17aaed3988-1",
+            "id": "fixture-f81d8cb9b286ff6c5965714c-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -506,7 +506,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-bcadebf9fd4e7a17aaed3988-0",
+            "id": "fixture-f81d8cb9b286ff6c5965714c-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -544,7 +544,7 @@
             ]
           },
           {
-            "id": "fixture-bcadebf9fd4e7a17aaed3988-1",
+            "id": "fixture-f81d8cb9b286ff6c5965714c-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -622,7 +622,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-d10d5138ee96fa72518521b2-0",
+            "id": "fixture-325a7c8892813cc074c9e028-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -658,7 +658,7 @@
             "hardFailures": []
           },
           {
-            "id": "fixture-d10d5138ee96fa72518521b2-1",
+            "id": "fixture-325a7c8892813cc074c9e028-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -729,7 +729,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-d10d5138ee96fa72518521b2-0",
+            "id": "fixture-325a7c8892813cc074c9e028-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -767,7 +767,7 @@
             ]
           },
           {
-            "id": "fixture-d10d5138ee96fa72518521b2-1",
+            "id": "fixture-325a7c8892813cc074c9e028-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -846,7 +846,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-3fb5c9f5feab05ffa4fb97c2-0",
+            "id": "fixture-1e5ba018d75c2ae551d66634-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -884,7 +884,7 @@
             ]
           },
           {
-            "id": "fixture-3fb5c9f5feab05ffa4fb97c2-1",
+            "id": "fixture-1e5ba018d75c2ae551d66634-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -965,7 +965,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-3fb5c9f5feab05ffa4fb97c2-0",
+            "id": "fixture-1e5ba018d75c2ae551d66634-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1003,7 +1003,7 @@
             ]
           },
           {
-            "id": "fixture-3fb5c9f5feab05ffa4fb97c2-1",
+            "id": "fixture-1e5ba018d75c2ae551d66634-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1082,7 +1082,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-beb8cf1342b72c58b5b40175-0",
+            "id": "fixture-2ba92d890ec8b63da0e29103-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1118,7 +1118,7 @@
             "hardFailures": []
           },
           {
-            "id": "fixture-beb8cf1342b72c58b5b40175-1",
+            "id": "fixture-2ba92d890ec8b63da0e29103-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1191,7 +1191,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-beb8cf1342b72c58b5b40175-0",
+            "id": "fixture-2ba92d890ec8b63da0e29103-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1229,7 +1229,7 @@
             ]
           },
           {
-            "id": "fixture-beb8cf1342b72c58b5b40175-1",
+            "id": "fixture-2ba92d890ec8b63da0e29103-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1307,7 +1307,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-3cf082b668d0baec586f4771-0",
+            "id": "fixture-b181436d505065a7324c2223-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1343,7 +1343,7 @@
             "hardFailures": []
           },
           {
-            "id": "fixture-3cf082b668d0baec586f4771-1",
+            "id": "fixture-b181436d505065a7324c2223-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1413,7 +1413,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-3cf082b668d0baec586f4771-0",
+            "id": "fixture-b181436d505065a7324c2223-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1449,7 +1449,7 @@
             "hardFailures": []
           },
           {
-            "id": "fixture-3cf082b668d0baec586f4771-1",
+            "id": "fixture-b181436d505065a7324c2223-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1519,7 +1519,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-f22e5fea4b8a1f109c855d77-0",
+            "id": "fixture-2237eff22b410a34b02f9732-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1555,7 +1555,7 @@
             "hardFailures": []
           },
           {
-            "id": "fixture-f22e5fea4b8a1f109c855d77-1",
+            "id": "fixture-2237eff22b410a34b02f9732-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1627,7 +1627,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-f22e5fea4b8a1f109c855d77-0",
+            "id": "fixture-2237eff22b410a34b02f9732-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1665,7 +1665,7 @@
             ]
           },
           {
-            "id": "fixture-f22e5fea4b8a1f109c855d77-1",
+            "id": "fixture-2237eff22b410a34b02f9732-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1742,7 +1742,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-0c328a93515833b5f520f7f3-0",
+            "id": "fixture-53f0bad1fc831cd3e03cc9c3-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1778,7 +1778,7 @@
             "hardFailures": []
           },
           {
-            "id": "fixture-0c328a93515833b5f520f7f3-1",
+            "id": "fixture-53f0bad1fc831cd3e03cc9c3-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1848,7 +1848,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-0c328a93515833b5f520f7f3-0",
+            "id": "fixture-53f0bad1fc831cd3e03cc9c3-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1886,7 +1886,7 @@
             ]
           },
           {
-            "id": "fixture-0c328a93515833b5f520f7f3-1",
+            "id": "fixture-53f0bad1fc831cd3e03cc9c3-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -1964,7 +1964,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-b80e8e6573a955cdeae97f4d-0",
+            "id": "fixture-34a76b2f8bed59520f3eb5cf-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -2002,7 +2002,7 @@
             ]
           },
           {
-            "id": "fixture-b80e8e6573a955cdeae97f4d-1",
+            "id": "fixture-34a76b2f8bed59520f3eb5cf-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -2082,7 +2082,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-b80e8e6573a955cdeae97f4d-0",
+            "id": "fixture-34a76b2f8bed59520f3eb5cf-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -2120,7 +2120,7 @@
             ]
           },
           {
-            "id": "fixture-b80e8e6573a955cdeae97f4d-1",
+            "id": "fixture-34a76b2f8bed59520f3eb5cf-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -2198,7 +2198,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-8f71df775f1917b42db0a678-0",
+            "id": "fixture-c58e229f1881a94d6b9c723c-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -2234,7 +2234,7 @@
             "hardFailures": []
           },
           {
-            "id": "fixture-8f71df775f1917b42db0a678-1",
+            "id": "fixture-c58e229f1881a94d6b9c723c-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -2306,7 +2306,7 @@
         "status": "fixture_annotations_only",
         "observations": [
           {
-            "id": "fixture-8f71df775f1917b42db0a678-0",
+            "id": "fixture-c58e229f1881a94d6b9c723c-0",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -2344,7 +2344,7 @@
             ]
           },
           {
-            "id": "fixture-8f71df775f1917b42db0a678-1",
+            "id": "fixture-c58e229f1881a94d6b9c723c-1",
             "reviewerId": "fixture-annotation-v1",
             "source": {
               "kind": "fixture",
@@ -2402,23 +2402,23 @@
   ],
   "comparisons": [
     {
-      "pairId": "a3cf484611100f97f2233ecb",
+      "pairId": "a43384475dea19685692a793",
       "caseId": "H01",
       "language": "en",
       "preference": "tie",
       "votes": [
         {
-          "feedbackId": "fixture-a3cf484611100f97f2233ecb-0",
+          "feedbackId": "fixture-a43384475dea19685692a793-0",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "a3cf484611100f97f2233ecb-0",
+          "presentationId": "a43384475dea19685692a793-0",
           "choice": "tie"
         },
         {
-          "feedbackId": "fixture-a3cf484611100f97f2233ecb-1",
+          "feedbackId": "fixture-a43384475dea19685692a793-1",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "a3cf484611100f97f2233ecb-1",
+          "presentationId": "a43384475dea19685692a793-1",
           "choice": "tie"
         }
       ],
@@ -2433,23 +2433,23 @@
       "hardGate": "evidence_insufficient"
     },
     {
-      "pairId": "bcadebf9fd4e7a17aaed3988",
+      "pairId": "f81d8cb9b286ff6c5965714c",
       "caseId": "H01",
       "language": "en",
       "preference": "owned-en-typed-error-baseline",
       "votes": [
         {
-          "feedbackId": "fixture-bcadebf9fd4e7a17aaed3988-0",
+          "feedbackId": "fixture-f81d8cb9b286ff6c5965714c-0",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "bcadebf9fd4e7a17aaed3988-0",
+          "presentationId": "f81d8cb9b286ff6c5965714c-0",
           "choice": "owned-en-typed-error-baseline"
         },
         {
-          "feedbackId": "fixture-bcadebf9fd4e7a17aaed3988-1",
+          "feedbackId": "fixture-f81d8cb9b286ff6c5965714c-1",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "bcadebf9fd4e7a17aaed3988-1",
+          "presentationId": "f81d8cb9b286ff6c5965714c-1",
           "choice": "owned-en-typed-error-baseline"
         }
       ],
@@ -2464,23 +2464,23 @@
       "hardGate": "reject_candidate"
     },
     {
-      "pairId": "d10d5138ee96fa72518521b2",
+      "pairId": "325a7c8892813cc074c9e028",
       "caseId": "H01",
       "language": "en",
       "preference": "owned-en-semantic-error-baseline",
       "votes": [
         {
-          "feedbackId": "fixture-d10d5138ee96fa72518521b2-0",
+          "feedbackId": "fixture-325a7c8892813cc074c9e028-0",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "d10d5138ee96fa72518521b2-0",
+          "presentationId": "325a7c8892813cc074c9e028-0",
           "choice": "owned-en-semantic-error-baseline"
         },
         {
-          "feedbackId": "fixture-d10d5138ee96fa72518521b2-1",
+          "feedbackId": "fixture-325a7c8892813cc074c9e028-1",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "d10d5138ee96fa72518521b2-1",
+          "presentationId": "325a7c8892813cc074c9e028-1",
           "choice": "owned-en-semantic-error-baseline"
         }
       ],
@@ -2495,23 +2495,23 @@
       "hardGate": "reject_candidate"
     },
     {
-      "pairId": "3fb5c9f5feab05ffa4fb97c2",
+      "pairId": "1e5ba018d75c2ae551d66634",
       "caseId": "H01",
       "language": "en",
       "preference": "both_fail",
       "votes": [
         {
-          "feedbackId": "fixture-3fb5c9f5feab05ffa4fb97c2-0",
+          "feedbackId": "fixture-1e5ba018d75c2ae551d66634-0",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "3fb5c9f5feab05ffa4fb97c2-0",
+          "presentationId": "1e5ba018d75c2ae551d66634-0",
           "choice": "both_fail"
         },
         {
-          "feedbackId": "fixture-3fb5c9f5feab05ffa4fb97c2-1",
+          "feedbackId": "fixture-1e5ba018d75c2ae551d66634-1",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "3fb5c9f5feab05ffa4fb97c2-1",
+          "presentationId": "1e5ba018d75c2ae551d66634-1",
           "choice": "both_fail"
         }
       ],
@@ -2526,23 +2526,23 @@
       "hardGate": "both_fail"
     },
     {
-      "pairId": "beb8cf1342b72c58b5b40175",
+      "pairId": "2ba92d890ec8b63da0e29103",
       "caseId": "H01",
       "language": "en",
       "preference": "owned-en-refusal-baseline",
       "votes": [
         {
-          "feedbackId": "fixture-beb8cf1342b72c58b5b40175-0",
+          "feedbackId": "fixture-2ba92d890ec8b63da0e29103-0",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "beb8cf1342b72c58b5b40175-0",
+          "presentationId": "2ba92d890ec8b63da0e29103-0",
           "choice": "owned-en-refusal-baseline"
         },
         {
-          "feedbackId": "fixture-beb8cf1342b72c58b5b40175-1",
+          "feedbackId": "fixture-2ba92d890ec8b63da0e29103-1",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "beb8cf1342b72c58b5b40175-1",
+          "presentationId": "2ba92d890ec8b63da0e29103-1",
           "choice": "owned-en-refusal-baseline"
         }
       ],
@@ -2557,23 +2557,23 @@
       "hardGate": "reject_candidate"
     },
     {
-      "pairId": "3cf082b668d0baec586f4771",
+      "pairId": "b181436d505065a7324c2223",
       "caseId": "H01",
       "language": "zh",
       "preference": "tie",
       "votes": [
         {
-          "feedbackId": "fixture-3cf082b668d0baec586f4771-0",
+          "feedbackId": "fixture-b181436d505065a7324c2223-0",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "3cf082b668d0baec586f4771-0",
+          "presentationId": "b181436d505065a7324c2223-0",
           "choice": "tie"
         },
         {
-          "feedbackId": "fixture-3cf082b668d0baec586f4771-1",
+          "feedbackId": "fixture-b181436d505065a7324c2223-1",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "3cf082b668d0baec586f4771-1",
+          "presentationId": "b181436d505065a7324c2223-1",
           "choice": "tie"
         }
       ],
@@ -2588,23 +2588,23 @@
       "hardGate": "evidence_insufficient"
     },
     {
-      "pairId": "f22e5fea4b8a1f109c855d77",
+      "pairId": "2237eff22b410a34b02f9732",
       "caseId": "H01",
       "language": "zh",
       "preference": "owned-zh-typed-error-baseline",
       "votes": [
         {
-          "feedbackId": "fixture-f22e5fea4b8a1f109c855d77-0",
+          "feedbackId": "fixture-2237eff22b410a34b02f9732-0",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "f22e5fea4b8a1f109c855d77-0",
+          "presentationId": "2237eff22b410a34b02f9732-0",
           "choice": "owned-zh-typed-error-baseline"
         },
         {
-          "feedbackId": "fixture-f22e5fea4b8a1f109c855d77-1",
+          "feedbackId": "fixture-2237eff22b410a34b02f9732-1",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "f22e5fea4b8a1f109c855d77-1",
+          "presentationId": "2237eff22b410a34b02f9732-1",
           "choice": "owned-zh-typed-error-baseline"
         }
       ],
@@ -2619,23 +2619,23 @@
       "hardGate": "reject_candidate"
     },
     {
-      "pairId": "0c328a93515833b5f520f7f3",
+      "pairId": "53f0bad1fc831cd3e03cc9c3",
       "caseId": "H01",
       "language": "zh",
       "preference": "owned-zh-semantic-error-baseline",
       "votes": [
         {
-          "feedbackId": "fixture-0c328a93515833b5f520f7f3-0",
+          "feedbackId": "fixture-53f0bad1fc831cd3e03cc9c3-0",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "0c328a93515833b5f520f7f3-0",
+          "presentationId": "53f0bad1fc831cd3e03cc9c3-0",
           "choice": "owned-zh-semantic-error-baseline"
         },
         {
-          "feedbackId": "fixture-0c328a93515833b5f520f7f3-1",
+          "feedbackId": "fixture-53f0bad1fc831cd3e03cc9c3-1",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "0c328a93515833b5f520f7f3-1",
+          "presentationId": "53f0bad1fc831cd3e03cc9c3-1",
           "choice": "owned-zh-semantic-error-baseline"
         }
       ],
@@ -2650,23 +2650,23 @@
       "hardGate": "reject_candidate"
     },
     {
-      "pairId": "b80e8e6573a955cdeae97f4d",
+      "pairId": "34a76b2f8bed59520f3eb5cf",
       "caseId": "H01",
       "language": "zh",
       "preference": "both_fail",
       "votes": [
         {
-          "feedbackId": "fixture-b80e8e6573a955cdeae97f4d-0",
+          "feedbackId": "fixture-34a76b2f8bed59520f3eb5cf-0",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "b80e8e6573a955cdeae97f4d-0",
+          "presentationId": "34a76b2f8bed59520f3eb5cf-0",
           "choice": "both_fail"
         },
         {
-          "feedbackId": "fixture-b80e8e6573a955cdeae97f4d-1",
+          "feedbackId": "fixture-34a76b2f8bed59520f3eb5cf-1",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "b80e8e6573a955cdeae97f4d-1",
+          "presentationId": "34a76b2f8bed59520f3eb5cf-1",
           "choice": "both_fail"
         }
       ],
@@ -2681,23 +2681,23 @@
       "hardGate": "both_fail"
     },
     {
-      "pairId": "8f71df775f1917b42db0a678",
+      "pairId": "c58e229f1881a94d6b9c723c",
       "caseId": "H01",
       "language": "zh",
       "preference": "owned-zh-refusal-baseline",
       "votes": [
         {
-          "feedbackId": "fixture-8f71df775f1917b42db0a678-0",
+          "feedbackId": "fixture-c58e229f1881a94d6b9c723c-0",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "8f71df775f1917b42db0a678-0",
+          "presentationId": "c58e229f1881a94d6b9c723c-0",
           "choice": "owned-zh-refusal-baseline"
         },
         {
-          "feedbackId": "fixture-8f71df775f1917b42db0a678-1",
+          "feedbackId": "fixture-c58e229f1881a94d6b9c723c-1",
           "reviewerId": "fixture-annotation-v1",
           "source": "fixture",
-          "presentationId": "8f71df775f1917b42db0a678-1",
+          "presentationId": "c58e229f1881a94d6b9c723c-1",
           "choice": "owned-zh-refusal-baseline"
         }
       ],

@@ -9,7 +9,7 @@
     "grader": "harness-grader-v1",
     "corpus": "harness-corpus-v1"
   },
-  "commit": "99f54c4f97b4cd7f00a11f3c1accef70f46b1720",
+  "commit": "1a9199085073a01f49c58c1a2684406c68b620de",
   "sourceState": "working-tree; commit alone does not attest uncommitted source",
   "mode": "fixture",
   "holdout": {
@@ -22,13 +22,13 @@
     "languages": [
       "en"
     ],
-    "fixtureBaselineRuns": 2,
-    "mutationRuns": 4,
-    "fixtureNotRun": 10,
+    "fixtureBaselineRuns": 3,
+    "mutationRuns": 5,
+    "fixtureNotRun": 9,
     "stagingRuns": 0,
     "stagingNotRun": 12
   },
-  "elapsedMs": 148.647,
+  "elapsedMs": 21.975,
   "usage": "unknown",
   "cost": "unknown",
   "providerCalls": 0,
@@ -75,7 +75,7 @@
         }
       ],
       "reasonCode": null,
-      "elapsedMs": 35.342,
+      "elapsedMs": 1.831,
       "usage": "unknown",
       "cost": "unknown"
     },
@@ -154,7 +154,7 @@
         }
       ],
       "reasonCode": null,
-      "elapsedMs": 47.782,
+      "elapsedMs": 5.645,
       "usage": "unknown",
       "cost": "unknown"
     },
@@ -185,7 +185,7 @@
       "caseId": "H04",
       "runId": "offline-v1-H04",
       "taskId": "synthetic-task-H04",
-      "attemptId": null,
+      "attemptId": "synthetic-attempt-H04-1",
       "group": "development",
       "category": "ambiguity",
       "language": "en",
@@ -195,12 +195,28 @@
       "owner": "VPJ-67",
       "clock": "2026-09-09T04:00:00.000Z",
       "tripVersion": null,
-      "execution": "not_started",
-      "outcome": null,
-      "verdict": "NOT_RUN",
-      "assertions": [],
-      "reasonCode": "INTEGRATION_NOT_CONNECTED",
-      "elapsedMs": null,
+      "execution": "completed",
+      "outcome": "blocked",
+      "verdict": "PASS",
+      "assertions": [
+        {
+          "step": "disambiguation",
+          "code": "MULTIPLE_ELIGIBLE_SUBJECTS",
+          "passed": true
+        },
+        {
+          "step": "answer",
+          "code": "NO_SINGLE_SUBJECT_SELECTED",
+          "passed": true
+        },
+        {
+          "step": "read_only",
+          "code": "TRIP_COLLECTION_UNCHANGED",
+          "passed": true
+        }
+      ],
+      "reasonCode": null,
+      "elapsedMs": 0.085,
       "usage": "unknown",
       "cost": "unknown"
     },
@@ -422,7 +438,7 @@
         ],
         "verdict": "FAIL"
       },
-      "elapsedMs": 0.289
+      "elapsedMs": 0.067
     },
     {
       "id": "H01-refusal",
@@ -456,7 +472,7 @@
         ],
         "verdict": "FAIL"
       },
-      "elapsedMs": 0.114
+      "elapsedMs": 0.018
     },
     {
       "id": "H02-dinner",
@@ -525,7 +541,7 @@
         ],
         "verdict": "FAIL"
       },
-      "elapsedMs": 0.634
+      "elapsedMs": 0.189
     },
     {
       "id": "H02-unconfirmed",
@@ -594,7 +610,36 @@
         ],
         "verdict": "FAIL"
       },
-      "elapsedMs": 0.396
+      "elapsedMs": 0.116
+    },
+    {
+      "id": "H04-single-candidate-assumed",
+      "caseId": "H04",
+      "expectedStep": "answer",
+      "expectedCode": "NO_SINGLE_SUBJECT_SELECTED",
+      "result": {
+        "execution": "completed",
+        "outcome": "answered",
+        "assertions": [
+          {
+            "step": "disambiguation",
+            "code": "MULTIPLE_ELIGIBLE_SUBJECTS",
+            "passed": true
+          },
+          {
+            "step": "answer",
+            "code": "NO_SINGLE_SUBJECT_SELECTED",
+            "passed": false
+          },
+          {
+            "step": "read_only",
+            "code": "TRIP_COLLECTION_UNCHANGED",
+            "passed": true
+          }
+        ],
+        "verdict": "FAIL"
+      },
+      "elapsedMs": 3.938
     }
   ],
   "preparationVerdict": "PASS",
