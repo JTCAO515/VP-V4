@@ -106,6 +106,38 @@ future slices, not this one.
   since "zero of many candidates" and "the one id you asked for doesn't
   exist" are different caller-facing situations).
 
+## Address geocode (added 2026-09-16)
+
+`lib/server/maps/provider-geocode-adapter.ts`'s `geocodeAddress()` fills in
+the "地址解析" (address resolution) half of the execution row's "统一服务端
+适配搜索/详情/地址/路线/矩阵/导航出口" bullet — search and detail already
+existed; suggest/nearby-category, route/matrix and nav-handoff remain future
+slices, not this one.
+
+- Same shape as the search and detail adapters: one provider per call, no
+  cross-provider fallback/retry (#367), no persistence, no canonical
+  matching decision. Reuses `provider-search-adapter.ts`'s `boundedJson`
+  response-size guard and `tencentSig` signing function rather than
+  duplicating security-relevant transport code.
+- Returns `formattedAddress` (Chinese, as echoed/normalized by the provider —
+  never translated or inferred) and `location`, the latter nullable: a
+  provider response that omits a parseable coordinate yields `null`, never a
+  fabricated `0,0` guess. `location.coordinateSystem` records the providers'
+  documented GCJ02 default for their web-service responses (this module
+  never requests a different `coord_type`/`output`); combining it with a
+  WGS84-sourced coordinate still requires `coordinate-conversion.ts`'s
+  explicit, non-double-applying conversion.
+- Its own explicit enable flag per provider
+  (`AMAP_GEOCODE_ENABLED`/`TENCENT_MAP_GEOCODE_ENABLED`), reusing the same
+  account web-service key/sk as search and detail — advanced capabilities
+  stay explicitly declared, never implicitly turned on because the provider
+  itself is enabled.
+- Same closed failure-classification set as search/detail, including
+  `not_found` for an empty/missing geocode result (an address that resolves
+  to nothing, as distinct from a malformed provider response).
+- No reverse geocode (coordinate to address) — this module only resolves an
+  address string to a location, not the other direction.
+
 ## Non-goals of this slice
 
 - No client SDK selection/integration (native or Web map display).
@@ -115,8 +147,9 @@ future slices, not this one.
 - No POI category browsing (restrooms/ATMs/etc.) beyond the closed
   `category` enum needed for entrance disambiguation — nearby-category
   search remains future #363 work.
-- No unified suggest/geocode adapter — those remain future #363 work
-  (search and detail are now both implemented).
+- No unified suggest (input-tip/autocomplete) adapter or reverse geocode —
+  those remain future #363 work (search, detail and forward geocode are now
+  implemented).
 - No authoritative geodetic ground-truth verification of the GCJ02
   conversion (see above) — UNRUN, not fabricated.
 
@@ -130,11 +163,13 @@ future slices, not this one.
 - `tests/contract/maps/place-identity.test.mjs` (10 tests),
   `tests/contract/maps/provider-search-adapter.test.mjs` (7 tests, including
   an independent re-verification of `tencentSig` against lbs.qq.com's own
-  worked example), and `tests/contract/maps/provider-detail-adapter.test.mjs`
-  (9 tests) — all passing alongside the existing suite, no regressions.
-- The detail adapter's provider request/response shapes
-  (`/v3/place/detail`, `/ws/place/v1/detail`) are taken from AMap POI 2.0
-  and Tencent WebService's public documentation (see
+  worked example), `tests/contract/maps/provider-detail-adapter.test.mjs`
+  (9 tests), and `tests/contract/maps/provider-geocode-adapter.test.mjs`
+  (8 tests) — all passing alongside the existing suite, no regressions.
+- The detail and geocode adapters' provider request/response shapes
+  (`/v3/place/detail`, `/ws/place/v1/detail`, `/v3/geocode/geo`,
+  `/ws/geocoder/v1/`) are taken from AMap POI 2.0/Geocoding API and Tencent
+  WebService's public documentation (see
   `docs/agents/maps-integration-development.md`'s source list); no real
   account call against these specific endpoints has been made in this
   environment — that live verification is UNRUN, tracked the same way the
