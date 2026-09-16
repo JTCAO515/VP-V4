@@ -17,3 +17,20 @@ Qwen百炼协议2026-09-02签约实体是通义云启（杭州）信息技术有
 
 本轮执行检查见commands.jsonl。仅文档检查和diff检查适用；原生、SQL与provider行为未修改，不重复原生测试。
 现有必需CI仍须在本PR准确HEAD通过后方可合并；完整#190继续开放。
+
+## 2026-09-16 PR #418 审阅修正
+
+原复核的“没有可达入口/零真实调用”结论被否决：检索遗漏了 lib/server/jobs 下的两个运行入口，
+也遗漏了既有 Staging 与 Wiki 的真实 Qwen 证据。该结论不作为有效验收；没有据此关闭 #190。
+
+实际只读核对：
+
+- `lib/server/jobs/run-staging-text-worker.mjs` / `run-staging-text-service.mjs` 的环境凭据回调、配置绑定和调用链。
+- `lib/server/jobs/staging-text-job.ts`、`lib/server/model-gateway/adapters/http-transport.ts` 的真实传输与隔离边界。
+- `artifacts/VPJ-07/staging-live-20260912/verification.md`、`artifacts/VPJ-75/359-wiki-dispatch-slice2-20260914/verification.md` 的历史实测范围。
+- `artifacts/VPJ-74/restore-rehearsal-20260914.md` 已有数据库地区记录；本轮没有将历史记录冒充实时配置查询。
+- `withdraw_text_policy` 与 native consent DELETE 已存在；通用 `/api/privacy` 仍为请求登记，二者不能混同。
+- 媒体 prepare 路径仍返回 unavailable；未核验完整材料链和全模块删除。
+
+数据披露第3–5节及Q36关联说明据此纠正，去除重新引入的供应商审批门。原错误结论保留在PR历史中。
+本轮未读取秘密、未发模型请求、未执行迁移或变更运行权限。验证结果在本PR最终提交与CI中记录。

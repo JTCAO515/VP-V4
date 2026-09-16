@@ -2,6 +2,10 @@
 
 Issue: [#190](https://github.com/JTCAO515/VP-V4/issues/190) · Program [VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187)
 
+**2026-09-16 审阅修正**：以当前源码入口和已归档运行证据为准，区分传输能力、历史实测与当前部署。
+原复核遗漏了 `lib/server/jobs/run-staging-text-worker.mjs` 和 `run-staging-text-service.mjs`，
+不能据其搜索结果断言“零真实接收方”。本次不执行模型调用或修改运行配置。
+
 ## 状态 / Status
 
 本文档记录**当前代码库已验证的真实行为**，不新增功能、不代表已对外发布的产品承诺。
@@ -30,7 +34,7 @@ behalf and is not published as a live user-facing commitment.
 
 - **Trip / Turn / Profile / Memory**：数据库中按 owner 隔离存储（RLS），当前代码库**没有**自动过期或定时清除这些表行的任何函数；保留期限为**运营方待定**，非本文档发布值。
 - **备份（Backup）**：`docs/runbooks/backup-restore.md` 明确"不选定 Supabase plan/region，不设 RPO/RTO，不创建备份"，备份保留期限为**运营方待定**。
-- **隐私请求收据（privacy request receipt）**：请求本身（`requested`/`not_started` 状态）永久保留为审计记录，不代表数据已删除——见下文第 5 节。
+- **隐私请求收据（privacy request receipt）**：请求本身按当前实现保存为审计记录（`requested`/`not_started` 状态）；此处不承诺永久保留，不代表数据已删除——见下文第 5 节。
 
 Retention for Trip/Turn/Profile/Memory rows and for backups is **Operator TBD**; no
 auto-expiry function exists in the current codebase (verified by grep across
@@ -38,37 +42,49 @@ auto-expiry function exists in the current codebase (verified by grep across
 
 ## 3. 处理地域 / Processing region
 
-- Web 部署函数区域：`iad1`（Vercel），**不是** Supabase 项目所在地区，也**不构成**模型处理地区的证明（`docs/runbooks/staging-vercel-maintenance.md:21`）。
-- Supabase 项目实际地区：**运营方待定**，本仓库未记录已选定值。
-- 模型处理地域：见第 4 节，当前无生产模型调用，故无真实处理地域可披露。
+- 既有 Vercel 检查记录的 `iad1` 是当时的函数配置，不代表所有当前 worker、数据库或模型处理地区。
+- `artifacts/VPJ-74/restore-rehearsal-20260914.md` 记录隔离恢复项目采用与当时 Staging 相同的
+  `ap-southeast-1`。本次未重新查询当前数据库/备份配置，不能据此声称当前全部数据路径已核验。
+- 模型处理地域按具体环境、policy、endpoint和运行证据记录；无法核实的供应商内部处理、留存或训练信息标记 unknown。
 
-Processing region is **Operator TBD** for both the database project and any live model call;
-the only region fact currently verifiable in-repo (`iad1`, Vercel function region) is
-explicitly documented as *not* the Supabase region and *not* proof of model-processing region.
+Historical deployment and restore records are scoped to their recorded environments and dates.
+Current database, worker, backup and provider-processing regions were not rechecked in this documentation review.
+An endpoint domain or a policy's configured region is not independent proof of the provider's internal processing location.
 
 ## 4. 第三方 AI 接收方 / Third-party AI recipients
 
-当前 `ModelGateway`（`docs/contracts/model-gateway.md`）**只是 TypeScript fixture**：
+`lib/server/model-gateway/adapters/http-transport.ts` 提供真实 HTTP 传输；Qwen、GLM、DeepSeek
+的 endpoint 为受限配置，凭据由调用方注入。纯 fixture gateway 与真实 adapter 同时存在，不能混为一谈。
 
-- 不发起任何真实供应商请求，不读取任何凭据/环境变量，没有供应商 SDK，不记录 prompt 或 response。
-- 已登记（仅登记，非已接入）的候选供应商画像：DeepSeek（Flash/Pro/Vision）、Qwen 3.7 strict——均为 `fixture only` 或 `shadow only`，**没有一个是生产路由**。
-- 上线任何真实供应商前，该文档明确要求"单独通过 Issue 完成真实协议一致性、地区/DPA 审批、无秘密处理、成本/延迟测量、可观测性与独立评审"。
+| 层次 | 已核对事实 | 不能由此推定 |
+| --- | --- | --- |
+| 真实调用入口 | `lib/server/jobs/run-staging-text-worker.mjs`、`run-staging-text-service.mjs` 读取 `VISEPANDA_STAGING_TEXT_WORKER_KEY` 与 `VISEPANDA_STAGING_TEXT_PROVIDER_KEY`，将凭据回调注入 `createStagingTextJob`；配置绑定 owner/policy/预算 | 本机具有这些凭据、当前 worker 正在运行、生产已获授权 |
+| 既有实测 | `artifacts/VPJ-07/staging-live-20260912/verification.md` 等记录真实 Qwen Staging 调用；`artifacts/VPJ-75/359-wiki-dispatch-slice2-20260914/verification.md` 记录两次真实 Qwen Wiki 探针 | 覆盖所有用户、材料、地区或完整生产生命周期 |
+| Wiki 与检索 | `wiki-generation-job.ts`、`wiki-search-job.ts`、`wiki-statement-proposal-job.ts` 接受调用方提供的真实 transport/credential；应按各模块当前消费者核对 | 模块存在等于持续运行的完整 worker 已部署；或缺少统一 cron 等于从未真实调用 |
+| 内部测试增量 | PR #417 提出测试域名下的 GLM 路由，PR #419 修复登录状态；合并状态、已部署版本与实际数据流需分别核对 | 未合并代码没有被单独部署；或测试入口自动获得生产/用户数据权限 |
 
-**结论**：目前没有用户对话或材料被发送给任何第三方 AI 供应商——因为生产模型调用路径尚未启用。一旦启用，接收方名单以届时经批准的 `docs/contracts/model-gateway.md` 生产路由记录为准，须先完成上述审批。
+**结论**：仓库已具备真实供应商调用入口，并有历史真实调用证据。“没有任何文本被发送给第三方”
+和“接收方为零”均不成立为全局披露。本次没有读取凭据或测试用户数据，也未核验全部当前环境的运行流量；
+当前启用的接收方必须按部署版本、有效 policy、用户同意和调用回执逐项披露，不能由源码搜索推断。
 
-No user conversation or material is currently sent to any third-party AI provider — no
-production model-call path exists yet. When one is approved, the recipient list will be the
-approved production route recorded in `docs/contracts/model-gateway.md`, gated on the review
-steps that document already requires.
+Real provider entry points and recorded Qwen calls exist. A repository-wide claim of zero external recipients is
+unsupported. This documentation review does not establish every currently active deployment, recipient or data flow.
+Disclose each enabled flow using its deployment, current policy, user consent and execution receipts; do not infer
+absence of traffic from a missing environment-variable name or scheduler.
+
+开发接入遵循 `docs/agents/development-integration-policy.md`：供应商工单、书面回复、法务/产品签字不作为
+开发前置；未知细节如实记录。用户同意、接收方和用途边界、预算、隔离及真实验收仍必须满足；生产发布和资金
+动作保留具体授权边界。不能重新引入已取消的审批要求，也不能把开发接入当作公开隐私承诺已经完成。
 
 ## 5. 撤回 / Withdrawal
 
-- 用户可通过 `POST /api/privacy` 提交撤回意图（`action` 覆盖删除/导出），系统返回 `202 requested`/`not_started`（`docs/contracts/privacy-lifecycle.md`）。
-- **当前这只是意图登记，不执行任何实际删除**：数据库里没有任何函数会删除 `user_profiles`／`memory_profiles`／`trips`／`turns`／`user_artifact`（`docs/runbooks/privacy-lifecycle.md`）。
-- 在真正的执行器（executor）落地前，**不得**告诉用户"已删除"或"备份已清除"。
+- 通用 `POST /api/privacy` 的删除/导出请求仍是 `202 requested` / `not_started`，不是完整删除执行结果。
+- 文本 Ask 已有 `withdraw_text_policy` 及原生 consent 的 DELETE 入口。撤回作用于对应 policy/consent，
+  后续读取与外发执行当前资格检查；按 `docs/contracts/vpj-07.md` 与相关迁移解释实际范围。
+- 撤回不等于供应商副本、备份或全部用户模块已经彻底删除；完整导出删除验收仍归原责任票。
 
-Withdrawal intent can be filed today; actual erasure execution is **not yet built** — this is
-recorded honestly per the acceptance criteria's "unknown items stay unknown" rule, not omitted.
+Text-policy consent withdrawal is implemented and distinct from the request-only privacy export/delete API.
+It does not prove provider-side deletion or complete erasure across all modules and backups.
 
 ## 6. 删除 / 备份 / Deletion and backup
 
@@ -89,9 +105,7 @@ recorded honestly per the acceptance criteria's "unknown items stay unknown" rul
 | `service_role`（Supabase 后台） | 全表访问，仅可通过 Supabase 控制台/服务端密钥使用，无应用内客服界面 |
 | 应用内"客服"角色 | **不存在**——Owner 角色不会被自动授予跨用户的普通读取权限（沿用 Issue 验收要求） |
 
-No in-app support/ops read role exists in the codebase today; the only elevated access path is
-Supabase's own `service_role`, reachable only via console/service key, not via any in-app
-support surface.
+No general-purpose in-app customer-support role is established by this review. Existing protected Ops author/reviewer access is purpose-scoped to knowledge operations; it does not grant arbitrary cross-user conversation access.
 
 ## 8. 材料两路径 / Material paths
 
@@ -105,7 +119,7 @@ support surface.
 
 - Free 与 Pass 共享**明确保存**的基础跨 Trip 偏好；一个有界 service 目标包含必要澄清与系统修复。
 - 存储/消费方与计费语义**需要版本化实现**（尚未落地）；新增容量、部分修改/TTL 与 Q38 激活**仍未决定**。
-- 来源（用户主动填写 vs 模型推断）、纠正版本、模型与人工接收方、撤回后队列/缓存/派生物处理：按当前实现，模型接收方为 0（第 4 节），人工接收方为 0（第 7 节，无客服角色）；队列/缓存/派生物清理机制**未实现**——与第 5、6 节保留期限"运营方待定"一致，不重复承诺具体数字。
+- 来源（用户主动填写 vs 模型推断）、纠正版本、模型与人工接收方、撤回后队列/缓存/派生物处理：必须按实际 consumer 和 policy 分别核对，不能将文本模型调用范围自动扩大至偏好。完整跨模块撤回传播尚未验收，不抹除第5节已有文本 consent 撤回行为。
 
 ## 不构成的承诺 / What this document does not claim
 
