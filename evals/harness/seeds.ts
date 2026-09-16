@@ -26,6 +26,26 @@ export function runReadOnlySeed(mutation: "none" | "unsupported_claim" | "blanke
   ], output.kind === "execution_card" ? "answered" : "blocked");
 }
 
+// H04 (VPJ-67, development): two distinct synthetic galleries share the same
+// query with no city/gallery selected. The real seam is the same
+// prepareGroundedExecution: a caller that cannot pick one eligible subject
+// must submit an empty claims array rather than guessing, and the pure
+// function's own NO_ELIGIBLE_EVIDENCE outcome is the clarification signal.
+// This does not invent a new disambiguation adapter; it only exercises the
+// existing function's real "no eligible claim" branch honestly.
+const galleryCandidates = ["synthetic-gallery-north", "synthetic-gallery-south"] as const;
+export function runAmbiguitySeed(mutation: "none" | "single_candidate_assumed" = "none"): SeedResult {
+  const trips: TripSnapshot[] = [];
+  const before = structuredClone(trips);
+  const assumedClaim: GroundedClaim = { claimType: "time_window", subjectId: galleryCandidates[0], value: { startsAt: "2026-09-12T09:00:00+08:00", endsAt: "2026-09-12T17:00:00+08:00", timeZone: "Asia/Shanghai" }, asOf: NOW, evidence: [{ kind: "fact", factId: "fact-gallery-hours-north", version: 1, reviewedAt: "2026-09-08T00:00:00.000Z", expiresAt: "2026-09-20T00:00:00.000Z" }] };
+  const output = prepareGroundedExecution({ mode: "grounded_execution", now: NOW, cardId: "harness-ambiguity", claims: mutation === "single_candidate_assumed" ? [{ claim: assumedClaim, qualifiers: [] }] : [] });
+  return result([
+    check("disambiguation", "MULTIPLE_ELIGIBLE_SUBJECTS", galleryCandidates.length === 2),
+    check("answer", "NO_SINGLE_SUBJECT_SELECTED", output.kind === "unsupported_execution" && output.reason === "NO_ELIGIBLE_EVIDENCE"),
+    check("read_only", "TRIP_COLLECTION_UNCHANGED", isDeepStrictEqual(before, trips)),
+  ], output.kind === "unsupported_execution" ? "blocked" : "answered");
+}
+
 const dinner = { id: "dinner", dayId: "day-two", title: "Confirmed synthetic dinner", startsAt: "2026-09-11T18:00:00+08:00", endsAt: "2026-09-11T20:00:00+08:00" };
 // Sidecar fields are synthetic: the accepted TripPatch contract has no place/status/receipt fields.
 const sidecar = { placeId: "synthetic-restaurant", confirmationStatus: "confirmed", receiptId: "fixture-dinner-receipt-v1" };
