@@ -3,7 +3,7 @@
 import { type FormEvent, type ReactNode, useEffect, useState } from "react";
 import { createPasswordAuthClient } from "@/lib/server/identity/browser-auth-client";
 
-type AuthState = "checking" | "signedOut" | "signedIn";
+type AuthState = { status: "checking" | "signedOut" | "signedIn"; ownerId: string | null };
 type Policy = { noticeZh: string; noticeEn: string; consentState: "not_accepted" | "withdrawn" | "accepted" };
 type Message = {
   id: string; role: "user" | "assistant"; text: string;
@@ -18,21 +18,33 @@ const CITIES = [
 ] as const;
 
 export function TestingChat({ signInFallback }: { signInFallback: ReactNode }) {
-  const [auth, setAuth] = useState<AuthState>("checking");
+  const [auth, setAuth] = useState<AuthState>({ status: "checking", ownerId: null });
 
   useEffect(() => {
     const client = createPasswordAuthClient();
-    if (!client) { setAuth("signedOut"); return; }
+    if (!client) { setAuth({ status: "signedOut", ownerId: null }); return; }
     let active = true;
+    let authChanged = false;
+    const { data: { subscription } } = client.auth.onAuthStateChange((_event, session) => {
+      if (!active) return;
+      authChanged = true;
+      // UI routing only; every testing-chat API still authenticates on the server.
+      const ownerId = session?.user?.id ?? null;
+      setAuth({ status: ownerId ? "signedIn" : "signedOut", ownerId });
+    });
     void client.auth.getClaims().then(({ data, error }) => {
-      if (active) setAuth(!error && data?.claims?.sub ? "signedIn" : "signedOut");
-    }).catch(() => { if (active) setAuth("signedOut"); });
-    return () => { active = false; };
+      if (active && !authChanged) {
+        const ownerId = !error && typeof data?.claims?.sub === "string" ? data.claims.sub : null;
+        setAuth({ status: ownerId ? "signedIn" : "signedOut", ownerId });
+      }
+    }).catch(() => { if (active && !authChanged) setAuth({ status: "signedOut", ownerId: null }); });
+    return () => { active = false; subscription.unsubscribe(); };
   }, []);
 
-  if (auth === "checking") return <main style={{ padding: 24 }}>Loading…</main>;
-  if (auth === "signedOut") return <>{signInFallback}</>;
-  return <ConsentGate />;
+  if (auth.status === "checking") return <main style={{ padding: 24 }}>Loading…</main>;
+  if (auth.status === "signedOut") return <>{signInFallback}</>;
+  // Remount all consent/chat state on account replacement, even without a sign-out event.
+  return <ConsentGate key={auth.ownerId} />;
 }
 
 function ConsentGate() {
