@@ -49,3 +49,30 @@ export function isStructuredWikiDraft(v:unknown):v is StructuredWikiDraft {
       &&Number.isSafeInteger(e.startOffset)&&Number.isSafeInteger(e.endOffset)&&(e.startOffset as number)>=0&&(e.endOffset as number)<=2000&&(e.endOffset as number)-(e.startOffset as number)===Array.from(e.quote).length)
     &&new Set(p.evidence.map(e=>e.sourceRevisionId)).size===p.evidence.length);
 }
+export type ProposalConflict=Readonly<{a:number;b:number;reason:'objectId'|'conditions'|'exclusions'}>;
+const sameIdSet=(x:readonly string[],y:readonly string[]):boolean=>x.length===y.length&&x.every(v=>y.includes(v));
+/** Purely structural, deterministic, and NOT semantic contradiction detection: it
+ * cannot read prose and cannot tell whether two different {subjectId,predicate}
+ * pairs disagree, or whether the free text of two quotes disagrees. It flags only
+ * the case where two proposals in the SAME draft assert the same structured
+ * {subjectId,predicate} for an overlapping city+scene but a different objectId,
+ * conditions, or exclusions -- i.e. the model's own structured output contradicts
+ * itself. Proposals whose scope.cities do not overlap are a legitimate cross-city
+ * difference (e.g. Shanghai vs Beijing), never flagged. This does not resolve,
+ * drop, or reorder any proposal; it only surfaces disagreement for the reviewer
+ * who already sees every proposal in the existing Ops diff view. */
+export function detectProposalConflicts(draft:StructuredWikiDraft):readonly ProposalConflict[] {
+  const conflicts:ProposalConflict[]=[];const proposals=draft.statementProposals;
+  for(let a=0;a<proposals.length;a++){
+    for(let b=a+1;b<proposals.length;b++){
+      const A=proposals[a].statement.assertion,B=proposals[b].statement.assertion;
+      const scopeA=proposals[a].statement.scope,scopeB=proposals[b].statement.scope;
+      if(A.subjectId!==B.subjectId||A.predicate!==B.predicate||scopeA.scene!==scopeB.scene)continue;
+      if(!scopeA.cities.some(c=>scopeB.cities.includes(c)))continue;
+      if(A.objectId!==B.objectId){conflicts.push({a,b,reason:'objectId'});continue;}
+      if(!sameIdSet(A.conditions,B.conditions)){conflicts.push({a,b,reason:'conditions'});continue;}
+      if(!sameIdSet(A.exclusions,B.exclusions))conflicts.push({a,b,reason:'exclusions'});
+    }
+  }
+  return conflicts;
+}

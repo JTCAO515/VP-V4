@@ -41,15 +41,36 @@ and `docs/contracts/wiki-generation-dispatch.md`.
   statement extraction at all yet.
 - **Docling/parser integration**, per #288's existing REJECT — not
   attempted, not silently assumed fine.
-- **Contradiction/conflict handling** between competing source material —
-  no logic exists to surface "these two sources disagree" to a reviewer.
-- **Multi-source synthesis.** Every real call so far used exactly one
-  source text; nothing combines multiple sources into one page.
-- **Prompt-injection resistance** against a fixed zh/en adversarial
-  fixture set — the wiki-generation system prompt explicitly instructs the
-  model to treat embedded instructions as ordinary content, but this has
-  not been tested against a real adversarial input, only asserted in the
-  prompt text.
+- ~~Contradiction/conflict handling~~ **PARTIALLY DONE 2026-09-16**, see
+  `wiki-statement-proposals-safety-20260916/verification.md` and
+  `docs/contracts/wiki-statement-proposals-safety.md`. A new pure,
+  deterministic `detectProposalConflicts` flags two proposals in the same
+  draft that structurally disagree (same subjectId/predicate/overlapping
+  city+scene, different objectId/conditions/exclusions), and never flags a
+  legitimate cross-city difference. Still not wired into the persisted draft
+  body or the `/ops/wiki` UI — ships as a tested, unwired primitive this
+  round. Still cannot detect semantic contradiction in free-text quotes or
+  across a single proposal's own multi-source evidence — that boundary is
+  now a locked regression test, not just prose.
+- ~~Multi-source synthesis~~ **Structural evidence-binding PARTIALLY DONE
+  2026-09-16.** `evals/wiki-statement-proposals-safety/cross-source-cases.ts`
+  exercises the real `resolveProposalOutput` with 2 real sources per case
+  (bilingual, cross-city and same-city), proving each evidence entry's
+  offsets independently reconstruct its own source's quote without
+  conflation. This is evidence-binding coverage only, not multi-source page
+  *synthesis* (one page combining several sources into one narrative) —
+  that remains unbuilt.
+- ~~Prompt-injection resistance~~ **PARTIALLY DONE 2026-09-16 for the
+  statement-proposal job, fixture-only.** A frozen zh/en adversarial fixture
+  set (`evals/wiki-statement-proposals-safety/injection-cases.ts`, 3
+  categories x 2 locales) proves the structural validation layer — not a
+  real model — rejects an injected-instruction-compliant output, including
+  end to end through the real worker path with a scripted transport. A real
+  model call against this fixture set (would it actually resist, or would it
+  write the injected marker into `summary`/`gaps`?) remains UNRUN. The
+  wiki-*generation* job's own system prompt (page-level summary/gaps, not
+  statement proposals) is still untested against this or any adversarial
+  fixture.
 - **Actual per-call RMB cost reconciliation** against Qwen's billing
   console — token counts are real; price is not independently confirmed.
 
@@ -57,6 +78,8 @@ and `docs/contracts/wiki-generation-dispatch.md`.
 storage, the `/ops/wiki` review UI, statement-candidate linking, structured
 statement proposals, and stale-job reclaim are done (see each item above
 and `docs/knowledge-upgrade/README.md`'s dated log for what each one
-actually covers and what it does not). Contradiction handling,
-multi-source synthesis, prompt-injection adversarial testing, real
+actually covers and what it does not). Structural conflict detection and
+fixture-only injection/multi-source-binding coverage are now partially done
+(2026-09-16, statement-proposal job only); real-model injection resistance,
+UI wiring for conflict flags, true multi-source page synthesis, real
 per-call RMB reconciliation, and Docling integration remain not started.

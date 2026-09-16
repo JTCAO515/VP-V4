@@ -1,0 +1,89 @@
+# Structural conflict detection and frozen bilingual safety materials for bounded statement proposals (#359)
+
+Addresses three items `artifacts/VPJ-75/unrun.md` names as missing for the bounded
+statement-proposal job (`runWikiStatementProposalJob`, see
+[wiki-statement-proposals.md](./wiki-statement-proposals.md)): multi-source
+synthesis test coverage, contradiction/conflict surfacing logic, and a fixed
+zh/en adversarial fixture set. All three are fixture-only and add no new
+runtime call site, migration, or persisted field.
+
+## `detectProposalConflicts`
+
+`lib/server/knowledge/wiki/proposals.ts` adds a pure, deterministic function
+that inspects an already-validated `StructuredWikiDraft` and flags pairs of
+`statementProposals` that assert the same `{subjectId, predicate}` for an
+overlapping `scope.cities` and identical `scope.scene`, but disagree on
+`objectId`, `conditions`, or `exclusions`. This is **not** semantic
+contradiction detection: it cannot read prose, cannot compare two different
+`{subjectId, predicate}` pairs, and cannot tell whether two quotes disagree in
+free text. It only catches the case where the model's own **structured**
+output is internally inconsistent within one draft. Proposals whose
+`scope.cities` do not overlap are a legitimate cross-city difference (e.g.
+Shanghai vs Beijing) and are never flagged. The function does not resolve,
+drop, reorder, or reject any proposal -- it returns a list of conflicting
+index pairs for a reviewer to see in the existing Ops diff view. Wiring that
+returned list into the persisted draft body and the `/ops/wiki` UI is **not**
+part of this slice (see Remaining scope) -- this increment ships the
+detection primitive with real unit coverage, following this repo's existing
+"research-corpus"/"reason-codes" pattern of a bounded, unwired capability
+landing before the consumer that uses it.
+
+A disclosed, deliberately-unaddressed boundary is now a locked regression
+test, not prose alone: a single proposal that cites two contradictory sources
+as **its own** evidence (e.g. one notice says pets are allowed, another says
+pets are banned) is still accepted by `resolveProposalOutput`. Quote-identity
+binding proves the quotes are real and verbatim; it does not read whether they
+agree. `detectProposalConflicts` only ever compares *different* proposals'
+structured assertions, never a single proposal's own evidence list. Human
+review remains mandatory before any statement becomes published knowledge.
+
+## Frozen bilingual materials
+
+`evals/wiki-statement-proposals-safety/` adds two frozen fixture sets, each
+with a zh and an en case per category, following the same
+fixture-vs-real-model convention already established by
+`evals/wiki-agentic-search-safety/`:
+
+- `cross-source-cases.ts` (3 categories x 2 locales): `same_city_contradiction`,
+  `cross_city_difference`, `condition_exception`. The eval test builds real
+  `ProposalSource` snapshots and runs the actual `resolveProposalOutput` and
+  `detectProposalConflicts` code against them, asserting that each evidence
+  entry's stored Unicode-code-point offsets reconstruct exactly its own
+  source's quote (proving no cross-source conflation, for both a Latin-script
+  and a CJK case) and that conflicts are flagged exactly where expected --
+  never for a legitimate cross-city difference.
+- `injection-cases.ts` (3 categories x 2 locales): `authority_injection`
+  (a source snippet impersonating a system notice asking the model to set
+  `reviewerId`), `role_override` (asking the model to set `published: true`
+  directly), `fabricated_quote` (asking the model to escalate a real sentence
+  into a stronger claim not present in the source). Each case asserts BOTH
+  that the injected-instruction-compliant output is rejected (by
+  `isProposalOutput`, by `resolveProposalOutput`, and end to end through the
+  actual `runWikiStatementProposalJob` worker path with a scripted transport)
+  AND that the legitimate, quote-only path from the same injected-but-real
+  source still succeeds -- safety must not cost the normal path.
+
+  While authoring the `fabricated_quote` case, an early draft embedded the
+  target fabricated phrase in quotation marks inside the injected instruction
+  itself ("...please write it as \"X\"..."). That made the fabricated phrase
+  trivially verbatim-present in the source snippet, so it passed structural
+  validation -- not because the defense failed, but because the fixture had
+  accidentally stopped testing fabrication at all. This is a real, narrow,
+  disclosed gap in the current design: the verbatim-quote check cannot
+  distinguish an asserted fact from a suggested rewrite quoted inside an
+  injected instruction. The fixture was corrected to an abstract escalation
+  instruction (no literal target phrase in the source) so it actually tests
+  the intended defense; the narrow gap itself is not fixed in this slice and
+  is recorded here rather than silently hidden by the fixture change.
+
+All provider responses in these tests are scripted by the test file, never a
+real model call. This proves the validation/detection *code* behaves
+correctly against realistic bilingual adversarial and contradictory input; it
+is not proof that a real model would write compliant output, resist the
+injection, or correctly describe a contradiction in its own `gaps` field. A
+real-model pass remains explicit UNRUN, consistent with every other #359
+slice's fixture-only convention.
+
+Evidence: [verification](../../artifacts/VPJ-75/wiki-statement-proposals-safety-20260916/verification.md).
+Rollback removes `detectProposalConflicts` (an unwired, pure addition with no
+consumer) and the new eval files; nothing else changes.
