@@ -275,7 +275,8 @@
       "verify": "pnpm docs:check; git diff --check; xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj; xcrun simctl list devices available; xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO; record actual external evidence in artifacts/VPJ-56/verification.md",
       "dependencyEffect": "Unblocks only dependents of VPJ-56; does not globally stop unrelated ready work.",
       "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
-      "nextSafeIssue": 188
+      "nextSafeIssue": 188,
+      "note": "2026-09-16: the requirements/procedure half of expectedResult's third sentence (upload SDK requirements, certificate rotation, build-failure/withdrawal paths) is now documented, with sources and fetch date, in docs/runbooks/ios-signing-and-testflight.md. This action's remaining scope is unchanged: JT performing the actual Apple account/BundleID/signing/upload."
     },
     {
       "id": "OA-VPJ-63",

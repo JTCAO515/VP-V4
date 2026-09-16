@@ -70,3 +70,8 @@ self-hosted configuration correction; do not silently revert to billed hosted ma
 Certificate rotation, Archive signing,
 App Store Connect upload/SDK requirements, TestFlight install and withdrawal procedures
 remain named operator work before signed distribution; no credentials are requested here.
+The actual current requirements and procedure for that operator work — App Store Connect API
+key scope, the April 28, 2026 minimum-SDK floor, certificate/profile rotation and
+build-failure/withdrawal paths — are recorded in
+[docs/runbooks/ios-signing-and-testflight.md](../runbooks/ios-signing-and-testflight.md), with
+sources and fetch date; it documents requirements only and performs no signing or upload.
