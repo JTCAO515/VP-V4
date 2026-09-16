@@ -2,6 +2,11 @@
 
 Issue: [#190](https://github.com/JTCAO515/VP-V4/issues/190) · Program [VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187)
 
+**2026-09-16 复核更新**：自本文档 2026-09-14 首次合入（PR #375）后，`lib/server/jobs/wiki-generation-job.ts`、
+`wiki-search-job.ts`、`wiki-statement-proposal-job.ts`、`staging-text-job.ts`（VPJ-75/76 切片）已开始复用
+第 4 节所述的 `ModelGateway` 传输层。第 4 节已按下方复核结果更新原有"只是 fixture"表述，其余章节结论未变。
+详见 `artifacts/VPJ-03/verification.md` 2026-09-16 条目的逐项命令与结论。
+
 ## 状态 / Status
 
 本文档记录**当前代码库已验证的真实行为**，不新增功能、不代表已对外发布的产品承诺。
@@ -48,18 +53,41 @@ explicitly documented as *not* the Supabase region and *not* proof of model-proc
 
 ## 4. 第三方 AI 接收方 / Third-party AI recipients
 
-当前 `ModelGateway`（`docs/contracts/model-gateway.md`）**只是 TypeScript fixture**：
+**2026-09-16 复核**：`lib/server/model-gateway/adapters/http-transport.ts` 现在是一个**真实的 HTTP 传输层**
+（`createProviderHttpTransport`），会向 `ENDPOINTS` 表中登记的 Qwen（`dashscope.aliyuncs.com`）、
+GLM（`open.bigmodel.cn`）、DeepSeek（`api.deepseek.com`）端点发起真实 `fetch POST`——前提是调用方注入
+一个返回真实密钥的 `credential` 函数。VPJ-75/76 新增的 `lib/server/jobs/wiki-generation-job.ts`、
+`wiki-search-job.ts`、`wiki-statement-proposal-job.ts`、`staging-text-job.ts` 均以这个真实传输层为基础
+（不再是纯 fixture 桩）。因此"ModelGateway 只是 TypeScript fixture"这一原表述已过期，更新为：
 
-- 不发起任何真实供应商请求，不读取任何凭据/环境变量，没有供应商 SDK，不记录 prompt 或 response。
-- 已登记（仅登记，非已接入）的候选供应商画像：DeepSeek（Flash/Pro/Vision）、Qwen 3.7 strict——均为 `fixture only` 或 `shadow only`，**没有一个是生产路由**。
+- **传输层代码本身能发起真实请求**；它不自带任何密钥来源——`credential` 由调用方注入，模块自身不读取
+  `process.env`、Keychain 或文件（已核对 `lib/server/model-gateway/**` 与四个 job 文件，均无
+  `process.env` 引用）。
+- 仓库中**没有**任何应用路由（`app/api/**`）、脚本（`scripts/**`）或已知 worker/cron 入口调用这四个
+  job 文件并注入真实供应商密钥；仓库也没有 `.env.example` 或任何文件为 Qwen/GLM/DeepSeek 声明过
+  `*_API_KEY`/`DASHSCOPE`/`BIGMODEL`/`DEEPSEEK` 环境变量名。这些 job 当前仅在
+  `tests/contract/model-gateway/**`、`tests/integration/model-gateway/**` 下以注入的假密钥/假 fetch 调用。
+- 已登记（仅登记，非已接入生产）的候选供应商画像：DeepSeek（Flash/Pro/Vision）、Qwen 3.7 strict——文档
+  地位仍为 `fixture only` 或 `shadow only`，**没有一个是生产路由**；见 `docs/contracts/model-gateway.md`。
 - 上线任何真实供应商前，该文档明确要求"单独通过 Issue 完成真实协议一致性、地区/DPA 审批、无秘密处理、成本/延迟测量、可观测性与独立评审"。
+- `ops_wiki_generation_v1` 等派发队列表（见 `supabase/migrations/20260914120000_vpj_75_359_wiki_dispatcher.sql`
+  等）已建立，但驱动它们去调用上述真实传输层的 worker/cron 入口在本仓库中**尚未存在**——这是一个
+  真实的、尚未交付的集成缺口，而不是审批阻塞。
 
-**结论**：目前没有用户对话或材料被发送给任何第三方 AI 供应商——因为生产模型调用路径尚未启用。一旦启用，接收方名单以届时经批准的 `docs/contracts/model-gateway.md` 生产路由记录为准，须先完成上述审批。
+**结论**：目前仍然没有用户对话或材料被发送给任何第三方 AI 供应商——不是因为传输代码不存在（它现在存在
+且可用），而是因为仓库中没有任何可达的调用路径会为它注入真实密钥。一旦某个 worker/route 开始注入真实
+`credential`，这个结论需要重新核实并更新本节；接收方名单以届时经批准的 `docs/contracts/model-gateway.md`
+生产路由记录为准，须先完成上述审批。
 
-No user conversation or material is currently sent to any third-party AI provider — no
-production model-call path exists yet. When one is approved, the recipient list will be the
-approved production route recorded in `docs/contracts/model-gateway.md`, gated on the review
-steps that document already requires.
+No user conversation or material is currently sent to any third-party AI provider today — not
+because the transport code is absent (a real HTTP transport now exists at
+`lib/server/model-gateway/adapters/http-transport.ts` and is wired into the VPJ-75/76 wiki/staging-text
+job modules), but because no reachable call path in this repository (`app/api/**`, `scripts/**`, or a
+known worker/cron entry point) supplies it with a real provider credential; there is no `.env.example`
+or code reference declaring a Qwen/GLM/DeepSeek API-key environment variable. When any route or worker
+starts injecting a real credential, this section must be re-verified and updated. Until then, the
+recipient list remains empty; the approved production route will be the one recorded in
+`docs/contracts/model-gateway.md`, gated on the review steps that document already requires.
 
 ## 5. 撤回 / Withdrawal
 
