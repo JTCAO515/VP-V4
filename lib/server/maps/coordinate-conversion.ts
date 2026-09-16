@@ -23,6 +23,39 @@ import type { CoordinateSystem } from "./place-identity";
  */
 export type SystemedCoordinate = Readonly<{ lat: number; lng: number; system: CoordinateSystem }>;
 
+const COORDINATE_SYSTEMS: readonly CoordinateSystem[] = ["gcj02", "wgs84"];
+
+/**
+ * Runtime shape/range check for a `SystemedCoordinate` -- catches the case a
+ * static type can't: a value that type-checks as `SystemedCoordinate` at a
+ * call site (because the field names line up) but is actually malformed at
+ * runtime (NaN/Infinity from a bad parse, a swapped/out-of-range lat or lng,
+ * or a `system` tag that isn't one of the two closed values). This module
+ * previously trusted every caller's `system` tag unconditionally; this is
+ * the runtime enforcement #363's acceptance bullet ("坐标明确WGS/GCJ等来源与
+ * 转换记录、经纬顺序") asks for, applied at this module's single entry point
+ * rather than duplicated per adapter.
+ */
+export function isValidSystemedCoordinate(value: unknown): value is SystemedCoordinate {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const v = value as Record<string, unknown>;
+  return typeof v.lat === "number" && Number.isFinite(v.lat) && Math.abs(v.lat) <= 90
+    && typeof v.lng === "number" && Number.isFinite(v.lng) && Math.abs(v.lng) <= 180
+    && COORDINATE_SYSTEMS.includes(v.system as CoordinateSystem);
+}
+
+/**
+ * Thrown by `convertCoordinateSystem` when either its input or requested
+ * target system fails runtime validation -- refusing to guess a source
+ * system or silently pass through a malformed coordinate.
+ */
+export class InvalidSystemedCoordinateError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "InvalidSystemedCoordinateError";
+  }
+}
+
 export type ConversionOutcome =
   /** Requested target system already matches the input -- the offset formula was never applied. */
   | Readonly<{ status: "noop_same_system"; result: SystemedCoordinate }>
@@ -100,6 +133,15 @@ function gcj02ToWgs84(lat: number, lng: number): { lat: number; lng: number } {
  * `targetSystem`, this is a no-op that returns the input unchanged.
  */
 export function convertCoordinateSystem(input: SystemedCoordinate, targetSystem: CoordinateSystem): ConversionOutcome {
+  if (!isValidSystemedCoordinate(input)) {
+    throw new InvalidSystemedCoordinateError(
+      "convertCoordinateSystem: input is not a valid SystemedCoordinate (lat/lng must be finite numbers within " +
+        "[-90,90]/[-180,180] and system must be \"gcj02\" or \"wgs84\") -- refusing to guess or silently pass through",
+    );
+  }
+  if (!COORDINATE_SYSTEMS.includes(targetSystem)) {
+    throw new InvalidSystemedCoordinateError(`convertCoordinateSystem: targetSystem "${String(targetSystem)}" is not a recognized CoordinateSystem`);
+  }
   if (input.system === targetSystem) {
     return Object.freeze({ status: "noop_same_system", result: input });
   }

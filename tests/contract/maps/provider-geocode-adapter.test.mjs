@@ -59,6 +59,29 @@ test("missing/malformed location is null, never a fabricated 0,0", async () => {
   assert.equal(outcome.result.location, null);
 });
 
+test("an out-of-range provider location is rejected as null, not silently accepted (#363 runtime coordinate guard)", async () => {
+  const amapOutOfRange = await geocodeAddress({
+    provider: "amap", address: "阅江西路222号",
+    env: { AMAP_GEOCODE_ENABLED: "true", AMAP_WEB_SERVICE_KEY: "secret" },
+    fetcher: async () => Response.json({
+      status: "1", info: "OK", infocode: "10000", count: "1",
+      // lat 990 is not a valid latitude -- a corrupted/garbage provider value.
+      geocodes: [{ formatted_address: "广东省广州市海珠区阅江西路222号", location: "113.324,990" }],
+    }),
+  });
+  assert.equal(amapOutOfRange.status, "observed");
+  assert.equal(amapOutOfRange.result.location, null);
+
+  const tencentOutOfRange = await geocodeAddress({
+    provider: "tencent", address: "上海市浦东新区世纪大道1号",
+    env: { TENCENT_MAP_GEOCODE_ENABLED: "true", TENCENT_MAP_WEB_SERVICE_KEY: "secret", TENCENT_MAP_SK: "sk-value" },
+    // lng 999 is not a valid longitude -- a corrupted/garbage provider value.
+    fetcher: async () => Response.json({ status: 0, message: "query ok", result: { location: { lat: 31.2397, lng: 999 }, address: "上海市浦东新区世纪大道1号" } }),
+  });
+  assert.equal(tencentOutOfRange.status, "observed");
+  assert.equal(tencentOutOfRange.result.location, null);
+});
+
 test("empty result set is not_found, not an error", async () => {
   const amapEmpty = await geocodeAddress({
     provider: "amap", address: "不存在的地址",

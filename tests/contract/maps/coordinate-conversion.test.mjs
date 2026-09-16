@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { convertCoordinateSystem } from "../../../lib/server/maps/coordinate-conversion.ts";
+import {
+  convertCoordinateSystem,
+  InvalidSystemedCoordinateError,
+  isValidSystemedCoordinate,
+} from "../../../lib/server/maps/coordinate-conversion.ts";
 
 // Guangzhou Tower, roughly -- well inside the GCJ02 obfuscation region.
 const GZ_WGS84 = Object.freeze({ lat: 23.1066, lng: 113.3245, system: "wgs84" });
@@ -74,4 +78,55 @@ test("a point outside China is passed through unchanged, only re-tagged", () => 
 test("an out-of-China point already in the target system is still just a same-system no-op", () => {
   const outcome = convertCoordinateSystem(NY, "wgs84");
   assert.equal(outcome.status, "noop_same_system");
+});
+
+// --- Runtime enforcement (#363: "坐标明确WGS/GCJ等来源与转换记录、经纬顺序") ---
+// convertCoordinateSystem previously trusted every caller's `system` tag and
+// numeric fields unconditionally. These tests exercise the runtime guard
+// that now rejects a malformed SystemedCoordinate instead of silently
+// passing it through or guessing a source system for it.
+
+test("isValidSystemedCoordinate accepts well-formed gcj02/wgs84 coordinates", () => {
+  assert.equal(isValidSystemedCoordinate(GZ_WGS84), true);
+  assert.equal(isValidSystemedCoordinate(GZ_GCJ02), true);
+  assert.equal(isValidSystemedCoordinate(NY), true);
+});
+
+test("isValidSystemedCoordinate rejects out-of-range, non-finite, swapped, or mistagged coordinates", () => {
+  assert.equal(isValidSystemedCoordinate({ lat: 91, lng: 113, system: "gcj02" }), false, "lat > 90");
+  assert.equal(isValidSystemedCoordinate({ lat: 23, lng: 181, system: "gcj02" }), false, "lng > 180");
+  assert.equal(isValidSystemedCoordinate({ lat: NaN, lng: 113, system: "gcj02" }), false, "NaN lat");
+  assert.equal(isValidSystemedCoordinate({ lat: 23, lng: Infinity, system: "gcj02" }), false, "Infinity lng");
+  assert.equal(isValidSystemedCoordinate({ lat: 23, lng: 113, system: "bd09" }), false, "unrecognized system tag");
+  assert.equal(isValidSystemedCoordinate({ lat: "23", lng: 113, system: "gcj02" }), false, "lat as string");
+  assert.equal(isValidSystemedCoordinate(null), false);
+  assert.equal(isValidSystemedCoordinate("23,113"), false, "not an object");
+});
+
+test("convertCoordinateSystem throws InvalidSystemedCoordinateError on an out-of-range input instead of silently converting it", () => {
+  assert.throws(
+    () => convertCoordinateSystem({ lat: 999, lng: 113.3245, system: "wgs84" }, "gcj02"),
+    InvalidSystemedCoordinateError,
+  );
+});
+
+test("convertCoordinateSystem throws on a non-finite input", () => {
+  assert.throws(
+    () => convertCoordinateSystem({ lat: NaN, lng: 113.3245, system: "wgs84" }, "gcj02"),
+    InvalidSystemedCoordinateError,
+  );
+});
+
+test("convertCoordinateSystem throws on an input whose system tag is outside the closed gcj02/wgs84 set", () => {
+  assert.throws(
+    () => convertCoordinateSystem({ lat: 23.1066, lng: 113.3245, system: "bd09" }, "gcj02"),
+    InvalidSystemedCoordinateError,
+  );
+});
+
+test("convertCoordinateSystem throws on an unrecognized targetSystem instead of returning a mistagged result", () => {
+  assert.throws(
+    () => convertCoordinateSystem(GZ_WGS84, "bd09"),
+    InvalidSystemedCoordinateError,
+  );
 });
