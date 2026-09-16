@@ -18,39 +18,19 @@ Qwen百炼协议2026-09-02签约实体是通义云启（杭州）信息技术有
 本轮执行检查见commands.jsonl。仅文档检查和diff检查适用；原生、SQL与provider行为未修改，不重复原生测试。
 现有必需CI仍须在本PR准确HEAD通过后方可合并；完整#190继续开放。
 
-## 2026-09-16 数据披露矩阵复核（分支 `worktree-agent-a150dd97bcf6cc53a`，基线含 PR #416/#375）
+## 2026-09-16 PR #418 审阅修正
 
-对 `docs/policy/vpj-03-data-disclosure.md`（2026-09-14 合入，PR #375）逐条对照 Issue #190 四条验收标准，
-用只读命令核对当前代码是否仍支持文中结论；未运行任何供应商调用、迁移或权限变更。
+原复核的“没有可达入口/零真实调用”结论被否决：检索遗漏了 lib/server/jobs 下的两个运行入口，
+也遗漏了既有 Staging 与 Wiki 的真实 Qwen 证据。该结论不作为有效验收；没有据此关闭 #190。
 
-1. **告知矩阵（第1条）**：抽查文中引用文件存在且内容一致——`docs/contracts/privacy-lifecycle.md`、
-   `lib/server/media/private-media.ts`、`lib/server/model-gateway/`。`preparePrivateMediaUpload` 与
-   `preparePrivateMediaDeletion`（`lib/server/media/private-media.ts:25-52`）在当前代码中**始终**返回
-   `{ kind: "media_unavailable" }`，与文档第8节一致。
-2. **经营主体/Owner权限（第2条）**：`grep -rln ops_reader supabase/migrations/` 无匹配，确认应用层不存在
-   跨用户客服读取角色，与文档第7节一致。
-3. **材料两路径（第3条）**：同上第8节验证；文本Ask/Trip流程不依赖材料上传，未发现强制材料上传的路由。
-4. **第三方AI接收方（第4条，本轮发现需更新）**：`grep -rn "createProviderHttpTransport" .` 发现
-   `lib/server/jobs/wiki-generation-job.ts`、`wiki-search-job.ts`、`wiki-statement-proposal-job.ts`、
-   `staging-text-job.ts`（VPJ-75/76，均晚于PR #375合入）已复用 `lib/server/model-gateway/adapters/http-transport.ts`
-   这一**真实**HTTP传输层（`fetcher(config.endpoint, { method: "POST", ... })`，`ENDPOINTS` 表指向
-   `dashscope.aliyuncs.com`/`open.bigmodel.cn`/`api.deepseek.com` 真实域名）。原文档"只是TypeScript fixture"
-   的表述因此过期。进一步核实：
-   - `grep -rn process.env lib/server/model-gateway/` 及对四个 job 文件同样检索：均无匹配，模块自身不读取
-     环境变量／密钥。
-   - `grep -rln "createProviderHttpTransport" .`（排除 node_modules）：只有上述四个 job 文件与两个测试文件
-     （`tests/contract/...`、`tests/integration/...`）引用；`grep -rln "from .*jobs/wiki-...-job" .` 显示
-     应用侧仅 `lib/server/knowledge/wiki/grounded-search.ts` 引用 `wiki-generation-job`，未发现 `app/api/**`
-     或 `scripts/**` 下任何路由/脚本调用这四个 job 并注入真实密钥。
-   - 未找到 `.env.example` 文件；`grep -rln "DEEPSEEK\|DASHSCOPE\|BIGMODEL"`（排除 node_modules/test）无匹配，
-     仓库未声明任何供应商 API Key 环境变量名。
-   - 结论：真实供应商调用能力**已具备**（传输层代码可用），但**没有任何可达调用路径**为其注入真实凭据，
-     因此"当前零真实供应商调用"结论仍然成立，只是理由从"代码不存在"变为"代码存在但未接线"。已更新
-     `docs/policy/vpj-03-data-disclosure.md` 第4节措辞以反映这一区别，并记录 `ops_wiki_generation_v1`
-     等派发队列表已建，但驱动其调用的 worker/cron 入口本仓库尚不存在，属真实集成缺口。
+实际只读核对：
 
-本轮命令（均只读，见对应 grep/find/ls 调用，未记录到 commands.jsonl 因该文件不属于本次改动范围）：
-`grep -rn process.env lib/server/model-gateway/`、`grep -rln createProviderHttpTransport .`、
-`grep -n media_unavailable lib/server/media/private-media.ts`、`grep -rln ops_reader supabase/migrations/`、
-`find app/api/privacy -maxdepth 2 -type f`、`grep -rln "DEEPSEEK\|DASHSCOPE\|BIGMODEL" .`。
-未读取任何凭据、用户数据或供应商响应；未发起网络请求；未修改运行时代码、迁移或权限。
+- `lib/server/jobs/run-staging-text-worker.mjs` / `run-staging-text-service.mjs` 的环境凭据回调、配置绑定和调用链。
+- `lib/server/jobs/staging-text-job.ts`、`lib/server/model-gateway/adapters/http-transport.ts` 的真实传输与隔离边界。
+- `artifacts/VPJ-07/staging-live-20260912/verification.md`、`artifacts/VPJ-75/359-wiki-dispatch-slice2-20260914/verification.md` 的历史实测范围。
+- `artifacts/VPJ-74/restore-rehearsal-20260914.md` 已有数据库地区记录；本轮没有将历史记录冒充实时配置查询。
+- `withdraw_text_policy` 与 native consent DELETE 已存在；通用 `/api/privacy` 仍为请求登记，二者不能混同。
+- 媒体 prepare 路径仍返回 unavailable；未核验完整材料链和全模块删除。
+
+数据披露第3–5节及Q36关联说明据此纠正，去除重新引入的供应商审批门。原错误结论保留在PR历史中。
+本轮未读取秘密、未发模型请求、未执行迁移或变更运行权限。验证结果在本PR最终提交与CI中记录。
