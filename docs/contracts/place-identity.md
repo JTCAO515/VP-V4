@@ -297,12 +297,85 @@ gap:
   flag on the return value lets a caller that cares (logging, retry
   policy) distinguish "checked, no match" from "could not check" without
   changing the synchronous lookup function's own `string | null` contract.
-- Still not a consumer. No route in `app/api/places/**` calls this yet —
-  `app/api/places/` does not exist in this repo. This module makes
-  `lookupMapping` real for the first time; wiring a real HTTP
-  producer/consumer pair (with the auth/session/budget handling a
-  request-facing route needs) remains a separate, larger future slice, not
-  claimed as done here.
+- Round 11: still not a consumer at that point. No route in
+  `app/api/places/**` called this yet — `app/api/places/` did not exist in
+  this repo. This module made `lookupMapping` real for the first time.
+  Round 12 (below, "Route-level consumer") adds the first real HTTP
+  consumer; see that section for what it does and does not resolve.
+
+## Route-level consumer (added 2026-09-16, round 12)
+
+`app/api/places/search/route.ts` and `app/api/places/nearby/route.ts` are
+the first `app/api/places/**` routes in this repo, and the first real HTTP
+consumers of `searchPlaces()`/`nearbySearch()` and
+`loadCanonicalMappingLookup()` together. Partial advance on #363's
+still-open "地图、列表、详情共享选中ID" acceptance bullet — this makes a
+search/nearby result's `matchedCanonicalPoiId` genuinely reachable over
+HTTP for the first time, in a real, deployable path; it does not resolve
+that bullet on its own, and #363 remains open.
+
+**Correcting round 11's Non-goals note below**: that note attributed "a
+route wiring it into search/nearby end-to-end" to "#364/#365/#366's scope".
+Re-reading #364/#365/#366 (round 12) shows that was wrong — #364 is a
+walking/transit/driving route-comparison and nav-handoff slice, #365 is
+place Save/Ask/Add plus trip-candidate adjustment, #366 is in-transit
+replanning; none of the three own a plain place-search/nearby HTTP route.
+That wiring was always #363's own "地图、列表、详情共享选中ID" bullet, which
+is what round 12 advances here.
+
+- `lib/server/maps/place-consumer.ts`'s `searchPlacesWithCanonicalMapping`/
+  `nearbySearchWithCanonicalMapping` do the two-phase composition
+  `loadCanonicalMappingLookup`'s own doc anticipates: call the provider
+  adapter once with an always-null `lookupMapping` to learn the response's
+  real `providerPoiId`s, then one batched `provider_poi_mappings` query for
+  exactly those ids, then remap `matchedCanonicalPoiId` over the
+  already-fetched candidates. One provider network call either way.
+- `lib/server/maps/service-role-client.ts` adds this repo's first
+  service-role-authorized Supabase client — the only way to legally read
+  `provider_poi_mappings` at all (RLS enabled, `anon`/`authenticated` fully
+  revoked). It is deliberately its own module: nothing under
+  `lib/server/identity/**` or the Trip/proposal/confirm routes
+  `tests/security/identity/no-service-credential.test.mjs` guards imports
+  it, so that guard's guarantee (no service credential ever stands in for
+  a real user's identity or reaches Trip RLS) is unaffected — verified by
+  `tests/security/maps/service-credential-isolation.test.ts`, added this
+  round, which also asserts no client-rendered surface (`components/**`,
+  `ios/**`, any `page.tsx`/`layout.tsx`) and no `NEXT_PUBLIC_`-prefixed
+  variable ever references it or the AMap/Tencent Web Service keys.
+  `provider_poi_mappings` carries no user-owned row (no `user_id`/owner
+  column), so this client can never read or write anything the identity
+  guard protects. Reads a private `SUPABASE_SERVICE_ROLE_KEY` (never
+  `NEXT_PUBLIC_`-prefixed) that is unset in every environment today;
+  `createMapsServiceRoleClient()` returns `null` until an operator
+  explicitly provisions it, and every caller already treats a `null`
+  client as "no known mapping" rather than an error.
+- `lib/server/maps/web-auth.ts` gates both routes behind a real Supabase
+  session (`requireAuthenticatedActor`), independent of
+  `createUserDataAdapter` — a place search touches no user-owned row, so
+  none of that adapter's Trip/memory/profile machinery applies; this exists
+  only to keep anonymous traffic from spending paid provider quota.
+  Anonymous callers get `UNAUTHENTICATED` before any provider or database
+  call.
+- Both routes default to `PROVIDER_UNAVAILABLE` (`reason: "disabled"`)
+  today, since `AMAP_SEARCH_ENABLED`/`AMAP_NEARBY_ENABLED`/their Tencent
+  equivalents remain unset in every environment — this round provisions no
+  new provider credential, only the route/composition code and the
+  service-role client factory (itself unusable without
+  `SUPABASE_SERVICE_ROLE_KEY`, also unprovisioned).
+- Not a live-account verification. No real HTTP call against
+  `restapi.amap.com`/`apis.map.qq.com` or a real `provider_poi_mappings`
+  row was made from these new routes in this environment — same UNRUN
+  posture the underlying adapters already carry. Contract-level coverage
+  (`tests/contract/maps/place-consumer.test.ts`,
+  `service-role-client.test.ts`, `places-route-wiring.test.ts`) uses
+  synthetic fetch/Supabase clients, the same style as every other adapter
+  test in this slice.
+- Still not done: map/list/detail UI actually consuming and sharing the
+  same selected id across surfaces (no client-side code changed this
+  round), any rate limiting/budget beyond the auth gate, single primary
+  map-display SDK selection, credential domain separation beyond what's
+  described above, and observation-vs-Fact permission isolation — all
+  remain open #363 work.
 
 ## Non-goals of this slice
 
@@ -317,15 +390,20 @@ gap:
 - No reverse geocode (coordinate to address) — search, detail, forward
   geocode, suggest and nearby-category search are now implemented; reverse
   geocode remains future #363 work, as does route/matrix/nav-handoff.
-- No `app/api/places/**` HTTP route, auth/session wiring, or client-side
-  consumption of the shared selected-place id across map/list/detail —
-  `canonical-mapping-repository.ts` makes the lookup itself real, but a
-  route wiring it into search/nearby end-to-end, and the map/list/detail
-  UI consuming it, remain #364/#365/#366's scope and later #363 work.
-- No single primary map-display SDK selection, credential domain
-  separation, or observation-vs-Fact permission isolation — those
-  remaining VPJ-19 acceptance bullets are still open, not addressed by any
-  adapter slice to date.
+- No client-side consumption of the shared selected-place id across
+  map/list/detail — round 12 added the `app/api/places/search` and
+  `app/api/places/nearby` HTTP routes and their auth/session wiring (see
+  "Route-level consumer" above), but no map/list/detail UI component
+  changed this round, so nothing actually renders or shares that id yet.
+- No single primary map-display SDK selection or observation-vs-Fact
+  permission isolation — those remaining VPJ-19 acceptance bullets are
+  still open, not addressed by any adapter or route slice to date.
+  Credential domain separation for the server-only AMap/Tencent Web
+  Service keys and the new service-role key already holds by construction
+  (see "Route-level consumer" above and
+  `tests/security/maps/service-credential-isolation.test.ts`), but full
+  domain separation across native/server/web remains open pending a
+  client-facing map-display SDK, which does not exist yet.
 - No authoritative geodetic ground-truth verification of the GCJ02
   conversion (see above) — UNRUN, not fabricated.
 
