@@ -76,6 +76,36 @@ implements the VPJ-19 execution row's other named acceptance bullet —
   not alter how `canonical_pois.coordinate_system` is recorded at
   ingestion — that field is still set once and never silently mutated.
 
+## Place detail lookup (added 2026-09-16)
+
+`lib/server/maps/provider-detail-adapter.ts`'s `getPlaceDetail()` fills in
+the "详情" (detail) half of the execution row's "统一服务端适配搜索/详情/
+地址/路线/矩阵/导航出口" bullet — search already existed
+(`provider-search-adapter.ts`); geocode/route/matrix/nav-handoff remain
+future slices, not this one.
+
+- Same shape as the search adapter: one provider per call, no cross-provider
+  fallback/retry (#367), no persistence, no canonical matching decision.
+  Reuses that module's `boundedJson` response-size guard and `tencentSig`
+  signing function rather than duplicating security-relevant transport code.
+- Returns `address` (Chinese, as provided — never translated or inferred)
+  and `location`, both nullable: a provider that omits either field yields
+  `null`, never a fabricated address or a `0,0`/building-centroid location
+  guess. `location.coordinateSystem` records the providers' documented
+  GCJ02 default for their web-service responses (this module never requests
+  a different `coord_type`/`output`); combining it with a WGS84-sourced
+  coordinate still requires `coordinate-conversion.ts`'s explicit,
+  non-double-applying conversion.
+- Each capability (`search`, `detail`) has its own explicit enable flag
+  per provider (`AMAP_DETAIL_ENABLED`/`TENCENT_MAP_DETAIL_ENABLED`), reusing
+  the same account web-service key/sk as search — "高级能力显式声明"
+  (advanced capabilities are explicitly declared, never implicitly turned
+  on because the provider itself is enabled).
+- Same closed failure-classification set as search, plus `not_found` for an
+  empty/missing detail result (distinct from `no_results` used by search,
+  since "zero of many candidates" and "the one id you asked for doesn't
+  exist" are different caller-facing situations).
+
 ## Non-goals of this slice
 
 - No client SDK selection/integration (native or Web map display).
@@ -83,10 +113,10 @@ implements the VPJ-19 execution row's other named acceptance bullet —
 - No cross-provider controlled degrade (timeout/quota-triggered switching) —
   that is #367.
 - No POI category browsing (restrooms/ATMs/etc.) beyond the closed
-  `category` enum needed for entrance disambiguation.
-- No unified suggest/nearby/detail/geocode adapter beyond the existing
-  single-provider `searchPlaces()` transport — those remain future #363
-  work.
+  `category` enum needed for entrance disambiguation — nearby-category
+  search remains future #363 work.
+- No unified suggest/geocode adapter — those remain future #363 work
+  (search and detail are now both implemented).
 - No authoritative geodetic ground-truth verification of the GCJ02
   conversion (see above) — UNRUN, not fabricated.
 
@@ -97,7 +127,16 @@ implements the VPJ-19 execution row's other named acceptance bullet —
   entrance, missing name, duplicate provider mapping on one canonical place,
   one provider id claimed by two canonical places) correctly rejected by
   the database, two valid rows (with and without entrance data) accepted.
-- `tests/contract/maps/place-identity.test.mjs` (10 tests) and
+- `tests/contract/maps/place-identity.test.mjs` (10 tests),
   `tests/contract/maps/provider-search-adapter.test.mjs` (7 tests, including
   an independent re-verification of `tencentSig` against lbs.qq.com's own
-  worked example) — all passing alongside the existing 313, no regressions.
+  worked example), and `tests/contract/maps/provider-detail-adapter.test.mjs`
+  (9 tests) — all passing alongside the existing suite, no regressions.
+- The detail adapter's provider request/response shapes
+  (`/v3/place/detail`, `/ws/place/v1/detail`) are taken from AMap POI 2.0
+  and Tencent WebService's public documentation (see
+  `docs/agents/maps-integration-development.md`'s source list); no real
+  account call against these specific endpoints has been made in this
+  environment — that live verification is UNRUN, tracked the same way the
+  #362 probe work already distinguishes documented-shape from
+  observed-response evidence.
