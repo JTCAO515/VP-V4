@@ -251,6 +251,59 @@ remain future slices, not this one.
 - Same closed failure-classification set as search (`no_results` for an
   empty result list).
 
+## Canonical-mapping lookup (added 2026-09-16, round 11)
+
+`searchPlaces()`/`nearbySearch()` have always required a caller-supplied
+`lookupMapping: (provider, providerPoiId) => string | null` — by design,
+so the adapters stay DB-free and unit-testable (see their own module
+docs). Until this addition, no real implementation of that function
+existed anywhere in the repo; every call site, including both adapters'
+own contract tests, supplied a hand-written in-memory mock. That gap
+matters because it is the concrete blocker behind the still-open
+"地图、列表、详情共享选中ID" acceptance bullet: without a real
+`provider_poi_mappings` lookup, a search/nearby result's
+`matchedCanonicalPoiId` can never be genuinely non-null outside a test.
+
+`lib/server/maps/canonical-mapping-repository.ts`'s
+`loadCanonicalMappingLookup(client, provider, providerPoiIds)` closes that
+gap:
+
+- Batched, not per-candidate. The adapters call `lookupMapping`
+  synchronously once per response row while normalizing an
+  already-fetched provider response — a live per-row DB round trip would
+  be both the wrong shape (that parameter is synchronous, not a Promise)
+  and needlessly slow. This function takes every `providerPoiId` already
+  present in an adapter's response, does one batched
+  `provider_poi_mappings` query (`provider = eq.<provider>`,
+  `provider_poi_id = in.(...)`, deduplicated, and bound-filtered to the
+  migration's 128-char `provider_poi_id` limit before the query is built),
+  and returns a synchronous closure over the resulting in-memory map — the
+  exact shape `searchPlaces`/`nearbySearch` already expect, so neither
+  adapter changes.
+- Queries `public.provider_poi_mappings` with a caller-supplied
+  `SupabaseClient` — this module never constructs its own client or reads
+  credentials itself (mirrors
+  `lib/server/model-gateway/budget/supabase-rpc.ts`'s
+  `createSupabaseBudgetRpc(client)` factory pattern). That table is
+  service-role-only (RLS enabled, `anon`/`authenticated` fully revoked in
+  the migration), so a route wiring this in must supply a server-authorized
+  client, never a request-scoped user client.
+- A DB error (network failure, malformed row, service-role
+  misconfiguration) collapses to "no known mapping" for every id in that
+  batch and is never thrown — the same "unknown when unavailable, never
+  guessed" posture already used for entrance data and coordinate systems.
+  It never turns into a search/nearby failure, since the underlying
+  provider result is still valid without a canonical match. A `dbError`
+  flag on the return value lets a caller that cares (logging, retry
+  policy) distinguish "checked, no match" from "could not check" without
+  changing the synchronous lookup function's own `string | null` contract.
+- Still not a consumer. No route in `app/api/places/**` calls this yet —
+  `app/api/places/` does not exist in this repo. This module makes
+  `lookupMapping` real for the first time; wiring a real HTTP
+  producer/consumer pair (with the auth/session/budget handling a
+  request-facing route needs) remains a separate, larger future slice, not
+  claimed as done here.
+
 ## Non-goals of this slice
 
 - No client SDK selection/integration (native or Web map display).
@@ -264,9 +317,11 @@ remain future slices, not this one.
 - No reverse geocode (coordinate to address) — search, detail, forward
   geocode, suggest and nearby-category search are now implemented; reverse
   geocode remains future #363 work, as does route/matrix/nav-handoff.
-- No client-side consumption of the shared selected-place id across
-  map/list/detail — that is #364/#365/#366's scope, not this server-side
-  adapter slice.
+- No `app/api/places/**` HTTP route, auth/session wiring, or client-side
+  consumption of the shared selected-place id across map/list/detail —
+  `canonical-mapping-repository.ts` makes the lookup itself real, but a
+  route wiring it into search/nearby end-to-end, and the map/list/detail
+  UI consuming it, remain #364/#365/#366's scope and later #363 work.
 - No single primary map-display SDK selection, credential domain
   separation, or observation-vs-Fact permission isolation — those
   remaining VPJ-19 acceptance bullets are still open, not addressed by any
