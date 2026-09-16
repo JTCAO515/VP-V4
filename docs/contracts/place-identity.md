@@ -43,6 +43,39 @@ tickets (#364/#365/#366) for the display/consumption side.
   diagnosis only, never a message string (keys/messages are never logged
   or returned to the caller).
 
+## Coordinate system conversion (added 2026-09-16)
+
+`lib/server/maps/coordinate-conversion.ts`'s `convertCoordinateSystem()`
+implements the VPJ-19 execution row's other named acceptance bullet —
+"GCJ/WGS等坐标转换显式且不双转" (explicit conversion, never double-applied)
+— left as an explicit non-goal by the 2026-09-14 identity/mapping slice.
+
+- Input and output are a named `{ lat, lng, system }` record, never a
+  `[number, number]` tuple, so axis order can never be silently swapped at
+  a call site.
+- Requesting the coordinate's own current system is a `noop_same_system`
+  result: the GCJ02 offset formula is never reapplied to an
+  already-converted point. This is the "不双转" guarantee — enforced by a
+  system-tag equality check before any math runs, not by trusting callers.
+- A coordinate outside GCJ02's obfuscation region (mainland China's
+  documented bounding box) returns `unchanged_out_of_china`: WGS84 and
+  GCJ02 coincide there, so only the tag changes, never the numbers.
+- Otherwise returns `converted` with `algorithm: "gcj02_offset_approx"` —
+  the standard non-iterative offset approximation used by common public
+  GCJ02 implementations. This module makes no claim of matching a surveyed
+  geodetic ground truth; that comparison is UNRUN (no authoritative
+  reference fixture available in this environment). What is verified is
+  the algorithm's internal consistency: round-trip wgs84→gcj02→wgs84 and
+  gcj02→wgs84→gcj02 both stay within ~3m of the origin, and the applied
+  offset inside China stays within its documented ~0-600m bound.
+- Only wgs84↔gcj02 — Baidu's bd09 is not part of the `CoordinateSystem`
+  closed set in the migration and is out of scope here.
+- No database column change: this module is a pure conversion utility for
+  callers (route/geocode adapters, future #364/#365 consumers) to use when
+  combining coordinates from sources tagged with different systems. It does
+  not alter how `canonical_pois.coordinate_system` is recorded at
+  ingestion — that field is still set once and never silently mutated.
+
 ## Non-goals of this slice
 
 - No client SDK selection/integration (native or Web map display).
@@ -51,7 +84,11 @@ tickets (#364/#365/#366) for the display/consumption side.
   that is #367.
 - No POI category browsing (restrooms/ATMs/etc.) beyond the closed
   `category` enum needed for entrance disambiguation.
-- No automatic coordinate-system conversion.
+- No unified suggest/nearby/detail/geocode adapter beyond the existing
+  single-provider `searchPlaces()` transport — those remain future #363
+  work.
+- No authoritative geodetic ground-truth verification of the GCJ02
+  conversion (see above) — UNRUN, not fabricated.
 
 ## Verification
 
