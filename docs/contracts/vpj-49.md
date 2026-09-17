@@ -9,7 +9,7 @@ new preference, order, media, database or hosted-sharing contracts.
 `NativeTripView` offers sharing only for `confirmationState == confirmed`. The
 editor takes an immutable snapshot, including its account generation. The user
 chooses the whole trip or one existing day, optionally includes the trip title
-and travel dates, and individually selects item titles. All free text and travel
+and travel dates, and individually selects item titles by the pair of day ID and item ID. All free text and travel
 dates default to hidden. An arbitrary title may include a hotel, room, companion
 or order reference: the app explains this instead of claiming automatic detection.
 Users can exclude any such title. Times, IDs, credentials, preferences, private

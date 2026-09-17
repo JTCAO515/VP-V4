@@ -28,7 +28,7 @@ nonisolated final class NativeTripShareTests: XCTestCase {
 
     @MainActor func testExplicitSelectionUsesOnlySavedTitlesAndOneDayWithoutTimesOrOtherItems() throws {
         var selection = NativeTripShareSelection()
-        selection.itemIDs = ["safe", "safe2", "unknown"]
+        selection.items = [.init(dayID: "d1", itemID: "safe"), .init(dayID: "d2", itemID: "safe2"), .init(dayID: "d1", itemID: "unknown")]
         selection.dayID = "d1"
         let card = try XCTUnwrap(NativeTripShareCard.make(from: detail(), selection: selection, chinese: false, now: .now))
         XCTAssertEqual(card.rows, [.init(day: "Day 1", title: "Museum / 博物馆")])
@@ -36,7 +36,7 @@ nonisolated final class NativeTripShareTests: XCTestCase {
         let included = try XCTUnwrap(NativeTripShareCard.make(from: detail(), selection: selection, chinese: false, now: .now))
         XCTAssertEqual(included.title, detail().trip.title)
         XCTAssertEqual(included.rows[0].day, "2026-10-02")
-        selection.itemIDs.remove("safe")
+        selection.items.remove(.init(dayID: "d1", itemID: "safe"))
         XCTAssertNil(NativeTripShareCard.make(from: detail(), selection: selection, chinese: false, now: .now)?.rows[0].title)
     }
 
@@ -60,8 +60,19 @@ nonisolated final class NativeTripShareTests: XCTestCase {
         XCTAssertFalse(source.matches(scope: scope, detail: nil))
     }
 
+    @MainActor func testSelectingOneDayItemDoesNotSelectMatchingIDOnAnotherDay() throws {
+        let original = detail()
+        let collision = NativeTripDetail(version: 2, trip: original.trip,
+            content: .init(days: [original.content.days[0],
+                .init(id: "d2", date: "2026-10-03", items: [.init(id: "safe", dayId: "d2", title: "Private hotel room")])]),
+            hardLocks: "unknown", externalOrderStatus: "unknown", confirmationState: "confirmed")
+        var selection = NativeTripShareSelection(); selection.items = [.init(dayID: "d1", itemID: "safe")]
+        let card = try XCTUnwrap(NativeTripShareCard.make(from: collision, selection: selection, chinese: false, now: .now))
+        XCTAssertEqual(card.rows.compactMap(\.title), ["Museum / 博物馆"])
+    }
+
     @MainActor func testActualExportPixelsExcludePrivateText() throws {
-        var selection = NativeTripShareSelection(); selection.itemIDs = ["safe"]
+        var selection = NativeTripShareSelection(); selection.items = [.init(dayID: "d1", itemID: "safe")]
         let card = try XCTUnwrap(NativeTripShareCard.make(from: detail(), selection: selection, chinese: false, now: .init(timeIntervalSince1970: 0)))
         let preview = try XCTUnwrap(NativeTripSharePreview.render(card))
         let image = try XCTUnwrap(preview.images.first?.cgImage)
@@ -80,7 +91,7 @@ nonisolated final class NativeTripShareTests: XCTestCase {
         var trip = detail()
         let items = (0..<17).map { NativeTripItem(id: "i\($0)", dayId: "d", title: "\($0) " + String(repeating: "长文字 Long text ", count: 10)) }
         trip = .init(version: 2, trip: trip.trip, content: .init(days: [.init(id: "d", date: "2026-10-02", items: items)]), hardLocks: "unknown", externalOrderStatus: "unknown", confirmationState: "confirmed")
-        var selection = NativeTripShareSelection(); selection.itemIDs = Set(items.map(\.id))
+        var selection = NativeTripShareSelection(); selection.items = Set(items.map { .init(dayID: $0.dayId, itemID: $0.id) })
         let card = try XCTUnwrap(NativeTripShareCard.make(from: trip, selection: selection, chinese: true, now: .now))
         XCTAssertEqual(card.pages.flatMap { $0 }.compactMap(\.title), items.map(\.title))
         XCTAssertEqual(card.pages.count, 5)

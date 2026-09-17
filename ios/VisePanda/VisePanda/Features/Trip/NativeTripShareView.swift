@@ -56,9 +56,9 @@ struct NativeTripShareView: View {
                         if selection.dayID == nil || selection.dayID == day.id {
                             Section(text("Day \(index + 1)", "第 \(index + 1) 天")) {
                                 ForEach(day.items) { item in
-                                    Toggle(item.title, isOn: Binding(get: { selection.itemIDs.contains(item.id) }, set: { included in
-                                        if included { selection.itemIDs.insert(item.id) }
-                                        else { selection.itemIDs.remove(item.id) }
+                                    Toggle(item.title, isOn: Binding(get: { selection.items.contains(.init(dayID: day.id, itemID: item.id)) }, set: { included in
+                                        if included { selection.items.insert(.init(dayID: day.id, itemID: item.id)) }
+                                        else { selection.items.remove(.init(dayID: day.id, itemID: item.id)) }
                                     })).accessibilityIdentifier("share.item.\(item.id)")
                                 }
                             }

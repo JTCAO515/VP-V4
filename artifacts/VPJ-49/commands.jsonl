@@ -23,3 +23,4 @@
 {"command": "python3 AST parse ios/scripts/run-share-ui-tests.py", "exitCode": 0}
 {"command": "xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj", "exitCode": 0}
 {"command": "xcrun simctl list devices available", "exitCode": 0}
+{"command": ["xcodebuild", "test-without-building", "-xctestrun", "/tmp/vpj49-derived/Build/Products/VisePanda_iphonesimulator27.0-arm64.xctestrun", "-destination", "platform=iOS Simulator,id=42675EC5-6837-4F73-B478-7D979D5DA392", "-parallel-testing-enabled", "NO", "-only-testing:VisePandaUITests/NativeTripShareUITests", "-only-testing:VisePandaTests/NativeTripShareTests", "-only-testing:VisePandaTests/NativeTripStateTests", "-resultBundlePath", "/tmp/vpj49-scoped-final.xcresult"], "exitCode": 0, "seconds": 120.5, "log": "/tmp/vpj49-scoped-final.log", "resultBundle": "/tmp/vpj49-scoped-final.xcresult"}

@@ -3,10 +3,11 @@ import Foundation
 /// Explicit opt-in: free text can contain hotel, room, order or companion details.
 /// Nothing attempts to classify or silently redact an arbitrary user title.
 struct NativeTripShareSelection: Equatable {
+    struct Item: Hashable { let dayID: String; let itemID: String }
     var dayID: String? = nil
     var includeTitle = false
     var includeDates = false
-    var itemIDs: Set<String> = []
+    var items: Set<Item> = []
 }
 
 /// Only this allowlisted, immutable value reaches the image renderer.
@@ -30,7 +31,7 @@ struct NativeTripShareCard: Equatable {
         var rows: [Row] = []
         for (index, day) in detail.content.days.enumerated() where selection.dayID == nil || selection.dayID == day.id {
             let heading = selection.includeDates ? day.date : (chinese ? "第 \(index + 1) 天" : "Day \(index + 1)")
-            let items = day.items.filter { selection.itemIDs.contains($0.id) }
+            let items = day.items.filter { selection.items.contains(.init(dayID: day.id, itemID: $0.id)) }
             if items.isEmpty { rows.append(.init(day: heading, title: nil)) }
             else { rows += items.map { .init(day: heading, title: $0.title) } }
         }

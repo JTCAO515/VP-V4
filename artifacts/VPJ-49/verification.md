@@ -33,11 +33,11 @@ retain their own acceptance, and #189/#359/#360 are untouched.
   9/9 browser tests, after successful Chromium install with bundled Node 24.19.0.
 - `xcodebuild -list`, `xcrun simctl list devices available`: PASS.
 - Generic iOS Simulator unsigned build: PASS, Xcode 27.0 / SDK 27.0.
-- Final native run: **12/12 PASS**, zero skipped, comprising 6 sharing tests,
+- Final native run: **13/13 PASS**, zero skipped, comprising 7 sharing tests,
   4 existing Trip state tests and 2 bilingual native UI tests. The OCR test reads
   the actual generated bitmap and verifies selected Museum text is present while
   hotel/room/order/companion/travel-date/private-ID text is absent.
-  Xcode result: `/tmp/vpj49-final.xcresult`, Simulator iPhone 17 Pro / iOS 26.5,
+  Xcode result: `/tmp/vpj49-scoped-final.xcresult`, Simulator iPhone 17 Pro / iOS 26.5,
   UDID `42675EC5-6837-4F73-B478-7D979D5DA392`.
 - `pnpm docs:check`, `git diff --check`, new Node/Python runner syntax: PASS.
 - Implementer diff review: no unrelated runtime changes, new data grants,
@@ -52,7 +52,7 @@ retain their own acceptance, and #189/#359/#360 are untouched.
 ![Real iOS system share controller](VPJ49-system-share-en.png)
 ![Actual export pixels checked by OCR](VPJ49-export-en.png)
 
-Work window: approximately 12:06–12:25 China time, 2026-09-17, to local verification.
+Work window: approximately 12:06–12:31 China time, 2026-09-17, to local verification.
 Rework: three UI-driver corrections and the Node/Playwright installation retry.
 No external approval waiting; CI/merge and user acceptance are separate states.
 
@@ -71,3 +71,9 @@ the fixture afterward. Native unit tests use the normal VisePandaTests scheme ta
 
 Rollback: revert this PR. No data migration, service configuration, new hosted
 surface, purchase or external message is involved.
+
+Post-PR review correction: selection keys include both day ID and item ID. A
+malformed snapshot with a repeated item ID on another day cannot cause an
+unselected private title to be exported. The new regression and both UI flows
+pass on the final code. First-head remote Quality PR also passed; final-head CI
+is checked separately on GitHub.
