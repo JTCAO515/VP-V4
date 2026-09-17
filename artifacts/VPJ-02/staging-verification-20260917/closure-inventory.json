@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "observedAt": "2026-09-17T05:28:31.574Z",
+  "observedAt": "2026-09-17T05:35:26.533Z",
   "project": "dzqdzetcctkhbrhlxxgn",
   "checks": [
     {
@@ -27,7 +27,7 @@
     "authAccountCount": 7,
     "tripCount": 3,
     "migrations": {
-      "localCount": 61,
+      "localCount": 62,
       "remoteCount": 50,
       "matched": 50,
       "pending": [
@@ -74,6 +74,10 @@
         {
           "version": "20260917100000",
           "name": "vpj_75_359_wiki_read_withdrawal_status"
+        },
+        {
+          "version": "20260917110000",
+          "name": "vpj_75_359_wiki_withdrawal_scan"
         }
       ],
       "nameDrift": [],
@@ -86,5 +90,5 @@
     "allListedTablesRLS": true
   },
   "status": "PASS_FOR_RECORDED_SCOPE",
-  "completedAt": "2026-09-17T05:28:39.201Z"
+  "completedAt": "2026-09-17T05:35:33.698Z"
 }

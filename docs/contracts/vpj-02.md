@@ -6,7 +6,7 @@ See the [final acceptance mapping](../../artifacts/VPJ-02/staging-verification-2
 real GoTrue/PostgREST matrix, bounded cleanup and recovery commands.
 
 Observed 2026-09-17 on the designated VP - V4 Singapore Staging:50 version/name-matched migrations
-against61 local files,11 pending, no remote-only version or name drift. The historical24 match; this
+against62 local files,12 pending, no remote-only version or name drift. The historical24 match; this
 is not a deployed-DDL/source-hash comparison. Existing7 Auth/3 Trip records were preserved byte-for-byte
 as measured by complete row digests. All31 listed public/private ordinary tables have RLS enabled;
 this inventory does not cover every private schema or view.
