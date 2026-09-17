@@ -85,6 +85,7 @@ function validate() {
     assert.ok(task.rollback && task.owner && task.observationWindow && task.contract);
     assert.ok(existsSync(task.contract));
     assert.ok(task.track !== 'expand' || task.activationEvidence);
+    validateExecutionBrief(task);
   }
   if (existsSync(`${dir}/archive-manifest.json`)) {
     for (const item of json(`${dir}/archive-manifest.json`).files) {
@@ -95,16 +96,40 @@ function validate() {
   console.log(`VPJ plan passed: ${plan.tasks.length} tasks, ${before.length} replacements, acyclic dependencies, contracts and archive hashes.`);
 }
 
+export function validateExecutionBrief(task) {
+  const brief = task.executionBrief;
+  if (brief === undefined) return;
+  assert.ok(brief && typeof brief === 'object' && !Array.isArray(brief), `${task.id} invalid execution brief`);
+  assert.deepEqual(Object.keys(brief).sort(), ['boundary', 'firstSlice', 'reuse']);
+  for (const key of ['firstSlice', 'boundary']) assert.ok(typeof brief[key] === 'string' && brief[key].trim(), `${task.id} missing ${key}`);
+  assert.ok(Array.isArray(brief.reuse) && brief.reuse.length && brief.reuse.every(p => typeof p === 'string' && p.trim()), `${task.id} missing reuse inputs`);
+}
+
+function executionBriefBlock(t) {
+  if (!t.executionBrief) return '';
+  validateExecutionBrief(t);
+  const source = `https://github.com/${plan.repo}/blob/${t.sourceRef ?? 'main'}`;
+  return '## 执行边界与首个切片\n\n' +
+    `- 首个可交付结果：${t.executionBrief.firstSlice}\n` +
+    `- 本票责任/非目标：${t.executionBrief.boundary}\n` +
+    `- 先读/复用：${t.executionBrief.reuse.map(p => `[${p}](${source}/${p})`).join(' · ')}\n` +
+    '- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。\n\n';
+}
+
 export function body(t) {
   const source = `https://github.com/${plan.repo}/blob/${t.sourceRef ?? 'main'}`;
   const baselineNote = t.baselineNote ?? `历史规划基线：${plan.baselinePr ? '#' + plan.baselinePr : '尚未登记'}。当前执行读取 main 的合同，并核对实时依赖、可用接口和获准环境；本计划定义不代表任务已就绪或已验收。`;
+  const entry = t.executionBrief
+    ? `## 实施与验收入口\n\n[执行行：范围、检查、证据与回退](${source}/${dir}/EXECUTION-CONTRACT.md#${t.id.toLowerCase()}) · [接口](${source}/${t.contract}) · [开发流程](${source}/docs/agents/development-workflow.md) · [阶段 ${t.deliveryStage}](${source}/${dir}/DELIVERY-STAGES.md#${t.deliveryStage.toLowerCase()})。\n\n`
+    : `## 当前基线与开发入口\n\n${baselineNote}\n` +
+      `任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](${source}/${dir}/EXECUTION-CONTRACT.md#${t.id.toLowerCase()})；按 [开发流程](${source}/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](${source}/${t.contract})。\n` +
+      (t.deliveryStage ? `验收阶段：[${t.deliveryStage}](${source}/${dir}/DELIVERY-STAGES.md#${t.deliveryStage.toLowerCase()})；阶段演示不代替本票完整验收。\n` : '') +
+      `首次进入或范围变化时读 [主报告](${source}/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。\n\n`;
   return `## Program\n\n${link('VPJ-00')} · ${t.track === 'expand' ? '后续证据触发任务' : '首发交付任务'}\n\n` +
     `## 用户结果\n\n${t.title}。\n\n` +
-    `## 当前基线与开发入口\n\n${baselineNote}\n` +
-    `任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](${source}/${dir}/EXECUTION-CONTRACT.md#${t.id.toLowerCase()})；按 [开发流程](${source}/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](${source}/${t.contract})。\n` +
-    (t.deliveryStage ? `验收阶段：[${t.deliveryStage}](${source}/${dir}/DELIVERY-STAGES.md#${t.deliveryStage.toLowerCase()})；阶段演示不代替本票完整验收。\n` : '') +
-    `首次进入或范围变化时读 [主报告](${source}/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。\n\n` +
-    `## Blocked by\n\n${t.blockedBy.length ? t.blockedBy.map(id => '- ' + link(id)).join('\n') : '无其他任务依赖；仍需核对当前接口、环境与外部条件。'}\n\n` +
+    executionBriefBlock(t) +
+    entry +
+    `${t.executionBrief ? '## 验收依赖（不自动转为 blocked）' : '## Blocked by'}\n\n${t.blockedBy.length ? t.blockedBy.map(id => '- ' + link(id)).join('\n') : '无其他任务依赖；仍需核对当前接口、环境与外部条件。'}\n\n` +
     `## Acceptance criteria\n\n${t.acceptance.map(a => '- [ ] ' + a).join('\n')}\n\n` +
     `## 不得触碰\n\n${t.doNotTouch.map(s => '- ' + s).join('\n')}\n\n` +
     (t.activationEvidence ? `后续开启门：${t.activationEvidence}\n\n` : '') +
@@ -130,6 +155,7 @@ export function renderDeliveryStages(value) {
 
 export function executionContractRow(t) {
   return `## ${t.id}\n\n${link(t.id)} — ${t.title}\n\n` +
+    executionBriefBlock(t).replace('## 执行边界与首个切片', '### 执行边界与首个切片') +
     `- Owner: ${t.owner}; ${t.kind}; ${t.effortDays}专注日，${t.observationWindow}\n` +
     `- 验收阶段: ${t.deliveryStage}\n` +
     `- Blocked by: ${t.blockedBy.map(link).join(', ') || '无任务依赖；核实际条件'}\n` +
@@ -366,6 +392,11 @@ function withoutCheckboxProgress(markdown) {
   return lines.join('\n');
 }
 
+// Public checked progress only; quoted examples and hidden historical blocks stay excluded.
+export function checkedTaskItems(markdown) {
+  return [...new Set(checklistEntries(markdown).filter(entry => entry.checked).map(entry => entry.text))];
+}
+
 export function validateRemoteTaskBody(task, markdown, { migrationSnapshot = false } = {}) {
   assert.equal(typeof markdown, 'string', `${task.id} missing remote body`);
   if (migrationSnapshot) {
@@ -472,7 +503,7 @@ function publish(){
       if(t.databaseId)assert.equal(match.id,t.databaseId,`database ID mismatch ${t.id}`);
       if(t.number)assert.equal(match.number,t.number,`number mismatch ${t.id}`);
     }
-    const labels=['enhancement',`phase:${t.phase}`,`priority:${t.track==='expand'?'P2':t.phase==='R0'||t.phase==='R1'?'P0':'P1'}`,'status:blocked',t.owner==='operator'?'ready-for-human':'needs-triage'];
+    const labels=['enhancement',`phase:${t.phase}`,`priority:${t.track==='expand'?'P2':t.phase==='R0'||t.phase==='R1'?'P0':'P1'}`,'status:planned',t.owner==='operator'?'ready-for-human':'needs-triage'];
     if(!match)match=api(`repos/${plan.repo}/issues`,'POST',{title:`[${t.id}] ${t.title}`,body:body(t),labels});
     t.number=match.number;t.databaseId=match.id;t.url=match.html_url;
     saveJson(planPath,plan);
@@ -523,15 +554,18 @@ export function validateRemoteTaskState(task, issue, { baselineMerged, blockers 
   const openBlockers = blockers.filter(blocker => blocker.state !== 'closed' || blocker.state_reason !== 'completed');
   if (issue.state === 'closed') {
     assert.equal(issue.state_reason, 'completed', `${task.id} closed without completion; reconcile its planned scope`);
-    assert.equal(openBlockers.length, 0, `${task.id} completed with unresolved native blockers`);
-    assert.ok(!labels.some(label => ['status:ready', 'status:in-progress'].includes(label) || label.startsWith('ready-for-')),
+    assert.ok(!labels.some(label => ['status:planned', 'status:blocked', 'status:ready', 'status:in-progress'].includes(label) || label.startsWith('ready-for-')),
       `${task.id} completed with active readiness labels; reconcile tracker lifecycle`);
-    return 'completed';
+    // A dependent may have accepted a usable interface while its upstream still has
+    // other unfinished scope. Flag the evidence review; never infer runtime acceptance
+    // or reopen/mark every downstream blocked merely from whole-Issue state.
+    return openBlockers.length ? 'completion-evidence-review' : 'completed';
   }
   assert.equal(issue.state, 'open', `${task.id} unexpected state`);
-  if (labels.some(label => ['status:ready', 'status:in-progress', 'ready-for-agent'].includes(label))) {
+  if (labels.some(label => ['status:ready', 'ready-for-agent'].includes(label))) {
     assert.equal(openBlockers.length, 0, `${task.id} active with unresolved native blockers`);
   }
+  if (labels.includes('status:in-progress') && openBlockers.length) return 'active-input-review';
   if (labels.includes('status:blocked') && openBlockers.length === 0) return 'readiness-review';
   return 'open';
 }
@@ -541,6 +575,7 @@ async function verifyNewRemote({ migrationSnapshot = false } = {}){
   const baseline = api(`repos/${plan.repo}/pulls/${plan.baselinePr}`);
   const baselineMerged = baseline.merged === true;
   const readinessReview = [];
+  const completionEvidenceReview = [], activeInputReview = [];
   for(let start=0;start<plan.tasks.length;start+=8){
     const results=await Promise.allSettled(plan.tasks.slice(start,start+8).map(async t=>{
       const i=existing.find(x=>x.number===t.number);assert.ok(i,`${t.id} missing remote issue`);assert.ok(i.title.startsWith(`[${t.id}] `));assert.equal(i.id,t.databaseId);
@@ -549,11 +584,13 @@ async function verifyNewRemote({ migrationSnapshot = false } = {}){
       assert.deepEqual(deps.map(x=>x.number).sort((a,b)=>a-b),t.blockedBy.map(number).sort((a,b)=>a-b),`${t.id} native deps`);assert.equal(parent.number,plan.parentNumber);
       const state = validateRemoteTaskState(t, i, { baselineMerged, blockers: deps, migrationSnapshot });
       if (state === 'readiness-review') readinessReview.push(t.id);
+      if (state === 'completion-evidence-review') completionEvidenceReview.push(t.id);
+      if (state === 'active-input-review') activeInputReview.push(t.id);
     }));
     const failures=results.filter(r=>r.status==='rejected');assert.equal(failures.length,0,failures.map(r=>String(r.reason)).join('\n'));
     console.log(`verified new tasks ${Math.min(start+8,plan.tasks.length)}/${plan.tasks.length}`);
   }
-  console.log(JSON.stringify({ baselineMerged, migrationSnapshot, readinessReview: readinessReview.sort(), bodyValidation: migrationSnapshot ? 'exact snapshot' : 'current acceptance criteria present; progress and appended history allowed', note: 'Tracker identity, acceptance definitions, dependencies, parent and lifecycle checked; not runtime acceptance. Readiness candidates still need interface, environment, ownership and activation review; no labels changed.' }));
+  console.log(JSON.stringify({ baselineMerged, migrationSnapshot, readinessReview: readinessReview.sort(), completionEvidenceReview: completionEvidenceReview.sort(), activeInputReview: activeInputReview.sort(), runtimeAcceptance: false, bodyValidation: migrationSnapshot ? 'exact snapshot' : 'current acceptance criteria present; progress and appended history allowed', note: 'Tracker structure only. Open upstream Issues require checking actual interfaces/evidence, not automatic blocking or completion. No labels changed.' }));
   return existing;
 }
 
@@ -562,7 +599,7 @@ function readApi(endpoint){return new Promise((resolve,reject)=>execFile('gh',['
 async function verifyRemote(){
   const existing=await verifyNewRemote();
   for(const n of Object.keys(plan.oldIssueSuccessors)){const i=existing.find(x=>x.number===Number(n));assert.equal(i?.state,'closed',n);assert.equal(i.state_reason,'not_planned',n);}
-  const result={at:new Date().toISOString(),repo:plan.repo,parent:plan.parentNumber,newTasks:plan.tasks.length,closedOld:Object.keys(plan.oldIssueSuccessors).length,nativeDependencies:plan.tasks.reduce((n,t)=>n+t.blockedBy.length,0),verified:true};
+  const result={at:new Date().toISOString(),repo:plan.repo,parent:plan.parentNumber,newTasks:plan.tasks.length,closedOld:Object.keys(plan.oldIssueSuccessors).length,nativeDependencies:plan.tasks.reduce((n,t)=>n+t.blockedBy.length,0),verified:true,runtimeAcceptance:false};
   saveJson(`${dir}/tracker-verification.json`,result);console.log(JSON.stringify(result));
 }
 

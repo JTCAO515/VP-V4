@@ -6,14 +6,18 @@
 
 住宿需求比较与透明联盟跳转。
 
-## 当前基线与开发入口
+## 执行边界与首个切片
 
-当前执行读取main合同及实时接口；计划定义不是完成证据。 开发阶段不等待供应商工单/书面答复、法务或产品许可；按开发接入规则用现有账号/API推进，未知项记录，保留用户同意和实际技术验证。
-任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-23)；按 [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)。
-验收阶段：[S4](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s4)；阶段演示不代替本票完整验收。
-首次进入或范围变化时读 [主报告](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
+- 首个可交付结果：沿已有日期/人数和行程比较住宿区域与可核实候选，保留已订/暂缓意向，选择后接回Trip调整建议。
+- 本票责任/非目标：负责住宿需求、比较和透明外跳；不复制22链接适配或24凭证处理，也不承担房间下单/支付/履约。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
-## Blocked by
+## 实施与验收入口
+
+[执行行：范围、检查、证据与回退](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-23) · [接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) · [阶段 S4](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s4)。
+
+## 验收依赖（不自动转为 blocked）
 
 - [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199)
 - [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209)
@@ -24,6 +28,8 @@
 - [ ] L1a整理区域/床型/入住/预算需求，L1b只传已验参数；展示候选范围和取舍。
 - [ ] CTA标供应商/佣金/需要重核条件；不展示无实时证据的可售房型/最终价。
 - [ ] 域名白名单/参数最小化、opened≠booked、失败/过期出口；佣金移除后候选排序不变。
+- [ ] 体验增量2026-09-17：先按实际行程比较有差异的住宿区域与交通负担，再给可核实酒店候选；继承日期、人数、床型和预算，保留已订/不需要/暂缓意向，避免重复推销。明确每晚/全程/房间数及币种口径，缓存起价不当实时价，无实时依据不宣称可售或最终价。
+- [ ] 体验增量2026-09-17：酒店暂选后说明它与当前Trip的关系和下一步；换住宿只提出受影响首末日/接驳的调整候选，经既有Proposal确认才改变Trip。推荐、用户暂选、材料核实与供应商确认分别有证据，选择或打开链接不能写成已预订。
 
 ## 不得触碰
 

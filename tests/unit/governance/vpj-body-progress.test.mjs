@@ -311,6 +311,8 @@ process.stdout.write(JSON.stringify(result));
     assert.deepEqual(after[0], existing[0], 'completed Issue body, labels and state must be preserved');
     assert.equal(after[1].number, 999);
     assert.equal(after[1].title, `[${tasks[1].id}] ${tasks[1].title}`);
+    assert.ok(after[1].labels.some(label => (label.name ?? label) === 'status:planned'));
+    assert.ok(!after[1].labels.some(label => (label.name ?? label) === 'status:blocked'));
     const finalParent = JSON.parse(readFileSync(path.join(fixtureRoot, 'parent.json'), 'utf8'));
     assert.ok(finalParent.body.includes('/DELIVERY-STAGES.md'), 'Program links the grouped task view');
     assert.ok(readFileSync(path.join(fixtureRoot, `${planDir}/DELIVERY-STAGES.md`), 'utf8')

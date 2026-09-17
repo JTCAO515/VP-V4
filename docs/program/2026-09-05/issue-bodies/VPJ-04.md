@@ -6,14 +6,18 @@
 
 原生登录、手机登录顶替与 Web 会话并存。
 
-## 当前基线与开发入口
+## 执行边界与首个切片
 
-当前执行读取main合同及实时接口；计划定义不是完成证据。 开发阶段不等待供应商工单/书面答复、法务或产品许可；按开发接入规则用现有账号/API推进，未知项记录，保留用户同意和实际技术验证。
-任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-04)；按 [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)。
-验收阶段：[S1](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s1)；阶段演示不代替本票完整验收。
-首次进入或范围变化时读 [主报告](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
+- 首个可交付结果：复用已有原生登录、换机和Web并存链，针对自然过期或丢失回执完成一条尚未验收的真实恢复路径。
+- 本票责任/非目标：负责身份/session；不重建02环境或05的Trip业务，也不以模拟器结果替代未验真机条件。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [artifacts/VPJ-04/staging-native/remote-20260911/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-04/staging-native/remote-20260911/verification.md) · [artifacts/VPJ-04/iphone-custom-domain-20260912/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-04/iphone-custom-domain-20260912/verification.md)
+- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
-## Blocked by
+## 实施与验收入口
+
+[执行行：范围、检查、证据与回退](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-04) · [接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) · [阶段 S1](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s1)。
+
+## 验收依赖（不自动转为 blocked）
 
 - [VPJ-01 #188](https://github.com/JTCAO515/VP-V4/issues/188)
 - [VPJ-02 #189](https://github.com/JTCAO515/VP-V4/issues/189)
