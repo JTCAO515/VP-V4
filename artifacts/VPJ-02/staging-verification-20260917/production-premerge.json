@@ -1,0 +1,12 @@
+{
+  "observedAt": "2026-09-17T05:33:14.193438+00:00",
+  "source": "authenticated Vercel dashboard, read-only",
+  "project": "vp-v4",
+  "settingsUrl": "https://vercel.com/jtcao515s-projects/vp-v4/settings/build-and-deployment",
+  "ignoredBuildStep": "if [ \"$VERCEL_ENV\" = \"production\" ] && [ \"$VERCEL_GIT_COMMIT_REF\" = \"main\" ]; then exit 0; else exit 1; fi",
+  "mainProductionBuildSkipped": true,
+  "currentProductionDeployment": "HENaTXBMMGRGwXy82WnVPM7EAd4t",
+  "currentProductionSource": "033a3f5ea2db932659353a7b5f2e4fcd30853fa0",
+  "currentProductionBranch": "testing-chat-vpv4",
+  "settingsChanged": false
+}

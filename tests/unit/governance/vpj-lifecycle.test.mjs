@@ -46,23 +46,39 @@ test('not-planned is not silently treated as product completion', () => {
   }), /closed without completion/);
 });
 
-test('completed tasks cannot conceal unresolved or cancelled native blockers', () => {
+test('closed tasks with open upstream scope are surfaced for evidence review without inventing acceptance', () => {
   for (const blocker of [issue(), issue('closed', [], 'not_planned')]) {
-    assert.throws(() => validateRemoteTaskState(task, issue('closed', [], 'completed'), {
+    assert.equal(validateRemoteTaskState(task, issue('closed', [], 'completed'), {
       baselineMerged: true, blockers: [blocker],
-    }), /completed with unresolved native blockers/);
+    }), 'completion-evidence-review');
   }
   assert.equal(validateRemoteTaskState(task, issue('closed', [], 'completed'), {
     baselineMerged: true, blockers: [issue('closed', [], 'completed')],
   }), 'completed');
 });
 
+test('ongoing slices with unfinished upstream scope require input review, not automatic blocking', () => {
+  const current = issue('open', ['status:in-progress']);
+  const original = structuredClone(current);
+  assert.equal(validateRemoteTaskState(task, current, { baselineMerged: true, blockers: [issue()] }), 'active-input-review');
+  assert.deepEqual(current, original);
+});
+
 test('completed tasks cannot retain active status or ready-for labels', () => {
-  for (const label of ['status:ready', 'status:in-progress', 'ready-for-agent', 'ready-for-human']) {
+  for (const label of ['status:planned', 'status:blocked', 'status:ready', 'status:in-progress', 'ready-for-agent', 'ready-for-human']) {
     assert.throws(() => validateRemoteTaskState(task, issue('closed', [label], 'completed'), {
       baselineMerged: true,
     }), /completed with active readiness labels/);
   }
+});
+
+test('planned work may retain unresolved acceptance dependencies without claiming readiness', () => {
+  assert.equal(validateRemoteTaskState(task, issue('open', ['status:planned']), {
+    baselineMerged: true, blockers: [issue()],
+  }), 'open');
+  assert.throws(() => validateRemoteTaskState(task, issue('open', ['status:planned', 'ready-for-agent']), {
+    baselineMerged: true, blockers: [issue()],
+  }), /unresolved native blockers/);
 });
 
 test('closing old tasks still demands a strict new-task migration snapshot', () => {

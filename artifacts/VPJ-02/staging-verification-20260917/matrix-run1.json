@@ -1,0 +1,200 @@
+{
+  "version": 1,
+  "observedAt": "2026-09-17T04:27:34.445Z",
+  "project": "dzqdzetcctkhbrhlxxgn",
+  "checks": [
+    {
+      "name": "explicit-staging-target",
+      "status": "PASS"
+    },
+    {
+      "name": "migration-version-name-history",
+      "status": "PASS"
+    },
+    {
+      "name": "direct-trip-update-revoked",
+      "status": "PASS"
+    },
+    {
+      "name": "reserved-identities-and-trip-ids-absent",
+      "status": "PASS"
+    },
+    {
+      "name": "ordinary-user-0-created",
+      "status": "PASS"
+    },
+    {
+      "name": "ordinary-user-0-password-login",
+      "status": "PASS"
+    },
+    {
+      "name": "ordinary-user-0-server-identity",
+      "status": "PASS"
+    },
+    {
+      "name": "ordinary-user-1-created",
+      "status": "PASS"
+    },
+    {
+      "name": "ordinary-user-1-password-login",
+      "status": "PASS"
+    },
+    {
+      "name": "ordinary-user-1-server-identity",
+      "status": "PASS"
+    },
+    {
+      "name": "owner-0-create-empty-trip",
+      "status": "PASS"
+    },
+    {
+      "name": "owner-0-read-own",
+      "status": "PASS"
+    },
+    {
+      "name": "other-0-read-hidden",
+      "status": "PASS"
+    },
+    {
+      "name": "anon-0-read-denied",
+      "status": "PASS"
+    },
+    {
+      "name": "other-0-forged-owner-insert-denied",
+      "status": "PASS"
+    },
+    {
+      "name": "owner-0-direct-patch-denied",
+      "status": "PASS"
+    },
+    {
+      "name": "other-0-direct-patch-denied",
+      "status": "PASS"
+    },
+    {
+      "name": "anon-0-direct-patch-denied",
+      "status": "PASS"
+    },
+    {
+      "name": "owner-0-trip-unchanged-after-attacks",
+      "status": "PASS"
+    },
+    {
+      "name": "owner-1-create-empty-trip",
+      "status": "PASS"
+    },
+    {
+      "name": "owner-1-read-own",
+      "status": "PASS"
+    },
+    {
+      "name": "other-1-read-hidden",
+      "status": "PASS"
+    },
+    {
+      "name": "anon-1-read-denied",
+      "status": "PASS"
+    },
+    {
+      "name": "other-1-forged-owner-insert-denied",
+      "status": "PASS"
+    },
+    {
+      "name": "owner-1-direct-patch-denied",
+      "status": "PASS"
+    },
+    {
+      "name": "other-1-direct-patch-denied",
+      "status": "PASS"
+    },
+    {
+      "name": "anon-1-direct-patch-denied",
+      "status": "PASS"
+    },
+    {
+      "name": "owner-1-trip-unchanged-after-attacks",
+      "status": "PASS"
+    },
+    {
+      "name": "anon-insert-denied",
+      "status": "PASS"
+    }
+  ],
+  "paths": {
+    "managementAPI": "PASS",
+    "httpJWT": "PASS",
+    "directDatabase": "UNRUN: no verified SQL credential",
+    "sessionPooler": "UNRUN: no verified SQL credential",
+    "worker": "UNRUN: no verified worker connection identity"
+  },
+  "inventory": {
+    "authAccountCount": 7,
+    "tripCount": 3,
+    "migrations": {
+      "localCount": 61,
+      "remoteCount": 50,
+      "matched": 50,
+      "pending": [
+        {
+          "version": "20260914100000",
+          "name": "vpj_19_363_place_identity"
+        },
+        {
+          "version": "20260914110000",
+          "name": "vpj_75_359_wiki_schema"
+        },
+        {
+          "version": "20260914120000",
+          "name": "vpj_75_359_wiki_dispatcher"
+        },
+        {
+          "version": "20260914130000",
+          "name": "vpj_75_wiki_draft_content"
+        },
+        {
+          "version": "20260914140000",
+          "name": "vpj_75_wiki_statement_review"
+        },
+        {
+          "version": "20260914150000",
+          "name": "vpj_75_wiki_statement_proposals"
+        },
+        {
+          "version": "20260915180000",
+          "name": "vpj_75_wiki_job_reclaim"
+        },
+        {
+          "version": "20260915190000",
+          "name": "vpj_76_360_grounded_ai_assist_context"
+        },
+        {
+          "version": "20260915200000",
+          "name": "vpj_76_360_grounded_ai_assist_jobs"
+        },
+        {
+          "version": "20260916120000",
+          "name": "vpj_75_359_wiki_source_withdrawal"
+        },
+        {
+          "version": "20260917100000",
+          "name": "vpj_75_359_wiki_read_withdrawal_status"
+        }
+      ],
+      "nameDrift": [],
+      "remoteOnly": [],
+      "historical24Matched": true
+    },
+    "authenticatedDirectTripUpdateGranted": false,
+    "scope": "public/private ordinary tables only",
+    "tableCount": 31,
+    "allListedTablesRLS": true
+  },
+  "cleanup": {
+    "operations": "PASS",
+    "fixturesAbsent": "PASS",
+    "originalsUnchanged": "PASS",
+    "authAccountCount": 7,
+    "tripCount": 3
+  },
+  "status": "PASS_FOR_RECORDED_SCOPE"
+}

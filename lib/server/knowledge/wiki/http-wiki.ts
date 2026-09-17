@@ -33,9 +33,18 @@ export async function handleWikiRequest(request: Request, options: {
   if (mutation && !options.sameOrigin) return response("OPS_FORBIDDEN", 403);
   const url = new URL(request.url);
   const pageKey = url.searchParams.get("pageKey");
+  // "scan=withdrawn" (GET only) is the one other single-key query this
+  // endpoint accepts, alongside no params (list) and "pageKey" (one page):
+  // it calls the new read-only ops_wiki_withdrawal_scan_v1 instead of
+  // ops_wiki_read_v1. Mutually exclusive with pageKey by construction --
+  // keys.length > 1 already rejects both being present together.
+  const scan = url.searchParams.get("scan");
   if (!mutation) {
     const keys = [...url.searchParams.keys()];
-    if (keys.length > 1 || (keys.length === 1 && (keys[0] !== "pageKey" || !pageKey || pageKey.trim() !== pageKey || pageKey.length > 200))) return response("INVALID_INPUT", 400);
+    if (keys.length > 1) return response("INVALID_INPUT", 400);
+    if (keys.length === 1 && keys[0] === "pageKey" && (!pageKey || pageKey.trim() !== pageKey || pageKey.length > 200)) return response("INVALID_INPUT", 400);
+    if (keys.length === 1 && keys[0] === "scan" && scan !== "withdrawn") return response("INVALID_INPUT", 400);
+    if (keys.length === 1 && keys[0] !== "pageKey" && keys[0] !== "scan") return response("INVALID_INPUT", 400);
   } else if (url.search || !request.headers.get("content-type")?.startsWith("application/json")) {
     return response("INVALID_INPUT", 400);
   }
@@ -47,7 +56,7 @@ export async function handleWikiRequest(request: Request, options: {
     const actor = await lifetime.run(() => rpc.authenticate());
     if (!actor) return response("UNAUTHENTICATED", 401);
     lifetime.check();
-    let name = "ops_wiki_read_v1";
+    let name = scan === "withdrawn" ? "ops_wiki_withdrawal_scan_v1" : "ops_wiki_read_v1";
     let input: Record<string, unknown> = pageKey ? { pageKey } : {};
     if (mutation) {
       reader = request.body?.getReader();

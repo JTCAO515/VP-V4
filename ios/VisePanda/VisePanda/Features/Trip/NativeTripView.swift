@@ -4,6 +4,7 @@ struct NativeTripView: View {
     @Environment(AppSettings.self) private var settings
     @State private var store = NativeTripStore()
     @State private var newTitle = ""
+    @State private var shareSource: NativeTripShareSource?
     @State private var confirmVisible = false
     @State private var reviewedReference: String?
     @State private var discardVisible = false
@@ -55,6 +56,9 @@ struct NativeTripView: View {
             .padding(VPSpacing.standard)
         }
         .background(Color.vpBackground)
+        .sheet(item: $shareSource) { source in
+            NativeTripShareView(source: source, store: store, session: session, chinese: chinese)
+        }
         .vpNavigationTitle("tab.trip")
         .navigationBarTitleDisplayMode(.inline)
         .scrollDismissesKeyboard(.interactively)
@@ -171,6 +175,14 @@ struct NativeTripView: View {
                             }
                         }
                     }
+                }
+                if detail.confirmationState == "confirmed" {
+                    Button(text("Share confirmed plan", "分享已确认计划")) {
+                        guard let scope = session.dataScope, store.scope == scope else { return }
+                        shareSource = NativeTripShareSource(scope: scope, detail: detail)
+                    }
+                    .accessibilityIdentifier("trip.share")
+                    .disabled(store.busy)
                 }
                 Divider()
                 Text(text("User locks are not available in this version. External order status is unknown.", "此版本尚不支持用户硬锁。外部订单状态未知。"))

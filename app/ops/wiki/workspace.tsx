@@ -1,13 +1,13 @@
 "use client";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
-import { citedWithdrawnSources, type WikiRead, type WikiPageList } from "@/lib/server/knowledge/wiki/read-model";
+import { citedWithdrawnSources, type WikiRead, type WikiPageList, type WikiWithdrawalScan } from "@/lib/server/knowledge/wiki/read-model";
 import { conflictsByProposal, detectProposalConflicts, type ProposalConflict, type StructuredWikiDraft } from "@/lib/server/knowledge/wiki/proposals";
 import styles from "../review/workspace.module.css";
 
 const copy = {
-  zh: { heading: "Wiki 草稿", boundary: "生成内容供运营核对，尚未成为已发布事实。声明审核与发布仍使用现有流程。", login: "登录", review: "声明审核", language: "语言", key: "页面标识", lookup: "查看", recent: "最近 50 个页面", refresh: "刷新列表", busy: "读取中…", unavailable: "暂时无法读取，请检查登录与 Ops 权限后重试。", missing: "没有找到页面。", empty: "暂无页面。", current: "当前版本", previous: "上一版本", noPrevious: "没有上一版本，无法比较。", noBody: "此历史版本未保存正文，无法还原或比较。", noRevision: "尚无完成的草稿版本。", gaps: "待核实缺口", sources: "来源与原文位置", absentSource: "来源记录缺失，无法核实", changes: "正文差异", same: "正文未变化", changed: "正文已变化，请对照两个版本", unknownDiff: "正文缺失，差异未知", added: "新增", removed: "移除", jobs: "最近 10 个生成任务", tokens: "记录的 token 数（非账单）", unknown: "未知", metadata: "生成记录", draft: "草稿", validated: "已校验（不代表发布）", rejected: "已拒绝", conflictReason: { objectId: "对象不同", conditions: "条件不同", exclusions: "例外不同" } as Record<ProposalConflict["reason"], string>, withdrawStart: "撤回此来源", withdrawConfirm: "此操作会阻止之后引用它发起新的生成任务，但不会自动撤销或隐藏已生成的草稿。请填写撤回原因后确认。", withdrawReason: "撤回原因", withdrawSubmit: "确认撤回", withdrawCancel: "取消", withdrawBusy: "提交中…", withdrawError: "撤回失败，请检查登录与 Ops 权限后重试。", citesWithdrawnSource: (n: number) => `⚠ 此版本引用的 ${n} 个来源已被撤回，展开下方"${copy.zh.sources}"逐条核实其原因；此提醒不会自动撤销或隐藏这份已生成的草稿，是否仍可信需人工判断。` },
-  en: { heading: "Wiki drafts", boundary: "Generated content is for operator review and is not a published fact. Statements use the existing review and publication process.", login: "Sign in", review: "Statement review", language: "Language", key: "Page key", lookup: "View", recent: "Latest 50 pages", refresh: "Refresh list", busy: "Loading…", unavailable: "Unable to read. Check your session and Ops access, then retry.", missing: "Page not found.", empty: "No pages yet.", current: "Current version", previous: "Previous version", noPrevious: "No previous version to compare.", noBody: "This historical revision has no stored body; it cannot be reconstructed or compared.", noRevision: "No completed draft revision yet.", gaps: "Gaps to verify", sources: "Sources and original location", absentSource: "Source record missing; cannot verify", changes: "Body differences", same: "Body unchanged", changed: "Body changed; compare both versions", unknownDiff: "Body missing; differences unknown", added: "Added", removed: "Removed", jobs: "Latest 10 generation jobs", tokens: "Recorded tokens (not an invoice)", unknown: "Unknown", metadata: "Generation record", draft: "Draft", validated: "Validated (not published)", rejected: "Rejected", conflictReason: { objectId: "different object", conditions: "different conditions", exclusions: "different exclusions" } as Record<ProposalConflict["reason"], string>, withdrawStart: "Withdraw this source", withdrawConfirm: "New generation work will stop citing it, but any already-generated draft is not automatically retracted or hidden. Enter a reason, then confirm.", withdrawReason: "Withdrawal reason", withdrawSubmit: "Confirm withdrawal", withdrawCancel: "Cancel", withdrawBusy: "Submitting…", withdrawError: "Withdrawal failed. Check your session and Ops access, then retry.", citesWithdrawnSource: (n: number) => `⚠ ${n} of the source(s) cited by this revision have since been withdrawn. Expand "Sources and original location" below to review each reason; this notice does not automatically retract or hide this already-generated draft -- whether it remains trustworthy needs manual review.` },
+  zh: { heading: "Wiki 草稿", boundary: "生成内容供运营核对，尚未成为已发布事实。声明审核与发布仍使用现有流程。", login: "登录", review: "声明审核", language: "语言", key: "页面标识", lookup: "查看", recent: "最近 50 个页面", refresh: "刷新列表", busy: "读取中…", unavailable: "暂时无法读取，请检查登录与 Ops 权限后重试。", missing: "没有找到页面。", empty: "暂无页面。", current: "当前版本", previous: "上一版本", noPrevious: "没有上一版本，无法比较。", noBody: "此历史版本未保存正文，无法还原或比较。", noRevision: "尚无完成的草稿版本。", gaps: "待核实缺口", sources: "来源与原文位置", absentSource: "来源记录缺失，无法核实", changes: "正文差异", same: "正文未变化", changed: "正文已变化，请对照两个版本", unknownDiff: "正文缺失，差异未知", added: "新增", removed: "移除", jobs: "最近 10 个生成任务", tokens: "记录的 token 数（非账单）", unknown: "未知", metadata: "生成记录", draft: "草稿", validated: "已校验（不代表发布）", rejected: "已拒绝", conflictReason: { objectId: "对象不同", conditions: "条件不同", exclusions: "例外不同" } as Record<ProposalConflict["reason"], string>, withdrawStart: "撤回此来源", withdrawConfirm: "此操作会阻止之后引用它发起新的生成任务，但不会自动撤销或隐藏已生成的草稿。请填写撤回原因后确认。", withdrawReason: "撤回原因", withdrawSubmit: "确认撤回", withdrawCancel: "取消", withdrawBusy: "提交中…", withdrawError: "撤回失败，请检查登录与 Ops 权限后重试。", citesWithdrawnSource: (n: number) => `⚠ 此版本引用的 ${n} 个来源已被撤回，展开下方"${copy.zh.sources}"逐条核实其原因；此提醒不会自动撤销或隐藏这份已生成的草稿，是否仍可信需人工判断。`, scanHeading: "全局扫描：引用已撤回来源的页面与任务", scanBoundary: "自动扫描所有页面的当前/上一版本，以及所有排队中或运行中的生成任务，无需逐页打开即可看到全貌；仅作提醒，不会自动撤销、隐藏或取消任何内容。", scanEmpty: "扫描未发现任何引用已撤回来源的页面或任务。", scanRevisions: "受影响的页面版本", scanJobs: "受影响的运行中任务", scanRevisionLine: (n: number) => `引用了 ${n} 个已撤回来源` },
+  en: { heading: "Wiki drafts", boundary: "Generated content is for operator review and is not a published fact. Statements use the existing review and publication process.", login: "Sign in", review: "Statement review", language: "Language", key: "Page key", lookup: "View", recent: "Latest 50 pages", refresh: "Refresh list", busy: "Loading…", unavailable: "Unable to read. Check your session and Ops access, then retry.", missing: "Page not found.", empty: "No pages yet.", current: "Current version", previous: "Previous version", noPrevious: "No previous version to compare.", noBody: "This historical revision has no stored body; it cannot be reconstructed or compared.", noRevision: "No completed draft revision yet.", gaps: "Gaps to verify", sources: "Sources and original location", absentSource: "Source record missing; cannot verify", changes: "Body differences", same: "Body unchanged", changed: "Body changed; compare both versions", unknownDiff: "Body missing; differences unknown", added: "Added", removed: "Removed", jobs: "Latest 10 generation jobs", tokens: "Recorded tokens (not an invoice)", unknown: "Unknown", metadata: "Generation record", draft: "Draft", validated: "Validated (not published)", rejected: "Rejected", conflictReason: { objectId: "different object", conditions: "different conditions", exclusions: "different exclusions" } as Record<ProposalConflict["reason"], string>, withdrawStart: "Withdraw this source", withdrawConfirm: "New generation work will stop citing it, but any already-generated draft is not automatically retracted or hidden. Enter a reason, then confirm.", withdrawReason: "Withdrawal reason", withdrawSubmit: "Confirm withdrawal", withdrawCancel: "Cancel", withdrawBusy: "Submitting…", withdrawError: "Withdrawal failed. Check your session and Ops access, then retry.", citesWithdrawnSource: (n: number) => `⚠ ${n} of the source(s) cited by this revision have since been withdrawn. Expand "Sources and original location" below to review each reason; this notice does not automatically retract or hide this already-generated draft -- whether it remains trustworthy needs manual review.`, scanHeading: "Global scan: pages and jobs citing a withdrawn source", scanBoundary: "Automatically scans every page's current/previous version and every queued or running generation job, so you do not have to open each page individually; advisory only -- nothing is automatically retracted, hidden or cancelled.", scanEmpty: "The scan found no page or job citing a withdrawn source.", scanRevisions: "Affected page versions", scanJobs: "Affected running jobs", scanRevisionLine: (n: number) => `Cites ${n} withdrawn source(s)` },
 };
 /** Purely structural, non-semantic conflicts between this revision's OWN structured
  * proposals -- see detectProposalConflicts. Computed client-side from the already-
@@ -78,9 +78,26 @@ export function OpsWikiWorkspace() {
   const [pages, setPages] = useState<WikiPageList["pages"]>([]);
   const [result, setResult] = useState<WikiRead | null>(null);
   const [status, setStatus] = useState<"idle" | "busy" | "unavailable" | "missing">("idle");
+  const [scan, setScan] = useState<WikiWithdrawalScan | null>(null);
   const selected = useRef<string | null>(null);
   const request = useRef<AbortController | null>(null);
+  const scanRequest = useRef<AbortController | null>(null);
   const c = copy[locale];
+  // Independent of `load`/`result`/`pages`: the scan covers ALL pages and
+  // in-flight jobs, not the one page (if any) currently selected, so it is
+  // fetched and refreshed on its own schedule alongside the page list, and
+  // simply ignored (not cleared) if it fails -- a scan hiccup must never
+  // block or blank out the page detail/list the operator is actually using.
+  const loadScan = useCallback(async () => {
+    scanRequest.current?.abort();
+    const controller = new AbortController(); scanRequest.current = controller;
+    try {
+      const response = await fetch("/api/ops/wiki?scan=withdrawn", { cache: "no-store", signal: AbortSignal.any([controller.signal, AbortSignal.timeout(10000)]) });
+      if (controller.signal.aborted || !response.ok) return;
+      const body = await response.json();
+      if (!controller.signal.aborted) setScan(body.data as WikiWithdrawalScan);
+    } catch { /* advisory only -- keep the last known scan on failure */ }
+  }, []);
   const load = useCallback(async (pageKey: string | null, background = false) => {
     request.current?.abort();
     const controller = new AbortController(); request.current = controller;
@@ -97,12 +114,13 @@ export function OpsWikiWorkspace() {
   }, []);
   useEffect(() => {
     void load(null);
-    const refresh = () => { if (document.visibilityState === "visible") void load(selected.current, true); else { request.current?.abort(); setResult(null); setPages([]); } };
+    void loadScan();
+    const refresh = () => { if (document.visibilityState === "visible") { void load(selected.current, true); void loadScan(); } else { request.current?.abort(); scanRequest.current?.abort(); setResult(null); setPages([]); } };
     const interval = setInterval(refresh, 25000);
     document.addEventListener("visibilitychange", refresh);
     window.addEventListener("pageshow", refresh);
-    return () => { request.current?.abort(); clearInterval(interval); document.removeEventListener("visibilitychange", refresh); window.removeEventListener("pageshow", refresh); };
-  }, [load]);
+    return () => { request.current?.abort(); scanRequest.current?.abort(); clearInterval(interval); document.removeEventListener("visibilitychange", refresh); window.removeEventListener("pageshow", refresh); };
+  }, [load, loadScan]);
   function lookup(event: FormEvent<HTMLFormElement>) { event.preventDefault(); void load(String(new FormData(event.currentTarget).get("pageKey") ?? "").trim()); }
   const current = result?.revisions[0]; const previous = result?.revisions[1];
   const currentConflicts = current ? structuralConflicts(current.draftContent) : null;
@@ -112,6 +130,13 @@ export function OpsWikiWorkspace() {
     <nav className={styles.actions}><Link href="/auth/sign-in?returnTo=/ops/wiki">{c.login}</Link><Link href="/ops/review">{c.review}</Link><button onClick={() => void load(null)}>{c.refresh}</button></nav>
     <form className={styles.panel} onSubmit={lookup}><label>{c.key}<input name="pageKey" required maxLength={200} /></label><button>{c.lookup}</button></form>
     <p role="status">{status === "idle" ? "" : c[status]}</p>
+    {!result && scan && <section className={styles.panel}>
+      <h2>{c.scanHeading}</h2>
+      <p className={styles.boundary}>{c.scanBoundary}</p>
+      {scan.affectedRevisions.length === 0 && scan.affectedJobs.length === 0 && <p>{c.scanEmpty}</p>}
+      {scan.affectedRevisions.length > 0 && <><h3>{c.scanRevisions}</h3>{scan.affectedRevisions.map(r => <p key={r.revisionId} role="alert" className={styles.conflict}><button onClick={() => void load(r.pageKey)}>{r.pageKey} · v{r.version}</button> — {c.scanRevisionLine(r.withdrawnSourceIds.length)}</p>)}</>}
+      {scan.affectedJobs.length > 0 && <><h3>{c.scanJobs}</h3>{scan.affectedJobs.map(j => <p key={j.jobId} role="alert" className={styles.conflict}><button onClick={() => void load(j.pageKey)}>{j.pageKey}</button> · {j.status} · {c.scanRevisionLine(j.withdrawnSourceIds.length)}</p>)}</>}
+    </section>}
     {!result && status === "idle" && <section className={styles.panel}><h2>{c.recent}</h2>{pages.length ? pages.map(p => <p key={p.pageKey}><button onClick={() => void load(p.pageKey)}>{p.pageKey} · v{p.version}</button></p>) : <p>{c.empty}</p>}</section>}
     {result && <section className={styles.list}>
       <h2 style={{ overflowWrap: "anywhere" }}>{result.pageKey} · v{result.version}</h2>

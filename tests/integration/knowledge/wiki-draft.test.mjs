@@ -551,6 +551,141 @@ test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACL
     assert.equal(afterWithdrawal.revisions[0].sources.find(s=>s.id===cascadeSourceIdB).withdrawnAt,null,'the second cited source, never withdrawn, must not be flagged');
   });
 
+  // ops_wiki_withdrawal_scan_v1 (migration 20260917110000) is the automated,
+  // ALL-pages/ALL-in-flight-jobs counterpart to citedWithdrawnSources, which
+  // only ever covers one already-fetched page. Named explicitly as UNRUN in
+  // docs/contracts/wiki-source-withdrawal.md ("No automated scan. Nothing
+  // periodically checks in-flight running jobs against newly-withdrawn
+  // sources") and in artifacts/VPJ-75/unrun.md.
+  const digest64=()=>(uuid()+uuid()).replaceAll('-','').slice(0,64);
+  const withdrawalScanMigration=readFileSync('supabase/migrations/20260917110000_vpj_75_359_wiki_withdrawal_scan.sql','utf8');
+  await t.test('withdrawal-scan migration rolls back cleanly and preserves prior receipt replay',async()=>{
+    const before=await call(author,'ops_wiki_read_v1',{pageKey});
+    await db('begin;'+withdrawalScanMigration+'rollback;');
+    assert.equal((await db("select count(*)::int n from information_schema.columns where table_schema='knowledge_review_private' and table_name='wiki_generation_jobs' and column_name='source_revision_ids';"))[0].n,0);
+    assert.equal((await db("select to_regprocedure('public.ops_wiki_withdrawal_scan_v1(jsonb)') is null as absent;"))[0].absent,true);
+    assert.deepEqual(await call(author,'ops_wiki_read_v1',{pageKey}),before);
+    await db('begin;'+withdrawalScanMigration+'commit;');
+    assert.equal((await db("select count(*)::int n from information_schema.columns where table_schema='knowledge_review_private' and table_name='wiki_generation_jobs' and column_name='source_revision_ids';"))[0].n,1);
+    assert.equal((await db("select to_regprocedure('public.ops_wiki_withdrawal_scan_v1(jsonb)') is null as absent;"))[0].absent,false);
+    // A pure `create or replace function` on ops_wiki_generation_v1, plus an
+    // additive nullable column -- must not disturb any already-persisted
+    // receipt/job/revision from before this migration landed.
+    assert.deepEqual(await completeWikiGenerationJob(rpc,completion,outcome),saved);
+  });
+
+  const scan=()=>call(author,'ops_wiki_withdrawal_scan_v1',{});
+
+  await t.test('claim() additively records sourceRevisionIds on the job row; every existing claim/complete behavior (fresh claimToken on retry, status transitions) is unchanged',async()=>{
+    const recSourceId=uuid();
+    const recSource={...source,sourceKey:'scan_record_source',snippet:'Synthetic scan-record source material.'};
+    await db(`insert into knowledge_review_private.source_revisions(id,source_key,revision_label,declaration,snippet_hash,submitted_by) values('${recSourceId}','scan_record_source','r1',${lit(JSON.stringify(recSource))},'${digest64()}','${author.id}');`);
+    const recPageKey='source_summary:scan-record-fixture';
+    const recClaimInput={action:'claim',operationId:uuid(),pageType:'source_summary',pageKey:recPageKey,sourceRevisionIds:[recSourceId],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),inputDigest:digest64()};
+    const recClaimed=await call(author,'ops_wiki_generation_v1',recClaimInput);
+    assert.equal(recClaimed.kind,'claimed');
+    assert.deepEqual((await db(`select source_revision_ids from knowledge_review_private.wiki_generation_jobs where id='${recClaimed.jobId}';`))[0].source_revision_ids,[recSourceId]);
+
+    // Fail then re-claim (the existing terminal-job-retry branch, unchanged
+    // by this migration) -- the recorded set must stay current across a
+    // reclaim, and a fresh claimToken is still minted exactly as before.
+    await call(author,'ops_wiki_generation_v1',{action:'complete',operationId:uuid(),jobId:recClaimed.jobId,outcome:{kind:'failed',errorCode:'SYNTHETIC_TEST_FAILURE',claimToken:recClaimed.claimToken}});
+    const retryClaimed=await call(author,'ops_wiki_generation_v1',{...recClaimInput,operationId:uuid()});
+    assert.equal(retryClaimed.kind,'claimed');
+    assert.notEqual(retryClaimed.claimToken,recClaimed.claimToken,'reclaim/retry must still mint a fresh claimToken, unchanged by this migration');
+    assert.deepEqual((await db(`select source_revision_ids from knowledge_review_private.wiki_generation_jobs where id='${retryClaimed.jobId}';`))[0].source_revision_ids,[recSourceId]);
+  });
+
+  await t.test('ops_wiki_withdrawal_scan_v1: real cross-page/cross-job scan finds exactly the affected page and the affected in-flight job, and never the unaffected control fixtures',async()=>{
+    // Control: a page whose source is never withdrawn must never appear.
+    const controlSourceId=uuid();
+    const controlSource={...source,sourceKey:'scan_control_source',snippet:'Synthetic scan-control source, never withdrawn.'};
+    await db(`insert into knowledge_review_private.source_revisions(id,source_key,revision_label,declaration,snippet_hash,submitted_by) values('${controlSourceId}','scan_control_source','r1',${lit(JSON.stringify(controlSource))},'${digest64()}','${author.id}');`);
+    const controlPageKey='source_summary:scan-control-fixture';
+    const controlClaimInput={action:'claim',operationId:uuid(),pageType:'source_summary',pageKey:controlPageKey,sourceRevisionIds:[controlSourceId],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),inputDigest:digest64()};
+    const controlClaimed=await call(author,'ops_wiki_generation_v1',controlClaimInput);
+    const controlOutcome=await runWikiGenerationJob({pageType:'source_summary',pageKey:controlPageKey,sourceText:controlSource.snippet,promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),maxOutputTokens:1024,timeoutMs:5000,provider:{provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:uuid(),configurationVersion:1,timeoutMs:5000}}, {credential:()=> 'synthetic',recordDestination:async()=>{},fetch:async()=>Response.json({model:'qwen3.7-plus-2026-05-26',choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({summary:'Scan control fixture summary.',gaps:[]})}}],usage:{prompt_tokens:5,completion_tokens:5,total_tokens:10}})},new AbortController().signal);
+    const controlCompletion={operationId:uuid(),jobId:controlClaimed.jobId,claimToken:controlClaimed.claimToken,expectedVersion:controlClaimed.expectedVersion,sourceRevisionIds:[controlSourceId],statementRefs:[],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),generatedAt:new Date().toISOString(),changeNote:'Scan control fixture, never withdrawn'};
+    assert.equal((await completeWikiGenerationJob(rpc,controlCompletion,controlOutcome)).data.kind,'succeeded');
+
+    const before=await scan();
+    assert.equal(before.affectedRevisions.some(r=>r.pageKey===controlPageKey),false);
+    assert.equal(before.affectedRevisions.some(r=>r.pageKey===cascadePageKey),true,'the cascade-flag fixture from earlier in this file, whose source A is already withdrawn, must already be found by this global scan');
+    assert.deepEqual(before.affectedRevisions.find(r=>r.pageKey===cascadePageKey).withdrawnSourceIds,[cascadeSourceIdA]);
+
+    // A fresh page+source, withdrawn only inside THIS test, proves the scan
+    // is live (not a cached/stale snapshot), correctly scoped to just the
+    // one source actually withdrawn.
+    const scanRevSourceId=uuid();
+    const scanRevSource={...source,sourceKey:'scan_revision_source',snippet:'Synthetic scan-revision source material.'};
+    await db(`insert into knowledge_review_private.source_revisions(id,source_key,revision_label,declaration,snippet_hash,submitted_by) values('${scanRevSourceId}','scan_revision_source','r1',${lit(JSON.stringify(scanRevSource))},'${digest64()}','${author.id}');`);
+    const scanRevPageKey='source_summary:scan-revision-fixture';
+    const scanRevClaimInput={action:'claim',operationId:uuid(),pageType:'source_summary',pageKey:scanRevPageKey,sourceRevisionIds:[scanRevSourceId],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),inputDigest:digest64()};
+    const scanRevClaimed=await call(author,'ops_wiki_generation_v1',scanRevClaimInput);
+    const scanRevOutcome=await runWikiGenerationJob({pageType:'source_summary',pageKey:scanRevPageKey,sourceText:scanRevSource.snippet,promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),maxOutputTokens:1024,timeoutMs:5000,provider:{provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:uuid(),configurationVersion:1,timeoutMs:5000}}, {credential:()=> 'synthetic',recordDestination:async()=>{},fetch:async()=>Response.json({model:'qwen3.7-plus-2026-05-26',choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({summary:'Scan revision fixture summary.',gaps:[]})}}],usage:{prompt_tokens:5,completion_tokens:5,total_tokens:10}})},new AbortController().signal);
+    const scanRevCompletion={operationId:uuid(),jobId:scanRevClaimed.jobId,claimToken:scanRevClaimed.claimToken,expectedVersion:scanRevClaimed.expectedVersion,sourceRevisionIds:[scanRevSourceId],statementRefs:[],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),generatedAt:new Date().toISOString(),changeNote:'Scan-revision fixture, withdrawn after persistence'};
+    assert.equal((await completeWikiGenerationJob(rpc,scanRevCompletion,scanRevOutcome)).data.kind,'succeeded');
+    await withdraw(author,scanRevSourceId,'Withdrawn to prove the global scan is live, not a stale snapshot.');
+
+    // A stuck in-flight job: claim with a real source, then withdraw that
+    // source before completing -- reproducing barrier 2's exact race (same
+    // idiom as the earlier "dispatch barrier: complete(succeeded) rejects
+    // ..." test), but this time leaving the job 'running' (never
+    // cancelled/completed) so it is exactly the in-flight-job case this
+    // scan exists to surface.
+    const scanJobSourceId=uuid();
+    const scanJobSource={...source,sourceKey:'scan_job_source',snippet:'Synthetic scan-job source material.'};
+    await db(`insert into knowledge_review_private.source_revisions(id,source_key,revision_label,declaration,snippet_hash,submitted_by) values('${scanJobSourceId}','scan_job_source','r1',${lit(JSON.stringify(scanJobSource))},'${digest64()}','${author.id}');`);
+    const scanJobPageKey='source_summary:scan-job-fixture';
+    const scanJobClaimInput={action:'claim',operationId:uuid(),pageType:'source_summary',pageKey:scanJobPageKey,sourceRevisionIds:[scanJobSourceId],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),inputDigest:digest64()};
+    const scanJobClaimed=await call(author,'ops_wiki_generation_v1',scanJobClaimInput);
+    assert.equal(scanJobClaimed.kind,'claimed');
+    assert.equal((await scan()).affectedJobs.some(j=>j.jobId===scanJobClaimed.jobId),false,'not yet withdrawn -- must not be reported before the withdrawal');
+    await withdraw(author,scanJobSourceId,'Withdrawn while a real claim is still running, to reproduce the in-flight-job scan case.');
+
+    const after=await scan();
+    const revEntry=after.affectedRevisions.find(r=>r.pageKey===scanRevPageKey);
+    assert.ok(revEntry,'the newly-withdrawn revision must be found by the scan');
+    assert.deepEqual(revEntry.withdrawnSourceIds,[scanRevSourceId]);
+    assert.equal(after.affectedRevisions.some(r=>r.pageKey===controlPageKey),false,'the never-withdrawn control fixture must never be reported');
+
+    const jobEntry=after.affectedJobs.find(j=>j.jobId===scanJobClaimed.jobId);
+    assert.ok(jobEntry,'the stuck in-flight job must be found by the scan');
+    assert.equal(jobEntry.pageKey,scanJobPageKey);
+    assert.equal(jobEntry.status,'running');
+    assert.deepEqual(jobEntry.withdrawnSourceIds,[scanJobSourceId]);
+    assert.equal(after.affectedJobs.some(j=>j.jobId===controlClaimed.jobId),false,'a job whose source was never withdrawn must never be reported');
+
+    // Read-only: none of this scanning changed the job's status, the page's
+    // version, or any revision content -- pure correlation only.
+    assert.equal((await db(`select status from knowledge_review_private.wiki_generation_jobs where id='${scanJobClaimed.jobId}';`))[0].status,'running');
+    assert.equal((await call(author,'ops_wiki_read_v1',{pageKey:scanRevPageKey})).version,1);
+  });
+
+  await t.test('ops_wiki_withdrawal_scan_v1 rejects outsiders and malformed input, same as every other Ops RPC',async()=>{
+    await assert.rejects(call(outsider,'ops_wiki_withdrawal_scan_v1',{}),/OPS_FORBIDDEN/);
+    await assert.rejects(call(author,'ops_wiki_withdrawal_scan_v1',{unexpected:'field'}),/INVALID_INPUT/);
+  });
+
+  await t.test('HTTP GET /api/ops/wiki?scan=withdrawn calls the real scan RPC end to end; an unknown scan value and pageKey+scan together are rejected before any RPC call',async()=>{
+    const httpRpcFor=(actor)=>({authenticate:async()=>actor.id,call:async(name,{p_input})=>{try{return {data:await call(actor,name,p_input),error:null};}catch(error){return {data:null,error:{message:error.message}};}}});
+    const scanHttpRequest={method:'GET',url:'http://127.0.0.1/api/ops/wiki?scan=withdrawn',headers:new Headers(),signal:new AbortController().signal};
+    const scanHttpResult=await handleWikiRequest(scanHttpRequest,{enabled:true,createRpc:()=>httpRpcFor(author)});
+    assert.equal(scanHttpResult.status,200);
+    assert.ok(Array.isArray(scanHttpResult.body.data.affectedRevisions));
+    assert.ok(Array.isArray(scanHttpResult.body.data.affectedJobs));
+    assert.equal(scanHttpResult.body.data.affectedRevisions.some(r=>r.pageKey==='source_summary:scan-revision-fixture'),true,'the real HTTP path must surface the same real data the direct-RPC scan test found');
+
+    const badScanValue={method:'GET',url:'http://127.0.0.1/api/ops/wiki?scan=bogus',headers:new Headers(),signal:new AbortController().signal};
+    assert.equal((await handleWikiRequest(badScanValue,{enabled:true,createRpc:()=>httpRpcFor(author)})).status,400);
+
+    const bothParams={method:'GET',url:`http://127.0.0.1/api/ops/wiki?scan=withdrawn&pageKey=${encodeURIComponent(pageKey)}`,headers:new Headers(),signal:new AbortController().signal};
+    assert.equal((await handleWikiRequest(bothParams,{enabled:true,createRpc:()=>httpRpcFor(author)})).status,400);
+
+    const outsiderScan={method:'GET',url:'http://127.0.0.1/api/ops/wiki?scan=withdrawn',headers:new Headers(),signal:new AbortController().signal};
+    assert.equal((await handleWikiRequest(outsiderScan,{enabled:true,createRpc:()=>httpRpcFor(outsider)})).status,403);
+  });
+
   // The withdrawal action still had no /ops/wiki HTTP entry point at all before this
   // slice -- ops_source_revision_withdraw_v1 was only ever exercised by calling the
   // RPC directly (see the "withdraw RPC" test above). This proves the actual write
