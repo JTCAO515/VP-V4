@@ -1,4 +1,5 @@
 import {runWikiStatementProposalJob} from "../../../lib/server/jobs/wiki-statement-proposal-job.ts";
+import {conflictsByProposal,detectProposalConflicts} from "../../../lib/server/knowledge/wiki/proposals.ts";
 import http from "node:http";
 import {Readable} from "node:stream";
 import {handleOpsRequest} from "../../../lib/server/knowledge/review/http-workspace.ts";
@@ -205,7 +206,15 @@ test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACL
   const proposalSourceId=uuid();const proposalSource={...source,sourceKey:'proposal_source',snippet:'😀 Shanghai museum: bring ID on entry unless exempt.'};
   await db(`insert into knowledge_review_private.source_revisions(id,source_key,revision_label,declaration,snippet_hash,submitted_by) values('${proposalSourceId}','proposal_source','r1',${lit(JSON.stringify(proposalSource))},'${'d'.repeat(64)}','${author.id}');`);
   const {sources:ignoredSources,...modelStatement}=statement;
-  const rawProposal={summary:'Synthetic museum entry requirements.',gaps:['Other cities are not covered.'],proposals:[{statement:modelStatement,evidence:[{sourceRevisionId:proposalSourceId,quote:'bring ID on entry unless exempt.'}]}]};
+  // Second proposal deliberately conflicts with the first (same subjectId/predicate/
+  // scene, overlapping city, different objectId) so the real persisted draft body
+  // exercises detectProposalConflicts/conflictsByProposal end to end -- the wiring
+  // artifacts/VPJ-75/unrun.md named as the still-missing piece.
+  const conflictingStatement={...modelStatement,assertion:{...modelStatement.assertion,objectId:'passport_document'},expressions:{zh:{text:'需提供护照。',conditions:['入场时'],exclusions:['豁免者除外']},en:{text:'Bring passport.',conditions:['On entry'],exclusions:['Unless exempt']}}};
+  const rawProposal={summary:'Synthetic museum entry requirements.',gaps:['Other cities are not covered.'],proposals:[
+    {statement:modelStatement,evidence:[{sourceRevisionId:proposalSourceId,quote:'bring ID on entry unless exempt.'}]},
+    {statement:conflictingStatement,evidence:[{sourceRevisionId:proposalSourceId,quote:'Shanghai museum'}]},
+  ]};
   const proposalResult=await runWikiStatementProposalJob({dataClass:'c0_synthetic',sources:[{id:proposalSourceId,declaration:proposalSource}],configDigest:'a'.repeat(64),provider:{provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:uuid(),configurationVersion:1,timeoutMs:5000},maxOutputTokens:2048,timeoutMs:5000},{credential:()=> 'synthetic',recordDestination:async()=>{},fetch:async()=>Response.json({model:'qwen3.7-plus-2026-05-26',choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify(rawProposal)}}],usage:{prompt_tokens:30,completion_tokens:60,total_tokens:90}})},new AbortController().signal);
   assert.equal(proposalResult.kind,'succeeded');
   const proposalPageKey='source_summary:proposal_fixture';
@@ -231,6 +240,20 @@ test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACL
     proposalRead=await call(author,'ops_wiki_read_v1',{pageKey:proposalPageKey});
     assert.deepEqual(proposalRead.revisions[0].draftContent,proposalResult.output);
     assert.equal(proposalRead.revisions[0].validationStatus,'draft');
+  });
+  await t.test('the persisted, real-DB-round-tripped draft body still detects the structural conflict the UI must surface',()=>{
+    // Not a fixture object -- this is proposalRead.revisions[0].draftContent as it
+    // came back from the real ops_wiki_read_v1 RPC over the real HTTP handler, after
+    // a real jsonb round trip and a real process restart. Proves the fields
+    // detectProposalConflicts reads (subjectId/predicate/scope.cities/scope.scene/
+    // objectId/conditions/exclusions) survive that round trip unmodified.
+    const draft=proposalRead.revisions[0].draftContent;
+    assert.equal(draft.statementProposals.length,2);
+    const conflicts=detectProposalConflicts(draft);
+    assert.deepEqual(conflicts,[{a:0,b:1,reason:'objectId'}]);
+    const byProposal=conflictsByProposal(conflicts);
+    assert.deepEqual(byProposal.get(0),[{other:1,reason:'objectId'}]);
+    assert.deepEqual(byProposal.get(1),[{other:0,reason:'objectId'}]);
   });
   await t.test('operator-edited model proposal retains its index and exact source without publication',async()=>{
     const selected={...input,operationId:uuid(),candidateId:uuid(),wikiRevisionId:proposalRead.revisions[0].id,expectedWikiVersion:1,wikiProposalIndex:0,statement:proposalResult.output.statementProposals[0].statement,title:'Generated proposal for operator review'};

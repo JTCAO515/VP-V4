@@ -76,3 +76,15 @@ export function detectProposalConflicts(draft:StructuredWikiDraft):readonly Prop
   }
   return conflicts;
 }
+/** Reshapes a flat conflict list into a per-proposal-index lookup, so a
+ * consumer (the `/ops/wiki` UI) can render "this proposal disagrees with
+ * proposal N" next to each proposal without re-deriving pair symmetry itself.
+ * Symmetric: if `a` conflicts with `b`, both indices get an entry pointing at
+ * the other. Pure and order-preserving; does not deduplicate a proposal that
+ * conflicts with several others -- each pair appears once per side. */
+export function conflictsByProposal(conflicts:readonly ProposalConflict[]):ReadonlyMap<number,readonly {other:number;reason:ProposalConflict['reason']}[]> {
+  const map=new Map<number,{other:number;reason:ProposalConflict['reason']}[]>();
+  const push=(at:number,other:number,reason:ProposalConflict['reason'])=>{const list=map.get(at);if(list)list.push({other,reason});else map.set(at,[{other,reason}]);};
+  for(const {a,b,reason} of conflicts){push(a,b,reason);push(b,a,reason);}
+  return map;
+}

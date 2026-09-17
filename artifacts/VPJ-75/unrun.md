@@ -41,17 +41,24 @@ and `docs/contracts/wiki-generation-dispatch.md`.
   statement extraction at all yet.
 - **Docling/parser integration**, per #288's existing REJECT — not
   attempted, not silently assumed fine.
-- ~~Contradiction/conflict handling~~ **PARTIALLY DONE 2026-09-16**, see
-  `wiki-statement-proposals-safety-20260916/verification.md` and
-  `docs/contracts/wiki-statement-proposals-safety.md`. A new pure,
-  deterministic `detectProposalConflicts` flags two proposals in the same
-  draft that structurally disagree (same subjectId/predicate/overlapping
-  city+scene, different objectId/conditions/exclusions), and never flags a
-  legitimate cross-city difference. Still not wired into the persisted draft
-  body or the `/ops/wiki` UI — ships as a tested, unwired primitive this
-  round. Still cannot detect semantic contradiction in free-text quotes or
-  across a single proposal's own multi-source evidence — that boundary is
-  now a locked regression test, not just prose.
+- ~~Contradiction/conflict handling~~ **PARTIALLY DONE 2026-09-16, UI-wired
+  2026-09-17.** See `wiki-statement-proposals-safety-20260916/verification.md`,
+  `docs/contracts/wiki-statement-proposals-safety.md`,
+  `wiki-proposal-conflict-ui-20260917/verification.md` and
+  `docs/contracts/wiki-proposal-conflict-ui.md`. A pure, deterministic
+  `detectProposalConflicts` flags two proposals in the same draft that
+  structurally disagree (same subjectId/predicate/overlapping city+scene,
+  different objectId/conditions/exclusions), and never flags a legitimate
+  cross-city difference. As of 2026-09-17, a new `conflictsByProposal` helper
+  and `/ops/wiki` UI wiring render a bilingual advisory warning next to every
+  flagged proposal (current revision and each historical revision detail),
+  verified against a real persisted-and-read-back draft (real native
+  PostgreSQL round trip) and a real browser session via the existing
+  `VP_WIKI_BROWSER_FIXTURE=1` fixture. The warning is advisory only — it
+  never blocks the existing "verify and edit this proposal" action. Still
+  cannot detect semantic contradiction in free-text quotes or across a
+  single proposal's own multi-source evidence — that boundary remains a
+  locked regression test, not just prose.
 - ~~Multi-source synthesis~~ **Structural evidence-binding PARTIALLY DONE
   2026-09-16.** `evals/wiki-statement-proposals-safety/cross-source-cases.ts`
   exercises the real `resolveProposalOutput` with 2 real sources per case
@@ -90,11 +97,12 @@ and `docs/contracts/wiki-generation-dispatch.md`.
 
 #359 remains OPEN. Schema, dispatcher+real-LLM-probe, durable draft
 storage, the `/ops/wiki` review UI, statement-candidate linking, structured
-statement proposals, stale-job reclaim, and the withdrawn-source dispatch
-barrier are done (see each item above and `docs/knowledge-upgrade/README.md`'s
+statement proposals, stale-job reclaim, the withdrawn-source dispatch
+barrier, and (as of 2026-09-17) UI wiring for the structural conflict flag
+are done (see each item above and `docs/knowledge-upgrade/README.md`'s
 dated log for what each one actually covers and what it does not).
 Structural conflict detection and fixture-only injection/multi-source-binding
 coverage are partially done (2026-09-16, statement-proposal job only);
-real-model injection resistance, UI wiring for conflict flags, true
-multi-source page synthesis, cascading source-withdrawal revocation, real
-per-call RMB reconciliation, and Docling integration remain not started.
+real-model injection resistance, true multi-source page synthesis, cascading
+source-withdrawal revocation, real per-call RMB reconciliation, and Docling
+integration remain not started.

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {detectProposalConflicts,isProposalOutput,isStructuredWikiDraft,resolveProposalOutput} from '../../../lib/server/knowledge/wiki/proposals.ts';
+import {conflictsByProposal,detectProposalConflicts,isProposalOutput,isStructuredWikiDraft,resolveProposalOutput} from '../../../lib/server/knowledge/wiki/proposals.ts';
 import {runWikiStatementProposalJob} from '../../../lib/server/jobs/wiki-statement-proposal-job.ts';
 const id='11111111-1111-4111-8111-111111111111';
 const source={id,declaration:{sourceKey:'synthetic',revisionLabel:'1',publisher:'Synthetic',uri:'urn:vpj15:synthetic:proposal',locator:'paragraph 1',snippet:'😀 In Shanghai, bring ID on entry unless exempt.',usageDeclaration:'Synthetic only'}};
@@ -74,4 +74,30 @@ test('different subjectId, predicate or scene is never flagged; three-way drafts
  const c=src('c','An updated notice states metro gates reject all contactless bank cards now.');
  const threeWay={schemaVersion:'wiki-draft/2',summary:'s',gaps:[],statementProposals:[...draftOf([{statement:gate('contactless_bank_card',sh),evidence:[{sourceRevisionId:uid('a'),quote:a.declaration.snippet}]}],[a]).statementProposals,...draftOf([{statement:gate('no_card_accepted',sh),evidence:[{sourceRevisionId:uid('c'),quote:c.declaration.snippet}]}],[c]).statementProposals,...draftOf([{statement:gate('yikatong_app',bj),evidence:[{sourceRevisionId:uid('b'),quote:'Metro gates only accept the Yikatong app for entry.'}]}],[src('b','Metro gates only accept the Yikatong app for entry.')]).statementProposals]};
  assert.deepEqual(detectProposalConflicts(threeWay),[{a:0,b:1,reason:'objectId'}]);
+});
+// conflictsByProposal reshapes the flat pair list into a per-index lookup the
+// /ops/wiki UI reads directly -- named as the missing wiring in
+// artifacts/VPJ-75/unrun.md ("Still not wired into the persisted draft body
+// or the /ops/wiki UI").
+test('conflictsByProposal is empty for a conflict-free draft',()=>{
+ assert.deepEqual(conflictsByProposal([]),new Map());
+});
+test('conflictsByProposal is symmetric: both indices in a pair see the other side',()=>{
+ const map=conflictsByProposal([{a:0,b:1,reason:'objectId'}]);
+ assert.deepEqual(map.get(0),[{other:1,reason:'objectId'}]);
+ assert.deepEqual(map.get(1),[{other:0,reason:'objectId'}]);
+ assert.equal(map.get(2),undefined);
+});
+test('conflictsByProposal accumulates every pair touching one proposal, order preserved',()=>{
+ const map=conflictsByProposal([{a:0,b:1,reason:'objectId'},{a:0,b:2,reason:'conditions'},{a:1,b:2,reason:'exclusions'}]);
+ assert.deepEqual(map.get(0),[{other:1,reason:'objectId'},{other:2,reason:'conditions'}]);
+ assert.deepEqual(map.get(1),[{other:0,reason:'objectId'},{other:2,reason:'exclusions'}]);
+ assert.deepEqual(map.get(2),[{other:0,reason:'conditions'},{other:1,reason:'exclusions'}]);
+});
+test('conflictsByProposal on a real detected three-way draft matches detectProposalConflicts exactly',()=>{
+ const a=src('a','Contactless bank cards are accepted at metro gates for entry.');
+ const c=src('c','An updated notice states metro gates reject all contactless bank cards now.');
+ const draft={schemaVersion:'wiki-draft/2',summary:'s',gaps:[],statementProposals:[...draftOf([{statement:gate('contactless_bank_card',sh),evidence:[{sourceRevisionId:uid('a'),quote:a.declaration.snippet}]}],[a]).statementProposals,...draftOf([{statement:gate('no_card_accepted',sh),evidence:[{sourceRevisionId:uid('c'),quote:c.declaration.snippet}]}],[c]).statementProposals]};
+ const conflicts=detectProposalConflicts(draft);
+ assert.deepEqual(conflictsByProposal(conflicts).get(0),[{other:1,reason:'objectId'}]);
 });
