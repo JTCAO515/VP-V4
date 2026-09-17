@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createWebRpc } from "@/lib/server/identity/web-rpc";
+import { isSameOriginMutation } from "@/lib/server/identity/request-guards";
 import { opsRuntimeConfig } from "@/lib/server/knowledge/review/local-workspace";
 import { handleWikiRequest } from "@/lib/server/knowledge/wiki/http-wiki";
 export const dynamic = "force-dynamic";
-export async function GET(request: NextRequest) {
+async function execute(request: NextRequest) {
   const config = opsRuntimeConfig(request);
   let rpc: ReturnType<typeof createWebRpc> | undefined;
   const result = await handleWikiRequest(request, {
-    enabled: config !== null,
+    enabled: config !== null, sameOrigin: request.method !== "POST" || isSameOriginMutation(request),
     createRpc(lifetime) { rpc = createWebRpc(request, config!, lifetime); return rpc; },
   });
   const response = NextResponse.json(result.body, { status: result.status, headers: { "Cache-Control": "private, no-store", "Vary": "Cookie", "X-Content-Type-Options": "nosniff" } });
   return rpc ? rpc.applyCookies(response) : response;
 }
+export const GET = execute;
+export const POST = execute;

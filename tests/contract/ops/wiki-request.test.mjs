@@ -76,3 +76,74 @@ test('empty query lists pages, duplicate and unknown query params reject',async(
   assert.equal(listed.status,200);
   for(const suffix of ['?pageKey=a&pageKey=b','?unknown=x','?pageKey=%20a'])assert.equal((await handleWikiRequest(request('http://localhost/api/ops/wiki'+suffix),options(good))).status,400);
 });
+
+const opId='11111111-1111-4111-8111-111111111111';
+const srId='22222222-2222-4222-8222-222222222222';
+function postRequest(body, { origin } = {}) {
+  const headers = new Headers({ 'content-type': 'application/json' });
+  if (origin) headers.set('origin', origin);
+  const controller = new AbortController();
+  return { method: 'POST', url: 'http://localhost/api/ops/wiki', headers, signal: controller.signal, body: body === undefined ? undefined : new ReadableStream({ start(c) { c.enqueue(new TextEncoder().encode(typeof body === 'string' ? body : JSON.stringify(body))); c.close(); } }) };
+}
+function postOptions(rpc, extra = {}) { return { enabled: true, sameOrigin: true, milliseconds: 25, createRpc: () => rpc, ...extra }; }
+const validWithdraw = { action: 'withdraw_source', operationId: opId, sourceRevisionId: srId, reason: 'Publisher retraction notice.' };
+
+test('POST without sameOrigin is rejected before any body read or RPC creation', async () => {
+  let created = 0;
+  const r = await handleWikiRequest(postRequest(validWithdraw), postOptions(good, { sameOrigin: false, createRpc: () => { created++; return good; } }));
+  assert.equal(r.status, 403); assert.equal(r.body.error, 'OPS_FORBIDDEN'); assert.equal(created, 0);
+});
+
+test('POST with a query string, missing/wrong content-type, or unparseable/malformed body rejects INVALID_INPUT', async () => {
+  const withQuery = { ...postRequest(validWithdraw) }; withQuery.url = 'http://localhost/api/ops/wiki?pageKey=x';
+  assert.equal((await handleWikiRequest(withQuery, postOptions(good))).body.error, 'INVALID_INPUT');
+  const noContentType = postRequest(validWithdraw); noContentType.headers.delete('content-type');
+  assert.equal((await handleWikiRequest(noContentType, postOptions(good))).body.error, 'INVALID_INPUT');
+  assert.equal((await handleWikiRequest(postRequest('not json'), postOptions(good))).body.error, 'INVALID_INPUT');
+  for (const malformed of [
+    { ...validWithdraw, extra: 'field' },
+    { ...validWithdraw, action: 'other_action' },
+    { ...validWithdraw, operationId: 'not-a-uuid' },
+    { ...validWithdraw, sourceRevisionId: 'not-a-uuid' },
+    { ...validWithdraw, reason: '' },
+    { ...validWithdraw, reason: '  ' },
+    { ...validWithdraw, reason: 'x'.repeat(501) },
+  ]) {
+    const r = await handleWikiRequest(postRequest(malformed), postOptions(good));
+    assert.equal(r.status, 400, JSON.stringify(malformed)); assert.equal(r.body.error, 'INVALID_INPUT');
+  }
+});
+
+test('failed authentication never dispatches the withdraw RPC', async () => {
+  let calls = 0;
+  const r = await handleWikiRequest(postRequest(validWithdraw),
+    postOptions({ authenticate: async () => false, call: async () => { calls++; return { data: {}, error: null }; } }));
+  assert.equal(r.status, 401); assert.equal(calls, 0);
+});
+
+test('a valid withdraw POST calls ops_source_revision_withdraw_v1 with exactly the three fields, stripping action', async () => {
+  let seenName, seenInput;
+  const r = await handleWikiRequest(postRequest(validWithdraw), postOptions({
+    authenticate: async () => 'reviewer',
+    call: async (name, input) => { seenName = name; seenInput = input; return { data: { sourceRevisionId: srId, withdrawnAt: '2026-09-17T00:00:00Z', withdrawnBy: 'reviewer', withdrawalReason: validWithdraw.reason }, error: null }; },
+  }));
+  assert.equal(r.status, 200);
+  assert.equal(seenName, 'ops_source_revision_withdraw_v1');
+  assert.deepEqual(seenInput, { p_input: { operationId: opId, sourceRevisionId: srId, reason: validWithdraw.reason } });
+  assert.deepEqual(r.body, { data: { sourceRevisionId: srId, withdrawnAt: '2026-09-17T00:00:00Z', withdrawnBy: 'reviewer', withdrawalReason: validWithdraw.reason } });
+});
+
+test('known RPC errors from the withdraw RPC map to their documented status; unknown errors become OPS_ACK_UNKNOWN', async () => {
+  for (const [message, status] of [['OPS_FORBIDDEN', 403], ['OPS_NOT_FOUND', 404], ['OPS_CONFLICT', 409], ['INVALID_INPUT', 400]]) {
+    const r = await handleWikiRequest(postRequest(validWithdraw), postOptions({ authenticate: async () => 'reviewer', call: async () => ({ data: null, error: { message } }) }));
+    assert.equal(r.status, status); assert.equal(r.body.error, message);
+  }
+  const unknown = await handleWikiRequest(postRequest(validWithdraw), postOptions({ authenticate: async () => 'reviewer', call: async () => ({ data: null, error: { message: 'SOMETHING_NEW' } }) }));
+  assert.equal(unknown.status, 503); assert.equal(unknown.body.error, 'OPS_ACK_UNKNOWN');
+});
+
+test('an oversized POST body is rejected without ever completing the read', async () => {
+  const bigReason = 'x'.repeat(5000);
+  const r = await handleWikiRequest(postRequest({ ...validWithdraw, reason: bigReason }), postOptions(good));
+  assert.equal(r.status, 413); assert.equal(r.body.error, 'INVALID_INPUT');
+});
