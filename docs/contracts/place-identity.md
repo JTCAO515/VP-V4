@@ -377,6 +377,23 @@ is what round 12 advances here.
   described above, and observation-vs-Fact permission isolation — all
   remain open #363 work.
 
+### Native place-search consumer (added 2026-09-17)
+
+`app/api/places/native/v1/search/route.ts` gives the native Explore surface
+the same mapped search composition without turning the existing cookie-only
+Web route into a bearer-token route. It rejects cookies and origins, verifies
+the native JWT, then verifies the current `native_session_v2` subject and
+session before the provider call. It returns only the bounded candidate shape
+already produced by `searchPlacesWithCanonicalMapping()` with `private,
+no-store` caching; no provider or service-role credential reaches the app.
+
+`NativePlaceSearchView` keeps provider observations in memory only. A known
+canonical mapping selects `canonical:<uuid>`; an unmapped observation selects
+`provider:<provider>:<provider-id>`. The list and selected-detail card use the
+same identifier, so a visually similar name never becomes an automatic merge.
+This is a native consumer slice, not a claim of a map SDK, route/navigation,
+reverse geocode, persisted place save, or live provider acceptance.
+
 ## Non-goals of this slice
 
 - No client SDK selection/integration (native or Web map display).
@@ -390,11 +407,9 @@ is what round 12 advances here.
 - No reverse geocode (coordinate to address) — search, detail, forward
   geocode, suggest and nearby-category search are now implemented; reverse
   geocode remains future #363 work, as does route/matrix/nav-handoff.
-- No client-side consumption of the shared selected-place id across
-  map/list/detail — round 12 added the `app/api/places/search` and
-  `app/api/places/nearby` HTTP routes and their auth/session wiring (see
-  "Route-level consumer" above), but no map/list/detail UI component
-  changed this round, so nothing actually renders or shares that id yet.
+- No map SDK or route consumer yet. The native list and selected-detail card
+  now share one selected-place id, but there is still no map surface or
+  navigation handoff consuming it.
 - No single primary map-display SDK selection or observation-vs-Fact
   permission isolation — those remaining VPJ-19 acceptance bullets are
   still open, not addressed by any adapter or route slice to date.

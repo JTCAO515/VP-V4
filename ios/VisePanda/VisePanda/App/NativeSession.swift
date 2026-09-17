@@ -155,6 +155,16 @@ final class NativeSession {
         return try await dataRequest(prefix: "api/knowledge/native/v1", path: "api/knowledge/native/v1", method: "GET", queryItems: selection.queryItems)
     }
 
+    /// Read-only place observations use the same active native-session fence as
+    /// Trip and Knowledge. The provider credential remains server-side.
+    func placeSearchRequest(provider: NativePlaceProvider, query: String, city: String) async throws -> Data {
+        guard query.count <= 200, city.count <= 100, !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              !city.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw NativeDataError.invalidResponse }
+        return try await dataRequest(prefix: "api/places/native/v1", path: "api/places/native/v1/search", method: "GET", queryItems: [
+            .init(name: "provider", value: provider.rawValue), .init(name: "q", value: query), .init(name: "city", value: city),
+        ])
+    }
+
     /// Local Ask shares identity fencing, never credentials, with the Trip consumer.
     func askRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
         guard askMode != .unavailable else { throw NativeDataError.invalidResponse }
