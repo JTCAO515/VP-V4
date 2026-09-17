@@ -34,3 +34,34 @@ Qwen百炼协议2026-09-02签约实体是通义云启（杭州）信息技术有
 
 数据披露第3–5节及Q36关联说明据此纠正，去除重新引入的供应商审批门。原错误结论保留在PR历史中。
 本轮未读取秘密、未发模型请求、未执行迁移或变更运行权限。验证结果在本PR最终提交与CI中记录。
+
+## 2026-09-17 关闭复核：实际 registry、部署与策略一致性
+
+基线 `origin/main@ffcd194`。本轮通过官方 Supabase Management API 在明确的 `VP - V4`
+Staging project 上执行只读 policy inventory；项目健康且地域为 Singapore。Vercel 项目
+`vp-v4` 只读元数据显示函数默认区域为 `iad1`，production 环境存在 Testing Chat 的开关、
+policy ID 与受保护凭据名称，但 main 并不包含该 Testing Chat 路由。
+
+只读 inventory 发现一条有效 GLM `internal-testing-v1` policy。其 immutable registry 的
+recipient/source/processing/storage region 与 notice、Vercel/Supabase 实际路径不一致，且
+对应路由只存在于未合入 main 的 `testing-chat-vpv4`。这不满足“实际接收方/地域与中英告知一致”
+的验收，不能用文档粉饰。通过精确 `id`、仍有效及未撤回三个条件执行一次终态
+`revoked_at` 更新，返回恰好一行；没有读取密钥、用户正文或同意记录，也没有删除数据。
+policy registry 的现有授权检查因此会在外发前拒绝旧 policy。
+
+再次读取 inventory：没有未撤回、未过期且通过本票完整性核验的 C2 text policy。对被撤销 policy
+通过现有 `turn_private.text_policy_current()` 的短事务、立即 `ROLLBACK` 检查返回 `false`；最初
+`READ ONLY` 事务被该函数内部 `FOR SHARE` 正确拒绝，失败原因已保留而非改写为通过。历史 Qwen
+Staging 与 Wiki 调用仍作为历史真实接收方证据保留；它们不等于当前生产流量。数据披露矩阵
+已改为记录运营主体、长期 hide-not-erase 文本语义、当前 Vercel/Supabase 地域、历史接收方、
+团队访问未启用、材料两路径和完整 Q36 scope/来源/版本/接收方/撤回边界。
+
+本次适用验证：官方 CLI policy inventory/terminal revoke/re-read/current-check、Vercel 项目与环境名称
+只读检查、源码入口/部署分支追踪、`pnpm docs:check`、`git diff --check`。完整命令和脱敏
+结果在 `artifacts/VPJ-03/closure-20260917/`。不以回退旧 policy 作为 rollback；若未来启用，
+必须新建 immutable policy 并取得新 consent。
+
+额外运行 `node scripts/vpj-program.mjs verify-remote`：**FAIL（与本票无关）**。远端 Issue
+关系已漂移：#188/#191/#193 的依赖与当前 manifest 的 VPJ-04…07 断言不一致。此命令在
+`docs:check` 通过后失败；本票没有修改 manifest 或这些 Issues，未将它们的 tracker 修复混入
+本 PR，也不把失败掩盖为 #190 通过。
