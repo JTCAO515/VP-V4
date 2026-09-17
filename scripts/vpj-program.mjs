@@ -500,7 +500,7 @@ function applyBodyUpdate(update) {
 
 export function programBody() {
   return read(`${dir}/program-body.md`) + '\n\n## 当前六阶段与后续扩展\n\n' +
-    '阶段演示不是整票完成；完整验收、原生依赖及后续激活条件保留。当前只推进一条集成主线与一条独立准备线。\n\n' +
+    '阶段演示不是整票完成；完整验收、原生依赖及后续激活条件保留。当前按[三队任务分工](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/TEAM-PLAN-2026-09-17.md)并行，每队一个主要交付；已分配VPJ-04/08/07/75/76保持原归属。\n\n' +
     '| 阶段 | 验收成果 | 现有任务数 |\n| --- | --- | --- |\n' +
     plan.deliveryStages.map(stage => `| [${stage.id}](${stage.milestoneUrl ?? `https://github.com/${plan.repo}/blob/main/${dir}/DELIVERY-STAGES.md#${stage.id.toLowerCase()}`}) | ${stage.title} | ${plan.tasks.filter(task => task.deliveryStage === stage.id).length} |`).join('\n') +
     `\n\n[逐阶段验收与现有 Issue](https://github.com/${plan.repo}/blob/main/${dir}/DELIVERY-STAGES.md) · [完整任务定义](https://github.com/${plan.repo}/blob/main/${dir}/ISSUES.md)\n`;

@@ -62,7 +62,7 @@ After a relevant merge or dependency/ownership change, refresh the affected fron
    direct maintenance and bounded preparation use the scoped brief in `development-workflow.md`.
    Do not infer a frozen interface from a type name in a planning document.
    Prefer the current delivery stage's user result and finish its existing integration first.
-   Apply the shared limit of one integration lane plus one independent preparation lane; a new
+   Apply the current three-team routing plan: one primary delivery per team, with coordinated shared-file and Staging write windows; a new
    preparation increment must remove a named stage blocker, deliver a testable part of that result,
    or fix an observed defect. A lack of eligible useful work is a valid stop, not a reason to
    invent another hardening increment.
