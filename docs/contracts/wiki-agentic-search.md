@@ -680,3 +680,56 @@ re-diagnosis, and logging raw model responses on `MODEL_OUTPUT_INVALID`
 own round). #360 remains OPEN; its own final line still requires a real
 end-to-end iOS/Web readback with a live provider credential, which no
 environment has configured.
+
+## VPJ-76 (#360): named place-fixture text + real Qwen re-run (2026-09-17, round 24)
+
+The other two follow-ups the 2026-09-16 real-model pass named, taken up
+this round: `evals/wiki-agentic-search/cases.ts` (`versions.corpus`
+bumped to `/2`) replaces the place-question fixture's generic "the named
+attraction"/"这个景点" placeholder -- previously present nowhere in
+either the question text or the corpus statement text -- with a
+consistently-named synthetic attraction, "Cloudscape Pavilion" / 云境阁,
+across both. Data-only change (no `grounded-search.ts`/`search-index.ts`
+edit): `grounded-search.ts` never reads `intent.placeName`, only
+`input.question` (free text), and in production that text is the
+traveler's own raw input, which already names the place they're asking
+about -- this eval's own templated text was the fixture-realism gap, not
+the pipeline. Fixture-mode regression check after the edit: still 34/34
+PASS.
+
+A fresh real-model pass (new script,
+`scripts/eval/run-wiki-agentic-place-fixture-real-model.mjs`, kept
+separate from the existing GLM-era script so that script's own
+2026-09-16 run stays an intact historical record) against **Qwen**, not
+GLM -- GLM's configured key was re-probed directly this round and
+returned a real HTTP 429 "insufficient balance"; Qwen has real usable
+balance (matching round 22's own finding). Result: **6/6 place-question
+scenarios now match ground truth** (up from 2/6 in the 2026-09-16 GLM
+run) -- the specific category-4 retrieval gap that write-up flagged as
+unresolved is closed. Overall accuracy 84.4% (27/32; not directly
+comparable to the prior 65.6% since the provider changed too). The 5
+remaining mismatches are all non-place cases and, per the raw model
+response captured for every row (see below), are either a real
+single-call locale-variance retrieval miss or the model honestly
+choosing to stop searching before using its full `tunedMaxRounds`-raised
+budget on a multi-claim question -- not schema failures, not
+fabrications.
+
+Also addresses the third named follow-up (raw-response logging on
+`MODEL_OUTPUT_INVALID`) at the **script layer only**: the new script's
+`deps.fetch` wrapper captures `rawResponseStatus`/`rawResponseText` for
+every real call (the same pattern `run-wiki-statement-proposals-injection-real-model.mjs`
+established in round 22). `provider-protocol.ts` itself -- the shared
+module every production/eval caller goes through -- is unchanged;
+extending this into the shared module still needs its own separate,
+careful pass, per unrun.md's own original caution about that module's
+blast radius. This run happened to hit zero `MODEL_OUTPUT_INVALID`
+outcomes, so the capture is proven working but not yet exercised against
+that specific failure mode.
+
+Full detail:
+`artifacts/VPJ-76/wiki-agentic-search-place-fixture-real-model-20260917/verification.md`.
+#360 remains OPEN; unchanged from every prior round, its final
+acceptance line still requires a real end-to-end iOS/Web readback with a
+live provider credential configured in an actual deployment, which no
+environment has.
