@@ -30,6 +30,16 @@ test('non-C0, invalid source, pre-cancel and unbound model quote cannot become p
  assert.equal((await runWikiStatementProposalJob({...input,sources:[{...source,id:'fake'}]},deps,new AbortController().signal)).errorCode,'INVALID_INPUT');
  const c=new AbortController();c.abort();assert.equal((await runWikiStatementProposalJob(input,deps,c.signal)).kind,'cancelled');
  const bad=await runWikiStatementProposalJob(input,{...deps,fetch:async()=>response({...raw,proposals:[{statement,evidence:[{sourceRevisionId:id,quote:'Invented claim'}]}]})},new AbortController().signal);assert.equal(bad.errorCode,'MODEL_OUTPUT_INVALID');
+ // resolveProposalOutput's own cross-check (a job-level failure, not provider-protocol.ts's) still gets a bounded diagnostic preview.
+ assert.equal(typeof bad.rawResponseForDiagnostics,'string');assert.match(bad.rawResponseForDiagnostics,/Invented claim/);
+});
+test('a provider-protocol-level MODEL_OUTPUT_INVALID also carries a bounded, allowlisted diagnostic snapshot, and a successful outcome carries none',async()=>{
+ const deps={credential:()=> 'synthetic',recordDestination:async()=>{}};
+ const invalid=await runWikiStatementProposalJob(input,{...deps,fetch:async()=>Response.json({model:'qwen3.7-plus-2026-05-26',choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:'not json'}}],usage:{prompt_tokens:1,completion_tokens:1,total_tokens:2}})},new AbortController().signal);
+ assert.equal(invalid.errorCode,'MODEL_OUTPUT_INVALID');assert.equal(typeof invalid.rawResponseForDiagnostics,'string');
+ assert.equal(Object.hasOwn(JSON.parse(invalid.rawResponseForDiagnostics),'reasoning_content'),false);
+ const ok=await runWikiStatementProposalJob(input,{...deps,fetch:async()=>response(raw)},new AbortController().signal);
+ assert.equal(ok.kind,'succeeded');assert.equal(Object.hasOwn(ok,'rawResponseForDiagnostics'),false);
 });
 // Structural (non-semantic) conflict detection: two proposals in the same draft
 // assert the same {subjectId,predicate} for an overlapping city+scene, but disagree

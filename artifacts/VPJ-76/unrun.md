@@ -265,11 +265,43 @@ very pass hit and noted).
   rejection), so this capture has not yet been exercised against a real
   invalid-output row -- the mechanism is proven working (it captured a
   real 200 response body for every one of the 32 scenarios run), not yet
-  proven against the specific failure mode it was built for. **Not
-  done:** making this logging a property of `provider-protocol.ts`
-  itself (the shared module every production/eval caller goes through) --
-  unrun.md's own original phrasing flagged that as needing separate,
-  careful review before touching a module this many call sites share,
-  and this round did not attempt it. A future round wanting raw-response
-  diagnosability inside the actual product path (not just this one
-  script) still needs that separate, careful pass.
+  proven against the specific failure mode it was built for. ~~Not done:
+  making this logging a property of `provider-protocol.ts` itself~~
+  **DONE 2026-09-17 (round 25), shared-module + 2 of 3 wiki jobs.** See
+  `docs/contracts/wiki-raw-response-diagnostics.md` and
+  `artifacts/VPJ-76/wiki-raw-response-diagnostics-20260917/verification.md`.
+  This round finally spent the time on the blast-radius review every prior
+  round deferred: read the full consumer graph (all four production call
+  sites share one HTTP transport factory that already discards the raw
+  body after buffering it), found that wrapping `deps.fetch` per-caller
+  (the round-22/24 script pattern) would cost a second full body read on
+  *every* call including successes -- which this round's brief explicitly
+  ruled out -- and instead added an opt-in
+  `captureRawResponseOnInvalid` flag directly to `provider-protocol.ts`'s
+  `ProtocolRequest`, read at the exact point `normalizeResponse` already
+  holds the parsed response in memory, so it costs nothing extra and never
+  fires on the success path. The snapshot is a hand-picked allowlist (model
+  id, finish reason, a bounded content preview), not a raw dump --
+  discovered along the way that a raw dump would violate this codebase's
+  own existing "reasoning never leaves normalization" invariant (the same
+  tests that already assert this for the success path), since a
+  MODEL_OUTPUT_INVALID response can carry `reasoning_content` too. Wired
+  *on* only for `wiki-generation-job.ts` and `wiki-statement-proposal-job.ts`
+  (approved-source input); deliberately left *off* for `wiki-search-job.ts`
+  (its prompt embeds the traveler's own real question text, even though
+  tagged `c0_synthetic`) and left `text-worker.ts`/`staging-text-job.ts`
+  (`c2_sensitive`, real user turn text) completely untouched -- both
+  documented as open, not silently dropped. No persistence, no logging
+  call, no migration; the field is inert data on each job's typed outcome
+  until some future caller decides to consume it. Full real verification
+  this round: `pnpm typecheck`/`lint`/`build` clean;
+  `pnpm test`/`test:unit`/`test:contract`/`test:integration`/`test:security`/
+  `evals`/`docs:check`/`check:flags`/`check:assets` all pass (579/579
+  contract, 0 failures anywhere); one pre-existing test that asserted exact
+  outcome-object equality was updated to account for the new optional
+  field, plus new tests proving the default-off behavior is unchanged and
+  the opt-in snapshot never leaks `reasoning_content`. **Still not done:**
+  the module's outer non-JSON-parse failure path (no parsed value exists
+  to summarize there) and the `c2_sensitive`/`wiki-search-job.ts` paths --
+  both named as deliberate, separate follow-ups in the contract doc, not
+  attempted this round.

@@ -297,3 +297,19 @@ least the conflict-detector's overlap semantics, not a one-line schema
 edit, and is recorded above as a separate, still-open item with a
 recommended direction (handle it at the job/prompt layer, not the shared
 schema).
+
+**Round 25 (2026-09-17):** `provider-protocol.ts` (this file's shared
+model-gateway entry, used by `wiki-generation-job.ts` and
+`wiki-statement-proposal-job.ts` among others) gained an opt-in,
+allowlisted `MODEL_OUTPUT_INVALID` raw-response diagnostic
+(`captureRawResponseOnInvalid`), wired on for those two #359 jobs and
+deliberately left off for `wiki-search-job.ts` (#360) and the
+`c2_sensitive` text-worker path. This was VPJ-76's own named follow-up
+(unrun.md item (c)), not a #359 acceptance-criteria item itself, so full
+detail lives in `artifacts/VPJ-76/unrun.md` and
+`docs/contracts/wiki-raw-response-diagnostics.md`; noted here only because
+the changed module is shared with #359's own jobs, and the full
+`pnpm check`-equivalent suite (typecheck/lint/build/test/test:contract/
+test:unit/test:integration/test:security/evals/docs:check/check:flags/
+check:assets) was re-run clean against this branch, confirming no
+regression to any #359 wiki-generation or statement-proposal behavior.

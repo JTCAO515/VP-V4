@@ -32,7 +32,15 @@ export type WikiGenerationJobInput = Readonly<{
 
 export type WikiGenerationJobOutcome =
   | Readonly<{ kind: "succeeded"; output: WikiGenerationDraftOutput; usage: Readonly<{ inputTokens: number; outputTokens: number; totalTokens: number }>; inputDigest: string }>
-  | Readonly<{ kind: "failed"; errorCode: string }>
+  /**
+   * rawResponseForDiagnostics is present only when errorCode is
+   * MODEL_OUTPUT_INVALID; it is a bounded, allowlisted snapshot (see
+   * provider-protocol.ts's summarizeInvalidOutput), never the verbatim
+   * provider body and never reasoning content. This module still never
+   * persists or logs it -- it is the caller's own decision whether to
+   * keep it, and where (see docs/contracts/wiki-raw-response-diagnostics.md).
+   */
+  | Readonly<{ kind: "failed"; errorCode: string; rawResponseForDiagnostics?: string }>
   | Readonly<{ kind: "cancelled" }>;
 
 export type WikiGenerationJobDependencies = Readonly<{
@@ -47,6 +55,21 @@ export function computeWikiInputDigest(promptVersion: string, configDigest: stri
 }
 
 const TASK_ID_UNSAFE = /[^A-Za-z0-9_-]/g;
+const DIAGNOSTIC_PREVIEW_CHARS = 4000;
+
+/**
+ * Bounded fallback for the one MODEL_OUTPUT_INVALID case this module
+ * detects itself (an otherwise-schema-valid output of the wrong shape,
+ * e.g. a plain string) rather than inside provider-protocol.ts's own
+ * normalizeResponse -- that already-parsed value is safe to preview since
+ * it passed provider-protocol.ts's own schema checks already.
+ */
+function safeJsonPreview(value: unknown): string {
+  try {
+    const text = JSON.stringify(value);
+    return text.length > DIAGNOSTIC_PREVIEW_CHARS ? text.slice(0, DIAGNOSTIC_PREVIEW_CHARS) : text;
+  } catch { return '"(unserializable)"'; }
+}
 
 export async function runWikiGenerationJob(
   input: WikiGenerationJobInput, dependencies: WikiGenerationJobDependencies, signal: AbortSignal,
@@ -65,13 +88,15 @@ export async function runWikiGenerationJob(
   });
   const inputDigest = computeWikiInputDigest(input.promptVersion, input.configDigest, input.sourceText);
   const outcome = await invokeProviderProtocol(
-    { requestId: randomUUID(), provider: input.provider.provider, dataClass: "c0_synthetic", input: input.sourceText, task: "wiki_generation_v1", maxOutputTokens: input.maxOutputTokens, timeoutMs: input.timeoutMs },
+    // captureRawResponseOnInvalid: true is safe here -- input is an approved,
+    // ingested source (c0_synthetic), not a traveler's own free-text input.
+    { requestId: randomUUID(), provider: input.provider.provider, dataClass: "c0_synthetic", input: input.sourceText, task: "wiki_generation_v1", maxOutputTokens: input.maxOutputTokens, timeoutMs: input.timeoutMs, captureRawResponseOnInvalid: true },
     turn, transport, signal,
   );
   if (outcome.kind === "cancelled") return { kind: "cancelled" };
-  if (outcome.kind === "unavailable") return { kind: "failed", errorCode: outcome.code };
+  if (outcome.kind === "unavailable") return { kind: "failed", errorCode: outcome.code, ...(outcome.rawResponseForDiagnostics !== undefined ? { rawResponseForDiagnostics: outcome.rawResponseForDiagnostics } : {}) };
   if (typeof outcome.output === "string" || (outcome.output as { kind?: string }).kind === "tool_candidate" || (outcome.output as { kind?: string }).kind === "known" || (outcome.output as { kind?: string }).kind === "unknown") {
-    return { kind: "failed", errorCode: "MODEL_OUTPUT_INVALID" };
+    return { kind: "failed", errorCode: "MODEL_OUTPUT_INVALID", rawResponseForDiagnostics: safeJsonPreview(outcome.output) };
   }
   return { kind: "succeeded", output: outcome.output as WikiGenerationDraftOutput, usage: outcome.usage, inputDigest };
 }

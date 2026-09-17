@@ -29,6 +29,15 @@ export type ProtocolRequest = Readonly<{
   tool?: ProtocolTool;
   /** Optional bounded Qwen task-context experiment; output cap includes reasoning. */
   thinkingBudgetTokens?: number;
+  /**
+   * Opt-in only; default (undefined/false) is today's exact behavior.
+   * When true, a MODEL_OUTPUT_INVALID outcome additionally carries a
+   * bounded, allowlisted `rawResponseForDiagnostics` snapshot (never the
+   * full raw body, never reasoning_content) for the caller to inspect or
+   * persist at its own discretion -- this module never logs or writes it
+   * anywhere itself. See summarizeInvalidOutput below.
+   */
+  captureRawResponseOnInvalid?: boolean;
   maxOutputTokens: number;
   timeoutMs: number;
 }>;
@@ -49,7 +58,7 @@ export type ProtocolOutcome =
       output: string | KnownUnknownOutput | WikiGenerationDraftOutput | ProposalOutput | WikiSearchAction | Readonly<{ kind: "tool_candidate"; id: string; name: string; arguments: Record<string, unknown> }>;
       usage: ProtocolUsage;
     }>
-  | Readonly<{ kind: "unavailable"; code: FailureCode; usage: ProtocolUsage | null; cost: "unknown" }>
+  | Readonly<{ kind: "unavailable"; code: FailureCode; usage: ProtocolUsage | null; cost: "unknown"; rawResponseForDiagnostics?: string }>
   | Readonly<{ kind: "cancelled"; code: "CANCELLED"; usage: null; cost: "unknown" }>;
 
 /** Deliberately no default fetch, endpoint, credential loading or production route. */
@@ -214,52 +223,61 @@ function requestBody(request: ProtocolRequest): Record<string, unknown> {
 }
 
 function normalizeResponse(request: ProtocolRequest, value: unknown): ProtocolOutcome {
-  if (!record(value)) return unavailable("MODEL_OUTPUT_INVALID");
+  // Opt-in only (default undefined = today's exact behavior, byte for byte).
+  // Only ever attached to MODEL_OUTPUT_INVALID -- never SAFETY_BLOCKED or any
+  // other code -- and built through the allowlisted summarizeInvalidOutput
+  // below, which deliberately never includes reasoning_content or any other
+  // field this module doesn't already know is safe (see this file's own
+  // "never display reasoning" invariant, covered by the existing
+  // "GLM preserves its native thinking default" / Qwen thinking tests).
+  const invalidOutput = (usage: ProtocolUsage | null): ProtocolOutcome =>
+    unavailable("MODEL_OUTPUT_INVALID", usage, request.captureRawResponseOnInvalid ? summarizeInvalidOutput(value) : undefined);
+  if (!record(value)) return invalidOutput(null);
   const usage = normalizeUsage(request.provider, value.usage);
-  if (value.error || !usage || value.model !== PROTOCOL_MODELS[request.provider] || !Array.isArray(value.choices) || value.choices.length !== 1) return unavailable("MODEL_OUTPUT_INVALID", usage);
-  if (request.thinkingBudgetTokens !== undefined && usage.outputTokens > request.maxOutputTokens) return unavailable("MODEL_OUTPUT_INVALID", usage);
+  if (value.error || !usage || value.model !== PROTOCOL_MODELS[request.provider] || !Array.isArray(value.choices) || value.choices.length !== 1) return invalidOutput(usage);
+  if (request.thinkingBudgetTokens !== undefined && usage.outputTokens > request.maxOutputTokens) return invalidOutput(usage);
   const choice = value.choices[0];
-  if (!record(choice) || choice.index !== 0 || !record(choice.message) || choice.message.role !== "assistant") return unavailable("MODEL_OUTPUT_INVALID", usage);
+  if (!record(choice) || choice.index !== 0 || !record(choice.message) || choice.message.role !== "assistant") return invalidOutput(usage);
   const message = choice.message;
   // Never display reasoning or treat a partial, blocked or resource-exhausted completion as an answer.
   if (choice.finish_reason === "content_filter" || (request.provider === "glm" && choice.finish_reason === "sensitive")) return unavailable("SAFETY_BLOCKED", usage);
-  if (choice.finish_reason !== "stop" && choice.finish_reason !== "tool_calls") return unavailable("MODEL_OUTPUT_INVALID", usage);
+  if (choice.finish_reason !== "stop" && choice.finish_reason !== "tool_calls") return invalidOutput(usage);
   let output: Extract<ProtocolOutcome, { kind: "protocol_validated" }>["output"];
   if (request.task === "tool_candidate") {
-    if (choice.finish_reason !== "tool_calls" || !request.tool || !Array.isArray(message.tool_calls) || message.tool_calls.length !== 1 || (message.content != null && message.content !== "")) return unavailable("MODEL_OUTPUT_INVALID", usage);
+    if (choice.finish_reason !== "tool_calls" || !request.tool || !Array.isArray(message.tool_calls) || message.tool_calls.length !== 1 || (message.content != null && message.content !== "")) return invalidOutput(usage);
     const call = message.tool_calls[0];
-    if (!record(call) || call.type !== "function" || typeof call.id !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(call.id) || !record(call.function) || call.function.name !== request.tool.name || typeof call.function.arguments !== "string") return unavailable("MODEL_OUTPUT_INVALID", usage);
+    if (!record(call) || call.type !== "function" || typeof call.id !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(call.id) || !record(call.function) || call.function.name !== request.tool.name || typeof call.function.arguments !== "string") return invalidOutput(usage);
     try {
       const args: unknown = JSON.parse(call.function.arguments);
-      if (!record(args) || !request.tool.validateArguments(args)) return unavailable("MODEL_OUTPUT_INVALID", usage);
+      if (!record(args) || !request.tool.validateArguments(args)) return invalidOutput(usage);
       output = { kind: "tool_candidate", id: call.id, name: request.tool.name, arguments: args };
-    } catch { return unavailable("MODEL_OUTPUT_INVALID", usage); }
+    } catch { return invalidOutput(usage); }
   } else {
-    if (choice.finish_reason !== "stop" || (message.tool_calls != null && (!Array.isArray(message.tool_calls) || message.tool_calls.length > 0)) || typeof message.content !== "string" || !message.content.trim()) return unavailable("MODEL_OUTPUT_INVALID", usage);
+    if (choice.finish_reason !== "stop" || (message.tool_calls != null && (!Array.isArray(message.tool_calls) || message.tool_calls.length > 0)) || typeof message.content !== "string" || !message.content.trim()) return invalidOutput(usage);
     if (request.task === "strict_known_unknown") {
       try {
         const parsed: unknown = JSON.parse(message.content);
-        if (!validateKnownUnknownOutput(parsed)) return unavailable("MODEL_OUTPUT_INVALID", usage);
+        if (!validateKnownUnknownOutput(parsed)) return invalidOutput(usage);
         output = parsed;
-      } catch { return unavailable("MODEL_OUTPUT_INVALID", usage); }
+      } catch { return invalidOutput(usage); }
     } else if (request.task === "wiki_statement_proposals_v1") {
       try {
         const parsed: unknown = JSON.parse(message.content);
-        if (!isProposalOutput(parsed)) return unavailable("MODEL_OUTPUT_INVALID", usage);
+        if (!isProposalOutput(parsed)) return invalidOutput(usage);
         output = parsed;
-      } catch { return unavailable("MODEL_OUTPUT_INVALID", usage); }
+      } catch { return invalidOutput(usage); }
     } else if (request.task === "wiki_generation_v1") {
       try {
         const parsed: unknown = JSON.parse(message.content);
-        if (!isValidWikiGenerationDraftOutput(parsed)) return unavailable("MODEL_OUTPUT_INVALID", usage);
+        if (!isValidWikiGenerationDraftOutput(parsed)) return invalidOutput(usage);
         output = parsed;
-      } catch { return unavailable("MODEL_OUTPUT_INVALID", usage); }
+      } catch { return invalidOutput(usage); }
     } else if (request.task === "wiki_search_v1") {
       try {
         const parsed: unknown = JSON.parse(message.content);
-        if (!isValidWikiSearchAction(parsed)) return unavailable("MODEL_OUTPUT_INVALID", usage);
+        if (!isValidWikiSearchAction(parsed)) return invalidOutput(usage);
         output = parsed;
-      } catch { return unavailable("MODEL_OUTPUT_INVALID", usage); }
+      } catch { return invalidOutput(usage); }
     } else output = message.content;
   }
   return { kind: "protocol_validated", provider: request.provider, model: value.model as string, output, usage };
@@ -317,6 +335,7 @@ function validRequest(value: ProtocolRequest): boolean {
     && count(value.maxOutputTokens) && value.maxOutputTokens > 0 && value.maxOutputTokens <= 8192
     && (value.thinkingBudgetTokens === undefined || (value.provider === "qwen" && value.task === "text_task_v2"
       && validThinkingBudget(value.thinkingBudgetTokens, value.maxOutputTokens)))
+    && (value.captureRawResponseOnInvalid === undefined || typeof value.captureRawResponseOnInvalid === "boolean")
     && count(value.timeoutMs) && value.timeoutMs > 0 && value.timeoutMs <= 60000
     && (value.task === "tool_candidate"
       ? record(value.tool) && typeof value.tool.name === "string" && /^[A-Za-z_][A-Za-z0-9_]{0,63}$/.test(value.tool.name) && record(value.tool.parameters) && value.tool.parameters.type === "object" && typeof value.tool.validateArguments === "function"
@@ -324,8 +343,46 @@ function validRequest(value: ProtocolRequest): boolean {
 }
 function record(value: unknown): value is Record<string, unknown> { return value !== null && typeof value === "object" && !Array.isArray(value); }
 function count(value: unknown): value is number { return typeof value === "number" && Number.isSafeInteger(value) && value >= 0; }
-function unavailable(code: FailureCode, usage: ProtocolUsage | null = null): ProtocolOutcome { return { kind: "unavailable", code, usage, cost: "unknown" }; }
+function unavailable(code: FailureCode, usage: ProtocolUsage | null = null, rawResponseForDiagnostics?: string): ProtocolOutcome {
+  return { kind: "unavailable", code, usage, cost: "unknown", ...(rawResponseForDiagnostics !== undefined ? { rawResponseForDiagnostics } : {}) };
+}
 function cancelled(): ProtocolOutcome { return { kind: "cancelled", code: "CANCELLED", usage: null, cost: "unknown" }; }
+
+const RAW_DIAGNOSTIC_CONTENT_CHARS = 4000;
+
+/**
+ * Opt-in, allowlisted MODEL_OUTPUT_INVALID snapshot -- never the verbatim
+ * raw body. Deliberately includes only fields already known to be safe
+ * (model id, finish reason, choice/tool-call shape, a bounded preview of
+ * the assistant message content that failed schema validation) and
+ * deliberately excludes reasoning_content and any field this function does
+ * not explicitly name, matching this module's existing "reasoning never
+ * leaves normalization" invariant. A `content` preview can still reflect
+ * whatever the caller's own prompt/input contained (e.g. a traveler's
+ * question text for wiki_search_v1) -- callers that build prompts from
+ * real user input should weigh that before setting captureRawResponseOnInvalid.
+ */
+function summarizeInvalidOutput(value: unknown): string {
+  try {
+    const v = record(value) ? value : {};
+    const choices = Array.isArray(v.choices) ? v.choices : null;
+    const choice = choices && record(choices[0]) ? choices[0] : null;
+    const message = choice && record(choice.message) ? choice.message : null;
+    const content = message && typeof message.content === "string" ? message.content : null;
+    const toolCalls = message && Array.isArray(message.tool_calls) ? message.tool_calls.length : null;
+    const snapshot = {
+      model: typeof v.model === "string" ? v.model : null,
+      hasError: v.error != null,
+      choiceCount: choices ? choices.length : null,
+      finishReason: choice && typeof choice.finish_reason === "string" ? choice.finish_reason : null,
+      messageRole: message && typeof message.role === "string" ? message.role : null,
+      toolCallCount: toolCalls,
+      contentPreview: content === null ? null : content.slice(0, RAW_DIAGNOSTIC_CONTENT_CHARS),
+      contentTruncated: content !== null && content.length > RAW_DIAGNOSTIC_CONTENT_CHARS,
+    };
+    return JSON.stringify(snapshot);
+  } catch { return '{"unserializable":true}'; }
+}
 
 /** Fixed alternating roles; caller-supplied system/tool messages never enter C2. */
 export function validTextTaskHistory(value: unknown): value is NonNullable<ProtocolRequest["history"]> {
