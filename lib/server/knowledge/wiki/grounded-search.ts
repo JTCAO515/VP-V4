@@ -72,6 +72,30 @@ export type GroundedSearchDependencies = WikiSearchJobDependencies & Readonly<{ 
 
 const zeroUsage: GroundedSearchUsage = { inputTokens: 0, outputTokens: 0, totalTokens: 0 };
 
+/** Mirrors wiki-search-job.ts's own hard bound on maxRounds (validInput: 1-6). Kept here,
+ * not imported, so this stays a pure value with no cross-module coupling beyond the number. */
+const HARD_MAX_ROUNDS = 6;
+
+/**
+ * VPJ-76 (#360) recommended follow-up, named explicitly in
+ * wiki-frozen-eval-real-model-20260916/verification.md: a flat `maxRounds`
+ * regardless of how many required claims a question has caused real
+ * under-coverage in that real-model pass -- 3 of 11 mismatches were
+ * multi-claim questions (e.g. payment_getting_started's 4 claims) that ran
+ * out of rounds before covering every required claim, under every caller's
+ * flat `maxRounds: 2` (both `scripts/eval/run-wiki-agentic-real-model.mjs`
+ * and the frozen eval harness use that same fixed value). This never
+ * lowers what a caller explicitly requested (a single-claim question keeps
+ * its caller's existing budget unchanged) and never exceeds
+ * runWikiSearchJob's own independently-enforced hard bound. Place
+ * questions (requiredClaimCount 0, since this module never resolves a
+ * placeSubjectId -- see the EvidencePack comment above) are unaffected,
+ * matching that existing scope decision.
+ */
+export function tunedMaxRounds(requestedMaxRounds: number, requiredClaimCount: number): number {
+  return Math.max(requestedMaxRounds, Math.min(HARD_MAX_ROUNDS, requiredClaimCount + 1));
+}
+
 export async function runGroundedWikiSearch(
   input: GroundedSearchInput, dependencies: GroundedSearchDependencies, signal: AbortSignal,
 ): Promise<GroundedSearchOutcome> {
@@ -101,8 +125,9 @@ export async function runGroundedWikiSearch(
   }
   if (corpusOutcome.entries.length === 0) return { kind: "unavailable", reason: "missing_content" };
 
+  const requiredClaimCount = definition?.claims.length ?? 0;
   const outcome = await runWikiSearchJob(
-    { question: input.question, locale: input.locale, corpus: corpusOutcome.entries, maxRounds: input.maxRounds, maxOutputTokens: input.maxOutputTokens, timeoutMs: input.timeoutMs, provider: input.provider },
+    { question: input.question, locale: input.locale, corpus: corpusOutcome.entries, maxRounds: tunedMaxRounds(input.maxRounds, requiredClaimCount), maxOutputTokens: input.maxOutputTokens, timeoutMs: input.timeoutMs, provider: input.provider },
     dependencies, signal,
   );
   switch (outcome.kind) {

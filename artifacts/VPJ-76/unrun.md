@@ -203,11 +203,29 @@ through Web and iOS, (2) decide, as an operator/product call rather than
 an engineering one, whether 65.6% real accuracy is acceptable to expose
 in production as-is or needs the tuning work below first.
 
-**Recommended follow-up work (not started, for whoever picks this up
-next):** (a) tune `maxRounds` relative to a question's required-claim
-count (category 3 above), (b) name the specific place in the place-fixture
-corpus text so the place-question retrieval gap (category 4) can be
-re-tested and actually diagnosed, (c) log raw model responses on
-`MODEL_OUTPUT_INVALID` for real diagnosability (a gap this very pass
-hit and noted). None of these are done in this thread; they are handed
-off as concrete, evidenced next steps, not vague TODOs.
+**Recommended follow-up work:** (a) tune `maxRounds` relative to a
+question's required-claim count (category 3 above), (b) name the specific
+place in the place-fixture corpus text so the place-question retrieval gap
+(category 4) can be re-tested and actually diagnosed, (c) log raw model
+responses on `MODEL_OUTPUT_INVALID` for real diagnosability (a gap this
+very pass hit and noted).
+
+- ~~(a) tune `maxRounds` relative to a question's required-claim
+  count~~ **DONE 2026-09-17.** See
+  `tuned-max-rounds-20260917/verification.md` and
+  `docs/contracts/wiki-agentic-search.md`'s matching dated entry. A new
+  pure `tunedMaxRounds` function in `grounded-search.ts` raises the
+  round-budget floor to `requiredClaimCount + 1` (capped at
+  `wiki-search-job.ts`'s own hard bound of 6), applied internally so
+  every existing caller (Web/iOS production routes, both real-model eval
+  scripts) inherits it without its own edit. Verified end to end against
+  the real `runGroundedWikiSearch`/`runWikiSearchJob` code path with a
+  scripted transport (a 4-claim question now gets 5 real model-call
+  attempts before `budget_exhausted`, up from 2; a 1-claim question is
+  provably unchanged at 2). The frozen eval's own fixture-mode metrics
+  are numerically unchanged (its one `budget_exhausted` scenario is a
+  place question, unaffected by design). **Not verified:** whether this
+  actually raises real-model accuracy on the frozen set -- that needs a
+  real GLM re-run, not separately authorized this round.
+- (b) and (c) remain not started; handed off as concrete, evidenced next
+  steps, not vague TODOs.
