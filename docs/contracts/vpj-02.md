@@ -20,7 +20,8 @@ separately observed. The two pooler paths return the expected database/session i
 50 migrations/7 Auth/3 Trips. Two failed password attempts are retained alongside two successful
 operator runs. No password reset was needed. Direct5432's normal path still closes before TLS;
 a temporary relay through the existing local proxy and public IPv6 target passes official-CA/
-hostname TLS verification, with authenticated direct SQL still pending the operator command.
+hostname TLS verification and authenticated direct-port SQL now PASS through that route.
+This does not establish an unproxied IPv6 route; the original path failure remains recorded.
 
 The actual existing HTTP scoped worker passes11 empty-poll checks, including server identity
 access, anon rejection, exact claim source/grants and unchanged queue/policy/budget/original data.

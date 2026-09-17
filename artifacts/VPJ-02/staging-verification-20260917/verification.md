@@ -127,3 +127,17 @@ Tests:16/16 scoped Node tests (including a wrapper for9 Python security/relay/re
 9/9 existing scoped-worker security tests PASS. Independent reviews cleared both the temporary
 relay and real idle-poll boundary before their use. Docs/diff checks PASS; final CI remains tracked
 on PR440's current commit rather than reusing an earlier commit's CI result.
+
+## Final direct-port operator result
+
+[Direct-via-existing-proxy SQL](connections-direct-proxy-sql.json),2026-09-17T05:08:01Z–05:08:11Z:
+TLS/hostname verification and authenticated read-only query PASS. The result confirms expected
+database/current+session identity, revoked direct UPDATE,50 migrations,7 Auth/3 Trips. This uses
+database port5432 via an ephemeral local relay and the existing proxy; it is not either Supavisor
+pooler and does not establish an unproxied IPv6 route. No network/project/password setting changed.
+
+Thus direct-port-via-existing-proxy, Session pooler and Transaction pooler SQL are individually
+observed on this machine. Original hostname-route TLS failure and two failed password attempts
+remain in their dated records. The separate actual HTTP worker empty-poll result remains bounded
+to connection/idle behavior: full real task isolation/processing/provider execution and the legacy
+SQL SystemDataAdapter are not covered. The parent staysOPEN; no acceptance goal is reduced.
