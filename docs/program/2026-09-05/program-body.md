@@ -13,6 +13,9 @@
 - 未合并 PR #185/#186 保留审查，冲突与可采纳内容在报告中登记。
 
 ## 实施入口
+
+2026-09-17用户授权的[Issue整理与排期](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/ISSUE-AUDIT-2026-09-17.md)为现有开放任务补充首个可交付切片、复用入口和不重复负责的范围。开放未开工任务默认`status:planned`，实际依赖不等于整票必须blocked。VPJ-02/49/62/75/76由原线程继续，本轮不修改。任务身份、阶段和依赖保留；不以关闭数量或标签判断产品完成。
+
 当前执行入口：[main / Program README](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/README.md)，完整任务与依赖见[当前任务表](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/ISSUES.md)。
 PR #253记录初始规划基线；实际调度核对当前main、原生依赖、可用接口和获准环境，不从历史基线文案推断仍未合并或已就绪。
 

@@ -53,7 +53,7 @@ do not ask again for routine work already authorized.
 | Runtime integration | Actual upstream interfaces and the permitted test environment exist | The stated behavior was observed on the identified version/environment |
 | Release/operations | Relevant integration, data, account and release conditions are met | The named deployment, device or customer outcome was verified |
 
-A missing technical behavior still blocks the parent Issue's acceptance. Cancelled supplier/legal/product
+A missing technical behavior still blocks the parent Issue's acceptance, not every independent development slice. Open work defaults to `status:planned`; an open upstream Issue alone does not justify `status:blocked` (JT, 2026-09-17). Cancelled supplier/legal/product
 approvals do not block development integration; use the available interface and test environment. For an independent preparation slice: record inputs, paths, unavailable checks and remaining
 integration work in a linked Issue or PR before editing. Preparation must not invent identity, end-user consent, retained data or an unmerged interface.
 Agents select reversible development configuration; unknown commercial or supplier details are recorded, not approval blockers.
