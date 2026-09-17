@@ -1,5 +1,11 @@
 # VPJ-02 Staging核查与验收记录
 
+## Current update — 2026-09-17
+
+See [current real verification](staging-verification-20260917/verification.md):50 matching migrations,11 pending,29/29 real target checks PASS; exact fixture cleanup and original7 Auth/3 Trip digest preservation PASS. Current-device direct database, Session pooler and worker connection identity remain UNRUN. Parent#189 remains OPEN. The dated26/33 prerequisite descriptions below are historical and must not drive reapplication.
+
+## Historical record
+
 最新2026-09-10：原13+获额外授权RPC迁移已完成11→25，备份恢复和普通JWT矩阵16/16通过，精确清理后原数据摘要一致。见[本次实际结果](staging-apply-20260910.md)。下文为此前只读阶段历史记录，不代表当前待执行清单。
 
 ## 已确认

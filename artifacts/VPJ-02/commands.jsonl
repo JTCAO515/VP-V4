@@ -2,3 +2,8 @@
 {"observedAt": "2026-09-09T10:37:44.644330+08:00", "command": "supabase db push --linked --dry-run --skip-vault --output-format json", "exitCode": 1, "result": "database connection terminated; no migration applied"}
 {"observedAt": "2026-09-09T10:37:44.644330+08:00", "command": "supabase db push --linked --dry-run --skip-vault --dns-resolver https --output-format json", "exitCode": 1, "result": "DNS-over-HTTPS returned no valid database IP; no migration applied"}
 {"recordedAt": "2026-09-10T20:17:14.726283+00:00", "scope": "staging26-to33-preparation", "commands": "artifacts/VPJ-02/staging-33-preparation/commands.jsonl", "remoteMutations": 0, "providerCalls": 0, "localChecks": 41, "result": "PREPARATION_PASS_REMOTE_BLOCKED"}
+{"recordedAt": "2026-09-17T04:31:18.917539+00:00", "command": "node --test tests/integration/db/vpj-02-verification.test.mjs", "exitCode": 0, "result": "13/13 PASS; mock transport and cleanup boundary regression"}
+{"recordedAt": "2026-09-17T04:31:18.917715+00:00", "command": "node scripts/db/vpj-02-staging-verify.mjs matrix <designated-staging> <private-new-directory>", "exitCode": 0, "result": "29/29 real checks PASS; exact cleanup and original7Auth/3Trip preservation PASS; sanitized matrix-run1.json"}
+{"recordedAt": "2026-09-17T04:31:18.917720+00:00", "command": "node scripts/db/vpj-02-staging-verify.mjs cleanup <designated-staging> <private-journal>", "exitCode": 0, "result": "idempotent cleanup repeat PASS; sanitized cleanup-repeat.json"}
+{"recordedAt": "2026-09-17T04:31:18.917723+00:00", "command": "node scripts/docs-check.mjs", "exitCode": 0, "result": "PASS; generated handoff consistent"}
+{"recordedAt": "2026-09-17T04:31:18.917726+00:00", "command": "git diff --check", "exitCode": 0, "result": "PASS"}

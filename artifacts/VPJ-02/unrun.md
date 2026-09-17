@@ -1,5 +1,11 @@
 # VPJ-02 remaining runtime acceptance
 
+## Current update — 2026-09-17
+
+See [current real verification](staging-verification-20260917/verification.md):50 matching migrations,11 pending,29/29 real target checks PASS; exact fixture cleanup and original7 Auth/3 Trip digest preservation PASS. Current-device direct database, Session pooler and worker connection identity remain UNRUN. Parent#189 remains OPEN. The dated26/33 prerequisite descriptions below are historical and must not drive reapplication.
+
+## Historical record
+
 As of2026-09-10, the authorized same-target Staging upgrade11->25, fresh encrypted backup/isolated restore, and two-account ordinary JWT isolation16/16 are PASS. Existing3 Auth/2 Trip row digests match after exact-ID fixture cleanup. See [actual evidence](staging-apply-20260910.md).
 
 - Direct-host database read-only query was rerun2026-09-10 and failed:psql exit2, connection closed with verify-full. Session pooler maintenance passed.
