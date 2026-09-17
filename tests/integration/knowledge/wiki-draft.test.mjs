@@ -1,5 +1,6 @@
 import {runWikiStatementProposalJob} from "../../../lib/server/jobs/wiki-statement-proposal-job.ts";
 import {conflictsByProposal,detectProposalConflicts} from "../../../lib/server/knowledge/wiki/proposals.ts";
+import {citedWithdrawnSources} from "../../../lib/server/knowledge/wiki/read-model.ts";
 import http from "node:http";
 import {Readable} from "node:stream";
 import {handleOpsRequest} from "../../../lib/server/knowledge/review/http-workspace.ts";
@@ -501,6 +502,53 @@ test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACL
     for(const s of unrelated.revisions.flatMap(r=>r.sources)){
       assert.equal(s.withdrawnAt,null);assert.equal(s.withdrawnBy,null);assert.equal(s.withdrawalReason,null);
     }
+  });
+
+  // citedWithdrawnSources (lib/server/knowledge/wiki/read-model.ts) is the pure,
+  // read-only "cascading" correlation named as an explicit gap in
+  // artifacts/VPJ-75/unrun.md: "no cascading revocation of a wiki_page_revisions
+  // row that already cites a source withdrawn after that revision was created".
+  // It adds no migration/RPC and never mutates anything -- this proves it
+  // composes correctly with the REAL ops_wiki_read_v1 response (not a synthetic
+  // fixture), both before and after a real withdrawal, and that it flags only
+  // the ONE cited source that was actually withdrawn out of several, never the
+  // others and never the revision's own persisted fields.
+  const cascadeSourceIdA=uuid();
+  const cascadeSourceIdB=uuid();
+  const cascadeSourceA={...source,sourceKey:'cascade_flag_source_a',snippet:'Synthetic cascade-flag source A material.'};
+  const cascadeSourceB={...source,sourceKey:'cascade_flag_source_b',snippet:'Synthetic cascade-flag source B material.'};
+  const cascadePageKey='source_summary:cascade-flag-fixture';
+  await db(`insert into knowledge_review_private.source_revisions(id,source_key,revision_label,declaration,snippet_hash,submitted_by) values('${cascadeSourceIdA}','cascade_flag_source_a','r1',${lit(JSON.stringify(cascadeSourceA))},'${'c'.repeat(64)}','${author.id}'),('${cascadeSourceIdB}','cascade_flag_source_b','r1',${lit(JSON.stringify(cascadeSourceB))},'${'d'.repeat(64)}','${author.id}');`);
+  const cascadeClaimInput={action:'claim',operationId:uuid(),pageType:'source_summary',pageKey:cascadePageKey,sourceRevisionIds:[cascadeSourceIdA,cascadeSourceIdB],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),inputDigest:'f'.repeat(64)};
+  const cascadeClaimed=await call(author,'ops_wiki_generation_v1',cascadeClaimInput);
+  const cascadeOutcome=await runWikiGenerationJob({pageType:'source_summary',pageKey:cascadePageKey,sourceText:cascadeSourceA.snippet+' '+cascadeSourceB.snippet,promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),maxOutputTokens:1024,timeoutMs:5000,provider:{provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:uuid(),configurationVersion:1,timeoutMs:5000}}, {credential:()=> 'synthetic',recordDestination:async()=>{},fetch:async()=>Response.json({model:'qwen3.7-plus-2026-05-26',choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({summary:'Cascade-flag fixture summary.',gaps:[]})}}],usage:{prompt_tokens:5,completion_tokens:5,total_tokens:10}})},new AbortController().signal);
+
+  await t.test('citedWithdrawnSources correctly flags a real, already-persisted two-source revision once only ONE of its cited sources is withdrawn',async()=>{
+    assert.equal(cascadeClaimed.kind,'claimed');
+    assert.equal(cascadeOutcome.kind,'succeeded');
+    const cascadeCompletion={operationId:uuid(),jobId:cascadeClaimed.jobId,claimToken:cascadeClaimed.claimToken,expectedVersion:cascadeClaimed.expectedVersion,sourceRevisionIds:[cascadeSourceIdA,cascadeSourceIdB],statementRefs:[],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),generatedAt:new Date().toISOString(),changeNote:'Cascade-flag fixture revision citing two sources'};
+    const completed=await completeWikiGenerationJob(rpc,cascadeCompletion,cascadeOutcome);
+    assert.equal(completed.data.kind,'succeeded');
+
+    const beforeWithdrawal=await call(author,'ops_wiki_read_v1',{pageKey:cascadePageKey});
+    assert.equal(beforeWithdrawal.revisions[0].sources.length,2);
+    assert.deepEqual(citedWithdrawnSources(beforeWithdrawal.revisions[0].sources),[],'neither cited source has been withdrawn yet');
+
+    await withdraw(author,cascadeSourceIdA,'Cascade-flag fixture: withdrawing only source A.');
+
+    const afterWithdrawal=await call(author,'ops_wiki_read_v1',{pageKey:cascadePageKey});
+    const flagged=citedWithdrawnSources(afterWithdrawal.revisions[0].sources);
+    assert.equal(flagged.length,1,'exactly one of the two cited sources is withdrawn');
+    assert.equal(flagged[0].id,cascadeSourceIdA);
+    assert.equal(flagged[0].withdrawnBy,author.id);
+    assert.equal(flagged[0].withdrawalReason,'Cascade-flag fixture: withdrawing only source A.');
+
+    // No cascading revocation: this correlation only MARKS the revision for
+    // manual review -- the revision's own persisted fields are completely
+    // untouched, matching docs/contracts/wiki-source-withdrawal.md's boundary.
+    assert.equal(afterWithdrawal.revisions[0].validationStatus,beforeWithdrawal.revisions[0].validationStatus);
+    assert.deepEqual(afterWithdrawal.revisions[0].draftContent,beforeWithdrawal.revisions[0].draftContent);
+    assert.equal(afterWithdrawal.revisions[0].sources.find(s=>s.id===cascadeSourceIdB).withdrawnAt,null,'the second cited source, never withdrawn, must not be flagged');
   });
 
   // The withdrawal action still had no /ops/wiki HTTP entry point at all before this
