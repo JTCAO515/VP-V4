@@ -73,3 +73,22 @@ Implementation/review/runtime/evidence are one bounded PR. Setup waited for the 
 login; two code-review corrections were completed before remote mutation. No measured user acceptance
 time or productivity gain is inferred. Remove the new tool to revert implementation; retain evidence.
 For interrupted fixtures use the runbook's exact journal cleanup, never wildcard-delete or reset rows.
+
+## Connection follow-up — 2026-09-17, user resumed
+
+The user requested continuation with step-by-step instructions for any manual action. Added
+`vpj-02-connection-check.py` and a Chinese terminal tutorial to the existing runbook. Six Python
+security/result tests and their integration-suite wrapper PASS; independent review found no P1/P2.
+The script prompts only in a real terminal, never persists the password, sends read-only SQL to fixed
+hosts through `psql -X -w`, pins the official CA and forces verify-full. Output is allowlisted aggregates.
+
+[Connection preflight](connections-preflight.json),2026-09-17T04:48:45Z: Session5432 and shared
+Transaction6543 both pass official-CA/hostname-verified TLS1.2. Direct5432 closes before accepting
+PostgreSQL TLS; SQL remainsUNRUN. Local DNS returns proxy benchmark198.18/15 addresses; no default
+IPv6 route was observed. No proxy/DNS/SSL/network restriction or paid IPv4 change was made.
+
+The browser Connect dialog confirmed the exact shared pooler host and tenant-qualified username;
+Database Settings supplied the official CA download link. These are connection metadata, not password
+access. The user has been given the one-command hidden-input tutorial; authenticated SQL results
+remain pending until that operator step completes. The legacy worker SQL profile's transaction
+connection check is explicitly distinct from a running SystemDataAdapter or a provider worker task.

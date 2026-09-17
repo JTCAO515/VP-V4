@@ -1,0 +1,37 @@
+{
+  "project": "dzqdzetcctkhbrhlxxgn",
+  "startedAt": "2026-09-17T04:48:45.440476+00:00",
+  "workerRuntime": "UNRUN: transaction connection profile is not a running SystemDataAdapter",
+  "paths": {
+    "direct": {
+      "host": "db.dzqdzetcctkhbrhlxxgn.supabase.co",
+      "port": 5432,
+      "tls": "FAIL",
+      "sql": "UNRUN",
+      "ipv6Available": false,
+      "proxyBenchmarkAddress": true,
+      "reason": "POSTGRES_TLS_NOT_ESTABLISHED"
+    },
+    "sessionPooler": {
+      "host": "aws-0-ap-southeast-1.pooler.supabase.com",
+      "port": 5432,
+      "tls": "PASS",
+      "sql": "UNRUN",
+      "ipv6Available": false,
+      "proxyBenchmarkAddress": true,
+      "tlsVersion": "TLSv1.2"
+    },
+    "transactionPoolerProfile": {
+      "host": "aws-0-ap-southeast-1.pooler.supabase.com",
+      "port": 6543,
+      "tls": "PASS",
+      "sql": "UNRUN",
+      "ipv6Available": false,
+      "proxyBenchmarkAddress": true,
+      "tlsVersion": "TLSv1.2"
+    }
+  },
+  "caSha256": "700723581420dd1ac98fd7e9ac529f0ef210eadcaf87fc868a3ad7d114c2f3b7",
+  "status": "PREFLIGHT_ONLY",
+  "completedAt": "2026-09-17T04:48:46.816869+00:00"
+}
