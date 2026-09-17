@@ -173,6 +173,14 @@ final class NativeSession {
         ])
     }
 
+    func placeReverseGeocodeRequest(provider: NativePlaceProvider, latitude: Double, longitude: Double) async throws -> Data {
+        guard latitude.isFinite, longitude.isFinite, (-90...90).contains(latitude), (-180...180).contains(longitude) else { throw NativeDataError.invalidResponse }
+        return try await dataRequest(prefix: "api/places/native/v1", path: "api/places/native/v1/reverse-geocode", method: "GET", queryItems: [
+            .init(name: "provider", value: provider.rawValue), .init(name: "lat", value: String(latitude)),
+            .init(name: "lng", value: String(longitude)), .init(name: "system", value: "gcj02"),
+        ])
+    }
+
     /// Local Ask shares identity fencing, never credentials, with the Trip consumer.
     func askRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
         guard askMode != .unavailable else { throw NativeDataError.invalidResponse }

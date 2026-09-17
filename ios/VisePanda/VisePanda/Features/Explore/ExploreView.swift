@@ -46,10 +46,14 @@ private struct NativePlaceSuggestion: Decodable, Identifiable {
     let provider: NativePlaceProvider
     let providerPoiId: String?
     let rawName: String
+    let location: NativePlaceCoordinate?
     var id: String { provider.rawValue + ":" + (providerPoiId ?? "text") + ":" + rawName }
 }
 
 private struct NativePlaceSuggestionReply: Decodable { let candidates: [NativePlaceSuggestion] }
+private struct NativePlaceCoordinate: Decodable { let lat: Double; let lng: Double; let coordinateSystem: String }
+private struct NativePlaceReverseReply: Decodable { let result: NativePlaceReverseResult? }
+private struct NativePlaceReverseResult: Decodable { let provider: NativePlaceProvider; let formattedAddress: String }
 
 @MainActor
 @Observable
@@ -100,6 +104,7 @@ private struct NativePlaceSearchView: View {
     @State private var city = "shanghai"
     @State private var provider = NativePlaceProvider.amap
     @State private var suggestions: [NativePlaceSuggestion] = []
+    @State private var observedAddress: String?
     private var chinese: Bool { settings.selectedLocale == .zh }
     private var session: NativeSession { settings.nativeSession }
     private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
@@ -134,10 +139,23 @@ private struct NativePlaceSearchView: View {
                     }
                 }.disabled(session.dataScope == nil || query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 ForEach(suggestions) { suggestion in
-                    Button { query = suggestion.rawName } label: {
-                        Text(suggestion.rawName).frame(maxWidth: .infinity, alignment: .leading)
-                    }.buttonStyle(.bordered).accessibilityIdentifier("places.suggestion.\(suggestion.id)")
+                    VStack(alignment: .leading, spacing: 5) {
+                        Button { query = suggestion.rawName; observedAddress = nil } label: {
+                            Text(suggestion.rawName).frame(maxWidth: .infinity, alignment: .leading)
+                        }.buttonStyle(.bordered).accessibilityIdentifier("places.suggestion.\(suggestion.id)")
+                        if suggestion.provider == .amap, let location = suggestion.location, location.coordinateSystem == "gcj02" {
+                            Button(text("Read provider address", "读取供应商地址")) {
+                                Task {
+                                    do {
+                                        let data = try await session.placeReverseGeocodeRequest(provider: suggestion.provider, latitude: location.lat, longitude: location.lng)
+                                        observedAddress = try JSONDecoder().decode(NativePlaceReverseReply.self, from: data).result?.formattedAddress
+                                    } catch { observedAddress = nil }
+                                }
+                            }.buttonStyle(.bordered)
+                        }
+                    }
                 }
+                if let observedAddress { Text(text("Provider address observation: ", "供应商地址观察：") + observedAddress).font(.caption).foregroundStyle(Color.vpSecondaryText).accessibilityIdentifier("places.reverseAddress") }
                 Button(text("Search places", "搜索地点")) {
                     Task { await store.search(scope: session.dataScope, provider: provider, query: query, city: city) {
                         try await session.placeSearchRequest(provider: provider, query: query, city: city)
