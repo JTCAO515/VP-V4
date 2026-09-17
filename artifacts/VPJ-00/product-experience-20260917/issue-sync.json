@@ -1,0 +1,258 @@
+{
+  "schemaVersion": "vpj-product-experience-sync/1",
+  "observedAt": "2026-09-17T01:33:04.025Z",
+  "planningPr": 433,
+  "planCommit": "83921fb",
+  "actualProviderCalls": 0,
+  "newIssues": 0,
+  "scope": "planning-only",
+  "closedIssue206": "untouched, observed closed",
+  "results": [
+    {
+      "issue": 195,
+      "task": "VPJ-07",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/195",
+      "addedAcceptance": 2,
+      "priorBodyPreserved": true,
+      "priorCheckedItems": 1,
+      "state": "open",
+      "labelsPreserved": true,
+      "milestonePreserved": true,
+      "nativeDependenciesPreserved": true,
+      "nativeDependencies": [
+        191,
+        192,
+        193,
+        194
+      ]
+    },
+    {
+      "issue": 197,
+      "task": "VPJ-09",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/197",
+      "addedAcceptance": 1,
+      "priorBodyPreserved": true,
+      "priorCheckedItems": 0,
+      "state": "open",
+      "labelsPreserved": true,
+      "milestonePreserved": true,
+      "nativeDependenciesPreserved": true,
+      "nativeDependencies": [
+        192,
+        195,
+        196
+      ]
+    },
+    {
+      "issue": 198,
+      "task": "VPJ-10",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/198",
+      "addedAcceptance": 1,
+      "priorBodyPreserved": true,
+      "priorCheckedItems": 0,
+      "state": "open",
+      "labelsPreserved": true,
+      "milestonePreserved": true,
+      "nativeDependenciesPreserved": true,
+      "nativeDependencies": [
+        197
+      ]
+    },
+    {
+      "issue": 201,
+      "task": "VPJ-12",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/201",
+      "addedAcceptance": 1,
+      "priorBodyPreserved": true,
+      "priorCheckedItems": 0,
+      "state": "open",
+      "labelsPreserved": true,
+      "milestonePreserved": true,
+      "nativeDependenciesPreserved": true,
+      "nativeDependencies": [
+        188,
+        190,
+        191,
+        195,
+        200
+      ]
+    },
+    {
+      "issue": 203,
+      "task": "VPJ-13",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/203",
+      "addedAcceptance": 1,
+      "priorBodyPreserved": true,
+      "priorCheckedItems": 0,
+      "state": "open",
+      "labelsPreserved": true,
+      "milestonePreserved": true,
+      "nativeDependenciesPreserved": true,
+      "nativeDependencies": [
+        197,
+        199,
+        201,
+        202
+      ]
+    },
+    {
+      "issue": 209,
+      "task": "VPJ-19",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/209",
+      "addedAcceptance": 1,
+      "priorBodyPreserved": true,
+      "priorCheckedItems": 0,
+      "state": "open",
+      "labelsPreserved": true,
+      "milestonePreserved": true,
+      "nativeDependenciesPreserved": true,
+      "nativeDependencies": [
+        192,
+        208
+      ]
+    },
+    {
+      "issue": 212,
+      "task": "VPJ-22",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/212",
+      "addedAcceptance": 1,
+      "priorBodyPreserved": true,
+      "priorCheckedItems": 0,
+      "state": "open",
+      "labelsPreserved": true,
+      "milestonePreserved": true,
+      "nativeDependenciesPreserved": true,
+      "nativeDependencies": [
+        190
+      ]
+    },
+    {
+      "issue": 213,
+      "task": "VPJ-23",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/213",
+      "addedAcceptance": 2,
+      "priorBodyPreserved": true,
+      "priorCheckedItems": 0,
+      "state": "open",
+      "labelsPreserved": true,
+      "milestonePreserved": true,
+      "nativeDependenciesPreserved": true,
+      "nativeDependencies": [
+        199,
+        209,
+        212
+      ]
+    },
+    {
+      "issue": 214,
+      "task": "VPJ-24",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/214",
+      "addedAcceptance": 1,
+      "priorBodyPreserved": true,
+      "priorCheckedItems": 0,
+      "state": "open",
+      "labelsPreserved": true,
+      "milestonePreserved": true,
+      "nativeDependenciesPreserved": true,
+      "nativeDependencies": [
+        201,
+        213
+      ]
+    },
+    {
+      "issue": 215,
+      "task": "VPJ-25",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/215",
+      "addedAcceptance": 1,
+      "priorBodyPreserved": true,
+      "priorCheckedItems": 0,
+      "state": "open",
+      "labelsPreserved": true,
+      "milestonePreserved": true,
+      "nativeDependenciesPreserved": true,
+      "nativeDependencies": [
+        191,
+        192
+      ]
+    },
+    {
+      "issue": 219,
+      "task": "VPJ-65",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/219",
+      "addedAcceptance": 2,
+      "priorBodyPreserved": true,
+      "priorCheckedItems": 0,
+      "state": "open",
+      "labelsPreserved": true,
+      "milestonePreserved": true,
+      "nativeDependenciesPreserved": true,
+      "nativeDependencies": [
+        197,
+        206,
+        209
+      ]
+    },
+    {
+      "issue": 233,
+      "task": "VPJ-40",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/233",
+      "addedAcceptance": 1,
+      "priorBodyPreserved": true,
+      "priorCheckedItems": 0,
+      "state": "open",
+      "labelsPreserved": true,
+      "milestonePreserved": true,
+      "nativeDependenciesPreserved": true,
+      "nativeDependencies": [
+        203,
+        210,
+        211,
+        213,
+        215,
+        217,
+        218,
+        220,
+        221,
+        226,
+        228,
+        235,
+        236,
+        238,
+        240,
+        241
+      ]
+    },
+    {
+      "issue": 236,
+      "task": "VPJ-55",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/236",
+      "addedAcceptance": 1,
+      "priorBodyPreserved": true,
+      "priorCheckedItems": 0,
+      "state": "open",
+      "labelsPreserved": true,
+      "milestonePreserved": true,
+      "nativeDependenciesPreserved": true,
+      "nativeDependencies": [
+        191,
+        201
+      ]
+    },
+    {
+      "issue": 241,
+      "task": "VPJ-49",
+      "url": "https://github.com/JTCAO515/VP-V4/issues/241",
+      "addedAcceptance": 1,
+      "priorBodyPreserved": true,
+      "priorCheckedItems": 0,
+      "state": "open",
+      "labelsPreserved": true,
+      "milestonePreserved": true,
+      "nativeDependenciesPreserved": true,
+      "nativeDependencies": [
+        192,
+        199
+      ]
+    }
+  ]
+}

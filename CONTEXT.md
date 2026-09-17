@@ -35,7 +35,7 @@ Generated from docs/handoff.json; active architecture/scope is ADR-0023.
 - 2026-09-14 JT authorizes unblocking Issues as actual dependencies permit and developing in order; labels are not an additional gate. Preserve unmet acceptance, production protection and complete parent tracking.
 - 2026-09-15 JT要求：当前模型提案这一轮处理完成后暂停。完成当前PR/CI与证据收尾，不启动下一轮，不建立继续开发的自动化。
 - 2026-09-16: JT gave explicit in-chat resume authorization for VPJ-75 (#359) this round, recorded here and in the PR/issue thread; the 2026-09-15 no-next-round-without-resume pause governed exactly one round and does not carry forward automatically.
-- 2026-09-17 JT授权将TourMind/JourniOne研究建议写入VP规划与现有Issue。体验增量见docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md：先交可用成果、自然下一步、同Trip视图/局部影响、住宿与路线衔接、保留原安排的导入、本地隐私分享。复用14个开放任务；不重开已闭#206、不增加Program/依赖、不扩大酒店交易或公开托管范围。用户已授权Issue正文同步；规划PR合入状态与功能实现/运行验收分别核对。
+- 2026-09-17 JT授权将TourMind/JourniOne研究建议写入VP规划与现有Issue。体验增量见docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md：先交可用成果、自然下一步、同Trip视图/局部影响、住宿与路线衔接、保留原安排的导入、本地隐私分享。复用14个开放任务；不重开已闭#206、不增加Program/依赖、不扩大酒店交易或公开托管范围。14张Issue正文追加同步及回读通过，保留原文/勾选/状态/标签/依赖；回执见artifacts/VPJ-00/product-experience-20260917/issue-sync.json；规划PR合入状态与功能实现/运行验收分别核对。
 
 ## 未决与运行证据
 
