@@ -35,6 +35,10 @@ test("consumer preserves unknown holds without floating-point loss and separates
   assert.match(report, /semantic quality: unknown/);
   assert.match(report, /partial=1/);
   assert.doesNotMatch(report, new RegExp(id));
+  const chinese = renderOpsLedgerReport(result.snapshot, "zh");
+  assert.match(chinese, /未解预留：20000000000000000/);
+  assert.match(chinese, /实际账单.*未知/);
+  assert.doesNotMatch(chinese, new RegExp(id));
 });
 
 test("unavailable transport or a malformed scope returns no row or raw error", async () => {

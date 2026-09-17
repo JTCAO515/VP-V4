@@ -64,3 +64,27 @@ No provider call, credential read, team permission activation, new platform, pai
 customer endpoint or remote migration occurred. Quality/latency/tools/human time/ServiceTask
 metrics remain explicitly unknown. See [unrun.md](unrun.md), the
 [contract](../../docs/contracts/vpj-37.md) and [runbook](../../docs/runbooks/ops-ledger-reconciliation.md).
+
+## 2026-09-17 Team A: Ops member read slice
+
+Based on `origin/main` at `1ad5bd3`, this branch adds a live Ops-member guarded
+read of the same budget-scope aggregate, a Cookie-authenticated API route and
+zh/en page. The private function and public invoker wrapper add no new ledger
+tables, model calls, budget mutations or customer permissions. The existing Ops
+switch and active membership still control availability.
+
+Real network-isolated PostgreSQL 17.6.1.167 replay of the full migration chain:
+6 PASS, 0 FAIL, 0 SKIP. It observed one pending synthetic attempt with a 123
+micro-unit hold; an active Ops member read the sanitized snapshot. A nonmember,
+anonymous role, revoked member and deleted Auth session were denied. The wider
+knowledge private schema remained unavailable to authenticated callers.
+
+Source policy lint, TypeScript and the new API contract cases passed. Local browser
+at 390×844 showed the form and unavailability message without overflow or console
+errors. Browser QA exposed a missing UUID segment in the HTML pattern; after fixing
+it, a valid UUID reached the API and returned an unavailable result because this
+local run had no enabled Ops environment. No Staging schema/Ops switch was changed.
+The initial database test run failed before SQL because its historical image tag
+was not cached; the compatible installed 17.6.1.167 image was selected explicitly
+and the suite then passed. Further checks and exact-head CI remain separately
+recorded with the PR.
