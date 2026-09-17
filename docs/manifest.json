@@ -632,6 +632,14 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/wiki-source-withdrawal-action-ui.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/wiki-source-withdrawal-revision-flag.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/wiki-source-withdrawal-status-ui.md",
       "status": "document"
     },
@@ -817,6 +825,10 @@
     },
     {
       "path": "docs/program/2026-09-05/INTERFACES.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/ISSUE-AUDIT-2026-09-17.md",
       "status": "document"
     },
     {

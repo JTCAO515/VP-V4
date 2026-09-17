@@ -26,7 +26,7 @@
 | [#191](https://github.com/JTCAO515/VP-V4/issues/191) · VPJ-04 | 原生登录、手机登录顶替与 Web 会话并存 |
 | [#192](https://github.com/JTCAO515/VP-V4/issues/192) · VPJ-05 | 同一 Trip 在 iOS 与精简 Web 创建、编辑和重载 |
 | [#202](https://github.com/JTCAO515/VP-V4/issues/202) · VPJ-62 | 公开中英申请入口与隐私可控的招募漏斗 |
-| [#246](https://github.com/JTCAO515/VP-V4/issues/246) · VPJ-46 | 每周35小时客户发现、招募与材料工作坊 |
+| [#246](https://github.com/JTCAO515/VP-V4/issues/246) · VPJ-46 | 两周客户发现试点与后续运营交接 |
 
 持续配合：[#202](https://github.com/JTCAO515/VP-V4/issues/202)、[#246](https://github.com/JTCAO515/VP-V4/issues/246)；这是跨阶段工作，不改变任务身份或依赖。
 
@@ -78,7 +78,7 @@
 | [#198](https://github.com/JTCAO515/VP-V4/issues/198) · VPJ-10 | 选中一天或项目后与 VP 局部改稿 |
 | [#199](https://github.com/JTCAO515/VP-V4/issues/199) · VPJ-11 | Trip 连续记忆与用户可纠正的偏好 |
 | [#207](https://github.com/JTCAO515/VP-V4/issues/207) · VPJ-17 | 来源更新后安全重验相关知识与 Trip |
-| [#208](https://github.com/JTCAO515/VP-V4/issues/208) · VPJ-18 | 高德、百度、腾讯的真实使用地域与采购比较 |
+| [#208](https://github.com/JTCAO515/VP-V4/issues/208) · VPJ-18 | 高德主选与腾讯补充的实测、用途与成本边界 |
 | [#209](https://github.com/JTCAO515/VP-V4/issues/209) · VPJ-19 | 地点消歧、地图展示与路线出口 |
 | [#210](https://github.com/JTCAO515/VP-V4/issues/210) · VPJ-20 | Explore 浏览内容并保存、问 VP、加入 Trip |
 | [#211](https://github.com/JTCAO515/VP-V4/issues/211) · VPJ-21 | 准备检查把关键缺口变成可做的下一步 |
@@ -103,7 +103,7 @@
 | [#200](https://github.com/JTCAO515/VP-V4/issues/200) · VPJ-60 | 图片和语音 Provider 的中英质量与数据流验收 |
 | [#201](https://github.com/JTCAO515/VP-V4/issues/201) · VPJ-12 | 单张旅行截图导入、校正与加入 Trip |
 | [#203](https://github.com/JTCAO515/VP-V4/issues/203) · VPJ-13 | 首访与回访的三种入口获得首个成果 |
-| [#212](https://github.com/JTCAO515/VP-V4/issues/212) · VPJ-22 | 酒店联盟授权与深链落地验证 |
+| [#212](https://github.com/JTCAO515/VP-V4/issues/212) · VPJ-22 | 酒店官方出口、参数落地与联盟归因验证 |
 | [#213](https://github.com/JTCAO515/VP-V4/issues/213) · VPJ-23 | 住宿需求比较与透明联盟跳转 |
 | [#214](https://github.com/JTCAO515/VP-V4/issues/214) · VPJ-24 | 第三方订单材料回到同一 Trip |
 | [#215](https://github.com/JTCAO515/VP-V4/issues/215) · VPJ-25 | Today 与可离线读取的旅行资料 |
@@ -115,7 +115,7 @@
 | [#222](https://github.com/JTCAO515/VP-V4/issues/222) · VPJ-57 | 用户服务请求与按任务授予资料访问 |
 | [#223](https://github.com/JTCAO515/VP-V4/issues/223) · VPJ-31 | 按服务任务授权的动态 Traveler Brief |
 | [#224](https://github.com/JTCAO515/VP-V4/issues/224) · VPJ-32 | 真人协助从请求到接单和结果回传 |
-| [#236](https://github.com/JTCAO515/VP-V4/issues/236) · VPJ-55 | 文件与系统分享导入、邀请链接接回原意图 |
+| [#236](https://github.com/JTCAO515/VP-V4/issues/236) · VPJ-55 | 限定文件导入与系统分享、登录回跳衔接 |
 | [#241](https://github.com/JTCAO515/VP-V4/issues/241) · VPJ-49 | 最简本地旅行分享卡与隐私预览 |
 | [#240](https://github.com/JTCAO515/VP-V4/issues/240) · VPJ-61 | 旅行结束、归档与下一次回来 |
 
@@ -183,7 +183,7 @@
 | 现有 Issue | 用户结果 |
 | --- | --- |
 | [#248](https://github.com/JTCAO515/VP-V4/issues/248) · VPJ-50 | 有真实召回失败才启用混合 RAG 与重排 |
-| [#249](https://github.com/JTCAO515/VP-V4/issues/249) · VPJ-51 | 航班来源采购与中国航线实测 |
+| [#249](https://github.com/JTCAO515/VP-V4/issues/249) · VPJ-51 | 航班来源与中国航线对照（证据触发） |
 | [#250](https://github.com/JTCAO515/VP-V4/issues/250) · VPJ-52 | 授权航班状态与相关行程重验 |
 | [#251](https://github.com/JTCAO515/VP-V4/issues/251) · VPJ-53 | Android 与新增语言的需求触发设计 |
 | [#252](https://github.com/JTCAO515/VP-V4/issues/252) · VPJ-54 | 长期订阅或交易深度升级的证据决策 |
