@@ -16,3 +16,12 @@ redaction gating and ownership metadata only; it does not parse media, persist T
 create a real Proposal record, authorize a user, or apply a Trip change.
 
 Rollback: revert this module, tests, contract and evidence. No external or durable state exists.
+
+## Synthetic screenshot preview supplement
+
+VPJ-12 adds a separate in-memory preview for a closed synthetic field bundle only.
+It accepts no image bytes, OCR text, URL, QR payload or provider result. Each field has a
+bounded type/value and line locator; current values classify it as added, duplicate or
+conflict. A user correction produces only a time-bounded pending screenshot proposal.
+Expiry, raw-media fields, cross-owner replay and cancellation fail closed. The preview has
+no file receiver, OCR call, database state or Trip writer.
