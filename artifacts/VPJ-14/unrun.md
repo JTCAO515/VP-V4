@@ -1,5 +1,7 @@
 # VPJ-14 remaining gates
 
+- 2026-09-17: the shared Staging `/ops/review` route was reachable but returned an unavailable workspace because the controlled review switch and active member scope remain off. No new browser submit, independent browser review, or revoked-browser rejection was run. This remains required evidence for the current #204 first slice; local disposable GoTrue/PostgreSQL 7/7 does not substitute for it.
+
 - No production deployment, remote migration, real team membership activation, public/customer-wide CRUD grant, or real customer data access was performed.
 - No rights-verified publication, reviewed Fact producer, runtime retrieval, knowledge-base bulk promotion, or paid/provider operation exists in this slice. A reviewed candidate remains private and ineligible for retrieval.
 - The separate VPJ-02/#189 upgrade/recovery package is frozen at migration 33. This new migration is not evidence of its upgrade/rollback matrix or remote release readiness.
