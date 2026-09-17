@@ -180,6 +180,10 @@
       "status": "document"
     },
     {
+      "path": "docs/agents/maps-integration-development.md",
+      "status": "document"
+    },
+    {
       "path": "docs/agents/prompts/continuous-afk-kickoff.md",
       "status": "document"
     },
@@ -264,6 +268,22 @@
       "status": "document"
     },
     {
+      "path": "docs/benchmarks/maps/four-city-pilot.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/benchmarks/maps/full-matrix.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/benchmarks/maps/initial-probe.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/benchmarks/maps/vpj-18-362-closeout.md",
+      "status": "document"
+    },
+    {
       "path": "docs/benchmarks/route-pattern/decision.md",
       "status": "document"
     },
@@ -293,6 +313,14 @@
     },
     {
       "path": "docs/benchmarks/vpj-70/offline-pairing.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/brand/VISEPANDA-BRAND-DISTILLATION-Q1-Q38-2026-09-10.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/brand/VISEPANDA-BRAND-WORKING-RECORD.md",
       "status": "document"
     },
     {
@@ -356,6 +384,10 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/knowledge-provenance.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/launch-05-message-output-retention.md",
       "status": "document"
     },
@@ -405,6 +437,10 @@
     },
     {
       "path": "docs/contracts/pending-proposal-read.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/place-identity.md",
       "status": "document"
     },
     {
@@ -572,6 +608,46 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/wiki-agentic-search.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/wiki-draft-content.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/wiki-generation-dispatch.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/wiki-generation-schema.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/wiki-job-reclaim.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/wiki-proposal-conflict-ui.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/wiki-source-withdrawal.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/wiki-statement-proposals-safety.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/wiki-statement-proposals.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/wiki-statement-review.md",
+      "status": "document"
+    },
+    {
       "path": "docs/decisions/decision-register.md",
       "status": "document"
     },
@@ -696,6 +772,10 @@
       "status": "document"
     },
     {
+      "path": "docs/policy/vpj-03-data-disclosure.md",
+      "status": "document"
+    },
+    {
       "path": "docs/policy/vpj-03-provider-qualification.md",
       "status": "document"
     },
@@ -741,6 +821,10 @@
     },
     {
       "path": "docs/program/2026-09-05/OPERATIONS-AND-RELEASE.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md",
       "status": "document"
     },
     {
@@ -1068,7 +1152,19 @@
       "status": "evidence"
     },
     {
+      "path": "docs/research/VISEPANDA-FREE-PAID-BOUNDARIES-2026-09-10.md",
+      "status": "evidence"
+    },
+    {
       "path": "docs/research/VISEPANDA-HUGGINGFACE-REUSE-REPORT-2026-09-10.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/VISEPANDA-MARKET-PRICING-MODELS-2026-09-10.md",
+      "status": "evidence"
+    },
+    {
+      "path": "docs/research/VISEPANDA-PRETRIP-ADDONS-ACTIVATION-EVIDENCE-2026-09-10.md",
       "status": "evidence"
     },
     {
@@ -1309,6 +1405,10 @@
     },
     {
       "path": "docs/vp-v4-closed-beta-launch-plan.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/vp-v4-product-direction.md",
       "status": "document"
     },
     {

@@ -23,6 +23,7 @@
 - [ ] 外跳返回后可跳过或导入凭证；user-reported/artifact-confirmed/provider-verified分开。
 - [ ] 用户核实日期/地址/条款候选后形成external reservation reference，约束后续规划。
 - [ ] 取消/改签在外部发生，VP只记录证据；导入失败保留原Trip和安全重试。
+- [ ] 体验增量2026-09-17：外跳回流材料先显示与现有Trip的新增/重复/冲突及原文定位，用户确认后更新外部订单引用与受影响候选，不重写整趟行程；相同凭证重放不重复加项，user-reported/artifact-confirmed/provider-verified保持区分，未知回执先读取核验再重试。
 
 ## 不得触碰
 

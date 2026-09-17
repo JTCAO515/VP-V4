@@ -148,7 +148,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-07.md`, `docs/contracts/service-task-metering.md`, `docs/contracts/vp-response-policy.md`, `docs/harness/hf-reuse/README.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-07.md`, `docs/contracts/service-task-metering.md`, `docs/contracts/vp-response-policy.md`, `docs/harness/hf-reuse/README.md`, `docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
@@ -159,6 +159,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 按ServiceTask规划契约关联一项明确目标的多轮Turn，必要澄清和系统修复不新建用户消费；归属由服务端核验，partial/完成后改稿/TTL等未决收费策略保持不启用。
 - [ ] 真实输出producer采用版本化VP内容与表达策略，英文直接创作、中英事实与动作状态一致；沿现有schema显式扩展并验证消费者，不新增人格服务或无约束二次润色。
 - [ ] HF复用：真实输出接入版本化的内容/语气规范与业务状态，相关性和友好表达不能替代证据/动作回执；复用现有prompt登记与响应合同，不新增人格服务或无约束二次润色。
+- [ ] 体验增量2026-09-17：五种结果均给出自然中英用户结果和可执行下一步，不以outcome/intent代码作为最终回答；answered先给结论，partial保留可靠部分并指出具体缺口，clarification只问影响当前目标的一项，blocked给许可内替代，technical_failure给同任务恢复入口。必要澄清和系统修复沿既有ServiceTask，不以表达优化新增扣次。
+- [ ] 体验增量2026-09-17：在受支持城市输入“机场地址”等有歧义问题时，仅用已核实实体构造必要选择；未知城市/实体不猜测，已有上下文不重复索取。复用#206已验行为与当前证据资格；正常可答却全拒答、技术失败伪称缺知识、没有来源的选项均为失败。
 
 ## VPJ-08
 
@@ -195,7 +197,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-09.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-09.md`, `docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
@@ -204,6 +206,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 时间、预算、固定项由确定性校验；缺实时依据标unknown不把想象时刻当可行。
 - [ ] 本单仅相对日方向/用户提供地点草稿；真实地点与grounded计划由VPJ-65补齐，不能把未解析地点当可执行。
 - [ ] Chat→Plan过渡、键盘、diff和返回锚点随此功能验收。
+- [ ] 体验增量2026-09-17：对“第一次去上海四天、喜欢吃和散步、日期未定”的输入，先交有取舍的方向及首段可修改的相对日草稿，再补仍会改变方案的信息；目的明确时不强凑两案，不等待全部坐标/素材就绪，也不编造实际营业/抵离时间。仍保留本票相对日/用户提供地点边界，真实地点与可执行性归#219。
 
 ## VPJ-10
 
@@ -218,7 +221,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-10.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-10.md`, `docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
@@ -226,6 +229,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 用户可直接移日/排序/改时，手动编辑与硬锁区别明确。
 - [ ] 并发更新旧proposal不能提交；撤销Trip修改不能伪装取消外部订单。
 - [ ] 负责已登录真实Trip的选区→Ask sheet→局部Proposal/diff→确认→回到原对象与位置→重载闭环；复用#188基础导航/样式/可访问性，拒绝或关闭sheet不得误确认，真实凭据/数据条件缺失保留未验收。
+- [ ] 体验增量2026-09-17：局部改稿展示新增/移日/替换/移除及受影响时间与接驳，说明保留的已确认事项和备选去向；不只回复“已加入”。步行改善仅在#219同口径证据具备时声明，否则保留待核候选；diff、确认目标、返回选区和重载均绑定同一Trip版本，拒绝或旧版本无误写。
 
 ## VPJ-11
 
@@ -266,7 +270,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-12.md`, `docs/harness/hf-reuse/README.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-12.md`, `docs/harness/hf-reuse/README.md`, `docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
@@ -274,6 +278,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 不给全相册/邮箱读取权限；未批准外发时使用许可内本地/人工录入路径。
 - [ ] 重复导入、解析失败、取消、TTL、删除、跨账号隔离可测；OCR成功不是供应商已确认。
 - [ ] HF复用：参考VPJ-73的Docling采用/否决证据，合格时只接回本票截图→定位字段→用户校正的边界；研究PDF对照不扩张本票格式，否决Docling不阻止采用其他合格方案；保留原始材料定位及取消/TTL。
+- [ ] 体验增量2026-09-17：单张截图的校正界面展示原文定位、日期/地址/金额/状态及与当前Trip的新增/重复/冲突；用户确认字段后才进入既有Proposal流程，解析失败或取消保留原安排，相同输入重放不重复加项。仅保留本票单图范围，不引入全相册读取。
 
 ## VPJ-13
 
@@ -288,7 +293,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-13.md`, `docs/contracts/vp-response-policy.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-13.md`, `docs/contracts/vp-response-policy.md`, `docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
@@ -297,6 +302,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 记录first_value与拒绝原因分开；大字/键盘/无权限/配额用尽有路径。
 - [ ] 继承同意范围内事件schema；first_value/activated/outcome_declined不混计。
 - [ ] 按本轮目标先交可用成果，只有会改变方案的缺失信息才追问；回访使用真实可用偏好与已保存成果，必要澄清沿同一ServiceTask，不机械问卷或反复索取已知信息。
+- [ ] 体验增量2026-09-17：以无日期新想法、已有安排导入、在途回访三类任务验收首值；每次必要问题伴随已有成果或具体变化，用户可跳过，已知日期/人数/服务意向不重问。分别记录首次可用成果时间、实际采用/保存、拒绝和技术失败，并以明确分母报告重复提问率，不预设未经测量的收益数字。
 
 ## VPJ-14
 
@@ -418,13 +424,14 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-19.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-19.md`, `docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] 中文/英文/拼音同一canonical实体；providerID和内部ID分开，城市同名需要消歧。
 - [ ] GCJ/WGS等坐标转换显式且不双转，地图/列表同选中对象；不从向量分数猜入口。
 - [ ] 当前位置拒权/无网时可用中文地址和缓存；路线报价只按已授权观察时效呈现。
+- [ ] 体验增量2026-09-17：地图、地点列表和详情沿同一Trip/day/item身份保留选中对象；休息、值机、未定用餐等时间线事件不伪装为具名POI或借附近坐标补齐。正式点位缺坐标明确显示，既有文字安排仍可读；绑定已有地点/服务的引用可核对，切换视图不改变确认版本。
 
 ## VPJ-20
 
@@ -483,13 +490,14 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Evidence: `artifacts/VPJ-22/verification.md`, `artifacts/VPJ-22/unrun.md`, `artifacts/VPJ-22/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
 - 运行门: 已有账号/API或官方入口可用即可由agent接入；未披露信息标unknown，不以第三方/法务/产品审批阻塞开发。 实际账号不可访问或接口不可用时记录技术原因；真实购买、上架和生产动作按已有授权范围执行。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-22.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-22.md`, `docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] 使用Trip.com/Booking.com现有可用API或官方链接开发并验证App跳转、归因和参数；不等待联盟批准、合同或供应商书面答复。
 - [ ] 真机验证hotel/date/occupancy/filters究竟保留哪些参数；不保留的字段写入用户提示。
 - [ ] 没有联盟账号或专用API时直接使用非联盟官方搜索出口；不自造库存、room SKU或佣金参数。
+- [ ] 体验增量2026-09-17：把TourMind列为可选酒店供应商研究候选，记录采纳/暂缓/否决依据及实际查询权限、费用/总价口径、外宾入住信息、字段用途和来源版本。源码可复用性与远端API/内容权利分别核对；候选不可用不阻塞原官方外跳，不把本票扩大为订房、支付、取消或履约，未验项保留UNRUN。
 
 ## VPJ-23
 
@@ -504,13 +512,15 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-23.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-23.md`, `docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] L1a整理区域/床型/入住/预算需求，L1b只传已验参数；展示候选范围和取舍。
 - [ ] CTA标供应商/佣金/需要重核条件；不展示无实时证据的可售房型/最终价。
 - [ ] 域名白名单/参数最小化、opened≠booked、失败/过期出口；佣金移除后候选排序不变。
+- [ ] 体验增量2026-09-17：先按实际行程比较有差异的住宿区域与交通负担，再给可核实酒店候选；继承日期、人数、床型和预算，保留已订/不需要/暂缓意向，避免重复推销。明确每晚/全程/房间数及币种口径，缓存起价不当实时价，无实时依据不宣称可售或最终价。
+- [ ] 体验增量2026-09-17：酒店暂选后说明它与当前Trip的关系和下一步；换住宿只提出受影响首末日/接驳的调整候选，经既有Proposal确认才改变Trip。推荐、用户暂选、材料核实与供应商确认分别有证据，选择或打开链接不能写成已预订。
 
 ## VPJ-24
 
@@ -525,13 +535,14 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-24.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-24.md`, `docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] 外跳返回后可跳过或导入凭证；user-reported/artifact-confirmed/provider-verified分开。
 - [ ] 用户核实日期/地址/条款候选后形成external reservation reference，约束后续规划。
 - [ ] 取消/改签在外部发生，VP只记录证据；导入失败保留原Trip和安全重试。
+- [ ] 体验增量2026-09-17：外跳回流材料先显示与现有Trip的新增/重复/冲突及原文定位，用户确认后更新外部订单引用与受影响候选，不重写整趟行程；相同凭证重放不重复加项，user-reported/artifact-confirmed/provider-verified保持区分，未知回执先读取核验再重试。
 
 ## VPJ-25
 
@@ -546,7 +557,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-25.md`, `docs/contracts/vp-response-policy.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-25.md`, `docs/contracts/vp-response-policy.md`, `docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
@@ -555,6 +566,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 离线编辑先本地草稿，恢复在线后CAS确认；不执行外部动作或静默覆盖。
 - [ ] 离线授权租约到期进入受限读取，回网重验；AppGroup/旧设备不可永久复活被撤销材料。
 - [ ] Free/Pass到期或额度不足时，既有权限允许的已保存计划/地址仍按原合同可读；打开App后的接续使用当前实际状态，不承诺后台持续监控。
+- [ ] 体验增量2026-09-17：Today复用确认Trip的日程、地址与适用准备状态，在线修改确认后更新到同一版本；离线继续显示明确的缓存版本/最后同步时间，回网重验，不把旧信息当当前事实。加载图片或地图失败不阻止许可内已保存文字/地址读取，不扩张为常驻后台监控。
 
 ## VPJ-26
 
@@ -874,7 +886,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-40.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-40.md`, `docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
@@ -882,6 +894,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 真机/Simulator完成小屏大屏、大字VoiceOver、Reduce Motion/Transparency、来电低电量弱网；录屏展示可中断动效。
 - [ ] 结构卡原子出现、滚动不抢位、已保存动画只在回执后；用profile定位性能不写未测FPS。
 - [ ] 在#198真实选区Ask消费者上复验sheet、焦点、返回锚点、大字与VoiceOver及拒绝/关闭状态；不能仅引用#188基础屏幕证据完成整链验收。
+- [ ] 体验增量2026-09-17：在相关上游实际可用后，整链复验同一Trip的概览/日程/地图及Today选区、版本、修改后重载一致；保留五Tab和Today在Trip内的导航，不为图文表现复制桌面多栏或另建Trip数据源。素材未就绪时可用文字成果仍可读，按真实小屏/大字/VoiceOver验证。
 
 ## VPJ-41
 
@@ -1064,13 +1077,14 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-49.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-49.md`, `docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] 一款中英本地分享模板，用户选择字段→隐私预览→系统Share Sheet，基础分享无需公共托管。
 - [ ] 模板只使用获权资产，标明AI生成或用户体验；不能伪造订单/见证。
 - [ ] 分享前可隐藏酒店/订单/同行/日期等私密字段；已导出图片不能远端撤回；复杂模板/视频/托管分享另期开启。
+- [ ] 体验增量2026-09-17：同一款本地分享模板可选择某天或整段已确认行程，默认隐藏订单/房间/同行及敏感日期等字段，先隐私预览再系统分享；标明快照版本/导出时间，计划更新后提示重新导出，内容与当时确认稿一致。不默认公开托管，不承诺已导出图片可远端撤回，不附带协作编辑权限。
 
 ## VPJ-50
 
@@ -1195,13 +1209,14 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-55.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-55.md`, `docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
 - [ ] Share Extension/Files沿已验材料通道投递，支持一类限定页数PDF并保持关键字段校正。
 - [ ] Universal Link/邀请/登录回跳/未安装回退/链接过期都有明确路径，安装后不承诺系统无法保证的自动传递。
 - [ ] AppGroup按账号命名空间、TTL/退出/删除清理；恶意文件/重复导入不覆盖Trip。
+- [ ] 体验增量2026-09-17：限定PDF沿#201已验校正与去重合同，将原固定活动/订单保留并展示新增/重复/冲突，不因导入重生成全程；超出页数/格式时保留原文件及Trip并给明确退路，不静默截断。已有行程、账号回跳与用户原意一致，不扩张为任意Word/Excel解析。
 
 ## VPJ-56
 
@@ -1403,7 +1418,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: Baseline PR merged, all implementation blockers resolved and interfaces available. Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=NO，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-65.md`, `docs/contracts/vp-response-policy.md`, `docs/harness/hf-reuse/README.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-65.md`, `docs/contracts/vp-response-policy.md`, `docs/harness/hf-reuse/README.md`, `docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md`
 - 不得触碰: No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.
 - Rollback: Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.
 
@@ -1412,6 +1427,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 整条有依据Proposal→diff→确认→TripItemSupport→以后重验可追溯。
 - [ ] 计划适合度由最新明确需求与相关基础偏好参与，但步行量、时间、地点和可行性仍需同口径合格证据；不得因品牌个性化而放宽来源或晚餐锁。
 - [ ] HF复用：借TravelPlanner等的有限约束检查结构并用独立oracle验最终计划，保留真实来源/版本/时区/用户约束；不执行外部hard_logic_py/任意DSL，不将ChinaTravel/Open-Travel的NC数据或历史价目直接导入商业运行链。
+- [ ] 体验增量2026-09-17：计划核验覆盖机场/站场到住宿、跨城、换酒店取行李、固定预约报到及末班风险；基于实际地点、日期/时区、同行与行李约束核对门到门时间及必要缓冲。更改机场/酒店后重验受影响段，固定预约不被普通估算静默顺移；缺可靠路线依据保留待核。
+- [ ] 体验增量2026-09-17：当前展开天次的餐饮/活动候选与路线、开放/预约条件相容；不强迫用户保留的自由时段绑定商户，不制造未选餐厅或实时席位。可靠缺口交给#211形成有依据的下一步，未确认提案不修改Trip；#265复用同口径少走路与已确认晚餐保持验收。
 
 ## VPJ-66
 

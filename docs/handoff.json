@@ -59,7 +59,8 @@
     "2026-09-12 JT明确同意仅暂停main自动Production构建。单字段guard已应用，PR332合并后真实Production构建CANCELED且全部线上alias保留db5fb7b；Preview/Staging不变。此授权不包含新的Production发布或解除guard。",
     "2026-09-14 JT authorizes unblocking Issues as actual dependencies permit and developing in order; labels are not an additional gate. Preserve unmet acceptance, production protection and complete parent tracking.",
     "2026-09-15 JT要求：当前模型提案这一轮处理完成后暂停。完成当前PR/CI与证据收尾，不启动下一轮，不建立继续开发的自动化。",
-    "2026-09-16: JT gave explicit in-chat resume authorization for VPJ-75 (#359) this round, recorded here and in the PR/issue thread; the 2026-09-15 no-next-round-without-resume pause governed exactly one round and does not carry forward automatically."
+    "2026-09-16: JT gave explicit in-chat resume authorization for VPJ-75 (#359) this round, recorded here and in the PR/issue thread; the 2026-09-15 no-next-round-without-resume pause governed exactly one round and does not carry forward automatically.",
+    "2026-09-17 JT授权将TourMind/JourniOne研究建议写入VP规划与现有Issue。体验增量见docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md：先交可用成果、自然下一步、同Trip视图/局部影响、住宿与路线衔接、保留原安排的导入、本地隐私分享。复用14个开放任务；不重开已闭#206、不增加Program/依赖、不扩大酒店交易或公开托管范围。用户已授权Issue正文同步；规划PR合入状态与功能实现/运行验收分别核对。"
   ],
   "changedFiles": [
     "lib/server/knowledge/wiki/proposals.ts",
