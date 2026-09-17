@@ -27,3 +27,10 @@ run: 12 passed, 3 failed in existing `NativeTripStateTests` synthetic login
 setup. The same `testLateRefreshCannotReviveSessionAfterTripDenial` fails at the
 same assertion on the unchanged #470 checkout; this failure is retained, not
 attributed to the screenshot change or reclassified as a pass.
+
+PR #472's first Native CI run failed two `AppShellUITests` contrast audits:
+the new preview button shifted existing Trip text beneath the translucent
+tab bar. The button was moved to the Trip navigation toolbar. The affected
+light/dark, zh/en accessibility audits and both screenshot-entry UI tests
+then passed locally (4/4, zero skipped). The original CI failure remains
+recorded; the updated PR head still requires a fresh Native CI pass.
