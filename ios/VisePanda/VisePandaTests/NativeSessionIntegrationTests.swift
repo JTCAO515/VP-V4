@@ -2,11 +2,14 @@ import XCTest
 @testable import VisePanda
 
 nonisolated final class NativeSessionIntegrationTests: XCTestCase {
+    private static var localAPIOrigin: String {
+        ProcessInfo.processInfo.environment["VP_NATIVE_API_ORIGIN"] ?? "http://127.0.0.1:59731"
+    }
     @MainActor
     func testStagingEndpointIsBuildBoundAndRejectsFallbackOrCredentialDestinations() {
         let host = "vp-v4-syntheticonly-jtcao515s-projects.vercel.app"
         let configured = ["VisePandaNativeEnvironment": "staging", "VisePandaStagingAPIOrigin": "https://" + host]
-        let args = ["-VisePandaNativeAPI", "http://127.0.0.1:59731"]
+        let args = ["-VisePandaNativeAPI", Self.localAPIOrigin]
         XCTAssertEqual(NativeSession.resolveEndpoint(arguments: args, bundleConfiguration: configured)?.absoluteString, "https://" + host)
         XCTAssertNil(NativeSession.resolveEndpoint(arguments: ["-VisePandaNativeAPI", "https://" + host], bundleConfiguration: [:]))
         for raw in ["http://" + host, "https://user:secret@" + host, "https://" + host + ":443", "https://" + host + "/path", "https://" + host + "?q=1", "https://" + host + "#fragment", "https://" + host + ".attacker.test", "https://vp-v4.vercel.app"] {

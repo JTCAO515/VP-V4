@@ -7,7 +7,8 @@ nonisolated final class NativeIdentityUITests: XCTestCase {
             throw XCTSkip("UNRUN: explicit disposable local identity environment is not configured")
         }
         let application = XCUIApplication()
-        application.launchArguments = ["-VisePandaNativeAPI", "http://127.0.0.1:59731", "-VisePandaLocale", "en"]
+        let origin = ProcessInfo.processInfo.environment["VP_NATIVE_API_ORIGIN"] ?? "http://127.0.0.1:59731"
+        application.launchArguments = ["-VisePandaNativeAPI", origin, "-VisePandaLocale", "en"]
         application.launch()
         application.tabBars.buttons["Profile"].tap()
         return application
