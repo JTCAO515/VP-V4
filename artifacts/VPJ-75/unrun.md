@@ -102,12 +102,31 @@ and `docs/contracts/wiki-generation-dispatch.md`.
   (not buried inside the collapsed sources details block, where the prior
   round's per-source note still also lives unchanged). It only marks the
   correlation for a human reviewer — it never hides, merges, blocks any
-  existing action, or retroactively invalidates the revision itself. Still
-  not done: no automated scan of in-flight jobs or already-generated pages
-  against newly-withdrawn sources (the flag only appears when an operator
-  actually reads that specific page), and it is scoped to the two revisions
-  (current + previous) the existing read RPC already returns, not full
-  history. ~~No `/ops/wiki` UI for seeing withdrawal
+  existing action, or retroactively invalidates the revision itself. It is
+  scoped to the two revisions (current + previous) the existing read RPC
+  already returns, not full history — that scope is unchanged by the
+  automated scan below, which shares it. ~~No automated scan of in-flight
+  jobs or already-generated pages against newly-withdrawn sources (the flag
+  only appears when an operator actually reads that specific page)~~
+  **DONE 2026-09-17 (round 20)**, see
+  `docs/contracts/wiki-withdrawal-scan.md` and
+  `wiki-withdrawal-scan-20260917/verification.md`. A new nullable column,
+  `wiki_generation_jobs.source_revision_ids`, is recorded only at `claim()`
+  time (every existing check/branch/statement in `ops_wiki_generation_v1` is
+  byte-for-byte unchanged except this one additive assignment, present in
+  both the fresh-insert and the terminal-job-reclaim branches). A new
+  read-only RPC, `ops_wiki_withdrawal_scan_v1`, scans **every** page's
+  current/previous revision and **every** `queued`/`running` job (not just
+  the one page an operator happens to be viewing) for one citing a
+  withdrawn source, and `/ops/wiki`'s landing view now renders this as a
+  bilingual advisory panel, on its own poll cycle, independent of and never
+  blocking the existing page lookup/list. Still marking-only — nothing is
+  cancelled, hidden, retried or retroactively invalidated by this scan. A
+  job claimed before this migration has `source_revision_ids = null` and is
+  simply excluded, not reconstructed. There is still no periodic/background
+  trigger or notification (email/webhook) — this is a pull-based RPC the UI
+  polls on its own existing refresh cadence, not a server-side scheduler.
+  ~~No `/ops/wiki` UI for seeing withdrawal
   status~~ **DONE 2026-09-17** for the "seeing" half only, see
   `wiki-read-withdrawal-status-20260917/verification.md` and
   `docs/contracts/wiki-source-withdrawal-status-ui.md` — a new migration
@@ -134,13 +153,15 @@ statement proposals, stale-job reclaim, the withdrawn-source dispatch
 barrier, UI wiring for the structural conflict flag (2026-09-17), surfacing
 a withdrawn source's status in `/ops/wiki` (read-only, 2026-09-17), a
 write-path `/ops/wiki` action to actually withdraw a source (2026-09-17,
-round 18), and a revision-level "cites a withdrawn source" marking-only flag
-(2026-09-17, round 19) are done (see each item above and
-`docs/knowledge-upgrade/README.md`'s dated log for what each one actually
-covers and what it does not). Structural conflict detection and
+round 18), a revision-level "cites a withdrawn source" marking-only flag
+(2026-09-17, round 19), and an automated all-pages/all-in-flight-jobs
+withdrawn-source scan (2026-09-17, round 20) are done (see each item above
+and `docs/knowledge-upgrade/README.md`'s dated log for what each one
+actually covers and what it does not). Structural conflict detection and
 fixture-only injection/multi-source-binding coverage are partially done
 (2026-09-16, statement-proposal job only); real-model injection resistance,
-true multi-source page synthesis, automated newly-withdrawn-source scanning
-(against in-flight jobs or already-generated pages an operator is not
-currently viewing), real per-call RMB reconciliation, and Docling
-integration remain not started.
+true multi-source page synthesis, real per-call RMB reconciliation, and
+Docling integration remain not started. The automated scan (round 20) is
+pull-based (an RPC the UI polls) — a periodic/scheduled server-side trigger
+or an outbound notification (email/webhook) for it remains not started and
+would need real delivery infrastructure this sandbox does not have.
