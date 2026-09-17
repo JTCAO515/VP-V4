@@ -92,3 +92,38 @@ Database Settings supplied the official CA download link. These are connection m
 access. The user has been given the one-command hidden-input tutorial; authenticated SQL results
 remain pending until that operator step completes. The legacy worker SQL profile's transaction
 connection check is explicitly distinct from a running SystemDataAdapter or a provider worker task.
+
+## Operator results and actual worker connection — later same day
+
+Authenticated Session5432 and Transaction6543 SQL both PASS in
+[operator attempt2](connections-operator-attempt2.json) and
+[operator attempt4](connections-operator-attempt4.json): current/session identity and database match,
+read-only transaction enforced, UPDATE remains revoked,50 migrations/7Auth/3Trips observed.
+[Attempt1](connections-operator-attempt1.json) and [attempt3](connections-operator-attempt3.json) returned
+authentication failures and stopped further password attempts; these failures are retained. No reset
+was needed. The initial `dquote>` was an incomplete shell quote before script startup; the tutorial
+now includes Control+C and a quote-free absolute command.
+
+For direct5432, the existing Shadowrocket HTTP proxy returns503 for hostname CONNECT, but200 for
+the public AAAA IPv6 target. The temporary loopback relay uses that same existing proxy without
+changing any settings; both Python TLS and libpq retain the original DB hostname and official CA.
+[Direct proxy TLS preflight](connections-direct-proxy-preflight.json) PASS. Authenticated direct SQL
+awaits the user's new hidden-input command; this is not an assertion that unproxied IPv6 works.
+
+[Actual worker idle report](worker-idle.json):11/11 PASS at2026-09-17T05:04:55Z. This invokes the
+repository's existing `createScopedTextWorker` through a real server credential/HTTP RPC. Preflight
+checks nonexistent random owner/policy/budget IDs, exact current claim function source hashes and
+service-only grants. A real anonymous call is denied; the real worker returns `empty` after exactly
+one real claim request. The guard rejects every other scope/RPC; the inert provider transport is
+never called. Full Auth/Trip/work/policy/budget row digests remain unchanged. No fixture, policy,
+lease, model request or budget attempt is created.
+
+This is **PASS_EMPTY_POLL_ONLY**: not full task/provider execution, not a deployed SQL
+SystemDataAdapter, and not the complete worker isolation matrix. Those remaining acceptance items
+stay visible and #189 remainsOPEN. The current HTTP worker source is reused; no new worker
+architecture or role grants are introduced to manufacture a connection result.
+
+Tests:16/16 scoped Node tests (including a wrapper for9 Python security/relay/result cases), plus
+9/9 existing scoped-worker security tests PASS. Independent reviews cleared both the temporary
+relay and real idle-poll boundary before their use. Docs/diff checks PASS; final CI remains tracked
+on PR440's current commit rather than reusing an earlier commit's CI result.

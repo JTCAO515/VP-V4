@@ -1,5 +1,7 @@
 """Bounded operator-run SQL connection checks; no stored credential or remote writes."""
 import argparse
+from contextlib import ExitStack
+from vpj02_proxy import direct_relay
 import datetime
 import getpass
 import hashlib
@@ -80,7 +82,7 @@ def verify_result(raw, local_versions):
             'tripCount': value['tripCount'], 'migrationCount': len(versions)}
 
 
-def tls_probe(host, port, ca_path):
+def tls_probe(host, port, ca_path, connect_address=None):
     result = {'host': host, 'port': port, 'tls': 'FAIL', 'sql': 'UNRUN'}
     try:
         resolved = socket.getaddrinfo(host, port, type=socket.SOCK_STREAM)
@@ -89,7 +91,7 @@ def tls_probe(host, port, ca_path):
             item[0] == socket.AF_INET and ipaddress.ip_address(item[4][0]) in ipaddress.ip_network('198.18.0.0/15')
             for item in resolved)
         context = ssl.create_default_context(cafile=str(ca_path))
-        with socket.create_connection((host, port), timeout=8) as connection:
+        with socket.create_connection(connect_address or (host, port), timeout=8) as connection:
             connection.settimeout(8)
             connection.sendall(bytes.fromhex('0000000804d2162f'))
             if connection.recv(1) != b'S':
@@ -106,6 +108,7 @@ def tls_probe(host, port, ca_path):
 def main():
     parser = argparse.ArgumentParser(description='VPJ-02 指定 Staging 只读连接验证。密码仅在终端隐藏输入。')
     parser.add_argument('--preflight', action='store_true', help='仅检查 DNS/TLS，不索取密码')
+    parser.add_argument('--direct-via-existing-proxy', action='store_true', help='仅验证直连：临时本地转发，经现有127.0.0.1:1082代理使用公开AAAA地址；不改网络配置')
     args = parser.parse_args()
     report = {'project': REF, 'startedAt': datetime.datetime.now(datetime.timezone.utc).isoformat(),
               'workerRuntime': 'UNRUN: transaction connection profile is not a running SystemDataAdapter', 'paths': {}}
@@ -115,7 +118,10 @@ def main():
     os.close(fd)
     exit_code = 1
     try:
-        with tempfile.TemporaryDirectory(prefix='vpj02-ca-') as temporary:
+        with ExitStack() as stack:
+            temporary = stack.enter_context(tempfile.TemporaryDirectory(prefix='vpj02-ca-'))
+            relay = stack.enter_context(direct_relay()) if args.direct_via_existing_proxy else None
+            targets = (('directViaExistingProxy', *TARGETS[0][1:]),) if relay else TARGETS
             ca = Path(temporary) / 'root.crt'
             with urllib.request.urlopen(CA_URL, timeout=15) as response:
                 data = response.read(32769)
@@ -123,8 +129,10 @@ def main():
                 raise ValueError('CA_CHANGED_OR_INVALID')
             ca.write_bytes(data)
             report['caSha256'] = CA_SHA256
-            for name, host, port, _ in TARGETS:
-                report['paths'][name] = tls_probe(host, port, ca)
+            for name, host, port, _ in targets:
+                report['paths'][name] = tls_probe(host, port, ca, relay)
+                if relay:
+                    report['paths'][name]['route'] = 'existing-loopback-HTTP-proxy-to-public-IPv6; original TLS hostname'
             if args.preflight:
                 report['status'] = 'PREFLIGHT_ONLY'
                 return 0 if all(p['tls'] == 'PASS' for p in report['paths'].values()) else 1
@@ -141,15 +149,18 @@ def main():
             if not password or '\x00' in password:
                 raise ValueError('PASSWORD_INPUT_INVALID')
             local = sorted(p.name[:14] for p in (ROOT / 'supabase/migrations').glob('*.sql'))
-            for name, host, port, user in TARGETS:
+            for name, host, port, user in targets:
                 entry = report['paths'][name]
                 if entry['tls'] != 'PASS':
                     continue
                 try:
+                    environment = sql_environment(password, ca)
+                    if relay:
+                        environment['PGHOSTADDR'] = relay[0]
                     completed = subprocess.run([psql, '-X', '-w', '-A', '-t', '-q', '-v', 'ON_ERROR_STOP=1',
-                                                '-h', host, '-p', str(port), '-U', user, '-d', 'postgres'],
+                                                '-h', host, '-p', str(relay[1] if relay else port), '-U', user, '-d', 'postgres'],
                                                input=SQL, capture_output=True, text=True, timeout=25,
-                                               env=sql_environment(password, ca))
+                                               env=environment)
                     if completed.returncode:
                         entry.update(sql='FAIL', reason=error_kind(completed.stderr))
                         if entry['reason'] == 'AUTHENTICATION_FAILED':

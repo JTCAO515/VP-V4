@@ -69,5 +69,31 @@ class ConnectionCheckTests(unittest.TestCase):
             self.assertEqual(result['tls'],'PASS')
             self.assertEqual(context.return_value.wrap_socket.call_args.kwargs['server_hostname'],'example.test')
 
+    def test_proxy_rejects_private_ipv6_and_non_ipv6_destinations(self):
+        from vpj02_proxy import public_ipv6
+        for address in ('127.0.0.1','::1','fe80::1','fd00::1','not-an-ip'):
+            with self.assertRaises(ValueError):
+                public_ipv6(address)
+
+    def test_proxy_failure_closes_socket(self):
+        import vpj02_proxy
+        with patch.object(vpj02_proxy.socket,'create_connection') as connection:
+            stream = connection.return_value
+            stream.recv.side_effect = [bytes([x]) for x in b'HTTP/1.1 503 Error\r\n\r\n']
+            with self.assertRaises(ValueError):
+                vpj02_proxy.connect_proxy('2606:4700:4700::1111')
+            stream.close.assert_called_once()
+
+    def test_relay_does_not_change_tls_verification_hostname(self):
+        with patch.object(check.socket,'getaddrinfo',return_value=[]), \
+             patch.object(check.ssl,'create_default_context') as context, \
+             patch.object(check.socket,'create_connection') as connection:
+            connection.return_value.__enter__.return_value.recv.return_value = b'S'
+            context.return_value.wrap_socket.return_value.__enter__.return_value.version.return_value = 'TLSv1.2'
+            result = check.tls_probe('original.example',5432,'ca',('127.0.0.1',43210))
+            self.assertEqual(result['tls'],'PASS')
+            self.assertEqual(connection.call_args.args[0],('127.0.0.1',43210))
+            self.assertEqual(context.return_value.wrap_socket.call_args.kwargs['server_hostname'],'original.example')
+
 if __name__ == '__main__':
     unittest.main()

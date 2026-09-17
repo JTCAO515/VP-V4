@@ -1,0 +1,55 @@
+{
+  "project": "dzqdzetcctkhbrhlxxgn",
+  "startedAt": "2026-09-17T04:53:14.774741+00:00",
+  "workerRuntime": "UNRUN: transaction connection profile is not a running SystemDataAdapter",
+  "paths": {
+    "direct": {
+      "host": "db.dzqdzetcctkhbrhlxxgn.supabase.co",
+      "port": 5432,
+      "tls": "FAIL",
+      "sql": "UNRUN",
+      "ipv6Available": false,
+      "proxyBenchmarkAddress": true,
+      "reason": "POSTGRES_TLS_NOT_ESTABLISHED"
+    },
+    "sessionPooler": {
+      "host": "aws-0-ap-southeast-1.pooler.supabase.com",
+      "port": 5432,
+      "tls": "PASS",
+      "sql": "PASS",
+      "ipv6Available": false,
+      "proxyBenchmarkAddress": true,
+      "tlsVersion": "TLSv1.2",
+      "result": {
+        "expectedIdentity": true,
+        "expectedDatabase": true,
+        "readOnly": true,
+        "directTripUpdateRevoked": true,
+        "authCount": 7,
+        "tripCount": 3,
+        "migrationCount": 50
+      }
+    },
+    "transactionPoolerProfile": {
+      "host": "aws-0-ap-southeast-1.pooler.supabase.com",
+      "port": 6543,
+      "tls": "PASS",
+      "sql": "PASS",
+      "ipv6Available": false,
+      "proxyBenchmarkAddress": true,
+      "tlsVersion": "TLSv1.2",
+      "result": {
+        "expectedIdentity": true,
+        "expectedDatabase": true,
+        "readOnly": true,
+        "directTripUpdateRevoked": true,
+        "authCount": 7,
+        "tripCount": 3,
+        "migrationCount": 50
+      }
+    }
+  },
+  "caSha256": "700723581420dd1ac98fd7e9ac529f0ef210eadcaf87fc868a3ad7d114c2f3b7",
+  "status": "INCOMPLETE",
+  "completedAt": "2026-09-17T04:53:24.909843+00:00"
+}

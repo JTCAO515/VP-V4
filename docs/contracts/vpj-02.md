@@ -15,11 +15,18 @@ other-user and anon read/write checks. Direct Trip PATCH remained denied, includ
 Exact fixture IDs were cleaned and final Auth/Trip/session absence and original-data preservation
 passed. See [dated evidence](../../artifacts/VPJ-02/staging-verification-20260917/verification.md).
 
-Management API and ordinary HTTP JWT are separately observed paths. Current-device direct database,
-Session pooler and worker connection identity remain UNRUN because no verified connection credential
-is configured. Historical direct-host FAIL and Session pooler PASS are retained in
-[2026-09-10 evidence](../../artifacts/VPJ-02/staging-apply-20260910.md); they are not fresh-device results.
-Do not simulate a worker with administrative SQL and count that as worker acceptance.
+Management API, ordinary HTTP JWT, Session5432 and Transaction6543 read-only SQL are now
+separately observed. The two pooler paths return the expected database/session identity and
+50 migrations/7 Auth/3 Trips. Two failed password attempts are retained alongside two successful
+operator runs. No password reset was needed. Direct5432's normal path still closes before TLS;
+a temporary relay through the existing local proxy and public IPv6 target passes official-CA/
+hostname TLS verification, with authenticated direct SQL still pending the operator command.
+
+The actual existing HTTP scoped worker passes11 empty-poll checks, including server identity
+access, anon rejection, exact claim source/grants and unchanged queue/policy/budget/original data.
+This is empty-poll connection evidence only. Full task execution/provider behavior and the legacy
+SQL SystemDataAdapter runtime are not established, and parent#189 remainsOPEN. Historical
+[2026-09-10 evidence](../../artifacts/VPJ-02/staging-apply-20260910.md) keeps its original scope.
 
 No migrations, ACL/roles, provider work, Production configuration or release state were changed in
 this round. Cleanup never restores original data or broadens permissions. Complete TripProposal,

@@ -2,7 +2,7 @@
 
 ## Current update — 2026-09-17
 
-See [current real verification](staging-verification-20260917/verification.md):50 matching migrations,11 pending,29/29 real target checks PASS; exact fixture cleanup and original7 Auth/3 Trip digest preservation PASS. Current-device direct database, Session pooler and worker connection identity remain UNRUN. Parent#189 remains OPEN. The dated26/33 prerequisite descriptions below are historical and must not drive reapplication.
+See [current real verification](staging-verification-20260917/verification.md):50 matching migrations,11 pending,29/29 real target checks PASS; exact fixture cleanup and original7 Auth/3 Trip digest preservation PASS. Current-device Session/Transaction pooler SQL now PASS; direct-via-existing-proxy TLS PASS but its SQL awaits the operator command. Actual HTTP worker idle poll PASS; full worker task execution and legacy SQL adapter remain unrun. Parent#189 remains OPEN. The dated26/33 prerequisite descriptions below are historical and must not drive reapplication.
 
 ## Historical record
 

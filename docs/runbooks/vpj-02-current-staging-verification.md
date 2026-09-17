@@ -129,3 +129,38 @@ provider/budget/claim语义的执行链。这里只读SQL连接通过不等于�
 
 参考：[连接方式](https://supabase.com/docs/guides/database/connecting-to-postgres)、
 [官方SSL/CA说明](https://supabase.com/docs/guides/platform/ssl-enforcement)。
+
+### 仅直连：沿用现有代理，不改系统配置
+
+本机Shadowrocket的现有HTTP代理为127.0.0.1:1082。实测以数据库域名CONNECT返回503，以公开AAAA
+地址CONNECT返回200，且原数据库hostname和官方CA校验通过。可使用临时回环转发，仅为此次psql
+连接指定地址；TLS仍校验原数据库域名。它不是Session/Transaction pooler，也不代表无代理直连。
+
+在终端执行以下完整一行（此路径没有空格，不需要引号）：
+
+```sh
+python3 -B /Users/jtsm5p/Documents/ChatGPT/VP-V4-staging-verification/scripts/db/vpj-02-connection-check.py --direct-via-existing-proxy
+```
+
+看到密码提示后输入之前已验证正确的数据库密码。完成后回复“直连验证已执行”。若出现`dquote>`，
+说明复制的引号不完整：按Control+C回到`%`提示符，再执行上述无引号命令。不要在`dquote>`处输密码。
+
+该模式只测试direct5432，通过HTTPS查询公开数据库主机名的AAAA记录，拒绝私有/非IPv6目的地址，
+并使用已在本机运行的代理。临时监听仅绑定127.0.0.1，退出即关闭；不切换节点、修改DNS/VPN或安装
+付费IPv4。CA和hostname验证依然强制执行，不能用IP替代证书校验名。此模式依赖该本机代理端口；
+其他机器需先核对环境，不沿用端口假设。`--preflight --direct-via-existing-proxy`只检查网络/TLS。
+
+### 现有HTTP worker的空轮询连接检查
+
+`scripts/db/vpj-02-worker-idle.mjs`复用当前`createScopedTextWorker`。它先验证随机owner/policy/
+budget scope均不存在、当前claim函数源码与已审迁移一致、服务端专用EXECUTE权限未放宽，再执行
+一次真实HTTP空轮询。传输守卫只放行该次精确参数的claim RPC，服务端响应不被替换；所有其他RPC、
+预算和provider调用均拒绝。前后比较Auth/Trip/queue/policy/budget完整行摘要，原数据变化即FAIL。
+
+```sh
+node --experimental-strip-types scripts/db/vpj-02-worker-idle.mjs dzqdzetcctkhbrhlxxgn
+```
+
+使用已登录CLI的既有服务凭据，不需要用户提供或保存API key。结果`PASS_EMPTY_POLL_ONLY`只证明
+实际HTTP worker服务身份/空范围连接，不证明真实任务领取执行、模型调用、完整worker隔离矩阵或
+旧SQL SystemDataAdapter已运行；这些验收不能用空轮询替代。
