@@ -1,4 +1,6 @@
 {"command":"node --experimental-strip-types --test tests/security/model-gateway/provider-protocol/boundaries.test.ts","exitCode":0,"startedAt":"2026-09-09T17:14:44.219Z","finishedAt":"2026-09-09T17:14:45.295Z","env":"local"}
+{"command":"node --check scripts/eval/run-wiki-statement-proposals-injection-real-model.mjs","exitCode":0,"scope":"2026-09-17 DeepSeek model-ID historical-record correction"}
+{"command":"git diff --check","exitCode":0,"scope":"2026-09-17 DeepSeek model-ID historical-record correction"}
 {"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-09-09T17:14:42.917Z","finishedAt":"2026-09-09T17:14:46.762Z","env":"local"}
 {"command":"pnpm evals","exitCode":0,"startedAt":"2026-09-09T17:14:46.685Z","finishedAt":"2026-09-09T17:14:48.992Z","env":"local"}
 {"command":"pnpm test:unit","exitCode":0,"startedAt":"2026-09-09T17:14:45.631Z","finishedAt":"2026-09-09T17:14:57.078Z","env":"local"}

@@ -1,5 +1,13 @@
 # VPJ-06 provider protocol verification
 
+## DeepSeek model-ID record correction — 2026-09-17
+
+The historical real API rejection of `deepseek-v4-flash` is retained as a
+protocol finding. Main commit `27b968c` corrected the gateway profile to
+`deepseek-flash`; the Qwen-only injection probe comment now records that state
+and does not imply a new DeepSeek call. `node --check` and `git diff --check`
+pass. A fresh billed DeepSeek protocol/usage observation remains separate.
+
 Latest actual C0 conformance is recorded in [2026-09-10 results](live-c0-20260910/verification.md). The following section is the original offline preparation evidence.
 
 Related to #193; baseline `080d5f0aa2a1e8976d9dc75b8c22207801d87fc4`.

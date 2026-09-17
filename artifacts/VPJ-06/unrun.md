@@ -10,6 +10,7 @@ boundaries and two real-call worker duplicate/crash proofs. See
   public-tariff budget debit; no-usage failures/cancellations retain full reservations.
 - Serving regions beyond the selected documented endpoints and complete account product
   entitlements are not independently verified by successful key use.
+- The corrected `deepseek-flash` ID has not yet received a fresh billed protocol/usage run; the historical `deepseek-v4-flash` rejection is not a current success observation.
 - ModelProfileId still lacks GLM and the public ModelAttemptOutcome lacks full usage/tool
   candidate shape. Registry/route and customer/native/worker/TurnCoordinator integration
   remain unactivated; C0 caller evidence cannot substitute for those interfaces.
