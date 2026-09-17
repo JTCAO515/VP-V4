@@ -1,4 +1,5 @@
 {"command":"node --experimental-strip-types --test tests/security/model-gateway/provider-protocol/boundaries.test.ts","exitCode":0,"startedAt":"2026-09-09T17:14:44.219Z","finishedAt":"2026-09-09T17:14:45.295Z","env":"local"}
+{"command":"authorized one-shot DeepSeek C0 protocol probe","exitCode":0,"provider":"deepseek","requestedModel":"deepseek-flash","servedModel":"deepseek-flash","protocolOutcome":"protocol_validated","usage":{"inputTokens":92,"outputTokens":13,"totalTokens":105,"cachedInputTokens":0,"uncachedInputTokens":92,"reasoningTokens":null},"elapsedMs":1042,"actualBilledCost":"unknown","scope":"2026-09-17 user-authorized, one request, CNY30 cap, no retry/fallback/tool/user data"}
 {"command":"node --check scripts/eval/run-wiki-statement-proposals-injection-real-model.mjs","exitCode":0,"scope":"2026-09-17 DeepSeek model-ID historical-record correction"}
 {"command":"git diff --check","exitCode":0,"scope":"2026-09-17 DeepSeek model-ID historical-record correction"}
 {"command":"pnpm test:contract","exitCode":0,"startedAt":"2026-09-09T17:14:42.917Z","finishedAt":"2026-09-09T17:14:46.762Z","env":"local"}

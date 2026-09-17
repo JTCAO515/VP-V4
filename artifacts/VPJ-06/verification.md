@@ -1,5 +1,14 @@
 # VPJ-06 provider protocol verification
 
+## DeepSeek Flash correction probe — 2026-09-17
+
+PASS: one user-authorized C0 synthetic `strict_known_unknown` request used the
+corrected `deepseek-flash` model through the real provider-protocol and bounded
+HTTP transport path. The response passed protocol validation with 92 input,
+13 output and105 total tokens in1042ms; cache hit/miss was0/92. No retry,
+fallback, tool execution, user/Trip content, raw response or credential was
+recorded. Actual invoice cost remains unknown.
+
 ## DeepSeek model-ID record correction — 2026-09-17
 
 The historical real API rejection of `deepseek-v4-flash` is retained as a
