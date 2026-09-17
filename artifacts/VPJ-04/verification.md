@@ -49,3 +49,16 @@ See [request-lifetime evidence](native-io/verification.md). The local handler no
 input and all credential/claim/RPC work, preserves503 unknown outcomes, and distinguishes upstream
 failure from explicit401 credential denial. Exact login session/attempt retry and local-only
 activation remain. No Swift, remote profile, shared/remote schema or user policy was changed.
+
+## 2026-09-17 current-main runner recovery preparation
+
+The identity runner now accepts an explicit `VP_SUPABASE_CLI` path and an optional `--simulator`
+mode. It dynamically creates/deletes two owned iPhone 17 Pro simulators, builds the current scheme
+into a private temporary DerivedData directory, injects the current loopback API origin into the
+test run, and cleans synthetic Auth users, the owned server and the disposable stack on every path.
+Swift tests no longer hard-code port 59731 when the runner provides `VP_NATIVE_API_ORIGIN`.
+
+`node --check`, `xcodebuild build-for-testing`, current identity contract/security coverage,
+`pnpm docs:check`, and `git diff --check` pass. The actual disposable database execution remains
+blocked before user setup by the exact historical migration inventory error recorded in `unrun.md`.
+No test result is claimed for the new simulator path until that VPJ-02-owned replay defect is fixed.

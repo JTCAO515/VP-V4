@@ -9,3 +9,7 @@
 {"command":"pnpm test:unit","exitCode":0,"startedAt":"2026-09-09T17:43:47.503Z","finishedAt":"2026-09-09T17:43:53.619Z","env":"local"}
 {"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-09-09T17:44:33.420Z","finishedAt":"2026-09-09T17:44:33.714Z","env":"local"}
 {"command":"git diff --cached --check","exitCode":0,"startedAt":"2026-09-09T17:44:33.775Z","finishedAt":"2026-09-09T17:44:33.786Z","env":"local"}
+{"at":"2026-09-17T05:49:44Z","scope":"VPJ-04 current-main rerun","command":"node --check tests/integration/identity/run-native-io.mjs","result":"PASS"}
+{"at":"2026-09-17T05:49:44Z","scope":"VPJ-04 current-main rerun","command":"xcodebuild build-for-testing VisePanda current source","result":"PASS"}
+{"at":"2026-09-17T05:49:44Z","scope":"VPJ-04 current-main rerun","command":"VP_SUPABASE_CLI=<official CLI> node tests/integration/identity/run-native-io.mjs","result":"FAIL before account creation: historical VPJ-04 migration rejects current public definer inventory; disposable workdir removed"}
+{"at":"2026-09-17T05:49:44Z","scope":"VPJ-04 current-main rerun","command":"pnpm test:contract; pnpm test:security","result":"PASS contract; security 149 pass, 1 existing environment skip (incomplete)"}
