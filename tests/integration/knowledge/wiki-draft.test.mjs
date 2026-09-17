@@ -426,6 +426,83 @@ test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACL
     assert.equal((await call(author,'ops_wiki_read_v1',{pageKey:barrierProposalPageKey})).version,0,'the rejected structured-proposal completion must not have written a revision');
   });
 
+  const readWithdrawSourceId=uuid();
+  const readWithdrawSource={...source,sourceKey:'read_withdrawal_source',snippet:'Synthetic read-withdrawal source material.'};
+  const readWithdrawPageKey='source_summary:read-withdrawal-fixture';
+  await db(`insert into knowledge_review_private.source_revisions(id,source_key,revision_label,declaration,snippet_hash,submitted_by) values('${readWithdrawSourceId}','read_withdrawal_source','r1',${lit(JSON.stringify(readWithdrawSource))},'${'8'.repeat(64)}','${author.id}');`);
+  const readWithdrawClaimInput={action:'claim',operationId:uuid(),pageType:'source_summary',pageKey:readWithdrawPageKey,sourceRevisionIds:[readWithdrawSourceId],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),inputDigest:'9'.repeat(64)};
+  const readWithdrawClaimed=await call(author,'ops_wiki_generation_v1',readWithdrawClaimInput);
+  const readWithdrawOutcome=await runWikiGenerationJob({pageType:'source_summary',pageKey:readWithdrawPageKey,sourceText:readWithdrawSource.snippet,promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),maxOutputTokens:1024,timeoutMs:5000,provider:{provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:uuid(),configurationVersion:1,timeoutMs:5000}}, {credential:()=> 'synthetic',recordDestination:async()=>{},fetch:async()=>Response.json({model:'qwen3.7-plus-2026-05-26',choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({summary:'Read-withdrawal fixture summary.',gaps:[]})}}],usage:{prompt_tokens:5,completion_tokens:5,total_tokens:10}})},new AbortController().signal);
+  // Persist the revision (citing readWithdrawSourceId) *before* the read-model
+  // migration below lands, exactly like linkSql/proposalMigration/reclaimSql/
+  // withdrawalMigration were each applied against data that predates them --
+  // proving this migration is a pure additive read-shape change, not something
+  // that requires re-generating existing revisions.
+  await t.test('read-withdrawal-status migration rolls back cleanly and preserves prior receipt replay',async()=>{
+    assert.equal(readWithdrawClaimed.kind,'claimed');
+    assert.equal(readWithdrawOutcome.kind,'succeeded');
+    const readWithdrawCompletion={operationId:uuid(),jobId:readWithdrawClaimed.jobId,claimToken:readWithdrawClaimed.claimToken,expectedVersion:readWithdrawClaimed.expectedVersion,sourceRevisionIds:[readWithdrawSourceId],statementRefs:[],promptVersion:'vp-wiki-generation-v1',configDigest:'a'.repeat(64),generatedAt:new Date().toISOString(),changeNote:'Persisted before the read-withdrawal-status migration lands'};
+    const completed=await completeWikiGenerationJob(rpc,readWithdrawCompletion,readWithdrawOutcome);
+    assert.equal(completed.data.kind,'succeeded');
+    assert.equal(Object.hasOwn((await call(author,'ops_wiki_read_v1',{pageKey:readWithdrawPageKey})).revisions[0].sources[0],'withdrawnAt'),false,'the field must not exist before this migration lands');
+
+    // Captured pre-migration, with the pre-migration source shape (no withdrawal
+    // fields yet) -- used below only to prove every *pre-existing* field on an
+    // unrelated page is preserved verbatim, not that the shape is byte-identical
+    // (it cannot be: this migration adds 3 fields to every source object, on
+    // every page, by design).
+    const beforeUnrelated=await call(author,'ops_wiki_read_v1',{pageKey});
+    const readWithdrawalMigration=readFileSync('supabase/migrations/20260917100000_vpj_75_359_wiki_read_withdrawal_status.sql','utf8');
+    await db('begin;'+readWithdrawalMigration+'rollback;');
+    assert.equal(Object.hasOwn((await call(author,'ops_wiki_read_v1',{pageKey:readWithdrawPageKey})).revisions[0].sources[0],'withdrawnAt'),false,'a rolled-back migration must not leave the new field behind');
+    await db('begin;'+readWithdrawalMigration+'commit;');
+    assert.equal(Object.hasOwn((await call(author,'ops_wiki_read_v1',{pageKey:readWithdrawPageKey})).revisions[0].sources[0],'withdrawnAt'),true,'the field must exist again once recommitted');
+    // Rollback+recommit of a pure `create or replace function` must not change
+    // any pre-existing field of an unrelated page's read output -- only the 3
+    // new withdrawal fields are added (each null, since this page's source was
+    // never withdrawn); this migration touches no table, row or other RPC.
+    const afterUnrelated=await call(author,'ops_wiki_read_v1',{pageKey});
+    for(const [i,revision] of afterUnrelated.revisions.entries()){
+      for(const key of Object.keys(beforeUnrelated.revisions[i]))if(key!=='sources')assert.deepEqual(revision[key],beforeUnrelated.revisions[i][key]);
+      for(const [n,src] of revision.sources.entries()){
+        for(const key of Object.keys(beforeUnrelated.revisions[i].sources[n]))assert.deepEqual(src[key],beforeUnrelated.revisions[i].sources[n][key]);
+        assert.equal(src.withdrawnAt,null);assert.equal(src.withdrawnBy,null);assert.equal(src.withdrawalReason,null);
+      }
+    }
+    assert.deepEqual(await completeWikiGenerationJob(rpc,completion,outcome),saved);
+  });
+
+  await t.test('read model surfaces a cited source\'s withdrawal status without altering the already-persisted revision',async()=>{
+    const beforeWithdrawal=await call(author,'ops_wiki_read_v1',{pageKey:readWithdrawPageKey});
+    assert.equal(beforeWithdrawal.revisions[0].sources[0].withdrawnAt,null);
+    assert.equal(beforeWithdrawal.revisions[0].sources[0].withdrawnBy,null);
+    assert.equal(beforeWithdrawal.revisions[0].sources[0].withdrawalReason,null);
+    const preWithdrawalDraft=beforeWithdrawal.revisions[0].draftContent;
+
+    await withdraw(author,readWithdrawSourceId,'Withdrawn after the revision was already persisted, to prove the read model surfaces this without altering the revision.');
+
+    const afterWithdrawal=await call(author,'ops_wiki_read_v1',{pageKey:readWithdrawPageKey});
+    const withdrawnSource=afterWithdrawal.revisions[0].sources[0];
+    assert.equal(withdrawnSource.id,readWithdrawSourceId);
+    assert.ok(withdrawnSource.withdrawnAt);
+    assert.equal(withdrawnSource.withdrawnBy,author.id);
+    assert.equal(withdrawnSource.withdrawalReason,'Withdrawn after the revision was already persisted, to prove the read model surfaces this without altering the revision.');
+    // No cascading revocation: the already-persisted revision body/version/status
+    // is untouched by a later withdrawal of one of its cited sources -- only the
+    // per-source withdrawal fields in the read response change. Matches
+    // docs/contracts/wiki-source-withdrawal.md's "no cascading revocation" boundary.
+    assert.equal(afterWithdrawal.version,beforeWithdrawal.version);
+    assert.deepEqual(afterWithdrawal.revisions[0].draftContent,preWithdrawalDraft);
+    assert.equal(afterWithdrawal.revisions[0].validationStatus,beforeWithdrawal.revisions[0].validationStatus);
+
+    // A page whose cited sources were never withdrawn keeps reading null fields --
+    // proving this is a real per-source lookup, not a page-wide or always-on flag.
+    const unrelated=await call(author,'ops_wiki_read_v1',{pageKey});
+    for(const s of unrelated.revisions.flatMap(r=>r.sources)){
+      assert.equal(s.withdrawnAt,null);assert.equal(s.withdrawnBy,null);assert.equal(s.withdrawalReason,null);
+    }
+  });
+
   if(process.env.VP_WIKI_BROWSER_FIXTURE==='1') {
     await db(`update knowledge_review_private.members set active=true where actor_id='${author.id}';`);
     await new Promise((resolve,reject)=>{

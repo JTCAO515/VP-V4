@@ -17,6 +17,20 @@ function structuralConflicts(draftContent: unknown): ReturnType<typeof conflicts
   if (!draftContent || typeof draftContent !== "object" || !("schemaVersion" in draftContent) || (draftContent as { schemaVersion: unknown }).schemaVersion !== "wiki-draft/2") return null;
   return conflictsByProposal(detectProposalConflicts(draftContent as StructuredWikiDraft));
 }
+/** Advisory-only: a cited source that has since been withdrawn (ops_source_revision_withdraw_v1).
+ * withdrawnAt/withdrawnBy/withdrawalReason are already present in the read response as of
+ * migration 20260917100000; this only renders them. Never hides the source, the revision or
+ * the "prepare/edit a statement" actions -- an already-generated draft is not retroactively
+ * retracted by this UI, matching docs/contracts/wiki-source-withdrawal.md's "no cascading
+ * revocation" boundary. Only a human decision (elsewhere) can act on this signal. */
+function sourceWithdrawalNote(locale: "zh" | "en", source: { withdrawnAt: string | null; withdrawalReason: string | null }): string | null {
+  if (!source.withdrawnAt) return null;
+  const at = new Date(source.withdrawnAt);
+  const when = Number.isNaN(at.getTime()) ? source.withdrawnAt : at.toLocaleString(locale === "zh" ? "zh-CN" : "en-US");
+  return locale === "zh"
+    ? `⚠ 此来源已于 ${when} 被撤回（原因：${source.withdrawalReason ?? "未记录"}）。基于此来源已生成的草稿不会被自动撤销或隐藏，请人工核实其是否仍可信。`
+    : `⚠ This source was withdrawn on ${when} (reason: ${source.withdrawalReason ?? "not recorded"}). Drafts already generated from it are not automatically retracted or hidden; verify manually whether they remain trustworthy.`;
+}
 
 export function OpsWikiWorkspace() {
   const [locale, setLocale] = useState<"zh" | "en">("zh");
@@ -84,6 +98,7 @@ export function OpsWikiWorkspace() {
         {revision.draftContent && 'schemaVersion' in revision.draftContent && (() => { const revisionConflicts = structuralConflicts(revision.draftContent); return <details><summary>{locale==='zh'?'此版本的声明提案':'Statement proposals in this revision'} ({revision.draftContent.statementProposals.length})</summary>{revision.draftContent.statementProposals.map((p,pi)=><section key={pi}><p className={styles.content}>{p.statement.expressions[locale].text}</p><ul>{p.statement.expressions[locale].conditions.map((v,n)=><li key={`c${n}`}>{v}</li>)}{p.statement.expressions[locale].exclusions.map((v,n)=><li key={`e${n}`}>{v}</li>)}</ul>{p.evidence.map((e,n)=><blockquote className={styles.content} key={n}>{e.quote}<p className={styles.meta}>{e.sourceRevisionId} · {e.startOffset}–{e.endOffset}</p></blockquote>)}{revisionConflicts?.get(pi)?.map((conflict,n)=><p key={`conflict-${n}`} role="alert" className={styles.conflict}>{locale==='zh'?`⚠ 与提案 #${conflict.other+1} 冲突（${c.conflictReason[conflict.reason]}）`:`⚠ Conflicts with proposal #${conflict.other+1} (${c.conflictReason[conflict.reason]})`}</p>)}</section>)}</details>; })()}
         <details><summary>{c.sources} ({revision.sources.length})</summary>{revision.sources.map((source, n) => <section key={`${source.id}:${n}`} className={styles.content}>
           <p>{source.id}</p>{source.missing ? <p>{c.absentSource}</p> : <><p>{source.declaration?.publisher} · {source.declaration?.revisionLabel}</p><p>{source.declaration?.uri}</p><p>{source.declaration?.locator}</p><blockquote>{source.declaration?.snippet}</blockquote></>}
+          {source.withdrawnAt && <p role="alert" className={styles.conflict}>{sourceWithdrawalNote(locale, source)}</p>}
         </section>)}</details>
         <details><summary>{c.metadata}</summary><p className={styles.content}>{revision.jobId}<br />{revision.generatedAt}<br />{revision.promptVersion}<br />{revision.configDigest}<br />{revision.inputDigest}</p></details>
       </article>)}
