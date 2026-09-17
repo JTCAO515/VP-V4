@@ -2,23 +2,20 @@
 
 Issue: [#190](https://github.com/JTCAO515/VP-V4/issues/190) · Program [VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187)
 
-**2026-09-16 审阅修正**：以当前源码入口和已归档运行证据为准，区分传输能力、历史实测与当前部署。
+**2026-09-17 完整性复核**：以当前源码入口、部署元数据、Staging policy registry 与已归档运行证据为准，区分传输能力、历史实测与当前部署。
 原复核遗漏了 `lib/server/jobs/run-staging-text-worker.mjs` 和 `run-staging-text-service.mjs`，
-不能据其搜索结果断言“零真实接收方”。本次不执行模型调用或修改运行配置。
+不能据其搜索结果断言“零真实接收方”。本轮没有执行模型调用或读取用户正文；发现一条仍有效但登记接收方/地域不完整的 GLM 内部测试 policy 后，已按其不可变 registry 的终态撤回机制撤销，旧调用会在派发前 fail-closed。
 
 ## 状态 / Status
 
 本文档记录**当前代码库已验证的真实行为**，不新增功能、不代表已对外发布的产品承诺。
-凡本仓库架构文档已将决定权明确保留给 operator 的事项（账号、地区、留存期限、合同、部署、对外承诺 —
-见 `docs/architecture/ai-02-vp-final-disposition-matrix.md` Owner 行），本文档如实标注为
-**「运营方待定」**，不代替 operator 做出该决定，也不发布为已生效的用户承诺。
+本文区分已经明确的文本保留/经营主体决定、实际部署或 policy registry 已观察的事实，以及仍未知的备份和供应商内部处理。本文不把历史开发 notice 变为面向公众的产品承诺。
 
 This document records **verified current implementation behavior only**. It is not a new
 feature and not a published product commitment. Any item this repository's own accepted
-architecture reserves for the operator (account, region, retention term, contract, deployment,
-public-promise — see `docs/architecture/ai-02-vp-final-disposition-matrix.md`, Owner line) is
-marked **"Operator TBD"** below; this document does not make that decision on the operator's
-behalf and is not published as a live user-facing commitment.
+architecture reserves for the operator is stated as unknown when it is not observed. Historical
+development notices remain scoped to their exact policy records; this document is not a public
+product commitment.
 
 ## 1. 告知与目的 / Disclosure and purpose
 
@@ -26,29 +23,28 @@ behalf and is not published as a live user-facing commitment.
 | --- | --- | --- |
 | 收集内容 | 账号身份（邮箱/第三方登录）、Trip 内容与修订、对话 Turn、用户上传材料（图片/PDF）、隐私请求记录 | Account identity (email/OAuth), Trip content and revisions, chat Turns, uploaded material (image/PDF), privacy-request records |
 | 用途 | 生成与维护用户自己的 Trip，回答用户提出的问题，处理用户发起的导出/删除请求 | Generating and maintaining the user's own Trip, answering the user's own questions, processing the user's own export/delete requests |
-| 法律依据/商业主体 | 沿用已提供的经营主体设定，未新增主体 | Uses the already-provided operating entity; no new entity introduced |
+| 经营主体与联系 | 广州创竞科技有限公司；负责人 JT；`jtcao@go2china.space` | Guangzhou Chuangjing Technology Co., Ltd.; responsible contact JT; `jtcao@go2china.space` |
 
 来源：`docs/contracts/privacy-lifecycle.md`、`lib/server/model-gateway/`、`lib/server/media/private-media.ts`。
 
 ## 2. 保留期限 / Retention
 
-- **Trip / Turn / Profile / Memory**：数据库中按 owner 隔离存储（RLS），当前代码库**没有**自动过期或定时清除这些表行的任何函数；保留期限为**运营方待定**，非本文档发布值。
-- **备份（Backup）**：`docs/runbooks/backup-restore.md` 明确"不选定 Supabase plan/region，不设 RPO/RTO，不创建备份"，备份保留期限为**运营方待定**。
+- **已同意的文本 Ask 输入和最终回答**：`retain_after_hide_v1` 的 immutable policy 表达 JT 已决定的长期保留；删除 Turn/thread/account 或撤回后永久隐藏，不能恢复可见性，但不等于物理擦除或供应商副本删除。
+- **Trip / Profile / Memory 与未进入上述 policy 的 Turn**：owner 隔离存储；本票没有把它们一概改成某个统一期限。
+- **备份（Backup）**：当前数据库 project 在 Singapore；本轮未获得可证明的备份对象寿命或恢复屏蔽结果，备份寿命仍 unknown。
 - **隐私请求收据（privacy request receipt）**：请求本身按当前实现保存为审计记录（`requested`/`not_started` 状态）；此处不承诺永久保留，不代表数据已删除——见下文第 5 节。
 
-Retention for Trip/Turn/Profile/Memory rows and for backups is **Operator TBD**; no
-auto-expiry function exists in the current codebase (verified by grep across
-`supabase/migrations/`).
+The long-term, hide-not-erase rule applies only to text content admitted under its matching
+immutable policy. It does not promise provider deletion, backup deletion or a common lifetime for
+all other product records.
 
 ## 3. 处理地域 / Processing region
 
-- 既有 Vercel 检查记录的 `iad1` 是当时的函数配置，不代表所有当前 worker、数据库或模型处理地区。
-- `artifacts/VPJ-74/restore-rehearsal-20260914.md` 记录隔离恢复项目采用与当时 Staging 相同的
-  `ap-southeast-1`。本次未重新查询当前数据库/备份配置，不能据此声称当前全部数据路径已核验。
-- 模型处理地域按具体环境、policy、endpoint和运行证据记录；无法核实的供应商内部处理、留存或训练信息标记 unknown。
+- 当前 Vercel project `vp-v4` 的函数默认区域为 `iad1`（US）；它不证明每一次 worker 或第三方推理发生在该区域。
+- 当前 Supabase project `VP - V4` 为 `ap-southeast-1`（Singapore）。这证明数据库 project 地域，不证明备份、调用方或供应商内部处理地域。
+- 历史 Qwen Staging notice 记录 Beijing API access、Singapore worker network exit 与 Vercel US path；官方 Qwen 文档区分接入地域、存储位置和服务部署范围，不能由 `dashscope.aliyuncs.com` 推断内部推理节点。
+- 当前没有未撤回且通过复核的 C2 text policy；新的接收方 policy 必须重新记录实际 endpoint、路径和未公开细节。
 
-Historical deployment and restore records are scoped to their recorded environments and dates.
-Current database, worker, backup and provider-processing regions were not rechecked in this documentation review.
 An endpoint domain or a policy's configured region is not independent proof of the provider's internal processing location.
 
 ## 4. 第三方 AI 接收方 / Third-party AI recipients
@@ -61,11 +57,11 @@ An endpoint domain or a policy's configured region is not independent proof of t
 | 真实调用入口 | `lib/server/jobs/run-staging-text-worker.mjs`、`run-staging-text-service.mjs` 读取 `VISEPANDA_STAGING_TEXT_WORKER_KEY` 与 `VISEPANDA_STAGING_TEXT_PROVIDER_KEY`，将凭据回调注入 `createStagingTextJob`；配置绑定 owner/policy/预算 | 本机具有这些凭据、当前 worker 正在运行、生产已获授权 |
 | 既有实测 | `artifacts/VPJ-07/staging-live-20260912/verification.md` 等记录真实 Qwen Staging 调用；`artifacts/VPJ-75/359-wiki-dispatch-slice2-20260914/verification.md` 记录两次真实 Qwen Wiki 探针 | 覆盖所有用户、材料、地区或完整生产生命周期 |
 | Wiki 与检索 | `wiki-generation-job.ts`、`wiki-search-job.ts`、`wiki-statement-proposal-job.ts` 接受调用方提供的真实 transport/credential；应按各模块当前消费者核对 | 模块存在等于持续运行的完整 worker 已部署；或缺少统一 cron 等于从未真实调用 |
-| 内部测试增量 | PR #417 提出测试域名下的 GLM 路由，PR #419 修复登录状态；合并状态、已部署版本与实际数据流需分别核对 | 未合并代码没有被单独部署；或测试入口自动获得生产/用户数据权限 |
+| 内部测试 GLM policy | 2026-09-17 只读 registry 发现 `internal-testing-v1` 仍有效，但 `recipient/source_region/storage_region` 与其 bilingual notice 和部署事实不一致；测试聊天路由也不在 main | 不能把这条不完整 policy 当作可用的接收方授权；已以 `revoked_at` 终态撤销，未删除内容、同意或密钥 |
 
 **结论**：仓库已具备真实供应商调用入口，并有历史真实调用证据。“没有任何文本被发送给第三方”
 和“接收方为零”均不成立为全局披露。本次没有读取凭据或测试用户数据，也未核验全部当前环境的运行流量；
-当前启用的接收方必须按部署版本、有效 policy、用户同意和调用回执逐项披露，不能由源码搜索推断。
+当前启用的接收方必须按部署版本、有效 policy、用户同意和调用回执逐项披露，不能由源码搜索推断。2026-09-17 registry 核验完成后，没有仍有效的、通过本票完整性核验的 C2 policy。
 
 Real provider entry points and recorded Qwen calls exist. A repository-wide claim of zero external recipients is
 unsupported. This documentation review does not establish every currently active deployment, recipient or data flow.
@@ -102,8 +98,9 @@ It does not prove provider-side deletion or complete erasure across all modules 
 | 角色 | 可见范围 |
 | --- | --- |
 | 用户本人 | 通过 RLS，仅自己的 Profile/Trip/Turn/隐私请求 |
-| `service_role`（Supabase 后台） | 全表访问，仅可通过 Supabase 控制台/服务端密钥使用，无应用内客服界面 |
-| 应用内"客服"角色 | **不存在**——Owner 角色不会被自动授予跨用户的普通读取权限（沿用 Issue 验收要求） |
+| `service_role`（Supabase 后台） | 全表访问，仅可通过受控服务端密钥使用；不是应用内客服角色 |
+| 应用内"客服"角色 | **不存在**——Owner 角色不会被自动授予跨用户的普通读取权限 |
+| 受控团队跨用户访问 | JT 已决定该业务范围，但身份、能力检查、审计与离职撤权尚未实现/验证，当前仍未启用 |
 
 No general-purpose in-app customer-support role is established by this review. Existing protected Ops author/reviewer access is purpose-scoped to knowledge operations; it does not grant arbitrary cross-user conversation access.
 
@@ -111,29 +108,28 @@ No general-purpose in-app customer-support role is established by this review. E
 
 - **服务端路径**：`lib/server/media/private-media.ts` 定义 owner-scoped 私有 Storage 路径与准入策略，但当前 `preparePrivateMediaUpload` **始终返回 `media_unavailable`**——"尚不存在已认证的 actor 或服务端校验过的 PolicyReceipt 适配器"，即该路径代码存在但未授权可用。
 - **设备端本地路径**：仓库中未找到独立于服务端存储的"仅设备本地"材料保存实现。
-- **未授权时可用功能**：用户仍可在不上传材料的情况下使用文本 Trip/Ask 流程；上传材料的按钮/入口在未接入前不应展示为"已可用"。
+- **未授权时可用功能**：用户仍可在不上传材料的情况下使用本地 Trip 浏览、编辑和确认；文本 Ask 仅能在另有当前 text policy 与用户同意时使用。上传材料的按钮/入口在未接入前不应展示为"已可用"。
 
 ## 9. Q36 基础明确偏好范围 / Q36 explicit-preference scope
 
 沿用 2026-09-10 已确认方向（`docs/handoff.json` decisions）：
 
-- Free 与 Pass 共享**明确保存**的基础跨 Trip 偏好；一个有界 service 目标包含必要澄清与系统修复。
-- 存储/消费方与计费语义**需要版本化实现**（尚未落地）；新增容量、部分修改/TTL 与 Q38 激活**仍未决定**。
-- 来源（用户主动填写 vs 模型推断）、纠正版本、模型与人工接收方、撤回后队列/缓存/派生物处理：必须按实际 consumer 和 policy 分别核对，不能将文本模型调用范围自动扩大至偏好。完整跨模块撤回传播尚未验收，不抹除第5节已有文本 consent 撤回行为。
+- Free 与 Pass 共享用户**明确保存**的基础偏好；可为仅本次、当前 Trip 或账号跨 Trip。仅本次不新增长期记录，Trip 范围必须绑定正确 Trip。
+- 来源必须标为用户主动输入或待澄清候选；模型推断不得自动写入长期偏好。纠正使用单调版本/等价并发控制，消费收据必须能识别实际读取的来源版本。
+- 模型或人工接收方只得到当前任务需要、仍有效且获同意的最小投影；Free/Pass 不替代同意，也不使所有记忆默认进入 prompt。
+- 暂停、撤回或删除后，新队列、重试、缓存和派生物必须按来源/版本重验；迟到结果不得复活旧偏好。实际跨模块投影与撤回传播仍由 #199/#195 验收。
 
 ## 不构成的承诺 / What this document does not claim
 
-本文档不发布具体保留天数、不指定 Supabase 地区、不批准任何生产模型路由、不新增客服角色。以上四项均为
-operator 决定事项；若要将本文档转化为对外公开的隐私政策页面，需 operator 先行拍板这四项，再由此文档转为
-面向用户的文案。
+本文档不批准新的生产模型路由、不新增客服角色、不承诺备份或供应商删除。面对用户的 notice 必须从实际 immutable policy 生成；当前没有可作为公开 C2 功能的有效 policy。
 
-This document does not publish a retention day-count, does not name a Supabase region, does not
-approve any production model route, and does not add a support role. Those four items remain
-operator decisions; turning this into a public-facing privacy policy page requires the operator
-to decide them first.
+This document does not approve a new production model route, add a support role, or promise
+backup/provider deletion. A user notice must be generated from an actual immutable policy; there
+is currently no active, publishable C2 policy.
 
 ## 回滚 / Rollback
 
-移除本文件即可；未修改任何运行时代码、迁移、路由或权限。
+文档改动可通过 revert 回退。2026-09-17 的 registry 终态撤回不应被反向恢复；如需再次启用任何 C2 流程，必须创建新的 immutable policy、重新取得用户同意并核验部署。
 
-Removing this file fully reverts it; no runtime code, migration, route, or permission changed.
+Reverting documentation does not reverse the 2026-09-17 terminal registry revocation. A new policy,
+new consent and deployment verification are required before a C2 route can be enabled again.

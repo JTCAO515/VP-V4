@@ -36,6 +36,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - 2026-09-15 JT要求：当前模型提案这一轮处理完成后暂停。完成当前PR/CI与证据收尾，不启动下一轮，不建立继续开发的自动化。
 - 2026-09-16: JT gave explicit in-chat resume authorization for VPJ-75 (#359) this round, recorded here and in the PR/issue thread; the 2026-09-15 no-next-round-without-resume pause governed exactly one round and does not carry forward automatically.
 - 2026-09-17: JT authorized selection and completion of one new issue with full checks and a PR, explicitly excluding VPJ-02/75/76 owned by other tasks. Selected #241 / VPJ-49: an independent S4 native local sharing result consuming the existing confirmed native-v2 Trip snapshot, without waiting for unrelated remaining #192/#199 acceptance. No production release or upstream issue closure is claimed.
+- 2026-09-17 VPJ-03/#190 closure audit: actual Staging policy inventory found the only current GLM internal-testing policy had recipient/region records inconsistent with its notice and observed Vercel/Supabase path, while its route was absent from main. The exact immutable policy was terminally revoked, leaving no active verified C2 policy; historical Qwen recipient evidence remains historical only. New C2 use requires a new immutable policy, renewed consent and deployment verification.
 
 ## 未决与运行证据
 
