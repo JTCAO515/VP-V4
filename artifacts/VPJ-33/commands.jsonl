@@ -1,0 +1,4 @@
+{"command":"node --experimental-strip-types --test tests/contract/entitlements/journey-pass-catalog.test.mjs","result":"PASS","summary":"3 tests passed"}
+{"command":"pnpm check","result":"PASS","summary":"lint, TypeScript, production build and 22 standard static tests passed"}
+{"command":"pnpm docs:check","result":"PASS","summary":"VPJ plan and documentation baseline passed"}
+{"command":"git diff --check","result":"PASS","summary":"no whitespace errors"}
