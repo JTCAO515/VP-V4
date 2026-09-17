@@ -10,7 +10,7 @@ Historical task tables and copied kickoff prompts cannot add current development
 
 Use the six [delivery stages](../program/2026-09-05/DELIVERY-STAGES.md) to select work within
 VPJ-00; `issue-plan.json` remains the only task-definition source. Stages group existing Issues
-and acceptance, without deleting native dependencies or changing the product's final scope.
+and acceptance, without changing the product's final scope. Native start blockers and textual acceptance dependencies are separate; both remain in the manifest.
 A stage demonstration is evidence for its stated slice, not automatic closure of every Issue
 assigned to that stage. Complete Issue and release checks still apply at their own boundaries.
 

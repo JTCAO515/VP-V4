@@ -92,3 +92,17 @@ test('published execution header stays synchronized with the generator', () => {
   const generated = readFileSync('docs/program/2026-09-05/EXECUTION-CONTRACT.md', 'utf8');
   assert.equal(generated.slice(0, generated.indexOf('## VPJ-')), executionContractHeader);
 });
+
+test('acceptance-only inputs permit scoped readiness but still flag premature completion', () => {
+  for (const input of [issue(), issue('closed', [], 'not_planned')]) {
+    assert.equal(validateRemoteTaskState(task, issue('open', ['status:ready']), {
+      baselineMerged: true, acceptanceInputs: [input],
+    }), 'open');
+    assert.equal(validateRemoteTaskState(task, issue('closed', [], 'completed'), {
+      baselineMerged: true, acceptanceInputs: [input],
+    }), 'completion-evidence-review');
+  }
+  assert.equal(validateRemoteTaskState(task, issue('closed', [], 'completed'), {
+    baselineMerged: true, acceptanceInputs: [issue('closed', [], 'completed')],
+  }), 'completed');
+});

@@ -36,3 +36,5 @@ waits for actual runtime acceptance. Future expand tasks retain their activation
 
 See `development-workflow.md` for scope and evidence, and `continuous-afk-execution.md` for
 scheduling. Do not turn a stale label or absent label into an invented capability result.
+
+GitHub 的红色 `Blocked` 图标由原生依赖产生，与 `status:blocked` 标签不同。原生关系仅表示开工硬依赖（本轮保护关系例外）；`acceptanceDependencies` 用普通引用保留最终集成输入。按 manifest 和实际输入判断，不按图标数量判断进度。

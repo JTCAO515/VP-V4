@@ -224,7 +224,6 @@
       "id": "VPJ-04",
       "title": "原生登录、手机登录顶替与 Web 会话并存",
       "blockedBy": [
-        "VPJ-01",
         "VPJ-02"
       ],
       "allowedPaths": [
@@ -310,14 +309,15 @@
           "artifacts/VPJ-04/iphone-custom-domain-20260912/verification.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-01"
+      ]
     },
     {
       "id": "VPJ-05",
       "title": "同一 Trip 在 iOS 与精简 Web 创建、编辑和重载",
-      "blockedBy": [
-        "VPJ-04"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "app/api/trips/**",
@@ -404,14 +404,15 @@
           "artifacts/VPJ-04/staging-native/remote-20260911/locale-followup.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-04"
+      ]
     },
     {
       "id": "VPJ-06",
       "title": "Qwen、GLM、DeepSeek 的真实调用与质量成本对照",
-      "blockedBy": [
-        "VPJ-03"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "lib/server/model-gateway/**",
         "evals/**",
@@ -488,17 +489,15 @@
           "artifacts/VPJ-06/http-transport-verification.md",
           "artifacts/VPJ-06/live-c0-20260910/verification.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-03"
+      ]
     },
     {
       "id": "VPJ-07",
       "title": "真实 Ask 得到可恢复的最终回答",
-      "blockedBy": [
-        "VPJ-04",
-        "VPJ-05",
-        "VPJ-06",
-        "VPJ-59"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "app/api/chat/**",
@@ -591,14 +590,18 @@
           "artifacts/VPJ-07/grounded-service-20260913/verification.md",
           "artifacts/VPJ-07/worker-service-20260912/verification.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-04",
+        "VPJ-05",
+        "VPJ-06",
+        "VPJ-59"
+      ]
     },
     {
       "id": "VPJ-08",
       "title": "流式回答在断网、后台和跨端重连后接续",
-      "blockedBy": [
-        "VPJ-07"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "app/api/chat/**",
@@ -681,16 +684,15 @@
           "artifacts/VPJ-08/native-events-staging-20260913/verification.md",
           "artifacts/VPJ-08/native-cancel-staging-20260913/verification.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-07"
+      ]
     },
     {
       "id": "VPJ-09",
       "title": "从模糊想法得到可确认的多日行程",
-      "blockedBy": [
-        "VPJ-05",
-        "VPJ-07",
-        "VPJ-08"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/turn/**",
@@ -772,14 +774,17 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-05",
+        "VPJ-07",
+        "VPJ-08"
+      ]
     },
     {
       "id": "VPJ-10",
       "title": "选中一天或项目后与 VP 局部改稿",
-      "blockedBy": [
-        "VPJ-09"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "components/canvas/**",
@@ -857,16 +862,15 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-09"
+      ]
     },
     {
       "id": "VPJ-11",
       "title": "Trip 连续记忆与用户可纠正的偏好",
-      "blockedBy": [
-        "VPJ-03",
-        "VPJ-05",
-        "VPJ-07"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/memory/**",
@@ -954,18 +958,17 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-03",
+        "VPJ-05",
+        "VPJ-07"
+      ]
     },
     {
       "id": "VPJ-12",
       "title": "单张旅行截图导入、校正与加入 Trip",
-      "blockedBy": [
-        "VPJ-01",
-        "VPJ-03",
-        "VPJ-04",
-        "VPJ-07",
-        "VPJ-60"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/artifacts/**",
@@ -1048,15 +1051,19 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-01",
+        "VPJ-03",
+        "VPJ-04",
+        "VPJ-07",
+        "VPJ-60"
+      ]
     },
     {
       "id": "VPJ-13",
       "title": "首访与回访的三种入口获得首个成果",
       "blockedBy": [
-        "VPJ-09",
-        "VPJ-11",
-        "VPJ-12",
         "VPJ-62"
       ],
       "allowedPaths": [
@@ -1135,14 +1142,18 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-09",
+        "VPJ-11",
+        "VPJ-12"
+      ]
     },
     {
       "id": "VPJ-14",
       "title": "受保护 Ops 登录与一条候选内容工作流",
       "blockedBy": [
-        "VPJ-02",
-        "VPJ-03"
+        "VPJ-02"
       ],
       "allowedPaths": [
         "apps/ops/**",
@@ -1220,14 +1231,15 @@
           "artifacts/VPJ-14/staging-20260912/verification.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-03"
+      ]
     },
     {
       "id": "VPJ-15",
       "title": "首批旅程内容从来源登记到已审核可用",
-      "blockedBy": [
-        "VPJ-14"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "apps/ops/**",
         "lib/server/knowledge/**",
@@ -1310,15 +1322,15 @@
           "docs/program/2026-09-05/INTERFACES.md",
           "artifacts/VPJ-15/staging-20260912/verification.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-14"
+      ]
     },
     {
       "id": "VPJ-16",
       "title": "有依据的回答、诚实部分答案与知识缺口",
-      "blockedBy": [
-        "VPJ-07",
-        "VPJ-15"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "lib/server/knowledge/**",
         "lib/server/turn/**",
@@ -1401,15 +1413,16 @@
           "docs/program/2026-09-05/INTERFACES.md",
           "artifacts/VPJ-206/hf-reuse-miracl-bipia-20260916/verification.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-07",
+        "VPJ-15"
+      ]
     },
     {
       "id": "VPJ-17",
       "title": "来源更新后安全重验相关知识与 Trip",
       "blockedBy": [
-        "VPJ-05",
-        "VPJ-14",
-        "VPJ-16",
         "VPJ-75"
       ],
       "allowedPaths": [
@@ -1491,14 +1504,17 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-05",
+        "VPJ-14",
+        "VPJ-16"
+      ]
     },
     {
       "id": "VPJ-18",
       "title": "高德主选与腾讯补充的实测、用途与成本边界",
-      "blockedBy": [
-        "VPJ-03"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "docs/benchmarks/maps/**",
         "docs/runbooks/**",
@@ -1565,15 +1581,15 @@
           "artifacts/VPJ-18/full-matrix-20260914/verification.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-03"
+      ]
     },
     {
       "id": "VPJ-19",
       "title": "地点消歧、地图展示与路线出口",
-      "blockedBy": [
-        "VPJ-05",
-        "VPJ-18"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/external-evidence/**",
@@ -1654,16 +1670,16 @@
           "docs/contracts/place-identity.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-05",
+        "VPJ-18"
+      ]
     },
     {
       "id": "VPJ-20",
       "title": "Explore 浏览内容并保存、问 VP、加入 Trip",
-      "blockedBy": [
-        "VPJ-09",
-        "VPJ-15",
-        "VPJ-19"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "app/explore/**",
@@ -1741,17 +1757,17 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-09",
+        "VPJ-15",
+        "VPJ-19"
+      ]
     },
     {
       "id": "VPJ-21",
       "title": "准备检查把关键缺口变成可做的下一步",
-      "blockedBy": [
-        "VPJ-10",
-        "VPJ-16",
-        "VPJ-19",
-        "VPJ-74"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/readiness/**",
@@ -1830,14 +1846,18 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-10",
+        "VPJ-16",
+        "VPJ-19",
+        "VPJ-74"
+      ]
     },
     {
       "id": "VPJ-22",
       "title": "酒店官方出口、参数落地与联盟归因验证",
-      "blockedBy": [
-        "VPJ-03"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "docs/benchmarks/hotels/**",
         "docs/runbooks/**",
@@ -1900,16 +1920,15 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-03"
+      ]
     },
     {
       "id": "VPJ-23",
       "title": "住宿需求比较与透明联盟跳转",
-      "blockedBy": [
-        "VPJ-11",
-        "VPJ-19",
-        "VPJ-22"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/hotels/**",
@@ -1986,15 +2005,17 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-11",
+        "VPJ-19",
+        "VPJ-22"
+      ]
     },
     {
       "id": "VPJ-24",
       "title": "第三方订单材料回到同一 Trip",
-      "blockedBy": [
-        "VPJ-12",
-        "VPJ-23"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/artifacts/**",
@@ -2073,15 +2094,16 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-12",
+        "VPJ-23"
+      ]
     },
     {
       "id": "VPJ-25",
       "title": "Today 与可离线读取的旅行资料",
-      "blockedBy": [
-        "VPJ-04",
-        "VPJ-05"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/today/**",
@@ -2160,15 +2182,16 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-04",
+        "VPJ-05"
+      ]
     },
     {
       "id": "VPJ-26",
       "title": "中英现场表达与大字展示",
-      "blockedBy": [
-        "VPJ-07",
-        "VPJ-16"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/media-translation/**",
@@ -2246,16 +2269,16 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-07",
+        "VPJ-16"
+      ]
     },
     {
       "id": "VPJ-27",
       "title": "按需语音翻译与可中断播放",
-      "blockedBy": [
-        "VPJ-03",
-        "VPJ-26",
-        "VPJ-60"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/media-translation/**",
@@ -2334,16 +2357,17 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-03",
+        "VPJ-26",
+        "VPJ-60"
+      ]
     },
     {
       "id": "VPJ-28",
       "title": "地点讲解与语音追问接回当前 Trip",
-      "blockedBy": [
-        "VPJ-15",
-        "VPJ-19",
-        "VPJ-27"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/guide/**",
@@ -2422,17 +2446,17 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-15",
+        "VPJ-19",
+        "VPJ-27"
+      ]
     },
     {
       "id": "VPJ-29",
       "title": "用户报告变化后的局部恢复",
-      "blockedBy": [
-        "VPJ-10",
-        "VPJ-21",
-        "VPJ-25",
-        "VPJ-65"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/today/recovery/**",
@@ -2510,16 +2534,18 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-10",
+        "VPJ-21",
+        "VPJ-25",
+        "VPJ-65"
+      ]
     },
     {
       "id": "VPJ-30",
       "title": "有原因、可关闭的旅行提醒",
-      "blockedBy": [
-        "VPJ-11",
-        "VPJ-17",
-        "VPJ-25"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/notifications/**",
@@ -2599,18 +2625,17 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-11",
+        "VPJ-17",
+        "VPJ-25"
+      ]
     },
     {
       "id": "VPJ-31",
       "title": "按服务任务授权的动态 Traveler Brief",
-      "blockedBy": [
-        "VPJ-03",
-        "VPJ-11",
-        "VPJ-12",
-        "VPJ-14",
-        "VPJ-57"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "apps/ops/**",
         "lib/server/ops/**",
@@ -2688,16 +2713,19 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-03",
+        "VPJ-11",
+        "VPJ-12",
+        "VPJ-14",
+        "VPJ-57"
+      ]
     },
     {
       "id": "VPJ-32",
       "title": "真人协助从请求到接单和结果回传",
-      "blockedBy": [
-        "VPJ-21",
-        "VPJ-31",
-        "VPJ-57"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "apps/ops/**",
@@ -2779,14 +2807,17 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-21",
+        "VPJ-31",
+        "VPJ-57"
+      ]
     },
     {
       "id": "VPJ-33",
       "title": "Journey Pass 商品、权益和定价实验配置",
-      "blockedBy": [
-        "VPJ-03"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "docs/commercial/**",
         "docs/runbooks/**",
@@ -2854,16 +2885,15 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-03"
+      ]
     },
     {
       "id": "VPJ-34",
       "title": "官方 IAP 购买、恢复与服务端权益",
-      "blockedBy": [
-        "VPJ-04",
-        "VPJ-05",
-        "VPJ-33"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "app/api/storekit/**",
@@ -2945,16 +2975,17 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-04",
+        "VPJ-05",
+        "VPJ-33"
+      ]
     },
     {
       "id": "VPJ-35",
       "title": "Free/Pass 额度与完整任务成本控制",
-      "blockedBy": [
-        "VPJ-06",
-        "VPJ-08",
-        "VPJ-34"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "lib/server/identity/quota/**",
         "lib/server/model-gateway/**",
@@ -3032,19 +3063,17 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-06",
+        "VPJ-08",
+        "VPJ-34"
+      ]
     },
     {
       "id": "VPJ-36",
       "title": "核心资料的导出删除框架与首批执行器",
-      "blockedBy": [
-        "VPJ-03",
-        "VPJ-04",
-        "VPJ-11",
-        "VPJ-12",
-        "VPJ-31",
-        "VPJ-34"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "app/api/privacy/**",
@@ -3127,15 +3156,20 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-03",
+        "VPJ-04",
+        "VPJ-11",
+        "VPJ-12",
+        "VPJ-31",
+        "VPJ-34"
+      ]
     },
     {
       "id": "VPJ-37",
       "title": "运营看见质量、成本和故障并能停用能力",
-      "blockedBy": [
-        "VPJ-07",
-        "VPJ-35"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "lib/server/observability/**",
         "apps/ops/**",
@@ -3212,14 +3246,17 @@
           "artifacts/VPJ-37/unrun.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-07",
+        "VPJ-35"
+      ]
     },
     {
       "id": "VPJ-38",
       "title": "数据库、对象与删除状态的恢复演练",
       "blockedBy": [
-        "VPJ-02",
-        "VPJ-36"
+        "VPJ-02"
       ],
       "allowedPaths": [
         "scripts/db/restore/**",
@@ -3286,21 +3323,15 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-36"
+      ]
     },
     {
       "id": "VPJ-39",
       "title": "境内外媒体、酒店跳转、IAP 与通知网络验收",
-      "blockedBy": [
-        "VPJ-07",
-        "VPJ-19",
-        "VPJ-27",
-        "VPJ-63",
-        "VPJ-23",
-        "VPJ-34",
-        "VPJ-30",
-        "VPJ-55"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "docs/benchmarks/network/**",
         "scripts/diagnostics/**",
@@ -3363,28 +3394,23 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-07",
+        "VPJ-19",
+        "VPJ-27",
+        "VPJ-63",
+        "VPJ-23",
+        "VPJ-34",
+        "VPJ-30",
+        "VPJ-55"
+      ]
     },
     {
       "id": "VPJ-40",
       "title": "原生视觉动效、无障碍与性能整链复验",
       "blockedBy": [
-        "VPJ-13",
-        "VPJ-20",
-        "VPJ-21",
-        "VPJ-23",
-        "VPJ-25",
-        "VPJ-27",
-        "VPJ-28",
-        "VPJ-29",
-        "VPJ-30",
-        "VPJ-34",
-        "VPJ-48",
-        "VPJ-64",
-        "VPJ-49",
-        "VPJ-55",
-        "VPJ-61",
-        "VPJ-36"
+        "VPJ-49"
       ],
       "allowedPaths": [
         "ios/**",
@@ -3461,16 +3487,29 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-13",
+        "VPJ-20",
+        "VPJ-21",
+        "VPJ-23",
+        "VPJ-25",
+        "VPJ-27",
+        "VPJ-28",
+        "VPJ-29",
+        "VPJ-30",
+        "VPJ-34",
+        "VPJ-48",
+        "VPJ-64",
+        "VPJ-55",
+        "VPJ-61",
+        "VPJ-36"
+      ]
     },
     {
       "id": "VPJ-41",
       "title": "精简 Web Planning Studio 的最终体验验收",
-      "blockedBy": [
-        "VPJ-05",
-        "VPJ-20",
-        "VPJ-34"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "app/**",
         "components/**",
@@ -3545,33 +3584,17 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-05",
+        "VPJ-20",
+        "VPJ-34"
+      ]
     },
     {
       "id": "VPJ-42",
       "title": "TestFlight 实机贯通 Plan、Ready、Travel 三段",
       "blockedBy": [
-        "VPJ-08",
-        "VPJ-16",
-        "VPJ-21",
-        "VPJ-24",
-        "VPJ-28",
-        "VPJ-29",
-        "VPJ-32",
-        "VPJ-35",
-        "VPJ-36",
-        "VPJ-37",
-        "VPJ-38",
-        "VPJ-39",
-        "VPJ-40",
-        "VPJ-41",
-        "VPJ-48",
-        "VPJ-55",
-        "VPJ-56",
-        "VPJ-58",
-        "VPJ-61",
-        "VPJ-64",
-        "VPJ-65",
         "VPJ-49"
       ],
       "allowedPaths": [
@@ -3640,15 +3663,35 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-08",
+        "VPJ-16",
+        "VPJ-21",
+        "VPJ-24",
+        "VPJ-28",
+        "VPJ-29",
+        "VPJ-32",
+        "VPJ-35",
+        "VPJ-36",
+        "VPJ-37",
+        "VPJ-38",
+        "VPJ-39",
+        "VPJ-40",
+        "VPJ-41",
+        "VPJ-48",
+        "VPJ-55",
+        "VPJ-56",
+        "VPJ-58",
+        "VPJ-61",
+        "VPJ-64",
+        "VPJ-65"
+      ]
     },
     {
       "id": "VPJ-43",
       "title": "独立 Production 与可回滚的客户服务环境",
-      "blockedBy": [
-        "VPJ-38",
-        "VPJ-42"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "docs/runbooks/**",
         "scripts/db/**",
@@ -3714,16 +3757,16 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-38",
+        "VPJ-42"
+      ]
     },
     {
       "id": "VPJ-44",
       "title": "正式 App Store 1.0 提交与数字商品审核",
-      "blockedBy": [
-        "VPJ-34",
-        "VPJ-40",
-        "VPJ-43"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "docs/release/**",
@@ -3792,7 +3835,12 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-34",
+        "VPJ-40",
+        "VPJ-43"
+      ]
     },
     {
       "id": "VPJ-45",
@@ -3865,7 +3913,8 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": []
     },
     {
       "id": "VPJ-46",
@@ -3942,9 +3991,7 @@
       "id": "VPJ-47",
       "title": "真实激活、付费与人工成本的经营观察",
       "blockedBy": [
-        "VPJ-42",
-        "VPJ-44",
-        "VPJ-46"
+        "VPJ-44"
       ],
       "allowedPaths": [
         "docs/commercial/**",
@@ -4010,16 +4057,16 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-42",
+        "VPJ-46"
+      ]
     },
     {
       "id": "VPJ-48",
       "title": "用户旅行内容投稿与发布前审核",
-      "blockedBy": [
-        "VPJ-14",
-        "VPJ-20",
-        "VPJ-36"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "apps/ops/**",
@@ -4099,7 +4146,12 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-14",
+        "VPJ-20",
+        "VPJ-36"
+      ]
     },
     {
       "id": "VPJ-49",
@@ -4179,8 +4231,6 @@
       "id": "VPJ-50",
       "title": "有真实召回失败才启用混合 RAG 与重排",
       "blockedBy": [
-        "VPJ-16",
-        "VPJ-17",
         "VPJ-76"
       ],
       "allowedPaths": [
@@ -4262,15 +4312,16 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-16",
+        "VPJ-17"
+      ]
     },
     {
       "id": "VPJ-51",
       "title": "航班来源与中国航线对照（证据触发）",
-      "blockedBy": [
-        "VPJ-03",
-        "VPJ-39"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "docs/benchmarks/aviation/**",
         "docs/runbooks/**",
@@ -4334,14 +4385,16 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-03",
+        "VPJ-39"
+      ]
     },
     {
       "id": "VPJ-52",
       "title": "授权航班状态与相关行程重验",
       "blockedBy": [
-        "VPJ-17",
-        "VPJ-29",
         "VPJ-51"
       ],
       "allowedPaths": [
@@ -4418,7 +4471,11 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-17",
+        "VPJ-29"
+      ]
     },
     {
       "id": "VPJ-53",
@@ -4488,7 +4545,8 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": []
     },
     {
       "id": "VPJ-54",
@@ -4558,15 +4616,13 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": []
     },
     {
       "id": "VPJ-55",
       "title": "限定文件导入与系统分享、登录回跳衔接",
-      "blockedBy": [
-        "VPJ-04",
-        "VPJ-12"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "app/api/artifacts/**",
@@ -4643,14 +4699,16 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-04",
+        "VPJ-12"
+      ]
     },
     {
       "id": "VPJ-56",
       "title": "原生 CI、签名 Archive 与首个 TestFlight 安装包",
-      "blockedBy": [
-        "VPJ-01"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         ".github/workflows/**",
@@ -4720,16 +4778,15 @@
           "artifacts/VPJ-56/verification.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-01"
+      ]
     },
     {
       "id": "VPJ-57",
       "title": "用户服务请求与按任务授予资料访问",
-      "blockedBy": [
-        "VPJ-03",
-        "VPJ-04",
-        "VPJ-14"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "apps/ops/**",
@@ -4810,24 +4867,18 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-03",
+        "VPJ-04",
+        "VPJ-14"
+      ]
     },
     {
       "id": "VPJ-58",
       "title": "全数据模块导出删除与恢复后的最终隔离验收",
       "blockedBy": [
-        "VPJ-30",
-        "VPJ-32",
-        "VPJ-34",
-        "VPJ-36",
-        "VPJ-48",
-        "VPJ-64",
-        "VPJ-24",
-        "VPJ-49",
-        "VPJ-55",
-        "VPJ-28",
-        "VPJ-61",
-        "VPJ-25"
+        "VPJ-49"
       ],
       "allowedPaths": [
         "tests/security/**",
@@ -4902,7 +4953,20 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-30",
+        "VPJ-32",
+        "VPJ-34",
+        "VPJ-36",
+        "VPJ-48",
+        "VPJ-64",
+        "VPJ-24",
+        "VPJ-55",
+        "VPJ-28",
+        "VPJ-61",
+        "VPJ-25"
+      ]
     },
     {
       "id": "VPJ-59",
@@ -4985,10 +5049,7 @@
     {
       "id": "VPJ-60",
       "title": "图片和语音 Provider 的中英质量与数据流验收",
-      "blockedBy": [
-        "VPJ-03",
-        "VPJ-06"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "lib/server/media/**",
         "lib/server/media-translation/**",
@@ -5060,16 +5121,16 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-03",
+        "VPJ-06"
+      ]
     },
     {
       "id": "VPJ-61",
       "title": "旅行结束、归档与下一次回来",
-      "blockedBy": [
-        "VPJ-05",
-        "VPJ-11",
-        "VPJ-32"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/trip/**",
@@ -5147,7 +5208,12 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-05",
+        "VPJ-11",
+        "VPJ-32"
+      ]
     },
     {
       "id": "VPJ-62",
@@ -5222,10 +5288,7 @@
     {
       "id": "VPJ-63",
       "title": "登录、Ask 与 Trip 的境内外网络首轮探针",
-      "blockedBy": [
-        "VPJ-04",
-        "VPJ-07"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "scripts/diagnostics/**",
         "docs/benchmarks/network/**",
@@ -5287,16 +5350,16 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-04",
+        "VPJ-07"
+      ]
     },
     {
       "id": "VPJ-64",
       "title": "社区举报、屏蔽、申诉与内容删除",
-      "blockedBy": [
-        "VPJ-14",
-        "VPJ-36",
-        "VPJ-48"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "apps/ops/**",
@@ -5376,16 +5439,17 @@
           "docs/program/2026-09-05/INTERFACES.md"
         ]
       },
-      "sourceRef": "main"
+      "sourceRef": "main",
+      "acceptanceDependencies": [
+        "VPJ-14",
+        "VPJ-36",
+        "VPJ-48"
+      ]
     },
     {
       "id": "VPJ-65",
       "title": "真实地点与依据支撑的完整计划核验",
-      "blockedBy": [
-        "VPJ-09",
-        "VPJ-16",
-        "VPJ-19"
-      ],
+      "blockedBy": [],
       "allowedPaths": [
         "ios/**",
         "lib/server/trip/**",
@@ -5468,7 +5532,12 @@
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-09",
+        "VPJ-16",
+        "VPJ-19"
+      ]
     },
     {
       "track": "launch",
@@ -5556,10 +5625,7 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "id": "VPJ-67",
       "title": "Harness：真实只读问答产生有依据的结果与回执",
-      "blockedBy": [
-        "VPJ-66",
-        "VPJ-16"
-      ],
+      "blockedBy": [],
       "phase": "R2",
       "effortDays": 4,
       "allowedPaths": [
@@ -5635,7 +5701,11 @@
           "docs/harness/OFFLINE-SEEDS.md",
           "artifacts/VPJ-67/recorded-usage-20260913/verification.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-66",
+        "VPJ-16"
+      ]
     },
     {
       "track": "launch",
@@ -5651,9 +5721,6 @@
       "id": "VPJ-68",
       "title": "Harness：少走路且保留已确认晚餐的局部改稿闭环",
       "blockedBy": [
-        "VPJ-67",
-        "VPJ-10",
-        "VPJ-11",
         "VPJ-65"
       ],
       "phase": "R2",
@@ -5729,7 +5796,12 @@
         "reuse": [
           "docs/harness/README.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-67",
+        "VPJ-10",
+        "VPJ-11"
+      ]
     },
     {
       "track": "launch",
@@ -5818,7 +5890,8 @@
         "reuse": [
           "docs/harness/README.md"
         ]
-      }
+      },
+      "acceptanceDependencies": []
     },
     {
       "track": "launch",
@@ -5833,10 +5906,7 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "id": "VPJ-70",
       "title": "Harness：只读模型或提示词候选的配对评测与校准",
-      "blockedBy": [
-        "VPJ-67",
-        "VPJ-72"
-      ],
+      "blockedBy": [],
       "phase": "R2",
       "effortDays": 3,
       "allowedPaths": [
@@ -5908,7 +5978,11 @@
           "artifacts/VPJ-70/verification.md",
           "artifacts/VPJ-70/unrun.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-67",
+        "VPJ-72"
+      ]
     },
     {
       "track": "launch",
@@ -5925,9 +5999,7 @@
       "title": "Harness：核心任务发布判定与能力停用恢复验收",
       "blockedBy": [
         "VPJ-69",
-        "VPJ-70",
-        "VPJ-37",
-        "VPJ-63"
+        "VPJ-70"
       ],
       "phase": "R5",
       "effortDays": 3,
@@ -6007,7 +6079,11 @@
         "reuse": [
           "docs/harness/README.md"
         ]
-      }
+      },
+      "acceptanceDependencies": [
+        "VPJ-37",
+        "VPJ-63"
+      ]
     },
     {
       "track": "launch",
@@ -6631,9 +6707,7 @@
             "真实两端演示包含定位拒权、无路线、超时、过期、起终点错误；不自动发送持续位置，不绕过权限或预算。"
           ],
           "number": 364,
-          "blockedByNumbers": [
-            363
-          ],
+          "blockedByNumbers": [],
           "url": "https://github.com/JTCAO515/VP-V4/issues/364",
           "status": "planned",
           "parentTaskId": "VPJ-19",
@@ -6645,7 +6719,10 @@
               "docs/agents/maps-integration-development.md",
               "docs/contracts/place-identity.md"
             ]
-          }
+          },
+          "acceptanceDependencyNumbers": [
+            363
+          ]
         },
         {
           "key": "maps-04",
@@ -6661,9 +6738,7 @@
             "所有建议生成带Trip版本与路线观察时间的Proposal；查看diff、确认、持久重载闭环可见，版本冲突拒绝静默覆盖，来源变化不自动改已确认Trip。"
           ],
           "number": 365,
-          "blockedByNumbers": [
-            364
-          ],
+          "blockedByNumbers": [],
           "url": "https://github.com/JTCAO515/VP-V4/issues/365",
           "status": "planned",
           "parentTaskId": "VPJ-20",
@@ -6675,7 +6750,10 @@
               "docs/agents/maps-integration-development.md",
               "docs/contracts/place-identity.md"
             ]
-          }
+          },
+          "acceptanceDependencyNumbers": [
+            364
+          ]
         },
         {
           "key": "maps-05",
@@ -6720,9 +6798,7 @@
             "验证两家均不可用、实体冲突、坐标边界与额外成本上限；高级矩阵/室内/可达圈只启用已证实改善具体任务的能力，其余保留后续项。"
           ],
           "number": 367,
-          "blockedByNumbers": [
-            364
-          ],
+          "blockedByNumbers": [],
           "url": "https://github.com/JTCAO515/VP-V4/issues/367",
           "status": "planned",
           "parentTaskId": "VPJ-18",
@@ -6734,7 +6810,10 @@
               "docs/agents/maps-integration-development.md",
               "docs/contracts/place-identity.md"
             ]
-          }
+          },
+          "acceptanceDependencyNumbers": [
+            364
+          ]
         }
       ]
     }

@@ -92,7 +92,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S1
-- Blocked by: [VPJ-01 #188](https://github.com/JTCAO515/VP-V4/issues/188), [VPJ-02 #189](https://github.com/JTCAO515/VP-V4/issues/189)
+- Blocked by: [VPJ-02 #189](https://github.com/JTCAO515/VP-V4/issues/189)
+- 集成/最终验收依赖（普通关联）: [VPJ-01 #188](https://github.com/JTCAO515/VP-V4/issues/188)
 - Allowed: `ios/**`, `lib/server/identity/**`, `app/api/auth/**`, `supabase/migrations/**`, `tests/**/identity/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `pnpm test:e2e`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-04/verification.md`, `artifacts/VPJ-04/unrun.md`, `artifacts/VPJ-04/commands.jsonl`
@@ -120,7 +121,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S1
-- Blocked by: [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191)
 - Allowed: `ios/**`, `app/api/trips/**`, `components/canvas/**`, `lib/server/trip/**`, `tests/**/trip/**`, `supabase/migrations/**`, `lib/server/identity/**`, `components/trips/**`, `components/today/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `pnpm test:e2e`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-05/verification.md`, `artifacts/VPJ-05/unrun.md`, `artifacts/VPJ-05/commands.jsonl`
@@ -148,7 +150,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S2
-- Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190)
 - Allowed: `lib/server/model-gateway/**`, `evals/**`, `tests/**/model-gateway/**`, `docs/benchmarks/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm evals`
 - Evidence: `artifacts/VPJ-06/verification.md`, `artifacts/VPJ-06/unrun.md`, `artifacts/VPJ-06/commands.jsonl`
@@ -176,7 +179,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S2
-- Blocked by: [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-06 #193](https://github.com/JTCAO515/VP-V4/issues/193), [VPJ-59 #194](https://github.com/JTCAO515/VP-V4/issues/194)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-06 #193](https://github.com/JTCAO515/VP-V4/issues/193), [VPJ-59 #194](https://github.com/JTCAO515/VP-V4/issues/194)
 - Allowed: `ios/**`, `app/api/chat/**`, `lib/server/turn/**`, `lib/server/jobs/**`, `supabase/migrations/**`, `tests/**/turn/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `pnpm test:e2e`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-07/verification.md`, `artifacts/VPJ-07/unrun.md`, `artifacts/VPJ-07/commands.jsonl`
@@ -209,7 +213,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S2
-- Blocked by: [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195)
 - Allowed: `ios/**`, `app/api/chat/**`, `lib/server/turn/**`, `lib/server/jobs/**`, `tests/**/turn/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:e2e`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-08/verification.md`, `artifacts/VPJ-08/unrun.md`, `artifacts/VPJ-08/commands.jsonl`
@@ -238,7 +243,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S3
-- Blocked by: [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-08 #196](https://github.com/JTCAO515/VP-V4/issues/196)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-08 #196](https://github.com/JTCAO515/VP-V4/issues/196)
 - Allowed: `ios/**`, `lib/server/turn/**`, `lib/server/constraints/**`, `lib/server/trip/**`, `tests/**/planning/**`, `evals/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm evals`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-09/verification.md`, `artifacts/VPJ-09/unrun.md`, `artifacts/VPJ-09/commands.jsonl`
@@ -269,7 +275,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S3
-- Blocked by: [VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197)
 - Allowed: `ios/**`, `components/canvas/**`, `lib/server/trip/**`, `lib/server/constraints/**`, `tests/**/planning/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:e2e`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-10/verification.md`, `artifacts/VPJ-10/unrun.md`, `artifacts/VPJ-10/commands.jsonl`
@@ -299,7 +306,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S3
-- Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195)
 - Allowed: `ios/**`, `lib/server/memory/**`, `lib/server/context/**`, `supabase/migrations/**`, `tests/**/memory/**`, `app/api/memory/**`, `lib/server/identity/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `pnpm test:e2e`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-11/verification.md`, `artifacts/VPJ-11/unrun.md`, `artifacts/VPJ-11/commands.jsonl`
@@ -332,7 +340,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-01 #188](https://github.com/JTCAO515/VP-V4/issues/188), [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-60 #200](https://github.com/JTCAO515/VP-V4/issues/200)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-01 #188](https://github.com/JTCAO515/VP-V4/issues/188), [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-60 #200](https://github.com/JTCAO515/VP-V4/issues/200)
 - Allowed: `ios/**`, `lib/server/artifacts/**`, `lib/server/media/**`, `app/api/artifacts/**`, `supabase/migrations/**`, `tests/**/artifacts/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `pnpm test:e2e`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-12/verification.md`, `artifacts/VPJ-12/unrun.md`, `artifacts/VPJ-12/commands.jsonl`
@@ -362,7 +371,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 3专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-12 #201](https://github.com/JTCAO515/VP-V4/issues/201), [VPJ-62 #202](https://github.com/JTCAO515/VP-V4/issues/202)
+- Blocked by: [VPJ-62 #202](https://github.com/JTCAO515/VP-V4/issues/202)
+- 集成/最终验收依赖（普通关联）: [VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-12 #201](https://github.com/JTCAO515/VP-V4/issues/201)
 - Allowed: `ios/**`, `tests/**/onboarding/**`, `docs/product/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-13/verification.md`, `artifacts/VPJ-13/unrun.md`, `artifacts/VPJ-13/commands.jsonl`
@@ -393,7 +403,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S2
-- Blocked by: [VPJ-02 #189](https://github.com/JTCAO515/VP-V4/issues/189), [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190)
+- Blocked by: [VPJ-02 #189](https://github.com/JTCAO515/VP-V4/issues/189)
+- 集成/最终验收依赖（普通关联）: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190)
 - Allowed: `apps/ops/**`, `lib/server/knowledge/review/**`, `lib/server/identity/**`, `supabase/migrations/**`, `tests/**/ops/**`, `app/ops/**`, `app/api/ops/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`
 - Evidence: `artifacts/VPJ-14/verification.md`, `artifacts/VPJ-14/unrun.md`, `artifacts/VPJ-14/commands.jsonl`
@@ -420,7 +431,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S2
-- Blocked by: [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204)
 - Allowed: `apps/ops/**`, `lib/server/knowledge/**`, `supabase/migrations/**`, `docs/knowledge-base/**`, `tests/**/knowledge/**`, `app/ops/**`, `app/api/ops/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`
 - Evidence: `artifacts/VPJ-15/verification.md`, `artifacts/VPJ-15/unrun.md`, `artifacts/VPJ-15/commands.jsonl`
@@ -449,7 +461,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S2
-- Blocked by: [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-15 #205](https://github.com/JTCAO515/VP-V4/issues/205)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-15 #205](https://github.com/JTCAO515/VP-V4/issues/205)
 - Allowed: `lib/server/knowledge/**`, `lib/server/turn/**`, `ios/**`, `components/chat/**`, `tests/**/knowledge/**`, `evals/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:e2e`; `pnpm evals`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-16/verification.md`, `artifacts/VPJ-16/unrun.md`, `artifacts/VPJ-16/commands.jsonl`
@@ -479,7 +492,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S3
-- Blocked by: [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-75 #359](https://github.com/JTCAO515/VP-V4/issues/359)
+- Blocked by: [VPJ-75 #359](https://github.com/JTCAO515/VP-V4/issues/359)
+- 集成/最终验收依赖（普通关联）: [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206)
 - Allowed: `lib/server/knowledge/report/**`, `lib/server/jobs/**`, `lib/server/trip/**`, `apps/ops/**`, `supabase/migrations/**`, `tests/**/takedown/**`, `app/ops/**`, `app/api/ops/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`
 - Evidence: `artifacts/VPJ-17/verification.md`, `artifacts/VPJ-17/unrun.md`, `artifacts/VPJ-17/commands.jsonl`
@@ -508,7 +522,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; decision; 3专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
 - 验收阶段: S3
-- Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190)
 - Allowed: `docs/benchmarks/maps/**`, `docs/runbooks/**`, `docs/operator-actions.json`, `lib/server/maps/**`, `scripts/maps/**`, `tests/**/maps/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-18/verification.md`, `artifacts/VPJ-18/unrun.md`, `artifacts/VPJ-18/commands.jsonl`
@@ -535,7 +550,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S3
-- Blocked by: [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-18 #208](https://github.com/JTCAO515/VP-V4/issues/208)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-18 #208](https://github.com/JTCAO515/VP-V4/issues/208)
 - Allowed: `ios/**`, `lib/server/external-evidence/**`, `lib/server/explore/**`, `app/api/places/**`, `tests/**/places/**`, `lib/server/maps/**`, `scripts/maps/**`, `tests/**/maps/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:e2e`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-19/verification.md`, `artifacts/VPJ-19/unrun.md`, `artifacts/VPJ-19/commands.jsonl`
@@ -564,7 +580,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S3
-- Blocked by: [VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197), [VPJ-15 #205](https://github.com/JTCAO515/VP-V4/issues/205), [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197), [VPJ-15 #205](https://github.com/JTCAO515/VP-V4/issues/205), [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209)
 - Allowed: `ios/**`, `app/explore/**`, `components/explore/**`, `lib/server/explore/**`, `tests/**/explore/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:e2e`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-20/verification.md`, `artifacts/VPJ-20/unrun.md`, `artifacts/VPJ-20/commands.jsonl`
@@ -592,7 +609,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S3
-- Blocked by: [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209), [VPJ-74 #358](https://github.com/JTCAO515/VP-V4/issues/358)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209), [VPJ-74 #358](https://github.com/JTCAO515/VP-V4/issues/358)
 - Allowed: `ios/**`, `lib/server/readiness/**`, `lib/server/trip/**`, `tests/**/readiness/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-21/verification.md`, `artifacts/VPJ-21/unrun.md`, `artifacts/VPJ-21/commands.jsonl`
@@ -623,7 +641,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; decision; 2专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
 - 验收阶段: S4
-- Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190)
 - Allowed: `docs/benchmarks/hotels/**`, `docs/runbooks/**`, `docs/operator-actions.json`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-22/verification.md`, `artifacts/VPJ-22/unrun.md`, `artifacts/VPJ-22/commands.jsonl`
@@ -651,7 +670,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209), [VPJ-22 #212](https://github.com/JTCAO515/VP-V4/issues/212)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209), [VPJ-22 #212](https://github.com/JTCAO515/VP-V4/issues/212)
 - Allowed: `ios/**`, `lib/server/hotels/**`, `app/api/hotels/**`, `tests/**/hotels/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:e2e`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-23/verification.md`, `artifacts/VPJ-23/unrun.md`, `artifacts/VPJ-23/commands.jsonl`
@@ -681,7 +701,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 3专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-12 #201](https://github.com/JTCAO515/VP-V4/issues/201), [VPJ-23 #213](https://github.com/JTCAO515/VP-V4/issues/213)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-12 #201](https://github.com/JTCAO515/VP-V4/issues/201), [VPJ-23 #213](https://github.com/JTCAO515/VP-V4/issues/213)
 - Allowed: `ios/**`, `lib/server/artifacts/**`, `lib/server/trip/**`, `supabase/migrations/**`, `tests/**/orders/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-24/verification.md`, `artifacts/VPJ-24/unrun.md`, `artifacts/VPJ-24/commands.jsonl`
@@ -710,7 +731,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192)
 - Allowed: `ios/**`, `lib/server/today/**`, `app/api/trips/**`, `tests/**/today/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:e2e`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-25/verification.md`, `artifacts/VPJ-25/unrun.md`, `artifacts/VPJ-25/commands.jsonl`
@@ -741,7 +763,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206)
 - Allowed: `ios/**`, `lib/server/media-translation/**`, `app/api/translate/**`, `tests/**/translate/**`, `evals/**`, `app/api/media/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:e2e`; `pnpm evals`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-26/verification.md`, `artifacts/VPJ-26/unrun.md`, `artifacts/VPJ-26/commands.jsonl`
@@ -769,7 +792,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-26 #216](https://github.com/JTCAO515/VP-V4/issues/216), [VPJ-60 #200](https://github.com/JTCAO515/VP-V4/issues/200)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-26 #216](https://github.com/JTCAO515/VP-V4/issues/216), [VPJ-60 #200](https://github.com/JTCAO515/VP-V4/issues/200)
 - Allowed: `ios/**`, `lib/server/media-translation/**`, `lib/server/media/**`, `tests/**/voice/**`, `evals/**`, `app/api/media/**`, `app/api/translate/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:e2e`; `pnpm evals`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-27/verification.md`, `artifacts/VPJ-27/unrun.md`, `artifacts/VPJ-27/commands.jsonl`
@@ -797,7 +821,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-15 #205](https://github.com/JTCAO515/VP-V4/issues/205), [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209), [VPJ-27 #217](https://github.com/JTCAO515/VP-V4/issues/217)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-15 #205](https://github.com/JTCAO515/VP-V4/issues/205), [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209), [VPJ-27 #217](https://github.com/JTCAO515/VP-V4/issues/217)
 - Allowed: `ios/**`, `lib/server/guide/**`, `app/api/guide/**`, `tests/**/guide/**`, `evals/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:e2e`; `pnpm evals`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-28/verification.md`, `artifacts/VPJ-28/unrun.md`, `artifacts/VPJ-28/commands.jsonl`
@@ -826,7 +851,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198), [VPJ-21 #211](https://github.com/JTCAO515/VP-V4/issues/211), [VPJ-25 #215](https://github.com/JTCAO515/VP-V4/issues/215), [VPJ-65 #219](https://github.com/JTCAO515/VP-V4/issues/219)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198), [VPJ-21 #211](https://github.com/JTCAO515/VP-V4/issues/211), [VPJ-25 #215](https://github.com/JTCAO515/VP-V4/issues/215), [VPJ-65 #219](https://github.com/JTCAO515/VP-V4/issues/219)
 - Allowed: `ios/**`, `lib/server/today/recovery/**`, `lib/server/constraints/**`, `tests/**/recovery/**`, `evals/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm evals`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-29/verification.md`, `artifacts/VPJ-29/unrun.md`, `artifacts/VPJ-29/commands.jsonl`
@@ -855,7 +881,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-17 #207](https://github.com/JTCAO515/VP-V4/issues/207), [VPJ-25 #215](https://github.com/JTCAO515/VP-V4/issues/215)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-17 #207](https://github.com/JTCAO515/VP-V4/issues/207), [VPJ-25 #215](https://github.com/JTCAO515/VP-V4/issues/215)
 - Allowed: `ios/**`, `lib/server/notifications/**`, `lib/server/jobs/**`, `supabase/migrations/**`, `tests/**/notifications/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-30/verification.md`, `artifacts/VPJ-30/unrun.md`, `artifacts/VPJ-30/commands.jsonl`
@@ -884,7 +911,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-12 #201](https://github.com/JTCAO515/VP-V4/issues/201), [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204), [VPJ-57 #222](https://github.com/JTCAO515/VP-V4/issues/222)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-12 #201](https://github.com/JTCAO515/VP-V4/issues/201), [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204), [VPJ-57 #222](https://github.com/JTCAO515/VP-V4/issues/222)
 - Allowed: `apps/ops/**`, `lib/server/ops/**`, `lib/server/memory/**`, `supabase/migrations/**`, `tests/**/ops/**`, `app/ops/**`, `app/api/ops/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`
 - Evidence: `artifacts/VPJ-31/verification.md`, `artifacts/VPJ-31/unrun.md`, `artifacts/VPJ-31/commands.jsonl`
@@ -912,7 +940,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-21 #211](https://github.com/JTCAO515/VP-V4/issues/211), [VPJ-31 #223](https://github.com/JTCAO515/VP-V4/issues/223), [VPJ-57 #222](https://github.com/JTCAO515/VP-V4/issues/222)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-21 #211](https://github.com/JTCAO515/VP-V4/issues/211), [VPJ-31 #223](https://github.com/JTCAO515/VP-V4/issues/223), [VPJ-57 #222](https://github.com/JTCAO515/VP-V4/issues/222)
 - Allowed: `ios/**`, `apps/ops/**`, `lib/server/service-cases/**`, `supabase/migrations/**`, `tests/**/service-cases/**`, `app/ops/**`, `app/api/ops/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-32/verification.md`, `artifacts/VPJ-32/unrun.md`, `artifacts/VPJ-32/commands.jsonl`
@@ -941,7 +970,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; decision; 2专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
 - 验收阶段: S5
-- Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190)
 - Allowed: `docs/commercial/**`, `docs/runbooks/**`, `lib/server/entitlements/**`, `tests/**/entitlements/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-33/verification.md`, `artifacts/VPJ-33/unrun.md`, `artifacts/VPJ-33/commands.jsonl`
@@ -971,7 +1001,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S5
-- Blocked by: [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-33 #225](https://github.com/JTCAO515/VP-V4/issues/225)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-33 #225](https://github.com/JTCAO515/VP-V4/issues/225)
 - Allowed: `ios/**`, `app/api/storekit/**`, `lib/server/entitlements/**`, `supabase/migrations/**`, `tests/**/entitlements/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `pnpm test:e2e`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-34/verification.md`, `artifacts/VPJ-34/unrun.md`, `artifacts/VPJ-34/commands.jsonl`
@@ -1001,7 +1032,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S5
-- Blocked by: [VPJ-06 #193](https://github.com/JTCAO515/VP-V4/issues/193), [VPJ-08 #196](https://github.com/JTCAO515/VP-V4/issues/196), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-06 #193](https://github.com/JTCAO515/VP-V4/issues/193), [VPJ-08 #196](https://github.com/JTCAO515/VP-V4/issues/196), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226)
 - Allowed: `lib/server/identity/quota/**`, `lib/server/model-gateway/**`, `lib/server/entitlements/**`, `ios/**`, `tests/**/cost/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-35/verification.md`, `artifacts/VPJ-35/unrun.md`, `artifacts/VPJ-35/commands.jsonl`
@@ -1031,7 +1063,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S5
-- Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-12 #201](https://github.com/JTCAO515/VP-V4/issues/201), [VPJ-31 #223](https://github.com/JTCAO515/VP-V4/issues/223), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-12 #201](https://github.com/JTCAO515/VP-V4/issues/201), [VPJ-31 #223](https://github.com/JTCAO515/VP-V4/issues/223), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226)
 - Allowed: `ios/**`, `app/api/privacy/**`, `lib/server/privacy/**`, `lib/server/jobs/**`, `supabase/migrations/**`, `tests/**/privacy/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `pnpm test:e2e`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-36/verification.md`, `artifacts/VPJ-36/unrun.md`, `artifacts/VPJ-36/commands.jsonl`
@@ -1060,7 +1093,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S5
-- Blocked by: [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-35 #227](https://github.com/JTCAO515/VP-V4/issues/227)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-35 #227](https://github.com/JTCAO515/VP-V4/issues/227)
 - Allowed: `lib/server/observability/**`, `apps/ops/**`, `lib/flags/**`, `tests/**/observability/**`, `docs/runbooks/**`, `app/ops/**`, `app/api/ops/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`
 - Evidence: `artifacts/VPJ-37/verification.md`, `artifacts/VPJ-37/unrun.md`, `artifacts/VPJ-37/commands.jsonl`
@@ -1087,7 +1121,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: operator; operational; 3专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
 - 验收阶段: S5
-- Blocked by: [VPJ-02 #189](https://github.com/JTCAO515/VP-V4/issues/189), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228)
+- Blocked by: [VPJ-02 #189](https://github.com/JTCAO515/VP-V4/issues/189)
+- 集成/最终验收依赖（普通关联）: [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228)
 - Allowed: `scripts/db/restore/**`, `docs/runbooks/**`, `tests/**/restore/**`, `artifacts/VPJ-38/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-38/verification.md`, `artifacts/VPJ-38/unrun.md`, `artifacts/VPJ-38/commands.jsonl`
@@ -1115,7 +1150,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: operator; operational; 3专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
 - 验收阶段: S5
-- Blocked by: [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209), [VPJ-27 #217](https://github.com/JTCAO515/VP-V4/issues/217), [VPJ-63 #231](https://github.com/JTCAO515/VP-V4/issues/231), [VPJ-23 #213](https://github.com/JTCAO515/VP-V4/issues/213), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226), [VPJ-30 #221](https://github.com/JTCAO515/VP-V4/issues/221), [VPJ-55 #236](https://github.com/JTCAO515/VP-V4/issues/236)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209), [VPJ-27 #217](https://github.com/JTCAO515/VP-V4/issues/217), [VPJ-63 #231](https://github.com/JTCAO515/VP-V4/issues/231), [VPJ-23 #213](https://github.com/JTCAO515/VP-V4/issues/213), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226), [VPJ-30 #221](https://github.com/JTCAO515/VP-V4/issues/221), [VPJ-55 #236](https://github.com/JTCAO515/VP-V4/issues/236)
 - Allowed: `docs/benchmarks/network/**`, `scripts/diagnostics/**`, `artifacts/VPJ-39/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-39/verification.md`, `artifacts/VPJ-39/unrun.md`, `artifacts/VPJ-39/commands.jsonl`
@@ -1143,7 +1179,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S5
-- Blocked by: [VPJ-13 #203](https://github.com/JTCAO515/VP-V4/issues/203), [VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210), [VPJ-21 #211](https://github.com/JTCAO515/VP-V4/issues/211), [VPJ-23 #213](https://github.com/JTCAO515/VP-V4/issues/213), [VPJ-25 #215](https://github.com/JTCAO515/VP-V4/issues/215), [VPJ-27 #217](https://github.com/JTCAO515/VP-V4/issues/217), [VPJ-28 #218](https://github.com/JTCAO515/VP-V4/issues/218), [VPJ-29 #220](https://github.com/JTCAO515/VP-V4/issues/220), [VPJ-30 #221](https://github.com/JTCAO515/VP-V4/issues/221), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226), [VPJ-48 #235](https://github.com/JTCAO515/VP-V4/issues/235), [VPJ-64 #238](https://github.com/JTCAO515/VP-V4/issues/238), [VPJ-49 #241](https://github.com/JTCAO515/VP-V4/issues/241), [VPJ-55 #236](https://github.com/JTCAO515/VP-V4/issues/236), [VPJ-61 #240](https://github.com/JTCAO515/VP-V4/issues/240), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228)
+- Blocked by: [VPJ-49 #241](https://github.com/JTCAO515/VP-V4/issues/241)
+- 集成/最终验收依赖（普通关联）: [VPJ-13 #203](https://github.com/JTCAO515/VP-V4/issues/203), [VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210), [VPJ-21 #211](https://github.com/JTCAO515/VP-V4/issues/211), [VPJ-23 #213](https://github.com/JTCAO515/VP-V4/issues/213), [VPJ-25 #215](https://github.com/JTCAO515/VP-V4/issues/215), [VPJ-27 #217](https://github.com/JTCAO515/VP-V4/issues/217), [VPJ-28 #218](https://github.com/JTCAO515/VP-V4/issues/218), [VPJ-29 #220](https://github.com/JTCAO515/VP-V4/issues/220), [VPJ-30 #221](https://github.com/JTCAO515/VP-V4/issues/221), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226), [VPJ-48 #235](https://github.com/JTCAO515/VP-V4/issues/235), [VPJ-64 #238](https://github.com/JTCAO515/VP-V4/issues/238), [VPJ-55 #236](https://github.com/JTCAO515/VP-V4/issues/236), [VPJ-61 #240](https://github.com/JTCAO515/VP-V4/issues/240), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228)
 - Allowed: `ios/**`, `tests/**/ios/**`, `docs/design/**`, `artifacts/VPJ-40/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-40/verification.md`, `artifacts/VPJ-40/unrun.md`, `artifacts/VPJ-40/commands.jsonl`
@@ -1173,7 +1210,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S5
-- Blocked by: [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226)
 - Allowed: `app/**`, `components/**`, `lib/i18n.ts`, `tests/**/frontend/**`, `docs/design/**`, `public/assets/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:e2e`
 - Evidence: `artifacts/VPJ-41/verification.md`, `artifacts/VPJ-41/unrun.md`, `artifacts/VPJ-41/commands.jsonl`
@@ -1201,7 +1239,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: operator; acceptance; 5专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
 - 验收阶段: S5
-- Blocked by: [VPJ-08 #196](https://github.com/JTCAO515/VP-V4/issues/196), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-21 #211](https://github.com/JTCAO515/VP-V4/issues/211), [VPJ-24 #214](https://github.com/JTCAO515/VP-V4/issues/214), [VPJ-28 #218](https://github.com/JTCAO515/VP-V4/issues/218), [VPJ-29 #220](https://github.com/JTCAO515/VP-V4/issues/220), [VPJ-32 #224](https://github.com/JTCAO515/VP-V4/issues/224), [VPJ-35 #227](https://github.com/JTCAO515/VP-V4/issues/227), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228), [VPJ-37 #229](https://github.com/JTCAO515/VP-V4/issues/229), [VPJ-38 #230](https://github.com/JTCAO515/VP-V4/issues/230), [VPJ-39 #232](https://github.com/JTCAO515/VP-V4/issues/232), [VPJ-40 #233](https://github.com/JTCAO515/VP-V4/issues/233), [VPJ-41 #234](https://github.com/JTCAO515/VP-V4/issues/234), [VPJ-48 #235](https://github.com/JTCAO515/VP-V4/issues/235), [VPJ-55 #236](https://github.com/JTCAO515/VP-V4/issues/236), [VPJ-56 #237](https://github.com/JTCAO515/VP-V4/issues/237), [VPJ-58 #239](https://github.com/JTCAO515/VP-V4/issues/239), [VPJ-61 #240](https://github.com/JTCAO515/VP-V4/issues/240), [VPJ-64 #238](https://github.com/JTCAO515/VP-V4/issues/238), [VPJ-65 #219](https://github.com/JTCAO515/VP-V4/issues/219), [VPJ-49 #241](https://github.com/JTCAO515/VP-V4/issues/241)
+- Blocked by: [VPJ-49 #241](https://github.com/JTCAO515/VP-V4/issues/241)
+- 集成/最终验收依赖（普通关联）: [VPJ-08 #196](https://github.com/JTCAO515/VP-V4/issues/196), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-21 #211](https://github.com/JTCAO515/VP-V4/issues/211), [VPJ-24 #214](https://github.com/JTCAO515/VP-V4/issues/214), [VPJ-28 #218](https://github.com/JTCAO515/VP-V4/issues/218), [VPJ-29 #220](https://github.com/JTCAO515/VP-V4/issues/220), [VPJ-32 #224](https://github.com/JTCAO515/VP-V4/issues/224), [VPJ-35 #227](https://github.com/JTCAO515/VP-V4/issues/227), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228), [VPJ-37 #229](https://github.com/JTCAO515/VP-V4/issues/229), [VPJ-38 #230](https://github.com/JTCAO515/VP-V4/issues/230), [VPJ-39 #232](https://github.com/JTCAO515/VP-V4/issues/232), [VPJ-40 #233](https://github.com/JTCAO515/VP-V4/issues/233), [VPJ-41 #234](https://github.com/JTCAO515/VP-V4/issues/234), [VPJ-48 #235](https://github.com/JTCAO515/VP-V4/issues/235), [VPJ-55 #236](https://github.com/JTCAO515/VP-V4/issues/236), [VPJ-56 #237](https://github.com/JTCAO515/VP-V4/issues/237), [VPJ-58 #239](https://github.com/JTCAO515/VP-V4/issues/239), [VPJ-61 #240](https://github.com/JTCAO515/VP-V4/issues/240), [VPJ-64 #238](https://github.com/JTCAO515/VP-V4/issues/238), [VPJ-65 #219](https://github.com/JTCAO515/VP-V4/issues/219)
 - Allowed: `docs/acceptance/**`, `tests/e2e/**`, `artifacts/VPJ-42/**`, `docs/runbooks/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-42/verification.md`, `artifacts/VPJ-42/unrun.md`, `artifacts/VPJ-42/commands.jsonl`
@@ -1230,7 +1269,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: operator; operational; 3专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
 - 验收阶段: S6
-- Blocked by: [VPJ-38 #230](https://github.com/JTCAO515/VP-V4/issues/230), [VPJ-42 #242](https://github.com/JTCAO515/VP-V4/issues/242)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-38 #230](https://github.com/JTCAO515/VP-V4/issues/230), [VPJ-42 #242](https://github.com/JTCAO515/VP-V4/issues/242)
 - Allowed: `docs/runbooks/**`, `scripts/db/**`, `docs/operator-actions.json`, `artifacts/VPJ-43/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-43/verification.md`, `artifacts/VPJ-43/unrun.md`, `artifacts/VPJ-43/commands.jsonl`
@@ -1257,7 +1297,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: operator; release; 3专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
 - 验收阶段: S6
-- Blocked by: [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226), [VPJ-40 #233](https://github.com/JTCAO515/VP-V4/issues/233), [VPJ-43 #243](https://github.com/JTCAO515/VP-V4/issues/243)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226), [VPJ-40 #233](https://github.com/JTCAO515/VP-V4/issues/233), [VPJ-43 #243](https://github.com/JTCAO515/VP-V4/issues/243)
 - Allowed: `ios/**`, `docs/release/**`, `docs/runbooks/**`, `artifacts/VPJ-44/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-44/verification.md`, `artifacts/VPJ-44/unrun.md`, `artifacts/VPJ-44/commands.jsonl`
@@ -1286,6 +1327,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Owner: operator; acceptance; 3专注日，72h系统观察+至少7天机会相关跟踪；实际旅行节点未到标not_observed
 - 验收阶段: S6
 - Blocked by: [VPJ-42 #242](https://github.com/JTCAO515/VP-V4/issues/242), [VPJ-44 #244](https://github.com/JTCAO515/VP-V4/issues/244)
+- 集成/最终验收依赖（普通关联）: 无
 - Allowed: `docs/acceptance/**`, `docs/runbooks/**`, `artifacts/VPJ-45/**`, `docs/handoff.json`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-45/verification.md`, `artifacts/VPJ-45/unrun.md`, `artifacts/VPJ-45/commands.jsonl`
@@ -1342,7 +1384,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: operator; operational; 2专注日，按B0-B4真实分母；至少两轮有效cohort，不设伪日历保证
 - 验收阶段: S6
-- Blocked by: [VPJ-42 #242](https://github.com/JTCAO515/VP-V4/issues/242), [VPJ-44 #244](https://github.com/JTCAO515/VP-V4/issues/244), [VPJ-46 #246](https://github.com/JTCAO515/VP-V4/issues/246)
+- Blocked by: [VPJ-44 #244](https://github.com/JTCAO515/VP-V4/issues/244)
+- 集成/最终验收依赖（普通关联）: [VPJ-42 #242](https://github.com/JTCAO515/VP-V4/issues/242), [VPJ-46 #246](https://github.com/JTCAO515/VP-V4/issues/246)
 - Allowed: `docs/commercial/**`, `docs/operations/**`, `apps/ops/**`, `artifacts/VPJ-47/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-47/verification.md`, `artifacts/VPJ-47/unrun.md`, `artifacts/VPJ-47/commands.jsonl`
@@ -1370,7 +1413,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S5
-- Blocked by: [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204), [VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204), [VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228)
 - Allowed: `ios/**`, `apps/ops/**`, `lib/server/community/**`, `supabase/migrations/**`, `tests/**/community/**`, `app/ops/**`, `app/api/ops/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-48/verification.md`, `artifacts/VPJ-48/unrun.md`, `artifacts/VPJ-48/commands.jsonl`
@@ -1419,7 +1463,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: expand
-- Blocked by: [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-17 #207](https://github.com/JTCAO515/VP-V4/issues/207), [VPJ-76 #360](https://github.com/JTCAO515/VP-V4/issues/360)
+- Blocked by: [VPJ-76 #360](https://github.com/JTCAO515/VP-V4/issues/360)
+- 集成/最终验收依赖（普通关联）: [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-17 #207](https://github.com/JTCAO515/VP-V4/issues/207)
 - Allowed: `lib/server/knowledge/retrieval/**`, `evals/**`, `docs/benchmarks/**`, `supabase/migrations/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `pnpm evals`
 - Evidence: `artifacts/VPJ-50/verification.md`, `artifacts/VPJ-50/unrun.md`, `artifacts/VPJ-50/commands.jsonl`
@@ -1451,7 +1496,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; decision; 3专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
 - 验收阶段: expand
-- Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-39 #232](https://github.com/JTCAO515/VP-V4/issues/232)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-39 #232](https://github.com/JTCAO515/VP-V4/issues/232)
 - Allowed: `docs/benchmarks/aviation/**`, `docs/runbooks/**`, `artifacts/VPJ-51/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-51/verification.md`, `artifacts/VPJ-51/unrun.md`, `artifacts/VPJ-51/commands.jsonl`
@@ -1479,7 +1525,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: expand
-- Blocked by: [VPJ-17 #207](https://github.com/JTCAO515/VP-V4/issues/207), [VPJ-29 #220](https://github.com/JTCAO515/VP-V4/issues/220), [VPJ-51 #249](https://github.com/JTCAO515/VP-V4/issues/249)
+- Blocked by: [VPJ-51 #249](https://github.com/JTCAO515/VP-V4/issues/249)
+- 集成/最终验收依赖（普通关联）: [VPJ-17 #207](https://github.com/JTCAO515/VP-V4/issues/207), [VPJ-29 #220](https://github.com/JTCAO515/VP-V4/issues/220)
 - Allowed: `lib/server/external-evidence/flight/**`, `ios/**`, `tests/**/flight/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-52/verification.md`, `artifacts/VPJ-52/unrun.md`, `artifacts/VPJ-52/commands.jsonl`
@@ -1509,6 +1556,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Owner: operator; decision; 2专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
 - 验收阶段: expand
 - Blocked by: [VPJ-45 #245](https://github.com/JTCAO515/VP-V4/issues/245), [VPJ-47 #247](https://github.com/JTCAO515/VP-V4/issues/247)
+- 集成/最终验收依赖（普通关联）: 无
 - Allowed: `docs/product/**`, `docs/benchmarks/**`, `artifacts/VPJ-53/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-53/verification.md`, `artifacts/VPJ-53/unrun.md`, `artifacts/VPJ-53/commands.jsonl`
@@ -1537,6 +1585,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Owner: operator; decision; 2专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
 - 验收阶段: expand
 - Blocked by: [VPJ-45 #245](https://github.com/JTCAO515/VP-V4/issues/245), [VPJ-47 #247](https://github.com/JTCAO515/VP-V4/issues/247)
+- 集成/最终验收依赖（普通关联）: 无
 - Allowed: `docs/commercial/**`, `docs/adr/**`, `artifacts/VPJ-54/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-54/verification.md`, `artifacts/VPJ-54/unrun.md`, `artifacts/VPJ-54/commands.jsonl`
@@ -1564,7 +1613,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-12 #201](https://github.com/JTCAO515/VP-V4/issues/201)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-12 #201](https://github.com/JTCAO515/VP-V4/issues/201)
 - Allowed: `ios/**`, `app/api/artifacts/**`, `lib/server/artifacts/**`, `tests/**/artifacts/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:e2e`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-55/verification.md`, `artifacts/VPJ-55/unrun.md`, `artifacts/VPJ-55/commands.jsonl`
@@ -1594,7 +1644,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: operator; operational; 4专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
 - 验收阶段: S5
-- Blocked by: [VPJ-01 #188](https://github.com/JTCAO515/VP-V4/issues/188)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-01 #188](https://github.com/JTCAO515/VP-V4/issues/188)
 - Allowed: `ios/**`, `.github/workflows/**`, `scripts/ios/**`, `docs/runbooks/**`, `artifacts/VPJ-56/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-56/verification.md`, `artifacts/VPJ-56/unrun.md`, `artifacts/VPJ-56/commands.jsonl`
@@ -1622,7 +1673,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204)
 - Allowed: `ios/**`, `apps/ops/**`, `lib/server/service-cases/**`, `lib/server/identity/**`, `supabase/migrations/**`, `tests/**/service-cases/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-57/verification.md`, `artifacts/VPJ-57/unrun.md`, `artifacts/VPJ-57/commands.jsonl`
@@ -1651,7 +1703,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; acceptance; 3专注日，PR/实际任务验证窗口
 - 验收阶段: S5
-- Blocked by: [VPJ-30 #221](https://github.com/JTCAO515/VP-V4/issues/221), [VPJ-32 #224](https://github.com/JTCAO515/VP-V4/issues/224), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228), [VPJ-48 #235](https://github.com/JTCAO515/VP-V4/issues/235), [VPJ-64 #238](https://github.com/JTCAO515/VP-V4/issues/238), [VPJ-24 #214](https://github.com/JTCAO515/VP-V4/issues/214), [VPJ-49 #241](https://github.com/JTCAO515/VP-V4/issues/241), [VPJ-55 #236](https://github.com/JTCAO515/VP-V4/issues/236), [VPJ-28 #218](https://github.com/JTCAO515/VP-V4/issues/218), [VPJ-61 #240](https://github.com/JTCAO515/VP-V4/issues/240), [VPJ-25 #215](https://github.com/JTCAO515/VP-V4/issues/215)
+- Blocked by: [VPJ-49 #241](https://github.com/JTCAO515/VP-V4/issues/241)
+- 集成/最终验收依赖（普通关联）: [VPJ-30 #221](https://github.com/JTCAO515/VP-V4/issues/221), [VPJ-32 #224](https://github.com/JTCAO515/VP-V4/issues/224), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228), [VPJ-48 #235](https://github.com/JTCAO515/VP-V4/issues/235), [VPJ-64 #238](https://github.com/JTCAO515/VP-V4/issues/238), [VPJ-24 #214](https://github.com/JTCAO515/VP-V4/issues/214), [VPJ-55 #236](https://github.com/JTCAO515/VP-V4/issues/236), [VPJ-28 #218](https://github.com/JTCAO515/VP-V4/issues/218), [VPJ-61 #240](https://github.com/JTCAO515/VP-V4/issues/240), [VPJ-25 #215](https://github.com/JTCAO515/VP-V4/issues/215)
 - Allowed: `tests/security/**`, `tests/integration/**`, `docs/acceptance/**`, `artifacts/VPJ-58/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`
 - Evidence: `artifacts/VPJ-58/verification.md`, `artifacts/VPJ-58/unrun.md`, `artifacts/VPJ-58/commands.jsonl`
@@ -1700,7 +1753,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-06 #193](https://github.com/JTCAO515/VP-V4/issues/193)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-03 #190](https://github.com/JTCAO515/VP-V4/issues/190), [VPJ-06 #193](https://github.com/JTCAO515/VP-V4/issues/193)
 - Allowed: `lib/server/media/**`, `lib/server/media-translation/**`, `evals/**`, `docs/benchmarks/media/**`, `tests/**/media/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm evals`
 - Evidence: `artifacts/VPJ-60/verification.md`, `artifacts/VPJ-60/unrun.md`, `artifacts/VPJ-60/commands.jsonl`
@@ -1727,7 +1781,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 3专注日，PR/实际任务验证窗口
 - 验收阶段: S4
-- Blocked by: [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-32 #224](https://github.com/JTCAO515/VP-V4/issues/224)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-32 #224](https://github.com/JTCAO515/VP-V4/issues/224)
 - Allowed: `ios/**`, `lib/server/trip/**`, `lib/server/memory/**`, `supabase/migrations/**`, `tests/**/trip/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-61/verification.md`, `artifacts/VPJ-61/unrun.md`, `artifacts/VPJ-61/commands.jsonl`
@@ -1775,7 +1830,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: operator; operational; 2专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
 - 验收阶段: S2
-- Blocked by: [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195)
 - Allowed: `scripts/diagnostics/**`, `docs/benchmarks/network/**`, `artifacts/VPJ-63/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-63/verification.md`, `artifacts/VPJ-63/unrun.md`, `artifacts/VPJ-63/commands.jsonl`
@@ -1802,7 +1858,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 3专注日，PR/实际任务验证窗口
 - 验收阶段: S5
-- Blocked by: [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228), [VPJ-48 #235](https://github.com/JTCAO515/VP-V4/issues/235)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-14 #204](https://github.com/JTCAO515/VP-V4/issues/204), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228), [VPJ-48 #235](https://github.com/JTCAO515/VP-V4/issues/235)
 - Allowed: `ios/**`, `apps/ops/**`, `lib/server/community/**`, `supabase/migrations/**`, `tests/**/community/**`, `app/ops/**`, `app/api/ops/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm db:verify`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-64/verification.md`, `artifacts/VPJ-64/unrun.md`, `artifacts/VPJ-64/commands.jsonl`
@@ -1830,7 +1887,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S3
-- Blocked by: [VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-19 #209](https://github.com/JTCAO515/VP-V4/issues/209)
 - Allowed: `ios/**`, `lib/server/trip/**`, `lib/server/constraints/**`, `lib/server/knowledge/**`, `tests/**/planning/**`, `evals/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm evals`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-65/verification.md`, `artifacts/VPJ-65/unrun.md`, `artifacts/VPJ-65/commands.jsonl`
@@ -1886,7 +1944,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，有界PR验证；真实环境/人工校准等待另计
 - 验收阶段: S2
-- Blocked by: [VPJ-66 #263](https://github.com/JTCAO515/VP-V4/issues/263), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-66 #263](https://github.com/JTCAO515/VP-V4/issues/263), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206)
 - Allowed: `lib/server/turn/**`, `lib/server/context/**`, `lib/server/knowledge/**`, `lib/server/observability/**`, `app/api/chat/**`, `components/chat/**`, `ios/VisePanda/**`, `evals/harness/**`, `tests/**/harness/**`, `docs/harness/**`, `artifacts/VPJ-67/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm evals`
 - Evidence: `artifacts/VPJ-67/verification.md`, `artifacts/VPJ-67/unrun.md`, `artifacts/VPJ-67/commands.jsonl`, `artifacts/VPJ-67/results.json`
@@ -1917,7 +1976,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 4专注日，有界PR验证；真实环境/人工校准等待另计
 - 验收阶段: S3
-- Blocked by: [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264), [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-65 #219](https://github.com/JTCAO515/VP-V4/issues/219)
+- Blocked by: [VPJ-65 #219](https://github.com/JTCAO515/VP-V4/issues/219)
+- 集成/最终验收依赖（普通关联）: [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264), [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199)
 - Allowed: `lib/server/trip/**`, `lib/server/constraints/**`, `lib/server/context/**`, `lib/server/memory/**`, `app/api/trips/**`, `components/canvas/**`, `ios/VisePanda/**`, `evals/harness/**`, `tests/**/harness/**`, `docs/harness/**`, `artifacts/VPJ-68/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm evals`
 - Evidence: `artifacts/VPJ-68/verification.md`, `artifacts/VPJ-68/unrun.md`, `artifacts/VPJ-68/commands.jsonl`, `artifacts/VPJ-68/results.json`
@@ -1949,6 +2009,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Owner: coding-agent; vertical; 3专注日，有界PR验证；真实环境/人工校准等待另计
 - 验收阶段: S3
 - Blocked by: [VPJ-68 #265](https://github.com/JTCAO515/VP-V4/issues/265)
+- 集成/最终验收依赖（普通关联）: 无
 - Allowed: `lib/server/turn/**`, `lib/server/jobs/**`, `lib/server/observability/**`, `app/api/chat/**`, `ios/VisePanda/**`, `components/chat/**`, `evals/harness/**`, `tests/**/harness/**`, `docs/harness/**`, `artifacts/VPJ-69/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm evals`
 - Evidence: `artifacts/VPJ-69/verification.md`, `artifacts/VPJ-69/unrun.md`, `artifacts/VPJ-69/commands.jsonl`, `artifacts/VPJ-69/results.json`
@@ -1978,7 +2039,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 3专注日，有界PR验证；真实环境/人工校准等待另计
 - 验收阶段: S5
-- Blocked by: [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264), [VPJ-72 #287](https://github.com/JTCAO515/VP-V4/issues/287)
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264), [VPJ-72 #287](https://github.com/JTCAO515/VP-V4/issues/287)
 - Allowed: `evals/harness/**`, `tests/**/harness/**`, `docs/benchmarks/**`, `lib/server/model-gateway/prompt/**`, `docs/harness/**`, `artifacts/VPJ-70/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm evals`
 - Evidence: `artifacts/VPJ-70/verification.md`, `artifacts/VPJ-70/unrun.md`, `artifacts/VPJ-70/commands.jsonl`, `artifacts/VPJ-70/results.json`
@@ -2010,7 +2072,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - Owner: coding-agent; vertical; 3专注日，有界PR验证；真实环境/人工校准等待另计
 - 验收阶段: S5
-- Blocked by: [VPJ-69 #266](https://github.com/JTCAO515/VP-V4/issues/266), [VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267), [VPJ-37 #229](https://github.com/JTCAO515/VP-V4/issues/229), [VPJ-63 #231](https://github.com/JTCAO515/VP-V4/issues/231)
+- Blocked by: [VPJ-69 #266](https://github.com/JTCAO515/VP-V4/issues/266), [VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267)
+- 集成/最终验收依赖（普通关联）: [VPJ-37 #229](https://github.com/JTCAO515/VP-V4/issues/229), [VPJ-63 #231](https://github.com/JTCAO515/VP-V4/issues/231)
 - Allowed: `evals/harness/**`, `tests/**/harness/**`, `lib/server/observability/**`, `lib/flags/**`, `docs/acceptance/**`, `docs/runbooks/**`, `docs/benchmarks/**`, `docs/harness/**`, `artifacts/VPJ-71/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm evals`
 - Evidence: `artifacts/VPJ-71/verification.md`, `artifacts/VPJ-71/unrun.md`, `artifacts/VPJ-71/commands.jsonl`, `artifacts/VPJ-71/results.json`

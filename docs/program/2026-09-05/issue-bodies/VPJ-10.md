@@ -17,9 +17,17 @@
 
 [执行行：范围、检查、证据与回退](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-10) · [接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) · [阶段 S3](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s3)。
 
-## 验收依赖（不自动转为 blocked）
+## 开工依赖（GitHub 原生关系）
+
+无已登记的整票开工硬依赖；开工前仍核实际接口、环境与权限。
+
+涉及本轮保护任务的原生关系暂按原样保留；有无 Blocked 图标都不证明已就绪或已验收。
+
+## 集成与最终验收依赖（普通关联）
 
 - [VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197)
+
+可按首个切片独立推进；这些输入的实际能力与适用证据仍须在集成/整票验收时核对，不能用 fixture 或移除图标替代。
 
 ## Acceptance criteria
 

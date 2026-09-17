@@ -18,6 +18,16 @@ const byId = new Map(plan.tasks.map(t => [t.id, t]));
 const number = id => id === 'VPJ-00' ? plan.parentNumber : byId.get(id)?.number;
 const link = id => number(id) ? `[${id} #${number(id)}](https://github.com/${plan.repo}/issues/${number(id)})` : id;
 
+// Both kinds remain in the acceptance graph. Only blockedBy is mirrored to GitHub.
+export function allDependencies(task) {
+  const acceptance = task.acceptanceDependencies ?? [];
+  assert.ok(Array.isArray(task.blockedBy) && Array.isArray(acceptance), `${task.id} invalid dependency list`);
+  const dependencies = [...task.blockedBy, ...acceptance];
+  assert.ok(dependencies.every(id => typeof id === 'string' && id.trim()), `${task.id} invalid dependency id`);
+  assert.equal(new Set(dependencies).size, dependencies.length, `${task.id} duplicate dependency`);
+  return dependencies;
+}
+
 export function orderedTasks(tasks) {
   const index = new Map(tasks.map(t => [t.id, t]));
   assert.equal(index.size, tasks.length, 'duplicate task id');
@@ -27,7 +37,7 @@ export function orderedTasks(tasks) {
     assert.ok(!visiting.has(id), `dependency cycle at ${id}`);
     if (done.has(id)) return;
     visiting.add(id);
-    for (const dep of index.get(id).blockedBy) visit(dep);
+    for (const dep of allDependencies(index.get(id))) visit(dep);
     visiting.delete(id); done.add(id); ordered.push(index.get(id));
   };
   for (const task of tasks) visit(task.id);
@@ -57,7 +67,7 @@ export function validateDeliveryStages(value) {
     assert.ok(stages.has(task.deliveryStage), `${task.id} unknown delivery stage ${task.deliveryStage}`);
     if (task.track === 'expand') assert.equal(task.deliveryStage, 'expand', `${task.id} expand task must use expand stage`);
     if (task.track === 'launch') assert.notEqual(task.deliveryStage, 'expand', `${task.id} launch task cannot use expand stage`);
-    for (const dependency of task.blockedBy) {
+    for (const dependency of allDependencies(task)) {
       const upstream = index.get(dependency);
       assert.ok(stages.get(upstream.deliveryStage) <= stages.get(task.deliveryStage),
         `${task.id} delivery stage ${task.deliveryStage} precedes dependency ${dependency} in ${upstream.deliveryStage}`);
@@ -105,6 +115,17 @@ export function validateExecutionBrief(task) {
   assert.ok(Array.isArray(brief.reuse) && brief.reuse.length && brief.reuse.every(p => typeof p === 'string' && p.trim()), `${task.id} missing reuse inputs`);
 }
 
+function dependencyBlock(t) {
+  if (t.acceptanceDependencies === undefined) {
+    return `${t.executionBrief ? '## 验收依赖（不自动转为 blocked）' : '## Blocked by'}\n\n${t.blockedBy.length ? t.blockedBy.map(id => '- ' + link(id)).join('\n') : '无其他任务依赖；仍需核对当前接口、环境与外部条件。'}\n\n`;
+  }
+  return '## 开工依赖（GitHub 原生关系）\n\n' +
+    (t.blockedBy.length ? t.blockedBy.map(id => '- ' + link(id)).join('\n') : '无已登记的整票开工硬依赖；开工前仍核实际接口、环境与权限。') +
+    '\n\n涉及本轮保护任务的原生关系暂按原样保留；有无 Blocked 图标都不证明已就绪或已验收。\n\n' +
+    '## 集成与最终验收依赖（普通关联）\n\n' + (t.acceptanceDependencies.map(id => '- ' + link(id)).join('\n') || '无其他普通关联；上列真实开工依赖仍保留。') +
+    '\n\n可按首个切片独立推进；这些输入的实际能力与适用证据仍须在集成/整票验收时核对，不能用 fixture 或移除图标替代。\n\n';
+}
+
 function executionBriefBlock(t) {
   if (!t.executionBrief) return '';
   validateExecutionBrief(t);
@@ -129,7 +150,7 @@ export function body(t) {
     `## 用户结果\n\n${t.title}。\n\n` +
     executionBriefBlock(t) +
     entry +
-    `${t.executionBrief ? '## 验收依赖（不自动转为 blocked）' : '## Blocked by'}\n\n${t.blockedBy.length ? t.blockedBy.map(id => '- ' + link(id)).join('\n') : '无其他任务依赖；仍需核对当前接口、环境与外部条件。'}\n\n` +
+    dependencyBlock(t) +
     `## Acceptance criteria\n\n${t.acceptance.map(a => '- [ ] ' + a).join('\n')}\n\n` +
     `## 不得触碰\n\n${t.doNotTouch.map(s => '- ' + s).join('\n')}\n\n` +
     (t.activationEvidence ? `后续开启门：${t.activationEvidence}\n\n` : '') +
@@ -159,6 +180,7 @@ export function executionContractRow(t) {
     `- Owner: ${t.owner}; ${t.kind}; ${t.effortDays}专注日，${t.observationWindow}\n` +
     `- 验收阶段: ${t.deliveryStage}\n` +
     `- Blocked by: ${t.blockedBy.map(link).join(', ') || '无任务依赖；核实际条件'}\n` +
+    (t.acceptanceDependencies !== undefined ? `- 集成/最终验收依赖（普通关联）: ${t.acceptanceDependencies.map(link).join(', ') || '无'}\n` : '') +
     `- Allowed: ${t.allowedPaths.map(p=>'\u0060'+p+'\u0060').join(', ')}\n` +
     `- Checks: ${t.checks.map(p=>'\u0060'+p+'\u0060').join('; ')}\n` +
     `- Evidence: ${t.artifactPaths.map(p=>'\u0060'+p+'\u0060').join(', ')}\n` +
@@ -175,8 +197,8 @@ export function executionContractRow(t) {
 function render() {
   validate();
   const header = '# VPJ 任务定义与依赖\n\n生成自 `issue-plan.json`；不要手工改此表。这是计划定义，不是实时进度；执行状态以 GitHub、已合并接口和获准环境的当前证据为准。\n\n';
-  const table = '| 任务 | 交付 | 依赖 | Owner | 专注日/观察 | 验收阶段 | 范围 |\n| --- | --- | --- | --- | --- | --- | --- |\n' +
-    orderedTasks(plan.tasks).map(t=>`| ${link(t.id)} | ${t.title} | ${t.blockedBy.map(link).join(', ') || '无任务依赖；核实际条件'} | ${t.owner} | ${t.effortDays}日；${t.observationWindow} | [${t.deliveryStage}](DELIVERY-STAGES.md#${t.deliveryStage.toLowerCase()}) | ${t.track} |`).join('\n');
+  const table = '| 任务 | 交付 | 原生开工依赖 | 集成/验收关联 | Owner | 专注日/观察 | 验收阶段 | 范围 |\n| --- | --- | --- | --- | --- | --- | --- | --- |\n' +
+    orderedTasks(plan.tasks).map(t=>`| ${link(t.id)} | ${t.title} | ${t.blockedBy.map(link).join(', ') || '无'} | ${(t.acceptanceDependencies ?? []).map(link).join(', ') || '无'} | ${t.owner} | ${t.effortDays}日；${t.observationWindow} | [${t.deliveryStage}](DELIVERY-STAGES.md#${t.deliveryStage.toLowerCase()}) | ${t.track} |`).join('\n');
   save(`${dir}/ISSUES.md`, header + table + '\n\n后续expand必须另有activationEvidence，依赖完成不会自动开放。\n');
   save(`${dir}/DELIVERY-STAGES.md`, renderDeliveryStages(plan));
   let contracts = executionContractHeader;
@@ -543,7 +565,7 @@ async function closeOld(){
   }
 }
 
-export function validateRemoteTaskState(task, issue, { baselineMerged, blockers = [], migrationSnapshot = false }) {
+export function validateRemoteTaskState(task, issue, { baselineMerged, blockers = [], acceptanceInputs = [], migrationSnapshot = false }) {
   assert.ok(issue, `${task.id} missing remote issue`);
   const labels = issue.labels.map(label => label.name);
   if (migrationSnapshot || !baselineMerged) {
@@ -552,6 +574,7 @@ export function validateRemoteTaskState(task, issue, { baselineMerged, blockers 
     return 'baseline-blocked';
   }
   const openBlockers = blockers.filter(blocker => blocker.state !== 'closed' || blocker.state_reason !== 'completed');
+  const unfinishedAcceptance = acceptanceInputs.filter(input => input.state !== 'closed' || input.state_reason !== 'completed');
   if (issue.state === 'closed') {
     assert.equal(issue.state_reason, 'completed', `${task.id} closed without completion; reconcile its planned scope`);
     assert.ok(!labels.some(label => ['status:planned', 'status:blocked', 'status:ready', 'status:in-progress'].includes(label) || label.startsWith('ready-for-')),
@@ -559,7 +582,7 @@ export function validateRemoteTaskState(task, issue, { baselineMerged, blockers 
     // A dependent may have accepted a usable interface while its upstream still has
     // other unfinished scope. Flag the evidence review; never infer runtime acceptance
     // or reopen/mark every downstream blocked merely from whole-Issue state.
-    return openBlockers.length ? 'completion-evidence-review' : 'completed';
+    return openBlockers.length || unfinishedAcceptance.length ? 'completion-evidence-review' : 'completed';
   }
   assert.equal(issue.state, 'open', `${task.id} unexpected state`);
   if (labels.some(label => ['status:ready', 'ready-for-agent'].includes(label))) {
@@ -582,7 +605,13 @@ async function verifyNewRemote({ migrationSnapshot = false } = {}){
       validateRemoteTaskBody(t, i.body, { migrationSnapshot });
       const [deps,parent]=await Promise.all([readApi(`repos/${plan.repo}/issues/${t.number}/dependencies/blocked_by`),readApi(`repos/${plan.repo}/issues/${t.number}/parent`)]);
       assert.deepEqual(deps.map(x=>x.number).sort((a,b)=>a-b),t.blockedBy.map(number).sort((a,b)=>a-b),`${t.id} native deps`);assert.equal(parent.number,plan.parentNumber);
-      const state = validateRemoteTaskState(t, i, { baselineMerged, blockers: deps, migrationSnapshot });
+      const acceptanceInputs = (t.acceptanceDependencies ?? []).map(id => {
+        const input = existing.find(issue => issue.number === number(id));
+        assert.ok(input, `${t.id} missing acceptance input ${id}`);
+        assert.ok(i.body.includes(`https://github.com/${plan.repo}/issues/${number(id)}`), `${t.id} missing acceptance link ${id}`);
+        return input;
+      });
+      const state = validateRemoteTaskState(t, i, { baselineMerged, blockers: deps, acceptanceInputs, migrationSnapshot });
       if (state === 'readiness-review') readinessReview.push(t.id);
       if (state === 'completion-evidence-review') completionEvidenceReview.push(t.id);
       if (state === 'active-input-review') activeInputReview.push(t.id);
@@ -599,7 +628,7 @@ function readApi(endpoint){return new Promise((resolve,reject)=>execFile('gh',['
 async function verifyRemote(){
   const existing=await verifyNewRemote();
   for(const n of Object.keys(plan.oldIssueSuccessors)){const i=existing.find(x=>x.number===Number(n));assert.equal(i?.state,'closed',n);assert.equal(i.state_reason,'not_planned',n);}
-  const result={at:new Date().toISOString(),repo:plan.repo,parent:plan.parentNumber,newTasks:plan.tasks.length,closedOld:Object.keys(plan.oldIssueSuccessors).length,nativeDependencies:plan.tasks.reduce((n,t)=>n+t.blockedBy.length,0),verified:true,runtimeAcceptance:false};
+  const result={at:new Date().toISOString(),repo:plan.repo,parent:plan.parentNumber,newTasks:plan.tasks.length,closedOld:Object.keys(plan.oldIssueSuccessors).length,nativeDependencies:plan.tasks.reduce((n,t)=>n+t.blockedBy.length,0),acceptanceDependencies:plan.tasks.reduce((n,t)=>n+(t.acceptanceDependencies?.length ?? 0),0),verified:true,runtimeAcceptance:false};
   saveJson(`${dir}/tracker-verification.json`,result);console.log(JSON.stringify(result));
 }
 

@@ -114,7 +114,7 @@ test('compact Issue bodies keep task-specific acceptance and guardrails with ful
     const execution = executionContractRow(task);
     for (const criterion of task.acceptance) assert.ok(generated.includes(`- [ ] ${criterion}`), `${task.id} lost acceptance`);
     for (const guardrail of task.doNotTouch) assert.ok(generated.includes(`- ${guardrail}`), `${task.id} lost guardrail`);
-    for (const dependency of task.blockedBy) assert.ok(generated.includes(`[${dependency} #`), `${task.id} lost dependency`);
+    for (const dependency of [...task.blockedBy, ...(task.acceptanceDependencies ?? [])]) assert.ok(generated.includes(`[${dependency} #`), `${task.id} lost dependency`);
     assert.ok(generated.includes(`/EXECUTION-CONTRACT.md#${task.id.toLowerCase()}`));
     assert.ok(generated.includes('/docs/agents/development-workflow.md'));
     for (const field of ['allowedPaths', 'checks', 'artifactPaths', 'docsImpact', 'externalPrerequisites']) {
@@ -127,4 +127,23 @@ test('compact Issue bodies keep task-specific acceptance and guardrails with ful
     assert.ok(!generated.includes('## Scope 与接口'), `${task.id} duplicates execution scope`);
     assert.ok(!generated.includes('## 验证与证据'), `${task.id} duplicates execution checks`);
   }
+});
+
+test('acceptance-only dependencies retain ordering, missing-node and mixed-cycle validation', () => {
+  assert.deepEqual(orderedTasks([
+    { id: 'B', blockedBy: [], acceptanceDependencies: ['A'] },
+    { id: 'A', blockedBy: [] },
+  ]).map(t => t.id), ['A', 'B']);
+  assert.throws(() => orderedTasks([{ id: 'A', blockedBy: [], acceptanceDependencies: ['missing'] }]), /unknown dependency/);
+  assert.throws(() => orderedTasks([
+    { id: 'A', blockedBy: ['B'] }, { id: 'B', blockedBy: [], acceptanceDependencies: ['A'] },
+  ]), /dependency cycle/);
+  assert.throws(() => orderedTasks([{ id: 'A', blockedBy: ['B'], acceptanceDependencies: ['B'] }]), /duplicate dependency/);
+  assert.throws(() => orderedTasks([{ id: 'A', blockedBy: [], acceptanceDependencies: 'B' }]), /invalid dependency list/);
+  const backward = stagedPlan();
+  backward.tasks[0].deliveryStage = 'S2';
+  backward.tasks[1].deliveryStage = 'S1';
+  backward.tasks[1].acceptanceDependencies = backward.tasks[1].blockedBy;
+  backward.tasks[1].blockedBy = [];
+  assert.throws(() => validateDeliveryStages(backward), /precedes dependency/);
 });
