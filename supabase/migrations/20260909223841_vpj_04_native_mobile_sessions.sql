@@ -136,6 +136,13 @@ begin
   if not identity_private.mobile_access_v2() then raise exception 'SESSION_REPLACED'; end if;
 end $$;
 revoke all on function identity_private.guard_mobile_rpc_v2() from public,anon,authenticated;
+-- Fresh-bootstrap correction: these two public SECURITY DEFINER functions are not
+-- ordinary mobile RPCs. The first is a service worker writer and the second is a
+-- trigger implementation. Explicit role grants from the older baseline otherwise
+-- make both look like unreviewed authenticated RPCs below.
+revoke all on function public.append_chat_turn_event(uuid,text,text,text) from public,anon,authenticated;
+grant execute on function public.append_chat_turn_event(uuid,text,text,text) to service_role;
+revoke all on function public.capture_initial_trip_version() from public,anon,authenticated;
 do $$ declare expected record; f record; definition text; revised text; guarded integer:=0; begin
   for expected in select * from (values
     ('public.cancel_chat_turn(uuid)', '1047fd7accd4b7d031caab4a67f49acb'),
