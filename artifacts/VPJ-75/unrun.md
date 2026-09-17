@@ -68,16 +68,32 @@ and `docs/contracts/wiki-generation-dispatch.md`.
   *synthesis* (one page combining several sources into one narrative) —
   that remains unbuilt.
 - ~~Prompt-injection resistance~~ **PARTIALLY DONE 2026-09-16 for the
-  statement-proposal job, fixture-only.** A frozen zh/en adversarial fixture
-  set (`evals/wiki-statement-proposals-safety/injection-cases.ts`, 3
+  statement-proposal job, fixture-only; real-model pass DONE 2026-09-17
+  (round 22).** A frozen zh/en adversarial fixture set
+  (`evals/wiki-statement-proposals-safety/injection-cases.ts`, 3
   categories x 2 locales) proves the structural validation layer — not a
   real model — rejects an injected-instruction-compliant output, including
-  end to end through the real worker path with a scripted transport. A real
-  model call against this fixture set (would it actually resist, or would it
-  write the injected marker into `summary`/`gaps`?) remains UNRUN. The
-  wiki-*generation* job's own system prompt (page-level summary/gaps, not
-  statement proposals) is still untested against this or any adversarial
-  fixture.
+  end to end through the real worker path with a scripted transport. This
+  round rechecked for a real, usable provider credential (found: Qwen has
+  real account balance; GLM's key is valid but the account has zero real
+  balance, a real HTTP 429; DeepSeek's key is valid but
+  `MODEL_PROFILES.deepseek_flash.providerModelId` is confirmed stale against
+  the real API, not fixed, shared-module, out of scope) and ran all 6 real
+  cases against the real `runWikiStatementProposalJob` worker path with real
+  Qwen (`qwen3.7-plus-2026-05-26`) HTTP calls: 6/6 resisted (the injected
+  compliance marker never appeared anywhere in the raw model response text),
+  every real response explicitly named the embedded instruction as untrusted
+  and declined to follow it. A real, separate, reproducible finding
+  surfaced: 4/6 real responses were rejected as `MODEL_OUTPUT_INVALID` for a
+  reason unrelated to the injection — the model correctly declined to invent
+  an unstated city, producing `scope.cities: []`, which
+  `isKnowledgeStatement` requires to be nonempty; not fixed here (would
+  require reasoning about the `KnowledgeStatement` schema broadly, not a
+  narrow #359 slice). See
+  `wiki-statement-proposals-injection-real-model-20260917/verification.md`.
+  The wiki-*generation* job's own system prompt (page-level summary/gaps,
+  not statement proposals) is still untested against this or any
+  adversarial fixture — unchanged, not addressed this round.
 - **Actual per-call RMB cost reconciliation** against Qwen's billing
   console — token counts are real; price is not independently confirmed.
 - ~~Withdrawn-source dispatch barrier~~ **DONE 2026-09-16**, see
@@ -159,9 +175,19 @@ withdrawn-source scan (2026-09-17, round 20) are done (see each item above
 and `docs/knowledge-upgrade/README.md`'s dated log for what each one
 actually covers and what it does not). Structural conflict detection and
 fixture-only injection/multi-source-binding coverage are partially done
-(2026-09-16, statement-proposal job only); real-model injection resistance,
-true multi-source page synthesis, real per-call RMB reconciliation, and
-Docling integration remain not started. The automated scan (round 20) is
-pull-based (an RPC the UI polls) — a periodic/scheduled server-side trigger
-or an outbound notification (email/webhook) for it remains not started and
-would need real delivery infrastructure this sandbox does not have.
+(2026-09-16, statement-proposal job only); a real-model pass over the
+statement-proposals injection fixture set is now DONE (2026-09-17, round
+22, see above) — 6/6 resisted against real Qwen. True multi-source page
+synthesis, real per-call RMB reconciliation, and Docling integration remain
+not started. **Environment correction (2026-09-17, round 22):** this
+sandbox DOES have a real, usable LLM credential (Qwen, real account
+balance) once the Bash tool's own sandbox is disabled for the network call
+— prior rounds' "no real credential" framing conflated a sandboxed-network
+restriction with an actual absence of credentials; re-check before assuming
+either way in a future round. GLM's configured key has zero real balance
+(verified); DeepSeek's configured model id is stale against the real API
+(verified, not fixed, shared-module, out of this round's #359-only scope).
+The automated scan (round 20) is pull-based (an RPC the UI polls) — a
+periodic/scheduled server-side trigger or an outbound notification
+(email/webhook) for it remains not started and would need real delivery
+infrastructure this sandbox does not have.
