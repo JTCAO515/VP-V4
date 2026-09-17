@@ -1,6 +1,7 @@
 import { appendFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
+import { PLANNING_RECEIPT_PATH } from './lib/planning-receipt.mjs';
 
 // Only known navigation and planning documents qualify. Runtime data, contracts,
 // ADRs, code, tests, workflow changes and unknown files retain the complete gate.
@@ -8,6 +9,12 @@ const documents = new Set([
   'README.md', 'AGENTS.md', 'CONTEXT.md', 'HANDOFF.md',
   'docs/INDEX.md', 'docs/handoff.json', 'docs/manifest.json',
   'docs/program/2026-09-05/issue-plan.json',
+  'docs/VISEPANDA-MASTER-PLAN-2026-09-05.md',
+  'docs/program/2026-09-05/BRAND-ALIGNMENT-EXECUTION.md',
+  'docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md',
+  // Historical, planning-only receipt; docs:check validates its closed shape.
+  // This is NOT a pattern allowing arbitrary artifact JSON or runtime inputs.
+  PLANNING_RECEIPT_PATH,
 ]);
 const documentPatterns = [
   /^docs\/agents\/(?:[^/]+\/)*[^/]+\.md$/,

@@ -115,6 +115,9 @@ Repository-required reviews remain in force; this does not authorize self-approv
 Quality PR has a narrow documentation path for known navigation, workflow and task-definition
 files: source-policy lint, governance tests, contract tests and docs checks. Code, tests, CI,
 dependencies, ADRs, runtime data, unknown paths and manual runs retain the full existing check set.
+The master product plan and explicitly named experience/brand planning pages are included;
+the one allowlisted product-experience sync receipt is checked against a closed metadata schema.
+This does not allow arbitrary artifact JSON or treat a historical receipt as live acceptance.
 The same job/check name reports either applicable scope; its summary states what did not apply.
 The full path builds once and reuses that output for browser tests. A newer commit cancels an
 older run for the same PR. The standalone frontend-test command still builds when called alone.
@@ -146,6 +149,11 @@ action changes, or at session handoff; regenerate `HANDOFF.md` and `CONTEXT.md` 
 Keep the active handoff concise: retain current decisions, blockers and evidence pointers. Move
 superseded verification history to a linked dated snapshot rather than repeating it in both generated
 entry files; keep failures and unrun acceptance visible. Historical snapshots never grant new authority.
+`CONTEXT.md` is the compact generated entry (recorded status, stage, next action and links);
+`HANDOFF.md` retains the complete decisions, blockers, unrun items and verification from the source.
+`pnpm docs:check` rejects drift in either output without rewriting it. After a source update or a
+merge involving `docs/handoff.json`, run `node scripts/vpj-program.mjs render-handoff` and review
+both generated files. The check proves source consistency, not that GitHub/runtime state is current.
 Do not edit all three for every test run or small commit. Update module contracts when behavior
 or interfaces change, not merely because a PR exists.
 

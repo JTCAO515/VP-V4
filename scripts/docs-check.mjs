@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
+import { assertHandoffDocuments } from "./lib/handoff-documents.mjs";
+import { PLANNING_RECEIPT_PATH, validatePlanningReceipt } from "./lib/planning-receipt.mjs";
 
 const handoffPath = "docs/handoff.json";
 const operatorActionsPath = "docs/operator-actions.json";
@@ -41,4 +43,6 @@ for (const action of operatorActions.actions) {
 if (existsSync("docs/program/2026-09-05/issue-plan.json")) {
   execFileSync(process.execPath, ["scripts/vpj-program.mjs", "verify"], { stdio: "inherit" });
 }
+assertHandoffDocuments();
+if (existsSync(PLANNING_RECEIPT_PATH)) validatePlanningReceipt(JSON.parse(readFileSync(PLANNING_RECEIPT_PATH, "utf8")));
 console.log("AI Core and VPJ documentation baseline passed.");
