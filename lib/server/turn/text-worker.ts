@@ -21,6 +21,8 @@ export type KnowledgeValidationReceipt = Readonly<{
   reason: KnowledgeIntentRejection | "valid" | "invalid_json" | "missing_unanswered_needs" | "protocol_unavailable";
 }>;
 export type RecordKnowledgeValidation = (receipt: KnowledgeValidationReceipt) => Promise<void>;
+const TEXT_OUTCOMES = new Set(["answered", "partial", "clarification", "blocked", "technical_failure"]);
+const MACHINE_OUTCOME = /^(?:outcome\s*[:=-]\s*)?(?:answered|partial|clarification|blocked|technical[\s_-]*failure)[.!]?$/i;
 /** Trusted deployment binding must match the registry endpoint exactly. No default network transport. */
 export type TextProviderBinding = Readonly<{
   thinkingBudgetTokens?: number;
@@ -110,8 +112,8 @@ export async function runTextWorker(
     if (output.kind === "protocol_validated" && typeof output.output === "string") {
       try {
         const value: unknown = JSON.parse(output.output);
-        if (record(value) && Object.keys(value).length === 2 && typeof value.outcome === "string" && ["answered","partial","clarification","blocked","technical_failure"].includes(value.outcome)
-          && typeof value.text === "string" && value.text.trim().length > 0 && value.text.length <= 8000) answer = { outcome: value.outcome, text: value.text };
+        if (record(value) && Object.keys(value).length === 2 && typeof value.outcome === "string" && TEXT_OUTCOMES.has(value.outcome)
+          && isUserFacingText(value.text)) answer = { outcome: value.outcome, text: value.text };
       } catch { /* Reject raw/invalid provider output. */ }
     }
     const kind = answer?.outcome ?? (output.kind === "unavailable" && ["SAFETY_BLOCKED","DATA_POLICY_BLOCKED"].includes(output.code) ? "blocked" : "technical_failure");
@@ -122,3 +124,14 @@ export async function runTextWorker(
   }, signal);
 }
 function record(value: unknown): value is Record<string, unknown> { return typeof value === "object" && value !== null && !Array.isArray(value); }
+
+/**
+ * The outcome is durable control data, never a user-facing answer. A provider
+ * occasionally returning its enum (or an encoded enum) must not make the UI
+ * show `answered` / `partial` in place of an actual result. We intentionally
+ * do not try to judge prose here: the versioned prompt owns that policy.
+ */
+function isUserFacingText(value: unknown): value is string {
+  if (typeof value !== "string" || !value.trim() || value.length > 8000) return false;
+  return !MACHINE_OUTCOME.test(value.trim());
+}
