@@ -26,13 +26,11 @@
 // GLM's key is valid but the account itself has zero balance (a real HTTP
 // 429 "余额不足或无可用资源包" from open.bigmodel.cn, not a sandbox/network
 // failure -- confirmed by first getting a real 401 with no Authorization
-// header, then a real 429 with one); DeepSeek's key is valid and funded but
-// lib/server/model-gateway/index.ts's MODEL_PROFILES.deepseek_flash.providerModelId
-// ("deepseek-v4-flash") is confirmed stale against the real API (which wants
-// "deepseek-flash" -- a real HTTP 400 names the two model ids it actually
-// supports), reproducing the bug earlier flagged in
-// wiki-real-model-probe-20260915/verification.md; not fixed here, out of
-// this script's scope. Earlier rounds recorded Qwen as unreachable "from
+// header, then a real 429 with one). DeepSeek's key was valid and funded, but
+// the previous `deepseek-v4-flash` API ID was rejected by the real API. The
+// model gateway was corrected in 27b968c to use `deepseek-flash`; this Qwen-only
+// script does not itself re-run a billed DeepSeek probe, so that fresh protocol
+// observation remains separate. Earlier rounds recorded Qwen as unreachable "from
 // this sandbox's network allowlist" -- that was this Bash tool's own
 // sandboxed-network restriction (Node's global fetch does not honor this
 // sandbox's HTTP(S)_PROXY), not an account/network problem with Qwen
