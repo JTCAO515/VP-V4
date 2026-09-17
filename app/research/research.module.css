@@ -1,0 +1,22 @@
+.page { max-width: 760px; margin: 0 auto; padding: 24px 24px 72px; color: var(--vp-ink-950); }
+.page nav { display: flex; justify-content: space-between; gap: 24px; align-items: center; }
+.page a { text-decoration: underline; text-underline-offset: 4px; display: inline-flex; align-items: center; min-height: 44px; }
+.header { margin: 64px 0 32px; }
+.header h1 { font-size: clamp(2rem, 6vw, 3.5rem); line-height: 1.12; max-width: 650px; margin: 16px 0 24px; }
+.page p { line-height: 1.7; margin: 14px 0; }
+.eyebrow { font-size: .8rem; letter-spacing: .13em; font-weight: 700; }
+.note { border-left: 3px solid currentColor; padding-left: 16px; }
+.card { border: 1px solid color-mix(in srgb, var(--vp-ink-950) 25%, transparent); border-radius: 16px; padding: 28px; margin-top: 24px; }
+.card h2 { font-size: 1.5rem; font-weight: 650; }
+.card h3 { font-weight: 650; }
+.card form { display: flex; flex-direction: column; gap: 14px; margin-top: 24px; }
+.card input:not([type="checkbox"]) { width: 100%; min-height: 48px; border: 1px solid color-mix(in srgb, var(--vp-ink-950) 55%, transparent); border-radius: 8px; background: transparent; padding: 10px 12px; font: inherit; }
+.choice { display: flex; align-items: flex-start; gap: 12px; min-height: 44px; line-height: 1.5; }
+.choice input { width: 22px; height: 22px; flex-shrink: 0; margin-top: 2px; accent-color: var(--vp-plum-900); }
+.card button { min-height: 48px; border-radius: 8px; padding: 12px 18px; color: var(--vp-cream-50); background: var(--vp-plum-900); font: inherit; cursor: pointer; }
+.card button:disabled { opacity: .6; cursor: wait; }
+.page :focus-visible { outline: 3px solid var(--vp-plum-900); outline-offset: 3px; }
+.trap { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.code { overflow-wrap: anywhere; font-family: monospace; border: 1px solid color-mix(in srgb, var(--vp-ink-950) 25%, transparent); padding: 12px; border-radius: 8px; }
+.status:empty { display: none; }
+@media (max-width: 480px) { .page { padding: 16px 16px 48px; } .header { margin-top: 40px; } .card { padding: 20px; } }
