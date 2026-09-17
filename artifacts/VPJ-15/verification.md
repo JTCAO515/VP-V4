@@ -1,5 +1,19 @@
 # VPJ-15 private producer verification
 
+## Supported Journey Matrix refresh — 2026-09-17
+
+PASS: `supported-journey-matrix.json` now maps exactly the existing 12-statement
+editorial batch: payment, connectivity and rail across Shanghai, Beijing,
+Guangzhou and Chongqing, plus the Chongqing-only attraction records. The matrix
+is deliberately development evidence only: it records the prior bounded Staging
+observation and its current disabled reader, never a current product capability.
+
+PASS: the contract test rejects any attempt to turn research-only candidates or
+city/scene scope drift into supported statements (2/2 focused; full `pnpm
+test:contract` and `pnpm docs:check` pass). It keeps N-01 arrival, airport
+ground transport, accommodation/emergency and non-Chongqing attraction content
+explicitly out of the supported cells.
+
 Base: main `a414c2a5961755aa64cfe135da8065837e18ba33` (PR317/318 merged). Branch: `codex/knowledge-draft-205`. This is one necessary private producer increment for #205; no city selection, real travel material, licence grant, Fact publication or product retrieval acceptance is claimed.
 
 ## Actual local runtime
