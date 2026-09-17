@@ -3,6 +3,7 @@ import { execFile, execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
+import { renderHandoffDocuments } from './lib/handoff-documents.mjs';
 
 const root = process.cwd();
 const dir = 'docs/program/2026-09-05';
@@ -171,16 +172,9 @@ function renderHandoff() {
   const h=json('docs/handoff.json');
   h.program.baselinePr=plan.baselinePr;
   saveJson('docs/handoff.json',h);
-  const shared=`最新Program：[VPJ-00 #${plan.parentNumber}](https://github.com/${plan.repo}/issues/${plan.parentNumber})。\n\n`+
-    `目标：${h.objective}\n\n状态：${h.status}\n\n阶段：${h.currentPhase}\n\n`+
-    `## 读取顺序\n\n${h.mandatoryReadingOrder.map(p=>'- ['+p+']('+p+')').join('\n')}\n\n`+
-    `## 当前决定\n\n${h.decisions.map(s=>'- '+s).join('\n')}\n\n`+
-    `## 未决与运行证据\n\n${h.blockers.map(s=>'- '+s).join('\n')}\n\n${h.unrun.map(s=>'- '+s).join('\n')}\n\n`+
-    `## 验证\n\n${h.verification.length?h.verification.map(s=>'- '+s).join('\n'):'验证进行中，最终见Program VERIFICATION.md。'}\n\n`+
-    `## 下一动作与回滚\n\n${h.nextAction}\n\n${h.rollback}\n\n${h.observation}\n\n`+
-    `历史：${h.historicalSnapshots.map(p=>'['+p+']('+p+')').join(', ')}。\n`;
-  save('HANDOFF.md','# Handoff\n\nGenerated from docs/handoff.json by vpj-program.mjs.\n\n'+shared);
-  save('CONTEXT.md','# Context\n\nGenerated from docs/handoff.json; active architecture/scope is ADR-0023.\n\n'+shared);
+  const { context, handoff } = renderHandoffDocuments(h, plan);
+  save('HANDOFF.md', handoff);
+  save('CONTEXT.md', context);
 }
 
 function walk(p) { return readdirSync(p,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(p,e.name)):[path.join(p,e.name)]); }
