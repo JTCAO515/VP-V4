@@ -5,6 +5,7 @@ struct NativeTripView: View {
     @State private var store = NativeTripStore()
     @State private var newTitle = ""
     @State private var shareSource: NativeTripShareSource?
+    @State private var screenshotReviewSource: NativeScreenshotReviewSource?
     @State private var confirmVisible = false
     @State private var reviewedReference: String?
     @State private var discardVisible = false
@@ -59,6 +60,9 @@ struct NativeTripView: View {
         .sheet(item: $shareSource) { source in
             NativeTripShareView(source: source, store: store, session: session, chinese: chinese)
         }
+        .sheet(item: $screenshotReviewSource) { source in
+            NativeScreenshotReviewView(source: source, chinese: chinese)
+        }
         .vpNavigationTitle("tab.trip")
         .navigationBarTitleDisplayMode(.inline)
         .scrollDismissesKeyboard(.interactively)
@@ -69,13 +73,14 @@ struct NativeTripView: View {
                 confirmVisible = false
                 reviewedReference = nil
                 discardVisible = false
+                screenshotReviewSource = nil
             }
             if session.dataScope != nil && !session.busy { await store.reload(using: session) }
         }
         .onChange(of: session.retainedDataScope) { _, retained in
             if store.scope != retained {
                 store.reset(for: retained)
-                newTitle = ""; confirmVisible = false; reviewedReference = nil; discardVisible = false
+                newTitle = ""; confirmVisible = false; reviewedReference = nil; discardVisible = false; screenshotReviewSource = nil
             }
         }
         .onChange(of: session.busy) { wasBusy, isBusy in
@@ -184,6 +189,15 @@ struct NativeTripView: View {
                     .accessibilityIdentifier("trip.share")
                     .disabled(store.busy)
                 }
+                Button(text("Review one screenshot on device", "在本机审阅一张截图")) {
+                    screenshotReviewSource = .init(
+                        tripID: detail.trip.id,
+                        tripVersion: detail.trip.headVersion,
+                        tripDates: detail.content.days.map(\.date)
+                    )
+                }
+                .accessibilityIdentifier("trip.screenshot.review")
+                .disabled(store.busy)
                 Divider()
                 Text(text("User locks are not enabled in this version. External orders are not connected, so this cannot tell you whether an order exists.", "此版本未启用用户硬锁。外部订单尚未接入，不能据此判断是否存在订单。"))
                     .font(.footnote).foregroundStyle(Color.vpSecondaryText)
