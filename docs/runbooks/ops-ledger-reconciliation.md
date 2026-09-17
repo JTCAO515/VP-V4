@@ -1,6 +1,9 @@
 # Read one budget scope without exporting content
 
-This runbook describes a service-only metadata diagnostic, not an activated team console.
+The service-only reader remains available to trusted workers. The new `/ops/budget`
+page lets a live authorized Ops member read the same metadata through
+`GET /api/ops/budget?scopeId=<uuid>` when the existing Ops environment and membership
+are enabled. It cannot stop or resume a budget scope.
 Confirm the authorized environment and scope through the existing operator process. Do not
 put a service key in a browser, mobile app, report, command-line argument or log.
 
@@ -48,5 +51,11 @@ Supabase. The pinned image must already be available; no provider call is made.
 VP_OPS_DB_TEST=1 node --experimental-strip-types --test tests/integration/observability/ops-ledger.test.mjs
 ```
 
-Full operational capability/kill switches, team authentication and remote deployment remain
-under #229 and its dependencies. A successful local read does not close those gates.
+On a host with the compatible PostgreSQL 17.6.1.167 image instead of 17.6.1.159,
+set `VP_OPS_DB_IMAGE=public.ecr.aws/supabase/postgres:17.6.1.167`. The test
+still creates one network-isolated disposable container. It now checks the Ops
+member gate as well as the service-only reader.
+
+Provider/city/capability kill switches, stop/resume UI, complete metric sources,
+remote deployment and full #229 acceptance remain open. A successful local read
+does not close those gates.

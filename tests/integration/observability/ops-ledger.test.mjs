@@ -8,7 +8,9 @@ import { renderOpsLedgerReport } from '../../../apps/ops/ledger-report.ts';
 
 const enabled = process.env.VP_OPS_DB_TEST === '1';
 const container = 'vpj37-ops-' + uuid().slice(0, 8);
+const postgresImage = process.env.VP_OPS_DB_IMAGE ?? 'public.ecr.aws/supabase/postgres:17.6.1.159';
 const migration = '20260910190658_vpj_37_ops_scope_read_model.sql';
+const memberMigration = '20260917131633_vpj_37_ops_budget_member_read.sql';
 let created = false;
 const run = (name, fn) => test(name, { skip: !enabled }, fn);
 const db = async text => { const r = await sql(container, text); assert.equal(r.code, 0, r.stderr); return r.stdout.trim(); };
@@ -58,18 +60,20 @@ async function attempt(a, task, provider, state, hold = 100, actual = 7) {
 
 before(async () => {
   if (!enabled) return;
-  const r = await command('docker', ['run', '--pull=never', '--rm', '-d', '--network', 'none', '--name', container, '--user', 'postgres', '--entrypoint', '/bin/sh', 'public.ecr.aws/supabase/postgres:17.6.1.159', '-c', 'umask 077; mkdir /tmp/vpj59-socket; initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);
+  assert.match(postgresImage, /^public\.ecr\.aws\/supabase\/postgres:17\.6\.1\.(159|167)$/);
+  const r = await command('docker', ['run', '--pull=never', '--rm', '-d', '--network', 'none', '--name', container, '--user', 'postgres', '--entrypoint', '/bin/sh', postgresImage, '-c', 'umask 077; mkdir /tmp/vpj59-socket; initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);
   assert.equal(r.code, 0, r.stderr); created = true;
   assert.equal(JSON.parse((await command('docker', ['inspect', container])).stdout)[0].HostConfig.NetworkMode, 'none');
   let ready = false;
   for (let i = 0; i < 40; i++) { if ((await command('docker', ['exec', container, 'pg_isready', '-h', '/tmp/vpj59-socket', '-U', 'postgres'])).code === 0) { ready = true; break; } await new Promise(r => setTimeout(r, 250)); }
   assert.ok(ready);
   await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql', 'utf8'));
-  const files = readdirSync('supabase/migrations').filter(f => f.endsWith('.sql') && f !== migration).sort();
+  const files = readdirSync('supabase/migrations').filter(f => f.endsWith('.sql') && f !== migration && f !== memberMigration).sort();
   for (const file of files) await db('begin;' + readFileSync('supabase/migrations/' + file, 'utf8') + 'commit;');
   const old = await scope(); await attempt(old, uuid(), 'qwen', 'pending', 123);
   const prior = await snapshotTables();
   await db('begin;' + readFileSync('supabase/migrations/' + migration, 'utf8') + 'commit;');
+  await db('begin;' + readFileSync('supabase/migrations/' + memberMigration, 'utf8') + 'commit;');
   assert.equal(await snapshotTables(), prior, 'migration does not change pre-existing ledger/Turn/body records');
 });
 after(async () => { if (created) assert.equal((await command('docker', ['rm', '-f', container])).code, 0); });
@@ -140,4 +144,30 @@ run('settlement concurrent with repeated snapshots preserves reconciliation and 
   ]);
   const final = parseOpsLedgerSnapshot(await read(a.scope)); assert.equal(final.money.settledMicros, '108'); assert.equal(final.money.holdMicros, '0');
   assert.equal(await db(`select to_jsonb(a) from public.model_budget_attempts a where scope_id='${b.scope}';`), other);
+});
+
+run('live Ops membership, session and switch gate the same sanitized ledger snapshot', async () => {
+  const budget = await scope(), member = await scope(), outsider = await scope();
+  await attempt(budget, uuid(), 'qwen', 'pending', 123);
+  await db(`update knowledge_review_private.settings set enabled=true;
+    insert into knowledge_review_private.members(actor_id,active) values('${member.owner}',true);`);
+  const call = async actor => sql(container, `set request.jwt.claim.sub='${actor.owner}';
+    set request.jwt.claims='{"role":"authenticated","is_anonymous":false,"session_id":"${actor.session}"}';
+    set role authenticated; select public.ops_budget_scope_read_v1('${budget.scope}');`);
+  const allowed = await call(member);
+  assert.equal(allowed.code, 0, allowed.stderr);
+  const snapshot = parseOpsLedgerSnapshot(JSON.parse(allowed.stdout.trim()));
+  assert.equal(snapshot.attempts.pending, 1);
+  assert.equal(snapshot.money.holdMicros, '123');
+  assert.equal(snapshot.unobserved.actualBilledMicros, null);
+  assert.ok(!allowed.stdout.includes(member.owner) && !allowed.stdout.includes(budget.owner));
+  const denied = await call(outsider);
+  assert.notEqual(denied.code, 0); assert.match(denied.stderr, /OPS_FORBIDDEN/);
+  assert.notEqual((await sql(container, `set role anon; select public.ops_budget_scope_read_v1('${budget.scope}');`)).code, 0);
+  await db(`update knowledge_review_private.members set active=false where actor_id='${member.owner}';`);
+  assert.match((await call(member)).stderr, /OPS_FORBIDDEN/);
+  await db(`update knowledge_review_private.members set active=true where actor_id='${member.owner}'; delete from auth.sessions where id='${member.session}';`);
+  assert.match((await call(member)).stderr, /UNAUTHENTICATED|SESSION_REPLACED/);
+  assert.equal(await db("select has_function_privilege('authenticated','public.read_ops_budget_scope_v1(uuid)','EXECUTE');"), 'f');
+  assert.equal(await db("select has_schema_privilege('authenticated','knowledge_review_private','USAGE');"), 'f');
 });

@@ -71,3 +71,27 @@ deployed operational access or full #229. See [verification](../../artifacts/VPJ
 Disable the future consumer or revert its code to stop using the read model. Preserve applied
 migration history and original ledger/Turn/body records. No refund, ledger reset, data deletion,
 scope enablement or permission expansion is part of rollback. Stop/resume remains owned by #194.
+
+## Ops member read slice, 2026-09-17
+
+An authenticated, active Ops member may request one budget-scope snapshot through
+`public.ops_budget_scope_read_v1(uuid)`. Its public wrapper is security-invoker;
+the sole definer function lives in `ops_budget_private`. It calls the existing
+`knowledge_review_private.current_actor()` in the same transaction before the
+existing service-only aggregate. That guard rechecks the live Auth session,
+mobile-session state, Ops switch and membership under locks. The wider knowledge
+private schema remains inaccessible to ordinary authenticated callers.
+
+`GET /api/ops/budget?scopeId=<uuid>` uses the existing Cookie-authenticated Ops
+configuration and a finite request lifetime. Authorization headers and extra query
+parameters are rejected. The server validates the exact aggregate schema before
+returning it, sets `private, no-store`, and never returns a raw SQL error or row.
+`/ops/budget` renders the source-backed diagnostic in a zh/en Ops UI. It has no
+mutation control; budget stop and resume are separate work. No service key is
+available to the browser. Actual invoices, provider latency, tool attempts, human
+time and semantic quality remain unknown, never zero-filled.
+
+The isolated PostgreSQL 17.6 replay checks active/nonmember/anonymous access,
+revocation, deleted session, original service-only RPC denial and unchanged
+knowledge-schema grants. The local browser checks the route and narrow layout
+without claiming Staging activation or customer access.

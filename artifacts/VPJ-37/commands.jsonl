@@ -8,3 +8,9 @@
 {"cwd": "/Users/jtcao/Documents/VP-V4-Ops-229", "command": ["pnpm", "docs:check"], "exitCode": 0}
 {"cwd": "/Users/jtcao/Documents/VP-V4-Ops-229", "command": ["git", "diff", "--check"], "exitCode": 0}
 {"recordedAt": "2026-09-10T19:23:32.528293+00:00", "command": ["node", "--experimental-strip-types", "--test", "tests/integration/observability/ops-ledger.test.mjs"], "environment": {"VP_OPS_DB_TEST": "1"}, "cwd": "/Users/jtcao/Documents/VP-V4-Ops-229", "sourceCommit": "87562d4ba0ab748522dab95844a287c1a1ab25e2", "migrationCount": 33, "exitCode": 0, "result": "5 pass/0 fail/0 skip", "log": "ops-db.log"}
+{"date":"2026-09-17","command":"VP_OPS_DB_TEST=1 node --experimental-strip-types --test tests/integration/observability/ops-ledger.test.mjs","result":"FAIL","reason":"Historical PostgreSQL 17.6.1.159 image not cached; no SQL executed"}
+{"date":"2026-09-17","command":"VP_OPS_DB_TEST=1 VP_OPS_DB_IMAGE=public.ecr.aws/supabase/postgres:17.6.1.167 node --experimental-strip-types --test tests/integration/observability/ops-ledger.test.mjs","result":"PASS","summary":"6 PostgreSQL tests, zero skips; Ops member/session/revocation and ledger reconciliation"}
+{"date":"2026-09-17","command":"pnpm check","result":"PASS","summary":"lint, TypeScript, Next production build, 22 static tests"}
+{"date":"2026-09-17","command":"pnpm test:unit && pnpm test:contract","result":"PASS","summary":"both suites completed with exit 0"}
+{"date":"2026-09-17","command":"pnpm test:security","result":"INCOMPLETE","summary":"149 pass, zero fail, one existing environment skip"}
+{"date":"2026-09-17","command":"pnpm docs:check && git diff --check","result":"PASS","summary":"documentation and whitespace checks"}
