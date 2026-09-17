@@ -1,5 +1,18 @@
 # VPJ-15 private producer verification
 
+## Arrival statement preparation — 2026-09-17
+
+PASS: ARR-01 adds one original bilingual `arrival` statement to the editorial
+batch after a fresh read of the NIA's 2025-12-02 notice. It records only the
+official free-filing channel and the stated port-device/paper fallback, with
+explicit exclusions for visa, admission, and online-only claims. The source is
+an editorial synopsis with no inferred blanket licence.
+
+PASS: all 13 batch statements pass the repository's real statement validator;
+the Supported Journey Matrix maps ARR-01 as `source_revalidated_prepublication`.
+Focused matrix contracts pass2/2, full `pnpm test:contract` and `pnpm docs:check`
+pass. No Staging mutation, provider call, or production action was performed.
+
 ## Supported Journey Matrix refresh — 2026-09-17
 
 PASS: `supported-journey-matrix.json` now maps exactly the existing 12-statement

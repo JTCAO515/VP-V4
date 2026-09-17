@@ -6,6 +6,12 @@
   "cities": ["shanghai", "beijing", "guangzhou", "chongqing"],
   "supportedCells": [
     {
+      "scene": "arrival",
+      "cities": ["shanghai", "beijing", "guangzhou", "chongqing"],
+      "editorialIds": ["ARR-01"],
+      "evidenceState": "source_revalidated_prepublication"
+    },
+    {
       "scene": "payment",
       "cities": ["shanghai", "beijing", "guangzhou", "chongqing"],
       "editorialIds": ["PAY-01", "PAY-02", "PAY-03", "PAY-04"],
@@ -33,12 +39,6 @@
   "explicitGaps": [
     {
       "cities": ["shanghai", "beijing", "guangzhou", "chongqing"],
-      "scenario": "arrival",
-      "researchCandidateIds": ["N-01"],
-      "reason": "The research candidate is not in the statement batch, and the current statement scene union has no arrival value."
-    },
-    {
-      "cities": ["shanghai", "beijing", "guangzhou", "chongqing"],
       "scenario": "airport_ground_transport",
       "researchCandidateIds": ["SH01", "BJ01", "GZ01", "CQ01"],
       "reason": "No selected candidate has entered the reviewed statement/publication path."
@@ -57,7 +57,7 @@
     }
   ],
   "publicationBoundary": {
-    "observed": "Twelve statement publications and one PAY-01 withdrawal were observed in the bounded Staging window recorded in artifacts/VPJ-15/staging-20260912/verification.md.",
+    "observed": "Twelve prior statement publications and one PAY-01 withdrawal were observed in the bounded Staging window recorded in artifacts/VPJ-15/staging-20260912/verification.md. ARR-01 is source-revalidated editorial preparation, not a Staging publication.",
     "current": "The reader and Ops switches are disabled; this matrix does not assert that a product reader is currently available.",
     "prohibitedInferences": ["nationwide coverage", "on-site availability", "licence verification", "production release", "Ask grounding"]
   }
