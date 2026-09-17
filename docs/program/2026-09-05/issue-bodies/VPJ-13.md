@@ -6,14 +6,18 @@
 
 首访与回访的三种入口获得首个成果。
 
-## 当前基线与开发入口
+## 执行边界与首个切片
 
-原VPJ基线已合并；2026-09-10品牌增量以Q1-Q38报告的已确认方向为准，当前任务及新增规划契约需按合入main后的版本执行。已有可独立进行的准备范围继续；开发接入与可逆参数由agent按现有方向推进，无需第三方、法务或产品许可；真实收费与发布按相应范围验收。 开发阶段不等待供应商工单/书面答复、法务或产品许可；按开发接入规则用现有账号/API推进，未知项记录，保留用户同意和实际技术验证。
-任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-13)；按 [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)。
-验收阶段：[S4](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s4)；阶段演示不代替本票完整验收。
-首次进入或范围变化时读 [主报告](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。
+- 首个可交付结果：先接一个无日期新想法入口取得可采用成果，补回访上下文；随后分别贯通材料和在途入口，按真实事件记录首值。
+- 本票责任/非目标：负责入口衔接/首值；不重建09规划、11记忆、12材料或62招募，三类入口全通才是整票完成。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
-## Blocked by
+## 实施与验收入口
+
+[执行行：范围、检查、证据与回退](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-13) · [接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) · [阶段 S4](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s4)。
+
+## 验收依赖（不自动转为 blocked）
 
 - [VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197)
 - [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199)
@@ -27,6 +31,7 @@
 - [ ] 记录first_value与拒绝原因分开；大字/键盘/无权限/配额用尽有路径。
 - [ ] 继承同意范围内事件schema；first_value/activated/outcome_declined不混计。
 - [ ] 按本轮目标先交可用成果，只有会改变方案的缺失信息才追问；回访使用真实可用偏好与已保存成果，必要澄清沿同一ServiceTask，不机械问卷或反复索取已知信息。
+- [ ] 体验增量2026-09-17：以无日期新想法、已有安排导入、在途回访三类任务验收首值；每次必要问题伴随已有成果或具体变化，用户可跳过，已知日期/人数/服务意向不重问。分别记录首次可用成果时间、实际采用/保存、拒绝和技术失败，并以明确分母报告重复提问率，不预设未经测量的收益数字。
 
 ## 不得触碰
 
