@@ -12,7 +12,7 @@ Base `/api/trips/native/v2`. All calls use only `Authorization: Bearer <ordinary
 | --- | --- | --- |
 | GET base | optional `?limit=1..50` | 200 `{version:2,trips:Trip[],currentTripId:UUID|null}` |
 | POST base | `{tripId:UUID,title:string}` | 201 new / 200 replay `{version:2,trip:Trip,reused:boolean}` |
-| GET `/:tripId` | none | 200 `{version:2,trip:Trip,content:Content,hardLocks:"unknown",externalOrderStatus:"unknown"}` |
+| GET `/:tripId` | none | 200 `{version:2,trip:Trip,content:Content,hardLocks:"not_enabled",externalOrderStatus:"not_connected"}` |
 | POST `/:tripId/proposal` | `{patch:TripPatch}` | 201 `{version:2,proposalId,revision,baseTripVersion}` |
 | GET `/:tripId/proposal` | optional `?proposalId=UUID` to read the exact created revision | 200 `{version:2,trip:Trip,proposal:Proposal}` |
 | POST `/:tripId/proposal/revision` | `{proposalId:UUID,patch:TripPatch}` | 201 `{version:2,proposalId,revision,baseTripVersion}` |
@@ -31,7 +31,16 @@ A retry keeps the exact proposal, digest and idempotency key. A different propos
 
 After a successful confirm, reload the server snapshot; do not infer committed content from a local patch. On conflict, keep the original draft and its base version. Reloading the confirmed server snapshot must not silently replace/rebase the draft. Revision creates a new pending proposal; the consumer must fetch and visibly review its exact ID before confirming.
 
-Hard-lock and external-order states remain **unknown** in this slice; database transaction locks are not user hard locks. JT explicitly deferred user hard-lock protection on 2026-09-11; lock scope/unlock/restore choices are no longer pending for the initial slice. Keep the existing unknown DTO for compatibility, without claiming protection. External orders and remote/full #192 acceptance remain open; this deferral does not satisfy the locked-dinner scenario in #265. Web continues to use the original Cookie/same-Origin path; no native cookie fabrication or global Origin exception is allowed.
+`hardLocks:"not_enabled"` means that VisePanda has no user hard-lock feature in
+this version. It is not a claim that a Trip has no constraints. JT explicitly deferred
+user hard-lock protection on 2026-09-11; no lock scope/unlock/restore behavior is
+implemented or implied. `externalOrderStatus:"not_connected"` means that VisePanda
+has no external-order connection for this Trip. It never means no booking exists, nor
+does it expose or infer any provider state. Both Web and native validate these closed
+values and fail the read rather than treating an unknown value as an absence of risk.
+The locked-dinner scenario in #265 and external-order materials in #214 remain separate
+work. Web continues to use the original Cookie/same-Origin path; no native cookie
+fabrication or global Origin exception is allowed.
 
 ## Deployment compatibility
 

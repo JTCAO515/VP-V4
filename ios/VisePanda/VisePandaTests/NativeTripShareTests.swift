@@ -11,7 +11,7 @@ nonisolated final class NativeTripShareTests: XCTestCase {
                     .init(id: "safe", dayId: "d1", title: "Museum / 博物馆", startsAt: "private time"),
                     .init(id: "private", dayId: "d1", title: "Hotel booking ABC, Alice, room 908")]),
                 .init(id: "d2", date: "2026-10-03", items: [.init(id: "safe2", dayId: "d2", title: "Park / 公园")])]),
-              hardLocks: "unknown", externalOrderStatus: "unknown", confirmationState: state)
+              hardLocks: .notEnabled, externalOrderStatus: .notConnected, confirmationState: state)
     }
 
     @MainActor func testDefaultProjectionHidesAllFreeTextAndTravelDatesInBothLanguages() throws {
@@ -65,7 +65,7 @@ nonisolated final class NativeTripShareTests: XCTestCase {
         let collision = NativeTripDetail(version: 2, trip: original.trip,
             content: .init(days: [original.content.days[0],
                 .init(id: "d2", date: "2026-10-03", items: [.init(id: "safe", dayId: "d2", title: "Private hotel room")])]),
-            hardLocks: "unknown", externalOrderStatus: "unknown", confirmationState: "confirmed")
+            hardLocks: .notEnabled, externalOrderStatus: .notConnected, confirmationState: "confirmed")
         var selection = NativeTripShareSelection(); selection.items = [.init(dayID: "d1", itemID: "safe")]
         let card = try XCTUnwrap(NativeTripShareCard.make(from: collision, selection: selection, chinese: false, now: .now))
         XCTAssertEqual(card.rows.compactMap(\.title), ["Museum / 博物馆"])
@@ -90,7 +90,7 @@ nonisolated final class NativeTripShareTests: XCTestCase {
     @MainActor func testRenderedPagesPreserveAllSelectedTextAndUseOnlyImagesForSharing() throws {
         var trip = detail()
         let items = (0..<17).map { NativeTripItem(id: "i\($0)", dayId: "d", title: "\($0) " + String(repeating: "长文字 Long text ", count: 10)) }
-        trip = .init(version: 2, trip: trip.trip, content: .init(days: [.init(id: "d", date: "2026-10-02", items: items)]), hardLocks: "unknown", externalOrderStatus: "unknown", confirmationState: "confirmed")
+        trip = .init(version: 2, trip: trip.trip, content: .init(days: [.init(id: "d", date: "2026-10-02", items: items)]), hardLocks: .notEnabled, externalOrderStatus: .notConnected, confirmationState: "confirmed")
         var selection = NativeTripShareSelection(); selection.items = Set(items.map { .init(dayID: $0.dayId, itemID: $0.id) })
         let card = try XCTUnwrap(NativeTripShareCard.make(from: trip, selection: selection, chinese: true, now: .now))
         XCTAssertEqual(card.pages.flatMap { $0 }.compactMap(\.title), items.map(\.title))

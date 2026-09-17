@@ -143,7 +143,7 @@ final class NativeTripStore {
         guard let selectedID else { return }
         let result: NativeTripDetail = try await call(session, scope, path: "\(base)/\(selectedID)", method: "GET")
         guard result.version == 2, result.trip.id == selectedID,
-              result.hardLocks == "unknown", result.externalOrderStatus == "unknown" else { throw NativeDataError.invalidResponse }
+              result.hardLocks == .notEnabled, result.externalOrderStatus == .notConnected else { throw NativeDataError.invalidResponse }
         detail = result
         do { pending = try await readPending(selectedID, proposalID: nil, session, scope) }
         catch NativeDataError.server(let code) where code == "PROPOSAL_NOT_CONFIRMABLE" { pending = nil }

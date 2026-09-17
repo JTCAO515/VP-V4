@@ -7,7 +7,13 @@ import { draftTripPatch } from "@/lib/server/trip/patch/draft";
 import type { TripSnapshot, TripDay } from "@/lib/server/trip/patch/contract";
 import styles from "./TripContentEditor.module.css";
 
-export type LocalTripRead = { trip: { id: string; title: string; headVersion: number; updatedAt: string }; content: { days: readonly TripDay[] }; confirmationState?: "initial" | "confirmed" | "unknown" };
+export type LocalTripRead = {
+  trip: { id: string; title: string; headVersion: number; updatedAt: string };
+  content: { days: readonly TripDay[] };
+  confirmationState?: "initial" | "confirmed" | "unknown";
+  hardLocks?: "not_enabled";
+  externalOrderStatus?: "not_connected";
+};
 type Notice = "conflict" | "pending" | "unavailable" | "noChanges" | "stored" | "rejected";
 const snapshotOf = (data: LocalTripRead): TripSnapshot => structuredClone({ version: data.trip.headVersion, title: data.trip.title, days: data.content.days });
 
@@ -80,7 +86,7 @@ export function TripContentEditor({ data, pending, locale, onReload, onPending }
   }
   return <section className={styles.workspace} data-testid="same-trip-editor">
     <p className={styles.note}>{copy.localOnly}</p>
-    <section className={styles.recorded}><h2>{data.confirmationState === "confirmed" ? copy.confirmed : data.confirmationState === "initial" ? copy.initial : copy.unknown} · v{data.trip.headVersion}</h2><SnapshotContent value={snapshotOf(data)} /><p>{copy.locks} · {copy.orders}</p><button type="button" onClick={() => void loadLatest()} disabled={busy}>{copy.reload}</button></section>
+    <section className={styles.recorded}><h2>{data.confirmationState === "confirmed" ? copy.confirmed : data.confirmationState === "initial" ? copy.initial : copy.unknown} · v{data.trip.headVersion}</h2><SnapshotContent value={snapshotOf(data)} /><p>{data.hardLocks === "not_enabled" ? copy.locksNotEnabled : copy.locksUnknown} · {data.externalOrderStatus === "not_connected" ? copy.ordersNotConnected : copy.ordersUnknown}</p><button type="button" onClick={() => void loadLatest()} disabled={busy}>{copy.reload}</button></section>
     <div role="status" className={styles.note}>{stale ? copy.conflict : notice ? copy[notice] : null}</div>
     <section className={styles.draft}><h2>{copy.draft}</h2><p>{copy.base} {base.version}</p>
       <label>{copy.tripTitle}<input value={draft.title} maxLength={160} disabled={busy} onChange={event => edit({ ...draft, title: event.target.value })} /></label>

@@ -35,3 +35,39 @@ Independent code review of application HEAD `7e63fe2b4e41d925f65bab7699105788566
 See [unrun.md](unrun.md) for full product, remote and policy boundaries. Current synthetic services/fixtures remain local; no provider budget hold was reset and no provider invocation was added.
 
 The first PR301 Native CI failed. A controlled same-source comparison identified the signing-disabled Keychain precondition; the CI test host now uses verified local ad-hoc signing, with application logic and all assertions unchanged. See [ci-signing/verification.md](ci-signing/verification.md) for the original failures,4/4 local state result and separate UI observations. Corrected remote CI status remains authoritative in the PR.
+
+## 2026-09-17 capability-state completion
+
+The remaining code gap was not a missing booking integration; it was an ambiguous wire
+value. Both the Web trip read route and the native v2 route previously returned the
+string `unknown` for unrelated things: an unavailable user-hard-lock capability and an
+absent external-order connection. That could be mistaken for a traveller's actual order
+state.
+
+`lib/server/trip/capability-state.ts` now supplies one closed shared projection:
+`hardLocks:"not_enabled"` and `externalOrderStatus:"not_connected"`. Web and native
+routes use the same helper. Native Swift decodes closed enums and rejects a changed or
+unknown value; Web copy also fails closed for an unrecognised payload. Both UI surfaces
+explain that the order value does **not** mean there is no booking. No Trip database,
+patch operation, provider call, order import, payment or external fulfillment path was
+introduced. Existing Day/Item snapshot, CAS, Proposal/Confirm/Patch and conflict behavior
+are unchanged.
+
+| Evidence | Result |
+| --- | --- |
+| `pnpm check` | PASS: lint, strict typecheck, Web production build, static tests 22/22 |
+| `pnpm test:unit` | PASS 106/106 |
+| `pnpm test:contract` | PASS 548/548; focused native HTTP and shared Web/native capability tests 9/9 |
+| `pnpm test:integration` | Exit 0 but INCOMPLETE: 23 pass, 76 environment-gated skips. The pre-existing real same-Trip test is among the skipped cases because the Supabase CLI is unavailable in this environment. |
+| `pnpm test:security` | Exit 0 but INCOMPLETE: 149 pass, 1 environment-gated skip |
+| `pnpm test:e2e`, `pnpm evals`, `pnpm check:flags`, `pnpm check:assets`, `pnpm docs:check`, `git diff --check` | PASS: 40/40 E2E source checks; 35/35 evals; all named checks pass |
+| iOS generic simulator build | PASS with `CODE_SIGNING_ALLOWED=NO` |
+| iOS targeted Trip XCTest | PASS: `NativeTripStateTests` + `NativeTripShareTests`, 11/11 with local ad-hoc signing on iPhone 17 Pro UDID `42675EC5-6837-4F73-B478-7D979D5DA392` |
+| iOS full XCTest | FAIL: six existing AppShell UI tests. The no-signing attempt also failed Keychain `-34018`; the signed retry fixed that host condition but retained the six UI failures. Four Knowledge and two Trip UI cases were explicit UNRUN fixture skips. |
+
+The full simulator failure is not represented as a pass. It does not originate in the
+changed Trip capability decoding: the affected targeted unit suite passes, the app builds,
+and the shared route test covers the new native wire response. The unavailable local
+Supabase CLI prevents a repeat of the old real cross-client stack, so this completion
+relies on its retained prior evidence plus the new route-level contract test; it does not
+claim a fresh database, Staging, device accessibility or real-user acceptance.

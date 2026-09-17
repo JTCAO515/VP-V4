@@ -16,7 +16,7 @@ const server=createServer(async(req,res)=>{
  const trip={id:tripId,title:'Hotel room 908 / Alice',headVersion:version,updatedAt:`2026-09-17T00:00:0${version}Z`};
  if(url.pathname==='/api/trips/native/v2')return reply({version:2,trips:[trip],currentTripId:tripId});
  if(url.pathname.endsWith('/proposal'))return reply({error:{code:'PROPOSAL_NOT_CONFIRMABLE'}},404);
- if(url.pathname==='/api/trips/native/v2/'+tripId)return reply({version:2,trip,confirmationState:'confirmed',hardLocks:'unknown',externalOrderStatus:'unknown',content:{days:[
+ if(url.pathname==='/api/trips/native/v2/'+tripId)return reply({version:2,trip,confirmationState:'confirmed',hardLocks:'not_enabled',externalOrderStatus:'not_connected',content:{days:[
   {id:'d1',date:'2026-10-02',items:[{id:'museum',dayId:'d1',title:'Museum / 博物馆'},{id:'hotel',dayId:'d1',title:'Hotel booking ABC / Alice / room 908'}]},
   {id:'d2',date:'2026-10-03',items:[{id:'park',dayId:'d2',title:'Park / 公园'}]}
  ]}});

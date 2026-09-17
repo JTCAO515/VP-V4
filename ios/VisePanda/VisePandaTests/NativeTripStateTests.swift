@@ -40,7 +40,7 @@ nonisolated final class NativeTripStateTests: XCTestCase {
         let identity = try XCTUnwrap(session.dataScope)
         let store = NativeTripStore()
         store.reset(for: identity)
-        store.draft = NativeTripDraft(.init(version: 2, trip: .init(id: UUID().uuidString, title: "Saved", headVersion: 1, updatedAt: "2026-09-10"), content: .init(days: []), hardLocks: "unknown", externalOrderStatus: "unknown"))
+        store.draft = NativeTripDraft(.init(version: 2, trip: .init(id: UUID().uuidString, title: "Saved", headVersion: 1, updatedAt: "2026-09-10"), content: .init(days: []), hardLocks: .notEnabled, externalOrderStatus: .notConnected))
         store.draft?.title = "Unsent user edit"
         DelayedTripProtocol.setRefreshFailure(true)
         defer { DelayedTripProtocol.setRefreshFailure(false) }
@@ -63,8 +63,10 @@ nonisolated final class NativeTripStateTests: XCTestCase {
 
     @MainActor
     func testDraftOnlyChangesRequestedFieldsAndKeepsConfirmedContent() throws {
-        let data = Data(#"{"version":2,"trip":{"id":"11111111-1111-4111-8111-111111111111","title":"Saved","headVersion":3,"updatedAt":"2026-09-10"},"content":{"days":[{"id":"d1","date":"2026-09-20","timeZone":"Asia/Shanghai","items":[{"id":"i1","dayId":"d1","title":"Museum","startsAt":"2026-09-20T10:00:00+08:00"}]}]},"hardLocks":"unknown","externalOrderStatus":"unknown"}"#.utf8)
+        let data = Data(#"{"version":2,"trip":{"id":"11111111-1111-4111-8111-111111111111","title":"Saved","headVersion":3,"updatedAt":"2026-09-10"},"content":{"days":[{"id":"d1","date":"2026-09-20","timeZone":"Asia/Shanghai","items":[{"id":"i1","dayId":"d1","title":"Museum","startsAt":"2026-09-20T10:00:00+08:00"}]}]},"hardLocks":"not_enabled","externalOrderStatus":"not_connected"}"#.utf8)
         let detail = try JSONDecoder().decode(NativeTripDetail.self, from: data)
+        XCTAssertEqual(detail.hardLocks, .notEnabled)
+        XCTAssertEqual(detail.externalOrderStatus, .notConnected)
         var draft = NativeTripDraft(detail)
         draft.days[0].items[0].title = "Garden"
         let patch = draft.patch
