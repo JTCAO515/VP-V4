@@ -21,12 +21,16 @@ output is internally inconsistent within one draft. Proposals whose
 `scope.cities` do not overlap are a legitimate cross-city difference (e.g.
 Shanghai vs Beijing) and are never flagged. The function does not resolve,
 drop, reorder, or reject any proposal -- it returns a list of conflicting
-index pairs for a reviewer to see in the existing Ops diff view. Wiring that
-returned list into the persisted draft body and the `/ops/wiki` UI is **not**
-part of this slice (see Remaining scope) -- this increment ships the
-detection primitive with real unit coverage, following this repo's existing
-"research-corpus"/"reason-codes" pattern of a bounded, unwired capability
-landing before the consumer that uses it.
+index pairs for a reviewer to see in the existing Ops diff view. This
+increment (2026-09-16) shipped the detection primitive **unwired**, following
+this repo's existing "research-corpus"/"reason-codes" pattern of a bounded
+capability landing before the consumer that uses it.
+
+**2026-09-17 update: now wired.** See
+[wiki-proposal-conflict-ui.md](./wiki-proposal-conflict-ui.md) for the
+`/ops/wiki` UI wiring (`conflictsByProposal` plus the rendered warning) added
+in a later slice. This file's description of `detectProposalConflicts` itself
+is unchanged; only its consumer changed.
 
 A disclosed, deliberately-unaddressed boundary is now a locked regression
 test, not prose alone: a single proposal that cites two contradictory sources
