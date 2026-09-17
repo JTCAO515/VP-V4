@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createServer, type Server, type RequestListener } from "node:http";
 import { createProviderHttpTransport, type DestinationReceipt } from "../../../../lib/server/model-gateway/adapters/http-transport.ts";
-import { invokeProviderProtocol } from "../../../../lib/server/model-gateway/adapters/provider-protocol.ts";
+import { invokeProviderProtocol, PROTOCOL_MODELS } from "../../../../lib/server/model-gateway/adapters/provider-protocol.ts";
 import { budget, completion, request } from "../../../contract/model-gateway/provider-protocol/fixtures.ts";
 
 // Only this explicit test seam remaps a validated logical URL to an owned loopback server.
@@ -17,7 +17,7 @@ async function listen(handler: RequestListener): Promise<{ server: Server; url: 
 async function close(server: Server) {
   server.closeAllConnections(); await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
 }
-const wire = (signal = new AbortController().signal) => ({ provider: "deepseek" as const, method: "POST" as const, body: JSON.stringify({ model: "deepseek-v4-flash", messages: [{ role: "user", content: "Synthetic HTTP fixture" }] }), signal });
+const wire = (signal = new AbortController().signal) => ({ provider: "deepseek" as const, method: "POST" as const, body: JSON.stringify({ model: PROTOCOL_MODELS.deepseek, messages: [{ role: "user", content: "Synthetic HTTP fixture" }] }), signal });
 const mappedFetch = (url: string): typeof fetch => async (target, init) => {
   assert.equal(target, configuration.endpoint);
   assert.equal(init?.redirect, "manual");
@@ -29,7 +29,7 @@ test("real loopback HTTP completes the admitted protocol and captures only desti
   const endpoint = await listen(async (req, res) => {
     received++; assert.equal(req.method, "POST"); assert.equal(req.headers.authorization, "Bearer SYNTHETIC_CREDENTIAL");
     let body = ""; for await (const chunk of req) body += chunk;
-    assert.equal(JSON.parse(body).model, "deepseek-v4-flash");
+    assert.equal(JSON.parse(body).model, PROTOCOL_MODELS.deepseek);
     res.writeHead(200, { "content-type": "application/json", "x-private": "HEADER_CANARY" }); res.end(JSON.stringify(completion("deepseek")));
   });
   try {

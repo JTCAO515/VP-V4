@@ -47,7 +47,7 @@ type ModelProfile = Readonly<{
 export const MODEL_PROFILES: Readonly<Record<ModelProfileId, ModelProfile>> = Object.freeze({
   deepseek_flash: Object.freeze({
     provider: "deepseek",
-    providerModelId: "deepseek-v4-flash",
+    providerModelId: "deepseek-flash",
     observedDeployment: "DeepSeek-V4-Flash-0731",
     lifecycle: "beta",
     tasks: Object.freeze<ModelTask[]>(["ordinary_text"]),
