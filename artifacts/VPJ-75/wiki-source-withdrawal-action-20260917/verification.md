@@ -126,8 +126,19 @@ claimed done.
     fill → submit sequence into fewer, faster tool calls (with the tab kept
     fronted) reproduced the flow cleanly and repeatably. Recorded here for
     the next round rather than silently omitted.
+- CI caught a real gap in local verification: `pnpm test:unit` was not run
+  locally before the first push, and GitHub's required `deterministic-pr-gates`
+  job failed it -- `tests/unit/governance/direct-issue-queue.test.mjs`
+  asserts `docs/handoff.json`'s `lastUpdated` field matches
+  `/^\d{4}-\d{2}-\d{2}$/` (a date-only string), and this round's first edit
+  had written `"2026-09-17 (round 18)"` into that field. Fixed by reverting
+  `lastUpdated` to the plain `"2026-09-17"` date (the `(round 18)` context
+  belongs in `status`/`owner`, which are free text, not `lastUpdated`).
+  `pnpm test:unit` then passed 100/100 locally, and the full check suite
+  below was rerun after the fix.
 - Full check suite on the final diff:
   - `pnpm lint` (`node scripts/lint.mjs`): pass, 311 files checked.
+  - `pnpm test:unit`: 100/100 pass, 0 fail, 0 skip.
   - `pnpm typecheck` (`tsc --noEmit`): pass, no errors.
   - `next build --webpack`: pass (production build succeeded; used for the
     browser fixture above).
@@ -168,6 +179,7 @@ LC_ALL=C VP_WIKI_PG_BIN=/opt/homebrew/opt/postgresql@16/bin \
   VP_WIKI_PG_MODULE=/tmp/vpwiki-pg-runtime/node_modules/pg/lib/index.js \
   node --test tests/integration/knowledge/wiki-draft.test.mjs
 node --test tests/contract/ops/wiki-request.test.mjs
+node scripts/run-ci-suite.mjs unit
 node scripts/run-ci-suite.mjs contract
 node scripts/run-ci-suite.mjs evals
 node scripts/run-ci-suite.mjs security
