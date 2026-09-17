@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "supported-journey-matrix/1",
+  "status": "development_evidence_only",
+  "batch": "2026-09-12-first-party",
+  "purpose": "Bound the currently evidenced first-party statement batch without claiming a complete journey, release readiness, or current reader availability.",
+  "cities": ["shanghai", "beijing", "guangzhou", "chongqing"],
+  "supportedCells": [
+    {
+      "scene": "payment",
+      "cities": ["shanghai", "beijing", "guangzhou", "chongqing"],
+      "editorialIds": ["PAY-01", "PAY-02", "PAY-03", "PAY-04"],
+      "evidenceState": "staging_observed_then_reader_disabled"
+    },
+    {
+      "scene": "connectivity",
+      "cities": ["shanghai", "beijing", "guangzhou", "chongqing"],
+      "editorialIds": ["SIM-01", "SIM-02"],
+      "evidenceState": "staging_observed_then_reader_disabled"
+    },
+    {
+      "scene": "rail",
+      "cities": ["shanghai", "beijing", "guangzhou", "chongqing"],
+      "editorialIds": ["RAIL-01", "RAIL-02", "RAIL-03"],
+      "evidenceState": "staging_observed_then_reader_disabled"
+    },
+    {
+      "scene": "attraction",
+      "cities": ["chongqing"],
+      "editorialIds": ["CQ-01", "CQ-02", "CQ-03"],
+      "evidenceState": "staging_observed_then_reader_disabled"
+    }
+  ],
+  "explicitGaps": [
+    {
+      "cities": ["shanghai", "beijing", "guangzhou", "chongqing"],
+      "scenario": "arrival",
+      "researchCandidateIds": ["N-01"],
+      "reason": "The research candidate is not in the statement batch, and the current statement scene union has no arrival value."
+    },
+    {
+      "cities": ["shanghai", "beijing", "guangzhou", "chongqing"],
+      "scenario": "airport_ground_transport",
+      "researchCandidateIds": ["SH01", "BJ01", "GZ01", "CQ01"],
+      "reason": "No selected candidate has entered the reviewed statement/publication path."
+    },
+    {
+      "cities": ["shanghai", "beijing", "guangzhou", "chongqing"],
+      "scenario": "accommodation_or_emergency",
+      "researchCandidateIds": ["N-08", "N-09", "N-10"],
+      "reason": "No selected candidate has entered the reviewed statement/publication path."
+    },
+    {
+      "cities": ["shanghai", "beijing", "guangzhou"],
+      "scenario": "attraction",
+      "researchCandidateIds": ["SH03", "BJ03", "GZ03"],
+      "reason": "Only the Chongqing museum statements are in the batch; city-specific attraction coverage is not inferred."
+    }
+  ],
+  "publicationBoundary": {
+    "observed": "Twelve statement publications and one PAY-01 withdrawal were observed in the bounded Staging window recorded in artifacts/VPJ-15/staging-20260912/verification.md.",
+    "current": "The reader and Ops switches are disabled; this matrix does not assert that a product reader is currently available.",
+    "prohibitedInferences": ["nationwide coverage", "on-site availability", "licence verification", "production release", "Ask grounding"]
+  }
+}
