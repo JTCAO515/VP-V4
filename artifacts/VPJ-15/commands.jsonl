@@ -1,4 +1,7 @@
 {"command": "supabase migration new vpj_15_private_source_assertion", "exitCode": 0, "migration": "20260910213151_vpj_15_private_source_assertion.sql"}
+{"command":"node --experimental-strip-types --test tests/contract/knowledge/supported-journey-matrix.test.mjs","exitCode":0,"passed":2,"skipped":0,"scope":"2026-09-17 ARR-01 arrival statement and matrix boundary"}
+{"command":"pnpm test:contract","exitCode":0,"scope":"2026-09-17 full contract suite after ARR-01"}
+{"command":"pnpm docs:check && git diff --check","exitCode":0,"scope":"2026-09-17 arrival editorial preparation validation"}
 {"command":"node --test tests/contract/knowledge/supported-journey-matrix.test.mjs","exitCode":0,"passed":2,"skipped":0,"scope":"2026-09-17 statement-batch city/scene matrix and explicit-gap boundary"}
 {"command":"pnpm test:contract","exitCode":0,"scope":"2026-09-17 full contract suite including Supported Journey Matrix"}
 {"command":"pnpm docs:check && git diff --check","exitCode":0,"scope":"2026-09-17 matrix documentation and diff validation"}

@@ -3,8 +3,16 @@
   "batch": "2026-09-12-first-party",
   "status": "editorial_content_not_published",
   "sourceReviewDate": "2026-09-12",
-  "recordCount": 12,
+  "recordCount": 13,
   "sourceMetadata": [
+    {
+      "sourceKey": "n-s01",
+      "priorSourceId": "N-S01",
+      "publishedAt": "2025-12-02",
+      "observedAt": "2026-09-17",
+      "retrievalMethod": "Direct official NIA HTTPS page read.",
+      "changeAssessment": "The official page still states that online foreign-arrival-card filing is free, names official channels, and retains the port-device/paper-card fallback. No whole-site change search or port observation was performed."
+    },
     {
       "sourceKey": "n-s02",
       "priorSourceId": "N-S02",
@@ -41,6 +49,78 @@
     }
   ],
   "records": [
+    {
+      "editorialId": "ARR-01",
+      "parent": "N-01",
+      "sourceObservedAt": "2026-09-17",
+      "title": "外国人入境卡官方免费填报与口岸替代渠道",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "foreign_arrival_card",
+          "predicate": "offers_procedure",
+          "objectId": "nia_official_free_filing",
+          "conditions": [
+            "arrival_card_requirement_check",
+            "official_nia_channel_only",
+            "current_port_process_check"
+          ],
+          "exclusions": [
+            "no_visa_or_admission_decision",
+            "no_online_only_claim"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "shanghai",
+            "beijing",
+            "guangzhou",
+            "chongqing"
+          ],
+          "scene": "arrival",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "zh": {
+            "text": "如需填写外国人入境卡，可通过国家移民管理局官方渠道免费填报；不能网上填报时，可在抵达中国口岸使用现场设备或填写纸质卡。",
+            "conditions": [
+              "仅适用于实际需要填写外国人入境卡的旅客；具体豁免须个别核对。",
+              "仅使用国家移民管理局公布的官方渠道，不使用第三方付费填报网站。",
+              "出行前向当前口岸或国家移民管理局核对流程和可用渠道。"
+            ],
+            "exclusions": [
+              "不构成签证、免签资格或准予入境决定。",
+              "不声称网上填报是唯一允许的渠道。"
+            ]
+          },
+          "en": {
+            "text": "Where a foreign arrival card is required, use the free official NIA channel; if online filing is unavailable, use port facilities or a paper card after arriving in China.",
+            "conditions": [
+              "Only for travelers who are actually required to complete a foreign arrival card; verify any exemption individually.",
+              "Use only channels published by the National Immigration Administration, not third-party paid filing sites.",
+              "Check the current process and available channels with the port or NIA before travel."
+            ],
+            "exclusions": [
+              "This is not a visa, visa-free eligibility, or admission decision.",
+              "It does not claim that online filing is the only permitted channel."
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "n-s01",
+            "revisionLabel": "20260917-arrival-card-page",
+            "publisher": "国家移民管理局 / National Immigration Administration",
+            "uri": "https://www.nia.gov.cn/n741440/n741577/c1755806/content.html",
+            "locator": "2025-12-02 notice, substantive paragraphs 1–2 and official URL line",
+            "snippet": "Editorial synopsis (not a quotation): NIA states that official online foreign-arrival-card filing is free and retains port-device and paper-card fallbacks for travelers unable to file online.",
+            "usageDeclaration": "Original editorial factual synopsis and citation metadata only; not a source quotation or official translation. No blanket licence, raw-page, media, corpus, embedding or TTS permission is asserted. Public accessibility is not a licence."
+          }
+        ]
+      },
+      "useBasis": "original_factual_summary",
+      "useNote": "Editorial proposal for our original bilingual fact statements and source metadata only. Source synopsis is not a quotation. No blanket commercial, media, raw-page, embedding or TTS licence is claimed. Publication and request eligibility have not been performed; applicable development policy and source-specific restrictions remain in force."
+    },
     {
       "editorialId": "PAY-01",
       "parent": "N-02",
