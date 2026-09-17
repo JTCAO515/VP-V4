@@ -1,5 +1,25 @@
 # VPJ-14 local runtime evidence
 
+## Local regression refresh — 2026-09-17
+
+PASS: the disposable local Supabase 2.117.0 stack completed the real GoTrue
+Cookie → controlled Ops → independent reviewer → atomic audit → restart and
+revocation suite, 7/7 with no skips. The runner now preflights the required
+Supabase CLI before it creates its disposable directory, so a missing CLI is an
+explicit environment failure and cannot leave an owned temporary stack behind.
+
+PASS: the Ops configuration/request-boundary regressions passed 12/12. `pnpm
+check`, unit, contract, docs and diff checks passed on this worktree. The
+aggregate security suite was 149 pass/1 existing environment skip and aggregate
+integration was 39 pass/77 environment skips; those aggregate skips do not
+weaken the dedicated disposable Ops result. `db:verify` reported unconfigured
+probes and made no production connection attempt.
+
+The current shared Staging route remains disabled/no-member and thus has no new
+browser submit/review/revocation observation in this refresh. Do not treat local
+browser-capable integration evidence or the existing HTTP-based Staging slice as
+the missing live browser-mutation evidence.
+
 Verified 2026-09-11 (Asia/Shanghai) from `codex/ops-review-204`, based on main `cd2201194402b87e6322f4b703dd780707fcae2e`. This increment supplies private candidate review only. It does not activate real membership, publish a Fact, enable retrieval, touch a remote database, or close #204.
 
 ## Real Auth / HTTP / PostgreSQL

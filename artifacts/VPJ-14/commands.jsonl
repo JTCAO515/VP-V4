@@ -1,4 +1,10 @@
 {"command": "supabase migration new vpj_14_ops_candidate_review", "exitCode": 0, "scope": "CLI-created new migration"}
+{"command":"node tests/integration/ops/run-local.mjs","exitCode":0,"passed":7,"skipped":0,"scope":"2026-09-17 disposable Supabase 2.117.0: real GoTrue Cookie, independent review, audit rollback, concurrency, restart and revocation; owned stack cleanup"}
+{"command":"node --experimental-strip-types --test tests/contract/ops/local-review.test.mjs tests/contract/ops/request-deadline.test.mjs","exitCode":0,"passed":12,"skipped":0,"scope":"2026-09-17 Ops configuration and request-boundary regressions"}
+{"command":"pnpm check","exitCode":0,"scope":"2026-09-17 lint/typecheck/build/static tests"}
+{"command":"pnpm test:security","exitCode":0,"outcome":"incomplete","passed":149,"skipped":1,"scope":"2026-09-17 aggregate suite; existing environment skip retained"}
+{"command":"pnpm test:integration","exitCode":0,"outcome":"incomplete","passed":39,"skipped":77,"scope":"2026-09-17 aggregate suite; environment skips retained"}
+{"command":"pnpm docs:check && git diff --check","exitCode":0,"scope":"2026-09-17 docs and diff validation"}
 {"command": "node tests/integration/ops/run-local.mjs", "exitCode": 0, "passed": 7, "skipped": 0, "scope": "new disposable GoTrue/HTTP/PostgreSQL stack; app and DB restart; injected audit rollback; real sign-out; owned cleanup"}
 {"command": "pnpm test:unit", "exitCode": 0, "outcome": "passed", "testFiles": 12, "skipped": 0}
 {"command": "pnpm test:integration", "exitCode": 0, "outcome": "incomplete", "testFiles": 28, "skipped": 55}
