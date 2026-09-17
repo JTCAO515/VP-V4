@@ -1,8 +1,11 @@
 # #359 a `/ops/wiki` write action to actually withdraw a source — 2026-09-17 (round 18)
 
-Baseline: merged main `8f3f8ce` (PR #434, round 17's read-only withdrawal
-status wiring). Isolated git worktree `vp-v4-work-round18`, branch
-`feat/vpj-75-ops-source-withdraw-ui-20260917`.
+Baseline: forked from main `8f3f8ce` (PR #434, round 17's read-only
+withdrawal status wiring). Isolated git worktree `vp-v4-work-round18`,
+branch `feat/vpj-75-ops-source-withdraw-ui-20260917`. Later merged
+`origin/main` `07775ad` (PR #435, unrelated `docs:check`/`CONTEXT.md`
+tooling merged by a separate session while this PR's CI was in flight —
+see the CI-fix entry below) with no conflicts.
 
 ## Result and scope
 
@@ -136,9 +139,23 @@ claimed done.
   belongs in `status`/`owner`, which are free text, not `lastUpdated`).
   `pnpm test:unit` then passed 100/100 locally, and the full check suite
   below was rerun after the fix.
+- A second CI attempt then failed `pnpm docs:check` with "CONTEXT.md is
+  stale" -- main had advanced past this branch's fork point (PR #435,
+  "keep handoff views current and narrow planning-only CI", merged after
+  this branch was created) and added a new `docs:check` step that renders
+  `CONTEXT.md`/`HANDOFF.md` from `docs/handoff.json` and fails if they are
+  out of sync. Merged `origin/main` into this branch (no conflicts) and ran
+  `node scripts/vpj-program.mjs render-handoff` as the error message
+  instructed, which regenerated `CONTEXT.md`/`HANDOFF.md` from this round's
+  already-correct `docs/handoff.json` content -- a pure derived-file
+  regeneration, not a new hand-written claim. `pnpm docs:check` then passed,
+  and the full check suite below was rerun a third time against the merged
+  tree to confirm no regression from picking up main's other changes.
 - Full check suite on the final diff:
   - `pnpm lint` (`node scripts/lint.mjs`): pass, 311 files checked.
-  - `pnpm test:unit`: 100/100 pass, 0 fail, 0 skip.
+  - `pnpm test:unit`: 106/106 pass, 0 fail, 0 skip (rose from 100 to 106
+    after merging main, which added new unit test files for the
+    `docs:check` tooling itself; unrelated to this PR's own changes).
   - `pnpm typecheck` (`tsc --noEmit`): pass, no errors.
   - `next build --webpack`: pass (production build succeeded; used for the
     browser fixture above).
