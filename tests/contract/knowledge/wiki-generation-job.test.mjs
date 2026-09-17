@@ -39,11 +39,38 @@ test("succeeded outcome returns validated draft output and usage, never leaks th
   assert.equal(seenAuth, "Bearer secret-key");
 });
 
-test("a model response outside the closed {summary, gaps} schema fails as MODEL_OUTPUT_INVALID", async () => {
+test("a model response outside the closed {summary, gaps} schema fails as MODEL_OUTPUT_INVALID, with a bounded diagnostic snapshot", async () => {
   const outcome = await runWikiGenerationJob(baseInput, {
     ...deps, fetch: async () => chatResponse({ summary: "ok", gaps: [], extraField: "not allowed" }),
   }, new AbortController().signal);
-  assert.deepEqual(outcome, { kind: "failed", errorCode: "MODEL_OUTPUT_INVALID" });
+  assert.equal(outcome.kind, "failed");
+  assert.equal(outcome.errorCode, "MODEL_OUTPUT_INVALID");
+  // captureRawResponseOnInvalid is on for this job (approved-source input,
+  // not a traveler's own text) -- the diagnostic snapshot is an allowlisted
+  // preview, not the verbatim response, and must never carry reasoning.
+  assert.equal(typeof outcome.rawResponseForDiagnostics, "string");
+  const snapshot = JSON.parse(outcome.rawResponseForDiagnostics);
+  assert.equal(snapshot.finishReason, "stop");
+  assert.match(snapshot.contentPreview, /extraField/);
+  assert.equal(Object.hasOwn(snapshot, "reasoning_content"), false);
+  assert.doesNotMatch(outcome.rawResponseForDiagnostics, /reasoning/);
+});
+
+test("a provider-protocol-level MODEL_OUTPUT_INVALID (missing usage) also carries the diagnostic snapshot", async () => {
+  const outcome = await runWikiGenerationJob(baseInput, {
+    ...deps, fetch: async () => Response.json({ model: "qwen3.7-plus-2026-05-26", choices: [{ index: 0, finish_reason: "stop", message: { role: "assistant", content: "{}" } }] }),
+  }, new AbortController().signal);
+  assert.equal(outcome.kind, "failed");
+  assert.equal(outcome.errorCode, "MODEL_OUTPUT_INVALID");
+  assert.equal(typeof outcome.rawResponseForDiagnostics, "string");
+});
+
+test("a successful outcome never carries a diagnostic field", async () => {
+  const outcome = await runWikiGenerationJob(baseInput, {
+    ...deps, fetch: async () => chatResponse({ summary: "The museum has daily hours.", gaps: [] }),
+  }, new AbortController().signal);
+  assert.equal(outcome.kind, "succeeded");
+  assert.equal(Object.hasOwn(outcome, "rawResponseForDiagnostics"), false);
 });
 
 test("a provider HTTP failure surfaces as a failed outcome with a code, not a throw", async () => {

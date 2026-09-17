@@ -95,6 +95,12 @@ export async function runWikiSearchJob(
   for (let round = 1; round <= input.maxRounds; round += 1) {
     if (signal.aborted) return { kind: "cancelled", rounds: round - 1, usage };
     const prompt = buildRoundPrompt(input.question, input.locale, rounds, round === input.maxRounds);
+    // Deliberately no captureRawResponseOnInvalid here (unlike
+    // wiki-generation-job.ts / wiki-statement-proposal-job.ts): `prompt`
+    // embeds the traveler's own real question text (input.question), so a
+    // MODEL_OUTPUT_INVALID snapshot could still preview a model completion
+    // that reflects real user content, even though this task's dataClass is
+    // tagged c0_synthetic. See docs/contracts/wiki-raw-response-diagnostics.md.
     const outcome = await invokeProviderProtocol(
       { requestId: randomUUID(), provider: input.provider.provider, dataClass: "c0_synthetic", input: prompt, task: "wiki_search_v1", maxOutputTokens: input.maxOutputTokens, timeoutMs: input.timeoutMs },
       turn, transport, signal,

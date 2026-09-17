@@ -12,7 +12,14 @@ export type WikiProposalJobInput=Readonly<{
 }>;
 export type WikiProposalJobOutcome=
  | Readonly<{kind:'succeeded';output:StructuredWikiDraft;usage:{inputTokens:number;outputTokens:number;totalTokens:number};inputDigest:string}>
- | Readonly<{kind:'failed';errorCode:string}> | Readonly<{kind:'cancelled'}>;
+ // rawResponseForDiagnostics is present only when errorCode is MODEL_OUTPUT_INVALID;
+ // a bounded, allowlisted snapshot (never the verbatim provider body, never
+ // reasoning content) -- this module still never persists or logs it itself.
+ | Readonly<{kind:'failed';errorCode:string;rawResponseForDiagnostics?:string}> | Readonly<{kind:'cancelled'}>;
+const DIAGNOSTIC_PREVIEW_CHARS=4000;
+function safeJsonPreview(value:unknown):string {
+  try { const text=JSON.stringify(value); return text.length>DIAGNOSTIC_PREVIEW_CHARS?text.slice(0,DIAGNOSTIC_PREVIEW_CHARS):text; } catch { return '"(unserializable)"'; }
+}
 function validSource(s:ProposalSource):boolean {
   return !!s&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s.id)
     &&isKnowledgeStatement({schemaVersion:'knowledge-statement/1',assertion:{subjectId:'validation',predicate:'requires_action',objectId:'validation',conditions:[],exclusions:[]},scope:{cities:['shanghai'],scene:'arrival',audience:'international_independent_traveler'},expressions:{zh:{text:'Validation',conditions:[],exclusions:[]},en:{text:'Validation',conditions:[],exclusions:[]}},sources:[s.declaration]});
@@ -33,10 +40,12 @@ export async function runWikiStatementProposalJob(input:WikiProposalJobInput,dep
   const turn=guard.startTurn({userId:'wiki-proposal-worker',taskId:'wiki-proposal'});
   if(turn.kind!=='turn')return {kind:'failed',errorCode:'INVALID_INPUT'};
   const transport=createProviderHttpTransport(input.provider,{credential:deps.credential,recordDestination:deps.recordDestination,...(deps.fetch?{fetch:deps.fetch}:{})});
-  const result=await invokeProviderProtocol({requestId:randomUUID(),provider:input.provider.provider,dataClass:'c0_synthetic',task:'wiki_statement_proposals_v1',input:JSON.stringify({sources:input.sources.map(s=>({sourceRevisionId:s.id,snippet:s.declaration.snippet}))}),maxOutputTokens:input.maxOutputTokens,timeoutMs:input.timeoutMs},turn,transport,signal);
+  // captureRawResponseOnInvalid: true is safe here -- input is approved,
+  // ingested source declarations (c0_synthetic), not a traveler's own free-text input.
+  const result=await invokeProviderProtocol({requestId:randomUUID(),provider:input.provider.provider,dataClass:'c0_synthetic',task:'wiki_statement_proposals_v1',input:JSON.stringify({sources:input.sources.map(s=>({sourceRevisionId:s.id,snippet:s.declaration.snippet}))}),maxOutputTokens:input.maxOutputTokens,timeoutMs:input.timeoutMs,captureRawResponseOnInvalid:true},turn,transport,signal);
   if(result.kind==='cancelled')return {kind:'cancelled'};
-  if(result.kind==='unavailable')return {kind:'failed',errorCode:result.code};
-  if(!isProposalOutput(result.output))return {kind:'failed',errorCode:'MODEL_OUTPUT_INVALID'};
+  if(result.kind==='unavailable')return {kind:'failed',errorCode:result.code,...(result.rawResponseForDiagnostics!==undefined?{rawResponseForDiagnostics:result.rawResponseForDiagnostics}:{})};
+  if(!isProposalOutput(result.output))return {kind:'failed',errorCode:'MODEL_OUTPUT_INVALID',rawResponseForDiagnostics:safeJsonPreview(result.output)};
   const output=resolveProposalOutput(result.output,input.sources);
-  return output?{kind:'succeeded',output,usage:result.usage,inputDigest:proposalInputDigest(input)}:{kind:'failed',errorCode:'MODEL_OUTPUT_INVALID'};
+  return output?{kind:'succeeded',output,usage:result.usage,inputDigest:proposalInputDigest(input)}:{kind:'failed',errorCode:'MODEL_OUTPUT_INVALID',rawResponseForDiagnostics:safeJsonPreview(result.output)};
 }

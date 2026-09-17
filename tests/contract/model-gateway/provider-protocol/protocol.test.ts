@@ -148,6 +148,40 @@ test("bounded Qwen task thinking caps complete output and never exposes reasonin
   }
 });
 
+test("captureRawResponseOnInvalid defaults to off: MODEL_OUTPUT_INVALID carries no diagnostic field unless the caller opts in", async () => {
+  const result = await invokeProviderProtocol(request("qwen"), budget(), async () => Response.json({ ...completion("qwen"), model: "unexpected-model" }), signal());
+  assert.equal(result.kind, "unavailable");
+  if (result.kind === "unavailable") { assert.equal(result.code, "MODEL_OUTPUT_INVALID"); assert.equal(Object.hasOwn(result, "rawResponseForDiagnostics"), false); }
+});
+
+test("captureRawResponseOnInvalid: true attaches a bounded, allowlisted snapshot only on MODEL_OUTPUT_INVALID, never on success or SAFETY_BLOCKED, and never leaks reasoning", async () => {
+  const invalid = await invokeProviderProtocol(request("qwen", { captureRawResponseOnInvalid: true }), budget(), async () =>
+    Response.json(completion("qwen", { role: "assistant", content: '{"unexpected":"shape"}', reasoning_content: "PRIVATE_REASONING_SHOULD_NEVER_LEAK" }, "stop")), signal());
+  // "ordinary_text" task accepts any non-empty string content, so force a schema
+  // failure via a task with a closed schema instead (strict_known_unknown).
+  const strict = await invokeProviderProtocol(request("qwen", { task: "strict_known_unknown", captureRawResponseOnInvalid: true }), budget(), async () =>
+    Response.json(completion("qwen", { role: "assistant", content: '{"unexpected":"shape"}', reasoning_content: "PRIVATE_REASONING_SHOULD_NEVER_LEAK" }, "stop")), signal());
+  assert.equal(invalid.kind, "protocol_validated"); // sanity: ordinary_text accepted this content, so it is NOT the invalid case
+  assert.equal(strict.kind, "unavailable");
+  if (strict.kind === "unavailable") {
+    assert.equal(strict.code, "MODEL_OUTPUT_INVALID");
+    assert.equal(typeof strict.rawResponseForDiagnostics, "string");
+    const snapshot = JSON.parse(strict.rawResponseForDiagnostics!);
+    assert.match(snapshot.contentPreview, /unexpected/);
+    assert.equal(Object.hasOwn(snapshot, "reasoning_content"), false);
+    assert.doesNotMatch(strict.rawResponseForDiagnostics!, /PRIVATE_REASONING_SHOULD_NEVER_LEAK/);
+  }
+  // Success path: identical opt-in flag, valid output -- no diagnostic field at all.
+  const ok = await invokeProviderProtocol(request("qwen", { captureRawResponseOnInvalid: true }), budget(), async () => Response.json(completion("qwen")), signal());
+  assert.equal(ok.kind, "protocol_validated");
+  assert.equal(Object.hasOwn(ok, "rawResponseForDiagnostics"), false);
+  // SAFETY_BLOCKED: opted in, but this code is deliberately excluded from capture.
+  const blocked = await invokeProviderProtocol(request("qwen", { captureRawResponseOnInvalid: true }), budget(), async () =>
+    Response.json(completion("qwen", { role: "assistant", content: "blocked" }, "content_filter")), signal());
+  assert.equal(blocked.kind === "unavailable" && blocked.code, "SAFETY_BLOCKED");
+  if (blocked.kind === "unavailable") assert.equal(Object.hasOwn(blocked, "rawResponseForDiagnostics"), false);
+});
+
 test("thinking experiment rejects invalid bounds, legacy tasks and other providers before egress", async () => {
   const base = request("qwen", { task: "text_task_v2", history: [], thinkingBudgetTokens: 64 });
   let calls = 0;
