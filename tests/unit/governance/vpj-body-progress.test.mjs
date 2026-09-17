@@ -248,6 +248,8 @@ function commandFixture(t, command, { parentDrift = false, successfulPublish = f
   const fixturePlan = { ...plan, tasks, sourceSnapshot: 'snapshot.json', oldIssueSuccessors: {} };
   for (const directory of ['scripts', 'bin', `${planDir}/issue-bodies`]) mkdirSync(path.join(fixtureRoot, directory), { recursive: true });
   cpSync('scripts/vpj-program.mjs', path.join(fixtureRoot, 'scripts/vpj-program.mjs'));
+  mkdirSync(path.join(fixtureRoot, 'scripts/lib'), { recursive: true });
+  cpSync('scripts/lib/handoff-documents.mjs', path.join(fixtureRoot, 'scripts/lib/handoff-documents.mjs'));
   writeFileSync(path.join(fixtureRoot, `${planDir}/issue-plan.json`), JSON.stringify(fixturePlan));
   writeFileSync(path.join(fixtureRoot, 'snapshot.json'), JSON.stringify({ issues: [] }));
   for (const entry of tasks) {
