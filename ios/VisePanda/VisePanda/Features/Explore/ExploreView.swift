@@ -42,6 +42,15 @@ private struct NativePlaceSearchReply: Decodable {
     let candidates: [NativePlaceCandidate]
 }
 
+private struct NativePlaceSuggestion: Decodable, Identifiable {
+    let provider: NativePlaceProvider
+    let providerPoiId: String?
+    let rawName: String
+    var id: String { provider.rawValue + ":" + (providerPoiId ?? "text") + ":" + rawName }
+}
+
+private struct NativePlaceSuggestionReply: Decodable { let candidates: [NativePlaceSuggestion] }
+
 @MainActor
 @Observable
 final class NativePlaceSearchStore {
@@ -90,6 +99,7 @@ private struct NativePlaceSearchView: View {
     @State private var query = ""
     @State private var city = "shanghai"
     @State private var provider = NativePlaceProvider.amap
+    @State private var suggestions: [NativePlaceSuggestion] = []
     private var chinese: Bool { settings.selectedLocale == .zh }
     private var session: NativeSession { settings.nativeSession }
     private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
@@ -114,6 +124,20 @@ private struct NativePlaceSearchView: View {
                 TextField(text("Place name in Chinese, English, or pinyin", "中文、英文或拼音地点名"), text: $query)
                     .textInputAutocapitalization(.never).autocorrectionDisabled()
                     .textFieldStyle(.roundedBorder).accessibilityIdentifier("places.query")
+                Button(text("Show input tips", "显示输入提示")) {
+                    Task {
+                        do {
+                            let data = try await session.placeSuggestRequest(provider: provider, query: query, city: city)
+                            let reply = try JSONDecoder().decode(NativePlaceSuggestionReply.self, from: data)
+                            suggestions = reply.candidates.filter { !$0.rawName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }.prefix(10).map { $0 }
+                        } catch { suggestions = [] }
+                    }
+                }.disabled(session.dataScope == nil || query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                ForEach(suggestions) { suggestion in
+                    Button { query = suggestion.rawName } label: {
+                        Text(suggestion.rawName).frame(maxWidth: .infinity, alignment: .leading)
+                    }.buttonStyle(.bordered).accessibilityIdentifier("places.suggestion.\(suggestion.id)")
+                }
                 Button(text("Search places", "搜索地点")) {
                     Task { await store.search(scope: session.dataScope, provider: provider, query: query, city: city) {
                         try await session.placeSearchRequest(provider: provider, query: query, city: city)
