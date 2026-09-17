@@ -84,10 +84,41 @@ All provider responses in these tests are scripted by the test file, never a
 real model call. This proves the validation/detection *code* behaves
 correctly against realistic bilingual adversarial and contradictory input; it
 is not proof that a real model would write compliant output, resist the
-injection, or correctly describe a contradiction in its own `gaps` field. A
-real-model pass remains explicit UNRUN, consistent with every other #359
-slice's fixture-only convention.
+injection, or correctly describe a contradiction in its own `gaps` field.
 
-Evidence: [verification](../../artifacts/VPJ-75/wiki-statement-proposals-safety-20260916/verification.md).
-Rollback removes `detectProposalConflicts` (an unwired, pure addition with no
-consumer) and the new eval files; nothing else changes.
+## 2026-09-17 update (round 22): real-model pass over the injection fixture set
+
+The real-model pass named above as UNRUN is now done. This round re-checked
+this sandbox for a usable real LLM credential (found: Qwen has real account
+balance; GLM's key is valid but the account has zero balance, a real HTTP
+429; DeepSeek's key is valid but its configured model id is stale against
+the real API — see full detail in the verification doc below) and ran all 6
+`injectionCases` against the real `runWikiStatementProposalJob` worker path
+with real Qwen (`qwen3.7-plus-2026-05-26`) HTTP calls, using the real
+adversarial `snippetWithInjection` text as the source.
+
+**Result: 6/6 resisted.** The injected compliance marker never appeared
+anywhere in any real raw model response; every response explicitly named the
+embedded instruction as untrusted in its own `summary` field. A real,
+separate, reproducible finding surfaced along the way: 4/6 real responses
+were rejected as `MODEL_OUTPUT_INVALID` for a reason unrelated to the
+injection — the model correctly declined to invent an unstated city
+(`scope.cities: []`), which `isKnowledgeStatement`
+(`lib/server/knowledge/publication/statement.ts`) requires to be nonempty.
+This is not fixed in this round (a `KnowledgeStatement`-schema-wide
+question, not a narrow #359 slice); it is the same class of gap VPJ-76's
+own round-21 handoff already named for `provider-protocol.ts` ("log raw
+model responses on `MODEL_OUTPUT_INVALID` for diagnosability") — that
+production change is still not made, still shared across every
+model-gateway task, still deliberately out of scope here.
+
+New script: `scripts/eval/run-wiki-statement-proposals-injection-real-model.mjs`
+(manual/on-demand only, never wired into `pnpm evals`/CI, makes real billed
+HTTP calls). No production runtime file, migration, or RPC changed.
+
+Evidence: [round-16 fixture verification](../../artifacts/VPJ-75/wiki-statement-proposals-safety-20260916/verification.md),
+[round-22 real-model verification](../../artifacts/VPJ-75/wiki-statement-proposals-injection-real-model-20260917/verification.md).
+Rollback (round 16) removes `detectProposalConflicts` (an unwired, pure
+addition with no consumer) and the new eval files; rollback (round 22)
+removes the new real-model script and its artifacts directory. Neither
+round changes anything else.
