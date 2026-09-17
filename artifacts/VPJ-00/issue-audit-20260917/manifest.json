@@ -15,6 +15,7 @@
     191,
     192,
     193,
+    194,
     195,
     196,
     197,
@@ -71,6 +72,7 @@
     250,
     251,
     252,
+    255,
     264,
     265,
     266,
@@ -93,5 +95,19 @@
   "nativeTaskDependencyCount": 217,
   "newIssues": 0,
   "deletedIssues": 0,
-  "scope": "planning-and-tracker-only"
+  "scope": "planning-and-tracker-only",
+  "supplementalSnapshot": {
+    "path": "artifacts/VPJ-00/issue-audit-20260917/before-lifecycle-cleanup.json.gz",
+    "sha256": "2fb5a7c327bcef35eb251ec2c5608a42e54ed2a8bc00cb7c19c29e9cf022adb7",
+    "bytes": 5747
+  },
+  "reopenedIssues": [
+    206
+  ],
+  "closedLabelsOnly": [
+    194,
+    255,
+    358,
+    362
+  ]
 }

@@ -1392,8 +1392,16 @@
       "databaseId": 5355306450,
       "url": "https://github.com/JTCAO515/VP-V4/issues/206",
       "sourceRef": "main",
-      "baselineNote": "原VPJ基线已合并；2026-09-10品牌增量以Q1-Q38报告的已确认方向为准，当前任务及新增规划契约需按合入main后的版本执行。已有可独立进行的准备范围继续；开发接入与可逆参数由agent按现有方向推进，无需第三方、法务或产品许可；真实收费与发布按相应范围验收。 开发阶段不等待供应商工单/书面答复、法务或产品许可；按开发接入规则用现有账号/API推进，未知项记录，保留用户同意和实际技术验证。",
-      "deliveryStage": "S2"
+      "baselineNote": "PR #416只完成HF复用条款，不代表其余验收完成；本轮纠正闭票，按现有接口推进剩余范围，不自动标blocked。",
+      "deliveryStage": "S2",
+      "executionBrief": {
+        "firstSlice": "复用已完成的直接知识回答与PR #416的MIRACL/BIPIA证据，补一条其余尚未验收的真实claim覆盖、partial或过拒答路径。",
+        "boundary": "本票曾在PR #416仅交付一条验收后被关票，现恢复原未完成范围；不重复07任务执行、67整合Harness或受保护76正在做的Wiki检索。",
+        "reuse": [
+          "docs/program/2026-09-05/INTERFACES.md",
+          "artifacts/VPJ-206/hf-reuse-miracl-bipia-20260916/verification.md"
+        ]
+      }
     },
     {
       "id": "VPJ-17",

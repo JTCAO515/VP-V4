@@ -503,7 +503,7 @@ function publish(){
       if(t.databaseId)assert.equal(match.id,t.databaseId,`database ID mismatch ${t.id}`);
       if(t.number)assert.equal(match.number,t.number,`number mismatch ${t.id}`);
     }
-    const labels=['enhancement',`phase:${t.phase}`,`priority:${t.track==='expand'?'P2':t.phase==='R0'||t.phase==='R1'?'P0':'P1'}`,'status:blocked',t.owner==='operator'?'ready-for-human':'needs-triage'];
+    const labels=['enhancement',`phase:${t.phase}`,`priority:${t.track==='expand'?'P2':t.phase==='R0'||t.phase==='R1'?'P0':'P1'}`,'status:planned',t.owner==='operator'?'ready-for-human':'needs-triage'];
     if(!match)match=api(`repos/${plan.repo}/issues`,'POST',{title:`[${t.id}] ${t.title}`,body:body(t),labels});
     t.number=match.number;t.databaseId=match.id;t.url=match.html_url;
     saveJson(planPath,plan);

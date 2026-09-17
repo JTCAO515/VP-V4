@@ -440,6 +440,13 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206) — 有依据的回答、诚实部分答案与知识缺口
 
+### 执行边界与首个切片
+
+- 首个可交付结果：复用已完成的直接知识回答与PR #416的MIRACL/BIPIA证据，补一条其余尚未验收的真实claim覆盖、partial或过拒答路径。
+- 本票责任/非目标：本票曾在PR #416仅交付一条验收后被关票，现恢复原未完成范围；不重复07任务执行、67整合Harness或受保护76正在做的Wiki检索。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [artifacts/VPJ-206/hf-reuse-miracl-bipia-20260916/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-206/hf-reuse-miracl-bipia-20260916/verification.md)
+- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
+
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S2
 - Blocked by: [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-15 #205](https://github.com/JTCAO515/VP-V4/issues/205)
