@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import { mkdirSync } from 'node:fs';
+import { mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { chromium, expect } from '@playwright/test';
 import { tripLocalEditorCopy } from '../../../lib/i18n.ts';
 
@@ -8,8 +10,7 @@ import { tripLocalEditorCopy } from '../../../lib/i18n.ts';
 export async function exerciseSameTripBrowser({api,jar,n,t}) {
   const origin=new URL(api);
   assert.equal(origin.protocol,'http:');assert.equal(origin.hostname,'127.0.0.1');
-  const directory='/Users/jtcao/Library/Caches/visepanda/s1-same-trip-browser-'+randomUUID();
-  mkdirSync(directory,{recursive:true,mode:0o700});
+  const directory=mkdtempSync(join(tmpdir(),'vpj05-same-trip-browser-'));
   const browser=await chromium.launch({headless:true});
   try {
     for(const locale of ['zh','en'])for(const viewport of [{width:1280,height:800},{width:390,height:844}]) {
