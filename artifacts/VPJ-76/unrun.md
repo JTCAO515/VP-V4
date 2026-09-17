@@ -227,5 +227,49 @@ very pass hit and noted).
   place question, unaffected by design). **Not verified:** whether this
   actually raises real-model accuracy on the frozen set -- that needs a
   real GLM re-run, not separately authorized this round.
-- (b) and (c) remain not started; handed off as concrete, evidenced next
-  steps, not vague TODOs.
+- ~~(b) name the specific place in the place-fixture corpus text so the
+  place-question retrieval gap (category 4) can be re-tested and
+  actually diagnosed~~ **DONE 2026-09-17 (round 24).** See
+  `wiki-agentic-search-place-fixture-real-model-20260917/verification.md`
+  and `docs/contracts/wiki-agentic-search.md`'s matching dated entry.
+  `evals/wiki-agentic-search/cases.ts` bumped to `versions.corpus:
+  "wiki-agentic-search-eval/2"`: the three place-question `QUESTION_TEXT`
+  entries and the `place_address`/`opening_hours` `STATEMENT_TEXT`
+  entries now consistently name a synthetic attraction, "Cloudscape
+  Pavilion" / 云境阁, instead of the generic "the named attraction" /
+  "这个景点" placeholder that appeared nowhere else in the fixture text
+  either. Re-verified real-model: a fresh real Qwen (`qwen3.7-plus-2026-05-26`)
+  run over the frozen set now gets **6/6 place-question scenarios right**
+  (up from 2/6 real-GLM in the 2026-09-16 pass) -- the specific category-4
+  gap this item named is closed. Not a controlled single-variable
+  comparison (provider changed too, GLM→Qwen, because GLM's configured
+  key now has zero real balance -- see that verification.md for the fresh
+  balance check); still real, direct evidence the fixture's missing place
+  name was at minimum *a* real contributor, matching hypothesis (a) from
+  the 2026-09-16 write-up. Fixture-mode test
+  (`wiki-agentic-search.evals.test.ts`) re-run after the edit: still
+  34/34 PASS, confirming the fixture-content change is fully backward
+  compatible with the deterministic scripted-transport pass.
+- ~~(c) log raw model responses on `MODEL_OUTPUT_INVALID` for real
+  diagnosability~~ **PARTIALLY DONE 2026-09-17 (round 24), script layer
+  only.** `scripts/eval/run-wiki-agentic-place-fixture-real-model.mjs`
+  (the same round-24 real-model script above) wraps `deps.fetch` with a
+  capturing wrapper (the same pattern
+  `run-wiki-statement-proposals-injection-real-model.mjs` already
+  established in round 22) so every row in this run's own `results.json`
+  carries `rawResponseStatus`/`rawResponseText` -- the real HTTP response
+  this run actually received, usable to diagnose a `MODEL_OUTPUT_INVALID`
+  row directly instead of guessing. This round's real run happened to hit
+  zero `MODEL_OUTPUT_INVALID` outcomes (every mismatch was a
+  `retrieval_miss` or an honestly-partial `answered`, not a schema
+  rejection), so this capture has not yet been exercised against a real
+  invalid-output row -- the mechanism is proven working (it captured a
+  real 200 response body for every one of the 32 scenarios run), not yet
+  proven against the specific failure mode it was built for. **Not
+  done:** making this logging a property of `provider-protocol.ts`
+  itself (the shared module every production/eval caller goes through) --
+  unrun.md's own original phrasing flagged that as needing separate,
+  careful review before touching a module this many call sites share,
+  and this round did not attempt it. A future round wanting raw-response
+  diagnosability inside the actual product path (not just this one
+  script) still needs that separate, careful pass.

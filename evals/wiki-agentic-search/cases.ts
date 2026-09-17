@@ -23,7 +23,7 @@ import { QUESTION_DEFINITIONS, PLACE_QUESTION_IDS, QUESTION_ONTOLOGY_VERSION, ty
  * of a narrow, self-authored eval; see the eval's own README).
  */
 
-export const versions = Object.freeze({ corpus: "wiki-agentic-search-eval/1", claims: QUESTION_ONTOLOGY_VERSION });
+export const versions = Object.freeze({ corpus: "wiki-agentic-search-eval/2", claims: QUESTION_ONTOLOGY_VERSION });
 
 export type ScenarioKind = "full_coverage" | "partial_coverage" | "missing_content" | "retrieval_miss" | "provider_failure" | "budget_exhausted";
 
@@ -57,9 +57,25 @@ const QUESTION_TEXT: Readonly<Record<string, Readonly<{ zh: string; en: string }
   connectivity_sim_documents: { zh: "办本地SIM卡需要哪些证件？", en: "What documents do I need for a local SIM card?" },
   connectivity_plan_allowances: { zh: "SIM套餐额度要注意什么？", en: "What should I check about my SIM plan allowances?" },
   connectivity_getting_started: { zh: "怎么开始办理本地SIM卡？", en: "How do I get started with a local SIM?" },
-  place_address: { zh: "这个景点的地址在哪？", en: "Where is the named attraction located?" },
-  place_opening_hours: { zh: "这个景点今天几点开门？", en: "What time does the named attraction open today?" },
-  place_address_and_hours: { zh: "这个景点的地址和今天开放时间是？", en: "Where is the named attraction and what are today's hours?" },
+  // v2 (2026-09-17, round 24): named a concrete, synthetic attraction
+  // instead of the generic "the named attraction" placeholder -- see
+  // artifacts/VPJ-76/unrun.md's item (b) and
+  // wiki-frozen-eval-real-model-20260916/verification.md's category-4
+  // finding. In the real product, this module's `question` input is the
+  // traveler's own raw input text (grounded-ai-assist.ts's
+  // `context.inputText`), which names the actual place the traveler is
+  // asking about -- a generic templated question that never names any
+  // place is a fixture-realism gap this eval had, not a property of real
+  // traffic. "Cloudscape Pavilion" / 云境阁 is a wholly synthetic,
+  // fictional attraction name (matches this repo's synthetic-only-content
+  // convention), used consistently across the question text and the
+  // corpus statement text below so a real model has a genuine textual
+  // anchor to match, exactly like every non-place question family already
+  // does (e.g. rail/payment/connectivity statements name their own real
+  // concepts instead of an underscored placeholder).
+  place_address: { zh: "云境阁的地址在哪？", en: "Where is Cloudscape Pavilion located?" },
+  place_opening_hours: { zh: "云境阁今天几点开门？", en: "What time does Cloudscape Pavilion open today?" },
+  place_address_and_hours: { zh: "云境阁的地址和今天开放时间是？", en: "Where is Cloudscape Pavilion and what are today's hours?" },
 };
 
 // Natural-language statement text per claim objectId. A real model searches
@@ -80,8 +96,8 @@ const STATEMENT_TEXT: Readonly<Record<string, Readonly<{ zh: string; en: string 
   marked_currency_exchange: { zh: "可在机场、酒店或银行网点带有外币兑换标识的柜台兑换人民币现金。", en: "RMB cash can be exchanged at marked currency exchange counters in airports, hotels, or bank branches." },
   passport_or_foreign_permanent_resident_id: { zh: "境外旅客办理本地SIM卡需出示有效护照或外国人永久居留身份证。", en: "Foreign travelers must present a valid passport or a foreign permanent resident ID card to apply for a local SIM card." },
   plan_allowance_check: { zh: "购买SIM套餐前应核实其通话分钟数与流量额度是否满足实际使用需求。", en: "Before purchasing a SIM plan, travelers should verify its call-minute and data allowances meet their actual needs." },
-  place_address: { zh: "该场馆的官方地址已在入口标识及官方信息渠道公布，建议出发前再次核对。", en: "The venue's official address is posted at its entrance and through official information channels; confirm it again before setting out." },
-  opening_hours: { zh: "该场馆今日的官方开放时间已在入口标识及官方信息渠道公布，节假日可能调整。", en: "The venue's official opening hours for today are posted at its entrance and through official information channels; holidays may change them." },
+  place_address: { zh: "云境阁的官方地址已在入口标识及官方信息渠道公布，建议出发前再次核对。", en: "Cloudscape Pavilion's official address is posted at its entrance and through official information channels; confirm it again before setting out." },
+  opening_hours: { zh: "云境阁今日的官方开放时间已在入口标识及官方信息渠道公布，节假日可能调整。", en: "Cloudscape Pavilion's official opening hours for today are posted at its entrance and through official information channels; holidays may change them." },
 };
 
 function corpusFor(questionId: string, claims: readonly QuestionClaim[], index: number): readonly CorpusStatement[] {

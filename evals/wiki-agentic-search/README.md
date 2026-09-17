@@ -26,9 +26,13 @@ drift from what the product actually resolves.
   revoked/expired-statement partial). Split `development`/`holdout`
   (17/17), following the naming this repo's own VPJ-66 harness already
   uses (`evals/harness/cases.ts`).
-- `versions`: `{ corpus: "wiki-agentic-search-eval/1", claims: <QUESTION_ONTOLOGY_VERSION> }` — bump `corpus` whenever a case's fixture
+- `versions`: `{ corpus: "wiki-agentic-search-eval/2", claims: <QUESTION_ONTOLOGY_VERSION> }` — bump `corpus` whenever a case's fixture
   content changes meaning, matching the frozen-corpus discipline the
-  acceptance criteria asks for.
+  acceptance criteria asks for. Bumped to `/2` on 2026-09-17 (round 24):
+  the place-question fixture text (`QUESTION_TEXT.place_*`,
+  `STATEMENT_TEXT.place_address`/`opening_hours`) now consistently names
+  a synthetic attraction ("Cloudscape Pavilion" / 云境阁) instead of a
+  generic, nameless placeholder — see the real-model re-run below.
 
 ## What the runner does
 
@@ -76,7 +80,23 @@ eval's own fixture-design gaps or the pipeline correctly degrading under
 real model imperfection, not pipeline defects) in
 `artifacts/VPJ-76/wiki-frozen-eval-real-model-20260916/verification.md`.
 Run it again with `node --experimental-strip-types scripts/eval/run-wiki-agentic-real-model.mjs`
-(reads `GLM_API_KEY` from `lib/server/jobs/.local/.env`).
+(reads `GLM_API_KEY` from `lib/server/jobs/.local/.env`) — note that as
+of 2026-09-17 GLM's configured key returns a real HTTP 429 "insufficient
+balance"; this script is kept as-is for its own historical GLM run's
+reproducibility, not because GLM is still usable.
+
+A second real-model script,
+`scripts/eval/run-wiki-agentic-place-fixture-real-model.mjs`, re-runs the
+same frozen set (after the `/2` place-fixture-naming edit above) against
+**Qwen** (`qwen3.7-plus-2026-05-26`, reads `QWEN_API_KEY`) instead —
+GLM's zero balance made a same-provider before/after comparison
+impossible this round. Run 2026-09-17: 84.4% overall, and **6/6 on
+place-question scenarios specifically** (up from 2/6 in the 2026-09-16
+GLM run) — the fixture-naming fix closed that run's category-4 gap. Every
+row in this script's own report also carries the raw HTTP response
+(`rawResponseStatus`/`rawResponseText`) for diagnosability, not just
+parsed output. Full detail:
+`artifacts/VPJ-76/wiki-agentic-search-place-fixture-real-model-20260917/verification.md`.
 
 ## What this eval deliberately does NOT do
 - **No real database.** Owner isolation and revocation/expiry are

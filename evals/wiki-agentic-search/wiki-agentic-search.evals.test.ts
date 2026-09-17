@@ -54,8 +54,13 @@ function sceneFor(questionId: string): string {
 }
 
 function intentFor(scenario: Scenario): KnowledgeIntent {
+  // "Cloudscape Pavilion" matches cases.ts v2's own place-question/statement
+  // text (2026-09-17, round 24) -- kept consistent for readability even
+  // though grounded-search.ts never reads `intent.placeName` today (see
+  // that module's own comment); this KnowledgeIntent shape is otherwise
+  // unchanged.
   return isPlaceQuestionId(scenario.questionId)
-    ? { intent: scenario.questionId as never, requestScope: "single", placeName: "Synthetic Landmark", unansweredNeeds: [] }
+    ? { intent: scenario.questionId as never, requestScope: "single", placeName: "Cloudscape Pavilion", unansweredNeeds: [] }
     : { intent: scenario.questionId as never, requestScope: "single" };
 }
 
