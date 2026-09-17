@@ -90,10 +90,24 @@ and `docs/contracts/wiki-generation-dispatch.md`.
   a cited source was withdrawn during the claim-to-complete window (never
   persists the draft) — verified against real native PostgreSQL, for both
   the plain generation job and the structured statement-proposal payload,
-  which share this one dispatcher. Not done: no cascading revocation of a
+  which share this one dispatcher. ~~No cascading revocation of a
   `wiki_page_revisions` row that already cites a source withdrawn *after*
-  that revision was created, no automated scan of in-flight jobs against
-  newly-withdrawn sources. ~~No `/ops/wiki` UI for seeing withdrawal
+  that revision was created~~ **DONE 2026-09-17 (round 19), as a marking-only
+  flag** — see `docs/contracts/wiki-source-withdrawal-revision-flag.md` and
+  `wiki-source-withdrawal-revision-flag-20260917/verification.md`. A new
+  pure function, `citedWithdrawnSources` (no migration, no RPC), derives
+  from fields the read RPC already returns which of a specific
+  already-generated revision's cited sources have since been withdrawn, and
+  `/ops/wiki` now renders this prominently at the revision-header level
+  (not buried inside the collapsed sources details block, where the prior
+  round's per-source note still also lives unchanged). It only marks the
+  correlation for a human reviewer — it never hides, merges, blocks any
+  existing action, or retroactively invalidates the revision itself. Still
+  not done: no automated scan of in-flight jobs or already-generated pages
+  against newly-withdrawn sources (the flag only appears when an operator
+  actually reads that specific page), and it is scoped to the two revisions
+  (current + previous) the existing read RPC already returns, not full
+  history. ~~No `/ops/wiki` UI for seeing withdrawal
   status~~ **DONE 2026-09-17** for the "seeing" half only, see
   `wiki-read-withdrawal-status-20260917/verification.md` and
   `docs/contracts/wiki-source-withdrawal-status-ui.md` — a new migration
@@ -118,13 +132,15 @@ and `docs/contracts/wiki-generation-dispatch.md`.
 storage, the `/ops/wiki` review UI, statement-candidate linking, structured
 statement proposals, stale-job reclaim, the withdrawn-source dispatch
 barrier, UI wiring for the structural conflict flag (2026-09-17), surfacing
-a withdrawn source's status in `/ops/wiki` (read-only, 2026-09-17), and (also
-2026-09-17, round 18) a write-path `/ops/wiki` action to actually withdraw a
-source are done (see each item above and `docs/knowledge-upgrade/README.md`'s
-dated log for what each one actually covers and what it does not).
-Structural conflict detection and fixture-only injection/multi-source-binding
-coverage are partially done (2026-09-16, statement-proposal job only);
-real-model injection resistance, true multi-source page synthesis, cascading
-source-withdrawal revocation, automated newly-withdrawn-source scanning,
-real per-call RMB reconciliation, and Docling integration remain not
-started.
+a withdrawn source's status in `/ops/wiki` (read-only, 2026-09-17), a
+write-path `/ops/wiki` action to actually withdraw a source (2026-09-17,
+round 18), and a revision-level "cites a withdrawn source" marking-only flag
+(2026-09-17, round 19) are done (see each item above and
+`docs/knowledge-upgrade/README.md`'s dated log for what each one actually
+covers and what it does not). Structural conflict detection and
+fixture-only injection/multi-source-binding coverage are partially done
+(2026-09-16, statement-proposal job only); real-model injection resistance,
+true multi-source page synthesis, automated newly-withdrawn-source scanning
+(against in-flight jobs or already-generated pages an operator is not
+currently viewing), real per-call RMB reconciliation, and Docling
+integration remain not started.
