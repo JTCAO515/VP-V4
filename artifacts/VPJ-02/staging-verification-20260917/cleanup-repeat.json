@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "observedAt": "2026-09-17T04:29:03.245Z",
+  "project": "dzqdzetcctkhbrhlxxgn",
+  "checks": [
+    {
+      "name": "explicit-staging-target",
+      "status": "PASS"
+    }
+  ],
+  "paths": {
+    "managementAPI": "PASS",
+    "httpJWT": "UNRUN",
+    "directDatabase": "UNRUN: no verified SQL credential",
+    "sessionPooler": "UNRUN: no verified SQL credential",
+    "worker": "UNRUN: no verified worker connection identity"
+  },
+  "cleanup": {
+    "operations": "PASS",
+    "fixturesAbsent": "PASS",
+    "originalsUnchanged": "PASS",
+    "authAccountCount": 7,
+    "tripCount": 3
+  },
+  "status": "PASS_FOR_RECORDED_SCOPE",
+  "completedAt": "2026-09-17T04:29:17.423Z"
+}
