@@ -6,8 +6,8 @@ import { conflictsByProposal, detectProposalConflicts, type ProposalConflict, ty
 import styles from "../review/workspace.module.css";
 
 const copy = {
-  zh: { heading: "Wiki 草稿", boundary: "生成内容供运营核对，尚未成为已发布事实。声明审核与发布仍使用现有流程。", login: "登录", review: "声明审核", language: "语言", key: "页面标识", lookup: "查看", recent: "最近 50 个页面", refresh: "刷新列表", busy: "读取中…", unavailable: "暂时无法读取，请检查登录与 Ops 权限后重试。", missing: "没有找到页面。", empty: "暂无页面。", current: "当前版本", previous: "上一版本", noPrevious: "没有上一版本，无法比较。", noBody: "此历史版本未保存正文，无法还原或比较。", noRevision: "尚无完成的草稿版本。", gaps: "待核实缺口", sources: "来源与原文位置", absentSource: "来源记录缺失，无法核实", changes: "正文差异", same: "正文未变化", changed: "正文已变化，请对照两个版本", unknownDiff: "正文缺失，差异未知", added: "新增", removed: "移除", jobs: "最近 10 个生成任务", tokens: "记录的 token 数（非账单）", unknown: "未知", metadata: "生成记录", draft: "草稿", validated: "已校验（不代表发布）", rejected: "已拒绝", conflictReason: { objectId: "对象不同", conditions: "条件不同", exclusions: "例外不同" } as Record<ProposalConflict["reason"], string> },
-  en: { heading: "Wiki drafts", boundary: "Generated content is for operator review and is not a published fact. Statements use the existing review and publication process.", login: "Sign in", review: "Statement review", language: "Language", key: "Page key", lookup: "View", recent: "Latest 50 pages", refresh: "Refresh list", busy: "Loading…", unavailable: "Unable to read. Check your session and Ops access, then retry.", missing: "Page not found.", empty: "No pages yet.", current: "Current version", previous: "Previous version", noPrevious: "No previous version to compare.", noBody: "This historical revision has no stored body; it cannot be reconstructed or compared.", noRevision: "No completed draft revision yet.", gaps: "Gaps to verify", sources: "Sources and original location", absentSource: "Source record missing; cannot verify", changes: "Body differences", same: "Body unchanged", changed: "Body changed; compare both versions", unknownDiff: "Body missing; differences unknown", added: "Added", removed: "Removed", jobs: "Latest 10 generation jobs", tokens: "Recorded tokens (not an invoice)", unknown: "Unknown", metadata: "Generation record", draft: "Draft", validated: "Validated (not published)", rejected: "Rejected", conflictReason: { objectId: "different object", conditions: "different conditions", exclusions: "different exclusions" } as Record<ProposalConflict["reason"], string> },
+  zh: { heading: "Wiki 草稿", boundary: "生成内容供运营核对，尚未成为已发布事实。声明审核与发布仍使用现有流程。", login: "登录", review: "声明审核", language: "语言", key: "页面标识", lookup: "查看", recent: "最近 50 个页面", refresh: "刷新列表", busy: "读取中…", unavailable: "暂时无法读取，请检查登录与 Ops 权限后重试。", missing: "没有找到页面。", empty: "暂无页面。", current: "当前版本", previous: "上一版本", noPrevious: "没有上一版本，无法比较。", noBody: "此历史版本未保存正文，无法还原或比较。", noRevision: "尚无完成的草稿版本。", gaps: "待核实缺口", sources: "来源与原文位置", absentSource: "来源记录缺失，无法核实", changes: "正文差异", same: "正文未变化", changed: "正文已变化，请对照两个版本", unknownDiff: "正文缺失，差异未知", added: "新增", removed: "移除", jobs: "最近 10 个生成任务", tokens: "记录的 token 数（非账单）", unknown: "未知", metadata: "生成记录", draft: "草稿", validated: "已校验（不代表发布）", rejected: "已拒绝", conflictReason: { objectId: "对象不同", conditions: "条件不同", exclusions: "例外不同" } as Record<ProposalConflict["reason"], string>, withdrawStart: "撤回此来源", withdrawConfirm: "此操作会阻止之后引用它发起新的生成任务，但不会自动撤销或隐藏已生成的草稿。请填写撤回原因后确认。", withdrawReason: "撤回原因", withdrawSubmit: "确认撤回", withdrawCancel: "取消", withdrawBusy: "提交中…", withdrawError: "撤回失败，请检查登录与 Ops 权限后重试。" },
+  en: { heading: "Wiki drafts", boundary: "Generated content is for operator review and is not a published fact. Statements use the existing review and publication process.", login: "Sign in", review: "Statement review", language: "Language", key: "Page key", lookup: "View", recent: "Latest 50 pages", refresh: "Refresh list", busy: "Loading…", unavailable: "Unable to read. Check your session and Ops access, then retry.", missing: "Page not found.", empty: "No pages yet.", current: "Current version", previous: "Previous version", noPrevious: "No previous version to compare.", noBody: "This historical revision has no stored body; it cannot be reconstructed or compared.", noRevision: "No completed draft revision yet.", gaps: "Gaps to verify", sources: "Sources and original location", absentSource: "Source record missing; cannot verify", changes: "Body differences", same: "Body unchanged", changed: "Body changed; compare both versions", unknownDiff: "Body missing; differences unknown", added: "Added", removed: "Removed", jobs: "Latest 10 generation jobs", tokens: "Recorded tokens (not an invoice)", unknown: "Unknown", metadata: "Generation record", draft: "Draft", validated: "Validated (not published)", rejected: "Rejected", conflictReason: { objectId: "different object", conditions: "different conditions", exclusions: "different exclusions" } as Record<ProposalConflict["reason"], string>, withdrawStart: "Withdraw this source", withdrawConfirm: "New generation work will stop citing it, but any already-generated draft is not automatically retracted or hidden. Enter a reason, then confirm.", withdrawReason: "Withdrawal reason", withdrawSubmit: "Confirm withdrawal", withdrawCancel: "Cancel", withdrawBusy: "Submitting…", withdrawError: "Withdrawal failed. Check your session and Ops access, then retry." },
 };
 /** Purely structural, non-semantic conflicts between this revision's OWN structured
  * proposals -- see detectProposalConflicts. Computed client-side from the already-
@@ -30,6 +30,47 @@ function sourceWithdrawalNote(locale: "zh" | "en", source: { withdrawnAt: string
   return locale === "zh"
     ? `⚠ 此来源已于 ${when} 被撤回（原因：${source.withdrawalReason ?? "未记录"}）。基于此来源已生成的草稿不会被自动撤销或隐藏，请人工核实其是否仍可信。`
     : `⚠ This source was withdrawn on ${when} (reason: ${source.withdrawalReason ?? "not recorded"}). Drafts already generated from it are not automatically retracted or hidden; verify manually whether they remain trustworthy.`;
+}
+
+/** Write-path counterpart to sourceWithdrawalNote: a two-step, explicit-reason
+ * form that calls ops_source_revision_withdraw_v1 via POST /api/ops/wiki.
+ * Step 1 is a plain toggle button (no mutation yet); step 2 requires a
+ * non-empty reason and its own separate submit -- the same "note plus its own
+ * submit is the confirmation, no native dialog" idiom this codebase already
+ * uses for revoke_statement in app/ops/review/workspace.tsx. Only ever
+ * rendered for a source that is not already withdrawn and not missing (see
+ * call site) -- withdrawing a source that no longer has a row, or one
+ * already withdrawn, is left to the RPC's own OPS_NOT_FOUND/idempotent-replay
+ * handling, never assumed here. On success it only triggers a re-read of the
+ * current page (onWithdrawn); it never hides/reorders the source itself --
+ * the next read shows the new withdrawnAt via the existing advisory note. */
+function SourceWithdrawForm({ locale, sourceId, onWithdrawn }: { locale: "zh" | "en"; sourceId: string; onWithdrawn: () => void }) {
+  const c = copy[locale];
+  const [open, setOpen] = useState(false);
+  const [state, setState] = useState<"idle" | "busy" | "error">("idle");
+  const submit = useCallback(async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const reason = String(new FormData(event.currentTarget).get("reason") ?? "").trim();
+    if (!reason) return;
+    setState("busy");
+    try {
+      const response = await fetch("/api/ops/wiki", {
+        method: "POST", cache: "no-store", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ action: "withdraw_source", operationId: crypto.randomUUID(), sourceRevisionId: sourceId, reason }),
+      });
+      if (!response.ok) { setState("error"); return; }
+      setState("idle"); setOpen(false);
+      onWithdrawn();
+    } catch { setState("error"); }
+  }, [sourceId, onWithdrawn]);
+  if (!open) return <button type="button" onClick={() => setOpen(true)}>{c.withdrawStart}</button>;
+  return <form onSubmit={submit}>
+    <p>{c.withdrawConfirm}</p>
+    <label>{c.withdrawReason}<input name="reason" required maxLength={500} disabled={state === "busy"} /></label>
+    <button disabled={state === "busy"}>{state === "busy" ? c.withdrawBusy : c.withdrawSubmit}</button>
+    <button type="button" onClick={() => setOpen(false)} disabled={state === "busy"}>{c.withdrawCancel}</button>
+    {state === "error" && <p role="alert" className={styles.conflict}>{c.withdrawError}</p>}
+  </form>;
 }
 
 export function OpsWikiWorkspace() {
@@ -99,6 +140,7 @@ export function OpsWikiWorkspace() {
         <details><summary>{c.sources} ({revision.sources.length})</summary>{revision.sources.map((source, n) => <section key={`${source.id}:${n}`} className={styles.content}>
           <p>{source.id}</p>{source.missing ? <p>{c.absentSource}</p> : <><p>{source.declaration?.publisher} · {source.declaration?.revisionLabel}</p><p>{source.declaration?.uri}</p><p>{source.declaration?.locator}</p><blockquote>{source.declaration?.snippet}</blockquote></>}
           {source.withdrawnAt && <p role="alert" className={styles.conflict}>{sourceWithdrawalNote(locale, source)}</p>}
+          {!source.withdrawnAt && !source.missing && <SourceWithdrawForm locale={locale} sourceId={source.id} onWithdrawn={() => void load(selected.current)} />}
         </section>)}</details>
         <details><summary>{c.metadata}</summary><p className={styles.content}>{revision.jobId}<br />{revision.generatedAt}<br />{revision.promptVersion}<br />{revision.configDigest}<br />{revision.inputDigest}</p></details>
       </article>)}

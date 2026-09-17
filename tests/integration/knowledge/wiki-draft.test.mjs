@@ -503,6 +503,48 @@ test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACL
     }
   });
 
+  // The withdrawal action still had no /ops/wiki HTTP entry point at all before this
+  // slice -- ops_source_revision_withdraw_v1 was only ever exercised by calling the
+  // RPC directly (see the "withdraw RPC" test above). This proves the actual write
+  // path an operator's browser uses (POST /api/ops/wiki -> handleWikiRequest ->
+  // ops_source_revision_withdraw_v1) end to end against the real database, composed
+  // with the existing real GET read path, not just the RPC in isolation.
+  await t.test('write-path /ops/wiki: real HTTP POST performs the real withdrawal, visible on the next real HTTP GET; non-same-origin and outsider POSTs are rejected before any mutation',async()=>{
+    const httpRpcFor=(actor)=>({authenticate:async()=>actor.id,call:async(name,{p_input})=>{try{return {data:await call(actor,name,p_input),error:null};}catch(error){return {data:null,error:{message:error.message}};}}});
+    const withdrawBody=(reason)=>JSON.stringify({action:'withdraw_source',operationId:uuid(),sourceRevisionId:sourceId,reason});
+    const postRequest=(body)=>({method:'POST',url:'http://127.0.0.1/api/ops/wiki',headers:new Headers({'content-type':'application/json'}),signal:new AbortController().signal,body:new Response(body).body});
+
+    const notSameOrigin=await handleWikiRequest(postRequest(withdrawBody('Should never reach the RPC: not same-origin')),{enabled:true,sameOrigin:false,createRpc:()=>httpRpcFor(author)});
+    assert.equal(notSameOrigin.status,403);assert.equal(notSameOrigin.body.error,'OPS_FORBIDDEN');
+
+    const outsiderAttempt=await handleWikiRequest(postRequest(withdrawBody('Outsider via the real HTTP write path')),{enabled:true,sameOrigin:true,createRpc:()=>httpRpcFor(outsider)});
+    assert.equal(outsiderAttempt.status,403);assert.equal(outsiderAttempt.body.error,'OPS_FORBIDDEN');
+    assert.equal((await db(`select withdrawn_at from knowledge_review_private.source_revisions where id='${sourceId}';`))[0].withdrawn_at,null,'a rejected non-same-origin or outsider POST must leave the real row untouched');
+
+    const ok=await handleWikiRequest(postRequest(withdrawBody('Withdrawn through the real HTTP POST write path.')),{enabled:true,sameOrigin:true,createRpc:()=>httpRpcFor(author)});
+    assert.equal(ok.status,200);
+    assert.equal(ok.body.data.sourceRevisionId,sourceId);
+    assert.equal(ok.body.data.withdrawnBy,author.id);
+    assert.equal(ok.body.data.withdrawalReason,'Withdrawn through the real HTTP POST write path.');
+
+    const getRequest={method:'GET',url:`http://127.0.0.1/api/ops/wiki?pageKey=${encodeURIComponent(pageKey)}`,headers:new Headers(),signal:new AbortController().signal};
+    const read=await handleWikiRequest(getRequest,{enabled:true,createRpc:()=>httpRpcFor(author)});
+    assert.equal(read.status,200);
+    const httpWithdrawnSource=read.body.data.revisions.flatMap(r=>r.sources).find(s=>s.id===sourceId);
+    assert.ok(httpWithdrawnSource,'the withdrawn source must still be present (not hidden) in the real HTTP read response');
+    assert.ok(httpWithdrawnSource.withdrawnAt);
+    assert.equal(httpWithdrawnSource.withdrawnBy,author.id);
+    assert.equal(httpWithdrawnSource.withdrawalReason,'Withdrawn through the real HTTP POST write path.');
+
+    // Idempotent replay through the same real HTTP path under a *new* operationId
+    // must not overwrite the original reason -- same guarantee as the direct-RPC
+    // "withdraw RPC" test above, now proven through the actual handler an
+    // operator's browser calls, not just the underlying RPC.
+    const replay=await handleWikiRequest(postRequest(withdrawBody('A later reason must not overwrite the original, even via the real HTTP path.')),{enabled:true,sameOrigin:true,createRpc:()=>httpRpcFor(author)});
+    assert.equal(replay.status,200);
+    assert.equal(replay.body.data.withdrawalReason,'Withdrawn through the real HTTP POST write path.');
+  });
+
   if(process.env.VP_WIKI_BROWSER_FIXTURE==='1') {
     await db(`update knowledge_review_private.members set active=true where actor_id='${author.id}';`);
     await new Promise((resolve,reject)=>{
@@ -514,7 +556,7 @@ test('Wiki: native PostgreSQL migrations, full draft persistence, conflicts, ACL
           if(req.url.startsWith('/api/ops/')) {
             const request=new Request('http://127.0.0.1:3197'+req.url,{method:req.method,headers:req.headers,...(req.method==='POST'?{body:Readable.toWeb(req),duplex:'half'}:{})});
             const createRpc=()=>({authenticate:async()=>author.id,call:async(name,{p_input})=>{try{return {data:await call(author,name,p_input),error:null};}catch(error){return {data:null,error:{message:error.message}};}}});
-            const result=req.url.startsWith('/api/ops/wiki')?await handleWikiRequest(request,{enabled:true,createRpc}):await handleOpsRequest(request,{enabled:true,sameOrigin:request.headers.get('origin')==='http://127.0.0.1:3197',createRpc});
+            const result=req.url.startsWith('/api/ops/wiki')?await handleWikiRequest(request,{enabled:true,sameOrigin:request.headers.get('origin')==='http://127.0.0.1:3197',createRpc}):await handleOpsRequest(request,{enabled:true,sameOrigin:request.headers.get('origin')==='http://127.0.0.1:3197',createRpc});
             if(dropNext && req.method==='POST'){dropNext=false;res.writeHead(503,{'content-type':'application/json','cache-control':'no-store'});res.end(JSON.stringify({error:'OPS_ACK_UNKNOWN'}));return;}
             res.writeHead(result.status,{'content-type':'application/json','cache-control':'private, no-store','x-vp-fixture':'SQL claims, not GoTrue'});res.end(JSON.stringify(result.body));return;
           }

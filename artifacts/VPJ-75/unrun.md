@@ -100,19 +100,31 @@ and `docs/contracts/wiki-generation-dispatch.md`.
   adds `withdrawnAt`/`withdrawnBy`/`withdrawalReason` to each source object
   `ops_wiki_read_v1` already returns, and `/ops/wiki` renders a bilingual
   advisory warning next to any withdrawn source, without hiding the source,
-  revision, or any existing action. An Ops UI *action* to actually withdraw
-  a source (as opposed to seeing that one already was) remains not built.
+  revision, or any existing action. ~~An Ops UI *action* to actually
+  withdraw a source~~ **DONE 2026-09-17 (round 18)**, see
+  `wiki-source-withdrawal-action-20260917/verification.md` and
+  `docs/contracts/wiki-source-withdrawal-action-ui.md` — `/api/ops/wiki` now
+  accepts a same-origin `POST` calling the existing
+  `ops_source_revision_withdraw_v1` RPC (no new migration/RPC), and
+  `/ops/wiki` renders a two-step, explicit-reason withdraw control (not a
+  native confirm dialog) next to any source that is neither already
+  withdrawn nor missing. Verified against real native PostgreSQL (a real
+  HTTP-level `POST` through the same `handleWikiRequest` handler the route
+  calls, including a real outsider rejection and a real GET-after-POST
+  round trip) and a real browser click-through via the existing
+  `VP_WIKI_BROWSER_FIXTURE=1` fixture.
 
 #359 remains OPEN. Schema, dispatcher+real-LLM-probe, durable draft
 storage, the `/ops/wiki` review UI, statement-candidate linking, structured
 statement proposals, stale-job reclaim, the withdrawn-source dispatch
-barrier, UI wiring for the structural conflict flag (2026-09-17), and (also
-2026-09-17) surfacing a withdrawn source's status in `/ops/wiki` (read-only)
-are done (see each item above and `docs/knowledge-upgrade/README.md`'s
+barrier, UI wiring for the structural conflict flag (2026-09-17), surfacing
+a withdrawn source's status in `/ops/wiki` (read-only, 2026-09-17), and (also
+2026-09-17, round 18) a write-path `/ops/wiki` action to actually withdraw a
+source are done (see each item above and `docs/knowledge-upgrade/README.md`'s
 dated log for what each one actually covers and what it does not).
 Structural conflict detection and fixture-only injection/multi-source-binding
 coverage are partially done (2026-09-16, statement-proposal job only);
-real-model injection resistance, true multi-source page synthesis, an
-`/ops/wiki` *action* to withdraw a source, cascading source-withdrawal
-revocation, automated newly-withdrawn-source scanning, real per-call RMB
-reconciliation, and Docling integration remain not started.
+real-model injection resistance, true multi-source page synthesis, cascading
+source-withdrawal revocation, automated newly-withdrawn-source scanning,
+real per-call RMB reconciliation, and Docling integration remain not
+started.
