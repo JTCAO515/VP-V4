@@ -2,3 +2,8 @@
 {"at": "2026-09-10T19:09:54.158869+00:00", "scope": "VPJ03-PROVIDERS-20260911-v1", "command": "pnpm docs:check", "result": "PASS: 73 tasks, 20 replacements, acyclic dependencies, contracts and archive hashes"}
 {"at": "2026-09-10T19:09:54.159028+00:00", "scope": "VPJ03-PROVIDERS-20260911-v1", "command": "git diff --check", "result": "PASS"}
 {"at": "2026-09-10T19:09:54.159035+00:00", "scope": "VPJ03-PROVIDERS-20260911-v1", "command": "Python pathlib check of local Markdown links in four changed policy/contract documents", "result": "PASS"}
+{"at":"2026-09-17T05:33:11.776661+00:00","scope":"VPJ-03 closure audit","command":"Supabase Management API guarded terminal revoke of exact active GLM policy ID","result":"PASS: exactly one policy revoked; no content, consent, credential or migration read/written"}
+{"at":"2026-09-17T05:35:00+00:00","scope":"VPJ-03 closure audit","command":"Supabase Management API active policy inventory inside READ ONLY transaction","result":"PASS: 0 active policies after revoke"}
+{"at":"2026-09-17T05:35:00+00:00","scope":"VPJ-03 closure audit","command":"text_policy_current in READ ONLY transaction","result":"EXPECTED FAIL: function acquires FOR SHARE lock; no mutation"}
+{"at":"2026-09-17T05:35:00+00:00","scope":"VPJ-03 closure audit","command":"text_policy_current in BEGIN/ROLLBACK transaction","result":"PASS: revoked policy returns false; no mutation"}
+{"at":"2026-09-17T05:35:00+00:00","scope":"VPJ-03 closure audit","command":"node scripts/vpj-program.mjs verify-remote","result":"FAIL outside VPJ-03: remote dependency drift for #188/#191/#193; docs check passed before this command"}
