@@ -635,6 +635,48 @@ Full detail: `artifacts/VPJ-206/hf-reuse-miracl-bipia-20260916/verification.md`
 (real model). Not built: fixes for the stopword/score-tie gaps
 (diagnosed and reported per MIRACL's own intended use, not remediated --
 a real semantic-retrieval upgrade stays gated behind #248's own
-activation gate); this does not close #206 as a whole (its other
+activation gate); this does not complete #206 as a whole (its other
 acceptance bullets, including real published content for #205, remain
 separately unverified).
+
+## VPJ-76 (#360): tuned `maxRounds` by required-claim count (2026-09-17)
+
+One of three concrete follow-ups named in the 2026-09-16 real-model pass
+(`wiki-frozen-eval-real-model-20260916/verification.md`): a flat
+`maxRounds` regardless of a question's required-claim count caused 3 of
+11 real-model mismatches (honest partial answers from running out of
+rounds, not fabrications). New exported pure function in
+`grounded-search.ts`, `tunedMaxRounds(requestedMaxRounds,
+requiredClaimCount) = max(requestedMaxRounds, min(6, requiredClaimCount +
+1))` -- 6 mirrors `wiki-search-job.ts`'s own independently-enforced hard
+bound. `runGroundedWikiSearch` now passes `tunedMaxRounds(input.maxRounds,
+definition?.claims.length ?? 0)` to `runWikiSearchJob` instead of
+`input.maxRounds` directly. Internal to this one function -- every caller
+(both production routes and both real-model eval scripts) inherits the
+fix without its own edit; never lowers what a caller requested; place
+questions (`requiredClaimCount` always 0, unchanged existing scope
+decision) and every single-claim question are unaffected under today's
+callers' `maxRounds: 2`; seven multi-claim questions get a higher real
+round budget (2→3 or 2→4/5 depending on claim count).
+
+Verified against the real (non-mocked) `runGroundedWikiSearch`/
+`runWikiSearchJob` code path with a scripted transport that always
+returns `search` (never answers): `payment_getting_started` (4 claims)
+now gets 5 real model-call attempts before `budget_exhausted` instead of
+2; `payment_card_acceptance` (1 claim) is provably unchanged at 2. Full
+TS contract suite 553/553 (550 baseline + 3 new), frozen eval (fixture
+mode) still 34/34 PASS with numerically unchanged coverage/over-refusal
+metrics (its one `budget_exhausted` scenario is a place question,
+`requiredClaimCount = 0`, so untouched by this change), evals 35/35, no
+regressions. Zero migrations, zero RPC changes, zero caller-file edits.
+Full detail: `artifacts/VPJ-76/tuned-max-rounds-20260917/verification.md`.
+
+Not done this round (deferred, not silently skipped): whether this
+actually improves real-model accuracy (needs a real GLM re-run, not
+separately re-authorized this round); the other two named follow-ups --
+naming a specific place in the place-fixture corpus text for
+re-diagnosis, and logging raw model responses on `MODEL_OUTPUT_INVALID`
+(scoped to the shared `provider-protocol.ts`, deliberately left for its
+own round). #360 remains OPEN; its own final line still requires a real
+end-to-end iOS/Web readback with a live provider credential, which no
+environment has configured.

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { runGroundedWikiSearch } from "../../../lib/server/knowledge/wiki/grounded-search.ts";
+import { runGroundedWikiSearch, tunedMaxRounds } from "../../../lib/server/knowledge/wiki/grounded-search.ts";
 
 const provider = Object.freeze({ provider: "qwen", endpoint: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", configurationId: "11111111-1111-1111-1111-111111111111", configurationVersion: 1, timeoutMs: 5000 });
 const baseInput = Object.freeze({
@@ -135,6 +135,36 @@ test("budget_exhausted and cancelled pass through as their own terminal kinds, n
   controller.abort();
   const cancelled = await runGroundedWikiSearch(baseInput, { ...jobDeps, rpc, fetch: () => { throw new Error("must not call"); } }, controller.signal);
   assert.deepEqual(cancelled, { kind: "cancelled", rounds: 0, usage: { inputTokens: 0, outputTokens: 0, totalTokens: 0 } });
+});
+
+test("tunedMaxRounds raises the floor to requiredClaimCount+1 capped at 6, never lowers what the caller requested", () => {
+  assert.equal(tunedMaxRounds(2, 0), 2, "a place question (0 claims here) is unaffected");
+  assert.equal(tunedMaxRounds(2, 1), 2, "1 claim: floor 2 equals the existing default, no change");
+  assert.equal(tunedMaxRounds(2, 4), 5, "4 claims (payment_getting_started): floor rises to 5");
+  assert.equal(tunedMaxRounds(6, 10), 6, "the floor never exceeds runWikiSearchJob's own hard bound of 6");
+  assert.equal(tunedMaxRounds(5, 1), 5, "a caller's higher request is preserved, never lowered to the floor");
+});
+
+test("a multi-claim question (payment_getting_started, 4 required claims) gets more real rounds than a flat maxRounds: 2 would allow, before falling back to budget_exhausted", async () => {
+  const rpc = async () => ({ data: knowledgeReadResponse([publishedStatement]), error: null });
+  let calls = 0;
+  const fetch = async () => { calls += 1; return chatResponse({ action: "search", query: `attempt ${calls}` }); };
+  const input = { ...baseInput, intent: { intent: "payment_getting_started", requestScope: "single" }, maxRounds: 2 };
+  const outcome = await runGroundedWikiSearch(input, { ...jobDeps, rpc, fetch }, new AbortController().signal);
+  assert.equal(outcome.kind, "budget_exhausted");
+  // Without the tuning fix this would be 2 (the caller's flat request); 4 claims -> floor 5.
+  assert.equal(outcome.rounds, 5, "4 required claims tunes the round budget to 5, not the caller's flat 2");
+  assert.equal(calls, 5, "the model was actually given 5 real chances to search, not 2");
+});
+
+test("a single-claim question (payment_card_acceptance, 1 required claim) is unaffected by the tuning floor", async () => {
+  const rpc = async () => ({ data: knowledgeReadResponse([publishedStatement]), error: null });
+  let calls = 0;
+  const fetch = async () => { calls += 1; return chatResponse({ action: "search", query: `attempt ${calls}` }); };
+  const outcome = await runGroundedWikiSearch(baseInput, { ...jobDeps, rpc, fetch }, new AbortController().signal);
+  assert.equal(outcome.kind, "budget_exhausted");
+  assert.equal(outcome.rounds, 2, "1 required claim: floor 2 equals baseInput's own maxRounds, unchanged from before this fix");
+  assert.equal(calls, 2);
 });
 
 test("an invalid city is rejected by the corpus adapter, surfaced as provider_failure", async () => {
