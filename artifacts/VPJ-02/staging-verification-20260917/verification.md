@@ -1,5 +1,7 @@
 # VPJ-02 real Staging verification — 2026-09-17
 
+**Final review:** [all three original criteria satisfied](acceptance.md). Earlier OPEN/worker-blocker conclusions below are historical; full task/provider processing belongs to VPJ-07, while VPJ-02 records the actual connection paths. Original FAIL/UNRUN evidence is retained.
+
 Related to #189, S1. Outcome: a repeatable explicit-target migration inventory and real ordinary
 owner/other-user/anon isolation matrix, with exact fixture cleanup and a resumable private receipt.
 Parent acceptance remains incomplete; no release or migration application is claimed.

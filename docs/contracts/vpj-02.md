@@ -1,6 +1,7 @@
 # VPJ-02 current Staging identity and isolation verification
 
-Related to [#189](https://github.com/JTCAO515/VP-V4/issues/189); parent remains OPEN. The current
+Related to [#189](https://github.com/JTCAO515/VP-V4/issues/189); all three defined acceptance criteria are satisfied.
+See the [final acceptance mapping](../../artifacts/VPJ-02/staging-verification-20260917/acceptance.md). GitHub records merge/closure state. The current
 [runbook](../runbooks/vpj-02-current-staging-verification.md) defines the explicit-target inventory,
 real GoTrue/PostgREST matrix, bounded cleanup and recovery commands.
 
@@ -26,7 +27,9 @@ This does not establish an unproxied IPv6 route; the original path failure remai
 The actual existing HTTP scoped worker passes11 empty-poll checks, including server identity
 access, anon rejection, exact claim source/grants and unchanged queue/policy/budget/original data.
 This is empty-poll connection evidence only. Full task execution/provider behavior and the legacy
-SQL SystemDataAdapter runtime are not established, and parent#189 remainsOPEN. Historical
+SQL SystemDataAdapter runtime are not established by this connection check. Full task processing
+belongs to VPJ-07#195; ADR-0016 applies when a concrete SQL adapter is introduced. These do not
+add requirements to the unchanged VPJ-02 criteria. Historical
 [2026-09-10 evidence](../../artifacts/VPJ-02/staging-apply-20260910.md) keeps its original scope.
 
 No migrations, ACL/roles, provider work, Production configuration or release state were changed in
