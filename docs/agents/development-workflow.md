@@ -16,10 +16,12 @@ assigned to that stage. Complete Issue and release checks still apply at their o
 
 At the start of a work unit, state the current stage, one observable user result, its owning
 Issue(s), the required environment and the next acceptance action. Prefer finishing a partially
-integrated result before starting another preparation PR. Keep at most one main integration
-lane and one independently useful preparation lane per product; subagents may investigate,
-implement disjoint pieces or review inside these lanes. Existing sessions finish or hand off
-their current changes safely before the coordinator selects more work.
+integrated result before starting another preparation PR. JT authorized three parallel teams on
+2026-09-17; use [the team routing plan](../program/2026-09-05/TEAM-PLAN-2026-09-17.md).
+Each team owns one primary delivery at a time; existing VPJ-04/08/07/75/76 assignments remain
+outside these queues. Shared-file changes and shared Staging write windows are coordinated,
+not a global requirement to wait for another team's whole Issue to close. This replaces the
+previous product-wide one-integration/one-preparation concurrency limit for this assignment.
 
 When an external prerequisite blocks integration, prepare its concrete action/evidence once.
 An additional preparation task must either remove a named stage blocker, deliver a separately
@@ -146,6 +148,7 @@ Use the Issue/PR as the normal work log: result, key checks, unresolved limits a
 Keep raw logs/screenshots in artifacts when useful to review. Avoid copying identical logs into
 multiple documents. Update `docs/handoff.json` when the shared phase, decision, blocker or next
 action changes, or at session handoff; regenerate `HANDOFF.md` and `CONTEXT.md` from it.
+During the three-team assignment, teams record scoped handoff evidence in their Issue/PR and artifacts; Overall integrates shared phase/decision/next-action updates in one coordinated write. Do not overwrite another team's global status.
 Keep the active handoff concise: retain current decisions, blockers and evidence pointers. Move
 superseded verification history to a linked dated snapshot rather than repeating it in both generated
 entry files; keep failures and unrun acceptance visible. Historical snapshots never grant new authority.

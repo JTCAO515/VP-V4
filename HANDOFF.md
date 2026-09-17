@@ -6,14 +6,15 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-状态：2026-09-17 (round 21): user re-scoped this thread to VPJ-75 (#359) and VPJ-76 (#360) only, in a dedicated worktree (../vp-v4-work-round21, branch feat/vpj-76-360-tuned-max-rounds-20260917) to avoid conflicting with other parallel sessions on main. #359 was evaluated first: every remaining named gap (real model calls against safety-materials fixtures, true multi-source synthesis, real RMB cost reconciliation, Docling) needs either real provider credentials not present in this sandbox or is out of scope (Docling REJECT stands) -- no bounded, credential-free next step found. Moved to #360 (VPJ-76): its own round-20 unrun.md already recorded three concrete, JT-delegated follow-ups from the 2026-09-16 real-model pass, none started. Picked (a): tune maxRounds relative to a question's required-claim count. New pure function tunedMaxRounds in lib/server/knowledge/wiki/grounded-search.ts raises the round-budget floor to requiredClaimCount+1 (capped at wiki-search-job.ts's own hard bound of 6), applied internally to runGroundedWikiSearch so every existing caller (Web/iOS production routes, both real-model eval scripts) inherits it without its own edit; never lowers a caller's request; place questions and every single-claim question are unaffected under today's callers' flat maxRounds: 2; seven multi-claim questions get a higher real round budget. Verified end to end against the real (non-mocked) runGroundedWikiSearch/runWikiSearchJob code path with a scripted always-search transport: a 4-claim question (payment_getting_started) now gets 5 real model-call attempts before budget_exhausted, up from 2; a 1-claim question is provably unchanged. Full TS contract suite 553/553 (550 baseline + 3 new); frozen eval (fixture mode) still 34/34 PASS with numerically unchanged coverage/over-refusal metrics (its one budget_exhausted scenario is a place question, requiredClaimCount 0, untouched). Zero migrations, zero RPC changes, zero caller-file edits -- see artifacts/VPJ-76/tuned-max-rounds-20260917/verification.md. Whether this actually raises real-model accuracy remains unverified (needs a real GLM re-run, not separately authorized this round) -- named honestly as an open gap, not assumed.
+状态：2026-09-17团队规划：71张开放Issue中，Program #187由Overall统筹，5张既有任务排除；其余65张归属A20/B31/C14。分工和标签不证明ready或完成；核最新Issue/PR、接口和环境。既有Wiki进展及未验项保留在证据栏与固定commit历史链接，不把原单线程下一动作当全项目排期。
 
-阶段：S2 #359 bounded model statement proposals, preserving manual review and source qualification; VPJ-76 (#360) agentic search structurally built, tuning follow-ups in progress. No non-C0 egress or automatic publication.
+阶段：三队并行：A平台/商业/交付，B行程/地图/原生体验，C AI/知识/质量。VPJ-04/08/07/75/76保持既有分配，阶段仍以单票实际验收判断。
 
 ## 读取顺序
 
 - [docs/agents/development-workflow.md](docs/agents/development-workflow.md)
 - [docs/program/2026-09-05/README.md](docs/program/2026-09-05/README.md)
+- [docs/program/2026-09-05/TEAM-PLAN-2026-09-17.md](docs/program/2026-09-05/TEAM-PLAN-2026-09-17.md)
 
 ## 当前决定
 
@@ -39,6 +40,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - 2026-09-17 VPJ-03/#190 closure audit: actual Staging policy inventory found the only current GLM internal-testing policy had recipient/region records inconsistent with its notice and observed Vercel/Supabase path, while its route was absent from main. The exact immutable policy was terminally revoked, leaving no active verified C2 policy; historical Qwen recipient evidence remains historical only. New C2 use requires a new immutable policy, renewed consent and deployment verification.
 - 2026-09-17 JT明确要求完成VPJ-02后合并并关闭#189。按原三条验收及独立复核，技术验收已满足；最终必需检查通过后合并PR440，再关闭#189。完整worker/provider链归属#195，不因本票完成而验收；未改变生产保护或其他父票。
 - 2026-09-17 JT确认复核GitHub原生Blocked：blockedBy仅保留开工硬依赖，acceptanceDependencies保留可并行任务的集成/最终验收输入；联合依赖图与完整验收不变。VPJ-02/49/62/75/76及关联原生边本轮冻结；移除图标不代表ready或运行验收。
+- 2026-09-17 JT明确要求三个新团队并行，并排除已分配的VPJ-04/08/07/75/76。TEAM-PLAN-2026-09-17.md分配其余65张开放工作票：A平台/商业/交付20、B行程/地图/原生体验31、C AI/知识/质量14；各队一个主要交付，Overall协调全局规划/handoff，共享Staging写窗口串行。分工不改变验收、依赖或既有权限。
 
 ## 未决与运行证据
 
@@ -171,10 +173,10 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 ## 下一动作与回滚
 
-Finish this PR's CI and evidence; do not merge and do not act on any issue's open/resolved state (user's own standing rule). On the next #360 round, the two other 2026-09-16 follow-ups remain open and un-started: (b) name a specific place in the place-fixture corpus text so the place-question retrieval_miss gap can be re-diagnosed (needs a real model re-run); (c) log raw model responses on MODEL_OUTPUT_INVALID for diagnosability (touches the shared provider-protocol.ts used by every model-gateway task, not just wiki_search_v1 -- scope it carefully, do not fold into an unrelated change). #359's remaining gaps (real model calls, multi-source synthesis, RMB reconciliation, Docling) still all need either real provider credentials this sandbox does not have or are out of scope -- re-check for a live credential before assuming that is still true.
+用户启动三个新团队后，A从#225开发权益规则开始，B从#363地点与地图同选中未验收切片开始，C从#204受保护Ops候选流程开始。各队按TEAM-PLAN-2026-09-17.md推进，不改派五张已分配票。Overall协调共享文件与Staging写窗口并汇总交接；各队在Issue/PR及既有artifacts报告结果和FAIL/UNRUN。
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
 Technical release acceptance in VPJ-45 and commercial lifecycle evidence in VPJ-47 are distinct terminal conditions.
 
-历史：[docs/archive/2026-09-10/handoff-before-astra-docs.json](docs/archive/2026-09-10/handoff-before-astra-docs.json), [docs/archive/2026-09-05/baseline/handoff.json](docs/archive/2026-09-05/baseline/handoff.json), [docs/archive/2026-09-05/baseline/CONTEXT.md](docs/archive/2026-09-05/baseline/CONTEXT.md), [docs/archive/2026-09-05/baseline/HANDOFF.md](docs/archive/2026-09-05/baseline/HANDOFF.md), [docs/archive/2026-09-05/baseline/issue-execution-contract.md](docs/archive/2026-09-05/baseline/issue-execution-contract.md)。
+历史：[docs/archive/2026-09-10/handoff-before-astra-docs.json](docs/archive/2026-09-10/handoff-before-astra-docs.json), [docs/archive/2026-09-05/baseline/handoff.json](docs/archive/2026-09-05/baseline/handoff.json), [docs/archive/2026-09-05/baseline/CONTEXT.md](docs/archive/2026-09-05/baseline/CONTEXT.md), [docs/archive/2026-09-05/baseline/HANDOFF.md](docs/archive/2026-09-05/baseline/HANDOFF.md), [docs/archive/2026-09-05/baseline/issue-execution-contract.md](docs/archive/2026-09-05/baseline/issue-execution-contract.md), [https://github.com/JTCAO515/VP-V4/blob/c5aaa4d/docs/handoff.json](https://github.com/JTCAO515/VP-V4/blob/c5aaa4d/docs/handoff.json)。
