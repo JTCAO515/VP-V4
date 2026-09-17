@@ -3,6 +3,7 @@ import SwiftUI
 struct TripView: View {
     @Environment(AppSettings.self) private var settings
     @ScaledMetric(relativeTo: .caption) private var workflowBadgeSize: CGFloat = 28
+    @State private var screenshotReviewSource: NativeScreenshotReviewSource?
 
     var body: some View {
         if settings.nativeSession.enabled { NativeTripView() }
@@ -26,6 +27,18 @@ struct TripView: View {
         .background(Color.vpBackground)
         .vpNavigationTitle("tab.trip")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(settings.selectedLocale == .zh ? "截图" : "Screenshot") {
+                    screenshotReviewSource = .init(tripID: "", tripVersion: 0, tripDates: [])
+                }
+                .accessibilityLabel(settings.selectedLocale == .zh ? "在本机检查一张截图" : "Review one screenshot on device")
+                .accessibilityIdentifier("trip.screenshot.localReview")
+            }
+        }
+        .sheet(item: $screenshotReviewSource) { source in
+            NativeScreenshotReviewView(source: source, chinese: settings.selectedLocale == .zh)
+        }
     }
 
     private var emptyTrip: some View {
