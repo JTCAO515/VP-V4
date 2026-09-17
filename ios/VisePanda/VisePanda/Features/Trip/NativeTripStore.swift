@@ -50,6 +50,14 @@ final class NativeTripStore {
         }
     }
 
+    /// Read the saved snapshot before handing local content to the system share UI.
+    /// A failed read must not authorize sharing a possibly stale cached snapshot.
+    func refreshForSharing(using session: NativeSession) async -> Bool {
+        guard !busy, let scope, session.dataScope == scope, selectedID != nil else { return false }
+        await perform(session) { scope in try await self.loadSelected(session, scope) }
+        return self.scope == scope && session.dataScope == scope && notice == nil
+    }
+
     func create(title: String, using session: NativeSession) async {
         guard draft == nil else { notice = "finishDraft"; return }
         let title = title.trimmingCharacters(in: .whitespacesAndNewlines)
