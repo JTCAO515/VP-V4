@@ -1,0 +1,21 @@
+✔ strict consent and bounded inputs (1.022417ms)
+✔ cross-origin and oversized bodies never invoke storage (19.981917ms)
+✔ database failure is unavailable without echoing input or exception secrets (1.58ms)
+✔ only successful persistence returns a receipt; rate-limit and conflict remain errors (1.366625ms)
+▶ research intake: real PostgreSQL/PostgREST lifecycle and adversarial cases
+  ✔ direct public RPC validates consent, schema, email, honeypot and locale (65.077375ms)
+  ✔ real HTTP handler → REST → PostgreSQL returns persisted receipt; retries are idempotent (199.925667ms)
+  ✔ direct table and staff RPC access denied for anon and signed-in users (169.257417ms)
+  ✔ independent consent and ordered, idempotent staff events; no invented first value (418.740542ms)
+  ✔ withdraw-before-submit fences a delayed submission and duplicate receipt cannot withdraw original (54.95225ms)
+  ✔ process restart retains records, receipts and revocations (2334.282292ms)
+  ✔ rate limit is durable, races cannot exceed capacity, withdrawal remains usable (279.189708ms)
+✔ research intake: real PostgreSQL/PostgREST lifecycle and adversarial cases (6352.414209ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6452.870791
