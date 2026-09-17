@@ -17,7 +17,7 @@ const strictRequest = (): ModelTaskRequest => ({
 });
 
 test("records DeepSeek candidate lifecycles and only submits the Flash API model id", () => {
-  assert.equal(MODEL_PROFILES.deepseek_flash.providerModelId, "deepseek-v4-flash");
+  assert.equal(MODEL_PROFILES.deepseek_flash.providerModelId, "deepseek-flash");
   assert.equal(MODEL_PROFILES.deepseek_flash.observedDeployment, "DeepSeek-V4-Flash-0731");
   assert.equal(MODEL_PROFILES.deepseek_flash.thinking, "disabled");
   assert.equal(MODEL_PROFILES.deepseek_pro.lifecycle, "ga");

@@ -14,7 +14,7 @@ Only complete `c0_synthetic` requests reach a fixture output. C1 through C4 valu
 
 | Profile | Provider API model ID | Observed deployment | Lifecycle | Supported fixture task | Thinking | Route |
 | --- | --- | --- | --- | --- | --- | --- |
-| DeepSeek Flash | `deepseek-v4-flash` | `DeepSeek-V4-Flash-0731` | beta | ordinary text | disabled | fixture only |
+| DeepSeek Flash | `deepseek-flash` | `DeepSeek-V4-Flash-0731` | beta | ordinary text | disabled | fixture only |
 | DeepSeek Pro | `deepseek-v4-pro` | `DeepSeek-V4-Pro-0813` | GA | ordinary text | not used | fixture only |
 | DeepSeek Vision | `deepseek-v4-flash-vision-exp` | `DeepSeek-V4-Flash-Vision-Exp` | experimental | none | not used | shadow only |
 | Qwen 3.7 strict | `qwen3.7-plus-2026-05-26` | `qwen3.7-plus-2026-05-26` | candidate | strict known/unknown | not used | fixture only |

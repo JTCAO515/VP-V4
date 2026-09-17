@@ -96,6 +96,98 @@ and `docs/contracts/wiki-generation-dispatch.md`.
   adversarial fixture — unchanged, not addressed this round.
 - **Actual per-call RMB cost reconciliation** against Qwen's billing
   console — token counts are real; price is not independently confirmed.
+- ~~Stale DeepSeek `providerModelId`~~ **DONE 2026-09-17 (round 23).**
+  `MODEL_PROFILES.deepseek_flash.providerModelId`
+  (`lib/server/model-gateway/index.ts`) changed from `"deepseek-v4-flash"`
+  to `"deepseek-flash"`. Re-probed the real DeepSeek API directly
+  (`api.deepseek.com/chat/completions`, sandbox disabled for the one
+  network call, same infra fact round 22 already recorded): unlike round
+  22's real `400`, this round's direct probe got a real `200` for all
+  three candidate ids (`deepseek-v4-flash`, `deepseek-flash`,
+  `deepseek-v4-pro`) — but requesting `deepseek-v4-flash` returns a
+  response body whose own `"model"` field is silently normalized to
+  `"deepseek-flash"`, not echoed back verbatim. That silent rename is
+  exactly what the ACTUAL production code was already failing on:
+  `provider-protocol.ts`'s `normalizeResponse` rejects any response whose
+  `value.model !== PROTOCOL_MODELS[request.provider]` as
+  `MODEL_OUTPUT_INVALID`, so the stale id was breaking the real call chain
+  even though the raw HTTP status was a `200`, not a `400` — a stricter,
+  more specific real-code-path reproduction than round 22's bare-probe
+  finding. Verified both ways through the actual production functions
+  (`invokeProviderProtocol` + `createProviderHttpTransport`, not a bespoke
+  script): with the old id the real call returns
+  `{kind:"unavailable", code:"MODEL_OUTPUT_INVALID"}`; with the fix
+  (`"deepseek-flash"`) the identical real call returns
+  `{kind:"protocol_validated", model:"deepseek-flash", output:"ok", ...}`
+  with real usage tokens. `deepseek_pro`'s existing `"deepseek-v4-pro"` and
+  `deepseek_vision`'s `"deepseek-v4-flash-vision-exp"` were left unchanged
+  (not re-probed for vision, since its `route` is `shadow_only`/`tasks:[]`
+  and it is never dispatched by any job; `deepseek_pro` was probed and
+  already round-trips correctly). Qwen's and GLM's profiles are untouched
+  (diff is a 2-line functional change: the profile id and its one
+  contract-test assertion, plus a doc-table cell and two test-fixture
+  literals switched to reference `PROTOCOL_MODELS.deepseek` instead of a
+  hardcoded stale string so they cannot silently drift again). See PR
+  for the exact diff.
+- **`scope.cities: []` vs. `isKnowledgeStatement`'s `length >= 1` check —
+  evaluated in round 23, NOT changed.** This round read the actual full
+  consumer graph (not just the two sites round 22's finding named) before
+  deciding, because the same `isKnowledgeStatement`
+  (`lib/server/knowledge/publication/statement.ts:47`) gates far more than
+  the one wiki-statement-proposal job:
+  - It is reused, unmodified, by `isProposalOutput`,
+    `resolveProposalOutput` and `isStructuredWikiDraft`
+    (`lib/server/knowledge/wiki/proposals.ts`) — the entire wiki-draft
+    pipeline round 22's finding was about.
+  - It is *also* the schema for `submit_statement` inside
+    `isKnowledgeOperation` — i.e. the same invariant gates the live,
+    published knowledge-base write path, not only a draft a human still
+    reviews. Loosening it is a change to what can ever be published, not
+    just to what a job accepts from a model.
+  - `lib/server/knowledge/claim/reviewed-selection.ts:40` matches a
+    published statement to a read request with
+    `entry.statement.scope.cities.includes(plan.scope.city)`. On an empty
+    array this is unconditionally `false`, so an empty-cities statement
+    would never match *any* city-scoped read — i.e. allowing it through
+    publish does not make it "apply to all cities"; it silently makes the
+    statement permanently unretrievable dead weight. The opposite of what
+    an empty array might be assumed to mean.
+  - `lib/server/knowledge/wiki/proposals.ts:71`'s `detectProposalConflicts`
+    skips a pair as a "legitimate cross-city difference" whenever
+    `!scopeA.cities.some(c=>scopeB.cities.includes(c))`. `[].some(...)` is
+    always `false`, so `!false` is always `true` — an empty-cities proposal
+    would be treated as non-overlapping with *every* other proposal in the
+    same draft and would never be checked against any of them, including a
+    real same-city duplicate. This is a real false-negative regression the
+    conflict detector would introduce silently if the schema were loosened
+    without also rewriting this overlap check's empty-array case (e.g.
+    treating `[]` as "unscoped, always overlaps" rather than "never
+    overlaps" — itself a real design decision, not a one-line fix).
+  - `lib/grounded/read-model.ts:106` enforces a third, independent,
+    *stricter* invariant on a `place`-scoped fact's `cities`
+    (`length === 1` exactly, not `>= 1`) for the place-question read path
+    — a second call site that would need its own review, separate from the
+    two above.
+  - **Conclusion:** a one-line schema loosening (`s.cities.length<1` →
+    allow `0`) is not safe on its own; it requires coordinated changes to
+    at least `detectProposalConflicts`'s overlap semantics and a decision
+    about whether an empty-`cities` statement may ever reach
+    `submit_statement`/publish at all (today's read-matching logic argues
+    it should not, since it would be unreachable dead data if it did) —
+    each of those needs its own tests and its own reasoning about blast
+    radius, which does not fit safely in the same round as the unrelated,
+    independent Bug 1 fix above. **Recommended direction for whoever picks
+    this up:** handle it at the wiki-statement-proposal *job* layer instead
+    of the shared schema — e.g. have the job (or the system prompt) require
+    the model to emit an explicit "scope unresolved" signal distinct from a
+    bare `[]`, and have the job treat that signal as "drop this one
+    proposal, keep the rest of the response" rather than the current
+    all-or-nothing `isProposalOutput` validation, which invalidates
+    `summary`/`gaps` and every other proposal in the same response over one
+    proposal's honest missing city. That keeps the publish-time and
+    read-time invariants (`cities.length >= 1`, `.includes()` matching,
+    `detectProposalConflicts`'s overlap check) exactly as they are today
+    and confines the fix to where the ambiguity actually originates.
 - ~~Withdrawn-source dispatch barrier~~ **DONE 2026-09-16**, see
   `wiki-source-withdrawal-20260916/verification.md` and
   `docs/contracts/wiki-source-withdrawal.md`. `source_revisions` gained an
@@ -191,3 +283,17 @@ The automated scan (round 20) is pull-based (an RPC the UI polls) — a
 periodic/scheduled server-side trigger or an outbound notification
 (email/webhook) for it remains not started and would need real delivery
 infrastructure this sandbox does not have.
+
+**Round 23 (2026-09-17):** the stale `MODEL_PROFILES.deepseek_flash`
+`providerModelId` round 22 flagged and deferred is now fixed and
+re-verified against the real DeepSeek API through the actual production
+call path (see the dedicated bullet above). The `scope.cities: []` schema
+question round 22 also flagged was evaluated in depth (full consumer graph
+read: the wiki-draft pipeline, the live `submit_statement` publish path,
+`reviewed-selection.ts`'s read-time city matching, and
+`detectProposalConflicts`'s cross-city-skip logic) and deliberately left
+unchanged this round — loosening it safely needs coordinated changes to at
+least the conflict-detector's overlap semantics, not a one-line schema
+edit, and is recorded above as a separate, still-open item with a
+recommended direction (handle it at the job/prompt layer, not the shared
+schema).
