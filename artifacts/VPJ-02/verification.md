@@ -1,5 +1,17 @@
 # VPJ-02 Staging核查与验收记录
 
+## Final acceptance — 2026-09-17
+
+The three unchanged VPJ-02 criteria are satisfied; see [criterion-by-criterion acceptance](staging-verification-20260917/acceptance.md). Earlier OPEN decisions incorrectly treated full worker/provider processing as this ticket's requirement. That remains under VPJ-07#195; no requirement or historical failure was removed. User authorized merge after checks, then closure. GitHub owns actual lifecycle state.
+
+## Prior progress (historical)
+
+## Current update — 2026-09-17
+
+See [current real verification](staging-verification-20260917/verification.md):50 matching migrations,11 pending,29/29 real target checks PASS; exact fixture cleanup and original7 Auth/3 Trip digest preservation PASS. Current-device Session/Transaction pooler SQL now PASS; direct-via-existing-proxy TLS and authenticated SQL PASS; original hostname-route failure remains recorded. Actual HTTP worker idle poll PASS; full worker task execution and legacy SQL adapter remain unrun. Parent#189 remains OPEN. The dated26/33 prerequisite descriptions below are historical and must not drive reapplication.
+
+## Historical record
+
 最新2026-09-10：原13+获额外授权RPC迁移已完成11→25，备份恢复和普通JWT矩阵16/16通过，精确清理后原数据摘要一致。见[本次实际结果](staging-apply-20260910.md)。下文为此前只读阶段历史记录，不代表当前待执行清单。
 
 ## 已确认

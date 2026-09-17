@@ -1,0 +1,55 @@
+{
+  "observedAt": "2026-09-17T05:04:55.101Z",
+  "project": "dzqdzetcctkhbrhlxxgn",
+  "scope": "actual scoped HTTP worker; one empty poll only",
+  "checks": [
+    {
+      "name": "dedicated-process",
+      "status": "PASS"
+    },
+    {
+      "name": "correct-staging-project",
+      "status": "PASS"
+    },
+    {
+      "name": "nonexistent-owner-policy-budget-scope",
+      "status": "PASS"
+    },
+    {
+      "name": "service-only-claim-grants",
+      "status": "PASS"
+    },
+    {
+      "name": "live-claim-source-matches-reviewed-filter",
+      "status": "PASS"
+    },
+    {
+      "name": "existing-server-credentials",
+      "status": "PASS"
+    },
+    {
+      "name": "anon-worker-rpc-denied",
+      "status": "PASS"
+    },
+    {
+      "name": "actual-worker-returned-empty",
+      "status": "PASS"
+    },
+    {
+      "name": "one-real-worker-http-request",
+      "status": "PASS"
+    },
+    {
+      "name": "no-provider-call",
+      "status": "PASS"
+    },
+    {
+      "name": "original-auth-trip-queue-policy-budget-unchanged",
+      "status": "PASS"
+    }
+  ],
+  "workerResult": "empty",
+  "status": "PASS_EMPTY_POLL_ONLY",
+  "fullTaskExecution": "UNRUN in this probe; no job, provider, policy or budget activated",
+  "completedAt": "2026-09-17T05:05:17.903Z"
+}

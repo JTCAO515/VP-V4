@@ -1,0 +1,29 @@
+{
+  "project": "dzqdzetcctkhbrhlxxgn",
+  "startedAt": "2026-09-17T05:08:01.449018+00:00",
+  "workerRuntime": "UNRUN: transaction connection profile is not a running SystemDataAdapter",
+  "paths": {
+    "directViaExistingProxy": {
+      "host": "db.dzqdzetcctkhbrhlxxgn.supabase.co",
+      "port": 5432,
+      "tls": "PASS",
+      "sql": "PASS",
+      "ipv6Available": false,
+      "proxyBenchmarkAddress": true,
+      "tlsVersion": "TLSv1.2",
+      "route": "existing-loopback-HTTP-proxy-to-public-IPv6; original TLS hostname",
+      "result": {
+        "expectedIdentity": true,
+        "expectedDatabase": true,
+        "readOnly": true,
+        "directTripUpdateRevoked": true,
+        "authCount": 7,
+        "tripCount": 3,
+        "migrationCount": 50
+      }
+    }
+  },
+  "caSha256": "700723581420dd1ac98fd7e9ac529f0ef210eadcaf87fc868a3ad7d114c2f3b7",
+  "status": "SQL_CONNECTIONS_PASS_WORKER_UNRUN",
+  "completedAt": "2026-09-17T05:08:11.542651+00:00"
+}
