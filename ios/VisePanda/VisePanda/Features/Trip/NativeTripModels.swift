@@ -23,12 +23,14 @@ struct NativeTripDay: Codable, Identifiable, Equatable {
 }
 
 struct NativeTripContent: Codable, Equatable { var days: [NativeTripDay] }
+enum NativeTripHardLockState: String, Decodable { case notEnabled = "not_enabled" }
+enum NativeTripExternalOrderState: String, Decodable { case notConnected = "not_connected" }
 struct NativeTripDetail: Decodable {
     let version: Int
     let trip: NativeTripSummary
     let content: NativeTripContent
-    let hardLocks: String
-    let externalOrderStatus: String
+    let hardLocks: NativeTripHardLockState
+    let externalOrderStatus: NativeTripExternalOrderState
     var confirmationState: String?
 }
 struct NativeTripList: Decodable {

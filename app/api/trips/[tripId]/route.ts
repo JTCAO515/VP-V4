@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { createUserDataAdapter } from "@/lib/server/identity/user-data-adapter";
 import { failureResponse } from "@/lib/server/identity/failure-response";
 import { isUuid } from "@/lib/server/identity/request-guards";
+import { withTripCapabilityState } from "@/lib/server/trip/capability-state";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ tripId: string }> }) {
   const { tripId } = await params;
@@ -14,5 +15,5 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const failure = failureResponse(result.error);
     return adapter.applyCookies(NextResponse.json(failure, { status: failure.status }));
   }
-  return adapter.applyCookies(NextResponse.json(result.data, { headers: { "Cache-Control": "private, no-store" } }));
+  return adapter.applyCookies(NextResponse.json(withTripCapabilityState(result.data), { headers: { "Cache-Control": "private, no-store" } }));
 }

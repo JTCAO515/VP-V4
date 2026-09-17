@@ -4,6 +4,7 @@ import type { NextRequest } from "next/server";
 import { createNativeTripDataAdapter } from "../identity/user-data-adapter.ts";
 import { isUuid, isTripCreateInput, parseTripListInput, isTripProposalInput, isTripProposalRevisionInput, isProposalRejectInput, isConfirmInput } from "../identity/request-guards.ts";
 import { FAILURE_TAXONOMY, type FailureCode } from "../contracts/errors/index.ts";
+import { withTripCapabilityState } from "./capability-state.ts";
 
 type Action = "list" | "create" | "read" | "proposal_read" | "proposal_create" | "revise" | "reject" | "confirm";
 const response = (value: unknown, status = 200) => Response.json(value, { status, headers: { "Cache-Control": "private, no-store" } });
@@ -32,7 +33,7 @@ export async function nativeTripHTTP(request: NextRequest, action: Action, tripI
     } else if (action === "read" && tripId) {
       if ([...params].length) return failure("INVALID_INPUT");
       result = await adapter.getTrip(tripId);
-      if (!("error" in result)) return response({ version: 2, trip: result.data.trip, content: result.data.content, confirmationState: result.data.confirmationState, hardLocks: "unknown", externalOrderStatus: "unknown" });
+      if (!("error" in result)) return response(withTripCapabilityState({ version: 2, trip: result.data.trip, content: result.data.content, confirmationState: result.data.confirmationState }));
     } else if (action === "proposal_read" && tripId) {
       const id = params.get("proposalId");
       if ([...params].some(([key]) => key !== "proposalId") || params.getAll("proposalId").length > 1 || (id !== null && !isUuid(id))) return failure("INVALID_INPUT");

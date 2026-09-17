@@ -91,7 +91,7 @@ struct NativeTripView: View {
             }
             Button(text("Keep reviewing", "继续审阅"), role: .cancel) {}
         } message: {
-            Text(text("Only this proposal will be applied. External orders remain unknown.", "只应用这一提议。外部订单状态仍为未知。"))
+            Text(text("Only this proposal will be applied. External orders are not connected.", "只应用这一提议。外部订单尚未接入。"))
         }
         .confirmationDialog(text("Discard this local draft?", "放弃这份本机草稿？"), isPresented: $discardVisible, titleVisibility: .visible) {
             Button(text("Discard draft", "放弃草稿"), role: .destructive) { store.discardDraft() }
@@ -185,7 +185,7 @@ struct NativeTripView: View {
                     .disabled(store.busy)
                 }
                 Divider()
-                Text(text("User locks are not available in this version. External order status is unknown.", "此版本尚不支持用户硬锁。外部订单状态未知。"))
+                Text(text("User locks are not enabled in this version. External orders are not connected, so this cannot tell you whether an order exists.", "此版本未启用用户硬锁。外部订单尚未接入，不能据此判断是否存在订单。"))
                     .font(.footnote).foregroundStyle(Color.vpSecondaryText)
             }
         }

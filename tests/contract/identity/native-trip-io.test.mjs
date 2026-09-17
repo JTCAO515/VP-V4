@@ -37,6 +37,23 @@ test('Preview Trip uses ordinary JWT with epoch authority and redirect denial',a
     if(call.path.startsWith('/rest/v1/'))assert.equal(call.authorization,'Bearer '+f.token);
   }
 });
+test('native Trip read distinguishes disabled locks from an unconnected external-order capability',async t=>{
+  const f=await setup(t),next=globalThis.fetch;
+  const trip={id:'314b8576-e9e7-49aa-aa66-94eac6ba6544',title:'Saved',head_version:0,updated_at:'2026-09-17T00:00:00Z'};
+  t.mock.method(globalThis,'fetch',async(input,init)=>{
+    const request=new Request(input,init),path=new URL(request.url).pathname;
+    if(path==='/rest/v1/rpc/native_session_v2') return Response.json({subject,sessionId,mobileEpoch:1});
+    if(path==='/rest/v1/trips') return Response.json([trip]);
+    if(path==='/rest/v1/trip_audit_events'||path==='/rest/v1/trip_events'||path==='/rest/v1/memory_consumer_receipts'||path==='/rest/v1/trip_idempotency'||path==='/rest/v1/trip_proposals') return Response.json([]);
+    if(path==='/rest/v1/trip_version_snapshots') return Response.json([{version:0,title:'Saved',content:{title:'Saved',days:[]},created_at:trip.updated_at}]);
+    return next(input,init);
+  });
+  const response=await nativeTripHTTP(f.request(),'read',trip.id);
+  assert.equal(response.status,200);
+  const data=await response.json();
+  assert.deepEqual({hardLocks:data.hardLocks,externalOrderStatus:data.externalOrderStatus},{hardLocks:'not_enabled',externalOrderStatus:'not_connected'});
+  assert.notEqual(data.externalOrderStatus,'no_order');
+});
 for(const stage of ['claims','epoch','read'])test(`Trip ${stage} outage is503, not a credential-clearing401`,async t=>{
   const f=await setup(t),next=globalThis.fetch;
   t.mock.method(globalThis,'fetch',async(input,init)=>{
