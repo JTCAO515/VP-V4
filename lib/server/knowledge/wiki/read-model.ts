@@ -16,6 +16,21 @@ export type WikiRead = {
   jobs: { id: string; status: JobStatus; startedAt: string | null; finishedAt: string | null; errorCode: string | null; costTokens: number | null; costUnknown: boolean }[];
 };
 export type WithdrawnCitedSource = Readonly<{ id: string; withdrawnAt: string; withdrawnBy: string | null; withdrawalReason: string | null }>;
+/** Response shape of `ops_wiki_withdrawal_scan_v1` (migration
+ * 20260917110000): the automated, all-pages/all-in-flight-jobs counterpart
+ * to `citedWithdrawnSources`, which only covers one already-fetched
+ * revision's sources. `affectedRevisions` covers every page's current and
+ * previous revision (the same two-revision scope `ops_wiki_read_v1` already
+ * exposes per page); `affectedJobs` covers every `queued`/`running` job
+ * whose recorded `sourceRevisionIds` (recorded at claim time only --
+ * historical jobs claimed before this migration are simply absent from this
+ * list, never guessed at) intersects a withdrawn source. Read-only: this
+ * never hides, cancels, merges or retroactively invalidates anything it
+ * reports. */
+export type WikiWithdrawalScan = Readonly<{
+  affectedRevisions: readonly Readonly<{ pageKey: string; pageType: PageType; version: number; revisionId: string; withdrawnSourceIds: readonly string[] }>[];
+  affectedJobs: readonly Readonly<{ jobId: string; pageKey: string; status: JobStatus; startedAt: string | null; withdrawnSourceIds: readonly string[] }>[];
+}>;
 /** Pure, derived entirely from fields `ops_wiki_read_v1` already returns on every
  * revision's `sources[]` since migration 20260917100000 -- no new migration, RPC
  * or fetch. Surfaces, for one already-generated revision, which of ITS cited
