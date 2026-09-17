@@ -596,6 +596,10 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/vpj-49.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/vpj-56.md",
       "status": "document"
     },
@@ -657,6 +661,10 @@
     },
     {
       "path": "docs/contracts/wiki-statement-review.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/wiki-withdrawal-scan.md",
       "status": "document"
     },
     {
@@ -837,6 +845,10 @@
     },
     {
       "path": "docs/program/2026-09-05/ISSUES.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/NATIVE-DEPENDENCY-AUDIT-2026-09-17.md",
       "status": "document"
     },
     {
@@ -1305,6 +1317,10 @@
     },
     {
       "path": "docs/runbooks/v4-31-release-blocked.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/vpj-02-current-staging-verification.md",
       "status": "document"
     },
     {

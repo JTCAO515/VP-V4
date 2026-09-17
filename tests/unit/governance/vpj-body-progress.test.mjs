@@ -236,10 +236,11 @@ test('batch preparation is pure and refuses unknown drift anywhere in the select
   assert.throws(() => prepareBodyUpdates([task], [], new Map(), { allowMissing: true }), /do not recreate an assigned identity/);
 });
 
-function commandFixture(t, command, { parentDrift = false, successfulPublish = false } = {}) {
+function commandFixture(t, command, { parentDrift = false, successfulPublish = false, acceptanceOnly = false } = {}) {
   const fixtureRoot = mkdtempSync(path.join(tmpdir(), 'vpj-body-preflight-'));
   t.after(() => rmSync(fixtureRoot, { recursive: true, force: true }));
   const tasks = plan.tasks.slice(0, 2).map(entry => ({ ...entry, blockedBy: [] }));
+  if (acceptanceOnly) tasks[1].acceptanceDependencies = [tasks[0].id];
   if (successfulPublish) {
     delete tasks[1].number;
     delete tasks[1].databaseId;
@@ -332,3 +333,6 @@ for (const command of ['sync-bodies', 'sync-selected', 'publish']) {
 test('publish also preflights the existing Program body before any remote mutation', t => commandFixture(t, 'publish', { parentDrift: true }));
 
 test('publish can add an unassigned task while preserving a completed Issue and its appended progress', t => commandFixture(t, 'publish', { successfulPublish: true }));
+
+test('publish keeps acceptance links without recreating native blocking relationships', t =>
+  commandFixture(t, 'publish', { successfulPublish: true, acceptanceOnly: true }));
