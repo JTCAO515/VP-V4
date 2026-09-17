@@ -1,0 +1,4 @@
+{"command":"node --test tests/contract/diagnostics/vpj-63-network-probe.test.mjs","result":"PASS","summary":"4 contract tests passed"}
+{"command":"node scripts/diagnostics/vpj-63-network-probe.mjs --target https://staging.go2china.space --region local-network-unclassified","result":"OBSERVED","summary":"Unauthenticated local preflight: DNS reachable; identity/trip 401; Ask policy 404"}
+{"command":"pnpm docs:check","result":"PASS","summary":"VPJ plan and documentation baseline passed"}
+{"command":"git diff --check","result":"PASS","summary":"no whitespace errors"}
