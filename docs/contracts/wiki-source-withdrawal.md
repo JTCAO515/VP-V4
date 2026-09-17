@@ -72,7 +72,10 @@ uses for a stale-`expectedVersion` `OPS_CONFLICT`.
 - **No `/ops/wiki` UI** for withdrawing a source or seeing withdrawal
   status — this is a database/RPC-level capability only, exercised in this
   slice's tests by calling the RPC directly, exactly like every prior
-  VPJ-75 slice before its own UI landed.
+  VPJ-75 slice before its own UI landed. **Update, 2026-09-17: the "seeing
+  withdrawal status" half is now done** — see
+  `docs/contracts/wiki-source-withdrawal-status-ui.md`. Withdrawing a
+  source from `/ops/wiki` (a write action) is still not built.
 - **No automated scan.** Nothing periodically checks in-flight `running`
   jobs against newly-withdrawn sources; the barrier only fires when a
   `claim` or `complete` call actually happens for that job.

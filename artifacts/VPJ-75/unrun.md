@@ -92,17 +92,27 @@ and `docs/contracts/wiki-generation-dispatch.md`.
   the plain generation job and the structured statement-proposal payload,
   which share this one dispatcher. Not done: no cascading revocation of a
   `wiki_page_revisions` row that already cites a source withdrawn *after*
-  that revision was created, no `/ops/wiki` UI for withdrawal, no automated
-  scan of in-flight jobs against newly-withdrawn sources.
+  that revision was created, no automated scan of in-flight jobs against
+  newly-withdrawn sources. ~~No `/ops/wiki` UI for seeing withdrawal
+  status~~ **DONE 2026-09-17** for the "seeing" half only, see
+  `wiki-read-withdrawal-status-20260917/verification.md` and
+  `docs/contracts/wiki-source-withdrawal-status-ui.md` — a new migration
+  adds `withdrawnAt`/`withdrawnBy`/`withdrawalReason` to each source object
+  `ops_wiki_read_v1` already returns, and `/ops/wiki` renders a bilingual
+  advisory warning next to any withdrawn source, without hiding the source,
+  revision, or any existing action. An Ops UI *action* to actually withdraw
+  a source (as opposed to seeing that one already was) remains not built.
 
 #359 remains OPEN. Schema, dispatcher+real-LLM-probe, durable draft
 storage, the `/ops/wiki` review UI, statement-candidate linking, structured
 statement proposals, stale-job reclaim, the withdrawn-source dispatch
-barrier, and (as of 2026-09-17) UI wiring for the structural conflict flag
+barrier, UI wiring for the structural conflict flag (2026-09-17), and (also
+2026-09-17) surfacing a withdrawn source's status in `/ops/wiki` (read-only)
 are done (see each item above and `docs/knowledge-upgrade/README.md`'s
 dated log for what each one actually covers and what it does not).
 Structural conflict detection and fixture-only injection/multi-source-binding
 coverage are partially done (2026-09-16, statement-proposal job only);
-real-model injection resistance, true multi-source page synthesis, cascading
-source-withdrawal revocation, real per-call RMB reconciliation, and Docling
-integration remain not started.
+real-model injection resistance, true multi-source page synthesis, an
+`/ops/wiki` *action* to withdraw a source, cascading source-withdrawal
+revocation, automated newly-withdrawn-source scanning, real per-call RMB
+reconciliation, and Docling integration remain not started.
