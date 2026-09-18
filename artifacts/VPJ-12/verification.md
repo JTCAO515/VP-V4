@@ -96,3 +96,11 @@ an earlier POST's outcome was unknown, defeating exact-patch reconciliation.
 The native editor/discard paths are now locked during that state, and the
 store retains the submitted patch for recovery. The lost-read/no-second-POST
 test checks the lock and passed with the affected draft tests (4/4).
+
+The submitted PR's exact-head review found one more P2 TTL gap: an already
+open review could submit a cached digest after the image receipt expired.
+The UI now invalidates an open review at expiry and re-reads the owner-scoped
+receipt before any Proposal request; a missing/expired/corrupt file fails
+closed. Focused inbox/recovery/UI tests passed 6 active, with the expected
+unseeded-picker and physical-protection skips. The earlier PR head's CI was
+green; this correction requires a new exact-head CI run.

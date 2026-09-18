@@ -96,7 +96,11 @@ struct NativeScreenshotReviewView: View {
     @State private var submitting = false
     @State private var submitError = false
     @State private var deletionFailed = false
+    @State private var expiredReceipt = false
     private let inbox = NativeScreenshotInbox()
+    private var expiryTaskID: String? {
+        inboxReceipt.map { "\($0.digest):\($0.expiresAt.timeIntervalSince1970)" }
+    }
 
     init(source: NativeScreenshotReviewSource, chinese: Bool,
          store: NativeTripStore? = nil, session: NativeSession? = nil) {
@@ -141,6 +145,10 @@ struct NativeScreenshotReviewView: View {
                     if deletionFailed {
                         Text(text("Could not remove the protected local copy yet. Unlock the device and retry Close.", "暂时无法删除受保护的本机副本。请解锁设备后重试关闭。"))
                             .accessibilityIdentifier("screenshot.deleteError")
+                    }
+                    if expiredReceipt {
+                        Text(text("This screenshot review expired. Choose it again to start a new review; the saved Trip is unchanged.", "这次截图审阅已过期。请重新选择截图开始审阅；已保存行程未改变。"))
+                            .accessibilityIdentifier("screenshot.expired")
                     }
                 } header: {
                     Text(text("Source", "来源"))
@@ -216,7 +224,7 @@ struct NativeScreenshotReviewView: View {
                                 Button(text("Create Trip proposal", "生成行程提议")) {
                                     Task { await submitProposal() }
                                 }
-                                .disabled(submitting || inboxReceipt == nil || !corrections.contains(where: { $0.kind == .date }))
+                                .disabled(submitting || inboxReceipt == nil || expiredReceipt || !corrections.contains(where: { $0.kind == .date }))
                                 .accessibilityIdentifier("screenshot.propose")
                             }
                             if submitError {
@@ -235,15 +243,24 @@ struct NativeScreenshotReviewView: View {
             .onChange(of: selectedItem) { _, item in
                 loadTask?.cancel(); recognitionTask?.cancel()
                 guard discardInbox() else { status = .unavailable; return }
+                if item != nil { expiredReceipt = false }
                 let currentID = UUID()
                 loadID = currentID
                 lines.removeAll(); corrections.removeAll(); selectedLine = nil; correctedValue = ""; reviewed = false
-                guard let item else { status = .idle; return }
+                guard let item else { status = expiredReceipt ? .unavailable : .idle; return }
                 status = .loading
                 loadTask = Task { await load(item, id: currentID) }
             }
             .onDisappear { _ = clear() }
             .interactiveDismissDisabled(inboxReceipt != nil)
+            .task(id: expiryTaskID) {
+                guard let receipt = inboxReceipt else { return }
+                let remaining = receipt.expiresAt.timeIntervalSinceNow
+                if remaining > 0 { try? await Task.sleep(for: .seconds(remaining)) }
+                guard !Task.isCancelled, inboxReceipt?.digest == receipt.digest else { return }
+                expiredReceipt = true
+                if clear() { status = .unavailable }
+            }
         }
     }
 
@@ -344,6 +361,16 @@ struct NativeScreenshotReviewView: View {
 
     private func submitProposal() async {
         guard !submitting, let store, let session, let receipt = inboxReceipt else { return }
+        guard let owner = source.ownerID else { return }
+        do {
+            // The receipt may have expired or been removed while this sheet
+            // stayed open. Recheck owner, TTL and content before any POST.
+            _ = try inbox.read(receipt.digest, owner: owner)
+        } catch {
+            expiredReceipt = true
+            if clear() { status = .unavailable }
+            return
+        }
         submitting = true
         defer { submitting = false }
         let accepted = await store.proposeScreenshot(source: source, digest: receipt.digest,

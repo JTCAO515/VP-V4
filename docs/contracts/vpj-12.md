@@ -17,6 +17,10 @@ retries when protected data becomes available or Trip reopens. Logical access
 expires after 24 hours and the next Trip access/import purges expired files.
 A failed delete is surfaced instead of being silently reported as successful. The preview-only
 screen keeps the image in memory and cannot propose a Trip change.
+An open review invalidates its receipt at expiry; immediately before a
+Proposal request, the UI re-reads the owner-scoped receipt so a missing,
+expired or corrupted image cannot be turned into a Trip proposal from a
+cached digest.
 
 The correction UI shows recognized source lines and allows one user-selected
 date, amount, address and status value with its source line. A date must be a
