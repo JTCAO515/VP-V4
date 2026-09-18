@@ -1,0 +1,201 @@
+{
+  "observedAt": "2026-09-18T04:45:43.099853+00:00",
+  "issues": [
+    {
+      "body": "## Program\n\n[VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187) · 首发交付任务\n\n## 用户结果\n\n选中一天或项目后与 VP 局部改稿。\n\n## 执行边界与首个切片\n\n- 首个可交付结果：在真实Trip选中一天或项目，提出局部改动并显示增删/移日、代价和保留项；确认后回到原位置且重载一致。\n- 本票责任/非目标：负责局部提案/确认消费者；65提供测量依据，68验证少走路案例，29负责在途变化触发，均复用同一writer。\n- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)\n- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。\n\n## 实施与验收入口\n\n[执行行：范围、检查、证据与回退](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-10) · [接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) · [阶段 S3](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s3)。\n\n## 开工依赖（GitHub 原生关系）\n\n无已登记的整票开工硬依赖；开工前仍核实际接口、环境与权限。\n\n涉及本轮保护任务的原生关系暂按原样保留；有无 Blocked 图标都不证明已就绪或已验收。\n\n## 集成与最终验收依赖（普通关联）\n\n- [VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197)\n\n可按首个切片独立推进；这些输入的实际能力与适用证据仍须在集成/整票验收时核对，不能用 fixture 或移除图标替代。\n\n## Acceptance criteria\n\n- [ ] 选中范围→Ask→局部候选→影响/diff→确认→回到原位置；未选对象保持不动。\n- [ ] 用户可直接移日/排序/改时，手动编辑与硬锁区别明确。\n- [ ] 并发更新旧proposal不能提交；撤销Trip修改不能伪装取消外部订单。\n- [ ] 负责已登录真实Trip的选区→Ask sheet→局部Proposal/diff→确认→回到原对象与位置→重载闭环；复用#188基础导航/样式/可访问性，拒绝或关闭sheet不得误确认，真实凭据/数据条件缺失保留未验收。\n- [ ] 体验增量2026-09-17：局部改稿展示新增/移日/替换/移除及受影响时间与接驳，说明保留的已确认事项和备选去向；不只回复“已加入”。步行改善仅在#219同口径证据具备时声明，否则保留待核候选；diff、确认目标、返回选区和重载均绑定同一Trip版本，拒绝或旧版本无误写。\n\n## 不得触碰\n\n- No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.\n- No secrets, original user worktree, old applied migrations, branch protection or production actions.\n- No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.\n- No archived research/test oracle deletion or invented runtime/provider/Store result.\n\n替代历史责任：见Program的旧新映射；不因新增任务删除有效旧测试。\n\n## 已有进展与原始记录\n\n[整理前正文与元数据快照](https://github.com/JTCAO515/VP-V4/blob/codex/issue-plan-audit-20260917/artifacts/VPJ-00/issue-audit-20260917/before.json.gz)；原评论与证据链接保留。已勾选项仅保持原完成范围，不等于整票通过。\n",
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2Rv_w",
+          "name": "priority:P1",
+          "description": "Growth and execution data after the core evidence",
+          "color": "D93F0B"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jsOw",
+          "name": "phase:R2",
+          "description": "R2 grounded text alpha",
+          "color": "7057FF"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAAC2RQagg",
+          "name": "status:planned",
+          "description": "Defined work awaiting scheduling; start a bounded slice when its actual inputs exist.",
+          "color": "c5def5"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAAC2SQX1g",
+          "name": "team:journey-experience",
+          "description": "Trip、地图、准备与在途功能、原生及轻量Web消费体验",
+          "color": "0E8A16"
+        }
+      ],
+      "number": 198,
+      "state": "OPEN",
+      "title": "[VPJ-10] 选中一天或项目后与 VP 局部改稿"
+    },
+    {
+      "body": "## Program\n\n[VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187) · 首发交付任务\n\n## 用户结果\n\n原生视觉动效、无障碍与性能整链复验。\n\n## 执行边界与首个切片\n\n- 首个可交付结果：在一个已运行的原生用户路径上验证选区/焦点/大字/VoiceOver与同Trip版本，随后覆盖全部原定模块。\n- 本票责任/非目标：负责整链体验验收和发现的缺陷；不重建01基础壳或10业务交互，不倒逼基础任务等待整链完成。\n- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)\n- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。\n\n## 实施与验收入口\n\n[执行行：范围、检查、证据与回退](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-40) · [接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) · [阶段 S5](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s5)。\n\n## 开工依赖（GitHub 原生关系）\n\n- [VPJ-49 #241](https://github.com/JTCAO515/VP-V4/issues/241)\n\n涉及本轮保护任务的原生关系暂按原样保留；有无 Blocked 图标都不证明已就绪或已验收。\n\n## 集成与最终验收依赖（普通关联）\n\n- [VPJ-13 #203](https://github.com/JTCAO515/VP-V4/issues/203)\n- [VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210)\n- [VPJ-21 #211](https://github.com/JTCAO515/VP-V4/issues/211)\n- [VPJ-23 #213](https://github.com/JTCAO515/VP-V4/issues/213)\n- [VPJ-25 #215](https://github.com/JTCAO515/VP-V4/issues/215)\n- [VPJ-27 #217](https://github.com/JTCAO515/VP-V4/issues/217)\n- [VPJ-28 #218](https://github.com/JTCAO515/VP-V4/issues/218)\n- [VPJ-29 #220](https://github.com/JTCAO515/VP-V4/issues/220)\n- [VPJ-30 #221](https://github.com/JTCAO515/VP-V4/issues/221)\n- [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226)\n- [VPJ-48 #235](https://github.com/JTCAO515/VP-V4/issues/235)\n- [VPJ-64 #238](https://github.com/JTCAO515/VP-V4/issues/238)\n- [VPJ-55 #236](https://github.com/JTCAO515/VP-V4/issues/236)\n- [VPJ-61 #240](https://github.com/JTCAO515/VP-V4/issues/240)\n- [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228)\n\n可按首个切片独立推进；这些输入的实际能力与适用证据仍须在集成/整票验收时核对，不能用 fixture 或移除图标替代。\n\n## Acceptance criteria\n\n- [ ] 统一Cream/Ink/Plum/Gold与原始VP资产；对话/计划/sheet/键盘/返回锚点同一状态语义。\n- [ ] 真机/Simulator完成小屏大屏、大字VoiceOver、Reduce Motion/Transparency、来电低电量弱网；录屏展示可中断动效。\n- [ ] 结构卡原子出现、滚动不抢位、已保存动画只在回执后；用profile定位性能不写未测FPS。\n- [ ] 在#198真实选区Ask消费者上复验sheet、焦点、返回锚点、大字与VoiceOver及拒绝/关闭状态；不能仅引用#188基础屏幕证据完成整链验收。\n- [ ] 体验增量2026-09-17：在相关上游实际可用后，整链复验同一Trip的概览/日程/地图及Today选区、版本、修改后重载一致；保留五Tab和Today在Trip内的导航，不为图文表现复制桌面多栏或另建Trip数据源。素材未就绪时可用文字成果仍可读，按真实小屏/大字/VoiceOver验证。\n\n## 不得触碰\n\n- No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.\n- No secrets, original user worktree, old applied migrations, branch protection or production actions.\n- No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.\n- No archived research/test oracle deletion or invented runtime/provider/Store result.\n\n替代历史责任：见Program的旧新映射；不因新增任务删除有效旧测试。\n\n## 已有进展与原始记录\n\n[整理前正文与元数据快照](https://github.com/JTCAO515/VP-V4/blob/codex/issue-plan-audit-20260917/artifacts/VPJ-00/issue-audit-20260917/before.json.gz)；原评论与证据链接保留。已勾选项仅保持原完成范围，不等于整票通过。\n",
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2Rv_w",
+          "name": "priority:P1",
+          "description": "Growth and execution data after the core evidence",
+          "color": "D93F0B"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jtdw",
+          "name": "phase:R4",
+          "description": "R4 multimodal beta",
+          "color": "A9BDD9"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAAC2RQagg",
+          "name": "status:planned",
+          "description": "Defined work awaiting scheduling; start a bounded slice when its actual inputs exist.",
+          "color": "c5def5"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAAC2SQX1g",
+          "name": "team:journey-experience",
+          "description": "Trip、地图、准备与在途功能、原生及轻量Web消费体验",
+          "color": "0E8A16"
+        }
+      ],
+      "number": 233,
+      "state": "OPEN",
+      "title": "[VPJ-40] 原生视觉动效、无障碍与性能整链复验"
+    },
+    {
+      "body": "## Program\n\n[VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187) · 首发交付任务\n\n## 用户结果\n\nTestFlight 实机贯通 Plan、Ready、Travel 三段。\n\n## 执行边界与首个切片\n\n- 首个可交付结果：选定同一可安装TestFlight版本，让受控用户完成一个Plan→Ready→Travel旅程并保留跨模块异常证据。\n- 本票责任/非目标：负责Beta联合验收；57/56等提供基础能力，40/41提供体验结果，71提供Harness；不把安装成功当产品完成。\n- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)\n- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。\n\n## 实施与验收入口\n\n[执行行：范围、检查、证据与回退](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-42) · [接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) · [阶段 S5](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s5)。\n\n## 开工依赖（GitHub 原生关系）\n\n- [VPJ-49 #241](https://github.com/JTCAO515/VP-V4/issues/241)\n\n涉及本轮保护任务的原生关系暂按原样保留；有无 Blocked 图标都不证明已就绪或已验收。\n\n## 集成与最终验收依赖（普通关联）\n\n- [VPJ-08 #196](https://github.com/JTCAO515/VP-V4/issues/196)\n- [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206)\n- [VPJ-21 #211](https://github.com/JTCAO515/VP-V4/issues/211)\n- [VPJ-24 #214](https://github.com/JTCAO515/VP-V4/issues/214)\n- [VPJ-28 #218](https://github.com/JTCAO515/VP-V4/issues/218)\n- [VPJ-29 #220](https://github.com/JTCAO515/VP-V4/issues/220)\n- [VPJ-32 #224](https://github.com/JTCAO515/VP-V4/issues/224)\n- [VPJ-35 #227](https://github.com/JTCAO515/VP-V4/issues/227)\n- [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228)\n- [VPJ-37 #229](https://github.com/JTCAO515/VP-V4/issues/229)\n- [VPJ-38 #230](https://github.com/JTCAO515/VP-V4/issues/230)\n- [VPJ-39 #232](https://github.com/JTCAO515/VP-V4/issues/232)\n- [VPJ-40 #233](https://github.com/JTCAO515/VP-V4/issues/233)\n- [VPJ-41 #234](https://github.com/JTCAO515/VP-V4/issues/234)\n- [VPJ-48 #235](https://github.com/JTCAO515/VP-V4/issues/235)\n- [VPJ-55 #236](https://github.com/JTCAO515/VP-V4/issues/236)\n- [VPJ-56 #237](https://github.com/JTCAO515/VP-V4/issues/237)\n- [VPJ-58 #239](https://github.com/JTCAO515/VP-V4/issues/239)\n- [VPJ-61 #240](https://github.com/JTCAO515/VP-V4/issues/240)\n- [VPJ-64 #238](https://github.com/JTCAO515/VP-V4/issues/238)\n- [VPJ-65 #219](https://github.com/JTCAO515/VP-V4/issues/219)\n\n可按首个切片独立推进；这些输入的实际能力与适用证据仍须在集成/整票验收时核对，不能用 fixture 或移除图标替代。\n\n## Acceptance criteria\n\n- [ ] 邀请受控用户在原生build完成一个真实Trip的Plan/Ready/Travel，含外跳、离线、恢复、拒绝/取消。\n- [ ] 真实owner/RLS/provider/数据/网络/权限证明与TestFlight build关联；sandbox购买不算收入。\n- [ ] 所有首发必需项有功能/异常/数据/UX/运行证据；只修验收缺陷，不靠fixture替代。\n- [ ] 非技术经营留存与真实付费效果由47观察，不因旅行节点未到而伪称成功/失败。\n- [ ] 真实设备与账号贯通#198选区Ask、明确确认、跨端/重载及拒绝路径；基础壳、模拟数据或仅#188完成不能替代本项联合验收。\n\n## 不得触碰\n\n- No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.\n- No secrets, original user worktree, old applied migrations, branch protection or production actions.\n- No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.\n- No archived research/test oracle deletion or invented runtime/provider/Store result.\n\n替代历史责任：#162\n\n## 已有进展与原始记录\n\n[整理前正文与元数据快照](https://github.com/JTCAO515/VP-V4/blob/codex/issue-plan-audit-20260917/artifacts/VPJ-00/issue-audit-20260917/before.json.gz)；原评论与证据链接保留。已勾选项仅保持原完成范围，不等于整票通过。\n",
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2Rv_w",
+          "name": "priority:P1",
+          "description": "Growth and execution data after the core evidence",
+          "color": "D93F0B"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R6Ng",
+          "name": "ready-for-human",
+          "description": "Requires operator or human implementation",
+          "color": "FBCA04"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jt5Q",
+          "name": "phase:R5",
+          "description": "R5 controlled production",
+          "color": "BFDADC"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAAC2RQagg",
+          "name": "status:planned",
+          "description": "Defined work awaiting scheduling; start a bounded slice when its actual inputs exist.",
+          "color": "c5def5"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAAC2SPtAw",
+          "name": "team:platform-delivery",
+          "description": "账户外的共享平台、权益、服务、数据生命周期与最终交付",
+          "color": "1D76DB"
+        }
+      ],
+      "number": 242,
+      "state": "OPEN",
+      "title": "[VPJ-42] TestFlight 实机贯通 Plan、Ready、Travel 三段"
+    },
+    {
+      "body": "<!-- vp-development-integration:2026-09-12 -->\n> **当前开发规则（JT，2026-09-12）：** 现有账号/API可用即可接入、开发和验证；无需供应商工单/书面答复、合同回执、法务或产品许可，也不等待供应商精确TTL。agent自行确定可逆开发参数，未知项如实记录。本文及历史评论中的冲突审批要求已取消；保留用户同意、RLS、Trip确认、秘密保护和真实技术验收。详见[开发接入规则](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-integration-policy.md)。\n<!-- /vp-development-integration -->\n\n## Program\n\n[VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187) · 首发交付任务\n\n## 用户结果\n\n最简本地旅行分享卡与隐私预览。\n\n## 当前基线与开发入口\n\n历史规划基线：#253。当前执行读取 main 的合同，并核对实时依赖、可用接口和获准环境；本计划定义不代表任务已就绪或已验收。\n任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-49)；按 [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)。\n验收阶段：[S4](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s4)；阶段演示不代替本票完整验收。\n首次进入或范围变化时读 [主报告](https://github.com/JTCAO515/VP-V4/blob/main/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。\n\n## Blocked by\n\n- [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192)\n- [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199)\n\n## Acceptance criteria\n\n- [ ] 一款中英本地分享模板，用户选择字段→隐私预览→系统Share Sheet，基础分享无需公共托管。\n- [ ] 模板只使用获权资产，标明AI生成或用户体验；不能伪造订单/见证。\n- [ ] 分享前可隐藏酒店/订单/同行/日期等私密字段；已导出图片不能远端撤回；复杂模板/视频/托管分享另期开启。\n\n## 不得触碰\n\n- No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.\n- No secrets, original user worktree, old applied migrations, branch protection or production actions.\n- No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.\n- No archived research/test oracle deletion or invented runtime/provider/Store result.\n\n替代历史责任：见Program的旧新映射；不因新增任务删除有效旧测试。\n\n\n## 产品体验验收增量（2026-09-17）\n\nJT已授权将研究建议纳入本任务；规划PR [#433](https://github.com/JTCAO515/VP-V4/pull/433)，[执行说明](https://github.com/JTCAO515/VP-V4/blob/codex/tourmind-product-plan-20260917/docs/program/2026-09-05/PRODUCT-EXPERIENCE-2026-09-17.md)。规划尚未合并main，功能实现与实际验收另行核对；原有进度、状态和依赖保留，不新增整批等待门。\n\n- [ ] 体验增量2026-09-17：同一款本地分享模板可选择某天或整段已确认行程，默认隐藏订单/房间/同行及敏感日期等字段，先隐私预览再系统分享；标明快照版本/导出时间，计划更新后提示重新导出，内容与当时确认稿一致。不默认公开托管，不承诺已导出图片可远端撤回，不附带协作编辑权限。\n",
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2Rv_w",
+          "name": "priority:P1",
+          "description": "Growth and execution data after the core evidence",
+          "color": "D93F0B"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2RzFg",
+          "name": "status:in-progress",
+          "description": "Active branch or pull request exists",
+          "color": "1D76DB"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2R4Ng",
+          "name": "needs-triage",
+          "description": "Maintainer needs to evaluate this issue",
+          "color": "D4C5F9"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jt5Q",
+          "name": "phase:R5",
+          "description": "R5 controlled production",
+          "color": "BFDADC"
+        }
+      ],
+      "number": 241,
+      "state": "CLOSED",
+      "title": "[VPJ-49] 最简本地旅行分享卡与隐私预览"
+    },
+    {
+      "body": "## Program\n\n[VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187) · 首发交付任务\n\n## 用户结果\n\n从模糊想法得到可确认的多日行程。\n\n## 执行边界与首个切片\n\n- 首个可交付结果：用日期未定且已有偏好的输入产出可修改相对日草稿，展示局部变化并沿既有确认路径保存/重载。\n- 本票责任/非目标：只负责初始多日草稿；10负责局部改稿交互，65补实际地点和路线依据，不把相对日草稿称可执行行程。\n- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)\n- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。\n\n## 实施与验收入口\n\n[执行行：范围、检查、证据与回退](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-09) · [接口](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [开发流程](https://github.com/JTCAO515/VP-V4/blob/main/docs/agents/development-workflow.md) · [阶段 S3](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/DELIVERY-STAGES.md#s3)。\n\n## 开工依赖（GitHub 原生关系）\n\n无已登记的整票开工硬依赖；开工前仍核实际接口、环境与权限。\n\n涉及本轮保护任务的原生关系暂按原样保留；有无 Blocked 图标都不证明已就绪或已验收。\n\n## 集成与最终验收依赖（普通关联）\n\n- [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192)\n- [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195)\n- [VPJ-08 #196](https://github.com/JTCAO515/VP-V4/issues/196)\n\n可按首个切片独立推进；这些输入的实际能力与适用证据仍须在集成/整票验收时核对，不能用 fixture 或移除图标替代。\n\n## Acceptance criteria\n\n- [ ] 无精确日期/订单也可先出方向和相对日草稿；日期预算未知明确且追问可跳过。\n- [ ] 两种真正有取舍的方案→日程对象→diff→确认→两端重载；已有Trip不被全量覆盖。\n- [ ] 时间、预算、固定项由确定性校验；缺实时依据标unknown不把想象时刻当可行。\n- [ ] 本单仅相对日方向/用户提供地点草稿；真实地点与grounded计划由VPJ-65补齐，不能把未解析地点当可执行。\n- [ ] Chat→Plan过渡、键盘、diff和返回锚点随此功能验收。\n- [ ] 体验增量2026-09-17：对“第一次去上海四天、喜欢吃和散步、日期未定”的输入，先交有取舍的方向及首段可修改的相对日草稿，再补仍会改变方案的信息；目的明确时不强凑两案，不等待全部坐标/素材就绪，也不编造实际营业/抵离时间。仍保留本票相对日/用户提供地点边界，真实地点与可执行性归#219。\n\n## 不得触碰\n\n- No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.\n- No secrets, original user worktree, old applied migrations, branch protection or production actions.\n- No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.\n- No archived research/test oracle deletion or invented runtime/provider/Store result.\n\n替代历史责任：#162\n\n## 已有进展与原始记录\n\n[整理前正文与元数据快照](https://github.com/JTCAO515/VP-V4/blob/codex/issue-plan-audit-20260917/artifacts/VPJ-00/issue-audit-20260917/before.json.gz)；原评论与证据链接保留。已勾选项仅保持原完成范围，不等于整票通过。\n",
+      "labels": [
+        {
+          "id": "LA_kwDOT_h9k88AAAACxcWPCg",
+          "name": "enhancement",
+          "description": "New feature or request",
+          "color": "a2eeef"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2Rv_w",
+          "name": "priority:P1",
+          "description": "Growth and execution data after the core evidence",
+          "color": "D93F0B"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAACx2jsOw",
+          "name": "phase:R2",
+          "description": "R2 grounded text alpha",
+          "color": "7057FF"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAAC2RQagg",
+          "name": "status:planned",
+          "description": "Defined work awaiting scheduling; start a bounded slice when its actual inputs exist.",
+          "color": "c5def5"
+        },
+        {
+          "id": "LA_kwDOT_h9k88AAAAC2SQX1g",
+          "name": "team:journey-experience",
+          "description": "Trip、地图、准备与在途功能、原生及轻量Web消费体验",
+          "color": "0E8A16"
+        }
+      ],
+      "number": 197,
+      "state": "OPEN",
+      "title": "[VPJ-09] 从模糊想法得到可确认的多日行程"
+    }
+  ]
+}
