@@ -206,6 +206,36 @@ final class AppShellUITests: XCTestCase {
         }
     }
 
+    // Full audit at maximum Dynamic Type: never waive contrast or clipping.
+    func testMaximumTextFullAccessibilityInBothThemesAndLanguages() throws {
+        let previousAppearance = XCUIDevice.shared.appearance
+        defer { XCUIDevice.shared.appearance = previousAppearance }
+        for appearance in [XCUIDevice.Appearance.light, .dark] {
+            XCUIDevice.shared.appearance = appearance
+            for locale in ["en", "zh-Hans"] {
+                let app = launch(locale: locale, largeText: true)
+                continueAfterFailure = true
+                func audit(_ position: String) {
+                    capture("Maximum-full-\(locale)-\(appearance.rawValue)-\(position)", app: app)
+                    do {
+                        try app.performAccessibilityAudit(for: .all) { issue in
+                            print("Maximum full AX \(locale) \(appearance.rawValue) \(position): \(issue.compactDescription); \(String(describing: issue.element))")
+                            return false
+                        }
+                    } catch {
+                        XCTFail("Maximum full audit \(locale) \(appearance.rawValue) \(position): \(error)")
+                    }
+                }
+                audit("Ask-top")
+                revealFully(app.staticTexts["ask-availability-notice"], in: app)
+                audit("Ask-notice")
+                app.tabBars.buttons[locale == "en" ? "Trip" : "行程"].tap()
+                audit("Trip-top")
+                app.terminate()
+            }
+        }
+    }
+
     private func revealFully(_ element: XCUIElement, in app: XCUIApplication) {
         let scroll = app.scrollViews.firstMatch
         let composer = app.otherElements["ask-composer"]

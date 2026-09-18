@@ -1,20 +1,31 @@
 import SwiftUI
 
-extension Color {
-    static let vpBrandFill = Color(red: 0.30, green: 0.12, blue: 0.29)
-    static let vpBrand = Color(uiColor: UIColor { traits in
+// Keep one dynamic UIColor source for SwiftUI and UIKit. On iOS17, converting
+// a SwiftUI Color back to UIColor can freeze the appearance at conversion time.
+extension UIColor {
+    static let vpBrandFill = UIColor(red: 0.30, green: 0.12, blue: 0.29, alpha: 1)
+    static let vpBrand = UIColor { traits in
         traits.userInterfaceStyle == .dark
             ? UIColor(red: 0.88, green: 0.75, blue: 0.94, alpha: 1)
-            : UIColor(red: 0.30, green: 0.12, blue: 0.29, alpha: 1)
-    })
-    // Opaque supporting text keeps contrast on grouped and preview surfaces.
-    static let vpSecondaryText = Color(uiColor: UIColor { traits in
+            : .vpBrandFill
+    }
+    static let vpSecondaryText = UIColor { traits in
         UIColor(white: traits.userInterfaceStyle == .dark ? 0.80 : 0.30, alpha: 1)
-    })
-    static let vpAccent = Color(red: 0.93, green: 0.56, blue: 0.25)
-    static let vpLavender = Color(red: 0.80, green: 0.68, blue: 0.93)
-    static let vpBackground = Color(uiColor: .systemGroupedBackground)
-    static let vpSurface = Color(uiColor: .secondarySystemGroupedBackground)
+    }
+    static let vpAccent = UIColor(red: 0.93, green: 0.56, blue: 0.25, alpha: 1)
+    static let vpLavender = UIColor(red: 0.80, green: 0.68, blue: 0.93, alpha: 1)
+    static let vpBackground = UIColor.systemGroupedBackground
+    static let vpSurface = UIColor.secondarySystemGroupedBackground
+}
+
+extension Color {
+    static let vpBrandFill = Color(uiColor: .vpBrandFill)
+    static let vpBrand = Color(uiColor: .vpBrand)
+    static let vpSecondaryText = Color(uiColor: .vpSecondaryText)
+    static let vpAccent = Color(uiColor: .vpAccent)
+    static let vpLavender = Color(uiColor: .vpLavender)
+    static let vpBackground = Color(uiColor: .vpBackground)
+    static let vpSurface = Color(uiColor: .vpSurface)
 }
 
 enum VPSpacing {

@@ -27,29 +27,21 @@ struct AskView: View {
                         .foregroundStyle(Color.vpBrand)
                         .textCase(.uppercase)
 
-                    Text("ask.title")
-                        .font(.largeTitle.weight(.bold))
-                        .tracking(-0.8)
-                        .fixedSize(horizontal: false, vertical: true)
+                    VPReadableText("ask.title", style: .largeTitle, weight: .bold, tracking: -0.8)
 
-                    Text("ask.subtitle")
-                        .accessibilityIdentifier("ask-introduction")
-                        .font(.body)
-                        .foregroundStyle(Color.vpSecondaryText)
+                    VPReadableText("ask.subtitle", color: .vpSecondaryText, identifier: "ask-introduction")
                 }
 
                 PreviewStatusBanner()
                 availabilityNotice
 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("ask.try")
-                        .font(.headline)
+                    VPReadableText("ask.try", style: .headline)
 
                     ForEach(Array(prompts.enumerated()), id: \.offset) { _, prompt in
                         NavigationLink(value: AppRoute.capability(prompt.capability)) {
                             HStack {
-                                Text(LocalizedStringKey(prompt.key))
-                                    .multilineTextAlignment(.leading)
+                                VPReadableText(prompt.key, style: .subheadline, weight: .medium)
                                 Spacer()
                                 Image(systemName: "arrow.up.right")
                                     .accessibilityHidden(true)
