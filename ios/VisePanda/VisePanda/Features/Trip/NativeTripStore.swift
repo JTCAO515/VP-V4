@@ -13,6 +13,8 @@ final class NativeTripStore {
     private(set) var notice: String?
     private(set) var scope: NativeDataScope?
     private var confirmationKeys: [String: String] = [:]
+    private var proposalOutcomeUnknown = false
+    private var uncertainProposalPatch: NativeTripPatch?
     private var creation: (id: String, title: String)?
     private let base = "api/trips/native/v2"
 
@@ -20,11 +22,15 @@ final class NativeTripStore {
         pending.map { "\($0.proposal.id):\($0.proposal.revision):\($0.proposal.digest)" }
     }
 
+    var hasUncertainProposal: Bool { proposalOutcomeUnknown }
+
     func reset(for scope: NativeDataScope?) {
         guard self.scope != scope else { return }
         self.scope = scope
         trips = []; selectedID = nil; detail = nil; pending = nil; draft = nil
         confirmationKeys = [:]; creation = nil; notice = nil; busy = false
+        proposalOutcomeUnknown = false
+        uncertainProposalPatch = nil
     }
 
     func list(using session: NativeSession) async {
@@ -76,13 +82,37 @@ final class NativeTripStore {
     }
 
     func beginDraft() {
-        guard !busy, pending == nil, let detail else { return }
+        guard !busy, pending == nil, !proposalOutcomeUnknown, let detail else { return }
         draft = NativeTripDraft(detail)
         notice = nil
     }
 
+    func proposeScreenshot(source: NativeScreenshotReviewSource, digest: String,
+                           corrections: [NativeScreenshotCorrection], using session: NativeSession) async -> Bool {
+        guard !busy, draft == nil, pending == nil,
+              let scope, session.dataScope == scope, scope.subject == source.ownerID,
+              selectedID == source.tripID, let detail,
+              detail.trip.id == source.tripID,
+              detail.trip.headVersion == source.tripVersion else {
+            notice = "STALE_TRIP_VERSION"
+            return false
+        }
+        switch NativeScreenshotTripDraft.make(detail: detail, digest: digest, corrections: corrections) {
+        case .invalid:
+            notice = "INVALID_INPUT"
+            return false
+        case .duplicate:
+            notice = "noChanges"
+            return false
+        case .ready(let prepared, _):
+            draft = prepared
+            await propose(using: session)
+            return self.scope == scope && session.dataScope == scope && pending != nil
+        }
+    }
+
     func discardDraft() {
-        guard !busy, pending == nil else { return }
+        guard !busy, pending == nil, !proposalOutcomeUnknown else { return }
         draft = nil
         notice = nil
     }
@@ -91,13 +121,43 @@ final class NativeTripStore {
         guard let draft, !draft.patch.operations.isEmpty else { notice = "noChanges"; return }
         let patch = draft.patch
         await perform(session) { scope in
-            let created: NativeProposalCreated = try await self.call(session, scope, path: "\(self.base)/\(draft.tripId)/proposal", method: "POST", body: ProposalBody(patch: patch))
+            if self.proposalOutcomeUnknown {
+                do {
+                    let existing = try await self.readPending(draft.tripId, proposalID: nil, session, scope)
+                    guard existing.proposal.baseTripVersion == draft.baseVersion,
+                          existing.proposal.patch == self.uncertainProposalPatch else { throw NativeDataError.invalidResponse }
+                    self.pending = existing
+                    self.proposalOutcomeUnknown = false
+                    self.uncertainProposalPatch = nil
+                    self.notice = "reviewRequired"
+                    return
+                } catch NativeDataError.server(let code) where code == "PROPOSAL_NOT_CONFIRMABLE" {
+                    // A successful read proved there is no pending proposal;
+                    // only now is another POST safe.
+                    self.proposalOutcomeUnknown = false
+                    self.uncertainProposalPatch = nil
+                }
+            }
+            self.proposalOutcomeUnknown = true
+            self.uncertainProposalPatch = patch
+            let created: NativeProposalCreated
+            do {
+                created = try await self.call(session, scope, path: "\(self.base)/\(draft.tripId)/proposal", method: "POST", body: ProposalBody(patch: patch))
+            } catch NativeDataError.server(let code) where code == "STALE_TRIP_VERSION" || code == "INVALID_INPUT" {
+                // These rejection codes are emitted before proposal creation.
+                // Transport loss and post-commit auth failures stay unknown.
+                self.proposalOutcomeUnknown = false
+                self.uncertainProposalPatch = nil
+                throw NativeDataError.server(code: code)
+            }
             let result = try await self.readPending(draft.tripId, proposalID: created.proposalId, session, scope)
             guard result.proposal.id == created.proposalId,
                   result.proposal.revision == created.revision,
                   result.proposal.baseTripVersion == draft.baseVersion,
                   result.proposal.patch == patch else { throw NativeDataError.invalidResponse }
             self.pending = result
+            self.proposalOutcomeUnknown = false
+            self.uncertainProposalPatch = nil
             self.notice = "reviewRequired"
         }
     }
