@@ -157,4 +157,60 @@ struct NativeTripDraft: Equatable, Identifiable {
         guard let index = days.firstIndex(where: { $0.id == dayID }) else { return }
         days[index].items.append(.init(id: UUID().uuidString, dayId: dayID, title: ""))
     }
+
+    /// Bind an uncommitted relative outline to calendar dates only after the user supplies one.
+    /// Existing days are never replaced by this operation.
+    mutating func appendOutline(_ titles: [String], starting rawDate: String) -> Bool {
+        guard (2...7).contains(titles.count), titles.allSatisfy({ !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && $0.count <= 160 }) else { return false }
+        guard let utc = TimeZone(secondsFromGMT: 0) else { return false }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.timeZone = utc
+        formatter.isLenient = false
+        formatter.dateFormat = "yyyy-MM-dd"
+        guard rawDate.count == 10, let start = formatter.date(from: rawDate), formatter.string(from: start) == rawDate else { return false }
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = utc
+        let dates = (0..<titles.count).compactMap { offset in calendar.date(byAdding: .day, value: offset, to: start).map(formatter.string(from:)) }
+        guard dates.count == titles.count, Set(dates).count == dates.count,
+              Set(dates).isDisjoint(with: days.map(\.date)) else { return false }
+        for (date, title) in zip(dates, titles) {
+            let dayID = UUID().uuidString
+            days.append(.init(id: dayID, date: date, timeZone: "Asia/Shanghai", items: [
+                .init(id: UUID().uuidString, dayId: dayID, title: title.trimmingCharacters(in: .whitespacesAndNewlines))
+            ]))
+        }
+        return true
+    }
+}
+
+/// Deliberately bounded outline, with no inferred venue, opening hour, route or feasibility.
+struct NativeRelativeOutline: Equatable {
+    let city: String
+    let count: Int
+    let foodFirst: [String]
+    let walkFirst: [String]
+
+    static func make(from request: String, chinese: Bool) -> Self? {
+        let cities = [("上海", "Shanghai"), ("北京", "Beijing"), ("广州", "Guangzhou"), ("重庆", "Chongqing")]
+        let matches = cities.filter { request.contains($0.0) || request.localizedCaseInsensitiveContains($0.1) }
+        guard matches.count == 1, let city = matches.first else { return nil }
+        guard ["吃", "美食"].contains(where: request.contains) || request.localizedCaseInsensitiveContains("food"),
+              ["散步", "步行"].contains(where: request.contains) || request.localizedCaseInsensitiveContains("walk") else { return nil }
+        let numerals = ["二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7]
+        let chineseCount = numerals.first { request.contains("\($0.key)天") }?.value
+        let words = ["two", "three", "four", "five", "six", "seven"]
+        let wordCount = words.firstIndex { request.range(of: "\\b\($0)\\s+days?\\b", options: [.regularExpression, .caseInsensitive]) != nil }.map { $0 + 2 }
+        let englishCount = (2...7).first { request.range(of: "\\b\($0)\\s*(?:days?|天)\\b", options: [.regularExpression, .caseInsensitive]) != nil }
+        guard let count = chineseCount ?? wordCount ?? englishCount else { return nil }
+        let name = chinese ? city.0 : city.1
+        let food = chinese ? "选择一个美食片区，地点与营业时间待核" : "Choose one food area; venues and hours to verify"
+        let walk = chinese ? "选择一条街区散步路线，距离与开放条件待核" : "Choose a neighborhood walk; route and access to verify"
+        let arrival = chinese ? "轻松熟悉城市，抵达时间待定" : "Settle in gently; arrival time unknown"
+        let departure = chinese ? "保留弹性收尾，离开时间待定" : "Keep a flexible final day; departure time unknown"
+        return .init(city: name, count: count,
+                     foodFirst: (0..<count).map { $0 == 0 && count > 2 ? arrival : ($0 == count - 1 ? departure : food) },
+                     walkFirst: (0..<count).map { $0 == 0 && count > 2 ? arrival : ($0 == count - 1 ? departure : walk) })
+    }
 }

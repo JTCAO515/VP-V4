@@ -1,0 +1,35 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "C5206455-4A39-4516-B485-9C05D2224105",
+        "deviceName" : "VPJ04-A-543f568e",
+        "exportedFileName" : "2FDC9CBB-9760-4BDE-9C06-EF5A544B7577.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "VPJ09-outline-reloaded_0_DC0FC909-3578-4408-A304-014ADE2DED57.png",
+        "timestamp" : 1789704249.842
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "C5206455-4A39-4516-B485-9C05D2224105",
+        "deviceName" : "VPJ04-A-543f568e",
+        "exportedFileName" : "127DD49C-46DA-4BE4-9449-181500F6BA0F.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "VPJ09-outline-confirmed_0_E6EC63B3-E8F9-4B3F-A7DE-E06F24E87F77.png",
+        "timestamp" : 1789704241.387
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "C5206455-4A39-4516-B485-9C05D2224105",
+        "deviceName" : "VPJ04-A-543f568e",
+        "exportedFileName" : "84B1CD89-A1AF-4F58-867B-397EF79FB95B.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "VPJ09-outline-proposal_0_89F7D228-7DA0-4282-900A-80E524EA8EBC.png",
+        "timestamp" : 1789704238.455
+      }
+    ],
+    "testIdentifier" : "NativeTripUITests/testRelativeOutlineReviewConfirmAndRelaunch()",
+    "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/NativeTripUITests/testRelativeOutlineReviewConfirmAndRelaunch"
+  }
+]

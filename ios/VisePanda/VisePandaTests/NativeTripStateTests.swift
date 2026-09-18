@@ -3,6 +3,41 @@ import XCTest
 
 nonisolated final class NativeTripStateTests: XCTestCase {
     @MainActor
+    func testRelativeOutlineRequiresSupportedInputsAndKeepsUnknowns() throws {
+        let outline = try XCTUnwrap(NativeRelativeOutline.make(from: "第一次去上海四天，喜欢吃和散步，日期未定", chinese: true))
+        XCTAssertEqual(outline.city, "上海")
+        XCTAssertEqual(outline.count, 4)
+        XCTAssertEqual(outline.foodFirst.count, 4)
+        XCTAssertNotEqual(outline.foodFirst[1], outline.walkFirst[1])
+        XCTAssertFalse(outline.foodFirst.joined().contains("10:00"))
+        let short = try XCTUnwrap(NativeRelativeOutline.make(from: "First time in Shanghai for two days; food and walks, dates unknown", chinese: false))
+        XCTAssertEqual(short.count, 2)
+        XCTAssertNotEqual(short.foodFirst[0], short.walkFirst[0])
+        XCTAssertNil(NativeRelativeOutline.make(from: "想去上海", chinese: true))
+        XCTAssertNil(NativeRelativeOutline.make(from: "上海和北京四天，喜欢吃和散步", chinese: true))
+        XCTAssertNil(NativeRelativeOutline.make(from: "Four days somewhere", chinese: false))
+    }
+
+    @MainActor
+    func testOutlineBindsOnlyAfterValidNonoverlappingDateAndPreservesTrip() throws {
+        let existing = NativeTripDay(id: "existing", date: "2026-10-01", timeZone: "Asia/Shanghai", items: [
+            .init(id: "dinner", dayId: "existing", title: "Confirmed dinner")
+        ])
+        let detail = NativeTripDetail(version: 2, trip: .init(id: UUID().uuidString, title: "Saved", headVersion: 3, updatedAt: "2026-09-18"), content: .init(days: [existing]), hardLocks: .notEnabled, externalOrderStatus: .notConnected)
+        var draft = NativeTripDraft(detail)
+        XCTAssertFalse(draft.appendOutline(["Walk", "Food"], starting: ""))
+        XCTAssertFalse(draft.appendOutline(["Walk", "Food"], starting: "2026-02-30"))
+        XCTAssertFalse(draft.appendOutline(["Walk", "Food"], starting: "2026-09-30"))
+        XCTAssertEqual(draft.days, [existing])
+        XCTAssertTrue(draft.appendOutline(["Walk", "Food"], starting: "2026-10-02"))
+        XCTAssertEqual(draft.days.map(\.date), ["2026-10-01", "2026-10-02", "2026-10-03"])
+        XCTAssertEqual(draft.days[0], existing)
+        XCTAssertEqual(draft.patch.expectedVersion, 3)
+        XCTAssertEqual(draft.patch.operations.map(\.kind), [.upsertDay, .upsertItem, .upsertDay, .upsertItem])
+        XCTAssertFalse(draft.patch.operations.contains { $0.itemId == "dinner" })
+    }
+
+    @MainActor
     func testLateRefreshCannotReviveSessionAfterTripDenial() async throws {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [DelayedTripProtocol.self]
