@@ -1,4 +1,8 @@
-# Native accessibility investigation — 2026-09-18 — unresolved, no product fix
+# Initial native accessibility investigation — 2026-09-18
+
+This is the retained initial FAIL snapshot. Later verified repairs are documented in
+[reading-text verification](../readable-text-20260918/verification.md); do not use
+this snapshot to infer current runtime availability or repair status.
 
 Base `2370391`, isolated branch `codex/ios17-accessibility-20260918`.
 Original checkout and its uncommitted Xcode/localization changes are untouched.
