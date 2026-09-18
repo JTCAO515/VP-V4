@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct NativeTripView: View {
     @Environment(AppSettings.self) private var settings
@@ -6,6 +7,7 @@ struct NativeTripView: View {
     @State private var newTitle = ""
     @State private var shareSource: NativeTripShareSource?
     @State private var screenshotReviewSource: NativeScreenshotReviewSource?
+    @State private var inboxCleanupFailed = false
     @State private var confirmVisible = false
     @State private var reviewedReference: String?
     @State private var discardVisible = false
@@ -28,13 +30,17 @@ struct NativeTripView: View {
                         Text(message(notice)).foregroundStyle(Color.vpSecondaryText)
                             .accessibilityIdentifier("trip.notice")
                     }
+                    if inboxCleanupFailed {
+                        Text(text("Protected screenshot cleanup is pending. Unlock the device to retry.", "受保护截图清理尚未完成。请解锁设备后重试。"))
+                            .foregroundStyle(Color.vpSecondaryText)
+                    }
                     if let detail = store.detail {
                         confirmed(detail)
                         if let pending = store.pending { proposal(pending) }
                         if let draft = store.draft {
                             NativeTripDraftEditor(draft: draftBinding(draft), chinese: chinese)
                                 .id(draft.id)
-                                .disabled(store.busy || store.pending != nil)
+                                .disabled(store.busy || store.pending != nil || store.hasUncertainProposal)
                             Button(text("Review proposed changes", "审阅拟议变化")) {
                                 Task { await store.propose(using: session) }
                             }
@@ -43,7 +49,7 @@ struct NativeTripView: View {
                             .disabled(store.busy || store.pending != nil || draft.patch.operations.isEmpty || draft.baseVersion != detail.trip.headVersion)
                             Button(text("Discard local draft", "放弃本机草稿"), role: .destructive) { discardVisible = true }
                                 .accessibilityIdentifier("trip.draft.discard")
-                                .disabled(store.busy || store.pending != nil)
+                                .disabled(store.busy || store.pending != nil || store.hasUncertainProposal)
                         } else if store.pending == nil {
                             Button(text("Edit a draft", "编辑草稿")) { store.beginDraft() }
                                 .buttonStyle(.borderedProminent)
@@ -61,12 +67,16 @@ struct NativeTripView: View {
             NativeTripShareView(source: source, store: store, session: session, chinese: chinese)
         }
         .sheet(item: $screenshotReviewSource) { source in
-            NativeScreenshotReviewView(source: source, chinese: chinese)
+            NativeScreenshotReviewView(source: source, chinese: chinese, store: store, session: session)
         }
         .vpNavigationTitle("tab.trip")
         .navigationBarTitleDisplayMode(.inline)
         .scrollDismissesKeyboard(.interactively)
         .task(id: session.dataScope) {
+            if screenshotReviewSource != nil || session.dataScope == nil {
+                screenshotReviewSource = nil
+            }
+            cleanupAbandonedScreenshots()
             if store.scope != session.retainedDataScope {
                 store.reset(for: session.retainedDataScope)
                 newTitle = ""
@@ -79,9 +89,14 @@ struct NativeTripView: View {
         }
         .onChange(of: session.retainedDataScope) { _, retained in
             if store.scope != retained {
+                screenshotReviewSource = nil
+                cleanupAbandonedScreenshots()
                 store.reset(for: retained)
-                newTitle = ""; confirmVisible = false; reviewedReference = nil; discardVisible = false; screenshotReviewSource = nil
+                newTitle = ""; confirmVisible = false; reviewedReference = nil; discardVisible = false
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in
+            if screenshotReviewSource == nil { cleanupAbandonedScreenshots() }
         }
         .onChange(of: session.busy) { wasBusy, isBusy in
             // Login/restore publishes the subject before its profile request finishes.
@@ -104,6 +119,11 @@ struct NativeTripView: View {
         }
     }
 
+    private func cleanupAbandonedScreenshots() {
+        do { try NativeScreenshotInbox().deleteAll(); inboxCleanupFailed = false }
+        catch { inboxCleanupFailed = true }
+    }
+
     private func draftBinding(_ rendered: NativeTripDraft) -> Binding<NativeTripDraft> {
         Binding {
             // SwiftUI may update a departing child after confirm has cleared the
@@ -111,7 +131,8 @@ struct NativeTripView: View {
             guard let current = store.draft, current.id == rendered.id else { return rendered }
             return current
         } set: { value in
-            guard store.draft?.id == rendered.id, store.scope == session.dataScope else { return }
+            guard store.draft?.id == rendered.id, store.scope == session.dataScope,
+                  !store.hasUncertainProposal else { return }
             store.draft = value
         }
     }
@@ -193,7 +214,9 @@ struct NativeTripView: View {
                     screenshotReviewSource = .init(
                         tripID: detail.trip.id,
                         tripVersion: detail.trip.headVersion,
-                        tripDates: detail.content.days.map(\.date)
+                        tripDates: detail.content.days.map(\.date),
+                        ownerID: session.dataScope?.subject,
+                        detail: detail
                     )
                 }
                 .accessibilityIdentifier("trip.screenshot.review")

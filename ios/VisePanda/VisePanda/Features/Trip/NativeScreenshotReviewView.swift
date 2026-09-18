@@ -8,6 +8,17 @@ struct NativeScreenshotReviewSource: Identifiable {
     let tripID: String
     let tripVersion: Int
     let tripDates: [String]
+    let ownerID: String?
+    let detail: NativeTripDetail?
+
+    init(tripID: String, tripVersion: Int, tripDates: [String], ownerID: String? = nil,
+         detail: NativeTripDetail? = nil) {
+        self.tripID = tripID
+        self.tripVersion = tripVersion
+        self.tripDates = tripDates
+        self.ownerID = ownerID
+        self.detail = detail
+    }
 }
 
 struct NativeScreenshotLine: Identifiable, Sendable {
@@ -67,6 +78,8 @@ enum NativeScreenshotReviewStatus {
 struct NativeScreenshotReviewView: View {
     let source: NativeScreenshotReviewSource
     let chinese: Bool
+    let store: NativeTripStore?
+    let session: NativeSession?
     @Environment(\.dismiss) private var dismiss
     @State private var selectedItem: PhotosPickerItem?
     @State private var status: NativeScreenshotReviewStatus = .idle
@@ -79,6 +92,19 @@ struct NativeScreenshotReviewView: View {
     @State private var loadID = UUID()
     @State private var loadTask: Task<Void, Never>?
     @State private var recognitionTask: Task<[NativeScreenshotLine], Error>?
+    @State private var inboxReceipt: NativeScreenshotInbox.Receipt?
+    @State private var submitting = false
+    @State private var submitError = false
+    @State private var deletionFailed = false
+    private let inbox = NativeScreenshotInbox()
+
+    init(source: NativeScreenshotReviewSource, chinese: Bool,
+         store: NativeTripStore? = nil, session: NativeSession? = nil) {
+        self.source = source
+        self.chinese = chinese
+        self.store = store
+        self.session = session
+    }
 
     private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
 
@@ -87,7 +113,9 @@ struct NativeScreenshotReviewView: View {
         return NavigationStack {
             Form {
                 Section {
-                    Text(text("Select one screenshot. Recognition runs on this device and remains in this review until you close it.", "选择一张截图。文字只在本机识别，并仅在当前审阅页面保留。"))
+                    Text(source.ownerID == nil
+                         ? text("Select one screenshot. Recognition runs on this device and remains in this review until you close it.", "选择一张截图。文字只在本机识别，并仅在当前审阅页面保留。")
+                         : text("Select one travel screenshot. A protected copy stays in this device's private inbox during review; Close deletes it. No image is uploaded.", "选择一张旅行截图。审阅期间，受保护副本仅存于本机私有收件箱；关闭时删除，不上传图片。"))
                         .foregroundStyle(Color.vpSecondaryText)
                     if source.tripID.isEmpty {
                         Text(text("This local review is not linked to a saved Trip.", "本机检查尚未关联已保存的行程。"))
@@ -97,10 +125,23 @@ struct NativeScreenshotReviewView: View {
                         Text(text("Compared with saved Trip version \(source.tripVersion).", "对照已保存行程版本 \(source.tripVersion)。"))
                             .foregroundStyle(Color.vpSecondaryText)
                     }
-                    PhotosPicker(selection: $selectedItem, matching: .screenshots) {
+                    // Imported screenshots can lack PhotoKit's screenshot subtype.
+                    // Selection is still one image and grants no full-library read.
+                    PhotosPicker(selection: $selectedItem, matching: .images) {
                         Label(chooseTitle, systemImage: "photo")
                     }
                     .accessibilityIdentifier("screenshot.choose")
+                    if let inboxReceipt {
+                        Text(inboxReceipt.duplicate
+                             ? text("This screenshot was already imported on this device.", "这张截图已在本机导入。")
+                             : text("Private on-device inbox · removed on close; expires after 24 hours and is purged on next access.", "本机私有收件箱 · 关闭时删除；24小时后不可读取，下次访问时清理。"))
+                            .font(.footnote)
+                            .foregroundStyle(Color.vpSecondaryText)
+                    }
+                    if deletionFailed {
+                        Text(text("Could not remove the protected local copy yet. Unlock the device and retry Close.", "暂时无法删除受保护的本机副本。请解锁设备后重试关闭。"))
+                            .accessibilityIdentifier("screenshot.deleteError")
+                    }
                 } header: {
                     Text(text("Source", "来源"))
                 }
@@ -169,8 +210,19 @@ struct NativeScreenshotReviewView: View {
                     }
                     if reviewed {
                         Section {
-                            Text(text("Your corrected fields are ready for review. Adding them to the Trip requires a separate proposal and your confirmation.", "校正字段已备好。加入行程仍需另行生成提议并由你确认。"))
+                            Text(text("Review these user-checked fields in a Trip proposal before saving. Screenshot text is not a verified booking.", "请先在行程提议中审阅这些已校正字段，再决定是否保存。截图文字并非已核实的订单。"))
                                 .accessibilityIdentifier("screenshot.pending")
+                            if source.detail != nil, store != nil, session != nil {
+                                Button(text("Create Trip proposal", "生成行程提议")) {
+                                    Task { await submitProposal() }
+                                }
+                                .disabled(submitting || inboxReceipt == nil || !corrections.contains(where: { $0.kind == .date }))
+                                .accessibilityIdentifier("screenshot.propose")
+                            }
+                            if submitError {
+                                Text(text("Could not prepare the proposal. Your saved Trip is unchanged; check the selected Trip and try again.", "未能生成提议；已保存行程未改变。请检查所选行程后重试。"))
+                                    .accessibilityIdentifier("screenshot.proposeError")
+                            }
                         }
                     }
                 }
@@ -178,10 +230,11 @@ struct NativeScreenshotReviewView: View {
             .navigationTitle(text("Review screenshot", "审阅截图"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) {
-                Button(text("Close", "关闭")) { clear(); dismiss() }
+                Button(text("Close", "关闭")) { if clear() { dismiss() } }
             } }
             .onChange(of: selectedItem) { _, item in
                 loadTask?.cancel(); recognitionTask?.cancel()
+                guard discardInbox() else { status = .unavailable; return }
                 let currentID = UUID()
                 loadID = currentID
                 lines.removeAll(); corrections.removeAll(); selectedLine = nil; correctedValue = ""; reviewed = false
@@ -189,11 +242,26 @@ struct NativeScreenshotReviewView: View {
                 status = .loading
                 loadTask = Task { await load(item, id: currentID) }
             }
-            .onDisappear { clear() }
+            .onDisappear { _ = clear() }
+            .interactiveDismissDisabled(inboxReceipt != nil)
         }
     }
 
     private func comparison(for correction: NativeScreenshotCorrection) -> String {
+        if let detail = source.detail, let digest = inboxReceipt?.digest {
+            switch NativeScreenshotTripDraft.make(detail: detail, digest: digest, corrections: corrections) {
+            case .duplicate:
+                return text("Duplicate in this Trip", "当前行程已有相同内容")
+            case .ready(_, let states):
+                switch states[correction.kind] {
+                case .added: return text("Added in proposal", "提议中新增")
+                case .duplicate: return text("Duplicate in this Trip", "当前行程已有相同内容")
+                case .conflict: return text("Conflicts with saved content; review the diff", "与已保存内容冲突，请审阅变化")
+                case nil: break
+                }
+            case .invalid: break
+            }
+        }
         switch NativeScreenshotComparison.classify(correction, tripDates: source.tripDates, hasTrip: !source.tripID.isEmpty) {
         case .alreadyInTrip:
             return text("Already in this Trip", "当前行程已有此日期")
@@ -212,12 +280,15 @@ struct NativeScreenshotReviewView: View {
         corrections.removeAll { $0.kind == selectedKind }
         corrections.append(.init(id: UUID(), kind: selectedKind, sourceLine: line.id, sourceText: line.text, correctedValue: value))
         reviewed = false
+        submitError = false
     }
 
     private var canKeepCorrection: Bool {
         let value = correctedValue.trimmingCharacters(in: .whitespacesAndNewlines)
-        return !value.isEmpty && value.count <= 160
-            && (selectedKind != .date || NativeScreenshotComparison.validDate(value))
+        guard let selectedLine, !value.isEmpty else { return false }
+        if selectedKind == .date { return NativeScreenshotComparison.validDate(value) }
+        return NativeScreenshotTripDraft.itemTitle(kind: selectedKind, sourceLine: selectedLine.id,
+                                                   value: value) != nil
     }
 
     private func load(_ item: PhotosPickerItem, id: UUID) async {
@@ -227,8 +298,18 @@ struct NativeScreenshotReviewView: View {
                 if loadID == id { status = .unavailable }; return
             }
             try Task.checkCancellation()
+            guard loadID == id else { return }
+            let imageData: Data
+            if let owner = source.ownerID {
+                let receipt = try inbox.receive(data, owner: owner)
+                guard loadID == id else { try? inbox.delete(receipt.digest, owner: owner); return }
+                inboxReceipt = receipt
+                imageData = try inbox.read(receipt.digest, owner: owner)
+            } else {
+                imageData = data
+            }
             let task = Task.detached(priority: .userInitiated) {
-                try NativeScreenshotOCR.recognize(data)
+                try NativeScreenshotOCR.recognize(imageData)
             }
             recognitionTask = task
             defer { if loadID == id { recognitionTask = nil } }
@@ -237,18 +318,49 @@ struct NativeScreenshotReviewView: View {
             lines = recognized
             status = recognized.isEmpty ? .unavailable : .ready
         } catch {
-            if loadID == id { status = .unavailable }
+            if loadID == id { _ = discardInbox(); status = .unavailable }
         }
     }
 
-    private func clear() {
+    @discardableResult
+    private func clear() -> Bool {
         loadTask?.cancel(); recognitionTask?.cancel(); loadTask = nil; recognitionTask = nil
+        guard discardInbox() else { return false }
         loadID = UUID(); selectedItem = nil; lines.removeAll(); corrections.removeAll()
         selectedLine = nil; correctedValue = ""; reviewed = false; status = .idle
+        return true
+    }
+
+    @discardableResult
+    private func discardInbox() -> Bool {
+        if let owner = source.ownerID, let receipt = inboxReceipt {
+            do { try inbox.delete(receipt.digest, owner: owner) }
+            catch { deletionFailed = true; return false }
+        }
+        inboxReceipt = nil
+        deletionFailed = false
+        return true
+    }
+
+    private func submitProposal() async {
+        guard !submitting, let store, let session, let receipt = inboxReceipt else { return }
+        submitting = true
+        defer { submitting = false }
+        let accepted = await store.proposeScreenshot(source: source, digest: receipt.digest,
+                                                      corrections: corrections, using: session)
+        if accepted {
+            if clear() { dismiss() }
+        } else if store.draft != nil {
+            // The network failed after constructing a local draft. Keep that
+            // draft available on the Trip screen for an explicit retry.
+            if clear() { dismiss() }
+        } else {
+            submitError = true
+        }
     }
 }
 
-private enum NativeScreenshotOCR {
+enum NativeScreenshotOCR {
     nonisolated static func recognize(_ data: Data) throws -> [NativeScreenshotLine] {
         try Task.checkCancellation()
         guard let image = CGImageSourceCreateWithData(data as CFData, nil),
