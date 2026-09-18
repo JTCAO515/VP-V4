@@ -104,3 +104,10 @@ receipt before any Proposal request; a missing/expired/corrupt file fails
 closed. Focused inbox/recovery/UI tests passed 6 active, with the expected
 unseeded-picker and physical-protection skips. The earlier PR head's CI was
 green; this correction requires a new exact-head CI run.
+
+The next PR review found a P2 deterministic rejection trap: a server
+`STALE_TRIP_VERSION` response left the draft in an uncertain state even though
+the proposal was not created. Only definite pre-insert stale/invalid responses
+now unlock it. A new synthetic owner-bound transport test returned 409 and
+verified that the local draft can be discarded; both recovery tests passed
+2/2. Transport loss remains read-before-repost.

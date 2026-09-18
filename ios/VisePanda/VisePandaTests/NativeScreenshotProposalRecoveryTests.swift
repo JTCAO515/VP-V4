@@ -49,6 +49,36 @@ nonisolated final class NativeScreenshotProposalRecoveryTests: XCTestCase {
         XCTAssertEqual(store.notice, "reviewRequired")
         await session.logout()
     }
+
+    @MainActor
+    func testDefiniteStaleRejectionUnlocksLocalDraft() async throws {
+        ScreenshotProposalProtocol.reset()
+        ScreenshotProposalProtocol.setRejectPostAsStale(true)
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [ScreenshotProposalProtocol.self]
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "vpj12.stale.\(UUID().uuidString)"))
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:59989"],
+                                    defaults: defaults, configuration: configuration)
+        await session.login(email: "synthetic", password: "unit-only")
+        let scope = try XCTUnwrap(session.dataScope)
+        let store = NativeTripStore()
+        store.reset(for: scope)
+        await store.select(ScreenshotProposalProtocol.tripID, using: session)
+        let detail = try XCTUnwrap(store.detail)
+        let source = NativeScreenshotReviewSource(tripID: detail.trip.id, tripVersion: detail.trip.headVersion,
+                                                   tripDates: [], ownerID: scope.subject, detail: detail)
+        let correction = NativeScreenshotCorrection(id: UUID(), kind: .date, sourceLine: 1,
+                                                     sourceText: "2026-10-01", correctedValue: "2026-10-01")
+        let accepted = await store.proposeScreenshot(source: source, digest: String(repeating: "b", count: 64),
+                                                     corrections: [correction], using: session)
+        XCTAssertFalse(accepted)
+        XCTAssertEqual(store.notice, "STALE_TRIP_VERSION")
+        XCTAssertFalse(store.hasUncertainProposal)
+        XCTAssertNotNil(store.draft)
+        store.discardDraft()
+        XCTAssertNil(store.draft)
+        await session.logout()
+    }
 }
 
 nonisolated private final class ScreenshotProposalProtocol: URLProtocol, @unchecked Sendable {
@@ -59,9 +89,11 @@ nonisolated private final class ScreenshotProposalProtocol: URLProtocol, @unchec
     nonisolated(unsafe) private static var posts = 0
     nonisolated(unsafe) private static var reads = 0
     nonisolated(unsafe) private static var patch: Data?
+    nonisolated(unsafe) private static var rejectPostAsStale = false
     static var postCount: Int { lock.withLock { posts } }
-    static func reset() { lock.withLock { posts = 0; reads = 0; patch = nil } }
+    static func reset() { lock.withLock { posts = 0; reads = 0; patch = nil; rejectPostAsStale = false } }
     static func setPatch(_ value: Data) { lock.withLock { patch = value } }
+    static func setRejectPostAsStale(_ value: Bool) { lock.withLock { rejectPostAsStale = value } }
     override class func canInit(with request: URLRequest) -> Bool { true }
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
     override func stopLoading() {}
@@ -81,8 +113,9 @@ nonisolated private final class ScreenshotProposalProtocol: URLProtocol, @unchec
                      "hardLocks": "not_enabled", "externalOrderStatus": "not_connected",
                      "confirmationState": "confirmed"])
         } else if path.hasSuffix("/proposal") && request.httpMethod == "POST" {
-            Self.lock.withLock { Self.posts += 1 }
-            respond(["version": 2, "proposalId": Self.proposalID, "revision": 1, "baseTripVersion": 1], status: 201)
+            let stale = Self.lock.withLock { Self.posts += 1; return Self.rejectPostAsStale }
+            if stale { respond(["error": ["code": "STALE_TRIP_VERSION"]], status: 409) }
+            else { respond(["version": 2, "proposalId": Self.proposalID, "revision": 1, "baseTripVersion": 1], status: 201) }
         } else if path.hasSuffix("/proposal") {
             let read = Self.lock.withLock { () -> (Int, Int, Data?) in
                 Self.reads += 1

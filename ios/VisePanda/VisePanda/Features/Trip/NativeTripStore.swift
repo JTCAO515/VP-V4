@@ -140,7 +140,16 @@ final class NativeTripStore {
             }
             self.proposalOutcomeUnknown = true
             self.uncertainProposalPatch = patch
-            let created: NativeProposalCreated = try await self.call(session, scope, path: "\(self.base)/\(draft.tripId)/proposal", method: "POST", body: ProposalBody(patch: patch))
+            let created: NativeProposalCreated
+            do {
+                created = try await self.call(session, scope, path: "\(self.base)/\(draft.tripId)/proposal", method: "POST", body: ProposalBody(patch: patch))
+            } catch NativeDataError.server(let code) where code == "STALE_TRIP_VERSION" || code == "INVALID_INPUT" {
+                // These rejection codes are emitted before proposal creation.
+                // Transport loss and post-commit auth failures stay unknown.
+                self.proposalOutcomeUnknown = false
+                self.uncertainProposalPatch = nil
+                throw NativeDataError.server(code: code)
+            }
             let result = try await self.readPending(draft.tripId, proposalID: created.proposalId, session, scope)
             guard result.proposal.id == created.proposalId,
                   result.proposal.revision == created.revision,

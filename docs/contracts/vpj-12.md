@@ -39,7 +39,9 @@ saved Trip path. Failure/cancellation leaves the saved Trip untouched; a
 failed or ambiguous proposal request retains the local draft. Retry first
 reads/reconciles any pending proposal and posts again only after the server
 proves none exists. While the outcome is unknown, local edits and discard are
-locked so the submitted patch remains the one being reconciled.
+locked so the submitted patch remains the one being reconciled. A definite
+pre-insert stale-version or invalid-input rejection unlocks the draft;
+transport loss and post-commit authentication uncertainty do not.
 
 The C0 synthetic contract in `user-artifact-c0.md` remains separate from this
 native path. The rejected VPJ-73 Docling configuration is not invoked; local
