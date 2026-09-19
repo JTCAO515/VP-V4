@@ -9,8 +9,8 @@ import { createClient } from '@supabase/supabase-js';
 const repo=process.cwd();
 const supabaseCLI=process.env.VP_SUPABASE_CLI || 'supabase';
 const mode=process.argv.slice(2);
-if(!mode.every(value=>['--same-trip','--simulator'].includes(value)) || new Set(mode).size!==mode.length || (mode.includes('--same-trip') && mode.includes('--simulator'))) throw Error('Use --same-trip, --simulator, or no arguments');
-const sameTrip=mode.includes('--same-trip'), simulator=mode.includes('--simulator');
+if(!mode.every(value=>['--same-trip','--simulator','--outline'].includes(value)) || new Set(mode).size!==mode.length || mode.length>1) throw Error('Use --same-trip, --simulator, --outline, or no arguments');
+const sameTrip=mode.includes('--same-trip'), outline=mode.includes('--outline'), simulator=mode.includes('--simulator')||outline;
 const base=58500;
 if(!Number.isInteger(base)||base<1024||base>65000)throw new Error('Invalid disposable port base');
 for(const offset of [20,21,22,23,24,27,29,31])await new Promise((ok,fail)=>{const socket=net.createServer();socket.once('error',()=>fail(new Error('Disposable test port unavailable')));socket.listen(base+offset,'127.0.0.1',()=>socket.close(ok));});
@@ -49,7 +49,7 @@ try{
     const state=identityLocalEnv(); simulatorState=state;
     for(const key of Object.keys(testEnv))before[key]===undefined?delete process.env[key]:process.env[key]=before[key];
     const publicKey=state.PUBLISHABLE_KEY||state.ANON_KEY, api=`http://localhost:${base+31}`, password='VPJ04-Local-Synthetic-Only-191!';
-    const apiEnv={...testEnv,NEXT_PUBLIC_SUPABASE_URL:state.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:publicKey,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:state.SERVICE_ROLE_KEY};
+    const apiEnv={...testEnv,NEXT_PUBLIC_SUPABASE_URL:state.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:publicKey,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:state.SERVICE_ROLE_KEY};
     server=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','0.0.0.0','--port',String(base+31)],{cwd:repo,env:apiEnv,stdio:'ignore'});
     const {waitForNativeAPI}=await import('./native-api-readiness.mjs'); await waitForNativeAPI(api,server);
     for(const label of ['A','B']){
@@ -68,15 +68,24 @@ try{
     if(!source)throw new Error('Expected native xctestrun was not built');
     const probe=(await import('./native-redirect-probe.mjs')).createNativeRedirectProbe; const redirect=await probe();
     try {
-      execFileSync('python3',['-c',`import plistlib,sys\np=plistlib.load(open(sys.argv[1],'rb'))\nfor k in ['VisePandaTests','VisePandaUITests']:\n p[k].setdefault('EnvironmentVariables',{}).update({'VP_NATIVE_LOCAL_UI':'1','VP_NATIVE_LOCAL_EMAIL':sys.argv[3],'VP_NATIVE_LOCAL_OTHER_EMAIL':sys.argv[4],'VP_NATIVE_REDIRECT_PROBE_URL':sys.argv[5],'VP_NATIVE_API_ORIGIN':sys.argv[6]})\nplistlib.dump(p,open(sys.argv[2],'wb'))`,source,target,simulatorUsers[0].email,simulatorUsers[1].email,redirect.url,api],{stdio:'ignore'});
+      execFileSync('python3',['-c',`import plistlib,sys\np=plistlib.load(open(sys.argv[1],'rb'))\nfor k in ['VisePandaTests','VisePandaUITests']:\n p[k].setdefault('EnvironmentVariables',{}).update({'VP_NATIVE_LOCAL_UI':'1','VP_NATIVE_LOCAL_EMAIL':sys.argv[3],'VP_NATIVE_LOCAL_OTHER_EMAIL':sys.argv[4],'VP_NATIVE_REDIRECT_PROBE_URL':sys.argv[5],'VP_NATIVE_API_ORIGIN':sys.argv[6],'VP_NATIVE_TRIP_TEST':'1','VP_NATIVE_TRIP_EMAIL':sys.argv[3],'VP_NATIVE_TRIP_PASSWORD':sys.argv[7]})\nplistlib.dump(p,open(sys.argv[2],'wb'))`,source,target,simulatorUsers[0].email,simulatorUsers[1].email,redirect.url,api,password],{stdio:'ignore'});
       const test=async(id,selector,name)=>native('xcodebuild',['test-without-building','-xctestrun',target,'-destination',`platform=iOS Simulator,id=${id}`,'-parallel-testing-enabled','NO','-only-testing:'+selector,'-resultBundlePath',join(derived,`${name}.xcresult`)],join(derived,`${name}.log`),buildEnv);
-      await test(simulators[0],'VisePandaTests/NativeSessionIntegrationTests','model');
-      await test(simulators[0],'VisePandaUITests/NativeIdentityUITests/testLoginShowsRealOwnerProfile','phone-a-login');
-      await test(simulators[1],'VisePandaUITests/NativeIdentityUITests/testLoginShowsRealOwnerProfile','phone-b-replace');
-      await test(simulators[0],'VisePandaUITests/NativeIdentityUITests/testReplacedPhoneCannotRestoreOldSession','phone-a-rejected');
-      await test(simulators[1],'VisePandaUITests/NativeIdentityUITests/testLogoutClearsAccount','phone-b-logout');
+      if(outline){
+        await test(simulators[0],'VisePandaUITests/NativeTripUITests/testRelativeOutlineReviewConfirmAndRelaunch','outline');
+        const bundle=join(derived,'outline.xcresult'), evidence=join(repo,'artifacts','VPJ-09','native-ui-20260918');
+        mkdirSync(evidence,{recursive:true});
+        writeFileSync(join(evidence,'summary.json'),execFileSync('xcrun',['xcresulttool','get','test-results','summary','--path',bundle],{encoding:'utf8'}));
+        rmSync(join(evidence,'attachments'),{recursive:true,force:true});
+        execFileSync('xcrun',['xcresulttool','export','attachments','--path',bundle,'--output-path',join(evidence,'attachments')],{stdio:'ignore'});
+      }else{
+        await test(simulators[0],'VisePandaTests/NativeSessionIntegrationTests','model');
+        await test(simulators[0],'VisePandaUITests/NativeIdentityUITests/testLoginShowsRealOwnerProfile','phone-a-login');
+        await test(simulators[1],'VisePandaUITests/NativeIdentityUITests/testLoginShowsRealOwnerProfile','phone-b-replace');
+        await test(simulators[0],'VisePandaUITests/NativeIdentityUITests/testReplacedPhoneCannotRestoreOldSession','phone-a-rejected');
+        await test(simulators[1],'VisePandaUITests/NativeIdentityUITests/testLogoutClearsAccount','phone-b-logout');
+      }
     } finally { redirect.close(); }
-    console.log(JSON.stringify({result:'PASS',simulators:'owned-and-deleted-after-run'})); exit=0;
+    console.log(JSON.stringify({result:'PASS',scope:outline?'vpj09-outline':'native-identity',simulators:'owned-and-deleted-after-run'})); exit=0;
   }else{
     exit=await run(process.execPath,['--test','tests/integration/identity/native-local-session.test.mjs'],true,testEnv);
   }

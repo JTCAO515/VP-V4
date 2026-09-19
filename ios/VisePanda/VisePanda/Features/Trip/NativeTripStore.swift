@@ -87,6 +87,17 @@ final class NativeTripStore {
         notice = nil
     }
 
+    func beginOutline(_ titles: [String], starting date: String, using session: NativeSession) -> Bool {
+        guard !busy, session.dataScope == scope, scope != nil,
+              draft == nil, pending == nil, !proposalOutcomeUnknown, let detail,
+              detail.trip.id == selectedID else { return false }
+        var prepared = NativeTripDraft(detail)
+        guard prepared.appendOutline(titles, starting: date) else { return false }
+        draft = prepared
+        notice = nil
+        return true
+    }
+
     func proposeScreenshot(source: NativeScreenshotReviewSource, digest: String,
                            corrections: [NativeScreenshotCorrection], using session: NativeSession) async -> Bool {
         guard !busy, draft == nil, pending == nil,

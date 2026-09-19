@@ -93,6 +93,27 @@ test('local native/Web share one immutable Trip with confirmed intent, CAS and o
  await n('/'+otherTrip+'/proposal/reject',{proposalId:race.data.proposalId});
  const rollback=await w('/'+tripId+'/rollback',{targetVersion:0});assert.equal(rollback.status,201);assert.match(rollback.data.digest,/^trip-v2:/);const rollbackRead=await w('/'+tripId+'/proposal?proposalId='+rollback.data.proposalId);assert.equal(rollbackRead.data.proposal.after.days.length,0,'rollback displays actual full snapshot effect');
  const rollbackConfirm={proposalId:rollback.data.proposalId,idempotencyKey:randomUUID(),digest:rollback.data.digest};assert.equal((await w('/'+tripId+'/confirm',rollbackConfirm)).data.resultingVersion,5);assert.equal((await w('/'+tripId+'/confirm',rollbackConfirm)).data.outcome,'already_applied');assert.deepEqual((await n('/'+tripId)).data.content.days,[]);
+ // VPJ-09: an undated outline stays local; only user-bound dates enter this real Trip.
+ const outlineTrip=randomUUID(), dinnerDay=randomUUID(), dinnerItem=randomUUID();
+ assert.equal((await n('',{tripId:outlineTrip,title:'Shanghai ideas'})).status,201);
+ const dinnerPatch={expectedVersion:0,operations:[{kind:'upsert_day',dayId:dinnerDay,date:'2026-11-01',timeZone:'Asia/Shanghai'},{kind:'upsert_item',dayId:dinnerDay,itemId:dinnerItem,title:'Confirmed dinner'}]};
+ const dinnerProposal=await n('/'+outlineTrip+'/proposal',{patch:dinnerPatch});assert.equal(dinnerProposal.status,201);
+ const dinnerRead=await n('/'+outlineTrip+'/proposal?proposalId='+dinnerProposal.data.proposalId);
+ assert.equal((await n('/'+outlineTrip+'/confirm',{proposalId:dinnerProposal.data.proposalId,idempotencyKey:randomUUID(),digest:dinnerRead.data.proposal.digest})).data.resultingVersion,1);
+ const outlineDays=[{dayId:randomUUID(),itemId:randomUUID(),date:'2026-11-02',title:'Choose one food area; venues and hours to verify'},{dayId:randomUUID(),itemId:randomUUID(),date:'2026-11-03',title:'Choose one neighborhood walk; route and access to verify'}];
+ const outlinePatch={expectedVersion:1,operations:outlineDays.flatMap(day=>[{kind:'upsert_day',dayId:day.dayId,date:day.date,timeZone:'Asia/Shanghai'},{kind:'upsert_item',dayId:day.dayId,itemId:day.itemId,title:day.title}])};
+ const outlineProposal=await n('/'+outlineTrip+'/proposal',{patch:outlinePatch});assert.equal(outlineProposal.status,201);
+ const outlineRead=await n('/'+outlineTrip+'/proposal?proposalId='+outlineProposal.data.proposalId);
+ assert.equal(outlineRead.data.proposal.before.days.length,1);
+ assert.equal(outlineRead.data.proposal.after.days.length,3);
+ assert.equal((await n('/'+outlineTrip)).data.content.days.length,1,'outline proposal is not an implicit write');
+ assert.equal((await n('/'+outlineTrip+'/confirm',{proposalId:outlineProposal.data.proposalId,idempotencyKey:randomUUID(),digest:outlineRead.data.proposal.digest})).data.resultingVersion,2);
+ const outlineNative=await n('/'+outlineTrip),outlineWeb=await w('/'+outlineTrip);
+ assert.equal(outlineNative.data.trip.headVersion,2);
+ assert.deepEqual(outlineNative.data.content,outlineWeb.data.content);
+ assert.equal(outlineNative.data.content.days[0].items[0].title,'Confirmed dinner');
+ assert.deepEqual(outlineNative.data.content.days.slice(1).map(day=>day.date),['2026-11-02','2026-11-03']);
+ t.diagnostic('VPJ-09 bounded outline: real local Auth/Postgres, two new dated days, prior dinner preserved, native/Web version 2 readback.');
  if(process.env.VP_S1_BROWSER==='true') {
   const {exerciseSameTripBrowser}=await import('./same-trip-browser.mjs');
   await exerciseSameTripBrowser({api,jar,n,t});

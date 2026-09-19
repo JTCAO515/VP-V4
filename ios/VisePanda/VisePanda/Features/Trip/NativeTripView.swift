@@ -11,6 +11,11 @@ struct NativeTripView: View {
     @State private var confirmVisible = false
     @State private var reviewedReference: String?
     @State private var discardVisible = false
+    @State private var planningRequest = ""
+    @State private var outline: NativeRelativeOutline?
+    @State private var outlineTitles: [String] = []
+    @State private var outlineStartDate = ""
+    @State private var outlineNotice: String?
     @FocusState private var titleFocused: Bool
     private var chinese: Bool { settings.selectedLocale == .zh }
     private var session: NativeSession { settings.nativeSession }
@@ -36,6 +41,7 @@ struct NativeTripView: View {
                     }
                     if let detail = store.detail {
                         confirmed(detail)
+                        if store.draft == nil && store.pending == nil { outlineComposer }
                         if let pending = store.pending { proposal(pending) }
                         if let draft = store.draft {
                             NativeTripDraftEditor(draft: draftBinding(draft), chinese: chinese)
@@ -83,6 +89,7 @@ struct NativeTripView: View {
                 confirmVisible = false
                 reviewedReference = nil
                 discardVisible = false
+                clearOutline()
                 screenshotReviewSource = nil
             }
             if session.dataScope != nil && !session.busy { await store.reload(using: session) }
@@ -93,6 +100,7 @@ struct NativeTripView: View {
                 cleanupAbandonedScreenshots()
                 store.reset(for: retained)
                 newTitle = ""; confirmVisible = false; reviewedReference = nil; discardVisible = false
+                clearOutline()
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in
@@ -124,6 +132,68 @@ struct NativeTripView: View {
         catch { inboxCleanupFailed = true }
     }
 
+    private func clearOutline() {
+        planningRequest = ""; outline = nil; outlineTitles = []; outlineStartDate = ""; outlineNotice = nil
+    }
+
+    private var outlineComposer: some View {
+        VisePandaCard {
+            VStack(alignment: .leading, spacing: 12) {
+                Text(text("Start with a rough idea", "从模糊想法开始")).font(.title2.bold())
+                Text(text("Describe a 2–7 day visit to Shanghai, Beijing, Guangzhou or Chongqing, with food and walks. This guided outline uses your words; it does not check places or routes.", "说说去上海、北京、广州或重庆的 2–7 天想法，并提到美食和散步。此引导草稿只使用你的输入，不核验地点或路线。"))
+                    .font(.footnote).foregroundStyle(Color.vpSecondaryText)
+                TextField(text("e.g. First time in Shanghai for four days; food and walks, dates unknown", "例如：第一次去上海四天，喜欢吃和散步，日期未定"), text: $planningRequest, axis: .vertical)
+                    .textFieldStyle(.roundedBorder)
+                    .accessibilityIdentifier("trip.outline.request")
+                Button(text("Show two directions", "查看两个方向")) {
+                    if let result = NativeRelativeOutline.make(from: planningRequest, chinese: chinese) {
+                        outline = result
+                        outlineTitles = result.foodFirst
+                        outlineNotice = nil
+                    } else {
+                        outline = nil; outlineTitles = []
+                        outlineNotice = text("Add a supported city, 2–7 days, food and walks.", "请写明支持的城市、2–7 天、美食和散步。")
+                    }
+                }
+                .accessibilityIdentifier("trip.outline.generate")
+                if let outline {
+                    Text(text("\(outline.city) · \(outline.count) relative days · date and budget unknown", "\(outline.city) · \(outline.count) 个相对日 · 日期与预算未知"))
+                        .font(.headline)
+                    Text(text("Food first: fewer planned walks, one food area on each full day.", "美食优先：少安排散步，每个完整日探索一个美食片区。"))
+                    Button(text("Use food first", "选择美食优先")) { outlineTitles = outline.foodFirst }
+                        .accessibilityIdentifier("trip.outline.food")
+                    Text(text("Walk first: one neighborhood walk on each full day; meals stay flexible.", "散步优先：每个完整日安排一段街区散步，用餐保持弹性。"))
+                    Button(text("Use walk first", "选择散步优先")) { outlineTitles = outline.walkFirst }
+                        .accessibilityIdentifier("trip.outline.walk")
+                    ForEach(outlineTitles.indices, id: \.self) { index in
+                        TextField(text("Day \(index + 1)", "第 \(index + 1) 天"), text: $outlineTitles[index], axis: .vertical)
+                            .textFieldStyle(.roundedBorder)
+                            .accessibilityIdentifier("trip.outline.day.\(index + 1)")
+                    }
+                    Text(text("Choose a start date to make a reviewable Trip proposal. Existing days stay untouched; matching dates are rejected. Place, route, timing and feasibility still need verification.", "选定开始日期后才能生成可审阅的 Trip 提议。原有日程不改动，重叠日期会被拒绝。地点、路线、时间与可行性仍待核验。"))
+                        .font(.footnote).foregroundStyle(Color.vpSecondaryText)
+                    TextField(text("Start date (YYYY-MM-DD)", "开始日期（YYYY-MM-DD）"), text: $outlineStartDate)
+                        .textFieldStyle(.roundedBorder).keyboardType(.numbersAndPunctuation)
+                        .accessibilityIdentifier("trip.outline.startDate")
+                    Button(text("Add outline to local draft", "将方向加入本机草稿")) {
+                        if store.beginOutline(outlineTitles, starting: outlineStartDate, using: session) {
+                            outlineNotice = nil
+                        } else {
+                            outlineNotice = text("Use a valid start date with no overlap, then try again.", "请填写有效且不与现有日程重叠的开始日期。")
+                        }
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .accessibilityIdentifier("trip.outline.addToDraft")
+                    .disabled(store.busy)
+                }
+                if let outlineNotice {
+                    Text(outlineNotice).foregroundStyle(Color.vpSecondaryText)
+                        .accessibilityIdentifier("trip.outline.notice")
+                }
+            }
+        }
+    }
+
     private func draftBinding(_ rendered: NativeTripDraft) -> Binding<NativeTripDraft> {
         Binding {
             // SwiftUI may update a departing child after confirm has cleared the
@@ -145,6 +215,7 @@ struct NativeTripView: View {
                 ForEach(store.trips) { trip in
                     Button {
                         titleFocused = false
+                        clearOutline()
                         Task { await store.select(trip.id, using: session) }
                     } label: {
                         VStack(alignment: .leading, spacing: 4) {

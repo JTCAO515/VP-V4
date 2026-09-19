@@ -2,6 +2,68 @@ import XCTest
 
 nonisolated final class NativeTripUITests: XCTestCase {
     @MainActor
+    func testRelativeOutlineReviewConfirmAndRelaunch() throws {
+        guard ProcessInfo.processInfo.environment["VP_NATIVE_TRIP_TEST"] == "1",
+              let email = ProcessInfo.processInfo.environment["VP_NATIVE_TRIP_EMAIL"],
+              let password = ProcessInfo.processInfo.environment["VP_NATIVE_TRIP_PASSWORD"],
+              let origin = ProcessInfo.processInfo.environment["VP_NATIVE_API_ORIGIN"] else {
+            throw XCTSkip("UNRUN: disposable local Auth/Trip environment is not configured")
+        }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-VisePandaNativeAPI", origin, "-VisePandaLocale", "en"]
+        app.launch()
+        app.tabBars.buttons["Profile"].tap()
+        let emailField = app.textFields["native.login.email"]
+        XCTAssertTrue(emailField.waitForExistence(timeout: 20))
+        reveal(emailField, app); emailField.tap(); emailField.typeText(email)
+        let passwordField = app.secureTextFields["native.login.password"]
+        reveal(passwordField, app); passwordField.tap(); passwordField.typeText(password)
+        let login = app.buttons["native.login.submit"]
+        reveal(login, app); login.tap()
+        XCTAssertTrue(app.staticTexts["native.session.status"].waitForExistence(timeout: 30))
+        app.tabBars.buttons["Trip"].tap()
+        let title = element("trip.create.title", app)
+        reveal(title, app); title.tap(); title.typeText("Synthetic outline trip")
+        let create = app.buttons["trip.create.submit"]
+        reveal(create, app); create.tap()
+        XCTAssertTrue(app.staticTexts["trip.confirmed.title"].waitForExistence(timeout: 25))
+        let tripID = app.staticTexts["trip.selected.id"].label
+        let request = element("trip.outline.request", app)
+        reveal(request, app); request.tap()
+        request.typeText("First time in Shanghai for four days; food and walks, dates unknown")
+        let generate = app.buttons["trip.outline.generate"]
+        reveal(generate, app); generate.tap()
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "4 relative days")).firstMatch.waitForExistence(timeout: 10))
+        let walk = app.buttons["trip.outline.walk"]
+        reveal(walk, app); walk.tap()
+        let startDate = element("trip.outline.startDate", app)
+        reveal(startDate, app); startDate.tap(); startDate.typeText("2026-12-10")
+        let add = app.buttons["trip.outline.addToDraft"]
+        reveal(add, app); add.tap()
+        XCTAssertTrue(app.staticTexts["trip.confirmed.version"].label.contains("0"))
+        let propose = app.buttons["trip.draft.propose"]
+        reveal(propose, app); propose.tap()
+        let confirm = app.buttons["trip.proposal.confirm"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 25))
+        XCTAssertEqual(app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH %@", "trip.confirmed.item.")).count, 0)
+        reveal(confirm, app); capture("VPJ09-outline-proposal", app); confirm.tap()
+        app.buttons["Confirm and save"].tap()
+        let saved = app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH %@", "trip.confirmed.item."))
+        XCTAssertTrue(saved.firstMatch.waitForExistence(timeout: 25))
+        XCTAssertEqual(saved.count, 4)
+        XCTAssertTrue(app.staticTexts["trip.confirmed.version"].label.contains("1"))
+        capture("VPJ09-outline-confirmed", app)
+        app.terminate(); app.launch(); app.tabBars.buttons["Trip"].tap()
+        let select = app.buttons["trip.select.\(tripID)"]
+        reveal(select, app); select.tap()
+        XCTAssertTrue(saved.firstMatch.waitForExistence(timeout: 25))
+        XCTAssertEqual(saved.count, 4)
+        XCTAssertEqual(app.staticTexts["trip.selected.id"].label, tripID)
+        capture("VPJ09-outline-reloaded", app)
+    }
+
+    @MainActor
     func testReloadSameTripAfterWebConfirmation() throws {
         guard ProcessInfo.processInfo.environment["VP_NATIVE_TRIP_TEST"] == "1",
               let tripID = ProcessInfo.processInfo.environment["VP_NATIVE_TRIP_SHARED_ID"],
