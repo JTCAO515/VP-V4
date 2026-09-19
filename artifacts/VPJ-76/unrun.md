@@ -305,3 +305,18 @@ very pass hit and noted).
   to summarize there) and the `c2_sensitive`/`wiki-search-job.ts` paths --
   both named as deliberate, separate follow-ups in the contract doc, not
   attempted this round.
+
+**2026-09-19 target-environment readiness observation:** the correct Staging
+project is visible but the authenticated CLI database connection terminates
+before a migration read or dry-run. Preview lacks all grounded-Ask activation
+and provider configuration variables; deployed Ops review is deliberately
+Preview-only and the Web shell disables grounded read in production. No Ask,
+Trip, rollback, or billing acceptance was attempted; see
+`target-environment-readiness-20260919/verification.md`.
+
+**2026-09-19 Staging migration update:** ~~Apply the two merged VPJ-76
+grounded-assist migrations to the pinned Staging database~~ **DONE in the
+exact 11-file VPJ-75/76 transaction.** The `grounded_ai_assist_work_v1`
+RPC and private RLS job table are present; original Trip rows and digest are
+unchanged. See `staging-migration-20260919/verification.md`. Live Web/iOS Ask,
+EvidencePack, owner isolation, publication readback and rollback remain UNRUN.

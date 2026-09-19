@@ -313,3 +313,21 @@ the changed module is shared with #359's own jobs, and the full
 test:unit/test:integration/test:security/evals/docs:check/check:flags/
 check:assets) was re-run clean against this branch, confirming no
 regression to any #359 wiki-generation or statement-proposal behavior.
+
+**2026-09-19 target-environment readiness observation:** the correct Staging
+project (`VP - V4`, `dzqdzetcctkhbrhlxxgn`) is visible and can be linked, but
+the authenticated CLI database connection terminates before `migration list`
+or `db push --dry-run` can inspect it. Preview also lacks the Ops and grounded
+provider activation variables, and main production builds are intentionally
+skipped. No target-environment write occurred; see
+`target-environment-readiness-20260919/verification.md`.
+
+**2026-09-19 Staging migration update:** ~~Apply the merged VPJ-75 Wiki
+migrations to the pinned Staging database~~ **DONE for the 9 VPJ-75 files in
+the exact 11-file VPJ-75/76 package.** The target now has 61 history rows,
+the Wiki/withdrawal RPCs, private RLS tables and unchanged original Auth,
+Trip, source and publication data. The new encrypted backup passed an
+isolated PostgreSQL 17 restore; the migration set also passed an in-target
+ROLLBACK rehearsal before commit. See
+`staging-migration-20260919/verification.md`. Real Ops/worker/publish/readback,
+withdrawal behavior, billing and full #359 acceptance remain UNRUN.
