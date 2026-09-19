@@ -62,3 +62,25 @@ Swift tests no longer hard-code port 59731 when the runner provides `VP_NATIVE_A
 `pnpm docs:check`, and `git diff --check` pass. The actual disposable database execution remains
 blocked before user setup by the exact historical migration inventory error recorded in `unrun.md`.
 No test result is claimed for the new simulator path until that VPJ-02-owned replay defect is fixed.
+
+## 2026-09-17 current-main mobile-session recovery
+
+PR #449 repaired the historical bootstrap ACL replay defect. On current `main` at
+`a68ff1a`, a fresh disposable Supabase stack then replayed every migration, including
+the new append-only `start_chat_turn` guard repair. The real local Auth → HTTPS API →
+PostgREST/RLS runner passed with one suite and zero skips: login, refresh, natural
+expiry, replacement, stale refresh rejection, and stale authenticated RPC replay
+rejection. Its created Auth users and stack were deleted in cleanup.
+
+The current `--simulator` runner also completed after the injected local API origin
+replaced the stale fixed test port. It created two owned iPhone 17 Pro simulators and
+two synthetic accounts, then passed the model session test plus: phone A login, phone
+B replacement, phone A rejection after replacement, and phone B logout. The runner
+deleted both simulators, synthetic accounts, DerivedData and the disposable stack.
+
+On 2026-09-17, an iPhone physical-device Staging build configured with
+`https://staging.go2china.space` was observed over cellular: password login, explicit
+session refresh, logout, re-login, and force-quit/relaunch restoration all worked.
+The device showed the Staging identity surface; no screenshots or account identifiers
+are retained in this repository. Realtime remained disconnected, which is a separate
+capability from the authenticated session.
