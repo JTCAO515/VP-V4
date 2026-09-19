@@ -207,6 +207,7 @@ final class NativeSession {
         guard let url = target.url else { throw NativeDataError.invalidResponse }
         var request = URLRequest(url: url)
         request.httpMethod = method
+        if path.hasSuffix("/ai-assist") { request.timeoutInterval = 90 }
         request.httpShouldHandleCookies = false
         request.httpBody = body
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")

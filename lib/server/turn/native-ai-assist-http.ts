@@ -43,7 +43,8 @@ export async function nativeGroundedAiAssist(request: NextRequest, turnId: strin
   const apiKey = process.env.VISEPANDA_GROUNDED_AI_ASSIST_API_KEY;
   if (!provider || !apiKey) return failure("PROVIDER_UNAVAILABLE", 503);
 
-  const scope = nativeRequestScope(request.signal);
+  // Match the Web route: four 15s provider rounds plus bounded database work.
+  const scope = nativeRequestScope(request.signal, 75_000);
   try {
     const actor = await scope.run(() => verifyNativeCredentials(request, config, scope.fetch, scope.unavailable));
     if (!actor) return failure("UNAUTHENTICATED", 401);

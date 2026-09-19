@@ -320,3 +320,61 @@ exact 11-file VPJ-75/76 transaction.** The `grounded_ai_assist_work_v1`
 RPC and private RLS job table are present; original Trip rows and digest are
 unchanged. See `staging-migration-20260919/verification.md`. Live Web/iOS Ask,
 EvidencePack, owner isolation, publication readback and rollback remain UNRUN.
+
+**2026-09-19 native Staging setup:** ~~Installed iOS Staging app and
+versioned Qwen consent for an owned ordinary account~~ **DONE on an isolated
+iOS 26.5 Simulator.** The actual merged Info.plist pinned the reviewed
+Preview and grounded mode; the App's notice/consent UI was used and the
+remote policy row shows one active consent. No Ask question, EvidencePack,
+physical-device readback or rollback has occurred yet; see
+`staging-ios-20260919/verification.md`.
+
+**2026-09-19 deployed Web policy baseline:** ~~Web policy-aware empty-history
+readback after native consent~~ **DONE on exact Preview
+`dpl_CZoHE82rGyxPQ7NFe8mcBeWYEJPU`.** The owner saw unavailable before
+consent and an authorized empty saved-answer list after consent; anonymous
+Web/native policy routes returned app `401`. No answer/EvidencePack or
+publication delta was read yet. See
+`staging-web-20260919/verification.md`.
+
+**2026-09-19 AI-assist live failure:** Real blocked-payment turn and Web
+fallback invocation ~~not attempted~~ **DONE, but the fallback returned
+503 and did not produce an EvidencePack.** The job remained running at
+inspection. A scoped timeout repair is in progress; re-deployed Web/native
+runtime, bounded provider outcome, and EvidencePack validation remain
+UNRUN. See `staging-web-20260919/verification.md`.
+
+**2026-09-19 owner isolation:** ~~Real owner/other-user policy and
+grounded-history reads~~ **DONE for the first native turn.** The owner had
+accepted consent and one visible turn; the second ordinary user had no
+consent, zero turns, and no copy of the owner's question. Published Fact
+qualification and historical reload after revocation remain UNRUN; see
+`staging-web-20260919/verification.md`.
+
+**2026-09-19 first real iOS Ask:** ~~Native submitted grounded turn with
+current Qwen policy, real provider worker and durable budget settlement~~
+**DONE for one installed Simulator request.** The visible English rail
+question produced a real `clarification` (not a fact answer), with 2611
+provider tokens and a conservative CNY 16,188-micro budget settlement.
+The first question omitted the contracted adult foreign-passport/domestic
+e-ticket scope, so clarification is expected, not over-refusal. No EvidencePack
+or #359 publication was consumed, and publication remained disabled.
+Original Trip digest matched. See `staging-ios-20260919/verification.md`.
+
+**2026-09-19 Web turn readback:** ~~Owner Web readback of a native-submitted
+real Qwen turn~~ **DONE for the clarification result.** The deployed Web
+saved-answer panel rendered the exact question and honest need-more-detail
+notice under the same account. This still has no published #359 fact or
+EvidencePack; see `staging-web-20260919/verification.md`.
+
+**2026-09-19 publication-on direct baseline:** ~~Real installed iOS and
+deployed Web answer from existing reviewed rail Facts, with two required
+claims, provenance and original Trip preservation~~ **DONE for the
+existing-content slice.** The actual App turn is
+`rail_boarding_documents/single`/`answered`, both required claims covered;
+the Web showed both sources and qualifiers. Three real Qwen worker calls
+totalling 7848 tokens had 48,726 CNY micros in conservative internal
+settlement; no account invoice was available. This does **not** complete the
+#359 new-publication readback or fallback EvidencePack v2. See
+`staging-ios-20260919/verification.md` and
+`staging-web-20260919/verification.md`.

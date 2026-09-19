@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "vpj75-76-staging-qwen-notice/1",
+  "noticeVersion": "vpj75-76-staging-qwen-20260919-v1",
+  "scope": "Pinned VP - V4 Staging project; owned synthetic test accounts only",
+  "provider": "qwen",
+  "recipient": "QwenAI via DashScope; public Bailian terms name Tongyi Yunqi (Hangzhou) Information Technology Co., Ltd.; this account's contracting entity is unverified",
+  "endpoint": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+  "sourceRegion": "Vercel iad1 application runtime; Supabase ap-southeast-1 Staging database",
+  "processingRegion": "Beijing DashScope access domain; internal inference location not independently observed",
+  "storageRegion": "Supabase Singapore; Qwen access region Beijing; supplier backup location unknown",
+  "termsVersion": "Public Bailian terms effective 2026-09-02; account-specific accepted version unverified",
+  "noticeZh": "仅供 VP - V4 Staging 的本轮合成账号验收。你主动提交的当次文字问题会在 VisePanda 服务端保存，并通过 QwenAI 的 DashScope 接口发送给千问模型生成回答；通过校验的回答也会保存。实际应用函数位于 Vercel iad1，数据库位于 Supabase 新加坡项目；接口接入域名对应北京，供应商内部推理地点、输入输出与备份的具体留存期限及本账号训练用途尚未独立核实。公开百炼协议列明通义云启（杭州）信息技术有限公司，本账号适用的签约主体与版本尚未核实；不能承诺供应商零留存、绝不训练或已删除。此次不发送 Trip、照片、音频、长期偏好或其他用户材料，也不自动切换供应商。VisePanda 长期保留问题与最终回答，没有自动删除日期；删除聊天或账号会在产品中永久隐藏正文，并非彻底擦除。撤回本版同意会阻止后续授权与结果保存，但不能召回已发出的请求或清除供应商副本。不同意时不调用模型。请勿输入密码、验证码、卡号、密钥或他人的私人信息。疑问或彻底删除申请请联系 jtcao@go2china.space；申请不代表处理已完成。",
+  "noticeEn": "For this VP - V4 Staging acceptance run with owned synthetic accounts only. VisePanda stores the text question you submit and sends that question through QwenAI's DashScope endpoint for an answer; it also stores the validated final answer. The application function is observed in Vercel iad1 and the database is in Supabase Singapore. The API access domain maps to Beijing; the supplier's internal inference location, exact input/output and backup retention periods, and training use for this account have not been independently verified. Public Bailian terms name Tongyi Yunqi (Hangzhou) Information Technology Co., Ltd.; this account's contracting entity and accepted terms version remain unverified. We cannot promise zero supplier retention, no training, or completed supplier deletion. This test does not send Trip data, photos, audio, saved preferences, or another person's material, and it has no automatic provider fallback. VisePanda retains the question and validated answer long term with no automatic deletion date. Deleting a chat or account permanently hides retained text in the product; it is not erasure. Withdrawing this policy's consent stops future authorization and result storage, but cannot recall a request already sent or erase supplier copies. Declining means no model call. Do not enter passwords, codes, card numbers, secret keys, or private information about others. Contact jtcao@go2china.space for questions or an erasure request; a request does not establish completion."
+}
