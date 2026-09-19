@@ -122,3 +122,17 @@ Trips with the exact prior full-row digest
 This proves native and structured answer behavior for **existing** rail
 Facts. It does not yet prove consumption of the new #359 candidate or
 EvidencePack v2 from the fallback search path.
+
+## New Preview native build boundary
+
+After the Web/native AI-assist timeout repair, the iOS Simulator build and
+install succeeded again with the new exact Preview host
+`vp-v4-64u5z6ck5-jtcao515s-projects.vercel.app` pinned as
+`VP_NATIVE_STAGING_API_ORIGIN` (bundle
+`space.go2china.VisePanda`, process 19253, iPhone 17 Pro iOS 26.5
+Simulator). The synthetic author signed into the rebuilt App, and the
+remote account session became valid. No native AI-assist action was
+completed on this build; a build and login cannot substitute for a real
+fallback response or a physical iPhone acceptance run. A fresh remote
+SQL read after the Web retry and native login still found the original
+3 Trip rows and exact digest `df58483b35f0002eb3bb9a9e829c8198`.

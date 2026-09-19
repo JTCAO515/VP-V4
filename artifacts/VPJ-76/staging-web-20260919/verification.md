@@ -68,3 +68,25 @@ search from this deployed Web page. The actual POST returned application
 shorter than its own four allowed 15-second provider rounds, and the Web
 client aborted after 20 seconds. A bounded timeout repair was prepared;
 new-deployment readback is still required before changing this result.
+
+## Re-deployed AI-assist retry: bounded completion, no invented answer
+
+The Git-triggered Preview `dpl_AG9s59Khqc94hXgcmjwed8RE4Gqj` at
+`https://vp-v4-64u5z6ck5-jtcao515s-projects.vercel.app` is `READY` and
+reports commit `30fd26f4cb1a76c154bdb1445f56aacae030ae76`. The existing
+maintenance firewall rule was amended to admit **only this exact host**;
+the deny action and every previous host remained unchanged. The same
+ordinary owner signed into the deployed Web UI and retried the same
+blocked-payment turn. The previous stale job was reclaimed; remote row
+`turn_private.grounded_ai_assist_jobs` for
+`0691deb1-fcfe-4d0f-997f-80f8a4d3b8b8` now shows `succeeded`, started
+`2026-09-19 10:05:28.742315+00`, finished
+`2026-09-19 10:05:34.033526+00`, `outcome.kind=unavailable`,
+`outcome.reason=retrieval_miss`, and no error code. The live Web rendered
+“AI 搜索未在已发布指引中找到相关内容” rather than a 503 or a fabricated
+payment answer. [Real deployed Web viewport](ai-assist-retrieval-miss-new-preview.png).
+
+This verifies the timeout repair and a truthful negative search outcome;
+it does **not** verify an `answered` EvidencePack, #359 newly published
+content, supplier invoice or physical iPhone. The provider may have billed
+the earlier timed-out attempt; no invoice reconciliation is claimed.

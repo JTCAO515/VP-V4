@@ -344,6 +344,14 @@ inspection. A scoped timeout repair is in progress; re-deployed Web/native
 runtime, bounded provider outcome, and EvidencePack validation remain
 UNRUN. See `staging-web-20260919/verification.md`.
 
+**2026-09-19 AI-assist re-deployment:** ~~Re-deployed Web retry after the
+timeout repair~~ **DONE on `dpl_AG9s59Khqc94hXgcmjwed8RE4Gqj`.** The
+same real job settled `succeeded/unavailable/retrieval_miss` in about 5.3
+seconds and Web displayed the honest no-content message. This removes the
+observed timeout failure but is **not** an answered EvidencePack. Native
+fallback runtime, newly published content readback and provider billing
+remain UNRUN; see `staging-web-20260919/verification.md`.
+
 **2026-09-19 owner isolation:** ~~Real owner/other-user policy and
 grounded-history reads~~ **DONE for the first native turn.** The owner had
 accepted consent and one visible turn; the second ordinary user had no
