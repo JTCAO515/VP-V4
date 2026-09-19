@@ -32,20 +32,22 @@ function AiAssistPanel({ turnId, locale }: { turnId: string; locale: "zh" | "en"
   useEffect(() => () => { alive.current = false; }, []);
   async function run() {
     setState("loading"); setResult(null);
+    const deadline = performance.now() + 90_000;
     for (let poll = 0; poll < 20; poll += 1) {
       if (!alive.current) return;
+      if (performance.now() >= deadline) break;
       let body: { data?: AiAssistJobStatus; error?: string } | null = null;
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), Math.min(85_000, deadline - performance.now()));
       try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 20_000);
         const response = await fetch("/api/chat/grounded/ai-assist", {
           method: "POST", credentials: "same-origin", cache: "no-store", signal: controller.signal,
           headers: { "Content-Type": "application/json" }, body: JSON.stringify({ turnId }),
         });
-        clearTimeout(timeout);
         if (!response.ok && response.status !== 401 && response.status !== 503) throw new Error("request failed");
         body = await response.json();
       } catch { /* transient network error: keep polling within the loop budget */ }
+      finally { clearTimeout(timeout); }
       if (!alive.current) return;
       if (!body || body.error || !body.data) { setState("error"); return; }
       if (body.data.status === "pending") { await new Promise(resolve => setTimeout(resolve, 1500)); continue; }
