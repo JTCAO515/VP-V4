@@ -37,15 +37,13 @@ Default environment-dependent skips remain; see native-io/commands.jsonl.503 is 
   the current scheme, injects only the explicit loopback API origin into a transient xctestrun,
   and guarantees simulator/account/stack cleanup. It replaces stale fixed UDIDs and a fixed
   `/tmp` build location; ordinary no-argument and `--same-trip` modes remain unchanged.
-- The current runner could not reach account creation: a fresh disposable full migration replay
-  stops in `20260909223841_vpj_04_native_mobile_sessions.sql` with `Unreviewed definer RPC
-  inventory`. The migration's fixed list is evaluated after the earlier VPJ-02 repair already
-  changes the public SECURITY DEFINER inventory. This is a reproducible VPJ-02 migration-history
-  compatibility FAIL, not an identity authorization result. No Supabase user, account, Trip or
-  simulator was created by the failed attempts; each disposable workdir was removed.
-- This task must not edit an applied historical migration or skip its inventory guard. Until the
-  owning VPJ-02 migration replay fix is merged, current-main real local Auth/RLS/natural-expiry
-  and the new two-Simulator run remain UNRUN. Existing 2026-09-10/11 evidence stays historical.
-- Current Preview native session endpoint returned Vercel 403 and `staging.go2china.space`
-  timed out. Its Native Staging variables remain scoped to historical Preview branches, so no
-  current remote activation or real-user account probe was attempted.
+- PR #449 repaired the migration replay failure. Current-main disposable Auth/RLS, natural expiry,
+  two-Simulator replacement and a physical-device Staging session recovery are now recorded in
+  `verification.md`.
+- The observed `staging.go2china.space` domain is DNS healthy: public resolvers and the
+  authoritative delegation return its Vercel CNAME, and anonymous native-session/profile probes
+  return expected 401 rather than timing out. It remains scoped to a historical Preview branch,
+  so this does not establish a current-main remote deployment.
+- Full Issue closure remains UNRUN: remote natural-expiry/fault injection, a second physical
+  device, VoiceOver/iOS 17 coverage, and push binding all lack observed evidence. No push binding
+  is claimed merely because the app has no active realtime connection.

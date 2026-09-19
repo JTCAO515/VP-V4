@@ -38,7 +38,7 @@ nonisolated final class NativeSessionIntegrationTests: XCTestCase {
         let otherEmail = try XCTUnwrap(ProcessInfo.processInfo.environment["VP_NATIVE_LOCAL_OTHER_EMAIL"])
         let password = "VPJ04-Local-Synthetic-Only-191!"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: "vpj04.native.integration.\(UUID().uuidString)"))
-        let args = ["-VisePandaNativeAPI", "http://127.0.0.1:59731"]
+        let args = ["-VisePandaNativeAPI", Self.localAPIOrigin]
         let phone = NativeSession(arguments: args, defaults: defaults)
         XCTAssertTrue(phone.enabled)
         await phone.login(email: email, password: password)
