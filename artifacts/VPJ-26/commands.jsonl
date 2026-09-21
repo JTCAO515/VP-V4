@@ -1,0 +1,4 @@
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-09-21T21:06:48.792Z","finishedAt":"2026-09-21T21:06:55.927Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-09-21T21:06:56.234Z","finishedAt":"2026-09-21T21:06:56.394Z","env":"local"}
+{"command":"env DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=FC6D13AB-EE1C-4599-A25B-C31C37D508DB' -derivedDataPath /tmp/vpj26-derived -only-testing:VisePandaTests/NativeTranslationTests -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-","exitCode":0,"startedAt":"2026-09-21T21:05:06.160Z","finishedAt":"2026-09-21T21:11:16.732Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-09-21T21:12:14.689Z","finishedAt":"2026-09-21T21:12:14.752Z","env":"local"}
