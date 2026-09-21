@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "journey-pass-catalog/2",
+  "catalogVersion": 2,
+  "policyVersion": "service-task-development/1",
+  "locale": "en",
+  "status": "In development. Not available to purchase.",
+  "purchaseEnabled": false,
+  "price": null,
+  "priceSource": "StoreKit.Product.displayPrice",
+  "free": {
+    "name": "Free",
+    "sharedBenefits": [
+      "explicit_cross_trip_preferences",
+      "trip_and_data_controls"
+    ],
+    "developmentCapacity": {
+      "period": {
+        "kind": "account_rolling",
+        "hours": 168,
+        "quantity": 4
+      },
+      "burst": {
+        "kind": "account_rolling",
+        "hours": 24,
+        "quantity": 2
+      }
+    }
+  },
+  "journeyPass": {
+    "name": "Journey Pass",
+    "durationHours": 720,
+    "sharedBenefits": [
+      "explicit_cross_trip_preferences",
+      "trip_and_data_controls"
+    ],
+    "developmentCapacity": {
+      "period": {
+        "kind": "per_grant",
+        "hours": 720,
+        "quantity": 80
+      },
+      "burst": {
+        "kind": "account_rolling",
+        "hours": 24,
+        "quantity": 12
+      }
+    },
+    "description": "30 days, non-renewing. Capacity is for development testing only."
+  },
+  "mediaTrialLimits": {
+    "voiceInputSeconds": 60,
+    "defaultGuideSeconds": 120,
+    "imageBytes": 10000000,
+    "pdfPages": 10,
+    "pdfBytes": 20000000
+  },
+  "promises": {
+    "unlimited": false,
+    "humanServiceIncluded": false
+  }
+}
