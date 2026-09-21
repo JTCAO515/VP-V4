@@ -140,7 +140,7 @@ Ask 输出简短解释和一份主要成果卡；“查看计划”进入全宽 
 
 SwiftUI + Swift 6；每个 Tab 独立 NavigationStack，路径仅保存 ID；页面数据从当前授权 repository 读取。领域状态与展示状态分离，任务取消和异步结果绑定账号、Trip、request ID。不要用 WKWebView 作为核心 App。
 
-最小结构为 App/Navigation、Features、DesignSystem、Networking、Persistence、Services、Resources 与 Tests。复用本地未跟踪壳的有效结构，经审计迁入，不能把它当 main 已有原生产品。代码审计见 [资产处置附件](research/final-code-reuse-audit-2026-09-05.md)。
+最小结构为 App/Navigation、Features、DesignSystem、Networking、Persistence、Services、Resources 与 Tests。原生壳已迁入 main，后续复用已接受的原生结构及同 Trip/Ask/地点/截图消费者；具体交付边界见[当前状态](program/2026-09-05/CURRENT-STATUS-2026-09-22.md)，不把代码存在视为产品验收。代码审计见 [资产处置附件](research/final-code-reuse-audit-2026-09-05.md)。
 
 Web 沿用 Next.js App Router、React、strict TypeScript、Tailwind；保留已有基本编辑和确认。两端共享序列化领域协议和验收样例，各自原生渲染；不强行共用 UI 代码。
 
@@ -443,7 +443,7 @@ Apple要求真正beta/demo走TestFlight，公开AppStore提交完整可用版本
 | 可见页面/merged等于已交付 | 代码、fixture、环境、客户端和用户验收五层分开 |
 | 关闭旧Issue即丢未完职责 | 每条链接到新的替代任务，历史可恢复 |
 
-PR #185中依赖调度、ADR编号和文档一致性建议值得继承；该PR仍保留待审，不自动合并。PR #186作为历史产品访谈记录保存，其只中文/酒店未分层/缺成功指标等冲突按本轮授权修订；实际费用、期限与用户证据仍需真实验证。
+以下为2026-09-05初始处置记录，PR当前状态须查询GitHub：PR #185中依赖调度、ADR编号和文档一致性建议值得继承；当时保留待审，不自动合并。PR #186作为历史产品访谈记录保存，其只中文/酒店未分层/缺成功指标等冲突按本轮授权修订；实际费用、期限与用户证据仍需真实验证。
 
 ## 26. 初始顺序与当前调度入口
 
