@@ -214,3 +214,14 @@ struct NativeRelativeOutline: Equatable {
                      walkFirst: (0..<count).map { $0 == 0 && count > 2 ? arrival : ($0 == count - 1 ? departure : walk) })
     }
 }
+
+/// Lifecycle is read separately so an unavailable archive API cannot erase a saved Trip.
+struct NativeTripArchive: Decodable, Equatable {
+    let tripId: String
+    let archivedVersion: Int
+    let archivedAt: String
+}
+struct NativeTripArchiveReply: Decodable {
+    let version: Int
+    let archive: NativeTripArchive?
+}

@@ -16,6 +16,7 @@ import { assertTripPatch, type TripSnapshot as TripContentSnapshot } from "../tr
 import { describeProposalDiff, type ProposalDayDiff } from "../trip/proposal/diff.ts";
 
 import { readStoredSnapshot, snapshotRestorePatch } from "../trip/snapshot/read.ts";
+import { tripArchiveOperations } from "../trip/archive/operations.ts";
 
 type PendingCookie = { name: string; value: string; options: CookieOptions };
 
@@ -233,7 +234,7 @@ export async function createNativeTripDataAdapter(request: Pick<NextRequest, "he
       ? { data: credentials.subject } : { error: "UNAUTHENTICATED" };
   };
   const operations = createDataOperations(credentials.client, authenticated, response => response, true);
-  return { authenticated, listTrips: operations.listTrips, createTrip: operations.createTrip,
+  return { ...tripArchiveOperations(credentials.client, authenticated), authenticated, listTrips: operations.listTrips, createTrip: operations.createTrip,
     getTrip: operations.getTrip, getPendingProposal: operations.getPendingProposal,
     createPendingProposal: operations.createPendingProposal, revisePendingProposalPatch: operations.revisePendingProposalPatch,
     rejectPendingProposal: operations.rejectPendingProposal, confirm: operations.confirm };
