@@ -59,3 +59,14 @@ its generated pages were rebuilt. After merge `b7d80fd`, iOS17.5 compiled both
 features and passed 9/9 tests, zero skips: place-search tests, palette,
 rendered-label updates and the original Tools audit. `plutil`, docs check and
 diff check pass. No map runtime behavior or SDK configuration was changed.
+
+## CI toolchain mismatch
+
+Native run35655888102 failed before compilation because the actual runner has
+Xcode26.6/17F113 while the script accepted only27.0/27A266a. The two previously
+validated exact version/build pairs are now an explicit allowlist; unknown
+versions, missing runtime/device, signature failures and tests still fail. No
+test was filtered or retried by the script. Python syntax, local27.0 preflight,
+docs and diff checks pass. Remote26.6 compilation/full-scheme outcome must be
+read from the replacement CI run; the old failure remains a failure. Adjacent
+script/VPJ-56 contract changes remove this observed S1 integration blocker.

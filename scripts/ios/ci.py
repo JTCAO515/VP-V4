@@ -13,7 +13,12 @@ import sys
 import uuid
 
 PROJECT = "ios/VisePanda/VisePanda.xcodeproj"
-XCODE = "Xcode 27.0\nBuild version 27A266a"
+# Both known self-hosted installations run the same pinned Simulator runtime.
+# Keep exact build identities: an unknown upgrade must still fail preflight.
+XCODE_VERSIONS = frozenset({
+    "Xcode 26.6\nBuild version 17F113",
+    "Xcode 27.0\nBuild version 27A266a",
+})
 RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-26-5"
 DEVICE = "iPhone 17 Pro"
 
@@ -61,8 +66,8 @@ def main():
         return result.stdout
 
     version = run(["xcodebuild", "-version"], "xcode-version").strip()
-    if version != XCODE:
-        raise RuntimeError(f"Expected {XCODE!r}, found {version!r}; no automatic fallback")
+    if version not in XCODE_VERSIONS:
+        raise RuntimeError(f"Expected one of {sorted(XCODE_VERSIONS)!r}, found {version!r}; no automatic fallback")
     run(["xcodebuild", "-list", "-project", PROJECT], "project")
     devices = json.loads(run(["xcrun", "simctl", "list", "devices", "available", "--json"], "devices"))
     matches = [d for d in devices["devices"].get(RUNTIME, [])
