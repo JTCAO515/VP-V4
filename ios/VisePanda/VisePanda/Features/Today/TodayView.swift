@@ -80,8 +80,7 @@ struct ToolsView: View {
                             Image(systemName: capability.systemImage)
                                 .accessibilityHidden(true)
                         }
-                        Text(capability.title)
-                            .fixedSize(horizontal: false, vertical: true)
+                        VPReadableText(capability.titleKey)
                     }
                     .frame(minHeight: 44)
                 }

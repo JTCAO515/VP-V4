@@ -278,6 +278,27 @@ final class AppShellUITests: XCTestCase {
         capture("Tools-largest-accessibility-text", app: app)
     }
 
+    func testToolsFullAccessibilityAndNavigationInBothLanguagesAndThemes() throws {
+        let previousAppearance = XCUIDevice.shared.appearance
+        defer { XCUIDevice.shared.appearance = previousAppearance }
+        for locale in ["en", "zh-Hans"] {
+            for appearance in [XCUIDevice.Appearance.light, .dark] {
+                XCUIDevice.shared.appearance = appearance
+                let app = launch(locale: locale, largeText: true)
+                app.tabBars.buttons[locale == "en" ? "Tools" : "工具"].tap()
+                app.swipeUp()
+                let title = locale == "en" ? "Translation" : "翻译"
+                let translation = app.buttons[title]
+                XCTAssertTrue(translation.isHittable)
+                try app.performAccessibilityAudit(for: .all)
+                capture("Tools-full-\(locale)-\(appearance.rawValue)", app: app)
+                translation.tap()
+                XCTAssertTrue(app.navigationBars[title].waitForExistence(timeout: 3))
+                app.terminate()
+            }
+        }
+    }
+
     func testTodayAccessibilityAtLargestTextSize() throws {
         let app = launch(largeText: true)
         app.tabBars.buttons["Trip"].tap()
