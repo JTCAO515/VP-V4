@@ -8,7 +8,7 @@
 
 ## 当前基线与开发入口
 
-JT于2026-09-13授权知识体系升级规划及拆票。先安全交付当前主线；本规划PR合并后核对本票输入、main接口与实际环境再实施。规划未合并可读规格和做独立准备，不按未合并接口写运行代码。沿现有开发接入规则，供应商未知项不是前置许可；保留RLS、实际告知/同意、Trip确认和真实验收。
+知识升级规划已合并；#358已关闭，#359/#360沿既有归属和开放PR接续。核最新main实际接口及当前GitHub状态，不重跑旧规划前置；保留RLS、实际告知/同意、Trip确认和真实验收。
 任务范围、接口、检查、证据、Owner、外部条件、观察、文档与回滚见 [本任务执行行](https://github.com/JTCAO515/VP-V4/blob/codex/knowledge-upgrade-plan-20260913/docs/program/2026-09-05/EXECUTION-CONTRACT.md#vpj-75)；按 [开发流程](https://github.com/JTCAO515/VP-V4/blob/codex/knowledge-upgrade-plan-20260913/docs/agents/development-workflow.md) 选择本次PR验证，读取受影响的 [领域接口](https://github.com/JTCAO515/VP-V4/blob/codex/knowledge-upgrade-plan-20260913/docs/knowledge-upgrade/README.md)。
 验收阶段：[S2](https://github.com/JTCAO515/VP-V4/blob/codex/knowledge-upgrade-plan-20260913/docs/program/2026-09-05/DELIVERY-STAGES.md#s2)；阶段演示不代替本票完整验收。
 首次进入或范围变化时读 [主报告](https://github.com/JTCAO515/VP-V4/blob/codex/knowledge-upgrade-plan-20260913/docs/VISEPANDA-MASTER-PLAN-2026-09-05.md)。

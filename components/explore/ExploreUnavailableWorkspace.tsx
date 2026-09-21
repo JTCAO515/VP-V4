@@ -38,6 +38,7 @@ export function ExploreUnavailableWorkspace({ route }: Readonly<{ route: RouteKi
       <p className={styles.state}>{content.unavailable}</p>
       <h1 id="explore-title">{content.title}</h1>
       <p>{content.body}</p>
+      {route === "index" && <a href="/places">{locale === "zh" ? "登录后查找地点与中文地址" : "Sign in to find places and Chinese addresses"}</a>}
       <a className={styles.returnAction} href="/visepanda">{content.returnToProduct} <span aria-hidden="true">↗</span></a>
     </section>
   </main>;

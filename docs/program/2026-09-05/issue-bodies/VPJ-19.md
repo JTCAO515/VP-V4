@@ -8,7 +8,7 @@
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：沿#363的现有身份/搜索/详情/geocode继续一个未完成适配与地图同选中路径，然后在#364验路线出口。
+- 首个可交付结果：复用已合并的搜索/详情/geocode/suggest/nearby/reverse-geocode适配；沿#363补原生输入状态隔离与地图/列表/详情同选中消费者，再在#364接路线出口。
 - 本票责任/非目标：这是地点/路线能力父票，消费子票证据；不与#363/364重复实现，#366负责交通观测，#365负责Trip消费。
 - 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/contracts/place-identity.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/contracts/place-identity.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。

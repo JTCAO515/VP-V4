@@ -769,7 +769,7 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
         "firstSlice": "用日期未定且已有偏好的输入产出可修改相对日草稿，展示局部变化并沿既有确认路径保存/重载。",
-        "boundary": "只负责初始多日草稿；10负责局部改稿交互，65补实际地点和路线依据，不把相对日草稿称可执行行程。",
+        "boundary": "只负责初始多日草稿；10负责局部改稿交互，65补实际地点和路线依据，不把相对日草稿称可执行行程。 2026-09-18已合并PR #475：四城2–7天美食/散步相对日方向、本机编辑、开始日期绑定、既有Proposal/diff/确认，拒绝重叠日期并保留旧日程；相邻真实Auth/PostgreSQL回读用tests/integration/trip/native-same-trip.test.mjs及一次性本地Supabase runner验证。仍未完成保存偏好、任意模糊输入、完整Chat→Plan、真实地点/可行性及目标环境验收，见artifacts/VPJ-09/verification.md。",
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md"
         ]
@@ -1663,7 +1663,7 @@
       "deliveryStage": "S3",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "沿#363的现有身份/搜索/详情/geocode继续一个未完成适配与地图同选中路径，然后在#364验路线出口。",
+        "firstSlice": "复用已合并的搜索/详情/geocode/suggest/nearby/reverse-geocode适配；沿#363补原生输入状态隔离与地图/列表/详情同选中消费者，再在#364接路线出口。",
         "boundary": "这是地点/路线能力父票，消费子票证据；不与#363/364重复实现，#366负责交通观测，#365负责Trip消费。",
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md",
@@ -6255,7 +6255,7 @@
       "activationEvidence": null,
       "sourceRef": "codex/knowledge-upgrade-plan-20260913",
       "deliveryStage": "S2",
-      "baselineNote": "JT于2026-09-13授权知识体系升级规划及拆票。先安全交付当前主线；本规划PR合并后核对本票输入、main接口与实际环境再实施。规划未合并可读规格和做独立准备，不按未合并接口写运行代码。沿现有开发接入规则，供应商未知项不是前置许可；保留RLS、实际告知/同意、Trip确认和真实验收。",
+      "baselineNote": "知识升级规划已合并；#358已关闭，#359/#360沿既有归属和开放PR接续。核最新main实际接口及当前GitHub状态，不重跑旧规划前置；保留RLS、实际告知/同意、Trip确认和真实验收。",
       "observationWindow": "估算专注日仅供排程；逐PR交付有界结果，整票以实际Staging生产者/消费者及故障验证为准",
       "checks": [
         "pnpm docs:check",
@@ -6329,7 +6329,7 @@
       "activationEvidence": null,
       "sourceRef": "codex/knowledge-upgrade-plan-20260913",
       "deliveryStage": "S2",
-      "baselineNote": "JT于2026-09-13授权知识体系升级规划及拆票。先安全交付当前主线；本规划PR合并后核对本票输入、main接口与实际环境再实施。规划未合并可读规格和做独立准备，不按未合并接口写运行代码。沿现有开发接入规则，供应商未知项不是前置许可；保留RLS、实际告知/同意、Trip确认和真实验收。",
+      "baselineNote": "知识升级规划已合并；#358已关闭，#359/#360沿既有归属和开放PR接续。核最新main实际接口及当前GitHub状态，不重跑旧规划前置；保留RLS、实际告知/同意、Trip确认和真实验收。",
       "observationWindow": "估算专注日仅供排程；逐PR交付有界结果，整票以实际Staging生产者/消费者及故障验证为准",
       "checks": [
         "pnpm docs:check",
@@ -6408,7 +6408,7 @@
       "activationEvidence": null,
       "sourceRef": "codex/knowledge-upgrade-plan-20260913",
       "deliveryStage": "S2",
-      "baselineNote": "JT于2026-09-13授权知识体系升级规划及拆票。先安全交付当前主线；本规划PR合并后核对本票输入、main接口与实际环境再实施。规划未合并可读规格和做独立准备，不按未合并接口写运行代码。沿现有开发接入规则，供应商未知项不是前置许可；保留RLS、实际告知/同意、Trip确认和真实验收。",
+      "baselineNote": "知识升级规划已合并；#358已关闭，#359/#360沿既有归属和开放PR接续。核最新main实际接口及当前GitHub状态，不重跑旧规划前置；保留RLS、实际告知/同意、Trip确认和真实验收。",
       "observationWindow": "估算专注日仅供排程；逐PR交付有界结果，整票以实际Staging生产者/消费者及故障验证为准",
       "checks": [
         "pnpm docs:check",

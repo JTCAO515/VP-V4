@@ -1,0 +1,105 @@
+import XCTest
+@testable import VisePanda
+
+nonisolated final class NativePlaceSearchTests: XCTestCase {
+    @MainActor private var scope: NativeDataScope {
+        .init(endpoint: "http://127.0.0.1", subject: "synthetic-owner", mobileEpoch: 1, generation: 1)
+    }
+
+    @MainActor
+    func testLateSuggestionsCannotReplaceNewQuery() async throws {
+        let store = NativePlaceSearchStore()
+        let delayed = DeferredPlaceReply()
+        let old = Task { await store.suggest(scope: scope) { await delayed.read() } }
+        await delayed.waitUntilStarted()
+        await store.suggest(scope: scope) { Data(#"{"candidates":[{"provider":"amap","rawName":"New place"}]}"#.utf8) }
+        delayed.finish(Data(#"{"candidates":[{"provider":"amap","rawName":"Old place"}]}"#.utf8))
+        await old.value
+        XCTAssertEqual(store.suggestions.map(\.rawName), ["New place"])
+    }
+
+    @MainActor
+    func testLateAddressCannotReplaceNewSelection() async throws {
+        let store = NativePlaceSearchStore()
+        let delayed = DeferredPlaceReply()
+        let old = Task { await store.readAddress(scope: scope) { await delayed.read() } }
+        await delayed.waitUntilStarted()
+        await store.readAddress(scope: scope) { Data(#"{"result":{"provider":"amap","formattedAddress":"New address"}}"#.utf8) }
+        delayed.finish(Data(#"{"result":{"provider":"amap","formattedAddress":"Old address"}}"#.utf8))
+        await old.value
+        XCTAssertEqual(store.observedAddress, "New address")
+    }
+
+    @MainActor
+    func testContextResetRejectsAllPendingPlaceResponses() async throws {
+        let store = NativePlaceSearchStore()
+        let searchReply = DeferredPlaceReply(), suggestionsReply = DeferredPlaceReply(), addressReply = DeferredPlaceReply()
+        let search = Task { await store.search(scope: scope, provider: .amap, query: "old", city: "shanghai") { await searchReply.read() } }
+        await searchReply.waitUntilStarted()
+        let tips = Task { await store.suggest(scope: scope) { await suggestionsReply.read() } }
+        await suggestionsReply.waitUntilStarted()
+        let address = Task { await store.readAddress(scope: scope) { await addressReply.read() } }
+        await addressReply.waitUntilStarted()
+        store.clear() // Same invalidation used for input, account, tab and screen changes.
+        searchReply.finish(Data(#"{"candidates":[{"provider":"amap","providerPoiId":"old","rawName":"Old place"}]}"#.utf8))
+        suggestionsReply.finish(Data(#"{"candidates":[{"provider":"amap","rawName":"Old suggestion"}]}"#.utf8))
+        addressReply.finish(Data(#"{"result":{"provider":"amap","formattedAddress":"Old address"}}"#.utf8))
+        await search.value; await tips.value; await address.value
+        XCTAssertTrue(store.candidates.isEmpty)
+        XCTAssertTrue(store.suggestions.isEmpty)
+        XCTAssertNil(store.observedAddress)
+        XCTAssertNil(store.selectedID)
+        XCTAssertNil(store.scope)
+        XCTAssertEqual(store.state, .idle)
+    }
+
+    @MainActor
+    func testLateDetailCannotRestorePreviousSelection() async {
+        let store = NativePlaceSearchStore()
+        let delayed = DeferredPlaceReply()
+        let first = NativePlaceCandidate(provider: .amap, providerPoiId: "first", rawName: "First", matchedCanonicalPoiId: nil)
+        let second = NativePlaceCandidate(provider: .amap, providerPoiId: "second", rawName: "Second", matchedCanonicalPoiId: nil)
+        store.adoptSuggestion(first, scope: scope)
+        let request = Task { await store.loadDetail(first) { await delayed.read() } }
+        await delayed.waitUntilStarted()
+        store.adoptSuggestion(second, scope: scope)
+        delayed.finish(Data(#"{"detail":{"provider":"amap","providerPoiId":"first","rawName":"First","address":"Old address","location":null}}"#.utf8))
+        await request.value
+        XCTAssertEqual(store.selectedID, second.id)
+        XCTAssertNil(store.detail)
+    }
+
+    @MainActor
+    func testMissingSessionNeverFetchesTipsOrAddress() async {
+        let store = NativePlaceSearchStore()
+        await store.suggest(scope: nil) { XCTFail("No session must not fetch"); return Data() }
+        await store.readAddress(scope: nil) { XCTFail("No session must not fetch"); return Data() }
+        XCTAssertTrue(store.suggestions.isEmpty)
+        XCTAssertNil(store.observedAddress)
+    }
+
+    @MainActor
+    func testCancelledRequestDoesNotPublishAddress() async {
+        let store = NativePlaceSearchStore()
+        let delayed = DeferredPlaceReply()
+        let request = Task { await store.readAddress(scope: scope) { await delayed.read() } }
+        await delayed.waitUntilStarted()
+        request.cancel()
+        delayed.finish(Data(#"{"result":{"provider":"amap","formattedAddress":"Cancelled"}}"#.utf8))
+        await request.value
+        XCTAssertNil(store.observedAddress)
+    }
+}
+
+@MainActor
+private final class DeferredPlaceReply {
+    private var continuation: CheckedContinuation<Data, Never>?
+    func read() async -> Data { await withCheckedContinuation { continuation = $0 } }
+    func waitUntilStarted() async {
+        while continuation == nil { await Task.yield() }
+    }
+    func finish(_ data: Data) {
+        continuation?.resume(returning: data)
+        continuation = nil
+    }
+}

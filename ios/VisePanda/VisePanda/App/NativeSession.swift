@@ -157,6 +157,11 @@ final class NativeSession {
 
     /// Read-only place observations use the same active native-session fence as
     /// Trip and Knowledge. The provider credential remains server-side.
+    func placeLookupRequest(_ parameters: [String: String]) async throws -> Data {
+        return try await dataRequest(prefix: "api/places/native/v1", path: "api/places/native/v1/lookup", method: "GET",
+            queryItems: parameters.sorted { $0.key < $1.key }.map { URLQueryItem(name: $0.key, value: $0.value) })
+    }
+
     func placeSearchRequest(provider: NativePlaceProvider, query: String, city: String) async throws -> Data {
         guard query.count <= 200, city.count <= 100, !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
               !city.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw NativeDataError.invalidResponse }

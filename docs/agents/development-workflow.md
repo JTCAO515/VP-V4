@@ -2,7 +2,7 @@
 
 2026-09-12：开发接入遵循 [开发阶段接入规则](development-integration-policy.md)。第三方、法务和产品许可不再作为开发前置条件；agent可依据已有账号/API自主集成和实测，不限于fixture准备。
 
-Effective when the governance PR adopting ADR-0024 merges. This is the shared workflow for
+ADR-0024 is merged and effective. This is the shared workflow for
 VPJ work and explicitly requested maintenance. ADR-0023 still defines product scope and safety.
 Historical task tables and copied kickoff prompts cannot add current development gates.
 

@@ -14,7 +14,8 @@ and an installed Staging build configuration (`VisePandaNativeEnvironment=stagin
 endpoints cannot be selected through launch arguments. `VisePandaNativeTaskContext`
 selects the installed Ask mode; local tests can use `-VisePandaGroundedMode`.
 
-Configured consumers implement identity, same-Trip reads/writes and bounded Ask;
+Configured consumers implement identity, same-Trip reads/writes, bounded Ask,
+place search/input tips/address observations, screenshot review and relative-day outlines;
 capability still depends on the actual backend, session, consent and worker. Refer
 to [current handoff](../../docs/handoff.json) for version-specific observed results
 and UNRUN items. This is not complete native, Store, booking or payment acceptance.
@@ -23,6 +24,19 @@ The bundled icon and wordmark use the operator-confirmed heart logo; see
 [the current source and runtime export notes](../../assets/brand/vise-panda/official-heart-20260913/README.md).
 [Asset provenance and permitted surfaces](../../docs/licenses/asset-rights-ledger.json) remain
 authoritative; replacement approval does not establish signed Store or complete app acceptance.
+
+## Current development
+
+The [2026-09-22 status snapshot](../../docs/program/2026-09-05/CURRENT-STATUS-2026-09-22.md)
+links merged features and open work. The relative-day outline is bounded to four cities,
+2–7 days and food/walking directions; it requires a date before the existing proposal
+confirmation path saves it. It is not a grounded executable itinerary. Place input has
+one shared invalidation path for query/city/provider/account/tab changes so late search,
+suggestion and address responses cannot restore obsolete selections. The AMap iOS SDK device lane and Web JS SDK consumer are wired under #363;
+real rendering and provider/app-domain acceptance remain separate. See
+[map configuration and SDK install](../../docs/runbooks/place-search-maps.md).
+Run `node scripts/maps/install-ios-sdk.mjs` before device builds. Simulator builds
+retain the address fallback.
 
 ## Build and test
 
