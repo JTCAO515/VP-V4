@@ -48,3 +48,14 @@ tests remain in [the first repair evidence](../readable-text-20260918/verificati
 
 Rollback: revert the Tools renderer/test increment, or the complete reading repair
 when reverting PR478. No data migration or account/configuration rollback is needed.
+
+## Integration with newer main
+
+Main `5f95d16` (#481) introduced place map files using the same Xcode object IDs
+as the reading repair. Resolved by retaining all main map/configuration objects
+and assigning unique 06F/070 references to the reading tests/component. Shared
+handoff preserves the newly compacted main state and adds only native evidence;
+its generated pages were rebuilt. After merge `b7d80fd`, iOS17.5 compiled both
+features and passed 9/9 tests, zero skips: place-search tests, palette,
+rendered-label updates and the original Tools audit. `plutil`, docs check and
+diff check pass. No map runtime behavior or SDK configuration was changed.
