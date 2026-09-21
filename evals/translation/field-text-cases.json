@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "field-translation-cases/1",
+  "dataClass": "c0_synthetic",
+  "execution": "UNRUN: no new charged-provider authorization",
+  "cases": [
+    { "id": "negation-en", "sourceLocale": "en", "targetLocale": "zh", "text": "Please do not add sugar.", "mustPreserve": ["do not", "sugar"] },
+    { "id": "negation-zh", "sourceLocale": "zh", "targetLocale": "en", "text": "我不要冰水，请给我温水。", "mustPreserve": ["no ice water", "warm water"] },
+    { "id": "amount-en", "sourceLocale": "en", "targetLocale": "zh", "text": "My limit is CNY 50, not CNY 500.", "mustPreserve": ["maximum 50 CNY", "not 500 CNY", "no currency conversion"] },
+    { "id": "amount-zh", "sourceLocale": "zh", "targetLocale": "en", "text": "已经付了人民币 120 元，不要再扣款。", "mustPreserve": ["already paid 120 CNY", "do not charge again", "not independently verified payment"] },
+    { "id": "place-en", "sourceLocale": "en", "targetLocale": "zh", "text": "Please take me to Shanghai Hongqiao Railway Station, not Hongqiao Airport Terminal 2.", "mustPreserve": ["railway station destination", "not airport terminal 2", "Shanghai Hongqiao"] },
+    { "id": "place-zh", "sourceLocale": "zh", "targetLocale": "en", "text": "请去测试路 88 号，不是 18 号。", "mustPreserve": ["chosen address 88", "not 18", "no invented geocode"] },
+    { "id": "allergy-en", "sourceLocale": "en", "targetLocale": "zh", "text": "I am allergic to peanuts. Please do not use peanut oil, even a little.", "mustPreserve": ["allergy", "peanuts", "no peanut oil", "even a little"] },
+    { "id": "allergy-zh", "sourceLocale": "zh", "targetLocale": "en", "text": "我对虾过敏，不是因为不喜欢吃虾。", "mustPreserve": ["shrimp allergy", "not a preference"] }
+  ]
+}

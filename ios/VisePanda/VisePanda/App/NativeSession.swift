@@ -199,6 +199,13 @@ final class NativeSession {
         return data
     }
 
+    /// Translation always uses the current-input lane, independently of Ask mode.
+    func translateRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
+        let data = try await dataRequest(prefix: "api/translate", path: path, method: method, body: body)
+        guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
+        return data
+    }
+
     private func dataRequest(prefix: String, path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         guard enabled, !busy, let initial = dataScope else { throw NativeDataError.sessionUnavailable }
         if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 {
