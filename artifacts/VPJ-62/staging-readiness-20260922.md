@@ -33,7 +33,7 @@ hosted-page check, not proof of site downtime or a successful application.
 
 ## Prepared next action requiring schema authorization
 
-Apply only the existing [intake migration](../../../supabase/migrations/20260917140000_vpj_62_research_intake.sql)
+Apply only the existing [intake migration](../../supabase/migrations/20260917140000_vpj_62_research_intake.sql)
 to the exact Staging project above, through the repository migration workflow
 with migration-history recording. Do not bulk-push other pending migrations.
 
@@ -50,7 +50,7 @@ retain only sanitized outcomes and confirm disabled/empty state afterward.
 This approval scope does **not** include public activation or real participant
 collection. Those require the deployed route/flag and an actual organizer contact,
 designated operator, region/retention record and browser apply/withdraw observation
-under [the intake runbook](../../../docs/operations/research-intake.md).
+under [the intake runbook](../../docs/operations/research-intake.md).
 
 The repository's supplied AGENTS.md requires confirmation before an unauthorized
 schema/permission change. Existing authorization for older migrations does not
