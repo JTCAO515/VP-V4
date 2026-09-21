@@ -16,3 +16,6 @@ out/
 !/artifacts/
 !/artifacts/**/
 !/artifacts/**/*.md
+
+# Local, vendor-supplied native map SDK; installed by scripts/maps/install-ios-sdk.mjs.
+/ios/VisePanda/.local/

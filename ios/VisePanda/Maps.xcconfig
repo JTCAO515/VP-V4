@@ -1,0 +1,5 @@
+// Optional local display credential. Never commit the included file.
+#include? "../../.env.maps.ios.xcconfig"
+// Official static SDK device slice. Simulator builds keep the address fallback.
+FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*] = $(inherited) $(SRCROOT)/.local/amap
+OTHER_LDFLAGS[sdk=iphoneos*] = $(inherited) -ObjC -framework MAMapKit -framework AMapFoundationKit -framework QuartzCore -framework CoreLocation -framework SystemConfiguration -framework CoreTelephony -framework Security -framework OpenGLES -framework CoreText -framework CoreGraphics -framework GLKit -lz -lc++

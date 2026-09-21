@@ -6,8 +6,9 @@ inferred POI identity") with real identity fields, and adds
 `public.provider_poi_mappings` for provider-id-to-canonical-place mapping.
 Client map SDK display integration, native location-permission fallback UI,
 and cross-provider degrade orchestration are explicitly out of scope here —
-see #367 (blocked on this slice) for controlled degrade, and the client
-tickets (#364/#365/#366) for the display/consumption side.
+see #367 for controlled degrade, #363 for the map/list/detail display, and
+#364/#365/#366 for route and Trip consumption. Open upstream Issues do not
+by themselves block independent slices; see the current team routing plan.
 
 ## Invariants
 

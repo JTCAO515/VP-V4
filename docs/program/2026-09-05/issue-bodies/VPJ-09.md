@@ -9,7 +9,7 @@
 ## 执行边界与首个切片
 
 - 首个可交付结果：用日期未定且已有偏好的输入产出可修改相对日草稿，展示局部变化并沿既有确认路径保存/重载。
-- 本票责任/非目标：只负责初始多日草稿；10负责局部改稿交互，65补实际地点和路线依据，不把相对日草稿称可执行行程。
+- 本票责任/非目标：只负责初始多日草稿；10负责局部改稿交互，65补实际地点和路线依据，不把相对日草稿称可执行行程。 2026-09-18已合并PR #475：四城2–7天美食/散步相对日方向、本机编辑、开始日期绑定、既有Proposal/diff/确认，拒绝重叠日期并保留旧日程；相邻真实Auth/PostgreSQL回读用tests/integration/trip/native-same-trip.test.mjs及一次性本地Supabase runner验证。仍未完成保存偏好、任意模糊输入、完整Chat→Plan、真实地点/可行性及目标环境验收，见artifacts/VPJ-09/verification.md。
 - 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 

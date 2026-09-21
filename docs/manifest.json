@@ -284,6 +284,10 @@
       "status": "document"
     },
     {
+      "path": "docs/benchmarks/network/vpj-63-probe.md",
+      "status": "document"
+    },
+    {
       "path": "docs/benchmarks/route-pattern/decision.md",
       "status": "document"
     },
@@ -321,6 +325,10 @@
     },
     {
       "path": "docs/brand/VISEPANDA-BRAND-WORKING-RECORD.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/commercial/journey-pass-development-catalog.md",
       "status": "document"
     },
     {
@@ -580,6 +588,14 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/vpj-09.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-12.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/vpj-14.md",
       "status": "document"
     },
@@ -589,6 +605,10 @@
     },
     {
       "path": "docs/contracts/vpj-16.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-33.md",
       "status": "document"
     },
     {
@@ -637,6 +657,10 @@
     },
     {
       "path": "docs/contracts/wiki-proposal-conflict-ui.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/wiki-raw-response-diagnostics.md",
       "status": "document"
     },
     {
@@ -829,6 +853,10 @@
     },
     {
       "path": "docs/program/2026-09-05/BRAND-ALIGNMENT-EXECUTION.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/CURRENT-STATUS-2026-09-22.md",
       "status": "document"
     },
     {
@@ -1288,6 +1316,10 @@
       "status": "document"
     },
     {
+      "path": "docs/runbooks/journey-pass-storekit-readiness.md",
+      "status": "document"
+    },
+    {
       "path": "docs/runbooks/launch-04-auth-guard.md",
       "status": "document"
     },
@@ -1305,6 +1337,10 @@
     },
     {
       "path": "docs/runbooks/ops-ledger-reconciliation.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/place-search-maps.md",
       "status": "document"
     },
     {

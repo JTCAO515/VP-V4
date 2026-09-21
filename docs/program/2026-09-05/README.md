@@ -6,6 +6,10 @@
 
 本目录始于 2026-09-05，持续接纳已批准增量；目录日期不是当前状态日期。2026-09-10 本地规划为 **73 项子任务、212 条直接依赖**；该数值描述任务图，不描述完成率。最初 PR #253 的 65 项/198 条依赖、旧 20 项迁移结果保留在[历史验证](VERIFICATION.md)。
 
+## 当前状态
+
+[2026-09-22 GitHub 全队列读回](CURRENT-STATUS-2026-09-22.md)区分已合并实现、开放 PR 和未验项。下文初始任务数、首批分工和有日期的增量是规划记录，不是实时待办。
+
 ## 从哪里开始
 
 日常只看[六个交付阶段](DELIVERY-STAGES.md)、当前阶段的里程碑和正在执行的 Issue。
@@ -34,13 +38,13 @@
 
 2026-09-17 [Issue整理与排期](ISSUE-AUDIT-2026-09-17.md)：65个VPJ任务（含纠正闭票的#206）和5张地图切片补齐首个交付与责任边界，默认planned替代笼统blocked；保留全部实际依赖与完成证据。VPJ-02/49/62/75/76本轮排除。现有Issue身份保留，不因标题相近删除实现或最终验收职责。
 
-2026-09-13 知识升级增加 VPJ-74…76 并补充 #207/#211/#248；当前为 76 项、217 条直接依赖。见[具体执行方案](../../knowledge-upgrade/README.md)。规划合并前保留原运行接口；当前 SIM 主线先安全交付，新票按真实 frontier 接续。
+2026-09-13 知识升级增加 VPJ-74…76 并补充 #207/#211/#248；当前为 76 项、217 条直接依赖。见[具体执行方案](../../knowledge-upgrade/README.md)。该规划已合并；当时 SIM 主线与规划发布的顺序保留为历史，新工作按当前状态和实际接口接续。
 
 | 工作 | 使用的契约与完成边界 |
 | --- | --- |
 | 品牌方向接入 | [增量开发计划](BRAND-ALIGNMENT-EXECUTION.md)串联[基础跨 Trip 偏好](../../contracts/basic-preferences-cross-trip.md)、[ServiceTask 计量](../../contracts/service-task-metering.md)、[响应规范](../../contracts/vp-response-policy.md)。Free/Pass 共享明确保存的基础偏好；必要澄清和系统修复不新增用户消费。新计量先只记录归属，未决容量、partial/改稿/TTL/跨期及 Q38 不因规划而启用 |
 | Harness 真实集成 | [Harness 计划](../../harness/README.md)。VPJ-66 #263 的[离线准备](../../../artifacts/VPJ-66/verification.md)已有完成记录；VPJ-67…71 的 provider、真实 Trip/worker、故障恢复及最终回归分别验收 |
-| 两项独立准备 | [HF 复用计划](../../harness/hf-reuse/README.md)：[VPJ-72 #287](https://github.com/JTCAO515/VP-V4/issues/287) 准备中英判分/盲评包，[VPJ-73 #288](https://github.com/JTCAO515/VP-V4/issues/288) 评估 Docling 合成材料解析。核实输入、契约与本地条件后可并行；后者与材料运行票是研究关系，没有新增阻塞边 |
+| 两项独立准备 | [HF 复用计划](../../harness/hf-reuse/README.md)：[VPJ-72 #287](https://github.com/JTCAO515/VP-V4/issues/287) 准备中英判分/盲评包，[VPJ-73 #288](https://github.com/JTCAO515/VP-V4/issues/288) 评估 Docling 合成材料解析。两票均已按离线范围关闭：#287 交付判分工具，#288 固定 Docling 管线为 REJECT；复用结果，后者与材料运行票是研究关系，没有新增阻塞边 |
 | 运营与客户交付 | [OPERATIONS-AND-RELEASE.md](OPERATIONS-AND-RELEASE.md)。技术发布 VPJ-45 与商业生命周期 VPJ-47 是各自的完成条件；模型、数据、Store、真人及客户结果不能由 Web 发布或准备 PR 代替 |
 
 以上为工作路由，不是新的整批等待顺序。按实时依赖、接口、环境及文件协作状态选取可推进任务；`expand` 仍需其 activationEvidence。可独立验证的准备片段按开发流程记录范围，父 Issue 保留未完成的运行验收；Issue 全部验收完成后才关闭。

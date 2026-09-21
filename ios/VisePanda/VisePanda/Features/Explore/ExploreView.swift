@@ -42,18 +42,36 @@ private struct NativePlaceSearchReply: Decodable {
     let candidates: [NativePlaceCandidate]
 }
 
-private struct NativePlaceSuggestion: Decodable, Identifiable {
+struct NativePlaceSuggestion: Decodable, Identifiable {
     let provider: NativePlaceProvider
     let providerPoiId: String?
+    let matchedCanonicalPoiId: String?
     let rawName: String
     let location: NativePlaceCoordinate?
     var id: String { provider.rawValue + ":" + (providerPoiId ?? "text") + ":" + rawName }
 }
 
 private struct NativePlaceSuggestionReply: Decodable { let candidates: [NativePlaceSuggestion] }
-private struct NativePlaceCoordinate: Decodable { let lat: Double; let lng: Double; let coordinateSystem: String }
+struct NativePlaceCoordinate: Codable, Equatable { let lat: Double; let lng: Double; let coordinateSystem: String }
 private struct NativePlaceReverseReply: Decodable { let result: NativePlaceReverseResult? }
 private struct NativePlaceReverseResult: Decodable { let provider: NativePlaceProvider; let formattedAddress: String }
+
+struct NativePlaceDetail: Decodable {
+    let provider: NativePlaceProvider
+    let providerPoiId: String
+    let rawName: String
+    let address: String?
+    let location: NativePlaceCoordinate?
+}
+private struct NativePlaceDetailReply: Decodable {
+    let detail: NativePlaceDetail?
+    let observedAt: String?
+}
+private struct NativePlaceGeocodeReply: Decodable {
+    struct Result: Decodable { let formattedAddress: String; let location: NativePlaceCoordinate? }
+    let result: Result?
+    let observedAt: String?
+}
 
 @MainActor
 @Observable
@@ -64,11 +82,99 @@ final class NativePlaceSearchStore {
     private(set) var state = State.idle
     private(set) var scope: NativeDataScope?
     private var generation = UUID()
+    private var suggestionGeneration = UUID()
+    private var addressGeneration = UUID()
+    private(set) var suggestions: [NativePlaceSuggestion] = []
+    private(set) var observedAddress: String?
+    private(set) var detail: NativePlaceDetail?
+    private(set) var observedAt: String?
+    private(set) var addressLocation: NativePlaceCoordinate?
+    private var detailGeneration = UUID()
+    private(set) var detailUnavailable = false
+
+    func loadDetail(_ candidate: NativePlaceCandidate, fetch: () async throws -> Data) async {
+        select(candidate)
+        detailGeneration = UUID()
+        let own = detailGeneration
+        detail = nil; observedAt = nil; detailUnavailable = false
+        guard selectedID == candidate.id, !Task.isCancelled else { return }
+        do {
+            let data = try await fetch()
+            guard own == detailGeneration, selectedID == candidate.id, !Task.isCancelled else { return }
+            guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
+            let reply = try JSONDecoder().decode(NativePlaceDetailReply.self, from: data)
+            guard let detail = reply.detail, detail.provider == candidate.provider, detail.providerPoiId == candidate.providerPoiId else { throw NativeDataError.invalidResponse }
+            self.detail = detail; observedAt = reply.observedAt
+        } catch {
+            guard own == detailGeneration else { return }
+            detailUnavailable = true
+        }
+    }
+
+    func geocode(scope: NativeDataScope?, fetch: () async throws -> Data) async {
+        clear()
+        guard let scope, !Task.isCancelled else { return }
+        self.scope = scope; state = .loading
+        let own = generation
+        do {
+            let data = try await fetch()
+            guard own == generation, !Task.isCancelled else { return }
+            guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
+            let reply = try JSONDecoder().decode(NativePlaceGeocodeReply.self, from: data)
+            observedAddress = reply.result?.formattedAddress; addressLocation = reply.result?.location
+            observedAt = reply.observedAt; state = reply.result == nil ? .empty : .ready
+        } catch {
+            guard own == generation else { return }
+            state = .unavailable
+        }
+    }
+
+    func clearAddress() {
+        addressGeneration = UUID()
+        observedAddress = nil
+    }
+
+    func suggest(scope: NativeDataScope?, fetch: () async throws -> Data) async {
+        suggestionGeneration = UUID()
+        let own = suggestionGeneration
+        suggestions = []
+        clearAddress()
+        guard let scope, !Task.isCancelled else { return }
+        self.scope = scope
+        do {
+            let data = try await fetch()
+            guard suggestionGeneration == own, !Task.isCancelled else { return }
+            guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
+            let reply = try JSONDecoder().decode(NativePlaceSuggestionReply.self, from: data)
+            suggestions = Array(reply.candidates.filter { !$0.rawName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }.prefix(10))
+        } catch {
+            guard suggestionGeneration == own else { return }
+            suggestions = []
+        }
+    }
+
+    func readAddress(scope: NativeDataScope?, fetch: () async throws -> Data) async {
+        clearAddress()
+        let own = addressGeneration
+        guard let scope, !Task.isCancelled else { return }
+        self.scope = scope
+        do {
+            let data = try await fetch()
+            guard addressGeneration == own, !Task.isCancelled else { return }
+            guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
+            observedAddress = try JSONDecoder().decode(NativePlaceReverseReply.self, from: data).result?.formattedAddress
+        } catch {
+            guard addressGeneration == own else { return }
+            observedAddress = nil
+        }
+    }
 
     var selected: NativePlaceCandidate? { candidates.first { $0.id == selectedID } }
 
     func clear() {
-        generation = UUID(); candidates = []; selectedID = nil; state = .idle; scope = nil
+        generation = UUID(); suggestionGeneration = UUID(); detailGeneration = UUID(); clearAddress()
+        detail = nil; observedAt = nil; addressLocation = nil; detailUnavailable = false
+        candidates = []; suggestions = []; selectedID = nil; state = .idle; scope = nil
     }
 
     func search(scope: NativeDataScope?, provider: NativePlaceProvider, query: String, city: String, fetch: () async throws -> Data) async {
@@ -91,20 +197,33 @@ final class NativePlaceSearchStore {
         }
     }
 
+    func adoptSuggestion(_ candidate: NativePlaceCandidate, scope: NativeDataScope?) {
+        clear()
+        guard let scope, candidate.valid() else { return }
+        self.scope = scope; candidates = [candidate]; selectedID = candidate.id; state = .ready
+    }
+
     func select(_ candidate: NativePlaceCandidate) {
         guard candidates.contains(candidate) else { return }
+        if selectedID != candidate.id { detailGeneration = UUID(); detail = nil; observedAt = nil }
         selectedID = candidate.id
     }
 }
 
 private struct NativePlaceSearchView: View {
+    var isActive: Bool
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(AppSettings.self) private var settings
     @State private var store = NativePlaceSearchStore()
     @State private var query = ""
     @State private var city = "shanghai"
     @State private var provider = NativePlaceProvider.amap
-    @State private var suggestions: [NativePlaceSuggestion] = []
-    @State private var observedAddress: String?
+    @State private var suggestionTask: Task<Void, Never>?
+    @State private var addressTask: Task<Void, Never>?
+    @State private var searchTask: Task<Void, Never>?
+    @State private var detailTask: Task<Void, Never>?
+    @State private var category = "restroom"
+    @State private var showMap = false
     private var chinese: Bool { settings.selectedLocale == .zh }
     private var session: NativeSession { settings.nativeSession }
     private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
@@ -130,43 +249,99 @@ private struct NativePlaceSearchView: View {
                     .textInputAutocapitalization(.never).autocorrectionDisabled()
                     .textFieldStyle(.roundedBorder).accessibilityIdentifier("places.query")
                 Button(text("Show input tips", "显示输入提示")) {
-                    Task {
-                        do {
-                            let data = try await session.placeSuggestRequest(provider: provider, query: query, city: city)
-                            let reply = try JSONDecoder().decode(NativePlaceSuggestionReply.self, from: data)
-                            suggestions = reply.candidates.filter { !$0.rawName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }.prefix(10).map { $0 }
-                        } catch { suggestions = [] }
+                    suggestionTask?.cancel()
+                    addressTask?.cancel()
+                    let scope = session.dataScope, provider = provider, query = query, city = city
+                    suggestionTask = Task {
+                        await store.suggest(scope: scope) {
+                            try await session.placeLookupRequest(["action": "suggest", "provider": provider.rawValue, "q": query, "city": city])
+                        }
                     }
                 }.disabled(session.dataScope == nil || query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                ForEach(suggestions) { suggestion in
+                ForEach(store.suggestions) { suggestion in
                     VStack(alignment: .leading, spacing: 5) {
-                        Button { query = suggestion.rawName; observedAddress = nil } label: {
+                        Button {
+                            resetSearch()
+                            if let id = suggestion.providerPoiId {
+                                let candidate = NativePlaceCandidate(provider: suggestion.provider, providerPoiId: id, rawName: suggestion.rawName, matchedCanonicalPoiId: suggestion.matchedCanonicalPoiId)
+                                store.adoptSuggestion(candidate, scope: session.dataScope)
+                                let parameters = ["action": "detail", "provider": candidate.provider.rawValue, "id": candidate.providerPoiId]
+                                detailTask = Task { await store.loadDetail(candidate) { try await session.placeLookupRequest(parameters) } }
+                            } else { query = suggestion.rawName }
+                        } label: {
                             Text(suggestion.rawName).frame(maxWidth: .infinity, alignment: .leading)
                         }.buttonStyle(.bordered).accessibilityIdentifier("places.suggestion.\(suggestion.id)")
                         if suggestion.provider == .amap, let location = suggestion.location, location.coordinateSystem == "gcj02" {
                             Button(text("Read provider address", "读取供应商地址")) {
-                                Task {
-                                    do {
-                                        let data = try await session.placeReverseGeocodeRequest(provider: suggestion.provider, latitude: location.lat, longitude: location.lng)
-                                        observedAddress = try JSONDecoder().decode(NativePlaceReverseReply.self, from: data).result?.formattedAddress
-                                    } catch { observedAddress = nil }
+                                addressTask?.cancel()
+                                let scope = session.dataScope
+                                addressTask = Task {
+                                    await store.readAddress(scope: scope) {
+                                        try await session.placeReverseGeocodeRequest(provider: suggestion.provider, latitude: location.lat, longitude: location.lng)
+                                    }
                                 }
                             }.buttonStyle(.bordered)
                         }
                     }
                 }
-                if let observedAddress { Text(text("Provider address observation: ", "供应商地址观察：") + observedAddress).font(.caption).foregroundStyle(Color.vpSecondaryText).accessibilityIdentifier("places.reverseAddress") }
+                if let observedAddress = store.observedAddress { Text(text("Provider address observation: ", "供应商地址观察：") + observedAddress).font(.caption).foregroundStyle(Color.vpSecondaryText).accessibilityIdentifier("places.reverseAddress") }
                 Button(text("Search places", "搜索地点")) {
-                    Task { await store.search(scope: session.dataScope, provider: provider, query: query, city: city) {
+                    resetSearch()
+                    let scope = session.dataScope, provider = provider, query = query, city = city
+                    searchTask = Task { await store.search(scope: scope, provider: provider, query: query, city: city) {
                         try await session.placeSearchRequest(provider: provider, query: query, city: city)
                     } }
                 }.buttonStyle(.borderedProminent).disabled(session.dataScope == nil || query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                Button(text("Find this address", "解析这个地址")) {
+                    resetSearch()
+                    let scope = session.dataScope, parameters = ["action": "geocode", "provider": provider.rawValue, "q": query, "city": city]
+                    searchTask = Task { await store.geocode(scope: scope) { try await session.placeLookupRequest(parameters) } }
+                }.disabled(session.dataScope == nil || query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 content
+                if let point = store.detail?.location ?? store.addressLocation, point.coordinateSystem == "gcj02" {
+                    if showMap {
+                        NativePlaceMapCanvas(point: point, selectionID: store.selectedID ?? "address", name: store.detail?.rawName ?? store.observedAddress ?? "", onSelect: { id in
+                            if let selected = store.selected, selected.id == id { store.select(selected) }
+                        }).frame(height: 280)
+                    } else {
+                        Link(text("AMap privacy policy", "高德隐私政策"), destination: URL(string: "https://lbs.amap.com/pages/privacy/")!)
+                        Button(text("Agree and show AMap", "同意并显示高德地图")) { showMap = true }
+                        Text(text("Loading the map sends this place coordinate and network/device information to AMap. Your current location is not requested.", "加载地图将向高德发送此地点坐标及网络/设备信息，不会请求你当前的位置。"))
+                            .font(.caption).foregroundStyle(Color.vpSecondaryText)
+                    }
+                    Picker(text("Nearby", "查找周边"), selection: $category) {
+                        Text(text("Restrooms", "厕所")).tag("restroom")
+                        Text(text("Convenience stores", "便利店")).tag("convenience_store")
+                        Text(text("Food", "餐饮")).tag("dining")
+                        Text(text("Pharmacies", "药店")).tag("pharmacy")
+                        Text("ATM").tag("atm")
+                    }
+                    Button(text("Search within 1 km", "搜索 1 公里内")) {
+                        let scope = session.dataScope, selectedProvider = provider
+                        let parameters = ["action": "nearby", "provider": provider.rawValue, "category": category, "lat": String(point.lat), "lng": String(point.lng), "system": "gcj02"]
+                        resetSearch()
+                        searchTask = Task { await store.search(scope: scope, provider: selectedProvider, query: "", city: city) { try await session.placeLookupRequest(parameters) } }
+                    }
+                    Text(text("Opening hours, accessibility and special services are unknown. A map point is not a verified entrance.", "营业时间、无障碍和特殊服务未知。地图点位不等于已核实入口。"))
+                        .font(.caption).foregroundStyle(Color.vpSecondaryText)
+                }
             }.padding(VPSpacing.standard)
         }
         .background(Color.vpBackground).vpNavigationTitle("tab.explore").navigationBarTitleDisplayMode(.inline)
-        .onChange(of: session.dataScope) { _, _ in store.clear() }
-        .onDisappear { store.clear() }
+        .onChange(of: session.dataScope) { _, _ in resetSearch() }
+        .onChange(of: query) { _, _ in resetSearch() }
+        .onChange(of: city) { _, _ in resetSearch() }
+        .onChange(of: provider) { _, _ in resetSearch() }
+        .onChange(of: scenePhase) { _, phase in if phase != .active { resetSearch() } }
+        .onChange(of: isActive) { _, active in if !active { resetSearch() } }
+        .onDisappear { resetSearch() }
+    }
+
+    private func resetSearch() {
+        suggestionTask?.cancel(); addressTask?.cancel(); searchTask?.cancel(); detailTask?.cancel()
+        detailTask = nil; showMap = false
+        suggestionTask = nil; addressTask = nil; searchTask = nil
+        store.clear()
     }
 
     @ViewBuilder private var content: some View {
@@ -176,7 +351,11 @@ private struct NativePlaceSearchView: View {
         else if store.state == .unavailable { Text(text("Place search is unavailable. Check your sign-in and try again.", "地点搜索暂不可用，请检查登录状态后重试。")) }
         else if store.state == .ready {
             ForEach(store.candidates) { candidate in
-                Button { store.select(candidate) } label: {
+                Button {
+                    detailTask?.cancel()
+                    let parameters = ["action": "detail", "provider": candidate.provider.rawValue, "id": candidate.providerPoiId]
+                    detailTask = Task { await store.loadDetail(candidate) { try await session.placeLookupRequest(parameters) } }
+                } label: {
                     VisePandaCard { VStack(alignment: .leading, spacing: 6) {
                         Text(candidate.rawName).font(.headline)
                         Text(candidate.matchedCanonicalPoiId == nil ? text("Choose this specific provider result", "请选择此具体供应商结果") : text("Mapped place", "已映射地点"))
@@ -188,7 +367,15 @@ private struct NativePlaceSearchView: View {
                 VisePandaCard { VStack(alignment: .leading, spacing: 6) {
                     Text(text("Selected place", "已选地点")).font(.headline)
                     Text(selected.rawName)
-                    Text(selected.selection.id).font(.caption.monospaced()).foregroundStyle(Color.vpSecondaryText)
+                    if let detail = store.detail {
+                        Text(detail.address ?? text("Chinese address unavailable", "暂无中文地址")).textSelection(.enabled)
+                        if let address = detail.address { ShareLink(item: detail.rawName + "\n" + address) { Text(text("Share address", "分享地址")) } }
+                        if let observedAt = store.observedAt { Text(text("Queried: ", "查询时间：") + observedAt).font(.caption) }
+                        Text(text("Entrance and parent/terminal relationship are unverified. Choose the exact branch or entrance result.", "入口与父地点/航站楼关系未核实，请选择具体分店或入口结果。"))
+                            .font(.caption).foregroundStyle(Color.vpSecondaryText)
+                    } else {
+                        Text(store.detailUnavailable ? text("Details unavailable. Retry this place.", "详情暂不可用，请重试此地点。") : text("Tap this result to load its address and map point.", "点选此结果以加载地址和地图点位。"))
+                    }
                 }.frame(maxWidth: .infinity, alignment: .leading) }.accessibilityIdentifier("places.detail.\(selected.id)")
             }
         }
@@ -212,7 +399,7 @@ struct ExploreView: View {
     ]
 
     var body: some View {
-        if settings.nativeSession.enabled { NativePlaceSearchView() } else { previewBody }
+        if settings.nativeSession.enabled { NativePlaceSearchView(isActive: isActive) } else { previewBody }
     }
 
     private var previewBody: some View {
