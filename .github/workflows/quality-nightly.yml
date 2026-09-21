@@ -27,5 +27,12 @@ jobs:
       - run: pnpm test:contract
       - run: pnpm test:integration
       - run: pnpm test:security
+      # The nightly run is the unscoped superset of quality-pr.yml: a PR only runs the
+      # suites its changed paths select, so gates skipped there must still run here.
+      - run: pnpm test:e2e
+      - run: pnpm exec playwright install chromium
+      - run: pnpm exec playwright test --config playwright.config.mjs --workers=1
       - run: pnpm evals
+      - run: pnpm check:flags
+      - run: pnpm check:assets
       - run: pnpm docs:check
