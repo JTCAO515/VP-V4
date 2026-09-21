@@ -56,6 +56,21 @@
       "reason": "Only the Chongqing museum statements are in the batch; city-specific attraction coverage is not inferred."
     }
   ],
+  "candidateSupplements": [
+    {
+      "batch": "2026-09-22-airport-transport",
+      "path": "../2026-09-22-airport-transport/statements.json",
+      "scene": "airport_transport",
+      "cities": [
+        "shanghai"
+      ],
+      "editorialIds": [
+        "SH-AIR-01"
+      ],
+      "evidenceState": "local_editorial_candidate_only",
+      "coverageEffect": "Does not close the airport_ground_transport gap; independent review, current topology verification, publication and runtime reads remain unrun."
+    }
+  ],
   "publicationBoundary": {
     "observed": "Twelve prior statement publications and one PAY-01 withdrawal were observed in the bounded Staging window recorded in artifacts/VPJ-15/staging-20260912/verification.md. ARR-01 is source-revalidated editorial preparation, not a Staging publication.",
     "current": "The reader and Ops switches are disabled; this matrix does not assert that a product reader is currently available.",
