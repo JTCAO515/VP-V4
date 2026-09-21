@@ -1,0 +1,60 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "55795782-1CE4-405C-BF77-50B9C7E7D525",
+        "deviceName" : "VP-AX-iOS17-20260918",
+        "modelName" : "iPhone 15",
+        "osBuildNumber" : "21F79",
+        "osVersion" : "17.5",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 2,
+      "passedTests" : 4,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "VisePanda · Built with macOS 27.0",
+  "expectedFailures" : 0,
+  "failedTests" : 2,
+  "finishTime" : 1789710687.18,
+  "passedTests" : 4,
+  "result" : "Failed",
+  "runtimeWarnings" : [
+
+  ],
+  "skippedTests" : 0,
+  "startTime" : 1789710561.013,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "Text clipped",
+      "targetName" : "VisePandaUITests",
+      "testIdentifier" : 5,
+      "testIdentifierString" : "AppShellUITests/testToolsAccessibilityAtLargestTextSize()",
+      "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testToolsAccessibilityAtLargestTextSize",
+      "testName" : "testToolsAccessibilityAtLargestTextSize()"
+    },
+    {
+      "failureText" : "Contrast failed",
+      "targetName" : "VisePandaUITests",
+      "testIdentifier" : 6,
+      "testIdentifierString" : "AppShellUITests/testToolsFullAccessibilityAndRouteAtLargestTextSize()",
+      "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testToolsFullAccessibilityAndRouteAtLargestTextSize",
+      "testName" : "testToolsFullAccessibilityAndRouteAtLargestTextSize()"
+    }
+  ],
+  "title" : "Test - VisePanda",
+  "topInsights" : [
+
+  ],
+  "totalTestCount" : 6
+}
