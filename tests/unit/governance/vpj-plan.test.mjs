@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { body, executionContractRow, orderedTasks, renderDeliveryStages, validateDeliveryStages } from '../../../scripts/vpj-program.mjs';
+import { body, executionContractHeader, executionContractRow, orderedTasks, renderDeliveryStages, validateDeliveryStages } from '../../../scripts/vpj-program.mjs';
 
 const planDir = 'docs/program/2026-09-05';
 const plan = JSON.parse(readFileSync(`${planDir}/issue-plan.json`, 'utf8'));
@@ -111,7 +111,9 @@ test('stage view reuses existing Issues and makes its completion boundary explic
 test('compact Issue bodies keep task-specific acceptance and guardrails with full execution details reachable', () => {
   for (const task of plan.tasks) {
     const generated = body(task);
-    const execution = executionContractRow(task);
+    // A clause the row shares with every other task is printed once in the contract header
+    // and referenced from the row, so assert against the document the reader actually opens.
+    const execution = executionContractHeader + executionContractRow(task);
     for (const criterion of task.acceptance) assert.ok(generated.includes(`- [ ] ${criterion}`), `${task.id} lost acceptance`);
     for (const guardrail of task.doNotTouch) assert.ok(generated.includes(`- ${guardrail}`), `${task.id} lost guardrail`);
     for (const dependency of [...task.blockedBy, ...(task.acceptanceDependencies ?? [])]) assert.ok(generated.includes(`[${dependency} #`), `${task.id} lost dependency`);
