@@ -77,6 +77,14 @@ struct ProfileView: View {
                 }.disabled(settings.nativeSession.busy)
             }
 
+            if settings.nativeSession.subject != nil {
+                Section {
+                    NavigationLink(chinese ? "旅途支持请求" : "Travel support requests") {
+                        NativeServiceCaseView().id(settings.nativeSession.dataScope)
+                    }
+                }
+            }
+
             Section("profile.language") {
                 Picker("profile.language", selection: $settings.selectedLocale) {
                     ForEach(SupportedLocale.selectionLocales(current: settings.selectedLocale)) { locale in

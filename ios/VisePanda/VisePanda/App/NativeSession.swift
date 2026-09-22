@@ -137,6 +137,10 @@ final class NativeSession {
         credential = updated
     }
 
+    func serviceCaseRequest(body: Data) async throws -> Data {
+        try await dataRequest(prefix: "api/service-cases/native/v1", path: "api/service-cases/native/v1", method: "POST", body: body)
+    }
+
     /// The Trip consumer receives response bytes, never the Keychain credential.
     func tripRequest(path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         try await dataRequest(prefix: "api/trips/native/v2", path: path, method: method, body: body, queryItems: queryItems)
