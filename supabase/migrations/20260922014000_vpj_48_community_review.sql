@@ -26,9 +26,9 @@ create table community_private.submissions (
   reviewed_at timestamptz,
   withdrawn_at timestamptz,
   check((status='withdrawn' and title='' and content='' and withdrawn_at is not null)
-    or (status<>'withdrawn' and length(btrim(title))>0 and length(btrim(content))>0 and withdrawn_at is null)),
+    or (status<>'withdrawn' and length(regexp_replace(title,'^[[:space:]]+|[[:space:]]+$','','g'))>0 and length(regexp_replace(content,'^[[:space:]]+|[[:space:]]+$','','g'))>0 and withdrawn_at is null)),
   check((reviewer_id is null and reviewed_at is null and review_note is null)
-    or (reviewer_id is not null and reviewer_id<>author_id and reviewed_at is not null and length(btrim(review_note)) between 1 and 400)),
+    or (reviewer_id is not null and reviewer_id<>author_id and reviewed_at is not null and length(regexp_replace(review_note,'^[[:space:]]+|[[:space:]]+$','','g')) between 1 and 400)),
   check((status='pending' and version=1 and reviewer_id is null)
     or (status in ('published','rejected') and version=2 and reviewer_id is not null)
     or (status='withdrawn' and version in (2,3)))
@@ -117,13 +117,13 @@ begin
   op:=(p_input->>'operationId')::uuid; cid:=(p_input->>'submissionId')::uuid;
   if action='submit' then
     if (select count(*) from jsonb_object_keys(p_input))<>6
-      or jsonb_typeof(p_input->'title') is distinct from 'string' or length(p_input->>'title')>160 or length(btrim(p_input->>'title'))<1
-      or jsonb_typeof(p_input->'content') is distinct from 'string' or length(p_input->>'content')>4000 or length(btrim(p_input->>'content'))<1
+      or jsonb_typeof(p_input->'title') is distinct from 'string' or length(p_input->>'title')>160 or length(regexp_replace(p_input->>'title','^[[:space:]]+|[[:space:]]+$','','g'))<1
+      or jsonb_typeof(p_input->'content') is distinct from 'string' or length(p_input->>'content')>4000 or length(regexp_replace(p_input->>'content','^[[:space:]]+|[[:space:]]+$','','g'))<1
       or p_input->>'consent' is distinct from 'internal-review-v1' then raise exception 'INVALID_INPUT'; end if;
   elsif action='review' then
     if (select count(*) from jsonb_object_keys(p_input))<>6 or p_input->'expectedVersion' is distinct from '1'::jsonb
       or jsonb_typeof(p_input->'decision') is distinct from 'string' or p_input->>'decision' not in ('approve','reject')
-      or jsonb_typeof(p_input->'note') is distinct from 'string' or length(p_input->>'note')>400 or length(btrim(p_input->>'note'))<1 then raise exception 'INVALID_INPUT'; end if;
+      or jsonb_typeof(p_input->'note') is distinct from 'string' or length(p_input->>'note')>400 or length(regexp_replace(p_input->>'note','^[[:space:]]+|[[:space:]]+$','','g'))<1 then raise exception 'INVALID_INPUT'; end if;
   else
     if (select count(*) from jsonb_object_keys(p_input))<>4 or (p_input->'expectedVersion' is distinct from '1'::jsonb and p_input->'expectedVersion' is distinct from '2'::jsonb) then raise exception 'INVALID_INPUT'; end if;
   end if;
@@ -137,7 +137,7 @@ begin
   end if;
   if action='submit' then
     insert into community_private.submissions(id,author_id,title,content,consent,author_identity)
-      values(cid,u,btrim(p_input->>'title'),btrim(p_input->>'content'),'internal-review-v1',
+      values(cid,u,regexp_replace(p_input->>'title','^[[:space:]]+|[[:space:]]+$','','g'),regexp_replace(p_input->>'content','^[[:space:]]+|[[:space:]]+$','','g'),'internal-review-v1',
         case when qualified then 'community_reviewer' else 'registered_user' end) on conflict do nothing;
     if not found then raise exception 'COMMUNITY_CONFLICT'; end if;
     insert into community_private.audit(submission_id,actor_id,action,version) values(cid,u,'submitted',1);
@@ -150,7 +150,7 @@ begin
     if action='review' then
       if item.status<>'pending' then raise exception 'COMMUNITY_CONFLICT'; end if;
       update community_private.submissions set status=case when p_input->>'decision'='approve' then 'published' else 'rejected' end,
-        version=2,reviewer_id=u,review_note=btrim(p_input->>'note'),reviewed_at=clock_timestamp() where id=cid;
+        version=2,reviewer_id=u,review_note=regexp_replace(p_input->>'note','^[[:space:]]+|[[:space:]]+$','','g'),reviewed_at=clock_timestamp() where id=cid;
       insert into community_private.audit(submission_id,actor_id,action,version) values(cid,u,'reviewed',2);
       insert into community_private.audit(submission_id,actor_id,action,version)
         values(cid,u,case when p_input->>'decision'='approve' then 'published' else 'rejected' end,2);

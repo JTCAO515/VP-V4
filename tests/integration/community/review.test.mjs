@@ -68,8 +68,9 @@ run('rejection and pending withdrawal are terminal; forged body fields fail in d
  const a=await actor(),r=await actor(true);const s=submit();await call(a,s);
  assert.equal((await call(r,review(s,'reject'))).status,'rejected');assert.equal((await call(a,withdraw(s))).status,'withdrawn');
  const p=submit();await call(a,p);assert.equal((await call(a,withdraw(p,1))).status,'withdrawn');await denied(r,review(p),'COMMUNITY_CONFLICT');
- for(const change of [{authorId:r.id},{status:'published'},{consent:null},{title:' '},{content:'x'.repeat(4001)}])await denied(a,{...submit(),...change},'INVALID_INPUT');
+ for(const change of [{authorId:r.id},{status:'published'},{consent:null},{title:' '},{title:'\t\n'},{content:'\t\n'},{content:'x'.repeat(4001)}])await denied(a,{...submit(),...change},'INVALID_INPUT');
  await denied(a,{action:'mine',authorId:r.id},'INVALID_INPUT');
+ const invalidNote=submit();await call(a,invalidNote);await denied(r,{...review(invalidNote),note:'\t\n'},'INVALID_INPUT');
 });
 run('opposing reviews and withdrawal/review race commit exactly one transition',async()=>{
  const a=await actor(),r=await actor(true),r2=await actor(true);const s=submit();await call(a,s);
