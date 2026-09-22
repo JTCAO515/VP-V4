@@ -13,7 +13,16 @@ const json = p => JSON.parse(read(p));
 const save = (p, value) => { mkdirSync(path.dirname(p), { recursive: true }); writeFileSync(p, value); };
 const saveJson = (p, value) => save(p, JSON.stringify(value, null, 2) + '\n');
 const plan = json(planPath);
-export const executionContractHeader = "# VPJ Issue 执行合同\n\n生成自issue-plan.json。当前共享流程见 [development-workflow.md](../../agents/development-workflow.md) / ADR-0024。\n阅读当前Issue/PR、本行、受影响接口与代码；历史研究按需读取。\n\nChecks列是完整Issue验收清单；每条PR按实际改动选择本地验证，保留适用CI和最终运行门。\nAllowed列标示主要范围；必要的相邻文件调整、维护任务和独立准备片段按共享流程记录。\n运行依赖未完成时父Issue保持未验收；fixture不证明设备、数据库、provider或生产通过。\n\n";
+// 76 行执行合同里，不得触碰(68/76)、Rollback(65/76) 和运行门(42/76) 逐字重复同一条款。
+// 提成默认条款后，行内只在偏离默认时展开原文：条款一字未改，每个 Issue 锚点少读约 800 字。
+// 改这里等于改全部默认任务的条款，改动要和 issue-plan.json 一起审查。
+export const contractDefaults = {
+  doNotTouch: "No unrelated runtime/module rewrites; allowedPaths is an upper bound, narrow to the current story.；No secrets, original user worktree, old applied migrations, branch protection or production actions.；No unreviewed knowledge publication, unconfirmed Trip writes, or external inventory/payment/fulfillment.；No archived research/test oracle deletion or invented runtime/provider/Store result.",
+  rollback: "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
+  externalPrerequisites: "本片实际输入与接口可用即可开始；上游Issue仍open不单独阻止有界实施。完整验收仍核对列出的技术依赖与真实环境。 Where provider/DB/media/Store behavior is an acceptance criterion, real permitted test environment is mandatory; fixture-only is partial.",
+};
+
+export const executionContractHeader = `# VPJ Issue 执行合同\n\n生成自issue-plan.json。当前共享流程见 [development-workflow.md](../../agents/development-workflow.md) / ADR-0024。\n阅读当前Issue/PR、本行、受影响接口与代码；历史研究按需读取。\n\nChecks列是完整Issue验收清单；每条PR按实际改动选择本地验证，保留适用CI和最终运行门。\nAllowed列标示主要范围；必要的相邻文件调整、维护任务和独立准备片段按共享流程记录。\n运行依赖未完成时父Issue保持未验收；fixture不证明设备、数据库、provider或生产通过。\n\n## 默认条款\n\n下列三条对全部任务生效。任务行写「默认」即适用本节原文；偏离的任务在自己行里写出完整条款。\n\n- 运行门（默认）: ${contractDefaults.externalPrerequisites}\n- 不得触碰（默认）: ${contractDefaults.doNotTouch}\n- Rollback（默认）: ${contractDefaults.rollback}\n\n`;
 const byId = new Map(plan.tasks.map(t => [t.id, t]));
 const number = id => id === 'VPJ-00' ? plan.parentNumber : byId.get(id)?.number;
 const link = id => number(id) ? `[${id} #${number(id)}](https://github.com/${plan.repo}/issues/${number(id)})` : id;
@@ -174,6 +183,8 @@ export function renderDeliveryStages(value) {
     ).join('') + '后续 expand 仍需各票 activationEvidence；依赖完成不自动激活，也不纳入当前首发验收。\n';
 }
 
+const defaulted = (value, fallback) => (value === fallback ? '默认（见文件开头「默认条款」）' : value);
+
 export function executionContractRow(t) {
   return `## ${t.id}\n\n${link(t.id)} — ${t.title}\n\n` +
     executionBriefBlock(t).replace('## 执行边界与首个切片', '### 执行边界与首个切片') +
@@ -185,12 +196,12 @@ export function executionContractRow(t) {
     `- Checks: ${t.checks.map(p=>'\u0060'+p+'\u0060').join('; ')}\n` +
     `- Evidence: ${t.artifactPaths.map(p=>'\u0060'+p+'\u0060').join(', ')}\n` +
     `- 接口: ${t.contract}; Red lines: ${t.redLines.join(', ')}\n` +
-    `- 运行门: ${t.externalPrerequisites.join(' ')}\n` +
+    `- 运行门: ${defaulted(t.externalPrerequisites.join(' '), contractDefaults.externalPrerequisites)}\n` +
     (t.nativeVerification ? `- Native: ${t.nativeVerification}\n`:'') +
     `- 文档影响: ${t.docsImpact.map(p=>'\u0060'+p+'\u0060').join(', ')}\n` +
-    `- 不得触碰: ${t.doNotTouch.join('；')}\n` +
+    `- 不得触碰: ${defaulted(t.doNotTouch.join('；'), contractDefaults.doNotTouch)}\n` +
     (t.activationEvidence ? `- 后续开启门: ${t.activationEvidence}\n` : '') +
-    `- Rollback: ${t.rollback}\n\n` +
+    `- Rollback: ${defaulted(t.rollback, contractDefaults.rollback)}\n\n` +
     t.acceptance.map(a=>'- [ ] '+a).join('\n') + '\n\n';
 }
 

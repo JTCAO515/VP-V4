@@ -1,0 +1,2 @@
+{"command":"pnpm docs:check","result":"PASS","scope":"discovery work-package documentation"}
+{"command":"git diff --check","result":"PASS","scope":"discovery work-package documentation"}

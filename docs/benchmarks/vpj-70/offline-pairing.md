@@ -70,3 +70,52 @@ performs no network request, side effect on Trip, provider call or credential lo
 it does not mean candidate adoption or product acceptance. Final acceptance stays NOT_RUN.
 Parent #267 remains OPEN. Revert the isolated slice; preserve the original baseline and report
 history. No database, route, ledger or live configuration rollback is needed.
+
+## Frozen VPJ-72 review connection (2026-09-22)
+
+`evals/harness/pairing/frozen-review.ts` connects the existing pairing basis to the existing
+VPJ-72 review state, rubric, A/B exchange, feedback provenance and disagreement records.
+It does not introduce another judge. Register a `FreezeInput` JSON before producing candidate
+outputs, then consume the `state.json` written by the VPJ-72 CLI:
+
+```sh
+node --experimental-strip-types evals/harness/pairing/frozen-review-cli.ts freeze plan.json frozen.json
+node --experimental-strip-types evals/harness/pairing/frozen-review-cli.ts report frozen.json state.json new-report-directory
+```
+
+The plan schema is the exported `FreezeInput` type. `plannedSample` projects each planned sample's
+ID, pair/repeat/language/configuration, source revision, task/evidence context and trace authority
+(actor/owner, allowed/revoked context, receipts). Supply those input fields before generation;
+answer text, emitted facts, consumed context and attempted actions are deliberately excluded.
+Both lanes must share the same input authority/evidence. The seed clock, input/evidence/policy/
+tool/grader revisions, source commit, rubric and implementation hashes bind the resulting report.
+A changed input, omitted slot, source version or modified frozen threshold cannot be silently
+compared. This is local content integrity, not a trusted timestamp or proof of preregistration:
+commit the frozen file before an eventual approved run to preserve independent chronology.
+
+This increment only accepts the existing **owned synthetic, offline development** format.
+Its budget is exactly `providerCalls: 0`, `perTaskUsd: 0`, `batchUsd: 0`,
+`modelLatencyMs: null`; nonzero budgets are rejected because no live executor is connected.
+These are execution limits, not measured usage. Costs and model latency remain unknown.
+Configuration IDs must identify fixed versions; they do not attest a provider's actual prompt.
+No network, credentials, runtime routes, ledger, model configuration or holdout content are used.
+
+Before candidate output, declare `qualityTolerance`, `minimumScore` (both 0–2 rubric units)
+and `benefit: { dimension, minimumGain }` (strictly positive, at most 2). The behavioral tests use
+1/1 and a one-point density benefit solely to exercise policy behavior, not to set live acceptance.
+Goal completion and evidence/required-claim scores always have zero regression tolerance.
+Each feedback observation is compared to the baseline from the same presentation/reviewer/source.
+Any candidate hard failure, parent deterministic failure, below-minimum score or prohibited
+regression rejects the comparison, including one failure among otherwise successful repeats.
+No average is used. Baseline failures, unknown semantics, order disagreement and missing human
+calibration are retained; even a reported benefit never produces adoption in this offline tool.
+
+The CLI refuses existing frozen files and existing output directories. `results.json` and
+`summary.md` are generated from one report with per-pair baseline/candidate observations,
+language slices, repeat IDs, A/B preference/disagreement, feedback source, frozen hash, and the
+original parent NOT_RUN denominator. Fixture labels remain fixture labels. Real provider pairing,
+human positive/negative calibration and parent #267 acceptance stay UNRUN.
+
+Focused check: `node --experimental-strip-types --test evals/harness/pairing/frozen-review.evals.test.ts`.
+Rollback removes these three new tooling files and this documentation increment; existing
+pairing/VPJ-72 reports, runtime and baseline remain intact.

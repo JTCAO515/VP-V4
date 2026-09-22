@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { runWikiSearchJob } from "../../../lib/server/jobs/wiki-search-job.ts";
 
-const provider = Object.freeze({ provider: "qwen", endpoint: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", configurationId: "11111111-1111-1111-1111-111111111111", configurationVersion: 1, timeoutMs: 5000 });
+const provider = Object.freeze({ provider: "qwen", endpoint: "https://llm-fixture.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions", configurationId: "11111111-1111-1111-1111-111111111111", configurationVersion: 1, timeoutMs: 5000 });
 const corpus = Object.freeze([{ pageKey: "source_summary:museum", text: "The museum opens at 9am and requires ID for entry." }]);
 const baseInput = Object.freeze({ question: "When does the museum open?", locale: "en", corpus, maxRounds: 3, maxOutputTokens: 300, timeoutMs: 5000, provider });
-const deps = Object.freeze({ credential: () => "secret-key", recordDestination: async () => {} });
+const deps = Object.freeze({ qwenEndpoint: provider.endpoint, credential: () => "secret-key", recordDestination: async () => {} });
 
 function chatResponse(content) {
   return Response.json({

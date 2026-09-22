@@ -191,6 +191,7 @@ export function TripCanvas({ tripId, localTripEnabled = false }: { tripId: strin
   return <Shell locale={locale} setLocale={setLocale} copy={copy}><main className={styles.main}>
     <p className={styles.eyebrow}>{copy.eyebrow}</p>
     <h1 className={styles.title}>{data.trip.title}</h1>
+    <Link className={styles.action} href={`/visepanda/trips/${tripId}/ready`}>{locale === "zh" ? "准备检查" : "Preparation check"}</Link>
     <p className={styles.lede}>{copy.lede}</p>
     <section className={styles.overview} aria-label={copy.currentVersion}><div><span>{copy.currentVersion}</span><strong>v{data.trip.headVersion}</strong></div><time dateTime={data.trip.updatedAt}>{copy.updated} {new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date(data.trip.updatedAt))}</time></section>
     <p className={styles.notice}>{copy.rollbackNotice}</p>

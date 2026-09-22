@@ -10,7 +10,12 @@ nonisolated final class NativeAskUITests: XCTestCase {
     @MainActor func testEnglishGroundedAnswerAndRelaunch() throws { try exercise(locale: "en", userKey: "VP_NATIVE_TEXT_UI_EN_EMAIL", grounded: true) }
     @MainActor func testChineseGroundedAnswerAndRelaunch() throws { try exercise(locale: "zh-Hans", userKey: "VP_NATIVE_TEXT_UI_ZH_EMAIL", grounded: true) }
 
-    @MainActor private func exercise(locale: String, userKey: String, taskContext: Bool = false, grounded: Bool = false) throws {
+    @MainActor func testEnglishMessageOpensOutlineAndReturnsToInput() throws { try exercise(locale: "en", userKey: "VP_NATIVE_TEXT_UI_EN_EMAIL", planning: true) }
+    @MainActor func testChineseMessageOpensOutlineAndReturnsToInput() throws { try exercise(locale: "zh-Hans", userKey: "VP_NATIVE_TEXT_UI_ZH_EMAIL", planning: true) }
+    @MainActor func testEnglishGroundedMessageOpensOutlineAndReturnsToInput() throws { try exercise(locale: "en", userKey: "VP_NATIVE_TEXT_UI_EN_EMAIL", grounded: true, planning: true) }
+    @MainActor func testChineseGroundedMessageOpensOutlineAndReturnsToInput() throws { try exercise(locale: "zh-Hans", userKey: "VP_NATIVE_TEXT_UI_ZH_EMAIL", grounded: true, planning: true) }
+
+    @MainActor private func exercise(locale: String, userKey: String, taskContext: Bool = false, grounded: Bool = false, planning: Bool = false) throws {
         let environment = ProcessInfo.processInfo.environment
         guard environment["VP_NATIVE_TEXT_TEST"] == "1" else { throw XCTSkip("UNRUN: explicit local native text UI environment is not configured") }
         if grounded && environment["VP_NATIVE_GROUNDED_TEST"] != "1" { throw XCTSkip("UNRUN: grounded native fixture not configured") }
@@ -42,6 +47,28 @@ nonisolated final class NativeAskUITests: XCTestCase {
         let accept = app.buttons["native-ask.accept"]; reveal(accept, app); accept.tap()
         let input = app.descendants(matching: .any).matching(identifier: "native-ask.input").firstMatch
         XCTAssertTrue(input.waitForExistence(timeout: 20)); reveal(input, app); input.tap()
+        if planning {
+            let request = chinese ? "第一次去上海四天，喜欢吃和散步，日期未定" : "First time in Shanghai for four days, food and walks, dates unknown"
+            input.typeText(request)
+            let plan = app.buttons["native-ask.plan"]
+            XCTAssertTrue(plan.waitForExistence(timeout: 5)); reveal(plan, app); plan.tap()
+            let day = app.descendants(matching: .any).matching(identifier: "trip.outline.day.1").firstMatch
+            XCTAssertTrue(day.waitForExistence(timeout: 15), "The original input must generate an outline without retyping or choosing a Trip")
+            XCTAssertEqual(app.keyboards.count, 0)
+            let copied = app.descendants(matching: .any).matching(identifier: "trip.outline.request").firstMatch
+            XCTAssertEqual(copied.value as? String, request)
+            XCTAssertTrue(app.buttons["trip.outline.food"].exists)
+            XCTAssertTrue(app.buttons["trip.outline.walk"].exists)
+            capture("Native-Ask-outline-\(locale)", app)
+            app.buttons["trip.outline.return"].tap()
+            app.buttons[chinese ? "返回并放弃未提交编辑" : "Return and discard unsubmitted edits"].tap()
+            XCTAssertTrue(input.waitForExistence(timeout: 10))
+            XCTAssertEqual(input.value as? String, request)
+            XCTAssertEqual(app.keyboards.count, 0)
+            XCTAssertTrue(app.buttons["native-ask.plan"].isHittable)
+            capture("Native-Ask-outline-return-\(locale)", app)
+            return
+        }
         input.typeText((chinese ? "中文合成请求" : "Synthetic UI request") + (taskContext ? " kind=clarification" : ""))
         let send = app.buttons["native-ask.send"]; send.tap()
         if grounded {

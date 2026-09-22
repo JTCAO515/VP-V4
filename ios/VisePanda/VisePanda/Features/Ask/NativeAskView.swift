@@ -8,11 +8,14 @@ struct NativeAskView: View {
     @State private var reviewed = false
     @State private var showNotice = true
     @State private var showReviewedQuestion = false
+    @State private var planningRequest: String?
+    @State private var measuredContentHeight: CGFloat = 0
+    @State private var planningContentHeight: CGFloat?
     @FocusState private var composing: Bool
     init(store: NativeAskStore = NativeAskStore(), isActive: Bool = true) { _store = State(initialValue: store); self.isActive = isActive }
 
     private var session: NativeSession { settings.nativeSession }
-    private var visible: Bool { isActive && !showReviewedQuestion && scenePhase == .active }
+    private var visible: Bool { isActive && !showReviewedQuestion && planningRequest == nil && scenePhase == .active }
     private var groundedReadKey: String { "\(visible):\(String(describing: session.dataScope)):\(store.pollKey)" }
     private var active: Bool { session.dataScope != nil && store.scope == session.dataScope }
 
@@ -47,7 +50,16 @@ struct NativeAskView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .background {
+                GeometryReader { geometry in
+                    Color.clear.preference(key: NativeAskContentHeight.self, value: geometry.size.height)
+                }
+            }
+            .frame(minHeight: planningContentHeight, alignment: .top)
             .padding(VPSpacing.standard)
+        }
+        .onPreferenceChange(NativeAskContentHeight.self) { height in
+            if planningContentHeight == nil { measuredContentHeight = height }
         }
         .background(Color.vpBackground)
         .scrollDismissesKeyboard(.interactively)
@@ -56,7 +68,7 @@ struct NativeAskView: View {
         }
         .overlay(alignment: .top) {
             TimelineView(.periodic(from: .now, by: 1)) { _ in
-                if active && visible && store.mode == .grounded && !store.groundedCurrent && !store.turns.isEmpty {
+                if active && visible && store.mode == .grounded && !store.groundedCurrent && (!store.turns.isEmpty || planningContentHeight != nil) {
                     // Anchor the notice to the viewport, not the beginning of a
                     // long history. Evidence remains hidden without moving it.
                     Text(settings.selectedLocale == .zh ? "正在重新核对已保存答案的依据。" : "Rechecking the evidence for saved answers.")
@@ -88,6 +100,11 @@ struct NativeAskView: View {
         .navigationDestination(isPresented: $showReviewedQuestion) {
             NativeKnowledgeView(isActive: isActive && showReviewedQuestion, question: true)
         }
+        .sheet(isPresented: Binding(get: { planningRequest != nil }, set: { if !$0 { planningRequest = nil } })) {
+            if let planningRequest {
+                NativePlanningSheet(request: planningRequest)
+            }
+        }
         .vpNavigationTitle("tab.ask")
         .navigationBarTitleDisplayMode(.inline)
         .task(id: session.dataScope) {
@@ -118,12 +135,17 @@ struct NativeAskView: View {
                         await store.receiveEvents(using: session)
                     } else { await store.reload(using: session) }
                 }
+                // Only a newly qualified response replaces the scalar layout
+                // placeholder. No hidden turn/evidence data is held for planning.
+                if store.groundedCurrent && planningRequest == nil { planningContentHeight = nil }
                 guard !Task.isCancelled, visible, session.dataScope == initial else { return }
                 let delay = !store.pollKey.isEmpty || store.busy || session.busy ? 1 : store.policy == nil ? 30 : store.groundedRefreshDelay
                 do { try await Task.sleep(for: .seconds(delay)) } catch { return }
             } while !Task.isCancelled && visible && session.dataScope == initial
         }
         .onChange(of: session.retainedDataScope) { _, retained in
+            planningRequest = nil
+            planningContentHeight = nil
             store.reset(for: retained)
             reviewed = false
         }
@@ -366,6 +388,17 @@ struct NativeAskView: View {
                 .buttonStyle(.borderedProminent).disabled(!store.canSend)
                 .accessibilityIdentifier("native-ask.send")
             }
+            if NativeRelativeOutline.make(from: store.draft, chinese: settings.selectedLocale == .zh) != nil {
+                Button(settings.selectedLocale == .zh ? "用本次输入开始规划" : "Plan from this message") {
+                    composing = false
+                    if store.mode == .grounded { planningContentHeight = measuredContentHeight }
+                    planningRequest = store.draft
+                }
+                .disabled(store.busy || store.pending != nil || store.intent != .newGoal)
+                .accessibilityIdentifier("native-ask.plan")
+                Text(settings.selectedLocale == .zh ? "打开本机相对日草稿；不会发送此消息。" : "Open a local relative-day outline without sending this message.")
+                    .font(.caption)
+            }
         }
         .padding(VPSpacing.standard)
         .background(.bar)
@@ -375,4 +408,9 @@ struct NativeAskView: View {
         if turn.status == "cancelled" { return "ask.local.cancelled" }
         return "ask.local." + (turn.outcome?.rawValue ?? "technical_failure")
     }
+}
+
+nonisolated private struct NativeAskContentHeight: PreferenceKey {
+    static let defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = max(value, nextValue()) }
 }

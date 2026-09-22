@@ -46,6 +46,7 @@ export type WikiGenerationJobOutcome =
 export type WikiGenerationJobDependencies = Readonly<{
   credential: HttpTransportDependencies["credential"];
   recordDestination: HttpTransportDependencies["recordDestination"];
+  qwenEndpoint?: HttpTransportDependencies["qwenEndpoint"];
   fetch?: typeof globalThis.fetch;
 }>;
 
@@ -84,6 +85,7 @@ export async function runWikiGenerationJob(
 
   const transport = createProviderHttpTransport(input.provider, {
     credential: dependencies.credential, recordDestination: dependencies.recordDestination,
+    qwenEndpoint: dependencies.qwenEndpoint,
     ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
   });
   const inputDigest = computeWikiInputDigest(input.promptVersion, input.configDigest, input.sourceText);

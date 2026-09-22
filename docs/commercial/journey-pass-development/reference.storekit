@@ -1,0 +1,36 @@
+{
+  "identifier": "F0CCFEF5-9870-4F6C-AD14-90C49134C225",
+  "nonRenewingSubscriptions": [
+    {
+      "displayPrice": "19.99",
+      "familyShareable": false,
+      "internalID": "22500001",
+      "localizations": [
+        {
+          "description": "30-day non-renewing Journey Pass. Local development test only.",
+          "displayName": "Journey Pass (Development)",
+          "locale": "en_US"
+        },
+        {
+          "description": "30 天非自动续费 Journey Pass，仅限本地开发测试。",
+          "displayName": "Journey Pass（开发测试）",
+          "locale": "zh_CN"
+        }
+      ],
+      "productID": "dev.visepanda.journey-pass.30-day",
+      "referenceName": "Journey Pass - Local Development",
+      "type": "NonRenewingSubscription"
+    }
+  ],
+  "products": [],
+  "settings": {
+    "_failTransactionsEnabled": false,
+    "_locale": "en_US",
+    "_storefront": "USA"
+  },
+  "subscriptionGroups": [],
+  "version": {
+    "major": 3,
+    "minor": 0
+  }
+}
