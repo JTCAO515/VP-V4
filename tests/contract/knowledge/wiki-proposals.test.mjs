@@ -17,15 +17,15 @@ test('invented sources/metadata, missing or repeated quotation and publication a
  assert.equal(isProposalOutput({...raw,proposals:Array(6).fill(raw.proposals[0])}),false);
  assert.equal(isProposalOutput({...raw,proposals:[{...raw.proposals[0],evidence:[]}]}),false);
 });
-const provider={provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:id,configurationVersion:1,timeoutMs:5000};
+const provider={provider:'qwen',endpoint:'https://llm-fixture.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:id,configurationVersion:1,timeoutMs:5000};
 const input={dataClass:'c0_synthetic',sources:[source],configDigest:'a'.repeat(64),provider,maxOutputTokens:2048,timeoutMs:5000};
 const response=output=>Response.json({model:'qwen3.7-plus-2026-05-26',choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify(output)}}],usage:{prompt_tokens:30,completion_tokens:60,total_tokens:90}});
 test('actual worker/protocol path has dedicated prompt, bounded output, no hidden retry',async()=>{
- let calls=0;const result=await runWikiStatementProposalJob(input,{credential:()=> 'synthetic',recordDestination:async()=>{},fetch:async(_u,options)=>{calls++;const body=JSON.parse(options.body);assert.match(body.messages[0].content,/untrusted/);assert.equal(body.max_tokens,2048);assert.equal(body.messages.length,2);return response(raw);}},new AbortController().signal);
+ let calls=0;const result=await runWikiStatementProposalJob(input,{qwenEndpoint: provider.endpoint, credential:()=> 'synthetic',recordDestination:async()=>{},fetch:async(_u,options)=>{calls++;const body=JSON.parse(options.body);assert.match(body.messages[0].content,/untrusted/);assert.equal(body.max_tokens,2048);assert.equal(body.messages.length,2);return response(raw);}},new AbortController().signal);
  assert.equal(calls,1);assert.equal(result.kind,'succeeded');assert.equal(result.output.schemaVersion,'wiki-draft/2');assert.equal(result.usage.totalTokens,90);
 });
 test('non-C0, invalid source, pre-cancel and unbound model quote cannot become proposals',async()=>{
- const deps={credential:()=> 'synthetic',recordDestination:async()=>{},fetch:()=>assert.fail('no network')};
+ const deps={qwenEndpoint: provider.endpoint, credential:()=> 'synthetic',recordDestination:async()=>{},fetch:()=>assert.fail('no network')};
  assert.equal((await runWikiStatementProposalJob({...input,dataClass:'c2_sensitive'},deps,new AbortController().signal)).errorCode,'INVALID_INPUT');
  assert.equal((await runWikiStatementProposalJob({...input,sources:[{...source,id:'fake'}]},deps,new AbortController().signal)).errorCode,'INVALID_INPUT');
  const c=new AbortController();c.abort();assert.equal((await runWikiStatementProposalJob(input,deps,c.signal)).kind,'cancelled');
@@ -34,7 +34,7 @@ test('non-C0, invalid source, pre-cancel and unbound model quote cannot become p
  assert.equal(typeof bad.rawResponseForDiagnostics,'string');assert.match(bad.rawResponseForDiagnostics,/Invented claim/);
 });
 test('a provider-protocol-level MODEL_OUTPUT_INVALID also carries a bounded, allowlisted diagnostic snapshot, and a successful outcome carries none',async()=>{
- const deps={credential:()=> 'synthetic',recordDestination:async()=>{}};
+ const deps={qwenEndpoint: provider.endpoint, credential:()=> 'synthetic',recordDestination:async()=>{}};
  const invalid=await runWikiStatementProposalJob(input,{...deps,fetch:async()=>Response.json({model:'qwen3.7-plus-2026-05-26',choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:'not json'}}],usage:{prompt_tokens:1,completion_tokens:1,total_tokens:2}})},new AbortController().signal);
  assert.equal(invalid.errorCode,'MODEL_OUTPUT_INVALID');assert.equal(typeof invalid.rawResponseForDiagnostics,'string');
  assert.equal(Object.hasOwn(JSON.parse(invalid.rawResponseForDiagnostics),'reasoning_content'),false);

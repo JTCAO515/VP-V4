@@ -2,7 +2,7 @@ import { nativeFetch } from "./native-fetch.ts";
 
 /** Request-local lifetime; no retry, identity, endpoint or credential authority. */
 export function nativeRequestScope(requestSignal: AbortSignal, milliseconds = 10_000) {
-  if (!Number.isSafeInteger(milliseconds) || milliseconds < 1 || milliseconds > 10_000) throw new Error("Native request unavailable.");
+  if (!Number.isSafeInteger(milliseconds) || milliseconds < 1 || milliseconds > 90_000) throw new Error("Native request unavailable.");
   const controller = new AbortController();
   const expiresAt = Date.now() + milliseconds;
   const abort = () => controller.abort();

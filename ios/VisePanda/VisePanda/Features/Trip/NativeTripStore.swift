@@ -8,6 +8,9 @@ final class NativeTripStore {
     private(set) var selectedID: String?
     private(set) var detail: NativeTripDetail?
     private(set) var pending: NativeTripPending?
+    private(set) var archive: NativeTripArchive?
+    private(set) var archiveAvailable = false
+    private var archiveKeys: [String: String] = [:]
     var draft: NativeTripDraft?
     private(set) var busy = false
     private(set) var notice: String?
@@ -23,11 +26,13 @@ final class NativeTripStore {
     }
 
     var hasUncertainProposal: Bool { proposalOutcomeUnknown }
+    var canEdit: Bool { archiveAvailable && archive == nil }
 
     func reset(for scope: NativeDataScope?) {
         guard self.scope != scope else { return }
         self.scope = scope
         trips = []; selectedID = nil; detail = nil; pending = nil; draft = nil
+        archive = nil; archiveAvailable = false; archiveKeys = [:]
         confirmationKeys = [:]; creation = nil; notice = nil; busy = false
         proposalOutcomeUnknown = false
         uncertainProposalPatch = nil
@@ -43,7 +48,7 @@ final class NativeTripStore {
         guard draft == nil || selectedID == id else { notice = "finishDraft"; return }
         await perform(session) { scope in
             guard UUID(uuidString: id) != nil else { throw NativeDataError.invalidResponse }
-            if self.selectedID != id { self.detail = nil; self.pending = nil }
+            if self.selectedID != id { self.detail = nil; self.pending = nil; self.archive = nil; self.archiveAvailable = false }
             self.selectedID = id
             try await self.loadSelected(session, scope)
         }
@@ -74,21 +79,46 @@ final class NativeTripStore {
             let reply: NativeTripCreated = try await self.call(session, scope, path: self.base, method: "POST", body: ["tripId": creation.id, "title": title])
             guard reply.version == 2, reply.trip.id == creation.id else { throw NativeDataError.invalidResponse }
             self.creation = nil
-            self.detail = nil; self.pending = nil
+            self.detail = nil; self.pending = nil; self.archive = nil; self.archiveAvailable = false
             self.selectedID = reply.trip.id
             try await self.loadList(session, scope)
             try await self.loadSelected(session, scope)
         }
     }
 
+    var archiveReference: String? {
+        guard archiveAvailable, archive == nil, draft == nil, pending == nil,
+              !proposalOutcomeUnknown, let detail, detail.confirmationState == "confirmed" else { return nil }
+        return "\(detail.trip.id):\(detail.trip.headVersion)"
+    }
+
+    func archive(reviewedReference: String, using session: NativeSession) async {
+        guard archiveReference == reviewedReference, let detail else { return }
+        await perform(session) { scope in
+            let key = self.archiveKeys[reviewedReference] ?? UUID().uuidString
+            self.archiveKeys[reviewedReference] = key
+            let result: NativeTripArchiveReply = try await self.call(session, scope,
+                path: "\(self.base)/\(detail.trip.id)/archive", method: "POST",
+                body: ArchiveBody(expectedVersion: detail.trip.headVersion, idempotencyKey: key, confirmed: true))
+            guard result.version == 1, let archive = result.archive,
+                  archive.tripId == detail.trip.id, archive.archivedVersion == detail.trip.headVersion else {
+                throw NativeDataError.invalidResponse
+            }
+            self.archive = archive
+            try await self.loadSelected(session, scope)
+            guard self.archive?.tripId == detail.trip.id else { throw NativeDataError.invalidResponse }
+            self.notice = "archived"
+        }
+    }
+
     func beginDraft() {
-        guard !busy, pending == nil, !proposalOutcomeUnknown, let detail else { return }
+        guard !busy, canEdit, pending == nil, !proposalOutcomeUnknown, let detail else { return }
         draft = NativeTripDraft(detail)
         notice = nil
     }
 
     func beginOutline(_ titles: [String], starting date: String, using session: NativeSession) -> Bool {
-        guard !busy, session.dataScope == scope, scope != nil,
+        guard !busy, canEdit, session.dataScope == scope, scope != nil,
               draft == nil, pending == nil, !proposalOutcomeUnknown, let detail,
               detail.trip.id == selectedID else { return false }
         var prepared = NativeTripDraft(detail)
@@ -100,7 +130,7 @@ final class NativeTripStore {
 
     func proposeScreenshot(source: NativeScreenshotReviewSource, digest: String,
                            corrections: [NativeScreenshotCorrection], using session: NativeSession) async -> Bool {
-        guard !busy, draft == nil, pending == nil,
+        guard !busy, canEdit, draft == nil, pending == nil,
               let scope, session.dataScope == scope, scope.subject == source.ownerID,
               selectedID == source.tripID, let detail,
               detail.trip.id == source.tripID,
@@ -129,6 +159,7 @@ final class NativeTripStore {
     }
 
     func propose(using session: NativeSession) async {
+        guard canEdit || proposalOutcomeUnknown else { notice = "PROPOSAL_NOT_CONFIRMABLE"; return }
         guard let draft, !draft.patch.operations.isEmpty else { notice = "noChanges"; return }
         let patch = draft.patch
         await perform(session) { scope in
@@ -149,6 +180,7 @@ final class NativeTripStore {
                     self.uncertainProposalPatch = nil
                 }
             }
+            guard self.canEdit else { throw NativeDataError.server(code: "PROPOSAL_NOT_CONFIRMABLE") }
             self.proposalOutcomeUnknown = true
             self.uncertainProposalPatch = patch
             let created: NativeProposalCreated
@@ -174,7 +206,7 @@ final class NativeTripStore {
     }
 
     func confirm(reviewedReference: String, using session: NativeSession) async {
-        guard confirmationReference == reviewedReference, let pending, !pending.proposal.stale, pending.proposal.status == "pending", detail?.trip.headVersion == pending.proposal.baseTripVersion else { notice = "PROPOSAL_NOT_CONFIRMABLE"; return }
+        guard canEdit, confirmationReference == reviewedReference, let pending, !pending.proposal.stale, pending.proposal.status == "pending", detail?.trip.headVersion == pending.proposal.baseTripVersion else { notice = "PROPOSAL_NOT_CONFIRMABLE"; return }
         let proposal = pending.proposal
         await perform(session) { scope in
             let keyID = "\(proposal.id):\(proposal.revision):\(proposal.digest)"
@@ -216,6 +248,20 @@ final class NativeTripStore {
         guard result.version == 2, result.trip.id == selectedID,
               result.hardLocks == .notEnabled, result.externalOrderStatus == .notConnected else { throw NativeDataError.invalidResponse }
         detail = result
+        if archive?.tripId != selectedID || archive?.archivedVersion != result.trip.headVersion { archive = nil }
+        archiveAvailable = false
+        do {
+            let state: NativeTripArchiveReply = try await call(session, scope, path: "\(base)/\(selectedID)/archive", method: "GET")
+            guard state.version == 1, state.archive == nil ||
+                    (state.archive?.tripId == selectedID && state.archive?.archivedVersion == result.trip.headVersion) else {
+                throw NativeDataError.invalidResponse
+            }
+            archive = state.archive; archiveAvailable = true
+        } catch {
+            guard self.scope == scope, session.dataScope == scope else { throw NativeDataError.staleSessionResponse }
+            // Missing migration or transient archive outage must not hide saved results.
+            archiveAvailable = false
+        }
         do { pending = try await readPending(selectedID, proposalID: nil, session, scope) }
         catch NativeDataError.server(let code) where code == "PROPOSAL_NOT_CONFIRMABLE" { pending = nil }
         if let draft, draft.baseVersion != result.trip.headVersion { notice = "STALE_TRIP_VERSION" }
@@ -257,6 +303,7 @@ final class NativeTripStore {
         return try JSONDecoder().decode(T.self, from: data)
     }
 
+    private struct ArchiveBody: Encodable { let expectedVersion: Int; let idempotencyKey: String; let confirmed: Bool }
     private struct ProposalBody: Encodable { let patch: NativeTripPatch }
     private struct ConfirmBody: Encodable { let proposalId: String; let idempotencyKey: String; let digest: String }
     private struct Rejected: Decodable { let version: Int; let proposalId: String; let status: String }

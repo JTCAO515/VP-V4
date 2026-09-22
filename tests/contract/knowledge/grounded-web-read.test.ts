@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { randomUUID } from "node:crypto";
 import { parseGroundedHistory, sourceLink } from "../../../lib/grounded/read-model.ts";
-import { savedAnswerNotice } from "../../../lib/grounded/copy.ts";
+import { savedAnswerNotice, savedClaimGapCopy } from "../../../lib/grounded/copy.ts";
 
 function fixture() {
   const owner = randomUUID(), policyId = randomUUID();
@@ -144,4 +144,56 @@ test("place hours gaps are explicit and a visible hours lease cannot cross local
   const midnight=placeFixture();midnight.knowledge.evaluatedAt="2026-09-13T15:59:59Z";
   midnight.knowledge.statements.forEach(fact=>fact.expiresAt="2026-09-14T15:00:00Z");
   assert.equal(midnight.read(250).lifetimeMs,750);assert.throws(()=>midnight.read(1000));
+});
+
+
+test("partial answers retain each validated claim gap without discarding reliable facts", () => {
+  for (const locale of ["zh", "en"] as const) {
+    for (const reasons of [["missing"], ["expired"], ["revoked", "unreviewed"], ["unresolved_variants"]]) {
+      const f = fixture(); f.turn.locale = f.knowledge.scope.locale = locale;
+      f.knowledge.statements.pop(); f.knowledge.answer.outcome = "partial";
+      Object.assign(f.knowledge.answer.claims[1], {
+        status: reasons[0] === "unresolved_variants" ? "unresolved_variants" : "unavailable", factIds: [], reasons,
+      });
+      const turn = f.read().turns[0];
+      assert.deepEqual(turn.claimGaps, [{ id: "valid_ticket_not_itinerary_or_receipt", reasons }]);
+      assert.equal(turn.facts.length, 1); assert.equal(turn.facts[0].text, f.knowledge.statements[0].text);
+      assert.deepEqual(turn.facts[0].conditions, ["Synthetic adults only"]);
+      assert.equal(turn.facts[0].sources.length, 1);
+      assert.equal(savedAnswerNotice(turn), "partial");
+      assert.equal(turn.outcome, "answered", "a current gap never rewrites the saved result");
+    }
+  }
+});
+
+test("complete evidence and non-knowledge failures never fabricate claim gaps", () => {
+  const f = fixture();
+  assert.deepEqual(f.read().turns[0].claimGaps, []);
+  assert.equal(savedAnswerNotice(f.read().turns[0]), null);
+  Object.assign(f.turn.result, { projection: "unavailable", knowledge: null });
+  assert.equal(f.read().turns[0].claimGaps, undefined);
+  Object.assign(f.turn, { outcome: "technical_failure", status: "failed" });
+  Object.assign(f.turn.result, { originalOutcome: "technical_failure", intent: "technical_failure", requestScope: "unknown", projection: "current" });
+  assert.equal(f.read().turns[0].claimGaps, undefined);
+  assert.equal(savedAnswerNotice(f.read().turns[0]), "failed");
+});
+
+test("unrecognized gap causes fail closed rather than masquerading as missing knowledge", () => {
+  for (const reason of ["provider_failure", "policy_denied", "user_input_missing", "capability_unsupported", "invented", "not_current_date"]) {
+    const f = fixture(); f.knowledge.statements.pop(); f.knowledge.answer.outcome = "partial";
+    Object.assign(f.knowledge.answer.claims[1], { status: "unavailable", factIds: [], reasons: [reason] });
+    assert.throws(() => f.read());
+  }
+});
+
+test("every server-owned question obligation and allowed cause has bilingual gap copy", async () => {
+  const { QUESTION_DEFINITIONS } = await import("../../../lib/server/knowledge/claim/questions.ts");
+  for (const locale of ["en", "zh"] as const) {
+    for (const definition of Object.values(QUESTION_DEFINITIONS)) {
+      for (const claim of definition.claims) assert.ok(Object.hasOwn(savedClaimGapCopy[locale].claims, claim.objectId));
+    }
+    for (const reason of ["missing", "expired", "revoked", "unreviewed", "unresolved_variants", "not_current_date"]) {
+      assert.ok(Object.hasOwn(savedClaimGapCopy[locale].reasons, reason));
+    }
+  }
 });

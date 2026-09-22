@@ -24,6 +24,16 @@ const { randomUUID } = await import('node:crypto');
 const nextTask=()=>new Promise(resolve=>setImmediate(resolve));
 let fixturePort=59800;
 
+test('AI-assist may opt into a bounded longer request without changing the default',()=>{
+ const ordinary=nativeRequestScope(new AbortController().signal);
+ const assist=nativeRequestScope(new AbortController().signal,75_000);
+ try {
+  assert.throws(()=>nativeRequestScope(new AbortController().signal,90_001),/Native request unavailable/);
+  assert.doesNotThrow(()=>ordinary.check());
+  assert.doesNotThrow(()=>assist.check());
+ }finally{ordinary.dispose();assist.dispose();}
+});
+
 test('shared native deadline bounds hostile body/cancel and prevents late work',async()=>{
  const scope=nativeRequestScope(new AbortController().signal,20);let cancelled=0,sends=0;
  try {

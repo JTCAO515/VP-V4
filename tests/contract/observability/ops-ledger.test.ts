@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readOpsLedgerScope, parseOpsLedgerSnapshot } from "../../../lib/server/observability/ops-ledger.ts";
+import { readOpsLedgerScope, parseOpsLedgerSnapshot, opsLedgerFindings } from "../../../lib/server/observability/ops-ledger.ts";
 import { renderOpsLedgerReport } from "../../../apps/ops/ledger-report.ts";
 
 const id = "11111111-1111-4111-8111-111111111111";
@@ -66,4 +66,21 @@ test("allowlist and reconciliation reject content, invented zeros, duplicated pr
     assert.throws(() => parseOpsLedgerSnapshot(value), /Invalid operational ledger snapshot/);
     assert.throws(() => renderOpsLedgerReport(value), /Invalid operational ledger snapshot/);
   }
+});
+
+
+test("dashboard findings preserve each independent integrity signal without inventing task outcomes", () => {
+  const raw = snapshot();
+  raw.tasks.ownerMismatch = 1;
+  raw.tasks.missingTurns = 0;
+  raw.tasks.business.partial = 0;
+  raw.tasks.business.unobserved = 2;
+  raw.integrity.inconsistentOutcomeTasks = 1;
+  raw.integrity.duplicateTerminalTasks = 1;
+  const parsed = parseOpsLedgerSnapshot(raw);
+  assert.deepEqual(opsLedgerFindings(parsed), ["unknown_cost_hold", "owner_mismatch", "inconsistent_outcome", "duplicate_terminal"]);
+  assert.equal(parsed.tasks.total, 2);
+  assert.equal(parsed.attempts.total, 3);
+  assert.equal(parsed.tasks.business.answered, 0);
+  assert.equal(parsed.tasks.business.unobserved, 2);
 });

@@ -1,0 +1,6 @@
+{"command":"node --experimental-strip-types --test tests/contract/community/request.test.mjs","outcome":"PASS","tests":4,"environment":"local lightweight injected HTTP transport"}
+{"command":"node scripts/lint.mjs","outcome":"PASS","files":347,"environment":"local source policy"}
+{"command":"node scripts/docs-check.mjs","outcome":"PASS","environment":"local documentation validation"}
+{"command":"git diff --check","outcome":"PASS","environment":"local diff validation"}
+{"command":"VP_COMMUNITY_DB_TEST=1 node --experimental-strip-types --test tests/integration/community/review.test.mjs","outcome":"UNRUN","environment":"local prohibited by load restriction; dedicated Linux CI tracked in PR #502"}
+{"command":"Community PostgreSQL runs 35676940819 and 35677017320","outcome":"FAIL","tests":5,"passed":3,"failed":2,"reason":"test expected UNAUTHENTICATED but existing guard rejects revoked/missing sessions with SESSION_REPLACED; exact expectation corrected"}
