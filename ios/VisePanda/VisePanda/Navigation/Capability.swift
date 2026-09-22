@@ -38,6 +38,14 @@ struct CapabilityDetailView: View {
     let capability: CapabilityKind
 
     var body: some View {
+        if [.translation, .addressCard, .safePhrase].contains(capability) {
+            NativeTranslationView()
+        } else {
+            preview
+        }
+    }
+
+    private var preview: some View {
         ContentUnavailableView {
             Label(capability.title, systemImage: capability.systemImage)
         } description: {

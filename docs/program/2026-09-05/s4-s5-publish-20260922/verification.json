@@ -1,0 +1,76 @@
+{
+  "verifiedAt": "2026-09-22T02:38:19.793625+00:00",
+  "parentsUpdated": 33,
+  "programUpdated": 187,
+  "reusedSliceUpdated": 366,
+  "childCount": 6,
+  "newNativeBlockedEdges": 0,
+  "removedNativeBlockedEdges": [
+    {
+      "issue": 366,
+      "upstream": 364,
+      "preservedAs": "acceptance input"
+    }
+  ],
+  "retainedOpenNativeGates": {
+    "268": [
+      266,
+      267
+    ]
+  },
+  "checkedProgressPreserved": true,
+  "parentMetadataPreserved": true,
+  "protectedIssuesUnchanged": [
+    189,
+    241,
+    202,
+    359,
+    360
+  ],
+  "productRuntimeAcceptance": false,
+  "firstWave": {
+    "Q2": {
+      "number": 503,
+      "databaseId": 5534615797,
+      "parent": 226,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/503",
+      "bodySha256": "b4c3fa2e2930e756dbd237af3e5022ba2a6e385323449306e2d4ee39034844d5"
+    },
+    "D1": {
+      "number": 504,
+      "databaseId": 5534616455,
+      "parent": 228,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/504",
+      "bodySha256": "a32463ad6e3b85119c24c6a20360bd033935c6d02757905ca5f5a2a73082893c"
+    },
+    "H3": {
+      "number": 505,
+      "databaseId": 5534617260,
+      "parent": 213,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/505",
+      "bodySha256": "d413db661d9dcf1b1874a05e17d7a7ab9976ed5051512505f8aebba452ac6d14"
+    },
+    "T1": {
+      "number": 506,
+      "databaseId": 5534618118,
+      "parent": 215,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/506",
+      "bodySha256": "44f069b67fb04362bb0b99408270313a2ef238aa6f5a30ef86fb006842fe2978"
+    },
+    "I1": {
+      "number": 507,
+      "databaseId": 5534618685,
+      "parent": 201,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/507",
+      "bodySha256": "fbb2a86b622637eb32d51e1eaed168af09f9d067506e3c14fa6ad4b87185ba0c"
+    },
+    "X1": {
+      "number": 508,
+      "databaseId": 5534619276,
+      "parent": 237,
+      "url": "https://github.com/JTCAO515/VP-V4/issues/508",
+      "bodySha256": "78bd497ef9139bb5f93f8a2b7fab675f3e046187602653f053ec8c35b64de2c4"
+    }
+  },
+  "verification": "PASS"
+}

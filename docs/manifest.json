@@ -284,6 +284,10 @@
       "status": "document"
     },
     {
+      "path": "docs/benchmarks/media/vision-c0-v1.md",
+      "status": "document"
+    },
+    {
       "path": "docs/benchmarks/network/vpj-63-probe.md",
       "status": "document"
     },
@@ -612,7 +616,15 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/vpj-36.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/vpj-37.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-48.md",
       "status": "document"
     },
     {
@@ -625,6 +637,10 @@
     },
     {
       "path": "docs/contracts/vpj-59.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-61.md",
       "status": "document"
     },
     {
@@ -732,6 +748,10 @@
       "status": "document"
     },
     {
+      "path": "docs/harness/VPJ-67-H04-RECORDING.md",
+      "status": "document"
+    },
+    {
       "path": "docs/harness/hf-reuse/DELIVERY.md",
       "status": "document"
     },
@@ -761,6 +781,14 @@
     },
     {
       "path": "docs/knowledge-base/batches/2026-09-12-first-party/README.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/knowledge-base/batches/2026-09-22-airport-transport/README.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/knowledge-base/batches/2026-09-22-airport-transport/source-research.md",
       "status": "document"
     },
     {
@@ -805,6 +833,10 @@
     },
     {
       "path": "docs/native/grounded-web-read.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/operations/customer-discovery-pilot.md",
       "status": "document"
     },
     {
@@ -897,6 +929,14 @@
     },
     {
       "path": "docs/program/2026-09-05/README.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/S4-S5-GITHUB-SYNC-2026-09-22.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md",
       "status": "document"
     },
     {
@@ -1349,6 +1389,10 @@
     },
     {
       "path": "docs/runbooks/privacy-lifecycle.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/qwen-workspace-endpoint.md",
       "status": "document"
     },
     {

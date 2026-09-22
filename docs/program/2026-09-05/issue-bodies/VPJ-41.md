@@ -8,9 +8,9 @@
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：在真实Web账号上完成一次Trip读写/差异确认/重载，并验证桌面与390宽度、中英、键盘和失败结果。
-- 本票责任/非目标：负责轻量Web最终整合验收；不做第二完整App，不重建05数据层、20内容或34权益。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：WEB1：Web完成基本编辑、Ask、diff确认并同步原生；材料状态和权益可读。
+- 本票责任/非目标：负责轻量Web最终整合验收；不做第二完整App，不重建05数据层、20内容或34权益。 2026-09-22已确认的实施顺序：WEB1 → WEB2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
