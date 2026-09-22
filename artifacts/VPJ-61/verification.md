@@ -52,3 +52,13 @@ prove the not-yet-integrated #224 Trip-linked human-service lifecycle.
 
 Live dependency observation: #192 CLOSED, #224 OPEN. #199 query initially timed
 out; source interfaces still do not supply this slice's per-preference selection.
+
+## CI toolchain repair
+
+User requested repair after the f288a1e Native CI preflight failure. Reused the
+exact scripts/ios/ci.py and matching contract patch from #478 commit 353c09b;
+that PR remains unmerged and its unrelated UI/tests are not imported. Exact known
+26.6/17F113 and 27.0/27A266a identities are accepted, unknown versions remain
+rejected. Runtime selection, full test execution, result upload and failure
+propagation are unchanged. Python syntax and exact allowlist checks pass; current
+PR-head CI still determines remote acceptance.
