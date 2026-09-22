@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState, type FormEvent } from "react";
-import { renderOpsLedgerReport } from "@/apps/ops/ledger-report";
+import { BudgetSnapshot } from "./snapshot";
 import { parseOpsLedgerSnapshot, type OpsLedgerSnapshot } from "@/lib/server/observability/ops-ledger";
 import styles from "../review/workspace.module.css";
 
@@ -36,7 +36,7 @@ export function OpsBudgetWorkspace() {
     } catch { if (current === generation.current) setStatus("unavailable"); }
   }
 
-  return <main className={styles.workspace}>
+  return <main className={styles.workspace} lang={locale === "zh" ? "zh-CN" : "en"}>
     <header className={styles.header}>
       <div><p className={styles.eyebrow}>VisePanda · Ops</p><h1>{c.heading}</h1></div>
       <label>Language / 语言<select value={locale} onChange={event => setLocale(event.target.value as "zh" | "en")}><option value="zh">中文</option><option value="en">English</option></select></label>
@@ -48,6 +48,6 @@ export function OpsBudgetWorkspace() {
       <button type="submit" disabled={status === "busy"}>{c.read}</button>
     </form>
     <p role="status" aria-live="polite">{status === "busy" ? c.busy : status === "invalid" ? c.invalid : status === "unavailable" ? c.unavailable : report ? "" : c.empty}</p>
-    {report ? <section className={styles.list} aria-label={c.heading}><pre className={styles.panel} style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere", lineHeight: 1.7 }}>{renderOpsLedgerReport(report, locale)}</pre></section> : null}
+    {report ? <BudgetSnapshot snapshot={report} locale={locale} /> : null}
   </main>;
 }
