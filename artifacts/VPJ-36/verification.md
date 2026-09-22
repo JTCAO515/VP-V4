@@ -31,6 +31,6 @@ Trips with chat/Turn references are rejected. All-data requests remain unexecute
 A separate reviewer identified direct authenticated Trip DELETE bypass and an
 advisory/row-lock inversion. Fixed by revoking direct DELETE and using parent row
 locks. Remaining legacy Proposal-first contention is bounded with a 500ms worker
-lock timeout and at most three retries in the local runner. A failed attempt remains
-queued. Dedicated integration assertions cover these cases; final execution awaits
+lock timeout and at most three attempts in the local runner. A failed transaction rolls back; read the receipt after an unavailable result.
+The reviewer accepted the mitigation with runtime evidence still UNRUN. Dedicated integration assertions cover these cases; final execution awaits
 a permitted resource window. Static review is not DB runtime evidence.

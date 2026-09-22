@@ -101,7 +101,7 @@ returns jsonb language plpgsql security definer set search_path='' as $$
 declare r privacy_private.trip_deletions%rowtype; target uuid; removed integer;
 begin
  -- Legacy writers can lock Proposal/child rows before Trip. Bound contention;
- -- a 55P03 rollback leaves queued for the worker's bounded retry, never deadlocks.
+ -- failed attempts roll back for bounded retry; contention never proves completion.
  perform pg_catalog.set_config('lock_timeout','500ms',true);
  select trip_id into target from privacy_private.trip_deletions where request_id=p_request_id;
  if not found then raise exception 'INVALID_INPUT'; end if;

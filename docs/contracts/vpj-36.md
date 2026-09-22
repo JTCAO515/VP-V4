@@ -25,7 +25,9 @@ days/items, place/action references and archive receipt. Proposal memory-consume
 references cascade; source memories remain. An exception rolls back erasure and
 completion together. Existing Proposal writers may acquire child locks first; the
 worker bounds lock waits to 500 ms and its local runner retries concurrency errors
-at most three times. Exhaustion remains queued and must be retried by request ID.
+for at most three attempts. Failed transactions preserve queued state, but another
+worker may complete concurrently: after an unavailable result, read the receipt
+before retrying by request ID.
 Repeated execution returns the original terminal receipt.
 
 `GET /api/privacy/native/v1/trips?requestId=UUID` requires a currently existing
