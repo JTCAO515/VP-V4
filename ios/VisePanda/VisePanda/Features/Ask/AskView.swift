@@ -27,10 +27,7 @@ struct AskView: View {
                         .foregroundStyle(Color.vpBrand)
                         .textCase(.uppercase)
 
-                    Text("ask.title")
-                        .font(.largeTitle.weight(.bold))
-                        .tracking(-0.8)
-                        .fixedSize(horizontal: false, vertical: true)
+                    VPReadableText("ask.title", style: .largeTitle, weight: .bold, tracking: -0.8)
 
                     Text("ask.subtitle")
                         .accessibilityIdentifier("ask-introduction")
