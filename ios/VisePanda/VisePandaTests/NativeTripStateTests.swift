@@ -75,6 +75,23 @@ nonisolated final class NativeTripStateTests: XCTestCase {
     }
 
     @MainActor
+    func testSingleInterestOutlineDoesNotInventAnAlternative() throws {
+        for (request, chinese, food) in [
+            ("上海四天，只想吃美食，日期未定", true, true),
+            ("Beijing for three days, neighborhood walks", false, false),
+            ("广州五天，散步", true, false),
+            ("Chongqing for two days, food", false, true)
+        ] {
+            let outline = try XCTUnwrap(NativeRelativeOutline.make(from: request, chinese: chinese))
+            XCTAssertFalse(outline.hasAlternatives)
+            XCTAssertEqual(outline.initialTitles, food ? outline.foodFirst : outline.walkFirst)
+        }
+        let both = try XCTUnwrap(NativeRelativeOutline.make(from: "Shanghai four days food and walks", chinese: false))
+        XCTAssertTrue(both.hasAlternatives)
+        XCTAssertNil(NativeRelativeOutline.make(from: "Shanghai four days food " + String(repeating: "x", count: 4000), chinese: false))
+    }
+
+    @MainActor
     func testOutlineBindsOnlyAfterValidNonoverlappingDateAndPreservesTrip() throws {
         let existing = NativeTripDay(id: "existing", date: "2026-10-01", timeZone: "Asia/Shanghai", items: [
             .init(id: "dinner", dayId: "existing", title: "Confirmed dinner")

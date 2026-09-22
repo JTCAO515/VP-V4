@@ -1916,7 +1916,7 @@
       "deliveryStage": "S4",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "H1：在原生酒店入口核对条件后跳到官方App/网站，用户清楚哪些参数需重新填写。 PR #498 OPEN/draft；Booking与Trip.com已有桌面观察，不能当真机通过。",
+        "firstSlice": "H1：在原生酒店入口核对条件后跳到官方App/网站，用户清楚哪些参数需重新填写。 PR #498 已合并；Booking与Trip.com已有桌面观察，不能当真机通过。",
         "boundary": "负责链接/归因/用途边界；23负责比较UI，24负责回流。TourMind只作可选研究候选，缺联盟账号不阻止普通官方出口。 2026-09-22已确认的实施顺序：H1 → H2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md",
@@ -7211,7 +7211,7 @@
           "title": "[VPJ-22 切片 H1] 官方酒店出口在手机保留真实参数",
           "result": "在原生酒店入口核对条件后跳到官方App/网站，用户清楚哪些参数需重新填写。",
           "acceptance": [
-            "接续PR #498，完成现存编译/设备检查；分别核安装/未安装供应商App",
+            "复用已合并PR #498的编译证据，完成设备检查；分别核安装/未安装供应商App",
             "hotel/date/rooms/adults/children逐字段记录；exact hotel丢失、儿童年龄不足必须提示",
             "固定域名/过期/失败回退；opened永不标booked，非联盟出口可完整使用"
           ],
@@ -7226,7 +7226,7 @@
           "laneOrder": 1,
           "status": "planned",
           "mode": "在途收尾",
-          "reuse": "PR #498 OPEN/draft；Booking与Trip.com已有桌面观察，不能当真机通过。",
+          "reuse": "PR #498 已合并；Booking与Trip.com已有桌面观察，不能当真机通过。",
           "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         },
         {
@@ -7237,7 +7237,7 @@
           "title": "[VPJ-22 切片 H2] 已有酒店供应商候选的采纳决定与最小接线",
           "result": "核对RollingGo已有只读候选及TourMind研究，形成有证据的采纳/暂缓决定；采纳时交付一个受控查询到官方外跳。",
           "acceptance": [
-            "PR #498附录已有RollingGo tools/tags/hotels/handoff真实观察；当前主线未集成，不从零重做探针",
+            "PR #498已合并，附录已有RollingGo tools/tags/hotels/handoff真实观察；复用现有观察，不从零重做探针",
             "字段用途、source版本、外宾入住信息和总价口径有证据或unknown；登录后价格不猜",
             "候选不可用可暂缓且不阻塞H1；无支付/代订/room SKU编造或佣金影响排序"
           ],

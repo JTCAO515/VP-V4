@@ -68,11 +68,23 @@ struct TodayView: View {
 
 // Native list keeps long labels readable at accessibility text sizes.
 struct ToolsView: View {
+    @Environment(AppSettings.self) private var settings
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         List {
             PreviewStatusBanner()
+            NavigationLink(destination: NativeHotelHandoffView()) {
+                HStack {
+                    if !dynamicTypeSize.isAccessibilitySize {
+                        Image(systemName: "bed.double").accessibilityHidden(true)
+                    }
+                    Text(settings.selectedLocale == .zh ? "酒店搜索" : "Hotel search")
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(minHeight: 44)
+            }
+            .accessibilityIdentifier("tools.hotels")
             ForEach([CapabilityKind.translation, .addressCard, .safePhrase]) { capability in
                 NavigationLink(value: AppRoute.capability(capability)) {
                     HStack {
