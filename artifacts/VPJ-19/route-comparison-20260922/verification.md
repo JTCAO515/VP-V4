@@ -36,3 +36,14 @@ increments are preserved. Shared handoff/issue-plan belongs to Overall.
 Start 2026-09-22; acceptance pending. Rework: strict segment validation and expiry click guard
 found during self-review. External waiting: severe local resource pressure, provider budget
 confirmation. No complete Issue or user acceptance claim; #364/#209 remain open.
+
+## Follow-up evidence
+
+- PASS: focused route adapter contracts 5/5 after strict segments and numeric bounds.
+- PASS: Quality PR for initial implementation 0a7d985a, run 35674646096.
+- Added desktop and 390×844 Playwright fixture interactions to CI, including future-departure
+  no-dispatch and expired-route removal; these are controlled fixtures, not live route proof.
+- Native tests additionally cover late completion after clearing, mismatch/expiry rejection
+  and POI/GCJ02 app-URL encoding. Execution remains pending the native CI/window.
+- Preview deployment succeeded for 0a7d985a but browser request returned HTTP 403; no access
+  controls bypassed, so remote visual verification remains UNRUN.

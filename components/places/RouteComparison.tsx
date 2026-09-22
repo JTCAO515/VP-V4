@@ -30,6 +30,13 @@ export function RouteComparison({ selected, chinese }: { selected: RoutePlace | 
     } catch (error) { if (!controller.signal.aborted && own === generation.current) setMessage(error instanceof Error ? error.message : text("Routes unavailable.", "路线暂不可用。")); }
     finally { if (own === generation.current) setLoading(false); }
   }
+  const statusText = (status: string) => {
+    if (status === "no_routes") return text("No route found. Try different endpoints.", "没有可用路线，请尝试其他起终点。");
+    if (status === "timeout") return text("Query timed out. Try again.", "查询超时，请重试。");
+    if (status === "endpoint_mismatch") return text("Route endpoints do not match. Select again.", "路线起终点不匹配，请重新选择。");
+    if (status === "city_unknown") return text("Transit city is unknown. Select a more specific place.", "公交城市信息缺失，请选择更准确的地点。");
+    return text("A complete plan is unavailable for this mode. Try again or copy the address.", "暂时无法提供此方式的完整方案，请重试或复制地址。");
+  };
   const eligible = selected?.provider === "amap" && selected.location?.coordinateSystem === "gcj02";
   return <section className={styles.detail} aria-label={text("Compare routes", "比较路线")}>
     <h2>{text("Compare routes", "比较路线")}</h2>
@@ -43,7 +50,7 @@ export function RouteComparison({ selected, chinese }: { selected: RoutePlace | 
     {destination && <><h3>{text("Chinese address card", "中文地址卡")}</h3><p>{destination.rawName}</p><address>{destination.address ?? text("Address unavailable; reselect an exact entrance or terminal.", "地址缺失，请重选准确入口或航站楼。")}</address>{destination.address && <button onClick={() => void navigator.clipboard.writeText(`${destination.rawName}\n${destination.address}`).then(() => setMessage(text("Address copied.", "地址已复制。"))).catch(() => setMessage(text("Select and copy the address manually.", "请选中文字手动复制地址。")))}>{text("Copy destination address", "复制终点地址")}</button>}</>}
     {reply && <><p>{text("Source: AMap · Queried: ", "来源：高德 · 查询：")}{reply.observedAt}</p>{expired ? <p role="alert">{text("Route observation expired. Query again before navigation.", "路线观测已过期，请重新查询后导航。")}</p> : reply.options.map(option => <article key={option.mode}>
       <h3>{text(option.mode, { walking: "步行", transit: "公交", driving: "驾车" }[option.mode])}</h3>
-      {option.status !== "observed" ? <p>{text("Unavailable for this mode: ", "此方式暂不可用：")}{option.status}</p> : <><p>{Math.ceil((option.durationSeconds ?? 0) / 60)} {text("min", "分钟")} · {option.distanceMeters} m</p><p>{text("Walking / transfers: ", "步行距离 / 换乘：")}{option.walkingMeters ?? "—"} m / {option.transfers ?? "—"}</p><p>{text(option.estimateKind === "tolls_only" ? "Estimated tolls only: " : "Estimated fare: ", option.estimateKind === "tolls_only" ? "仅过路费估算：" : "票价估算：")}{option.estimateCny == null ? text("Unknown", "未知") : `¥${option.estimateCny}`}</p><p>{text("Estimated departure / arrival: ", "估算出发 / 到达：")}{option.departureAt} / {option.arrivalAt}</p><ol>{option.steps?.map((step, index) => <li key={index}>{step}</li>)}</ol>{option.webUrl?.startsWith("https://uri.amap.com/navigation?") && <a onClick={event => { if (Date.now() >= Date.parse(reply.expiresAt)) { event.preventDefault(); setNow(Date.now()); } }} href={option.webUrl} target="_blank" rel="noreferrer">{text("Open AMap web directions", "打开高德网页路线")}</a>}</>}
+      {option.status !== "observed" ? <p>{statusText(option.status)}</p> : <><p>{Math.ceil((option.durationSeconds ?? 0) / 60)} {text("min", "分钟")} · {option.distanceMeters} m</p><p>{text("Walking / transfers: ", "步行距离 / 换乘：")}{option.walkingMeters ?? "—"} m / {option.transfers ?? "—"}</p><p>{text(option.estimateKind === "tolls_only" ? "Estimated tolls only: " : "Estimated fare: ", option.estimateKind === "tolls_only" ? "仅过路费估算：" : "票价估算：")}{option.estimateCny == null ? text("Unknown", "未知") : `¥${option.estimateCny}`}</p><p>{text("Estimated departure / arrival: ", "估算出发 / 到达：")}{option.departureAt} / {option.arrivalAt}</p><ol>{option.steps?.map((step, index) => <li key={index}>{step}</li>)}</ol>{option.webUrl?.startsWith("https://uri.amap.com/navigation?") && <a onClick={event => { if (Date.now() >= Date.parse(reply.expiresAt)) { event.preventDefault(); setNow(Date.now()); } }} href={option.webUrl} target="_blank" rel="noreferrer">{text("Open AMap web directions", "打开高德网页路线")}</a>}</>}
     </article>)}<p>{text("If the map cannot open, copy the address. After returning to VP, select and query again.", "地图无法打开时请复制地址；返回 VP 后请重新选点查询。")}</p></>}
   </section>;
 }

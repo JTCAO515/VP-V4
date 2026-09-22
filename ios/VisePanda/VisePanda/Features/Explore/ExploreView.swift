@@ -278,6 +278,9 @@ struct NativeRouteReply: Decodable {
             let value = try JSONDecoder().decode(NativeRouteReply.self, from: data)
             guard value.provider == "amap", value.origin.provider == .amap, value.destination.provider == .amap,
                   value.origin.providerPoiId == origin.providerPoiId, value.destination.providerPoiId == destination.providerPoiId,
+                  value.options.allSatisfy({ option in
+                      option.status != "observed" || ((option.durationSeconds ?? -1) >= 0 && (option.durationSeconds ?? .infinity) <= 604800 && (option.distanceMeters ?? -1) >= 0 && (option.distanceMeters ?? .infinity) <= 100_000_000 && (option.walkingMeters.map { $0 >= 0 && $0 <= 100_000_000 } ?? true))
+                  }),
                   value.options.count == 3, Set(value.options.map(\.mode)) == Set(["walking", "transit", "driving"]),
                   !value.expired(at: Date()) else { throw NativeDataError.invalidResponse }
             reply = value
@@ -331,10 +334,19 @@ private struct NativeRouteComparison: View {
             if openFailed { Text(text("Map app unavailable or failed to open. Use the web link or copy the address.", "地图 App 未安装或打开失败，请使用网页出口或复制地址。")) }
         }.onDisappear { task?.cancel(); store.clear() }
     }
+    private func statusText(_ status: String) -> String {
+        switch status {
+        case "no_routes": text("No route found. Try different endpoints.", "没有可用路线，请尝试其他起终点。")
+        case "timeout": text("Query timed out. Try again.", "查询超时，请重试。")
+        case "endpoint_mismatch": text("Route endpoints do not match. Select again.", "路线起终点不匹配，请重新选择。")
+        case "city_unknown": text("Transit city is unknown. Select a more specific place.", "公交城市信息缺失，请选择更准确的地点。")
+        default: text("A complete plan is unavailable. Retry or copy the address.", "暂时无法提供完整方案，请重试或复制地址。")
+        }
+    }
     @ViewBuilder private func route(_ option: NativeRouteOption, reply: NativeRouteReply) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(chinese ? (["walking": "步行", "transit": "公交", "driving": "驾车"][option.mode] ?? option.mode) : option.mode).font(.headline)
-            if option.status != "observed" { Text(text("Unavailable: ", "暂不可用：") + option.status) }
+            if option.status != "observed" { Text(statusText(option.status)) }
             else {
                 Text("\(Int(ceil((option.durationSeconds ?? 0) / 60))) min · \(Int(option.distanceMeters ?? 0)) m")
                 Text(text("Walking / transfers: ", "步行距离 / 换乘：") + (option.walkingMeters.map { "\(Int($0)) m" } ?? "—") + " / " + (option.transfers.map(String.init) ?? "—"))

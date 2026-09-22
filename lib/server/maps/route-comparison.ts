@@ -36,7 +36,7 @@ async function route(mode: RouteMode, origin: PlaceDetail, destination: PlaceDet
     if (!alternatives.length) return { mode, status: "no_routes" };
     const path = object(alternatives[0]), cost = object(path.cost);
     const durationSeconds = number(cost.duration), distanceMeters = number(path.distance);
-    if (durationSeconds === null || durationSeconds > 604800 || distanceMeters === null) return { mode, status: "invalid_response" };
+    if (durationSeconds === null || durationSeconds > 604800 || distanceMeters === null || distanceMeters > 100_000_000) return { mode, status: "invalid_response" };
     let steps: string[] = [], walkingMeters: number | null = mode === "walking" ? distanceMeters : null, transfers: number | null = null;
     if (mode === "transit") {
       const segments = list(path.segments); let rides = 0, walk = 0, knownWalk = true;
@@ -52,14 +52,18 @@ async function route(mode: RouteMode, origin: PlaceDetail, destination: PlaceDet
         const lines = list(bus.buslines);
         if (lines.length) {
           // Buslines are provider alternatives for this segment; retain their names together.
-          const names = lines.map(line => label(object(line).name)).filter((s): s is string => !!s);
+          const names = lines.map(line => {
+            const value = object(line), name = label(value.name);
+            const from = label(object(value.departure_stop).name), to = label(object(value.arrival_stop).name);
+            return name ? `${name} (${from ?? "?"} → ${to ?? "?"})` : null;
+          }).filter((s): s is string => !!s);
           if (!names.length) return { mode, status: "invalid_response" };
           steps.push(names.join(" / ")); rides++;
         }
         // Do not silently drop rail/taxi portions from a supposedly complete transit plan.
         if (Object.keys(object(segment.railway)).length || Object.keys(object(segment.taxi)).length) return { mode, status: "unsupported_segment" };
       }
-      walkingMeters = knownWalk ? walk : null; transfers = Math.max(0, rides - 1);
+      walkingMeters = knownWalk && walk <= 100_000_000 ? walk : null; transfers = Math.max(0, rides - 1);
     } else {
       const instructions = list(path.steps).map(step => label(object(step).instruction));
       if (instructions.some(step => !step)) return { mode, status: "invalid_response" };

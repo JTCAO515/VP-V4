@@ -3,6 +3,22 @@ import XCTest
 
 nonisolated final class NativePlaceSearchTests: XCTestCase {
     @MainActor
+    func testRouteHandoffRetainsPOIIdentityAndGCJCoordinates() throws {
+        let start = NativePlaceDetail(provider: .amap, providerPoiId: "start", rawName: "上海 & 起点", address: nil, location: .init(lat: 31.2, lng: 121.4, coordinateSystem: "gcj02"))
+        let end = NativePlaceDetail(provider: .amap, providerPoiId: "end", rawName: "终点", address: nil, location: .init(lat: 31.3, lng: 121.5, coordinateSystem: "gcj02"))
+        let value = NativeRouteReply(provider: "amap", origin: start, destination: end, observedAt: "2026-09-22T00:00:00.000Z", expiresAt: "2099-01-01T00:00:00.000Z", options: [])
+        let url = try XCTUnwrap(value.appURL(mode: "walking"))
+        let items = try XCTUnwrap(URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems)
+        let parameters = Dictionary(uniqueKeysWithValues: items.map { ($0.name, $0.value ?? "") })
+        XCTAssertEqual(url.scheme, "iosamap"); XCTAssertEqual(url.host, "path")
+        XCTAssertEqual(parameters["sid"], "start"); XCTAssertEqual(parameters["did"], "end")
+        XCTAssertEqual(parameters["slon"], "121.4"); XCTAssertEqual(parameters["dlat"], "31.3")
+        XCTAssertEqual(parameters["dev"], "0"); XCTAssertEqual(parameters["t"], "2")
+        XCTAssertEqual(parameters["sname"], "上海 & 起点")
+        XCTAssertFalse(value.expired(at: Date())); XCTAssertNil(value.appURL(mode: "unknown"))
+    }
+
+    @MainActor
     func testRouteClearRejectsLateResponse() async throws {
         let store = NativeRouteStore(), delayed = DeferredPlaceReply()
         let start = NativePlaceDetail(provider: .amap, providerPoiId: "start", rawName: "Start", address: nil, location: .init(lat: 31.2, lng: 121.4, coordinateSystem: "gcj02"))
