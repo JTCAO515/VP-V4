@@ -343,6 +343,9 @@ struct NativeTripView: View {
                 }
                 Text(detail.trip.title).font(.title2.bold()).accessibilityIdentifier("trip.confirmed.title")
                 Text(detail.trip.id).font(.caption).textSelection(.enabled).accessibilityIdentifier("trip.selected.id")
+                NavigationLink(text("Preparation check", "准备检查")) {
+                    NativeReadinessView(tripID: detail.trip.id, tripVersion: detail.trip.headVersion)
+                }.accessibilityIdentifier("trip.readiness")
                 if detail.content.days.isEmpty { Text(text("No days in this saved version.", "此保存版本尚无日期安排。")) }
                 ForEach(detail.content.days) { day in
                     VStack(alignment: .leading, spacing: 8) {

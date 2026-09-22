@@ -1,0 +1,13 @@
+.main { max-width: 48rem; margin: auto; padding: 1.5rem; color: var(--vp-plum-900); }
+.header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.main label { display: grid; gap: .5rem; }
+.main select, .main input, .main button { min-height: 44px; max-width: 100%; font: inherit; padding: .5rem; border: 1px solid var(--vp-plum-700); border-radius: .5rem; background: white; color: var(--vp-plum-900); }
+.main button { cursor: pointer; font-weight: 600; }
+.main button:disabled { opacity: .6; cursor: wait; }
+.main a { text-underline-offset: .2em; overflow-wrap: anywhere; }
+.main :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+.panel { display: grid; gap: 1rem; padding: 1.25rem; margin-block: 1.5rem; border: 1px solid var(--vp-butter-100); border-radius: 1rem; }
+.panel h2, .panel p { margin: 0; }
+.panel dl { display: grid; gap: 1rem; margin: 0; }
+.panel dd { margin: .25rem 0 0; font-weight: 600; }
+.panel li { margin-block: .5rem; }

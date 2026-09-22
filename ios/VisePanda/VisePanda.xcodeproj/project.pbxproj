@@ -67,6 +67,7 @@
 		D6966D14059643ACBB204384 /* NativeHotelHandoffView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5046CDB2E340BAA93D9194; };
 		D679092AC75040D3B7FC3E03 /* NativeHotelHandoffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E665A1A99C49B7A7A7184C; };
 		B70096DFB59F47A2A16D06BD /* NativeHotelHandoffUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9AE0A5F84264B519E771326; };
+		A21100000000000000000001 /* NativeReadinessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A21100000000000000000002; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -144,6 +145,7 @@
 		AE5046CDB2E340BAA93D9194 /* NativeHotelHandoffView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeHotelHandoffView.swift; sourceTree = "<group>"; };
 		D8E665A1A99C49B7A7A7184C /* NativeHotelHandoffTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeHotelHandoffTests.swift; sourceTree = "<group>"; };
 		A9AE0A5F84264B519E771326 /* NativeHotelHandoffUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeHotelHandoffUITests.swift; sourceTree = "<group>"; };
+		A21100000000000000000002 /* NativeReadinessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisePanda/Features/Readiness/NativeReadinessView.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +159,7 @@
 			isa = PBXGroup;
 			children = (
 				600000000000000000000002 /* VisePanda */,
+				A21100000000000000000002 /* NativeReadinessView.swift */,
 				60000000000000000000000F /* VisePandaTests */,
                 30000000000000000000006E,
 				600000000000000000000011 /* VisePandaUITests */,
@@ -286,6 +289,7 @@
 				200000000000000000000047, 200000000000000000000050, 200000000000000000000051, 200000000000000000000052, 200000000000000000000042, 200000000000000000000040, 200000000000000000000041,
 				200000000000000000000069, 200000000000000000000067, 200000000000000000000064, 200000000000000000000060, 200000000000000000000061, 200000000000000000000030, 200000000000000000000031, 200000000000000000000032,
 				200000000000000000000020,
+				A21100000000000000000001 /* NativeReadinessView.swift in Sources */,
 				200000000000000000000001, 200000000000000000000002, 200000000000000000000003,
 				200000000000000000000004, 200000000000000000000005, 200000000000000000000006,
 				200000000000000000000007, 200000000000000000000008, 200000000000000000000009,
