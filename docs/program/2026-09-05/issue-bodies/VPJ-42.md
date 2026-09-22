@@ -8,9 +8,9 @@ TestFlight 实机贯通 Plan、Ready、Travel 三段。
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：选定同一可安装TestFlight版本，让受控用户完成一个Plan→Ready→Travel旅程并保留跨模块异常证据。
-- 本票责任/非目标：负责Beta联合验收；57/56等提供基础能力，40/41提供体验结果，71提供Harness；不把安装成功当产品完成。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：BETA1：受控测试用户在指定build完成真实Trip规划、选区Ask、明确确认、材料/订单回流与准备。
+- 本票责任/非目标：负责Beta联合验收；57/56等提供基础能力，40/41提供体验结果，71提供Harness；不把安装成功当产品完成。 2026-09-22已确认的实施顺序：BETA1 → BETA2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口

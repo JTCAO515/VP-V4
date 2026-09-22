@@ -8,9 +8,9 @@
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：基于已有budget-scope只读模型贯通一次实际attempt对账与能力停用/恢复，明确unknown费用。
-- 本票责任/非目标：负责运营可观测性和停止消费者；59提供账本、35提供商品额度，71执行最终演练；不重建第二账本。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [artifacts/VPJ-37/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-37/verification.md) · [artifacts/VPJ-37/unrun.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-37/unrun.md)
+- 首个可交付结果：W1：授权运营在质量/成本视图分辨answered、partial、失败、未观测及待核费用。 PR #501已合入main，复用聚合视图及受保护读接口；真实授权部署读取与实际成本验收仍未完成。
+- 本票责任/非目标：负责运营可观测性和停止消费者；59提供账本、35提供商品额度，71执行最终演练；不重建第二账本。 2026-09-22已确认的实施顺序：W1 → W2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [artifacts/VPJ-37/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-37/verification.md) · [artifacts/VPJ-37/unrun.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-37/unrun.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口

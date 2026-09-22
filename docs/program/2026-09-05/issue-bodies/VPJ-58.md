@@ -8,9 +8,9 @@
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：复用36已交付handler注册，选一个后来接入模块做删除期间并发与恢复后隔离，随后补齐原全模块矩阵。
-- 本票责任/非目标：负责最终覆盖与跨模块回归；不重复36的基础执行器或38的备份工具，必需模块未验不能宣称全域删除完成。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：ALL1：一个测试账号对当前实际已存在模块完成导出删除，回执列清所有已完成/缺失模块。
+- 本票责任/非目标：负责最终覆盖与跨模块回归；不重复36的基础执行器或38的备份工具，必需模块未验不能宣称全域删除完成。 2026-09-22已确认的实施顺序：ALL1 → ALL2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口

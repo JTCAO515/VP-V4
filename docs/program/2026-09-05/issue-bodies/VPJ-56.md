@@ -8,9 +8,9 @@
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：复用已通过的原生CI；先将PR #421已合入testing-chat-vpv4但尚未入main的签名手册独立核对接回，再完成一个实际签名Archive/TestFlight安装缺口。
-- 本票责任/非目标：负责可分发构建；42负责完整Beta、44负责正式上架。CI已勾选记录保留，未获准账号/上传动作不阻止本地诊断。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/contracts/vpj-56.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/contracts/vpj-56.md) · [artifacts/VPJ-56/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-56/verification.md)
+- 首个可交付结果：X1：同一commit在实际可用工具链构建，获得可审查Archive及版本/签名准备结果。
+- 本票责任/非目标：负责可分发构建；42负责完整Beta、44负责正式上架。CI已勾选记录保留，未获准账号/上传动作不阻止本地诊断。 2026-09-22已确认的实施顺序：X1 → X2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/contracts/vpj-56.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/contracts/vpj-56.md) · [artifacts/VPJ-56/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-56/verification.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口

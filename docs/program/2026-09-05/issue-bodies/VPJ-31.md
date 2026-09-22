@@ -8,9 +8,9 @@
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：在现有CaseRequest/AccessGrant下，只投影一个服务任务必需的用户字段，并验证纠正/撤回后的访问。
-- 本票责任/非目标：负责授权Brief投影；57负责grant/访问期限，32负责人员接单与结果，11负责偏好权威。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：B1：用户预览本服务任务要分享的资料后，指定员工看到有来源和更新时间的最小Brief。
+- 本票责任/非目标：负责授权Brief投影；57负责grant/访问期限，32负责人员接单与结果，11负责偏好权威。 2026-09-22已确认的实施顺序：B1 → B2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口

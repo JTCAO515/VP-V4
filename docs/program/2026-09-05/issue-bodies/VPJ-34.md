@@ -8,9 +8,9 @@
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：按33的版本化商品策略完成一次StoreKit sandbox交易验证→账号grant→两端生效及同交易恢复。
-- 本票责任/非目标：负责交易/grant幂等、排队、生效、退款和恢复；不再定义33的商品规则，不实现35的任务扣次。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：Q2：用户在官方测试环境购买一次，服务端验证交易绑定账号后，两端读取同一720h权益段。
+- 本票责任/非目标：负责交易/grant幂等、排队、生效、退款和恢复；不再定义33的商品规则，不实现35的任务扣次。 2026-09-22已确认的实施顺序：Q2 → Q3 → Q4；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口

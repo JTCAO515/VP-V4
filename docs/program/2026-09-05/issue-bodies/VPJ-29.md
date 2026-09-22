@@ -8,9 +8,9 @@
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：以疲劳或有效晚点/关闭为输入，在当前Trip生成1–2个可理解的局部恢复候选，确认后应用。
-- 本票责任/非目标：负责在途变化的业务触发；复用10提案、21准备、25缓存和65约束；不是另一个规划器或地图实时监听器。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：R1：用户说走不动或晚点，看到1–2个保留固定订单/晚餐的局部候选，确认后才更新Trip。
+- 本票责任/非目标：负责在途变化的业务触发；复用10提案、21准备、25缓存和65约束；不是另一个规划器或地图实时监听器。 2026-09-22已确认的实施顺序：R1 → R2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
