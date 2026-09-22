@@ -45,6 +45,22 @@ Current evidence: [verification](../../artifacts/VPJ-22/verification.md) and
 [remaining acceptance](../../artifacts/VPJ-22/unrun.md). Browser observations do not establish
 installed-provider-app or physical-iPhone retention. #212 remains open.
 
+## RollingGo verified candidate
+
+JT explicitly requested revalidation of the existing configured MCP on 2026-09-22.
+The existing query-only adapter at `codex/dida-hotel-integration` / `e0dadd8f` successfully
+listed three tools, returned 74 tags, 3 hotels and 15 room entries for the first hotel. Its
+returned link preserved hotel 1100060, October 20–22 and 1 room/2 adults/0 children on the
+real desktop website. See the [bounded report](../../artifacts/VPJ-22/rollinggo-availability-20260922.json).
+
+This establishes present provider availability and this website sample only. The old server
+integration is not on main and the native screen does not yet call it. Future wiring must reuse
+server-only credentials, explicit per-query consent, session checks, bounded response handling
+and strict returned-link validation; it must not put the MCP key in Swift or fabricate a direct
+hotel ID. Supplier `utm_source` already present on returned links needs disclosure; it does not
+establish commission entitlement. Price display required login in this probe, while price basis,
+foreign-guest eligibility and API/content-use rights remain bounded by the existing runbook.
+
 ## TourMind candidate
 
 Decision: **defer adoption for this exit slice**, retain the candidate from #212.

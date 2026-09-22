@@ -60,3 +60,27 @@ Branch work started 2026-09-22 08:49:29 +0800 (Git reflog). User acceptance has 
 so start-to-acceptance duration is UNRUN. Rework: test class isolation declarations and temporary
 validation-command setup as above. External wait: shared-host resource window and physical-device
 installation authorization; no supplier approval wait. No efficiency improvement is claimed.
+
+## RollingGo MCP revalidation requested by JT
+
+**PASS, live on 2026-09-22 01:21:07–12 UTC.** Reused the clean existing
+`codex/dida-hotel-integration` worktree (`e0dadd8f`) and its query-only adapter, with
+the existing mode-0600 private configuration loaded as process environment. No secret was
+printed, copied into this branch or passed to a browser. The old integration remains outside main.
+
+- `tools/list` HTTP 200: exactly `getHotelDetail`, `getHotelSearchTags`, `searchHotels`.
+- Tags: 74. Synthetic Shanghai search, 2026-10-20, 2 nights, 2 adults/1 room: 3 hotels,
+  all 3 handoff URLs passed the existing strict validator. First hotel detail: 15 room entries.
+- Opened the **returned** RollingGo handoff for hotel 1100060. Visible desktop page showed
+  和颐至尊酒店(上海人民广场南京路步行街店), 2026-10-20 → 2026-10-22, 1 room, 2 adults,
+  0 children. **PASS** for exact hotel/date/occupancy landing in this sample.
+- The page required login to view prices. No login, booking, payment, cancellation or order call.
+  MCP room entries are supplier observations, not inventory/price guarantees.
+- Returned link includes supplier `utm_source`; its value is omitted from durable evidence.
+  Presence is not proof of VisePanda commission/attribution. No new affiliate value was invented.
+
+Bounded, secret-free report: [RollingGo availability](rollinggo-availability-20260922.json).
+Verdict: **usable read-only provider candidate with successful desktop handoff**. It is not yet
+wired to this branch's native screen or deployed server; existing ordinary official links remain
+the credential-free fallback. True device retention and signed-in price/checkout remain UNRUN.
+This real retest supersedes relying on the September 14 memory result.
