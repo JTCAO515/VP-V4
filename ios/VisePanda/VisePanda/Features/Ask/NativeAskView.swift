@@ -410,7 +410,7 @@ struct NativeAskView: View {
     }
 }
 
-private struct NativeAskContentHeight: PreferenceKey {
+nonisolated private struct NativeAskContentHeight: PreferenceKey {
     static let defaultValue: CGFloat = 0
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = max(value, nextValue()) }
 }
