@@ -22,9 +22,11 @@ At the start of a work unit, state: current stage, one observable user result, i
 the required environment, the next acceptance action. Finish a partially integrated result before
 starting another preparation PR.
 
-Three parallel teams are authorized (JT, 2026-09-17); routing is in
-[TEAM-PLAN-2026-09-17.md](../program/2026-09-05/TEAM-PLAN-2026-09-17.md). Each team owns one
-primary delivery at a time. Coordinate shared-file edits and shared Staging write windows; do not
+Three domain teams retain ownership under
+[TEAM-PLAN-2026-09-17.md](../program/2026-09-05/TEAM-PLAN-2026-09-17.md). JT authorized up to six
+active development threads on 2026-09-22; use the [S4/S5 six-thread order](../program/2026-09-05/S4-S5-SLICES-2026-09-22.md).
+Each thread owns one primary delivery at a time; existing active work counts toward the six-thread
+limit. Coordinate shared-file edits, heavy local checks and shared Staging write windows; do not
 wait for another team's whole Issue to close.
 
 An additional preparation task must remove a named stage blocker, deliver a separately testable

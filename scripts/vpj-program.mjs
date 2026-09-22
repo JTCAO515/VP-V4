@@ -511,7 +511,7 @@ function applyBodyUpdate(update) {
 
 export function programBody() {
   return read(`${dir}/program-body.md`) + '\n\n## 当前六阶段与后续扩展\n\n' +
-    '阶段演示不是整票完成；完整验收、原生依赖及后续激活条件保留。当前按[三队任务分工](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/TEAM-PLAN-2026-09-17.md)并行，每队一个主要交付；已分配VPJ-04/08/07/75/76保持原归属。\n\n' +
+    '阶段演示不是整票完成；完整验收、原生依赖及后续激活条件保留。当前保留[三队领域归属](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/TEAM-PLAN-2026-09-17.md)，按[最多六线程实施顺序](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)推进，每线程一个主要交付；已有活跃任务计入六个名额，已分配VPJ-04/08/07/75/76保持原归属。\n\n' +
     '| 阶段 | 验收成果 | 现有任务数 |\n| --- | --- | --- |\n' +
     plan.deliveryStages.map(stage => `| [${stage.id}](${stage.milestoneUrl ?? `https://github.com/${plan.repo}/blob/main/${dir}/DELIVERY-STAGES.md#${stage.id.toLowerCase()}`}) | ${stage.title} | ${plan.tasks.filter(task => task.deliveryStage === stage.id).length} |`).join('\n') +
     `\n\n[逐阶段验收与现有 Issue](https://github.com/${plan.repo}/blob/main/${dir}/DELIVERY-STAGES.md) · [完整任务定义](https://github.com/${plan.repo}/blob/main/${dir}/ISSUES.md)\n`;

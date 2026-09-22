@@ -77,7 +77,7 @@ export function renderSequence(entries, generatedOn) {
 
   out += `## 现在就可以开工（无开放硬依赖）\n\n`;
   out += `S3–S6 共 ${inScope.length} 张开放票，其中 ${startable.length} 张没有任何开放的开工硬依赖。\n`;
-  out += `排期的瓶颈不是依赖图，而是三队的并行带宽。\n\n`;
+  out += `领域归属沿用三队，活跃开发最多六线程；具体开工顺序见[已确认S4/S5切片](S4-S5-SLICES-2026-09-22.md)。\n\n`;
   for (const [label, name] of TEAMS) {
     const mine = startable.filter((entry) => entry.team === label);
     if (mine.length === 0) continue;
