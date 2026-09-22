@@ -70,3 +70,53 @@ export function savedAnswerNotice(turn: SavedTurn): "pending" | "cancelled" | "f
   if (place && (turn.outcome === "partial" || turn.coverage === "partial")) return turn.missingClaims?.includes("opening_hours") ? "placeHoursMissing" : turn.missingClaims?.includes("place_address") ? "placeAddressMissing" : "placePartial";
   return turn.outcome === "partial" || turn.coverage === "partial" ? connectivity ? "connectivityPartial" : payment ? "paymentPartial" : "partial" : null;
 }
+
+/** Labels for validated server-owned obligations; never model-authored explanations. */
+export const savedClaimGapCopy = {
+  en: {
+    title: "Points without current support",
+    claims: {
+      original_valid_booking_id: "Booking ID",
+      valid_ticket_not_itinerary_or_receipt: "Itinerary and receipt as ticket proof",
+      merchant_acceptance_check: "Checking card acceptance",
+      supported_card_merchant_qr_payment: "Mobile merchant payments",
+      international_card_atm_withdrawal: "RMB cash from an ATM",
+      marked_currency_exchange: "Currency-exchange outlets",
+      passport_or_foreign_permanent_resident_id: "SIM application documents",
+      plan_allowance_check: "Checking call and data allowances",
+      place_address: "Attraction address",
+      opening_hours: "Today’s opening time",
+    },
+    reasons: {
+      missing: "No published support was found for this point.",
+      expired: "The supporting publication has expired.",
+      revoked: "The supporting publication has been withdrawn.",
+      unreviewed: "The publication is not currently reviewed.",
+      unresolved_variants: "Reviewed versions differ and have not been reconciled.",
+      not_current_date: "The published opening window is for another date; today’s hours are unverified.",
+    },
+  },
+  zh: {
+    title: "尚缺当前依据的要点",
+    claims: {
+      original_valid_booking_id: "购票证件",
+      valid_ticket_not_itinerary_or_receipt: "行程单和报销凭证是否可作车票",
+      merchant_acceptance_check: "核对外卡受理",
+      supported_card_merchant_qr_payment: "手机商户支付",
+      international_card_atm_withdrawal: "ATM取人民币现金",
+      marked_currency_exchange: "外币兑换网点",
+      passport_or_foreign_permanent_resident_id: "SIM卡申请证件",
+      plan_allowance_check: "核对通话和流量额度",
+      place_address: "景点地址",
+      opening_hours: "今日开放时间",
+    },
+    reasons: {
+      missing: "尚未找到支持这一要点的已发布信息。",
+      expired: "相关依据已超过有效期。",
+      revoked: "相关依据已撤回。",
+      unreviewed: "相关发布内容当前不满足审核条件。",
+      unresolved_variants: "已审核版本存在差异，尚未完成核对。",
+      not_current_date: "已发布开放时段对应其他日期，今日开放时间尚未核实。",
+    },
+  },
+} as const;

@@ -39,7 +39,7 @@ export async function runWikiStatementProposalJob(input:WikiProposalJobInput,dep
   const guard=new CostGuard({windowMs:60000,perUserAttempts:10,perTaskAttempts:3,turnDeadlineMs:input.timeoutMs,maxModelSteps:1,maxToolSteps:1});
   const turn=guard.startTurn({userId:'wiki-proposal-worker',taskId:'wiki-proposal'});
   if(turn.kind!=='turn')return {kind:'failed',errorCode:'INVALID_INPUT'};
-  const transport=createProviderHttpTransport(input.provider,{credential:deps.credential,recordDestination:deps.recordDestination,...(deps.fetch?{fetch:deps.fetch}:{})});
+  const transport=createProviderHttpTransport(input.provider,{credential:deps.credential,recordDestination:deps.recordDestination,qwenEndpoint:deps.qwenEndpoint,...(deps.fetch?{fetch:deps.fetch}:{})});
   // captureRawResponseOnInvalid: true is safe here -- input is approved,
   // ingested source declarations (c0_synthetic), not a traveler's own free-text input.
   const result=await invokeProviderProtocol({requestId:randomUUID(),provider:input.provider.provider,dataClass:'c0_synthetic',task:'wiki_statement_proposals_v1',input:JSON.stringify({sources:input.sources.map(s=>({sourceRevisionId:s.id,snippet:s.declaration.snippet}))}),maxOutputTokens:input.maxOutputTokens,timeoutMs:input.timeoutMs,captureRawResponseOnInvalid:true},turn,transport,signal);

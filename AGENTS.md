@@ -1,25 +1,21 @@
 # VP-V4 Engineering Instructions
 
-Current development integration follows `docs/agents/development-integration-policy.md` (JT, 2026-09-12): no supplier ticket/written reply, legal or product sign-off gate. Available accounts/APIs and observed behavior drive development; record unknown supplier details honestly. This supersedes conflicting historical approval requirements.
-
-Active product: VPJ-00 #187 / ADR-0023. Native SwiftUI iOS is the complete product;
-Web is a lightweight same-Trip Planning Studio. Start with `CONTEXT.md` and the current task.
+Active product: VPJ-00 #187 / ADR-0023. Native SwiftUI iOS is the complete product; Web is a
+lightweight same-Trip Planning Studio. Start with `CONTEXT.md` and the current Issue.
 Product entry: `docs/program/2026-09-05/README.md`.
 
-## Development workflow
+## Where each rule lives
 
-Follow `docs/agents/development-workflow.md` (ADR-0024) for reading, scope, preparation,
-validation and handoff. It replaces conflicting historical workflow instructions.
+Every rule below has exactly one home. Read the one you need; do not expect it restated elsewhere.
 
-- Read the current Issue/PR, its VPJ row and affected interfaces/code; load research and other ADRs on demand.
-- Verify live dependencies and readiness; reconcile stale labels instead of treating them as permanent blockers.
-- Use one coherent outcome per PR. Incremental PRs may share an Issue; preserve complete acceptance tracking.
-- Use an isolated checkout/worktree as needed to protect concurrent and user changes.
-- Explicit maintenance requests may use a compact Issue/PR brief without a new VPJ product row.
-- Explain necessary adjacent-file changes and coordinate actual ownership conflicts.
-- Run checks appropriate to changed behavior; existing CI and final capability acceptance remain required.
-- Update shared handoff when shared state changes, using `docs/handoff.json` as the source.
-- Long sessions follow `docs/agents/continuous-afk-execution.md`; continue independent work after a blocker.
+| Topic | File |
+| --- | --- |
+| Work unit, scope, local check selection, evidence vocabulary, handoff updates | `docs/agents/development-workflow.md` (ADR-0024) |
+| Authority classes, merge rules, operator queue, long-session scheduling and stop conditions | `docs/agents/continuous-afk-execution.md` |
+| Task scope, runnable command registry, red-line suite registry | `docs/agents/issue-execution-contract.md` |
+| Issue and label semantics | `docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md` |
+| Development-stage integration approvals | `docs/agents/development-integration-policy.md` (JT, 2026-09-12) |
+| Domain vocabulary | `docs/agents/domain.md` |
 
 ## Implementation foundations
 
@@ -38,13 +34,20 @@ validation and handoff. It replaces conflicting historical workflow instructions
 - For external ML tools, weights or datasets, use `docs/harness/hf-reuse/README.md` for scoped
   reuse, separate licences, fixed revisions and offline-versus-runtime acceptance.
 
-## Invariants and authority
+## Invariants
 
-Preserve confirmed TripProposal/diff/atomic Patch, actor isolation/RLS, data/recipient permissions,
-licences, safe logging, append-only applied migrations, deletion and rollback contracts.
-Never fabricate approvals, test results, transactions or runtime evidence. Preserve secrets and
-unrelated user changes. Development autonomy grants no new production, account, payment or
-external-message authority and never bypasses required checks or reviews.
+These hold regardless of task, agent or urgency:
 
-Tracker and labels: `docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md`.
-Task checks and red lines: `docs/agents/issue-execution-contract.md`.
+- Confirmed TripProposal → visible diff → atomic Patch.
+- Actor isolation and RLS; data and recipient permissions; asset licences; safe logging.
+- Applied migrations are append-only; deletion and rollback contracts stay intact.
+- Never fabricate an approval, test result, transaction or runtime observation.
+- Never reveal, request in chat, or commit a secret; never weaken a check to get green CI.
+- Development autonomy grants no production, account, payment or external-message authority.
+
+## Judgement
+
+The rule files state boundaries, not a procedure to follow step by step. Within those boundaries,
+choose the reading, the slice, the checks and the sequence yourself, and record what you actually
+ran. When a rule and an observed repository or runtime fact disagree, the observation wins and the
+rule file gets corrected in the same PR.

@@ -1,0 +1,29 @@
+name: Community PostgreSQL
+on:
+  pull_request:
+    paths:
+      - 'lib/server/community/**'
+      - 'app/api/ops/community/**'
+      - 'supabase/migrations/**'
+      - 'tests/**/community/**'
+      - '.github/workflows/community-postgres.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: community-postgres-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  internal-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: docker pull public.ecr.aws/supabase/postgres:17.6.1.159
+      - name: Isolated SQL authorization, lifecycle and rollback
+        env:
+          VP_COMMUNITY_DB_TEST: '1'
+        run: node --experimental-strip-types --test tests/integration/community/review.test.mjs

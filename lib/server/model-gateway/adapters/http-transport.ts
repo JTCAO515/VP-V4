@@ -1,12 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { PROTOCOL_MODELS, type ProtocolProvider, type ProtocolTransport } from "./provider-protocol.ts";
 
-/** Technical destination allowlist, not account/region/policy qualification. */
-const ENDPOINTS: Readonly<Record<ProtocolProvider, readonly string[]>> = Object.freeze({
-  qwen: Object.freeze(["https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"]),
-  glm: Object.freeze(["https://open.bigmodel.cn/api/paas/v4/chat/completions"]),
-  deepseek: Object.freeze(["https://api.deepseek.com/chat/completions", "https://api.deepseek.com/v1/chat/completions"]),
-});
+import { isProviderEndpoint } from "./provider-endpoints.ts";
+
 const MAX_BYTES = 262144;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export type HttpProviderConfiguration = Readonly<{
@@ -28,6 +24,8 @@ export type DestinationReceipt = Readonly<{
   observedAt: string;
 }>;
 export type HttpTransportDependencies = Readonly<{
+  /** Exact server-owned Qwen destination; never copied from an untrusted job/request. */
+  qwenEndpoint?: string;
   /** Server-owned secret supplier. This module never reads env, keychain or files. */
   credential: (signal: AbortSignal) => string | null | Promise<string | null>;
   /** Must persist only this closed metadata receipt. Preparation is not proof of dispatch. */
@@ -42,7 +40,7 @@ export type HttpTransportDependencies = Readonly<{
  * permission or prove a supplier's physical region, legal recipient or account terms.
  */
 export function createProviderHttpTransport(configuration: HttpProviderConfiguration, dependencies: HttpTransportDependencies): ProtocolTransport {
-  if (typeof window !== "undefined" || !validConfiguration(configuration)
+  if (typeof window !== "undefined" || !validConfiguration(configuration, dependencies?.qwenEndpoint)
     || !record(dependencies) || typeof dependencies.credential !== "function" || typeof dependencies.recordDestination !== "function"
     || (dependencies.fetch !== undefined && typeof dependencies.fetch !== "function")) throw new Error("Provider transport configuration unavailable.");
   const config = Object.freeze({ ...configuration });
@@ -145,9 +143,9 @@ async function bufferResponse(response: Response, signal: AbortSignal): Promise<
     reader.releaseLock();
   }
 }
-function validConfiguration(value: HttpProviderConfiguration): boolean {
+function validConfiguration(value: HttpProviderConfiguration, qwenEndpoint?: string): boolean {
   return record(value) && Object.keys(value).length === 5
-    && Object.hasOwn(ENDPOINTS, value.provider) && ENDPOINTS[value.provider].includes(value.endpoint)
+    && isProviderEndpoint(value.provider, value.endpoint, qwenEndpoint)
     && typeof value.configurationId === "string" && UUID.test(value.configurationId)
     && Number.isSafeInteger(value.configurationVersion) && value.configurationVersion > 0
     && Number.isSafeInteger(value.timeoutMs) && value.timeoutMs > 0 && value.timeoutMs <= 60000;

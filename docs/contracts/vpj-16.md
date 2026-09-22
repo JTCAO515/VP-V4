@@ -229,3 +229,21 @@ fail closed on unknown intents. Rollback disables the scoped worker/read entry a
 retains history and usage; applied migrations are append-only. Local rollback tests
 do not establish Staging recovery. Current evidence and remaining integration:
 [place verification](../../artifacts/VPJ-16/place-grounding-20260914/verification.md).
+
+## Saved Web answers: explicit current claim gaps (2026-09-22)
+
+The browser projection now retains each validated non-covered claim's ID and observed
+reasons as optional `claimGaps`. Saved answers render those obligations and reasons in the
+answer's original zh/en language, alongside the reliable facts, qualifiers, sources and
+existing domain-specific next step. Withdrawn, expired, currently unreviewed, missing and
+unresolved-variant evidence remain distinct; attraction hours also retain `not_current_date`.
+The original saved outcome remains immutable when current coverage changes.
+
+Only the existing validated `knowledge-answer/1` projection supplies these gaps. An unavailable
+projection, provider failure, policy denial, missing user input or unsupported capability is
+not converted into a missing-publication claim. Full coverage produces an empty list. Existing
+place-specific notices and unanswered user excerpts remain compatible. This changes no upstream
+wire schema, eligibility, publication, worker, AI-assist behavior, persistence or native DTO.
+
+Evidence: `artifacts/VPJ-16/web-claim-gaps-20260922/verification.md`. Component fixtures and
+local checks do not establish authenticated Staging, real-source or whole-#206 acceptance.

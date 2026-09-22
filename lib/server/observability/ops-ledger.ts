@@ -33,14 +33,20 @@ export async function readOpsLedgerScope(rpc: OpsLedgerRpc, scopeId: string): Pr
   if (typeof scopeId !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(scopeId)) return { kind: "unavailable" };
   try {
     const snapshot = parseOpsLedgerSnapshot(await rpc("read_ops_budget_scope_v1", { p_scope_id: scopeId }));
-    const findings: OpsLedgerFinding[] = [];
-    if (BigInt(snapshot.money.holdMicros) > BigInt(0)) findings.push("unknown_cost_hold");
-    if (snapshot.tasks.missingTurns) findings.push("unlinked_tasks");
-    if (snapshot.tasks.ownerMismatch) findings.push("owner_mismatch");
-    if (snapshot.integrity.inconsistentOutcomeTasks) findings.push("inconsistent_outcome");
-    if (snapshot.integrity.duplicateTerminalTasks) findings.push("duplicate_terminal");
+    const findings = opsLedgerFindings(snapshot);
     return Object.freeze({ kind: "available", snapshot, findings: Object.freeze(findings) });
   } catch { return { kind: "unavailable" }; } // Never return a raw database error or row.
+}
+
+/** Findings are derived from the same validated snapshot, never a second ledger read. */
+export function opsLedgerFindings(snapshot: OpsLedgerSnapshot): readonly OpsLedgerFinding[] {
+  const findings: OpsLedgerFinding[] = [];
+  if (BigInt(snapshot.money.holdMicros) > BigInt(0)) findings.push("unknown_cost_hold");
+  if (snapshot.tasks.missingTurns) findings.push("unlinked_tasks");
+  if (snapshot.tasks.ownerMismatch) findings.push("owner_mismatch");
+  if (snapshot.integrity.inconsistentOutcomeTasks) findings.push("inconsistent_outcome");
+  if (snapshot.integrity.duplicateTerminalTasks) findings.push("duplicate_terminal");
+  return Object.freeze(findings);
 }
 
 /** Exact allowlist plus arithmetic reconciliation; rejects extra body/identifier fields. */

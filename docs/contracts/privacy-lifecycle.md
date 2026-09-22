@@ -19,3 +19,6 @@ final immutable completion receipt before changing `not_started`.
 
 Rollback: revert the V4-17 route, adapter, pure contract, migration, tests and
 runbook. No existing product data is modified by a request.
+
+VPJ-36 adds a separate, explicitly bounded [Trip core deletion](vpj-36.md).
+It does not execute or complete any existing all-user-data-v1 request.

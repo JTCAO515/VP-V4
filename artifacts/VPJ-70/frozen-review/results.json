@@ -1,0 +1,1172 @@
+{
+  "schemaVersion": "vpj70-frozen-review-v1",
+  "frozenHash": "4d53453d8a62116df114d8b2be5cc7e40838fc48b1b229b81bd9c5c2344dcee7",
+  "bundleHash": "c2c92c73674e6fd4922ddf7f8cfcc575a61d6b0cc74024cb515cdc0182457bdc",
+  "decision": "reject",
+  "mode": "owned-synthetic-offline-review",
+  "input": {
+    "id": "offline-negative-control-20260922",
+    "commit": "d2d14061111acfee905dfb5fa6cf14259bace4a0",
+    "basis": {
+      "caseId": "H01",
+      "language": "en",
+      "risk": "normal",
+      "mode": "fixture",
+      "inputHash": "1e023081359525f5a91454de529b8ec045514e6cd0980dfe5a8d6f6f9507d8a6",
+      "clock": "2026-09-09T04:00:00.000Z",
+      "evidenceRevision": "fact-address-v1",
+      "permissionRevision": "c0-no-external-dispatch-v1",
+      "budgetRevision": "c0-no-provider-budget-v1",
+      "contextRevision": "h01-grounded-execution-v1",
+      "tripRevision": "h01-empty-array-v1",
+      "toolsRevision": "h01-none-v1",
+      "graderVersion": "vpj70-h01-offline-v1",
+      "graderHash": "117a41ceb39a73a9614911f2bee397c5f51f428db020d152ba50914c735ec6e6"
+    },
+    "baselineConfiguration": "h01-baseline-v1",
+    "candidateConfiguration": "h01-unchanged-candidate-v1",
+    "slots": [
+      {
+        "id": "owned-en-tie-baseline-1",
+        "pairId": "owned-en-tie-1",
+        "caseId": "H01",
+        "language": "en",
+        "repeat": 1,
+        "lane": "baseline",
+        "configuration": "h01-baseline-v1",
+        "source": {
+          "kind": "owned_synthetic",
+          "owner": "VP-V4",
+          "revision": "owned-response-anchors-v1",
+          "originalId": "owned-en-tie-baseline-1",
+          "permission": "offline-evaluation"
+        },
+        "context": {
+          "task": "In this fictional H01 case, give the museum address and tell me what to show my driver.",
+          "evidence": "Synthetic receipt: address 1 Synthetic Museum Road, CN; current at the fixed H01 clock. Opening hours are unknown. No trip change, booking cancellation or human acceptance receipt exists.",
+          "needsNextStep": true,
+          "preferencesRelevant": false,
+          "normallyAnswerable": true
+        },
+        "traceContext": {
+          "actorId": "synthetic-owner",
+          "ownerId": "synthetic-owner",
+          "confirmedProposalRevision": null,
+          "allowedContextIds": [],
+          "revokedContextIds": [],
+          "evidence": [
+            {
+              "field": "museum-address",
+              "value": "1 Synthetic Museum Road, CN",
+              "receiptId": "fixture-address-v1",
+              "eligible": true,
+              "expiresAt": "2026-09-10T00:00:00.000Z"
+            }
+          ],
+          "receipts": []
+        }
+      },
+      {
+        "id": "owned-en-tie-baseline-2",
+        "pairId": "owned-en-tie-2",
+        "caseId": "H01",
+        "language": "en",
+        "repeat": 2,
+        "lane": "baseline",
+        "configuration": "h01-baseline-v1",
+        "source": {
+          "kind": "owned_synthetic",
+          "owner": "VP-V4",
+          "revision": "owned-response-anchors-v1",
+          "originalId": "owned-en-tie-baseline-2",
+          "permission": "offline-evaluation"
+        },
+        "context": {
+          "task": "In this fictional H01 case, give the museum address and tell me what to show my driver.",
+          "evidence": "Synthetic receipt: address 1 Synthetic Museum Road, CN; current at the fixed H01 clock. Opening hours are unknown. No trip change, booking cancellation or human acceptance receipt exists.",
+          "needsNextStep": true,
+          "preferencesRelevant": false,
+          "normallyAnswerable": true
+        },
+        "traceContext": {
+          "actorId": "synthetic-owner",
+          "ownerId": "synthetic-owner",
+          "confirmedProposalRevision": null,
+          "allowedContextIds": [],
+          "revokedContextIds": [],
+          "evidence": [
+            {
+              "field": "museum-address",
+              "value": "1 Synthetic Museum Road, CN",
+              "receiptId": "fixture-address-v1",
+              "eligible": true,
+              "expiresAt": "2026-09-10T00:00:00.000Z"
+            }
+          ],
+          "receipts": []
+        }
+      },
+      {
+        "id": "owned-en-tie-baseline-3",
+        "pairId": "owned-en-tie-3",
+        "caseId": "H01",
+        "language": "en",
+        "repeat": 3,
+        "lane": "baseline",
+        "configuration": "h01-baseline-v1",
+        "source": {
+          "kind": "owned_synthetic",
+          "owner": "VP-V4",
+          "revision": "owned-response-anchors-v1",
+          "originalId": "owned-en-tie-baseline-3",
+          "permission": "offline-evaluation"
+        },
+        "context": {
+          "task": "In this fictional H01 case, give the museum address and tell me what to show my driver.",
+          "evidence": "Synthetic receipt: address 1 Synthetic Museum Road, CN; current at the fixed H01 clock. Opening hours are unknown. No trip change, booking cancellation or human acceptance receipt exists.",
+          "needsNextStep": true,
+          "preferencesRelevant": false,
+          "normallyAnswerable": true
+        },
+        "traceContext": {
+          "actorId": "synthetic-owner",
+          "ownerId": "synthetic-owner",
+          "confirmedProposalRevision": null,
+          "allowedContextIds": [],
+          "revokedContextIds": [],
+          "evidence": [
+            {
+              "field": "museum-address",
+              "value": "1 Synthetic Museum Road, CN",
+              "receiptId": "fixture-address-v1",
+              "eligible": true,
+              "expiresAt": "2026-09-10T00:00:00.000Z"
+            }
+          ],
+          "receipts": []
+        }
+      },
+      {
+        "id": "owned-en-tie-candidate-1",
+        "pairId": "owned-en-tie-1",
+        "caseId": "H01",
+        "language": "en",
+        "repeat": 1,
+        "lane": "candidate",
+        "configuration": "h01-unchanged-candidate-v1",
+        "source": {
+          "kind": "owned_synthetic",
+          "owner": "VP-V4",
+          "revision": "owned-response-anchors-v1",
+          "originalId": "owned-en-tie-candidate-1",
+          "permission": "offline-evaluation"
+        },
+        "context": {
+          "task": "In this fictional H01 case, give the museum address and tell me what to show my driver.",
+          "evidence": "Synthetic receipt: address 1 Synthetic Museum Road, CN; current at the fixed H01 clock. Opening hours are unknown. No trip change, booking cancellation or human acceptance receipt exists.",
+          "needsNextStep": true,
+          "preferencesRelevant": false,
+          "normallyAnswerable": true
+        },
+        "traceContext": {
+          "actorId": "synthetic-owner",
+          "ownerId": "synthetic-owner",
+          "confirmedProposalRevision": null,
+          "allowedContextIds": [],
+          "revokedContextIds": [],
+          "evidence": [
+            {
+              "field": "museum-address",
+              "value": "1 Synthetic Museum Road, CN",
+              "receiptId": "fixture-address-v1",
+              "eligible": true,
+              "expiresAt": "2026-09-10T00:00:00.000Z"
+            }
+          ],
+          "receipts": []
+        }
+      },
+      {
+        "id": "owned-en-tie-candidate-2",
+        "pairId": "owned-en-tie-2",
+        "caseId": "H01",
+        "language": "en",
+        "repeat": 2,
+        "lane": "candidate",
+        "configuration": "h01-unchanged-candidate-v1",
+        "source": {
+          "kind": "owned_synthetic",
+          "owner": "VP-V4",
+          "revision": "owned-response-anchors-v1",
+          "originalId": "owned-en-tie-candidate-2",
+          "permission": "offline-evaluation"
+        },
+        "context": {
+          "task": "In this fictional H01 case, give the museum address and tell me what to show my driver.",
+          "evidence": "Synthetic receipt: address 1 Synthetic Museum Road, CN; current at the fixed H01 clock. Opening hours are unknown. No trip change, booking cancellation or human acceptance receipt exists.",
+          "needsNextStep": true,
+          "preferencesRelevant": false,
+          "normallyAnswerable": true
+        },
+        "traceContext": {
+          "actorId": "synthetic-owner",
+          "ownerId": "synthetic-owner",
+          "confirmedProposalRevision": null,
+          "allowedContextIds": [],
+          "revokedContextIds": [],
+          "evidence": [
+            {
+              "field": "museum-address",
+              "value": "1 Synthetic Museum Road, CN",
+              "receiptId": "fixture-address-v1",
+              "eligible": true,
+              "expiresAt": "2026-09-10T00:00:00.000Z"
+            }
+          ],
+          "receipts": []
+        }
+      },
+      {
+        "id": "owned-en-tie-candidate-3",
+        "pairId": "owned-en-tie-3",
+        "caseId": "H01",
+        "language": "en",
+        "repeat": 3,
+        "lane": "candidate",
+        "configuration": "h01-unchanged-candidate-v1",
+        "source": {
+          "kind": "owned_synthetic",
+          "owner": "VP-V4",
+          "revision": "owned-response-anchors-v1",
+          "originalId": "owned-en-tie-candidate-3",
+          "permission": "offline-evaluation"
+        },
+        "context": {
+          "task": "In this fictional H01 case, give the museum address and tell me what to show my driver.",
+          "evidence": "Synthetic receipt: address 1 Synthetic Museum Road, CN; current at the fixed H01 clock. Opening hours are unknown. No trip change, booking cancellation or human acceptance receipt exists.",
+          "needsNextStep": true,
+          "preferencesRelevant": false,
+          "normallyAnswerable": true
+        },
+        "traceContext": {
+          "actorId": "synthetic-owner",
+          "ownerId": "synthetic-owner",
+          "confirmedProposalRevision": null,
+          "allowedContextIds": [],
+          "revokedContextIds": [],
+          "evidence": [
+            {
+              "field": "museum-address",
+              "value": "1 Synthetic Museum Road, CN",
+              "receiptId": "fixture-address-v1",
+              "eligible": true,
+              "expiresAt": "2026-09-10T00:00:00.000Z"
+            }
+          ],
+          "receipts": []
+        }
+      },
+      {
+        "id": "owned-zh-tie-baseline-1",
+        "pairId": "owned-zh-tie-1",
+        "caseId": "H01",
+        "language": "zh",
+        "repeat": 1,
+        "lane": "baseline",
+        "configuration": "h01-baseline-v1",
+        "source": {
+          "kind": "owned_synthetic",
+          "owner": "VP-V4",
+          "revision": "owned-response-anchors-v1",
+          "originalId": "owned-zh-tie-baseline-1",
+          "permission": "offline-evaluation"
+        },
+        "context": {
+          "task": "在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。",
+          "evidence": "合成回执：地址为 1 Synthetic Museum Road, CN，在固定H01时钟下有效。开放时间未知，没有行程更改、订单取消或真人接单回执。",
+          "needsNextStep": true,
+          "preferencesRelevant": false,
+          "normallyAnswerable": true
+        },
+        "traceContext": {
+          "actorId": "synthetic-owner",
+          "ownerId": "synthetic-owner",
+          "confirmedProposalRevision": null,
+          "allowedContextIds": [],
+          "revokedContextIds": [],
+          "evidence": [
+            {
+              "field": "museum-address",
+              "value": "1 Synthetic Museum Road, CN",
+              "receiptId": "fixture-address-v1",
+              "eligible": true,
+              "expiresAt": "2026-09-10T00:00:00.000Z"
+            }
+          ],
+          "receipts": []
+        }
+      },
+      {
+        "id": "owned-zh-tie-baseline-2",
+        "pairId": "owned-zh-tie-2",
+        "caseId": "H01",
+        "language": "zh",
+        "repeat": 2,
+        "lane": "baseline",
+        "configuration": "h01-baseline-v1",
+        "source": {
+          "kind": "owned_synthetic",
+          "owner": "VP-V4",
+          "revision": "owned-response-anchors-v1",
+          "originalId": "owned-zh-tie-baseline-2",
+          "permission": "offline-evaluation"
+        },
+        "context": {
+          "task": "在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。",
+          "evidence": "合成回执：地址为 1 Synthetic Museum Road, CN，在固定H01时钟下有效。开放时间未知，没有行程更改、订单取消或真人接单回执。",
+          "needsNextStep": true,
+          "preferencesRelevant": false,
+          "normallyAnswerable": true
+        },
+        "traceContext": {
+          "actorId": "synthetic-owner",
+          "ownerId": "synthetic-owner",
+          "confirmedProposalRevision": null,
+          "allowedContextIds": [],
+          "revokedContextIds": [],
+          "evidence": [
+            {
+              "field": "museum-address",
+              "value": "1 Synthetic Museum Road, CN",
+              "receiptId": "fixture-address-v1",
+              "eligible": true,
+              "expiresAt": "2026-09-10T00:00:00.000Z"
+            }
+          ],
+          "receipts": []
+        }
+      },
+      {
+        "id": "owned-zh-tie-baseline-3",
+        "pairId": "owned-zh-tie-3",
+        "caseId": "H01",
+        "language": "zh",
+        "repeat": 3,
+        "lane": "baseline",
+        "configuration": "h01-baseline-v1",
+        "source": {
+          "kind": "owned_synthetic",
+          "owner": "VP-V4",
+          "revision": "owned-response-anchors-v1",
+          "originalId": "owned-zh-tie-baseline-3",
+          "permission": "offline-evaluation"
+        },
+        "context": {
+          "task": "在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。",
+          "evidence": "合成回执：地址为 1 Synthetic Museum Road, CN，在固定H01时钟下有效。开放时间未知，没有行程更改、订单取消或真人接单回执。",
+          "needsNextStep": true,
+          "preferencesRelevant": false,
+          "normallyAnswerable": true
+        },
+        "traceContext": {
+          "actorId": "synthetic-owner",
+          "ownerId": "synthetic-owner",
+          "confirmedProposalRevision": null,
+          "allowedContextIds": [],
+          "revokedContextIds": [],
+          "evidence": [
+            {
+              "field": "museum-address",
+              "value": "1 Synthetic Museum Road, CN",
+              "receiptId": "fixture-address-v1",
+              "eligible": true,
+              "expiresAt": "2026-09-10T00:00:00.000Z"
+            }
+          ],
+          "receipts": []
+        }
+      },
+      {
+        "id": "owned-zh-tie-candidate-1",
+        "pairId": "owned-zh-tie-1",
+        "caseId": "H01",
+        "language": "zh",
+        "repeat": 1,
+        "lane": "candidate",
+        "configuration": "h01-unchanged-candidate-v1",
+        "source": {
+          "kind": "owned_synthetic",
+          "owner": "VP-V4",
+          "revision": "owned-response-anchors-v1",
+          "originalId": "owned-zh-tie-candidate-1",
+          "permission": "offline-evaluation"
+        },
+        "context": {
+          "task": "在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。",
+          "evidence": "合成回执：地址为 1 Synthetic Museum Road, CN，在固定H01时钟下有效。开放时间未知，没有行程更改、订单取消或真人接单回执。",
+          "needsNextStep": true,
+          "preferencesRelevant": false,
+          "normallyAnswerable": true
+        },
+        "traceContext": {
+          "actorId": "synthetic-owner",
+          "ownerId": "synthetic-owner",
+          "confirmedProposalRevision": null,
+          "allowedContextIds": [],
+          "revokedContextIds": [],
+          "evidence": [
+            {
+              "field": "museum-address",
+              "value": "1 Synthetic Museum Road, CN",
+              "receiptId": "fixture-address-v1",
+              "eligible": true,
+              "expiresAt": "2026-09-10T00:00:00.000Z"
+            }
+          ],
+          "receipts": []
+        }
+      },
+      {
+        "id": "owned-zh-tie-candidate-2",
+        "pairId": "owned-zh-tie-2",
+        "caseId": "H01",
+        "language": "zh",
+        "repeat": 2,
+        "lane": "candidate",
+        "configuration": "h01-unchanged-candidate-v1",
+        "source": {
+          "kind": "owned_synthetic",
+          "owner": "VP-V4",
+          "revision": "owned-response-anchors-v1",
+          "originalId": "owned-zh-tie-candidate-2",
+          "permission": "offline-evaluation"
+        },
+        "context": {
+          "task": "在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。",
+          "evidence": "合成回执：地址为 1 Synthetic Museum Road, CN，在固定H01时钟下有效。开放时间未知，没有行程更改、订单取消或真人接单回执。",
+          "needsNextStep": true,
+          "preferencesRelevant": false,
+          "normallyAnswerable": true
+        },
+        "traceContext": {
+          "actorId": "synthetic-owner",
+          "ownerId": "synthetic-owner",
+          "confirmedProposalRevision": null,
+          "allowedContextIds": [],
+          "revokedContextIds": [],
+          "evidence": [
+            {
+              "field": "museum-address",
+              "value": "1 Synthetic Museum Road, CN",
+              "receiptId": "fixture-address-v1",
+              "eligible": true,
+              "expiresAt": "2026-09-10T00:00:00.000Z"
+            }
+          ],
+          "receipts": []
+        }
+      },
+      {
+        "id": "owned-zh-tie-candidate-3",
+        "pairId": "owned-zh-tie-3",
+        "caseId": "H01",
+        "language": "zh",
+        "repeat": 3,
+        "lane": "candidate",
+        "configuration": "h01-unchanged-candidate-v1",
+        "source": {
+          "kind": "owned_synthetic",
+          "owner": "VP-V4",
+          "revision": "owned-response-anchors-v1",
+          "originalId": "owned-zh-tie-candidate-3",
+          "permission": "offline-evaluation"
+        },
+        "context": {
+          "task": "在这个虚构H01案例中，请提供博物馆地址，并告诉我向司机出示什么。",
+          "evidence": "合成回执：地址为 1 Synthetic Museum Road, CN，在固定H01时钟下有效。开放时间未知，没有行程更改、订单取消或真人接单回执。",
+          "needsNextStep": true,
+          "preferencesRelevant": false,
+          "normallyAnswerable": true
+        },
+        "traceContext": {
+          "actorId": "synthetic-owner",
+          "ownerId": "synthetic-owner",
+          "confirmedProposalRevision": null,
+          "allowedContextIds": [],
+          "revokedContextIds": [],
+          "evidence": [
+            {
+              "field": "museum-address",
+              "value": "1 Synthetic Museum Road, CN",
+              "receiptId": "fixture-address-v1",
+              "eligible": true,
+              "expiresAt": "2026-09-10T00:00:00.000Z"
+            }
+          ],
+          "receipts": []
+        }
+      }
+    ],
+    "budget": {
+      "providerCalls": 0,
+      "perTaskUsd": 0,
+      "batchUsd": 0,
+      "modelLatencyMs": null
+    },
+    "thresholds": {
+      "qualityTolerance": 1,
+      "minimumScore": 1,
+      "benefit": {
+        "dimension": "density",
+        "minimumGain": 1
+      }
+    }
+  },
+  "pairs": [
+    {
+      "pairId": "52ad1e3ff795d9e96ddcbe14",
+      "caseId": "H01",
+      "language": "en",
+      "repeat": 1,
+      "baseline": {
+        "sampleId": "owned-en-tie-baseline-1",
+        "caseId": "H01",
+        "language": "en",
+        "lane": "baseline",
+        "parentRow": {
+          "caseId": "H01",
+          "language": "en",
+          "repeat": 1,
+          "lane": "baseline",
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-1"
+        },
+        "sourcePairingVerdict": "PASS",
+        "deterministic": {
+          "status": "PASS",
+          "failures": []
+        },
+        "semantic": {
+          "status": "NOT_RUN",
+          "observations": [],
+          "unreviewedHumanDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "english_naturalness",
+            "tone"
+          ],
+          "unreviewedDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "english_naturalness",
+            "tone"
+          ]
+        },
+        "verdict": "evidence_insufficient",
+        "failures": []
+      },
+      "candidate": {
+        "sampleId": "owned-en-tie-candidate-1",
+        "caseId": "H01",
+        "language": "en",
+        "lane": "candidate",
+        "parentRow": {
+          "caseId": "H01",
+          "language": "en",
+          "repeat": 1,
+          "lane": "candidate",
+          "configuration": "h01-unchanged-candidate-v1",
+          "runId": "h01-unchanged-candidate-v1-H01-en-1"
+        },
+        "sourcePairingVerdict": "PASS",
+        "deterministic": {
+          "status": "FAIL",
+          "failures": [
+            "NORMAL_TASK_REFUSED"
+          ]
+        },
+        "semantic": {
+          "status": "NOT_RUN",
+          "observations": [],
+          "unreviewedHumanDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "english_naturalness",
+            "tone"
+          ],
+          "unreviewedDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "english_naturalness",
+            "tone"
+          ]
+        },
+        "verdict": "FAIL",
+        "failures": [
+          "NORMAL_TASK_REFUSED"
+        ]
+      },
+      "comparison": {
+        "pairId": "52ad1e3ff795d9e96ddcbe14",
+        "caseId": "H01",
+        "language": "en",
+        "preference": "NOT_RUN",
+        "votes": [],
+        "orderChecks": [],
+        "orderDisagreements": [],
+        "hardGate": "reject_candidate"
+      },
+      "observations": [],
+      "benefitObserved": false,
+      "decision": "reject",
+      "reasons": [
+        "NORMAL_TASK_REFUSED"
+      ]
+    },
+    {
+      "pairId": "769ab684138767fc305db899",
+      "caseId": "H01",
+      "language": "en",
+      "repeat": 2,
+      "baseline": {
+        "sampleId": "owned-en-tie-baseline-2",
+        "caseId": "H01",
+        "language": "en",
+        "lane": "baseline",
+        "parentRow": {
+          "caseId": "H01",
+          "language": "en",
+          "repeat": 2,
+          "lane": "baseline",
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-2"
+        },
+        "sourcePairingVerdict": "PASS",
+        "deterministic": {
+          "status": "PASS",
+          "failures": []
+        },
+        "semantic": {
+          "status": "NOT_RUN",
+          "observations": [],
+          "unreviewedHumanDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "english_naturalness",
+            "tone"
+          ],
+          "unreviewedDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "english_naturalness",
+            "tone"
+          ]
+        },
+        "verdict": "evidence_insufficient",
+        "failures": []
+      },
+      "candidate": {
+        "sampleId": "owned-en-tie-candidate-2",
+        "caseId": "H01",
+        "language": "en",
+        "lane": "candidate",
+        "parentRow": {
+          "caseId": "H01",
+          "language": "en",
+          "repeat": 2,
+          "lane": "candidate",
+          "configuration": "h01-unchanged-candidate-v1",
+          "runId": "h01-unchanged-candidate-v1-H01-en-2"
+        },
+        "sourcePairingVerdict": "PASS",
+        "deterministic": {
+          "status": "PASS",
+          "failures": []
+        },
+        "semantic": {
+          "status": "NOT_RUN",
+          "observations": [],
+          "unreviewedHumanDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "english_naturalness",
+            "tone"
+          ],
+          "unreviewedDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "english_naturalness",
+            "tone"
+          ]
+        },
+        "verdict": "evidence_insufficient",
+        "failures": []
+      },
+      "comparison": {
+        "pairId": "769ab684138767fc305db899",
+        "caseId": "H01",
+        "language": "en",
+        "preference": "NOT_RUN",
+        "votes": [],
+        "orderChecks": [],
+        "orderDisagreements": [],
+        "hardGate": "evidence_insufficient"
+      },
+      "observations": [],
+      "benefitObserved": false,
+      "decision": "evidence_insufficient",
+      "reasons": []
+    },
+    {
+      "pairId": "1d53844f1988454292bdd86e",
+      "caseId": "H01",
+      "language": "en",
+      "repeat": 3,
+      "baseline": {
+        "sampleId": "owned-en-tie-baseline-3",
+        "caseId": "H01",
+        "language": "en",
+        "lane": "baseline",
+        "parentRow": {
+          "caseId": "H01",
+          "language": "en",
+          "repeat": 3,
+          "lane": "baseline",
+          "configuration": "h01-baseline-v1",
+          "runId": "h01-baseline-v1-H01-en-3"
+        },
+        "sourcePairingVerdict": "PASS",
+        "deterministic": {
+          "status": "PASS",
+          "failures": []
+        },
+        "semantic": {
+          "status": "NOT_RUN",
+          "observations": [],
+          "unreviewedHumanDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "english_naturalness",
+            "tone"
+          ],
+          "unreviewedDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "english_naturalness",
+            "tone"
+          ]
+        },
+        "verdict": "evidence_insufficient",
+        "failures": []
+      },
+      "candidate": {
+        "sampleId": "owned-en-tie-candidate-3",
+        "caseId": "H01",
+        "language": "en",
+        "lane": "candidate",
+        "parentRow": {
+          "caseId": "H01",
+          "language": "en",
+          "repeat": 3,
+          "lane": "candidate",
+          "configuration": "h01-unchanged-candidate-v1",
+          "runId": "h01-unchanged-candidate-v1-H01-en-3"
+        },
+        "sourcePairingVerdict": "PASS",
+        "deterministic": {
+          "status": "PASS",
+          "failures": []
+        },
+        "semantic": {
+          "status": "NOT_RUN",
+          "observations": [],
+          "unreviewedHumanDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "english_naturalness",
+            "tone"
+          ],
+          "unreviewedDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "english_naturalness",
+            "tone"
+          ]
+        },
+        "verdict": "evidence_insufficient",
+        "failures": []
+      },
+      "comparison": {
+        "pairId": "1d53844f1988454292bdd86e",
+        "caseId": "H01",
+        "language": "en",
+        "preference": "NOT_RUN",
+        "votes": [],
+        "orderChecks": [],
+        "orderDisagreements": [],
+        "hardGate": "evidence_insufficient"
+      },
+      "observations": [],
+      "benefitObserved": false,
+      "decision": "evidence_insufficient",
+      "reasons": []
+    },
+    {
+      "pairId": "578c1bc67eda89a013e6652f",
+      "caseId": "H01",
+      "language": "zh",
+      "repeat": 1,
+      "baseline": {
+        "sampleId": "owned-zh-tie-baseline-1",
+        "caseId": "H01",
+        "language": "zh",
+        "lane": "baseline",
+        "parentRow": {
+          "caseId": "H01",
+          "language": "zh",
+          "repeat": 1,
+          "lane": "baseline",
+          "configuration": "h01-baseline-v1",
+          "runId": null
+        },
+        "sourcePairingVerdict": "NOT_RUN",
+        "deterministic": {
+          "status": "PASS",
+          "failures": []
+        },
+        "semantic": {
+          "status": "NOT_RUN",
+          "observations": [],
+          "unreviewedHumanDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "tone"
+          ],
+          "unreviewedDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "tone"
+          ]
+        },
+        "verdict": "evidence_insufficient",
+        "failures": []
+      },
+      "candidate": {
+        "sampleId": "owned-zh-tie-candidate-1",
+        "caseId": "H01",
+        "language": "zh",
+        "lane": "candidate",
+        "parentRow": {
+          "caseId": "H01",
+          "language": "zh",
+          "repeat": 1,
+          "lane": "candidate",
+          "configuration": "h01-unchanged-candidate-v1",
+          "runId": null
+        },
+        "sourcePairingVerdict": "NOT_RUN",
+        "deterministic": {
+          "status": "PASS",
+          "failures": []
+        },
+        "semantic": {
+          "status": "NOT_RUN",
+          "observations": [],
+          "unreviewedHumanDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "tone"
+          ],
+          "unreviewedDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "tone"
+          ]
+        },
+        "verdict": "evidence_insufficient",
+        "failures": []
+      },
+      "comparison": {
+        "pairId": "578c1bc67eda89a013e6652f",
+        "caseId": "H01",
+        "language": "zh",
+        "preference": "NOT_RUN",
+        "votes": [],
+        "orderChecks": [],
+        "orderDisagreements": [],
+        "hardGate": "evidence_insufficient"
+      },
+      "observations": [],
+      "benefitObserved": false,
+      "decision": "evidence_insufficient",
+      "reasons": []
+    },
+    {
+      "pairId": "668f2e519ee2b3311311322f",
+      "caseId": "H01",
+      "language": "zh",
+      "repeat": 2,
+      "baseline": {
+        "sampleId": "owned-zh-tie-baseline-2",
+        "caseId": "H01",
+        "language": "zh",
+        "lane": "baseline",
+        "parentRow": {
+          "caseId": "H01",
+          "language": "zh",
+          "repeat": 2,
+          "lane": "baseline",
+          "configuration": "h01-baseline-v1",
+          "runId": null
+        },
+        "sourcePairingVerdict": "NOT_RUN",
+        "deterministic": {
+          "status": "PASS",
+          "failures": []
+        },
+        "semantic": {
+          "status": "NOT_RUN",
+          "observations": [],
+          "unreviewedHumanDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "tone"
+          ],
+          "unreviewedDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "tone"
+          ]
+        },
+        "verdict": "evidence_insufficient",
+        "failures": []
+      },
+      "candidate": {
+        "sampleId": "owned-zh-tie-candidate-2",
+        "caseId": "H01",
+        "language": "zh",
+        "lane": "candidate",
+        "parentRow": {
+          "caseId": "H01",
+          "language": "zh",
+          "repeat": 2,
+          "lane": "candidate",
+          "configuration": "h01-unchanged-candidate-v1",
+          "runId": null
+        },
+        "sourcePairingVerdict": "NOT_RUN",
+        "deterministic": {
+          "status": "PASS",
+          "failures": []
+        },
+        "semantic": {
+          "status": "NOT_RUN",
+          "observations": [],
+          "unreviewedHumanDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "tone"
+          ],
+          "unreviewedDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "tone"
+          ]
+        },
+        "verdict": "evidence_insufficient",
+        "failures": []
+      },
+      "comparison": {
+        "pairId": "668f2e519ee2b3311311322f",
+        "caseId": "H01",
+        "language": "zh",
+        "preference": "NOT_RUN",
+        "votes": [],
+        "orderChecks": [],
+        "orderDisagreements": [],
+        "hardGate": "evidence_insufficient"
+      },
+      "observations": [],
+      "benefitObserved": false,
+      "decision": "evidence_insufficient",
+      "reasons": []
+    },
+    {
+      "pairId": "c094e0f495384e52622fbfce",
+      "caseId": "H01",
+      "language": "zh",
+      "repeat": 3,
+      "baseline": {
+        "sampleId": "owned-zh-tie-baseline-3",
+        "caseId": "H01",
+        "language": "zh",
+        "lane": "baseline",
+        "parentRow": {
+          "caseId": "H01",
+          "language": "zh",
+          "repeat": 3,
+          "lane": "baseline",
+          "configuration": "h01-baseline-v1",
+          "runId": null
+        },
+        "sourcePairingVerdict": "NOT_RUN",
+        "deterministic": {
+          "status": "PASS",
+          "failures": []
+        },
+        "semantic": {
+          "status": "NOT_RUN",
+          "observations": [],
+          "unreviewedHumanDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "tone"
+          ],
+          "unreviewedDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "tone"
+          ]
+        },
+        "verdict": "evidence_insufficient",
+        "failures": []
+      },
+      "candidate": {
+        "sampleId": "owned-zh-tie-candidate-3",
+        "caseId": "H01",
+        "language": "zh",
+        "lane": "candidate",
+        "parentRow": {
+          "caseId": "H01",
+          "language": "zh",
+          "repeat": 3,
+          "lane": "candidate",
+          "configuration": "h01-unchanged-candidate-v1",
+          "runId": null
+        },
+        "sourcePairingVerdict": "NOT_RUN",
+        "deterministic": {
+          "status": "PASS",
+          "failures": []
+        },
+        "semantic": {
+          "status": "NOT_RUN",
+          "observations": [],
+          "unreviewedHumanDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "tone"
+          ],
+          "unreviewedDimensions": [
+            "goal",
+            "evidence",
+            "next_step",
+            "density",
+            "tone"
+          ]
+        },
+        "verdict": "evidence_insufficient",
+        "failures": []
+      },
+      "comparison": {
+        "pairId": "c094e0f495384e52622fbfce",
+        "caseId": "H01",
+        "language": "zh",
+        "preference": "NOT_RUN",
+        "votes": [],
+        "orderChecks": [],
+        "orderDisagreements": [],
+        "hardGate": "evidence_insufficient"
+      },
+      "observations": [],
+      "benefitObserved": false,
+      "decision": "evidence_insufficient",
+      "reasons": []
+    }
+  ],
+  "slices": [
+    {
+      "language": "en",
+      "risk": "H01-development-variants",
+      "samples": 6,
+      "failed": 1,
+      "semanticNotRun": 6,
+      "humanSemanticNotRun": 6
+    },
+    {
+      "language": "zh",
+      "risk": "H01-development-variants",
+      "samples": 6,
+      "failed": 0,
+      "semanticNotRun": 6,
+      "humanSemanticNotRun": 6
+    }
+  ],
+  "parentCounts": {
+    "independentDevelopmentCases": 1,
+    "syntheticRepeatsPerConfiguration": 3,
+    "fixtureRuns": 6,
+    "plannedSamples": 12,
+    "failed": 0,
+    "notRun": 6,
+    "stagingRuns": 0,
+    "stagingNotRun": 12
+  },
+  "reasons": [
+    "REAL_READONLY_CHAIN_UNRUN",
+    "HUMAN_CALIBRATION_UNRUN",
+    "MODEL_LATENCY_AND_USAGE_UNKNOWN",
+    "DECLARED_BENEFIT_NOT_ESTABLISHED"
+  ],
+  "humanCalibration": "UNRUN",
+  "realProviderPairing": "UNRUN",
+  "finalAcceptance": "UNRUN",
+  "usage": "unknown",
+  "cost": "unknown"
+}

@@ -2,12 +2,12 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { runGroundedAiAssistJob } from "../../../lib/server/knowledge/wiki/grounded-ai-assist-job.ts";
 
-const provider = Object.freeze({ provider: "qwen", endpoint: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", configurationId: "11111111-1111-1111-1111-111111111111", configurationVersion: 1, timeoutMs: 5000 });
+const provider = Object.freeze({ provider: "qwen", endpoint: "https://llm-fixture.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions", configurationId: "11111111-1111-1111-1111-111111111111", configurationVersion: 1, timeoutMs: 5000 });
 const searchInput = Object.freeze({ maxRounds: 2, maxOutputTokens: 300, timeoutMs: 5000, provider });
 const turnId = "22222222-2222-2222-2222-222222222222";
 const jobId = "33333333-3333-3333-3333-333333333333";
 const claimToken = "44444444-4444-4444-4444-444444444444";
-const jobDeps = Object.freeze({ credential: () => "secret-key", recordDestination: async () => {} });
+const jobDeps = Object.freeze({ qwenEndpoint: provider.endpoint, credential: () => "secret-key", recordDestination: async () => {} });
 
 function chatResponse(content) {
   return Response.json({ model: "qwen3.7-plus-2026-05-26", choices: [{ index: 0, finish_reason: "stop", message: { role: "assistant", content: JSON.stringify(content) } }], usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 } });

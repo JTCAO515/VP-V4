@@ -1,0 +1,106 @@
+{
+  "startedAt": "2026-09-22T01:21:07.780Z",
+  "provider": "dida-cn",
+  "endpoint": "https://mcp.rollinggo.cn/mcp",
+  "credentialPresent": true,
+  "stages": [
+    {
+      "step": "tools/list",
+      "httpStatus": 200,
+      "tools": [
+        {
+          "name": "getHotelDetail",
+          "inputFields": [
+            "dateParam",
+            "filter",
+            "hotelId",
+            "name",
+            "occupancyParam"
+          ]
+        },
+        {
+          "name": "getHotelSearchTags",
+          "inputFields": []
+        },
+        {
+          "name": "searchHotels",
+          "inputFields": [
+            "checkInParam",
+            "filterOptions",
+            "hotelTags",
+            "originQuery",
+            "place",
+            "placeType",
+            "size"
+          ]
+        }
+      ],
+      "status": "PASS"
+    },
+    {
+      "step": "tags",
+      "status": "PASS",
+      "observedAt": "2026-09-22T01:21:09.595Z",
+      "count": 74,
+      "bookingStatus": "not_booked",
+      "priceGuarantee": false
+    },
+    {
+      "step": "search",
+      "status": "PASS",
+      "observedAt": "2026-09-22T01:21:11.834Z",
+      "count": 3,
+      "validHandoffs": 3,
+      "bookingStatus": "not_booked",
+      "priceGuarantee": false
+    },
+    {
+      "step": "detail",
+      "status": "PASS",
+      "observedAt": "2026-09-22T01:21:12.467Z",
+      "count": 15,
+      "bookingStatus": "not_booked",
+      "priceGuarantee": false
+    }
+  ],
+  "firstHotelId": 1100060,
+  "finishedAt": "2026-09-22T01:21:12.468Z",
+  "handoff": {
+    "provider": "Dida / RollingGo",
+    "status": "prepared",
+    "affiliate": true,
+    "landingVerifiedByAdapter": false,
+    "urlHost": "rollinggo.cn",
+    "urlPath": "/pages/hotel/detail/index",
+    "parameters": {
+      "id": "1100060",
+      "checkInDate": "2026-10-20",
+      "checkOutDate": "2026-10-22",
+      "roomCount": "1",
+      "adultCount": "2",
+      "childCount": "0",
+      "childAgeDetails": ""
+    },
+    "supplierAttribution": "present; value omitted from evidence"
+  },
+  "adapter": {
+    "commit": "e0dadd8f",
+    "worktreeClean": true,
+    "didaSHA256": "a68f8525ac082af08708992fbf15443d5aa709b829cab07439f5aeb6dcb6902f"
+  },
+  "websiteObservation": {
+    "environment": "Codex in-app browser desktop",
+    "status": "PASS",
+    "hotelId": 1100060,
+    "hotelName": "和颐至尊酒店(上海人民广场南京路步行街店)",
+    "checkIn": "2026-10-20",
+    "checkOut": "2026-10-22",
+    "rooms": 1,
+    "adults": 2,
+    "children": 0,
+    "priceVisibility": "Login required to view price; no login attempted",
+    "physicalDevice": "UNRUN",
+    "installedApp": "UNRUN",
+    "bookingPerformed": false
+  }
+}
