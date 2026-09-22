@@ -95,3 +95,19 @@ The isolated PostgreSQL 17.6 replay checks active/nonmember/anonymous access,
 revocation, deleted session, original service-only RPC denial and unchanged
 knowledge-schema grants. The local browser checks the route and narrow layout
 without claiming Staging activation or customer access.
+
+## Attempt reconciliation view, 2026-09-22
+
+`/ops/budget` now presents the existing validated snapshot as separate zh/en task,
+attempt, budget, provider, integrity and unobserved metric sections. No new RPC,
+ledger or access grant is introduced. Business partial/failure/unobserved counts
+remain separate from answered and technical completed; provider subtotals only
+reconcile attempts and money, never task counts. All six absent metrics display
+Unknown, including empty scopes. Micros remain decimal strings without conversion
+to floating-point numbers. The original text diagnostic is available in a disclosure.
+
+The UI and service reader derive findings from the same validated snapshot through
+`opsLedgerFindings`; no additional query can introduce a different observation time.
+Budget admission flags are read-only observations. This increment adds no stop/resume
+protocol, capability/provider/city control, actual provider billing or operational
+acceptance. Synthetic browser tests verify presentation and failure handling only.
