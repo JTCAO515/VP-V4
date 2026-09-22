@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPasswordAuthClient } from "@/lib/server/identity/browser-auth-client";
-import { savedAnswerCopy, savedAnswerNotice } from "@/lib/grounded/copy";
+import { savedAnswerCopy, savedAnswerNotice, savedClaimGapCopy } from "@/lib/grounded/copy";
 import type { SavedHistory } from "@/lib/grounded/read-model";
 import styles from "./SavedAnswers.module.css";
 
@@ -154,11 +154,19 @@ export function SavedAnswers({ locale }: { locale: "zh" | "en" }) {
         {history?.turns.map(turn => {
           const language = savedAnswerCopy[turn.locale];
           const notice = savedAnswerNotice(turn);
+          const gapCopy = savedClaimGapCopy[turn.locale];
           return <article key={turn.id} lang={turn.locale} dir="ltr" data-turn-id={turn.id} data-task-id={turn.taskId}>
             <small>{language.cities[turn.city as keyof typeof language.cities]} · {turn.locale === "zh" ? "中文" : "English"} · {turn.parentId ? language.parent : language.original}</small>
             <h3>{turn.input}</h3>
             {notice ? <p>{language[notice]}</p> : null}
             {notice && AI_ASSIST_NOTICES.has(notice) ? <AiAssistPanel turnId={turn.id} locale={turn.locale} /> : null}
+            {turn.claimGaps?.length ? <div>
+              <strong>{gapCopy.title}</strong>
+              <ul>{turn.claimGaps.map(gap => <li key={gap.id}>
+                <strong>{gapCopy.claims[gap.id as keyof typeof gapCopy.claims]}</strong>
+                {gap.reasons.map(reason => <p key={reason}>{gapCopy.reasons[reason as keyof typeof gapCopy.reasons]}</p>)}
+              </li>)}</ul>
+            </div> : null}
             {turn.unansweredNeeds?.length ? <div>
               <strong>{language.unanswered}</strong><p>{language.outsideScope}</p>
               <ul>{turn.unansweredNeeds.map(need => <li key={need}><q>{need}</q></li>)}</ul>

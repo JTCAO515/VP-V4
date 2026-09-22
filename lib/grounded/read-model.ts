@@ -3,9 +3,10 @@ import { validPlaceFields } from "../server/knowledge/publication/place.ts";
 /** Browser projection of the existing grounded-turn/1 contract. No inference or persistence. */
 export type SavedSource = { id: string; publisher: string; locator: string; href: string | null };
 export type SavedFact = { id: string; text: string; placeDetails?: string[]; conditions: string[]; exclusions: string[]; sources: SavedSource[] };
+export type SavedClaimGap = { id: string; reasons: string[] };
 export type SavedTurn = {
   id: string; taskId: string; parentId: string | null; threadId: string; relationship: string;
-  unansweredNeeds?: string[]; questionId?: string | null; placeName?: string; placeResolution?: "matched" | "ambiguous" | "unavailable"; missingClaims?: string[]; input: string; city: string; locale: "zh" | "en"; createdAt: string;
+  claimGaps?: SavedClaimGap[]; unansweredNeeds?: string[]; questionId?: string | null; placeName?: string; placeResolution?: "matched" | "ambiguous" | "unavailable"; missingClaims?: string[]; input: string; city: string; locale: "zh" | "en"; createdAt: string;
   status: string; outcome: string | null; coverage: string | null; projection: string; facts: SavedFact[];
 };
 export type SavedHistory = { ownerId: string; turns: SavedTurn[]; lifetimeMs: number };
@@ -79,6 +80,7 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
     const facts: SavedFact[] = [];
     let coverage: string | null = null;
     let missingClaims: string[] | undefined;
+    let claimGaps: SavedClaimGap[] | undefined;
     if (result.completedAt === null) {
       requireValue(result.intent === null && result.requestScope === null && outcome === null && turn.output === null && result.knowledge === null && result.projection === "pending");
     } else {
@@ -143,6 +145,7 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
             else requireValue(claim.status === "unavailable" && !ids.length && reasons.length && reasons.every(reason => ["missing", "expired", "revoked", "unreviewed", ...(isPlaceQuestionId(result.intent) ? ["not_current_date"] : [])].includes(reason)) && (!reasons.includes("missing") || reasons.length === 1));
           });
           unique(allIds); requireValue(allIds.length === facts.length && allIds.every(factId => assertions.has(factId)));
+          claimGaps = claims.filter(claim => claim.status !== "covered").map(claim => ({ id: String(claim.id), reasons: strings(claim.reasons) }));
           if (isPlaceQuestionId(result.intent)) missingClaims = claims.filter(claim => claim.status !== "covered").map(claim => String(claim.id));
           requireValue(answer.outcome === (claims.every(claim => claim.status === "covered") ? "answered" : facts.length ? "partial" : "no_answer"));
           coverage = String(answer.outcome);
@@ -152,7 +155,7 @@ export function parseGroundedHistory(owner: unknown, policyReply: unknown, histo
         requireValue(outcome === (result.intent === "clarification" ? "clarification" : result.intent === "technical_failure" ? "technical_failure" : "blocked"));
       }
     }
-    return { ...(unansweredNeeds ? { unansweredNeeds } : {}), ...(placeName ? { placeName, placeResolution: placeResolution as SavedTurn["placeResolution"] } : {}), ...(missingClaims ? { missingClaims } : {}), questionId: questionDefinition(result.intent, result.placeSubjectId) ? String(result.intent) : null, id: turnId, taskId, parentId, threadId, relationship, input: string(turn.input), city, locale: turn.locale as "zh" | "en", createdAt: string(turn.createdAt, 40), status: String(turn.status), outcome, coverage, projection: String(result.projection), facts };
+    return { ...(claimGaps ? { claimGaps } : {}), ...(unansweredNeeds ? { unansweredNeeds } : {}), ...(placeName ? { placeName, placeResolution: placeResolution as SavedTurn["placeResolution"] } : {}), ...(missingClaims ? { missingClaims } : {}), questionId: questionDefinition(result.intent, result.placeSubjectId) ? String(result.intent) : null, id: turnId, taskId, parentId, threadId, relationship, input: string(turn.input), city, locale: turn.locale as "zh" | "en", createdAt: string(turn.createdAt, 40), status: String(turn.status), outcome, coverage, projection: String(result.projection), facts };
   });
   unique(turns.map(turn => turn.id));
   requireValue(lifetimeMs > elapsedMs);
