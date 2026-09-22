@@ -98,9 +98,11 @@ final class AppShellUITests: XCTestCase {
         app.tabBars.buttons["Ask"].tap()
         app.buttons["Help me prepare a bilingual address"].tap()
         XCTAssertTrue(app.navigationBars["Translation"].waitForExistence(timeout: 3))
-        XCTAssertTrue(app.staticTexts["Translation"].exists)
-        XCTAssertTrue(app.staticTexts["Planned bilingual text, speech, and image assistance."].exists)
-        XCTAssertTrue(app.staticTexts["Preview only"].exists)
+        // VPJ-26 replaced the preview placeholder with the real bilingual composer;
+        // assert the actual reachable screen instead of retired preview-only copy.
+        XCTAssertTrue(app.staticTexts["Say it clearly"].exists)
+        XCTAssertTrue(app.staticTexts["Sign in in Profile to translate."].exists)
+        XCTAssertFalse(app.buttons["translation.submit"].isEnabled)
         // Each tab retains its own navigation stack; this creates no saved Trip.
         app.tabBars.buttons["Trip"].tap()
         XCTAssertTrue(app.navigationBars["Today"].exists)
