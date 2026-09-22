@@ -8,9 +8,9 @@ Harness：只读模型或提示词候选的配对评测与校准。
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：复用已交付72盲评包，在同一真实只读任务上冻结基线与一个候选、阈值/预算，形成可复核配对结论。
-- 本票责任/非目标：负责真实任务质量/语气配对与人工校准；06验供应商协议，72离线工具不重做，不自动切生产模型。
-- 先读/复用：[docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md) · [artifacts/VPJ-70/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-70/verification.md) · [artifacts/VPJ-70/unrun.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-70/unrun.md)
+- 首个可交付结果：EVAL1：在候选运行前固定语料/阈值/预算与grader，通过真实人工正反例校准盲评。 PR #495已合入main，freeze/report及合成负控已有；真实人工校准和provider配对仍未完成。
+- 本票责任/非目标：负责真实任务质量/语气配对与人工校准；06验供应商协议，72离线工具不重做，不自动切生产模型。 2026-09-22已确认的实施顺序：EVAL1 → EVAL2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md) · [artifacts/VPJ-70/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-70/verification.md) · [artifacts/VPJ-70/unrun.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-70/unrun.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
