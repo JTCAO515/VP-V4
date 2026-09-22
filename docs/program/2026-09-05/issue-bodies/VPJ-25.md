@@ -8,9 +8,9 @@ Today 与可离线读取的旅行资料。
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：从已确认Trip形成许可内的Today/地址缓存，验证断网读取、版本显示和回网重验。
-- 本票责任/非目标：负责原生在途读取与缓存；30负责提醒，29负责恢复，11负责记忆，不能把离线旧数据称实时。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：T1：打开Trip内Today，看到同一确认版本的日程、中文地址与适用准备状态。 main已有Today证据函数，不等于原生Today或离线包已验收。
+- 本票责任/非目标：负责原生在途读取与缓存；30负责提醒，29负责恢复，11负责记忆，不能把离线旧数据称实时。 2026-09-22已确认的实施顺序：T1 → T2 → T3；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口

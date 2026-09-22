@@ -8,9 +8,9 @@ Free/Pass 额度与完整任务成本控制。
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：复用34的grant和59的内部费用账本，实现一个ServiceTask容量预留/结算/失败恢复及并发最后一份额度。
-- 本票责任/非目标：负责用户任务额度；不复制34交易账本或59供应商attempt计费；必要澄清和修复不新扣用户次数。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：U1：一个完整文本目标经合法容量接纳并交付可读取结果，只结算一次，澄清和修复沿同一任务。
+- 本票责任/非目标：负责用户任务额度；不复制34交易账本或59供应商attempt计费；必要澄清和修复不新扣用户次数。 2026-09-22已确认的实施顺序：U1 → U2 → U3 → U4；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
