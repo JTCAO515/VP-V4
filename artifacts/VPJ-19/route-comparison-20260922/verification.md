@@ -69,3 +69,25 @@ then walking/transit/driving (3 calls), no retries, no real user location, no da
 Use only the existing ignored secure environment. Actual quota/charging is not established
 by possession of credentials; do not dispatch until Overall verifies the existing authorized
 budget/scope. Record timestamp, five statuses and sanitized output, never key-bearing URLs.
+
+## 1b80a6cc native outcome and final address correction
+
+Native run [35675850162](https://github.com/JTCAO515/VP-V4/actions/runs/35675850162)
+completed app/test builds successfully; NativePlaceSearchTests passed all 9 cases, including
+route expiry/identity, late clear and POI/GCJ02 handoff. The full UI run failed:
+
+- AppShellUITests.swift:194 `testAccessibilityAtLargestTextSize`: audit error -56,
+  "Audit failed to complete in time" (not the separately tracked ask.title clipping finding).
+- AppShellUITests.swift:117 `testChineseReleaseLanguagePickerAndEnglishSwitch`: failed to tap
+  the Chinese Done button after typing in Ask, **before** entering the language picker.
+  The reported button collection lacked Done; this alone does not establish keyboard state.
+- Diagnostics collection additionally reported missing simctl in xcrun's tool path. This is
+  secondary to the two test failures, not a replacement explanation. Shared tests unchanged.
+
+A final scoped correctness fix updates both pinned route endpoints from a successful,
+identity-checked comparison reply. Otherwise its address card could retain a pre-query address
+while handoff uses newly resolved coordinates. Web assertions now pair the new address with the
+new navigation coordinate. Native assertions cover same-ID address/coordinate refresh and a
+valid late reply after the user selects another destination. Read-only independent review
+confirmed these guards and assertions; final-head execution remains required. The in-flight
+1b80a6cc CI was allowed to end naturally, and is not claimed as evidence for this later fix.

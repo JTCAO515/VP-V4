@@ -19,6 +19,38 @@ nonisolated final class NativePlaceSearchTests: XCTestCase {
     }
 
     @MainActor
+    func testRouteReplyRefreshesPinnedAddress() async {
+        let store = NativeRouteStore()
+        store.choose(NativePlaceDetail(provider: .amap, providerPoiId: "start", rawName: "Start", address: "Old start", location: .init(lat: 31.2, lng: 121.4, coordinateSystem: "gcj02")), start: true)
+        store.choose(NativePlaceDetail(provider: .amap, providerPoiId: "end", rawName: "End", address: "Old end", location: .init(lat: 31.3, lng: 121.5, coordinateSystem: "gcj02")), start: false)
+        let data = #"{"provider":"amap","origin":{"provider":"amap","providerPoiId":"start","rawName":"Start","address":"Fresh start","location":{"lat":31.2,"lng":121.4,"coordinateSystem":"gcj02"}},"destination":{"provider":"amap","providerPoiId":"end","rawName":"End","address":"Fresh end","location":{"lat":31.3,"lng":121.6,"coordinateSystem":"gcj02"}},"observedAt":"2026-09-22T00:00:00.000Z","expiresAt":"2099-01-01T00:00:00.000Z","options":[{"mode":"walking","status":"no_routes"},{"mode":"transit","status":"no_routes"},{"mode":"driving","status":"no_routes"}]}"#
+        await store.compare { _ in Data(data.utf8) }
+        XCTAssertNotNil(store.reply)
+        XCTAssertEqual(store.origin?.address, "Fresh start")
+        XCTAssertEqual(store.destination?.address, "Fresh end")
+        XCTAssertEqual(store.destination?.location?.lng, 121.6)
+    }
+
+    @MainActor
+    func testRouteSelectionRejectsValidLateResponse() async {
+        let store = NativeRouteStore(), delayed = DeferredPlaceReply()
+        let start = NativePlaceDetail(provider: .amap, providerPoiId: "start", rawName: "Start", address: "Start address", location: .init(lat: 31.2, lng: 121.4, coordinateSystem: "gcj02"))
+        let end = NativePlaceDetail(provider: .amap, providerPoiId: "end", rawName: "End", address: "End address", location: .init(lat: 31.3, lng: 121.5, coordinateSystem: "gcj02"))
+        let next = NativePlaceDetail(provider: .amap, providerPoiId: "next", rawName: "Next", address: "New selection", location: .init(lat: 31.4, lng: 121.7, coordinateSystem: "gcj02"))
+        store.choose(start, start: true); store.choose(end, start: false)
+        let pending = Task { await store.compare { _ in await delayed.read() } }
+        await delayed.waitUntilStarted()
+        store.choose(next, start: false)
+        let stale = #"{"provider":"amap","origin":{"provider":"amap","providerPoiId":"start","rawName":"Start","location":{"lat":31.2,"lng":121.4,"coordinateSystem":"gcj02"}},"destination":{"provider":"amap","providerPoiId":"end","rawName":"End","address":"Late old address","location":{"lat":31.3,"lng":121.5,"coordinateSystem":"gcj02"}},"observedAt":"2026-09-22T00:00:00.000Z","expiresAt":"2099-01-01T00:00:00.000Z","options":[{"mode":"walking","status":"no_routes"},{"mode":"transit","status":"no_routes"},{"mode":"driving","status":"no_routes"}]}"#
+        delayed.finish(Data(stale.utf8))
+        await pending.value
+        XCTAssertNil(store.reply); XCTAssertFalse(store.unavailable)
+        XCTAssertEqual(store.destination?.providerPoiId, "next")
+        XCTAssertEqual(store.destination?.address, "New selection")
+        XCTAssertEqual(store.destination?.location?.lng, 121.7)
+    }
+
+    @MainActor
     func testRouteClearRejectsLateResponse() async throws {
         let store = NativeRouteStore(), delayed = DeferredPlaceReply()
         let start = NativePlaceDetail(provider: .amap, providerPoiId: "start", rawName: "Start", address: nil, location: .init(lat: 31.2, lng: 121.4, coordinateSystem: "gcj02"))

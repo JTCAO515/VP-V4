@@ -283,6 +283,7 @@ struct NativeRouteReply: Decodable {
                   }),
                   value.options.count == 3, Set(value.options.map(\.mode)) == Set(["walking", "transit", "driving"]),
                   !value.expired(at: Date()) else { throw NativeDataError.invalidResponse }
+            self.origin = value.origin; self.destination = value.destination
             reply = value
         } catch { if own == generation { unavailable = true } }
         if own == generation { loading = false }

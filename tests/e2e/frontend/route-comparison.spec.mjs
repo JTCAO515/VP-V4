@@ -12,8 +12,8 @@ for (const viewport of [{ width: 1280, height: 900 }, { width: 390, height: 844 
       if (action === 'search') return route.fulfill({ json: { candidates: [origin, destination] } });
       if (action === 'detail') return route.fulfill({ json: { detail: params.get('id') === 'start' ? origin : destination, observedAt: new Date().toISOString() } });
       expect(action).toBe('routes'); expect(params.get('originId')).toBe('start'); expect(params.get('destinationId')).toBe('end'); expect(params.get('departure')).toBe('now'); routes++;
-      return route.fulfill({ json: { provider: 'amap', origin, destination, observedAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 300000).toISOString(), options: [
-        { mode: 'walking', status: 'observed', durationSeconds: 600, distanceMeters: 500, walkingMeters: 500, transfers: null, steps: ['测试步行分段'], webUrl: 'https://uri.amap.com/navigation?to=121.5,31.2,End&mode=walk&coordinate=gaode' },
+      return route.fulfill({ json: { provider: 'amap', origin, destination: { ...destination, address: '更新后的终点地址', location: { ...destination.location, lng: 121.6 } }, observedAt: new Date().toISOString(), expiresAt: new Date(Date.now() + 300000).toISOString(), options: [
+        { mode: 'walking', status: 'observed', durationSeconds: 600, distanceMeters: 500, walkingMeters: 500, transfers: null, steps: ['测试步行分段'], webUrl: 'https://uri.amap.com/navigation?to=121.6,31.2,End&mode=walk&coordinate=gaode' },
         { mode: 'transit', status: 'no_routes' }, { mode: 'driving', status: 'timeout' },
       ] } });
     });
@@ -31,7 +31,9 @@ for (const viewport of [{ width: 1280, height: 900 }, { width: 390, height: 844 
     await page.getByLabel('Departure', { exact: true }).selectOption('now');
     await page.getByRole('button', { name: 'Agree and compare with AMap', exact: true }).click();
     await expect(page.getByText('测试步行分段')).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Compare routes' }).getByText('更新后的终点地址', { exact: true })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Open AMap web directions' })).toHaveCount(1);
+    await expect(page.getByRole('link', { name: 'Open AMap web directions' })).toHaveAttribute('href', /to=121\.6,31\.2,End/);
     await expect(page.getByRole('button', { name: 'Copy destination address' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.getByRole('button', { name: '中文', exact: true }).click();

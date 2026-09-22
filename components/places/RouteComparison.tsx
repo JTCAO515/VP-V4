@@ -26,6 +26,7 @@ export function RouteComparison({ selected, chinese }: { selected: RoutePlace | 
         throw new Error(data.error?.code === "TIMEOUT_BEFORE_OUTPUT" ? text("Query timed out. Retry.", "查询超时，请重试。") : text("Routes unavailable. Check the selected places and sign-in, or copy the address.", "路线暂不可用。请检查起终点和登录状态，或复制地址。"));
       }
       if (data.provider !== "amap" || data.origin?.providerPoiId !== origin.providerPoiId || data.destination?.providerPoiId !== destination.providerPoiId || !Array.isArray(data.options) || !Number.isFinite(Date.parse(data.expiresAt))) throw new Error(text("Route endpoints do not match. Select again.", "路线起终点不匹配，请重新选择。"));
+      setOrigin(data.origin); setDestination(data.destination);
       setReply(data); setNow(Date.now());
     } catch (error) { if (!controller.signal.aborted && own === generation.current) setMessage(error instanceof Error ? error.message : text("Routes unavailable.", "路线暂不可用。")); }
     finally { if (own === generation.current) setLoading(false); }
