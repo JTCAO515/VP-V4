@@ -191,13 +191,20 @@ struct NativeRelativeOutline: Equatable {
     let count: Int
     let foodFirst: [String]
     let walkFirst: [String]
+    let includesFood: Bool
+    let includesWalking: Bool
+
+    var hasAlternatives: Bool { includesFood && includesWalking }
+    var initialTitles: [String] { includesFood ? foodFirst : walkFirst }
 
     static func make(from request: String, chinese: Bool) -> Self? {
+        guard request.utf16.count <= 4000 else { return nil }
         let cities = [("上海", "Shanghai"), ("北京", "Beijing"), ("广州", "Guangzhou"), ("重庆", "Chongqing")]
         let matches = cities.filter { request.contains($0.0) || request.localizedCaseInsensitiveContains($0.1) }
         guard matches.count == 1, let city = matches.first else { return nil }
-        guard ["吃", "美食"].contains(where: request.contains) || request.localizedCaseInsensitiveContains("food"),
-              ["散步", "步行"].contains(where: request.contains) || request.localizedCaseInsensitiveContains("walk") else { return nil }
+        let foodInterest = ["吃", "美食"].contains(where: request.contains) || request.localizedCaseInsensitiveContains("food")
+        let walkInterest = ["散步", "步行"].contains(where: request.contains) || request.localizedCaseInsensitiveContains("walk")
+        guard foodInterest || walkInterest else { return nil }
         let numerals = ["二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7]
         let chineseCount = numerals.first { request.contains("\($0.key)天") }?.value
         let words = ["two", "three", "four", "five", "six", "seven"]
@@ -211,7 +218,8 @@ struct NativeRelativeOutline: Equatable {
         let departure = chinese ? "保留弹性收尾，离开时间待定" : "Keep a flexible final day; departure time unknown"
         return .init(city: name, count: count,
                      foodFirst: (0..<count).map { $0 == 0 && count > 2 ? arrival : ($0 == count - 1 ? departure : food) },
-                     walkFirst: (0..<count).map { $0 == 0 && count > 2 ? arrival : ($0 == count - 1 ? departure : walk) })
+                     walkFirst: (0..<count).map { $0 == 0 && count > 2 ? arrival : ($0 == count - 1 ? departure : walk) },
+                     includesFood: foodInterest, includesWalking: walkInterest)
     }
 }
 
