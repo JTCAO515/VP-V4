@@ -16,13 +16,15 @@ so Overall prohibited new local native builds, simulators and database stacks.
   existing alternatives. The UI explicitly discloses unsupported constraints.
 - Entry dismisses the Ask keyboard. Return retains the original composer and
   underlying layout, with a warning before losing unsubmitted planning edits.
-  Account-scope changes dismiss the sheet; grounded read leases revalidate after it.
+  Account-scope changes dismiss the sheet; grounded reads clear facts immediately
+  while covered and revalidate on return. Only a scalar content-height placeholder
+  retains the scroll extent, never hidden turn/evidence data.
 - Existing source-text edits invalidate old titles. No stored preference or
   default profile pace is consumed. No shared worker, store, DTO or writer change.
 
 ## Evidence
 
-- PASS: Swift frontend syntax parse of all five changed Swift source/test files.
+- PASS: Swift frontend syntax parse of changed Swift source/test files.
 - PASS: standalone production-model smoke, 22 assertions for original input,
   one/two interests, input limit, unsupported city, invalid/overlapping dates,
   preserved fixed content, base version and no inferred times. See `model-smoke.swift`.
@@ -32,8 +34,13 @@ so Overall prohibited new local native builds, simulators and database stacks.
 - Native build and XCTest: UNRUN locally due to the shared-host resource restriction;
   automatic single-runner CI will report separately on the PR head.
 - Added opt-in English/Chinese native UI cases for immediate generation, copied
-  input, keyboard dismissal and return to the same composer. UNRUN until the
+  input, keyboard dismissal and return to the same composer in current-input and
+  grounded modes. UNRUN until the
   isolated native text test environment and a serialized Simulator window exist.
+- Extended the existing grounded suspension state test to check cleared policy/
+  turns/AI results, retained same-scope input, fresh reload and reset cleanup.
+  Runtime result remains pending Native CI. Concrete isolated resources and narrow
+  selections are recorded in `ui-verification-plan.md`.
 - Real Auth/PostgreSQL, same-Trip Web reload, target Staging, device and
   accessibility: UNRUN for this increment. #475 evidence is historical and is
   not represented as new evidence for these changes.
