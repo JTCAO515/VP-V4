@@ -110,12 +110,53 @@ final class AppShellUITests: XCTestCase {
         let app = launch(locale: "zh-Hans")
         XCTAssertTrue(app.tabBars.buttons["问熊猫"].isSelected)
         capture("Ask-Chinese", app: app)
-        let composer = app.textViews.firstMatch.exists ? app.textViews.firstMatch : app.textFields.firstMatch
+        func failState(_ message: String) {
+            capture("Ask-Chinese-keyboard-state-failure", app: app)
+            let hierarchy = XCTAttachment(string: app.debugDescription)
+            hierarchy.name = "Ask keyboard state: \(message)"
+            hierarchy.lifetime = .keepAlways
+            add(hierarchy)
+            XCTFail(message)
+        }
+        func requireReady(_ element: XCUIElement, _ message: String) -> Bool {
+            let ready = XCTNSPredicateExpectation(
+                predicate: NSPredicate(format: "exists == true AND hittable == true"), object: element)
+            guard XCTWaiter.wait(for: [ready], timeout: 10) == .completed else {
+                failState(message)
+                return false
+            }
+            return true
+        }
+        let composer = app.otherElements["ask-composer"].descendants(matching: .any)
+            .matching(identifier: "ask-composer-input").firstMatch
+        let keyboard = app.keyboards.firstMatch
+        let done = app.buttons["ask-keyboard-done"]
+        guard requireReady(composer, "Ask composer must exist and be hittable before input") else { return }
         composer.tap()
+        guard keyboard.waitForExistence(timeout: 10) else {
+            failState("Software keyboard did not appear after focusing the Ask composer")
+            return
+        }
         composer.typeText("Keep this draft")
         if app.staticTexts["Quickly Change Keyboards"].exists { app.buttons["Continue"].tap() }
-        app.buttons["完成"].tap()
-        XCTAssertTrue(app.keyboards.firstMatch.waitForNonExistence(timeout: 3))
+        guard (composer.value as? String) == "Keep this draft" else {
+            failState("Ask draft was not entered before keyboard dismissal")
+            return
+        }
+        guard keyboard.waitForExistence(timeout: 10) else {
+            failState("Software keyboard disappeared before the explicit Done action")
+            return
+        }
+        guard requireReady(done, "Keyboard Done must exist and be hittable before its single tap") else { return }
+        guard done.label == "完成" else {
+            failState("Keyboard Done did not retain its Chinese label")
+            return
+        }
+        done.tap()
+        guard keyboard.waitForNonExistence(timeout: 3) else {
+            failState("Software keyboard remained after the single Done tap")
+            return
+        }
         for title in ["行程", "探索", "问熊猫", "工具", "我的"] {
             app.tabBars.buttons[title].tap()
             XCTAssertTrue(app.navigationBars[title].waitForExistence(timeout: 3))
