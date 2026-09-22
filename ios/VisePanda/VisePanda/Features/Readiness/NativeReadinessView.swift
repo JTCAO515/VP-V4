@@ -57,9 +57,9 @@ struct NativeReadinessView: View {
             TimelineView(.periodic(from: .now, by: 1)) { _ in
                 if phase == .active, session.dataScope != nil, resultOwner == session.dataScope, let result, deadline > ProcessInfo.processInfo.systemUptime {
                     Section(text("Next step", "下一步")) {
-                        Text(state(result.knowledgeAvailability)).accessibilityIdentifier("readiness.knowledge")
-                        Text(state(result.userReadiness)).accessibilityIdentifier("readiness.user")
-                        Text(state(result.actionTiming)).accessibilityIdentifier("readiness.timing")
+                        Text(text("Knowledge: ", "知识依据：") + state(result.knowledgeAvailability)).accessibilityIdentifier("readiness.knowledge")
+                        Text(text("This preparation check: ", "本项准备检查：") + state(result.userReadiness)).accessibilityIdentifier("readiness.user")
+                        Text(text("Action time: ", "行动时间：") + state(result.actionTiming)).accessibilityIdentifier("readiness.timing")
                         Text(result.nextStep.text).accessibilityIdentifier("readiness.nextStep")
                         if let at = result.nextStep.at, let date = NativeKnowledgeRead.date(at) { Text(date.formatted()) }
                     }

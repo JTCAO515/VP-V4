@@ -40,3 +40,5 @@ Timing/rework: exact start-to-acceptance duration was not instrumented; acceptan
 UNRUN. Rework is the fixture/type/layout corrections above. External waiting: shared host was
 reported overloaded before assignment and measured load 594.13/511.38/387.52 at 10:42 CST;
 no build, database stack, simulator or browser was started locally. Native CI must remain serialized.
+
+Post-check integration: rebased onto main `b15635ad` after #498 merged. Two pbx append-location conflicts were resolved by retaining all Hotel entries and the Ready entries; the diff to main still adds only four registrations. Native status labels now explicitly name the three dimensions. Local checks were not restarted after Overall tightened the host restriction; final-head build/runtime checks await CI.
