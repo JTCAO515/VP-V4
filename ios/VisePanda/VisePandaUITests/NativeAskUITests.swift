@@ -12,6 +12,8 @@ nonisolated final class NativeAskUITests: XCTestCase {
 
     @MainActor func testEnglishMessageOpensOutlineAndReturnsToInput() throws { try exercise(locale: "en", userKey: "VP_NATIVE_TEXT_UI_EN_EMAIL", planning: true) }
     @MainActor func testChineseMessageOpensOutlineAndReturnsToInput() throws { try exercise(locale: "zh-Hans", userKey: "VP_NATIVE_TEXT_UI_ZH_EMAIL", planning: true) }
+    @MainActor func testEnglishGroundedMessageOpensOutlineAndReturnsToInput() throws { try exercise(locale: "en", userKey: "VP_NATIVE_TEXT_UI_EN_EMAIL", grounded: true, planning: true) }
+    @MainActor func testChineseGroundedMessageOpensOutlineAndReturnsToInput() throws { try exercise(locale: "zh-Hans", userKey: "VP_NATIVE_TEXT_UI_ZH_EMAIL", grounded: true, planning: true) }
 
     @MainActor private func exercise(locale: String, userKey: String, taskContext: Bool = false, grounded: Bool = false, planning: Bool = false) throws {
         let environment = ProcessInfo.processInfo.environment

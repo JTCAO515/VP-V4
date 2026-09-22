@@ -116,7 +116,14 @@ struct NativeAskView: View {
         .task(id: groundedReadKey) {
             guard store.mode == .grounded else { return }
             store.reset(for: session.retainedDataScope)
-            guard visible, session.dataScope != nil else { store.suspendReads(); return }
+            guard visible, session.dataScope != nil else {
+                // The planning sheet only covers this same-account conversation.
+                // Keep its hidden layout/unsent input so returning retains the
+                // anchor. The existing deadline still expires; owner/auth changes
+                // and other navigation retain the normal destructive read reset.
+                if planningRequest == nil || session.dataScope == nil { store.suspendReads() }
+                return
+            }
             let initial = session.dataScope
             repeat {
                 if !store.busy && !session.busy {
