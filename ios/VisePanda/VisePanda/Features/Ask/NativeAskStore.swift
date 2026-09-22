@@ -123,8 +123,10 @@ final class NativeAskStore {
               turns.contains(where: { $0.id == turnId }), let current = scope, session.dataScope == current else { return }
         let token = UUID(); aiAssistTokens[turnId] = token
         aiAssist[turnId] = .loading
+        let deadline = ProcessInfo.processInfo.systemUptime + 90
         for _ in 0..<20 {
             guard !Task.isCancelled, aiAssistTokens[turnId] == token, scope == current, session.dataScope == current else { return }
+            guard ProcessInfo.processInfo.systemUptime < deadline else { break }
             do {
                 let data = try await session.askRequest(path: base + "/turns/\(turnId)/ai-assist", method: "POST", body: Data("{}".utf8))
                 guard aiAssistTokens[turnId] == token, scope == current, session.dataScope == current else { return }
