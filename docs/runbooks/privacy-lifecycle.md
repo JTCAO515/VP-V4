@@ -28,3 +28,11 @@ runtime probes, export delivery, deletion and backup expiry are all unrun.
 
 Revert the V4-17 application and migration preparation. Because no product row
 is exported or erased, no data repair is required.
+
+## Bounded Trip executor
+
+[VPJ-36 Trip core v1](../contracts/vpj-36.md) adds a separate queued request,
+service-only atomic executor and persistent tombstone. This does not advance the
+V4-17 all-user-data request. Only the named module's committed terminal receipt is
+completion evidence. Its local runner is restricted to explicitly disposable,
+synthetic loopback stacks; no shared or deployed execution is authorized here.

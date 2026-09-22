@@ -1,0 +1,7 @@
+{"command":"pnpm lint && pnpm typecheck && pnpm docs:check && git diff --check","result":"PASS","scope":"initial implementation; later SQL/runner edits require their focused checks"}
+{"command":"node --experimental-strip-types --test tests/contract/privacy/trip-deletion-http.test.mjs","result":"PASS","tests":1,"scope":"HTTP fixture"}
+{"command":"node --check lib/server/jobs/run-local-trip-deletion.mjs && git diff --check","result":"PASS"}
+{"command":"VP_PRIVACY_DB_TEST=1 node --test tests/integration/privacy/trip-deletion.test.mjs","result":"FAIL","reason":"initial synthetic other actor reused owner session; corrected"}
+{"command":"VP_PRIVACY_DB_TEST=1 node --test tests/integration/privacy/trip-deletion.test.mjs","result":"FAIL","reason":"statement timeout under extreme host load; private container cleaned; final SQL changes UNRUN"}
+{"command":"node --experimental-strip-types --test tests/contract/privacy/*.test.* tests/security/privacy/*.test.*","result":"PASS","tests":5}
+{"command":"VP_PRIVACY_DB_TEST=1 node --test tests/integration/privacy/trip-deletion.test.mjs","result":"PASS","environment":"CI runner local network-none disposable PostgreSQL container; synthetic SQL identities","codeSha":"b7938c7606214f1d6641682ad00d7b16cdb9b3d8","run":"https://github.com/JTCAO515/VP-V4/actions/runs/35675303678"}
