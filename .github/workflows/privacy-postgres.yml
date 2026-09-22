@@ -1,0 +1,50 @@
+name: Privacy PostgreSQL
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/**'
+      - 'lib/server/privacy/**'
+      - 'lib/server/jobs/run-local-trip-deletion.mjs'
+      - 'tests/**/privacy/**'
+      - '.github/workflows/privacy-postgres.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: privacy-postgres-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  trip-deletion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Pull the pinned local test database image
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            if output=$(docker pull public.ecr.aws/supabase/postgres:17.6.1.159 2>&1); then
+              printf '%s\n' "$output"
+              exit 0
+            else
+              status=$?
+            fi
+            printf '%s\n' "$output"
+            case "$output" in
+              *toomanyrequests*|*"Rate exceeded"*) ;;
+              *) exit "$status" ;;
+            esac
+            if [ "$attempt" -eq 3 ]; then exit "$status"; fi
+            sleep "$((attempt * 10))"
+          done
+      - name: Verify synthetic Trip deletion in a disposable network-disabled database
+        env:
+          VP_PRIVACY_DB_TEST: '1'
+        run: node --test tests/integration/privacy/trip-deletion.test.mjs

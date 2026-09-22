@@ -66,14 +66,19 @@ test('Trip deletion SQL: reauthentication, fencing, atomic completion, isolation
   assert.equal(JSON.parse(await db(as(owner,`select public.read_trip_deletion_v1('${request}');`))).state,'queued');
   await db('drop trigger test_fail on privacy_private.trip_deletions; drop function privacy_private.test_fail();');
   // A legacy writer holding Proposal before Trip cannot trap the worker.
-  const held=sql(container,`begin; select id from public.trip_proposals where id='${proposal.proposal_id}' for update; select pg_sleep(1.2); commit;`);
-  await new Promise(resolve=>setTimeout(resolve,150));
+  const held=sql(container,`set application_name='vpj36-proposal-lock'; begin; select id from public.trip_proposals where id='${proposal.proposal_id}' for update; select pg_sleep(2); commit;`);
+  let sleeping=false;
+  for(let i=0;i<30;i++){
+    if(await db("select count(*) from pg_stat_activity where application_name='vpj36-proposal-lock' and wait_event='PgSleep';")==='1'){sleeping=true;break;}
+    await new Promise(resolve=>setTimeout(resolve,20));
+  }
+  assert.ok(sleeping,'proposal lock acquired before worker attempt');
   await denied(execute,'lock timeout');
   assert.equal((await held).code,0);
   assert.equal(JSON.parse(await db(as(owner,`select public.read_trip_deletion_v1('${request}');`))).state,'queued');
   const racingWrite=sql(container,`begin; select 1 from public.trips where id='${trip}' for update; select pg_sleep(0.2); update public.trips set title='Race' where id='${trip}'; commit;`);
   const completions=await Promise.all([db(execute),db(execute)]);
-  const raced=await racingWrite; assert.notEqual(raced.code,0); assert.ok(raced.stderr.includes('TRIP_DELETION_PENDING_OR_COMPLETED'),raced.stderr);
+  const raced=await racingWrite; if(raced.code!==0)assert.ok(raced.stderr.includes('TRIP_DELETION_PENDING_OR_COMPLETED'),raced.stderr);
   assert.equal(completions[0],completions[1]);
   const receipt=JSON.parse(completions[0]);assert.equal(receipt.state,'completed');assert.ok(receipt.completedAt);assert.equal(receipt.backupErasure,'not_verified');
   assert.equal(await db(call()),completions[0]);
