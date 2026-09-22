@@ -8,9 +8,9 @@ Harness：核心任务发布判定与能力停用恢复验收。
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：整合同一选定版本的两条核心任务、12场景与Ops停止/恢复，先证明失败可阻断，再给能力发布判定。
-- 本票责任/非目标：负责Harness最终门；42/43/44/45仍各管设备、生产、商店和交付，不能以本票结果自动关闭它们。
-- 先读/复用：[docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md)
+- 首个可交付结果：GATE1：对同一选定commit/config运行全部required-mode场景，明确是否允许该能力进入Beta。
+- 本票责任/非目标：负责Harness最终门；42/43/44/45仍各管设备、生产、商店和交付，不能以本票结果自动关闭它们。 2026-09-22已确认的实施顺序：GATE1 → GATE2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口

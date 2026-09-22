@@ -8,9 +8,9 @@ Journey Pass 商品、权益和定价实验配置。
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：冻结一个版本化Free/30天Pass开发权益表及交易时间规则，给sandbox配置和用户展示提供同一输入。
-- 本票责任/非目标：唯一维护商品/有效期/容量政策说明；34实现交易与grant，35实现ServiceTask容量消费；真实销售参数另核实际账户。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：Q1：用户看到Free/Pass差异、时长与可购买状态，地区价格只来自匹配StoreKit商品。 PR #482已合并：Free 4/168h及2/24h，Pass 80/grant及12/24h均仅开发值。
+- 本票责任/非目标：唯一维护商品/有效期/容量政策说明；34实现交易与grant，35实现ServiceTask容量消费；真实销售参数另核实际账户。 2026-09-22已确认的实施顺序：Q1；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口

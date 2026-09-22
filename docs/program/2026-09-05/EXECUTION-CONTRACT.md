@@ -341,9 +341,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：单张合成旅行截图经现有材料边界解析，展示原文定位和与Trip的新增/重复/冲突，经用户校正形成提案。
-- 本票责任/非目标：负责单图导入；55负责限定PDF与系统入口，24负责外部订单引用；不重跑已否决Docling配置。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：I1：用户用Photo Picker选择单图，校正原文中的日期/金额/地址，再经diff确认加入同一Trip并跨端重载。 PR #472/#474 已合并原生审阅/Proposal；不重写解析UI，不重新研究已否决Docling。
+- 本票责任/非目标：负责单图导入；55负责限定PDF与系统入口，24负责外部订单引用；不重跑已否决Docling配置。 2026-09-22已确认的实施顺序：I1 → I2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
@@ -372,9 +372,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：先接一个无日期新想法入口取得可采用成果，补回访上下文；随后分别贯通材料和在途入口，按真实事件记录首值。
-- 本票责任/非目标：负责入口衔接/首值；不重建09规划、11记忆、12材料或62招募，三类入口全通才是整票完成。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：E1：新用户一句无日期想法先得到可保存的方向或片段，再按需要补一个可跳过的问题。
+- 本票责任/非目标：负责入口衔接/首值；不重建09规划、11记忆、12材料或62招募，三类入口全通才是整票完成。 2026-09-22已确认的实施顺序：E1 → E2 → E3；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 3专注日，PR/实际任务验证窗口
@@ -642,9 +642,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：先用已有官方酒店出口验证一组hotel/date/occupancy参数在真机落地；不可用字段向用户说明。
-- 本票责任/非目标：负责链接/归因/用途边界；23负责比较UI，24负责回流。TourMind只作可选研究候选，缺联盟账号不阻止普通官方出口。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：H1：在原生酒店入口核对条件后跳到官方App/网站，用户清楚哪些参数需重新填写。 PR #498 OPEN/draft；Booking与Trip.com已有桌面观察，不能当真机通过。
+- 本票责任/非目标：负责链接/归因/用途边界；23负责比较UI，24负责回流。TourMind只作可选研究候选，缺联盟账号不阻止普通官方出口。 2026-09-22已确认的实施顺序：H1 → H2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; decision; 2专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
@@ -671,9 +671,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：沿已有日期/人数和行程比较住宿区域与可核实候选，保留已订/暂缓意向，选择后接回Trip调整建议。
-- 本票责任/非目标：负责住宿需求、比较和透明外跳；不复制22链接适配或24凭证处理，也不承担房间下单/支付/履约。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：H3：用户看到有差异的区域/酒店候选及交通负担，继承日期、人数、床型、预算与已订意向。
+- 本票责任/非目标：负责住宿需求、比较和透明外跳；不复制22链接适配或24凭证处理，也不承担房间下单/支付/履约。 2026-09-22已确认的实施顺序：H3 → H4；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -702,9 +702,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：从一次酒店外跳返回导入允许的订单材料，校正日期/地址/条款，识别重复/冲突并保存外部引用。
-- 本票责任/非目标：负责订单证据回流；12/55提供解析，外部供应商负责取消/改签，选择酒店与打开链接不算预订。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：O1：用户外跳回来可跳过，也可校正确认凭证，把订单引用关联至原Trip。
+- 本票责任/非目标：负责订单证据回流；12/55提供解析，外部供应商负责取消/改签，选择酒店与打开链接不算预订。 2026-09-22已确认的实施顺序：O1 → O2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 3专注日，PR/实际任务验证窗口
@@ -732,9 +732,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：从已确认Trip形成许可内的Today/地址缓存，验证断网读取、版本显示和回网重验。
-- 本票责任/非目标：负责原生在途读取与缓存；30负责提醒，29负责恢复，11负责记忆，不能把离线旧数据称实时。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：T1：打开Trip内Today，看到同一确认版本的日程、中文地址与适用准备状态。 main已有Today证据函数，不等于原生Today或离线包已验收。
+- 本票责任/非目标：负责原生在途读取与缓存；30负责提醒，29负责恢复，11负责记忆，不能把离线旧数据称实时。 2026-09-22已确认的实施顺序：T1 → T2 → T3；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -764,9 +764,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：一个真实文字短句或当前地址生成中英译文与大字卡，核对否定/金额/地点且保留原文。
-- 本票责任/非目标：负责文字现场表达；27处理音频生命周期，60负责媒体provider资格，不扩全量图片/常驻录音。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：P1：输入一条短语得到中英翻译与随时可见原文，给本地人看可读的大字卡。 PR #485 OPEN，已有API与原生消费者及本地验证，真实provider与现场UX未验。
+- 本票责任/非目标：负责文字现场表达；27处理音频生命周期，60负责媒体provider资格，不扩全量图片/常驻录音。 2026-09-22已确认的实施顺序：P1 → P2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -793,9 +793,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：用一段许可内短音频完成按需录音→ASR→翻译→字幕/TTS，并验证停止或来电中断。
-- 本票责任/非目标：负责原生音频链与取消/TTL；60提供适配资格，26提供文字语义，28消费讲解播放，不重复造录音器。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：V1：用户按住录音，松开后得到字幕/译文并可主动播放、随时停止。
+- 本票责任/非目标：负责原生音频链与取消/TTL；60提供适配资格，26提供文字语义，28消费讲解播放，不重复造录音器。 2026-09-22已确认的实施顺序：V1 → V2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
@@ -822,9 +822,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：选一个已覆盖地点，将有来源短讲解、字幕播放进度与一条追问接回当前Trip。
-- 本票责任/非目标：负责Guide内容消费与续播；15维护知识，27提供音频，29处理临时变化，不把传说或旧缓存作新事实。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：G1：在首批覆盖地点听简短讲解，查看来源、字幕并暂停续播。
+- 本票责任/非目标：负责Guide内容消费与续播；15维护知识，27提供音频，29处理临时变化，不把传说或旧缓存作新事实。 2026-09-22已确认的实施顺序：G1 → G2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -852,9 +852,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：以疲劳或有效晚点/关闭为输入，在当前Trip生成1–2个可理解的局部恢复候选，确认后应用。
-- 本票责任/非目标：负责在途变化的业务触发；复用10提案、21准备、25缓存和65约束；不是另一个规划器或地图实时监听器。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：R1：用户说走不动或晚点，看到1–2个保留固定订单/晚餐的局部候选，确认后才更新Trip。
+- 本票责任/非目标：负责在途变化的业务触发；复用10提案、21准备、25缓存和65约束；不是另一个规划器或地图实时监听器。 2026-09-22已确认的实施顺序：R1 → R2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -882,9 +882,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：先做一个用户亲设时间提醒，发送前核对当前Trip版本、用途同意、时区、完成/撤回状态。
-- 本票责任/非目标：负责提醒触发与投递；25负责打开App后的读取，17提供变化信号，不启用持续定位/营销通知或无根据watch。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：N1：用户重新打开Trip时看到与当前状态相关的下一步及为什么出现，可关闭。
+- 本票责任/非目标：负责提醒触发与投递；25负责打开App后的读取，17提供变化信号，不启用持续定位/营销通知或无根据watch。 2026-09-22已确认的实施顺序：N1 → N2 → N3；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -912,9 +912,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：在现有CaseRequest/AccessGrant下，只投影一个服务任务必需的用户字段，并验证纠正/撤回后的访问。
-- 本票责任/非目标：负责授权Brief投影；57负责grant/访问期限，32负责人员接单与结果，11负责偏好权威。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：B1：用户预览本服务任务要分享的资料后，指定员工看到有来源和更新时间的最小Brief。
+- 本票责任/非目标：负责授权Brief投影；57负责grant/访问期限，32负责人员接单与结果，11负责偏好权威。 2026-09-22已确认的实施顺序：B1 → B2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -941,9 +941,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：在受控容量下完成一次请求→排队→接单/分派→外部等待→有证据结果的可见服务流程。
-- 本票责任/非目标：负责服务运营与人工分钟；57负责申请授权，31负责Brief，不伪造接单、ETA或自动写Trip。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：S1：用户看到queued/accepted/assigned/waiting_external真实状态，员工在实际容量内接单。
+- 本票责任/非目标：负责服务运营与人工分钟；57负责申请授权，31负责Brief，不伪造接单、ETA或自动写Trip。 2026-09-22已确认的实施顺序：S1 → S2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
@@ -971,9 +971,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：冻结一个版本化Free/30天Pass开发权益表及交易时间规则，给sandbox配置和用户展示提供同一输入。
-- 本票责任/非目标：唯一维护商品/有效期/容量政策说明；34实现交易与grant，35实现ServiceTask容量消费；真实销售参数另核实际账户。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：Q1：用户看到Free/Pass差异、时长与可购买状态，地区价格只来自匹配StoreKit商品。 PR #482已合并：Free 4/168h及2/24h，Pass 80/grant及12/24h均仅开发值。
+- 本票责任/非目标：唯一维护商品/有效期/容量政策说明；34实现交易与grant，35实现ServiceTask容量消费；真实销售参数另核实际账户。 2026-09-22已确认的实施顺序：Q1；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; decision; 2专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
@@ -1002,9 +1002,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：按33的版本化商品策略完成一次StoreKit sandbox交易验证→账号grant→两端生效及同交易恢复。
-- 本票责任/非目标：负责交易/grant幂等、排队、生效、退款和恢复；不再定义33的商品规则，不实现35的任务扣次。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：Q2：用户在官方测试环境购买一次，服务端验证交易绑定账号后，两端读取同一720h权益段。
+- 本票责任/非目标：负责交易/grant幂等、排队、生效、退款和恢复；不再定义33的商品规则，不实现35的任务扣次。 2026-09-22已确认的实施顺序：Q2 → Q3 → Q4；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
@@ -1033,9 +1033,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：复用34的grant和59的内部费用账本，实现一个ServiceTask容量预留/结算/失败恢复及并发最后一份额度。
-- 本票责任/非目标：负责用户任务额度；不复制34交易账本或59供应商attempt计费；必要澄清和修复不新扣用户次数。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：U1：一个完整文本目标经合法容量接纳并交付可读取结果，只结算一次，澄清和修复沿同一任务。
+- 本票责任/非目标：负责用户任务额度；不复制34交易账本或59供应商attempt计费；必要澄清和修复不新扣用户次数。 2026-09-22已确认的实施顺序：U1 → U2 → U3 → U4；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -1064,9 +1064,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：先让Trip/chat之一完成身份复核→异步导出或删除→回执，再接入原验收指定的核心模块handler。
-- 本票责任/非目标：负责核心生命周期框架与首批执行器；58验全模块竞态/恢复覆盖，38验备份恢复，不能以请求202当删除成功。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：D1：用户重新验证身份后删除一个无关联聊天的Trip，在原生看到queued到completed并回网清理对应缓存。 main已有真实隔离SQL删除证据；native UI、export、linked-chat及全数据未完成。
+- 本票责任/非目标：负责核心生命周期框架与首批执行器；58验全模块竞态/恢复覆盖，38验备份恢复，不能以请求202当删除成功。 2026-09-22已确认的实施顺序：D1 → D2 → D3 → D4 → D5；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
@@ -1094,9 +1094,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：基于已有budget-scope只读模型贯通一次实际attempt对账与能力停用/恢复，明确unknown费用。
-- 本票责任/非目标：负责运营可观测性和停止消费者；59提供账本、35提供商品额度，71执行最终演练；不重建第二账本。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [artifacts/VPJ-37/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-37/verification.md) · [artifacts/VPJ-37/unrun.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-37/unrun.md)
+- 首个可交付结果：W1：授权运营在质量/成本视图分辨answered、partial、失败、未观测及待核费用。 PR #501已合入main，复用聚合视图及受保护读接口；真实授权部署读取与实际成本验收仍未完成。
+- 本票责任/非目标：负责运营可观测性和停止消费者；59提供账本、35提供商品额度，71执行最终演练；不重建第二账本。 2026-09-22已确认的实施顺序：W1 → W2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [artifacts/VPJ-37/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-37/verification.md) · [artifacts/VPJ-37/unrun.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-37/unrun.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -1122,9 +1122,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：复用已有恢复工具，在隔离目标验证一个实际备份恢复并重放删除/撤权tombstone，记录测得RPO/RTO。
-- 本票责任/非目标：负责灾备恢复机制；36提供删除状态，58验全模块退出，已做的74隔离演练不等于全部Storage/生产恢复。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：K1：在隔离目标恢复数据库和必要对象，重放删除/撤权后才允许测试用户读取。
+- 本票责任/非目标：负责灾备恢复机制；36提供删除状态，58验全模块退出，已做的74隔离演练不等于全部Storage/生产恢复。 2026-09-22已确认的实施顺序：K1 → K2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: operator; operational; 3专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
@@ -1151,9 +1151,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：先选媒体、OTA外跳、StoreKit或通知中的一个已接通路径，在真实境内外网络记录失败/恢复与时延。
-- 本票责任/非目标：负责扩展端到端网络验收；63负责登录/Ask/Trip基础探针，各功能票负责实现，不重复测未变基线。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：NET1：在真实境内外WiFi/漫游/弱网下使用图片/PDF/语音，断网能恢复或保留可读资料。
+- 本票责任/非目标：负责扩展端到端网络验收；63负责登录/Ask/Trip基础探针，各功能票负责实现，不重复测未变基线。 2026-09-22已确认的实施顺序：NET1 → NET2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: operator; operational; 3专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
@@ -1180,9 +1180,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：在一个已运行的原生用户路径上验证选区/焦点/大字/VoiceOver与同Trip版本，随后覆盖全部原定模块。
-- 本票责任/非目标：负责整链体验验收和发现的缺陷；不重建01基础壳或10业务交互，不倒逼基础任务等待整链完成。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：UX1：同一Trip的选区Ask、diff、确认、重载和返回锚点在小屏/大字/VoiceOver可用。
+- 本票责任/非目标：负责整链体验验收和发现的缺陷；不重建01基础壳或10业务交互，不倒逼基础任务等待整链完成。 2026-09-22已确认的实施顺序：UX1 → UX2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
@@ -1211,9 +1211,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：在真实Web账号上完成一次Trip读写/差异确认/重载，并验证桌面与390宽度、中英、键盘和失败结果。
-- 本票责任/非目标：负责轻量Web最终整合验收；不做第二完整App，不重建05数据层、20内容或34权益。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：WEB1：Web完成基本编辑、Ask、diff确认并同步原生；材料状态和权益可读。
+- 本票责任/非目标：负责轻量Web最终整合验收；不做第二完整App，不重建05数据层、20内容或34权益。 2026-09-22已确认的实施顺序：WEB1 → WEB2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -1240,9 +1240,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：选定同一可安装TestFlight版本，让受控用户完成一个Plan→Ready→Travel旅程并保留跨模块异常证据。
-- 本票责任/非目标：负责Beta联合验收；57/56等提供基础能力，40/41提供体验结果，71提供Harness；不把安装成功当产品完成。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：BETA1：受控测试用户在指定build完成真实Trip规划、选区Ask、明确确认、材料/订单回流与准备。
+- 本票责任/非目标：负责Beta联合验收；57/56等提供基础能力，40/41提供体验结果，71提供Harness；不把安装成功当产品完成。 2026-09-22已确认的实施顺序：BETA1 → BETA2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: operator; acceptance; 5专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
@@ -1414,9 +1414,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：用一条旅行体验投稿走注册用户提交→异人审核→发布或拒绝→作者撤回的受控链。
-- 本票责任/非目标：负责UGC创建/审核；64负责举报屏蔽申诉删除，未完成其必需保护前不开放公众发布；体验不自动升级Fact。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：J1：用户提交旅行体验或求助，看到pending及审核结果，能撤回；运营异人审阅。 PR #502已合入main，仅内部受控审核实现，公开读关闭；用户界面和完整GoTrue链仍缺。
+- 本票责任/非目标：负责UGC创建/审核；64负责举报屏蔽申诉删除，未完成其必需保护前不开放公众发布；体验不自动升级Fact。 2026-09-22已确认的实施顺序：J1 → J3；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
@@ -1614,9 +1614,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：在已验单图材料链上增加一类限定PDF或一个Files/Share入口，校正、去重并接回登录前的原任务。
-- 本票责任/非目标：负责文件和系统入口；12负责单图解析基础，24负责订单语义；暂不建设多人协作邀请或任意文档平台。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：F1：用户从Files选择一类受限PDF，逐页定位关键字段并确认加入同Trip。
+- 本票责任/非目标：负责文件和系统入口；12负责单图解析基础，24负责订单语义；暂不建设多人协作邀请或任意文档平台。 2026-09-22已确认的实施顺序：F1 → F2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -1645,9 +1645,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：复用已通过的原生CI；先将PR #421已合入testing-chat-vpv4但尚未入main的签名手册独立核对接回，再完成一个实际签名Archive/TestFlight安装缺口。
-- 本票责任/非目标：负责可分发构建；42负责完整Beta、44负责正式上架。CI已勾选记录保留，未获准账号/上传动作不阻止本地诊断。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/contracts/vpj-56.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/contracts/vpj-56.md) · [artifacts/VPJ-56/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-56/verification.md)
+- 首个可交付结果：X1：同一commit在实际可用工具链构建，获得可审查Archive及版本/签名准备结果。
+- 本票责任/非目标：负责可分发构建；42负责完整Beta、44负责正式上架。CI已勾选记录保留，未获准账号/上传动作不阻止本地诊断。 2026-09-22已确认的实施顺序：X1 → X2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/contracts/vpj-56.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/contracts/vpj-56.md) · [artifacts/VPJ-56/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-56/verification.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: operator; operational; 4专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
@@ -1674,9 +1674,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：让用户创建一项请求、预览最少字段并授予有期限访问，验证撤回/到期/换员工/越权拒绝。
-- 本票责任/非目标：负责Case身份与AccessGrant；31投影Brief，32安排真人容量；请求记录不等于接单。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：C1：用户不分享也能请求通用支持，或预览问题文本后限时授权指定员工读取。 PR #497 OPEN，已有可弃Supabase登录→HTTP→PG证据；无共享Staging/真实员工或原生交互验收。
+- 本票责任/非目标：负责Case身份与AccessGrant；31投影Brief，32安排真人容量；请求记录不等于接单。 2026-09-22已确认的实施顺序：C1 → C2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -1704,9 +1704,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：复用36已交付handler注册，选一个后来接入模块做删除期间并发与恢复后隔离，随后补齐原全模块矩阵。
-- 本票责任/非目标：负责最终覆盖与跨模块回归；不重复36的基础执行器或38的备份工具，必需模块未验不能宣称全域删除完成。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：ALL1：一个测试账号对当前实际已存在模块完成导出删除，回执列清所有已完成/缺失模块。
+- 本票责任/非目标：负责最终覆盖与跨模块回归；不重复36的基础执行器或38的备份工具，必需模块未验不能宣称全域删除完成。 2026-09-22已确认的实施顺序：ALL1 → ALL2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; acceptance; 3专注日，PR/实际任务验证窗口
@@ -1754,9 +1754,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：用许可内合成材料验证一个OCR/vision、ASR或TTS实际任务与关键语义，分别记录usage、取消和数据生命周期。
-- 本票责任/非目标：负责媒体provider与数据流资格；12/26/27实现用户功能，不能因文本接口兼容就宣称媒体合格。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：M1：运营运行一组冻结的中英文C0截图，拿到字段、来源定位、usage和明确合格/不合格结论。 PR #484 已合并C0适配器；DeepSeek HTTP400保留，Qwen真实媒体调用仍UNRUN，原付费额度不复用。
+- 本票责任/非目标：负责媒体provider与数据流资格；12/26/27实现用户功能，不能因文本接口兼容就宣称媒体合格。 2026-09-22已确认的实施顺序：M1 → M2 → M3；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -1782,9 +1782,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：从一个已确认Trip执行用户主动归档，保留未完服务与可读成果，再验证下一Trip不继承旧时效约束。
-- 本票责任/非目标：负责旅程结束/再次开始；不是删除账户或取消外部服务，偏好保存归11、私密分享49正在独立开发。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：A1：用户主动结束Trip，选择保留哪些明确偏好或跳过，归档后仍可读成果与未完服务。 main仅已有显式归档首片；偏好选择、3草稿/1Active与完整真实验收仍缺。
+- 本票责任/非目标：负责旅程结束/再次开始；不是删除账户或取消外部服务，偏好保存归11、私密分享49正在独立开发。 2026-09-22已确认的实施顺序：A1 → A2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 3专注日，PR/实际任务验证窗口
@@ -1859,9 +1859,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：在已有投稿链上完成一次举报→运营处置→回执，再加入屏蔽/申诉/删除和引用失效验证。
-- 本票责任/非目标：负责UGC安全生命周期；48负责投稿审核本身，36/58负责统一数据退出，不建设私信/关注系统。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：J2：在受控测试内容上完成举报→运营处置→回执，屏蔽或申诉有可追状态。
+- 本票责任/非目标：负责UGC安全生命周期；48负责投稿审核本身，36/58负责统一数据退出，不建设私信/关注系统。 2026-09-22已确认的实施顺序：J2 → J4；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 3专注日，PR/实际任务验证窗口
@@ -2040,9 +2040,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：复用已交付72盲评包，在同一真实只读任务上冻结基线与一个候选、阈值/预算，形成可复核配对结论。
-- 本票责任/非目标：负责真实任务质量/语气配对与人工校准；06验供应商协议，72离线工具不重做，不自动切生产模型。
-- 先读/复用：[docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md) · [artifacts/VPJ-70/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-70/verification.md) · [artifacts/VPJ-70/unrun.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-70/unrun.md)
+- 首个可交付结果：EVAL1：在候选运行前固定语料/阈值/预算与grader，通过真实人工正反例校准盲评。 PR #495已合入main，freeze/report及合成负控已有；真实人工校准和provider配对仍未完成。
+- 本票责任/非目标：负责真实任务质量/语气配对与人工校准；06验供应商协议，72离线工具不重做，不自动切生产模型。 2026-09-22已确认的实施顺序：EVAL1 → EVAL2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md) · [artifacts/VPJ-70/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-70/verification.md) · [artifacts/VPJ-70/unrun.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-70/unrun.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 3专注日，有界PR验证；真实环境/人工校准等待另计
@@ -2073,9 +2073,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：整合同一选定版本的两条核心任务、12场景与Ops停止/恢复，先证明失败可阻断，再给能力发布判定。
-- 本票责任/非目标：负责Harness最终门；42/43/44/45仍各管设备、生产、商店和交付，不能以本票结果自动关闭它们。
-- 先读/复用：[docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md)
+- 首个可交付结果：GATE1：对同一选定commit/config运行全部required-mode场景，明确是否允许该能力进入Beta。
+- 本票责任/非目标：负责Harness最终门；42/43/44/45仍各管设备、生产、商店和交付，不能以本票结果自动关闭它们。 2026-09-22已确认的实施顺序：GATE1 → GATE2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 3专注日，有界PR验证；真实环境/人工校准等待另计

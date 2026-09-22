@@ -1,0 +1,510 @@
+{
+  "retrievedAt": "2026-09-22T02:10:51.919468+00:00",
+  "main": "a3a69189f349a9e9547157c3cf4ad13232ebd68c",
+  "scope": "read-only snapshot, not capability acceptance",
+  "issues": [
+    {
+      "number": 200,
+      "title": "[VPJ-60] 图片和语音 Provider 的中英质量与数据流验收",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-21T20:52:30Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/200"
+    },
+    {
+      "number": 201,
+      "title": "[VPJ-12] 单张旅行截图导入、校正与加入 Trip",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:58:47Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/201"
+    },
+    {
+      "number": 203,
+      "title": "[VPJ-13] 首访与回访的三种入口获得首个成果",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:57:19Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/203"
+    },
+    {
+      "number": 212,
+      "title": "[VPJ-22] 酒店官方出口、参数落地与联盟归因验证",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:57:21Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/212"
+    },
+    {
+      "number": 213,
+      "title": "[VPJ-23] 住宿需求比较与透明联盟跳转",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:57:23Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/213"
+    },
+    {
+      "number": 214,
+      "title": "[VPJ-24] 第三方订单材料回到同一 Trip",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:57:25Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/214"
+    },
+    {
+      "number": 215,
+      "title": "[VPJ-25] Today 与可离线读取的旅行资料",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:57:29Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/215"
+    },
+    {
+      "number": 216,
+      "title": "[VPJ-26] 中英现场表达与大字展示",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:57:34Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/216"
+    },
+    {
+      "number": 217,
+      "title": "[VPJ-27] 按需语音翻译与可中断播放",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:57:39Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/217"
+    },
+    {
+      "number": 218,
+      "title": "[VPJ-28] 地点讲解与语音追问接回当前 Trip",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:57:41Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/218"
+    },
+    {
+      "number": 220,
+      "title": "[VPJ-29] 用户报告变化后的局部恢复",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:57:43Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/220"
+    },
+    {
+      "number": 221,
+      "title": "[VPJ-30] 有原因、可关闭的旅行提醒",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:57:46Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/221"
+    },
+    {
+      "number": 222,
+      "title": "[VPJ-57] 用户服务请求与按任务授予资料访问",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:55:56Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/222"
+    },
+    {
+      "number": 223,
+      "title": "[VPJ-31] 按服务任务授权的动态 Traveler Brief",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:56:01Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/223"
+    },
+    {
+      "number": 224,
+      "title": "[VPJ-32] 真人协助从请求到接单和结果回传",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:56:05Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/224"
+    },
+    {
+      "number": 225,
+      "title": "[VPJ-33] Journey Pass 商品、权益和定价实验配置",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:55:49Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/225"
+    },
+    {
+      "number": 226,
+      "title": "[VPJ-34] 官方 IAP 购买、恢复与服务端权益",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:55:51Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/226"
+    },
+    {
+      "number": 227,
+      "title": "[VPJ-35] Free/Pass 额度与完整任务成本控制",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:55:53Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/227"
+    },
+    {
+      "number": 228,
+      "title": "[VPJ-36] 核心资料的导出删除框架与首批执行器",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:56:08Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/228"
+    },
+    {
+      "number": 229,
+      "title": "[VPJ-37] 运营看见质量、成本和故障并能停用能力",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-22T01:46:12Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/229"
+    },
+    {
+      "number": 230,
+      "title": "[VPJ-38] 数据库、对象与删除状态的恢复演练",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:56:13Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/230"
+    },
+    {
+      "number": 232,
+      "title": "[VPJ-39] 境内外媒体、酒店跳转、IAP 与通知网络验收",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:56:35Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/232"
+    },
+    {
+      "number": 233,
+      "title": "[VPJ-40] 原生视觉动效、无障碍与性能整链复验",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:57:50Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/233"
+    },
+    {
+      "number": 234,
+      "title": "[VPJ-41] 精简 Web Planning Studio 的最终体验验收",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:57:52Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/234"
+    },
+    {
+      "number": 235,
+      "title": "[VPJ-48] 用户旅行内容投稿与发布前审核",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:58:51Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/235"
+    },
+    {
+      "number": 236,
+      "title": "[VPJ-55] 限定文件导入与系统分享、登录回跳衔接",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:57:27Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/236"
+    },
+    {
+      "number": 237,
+      "title": "[VPJ-56] 原生 CI、签名 Archive 与首个 TestFlight 安装包",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:56:31Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/237"
+    },
+    {
+      "number": 238,
+      "title": "[VPJ-64] 社区举报、屏蔽、申诉与内容删除",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:58:53Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/238"
+    },
+    {
+      "number": 239,
+      "title": "[VPJ-58] 全数据模块导出删除与恢复后的最终隔离验收",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:56:16Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/239"
+    },
+    {
+      "number": 240,
+      "title": "[VPJ-61] 旅行结束、归档与下一次回来",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:57:48Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/240"
+    },
+    {
+      "number": 241,
+      "title": "[VPJ-49] 最简本地旅行分享卡与隐私预览",
+      "state": "closed",
+      "state_reason": "completed",
+      "updated_at": "2026-09-17T05:37:19Z",
+      "closed_at": "2026-09-17T05:37:19Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/241"
+    },
+    {
+      "number": 242,
+      "title": "[VPJ-42] TestFlight 实机贯通 Plan、Ready、Travel 三段",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:56:38Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/242"
+    },
+    {
+      "number": 267,
+      "title": "[VPJ-70] Harness：只读模型或提示词候选的配对评测与校准",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:59:00Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/267"
+    },
+    {
+      "number": 268,
+      "title": "[VPJ-71] Harness：核心任务发布判定与能力停用恢复验收",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:59:02Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/268"
+    },
+    {
+      "number": 366,
+      "title": "[VPJ-19 切片] 在途交通变化与前台重新规划",
+      "state": "open",
+      "state_reason": null,
+      "updated_at": "2026-09-17T06:58:20Z",
+      "closed_at": null,
+      "html_url": "https://github.com/JTCAO515/VP-V4/issues/366"
+    }
+  ],
+  "prs": [
+    {
+      "number": 502,
+      "title": "feat(community): add guarded internal experience moderation",
+      "state": "closed",
+      "updated_at": "2026-09-22T01:56:58Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/502",
+      "verifiedMergedInMain": true
+    },
+    {
+      "number": 485,
+      "title": "feat(translate): native bilingual text and large cards",
+      "state": "open",
+      "updated_at": "2026-09-22T01:56:06Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/485"
+    },
+    {
+      "number": 496,
+      "title": "feat(privacy): add queued Trip core deletion and verifiable receipts",
+      "state": "closed",
+      "updated_at": "2026-09-22T01:55:41Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/496"
+    },
+    {
+      "number": 490,
+      "title": "feat(reminders): user-set time, reason and cancellation with guarded storage",
+      "state": "open",
+      "updated_at": "2026-09-22T01:54:53Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/490"
+    },
+    {
+      "number": 497,
+      "title": "feat(service): record support cases with revocable employee access",
+      "state": "open",
+      "updated_at": "2026-09-22T01:53:15Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/497"
+    },
+    {
+      "number": 501,
+      "title": "feat(ops): surface attempt reconciliation and unknown costs",
+      "state": "closed",
+      "updated_at": "2026-09-22T01:52:31Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/501",
+      "verifiedMergedInMain": true
+    },
+    {
+      "number": 500,
+      "title": "test(harness): validate H04 task recordings and Trip invariance",
+      "state": "closed",
+      "updated_at": "2026-09-22T01:42:08Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/500",
+      "verifiedMergedInMain": true
+    },
+    {
+      "number": 498,
+      "title": "feat(ios): add transparent official hotel search exits",
+      "state": "open",
+      "updated_at": "2026-09-22T01:34:45Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/498"
+    },
+    {
+      "number": 494,
+      "title": "feat(maps): compare current routes and hand off exact places (#364)",
+      "state": "open",
+      "updated_at": "2026-09-22T01:33:43Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/494"
+    },
+    {
+      "number": 495,
+      "title": "feat(evals): freeze read-only pairing thresholds and bind blind-review decisions",
+      "state": "closed",
+      "updated_at": "2026-09-22T01:14:37Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/495",
+      "verifiedMergedInMain": true
+    },
+    {
+      "number": 482,
+      "title": "feat(entitlements): Journey Pass 开发政策与同源 StoreKit 配置",
+      "state": "closed",
+      "updated_at": "2026-09-22T00:50:31Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/482"
+    },
+    {
+      "number": 484,
+      "title": "feat(media): add bounded synthetic vision qualification path",
+      "state": "closed",
+      "updated_at": "2026-09-22T00:50:11Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/484"
+    },
+    {
+      "number": 486,
+      "title": "feat(trip): explicit archive with preserved results and services",
+      "state": "closed",
+      "updated_at": "2026-09-22T00:47:36Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/486"
+    },
+    {
+      "number": 478,
+      "title": "fix(ios): repair native reading and Tools accessibility",
+      "state": "open",
+      "updated_at": "2026-09-21T21:30:17Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/478"
+    },
+    {
+      "number": 481,
+      "title": "VPJ-19: connect place consumers and AMap display; refresh current docs",
+      "state": "closed",
+      "updated_at": "2026-09-21T20:37:50Z",
+      "html_url": "https://github.com/JTCAO515/VP-V4/pull/481"
+    }
+  ],
+  "openPullRequestsReadback": [
+    {
+      "number": 498,
+      "title": "feat(ios): add transparent official hotel search exits",
+      "state": "open",
+      "draft": true,
+      "head": "edbc429ed1d7c52a7f5c3d68ddbd4c5c291d2f43",
+      "url": "https://github.com/JTCAO515/VP-V4/pull/498",
+      "updatedAt": "2026-09-22T01:34:45Z"
+    },
+    {
+      "number": 497,
+      "title": "feat(service): record support cases with revocable employee access",
+      "state": "open",
+      "draft": false,
+      "head": "b906d00147d5fc6f142330a37f24f0431d06727e",
+      "url": "https://github.com/JTCAO515/VP-V4/pull/497",
+      "updatedAt": "2026-09-22T02:16:36Z"
+    },
+    {
+      "number": 494,
+      "title": "feat(maps): compare current routes and hand off exact places (#364)",
+      "state": "open",
+      "draft": false,
+      "head": "1b80a6cc718ec22f516caa796af26223b32bf208",
+      "url": "https://github.com/JTCAO515/VP-V4/pull/494",
+      "updatedAt": "2026-09-22T01:33:43Z"
+    },
+    {
+      "number": 490,
+      "title": "feat(reminders): user-set time, reason and cancellation with guarded storage",
+      "state": "open",
+      "draft": false,
+      "head": "1ba22d5170b24ede717a876813f0819c7ea7b676",
+      "url": "https://github.com/JTCAO515/VP-V4/pull/490",
+      "updatedAt": "2026-09-22T01:54:53Z"
+    },
+    {
+      "number": 485,
+      "title": "feat(translate): native bilingual text and large cards",
+      "state": "open",
+      "draft": false,
+      "head": "63c00a51fc16d5c2413539bbfa1b055376bfa01f",
+      "url": "https://github.com/JTCAO515/VP-V4/pull/485",
+      "updatedAt": "2026-09-22T01:56:06Z"
+    },
+    {
+      "number": 478,
+      "title": "fix(ios): repair native reading and Tools accessibility",
+      "state": "open",
+      "draft": true,
+      "head": "353c09b983490e5550badc93eb788cacf5c1088c",
+      "url": "https://github.com/JTCAO515/VP-V4/pull/478",
+      "updatedAt": "2026-09-21T21:30:17Z"
+    }
+  ],
+  "schemaPurpose": "Read-only planning snapshot. Approved slice definitions now live only in issue-plan.json deliverySupplements.s4-s5-20260922.",
+  "maxConcurrentThreads": 6,
+  "initialMain": "9782e0c1",
+  "refreshedAt": "2026-09-22T02:18:53.299596+00:00",
+  "mergedDuringPlanning": [
+    {
+      "pr": 495,
+      "mergeCommit": "2dcd25ce"
+    },
+    {
+      "pr": 501,
+      "mergeCommit": "fa4b7f56"
+    },
+    {
+      "pr": 502,
+      "mergeCommit": "a3a69189"
+    }
+  ],
+  "approvedAt": "2026-09-22",
+  "approvedBy": "JT: 同意，授权你来github修改",
+  "sliceSource": "docs/program/2026-09-05/issue-plan.json#deliverySupplements.s4-s5-20260922"
+}

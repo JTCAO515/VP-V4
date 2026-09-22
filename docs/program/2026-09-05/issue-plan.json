@@ -1046,10 +1046,11 @@
       "deliveryStage": "S4",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "单张合成旅行截图经现有材料边界解析，展示原文定位和与Trip的新增/重复/冲突，经用户校正形成提案。",
-        "boundary": "负责单图导入；55负责限定PDF与系统入口，24负责外部订单引用；不重跑已否决Docling配置。",
+        "firstSlice": "I1：用户用Photo Picker选择单图，校正原文中的日期/金额/地址，再经diff确认加入同一Trip并跨端重载。 PR #472/#474 已合并原生审阅/Proposal；不重写解析UI，不重新研究已否决Docling。",
+        "boundary": "负责单图导入；55负责限定PDF与系统入口，24负责外部订单引用；不重跑已否决Docling配置。 2026-09-22已确认的实施顺序：I1 → I2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -1137,10 +1138,11 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "deliveryStage": "S4",
       "executionBrief": {
-        "firstSlice": "先接一个无日期新想法入口取得可采用成果，补回访上下文；随后分别贯通材料和在途入口，按真实事件记录首值。",
-        "boundary": "负责入口衔接/首值；不重建09规划、11记忆、12材料或62招募，三类入口全通才是整票完成。",
+        "firstSlice": "E1：新用户一句无日期想法先得到可保存的方向或片段，再按需要补一个可跳过的问题。",
+        "boundary": "负责入口衔接/首值；不重建09规划、11记忆、12材料或62招募，三类入口全通才是整票完成。 2026-09-22已确认的实施顺序：E1 → E2 → E3；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -1914,10 +1916,11 @@
       "deliveryStage": "S4",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "先用已有官方酒店出口验证一组hotel/date/occupancy参数在真机落地；不可用字段向用户说明。",
-        "boundary": "负责链接/归因/用途边界；23负责比较UI，24负责回流。TourMind只作可选研究候选，缺联盟账号不阻止普通官方出口。",
+        "firstSlice": "H1：在原生酒店入口核对条件后跳到官方App/网站，用户清楚哪些参数需重新填写。 PR #498 OPEN/draft；Booking与Trip.com已有桌面观察，不能当真机通过。",
+        "boundary": "负责链接/归因/用途边界；23负责比较UI，24负责回流。TourMind只作可选研究候选，缺联盟账号不阻止普通官方出口。 2026-09-22已确认的实施顺序：H1 → H2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -1999,10 +2002,11 @@
       "deliveryStage": "S4",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "沿已有日期/人数和行程比较住宿区域与可核实候选，保留已订/暂缓意向，选择后接回Trip调整建议。",
-        "boundary": "负责住宿需求、比较和透明外跳；不复制22链接适配或24凭证处理，也不承担房间下单/支付/履约。",
+        "firstSlice": "H3：用户看到有差异的区域/酒店候选及交通负担，继承日期、人数、床型、预算与已订意向。",
+        "boundary": "负责住宿需求、比较和透明外跳；不复制22链接适配或24凭证处理，也不承担房间下单/支付/履约。 2026-09-22已确认的实施顺序：H3 → H4；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -2088,10 +2092,11 @@
       "deliveryStage": "S4",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "从一次酒店外跳返回导入允许的订单材料，校正日期/地址/条款，识别重复/冲突并保存外部引用。",
-        "boundary": "负责订单证据回流；12/55提供解析，外部供应商负责取消/改签，选择酒店与打开链接不算预订。",
+        "firstSlice": "O1：用户外跳回来可跳过，也可校正确认凭证，把订单引用关联至原Trip。",
+        "boundary": "负责订单证据回流；12/55提供解析，外部供应商负责取消/改签，选择酒店与打开链接不算预订。 2026-09-22已确认的实施顺序：O1 → O2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -2177,10 +2182,11 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "deliveryStage": "S4",
       "executionBrief": {
-        "firstSlice": "从已确认Trip形成许可内的Today/地址缓存，验证断网读取、版本显示和回网重验。",
-        "boundary": "负责原生在途读取与缓存；30负责提醒，29负责恢复，11负责记忆，不能把离线旧数据称实时。",
+        "firstSlice": "T1：打开Trip内Today，看到同一确认版本的日程、中文地址与适用准备状态。 main已有Today证据函数，不等于原生Today或离线包已验收。",
+        "boundary": "负责原生在途读取与缓存；30负责提醒，29负责恢复，11负责记忆，不能把离线旧数据称实时。 2026-09-22已确认的实施顺序：T1 → T2 → T3；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -2263,10 +2269,11 @@
       "deliveryStage": "S4",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "一个真实文字短句或当前地址生成中英译文与大字卡，核对否定/金额/地点且保留原文。",
-        "boundary": "负责文字现场表达；27处理音频生命周期，60负责媒体provider资格，不扩全量图片/常驻录音。",
+        "firstSlice": "P1：输入一条短语得到中英翻译与随时可见原文，给本地人看可读的大字卡。 PR #485 OPEN，已有API与原生消费者及本地验证，真实provider与现场UX未验。",
+        "boundary": "负责文字现场表达；27处理音频生命周期，60负责媒体provider资格，不扩全量图片/常驻录音。 2026-09-22已确认的实施顺序：P1 → P2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -2351,10 +2358,11 @@
       "deliveryStage": "S4",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "用一段许可内短音频完成按需录音→ASR→翻译→字幕/TTS，并验证停止或来电中断。",
-        "boundary": "负责原生音频链与取消/TTL；60提供适配资格，26提供文字语义，28消费讲解播放，不重复造录音器。",
+        "firstSlice": "V1：用户按住录音，松开后得到字幕/译文并可主动播放、随时停止。",
+        "boundary": "负责原生音频链与取消/TTL；60提供适配资格，26提供文字语义，28消费讲解播放，不重复造录音器。 2026-09-22已确认的实施顺序：V1 → V2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -2441,10 +2449,11 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "deliveryStage": "S4",
       "executionBrief": {
-        "firstSlice": "选一个已覆盖地点，将有来源短讲解、字幕播放进度与一条追问接回当前Trip。",
-        "boundary": "负责Guide内容消费与续播；15维护知识，27提供音频，29处理临时变化，不把传说或旧缓存作新事实。",
+        "firstSlice": "G1：在首批覆盖地点听简短讲解，查看来源、字幕并暂停续播。",
+        "boundary": "负责Guide内容消费与续播；15维护知识，27提供音频，29处理临时变化，不把传说或旧缓存作新事实。 2026-09-22已确认的实施顺序：G1 → G2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -2529,10 +2538,11 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "deliveryStage": "S4",
       "executionBrief": {
-        "firstSlice": "以疲劳或有效晚点/关闭为输入，在当前Trip生成1–2个可理解的局部恢复候选，确认后应用。",
-        "boundary": "负责在途变化的业务触发；复用10提案、21准备、25缓存和65约束；不是另一个规划器或地图实时监听器。",
+        "firstSlice": "R1：用户说走不动或晚点，看到1–2个保留固定订单/晚餐的局部候选，确认后才更新Trip。",
+        "boundary": "负责在途变化的业务触发；复用10提案、21准备、25缓存和65约束；不是另一个规划器或地图实时监听器。 2026-09-22已确认的实施顺序：R1 → R2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -2620,10 +2630,11 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "deliveryStage": "S4",
       "executionBrief": {
-        "firstSlice": "先做一个用户亲设时间提醒，发送前核对当前Trip版本、用途同意、时区、完成/撤回状态。",
-        "boundary": "负责提醒触发与投递；25负责打开App后的读取，17提供变化信号，不启用持续定位/营销通知或无根据watch。",
+        "firstSlice": "N1：用户重新打开Trip时看到与当前状态相关的下一步及为什么出现，可关闭。",
+        "boundary": "负责提醒触发与投递；25负责打开App后的读取，17提供变化信号，不启用持续定位/营销通知或无根据watch。 2026-09-22已确认的实施顺序：N1 → N2 → N3；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -2708,10 +2719,11 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "deliveryStage": "S4",
       "executionBrief": {
-        "firstSlice": "在现有CaseRequest/AccessGrant下，只投影一个服务任务必需的用户字段，并验证纠正/撤回后的访问。",
-        "boundary": "负责授权Brief投影；57负责grant/访问期限，32负责人员接单与结果，11负责偏好权威。",
+        "firstSlice": "B1：用户预览本服务任务要分享的资料后，指定员工看到有来源和更新时间的最小Brief。",
+        "boundary": "负责授权Brief投影；57负责grant/访问期限，32负责人员接单与结果，11负责偏好权威。 2026-09-22已确认的实施顺序：B1 → B2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -2802,10 +2814,11 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "deliveryStage": "S4",
       "executionBrief": {
-        "firstSlice": "在受控容量下完成一次请求→排队→接单/分派→外部等待→有证据结果的可见服务流程。",
-        "boundary": "负责服务运营与人工分钟；57负责申请授权，31负责Brief，不伪造接单、ETA或自动写Trip。",
+        "firstSlice": "S1：用户看到queued/accepted/assigned/waiting_external真实状态，员工在实际容量内接单。",
+        "boundary": "负责服务运营与人工分钟；57负责申请授权，31负责Brief，不伪造接单、ETA或自动写Trip。 2026-09-22已确认的实施顺序：S1 → S2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -2880,10 +2893,11 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "deliveryStage": "S5",
       "executionBrief": {
-        "firstSlice": "冻结一个版本化Free/30天Pass开发权益表及交易时间规则，给sandbox配置和用户展示提供同一输入。",
-        "boundary": "唯一维护商品/有效期/容量政策说明；34实现交易与grant，35实现ServiceTask容量消费；真实销售参数另核实际账户。",
+        "firstSlice": "Q1：用户看到Free/Pass差异、时长与可购买状态，地区价格只来自匹配StoreKit商品。 PR #482已合并：Free 4/168h及2/24h，Pass 80/grant及12/24h均仅开发值。",
+        "boundary": "唯一维护商品/有效期/容量政策说明；34实现交易与grant，35实现ServiceTask容量消费；真实销售参数另核实际账户。 2026-09-22已确认的实施顺序：Q1；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -2970,10 +2984,11 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "deliveryStage": "S5",
       "executionBrief": {
-        "firstSlice": "按33的版本化商品策略完成一次StoreKit sandbox交易验证→账号grant→两端生效及同交易恢复。",
-        "boundary": "负责交易/grant幂等、排队、生效、退款和恢复；不再定义33的商品规则，不实现35的任务扣次。",
+        "firstSlice": "Q2：用户在官方测试环境购买一次，服务端验证交易绑定账号后，两端读取同一720h权益段。",
+        "boundary": "负责交易/grant幂等、排队、生效、退款和恢复；不再定义33的商品规则，不实现35的任务扣次。 2026-09-22已确认的实施顺序：Q2 → Q3 → Q4；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -3058,10 +3073,11 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "deliveryStage": "S5",
       "executionBrief": {
-        "firstSlice": "复用34的grant和59的内部费用账本，实现一个ServiceTask容量预留/结算/失败恢复及并发最后一份额度。",
-        "boundary": "负责用户任务额度；不复制34交易账本或59供应商attempt计费；必要澄清和修复不新扣用户次数。",
+        "firstSlice": "U1：一个完整文本目标经合法容量接纳并交付可读取结果，只结算一次，澄清和修复沿同一任务。",
+        "boundary": "负责用户任务额度；不复制34交易账本或59供应商attempt计费；必要澄清和修复不新扣用户次数。 2026-09-22已确认的实施顺序：U1 → U2 → U3 → U4；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -3150,10 +3166,11 @@
       "deliveryStage": "S5",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "先让Trip/chat之一完成身份复核→异步导出或删除→回执，再接入原验收指定的核心模块handler。",
-        "boundary": "负责核心生命周期框架与首批执行器；58验全模块竞态/恢复覆盖，38验备份恢复，不能以请求202当删除成功。",
+        "firstSlice": "D1：用户重新验证身份后删除一个无关联聊天的Trip，在原生看到queued到completed并回网清理对应缓存。 main已有真实隔离SQL删除证据；native UI、export、linked-chat及全数据未完成。",
+        "boundary": "负责核心生命周期框架与首批执行器；58验全模块竞态/恢复覆盖，38验备份恢复，不能以请求202当删除成功。 2026-09-22已确认的实施顺序：D1 → D2 → D3 → D4 → D5；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -3238,12 +3255,13 @@
       "deliveryStage": "S5",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "基于已有budget-scope只读模型贯通一次实际attempt对账与能力停用/恢复，明确unknown费用。",
-        "boundary": "负责运营可观测性和停止消费者；59提供账本、35提供商品额度，71执行最终演练；不重建第二账本。",
+        "firstSlice": "W1：授权运营在质量/成本视图分辨answered、partial、失败、未观测及待核费用。 PR #501已合入main，复用聚合视图及受保护读接口；真实授权部署读取与实际成本验收仍未完成。",
+        "boundary": "负责运营可观测性和停止消费者；59提供账本、35提供商品额度，71执行最终演练；不重建第二账本。 2026-09-22已确认的实施顺序：W1 → W2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md",
           "artifacts/VPJ-37/verification.md",
-          "artifacts/VPJ-37/unrun.md"
+          "artifacts/VPJ-37/unrun.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -3317,10 +3335,11 @@
       "deliveryStage": "S5",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "复用已有恢复工具，在隔离目标验证一个实际备份恢复并重放删除/撤权tombstone，记录测得RPO/RTO。",
-        "boundary": "负责灾备恢复机制；36提供删除状态，58验全模块退出，已做的74隔离演练不等于全部Storage/生产恢复。",
+        "firstSlice": "K1：在隔离目标恢复数据库和必要对象，重放删除/撤权后才允许测试用户读取。",
+        "boundary": "负责灾备恢复机制；36提供删除状态，58验全模块退出，已做的74隔离演练不等于全部Storage/生产恢复。 2026-09-22已确认的实施顺序：K1 → K2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -3388,10 +3407,11 @@
       "deliveryStage": "S5",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "先选媒体、OTA外跳、StoreKit或通知中的一个已接通路径，在真实境内外网络记录失败/恢复与时延。",
-        "boundary": "负责扩展端到端网络验收；63负责登录/Ask/Trip基础探针，各功能票负责实现，不重复测未变基线。",
+        "firstSlice": "NET1：在真实境内外WiFi/漫游/弱网下使用图片/PDF/语音，断网能恢复或保留可读资料。",
+        "boundary": "负责扩展端到端网络验收；63负责登录/Ask/Trip基础探针，各功能票负责实现，不重复测未变基线。 2026-09-22已确认的实施顺序：NET1 → NET2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -3481,10 +3501,11 @@
       "deliveryStage": "S5",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "在一个已运行的原生用户路径上验证选区/焦点/大字/VoiceOver与同Trip版本，随后覆盖全部原定模块。",
-        "boundary": "负责整链体验验收和发现的缺陷；不重建01基础壳或10业务交互，不倒逼基础任务等待整链完成。",
+        "firstSlice": "UX1：同一Trip的选区Ask、diff、确认、重载和返回锚点在小屏/大字/VoiceOver可用。",
+        "boundary": "负责整链体验验收和发现的缺陷；不重建01基础壳或10业务交互，不倒逼基础任务等待整链完成。 2026-09-22已确认的实施顺序：UX1 → UX2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -3579,10 +3600,11 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "deliveryStage": "S5",
       "executionBrief": {
-        "firstSlice": "在真实Web账号上完成一次Trip读写/差异确认/重载，并验证桌面与390宽度、中英、键盘和失败结果。",
-        "boundary": "负责轻量Web最终整合验收；不做第二完整App，不重建05数据层、20内容或34权益。",
+        "firstSlice": "WEB1：Web完成基本编辑、Ask、diff确认并同步原生；材料状态和权益可读。",
+        "boundary": "负责轻量Web最终整合验收；不做第二完整App，不重建05数据层、20内容或34权益。 2026-09-22已确认的实施顺序：WEB1 → WEB2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -3657,10 +3679,11 @@
       "deliveryStage": "S5",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "选定同一可安装TestFlight版本，让受控用户完成一个Plan→Ready→Travel旅程并保留跨模块异常证据。",
-        "boundary": "负责Beta联合验收；57/56等提供基础能力，40/41提供体验结果，71提供Harness；不把安装成功当产品完成。",
+        "firstSlice": "BETA1：受控测试用户在指定build完成真实Trip规划、选区Ask、明确确认、材料/订单回流与准备。",
+        "boundary": "负责Beta联合验收；57/56等提供基础能力，40/41提供体验结果，71提供Harness；不把安装成功当产品完成。 2026-09-22已确认的实施顺序：BETA1 → BETA2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -4140,10 +4163,11 @@
       "deliveryStage": "S5",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "用一条旅行体验投稿走注册用户提交→异人审核→发布或拒绝→作者撤回的受控链。",
-        "boundary": "负责UGC创建/审核；64负责举报屏蔽申诉删除，未完成其必需保护前不开放公众发布；体验不自动升级Fact。",
+        "firstSlice": "J1：用户提交旅行体验或求助，看到pending及审核结果，能撤回；运营异人审阅。 PR #502已合入main，仅内部受控审核实现，公开读关闭；用户界面和完整GoTrue链仍缺。",
+        "boundary": "负责UGC创建/审核；64负责举报屏蔽申诉删除，未完成其必需保护前不开放公众发布；体验不自动升级Fact。 2026-09-22已确认的实施顺序：J1 → J3；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -4693,10 +4717,11 @@
       "deliveryStage": "S4",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "在已验单图材料链上增加一类限定PDF或一个Files/Share入口，校正、去重并接回登录前的原任务。",
-        "boundary": "负责文件和系统入口；12负责单图解析基础，24负责订单语义；暂不建设多人协作邀请或任意文档平台。",
+        "firstSlice": "F1：用户从Files选择一类受限PDF，逐页定位关键字段并确认加入同Trip。",
+        "boundary": "负责文件和系统入口；12负责单图解析基础，24负责订单语义；暂不建设多人协作邀请或任意文档平台。 2026-09-22已确认的实施顺序：F1 → F2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -4770,12 +4795,13 @@
       "deliveryStage": "S5",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "复用已通过的原生CI；先将PR #421已合入testing-chat-vpv4但尚未入main的签名手册独立核对接回，再完成一个实际签名Archive/TestFlight安装缺口。",
-        "boundary": "负责可分发构建；42负责完整Beta、44负责正式上架。CI已勾选记录保留，未获准账号/上传动作不阻止本地诊断。",
+        "firstSlice": "X1：同一commit在实际可用工具链构建，获得可审查Archive及版本/签名准备结果。",
+        "boundary": "负责可分发构建；42负责完整Beta、44负责正式上架。CI已勾选记录保留，未获准账号/上传动作不阻止本地诊断。 2026-09-22已确认的实施顺序：X1 → X2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
           "docs/program/2026-09-05/INTERFACES.md",
           "docs/contracts/vpj-56.md",
-          "artifacts/VPJ-56/verification.md"
+          "artifacts/VPJ-56/verification.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -4862,10 +4888,11 @@
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "deliveryStage": "S4",
       "executionBrief": {
-        "firstSlice": "让用户创建一项请求、预览最少字段并授予有期限访问，验证撤回/到期/换员工/越权拒绝。",
-        "boundary": "负责Case身份与AccessGrant；31投影Brief，32安排真人容量；请求记录不等于接单。",
+        "firstSlice": "C1：用户不分享也能请求通用支持，或预览问题文本后限时授权指定员工读取。 PR #497 OPEN，已有可弃Supabase登录→HTTP→PG证据；无共享Staging/真实员工或原生交互验收。",
+        "boundary": "负责Case身份与AccessGrant；31投影Brief，32安排真人容量；请求记录不等于接单。 2026-09-22已确认的实施顺序：C1 → C2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -4947,10 +4974,11 @@
       "deliveryStage": "S5",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "复用36已交付handler注册，选一个后来接入模块做删除期间并发与恢复后隔离，随后补齐原全模块矩阵。",
-        "boundary": "负责最终覆盖与跨模块回归；不重复36的基础执行器或38的备份工具，必需模块未验不能宣称全域删除完成。",
+        "firstSlice": "ALL1：一个测试账号对当前实际已存在模块完成导出删除，回执列清所有已完成/缺失模块。",
+        "boundary": "负责最终覆盖与跨模块回归；不重复36的基础执行器或38的备份工具，必需模块未验不能宣称全域删除完成。 2026-09-22已确认的实施顺序：ALL1 → ALL2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -5115,10 +5143,11 @@
       "deliveryStage": "S4",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "用许可内合成材料验证一个OCR/vision、ASR或TTS实际任务与关键语义，分别记录usage、取消和数据生命周期。",
-        "boundary": "负责媒体provider与数据流资格；12/26/27实现用户功能，不能因文本接口兼容就宣称媒体合格。",
+        "firstSlice": "M1：运营运行一组冻结的中英文C0截图，拿到字段、来源定位、usage和明确合格/不合格结论。 PR #484 已合并C0适配器；DeepSeek HTTP400保留，Qwen真实媒体调用仍UNRUN，原付费额度不复用。",
+        "boundary": "负责媒体provider与数据流资格；12/26/27实现用户功能，不能因文本接口兼容就宣称媒体合格。 2026-09-22已确认的实施顺序：M1 → M2 → M3；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -5202,10 +5231,11 @@
       "deliveryStage": "S4",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "从一个已确认Trip执行用户主动归档，保留未完服务与可读成果，再验证下一Trip不继承旧时效约束。",
-        "boundary": "负责旅程结束/再次开始；不是删除账户或取消外部服务，偏好保存归11、私密分享49正在独立开发。",
+        "firstSlice": "A1：用户主动结束Trip，选择保留哪些明确偏好或跳过，归档后仍可读成果与未完服务。 main仅已有显式归档首片；偏好选择、3草稿/1Active与完整真实验收仍缺。",
+        "boundary": "负责旅程结束/再次开始；不是删除账户或取消外部服务，偏好保存归11、私密分享49正在独立开发。 2026-09-22已确认的实施顺序：A1 → A2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -5433,10 +5463,11 @@
       "deliveryStage": "S5",
       "baselineNote": "从main与本票首个切片开始；status:planned表示待排期，不是验收通过或停止开发。已有接口可用即可推进有界切片；完整验收仍需下列实际输入与证据。",
       "executionBrief": {
-        "firstSlice": "在已有投稿链上完成一次举报→运营处置→回执，再加入屏蔽/申诉/删除和引用失效验证。",
-        "boundary": "负责UGC安全生命周期；48负责投稿审核本身，36/58负责统一数据退出，不建设私信/关注系统。",
+        "firstSlice": "J2：在受控测试内容上完成举报→运营处置→回执，屏蔽或申诉有可追状态。",
+        "boundary": "负责UGC安全生命周期；48负责投稿审核本身，36/58负责统一数据退出，不建设私信/关注系统。 2026-09-22已确认的实施顺序：J2 → J4；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/program/2026-09-05/INTERFACES.md"
+          "docs/program/2026-09-05/INTERFACES.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "sourceRef": "main",
@@ -5971,12 +6002,13 @@
       "url": "https://github.com/JTCAO515/VP-V4/issues/267",
       "deliveryStage": "S5",
       "executionBrief": {
-        "firstSlice": "复用已交付72盲评包，在同一真实只读任务上冻结基线与一个候选、阈值/预算，形成可复核配对结论。",
-        "boundary": "负责真实任务质量/语气配对与人工校准；06验供应商协议，72离线工具不重做，不自动切生产模型。",
+        "firstSlice": "EVAL1：在候选运行前固定语料/阈值/预算与grader，通过真实人工正反例校准盲评。 PR #495已合入main，freeze/report及合成负控已有；真实人工校准和provider配对仍未完成。",
+        "boundary": "负责真实任务质量/语气配对与人工校准；06验供应商协议，72离线工具不重做，不自动切生产模型。 2026-09-22已确认的实施顺序：EVAL1 → EVAL2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
           "docs/harness/README.md",
           "artifacts/VPJ-70/verification.md",
-          "artifacts/VPJ-70/unrun.md"
+          "artifacts/VPJ-70/unrun.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -6074,10 +6106,11 @@
       "url": "https://github.com/JTCAO515/VP-V4/issues/268",
       "deliveryStage": "S5",
       "executionBrief": {
-        "firstSlice": "整合同一选定版本的两条核心任务、12场景与Ops停止/恢复，先证明失败可阻断，再给能力发布判定。",
-        "boundary": "负责Harness最终门；42/43/44/45仍各管设备、生产、商店和交付，不能以本票结果自动关闭它们。",
+        "firstSlice": "GATE1：对同一选定commit/config运行全部required-mode场景，明确是否允许该能力进入Beta。",
+        "boundary": "负责Harness最终门；42/43/44/45仍各管设备、生产、商店和交付，不能以本票结果自动关闭它们。 2026-09-22已确认的实施顺序：GATE1 → GATE2；交接输入不新增原生blocked，完整父票验收保留。",
         "reuse": [
-          "docs/harness/README.md"
+          "docs/harness/README.md",
+          "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
         ]
       },
       "acceptanceDependencies": [
@@ -6768,9 +6801,7 @@
             "验证路况变化、过期、封路数据缺失、网络中断恢复和无变化场景，保留调用记录；不能提供可信替代时保持中文地址和手动导航出口。"
           ],
           "number": 366,
-          "blockedByNumbers": [
-            364
-          ],
+          "blockedByNumbers": [],
           "url": "https://github.com/JTCAO515/VP-V4/issues/366",
           "status": "planned",
           "parentTaskId": "VPJ-19",
@@ -6782,7 +6813,10 @@
               "docs/agents/maps-integration-development.md",
               "docs/contracts/place-identity.md"
             ]
-          }
+          },
+          "acceptanceDependencyNumbers": [
+            364
+          ]
         },
         {
           "key": "maps-06",
@@ -6816,6 +6850,2236 @@
           ]
         }
       ]
+    },
+    "s4-s5-20260922": {
+      "approvedAt": "2026-09-22",
+      "status": "planned",
+      "purpose": "Approved implementation slices of existing parents, not replacement VPJ tasks. No new native blocking edges. Parent acceptance, identities and existing owners stay intact.",
+      "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md",
+      "maxConcurrentThreads": 6,
+      "firstWaveKeys": [
+        "Q2",
+        "D1",
+        "H3",
+        "T1",
+        "I1",
+        "X1"
+      ],
+      "reusedSliceNumbers": [
+        366
+      ],
+      "lanes": [
+        {
+          "lane": 1,
+          "order": [
+            "Q2",
+            "Q1",
+            "Q3",
+            "Q4",
+            "U1",
+            "U2",
+            "U3",
+            "U4"
+          ]
+        },
+        {
+          "lane": 2,
+          "order": [
+            "C1",
+            "D1",
+            "D2",
+            "C2",
+            "B1",
+            "B2",
+            "S1",
+            "S2",
+            "D3",
+            "D4",
+            "D5",
+            "K1",
+            "K2",
+            "ALL1",
+            "ALL2"
+          ]
+        },
+        {
+          "lane": 3,
+          "order": [
+            "H1",
+            "H2",
+            "H3",
+            "H4",
+            "O1",
+            "O2",
+            "F1",
+            "F2",
+            "E1",
+            "E2",
+            "E3"
+          ]
+        },
+        {
+          "lane": 4,
+          "order": [
+            "P1",
+            "T1",
+            "T2",
+            "P2",
+            "T3",
+            "N1",
+            "N2",
+            "N3",
+            "V1",
+            "V2",
+            "G1",
+            "G2",
+            "R1",
+            "MAP366",
+            "R2",
+            "A1",
+            "A2"
+          ]
+        },
+        {
+          "lane": 5,
+          "order": [
+            "M1",
+            "M2",
+            "M3",
+            "I1",
+            "I2",
+            "J1",
+            "J2",
+            "J3",
+            "J4",
+            "EVAL1",
+            "EVAL2"
+          ]
+        },
+        {
+          "lane": 6,
+          "order": [
+            "W1",
+            "X1",
+            "X2",
+            "WEB1",
+            "UX1",
+            "NET1",
+            "NET2",
+            "W2",
+            "WEB2",
+            "UX2",
+            "GATE1",
+            "GATE2",
+            "BETA1",
+            "BETA2"
+          ]
+        }
+      ],
+      "slices": [
+        {
+          "key": "M1",
+          "parent": 200,
+          "parentTaskId": "VPJ-60",
+          "stage": "S4",
+          "title": "[VPJ-60 切片 M1] 真实合成截图识别资格与失败回执",
+          "result": "运营运行一组冻结的中英文C0截图，拿到字段、来源定位、usage和明确合格/不合格结论。",
+          "acceptance": [
+            "数字/否定/姓名/日期逐项判分，partial与拒绝不伪装通过",
+            "取消、超时、费用未知和接收地区有真实回执；供应商留存未知如实保留",
+            "只将已验vision能力交给材料消费者；ASR/TTS仍单独关闭"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 5,
+          "laneOrder": 1,
+          "status": "planned",
+          "mode": "运行验收",
+          "reuse": "PR #484 已合并C0适配器；DeepSeek HTTP400保留，Qwen真实媒体调用仍UNRUN，原付费额度不复用。",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "M2",
+          "parent": 200,
+          "parentTaskId": "VPJ-60",
+          "stage": "S4",
+          "title": "[VPJ-60 切片 M2] 按需短语音的ASR资格",
+          "result": "一段不超过既有上限的中英合成短录音得到可审字幕与实际秒数费用。",
+          "acceptance": [
+            "金额、否定、姓名、日期的错漏单列，静音/截断/噪声有明确失败",
+            "取消后停止可控处理并验证临时音频清理，未知外部费用待核",
+            "冻结来源/模型/地区/预算与质量阈值，不能用文字模型通过代替ASR"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 5,
+          "laneOrder": 2,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "M3",
+          "parent": 200,
+          "parentTaskId": "VPJ-60",
+          "stage": "S4",
+          "title": "[VPJ-60 切片 M3] 中英字幕对应的TTS资格",
+          "result": "给定已核实短文本生成可试听音频，逐句核对字幕和朗读。",
+          "acceptance": [
+            "否定/数字/地址发音有独立听审记录，失败不能上线",
+            "记录实际字符/秒数/usage、首音频延迟、取消及缓存用途",
+            "短讲解默认长度沿用catalog；清理和供应商留存边界可核"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 5,
+          "laneOrder": 3,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "I1",
+          "parent": 201,
+          "parentTaskId": "VPJ-12",
+          "stage": "S4",
+          "title": "[VPJ-12 切片 I1] 单张截图接入真实同Trip确认链",
+          "result": "用户用Photo Picker选择单图，校正原文中的日期/金额/地址，再经diff确认加入同一Trip并跨端重载。",
+          "acceptance": [
+            "复用设备Vision，不把M1当本地OCR开工硬依赖；需要云解析时才消费其资格",
+            "原文定位、新增/重复/冲突可见；拒绝和版本过期不写入",
+            "真实登录→私有收件箱→Proposal→明确确认→两端重载有串联证据"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            4,
+            5
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 5,
+          "laneOrder": 4,
+          "status": "planned",
+          "mode": "运行验收",
+          "reuse": "PR #472/#474 已合并原生审阅/Proposal；不重写解析UI，不重新研究已否决Docling。",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "I2",
+          "parent": 201,
+          "parentTaskId": "VPJ-12",
+          "stage": "S4",
+          "title": "[VPJ-12 切片 I2] 截图的重放、取消与设备私密性",
+          "result": "同一截图重复导入、取消、过期、换账号后，用户仍看见准确状态，旧材料不能串用。",
+          "acceptance": [
+            "相同输入/凭证不重复添项，失败与取消保留确认Trip",
+            "真机验证文件保护、24h逻辑TTL、重新启动和下次访问清理；不承诺App不运行也即时物理删除",
+            "owner/other和旧设备回网拒绝可追；只访问用户选中的图片"
+          ],
+          "parentAcceptanceRefs": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "integrationInputKeys": [
+            "I1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 5,
+          "laneOrder": 5,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "E1",
+          "parent": 203,
+          "parentTaskId": "VPJ-13",
+          "stage": "S4",
+          "title": "[VPJ-13 切片 E1] 无日期新想法产生首个可用成果",
+          "result": "新用户一句无日期想法先得到可保存的方向或片段，再按需要补一个可跳过的问题。",
+          "acceptance": [
+            "消费#197已有相对日成果；不强制填长表/完整计划",
+            "同一ServiceTask复用已知人数/日期，拒绝、配额、无权限、大字键盘均有路径",
+            "first_value、采用/保存、outcome_declined、technical_failure分别记录，重复提问率写分母"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            3,
+            4,
+            5,
+            6
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 3,
+          "laneOrder": 9,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "E2",
+          "parent": 203,
+          "parentTaskId": "VPJ-13",
+          "stage": "S4",
+          "title": "[VPJ-13 切片 E2] 已有材料成为首访入口",
+          "result": "用户选择已有截图，从校正结果直接进入第一份可确认Trip成果。",
+          "acceptance": [
+            "不先要求重新口述材料，关键歧义才追问",
+            "跳过导入、解析失败和拒绝确认仍可继续，既有计划不丢失",
+            "首值计时以真实可用成果为准，上传或OCR完成不计激活"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            3,
+            4,
+            5,
+            6
+          ],
+          "integrationInputKeys": [
+            "I1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 3,
+          "laneOrder": 10,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "E3",
+          "parent": 203,
+          "parentTaskId": "VPJ-13",
+          "stage": "S4",
+          "title": "[VPJ-13 切片 E3] 在途与回访接续上次成果",
+          "result": "回访显示当前Trip、上次决定与可用下一步；在途用户可直接获取地址或现场工具。",
+          "acceptance": [
+            "当前状态/偏好版本可追；撤回偏好不复活",
+            "无完整计划、离线、到期/配额不足仍可读已有安全成果",
+            "必要澄清沿原目标，用户可跳过；无依据下一步清楚标未知"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "integrationInputKeys": [
+            "T1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 3,
+          "laneOrder": 11,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "H1",
+          "parent": 212,
+          "parentTaskId": "VPJ-22",
+          "stage": "S4",
+          "title": "[VPJ-22 切片 H1] 官方酒店出口在手机保留真实参数",
+          "result": "在原生酒店入口核对条件后跳到官方App/网站，用户清楚哪些参数需重新填写。",
+          "acceptance": [
+            "接续PR #498，完成现存编译/设备检查；分别核安装/未安装供应商App",
+            "hotel/date/rooms/adults/children逐字段记录；exact hotel丢失、儿童年龄不足必须提示",
+            "固定域名/过期/失败回退；opened永不标booked，非联盟出口可完整使用"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 3,
+          "laneOrder": 1,
+          "status": "planned",
+          "mode": "在途收尾",
+          "reuse": "PR #498 OPEN/draft；Booking与Trip.com已有桌面观察，不能当真机通过。",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "H2",
+          "parent": 212,
+          "parentTaskId": "VPJ-22",
+          "stage": "S4",
+          "title": "[VPJ-22 切片 H2] 已有酒店供应商候选的采纳决定与最小接线",
+          "result": "核对RollingGo已有只读候选及TourMind研究，形成有证据的采纳/暂缓决定；采纳时交付一个受控查询到官方外跳。",
+          "acceptance": [
+            "PR #498附录已有RollingGo tools/tags/hotels/handoff真实观察；当前主线未集成，不从零重做探针",
+            "字段用途、source版本、外宾入住信息和总价口径有证据或unknown；登录后价格不猜",
+            "候选不可用可暂缓且不阻塞H1；无支付/代订/room SKU编造或佣金影响排序"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 3,
+          "laneOrder": 2,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "H3",
+          "parent": 213,
+          "parentTaskId": "VPJ-23",
+          "stage": "S4",
+          "title": "[VPJ-23 切片 H3] 按行程比较住宿区域与需求",
+          "result": "用户看到有差异的区域/酒店候选及交通负担，继承日期、人数、床型、预算与已订意向。",
+          "acceptance": [
+            "消费#199合法偏好和#363/#364已交接口；缺路线时标缺口，不猜分钟数",
+            "每晚/全程/房间数/币种明确，缓存起价不当可售实时价",
+            "已订/不需要/暂缓不反复推销；佣金移除后排序不变"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            4
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 3,
+          "laneOrder": 3,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "H4",
+          "parent": 213,
+          "parentTaskId": "VPJ-23",
+          "stage": "S4",
+          "title": "[VPJ-23 切片 H4] 暂选酒店、透明外跳和受影响Trip提案",
+          "result": "用户暂选住宿后可继续官方预订；需要调整首末日/接驳时先审阅局部diff。",
+          "acceptance": [
+            "CTA说明供应商、佣金或非联盟、需重核字段和过期失败路径",
+            "推荐/暂选/opened/材料确认/供应商核实分开；未经确认不写Trip",
+            "域名白名单与最小参数生效；同意取消、链接失败不损坏原行程"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            5
+          ],
+          "integrationInputKeys": [
+            "H1",
+            "H3"
+          ],
+          "blockedByNumbers": [],
+          "lane": 3,
+          "laneOrder": 4,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "O1",
+          "parent": 214,
+          "parentTaskId": "VPJ-24",
+          "stage": "S4",
+          "title": "[VPJ-24 切片 O1] 订单材料回流形成外部订单引用",
+          "result": "用户外跳回来可跳过，也可校正确认凭证，把订单引用关联至原Trip。",
+          "acceptance": [
+            "没有H4也可手动导入已有第三方订单；不把酒店比较作为开工硬依赖",
+            "user-reported/artifact-confirmed/provider-verified分开，原文定位可见",
+            "日期/地址/条款新增与冲突先审阅，经既有Proposal确认再改变安排"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            4
+          ],
+          "integrationInputKeys": [
+            "I1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 3,
+          "laneOrder": 5,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "O2",
+          "parent": 214,
+          "parentTaskId": "VPJ-24",
+          "stage": "S4",
+          "title": "[VPJ-24 切片 O2] 订单重复、改签与未知回执恢复",
+          "result": "凭证重传或外部订单发生变化时，仅更新用户核实的引用和受影响候选。",
+          "acceptance": [
+            "相同凭证重复不添项，未知提交回执先读取再重试",
+            "取消/退款/改签只记录外部证据，不声称VP代办成功",
+            "失败保留原Trip；固定订单约束可被后续规划正确读取，生命周期handler随模块交付"
+          ],
+          "parentAcceptanceRefs": [
+            3,
+            4
+          ],
+          "integrationInputKeys": [
+            "O1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 3,
+          "laneOrder": 6,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "F1",
+          "parent": 236,
+          "parentTaskId": "VPJ-55",
+          "stage": "S4",
+          "title": "[VPJ-55 切片 F1] 限定PDF从Files进入同一校正链",
+          "result": "用户从Files选择一类受限PDF，逐页定位关键字段并确认加入同Trip。",
+          "acceptance": [
+            "≤10页/20MB沿catalog；超限/恶意/格式错误明确拒绝，不静默截页",
+            "复用新增/重复/冲突和Proposal合同，保留原固定活动与订单",
+            "材料TTL/取消/删除及失败保留原文件/Trip有证据；不扩大Word/Excel范围"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            3,
+            4
+          ],
+          "integrationInputKeys": [
+            "I1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 3,
+          "laneOrder": 7,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "F2",
+          "parent": 236,
+          "parentTaskId": "VPJ-55",
+          "stage": "S4",
+          "title": "[VPJ-55 切片 F2] 系统分享与登录回跳不丢原任务",
+          "result": "Share Extension短投递到私有收件箱，用户完成登录后回到原材料或已有授权入口。",
+          "acceptance": [
+            "AppGroup按账号隔离、退出/TTL/删除清理，跨账号和过期链接拒绝",
+            "已安装/未安装/Universal Link/登录回跳实测，不承诺安装后自动传参",
+            "扩展不执行长解析，不建立多人Trip或跨账号授权；端到端重复导入仍幂等"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            5
+          ],
+          "integrationInputKeys": [
+            "F1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 3,
+          "laneOrder": 8,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "T1",
+          "parent": 215,
+          "parentTaskId": "VPJ-25",
+          "stage": "S4",
+          "title": "[VPJ-25 切片 T1] 确认Trip的Today与中文地址",
+          "result": "打开Trip内Today，看到同一确认版本的日程、中文地址与适用准备状态。",
+          "acceptance": [
+            "只消费现有确认快照，不新建Trip数据源；在线确认后两端版本一致",
+            "地图/图片加载失败仍可读已有文字；无日期/无日程有真实空态",
+            "到期/额度不足保留许可内已保存资料，不承诺后台监控"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            5,
+            6
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 2,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "main已有Today证据函数，不等于原生Today或离线包已验收。",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "T2",
+          "parent": 215,
+          "parentTaskId": "VPJ-25",
+          "stage": "S4",
+          "title": "[VPJ-25 切片 T2] 用户选择资料的离线读取与到期隔离",
+          "result": "用户保存允许缓存的地址和资料，断网重启仍能读取，并看见缓存版本和同步时间。",
+          "acceptance": [
+            "账户/Trip命名空间、文件保护、登出清理；旧设备离线租约到期限制读取",
+            "回网重验删除/撤权；过期Fact不当实时信息，未经允许的地图/第三方内容不缓存",
+            "真机飞行模式、换账号和过期/删除回网可观察；新缓存同时注册数据生命周期"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            4,
+            5,
+            6
+          ],
+          "integrationInputKeys": [
+            "T1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 3,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "T3",
+          "parent": 215,
+          "parentTaskId": "VPJ-25",
+          "stage": "S4",
+          "title": "[VPJ-25 切片 T3] 离线改稿回网后显式解决冲突",
+          "result": "离线修改保存在本地草稿，回网展示与当前版本差异，用户再确认提交。",
+          "acceptance": [
+            "CAS旧版本失败不覆盖服务器最新安排；取消保留原确认稿",
+            "重复同步和断网重试不重复Patch；撤权/删除/归档后不可提交",
+            "离线不执行外部动作；两设备竞态与成功回执可复核"
+          ],
+          "parentAcceptanceRefs": [
+            3,
+            4,
+            6
+          ],
+          "integrationInputKeys": [
+            "T2"
+          ],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 5,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "P1",
+          "parent": 216,
+          "parentTaskId": "VPJ-26",
+          "stage": "S4",
+          "title": "[VPJ-26 切片 P1] 真实文字翻译与大字卡验收",
+          "result": "输入一条短语得到中英翻译与随时可见原文，给本地人看可读的大字卡。",
+          "acceptance": [
+            "接续PR #485实际worker/同意/预算链，错误格式和关键数字不生成误导卡片",
+            "金额、否定、地点、过敏语义做独立双向核验；模型自回译不是独立验证",
+            "真机最大字号/VoiceOver、失败/拒绝/停止路径通过，不宣称认证翻译"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 1,
+          "status": "planned",
+          "mode": "在途收尾",
+          "reuse": "PR #485 OPEN，已有API与原生消费者及本地验证，真实provider与现场UX未验。",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "P2",
+          "parent": 216,
+          "parentTaskId": "VPJ-26",
+          "stage": "S4",
+          "title": "[VPJ-26 切片 P2] 同Trip地址带入与已存短语重读",
+          "result": "从确认Trip选中地址/场景带入翻译，用户保存后可在额度耗尽时重读。",
+          "acceptance": [
+            "只传明确选择的字段，不默认带入历史私密记忆",
+            "保存短语受账号/资料权利隔离，离线使用复用T2可用缓存合同",
+            "持久提交恢复读取原回执，不因后台/重开重复生成；缓存读取不扣次"
+          ],
+          "parentAcceptanceRefs": [
+            3
+          ],
+          "integrationInputKeys": [
+            "P1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 4,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "V1",
+          "parent": 217,
+          "parentTaskId": "VPJ-27",
+          "stage": "S4",
+          "title": "[VPJ-27 切片 V1] 按住说话到字幕和可停止朗读",
+          "result": "用户按住录音，松开后得到字幕/译文并可主动播放、随时停止。",
+          "acceptance": [
+            "仅按需请求麦克风权限；拒权/无网退回可用文字入口",
+            "ASR最终字幕、翻译与朗读对应；不出现常开监听",
+            "每次录音≤既有上限，实际秒/字符入attempt账；临时音频取消/TTL可核"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            3
+          ],
+          "integrationInputKeys": [
+            "M2",
+            "M3",
+            "P1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 9,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "V2",
+          "parent": 217,
+          "parentTaskId": "VPJ-27",
+          "stage": "S4",
+          "title": "[VPJ-27 切片 V2] 来电、耳机和后台恢复不重复播放",
+          "result": "来电/拔耳机/退后台/停止后恢复界面时，用户明确选择下一动作且不重复播音。",
+          "acceptance": [
+            "两设备/多次点击/未知生成回执先读后重试，不存多份音频",
+            "中断后字幕及播放进度一致，音频过期/取消已清理",
+            "真机耳机、来电、后台和弱网有实际记录；费用未知仍待核"
+          ],
+          "parentAcceptanceRefs": [
+            2,
+            3
+          ],
+          "integrationInputKeys": [
+            "V1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 10,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "G1",
+          "parent": 218,
+          "parentTaskId": "VPJ-28",
+          "stage": "S4",
+          "title": "[VPJ-28 切片 G1] 一处已覆盖地点的有来源短讲解",
+          "result": "在首批覆盖地点听简短讲解，查看来源、字幕并暂停续播。",
+          "acceptance": [
+            "消费#205已发布内容和#363准确地点；事实/传说分开，过期撤回内容不读",
+            "兴趣仅用获准投影；英文自然、中文事实和否定一致；默认≤2分钟",
+            "许可内缓存重播不扣任务单位；未覆盖有清楚退路，不等语音输入才能开发"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            3,
+            4
+          ],
+          "integrationInputKeys": [
+            "M3"
+          ],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 11,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "G2",
+          "parent": 218,
+          "parentTaskId": "VPJ-28",
+          "stage": "S4",
+          "title": "[VPJ-28 切片 G2] 地点语音追问回到当前Trip",
+          "result": "用户基于当前地点与已听进度追问，VP给有依据的回答并保留当前Trip上下文。",
+          "acceptance": [
+            "当前地点/兴趣/进度使用范围可见；拒权时可文字追问",
+            "新增生成与缓存重播计量分开；字幕、可中断播放和后台恢复准确",
+            "无依据只标缺口，不自动改行程；Guide缓存与撤权删除handler一起交付"
+          ],
+          "parentAcceptanceRefs": [
+            2,
+            3,
+            4
+          ],
+          "integrationInputKeys": [
+            "G1",
+            "V1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 12,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "R1",
+          "parent": 220,
+          "parentTaskId": "VPJ-29",
+          "stage": "S4",
+          "title": "[VPJ-29 切片 R1] 用户报告疲劳或晚点后的局部候选",
+          "result": "用户说走不动或晚点，看到1–2个保留固定订单/晚餐的局部候选，确认后才更新Trip。",
+          "acceptance": [
+            "只消费#198/#219可用选区、约束和核验接口；T1用于Today入口而非所有入口硬依赖",
+            "diff范围、版本、候选/确认/应用回执分开；拒绝/失效/技术失败不改原稿",
+            "unknown或无法安全修复有官方/供应商出口；不虚构实时检测、退订或退款"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 13,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "R2",
+          "parent": 220,
+          "parentTaskId": "VPJ-29",
+          "stage": "S4",
+          "title": "[VPJ-29 切片 R2] 有效交通变化接回局部恢复",
+          "result": "用户前台检查得到有时效的交通变化后，可选择将其转成局部恢复提案。",
+          "acceptance": [
+            "复用现有#366，不新造第二张交通变化票；交通观测与提案归属清楚",
+            "无变化/过期/无覆盖保持地址与导航出口，不编造公交实时到站",
+            "现有固定订单和未选范围不变，确认失败/重试不重复写Trip"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "integrationInputKeys": [
+            "R1",
+            "MAP366"
+          ],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 15,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "N1",
+          "parent": 221,
+          "parentTaskId": "VPJ-30",
+          "stage": "S4",
+          "title": "[VPJ-30 切片 N1] App内有原因的下一步",
+          "result": "用户重新打开Trip时看到与当前状态相关的下一步及为什么出现，可关闭。",
+          "acceptance": [
+            "版本/同意/时区/有效期和已完成状态每次重验",
+            "无法取得watch或准备证据就显示未知，不默认后台持续检测",
+            "关闭后不反复恢复；不夹带营销/联盟推广"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            4
+          ],
+          "integrationInputKeys": [
+            "T1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 6,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "N2",
+          "parent": 221,
+          "parentTaskId": "VPJ-30",
+          "stage": "S4",
+          "title": "[VPJ-30 切片 N2] 用户定时提醒真正送达与可撤销",
+          "result": "用户设置有原因的提醒，获准后真实接收通知并回到对应Trip；关闭后不再发送。",
+          "acceptance": [
+            "先接续PR #490保存/关闭切片；接入真实调度/APNs后才可显示已发送或启用推送",
+            "派发时重验同意、版本、时区、结束/归档、账号与去重；锁屏不含敏感内容",
+            "拒权/换机/换账号/取消与派发竞态实测，数据handler同交；不加入Live Activity"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 7,
+          "status": "planned",
+          "mode": "在途接续",
+          "reuse": "PR #490 OPEN，仅持久记录与资格投影，push delivery明确unavailable。",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "N3",
+          "parent": 221,
+          "parentTaskId": "VPJ-30",
+          "stage": "S4",
+          "title": "[VPJ-30 切片 N3] 明确watch变化的提醒去重与停止",
+          "result": "用户为明确观察对象设置watch，有有效变化才提醒，撤回和到期后停止。",
+          "acceptance": [
+            "消费#207实际重验结果，不把来源时间变化当行程变化",
+            "相同结果不重发，过期/撤销/已完成/旅行结束关闭待发送队列",
+            "实际发送绑定最新Trip和用户用途同意，未实现的观察源保持不可用"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            4
+          ],
+          "integrationInputKeys": [
+            "N2"
+          ],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 8,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "C1",
+          "parent": 222,
+          "parentTaskId": "VPJ-57",
+          "stage": "S4",
+          "title": "[VPJ-57 切片 C1] 请求与指定员工授权的真实交互",
+          "result": "用户不分享也能请求通用支持，或预览问题文本后限时授权指定员工读取。",
+          "acceptance": [
+            "接续PR #497真实身份/RPC合同；原生申请、换员工、撤回、到期完整可操作",
+            "指定员工/other/旧员工分别验拒绝；新目录空态不能虚构接单人",
+            "请求仅记申请，旅途执行问题范围清楚；不默认把行前计划转人工"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 1,
+          "status": "planned",
+          "mode": "在途收尾",
+          "reuse": "PR #497 OPEN，已有可弃Supabase登录→HTTP→PG证据；无共享Staging/真实员工或原生交互验收。",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "C2",
+          "parent": 222,
+          "parentTaskId": "VPJ-57",
+          "stage": "S4",
+          "title": "[VPJ-57 切片 C2] 服务请求生命周期和待访问重验",
+          "result": "用户删除或撤回服务资料后，旧授权链接、排队访问与缓存无法继续读取。",
+          "acceptance": [
+            "请求/AccessGrant接入#228可用handler合同；不得等待#239终验才补数据能力",
+            "用户可读审计和最少授权范围，重放不会重新授予",
+            "删除/到期/换员工与读取竞态、账号切换在真实持久存储验收"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2
+          ],
+          "integrationInputKeys": [
+            "C1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 4,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "B1",
+          "parent": 223,
+          "parentTaskId": "VPJ-31",
+          "stage": "S4",
+          "title": "[VPJ-31 切片 B1] 一个ServiceCase的最小Traveler Brief",
+          "result": "用户预览本服务任务要分享的资料后，指定员工看到有来源和更新时间的最小Brief。",
+          "acceptance": [
+            "从#199/#201已有合法字段投影，不先要求其整票关闭",
+            "预算/需求/偏好标显式或推断，不推定敏感人格",
+            "owner可审范围和访问记录；无权限员工看不到全历史，基本记忆Free不授予人工读取权"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            4
+          ],
+          "integrationInputKeys": [
+            "C1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 5,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "B2",
+          "parent": 223,
+          "parentTaskId": "VPJ-31",
+          "stage": "S4",
+          "title": "[VPJ-31 切片 B2] Brief随纠正、撤权与删除失效",
+          "result": "用户纠正资料或撤权后，员工再打开Brief立即得到新版本或拒绝。",
+          "acceptance": [
+            "旧摘要不得压过最新输入，排队读和可控缓存重新校验",
+            "worker重试/旧URL/旧版本不可复活已撤回字段",
+            "Brief数据handler、版本审计和owner/employee隔离有真实并发证据"
+          ],
+          "parentAcceptanceRefs": [
+            3,
+            4
+          ],
+          "integrationInputKeys": [
+            "B1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 6,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "S1",
+          "parent": 224,
+          "parentTaskId": "VPJ-32",
+          "stage": "S4",
+          "title": "[VPJ-32 切片 S1] 真人容量与接单状态",
+          "result": "用户看到queued/accepted/assigned/waiting_external真实状态，员工在实际容量内接单。",
+          "acceptance": [
+            "未接单无负责人/ETA承诺；只有真实接受后显示负责人与更新时间",
+            "无容量、紧急请求、用户退出有明确官方/供应商路径",
+            "并发接单唯一、撤权后不可读；状态变化有审计且不改Trip"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            4
+          ],
+          "integrationInputKeys": [
+            "C1",
+            "B1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 7,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "S2",
+          "parent": 224,
+          "parentTaskId": "VPJ-32",
+          "stage": "S4",
+          "title": "[VPJ-32 切片 S2] 真人结果回传与Trip候选",
+          "result": "同一服务线回传resolved/unresolved和依据，需要变更Trip时由用户确认候选。",
+          "acceptance": [
+            "教程、已联系、实际外部解决分别有证据；不自动代订/退款",
+            "人工分钟/容量可核；未解决、撤回、取消保留准确状态",
+            "归档不删除未完服务；Case/Brief/附件的导出删除handler可用"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "integrationInputKeys": [
+            "S1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 8,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "A1",
+          "parent": 240,
+          "parentTaskId": "VPJ-61",
+          "stage": "S4",
+          "title": "[VPJ-61 切片 A1] 归档、保留偏好与未完服务接续",
+          "result": "用户主动结束Trip，选择保留哪些明确偏好或跳过，归档后仍可读成果与未完服务。",
+          "acceptance": [
+            "复用PR #486；真实原生→API→DB→重载/分享，时间过去不自动归档",
+            "#199逐偏好同意和#224服务状态作为分段集成输入；任一未验不能关父票",
+            "Pass到期仍可读/导出；新Trip不复制旧日期、临时约束或未同意偏好"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 16,
+          "status": "planned",
+          "mode": "接续开发",
+          "reuse": "main仅已有显式归档首片；偏好选择、3草稿/1Active与完整真实验收仍缺。",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "A2",
+          "parent": 240,
+          "parentTaskId": "VPJ-61",
+          "stage": "S4",
+          "title": "[VPJ-61 切片 A2] 三草稿与一个Active的显式切换",
+          "result": "用户创建或启用Trip时看见容量与当前Active，主动切换而非日期隐式推断。",
+          "acceptance": [
+            "并发创建/激活最多3草稿+1Active，超过时有可理解选择",
+            "旧数据显式对账，不能把所有历史确认稿自动算Active或删档",
+            "失败回滚保留原Active和归档成果；schema变更遵循追加迁移与受影响独立审查"
+          ],
+          "parentAcceptanceRefs": [
+            3
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 4,
+          "laneOrder": 17,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "Q1",
+          "parent": 225,
+          "parentTaskId": "VPJ-33",
+          "stage": "S5",
+          "title": "[VPJ-33 切片 Q1] 同源商品政策展示与真实店面核对",
+          "result": "用户看到Free/Pass差异、时长与可购买状态，地区价格只来自匹配StoreKit商品。",
+          "acceptance": [
+            "复用catalog v2/policy v1及本地StoreKit，不再等开发容量/partial/TTL决策",
+            "未绑定真实SKU时保持不可购买；实际店面/税费/合同主体记录为待核，不把参考美元当当地价",
+            "基本偏好两档共享、不含无限人工；Q38激活/eSIM仍排除，真实销售另门核价与成本"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 1,
+          "laneOrder": 2,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "PR #482已合并：Free 4/168h及2/24h，Pass 80/grant及12/24h均仅开发值。",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "Q2",
+          "parent": 226,
+          "parentTaskId": "VPJ-34",
+          "stage": "S5",
+          "title": "[VPJ-34 切片 Q2] 一次官方测试购买到两端有效grant",
+          "result": "用户在官方测试环境购买一次，服务端验证交易绑定账号后，两端读取同一720h权益段。",
+          "acceptance": [
+            "直接消费已合并catalog，Q1展示接线可同PR完成，非开工硬依赖",
+            "唯一环境+transaction身份、可信购买时间、策略/容量快照；跨账号/未知SKU/签名/环境不符拒绝",
+            "pending/cancelled/revoked不算成功；Xcode local与真实Sandbox分开留证，不启用生产付款"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            3,
+            4,
+            5
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 1,
+          "laneOrder": 1,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "Q3",
+          "parent": 226,
+          "parentTaskId": "VPJ-34",
+          "stage": "S5",
+          "title": "[VPJ-34 切片 Q3] 换机恢复、退款与到期不重复授权",
+          "result": "用户换机恢复原权益，退款只撤销对应段，到期仍能读取和手动编辑已有资料。",
+          "acceptance": [
+            "同交易重放/双端恢复不加时、不补容量；消息乱序有可追对账",
+            "退款不移动其他段或抹已有成果；用户可见生效/到期/恢复/撤销原因",
+            "真实Sandbox/持久DB回执与两端读取对应；仅本地StoreKit测试不足以关闭"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "integrationInputKeys": [
+            "Q2"
+          ],
+          "blockedByNumbers": [],
+          "lane": 1,
+          "laneOrder": 3,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "Q4",
+          "parent": 226,
+          "parentTaskId": "VPJ-34",
+          "stage": "S5",
+          "title": "[VPJ-34 切片 Q4] 提前购买与迟到交易的可见排队",
+          "result": "再次购买显示下一个独立时段，未到startsAt不能使用其容量，迟到交易冲突可解释。",
+          "acceptance": [
+            "每段720h且到期余量不结转；可信时间排序，已固定段不静默移动",
+            "重复/并发/晚到过期交易不从恢复时间重启；退款空窗和其他段时间保留",
+            "账号滚动窗口不因购买/恢复重置；实际并发与崩溃恢复有证据"
+          ],
+          "parentAcceptanceRefs": [
+            2,
+            4,
+            5
+          ],
+          "integrationInputKeys": [
+            "Q2"
+          ],
+          "blockedByNumbers": [],
+          "lane": 1,
+          "laneOrder": 4,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "U1",
+          "parent": 227,
+          "parentTaskId": "VPJ-35",
+          "stage": "S5",
+          "title": "[VPJ-35 切片 U1] 文本完整目标的唯一接纳与结算",
+          "result": "一个完整文本目标经合法容量接纳并交付可读取结果，只结算一次，澄清和修复沿同一任务。",
+          "acceptance": [
+            "复用#195/#194记录模式、v2开发政策；初期开发grant可验证，正式集成消费Q2且不伪造交易",
+            "真实DB最后一份容量竞争、两设备/多worker、同key异参数、写入前后崩溃不双扣",
+            "必要澄清/系统修复/失败不额外消费；安全、记忆纠错、导出删除、手动编辑免费，内部成本仍止损"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 1,
+          "laneOrder": 5,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "U2",
+          "parent": 227,
+          "parentTaskId": "VPJ-35",
+          "stage": "S5",
+          "title": "[VPJ-35 切片 U2] Trip目标只在确认成功后结算",
+          "result": "用户拒绝或修改提案不产生虚构Trip成功；原子Patch成功且可读后才完成该目标消费。",
+          "acceptance": [
+            "消费#198确认回执，不因provider返回/卡片/按钮点击扣一次",
+            "取消与提交竞态唯一裁定，过期Proposal/旧worker不能结算",
+            "部分成功、系统修复与主动新目标区分，未明确开始新目标不扣新单位"
+          ],
+          "parentAcceptanceRefs": [
+            2,
+            3,
+            5
+          ],
+          "integrationInputKeys": [
+            "U1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 1,
+          "laneOrder": 6,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "U3",
+          "parent": 227,
+          "parentTaskId": "VPJ-35",
+          "stage": "S5",
+          "title": "[VPJ-35 切片 U3] 跨周期、退款与准确余额",
+          "result": "用户看到准确余额和下次可用时间；跨期继续、媒体调用与迟到费用均按原策略对账。",
+          "acceptance": [
+            "partial释放、首次等待24h且不超过grant期限；跨期继续重新接纳，不偷扣下一段",
+            "账号跨档位滚动窗口连续；未来段不发容量、到期不结转、Pass用尽不自动扣Free",
+            "取消/到期/退款/迟到成果的唯一结算和下次可用时刻在真实并发数据库验证"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "integrationInputKeys": [
+            "U1",
+            "Q3",
+            "Q4"
+          ],
+          "blockedByNumbers": [],
+          "lane": 1,
+          "laneOrder": 7,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "D1",
+          "parent": 228,
+          "parentTaskId": "VPJ-36",
+          "stage": "S5",
+          "title": "[VPJ-36 切片 D1] Trip删除请求、执行与原生回执",
+          "result": "用户重新验证身份后删除一个无关联聊天的Trip，在原生看到queued到completed并回网清理对应缓存。",
+          "acceptance": [
+            "复用PR #496持久队列/写围栏/tombstone；真实JWT→HTTP→worker→DB→读取，非仅SQL claims",
+            "同key异scope、过期身份、other、并发确认/链接与删除验证；202不显示已删除",
+            "缓存回网/租约清理实测；allUserDataCompleted仍false，账户删除不能误用此单Trip执行器"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            4
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 2,
+          "status": "planned",
+          "mode": "接续开发",
+          "reuse": "main已有真实隔离SQL删除证据；native UI、export、linked-chat及全数据未完成。",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "D2",
+          "parent": 228,
+          "parentTaskId": "VPJ-36",
+          "stage": "S5",
+          "title": "[VPJ-36 切片 D2] 身份复核后的首批核心导出",
+          "result": "用户异步导出自己的核心Trip及已接入资料，得到受保护下载和按模块列明的回执。",
+          "acceptance": [
+            "复用既有privacy请求边界；仅intent的旧请求不能伪标completed",
+            "owner隔离、链接期限、重试和内容完整性可测；缺模块显式partial/unrun",
+            "最少财务留存、provider无法导出/删除、已下载不可远程撤回如实说明"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            3,
+            4
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 3,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "D3",
+          "parent": 228,
+          "parentTaskId": "VPJ-36",
+          "stage": "S5",
+          "title": "[VPJ-36 切片 D3] 关联聊天与Trip的协同删除",
+          "result": "用户删除有聊天/Turn关联的Trip时，看到可执行的协同清理范围及同一最终回执。",
+          "acceptance": [
+            "解决现有TRIP_HAS_CHAT_REFERENCES边界；选定范围外其他Trip/聊天保持不变",
+            "关联创建、worker生成与删除并发受围栏保护；重试/崩溃不留下可读残片",
+            "真实身份与持久存储验证删除后重连/旧请求不可复活；不把此回执标成全账户删除"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2
+          ],
+          "integrationInputKeys": [
+            "D1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 9,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "W1",
+          "parent": 229,
+          "parentTaskId": "VPJ-37",
+          "stage": "S5",
+          "title": "[VPJ-37 切片 W1] 真实Ops账本观察与未知成本对账",
+          "result": "授权运营在质量/成本视图分辨answered、partial、失败、未观测及待核费用。",
+          "acceptance": [
+            "复用PR #501现存聚合视图，真实授权读和无权限拒绝，金额保持精度",
+            "task/attempt/provider/tool作用域相互可对账；未观测不能显示0",
+            "人工分钟、延迟、错误与费用缺口可定位，日志不含原聊天/材料/秘密"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 6,
+          "laneOrder": 1,
+          "status": "planned",
+          "mode": "运行验收",
+          "reuse": "PR #501已合入main，复用聚合视图及受保护读接口；真实授权部署读取与实际成本验收仍未完成。",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "W2",
+          "parent": 229,
+          "parentTaskId": "VPJ-37",
+          "stage": "S5",
+          "title": "[VPJ-37 切片 W2] 能力/供应商/城市停用与安全恢复",
+          "result": "运营停用一个明确能力，用户即时得到已验证替代；恢复后可正常使用且已有Trip不丢。",
+          "acceptance": [
+            "真实请求入口和worker派发均消费控制；在途处理/取消边界明确",
+            "能力、供应商、城市作用域与预算熔断分别验，未授权运营拒绝",
+            "Staging演练关闭/恢复和故障回滚，保留删除/撤权，#268复用同版本证据"
+          ],
+          "parentAcceptanceRefs": [
+            3
+          ],
+          "integrationInputKeys": [
+            "W1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 6,
+          "laneOrder": 8,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "K1",
+          "parent": 230,
+          "parentTaskId": "VPJ-38",
+          "stage": "S5",
+          "title": "[VPJ-38 切片 K1] 隔离备份恢复后再提供读取",
+          "result": "在隔离目标恢复数据库和必要对象，重放删除/撤权后才允许测试用户读取。",
+          "acceptance": [
+            "按数据类backup/no-backup TTL、对象文件和元数据、RLS/grants/functions/queue分别验",
+            "独立保存tombstone来源，恢复入口先拒读，已删资料不得先暴露再补删",
+            "测实际RPO/RTO、一致性及未验项；不动Production或共用数据库"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "integrationInputKeys": [
+            "D1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 12,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "K2",
+          "parent": 230,
+          "parentTaskId": "VPJ-38",
+          "stage": "S5",
+          "title": "[VPJ-38 切片 K2] 恢复中断与迟到对象不会复活",
+          "result": "恢复中断再继续、对象迟到或队列重放时，用户仍只能读取当前允许的数据。",
+          "acceptance": [
+            "删除、权益退款/撤销和许可撤回在恢复后持续生效",
+            "缺失/损坏对象、重复worker与恢复期间新tombstone可恢复对账",
+            "实际时间及不可恢复范围写回演练记录，阈值事先固定"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            4
+          ],
+          "integrationInputKeys": [
+            "K1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 13,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "J1",
+          "parent": 235,
+          "parentTaskId": "VPJ-48",
+          "stage": "S5",
+          "title": "[VPJ-48 切片 J1] 注册用户投稿到内部异人审阅",
+          "result": "用户提交旅行体验或求助，看到pending及审核结果，能撤回；运营异人审阅。",
+          "acceptance": [
+            "接续PR #502内部API/SQL，补真实身份及原生/Ops消费者；内部approved不等published",
+            "作者/审者不同、员工身份/利益披露可见，重放不能恢复撤回正文",
+            "地点关联及Save/拟加入Trip有明确界限；不自动晋升Fact、不建私信/关注"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 5,
+          "laneOrder": 6,
+          "status": "planned",
+          "mode": "接续开发",
+          "reuse": "PR #502已合入main，仅内部受控审核实现，公开读关闭；用户界面和完整GoTrue链仍缺。",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "J2",
+          "parent": 238,
+          "parentTaskId": "VPJ-64",
+          "stage": "S5",
+          "title": "[VPJ-64 切片 J2] 举报、屏蔽与申诉的内部安全闭环",
+          "result": "在受控测试内容上完成举报→运营处置→回执，屏蔽或申诉有可追状态。",
+          "acceptance": [
+            "普通用户不可读他人举报敏感详情，利益/来源/著作权字段明确",
+            "申诉异步状态真实；作者撤回/删除、下架后缓存/引用不可见",
+            "举报和屏蔽数据handler同步交付；先闭环保护，再允许公开UGC"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3
+          ],
+          "integrationInputKeys": [
+            "J1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 5,
+          "laneOrder": 7,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "J3",
+          "parent": 235,
+          "parentTaskId": "VPJ-48",
+          "stage": "S5",
+          "title": "[VPJ-48 切片 J3] 通过安全门后发布可撤回UGC",
+          "result": "受控环境中已审核内容成为可读Explore体验，用户能Save或经确认加入Trip。",
+          "acceptance": [
+            "仅published且未撤回/未屏蔽/未下架可读，J2保护必须可用",
+            "experience不变Fact，官方/员工披露和资产来源完整",
+            "公开端点开启前核权限/handler/报告；本计划不授权真实对外发布，审批针对已验证具体配置"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3
+          ],
+          "integrationInputKeys": [
+            "J1",
+            "J2"
+          ],
+          "blockedByNumbers": [],
+          "lane": 5,
+          "laneOrder": 8,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "J4",
+          "parent": 238,
+          "parentTaskId": "VPJ-64",
+          "stage": "S5",
+          "title": "[VPJ-64 切片 J4] 已发布内容删除的跨缓存传播",
+          "result": "作者撤回、运营下架或隐私删除后，Explore、搜索、旧引用与缓存正确失效。",
+          "acceptance": [
+            "并发读/发布/撤回和旧URL回放不能复活；用户自有Trip如何显示失效引用有合同",
+            "举报/申诉审计仅保留必要字段，导出与删除范围准确",
+            "无私信/关注扩展；真实存储/缓存证据交#239复用"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3
+          ],
+          "integrationInputKeys": [
+            "J3"
+          ],
+          "blockedByNumbers": [],
+          "lane": 5,
+          "laneOrder": 9,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "X1",
+          "parent": 237,
+          "parentTaskId": "VPJ-56",
+          "stage": "S5",
+          "title": "[VPJ-56 切片 X1] 复用现有CI形成可签名Archive",
+          "result": "同一commit在实际可用工具链构建，获得可审查Archive及版本/签名准备结果。",
+          "acceptance": [
+            "#237已勾CI项保留，复用main现有Xcode允许清单，不重建CI",
+            "核main缺少的签名手册与#421来源再移入；证书轮换/失败/撤回路径准确",
+            "实际Apple上传要求在执行时查官方资料；无凭据时明确UNRUN签名，不索取聊天秘密"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            3
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 6,
+          "laneOrder": 2,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "X2",
+          "parent": 237,
+          "parentTaskId": "VPJ-56",
+          "stage": "S5",
+          "title": "[VPJ-56 切片 X2] 首个TestFlight安装与版本证明",
+          "result": "使用已授权Apple账号完成签名、上传并从TestFlight在真机安装指定build。",
+          "acceptance": [
+            "记录bundle/version/build/commit/后端环境对应及安装证据",
+            "真实账号/BundleID/签名/上传有当前授权才执行，上传等待不阻塞其他开发",
+            "撤回构建/证书失效/安装失败路径记录；只证明分发，不宣称完整Beta"
+          ],
+          "parentAcceptanceRefs": [
+            2,
+            3
+          ],
+          "integrationInputKeys": [
+            "X1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 6,
+          "laneOrder": 3,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "NET1",
+          "parent": 232,
+          "parentTaskId": "VPJ-39",
+          "stage": "S5",
+          "title": "[VPJ-39 切片 NET1] 境内外媒体与导入弱网路径",
+          "result": "在真实境内外WiFi/漫游/弱网下使用图片/PDF/语音，断网能恢复或保留可读资料。",
+          "acceptance": [
+            "复用#231真实探针，分DNS/API/DB/model/map/media链记录p50/p95/失败与样本数",
+            "功能逐项可用即开测；M/V/F对应未就绪行标UNRUN，不等待全票启动",
+            "超时/恢复/离线目标预冻结；本机或VPN不能冒充真实用户网络，替代部署只提案"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 6,
+          "laneOrder": 6,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "NET2",
+          "parent": 232,
+          "parentTaskId": "VPJ-39",
+          "stage": "S5",
+          "title": "[VPJ-39 切片 NET2] 酒店、IAP、通知及回跳的网络验收",
+          "result": "同一候选build在境内外完成官方酒店出口、测试购买恢复、通知接收和系统分享回跳。",
+          "acceptance": [
+            "消费H1/Q2/Q3/N2/F2实际链，按已可用功能滚动验收",
+            "逐字段核OTA落地，StoreKit/APNs/文件分别记成功失败，模型探针不替代",
+            "绑定地点/网络/时刻/build/config；拓扑变化重验受影响路径，缺设备/网络仅阻相关行"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            3,
+            4
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 6,
+          "laneOrder": 7,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "UX1",
+          "parent": 233,
+          "parentTaskId": "VPJ-40",
+          "stage": "S5",
+          "title": "[VPJ-40 切片 UX1] 原生核心计划链的真机可访问性",
+          "result": "同一Trip的选区Ask、diff、确认、重载和返回锚点在小屏/大字/VoiceOver可用。",
+          "acceptance": [
+            "复用#478在途修复及#198真实消费者；基础壳证据不能替代已登录链",
+            "Cream/Ink/Plum/Gold、品牌资产与状态一致；卡片原子出现，保存动效须等回执",
+            "Reduce Motion/Transparency、键盘/来电/低电量/弱网按实际设备录证，性能用profile测"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 6,
+          "laneOrder": 5,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "UX2",
+          "parent": 233,
+          "parentTaskId": "VPJ-40",
+          "stage": "S5",
+          "title": "[VPJ-40 切片 UX2] 完整在途、设置和数据退出体验",
+          "result": "已可用S4功能及权益/社区/隐私/归档在原生整链保持导航、选区和状态一致。",
+          "acceptance": [
+            "按功能逐行接入审验，最终复验Today/地图/日程同版本及失效状态",
+            "图片/地图失败不挡文字成果，动效可中断、不抢滚动位置",
+            "保留五Tab/Today在Trip内，小屏/大屏/中英/无障碍有实际证据；未就绪行UNRUN"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            5
+          ],
+          "integrationInputKeys": [
+            "UX1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 6,
+          "laneOrder": 10,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "WEB1",
+          "parent": 234,
+          "parentTaskId": "VPJ-41",
+          "stage": "S5",
+          "title": "[VPJ-41 切片 WEB1] 轻量Web与原生同Trip连续性",
+          "result": "Web完成基本编辑、Ask、diff确认并同步原生；材料状态和权益可读。",
+          "acceptance": [
+            "复用#192/#198已交合同；权益等缺接口项可后接，不重做完整现场App",
+            "正文不能改变按钮权限/确认目标；拒绝/旧版本/跨端重载真实可验",
+            "当前结果、限定和下一步中英一致，现场工具明确引导iOS"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            4
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 6,
+          "laneOrder": 4,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "WEB2",
+          "parent": 234,
+          "parentTaskId": "VPJ-41",
+          "stage": "S5",
+          "title": "[VPJ-41 切片 WEB2] 公开页面与双视口最终核验",
+          "result": "用户在Landing/Explore准确理解现有覆盖与第三方预订，邮箱同意可撤。",
+          "acceptance": [
+            "桌面及390×844、中英键盘可访问、资产来源和claim scan通过",
+            "仅引用已证实功能，不把规划/库存/真人SLA写成可用承诺",
+            "使用#202/#241已有入口和分享能力，不修改受保护Issue定义或复制新产品"
+          ],
+          "parentAcceptanceRefs": [
+            2,
+            3,
+            4
+          ],
+          "integrationInputKeys": [
+            "WEB1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 6,
+          "laneOrder": 9,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "ALL1",
+          "parent": 239,
+          "parentTaskId": "VPJ-58",
+          "stage": "S5",
+          "title": "[VPJ-58 切片 ALL1] 全数据模块逐一导出与删除验收",
+          "result": "一个测试账号对当前实际已存在模块完成导出删除，回执列清所有已完成/缺失模块。",
+          "acceptance": [
+            "Trip/材料/记忆/Brief/Case/UGC/举报/通知/权益/订单/AppGroup/Guide/归档/离线全部列名",
+            "随着模块合入滚动验证handler注册；只验已存在模块但不能删掉未就绪分母",
+            "继承#228框架，不重复实现隐私系统；最少财务字段及外部已导出副本边界准确"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            3,
+            4
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 14,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "ALL2",
+          "parent": 239,
+          "parentTaskId": "VPJ-58",
+          "stage": "S5",
+          "title": "[VPJ-58 切片 ALL2] 删除竞态、恢复与旧设备最终隔离",
+          "result": "选定版本的全模块存在后，删除中的新任务/通知/发布及旧设备回网均不能复活资料。",
+          "acceptance": [
+            "执行真实并发生成/发布/通知与删除、账号切换、离线租约到期",
+            "恢复后tombstone/权限重验连同AppGroup、分享临时副本、Guide缓存检查",
+            "任一必需runtime未验即阻Beta对应验收；后续数据模块变化只重跑受影响集合"
+          ],
+          "parentAcceptanceRefs": [
+            2,
+            3,
+            4
+          ],
+          "integrationInputKeys": [
+            "ALL1",
+            "K2"
+          ],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 15,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "EVAL1",
+          "parent": 267,
+          "parentTaskId": "VPJ-70",
+          "stage": "S5",
+          "title": "[VPJ-70 切片 EVAL1] 冻结配对计划并完成真实人工校准",
+          "result": "在候选运行前固定语料/阈值/预算与grader，通过真实人工正反例校准盲评。",
+          "acceptance": [
+            "接续PR #495 freeze/report和#287盲评，不重建工具；真实人反馈不能用合成标签冒充",
+            "开发/holdout暴露记录、A/B交换/平局/都失败/分歧均留存",
+            "任务完成、事实、偏好、下一步、密度、英文语气分项；退化候选必须被拒"
+          ],
+          "parentAcceptanceRefs": [
+            2,
+            3,
+            5,
+            6,
+            7,
+            8
+          ],
+          "integrationInputKeys": [],
+          "blockedByNumbers": [],
+          "lane": 5,
+          "laneOrder": 10,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "PR #495已合入main，freeze/report及合成负控已有；真实人工校准和provider配对仍未完成。",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "EVAL2",
+          "parent": 267,
+          "parentTaskId": "VPJ-70",
+          "stage": "S5",
+          "title": "[VPJ-70 切片 EVAL2] 同一只读链真实配对并给出结论",
+          "result": "基线与一个明确候选在#264实际可用只读链比较，输出采纳/拒绝/证据不足。",
+          "acceptance": [
+            "每适用场景每配置至少3次，固定输入/时钟/证据/权限/预算与版本",
+            "中英/风险/正常可答分层，失败/NOT_RUN/unknown成本不漏；硬失败不能均分抵消",
+            "事前收益与延迟/成本上限固定，JSON/Markdown同源，不自动切生产路由"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ],
+          "integrationInputKeys": [
+            "EVAL1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 5,
+          "laneOrder": 11,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "GATE1",
+          "parent": 268,
+          "parentTaskId": "VPJ-71",
+          "stage": "S5",
+          "title": "[VPJ-71 切片 GATE1] 两条真实任务和12场景发布判定",
+          "result": "对同一选定commit/config运行全部required-mode场景，明确是否允许该能力进入Beta。",
+          "acceptance": [
+            "保留原生硬依赖#266/#267，#265/#266真实Trip/故障证据缺失不伪造；报告准备可先做",
+            "12场景无FAIL/NOT_RUN，中英/风险/正常可答分别达标；故意缺证据应拒绝",
+            "ServiceTask澄清、偏好、确认、步行量、回执/成本真实可串联；不用录制回放替代required mode"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            6,
+            7,
+            8,
+            9
+          ],
+          "integrationInputKeys": [
+            "EVAL2"
+          ],
+          "blockedByNumbers": [],
+          "lane": 6,
+          "laneOrder": 11,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "GATE2",
+          "parent": 268,
+          "parentTaskId": "VPJ-71",
+          "stage": "S5",
+          "title": "[VPJ-71 切片 GATE2] 同版本Staging停用、恢复与回退",
+          "result": "选定能力故障时运营关闭并恢复，用户保留Trip及可用替代，报告反映真实结果。",
+          "acceptance": [
+            "同版本或已证明等价的#231/#232网络证据，不拼接不同配置通过报告",
+            "部署回退保留追加迁移、删除/撤权与已确认Trip，失败应阻判定",
+            "拒绝候选可保留合格基线；仍需完整回归，本门不自动批准Production或替代设备/IAP/隐私验收"
+          ],
+          "parentAcceptanceRefs": [
+            4,
+            5,
+            6,
+            7,
+            9
+          ],
+          "integrationInputKeys": [
+            "GATE1",
+            "W2"
+          ],
+          "blockedByNumbers": [],
+          "lane": 6,
+          "laneOrder": 12,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "BETA1",
+          "parent": 242,
+          "parentTaskId": "VPJ-42",
+          "stage": "S5",
+          "title": "[VPJ-42 切片 BETA1] TestFlight同一旅程的Plan与Ready",
+          "result": "受控测试用户在指定build完成真实Trip规划、选区Ask、明确确认、材料/订单回流与准备。",
+          "acceptance": [
+            "原生/Web重载与拒绝路径绑定真实账号/版本/环境；不拼接不同Trip假装全程",
+            "网络/provider/RLS/数据/UX证据可定位；sandbox交易不计收入",
+            "逐项准备与验收可滚动进行，尚未交付功能记录缺陷/UNRUN，不由fixture填补"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            5
+          ],
+          "integrationInputKeys": [
+            "X2"
+          ],
+          "blockedByNumbers": [],
+          "lane": 6,
+          "laneOrder": 13,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "BETA2",
+          "parent": 242,
+          "parentTaskId": "VPJ-42",
+          "stage": "S5",
+          "title": "[VPJ-42 切片 BETA2] Travel异常、数据退出与Beta关账",
+          "result": "同一候选build贯通离线、现场工具、局部恢复、真人结果、归档与数据退出，给出Beta验收结论。",
+          "acceptance": [
+            "父票全部验收依赖逐项查证，包括O2/G2/R2/S2/U3/W2/K2/J4/F2/A2；未就绪就保留未验",
+            "真实设备经历断网/恢复/拒绝/取消/授权撤回，结果与成本回执一致",
+            "未到旅行机会窗口不伪造成功/失败，经营留存和真实付款留#247；无Production/AppStore发布动作"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "integrationInputKeys": [
+            "BETA1",
+            "ALL2",
+            "GATE2",
+            "UX2",
+            "WEB2",
+            "NET1",
+            "NET2"
+          ],
+          "blockedByNumbers": [],
+          "lane": 6,
+          "laneOrder": 14,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "D4",
+          "parent": 228,
+          "parentTaskId": "VPJ-36",
+          "stage": "S5",
+          "title": "[VPJ-36 切片 D4] 材料与记忆的核心导出删除执行器",
+          "result": "用户导出或删除核心材料、记忆时，得到原文/派生引用及可控缓存范围一致的回执。",
+          "acceptance": [
+            "针对当前已存在的材料和记忆生产者接入handler，缺模块保持显式未完成",
+            "新解析/记忆写入与删除竞态、临时对象TTL、旧设备回网按范围清理",
+            "provider留存未知及已下载副本不可召回如实披露；最少必要审计不保存已删正文"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "integrationInputKeys": [
+            "D1",
+            "D2"
+          ],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 10,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "D5",
+          "parent": 228,
+          "parentTaskId": "VPJ-36",
+          "stage": "S5",
+          "title": "[VPJ-36 切片 D5] Brief与权益引用接入核心隐私请求",
+          "result": "核心导出删除任务覆盖已存在Brief和权益引用，保留必要财务字段并准确解释。",
+          "acceptance": [
+            "消费B2授权投影和Q2可用交易引用，不删除或伪造交易财务账",
+            "全核心Trip/chat/material/memory/Brief/权益引用逐项核handler与实际回执",
+            "尚无生产者的模块不能报完成；全部S4/S5模块最终集合仍交#239，非本票重新实现"
+          ],
+          "parentAcceptanceRefs": [
+            1,
+            2,
+            3
+          ],
+          "integrationInputKeys": [
+            "D2",
+            "B2"
+          ],
+          "blockedByNumbers": [],
+          "lane": 2,
+          "laneOrder": 11,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        },
+        {
+          "key": "U4",
+          "parent": 227,
+          "parentTaskId": "VPJ-35",
+          "stage": "S5",
+          "title": "[VPJ-35 切片 U4] 媒体与工具的完整任务成本上限",
+          "result": "一次含媒体/工具的任务把全部尝试费用归到同一目标，达到预算时停止且保留已得成果。",
+          "acceptance": [
+            "秒/字符/图片/文件及地图/模型所有attempt独立对账，遵守catalog媒体上限",
+            "超时/取消/迟到usage标待核，unknown不算0；必要修复沿累计预算，不能新建task续烧",
+            "复用真实媒体与工具证据核成本，不用文本token推算全部；经济性未验不作正式容量承诺"
+          ],
+          "parentAcceptanceRefs": [
+            2,
+            3,
+            4,
+            5
+          ],
+          "integrationInputKeys": [
+            "U1"
+          ],
+          "blockedByNumbers": [],
+          "lane": 1,
+          "laneOrder": 8,
+          "status": "planned",
+          "mode": "开发",
+          "reuse": "",
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+        }
+      ],
+      "dependencyReconciliation": {
+        "issue": 366,
+        "upstream": 364,
+        "from": "native blocked_by",
+        "to": "acceptanceDependencyNumbers",
+        "reason": "Existing Issue body already records #364 as acceptance input; independent foreground-refresh preparation is possible. Live route integration still requires the real #364 consumer."
+      }
     }
   }
 }
