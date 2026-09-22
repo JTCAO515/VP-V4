@@ -25,6 +25,7 @@ export type StagingTextJobDependencies = Readonly<{
   workerCredential: HttpTransportDependencies["credential"];
   providerCredential: HttpTransportDependencies["credential"];
   recordDestination: HttpTransportDependencies["recordDestination"];
+  qwenEndpoint?: HttpTransportDependencies["qwenEndpoint"];
   recordUsage?: RecordValidatedUsage;
   recordKnowledgeValidation?: RecordKnowledgeValidation;
   /** Test-only closed destination mapper; CLI uses real fetch without an override. */
@@ -61,6 +62,7 @@ export function createStagingTextJob(raw: unknown, dependencies: StagingTextJobD
   const price = createTextJobPrice(config.pricing);
   const transport = createProviderHttpTransport(config.provider, {
     credential: dependencies.providerCredential, recordDestination: dependencies.recordDestination,
+    qwenEndpoint: dependencies.qwenEndpoint,
     ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
   });
   return createScopedTextWorker({ environment: "staging", databaseUrl: "https://dzqdzetcctkhbrhlxxgn.supabase.co",

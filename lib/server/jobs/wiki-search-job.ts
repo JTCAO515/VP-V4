@@ -48,6 +48,7 @@ export type WikiSearchJobOutcome =
 export type WikiSearchJobDependencies = Readonly<{
   credential: HttpTransportDependencies["credential"];
   recordDestination: HttpTransportDependencies["recordDestination"];
+  qwenEndpoint?: HttpTransportDependencies["qwenEndpoint"];
   fetch?: typeof globalThis.fetch;
 }>;
 
@@ -83,6 +84,7 @@ export async function runWikiSearchJob(
 
   const transport = createProviderHttpTransport(input.provider, {
     credential: dependencies.credential, recordDestination: dependencies.recordDestination,
+    qwenEndpoint: dependencies.qwenEndpoint,
     ...(dependencies.fetch ? { fetch: dependencies.fetch } : {}),
   });
 
