@@ -79,6 +79,8 @@ printed, copied into this branch or passed to a browser. The old integration rem
 - Returned link includes supplier `utm_source`; its value is omitted from durable evidence.
   Presence is not proof of VisePanda commission/attribution. No new affiliate value was invented.
 
+Visual landing evidence: [desktop screenshot](rollinggo-desktop-landing.png).
+
 Bounded, secret-free report: [RollingGo availability](rollinggo-availability-20260922.json).
 Verdict: **usable read-only provider candidate with successful desktop handoff**. It is not yet
 wired to this branch's native screen or deployed server; existing ordinary official links remain

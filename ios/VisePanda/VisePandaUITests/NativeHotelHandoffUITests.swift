@@ -5,10 +5,12 @@ nonisolated final class NativeHotelHandoffUITests: XCTestCase {
     @MainActor func testChineseReviewAndCancel() throws { try review(locale: "zh-Hans") }
 
     @MainActor private func review(locale: String) throws {
+        continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["-VisePandaLocale", locale]
         app.launch()
-        app.tabBars.buttons[locale == "en" ? "Tools" : "工具"].tap()
+        let tools = app.tabBars.buttons[locale == "en" ? "Tools" : "工具"]
+        XCTAssertTrue(tools.waitForExistence(timeout: 10)); tools.tap()
         let entry = app.buttons["tools.hotels"]
         XCTAssertTrue(entry.waitForExistence(timeout: 10)); entry.tap()
         let query = app.textFields["hotel.query"]
@@ -37,9 +39,14 @@ nonisolated final class NativeHotelHandoffUITests: XCTestCase {
         guard ProcessInfo.processInfo.environment["VP_HOTEL_REAL_EXIT"] == "1" else {
             throw XCTSkip("UNRUN: opt in to opening official sites with synthetic Shanghai query")
         }
+        continueAfterFailure = false
         let app = XCUIApplication()
         app.launchArguments = ["-VisePandaLocale", "en"]
-        app.launch(); app.tabBars.buttons["Tools"].tap(); app.buttons["tools.hotels"].tap()
+        app.launch()
+        let tools = app.tabBars.buttons["Tools"]
+        XCTAssertTrue(tools.waitForExistence(timeout: 10)); tools.tap()
+        let entry = app.buttons["tools.hotels"]
+        XCTAssertTrue(entry.waitForExistence(timeout: 10)); entry.tap()
         let query = app.textFields["hotel.query"]; query.tap(); query.typeText("Shanghai")
         let prepare = app.buttons["hotel.prepare.booking"]; reveal(prepare, app); prepare.tap()
         let open = app.buttons["hotel.open"]; reveal(open, app); open.tap()

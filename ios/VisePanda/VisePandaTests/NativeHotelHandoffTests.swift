@@ -2,7 +2,7 @@ import XCTest
 @testable import VisePanda
 
 nonisolated final class NativeHotelHandoffTests: XCTestCase {
-    private let now = Date(timeIntervalSince1970: 1_789_977_600) // 2026-09-22 UTC
+    private let now = Date(timeIntervalSince1970: 1_790_035_200) // 2026-09-22 UTC
     private var calendar: Calendar { var c = Calendar(identifier: .gregorian); c.timeZone = TimeZone(secondsFromGMT: 0)!; return c }
     private var search: NativeHotelSearch { .init(hotelOrCity: "上海 & aid=evil#fragment", checkIn: "2026-10-20", checkOut: "2026-10-22", adults: 2, rooms: 1, includesChildren: false) }
 
