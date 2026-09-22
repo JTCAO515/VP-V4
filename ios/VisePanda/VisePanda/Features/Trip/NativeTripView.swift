@@ -78,6 +78,8 @@ struct NativeTripView: View {
                     }
                     if let detail = store.detail {
                         confirmed(detail)
+                        NativeTravelRemindersView(detail: detail, session: session, chinese: chinese)
+                            .id("reminders-\(detail.trip.id)-\(session.dataScope?.subject ?? "")")
                         if initialPlanningRequest == nil && store.canEdit && store.draft == nil && store.pending == nil { outlineComposer }
                         if let pending = store.pending { proposal(pending) }
                         if let draft = store.draft {

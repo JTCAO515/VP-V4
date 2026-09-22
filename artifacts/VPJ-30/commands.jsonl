@@ -1,0 +1,8 @@
+{"command":"node --experimental-strip-types --test tests/unit/notifications/reminders.test.mjs","result":"PASS","cases":18}
+{"command":"VP_REMINDER_DB_TEST=1 node --test tests/integration/notifications/storage.test.mjs","result":"PASS","scope":"isolated PostgreSQL with synthetic Auth/Trip rows"}
+{"command":"pnpm lint","result":"PASS"}
+{"command":"pnpm typecheck","result":"PASS"}
+{"command":"pnpm build","result":"PASS"}
+{"command":"pnpm docs:check","result":"PASS"}
+{"command":"DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/vpj30-derived-sim CODE_SIGNING_ALLOWED=NO","result":"PASS","toolchain":"Xcode 26.6 17F113"}
+{"command":"DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS' -derivedDataPath /tmp/vpj30-derived CODE_SIGNING_ALLOWED=NO","result":"FAIL","reason":"Missing ignored AMap device SDK resources in clean checkout"}
