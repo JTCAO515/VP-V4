@@ -8,9 +8,9 @@
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：从一个已确认Trip执行用户主动归档，保留未完服务与可读成果，再验证下一Trip不继承旧时效约束。
-- 本票责任/非目标：负责旅程结束/再次开始；不是删除账户或取消外部服务，偏好保存归11、私密分享49正在独立开发。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：A1：用户主动结束Trip，选择保留哪些明确偏好或跳过，归档后仍可读成果与未完服务。 main仅已有显式归档首片；偏好选择、3草稿/1Active与完整真实验收仍缺。
+- 本票责任/非目标：负责旅程结束/再次开始；不是删除账户或取消外部服务，偏好保存归11、私密分享49正在独立开发。 2026-09-22已确认的实施顺序：A1 → A2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口

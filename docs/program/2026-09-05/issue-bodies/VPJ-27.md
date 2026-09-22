@@ -8,9 +8,9 @@
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：用一段许可内短音频完成按需录音→ASR→翻译→字幕/TTS，并验证停止或来电中断。
-- 本票责任/非目标：负责原生音频链与取消/TTL；60提供适配资格，26提供文字语义，28消费讲解播放，不重复造录音器。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：V1：用户按住录音，松开后得到字幕/译文并可主动播放、随时停止。
+- 本票责任/非目标：负责原生音频链与取消/TTL；60提供适配资格，26提供文字语义，28消费讲解播放，不重复造录音器。 2026-09-22已确认的实施顺序：V1 → V2；交接输入不新增原生blocked，完整父票验收保留。
+- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口

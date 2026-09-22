@@ -1,0 +1,3 @@
+{"command":"node --experimental-strip-types --test --test-concurrency=1 tests/contract/readiness/readiness.test.ts","exitCode":0,"startedAt":"2026-09-22T02:43:34.539Z","finishedAt":"2026-09-22T02:43:39.523Z","env":"local"}
+{"command":"node scripts/docs-check.mjs","exitCode":0,"startedAt":"2026-09-22T02:43:40.243Z","finishedAt":"2026-09-22T02:43:43.365Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-09-22T02:43:43.832Z","finishedAt":"2026-09-22T02:43:43.980Z","env":"local"}
