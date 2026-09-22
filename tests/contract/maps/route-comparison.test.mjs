@@ -15,7 +15,7 @@ function fixture(overrides = {}) {
     const transit = url.pathname.includes('transit');
     return Response.json({ status: '1', infocode: '10000', route: {
       origin: '121.4,31.2', destination: '121.5,31.3',
-      [transit ? 'transits' : 'paths']: [{ distance: '1000', cost: { duration: '600', tolls: '5', transit_fee: '3' }, steps: [{ instruction: '沿路前行' }], segments: [{ walking: { distance: '100', steps: [{ instruction: '步行到站' }] }, bus: { buslines: [{ name: '2号线' }] } }] }], ...overrides.route,
+      [transit ? 'transits' : 'paths']: [{ distance: '1000', cost: { duration: '600', tolls: '5' }, steps: [{ instruction: '沿路前行' }], segments: [{ cost: { transit_fee: '3' }, walking: { distance: '100', steps: [{ instruction: '步行到站' }] }, bus: { buslines: [{ name: '2号线', departure_stop: { name: '测试上车站' }, arrival_stop: { name: '测试下车站' } }] } }] }], ...overrides.route,
     } });
   } };
 }
@@ -24,7 +24,7 @@ test('three whole AMap options retain endpoints, timing, estimates and safe hand
   assert.equal(result.status, 200); assert.equal(f.calls.length, 5);
   const body = result.body;
   assert.deepEqual(body.options.map(o => o.status), ['observed', 'observed', 'observed']);
-  assert.equal(body.options[1].walkingMeters, 100); assert.equal(body.options[1].transfers, 0);
+  assert.equal(body.options[1].estimateCny, 3); assert.equal(body.options[1].walkingMeters, 100); assert.equal(body.options[1].transfers, 0);
   assert.equal(body.options[2].estimateKind, 'tolls_only');
   assert.equal(Date.parse(body.expiresAt) - Date.parse(body.observedAt), 300000);
   for (const o of body.options) {
@@ -59,4 +59,27 @@ test('missing city disables only transit; unsupported rail is not dropped', asyn
   assert.equal(r.body.options[1].status, 'city_unknown'); assert.equal(f.calls.length, 4);
   const g = fixture({ route: { transits: [{ distance: '100', cost: { duration: '10' }, segments: [{ railway: { name: 'train' } }] }] } });
   assert.equal((await compareRoutes(parameters(), { env, fetcher: g.fetcher })).body.options[1].status, 'unsupported_segment');
+});
+
+test('transit requires complete stops and never substitutes a path-level fare', async () => {
+  for (const [segment, expected] of [
+    [{ walking: { distance: '0' }, bus: { buslines: [{ name: 'line' }] }, cost: { transit_fee: '2' } }, 'invalid_response'],
+    [{ walking: { distance: '0' }, bus: { buslines: [{ name: 'line', departure_stop: { name: 'A' }, arrival_stop: { name: 'B' } }] } }, 'observed'],
+  ]) {
+    const f = fixture({ route: { transits: [{ distance: '100', cost: { duration: '10', transit_fee: '999' }, segments: [segment] }] } });
+    const result = await compareRoutes(parameters(), { env, fetcher: f.fetcher });
+    assert.equal(result.body.options[1].status, expected);
+    if (expected === 'observed') assert.equal(result.body.options[1].estimateCny, null);
+  }
+});
+
+test('transit alternatives are not double charged and multi-segment totals remain unknown', async () => {
+  const line = { name: 'line', departure_stop: { name: 'A' }, arrival_stop: { name: 'B' } };
+  const segment = { walking: { distance: '0' }, bus: { buslines: [line, { ...line, name: 'alternative' }] }, cost: { transit_fee: '3' } };
+  for (const [segments, expected] of [[[segment], 3], [[segment, { ...segment, cost: { transit_fee: '5' } }], null], [[segment, { ...segment, cost: {} }], null]]) {
+    const f = fixture({ route: { transits: [{ distance: '100', cost: { duration: '10' }, segments }] } });
+    const option = (await compareRoutes(parameters(), { env, fetcher: f.fetcher })).body.options[1];
+    assert.equal(option.status, 'observed'); assert.equal(option.estimateCny, expected);
+    assert.equal(option.transfers, segments.length - 1);
+  }
 });

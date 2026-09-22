@@ -349,7 +349,9 @@ private struct NativeRouteComparison: View {
             if option.status != "observed" { Text(statusText(option.status)) }
             else {
                 Text("\(Int(ceil((option.durationSeconds ?? 0) / 60))) min · \(Int(option.distanceMeters ?? 0)) m")
-                Text(text("Walking / transfers: ", "步行距离 / 换乘：") + (option.walkingMeters.map { "\(Int($0)) m" } ?? "—") + " / " + (option.transfers.map(String.init) ?? "—"))
+                let walking: String = option.walkingMeters.map { "\(Int($0)) m" } ?? "—"
+                let transfers: String = option.transfers.map { String($0) } ?? "—"
+                Text(text("Walking / transfers: ", "步行距离 / 换乘：") + walking + " / " + transfers)
                 Text(text(option.estimateKind == "tolls_only" ? "Estimated tolls only: " : "Estimated fare: ", option.estimateKind == "tolls_only" ? "仅过路费估算：" : "票价估算：") + (option.estimateCny.map { "¥\($0)" } ?? text("Unknown", "未知")))
                 Text(text("Estimated departure / arrival: ", "估算出发 / 到达：") + (option.departureAt ?? "—") + " / " + (option.arrivalAt ?? "—")).font(.caption)
                 ForEach(Array((option.steps ?? []).enumerated()), id: \.offset) { _, step in Text(step) }

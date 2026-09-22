@@ -37,9 +37,10 @@ async function route(mode: RouteMode, origin: PlaceDetail, destination: PlaceDet
     const path = object(alternatives[0]), cost = object(path.cost);
     const durationSeconds = number(cost.duration), distanceMeters = number(path.distance);
     if (durationSeconds === null || durationSeconds > 604800 || distanceMeters === null || distanceMeters > 100_000_000) return { mode, status: "invalid_response" };
+    let transitFare: number | null = null;
     let steps: string[] = [], walkingMeters: number | null = mode === "walking" ? distanceMeters : null, transfers: number | null = null;
     if (mode === "transit") {
-      const segments = list(path.segments); let rides = 0, walk = 0, knownWalk = true;
+      const segments = list(path.segments); let rides = 0, walk = 0, knownWalk = true, fare = 0, knownFare = true;
       if (!segments.length || segments.length > 100) return { mode, status: "invalid_response" };
       for (const item of segments) {
         const segment = object(item), walking = object(segment.walking), bus = object(segment.bus);
@@ -55,14 +56,21 @@ async function route(mode: RouteMode, origin: PlaceDetail, destination: PlaceDet
           const names = lines.map(line => {
             const value = object(line), name = label(value.name);
             const from = label(object(value.departure_stop).name), to = label(object(value.arrival_stop).name);
-            return name ? `${name} (${from ?? "?"} → ${to ?? "?"})` : null;
-          }).filter((s): s is string => !!s);
-          if (!names.length) return { mode, status: "invalid_response" };
+            return name && from && to ? `${name} (${from} → ${to})` : null;
+          });
+          if (!names.length || names.some(name => !name)) return { mode, status: "invalid_response" };
+          const segmentFare = number(object(segment.cost).transit_fee);
+          if (segmentFare === null) knownFare = false; else fare += segmentFare;
           steps.push(names.join(" / ")); rides++;
         }
         // Do not silently drop rail/taxi portions from a supposedly complete transit plan.
         if (Object.keys(object(segment.railway)).length || Object.keys(object(segment.taxi)).length) return { mode, status: "unsupported_segment" };
       }
+      // The v5 docs locate transit_fee under segments but call it a plan total.
+      // Without live evidence that multi-segment amounts are additive, do not sum
+      // them into a purported total. One transit segment has no such ambiguity;
+      // busline alternatives within that segment are never charged repeatedly.
+      transitFare = rides === 1 && knownFare ? fare : null;
       walkingMeters = knownWalk && walk <= 100_000_000 ? walk : null; transfers = Math.max(0, rides - 1);
     } else {
       const instructions = list(path.steps).map(step => label(object(step).instruction));
@@ -70,7 +78,7 @@ async function route(mode: RouteMode, origin: PlaceDetail, destination: PlaceDet
       steps = instructions.filter((s): s is string => !!s);
     }
     if (!steps.length || steps.length > 300) return { mode, status: "invalid_response" };
-    return { mode, status: "observed", durationSeconds, distanceMeters, walkingMeters, transfers, estimateCny: mode === "driving" ? number(cost.tolls) : mode === "transit" ? number(cost.transit_fee) : null, estimateKind: mode === "driving" ? "tolls_only" : "transit_fare", steps, departureAt: observedAt, arrivalAt: new Date(Date.parse(observedAt) + durationSeconds * 1000).toISOString(), webUrl: webUrl(origin, destination, mode) };
+    return { mode, status: "observed", durationSeconds, distanceMeters, walkingMeters, transfers, estimateCny: mode === "driving" ? number(cost.tolls) : mode === "transit" ? transitFare : null, estimateKind: mode === "driving" ? "tolls_only" : "transit_fare", steps, departureAt: observedAt, arrivalAt: new Date(Date.parse(observedAt) + durationSeconds * 1000).toISOString(), webUrl: webUrl(origin, destination, mode) };
   } catch (error) { return { mode, status: (error as Error)?.name === "TimeoutError" ? "timeout" : "unavailable" }; }
 }
 

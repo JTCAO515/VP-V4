@@ -18,7 +18,10 @@ Responses include the resolved endpoints, provider, observation time, five-minut
 per-mode outcome, duration, distance, walking distance, transfer count, steps and estimated
 current departure/arrival. The five-minute cutoff is a client requery policy, not a supplier
 freshness guarantee. Missing fields remain unknown. Driving costs are **tolls only**; all costs
-are estimates, not quotes. Transit is not real-time arrival data, driving is not a ride booking,
+are estimates, not quotes. Transit reads the documented segment-level `cost.transit_fee`
+only for a single transit segment; busline alternatives are not summed. Multi-segment totals
+remain unknown because the v5 documentation describes this segment field as a plan total
+without enough evidence that separate values are additive. Missing segment fees remain unknown. Transit is not real-time arrival data, driving is not a ride booking,
 and missing entrance/accessibility facts never imply a verified accessible entrance.
 
 Future departure returns `422 FUTURE_DEPARTURE_UNAVAILABLE` before provider dispatch.

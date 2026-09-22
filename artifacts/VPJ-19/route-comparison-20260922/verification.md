@@ -47,3 +47,25 @@ confirmation. No complete Issue or user acceptance claim; #364/#209 remain open.
   and POI/GCJ02 app-URL encoding. Execution remains pending the native CI/window.
 - Preview deployment succeeded for 0a7d985a but browser request returned HTTP 403; no access
   controls bypassed, so remote visual verification remains UNRUN.
+
+## Failures retained and repairs
+
+At ac59e0bf, Quality run 35675163995 failed both new viewport cases waiting for the exact
+Departure label (11 other browser cases passed); the select now has an explicit localized
+accessible name and the original exact-label assertion is retained.
+Native run 35675164037 failed ExploreView.swift:352 because Swift could not type-check the
+optional map/String.init/concatenation expression in reasonable time. Typed local strings
+replace that expression; this was a code defect, not dismissed as host load.
+
+Overall-authorized read-only independent review found two P2 issues: transit fee was read
+at the wrong response level and missing stop names were accepted. The adapter now requires
+boarding/alighting names, reads the documented segment-level fee, counts alternatives once,
+and leaves multi-segment totals unknown pending evidence of additive semantics. Protocol
+fixtures cover multiple segments, alternatives and missing fares/stops. No unresolved P1
+was reported by that review. Review fixes and CI repair need final-head CI.
+
+Real supplier plan (UNRUN): two public, already identified AMap POIs, resolved by ID (2 calls),
+then walking/transit/driving (3 calls), no retries, no real user location, no database writes.
+Use only the existing ignored secure environment. Actual quota/charging is not established
+by possession of credentials; do not dispatch until Overall verifies the existing authorized
+budget/scope. Record timestamp, five statuses and sanitized output, never key-bearing URLs.
