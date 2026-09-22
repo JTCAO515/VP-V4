@@ -7080,7 +7080,10 @@
           "status": "planned",
           "mode": "运行验收",
           "reuse": "PR #472/#474 已合并原生审阅/Proposal；不重写解析UI，不重新研究已否决Docling。",
-          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md",
+          "number": 507,
+          "databaseId": 5534618685,
+          "url": "https://github.com/JTCAO515/VP-V4/issues/507"
         },
         {
           "key": "I2",
@@ -7276,7 +7279,10 @@
           "status": "planned",
           "mode": "开发",
           "reuse": "",
-          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md",
+          "number": 505,
+          "databaseId": 5534617260,
+          "url": "https://github.com/JTCAO515/VP-V4/issues/505"
         },
         {
           "key": "H4",
@@ -7444,7 +7450,10 @@
           "status": "planned",
           "mode": "开发",
           "reuse": "main已有Today证据函数，不等于原生Today或离线包已验收。",
-          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md",
+          "number": 506,
+          "databaseId": 5534618118,
+          "url": "https://github.com/JTCAO515/VP-V4/issues/506"
         },
         {
           "key": "T2",
@@ -8078,7 +8087,10 @@
           "status": "planned",
           "mode": "开发",
           "reuse": "",
-          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md",
+          "number": 503,
+          "databaseId": 5534615797,
+          "url": "https://github.com/JTCAO515/VP-V4/issues/503"
         },
         {
           "key": "Q3",
@@ -8250,7 +8262,10 @@
           "status": "planned",
           "mode": "接续开发",
           "reuse": "main已有真实隔离SQL删除证据；native UI、export、linked-chat及全数据未完成。",
-          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md",
+          "number": 504,
+          "databaseId": 5534616455,
+          "url": "https://github.com/JTCAO515/VP-V4/issues/504"
         },
         {
           "key": "D2",
@@ -8547,7 +8562,10 @@
           "status": "planned",
           "mode": "开发",
           "reuse": "",
-          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md"
+          "executionGuide": "docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md",
+          "number": 508,
+          "databaseId": 5534619276,
+          "url": "https://github.com/JTCAO515/VP-V4/issues/508"
         },
         {
           "key": "X2",
