@@ -2,10 +2,35 @@ import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import test from "node:test";
 
+// This suite asserts the compiled Next.js output, so it only runs after a build.
+// `pnpm check` and the CI gates run `pnpm build` first; a bare `pnpm test` does not.
+// Without this guard a missing build directory surfaces as a bare fs ENOENT stack
+// with no indication of what the runner should do next.
+const BUILD_OUTPUT_HINT =
+  "run `pnpm build` first (`pnpm check` and the CI quality gates already do)";
+
+const readBuildOutput = (relativePath) => {
+  try {
+    return readFileSync(relativePath, "utf8");
+  } catch (error) {
+    if (error?.code !== "ENOENT") throw error;
+    throw new Error(`missing build output ${relativePath} — ${BUILD_OUTPUT_HINT}`, { cause: error });
+  }
+};
+
+const readBuildOutputDir = (relativePath) => {
+  try {
+    return readdirSync(relativePath);
+  } catch (error) {
+    if (error?.code !== "ENOENT") throw error;
+    throw new Error(`missing build output ${relativePath}/ — ${BUILD_OUTPUT_HINT}`, { cause: error });
+  }
+};
+
 const htmlPath = ".next/server/app/index.html";
-const html = readFileSync(htmlPath, "utf8");
-const relocatedHomepageHtml = readFileSync(".next/server/app/homepage.html", "utf8");
-const appPaths = JSON.parse(readFileSync(".next/server/app-paths-manifest.json", "utf8"));
+const html = readBuildOutput(htmlPath);
+const relocatedHomepageHtml = readBuildOutput(".next/server/app/homepage.html");
+const appPaths = JSON.parse(readBuildOutput(".next/server/app-paths-manifest.json"));
 const homepageSource = readFileSync("components/homepage/Homepage.tsx", "utf8");
 const homepageCss = readFileSync("components/homepage/Homepage.module.css", "utf8");
 const localeSource = readFileSync("lib/i18n.ts", "utf8");
@@ -24,9 +49,9 @@ const documentation = [
   "docs/adr/0001-nextjs-typescript-tailwind-migration.md",
   "docs/adr/0002-visepanda-brand-localization-assets.md",
 ].map((file) => readFileSync(file, "utf8")).join("\n");
-const cssName = readdirSync(".next/static/css").find((file) => file.endsWith(".css"));
-assert.ok(cssName, "compiled CSS must exist");
-const css = readFileSync(`.next/static/css/${cssName}`, "utf8");
+const cssName = readBuildOutputDir(".next/static/css").find((file) => file.endsWith(".css"));
+assert.ok(cssName, `compiled CSS must exist — ${BUILD_OUTPUT_HINT}`);
+const css = readBuildOutput(`.next/static/css/${cssName}`);
 
 test("renders Journey at the root while preserving the relocated preview", () => {
   assert.match(html, /<html lang="zh-CN"/);
