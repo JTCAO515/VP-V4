@@ -13,6 +13,8 @@ Related to #187, #206 and #269. Explicit operator request: review all work from 
 - PASS: source policy lint; Swift syntax parse; docs check; diff whitespace check.
 - PASS: actual `aiAssistData` source extracted and compiled with Swift 6 on macOS; before-deadline success, expired no-dispatch, and cancellation/late-data rejection all pass. This is a Foundation-only probe, not an iOS app build.
 - PASS: direct import verifies the corrected English claim label; all preserved JSON artifact files parse, and compressed patch checksum is recorded.
+- Initial saved-answer contract attempt failed before execution because this clean worktree had no TypeScript dependency. `pnpm install --frozen-lockfile` completed using the pinned lockfile; the follow-up rendered saved-answer contract passed 1/1 (bilingual gaps, supported content and sources).
+- Independent Spec review found the actor-resumption deadline boundary; checks were added both after the await and immediately before successful state publication. The follow-up review marked it resolved.
 - Added three XCTest cases for the same behavioral boundaries. Complete application build/test and required remote checks remain pending on this PR head; the existing serialized Native CI queue is authoritative.
 - UNRUN: real model/provider search, Staging or production changes, physical VoiceOver, full parent-Issue acceptance. No new provider spend or database migration execution.
 
