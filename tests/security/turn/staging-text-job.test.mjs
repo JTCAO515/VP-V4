@@ -99,3 +99,16 @@ test('job/3 CLI journals explicit generation limits with unchanged task prompt',
  assert.equal(rows.length,2);
  for(const row of rows){assert.equal(row.schemaVersion,'vpj07-worker-run/3');assert.deepEqual(row.prompt,TEXT_TASK_PROMPT_REF);assert.deepEqual(row.generation,{mode:'qwen-bounded-thinking-v1',maxCompletionTokens:512,thinkingBudgetTokens:256});}
 });
+
+test('workspace worker binding is independent of job JSON and preserves explicit rollback',()=>{
+ const endpoint='https://llm-fixture.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions';
+ let touched=0;
+ const deps={qwenEndpoint:endpoint,workerCredential:()=>{touched++;return 'key';},providerCredential:()=>{touched++;return 'key';},recordDestination:async()=>{},fetch:async()=>{touched++;throw Error('unexpected');}};
+ const job={...config(),provider:{...config().provider,endpoint,configurationVersion:2}};
+ assert.doesNotThrow(()=>createStagingTextJob(job,deps));
+ assert.throws(()=>createStagingTextJob(config(),deps),/configuration unavailable/);
+ assert.throws(()=>createStagingTextJob(job,{...deps,qwenEndpoint:undefined}),/configuration unavailable/);
+ assert.throws(()=>createStagingTextJob({...job,provider:{...job.provider,endpoint:endpoint.replace('llm-fixture','llm-foreign')}},deps),/configuration unavailable/);
+ assert.doesNotThrow(()=>createStagingTextJob(config(),{...deps,qwenEndpoint:config().provider.endpoint}));
+ assert.equal(touched,0);
+});

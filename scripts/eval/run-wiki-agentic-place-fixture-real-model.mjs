@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { readQwenEndpoint } from "../../lib/server/model-gateway/adapters/provider-endpoints.ts";
 // VPJ-76 (#360) round 24 follow-up on the slice-11 real-model pass
 // (artifacts/VPJ-76/wiki-frozen-eval-real-model-20260916/verification.md).
 // That earlier real-GLM run flagged an unresolved "category 4" gap: 4/6
@@ -85,7 +86,7 @@ function loadEnvKey(name) {
 const apiKey = loadEnvKey("QWEN_API_KEY");
 if (!apiKey) { console.error("QWEN_API_KEY not set in lib/server/jobs/.local/.env -- nothing to run"); process.exit(1); }
 
-const provider = Object.freeze({ provider: "qwen", endpoint: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", configurationId: "55555555-5555-4555-8555-555555555555", configurationVersion: 1, timeoutMs: 30000 });
+const provider = Object.freeze({ provider: "qwen", endpoint: readQwenEndpoint(process.env), configurationId: "55555555-5555-4555-8555-555555555555", configurationVersion: 2, timeoutMs: 30000 });
 
 function sceneFor(questionId) {
   if (questionId === "rail_boarding_documents") return "rail";
@@ -136,7 +137,7 @@ async function main() {
       try { rawResponseText = await response.clone().text(); } catch { rawResponseText = null; }
       return response;
     };
-    const deps = { credential: () => apiKey, recordDestination: async () => {}, fetch: capturingFetch };
+    const deps = { qwenEndpoint: readQwenEndpoint(process.env), credential: () => apiKey, recordDestination: async () => {}, fetch: capturingFetch };
     const input = { intent: intentFor(scenario), question: scenario.question, city: scenario.city, locale: scenario.locale, maxRounds: 2, maxOutputTokens: 2000, timeoutMs: 25000, provider };
     const started = performance.now();
     let outcome;
@@ -184,7 +185,8 @@ async function main() {
   const report = {
     schemaVersion: 1, versions, commit, mode: "real_model", provider: "qwen", model: "qwen3.7-plus-2026-05-26",
     skippedKinds: [...SKIP_KINDS], skippedCount: scenarios.length - runSet.length,
-    note: "Real HTTP calls to Qwen (dashscope.aliyuncs.com); the knowledge_read_v1 RPC side stays fixture (the same synthetic, already-reviewed statements the fixture pass uses). elapsedMs and usageTotalTokens are real. This is a real bill against the operator-provided key. Every row carries rawResponseStatus/rawResponseText (the actual HTTP response this run received), addressing artifacts/VPJ-76/unrun.md item (c) at this script's own layer -- provider-protocol.ts itself is unchanged.",
+    destination: { endpoint: provider.endpoint, configurationId: provider.configurationId, configurationVersion: provider.configurationVersion },
+    note: "Real HTTP calls to Qwen at the recorded destination; the knowledge_read_v1 RPC side stays fixture (the same synthetic, already-reviewed statements the fixture pass uses). elapsedMs and usageTotalTokens are real. This is a real bill against the operator-provided key. Every row carries rawResponseStatus/rawResponseText (the actual HTTP response this run received), addressing artifacts/VPJ-76/unrun.md item (c) at this script's own layer -- provider-protocol.ts itself is unchanged.",
     placeQuestionFocus: { total: placeRows.length, matched: placeMatched, comparedTo: "artifacts/VPJ-76/wiki-frozen-eval-real-model-20260916/verification.md's category 4 (real GLM run, 2026-09-16): 2/6 place scenarios matched ground truth there (4 were retrieval_miss against a full_coverage expectation). This run uses cases.ts v2's named-attraction fixture text and a different provider (Qwen, not GLM), so it is a fixture-realism + provider re-test, not a controlled single-variable comparison." },
     counts: { total: rows.length, matchedExpected: matched, mismatched: rows.length - matched, answered, unavailable: rows.filter((r) => r.outcomeKind === "unavailable").length },
     metrics: { accuracyPercent: Math.round((matched / rows.length) * 1000) / 10, coverageRatePercent: Math.round((answered / rows.length) * 1000) / 10, p50ElapsedMs: percentile(50), p95ElapsedMs: percentile(95), totalTokens },

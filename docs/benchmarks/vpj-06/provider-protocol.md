@@ -90,8 +90,12 @@ The factory is a trusted low-level dependency, not a new public invocation API.
 The reviewed technical allowlist currently includes Qwen's DashScope Chat URL, GLM's ordinary
 Chat URL, and DeepSeek's explicitly selected root or `/v1` Chat URL. These match the official
 candidate endpoints in [the qualification matrix](../../policy/vpj-03-provider-qualification.md).
-An allowlist entry establishes no account/SKU, region or recipient qualification. Other workspace,
-regional, Coding or compatible endpoints need separately reviewed additions, not URL rewriting.
+Qwen additionally accepts one exact Beijing workspace Chat endpoint selected by the trusted
+server/CLI environment (`VISEPANDA_QWEN_ENDPOINT`) and passed as `qwenEndpoint` independently
+of the job input. Selecting that destination disables shared-host dispatch for that instance.
+Unset configuration preserves the legacy rollout path; an invalid explicit value fails closed.
+An allowlist entry establishes no account/SKU, region or recipient qualification. Other regions,
+Coding or compatible endpoints need separate review. See the [migration runbook](../../runbooks/qwen-workspace-endpoint.md).
 No URL query, userinfo, fragment, alternate host/port or normalization is accepted. C2 passes its
 exact durable policy endpoint to the transport; a different bound endpoint fails before fetching
 credentials or sending HTTP. The C0 compatibility entry retains its existing policy behavior.

@@ -1,11 +1,10 @@
+import { groundedAiAssistProviderConfig } from "./ai-assist-provider-config.ts";
 import type { NextRequest } from "next/server";
 import { nativeRequestScope } from "../identity/native-request.ts";
 import { verifyNativeCredentials } from "../identity/native-credentials.ts";
 import { isUuid } from "../identity/request-guards.ts";
 import { getNativeTextConfig } from "./native-http.ts";
 import { runGroundedAiAssistJob } from "../knowledge/wiki/grounded-ai-assist-job.ts";
-import type { HttpProviderConfiguration } from "../model-gateway/adapters/http-transport.ts";
-import type { ProtocolProvider } from "../model-gateway/adapters/provider-protocol.ts";
 
 /**
  * VPJ-76 (#360) slice 9: the iOS counterpart of the Web trigger/poll route
@@ -17,21 +16,6 @@ import type { ProtocolProvider } from "../model-gateway/adapters/provider-protoc
  * iOS client polls this the same way SavedAnswers.tsx polls the Web route.
  */
 
-const ENDPOINTS: Readonly<Record<ProtocolProvider, string>> = Object.freeze({
-  qwen: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
-  glm: "https://open.bigmodel.cn/api/paas/v4/chat/completions",
-  deepseek: "https://api.deepseek.com/chat/completions",
-});
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-function providerConfig(): HttpProviderConfiguration | null {
-  const provider = process.env.VISEPANDA_GROUNDED_AI_ASSIST_PROVIDER;
-  const configurationId = process.env.VISEPANDA_GROUNDED_AI_ASSIST_CONFIG_ID;
-  if (provider !== "qwen" && provider !== "glm" && provider !== "deepseek") return null;
-  if (!configurationId || !UUID.test(configurationId)) return null;
-  return { provider, endpoint: ENDPOINTS[provider], configurationId, configurationVersion: 1, timeoutMs: 15000 };
-}
-
 const failure = (code: string, status: number) => Response.json({ error: { code } }, { status, headers: { "Cache-Control": "private, no-store" } });
 
 export async function nativeGroundedAiAssist(request: NextRequest, turnId: string) {
@@ -39,7 +23,7 @@ export async function nativeGroundedAiAssist(request: NextRequest, turnId: strin
   if (!config) return failure("PROVIDER_UNAVAILABLE", 503);
   if (!isUuid(turnId) || request.headers.has("cookie") || request.headers.has("origin") || [...request.nextUrl.searchParams].length) return failure("INVALID_INPUT", 400);
   if (process.env.VISEPANDA_GROUNDED_AI_ASSIST !== "true") return failure("PROVIDER_UNAVAILABLE", 503);
-  const provider = providerConfig();
+  const provider = groundedAiAssistProviderConfig(process.env);
   const apiKey = process.env.VISEPANDA_GROUNDED_AI_ASSIST_API_KEY;
   if (!provider || !apiKey) return failure("PROVIDER_UNAVAILABLE", 503);
 
@@ -63,6 +47,7 @@ export async function nativeGroundedAiAssist(request: NextRequest, turnId: strin
         rpc: (name, params) => rpc(name, params),
         contextRpc: (name, params) => rpc(name, params),
         credential: () => apiKey,
+        qwenEndpoint: provider.provider === "qwen" ? provider.endpoint : undefined,
         recordDestination: async () => {},
         fetch: scope.fetch,
       },

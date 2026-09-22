@@ -2,12 +2,12 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { runWikiGenerationJob, computeWikiInputDigest } from "../../../lib/server/jobs/wiki-generation-job.ts";
 
-const provider = Object.freeze({ provider: "qwen", endpoint: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", configurationId: "11111111-1111-1111-1111-111111111111", configurationVersion: 1, timeoutMs: 5000 });
+const provider = Object.freeze({ provider: "qwen", endpoint: "https://llm-fixture.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions", configurationId: "11111111-1111-1111-1111-111111111111", configurationVersion: 1, timeoutMs: 5000 });
 const baseInput = Object.freeze({
   pageType: "source_summary", pageKey: "source_summary:test", sourceText: "The museum opens at 9am and closes at 5pm daily.",
   promptVersion: "vp-wiki-generation-v1", configDigest: "a".repeat(64), maxOutputTokens: 300, timeoutMs: 5000, provider,
 });
-const deps = Object.freeze({ credential: () => "secret-key", recordDestination: async () => {} });
+const deps = Object.freeze({ qwenEndpoint: provider.endpoint, credential: () => "secret-key", recordDestination: async () => {} });
 
 function chatResponse(content) {
   return Response.json({
