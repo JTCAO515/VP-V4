@@ -92,6 +92,65 @@ nonisolated final class NativeTripStateTests: XCTestCase {
     }
 
     @MainActor
+    func testOutlineRejectsAmbiguousAndUnsupportedWholeDurations() throws {
+        for request in [
+            "Shanghai for 4 or 7 days, food",
+            "Shanghai for 4 days or 7 days, food",
+            "Shanghai for four or seven days, food",
+            "Shanghai for 4–7 days, food",
+            "上海四天或七天，美食",
+            "上海十四天，喜欢美食",
+            "上海二十四天，喜欢美食",
+            "Shanghai 14 days, food",
+            "Shanghai fourteen days, food",
+            "Shanghai twenty-four days, food",
+            "Shanghai 4 days or 14 days, food",
+            "Shanghai 2.5 days, food",
+            "Shanghai -4 days, food"
+        ] {
+            XCTAssertNil(NativeRelativeOutline.make(from: request, chinese: false), request)
+        }
+        for request in ["上海四天，美食", "上海4天，美食", "Shanghai 4 days, food", "Shanghai four days, food"] {
+            XCTAssertEqual(try XCTUnwrap(NativeRelativeOutline.make(from: request, chinese: false)).count, 4, request)
+        }
+    }
+
+    @MainActor
+    func testOutlineRespectsExplicitNegationWithoutGuessingItsScope() throws {
+        for request in [
+            "Shanghai four days, food but no walks",
+            "Shanghai four days, food without walking",
+            "Shanghai four days, food; I don't want walks",
+            "上海四天，只想美食，不要散步"
+        ] {
+            let outline = try XCTUnwrap(NativeRelativeOutline.make(from: request, chinese: false), request)
+            XCTAssertTrue(outline.includesFood, request)
+            XCTAssertFalse(outline.includesWalking, request)
+            XCTAssertFalse(outline.hasAlternatives, request)
+            XCTAssertEqual(outline.initialTitles, outline.foodFirst, request)
+        }
+        let walking = try XCTUnwrap(NativeRelativeOutline.make(from: "Shanghai four days, no food, only walks", chinese: false))
+        XCTAssertFalse(walking.includesFood)
+        XCTAssertTrue(walking.includesWalking)
+        XCTAssertEqual(walking.initialTitles, walking.walkFirst)
+        for request in [
+            "Shanghai four days, food but not no walks",
+            "Shanghai four days, food but not without walks",
+            "Shanghai four days, food but no long walks",
+            "Shanghai four days, food but not only walks",
+            "Shanghai four days, food and walks but no walks",
+            "Shanghai four days, no food or walks",
+            "Shanghai four days, no food and no walks",
+            "上海四天，美食但不是不散步",
+            "Shanghai four days, sidewalk",
+            "Shanghai four days, walkman",
+            "Shanghai four days, seafood"
+        ] {
+            XCTAssertNil(NativeRelativeOutline.make(from: request, chinese: false), request)
+        }
+    }
+
+    @MainActor
     func testOutlineBindsOnlyAfterValidNonoverlappingDateAndPreservesTrip() throws {
         let existing = NativeTripDay(id: "existing", date: "2026-10-01", timeZone: "Asia/Shanghai", items: [
             .init(id: "dinner", dayId: "existing", title: "Confirmed dinner")

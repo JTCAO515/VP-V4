@@ -202,15 +202,10 @@ struct NativeRelativeOutline: Equatable {
         let cities = [("上海", "Shanghai"), ("北京", "Beijing"), ("广州", "Guangzhou"), ("重庆", "Chongqing")]
         let matches = cities.filter { request.contains($0.0) || request.localizedCaseInsensitiveContains($0.1) }
         guard matches.count == 1, let city = matches.first else { return nil }
-        let foodInterest = ["吃", "美食"].contains(where: request.contains) || request.localizedCaseInsensitiveContains("food")
-        let walkInterest = ["散步", "步行"].contains(where: request.contains) || request.localizedCaseInsensitiveContains("walk")
-        guard foodInterest || walkInterest else { return nil }
-        let numerals = ["二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7]
-        let chineseCount = numerals.first { request.contains("\($0.key)天") }?.value
-        let words = ["two", "three", "four", "five", "six", "seven"]
-        let wordCount = words.firstIndex { request.range(of: "\\b\($0)\\s+days?\\b", options: [.regularExpression, .caseInsensitive]) != nil }.map { $0 + 2 }
-        let englishCount = (2...7).first { request.range(of: "\\b\($0)\\s*(?:days?|天)\\b", options: [.regularExpression, .caseInsensitive]) != nil }
-        guard let count = chineseCount ?? wordCount ?? englishCount else { return nil }
+        guard let interests = explicitInterests(in: request), interests.food || interests.walking,
+              let count = explicitDayCount(in: request) else { return nil }
+        let foodInterest = interests.food
+        let walkInterest = interests.walking
         let name = chinese ? city.0 : city.1
         let food = chinese ? "选择一个美食片区，地点与营业时间待核" : "Choose one food area; venues and hours to verify"
         let walk = chinese ? "选择一条街区散步路线，距离与开放条件待核" : "Choose a neighborhood walk; route and access to verify"
@@ -220,6 +215,62 @@ struct NativeRelativeOutline: Equatable {
                      foodFirst: (0..<count).map { $0 == 0 && count > 2 ? arrival : ($0 == count - 1 ? departure : food) },
                      walkFirst: (0..<count).map { $0 == 0 && count > 2 ? arrival : ($0 == count - 1 ? departure : walk) },
                      includesFood: foodInterest, includesWalking: walkInterest)
+    }
+
+    /// Read complete quantity spans. Never choose one side of a range or an
+    /// alternative, nor recover a supported suffix from an unsupported number.
+    private static func explicitDayCount(in request: String) -> Int? {
+        let word = #"\b(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred)\b"#
+        let quantity = #"(?:[+-]?[0-9]+(?:\.[0-9]+)?|[零〇一二两三四五六七八九十百千万]+|"# + word + #"(?:[\s-]+"# + word + #")*)"#
+        let unit = #"(?:days?\b|天)"#
+        let alternatives = quantity + #"\s*(?:days?\b|天)?\s*(?:or\b|and\b|to\b|[-–—~/]|或者|或|到|至)\s*"# + quantity + #"\s*"# + unit
+        guard regexMatches(alternatives, in: request).isEmpty else { return nil }
+        let mentions = regexMatches("(" + quantity + #")\s*"# + unit, in: request)
+        guard !mentions.isEmpty else { return nil }
+        let supported = ["2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7,
+                         "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7,
+                         "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7]
+        let source = request as NSString
+        var counts = Set<Int>()
+        for mention in mentions {
+            let token = source.substring(with: mention.range(at: 1)).lowercased()
+            guard let count = supported[token] else { return nil }
+            counts.insert(count)
+        }
+        return counts.count == 1 ? counts.first : nil
+    }
+
+    /// A small explicit vocabulary, not general intent classification. Conflicting
+    /// mentions and shared negation need clarification rather than a guessed plan.
+    private static func explicitInterests(in request: String) -> (food: Bool, walking: Bool)? {
+        let food = #"(?:美食|吃|\bfood\b)"#
+        let walking = #"(?:散步|步行|\bwalk(?:s|ing)?\b)"#
+        let negation = #"(?:\b(?:(?:do\s+not|don['’]t)\s+(?:want|like)|not\s+interested\s+in|no|not|without|avoid|skip)(?:\s+any)?\s+|(?:不想要?|不要|不喜欢|不安排|避免|不)\s*)"#
+        let either = "(?:" + food + "|" + walking + ")"
+        let sharedNegation = negation + either + #"\s*(?:and\b|or\b|和|或|、)\s*"# + either
+        let doubleNegation = "(?:" + negation + #"|(?:不是|并非)\s*)"# + negation + either
+        guard regexMatches(sharedNegation, in: request).isEmpty,
+              regexMatches(doubleNegation, in: request).isEmpty else { return nil }
+        let remaining = request.replacingOccurrences(of: negation + either, with: " ", options: [.regularExpression, .caseInsensitive])
+        // Do not turn unhandled qualifiers such as "no long walks" or
+        // "not only walks" into a positive preference.
+        guard regexMatches(negation + #"(?:[a-z]+\s+){0,3}"# + either, in: remaining).isEmpty else { return nil }
+
+        func interest(_ keyword: String) -> Bool? {
+            let mentions = regexMatches(keyword, in: request)
+            let excluded = regexMatches(negation + keyword, in: request)
+            // Each recognized exclusion covers exactly one keyword occurrence.
+            let positiveCount = mentions.count - excluded.count
+            guard excluded.isEmpty || positiveCount == 0 else { return nil }
+            return excluded.isEmpty && positiveCount > 0
+        }
+        guard let includesFood = interest(food), let includesWalking = interest(walking) else { return nil }
+        return (includesFood, includesWalking)
+    }
+
+    private static func regexMatches(_ pattern: String, in request: String) -> [NSTextCheckingResult] {
+        guard let expression = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive) else { return [] }
+        return expression.matches(in: request, range: NSRange(request.startIndex..., in: request))
     }
 }
 
