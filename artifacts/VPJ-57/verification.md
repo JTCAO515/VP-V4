@@ -41,3 +41,9 @@ Permission/migration review by separate agent found and rechecked: anonymous dir
 Global handoff/queue updates and merge sequencing belong to Overall. Client/API rollback and direct RPC revoke procedure are in `docs/contracts/vpj-57.md`.
 
 Final local migration SHA-256: `035fadace0c096b96ba1e18566e51ffd60c704fadb57fa5b958e279d3926efb1`.
+
+## Authorized adjacent Ask title repair
+
+Overall authorized the minimum fix for this PR's observed `AppShellUITests.testAccessibilityAtLargestTextSize` failure at Ask's Chinese title. Latest fetched main `a3a69189` does not contain `VPReadableText.swift`. Reused the renderer byte-for-byte from PR #478 head `353c09b983490e5550badc93eb788cacf5c1088c` (repair lineage `a19102a`), replaced only `Text("ask.title")` and its equivalent typography modifiers, and added unique DesignSystem/Sources references. Renderer dependencies are SwiftUI/UIKit plus its private DynamicTypeSize mapping; default UIColor.label needs no palette changes. No Tools/Trip/palette or audit assertions changed. Existing service registration is preserved.
+
+Lightweight verification: Swift parse, project plutil, docs and diff checks. No local build/simulator started for this increment. Prior local service tests remain valid for unchanged service code; prior head's native CI failure/retry does not validate this new repair. The new head must pass its own unchanged native audit/CI. Service screen interactions and physical VoiceOver remain UNRUN.

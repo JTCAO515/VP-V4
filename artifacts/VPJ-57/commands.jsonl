@@ -11,3 +11,7 @@
 {"command": "DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj", "result": "PASS"}
 {"command": "DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl list devices available", "result": "PASS"}
 {"command": "DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/vpj57-derived CODE_SIGNING_ALLOWED=NO", "result": "PASS"}
+{"phase": "authorized-minimal-ask-title-repair", "command": "DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun swiftc -frontend -parse ios/VisePanda/VisePanda/DesignSystem/VPReadableText.swift ios/VisePanda/VisePanda/Features/Ask/AskView.swift", "result": "PASS"}
+{"phase": "authorized-minimal-ask-title-repair", "command": "plutil -lint ios/VisePanda/VisePanda.xcodeproj/project.pbxproj", "result": "PASS"}
+{"phase": "authorized-minimal-ask-title-repair", "command": "pnpm docs:check", "result": "PASS"}
+{"phase": "authorized-minimal-ask-title-repair", "command": "git diff --check", "result": "PASS"}
