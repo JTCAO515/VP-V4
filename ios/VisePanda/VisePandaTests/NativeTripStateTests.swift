@@ -121,6 +121,9 @@ nonisolated final class NativeTripStateTests: XCTestCase {
             "Shanghai four days, food but no walks",
             "Shanghai four days, food without walking",
             "Shanghai four days, food; I don't want walks",
+            "Shanghai four days, food, don't walk",
+            "Shanghai four days, food, don’t walk",
+            "Shanghai four days, food, do not walk",
             "上海四天，只想美食，不要散步"
         ] {
             let outline = try XCTUnwrap(NativeRelativeOutline.make(from: request, chinese: false), request)
@@ -137,6 +140,9 @@ nonisolated final class NativeTripStateTests: XCTestCase {
             "Shanghai four days, food but not no walks",
             "Shanghai four days, food but not without walks",
             "Shanghai four days, food but no long walks",
+            "Shanghai four days, food, don't include walks",
+            "上海四天，美食，但不要长时间步行",
+            "上海四天，美食，不想剧烈散步",
             "Shanghai four days, food but not only walks",
             "Shanghai four days, food and walks but no walks",
             "Shanghai four days, no food or walks",

@@ -41,3 +41,9 @@ Nil results retain the source request and reuse the current editable-input path.
 Rollback: revert this increment to restore the previous input recognizer. No data,
 schema, provider, account, spending, production or shared-Staging operation occurs.
 No global handoff or issue-plan files are changed; Overall owns those updates.
+
+## Overall daily-review follow-up
+
+Independent review found two exclusion gaps: bare `don't`/`don’t`, and Chinese modifiers between negation and an interest. The explicit vocabulary now covers bare English contractions; unhandled Han qualifiers such as 不要长时间步行 reject the outline instead of adding walks. Existing direct exclusions, duration ambiguity and keyword boundaries remain. Six focused cases were added to the existing XCTest method.
+
+PASS: actual NativeRelativeOutline source extracted into a Swift 6 Foundation probe; 26 cases show 5 failures on `30a40915` and 0 after the correction. The first probe itself failed Swift 6 global actor checking; its helper was correctly annotated MainActor before comparing identical baseline/candidate vectors. This is a probe-input fix, not a product change or an iOS runtime pass. Swift source syntax, docs and diff checks PASS. Full native CI remains required on the updated PR.

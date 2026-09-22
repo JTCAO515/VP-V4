@@ -245,7 +245,7 @@ struct NativeRelativeOutline: Equatable {
     private static func explicitInterests(in request: String) -> (food: Bool, walking: Bool)? {
         let food = #"(?:美食|吃|\bfood\b)"#
         let walking = #"(?:散步|步行|\bwalk(?:s|ing)?\b)"#
-        let negation = #"(?:\b(?:(?:do\s+not|don['’]t)\s+(?:want|like)|not\s+interested\s+in|no|not|without|avoid|skip)(?:\s+any)?\s+|(?:不想要?|不要|不喜欢|不安排|避免|不)\s*)"#
+        let negation = #"(?:\b(?:(?:do\s+not|don['’]t)(?:\s+(?:want|like))?|not\s+interested\s+in|no|not|without|avoid|skip)(?:\s+any)?\s+|(?:不想要?|不要|不喜欢|不安排|避免|不)\s*)"#
         let either = "(?:" + food + "|" + walking + ")"
         let sharedNegation = negation + either + #"\s*(?:and\b|or\b|和|或|、)\s*"# + either
         let doubleNegation = "(?:" + negation + #"|(?:不是|并非)\s*)"# + negation + either
@@ -253,8 +253,8 @@ struct NativeRelativeOutline: Equatable {
               regexMatches(doubleNegation, in: request).isEmpty else { return nil }
         let remaining = request.replacingOccurrences(of: negation + either, with: " ", options: [.regularExpression, .caseInsensitive])
         // Do not turn unhandled qualifiers such as "no long walks" or
-        // "not only walks" into a positive preference.
-        guard regexMatches(negation + #"(?:[a-z]+\s+){0,3}"# + either, in: remaining).isEmpty else { return nil }
+        // "not only walks" or "不要长时间步行" into a positive preference.
+        guard regexMatches(negation + #"(?:(?:[a-z]+\s+){0,3}|[\p{Han}]+\s*)"# + either, in: remaining).isEmpty else { return nil }
 
         func interest(_ keyword: String) -> Bool? {
             let mentions = regexMatches(keyword, in: request)
