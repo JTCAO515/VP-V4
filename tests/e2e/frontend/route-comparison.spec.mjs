@@ -17,6 +17,7 @@ for (const viewport of [{ width: 1280, height: 900 }, { width: 390, height: 844 
         { mode: 'transit', status: 'no_routes' }, { mode: 'driving', status: 'timeout' },
       ] } });
     });
+    await page.clock.install();
     await page.goto('/places');
     await page.getByLabel('Place or address', { exact: true }).fill('测试');
     await page.getByRole('button', { name: 'Search', exact: true }).click();
@@ -35,7 +36,7 @@ for (const viewport of [{ width: 1280, height: 900 }, { width: 390, height: 844 
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await page.getByRole('button', { name: '中文', exact: true }).click();
     await expect(page.getByRole('heading', { name: '比较路线', exact: true })).toBeVisible();
-    await page.clock.install(); await page.clock.fastForward(301000);
+    await page.clock.fastForward(301000);
     await expect(page.getByText('路线观测已过期，请重新查询后导航。')).toBeVisible();
     await expect(page.getByRole('link', { name: '打开高德网页路线' })).toHaveCount(0);
     await page.getByRole('button', { name: '清除路线', exact: true }).click();
