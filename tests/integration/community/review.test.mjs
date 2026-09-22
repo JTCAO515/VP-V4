@@ -35,7 +35,7 @@ run('default closed, explicit reviewer qualification, live registered session an
  await db(`insert into knowledge_review_private.members(actor_id,active) values('${ops.id}',true);`);
  await denied(ops,{action:'queue'},'COMMUNITY_FORBIDDEN');
  await denied(author,{action:'mine'},'UNAUTHENTICATED',{is_anonymous:true});
- await denied(author,{action:'mine'},'UNAUTHENTICATED',{session_id:uuid()});
+ await denied(author,{action:'mine'},'SESSION_REPLACED',{session_id:uuid()});
  assert.deepEqual(await call(author,{action:'mine'}),{submissions:[]});
  for(const role of ['anon','authenticated','service_role']) {
   assert.notEqual((await sql(container,`set role ${role};select * from community_private.submissions;`)).code,0);
@@ -62,7 +62,7 @@ run('author pending → independent internal publication → withdraw; projectio
  assert.equal((await call(a,s)).content,'');assert.equal((await call(r,decision)).content,'');
  assert.equal(await db(`select count(*) from community_private.receipts where submission_id='${s.submissionId}' and input_digest like '%DO-NOT-EXPOSE%';`),'0');
  await db(`update community_private.reviewers set active=false where actor_id='${r.id}';`);await denied(r,decision,'COMMUNITY_FORBIDDEN');
- await db(`delete from auth.sessions where id='${a.session}';`);await denied(a,s,'UNAUTHENTICATED');
+ await db(`delete from auth.sessions where id='${a.session}';`);await denied(a,s,'SESSION_REPLACED');
 });
 run('rejection and pending withdrawal are terminal; forged body fields fail in direct RPC',async()=>{
  const a=await actor(),r=await actor(true);const s=submit();await call(a,s);

@@ -20,3 +20,11 @@ no shared budget/native workflow or global handoff/issue-plan was edited.
 
 Work started 2026-09-22 ~01:30 UTC. Runtime/user acceptance not reached; elapsed
 acceptance time is unmeasured. Rework and external waiting are recorded in the PR.
+
+Initial isolated SQL CI (run 35676940819, repeated in 35677017320) applied
+the migration history and ran 5 scenarios: 3 passed, 2 failed because the test
+expected UNAUTHENTICATED for a missing/deleted session. The unchanged existing
+`guard_mobile_rpc_v2` rejects this earlier with SESSION_REPLACED. Corrected those
+two exact expected errors; the rejection assertion and identity guards are unchanged.
+This is a test expectation defect, not relaxed authorization. GitHub log retrieval
+was delayed by TLS handshake timeouts before the error could be diagnosed.
