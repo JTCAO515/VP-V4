@@ -27,10 +27,7 @@ struct AskView: View {
                         .foregroundStyle(Color.vpBrand)
                         .textCase(.uppercase)
 
-                    Text("ask.title")
-                        .font(.largeTitle.weight(.bold))
-                        .tracking(-0.8)
-                        .fixedSize(horizontal: false, vertical: true)
+                    VPReadableText("ask.title", style: .largeTitle, weight: .bold, tracking: -0.8)
 
                     Text("ask.subtitle")
                         .accessibilityIdentifier("ask-introduction")
@@ -72,6 +69,7 @@ struct AskView: View {
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
                 Button("ask.done") { isComposerFocused = false }
+                    .accessibilityIdentifier("ask-keyboard-done")
             }
         }
         .background(Color.vpBackground)
@@ -94,6 +92,7 @@ struct AskView: View {
         VStack(spacing: 8) {
             HStack(alignment: .bottom, spacing: 10) {
                 TextField("ask.placeholder", text: $draft, axis: .vertical)
+                    .accessibilityIdentifier("ask-composer-input")
                     .lineLimit(1...4)
                     .focused($isComposerFocused)
                     .padding(.horizontal, 14)

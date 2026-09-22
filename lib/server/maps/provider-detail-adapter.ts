@@ -24,6 +24,7 @@ export type PlaceDetail = Readonly<{
   provider: Provider;
   providerPoiId: string;
   rawName: string;
+  cityCode?: string | null;
   /** Chinese address as returned by the provider; null when the provider omits it. */
   address: string | null;
   /** null when the provider response omits a parseable coordinate — never a fabricated 0,0 or building-centroid guess. */
@@ -77,7 +78,7 @@ function parseLocation(provider: Provider, raw: unknown): PlaceDetail["location"
   if (provider === "amap") {
     if (typeof raw !== "string") return null;
     const parts = raw.split(",");
-    if (parts.length !== 2) return null;
+    if (parts.length != 2 || parts.some(part => !part.trim())) return null;
     lng = Number(parts[0]);
     lat = Number(parts[1]);
   } else {
@@ -93,11 +94,12 @@ function parseLocation(provider: Provider, raw: unknown): PlaceDetail["location"
 }
 
 function normalizeDetail(provider: Provider, providerPoiId: string, row: Record<string, unknown>): PlaceDetail | null {
+  if (row.id !== providerPoiId) return null;
   const rawName = typeof (row.name ?? row.title) === "string" ? String(row.name ?? row.title) : null;
   if (!rawName) return null;
   const address = typeof row.address === "string" && row.address.length > 0 ? row.address : null;
   const location = parseLocation(provider, row.location);
-  return Object.freeze({ provider, providerPoiId, rawName, address, location });
+  return Object.freeze({ provider, providerPoiId, rawName, address, location, ...(provider === "amap" ? { cityCode: typeof row.citycode === "string" && /^\d{2,4}$/.test(row.citycode) ? row.citycode : null } : {}) });
 }
 
 export async function getPlaceDetail(input: {
