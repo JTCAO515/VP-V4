@@ -30,7 +30,7 @@ function snapshot(value: unknown, ownerId: string) {
 export function recordedH04(raw: unknown) {
   try {
     const input = record(raw, ["schemaVersion", "mode", "usage", "policyReply", "historyReply", "elapsedMs", "before", "after"]);
-    if (input.schemaVersion !== "vpj67-h04-recording/1" || !["fixture", "recorded-staging"].includes(String(input.mode))
+    if (input.schemaVersion !== "vpj67-h04-recording/1" || (input.mode !== "fixture" && input.mode !== "recorded-staging")
       || typeof input.elapsedMs !== "number") return invalid();
     const usage = recordedUsageTrace(input.usage);
     const history = parseGroundedHistory(usage.binding.ownerId, input.policyReply, input.historyReply, usage.binding.policyId, input.elapsedMs);

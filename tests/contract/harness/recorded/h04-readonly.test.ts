@@ -66,5 +66,6 @@ test("rejects malformed projections, duplicate Trips, unknown envelope fields wi
   const duplicate = sample(); duplicate.before.trips = [{ id: id(8), content: {} }, { id: id(8), content: {} }];
   assert.throws(() => recordedH04(duplicate));
   assert.throws(() => recordedH04({ ...sample(), secret: "PRIVATE_SECRET" }));
+  assert.throws(() => recordedH04({ ...sample(), mode: ["fixture"] }));
   const denied = sample(); denied.policyReply.policy.consentState = "revoked"; assert.throws(() => recordedH04(denied));
 });
