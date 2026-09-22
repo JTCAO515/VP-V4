@@ -11,6 +11,8 @@ struct NativeTripView: View {
     @State private var confirmVisible = false
     @State private var reviewedReference: String?
     @State private var discardVisible = false
+    @State private var archiveVisible = false
+    @State private var archiveReference: String?
     @State private var planningRequest = ""
     @State private var outline: NativeRelativeOutline?
     @State private var outlineTitles: [String] = []
@@ -43,7 +45,7 @@ struct NativeTripView: View {
                         confirmed(detail)
                         NativeTravelRemindersView(detail: detail, session: session, chinese: chinese)
                             .id("reminders-\(detail.trip.id)-\(session.dataScope?.subject ?? "")")
-                        if store.draft == nil && store.pending == nil { outlineComposer }
+                        if store.canEdit && store.draft == nil && store.pending == nil { outlineComposer }
                         if let pending = store.pending { proposal(pending) }
                         if let draft = store.draft {
                             NativeTripDraftEditor(draft: draftBinding(draft), chinese: chinese)
@@ -54,11 +56,11 @@ struct NativeTripView: View {
                             }
                             .buttonStyle(.borderedProminent)
                             .accessibilityIdentifier("trip.draft.propose")
-                            .disabled(store.busy || store.pending != nil || draft.patch.operations.isEmpty || draft.baseVersion != detail.trip.headVersion)
+                            .disabled(store.busy || !store.canEdit || store.pending != nil || draft.patch.operations.isEmpty || draft.baseVersion != detail.trip.headVersion)
                             Button(text("Discard local draft", "放弃本机草稿"), role: .destructive) { discardVisible = true }
                                 .accessibilityIdentifier("trip.draft.discard")
                                 .disabled(store.busy || store.pending != nil || store.hasUncertainProposal)
-                        } else if store.pending == nil {
+                        } else if store.pending == nil && store.canEdit {
                             Button(text("Edit a draft", "编辑草稿")) { store.beginDraft() }
                                 .buttonStyle(.borderedProminent)
                                 .accessibilityIdentifier("trip.draft.begin")
@@ -92,6 +94,7 @@ struct NativeTripView: View {
                 reviewedReference = nil
                 discardVisible = false
                 clearOutline()
+                archiveVisible = false; archiveReference = nil
                 screenshotReviewSource = nil
             }
             if session.dataScope != nil && !session.busy { await store.reload(using: session) }
@@ -103,6 +106,7 @@ struct NativeTripView: View {
                 store.reset(for: retained)
                 newTitle = ""; confirmVisible = false; reviewedReference = nil; discardVisible = false
                 clearOutline()
+                archiveVisible = false; archiveReference = nil
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in
@@ -122,6 +126,14 @@ struct NativeTripView: View {
             Button(text("Keep reviewing", "继续审阅"), role: .cancel) {}
         } message: {
             Text(text("Only this proposal will be applied. External orders are not connected.", "只应用这一提议。外部订单尚未接入。"))
+        }
+        .confirmationDialog(text("Archive this trip?", "归档此行程？"), isPresented: $archiveVisible, titleVisibility: .visible) {
+            Button(text("Archive confirmed trip", "归档已确认行程")) {
+                if let archiveReference { Task { await store.archive(reviewedReference: archiveReference, using: session) } }
+            }
+            Button(text("Keep this trip open", "保持行程开放"), role: .cancel) {}
+        } message: {
+            Text(text("Your saved plan stays readable and shareable. Unfinished services keep their status. No preferences are saved automatically; you can skip preference review and start a fresh trip.", "已保存计划仍可读取和分享，未完服务保留原状态。不自动保存偏好；可以跳过偏好检查，直接开始新行程。"))
         }
         .confirmationDialog(text("Discard this local draft?", "放弃这份本机草稿？"), isPresented: $discardVisible, titleVisibility: .visible) {
             Button(text("Discard draft", "放弃草稿"), role: .destructive) { store.discardDraft() }
@@ -237,6 +249,7 @@ struct NativeTripView: View {
                     .accessibilityIdentifier("trip.create.title")
                 Button(text("Create trip", "创建行程")) {
                     titleFocused = false
+                    clearOutline()
                     Task { await store.create(title: newTitle, using: session) }
                 }
                 .buttonStyle(.bordered)
@@ -259,6 +272,22 @@ struct NativeTripView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Text(snapshotStatus(detail))
                     .font(.headline).accessibilityIdentifier("trip.confirmed.version")
+                if let archive = store.archive {
+                    Text(text("Archived · version \(archive.archivedVersion)", "已归档 · 版本 \(archive.archivedVersion)"))
+                        .accessibilityIdentifier("trip.archive.status")
+                    Text(text("Start your next trip with a new title above. Dates, places and temporary constraints stay with this trip. Manage explicitly saved preferences in Profile.", "在上方填写新名称即可开始下一旅程。日期、地点和临时约束留在此行程中；已明确保存的偏好可在「我的」管理。"))
+                        .font(.footnote)
+                } else if !store.archiveAvailable {
+                    Text(text("Archive status is unavailable. Your saved plan is still readable.", "归档状态暂不可用，已保存计划仍可读取。"))
+                        .font(.footnote)
+                }
+                if store.archiveReference != nil {
+                    Button(text("Archive trip…", "归档行程…")) {
+                        archiveReference = store.archiveReference
+                        archiveVisible = true
+                    }
+                    .accessibilityIdentifier("trip.archive.begin").disabled(store.busy)
+                }
                 Text(detail.trip.title).font(.title2.bold()).accessibilityIdentifier("trip.confirmed.title")
                 Text(detail.trip.id).font(.caption).textSelection(.enabled).accessibilityIdentifier("trip.selected.id")
                 if detail.content.days.isEmpty { Text(text("No days in this saved version.", "此保存版本尚无日期安排。")) }
@@ -293,7 +322,7 @@ struct NativeTripView: View {
                     )
                 }
                 .accessibilityIdentifier("trip.screenshot.review")
-                .disabled(store.busy)
+                .disabled(store.busy || !store.canEdit)
                 Divider()
                 Text(text("User locks are not enabled in this version. External orders are not connected, so this cannot tell you whether an order exists.", "此版本未启用用户硬锁。外部订单尚未接入，不能据此判断是否存在订单。"))
                     .font(.footnote).foregroundStyle(Color.vpSecondaryText)
@@ -325,7 +354,7 @@ struct NativeTripView: View {
                 Button(text("Confirm this proposal", "确认此提议")) { reviewedReference = store.confirmationReference; confirmVisible = true }
                     .buttonStyle(.borderedProminent)
                     .accessibilityIdentifier("trip.proposal.confirm")
-                    .disabled(store.busy || pending.proposal.stale || store.notice == "STALE_TRIP_VERSION" || store.detail?.trip.headVersion != pending.proposal.baseTripVersion)
+                    .disabled(store.busy || !store.canEdit || pending.proposal.stale || store.notice == "STALE_TRIP_VERSION" || store.detail?.trip.headVersion != pending.proposal.baseTripVersion)
                 Button(text("Reject proposal; keep local draft", "拒绝提议并保留本机草稿")) { Task { await store.reject(using: session) } }
                     .accessibilityIdentifier("trip.proposal.reject").disabled(store.busy)
             }
@@ -382,6 +411,7 @@ struct NativeTripView: View {
 
     private func message(_ code: String) -> String {
         switch code {
+        case "archived": text("Trip archived. Saved results and unfinished services are retained.", "行程已归档，已保存成果和未完服务已保留。")
         case "STALE_TRIP_VERSION": text("The saved trip changed. Your local draft is retained. Reload to compare; discard only when you choose to start again from the latest version.", "已保存行程发生变化，本机草稿已保留。请重载比较；只有你选择放弃草稿后，才从最新版本重新开始。")
         case "reviewRequired": text("Review the proposal below. Nothing has been applied yet.", "请审阅下方提议，目前尚未应用。")
         case "confirmed": text("Confirmed and reloaded from storage.", "已确认，并从存储重载。")

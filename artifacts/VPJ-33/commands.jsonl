@@ -2,3 +2,15 @@
 {"command":"pnpm check","result":"PASS","summary":"lint, TypeScript, production build and 22 standard static tests passed"}
 {"command":"pnpm docs:check","result":"PASS","summary":"VPJ plan and documentation baseline passed"}
 {"command":"git diff --check","result":"PASS","summary":"no whitespace errors"}
+{"command":"node lib/server/entitlements/generate-development-config.mjs --check","exitCode":0,"startedAt":"2026-09-21T20:37:40.862Z","finishedAt":"2026-09-21T20:37:41.724Z","env":"local"}
+{"command":"sh tests/contract/entitlements/probe-storekit-config.sh","exitCode":0,"startedAt":"2026-09-21T20:36:22.666Z","finishedAt":"2026-09-21T20:38:30.565Z","env":"local"}
+{"command":"node --test tests/contract/entitlements/journey-pass-catalog.test.mjs","exitCode":0,"observedAt":"2026-09-21T20:38:47.567Z","env":"local","note":"Recorded from completed tool output; not a rerun"}
+{"command":"pnpm lint","exitCode":0,"observedAt":"2026-09-21T20:38:47.576Z","env":"local","note":"Recorded from completed tool output; not a rerun"}
+{"command":"pnpm typecheck","exitCode":0,"observedAt":"2026-09-21T20:38:47.576Z","env":"local","note":"Recorded from completed tool output; not a rerun"}
+{"command":"pnpm docs:check","exitCode":0,"observedAt":"2026-09-21T20:38:47.576Z","env":"local","note":"Recorded from completed tool output; not a rerun"}
+{"command":"git diff --check","exitCode":0,"observedAt":"2026-09-21T20:38:47.577Z","env":"local","note":"Recorded from completed tool output; not a rerun"}
+{"command":"sh tests/contract/entitlements/probe-storekit-config.sh","exitCode":133,"startedAt":"2026-09-21T20:39:57.337Z","finishedAt":"2026-09-21T20:40:05.937Z","env":"local"}
+{"command":"sh tests/contract/entitlements/probe-storekit-config.sh","exitCode":0,"startedAt":"2026-09-21T20:41:01.801Z","finishedAt":"2026-09-21T20:41:19.037Z","env":"local"}
+{"command":"sh tests/contract/entitlements/probe-storekit-config.sh","exitCode":0,"startedAt":"2026-09-21T20:42:14.510Z","finishedAt":"2026-09-21T20:42:36.230Z","env":"local"}
+{"command":"pnpm docs:check","exitCode":0,"startedAt":"2026-09-21T20:44:12.428Z","finishedAt":"2026-09-21T20:44:15.245Z","env":"local"}
+{"command":"git diff --check","exitCode":0,"startedAt":"2026-09-21T20:44:15.428Z","finishedAt":"2026-09-21T20:44:15.527Z","env":"local"}

@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "editorial-statement-batch/1",
+  "batch": "2026-09-22-airport-transport",
+  "status": "editorial_content_not_published",
+  "sourceReviewDate": "2026-09-22",
+  "recordCount": 1,
+  "sourceMetadata": [
+    {
+      "sourceKey": "sh-gov-metro-t2",
+      "publishedAt": "2024-03-21",
+      "observedAt": "2026-09-22",
+      "retrievalMethod": "Readable government HTML via web.open; current airport home cross-check only, excluded from reusable source materials.",
+      "changeAssessment": "Fresh read of an older announcement. Newer government guide returned 404/TLS timeout; operator Metro page returned 521. No whole-site or on-site verification.",
+      "researchRecord": "source-research.md"
+    }
+  ],
+  "records": [
+    {
+      "editorialId": "SH-AIR-01",
+      "title": "虹桥机场T2的地铁线路衔接",
+      "sourceObservedAt": "2026-09-22",
+      "statement": {
+        "schemaVersion": "knowledge-statement/1",
+        "assertion": {
+          "subjectId": "sha_terminal_2",
+          "predicate": "connects_to",
+          "objectId": "shanghai_metro_lines_2_10",
+          "conditions": [
+            "sha_terminal_2_only",
+            "check_current_service_and_signs"
+          ],
+          "exclusions": [
+            "no_other_terminal_or_airport_mapping",
+            "no_live_service_fare_or_connection_guarantee"
+          ]
+        },
+        "scope": {
+          "cities": [
+            "shanghai"
+          ],
+          "scene": "airport_transport",
+          "audience": "international_independent_traveler"
+        },
+        "expressions": {
+          "zh": {
+            "text": "在上海虹桥机场T2选择地铁出行时，可寻找2号线或10号线。",
+            "conditions": [
+              "仅适用于上海虹桥机场（SHA）2号航站楼。",
+              "出行前核对当前地铁运营公告，并按机场现场指引前往车站。"
+            ],
+            "exclusions": [
+              "不能据此推断虹桥T1、浦东机场、虹桥火车站或市域机场线的衔接。",
+              "不提供当日运营、时刻、票价、步行路径、无障碍设施或赶上航班的保证。"
+            ]
+          },
+          "en": {
+            "text": "For metro travel at Shanghai Hongqiao Airport T2, look for Line 2 or Line 10.",
+            "conditions": [
+              "Applies only to Terminal 2 of Shanghai Hongqiao Airport (SHA).",
+              "Check current metro service notices before travel and follow airport signs to the station."
+            ],
+            "exclusions": [
+              "Do not infer connections for Hongqiao T1, Pudong Airport, Hongqiao Railway Station or the Airport Link Line.",
+              "No guarantee of same-day service, timetables, fares, walking routes, accessibility or flight connections."
+            ]
+          }
+        },
+        "sources": [
+          {
+            "sourceKey": "sh-gov-metro-t2",
+            "revisionLabel": "20240321-observed-20260922",
+            "publisher": "Shanghai municipal government English portal; credited source: Shanghai Metro",
+            "uri": "https://english.shanghai.gov.cn/en-Latest-WhatsNew/20240321/3c3ab971bc2a417cbb214ce53e7008c8.html",
+            "locator": "2024-03-21 article: paragraph after the opening paragraph listing service-center locations at Hongqiao Terminal 2 on Lines 2 and 10.",
+            "snippet": "Editorial synopsis, not a quotation: the government-hosted Metro announcement identifies Hongqiao Terminal 2 stations on both Metro Line 2 and Line 10. Payment-service details are outside this statement.",
+            "usageDeclaration": "Original factual synopsis and citation metadata only, not a quotation or official translation. Public availability is not a licence. No commercial source-material, article, photograph, diagram, embedding or TTS permission has been established."
+          }
+        ]
+      },
+      "useBasis": "original_factual_summary",
+      "useNote": "Proposed editorial use of our original bilingual summary only. No source-material redistribution grant or independent rights approval is claimed. Verify current topology and source-specific use restrictions before publication. No raw article or media retained.",
+      "lifecycle": {
+        "candidate": "local_editorial_draft",
+        "submitted": false,
+        "reviewed": false,
+        "published": false,
+        "eligibility": "not_evaluated",
+        "author": "Codex editorial preparation",
+        "reviewer": null,
+        "reviewReceipt": null,
+        "publicationReceipt": null
+      },
+      "freshness": {
+        "sourcePublishedAt": "2024-03-21",
+        "observedAt": "2026-09-22",
+        "currentTopologyVerification": "required_before_publication",
+        "proposedRecheckBy": "2026-10-22",
+        "travelDayRecheckRequired": true,
+        "expiresAt": null,
+        "note": "Observation of an older page is not a current operator service guarantee; no publication expiry has been assigned."
+      },
+      "qualification": {
+        "sourceMaterialLicence": "not_established",
+        "sourceMaterialStored": false,
+        "independentSemanticAndUseReview": "pending",
+        "runtimeRecipientScope": "not_granted",
+        "perRequestEligibility": "must_be_computed_by_existing_reader_after_publication"
+      }
+    }
+  ]
+}

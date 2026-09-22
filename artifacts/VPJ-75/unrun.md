@@ -313,3 +313,50 @@ the changed module is shared with #359's own jobs, and the full
 test:unit/test:integration/test:security/evals/docs:check/check:flags/
 check:assets) was re-run clean against this branch, confirming no
 regression to any #359 wiki-generation or statement-proposal behavior.
+
+**2026-09-19 target-environment readiness observation:** the correct Staging
+project (`VP - V4`, `dzqdzetcctkhbrhlxxgn`) is visible and can be linked, but
+the authenticated CLI database connection terminates before `migration list`
+or `db push --dry-run` can inspect it. Preview also lacks the Ops and grounded
+provider activation variables, and main production builds are intentionally
+skipped. No target-environment write occurred; see
+`target-environment-readiness-20260919/verification.md`.
+
+**2026-09-19 Staging migration update:** ~~Apply the merged VPJ-75 Wiki
+migrations to the pinned Staging database~~ **DONE for the 9 VPJ-75 files in
+the exact 11-file VPJ-75/76 package.** The target now has 61 history rows,
+the Wiki/withdrawal RPCs, private RLS tables and unchanged original Auth,
+Trip, source and publication data. The new encrypted backup passed an
+isolated PostgreSQL 17 restore; the migration set also passed an in-target
+ROLLBACK rehearsal before commit. See
+`staging-migration-20260919/verification.md`. Real Ops/worker/publish/readback,
+withdrawal behavior, billing and full #359 acceptance remain UNRUN.
+
+**2026-09-19 real Staging Ops/worker update:** ~~Real Qwen Wiki worker,
+Staging claim/complete and `/ops/wiki` draft readback~~ **DONE for one
+previously reviewed 12306 editorial source.** Real job
+`1a485048-d35e-44bb-816c-60af686c6122` persisted revision v1 with
+config/input digests and `cost_tokens=475`, `cost_unknown=false`; an
+authenticated browser opened the actual deployed page. See
+`staging-ops-20260919/verification.md`. Statement proposal, separate human
+review, publication, withdrawal and Ask readback are still UNRUN; 475 tokens
+is usage, not a reconciled monetary charge.
+
+**2026-09-19 structured-proposal update:** ~~Real Staging source intake and
+Qwen-generated statement proposals~~ **DONE for one original editorial
+synopsis from the current official Chongqing museum notice.** The source
+revision is linked to a pending Ops candidate; a separate real Qwen job
+persisted 3 source-span-bound proposals with `cost_tokens=1783` and
+`cost_unknown=false`. The deployed `/ops/wiki` UI rendered all three.
+Editorial correction, independent human review, actual publication and Ask
+consumption are still UNRUN; see `staging-ops-20260919/verification.md`.
+
+**2026-09-19 withdrawal update:** ~~Real Staging source withdrawal after
+claim and before publication, plus new-dispatch denial~~ **DONE for an
+independent owned source revision.** One real Qwen call reported 528 tokens;
+the succeeding completion was refused with `OPS_SOURCE_WITHDRAWN`, no Wiki
+revision was written, the job was settled `failed`, and a fresh claim was
+also refused before another provider call. The blocked job correctly
+remains `cost_unknown=true`; see
+`staging-withdrawal-20260919/verification.md`. The separate reviewed-source
+publication and Ask readback are still UNRUN.

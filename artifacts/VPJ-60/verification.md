@@ -25,3 +25,9 @@ customer media capability.
 Inspect only safe provider error metadata or use an approved provider-specific
 media credential/adapter before a new bounded attempt. Preserve this HTTP400
 evidence; do not substitute a text-only completion for media acceptance.
+
+## 2026-09-22 independent Qwen development slice
+
+[Current implementation and verification](vision-c0-20260922.md) adds a C0 PNG adapter
+and a bounded probe runner. It preserves the DeepSeek HTTP400 result above. The old
+one-test media authorization is exhausted and is not reused for the new Qwen proposal.

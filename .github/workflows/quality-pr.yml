@@ -63,3 +63,10 @@ jobs:
       - if: steps.scope.outputs.scope != 'documentation'
         run: pnpm check:assets
       - run: pnpm docs:check
+      # artifacts/ is committed evidence that never shrinks, so the size guard has to
+      # run on every PR scope, documentation included — evidence Markdown lands there too.
+      - name: Guard artifacts/ growth
+        env:
+          VP_CI_BASE: ${{ github.event.pull_request.base.sha }}
+          VP_CI_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: pnpm check:artifacts
