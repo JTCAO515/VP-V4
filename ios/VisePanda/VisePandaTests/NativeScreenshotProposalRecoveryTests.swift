@@ -112,6 +112,8 @@ nonisolated private final class ScreenshotProposalProtocol: URLProtocol, @unchec
             respond(["version": 2, "trip": Self.trip, "content": ["days": []],
                      "hardLocks": "not_enabled", "externalOrderStatus": "not_connected",
                      "confirmationState": "confirmed"])
+        } else if path.hasSuffix("/archive") {
+            respond(["version": 1, "archive": NSNull()])
         } else if path.hasSuffix("/proposal") && request.httpMethod == "POST" {
             let stale = Self.lock.withLock { Self.posts += 1; return Self.rejectPostAsStale }
             if stale { respond(["error": ["code": "STALE_TRIP_VERSION"]], status: 409) }

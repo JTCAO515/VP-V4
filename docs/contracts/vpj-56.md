@@ -11,11 +11,12 @@ The existing Quality PR workflow and branch protections remain independent.
 Runner labels: `[self-hosted, macOS, ARM64, vp-v4-ios]`; the registered Mac
 `vp-v4-ios-local` (runner ID21) was verified online with these exact labels before
 changing the workflow. The job ID remains `simulator`. Selected Xcode:
-`/Applications/Xcode.app/Contents/Developer`, exact 27.0 / 27A266a (bumped
-2026-09-15 from 26.6/17F113 after the self-hosted Mac's own Xcode install moved to
-27.0, with no automatic fallback available for the prior version; see
-`docs/contracts/wiki-agentic-search.md`, "Slice 9", for the PR this pin bump
-shipped alongside).
+`/Applications/Xcode.app/Contents/Developer`, exact 26.6 / 17F113 or 27.0 / 27A266a.
+The 2026-09-15 pin moved to27.0 after one Mac upgraded, but PR478 run35655888102
+on2026-09-22 observed26.6 on the actual selected runner and failed before tests.
+Both previously validated installations are now explicitly accepted; unknown
+version/build pairs still fail, with no automatic upgrade or executable fallback.
+The selected version is recorded in each job's environment evidence.
 Runtime: installed iOS 26.5; device: iPhone 17 Pro. The script discovers its actual
 UDID and records the complete executable command. Missing tools/runtime fail without
 upgrading, downloading a runtime or substituting another device.
