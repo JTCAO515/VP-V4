@@ -42,7 +42,7 @@ test('invalid endpoints, future departure, disabled routes dispatch nothing', as
   }
 });
 test('mismatched POI IDs and absent coordinates never route', async () => {
-  for (const detail of [{ id: 'unrelated' }, { location: '' }]) {
+  for (const detail of [{ id: 'unrelated' }, { location: '' }, { location: ',' }]) {
     const f = fixture({ detail }); const r = await compareRoutes(parameters(), { env, fetcher: f.fetcher });
     assert.notEqual(r.status, 200); assert.equal(f.calls.length, 2);
   }

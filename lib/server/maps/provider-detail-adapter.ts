@@ -78,7 +78,7 @@ function parseLocation(provider: Provider, raw: unknown): PlaceDetail["location"
   if (provider === "amap") {
     if (typeof raw !== "string") return null;
     const parts = raw.split(",");
-    if (parts.length !== 2) return null;
+    if (parts.length != 2 || parts.some(part => !part.trim())) return null;
     lng = Number(parts[0]);
     lat = Number(parts[1]);
   } else {
