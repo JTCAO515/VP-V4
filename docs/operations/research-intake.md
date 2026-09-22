@@ -29,6 +29,10 @@ in logs. Raw tokens must not be placed in query parameters or sent to an analyti
 
 ## Record actual research events
 
+Use the [two-week discovery pilot](customer-discovery-pilot.md) for VPJ-46's
+interview, delivery, time-accounting and handoff records. The work package is a
+template; real participant outcomes remain separate from intake implementation.
+
 Use the existing secured database administration surface or service-role RPC in a trusted
 operator environment. Select only the needed application, check its current research
 consent and record the actual observation with `research_intake_record_event_v1`:
