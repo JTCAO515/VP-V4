@@ -102,10 +102,23 @@ final class AppShellUITests: XCTestCase {
         // assert the actual reachable screen instead of retired preview-only copy.
         XCTAssertTrue(app.staticTexts["Say it clearly"].exists)
         XCTAssertTrue(app.staticTexts["Sign in in Profile to translate."].exists)
-        XCTAssertFalse(app.buttons["translation.submit"].isEnabled)
+        let input = app.descendants(matching: .any).matching(identifier: "translation.input").firstMatch
+        XCTAssertTrue(input.waitForExistence(timeout: 3))
+        let submit = app.buttons["translation.submit"]
+        XCTAssertTrue(submit.exists)
+        XCTAssertFalse(submit.isEnabled)
+        // Check tab isolation before opening the keyboard, which hides the tab bar.
         // Each tab retains its own navigation stack; this creates no saved Trip.
         app.tabBars.buttons["Trip"].tap()
         XCTAssertTrue(app.navigationBars["Today"].exists)
+        app.tabBars.buttons["Ask"].tap()
+        XCTAssertTrue(app.navigationBars["Translation"].waitForExistence(timeout: 3))
+        input.tap()
+        input.typeText("No peanuts. CNY 50.")
+        XCTAssertEqual(input.value as? String, "No peanuts. CNY 50.")
+        // Drafting a phrase without an active session/consent cannot submit it.
+        XCTAssertFalse(submit.isEnabled)
+        capture("Translation-English-SignedOut", app: app)
     }
 
     func testChineseReleaseLanguagePickerAndEnglishSwitch() {
