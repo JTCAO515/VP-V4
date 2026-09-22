@@ -34,3 +34,7 @@ locks. Remaining legacy Proposal-first contention is bounded with a 500ms worker
 lock timeout and at most three attempts in the local runner. A failed transaction rolls back; read the receipt after an unavailable result.
 The reviewer accepted the mitigation with runtime evidence still UNRUN. Dedicated integration assertions cover these cases; final execution awaits
 a permitted resource window. Static review is not DB runtime evidence.
+
+CI first executable SQL run found a real concurrent request-id replay defect
+(second admission returned DELETION_ALREADY_REQUESTED). Admission now serializes
+by request ID independently of Trip writer locks. The failing assertion remains.

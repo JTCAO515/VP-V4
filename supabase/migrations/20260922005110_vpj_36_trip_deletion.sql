@@ -38,6 +38,8 @@ begin
  if not exists(select 1 from auth.sessions s where s.id=(auth.jwt()->>'session_id')::uuid
    and s.user_id=actor and s.created_at between clock_timestamp()-interval '5 minutes' and clock_timestamp())
  then raise exception 'REAUTHENTICATION_REQUIRED'; end if;
+ -- Only admission uses this request-key lock; no Trip writer acquires it.
+ perform pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('privacy-request:'||p_request_id::text,0));
  select * into r from privacy_private.trip_deletions where request_id=p_request_id;
  if found then
    if r.owner_id<>actor then raise exception 'FORBIDDEN'; end if;

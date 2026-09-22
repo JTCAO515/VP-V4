@@ -35,6 +35,9 @@ test('Trip deletion SQL: reauthentication, fencing, atomic completion, isolation
   const proposal=JSON.parse(await db(as(owner,`select row_to_json(r) from public.create_trip_proposal_patch('${trip}','{"expectedVersion":0,"operations":[{"kind":"upsert_day","dayId":"day-test","date":"2026-09-22","timeZone":"Asia/Shanghai"},{"kind":"upsert_item","dayId":"day-test","itemId":"item-test","title":"Synthetic item"}]}') r;`)));
   const digest=await db(as(owner,`select digest from public.read_trip_proposal_v2('${proposal.proposal_id}');`));
   await db(as(owner,`select * from public.confirm_and_apply_trip_proposal('${proposal.proposal_id}','${uuid()}','${digest}');`));
+  const pending=JSON.parse(await db(as(owner,`select row_to_json(r) from public.create_trip_proposal_patch('${trip}','{"expectedVersion":1,"operations":[{"kind":"set_title","title":"Pending"}]}') r;`)));
+  const revised=JSON.parse(await db(as(owner,`select row_to_json(r) from public.revise_trip_proposal_patch('${pending.proposal_id}','{"expectedVersion":1,"operations":[{"kind":"set_title","title":"Revised"}]}') r;`)));
+  assert.equal(revised.outcome,'revised');
   await db(`insert into public.chat_threads(owner_id,trip_id) values('${owner}','${linked}');`);
   await denied(call(owner,linked,uuid(),session,0),'TRIP_HAS_CHAT_REFERENCES');
   await denied(call(owner,trip,request,session,0),'STALE_TRIP_VERSION');
