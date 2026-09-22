@@ -1,0 +1,13 @@
+{"command": "pnpm check", "result": "PASS"}
+{"command": "pnpm test:unit", "result": "PASS 114"}
+{"command": "pnpm test:contract", "result": "PASS 587"}
+{"command": "pnpm test:security", "result": "PASS 149; SKIP 1"}
+{"command": "pnpm test:integration", "result": "PASS 39; SKIP 80"}
+{"command": "node tests/integration/service-cases/run-local.mjs", "result": "PASS 6; SKIP 0"}
+{"command": "node --experimental-strip-types --test tests/contract/service-cases/http.test.mjs", "result": "PASS 5"}
+{"command": "pnpm docs:check", "result": "PASS"}
+{"command": "pnpm db:verify", "result": "PASS command; targets NOT CONFIGURED"}
+{"command": "git diff --check", "result": "PASS"}
+{"command": "DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj", "result": "PASS"}
+{"command": "DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcrun simctl list devices available", "result": "PASS"}
+{"command": "DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' -derivedDataPath /tmp/vpj57-derived CODE_SIGNING_ALLOWED=NO", "result": "PASS"}
