@@ -5,8 +5,9 @@ import { createNativeTripDataAdapter } from "../identity/user-data-adapter.ts";
 import { isUuid, isTripCreateInput, parseTripListInput, isTripProposalInput, isTripProposalRevisionInput, isProposalRejectInput, isConfirmInput } from "../identity/request-guards.ts";
 import { FAILURE_TAXONOMY, type FailureCode } from "../contracts/errors/index.ts";
 import { withTripCapabilityState } from "./capability-state.ts";
+import { isArchiveInput } from "./archive/contract.ts";
 
-type Action = "list" | "create" | "read" | "proposal_read" | "proposal_create" | "revise" | "reject" | "confirm";
+type Action = "list" | "create" | "read" | "proposal_read" | "proposal_create" | "revise" | "reject" | "confirm" | "archive" | "archive_read";
 const response = (value: unknown, status = 200) => Response.json(value, { status, headers: { "Cache-Control": "private, no-store" } });
 const failure = (code: FailureCode) => response({ error: { code } }, FAILURE_TAXONOMY[code].httpStatus);
 export async function nativeTripHTTP(request: NextRequest, action: Action, tripId?: string) {
@@ -30,6 +31,10 @@ export async function nativeTripHTTP(request: NextRequest, action: Action, tripI
       if (!input) return failure("INVALID_INPUT");
       result = await adapter.listTrips(input.limit);
       if (!("error" in result)) return response({ version: 2, trips: result.data, currentTripId: result.data[0]?.id ?? null });
+    } else if (action === "archive_read" && tripId) {
+      if ([...params].length) return failure("INVALID_INPUT");
+      result = await adapter.readArchive(tripId);
+      if (!("error" in result)) return response({ version: 1, archive: result.data });
     } else if (action === "read" && tripId) {
       if ([...params].length) return failure("INVALID_INPUT");
       result = await adapter.getTrip(tripId);
@@ -45,7 +50,10 @@ export async function nativeTripHTTP(request: NextRequest, action: Action, tripI
       if (raw === null || raw.length > 64000) return failure("INVALID_INPUT");
       let input: unknown;
       try { input = JSON.parse(raw); } catch { return failure("INVALID_INPUT"); }
-      if (action === "create" && isTripCreateInput(input)) {
+      if (action === "archive" && tripId && isArchiveInput(input)) {
+        result = await adapter.archiveTrip(tripId, input);
+        if (!("error" in result)) return response({ version: 1, ...result.data });
+      } else if (action === "create" && isTripCreateInput(input)) {
         result = await adapter.createTrip(input);
         if (!("error" in result)) return response({ version: 2, ...result.data }, result.data.reused ? 200 : 201);
       } else if (action === "proposal_create" && tripId && isTripProposalInput(input)) {

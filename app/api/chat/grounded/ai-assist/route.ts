@@ -59,7 +59,8 @@ export async function POST(request: NextRequest) {
   const turnId = (body as Record<string, unknown>).turnId;
   if (typeof turnId !== "string" || !UUID.test(turnId)) return reply({ error: "INVALID_INPUT" }, 400);
 
-  const scope = nativeRequestScope(request.signal);
+  // Four bounded provider rounds can legitimately outlive the usual 10s data request.
+  const scope = nativeRequestScope(request.signal, 75_000);
   const adapter = createUserDataAdapter(request, textConfig, scope.fetch);
   if (!adapter) { scope.dispose(); return reply({ error: "UNAVAILABLE" }, 503); }
   try {

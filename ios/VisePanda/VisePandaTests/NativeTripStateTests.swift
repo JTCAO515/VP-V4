@@ -3,6 +3,62 @@ import XCTest
 
 nonisolated final class NativeTripStateTests: XCTestCase {
     @MainActor
+    func testArchiveRequiresReviewedVersionRetainsResultsAndStartsFresh() async throws {
+        ArchiveTripProtocol.reset()
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [ArchiveTripProtocol.self]
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "vpj61.\(UUID().uuidString)"))
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:59931"], defaults: defaults, configuration: configuration)
+        await session.login(email: "archive-owner", password: "unit-only")
+        let store = NativeTripStore()
+        store.reset(for: try XCTUnwrap(session.dataScope))
+        await store.select(ArchiveTripProtocol.tripID, using: session)
+        let original = try XCTUnwrap(store.detail)
+        let reference = try XCTUnwrap(store.archiveReference)
+        await store.archive(reviewedReference: "wrong-version", using: session)
+        XCTAssertNil(store.archive)
+        XCTAssertEqual(ArchiveTripProtocol.posts, 0)
+        await store.archive(reviewedReference: reference, using: session)
+        XCTAssertEqual(store.archive?.archivedVersion, 1)
+        XCTAssertEqual(store.detail?.content, original.content)
+        XCTAssertNil(store.archiveReference)
+        ArchiveTripProtocol.setUnavailable(true)
+        await store.reload(using: session)
+        XCTAssertEqual(store.archive?.archivedVersion, 1, "A failed status read cannot reopen a known archive")
+        XCTAssertFalse(store.canEdit)
+        ArchiveTripProtocol.setUnavailable(false)
+        store.beginDraft()
+        XCTAssertNil(store.draft)
+        await store.create(title: "Fresh", using: session)
+        XCTAssertNotEqual(store.selectedID, original.trip.id)
+        XCTAssertEqual(store.detail?.content.days.count, 0)
+        XCTAssertNil(store.archive)
+        store.reset(for: nil)
+        XCTAssertNil(store.detail)
+        XCTAssertNil(store.archive)
+        XCTAssertFalse(store.archiveAvailable)
+    }
+
+    @MainActor
+    func testArchiveUnavailableKeepsSavedResultsWithoutClaimingSuccess() async throws {
+        ArchiveTripProtocol.reset(unavailable: true)
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [ArchiveTripProtocol.self]
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "vpj61.unavailable.\(UUID().uuidString)"))
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:59931"], defaults: defaults, configuration: configuration)
+        await session.login(email: "archive-owner", password: "unit-only")
+        let store = NativeTripStore()
+        store.reset(for: try XCTUnwrap(session.dataScope))
+        await store.select(ArchiveTripProtocol.tripID, using: session)
+        XCTAssertNotNil(store.detail)
+        XCTAssertFalse(store.archiveAvailable)
+        XCTAssertNil(store.archiveReference)
+        XCTAssertNil(store.archive)
+        await store.archive(reviewedReference: "guessed", using: session)
+        XCTAssertEqual(ArchiveTripProtocol.posts, 0)
+    }
+
+    @MainActor
     func testRelativeOutlineRequiresSupportedInputsAndKeepsUnknowns() throws {
         let outline = try XCTUnwrap(NativeRelativeOutline.make(from: "第一次去上海四天，喜欢吃和散步，日期未定", chinese: true))
         XCTAssertEqual(outline.city, "上海")
@@ -199,6 +255,66 @@ nonisolated private final class DelayedTripProtocol: URLProtocol, @unchecked Sen
         guard let url = request.url,
               let response = HTTPURLResponse(url: url, statusCode: status, httpVersion: nil, headerFields: ["Content-Type": "application/json"]),
               let data = try? JSONSerialization.data(withJSONObject: value) else { return }
+        client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
+        client?.urlProtocol(self, didLoad: data)
+        client?.urlProtocolDidFinishLoading(self)
+    }
+}
+
+/// Native state test only; SQL and HTTP authority have separate tests.
+nonisolated private final class ArchiveTripProtocol: URLProtocol, @unchecked Sendable {
+    static let tripID = "11111111-1111-4111-8111-111111111111"
+    private static let lock = NSLock()
+    nonisolated(unsafe) private static var archived = false
+    nonisolated(unsafe) private static var unavailable = false
+    nonisolated(unsafe) private static var postCount = 0
+    static var posts: Int { lock.withLock { postCount } }
+    static func setUnavailable(_ value: Bool) { lock.withLock { unavailable = value } }
+    static func reset(unavailable: Bool = false) { lock.withLock { archived = false; Self.unavailable = unavailable; postCount = 0 } }
+    override class func canInit(with request: URLRequest) -> Bool { true }
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override func stopLoading() {}
+    override func startLoading() {
+        let path = request.url?.path ?? ""
+        if path.hasSuffix("credentials") || path.hasSuffix("refresh") {
+            respond(["subject": "archive-owner", "accessToken": "archive-owner", "refreshToken": "archive-owner", "expiresAt": Date().timeIntervalSince1970 + 3600, "mobileEpoch": 1])
+        } else if path.hasSuffix("profile") {
+            respond(["subject": "archive-owner", "displayName": "Archive owner"])
+        } else if path.hasSuffix("archive") {
+            if Self.lock.withLock({ Self.unavailable }) { respond(["error": ["code": "PROVIDER_UNAVAILABLE"]], status: 503); return }
+            if request.httpMethod == "POST" { Self.lock.withLock { Self.archived = true; Self.postCount += 1 } }
+            let archived = Self.lock.withLock { Self.archived }
+            let isOld = path.contains(Self.tripID)
+            respond(["version": 1, "archive": archived && isOld ? ["tripId": Self.tripID, "archivedVersion": 1, "archivedAt": "2026-09-22T01:00:00Z"] : NSNull()])
+        } else if path.hasSuffix("proposal") {
+            respond(["error": ["code": "PROPOSAL_NOT_CONFIRMABLE"]], status: 409)
+        } else if path == "/api/trips/native/v2" {
+            if request.httpMethod == "POST" {
+                var data = request.httpBody ?? Data()
+                if let stream = request.httpBodyStream {
+                    stream.open(); defer { stream.close() }
+                    var buffer = [UInt8](repeating: 0, count: 1024)
+                    while stream.hasBytesAvailable {
+                        let count = stream.read(&buffer, maxLength: buffer.count)
+                        if count <= 0 { break }
+                        data.append(contentsOf: buffer.prefix(count))
+                    }
+                }
+                let body = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+                guard let id = body?["tripId"] as? String else { respond([:], status: 400); return }
+                respond(["version": 2, "trip": trip(id), "reused": false], status: 201)
+            } else { respond(["version": 2, "trips": [trip(Self.tripID)], "currentTripId": NSNull()]) }
+        } else if path.contains("/trips/native/v2/") {
+            let id = request.url?.lastPathComponent ?? Self.tripID
+            let days: [[String: Any]] = id == Self.tripID ? [["id": "old-day", "date": "2020-01-01", "items": [["id": "old-item", "dayId": "old-day", "title": "Temporary meeting"]]]] : []
+            respond(["version": 2, "trip": trip(id), "content": ["days": days], "hardLocks": "not_enabled", "externalOrderStatus": "not_connected", "confirmationState": id == Self.tripID ? "confirmed" : "initial"])
+        } else { respond(["subject": "archive-owner", "mobileEpoch": 1]) }
+    }
+    private func trip(_ id: String) -> [String: Any] {
+        ["id": id, "title": id == Self.tripID ? "Old" : "Fresh", "headVersion": id == Self.tripID ? 1 : 0, "updatedAt": "2026-09-22T01:00:00Z"]
+    }
+    private func respond(_ value: [String: Any], status: Int = 200) {
+        guard let url = request.url, let response = HTTPURLResponse(url: url, statusCode: status, httpVersion: nil, headerFields: ["Content-Type": "application/json"]), let data = try? JSONSerialization.data(withJSONObject: value) else { return }
         client?.urlProtocol(self, didReceive: response, cacheStoragePolicy: .notAllowed)
         client?.urlProtocol(self, didLoad: data)
         client?.urlProtocolDidFinishLoading(self)
