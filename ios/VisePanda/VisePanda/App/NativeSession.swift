@@ -199,6 +199,10 @@ final class NativeSession {
         return data
     }
 
+    func memoryRequest(path: String = "api/memory/native/v1/travel-pace", method: String, body: Data? = nil) async throws -> Data {
+        try await dataRequest(prefix: "api/memory/native/v1/travel-pace", path: path, method: method, body: body)
+    }
+
     private func dataRequest(prefix: String, path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         guard enabled, !busy, let initial = dataScope else { throw NativeDataError.sessionUnavailable }
         if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 {

@@ -77,6 +77,12 @@ struct ProfileView: View {
                 }.disabled(settings.nativeSession.busy)
             }
 
+            if settings.nativeSession.dataScope != nil {
+                Section(chinese ? "基础偏好" : "Basic preferences") {
+                    NavigationLink(chinese ? "已保存旅行节奏" : "Saved travel pace") { NativeTravelPaceView() }
+                }
+            }
+
             Section("profile.language") {
                 Picker("profile.language", selection: $settings.selectedLocale) {
                     ForEach(SupportedLocale.selectionLocales(current: settings.selectedLocale)) { locale in
