@@ -1,3 +1,4 @@
+import { compareRoutes } from "./route-comparison.ts";
 import { loadCanonicalMappingLookup } from "./canonical-mapping-repository.ts";
 import { getPlaceDetail } from "./provider-detail-adapter.ts";
 import { geocodeAddress } from "./provider-geocode-adapter.ts";
@@ -17,6 +18,7 @@ export async function lookupPlace(params: URLSearchParams, dependencies: Depende
   const provider = params.get("provider"), action = params.get("action");
   if (provider !== "amap" && provider !== "tencent") return failure("INVALID_INPUT", 400);
   const input = { ...dependencies, provider } as const;
+  if (action === "routes") return compareRoutes(params, dependencies);
   let outcome;
   if (action === "search" || action === "suggest" || action === "geocode") {
     const q = params.get("q"), city = params.get("city");

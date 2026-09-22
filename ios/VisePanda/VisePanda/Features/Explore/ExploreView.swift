@@ -210,11 +210,160 @@ final class NativePlaceSearchStore {
     }
 }
 
+struct NativeRouteOption: Decodable, Identifiable {
+    let mode: String
+    let status: String
+    let durationSeconds: Double?
+    let distanceMeters: Double?
+    let walkingMeters: Double?
+    let transfers: Int?
+    let estimateCny: Double?
+    let estimateKind: String?
+    let steps: [String]?
+    let departureAt: String?
+    let arrivalAt: String?
+    let webUrl: String?
+    var id: String { mode }
+}
+struct NativeRouteReply: Decodable {
+    let provider: String
+    let origin: NativePlaceDetail
+    let destination: NativePlaceDetail
+    let observedAt: String
+    let expiresAt: String
+    let options: [NativeRouteOption]
+    func expired(at date: Date) -> Bool {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        guard let expiry = formatter.date(from: expiresAt) else { return true }
+        return date >= expiry
+    }
+    func appURL(mode: String) -> URL? {
+        guard let start = origin.location, let end = destination.location,
+              start.coordinateSystem == "gcj02", end.coordinateSystem == "gcj02",
+              start.lat.isFinite, start.lng.isFinite, end.lat.isFinite, end.lng.isFinite,
+              abs(start.lat) <= 90, abs(end.lat) <= 90, abs(start.lng) <= 180, abs(end.lng) <= 180,
+              let transport = ["driving": "0", "transit": "1", "walking": "2"][mode] else { return nil }
+        var url = URLComponents()
+        url.scheme = "iosamap"; url.host = "path"
+        url.queryItems = ["sourceApplication": "VisePanda", "sid": origin.providerPoiId, "did": destination.providerPoiId,
+                          "slat": String(start.lat), "slon": String(start.lng), "sname": origin.rawName,
+                          "dlat": String(end.lat), "dlon": String(end.lng), "dname": destination.rawName,
+                          "dev": "0", "t": transport].map { URLQueryItem(name: $0.key, value: $0.value) }
+        return url.url
+    }
+}
+@MainActor @Observable final class NativeRouteStore {
+    private(set) var origin: NativePlaceDetail?
+    private(set) var destination: NativePlaceDetail?
+    private(set) var reply: NativeRouteReply?
+    private(set) var loading = false
+    private(set) var unavailable = false
+    private var generation = UUID()
+    func invalidate() { generation = UUID(); reply = nil; loading = false; unavailable = false }
+    func clear() { invalidate(); origin = nil; destination = nil }
+    func choose(_ detail: NativePlaceDetail, start: Bool) {
+        guard detail.provider == .amap, detail.location?.coordinateSystem == "gcj02" else { return }
+        invalidate()
+        if start { origin = detail } else { destination = detail }
+    }
+    func compare(fetch: ([String: String]) async throws -> Data) async {
+        invalidate()
+        guard let origin, let destination, origin.providerPoiId != destination.providerPoiId else { return }
+        let own = generation; loading = true
+        do {
+            let data = try await fetch(["action": "routes", "provider": "amap", "originId": origin.providerPoiId, "destinationId": destination.providerPoiId, "departure": "now"])
+            guard own == generation, !Task.isCancelled else { return }
+            guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
+            let value = try JSONDecoder().decode(NativeRouteReply.self, from: data)
+            guard value.provider == "amap", value.origin.provider == .amap, value.destination.provider == .amap,
+                  value.origin.providerPoiId == origin.providerPoiId, value.destination.providerPoiId == destination.providerPoiId,
+                  value.options.count == 3, Set(value.options.map(\.mode)) == Set(["walking", "transit", "driving"]),
+                  !value.expired(at: Date()) else { throw NativeDataError.invalidResponse }
+            reply = value
+        } catch { if own == generation { unavailable = true } }
+        if own == generation { loading = false }
+    }
+}
+private struct NativeRouteComparison: View {
+    let selected: NativePlaceDetail?
+    let store: NativeRouteStore
+    let chinese: Bool
+    let fetch: ([String: String]) async throws -> Data
+    @Environment(\.openURL) private var openURL
+    @State private var future = false
+    @State private var task: Task<Void, Never>?
+    @State private var openFailed = false
+    private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(text("Compare routes", "比较路线")).font(.headline)
+            Text(text("Select an AMap place below, then set start or destination. Manual selection also works when location is denied.", "在下方选择高德地点，再设为起点或终点。定位拒权后仍可手动选点。"))
+            if let selected, selected.provider == .amap, selected.location?.coordinateSystem == "gcj02" {
+                Button(text("Use selected place as start", "将已选地点设为起点")) { task?.cancel(); store.choose(selected, start: true) }
+                Button(text("Use selected place as destination", "将已选地点设为终点")) { task?.cancel(); store.choose(selected, start: false) }
+            }
+            Text((store.origin?.rawName ?? "—") + " → " + (store.destination?.rawName ?? "—"))
+            Toggle(text("Future departure", "未来出发"), isOn: $future).onChange(of: future) { _, _ in task?.cancel(); store.invalidate() }
+            if future { Text(text("Future departure unavailable. Current traffic is not tomorrow's forecast.", "未来出发暂不可用，当前路况不是明日预测。")) }
+            else {
+                Button(text("Agree and compare with AMap", "同意并向高德查询比较")) {
+                    task?.cancel(); task = Task { await store.compare(fetch: fetch) }
+                }.disabled(store.origin == nil || store.destination == nil || store.origin?.providerPoiId == store.destination?.providerPoiId || store.loading)
+            }
+            Button(text("Clear route", "清除路线")) { task?.cancel(); store.clear() }
+            Text(text("The two places are sent to AMap, without current or background location. Estimates are not quotes; tolls exclude taxi fare. Transit is not live arrival data; driving does not book a car. Accessibility and entrances are unverified.", "两处地点将发送给高德，不发送当前或后台定位。估算不是报价；过路费不含打车费。公交不是实时到站；驾车不代表叫车成功。无障碍与入口未核实。"))
+                .font(.caption).foregroundStyle(Color.vpSecondaryText)
+            if store.loading { ProgressView() }
+            if store.unavailable { Text(text("Routes unavailable or timed out. Check endpoints and sign-in, then retry or copy the address.", "路线不可用或查询超时。请检查起终点与登录状态，重试或复制地址。")) }
+            if let destination = store.destination {
+                Text(text("Chinese address card", "中文地址卡")).font(.headline)
+                Text(destination.rawName + "\n" + (destination.address ?? text("Address unknown; select an exact entrance or terminal.", "地址未知，请选择准确入口或航站楼。"))).textSelection(.enabled)
+                if let address = destination.address { Button(text("Copy destination address", "复制终点地址")) { UIPasteboard.general.string = destination.rawName + "\n" + address } }
+            }
+            if let reply = store.reply {
+                Text(text("Source: AMap · Queried: ", "来源：高德 · 查询：") + reply.observedAt).font(.caption)
+                TimelineView(.periodic(from: .now, by: 1)) { context in
+                    if reply.expired(at: context.date) { Text(text("Route expired. Query again before navigation.", "路线已过期，请重新查询后导航。")) }
+                    else { ForEach(reply.options) { option in route(option, reply: reply) } }
+                }
+            }
+            if openFailed { Text(text("Map app unavailable or failed to open. Use the web link or copy the address.", "地图 App 未安装或打开失败，请使用网页出口或复制地址。")) }
+        }.onDisappear { task?.cancel(); store.clear() }
+    }
+    @ViewBuilder private func route(_ option: NativeRouteOption, reply: NativeRouteReply) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(chinese ? (["walking": "步行", "transit": "公交", "driving": "驾车"][option.mode] ?? option.mode) : option.mode).font(.headline)
+            if option.status != "observed" { Text(text("Unavailable: ", "暂不可用：") + option.status) }
+            else {
+                Text("\(Int(ceil((option.durationSeconds ?? 0) / 60))) min · \(Int(option.distanceMeters ?? 0)) m")
+                Text(text("Walking / transfers: ", "步行距离 / 换乘：") + (option.walkingMeters.map { "\(Int($0)) m" } ?? "—") + " / " + (option.transfers.map(String.init) ?? "—"))
+                Text(text(option.estimateKind == "tolls_only" ? "Estimated tolls only: " : "Estimated fare: ", option.estimateKind == "tolls_only" ? "仅过路费估算：" : "票价估算：") + (option.estimateCny.map { "¥\($0)" } ?? text("Unknown", "未知")))
+                Text(text("Estimated departure / arrival: ", "估算出发 / 到达：") + (option.departureAt ?? "—") + " / " + (option.arrivalAt ?? "—")).font(.caption)
+                ForEach(Array((option.steps ?? []).enumerated()), id: \.offset) { _, step in Text(step) }
+                if let app = reply.appURL(mode: option.mode) {
+                    Button(text("Open AMap app", "打开高德 App")) {
+                        guard !reply.expired(at: Date()) else { return }
+                        openURL(app) { accepted in openFailed = !accepted }
+                    }
+                }
+                if let raw = option.webUrl, let url = URL(string: raw), url.scheme == "https", url.host == "uri.amap.com", url.path == "/navigation" {
+                    Button(text("Open web directions", "打开网页路线")) {
+                        guard !reply.expired(at: Date()) else { return }
+                        openURL(url) { accepted in openFailed = !accepted }
+                    }
+                }
+            }
+        }
+    }
+}
+
 private struct NativePlaceSearchView: View {
     var isActive: Bool
     @Environment(\.scenePhase) private var scenePhase
     @Environment(AppSettings.self) private var settings
     @State private var store = NativePlaceSearchStore()
+    @State private var routes = NativeRouteStore()
     @State private var query = ""
     @State private var city = "shanghai"
     @State private var provider = NativePlaceProvider.amap
@@ -298,6 +447,7 @@ private struct NativePlaceSearchView: View {
                     searchTask = Task { await store.geocode(scope: scope) { try await session.placeLookupRequest(parameters) } }
                 }.disabled(session.dataScope == nil || query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 content
+                NativeRouteComparison(selected: store.detail, store: routes, chinese: chinese, fetch: { try await session.placeLookupRequest($0) })
                 if let point = store.detail?.location ?? store.addressLocation, point.coordinateSystem == "gcj02" {
                     if showMap {
                         NativePlaceMapCanvas(point: point, selectionID: store.selectedID ?? "address", name: store.detail?.rawName ?? store.observedAddress ?? "", onSelect: { id in
@@ -328,12 +478,12 @@ private struct NativePlaceSearchView: View {
             }.padding(VPSpacing.standard)
         }
         .background(Color.vpBackground).vpNavigationTitle("tab.explore").navigationBarTitleDisplayMode(.inline)
-        .onChange(of: session.dataScope) { _, _ in resetSearch() }
+        .onChange(of: session.dataScope) { _, _ in routes.clear(); resetSearch() }
         .onChange(of: query) { _, _ in resetSearch() }
-        .onChange(of: city) { _, _ in resetSearch() }
-        .onChange(of: provider) { _, _ in resetSearch() }
-        .onChange(of: scenePhase) { _, phase in if phase != .active { resetSearch() } }
-        .onChange(of: isActive) { _, active in if !active { resetSearch() } }
+        .onChange(of: city) { _, _ in routes.clear(); resetSearch() }
+        .onChange(of: provider) { _, _ in routes.clear(); resetSearch() }
+        .onChange(of: scenePhase) { _, phase in if phase != .active { routes.clear(); resetSearch() } }
+        .onChange(of: isActive) { _, active in if !active { routes.clear(); resetSearch() } }
         .onDisappear { resetSearch() }
     }
 

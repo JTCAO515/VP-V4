@@ -2,6 +2,34 @@ import XCTest
 @testable import VisePanda
 
 nonisolated final class NativePlaceSearchTests: XCTestCase {
+    @MainActor
+    func testRouteClearRejectsLateResponse() async throws {
+        let store = NativeRouteStore(), delayed = DeferredPlaceReply()
+        let start = NativePlaceDetail(provider: .amap, providerPoiId: "start", rawName: "Start", address: nil, location: .init(lat: 31.2, lng: 121.4, coordinateSystem: "gcj02"))
+        let end = NativePlaceDetail(provider: .amap, providerPoiId: "end", rawName: "End", address: nil, location: .init(lat: 31.3, lng: 121.5, coordinateSystem: "gcj02"))
+        store.choose(start, start: true); store.choose(end, start: false)
+        let pending = Task { await store.compare { _ in await delayed.read() } }
+        await delayed.waitUntilStarted()
+        store.clear()
+        delayed.finish(Data("{}".utf8))
+        await pending.value
+        XCTAssertNil(store.reply); XCTAssertNil(store.origin); XCTAssertNil(store.destination)
+        XCTAssertFalse(store.loading); XCTAssertFalse(store.unavailable)
+    }
+
+    @MainActor
+    func testRouteIdentityMismatchAndExpiryFailClosed() async throws {
+        let store = NativeRouteStore()
+        let start = NativePlaceDetail(provider: .amap, providerPoiId: "start", rawName: "Start", address: nil, location: .init(lat: 31.2, lng: 121.4, coordinateSystem: "gcj02"))
+        let end = NativePlaceDetail(provider: .amap, providerPoiId: "end", rawName: "End", address: nil, location: .init(lat: 31.3, lng: 121.5, coordinateSystem: "gcj02"))
+        store.choose(start, start: true); store.choose(end, start: false)
+        let invalid = #"{"provider":"amap","origin":{"provider":"amap","providerPoiId":"wrong","rawName":"Wrong"},"destination":{"provider":"amap","providerPoiId":"end","rawName":"End"},"observedAt":"2026-09-22T00:00:00.000Z","expiresAt":"2020-01-01T00:00:00.000Z","options":[]}"#
+        await store.compare { _ in Data(invalid.utf8) }
+        XCTAssertNil(store.reply); XCTAssertTrue(store.unavailable)
+        let reply = try JSONDecoder().decode(NativeRouteReply.self, from: Data(invalid.utf8))
+        XCTAssertTrue(reply.expired(at: Date())); XCTAssertNil(reply.appURL(mode: "walking"))
+    }
+
     @MainActor private var scope: NativeDataScope {
         .init(endpoint: "http://127.0.0.1", subject: "synthetic-owner", mobileEpoch: 1, generation: 1)
     }
