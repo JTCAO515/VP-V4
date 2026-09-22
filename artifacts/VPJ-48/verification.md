@@ -8,7 +8,10 @@ author withdrawal. Public UGC remains unavailable; #235 is not closed.
   body bound, private error mapping, acknowledgement timeout semantics.
 - PASS: `git diff --check` before initial commit.
 - Pending: isolated PostgreSQL CI and repository-required CI on final PR head.
-- Pending: independent permission/migration code review.
+- PASS: independent read-only permission/migration review; one non-blocking SQL
+  whitespace-validation mismatch fixed and incrementally re-reviewed. No unresolved
+  blocking finding. Review is not merge approval.
+- PASS: source policy lint (347 files), `node scripts/docs-check.mjs`.
 
 No local build, full test suite, PostgreSQL stack or simulator was started. Machine
 load restrictions route expensive work to authorized Linux CI. The independent
