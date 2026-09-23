@@ -16,6 +16,7 @@
     "test:unit": "node scripts/run-ci-suite.mjs unit",
     "test:contract": "node scripts/run-ci-suite.mjs contract",
     "test:integration": "node scripts/run-ci-suite.mjs integration",
+    "test:integration:db": "node scripts/ci-suites/db-integration.mjs",
     "test:security": "node scripts/run-ci-suite.mjs security",
     "test:e2e": "node scripts/run-ci-suite.mjs e2e",
     "test:e2e:frontend": "pnpm build && playwright install chromium && playwright test --config playwright.config.mjs --workers=1",
