@@ -50,6 +50,12 @@ Web JS 2.0 仅在线加载高德官方脚本，`/api/maps/display-config` 只返
 
 [高德 JS 加载文档](https://lbs.amap.com/api/javascript-api-v2/guide/abc/load) · [JS 安全代理文档](https://lbs.amap.com/api/javascript-api-v2/guide/abc/jscode) · [官方 3DMap 发行规格](https://github.com/CocoaPods/Specs/blob/master/Specs/5/f/c/AMap3DMap/11.2.100/AMap3DMap.podspec.json) · [Foundation 发行规格](https://github.com/CocoaPods/Specs/blob/master/Specs/8/f/f/AMapFoundation/1.9.0/AMapFoundation.podspec.json)。本次原生 API 编译以实际下载的官方头文件为准。
 
+## 按用户配额与安全头
+
+- 付费供应商路由（Web `search/nearby/lookup`、原生 `native/v1/*`、`/api/maps/_AMapService/*`）在认证之后、调用供应商之前执行按用户配额：`lib/server/maps/place-quota.ts` 集中定义阈值（`places` 每分钟 30 / 每 UTC 日 500；`map_proxy` 每分钟 300 / 每 UTC 日 5000），数据库 `public.consume_place_quota_v1` 原子计数（迁移 `20260923120000_places_provider_quota.sql`，SECURITY DEFINER、空 `search_path`、仅 `authenticated` 可执行，按 `auth.uid()` 选行）。超限返回 `429 RATE_LIMITED` 与 `Retry-After`；被拒请求不计数；无法检查配额时 fail-closed 返回 503 且不调用供应商。计数表只存用户、桶和窗口计数，不存查询文本/坐标/IP，账号删除级联清除。`display-config` 不调用供应商，不计数。
+- 部署顺序：必须先在目标库应用该迁移再部署代码，否则地点接口全部 503。
+- 安全头由 `lib/security/headers.ts` 经 `next.config.ts` 下发：全站 CSP 仅同源（`script-src`/`style-src` 保留 `'unsafe-inline'`，因 App Router 内联 RSC 脚本与 React style 属性），`frame-ancestors 'none'`、`object-src 'none'`、`X-Frame-Options: DENY`、`nosniff`、`Referrer-Policy`、`Permissions-Policy`、COOP。仅 `/places` 追加高德/AutoNavi 源、`blob:` worker 与 `'unsafe-eval'`，并附不含 `'unsafe-eval'` 的 Report-Only 候选策略；真实 Key 实测无 Report-Only 违规后可移除 `'unsafe-eval'`。
+
 ## 验证与回退
 
 本次按用户要求只做最低工程验证：相关编译/类型/源码检查、定向回归与本地未登录 HTTP 检查，见[执行记录](../../artifacts/VPJ-19/363-consumers-20260922/verification.md)。未重新运行付费供应商、未部署 Staging/Production、未完成真机地图/域名绑定/网络矩阵与整票验收，#363 保持开放。
