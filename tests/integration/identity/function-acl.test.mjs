@@ -22,6 +22,7 @@ const AUTHENTICATED = [
   "public.community_workspace(jsonb)",
   "public.confirm_and_apply_trip_proposal(uuid,text,text)",
   "public.connection_probe_ops_visible_count()",
+  "public.consume_place_quota_v1(text,integer,integer)",
   "public.create_explicit_memory_profile(uuid,uuid,uuid,text,text)",
   "public.create_memory_retrieval_consent()",
   "public.create_trip_proposal_patch(uuid,jsonb)",
