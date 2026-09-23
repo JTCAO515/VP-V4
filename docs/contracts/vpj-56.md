@@ -71,3 +71,22 @@ self-hosted configuration correction; do not silently revert to billed hosted ma
 Certificate rotation, Archive signing,
 App Store Connect upload/SDK requirements, TestFlight install and withdrawal procedures
 remain named operator work before signed distribution; no credentials are requested here.
+The current requirements and procedure for that operator work — upload SDK/target/privacy
+manifest requirements, App Store Connect API key scope, certificate/profile rotation and
+build-failure/withdrawal paths — are in
+[docs/runbooks/ios-signing-and-testflight.md](../runbooks/ios-signing-and-testflight.md).
+
+## Archive path (X1, #508)
+
+`scripts/ios/archive.py` and the manual-only `.github/workflows/native-ios-archive.yml` add a
+Release device Archive on the same runner and Xcode allowlist. This does not change the
+`simulator` job, its triggers or its evidence. Unsigned mode needs no Apple material. Signed modes
+read the team ID and App Store Connect API key only from the environment (the `testflight`
+GitHub Environment on `main`) or use the Mac's own Xcode account/login keychain, refuse before
+building when anything is missing, export an `app-store-connect` ipa and never upload. The
+installed backend comes only from `ios/VisePanda/Distribution/testflight-staging.json`, checked
+against `NativeSession` and read back from the archived Info.plist. `CFBundleVersion` defaults to
+UTC `YYYYMMDD.HHMMSS`. Evidence uploads exclude every archive, ipa and signed result bundle and
+redact signing identifiers. Governance test `tests/unit/governance/native-ios-archive.test.mjs`
+runs the Python unit tests in Quality PR. See the runbook §0 and §6 and
+[X1 verification](../../artifacts/VPJ-56/signed-archive-20260923/verification.md).
