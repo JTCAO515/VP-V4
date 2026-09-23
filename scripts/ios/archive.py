@@ -48,6 +48,35 @@ EXPORT_METHOD = "app-store-connect"
 MINIMUM_UPLOAD_SDK_MAJOR = 26  # Apple: uploads from 2026-04-28 need the iOS 26 SDK or later.
 SIGNING_MODES = ("none", "api-key", "xcode-account")
 
+# Privacy manifest (Apple: "Describing use of required reason API", NSPrivacyAccessedAPIType,
+# re-read 2026-09-23). App Store Connect refuses uploads whose executable uses a required-reason
+# API without a declared approved reason. 0A2A.1 and C56D.1 exist but only third-party SDKs may
+# declare them, so an app manifest carrying them is refused too.
+PRIVACY_MANIFEST = "PrivacyInfo.xcprivacy"
+APP_API_REASONS = {
+    "NSPrivacyAccessedAPICategoryFileTimestamp": frozenset({"DDA9.1", "C617.1", "3B52.1"}),
+    "NSPrivacyAccessedAPICategorySystemBootTime": frozenset({"35F9.1", "8FFB.1", "3D61.1"}),
+    "NSPrivacyAccessedAPICategoryDiskSpace": frozenset({"85F4.1", "E174.1", "7D9E.1", "B728.1"}),
+    "NSPrivacyAccessedAPICategoryActiveKeyboards": frozenset({"3EC4.1", "54BD.1"}),
+    "NSPrivacyAccessedAPICategoryUserDefaults": frozenset({"CA92.1", "1C8F.1", "AC6B.1"}),
+}
+# Categories the executable is known to use: app code (UserDefaults, systemUptime, file
+# creationDate) plus the statically linked AMap SDK (adds disk-space calls). Dropping one of these
+# from the manifest must fail the Archive rather than the upload.
+REQUIRED_API_CATEGORIES = frozenset({"NSPrivacyAccessedAPICategoryUserDefaults",
+                                     "NSPrivacyAccessedAPICategorySystemBootTime",
+                                     "NSPrivacyAccessedAPICategoryFileTimestamp",
+                                     "NSPrivacyAccessedAPICategoryDiskSpace"})
+COLLECTED_DATA_KEYS = frozenset({"NSPrivacyCollectedDataType", "NSPrivacyCollectedDataTypeLinked",
+                                 "NSPrivacyCollectedDataTypeTracking", "NSPrivacyCollectedDataTypePurposes"})
+COLLECTION_PURPOSES = frozenset("NSPrivacyCollectedDataTypePurpose" + name for name in (
+    "ThirdPartyAdvertising", "DeveloperAdvertising", "Analytics", "ProductPersonalization",
+    "AppFunctionality", "Other"))
+# The linked AMap SDK references the location authorization API, so App Store Connect requires
+# this purpose string (ITMS-90683) even though the app never requests location.
+REQUIRED_PURPOSE_STRINGS = ("NSLocationWhenInUseUsageDescription",)
+PURPOSE_STRING_LOCALES = ("en", "zh-Hans")
+
 
 class Refusal(RuntimeError):
     """A precondition failed before any build; exit 2 so callers can tell it from a build failure."""
@@ -195,7 +224,132 @@ def verify_app_info(info, profile, build_number):
     major = sdk_major(info.get("DTSDKName"))
     if major is None or major < MINIMUM_UPLOAD_SDK_MAJOR:
         problems.append(f"DTSDKName={info.get('DTSDKName')!r} is below the iOS {MINIMUM_UPLOAD_SDK_MAJOR} SDK upload floor")
+    # The value is a legal declaration reviewed in source; here we only require that it is declared.
+    if not isinstance(info.get("ITSAppUsesNonExemptEncryption"), bool):
+        problems.append("ITSAppUsesNonExemptEncryption is not declared as a Boolean")
+    for key in REQUIRED_PURPOSE_STRINGS:
+        if not isinstance(info.get(key), str) or not info[key].strip():
+            problems.append(f"{key} purpose string is missing or empty")
     return problems
+
+
+def verify_privacy_manifest(manifest):
+    """Structural and reason-code checks of an app PrivacyInfo.xcprivacy root dictionary.
+
+    Returns (problems, summary). The summary is safe for evidence (no user data exists here).
+    """
+    problems = []
+    if not isinstance(manifest, dict):
+        return ["privacy manifest root is not a dictionary"], {}
+    required = {"NSPrivacyTracking", "NSPrivacyTrackingDomains", "NSPrivacyCollectedDataTypes",
+                "NSPrivacyAccessedAPITypes"}
+    missing = sorted(required - set(manifest))
+    if missing:
+        problems.append("privacy manifest lacks " + ", ".join(missing))
+    tracking = manifest.get("NSPrivacyTracking")
+    if not isinstance(tracking, bool):
+        problems.append("NSPrivacyTracking is not a Boolean")
+    domains = manifest.get("NSPrivacyTrackingDomains", [])
+    if not isinstance(domains, list) or any(not isinstance(domain, str) or not domain for domain in domains):
+        problems.append("NSPrivacyTrackingDomains is not a list of domain strings")
+    elif tracking is False and domains:
+        problems.append("NSPrivacyTrackingDomains is non-empty while NSPrivacyTracking is false")
+
+    summary = {"tracking": tracking, "accessedAPITypes": {}, "collectedDataTypes": []}
+    accessed = manifest.get("NSPrivacyAccessedAPITypes", [])
+    if not isinstance(accessed, list):
+        problems.append("NSPrivacyAccessedAPITypes is not a list")
+        accessed = []
+    for entry in accessed:
+        category = entry.get("NSPrivacyAccessedAPIType") if isinstance(entry, dict) else None
+        reasons = entry.get("NSPrivacyAccessedAPITypeReasons") if isinstance(entry, dict) else None
+        if not isinstance(entry, dict) or set(entry) != {"NSPrivacyAccessedAPIType", "NSPrivacyAccessedAPITypeReasons"}:
+            problems.append(f"accessed API entry {category!r} must have exactly a type and reasons")
+        if category not in APP_API_REASONS:
+            problems.append(f"unknown required-reason API category {category!r}")
+            continue
+        if category in summary["accessedAPITypes"]:
+            problems.append(f"{category} is declared more than once")
+        if not isinstance(reasons, list) or not reasons or any(not isinstance(reason, str) for reason in reasons):
+            problems.append(f"{category} has no reason codes")
+            continue
+        invalid = sorted(set(reasons) - APP_API_REASONS[category])
+        if invalid:
+            problems.append(f"{category} has reason(s) not approved for an app: {', '.join(invalid)}")
+        summary["accessedAPITypes"][category] = sorted(reasons)
+    undeclared = sorted(REQUIRED_API_CATEGORIES - set(summary["accessedAPITypes"]))
+    if undeclared:
+        problems.append("privacy manifest does not declare required-reason API used by the executable: "
+                        + ", ".join(undeclared))
+
+    collected = manifest.get("NSPrivacyCollectedDataTypes", [])
+    if not isinstance(collected, list):
+        problems.append("NSPrivacyCollectedDataTypes is not a list")
+        collected = []
+    for entry in collected:
+        kind = entry.get("NSPrivacyCollectedDataType") if isinstance(entry, dict) else None
+        if not isinstance(entry, dict) or set(entry) != COLLECTED_DATA_KEYS:
+            problems.append(f"collected data entry {kind!r} must have exactly " + ", ".join(sorted(COLLECTED_DATA_KEYS)))
+            continue
+        if not isinstance(kind, str) or not re.fullmatch(r"NSPrivacyCollectedDataType[A-Z][A-Za-z]+", kind):
+            problems.append(f"invalid collected data type {kind!r}")
+            continue
+        if any(item["NSPrivacyCollectedDataType"] == kind for item in summary["collectedDataTypes"]):
+            problems.append(f"{kind} is declared more than once")
+        linked, used_for_tracking = entry["NSPrivacyCollectedDataTypeLinked"], entry["NSPrivacyCollectedDataTypeTracking"]
+        purposes = entry["NSPrivacyCollectedDataTypePurposes"]
+        if not isinstance(linked, bool) or not isinstance(used_for_tracking, bool):
+            problems.append(f"{kind} linked/tracking flags must be Booleans")
+        if used_for_tracking is True and tracking is False:
+            problems.append(f"{kind} is marked as tracking while NSPrivacyTracking is false")
+        if not isinstance(purposes, list) or not purposes or not set(purposes) <= COLLECTION_PURPOSES:
+            problems.append(f"{kind} has missing or unknown purposes")
+        summary["collectedDataTypes"].append({"NSPrivacyCollectedDataType": kind, "linked": linked,
+                                              "tracking": used_for_tracking,
+                                              "purposes": sorted(purposes) if isinstance(purposes, list) else purposes})
+    return problems, summary
+
+
+def read_strings_table(path):
+    """A compiled .strings table as a dict: binary/XML plist directly, old-style text via plutil."""
+    if not path.is_file():
+        return {}
+    try:
+        with path.open("rb") as stream:
+            table = plistlib.load(stream)
+    except (plistlib.InvalidFileException, ValueError):
+        try:
+            converted = subprocess.run(["plutil", "-convert", "xml1", "-o", "-", str(path)],
+                                       stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, check=True).stdout
+            table = plistlib.loads(converted)
+        except (OSError, subprocess.CalledProcessError, plistlib.InvalidFileException, ValueError):
+            return {}
+    return table if isinstance(table, dict) else {}
+
+
+def verify_app_privacy(app):
+    """Check the built .app bundle: privacy manifest at the bundle root, and localized purpose strings."""
+    path = Path(app) / PRIVACY_MANIFEST
+    if not path.is_file():
+        return [f"{PRIVACY_MANIFEST} is missing from the app bundle root"], {}
+    try:
+        with path.open("rb") as stream:
+            manifest = plistlib.load(stream)
+    except (plistlib.InvalidFileException, ValueError, OSError) as error:
+        return [f"{PRIVACY_MANIFEST} is not a valid property list ({type(error).__name__})"], {}
+    problems, summary = verify_privacy_manifest(manifest)
+    summary["sha256"] = hashlib.sha256(path.read_bytes()).hexdigest()
+    summary["purposeStringLocales"] = {}
+    for key in REQUIRED_PURPOSE_STRINGS:
+        found = []
+        for locale in PURPOSE_STRING_LOCALES:
+            value = read_strings_table(Path(app) / f"{locale}.lproj" / "InfoPlist.strings").get(key)
+            if isinstance(value, str) and value.strip():
+                found.append(locale)
+            else:
+                problems.append(f"{key} is not localized for {locale} (InfoPlist.strings)")
+        summary["purposeStringLocales"][key] = found
+    return problems, summary
 
 
 def verify_distribution_profile(profile_plist, team_id, bundle_id):
@@ -345,13 +499,16 @@ def main(argv=None):
             "DTSDKName", "DTXcode", "DTXcodeBuild", *INFO_KEYS.values()]}
         manifest["amapDisplayKeyConfigured"] = bool(info.get("VisePandaAMapIOSKey"))
         manifest["exportComplianceDeclared"] = "ITSAppUsesNonExemptEncryption" in info
+        manifest["usesNonExemptEncryption"] = info.get("ITSAppUsesNonExemptEncryption")
         problems = verify_app_info(info, profile, build_number)
+        privacy_problems, manifest["privacyManifest"] = verify_app_privacy(app)
+        problems += privacy_problems
         manifest["infoPlistProblems"] = problems
         manifest["archiveSignature"] = redact(run(["codesign", "-dv", "--verbose=2", str(app)], "archive-signature",
                                                   allow_failure=True)).splitlines()[-6:]
         save_manifest()
         if problems:
-            raise Refusal("Archived Info.plist does not match the distribution profile: " + "; ".join(problems))
+            raise Refusal("Archived app failed Info.plist/privacy checks: " + "; ".join(problems))
         if args.signing == "none":
             return
 
@@ -372,6 +529,10 @@ def main(argv=None):
         exported = exported_apps[0]
         with (exported / "Info.plist").open("rb") as stream:
             exported_problems = verify_app_info(plistlib.load(stream), profile, build_number)
+        exported_privacy_problems, exported_privacy = verify_app_privacy(exported)
+        exported_problems += exported_privacy_problems
+        if exported_privacy.get("sha256") != manifest["privacyManifest"].get("sha256"):
+            exported_problems.append("exported privacy manifest differs from the archived one")
         signature = run(["codesign", "-dv", "--verbose=4", str(exported)], "export-signature")
         run(["codesign", "--verify", "--strict", "--deep", str(exported)], "export-signature-verification")
         if "Authority=Apple Distribution" not in signature:

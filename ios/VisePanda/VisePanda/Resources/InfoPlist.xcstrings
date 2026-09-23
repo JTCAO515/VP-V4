@@ -1,0 +1,24 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "NSLocationWhenInUseUsageDescription" : {
+      "comment" : "Location purpose string. The linked AMap SDK references the location authorization API; the app keeps showsUserLocation off and never requests location.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The built-in AMap map component can show your current position on the map. This version of VisePanda does not turn that on and does not use your location."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "应用内置的高德地图组件支持在地图上显示您当前的位置。当前版本的 VisePanda 不开启该功能，也不使用您的位置。"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
