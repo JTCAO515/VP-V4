@@ -14,7 +14,7 @@ written reason; an unclassified gated file fails `pnpm test:unit` (governance) a
 | --- | --- | --- |
 | `postgres` | Docker + pinned images (`--images`) | isolated, network-disabled PostgreSQL SQL/RLS suites |
 | `postgres-native` | `VP_WIKI_PG_BIN`, `VP_WIKI_PG_MODULE` | Wiki migrations/ACLs on native PostgreSQL |
-| `supabase-rls` | Docker + Supabase CLI | one disposable stack with all migrations: identity, RLS, Trip confirm/revise/reject/rollback (v2 protocol) |
+| `supabase-rls` | Docker + Supabase CLI | one disposable stack with all migrations: function EXECUTE allowlist, identity, profile/privacy RPC, RLS, Trip confirm/revise/reject/rollback (v2 protocol) |
 | `supabase-http-native` | Docker + Supabase CLI | real Auth → Next.js native routes → PostgreSQL |
 | `supabase-http-ops` | Docker + Supabase CLI | Ops review, knowledge publication/private source (34→35), service cases |
 
