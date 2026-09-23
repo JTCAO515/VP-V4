@@ -8,7 +8,7 @@ import { consumePlaceQuota, PLACE_QUOTA_LIMITS } from '../../../lib/server/maps/
 // Isolated PostgreSQL (no network) with the SQL-only auth fixture and the full migration history.
 const enabled = process.env.VP_PLACE_QUOTA_DB_TEST === '1';
 const container = 'vp-place-quota-' + uuid().slice(0, 8);
-const MIGRATION = 'supabase/migrations/20260923120000_places_provider_quota.sql';
+const MIGRATION = 'supabase/migrations/20260923140000_places_provider_quota.sql';
 let created = false;
 const run = (name, fn) => test(name, { skip: !enabled, timeout: 120000 }, fn);
 const db = async text => { const r = await sql(container, text); assert.equal(r.code, 0, r.stderr); return r.stdout.trim(); };

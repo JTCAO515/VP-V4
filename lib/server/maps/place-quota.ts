@@ -4,7 +4,7 @@
  * app/api/maps/_AMapService/**).
  *
  * Counting is atomic in PostgreSQL (`public.consume_place_quota_v1`, see
- * supabase/migrations/20260923120000_places_provider_quota.sql). The RPC is
+ * supabase/migrations/20260923140000_places_provider_quota.sql). The RPC is
  * called with the caller's own request-scoped client, so `auth.uid()` — never
  * a caller-supplied id — selects the counter row: a user can only ever spend
  * their own quota. No service credential is involved.
