@@ -66,7 +66,7 @@ export function createGetter(env = process.env) {
   };
 }
 
-async function paginate(get, endpoint, { maxPages = 20 } = {}) {
+async function paginate(get, endpoint, { maxPages = 20, truncate = false } = {}) {
   const items = [];
   for (let page = 1; page <= maxPages; page += 1) {
     const sep = endpoint.includes('?') ? '&' : '?';
@@ -74,6 +74,8 @@ async function paginate(get, endpoint, { maxPages = 20 } = {}) {
     items.push(...batch);
     if (batch.length < 100) return items;
   }
+  // Recent-first listings (closed PRs sorted by update time) only need the newest pages.
+  if (truncate) return items;
   throw new Error(`${endpoint} exceeded ${maxPages} pages`);
 }
 
@@ -84,7 +86,7 @@ export async function collectStatus({ plan, get, merged = 40, extra = EXTRA_ISSU
     get(`repos/${repo}/commits/main`),
     paginate(get, `repos/${repo}/issues?state=all`),
     paginate(get, `repos/${repo}/pulls?state=open`),
-    paginate(get, `repos/${repo}/pulls?state=closed&base=main&sort=updated&direction=desc`, { maxPages: 3 }),
+    paginate(get, `repos/${repo}/pulls?state=closed&base=main&sort=updated&direction=desc`, { maxPages: 2, truncate: true }),
     get(`repos/${repo}/deployments?environment=Production&per_page=3`),
   ]);
   const deploymentStatuses = await Promise.all(deployments.map(d =>
@@ -137,7 +139,7 @@ export function renderStatusMarkdown(s) {
     `生成时间：${s.generatedAt} · 仓库：${s.repo} · main：\`${short(s.main.sha)}\`（${s.main.date ?? '未知'}，${cell(s.main.headline)}）`,
     '',
     '由 `node scripts/program-status.mjs` 只读查询 GitHub API 生成。OPEN/CLOSED 只是 Tracker 状态，不等于对应版本、环境或用户行为已验收；' +
-      '部署记录只是 GitHub Deployment 元数据，不代表线上实际提供的版本。',
+      '部署记录只是 GitHub Deployment 元数据，不代表线上实际提供的版本；Vercel CLI/Dashboard 发布不产生这类记录，生产实际版本须以 Vercel alias 读取为准。',
     '',
     '## 阶段汇总',
     '',
