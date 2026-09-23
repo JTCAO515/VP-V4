@@ -70,6 +70,7 @@ export const LANES = {
           "tests/integration/privacy/trip-deletion.test.mjs",
           "tests/integration/trip/archive.test.mjs",
           "tests/integration/turn/durable-work.test.mjs",
+          "tests/integration/turn/hosted-worker.test.mjs",
           "tests/integration/turn/text-work.test.mjs",
         ],
       },
