@@ -1,0 +1,8 @@
+# Context is the repository root; only lib/ is copied. Keep secrets and bulk out of the context.
+**/.env*
+node_modules
+.next
+ios
+artifacts
+public
+.git
