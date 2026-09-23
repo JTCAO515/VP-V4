@@ -3,6 +3,9 @@ name: Quality Release Candidate
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   release-candidate-local-gates:
     runs-on: ubuntu-latest

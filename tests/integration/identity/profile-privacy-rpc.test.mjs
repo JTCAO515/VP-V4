@@ -25,7 +25,8 @@ test("profile upsert and privacy request replay preserve owner isolation without
     const owner = await create(); const other = await create();
     const anonymous = { apikey: env.ANON_KEY, "content-type": "application/json" };
     const profile = { p_display_name: "Local fixture", p_travel_pace: "balanced", p_locale: "en", p_currency: "CNY", p_distance_unit: "kilometre", p_temperature_unit: "celsius", p_default_departure_time: "09:00:00" };
-    assert.equal((await request("/rest/v1/rpc/save_user_profile", anonymous, profile)).status, 401);
+    const anonymousSave = await request("/rest/v1/rpc/save_user_profile", anonymous, profile);
+    assert.equal(anonymousSave.status, 401, JSON.stringify(anonymousSave.body));
     const saved = await request("/rest/v1/rpc/save_user_profile", owner.headers, profile);
     assert.equal(saved.status, 200, JSON.stringify(saved.body));
     assert.equal(saved.body[0].owner_id, owner.id);
