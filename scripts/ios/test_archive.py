@@ -5,9 +5,11 @@
 They need no Xcode, network, Apple account or signing material.
 """
 import datetime
+import hashlib
 import json
 import os
 from pathlib import Path
+import plistlib
 import re
 import stat
 import sys
@@ -199,7 +201,9 @@ class VerificationTests(unittest.TestCase):
                      "CFBundleVersion": "20260923.153012", "DTSDKName": "iphoneos27.0",
                      "VisePandaNativeEnvironment": "staging",
                      "VisePandaStagingAPIOrigin": "https://staging.go2china.space",
-                     "VisePandaNativeTaskContext": "knowledge_intent_v1"}
+                     "VisePandaNativeTaskContext": "knowledge_intent_v1",
+                     "ITSAppUsesNonExemptEncryption": False,
+                     "NSLocationWhenInUseUsageDescription": "Not used."}
 
     def test_matching_info(self):
         self.assertEqual(archive.verify_app_info(self.info, self.profile, "20260923.153012"), [])
@@ -210,6 +214,14 @@ class VerificationTests(unittest.TestCase):
         self.assertEqual(len(problems), 3)
         self.assertTrue(any("upload floor" in problem for problem in problems))
 
+    def test_export_compliance_and_purpose_string_required(self):
+        info = {key: value for key, value in self.info.items()
+                if key not in ("ITSAppUsesNonExemptEncryption", "NSLocationWhenInUseUsageDescription")}
+        problems = archive.verify_app_info(info, self.profile, "20260923.153012")
+        self.assertEqual(len(problems), 2)
+        info = {**self.info, "ITSAppUsesNonExemptEncryption": "NO", "NSLocationWhenInUseUsageDescription": " "}
+        self.assertEqual(len(archive.verify_app_info(info, self.profile, "20260923.153012")), 2)
+
     def test_distribution_profile(self):
         good = {"TeamIdentifier": [TEAM], "Entitlements": {
             "get-task-allow": False, "beta-reports-active": True,
@@ -218,6 +230,104 @@ class VerificationTests(unittest.TestCase):
         development = {**good, "ProvisionedDevices": ["x"], "Entitlements": {**good["Entitlements"], "get-task-allow": True}}
         self.assertEqual(len(archive.verify_distribution_profile(development, TEAM, "space.go2china.VisePanda")), 2)
         self.assertEqual(len(archive.verify_distribution_profile(good, "ZZZZZ99999", "space.go2china.VisePanda")), 2)
+
+
+PRIVACY = ROOT / "ios/VisePanda/VisePanda/Resources/PrivacyInfo.xcprivacy"
+
+
+def committed_privacy():
+    with PRIVACY.open("rb") as stream:
+        return plistlib.load(stream)
+
+
+class PrivacyManifestTests(unittest.TestCase):
+    def test_committed_manifest_is_valid_and_declares_expected_reasons(self):
+        problems, summary = archive.verify_privacy_manifest(committed_privacy())
+        self.assertEqual(problems, [])
+        self.assertIs(summary["tracking"], False)
+        self.assertEqual(summary["accessedAPITypes"], {
+            "NSPrivacyAccessedAPICategoryUserDefaults": ["CA92.1"],
+            "NSPrivacyAccessedAPICategorySystemBootTime": ["35F9.1"],
+            "NSPrivacyAccessedAPICategoryFileTimestamp": ["C617.1"],
+            "NSPrivacyAccessedAPICategoryDiskSpace": ["E174.1"]})
+        kinds = {item["NSPrivacyCollectedDataType"]: item for item in summary["collectedDataTypes"]}
+        self.assertEqual(set(kinds), {"NSPrivacyCollectedDataType" + name for name in (
+            "EmailAddress", "UserID", "OtherUserContent", "CustomerSupport", "DeviceID", "ProductInteraction")})
+        self.assertFalse(any(item["tracking"] for item in kinds.values()))
+        self.assertTrue(kinds["NSPrivacyCollectedDataTypeEmailAddress"]["linked"])
+        self.assertFalse(kinds["NSPrivacyCollectedDataTypeDeviceID"]["linked"])
+
+    def test_committed_manifest_and_strings_are_app_resources(self):
+        pbxproj = (ROOT / archive.PBXPROJ).read_text()
+        phase = re.search(r"800000000000000000000002 /\* Resources \*/ = \{[^}]*files = \(([^)]*)\)", pbxproj)
+        self.assertIsNotNone(phase)
+        for name in ("PrivacyInfo.xcprivacy", "InfoPlist.xcstrings"):
+            build_file = re.search(r"(\w{24}) /\* " + re.escape(name) + r" in Resources \*/", pbxproj)
+            self.assertIsNotNone(build_file, name)
+            self.assertIn(build_file.group(1), phase.group(1), name)
+
+    def test_committed_info_plist_and_localized_purpose_string(self):
+        with (ROOT / "ios/VisePanda/VisePanda/NativeEnvironment.plist").open("rb") as stream:
+            info = plistlib.load(stream)
+        self.assertIs(info["ITSAppUsesNonExemptEncryption"], False)
+        catalog = json.loads((ROOT / "ios/VisePanda/VisePanda/Resources/InfoPlist.xcstrings").read_text())
+        localizations = catalog["strings"]["NSLocationWhenInUseUsageDescription"]["localizations"]
+        self.assertEqual(set(localizations), {"en", "zh-Hans"})
+        self.assertEqual(localizations["en"]["stringUnit"]["value"], info["NSLocationWhenInUseUsageDescription"])
+        self.assertTrue(localizations["zh-Hans"]["stringUnit"]["value"].strip())
+
+    def test_refusals(self):
+        base = committed_privacy()
+        accessed = base["NSPrivacyAccessedAPITypes"]
+        collected = base["NSPrivacyCollectedDataTypes"]
+        sdk_only = [{**entry, "NSPrivacyAccessedAPITypeReasons": ["C56D.1"]}
+                    if entry["NSPrivacyAccessedAPIType"].endswith("UserDefaults") else entry for entry in accessed]
+        cases = {
+            "lacks": {key: value for key, value in base.items() if key != "NSPrivacyTracking"},
+            "not approved for an app: C56D.1": {**base, "NSPrivacyAccessedAPITypes": sdk_only},
+            "unknown required-reason": {**base, "NSPrivacyAccessedAPITypes": accessed + [
+                {"NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryMadeUp", "NSPrivacyAccessedAPITypeReasons": ["X.1"]}]},
+            "used by the executable": {**base, "NSPrivacyAccessedAPITypes": [
+                entry for entry in accessed if not entry["NSPrivacyAccessedAPIType"].endswith("DiskSpace")]},
+            "more than once": {**base, "NSPrivacyAccessedAPITypes": accessed + accessed[:1]},
+            "no reason codes": {**base, "NSPrivacyAccessedAPITypes": [
+                {**accessed[0], "NSPrivacyAccessedAPITypeReasons": []}] + accessed[1:]},
+            "marked as tracking": {**base, "NSPrivacyCollectedDataTypes": [
+                {**collected[0], "NSPrivacyCollectedDataTypeTracking": True}] + collected[1:]},
+            "non-empty while": {**base, "NSPrivacyTrackingDomains": ["tracker.example"]},
+            "unknown purposes": {**base, "NSPrivacyCollectedDataTypes": [
+                {**collected[0], "NSPrivacyCollectedDataTypePurposes": ["Marketing"]}] + collected[1:]},
+            "must have exactly": {**base, "NSPrivacyCollectedDataTypes": [
+                {"NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeName"}]},
+        }
+        for fragment, manifest in cases.items():
+            with self.subTest(fragment=fragment):
+                problems, _ = archive.verify_privacy_manifest(manifest)
+                self.assertTrue(any(fragment in problem for problem in problems), problems)
+        self.assertEqual(archive.verify_privacy_manifest([])[0], ["privacy manifest root is not a dictionary"])
+
+    def test_built_app_bundle(self):
+        with tempfile.TemporaryDirectory() as directory:
+            app = Path(directory) / "VisePanda.app"
+            app.mkdir()
+            problems, _ = archive.verify_app_privacy(app)
+            self.assertEqual(problems, ["PrivacyInfo.xcprivacy is missing from the app bundle root"])
+            (app / "PrivacyInfo.xcprivacy").write_text("not a plist")
+            problems, _ = archive.verify_app_privacy(app)
+            self.assertEqual(len(problems), 1)
+            self.assertIn("not a valid property list", problems[0])
+            (app / "PrivacyInfo.xcprivacy").write_bytes(PRIVACY.read_bytes())
+            for locale in archive.PURPOSE_STRING_LOCALES:
+                (app / f"{locale}.lproj").mkdir()
+                (app / f"{locale}.lproj" / "InfoPlist.strings").write_bytes(plistlib.dumps(
+                    {"NSLocationWhenInUseUsageDescription": "text"}, fmt=plistlib.FMT_BINARY))
+            problems, summary = archive.verify_app_privacy(app)
+            self.assertEqual(problems, [])
+            self.assertEqual(summary["purposeStringLocales"], {"NSLocationWhenInUseUsageDescription": ["en", "zh-Hans"]})
+            self.assertEqual(summary["sha256"], hashlib.sha256(PRIVACY.read_bytes()).hexdigest())
+            (app / "zh-Hans.lproj" / "InfoPlist.strings").unlink()
+            problems, _ = archive.verify_app_privacy(app)
+            self.assertEqual(problems, ["NSLocationWhenInUseUsageDescription is not localized for zh-Hans (InfoPlist.strings)"])
 
 
 class MainRefusalTests(unittest.TestCase):

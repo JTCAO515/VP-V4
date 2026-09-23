@@ -45,7 +45,12 @@ observed result remain `OA-VPJ-56` (Class C) in [docs/operator-actions.json](../
 - **Checks after export.** Exactly one `.ipa`; its app is verified with `codesign --verify
   --strict --deep`, signed by an `Apple Distribution` identity, and its embedded profile has no
   device list, `get-task-allow=false`, `beta-reports-active=true` and the expected
-  `TEAM.bundle-id`. The SDK must be iOS 26 or later (§1). Results go to `build-manifest.json`.
+  `TEAM.bundle-id`. The SDK must be iOS 26 or later (§1). Both the archived and the exported app
+  must carry a valid `PrivacyInfo.xcprivacy` at the bundle root that declares every
+  required-reason category in §1a with app-approved reason codes, a Boolean
+  `ITSAppUsesNonExemptEncryption`, and an `NSLocationWhenInUseUsageDescription` localized for
+  `en` and `zh-Hans`; the exported manifest must be byte-identical to the archived one. Results
+  go to `build-manifest.json` (`privacyManifest`, `usesNonExemptEncryption`).
 - **Evidence vs products.** `--output` holds logs, `commands.jsonl` and `build-manifest.json`
   with the team ID, key ID, issuer ID, key path and certificate holder names redacted.
   `--products` (a separate tree, enforced) holds DerivedData, the `.xcarchive`, the `.ipa` and a
@@ -91,16 +96,81 @@ Both Xcode builds in the CI allowlist (26.6/17F113 and 27.0/27A266a) meet the SD
 2026-09-23 local Archive recorded `DTSDKName=iphoneos27.0`. `archive.py` refuses an app whose
 `DTSDKName` is below iOS 26.
 
-**Known upload risk, not yet resolved:** neither the app nor the pinned AMap SDK ships a
-`PrivacyInfo.xcprivacy` (checked in the 2026-09-23 Archive). App code uses `UserDefaults` and
-`ProcessInfo.systemUptime`, which are required-reason API categories. Expect App Store Connect to
-report ITMS-91053 or refuse the build until a privacy manifest with the correct reasons is added
-and reviewed. The app also links CoreLocation through AMap without a location purpose string, a
-possible ITMS-90683 notice. Neither is fixed by X1; they are named in §6.
+The privacy manifest, export-compliance key and location purpose string that the first upload
+needs are described in §1a.
 
 Source: Apple Developer, "Upcoming Requirements" (<https://developer.apple.com/news/upcoming-requirements/>),
 fetched 2026-09-23; the earlier SDK announcement is <https://developer.apple.com/news/?id=ueeok6yw>.
 Reverify before each actual submission.
+
+## 1a. Privacy manifest, location purpose string and export compliance
+
+Added for the first TestFlight upload (VP-V4 optimisation thread T9, 2026-09-23). Sources re-read
+that day: Apple "Describing use of required reason API" and `NSPrivacyAccessedAPIType`
+(reason codes), "Third-party SDK requirements" (listed SDKs), "Complying with encryption export
+regulations", `ITSAppUsesNonExemptEncryption`, and App Store Connect Help "Export compliance
+documentation for encryption". Reverify before each submission.
+
+**What the executable contains.** The pinned AMap SDK (`MAMapKit` 11.2.100,
+`AMapFoundationKit` 1.9.0) is a pair of static archives linked with `-ObjC` for device builds,
+so its code becomes part of the `VisePanda` executable. Neither archive ships a privacy manifest,
+and AMap is not on Apple's list of SDKs that must carry their own manifest and signature, so the
+app manifest declares the union of app and AMap use. AMap publishes separate `.xcprivacy` files
+(lbs.amap.com/news/ios_pri, updated 2024-03-27); they were read as input, not vendored.
+
+| Category | App code | AMap (symbol scan of the pinned archives) | Declared reason | Why |
+| --- | --- | --- | --- | --- |
+| UserDefaults | `UserDefaults.standard` in `AppSettings` (locale) and `NativeSession` (active subject) | `NSUserDefaults` (standard and a suite; no App Group entitlement exists) | `CA92.1` | Read/write data only this app can access. AMap declares `CA92.1`. |
+| SystemBootTime | `ProcessInfo.systemUptime` for request, stream and answer deadlines (`NativeSession`, `NativeAskStore`, `NativeKnowledgeStore`, `NativeReadinessView`) | `mach_absolute_time` | `35F9.1` | Elapsed time between in-app events and timers; the uptime value is never sent. AMap declares `35F9.1`. |
+| FileTimestamp | `creationDateKey` on `NativeScreenshotInbox` files under Application Support | `stat`/`fstat`/`lstat`, `NSFileCreationDate`/`NSFileModificationDate` | `C617.1` | Metadata of files inside the app container. AMapFoundationKit declares `C617.1`; MAMapKit's manifest says `3B52.1` (user-granted files), but this app never hands the SDK a user-selected file, so its reachable files are container files and `C617.1` is the accurate reason here. |
+| DiskSpace | none | `statfs`/`statvfs`/`fstatfs`, `NSFileSystemSize` | `E174.1` | Checking space before writing SDK caches, as AMapFoundationKit declares. MAMapKit 11.2.100 calls `statfs`/`statvfs` although its 2024 manifest omits the category. |
+
+`ActiveKeyboards` is not used. `NSPrivacyTracking` is `false` and there are no tracking domains:
+the app never requests App Tracking Transparency authorization (no `NSUserTrackingUsageDescription`;
+AMapFoundationKit references `trackingAuthorizationStatus` but not the request API), so the
+advertising identifier the SDK can query is the all-zero value.
+
+**Collected data (`NSPrivacyCollectedDataTypes`)**, from the native endpoints and
+[the VPJ-03 disclosure matrix](../policy/vpj-03-data-disclosure.md):
+
+| Type | Linked | Tracking | Purpose | Source |
+| --- | --- | --- | --- | --- |
+| Email Address | yes | no | App Functionality | sign-in (`api/auth/native/v2`) |
+| User ID | yes | no | App Functionality, Analytics | VisePanda account subject; AMap's own non-linked SDK identifier (Analytics) |
+| Other User Content | yes | no | App Functionality | Trip content, Ask/knowledge questions and turns, translation text |
+| Customer Support | yes | no | App Functionality | service cases (`api/service-cases/native/v1`) |
+| Device ID | no | no | Analytics | AMapFoundationKit (IDFA-capable build; per AMap's manifest) |
+| Product Interaction | no | no | Analytics | AMapFoundationKit (per AMap's manifest) |
+
+Not declared, with reason: photos (screenshots stay on device in `NativeScreenshotInbox`; the
+server media path returns `media_unavailable`); precise/coarse location (MAMapKit declares
+precise location for its location feature, which this app keeps off and never authorizes);
+place-search text and the map coordinates of a *selected place* (sent to the server for a
+real-time lookup, not persisted by VisePanda; the retention on AMap's side is unknown — JT to
+decide when filling in the App Store privacy label). The manifest feeds Xcode's privacy report;
+the App Store Connect privacy label is still answered by JT and must stay consistent with it.
+
+**Location purpose string.** The app sets `showsUserLocation = false` and never asks for
+location, but MAMapKit references `CLLocationManager` and `requestWhenInUseAuthorization`.
+App Store Connect's static scan raises ITMS-90683 for such references even when they are never
+called ("While your app might not use these APIs, a purpose string is still required"), and
+the build then fails processing. `NSLocationWhenInUseUsageDescription` is therefore set in
+`NativeEnvironment.plist` (English) and `Resources/InfoPlist.xcstrings` (`en`, `zh-Hans`); the text
+says that the map component *can* show the user's position and that this version does not
+turn it on or use location. No `Always` string is added: `requestAlwaysAuthorization` is not
+referenced.
+
+**Export compliance (`ITSAppUsesNonExemptEncryption = false`) — a legal declaration that JT
+must confirm before the first upload.** Evidence: app networking is `URLSession` over HTTPS;
+app code uses `CryptoKit.SHA256` only for content digests and the Keychain for credentials;
+AMapFoundationKit's AES/RSA helpers call `CCCrypt` (CommonCrypto) and `SecKeyEncrypt`/
+`SecKeyDecrypt` (Security), and MAMapKit only `CC_MD5`. No defined cryptographic implementation
+(OpenSSL, mbedTLS, SM-series, custom ciphers) was found in either archive. App Store Connect Help
+lists "encryption limited to that within the Apple operating system" as needing no
+documentation, and Apple's key documentation says `NO` covers apps whose encryption, including
+linked libraries, is exempt. If JT does not confirm, change the value to `true` (and upload the
+documentation App Store Connect then asks for) or remove the key to answer per upload. Apple
+also notes that exempt encryption may still require the annual self-classification report.
 
 ## 2. Actual upload path and its credential requirements
 
@@ -235,18 +305,20 @@ a commit.
 5. **GitHub Environment `testflight`** (Settings → Environments): deployment branches limited to
    `main`, JT as required reviewer, and environment secrets named exactly
    `VP_IOS_TEAM_ID`, `VP_ASC_KEY_ID`, `VP_ASC_ISSUER_ID`, `VP_ASC_KEY_P8` (entire `.p8` text).
-6. **Pre-upload app decisions** (repository changes, need review): a privacy manifest for the
-   required-reason APIs (§1); whether to declare `ITSAppUsesNonExemptEncryption` (the build
-   currently does not, so App Store Connect asks export compliance per build); location purpose
-   string if Apple reports ITMS-90683; Staging server/worker readiness for Ask and Trip
-   confirmation on `staging.go2china.space`.
+6. **Pre-upload app decisions**: confirm the export-compliance declaration
+   `ITSAppUsesNonExemptEncryption = false` (§1a; a legal statement only JT can make); review the
+   privacy manifest's collected-data list against the App Store privacy label you will enter
+   (§1a); Staging server/worker readiness for Ask and Trip confirmation on
+   `staging.go2china.space`.
 7. **Build**: after merge, Actions → Native iOS Archive → Run workflow on `main` with
    `signing=api-key` (approve the environment), or run `archive.py` locally. Check the uploaded
    `build-manifest.json`: `exported=true`, no problems, expected build number and commit.
 8. **Upload** (not done by the repository): from the runner Mac, upload the `.ipa` under
    `~/Library/Developer/VisePanda/TestFlight/<run>-<attempt>/export/` with Transporter, or
    `xcrun altool --upload-app -f <ipa> -t ios --apiKey <Key ID> --apiIssuer <Issuer ID>` with the
-   `.p8` in `~/.appstoreconnect/private_keys/`. Wait for processing; answer export compliance.
+   `.p8` in `~/.appstoreconnect/private_keys/`. Wait for processing. With the key in
+   Info.plist, App Store Connect should not ask the export-compliance questions; any ITMS-91053
+   (missing API reason) or ITMS-90683 (purpose string) email means §1a is incomplete.
 9. **TestFlight internal group**: TestFlight → Internal Testing → create a group (e.g.
    "VisePanda internal"), add team members with App Store Connect access, add the processed
    build. Internal testing needs no Beta App Review; external groups do.

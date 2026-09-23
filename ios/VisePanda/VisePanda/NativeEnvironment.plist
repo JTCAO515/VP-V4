@@ -10,5 +10,9 @@
     <string>$(VP_NATIVE_STAGING_API_ORIGIN)</string>
     <key>VisePandaNativeTaskContext</key>
     <string>$(VP_NATIVE_TASK_CONTEXT)</string>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>The built-in AMap map component can show your current position on the map. This version of VisePanda does not turn that on and does not use your location.</string>
 </dict>
 </plist>
