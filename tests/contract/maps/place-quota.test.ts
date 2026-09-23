@@ -16,11 +16,11 @@ function fakeClient(result: () => Promise<{ data: unknown; error: unknown }>, ca
     rpc(name, params) {
       const call: Call = { name, params };
       calls.push(call);
-      const builder = {
-        then: (resolve: (v: { data: unknown; error: unknown }) => unknown, reject?: (e: unknown) => unknown) => result().then(resolve, reject),
-        abortSignal(signal: AbortSignal) { call.signal = signal; return builder; },
-      };
-      return builder;
+      const pending = result();
+      pending.catch(() => {});
+      return Object.assign(pending, {
+        abortSignal(signal: AbortSignal) { call.signal = signal; return pending; },
+      });
     },
   };
 }
