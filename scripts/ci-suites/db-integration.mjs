@@ -94,7 +94,9 @@ export const LANES = {
         concurrency: 1,
         env: { VISEPANDA_TRIP_PROTOCOL_V2: "true" },
         files: [
+          "tests/integration/identity/function-acl.test.mjs",
           "tests/integration/identity/pending-proposal-read.test.mjs",
+          "tests/integration/identity/profile-privacy-rpc.test.mjs",
           "tests/integration/trip/confirm-apply.test.mjs",
           "tests/integration/trip/proposal-reject.test.mjs",
           "tests/integration/trip/proposal-revision.test.mjs",
@@ -136,8 +138,6 @@ export const LANES = {
 export const EXCLUDED = {
   "tests/integration/cost/full-supabase-budget.test.mjs":
     "Historical one-off 25→26 upgrade rehearsal: needs an operator-prepared Supabase workdir frozen at migration 25 (VP_BUDGET_SUPABASE_WORKDIR) and hard-codes that container; the budget schema itself is covered by cost/durable-budget in the postgres lane.",
-  "tests/integration/identity/profile-privacy-rpc.test.mjs":
-    "KNOWN DEFECT, not an environment gap: on a standard Supabase stack `anon` holds EXECUTE on save_user_profile (and 13 other SECURITY DEFINER public RPCs) because migrations only `revoke ... from public` while Supabase default privileges grant anon directly. The RPC still raises FORBIDDEN (HTTP 400), but the test expects the privilege-level 401. Needs a reviewed append-only migration revoking anon EXECUTE; remove this entry in that PR.",
 };
 
 const INTEGRATION_ROOT = "tests/integration";
