@@ -5,6 +5,7 @@ import {
   contentSecurityPolicy,
   mapContentSecurityPolicy,
   securityHeaderRules,
+  supabaseConnectOrigin,
 } from "../../../lib/security/headers.ts";
 
 const directives = (policy: string) =>
@@ -17,6 +18,7 @@ test("next.config.ts applies the shared security header rules", () => {
   assert.match(source, /async headers\(\)/);
   assert.match(source, /securityHeaderRules\(/);
   assert.match(source, /dev: process\.env\.NODE_ENV !== "production"/);
+  assert.match(source, /supabaseUrl: process\.env\.NEXT_PUBLIC_SUPABASE_URL/);
 });
 
 test("every route gets the static hardening headers and the base CSP", () => {
@@ -77,4 +79,21 @@ test("/places alone gets the AMap relaxation, and its rule comes after the catch
   // The Report-Only candidate is the same policy minus 'unsafe-eval'.
   assert.ok(!directives(reportOnly).get("script-src")?.includes("'unsafe-eval'"));
   assert.ok(directives(reportOnly).get("script-src")?.includes("https://*.amap.com"));
+});
+
+test("the browser sign-in client's Supabase origin (only its origin) is connectable on every route", () => {
+  // lib/server/identity/browser-auth-client.ts calls Supabase Auth from the browser.
+  assert.match(readFileSync("lib/server/identity/browser-auth-client.ts", "utf8"), /NEXT_PUBLIC_SUPABASE_URL/);
+  const options = { ...prod, supabaseUrl: "https://abc123.supabase.co/auth/v1?x=1" };
+  const [all, places] = securityHeaderRules(options);
+  for (const header of [...all.headers, ...places.headers].filter(h => h.key.startsWith("Content-Security-Policy"))) {
+    const connect = directives(header.value).get("connect-src") ?? [];
+    assert.ok(connect.includes("https://abc123.supabase.co"), header.key);
+    assert.ok(!connect.some(v => v.includes("/auth") || v.includes("*.supabase.co")), header.key);
+  }
+  assert.equal(supabaseConnectOrigin("http://127.0.0.1:54321"), "http://127.0.0.1:54321");
+  for (const bad of [undefined, "", "not a url", "javascript:alert(1)", "data:text/plain,x", "wss://abc.supabase.co"]) {
+    assert.equal(supabaseConnectOrigin(bad), null, String(bad));
+  }
+  assert.deepEqual(directives(contentSecurityPolicy({ ...prod, supabaseUrl: "javascript:alert(1)" })).get("connect-src"), ["'self'"]);
 });

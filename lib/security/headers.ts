@@ -4,7 +4,8 @@
  * Kept dependency-free so contract tests can import it directly.
  *
  * Policy shape:
- * - Every route gets the base CSP: same-origin only, no plugins, no framing, no foreign forms.
+ * - Every route gets the base CSP: same-origin plus the configured Supabase origin for the browser
+ *   sign-in client, no plugins, no framing, no foreign forms.
  * - `/places` (the only page that loads AMap JS 2.0, and only after explicit user consent) gets a
  *   route-scoped CSP that adds AMap/AutoNavi origins, `blob:` workers and `'unsafe-eval'`, which
  *   AMap JS 2.0 is reported to require. It also carries a Report-Only candidate without
@@ -18,7 +19,7 @@
 
 export type SecurityHeader = { key: string; value: string };
 export type HeaderRule = { source: string; headers: SecurityHeader[] };
-export type SecurityHeaderOptions = { dev?: boolean; vercelEnv?: string | undefined };
+export type SecurityHeaderOptions = { dev?: boolean; vercelEnv?: string | undefined; supabaseUrl?: string | undefined };
 
 type Directives = Record<string, string[]>;
 
@@ -32,15 +33,31 @@ function serialize(directives: Directives): string {
     .join("; ");
 }
 
-function baseDirectives({ dev = false, vercelEnv }: SecurityHeaderOptions): Directives {
+/**
+ * The browser password sign-in client (lib/server/identity/browser-auth-client.ts) talks to
+ * Supabase Auth directly, so its exact origin (from NEXT_PUBLIC_SUPABASE_URL) must be connectable.
+ * Only an http(s) origin is accepted; anything else adds nothing.
+ */
+export function supabaseConnectOrigin(url: string | undefined): string | null {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" || parsed.protocol === "http:" ? parsed.origin : null;
+  } catch {
+    return null;
+  }
+}
+
+function baseDirectives({ dev = false, vercelEnv, supabaseUrl }: SecurityHeaderOptions): Directives {
   const preview = vercelEnv === "preview";
+  const supabase = supabaseConnectOrigin(supabaseUrl);
   return {
     "default-src": ["'self'"],
     "script-src": ["'self'", "'unsafe-inline'", ...(dev ? ["'unsafe-eval'"] : []), ...(preview ? VERCEL_LIVE : [])],
     "style-src": ["'self'", "'unsafe-inline'", ...(preview ? VERCEL_LIVE : [])],
     "img-src": ["'self'", "data:", "blob:", ...(preview ? VERCEL_LIVE : [])],
     "font-src": ["'self'", ...(preview ? VERCEL_LIVE : [])],
-    "connect-src": ["'self'", ...(preview ? [...VERCEL_LIVE, "wss://ws-us3.pusher.com"] : [])],
+    "connect-src": ["'self'", ...(supabase ? [supabase] : []), ...(preview ? [...VERCEL_LIVE, "wss://ws-us3.pusher.com"] : [])],
     "media-src": ["'self'"],
     "worker-src": ["'self'"],
     "manifest-src": ["'self'"],

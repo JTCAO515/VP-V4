@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     return securityHeaderRules({
       dev: process.env.NODE_ENV !== "production",
       vercelEnv: process.env.VERCEL_ENV,
+      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
     });
   },
 };
