@@ -1,0 +1,43 @@
+name: Program Status
+
+# Read-only VPJ tracker readback. Deliberately not a pull_request workflow and not a required
+# check: PR gates must not depend on GitHub API availability. It runs on GitHub-hosted runners
+# only, never on the self-hosted runner, and writes nothing back to the repository or Issues.
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "41 1 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+  deployments: read
+
+concurrency:
+  group: program-status
+  cancel-in-progress: true
+
+jobs:
+  readback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generate read-only program status
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p program-status
+          node scripts/program-status.mjs --out program-status/program-status.md --json program-status/program-status.json
+          cat program-status/program-status.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: program-status
+          path: program-status/
+          retention-days: 14
