@@ -28,7 +28,9 @@ function fakeGet(calls) {
     if (endpoint.startsWith('repos/example/vp/pulls?state=open')) return [
       { number: 514, title: 'b', draft: false, base: { ref: 'main' }, head: { sha: 'c'.repeat(40) }, updated_at: 'u' },
       { number: 478, title: 'a', draft: true, base: { ref: 'main' }, head: { sha: 'd'.repeat(40) }, updated_at: 'u' }];
-    if (endpoint.startsWith('repos/example/vp/pulls?state=closed')) return [
+    if (endpoint.startsWith('repos/example/vp/pulls?state=closed') && !endpoint.endsWith('page=1'))
+      return Array.from({ length: 100 }, (_, i) => ({ number: 100 + i, title: 'old', base: { ref: 'main' }, merged_at: '2026-01-01T00:00:00Z', merge_commit_sha: '0'.repeat(40) }));
+    if (endpoint.startsWith('repos/example/vp/pulls?state=closed')) return [...Array.from({ length: 97 }, (_, i) => ({ number: 300 + i, title: 'closed', base: { ref: 'main' }, merged_at: null })),
       { number: 479, title: 'older', base: { ref: 'main' }, merged_at: '2026-09-22T00:37:17Z', merge_commit_sha: 'e'.repeat(40) },
       { number: 470, title: 'closed unmerged', base: { ref: 'main' }, merged_at: null },
       { number: 516, title: 'newest', base: { ref: 'main' }, merged_at: '2026-09-22T06:19:37Z', merge_commit_sha: 'f'.repeat(40) }];
@@ -42,12 +44,13 @@ test('collects a read-only snapshot with pagination, merged-only PRs and explici
   const calls = [];
   const status = await collectStatus({ plan, get: fakeGet(calls), merged: 5, extra: [363, 999], now: new Date('2026-09-23T00:00:00Z') });
   assert.ok(calls.some(c => c.endsWith('page=2')), 'issues are paginated');
+  assert.ok(!calls.some(c => c.includes('state=closed') && c.endsWith('page=3')), 'closed PR history is truncated, not exhausted');
   assert.ok(calls.every(c => !/[?&](method|_method)=/.test(c)), 'GET-only endpoints');
   assert.deepEqual(status.tasks.map(t => t.state), ['CLOSED', 'OPEN', 'CLOSED']);
   assert.equal(status.tasks[2].stateReason, 'not_planned');
   assert.deepEqual(status.extra.map(r => r.state), ['OPEN', 'MISSING']);
   assert.deepEqual(status.openPulls.map(p => p.number), [478, 514]);
-  assert.deepEqual(status.mergedPulls.map(p => p.number), [516, 479]);
+  assert.deepEqual(status.mergedPulls.map(p => p.number), [516, 479, 199, 198, 197], 'newest first, capped at --merged');
   assert.equal(status.productionDeployments[0].latestState, 'success');
 
   const md = renderStatusMarkdown(status);

@@ -7,15 +7,15 @@ Program: [VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187) · Source u
 
 目标：交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。
 
-阶段：2026-09-23 JT决定下一轮集中一条完整链路：常驻worker + 有依据的Ask + Trip确认，直到TestFlight真机可用，同时启动#246客户发现；暂停继续铺设新的S3–S5切片。本轮并行线程：T1 next安全升级（含生产版本只读核实），T2 CI治理与全量DB集成测试，T3常驻Ask worker（#195），T4签名Archive/TestFlight（待启动），T5 Web安全头与地图限流，T6交接同步与状态自动化，T7 #246客户发现执行包。阶段完成仍由实际验收判断。
+阶段：2026-09-23 JT决定的下一轮主线：常驻worker + 有依据的Ask + Trip确认，直到TestFlight真机可用，同时启动#246客户发现；暂停继续铺设新的S3–S5切片。本轮线程产出已合并（T1 #519、T2 #521、T3 #522、T4 #524、T5 #520、T6 #518、T7 #517、T8 #523），T9 iOS隐私清单/出口合规进行中。下一步主要被JT亲自执行的生产热修、共享数据库备份/迁移、签名材料与worker托管账号阻塞。阶段完成仍由实际验收判断。
 
 ## 源记录状态（执行前核对 GitHub）
 
-已只读核对 origin/main a90ce61（#516，2026-09-22T06:19Z）、76张VPJ任务、地图子票#362–#367与S4/S5子票#503–#508。#479已于2026-09-22合并（2ef0950），不再OPEN；ce46abd后另有#480–#516中27个PR合并（#482 IAP开发政策、#485翻译、#486归档、#490提醒、#494路线比较、#496 Trip删除、#497服务单、#498酒店出口、#499 Qwen端点、#502社区审核、#509/#515规划输入、#510 S4/S5切片、#512 SIM准备等），相关VPJ Issue均仍OPEN。开放PR为#478、#511、#514。VPJ状态61 OPEN/15 CLOSED，与9-22相同。生产实际版本未知、记录互相矛盾，待T1只读核实。完整表见 docs/program/2026-09-05/CURRENT-STATUS-2026-09-23.md；此后读回用 node scripts/program-status.mjs 或 Program Status workflow 生成。
+本轮最终同步：main a4c7f12（#520，2026-09-23T13:55Z）。本轮已合并#519 next 16.3.6（仅main）、#517 #246客户发现执行包、#518交接同步与状态读回脚本、#521 CI治理（自托管runner仅本仓库/手动；db-integration 5 lane 181用例0 skip）、#523函数EXECUTE收紧（anon仅research_intake_v1）、#522常驻text worker（代码与迁移，未激活）、#524签名Archive通路（未签名Archive首跑run 35870142999在main success）、#520 Web安全头与地点配额；T9 iOS隐私清单/出口合规PR进行中。开放PR #478/#511/#514。VPJ 61 OPEN/15 CLOSED，本轮无Issue关闭。生产=Vercel dpl_2WV2dky65LhMguX8QnFUhz6xPRKm（gitCommitSha a8fa82ad即#499，Next 16.2.6，CLI发布），尚未含next安全补丁。生产站与Staging共用Supabase项目dzqdzetcctkhbrhlxxgn。完整表见 docs/program/2026-09-05/CURRENT-STATUS-2026-09-23.md。
 
 ## 下一动作
 
-T1准备仅含next安全补丁的生产发布方案，经JT批准后才执行，并只读核实生产实际版本；T2完成CI治理（外部PR不进自托管runner、required check为deterministic-pr-gates）与全量DB集成测试；T3推进#195常驻Ask worker，接有依据Ask与Trip确认；T4待启动签名Archive/TestFlight（#237/#242）；T5 Web安全头与地图限流；T7 #246客户发现执行包（实际外联需单独授权）。开放PR #478/#511/#514保持原归属。其他线程合并后由交接线程再同步：生产实际版本、分支保护与runner触发实际状态、#195/#237进展。无新的生产发布已执行；各Issue完整验收仍按原条款。
+待JT亲自执行（开发线程不代办）：1) 生产热修部署——分支hotfix/next-16-3-6-20260923 = a8fa82ad + cherry-pick 303088d3（协调者本地提交30e98013，本地验证全绿，因权限尚未推送/部署），方案见artifacts/SEC-next-16-3-20260923/hotfix-plan.md；2) Staging（即生产站共用的dzqdzetcctkhbrhlxxgn）数据库备份，再应用#522/#523/#520迁移——#520代码上线生产前该库须先有其迁移；3) TestFlight签名材料与testflight Environment secrets（#237/#242）；4) worker托管账号与密钥（#195激活）；5) #246客户发现D0核对。开发侧：T9完成iOS隐私清单/出口合规PR；上述输入到位后依次激活#522 worker、有依据Ask与Trip确认、签名Archive→TestFlight。开放PR #478/#511/#514保持原归属。独立Production仍属#243。
 
 ## 开工入口
 
