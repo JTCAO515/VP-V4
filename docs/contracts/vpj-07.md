@@ -489,7 +489,13 @@ container, with Docker restart disabled. A host reboot erases `/run`; no
 new worker claims occur until keys are safely reinjected and an operator
 rechecks the SQL switch, owner scope/policy and queue. The SQL switch itself
 may still be enabled after an abrupt host loss, so disable it before any
-manual restart. The fsync journal remains on persistent private storage;
+manual restart. File mode also makes a bounded read-only
+`read_hosted_worker_status()` check requiring `enabled=false` before it
+creates a journal. Its **first actual SQL heartbeat** must still observe
+disabled; if the switch was already on or flips in that interval, it exits
+unavailable with no discovery, claim or provider call. Only a later explicit
+operator enable after that disabled heartbeat can arm work. The fsync
+journal remains on persistent private storage;
 tmpfs must not be substituted for it. This path is repository preparation,
 not actual ECS or supplier acceptance.
 The process refuses to start without `VISEPANDA_HOSTED_TEXT_WORKER=true`, with any

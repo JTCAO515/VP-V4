@@ -10,10 +10,21 @@ if(process.argv.length!==3||typeof image!=='string'||!/^vp-hosted-text-worker:[A
 const name='vp-hosted-file-proof-'+randomUUID().slice(0,8),dir=mkdtempSync(join(tmpdir(),'vp-hosted-file-proof-'));
 const db='sb_secret_SYNTHETIC_FILE_DB_'+randomUUID(),qwen='SYNTHETIC_FILE_QWEN_'+randomUUID();
 const mapper=join(dir,'mapper.mjs');
-writeFileSync(mapper,`globalThis.fetch=async(url,options)=>{
- if(url==='https://dzqdzetcctkhbrhlxxgn.supabase.co/rest/v1/rpc/hosted_worker_heartbeat'
-  && options.headers.apikey.startsWith('sb_secret_') && !Object.hasOwn(options.headers,'authorization'))
-  return Response.json({kind:'ok',enabled:false});
+writeFileSync(mapper,`import {existsSync} from 'node:fs';
+globalThis.fetch=async(url,options)=>{
+ if(!options.headers.apikey.startsWith('sb_secret_')||Object.hasOwn(options.headers,'authorization'))
+  throw Error('wrong auth');
+ if(url==='https://dzqdzetcctkhbrhlxxgn.supabase.co/rest/v1/rpc/read_hosted_worker_status'){
+  const enabled=existsSync('/run/vp-worker-secrets/force-enabled');
+  console.log('SYNTHETIC_STATUS_READ_'+enabled);
+  return Response.json({kind:'status',enabled});
+ }
+ if(url==='https://dzqdzetcctkhbrhlxxgn.supabase.co/rest/v1/rpc/hosted_worker_heartbeat'){
+  const enabled=existsSync('/run/vp-worker-secrets/force-race');
+  if(enabled)console.log('SYNTHETIC_HEARTBEAT_TRUE');
+  return Response.json({kind:'ok',enabled});
+ }
+ console.log('SYNTHETIC_UNEXPECTED_FETCH');
  throw Error('unexpected network');
 };`);
 const profile={schemaVersion:'vpj07-hosted-text-worker/1',pollIntervalMs:1000,maxLifetimeMs:60000,drainMs:1000,concurrency:1,groupLimit:1,
@@ -83,9 +94,45 @@ try{
   await wait(100);
  }
  if(!symlinkRejected||logs().includes(db)||logs().includes(qwen))throw Error('symlink secret did not fail closed');
+ run(['start',name]);
+ run(['exec','-i','--user','1000:1000',name,'sh','-c',
+  'umask 077; IFS= read -r db; IFS= read -r qwen; printf %s "$db" > /run/vp-worker-secrets/db.key; printf %s "$qwen" > /run/vp-worker-secrets/qwen.key; chmod 0400 /run/vp-worker-secrets/*.key; touch /run/vp-worker-secrets/force-enabled /run/vp-worker-secrets/ready'],db+'\n'+qwen+'\n');
+ let enabledRejected=false;
+ for(let i=0;i<80;i++){
+  if(run(['inspect','--format','{{.State.Status}}:{{.State.ExitCode}}',name])==='exited:1'){enabledRejected=true;break;}
+  await wait(100);
+ }
+ const finalLogs=logs();
+ if(!enabledRejected||!finalLogs.includes('SYNTHETIC_STATUS_READ_true')
+  ||finalLogs.includes('SYNTHETIC_UNEXPECTED_FETCH')
+  ||(finalLogs.match(/"phase":"started"/g)??[]).length!==1
+  ||finalLogs.includes(db)||finalLogs.includes(qwen))throw Error('enabled SQL switch was not rejected before discovery');
+ run(['cp',`${name}:/var/lib/vp-worker/journal`,join(dir,'final-journal')]);
+ if(readdirSync(join(dir,'final-journal')).length!==1)throw Error('enabled startup wrote a journal');
+ run(['start',name]);
+ run(['exec','-i','--user','1000:1000',name,'sh','-c',
+  'umask 077; IFS= read -r db; IFS= read -r qwen; printf %s "$db" > /run/vp-worker-secrets/db.key; printf %s "$qwen" > /run/vp-worker-secrets/qwen.key; chmod 0400 /run/vp-worker-secrets/*.key; touch /run/vp-worker-secrets/force-race /run/vp-worker-secrets/ready'],db+'\n'+qwen+'\n');
+ let raceRejected=false;
+ for(let i=0;i<80;i++){
+  if(run(['inspect','--format','{{.State.Status}}:{{.State.ExitCode}}',name])==='exited:1'){raceRejected=true;break;}
+  await wait(100);
+ }
+ const raceLogs=logs();
+ if(!raceRejected||!raceLogs.includes('SYNTHETIC_HEARTBEAT_TRUE')
+  ||raceLogs.includes('SYNTHETIC_UNEXPECTED_FETCH')||raceLogs.includes(db)||raceLogs.includes(qwen))
+  throw Error('enabled first heartbeat reached discovery');
+ run(['cp',`${name}:/var/lib/vp-worker/journal`,join(dir,'race-journal')]);
+ const raceFiles=readdirSync(join(dir,'race-journal'));
+ if(raceFiles.length!==2)throw Error('race startup journal count invalid');
+ const raceFile=raceFiles.find(file=>file!==files[0]);
+ if(!raceFile)throw Error('race journal missing');
+ const raceJournal=readFileSync(join(dir,'race-journal',raceFile),'utf8');
+ if(raceJournal.includes('vpj07-hosted-job/1')||raceJournal.includes('provider-destination/1')
+  ||raceJournal.includes('vpj07-usage-journal/1'))throw Error('race startup claimed or invoked provider');
  console.log(JSON.stringify({schemaVersion:'vpj07-hosted-file-secret-proof/1',fileModeStarted:true,
   dockerEnvClean:true,journalClean:true,logsClean:true,restartWithoutFilesBlocked:true,
-  badPermissionsFailClosed:true,symlinkFailClosed:true,network:'none'}));
+  badPermissionsFailClosed:true,symlinkFailClosed:true,enabledSwitchFailClosed:true,
+  firstHeartbeatRaceFailClosed:true,network:'none'}));
 }finally{
  spawnSync('docker',['rm','-fv',name],{encoding:'utf8',timeout:30000,stdio:'ignore'});
  rmSync(dir,{recursive:true,force:true});

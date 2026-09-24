@@ -278,6 +278,10 @@ metadata; `start <merged-SHA>` is allowed only with no existing worker,
 candidate or previous container. The script sets `--restart no` and mounts
 the tmpfs directory read-only; check `docker inspect` for **absence of key
 names/values in Config.Env** without printing full configuration. After
+start, file mode itself requires both the read-only status RPC and its
+first heartbeat to observe disabled before any discovery. A true switch
+at either point produces a generic failure with zero claim/provider call;
+only an explicit later enable may start polling. After
 reboot `/run` keys vanish; do not auto-start or reuse a stopped container.
 Recheck/disable the SQL switch before any reinjection. For rollback disable
 SQL first, `ecs-worker-files.sh stop`, retain the persistent journal and

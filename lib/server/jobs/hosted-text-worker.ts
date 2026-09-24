@@ -114,7 +114,7 @@ export type HostedLoopDependencies = Readonly<{
   now?: () => number;
   wait?: (milliseconds: number, signal: AbortSignal) => Promise<void>;
 }>;
-export type HostedLoopSettings = Readonly<{ pollIntervalMs: number; maxLifetimeMs: number; drainMs: number; concurrency: number; maxConsecutiveFailures?: number; pollDeadlineMs?: number }>;
+export type HostedLoopSettings = Readonly<{ pollIntervalMs: number; maxLifetimeMs: number; drainMs: number; concurrency: number; maxConsecutiveFailures?: number; pollDeadlineMs?: number; requireInitialDisabled?: boolean }>;
 export type HostedLoopResult = Readonly<{ reason: StopReason; polls: number; finished: number; unavailable: number; skipped: number }>;
 
 /**
@@ -159,6 +159,12 @@ export async function runHostedTextLoop(settings: HostedLoopSettings, dependenci
       cycle++;
       const heartbeat = await beat();
       if (soft.signal.aborted) break;
+      // File-secret startup is armed only after its first real SQL heartbeat
+      // confirms disabled. This closes the gap after the read-only precheck.
+      if (settings.requireInitialDisabled && cycle === 1 && heartbeat?.enabled !== false) {
+        stop("unavailable");
+        break;
+      }
       if (!heartbeat) { await fail("heartbeat-unavailable"); continue; }
       if (!heartbeat.enabled) {
         failures = 0; phase = "disabled"; lastResult = "disabled";
@@ -252,6 +258,8 @@ export type HostedWorkerDependencies = Readonly<{
   qwenEndpoint: string;
   workerCredential: StagingTextJobDependencies["workerCredential"];
   providerCredential: StagingTextJobDependencies["providerCredential"];
+  /** File-secret process only: no discovery until first SQL heartbeat is disabled. */
+  requireInitialDisabled?: boolean;
   journal: HostedJournal;
   /** Content-free liveness observer for an optional local health endpoint. */
   onHeartbeat?: (ok: boolean, enabled: boolean | null) => void;
@@ -283,7 +291,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
     if (text.length > 262144) throw unavailable();
     return JSON.parse(text) as unknown;
   };
-  return (signal: AbortSignal) => runHostedTextLoop(profile, {
+  return (signal: AbortSignal) => runHostedTextLoop({ ...profile, requireInitialDisabled: dependencies.requireInitialDisabled === true }, {
     heartbeat: async (state, stop) => {
       const value = await rpc("hosted_worker_heartbeat", {
         p_worker_id: dependencies.workerId, p_build: dependencies.build, p_started_at: dependencies.startedAt,
