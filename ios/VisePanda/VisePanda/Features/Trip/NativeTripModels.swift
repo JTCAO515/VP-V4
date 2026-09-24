@@ -197,6 +197,16 @@ struct NativeRelativeOutline: Equatable {
     var hasAlternatives: Bool { includesFood && includesWalking }
     var initialTitles: [String] { includesFood ? foodFirst : walkFirst }
 
+    /// Only the user's original request crosses from a current, completed Ask
+    /// read. Reviewed answer text and place claims never become Trip items.
+    static func planningRequest(from turn: NativeTextTurn, evidenceCurrent: Bool, chinese: Bool) -> String? {
+        guard evidenceCurrent, turn.valid, ["completed", "unavailable"].contains(turn.status),
+              let result = turn.result, result.completedAt != nil,
+              result.projection == "current",
+              make(from: turn.input, chinese: chinese) != nil else { return nil }
+        return turn.input
+    }
+
     static func make(from request: String, chinese: Bool) -> Self? {
         guard request.utf16.count <= 4000 else { return nil }
         let cities = [("上海", "Shanghai"), ("北京", "Beijing"), ("广州", "Guangzhou"), ("重庆", "Chongqing")]
