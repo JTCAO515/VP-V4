@@ -150,3 +150,19 @@ test('CLI serves disabled heartbeat, exposes content-free health and drains on S
  const phases=r.journal.trim().split('\n').map(line=>JSON.parse(line).phase);
  assert.equal(phases[0],'started');assert.equal(phases.at(-1),'returned');assert.ok(phases.includes('disabled'));
 });
+
+test('hosted discovery accepts a dedicated Supabase secret key without a Bearer header',async t=>{
+ const key='sb_secret_synthetic_hosted_only',port=String(40000+Math.floor(Math.random()*20000));
+ const mapper=`globalThis.fetch=async(url,options)=>{
+  if(options.headers.apikey!==${JSON.stringify(key)}||Object.hasOwn(options.headers,'authorization'))throw Error('wrong headers');
+  if(url==='https://dzqdzetcctkhbrhlxxgn.supabase.co/rest/v1/rpc/hosted_worker_heartbeat')return Response.json({kind:'ok',enabled:false});
+  throw Error('unexpected route');};`;
+ const r=await cli(t,{mapper,env:{VISEPANDA_HOSTED_WORKER_DB_KEY:key,VISEPANDA_HOSTED_WORKER_HEALTH_PORT:port},wait:async child=>{
+  for(let i=0;i<100;i++){
+   try{const response=await fetch('http://127.0.0.1:'+port+'/healthz');if((await response.json()).status==='disabled')break;}catch{}
+   await new Promise(resolve=>setTimeout(resolve,50));
+  }
+  child.kill('SIGTERM');
+ }});
+ assert.equal(r.code,0,r.stderr);assert.ok(!r.stdout.includes(key));assert.ok(!r.journal.includes(key));
+});

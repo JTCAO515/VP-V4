@@ -471,6 +471,12 @@ Profile `vpj07-hosted-text-worker/1` is a closed, non-secret JSON environment va
 qualified by the existing job validator. Secrets come only from
 `VISEPANDA_HOSTED_WORKER_DB_KEY` and `VISEPANDA_HOSTED_WORKER_QWEN_KEY`, are removed
 from `process.env` after reading, and never reach stdout, stderr or the journal.
+The worker sends a dedicated Supabase `sb_secret_` key only in `apikey`; the legacy
+service-role JWT retains its existing `apikey` plus Bearer headers ([Supabase key migration](https://supabase.com/docs/guides/getting-started/migrating-to-new-api-keys)). A publishable
+key fails before RPC I/O. Both secret forms run with project-wide `service_role`
+authority and bypass RLS; a dedicated key limits credential reuse and permits
+independent revocation, not database permissions. Actual Staging authorization
+must be verified before activation.
 The process refuses to start without `VISEPANDA_HOSTED_TEXT_WORKER=true`, with any
 `VERCEL_ENV`, with equal/missing keys, an invalid profile/endpoint/build label, or a
 journal directory that is not absolute and free of group/other write permission.

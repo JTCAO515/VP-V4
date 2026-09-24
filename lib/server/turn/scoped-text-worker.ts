@@ -2,6 +2,7 @@ import { nativeRequestScope } from "../identity/native-request.ts";
 import { isLocalNativeTarget } from "../identity/native-config.ts";
 import { runTextWorker, type TextProviderBinding, type TextWorkerConfig } from "./text-worker.ts";
 import { PROTOCOL_MODELS, validThinkingBudget } from "../model-gateway/adapters/provider-protocol.ts";
+import { supabaseWorkerHeaders } from "../jobs/supabase-worker-headers.ts";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const RPCS = new Set(["claim_text_task_work", "authorize_text_task_dispatch", "claim_text_work", "finish_turn_work", "read_text_work", "authorize_text_dispatch", "complete_text_work",
@@ -54,7 +55,7 @@ export function createScopedTextWorker(config: ScopedTextWorkerConfig, dependenc
         const secret = await scope.run(() => Promise.resolve(credential(scope.signal)));
         if (typeof secret !== "string" || !/^[\x21-\x7e]{1,8192}$/.test(secret)) throw unavailable();
         const response = await scope.run(() => fetcher(binding.databaseUrl + "/rest/v1/rpc/" + name, {
-          method: "POST", headers: { "content-type": "application/json", apikey: secret, authorization: "Bearer " + secret },
+          method: "POST", headers: supabaseWorkerHeaders(secret),
           body: JSON.stringify(parameters), redirect: "manual", credentials: "omit", cache: "no-store", signal: scope.signal,
         }).then(value => {
           if (scope.signal.aborted) { try { void value.body?.cancel().catch(() => {}); } catch { /* late body */ } }

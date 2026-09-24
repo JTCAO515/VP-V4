@@ -10,17 +10,27 @@ const config=()=>({environment:'staging',databaseUrl:'https://dzqdzetcctkhbrhlxx
 const lease={kind:'leased',ownerId,turnId,leaseToken,attempt:1,leaseMs:120000};
 const input={kind:'input',text:'Synthetic input',provider:'qwen',endpoint:'https://synthetic.invalid/inference',locale:'en',policyId};
 const output=()=>Response.json({model:PROTOCOL_MODELS.qwen,choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify({outcome:'answered',text:'Synthetic answer'})}}],usage:{prompt_tokens:10,completion_tokens:10,total_tokens:20}});
-function fixture(){
+function fixture(key='synthetic-worker-credential'){
  const calls=[],sent=[];
- const deps={credential:()=> 'synthetic-worker-credential',provider:{provider:'qwen',endpoint:input.endpoint,price:()=>20,transport:async request=>{sent.push(request);return output();}},fetch:async(url,options)=>{
+ const deps={credential:()=> key,provider:{provider:'qwen',endpoint:input.endpoint,price:()=>20,transport:async request=>{sent.push(request);return output();}},fetch:async(url,options)=>{
   assert.equal(new URL(url).origin,config().databaseUrl);assert.equal(options.redirect,'manual');assert.equal(options.credentials,'omit');
-  assert.equal(options.headers.authorization,'Bearer synthetic-worker-credential');assert.equal(options.headers.apikey,'synthetic-worker-credential');
+  assert.equal(options.headers.authorization,key.startsWith('sb_secret_')?undefined:'Bearer '+key);assert.equal(options.headers.apikey,key);
   const name=new URL(url).pathname.split('/').at(-1),params=JSON.parse(options.body);calls.push({name,params});
   const result={claim_text_work:lease,read_text_work:input,reserve_model_budget:{kind:'reserved'},dispatch_model_budget:{kind:'dispatched'},authorize_text_dispatch:{kind:'authorized'},finish_model_budget:{kind:'settled',overrun:false},complete_text_work:{kind:'finished'},finish_turn_work:{kind:'finished'}}[name];
   assert.ok(result,'no unknown RPC');return Response.json(result);
  }};
  return {deps,calls,sent};
 }
+test('dedicated Supabase secret key stays in apikey only across claim, budget and completion',async()=>{
+ const f=fixture('sb_secret_synthetic_worker_only');
+ assert.equal(await createScopedTextWorker(config(),f.deps)(new AbortController().signal),'finished');
+ assert.ok(f.calls.some(c=>c.name==='reserve_model_budget'));
+ assert.ok(f.calls.some(c=>c.name==='finish_model_budget'));
+ assert.equal(f.sent.length,1);
+ const denied=fixture('sb_publishable_synthetic');
+ assert.equal(await createScopedTextWorker(config(),denied.deps)(new AbortController().signal),'unavailable');
+ assert.equal(denied.calls.length,0);
+});
 test('scoped worker binds claim, policy and budget; snapshots operator configuration',async()=>{
  const f=fixture(),c=config(),worker=createScopedTextWorker(c,f.deps);c.ownerId=otherId;c.policyId=otherId;c.budget.scopeId=otherId;
  assert.equal(await worker(new AbortController().signal),'finished');
