@@ -174,8 +174,9 @@ synthetic fixture alone do not constitute #195 acceptance.
 **A1 — encrypted system disk (preferred durable path).** Alibaba says an
 existing unencrypted disk cannot be encrypted in place. First record the
 completed file backup, then create and verify a **manual system-disk
-snapshot** as a separate boot-level rollback source; the current file-level
-version alone is not a bootable system image. Create a custom image of this
+snapshot** as evidence and a source for restoring the original disk's
+files; neither it nor the current file-level backup is a one-click bootable
+rollback after system-disk replacement. Create a custom image of this
 instance, make an encrypted copy with the ECS service key, and replace this
 same instance's system disk from that encrypted image during an approved
 ordinary-stop window. The old system disk is released and its bytes cannot
@@ -183,8 +184,13 @@ be recovered without a prepared snapshot. Alibaba estimates about ten
 minutes for OS replacement and states same-instance IP remains unchanged,
 but verify disk encryption, boot, SSH/Workbench, Docker, image, journal and
 actual egress IP on the new system before any key. Keep the old snapshot/image
-until rollback/readback is accepted; reverting by creating another disk or
-image is a new reviewed action, not in-place decryption. The managed ECS
+until rollback/readback is accepted. If replacement fails, stay SQL-disabled:
+the original system-disk snapshot cannot directly roll back the new system
+disk. Alibaba's documented recovery creates a **new pay-as-you-go data disk**
+from that snapshot, attaches it and copies the needed files; restoring an old
+boot environment would require a separately reviewed image/system-disk
+replacement or new instance. These are additional outage, storage and cost
+actions, not in-place decryption. The managed ECS
 service key gives basic disk encryption without an additional encryption
 feature/key usage fee; a customer-managed KMS key may require
 `AliyunECSDiskEncryptDefaultRole` and paid KMS capacity. Snapshot, custom
