@@ -23,6 +23,8 @@ test('unscoped model proposal is omitted with a review gap while valid proposals
  assert.ok(normalized);assert.equal(normalized.proposals.length,1);assert.deepEqual(normalized.proposals[0],raw.proposals[0]);
  assert.match(normalized.gaps[0],/city scope is unsupported/);
  assert.equal(isStructuredWikiDraft(resolveProposalOutput(normalized,[source])),true);
+ const chinese=omitUnscopedProposals({...raw,summary:'来源未说明城市。',proposals:[unscoped]});
+ assert.deepEqual(chinese.proposals,[]);assert.match(chinese.gaps[0],/城市范围/);
  assert.equal(omitUnscopedProposals({...raw,gaps:Array(5).fill('Existing gap'),proposals:[unscoped]}),null);
  assert.equal(omitUnscopedProposals({...raw,proposals:[{...unscoped,evidence:[{sourceRevisionId:'forged',quote:'x'}]}]}),null);
  assert.equal(omitUnscopedProposals({...raw,proposals:[{...unscoped,reviewerId:id}]}),null);

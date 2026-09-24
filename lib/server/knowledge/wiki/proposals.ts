@@ -42,7 +42,10 @@ export function omitUnscopedProposals(v:unknown):ProposalOutput|null {
     omitted++;
   }
   if(omitted===0||v.gaps.length===5)return null;
-  const normalized={summary:v.summary,gaps:[...v.gaps,`${omitted} statement proposal(s) omitted: city scope is unsupported by the supplied source; reviewer must verify the source before drafting a city-scoped claim.`],proposals:retained};
+  const gap=/[\u3400-\u9fff]/u.test(v.summary as string)
+    ? `${omitted} 条声明候选因来源未支持城市范围而省略；请先核对原文，再拟定有城市范围的声明。`
+    : `${omitted} statement proposal(s) omitted: city scope is unsupported by the supplied source; reviewer must verify the source before drafting a city-scoped claim.`;
+  const normalized={summary:v.summary,gaps:[...v.gaps,gap],proposals:retained};
   return isProposalOutput(normalized)?normalized:null;
 }
 /** Exact quotations only. Offsets count Unicode code points in the stored snippet,
