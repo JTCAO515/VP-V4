@@ -1,0 +1,9 @@
+{"command":"node --experimental-strip-types --test --test-concurrency=1 tests/contract/memory/travel-pace.test.ts","result":"PASS","passed":2,"failed":0}
+{"command":"node --experimental-strip-types --test --test-concurrency=1 tests/contract/memory/*.test.ts tests/contract/context/*.test.ts","result":"PASS","passed":20,"failed":0}
+{"command":"node scripts/lint.mjs","result":"PASS","files":357}
+{"command":"git diff --check","result":"PASS"}
+{"command":"plutil -lint ios/VisePanda/VisePanda.xcodeproj/project.pbxproj","result":"PASS"}
+{"command":"xcrun swiftc -frontend -parse ios/VisePanda/VisePanda/Features/Profile/NativeTravelPace.swift ios/VisePanda/VisePanda/Features/Profile/NativeTravelPaceView.swift ios/VisePanda/VisePandaTests/NativeTravelPaceTests.swift","result":"PASS","scope":"syntax only"}
+{"command":"node scripts/docs-check.mjs","result":"PASS"}
+{"command":"node node_modules/typescript/bin/tsc --noEmit --strict --target es2022 --module esnext --moduleResolution bundler --allowImportingTsExtensions --skipLibCheck lib/server/memory/travel-pace.ts lib/server/memory/native-http.ts tests/contract/memory/travel-pace.test.ts","result":"UNRUN","note":"No output after three minutes through shared dependency tree; own compiler stopped, Linux CI remains required."}
+{"command":"node --test --test-concurrency=1 tests/integration/memory/travel-pace.test.mjs","result":"UNRUN","skipped":4,"note":"Initial four-case suite; explicit local database flag absent, resource restriction. Fifth rollback case added afterward; execute all in Linux CI."}

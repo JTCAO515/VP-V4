@@ -77,6 +77,12 @@ struct ProfileView: View {
                 }.disabled(settings.nativeSession.busy)
             }
 
+            if settings.nativeSession.dataScope != nil {
+                Section(chinese ? "基础偏好" : "Basic preferences") {
+                    NavigationLink(chinese ? "已保存旅行节奏" : "Saved travel pace") { NativeTravelPaceView() }
+                }
+            }
+
             if settings.nativeSession.subject != nil {
                 Section {
                     NavigationLink(chinese ? "旅途支持请求" : "Travel support requests") {

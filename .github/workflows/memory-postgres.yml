@@ -1,0 +1,27 @@
+name: Memory PostgreSQL
+on:
+  pull_request:
+    paths:
+      - 'lib/server/memory/**'
+      - 'supabase/migrations/**'
+      - 'tests/**/memory/**'
+      - '.github/workflows/memory-postgres.yml'
+permissions:
+  contents: read
+concurrency:
+  group: memory-postgres-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  travel-pace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: docker pull public.ecr.aws/supabase/postgres:17.6.1.159
+      - name: Isolated consent, CAS, withdrawal and retry SQL
+        env:
+          VP_MEMORY_DB_TEST: '1'
+        run: node --test --test-concurrency=1 tests/integration/memory/travel-pace.test.mjs

@@ -1,6 +1,6 @@
 # 基础明确偏好跨 Trip
 
-**状态：**Q36 产品方向已接受；本文为实现与验收规划契约，字段及消费者变更尚未实施。
+**状态：**Q36 产品方向已接受；Profile 旅行节奏的版本化保存/撤回、原生管理及任务资格 API 已有仓库实现，见下方最小切片。数据库应用、实际规划消费者接线和用户验收仍须分别验证，其余字段保持规划状态。
 **Owner：**VPJ-11 #199；协作 #190（数据政策）、#195（真实 Ask）、#206（有依据回答）。
 **依据：**[品牌蒸馏 Q36](https://github.com/JTCAO515/VP-V4/blob/8ae95a7/docs/brand/VISEPANDA-BRAND-DISTILLATION-Q1-Q38-2026-09-10.md#q36--免费用户的基础长期偏好能否跨规划使用)、[代码与研究证据](../research/brand-engineering-2026-09-10/memory-evidence.md)。
 
@@ -29,6 +29,49 @@ Free 与 Journey Pass 均可保存、查看、纠正、暂停、撤回及使用�
 | 相关性 | 服务端按当前任务决定使用资格；无需持久保存笼统人格评分或模型置信画像 |
 
 当前管理 API 可返回暂停、撤回或其他不可供模型使用的记录，以支持用户控制；其结果不得整体作为模型输入。Profile 的管理展示默认值也不能自动视为用户明确表达的偏好。
+
+## 旅行节奏最小切片（VPJ-11，2026-09-22）
+
+`user_profiles.travel_pace` 继续是唯一权威。追加迁移
+`20260922033000_vpj_11_travel_pace_control.sql` 添加字段级 `pace_revision`、
+`pace_state`、`pace_notice` 及最近操作/撤销前值；不新增 Preference 表，不复制到 Memory。
+旧记录和默认 `balanced` 的状态均为 `unset`。旧 Web 保存若改变节奏，触发器递增版本并
+清除同意、操作和撤销前值；修改其他 Profile 字段不改变节奏资格。
+
+- 明确 notice `local-planning-cross-trip-v1` 仅允许本账号跨 Trip 的本机规划；不允许模型接收方或其他用途。
+  用户提交 `save` 才建立 `explicit` 资格；Free/Pass 使用相同路径。`pause` 保留值但不入选；
+  `revoke` 清除资格、旧操作内容及撤销前值，把底层必填节奏还原为未授权默认值。
+- 管理端 `GET/POST /api/memory/native/v1/travel-pace` 使用 `travel-pace/1`，
+  `save/pause/revoke/undo` 绑定 `operationId + expectedRevision`。错误区分冲突、操作 ID 重用、身份失效和暂不可用。
+  新接口只接受有效 native bearer；SQL 在每次读取、重试和写入重新检查并锁定 mobile session，然后锁定 Profile。
+- 最近操作的完全相同请求可幂等重试；改变其载荷报 `PACE_OPERATION_REUSE`。
+  更早请求携带原版本重放报 `PACE_CONFLICT`，不重新执行。这里没有永久 operation-ID 历史表：
+  不承诺“改写 expectedRevision 后重用旧 UUID”仍被识别为同一请求；客户端不会这样改写重试。
+- `undo` 只撤销最后一次成功的 `save` 及其准确 revision，恢复该次保存前的值/状态，同步递增版本。
+  后续保存、暂停、撤回或旧客户端修改使旧 Undo 失效；撤回本身不提供复活授权的 Undo。
+  四秒是 UI 隐藏时间，SQL 撤销资格按版本失效，并非声称服务器在四秒后删除所有来源记录。
+- 原生 `Saved to memory / 已加入记忆` 仅在对应写入成功后出现，唯一按钮为 Undo，四秒收起；
+  按钮键盘/辅助功能聚焦或操作中延后收起。读取、重连和同一操作重放不重复提示，Undo 不产生保存提示。
+  网络失败保留原操作用于重试，冲突要求刷新；账号/epoch/generation 改变清除状态并丢弃迟到响应。
+
+任务消费者必须调用 **单独的** `POST /api/memory/native/v1/travel-pace/project`，输入
+`{tripId, currentPace: relaxed|balanced|packed|null, useSaved: boolean, expectedSourceRevision?: number}`。
+SQL 核验真实 Trip owner，仅返回 `task-travel-pace/1` 的
+`tripId/travelPace/source/sourceRevision/sourceOperationId/purpose`；当前明确输入优先，
+`useSaved=false` 仅本次不用；无资格时 `source=none`，偏好和来源版本均为 null。每次队列尝试/重试
+重新读取，不缓存旧管理快照；提供 `expectedSourceRevision` 可在后续使用前拒绝失效来源。
+此返回值是**资格读取**，不是模型使用、持久消费收据或 Trip 修改证明。
+
+当前 main 的 `NativeRelativeOutline.make(from:chinese:)` 尚无节奏消费者。#197 所属
+`NativeTripView/NativeRelativeOutline` 在途文件保持归属；合同合并后续接线须证明：
+明确本次选项覆盖默认，`relaxed` 隔日单主题/自由日，`balanced` 每天单主题，
+`packed` 每天两个待核主题。均不编造地点、时刻、距离或预算可行性；仍经可编辑草稿、
+Proposal 可见 diff 和准确版本确认。该可观察映射、保存后跨两 Trip 实际使用、失效提案/迟到结果
+与实际建议使用依据均仍属 #199 剩余验收，不能以此管理界面或资格 API 替代。
+
+本迁移未在共享 Staging 或生产应用。回退使用代码 revert 并在获准环境撤销新 RPC 的执行权限，
+保留字段和当前撤回状态；不回填旧同意、不倒退 revision、不修改已应用迁移。隔离 SQL 测试沿完整迁移历史
+启动网络隔离的临时 PostgreSQL；这是 SQL 身份夹具证据，不是 GoTrue/JWT 或真实用户同意验收。
 
 ## 保存、冲突与任务投影
 

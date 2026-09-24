@@ -203,6 +203,10 @@ final class NativeSession {
         return data
     }
 
+    func memoryRequest(path: String = "api/memory/native/v1/travel-pace", method: String, body: Data? = nil) async throws -> Data {
+        try await dataRequest(prefix: "api/memory/native/v1/travel-pace", path: path, method: method, body: body)
+    }
+
     /// Translation always uses the current-input lane, independently of Ask mode.
     func translateRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
         let data = try await dataRequest(prefix: "api/translate", path: path, method: method, body: body)
