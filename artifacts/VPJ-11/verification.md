@@ -61,3 +61,8 @@ the migration's explicit grants remain the authority. No applied migration was r
   `node_modules`; it is not counted as a passing full contract suite. Final-head CI remains required.
 - UNRUN: native SDK build/tests and target-environment user behavior at this integration point;
   the older Native CI failure's job log is unavailable and does not identify a code defect.
+
+First integration head `9673de75` exposed a current-main DB Integration registry gate: the new gated
+`travel-pace.test.mjs` was not classified, so all five lanes failed their preflight before running
+database assertions. This is a CI configuration failure, not a passed database lane. Registered the
+test in the network-isolated PostgreSQL lane with `VP_MEMORY_DB_TEST=1`; the next head must rerun CI.
