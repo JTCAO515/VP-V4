@@ -63,8 +63,8 @@ Vercel Staging（**已有**，本 PR 不改）：`VISEPANDA_NATIVE_STAGING=true`
 ## 3. 部署与替换（实际远端动作待授权）
 
 1. ECS 已使用 Ubuntu apt 仓库的 `docker.io` 安装 Docker Server 29.1.3。执行前再核对
-   `docker version`、daemon、`uname -m` 和剩余磁盘；无需重新安装 Docker。ECS 保持只允许已有
-   SSH 入口，worker 不增开端口。已有无凭据 HTTPS 401/400 仅作网络连通证据。
+   `docker version`、daemon、`uname -m` 和剩余磁盘；无需重新安装 Docker。Worker 不新增入站规则
+   或端口；现有安全组另行审查。已有无凭据 HTTPS 401/400 仅作网络连通证据。
 2. 在 ECS 本地以 root 安全写入 `/etc/visepanda/hosted-text-worker.env`，设置 0600；每个变量占一行
    `NAME=value`，其中 profile JSON 单行。该文件不随镜像、Git 或 journal 传输。先以已核准的
    `current_input_v1` 与保守并发/预算启动。由管理员离线保存该文件的受控备份，轮换密钥时替换该文件
