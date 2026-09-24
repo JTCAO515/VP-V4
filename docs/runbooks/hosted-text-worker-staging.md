@@ -16,7 +16,7 @@
 
 | 形态 | 取件延迟 | 取消/崩溃恢复 | 与现有 lease/预算语义 | 未知费用追溯 | 网络 | 结论 |
 | --- | --- | --- | --- | --- | --- | --- |
-| **香港 ECS 单容器（JT 已选）** | 轮询 1–5 s；有进展时立即下一轮 | SIGTERM 排空；异常退出由容器重启，未完成 lease 到期后接管 | 复用现有 SQL 发现、预算与围栏 | 宿主私有目录绑定挂载，fsync 元数据 journal；按组对账工具仍待适配 | 香港到 Staging Supabase 和北京 DashScope 的实际连通与延迟待测 | 采用 |
+| **香港 ECS 单容器（JT 已选）** | 轮询 1–5 s；有进展时立即下一轮 | SIGTERM 排空；异常退出由容器重启，未完成 lease 到期后接管 | 复用现有 SQL 发现、预算与围栏 | 宿主私有目录绑定挂载，fsync 元数据 journal；离线按组收据审计可用，账本对账仍需授权 | 香港到 Staging Supabase 和北京 DashScope 的实际连通与延迟待测 | 采用 |
 | Vercel Cron 有界批处理 | Cron 最小 1 分钟，用户最坏等 60 s | 函数时限到期即被杀；在途 dispatch 变为 pending（#491 同类时长问题） | 需放开 scoped worker 对 `VERCEL_ENV` 的拒绝，改变既有安全前提 | 无持久文件系统，usage receipt 无处 fsync | Vercel 区域不可控 | 不采用 |
 | Supabase pg_cron + Edge Function | 同为分钟级（或需 pg_net 触发） | Edge 墙钟上限，Deno 运行时 | 需把 Node 代码（fs journal、node:crypto、type stripping 导入）移植到 Deno | 同上，无持久 journal | provider 密钥进入数据库项目，出口区域不可控 | 不采用 |
 
@@ -124,11 +124,36 @@ Vercel Staging（**已有**，本 PR 不改）：`VISEPANDA_NATIVE_STAGING=true`
    若替换后无法启动，保持 SQL disabled 并查容器状态，不要用有缺陷的镜像反复启动。
 3. 未知费用保持 pending，按完整预留计入 scope 上限（保守、不会少算）。journal 已保存对账所需的全部元数据：
    `vpj07-hosted-job/1` 行是该组的精确 job 配置，`jobDigest = sha256(JSON.stringify(job))`；
-   `vpj07-usage-journal/1` 的 `configurationDigest` 指向它。**现有 `reconcile-staging-text-usage.mjs`
-   只接受单一配置文件 + 其 run 日志，尚不能直接读取常驻 journal**；按组对账的适配是后续项（见 PR 未完成清单）。
-   不手工 release 未知费用，也不改写 journal 去迎合旧工具。
+   `vpj07-usage-journal/1` 的 `configurationDigest` 指向它。现有 `reconcile-staging-text-usage.mjs`
+   仍只接受单一配置文件 + 其 run 日志，不能直接读取常驻 journal。离线审计只核对 journal 内组别、
+   价目、attempt 与收据，不读共享账本，不能判定 pending/settled，也不做结算或 release。
+   不改写 journal 去迎合旧工具。
 4. 迁移为只追加：保留表和 RPC（停用状态下无行为）；需要时由新迁移移除，不改历史迁移。
 5. 之前的一次性/有界 CLI（`run-staging-text-worker.mjs`、`run-staging-text-service.mjs`）保持可用作回退。
+
+### 离线按组收据审计（不改数据库）
+
+在 ECS 私有目录准备 uid/gid 1000、0700 的 `/var/lib/vp-worker/audit`；从 journal 目录选定一份
+完整进程文件，先记录其文件名和 SHA-256。镜像已含审计 CLI，运行时不传 env 文件、不开放网络、
+以只读方式挂载 journal，报告目录单独绑定并创建 0600 新文件：
+
+```bash
+install -d -o 1000 -g 1000 -m 0700 /var/lib/vp-worker/audit
+docker run --rm --network none --read-only --cap-drop ALL --user 1000:1000 \
+  --entrypoint node \
+  --mount type=bind,src=/var/lib/vp-worker/journal,dst=/journal,readonly \
+  --mount type=bind,src=/var/lib/vp-worker/audit,dst=/audit \
+  "vp-hosted-text-worker:<已合并 SHA>" \
+  --experimental-strip-types lib/server/jobs/audit-hosted-text-usage.mjs \
+  --journal /journal/<hosted-journal-file>.jsonl --report /audit/<新报告名>.json
+```
+
+运行前把尖括号占位替换为实际文件名；报告路径不得已存在。标准输出只给组数/收据数与
+`ledgerState=not_checked`，按组 owner/scope/attempt ID 和金额只在私有报告中。最后未完成的
+JSONL 行会标为 `partialTailIgnored`，不能重建为已验证收据；无对应收据的未知费用保持全额预留。
+`processEndObserved=false` 表示该进程没有完整的 returned 行，不能推断日志或 attempt 已完整收尾。
+审计结果必须再与获准的实际账本和供应商回执逐笔核对，不能据此自动调用旧结算 CLI。
+每份进程 journal 单独审计；跨进程同一 attempt 的重复或冲突也须在账本核对时检查。
 
 ## 6. 成本与容量（以实际账单和监测复核）
 
