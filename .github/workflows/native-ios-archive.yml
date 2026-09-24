@@ -1,0 +1,93 @@
+name: Native iOS Archive
+
+# Manual only. Produces a Release device Archive of the dispatched commit; the signed job also
+# exports an App Store Connect (TestFlight) ipa. Nothing here uploads to App Store Connect, and
+# the uploaded GitHub artifact is evidence only: xcarchive/ipa never leave the runner Mac.
+on:
+  workflow_dispatch:
+    inputs:
+      signing:
+        description: 'none = unsigned Archive check; api-key = signed Archive + app-store-connect export (main only, testflight environment secrets)'
+        type: choice
+        options: [none, api-key]
+        default: none
+      build_number:
+        description: 'Optional CFBundleVersion override; default is UTC YYYYMMDD.HHMMSS'
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: native-ios-archive
+  cancel-in-progress: false
+
+jobs:
+  unsigned:
+    # The runner is the owner's own Mac; only this repository's own dispatches reach it.
+    if: github.repository == 'JTCAO515/VP-V4' && inputs.signing == 'none'
+    runs-on: [self-hosted, macOS, ARM64, vp-v4-ios]
+    timeout-minutes: 45
+    env:
+      DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
+      VP_BUILD_NUMBER: ${{ inputs.build_number }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install pinned AMap device SDK
+        run: node scripts/maps/install-ios-sdk.mjs
+      - name: Unsigned Release Archive
+        shell: bash --noprofile --norc -eo pipefail "{0}"
+        run: |
+          python3 scripts/ios/archive.py --signing none \
+            --output "$RUNNER_TEMP/vpj-56-archive-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --products "$RUNNER_TEMP/vpj-56-archive-products-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            ${VP_BUILD_NUMBER:+--build-number "$VP_BUILD_NUMBER"}
+      - name: Preserve archive evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-ios-archive-unsigned-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/vpj-56-archive-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 14
+          if-no-files-found: error
+
+  signed:
+    # Signed builds only from main, only through the protected testflight environment whose
+    # secrets JT owns. Missing secrets make archive.py refuse before building (exit 2).
+    if: github.repository == 'JTCAO515/VP-V4' && inputs.signing == 'api-key' && github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, macOS, ARM64, vp-v4-ios]
+    environment: testflight
+    timeout-minutes: 60
+    env:
+      DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
+      VP_BUILD_NUMBER: ${{ inputs.build_number }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install pinned AMap device SDK
+        run: node scripts/maps/install-ios-sdk.mjs
+      - name: Signed Release Archive and App Store Connect export (no upload)
+        shell: bash --noprofile --norc -eo pipefail "{0}"
+        env:
+          VP_IOS_TEAM_ID: ${{ secrets.VP_IOS_TEAM_ID }}
+          VP_ASC_KEY_ID: ${{ secrets.VP_ASC_KEY_ID }}
+          VP_ASC_ISSUER_ID: ${{ secrets.VP_ASC_ISSUER_ID }}
+          VP_ASC_KEY_P8: ${{ secrets.VP_ASC_KEY_P8 }}
+        run: |
+          # The ipa stays on the runner Mac for the operator's own upload; it is never a GitHub artifact.
+          python3 scripts/ios/archive.py --signing api-key \
+            --output "$RUNNER_TEMP/vpj-56-archive-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            --products "$HOME/Library/Developer/VisePanda/TestFlight/$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT" \
+            ${VP_BUILD_NUMBER:+--build-number "$VP_BUILD_NUMBER"}
+      - name: Preserve archive evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-ios-archive-signed-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/vpj-56-archive-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 14
+          if-no-files-found: error

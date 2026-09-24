@@ -194,6 +194,16 @@ struct NativeAskView: View {
             Text(turn.input).font(.headline)
             if store.mode == .grounded, let result = turn.result {
                 groundedResult(turn, result)
+                if let request = NativeRelativeOutline.planningRequest(from: turn, evidenceCurrent: store.groundedCurrent, chinese: settings.selectedLocale == .zh) {
+                    Button(settings.selectedLocale == .zh ? "用这条请求继续规划" : "Plan from this request") {
+                        composing = false
+                        planningContentHeight = measuredContentHeight
+                        planningRequest = request
+                    }
+                    .accessibilityIdentifier("native-ask.plan-turn.\(turn.id)")
+                    Text(settings.selectedLocale == .zh ? "只带入你的原始请求，当前答案与地点依据不会写入行程；保存仍需审阅变化并明确确认。" : "Only your original request is used. Answer facts and place evidence are not added to Trip; saving still requires reviewing changes and confirming.")
+                        .font(.caption).foregroundStyle(Color.vpSecondaryText)
+                }
             } else {
                 Text(LocalizedStringKey(label(turn))).font(.caption.bold()).foregroundStyle(Color.vpSecondaryText)
             }

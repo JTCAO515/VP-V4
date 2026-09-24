@@ -37,6 +37,8 @@ real rendering and provider/app-domain acceptance remain separate. See
 [map configuration and SDK install](../../docs/runbooks/place-search-maps.md).
 Run `node scripts/maps/install-ios-sdk.mjs` before device builds. Simulator builds
 retain the address fallback.
+Xcode Cloud installs the same pinned SDK with
+`ios/VisePanda/ci_scripts/ci_post_clone.sh` before its device build.
 
 ## Build and test
 

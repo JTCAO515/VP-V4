@@ -3,6 +3,39 @@ import SwiftUI
 @testable import VisePanda
 
 nonisolated final class NativeAskStateTests: XCTestCase {
+    func testAiAssistAcceptsResponseInsideDeadline() async throws {
+        let data = try await NativeAskStore.aiAssistData(until: .now.advanced(by: .seconds(5))) {
+            Data("ready".utf8)
+        }
+        XCTAssertEqual(data, Data("ready".utf8))
+    }
+
+    func testAiAssistRejectsExpiredDeadlineBeforeDispatch() async {
+        do {
+            _ = try await NativeAskStore.aiAssistData(until: .now.advanced(by: .seconds(-1))) {
+                XCTFail("An expired search must not dispatch another request")
+                return Data()
+            }
+            XCTFail("Expected the shared deadline to expire")
+        } catch {
+            XCTAssertEqual((error as? URLError)?.code, .timedOut)
+        }
+    }
+
+    func testAiAssistCancelsRequestAtDeadlineAndRejectsLateData() async {
+        do {
+            _ = try await NativeAskStore.aiAssistData(until: .now.advanced(by: .milliseconds(20))) {
+                // Model a transport which yields a final payload on cancellation.
+                // That payload must never turn an expired search into success.
+                do { try await Task.sleep(for: .seconds(30)) } catch {}
+                return Data("late".utf8)
+            }
+            XCTFail("A late transport result must not be accepted")
+        } catch {
+            XCTAssertEqual((error as? URLError)?.code, .timedOut)
+        }
+    }
+
     @MainActor func testEventParserRequiresCompleteFrameAndMonotonicMatchingCursor() throws {
         let id = "30000000-0000-4000-8000-000000000001"
         let json = "{\"schemaVersion\":\"grounded-events/1\",\"turnId\":\"\(id)\",\"sequence\":1,\"eventId\":\"accepted\",\"type\":\"accepted\",\"state\":\"accepted\",\"turn\":null}"

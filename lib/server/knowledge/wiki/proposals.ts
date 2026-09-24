@@ -22,6 +22,32 @@ export function isProposalOutput(v:unknown):v is ProposalOutput {
     &&p.evidence.every(e=>object(e,['sourceRevisionId','quote'])&&typeof e.sourceRevisionId==='string'&&UUID.test(e.sourceRevisionId)&&text(e.quote,2000))
     &&new Set(p.evidence.map(e=>e.sourceRevisionId)).size===p.evidence.length);
 }
+/** Recover only an otherwise valid proposal whose city is genuinely unresolved.
+ * The unsafe statement is discarded and the omission stays visible to Ops.
+ * Every other invalid shape still fails closed, including a full gaps array
+ * that cannot record the omission. Published statement scope is unchanged. */
+export function omitUnscopedProposals(v:unknown):ProposalOutput|null {
+  if(isProposalOutput(v))return v;
+  if(!object(v,['summary','gaps','proposals'])||!base(v)||!Array.isArray(v.gaps)||!Array.isArray(v.proposals)||v.proposals.length>5)return null;
+  const retained:ProposalOutput['proposals'][number][]=[];
+  let omitted=0;
+  for(const proposal of v.proposals){
+    const single={summary:v.summary,gaps:[],proposals:[proposal]};
+    if(isProposalOutput(single)){retained.push(proposal);continue;}
+    if(!object(proposal,['statement','evidence'])||!object(proposal.statement,['schemaVersion','assertion','scope','expressions'])
+      ||!object(proposal.statement.scope,['cities','scene','audience'])||!Array.isArray(proposal.statement.scope.cities)
+      ||proposal.statement.scope.cities.length!==0)return null;
+    const withCity={...proposal,statement:{...proposal.statement,scope:{...proposal.statement.scope,cities:['shanghai']}}};
+    if(!isProposalOutput({summary:v.summary,gaps:[],proposals:[withCity]}))return null;
+    omitted++;
+  }
+  if(omitted===0||v.gaps.length===5)return null;
+  const gap=/[\u3400-\u9fff]/u.test(v.summary as string)
+    ? `${omitted} 条声明候选因来源未支持城市范围而省略；请先核对原文，再拟定有城市范围的声明。`
+    : `${omitted} statement proposal(s) omitted: city scope is unsupported by the supplied source; reviewer must verify the source before drafting a city-scoped claim.`;
+  const normalized={summary:v.summary,gaps:[...v.gaps,gap],proposals:retained};
+  return isProposalOutput(normalized)?normalized:null;
+}
 /** Exact quotations only. Offsets count Unicode code points in the stored snippet,
  * without normalization. Repeated quotations are ambiguous and reject. */
 export function resolveProposalOutput(output:ProposalOutput,sources:readonly ProposalSource[]):StructuredWikiDraft|null {

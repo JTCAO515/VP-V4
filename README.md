@@ -2,7 +2,7 @@
 
 VisePanda 面向国际来华自由行旅客，围绕同一个 Trip 连接规划、材料、准备、现场沟通与变化后的行程调整。完整首发产品目标是原生 SwiftUI iOS；Web 是同 Trip 的轻量 Planning Studio。发布范围为中英，既有 es/ru/ar 资产与协议兼容由 VPJ-01 迁移。
 
-[产品与任务入口](docs/program/2026-09-05/README.md) · [完整产品规划](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md) · [当前交接与证据](CONTEXT.md) · [2026-09-22 开发状态](docs/program/2026-09-05/CURRENT-STATUS-2026-09-22.md)
+[产品与任务入口](docs/program/2026-09-05/README.md) · [完整产品规划](docs/VISEPANDA-MASTER-PLAN-2026-09-05.md) · [当前交接与证据](CONTEXT.md) · [2026-09-24 开发状态](docs/program/2026-09-05/CURRENT-STATUS-2026-09-24.md)
 
 开发与验收按[六个交付阶段](docs/program/2026-09-05/DELIVERY-STAGES.md)推进：同一 Trip 与真实环境 →
 真实有据 Ask → 共同计划与确认 → 旅途功能 → 完整 Beta → 正式客户交付。每阶段先验证一个完整用户行为，

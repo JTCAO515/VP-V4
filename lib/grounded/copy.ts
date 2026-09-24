@@ -75,8 +75,9 @@ export function savedAnswerNotice(turn: SavedTurn): "pending" | "cancelled" | "f
 export const savedClaimGapCopy = {
   en: {
     title: "Points without current support",
+    nextStep: "Next step:",
     claims: {
-      original_valid_booking_id: "Booking ID",
+      original_valid_booking_id: "Original identity document used for booking",
       valid_ticket_not_itinerary_or_receipt: "Itinerary and receipt as ticket proof",
       merchant_acceptance_check: "Checking card acceptance",
       supported_card_merchant_qr_payment: "Mobile merchant payments",
@@ -86,6 +87,18 @@ export const savedClaimGapCopy = {
       plan_allowance_check: "Checking call and data allowances",
       place_address: "Attraction address",
       opening_hours: "Today’s opening time",
+    },
+    nextSteps: {
+      original_valid_booking_id: "Check the current accepted ID requirements with the railway before boarding.",
+      valid_ticket_not_itinerary_or_receipt: "Check the railway’s current ticket and boarding proof rules before travelling.",
+      merchant_acceptance_check: "Ask the merchant which payment methods it currently accepts before paying.",
+      supported_card_merchant_qr_payment: "Check the payment app’s current setup prompts and whether the merchant accepts that method.",
+      international_card_atm_withdrawal: "Check your card issuer’s withdrawal terms and the ATM’s displayed options before withdrawing.",
+      marked_currency_exchange: "Check current exchange availability and requirements with the outlet before visiting.",
+      passport_or_foreign_permanent_resident_id: "Confirm the current application documents with the mobile carrier before applying.",
+      plan_allowance_check: "Check the carrier’s current plan details before choosing a SIM.",
+      place_address: "Confirm the venue’s current address through its official information before travelling.",
+      opening_hours: "Check the venue’s official opening information for today before visiting.",
     },
     reasons: {
       missing: "No published support was found for this point.",
@@ -98,6 +111,7 @@ export const savedClaimGapCopy = {
   },
   zh: {
     title: "尚缺当前依据的要点",
+    nextStep: "下一步：",
     claims: {
       original_valid_booking_id: "购票证件",
       valid_ticket_not_itinerary_or_receipt: "行程单和报销凭证是否可作车票",
@@ -109,6 +123,18 @@ export const savedClaimGapCopy = {
       plan_allowance_check: "核对通话和流量额度",
       place_address: "景点地址",
       opening_hours: "今日开放时间",
+    },
+    nextSteps: {
+      original_valid_booking_id: "乘车前向铁路官方渠道核对当前认可的身份证件要求。",
+      valid_ticket_not_itinerary_or_receipt: "出行前向铁路官方渠道核对当前车票与进站凭证规则。",
+      merchant_acceptance_check: "付款前向商户确认目前受理哪些支付方式。",
+      supported_card_merchant_qr_payment: "查看支付应用当前开通提示，并向商户确认是否受理该方式。",
+      international_card_atm_withdrawal: "取款前向发卡行核对取现条款，并查看 ATM 显示的可用选项。",
+      marked_currency_exchange: "到访前向兑换网点核对当前服务及办理要求。",
+      passport_or_foreign_permanent_resident_id: "办理前向通信运营商确认当前申请证件要求。",
+      plan_allowance_check: "选择 SIM 卡前核对运营商当前套餐详情。",
+      place_address: "出发前通过场馆官方信息确认当前地址。",
+      opening_hours: "到访前查看场馆今天的官方开放信息。",
     },
     reasons: {
       missing: "尚未找到支持这一要点的已发布信息。",

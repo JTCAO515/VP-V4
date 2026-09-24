@@ -17,7 +17,7 @@ test("V4-11 preserves exact/user place references and rejects cross-owner reads 
     const ownerHeaders = headers(await login(owner.email)); const otherHeaders = headers(await login(other.email));
     const trip = JSON.parse((await request("/rest/v1/trips", { method: "POST", headers: ownerHeaders, body: JSON.stringify([{ owner_id: owner.id, title: "Place scope" }]) })).body)[0];
     canonicalId = crypto.randomUUID();
-    const registered = await request("/rest/v1/canonical_pois", { method: "POST", headers: { ...adminHeaders, Prefer: "return=representation" }, body: JSON.stringify([{ id: canonicalId }]) });
+    const registered = await request("/rest/v1/canonical_pois", { method: "POST", headers: { ...adminHeaders, Prefer: "return=representation" }, body: JSON.stringify([{ id: canonicalId, primary_name_zh: "测试地点", primary_name_en: "Probe place" }]) });
     assert.equal(registered.response.status, 201, registered.body);
     const added = await request("/rest/v1/trip_place_references", { method: "POST", headers: { ...adminHeaders, Prefer: "return=representation" }, body: JSON.stringify([{ owner_id: owner.id, trip_id: trip.id, reference_kind: "canonical", canonical_poi_id: canonicalId, user_label: null, freshness: "recheck_required" }, { owner_id: owner.id, trip_id: trip.id, reference_kind: "user", canonical_poi_id: null, user_label: "My hotel note", freshness: "current" }]) });
     assert.equal(added.response.status, 201, added.body);

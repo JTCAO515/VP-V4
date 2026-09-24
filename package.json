@@ -16,6 +16,7 @@
     "test:unit": "node scripts/run-ci-suite.mjs unit",
     "test:contract": "node scripts/run-ci-suite.mjs contract",
     "test:integration": "node scripts/run-ci-suite.mjs integration",
+    "test:integration:db": "node scripts/ci-suites/db-integration.mjs",
     "test:security": "node scripts/run-ci-suite.mjs security",
     "test:e2e": "node scripts/run-ci-suite.mjs e2e",
     "test:e2e:frontend": "pnpm build && playwright install chromium && playwright test --config playwright.config.mjs --workers=1",
@@ -30,12 +31,12 @@
   "dependencies": {
     "@supabase/ssr": "0.12.5",
     "@supabase/supabase-js": "2.112.4",
-    "next": "16.2.6",
+    "next": "16.3.6",
     "react": "19.2.6",
     "react-dom": "19.2.6"
   },
   "devDependencies": {
-    "@playwright/test": "1.55.0",
+    "@playwright/test": "1.55.1",
     "@tailwindcss/postcss": "4.2.1",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",

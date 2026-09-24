@@ -75,6 +75,29 @@ nonisolated final class NativeTripStateTests: XCTestCase {
     }
 
     @MainActor
+    func testCompletedGroundedRequestCanEnterOutlineWithoutCopyingAnswer() throws {
+        let input = "第一次去上海四天，喜欢吃和散步，日期未定"
+        func turn(status: String, projection: String, completed: Bool, request: String = input) throws -> NativeTextTurn {
+            let payload: [String: Any] = [
+                "turnId": UUID().uuidString, "threadId": UUID().uuidString,
+                "locale": "zh", "input": request,
+                "outcome": status == "planning" ? NSNull() : status == "unavailable" ? "blocked" : "answered",
+                "output": status == "planning" ? NSNull() : "reviewed-answer-v1", "status": status, "createdAt": "2026-09-24T00:00:00Z",
+                "result": ["type": "reviewed_answer", "city": "shanghai", "intent": "unsupported",
+                           "originalOutcome": "blocked", "projection": projection,
+                           "completedAt": completed ? "2026-09-24T00:00:00Z" : NSNull()] as [String: Any]
+            ]
+            return try JSONDecoder().decode(NativeTextTurn.self, from: JSONSerialization.data(withJSONObject: payload))
+        }
+        let saved = try turn(status: "unavailable", projection: "current", completed: true)
+        XCTAssertEqual(NativeRelativeOutline.planningRequest(from: saved, evidenceCurrent: true, chinese: true), input)
+        XCTAssertNil(NativeRelativeOutline.planningRequest(from: saved, evidenceCurrent: false, chinese: true))
+        XCTAssertNil(NativeRelativeOutline.planningRequest(from: try turn(status: "unavailable", projection: "unavailable", completed: true), evidenceCurrent: true, chinese: true))
+        XCTAssertNil(NativeRelativeOutline.planningRequest(from: try turn(status: "planning", projection: "pending", completed: false), evidenceCurrent: true, chinese: true))
+        XCTAssertNil(NativeRelativeOutline.planningRequest(from: try turn(status: "unavailable", projection: "current", completed: true, request: "想去上海"), evidenceCurrent: true, chinese: true))
+    }
+
+    @MainActor
     func testSingleInterestOutlineDoesNotInventAnAlternative() throws {
         for (request, chinese, food) in [
             ("上海四天，只想吃美食，日期未定", true, true),
