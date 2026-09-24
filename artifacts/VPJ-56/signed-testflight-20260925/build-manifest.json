@@ -1,0 +1,41 @@
+{
+  "commit": "64a54155334825507301ddb9a33c80aaf7469375",
+  "sourceClean": true,
+  "profileName": "testflight-staging",
+  "bundleIdentifier": "space.go2china.VisePanda",
+  "marketingVersion": "0.1.0",
+  "buildNumber": "20260924.163820",
+  "buildSettings": {
+    "VP_NATIVE_ENVIRONMENT": "staging",
+    "VP_NATIVE_STAGING_API_ORIGIN": "https://staging.go2china.space",
+    "VP_NATIVE_TASK_CONTEXT": "knowledge_intent_v1"
+  },
+  "signing": "xcode-account",
+  "exportMethod": "app-store-connect",
+  "archived": true,
+  "exported": true,
+  "xcode": "Xcode 27.0\nBuild version 27A266a",
+  "appInfo": {
+    "CFBundleIdentifier": "space.go2china.VisePanda",
+    "CFBundleShortVersionString": "0.1.0",
+    "CFBundleVersion": "20260924.163820",
+    "MinimumOSVersion": "17.0",
+    "DTSDKName": "iphoneos27.0",
+    "DTXcode": "2700",
+    "DTXcodeBuild": "27A266a",
+    "VisePandaNativeEnvironment": "staging",
+    "VisePandaStagingAPIOrigin": "https://staging.go2china.space",
+    "VisePandaNativeTaskContext": "knowledge_intent_v1"
+  },
+  "ipaSHA256": "fd76636240ff23927ef6c7386f9d314db29dd98198c62a99485c87b136dce699",
+  "ipaBytes": 23375812,
+  "provisioningProfile": {
+    "expires": "2027-09-17T12:23:05",
+    "betaReportsActive": true
+  },
+  "infoPlistProblems": [],
+  "exportProblems": [],
+  "amapDisplayKeyConfigured": false,
+  "exportComplianceDeclared": true,
+  "usesNonExemptEncryption": false
+}
