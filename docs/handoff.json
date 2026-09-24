@@ -3,12 +3,12 @@
   "projectId": "visepanda-vp-v4",
   "lastUpdated": "2026-09-24",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
-  "status": "2026-09-24同步：main 8002bb6（#526 iOS隐私清单/位置用途/出口合规键已合并；#525最终交接已合并）。生产安全热修已上线：JT在Vercel控制台将hotfix/next-16-3-6-20260923（30e98013 = a8fa82ad + cherry-pick 303088d3）的Preview提升为Production，新部署dpl_9t4iY7YF48r9Suru34hZFdxH8sdw，线上Next 16.3.6，无新功能带入；回滚点dpl_2WV2dky65LhMguX8QnFUhz6xPRKm。共享数据库dzqdzetcctkhbrhlxxgn（生产与Staging共用）经备份后应用14个迁移，migration list本地/远端一致；research intake与hosted worker开关默认关闭。开放PR #478/#511/#514。完整表见 docs/program/2026-09-05/CURRENT-STATUS-2026-09-24.md。",
-  "currentPhase": "2026-09-23 JT决定的主线继续：常驻worker + 有依据的Ask + Trip确认，直到TestFlight真机可用，同时启动#246客户发现；暂停继续铺设新的S3–S5切片。生产Next安全热修与共享数据库迁移已由JT完成；剩余阻塞为TestFlight签名材料、worker托管账号与密钥、客户发现D0、intake开启决定与出口合规确认。独立Production数据库（#243）仍是最大结构风险。阶段完成仍由实际验收判断。",
+  "status": "2026-09-24 GitHub读回：main 7e512727；#527/#529/#528/#531/#532/#533/#514/#534/#478/#511已合并，开放PR #530；#187仍OPEN。#534记录Xcode Cloud iOS Build成功与6200724b的未签名Archive成功，签名/上传/安装未运行。#478的iOS17.5定向8/8通过，真机VoiceOver未运行。#511新增迁移20260922033000仅合并仓库，尚无共享远端应用证据。生产热修与此前14个共享库迁移的观察沿用2026-09-24已记录证据，未在本次重新读取Vercel/数据库；生产与Staging仍共库，新增迁移不得推断已应用。详见 docs/program/2026-09-05/CURRENT-STATUS-2026-09-24.md。",
+  "currentPhase": "2026-09-23 JT决定的主线继续：常驻worker + 有依据的Ask + Trip确认，直到TestFlight真机可用，同时启动#246客户发现；暂停继续铺设新的S3–S5切片。主线已有#531–#533等代码增量合并，但#195托管worker仍待账号/密钥及激活，#237签名Archive、上传与TestFlight安装仍UNRUN，#206完整真实知识/Provider验收未完成。生产Next安全热修与此前14个共享库迁移已有观察；#511的新迁移仅在仓库。独立Production数据库（#243）仍是最大结构风险；阶段完成由目标环境和用户结果验收判断。",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "Overall / current Issue owner",
-  "intendedNextAgent": "Read live origin/main, open PRs and the current Issue/execution row first; regenerate the tracker readback with node scripts/program-status.mjs rather than trusting this snapshot. Stay inside the 2026-09-23 focus (resident worker + grounded Ask + Trip confirmation to TestFlight, plus #246). Production is a CLI deployment of a8fa82ad on Next 16.2.6 and shares the Staging Supabase database: any migration applied to \"Staging\" also changes the database behind the production site, so never apply one without JT's backup/migration decision. Use existing secure credentials/official login; never request secrets in chat.",
-  "nextAction": "待JT亲自执行（开发线程不代办）：1) TestFlight签名材料与testflight Environment secrets（#237/#242）；2) worker托管账号与密钥（#195激活#522 worker）；3) #246客户发现D0核对；4) research intake是否开启收件的决定（当前enabled=false）；5) 出口合规确认（#526已加入Info.plist键，其取值须JT确认）。开发侧：输入到位后依次部署并激活#522 worker（开关默认关）、接有依据Ask与Trip确认、签名Archive→TestFlight；规划#243独立Production数据库。native/ops生产路由503是生产未启用对应开关，属预期，不作故障处理。开放PR #478/#511/#514保持原归属。",
+  "intendedNextAgent": "Read live origin/main, open PRs and current Issue/execution row first; regenerate tracker readback with node scripts/program-status.mjs. Stay inside the 2026-09-23 focus (hosted worker + grounded Ask + Trip confirmation to TestFlight, plus #246). The last observed Production deployment is 30e98013 on Next 16.3.6, not current main. Production and Staging share one Supabase database; the 14 migrations observed applied on 2026-09-24 do not include newly merged #511 migration 20260922033000. Verify fresh remote state before any later claim or operation. Use existing secure credentials/official login; never request secrets in chat.",
+  "nextAction": "待JT亲自执行（开发线程不代办）：1) TestFlight签名材料与testflight Environment secrets（#237/#242）；2) worker托管账号与密钥（#195激活#522 worker）；3) #246客户发现D0核对；4) research intake是否开启收件的决定（当前enabled=false）；5) 出口合规确认（#526已加入Info.plist键，其取值须JT确认）。开发侧：核#531–#533合并范围并继续有依据Ask/Trip确认的目标环境验收；输入到位后部署并激活#522 worker、签名Archive→TestFlight；评估#511新迁移时先核共享库实际状态并遵守#243独立Production数据库风险边界。#206 Preview如返回403 x-vercel-mitigated: deny，先按Firewall阻断处理，不能算应用失败。native/ops生产路由503是生产未启用对应开关的既有观察。开放PR #530仍归原线程；#478/#511/#514已合并。",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
@@ -71,17 +71,16 @@
     "2026-09-24 JT亲自执行（协调者核实）：1) 按2026-09-23授权完成仅含next安全补丁的生产发布，方式为Vercel控制台Promote热修分支Preview；2) 共享数据库dzqdzetcctkhbrhlxxgn先备份再应用14个既有迁移。research intake与hosted worker开关均保持默认关闭；这两项执行不授权开启收件、激活worker或其他生产变更。"
   ],
   "changedFiles": [
-    "docs/program/2026-09-05/CURRENT-STATUS-2026-09-24.md",
     "docs/handoff.json",
     "HANDOFF.md",
     "CONTEXT.md",
-    "docs/runbooks/staging-vercel-maintenance.md",
-    "README.md",
-    "docs/program/2026-09-05/README.md",
-    "docs/INDEX.md",
-    "docs/manifest.json"
+    "docs/program/2026-09-05/CURRENT-STATUS-2026-09-24.md"
   ],
   "verification": [
+    "2026-09-24 GitHub只读读回（node scripts/program-status.mjs，15:36Z）：main 7e512727；#187 OPEN，VPJ任务61 OPEN/15 CLOSED；开放PR仅#530。#527/#529/#528/#531/#532/#533/#514/#534/#478/#511均已合并。main Program Status于7e512727成功；该提交DB Integration查询时仍in_progress。此为仓库/Tracker/CI元数据，不代表目标环境整票验收。状态表见CURRENT-STATUS-2026-09-24.md。",
+    "#534：#528后Xcode Cloud第一次ci_post_clone失败根因因无Apple原始日志仍未知；后续main c5735877和6200724b的Xcode Cloud iOS Build成功。GitHub Native iOS Archive run36013986823在6200724b未签名Release设备Archive成功，bundle space.go2china.VisePanda，版本0.1.0 (20260924.144227)，Xcode27/iOS27 SDK，Staging origin。Build与未签名Archive不证明签名包或TestFlight；见PR534及artifacts/VPJ-56/cloud-build-20260924/verification.md。",
+    "#478已合并：最新集成head的Native iOS CI通过（iOS26.5 xcresult 121 pass/34 gated skip/0 fail）；本地iOS17.5受影响定向8/8，0 skip。34项CI跳过不计通过；真机VoiceOver与相关后续物理/发布验收仍UNRUN，#188保持既有CLOSED范围；见PR478及artifacts/VPJ-01/tools-reading-20260922/verification.md。",
+    "#511已合并：版本化travel pace producer/API与原生管理页代码、隔离PostgreSQL/Native CI已有通过证据；新增append-only迁移20260922033000_vpj_11_travel_pace_control.sql仅在仓库，未见共享Staging/Production远端应用或真实用户验收。#199后续planner consumer及原子proposal basis仍待完成；见PR511和artifacts/VPJ-11/unrun.md。",
     "2026-09-18 PR478 shared reading repair: brand-readable17 and brand-readable26 each3/3PASS including full maximum contrast; original palette RGB preserved, dynamic UIColor feeds UIKit/SwiftUI without iOS17 round-trip freezing. Native UILabel retains full text/scale/locale/RTL; deliberate white-text and one-line controls still fail .all. 2026-09-22 Tools row repair passes original red/green and full en/zh light/dark audits on17.5/26.5; shell17 10/10, Tools/rendered-layout17 2/2, scoped26 5/5, zero skips. See artifacts/VPJ-01/tools-reading-20260922/verification.md; physical VoiceOver and remote CI remain separate.",
     "2026-09-18 native audit investigation: iPhone15/iOS26.5 original four tests2PASS/2FAIL; new maximum en/zh light/dark .all testFAIL and palette unitPASS. Edge-effect, geometry and reading-margin experiments failed and were reverted; real system maximum alsoFAIL. Original tests/acceptance unchanged; no production fix or physical VoiceOver pass. See artifacts/VPJ-01/accessibility-20260918/verification.md and VPJ-10/40/42/accessibility-20260918/verification.md.",
     "2026-09-22 #363当前分支：NativePlaceSearchTests6/6、lookup契约2/2、TypeScript与source-policy lint、Xcode26.6 iOS设备高德SDK构建/资源复制通过；/places HTTP200，未登录lookup/display-config均401。最低验证不证明真实供应商、应用绑定、地图渲染或目标环境通过。详见artifacts/VPJ-19/363-consumers-20260922/verification.md。",
@@ -109,7 +108,8 @@
     "VPJ-09/#197 full acceptance remains open: saved cross-Trip preferences, arbitrary fuzzy requests, real model/Chat-to-Plan transition, target Staging/device breadth and grounded place/route feasibility have not passed this bounded slice; VPJ-65 owns grounded complete-plan checks.",
     "#363：双端消费者与地图SDK接线已实现，用户提供的地图配置仅本机忽略文件；供应商Key有效性、iOS应用/Web域名限制、真实地图与网络/实机/跨账号联合验收未运行。父子/入口/别名来源无可用依据时仍明确未知。",
     "生产（2026-09-24起）：dpl_9t4iY7YF48r9Suru34hZFdxH8sdw（30e98013，Next 16.3.6），Next Critical已消除。它等同于a8fa82ad加安全补丁，不含main之后的功能（#520安全头/地点配额、#522 worker等未上线生产）；生产未启用native/ops开关。早先“冻结于db5fb7b”“最后生产部署f14ee46”两种记载不成立，历史见固定commit bb43c5d的handoff。",
-    "仍未运行/未激活：#522常驻text worker迁移已在共享库、开关默认关，托管账号/密钥未配置、未部署、未激活；research intake开关enabled=false，未开启收件；#520代码未上线生产（其迁移已在共享库）；#524仅未签名Archive首跑通过，签名、上传App Store Connect与TestFlight安装UNRUN；#526隐私清单/出口合规键已合并，出口合规取值待JT确认；#517客户发现未外联、D0未核对。"
+    "仍未运行/未激活：#522常驻text worker迁移已在共享库、开关默认关，托管账号/密钥未配置、未部署、未激活；research intake开关enabled=false，未开启收件；#520代码未上线生产（其迁移已在共享库）；#534记录后续Xcode Cloud Build与未签名Archive通过，签名Archive、上传App Store Connect与TestFlight安装UNRUN；#526隐私清单/出口合规键已合并，出口合规取值待JT确认；#517客户发现未外联、D0未核对。",
+    "2026-09-24仍UNRUN：#195托管worker的账号/密钥、部署激活与完整Provider结果；#237签名Archive/App Store Connect上传/TestFlight真机安装；#478真机VoiceOver；#206完整真实知识与Provider验收；#511迁移的共享远端应用与真实偏好消费。#206 Preview Firewall 403不计应用行为。"
   ],
   "blockers": [
     "Staging46 bounded rail/payment/SIM Ask, specific unanswered requests, same-task clarification/repair, Web owner readback, worker recovery and native event reconnect are observed. Full S1/S2, wider knowledge coverage, physical/VoiceOver, unobserved fault cases and complete operational acceptance remain incomplete.",
@@ -120,7 +120,8 @@
     "#267 depends on #264 and completed offline #287: the bounded rail-document chain now runs, but complete real-task coverage, frozen benefit/tolerance criteria and human calibration remain outstanding. Test-budget direction does not remove attempt/token/concurrency safeguards or settle unknown charges.",
     "#268消费#266/#267/#229的完整链与#231已关闭范围内的网络证据；选定版本12场景、Ops停用恢复和匹配环境仍需联合验收。#231不再列为OPEN阻塞。",
     "JT deferred further physical phone verification on2026-09-12. Existing physical same-Trip/auth slice passed; full native/VoiceOver/Store acceptance remains unrun. The previous CI AX failure is resolved; do not repeat phone work as a development gate.",
-    "最大结构风险——生产与Staging共用数据库dzqdzetcctkhbrhlxxgn（Production/Preview/Development三个Vercel环境同一NEXT_PUBLIC_SUPABASE_URL，见docs/runbooks/staging-vercel-maintenance.md）：任何“Staging”迁移、测试写入或开关变更都同时作用于生产站，须JT先备份并决定。2026-09-24的14个迁移已应用，此后新增迁移同样适用该约束。独立Production数据库仍属#243，未建立。"
+    "最大结构风险——生产与Staging共用数据库dzqdzetcctkhbrhlxxgn（Production/Preview/Development三个Vercel环境同一NEXT_PUBLIC_SUPABASE_URL，见docs/runbooks/staging-vercel-maintenance.md）：任何“Staging”迁移、测试写入或开关变更都同时作用于生产站，须JT先备份并决定。2026-09-24的14个迁移已应用，此后新增迁移同样适用该约束。独立Production数据库仍属#243，未建立。",
+    "2026-09-24 #206 Preview 403如带x-vercel-mitigated: deny，阻断发生在Vercel Firewall、请求未进入应用；不据此判定应用或Provider失败。需要可达的目标环境及真实请求回执才能验收。相关早期Firewall证据见artifacts/VPJ-75/staging-ops-20260919/verification.md和VPJ-76/staging-web-20260919/verification.md。"
   ],
   "rollback": "For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.",
   "historicalSnapshots": [
