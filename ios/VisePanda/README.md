@@ -58,3 +58,20 @@ A nonpersistent `-VisePandaLocale en` launch argument selects QA language; defau
 See [scope and compatibility](../../docs/contracts/vpj-01.md) and
 [verification](../../artifacts/VPJ-01/verification.md). Tests use a local ad-hoc signature for
 Keychain access; no Apple signing credentials, provisioning update or production action is included.
+
+## Reading-text accessibility
+
+Scrollable foundation copy uses `VPReadableText` where native text measurement is
+needed for consistent iOS17 and current-OS audits. It retains full Dynamic Type,
+locale changes and RTL. SwiftUI and UIKit consume the same dynamic UIColor tokens;
+do not round-trip these tokens through `UIColor(Color(...))` on iOS17.
+
+`AppShellUITests.testMaximumTextFullAccessibilityInBothThemesAndLanguages` keeps
+contrast in the full maximum-size audit. `AccessibilityContrastTests` checks the
+palette and `ReadableTextLayoutTests` exercises actual rendered locale, size,
+bounds and appearance behavior. See [the before/after and negative controls](../../artifacts/VPJ-01/readable-text-20260918/verification.md).
+
+Tools row titles use the same renderer. The [Tools follow-up](../../artifacts/VPJ-01/tools-reading-20260922/verification.md)
+retains the original iOS17 clipping failure and passing iOS17.5/26.5 full audits;
+physical VoiceOver remains a separate unrun check.
+Simulator audits do not establish physical VoiceOver or signed Store acceptance.

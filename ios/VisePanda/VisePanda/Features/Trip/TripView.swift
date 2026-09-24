@@ -52,8 +52,7 @@ struct TripView: View {
                 Text("trip.empty.title")
                     .font(.title2.weight(.bold))
 
-                Text("trip.empty.message")
-                    .foregroundStyle(Color.vpSecondaryText)
+                VPReadableText("trip.empty.message", color: .vpSecondaryText)
 
                 NavigationLink(value: AppRoute.capability(.tripPlanning)) {
                     Label("trip.empty.action", systemImage: "sparkles")
@@ -75,16 +74,13 @@ struct TripView: View {
         }
     }
 
-    private func workflowRow(number: String, key: LocalizedStringKey) -> some View {
+    private func workflowRow(number: String, key: String) -> some View {
         HStack(spacing: 12) {
-            Text(number)
-                .font(.caption.weight(.bold))
+            VPReadableText(number, style: .caption1, weight: .bold, color: .white, fillsWidth: false)
                 .frame(width: workflowBadgeSize, height: workflowBadgeSize)
-                .foregroundStyle(.white)
                 .background(Color.vpBrandFill, in: Circle())
 
-            Text(key)
-                .font(.subheadline)
+            VPReadableText(key, style: .subheadline)
 
             Spacer()
         }

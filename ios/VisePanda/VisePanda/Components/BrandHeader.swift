@@ -15,9 +15,7 @@ struct BrandHeader: View {
                 // Fit the complete image; never stretch or crop the approved mark.
                 BrandWordmark(width: 156, maxHeight: 36)
 
-                Text("brand.tagline")
-                    .font(.caption)
-                    .foregroundStyle(Color.vpSecondaryText)
+                VPReadableText("brand.tagline", style: .caption1, color: .vpSecondaryText)
             }
 
             Spacer(minLength: 0)

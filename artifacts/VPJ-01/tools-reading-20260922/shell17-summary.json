@@ -1,0 +1,36 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceId": "B84FA802-B4D6-41D6-ACEE-0FFB43221C50",
+        "deviceName": "VPJ01 iPhone 15 iOS 17.5",
+        "modelName": "iPhone 15",
+        "osBuildNumber": "21F79",
+        "osVersion": "17.5",
+        "platform": "iOS Simulator"
+      },
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "passedTests": 10,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "VisePanda \u00b7 Built with macOS 26.6.2",
+  "expectedFailures": 0,
+  "failedTests": 0,
+  "finishTime": 1790023165.694,
+  "passedTests": 10,
+  "result": "Passed",
+  "skippedTests": 0,
+  "startTime": 1790022628.324,
+  "statistics": [],
+  "testFailures": [],
+  "title": "Test - VisePanda",
+  "topInsights": [],
+  "totalTestCount": 10
+}

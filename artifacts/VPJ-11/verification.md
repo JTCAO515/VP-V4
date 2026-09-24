@@ -66,3 +66,9 @@ First integration head `9673de75` exposed a current-main DB Integration registry
 `travel-pace.test.mjs` was not classified, so all five lanes failed their preflight before running
 database assertions. This is a CI configuration failure, not a passed database lane. Registered the
 test in the network-isolated PostgreSQL lane with `VP_MEMORY_DB_TEST=1`; the next head must rerun CI.
+
+After #478 merged, also merged main `f27af3a9`. Four Xcode project conflict blocks were resolved by
+retaining one registration each for Travel Pace app/tests, `VPReadableText`,
+`AccessibilityContrastTests`, and privacy resources. `plutil -lint`, project scheme list,
+Swift syntax parse, registration-uniqueness inspection, DB test classification and diff check PASS.
+No Travel Pace runtime/SQL behavior changed in this merge; new-head CI remains the merge gate.

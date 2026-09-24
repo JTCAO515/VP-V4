@@ -12,14 +12,9 @@ struct PreviewStatusBanner: View {
                         .foregroundStyle(Color.vpBrand)
                         .accessibilityHidden(true)
                 }
-                Text("preview.title")
-                    .font(.subheadline.weight(.semibold))
+                VPReadableText("preview.title", style: .subheadline, weight: .semibold)
             }
-            Text("preview.message")
-                .font(.footnote)
-                .lineLimit(nil)
-                .foregroundStyle(Color.vpSecondaryText)
-                .fixedSize(horizontal: false, vertical: true)
+            VPReadableText("preview.message", style: .footnote, color: .vpSecondaryText)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14)
