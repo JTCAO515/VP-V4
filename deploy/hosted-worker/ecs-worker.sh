@@ -45,15 +45,13 @@ fi
 
 image="vp-hosted-text-worker:$2"
 docker image inspect "$image" >/dev/null || fail 'image tag is not loaded locally'
-if docker container inspect "$name" >/dev/null 2>&1; then
-  docker inspect --format 'previous image={{.Config.Image}}' "$name"
-  docker stop --time 75 "$name"
-  docker rm "$name"
-fi
+candidate="${name}-candidate"
+previous="${name}-previous"
+docker container inspect "$candidate" >/dev/null 2>&1 && fail 'candidate container already exists; inspect it before retrying'
 
 # No published port: Docker runs the health probe inside the container. The SQL
 # stop switch remains independent and must be disabled before rollback/replacement.
-docker run -d --name "$name" \
+docker create --name "$candidate" \
   --restart unless-stopped --stop-timeout 75 \
   --read-only --cap-drop ALL --security-opt no-new-privileges \
   --memory 768m --pids-limit 128 \
@@ -67,4 +65,25 @@ docker run -d --name "$name" \
   --health-interval 30s --health-timeout 5s --health-start-period 90s \
   --health-cmd 'node -e "fetch(\"http://127.0.0.1:8765/healthz\").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"' \
   "$image" >/dev/null
+
+# Keep the stopped former container until the replacement starts successfully.
+# This also preserves its image and configuration if a Docker start/rename fails.
+if docker container inspect "$name" >/dev/null 2>&1; then
+  docker inspect --format 'previous image={{.Config.Image}}' "$name"
+  if docker container inspect "$previous" >/dev/null 2>&1; then docker rm "$previous" >/dev/null; fi
+  if ! docker stop --time 75 "$name" >/dev/null || ! docker rename "$name" "$previous"; then
+    docker rm "$candidate" >/dev/null
+    if docker container inspect "$name" >/dev/null 2>&1; then docker start "$name" >/dev/null || true; fi
+    fail 'could not stop/retain previous container'
+  fi
+fi
+if ! docker rename "$candidate" "$name" || ! docker start "$name" >/dev/null; then
+  docker rm -f "$name" >/dev/null 2>&1 || true
+  docker rm "$candidate" >/dev/null 2>&1 || true
+  if docker container inspect "$previous" >/dev/null 2>&1; then
+    docker rename "$previous" "$name"
+    docker start "$name" >/dev/null || fail 'replacement and previous container both failed to start; keep SQL disabled'
+  fi
+  fail 'replacement failed; previous container restored; keep SQL disabled'
+fi
 echo "hosted worker: started $image; inspect health and SQL heartbeat before enabling claims"

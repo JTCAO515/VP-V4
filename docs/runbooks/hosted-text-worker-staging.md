@@ -1,8 +1,10 @@
 # 常驻文本 worker：Staging 激活方案（VPJ-07 #195）
 
 状态：**阿里云香港 ECS 部署准备，未执行**。JT 已选用现有 Ubuntu 22.04 香港 ECS；2026-09-25
-只读检查观察到约 1.7 GiB 内存、40 GB 磁盘、仅 SSH 22 监听，Docker/Node 尚未安装，GitHub 出站 HTTPS
-可达。该观察不证明 Supabase、DashScope 访问、镜像运行或 Staging 验收。本 runbook 不授权远端写入、
+只读检查观察到约 1.7 GiB 内存、40 GB 磁盘、仅 SSH 22 监听。协调线程随后在 ECS 使用 Ubuntu apt
+仓库安装 `docker.io`，Docker Server 29.1.3 已运行，并将当时 main `f7ec21a4` 浅克隆到 `/opt/vp-v4`。
+无凭据 HTTPS 探测到 Staging Supabase 返回 401、DashScope endpoint 返回 400：只证明对应出站路径可达，
+不证明认证、权限、模型调用、镜像运行或 Staging 验收。本 runbook 不授权其他远端写入、
 共享数据库操作或付费调用；实际操作遵守[继续执行政策](../agents/continuous-afk-execution.md)。Production 不在范围。
 
 代码：`lib/server/jobs/hosted-text-worker.ts`、`lib/server/jobs/run-hosted-text-worker.mjs`、
@@ -60,36 +62,39 @@ Vercel Staging（**已有**，本 PR 不改）：`VISEPANDA_NATIVE_STAGING=true`
 
 ## 3. 部署与替换（实际远端动作待授权）
 
-1. 在 ECS 上按 [Docker 官方 Ubuntu 22.04 安装流程](https://docs.docker.com/engine/install/ubuntu/)
-   配置 apt 仓库并安装 Docker Engine；核对 `docker version`、daemon、剩余磁盘。不要运行安装便利脚本。
-   ECS 保持只允许已有 SSH 入口；无需为 worker 增加入站规则。确认到 Staging Supabase 和实际 Qwen
-   endpoint 的 DNS/TLS 出站可用，并记录无秘密的响应状态。
+1. ECS 已使用 Ubuntu apt 仓库的 `docker.io` 安装 Docker Server 29.1.3。执行前再核对
+   `docker version`、daemon、`uname -m` 和剩余磁盘；无需重新安装 Docker。ECS 保持只允许已有
+   SSH 入口，worker 不增开端口。已有无凭据 HTTPS 401/400 仅作网络连通证据。
 2. 在 ECS 本地以 root 安全写入 `/etc/visepanda/hosted-text-worker.env`，设置 0600；每个变量占一行
    `NAME=value`，其中 profile JSON 单行。该文件不随镜像、Git 或 journal 传输。先以已核准的
    `current_input_v1` 与保守并发/预算启动。由管理员离线保存该文件的受控备份，轮换密钥时替换该文件
    并重新运行脚本。不要在 `docker run -e NAME=value`、命令行参数或 shell 输出中放密钥。
-3. ECS 上先记录 `uname -m`；`x86_64` 用 `linux/amd64`，`aarch64` 用 `linux/arm64`。
-   在已合并 main 的干净 checkout 构建 `vp-hosted-text-worker:<12 位以上 commit SHA>`：
+3. 在 ECS 的 `/opt/vp-v4` 将干净 main 快进到包含本 PR 的已合并提交，核对当前 commit 与
+   `uname -m`；`x86_64` 用 `linux/amd64`，`aarch64` 用 `linux/arm64`。直接在 ECS 构建镜像：
 
    ```bash
+   cd /opt/vp-v4
+   git status --short # 应无输出；若有改动，先查明归属，不覆盖
+   git fetch origin main
+   git switch main
+   git merge --ff-only origin/main
    sha=$(git rev-parse --short=12 HEAD)
-   platform=linux/amd64 # ECS 若为 aarch64 则改为 linux/arm64
+   platform=linux/amd64 # 仅当 uname -m 为 x86_64；aarch64 改用 linux/arm64
    docker build --platform "$platform" -f deploy/hosted-worker/Dockerfile --build-arg BUILD_ID="$sha" -t "vp-hosted-text-worker:$sha" .
    docker image inspect --format '{{.Id}} {{.Architecture}}' "vp-hosted-text-worker:$sha"
-   docker save "vp-hosted-text-worker:$sha" > "vp-hosted-text-worker-$sha.tar"
    ```
 
-   记录基础镜像 digest、生成的镜像 ID 与 tar 校验和；用已批准的安全传输方式把 tar 和
-   `ecs-worker.sh` 送至 ECS，在 ECS 上核对校验和并 `docker load -i <tar>`。传输物不得含 env 文件。
-   保留上一个已知可用的镜像 tag 与 journal。不要在 40 GB 磁盘上无界保留旧 tar/镜像。
+   记录基础镜像 digest、生成的镜像 ID 与实际架构。镜像不经 tar 中转；保留上一已知可用
+   镜像 tag 与 journal，并监测 40 GB 根盘。构建后原代码与部署脚本同处该 checkout。
 4. **数据库仍停用时**，先完成本迁移的备份与授权写窗口。应用
    `20260923090000_vpj_07_hosted_text_worker.sql` 后，以 service_role 确认
    `hosted_worker_ready_groups(1)` 返回 disabled，并确认 anon/authenticated 无四个 RPC 执行权限。
    迁移只追加私有表/RPC，开关默认 disabled；不得从仓库文件推断共享库已应用。
-5. ECS 上 `bash ecs-worker.sh preflight`，再 `bash ecs-worker.sh replace "$sha"`。
+5. ECS 上 `bash deploy/hosted-worker/ecs-worker.sh preflight`，再
+   `bash deploy/hosted-worker/ecs-worker.sh replace "$sha"`。
    脚本要求 root、已加载的 SHA 标签镜像、私有 env 文件和 uid 1000/0700 journal 目录；运行容器
    只读根文件系统、无新增能力、768 MiB 内存上限、不发布端口、75 秒停止宽限。
-   `bash ecs-worker.sh status` 应显示 running/healthy；`read_hosted_worker_status()` 应显示 workerId、
+   `bash deploy/hosted-worker/ecs-worker.sh status` 应显示 running/healthy；`read_hosted_worker_status()` 应显示 workerId、
    `phase=disabled`、新鲜 `lastSeenAt`。`healthy` 在 disabled 状态同样可能出现，只证明 SQL 心跳可达。
 6. 在获准的 Staging 操作窗口执行 `set_hosted_worker_enabled(true,'staging activation #195')`，
    然后按第 4 节验证。任何关键项失败，先关闭 SQL 开关再按第 5 节回滚。
@@ -111,9 +116,11 @@ Vercel Staging（**已有**，本 PR 不改）：`VISEPANDA_NATIVE_STAGING=true`
 
 1. **立即**：以获准的 service_role 调用 `set_hosted_worker_enabled(false,'rollback')`，读回 disabled。
    这停止新发现/领取；已在途请求须按 lease、预算和 journal 结果核对。
-2. ECS 上 `bash ecs-worker.sh stop`（SIGTERM，75 秒宽限）；需要退回代码时，确认 SQL 仍 disabled，
-   用保留的上一已知可用 SHA 执行 `bash ecs-worker.sh replace <previous-sha>`，先核健康/心跳，
-   再决定是否重新启用 SQL 开关。脚本会输出被替换的镜像标签；不会删除 journal 或旧镜像。
+2. ECS 上 `bash deploy/hosted-worker/ecs-worker.sh stop`（SIGTERM，75 秒宽限）；需要退回代码时，
+   确认 SQL 仍 disabled，用保留的上一已知可用 SHA 执行
+   `bash deploy/hosted-worker/ecs-worker.sh replace <previous-sha>`，先核健康/心跳，
+   再决定是否重新启用 SQL 开关。脚本会先创建候选容器再停止旧容器；新容器启动失败时尝试恢复
+   旧容器。不会删除 journal 或旧镜像。
    若替换后无法启动，保持 SQL disabled 并查容器状态，不要用有缺陷的镜像反复启动。
 3. 未知费用保持 pending，按完整预留计入 scope 上限（保守、不会少算）。journal 已保存对账所需的全部元数据：
    `vpj07-hosted-job/1` 行是该组的精确 job 配置，`jobDigest = sha256(JSON.stringify(job))`；
@@ -135,7 +142,7 @@ Vercel Staging（**已有**，本 PR 不改）：`VISEPANDA_NATIVE_STAGING=true`
 
 ## 7. 需要 JT 决定/提供
 
-1. ECS Docker 安装、镜像/脚本传输和容器启动的实际授权与操作窗口。
+1. ECS 镜像构建、容器启动与 Staging 激活的实际授权和操作窗口。
 2. Staging 迁移写窗口与备份确认；共享库实际状态先读回。
 3. 在 ECS 私有 env 文件安全写入 service_role key 与 Qwen key（不入聊天/仓库）。
 4. 核准 profile 价目版本、费率、预留、超时、首批 `modes` 与测试 owner budget scope。
