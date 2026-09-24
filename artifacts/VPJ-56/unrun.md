@@ -8,6 +8,9 @@
   build withdrawal and certificate rotation remain UNRUN; no signing secret was committed.
 - The iOS 27 SDK upload was accepted for this build. Physical-device installation,
   VoiceOver and product acceptance remain UNRUN; no CI or upload result substitutes for them.
+- The exact build `0.1.0 (20260924.163820)` is now assigned to the existing one-tester
+  VisePanda Internal group and is visible in JTs17 TestFlight ([record](testflight-install-20260925/verification.md)).
+  Device installation remains UNRUN pending action-time confirmation for the UI install.
 - VPJ-01 #188 is CLOSED; VPJ-56 #237 acceptance remains open.
 - 2026-09-24 X1 (#508): the unsigned Archive and Xcode Cloud device Build evidence remains
   [recorded](cloud-build-20260924/verification.md). The first post-#528 Cloud script failure's
