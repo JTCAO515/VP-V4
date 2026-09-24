@@ -345,6 +345,14 @@ struct NativeTripView: View {
                 }
                 Text(detail.trip.title).font(.title2.bold()).accessibilityIdentifier("trip.confirmed.title")
                 Text(detail.trip.id).font(.caption).textSelection(.enabled).accessibilityIdentifier("trip.selected.id")
+                if detail.confirmationState == "confirmed" {
+                    NavigationLink {
+                        NativeTodayView(store: store, tripID: detail.trip.id)
+                    } label: {
+                        Label(text("Open Today", "打开今日"), systemImage: "sun.max")
+                    }
+                    .accessibilityIdentifier("trip.today")
+                }
                 NavigationLink(text("Preparation check", "准备检查")) {
                     NativeReadinessView(tripID: detail.trip.id, tripVersion: detail.trip.headVersion)
                 }.accessibilityIdentifier("trip.readiness")
