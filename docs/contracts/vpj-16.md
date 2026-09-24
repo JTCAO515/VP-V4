@@ -245,5 +245,12 @@ not converted into a missing-publication claim. Full coverage produces an empty 
 place-specific notices and unanswered user excerpts remain compatible. This changes no upstream
 wire schema, eligibility, publication, worker, AI-assist behavior, persistence or native DTO.
 
+When saved evidence revalidation is temporarily unavailable, the Web reader shows a distinct
+retry notice and hides factual content. It does not describe that state as missing knowledge or
+offer the blocked-answer AI assist. This applies to rail, payment, SIM and place results without
+changing the immutable original outcome or an actual current no-answer result.
+
 Evidence: `artifacts/VPJ-16/web-claim-gaps-20260922/verification.md`. Component fixtures and
 local checks do not establish authenticated Staging, real-source or whole-#206 acceptance.
+The unavailable-recheck correction is recorded in
+`artifacts/VPJ-16/web-recheck-unavailable-20260925/verification.md`.
