@@ -1,0 +1,72 @@
+{
+  "devicesAndConfigurations" : [
+    {
+      "device" : {
+        "architecture" : "arm64",
+        "deviceId" : "74ADB60A-DFBD-46FC-A6CD-8DD4ACD7C6C0",
+        "deviceName" : "VP-AX-20260918",
+        "modelName" : "iPhone 15",
+        "osBuildNumber" : "23F77",
+        "osVersion" : "26.5",
+        "platform" : "iOS Simulator"
+      },
+      "expectedFailures" : 0,
+      "failedTests" : 3,
+      "passedTests" : 0,
+      "skippedTests" : 0,
+      "testPlanConfiguration" : {
+        "configurationId" : "1",
+        "configurationName" : "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription" : "VisePanda · Built with macOS 27.0",
+  "expectedFailures" : 0,
+  "failedTests" : 3,
+  "finishTime" : 1789706678.166,
+  "passedTests" : 0,
+  "result" : "Failed",
+  "runtimeWarnings" : [
+
+  ],
+  "skippedTests" : 0,
+  "startTime" : 1789706549.439,
+  "statistics" : [
+
+  ],
+  "testFailures" : [
+    {
+      "failureText" : "Contrast failed",
+      "targetName" : "VisePandaUITests",
+      "testIdentifier" : 1,
+      "testIdentifierString" : "AppShellUITests/testAskAndTripFullAccessibilityInDarkMode()",
+      "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testAskAndTripFullAccessibilityInDarkMode",
+      "testName" : "testAskAndTripFullAccessibilityInDarkMode()"
+    },
+    {
+      "failureText" : "Contrast failed",
+      "targetName" : "VisePandaUITests",
+      "testIdentifier" : 2,
+      "testIdentifierString" : "AppShellUITests/testAskAndTripFullAccessibilityInReleaseLanguages()",
+      "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testAskAndTripFullAccessibilityInReleaseLanguages",
+      "testName" : "testAskAndTripFullAccessibilityInReleaseLanguages()"
+    },
+    {
+      "failureText" : "Contrast failed",
+      "targetName" : "VisePandaUITests",
+      "testIdentifier" : 3,
+      "testIdentifierString" : "AppShellUITests/testMaximumTextFullAccessibilityInBothThemesAndLanguages()",
+      "testIdentifierURL" : "test://com.apple.xcode/VisePanda/VisePandaUITests/AppShellUITests/testMaximumTextFullAccessibilityInBothThemesAndLanguages",
+      "testName" : "testMaximumTextFullAccessibilityInBothThemesAndLanguages()"
+    }
+  ],
+  "title" : "Test - VisePanda",
+  "topInsights" : [
+    {
+      "category" : "Common Failures",
+      "impact" : "100% of failures",
+      "text" : "16 runs of 3 tests failed with Contrast failed"
+    }
+  ],
+  "totalTestCount" : 3
+}
