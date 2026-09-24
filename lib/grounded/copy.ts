@@ -77,7 +77,7 @@ export const savedClaimGapCopy = {
     title: "Points without current support",
     nextStep: "Next step:",
     claims: {
-      original_valid_booking_id: "Booking ID",
+      original_valid_booking_id: "Original identity document used for booking",
       valid_ticket_not_itinerary_or_receipt: "Itinerary and receipt as ticket proof",
       merchant_acceptance_check: "Checking card acceptance",
       supported_card_merchant_qr_payment: "Mobile merchant payments",
