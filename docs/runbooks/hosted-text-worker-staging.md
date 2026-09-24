@@ -11,6 +11,8 @@
 迁移 `supabase/migrations/20260923090000_vpj_07_hosted_text_worker.sql`、镜像
 `deploy/hosted-worker/Dockerfile`、`deploy/hosted-worker/ecs-worker.sh`。契约见
 [VPJ-07 常驻 worker](../contracts/vpj-07.md#hosted-resident-text-worker)。
+当前目标环境的价格、过期 policy/consent、单 owner 窄预算及逐步授权门槛见
+[2026-09-25 激活审查方案](hosted-text-worker-activation-review-20260925.md)。
 
 ## 1. 部署形态选择
 
@@ -32,7 +34,7 @@ Docker 不会因健康状态变为 `unhealthy` 自动重启容器，需监测并
 | 变量 | 类型 | 说明 |
 | --- | --- | --- |
 | `VISEPANDA_HOSTED_TEXT_WORKER` | 开关 | 必须为 `true`，否则进程直接退出 1 |
-| `VISEPANDA_HOSTED_WORKER_DB_KEY` | **秘密** | Staging service_role key（与现有 `VISEPANDA_STAGING_TEXT_WORKER_KEY` 同类） |
+| `VISEPANDA_HOSTED_WORKER_DB_KEY` | **秘密** | 优先为 ECS 单独创建可单独撤销的 Staging `sb_secret_` key；它仍映射 project-wide `service_role`、绕过 RLS，不是细粒度数据库授权。旧 service_role JWT 仅作为兼容后备 |
 | `VISEPANDA_HOSTED_WORKER_QWEN_KEY` | **秘密** | VP-v4 Qwen 按量 API key（与现有 `VISEPANDA_STAGING_TEXT_PROVIDER_KEY` 同类） |
 | `VISEPANDA_HOSTED_WORKER_PROFILE` | 非秘密 JSON | 见下；内含价目版本/费率/预留/超时/configurationId，≤16 KB |
 | `VISEPANDA_QWEN_ENDPOINT` | 可选 | 不设=旧北京端点；设置则必须与 Staging policy 的 `endpoint` 完全相同，否则所有组被跳过 |
@@ -169,5 +171,5 @@ JSONL 行会标为 `partialTailIgnored`，不能重建为已验证收据；无�
 
 1. ECS 镜像构建、容器启动与 Staging 激活的实际授权和操作窗口。
 2. Staging 迁移写窗口与备份确认；共享库实际状态先读回。
-3. 在 ECS 私有 env 文件安全写入 service_role key 与 Qwen key（不入聊天/仓库）。
+3. 在 ECS 私有 env 文件安全写入独立 Supabase secret key 与独立 Qwen key（不入聊天/仓库）。
 4. 核准 profile 价目版本、费率、预留、超时、首批 `modes` 与测试 owner budget scope。

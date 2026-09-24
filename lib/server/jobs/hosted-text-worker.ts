@@ -5,6 +5,7 @@ import { PROTOCOL_MODELS } from "../model-gateway/adapters/provider-protocol.ts"
 import type { ValidatedUsageReceipt } from "../model-gateway/budget/usage-receipt.ts";
 import type { KnowledgeValidationReceipt } from "../turn/text-worker.ts";
 import type { DestinationReceipt } from "../model-gateway/adapters/http-transport.ts";
+import { supabaseWorkerHeaders } from "./supabase-worker-headers.ts";
 
 /**
  * VPJ-07 #195 hosted text worker. One long-running trusted process (a small
@@ -271,7 +272,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
     const secret = await dependencies.workerCredential(timeout);
     if (typeof secret !== "string" || !/^[\x21-\x7e]{1,8192}$/.test(secret)) throw unavailable();
     const response = await fetcher(HOSTED_STAGING_DATABASE_URL + "/rest/v1/rpc/" + name, {
-      method: "POST", headers: { "content-type": "application/json", apikey: secret, authorization: "Bearer " + secret },
+      method: "POST", headers: supabaseWorkerHeaders(secret),
       body: JSON.stringify(parameters), redirect: "manual", credentials: "omit", cache: "no-store", signal: timeout,
     });
     if (response.status !== 200 || response.headers.get("content-type")?.split(";")[0].trim() !== "application/json") {
