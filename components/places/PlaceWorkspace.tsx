@@ -41,7 +41,7 @@ export function PlaceWorkspace() {
       if (own !== generation.current) return;
       if (!response.ok) {
         if (response.status === 401) { reset(); setRouteEpoch(value => value + 1); }
-        throw new Error(response.status === 401 ? text("Sign in to search places.", "请先登录后搜索地点。") : text("This lookup is unavailable. You can retry or change the input.", "本次查询暂不可用，可以重试或调整输入。"));
+        throw new Error(response.status === 401 ? text("Sign in to search places.", "请先登录后搜索地点。") : response.status === 429 ? text("Too many lookups for now. Please wait a moment and retry.", "查询过于频繁，请稍后再试。") : text("This lookup is unavailable. You can retry or change the input.", "本次查询暂不可用，可以重试或调整输入。"));
       }
       const data: Reply = await response.json();
       if (own !== generation.current) return;

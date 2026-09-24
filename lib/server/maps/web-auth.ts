@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { NextRequest } from "next/server";
 import { getSupabasePublicConfig } from "@/lib/server/identity/user-data-adapter";
 
@@ -27,8 +28,15 @@ import { getSupabasePublicConfig } from "@/lib/server/identity/user-data-adapter
  * unlike `createUserDataAdapter`, this never forwards a refreshed-session
  * cookie back to the caller, since a place search is not a page load that
  * a browser session depends on continuing from.
+ *
+ * Returns the verified subject together with the same request-scoped,
+ * caller-JWT client so routes can spend the caller's own per-actor provider
+ * quota (lib/server/maps/place-quota.ts) under `auth.uid()` -- still no
+ * service credential.
  */
-export async function requireAuthenticatedActor(request: NextRequest): Promise<string | null> {
+export type AuthenticatedPlaceActor = { subject: string; client: SupabaseClient };
+
+export async function requireAuthenticatedActor(request: NextRequest): Promise<AuthenticatedPlaceActor | null> {
   if (request.headers.has("authorization")) return null;
   const config = getSupabasePublicConfig();
   if (!config) return null;
@@ -38,7 +46,7 @@ export async function requireAuthenticatedActor(request: NextRequest): Promise<s
     });
     const { data, error } = await client.auth.getClaims();
     const subject = data?.claims?.sub;
-    return !error && typeof subject === "string" ? subject : null;
+    return !error && typeof subject === "string" ? { subject, client } : null;
   } catch {
     return null;
   }

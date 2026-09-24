@@ -1,14 +1,14 @@
 {
   "schemaVersion": "jtcoding-handoff/1.0",
   "projectId": "visepanda-vp-v4",
-  "lastUpdated": "2026-09-22",
+  "lastUpdated": "2026-09-24",
   "objective": "交付中英原生iOS的一站式陪伴Journey Agent，全程Trip、知识、现场能力、IAP、运营、用户交付和可维护系统；以VPJ-00#187统筹。",
-  "status": "已只读核对 origin/main ce46abd、76张VPJ任务及6张地图子票。#191/#204/#193/#231等已关闭；#475相对日草稿和#472/#474截图审阅已合并。开放PR为#478无障碍失败记录与#479 Wiki/Ask Staging证据；尚未合并，不覆盖main状态。完整表见 docs/program/2026-09-05/CURRENT-STATUS-2026-09-22.md。",
-  "currentPhase": "按三队既定顺序继续 S1–S6；本次开发 S3 #363 双端地点消费者与高德展示，同步当前说明文档。阶段完成仍由实际验收判断。",
+  "status": "2026-09-24同步：main 8002bb6（#526 iOS隐私清单/位置用途/出口合规键已合并；#525最终交接已合并）。生产安全热修已上线：JT在Vercel控制台将hotfix/next-16-3-6-20260923（30e98013 = a8fa82ad + cherry-pick 303088d3）的Preview提升为Production，新部署dpl_9t4iY7YF48r9Suru34hZFdxH8sdw，线上Next 16.3.6，无新功能带入；回滚点dpl_2WV2dky65LhMguX8QnFUhz6xPRKm。共享数据库dzqdzetcctkhbrhlxxgn（生产与Staging共用）经备份后应用14个迁移，migration list本地/远端一致；research intake与hosted worker开关默认关闭。开放PR #478/#511/#514。完整表见 docs/program/2026-09-05/CURRENT-STATUS-2026-09-24.md。",
+  "currentPhase": "2026-09-23 JT决定的主线继续：常驻worker + 有依据的Ask + Trip确认，直到TestFlight真机可用，同时启动#246客户发现；暂停继续铺设新的S3–S5切片。生产Next安全热修与共享数据库迁移已由JT完成；剩余阻塞为TestFlight签名材料、worker托管账号与密钥、客户发现D0、intake开启决定与出口合规确认。独立Production数据库（#243）仍是最大结构风险。阶段完成仍由实际验收判断。",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "Overall / current Issue owner",
-  "intendedNextAgent": "Read live origin/main, PR/Issue and execution row; preserve the user plan file. Use existing secure credentials/official login, never request secrets in chat or assume old-device files exist. This thread is scoped to #359/#360 only per JT's 2026-09-17 re-scoping -- do not resume the general backlog scan without a fresh instruction to do so. Before assuming this sandbox lacks real LLM credentials, re-check lib/server/jobs/.local/.env in the user's main worktree and re-probe each key directly (with the sandbox disabled for that one network call) -- do not just repeat a prior round's stated conclusion; account balance and reachability can both change between rounds.",
-  "nextAction": "本次#363代码已补双端搜索/提示/详情/地址/周边、同选中与高德展示接线。最低验证：Swift设备SDK构建、模拟器状态6/6、lookup契约2/2、TS/lint/文档及未登录HTTP拒绝。后续#363核实际应用/域名绑定、真实地图和供应商行为；#364→#197/#198→#199/#219顺序保持。A接续#225→#226/#227，C复用#204/#193后接续#205/#206。#195/#196/#359/#360及#478/#479保持原归属。无生产发布；#363完整验收仍OPEN。",
+  "intendedNextAgent": "Read live origin/main, open PRs and the current Issue/execution row first; regenerate the tracker readback with node scripts/program-status.mjs rather than trusting this snapshot. Stay inside the 2026-09-23 focus (resident worker + grounded Ask + Trip confirmation to TestFlight, plus #246). Production is a CLI deployment of a8fa82ad on Next 16.2.6 and shares the Staging Supabase database: any migration applied to \"Staging\" also changes the database behind the production site, so never apply one without JT's backup/migration decision. Use existing secure credentials/official login; never request secrets in chat.",
+  "nextAction": "待JT亲自执行（开发线程不代办）：1) TestFlight签名材料与testflight Environment secrets（#237/#242）；2) worker托管账号与密钥（#195激活#522 worker）；3) #246客户发现D0核对；4) research intake是否开启收件的决定（当前enabled=false）；5) 出口合规确认（#526已加入Info.plist键，其取值须JT确认）。开发侧：输入到位后依次部署并激活#522 worker（开关默认关）、接有依据Ask与Trip确认、签名Archive→TestFlight；规划#243独立Production数据库。native/ops生产路由503是生产未启用对应开关，属预期，不作故障处理。开放PR #478/#511/#514保持原归属。",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
@@ -57,7 +57,7 @@
     "2026-09-11 resumed: JT explicitly confirmed Preview native configuration/proof key, exact host WAF allowance and two synthetic-account/owned-Trip cleanup, then delegated development permission management. This supersedes the earlier pause for this scope; Production/real-user/provider/funds boundaries remain separate.",
     "2026-09-12 JT removed mandatory supplier support responses, account-contract receipts and precise supplier TTL evidence from VPJ-03 for ALL model providers, including Qwen, GLM, DeepSeek and future candidates. Public terms, console metadata and actual configuration suffice as documented sources with explicit unknowns. No supplier ticket blocks development; preserve truthful notice, user consent and runtime permissions.",
     "2026-09-12 JT取消全部开发阶段第三方、法务与产品许可前置要求；工单/书面回复/合同回执/精确供应商TTL缺失不再阻塞开发。agent按docs/agents/development-integration-policy.md以现有账号/API与实际配置推进，可逆参数自行决定；保留用户同意、RLS、确认、秘密及真实验证。",
-    "2026-09-12 JT明确同意仅暂停main自动Production构建。单字段guard已应用，PR332合并后真实Production构建CANCELED且全部线上alias保留db5fb7b；Preview/Staging不变。此授权不包含新的Production发布或解除guard。",
+    "2026-09-12 JT明确同意仅暂停main自动Production构建。单字段guard已应用，PR332合并后真实Production构建CANCELED且全部线上alias保留db5fb7b；Preview/Staging不变。此授权不包含新的Production发布或解除guard。（2026-09-23更正：该alias状态已不成立。协调者经Vercel CLI读取，当前生产为2026-09-22 CLI发布的a8fa82ad，见下方生产事实；本条仅保留当时记录。）",
     "2026-09-14 JT authorizes unblocking Issues as actual dependencies permit and developing in order; labels are not an additional gate. Preserve unmet acceptance, production protection and complete parent tracking.",
     "2026-09-15 JT要求：当前模型提案这一轮处理完成后暂停。完成当前PR/CI与证据收尾，不启动下一轮，不建立继续开发的自动化。",
     "2026-09-16: JT gave explicit in-chat resume authorization for VPJ-75 (#359) this round, recorded here and in the PR/issue thread; the 2026-09-15 no-next-round-without-resume pause governed exactly one round and does not carry forward automatically.",
@@ -65,21 +65,27 @@
     "2026-09-17 VPJ-03/#190 closure audit: actual Staging policy inventory found the only current GLM internal-testing policy had recipient/region records inconsistent with its notice and observed Vercel/Supabase path, while its route was absent from main. The exact immutable policy was terminally revoked, leaving no active verified C2 policy; historical Qwen recipient evidence remains historical only. New C2 use requires a new immutable policy, renewed consent and deployment verification.",
     "2026-09-17 JT明确要求完成VPJ-02后合并并关闭#189。按原三条验收及独立复核，技术验收已满足；最终必需检查通过后合并PR440，再关闭#189。完整worker/provider链归属#195，不因本票完成而验收；未改变生产保护或其他父票。",
     "2026-09-17 JT确认复核GitHub原生Blocked：blockedBy仅保留开工硬依赖，acceptanceDependencies保留可并行任务的集成/最终验收输入；联合依赖图与完整验收不变。VPJ-02/49/62/75/76及关联原生边本轮冻结；移除图标不代表ready或运行验收。",
-    "2026-09-17 JT明确要求三个新团队并行，并排除已分配的VPJ-04/08/07/75/76。TEAM-PLAN-2026-09-17.md分配其余65张开放工作票：A平台/商业/交付20、B行程/地图/原生体验31、C AI/知识/质量14；各队一个主要交付，Overall协调全局规划/handoff，共享Staging写窗口串行。分工不改变验收、依赖或既有权限。"
+    "2026-09-17 JT明确要求三个新团队并行，并排除已分配的VPJ-04/08/07/75/76。TEAM-PLAN-2026-09-17.md分配其余65张开放工作票：A平台/商业/交付20、B行程/地图/原生体验31、C AI/知识/质量14；各队一个主要交付，Overall协调全局规划/handoff，共享Staging写窗口串行。分工不改变验收、依赖或既有权限。",
+    "2026-09-23 JT在协调会话中明确授权（来源：JT本人会话指令）：1) 一次只含安全补丁的生产发布——升级next修复Critical漏洞，执行方案待JT批准后进行；2) 收紧公开仓库自托管runner触发条件，外部PR不在自托管runner执行；3) main开启分支保护，required check为Quality PR的deterministic-pr-gates，禁止force push与删除；4) 下一轮开发集中一条完整链路：常驻worker + 有依据的Ask + Trip确认，直到TestFlight真机可用，同时启动#246客户发现，暂停继续铺设新的S3–S5切片。这些决定不扩展到其他生产动作、资金、真实用户数据或外部消息；2026-09-12仅暂停main自动Production构建的决定在该次安全发布之外仍有效。",
+    "2026-09-23 仓库设置（JT授权，协调者执行）：fork PR运行审批改为all_external_contributors；main分支保护required checks = deterministic-pr-gates、db-integration，enforce_admins=true，禁止force push与删除。本线程于同日只读复核分支保护与之一致。该授权不包含其他仓库、账号或生产设置变更。",
+    "2026-09-24 JT亲自执行（协调者核实）：1) 按2026-09-23授权完成仅含next安全补丁的生产发布，方式为Vercel控制台Promote热修分支Preview；2) 共享数据库dzqdzetcctkhbrhlxxgn先备份再应用14个既有迁移。research intake与hosted worker开关均保持默认关闭；这两项执行不授权开启收件、激活worker或其他生产变更。"
   ],
   "changedFiles": [
-    "docs/program/2026-09-05/CURRENT-STATUS-2026-09-22.md",
+    "docs/program/2026-09-05/CURRENT-STATUS-2026-09-24.md",
     "docs/handoff.json",
     "HANDOFF.md",
     "CONTEXT.md",
+    "docs/runbooks/staging-vercel-maintenance.md",
     "README.md",
-    "ios/VisePanda/README.md",
-    "docs/agents/maps-integration-development.md",
-    "docs/program/2026-09-05/TEAM-PLAN-2026-09-17.md"
+    "docs/program/2026-09-05/README.md",
+    "docs/INDEX.md",
+    "docs/manifest.json"
   ],
   "verification": [
     "2026-09-22 #363当前分支：NativePlaceSearchTests6/6、lookup契约2/2、TypeScript与source-policy lint、Xcode26.6 iOS设备高德SDK构建/资源复制通过；/places HTTP200，未登录lookup/display-config均401。最低验证不证明真实供应商、应用绑定、地图渲染或目标环境通过。详见artifacts/VPJ-19/363-consumers-20260922/verification.md。",
-    "2026-09-22 GitHub只读核对：main ce46abd，开放PR #478/#479，76张VPJ任务与6张地图子票状态见 CURRENT-STATUS-2026-09-22.md。本次未重新连接Staging或执行付费provider。其余109条完整历史验证及当时FAIL/UNRUN保留在固定commit ce46abd 的 docs/handoff.json；以下为按原版本摘录。",
+    "2026-09-24 生产热修（协调者验证）：go2china.space、www、vp-v4.vercel.app均指向dpl_9t4iY7YF48r9Suru34hZFdxH8sdw（热修分支提交30e98013），线上JS为Next 16.3.6；/、/research、/auth/sign-in、/places 200；/api/trips、/api/places/lookup 401；/api/intake GET 405；/api/ops/community、/api/translate/policy 404（未带入新功能）；next/image 200；HSTS保留。回滚点dpl_2WV2dky65LhMguX8QnFUhz6xPRKm。CLI vercel deploy --prod曾报Not authorized（疑与本地committer邮箱有关，未确证），改用控制台Promote。",
+    "2026-09-24 共享数据库迁移（JT执行、协调者核实）：经IPv4 Session pooler备份（schema 374K + data 2.2M，本机文件，不入库），随后supabase db push --include-all成功应用14个迁移：20260914100000、20260917062305、20260917064821、20260917131633、20260917140000、20260918032847、20260921205157、20260922002626、20260922004906、20260922005110、20260922014000、20260923090000、20260923120000、20260923140000。其中20260914100000 place_identity与20260917两个mobile-guard迁移此前未登记（place_identity与start_chat_turn守卫此前确未生效，ACL已等效存在），现已补齐；migration list本地/远端完全一致。迁移后生产站点验证正常；native/ops路由仍503（生产未启用对应开关，属预期）。直连db.<ref>.supabase.co经本机代理fake-IP失败，须用aws-0-ap-southeast-1 pooler，已写入docs/runbooks/staging-vercel-maintenance.md。",
+    "2026-09-23 最终GitHub只读核对（node scripts/program-status.mjs 与 gh api，约13:58Z）：main a4c7f12；本轮合并#517–#524（#519/#517/#518/#521/#523/#522/#524/#520），开放PR #478/#511/#514；VPJ 61 OPEN/15 CLOSED，#503–#508 OPEN；main分支保护contexts=[deterministic-pr-gates, db-integration]、enforce_admins=true、force push/删除关闭；Native iOS Archive run 35870142999（772620c，main）success。协调者核实：#521 db-integration 5 lane 181用例0 skip；Vercel CLI读取生产alias（见unrun生产条）。未连接Staging/生产数据库、未执行付费provider。表见CURRENT-STATUS-2026-09-23.md。其余109条完整历史验证及当时FAIL/UNRUN保留在固定commit ce46abd 的 docs/handoff.json；以下为按原版本摘录。",
     "2026-09-14 #362 full matrix: AMap 160/160 (120 search + 40 route), Tencent 159/160 (1 genuine no_results, English query for a minor viewpoint). Full variant/city breakdown in artifacts/VPJ-18/full-matrix-20260914/verification.md. Mid-run AMap OVER_DIRECTION_RANGE (code 20803) found and fixed (route redesign, short synthetic offsets instead of long-distance real-place pairs).",
     "Place mainline: local contracts291/291, PG19/19 zero skips, Web read9/9, lint267/typecheck and Web build PASS. Native14/14 PASS again after typed-display fix; static tests22/22 PASS. Two independent review findings fixed, final SQL and consumer0/0; see artifacts/VPJ-16/place-grounding-20260914/verification.md.",
     "PR342/2aa489d: exact318f83d Native34717138599, Quality34717138686, Budget34717138621 and Preview passed. Real Staging41 preserved77 original tables/data and declared schema invariants, users6/Trips3/published11/revoked1. v1 semantic2/12 failures retained and its policy revoked; v2 passed16/16 once each. Native zh/en answered/relaunch,40second source/scroll continuity and expired AX hiding passed; disable within16.76s, logout and cleanup/WAF20 passed. All18 v2+native attempts settled,0 unresolved; Production CANCELED. See artifacts/VPJ-16/grounded-ask-20260913/staging-delivery/verification.md.",
@@ -90,7 +96,7 @@
     "2026-09-18 VPJ-09/#197 bounded relative-day outline on branch codex/vpj-09-relative-day-20260918: native guided four-city food/walk directions remain local until a user supplies non-overlapping dates; existing Trip Proposal/diff/exact confirmation unchanged. Disposable local Supabase ordinary Auth/PostgreSQL native+Web integration passed with a prior dinner retained and two appended days; native simulator end-to-end outline/proposal/confirmation/relaunch passed on synthetic account. See artifacts/VPJ-09/verification.md. This does not close #197."
   ],
   "unrun": [
-    "#359/#360：PR #479 报告 Staging61、真实Qwen与双端有界回读；本次仅核对PR，未重新运行。独立审核发布、新内容双端回读、answered EvidencePack v2、真机、账单与最终恢复演练仍未完成。旧Staging50缺迁移/无凭据判断已过时，不作当前阻塞。",
+    "#359/#360：PR #479已于2026-09-22合并（2ef0950），其报告的Staging61、真实Qwen与双端有界回读是该PR证据，本次未重新运行。独立审核发布、新内容双端回读、answered EvidencePack v2、真机、账单与最终恢复演练仍未完成；两票仍OPEN。",
     "Production/customer and complete native/Harness acceptance remain unrun. Scoped Staging and actual C0 model protocol/worker behavior are verified; supplier billing, semantic quality and real user data consumers remain separate.",
     "Physical VoiceOver, signed Store and selected-object Ask sheet acceptance under #198/#233/#242 remain unrun. PR278 merged the source with iOS26.5 all15 tests pass; iOS17.5 ran and failed4 UI audits. Full maximum-size contrast diagnostic also remains FAIL; these are not waived.",
     "VPJ-66 offline preparation is merged and accepted; ten remaining fixture cases and all12 Staging cases, provider pairing, real Trip/worker/fault/rollback acceptance remain NOT_RUN under VPJ-67..71. Offline preparation does not establish Harness runtime acceptance.",
@@ -99,7 +105,9 @@
     "S1 scope beyond the recorded physical create/review/confirm/relaunch remains unrun: iOS17/VoiceOver/maximum text, natural token expiry and deliberate network-loss/unknown-ack UI. JT deferred further phone verification; continue development. Earlier remote status/locale/browser limitations remain recorded with their original versions.",
     "Broader scope beyond completed VPJ-02: VPJ-07/#195 full worker task execution/isolation/provider acceptance remains separate; ADR-0016 applies when a concrete SQL SystemDataAdapter is introduced. Normal direct hostname-route TLS failed and unproxied IPv6 is unobserved; the actual direct-port existing-proxy route passed. These preserved limits are not additional VPJ-02 criteria.",
     "VPJ-09/#197 full acceptance remains open: saved cross-Trip preferences, arbitrary fuzzy requests, real model/Chat-to-Plan transition, target Staging/device breadth and grounded place/route feasibility have not passed this bounded slice; VPJ-65 owns grounded complete-plan checks.",
-    "#363：双端消费者与地图SDK接线已实现，用户提供的地图配置仅本机忽略文件；供应商Key有效性、iOS应用/Web域名限制、真实地图与网络/实机/跨账号联合验收未运行。父子/入口/别名来源无可用依据时仍明确未知。"
+    "#363：双端消费者与地图SDK接线已实现，用户提供的地图配置仅本机忽略文件；供应商Key有效性、iOS应用/Web域名限制、真实地图与网络/实机/跨账号联合验收未运行。父子/入口/别名来源无可用依据时仍明确未知。",
+    "生产（2026-09-24起）：dpl_9t4iY7YF48r9Suru34hZFdxH8sdw（30e98013，Next 16.3.6），Next Critical已消除。它等同于a8fa82ad加安全补丁，不含main之后的功能（#520安全头/地点配额、#522 worker等未上线生产）；生产未启用native/ops开关。早先“冻结于db5fb7b”“最后生产部署f14ee46”两种记载不成立，历史见固定commit bb43c5d的handoff。",
+    "仍未运行/未激活：#522常驻text worker迁移已在共享库、开关默认关，托管账号/密钥未配置、未部署、未激活；research intake开关enabled=false，未开启收件；#520代码未上线生产（其迁移已在共享库）；#524仅未签名Archive首跑通过，签名、上传App Store Connect与TestFlight安装UNRUN；#526隐私清单/出口合规键已合并，出口合规取值待JT确认；#517客户发现未外联、D0未核对。"
   ],
   "blockers": [
     "Staging46 bounded rail/payment/SIM Ask, specific unanswered requests, same-task clarification/repair, Web owner readback, worker recovery and native event reconnect are observed. Full S1/S2, wider knowledge coverage, physical/VoiceOver, unobserved fault cases and complete operational acceptance remain incomplete.",
@@ -109,7 +117,8 @@
     "#265←#264/#198/#199/#219, all OPEN: actual same-Trip proposal/confirmation, current context, retained dinner evidence and comparable walking measurements remain incomplete. #266←#265 remains OPEN and additionally requires the same real task, persistent deployed worker/data, fault checkpoints and reconnect/cancellation receipts.",
     "#267 depends on #264 and completed offline #287: the bounded rail-document chain now runs, but complete real-task coverage, frozen benefit/tolerance criteria and human calibration remain outstanding. Test-budget direction does not remove attempt/token/concurrency safeguards or settle unknown charges.",
     "#268消费#266/#267/#229的完整链与#231已关闭范围内的网络证据；选定版本12场景、Ops停用恢复和匹配环境仍需联合验收。#231不再列为OPEN阻塞。",
-    "JT deferred further physical phone verification on2026-09-12. Existing physical same-Trip/auth slice passed; full native/VoiceOver/Store acceptance remains unrun. The previous CI AX failure is resolved; do not repeat phone work as a development gate."
+    "JT deferred further physical phone verification on2026-09-12. Existing physical same-Trip/auth slice passed; full native/VoiceOver/Store acceptance remains unrun. The previous CI AX failure is resolved; do not repeat phone work as a development gate.",
+    "最大结构风险——生产与Staging共用数据库dzqdzetcctkhbrhlxxgn（Production/Preview/Development三个Vercel环境同一NEXT_PUBLIC_SUPABASE_URL，见docs/runbooks/staging-vercel-maintenance.md）：任何“Staging”迁移、测试写入或开关变更都同时作用于生产站，须JT先备份并决定。2026-09-24的14个迁移已应用，此后新增迁移同样适用该约束。独立Production数据库仍属#243，未建立。"
   ],
   "rollback": "For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.",
   "historicalSnapshots": [
@@ -119,7 +128,10 @@
     "docs/archive/2026-09-05/baseline/HANDOFF.md",
     "docs/archive/2026-09-05/baseline/issue-execution-contract.md",
     "https://github.com/JTCAO515/VP-V4/blob/c5aaa4d/docs/handoff.json",
-    "https://github.com/JTCAO515/VP-V4/blob/ce46abd/docs/handoff.json"
+    "https://github.com/JTCAO515/VP-V4/blob/ce46abd/docs/handoff.json",
+    "https://github.com/JTCAO515/VP-V4/blob/a90ce61/docs/handoff.json",
+    "https://github.com/JTCAO515/VP-V4/blob/9e0553f/docs/handoff.json",
+    "https://github.com/JTCAO515/VP-V4/blob/bb43c5d/docs/handoff.json"
   ],
   "observation": "Technical release acceptance in VPJ-45 and commercial lifecycle evidence in VPJ-47 are distinct terminal conditions.",
   "readingGuidance": "Read the current Issue/PR, its VPJ execution row and affected interfaces/code next. Read the master plan on first entry or scope changes; research and historical ADRs on demand."

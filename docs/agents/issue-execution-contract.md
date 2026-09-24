@@ -27,6 +27,9 @@ boundaries retain their protection.
 `test:security`, `test:e2e`, `test:e2e:frontend` and `evals` by affected behavior.
 
 - `test:e2e` is source/contract inspection; only `test:e2e:frontend` runs browser flows.
+- `test:integration` skips its gated database files; `test:integration:db --lane <lane>` runs
+  them on disposable local stacks and fails on any skip (lanes and the reasoned allowlist:
+  `tests/integration/README.md`; CI check `db-integration`).
 - `db:verify` and provider/native checks need their actual environment and task-specific
   assertions; a command name alone proves no live behavior.
 - `docs:check`, `check:assets`, `check:flags` and `check:artifacts` keep their defined scope.

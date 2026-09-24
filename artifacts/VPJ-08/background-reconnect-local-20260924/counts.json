@@ -1,0 +1,82 @@
+{
+  "scope": "actual local native/Auth/HTTP/SQL; synthetic model only",
+  "counts": {
+    "http": 4,
+    "finished": 4,
+    "destinationReceipts": 12
+  },
+  "tasks": [
+    {
+      "turnId": "f435d9dd-f46c-499e-ab32-8246fab09947",
+      "taskId": "33e2016b-1650-459c-8d8a-982dac29e32b",
+      "status": "completed",
+      "events": 2,
+      "attempts": 1
+    },
+    {
+      "turnId": "2cd300a3-1ab6-488c-8970-b1a92a67035d",
+      "taskId": "fce0671f-b63d-4d8a-a328-d48e787f6d10",
+      "status": "cancelled",
+      "events": 2,
+      "attempts": 0
+    },
+    {
+      "turnId": "192d983b-f8d8-431f-a1ae-36ea4efb30a3",
+      "taskId": "e6e42980-a806-4bce-a0e3-434ab782da9a",
+      "status": "completed",
+      "events": 2,
+      "attempts": 1
+    },
+    {
+      "turnId": "e5e9b8f7-0256-4441-9dd3-244f094c940a",
+      "taskId": "e16db2b3-8a39-4a8e-a4f5-11d08315442c",
+      "status": "completed",
+      "events": 2,
+      "attempts": 1
+    },
+    {
+      "turnId": "451bd8a7-d296-440b-8873-997997c1623a",
+      "taskId": "7a58b0da-8c6a-450e-9797-a09a623b93bf",
+      "status": "completed",
+      "events": 2,
+      "attempts": 1
+    }
+  ],
+  "eventRequests": [
+    {
+      "turnId": "f435d9dd-f46c-499e-ab32-8246fab09947",
+      "cursor": "0"
+    },
+    {
+      "turnId": "f435d9dd-f46c-499e-ab32-8246fab09947",
+      "cursor": "1"
+    },
+    {
+      "turnId": "f435d9dd-f46c-499e-ab32-8246fab09947",
+      "cursor": "0"
+    },
+    {
+      "turnId": "2cd300a3-1ab6-488c-8970-b1a92a67035d",
+      "cursor": "0"
+    },
+    {
+      "turnId": "e5e9b8f7-0256-4441-9dd3-244f094c940a",
+      "cursor": "0"
+    },
+    {
+      "turnId": "451bd8a7-d296-440b-8873-997997c1623a",
+      "cursor": "0"
+    },
+    {
+      "turnId": "451bd8a7-d296-440b-8873-997997c1623a",
+      "cursor": "1"
+    }
+  ],
+  "inputs": [
+    "Synthetic HOLD native stream document question",
+    "中文合成请求",
+    "Synthetic UI request",
+    "Synthetic HOLD native stream document question"
+  ],
+  "onlyCurrentInput": true
+}

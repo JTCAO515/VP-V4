@@ -1,5 +1,14 @@
 # VPJ-75 (#359) — explicitly UNRUN
 
+**2026-09-24 unscoped-proposal recovery slice:** The real Qwen finding below
+(`scope.cities: []` causing an all-or-nothing rejection) now has a bounded
+code-path fix: the v2 prompt asks the model to omit unsupported city claims;
+the parser discards only otherwise-valid unscoped proposals and records a
+reviewer-visible gap. Local scripted-provider contract checks are evidence
+for this behavior. A real v2 Qwen call, Staging persistence/Ops readback,
+independent human review, publication and new-content reader readback remain
+**UNRUN** for this slice. The earlier Qwen result remains a v1 observation.
+
 Slice 1 (schema/idempotency data model) — see
 `359-wiki-schema-slice1-20260914/verification.md`. Slice 2 (dispatcher RPC
 + real LLM wiring) — see `359-wiki-dispatch-slice2-20260914/verification.md`

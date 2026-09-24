@@ -1,2 +1,3 @@
 {"command":"pnpm docs:check","result":"PASS","scope":"discovery work-package documentation"}
 {"command":"git diff --check","result":"PASS","scope":"discovery work-package documentation"}
+{"command":"curl GET go2china.space /research en|zh, /, /api/intake","result":"200/200/200/405","scope":"read-only production funnel check 2026-09-23"}

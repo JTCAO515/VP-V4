@@ -2,10 +2,12 @@
 
 This producer PR does not close #199.
 
-- UNRUN: migration application and RPC calls in a permitted real identity environment. Local heavy
-  database stack is forbidden during this work; shared Staging changes require separately verified authority.
-- UNRUN: native SDK build/tests, four-second timing, keyboard/VoiceOver interaction and actual sign-in/account-switch
-  observations. New native tests are prepared; CI uses the existing single self-hosted runner queue.
+- UNRUN: migration application and RPC calls in a permitted real identity environment. The 2026-09-24
+  local network-isolated PostgreSQL suite passed against full migration history; it is fixture evidence only.
+  Shared Staging changes require separately verified authority.
+- UNRUN: final-head native SDK build/tests, four-second timing, keyboard/VoiceOver interaction and actual
+  sign-in/account-switch observations. New native tests are prepared; CI uses the existing single
+  self-hosted runner queue. The older failed Native job's log was unavailable at 2026-09-24 review.
 - UNRUN: actual planner consumer. Main's `NativeRelativeOutline.make(from:chinese:)` has no pace input;
   #197 owns its current changes. After the producer/main contract and that work merge, wire the
   task projection to explicit pace choices and visible draft density, revalidate before promoting a draft,

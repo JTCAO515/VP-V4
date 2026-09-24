@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "name": "testflight-staging",
+  "purpose": "First TestFlight build: installed app talks only to the Staging custom origin that the physical iPhone reached on 2026-09-12 (vercel.app hosts timed out on device).",
+  "bundleIdentifier": "space.go2china.VisePanda",
+  "marketingVersion": "0.1.0",
+  "buildSettings": {
+    "VP_NATIVE_ENVIRONMENT": "staging",
+    "VP_NATIVE_STAGING_API_ORIGIN": "https://staging.go2china.space",
+    "VP_NATIVE_TASK_CONTEXT": "knowledge_intent_v1"
+  }
+}

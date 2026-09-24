@@ -1,0 +1,101 @@
+name: DB Integration
+
+# Runs every gated tests/integration file against disposable local databases.
+# Lanes, their switches and the explicit not-in-CI allowlist live in
+# scripts/ci-suites/db-integration.mjs; a lane fails on any skipped, todo or cancelled test.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: db-integration-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Pinned Supabase CLI: `supabase start` chooses the Auth/PostgREST/PostgreSQL image versions.
+  SUPABASE_CLI_VERSION: 2.117.0
+  # Pinned `pg` client for the native-PostgreSQL Wiki lane (installed outside the lockfile).
+  PG_CLIENT_VERSION: 8.13.1
+
+jobs:
+  lane:
+    name: lane (${{ matrix.lane }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        lane: [postgres, postgres-native, supabase-rls, supabase-http-native, supabase-http-ops]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Verify every integration test file is classified
+        run: node scripts/ci-suites/db-integration.mjs --list
+      - name: Pull pinned test database images
+        if: matrix.lane == 'postgres'
+        shell: bash
+        run: |
+          for image in $(node scripts/ci-suites/db-integration.mjs --images); do
+            for attempt in 1 2 3; do
+              if output=$(docker pull "$image" 2>&1); then
+                printf '%s\n' "$output" | tail -1
+                break
+              else
+                status=$?
+              fi
+              printf '%s\n' "$output"
+              case "$output" in
+                *toomanyrequests*|*"Rate exceeded"*) ;;
+                *) exit "$status" ;;
+              esac
+              if [ "$attempt" -eq 3 ]; then exit "$status"; fi
+              sleep "$((attempt * 10))"
+            done
+          done
+      - name: Prepare native PostgreSQL for the Wiki lane
+        if: matrix.lane == 'postgres-native'
+        shell: bash
+        run: |
+          bin=$(ls -d /usr/lib/postgresql/*/bin | sort -V | tail -1)
+          test -x "$bin/initdb" && test -x "$bin/pg_ctl"
+          mkdir -p "$RUNNER_TEMP/pg-client"
+          npm install --prefix "$RUNNER_TEMP/pg-client" --no-save --no-package-lock --ignore-scripts "pg@$PG_CLIENT_VERSION"
+          echo "VP_WIKI_PG_BIN=$bin" >> "$GITHUB_ENV"
+          echo "VP_WIKI_PG_MODULE=$RUNNER_TEMP/pg-client/node_modules/pg/lib/index.js" >> "$GITHUB_ENV"
+          echo "LC_ALL=C" >> "$GITHUB_ENV"
+      - uses: supabase/setup-cli@v1
+        if: startsWith(matrix.lane, 'supabase-')
+        with:
+          version: ${{ env.SUPABASE_CLI_VERSION }}
+      - name: Install Chromium for browser subtests
+        if: startsWith(matrix.lane, 'supabase-http-')
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          echo "VP_OPS_BROWSER_EXECUTABLE=$(node -e "process.stdout.write(require('@playwright/test').chromium.executablePath())")" >> "$GITHUB_ENV"
+      - name: Run lane (skip, todo or cancel fails)
+        run: node scripts/ci-suites/db-integration.mjs --lane ${{ matrix.lane }}
+
+  # Single stable check name for branch protection.
+  db-integration:
+    if: always()
+    needs: lane
+    runs-on: ubuntu-24.04
+    steps:
+      - name: All lanes passed
+        env:
+          RESULT: ${{ needs.lane.result }}
+        run: test "$RESULT" = success

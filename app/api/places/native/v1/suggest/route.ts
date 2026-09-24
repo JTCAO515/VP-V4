@@ -4,6 +4,7 @@ import type { Provider } from "@/lib/server/maps/place-identity";
 import { getNativeRuntimeConfig } from "@/lib/server/identity/native-config";
 import { verifyNativeCredentials } from "@/lib/server/identity/native-credentials";
 import { nativeRequestScope } from "@/lib/server/identity/native-request";
+import { enforcePlaceQuota } from "@/lib/server/maps/place-quota";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -28,6 +29,9 @@ export async function GET(request: NextRequest) {
       const session = await credentials.client.rpc("native_session_v2", { p_action: "session" }).abortSignal(scope.signal);
       scope.check();
       if (session.error || session.data?.subject !== credentials.subject || session.data?.sessionId !== credentials.sessionId) return reply({ error: { code: "SESSION_REPLACED" } }, 401);
+      // Per-actor provider quota (auth.uid() of this JWT) before any provider call; fail-closed.
+      const quotaRejection = await enforcePlaceQuota(credentials.client, "places", scope.signal); scope.check();
+      if (quotaRejection) return quotaRejection;
       const outcome = await suggestPlaces({ provider: selectedProvider, query, city: city ?? undefined, env: process.env, fetcher: scope.fetch });
       scope.check();
       if (outcome.status === "observed") return reply({ candidates: outcome.candidates });

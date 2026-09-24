@@ -1,0 +1,69 @@
+{
+  "capturedAt": "2026-09-22T04:14:35.048718+00:00",
+  "sourceWorktree": "/Users/jtcao/vp-v4-next-issue-20260922",
+  "sourceHead": "4cd14eeb7472ba65554c90a4ae0035d3248a0658",
+  "classification": "Historical fixture rerun outputs only; source files preserved; not new runtime acceptance. Original execution source and command provenance are not independently attested.",
+  "patchSha256": "534c3ee72de38dbe48a10891dd8625d4b9f8c4a1a9f4af834f72d79b30a1fda4",
+  "files": [
+    {
+      "path": "artifacts/VPJ-206/hf-reuse-miracl-bipia-20260916/summary.md",
+      "sha256": "21fdec8cd768e07ba79392c4171c4ad96ce9faadb5946f9f2fe88ac0c5a97b92",
+      "bytes": 4035
+    },
+    {
+      "path": "artifacts/VPJ-66/results.json",
+      "sha256": "bcf6aa1dbf56aec62f2dee18f629c6d70ec3bea71962cd5f91b02a003d2014a8",
+      "bytes": 15736
+    },
+    {
+      "path": "artifacts/VPJ-70/results.json",
+      "sha256": "7a3ac1b03c06f33f3414cf1f2deda38883070c0455cd8fffcd1f6658ccc9bbc0",
+      "bytes": 83526
+    },
+    {
+      "path": "artifacts/VPJ-72/feedback-template.json",
+      "sha256": "136ec95ac32a423b982ce0d2904e5252de37335d38eb1337e1aa69bd724351a4",
+      "bytes": 42763
+    },
+    {
+      "path": "artifacts/VPJ-72/fixture-feedback.json",
+      "sha256": "87bcc8af0703c7b428c0d66d4ed803e220f6bd54af5ea37141d0a4597358bb21",
+      "bytes": 79543
+    },
+    {
+      "path": "artifacts/VPJ-72/results.json",
+      "sha256": "5c47e781c275d3b0aefd0b7ae5a3f948bf67040ef8b70be26874f162de83ce16",
+      "bytes": 116709
+    },
+    {
+      "path": "artifacts/VPJ-72/review.json",
+      "sha256": "59e16784755c1d1558d6f74f70303e8bef4a61b3cbb5a6e23ef97d512781b50a",
+      "bytes": 22642
+    },
+    {
+      "path": "artifacts/VPJ-72/review.md",
+      "sha256": "05de8b87e564aea14debfc8a2c10c025e5f7b2210d39e2938ae3e291de6f10e3",
+      "bytes": 15202
+    },
+    {
+      "path": "artifacts/VPJ-72/state.json",
+      "sha256": "3056a499c0df88b3eebea5e00f16fa4cd32a642112814e72dae39053fc296e16",
+      "bytes": 161178
+    },
+    {
+      "path": "artifacts/VPJ-72/summary.md",
+      "sha256": "239e9031fb4293d076373979a90dd2f8d369877285e58df5c082613de74fa2a0",
+      "bytes": 56527
+    },
+    {
+      "path": "artifacts/VPJ-75/wiki-statement-proposals-safety-20260916/summary.md",
+      "sha256": "0d04287e7acebe0a06399d4e5017608e5afb1e60c915f0f0e4206fa89afa5faf",
+      "bytes": 1406
+    },
+    {
+      "path": "artifacts/VPJ-76/wiki-frozen-eval-20260915/summary.md",
+      "sha256": "18ee3d01b603cdc437a89f62d89e099715d8c70bb62c1b4ba79716b388168038",
+      "bytes": 3419
+    }
+  ]
+}

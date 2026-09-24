@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {conflictsByProposal,detectProposalConflicts,isProposalOutput,isStructuredWikiDraft,resolveProposalOutput} from '../../../lib/server/knowledge/wiki/proposals.ts';
+import {conflictsByProposal,detectProposalConflicts,isProposalOutput,isStructuredWikiDraft,omitUnscopedProposals,resolveProposalOutput} from '../../../lib/server/knowledge/wiki/proposals.ts';
 import {runWikiStatementProposalJob} from '../../../lib/server/jobs/wiki-statement-proposal-job.ts';
 const id='11111111-1111-4111-8111-111111111111';
 const source={id,declaration:{sourceKey:'synthetic',revisionLabel:'1',publisher:'Synthetic',uri:'urn:vpj15:synthetic:proposal',locator:'paragraph 1',snippet:'😀 In Shanghai, bring ID on entry unless exempt.',usageDeclaration:'Synthetic only'}};
@@ -17,12 +17,30 @@ test('invented sources/metadata, missing or repeated quotation and publication a
  assert.equal(isProposalOutput({...raw,proposals:Array(6).fill(raw.proposals[0])}),false);
  assert.equal(isProposalOutput({...raw,proposals:[{...raw.proposals[0],evidence:[]}]}),false);
 });
+test('unscoped model proposal is omitted with a review gap while valid proposals survive',()=>{
+ const unscoped={...raw.proposals[0],statement:{...statement,scope:{...statement.scope,cities:[]}}};
+ const normalized=omitUnscopedProposals({...raw,proposals:[raw.proposals[0],unscoped]});
+ assert.ok(normalized);assert.equal(normalized.proposals.length,1);assert.deepEqual(normalized.proposals[0],raw.proposals[0]);
+ assert.match(normalized.gaps[0],/city scope is unsupported/);
+ assert.equal(isStructuredWikiDraft(resolveProposalOutput(normalized,[source])),true);
+ const chinese=omitUnscopedProposals({...raw,summary:'来源未说明城市。',proposals:[unscoped]});
+ assert.deepEqual(chinese.proposals,[]);assert.match(chinese.gaps[0],/城市范围/);
+ assert.equal(omitUnscopedProposals({...raw,gaps:Array(5).fill('Existing gap'),proposals:[unscoped]}),null);
+ assert.equal(omitUnscopedProposals({...raw,proposals:[{...unscoped,evidence:[{sourceRevisionId:'forged',quote:'x'}]}]}),null);
+ assert.equal(omitUnscopedProposals({...raw,proposals:[{...unscoped,reviewerId:id}]}),null);
+});
 const provider={provider:'qwen',endpoint:'https://llm-fixture.cn-beijing.maas.aliyuncs.com/compatible-mode/v1/chat/completions',configurationId:id,configurationVersion:1,timeoutMs:5000};
 const input={dataClass:'c0_synthetic',sources:[source],configDigest:'a'.repeat(64),provider,maxOutputTokens:2048,timeoutMs:5000};
 const response=output=>Response.json({model:'qwen3.7-plus-2026-05-26',choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:JSON.stringify(output)}}],usage:{prompt_tokens:30,completion_tokens:60,total_tokens:90}});
 test('actual worker/protocol path has dedicated prompt, bounded output, no hidden retry',async()=>{
  let calls=0;const result=await runWikiStatementProposalJob(input,{qwenEndpoint: provider.endpoint, credential:()=> 'synthetic',recordDestination:async()=>{},fetch:async(_u,options)=>{calls++;const body=JSON.parse(options.body);assert.match(body.messages[0].content,/untrusted/);assert.equal(body.max_tokens,2048);assert.equal(body.messages.length,2);return response(raw);}},new AbortController().signal);
  assert.equal(calls,1);assert.equal(result.kind,'succeeded');assert.equal(result.output.schemaVersion,'wiki-draft/2');assert.equal(result.usage.totalTokens,90);
+});
+test('actual worker preserves an honest missing-city summary without proposing its claim',async()=>{
+ const unscoped={...raw.proposals[0],statement:{...statement,scope:{...statement.scope,cities:[]}}};
+ const result=await runWikiStatementProposalJob(input,{qwenEndpoint:provider.endpoint,credential:()=> 'synthetic',recordDestination:async()=>{},fetch:async()=>response({...raw,proposals:[unscoped]})},new AbortController().signal);
+ assert.equal(result.kind,'succeeded');assert.equal(result.output.summary,raw.summary);
+ assert.deepEqual(result.output.statementProposals,[]);assert.match(result.output.gaps[0],/city scope is unsupported/);
 });
 test('non-C0, invalid source, pre-cancel and unbound model quote cannot become proposals',async()=>{
  const deps={qwenEndpoint: provider.endpoint, credential:()=> 'synthetic',recordDestination:async()=>{},fetch:()=>assert.fail('no network')};

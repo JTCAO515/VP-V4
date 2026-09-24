@@ -45,3 +45,19 @@ Global handoff/issue-plan ownership remains with Overall. No shared environment 
 
 Rollback: revert code; in an authorized environment revoke execute on the new RPCs while retaining
 schema, monotonic versions and current revoked states. Do not restore old consent or modify applied migrations.
+
+## 2026-09-24 integration with current main
+
+Merged `origin/main` at `a05528f6` into the existing PR branch. The only content conflict was in
+the Xcode project groups: retained the Travel Pace sources/tests and main's privacy resources and
+hotel test registration. The new RPCs were added to main's authenticated function EXECUTE allowlist;
+the migration's explicit grants remain the authority. No applied migration was rewritten.
+
+- PASS: network-isolated PostgreSQL, complete current migration history, travel pace 5/5 tests
+  with zero skipped; covers owner/session checks, CAS, stale retry, withdrawal, exact Undo and rollback.
+- PASS: focused input contract 2/2; docs check; source policy lint; Xcode project plist; new Swift
+  syntax parse; `git diff --check`.
+- FAIL (environment): full local `pnpm test:contract` exited because this worktree lacks
+  `node_modules`; it is not counted as a passing full contract suite. Final-head CI remains required.
+- UNRUN: native SDK build/tests and target-environment user behavior at this integration point;
+  the older Native CI failure's job log is unavailable and does not identify a code defect.
