@@ -190,7 +190,10 @@ test("every server-owned question obligation and allowed cause has bilingual gap
   const { QUESTION_DEFINITIONS } = await import("../../../lib/server/knowledge/claim/questions.ts");
   for (const locale of ["en", "zh"] as const) {
     for (const definition of Object.values(QUESTION_DEFINITIONS)) {
-      for (const claim of definition.claims) assert.ok(Object.hasOwn(savedClaimGapCopy[locale].claims, claim.objectId));
+      for (const claim of definition.claims) {
+        assert.ok(Object.hasOwn(savedClaimGapCopy[locale].claims, claim.objectId));
+        assert.ok(Object.hasOwn(savedClaimGapCopy[locale].nextSteps, claim.objectId));
+      }
     }
     for (const reason of ["missing", "expired", "revoked", "unreviewed", "unresolved_variants", "not_current_date"]) {
       assert.ok(Object.hasOwn(savedClaimGapCopy[locale].reasons, reason));
