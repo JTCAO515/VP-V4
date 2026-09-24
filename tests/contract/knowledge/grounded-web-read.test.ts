@@ -172,6 +172,7 @@ test("complete evidence and non-knowledge failures never fabricate claim gaps", 
   assert.equal(savedAnswerNotice(f.read().turns[0]), null);
   Object.assign(f.turn.result, { projection: "unavailable", knowledge: null });
   assert.equal(f.read().turns[0].claimGaps, undefined);
+  assert.equal(savedAnswerNotice(f.read().turns[0]), "recheckUnavailable");
   Object.assign(f.turn, { outcome: "technical_failure", status: "failed" });
   Object.assign(f.turn.result, { originalOutcome: "technical_failure", intent: "technical_failure", requestScope: "unknown", projection: "current" });
   assert.equal(f.read().turns[0].claimGaps, undefined);

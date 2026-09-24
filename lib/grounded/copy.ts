@@ -7,6 +7,7 @@ export const savedAnswerCopy = {
     refresh: "Refresh answers", checking: "Checking access and sources…", unavailable: "Saved answers are unavailable. Please sign in again or try later.",
     empty: "No saved answers are available.", sources: "Sources and context", conditions: "Applies when", exclusions: "Does not cover",
     pending: "This question is still being processed.", cancelled: "This question was cancelled.", clarification: "More detail is needed. Continue this question in the app.",
+    recheckUnavailable: "Evidence for the saved answer cannot be rechecked right now. Factual content is hidden; try refreshing later.",
     placeClarification: "More than one reviewed attraction matches this name. Please provide its full official name and check the selected city in the app.",
     placeBlocked: "Current reviewed information does not support the requested attraction details. Check the full venue name, selected city and the venue's official information.",
     placePartial: "Reviewed attraction details are shown below. Other requested details remain unanswered; check them with the venue.",
@@ -34,6 +35,7 @@ export const savedAnswerCopy = {
     refresh: "刷新回答", checking: "正在核对访问权限和来源…", unavailable: "暂时无法读取已保存的回答，请重新登录或稍后再试。",
     empty: "暂无可读取的已保存回答。", sources: "来源与上下文", conditions: "适用条件", exclusions: "不包含",
     pending: "这个问题仍在处理中。", cancelled: "这个问题已取消。", clarification: "还需要更多信息，请在 App 中继续这个问题。",
+    recheckUnavailable: "当前无法重新核对已保存答案的依据，事实内容已隐藏；请稍后刷新重试。",
     placeClarification: "这个名称匹配到多个已审核景点。请在 App 中提供完整官方名称，并核对所选城市。",
     placeBlocked: "当前已审核信息不足以支持所问的景点详情。请核对场馆完整名称、所选城市及场馆官方信息。",
     placePartial: "以下是有依据的景点信息，其他所问内容尚未回答，请向场馆核对。",
@@ -58,12 +60,12 @@ export const savedAnswerCopy = {
 } as const;
 
 /** Queue terminal states can precede any grounded result; they are never ongoing work. */
-export function savedAnswerNotice(turn: SavedTurn): "pending" | "cancelled" | "failed" | "blocked" | "clarification" | "partial" | "paymentPartial" | "paymentBlocked" | "connectivityPartial" | "connectivityBlocked" | "placeClarification" | "placeBlocked" | "placePartial" | "placeHoursMissing" | "placeAddressMissing" | null {
+export function savedAnswerNotice(turn: SavedTurn): "pending" | "cancelled" | "failed" | "recheckUnavailable" | "blocked" | "clarification" | "partial" | "paymentPartial" | "paymentBlocked" | "connectivityPartial" | "connectivityBlocked" | "placeClarification" | "placeBlocked" | "placePartial" | "placeHoursMissing" | "placeAddressMissing" | null {
   const payment = turn.questionId?.startsWith("payment_") === true;
   const connectivity = turn.questionId?.startsWith("connectivity_") === true;
   const place = turn.questionId?.startsWith("place_") === true || turn.placeResolution !== undefined;
   if (turn.projection === "pending") return turn.status === "cancelled" ? "cancelled" : turn.status === "failed" ? "failed" : "pending";
-  if (turn.projection === "unavailable") return place ? "placeBlocked" : connectivity ? "connectivityBlocked" : payment ? "paymentBlocked" : "blocked";
+  if (turn.projection === "unavailable") return "recheckUnavailable";
   if (turn.outcome === "clarification") return turn.placeResolution === "ambiguous" ? "placeClarification" : "clarification";
   if (turn.outcome === "technical_failure") return "failed";
   if (turn.outcome === "blocked" || !turn.facts.length) return place ? "placeBlocked" : connectivity ? "connectivityBlocked" : payment ? "paymentBlocked" : "blocked";
