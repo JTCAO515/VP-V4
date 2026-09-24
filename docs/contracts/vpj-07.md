@@ -477,6 +477,21 @@ key fails before RPC I/O. Both secret forms run with project-wide `service_role`
 authority and bypass RLS; a dedicated key limits credential reuse and permits
 independent revocation, not database permissions. Actual Staging authorization
 must be verified before activation.
+For the bounded S1 synthetic smoke, explicit `VISEPANDA_HOSTED_WORKER_SECRET_MODE=files`
+rejects both credential environment variables and reads only fixed
+`/run/vp-worker-secrets/db.key` and `qwen.key`. The directory must be a Linux
+tmpfs owned by the Node uid/gid 1000 with mode 0700; both files must be
+regular, one-link, no-symlink uid/gid 1000 mode 0400, ASCII-only and distinct.
+No file value enters `process.env` or Docker Config.Env. The original env
+mode remains compatible and cannot silently fall back from invalid file
+mode. `ecs-worker-files.sh` starts only with no prior worker/candidate/previous
+container, with Docker restart disabled. A host reboot erases `/run`; no
+new worker claims occur until keys are safely reinjected and an operator
+rechecks the SQL switch, owner scope/policy and queue. The SQL switch itself
+may still be enabled after an abrupt host loss, so disable it before any
+manual restart. The fsync journal remains on persistent private storage;
+tmpfs must not be substituted for it. This path is repository preparation,
+not actual ECS or supplier acceptance.
 The process refuses to start without `VISEPANDA_HOSTED_TEXT_WORKER=true`, with any
 `VERCEL_ENV`, with equal/missing keys, an invalid profile/endpoint/build label, or a
 journal directory that is not absolute and free of group/other write permission.

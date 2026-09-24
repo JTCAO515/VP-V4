@@ -120,6 +120,7 @@ async function cli(t,{env={},mapper=null,journalMode=0o700,wait=null}={}){
 
 test('CLI fails closed before any I/O without every explicit prerequisite',async t=>{
  for(const env of [{VISEPANDA_HOSTED_TEXT_WORKER:''},{VERCEL_ENV:'preview'},{VISEPANDA_HOSTED_WORKER_DB_KEY:''},{VISEPANDA_HOSTED_WORKER_QWEN_KEY:CANARY_DB},
+  {VISEPANDA_HOSTED_WORKER_SECRET_MODE:'files'},{VISEPANDA_HOSTED_WORKER_SECRET_MODE:'unexpected'},
   {VISEPANDA_HOSTED_WORKER_PROFILE:'{}'},{VISEPANDA_HOSTED_WORKER_PROFILE:JSON.stringify(profile({modes:['x']}))},{VISEPANDA_HOSTED_WORKER_JOURNAL_DIR:'relative'},
   {VISEPANDA_HOSTED_WORKER_BUILD:'bad build'},{VISEPANDA_QWEN_ENDPOINT:'https://evil.example/v1'},{VISEPANDA_HOSTED_WORKER_HEALTH_PORT:'0'}]){
   const r=await cli(t,{env,mapper:'globalThis.fetch=async()=>{throw Error("no network expected");};'});
