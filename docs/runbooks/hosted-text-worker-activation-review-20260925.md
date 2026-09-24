@@ -89,9 +89,14 @@ that any discounted tier will be billed.
    heartbeat, with no ready claims, provider destination receipts, budget
    attempts or unexpected journal content. Failures: keep switch disabled,
    stop container, retain journal and investigate without retry storms.
-5. **Single activation:** Confirm current policy/consent, the one active S1
-   scope, zero unresolved attempts and the exact profile/endpoint. Submit one
-   authorized synthetic Ask, then enable SQL switch in the approved Staging
+5. **Single activation:** Confirm S1 has exactly one current unrevoked Qwen
+   policy/consent pair and it is the new policy, the one active S1 scope,
+   zero unresolved attempts and the exact profile/endpoint. Submit one
+   authorized synthetic Ask. Immediately before enabling, recheck that
+   policy/consent pair and read back **exactly one** ready
+   row globally and confirm its `text_content.owner_id` and `policy_id` match
+   the reviewed S1 owner and new policy; leased must remain zero. Then enable
+   SQL switch in the approved Staging
    window. Observe one claim, one bounded Qwen destination/usage receipt,
    ledger settlement or explicitly pending unknown cost, terminal Turn and
    native owner readback. Verify another owner cannot read it. Stop switch
@@ -105,8 +110,11 @@ that any discounted tier will be billed.
    is a separate reviewed action after checking other consumers. No migration
    down or Production change.
 
-Before steps 1–5, re-read migration, switch, policy/consent, ready/leased
-queue, all S1 scope candidates and unresolved attempts. Abort on drift,
+Before database writes and container start, re-read migration, switch,
+policy/consent, zero ready/leased queue, all S1 scope candidates and
+unresolved attempts. After the deliberate synthetic Ask, the expected queue
+state changes to exactly one S1/new-policy ready row and zero leased; any
+other change is drift. Abort on drift,
 ambiguous active scope, mismatched price/endpoint, stale heartbeat, key
 incompatibility or missing owner consent. Codes merged, healthy SQL and a
 synthetic fixture alone do not constitute #195 acceptance.
@@ -167,6 +175,13 @@ begin
     then raise exception 'NOTICE_HASH_MISMATCH'; end if;
   if exists(select 1 from turn_private.text_policies
        where id = v_new_policy or notice_hash = v_notice_hash)
+    or exists(select 1 from turn_private.text_consents c
+        join turn_private.text_policies p on p.id = c.policy_id
+        where c.owner_id = v_owner and c.revoked_at is null
+          and p.provider = 'qwen' and p.revoked_at is null
+          and p.effective_at <= clock_timestamp()
+          and p.expires_at > clock_timestamp()
+          and p.terms_recheck_at > clock_timestamp())
     or exists(select 1 from public.model_budget_scopes where id = v_new_scope)
     or (select count(*) from public.model_budget_scopes
         where owner_id = v_owner and enabled and not frozen and expires_at > clock_timestamp()) <> 0
@@ -177,7 +192,7 @@ begin
       l.attempt_limit_micros, l.enabled as provider_enabled
     into v_old from public.model_budget_scopes s
     join public.model_budget_provider_limits l on l.scope_id = s.id and l.provider = 'qwen'
-    where s.id = v_old_scope for update of s;
+    where s.id = v_old_scope for update of s, l;
   if not found or v_old.owner_id <> v_owner or v_old.currency <> 'CNY'
     or v_old.limit_micros <> 70000000 or v_old.task_limit_micros <> 21000000
     or v_old.task_attempt_limit <> 3 or v_old.concurrency_limit <> 1
