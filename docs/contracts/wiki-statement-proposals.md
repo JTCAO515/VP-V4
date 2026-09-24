@@ -8,6 +8,14 @@ policy binding and is not enabled by this implementation.
 
 The versioned prompt requests at most5 atomic v1 statements, each with1–3 supplied
 source IDs and verbatim quotes, bilingual conditions/exceptions, summary and gaps.
+Prompt `vp-wiki-statement-proposals-v2` tells the model to omit a proposal when
+the supplied source does not establish a supported city. The protocol also
+recovers an otherwise valid output containing `scope.cities: []`: it discards
+only those proposals and adds a visible gap naming the omission. It rejects
+the whole output when any other field is invalid or all five gap slots are
+already occupied. This does not relax the published statement schema or infer
+a city. The changed prompt digest changes the job input digest, so a v2 run
+has its own idempotency key and version history.
 The model cannot supply source declarations, reviewer, TTL or publication authority.
 Application validation reuses the existing statement schema without exposing its
 validation-only sentinel as data. Canonical source declarations are selected from
