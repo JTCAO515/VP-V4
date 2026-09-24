@@ -1,12 +1,14 @@
 # 当前开发状态与交接核对（2026-09-24）
 
-核对基线：GitHub `origin/main` 的 `8002bb6`（PR #526 合并）；Issue 与 PR 于 2026-09-23T22:48Z（+0800 为 09-24 06:48）由 `node scripts/program-status.mjs` 只读查询。生产与数据库事实由协调者核实、JT 执行，本线程未重复读取 Vercel 或数据库。[2026-09-23 版本](CURRENT-STATUS-2026-09-23.md)保留为历史。OPEN/CLOSED 仅为 Tracker 状态，不替代验收；本次未更改任何 Issue。
+GitHub 核对基线：`main` 的 `7e512727`（PR #511 合并）；Issue、PR 和 GitHub Deployment 元数据于 2026-09-24T15:36Z 由 `node scripts/program-status.mjs` 只读查询。生产与数据库事实沿用协调者先前核实、JT 执行的记录，本次未重新读取 Vercel 或数据库。[2026-09-23 版本](CURRENT-STATUS-2026-09-23.md)保留为历史。OPEN/CLOSED 仅为 Tracker 状态，不替代验收；本次未更改任何 Issue。
 
 ## 自 2026-09-23 最终同步以来
 
 - [#525](https://github.com/JTCAO515/VP-V4/pull/525) 最终交接同步已合并；Program Status workflow 分页修复后，在 `bb43c5d`、`8002bb6` 两次 main push 上运行成功。
 - [#526](https://github.com/JTCAO515/VP-V4/pull/526)（T9）已合并：iOS 隐私清单、位置用途说明与首个 TestFlight 上传所需的出口合规键；出口合规的实际取值仍待 JT 确认。
-- 开放 PR 仍为 #478、#511、#514；76 张 VPJ 任务仍为 61 OPEN / 15 CLOSED。
+- #527、#529、#528、#531、#532、#533、#514、#534、#478、#511 已合并；当前开放 PR 仅 [#530](https://github.com/JTCAO515/VP-V4/pull/530)。76 张 VPJ 任务仍为 61 OPEN / 15 CLOSED，Program #187 OPEN。
+- #531–#533 交付 Ask 缺口下一步、Ask 到 Trip 规划与后台 SSE 重连的代码/测试增量；#206/#195 的真实 Provider、托管 worker 与完整目标环境验收仍未完成。Preview 若返回 `403 x-vercel-mitigated: deny`，是 Vercel Firewall 阻断，不能当作应用失败。
+- #534 记录 Xcode Cloud iOS Build 在后续提交成功及同提交的 GitHub 未签名 Archive 成功；签名 Archive、上传和 TestFlight 安装仍 UNRUN。#478 的 iOS 17.5 定向 8/8 通过，真机 VoiceOver UNRUN。#511 新迁移 `20260922033000` 仅在仓库合并，未观察到共享远端应用。
 
 ## 生产安全热修已上线（2026-09-24）
 
@@ -22,22 +24,26 @@
 
 - JT 先经 IPv4 Session pooler 备份（schema 374K + data 2.2M，本机文件，不入库）。
 - 随后 `supabase db push --include-all` 成功应用 14 个迁移：`20260914100000`、`20260917062305`、`20260917064821`、`20260917131633`、`20260917140000`、`20260918032847`、`20260921205157`、`20260922002626`、`20260922004906`、`20260922005110`、`20260922014000`、`20260923090000`、`20260923120000`、`20260923140000`。
-- 其中 `20260914100000` place_identity 与 0917 的两个 mobile-guard 迁移此前从未登记：place_identity 与 `start_chat_turn` 守卫此前确未生效，ACL 已等效存在；现已补齐。`migration list` 本地与远端完全一致。
+- 其中 `20260914100000` place_identity 与 0917 的两个 mobile-guard 迁移此前从未登记：place_identity 与 `start_chat_turn` 守卫此前确未生效，ACL 已等效存在；现已补齐。在这 14 个迁移时点，`migration list` 本地与远端完全一致；随后 #511 合并的新迁移 `20260922033000` 不在这次应用记录内。
 - research intake 开关默认 `enabled=false`（未开启收件）；hosted worker 开关默认关闭。
 - 迁移后生产站点验证正常；native/ops 路由仍 503，因为生产未启用对应开关，属预期。
 - 连接注意：直连 `db.<ref>.supabase.co` 经本机代理 fake-IP 失败，须用 `aws-0-ap-southeast-1` pooler；已写入 [Staging/Vercel 维护手册](../../runbooks/staging-vercel-maintenance.md#共享数据库迁移注意事项2026-09-24)。
 
 ## 仍待 JT
 
-1. TestFlight 签名材料与 `testflight` Environment secrets（#237/#242）。
-2. worker 托管账号与密钥（#195，激活 #522 worker）。
+1. TestFlight 签名材料与 `testflight` Environment secrets（#237/#242）；签名 Archive、上传与真机安装均 UNRUN。
+2. worker 托管账号与密钥（#195，激活 #522 worker）；当前仍无托管部署/激活回执。
 3. #246 客户发现 D0 核对。
 4. research intake 是否开启收件的决定。
 5. 出口合规确认（#526 已加入的键的取值）。
 
-**最大结构风险**：独立 Production 数据库（[#243](https://github.com/JTCAO515/VP-V4/issues/243)）尚未建立。在此之前，对共享库的任何迁移、测试写入或开关变更都同时作用于生产站。
+**最大结构风险**：独立 Production 数据库（[#243](https://github.com/JTCAO515/VP-V4/issues/243)）尚未建立。在此之前，对共享库的任何迁移、测试写入或开关变更都同时作用于生产站；#511 新迁移需要单独核远端状态，不能由仓库合并推断已应用。
 
-## 全队列读回（2026-09-23T22:48Z 生成）
+## 全队列读回（2026-09-24T15:36Z 生成）
+
+以下为 GitHub 只读状态；合并和 CI 状态不证明生产、Staging、Provider 或物理设备验收。
+
+## 阶段汇总
 
 | 阶段 | 任务 | OPEN | CLOSED | OPEN 任务 |
 | --- | ---: | ---: | ---: | --- |
@@ -51,32 +57,33 @@
 
 Program [#187](https://github.com/JTCAO515/VP-V4/issues/187)：OPEN。 附加跟踪子票（地图/S4–S5 切片）：[#362](https://github.com/JTCAO515/VP-V4/issues/362) CLOSED；[#363](https://github.com/JTCAO515/VP-V4/issues/363) OPEN；[#364](https://github.com/JTCAO515/VP-V4/issues/364) OPEN；[#365](https://github.com/JTCAO515/VP-V4/issues/365) OPEN；[#366](https://github.com/JTCAO515/VP-V4/issues/366) OPEN；[#367](https://github.com/JTCAO515/VP-V4/issues/367) OPEN；[#503](https://github.com/JTCAO515/VP-V4/issues/503) OPEN；[#504](https://github.com/JTCAO515/VP-V4/issues/504) OPEN；[#505](https://github.com/JTCAO515/VP-V4/issues/505) OPEN；[#506](https://github.com/JTCAO515/VP-V4/issues/506) OPEN；[#507](https://github.com/JTCAO515/VP-V4/issues/507) OPEN；[#508](https://github.com/JTCAO515/VP-V4/issues/508) OPEN。
 
-### 开放 PR
+## 开放 PR
 
 | PR | 标题 | base | head | Draft | 最近更新（UTC） |
 | --- | --- | --- | --- | --- | --- |
-| [#478](https://github.com/JTCAO515/VP-V4/pull/478) | fix(ios): repair native reading and Tools accessibility | main | `e491406` | 否 | 2026-09-22T06:17:47Z |
-| [#511](https://github.com/JTCAO515/VP-V4/pull/511) | feat(memory): explicit travel pace with versioned correction and Undo | main | `4855ba6` | 否 | 2026-09-22T06:19:45Z |
-| [#514](https://github.com/JTCAO515/VP-V4/pull/514) | fix(review): enforce native search deadline and clarify document label | main | `2ddf400` | 否 | 2026-09-22T04:18:57Z |
+| [#530](https://github.com/JTCAO515/VP-V4/pull/530) | feat(ios): read confirmed Trip schedule in Today | main | `4560404` | 否 | 2026-09-24T13:51:42Z |
 
-### 最近合并到 main 的 PR（最多 12 条）
+## 最近合并到 main 的 PR（最多 15 条）
 
 | PR | 合并时间（UTC） | 合并提交 | 标题 |
 | --- | --- | --- | --- |
+| [#511](https://github.com/JTCAO515/VP-V4/pull/511) | 2026-09-24T15:33:59Z | `7e51272` | feat(memory): explicit travel pace with versioned correction and Undo |
+| [#478](https://github.com/JTCAO515/VP-V4/pull/478) | 2026-09-24T15:21:09Z | `f27af3a` | fix(ios): repair native reading and Tools accessibility |
+| [#534](https://github.com/JTCAO515/VP-V4/pull/534) | 2026-09-24T15:02:36Z | `a05528f` | Record Xcode Cloud recovery and unsigned Archive evidence for VPJ-56 |
+| [#514](https://github.com/JTCAO515/VP-V4/pull/514) | 2026-09-24T14:57:06Z | `a2d090f` | fix(review): enforce native search deadline and clarify document label |
+| [#533](https://github.com/JTCAO515/VP-V4/pull/533) | 2026-09-24T14:42:28Z | `d0482e7` | test(ios): verify pending Ask background SSE reconnect |
+| [#532](https://github.com/JTCAO515/VP-V4/pull/532) | 2026-09-24T14:29:13Z | `6200724` | feat(ios): plan from completed grounded Ask request |
+| [#531](https://github.com/JTCAO515/VP-V4/pull/531) | 2026-09-24T14:05:34Z | `c573587` | feat(ask): show next steps for each saved claim gap |
+| [#528](https://github.com/JTCAO515/VP-V4/pull/528) | 2026-09-24T14:00:03Z | `6ee11a2` | Fix Xcode Cloud AMap script phase failure |
+| [#529](https://github.com/JTCAO515/VP-V4/pull/529) | 2026-09-24T13:56:33Z | `8c04b29` | fix(knowledge): preserve Wiki draft when city scope is unresolved |
+| [#527](https://github.com/JTCAO515/VP-V4/pull/527) | 2026-09-24T13:46:33Z | `b691ee9` | docs(handoff): record 2026-09-24 production hotfix and shared-database migrations |
 | [#526](https://github.com/JTCAO515/VP-V4/pull/526) | 2026-09-23T14:19:43Z | `8002bb6` | iOS: privacy manifest, location purpose string and export-compliance key for first TestFlight upload |
 | [#525](https://github.com/JTCAO515/VP-V4/pull/525) | 2026-09-23T14:08:11Z | `bb43c5d` | docs(handoff): final 2026-09-23 sync, production correction and status pagination fix |
 | [#520](https://github.com/JTCAO515/VP-V4/pull/520) | 2026-09-23T13:55:17Z | `a4c7f12` | T5: Web security headers + per-actor quota for paid map/place routes |
 | [#524](https://github.com/JTCAO515/VP-V4/pull/524) | 2026-09-23T13:52:18Z | `772620c` | feat(vpj-56): signed Archive + App Store Connect export path (X1) |
 | [#522](https://github.com/JTCAO515/VP-V4/pull/522) | 2026-09-23T13:48:45Z | `f8bb609` | VPJ-07 #195: hosted multi-owner text worker with SQL discovery, stop switch and heartbeat |
-| [#523](https://github.com/JTCAO515/VP-V4/pull/523) | 2026-09-23T13:37:51Z | `afb574f` | fix(db): revoke implicit anon function EXECUTE and pin the function ACL allowlist |
-| [#521](https://github.com/JTCAO515/VP-V4/pull/521) | 2026-09-23T13:26:48Z | `9f11ec4` | ci: guard self-hosted iOS runner; run every gated DB integration test in CI |
-| [#518](https://github.com/JTCAO515/VP-V4/pull/518) | 2026-09-23T13:26:27Z | `9e0553f` | docs(handoff): sync 2026-09-23 status and add read-only program status report |
-| [#517](https://github.com/JTCAO515/VP-V4/pull/517) | 2026-09-23T13:25:01Z | `f69c4f9` | docs(vpj-46): executable recruiting, interview and write-back kit for the two-week discovery pilot |
-| [#519](https://github.com/JTCAO515/VP-V4/pull/519) | 2026-09-23T13:23:47Z | `fedb3c4` | fix(deps): upgrade Next.js to 16.3.6 (critical/high advisories) + prod hotfix plan |
-| [#516](https://github.com/JTCAO515/VP-V4/pull/516) | 2026-09-22T06:19:37Z | `a90ce61` | chore(ci): retry the pinned Postgres image pull in community-postgres.yml |
-| [#515](https://github.com/JTCAO515/VP-V4/pull/515) | 2026-09-22T06:14:30Z | `881230e` | fix(planning): preserve duration ambiguity and explicit interest exclusions |
 
-### GitHub Production Deployment 记录（仅元数据）
+## GitHub Production Deployment 记录（仅元数据）
 
 | SHA | ref | 创建（UTC） | 最新状态 | 状态时间（UTC） |
 | --- | --- | --- | --- | --- |
@@ -84,7 +91,7 @@ Program [#187](https://github.com/JTCAO515/VP-V4/issues/187)：OPEN。 附加跟
 | `f14ee46` | f14ee46 | 2026-09-16T02:43:48Z | success | 2026-09-16T02:43:50Z |
 | `033a3f5` | 033a3f5 | 2026-09-16T02:20:22Z | success | 2026-09-16T02:20:24Z |
 
-### 全部 VPJ 任务
+## 全部 VPJ 任务
 
 | 任务 | 阶段 | GitHub 状态 | 最近更新（UTC） | 关闭（UTC） |
 | --- | --- | --- | --- | --- |
