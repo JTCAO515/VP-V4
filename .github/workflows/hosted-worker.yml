@@ -11,6 +11,7 @@ on:
       - 'deploy/hosted-worker/**'
       - 'tests/integration/turn/hosted-worker.test.mjs'
       - 'tests/security/turn/hosted-text-worker.test.mjs'
+      - 'tests/security/cost/hosted-usage-audit.test.mjs'
       - '.github/workflows/hosted-worker.yml'
   workflow_dispatch:
 
@@ -46,6 +47,8 @@ jobs:
           done
       - name: Hosted worker loop, profile and CLI fail-closed checks
         run: node --experimental-strip-types --test tests/security/turn/hosted-text-worker.test.mjs
+      - name: Offline hosted journal audit and receipt isolation
+        run: node --experimental-strip-types --test tests/security/cost/hosted-usage-audit.test.mjs
       - name: Hosted worker end-to-end on isolated PostgreSQL (fake provider, no remote)
         env:
           VP_TURN_DB_TEST: '1'

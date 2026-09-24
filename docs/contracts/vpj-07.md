@@ -486,9 +486,14 @@ The journal is one new 0600 file per process in the journal directory. It record
 the start profile, each group's exact job configuration once (`vpj07-hosted-job/1`,
 `jobDigest = sha256(JSON.stringify(job))`), usage receipts keyed by that digest,
 knowledge-validation reasons, provider destination metadata and cycle counts. It never
-records input, answer or credentials. The existing single-config reconciliation CLI
-cannot yet consume this journal; until a per-group adapter exists, unknown holds stay
-pending at their full reservation.
+records input, answer or credentials. `audit-hosted-text-usage.mjs` reads one private
+resident journal, verifies each exact group job, receipt price and attempt identity,
+and writes a private per-group report without credentials or network access. That
+report records journal evidence only: it cannot establish the ledger's current
+pending/settled state and never calls `finish_model_budget`. Unknown holds remain
+pending at their full reservation until a separate authorized ledger comparison and
+settlement. The original single-config reconciliation CLI does not accept resident
+journals.
 
 Operations RPCs (service_role only; anon/authenticated denied):
 `set_hosted_worker_enabled(p_enabled, p_reason)` and `read_hosted_worker_status()`
