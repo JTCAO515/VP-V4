@@ -434,3 +434,68 @@ ServiceTask budget. The continuous service also accepts this nested job version.
 Only the current input crosses the model boundary; the structured result and
 historical evidence eligibility follow [VPJ-16](vpj-16.md#bounded-natural-language-ask-and-durable-results).
 No new queue, automatic retry or recipient grant is introduced.
+
+## Hosted resident text worker
+
+Implementation 2026-09-23 (#195); local disposable-database verification only, not
+activated anywhere. Activation plan: [runbook](../runbooks/hosted-text-worker-staging.md).
+
+`run-hosted-text-worker.mjs` is one long-running trusted process for a dedicated
+container (`deploy/hosted-worker/Dockerfile`; runtime is Node ≥22.6 plus `lib/`).
+It replaces a hand-written single owner/policy/job file with SQL discovery; it
+adds no new execution authority. Per poll it:
+
+1. upserts a content-free heartbeat (`hosted_worker_heartbeat`) that also returns
+   the operator switch `turn_private.hosted_worker_control.enabled` (default
+   **false**). Disabled ⇒ no discovery and no claim;
+2. reads `hosted_worker_ready_groups(limit)`: distinct owner/policy/context-mode
+   groups with queued or lease-expired work under the same policy/consent/visibility
+   predicates as `claim_text_mode`, plus that owner's enabled candidate budget scopes;
+3. runs each group through the unchanged `createStagingTextJob` (job/1 text and
+   translation, job/2 task history, job/4 knowledge intent), i.e. the existing scoped
+   claim → read/authorize → durable budget → provider → atomic completion path.
+
+A group is skipped (never guessed) unless its mode is enabled in the profile, its
+provider is `qwen`, its policy endpoint equals the process's bound Qwen endpoint,
+and exactly one scope matches the pinned model and profile `priceVersion`. Skips are
+counted in the heartbeat; the Turn stays queued. One owner's groups run
+sequentially (parallel reservations on one scope would trip its concurrency limit
+and consume bounded Turn attempts); different owners run concurrently up to
+`concurrency` (1–8). Multiple replicas are safe: the claimers' advisory locks and
+lease fences are unchanged.
+
+Profile `vpj07-hosted-text-worker/1` is a closed, non-secret JSON environment value:
+`pollIntervalMs` 1000–60000, `maxLifetimeMs` ≤24 h (then exit 0 for restart),
+`drainMs` 0–60000, `concurrency`, `groupLimit` 1–50, `modes`, and a `qwen` tariff
+(price version, pricing, reservation, max output, timeout, configuration id/version)
+qualified by the existing job validator. Secrets come only from
+`VISEPANDA_HOSTED_WORKER_DB_KEY` and `VISEPANDA_HOSTED_WORKER_QWEN_KEY`, are removed
+from `process.env` after reading, and never reach stdout, stderr or the journal.
+The process refuses to start without `VISEPANDA_HOSTED_TEXT_WORKER=true`, with any
+`VERCEL_ENV`, with equal/missing keys, an invalid profile/endpoint/build label, or a
+journal directory that is not absolute and free of group/other write permission.
+
+SIGTERM/SIGINT is a soft stop: no new heartbeat, discovery or claim; in-flight group
+polls get `drainMs` before their signal aborts (an aborted dispatch keeps its pending
+hold and its lease expires normally). Five consecutive unavailable heartbeats,
+discoveries or all-unavailable cycles exit 1 so the orchestrator restarts it;
+heartbeat/discovery failures back off exponentially (capped at 60 s) meanwhile. A final `stopped` heartbeat is best effort; a killed
+process remains visible as a stale heartbeat.
+
+The journal is one new 0600 file per process in the journal directory. It records
+the start profile, each group's exact job configuration once (`vpj07-hosted-job/1`,
+`jobDigest = sha256(JSON.stringify(job))`), usage receipts keyed by that digest,
+knowledge-validation reasons, provider destination metadata and cycle counts. It never
+records input, answer or credentials. The existing single-config reconciliation CLI
+cannot yet consume this journal; until a per-group adapter exists, unknown holds stay
+pending at their full reservation.
+
+Operations RPCs (service_role only; anon/authenticated denied):
+`set_hosted_worker_enabled(p_enabled, p_reason)` and `read_hosted_worker_status()`
+(switch, reason, last 20 heartbeats, ready/leased counts and oldest ready age; no
+content or owner ids). Optional `GET /healthz` on a configured local port reports
+only `serving`/`disabled`/`stale` from heartbeat freshness.
+
+Not covered: the grounded ai-assist supplement job remains request-driven (#360/#491);
+no Production binding (the database URL is the pinned Staging project, as in
+`createStagingTextJob`); per-owner budget scope provisioning remains an operator action.

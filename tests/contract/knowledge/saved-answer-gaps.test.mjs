@@ -33,12 +33,13 @@ test('actual saved-answer component renders bilingual precise gaps beside reliab
   for (const locale of ['zh', 'en']) {
     const gaps = [{ id: 'valid_ticket_not_itinerary_or_receipt', reasons: ['revoked', 'unreviewed'] }];
     const html = render(locale, gaps), labels = copy.savedClaimGapCopy[locale];
-    for (const value of [labels.title, labels.claims[gaps[0].id], ...gaps[0].reasons.map(reason => labels.reasons[reason]), 'Synthetic source', 'https://example.test/source']) assert.ok(html.includes(value), value);
+    for (const value of [labels.title, labels.claims[gaps[0].id], ...gaps[0].reasons.map(reason => labels.reasons[reason]), labels.nextStep, labels.nextSteps[gaps[0].id], 'Synthetic source', 'https://example.test/source']) assert.ok(html.includes(value), value);
     assert.ok(html.includes(locale === 'zh' ? '合成已审核购票证件指引。' : 'Synthetic reviewed booking ID guidance.'));
     assert.ok(!html.includes(copy.savedAnswerCopy[locale].blocked));
     assert.ok(!html.includes(copy.savedAnswerCopy[locale].aiAssistPrompt));
     const complete = render(locale, []);
     assert.ok(!complete.includes(labels.title));
+    assert.ok(!complete.includes(labels.nextStep));
     assert.ok(!complete.includes(copy.savedAnswerCopy[locale].partial));
     if (process.env.VPJ16_RENDER_DIRECTORY) {
       const css = readFileSync('components/chat/SavedAnswers.module.css', 'utf8');

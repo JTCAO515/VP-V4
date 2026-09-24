@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { requireAuthenticatedActor } from "@/lib/server/maps/web-auth";
+import { enforcePlaceQuota } from "@/lib/server/maps/place-quota";
 import { createMapsServiceRoleClient } from "@/lib/server/maps/service-role-client";
 import { searchPlacesWithCanonicalMapping } from "@/lib/server/maps/place-consumer";
 import type { Provider } from "@/lib/server/maps/place-identity";
@@ -77,6 +78,10 @@ export async function GET(request: NextRequest) {
     const failure = failureResponse("INVALID_INPUT");
     return NextResponse.json(failure, { status: failure.status });
   }
+
+  // Per-actor provider quota, checked only once input is valid; fail-closed.
+  const quotaRejection = await enforcePlaceQuota(actor.client, "places", request.signal);
+  if (quotaRejection) return quotaRejection;
 
   const outcome = await searchPlacesWithCanonicalMapping({
     provider,

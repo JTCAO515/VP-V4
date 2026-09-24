@@ -1,5 +1,5 @@
 import { WIKI_STATEMENT_PROPOSALS_PROMPT } from "../prompt/wiki-statement-proposals.ts";
-import { isProposalOutput, type ProposalOutput } from "../../knowledge/wiki/proposals.ts";
+import { omitUnscopedProposals, type ProposalOutput } from "../../knowledge/wiki/proposals.ts";
 import { MODEL_PROFILES, validateKnownUnknownOutput, type KnownUnknownOutput, type ModelDataClass, type ModelTask } from "../index.ts";
 import type { CostGuard } from "../budget/index.ts";
 import type { FailureCode } from "../../contracts/errors/index.ts";
@@ -263,8 +263,9 @@ function normalizeResponse(request: ProtocolRequest, value: unknown): ProtocolOu
     } else if (request.task === "wiki_statement_proposals_v1") {
       try {
         const parsed: unknown = JSON.parse(message.content);
-        if (!isProposalOutput(parsed)) return invalidOutput(usage);
-        output = parsed;
+        const normalized = omitUnscopedProposals(parsed);
+        if (!normalized) return invalidOutput(usage);
+        output = normalized;
       } catch { return invalidOutput(usage); }
     } else if (request.task === "wiki_generation_v1") {
       try {

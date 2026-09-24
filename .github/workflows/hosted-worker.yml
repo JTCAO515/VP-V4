@@ -1,0 +1,67 @@
+name: Hosted Text Worker
+
+# VPJ-07 #195. Separate file so it does not collide with shared workflow edits.
+on:
+  pull_request:
+    paths:
+      - 'lib/server/jobs/**'
+      - 'lib/server/turn/**'
+      - 'lib/server/model-gateway/**'
+      - 'supabase/migrations/**'
+      - 'deploy/hosted-worker/**'
+      - 'tests/integration/turn/hosted-worker.test.mjs'
+      - 'tests/security/turn/hosted-text-worker.test.mjs'
+      - '.github/workflows/hosted-worker.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hosted-worker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Pull the pinned local test database image
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            if output=$(docker pull public.ecr.aws/supabase/postgres:17.6.1.159 2>&1); then
+              printf '%s\n' "$output"
+              exit 0
+            else
+              status=$?
+            fi
+            printf '%s\n' "$output"
+            case "$output" in
+              *toomanyrequests*|*"Rate exceeded"*) ;;
+              *) exit "$status" ;;
+            esac
+            if [ "$attempt" -eq 3 ]; then exit "$status"; fi
+            sleep "$((attempt * 10))"
+          done
+      - name: Hosted worker loop, profile and CLI fail-closed checks
+        run: node --experimental-strip-types --test tests/security/turn/hosted-text-worker.test.mjs
+      - name: Hosted worker end-to-end on isolated PostgreSQL (fake provider, no remote)
+        env:
+          VP_TURN_DB_TEST: '1'
+        run: node --experimental-strip-types --test tests/integration/turn/hosted-worker.test.mjs
+      - name: Build the worker image and prove it fails closed without configuration
+        shell: bash
+        run: |
+          docker build -f deploy/hosted-worker/Dockerfile --build-arg BUILD_ID="${GITHUB_SHA::12}" -t vp-hosted-text-worker:ci .
+          set +e
+          output=$(docker run --rm --network none vp-hosted-text-worker:ci 2>&1); status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -eq 1
+          printf '%s' "$output" | grep -q 'Hosted text worker unavailable'
+          set +e
+          output=$(docker run --rm --network none -e VISEPANDA_HOSTED_TEXT_WORKER=true vp-hosted-text-worker:ci 2>&1); status=$?
+          set -e
+          test "$status" -eq 1
+          docker image inspect vp-hosted-text-worker:ci --format '{{.Config.User}} {{.Size}}'

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import { RouteComparison } from "./RouteComparison";
 import styles from "./PlaceWorkspace.module.css";
 const AMapCanvas = dynamic(() => import("./AMapCanvas").then(module => module.AMapCanvas), { ssr: false });
 type Candidate = { provider: "amap" | "tencent"; providerPoiId: string; rawName: string; matchedCanonicalPoiId?: string | null };
@@ -13,6 +14,7 @@ export function PlaceWorkspace() {
   const [provider, setProvider] = useState("amap"), [candidates, setCandidates] = useState<Candidate[]>([]), [suggestions, setSuggestions] = useState<Candidate[]>([]);
   const [selected, setSelected] = useState<Candidate | null>(null), [detail, setDetail] = useState<Detail | null>(null), [addressResult, setAddressResult] = useState<Reply["result"]>(null);
   const [observedAt, setObservedAt] = useState<string>(), [message, setMessage] = useState(""), [loading, setLoading] = useState(false), [showMap, setShowMap] = useState(false);
+  const [routeEpoch, setRouteEpoch] = useState(0);
   const generation = useRef(0), request = useRef<AbortController | null>(null);
   const text = (en: string, zh: string) => chinese ? zh : en;
   const reset = () => { generation.current++; request.current?.abort(); setCandidates([]); setSuggestions([]); setSelected(null); setDetail(null); setAddressResult(null); setObservedAt(undefined); setMessage(""); setLoading(false); setShowMap(false); };
@@ -23,7 +25,7 @@ export function PlaceWorkspace() {
   useEffect(() => {
     // Back navigation and tab hiding discard private provider observations. Nothing
     // is retained in localStorage, URLs, history state or a cross-account cache.
-    const clear = () => { generation.current++; request.current?.abort(); setCandidates([]); setSuggestions([]); setSelected(null); setDetail(null); setAddressResult(null); setObservedAt(undefined); setShowMap(false); setLoading(false); setMessage(""); };
+    const clear = () => { setRouteEpoch(value => value + 1); generation.current++; request.current?.abort(); setCandidates([]); setSuggestions([]); setSelected(null); setDetail(null); setAddressResult(null); setObservedAt(undefined); setShowMap(false); setLoading(false); setMessage(""); };
     const hidden = () => { if (document.hidden) clear(); };
     window.addEventListener("focus", clear); window.addEventListener("pagehide", clear); document.addEventListener("visibilitychange", hidden);
     return () => { generation.current++; request.current?.abort(); window.removeEventListener("focus", clear); window.removeEventListener("pagehide", clear); document.removeEventListener("visibilitychange", hidden); };
@@ -38,8 +40,8 @@ export function PlaceWorkspace() {
       const response = await fetch(`/api/places/lookup?${params}`, { cache: "no-store", signal: controller.signal });
       if (own !== generation.current) return;
       if (!response.ok) {
-        if (response.status === 401) reset();
-        throw new Error(response.status === 401 ? text("Sign in to search places.", "请先登录后搜索地点。") : text("This lookup is unavailable. You can retry or change the input.", "本次查询暂不可用，可以重试或调整输入。"));
+        if (response.status === 401) { reset(); setRouteEpoch(value => value + 1); }
+        throw new Error(response.status === 401 ? text("Sign in to search places.", "请先登录后搜索地点。") : response.status === 429 ? text("Too many lookups for now. Please wait a moment and retry.", "查询过于频繁，请稍后再试。") : text("This lookup is unavailable. You can retry or change the input.", "本次查询暂不可用，可以重试或调整输入。"));
       }
       const data: Reply = await response.json();
       if (own !== generation.current) return;
@@ -82,5 +84,6 @@ export function PlaceWorkspace() {
       <p className={styles.note}>{text("This is an observed map point, not a verified entrance. Missing coordinates stay unknown.", "这是观测点位，不是已核实入口。缺失坐标保持未知。")}</p>
       {point?.coordinateSystem === "gcj02" && <div className={styles.form}>{[["restroom", "Restrooms", "厕所"], ["convenience_store", "Convenience stores", "便利店"], ["dining", "Food", "餐饮"], ["pharmacy", "Pharmacies", "药店"], ["atm", "ATM", "ATM"]].map(([category, en, zh]) => <button key={category} disabled={loading} onClick={() => void lookup("nearby", { category, lat: String(point.lat), lng: String(point.lng), system: "gcj02" })}>{text(en, zh)}</button>)}</div>}
     </section>}
+    <RouteComparison key={`${city}:${provider}:${routeEpoch}`} selected={detail} chinese={chinese} />
   </main>;
 }

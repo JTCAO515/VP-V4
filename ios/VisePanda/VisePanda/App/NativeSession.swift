@@ -137,6 +137,10 @@ final class NativeSession {
         credential = updated
     }
 
+    func serviceCaseRequest(body: Data) async throws -> Data {
+        try await dataRequest(prefix: "api/service-cases/native/v1", path: "api/service-cases/native/v1", method: "POST", body: body)
+    }
+
     /// The Trip consumer receives response bytes, never the Keychain credential.
     func tripRequest(path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         try await dataRequest(prefix: "api/trips/native/v2", path: path, method: method, body: body, queryItems: queryItems)
@@ -195,6 +199,13 @@ final class NativeSession {
         let cancellation = method == "POST" && UUID(uuidString: cancelID) != nil
         let prefix = askMode.usesTask && cancellation ? "api/chat/native/v1" : askMode.base
         let data = try await dataRequest(prefix: prefix, path: path, method: method, body: body)
+        guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
+        return data
+    }
+
+    /// Translation always uses the current-input lane, independently of Ask mode.
+    func translateRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
+        let data = try await dataRequest(prefix: "api/translate", path: path, method: method, body: body)
         guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
         return data
     }

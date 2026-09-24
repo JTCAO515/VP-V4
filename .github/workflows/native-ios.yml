@@ -19,6 +19,9 @@ concurrency:
 
 jobs:
   simulator:
+    # The runner is the owner's own Mac. The repository is public, so never execute fork PR code
+    # on it: only manual dispatch or a PR whose head branch lives in this repository.
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: [self-hosted, macOS, ARM64, vp-v4-ios]
     # Full simulator suite can use 30 minutes; leave time for evidence and cleanup.
     timeout-minutes: 45

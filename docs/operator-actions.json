@@ -275,7 +275,8 @@
       "verify": "pnpm docs:check; git diff --check; xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj; xcrun simctl list devices available; xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO; record actual external evidence in artifacts/VPJ-56/verification.md",
       "dependencyEffect": "Unblocks only dependents of VPJ-56; does not globally stop unrelated ready work.",
       "rollback": "Revert this Issue's isolated PR/flag and restore the prior supported client/API path. For append-only data changes, use the reviewed forward/compatibility rollback; never rewrite applied history or restore revoked/deleted user data.",
-      "nextSafeIssue": 188
+      "nextSafeIssue": 188,
+      "note": "2026-09-23 X1 (#508): docs/runbooks/ios-signing-and-testflight.md (moved from the PR421 branch) records upload requirements, rotation and withdrawal paths and an ordered checklist (§6). scripts/ios/archive.py plus the manual Native iOS Archive workflow produce a signed app-store-connect ipa once JT supplies the testflight environment secrets or a signed-in Xcode account; nothing is uploaded. Remaining scope unchanged: JT's Apple account/app record/signing/upload and the first TestFlight install."
     },
     {
       "id": "OA-VPJ-63",

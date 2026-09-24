@@ -165,6 +165,7 @@ export function SavedAnswers({ locale }: { locale: "zh" | "en" }) {
               <ul>{turn.claimGaps.map(gap => <li key={gap.id}>
                 <strong>{gapCopy.claims[gap.id as keyof typeof gapCopy.claims]}</strong>
                 {gap.reasons.map(reason => <p key={reason}>{gapCopy.reasons[reason as keyof typeof gapCopy.reasons]}</p>)}
+                <p><strong>{gapCopy.nextStep}</strong> {gapCopy.nextSteps[gap.id as keyof typeof gapCopy.nextSteps]}</p>
               </li>)}</ul>
             </div> : null}
             {turn.unansweredNeeds?.length ? <div>
