@@ -24,6 +24,13 @@
 是所查生产部署的aliases。当前配置不能证明每个历史deployment的环境值；历史URL一律作为潜在Staging入口处理。
 因此只保护Preview不充分，**本项目Production也必须进入本次停流授权范围**，不涉及其他Vercel项目或Production数据库。
 
+### 共享数据库迁移注意事项（2026-09-24）
+
+- 生产站与Staging共用`dzqdzetcctkhbrhlxxgn`：对该库的任何迁移都同时作用于生产站。执行前须由JT先备份并决定；独立Production数据库属#243。
+- 本机经代理访问时，直连`db.<ref>.supabase.co`因代理fake-IP失败；备份与`supabase db push`须经`aws-0-ap-southeast-1`的IPv4 Session pooler。连接串与密码只在本机使用，不写入仓库或聊天。
+- 2026-09-24 JT经该pooler先备份（schema与data文件只存本机、不入库），再以`supabase db push --include-all`应用14个迁移，`migration list`本地/远端一致；记录见`docs/handoff.json`与`docs/program/2026-09-05/CURRENT-STATUS-2026-09-24.md`。
+- `--include-all`会补应用早于远端最新版本的未登记迁移；执行前先`supabase migration list`核对差异，确认补齐项是预期的。
+
 ## 可用控制与局限
 
 [WAF自定义规则](https://vercel.com/docs/vercel-firewall/vercel-waf/custom-rules)是项目级实时配置，不需应用重部署；
