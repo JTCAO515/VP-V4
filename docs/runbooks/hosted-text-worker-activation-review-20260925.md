@@ -79,10 +79,9 @@ that any discounted tier will be billed.
    JWT is a separate fallback. For Qwen, choose the VP-v4 business space and,
    if available for this account, custom access to the pinned model and ECS
    egress IP only ([Alibaba Cloud API key guide](https://help.aliyun.com/zh/model-studio/get-api-key)).
-   Transfer plaintext through an approved encrypted credential channel into
-   ECS root-owned `/etc/visepanda/hosted-text-worker.env` mode 0600; never
-   pass it through chat, source, shell arguments, logs or journal. Keep key
-   inventory identifiers separately for rotation; do not print key values.
+   Use the private handoff below. Never pass plaintext through chat, source,
+   shell arguments, logs or journal. Keep key inventory identifiers separately
+   for rotation; do not print key values.
 4. **Start while disabled:** Build and launch the reviewed main SHA on ECS with
    `ecs-worker.sh`, with SQL switch confirmed `false`. Read back container
    running/healthy (health `disabled`), new worker ID/build and fresh SQL
@@ -118,6 +117,101 @@ other change is drift. Abort on drift,
 ambiguous active scope, mismatched price/endpoint, stale heartbeat, key
 incompatibility or missing owner consent. Codes merged, healthy SQL and a
 synthetic fixture alone do not constitute #195 acceptance.
+
+### Private one-time key handoff on the available surfaces
+
+The Codex in-app browser can show the signed-in Supabase/Alibaba dashboards
+and Alibaba Workbench root terminal, but it does **not** provide this agent
+an opaque secret-transfer channel. An agent clicking reveal/copy, reading the
+clipboard, typing a key through an automation tool or taking a screenshot
+during key display would expose plaintext to the model/tool transcript. This
+step therefore requires JT (coordinated through the main session) to perform
+the private UI gestures manually; if that handoff is unavailable, **stop here**.
+The agent may prepare the host and verify permissions without reading values.
+
+1. Before creating keys, the operator opens the already signed-in Workbench
+   root shell and prepares the target without a secret:
+
+   ```bash
+   umask 077
+   install -d -o root -g root -m 0700 /etc/visepanda
+   install -o root -g root -m 0600 /dev/null /etc/visepanda/hosted-text-worker.env
+   ```
+
+   Confirm the ECS disk encryption/backup policy and Workbench access scope.
+   A 0600 file limits OS readers but does not encrypt an unencrypted disk.
+   Pause agent screenshots/terminal capture during key display and entry.
+2. JT manually creates a named Supabase secret key for this ECS component in
+   the target Staging project's API Keys page and copies its one-time value.
+   In local macOS Terminal, JT saves it in the login Keychain. The final `-w`
+   prompts for the value without putting it in a command argument:
+
+   ```bash
+   security add-generic-password -a vpj07-staging-ecs -s vpj07-staging-supabase-secret -T "" -w
+   ```
+
+   Do not use `-U` to overwrite an existing item without a rotation plan.
+   JT then switches to Workbench and pastes the same value into Bash's silent
+   `read` prompt. Define this function once in the root Bash; its commands
+   contain only variable names and built-in `printf` writes directly to the
+   private file. A failed read/type check returns without writing:
+
+   ```bash
+   vp_store_secret() {
+     local name="$1" value
+     IFS= read -r -s -p "$name: " value || return 1
+     printf '\n'
+     case "$name" in
+       VISEPANDA_HOSTED_WORKER_DB_KEY) [[ "$value" == sb_secret_?* ]] || return 1 ;;
+       VISEPANDA_HOSTED_WORKER_QWEN_KEY) [[ -n "$value" ]] || return 1 ;;
+       *) return 1 ;;
+     esac
+     printf '%s=%s\n' "$name" "$value" >> /etc/visepanda/hosted-text-worker.env
+   }
+   vp_store_secret VISEPANDA_HOSTED_WORKER_DB_KEY
+   ```
+
+   JT does not send the value to Codex chat or an agent tool. The agent never
+   inspects the clipboard, Keychain item or file content.
+3. JT creates a distinct API key in the existing VP-v4 Beijing business
+   space, selecting custom model access to the pinned Qwen snapshot and the
+   verified fixed ECS egress IP if the console offers both. JT saves its
+   one-time value in a separate macOS Keychain item, then enters it through
+   the same Workbench silent prompt:
+
+   ```bash
+   # Local macOS Terminal:
+   security add-generic-password -a vpj07-staging-ecs -s vpj07-staging-qwen-key -T "" -w
+   # Workbench root Bash:
+   vp_store_secret VISEPANDA_HOSTED_WORKER_QWEN_KEY
+   unset -f vp_store_secret
+   ```
+
+   The existing masked Qwen key is not recoverable and is not copied.
+   Separate keys can be revoked without rotating unrelated components;
+   creation does not authorize a model call.
+4. JT clears the local clipboard. With key entry complete and no agent
+   screen capture of its values, the agent may verify only existence and
+   permissions (never plaintext) in Workbench:
+
+   ```bash
+   stat -c '%U:%G %a' /etc/visepanda/hosted-text-worker.env
+   grep -Eq '^VISEPANDA_HOSTED_WORKER_DB_KEY=.+$' /etc/visepanda/hosted-text-worker.env && echo 'DB key present'
+   grep -Eq '^VISEPANDA_HOSTED_WORKER_QWEN_KEY=.+$' /etc/visepanda/hosted-text-worker.env && echo 'Qwen key present'
+   bash /opt/vp-v4/deploy/hosted-worker/ecs-worker.sh preflight
+   ```
+
+   Do not use `cat`, `head`, shell tracing, `docker inspect` environment
+   output or a `grep` that prints a line. Add the reviewed profile and
+   explicit worker flag as nonsecret single-line env entries before
+   preflight; SQL remains disabled.
+5. If a one-time copy, Keychain save, Workbench input, file permission or
+   preflight check fails, keep SQL disabled and the container stopped. Revoke
+   the new key(s) in their respective dashboards, remove the partial env
+   file, clear the clipboard and review the cause before replacement keys.
+   Removing a file does not prove its bytes vanished from cloud snapshots;
+   revocation is the primary containment step. Never recover a masked key
+   through chat or logs.
 
 ## Exact Staging write proposal (review only; not authorized to run)
 
