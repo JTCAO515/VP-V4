@@ -11,7 +11,7 @@ ENV NODE_ENV=production \
     VISEPANDA_HOSTED_WORKER_JOURNAL_DIR=/var/lib/vp-worker/journal
 WORKDIR /app
 RUN printf '{"type":"module","private":true}\n' > package.json \
- && install -d -o node -g node -m 0700 /var/lib/vp-worker /var/lib/vp-worker/journal
+ && install -d -o node -g node -m 0700 /var/lib/vp-worker /var/lib/vp-worker/journal /run/vp-worker-secrets
 COPY lib ./lib
 USER node
 # Journals (metadata-only usage/destination receipts) must survive restarts for

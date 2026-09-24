@@ -11,6 +11,7 @@
 迁移 `supabase/migrations/20260923090000_vpj_07_hosted_text_worker.sql`、镜像
 `deploy/hosted-worker/Dockerfile`、`deploy/hosted-worker/ecs-worker.sh`。契约见
 [VPJ-07 常驻 worker](../contracts/vpj-07.md#hosted-resident-text-worker)。
+仅合成 S1 文件密钥模式使用 `deploy/hosted-worker/ecs-worker-files.sh`，不得拿旧脚本替代。
 当前目标环境的价格、过期 policy/consent、单 owner 窄预算及逐步授权门槛见
 [2026-09-25 激活审查方案](hosted-text-worker-activation-review-20260925.md)。
 
@@ -28,7 +29,8 @@ Docker 不会因健康状态变为 `unhealthy` 自动重启容器，需监测并
 **当前 ECS 系统盘未加密；下列 `/etc` env-file + Docker `--env-file` 路径不得接收真实 Key。**
 仅 S1 合成 Staging 烟测的 `/run` tmpfs 文件密钥候选与残余 journal 风险，见
 [激活审查方案](hosted-text-worker-activation-review-20260925.md#host-storage-and-ip-decision-before-any-real-key)。
-该候选尚需独立代码和合成验证；本 runbook 的现有脚本不能直接执行真实启动。
+该候选的仓库实现与本地合成 Docker 验证不构成 ECS 真实密钥/运行验收；
+旧 `ecs-worker.sh` 仍不能在当前盘上执行真实启动。
 
 ## 2. 需要的配置（名称；值不入库、不入聊天）
 
@@ -45,6 +47,14 @@ Docker 不会因健康状态变为 `unhealthy` 自动重启容器，需监测并
 | `VISEPANDA_HOSTED_WORKER_BUILD` | 可选 | 镜像构建时由 `BUILD_ID` 写入（git 短 SHA） |
 | `VISEPANDA_HOSTED_WORKER_JOURNAL_DIR` | 默认 `/var/lib/vp-worker/journal` | 必须是持久卷、属主 uid 1000、权限 0700 |
 | `VISEPANDA_HOSTED_WORKER_HEALTH_PORT` / `_HOST` | 脚本设置 | 容器内 `127.0.0.1:8765/healthz`；不映射宿主端口 |
+
+文件密钥模式与上表的 env 密钥方式互斥。`VISEPANDA_HOSTED_WORKER_SECRET_MODE=files`
+仅作为非秘密模式标记进入 Docker Config.Env；两个真实值只由 worker 从
+`/run/vp-worker-secrets/db.key`、`qwen.key` 读取。容器目录/文件分别要求
+uid/gid 1000 的 0700/0400，宿主该目录必须是 tmpfs 且 swap 为空；
+`ecs-worker-files.sh` 会做无值的权限/大小/挂载预检。非秘密 profile 单独存于
+`/etc/visepanda/hosted-profile.json` root:root 0600，内容会出现在容器配置，
+不得在其中放用户标识、正文或凭据。
 
 Profile 模板（值须在激活前由 JT 核准；费率沿用已记录的保守 Qwen 价目）：
 

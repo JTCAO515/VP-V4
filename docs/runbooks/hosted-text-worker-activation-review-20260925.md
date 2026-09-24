@@ -219,12 +219,16 @@ and `/var/lib/docker/containers/<id>` on the unencrypted root. A synthetic
 read-only `/run` bind mount, with no secret passed as Docker env or argument,
 ran successfully with no canary in that container's inspected Env, container
 metadata or logs. Both synthetic containers and files were removed. This
-is limited evidence: it does not cover cloud backend logs or a future worker
-entrypoint. The merged worker still **requires environment keys at start**;
-B needs a separate reviewed file-secret loader, tests, core/swap/log audit,
-and a host/container restart rehearsal. `/run` disappears on host reboot:
-without fresh private key injection the worker must stay stopped and SQL
-disabled, so unattended reboot recovery is unavailable.
+is limited evidence: it does not cover cloud backend logs or an actual
+supplier call. The file-secret worker mode and first-start-only ECS script
+are repository preparation, tested with synthetic tmpfs values in an
+isolated Docker container; target ECS synthetic and real credentials are
+separate gates. `/run` disappears on host reboot:
+without fresh private key injection the worker must stay stopped, so
+unattended reboot recovery is unavailable. `--restart no`
+prevents Docker from restarting it; an abrupt reboot does not itself flip
+the database switch to false. Disable and read back that switch before
+any manual reinjection/start after a crash or reboot.
 
 The current journal is different: it fsyncs owner/policy/turn/attempt/scope
 IDs, destination and cost metadata to root-owned 0700 storage on the
@@ -253,11 +257,38 @@ or restore claim follows ([file-backup billing](https://help.aliyun.com/zh/cloud
 
 ### Private one-time key handoff on the available surfaces
 
-**A-only procedure below. Do not write `/etc/visepanda` on the currently
-unencrypted ECS.** The B candidate needs the next PR's file-secret loader
-and `/run`-specific handoff, tested again with synthetic values before any
-real key. The browser-to-Workbench in-memory transfer technique itself was
-tested, but does not make an unencrypted destination safe.
+**Do not write any real key to `/etc/visepanda` on the currently unencrypted
+ECS.** A below keeps its encrypted-disk `/etc` procedure; B must use the
+separate `/run` procedure immediately below. Both require explicit main
+authorization before real credentials or target-environment activation.
+
+For B, prepare `/run/vp-worker-secrets` as uid/gid 1000 mode 0700 only after
+main accepts the S1 synthetic metadata risk. Use the already tested browser
+memory-variable → Workbench `read -s` technique, but write each value with
+Bash's built-in `printf '%s' "$value"` directly to its own tmpfs file,
+`chown 1000:1000` and `chmod 0400`; the shell command must contain only
+variable names, never the literal value. Do not put secrets in an env file,
+Docker `--env`, `--env-file`, command arguments or profile JSON. Wait for
+each hidden prompt before sending the next browser input or command.
+After installing the approved nonsecret profile at
+`/etc/visepanda/hosted-profile.json` root:root 0600, verify SQL disabled,
+zero unexpected ready/leased work, the exact S1 scope/policy and one-owner
+limit. `bash deploy/hosted-worker/ecs-worker-files.sh preflight` prints only
+metadata; `start <merged-SHA>` is allowed only with no existing worker,
+candidate or previous container. The script sets `--restart no` and mounts
+the tmpfs directory read-only; check `docker inspect` for **absence of key
+names/values in Config.Env** without printing full configuration. After
+start, file mode itself requires both the read-only status RPC and its
+first heartbeat to observe disabled before any discovery. A true switch
+at either point produces a generic failure with zero claim/provider call;
+only an explicit later enable may start polling. After
+reboot `/run` keys vanish; do not auto-start or reuse a stopped container.
+Recheck/disable the SQL switch before any reinjection. For rollback disable
+SQL first, `ecs-worker-files.sh stop`, retain the persistent journal and
+pending budget holds; key removal/revocation and container cleanup require
+separate reviewed actions. This does not enable real users or Production.
+
+**A-only procedure below.** Do not apply it to B's unencrypted system disk.
 
 The b446 in-app browser reaches the signed-in target Supabase project and
 Alibaba ECS/Model Studio pages. Using the official ECS Workbench URL, this
