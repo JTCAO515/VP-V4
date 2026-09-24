@@ -120,17 +120,35 @@ synthetic fixture alone do not constitute #195 acceptance.
 
 ### Private one-time key handoff on the available surfaces
 
-The Codex in-app browser can show the signed-in Supabase/Alibaba dashboards
-and Alibaba Workbench root terminal, but it does **not** provide this agent
-an opaque secret-transfer channel. An agent clicking reveal/copy, reading the
-clipboard, typing a key through an automation tool or taking a screenshot
-during key display would expose plaintext to the model/tool transcript. This
-step therefore requires JT (coordinated through the main session) to perform
-the private UI gestures manually; if that handoff is unavailable, **stop here**.
-The agent may prepare the host and verify permissions without reading values.
+The b446 in-app browser reaches the signed-in target Supabase project and
+Alibaba ECS/Model Studio pages. Using the official ECS Workbench URL, this
+session also connected to the selected Hong Kong ECS as root. A synthetic
+browser DOM token was kept only in a browser-runtime memory variable and
+passed to Workbench's `read -s` prompt via `wbTab.cua.type({text: token})`;
+no token appeared in the visible terminal DOM, `history | tail` contained
+only variable-name commands, and the temporary file was root:root 0600.
+The synthetic `/tmp/vpj07-browser-synthetic` file and directory were removed
+and their absence checked. This verifies the current toolchain's visible
+output and shell-history behavior; it does **not** prove that Alibaba,
+Supabase or Codex infrastructure keeps no internal audit logs. The agent
+must not claim secret zeroization from clearing a JavaScript reference.
 
-1. Before creating keys, the operator opens the already signed-in Workbench
-   root shell and prepares the target without a secret:
+The agent-assisted path is preferred **only after main authorizes each real
+key's creation, account scope and transfer to this ECS at action time**.
+Browser confirmation policy may require JT to take over the final credential
+creation step; main coordinates that handoff. The agent must not open a key
+reveal/copy screen, read an actual value or write `/etc/visepanda` until that
+specific action is authorized. During real key display, never request a
+screenshot or full DOM snapshot, and never emit the value via `nodeRepl.write`,
+console, chat, PR, shell command text or tool result. If the official UI's
+one-time value cannot be read through a narrow, verified locator or browser
+clipboard into a private browser-runtime variable without emitting it,
+stop and use the manual fallback below.
+
+1. Before key creation, after the host preparation action is authorized,
+   prepare only the ECS target path in the already connected Workbench root
+   shell. Confirm disk and backup encryption first; mode 0600 alone does not
+   encrypt an unencrypted disk or snapshot.
 
    ```bash
    umask 077
@@ -138,61 +156,59 @@ The agent may prepare the host and verify permissions without reading values.
    install -o root -g root -m 0600 /dev/null /etc/visepanda/hosted-text-worker.env
    ```
 
-   Confirm the ECS disk encryption/backup policy and Workbench access scope.
-   A 0600 file limits OS readers but does not encrypt an unencrypted disk.
-   Pause agent screenshots/terminal capture during key display and entry.
-2. JT manually creates a named Supabase secret key for this ECS component in
-   the target Staging project's API Keys page and copies its one-time value.
-   In local macOS Terminal, JT saves it in the login Keychain. The final `-w`
-   prompts for the value without putting it in a command argument:
+2. In the target Staging Supabase project's official UI, create one
+   separately named ECS-only `sb_secret_` key. In the VP-v4 Beijing
+   business space, create one separate Qwen key with the pinned model and
+   verified fixed ECS egress IP restrictions if available. The old masked
+   Qwen key is not recoverable or copied. Keep only key labels/IDs in the
+   rotation inventory, never values. Do not create either key until main
+   approves that specific security-sensitive access.
+3. For each key, **first** put the Workbench root shell at Bash's hidden
+   `read` prompt. Then hold the official UI's value in a short-lived
+   browser-runtime variable with a narrow read (or the official Copy action
+   followed by `tab.clipboard.readText()`); never output the value. Type that
+   variable into the focused Workbench prompt, press Enter, then use Bash's
+   built-in `printf` with a variable reference, not a literal value or an
+   external process argument. Do not batch commands after `read` into the
+   same terminal paste; a pending `read` could consume the next command as
+   its input. Repeat separately for the Supabase and Qwen keys:
+
+   ```bash
+   # Stage A: execute, then wait until the hidden prompt is visible.
+   IFS= read -r -s -p 'Supabase ECS key: ' vp_db_key
+   # Stage B: browser types its in-memory key variable and presses Enter.
+   # Stage C: execute only after Bash returns to its normal prompt.
+   [[ "$vp_db_key" == sb_secret_?* ]] && printf 'VISEPANDA_HOSTED_WORKER_DB_KEY=%s\n' "$vp_db_key" >> /etc/visepanda/hosted-text-worker.env
+   unset vp_db_key
+   # Repeat A/B/C with vp_qwen_key and VISEPANDA_HOSTED_WORKER_QWEN_KEY;
+   # require [[ -n "$vp_qwen_key" ]] before writing, then unset it.
+   ```
+
+   The actual browser call uses `wbTab.cua.type({text: secretValue})` where
+   `secretValue` is already in memory; the tool code contains only that
+   variable name. After each transfer, clear the browser clipboard if used,
+   reassign the session variable to an empty string, and close the reveal
+   view without a screenshot. This removes readily accessible copies, not
+   provider-side logs or every memory remnant.
+4. Store the **operational** copies only in the verified encrypted ECS
+   volume at root-owned mode 0600. If an independent recoverable backup is
+   required, JT may privately save each one-time value in a separate macOS
+   login Keychain item. A synthetic item proved that the final `-w` prompts
+   twice without terminal echo; `-T ""` suppresses default app trust and
+   `-U` should be omitted to avoid overwriting an existing item:
 
    ```bash
    security add-generic-password -a vpj07-staging-ecs -s vpj07-staging-supabase-secret -T "" -w
-   ```
-
-   Do not use `-U` to overwrite an existing item without a rotation plan.
-   JT then switches to Workbench and pastes the same value into Bash's silent
-   `read` prompt. Define this function once in the root Bash; its commands
-   contain only variable names and built-in `printf` writes directly to the
-   private file. A failed read/type check returns without writing:
-
-   ```bash
-   vp_store_secret() {
-     local name="$1" value
-     IFS= read -r -s -p "$name: " value || return 1
-     printf '\n'
-     case "$name" in
-       VISEPANDA_HOSTED_WORKER_DB_KEY) [[ "$value" == sb_secret_?* ]] || return 1 ;;
-       VISEPANDA_HOSTED_WORKER_QWEN_KEY) [[ -n "$value" ]] || return 1 ;;
-       *) return 1 ;;
-     esac
-     printf '%s=%s\n' "$name" "$value" >> /etc/visepanda/hosted-text-worker.env
-   }
-   vp_store_secret VISEPANDA_HOSTED_WORKER_DB_KEY
-   ```
-
-   JT does not send the value to Codex chat or an agent tool. The agent never
-   inspects the clipboard, Keychain item or file content.
-3. JT creates a distinct API key in the existing VP-v4 Beijing business
-   space, selecting custom model access to the pinned Qwen snapshot and the
-   verified fixed ECS egress IP if the console offers both. JT saves its
-   one-time value in a separate macOS Keychain item, then enters it through
-   the same Workbench silent prompt:
-
-   ```bash
-   # Local macOS Terminal:
    security add-generic-password -a vpj07-staging-ecs -s vpj07-staging-qwen-key -T "" -w
-   # Workbench root Bash:
-   vp_store_secret VISEPANDA_HOSTED_WORKER_QWEN_KEY
-   unset -f vp_store_secret
    ```
 
-   The existing masked Qwen key is not recoverable and is not copied.
-   Separate keys can be revoked without rotating unrelated components;
-   creation does not authorize a model call.
-4. JT clears the local clipboard. With key entry complete and no agent
-   screen capture of its values, the agent may verify only existence and
-   permissions (never plaintext) in Workbench:
+   This Keychain step is a JT-only fallback, coordinated through main. If
+   backup cannot be made safely, document that the ECS file is the sole
+   operational copy and plan revocation/reissue if it is lost. No agent
+   should retrieve Keychain values into chat or terminal output.
+5. With no key visible in the UI, verify **only** existence and permissions
+   in Workbench; do not use `cat`, `head`, shell tracing, `docker inspect`
+   environment output or a `grep` that prints a line:
 
    ```bash
    stat -c '%U:%G %a' /etc/visepanda/hosted-text-worker.env
@@ -201,17 +217,14 @@ The agent may prepare the host and verify permissions without reading values.
    bash /opt/vp-v4/deploy/hosted-worker/ecs-worker.sh preflight
    ```
 
-   Do not use `cat`, `head`, shell tracing, `docker inspect` environment
-   output or a `grep` that prints a line. Add the reviewed profile and
-   explicit worker flag as nonsecret single-line env entries before
-   preflight; SQL remains disabled.
-5. If a one-time copy, Keychain save, Workbench input, file permission or
-   preflight check fails, keep SQL disabled and the container stopped. Revoke
-   the new key(s) in their respective dashboards, remove the partial env
-   file, clear the clipboard and review the cause before replacement keys.
-   Removing a file does not prove its bytes vanished from cloud snapshots;
-   revocation is the primary containment step. Never recover a masked key
-   through chat or logs.
+   Add the reviewed nonsecret profile and worker flag before preflight;
+   the SQL switch remains disabled. The presence checks do not establish
+   key validity. If a one-time read, transfer, file permission, encryption
+   or preflight check fails, keep SQL disabled and the container stopped;
+   revoke the new keys in their official dashboards, remove the partial env
+   file, clear clipboard/session references and review the cause before
+   issuing replacements. Removing a file is not proof its bytes vanished
+   from cloud snapshots; revocation is the primary containment step.
 
 ## Exact Staging write proposal (review only; not authorized to run)
 
