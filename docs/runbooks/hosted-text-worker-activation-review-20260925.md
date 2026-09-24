@@ -16,6 +16,23 @@ This is a reported target observation, not a fresh database read by this worktre
 repeat it immediately before any write. Historic policies/consents are immutable
 evidence and cannot be prolonged or silently reused.
 
+2026-09-25 target ECS readback: the 40 GiB ESSD Entry system disk is
+**unencrypted**, with zero disk snapshots and zero automatic snapshot
+policies. A root-path `/` **file-level** backup version completed at
+2026-09-25 01:51:07, expires 2026-10-25 01:51:07, and offers Browse/Restore;
+the UI's ongoing "备份中" label is a backup-service state, not a failed
+version. This does not establish a bootable disk restore, backup encryption,
+or whether future key/journal files would be included. ECS is pay-as-you-go,
+with 100 Mbps peak public bandwidth billed by traffic. Its current public IP
+is instance-assigned, not an EIP (the console offers conversion). `/run` is
+tmpfs, current swap is empty, current shell core limit is zero, while Docker
+root and the existing journal mount resolve to the unencrypted root ext4.
+No real key or worker container is present. Re-read these facts before action.
+The target Supabase `Settings → API Keys` UI exposes an enabled `New secret
+key` form with name and optional description; it was closed without submit.
+This proves the current account can reach the creation UI, not that a new
+key has been granted or shown.
+
 | Cohort | Old scope and usage | Provider limit | Activation decision |
 | --- | --- | --- | --- |
 | S1 | CNY70m micros cap; CNY2,737,992 micros settled, no unresolved; expires 2026-09-14 | pinned Qwen; `qwen-public-upper-20260912-v1`; CNY7m micros/attempt | Candidate synthetic owner for first smoke only; leave old scope expired |
@@ -71,19 +88,53 @@ that any discounted tier will be billed.
    ledger stop-loss is **not** an absolute bound on a supplier's bill after
    unknown or duplicate attempts; stop after the first synthetic terminal result.
 3. **Keys and host:** Create one ECS-only Supabase `sb_secret_` key and one
-   VP-v4 Beijing Qwen API key only after explicit account/permission authority.
+   Beijing Qwen API key only after a storage plan and explicit
+   account/permission authority.
    The Supabase key is independently revocable but still maps to project-wide
    `service_role` and bypasses RLS ([Supabase API keys](https://supabase.com/docs/guides/getting-started/api-keys));
    this is not a least-privilege database role. The new key requires the
    repository's apikey-only RPC header compatibility; a legacy service-role
-   JWT is a separate fallback. For Qwen, choose the VP-v4 business space and,
-   if available for this account, custom access to the pinned model and ECS
-   egress IP only ([Alibaba Cloud API key guide](https://help.aliyun.com/zh/model-studio/get-api-key)).
-   Use the private handoff below. Never pass plaintext through chat, source,
-   shell arguments, logs or journal. Keep key inventory identifiers separately
-   for rotation; do not print key values.
-4. **Start while disabled:** Build and launch the reviewed main SHA on ECS with
-   `ecs-worker.sh`, with SQL switch confirmed `false`. Read back container
+   JWT is a separate fallback. The target Qwen UI currently selects the
+   Beijing **default business space**. `VP-v4` labels an existing key there;
+   it is not an observed independent workspace. A new key's "Custom"
+   permission form defaults to public IPv4 `0.0.0.0/0` and IPv6 `::/0`;
+   both must be removed for a narrow whitelist. The model list visibly
+   offers `Qwen3.7-Plus`, but exact snapshot-only access to
+   `qwen3.7-plus-2026-05-26` is **unverified**. Do not claim it until a
+   readback or controlled denial check establishes the granularity
+   ([Alibaba Cloud API key guide](https://help.aliyun.com/zh/model-studio/get-api-key)).
+   A separate Beijing sub-workspace could limit model permissions, but its
+   creation, model authorization, endpoint/policy change and costs are a
+   separate reviewed decision; the current default space cannot set
+   workspace-level model limits
+   ([permission management](https://help.aliyun.com/zh/model-studio/permission-management-overview)).
+   For one short smoke, prefer the verified current ECS egress IP as a `/32`
+   only after readback. Ordinary stop on the same instance can retain the
+   instance-assigned IP, while savings stop, zero bandwidth or instance
+   release can replace it. Before/after every stop or disk replacement,
+   re-read egress IP; a mismatch keeps SQL disabled and requires whitelist
+   update/key rotation before any call. EIP conversion is a separate,
+   potentially billable and irreversible choice
+   ([ECS IP lifecycle](https://help.aliyun.com/zh/ecs/user-guide/ip-address/),
+   [EIP conversion](https://help.aliyun.com/zh/ecs/user-guide/convert-the-public-ip-address-of-an-instance-in-a-vpc-to-an-eip)).
+   Subject to target-account UI verification and main approval, configure
+   a **CNY7 monthly per-key Qwen budget with immediate stop** (optional 80%
+   notification) as a second stop-loss beside the shared-ledger CNY7 scope.
+   Alibaba documents an enforcement delay and charges during it, so this is
+   not an absolute supplier-bill cap; a budget 429 must stop new claims via
+   the SQL switch and retain unknown holds for reconciliation
+   ([budget management](https://help.aliyun.com/zh/model-studio/budget-management)).
+   Never pass plaintext through chat, source, shell arguments, logs or
+   journal. Keep key inventory identifiers separately for rotation; do not
+   print key values. The `/etc` handoff below applies **only after A has an
+   encrypted disk**. Main has selected B as the first synthetic-only
+   candidate; B requires a separate reviewed file-secret implementation
+   and `/run` handoff before any real key can be transferred.
+4. **Start while disabled:** After the selected storage route is implemented
+   and reviewed, build the reviewed main SHA. A may use the current
+   `ecs-worker.sh` on an encrypted disk; B must use its future file-secret
+   entrypoint/script, never the current `--env-file`. Keep SQL switch
+   confirmed `false`. Read back container
    running/healthy (health `disabled`), new worker ID/build and fresh SQL
    heartbeat, with no ready claims, provider destination receipts, budget
    attempts or unexpected journal content. Failures: keep switch disabled,
@@ -118,7 +169,89 @@ ambiguous active scope, mismatched price/endpoint, stale heartbeat, key
 incompatibility or missing owner consent. Codes merged, healthy SQL and a
 synthetic fixture alone do not constitute #195 acceptance.
 
+## Host storage and IP decision before any real key
+
+**A1 — encrypted system disk (preferred durable path).** Alibaba says an
+existing unencrypted disk cannot be encrypted in place. First record the
+completed file backup, then create and verify a **manual system-disk
+snapshot** as a separate boot-level rollback source; the current file-level
+version alone is not a bootable system image. Create a custom image of this
+instance, make an encrypted copy with the ECS service key, and replace this
+same instance's system disk from that encrypted image during an approved
+ordinary-stop window. The old system disk is released and its bytes cannot
+be recovered without a prepared snapshot. Alibaba estimates about ten
+minutes for OS replacement and states same-instance IP remains unchanged,
+but verify disk encryption, boot, SSH/Workbench, Docker, image, journal and
+actual egress IP on the new system before any key. Keep the old snapshot/image
+until rollback/readback is accepted; reverting by creating another disk or
+image is a new reviewed action, not in-place decryption. The managed ECS
+service key gives basic disk encryption without an additional encryption
+feature/key usage fee; a customer-managed KMS key may require
+`AliyunECSDiskEncryptDefaultRole` and paid KMS capacity. Snapshot, custom
+image storage, extra disk and any parallel instance/storage **may incur
+charges**; their Hong Kong quote and retention period must be read from the
+target console before action. Do not infer zero cost from the service key.
+Sources: [ECS encryption and conversion](https://help.aliyun.com/zh/ecs/user-guide/encryption-overview/),
+[OS replacement and data loss](https://help.aliyun.com/zh/ecs/user-guide/replace-the-operating-system-of-an-instance-1),
+[snapshot billing](https://help.aliyun.com/zh/ecs/snapshots-1).
+
+**A2 — new encrypted data disk (alternative).** A separately created encrypted
+ESSD disk could hold `/etc/visepanda`, Docker's data root and the persistent
+journal after a reviewed migration and Docker restart. It leaves the original
+system disk unencrypted, so logs, temporary files, core dumps and any other
+secret-bearing path must be audited before acceptance. It adds a disk and
+backup cost, and is not an automatic replacement for A1. A new encrypted
+ECS instance from the copied image is another option but adds parallel
+compute and network cutover; the present instance-assigned public IP would
+not automatically follow it. Neither alternative is authorized here.
+
+**B — existing-resource tmpfs only (main's preferred first synthetic-smoke
+candidate, not current runtime or execution authority).** `/run` is tmpfs
+and swap is currently empty. On this target ECS,
+a synthetic `--env-file` container exposed its canary in `docker inspect`
+and `/var/lib/docker/containers/<id>` on the unencrypted root. A synthetic
+read-only `/run` bind mount, with no secret passed as Docker env or argument,
+ran successfully with no canary in that container's inspected Env, container
+metadata or logs. Both synthetic containers and files were removed. This
+is limited evidence: it does not cover cloud backend logs or a future worker
+entrypoint. The merged worker still **requires environment keys at start**;
+B needs a separate reviewed file-secret loader, tests, core/swap/log audit,
+and a host/container restart rehearsal. `/run` disappears on host reboot:
+without fresh private key injection the worker must stay stopped and SQL
+disabled, so unattended reboot recovery is unavailable.
+
+The current journal is different: it fsyncs owner/policy/turn/attempt/scope
+IDs, destination and cost metadata to root-owned 0700 storage on the
+unencrypted system disk. It contains no question, answer or key and the
+contract treats it as private trusted-operator evidence; no repo rule
+explicitly mandates at-rest encryption for this journal. These are C1
+account/operational identifiers, however, not public C0 data. Host root
+access, disk/snapshot exposure, and the completed 30-day file-level backup
+create residual read/retention risk that mode 0700 alone does not remove.
+Moving the journal to tmpfs would violate its crash/reboot recovery contract;
+do not do so. Main may separately accept B's residual risk for one bounded
+**S1-only synthetic Staging** smoke with documented backup/deletion limits,
+but B cannot be described as fully encrypted storage or production-ready. If a
+reviewed journal at-rest requirement or real-user data is introduced, B
+stops until an encrypted persistent volume or reviewed encrypted-journal
+design exists ([data classes](../policy/data-classes.md),
+[worker journal contract](../contracts/vpj-07.md#hosted-resident-text-worker)).
+
+The completed `/` file-backup version is file-level and does not satisfy the
+system-disk snapshot gate in A1. Alibaba bills file backup by backed-up
+block-storage capacity after a successful version and documents a shared
+100 GiB account allowance; the target account's cross-region usage, backup
+encryption and future key/journal inclusion are **unverified**, so no zero-cost
+or restore claim follows ([file-backup billing](https://help.aliyun.com/zh/cloud-backup/product-overview/billing-methods-and-billable-items),
+[backup comparison](https://help.aliyun.com/zh/ecs/user-guide/select-the-appropriate-ecs-data-protection-scheme-snapshot-and-file-backup-essential-edition)).
+
 ### Private one-time key handoff on the available surfaces
+
+**A-only procedure below. Do not write `/etc/visepanda` on the currently
+unencrypted ECS.** The B candidate needs the next PR's file-secret loader
+and `/run`-specific handoff, tested again with synthetic values before any
+real key. The browser-to-Workbench in-memory transfer technique itself was
+tested, but does not make an unencrypted destination safe.
 
 The b446 in-app browser reaches the signed-in target Supabase project and
 Alibaba ECS/Model Studio pages. Using the official ECS Workbench URL, this

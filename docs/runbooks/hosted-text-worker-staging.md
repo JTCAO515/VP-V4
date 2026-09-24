@@ -25,6 +25,10 @@
 宿主固定为上述香港 ECS。无需开放 worker 入站端口；健康探针只在容器内部访问 loopback。
 `--restart unless-stopped` 会在 worker 到达最长 24 小时寿命并正常退出后重新启动；手动 `stop` 后不会自行恢复。
 Docker 不会因健康状态变为 `unhealthy` 自动重启容器，需监测并排查 SQL 心跳与日志。
+**当前 ECS 系统盘未加密；下列 `/etc` env-file + Docker `--env-file` 路径不得接收真实 Key。**
+仅 S1 合成 Staging 烟测的 `/run` tmpfs 文件密钥候选与残余 journal 风险，见
+[激活审查方案](hosted-text-worker-activation-review-20260925.md#host-storage-and-ip-decision-before-any-real-key)。
+该候选尚需独立代码和合成验证；本 runbook 的现有脚本不能直接执行真实启动。
 
 ## 2. 需要的配置（名称；值不入库、不入聊天）
 
@@ -35,7 +39,7 @@ Docker 不会因健康状态变为 `unhealthy` 自动重启容器，需监测并
 | --- | --- | --- |
 | `VISEPANDA_HOSTED_TEXT_WORKER` | 开关 | 必须为 `true`，否则进程直接退出 1 |
 | `VISEPANDA_HOSTED_WORKER_DB_KEY` | **秘密** | 优先为 ECS 单独创建可单独撤销的 Staging `sb_secret_` key；它仍映射 project-wide `service_role`、绕过 RLS，不是细粒度数据库授权。旧 service_role JWT 仅作为兼容后备 |
-| `VISEPANDA_HOSTED_WORKER_QWEN_KEY` | **秘密** | VP-v4 Qwen 按量 API key（与现有 `VISEPANDA_STAGING_TEXT_PROVIDER_KEY` 同类） |
+| `VISEPANDA_HOSTED_WORKER_QWEN_KEY` | **秘密** | 北京默认业务空间的新 ECS 独立按量 Key；现有 `VP-v4` 是旧 Key 描述，不是独立业务空间。自定义 IP 默认全放通，必须按激活方案收窄；精确模型快照权限尚未验收 |
 | `VISEPANDA_HOSTED_WORKER_PROFILE` | 非秘密 JSON | 见下；内含价目版本/费率/预留/超时/configurationId，≤16 KB |
 | `VISEPANDA_QWEN_ENDPOINT` | 可选 | 不设=旧北京端点；设置则必须与 Staging policy 的 `endpoint` 完全相同，否则所有组被跳过 |
 | `VISEPANDA_HOSTED_WORKER_BUILD` | 可选 | 镜像构建时由 `BUILD_ID` 写入（git 短 SHA） |
