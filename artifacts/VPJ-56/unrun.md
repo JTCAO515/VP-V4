@@ -29,3 +29,10 @@
   prior UNRUN installation state. CoreDevice still read developer build `0.1.0 (1)` afterward.
   Target launch and post-install data checks remain UNRUN; old app backup remains intact.
   The error cause and current App Store Connect agreement status are unknown.
+- Main's later authenticated ASC readback at about 08:55 on 2026-09-25
+  ([record](testflight-install-20260925/verification.md)) reconfirmed target upload Complete,
+  binary Validated, Internal / Testing, one Accepted tester and non-expired iOS-compatible
+  build. Free Apps Agreement was active; Paid Apps Agreement remained unsigned.
+  The unsigned paid agreement's relationship to the device installation FAIL is unknown,
+  and target launch/data checks remain UNRUN. The earlier agreement-status unknown was
+  a time-limited browser-session gap, not a current account-state assertion.
