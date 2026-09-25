@@ -1,0 +1,20 @@
+{
+  "device": "JTs17",
+  "osVersion": "27.0",
+  "bootState": "booted",
+  "pairingState": "paired",
+  "transportType": "localNetwork",
+  "testFlightVersion": "4.3.1",
+  "beforeInstall": {
+    "bundleIdentifier": "space.go2china.VisePanda",
+    "version": "0.1.0",
+    "buildNumber": "1",
+    "builtByDeveloper": true,
+    "containerAccessible": true
+  },
+  "restrictedLocalContainerBackup": {
+    "fileCount": 8,
+    "totalBytes": 13876061,
+    "committed": false
+  }
+}
