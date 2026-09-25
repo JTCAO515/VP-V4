@@ -15,3 +15,17 @@
 - 2026-09-24 X1 (#508): the unsigned Archive and Xcode Cloud device Build evidence remains
   [recorded](cloud-build-20260924/verification.md). The first post-#528 Cloud script failure's
   raw log and cause were not observed in that run; the later successful Build did not explain it.
+- Later 2026-09-25 device readback ([record](testflight-install-20260925/verification.md)):
+  earlier TestFlight visibility of `0.1.0 (20260924.163820)` is historical. Action-time
+  installation authority was granted, but a single bounded client retry ended with
+  “TestFlight cannot connect to App Store Connect.” The device still had developer build
+  `0.1.0 (1)` before retry; the old app backup remained mode 700 and intact. Current
+  TestFlight client reachability/build readback are FAIL; installation, launch and
+  post-install data checks remain UNRUN. The client error cause is unknown. This supersedes the earlier
+  “pending action-time confirmation” and present-tense device-visibility wording above.
+- Latest 2026-09-25 08:36 JTs17 observation ([record](testflight-install-20260925/verification.md)):
+  JT saw exact internal build `0.1.0 (20260924.163820)` over Wi-Fi and tapped Install;
+  TestFlight returned “所请求的 App 不可用或者不存在。” **Installation FAIL**, superseding the
+  prior UNRUN installation state. CoreDevice still read developer build `0.1.0 (1)` afterward.
+  Target launch and post-install data checks remain UNRUN; old app backup remains intact.
+  The error cause and current App Store Connect agreement status are unknown.
