@@ -6,6 +6,8 @@ import { getNativeTextConfig } from "@/lib/server/turn/native-http";
 import { runGroundedAiAssistJob } from "@/lib/server/knowledge/wiki/grounded-ai-assist-job";
 
 export const dynamic = "force-dynamic";
+// The 75s request scope below must finish before this Vercel function's 90s limit.
+export const maxDuration = 90;
 
 /**
  * VPJ-76 (#360) slice 8: the real Web trigger/poll route for
