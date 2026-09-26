@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { VisePandaMark } from "@/components/brand/VisePandaMark";
 import { getLocaleAttributes, getLocaleSelectionOptions, type Locale } from "@/lib/i18n";
 import memoryStyles from "@/components/copilot/CopilotMemoryWorkspace.module.css";
+import { createReadbackIsCurrent, parseCreateReceipt, takeCreateToast } from "@/components/copilot/memory-create-toast";
 import styles from "@/components/canvas/TripCanvas.module.css";
 
 type MemoryState =
@@ -17,6 +18,7 @@ type MemoryState =
 type ConstraintKind = "preference" | "hard_constraint";
 type MemoryProfile = Readonly<{
   id: string;
+  revision: number | null;
   state: MemoryState;
   constraintKind: ConstraintKind;
   summary: string | null;
@@ -32,6 +34,22 @@ type MemoryProfile = Readonly<{
     constraintKind: ConstraintKind;
     createdAt: string;
   }>[];
+}>;
+type PendingCreate = {
+  ownerId: string;
+  memoryId: string;
+  receiptId: string;
+  consentId: string | null;
+  constraintKind: ConstraintKind;
+  summary: string;
+};
+type SavedToast = Readonly<{
+  ownerId: string;
+  memoryId: string;
+  sourceReceiptId: string;
+  revision: number;
+  undoOperationId: string | null;
+  outcomeUnknown: boolean;
 }>;
 type Copy = Readonly<{
   eyebrow: string;
@@ -59,6 +77,12 @@ type Copy = Readonly<{
   preference: string;
   hard: string;
   save: string;
+  saved: string;
+  undo: string;
+  undone: string;
+  undoConflict: string;
+  undoUnknown: string;
+  createChanged: string;
   back: string;
   home: string;
   language: string;
@@ -91,6 +115,12 @@ const copy: Record<Locale, Copy> = {
     preference: "偏好",
     hard: "硬限制",
     save: "保存记忆",
+    saved: "已加入记忆",
+    undo: "撤销",
+    undone: "已撤销",
+    undoConflict: "这条记忆已变化，撤销未执行；请核对最新状态。",
+    undoUnknown: "撤销结果尚未确认，可重试同一次撤销。",
+    createChanged: "这条记忆的状态已变化，请核对列表中的最新状态。",
     back: "返回 VisePanda",
     home: "VisePanda 首页",
     language: "界面语言",
@@ -122,6 +152,12 @@ const copy: Record<Locale, Copy> = {
     preference: "Preference",
     hard: "Hard constraint",
     save: "Save memory",
+    saved: "Saved to memory",
+    undo: "Undo",
+    undone: "Undone",
+    undoConflict: "This memory changed. Undo was not applied; check its current state.",
+    undoUnknown: "Undo could not be confirmed. Retry the same undo.",
+    createChanged: "This memory changed. Check its current state in the list.",
     back: "Back to VisePanda",
     home: "VisePanda home",
     language: "Interface language",
@@ -153,6 +189,12 @@ const copy: Record<Locale, Copy> = {
     preference: "Preferencia",
     hard: "Restricción estricta",
     save: "Guardar memoria",
+    saved: "Guardado en memoria",
+    undo: "Deshacer",
+    undone: "Deshecho",
+    undoConflict: "Esta memoria cambió. Comprueba su estado actual.",
+    undoUnknown: "No se confirmó la reversión. Reintenta la misma acción.",
+    createChanged: "Esta memoria cambió. Comprueba su estado actual en la lista.",
     back: "Volver a VisePanda",
     home: "Inicio de VisePanda",
     language: "Idioma de la interfaz",
@@ -184,6 +226,12 @@ const copy: Record<Locale, Copy> = {
     preference: "Предпочтение",
     hard: "Строгое ограничение",
     save: "Сохранить память",
+    saved: "Добавлено в память",
+    undo: "Отменить",
+    undone: "Отменено",
+    undoConflict: "Эта запись изменилась. Проверьте её текущее состояние.",
+    undoUnknown: "Отмена не подтверждена. Повторите ту же операцию.",
+    createChanged: "Эта запись изменилась. Проверьте её текущее состояние в списке.",
     back: "Назад к VisePanda",
     home: "Главная VisePanda",
     language: "Язык интерфейса",
@@ -214,6 +262,12 @@ const copy: Record<Locale, Copy> = {
     preference: "تفضيل",
     hard: "قيد صارم",
     save: "حفظ الذاكرة",
+    saved: "أُضيف إلى الذاكرة",
+    undo: "تراجع",
+    undone: "تم التراجع",
+    undoConflict: "تغيّرت هذه الذاكرة. تحقّق من حالتها الحالية.",
+    undoUnknown: "لم يتأكد التراجع. أعد محاولة التراجع نفسه.",
+    createChanged: "تغيّرت حالة هذه الذاكرة. تحقّق من أحدث حالة في القائمة.",
     back: "العودة إلى VisePanda",
     home: "الصفحة الرئيسية لـ VisePanda",
     language: "لغة الواجهة",
@@ -239,26 +293,74 @@ export function CopilotMemoryWorkspace() {
   const [summary, setSummary] = useState("");
   const [constraintKind, setConstraintKind] =
     useState<ConstraintKind>("preference");
+  const [toast, setToast] = useState<SavedToast | null>(null);
+  const [notice, setNotice] = useState<"undone" | "undoConflict" | "undoUnknown" | "createChanged" | null>(null);
+  const [undoFocused, setUndoFocused] = useState(false);
+  const [toastHovered, setToastHovered] = useState(false);
+  const ownerScope = useRef<string | null>(null);
+  const loadGeneration = useRef(0);
+  const pendingCreate = useRef<PendingCreate | null>(null);
+  const shownCreates = useRef(new Set<string>());
   const words = copy[locale];
 
-  const load = async () => {
+  const load = useCallback(async (): Promise<Readonly<{ ownerId: string; profiles: readonly MemoryProfile[] }> | null> => {
+    const generation = ++loadGeneration.current;
     setError(false);
     const response = await fetch("/api/memory", {
       headers: { Accept: "application/json" },
     });
+    if (response.status === 401 || response.status === 403) {
+      setToast(null); setNotice(null); setProfiles(null);
+      pendingCreate.current = null; ownerScope.current = null; setSummary("");
+      shownCreates.current.clear();
+    }
     if (!response.ok) return messageFor(response);
     const data: unknown = await response.json();
-    if (!Array.isArray(data)) throw new Error("memory_response_invalid");
-    setProfiles(data as readonly MemoryProfile[]);
-  };
+    const ownerId = response.headers.get("X-VP-Memory-Owner");
+    if (!Array.isArray(data) || !ownerId) throw new Error("memory_response_invalid");
+    if (generation !== loadGeneration.current) return null;
+    if (ownerScope.current !== null && ownerScope.current !== ownerId) {
+      setToast(null);
+      setNotice(null);
+      pendingCreate.current = null;
+      shownCreates.current.clear();
+      setSummary("");
+    }
+    ownerScope.current = ownerId;
+    const profiles = data as readonly MemoryProfile[];
+    setProfiles(profiles);
+    return { ownerId, profiles };
+  }, []);
   useEffect(() => {
     const attributes = getLocaleAttributes(locale);
     document.documentElement.lang = attributes.lang;
     document.documentElement.dir = attributes.dir;
   }, [locale]);
   useEffect(() => {
-    void load().catch(() => setError(true));
-  }, []);
+    const refresh = () => {
+      void load().catch(() => {
+        setToast(null); setNotice(null); setProfiles(null);
+        pendingCreate.current = null; ownerScope.current = null; setSummary(""); setError(true);
+        shownCreates.current.clear();
+      });
+    };
+    refresh();
+    window.addEventListener("focus", refresh);
+    const onVisibility = () => { if (document.visibilityState === "visible") refresh(); };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [load]);
+  useEffect(() => {
+    if (!toast || toast.outcomeUnknown || pending || undoFocused || toastHovered) return;
+    const timer = window.setTimeout(() => {
+      setToast((current) => current?.memoryId === toast.memoryId && current.revision === toast.revision ? null : current);
+    }, 4000);
+    return () => window.clearTimeout(timer);
+  }, [toast, pending, undoFocused, toastHovered]);
+  useEffect(() => { if (!toast) { setToastHovered(false); setUndoFocused(false); } }, [toast]);
 
   const mutate = async (url: string, body: object) => {
     setPending(true);
@@ -269,7 +371,12 @@ export function CopilotMemoryWorkspace() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+      if (response.status === 401 || response.status === 403) {
+        setToast(null); setProfiles(null); pendingCreate.current = null; ownerScope.current = null; setSummary("");
+        shownCreates.current.clear();
+      }
       if (!response.ok) await messageFor(response);
+      setToast(null);
       await load();
     } catch {
       setError(true);
@@ -280,35 +387,115 @@ export function CopilotMemoryWorkspace() {
   const addMemory = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const trimmed = summary.trim();
-    if (!trimmed || pending) return;
+    const ownerId = ownerScope.current;
+    if (!trimmed || pending || !ownerId) return;
+    const existing = pendingCreate.current;
+    const command: PendingCreate = existing && existing.ownerId === ownerId &&
+      existing.summary === trimmed && existing.constraintKind === constraintKind
+      ? existing : { ownerId, memoryId: crypto.randomUUID(), receiptId: crypto.randomUUID(),
+          consentId: null, constraintKind, summary: trimmed };
+    pendingCreate.current = command;
     setPending(true);
     setError(false);
+    setNotice(null);
     try {
-      const consent = await fetch("/api/memory/consent", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "create" }),
-      });
-      if (!consent.ok) await messageFor(consent);
-      const consentData = await consent.json() as Readonly<{ consentId?: unknown; status?: unknown }>;
-      if (typeof consentData.consentId !== "string" || consentData.status !== "granted") throw new Error("Memory consent creation returned an invalid response");
-      const consentId = consentData.consentId;
+      if (!command.consentId) {
+        const consent = await fetch("/api/memory/consent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "create", expectedOwnerId: ownerId }),
+        });
+        if (consent.status === 401 || consent.status === 403) {
+          setToast(null); setProfiles(null); pendingCreate.current = null; ownerScope.current = null; setSummary("");
+          shownCreates.current.clear();
+        }
+        if (!consent.ok) await messageFor(consent);
+        const consentData = await consent.json() as Readonly<{ consentId?: unknown; status?: unknown }>;
+        if (typeof consentData.consentId !== "string" || consentData.status !== "granted")
+          throw new Error("memory_consent_response_invalid");
+        command.consentId = consentData.consentId;
+      }
       const response = await fetch("/api/memory", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          memoryId: crypto.randomUUID(),
-          receiptId: crypto.randomUUID(),
-          consentId,
-          constraintKind,
-          summary: trimmed,
+          memoryId: command.memoryId,
+          receiptId: command.receiptId,
+          consentId: command.consentId,
+          constraintKind: command.constraintKind,
+          summary: command.summary,
+          expectedOwnerId: ownerId,
         }),
       });
+      if (response.status === 401 || response.status === 403) {
+        setToast(null); setProfiles(null); pendingCreate.current = null; ownerScope.current = null; setSummary("");
+        shownCreates.current.clear();
+      }
       if (!response.ok) await messageFor(response);
-      setSummary("");
-      await load();
+      const receipt = parseCreateReceipt(await response.json(), {
+        memoryId: command.memoryId, receiptId: command.receiptId, ownerId,
+      });
+      const readback = await load();
+      if (readback?.ownerId !== ownerId || ownerScope.current !== ownerId) return;
+      if (pendingCreate.current === command) pendingCreate.current = null;
+      setSummary((current) => current.trim() === command.summary ? "" : current);
+      if (!receipt.undoAvailable) return;
+      const current = readback.profiles.find(memory => memory.id === command.memoryId);
+      if (!createReadbackIsCurrent(receipt, current)) {
+        setNotice("createChanged");
+      } else if (takeCreateToast(receipt, readback.ownerId, shownCreates.current)) {
+        setToast({ ownerId, memoryId: command.memoryId,
+          sourceReceiptId: command.receiptId, revision: 1, undoOperationId: null,
+          outcomeUnknown: false });
+      }
     } catch {
       setError(true);
+    } finally {
+      setPending(false);
+    }
+  };
+
+  const undoCreate = async () => {
+    if (!toast || pending) return;
+    if (ownerScope.current !== toast.ownerId) { setToast(null); return; }
+    const operationId = toast.undoOperationId ?? crypto.randomUUID();
+    setToast({ ...toast, undoOperationId: operationId, outcomeUnknown: false });
+    setPending(true);
+    setNotice(null);
+    try {
+      const response = await fetch(`/api/memory/${toast.memoryId}/undo`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sourceReceiptId: toast.sourceReceiptId,
+          expectedRevision: toast.revision, operationId }),
+      });
+      if (response.status === 409) {
+        setToast(null);
+        setNotice("undoConflict");
+        await load();
+        return;
+      }
+      if (response.status === 401 || response.status === 403) {
+        setToast(null); setNotice(null); setProfiles(null); setSummary("");
+        pendingCreate.current = null; ownerScope.current = null;
+        shownCreates.current.clear();
+        throw new Error("memory_owner_changed");
+      }
+      if (!response.ok) await messageFor(response);
+      const result = await response.json() as Readonly<{ memoryId?: unknown; state?: unknown; revision?: unknown; ownerId?: unknown }>;
+      if (result.memoryId !== toast.memoryId || result.state !== "deleted" ||
+          result.revision !== toast.revision + 1 || result.ownerId !== toast.ownerId)
+        throw new Error("memory_undo_receipt_invalid");
+      const readback = await load();
+      setToast(null);
+      if (readback?.ownerId === toast.ownerId && readback.profiles.some(memory =>
+        memory.id === toast.memoryId && memory.state === "deleted" && memory.revision === toast.revision + 1))
+        setNotice("undone");
+    } catch {
+      if (ownerScope.current !== toast.ownerId) setToast(null);
+      else {
+        setToast({ ...toast, undoOperationId: operationId, outcomeUnknown: true });
+        setNotice("undoUnknown");
+      }
     } finally {
       setPending(false);
     }
@@ -339,6 +526,20 @@ export function CopilotMemoryWorkspace() {
           ))}
         </select>
       </header>
+      {toast && ownerScope.current === toast.ownerId ? (
+        <div className={memoryStyles.savedToast} role="status" aria-live="polite"
+          onPointerEnter={() => setToastHovered(true)} onPointerLeave={() => setToastHovered(false)}>
+          <span>{toast.outcomeUnknown ? words.undoUnknown : words.saved}</span>
+          <button type="button" className={memoryStyles.toastUndo} disabled={pending}
+            onFocus={() => setUndoFocused(true)} onBlur={() => setUndoFocused(false)}
+            onClick={() => void undoCreate()}>{words.undo}</button>
+        </div>
+      ) : null}
+      {notice && !toast ? (
+        <div className={memoryStyles.savedToast} role="status" aria-live="polite">
+          {words[notice]}
+        </div>
+      ) : null}
       <main className={styles.main}>
         <p className={styles.eyebrow}>{words.eyebrow}</p>
         <h1 className={styles.title}>{words.title}</h1>
@@ -357,22 +558,23 @@ export function CopilotMemoryWorkspace() {
                 value={summary}
                 maxLength={500}
                 required
-                onChange={(event) => setSummary(event.target.value)}
+                onChange={(event) => { pendingCreate.current = null; setSummary(event.target.value); }}
               />
             </label>
             <label>
               {words.summary}
               <select
                 value={constraintKind}
-                onChange={(event) =>
-                  setConstraintKind(event.target.value as ConstraintKind)
-                }
+                onChange={(event) => {
+                  pendingCreate.current = null;
+                  setConstraintKind(event.target.value as ConstraintKind);
+                }}
               >
                 <option value="preference">{words.preference}</option>
                 <option value="hard_constraint">{words.hard}</option>
               </select>
             </label>
-            <button className={styles.button} disabled={pending} type="submit">
+            <button className={styles.button} disabled={pending || profiles === null || !ownerScope.current} type="submit">
               {words.save}
             </button>
           </form>

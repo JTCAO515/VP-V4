@@ -8,6 +8,7 @@ test("V4-14 presents durable Copilot Memory governance without browser-local mut
   const memoryRoute = readFileSync("app/api/memory/route.ts", "utf8");
   const consentRoute = readFileSync("app/api/memory/consent/route.ts", "utf8");
   const transitionRoute = readFileSync("app/api/memory/[memoryId]/route.ts", "utf8");
+  const undoRoute = readFileSync("app/api/memory/[memoryId]/undo/route.ts", "utf8");
   assert.match(page, /CopilotMemoryWorkspace/);
   assert.match(view, /\/api\/memory/);
   assert.match(view, /\/api\/memory\/consent/);
@@ -22,7 +23,7 @@ test("V4-14 presents durable Copilot Memory governance without browser-local mut
   assert.match(view, /dir = attributes\.dir/);
   for (const label of ["返回 VisePanda", "Volver a VisePanda", "Назад к VisePanda", "العودة إلى VisePanda"]) assert.match(view, new RegExp(label));
   assert.doesNotMatch(view, /localStorage|sessionStorage/);
-  for (const route of [memoryRoute, consentRoute, transitionRoute]) {
+  for (const route of [memoryRoute, consentRoute, transitionRoute, undoRoute]) {
     assert.match(route, /isSameOriginMutation/);
     assert.match(route, /Cache-Control.*private, no-store/);
     assert.doesNotMatch(route, /service_role|SUPABASE_SERVICE/);

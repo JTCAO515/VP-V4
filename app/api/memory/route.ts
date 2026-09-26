@@ -12,7 +12,9 @@ export async function GET(request: NextRequest) {
     const failure = failureResponse(result.error);
     return adapter.applyCookies(NextResponse.json(failure, { status: failure.status }));
   }
-  return adapter.applyCookies(NextResponse.json(result.data, { headers: { "Cache-Control": "private, no-store" } }));
+  return adapter.applyCookies(NextResponse.json(result.data.profiles, { headers: {
+    "Cache-Control": "private, no-store", "X-VP-Memory-Owner": result.data.ownerId,
+  } }));
 }
 
 export async function POST(request: NextRequest) {

@@ -28,3 +28,20 @@ This producer PR does not close #199.
   Existing Trip facts, working context and external evidence contracts remain in force.
 
 No production action, payment/provider dispatch, real deletion or place-v7 regression was performed.
+
+## 2026-09-27 Web create/Undo increment
+
+- UNRUN: new append-only migration on a complete disposable Supabase/Auth stack; the added
+  integration suite covers owner isolation, exact replay, later revision conflict, tombstone,
+  rollback fault and function EXECUTE, but Docker is inaccessible in this task sandbox.
+- UNRUN: `pnpm check`/full typecheck/build because this worktree has no `node_modules` and local
+  pnpm commands stalled without output. The focused source/contract checks above are not a build.
+- UNRUN: authenticated zh/en browser view at desktop/mobile, four-second timer, focus/VoiceOver,
+  same-owner readback, cross-account refresh and unknown-result retry against real HTTP/DB.
+- UNRUN: shared Staging migration application and actual user creation/Undo. No shared environment
+  changed in this slice; fixture or code receipt is not target acceptance.
+- UNRUN: code-first deployment against a real old-schema target. The narrow missing-function and
+  missing-column fallback is contract-tested, but old-schema HTTP persistence/readback is not
+  observed; all other RPC errors must stay hard failures rather than falling back.
+- UNRUN: summary-update toast/Undo and direct saved-pace Proposal use; this increment covers one
+  explicit new Memory record only. #199 stays open.

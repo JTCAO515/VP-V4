@@ -100,6 +100,7 @@ export const LANES = {
           "tests/integration/identity/function-acl.test.mjs",
           "tests/integration/identity/pending-proposal-read.test.mjs",
           "tests/integration/identity/profile-privacy-rpc.test.mjs",
+          "tests/integration/memory/create-undo.test.mjs",
           "tests/integration/privacy/trip-deletion-live.test.mjs",
           "tests/integration/entitlements/storekit-ledger.test.mjs",
           "tests/integration/trip/confirm-apply.test.mjs",

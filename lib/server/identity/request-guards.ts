@@ -221,6 +221,7 @@ export function isMemoryCreateInput(
   memoryId: string;
   receiptId: string;
   consentId: string;
+  expectedOwnerId?: string;
   constraintKind: "preference" | "hard_constraint";
   summary: string;
 }> {
@@ -230,6 +231,7 @@ export function isMemoryCreateInput(
     isUuid(String(input.memoryId ?? "")) &&
     isUuid(String(input.receiptId ?? "")) &&
     isUuid(String(input.consentId ?? "")) &&
+    (!Object.hasOwn(input, "expectedOwnerId") || isUuid(String(input.expectedOwnerId))) &&
     (input.constraintKind === "preference" ||
       input.constraintKind === "hard_constraint") &&
     typeof input.summary === "string" &&
@@ -240,6 +242,7 @@ export function isMemoryCreateInput(
         "memoryId",
         "receiptId",
         "consentId",
+        "expectedOwnerId",
         "constraintKind",
         "summary",
       ].includes(key),
@@ -250,11 +253,12 @@ export function isMemoryCreateInput(
 export function isMemoryConsentInput(
   value: unknown,
 ): value is
-  | Readonly<{ action: "create" }>
+  | Readonly<{ action: "create"; expectedOwnerId?: string }>
   | Readonly<{ consentId: string; action: "grant" | "revoke" }> {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const input = value as Record<string, unknown>;
-  if (input.action === "create") return Object.keys(input).length === 1;
+  if (input.action === "create") return Object.keys(input).every(key => key === "action" || key === "expectedOwnerId")
+    && (!Object.hasOwn(input, "expectedOwnerId") || isUuid(String(input.expectedOwnerId)));
   return (
     isUuid(String(input.consentId ?? "")) &&
     (input.action === "grant" || input.action === "revoke") &&
@@ -275,6 +279,21 @@ export function isMemoryTransitionInput(
       input.state === "deleted") &&
     Object.keys(input).every((key) => key === "state")
   );
+}
+
+export function isMemoryCreateUndoInput(
+  value: unknown,
+): value is Readonly<{
+  sourceReceiptId: string;
+  expectedRevision: number;
+  operationId: string;
+}> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const input = value as Record<string, unknown>;
+  return isUuid(String(input.sourceReceiptId ?? "")) &&
+    isUuid(String(input.operationId ?? "")) &&
+    input.expectedRevision === 1 &&
+    Object.keys(input).sort().join() === "expectedRevision,operationId,sourceReceiptId";
 }
 
 export function isUserProfileInput(
