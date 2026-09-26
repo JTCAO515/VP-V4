@@ -123,12 +123,6 @@ begin
     then raise exception 'SERVICE_TASK_CONFLICT'; end if;
   if p_action='unlink' and (linked.goal_id is null or linked.trip_id is null)
     then raise exception 'SERVICE_TASK_CONFLICT'; end if;
-  -- The privacy index is bounded to 100 active links per owner. text_owner()
-  -- holds the mobile-account row lock, so competing owner admissions cannot
-  -- both count below the bound and hide an older link from privacy controls.
-  if p_action='link' and linked.trip_id is null
-    and (select count(*) from turn_private.assistant_goal_trip_links where owner_id=u and trip_id is not null)>=100
-    then raise exception 'SERVICE_TASK_CONFLICT'; end if;
   if p_action='unlink' then
     perform 1 from public.trips where id=linked.trip_id and owner_id=u;
     if not found then raise exception 'SERVICE_TASK_CONFLICT'; end if;
@@ -219,28 +213,32 @@ grant execute on function public.read_assistant_goal_trip_link_v1(uuid) to authe
 
 -- Minimal owner privacy index. It stays readable after text withdrawal so the
 -- user can find and unlink an existing Trip reference without reopening consent.
-create function public.list_assistant_goal_trip_links_v1()
+create function public.list_assistant_goal_trip_links_v1(p_after_goal_id uuid default null,p_limit integer default 50)
 returns jsonb language plpgsql security definer set search_path='' as $$
-declare u uuid:=turn_private.text_owner(); links jsonb;
+declare u uuid:=turn_private.text_owner(); links jsonb:='[]'::jsonb; item record;
+  cursor_id uuid; item_count integer:=0;
 begin
-  if (select count(*) from turn_private.assistant_goal_trip_links where owner_id=u and trip_id is not null)>100
-    then raise exception 'SERVICE_TASK_CONFLICT'; end if;
-  select coalesce(jsonb_agg(x.item order by x.updated_at desc,x.goal_id),'[]'::jsonb)
-    into links from (
-      select l.updated_at,l.goal_id,jsonb_build_object('version',5,'kind','goal_trip_link',
+  if p_limit is null or p_limit not between 1 and 50 then raise exception 'INVALID_INPUT'; end if;
+  for item in select l.goal_id,jsonb_build_object('version',5,'kind','goal_trip_link',
         'conversationId',l.conversation_id,'goalId',l.goal_id,'goalScopeVersion',g.scope_version,
         'linkVersion',l.link_version,'lastOperationId',l.operation_id,'tripId',l.trip_id,
         'tripHeadVersion',l.trip_head_version,'terminalUnlinked',l.terminal_unlinked,
         'sourceMessageId',null,'sourceKind','privacy_control','current',false) item
       from turn_private.assistant_goal_trip_links l
       join turn_private.assistant_goals g on g.id=l.goal_id and g.owner_id=u
-      where l.owner_id=u and l.trip_id is not null
-      order by l.updated_at desc,l.goal_id limit 100
-    ) x;
-  return jsonb_build_object('kind','goal_trip_links','links',links);
+      where l.owner_id=u and l.trip_id is not null and (p_after_goal_id is null or l.goal_id>p_after_goal_id)
+      order by l.goal_id limit p_limit+1 loop
+    item_count:=item_count+1;
+    if item_count>p_limit then
+      return jsonb_build_object('kind','goal_trip_links','links',links,'nextCursor',cursor_id);
+    end if;
+    links:=links||jsonb_build_array(item.item);
+    cursor_id:=item.goal_id;
+  end loop;
+  return jsonb_build_object('kind','goal_trip_links','links',links,'nextCursor',null);
 end $$;
-revoke all on function public.list_assistant_goal_trip_links_v1() from public,anon,service_role;
-grant execute on function public.list_assistant_goal_trip_links_v1() to authenticated;
+revoke all on function public.list_assistant_goal_trip_links_v1(uuid,integer) from public,anon,service_role;
+grant execute on function public.list_assistant_goal_trip_links_v1(uuid,integer) to authenticated;
 
 -- A confirmed, recently reauthenticated Trip deletion is also an explicit
 -- decision to end that Trip's goal associations. Admission already holds the

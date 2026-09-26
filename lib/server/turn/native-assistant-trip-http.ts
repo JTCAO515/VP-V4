@@ -68,10 +68,11 @@ export async function nativeAssistantTripHTTP(request: NextRequest, goalId: stri
   finally { scope.dispose(); }
 }
 
-export async function nativeAssistantTripPrivacyHTTP(request: NextRequest) {
+export async function nativeAssistantTripPrivacyHTTP(request: NextRequest, afterGoalId?: string) {
   const config = getNativeRuntimeConfig(request, "trip", "text");
   if (!config) return failure("PROVIDER_UNAVAILABLE");
-  if (request.method !== "GET" || request.headers.has("cookie") || request.headers.has("origin")
+  if (request.method !== "GET" || (afterGoalId !== undefined && !uuid(afterGoalId))
+    || request.headers.has("cookie") || request.headers.has("origin")
     || [...request.nextUrl.searchParams].length) return failure("INVALID_INPUT");
   const scope = nativeRequestScope(request.signal, 15_000);
   try {
@@ -81,10 +82,12 @@ export async function nativeAssistantTripPrivacyHTTP(request: NextRequest) {
     if (session.error) return failure(mapError(session.error.message));
     if (!record(session.data) || session.data.subject !== actor.subject || session.data.sessionId !== actor.sessionId)
       return failure("UNAUTHENTICATED");
-    const result = await scope.run(() => actor.client.rpc("list_assistant_goal_trip_links_v1").abortSignal(scope.signal));
+    const result = await scope.run(() => actor.client.rpc("list_assistant_goal_trip_links_v1",
+      {p_after_goal_id:afterGoalId ?? null,p_limit:50}).abortSignal(scope.signal));
     if (result.error) return failure(mapError(result.error.message));
     if (!record(result.data) || result.data.kind !== "goal_trip_links" || !Array.isArray(result.data.links)
-      || result.data.links.length > 100) return failure("INTERNAL_ERROR");
+      || result.data.links.length > 50 || (result.data.nextCursor !== null && !uuid(result.data.nextCursor)))
+      return failure("INTERNAL_ERROR");
     return response({version:5,...result.data});
   } catch { return failure("PROVIDER_UNAVAILABLE"); }
   finally { scope.dispose(); }

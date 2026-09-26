@@ -114,10 +114,14 @@ private struct AssistantGoalTripLinksRead: Decodable {
     let version: Int
     let kind: String
     let links: [AssistantGoalTripLink]
+    let nextCursor: String?
     var valid: Bool {
-        version == 5 && kind == "goal_trip_links" && links.count <= 100
+        version == 5 && kind == "goal_trip_links" && links.count <= 50
         && links.allSatisfy { $0.valid && $0.tripId != nil }
         && Set(links.map(\.goalId)).count == links.count
+        && (nextCursor == nil || UUID(uuidString: nextCursor!) != nil)
+        && zip(links, links.dropFirst()).allSatisfy { $0.0.goalId < $0.1.goalId }
+        && (nextCursor == nil || nextCursor == links.last?.goalId)
     }
 }
 
@@ -173,6 +177,7 @@ struct NativeAssistantConversationView: View {
     @State private var ownedTrips: [NativeTripSummary] = []
     @State private var pendingTripMutation: AssistantTripMutation?
     @State private var privacyLinks: [AssistantGoalTripLink] = []
+    @State private var privacyNextCursor: String?
     @State private var tripBusy = false
     @State private var tripNotice: String?
     @State private var showTripPicker = false
@@ -304,7 +309,7 @@ struct NativeAssistantConversationView: View {
                 pending = nil; draft = ""; boundScope = session.retainedDataScope
             }
             policy = nil; conversation = nil; resultStore.clear(); notice = nil
-            tripLink = nil; ownedTrips = []; pendingTripMutation = nil; privacyLinks = []
+            tripLink = nil; ownedTrips = []; pendingTripMutation = nil; privacyLinks = []; privacyNextCursor = nil
             tripNotice = nil; tripConfirmation = nil; showTripPicker = false
             guard requested != nil else { return }
             while busy {
@@ -396,6 +401,10 @@ struct NativeAssistantConversationView: View {
                         .disabled(tripBusy).accessibilityIdentifier("assistant.trip.privacy-retry.\(link.goalId)")
                 }
             }
+            if privacyNextCursor != nil {
+                Button(chinese ? "加载更多关联" : "Load more Trip links") { Task { await loadMorePrivacyLinks() } }
+                    .disabled(tripBusy).accessibilityIdentifier("assistant.trip.privacy-more")
+            }
         }
         .padding(14).frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
@@ -469,7 +478,7 @@ struct NativeAssistantConversationView: View {
                 && accepted.linkVersion == request.expectedLinkVersion + 1
                 && accepted.goalScopeVersion == request.expectedGoalScopeVersion + 1
                 && accepted.tripId == request.tripId else { throw NativeDataError.invalidResponse }
-            tripNotice = nil
+            pendingTripMutation = nil; tripNotice = nil
         } catch {
             if session.dataScope == initial {
                 if case NativeDataError.server(let code) = error,
@@ -489,9 +498,10 @@ struct NativeAssistantConversationView: View {
             let read = try JSONDecoder().decode(AssistantGoalTripLinksRead.self, from: data)
             guard read.valid else { throw NativeDataError.invalidResponse }
             privacyLinks = read.links
+            privacyNextCursor = read.nextCursor
             if pendingTripMutation?.action == "link" { pendingTripMutation = nil }
             if let pendingTripMutation, pendingTripMutation.action == "unlink",
-               !read.links.contains(where: { $0.goalId == pendingTripMutation.goalId }) {
+               read.nextCursor == nil && !read.links.contains(where: { $0.goalId == pendingTripMutation.goalId }) {
                 self.pendingTripMutation = nil
             }
             if !read.links.isEmpty {
@@ -499,8 +509,26 @@ struct NativeAssistantConversationView: View {
                 catch { if session.dataScope == initial { ownedTrips = [] } }
             } else { ownedTrips = [] }
         } catch {
-            if session.dataScope == initial { privacyLinks = []; tripNotice = "retry" }
+            if session.dataScope == initial { privacyLinks = []; privacyNextCursor = nil; tripNotice = "retry" }
         }
+    }
+    private func loadMorePrivacyLinks() async {
+        guard !tripBusy, let initial = session.dataScope, let cursor = privacyNextCursor else { return }
+        tripBusy = true; defer { tripBusy = false }
+        do {
+            let data = try await session.askRequest(path: "api/chat/native/v5/goal-trips/\(cursor)", method: "GET")
+            guard session.dataScope == initial else { return }
+            let page = try JSONDecoder().decode(AssistantGoalTripLinksRead.self, from: data)
+            guard page.valid && !page.links.isEmpty && page.links.allSatisfy({ $0.goalId > cursor })
+                else { throw NativeDataError.invalidResponse }
+            privacyLinks = privacyLinks.filter { $0.goalId <= cursor } + page.links
+            privacyNextCursor = page.nextCursor
+            if let pendingTripMutation, pendingTripMutation.action == "unlink",
+               page.nextCursor == nil && !privacyLinks.contains(where: { $0.goalId == pendingTripMutation.goalId }) {
+                self.pendingTripMutation = nil
+            }
+            tripNotice = nil
+        } catch { if session.dataScope == initial { tripNotice = "retry" } }
     }
     private func reload() async {
         guard !busy, let initial = session.dataScope else { return }
@@ -516,7 +544,7 @@ struct NativeAssistantConversationView: View {
                 await loadPrivacyLinks(initial)
                 return
             }
-            privacyLinks = []
+            privacyLinks = []; privacyNextCursor = nil
             let data = try await session.askRequest(path: "api/chat/native/v5/conversation", method: "GET")
             guard session.dataScope == initial else { return }
             let read = try JSONDecoder().decode(AssistantConversation.self, from: data)

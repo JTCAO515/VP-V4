@@ -33,7 +33,7 @@ const AUTHENTICATED = [
   "public.knowledge_answer_v1(jsonb)",
   "public.knowledge_read_v1(jsonb)",
   "public.list_grounded_turns(uuid,integer)",
-  "public.list_assistant_goal_trip_links_v1()",
+  "public.list_assistant_goal_trip_links_v1(uuid,integer)",
   "public.list_service_task_turns(uuid,integer)",
   "public.list_text_turns(uuid,integer)",
   "public.native_task_travel_pace_v1(jsonb)",

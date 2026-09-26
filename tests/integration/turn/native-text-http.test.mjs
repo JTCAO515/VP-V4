@@ -526,7 +526,7 @@ test('v5 Trip unlink and confirmed deletion reserve a terminal goal version at t
  }
 });
 
-test('v5 owner privacy list covers every admitted active link at its capacity',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
+test('v5 owner privacy cursor reaches and can unlink the 101st active link after withdrawal',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
  const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
  const call=async(path,token,method='GET',body)=>{const r=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,body:await r.json()};};
  const attemptId=randomUUID(),c=await call('/api/auth/native/v2/credentials',null,'POST',{email:e.users[0].email,password:e.users[0].password,attemptId});
@@ -544,18 +544,28 @@ test('v5 owner privacy list covers every admitted active link at its capacity',{
    select gen_random_uuid(),'${dummyConversation}','${e.users[0].id}','Synthetic bounded link' from generate_series(1,100) returning id)
  insert into turn_private.assistant_goal_trip_links(goal_id,conversation_id,owner_id,link_version,goal_scope_version,operation_id,trip_id,trip_head_version,source_kind)
  select id,'${dummyConversation}','${e.users[0].id}',1,1,gen_random_uuid(),'${dummyTrip}',0,'native_user_confirmed' from goals;`);
- const privacy=()=>call('/api/chat/native/v5/goal-trips',owner);
- assert.equal((await privacy()).body.links.length,100,'all admitted active references remain reachable for unlink');
+ const privacy=cursor=>call('/api/chat/native/v5/goal-trips'+(cursor?'/'+cursor:''),owner);
+ const allPages=async()=>{
+  const links=[];let cursor=null;
+  do {
+   const page=await privacy(cursor);assert.equal(page.status,200,JSON.stringify(page.body));
+   assert.ok(page.body.links.length<=50);
+   links.push(...page.body.links);cursor=page.body.nextCursor;
+  }while(cursor);
+  assert.equal(new Set(links.map(link=>link.goalId)).size,links.length);
+  return links;
+ };
+ assert.equal((await allPages()).length,100,'no active owner link is hidden by the first-page bound');
  const path='/api/chat/native/v5/goals/'+goalId+'/trip',input={operationId:randomUUID(),conversationId,sourceMessageId:messageId,
   expectedGoalScopeVersion:1,expectedLinkVersion:0,action:'link',tripId:candidateTrip,expectedTripVersion:0,confirmed:true};
- assert.equal((await call(path,owner,'POST',input)).status,409,'a 101st active link cannot become invisible');
- const previousGoal=e.sql(`select goal_id from turn_private.assistant_goal_trip_links where conversation_id='${dummyConversation}' order by goal_id limit 1;`);
- const unlink={operationId:randomUUID(),conversationId:dummyConversation,sourceMessageId:null,
-  expectedGoalScopeVersion:1,expectedLinkVersion:1,action:'unlink',tripId:null,expectedTripVersion:null,confirmed:true};
- assert.equal((await call('/api/chat/native/v5/goals/'+previousGoal+'/trip',owner,'POST',unlink)).status,201);
- assert.equal((await privacy()).body.links.length,99);
- assert.equal((await call(path,owner,'POST',{...input,operationId:randomUUID()})).status,201);
- assert.equal((await privacy()).body.links.length,100);
+ assert.equal((await call(path,owner,'POST',input)).status,201,'a 101st link is allowed and must be pageable');
+ assert.equal((await call('/api/chat/native/v5/consent',owner,'DELETE',{policyId:e.policyId})).status,200);
+ const links=await allPages();assert.equal(links.length,101);
+ const last=links.at(-1),unlink={operationId:randomUUID(),conversationId:last.conversationId,sourceMessageId:null,
+  expectedGoalScopeVersion:last.goalScopeVersion,expectedLinkVersion:last.linkVersion,
+  action:'unlink',tripId:null,expectedTripVersion:null,confirmed:true};
+ assert.equal((await call('/api/chat/native/v5/goals/'+last.goalId+'/trip',owner,'POST',unlink)).status,201);
+ assert.equal((await allPages()).length,100,'the far-page link remains removable after consent withdrawal');
  e.sql(`delete from turn_private.assistant_goal_trip_links where owner_id='${e.users[0].id}';
   delete from turn_private.assistant_goal_trip_receipts where owner_id='${e.users[0].id}';`);
 });

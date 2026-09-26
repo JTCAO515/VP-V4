@@ -1,6 +1,53 @@
 import XCTest
 
 nonisolated final class NativeAskUITests: XCTestCase {
+    @MainActor func testEnglishAssistantTripPrivacyPagination() throws {
+        let environment = ProcessInfo.processInfo.environment
+        guard environment["VP_NATIVE_ASSISTANT_PRIVACY_PAGINATION"] == "1" else { throw XCTSkip("UNRUN: disposable 101-link privacy fixture required") }
+        continueAfterFailure = false
+        let api = try XCTUnwrap(environment["VP_NATIVE_TEXT_API_URL"])
+        let email = try XCTUnwrap(environment["VP_NATIVE_TEXT_UI_EN_EMAIL"])
+        let marker = try XCTUnwrap(environment["VP_NATIVE_ASSISTANT_LAST_GOAL"])
+        let app = XCUIApplication()
+        app.launchArguments = ["-VisePandaNativeAPI", api, "-VisePandaAssistantConversation", "-VisePandaLocale", "en", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        app.tabBars.buttons["Profile"].tap()
+        let signOut = app.buttons["Sign out"]
+        if signOut.waitForExistence(timeout: 2) { reveal(signOut, app); signOut.tap() }
+        let emailField = app.textFields["native.login.email"]
+        XCTAssertTrue(emailField.waitForExistence(timeout: 15)); reveal(emailField, app); emailField.tap(); emailField.typeText(email)
+        let password = app.secureTextFields["native.login.password"]
+        reveal(password, app); password.tap(); password.typeText("VPJ07-Local-Synthetic-Only-195!")
+        let login = app.buttons["native.login.submit"]; reveal(login, app); login.tap()
+        expectation(for: NSPredicate(format: "label == %@", "Session active"), evaluatedWith: app.staticTexts["native.session.status"])
+        waitForExpectations(timeout: 30)
+        app.tabBars.buttons["Ask"].tap()
+        XCTAssertTrue(app.staticTexts["assistant.consent.withdrawn"].waitForExistence(timeout: 20))
+        XCTAssertFalse(app.switches["assistant.agree"].exists)
+        let more = app.buttons["assistant.trip.privacy-more"]
+        XCTAssertTrue(more.waitForExistence(timeout: 20))
+        func revealFar(_ element: XCUIElement) {
+            for _ in 0..<80 where !element.isHittable { app.swipeUp() }
+            XCTAssertTrue(element.isHittable)
+        }
+        revealFar(more); more.tap()
+        XCTAssertTrue(more.waitForExistence(timeout: 10), "A second page must expose the third-page cursor")
+        revealFar(more); more.tap()
+        let unlink = app.buttons["assistant.trip.privacy-unlink.\(marker)"]
+        XCTAssertTrue(unlink.waitForExistence(timeout: 15), "The 101st link must be reachable after two page advances")
+        revealFar(unlink)
+        capture("Assistant-goal-Trip-privacy-page-101-en", app)
+        unlink.tap()
+        let confirm = app.buttons["Confirm privacy unlink"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 10)); confirm.tap()
+        XCTAssertTrue(app.staticTexts["assistant.consent.withdrawn"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.switches["assistant.agree"].exists)
+        XCTAssertTrue(more.waitForExistence(timeout: 15))
+        revealFar(more); more.tap()
+        XCTAssertFalse(more.exists, "100 remaining links fit exactly in two complete pages")
+        XCTAssertFalse(unlink.exists, "The far-page link was removed without reviving consent")
+    }
+
     @MainActor func testEnglishAssistantGoalTripLinkReadback() throws {
         let environment = ProcessInfo.processInfo.environment
         guard environment["VP_NATIVE_ASSISTANT_TRIP_TEST"] == "1" else { throw XCTSkip("UNRUN: disposable goal Trip fixture required") }

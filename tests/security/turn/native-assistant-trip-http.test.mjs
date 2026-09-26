@@ -48,13 +48,14 @@ test('feature-off Trip authority keeps owner privacy list/read/unlink but never 
   if(path.endsWith('/native_session_v2'))return Response.json({version:2,subject,sessionId,mobileEpoch:1});
   if(path.endsWith('/read_assistant_goal_trip_link_v1'))return Response.json({kind:'goal_trip_link',goalId,conversationId:body.conversationId,
    goalScopeVersion:2,linkVersion:1,tripId:body.tripId,tripHeadVersion:0,current:false});
-  if(path.endsWith('/list_assistant_goal_trip_links_v1'))return Response.json({kind:'goal_trip_links',links:[{goalId,tripId:body.tripId}]});
+  if(path.endsWith('/list_assistant_goal_trip_links_v1'))return Response.json({kind:'goal_trip_links',links:[{goalId,tripId:body.tripId}],nextCursor:null});
   if(path.endsWith('/set_assistant_goal_trip_link_v1'))return Response.json({kind:'goal_trip_link',operationId:body.operationId,
    goalScopeVersion:3,linkVersion:2,tripId:null,tripHeadVersion:null,reused:false});
   return transport(input,init);
  });
  assert.equal((await nativeAssistantTripHTTP(fixture.request(),goalId)).status,200);
  assert.equal((await nativeAssistantTripPrivacyHTTP(fixture.request())).status,200);
+ assert.equal((await nativeAssistantTripPrivacyHTTP(fixture.request(),'not-a-uuid')).status,400);
  const unlink={...body,sourceMessageId:null,action:'unlink',tripId:null,expectedTripVersion:null};
  assert.equal((await nativeAssistantTripHTTP(fixture.request({method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(unlink)}),goalId)).status,201);
  assert.equal((await nativeAssistantTripHTTP(fixture.request({method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}),goalId)).status,503);
