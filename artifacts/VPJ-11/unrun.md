@@ -8,7 +8,8 @@ This producer PR does not close #199.
 - UNRUN: final-PR-SHA native XCTest, four-second timing, keyboard/VoiceOver interaction and actual
   sign-in/account-switch observations. On 2026-09-26 the main session reported a generic Simulator
   build and build-for-testing PASS before the preview-only safety change; final-head compilation
-  still needs same-SHA CI or a rerun. Two focused iOS 17.5 XCTest launches
+  was subsequently observed PASS on combined head `4dc6521a` after merging H3; final PR SHA still
+  needs Native CI. Two focused iOS 17.5 XCTest launches
   stalled before test execution/xcresult and were terminated (exit 143); no test outcome was observed.
   Await the same-SHA Native CI result without treating these local interruptions as code failures.
 - UNRUN: target-environment planner consumer. The 2026-09-27 native code requests the task projection

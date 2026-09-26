@@ -97,17 +97,23 @@ The main session attempted focused `NativeTravelPaceTests` and `NativeTripStateT
 iOS 17.5 simulators with parallel testing disabled. Both local `xcodebuild test` invocations
 stalled before test execution or an xcresult was produced; they were stopped to release the
 shared Mac runner (exit 143). Focused XCTest is **UNRUN**, neither PASS nor assertion FAIL.
-The same-SHA Native CI result remains pending; the reported build-for-testing preceded the
-preview-only safety change and must be rerun or replaced with same-head CI evidence. Target Staging
-migration, real identity/Trip use, Free/Pass lifecycle and withdrawal behavior remain UNRUN.
+The same-SHA Native CI result remains pending. Target Staging migration, real identity/Trip use,
+Free/Pass lifecycle and withdrawal behavior remain UNRUN.
 The earlier draft had only a View-local pace basis, which would be lost on restored pending Proposals.
 This slice now prevents saved-Profile projections from entering drafts at all. Durable owner/source
 binding and atomic server confirmation remain future requirements before direct saved-pace Proposal use.
 This PR cannot claim that broader #199 acceptance.
 
 After the 2026-09-27 preview-only safety change, `pnpm docs:check`, Swift frontend parse of the
-five changed Swift files, and `git diff --check` passed again. Full native build and XCTest need
-same-head CI or a new local run; earlier build-for-testing does not cover this final change.
+five changed Swift files, and `git diff --check` passed again. The main session committed this
+nine-file slice as `ceb5c83d`, then merged `origin/main` at `e6ae8d06` without conflicts; the
+combined head is `4dc6521adccf2c2635d2791908c5e9ad5b87b148`. Its diff against main still
+contains only this slice's nine files; `NativeTripView` also contains H3's separate mainline addition.
+On this combined head, the main session ran `xcodebuild -quiet build-for-testing` for generic iOS
+Simulator with DerivedData at `/private/tmp/vpj11-pace-combined-derived` and signing disabled:
+exit 0, app and test bundle compiled. The only reported diagnostic is an existing iOS 17
+deprecation warning in `AccessibilityContrastTests`. This is compile evidence; focused XCTest
+remains UNRUN after the interrupted local launches, pending the final PR SHA's Native CI.
 
 Rollback: revert this client code. Preserve Profile revisions, prior withdrawal state, and all
 confirmed Trips; no migration or shared environment was changed in this slice.
