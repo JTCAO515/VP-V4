@@ -13,6 +13,8 @@ test("requires a versioned closed patch operation set", () => {
   assert.throws(() => assertTripPatch({ expectedVersion: -1, operations: [{ kind: "set_title", title: "x" }] }), InvalidTripPatchError);
   assert.throws(() => assertTripPatch({ expectedVersion: 1, operations: [] }), InvalidTripPatchError);
   assert.throws(() => assertTripPatch({ expectedVersion: 1, operations: [{ kind: "upsert_item", itemId: "i", dayId: "d", title: "x", extra: true } as never] }), InvalidTripPatchError);
+  assert.throws(() => assertTripPatch({ expectedVersion: 1, operations: [{ kind: "upsert_item", itemId: "i", dayId: "d", title: "x", addressZh: "上海市黄浦区" } as never] }), InvalidTripPatchError);
+  assert.throws(() => assertTripPatch({ expectedVersion: 1, operations: [{ kind: "set_item_address_zh", itemId: "i", dayId: "d", addressZh: "上海市黄浦区" } as never] }), InvalidTripPatchError);
 });
 
 test("applies day and item edits deterministically and keeps legacy title/day snapshots readable", () => {
