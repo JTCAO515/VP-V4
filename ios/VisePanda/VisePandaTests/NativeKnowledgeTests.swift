@@ -318,6 +318,39 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         request.city = nil; XCTAssertFalse(pending(.grounded).valid)
     }
 
+    @MainActor func testSavedComparisonReadbackFencesScopeAndUnknownSchema() async throws {
+        let artifact = UUID().uuidString.lowercased()
+        func bytes(_ schema: String = "comparison/1") throws -> Data {
+            try JSONSerialization.data(withJSONObject: ["version": 1, "data": [
+                "kind": "result_artifact", "artifactId": artifact, "revision": 2,
+                "current": false, "lifecycle": "active", "content": ["schemaVersion": schema,
+                    "title": "Synthetic directions", "summary": "No real travel recommendation.",
+                    "options": [["id": "one", "title": "Option one", "tradeoff": "Time unknown"],
+                                ["id": "two", "title": "Option two", "tradeoff": "Availability unknown"]]]
+            ]])
+        }
+        let store = NativeResultStore()
+        await store.load(scope: owner) { try bytes() }
+        XCTAssertTrue(store.isCurrent(owner))
+        XCTAssertEqual(store.result?.artifactId, artifact)
+        XCTAssertEqual(store.result?.revision, 2)
+        XCTAssertEqual(store.result?.content?.options?.count, 2)
+        let another = NativeDataScope(endpoint: owner.endpoint, subject: "other-owner", mobileEpoch: 1, generation: 2)
+        XCTAssertFalse(store.isCurrent(another))
+        store.clear()
+        XCTAssertNil(store.result)
+        await store.load(scope: owner) { try bytes("comparison/999") }
+        XCTAssertEqual(store.result?.content?.schemaVersion, "comparison/999")
+        XCTAssertFalse(store.result?.content?.schemaVersion == "comparison/1")
+        let barrier = KnowledgeReadBarrier()
+        let pending = Task { await store.load(scope: owner) { await barrier.wait() } }
+        await barrier.awaitStart()
+        store.clear()
+        await barrier.finish(try bytes())
+        await pending.value
+        XCTAssertNil(store.result, "a cleared account must not revive a late result")
+    }
+
 }
 
 private actor KnowledgeReadBarrier {

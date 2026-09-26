@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {createNativeTextEnvironment} from './native-text-environment.mjs';
 import {waitUntil} from '../identity/database-barrier.mjs';
+import {identityLocalEnv} from '../identity/local-supabase.mjs';
 
 test('real local Auth, native HTTP, consent, durable worker and recovery enforce owner/session boundaries',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
  const continuous=process.env.VP_NATIVE_TEXT_SERVICE_INTEGRATION==='true';
@@ -132,23 +133,104 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  assert.equal((await call(base+'/conversation',owner,'POST',{...follow,expectedGoalVersion:1,messageId:randomUUID(),idempotencyKey:randomUUID()})).status,409);
  assert.equal((await call(base+'/conversation',owner,'POST',{...follow,taskId:randomUUID(),messageId:randomUUID(),idempotencyKey:randomUUID()})).status,409,'unowned task rejected');
  assert.equal(e.sql(`select count(*) from public.model_budget_attempts where scope_id='${e.users[0].scopeId}';`),'1','goal edits did not enqueue or settle another attempt');
- const taskIds=[];
+ const taskIds=[],links=[];
  for(let index=0;index<2;index++){
   const taskId=randomUUID(),taskTurn=randomUUID();taskIds.push(taskId);
   const task={threadId:randomUUID(),turnId:taskTurn,idempotencyKey:randomUUID(),policyId:policy.id,locale:'en',text:'Synthetic related task '+index,serviceTask:{id:taskId,scopeVersion:1,relationship:'new_goal',parentTurnId:null}};
   assert.equal((await call('/api/chat/native/v2/turns',owner,'POST',task)).status,201,'existing task explicitly admitted');
   const link=make('follow_up',{text:'Attach accepted task '+index,goalId,expectedGoalVersion:2,parentMessageId:follow.messageId,taskId,turnId:null});
   assert.equal((await call(base+'/conversation',owner,'POST',link)).status,201,'goal references existing task');
+  links.push(link);
  }
  read=(await call(base+'/conversation',owner)).body;
  assert.deepEqual(read.messages.filter(x=>x.taskId).map(x=>x.taskId),taskIds);
+ const artifactId=randomUUID(),publicationKey=randomUUID();
+ const content={schemaVersion:'comparison/1',title:'Synthetic directions',summary:'Fixture only; no travel recommendation.',options:[
+  {id:'one',title:'Synthetic A',tradeoff:'Unknown travel time.'},{id:'two',title:'Synthetic B',tradeoff:'Unknown availability.'}],actions:[]};
+ const publish=(expected=0,key=publicationKey,body=content)=>{
+  const literal=JSON.stringify(body).replaceAll("'","''");
+  return e.sql(`set request.jwt.claim.role='service_role';select public.publish_comparison_result_v1('${e.users[0].id}','${artifactId}',${expected},'${key}','${taskIds[0]}','${goalId}','${links[0].messageId}',null,null,2,'[]'::jsonb,'${literal}'::jsonb);`);
+ };
+ const published=JSON.parse(publish());assert.deepEqual({kind:published.kind,artifactId:published.artifactId,revision:published.revision,reused:published.reused},
+  {kind:'published',artifactId,revision:1,reused:false});
+ assert.equal(JSON.parse(publish()).reused,true,'idempotent publication returns the same immutable revision');
+ assert.throws(()=>publish(0,randomUUID()),/REVISION_CONFLICT/,'CAS prevents a second revision one');
+ assert.throws(()=>publish(1,randomUUID(),{...content,actions:[{kind:'open_url',url:'https://example.test'}]}),/INVALID_INPUT/,'action URL is rejected at storage');
+ const resultPath='/api/results/native/v1?artifactId='+artifactId+'&revision=1';
+ const saved=await call(resultPath,owner);assert.equal(saved.status,200,JSON.stringify(saved.body));
+ assert.equal(saved.body.data.artifactId,artifactId);assert.equal(saved.body.data.revision,1);assert.equal(saved.body.data.current,true);
+ assert.equal(saved.body.data.source.inputMessageId,links[0].messageId);
+ const second=JSON.parse(publish(1,randomUUID(),{...content,summary:'Synthetic revision two; still no travel recommendation.'}));
+ assert.equal(second.revision,2);
+ const currentPath='/api/results/native/v1?artifactId='+artifactId+'&revision=2';
+ assert.equal((await call(currentPath,owner)).body.data.current,true);
+ assert.equal((await call(resultPath,owner)).body.data.current,false,'older immutable revision cannot remain current');
+ assert.throws(()=>e.sql(`update turn_private.result_revisions set content='{}'::jsonb where artifact_id='${artifactId}' and revision=1;`),/IMMUTABLE_RESULT_REVISION/);
+ const serviceKey=identityLocalEnv()?.SERVICE_ROLE_KEY;assert.ok(serviceKey);
+ const raceId=randomUUID();
+ const raceParams=(key)=>({p_owner_id:e.users[0].id,p_artifact_id:raceId,p_expected_revision:0,p_idempotency_key:key,
+   p_task_id:taskIds[0],p_goal_id:goalId,p_input_message_id:links[0].messageId,p_trip_id:null,p_trip_version:null,
+   p_goal_version:2,p_memory_basis:[],p_content:content});
+ const raceCall=async(key)=>{const response=await fetch(identityLocalEnv().API_URL+'/rest/v1/rpc/publish_comparison_result_v1',{
+   method:'POST',headers:{apikey:serviceKey,Authorization:'Bearer '+serviceKey,'Content-Type':'application/json'},body:JSON.stringify(raceParams(key))});
+   return response.status;};
+ assert.deepEqual((await Promise.all([raceCall(randomUUID()),raceCall(randomUUID())])).sort(),[200,409],'concurrent distinct keys get one CAS winner');
+ assert.equal(e.sql(`select count(*) from turn_private.result_revisions where artifact_id='${raceId}';`),'1');
+ assert.equal((await call(resultPath,other)).body.data.kind,'empty','other owner cannot read the result');
+ assert.equal((await call('/api/results/native/v1?artifactId='+artifactId+'&revision=3',owner)).body.data.kind,'empty');
+ const revised=make('amendment',{text:'Change synthetic planning basis',goalId,expectedGoalVersion:2,parentMessageId:links[1].messageId,turnId:null});
+ assert.equal((await call(base+'/conversation',owner,'POST',revised)).status,201);
+ const stale=await call(currentPath,owner);assert.equal(stale.body.data.current,false,'goal CAS makes prior basis stale');
+ assert.equal(stale.body.data.historicalReadable,true,'authorized history remains readable');
+ assert.equal(e.sql(`select count(*) from turn_private.result_events where artifact_id='${artifactId}' and event_type='ready';`),'1','result and ready outbox were committed together');
+ assert.equal((await call('/api/results/native/v1?artifactId=bad',owner)).status,400);
+ const currentLink=make('follow_up',{text:'Attach task under current scope',goalId,expectedGoalVersion:3,parentMessageId:revised.messageId,taskId:taskIds[0],turnId:null});
+ assert.equal((await call(base+'/conversation',owner,'POST',currentLink)).status,201);
+ const memoryId=randomUUID(),memoryConsent=randomUUID(),memoryReceipt=randomUUID();
+ e.sql(`begin;set constraints all deferred;
+   insert into public.memory_consents(id,owner_id,status) values('${memoryConsent}','${e.users[0].id}','granted');
+   insert into public.memory_profiles(id,owner_id,source_receipt_id,consent_id,state,constraint_kind,summary)
+     values('${memoryId}','${e.users[0].id}','${memoryReceipt}','${memoryConsent}','explicit','preference','Synthetic pace');
+   insert into public.memory_receipts(id,owner_id,memory_id,event_state,source_kind)
+     values('${memoryReceipt}','${e.users[0].id}','${memoryId}','explicit','system');commit;`);
+ const dependentId=randomUUID(),dependentKey=randomUUID(),tripId=randomUUID();
+ e.sql(`insert into public.trips(id,owner_id,title) values('${tripId}','${e.users[0].id}','Synthetic trip');`);
+ const dependentPath='/api/results/native/v1?artifactId='+dependentId+'&revision=1';
+ const dependentContent=JSON.stringify(content).replaceAll("'","''");
+ const basis=JSON.stringify([{id:memoryId,revision:1}]).replaceAll("'","''");
+ const dependentPublish=e.sql(`set request.jwt.claim.role='service_role';select public.publish_comparison_result_v1('${e.users[0].id}','${dependentId}',0,'${dependentKey}',
+   '${taskIds[0]}','${goalId}','${currentLink.messageId}','${tripId}',0,3,'${basis}'::jsonb,'${dependentContent}'::jsonb);`);
+ assert.equal(JSON.parse(dependentPublish).revision,1);
+ assert.equal((await call(dependentPath,owner)).body.data.current,true);
+ const tripOnlyId=randomUUID(),tripOnlyPath='/api/results/native/v1?artifactId='+tripOnlyId+'&revision=1';
+ assert.equal(JSON.parse(e.sql(`set request.jwt.claim.role='service_role';select public.publish_comparison_result_v1('${e.users[0].id}','${tripOnlyId}',0,'${randomUUID()}',
+   '${taskIds[0]}','${goalId}','${currentLink.messageId}','${tripId}',0,3,'[]'::jsonb,'${dependentContent}'::jsonb);`)).revision,1);
+ assert.equal((await call(tripOnlyPath,owner)).body.data.current,true);
+ e.sql(`update public.memory_profiles set summary='Changed synthetic pace' where id='${memoryId}';`);
+ assert.equal((await call(dependentPath,owner)).body.data.current,false,'memory revision invalidates currentness');
+ assert.equal((await call(dependentPath,owner)).body.data.historicalReadable,true);
+ assert.equal((await call(tripOnlyPath,owner)).body.data.current,true,'unrelated memory correction leaves independent result current');
+ e.sql(`update public.trips set head_version=1 where id='${tripId}';`);
+ assert.equal((await call(tripOnlyPath,owner)).body.data.current,false,'new Trip base invalidates relevant result');
+ e.sql(`update public.memory_profiles set state='deleted',summary=null where id='${memoryId}';`);
+ assert.equal((await call(dependentPath,owner)).body.data.kind,'unavailable','deleted memory cannot be recovered from result content');
+ e.sql(`delete from public.trips where id='${tripId}';`);
+ assert.equal(e.sql(`select count(*) from turn_private.result_artifacts where id='${dependentId}';`),'0','Trip deletion cascades result and index');
+ assert.equal(e.sql(`select count(*) from turn_private.result_artifacts where id='${tripOnlyId}';`),'0');
+ const withdraw=()=>JSON.parse(e.sql(`set request.jwt.claim.role='service_role';select public.withdraw_result_artifact_v1('${e.users[0].id}','${artifactId}',2);`));
+ assert.equal(withdraw().reused,false);
+ assert.equal(withdraw().reused,true,'withdrawal replay has one durable event');
+ assert.equal((await call(resultPath,owner)).body.data.kind,'unavailable','withdrawn content is hidden');
+ assert.equal(e.sql(`select count(*) from turn_private.result_events where artifact_id='${artifactId}' and event_type='withdrawn';`),'1');
  const otherGoalId=randomUUID(),otherStart=make('goal_start',{text:'A separate goal',goalId:otherGoalId,turnId:null});
  assert.equal((await call(base+'/conversation',owner,'POST',otherStart)).status,201);
  assert.equal((await call(base+'/conversation',owner,'POST',make('follow_up',{text:'Do not reassign the first task',goalId:otherGoalId,expectedGoalVersion:1,parentMessageId:otherStart.messageId,taskId:taskIds[0],turnId:null}))).status,409);
  await login(e.users[0]);assert.equal((await call(base+'/conversation',owner)).status,401,'replaced session cannot read');
+ assert.equal((await call(resultPath,owner)).status,401,'replaced session cannot read result');
  const replacement=await login(e.users[0]);
- assert.equal((await call(base+'/conversation',replacement)).body.messages.length,7,'new session reads durable conversation');
+ assert.equal((await call(base+'/conversation',replacement)).body.messages.length,9,'new session reads durable conversation');
  assert.equal((await call(base+'/consent',replacement,'DELETE',{policyId:policy.id})).status,200);
  assert.equal((await call(base+'/conversation',replacement)).status,403,'withdrawal hides transcript');
+ assert.equal((await call(resultPath,replacement)).body.data.kind,'unavailable','withdrawal hides result content');
  assert.equal((await call(base+'/conversation',replacement,'POST',make('independent_question'))).status,403,'withdrawal denies new work');
 });
