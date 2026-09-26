@@ -74,6 +74,7 @@ struct NativeTodayView: View {
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var phase
     @State private var detail: NativeTripDetail?
+    @State private var readAt: Date?
     @State private var loading = false
     @State private var unavailable = false
 
@@ -84,7 +85,8 @@ struct NativeTodayView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: VPSpacing.section) {
-                if let detail, session.dataScope != nil, store.scope == session.dataScope {
+                if let detail, session.dataScope != nil, store.scope == session.dataScope,
+                   store.selectedID == tripID, store.detail?.trip.headVersion == detail.trip.headVersion {
                     confirmed(detail)
                 } else if loading {
                     ProgressView(text("Loading confirmed Trip…", "正在读取已确认行程…"))
@@ -115,6 +117,7 @@ struct NativeTodayView: View {
         }
         .onChange(of: session.retainedDataScope) { _, _ in
             detail = nil
+            readAt = nil
             unavailable = false
         }
     }
@@ -128,9 +131,14 @@ struct NativeTodayView: View {
                     Text(text("Confirmed Trip · version \(detail.trip.headVersion)", "已确认行程 · 版本 \(detail.trip.headVersion)"))
                         .font(.subheadline)
                         .accessibilityIdentifier("today.version")
-                    Text(text("Read from the current Trip online. No offline copy is saved by Today.", "已联网读取当前行程；今日页尚未保存离线副本。"))
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
+                    if let readAt {
+                        Text(text("Last online read: ", "最近联网读取：") + readAt.formatted(.dateTime.year().month().day().hour().minute().locale(settings.selectedLocale.locale)))
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .accessibilityIdentifier("today.lastRead")
+                    }
+                    Text(text("Refresh to check for changes. Today has no offline copy.", "刷新可检查更新；今日页尚未保存离线副本。"))
+                        .font(.footnote).foregroundStyle(.secondary)
                 }
             }
             VisePandaCard {
@@ -189,10 +197,12 @@ struct NativeTodayView: View {
     private func refresh() async {
         guard !loading, let owner = session.dataScope else {
             detail = nil
+            readAt = nil
             return
         }
         loading = true
         detail = nil
+        readAt = nil
         unavailable = false
         let refreshed = await store.refreshForSharing(using: session)
         guard !Task.isCancelled, session.dataScope == owner, store.scope == owner else {
@@ -202,6 +212,7 @@ struct NativeTodayView: View {
         if refreshed, let current = store.detail, store.selectedID == tripID,
            current.trip.id == tripID, current.confirmationState == "confirmed", store.notice == nil {
             detail = current
+            readAt = Date()
         } else {
             unavailable = true
         }

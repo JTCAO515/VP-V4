@@ -3,33 +3,6 @@ import XCTest
 
 nonisolated final class NativeTripStateTests: XCTestCase {
     @MainActor
-    func testTodaySelectsOnlyDatedConfirmedItemsAndKeepsEmptyStatesDistinct() {
-        let trip = NativeTripSummary(id: UUID().uuidString, title: "Shanghai", headVersion: 4, updatedAt: "2026-09-24T00:00:00Z")
-        let now = ISO8601DateFormatter().date(from: "2026-09-24T02:00:00Z")!
-        func detail(_ days: [NativeTripDay]) -> NativeTripDetail {
-            .init(version: 2, trip: trip, content: .init(days: days), hardLocks: .notEnabled,
-                  externalOrderStatus: .notConnected, confirmationState: "confirmed")
-        }
-        func day(_ id: String, _ date: String, _ titles: [String], zone: String? = "Asia/Shanghai") -> NativeTripDay {
-            .init(id: id, date: date, timeZone: zone,
-                  items: titles.enumerated().map { index, title in
-                      .init(id: "\(id)-\(index)", dayId: id, title: title)
-                  })
-        }
-        if case .noDates = NativeTodaySelection.select(detail: detail([]), now: now) {} else { XCTFail("No date must not become a schedule") }
-        if case .noItems = NativeTodaySelection.select(detail: detail([day("a", "2026-09-24", [])]), now: now) {} else { XCTFail("Empty days must have their own state") }
-        if case .incomplete = NativeTodaySelection.select(detail: detail([day("a", "2026-09-24", ["Museum"], zone: nil)]), now: now) {} else { XCTFail("Missing zone cannot select Today") }
-        if case .complete = NativeTodaySelection.select(detail: detail([day("a", "2026-09-23", ["Museum"])]), now: now) {} else { XCTFail("Past items are not upcoming") }
-        let scheduled = detail([day("future", "2026-09-25", ["Tomorrow"]), day("today", "2026-09-24", ["今日地址：上海市黄浦区"], zone: "Asia/Shanghai")])
-        if case .day(let selected, let isToday) = NativeTodaySelection.select(detail: scheduled, now: now) {
-            XCTAssertEqual(selected.id, "today")
-            XCTAssertEqual(selected.items.first?.title, "今日地址：上海市黄浦区")
-            XCTAssertTrue(isToday)
-            XCTAssertEqual(scheduled.trip.headVersion, 4)
-        } else { XCTFail("Confirmed Today's item should be selected") }
-    }
-
-    @MainActor
     func testArchiveRequiresReviewedVersionRetainsResultsAndStartsFresh() async throws {
         ArchiveTripProtocol.reset()
         let configuration = URLSessionConfiguration.ephemeral
@@ -326,6 +299,34 @@ nonisolated final class NativeTripStateTests: XCTestCase {
         XCTAssertNil(store.detail)
         XCTAssertEqual(store.scope, session.dataScope)
         await session.logout()
+    }
+
+    @MainActor
+    func testTodaySelectsOnlyDatedConfirmedItemsAndKeepsEmptyStatesDistinct() {
+        let trip = NativeTripSummary(id: UUID().uuidString, title: "Shanghai", headVersion: 4, updatedAt: "2026-09-24T00:00:00Z")
+        let now = ISO8601DateFormatter().date(from: "2026-09-24T02:00:00Z")!
+        func detail(_ days: [NativeTripDay]) -> NativeTripDetail {
+            .init(version: 2, trip: trip, content: .init(days: days), hardLocks: .notEnabled,
+                  externalOrderStatus: .notConnected, confirmationState: "confirmed")
+        }
+        func day(_ id: String, _ date: String, _ titles: [String], zone: String? = "Asia/Shanghai") -> NativeTripDay {
+            .init(id: id, date: date, timeZone: zone,
+                  items: titles.enumerated().map { index, title in
+                      .init(id: "\(id)-\(index)", dayId: id, title: title)
+                  })
+        }
+        if case .noDates = NativeTodaySelection.select(detail: detail([]), now: now) {} else { XCTFail("No date must not become a schedule") }
+        if case .noItems = NativeTodaySelection.select(detail: detail([day("a", "2026-09-24", [])]), now: now) {} else { XCTFail("Empty days must have their own state") }
+        if case .incomplete = NativeTodaySelection.select(detail: detail([day("a", "2026-09-24", ["Museum"], zone: nil)]), now: now) {} else { XCTFail("Missing zone cannot select Today") }
+        if case .incomplete = NativeTodaySelection.select(detail: detail([day("a", "2026-02-30", ["Museum"])]), now: now) {} else { XCTFail("Invalid date cannot select Today") }
+        if case .complete = NativeTodaySelection.select(detail: detail([day("a", "2026-09-23", ["Museum"])]), now: now) {} else { XCTFail("Past items are not upcoming") }
+        let scheduled = detail([day("future", "2026-09-25", ["Tomorrow"]), day("today", "2026-09-24", ["今日地址：上海市黄浦区"], zone: "Asia/Shanghai")])
+        if case .day(let selected, let isToday) = NativeTodaySelection.select(detail: scheduled, now: now) {
+            XCTAssertEqual(selected.id, "today")
+            XCTAssertEqual(selected.items.first?.title, "今日地址：上海市黄浦区")
+            XCTAssertTrue(isToday)
+            XCTAssertEqual(scheduled.trip.headVersion, 4)
+        } else { XCTFail("Confirmed Today's item should be selected") }
     }
 }
 
