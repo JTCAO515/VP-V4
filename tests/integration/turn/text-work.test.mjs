@@ -9,6 +9,7 @@ import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 import {PROTOCOL_MODELS} from '../../../lib/server/model-gateway/adapters/provider-protocol.ts';
 import {waitUntil} from '../identity/database-barrier.mjs';
 import {runTextWorker} from '../../../lib/server/turn/text-worker.ts';
+import {journeyPassCatalog} from '../../../lib/server/entitlements/journey-pass-catalog.ts';
 const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj07-text-'+uuid().slice(0,8);
 let created=false;
 const run=(name,fn)=>test(name,{skip:!enabled},fn);
@@ -342,6 +343,96 @@ run('ServiceTask records exact request replay and a latest-parent clarification/
  await a.finish('answered');await assert.rejects(a.submit(a.next(third.p_turn_id)),/SERVICE_TASK_CONFLICT/);
  const history=await a.call('list_service_task_turns',{p_policy_id:a.policy,p_limit:20});assert.equal(history.turns.length,3);assert.ok(history.turns.every(t=>t.serviceTaskId===a.task));
  assert.equal(await db(`select count(*) from public.chat_turn_events where turn_id='${a.turn}' and event_type='terminal';`),'1');
+});
+run('development capacity serializes the last text slot and settles only a readable answer',async()=>{
+ await db("update turn_private.service_task_capacity_settings set enabled=true where singleton=true;");
+ try{
+  const a=await taskFixture();
+  const first=await a.submit();assert.equal(first.capacityState,'reserved');
+  await a.finish('answered');
+  assert.equal((await a.call('read_text_turn',{p_turn_id:a.turn})).outcome,'answered');
+  assert.equal(await db(`select state from turn_private.service_task_capacity where task_id='${a.task}';`),'settled');
+  assert.equal((await a.submit()).reused,true);
+  assert.equal(await db(`select count(*) from turn_private.service_task_capacity where task_id='${a.task}';`),'1');
+  const goal=()=>({...a.taskInput,p_thread_id:uuid(),p_turn_id:uuid(),p_idempotency_key:uuid(),p_task_id:uuid()});
+  const contenders=[goal(),goal()];
+  const raced=await Promise.allSettled(contenders.map(input=>a.call('submit_service_task_turn',input)));
+  assert.equal(raced.filter(x=>x.status==='fulfilled').length,1);
+  assert.match(raced.find(x=>x.status==='rejected').reason.message,/SERVICE_TASK_CAPACITY_EXHAUSTED/);
+  const accepted=contenders[raced.findIndex(x=>x.status==='fulfilled')];
+  const rejected=contenders[raced.findIndex(x=>x.status==='rejected')];
+  assert.equal(await db(`select count(*) from turn_private.service_task_capacity where owner_id='${a.owner}' and state in ('reserved','settled');`),'2');
+  assert.equal(await db(`select count(*) from turn_private.service_tasks where id='${rejected.p_task_id}';`),'0','exhausted admission rolls back the task and Turn');
+  await a.call('cancel_chat_turn',{p_turn_id:accepted.p_turn_id});
+  assert.equal(await db(`select state from turn_private.service_task_capacity where task_id='${accepted.p_task_id}';`),'released');
+  assert.equal((await a.call('submit_service_task_turn',rejected)).capacityState,'reserved');
+ }finally{await db("update turn_private.service_task_capacity_settings set enabled=false where singleton=true;");await clean();}
+});
+run('clarification and failed repair retain one task identity and re-admit after release',async()=>{
+ await db("update turn_private.service_task_capacity_settings set enabled=true where singleton=true;");
+ try{
+  const a=await taskFixture();await a.submit();await a.finish('clarification');
+  assert.equal(await db(`select state from turn_private.service_task_capacity where task_id='${a.task}';`),'reserved');
+  const next=a.next(a.turn);await a.submit(next);await a.finish('technical_failure');
+  assert.equal(await db(`select state from turn_private.service_task_capacity where task_id='${a.task}';`),'released');
+  const repair=a.next(next.p_turn_id,'repair');
+  await db("update turn_private.service_task_capacity_settings set enabled=false where singleton=true;");
+  await assert.rejects(a.submit(repair),/CAPACITY_POLICY_UNAVAILABLE/,'switching off admission cannot demote an enforced task');
+  await db("update turn_private.service_task_capacity_settings set enabled=true where singleton=true;");
+  assert.equal((await a.submit(repair)).capacityState,'reserved');
+  await a.finish('answered');
+  assert.equal(await db(`select count(*) from turn_private.service_task_capacity where task_id='${a.task}' and state='settled';`),'1');
+  assert.equal(await db(`select count(*) from turn_private.service_task_turns where task_id='${a.task}';`),'3');
+ }finally{await db("update turn_private.service_task_capacity_settings set enabled=false where singleton=true;");await clean();}
+});
+run('partial text keeps readable output but releases capacity without a later settlement path',async()=>{
+ await db("update turn_private.service_task_capacity_settings set enabled=true where singleton=true;");
+ try{
+  const a=await taskFixture();await a.submit();
+  const lease=await service('claim_text_work',{p_owner_id:a.owner,p_policy_id:a.policy});
+  assert.equal(lease.kind,'leased');assert.equal((await authorize(a,lease)).kind,'authorized');
+  assert.equal((await complete(lease,'partial')).kind,'finished');
+  const saved=await a.call('read_text_turn',{p_turn_id:a.turn});
+  assert.equal(saved.outcome,'partial');assert.equal(saved.output,'Synthetic result');
+  assert.equal(await db(`select state||':'||(settled_turn_id is null)::text from turn_private.service_task_capacity where task_id='${a.task}';`),'released:true');
+  assert.equal((await complete(lease,'answered')).kind,'blocked','the terminal Turn rejects a late old worker');
+  for(const relationship of ['repair','clarification'])await assert.rejects(a.submit(a.next(a.turn,relationship)),/SERVICE_TASK_CONFLICT/);
+  assert.equal((await a.submit()).reused,true,'exact replay cannot recreate a reservation');
+  assert.equal(await db(`select count(*) from turn_private.service_task_capacity where task_id='${a.task}' and state='settled';`),'0');
+  const fresh={...a.taskInput,p_thread_id:uuid(),p_turn_id:uuid(),p_idempotency_key:uuid(),p_task_id:uuid()};
+  assert.equal((await a.call('submit_service_task_turn',fresh)).capacityState,'reserved','released partial capacity may serve a new goal');
+ }finally{await db("update turn_private.service_task_capacity_settings set enabled=false where singleton=true;");await clean();}
+});
+run('missing development capacity settings fail closed without a task or Turn',async()=>{
+ const a=await taskFixture();
+ await db('delete from turn_private.service_task_capacity_settings where singleton=true;');
+ try{
+  await assert.rejects(a.submit(),/CAPACITY_POLICY_UNAVAILABLE/);
+  assert.equal(await db(`select count(*) from turn_private.service_tasks where id='${a.task}';`),'0');
+  assert.equal(await db(`select count(*) from public.turns where id='${a.turn}';`),'0');
+ }finally{await db("insert into turn_private.service_task_capacity_settings(singleton,enabled) values(true,false);");}
+ assert.equal((await a.submit()).capacityMode,'record_only','a valid disabled configuration restores legacy behavior');
+ await clean();
+});
+run('future and revoked Sandbox grants never authorize text capacity or late settlement',async()=>{
+ await db("update turn_private.service_task_capacity_settings set enabled=true where singleton=true;");
+ try{
+  const snapshot=lit(JSON.stringify(journeyPassCatalog.serviceTaskCapacity.journeyPass));
+  const future=await taskFixture(),live=await taskFixture();
+  await db(`insert into public.storekit_grants(environment,transaction_id,owner_id,app_account_token,product_id,purchase_at,starts_at,ends_at,catalog_version,policy_version,capacity_snapshot)
+    values('Sandbox','future-test','${future.owner}','${future.owner}','synthetic',now(),now()+interval '1 hour',now()+interval '721 hours',2,'service-task-development/1',${snapshot}::jsonb),
+    ('Sandbox','live-test','${live.owner}','${live.owner}','synthetic',now()-interval '1 minute',now()-interval '1 minute',now()+interval '719 hours 59 minutes',2,'service-task-development/1',${snapshot}::jsonb);`);
+  await future.submit();
+  assert.equal(await db(`select tier from turn_private.service_task_capacity where task_id='${future.task}';`),'free');
+  await live.submit();
+  assert.equal(await db(`select tier from turn_private.service_task_capacity where task_id='${live.task}';`),'journey_pass');
+  const lease=await service('claim_text_work',{p_owner_id:live.owner,p_policy_id:live.policy});
+  assert.equal(lease.kind,'leased');assert.equal((await authorize(live,lease)).kind,'authorized');
+  await db("update public.storekit_grants set state='revoked',revoked_at=clock_timestamp() where transaction_id='live-test';");
+  await assert.rejects(complete(lease),/SERVICE_TASK_GRANT_UNAVAILABLE/);
+  assert.equal(await db(`select output_text is null from turn_private.text_content where turn_id='${live.turn}';`),'t');
+  assert.equal(await db(`select state from turn_private.service_task_capacity where task_id='${live.task}';`),'reserved');
+ }finally{await db("update turn_private.service_task_capacity_settings set enabled=false where singleton=true;");await clean();}
 });
 run('ServiceTask competing continuations and legacy v1/state admissions cannot split the task',async()=>{
  const a=await taskFixture();await a.submit();await a.finish('clarification');

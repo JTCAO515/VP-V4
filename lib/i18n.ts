@@ -543,8 +543,11 @@ export const chatThreadWorkspaceCopy: Readonly<Record<Locale, Readonly<{
   ar: { exactPlaceScope: "تحديد المكان الدقيق: {poiId}. لا يرسل هذا المعرّف المعتم مطالبة ولا يستنتج حقائق عن المكان.", memoryProvenance: "مصدر الذاكرة", hardConstraint: "قيد صارم", preference: "تفضيل", memorySource: "مصدر الذاكرة", receipt: "إيصال" },
 };
 
-const failureMessages = (messages: readonly string[]): Readonly<Record<FailureCode, string>> =>
-  Object.fromEntries(FAILURE_CODES.map((code, index) => [code, messages[index]])) as Readonly<Record<FailureCode, string>>;
+const failureMessages = (messages: readonly string[]): Readonly<Record<FailureCode, string>> => {
+  const legacyCodes = FAILURE_CODES.filter(code => code !== "SERVICE_TASK_CAPACITY_EXHAUSTED");
+  const values = Object.fromEntries(legacyCodes.map((code, index) => [code, messages[index]]));
+  return { ...values, SERVICE_TASK_CAPACITY_EXHAUSTED: values.BUDGET_EXHAUSTED } as Readonly<Record<FailureCode, string>>;
+};
 
 // AI-44 is intentionally separate from landing-page copy: these are the future product error messages,
 // not proof that a live Chatbot or HTTP/SSE endpoint exists today.

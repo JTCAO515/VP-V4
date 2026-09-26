@@ -101,6 +101,7 @@ export async function nativeTextHTTP(request: NextRequest, action: Action, turnI
 function mapError(message: string): FailureCode {
   if (/UNAUTHENTICATED|SESSION_REPLACED/.test(message)) return "UNAUTHENTICATED";
   if (message.includes("SERVICE_TASK_CONFLICT")) return "SERVICE_TASK_CONFLICT";
+  if (message.includes("SERVICE_TASK_CAPACITY_EXHAUSTED")) return "SERVICE_TASK_CAPACITY_EXHAUSTED";
   if (message.includes("IDEMPOTENCY_KEY_REUSE")) return "IDEMPOTENCY_KEY_REUSE";
   if (message.includes("DATA_POLICY_BLOCKED")) return "DATA_POLICY_BLOCKED";
   if (message.includes("INVALID_INPUT")) return "INVALID_INPUT";

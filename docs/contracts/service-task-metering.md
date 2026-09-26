@@ -115,3 +115,11 @@ Task/Turn UUID 共用接纳身份锁并双向拒绝碰撞。旧 v1 可重放已�
 回退：撤回本切片 API 的部署即可停止 v2 接纳，保留追加迁移、任务关联和预算固定，继续对既有 worker 强制共享预算；已关联任务不自动降级到 v1。不得通过清除关联或解除 scope 来恢复额度。迁移事务回滚在独立数据库演练；不对已有环境执行破坏性 down migration。本切片未实现 SwiftUI 消费、多轮模型上下文或生产发布。
 
 真实 Staging 的两语言、四次模型调用共享任务预算与迁移/权限证据见[验证记录](../../artifacts/VPJ-07/service-task-staging-20260912/verification.md)。这不替代多轮上下文、原生 v2 消费或完整语义判断验收。
+
+## 2026-09-26 U1 开发容量实现
+
+VPJ-35 的追加迁移建立私有 ServiceTask 容量记录，默认关闭容量执行，既有任务仍是 record-only。仅在隔离开发数据库明确启用 `turn_private.service_task_capacity_settings.enabled` 后，新的文本 `new_goal` 接纳才按 `service-task-development/1` 预留一份容量；这不是正式收费启用或真实环境验收。旧 v1 Turn 与已接纳的 record-only 任务不追溯消费。
+
+开发策略使用 #225 冻结的 Free 168 小时 4 项、24 小时 2 项，或 #226 已验证且正在有效期内的 Sandbox Pass 快照 720 小时 80 项、账号 24 小时 12 项。账号统一的 24 小时窗口计入 Free/Pass 的已结算及有效预留；有效 Pass 用尽不回退 Free。接纳与 grant 变更共用账号事务锁；请求幂等、归属、同键异参仍由 #195 原接纳契约核验。Pass 未到 `startsAt`、已过 `endsAt` 或已撤销不提供容量。
+
+单个文本任务的 `clarification` 沿原预留；`technical_failure` 释放预留，合法 `repair` 在同一任务及原内部成本范围内重新校验容量。`answered` 仅在当前 Turn 成功提交、原 owner 可读取持久结果、相关 grant 仍有效时，将该任务预留唯一结算；失败、阻断与交付前取消释放预留。结算与成果写入在同一数据库事务，旧 worker 的重复完成与取消竞态不能重复结算。`partial` 保留已写入的部分成果、释放预留且不结算；该 Turn 已终结，现有归属契约禁止从 partial 自动续作或改稿，旧 worker 也不能再结算同一 Turn。跨窗口续作、等待 TTL、完成后改稿、真实收费及媒体任务均不在 U1 启用范围。新账本提供 service-role 限定的导出与删除 RPC；不复制 StoreKit 交易或供应商 attempt 账本。

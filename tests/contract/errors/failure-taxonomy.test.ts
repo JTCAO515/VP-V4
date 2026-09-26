@@ -3,10 +3,10 @@ import test from "node:test";
 import { failureCopy, type Locale } from "../../../lib/i18n.ts";
 import { FAILURE_CODES, FAILURE_TAXONOMY, getFailureSpec, isFailureCode } from "../../../lib/server/contracts/errors/index.ts";
 
-test("freezes exactly the 22 registered failure codes with unique metric labels", () => {
-  assert.equal(FAILURE_CODES.length, 22);
-  assert.equal(Object.keys(FAILURE_TAXONOMY).length, 22);
-  assert.equal(new Set(Object.values(FAILURE_TAXONOMY).map((item) => item.metricLabel)).size, 22);
+test("freezes exactly the 23 registered failure codes with unique metric labels", () => {
+  assert.equal(FAILURE_CODES.length, 23);
+  assert.equal(Object.keys(FAILURE_TAXONOMY).length, 23);
+  assert.equal(new Set(Object.values(FAILURE_TAXONOMY).map((item) => item.metricLabel)).size, 23);
   assert.equal(isFailureCode("PROVIDER_UNAVAILABLE"), true);
   assert.equal(isFailureCode("PROVIDER_ERROR"), false);
 });
