@@ -14,7 +14,7 @@ Producer: native v5 composer. Transport: bearer-only `/api/chat/native/v5/conver
 | `pnpm test:contract`, `pnpm test:security` | PASS | Repository suite; skips remain as reported by runner |
 | `pnpm test:integration` | PASS for always-on tests; gated tests UNRUN in this command | Runner reported `incomplete`, 117 skipped |
 | `node tests/integration/turn/run-native-http.mjs` | PASS 2/2 | Disposable local Auth/Postgres/HTTP and synthetic local model; v5 answer/readback, multi-message order, exact retry/conflict, two existing Tasks, stale goal version, other actor, session replacement, withdrawal |
-| `node scripts/ci-suites/db-integration.mjs --lane supabase-rls` | PASS 18/18 | Disposable local RLS and reviewed function ACL with all local migrations |
+| `node scripts/ci-suites/db-integration.mjs --lane supabase-rls` | PASS 21/21 | Disposable local RLS and reviewed function ACL with all local migrations, including merged #566 Memory |
 | `node scripts/ci-suites/db-integration.mjs --lane postgres` | PASS 128/128 | Disposable local Postgres, affected Turn and migration compatibility suites |
 | `xcodebuild -quiet ... build` on iPhone 15 Pro iOS 17.5 simulator UDID `B0AD77FD-33C3-4616-92CE-2E76ACD93148` | PASS | Native compilation |
 | `xcodebuild -quiet test ... -only-testing:VisePandaTests/NativeAskStateTests -only-testing:VisePandaTests/NativeAskPersistenceTests` on same simulator | PASS | Existing native Ask behavior |

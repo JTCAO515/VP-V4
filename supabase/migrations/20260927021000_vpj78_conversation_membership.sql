@@ -113,11 +113,14 @@ begin
     else assigned_version:=goal.scope_version; end if;
   end if;
   if p_task_id is not null then
-    select * into task from turn_private.service_tasks where id=p_task_id;
+    select * into task from turn_private.service_tasks where id=p_task_id for update;
     if not found or task.owner_id<>u or not turn_private.text_policy_current(task.policy_id)
       or not exists(select 1 from turn_private.text_consents tc where tc.owner_id=u and tc.policy_id=task.policy_id and tc.consent_id=task.consent_id and tc.revoked_at is null)
       or not exists(select 1 from turn_private.text_content root where root.turn_id=task.goal_turn_id and root.owner_id=u and root.hidden_at is null)
       or p_goal_id is null then raise exception 'SERVICE_TASK_CONFLICT'; end if;
+    if exists(select 1 from turn_private.assistant_messages linked where linked.task_id=p_task_id
+      and (linked.owner_id<>u or linked.goal_id<>p_goal_id or linked.conversation_id<>p_conversation_id))
+      then raise exception 'SERVICE_TASK_CONFLICT'; end if;
   end if;
   if p_relationship='independent_question' then
     -- A separate question uses the existing text worker and ledger exactly once.

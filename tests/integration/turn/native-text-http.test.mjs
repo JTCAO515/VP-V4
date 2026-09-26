@@ -111,6 +111,9 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  let read=(await call(base+'/conversation',owner)).body;
  assert.equal(read.version,5);assert.equal(read.conversationId,conversationId);assert.equal(read.messages[0].output,'Local synthetic answer: request completed.');
  assert.equal((await call(base+'/conversation',other)).status,403,'other owner without consent sees nothing');
+ assert.equal((await call(base+'/consent',other,'POST',{policyId:policy.id,noticeHash:policy.noticeHash})).status,200);
+ assert.deepEqual((await call(base+'/conversation',other)).body.messages,[],'consented other owner sees no conversation');
+ assert.equal((await call(base+'/conversation',other,'POST',make('goal_start',{goalId:randomUUID(),turnId:null}))).status,403,'other owner cannot append to conversation');
  assert.equal((await call(base+'/conversation',owner,'POST',{...question,text:'Changed'})).status,409);
  assert.equal((await call(base+'/conversation',owner,'POST',{...question,selectedArtifactId:randomUUID()})).status,400,'unknown artifact field closed');
  const goalId=randomUUID();const start=make('goal_start',{text:'Plan a China trip without dates',goalId,turnId:null});
@@ -139,9 +142,12 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  }
  read=(await call(base+'/conversation',owner)).body;
  assert.deepEqual(read.messages.filter(x=>x.taskId).map(x=>x.taskId),taskIds);
+ const otherGoalId=randomUUID(),otherStart=make('goal_start',{text:'A separate goal',goalId:otherGoalId,turnId:null});
+ assert.equal((await call(base+'/conversation',owner,'POST',otherStart)).status,201);
+ assert.equal((await call(base+'/conversation',owner,'POST',make('follow_up',{text:'Do not reassign the first task',goalId:otherGoalId,expectedGoalVersion:1,parentMessageId:otherStart.messageId,taskId:taskIds[0],turnId:null}))).status,409);
  await login(e.users[0]);assert.equal((await call(base+'/conversation',owner)).status,401,'replaced session cannot read');
  const replacement=await login(e.users[0]);
- assert.equal((await call(base+'/conversation',replacement)).body.messages.length,6,'new session reads durable conversation');
+ assert.equal((await call(base+'/conversation',replacement)).body.messages.length,7,'new session reads durable conversation');
  assert.equal((await call(base+'/consent',replacement,'DELETE',{policyId:policy.id})).status,200);
  assert.equal((await call(base+'/conversation',replacement)).status,403,'withdrawal hides transcript');
  assert.equal((await call(base+'/conversation',replacement,'POST',make('independent_question'))).status,403,'withdrawal denies new work');
