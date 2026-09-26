@@ -396,6 +396,12 @@ struct NativeTripView: View {
                         Label(text("Open Today", "打开今日"), systemImage: "sun.max")
                     }
                     .accessibilityIdentifier("trip.today")
+                    NavigationLink {
+                        NativeHotelComparisonView(detail: detail, store: store)
+                    } label: {
+                        Label(text("Compare accommodation", "比较住宿"), systemImage: "bed.double")
+                    }
+                    .accessibilityIdentifier("trip.hotelComparison")
                 }
                 NavigationLink(text("Preparation check", "准备检查")) {
                     NativeReadinessView(tripID: detail.trip.id, tripVersion: detail.trip.headVersion)
