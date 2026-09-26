@@ -176,13 +176,13 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ## VPJ-07
 
-[VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195) — 真实 Ask 得到可恢复的最终回答
+[VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195) — 真实文本与持久任务执行基础
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：在现有持久Ask上补一个中英可用结果与下一步的实际缺口；必要澄清/修复沿同一ServiceTask，核对回执与成本。
-- 本票责任/非目标：已勾选的首条文本纵切保留；08负责事件恢复，16既有知识结果复用，67负责跨场景真实验收，不重写worker。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [artifacts/VPJ-07/grounded-service-20260913/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-07/grounded-service-20260913/verification.md) · [artifacts/VPJ-07/worker-service-20260912/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-07/worker-service-20260912/verification.md)
+- 首个可交付结果：保留现有文本纵切和真实worker验收；为新助手模式提供实际执行/恢复接缝。
+- 本票责任/非目标：本票保留text/grounded旧模式；持续会话归VPJ-78，多步骤规划归VPJ-80，不能把启用worker当完整助手升级。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [artifacts/VPJ-07/grounded-service-20260913/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-07/grounded-service-20260913/verification.md) · [artifacts/VPJ-07/worker-service-20260912/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-07/worker-service-20260912/verification.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
@@ -195,7 +195,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: 默认（见文件开头「默认条款」）
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-07.md`, `docs/contracts/service-task-metering.md`, `docs/contracts/vp-response-policy.md`, `docs/harness/hf-reuse/README.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-07.md`, `docs/contracts/service-task-metering.md`, `docs/contracts/vp-response-policy.md`, `docs/harness/hf-reuse/README.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
@@ -207,6 +207,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 真实输出producer采用版本化VP内容与表达策略，英文直接创作、中英事实与动作状态一致；沿现有schema显式扩展并验证消费者，不新增人格服务或无约束二次润色。
 - [ ] 体验增量2026-09-17：五种结果均给出自然中英用户结果和可执行下一步，不以outcome/intent代码作为最终回答；answered先给结论，partial保留可靠部分并指出具体缺口，clarification只问影响当前目标的一项，blocked给许可内替代，technical_failure给同任务恢复入口。必要澄清和系统修复沿既有ServiceTask，不以表达优化新增扣次。
 - [ ] 体验增量2026-09-17：在受支持城市输入“机场地址”等有歧义问题时，仅用已核实实体构造必要选择；未知城市/实体不猜测，已有上下文不重复索取。复用#206已验行为与当前证据资格；正常可答却全拒答、技术失败伪称缺知识、没有来源的选项均为失败。
+- [ ] 助手升级2026-09-27：向VPJ-78/80提供当前真实job、授权、attempt成本、取消与完成回执接缝；新模式通过版本化接入，既有文本模式边界及已勾选证据保持原范围。
 
 ## VPJ-08
 
@@ -214,9 +215,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：复用现有cursor/SSE与取消接口，在同一已接受任务上验一次后台/断网/重启后的事件接续和最终结果读取。
-- 本票责任/非目标：负责事件与客户端恢复；不重建07执行队列/59账本，提交前后全链故障由69整合验收。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [artifacts/VPJ-08/native-events-staging-20260913/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-08/native-events-staging-20260913/verification.md) · [artifacts/VPJ-08/native-cancel-staging-20260913/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-08/native-cancel-staging-20260913/verification.md)
+- 首个可交付结果：在现有cursor/replay上核对任务进度和成果引用的兼容扩展接缝。
+- 本票责任/非目标：负责可恢复事件传输；VPJ-78负责关联语义、VPJ-79负责成果、VPJ-81负责不阻塞的主会话。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [artifacts/VPJ-08/native-events-staging-20260913/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-08/native-events-staging-20260913/verification.md) · [artifacts/VPJ-08/native-cancel-staging-20260913/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-08/native-cancel-staging-20260913/verification.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -229,7 +230,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: 默认（见文件开头「默认条款」）
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-08.md`, `docs/contracts/service-task-metering.md`, `docs/contracts/vp-response-policy.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-08.md`, `docs/contracts/service-task-metering.md`, `docs/contracts/vp-response-policy.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
@@ -237,16 +238,17 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 断网重连、App后台、取消、服务重启不丢最终回答、不双扣Ask、不重复Trip提交。
 - [ ] 跨账号旧事件不可回放；流式tail usage缺失进入待核账。
 - [ ] 同一ServiceTask跨轮/断网/重连保持归属，必要澄清或系统恢复不重复消费；状态文案来自实际事件，取消生成、未提交Proposal和已提交Trip分别呈现。
+- [ ] 助手升级2026-09-27：新增任务/成果事件需持久cursor与去重、schema兼容和账号失效保护；SSE不是唯一存储，晚到事件不能抢焦点、复活撤回内容或把旧成果标为当前。
 
 ## VPJ-09
 
-[VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197) — 从模糊想法得到可确认的多日行程
+[VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197) — 个性化旅行方向比较与可确认计划
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：用日期未定且已有偏好的输入产出可修改相对日草稿，展示局部变化并沿既有确认路径保存/重载。
-- 本票责任/非目标：只负责初始多日草稿；10负责局部改稿交互，65补实际地点和路线依据，不把相对日草稿称可执行行程。 2026-09-18已合并PR #475：四城2–7天美食/散步相对日方向、本机编辑、开始日期绑定、既有Proposal/diff/确认，拒绝重叠日期并保留旧日程；相邻真实Auth/PostgreSQL回读用tests/integration/trip/native-same-trip.test.mjs及一次性本地Supabase runner验证。仍未完成保存偏好、任意模糊输入、完整Chat→Plan、真实地点/可行性及目标环境验收，见artifacts/VPJ-09/verification.md。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：以新用户无精确日期的真实想法产出有取舍的方向，逐步接到可版本化成果和同Trip草稿。
+- 本票责任/非目标：负责方向/相对日规划及草稿生产；VPJ-79负责成果存储，VPJ-65负责真实地点与完整可行性，VPJ-80负责后台执行。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
@@ -259,7 +261,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: 默认（见文件开头「默认条款」）
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-09.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-09.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
@@ -269,6 +271,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 本单仅相对日方向/用户提供地点草稿；真实地点与grounded计划由VPJ-65补齐，不能把未解析地点当可执行。
 - [ ] Chat→Plan过渡、键盘、diff和返回锚点随此功能验收。
 - [ ] 体验增量2026-09-17：对“第一次去上海四天、喜欢吃和散步、日期未定”的输入，先交有取舍的方向及首段可修改的相对日草稿，再补仍会改变方案的信息；目的明确时不强凑两案，不等待全部坐标/素材就绪，也不编造实际营业/抵离时间。仍保留本票相对日/用户提供地点边界，真实地点与可执行性归#219。
+- [ ] 助手升级2026-09-27：前台先呈现体验、偏好与取舍，准备事项随阶段展开；十天/多城市输入不得被旧2–7天本地规则静默截断，未覆盖范围诚实说明并保留可交付部分。
+- [ ] 助手升级2026-09-27：选方向、保存草稿、提交已确认Trip分开；成果带输入/偏好/证据版本，修改仅重算受影响部分，持久读回由VPJ-79合同承接。
 
 ## VPJ-10
 
@@ -276,9 +280,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：在真实Trip选中一天或项目，提出局部改动并显示增删/移日、代价和保留项；确认后回到原位置且重载一致。
-- 本票责任/非目标：负责局部提案/确认消费者；65提供测量依据，68验证少走路案例，29负责在途变化触发，均复用同一writer。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：把选中成果/Trip范围交给VP，呈现保留项、变化与影响并确认准确版本。
+- 本票责任/非目标：唯一承接局部候选到已确认Trip；VPJ-79只引用Proposal，不建第二个writer，VPJ-81/83消费同一结果。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -291,7 +295,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: 默认（见文件开头「默认条款」）
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-10.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-10.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
@@ -300,16 +304,17 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 并发更新旧proposal不能提交；撤销Trip修改不能伪装取消外部订单。
 - [ ] 负责已登录真实Trip的选区→Ask sheet→局部Proposal/diff→确认→回到原对象与位置→重载闭环；复用#188基础导航/样式/可访问性，拒绝或关闭sheet不得误确认，真实凭据/数据条件缺失保留未验收。
 - [ ] 体验增量2026-09-17：局部改稿展示新增/移日/替换/移除及受影响时间与接驳，说明保留的已确认事项和备选去向；不只回复“已加入”。步行改善仅在#219同口径证据具备时声明，否则保留待核候选；diff、确认目标、返回选区和重载均绑定同一Trip版本，拒绝或旧版本无误写。
+- [ ] 助手升级2026-09-27：从VP/Journeys/Library进入同一成果或proposal时保持对象和revision；纠正记忆、换Trip或新base使旧候选失效，重新审阅后才能确认，不把方向选择当成交。
 
 ## VPJ-11
 
-[VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199) — Trip 连续记忆与用户可纠正的偏好
+[VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199) — 可见Memory与真实偏好消费、纠正和遗忘
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：把一个明确保存且有同意范围的基础偏好接入真实任务消费者，验证纠正/本次不用/撤回及迟到响应。
-- 本票责任/非目标：负责Profile/Memory权威与任务投影；31只消费授权Brief，不另建记忆库；UI提示与撤销复用同次变更版本。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：打通Memory独立页面→明确保存→真实规划使用→纠正/撤回→相关结果变化的一条链。
+- 本票责任/非目标：唯一负责Profile/Memory字段权威、资格投影和纠正；VPJ-83提供一级tab、VPJ-81提供上下文呈现，禁止另建画像库。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -322,7 +327,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: 默认（见文件开头「默认条款」）
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-11.md`, `docs/contracts/basic-preferences-cross-trip.md`, `docs/harness/hf-reuse/README.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-11.md`, `docs/contracts/basic-preferences-cross-trip.md`, `docs/harness/hf-reuse/README.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
@@ -334,6 +339,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] HF复用：借LongMemEval更新/跨会话方法编写自有中英反例，分别观察资格、Context入选、实际使用与撤回；管理API不充当模型检索，Profile/Memory字段保持唯一权威源，不为benchmark新建画像或向量库。
 - [ ] 记忆新增/更新实际成功后，顶部轻提示“已加入记忆/Saved to memory”，仅“撤销/Undo”，默认4秒自动隐藏；不抢焦点、不阻断输入。摘要有现成允许内容才附一行，不增加生成步骤；首版不加查看按钮。
 - [ ] 撤销必须作用于本次记忆变更及版本，成功显示已撤销，失败/冲突如实提示，不覆盖后续修改或改变Trip；同一逻辑写入重试/重连/重放不重复弹出，撤销自身不再触发加入记忆提示，换账号清理旧操作入口。
+- [ ] 助手升级2026-09-27：Memory作为一级Tab，VP相关偏好、真实save/undo和成果使用解释构成四处可见性；无记忆时不伪装熟悉，管理项有来源、scope、修改/暂停/忘记入口。
+- [ ] 助手升级2026-09-27：首版真实消费者至少使用已支持的travel pace；再逐字段扩展明确偏好，当前Trip/临时状态/外部事实/任务不得混入长期Memory。
+- [ ] 助手升级2026-09-27：在任务排队、运行、重试和成果待确认期间纠正或忘记，新的dispatch与推荐不使用旧值；删除同时覆盖衍生摘要、索引和检查点，Free/付费及到期后保持同等基础记忆控制。
 
 ## VPJ-12
 
@@ -368,13 +376,13 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ## VPJ-13
 
-[VPJ-13 #203](https://github.com/JTCAO515/VP-V4/issues/203) — 首访与回访的三种入口获得首个成果
+[VPJ-13 #203](https://github.com/JTCAO515/VP-V4/issues/203) — VP首访、委托与回访的连续体验
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：E1：新用户一句无日期想法先得到可保存的方向或片段，再按需要补一个可跳过的问题。
-- 本票责任/非目标：负责入口衔接/首值；不重建09规划、11记忆、12材料或62招募，三类入口全通才是整票完成。 2026-09-22已确认的实施顺序：E1 → E2 → E3；交接输入不新增原生blocked，完整父票验收保留。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
+- 首个可交付结果：从一句模糊想法形成可用方向，用户委托研究后离开，再回来看到真实成果与下一决定。
+- 本票责任/非目标：负责三段入口和用户观测；VPJ-81实现主会话，规划/记忆/材料各沿原owner，首值不是注册或点击。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 3专注日，PR/实际任务验证窗口
@@ -387,7 +395,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: 默认（见文件开头「默认条款」）
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-13.md`, `docs/contracts/vp-response-policy.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-13.md`, `docs/contracts/vp-response-policy.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
@@ -397,6 +405,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 继承同意范围内事件schema；first_value/activated/outcome_declined不混计。
 - [ ] 按本轮目标先交可用成果，只有会改变方案的缺失信息才追问；回访使用真实可用偏好与已保存成果，必要澄清沿同一ServiceTask，不机械问卷或反复索取已知信息。
 - [ ] 体验增量2026-09-17：以无日期新想法、已有安排导入、在途回访三类任务验收首值；每次必要问题伴随已有成果或具体变化，用户可跳过，已知日期/人数/服务意向不重问。分别记录首次可用成果时间、实际采用/保存、拒绝和技术失败，并以明确分母报告重复提问率，不预设未经测量的收益数字。
+- [ ] 助手升级2026-09-27：首次呈现有吸引力的个性化选择，回访优先真实新成果/未决问题；没有进展不捏造更新，不强制先建Trip或填写完整问卷。
+- [ ] 助手升级2026-09-27：评价用户能否说明VP记得什么、正在做什么、结果在哪及如何改口；目标结果完成与partial/blocked/technical_failure分开计量。
 
 ## VPJ-14
 
@@ -577,13 +587,13 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ## VPJ-20
 
-[VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210) — Explore 浏览内容并保存、问 VP、加入 Trip
+[VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210) — 全局探索中的地点发现、保存和交给VP
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：让一条当前有资格的Explore内容完成浏览→Save→Ask→经确认Add到现有Trip的用户行为。
-- 本票责任/非目标：负责发现与消费界面；#365是本票地图/路线集成切片，地点身份归19、知识发布归15，不重建两套收藏/Trip。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：复用真实内容和地点身份，在全局搜索/探索页展示有依据的旅行发现并交给VP。
+- 本票责任/非目标：旧Explore独立Tab迁入搜索/探索；本票拥有内容/Save/Ask/Add行为，VPJ-82拥有跨域搜索聚合。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -596,13 +606,14 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: 默认（见文件开头「默认条款」）
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-20.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-20.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
 - [ ] 中英官方/编辑内容可主动浏览、搜索和收藏；说明覆盖与来源。
 - [ ] Save/Ask/Add使用同一实体ID，Add走Proposal/Confirm；地点没找到可发起消歧/研究。
 - [ ] 无内容、已下架、过期图片/许可、分页/弱网状态可用，不用静态假数据冒充全国。
+- [ ] 助手升级2026-09-27：新四Tab无独立Explore，全球入口使用明确选区/实体/来源带入主会话；不能把照片或用户偏好当地点证据，生产图片有权利与真实地点对应。
 
 ## VPJ-21
 
@@ -610,9 +621,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：用一项有证据的支付/网络/预约准备事项，对unknown、已满足、不满足及不适用用户状态给不同下一步。
-- 本票责任/非目标：负责Readiness规则与呈现；17负责知识刷新，65负责计划可行性，Trip变更交回10确认，不把待办当已完成。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：从已选方向识别一个当前需要处理的准备缺口，提供可完成的下一步。
+- 本票责任/非目标：负责准备事实/依赖与状态；优先级随旅行阶段，任务调度复用VPJ-80，不建设第二个待办引擎。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -625,7 +636,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: 默认（见文件开头「默认条款」）
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-21.md`, `docs/contracts/vp-response-policy.md`, `docs/knowledge-upgrade/README.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-21.md`, `docs/contracts/vp-response-policy.md`, `docs/knowledge-upgrade/README.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
@@ -635,6 +646,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 准备检查以可执行下一步呈现：获准资料、核实入口、条件性候选与修改提案分开；不要把review_fact标签或提示文字作为真实问题已解决。
 - [ ] 知识升级：用版本化Ontology对象/关系/条件和获准用户状态计算knowledgeAvailability/userReadiness/actionTiming；相同证据下unknown/满足/不满足/不适用/未到时间均有中英原生实际结果，未知不能当false或已准备。
 - [ ] 知识升级：每个可做下一步绑定task/trip scope及evidence/rule versions；需改Trip时复用Proposal/diff/exact-version确认/原子Patch，拒绝、撤权、旧版本和重试无误写，原生与同Trip Web重载一致。
+- [ ] 助手升级2026-09-27：行前先帮助选择，再渐进呈现网络/支付/预约等适用准备；unknown与未完成区分，完成必须有明确来源，避免首页满屏风险或用阻塞状态充当完成率。
 
 ## VPJ-22
 
@@ -642,7 +654,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：H1：在原生酒店入口核对条件后跳到官方App/网站，用户清楚哪些参数需重新填写。 PR #498 OPEN/draft；Booking与Trip.com已有桌面观察，不能当真机通过。
+- 首个可交付结果：H1：在原生酒店入口核对条件后跳到官方App/网站，用户清楚哪些参数需重新填写。 PR #498 已合并；Booking与Trip.com已有桌面观察，不能当真机通过。
 - 本票责任/非目标：负责链接/归因/用途边界；23负责比较UI，24负责回流。TourMind只作可选研究候选，缺联盟账号不阻止普通官方出口。 2026-09-22已确认的实施顺序：H1 → H2；交接输入不新增原生blocked，完整父票验收保留。
 - 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
@@ -882,9 +894,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：N1：用户重新打开Trip时看到与当前状态相关的下一步及为什么出现，可关闭。
-- 本票责任/非目标：负责提醒触发与投递；25负责打开App后的读取，17提供变化信号，不启用持续定位/营销通知或无根据watch。 2026-09-22已确认的实施顺序：N1 → N2 → N3；交接输入不新增原生blocked，完整父票验收保留。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
+- 首个可交付结果：先验已接受任务结果与用户设置提醒的真实投递，再增加有来源的持续检查。
+- 本票责任/非目标：负责通知/调度资格和真实transport；VPJ-80拥有任务执行，VPJ-81显示进度，不因文件存在声称APNs可用。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -897,7 +909,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: 默认（见文件开头「默认条款」）
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-30.md`, `docs/contracts/vp-response-policy.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-30.md`, `docs/contracts/vp-response-policy.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
@@ -905,6 +917,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 重复、已完成、撤回、旅行结束、换账号提醒不发送；锁屏不泄漏敏感内容。
 - [ ] 通知默认按用途授权，marketing/affiliate不借旅行提醒；Live Activity不在本纵切。
 - [ ] 先验打开App后接续与用户授权的提醒，实际发送前重验范围/版本/期限；不把亲切或Pass增强解释为持续定位、永久后台或未经许可的主动联系。
+- [ ] 助手升级2026-09-27：仅有意义的新结果/必要输入触发消息，无变化保持安静；Trip/同意/记忆basis已变、到期、暂停或完成时取消过时跟进，校验去重/时区/quiet hours。
 
 ## VPJ-31
 
@@ -967,13 +980,13 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ## VPJ-33
 
-[VPJ-33 #225](https://github.com/JTCAO515/VP-V4/issues/225) — Journey Pass 商品、权益和定价实验配置
+[VPJ-33 #225](https://github.com/JTCAO515/VP-V4/issues/225) — Free与订阅服务边界、商品策略和旧Pass兼容
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：Q1：用户看到Free/Pass差异、时长与可购买状态，地区价格只来自匹配StoreKit商品。 PR #482已合并：Free 4/168h及2/24h，Pass 80/grant及12/24h均仅开发值。
-- 本票责任/非目标：唯一维护商品/有效期/容量政策说明；34实现交易与grant，35实现ServiceTask容量消费；真实销售参数另核实际账户。 2026-09-22已确认的实施顺序：Q1；交接输入不新增原生blocked，完整父票验收保留。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
+- 首个可交付结果：先定义行前可感知的免费/付费服务范围与旧Pass兼容矩阵，所有未选销售参数保持未激活。
+- 本票责任/非目标：本票是唯一商品/范围/容量策略owner；新订阅方向已接受，月订阅为首候选，价格/周期/额度待验证；VPJ-34/35消费版本策略。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; decision; 2专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
@@ -985,26 +998,28 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Evidence: `artifacts/VPJ-33/verification.md`, `artifacts/VPJ-33/unrun.md`, `artifacts/VPJ-33/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
 - 运行门: 已有账号/API或官方入口可用即可由agent接入；未披露信息标unknown，不以第三方/法务/产品审批阻塞开发。 实际账号不可访问或接口不可用时记录技术原因；真实购买、上架和生产动作按已有授权范围执行。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-33.md`, `docs/contracts/service-task-metering.md`, `docs/contracts/basic-preferences-cross-trip.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-33.md`, `docs/contracts/service-task-metering.md`, `docs/contracts/basic-preferences-cross-trip.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
-- [ ] 以Free+30天非自动续费Journey Pass为试点：$19.99参考价，$14.99只单变量实验；地区价来自StoreKit。
+- [ ] 2026-09-27采用Free+用户付费订阅的产品方向，月订阅作为首轮候选；实际价格/周期/容量尚未冻结。旧30天Pass及$19.99/$14.99为历史实现/实验参考，不是新方案唯一销售约束。
 - [ ] 明确现行购买开始/提前续买/退款/恢复/到期，以及获准的新服务任务周期与Free窗口口径；新容量未决定前不写入在售商品，无unlimited或人工包含承诺。
 - [ ] agent先用StoreKit开发/sandbox配置完成链路；真实上架时从实际账户核对SKU/合同主体/税费及价格，未上线商品不能收私人款。
-- [ ] 每笔交易独立720h grant，绑定已批准的计量策略版本和容量；提前购排队、到自己的startsAt才发额度，到期余量不结转；退款仅撤本段、其他段时间不移，恢复无新额度，账号滚动窗口不因购买/恢复而重置；乱序交易按可信购买时间对账。容量与窗口数值由agent按Q37方向设置可追踪开发值，真实收费前再确认，历史300Ask/60Ask只作兼容研究记录，不是新服务任务的实施门。媒体≤60秒录音/次、默认讲解≤2分钟、图≤10MB、PDF≤10页/20MB的既有试点上限保留并核成本。
+- [ ] 旧non-renewing Pass保持每笔交易720h、排队/startsAt/退款/恢复的既有账本语义，不能套用于新订阅。按商品策略版本分别规定续期、到期、撤销、容量和跨期服务；未选值只用于明确标记的开发配置，真实销售前核对官方商品及公开权益。
 - [ ] 权益表回写Q36：Free与Pass共同具有获准的基础显式跨Trip偏好；Q37采用完整服务任务方向，原Ask数值不得换名沿用，partial/改稿/TTL/跨期及新容量先决策再公布。
 - [ ] Q38购买后激活、到达起算、eSIM和支付渠道保持待研究；本轮不改变现行购买/生效/到期规则、不增加商品承诺。
+- [ ] 助手升级2026-09-27：付费边界围绕行前研究、约束核查、复杂协调和持续任务；免费保留基础记忆/纠错/导出删除与可用首值。eSIM/无限服务/人工包含不因资源库入口而获准。
+- [ ] 助手升级2026-09-27：有佣/无佣候选使用同一适配规则，佣金元数据不提升有机排序，披露商业出口和候选覆盖；用户在其他平台预订仍可获得独立助手价值。
 
 ## VPJ-34
 
-[VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226) — 官方 IAP 购买、恢复与服务端权益
+[VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226) — 官方购买、订阅兼容与同源权益
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：Q2：用户在官方测试环境购买一次，服务端验证交易绑定账号后，两端读取同一720h权益段。
-- 本票责任/非目标：负责交易/grant幂等、排队、生效、退款和恢复；不再定义33的商品规则，不实现35的任务扣次。 2026-09-22已确认的实施顺序：Q2 → Q3 → Q4；交接输入不新增原生blocked，完整父票验收保留。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
+- 首个可交付结果：保持#503官方测试交易到grant，按#225版本策略设计订阅续期/退款/恢复与旧Pass共存。
+- 本票责任/非目标：唯一交易/账号绑定/grant账本；旧720h语义不可当自动续费，#225给政策、#227给任务容量。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
@@ -1017,15 +1032,16 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: 默认（见文件开头「默认条款」）
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-34.md`, `docs/contracts/service-task-metering.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-34.md`, `docs/contracts/service-task-metering.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
 - [ ] StoreKit2交易验证→服务端账号绑定→权益→两端生效；重放/换机/恢复不重复延长或补额度。
 - [ ] non-renewing类型的期限与恢复由服务端账本处理，退款撤销有可核路径；到期保留Trip/手动编辑/安全资料。
 - [ ] TestFlight/sandbox与production隔离，购买pending/cancelled/revoked不当success；真实付款另门验证。
-- [ ] 消费VPJ-33唯一版本化商品策略，实现交易到grant的720h时段、提前购买排队、startsAt生效、退款仅撤本段与不移其他时段、恢复不重复授予及可信购买时间乱序对账。媒体与容量参数由33定义，用户任务扣次由35消费；本票不复制另一份政策定义。
+- [ ] 消费VPJ-33唯一版本化政策；现有Pass的720h、排队、生效、退款和恢复作为兼容路径验证，新订阅续期/撤销按新版本单独实现。媒体/容量由33定义，任务消费由35承接，不复制另一账本。
 - [ ] StoreKit购买交易/grant与ServiceTask容量及attempt成本分离；恢复或任务重试不补发同一权益，本轮保持现行激活起算，未定容量不写入真实在售商品。
+- [ ] 助手升级2026-09-27：新订阅产品需独立版本化renewal/expiry/revocation及同源权益，先以官方Sandbox证据验证；保留既有non-renewing Pass/grant兼容，不把旧720h规则静默套用所有商品。
 
 ## VPJ-35
 
@@ -1033,9 +1049,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：U1：一个完整文本目标经合法容量接纳并交付可读取结果，只结算一次，澄清和修复沿同一任务。
-- 本票责任/非目标：负责用户任务额度；不复制34交易账本或59供应商attempt计费；必要澄清和修复不新扣用户次数。 2026-09-22已确认的实施顺序：U1 → U2 → U3 → U4；交接输入不新增原生blocked，完整父票验收保留。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
+- 首个可交付结果：记录规划委托的真实attempt成本与服务范围，验证免费也能体验一次有界持续任务。
+- 本票责任/非目标：延续唯一容量账和实际成本预算；不以普通提问数量作为新主要付费价值，不自动启用历史开发配额。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
@@ -1048,7 +1064,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: 默认（见文件开头「默认条款」）
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-35.md`, `docs/contracts/service-task-metering.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-35.md`, `docs/contracts/service-task-metering.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
@@ -1057,6 +1073,8 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 安全/记忆纠错/导出删除/手动编辑/缓存播放不付费；强模型预算不能悄悄降低安全质量。
 - [ ] 消费VPJ-34的有效grant与VPJ-33政策版本，验证未到startsAt不发容量、到期余量不结转、退款/恢复不补发或重置账号窗口；媒体上限按33的版本化值核成本。不重新实现购买、排队和退款交易账本。
 - [ ] 验证最后一份容量竞争、相同key不同参数、两设备/多worker、取消与完成竞态、晚到usage和跨窗口；实际结果/结算幂等，失败或未知状态不被当零成本。
+- [ ] 助手升级2026-09-27：免费保留真实首值、基础Memory和有界委托体验；付费提升研究深度/协调/持续工作范围；系统修复/必要澄清不新增消费，已交付关键资料不因到期锁住。
+- [ ] 助手升级2026-09-27：用户所述200问题低于US$5含模型/搜索/地图/语音；增量后台步骤/重试/存储/支持和实际佣金分开计量，报告每任务及旅程窗口成本分布，不把潜在佣金当已到账。
 
 ## VPJ-36
 
@@ -1180,30 +1198,31 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：UX1：同一Trip的选区Ask、diff、确认、重载和返回锚点在小屏/大字/VoiceOver可用。
-- 本票责任/非目标：负责整链体验验收和发现的缺陷；不重建01基础壳或10业务交互，不倒逼基础任务等待整链完成。 2026-09-22已确认的实施顺序：UX1 → UX2；交接输入不新增原生blocked，完整父票验收保留。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
+- 首个可交付结果：在新四Tab真实链上复验连续对话、任务/成果、Memory纠正和可中断状态。
+- 本票责任/非目标：整链UX/无障碍/性能owner；旧五Tab验收保留历史，当前遵循ADR-0027和VPJ-77样例，不以概念图替代渲染。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 5专注日，PR/实际任务验证窗口
 - 验收阶段: S5
 - Blocked by: [VPJ-49 #241](https://github.com/JTCAO515/VP-V4/issues/241)
-- 集成/最终验收依赖（普通关联）: [VPJ-13 #203](https://github.com/JTCAO515/VP-V4/issues/203), [VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210), [VPJ-21 #211](https://github.com/JTCAO515/VP-V4/issues/211), [VPJ-23 #213](https://github.com/JTCAO515/VP-V4/issues/213), [VPJ-25 #215](https://github.com/JTCAO515/VP-V4/issues/215), [VPJ-27 #217](https://github.com/JTCAO515/VP-V4/issues/217), [VPJ-28 #218](https://github.com/JTCAO515/VP-V4/issues/218), [VPJ-29 #220](https://github.com/JTCAO515/VP-V4/issues/220), [VPJ-30 #221](https://github.com/JTCAO515/VP-V4/issues/221), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226), [VPJ-48 #235](https://github.com/JTCAO515/VP-V4/issues/235), [VPJ-64 #238](https://github.com/JTCAO515/VP-V4/issues/238), [VPJ-55 #236](https://github.com/JTCAO515/VP-V4/issues/236), [VPJ-61 #240](https://github.com/JTCAO515/VP-V4/issues/240), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228)
+- 集成/最终验收依赖（普通关联）: [VPJ-13 #203](https://github.com/JTCAO515/VP-V4/issues/203), [VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210), [VPJ-21 #211](https://github.com/JTCAO515/VP-V4/issues/211), [VPJ-23 #213](https://github.com/JTCAO515/VP-V4/issues/213), [VPJ-25 #215](https://github.com/JTCAO515/VP-V4/issues/215), [VPJ-27 #217](https://github.com/JTCAO515/VP-V4/issues/217), [VPJ-28 #218](https://github.com/JTCAO515/VP-V4/issues/218), [VPJ-29 #220](https://github.com/JTCAO515/VP-V4/issues/220), [VPJ-30 #221](https://github.com/JTCAO515/VP-V4/issues/221), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226), [VPJ-48 #235](https://github.com/JTCAO515/VP-V4/issues/235), [VPJ-64 #238](https://github.com/JTCAO515/VP-V4/issues/238), [VPJ-55 #236](https://github.com/JTCAO515/VP-V4/issues/236), [VPJ-61 #240](https://github.com/JTCAO515/VP-V4/issues/240), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228), [VPJ-83 #564](https://github.com/JTCAO515/VP-V4/issues/564)
 - Allowed: `ios/**`, `tests/**/ios/**`, `docs/design/**`, `artifacts/VPJ-40/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
 - Evidence: `artifacts/VPJ-40/verification.md`, `artifacts/VPJ-40/unrun.md`, `artifacts/VPJ-40/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: 默认（见文件开头「默认条款」）
 - Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-40.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-40.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
-- [ ] 统一Cream/Ink/Plum/Gold与原始VP资产；对话/计划/sheet/键盘/返回锚点同一状态语义。
+- [ ] 按VPJ-77确定的一致视觉系统和已批准品牌资产复验；语义token、对话/计划/sheet/键盘/返回锚点保持同一状态语义，不机械照搬概念图。
 - [ ] 真机/Simulator完成小屏大屏、大字VoiceOver、Reduce Motion/Transparency、来电低电量弱网；录屏展示可中断动效。
 - [ ] 结构卡原子出现、滚动不抢位、已保存动画只在回执后；用profile定位性能不写未测FPS。
 - [ ] 在#198真实选区Ask消费者上复验sheet、焦点、返回锚点、大字与VoiceOver及拒绝/关闭状态；不能仅引用#188基础屏幕证据完成整链验收。
-- [ ] 体验增量2026-09-17：在相关上游实际可用后，整链复验同一Trip的概览/日程/地图及Today选区、版本、修改后重载一致；保留五Tab和Today在Trip内的导航，不为图文表现复制桌面多栏或另建Trip数据源。素材未就绪时可用文字成果仍可读，按真实小屏/大字/VoiceOver验证。
+- [ ] 体验增量2026-09-17：在相关上游实际可用后，整链复验同一Trip的概览/日程/地图及Today选区、版本、修改后重载一致；采用ADR-0027四Tab、全局搜索与Today在Journeys内的导航，不为图文表现复制桌面多栏或另建Trip数据源。素材未就绪时可用文字成果仍可读，按真实小屏/大字/VoiceOver验证。
+- [ ] 助手升级2026-09-27：按EXPERIENCE.md E1–E10检查真实UI；Memory一步可达，任务运行不阻塞对话，结果更新不抢焦点，四Tab/全局搜索/旧deep link/账号与隐私入口全部可达。
 
 ## VPJ-41
 
@@ -1211,21 +1230,21 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：WEB1：Web完成基本编辑、Ask、diff确认并同步原生；材料状态和权益可读。
-- 本票责任/非目标：负责轻量Web最终整合验收；不做第二完整App，不重建05数据层、20内容或34权益。 2026-09-22已确认的实施顺序：WEB1 → WEB2；交接输入不新增原生blocked，完整父票验收保留。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
+- 首个可交付结果：复验轻量Web与原生使用同一Trip、支持成果和准确确认revision。
+- 本票责任/非目标：保留轻量Web范围；不复制原生四Tab全产品，不新建第二套artifact/Trip数据。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，PR/实际任务验证窗口
 - 验收阶段: S5
 - Blocked by: 无任务依赖；核实际条件
-- 集成/最终验收依赖（普通关联）: [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226)
+- 集成/最终验收依赖（普通关联）: [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210), [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226), [VPJ-79 #560](https://github.com/JTCAO515/VP-V4/issues/560)
 - Allowed: `app/**`, `components/**`, `lib/i18n.ts`, `tests/**/frontend/**`, `docs/design/**`, `public/assets/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:e2e`
 - Evidence: `artifacts/VPJ-41/verification.md`, `artifacts/VPJ-41/unrun.md`, `artifacts/VPJ-41/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
 - 运行门: 默认（见文件开头「默认条款」）
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-41.md`, `docs/contracts/vp-response-policy.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-41.md`, `docs/contracts/vp-response-policy.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
@@ -1233,6 +1252,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 公开Landing/Explore明确当前可用/覆盖/第三方预订，Early Access邮箱同意可撤。
 - [ ] 桌面+390x844、中英、键盘无障碍/真实品牌资产/claim scan通过；不重做第二全功能App。
 - [ ] 真实Web消费者按VP响应规范呈现主结果、必要限定与下一步；英文原生表达、中英状态一致，正文不控制按钮权限/确认目标，保留轻量同Trip范围与原有可访问性门。
+- [ ] 助手升级2026-09-27：支持的新成果和proposal通过同源版本读取；未知schema安全降级，旧客户端不能在丢字段后确认新语义。
 
 ## VPJ-42
 
@@ -1240,21 +1260,21 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：BETA1：受控测试用户在指定build完成真实Trip规划、选区Ask、明确确认、材料/订单回流与准备。
-- 本票责任/非目标：负责Beta联合验收；57/56等提供基础能力，40/41提供体验结果，71提供Harness；不把安装成功当产品完成。 2026-09-22已确认的实施顺序：BETA1 → BETA2；交接输入不新增原生blocked，完整父票验收保留。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
+- 首个可交付结果：用同一真实TestFlight版本贯通首次认识VP、关闭App后的委托、回访交付与Memory纠正。
+- 本票责任/非目标：实际设备联合验收owner；复用同版本已有证据，原安装/网络/Store/数据退出缺口继续保留。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: operator; acceptance; 5专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
 - 验收阶段: S5
 - Blocked by: [VPJ-49 #241](https://github.com/JTCAO515/VP-V4/issues/241)
-- 集成/最终验收依赖（普通关联）: [VPJ-08 #196](https://github.com/JTCAO515/VP-V4/issues/196), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-21 #211](https://github.com/JTCAO515/VP-V4/issues/211), [VPJ-24 #214](https://github.com/JTCAO515/VP-V4/issues/214), [VPJ-28 #218](https://github.com/JTCAO515/VP-V4/issues/218), [VPJ-29 #220](https://github.com/JTCAO515/VP-V4/issues/220), [VPJ-32 #224](https://github.com/JTCAO515/VP-V4/issues/224), [VPJ-35 #227](https://github.com/JTCAO515/VP-V4/issues/227), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228), [VPJ-37 #229](https://github.com/JTCAO515/VP-V4/issues/229), [VPJ-38 #230](https://github.com/JTCAO515/VP-V4/issues/230), [VPJ-39 #232](https://github.com/JTCAO515/VP-V4/issues/232), [VPJ-40 #233](https://github.com/JTCAO515/VP-V4/issues/233), [VPJ-41 #234](https://github.com/JTCAO515/VP-V4/issues/234), [VPJ-48 #235](https://github.com/JTCAO515/VP-V4/issues/235), [VPJ-55 #236](https://github.com/JTCAO515/VP-V4/issues/236), [VPJ-56 #237](https://github.com/JTCAO515/VP-V4/issues/237), [VPJ-58 #239](https://github.com/JTCAO515/VP-V4/issues/239), [VPJ-61 #240](https://github.com/JTCAO515/VP-V4/issues/240), [VPJ-64 #238](https://github.com/JTCAO515/VP-V4/issues/238), [VPJ-65 #219](https://github.com/JTCAO515/VP-V4/issues/219)
+- 集成/最终验收依赖（普通关联）: [VPJ-08 #196](https://github.com/JTCAO515/VP-V4/issues/196), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-21 #211](https://github.com/JTCAO515/VP-V4/issues/211), [VPJ-24 #214](https://github.com/JTCAO515/VP-V4/issues/214), [VPJ-28 #218](https://github.com/JTCAO515/VP-V4/issues/218), [VPJ-29 #220](https://github.com/JTCAO515/VP-V4/issues/220), [VPJ-32 #224](https://github.com/JTCAO515/VP-V4/issues/224), [VPJ-35 #227](https://github.com/JTCAO515/VP-V4/issues/227), [VPJ-36 #228](https://github.com/JTCAO515/VP-V4/issues/228), [VPJ-37 #229](https://github.com/JTCAO515/VP-V4/issues/229), [VPJ-38 #230](https://github.com/JTCAO515/VP-V4/issues/230), [VPJ-39 #232](https://github.com/JTCAO515/VP-V4/issues/232), [VPJ-40 #233](https://github.com/JTCAO515/VP-V4/issues/233), [VPJ-41 #234](https://github.com/JTCAO515/VP-V4/issues/234), [VPJ-48 #235](https://github.com/JTCAO515/VP-V4/issues/235), [VPJ-55 #236](https://github.com/JTCAO515/VP-V4/issues/236), [VPJ-56 #237](https://github.com/JTCAO515/VP-V4/issues/237), [VPJ-58 #239](https://github.com/JTCAO515/VP-V4/issues/239), [VPJ-61 #240](https://github.com/JTCAO515/VP-V4/issues/240), [VPJ-64 #238](https://github.com/JTCAO515/VP-V4/issues/238), [VPJ-65 #219](https://github.com/JTCAO515/VP-V4/issues/219), [VPJ-83 #564](https://github.com/JTCAO515/VP-V4/issues/564)
 - Allowed: `docs/acceptance/**`, `tests/e2e/**`, `artifacts/VPJ-42/**`, `docs/runbooks/**`
 - Checks: `pnpm docs:check`; `git diff --check`
 - Evidence: `artifacts/VPJ-42/verification.md`, `artifacts/VPJ-42/unrun.md`, `artifacts/VPJ-42/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
 - 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-42.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-42.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
@@ -1263,6 +1283,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 所有首发必需项有功能/异常/数据/UX/运行证据；只修验收缺陷，不靠fixture替代。
 - [ ] 非技术经营留存与真实付费效果由47观察，不因旅行节点未到而伪称成功/失败。
 - [ ] 真实设备与账号贯通#198选区Ask、明确确认、跨端/重载及拒绝路径；基础壳、模拟数据或仅#188完成不能替代本项联合验收。
+- [ ] 助手升级2026-09-27：新助手E1–E10在适用真实链和客户端验收，至少含worker重启、任务运行时改口、忘记偏好后重试、旧成果确认拒绝及同源成果读回；截图/merged/fixture不能完成本项。
 
 ## VPJ-43
 
@@ -1355,9 +1376,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：完成一个两周客户发现试点：去敏任务记录、实际交付/分钟数、需求矩阵与下一轮运营安排。
-- 本票责任/非目标：负责获准招募/访谈/材料工作坊；62提供intake，47判断商业指标；35小时是总容量约束，不是永久不结票的任务。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：以已有招募与工作包验证规划阶段真实任务，观察用户是否愿意委托并回来继续。
+- 本票责任/非目标：复用原客户发现；不新增外发授权、不把访谈满意等同付费或真实采用。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: operator; operational; 2专注日，每周30–40小时、首两周校准；effort仅建立流程，不是整段观察时长
@@ -1368,7 +1389,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Evidence: `artifacts/VPJ-46/verification.md`, `artifacts/VPJ-46/unrun.md`, `artifacts/VPJ-46/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
 - 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-46.md`, `docs/contracts/vp-response-policy.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-46.md`, `docs/contracts/vp-response-policy.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
@@ -1378,6 +1399,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 初期使用许可内现有入口或VPJ-62 intake，不等待地图/支付/完整App；Founder-assisted与产品自助明确。
 - [ ] 按规划/临近抵达/在途分别记录真实首值、重复问题与下一自然节点机会；Demo、创始人协助与自助真实能力分别统计，不从社媒触达推断已实现。
 - [ ] 本票以两个周sprint的去敏任务/交付/分钟记录、需求复盘与下一轮负责人/节奏交接作为有限交付；后续每周经营持续进行，但不以永久运营义务让本票无法结项。
+- [ ] 助手升级2026-09-27：区分探索/关键安排未定/已预订/在途人群；观察任务采用、自然节点回访、记忆可理解与可纠正、无需VP预订时的独立付费意愿；小样本不外推转化率。
 
 ## VPJ-47
 
@@ -1385,9 +1407,9 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：对一个事前定义的有效旅客队列形成激活、机会回访、净付款/退款和人工成本观察，给出继续/调整/证据不足结论。
-- 本票责任/非目标：负责B0–B4商业判读；45负责技术发布关账，sandbox和人工代办不能算自助付费成功。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：观察新助手真实任务成果、旅程窗口留存与订阅/佣金分列的经营表现。
+- 本票责任/非目标：经营观察owner；不以AI标签或月付形式推定长期留存/估值，也不把旅后正常暂停直接当产品失败。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: operator; operational; 2专注日，按B0-B4真实分母；至少两轮有效cohort，不设伪日历保证
@@ -1399,7 +1421,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Evidence: `artifacts/VPJ-47/verification.md`, `artifacts/VPJ-47/unrun.md`, `artifacts/VPJ-47/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
 - 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-47.md`, `docs/contracts/vp-response-policy.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-47.md`, `docs/contracts/vp-response-policy.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - Rollback: 默认（见文件开头「默认条款」）
 
@@ -1407,6 +1429,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] opportunity-based organic/triggered/founder-prompted回访分开；真实净付款与退款/赠送/sandbox分开。
 - [ ] 依据主报告单一B0-B4门和容量/现金止损决策，不以一个OR指标杀整个Program；少样本明确不确定。
 - [ ] 经营指标以有机会的服务任务/Trip为分母，区分Free/Pass、人工辅助、真实支付与sandbox；保留必要澄清次数、任务成本及实际人工分钟，旧Ask数值不可当同等新服务容量。
+- [ ] 助手升级2026-09-27：分开任务完成/有用partial/blocked/失败、订阅实收/退款/实际结算佣金/全体活跃旅客成本；记录跨旅程回访和获客成本，不把月收入简单年化当稳定ARR证据。
 
 ## VPJ-48
 
@@ -1581,13 +1604,13 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 ## VPJ-54
 
-[VPJ-54 #252](https://github.com/JTCAO515/VP-V4/issues/252) — 长期订阅或交易深度升级的证据决策
+[VPJ-54 #252](https://github.com/JTCAO515/VP-V4/issues/252) — 年订阅与交易深度升级的证据决策
 
 ### 执行边界与首个切片
 
-- 首个可交付结果：保持expand门：用重复旅行价值、单位经济性和责任证据决定是否探索长期订阅或某一类交易深度。
-- 本票责任/非目标：只交付有证据的采纳/暂缓/否决决定；不启用商品/代客执行，不把联盟收入当充分扩展理由。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：评估年订阅与更深外部执行的重复价值、责任和成本；不阻塞已接受的首轮订阅设计。
+- 本票责任/非目标：本票保留未来扩展证据门；首轮订阅包装归#225，代订/支付/履约每类单独验证。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: operator; decision; 2专注日，实际账号/签名/真机/网络等待另计，不含已取消的供应商审批
@@ -1599,14 +1622,14 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - Evidence: `artifacts/VPJ-54/verification.md`, `artifacts/VPJ-54/unrun.md`, `artifacts/VPJ-54/commands.jsonl`
 - 接口: docs/program/2026-09-05/INTERFACES.md; Red lines: evidence-no-fabrication
 - 运行门: Agent完成已有授权内的开发与配置；只将确需本人交互或未授权实际外部动作交给JT，不索取额外产品或第三方许可。 Missing access is an explicit operator outcome, never fabricated completion.
-- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-54.md`
+- 文档影响: `docs/handoff.json`, `HANDOFF.md`, `CONTEXT.md`, `docs/contracts/vpj-54.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 默认（见文件开头「默认条款」）
 - 后续开启门: 在VPJ-47记录需求/成本/责任证据，agent据此判断开发优先级；无需额外产品许可，未实测不能自动标为验收通过
 - Rollback: 默认（见文件开头「默认条款」）
 
-- [ ] 只有重复旅行/持续价值证据才考虑Plus月/年订阅；只读Live Offer、代客执行、签约履约按品类分别决策。
+- [ ] 以重复旅行/持续价值证据评估年订阅；首轮订阅方向已由ADR-0027接受，包装由VPJ-33负责。只读Live Offer、代客执行、签约履约按品类分别决策。
 - [ ] 比较责任、服务成本、恢复/退款和排名中立性；不把affiliate增长自动当升级理由。
-- [ ] 没有授权保持当前Free+Pass与L1a/L1b；本Issue只决策，不启用外部交易。
+- [ ] 本Issue只评估更长期或更深的商业扩展，不启用外部交易；现有L1a/L1b与旧Pass账本兼容继续保留，不能恢复已被替代的首轮订阅禁令。
 
 ## VPJ-55
 
@@ -1979,20 +2002,20 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - 首个可交付结果：在实际路线依据就绪时执行同一Trip少走路且保留晚餐的完整局部改稿，取得确认/重载与测量回执。
 - 本票责任/非目标：负责整合验收；10实现交互、11提供偏好、65提供可行性，不能用新fake适配器绕过真实输入。
-- 先读/复用：[docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md)
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 4专注日，有界PR验证；真实环境/人工校准等待另计
 - 验收阶段: S3
 - Blocked by: [VPJ-65 #219](https://github.com/JTCAO515/VP-V4/issues/219)
-- 集成/最终验收依赖（普通关联）: [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264), [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199)
+- 集成/最终验收依赖（普通关联）: [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264), [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-79 #560](https://github.com/JTCAO515/VP-V4/issues/560)
 - Allowed: `lib/server/trip/**`, `lib/server/constraints/**`, `lib/server/context/**`, `lib/server/memory/**`, `app/api/trips/**`, `components/canvas/**`, `ios/VisePanda/**`, `evals/harness/**`, `tests/**/harness/**`, `docs/harness/**`, `artifacts/VPJ-68/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm evals`
 - Evidence: `artifacts/VPJ-68/verification.md`, `artifacts/VPJ-68/unrun.md`, `artifacts/VPJ-68/commands.jsonl`, `artifacts/VPJ-68/results.json`
 - 接口: docs/harness/README.md; Red lines: RL-01, RL-02, RL-03, RL-04, RL-05, RL-06, RL-07
 - 运行门: 真实Trip、局部提案、可纠正上下文及计划依据由VPJ-10/11/65验收；获准测试身份/数据/路线依据必须存在。 受影响Web路径做桌面与390×844交互/console检查，原生做实际确认/拒绝/重载；全量设备发布门仍归原票。
 - Native: 本票实际受影响原生路径必须build/test并附中英交互证据；先xcrun simctl list devices available，记录实际UDID替换后的xcodebuild test命令及版本/xcresult。真实账号/worker/服务不可用标UNRUN；Simulator不替代原票的真机/商店门。
-- 文档影响: `docs/harness/README.md`, `docs/handoff.json`
+- 文档影响: `docs/harness/README.md`, `docs/handoff.json`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 不新建 Program、Coordinator、模型路由、长期记忆、预算账本或 Ops 仪表盘；缺失基础接口归原 VPJ 责任票。；保留 actor/RLS、证据资格、用途/接收方许可、准确版本确认和原子 TripPatch；不解除 Trip/proposal 工具注册限制。；不读取或持久记录秘密、真实用户原文或完整思维链；不修改原用户工作树、既有65项范围/依赖或已应用迁移。；不把 fixture/NOT_RUN/skip 当真实通过，不自动上线候选，不进行未授权的账号、外发、采购、支付或生产操作。
 - Rollback: 停用本票整合入口，保留已确认Trip及手动编辑路径；不得回写撤销已发生的用户确认或改历史迁移。
 
@@ -2002,6 +2025,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 用户确认绑定不可变proposal revision与base Trip revision；未确认、拒绝、过期、越权/撤权以及另一客户端修改均不误写或覆盖，重复确认不重复提交。
 - [ ] 按12场景规格接入约束/偏好/证据不足及确认冲突案例；原生中英结果和精简Web同Trip/diff语义一致，应用后重载与事务回执一致。
 - [ ] 报告fixture与获准真实环境、测量依据及失败案例；缺路线口径或真实原子回执不可用不能关闭本票。
+- [ ] 助手升级2026-09-27：局部改稿增加artifact/task/memory basis一致性观测，精确保留已确认对象；真实步行改善等既有专项不因新UI而缩减。
 
 ## VPJ-69
 
@@ -2011,20 +2035,20 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - 首个可交付结果：在68同一任务的一个提交/回执检查点注入真实中断，验证原任务恢复、取消和重复投递的终态。
 - 本票责任/非目标：负责跨执行/确认的故障整合；07/08实现运行机制，59记attempt费用，不重复建设队列。
-- 先读/复用：[docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md)
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 3专注日，有界PR验证；真实环境/人工校准等待另计
 - 验收阶段: S3
 - Blocked by: [VPJ-68 #265](https://github.com/JTCAO515/VP-V4/issues/265)
-- 集成/最终验收依赖（普通关联）: 无
+- 集成/最终验收依赖（普通关联）: [VPJ-80 #561](https://github.com/JTCAO515/VP-V4/issues/561)
 - Allowed: `lib/server/turn/**`, `lib/server/jobs/**`, `lib/server/observability/**`, `app/api/chat/**`, `ios/VisePanda/**`, `components/chat/**`, `evals/harness/**`, `tests/**/harness/**`, `docs/harness/**`, `artifacts/VPJ-69/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm evals`
 - Evidence: `artifacts/VPJ-69/verification.md`, `artifacts/VPJ-69/unrun.md`, `artifacts/VPJ-69/commands.jsonl`, `artifacts/VPJ-69/results.json`
 - 接口: docs/harness/README.md; Red lines: RL-01, RL-02, RL-03, RL-04, RL-05, RL-06, RL-07
 - 运行门: VPJ-68经VPJ-10→VPJ-09继承VPJ-08的恢复门；不重复建设任务、事件或预算账本。 仅在获准隔离Staging、测试任务与预算下故障注入；无获准worker/持久数据则真实恢复UNRUN，保持父票开放。
 - Native: 本票实际受影响原生路径必须build/test并附中英交互证据；先xcrun simctl list devices available，记录实际UDID替换后的xcodebuild test命令及版本/xcresult。真实账号/worker/服务不可用标UNRUN；Simulator不替代原票的真机/商店门。
-- 文档影响: `docs/harness/README.md`, `docs/handoff.json`
+- 文档影响: `docs/harness/README.md`, `docs/handoff.json`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 不新建 Program、Coordinator、模型路由、长期记忆、预算账本或 Ops 仪表盘；缺失基础接口归原 VPJ 责任票。；保留 actor/RLS、证据资格、用途/接收方许可、准确版本确认和原子 TripPatch；不解除 Trip/proposal 工具注册限制。；不读取或持久记录秘密、真实用户原文或完整思维链；不修改原用户工作树、既有65项范围/依赖或已应用迁移。；不把 fixture/NOT_RUN/skip 当真实通过，不自动上线候选，不进行未授权的账号、外发、采购、支付或生产操作。
 - Rollback: 移除测试故障注入和新增整合点，保留已发生账目/提交、最终回执与原有恢复能力。
 
@@ -2033,6 +2057,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 取消阻止后续新副作用；提交已发生则显示已提交，不能伪称撤销。旧租约不能继续提交，跨账号旧事件不能回放。
 - [ ] 实际Staging持久worker/数据/客户端在进程重启后仍恢复同一任务；进程内fake只能作为准备证据。任务次数/期限/费用均有预设上限。
 - [ ] 将12场景中的故障与取消案例及命名注入点加入回归，保存实际最终状态/回执/失败矩阵；原生中英及现有Web受影响恢复路径验证。
+- [ ] 助手升级2026-09-27：覆盖独立对话与后台任务、重启检查点、改口/撤回后旧成果失效、at-least-once工具执行和逻辑成果幂等；unknown不得变completed。
 
 ## VPJ-70
 
@@ -2075,19 +2100,19 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 
 - 首个可交付结果：GATE1：对同一选定commit/config运行全部required-mode场景，明确是否允许该能力进入Beta。
 - 本票责任/非目标：负责Harness最终门；42/43/44/45仍各管设备、生产、商店和交付，不能以本票结果自动关闭它们。 2026-09-22已确认的实施顺序：GATE1 → GATE2；交接输入不新增原生blocked，完整父票验收保留。
-- 先读/复用：[docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 - Owner: coding-agent; vertical; 3专注日，有界PR验证；真实环境/人工校准等待另计
 - 验收阶段: S5
 - Blocked by: [VPJ-69 #266](https://github.com/JTCAO515/VP-V4/issues/266), [VPJ-70 #267](https://github.com/JTCAO515/VP-V4/issues/267)
-- 集成/最终验收依赖（普通关联）: [VPJ-37 #229](https://github.com/JTCAO515/VP-V4/issues/229), [VPJ-63 #231](https://github.com/JTCAO515/VP-V4/issues/231)
+- 集成/最终验收依赖（普通关联）: [VPJ-37 #229](https://github.com/JTCAO515/VP-V4/issues/229), [VPJ-63 #231](https://github.com/JTCAO515/VP-V4/issues/231), [VPJ-83 #564](https://github.com/JTCAO515/VP-V4/issues/564)
 - Allowed: `evals/harness/**`, `tests/**/harness/**`, `lib/server/observability/**`, `lib/flags/**`, `docs/acceptance/**`, `docs/runbooks/**`, `docs/benchmarks/**`, `docs/harness/**`, `artifacts/VPJ-71/**`
 - Checks: `pnpm docs:check`; `git diff --check`; `pnpm check`; `pnpm test:unit`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `pnpm evals`
 - Evidence: `artifacts/VPJ-71/verification.md`, `artifacts/VPJ-71/unrun.md`, `artifacts/VPJ-71/commands.jsonl`, `artifacts/VPJ-71/results.json`
 - 接口: docs/harness/README.md; Red lines: RL-01, RL-02, RL-03, RL-04, RL-05, RL-06, RL-07
 - 运行门: VPJ-69/70实际验收完成，VPJ-37 Ops停用与VPJ-63真实网络证据可用；agent已在运行前冻结本轮完整集合阈值，无需产品负责人签字。 获准Staging能力停用/恢复与部署回退窗口实际存在；生产开放仍需对应对象/环境/范围有效授权。
-- 文档影响: `docs/harness/README.md`, `docs/handoff.json`, `docs/contracts/service-task-metering.md`, `docs/contracts/basic-preferences-cross-trip.md`, `docs/contracts/vp-response-policy.md`, `docs/harness/hf-reuse/README.md`
+- 文档影响: `docs/harness/README.md`, `docs/handoff.json`, `docs/contracts/service-task-metering.md`, `docs/contracts/basic-preferences-cross-trip.md`, `docs/contracts/vp-response-policy.md`, `docs/harness/hf-reuse/README.md`, `docs/product/assistant-upgrade-2026-09-27/README.md`
 - 不得触碰: 不新建 Program、Coordinator、模型路由、长期记忆、预算账本或 Ops 仪表盘；缺失基础接口归原 VPJ 责任票。；保留 actor/RLS、证据资格、用途/接收方许可、准确版本确认和原子 TripPatch；不解除 Trip/proposal 工具注册限制。；不读取或持久记录秘密、真实用户原文或完整思维链；不修改原用户工作树、既有65项范围/依赖或已应用迁移。；不把 fixture/NOT_RUN/skip 当真实通过，不自动上线候选，不进行未授权的账号、外发、采购、支付或生产操作。
 - Rollback: 停用本轮候选/整合，保留可审计报告与既有安全不变量；保持Trip和删除/撤权状态，不回退已应用数据库历史。
 
@@ -2100,6 +2125,7 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] Harness门纳入现有发布验收资料；本票不授权生产、不自动关闭VPJ-41/42/43/45，不替代真实账号、原生设备、IAP、隐私或商店验收。
 - [ ] 同一已选配置的两条真实中英任务同时验证ServiceTask必要澄清不重复消费、正确偏好使用及真实状态表达；保留12场景required mode与全部原门，表达更好不替代真实正确性/恢复/费用证据。
 - [ ] HF复用：最终报告同时核验真实任务结果和内容/语气，不以讨喜均分抵消状态、事实、记忆、确认硬失败；确认公开基准、开发集和独立验收集的暴露记录，采用资源版本/许可/运行环境可追。
+- [ ] 助手升级2026-09-27：在既有12场景与实际发布门之外，汇总新助手三段体验和E1–E10的适用证据；不重置历史失败，不以新增场景数替代真实闭环。
 
 ## VPJ-72
 
@@ -2217,3 +2243,225 @@ Allowed列标示主要范围；必要的相邻文件调整、维护任务和独�
 - [ ] 沿用当前只分类输入的数据边界；如外发知识片段/上下文需版本化实际数据流配置与对应告知/同意及旧模式兼容，不静默改变现有policy。
 - [ ] 冻结复用加新增的中英问题族与qrels/必要claim真值，调参和保留集按来源版本/问题族隔离；跑实际查询、普通账号owner隔离、撤回和故障，并报告覆盖/过拒答、p50/p95与成本分母。
 - [ ] 记录同批结构化/直接读取baseline和本路径实测差异；向量化/重排仍归#248的真实召回和净收益激活门。iOS/Web实际读回、原Trip不变、历史证据和回退通过后才完成本票。
+
+## VPJ-77
+
+[VPJ-77 #558](https://github.com/JTCAO515/VP-V4/issues/558) — 新版助手三段体验样例与组件契约
+
+### 执行边界与首个切片
+
+- 首个可交付结果：先让用户完整走通三段样例和Memory纠正，建立前后端共用的可见状态约定。
+- 本票责任/非目标：只负责交互样例和输出呈现契约；运行能力由后续producer/consumer证明。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md)
+- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
+
+- Owner: coding-agent; vertical; 3专注日，按一个可审阅切片推进；effortDays仅为旧manifest字段占位，不是整票工期或上线承诺。
+- 验收阶段: S1
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: 无
+- Allowed: `docs/product/**`, `ios/**`, `tests/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm lint`; `pnpm typecheck`; `pnpm test:contract`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
+- Evidence: `artifacts/VPJ-77/verification.md`, `artifacts/VPJ-77/unrun.md`
+- 接口: docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
+- 运行门: 默认（见文件开头「默认条款」）
+- Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
+- 文档影响: `docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md`, `docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md`, `docs/handoff.json`
+- 不得触碰: 默认（见文件开头「默认条款」）
+- Rollback: 默认（见文件开头「默认条款」）
+
+- [ ] 以VP/旅程/资源库/Memory四Tab和全局搜索制作可交互体验样例；首次认识、委托离开、回来交付及Memory纠正四条路径明确标fixture，保留真实组件接线位置。
+- [ ] 一个稳定VP身份承接持续对话、实际工作状态与可操作成果；图1关系、图3探索、图2成果分场景使用，三张参考图的旧导航/虚构路线不照搬。
+- [ ] 冻结最小Message/Task/Artifact/Memory呈现与点击契约，兼容短答案、比较、草稿、待确认、失败/未知/无更新；不发明真人、记忆、工作和成交。
+- [ ] 在目标原生尺寸渲染zh/en、小屏/大字/VoiceOver/Reduce Motion和键盘；记录用户能否找到Memory/任务/成果并纠正的观察，未观察不写accepted。
+- [ ] 交付可复用语义token/组件边界和状态映射，允许普通视觉迭代；不把像素审批或全部后台完成作为有界原型前置。
+
+## VPJ-78
+
+[VPJ-78 #559](https://github.com/JTCAO515/VP-V4/issues/559) — 持续会话、旅程目标与ServiceTask归属
+
+### 执行边界与首个切片
+
+- 首个可交付结果：先版本化一次独立消息与后续改口的归属，完成持久接纳和原生读回。
+- 本票责任/非目标：唯一负责Conversation/goal与Task的关联；#195/196保留执行和传输基础，#199负责记忆权威。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md)
+- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
+
+- Owner: coding-agent; vertical; 3专注日，按一个可审阅切片推进；effortDays仅为旧manifest字段占位，不是整票工期或上线承诺。
+- 验收阶段: S2
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-04 #191](https://github.com/JTCAO515/VP-V4/issues/191), [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192), [VPJ-07 #195](https://github.com/JTCAO515/VP-V4/issues/195), [VPJ-08 #196](https://github.com/JTCAO515/VP-V4/issues/196)
+- Allowed: `lib/server/turn/**`, `lib/server/context/**`, `lib/server/identity/**`, `app/api/chat/**`, `supabase/migrations/**`, `ios/**`, `tests/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm lint`; `pnpm typecheck`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`
+- Evidence: `artifacts/VPJ-78/verification.md`, `artifacts/VPJ-78/unrun.md`
+- 接口: docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
+- 运行门: 默认（见文件开头「默认条款」）
+- Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
+- 文档影响: `docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md`, `docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md`, `docs/handoff.json`
+- 不得触碰: 默认（见文件开头「默认条款」）
+- Rollback: 默认（见文件开头「默认条款」）
+
+- [ ] 新版本Conversation允许多个ServiceTask和普通问答；Journey goal可在日期/Trip未定前存在，仅引用现有Task/Trip，不建第二个队列或Trip内容副本。
+- [ ] 服务端校验消息/任务/选中成果/Trip/actor及scope版本；支持follow-up/amendment/独立问题，歧义才澄清，新消息不自动新收费。
+- [ ] 旧text/task/grounded模式和ID摘要语义保留；不直接放宽旧四Turn/clarification-repair合同，不重开终态Turn。
+- [ ] 多消息接纳、并发次序、幂等冲突、换账号/顶替、撤权、删除、导出与迟到响应均有生产者消费者反例；新存储append-only及兼容回退。
+- [ ] 上下文装配携带当前目标、允许的Trip/Memory/证据和未决项，记录来源版本；合成和真实模型消费分栏，不把完整记忆管理列表外发。
+- [ ] 实际API/持久化/事件与原生消费者完成一条无Trip问答到持续目标的链；服务器重启后归属不丢，UI可继续输入。
+
+## VPJ-79
+
+[VPJ-79 #560](https://github.com/JTCAO515/VP-V4/issues/560) — 持久版本化成果与跨页面同源读取
+
+### 执行边界与首个切片
+
+- 首个可交付结果：先保存一份比较成果并在VP和Library同源读回，再扩充其他结果类型。
+- 本票责任/非目标：本票拥有结果生命周期；#197/198生产旅行建议/提案，VPJ-81/82/83负责入口呈现。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md)
+- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
+
+- Owner: coding-agent; vertical; 3专注日，按一个可审阅切片推进；effortDays仅为旧manifest字段占位，不是整票工期或上线承诺。
+- 验收阶段: S3
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-78 #559](https://github.com/JTCAO515/VP-V4/issues/559), [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192)
+- Allowed: `lib/server/turn/**`, `lib/server/trip/**`, `lib/server/identity/**`, `lib/server/artifacts/**`, `app/api/**`, `supabase/migrations/**`, `ios/**`, `components/**`, `tests/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm lint`; `pnpm typecheck`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`
+- Evidence: `artifacts/VPJ-79/verification.md`, `artifacts/VPJ-79/unrun.md`
+- 接口: docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
+- 运行门: 默认（见文件开头「默认条款」）
+- Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
+- 文档影响: `docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md`, `docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md`, `docs/handoff.json`
+- 不得触碰: 默认（见文件开头「默认条款」）
+- Rollback: 默认（见文件开头「默认条款」）
+
+- [ ] 定义comparison/journey-draft/decision/change-proposal-reference/practical结果的闭合版本schema；owner、来源task/goal/Trip和input/Memory/evidence basis均明确。
+- [ ] 成果写入和可发布事件原子或可恢复一致，immutable revision/CAS/currentness可验证；实际结果回执前不显示完成。
+- [ ] VP、Journeys、Library及受支持Web读取同一artifact ID/revision；变更proposal只引用既有ID/revision，不能复制确认payload或写Trip。
+- [ ] 用户手改、输入/偏好更新、来源撤回和Trip新base使相关结果准确失效；历史可读资格独立核验，旧版本不能继续执行确认。
+- [ ] RLS/其他actor/换账号/删除/索引/导出/旧schema消费者与回退验证；不把UserArtifact原材料复制为无来源的生成结果。
+- [ ] 原生真实渲染至少一类方向比较及同源重载；安全降级未知schema，不渲染任意模型HTML或动作URL。
+
+## VPJ-80
+
+[VPJ-80 #561](https://github.com/JTCAO515/VP-V4/issues/561) — 可恢复的有界规划执行与真实后台交付
+
+### 执行边界与首个切片
+
+- 首个可交付结果：先执行一项住宿区域比较委托，真实工具/provider、关App与worker重启后交付持久成果。
+- 本票责任/非目标：复用#195的worker和#194预算；#221拥有实际通知投递，#219拥有完整旅行可行性；无通用浏览器/任意代码平台。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md)
+- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
+
+- Owner: coding-agent; vertical; 3专注日，按一个可审阅切片推进；effortDays仅为旧manifest字段占位，不是整票工期或上线承诺。
+- 验收阶段: S3
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-78 #559](https://github.com/JTCAO515/VP-V4/issues/559), [VPJ-79 #560](https://github.com/JTCAO515/VP-V4/issues/560), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-16 #206](https://github.com/JTCAO515/VP-V4/issues/206), [VPJ-59 #194](https://github.com/JTCAO515/VP-V4/issues/194)
+- Allowed: `lib/server/turn/**`, `lib/server/tools/**`, `lib/server/context/**`, `lib/server/constraints/**`, `lib/server/model-gateway/**`, `scripts/jobs/**`, `supabase/migrations/**`, `tests/**`, `evals/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm lint`; `pnpm typecheck`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`
+- Evidence: `artifacts/VPJ-80/verification.md`, `artifacts/VPJ-80/unrun.md`
+- 接口: docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
+- 运行门: 默认（见文件开头「默认条款」）
+- Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
+- 文档影响: `docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md`, `docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md`, `docs/handoff.json`
+- 不得触碰: 默认（见文件开头「默认条款」）
+- Rollback: 默认（见文件开头「默认条款」）
+
+- [ ] 在现有持久work/lease/attempt预算上增加有界规划模式：装配当前basis、选择允许步骤、工具执行、checkpoint、结果核验、交付或等待；不建通用第二Coordinator。
+- [ ] 分别限制steps/retries/time/concurrency/累计成本，等待用户/确认时释放worker；继续任务保留原目标和已花成本，取消/撤权停止新的effect。
+- [ ] 最小工具集合含合格知识/地点路线读、约束校验、成果准备；proposal生产只走typed adapter，持久action claim/回执替换进程Map假幂等，confirm/预订/支付仍不提供给模型。
+- [ ] 实际provider/tool多步骤链在App关闭及worker重启后得到同一逻辑成果；每次可能重复计费的attempt真实记录，unknown先核验不盲重试。
+- [ ] 任务运行时改口/Memory纠正/Trip版本变化重验basis，仅重算受影响部分；旧worker不得发布可行动的新结果，及时保存有用partial。
+- [ ] 后台托管、scheduler与tool接线在指定环境实测；源码、空轮询、已完成文本纵切不算本票完成；前台任务状态和成果由同一持久事件读回。
+
+## VPJ-81
+
+[VPJ-81 #562](https://github.com/JTCAO515/VP-V4/issues/562) — VP持续主对话、任务可见性与成果交付
+
+### 执行边界与首个切片
+
+- 首个可交付结果：先接真实Conversation和一项独立后台任务，保持composer可用并打开同源成果。
+- 本票责任/非目标：本票仅主会话及其交互状态；VPJ-83集成全壳，VM/数据库/任务writer不在客户端重做。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md)
+- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
+
+- Owner: coding-agent; vertical; 3专注日，按一个可审阅切片推进；effortDays仅为旧manifest字段占位，不是整票工期或上线承诺。
+- 验收阶段: S3
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-77 #558](https://github.com/JTCAO515/VP-V4/issues/558), [VPJ-78 #559](https://github.com/JTCAO515/VP-V4/issues/559), [VPJ-79 #560](https://github.com/JTCAO515/VP-V4/issues/560), [VPJ-80 #561](https://github.com/JTCAO515/VP-V4/issues/561), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199)
+- Allowed: `ios/**`, `lib/i18n.ts`, `tests/**`, `docs/product/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm lint`; `pnpm typecheck`; `pnpm test:contract`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
+- Evidence: `artifacts/VPJ-81/verification.md`, `artifacts/VPJ-81/unrun.md`
+- 接口: docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
+- 运行门: 默认（见文件开头「默认条款」）
+- Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
+- 文档影响: `docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md`, `docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md`, `docs/handoff.json`
+- 不得触碰: 默认（见文件开头「默认条款」）
+- Rollback: 默认（见文件开头「默认条款」）
+
+- [ ] 原生VP区分首次、探索中、任务中、有结果、无新进展；主对话保持同一身份与恰当记忆提示，不复制多个不相干聊天工作区。
+- [ ] 会话输入、任务列表与成果浏览独立状态；支持连续补充/独立问题/取消，慢任务不锁composer，事件不抢滚动/焦点。
+- [ ] 展示真实接纳/进度/待输入/待确认/完成/失败/取消，后台结果进来引用同一artifact；不显示无依据Online、假百分比或虚构成功。
+- [ ] 在对话自然纠正偏好/本次覆盖/明确长期保存，沿#199保存回执和版本undo；相关成果提供真实使用解释。
+- [ ] 新旧会话选择、消息归属、选中成果引用、session replacement/offline/relaunch均有原生行为证据；zh/en/大字/VoiceOver/Reduce Motion可用。
+- [ ] 用真实环境跑第一次方向→委托离开→回来成果→改口，不把fixture截图当拟人/执行能力通过。
+
+## VPJ-82
+
+[VPJ-82 #563](https://github.com/JTCAO515/VP-V4/issues/563) — Library工具资料与全局搜索探索
+
+### 执行边界与首个切片
+
+- 首个可交付结果：先在Library聚合一类既有工具和同源成果，并支持查找自己的一份材料。
+- 本票责任/非目标：负责资源聚合与搜索入口；工具自身、内容资格、导入、外部服务和实际成交各归已有owner。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md)
+- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
+
+- Owner: coding-agent; vertical; 3专注日，按一个可审阅切片推进；effortDays仅为旧manifest字段占位，不是整票工期或上线承诺。
+- 验收阶段: S4
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-79 #560](https://github.com/JTCAO515/VP-V4/issues/560), [VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210), [VPJ-24 #214](https://github.com/JTCAO515/VP-V4/issues/214), [VPJ-26 #216](https://github.com/JTCAO515/VP-V4/issues/216)
+- Allowed: `ios/**`, `lib/server/**`, `app/api/**`, `components/**`, `tests/**`, `supabase/migrations/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm lint`; `pnpm typecheck`; `pnpm test:contract`; `pnpm test:integration`; `pnpm test:security`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
+- Evidence: `artifacts/VPJ-82/verification.md`, `artifacts/VPJ-82/unrun.md`
+- 接口: docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
+- 运行门: 默认（见文件开头「默认条款」）
+- Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
+- 文档影响: `docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md`, `docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md`, `docs/handoff.json`
+- 不得触碰: 默认（见文件开头「默认条款」）
+- Rollback: 默认（见文件开头「默认条款」）
+
+- [ ] Library清楚区分Tools与My materials/results，聚合既有翻译/地址/上传订单/生成成果来源；不复制域内writer，eSIM仅在实际可用能力下开放。
+- [ ] 全局搜索按外部已支持内容和私有资料/成果分组；search/open再次校验actor与当前资格，索引不成为隐私/撤回绕过。
+- [ ] 空搜索页可提供有版权、与地点对应的视觉发现，既有Save/Ask/Add带实体/选区/来源交接同一VP；不是新增独立动态流。
+- [ ] 跨Trip资料明确范围，成果从Library打开同一revision；纠正/删除/账号切换失效缓存和索引，不泄露标题、数量或摘要。
+- [ ] 全局入口及旧Explore/Tools/Profile深链在zh/en和无障碍可达，缺能力时有真实状态和可用替代；搜索性能/质量以实测记录。
+
+## VPJ-83
+
+[VPJ-83 #564](https://github.com/JTCAO515/VP-V4/issues/564) — 四Tab原生助手壳与Journey全链整合
+
+### 执行边界与首个切片
+
+- 首个可交付结果：整合四Tab及旧入口映射，先打通VP→Memory纠正→结果变化→Journeys确认→Library读回。
+- 本票责任/非目标：新导航/聚合owner；已关闭#188保留旧壳完成范围，最终用户/设备/发布验收仍由#233/#242承担。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md)
+- 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
+
+- Owner: coding-agent; vertical; 3专注日，按一个可审阅切片推进；effortDays仅为旧manifest字段占位，不是整票工期或上线承诺。
+- 验收阶段: S4
+- Blocked by: 无任务依赖；核实际条件
+- 集成/最终验收依赖（普通关联）: [VPJ-77 #558](https://github.com/JTCAO515/VP-V4/issues/558), [VPJ-81 #562](https://github.com/JTCAO515/VP-V4/issues/562), [VPJ-82 #563](https://github.com/JTCAO515/VP-V4/issues/563), [VPJ-09 #197](https://github.com/JTCAO515/VP-V4/issues/197), [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198), [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199), [VPJ-13 #203](https://github.com/JTCAO515/VP-V4/issues/203)
+- Allowed: `ios/**`, `lib/i18n.ts`, `tests/**`, `docs/product/**`
+- Checks: `pnpm docs:check`; `git diff --check`; `pnpm lint`; `pnpm typecheck`; `pnpm test:contract`; `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj`; `xcrun simctl list devices available`; `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO`
+- Evidence: `artifacts/VPJ-83/verification.md`, `artifacts/VPJ-83/unrun.md`
+- 接口: docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md; Red lines: RL-01, RL-02, RL-04, RL-06, RL-07
+- 运行门: 默认（见文件开头「默认条款」）
+- Native: 工程/scheme由VPJ-01引入；运行xcrun simctl列出可用设备后，用实际UDID执行xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=<该UDID>' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-，commands.jsonl必须记录替换后的完整可运行命令。设备动作/录屏/VoiceOver证据另附；Xcode或工程缺失标UNRUN，不声称成功。
+- 文档影响: `docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md`, `docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md`, `docs/handoff.json`
+- 不得触碰: 默认（见文件开头「默认条款」）
+- Rollback: 默认（见文件开头「默认条款」）
+
+- [ ] 以VP/Journeys/Library/Memory替换旧五Tab，默认VP；Search全局可达，无活动Tab；account/privacy/purchase/logout、Today、工具和旧deep links无丢失。
+- [ ] Memory在一级tab、VP上下文、成功保存undo与成果使用解释四处可感知，纠正能通过真实服务改变结果；不是仅增加设置入口。
+- [ ] Journeys可呈现未有准确日期/Trip的目标与已有Trip，清楚显示下一决定、关联任务/成果；goal与Trip不混作两个可编辑事实源。
+- [ ] 全壳只聚合已有domain消费者，不复制API/模型/业务状态；后台任务不阻塞tab切换，切账号清理所有投影并拒绝迟到响应。
+- [ ] 新壳分阶段能力开关与旧入口fallback经过验证；回退仍可读/取消新任务及保留成果，不产生已接受工作孤儿。
+- [ ] 真实原生三段体验及E1–E10适用项、zh/en/小屏大字/VoiceOver/Reduce Motion完成；与#233/#242共享同版本证据，不自动关闭其他父票。

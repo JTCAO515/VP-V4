@@ -8,9 +8,9 @@
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：对一个事前定义的有效旅客队列形成激活、机会回访、净付款/退款和人工成本观察，给出继续/调整/证据不足结论。
-- 本票责任/非目标：负责B0–B4商业判读；45负责技术发布关账，sandbox和人工代办不能算自助付费成功。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：观察新助手真实任务成果、旅程窗口留存与订阅/佣金分列的经营表现。
+- 本票责任/非目标：经营观察owner；不以AI标签或月付形式推定长期留存/估值，也不把旅后正常暂停直接当产品失败。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
@@ -36,6 +36,7 @@
 - [ ] opportunity-based organic/triggered/founder-prompted回访分开；真实净付款与退款/赠送/sandbox分开。
 - [ ] 依据主报告单一B0-B4门和容量/现金止损决策，不以一个OR指标杀整个Program；少样本明确不确定。
 - [ ] 经营指标以有机会的服务任务/Trip为分母，区分Free/Pass、人工辅助、真实支付与sandbox；保留必要澄清次数、任务成本及实际人工分钟，旧Ask数值不可当同等新服务容量。
+- [ ] 助手升级2026-09-27：分开任务完成/有用partial/blocked/失败、订阅实收/退款/实际结算佣金/全体活跃旅客成本；记录跨旅程回访和获客成本，不把月收入简单年化当稳定ARR证据。
 
 ## 不得触碰
 

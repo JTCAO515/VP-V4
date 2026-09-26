@@ -8,9 +8,9 @@ TestFlight 实机贯通 Plan、Ready、Travel 三段。
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：BETA1：受控测试用户在指定build完成真实Trip规划、选区Ask、明确确认、材料/订单回流与准备。
-- 本票责任/非目标：负责Beta联合验收；57/56等提供基础能力，40/41提供体验结果，71提供Harness；不把安装成功当产品完成。 2026-09-22已确认的实施顺序：BETA1 → BETA2；交接输入不新增原生blocked，完整父票验收保留。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
+- 首个可交付结果：用同一真实TestFlight版本贯通首次认识VP、关闭App后的委托、回访交付与Memory纠正。
+- 本票责任/非目标：实际设备联合验收owner；复用同版本已有证据，原安装/网络/Store/数据退出缺口继续保留。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
@@ -46,6 +46,7 @@ TestFlight 实机贯通 Plan、Ready、Travel 三段。
 - [VPJ-61 #240](https://github.com/JTCAO515/VP-V4/issues/240)
 - [VPJ-64 #238](https://github.com/JTCAO515/VP-V4/issues/238)
 - [VPJ-65 #219](https://github.com/JTCAO515/VP-V4/issues/219)
+- [VPJ-83 #564](https://github.com/JTCAO515/VP-V4/issues/564)
 
 可按首个切片独立推进；这些输入的实际能力与适用证据仍须在集成/整票验收时核对，不能用 fixture 或移除图标替代。
 
@@ -56,6 +57,7 @@ TestFlight 实机贯通 Plan、Ready、Travel 三段。
 - [ ] 所有首发必需项有功能/异常/数据/UX/运行证据；只修验收缺陷，不靠fixture替代。
 - [ ] 非技术经营留存与真实付费效果由47观察，不因旅行节点未到而伪称成功/失败。
 - [ ] 真实设备与账号贯通#198选区Ask、明确确认、跨端/重载及拒绝路径；基础壳、模拟数据或仅#188完成不能替代本项联合验收。
+- [ ] 助手升级2026-09-27：新助手E1–E10在适用真实链和客户端验收，至少含worker重启、任务运行时改口、忘记偏好后重试、旧成果确认拒绝及同源成果读回；截图/merged/fixture不能完成本项。
 
 ## 不得触碰
 

@@ -8,9 +8,9 @@
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：在真实Trip选中一天或项目，提出局部改动并显示增删/移日、代价和保留项；确认后回到原位置且重载一致。
-- 本票责任/非目标：负责局部提案/确认消费者；65提供测量依据，68验证少走路案例，29负责在途变化触发，均复用同一writer。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：把选中成果/Trip范围交给VP，呈现保留项、变化与影响并确认准确版本。
+- 本票责任/非目标：唯一承接局部候选到已确认Trip；VPJ-79只引用Proposal，不建第二个writer，VPJ-81/83消费同一结果。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
@@ -36,6 +36,7 @@
 - [ ] 并发更新旧proposal不能提交；撤销Trip修改不能伪装取消外部订单。
 - [ ] 负责已登录真实Trip的选区→Ask sheet→局部Proposal/diff→确认→回到原对象与位置→重载闭环；复用#188基础导航/样式/可访问性，拒绝或关闭sheet不得误确认，真实凭据/数据条件缺失保留未验收。
 - [ ] 体验增量2026-09-17：局部改稿展示新增/移日/替换/移除及受影响时间与接驳，说明保留的已确认事项和备选去向；不只回复“已加入”。步行改善仅在#219同口径证据具备时声明，否则保留待核候选；diff、确认目标、返回选区和重载均绑定同一Trip版本，拒绝或旧版本无误写。
+- [ ] 助手升级2026-09-27：从VP/Journeys/Library进入同一成果或proposal时保持对象和revision；纠正记忆、换Trip或新base使旧候选失效，重新审阅后才能确认，不把方向选择当成交。
 
 ## 不得触碰
 

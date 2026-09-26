@@ -1,7 +1,9 @@
 # VP-V4 Engineering Instructions
 
-Active product: VPJ-00 #187 / ADR-0023. Native SwiftUI iOS is the complete product; Web is a
-lightweight same-Trip Planning Studio. Start with `CONTEXT.md` and the current Issue.
+Active product: VPJ-00 #187. ADR-0027 defines the current personal-assistant upgrade;
+unaffected ADR-0023/0025 domain and safety contracts remain. Native SwiftUI iOS is the complete
+product; Web is a lightweight same-Trip Planning Studio. Start with `CONTEXT.md` and the current Issue.
+Upgrade entry: `docs/product/assistant-upgrade-2026-09-27/README.md`.
 Product entry: `docs/program/2026-09-05/README.md`.
 
 ## Where each rule lives

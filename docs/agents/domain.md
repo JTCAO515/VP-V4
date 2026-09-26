@@ -9,6 +9,10 @@ preference, ServiceTask and response semantics. The [development workflow](devel
 
 ## Read for the current task
 
+The current assistant experience and versioned Conversation/goal/artifact integration follow
+[ADR-0027](../adr/ADR-0027-personal-journey-assistant.md). These planned additions do not imply
+live APIs; retain each existing domain authority and the single durable work/budget path.
+
 Read root AGENTS/CONTEXT, the current Issue/PR and its [VPJ execution row](../program/2026-09-05/EXECUTION-CONTRACT.md),
 then affected interfaces, code, tests and accepted decisions. Read the master report on first
 entry or scope change. Load historical research and old AI/V4/LAUNCH rows only when their evidence

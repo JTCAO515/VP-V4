@@ -4,13 +4,13 @@
 
 ## 用户结果
 
-Trip 连续记忆与用户可纠正的偏好。
+可见Memory与真实偏好消费、纠正和遗忘。
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：把一个明确保存且有同意范围的基础偏好接入真实任务消费者，验证纠正/本次不用/撤回及迟到响应。
-- 本票责任/非目标：负责Profile/Memory权威与任务投影；31只消费授权Brief，不另建记忆库；UI提示与撤销复用同次变更版本。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：打通Memory独立页面→明确保存→真实规划使用→纠正/撤回→相关结果变化的一条链。
+- 本票责任/非目标：唯一负责Profile/Memory字段权威、资格投影和纠正；VPJ-83提供一级tab、VPJ-81提供上下文呈现，禁止另建画像库。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
@@ -41,6 +41,9 @@ Trip 连续记忆与用户可纠正的偏好。
 - [ ] HF复用：借LongMemEval更新/跨会话方法编写自有中英反例，分别观察资格、Context入选、实际使用与撤回；管理API不充当模型检索，Profile/Memory字段保持唯一权威源，不为benchmark新建画像或向量库。
 - [ ] 记忆新增/更新实际成功后，顶部轻提示“已加入记忆/Saved to memory”，仅“撤销/Undo”，默认4秒自动隐藏；不抢焦点、不阻断输入。摘要有现成允许内容才附一行，不增加生成步骤；首版不加查看按钮。
 - [ ] 撤销必须作用于本次记忆变更及版本，成功显示已撤销，失败/冲突如实提示，不覆盖后续修改或改变Trip；同一逻辑写入重试/重连/重放不重复弹出，撤销自身不再触发加入记忆提示，换账号清理旧操作入口。
+- [ ] 助手升级2026-09-27：Memory作为一级Tab，VP相关偏好、真实save/undo和成果使用解释构成四处可见性；无记忆时不伪装熟悉，管理项有来源、scope、修改/暂停/忘记入口。
+- [ ] 助手升级2026-09-27：首版真实消费者至少使用已支持的travel pace；再逐字段扩展明确偏好，当前Trip/临时状态/外部事实/任务不得混入长期Memory。
+- [ ] 助手升级2026-09-27：在任务排队、运行、重试和成果待确认期间纠正或忘记，新的dispatch与推荐不使用旧值；删除同时覆盖衍生摘要、索引和检查点，Free/付费及到期后保持同等基础记忆控制。
 
 ## 不得触碰
 

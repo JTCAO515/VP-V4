@@ -8,6 +8,12 @@ recorded honestly, not waited on.
 
 Historical task tables and copied kickoff prompts add no current development gates.
 
+The current personal-assistant upgrade follows [ADR-0027](../adr/ADR-0027-personal-journey-assistant.md)
+and [the new plan](../product/assistant-upgrade-2026-09-27/README.md). Its U0–U4 sequence takes
+precedence over the historical fixed slice order below; preserve actual active ownership and the
+coordinator's current concurrency/model settings. Historical six-thread authorization does not
+automatically reactivate six chats or override a later user limit.
+
 Authority classes, merge rules and the operator queue live in
 [`continuous-afk-execution.md`](continuous-afk-execution.md). Label semantics live in
 [`triage-labels.md`](triage-labels.md). This file owns work units, scope, checks and reporting.

@@ -26,6 +26,7 @@
 | [#191](https://github.com/JTCAO515/VP-V4/issues/191) · VPJ-04 | 原生登录、手机登录顶替与 Web 会话并存 |
 | [#192](https://github.com/JTCAO515/VP-V4/issues/192) · VPJ-05 | 同一 Trip 在 iOS 与精简 Web 创建、编辑和重载 |
 | [#202](https://github.com/JTCAO515/VP-V4/issues/202) · VPJ-62 | 公开中英申请入口与隐私可控的招募漏斗 |
+| [#558](https://github.com/JTCAO515/VP-V4/issues/558) · VPJ-77 | 新版助手三段体验样例与组件契约 |
 | [#246](https://github.com/JTCAO515/VP-V4/issues/246) · VPJ-46 | 两周客户发现试点与后续运营交接 |
 
 持续配合：[#202](https://github.com/JTCAO515/VP-V4/issues/202)、[#246](https://github.com/JTCAO515/VP-V4/issues/246)；这是跨阶段工作，不改变任务身份或依赖。
@@ -46,7 +47,7 @@
 | --- | --- |
 | [#193](https://github.com/JTCAO515/VP-V4/issues/193) · VPJ-06 | Qwen、GLM、DeepSeek 的真实调用与质量成本对照 |
 | [#194](https://github.com/JTCAO515/VP-V4/issues/194) · VPJ-59 | 首个真实模型任务的预算预留与故障止损 |
-| [#195](https://github.com/JTCAO515/VP-V4/issues/195) · VPJ-07 | 真实 Ask 得到可恢复的最终回答 |
+| [#195](https://github.com/JTCAO515/VP-V4/issues/195) · VPJ-07 | 真实文本与持久任务执行基础 |
 | [#196](https://github.com/JTCAO515/VP-V4/issues/196) · VPJ-08 | 流式回答在断网、后台和跨端重连后接续 |
 | [#204](https://github.com/JTCAO515/VP-V4/issues/204) · VPJ-14 | 受保护 Ops 登录与一条候选内容工作流 |
 | [#205](https://github.com/JTCAO515/VP-V4/issues/205) · VPJ-15 | 首批旅程内容从来源登记到已审核可用 |
@@ -54,6 +55,7 @@
 | [#358](https://github.com/JTCAO515/VP-V4/issues/358) · VPJ-74 | 运营可追溯查看来源版本、原文与知识本体关系 |
 | [#359](https://github.com/JTCAO515/VP-V4/issues/359) · VPJ-75 | 新来源经LLM Wiki整理为可审查并可发布的知识变更 |
 | [#231](https://github.com/JTCAO515/VP-V4/issues/231) · VPJ-63 | 登录、Ask 与 Trip 的境内外网络首轮探针 |
+| [#559](https://github.com/JTCAO515/VP-V4/issues/559) · VPJ-78 | 持续会话、旅程目标与ServiceTask归属 |
 | [#360](https://github.com/JTCAO515/VP-V4/issues/360) · VPJ-76 | Ask检索已发布Wiki与原子声明并返回完整证据和具体缺口 |
 | [#263](https://github.com/JTCAO515/VP-V4/issues/263) · VPJ-66 | Harness：两条离线旅行任务可运行、判分并定位失败 |
 | [#264](https://github.com/JTCAO515/VP-V4/issues/264) · VPJ-67 | Harness：真实只读问答产生有依据的结果与回执 |
@@ -62,7 +64,7 @@
 
 ## S3
 
-**共同计划与明确确认**
+**个性化规划、持续助手与明确确认**
 
 [GitHub 里程碑](https://github.com/JTCAO515/VP-V4/milestone/9)
 
@@ -71,18 +73,22 @@
 - 模糊想法形成方向及可核验计划；实际地点、路线及约束有一致来源口径，用户看见 diff 后确认，同一 Trip 在两端重载。
 - 用户要求第二天少走路且保留已确认晚餐：可比测量严格改善，晚餐及未选范围不变，旧版本/拒绝/撤权不能误写。
 - 偏好纠正/撤回、知识更新、进程崩溃/取消/断网恢复在同一实际持久任务链上通过，保留准确回执与费用未知态。
+- 2026-09-27助手升级：持续会话/目标、显式Memory与可版本化成果接到有界真实执行；用户可委托、离开、回访、纠正并确认准确变更。
 
 | 现有 Issue | 用户结果 |
 | --- | --- |
-| [#197](https://github.com/JTCAO515/VP-V4/issues/197) · VPJ-09 | 从模糊想法得到可确认的多日行程 |
+| [#197](https://github.com/JTCAO515/VP-V4/issues/197) · VPJ-09 | 个性化旅行方向比较与可确认计划 |
 | [#198](https://github.com/JTCAO515/VP-V4/issues/198) · VPJ-10 | 选中一天或项目后与 VP 局部改稿 |
-| [#199](https://github.com/JTCAO515/VP-V4/issues/199) · VPJ-11 | Trip 连续记忆与用户可纠正的偏好 |
+| [#199](https://github.com/JTCAO515/VP-V4/issues/199) · VPJ-11 | 可见Memory与真实偏好消费、纠正和遗忘 |
 | [#207](https://github.com/JTCAO515/VP-V4/issues/207) · VPJ-17 | 来源更新后安全重验相关知识与 Trip |
 | [#208](https://github.com/JTCAO515/VP-V4/issues/208) · VPJ-18 | 高德主选与腾讯补充的实测、用途与成本边界 |
 | [#209](https://github.com/JTCAO515/VP-V4/issues/209) · VPJ-19 | 地点消歧、地图展示与路线出口 |
-| [#210](https://github.com/JTCAO515/VP-V4/issues/210) · VPJ-20 | Explore 浏览内容并保存、问 VP、加入 Trip |
+| [#210](https://github.com/JTCAO515/VP-V4/issues/210) · VPJ-20 | 全局探索中的地点发现、保存和交给VP |
 | [#211](https://github.com/JTCAO515/VP-V4/issues/211) · VPJ-21 | 准备检查把关键缺口变成可做的下一步 |
 | [#219](https://github.com/JTCAO515/VP-V4/issues/219) · VPJ-65 | 真实地点与依据支撑的完整计划核验 |
+| [#560](https://github.com/JTCAO515/VP-V4/issues/560) · VPJ-79 | 持久版本化成果与跨页面同源读取 |
+| [#561](https://github.com/JTCAO515/VP-V4/issues/561) · VPJ-80 | 可恢复的有界规划执行与真实后台交付 |
+| [#562](https://github.com/JTCAO515/VP-V4/issues/562) · VPJ-81 | VP持续主对话、任务可见性与成果交付 |
 | [#265](https://github.com/JTCAO515/VP-V4/issues/265) · VPJ-68 | Harness：少走路且保留已确认晚餐的局部改稿闭环 |
 | [#266](https://github.com/JTCAO515/VP-V4/issues/266) · VPJ-69 | Harness：故障取消与重连不伪造成功或重复提交 |
 
@@ -97,12 +103,13 @@
 - 受支持旅程贯通截图/文件导入、首访回访、住宿比较与透明跳转、订单资料、Today 离线、现场表达/语音/讲解、变化恢复与提醒。
 - 用户能按服务任务授权真人协助所需资料、取得结果，并完成归档与隐私预览分享；拒权、离线、撤回及取消状态均真实。
 - 只交付既定地域、供应商与许可范围；不将外部库存、交易代办或人工 SLA 加入承诺。
+- 2026-09-27四Tab（VP/Journeys/Library/Memory）整合既有功能；全局搜索/探索与资源库共享成果，Memory四处可见并影响真实结果。
 
 | 现有 Issue | 用户结果 |
 | --- | --- |
 | [#200](https://github.com/JTCAO515/VP-V4/issues/200) · VPJ-60 | 图片和语音 Provider 的中英质量与数据流验收 |
 | [#201](https://github.com/JTCAO515/VP-V4/issues/201) · VPJ-12 | 单张旅行截图导入、校正与加入 Trip |
-| [#203](https://github.com/JTCAO515/VP-V4/issues/203) · VPJ-13 | 首访与回访的三种入口获得首个成果 |
+| [#203](https://github.com/JTCAO515/VP-V4/issues/203) · VPJ-13 | VP首访、委托与回访的连续体验 |
 | [#212](https://github.com/JTCAO515/VP-V4/issues/212) · VPJ-22 | 酒店官方出口、参数落地与联盟归因验证 |
 | [#213](https://github.com/JTCAO515/VP-V4/issues/213) · VPJ-23 | 住宿需求比较与透明联盟跳转 |
 | [#214](https://github.com/JTCAO515/VP-V4/issues/214) · VPJ-24 | 第三方订单材料回到同一 Trip |
@@ -118,6 +125,8 @@
 | [#236](https://github.com/JTCAO515/VP-V4/issues/236) · VPJ-55 | 限定文件导入与系统分享、登录回跳衔接 |
 | [#241](https://github.com/JTCAO515/VP-V4/issues/241) · VPJ-49 | 最简本地旅行分享卡与隐私预览 |
 | [#240](https://github.com/JTCAO515/VP-V4/issues/240) · VPJ-61 | 旅行结束、归档与下一次回来 |
+| [#563](https://github.com/JTCAO515/VP-V4/issues/563) · VPJ-82 | Library工具资料与全局搜索探索 |
+| [#564](https://github.com/JTCAO515/VP-V4/issues/564) · VPJ-83 | 四Tab原生助手壳与Journey全链整合 |
 
 ## S5
 
@@ -133,8 +142,8 @@
 
 | 现有 Issue | 用户结果 |
 | --- | --- |
-| [#225](https://github.com/JTCAO515/VP-V4/issues/225) · VPJ-33 | Journey Pass 商品、权益和定价实验配置 |
-| [#226](https://github.com/JTCAO515/VP-V4/issues/226) · VPJ-34 | 官方 IAP 购买、恢复与服务端权益 |
+| [#225](https://github.com/JTCAO515/VP-V4/issues/225) · VPJ-33 | Free与订阅服务边界、商品策略和旧Pass兼容 |
+| [#226](https://github.com/JTCAO515/VP-V4/issues/226) · VPJ-34 | 官方购买、订阅兼容与同源权益 |
 | [#227](https://github.com/JTCAO515/VP-V4/issues/227) · VPJ-35 | Free/Pass 额度与完整任务成本控制 |
 | [#228](https://github.com/JTCAO515/VP-V4/issues/228) · VPJ-36 | 核心资料的导出删除框架与首批执行器 |
 | [#229](https://github.com/JTCAO515/VP-V4/issues/229) · VPJ-37 | 运营看见质量、成本和故障并能停用能力 |
@@ -186,6 +195,6 @@
 | [#249](https://github.com/JTCAO515/VP-V4/issues/249) · VPJ-51 | 航班来源与中国航线对照（证据触发） |
 | [#250](https://github.com/JTCAO515/VP-V4/issues/250) · VPJ-52 | 授权航班状态与相关行程重验 |
 | [#251](https://github.com/JTCAO515/VP-V4/issues/251) · VPJ-53 | Android 与新增语言的需求触发设计 |
-| [#252](https://github.com/JTCAO515/VP-V4/issues/252) · VPJ-54 | 长期订阅或交易深度升级的证据决策 |
+| [#252](https://github.com/JTCAO515/VP-V4/issues/252) · VPJ-54 | 年订阅与交易深度升级的证据决策 |
 
 后续 expand 仍需各票 activationEvidence；依赖完成不自动激活，也不纳入当前首发验收。

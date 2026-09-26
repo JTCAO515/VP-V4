@@ -1,0 +1,250 @@
+{
+  "scope": "planning-only",
+  "runtimeAcceptance": false,
+  "tasks": [
+    {
+      "task": "VPJ-07",
+      "issue": 195,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-08",
+      "issue": 196,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-09",
+      "issue": 197,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-10",
+      "issue": 198,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-11",
+      "issue": 199,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-13",
+      "issue": 203,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [
+        202
+      ],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-20",
+      "issue": 210,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-21",
+      "issue": 211,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-30",
+      "issue": 221,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-33",
+      "issue": 225,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-34",
+      "issue": 226,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-35",
+      "issue": 227,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-40",
+      "issue": 233,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [
+        241
+      ],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-41",
+      "issue": 234,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-42",
+      "issue": 242,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [
+        241
+      ],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-46",
+      "issue": 246,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-47",
+      "issue": 247,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [
+        244
+      ],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-54",
+      "issue": 252,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [
+        245,
+        247
+      ],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-68",
+      "issue": 265,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [
+        219
+      ],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-69",
+      "issue": 266,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [
+        265
+      ],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-71",
+      "issue": 268,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [
+        266,
+        267
+      ],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-77",
+      "issue": 558,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-78",
+      "issue": 559,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-79",
+      "issue": 560,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-80",
+      "issue": 561,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-81",
+      "issue": 562,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-82",
+      "issue": 563,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    },
+    {
+      "task": "VPJ-83",
+      "issue": 564,
+      "state": "open",
+      "acceptancePresent": true,
+      "nativeDependencies": [],
+      "metadataPreserved": true
+    }
+  ],
+  "program": 187,
+  "programHistoryPreserved": true
+}

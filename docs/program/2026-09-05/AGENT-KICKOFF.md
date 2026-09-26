@@ -1,5 +1,8 @@
 # 后续 AI coding agent 启动说明
 
+助手升级优先使用[新的coding-agent启动说明](../../product/assistant-upgrade-2026-09-27/CODING-AGENT.md)。
+下方通用流程保留；旧团队/阶段顺序不得覆盖ADR-0027与U0–U4当前排期。
+
 填写当前任务与交付范围后复制下段。已有进行中的任务直接接续；本文不指定固定的“下一张票”。完整文档权威与专题入口见 [Program README](README.md)，共享工作方式见[开发流程](../../agents/development-workflow.md)。
 
 ```text

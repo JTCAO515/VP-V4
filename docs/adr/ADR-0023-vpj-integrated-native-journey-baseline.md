@@ -1,5 +1,7 @@
 # ADR-0023: Integrated native Journey Agent and replacement delivery program
 
+2026-09-27 scoped supersession: [ADR-0027](ADR-0027-personal-journey-assistant.md) defines the current assistant experience, navigation and versioned integration. Historical decisions/evidence below remain intact; unaffected Trip, memory authority, billing integrity and safety contracts still apply.
+
 2026-09-12修订：[开发接入规则](../agents/development-integration-policy.md)替代本文涉及开发阶段第三方、法务或产品审批的要求；其余产品范围及实际技术不变量继续适用。
 
 Status: accepted for product planning and repository governance on 2026-09-05 by JT's explicit delegation to optimize positioning, pricing, usage, overall delivery and to close all open Issues and create a replacement program. Actual accounts, data-retention values, supplier contracts, payments and production execution are not approved by this ADR.
