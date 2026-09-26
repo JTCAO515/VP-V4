@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {NextRequest} from 'next/server.js';
 import {nativeAssistantContextHTTP,getNativeGoalContextConfig} from '../../../lib/server/turn/native-assistant-context-http.ts';
+import {getNativeAssistantConfig} from '../../../lib/server/turn/native-assistant-http.ts';
 import {nativeFixture,subject,sessionId} from '../../contract/identity/native-fixture.ts';
 
 const policyId='11111111-1111-4111-8111-111111111111';
@@ -35,6 +36,34 @@ test('goal manifest has a separate default-closed activation gate',async t=>{
  assert.equal((await nativeAssistantContextHTTP(fixture.request())).status,503);
  process.env.VISEPANDA_NATIVE_LOCAL_GOAL_CONTEXT='true';
  assert.ok(getNativeGoalContextConfig(fixture.request()));
+});
+
+test('Staging and Production v5 conversation enablement never implies goal-context access',t=>{
+ const keys=['VERCEL_ENV','VERCEL_URL','VISEPANDA_NATIVE_STAGING','VISEPANDA_NATIVE_STAGING_TEXT','VISEPANDA_NATIVE_STAGING_TEXT_POLICY',
+  'VISEPANDA_NATIVE_STAGING_ASSISTANT_CONVERSATION','VISEPANDA_NATIVE_STAGING_GOAL_CONTEXT','VISEPANDA_NATIVE_PRODUCTION',
+  'VISEPANDA_NATIVE_PRODUCTION_TRIP','VISEPANDA_NATIVE_PRODUCTION_PROJECT_REF','VISEPANDA_NATIVE_PRODUCTION_ORIGIN',
+  'VISEPANDA_PUBLIC_ORIGIN','VISEPANDA_NATIVE_PRODUCTION_TEXT','VISEPANDA_NATIVE_PRODUCTION_TEXT_POLICY',
+  'VISEPANDA_NATIVE_PRODUCTION_ASSISTANT_CONVERSATION','VISEPANDA_NATIVE_PRODUCTION_GOAL_CONTEXT',
+  'VISEPANDA_TRIP_PROTOCOL_V2','NEXT_PUBLIC_SUPABASE_URL','NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY'];
+ const prior=new Map(keys.map(key=>[key,process.env[key]]));
+ t.after(()=>{for(const [key,value] of prior)value===undefined?delete process.env[key]:process.env[key]=value;});
+ for(const key of keys)delete process.env[key];
+ const host='vp-v4-abc123-jtcao515s-projects.vercel.app';
+ Object.assign(process.env,{VERCEL_ENV:'preview',VERCEL_URL:host,VISEPANDA_NATIVE_STAGING:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',
+  VISEPANDA_NATIVE_STAGING_TEXT:'true',VISEPANDA_NATIVE_STAGING_TEXT_POLICY:policyId,
+  VISEPANDA_NATIVE_STAGING_ASSISTANT_CONVERSATION:'true',NEXT_PUBLIC_SUPABASE_URL:'https://dzqdzetcctkhbrhlxxgn.supabase.co',
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:'synthetic-public'});
+ const preview=new NextRequest('https://'+host+'/api/chat/native/v5/context');
+ assert.ok(getNativeAssistantConfig(preview));assert.equal(getNativeGoalContextConfig(preview),null);
+ process.env.VISEPANDA_NATIVE_STAGING_GOAL_CONTEXT='true';assert.equal(getNativeGoalContextConfig(preview)?.environment,'staging');
+ const ref='abcdefghijklmnopqrst',origin='https://go2china.space';
+ Object.assign(process.env,{VERCEL_ENV:'production',VISEPANDA_NATIVE_STAGING:'false',VISEPANDA_NATIVE_PRODUCTION:'true',
+  VISEPANDA_NATIVE_PRODUCTION_TRIP:'true',VISEPANDA_NATIVE_PRODUCTION_PROJECT_REF:ref,VISEPANDA_NATIVE_PRODUCTION_ORIGIN:origin,
+  VISEPANDA_PUBLIC_ORIGIN:origin,VISEPANDA_NATIVE_PRODUCTION_TEXT:'true',VISEPANDA_NATIVE_PRODUCTION_TEXT_POLICY:policyId,
+  VISEPANDA_NATIVE_PRODUCTION_ASSISTANT_CONVERSATION:'true',NEXT_PUBLIC_SUPABASE_URL:`https://${ref}.supabase.co`});
+ const production=new NextRequest(origin+'/api/chat/native/v5/context');
+ assert.ok(getNativeAssistantConfig(production));assert.equal(getNativeGoalContextConfig(production),null);
+ process.env.VISEPANDA_NATIVE_PRODUCTION_GOAL_CONTEXT='true';assert.equal(getNativeGoalContextConfig(production)?.environment,'production');
 });
 
 for(const [name,secondMemory,expected] of [
