@@ -146,10 +146,18 @@ nonisolated final class NativeTripStateTests: XCTestCase {
         let relaxed = outline.titles(for: .relaxed, chinese: false)
         let balanced = outline.titles(for: .balanced, chinese: false)
         let packed = outline.titles(for: .packed, chinese: false)
+        let foodArea = "food area", neighborhoodWalk = "neighborhood walk"
         XCTAssertEqual(relaxed.count, 4)
         XCTAssertTrue(relaxed[1].contains("free"))
-        XCTAssertFalse(balanced.contains(where: { $0.contains("free") || $0.contains("; ") }))
-        XCTAssertTrue(packed.allSatisfy { $0.contains("; ") && $0.contains("verify") })
+        XCTAssertTrue(relaxed[3].contains("free"))
+        XCTAssertEqual(balanced.count, 4)
+        XCTAssertTrue(balanced.allSatisfy { day in
+            !day.contains("free") && (day.contains(foodArea) != day.contains(neighborhoodWalk))
+        })
+        XCTAssertEqual(packed.count, 4)
+        XCTAssertTrue(packed.allSatisfy { day in
+            day.contains(foodArea) && day.contains(neighborhoodWalk) && day.contains("verify")
+        })
         XCTAssertEqual(outline.initialTitles.count, 4)
         XCTAssertFalse(packed.joined().contains("10:00"))
     }

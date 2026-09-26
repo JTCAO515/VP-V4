@@ -117,3 +117,19 @@ remains UNRUN after the interrupted local launches, pending the final PR SHA's N
 
 Rollback: revert this client code. Preserve Profile revisions, prior withdrawal state, and all
 confirmed Trips; no migration or shared environment was changed in this slice.
+
+## 2026-09-27 final-head Native CI assertion
+
+PR #555 head `9f2abaf341ad458ba82c6d0031572b1b64305f58` ran Native iOS CI
+([run 36254623450](https://github.com/JTCAO515/VP-V4/actions/runs/36254623450)).
+The main session inspected its retained xcresult: iPhone 17 Pro / iOS 26.5 reported
+133 PASS, 1 FAIL and 34 SKIP. The sole failure was
+`NativeTripStateTests.testAuthorizedPaceChangesOnlyUnconfirmedRelativeDayDensity()` at
+`NativeTripStateTests.swift:151`. Its original balanced assertion treated a semicolon as a
+second theme, although a single food or walk theme already includes that punctuation.
+Build and test-build passed; `test-without-building` exited 65 due to this assertion.
+
+The follow-up edits only that test's assertions: balanced days must contain exactly one
+food/walk theme, packed days both themes, relaxed free days remain, and day counts stay four.
+The implementation is unchanged. Local iOS 17.5 focused XCTest remains UNRUN as recorded above;
+the corrected test needs new-head Native CI before it can be called PASS.
