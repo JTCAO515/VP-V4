@@ -52,6 +52,7 @@ const AUTHENTICATED = [
   "public.read_text_policy(uuid)",
   "public.read_text_task_policy(uuid)",
   "public.read_text_turn(uuid)",
+  "public.read_trip_confirmation_receipt_v1(uuid)",
   "public.read_trip_deletion_v1(uuid)",
   "public.read_trip_proposal_v2(uuid)",
   "public.record_turn_feedback(uuid,text,text)",
@@ -125,6 +126,7 @@ test("repository functions grant EXECUTE to anon and authenticated only through 
     };
     for (const [fn, body] of [
       ["confirm_and_apply_trip_proposal", { p_proposal_id: crypto.randomUUID(), p_idempotency_key: "acl-probe", p_digest: "acl-probe" }],
+      ["read_trip_confirmation_receipt_v1", { p_proposal_id: crypto.randomUUID() }],
       ["create_trip_proposal_patch", { p_trip_id: crypto.randomUUID(), p_patch: {} }],
       ["request_privacy_action", { p_request_id: crypto.randomUUID(), p_action: "export" }],
     ]) {
