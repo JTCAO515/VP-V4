@@ -156,6 +156,10 @@
       "status": "document"
     },
     {
+      "path": "docs/adr/ADR-0026-confirmed-trip-item-chinese-address.md",
+      "status": "document"
+    },
+    {
       "path": "docs/agents/continuous-afk-execution.md",
       "status": "document"
     },
