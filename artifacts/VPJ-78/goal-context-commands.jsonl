@@ -1,0 +1,10 @@
+{"command":"node --experimental-strip-types --test tests/contract/context/goal-context.test.ts tests/security/turn/native-assistant-context-http.test.mjs","result":"PASS 11/11","environment":"local pure and intercepted HTTP fixtures"}
+{"command":"node tests/integration/turn/run-native-http.mjs","result":"PASS 3/3","environment":"disposable local Supabase/Auth/HTTP and synthetic model; manifest itself caused no model calls"}
+{"command":"pnpm lint","result":"PASS","environment":"local source"}
+{"command":"pnpm typecheck","result":"PASS","environment":"local source"}
+{"command":"pnpm build","result":"PASS","environment":"local production build"}
+{"command":"pnpm docs:check","result":"PASS","environment":"local docs"}
+{"command":"git diff --check origin/main","result":"PASS","environment":"local branch diff"}
+{"command":"pnpm test:contract","result":"PASS 690/690","environment":"local suite"}
+{"command":"pnpm test:security","result":"INCOMPLETE 185 passed, 1 target-gated skipped","environment":"local suite"}
+{"command":"pnpm test:integration","result":"INCOMPLETE 39 passed, 119 target-gated skipped","environment":"local suite"}
