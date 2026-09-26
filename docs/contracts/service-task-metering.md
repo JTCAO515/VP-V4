@@ -128,4 +128,4 @@ VPJ-35 的追加迁移建立私有 ServiceTask 容量记录，默认关闭容量
 
 `read_trip_confirmation_receipt_v1(proposal_id)` 只向当前 owner 返回仍是 Trip 最新版本的确认成果。它交叉核对已应用的 Proposal、唯一 Trip event、绑定该 Proposal 的幂等提交记录、可读取的版本快照和当前 Trip head；提案展示、拒绝、过期、旧版本和历史上未绑定 Proposal 的回执均不返回成果。结果只包含 Proposal、Trip 和版本 ID，不复制行程内容。
 
-此凭证不是扣次接口。U1 的 ServiceTask 仍只接受 `text_answer`，#198 的 Trip 确认入口尚未携带可验证的 ServiceTask 身份；因此不能把手动 Trip 编辑、任意文本任务或按钮点击视作可计量 Trip 目标。后续接入须在同一数据库事务中锁定 owner、任务与 Trip，验证任务目标/范围、当前 Proposal 和确认意图，原子 Patch 成功且版本可读后才把已有任务预留结算一次。现有确认 RPC 保持原有 owner/RLS 与幂等保护，开发容量开关仍默认关闭。Trip 变更后的延迟独立结算不能依赖本凭证，因为最新版本可能已变化。
+此凭证不是扣次接口。现有 ServiceTask 表允许 `text_answer` 与 `reviewed_answer`；U1 的容量接纳仍仅覆盖现有文本目标路径，没有 `trip_modification` 类型或 Trip thread 绑定。#198 的 Trip 确认入口尚未携带可验证的 ServiceTask 身份；因此不能把手动 Trip 编辑、任意文本任务或按钮点击视作可计量 Trip 目标。后续接入须在同一数据库事务中锁定 owner、任务与 Trip，验证任务目标/范围、当前 Proposal 和确认意图，原子 Patch 成功且版本可读后才把已有任务预留结算一次。现有确认 RPC 保持原有 owner/RLS 与幂等保护，开发容量开关仍默认关闭。Trip 变更后的延迟独立结算不能依赖本凭证，因为最新版本可能已变化。

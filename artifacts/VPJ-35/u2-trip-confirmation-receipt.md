@@ -19,6 +19,6 @@ Date: 2026-09-26. Base before final sync: `15e9be8e460a2c4855e4f6bc284d52118ef10
 
 ## Remaining acceptance
 
-- The #198 confirmation request has no verified ServiceTask identity; U1 tasks only have `expected_result=text_answer` and exclude Trip threads. No Trip capacity is reserved or settled by this PR. An atomic task binding and settlement path, including cancel/worker races, is still needed for U2 acceptance.
+- The #198 confirmation request has no verified ServiceTask identity. The task table permits `text_answer` and `reviewed_answer`, while U1 capacity admission covers the existing text-goal path; neither `trip_modification` nor Trip-thread binding exists. No Trip capacity is reserved or settled by this PR. An atomic task binding and settlement path, including cancel/worker races, is still needed for U2 acceptance.
 - Shared Staging, a real provider-generated Trip goal, physical iPhone, actual Sandbox purchase-to-grant, Production, and paid settlement: UNRUN. Local Supabase proves the receipt contract only.
 - Rollback: leave the append-only migration in place and stop using the optional read RPC. Existing Trip writer and capacity behavior are unchanged.
