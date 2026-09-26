@@ -44,6 +44,8 @@ struct NativeTripView: View {
     @State private var discardVisible = false
     @State private var archiveVisible = false
     @State private var archiveReference: String?
+    @State private var deleteVisible = false
+    @State private var deleteReference: String?
     @State private var planningRequest = ""
     @State private var outline: NativeRelativeOutline?
     @State private var outlineTitles: [String] = []
@@ -68,6 +70,27 @@ struct NativeTripView: View {
                         outlineComposer
                     }
                     tripList
+                    if let receipt = store.deletionReceipt {
+                        VisePandaCard {
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text(receipt.state == "completed" ? text("Trip deletion completed", "行程删除已完成") : text("Trip deletion queued", "行程删除已排队"))
+                                    .font(.headline).accessibilityIdentifier("trip.deletion.state")
+                                Text(text("Only this Trip is covered. Other account data, provider copies and backups are not confirmed erased. This screen clears its saved Trip view when opened online again; exported files cannot be recalled.",
+                                          "仅处理这一行程。其他账户资料、服务商副本和备份未确认删除。再次联网打开此页面时，会清理已保存的行程视图；已导出的文件无法撤回。"))
+                                    .font(.footnote)
+                                if receipt.state == "queued" {
+                                    Button(text("Check deletion status", "查询删除状态")) { Task { await store.retryDeletion(using: session) } }
+                                        .accessibilityIdentifier("trip.deletion.refresh")
+                                }
+                            }
+                        }
+                    } else if store.deletionRequest != nil {
+                        Text(text("Deletion request outcome is unknown. Reconnect and check the same request before trying another Trip.",
+                                  "删除请求结果尚不确定。回网后查询同一请求，再处理其他行程。"))
+                            .accessibilityIdentifier("trip.deletion.unknown")
+                        Button(text("Check deletion request", "查询删除请求")) { Task { await store.retryDeletion(using: session) } }
+                            .accessibilityIdentifier("trip.deletion.refresh")
+                    }
                     if let notice = store.notice {
                         Text(message(notice)).foregroundStyle(Color.vpSecondaryText)
                             .accessibilityIdentifier("trip.notice")
@@ -159,6 +182,12 @@ struct NativeTripView: View {
                 Task { await store.reload(using: session) }
             }
         }
+        .onChange(of: store.deletionRequest) { _, request in
+            if request != nil {
+                shareSource = nil; screenshotReviewSource = nil
+                cleanupAbandonedScreenshots()
+            }
+        }
         .confirmationDialog(text("Apply the reviewed proposal?", "应用刚刚审阅的提议？"), isPresented: $confirmVisible, titleVisibility: .visible) {
             Button(text("Confirm and save", "确认并保存")) {
                 if let reviewedReference { Task { await store.confirm(reviewedReference: reviewedReference, using: session) } }
@@ -174,6 +203,15 @@ struct NativeTripView: View {
             Button(text("Keep this trip open", "保持行程开放"), role: .cancel) {}
         } message: {
             Text(text("Your saved plan stays readable and shareable. Unfinished services keep their status. No preferences are saved automatically; you can skip preference review and start a fresh trip.", "已保存计划仍可读取和分享，未完服务保留原状态。不自动保存偏好；可以跳过偏好检查，直接开始新行程。"))
+        }
+        .confirmationDialog(text("Delete this Trip?", "删除此行程？"), isPresented: $deleteVisible, titleVisibility: .visible) {
+            Button(text("Request Trip deletion", "请求删除行程"), role: .destructive) {
+                if let deleteReference { Task { await store.deleteTrip(reviewedReference: deleteReference, using: session) } }
+            }.accessibilityIdentifier("trip.deletion.confirm")
+            Button(text("Keep Trip", "保留行程"), role: .cancel) {}
+        } message: {
+            Text(text("Sign out and sign in again in Profile before requesting deletion. The server requires a new sign-in within five minutes. A queued response is not completion. Trips with linked chats cannot be deleted in this step.",
+                      "请先在「我的」退出并重新登录；服务端要求登录发生在五分钟内。排队回执不代表删除完成。有关联聊天的行程暂不能在此删除。"))
         }
         .confirmationDialog(text("Discard this local draft?", "放弃这份本机草稿？"), isPresented: $discardVisible, titleVisibility: .visible) {
             Button(text("Discard draft", "放弃草稿"), role: .destructive) { store.discardDraft() }
@@ -343,6 +381,12 @@ struct NativeTripView: View {
                     }
                     .accessibilityIdentifier("trip.archive.begin").disabled(store.busy)
                 }
+                if let reference = store.deletionReference {
+                    Button(text("Delete this Trip…", "删除此行程…"), role: .destructive) {
+                        deleteReference = reference; deleteVisible = true
+                    }
+                    .accessibilityIdentifier("trip.deletion.begin")
+                }
                 Text(detail.trip.title).font(.title2.bold()).accessibilityIdentifier("trip.confirmed.title")
                 Text(detail.trip.id).font(.caption).textSelection(.enabled).accessibilityIdentifier("trip.selected.id")
                 NavigationLink(text("Preparation check", "准备检查")) {
@@ -479,6 +523,9 @@ struct NativeTripView: View {
         case "noChanges": text("Make a change before proposing it.", "请先修改草稿再提出提议。")
         case "INVALID_INPUT": text("Check the title, dates and item details.", "请检查名称、日期与项目内容。")
         case "FORBIDDEN": text("This account cannot access that trip.", "此账号无权访问该行程。")
+        case "REAUTHENTICATION_REQUIRED": text("Sign out and sign in again in Profile, then check this same deletion request within five minutes.", "请在「我的」退出并重新登录，并在五分钟内查询同一删除请求。")
+        case "TRIP_HAS_CHAT_REFERENCES": text("This Trip has linked chats. Coordinated deletion is not available yet; nothing was deleted.", "此行程有关联聊天，协同删除尚不可用；未删除任何内容。")
+        case "DELETION_ALREADY_REQUESTED": text("A deletion request already exists for this Trip. Contact support with the Trip ID if its receipt is unavailable.", "此行程已有删除请求。若无法读取原回执，请携带行程 ID 联系支持团队。")
         case "IDEMPOTENCY_KEY_REUSE": text("The request conflicts with an earlier submission. Reload before retrying.", "此请求与先前提交冲突，请重载后再试。")
         case "invalidResponse": text("The trip response could not be verified. Reload to try again.", "无法核实行程响应，请重载后再试。")
         default: text("Connection incomplete. Your draft is retained. Reload before retrying a proposal or confirmation.", "连接未完成，本机草稿已保留。请先重载，再重试提议或确认。")
