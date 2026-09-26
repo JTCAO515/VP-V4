@@ -123,19 +123,26 @@ final class NativeAskStore {
               turns.contains(where: { $0.id == turnId }), let current = scope, session.dataScope == current else { return }
         let token = UUID(); aiAssistTokens[turnId] = token
         aiAssist[turnId] = .loading
-        let deadline = ProcessInfo.processInfo.systemUptime + 90
+        let deadline = ContinuousClock.now.advanced(by: .seconds(90))
+        let path = base + "/turns/\(turnId)/ai-assist"
         for _ in 0..<20 {
             guard !Task.isCancelled, aiAssistTokens[turnId] == token, scope == current, session.dataScope == current else { return }
-            guard ProcessInfo.processInfo.systemUptime < deadline else { break }
+            guard ContinuousClock.now < deadline else { break }
             do {
-                let data = try await session.askRequest(path: base + "/turns/\(turnId)/ai-assist", method: "POST", body: Data("{}".utf8))
+                let data = try await Self.aiAssistData(until: deadline) {
+                    try await session.askRequest(path: path, method: "POST", body: Data("{}".utf8))
+                }
                 guard aiAssistTokens[turnId] == token, scope == current, session.dataScope == current else { return }
+                try Task.checkCancellation()
+                guard ContinuousClock.now < deadline else { throw URLError(.timedOut) }
                 let reply = try JSONDecoder().decode(NativeAiAssistReply.self, from: data)
                 guard reply.data.valid else { aiAssist[turnId] = .error; return }
                 if reply.data.status == "pending" {
-                    try await Task.sleep(for: .seconds(1.5))
+                    try await Task.sleep(until: min(deadline, ContinuousClock.now.advanced(by: .seconds(1.5))), clock: .continuous)
                     continue
                 }
+                try Task.checkCancellation()
+                guard ContinuousClock.now < deadline else { throw URLError(.timedOut) }
                 aiAssist[turnId] = .done(reply.data)
                 return
             } catch {
@@ -145,6 +152,27 @@ final class NativeAskStore {
             }
         }
         if aiAssistTokens[turnId] == token { aiAssist[turnId] = .error }
+    }
+
+    /// Every poll shares one monotonic deadline, including session refresh and
+    /// transport. Cancelling the losing child also cancels URLSession's request.
+    nonisolated static func aiAssistData(
+        until deadline: ContinuousClock.Instant,
+        request: @escaping @Sendable () async throws -> Data
+    ) async throws -> Data {
+        guard ContinuousClock.now < deadline else { throw URLError(.timedOut) }
+        return try await withThrowingTaskGroup(of: Data.self) { group in
+            group.addTask { try await request() }
+            group.addTask {
+                try await Task.sleep(until: deadline, clock: .continuous)
+                throw URLError(.timedOut)
+            }
+            defer { group.cancelAll() }
+            guard let data = try await group.next() else { throw URLError(.timedOut) }
+            try Task.checkCancellation()
+            guard ContinuousClock.now < deadline else { throw URLError(.timedOut) }
+            return data
+        }
     }
 
     func reload(using session: NativeSession) async {

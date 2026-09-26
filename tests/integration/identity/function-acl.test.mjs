@@ -34,6 +34,8 @@ const AUTHENTICATED = [
   "public.list_grounded_turns(uuid,integer)",
   "public.list_service_task_turns(uuid,integer)",
   "public.list_text_turns(uuid,integer)",
+  "public.native_task_travel_pace_v1(jsonb)",
+  "public.native_travel_pace_v1(jsonb)",
   "public.native_session_v2(text,uuid)",
   "public.ops_budget_scope_read_v1(uuid)",
   "public.ops_knowledge_provenance_read_v1(jsonb)",

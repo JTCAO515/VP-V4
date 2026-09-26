@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {NextRequest} from 'next/server.js';
 import {getNativeTextConfig,nativeTextHTTP} from '../../../lib/server/turn/native-http.ts';
 const request=new NextRequest('http://127.0.0.1/api/chat/native/v1/policy');
-const names=['VERCEL_ENV','VERCEL_URL','VISEPANDA_NATIVE_STAGING','VISEPANDA_TRIP_PROTOCOL_V2','VISEPANDA_NATIVE_STAGING_TEXT','VISEPANDA_NATIVE_STAGING_TEXT_POLICY','NEXT_PUBLIC_SUPABASE_URL','NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY','VISEPANDA_NATIVE_LOCAL_TEXT','VISEPANDA_NATIVE_LOCAL_TEXT_POLICY'];
+const names=['VERCEL_ENV','VERCEL_URL','VISEPANDA_NATIVE_STAGING','VISEPANDA_TRIP_PROTOCOL_V2','VISEPANDA_NATIVE_STAGING_TEXT','VISEPANDA_NATIVE_STAGING_TEXT_POLICY','NEXT_PUBLIC_SUPABASE_URL','NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY','VISEPANDA_NATIVE_LOCAL_TEXT','VISEPANDA_NATIVE_LOCAL_TEXT_POLICY','VISEPANDA_NATIVE_PRODUCTION','VISEPANDA_NATIVE_PRODUCTION_TRIP','VISEPANDA_NATIVE_PRODUCTION_PROJECT_REF','VISEPANDA_NATIVE_PRODUCTION_ORIGIN','VISEPANDA_PUBLIC_ORIGIN','VISEPANDA_NATIVE_PRODUCTION_TEXT','VISEPANDA_NATIVE_PRODUCTION_TEXT_POLICY','VISEPANDA_NATIVE_PRODUCTION_TASK_POLICY','VISEPANDA_NATIVE_PRODUCTION_GROUNDED','VISEPANDA_NATIVE_PRODUCTION_GROUNDED_POLICY'];
 function configure(t,patch={}){
  const prior=new Map(names.map(n=>[n,process.env[n]]));t.after(()=>{for(const[n,v]of prior)v===undefined?delete process.env[n]:process.env[n]=v;});
  for(const name of names)delete process.env[name];
@@ -43,5 +43,38 @@ test('staging Ask requires exact Preview, database, explicit activation and poli
  for(const origin of ['https://vp-v4.vercel.app','https://attacker.test','http://'+host,'https://'+host+':444'])assert.equal((await nativeTextHTTP(new NextRequest(origin+'/api/chat/native/v1/policy'),'policy')).status,503);
  Object.assign(process.env,{VISEPANDA_NATIVE_STAGING:'false',NEXT_PUBLIC_SUPABASE_URL:'http://127.0.0.1:59641'});
  for(const value of ['preview','production','development']){process.env.VERCEL_ENV=value;assert.equal((await nativeTextHTTP(request,'policy')).status,503);}
+ assert.equal(calls,0);
+});
+
+test('Production Ask stays off until exact Production target, policy and text flag are selected',async t=>{
+ configure(t);let calls=0;t.mock.method(globalThis,'fetch',async()=>{calls++;throw Error('must not call');});
+ const ref='abcdefghijklmnopqrst',origin='https://go2china.space';
+ const production={VERCEL_ENV:'production',VISEPANDA_NATIVE_PRODUCTION:'true',VISEPANDA_NATIVE_PRODUCTION_TRIP:'true',
+  VISEPANDA_NATIVE_PRODUCTION_PROJECT_REF:ref,VISEPANDA_NATIVE_PRODUCTION_ORIGIN:origin,VISEPANDA_PUBLIC_ORIGIN:origin,
+  VISEPANDA_TRIP_PROTOCOL_V2:'true',NEXT_PUBLIC_SUPABASE_URL:`https://${ref}.supabase.co`,
+  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:'synthetic-public',VISEPANDA_NATIVE_PRODUCTION_TEXT:'false',
+  VISEPANDA_NATIVE_PRODUCTION_TEXT_POLICY:'AAAAAAAA-1111-4111-8111-111111111111'};
+ const remote=new NextRequest(origin+'/api/chat/native/v1/policy');
+ Object.assign(process.env,production);
+ assert.equal(getNativeTextConfig(remote),null);
+ process.env.VISEPANDA_NATIVE_PRODUCTION_TEXT='true';
+ assert.equal(getNativeTextConfig(remote)?.environment,'production');
+ assert.equal(getNativeTextConfig(remote)?.policyId,'aaaaaaaa-1111-4111-8111-111111111111');
+ assert.equal(Object.hasOwn(getNativeTextConfig(remote),'serviceRoleKey'),false);
+ for(const patch of [{VERCEL_ENV:'preview'},{VISEPANDA_NATIVE_STAGING:'true'},
+  {NEXT_PUBLIC_SUPABASE_URL:'https://dzqdzetcctkhbrhlxxgn.supabase.co'},
+  {VISEPANDA_NATIVE_PRODUCTION_TRIP:'false'},{VISEPANDA_NATIVE_PRODUCTION_TEXT:'false'},
+  {VISEPANDA_NATIVE_PRODUCTION_TEXT_POLICY:'not-a-policy'},
+  {VISEPANDA_NATIVE_PRODUCTION_ORIGIN:'https://staging.go2china.space'}]){
+  Object.assign(process.env,production,{VISEPANDA_NATIVE_PRODUCTION_TEXT:'true'},patch);
+  assert.equal(getNativeTextConfig(remote),null,JSON.stringify(patch));
+  assert.equal((await nativeTextHTTP(remote,'policy')).status,503);
+ }
+ Object.assign(process.env,production,{VISEPANDA_NATIVE_PRODUCTION_TEXT:'true'});
+ for(const url of ['https://staging.go2china.space/api/chat/native/v1/policy',
+  'https://go2china.space.attacker.test/api/chat/native/v1/policy'])
+  assert.equal(getNativeTextConfig(new NextRequest(url)),null,url);
+ assert.equal(getNativeTextConfig(remote,true),null);
+ assert.equal(getNativeTextConfig(remote,'grounded'),null);
  assert.equal(calls,0);
 });

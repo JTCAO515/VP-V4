@@ -14,6 +14,15 @@ type Profile = {
   temperatureUnit: "celsius" | "fahrenheit";
   defaultDepartureTime: string;
 };
+type PassGrant = {
+  transaction_id: string;
+  starts_at: string;
+  ends_at: string;
+  state: "active" | "revoked";
+  effective_state: "active" | "queued" | "expired" | "revoked" | "unavailable";
+  catalog_version: number;
+  policy_version: string;
+};
 const blank: Profile = {
   displayName: "",
   travelPace: "balanced",
@@ -128,6 +137,8 @@ export function ProfileWorkspace() {
     [ready, setReady] = useState(false),
     [error, setError] = useState(false),
     [saving, setSaving] = useState(false),
+    [grants, setGrants] = useState<PassGrant[]>([]),
+    [passAvailable, setPassAvailable] = useState(false),
     words = copy[locale];
   const load = async () => {
     const r = await fetch("/api/profile");
@@ -144,6 +155,12 @@ export function ProfileWorkspace() {
   }, [locale]);
   useEffect(() => {
     void load().catch(() => setError(true));
+    void fetch("/api/storekit/web/v1", { cache: "no-store" }).then(async (response) => {
+      if (!response.ok) return;
+      const payload = await response.json() as { data?: { grants?: PassGrant[] } };
+      setGrants(payload.data?.grants ?? []);
+      setPassAvailable(true);
+    }).catch(() => {});
   }, []);
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -273,6 +290,22 @@ export function ProfileWorkspace() {
             {words.save}
           </button>
         </form>
+        {passAvailable ? (
+          <section className={styles.panel} aria-label={locale === "zh" ? "Journey Pass 权益" : "Journey Pass entitlement"}>
+            <h2>{locale === "zh" ? "Journey Pass 权益" : "Journey Pass entitlement"}</h2>
+            {grants.length === 0 ? <p>{locale === "zh" ? "尚无有效购买记录" : "No purchase grants yet"}</p> : null}
+            {grants.map((grant) => (
+              <p key={grant.transaction_id} data-testid="journey-pass-grant">
+                {grant.effective_state === "active" ? (locale === "zh" ? "生效中" : "Active")
+                  : grant.effective_state === "queued" ? (locale === "zh" ? "待生效" : "Queued")
+                  : grant.effective_state === "expired" ? (locale === "zh" ? "已到期" : "Expired")
+                  : (locale === "zh" ? "已撤销或不可用" : "Revoked or unavailable")}
+                {" · "}{grant.starts_at}{" – "}{grant.ends_at}
+                {" · catalog "}{grant.catalog_version}{" / "}{grant.policy_version}
+              </p>
+            ))}
+          </section>
+        ) : null}
       </main>
     </div>
   );

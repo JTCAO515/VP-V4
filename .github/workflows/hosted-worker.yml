@@ -11,6 +11,9 @@ on:
       - 'deploy/hosted-worker/**'
       - 'tests/integration/turn/hosted-worker.test.mjs'
       - 'tests/security/turn/hosted-text-worker.test.mjs'
+      - 'tests/security/turn/hosted-secret-profile.test.mjs'
+      - 'tests/security/cost/hosted-usage-audit.test.mjs'
+      - 'scripts/acceptance/verify-hosted-file-secrets-docker.mjs'
       - '.github/workflows/hosted-worker.yml'
   workflow_dispatch:
 
@@ -45,7 +48,9 @@ jobs:
             sleep "$((attempt * 10))"
           done
       - name: Hosted worker loop, profile and CLI fail-closed checks
-        run: node --experimental-strip-types --test tests/security/turn/hosted-text-worker.test.mjs
+        run: node --experimental-strip-types --test tests/security/turn/hosted-text-worker.test.mjs tests/security/turn/hosted-secret-profile.test.mjs
+      - name: Offline hosted journal audit and receipt isolation
+        run: node --experimental-strip-types --test tests/security/cost/hosted-usage-audit.test.mjs
       - name: Hosted worker end-to-end on isolated PostgreSQL (fake provider, no remote)
         env:
           VP_TURN_DB_TEST: '1'
@@ -65,3 +70,5 @@ jobs:
           set -e
           test "$status" -eq 1
           docker image inspect vp-hosted-text-worker:ci --format '{{.Config.User}} {{.Size}}'
+      - name: Prove tmpfs file secrets stay out of Docker config, logs and journal
+        run: node scripts/acceptance/verify-hosted-file-secrets-docker.mjs vp-hosted-text-worker:ci

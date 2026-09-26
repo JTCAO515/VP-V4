@@ -7,6 +7,7 @@ export const savedAnswerCopy = {
     refresh: "Refresh answers", checking: "Checking access and sources…", unavailable: "Saved answers are unavailable. Please sign in again or try later.",
     empty: "No saved answers are available.", sources: "Sources and context", conditions: "Applies when", exclusions: "Does not cover",
     pending: "This question is still being processed.", cancelled: "This question was cancelled.", clarification: "More detail is needed. Continue this question in the app.",
+    recheckUnavailable: "Evidence for the saved answer cannot be rechecked right now. Factual content is hidden; try refreshing later.",
     placeClarification: "More than one reviewed attraction matches this name. Please provide its full official name and check the selected city in the app.",
     placeBlocked: "Current reviewed information does not support the requested attraction details. Check the full venue name, selected city and the venue's official information.",
     placePartial: "Reviewed attraction details are shown below. Other requested details remain unanswered; check them with the venue.",
@@ -34,6 +35,7 @@ export const savedAnswerCopy = {
     refresh: "刷新回答", checking: "正在核对访问权限和来源…", unavailable: "暂时无法读取已保存的回答，请重新登录或稍后再试。",
     empty: "暂无可读取的已保存回答。", sources: "来源与上下文", conditions: "适用条件", exclusions: "不包含",
     pending: "这个问题仍在处理中。", cancelled: "这个问题已取消。", clarification: "还需要更多信息，请在 App 中继续这个问题。",
+    recheckUnavailable: "当前无法重新核对已保存答案的依据，事实内容已隐藏；请稍后刷新重试。",
     placeClarification: "这个名称匹配到多个已审核景点。请在 App 中提供完整官方名称，并核对所选城市。",
     placeBlocked: "当前已审核信息不足以支持所问的景点详情。请核对场馆完整名称、所选城市及场馆官方信息。",
     placePartial: "以下是有依据的景点信息，其他所问内容尚未回答，请向场馆核对。",
@@ -58,12 +60,12 @@ export const savedAnswerCopy = {
 } as const;
 
 /** Queue terminal states can precede any grounded result; they are never ongoing work. */
-export function savedAnswerNotice(turn: SavedTurn): "pending" | "cancelled" | "failed" | "blocked" | "clarification" | "partial" | "paymentPartial" | "paymentBlocked" | "connectivityPartial" | "connectivityBlocked" | "placeClarification" | "placeBlocked" | "placePartial" | "placeHoursMissing" | "placeAddressMissing" | null {
+export function savedAnswerNotice(turn: SavedTurn): "pending" | "cancelled" | "failed" | "recheckUnavailable" | "blocked" | "clarification" | "partial" | "paymentPartial" | "paymentBlocked" | "connectivityPartial" | "connectivityBlocked" | "placeClarification" | "placeBlocked" | "placePartial" | "placeHoursMissing" | "placeAddressMissing" | null {
   const payment = turn.questionId?.startsWith("payment_") === true;
   const connectivity = turn.questionId?.startsWith("connectivity_") === true;
   const place = turn.questionId?.startsWith("place_") === true || turn.placeResolution !== undefined;
   if (turn.projection === "pending") return turn.status === "cancelled" ? "cancelled" : turn.status === "failed" ? "failed" : "pending";
-  if (turn.projection === "unavailable") return place ? "placeBlocked" : connectivity ? "connectivityBlocked" : payment ? "paymentBlocked" : "blocked";
+  if (turn.projection === "unavailable") return "recheckUnavailable";
   if (turn.outcome === "clarification") return turn.placeResolution === "ambiguous" ? "placeClarification" : "clarification";
   if (turn.outcome === "technical_failure") return "failed";
   if (turn.outcome === "blocked" || !turn.facts.length) return place ? "placeBlocked" : connectivity ? "connectivityBlocked" : payment ? "paymentBlocked" : "blocked";
@@ -75,8 +77,9 @@ export function savedAnswerNotice(turn: SavedTurn): "pending" | "cancelled" | "f
 export const savedClaimGapCopy = {
   en: {
     title: "Points without current support",
+    nextStep: "Next step:",
     claims: {
-      original_valid_booking_id: "Booking ID",
+      original_valid_booking_id: "Original identity document used for booking",
       valid_ticket_not_itinerary_or_receipt: "Itinerary and receipt as ticket proof",
       merchant_acceptance_check: "Checking card acceptance",
       supported_card_merchant_qr_payment: "Mobile merchant payments",
@@ -86,6 +89,18 @@ export const savedClaimGapCopy = {
       plan_allowance_check: "Checking call and data allowances",
       place_address: "Attraction address",
       opening_hours: "Today’s opening time",
+    },
+    nextSteps: {
+      original_valid_booking_id: "Check the current accepted ID requirements with the railway before boarding.",
+      valid_ticket_not_itinerary_or_receipt: "Check the railway’s current ticket and boarding proof rules before travelling.",
+      merchant_acceptance_check: "Ask the merchant which payment methods it currently accepts before paying.",
+      supported_card_merchant_qr_payment: "Check the payment app’s current setup prompts and whether the merchant accepts that method.",
+      international_card_atm_withdrawal: "Check your card issuer’s withdrawal terms and the ATM’s displayed options before withdrawing.",
+      marked_currency_exchange: "Check current exchange availability and requirements with the outlet before visiting.",
+      passport_or_foreign_permanent_resident_id: "Confirm the current application documents with the mobile carrier before applying.",
+      plan_allowance_check: "Check the carrier’s current plan details before choosing a SIM.",
+      place_address: "Confirm the venue’s current address through its official information before travelling.",
+      opening_hours: "Check the venue’s official opening information for today before visiting.",
     },
     reasons: {
       missing: "No published support was found for this point.",
@@ -98,6 +113,7 @@ export const savedClaimGapCopy = {
   },
   zh: {
     title: "尚缺当前依据的要点",
+    nextStep: "下一步：",
     claims: {
       original_valid_booking_id: "购票证件",
       valid_ticket_not_itinerary_or_receipt: "行程单和报销凭证是否可作车票",
@@ -109,6 +125,18 @@ export const savedClaimGapCopy = {
       plan_allowance_check: "核对通话和流量额度",
       place_address: "景点地址",
       opening_hours: "今日开放时间",
+    },
+    nextSteps: {
+      original_valid_booking_id: "乘车前向铁路官方渠道核对当前认可的身份证件要求。",
+      valid_ticket_not_itinerary_or_receipt: "出行前向铁路官方渠道核对当前车票与进站凭证规则。",
+      merchant_acceptance_check: "付款前向商户确认目前受理哪些支付方式。",
+      supported_card_merchant_qr_payment: "查看支付应用当前开通提示，并向商户确认是否受理该方式。",
+      international_card_atm_withdrawal: "取款前向发卡行核对取现条款，并查看 ATM 显示的可用选项。",
+      marked_currency_exchange: "到访前向兑换网点核对当前服务及办理要求。",
+      passport_or_foreign_permanent_resident_id: "办理前向通信运营商确认当前申请证件要求。",
+      plan_allowance_check: "选择 SIM 卡前核对运营商当前套餐详情。",
+      place_address: "出发前通过场馆官方信息确认当前地址。",
+      opening_hours: "到访前查看场馆今天的官方开放信息。",
     },
     reasons: {
       missing: "尚未找到支持这一要点的已发布信息。",

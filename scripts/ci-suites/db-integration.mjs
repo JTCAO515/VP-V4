@@ -59,6 +59,7 @@ export const LANES = {
           VP_GROUNDED_TURN_DB_TEST: "1",
           VP_INTAKE_POSTGRES: "1",
           VP_PLACE_QUOTA_DB_TEST: "1",
+          VP_MEMORY_DB_TEST: "1",
         },
         files: [
           "tests/integration/community/review.test.mjs",
@@ -67,6 +68,7 @@ export const LANES = {
           "tests/integration/knowledge/grounded-turn.test.mjs",
           "tests/integration/knowledge/question.test.mjs",
           "tests/integration/maps/place-quota.test.mjs",
+          "tests/integration/memory/travel-pace.test.mjs",
           "tests/integration/notifications/storage.test.mjs",
           "tests/integration/observability/ops-ledger.test.mjs",
           "tests/integration/privacy/trip-deletion.test.mjs",
@@ -98,6 +100,7 @@ export const LANES = {
           "tests/integration/identity/function-acl.test.mjs",
           "tests/integration/identity/pending-proposal-read.test.mjs",
           "tests/integration/identity/profile-privacy-rpc.test.mjs",
+          "tests/integration/entitlements/storekit-ledger.test.mjs",
           "tests/integration/trip/confirm-apply.test.mjs",
           "tests/integration/trip/proposal-reject.test.mjs",
           "tests/integration/trip/proposal-revision.test.mjs",

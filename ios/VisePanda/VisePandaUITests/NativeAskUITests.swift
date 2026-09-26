@@ -9,6 +9,84 @@ nonisolated final class NativeAskUITests: XCTestCase {
 
     @MainActor func testEnglishGroundedAnswerAndRelaunch() throws { try exercise(locale: "en", userKey: "VP_NATIVE_TEXT_UI_EN_EMAIL", grounded: true) }
     @MainActor func testChineseGroundedAnswerAndRelaunch() throws { try exercise(locale: "zh-Hans", userKey: "VP_NATIVE_TEXT_UI_ZH_EMAIL", grounded: true) }
+    @MainActor func testEnglishGroundedBackgroundNetworkReconnect() async throws {
+        try await exerciseBackgroundReconnect()
+    }
+
+    @MainActor private func exerciseBackgroundReconnect() async throws {
+        let environment = ProcessInfo.processInfo.environment
+        guard environment["VP_NATIVE_GROUNDED_TEST"] == "1" else { throw XCTSkip("UNRUN: disposable grounded environment required") }
+        continueAfterFailure = false
+        let api = try XCTUnwrap(environment["VP_NATIVE_TEXT_API_URL"])
+        let control = try XCTUnwrap(environment["VP_NATIVE_GROUNDED_READ_CONTROL_URL"])
+        let model = try XCTUnwrap(environment["VP_NATIVE_TEXT_CONTROL_URL"])
+        let app = XCUIApplication()
+        app.launchArguments = ["-VisePandaNativeAPI", api, "-VisePandaGroundedMode", "-VisePandaLocale", "en", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        defer { setReadGate("resume-events", url: control) }
+        app.tabBars.buttons["Profile"].tap()
+        let signOut = app.buttons["Sign out"]
+        if signOut.waitForExistence(timeout: 2) { reveal(signOut, app); signOut.tap() }
+        let email = app.textFields["native.login.email"]
+        XCTAssertTrue(email.waitForExistence(timeout: 15)); reveal(email, app); email.tap()
+        email.typeText(try XCTUnwrap(environment["VP_NATIVE_TEXT_UI_RECONNECT_EMAIL"]))
+        let password = app.secureTextFields["native.login.password"]
+        reveal(password, app); password.tap(); password.typeText("VPJ07-Local-Synthetic-Only-195!")
+        let login = app.buttons["native.login.submit"]; reveal(login, app); login.tap()
+        let active = expectation(for: NSPredicate(format: "label == %@", "Session active"), evaluatedWith: app.staticTexts["native.session.status"])
+        await fulfillment(of: [active], timeout: 30)
+        app.tabBars.buttons["Ask"].tap()
+        let agree = app.switches["native-ask.agree"]
+        XCTAssertTrue(agree.waitForExistence(timeout: 20)); reveal(agree, app); agree.tap()
+        let accept = app.buttons["native-ask.accept"]; reveal(accept, app); accept.tap()
+        let input = app.descendants(matching: .any).matching(identifier: "native-ask.input").firstMatch
+        XCTAssertTrue(input.waitForExistence(timeout: 20)); reveal(input, app); input.tap()
+        input.typeText("Synthetic HOLD native stream document question")
+        app.buttons["native-ask.send"].tap()
+        let cancel = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "native-ask.cancel.")).firstMatch
+        XCTAssertTrue(cancel.waitForExistence(timeout: 20))
+        let turnId = String(cancel.identifier.dropFirst("native-ask.cancel.".count))
+        let pendingURL = try XCTUnwrap(URL(string: model)?.deletingLastPathComponent().appendingPathComponent("pending"))
+        var pending = false
+        for _ in 0..<50 {
+            let (data, _) = try await URLSession.shared.data(from: pendingURL)
+            pending = ((try JSONSerialization.jsonObject(with: data) as? [String: Int])?["count"] ?? 0) == 1
+            if pending { break }
+            try await Task.sleep(for: .milliseconds(100))
+        }
+        XCTAssertTrue(pending, "The accepted task must be held inside the model attempt")
+        let observationURL = try XCTUnwrap(URL(string: control)?.deletingLastPathComponent().appendingPathComponent("__event-observation"))
+        var initialSeen = false
+        for _ in 0..<30 {
+            let (data, _) = try await URLSession.shared.data(from: observationURL)
+            let requests = (try JSONSerialization.jsonObject(with: data) as? [String: Any])?["requests"] as? [[String: String]] ?? []
+            initialSeen = requests.contains { $0["turnId"] == turnId && $0["cursor"] == "0" }
+            if initialSeen { break }
+            try await Task.sleep(for: .milliseconds(100))
+        }
+        XCTAssertTrue(initialSeen)
+        try await Task.sleep(for: .milliseconds(500))
+        setReadGate("drop-events", url: control)
+        XCUIDevice.shared.press(.home)
+        setReadGate("resume-events", url: control)
+        app.activate()
+        var resumed = false
+        for _ in 0..<100 {
+            let (data, _) = try await URLSession.shared.data(from: observationURL)
+            let requests = (try JSONSerialization.jsonObject(with: data) as? [String: Any])?["requests"] as? [[String: String]] ?? []
+            resumed = requests.contains { $0["turnId"] == turnId && ($0["cursor"] ?? "0") != "0" }
+            if resumed { break }
+            try await Task.sleep(for: .milliseconds(100))
+        }
+        XCTAssertTrue(resumed, "Foreground must reconnect the same Turn from its acknowledged cursor")
+        _ = try await URLSession.shared.data(from: try XCTUnwrap(URL(string: model)))
+        let answer = app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH %@", "knowledge.note.")).firstMatch
+        XCTAssertTrue(answer.waitForExistence(timeout: 30)); reveal(answer, app)
+        XCTAssertTrue(answer.label.contains("Synthetic reviewed"))
+        XCTAssertTrue(app.staticTexts["Synthetic HOLD native stream document question"].exists)
+        XCTAssertFalse(app.buttons["native-ask.cancel.\(turnId)"].exists)
+        capture("Grounded-background-reconnect-en", app)
+    }
 
     @MainActor func testEnglishMessageOpensOutlineAndReturnsToInput() throws { try exercise(locale: "en", userKey: "VP_NATIVE_TEXT_UI_EN_EMAIL", planning: true) }
     @MainActor func testChineseMessageOpensOutlineAndReturnsToInput() throws { try exercise(locale: "zh-Hans", userKey: "VP_NATIVE_TEXT_UI_ZH_EMAIL", planning: true) }
@@ -145,7 +223,14 @@ nonisolated final class NativeAskUITests: XCTestCase {
         wait(for: [completed], timeout: 5)
     }
     @MainActor private func reveal(_ element: XCUIElement, _ app: XCUIApplication) {
-        for _ in 0..<12 where !element.isHittable { app.swipeUp() }
+        let scroll = app.scrollViews.firstMatch
+        for _ in 0..<12 where !element.isHittable {
+            if scroll.exists {
+                let from = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.38))
+                let to = scroll.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.08))
+                from.press(forDuration: 0.05, thenDragTo: to)
+            } else { app.swipeUp() }
+        }
         XCTAssertTrue(element.isHittable)
     }
     @MainActor private func capture(_ name: String, _ app: XCUIApplication) {

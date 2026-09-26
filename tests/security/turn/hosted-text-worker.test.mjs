@@ -47,6 +47,24 @@ test('disabled switch performs no discovery or claim and the loop keeps signalli
  assert.equal(states.at(-1),'stopped');assert.ok(states.includes('disabled'));
 });
 
+test('file-mode first heartbeat must still be disabled after read-only precheck',async()=>{
+ let discovery=0,claims=0;
+ const result=await runHostedTextLoop({...settings,requireInitialDisabled:true},{
+  heartbeat:async()=>({enabled:true}),readyGroups:async()=>{discovery++;return [];},
+  workerFor:()=>{claims++;return null;},record:async()=>{},wait:async()=>{},
+ },new AbortController().signal);
+ assert.equal(result.reason,'unavailable');assert.equal(discovery,0);assert.equal(claims,0);assert.equal(result.polls,0);
+});
+
+test('file-mode first disabled heartbeat arms later explicit enable',async()=>{
+ const controller=new AbortController();let beats=0,discovery=0;
+ const result=await runHostedTextLoop({...settings,requireInitialDisabled:true},{
+  heartbeat:async()=>({enabled:++beats>1}),readyGroups:async()=>{discovery++;controller.abort();return [];},
+  workerFor:()=>null,record:async()=>{},wait:async()=>{},
+ },controller.signal);
+ assert.equal(result.reason,'stopped');assert.equal(discovery,1);assert.ok(beats>=2);
+});
+
 test('one owner runs sequentially; different owners run concurrently within the bound',async()=>{
  const controller=new AbortController();let active=new Map(),maxByOwner=0,maxTotal=0,total=0,cycles=0;
  const groups=[{o:'A'},{o:'A'},{o:'B'},{o:'C'},{o:'C'}];
@@ -120,6 +138,7 @@ async function cli(t,{env={},mapper=null,journalMode=0o700,wait=null}={}){
 
 test('CLI fails closed before any I/O without every explicit prerequisite',async t=>{
  for(const env of [{VISEPANDA_HOSTED_TEXT_WORKER:''},{VERCEL_ENV:'preview'},{VISEPANDA_HOSTED_WORKER_DB_KEY:''},{VISEPANDA_HOSTED_WORKER_QWEN_KEY:CANARY_DB},
+  {VISEPANDA_HOSTED_WORKER_SECRET_MODE:'files'},{VISEPANDA_HOSTED_WORKER_SECRET_MODE:'unexpected'},
   {VISEPANDA_HOSTED_WORKER_PROFILE:'{}'},{VISEPANDA_HOSTED_WORKER_PROFILE:JSON.stringify(profile({modes:['x']}))},{VISEPANDA_HOSTED_WORKER_JOURNAL_DIR:'relative'},
   {VISEPANDA_HOSTED_WORKER_BUILD:'bad build'},{VISEPANDA_QWEN_ENDPOINT:'https://evil.example/v1'},{VISEPANDA_HOSTED_WORKER_HEALTH_PORT:'0'}]){
   const r=await cli(t,{env,mapper:'globalThis.fetch=async()=>{throw Error("no network expected");};'});
@@ -149,4 +168,20 @@ test('CLI serves disabled heartbeat, exposes content-free health and drains on S
  assert.equal(r.files.length,1);assert.match(r.files[0],/^hosted-.*\.jsonl$/);
  const phases=r.journal.trim().split('\n').map(line=>JSON.parse(line).phase);
  assert.equal(phases[0],'started');assert.equal(phases.at(-1),'returned');assert.ok(phases.includes('disabled'));
+});
+
+test('hosted discovery accepts a dedicated Supabase secret key without a Bearer header',async t=>{
+ const key='sb_secret_synthetic_hosted_only',port=String(40000+Math.floor(Math.random()*20000));
+ const mapper=`globalThis.fetch=async(url,options)=>{
+  if(options.headers.apikey!==${JSON.stringify(key)}||Object.hasOwn(options.headers,'authorization'))throw Error('wrong headers');
+  if(url==='https://dzqdzetcctkhbrhlxxgn.supabase.co/rest/v1/rpc/hosted_worker_heartbeat')return Response.json({kind:'ok',enabled:false});
+  throw Error('unexpected route');};`;
+ const r=await cli(t,{mapper,env:{VISEPANDA_HOSTED_WORKER_DB_KEY:key,VISEPANDA_HOSTED_WORKER_HEALTH_PORT:port},wait:async child=>{
+  for(let i=0;i<100;i++){
+   try{const response=await fetch('http://127.0.0.1:'+port+'/healthz');if((await response.json()).status==='disabled')break;}catch{}
+   await new Promise(resolve=>setTimeout(resolve,50));
+  }
+  child.kill('SIGTERM');
+ }});
+ assert.equal(r.code,0,r.stderr);assert.ok(!r.stdout.includes(key));assert.ok(!r.journal.includes(key));
 });

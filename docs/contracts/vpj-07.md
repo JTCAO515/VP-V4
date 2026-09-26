@@ -471,6 +471,33 @@ Profile `vpj07-hosted-text-worker/1` is a closed, non-secret JSON environment va
 qualified by the existing job validator. Secrets come only from
 `VISEPANDA_HOSTED_WORKER_DB_KEY` and `VISEPANDA_HOSTED_WORKER_QWEN_KEY`, are removed
 from `process.env` after reading, and never reach stdout, stderr or the journal.
+The worker sends a dedicated Supabase `sb_secret_` key only in `apikey`; the legacy
+service-role JWT retains its existing `apikey` plus Bearer headers ([Supabase key migration](https://supabase.com/docs/guides/getting-started/migrating-to-new-api-keys)). A publishable
+key fails before RPC I/O. Both secret forms run with project-wide `service_role`
+authority and bypass RLS; a dedicated key limits credential reuse and permits
+independent revocation, not database permissions. Actual Staging authorization
+must be verified before activation.
+For the bounded S1 synthetic smoke, explicit `VISEPANDA_HOSTED_WORKER_SECRET_MODE=files`
+rejects both credential environment variables and reads only fixed
+`/run/vp-worker-secrets/db.key` and `qwen.key`. The directory must be a Linux
+tmpfs owned by the Node uid/gid 1000 with mode 0700; both files must be
+regular, one-link, no-symlink uid/gid 1000 mode 0400, ASCII-only and distinct.
+No file value enters `process.env` or Docker Config.Env. The original env
+mode remains compatible and cannot silently fall back from invalid file
+mode. `ecs-worker-files.sh` starts only with no prior worker/candidate/previous
+container, with Docker restart disabled. A host reboot erases `/run`; no
+new worker claims occur until keys are safely reinjected and an operator
+rechecks the SQL switch, owner scope/policy and queue. The SQL switch itself
+may still be enabled after an abrupt host loss, so disable it before any
+manual restart. File mode also makes a bounded read-only
+`read_hosted_worker_status()` check requiring `enabled=false` before it
+creates a journal. Its **first actual SQL heartbeat** must still observe
+disabled; if the switch was already on or flips in that interval, it exits
+unavailable with no discovery, claim or provider call. Only a later explicit
+operator enable after that disabled heartbeat can arm work. The fsync
+journal remains on persistent private storage;
+tmpfs must not be substituted for it. This path is repository preparation,
+not actual ECS or supplier acceptance.
 The process refuses to start without `VISEPANDA_HOSTED_TEXT_WORKER=true`, with any
 `VERCEL_ENV`, with equal/missing keys, an invalid profile/endpoint/build label, or a
 journal directory that is not absolute and free of group/other write permission.
@@ -486,9 +513,14 @@ The journal is one new 0600 file per process in the journal directory. It record
 the start profile, each group's exact job configuration once (`vpj07-hosted-job/1`,
 `jobDigest = sha256(JSON.stringify(job))`), usage receipts keyed by that digest,
 knowledge-validation reasons, provider destination metadata and cycle counts. It never
-records input, answer or credentials. The existing single-config reconciliation CLI
-cannot yet consume this journal; until a per-group adapter exists, unknown holds stay
-pending at their full reservation.
+records input, answer or credentials. `audit-hosted-text-usage.mjs` reads one private
+resident journal, verifies each exact group job, receipt price and attempt identity,
+and writes a private per-group report without credentials or network access. That
+report records journal evidence only: it cannot establish the ledger's current
+pending/settled state and never calls `finish_model_budget`. Unknown holds remain
+pending at their full reservation until a separate authorized ledger comparison and
+settlement. The original single-config reconciliation CLI does not accept resident
+journals.
 
 Operations RPCs (service_role only; anon/authenticated denied):
 `set_hosted_worker_enabled(p_enabled, p_reason)` and `read_hosted_worker_status()`

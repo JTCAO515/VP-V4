@@ -1,41 +1,60 @@
 # 常驻文本 worker：Staging 激活方案（VPJ-07 #195）
 
-状态：**方案，未执行**。本文件不授权任何远端写入、账号开通、部署或付费调用；每一步需 JT/协调者按
-[继续执行政策](../agents/continuous-afk-execution.md) 单独批准。Production 不在本方案范围。
+状态：**阿里云香港 ECS 部署准备，未执行**。JT 已选用现有 Ubuntu 22.04 香港 ECS；2026-09-25
+只读检查观察到约 1.7 GiB 内存、40 GB 磁盘、仅 SSH 22 监听。协调线程随后在 ECS 使用 Ubuntu apt
+仓库安装 `docker.io`，Docker Server 29.1.3 已运行，并将当时 main `f7ec21a4` 浅克隆到 `/opt/vp-v4`。
+无凭据 HTTPS 探测到 Staging Supabase 返回 401、DashScope endpoint 返回 400：只证明对应出站路径可达，
+不证明认证、权限、模型调用、镜像运行或 Staging 验收。本 runbook 不授权其他远端写入、
+共享数据库操作或付费调用；实际操作遵守[继续执行政策](../agents/continuous-afk-execution.md)。Production 不在范围。
 
 代码：`lib/server/jobs/hosted-text-worker.ts`、`lib/server/jobs/run-hosted-text-worker.mjs`、
 迁移 `supabase/migrations/20260923090000_vpj_07_hosted_text_worker.sql`、镜像
-`deploy/hosted-worker/Dockerfile`。契约见 [VPJ-07 常驻 worker](../contracts/vpj-07.md#hosted-resident-text-worker)。
+`deploy/hosted-worker/Dockerfile`、`deploy/hosted-worker/ecs-worker.sh`。契约见
+[VPJ-07 常驻 worker](../contracts/vpj-07.md#hosted-resident-text-worker)。
+仅合成 S1 文件密钥模式使用 `deploy/hosted-worker/ecs-worker-files.sh`，不得拿旧脚本替代。
+当前目标环境的价格、过期 policy/consent、单 owner 窄预算及逐步授权门槛见
+[2026-09-25 激活审查方案](hosted-text-worker-activation-review-20260925.md)。
 
 ## 1. 部署形态选择
 
 | 形态 | 取件延迟 | 取消/崩溃恢复 | 与现有 lease/预算语义 | 未知费用追溯 | 网络 | 结论 |
 | --- | --- | --- | --- | --- | --- | --- |
-| **小型常驻容器（选定）** | 轮询 1–5 s；有进展时立即下一轮 | SIGTERM 排空；SIGKILL 由 SQL lease 到期接管（已在 Staging 验证过同一路径） | 完全复用：现有 CLI 本就是常驻轮询进程，只把“单一 owner/policy 配置”换成 SQL 发现 | 持久卷上的 fsync 元数据 journal（含每组 job 配置与 usage receipt；按组对账工具适配为后续项） | 放在新加坡，与 Staging Supabase 同区；到北京 DashScope 跨境一跳 | 采用 |
+| **香港 ECS 单容器（JT 已选）** | 轮询 1–5 s；有进展时立即下一轮 | SIGTERM 排空；异常退出由容器重启，未完成 lease 到期后接管 | 复用现有 SQL 发现、预算与围栏 | 宿主私有目录绑定挂载，fsync 元数据 journal；离线按组收据审计可用，账本对账仍需授权 | 香港到 Staging Supabase 和北京 DashScope 的实际连通与延迟待测 | 采用 |
 | Vercel Cron 有界批处理 | Cron 最小 1 分钟，用户最坏等 60 s | 函数时限到期即被杀；在途 dispatch 变为 pending（#491 同类时长问题） | 需放开 scoped worker 对 `VERCEL_ENV` 的拒绝，改变既有安全前提 | 无持久文件系统，usage receipt 无处 fsync | Vercel 区域不可控 | 不采用 |
 | Supabase pg_cron + Edge Function | 同为分钟级（或需 pg_net 触发） | Edge 墙钟上限，Deno 运行时 | 需把 Node 代码（fs journal、node:crypto、type stripping 导入）移植到 Deno | 同上，无持久 journal | provider 密钥进入数据库项目，出口区域不可控 | 不采用 |
 
-选定理由：常驻容器与已验证的 lease/claim/budget/journal 语义一一对应，唯一新增的是“多 owner/多
-policy 发现 + 运营停用开关 + 心跳”；延迟最低；不需要改动任何已有安全拒绝条件。代价是一个新的托管账号
-（需 JT 批准）和一个镜像的运维。
-
-推荐宿主（任选其一，需 JT 决定并由人开通账号）：Fly.io `sin` 区单机（shared-cpu-1x/256MB + 1 GB volume），
-或阿里云新加坡 SAE/ECS。只需要出站 HTTPS 到 Staging Supabase 与 DashScope；无入站端口。
+宿主固定为上述香港 ECS。无需开放 worker 入站端口；健康探针只在容器内部访问 loopback。
+`--restart unless-stopped` 会在 worker 到达最长 24 小时寿命并正常退出后重新启动；手动 `stop` 后不会自行恢复。
+Docker 不会因健康状态变为 `unhealthy` 自动重启容器，需监测并排查 SQL 心跳与日志。
+**当前 ECS 系统盘未加密；下列 `/etc` env-file + Docker `--env-file` 路径不得接收真实 Key。**
+仅 S1 合成 Staging 烟测的 `/run` tmpfs 文件密钥候选与残余 journal 风险，见
+[激活审查方案](hosted-text-worker-activation-review-20260925.md#host-storage-and-ip-decision-before-any-real-key)。
+该候选的仓库实现与本地合成 Docker 验证不构成 ECS 真实密钥/运行验收；
+旧 `ecs-worker.sh` 仍不能在当前盘上执行真实启动。
 
 ## 2. 需要的配置（名称；值不入库、不入聊天）
 
-容器（秘密放宿主的 secret store）：
+容器（秘密仅放宿主 `/etc/visepanda/hosted-text-worker.env`，root:root、0600；不得提交、打印、
+粘贴到聊天或 shell 历史。Docker 管理权限等同可读取容器配置与秘密，不给非受信任用户 Docker 权限）：
 
 | 变量 | 类型 | 说明 |
 | --- | --- | --- |
 | `VISEPANDA_HOSTED_TEXT_WORKER` | 开关 | 必须为 `true`，否则进程直接退出 1 |
-| `VISEPANDA_HOSTED_WORKER_DB_KEY` | **秘密** | Staging service_role key（与现有 `VISEPANDA_STAGING_TEXT_WORKER_KEY` 同类） |
-| `VISEPANDA_HOSTED_WORKER_QWEN_KEY` | **秘密** | VP-v4 Qwen 按量 API key（与现有 `VISEPANDA_STAGING_TEXT_PROVIDER_KEY` 同类） |
+| `VISEPANDA_HOSTED_WORKER_DB_KEY` | **秘密** | 优先为 ECS 单独创建可单独撤销的 Staging `sb_secret_` key；它仍映射 project-wide `service_role`、绕过 RLS，不是细粒度数据库授权。旧 service_role JWT 仅作为兼容后备 |
+| `VISEPANDA_HOSTED_WORKER_QWEN_KEY` | **秘密** | 北京默认业务空间的新 ECS 独立按量 Key；现有 `VP-v4` 是旧 Key 描述，不是独立业务空间。自定义 IP 默认全放通，必须按激活方案收窄；精确模型快照权限尚未验收 |
 | `VISEPANDA_HOSTED_WORKER_PROFILE` | 非秘密 JSON | 见下；内含价目版本/费率/预留/超时/configurationId，≤16 KB |
 | `VISEPANDA_QWEN_ENDPOINT` | 可选 | 不设=旧北京端点；设置则必须与 Staging policy 的 `endpoint` 完全相同，否则所有组被跳过 |
 | `VISEPANDA_HOSTED_WORKER_BUILD` | 可选 | 镜像构建时由 `BUILD_ID` 写入（git 短 SHA） |
 | `VISEPANDA_HOSTED_WORKER_JOURNAL_DIR` | 默认 `/var/lib/vp-worker/journal` | 必须是持久卷、属主 uid 1000、权限 0700 |
-| `VISEPANDA_HOSTED_WORKER_HEALTH_PORT` / `_HOST` | 可选 | 平台健康检查用 `GET /healthz`；宿主需要时设 `0.0.0.0`，不对公网暴露 |
+| `VISEPANDA_HOSTED_WORKER_HEALTH_PORT` / `_HOST` | 脚本设置 | 容器内 `127.0.0.1:8765/healthz`；不映射宿主端口 |
+
+文件密钥模式与上表的 env 密钥方式互斥。`VISEPANDA_HOSTED_WORKER_SECRET_MODE=files`
+仅作为非秘密模式标记进入 Docker Config.Env；两个真实值只由 worker 从
+`/run/vp-worker-secrets/db.key`、`qwen.key` 读取。容器目录/文件分别要求
+uid/gid 1000 的 0700/0400，宿主该目录必须是 tmpfs 且 swap 为空；
+`ecs-worker-files.sh` 会做无值的权限/大小/挂载预检。非秘密 profile 单独存于
+`/etc/visepanda/hosted-profile.json` root:root 0600，内容会出现在容器配置，
+不得在其中放用户标识、正文或凭据。
 
 Profile 模板（值须在激活前由 JT 核准；费率沿用已记录的保守 Qwen 价目）：
 
@@ -57,21 +76,44 @@ Vercel Staging（**已有**，本 PR 不改）：`VISEPANDA_NATIVE_STAGING=true`
 启用、未冻结、未过期的 `model_budget_scopes`，其 `qwen` provider limit 的 `model`/`price_version`
 与 profile 一致。没有或多于一个匹配 scope 的 owner 被跳过（心跳 `skipped` 计数上升，Turn 保持 queued）。
 
-## 3. 部署步骤（均待批准）
+## 3. 部署与替换（实际远端动作待授权）
 
-1. **迁移**（Staging 写窗口）：备份后应用 `20260923090000_vpj_07_hosted_text_worker.sql`。它只新增两张私有表
-   和四个 service-only RPC，开关默认 **disabled**，不改任何现有行/函数。核对：
-   `select public.hosted_worker_ready_groups(1)` 以 service_role 返回 `{"kind":"disabled"}`；
-   anon/authenticated 执行四个 RPC 均 `permission denied`。
-2. **镜像**：在已合并 main 上
-   `docker build -f deploy/hosted-worker/Dockerfile --build-arg BUILD_ID=$(git rev-parse --short=12 HEAD) -t <registry>/vp-hosted-text-worker:<sha> .`；
-   记录基础镜像 digest 与镜像 digest。
-3. **宿主**：新加坡 1 个实例，挂 1 GB 持久卷到 journal 目录，写入上表 secret/env，重启策略
-   `on-failure` 带退避，停止宽限 ≥ `drainMs`+15 s。
-4. **启动（仍停用）**：`read_hosted_worker_status()` 显示该 workerId、`phase=disabled`、`lastSeenAt` 每轮刷新；
-   日志只有 `vpj07-hosted-worker/1` 启动行。
-5. **打开开关**：`select public.set_hosted_worker_enabled(true,'staging activation #195')`。
-6. 按第 4 节验证；任何一项失败立即执行回滚第 1 步。
+1. ECS 已使用 Ubuntu apt 仓库的 `docker.io` 安装 Docker Server 29.1.3。执行前再核对
+   `docker version`、daemon、`uname -m` 和剩余磁盘；无需重新安装 Docker。Worker 不新增入站规则
+   或端口；现有安全组另行审查。已有无凭据 HTTPS 401/400 仅作网络连通证据。
+2. 在 ECS 本地以 root 安全写入 `/etc/visepanda/hosted-text-worker.env`，设置 0600；每个变量占一行
+   `NAME=value`，其中 profile JSON 单行。该文件不随镜像、Git 或 journal 传输。先以已核准的
+   `current_input_v1` 与保守并发/预算启动。由管理员离线保存该文件的受控备份，轮换密钥时替换该文件
+   并重新运行脚本。不要在 `docker run -e NAME=value`、命令行参数或 shell 输出中放密钥。
+3. 在 ECS 的 `/opt/vp-v4` 将干净 main 快进到包含本 PR 的已合并提交，核对当前 commit 与
+   `uname -m`；`x86_64` 用 `linux/amd64`，`aarch64` 用 `linux/arm64`。直接在 ECS 构建镜像：
+
+   ```bash
+   cd /opt/vp-v4
+   git status --short # 应无输出；若有改动，先查明归属，不覆盖
+   git fetch origin main
+   git switch main
+   git merge --ff-only origin/main
+   sha=$(git rev-parse --short=12 HEAD)
+   platform=linux/amd64 # 仅当 uname -m 为 x86_64；aarch64 改用 linux/arm64
+   docker build --platform "$platform" -f deploy/hosted-worker/Dockerfile --build-arg BUILD_ID="$sha" -t "vp-hosted-text-worker:$sha" .
+   docker image inspect --format '{{.Id}} {{.Architecture}}' "vp-hosted-text-worker:$sha"
+   ```
+
+   记录基础镜像 digest、生成的镜像 ID 与实际架构。镜像不经 tar 中转；保留上一已知可用
+   镜像 tag 与 journal，并监测 40 GB 根盘。构建后原代码与部署脚本同处该 checkout。
+4. **数据库仍停用时**，先完成本迁移的备份与授权写窗口。应用
+   `20260923090000_vpj_07_hosted_text_worker.sql` 后，以 service_role 确认
+   `hosted_worker_ready_groups(1)` 返回 disabled，并确认 anon/authenticated 无四个 RPC 执行权限。
+   迁移只追加私有表/RPC，开关默认 disabled；不得从仓库文件推断共享库已应用。
+5. ECS 上 `bash deploy/hosted-worker/ecs-worker.sh preflight`，再
+   `bash deploy/hosted-worker/ecs-worker.sh replace "$sha"`。
+   脚本要求 root、已加载的 SHA 标签镜像、私有 env 文件和 uid 1000/0700 journal 目录；运行容器
+   只读根文件系统、无新增能力、768 MiB 内存上限、不发布端口、75 秒停止宽限。
+   `bash deploy/hosted-worker/ecs-worker.sh status` 应显示 running/healthy；`read_hosted_worker_status()` 应显示 workerId、
+   `phase=disabled`、新鲜 `lastSeenAt`。`healthy` 在 disabled 状态同样可能出现，只证明 SQL 心跳可达。
+6. 在获准的 Staging 操作窗口执行 `set_hosted_worker_enabled(true,'staging activation #195')`，
+   然后按第 4 节验证。任何关键项失败，先关闭 SQL 开关再按第 5 节回滚。
 
 ## 4. 验证清单
 
@@ -88,28 +130,60 @@ Vercel Staging（**已有**，本 PR 不改）：`VISEPANDA_NATIVE_STAGING=true`
 
 ## 5. 回滚
 
-1. **立即**：`set_hosted_worker_enabled(false,'rollback')` —— 下一轮起不再发现/领取，不需要部署。
-2. 停止/缩容容器（SIGTERM）；在途 lease 由原 lease 围栏到期处理，未知费用保持 pending。
+1. **立即**：以获准的 service_role 调用 `set_hosted_worker_enabled(false,'rollback')`，读回 disabled。
+   这停止新发现/领取；已在途请求须按 lease、预算和 journal 结果核对。
+2. ECS 上 `bash deploy/hosted-worker/ecs-worker.sh stop`（SIGTERM，75 秒宽限）；需要退回代码时，
+   确认 SQL 仍 disabled，用保留的上一已知可用 SHA 执行
+   `bash deploy/hosted-worker/ecs-worker.sh replace <previous-sha>`，先核健康/心跳，
+   再决定是否重新启用 SQL 开关。脚本会先创建候选容器再停止旧容器；新容器启动失败时尝试恢复
+   旧容器。不会删除 journal 或旧镜像。
+   若替换后无法启动，保持 SQL disabled 并查容器状态，不要用有缺陷的镜像反复启动。
 3. 未知费用保持 pending，按完整预留计入 scope 上限（保守、不会少算）。journal 已保存对账所需的全部元数据：
    `vpj07-hosted-job/1` 行是该组的精确 job 配置，`jobDigest = sha256(JSON.stringify(job))`；
-   `vpj07-usage-journal/1` 的 `configurationDigest` 指向它。**现有 `reconcile-staging-text-usage.mjs`
-   只接受单一配置文件 + 其 run 日志，尚不能直接读取常驻 journal**；按组对账的适配是后续项（见 PR 未完成清单）。
-   不手工 release 未知费用，也不改写 journal 去迎合旧工具。
+   `vpj07-usage-journal/1` 的 `configurationDigest` 指向它。现有 `reconcile-staging-text-usage.mjs`
+   仍只接受单一配置文件 + 其 run 日志，不能直接读取常驻 journal。离线审计只核对 journal 内组别、
+   价目、attempt 与收据，不读共享账本，不能判定 pending/settled，也不做结算或 release。
+   不改写 journal 去迎合旧工具。
 4. 迁移为只追加：保留表和 RPC（停用状态下无行为）；需要时由新迁移移除，不改历史迁移。
 5. 之前的一次性/有界 CLI（`run-staging-text-worker.mjs`、`run-staging-text-service.mjs`）保持可用作回退。
 
-## 6. 预期成本（激活前以官网当期价目复核）
+### 离线按组收据审计（不改数据库）
 
-- 计算：Fly.io shared-cpu-1x/256MB 约 US$2/月 + 1 GB 卷约 US$0.15/月；阿里云新加坡同等规格约 CNY 30–60/月。
+在 ECS 私有目录准备 uid/gid 1000、0700 的 `/var/lib/vp-worker/audit`；从 journal 目录选定一份
+完整进程文件，先记录其文件名和 SHA-256。镜像已含审计 CLI，运行时不传 env 文件、不开放网络、
+以只读方式挂载 journal，报告目录单独绑定并创建 0600 新文件：
+
+```bash
+install -d -o 1000 -g 1000 -m 0700 /var/lib/vp-worker/audit
+docker run --rm --network none --read-only --cap-drop ALL --user 1000:1000 \
+  --entrypoint node \
+  --mount type=bind,src=/var/lib/vp-worker/journal,dst=/journal,readonly \
+  --mount type=bind,src=/var/lib/vp-worker/audit,dst=/audit \
+  "vp-hosted-text-worker:<已合并 SHA>" \
+  --experimental-strip-types lib/server/jobs/audit-hosted-text-usage.mjs \
+  --journal /journal/<hosted-journal-file>.jsonl --report /audit/<新报告名>.json
+```
+
+运行前把尖括号占位替换为实际文件名；报告路径不得已存在。标准输出只给组数/收据数与
+`ledgerState=not_checked`，按组 owner/scope/attempt ID 和金额只在私有报告中。最后未完成的
+JSONL 行会标为 `partialTailIgnored`，不能重建为已验证收据；无对应收据的未知费用保持全额预留。
+`processEndObserved=false` 表示该进程没有完整的 returned 行，不能推断日志或 attempt 已完整收尾。
+审计结果必须再与获准的实际账本和供应商回执逐笔核对，不能据此自动调用旧结算 CLI。
+每份进程 journal 单独审计；跨进程同一 attempt 的重复或冲突也须在账本核对时检查。
+
+## 6. 成本与容量（以实际账单和监测复核）
+
+- 计算：使用 JT 已选香港 ECS 的现有容量；Docker 与镜像、journal、日志占用受 40 GB 磁盘约束，
+  按 ECS 实际账单与磁盘监测，不引用过期的 Fly/新加坡价格。
 - 数据库：空闲时每轮 2 个 RPC（心跳+发现）；3 s 轮询约 5.8 万次/日，属 Staging 项目常规负载。
 - 模型：沿用 budget scope 硬上限。已记录的 Staging 保守价目约 CNY 0.004–0.008/次（例：74 次 342228 micros）；
   每个测试 owner 的 scope 上限即其最大支出。
-- 网络：新加坡→北京 DashScope 跨境；如需境外 DashScope 端点，属于另一个端点/区域决定，当前代码拒绝。
+- 网络：香港 ECS 到 Staging Supabase 和已绑定 DashScope endpoint 的实测结果待补；endpoint 必须与
+  Staging policy 完全相同，不能为求连通擅自改为另一区域。
 
 ## 7. 需要 JT 决定/提供
 
-1. 批准宿主与开通账号（推荐 Fly.io `sin`）以及镜像仓库；由人完成账号与支付方式。
-2. Staging 迁移写窗口与备份确认。
-3. 在宿主 secret store 写入 service_role key 与 Qwen key（agent 不接触值）。
-4. 核准 profile 中的价目版本/费率/预留/超时，以及首批 `modes`。
-5. TestFlight 测试 owner 名单与每人 budget scope 上限（逐人 scope 目前是运营插入，未自动化）。
+1. ECS 镜像构建、容器启动与 Staging 激活的实际授权和操作窗口。
+2. Staging 迁移写窗口与备份确认；共享库实际状态先读回。
+3. 在 ECS 私有 env 文件安全写入独立 Supabase secret key 与独立 Qwen key（不入聊天/仓库）。
+4. 核准 profile 价目版本、费率、预留、超时、首批 `modes` 与测试 owner budget scope。

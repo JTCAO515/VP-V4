@@ -5,6 +5,7 @@ import { PROTOCOL_MODELS } from "../model-gateway/adapters/provider-protocol.ts"
 import type { ValidatedUsageReceipt } from "../model-gateway/budget/usage-receipt.ts";
 import type { KnowledgeValidationReceipt } from "../turn/text-worker.ts";
 import type { DestinationReceipt } from "../model-gateway/adapters/http-transport.ts";
+import { supabaseWorkerHeaders } from "./supabase-worker-headers.ts";
 
 /**
  * VPJ-07 #195 hosted text worker. One long-running trusted process (a small
@@ -113,7 +114,7 @@ export type HostedLoopDependencies = Readonly<{
   now?: () => number;
   wait?: (milliseconds: number, signal: AbortSignal) => Promise<void>;
 }>;
-export type HostedLoopSettings = Readonly<{ pollIntervalMs: number; maxLifetimeMs: number; drainMs: number; concurrency: number; maxConsecutiveFailures?: number; pollDeadlineMs?: number }>;
+export type HostedLoopSettings = Readonly<{ pollIntervalMs: number; maxLifetimeMs: number; drainMs: number; concurrency: number; maxConsecutiveFailures?: number; pollDeadlineMs?: number; requireInitialDisabled?: boolean }>;
 export type HostedLoopResult = Readonly<{ reason: StopReason; polls: number; finished: number; unavailable: number; skipped: number }>;
 
 /**
@@ -158,6 +159,12 @@ export async function runHostedTextLoop(settings: HostedLoopSettings, dependenci
       cycle++;
       const heartbeat = await beat();
       if (soft.signal.aborted) break;
+      // File-secret startup is armed only after its first real SQL heartbeat
+      // confirms disabled. This closes the gap after the read-only precheck.
+      if (settings.requireInitialDisabled && cycle === 1 && heartbeat?.enabled !== false) {
+        stop("unavailable");
+        break;
+      }
       if (!heartbeat) { await fail("heartbeat-unavailable"); continue; }
       if (!heartbeat.enabled) {
         failures = 0; phase = "disabled"; lastResult = "disabled";
@@ -251,6 +258,8 @@ export type HostedWorkerDependencies = Readonly<{
   qwenEndpoint: string;
   workerCredential: StagingTextJobDependencies["workerCredential"];
   providerCredential: StagingTextJobDependencies["providerCredential"];
+  /** File-secret process only: no discovery until first SQL heartbeat is disabled. */
+  requireInitialDisabled?: boolean;
   journal: HostedJournal;
   /** Content-free liveness observer for an optional local health endpoint. */
   onHeartbeat?: (ok: boolean, enabled: boolean | null) => void;
@@ -271,7 +280,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
     const secret = await dependencies.workerCredential(timeout);
     if (typeof secret !== "string" || !/^[\x21-\x7e]{1,8192}$/.test(secret)) throw unavailable();
     const response = await fetcher(HOSTED_STAGING_DATABASE_URL + "/rest/v1/rpc/" + name, {
-      method: "POST", headers: { "content-type": "application/json", apikey: secret, authorization: "Bearer " + secret },
+      method: "POST", headers: supabaseWorkerHeaders(secret),
       body: JSON.stringify(parameters), redirect: "manual", credentials: "omit", cache: "no-store", signal: timeout,
     });
     if (response.status !== 200 || response.headers.get("content-type")?.split(";")[0].trim() !== "application/json") {
@@ -282,7 +291,7 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
     if (text.length > 262144) throw unavailable();
     return JSON.parse(text) as unknown;
   };
-  return (signal: AbortSignal) => runHostedTextLoop(profile, {
+  return (signal: AbortSignal) => runHostedTextLoop({ ...profile, requireInitialDisabled: dependencies.requireInitialDisabled === true }, {
     heartbeat: async (state, stop) => {
       const value = await rpc("hosted_worker_heartbeat", {
         p_worker_id: dependencies.workerId, p_build: dependencies.build, p_started_at: dependencies.startedAt,

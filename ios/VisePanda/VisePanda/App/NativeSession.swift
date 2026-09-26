@@ -141,6 +141,10 @@ final class NativeSession {
         try await dataRequest(prefix: "api/service-cases/native/v1", path: "api/service-cases/native/v1", method: "POST", body: body)
     }
 
+    func storeKitRequest(method: String, body: Data? = nil) async throws -> Data {
+        try await dataRequest(prefix: "api/storekit/native/v1", path: "api/storekit/native/v1", method: method, body: body)
+    }
+
     /// The Trip consumer receives response bytes, never the Keychain credential.
     func tripRequest(path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         try await dataRequest(prefix: "api/trips/native/v2", path: path, method: method, body: body, queryItems: queryItems)
@@ -201,6 +205,10 @@ final class NativeSession {
         let data = try await dataRequest(prefix: prefix, path: path, method: method, body: body)
         guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
         return data
+    }
+
+    func memoryRequest(path: String = "api/memory/native/v1/travel-pace", method: String, body: Data? = nil) async throws -> Data {
+        try await dataRequest(prefix: "api/memory/native/v1/travel-pace", path: path, method: method, body: body)
     }
 
     /// Translation always uses the current-input lane, independently of Ask mode.

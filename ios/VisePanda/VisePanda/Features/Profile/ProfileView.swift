@@ -1,10 +1,46 @@
 import SwiftUI
+import StoreKit
+
+enum NativePassScopeGate {
+    static func canShow(_ captured: NativeDataScope?, current: NativeDataScope?) -> Bool {
+        guard let captured, let current else { return false }
+        return captured == current
+    }
+}
+
+private struct NativePassRead: Decodable {
+    struct DataPart: Decodable {
+        let productId: String?
+        let grants: [Grant]
+    }
+    struct Grant: Decodable, Identifiable {
+        let transactionId: String
+        let startsAt: String
+        let endsAt: String
+        let state: String
+        let effectiveState: String
+        let catalogVersion: Int
+        let policyVersion: String
+        var id: String { transactionId }
+    }
+    let data: DataPart
+}
+
+private struct NativePassClaim: Decodable {
+    struct Claim: Decodable { let state: String; let transactionId: String }
+    let data: Claim
+}
 
 struct ProfileView: View {
     @Environment(AppSettings.self) private var settings
 
     @State private var email = ""
     @State private var password = ""
+    @State private var passRead: NativePassRead?
+    @State private var passProduct: Product?
+    @State private var passStatus: String?
+    @State private var passBusy = false
+    @State private var passScope: NativeDataScope?
 
     private var chinese: Bool { settings.selectedLocale == .zh }
 
@@ -77,6 +113,35 @@ struct ProfileView: View {
                 }.disabled(settings.nativeSession.busy)
             }
 
+            if settings.nativeSession.dataScope != nil {
+                Section(chinese ? "Journey Pass 测试权益" : "Journey Pass test entitlement") {
+                    if NativePassScopeGate.canShow(passScope, current: settings.nativeSession.dataScope), let passStatus {
+                        Text(passStatus).font(.footnote).accessibilityIdentifier("native.pass.status")
+                    }
+                    if NativePassScopeGate.canShow(passScope, current: settings.nativeSession.dataScope), let read = passRead {
+                        ForEach(read.data.grants) { grant in
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(grant.effectiveState == "active" ? (chinese ? "生效中" : "Active") : grant.effectiveState)
+                                Text("\(grant.startsAt) – \(grant.endsAt)").font(.caption).textSelection(.enabled)
+                                Text("catalog \(grant.catalogVersion) · \(grant.policyVersion)").font(.caption2).foregroundStyle(.secondary)
+                            }.accessibilityIdentifier("native.pass.grant.\(grant.transactionId)")
+                        }
+                    }
+                    if NativePassScopeGate.canShow(passScope, current: settings.nativeSession.dataScope), let passProduct {
+                        Button(chinese ? "Sandbox 购买 · \(passProduct.displayPrice)" : "Sandbox purchase · \(passProduct.displayPrice)") {
+                            Task { await purchasePass(passProduct, session: settings.nativeSession) }
+                        }.disabled(passBusy)
+                    }
+                    Button(chinese ? "刷新权益" : "Refresh entitlement") {
+                        Task { await loadPass(session: settings.nativeSession) }
+                    }.disabled(passBusy)
+                }
+                .task(id: settings.nativeSession.dataScope) { await loadPass(session: settings.nativeSession) }
+                Section(chinese ? "基础偏好" : "Basic preferences") {
+                    NavigationLink(chinese ? "已保存旅行节奏" : "Saved travel pace") { NativeTravelPaceView() }
+                }
+            }
+
             if settings.nativeSession.subject != nil {
                 Section {
                     NavigationLink(chinese ? "旅途支持请求" : "Travel support requests") {
@@ -117,6 +182,73 @@ struct ProfileView: View {
             }
         }
         .vpNavigationTitle("tab.profile")
+    }
+
+    private func loadPass(session: NativeSession) async {
+        guard let scope = session.dataScope else {
+            passScope = nil; passRead = nil; passProduct = nil; passStatus = nil
+            return
+        }
+        passScope = scope
+        passRead = nil
+        passProduct = nil
+        passStatus = nil
+        do {
+            let bytes = try await session.storeKitRequest(method: "GET")
+            guard session.dataScope == scope else { return }
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            let read = try decoder.decode(NativePassRead.self, from: bytes)
+            passRead = read
+            passProduct = nil
+            if let id = read.data.productId,
+               let product = try await Product.products(for: [id]).first,
+               product.type == .nonRenewable,
+               session.dataScope == scope {
+                passProduct = product
+            }
+            if session.dataScope == scope { passStatus = nil }
+        } catch {
+            guard session.dataScope == scope else { return }
+            passRead = nil
+            passProduct = nil
+            passStatus = chinese ? "Sandbox 权益尚未启用" : "Sandbox entitlement is unavailable"
+        }
+    }
+
+    private func purchasePass(_ product: Product, session: NativeSession) async {
+        guard let scope = session.dataScope, let owner = UUID(uuidString: scope.subject),
+              NativePassScopeGate.canShow(passScope, current: scope), passRead?.data.productId == product.id else { return }
+        passBusy = true
+        defer { passBusy = false }
+        do {
+            let result = try await product.purchase(options: [.appAccountToken(owner)])
+            switch result {
+            case .pending:
+                passStatus = chinese ? "购买待批准，权益未生效" : "Purchase pending; no grant yet"
+            case .userCancelled:
+                passStatus = chinese ? "购买已取消" : "Purchase cancelled"
+            case .success(let verification):
+                guard case .verified(let transaction) = verification,
+                      session.dataScope == scope else {
+                    passStatus = chinese ? "交易未验证，权益未生效" : "Transaction unverified; no grant"
+                    return
+                }
+                let body = try JSONEncoder().encode(["signedTransaction": verification.jwsRepresentation])
+                let receipt = try await session.storeKitRequest(method: "POST", body: body)
+                let claim = try JSONDecoder().decode(NativePassClaim.self, from: receipt)
+                guard claim.data.state == "active", claim.data.transactionId == String(transaction.id) else {
+                    passStatus = chinese ? "交易未生效" : "Transaction did not grant access"
+                    return
+                }
+                await transaction.finish()
+                await loadPass(session: session)
+            @unknown default:
+                passStatus = chinese ? "未知购买状态" : "Unknown purchase state"
+            }
+        } catch {
+            passStatus = chinese ? "服务端验证未完成，请稍后重试" : "Server verification incomplete; retry later"
+        }
     }
 }
 

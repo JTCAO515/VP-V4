@@ -172,6 +172,7 @@ test("complete evidence and non-knowledge failures never fabricate claim gaps", 
   assert.equal(savedAnswerNotice(f.read().turns[0]), null);
   Object.assign(f.turn.result, { projection: "unavailable", knowledge: null });
   assert.equal(f.read().turns[0].claimGaps, undefined);
+  assert.equal(savedAnswerNotice(f.read().turns[0]), "recheckUnavailable");
   Object.assign(f.turn, { outcome: "technical_failure", status: "failed" });
   Object.assign(f.turn.result, { originalOutcome: "technical_failure", intent: "technical_failure", requestScope: "unknown", projection: "current" });
   assert.equal(f.read().turns[0].claimGaps, undefined);
@@ -190,7 +191,10 @@ test("every server-owned question obligation and allowed cause has bilingual gap
   const { QUESTION_DEFINITIONS } = await import("../../../lib/server/knowledge/claim/questions.ts");
   for (const locale of ["en", "zh"] as const) {
     for (const definition of Object.values(QUESTION_DEFINITIONS)) {
-      for (const claim of definition.claims) assert.ok(Object.hasOwn(savedClaimGapCopy[locale].claims, claim.objectId));
+      for (const claim of definition.claims) {
+        assert.ok(Object.hasOwn(savedClaimGapCopy[locale].claims, claim.objectId));
+        assert.ok(Object.hasOwn(savedClaimGapCopy[locale].nextSteps, claim.objectId));
+      }
     }
     for (const reason of ["missing", "expired", "revoked", "unreviewed", "unresolved_variants", "not_current_date"]) {
       assert.ok(Object.hasOwn(savedClaimGapCopy[locale].reasons, reason));

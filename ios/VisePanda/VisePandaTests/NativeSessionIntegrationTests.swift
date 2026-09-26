@@ -2,6 +2,16 @@ import XCTest
 @testable import VisePanda
 
 nonisolated final class NativeSessionIntegrationTests: XCTestCase {
+    @MainActor
+    func testJourneyPassStateIsHiddenAcrossAccountOrSessionGeneration() {
+        let first = NativeDataScope(endpoint: "https://staging.go2china.space", subject: "owner-a", mobileEpoch: 1, generation: 10)
+        let other = NativeDataScope(endpoint: first.endpoint, subject: "owner-b", mobileEpoch: 1, generation: 11)
+        let replaced = NativeDataScope(endpoint: first.endpoint, subject: first.subject, mobileEpoch: 2, generation: 11)
+        XCTAssertTrue(NativePassScopeGate.canShow(first, current: first))
+        XCTAssertFalse(NativePassScopeGate.canShow(first, current: other))
+        XCTAssertFalse(NativePassScopeGate.canShow(first, current: replaced))
+        XCTAssertFalse(NativePassScopeGate.canShow(first, current: nil))
+    }
     private static var localAPIOrigin: String {
         ProcessInfo.processInfo.environment["VP_NATIVE_API_ORIGIN"] ?? "http://127.0.0.1:59731"
     }
