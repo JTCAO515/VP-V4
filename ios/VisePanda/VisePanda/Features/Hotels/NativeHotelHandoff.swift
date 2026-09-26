@@ -10,6 +10,65 @@ struct NativeHotelSearch: Equatable {
     var includesChildren: Bool
 }
 
+/// A suggested span from confirmed Trip days, never a claim that one hotel is needed throughout it.
+struct NativeHotelTripWindow: Equatable {
+    let checkIn: String
+    let checkOut: String
+    let nights: Int
+    let tripVersion: Int
+
+    static func suggest(from detail: NativeTripDetail) -> Self? {
+        guard detail.confirmationState == "confirmed", !detail.content.days.isEmpty else { return nil }
+        let days = detail.content.days.map(\.date).sorted()
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.isLenient = false
+        guard days.allSatisfy({ day in
+            day.count == 10 && formatter.date(from: day).map { formatter.string(from: $0) == day } == true
+        }), let last = formatter.date(from: days[days.count - 1]),
+              let first = formatter.date(from: days[0]),
+              let departure = formatter.calendar.date(byAdding: .day, value: 1, to: last),
+              let nights = formatter.calendar.dateComponents([.day], from: first, to: departure).day,
+              (1...90).contains(nights) else { return nil }
+        return .init(checkIn: days[0], checkOut: formatter.string(from: departure),
+                     nights: nights, tripVersion: detail.trip.headVersion)
+    }
+}
+
+/// Accepts a pair only when both observations identify the selected map points
+/// and share at least one usable mode. A lone result cannot imply a comparison.
+enum NativeHotelRouteComparison {
+    static func accepts(_ first: NativeRouteReply, _ second: NativeRouteReply,
+                        firstArea: NativePlaceCandidate, secondArea: NativePlaceCandidate,
+                        destination: NativePlaceCandidate, now: Date) -> Bool {
+        guard valid(first, area: firstArea, destination: destination, now: now),
+              valid(second, area: secondArea, destination: destination, now: now) else { return false }
+        let firstModes = Set(first.options.filter { $0.status == "observed" }.map(\.mode))
+        let secondModes = Set(second.options.filter { $0.status == "observed" }.map(\.mode))
+        return !firstModes.isDisjoint(with: secondModes)
+    }
+
+    private static func valid(_ reply: NativeRouteReply, area: NativePlaceCandidate,
+                              destination: NativePlaceCandidate, now: Date) -> Bool {
+        guard area.provider == .amap, destination.provider == .amap,
+              reply.provider == "amap", reply.origin.provider == .amap, reply.destination.provider == .amap,
+              reply.origin.providerPoiId == area.providerPoiId,
+              reply.destination.providerPoiId == destination.providerPoiId,
+              reply.options.count == 3,
+              Set(reply.options.map(\.mode)) == Set(["walking", "transit", "driving"]),
+              !reply.expired(at: now) else { return false }
+        return reply.options.allSatisfy { option in
+            option.status != "observed" ||
+                ((option.durationSeconds ?? -1) >= 0 && (option.durationSeconds ?? .infinity) <= 604800 &&
+                 (option.distanceMeters ?? -1) >= 0 && (option.distanceMeters ?? .infinity) <= 100_000_000 &&
+                 (option.walkingMeters.map { $0 >= 0 && $0 <= 100_000_000 } ?? true))
+        }
+    }
+}
+
 enum NativeHotelProvider: String, CaseIterable, Identifiable {
     case booking, trip
     var id: String { rawValue }
