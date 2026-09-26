@@ -17,6 +17,9 @@ Start-to-reviewable-slice: approximately 20 minutes of this work session. Rework
 | Same test command with `testVPJ77FixtureRemainsReachableAtAccessibilityTextSize` | PASS | iPhone SE accessibility XXXL, Memory and search remained reachable; earlier `Test-VisePanda-2026.09.27_02-02-32-+0800.xcresult` |
 | `pnpm docs:check`, `pnpm lint`, `pnpm typecheck`, `pnpm test:contract`, `git diff --check` | PASS | Local dependencies installed with frozen lockfile; after rebase onto `ea698082`, contract suite: 685/685 |
 | First UI test before keyboard fix | FAIL, resolved | Memory keyboard obscured tab selection in zh/en. Focus is now dismissed by correction and keyboard Done. Subsequent UI run passed. |
+| First PR Native iOS CI on `c10a3395` | FAIL, resolved in follow-up | iOS 26.5 tapped the inline correction while the keyboard was open; both zh/en lacked the corrected cue. The keyboard now offers a reachable correction action. |
+| Native iOS CI on `9ad6f84a` before #568 rebase | PASS | iOS 26.5 full `xcresult`: 136 passed, 34 skipped for recorded environment prerequisites, 0 failed. Two `Invalid frame dimension` runtime warnings remain visible in the result; CI completed PASS after diagnostic collection. |
+| After #568 rebase | PASS locally; final CI pending | Combined both `NativeAssistantConversationView.swift` and `AssistantSpecimenView.swift` Xcode project entries. Unsigned Simulator build and focused iPhone SE iOS 17.5 zh/en + accessibility XXXL UI tests passed 2/2 (`Test-VisePanda-2026.09.27_03-12-11-+0800.xcresult`); `pnpm docs:check` and diff check passed. |
 
 Manual rendered inspection: [iPhone 15 Pro Chinese](iphone15pro-zh.png) and [iPhone SE English at accessibility XXXL](se-accessibility-en.png). These confirm fixture banner and four-tab layout on those snapshots. Automated taps confirm the named controls, not a human usability outcome.
 

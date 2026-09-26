@@ -70,11 +70,17 @@ struct AssistantSpecimenView: View {
                             .accessibilityIdentifier("specimen.search.open")
                         }
                         ToolbarItemGroup(placement: .keyboard) {
+                            if tab == .memory {
+                                Button(t("演示纠正", "Correct example")) { applyCorrection() }
+                                    .disabled(correction.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                                    .accessibilityIdentifier("specimen.keyboard.correct")
+                            }
                             Spacer()
                             Button(t("完成", "Done")) {
                                 inputFocused = false
                                 memoryFocused = false
                             }
+                            .accessibilityIdentifier("specimen.keyboard.done")
                         }
                     }
                 }
@@ -192,9 +198,7 @@ struct AssistantSpecimenView: View {
                 .focused($memoryFocused)
                 .accessibilityIdentifier("specimen.memory.edit")
             action(t("仅在本地演示纠正", "Correct local example only"), id: "specimen.memory.correct") {
-                corrected = true
-                inputFocused = false
-                memoryFocused = false
+                applyCorrection()
             }
             .disabled(correction.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             if corrected {
@@ -278,6 +282,13 @@ struct AssistantSpecimenView: View {
     }
 
     private func stateRow(_ heading: String, _ body: String) -> some View { card(heading, body) }
+
+    private func applyCorrection() {
+        guard !correction.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        corrected = true
+        inputFocused = false
+        memoryFocused = false
+    }
 
     private func action(_ title: String, id: String, perform: @escaping () -> Void) -> some View {
         Button(action: perform) {

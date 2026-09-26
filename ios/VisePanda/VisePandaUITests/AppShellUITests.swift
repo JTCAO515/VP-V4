@@ -40,10 +40,10 @@ final class AppShellUITests: XCTestCase {
             XCTAssertTrue(edit.exists)
             edit.tap()
             edit.typeText(locale == "en" ? "Prefer slower days" : "喜欢慢节奏")
-            app.buttons["specimen.memory.correct"].tap()
-            XCTAssertTrue(app.staticTexts["specimen.memory.corrected"].exists)
+            app.buttons["specimen.keyboard.correct"].tap()
+            XCTAssertTrue(app.staticTexts["specimen.memory.corrected"].waitForExistence(timeout: 5))
             app.tabBars.buttons["VP"].tap()
-            XCTAssertTrue(app.staticTexts["specimen.memory-impact"].exists)
+            XCTAssertTrue(app.staticTexts["specimen.memory-impact"].waitForExistence(timeout: 5))
             app.terminate()
         }
     }
