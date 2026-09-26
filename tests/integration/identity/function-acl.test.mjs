@@ -50,6 +50,7 @@ const AUTHENTICATED = [
   "public.read_grounded_policy(uuid)",
   "public.read_grounded_turn(uuid)",
   "public.read_assistant_conversation_v1(uuid,uuid)",
+  "public.read_result_artifacts_v1(uuid,integer)",
   "public.read_retrievable_memory_profiles()",
   "public.read_text_policy(uuid)",
   "public.read_text_task_policy(uuid)",
@@ -114,6 +115,21 @@ test("repository functions grant EXECUTE to anon and authenticated only through 
   await t.test("Memory create/Undo grants only authenticated, never anonymous or service role", () => {
     for (const role of ["anon", "service_role"]) {
       assert.deepEqual(sql(`select has_function_privilege('${role}', 'public.create_explicit_memory_profile_v2(uuid,uuid,uuid,text,text)'::regprocedure, 'EXECUTE'), has_function_privilege('${role}', 'public.undo_explicit_memory_create_v1(uuid,uuid,bigint,uuid)'::regprocedure, 'EXECUTE');`), ["f|f"], role);
+    }
+  });
+
+  await t.test("result publication is internal and result tables have no direct API grants", () => {
+    assert.deepEqual(sql(`select has_function_privilege('anon', 'public.publish_comparison_result_v1(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb)'::regprocedure, 'EXECUTE'),
+      has_function_privilege('authenticated', 'public.publish_comparison_result_v1(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb)'::regprocedure, 'EXECUTE'),
+      has_function_privilege('service_role', 'public.publish_comparison_result_v1(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,integer,integer,jsonb,jsonb)'::regprocedure, 'EXECUTE');`), ["f|f|t"]);
+    assert.deepEqual(sql(`select has_function_privilege('anon','public.withdraw_result_artifact_v1(uuid,uuid,integer)'::regprocedure,'EXECUTE'),
+      has_function_privilege('authenticated','public.withdraw_result_artifact_v1(uuid,uuid,integer)'::regprocedure,'EXECUTE'),
+      has_function_privilege('service_role','public.withdraw_result_artifact_v1(uuid,uuid,integer)'::regprocedure,'EXECUTE');`), ["f|f|t"]);
+    assert.deepEqual(sql(`select has_function_privilege('anon','public.read_result_events_v1(bigint,integer)'::regprocedure,'EXECUTE'),
+      has_function_privilege('authenticated','public.read_result_events_v1(bigint,integer)'::regprocedure,'EXECUTE'),
+      has_function_privilege('service_role','public.read_result_events_v1(bigint,integer)'::regprocedure,'EXECUTE');`), ["f|f|t"]);
+    for (const table of ["result_artifacts", "result_revisions", "result_events"]) {
+      assert.deepEqual(sql(`select has_table_privilege('authenticated','turn_private.${table}','SELECT'),has_table_privilege('service_role','turn_private.${table}','SELECT');`), ["f|f"]);
     }
   });
 

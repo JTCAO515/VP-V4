@@ -91,6 +91,7 @@ struct NativeAssistantConversationView: View {
     @Environment(AppSettings.self) private var settings
     @State private var policy: NativeTextPolicy?
     @State private var conversation: AssistantConversation?
+    @State private var resultStore = NativeResultStore()
     @State private var draft = ""
     @State private var operation = "independent_question"
     @State private var agreed = false
@@ -122,6 +123,9 @@ struct NativeAssistantConversationView: View {
                             }
                             .frame(maxWidth: .infinity, alignment: .leading).padding(14)
                             .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
+                        }
+                        TimelineView(.periodic(from: .now, by: 1)) { _ in
+                            NativeResultCard(store: resultStore, scope: session.dataScope, chinese: chinese)
                         }
                         Button(chinese ? "撤回文本授权" : "Withdraw text consent", role: .destructive) { Task { await withdraw() } }
                             .disabled(busy)
@@ -160,7 +164,7 @@ struct NativeAssistantConversationView: View {
             if boundScope != session.retainedDataScope {
                 pending = nil; draft = ""; boundScope = session.retainedDataScope
             }
-            policy = nil; conversation = nil; notice = nil
+            policy = nil; conversation = nil; resultStore.clear(); notice = nil
             guard requested != nil else { return }
             while busy {
                 do { try await Task.sleep(for: .milliseconds(50)) } catch { return }
@@ -205,17 +209,18 @@ struct NativeAssistantConversationView: View {
             let policyReply = try JSONDecoder().decode(NativeTextPolicyReply.self, from: policyData)
             guard policyReply.kind == "policy", policyReply.policy.valid else { throw NativeDataError.invalidResponse }
             policy = policyReply.policy
-            if policyReply.policy.consentState != .accepted { conversation = nil; pending = nil; return }
+            if policyReply.policy.consentState != .accepted { conversation = nil; pending = nil; resultStore.clear(); return }
             let data = try await session.askRequest(path: "api/chat/native/v5/conversation", method: "GET")
             guard session.dataScope == initial else { return }
             let read = try JSONDecoder().decode(AssistantConversation.self, from: data)
             guard read.valid else { throw NativeDataError.invalidResponse }
             conversation = read
+            await resultStore.load(scope: initial, using: session)
             if let pending, read.messages.contains(where: { $0.messageId == pending.messageId }) { self.pending = nil; draft = "" }
             notice = nil
         } catch {
             guard session.dataScope == initial else { return }
-            policy = nil; conversation = nil; notice = "retry"
+            policy = nil; conversation = nil; resultStore.clear(); notice = "retry"
         }
     }
     private func accept() async {
@@ -237,7 +242,7 @@ struct NativeAssistantConversationView: View {
             let body = try JSONEncoder().encode(["policyId": policy.id])
             _ = try await session.askRequest(path: "api/chat/native/v5/consent", method: "DELETE", body: body)
             guard session.dataScope == initial else { throw NativeDataError.staleSessionResponse }
-            conversation = nil; pending = nil; draft = ""; self.policy = nil
+            conversation = nil; resultStore.clear(); pending = nil; draft = ""; self.policy = nil
         } catch { if session.dataScope == initial { notice = "retry" } }
         busy = false
         await reload()

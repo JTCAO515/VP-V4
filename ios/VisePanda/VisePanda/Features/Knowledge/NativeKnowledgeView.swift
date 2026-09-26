@@ -1,4 +1,5 @@
 import SwiftUI
+import Observation
 
 struct NativeKnowledgeView: View {
     var isActive = true
@@ -6,6 +7,7 @@ struct NativeKnowledgeView: View {
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var scenePhase
     @State private var store = NativeKnowledgeStore()
+    @State private var resultStore = NativeResultStore()
     @State private var city = "shanghai"
     @State private var scene = "arrival"
     @State private var refresh = UUID()
@@ -32,10 +34,13 @@ struct NativeKnowledgeView: View {
                         Text(chinese ? ["入境", "机场交通", "支付", "手机与网络", "公共交通", "出租车", "高铁", "景点", "住宿", "紧急求助"][index] : ["Arrival", "Airport transport", "Payment", "Phone and internet", "Public transport", "Taxis", "Rail", "Attractions", "Accommodation", "Emergency help"][index]).tag(value)
                     }
                 }.accessibilityIdentifier("knowledge.scene") }
-                Button(text("Refresh", "刷新")) { store.clear(); refresh = UUID() }
+                Button(text("Refresh", "刷新")) { store.clear(); resultStore.clear(); refresh = UUID() }
                     .buttonStyle(.bordered).accessibilityIdentifier("knowledge.refresh")
                 TimelineView(.periodic(from: .now, by: 1)) { _ in
-                    content
+                    VStack(alignment: .leading, spacing: VPSpacing.section) {
+                        content
+                        if !question { NativeResultCard(store: resultStore, scope: session.dataScope, chinese: chinese) }
+                    }
                 }
             }.padding(VPSpacing.standard)
         }
@@ -59,7 +64,12 @@ struct NativeKnowledgeView: View {
                 catch { return }
             } while !Task.isCancelled && loadKey == key
         }
-        .onDisappear { store.clear() }
+        .task(id: loadKey) {
+            let key = loadKey
+            guard key.active else { resultStore.clear(); return }
+            await resultStore.load(scope: key.scope, using: session)
+        }
+        .onDisappear { store.clear(); resultStore.clear() }
     }
 
     @ViewBuilder private var content: some View {
@@ -90,6 +100,146 @@ struct NativeKnowledgeView: View {
         let selection: NativeKnowledgeSelection
         let active: Bool
         let refresh: UUID
+    }
+}
+
+/// The same result read model is used by VP and the existing materials entry.
+/// Schema changes degrade to literal text; actions and URLs are never interpreted.
+struct NativeResultEnvelope: Decodable {
+    let version: Int
+    let data: NativeResultPayload
+}
+
+struct NativeResultPayload: Decodable {
+    let kind: String
+    let artifactId: String?
+    let revision: Int?
+    let current: Bool?
+    let lifecycle: String?
+    let content: NativeResultContent?
+
+    var valid: Bool {
+        if kind == "empty" || kind == "unavailable" { return artifactId == nil && content == nil }
+        guard kind == "result_artifact", let artifactId, UUID(uuidString: artifactId) != nil,
+              let revision, revision > 0, revision <= 1000,
+              current != nil, let lifecycle, ["active", "withdrawn"].contains(lifecycle),
+              let content, content.valid else { return false }
+        return true
+    }
+}
+
+struct NativeResultContent: Decodable {
+    let schemaVersion: String
+    let title: String
+    let summary: String
+    let options: [NativeResultOption]?
+
+    var valid: Bool {
+        guard !title.isEmpty, title.count <= 120, !summary.isEmpty, summary.count <= 1000 else { return false }
+        if schemaVersion != "comparison/1" { return true }
+        guard let options, (2...4).contains(options.count), options.allSatisfy(\.valid) else { return false }
+        return Set(options.map(\.id)).count == options.count
+    }
+}
+
+struct NativeResultOption: Decodable, Identifiable {
+    let id: String
+    let title: String
+    let tradeoff: String
+    var valid: Bool {
+        !id.isEmpty && id.count <= 40 && !title.isEmpty && title.count <= 120
+        && !tradeoff.isEmpty && tradeoff.count <= 500
+    }
+}
+
+@MainActor @Observable
+final class NativeResultStore {
+    private(set) var result: NativeResultPayload?
+    private(set) var state = "idle"
+    private(set) var scope: NativeDataScope?
+    private var generation = UUID()
+    private var loadedAt: TimeInterval = 0
+
+    func clear() {
+        generation = UUID(); result = nil; state = "idle"; scope = nil; loadedAt = 0
+    }
+
+    func isCurrent(_ currentScope: NativeDataScope?) -> Bool {
+        currentScope != nil && scope == currentScope && loadedAt > 0
+        && ProcessInfo.processInfo.systemUptime - loadedAt < 30
+    }
+
+    func load(scope requested: NativeDataScope?, using session: NativeSession) async {
+        await load(scope: requested) {
+            guard session.dataScope == requested else { throw NativeDataError.staleSessionResponse }
+            let bytes = try await session.resultRequest()
+            guard session.dataScope == requested else { throw NativeDataError.staleSessionResponse }
+            return bytes
+        }
+    }
+
+    func load(scope requested: NativeDataScope?, fetch: () async throws -> Data) async {
+        clear()
+        guard let requested, !Task.isCancelled else { return }
+        scope = requested; state = "loading"
+        let own = generation
+        do {
+            let bytes = try await fetch()
+            guard !Task.isCancelled, generation == own else { return }
+            let envelope = try JSONDecoder().decode(NativeResultEnvelope.self, from: bytes)
+            guard envelope.version == 1, envelope.data.valid else { throw NativeDataError.invalidResponse }
+            result = envelope.data; state = envelope.data.kind; loadedAt = ProcessInfo.processInfo.systemUptime
+        } catch {
+            guard generation == own else { return }
+            result = nil; state = "unavailable"; loadedAt = 0
+        }
+    }
+}
+
+struct NativeResultCard: View {
+    let store: NativeResultStore
+    let scope: NativeDataScope?
+    let chinese: Bool
+    private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(text("My comparison result", "我的比较成果")).font(.headline)
+            if scope == nil {
+                Text(text("Sign in to read saved results.", "登录后可读取已保存的成果。"))
+            } else if store.isCurrent(scope), let result = store.result, result.kind == "result_artifact", let content = result.content {
+                Text(content.title).font(.title3.bold()).textSelection(.enabled)
+                Text(content.summary).textSelection(.enabled)
+                if content.schemaVersion == "comparison/1", let options = content.options {
+                    ForEach(options) { option in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(option.title).font(.subheadline.bold())
+                            Text(option.tradeoff)
+                        }
+                    }
+                } else {
+                    Text(text("This result uses a newer format. Open it in an updated app before acting.", "此成果使用较新格式，请更新应用后再操作。"))
+                        .font(.footnote)
+                }
+                Text("\(result.artifactId ?? "") · r\(result.revision ?? 0)")
+                    .font(.caption2).textSelection(.enabled).accessibilityIdentifier("result.identity")
+                if result.current != true {
+                    Text(text("Earlier result. Review current inputs before using it.", "这是旧成果；使用前请核对当前输入。"))
+                        .font(.footnote).foregroundStyle(Color.vpSecondaryText)
+                }
+            } else if store.state == "empty" {
+                Text(text("No saved comparison yet.", "尚无保存的比较成果。"))
+            } else if store.state == "unavailable" {
+                Text(text("Result unavailable. Refresh after checking your session and permissions.", "成果暂不可读，请检查登录和授权后刷新。"))
+            } else if store.state == "result_artifact" {
+                Text(text("Refresh to check whether this result is still current.", "请刷新以核对成果是否仍有效。"))
+            } else {
+                ProgressView()
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(14).background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
+        .accessibilityIdentifier("result.card")
     }
 }
 

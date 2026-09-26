@@ -201,6 +201,18 @@ final class NativeSession {
         return try await dataRequest(prefix: "api/knowledge/native/v1", path: "api/knowledge/native/v1", method: "GET", queryItems: selection.queryItems)
     }
 
+    /// Owned result reads share the native session fence; the caller receives no credential.
+    func resultRequest(artifactID: String? = nil, revision: Int? = nil) async throws -> Data {
+        if let artifactID, UUID(uuidString: artifactID) == nil { throw NativeDataError.invalidResponse }
+        if let revision, artifactID == nil || !(1...1000).contains(revision) { throw NativeDataError.invalidResponse }
+        var query: [URLQueryItem] = []
+        if let artifactID { query.append(.init(name: "artifactId", value: artifactID)) }
+        if let revision { query.append(.init(name: "revision", value: String(revision))) }
+        let bytes = try await dataRequest(prefix: "api/results/native/v1", path: "api/results/native/v1", method: "GET", queryItems: query)
+        guard bytes.count <= 100_000 else { throw NativeDataError.invalidResponse }
+        return bytes
+    }
+
     /// Read-only place observations use the same active native-session fence as
     /// Trip and Knowledge. The provider credential remains server-side.
     func placeLookupRequest(_ parameters: [String: String]) async throws -> Data {
