@@ -6,5 +6,6 @@
 - UNRUN: Real signed-in native install, reopen and visible result on a physical device or target Staging/Production. Native verification is synthetic Simulator read-model coverage and local HTTP/DB integration.
 - UNRUN: All-user-data export/delete executor, derived global search index invalidation, actual event relay, old shipped-client compatibility, production migration/rollback and real user acceptance.
 - UNRUN: Relevant Profile travel-pace revision basis and qualified nonempty evidence basis. This first slice accepts only explicit Memory revisions and an empty evidence list, so it cannot present sourced destination advice.
+- UNRUN: Task/goal-to-Trip membership, non-null Trip basis, Trip-base invalidation and dependent Trip deletion. Non-null Trip publication is rejected in this slice; same-owner is insufficient authority.
 
 #560 remains OPEN. These gaps are required for full Issue acceptance and release claims.

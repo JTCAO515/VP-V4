@@ -133,9 +133,9 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  assert.equal((await call(base+'/conversation',owner,'POST',{...follow,expectedGoalVersion:1,messageId:randomUUID(),idempotencyKey:randomUUID()})).status,409);
  assert.equal((await call(base+'/conversation',owner,'POST',{...follow,taskId:randomUUID(),messageId:randomUUID(),idempotencyKey:randomUUID()})).status,409,'unowned task rejected');
  assert.equal(e.sql(`select count(*) from public.model_budget_attempts where scope_id='${e.users[0].scopeId}';`),'1','goal edits did not enqueue or settle another attempt');
- const taskIds=[],links=[];
+ const taskIds=[],taskTurns=[],links=[];
  for(let index=0;index<2;index++){
-  const taskId=randomUUID(),taskTurn=randomUUID();taskIds.push(taskId);
+  const taskId=randomUUID(),taskTurn=randomUUID();taskIds.push(taskId);taskTurns.push(taskTurn);
   const task={threadId:randomUUID(),turnId:taskTurn,idempotencyKey:randomUUID(),policyId:policy.id,locale:'en',text:'Synthetic related task '+index,serviceTask:{id:taskId,scopeVersion:1,relationship:'new_goal',parentTurnId:null}};
   assert.equal((await call('/api/chat/native/v2/turns',owner,'POST',task)).status,201,'existing task explicitly admitted');
   const link=make('follow_up',{text:'Attach accepted task '+index,goalId,expectedGoalVersion:2,parentMessageId:follow.messageId,taskId,turnId:null});
@@ -144,6 +144,23 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  }
  read=(await call(base+'/conversation',owner)).body;
  assert.deepEqual(read.messages.filter(x=>x.taskId).map(x=>x.taskId),taskIds);
+ const heldTask=randomUUID(),heldTurn=randomUUID();
+ const held={threadId:randomUUID(),turnId:heldTurn,idempotencyKey:randomUUID(),policyId:policy.id,locale:'en',text:'Synthetic HOLD result',
+   serviceTask:{id:heldTask,scopeVersion:1,relationship:'new_goal',parentTurnId:null}};
+ assert.equal((await call('/api/chat/native/v2/turns',owner,'POST',held)).status,201);
+ const heldLink=make('follow_up',{text:'Attach cancellable task',goalId,expectedGoalVersion:2,parentMessageId:links[1].messageId,taskId:heldTask,turnId:null});
+ assert.equal((await call(base+'/conversation',owner,'POST',heldLink)).status,201);
+ await waitUntil(()=>e.requests.some(r=>r.messages.at(-1)?.content==='Synthetic HOLD result'),10000,'held task reached local provider');
+ assert.equal((await call('/api/chat/native/v1/turns/'+heldTurn+'/cancel',owner,'POST',{})).status,200);
+ assert.equal(e.sql(`select status from public.turns where id='${heldTurn}';`),'cancelled');
+ e.releaseModels();
+ const cancelledArtifact=randomUUID();
+ assert.throws(()=>e.sql(`set request.jwt.claim.role='service_role';select public.publish_comparison_result_v1('${e.users[0].id}','${cancelledArtifact}',0,'${randomUUID()}',
+   '${heldTask}','${goalId}','${heldLink.messageId}',null,null,2,'[]'::jsonb,
+   '{"schemaVersion":"comparison/1","title":"Cancelled","summary":"Must not publish","options":[{"id":"a","title":"A","tradeoff":"X"},{"id":"b","title":"B","tradeoff":"Y"}],"actions":[]}'::jsonb);`),/STALE_BASIS/,
+   'a cancelled latest Turn cannot publish a result');
+ assert.equal(e.sql(`select count(*) from turn_private.result_artifacts where id='${cancelledArtifact}';`),'0');
+ await waitUntil(()=>e.sql(`select status from public.turns where id='${taskTurns[0]}';`)==='completed',10000,'source task completed before publication');
  const artifactId=randomUUID(),publicationKey=randomUUID();
  const content={schemaVersion:'comparison/1',title:'Synthetic directions',summary:'Fixture only; no travel recommendation.',options:[
   {id:'one',title:'Synthetic A',tradeoff:'Unknown travel time.'},{id:'two',title:'Synthetic B',tradeoff:'Unknown availability.'}],actions:[]};
@@ -160,6 +177,7 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  const saved=await call(resultPath,owner);assert.equal(saved.status,200,JSON.stringify(saved.body));
  assert.equal(saved.body.data.artifactId,artifactId);assert.equal(saved.body.data.revision,1);assert.equal(saved.body.data.current,true);
  assert.equal(saved.body.data.source.inputMessageId,links[0].messageId);
+ assert.equal(saved.body.data.source.taskTurnId,taskTurns[0]);
  const second=JSON.parse(publish(1,randomUUID(),{...content,summary:'Synthetic revision two; still no travel recommendation.'}));
  assert.equal(second.revision,2);
  const currentPath='/api/results/native/v1?artifactId='+artifactId+'&revision=2';
@@ -173,9 +191,33 @@ test('v5 conversation persists independent answer and versioned goal changes wit
    p_goal_version:2,p_memory_basis:[],p_content:content});
  const raceCall=async(key)=>{const response=await fetch(identityLocalEnv().API_URL+'/rest/v1/rpc/publish_comparison_result_v1',{
    method:'POST',headers:{apikey:serviceKey,Authorization:'Bearer '+serviceKey,'Content-Type':'application/json'},body:JSON.stringify(raceParams(key))});
-   return response.status;};
- assert.deepEqual((await Promise.all([raceCall(randomUUID()),raceCall(randomUUID())])).sort(),[200,409],'concurrent distinct keys get one CAS winner');
+   return {status:response.status,body:await response.json()};};
+ const racedPublish=await Promise.all([raceCall(randomUUID()),raceCall(randomUUID())]);
+ assert.equal(racedPublish.filter(x=>x.status===200).length,1,'concurrent distinct keys get exactly one CAS winner');
+ const loser=racedPublish.find(x=>x.status!==200);
+ assert.ok(loser && ((loser.status===400 && loser.body.message==='REVISION_CONFLICT')
+   || (loser.status===409 && loser.body.code==='23505' && /result_artifacts_pkey/.test(loser.body.message))),
+   'loser must be an explicit revision or artifact-key conflict');
  assert.equal(e.sql(`select count(*) from turn_private.result_revisions where artifact_id='${raceId}';`),'1');
+ assert.equal(e.sql(`select count(*) from turn_private.result_events where artifact_id='${raceId}';`),'1');
+ await waitUntil(()=>e.sql(`select status from public.turns where id='${taskTurns[1]}';`)==='completed',10000,'second task completed before publication');
+ const shiftedId=randomUUID(),shiftedPath='/api/results/native/v1?artifactId='+shiftedId+'&revision=1';
+ assert.equal(JSON.parse(e.sql(`set request.jwt.claim.role='service_role';select public.publish_comparison_result_v1('${e.users[0].id}','${shiftedId}',0,'${randomUUID()}',
+   '${taskIds[1]}','${goalId}','${links[1].messageId}',null,null,2,'[]'::jsonb,'${JSON.stringify(content).replaceAll("'","''")}'::jsonb);`)).revision,1);
+ assert.equal((await call(shiftedPath,owner)).body.data.current,true);
+ const nextTaskTurn=randomUUID();
+ e.sql(`begin;
+   insert into public.turns(id,owner_id,status) values('${nextTaskTurn}','${e.users[0].id}','accepted');
+   insert into turn_private.text_content(turn_id,owner_id,thread_id,policy_id,consent_id,locale,input_text)
+     select '${nextTaskTurn}',owner_id,thread_id,policy_id,consent_id,'en','Synthetic later turn' from turn_private.service_tasks where id='${taskIds[1]}';
+   update turn_private.service_tasks set last_turn_id='${nextTaskTurn}' where id='${taskIds[1]}';commit;`);
+ assert.equal((await call(shiftedPath,owner)).body.data.current,false,'new latest Task Turn invalidates old result without changing goal version');
+ assert.equal((await call(shiftedPath,owner)).body.data.historicalReadable,true);
+ assert.equal(JSON.parse(e.sql(`set request.jwt.claim.role='service_role';select public.withdraw_result_artifact_v1('${e.users[0].id}','${shiftedId}',1);`)).reused,false,
+   'withdraw remains available after source Task advances');
+ assert.equal((await call(shiftedPath,owner)).body.data.kind,'unavailable');
+ assert.throws(()=>e.sql(`set request.jwt.claim.role='service_role';select public.publish_comparison_result_v1('${e.users[0].id}','${shiftedId}',1,'${randomUUID()}',
+   '${taskIds[1]}','${goalId}','${links[1].messageId}',null,null,2,'[]'::jsonb,'${JSON.stringify(content).replaceAll("'","''")}'::jsonb);`),/STALE_BASIS/);
  assert.equal((await call(resultPath,other)).body.data.kind,'empty','other owner cannot read the result');
  assert.equal((await call('/api/results/native/v1?artifactId='+artifactId+'&revision=3',owner)).body.data.kind,'empty');
  const revised=make('amendment',{text:'Change synthetic planning basis',goalId,expectedGoalVersion:2,parentMessageId:links[1].messageId,turnId:null});
@@ -198,25 +240,20 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  const dependentPath='/api/results/native/v1?artifactId='+dependentId+'&revision=1';
  const dependentContent=JSON.stringify(content).replaceAll("'","''");
  const basis=JSON.stringify([{id:memoryId,revision:1}]).replaceAll("'","''");
+ assert.throws(()=>e.sql(`set request.jwt.claim.role='service_role';select public.publish_comparison_result_v1('${e.users[0].id}','${dependentId}',0,'${dependentKey}',
+   '${taskIds[0]}','${goalId}','${currentLink.messageId}','${tripId}',0,3,'${basis}'::jsonb,'${dependentContent}'::jsonb);`),/INVALID_INPUT/,
+   'same-owner Trip is not enough without an explicit task/goal membership contract');
  const dependentPublish=e.sql(`set request.jwt.claim.role='service_role';select public.publish_comparison_result_v1('${e.users[0].id}','${dependentId}',0,'${dependentKey}',
-   '${taskIds[0]}','${goalId}','${currentLink.messageId}','${tripId}',0,3,'${basis}'::jsonb,'${dependentContent}'::jsonb);`);
+   '${taskIds[0]}','${goalId}','${currentLink.messageId}',null,null,3,'${basis}'::jsonb,'${dependentContent}'::jsonb);`);
  assert.equal(JSON.parse(dependentPublish).revision,1);
  assert.equal((await call(dependentPath,owner)).body.data.current,true);
- const tripOnlyId=randomUUID(),tripOnlyPath='/api/results/native/v1?artifactId='+tripOnlyId+'&revision=1';
- assert.equal(JSON.parse(e.sql(`set request.jwt.claim.role='service_role';select public.publish_comparison_result_v1('${e.users[0].id}','${tripOnlyId}',0,'${randomUUID()}',
-   '${taskIds[0]}','${goalId}','${currentLink.messageId}','${tripId}',0,3,'[]'::jsonb,'${dependentContent}'::jsonb);`)).revision,1);
- assert.equal((await call(tripOnlyPath,owner)).body.data.current,true);
  e.sql(`update public.memory_profiles set summary='Changed synthetic pace' where id='${memoryId}';`);
  assert.equal((await call(dependentPath,owner)).body.data.current,false,'memory revision invalidates currentness');
  assert.equal((await call(dependentPath,owner)).body.data.historicalReadable,true);
- assert.equal((await call(tripOnlyPath,owner)).body.data.current,true,'unrelated memory correction leaves independent result current');
- e.sql(`update public.trips set head_version=1 where id='${tripId}';`);
- assert.equal((await call(tripOnlyPath,owner)).body.data.current,false,'new Trip base invalidates relevant result');
  e.sql(`update public.memory_profiles set state='deleted',summary=null where id='${memoryId}';`);
  assert.equal((await call(dependentPath,owner)).body.data.kind,'unavailable','deleted memory cannot be recovered from result content');
  e.sql(`delete from public.trips where id='${tripId}';`);
- assert.equal(e.sql(`select count(*) from turn_private.result_artifacts where id='${dependentId}';`),'0','Trip deletion cascades result and index');
- assert.equal(e.sql(`select count(*) from turn_private.result_artifacts where id='${tripOnlyId}';`),'0');
+ assert.equal(e.sql(`select count(*) from turn_private.result_artifacts where id='${dependentId}';`),'1','unrelated Trip deletion leaves an unbound result alone');
  const withdraw=()=>JSON.parse(e.sql(`set request.jwt.claim.role='service_role';select public.withdraw_result_artifact_v1('${e.users[0].id}','${artifactId}',2);`));
  assert.equal(withdraw().reused,false);
  assert.equal(withdraw().reused,true,'withdrawal replay has one durable event');
@@ -228,7 +265,7 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  await login(e.users[0]);assert.equal((await call(base+'/conversation',owner)).status,401,'replaced session cannot read');
  assert.equal((await call(resultPath,owner)).status,401,'replaced session cannot read result');
  const replacement=await login(e.users[0]);
- assert.equal((await call(base+'/conversation',replacement)).body.messages.length,9,'new session reads durable conversation');
+ assert.equal((await call(base+'/conversation',replacement)).body.messages.length,10,'new session reads durable conversation');
  assert.equal((await call(base+'/consent',replacement,'DELETE',{policyId:policy.id})).status,200);
  assert.equal((await call(base+'/conversation',replacement)).status,403,'withdrawal hides transcript');
  assert.equal((await call(resultPath,replacement)).body.data.kind,'unavailable','withdrawal hides result content');

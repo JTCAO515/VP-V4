@@ -15,7 +15,7 @@ export type ResultArtifactRead = Readonly<{
   current: boolean;
   historicalReadable: true;
   lifecycle: "active" | "withdrawn";
-  source: Readonly<{ taskId: string; goalId: string; goalVersion: number; inputMessageId: string; inputSequence: number; tripId: string | null; tripVersion: number | null }>;
+  source: Readonly<{ taskId: string; taskTurnId: string; goalId: string; goalVersion: number; inputMessageId: string; inputSequence: number; tripId: string | null; tripVersion: number | null }>;
   basis: Readonly<{ memories: readonly Readonly<{ id: string; revision: number }>[]; evidence: readonly [] }>;
   content: ComparisonContent;
   createdAt: string;
@@ -34,8 +34,8 @@ export function parseResultArtifactRead(value: unknown): ResultArtifactRead | nu
     || typeof value.current !== "boolean" || value.historicalReadable !== true || !["active", "withdrawn"].includes(String(value.lifecycle))
     || !short(value.createdAt, 64) || !object(value.source) || !object(value.basis) || !object(value.content)) return null;
   const source = value.source, basis = value.basis, content = value.content;
-  if (!exact(source, ["taskId", "goalId", "goalVersion", "inputMessageId", "inputSequence", "tripId", "tripVersion"])
-    || !uuid(source.taskId) || !uuid(source.goalId) || !revision(source.goalVersion) || !uuid(source.inputMessageId) || !revision(source.inputSequence)
+  if (!exact(source, ["taskId", "taskTurnId", "goalId", "goalVersion", "inputMessageId", "inputSequence", "tripId", "tripVersion"])
+    || !uuid(source.taskId) || !uuid(source.taskTurnId) || !uuid(source.goalId) || !revision(source.goalVersion) || !uuid(source.inputMessageId) || !revision(source.inputSequence)
     || (source.tripId !== null && !uuid(source.tripId)) || (source.tripId === null ? source.tripVersion !== null : !Number.isSafeInteger(source.tripVersion) || Number(source.tripVersion) < 0)) return null;
   if (!exact(basis, ["memories", "evidence"]) || !Array.isArray(basis.memories) || basis.memories.length > 20 || !Array.isArray(basis.evidence) || basis.evidence.length !== 0
     || !basis.memories.every(item => object(item) && exact(item, ["id", "revision"]) && uuid(item.id) && revision(item.revision))) return null;

@@ -21,6 +21,7 @@ create table turn_private.result_revisions (
   idempotency_key uuid not null,
   request_digest text not null check(request_digest ~ '^[a-f0-9]{64}$'),
   input_sequence bigint not null check(input_sequence > 0),
+  task_turn_id uuid not null references turn_private.text_content(turn_id),
   goal_version integer not null check(goal_version > 0),
   trip_version integer check(trip_version >= 0),
   memory_basis jsonb not null check(jsonb_typeof(memory_basis)='array' and jsonb_array_length(memory_basis)<=20),
@@ -96,8 +97,12 @@ begin
     or not turn_private.text_policy_current(task.policy_id)
     or not exists(select 1 from turn_private.text_consents c where c.owner_id=a.owner_id and c.policy_id=task.policy_id and c.consent_id=task.consent_id and c.revoked_at is null)
     or not exists(select 1 from turn_private.text_content root where root.turn_id=task.goal_turn_id and root.owner_id=a.owner_id and root.hidden_at is null)
+    or not exists(select 1 from turn_private.text_content basis_turn where basis_turn.turn_id=r.task_turn_id and basis_turn.owner_id=a.owner_id and basis_turn.hidden_at is null)
     then return jsonb_build_object('readable',false,'current',false); end if;
-  if goal.scope_version<>r.goal_version then current_basis:=false; end if;
+  if goal.scope_version<>r.goal_version or task.last_turn_id<>r.task_turn_id
+    or not exists(select 1 from public.turns t join turn_private.text_content c on c.turn_id=t.id and c.owner_id=a.owner_id and c.hidden_at is null
+      where t.id=r.task_turn_id and t.owner_id=a.owner_id and t.status='completed' and c.output_kind='answered')
+    then current_basis:=false; end if;
   if a.trip_id is not null and not exists(select 1 from public.trips t where t.id=a.trip_id and t.owner_id=a.owner_id and t.head_version=r.trip_version)
     then current_basis:=false; end if;
   for m in select value from jsonb_array_elements(r.memory_basis) loop
@@ -117,12 +122,14 @@ create function public.publish_comparison_result_v1(
   p_goal_version integer,p_memory_basis jsonb,p_content jsonb
 ) returns jsonb language plpgsql security definer set search_path='' as $$
 declare a turn_private.result_artifacts%rowtype; r turn_private.result_revisions%rowtype;
-  source turn_private.assistant_messages%rowtype; digest text; new_revision integer; m jsonb;
+  source turn_private.assistant_messages%rowtype; task turn_private.service_tasks%rowtype;
+  digest text; new_revision integer; m jsonb;
 begin
   if (select auth.role())<>'service_role' or p_owner_id is null or p_artifact_id is null or p_idempotency_key is null
     or p_task_id is null or p_goal_id is null or p_input_message_id is null or p_expected_revision is null
     or p_expected_revision not between 0 and 999 or p_goal_version is null or p_goal_version<1
-    or (p_trip_id is null)<>(p_trip_version is null)
+    -- #559 has no trusted task/goal-to-Trip membership yet.
+    or p_trip_id is not null or p_trip_version is not null
     or p_memory_basis is null or jsonb_typeof(p_memory_basis)<>'array' or jsonb_array_length(p_memory_basis)>20
     or not turn_private.valid_comparison_v1(p_content) then raise exception 'INVALID_INPUT'; end if;
   for m in select value from jsonb_array_elements(p_memory_basis) loop
@@ -141,14 +148,17 @@ begin
     return jsonb_build_object('kind','published','artifactId',r.artifact_id,'revision',r.revision,'reused',true);
   end if;
   select * into source from turn_private.assistant_messages where id=p_input_message_id and owner_id=p_owner_id and goal_id=p_goal_id and task_id=p_task_id;
-  if not found or source.scope_version<>p_goal_version
-    or not exists(select 1 from turn_private.assistant_goals g where g.id=p_goal_id and g.owner_id=p_owner_id and g.conversation_id=source.conversation_id and g.scope_version=p_goal_version)
-    or not exists(select 1 from turn_private.service_tasks t where t.id=p_task_id and t.owner_id=p_owner_id and turn_private.text_policy_current(t.policy_id)
-      and exists(select 1 from turn_private.text_consents c where c.owner_id=p_owner_id and c.policy_id=t.policy_id and c.consent_id=t.consent_id and c.revoked_at is null)
-      and exists(select 1 from turn_private.text_content root where root.turn_id=t.goal_turn_id and root.owner_id=p_owner_id and root.hidden_at is null))
+  if not found or source.scope_version<>p_goal_version then raise exception 'STALE_BASIS'; end if;
+  select * into task from turn_private.service_tasks where id=p_task_id and owner_id=p_owner_id for share;
+  if not found or not turn_private.text_policy_current(task.policy_id)
+    or not exists(select 1 from turn_private.text_consents c where c.owner_id=p_owner_id and c.policy_id=task.policy_id and c.consent_id=task.consent_id and c.revoked_at is null)
+    or not exists(select 1 from turn_private.text_content root where root.turn_id=task.goal_turn_id and root.owner_id=p_owner_id and root.hidden_at is null)
+    or not exists(select 1 from public.turns t join turn_private.text_content c on c.turn_id=t.id and c.owner_id=p_owner_id and c.hidden_at is null
+      where t.id=task.last_turn_id and t.owner_id=p_owner_id and t.status='completed' and c.output_kind='answered' for share)
+    then raise exception 'STALE_BASIS'; end if;
+  if not exists(select 1 from turn_private.assistant_goals g where g.id=p_goal_id and g.owner_id=p_owner_id and g.conversation_id=source.conversation_id and g.scope_version=p_goal_version)
     or not turn_private.text_policy_current(source.policy_id)
     or not exists(select 1 from turn_private.text_consents c where c.owner_id=p_owner_id and c.policy_id=source.policy_id and c.consent_id=source.consent_id and c.revoked_at is null)
-    or (p_trip_id is not null and not exists(select 1 from public.trips t where t.id=p_trip_id and t.owner_id=p_owner_id and t.head_version=p_trip_version))
     then raise exception 'STALE_BASIS'; end if;
   select * into a from turn_private.result_artifacts where id=p_artifact_id for update;
   if p_expected_revision=0 then
@@ -163,8 +173,8 @@ begin
     new_revision:=a.current_revision+1;
     update turn_private.result_artifacts set current_revision=new_revision where id=p_artifact_id;
   end if;
-  insert into turn_private.result_revisions(artifact_id,revision,owner_id,idempotency_key,request_digest,input_sequence,goal_version,trip_version,memory_basis,content)
-    values(p_artifact_id,new_revision,p_owner_id,p_idempotency_key,digest,source.sequence,p_goal_version,p_trip_version,p_memory_basis,p_content);
+  insert into turn_private.result_revisions(artifact_id,revision,owner_id,idempotency_key,request_digest,input_sequence,task_turn_id,goal_version,trip_version,memory_basis,content)
+    values(p_artifact_id,new_revision,p_owner_id,p_idempotency_key,digest,source.sequence,task.last_turn_id,p_goal_version,p_trip_version,p_memory_basis,p_content);
   insert into turn_private.result_events(owner_id,artifact_id,revision,event_type)
     values(p_owner_id,p_artifact_id,new_revision,case when new_revision=1 then 'ready' else 'revised' end);
   return jsonb_build_object('kind','published','artifactId',p_artifact_id,'revision',new_revision,'reused',false);
@@ -224,7 +234,7 @@ begin
   return jsonb_build_object('kind','result_artifact','artifactId',a.id,'revision',r.revision,'currentRevision',a.current_revision,
     'current',a.lifecycle='active' and r.revision=a.current_revision and state->>'current'='true',
     'historicalReadable',true,'lifecycle',a.lifecycle,
-    'source',jsonb_build_object('taskId',a.task_id,'goalId',a.goal_id,'goalVersion',r.goal_version,
+    'source',jsonb_build_object('taskId',a.task_id,'taskTurnId',r.task_turn_id,'goalId',a.goal_id,'goalVersion',r.goal_version,
       'inputMessageId',a.input_message_id,'inputSequence',r.input_sequence,'tripId',a.trip_id,'tripVersion',r.trip_version),
     'basis',jsonb_build_object('memories',r.memory_basis,'evidence','[]'::jsonb),
     'content',r.content,'createdAt',r.created_at);

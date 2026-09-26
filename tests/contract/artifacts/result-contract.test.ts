@@ -6,7 +6,7 @@ const id = "11111111-1111-4111-8111-111111111111";
 const read = () => ({
   kind: "result_artifact", artifactId: id, revision: 1, currentRevision: 1, current: true,
   historicalReadable: true, lifecycle: "active", createdAt: "2026-09-27T00:00:00Z",
-  source: { taskId: id, goalId: id, goalVersion: 1, inputMessageId: id, inputSequence: 1, tripId: null, tripVersion: null },
+  source: { taskId: id, taskTurnId: id, goalId: id, goalVersion: 1, inputMessageId: id, inputSequence: 1, tripId: null, tripVersion: null },
   basis: { memories: [], evidence: [] },
   content: { schemaVersion: "comparison/1", title: "Synthetic comparison", summary: "Two unverified options.",
     options: [{ id: "a", title: "A", tradeoff: "Unknown time" }, { id: "b", title: "B", tradeoff: "Unknown availability" }], actions: [] },
