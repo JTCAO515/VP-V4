@@ -62,12 +62,16 @@ SQL 核验真实 Trip owner，仅返回 `task-travel-pace/1` 的
 重新读取，不缓存旧管理快照；提供 `expectedSourceRevision` 可在后续使用前拒绝失效来源。
 此返回值是**资格读取**，不是模型使用、持久消费收据或 Trip 修改证明。
 
-当前 main 的 `NativeRelativeOutline.make(from:chinese:)` 尚无节奏消费者。#197 所属
-`NativeTripView/NativeRelativeOutline` 在途文件保持归属；合同合并后续接线须证明：
+`NativeRelativeOutline.make(from:chinese:)` 的原始方向不读取 Profile；#199 原生消费者增量在
+已选中的真实 Trip 上调用独立任务投影，明确选择本次节奏或跳过保存值。`profile` 来源的节奏
+只塑造本机方向预览，不能直接进入 Trip 草稿；用户须在可见选择器中明确选“本次”节奏并重新生成，
+由 `current_input` 投影后才能经重验进入原有草稿/Proposal/确认链。该代码未在目标环境验证，
+不把预览视为原子 Trip 提交或真实跨 Trip 验收。后续完整接线仍须证明：
 明确本次选项覆盖默认，`relaxed` 隔日单主题/自由日，`balanced` 每天单主题，
 `packed` 每天两个待核主题。均不编造地点、时刻、距离或预算可行性；仍经可编辑草稿、
 Proposal 可见 diff 和准确版本确认。该可观察映射、保存后跨两 Trip 实际使用、失效提案/迟到结果
-与实际建议使用依据均仍属 #199 剩余验收，不能以此管理界面或资格 API 替代。
+与实际建议使用依据均仍属 #199 剩余验收。若将来允许保存偏好直接影响可提交 Proposal，
+须持久绑定 owner/来源版本并在服务端确认边界失效关闭；不能以本机预览、管理界面或资格 API 替代。
 
 本迁移未在共享 Staging 或生产应用。回退使用代码 revert 并在获准环境撤销新 RPC 的执行权限，
 保留字段和当前撤回状态；不回填旧同意、不倒退 revision、不修改已应用迁移。隔离 SQL 测试沿完整迁移历史

@@ -12,6 +12,102 @@ enum NativeTravelPace: String, Codable, CaseIterable {
     }
 }
 
+enum NativeOutlinePaceChoice: String, CaseIterable {
+    case saved, thisTimeNone, relaxed, balanced, packed
+
+    var currentPace: NativeTravelPace? { NativeTravelPace(rawValue: rawValue) }
+    var useSaved: Bool { self == .saved }
+    func label(chinese: Bool) -> String {
+        switch self {
+        case .saved: chinese ? "使用已保存节奏" : "Use saved pace"
+        case .thisTimeNone: chinese ? "本次不用已保存节奏" : "Skip saved pace this time"
+        case .relaxed: chinese ? "本次轻松" : "Relaxed this time"
+        case .balanced: chinese ? "本次适中" : "Balanced this time"
+        case .packed: chinese ? "本次紧凑" : "Packed this time"
+        }
+    }
+}
+
+struct NativeTaskTravelPace: Decodable, Equatable {
+    let schemaVersion: String
+    let tripId: String
+    let travelPace: NativeTravelPace?
+    let source: String
+    let sourceRevision: Int?
+    let sourceOperationId: UUID?
+    let purpose: String
+
+    // A saved Profile value may shape a local preview, but it has no durable
+    // basis in Trip proposals. Only an explicit this-time choice or a generic
+    // outline can move into a Trip draft.
+    func canPromoteToTripDraft(for tripID: String, choice: NativeOutlinePaceChoice) -> Bool {
+        valid(for: tripID, choice: choice) && (source == "current_input" || source == "none")
+    }
+
+    func valid(for tripID: String, choice: NativeOutlinePaceChoice) -> Bool {
+        guard schemaVersion == "task-travel-pace/1", tripId.lowercased() == tripID.lowercased(),
+              purpose == "local_trip_planning" else { return false }
+        switch source {
+        case "profile":
+            return choice == .saved && travelPace != nil && sourceRevision.map { $0 > 0 && $0 <= 9_007_199_254_740_990 } == true
+                && sourceOperationId != nil
+        case "current_input":
+            return travelPace == choice.currentPace && choice.currentPace != nil
+                && sourceRevision == nil && sourceOperationId == nil
+        case "none":
+            return travelPace == nil && sourceRevision == nil && sourceOperationId == nil
+                && choice.currentPace == nil
+        default: return false
+        }
+    }
+}
+
+struct NativeTaskTravelPaceInput: Encodable {
+    let tripId: String
+    let currentPace: NativeTravelPace?
+    let useSaved: Bool
+    let expectedSourceRevision: Int?
+
+    init(tripId: String, choice: NativeOutlinePaceChoice, expectedSourceRevision: Int? = nil) {
+        self.tripId = tripId
+        currentPace = choice.currentPace
+        useSaved = choice.useSaved
+        self.expectedSourceRevision = expectedSourceRevision
+    }
+
+    private enum CodingKeys: String, CodingKey { case tripId, currentPace, useSaved, expectedSourceRevision }
+    func encode(to encoder: Encoder) throws {
+        var values = encoder.container(keyedBy: CodingKeys.self)
+        try values.encode(tripId, forKey: .tripId)
+        if let currentPace { try values.encode(currentPace, forKey: .currentPace) }
+        else { try values.encodeNil(forKey: .currentPace) }
+        try values.encode(useSaved, forKey: .useSaved)
+        try values.encodeIfPresent(expectedSourceRevision, forKey: .expectedSourceRevision)
+    }
+}
+
+@MainActor
+enum NativeTaskTravelPaceReader {
+    static func read(tripID: String, choice: NativeOutlinePaceChoice,
+                     expectedSourceRevision: Int? = nil,
+                     currentScope: @MainActor () -> NativeDataScope?,
+                     request: @MainActor (Data) async throws -> Data) async throws -> NativeTaskTravelPace {
+        guard UUID(uuidString: tripID) != nil, let captured = currentScope() else {
+            throw NativeDataError.sessionUnavailable
+        }
+        let body = try JSONEncoder().encode(NativeTaskTravelPaceInput(
+            tripId: tripID, choice: choice, expectedSourceRevision: expectedSourceRevision))
+        let data = try await request(body)
+        guard !Task.isCancelled, currentScope() == captured else { throw NativeDataError.staleSessionResponse }
+        let result = try JSONDecoder().decode(NativeTaskTravelPace.self, from: data)
+        guard result.valid(for: tripID, choice: choice),
+              expectedSourceRevision == nil || result.sourceRevision == expectedSourceRevision else {
+            throw NativeDataError.invalidResponse
+        }
+        return result
+    }
+}
+
 struct NativeTravelPaceSnapshot: Decodable, Equatable {
     let schemaVersion: String
     let revision: Int

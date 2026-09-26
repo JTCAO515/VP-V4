@@ -32,6 +32,12 @@ struct NativePlanningSheet: View {
 }
 
 struct NativeTripView: View {
+    private struct PaceBasis: Equatable {
+        let tripID: String
+        let request: String
+        let choice: NativeOutlinePaceChoice
+        let projection: NativeTaskTravelPace
+    }
     var initialPlanningRequest: String? = nil
     @Environment(AppSettings.self) private var settings
     @State private var store = NativeTripStore()
@@ -51,11 +57,18 @@ struct NativeTripView: View {
     @State private var outlineTitles: [String] = []
     @State private var outlineStartDate = ""
     @State private var outlineNotice: String?
+    @State private var outlinePaceChoice: NativeOutlinePaceChoice = .saved
+    @State private var outlinePaceBasis: PaceBasis?
+    @State private var outlineGeneration = UUID()
     @State private var consumedInitialRequest = false
     @FocusState private var titleFocused: Bool
     private var chinese: Bool { settings.selectedLocale == .zh }
     private var session: NativeSession { settings.nativeSession }
     private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
+    private var outlineCanPromote: Bool {
+        guard let basis = outlinePaceBasis else { return false }
+        return basis.projection.canPromoteToTripDraft(for: basis.tripID, choice: basis.choice)
+    }
 
     var body: some View {
         ScrollView {
@@ -158,7 +171,7 @@ struct NativeTripView: View {
             if !consumedInitialRequest, session.dataScope != nil, let initialPlanningRequest {
                 consumedInitialRequest = true
                 planningRequest = initialPlanningRequest
-                generateOutline()
+                await generateOutline()
             }
             if session.dataScope != nil && !session.busy { await store.reload(using: session) }
         }
@@ -171,6 +184,9 @@ struct NativeTripView: View {
                 clearOutline()
                 archiveVisible = false; archiveReference = nil
             }
+        }
+        .onChange(of: store.selectedID) { _, _ in
+            outlineGeneration = UUID(); outline = nil; outlineTitles = []; outlinePaceBasis = nil
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.protectedDataDidBecomeAvailableNotification)) { _ in
             if screenshotReviewSource == nil { cleanupAbandonedScreenshots() }
@@ -226,17 +242,69 @@ struct NativeTripView: View {
 
     private func clearOutline() {
         planningRequest = ""; outline = nil; outlineTitles = []; outlineStartDate = ""; outlineNotice = nil
+        outlinePaceBasis = nil; outlineGeneration = UUID()
     }
 
-    private func generateOutline() {
+    private func projectPace(tripID: String, choice: NativeOutlinePaceChoice,
+                             expectedRevision: Int? = nil) async throws -> NativeTaskTravelPace {
+        try await NativeTaskTravelPaceReader.read(tripID: tripID, choice: choice,
+            expectedSourceRevision: expectedRevision, currentScope: { session.dataScope }) { body in
+            try await session.memoryRequest(path: "api/memory/native/v1/travel-pace/project", method: "POST", body: body)
+        }
+    }
+
+    private func stillCurrent(_ basis: PaceBasis) async -> Bool {
+        guard session.dataScope != nil, store.scope == session.dataScope,
+              store.selectedID == basis.tripID else { return false }
+        do {
+            let latest = try await projectPace(tripID: basis.tripID, choice: basis.choice,
+                expectedRevision: basis.projection.sourceRevision)
+            return latest == basis.projection && store.selectedID == basis.tripID
+        } catch { return false }
+    }
+
+    private func generateOutline() async {
         titleFocused = false
-        if let result = NativeRelativeOutline.make(from: planningRequest, chinese: chinese) {
-            outline = result
-            outlineTitles = result.initialTitles
-            outlineNotice = nil
-        } else {
+        let token = UUID(), request = planningRequest, choice = outlinePaceChoice
+        outlineGeneration = token; outline = nil; outlineTitles = []; outlinePaceBasis = nil
+        guard let result = NativeRelativeOutline.make(from: request, chinese: chinese) else {
             outline = nil; outlineTitles = []
             outlineNotice = text("Add a supported city, 2–7 days, and food or walks.", "请写明支持的城市、2–7 天，以及美食或散步。")
+            return
+        }
+        guard let tripID = store.detail?.trip.id else {
+            outline = result; outlineTitles = result.initialTitles; outlineNotice = nil
+            return
+        }
+        do {
+            let projection = try await projectPace(tripID: tripID, choice: choice)
+            guard outlineGeneration == token, planningRequest == request, outlinePaceChoice == choice,
+                  store.detail?.trip.id == tripID else { return }
+            outline = result
+            outlineTitles = projection.travelPace.map { result.titles(for: $0, chinese: chinese) } ?? result.initialTitles
+            outlinePaceBasis = .init(tripID: tripID, request: request, choice: choice, projection: projection)
+            outlineNotice = nil
+        } catch {
+            guard outlineGeneration == token else { return }
+            outlineNotice = text("Could not verify the Trip and saved pace. Retry when connected.",
+                                 "无法核验行程与已保存节奏，请联网后重试。")
+        }
+    }
+
+    private func addOutlineToDraft() async {
+        guard let basis = outlinePaceBasis, basis.request == planningRequest,
+              basis.projection.canPromoteToTripDraft(for: basis.tripID, choice: basis.choice) else { return }
+        guard await stillCurrent(basis) else {
+            outline = nil; outlineTitles = []; outlinePaceBasis = nil
+            outlineNotice = text("The pace or Trip changed. Generate a fresh outline before continuing.",
+                                 "节奏或行程发生变化，请重新生成方向后继续。")
+            return
+        }
+        if store.beginOutline(outlineTitles, starting: outlineStartDate, using: session) {
+            outlineNotice = nil
+        } else {
+            outlineNotice = text("Use a valid start date with no overlap, then try again.",
+                                 "请填写有效且不与现有日程重叠的开始日期。")
         }
     }
 
@@ -244,21 +312,32 @@ struct NativeTripView: View {
         VisePandaCard {
             VStack(alignment: .leading, spacing: 12) {
                 Text(text("Start with a rough idea", "从模糊想法开始")).font(.title2.bold())
-                Text(text("Describe a 2–7 day visit to Shanghai, Beijing, Guangzhou or Chongqing, with food or walks. This outline uses only the city, duration and these interests. Other requests, dates, budget and fixed plans still need review; places and routes are not checked.", "说说去上海、北京、广州或重庆的 2–7 天想法，以及美食或散步兴趣。草稿只使用城市、天数和这些兴趣；其他要求、日期、预算与固定安排仍需审阅，地点和路线未经核验。"))
+                Text(text("Describe a 2–7 day visit to Shanghai, Beijing, Guangzhou or Chongqing, with food or walks. This outline uses the city, duration, interests and the pace you select below. Other requests, dates, budget and fixed plans still need review; places and routes are not checked.", "说说去上海、北京、广州或重庆的 2–7 天想法，以及美食或散步兴趣。方向草稿使用城市、天数、兴趣及下方选择的节奏；其他要求、日期、预算与固定安排仍需审阅，地点和路线未经核验。"))
                     .font(.footnote).foregroundStyle(Color.vpSecondaryText)
+                if store.detail != nil {
+                    Picker(text("Travel pace for this outline", "本次方向的旅行节奏"), selection: $outlinePaceChoice) {
+                        ForEach(NativeOutlinePaceChoice.allCases, id: \.self) { choice in
+                            Text(choice.label(chinese: chinese)).tag(choice)
+                        }
+                    }
+                    .accessibilityIdentifier("trip.outline.pace")
+                    .onChange(of: outlinePaceChoice) { _, _ in
+                        outlineGeneration = UUID(); outline = nil; outlineTitles = []; outlinePaceBasis = nil
+                    }
+                }
                 TextField(text("e.g. First time in Shanghai for four days; food and walks, dates unknown", "例如：第一次去上海四天，喜欢吃和散步，日期未定"), text: Binding(get: { planningRequest }, set: {
                     planningRequest = $0
-                    outline = nil; outlineTitles = []; outlineNotice = nil
+                    outlineGeneration = UUID(); outline = nil; outlineTitles = []; outlinePaceBasis = nil; outlineNotice = nil
                 }), axis: .vertical)
                     .textFieldStyle(.roundedBorder)
                     .focused($titleFocused)
                     .accessibilityIdentifier("trip.outline.request")
-                Button(text("Show a relative-day outline", "查看相对日草稿"), action: generateOutline)
+                Button(text("Show a relative-day outline", "查看相对日草稿")) { Task { await generateOutline() } }
                 .accessibilityIdentifier("trip.outline.generate")
                 if let outline {
                     Text(text("\(outline.city) · \(outline.count) relative days · dates not bound, budget unchecked", "\(outline.city) · \(outline.count) 个相对日 · 日期未绑定，预算未核验"))
                         .font(.headline)
-                    if outline.hasAlternatives {
+                    if outlinePaceBasis?.projection.travelPace == nil && outline.hasAlternatives {
                         Text(text("Food first: fewer planned walks, one food area on each full day.", "美食优先：少安排散步，每个完整日探索一个美食片区。"))
                         Button(text("Use food first", "选择美食优先")) { titleFocused = false; outlineTitles = outline.foodFirst }
                             .accessibilityIdentifier("trip.outline.food")
@@ -266,12 +345,33 @@ struct NativeTripView: View {
                         Button(text("Use walk first", "选择散步优先")) { titleFocused = false; outlineTitles = outline.walkFirst }
                             .accessibilityIdentifier("trip.outline.walk")
                     }
+                    if let projection = outlinePaceBasis?.projection, let pace = projection.travelPace {
+                        Text(projection.source == "profile"
+                             ? text("Saved \(pace.label(chinese: false)) pace shapes this local preview only.",
+                                    "已保存的\(pace.label(chinese: true))节奏仅用于本机方向预览。")
+                             : text("This-time \(pace.label(chinese: false)) pace shapes this local outline.",
+                                    "本次\(pace.label(chinese: true))节奏用于本机方向草稿。"))
+                            .font(.footnote).accessibilityIdentifier("trip.outline.paceSource")
+                        if projection.source == "profile" {
+                            Text(text("To add it to a Trip draft, choose \(pace.label(chinese: false)) this time and generate again.",
+                                      "如要加入行程草稿，请明确选择“本次\(pace.label(chinese: true))”并重新生成。"))
+                                .font(.footnote).accessibilityIdentifier("trip.outline.previewOnly")
+                        }
+                    } else if outlinePaceChoice == .saved && outlinePaceBasis?.projection.source == "none" {
+                        Text(text("No authorized saved pace is available; this outline uses only your current request.",
+                                  "没有可用的已授权保存节奏；这份方向只使用本次输入。"))
+                            .font(.footnote).accessibilityIdentifier("trip.outline.paceSource")
+                    }
                     ForEach(outlineTitles.indices, id: \.self) { index in
                         TextField(text("Day \(index + 1)", "第 \(index + 1) 天"), text: $outlineTitles[index], axis: .vertical)
                             .textFieldStyle(.roundedBorder)
                             .accessibilityIdentifier("trip.outline.day.\(index + 1)")
                     }
-                    Text(text("Choose a start date to make a reviewable Trip proposal. Existing days stay untouched; matching dates are rejected. Place, route, timing and feasibility still need verification.", "选定开始日期后才能生成可审阅的 Trip 提议。原有日程不改动，重叠日期会被拒绝。地点、路线、时间与可行性仍待核验。"))
+                    Text(outlinePaceBasis?.projection.source == "profile"
+                         ? text("Saved pace is preview-only. Choose a this-time pace and generate again before adding to a Trip draft.",
+                                "已保存节奏仅供预览。请明确选择本次节奏并重新生成，再加入行程草稿。")
+                         : text("Choose a start date to make a reviewable Trip proposal. Existing days stay untouched; matching dates are rejected. Place, route, timing and feasibility still need verification.",
+                                "选定开始日期后才能生成可审阅的 Trip 提议。原有日程不改动，重叠日期会被拒绝。地点、路线、时间与可行性仍待核验。"))
                         .font(.footnote).foregroundStyle(Color.vpSecondaryText)
                     TextField(text("Start date (YYYY-MM-DD)", "开始日期（YYYY-MM-DD）"), text: $outlineStartDate)
                         .textFieldStyle(.roundedBorder).keyboardType(.numbersAndPunctuation)
@@ -283,15 +383,11 @@ struct NativeTripView: View {
                     }
                     Button(text("Add outline to local draft", "将方向加入本机草稿")) {
                         titleFocused = false
-                        if store.beginOutline(outlineTitles, starting: outlineStartDate, using: session) {
-                            outlineNotice = nil
-                        } else {
-                            outlineNotice = text("Use a valid start date with no overlap, then try again.", "请填写有效且不与现有日程重叠的开始日期。")
-                        }
+                        Task { await addOutlineToDraft() }
                     }
                     .buttonStyle(.borderedProminent)
                     .accessibilityIdentifier("trip.outline.addToDraft")
-                    .disabled(store.busy || store.detail == nil || !store.canEdit)
+                    .disabled(store.busy || store.detail == nil || !store.canEdit || !outlineCanPromote)
                 }
                 if let outlineNotice {
                     Text(outlineNotice).foregroundStyle(Color.vpSecondaryText)
