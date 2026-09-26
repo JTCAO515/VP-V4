@@ -141,6 +141,10 @@ final class NativeSession {
         try await dataRequest(prefix: "api/service-cases/native/v1", path: "api/service-cases/native/v1", method: "POST", body: body)
     }
 
+    func storeKitRequest(method: String, body: Data? = nil) async throws -> Data {
+        try await dataRequest(prefix: "api/storekit/native/v1", path: "api/storekit/native/v1", method: method, body: body)
+    }
+
     /// The Trip consumer receives response bytes, never the Keychain credential.
     func tripRequest(path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         try await dataRequest(prefix: "api/trips/native/v2", path: path, method: method, body: body, queryItems: queryItems)
