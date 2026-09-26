@@ -7,6 +7,7 @@ import { opsRuntimeConfig } from "../knowledge/review/local-workspace.ts";
 import { isUuid, hasSameOrigin } from "../identity/request-guards.ts";
 import { parseReadinessInput } from "./contract.ts";
 import { readReadiness } from "./service.ts";
+import { nativeReadEnabled } from "../knowledge/native-read-flag.ts";
 
 /** Read-only assessment; declarations are used for this request, never persisted or sent to a model. */
 export async function readinessHTTP(request: NextRequest, tripId: string, native: boolean) {
@@ -18,7 +19,7 @@ export async function readinessHTTP(request: NextRequest, tripId: string, native
   const config = native ? nativeConfig : opsRuntimeConfig(request, {
     ...process.env, OPS_LOCAL_REVIEW: process.env.KNOWLEDGE_LOCAL_READ, OPS_STAGING_REVIEW: process.env.KNOWLEDGE_STAGING_READ,
   });
-  if (!config || (native && (nativeConfig?.environment === "staging" ? process.env.KNOWLEDGE_STAGING_READ : process.env.KNOWLEDGE_LOCAL_READ) !== "1")) return failure("READINESS_DISABLED", 503);
+  if (!config || (native && !nativeReadEnabled(nativeConfig?.environment, process.env))) return failure("READINESS_DISABLED", 503);
   const lifetime = nativeRequestScope(request.signal);
   try {
     return await lifetime.run(async () => {

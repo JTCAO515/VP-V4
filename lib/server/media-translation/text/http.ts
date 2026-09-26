@@ -8,6 +8,8 @@ const invalid = () => response({ error: { code: "INVALID_INPUT" } }, 400);
 
 /** Uses exactly the current-input text lane: no new recipient, worker, budget or history context. */
 export async function translationHTTP(request: NextRequest, textHTTP: typeof nativeTextHTTP = nativeTextHTTP) {
+  // The shared current-input Ask lane does not grant Production translation.
+  if (process.env.VERCEL_ENV === "production") return response({ error: { code: "PROVIDER_UNAVAILABLE" } }, 503);
   if (request.headers.has("cookie") || request.headers.has("origin") || [...request.nextUrl.searchParams].length) return invalid();
   if (request.method === "GET") {
     const result = await textHTTP(request, "history");
