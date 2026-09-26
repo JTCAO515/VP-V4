@@ -1,5 +1,7 @@
 # ADR-0025: Basic cross-Trip preferences, service-task metering and response semantics
 
+2026-09-27 scoped supersession: [ADR-0027](ADR-0027-personal-journey-assistant.md) defines the current assistant experience, navigation and versioned integration. Historical decisions/evidence below remain intact; unaffected Trip, memory authority, billing integrity and safety contracts still apply.
+
 Status: proposed for the adopting planning PR. The Q36/Q37 product directions are confirmed inputs; this repository specification takes effect when the PR merges. Runtime schemas, unsettled charging policies and operational permissions are not approved by this ADR.
 
 ## Context

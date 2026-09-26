@@ -1,5 +1,7 @@
 # VP-Harness：旅行任务的可靠性整合与验收
 
+2026-09-27升级接线：按[ADR-0027](../adr/ADR-0027-personal-journey-assistant.md)与[体验E1–E10](../product/assistant-upgrade-2026-09-27/EXPERIENCE.md)补充助手场景。既有12场景、来源版本和未验项不重置；typed proposal-producing adapter仅在版本化合同下接入，不能解除确认或开放任意Trip写入。
+
 日期：2026-09-09。统筹范围已由本次请求授权；六张实施任务纳入现有 [VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187)。任务发布和主线交付证据见 [验证记录](VERIFICATION.md)。本次交付规划与 Issue，不表示 Harness 已实现或真实旅行能力已验收。
 
 权威任务来源为 [issue-plan.json](../program/2026-09-05/issue-plan.json)，执行入口为 [任务表](../program/2026-09-05/ISSUES.md) 和 [执行合同](../program/2026-09-05/EXECUTION-CONTRACT.md)。本文件定义验收口径，不建立第二个 Program、数据库或执行队列。遵循 ADR-0023 与 [开发流程 / ADR-0024](../agents/development-workflow.md)。

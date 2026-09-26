@@ -4,13 +4,13 @@
 
 ## 用户结果
 
-首访与回访的三种入口获得首个成果。
+VP首访、委托与回访的连续体验。
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：E1：新用户一句无日期想法先得到可保存的方向或片段，再按需要补一个可跳过的问题。
-- 本票责任/非目标：负责入口衔接/首值；不重建09规划、11记忆、12材料或62招募，三类入口全通才是整票完成。 2026-09-22已确认的实施顺序：E1 → E2 → E3；交接输入不新增原生blocked，完整父票验收保留。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
+- 首个可交付结果：从一句模糊想法形成可用方向，用户委托研究后离开，再回来看到真实成果与下一决定。
+- 本票责任/非目标：负责三段入口和用户观测；VPJ-81实现主会话，规划/记忆/材料各沿原owner，首值不是注册或点击。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
@@ -39,6 +39,8 @@
 - [ ] 继承同意范围内事件schema；first_value/activated/outcome_declined不混计。
 - [ ] 按本轮目标先交可用成果，只有会改变方案的缺失信息才追问；回访使用真实可用偏好与已保存成果，必要澄清沿同一ServiceTask，不机械问卷或反复索取已知信息。
 - [ ] 体验增量2026-09-17：以无日期新想法、已有安排导入、在途回访三类任务验收首值；每次必要问题伴随已有成果或具体变化，用户可跳过，已知日期/人数/服务意向不重问。分别记录首次可用成果时间、实际采用/保存、拒绝和技术失败，并以明确分母报告重复提问率，不预设未经测量的收益数字。
+- [ ] 助手升级2026-09-27：首次呈现有吸引力的个性化选择，回访优先真实新成果/未决问题；没有进展不捏造更新，不强制先建Trip或填写完整问卷。
+- [ ] 助手升级2026-09-27：评价用户能否说明VP记得什么、正在做什么、结果在哪及如何改口；目标结果完成与partial/blocked/technical_failure分开计量。
 
 ## 不得触碰
 

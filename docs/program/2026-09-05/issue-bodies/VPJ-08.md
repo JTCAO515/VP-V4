@@ -8,9 +8,9 @@
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：复用现有cursor/SSE与取消接口，在同一已接受任务上验一次后台/断网/重启后的事件接续和最终结果读取。
-- 本票责任/非目标：负责事件与客户端恢复；不重建07执行队列/59账本，提交前后全链故障由69整合验收。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [artifacts/VPJ-08/native-events-staging-20260913/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-08/native-events-staging-20260913/verification.md) · [artifacts/VPJ-08/native-cancel-staging-20260913/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-08/native-cancel-staging-20260913/verification.md)
+- 首个可交付结果：在现有cursor/replay上核对任务进度和成果引用的兼容扩展接缝。
+- 本票责任/非目标：负责可恢复事件传输；VPJ-78负责关联语义、VPJ-79负责成果、VPJ-81负责不阻塞的主会话。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [artifacts/VPJ-08/native-events-staging-20260913/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-08/native-events-staging-20260913/verification.md) · [artifacts/VPJ-08/native-cancel-staging-20260913/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-08/native-cancel-staging-20260913/verification.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
@@ -35,6 +35,7 @@
 - [ ] 断网重连、App后台、取消、服务重启不丢最终回答、不双扣Ask、不重复Trip提交。
 - [ ] 跨账号旧事件不可回放；流式tail usage缺失进入待核账。
 - [ ] 同一ServiceTask跨轮/断网/重连保持归属，必要澄清或系统恢复不重复消费；状态文案来自实际事件，取消生成、未提交Proposal和已提交Trip分别呈现。
+- [ ] 助手升级2026-09-27：新增任务/成果事件需持久cursor与去重、schema兼容和账号失效保护；SSE不是唯一存储，晚到事件不能抢焦点、复活撤回内容或把旧成果标为当前。
 
 ## 不得触碰
 

@@ -160,6 +160,10 @@
       "status": "document"
     },
     {
+      "path": "docs/adr/ADR-0027-personal-journey-assistant.md",
+      "status": "document"
+    },
+    {
       "path": "docs/agents/continuous-afk-execution.md",
       "status": "document"
     },
@@ -500,6 +504,10 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/route-comparison.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/safe-phrase-unavailable.md",
       "status": "document"
     },
@@ -616,7 +624,31 @@
       "status": "document"
     },
     {
+      "path": "docs/contracts/vpj-21.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-22.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-23.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-26.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-30.md",
+      "status": "document"
+    },
+    {
       "path": "docs/contracts/vpj-33.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-34.md",
       "status": "document"
     },
     {
@@ -637,6 +669,10 @@
     },
     {
       "path": "docs/contracts/vpj-56.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/contracts/vpj-57.md",
       "status": "document"
     },
     {
@@ -840,6 +876,14 @@
       "status": "document"
     },
     {
+      "path": "docs/operations/customer-discovery-interview-kit.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/operations/customer-discovery-outreach.md",
+      "status": "document"
+    },
+    {
       "path": "docs/operations/customer-discovery-pilot.md",
       "status": "document"
     },
@@ -877,6 +921,30 @@
     },
     {
       "path": "docs/policy/vpj-03-text-notice-review.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/assistant-upgrade-2026-09-27/CODING-AGENT.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/assistant-upgrade-2026-09-27/README.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/assistant-upgrade-2026-09-27/TASK-MAP.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/product/assistant-upgrade-2026-09-27/references/README.md",
       "status": "document"
     },
     {
@@ -1264,6 +1332,34 @@
       "status": "document"
     },
     {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-77.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-78.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-79.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-80.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-81.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-82.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/program/2026-09-05/issue-bodies/VPJ-83.md",
+      "status": "document"
+    },
+    {
       "path": "docs/program/2026-09-05/program-body.md",
       "status": "document"
     },
@@ -1372,6 +1468,18 @@
       "status": "document"
     },
     {
+      "path": "docs/runbooks/hosted-text-worker-activation-review-20260925.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/hosted-text-worker-staging.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/ios-signing-and-testflight.md",
+      "status": "document"
+    },
+    {
       "path": "docs/runbooks/journey-pass-storekit-readiness.md",
       "status": "document"
     },
@@ -1429,6 +1537,10 @@
     },
     {
       "path": "docs/runbooks/vpj-02-current-staging-verification.md",
+      "status": "document"
+    },
+    {
+      "path": "docs/runbooks/vpj-43-production-separation.md",
       "status": "document"
     },
     {

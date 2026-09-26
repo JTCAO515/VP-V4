@@ -10,7 +10,7 @@ Harness：少走路且保留已确认晚餐的局部改稿闭环。
 
 - 首个可交付结果：在实际路线依据就绪时执行同一Trip少走路且保留晚餐的完整局部改稿，取得确认/重载与测量回执。
 - 本票责任/非目标：负责整合验收；10实现交互、11提供偏好、65提供可行性，不能用新fake适配器绕过真实输入。
-- 先读/复用：[docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md)
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
@@ -28,6 +28,7 @@ Harness：少走路且保留已确认晚餐的局部改稿闭环。
 - [VPJ-67 #264](https://github.com/JTCAO515/VP-V4/issues/264)
 - [VPJ-10 #198](https://github.com/JTCAO515/VP-V4/issues/198)
 - [VPJ-11 #199](https://github.com/JTCAO515/VP-V4/issues/199)
+- [VPJ-79 #560](https://github.com/JTCAO515/VP-V4/issues/560)
 
 可按首个切片独立推进；这些输入的实际能力与适用证据仍须在集成/整票验收时核对，不能用 fixture 或移除图标替代。
 
@@ -39,6 +40,7 @@ Harness：少走路且保留已确认晚餐的局部改稿闭环。
 - [ ] 用户确认绑定不可变proposal revision与base Trip revision；未确认、拒绝、过期、越权/撤权以及另一客户端修改均不误写或覆盖，重复确认不重复提交。
 - [ ] 按12场景规格接入约束/偏好/证据不足及确认冲突案例；原生中英结果和精简Web同Trip/diff语义一致，应用后重载与事务回执一致。
 - [ ] 报告fixture与获准真实环境、测量依据及失败案例；缺路线口径或真实原子回执不可用不能关闭本票。
+- [ ] 助手升级2026-09-27：局部改稿增加artifact/task/memory basis一致性观测，精确保留已确认对象；真实步行改善等既有专项不因新UI而缩减。
 
 ## 不得触碰
 
