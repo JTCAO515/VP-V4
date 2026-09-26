@@ -294,3 +294,46 @@ struct NativeTripArchiveReply: Decodable {
     let version: Int
     let archive: NativeTripArchive?
 }
+
+struct NativePendingTripDeletion: Codable, Equatable {
+    let owner: String
+    let tripID: String
+    let requestID: String
+    let expectedVersion: Int
+
+    var isValid: Bool {
+        UUID(uuidString: owner) != nil && UUID(uuidString: tripID) != nil &&
+        UUID(uuidString: requestID) != nil && expectedVersion >= 0
+    }
+}
+
+struct NativeTripDeletionReceipt: Decodable, Equatable {
+    let version: Int
+    let requestId: String
+    let tripId: String
+    let scope: String
+    let state: String
+    let completedAt: String?
+    let allUserDataCompleted: Bool
+    let backupErasure: String
+    let providerErasure: String
+
+    func isValid(for request: NativePendingTripDeletion) -> Bool {
+        let completionValid: Bool
+        if state == "queued" { completionValid = completedAt == nil }
+        else if state == "completed", let completedAt,
+                !completedAt.isEmpty, completedAt.count <= 64,
+                completedAt.hasSuffix("Z") || completedAt.hasSuffix("+00:00") {
+            let withFraction = ISO8601DateFormatter()
+            withFraction.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            let withoutFraction = ISO8601DateFormatter()
+            withoutFraction.formatOptions = [.withInternetDateTime]
+            completionValid = withFraction.date(from: completedAt) != nil || withoutFraction.date(from: completedAt) != nil
+        } else { completionValid = false }
+        return version == 1 && requestId.lowercased() == request.requestID.lowercased() &&
+        tripId.lowercased() == request.tripID.lowercased() && scope == "trip-core-v1" &&
+        completionValid &&
+        allUserDataCompleted == false && backupErasure == "not_verified" &&
+        providerErasure == "not_performed"
+    }
+}

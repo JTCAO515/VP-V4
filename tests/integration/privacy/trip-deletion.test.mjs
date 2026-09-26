@@ -19,7 +19,12 @@ test('Trip deletion SQL: reauthentication, fencing, atomic completion, isolation
     await new Promise(resolve => setTimeout(resolve, 100));
   }
   assert.ok(ready);
-  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql', 'utf8') + '\ngrant usage on schema auth to authenticated, service_role;');
+  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql', 'utf8') + `
+    create function auth.role() returns text language sql stable as $$
+      select nullif(current_setting('request.jwt.claim.role',true),'')
+    $$;
+    grant usage on schema auth to authenticated, service_role;
+    grant execute on function auth.role() to authenticated, service_role;`);
   await db(readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort().map(f=>'begin;\n'+readFileSync('supabase/migrations/'+f,'utf8')+'\ncommit;').join('\n'));
   const owner=uuid(), other=uuid(), session=uuid(), otherSession=uuid(), oldSession=uuid(), trip=uuid(), request=uuid(), linked=uuid(), archived=uuid();
   await db(`insert into auth.users values('${owner}'),('${other}'); insert into auth.sessions(id,user_id) values('${session}','${owner}'),('${otherSession}','${other}'); insert into auth.sessions(id,user_id,created_at) values('${oldSession}','${owner}',now()-interval '1 hour');
@@ -49,6 +54,8 @@ test('Trip deletion SQL: reauthentication, fencing, atomic completion, isolation
   const queued=await Promise.all([db(call()),db(call())]);
   for(const q of queued){assert.equal(JSON.parse(q).state,'queued');assert.equal(JSON.parse(q).allUserDataCompleted,false);}
   assert.equal(await db(`select count(*) from privacy_private.trip_deletions;`),'1');
+  assert.equal(await db(`set role service_role; set request.jwt.claim.role='service_role'; select public.next_trip_deletion_v1();`),request);
+  await denied(`set role authenticated; select public.next_trip_deletion_v1();`,'permission denied');
   await denied(call(owner,linked,request,session,0),'IDEMPOTENCY_KEY_REUSE');
   await denied(as(other,`select public.read_trip_deletion_v1('${request}');`),'FORBIDDEN');
   await denied(`set role authenticated; select public.execute_trip_deletion_v1('${request}');`,'permission denied');
@@ -63,7 +70,7 @@ test('Trip deletion SQL: reauthentication, fencing, atomic completion, isolation
   // Crash after source erasure but before completion rolls the complete transaction back.
   await db('create trigger test_fail before update on privacy_private.trip_deletions for each row execute function privacy_private.test_fail();');
   await denied(as(owner,`delete from public.trips where id='${trip}';`),'permission denied');
-  const execute=`set role service_role; select public.execute_trip_deletion_v1('${request}');`;
+  const execute=`set role service_role; set request.jwt.claim.role='service_role'; select public.execute_trip_deletion_v1('${request}');`;
   await denied(execute,'receipt fault');
   assert.equal(await db(`select jsonb_agg(to_jsonb(s)) from public.trip_version_snapshots s where trip_id='${trip}';`),before);
   assert.equal(JSON.parse(await db(as(owner,`select public.read_trip_deletion_v1('${request}');`))).state,'queued');
@@ -84,6 +91,7 @@ test('Trip deletion SQL: reauthentication, fencing, atomic completion, isolation
   const raced=await racingWrite; if(raced.code!==0)assert.ok(raced.stderr.includes('TRIP_DELETION_PENDING_OR_COMPLETED'),raced.stderr);
   assert.equal(completions[0],completions[1]);
   const receipt=JSON.parse(completions[0]);assert.equal(receipt.state,'completed');assert.ok(receipt.completedAt);assert.equal(receipt.backupErasure,'not_verified');
+  assert.equal(await db(`set role service_role; set request.jwt.claim.role='service_role'; select public.next_trip_deletion_v1();`),'');
   assert.equal(await db(call()),completions[0]);
   for(const table of ['trips','trip_days','trip_items','trip_proposals','trip_events','trip_audit_events','trip_version_snapshots']){
     assert.equal(await db(`select count(*) from public.${table} where ${table==='trips'?'id':'trip_id'}='${trip}';`),'0',table);
@@ -97,7 +105,7 @@ test('Trip deletion SQL: reauthentication, fencing, atomic completion, isolation
   const ap=JSON.parse(await db(as(owner,`select row_to_json(r) from public.create_trip_proposal_patch('${archived}','{"expectedVersion":0,"operations":[{"kind":"set_title","title":"Archived synthetic"}]}') r;`)));
   const ad=await db(as(owner,`select digest from public.read_trip_proposal_v2('${ap.proposal_id}');`));
   await db(as(owner,`select * from public.confirm_and_apply_trip_proposal('${ap.proposal_id}','${uuid()}','${ad}'); select * from public.archive_trip_v1('${archived}',1,'${uuid()}',true);`));
-  const ar=uuid();await db(call(owner,archived,ar));await db(`set role service_role; select public.execute_trip_deletion_v1('${ar}');`);
+  const ar=uuid();await db(call(owner,archived,ar));await db(`set role service_role; set request.jwt.claim.role='service_role'; select public.execute_trip_deletion_v1('${ar}');`);
   assert.equal(await db(`select count(*) from public.trip_archives where trip_id='${archived}';`),'0');
   // Admission versus a new chat link must serialize, never admit both.
   for(let i=0;i<3;i++){

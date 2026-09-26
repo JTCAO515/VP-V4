@@ -150,6 +150,43 @@ final class NativeSession {
         try await dataRequest(prefix: "api/trips/native/v2", path: path, method: method, body: body, queryItems: queryItems)
     }
 
+    func tripDeletionRequest(method: String, body: Data? = nil, requestID: String? = nil) async throws -> Data {
+        let query = requestID.map { [URLQueryItem(name: "requestId", value: $0)] } ?? []
+        return try await dataRequest(prefix: "api/privacy/native/v1/trips", path: "api/privacy/native/v1/trips",
+                                     method: method, body: body, queryItems: query)
+    }
+
+    /// Keep an uncertain request across app restarts and token replacement. This
+    /// keychain record is owner and API-origin scoped; it contains no Trip text.
+    func pendingTripDeletion() throws -> NativePendingTripDeletion? {
+        guard let scope = dataScope else { throw NativeDataError.sessionUnavailable }
+        let (status, bytes) = vault.read(service: deletionVaultService, owner: scope.subject)
+        if status == errSecItemNotFound { return nil }
+        guard status == errSecSuccess, let bytes,
+              let value = try? JSONDecoder().decode(NativePendingTripDeletion.self, from: bytes),
+              value.owner == scope.subject, value.isValid else { throw NativeDataError.sessionUnavailable }
+        return value
+    }
+
+    func rememberTripDeletion(_ value: NativePendingTripDeletion) throws {
+        let existing = try pendingTripDeletion()
+        guard let scope = dataScope, value.owner == scope.subject, value.isValid,
+              existing == nil || existing == value else { throw NativeDataError.sessionUnavailable }
+        let result = vault.write(try JSONEncoder().encode(value), service: deletionVaultService, owner: value.owner)
+        guard result == errSecSuccess else { throw NativeDataError.sessionUnavailable }
+    }
+
+    func forgetTripDeletion(_ value: NativePendingTripDeletion) throws {
+        let existing = try pendingTripDeletion()
+        guard let scope = dataScope, scope.subject == value.owner, existing == value else {
+            throw NativeDataError.sessionUnavailable
+        }
+        let result = vault.remove(service: deletionVaultService, owner: value.owner)
+        guard result == errSecSuccess || result == errSecItemNotFound else { throw NativeDataError.sessionUnavailable }
+    }
+
+    private var deletionVaultService: String { keychainService + ".trip-deletion." + (endpoint?.absoluteString ?? "disabled") }
+
     /// First-party read only: fixed endpoint and typed scope share the current identity fence.
     func knowledgeRequest(selection: NativeKnowledgeSelection, question: Bool = false) async throws -> Data {
         guard selection.valid else { throw NativeDataError.invalidResponse }
