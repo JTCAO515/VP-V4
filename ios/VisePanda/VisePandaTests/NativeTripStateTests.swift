@@ -3,6 +3,41 @@ import XCTest
 
 nonisolated final class NativeTripStateTests: XCTestCase {
     @MainActor
+    func testDeletionQueuedThenCompletedClearsCachedTripOnReconnect() async throws {
+        ArchiveTripProtocol.reset()
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.protocolClasses = [ArchiveTripProtocol.self]
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "vpj36.deletion.\(UUID().uuidString)"))
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", "http://127.0.0.1:59931"],
+                                    defaults: defaults, configuration: configuration)
+        await session.login(email: "deletion-owner", password: "unit-only")
+        let store = NativeTripStore()
+        store.reset(for: try XCTUnwrap(session.dataScope))
+        await store.select(ArchiveTripProtocol.tripID, using: session)
+        let reference = try XCTUnwrap(store.deletionReference)
+        await store.deleteTrip(reviewedReference: reference, using: session)
+        XCTAssertEqual(store.deletionReceipt?.state, "queued")
+        XCTAssertEqual(store.deletionReceipt?.allUserDataCompleted, false)
+        XCTAssertNil(store.detail)
+        XCTAssertTrue(store.trips.isEmpty, "Even a stale list cannot redisplay a queued Trip")
+        XCTAssertNotNil(try session.pendingTripDeletion())
+        let reopened = NativeTripStore()
+        reopened.reset(for: session.dataScope)
+        ArchiveTripProtocol.setDeletionOffline(true)
+        await reopened.reload(using: session)
+        XCTAssertNil(reopened.detail)
+        XCTAssertTrue(reopened.trips.isEmpty)
+        XCTAssertNotNil(try session.pendingTripDeletion(), "An offline status read cannot lose the queued request")
+        ArchiveTripProtocol.setDeletionOffline(false)
+        ArchiveTripProtocol.completeDeletion()
+        await reopened.reload(using: session)
+        XCTAssertEqual(reopened.deletionReceipt?.state, "completed")
+        XCTAssertNil(try session.pendingTripDeletion())
+        XCTAssertTrue(reopened.trips.isEmpty)
+        XCTAssertNil(reopened.detail)
+    }
+
+    @MainActor
     func testArchiveRequiresReviewedVersionRetainsResultsAndStartsFresh() async throws {
         ArchiveTripProtocol.reset()
         let configuration = URLSessionConfiguration.ephemeral
@@ -369,22 +404,55 @@ nonisolated private final class DelayedTripProtocol: URLProtocol, @unchecked Sen
 /// Native state test only; SQL and HTTP authority have separate tests.
 nonisolated private final class ArchiveTripProtocol: URLProtocol, @unchecked Sendable {
     static let tripID = "11111111-1111-4111-8111-111111111111"
+    private static let ownerID = "22222222-2222-4222-8222-222222222222"
     private static let lock = NSLock()
     nonisolated(unsafe) private static var archived = false
     nonisolated(unsafe) private static var unavailable = false
     nonisolated(unsafe) private static var postCount = 0
+    nonisolated(unsafe) private static var deletionRequestID: String?
+    nonisolated(unsafe) private static var deletionCompleted = false
+    nonisolated(unsafe) private static var deletionOffline = false
     static var posts: Int { lock.withLock { postCount } }
     static func setUnavailable(_ value: Bool) { lock.withLock { unavailable = value } }
-    static func reset(unavailable: Bool = false) { lock.withLock { archived = false; Self.unavailable = unavailable; postCount = 0 } }
+    static func reset(unavailable: Bool = false) { lock.withLock { archived = false; Self.unavailable = unavailable; postCount = 0; deletionRequestID = nil; deletionCompleted = false; deletionOffline = false } }
+    static func completeDeletion() { lock.withLock { deletionCompleted = true } }
+    static func setDeletionOffline(_ value: Bool) { lock.withLock { deletionOffline = value } }
     override class func canInit(with request: URLRequest) -> Bool { true }
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
     override func stopLoading() {}
     override func startLoading() {
         let path = request.url?.path ?? ""
         if path.hasSuffix("credentials") || path.hasSuffix("refresh") {
-            respond(["subject": "archive-owner", "accessToken": "archive-owner", "refreshToken": "archive-owner", "expiresAt": Date().timeIntervalSince1970 + 3600, "mobileEpoch": 1])
+            respond(["subject": Self.ownerID, "accessToken": Self.ownerID, "refreshToken": Self.ownerID, "expiresAt": Date().timeIntervalSince1970 + 3600, "mobileEpoch": 1])
         } else if path.hasSuffix("profile") {
-            respond(["subject": "archive-owner", "displayName": "Archive owner"])
+            respond(["subject": Self.ownerID, "displayName": "Archive owner"])
+        } else if path == "/api/privacy/native/v1/trips" {
+            if request.httpMethod == "GET" && Self.lock.withLock({ Self.deletionOffline }) {
+                client?.urlProtocol(self, didFailWithError: URLError(.notConnectedToInternet))
+                return
+            }
+            if request.httpMethod == "POST" {
+                var data = request.httpBody ?? Data()
+                if let stream = request.httpBodyStream {
+                    stream.open(); defer { stream.close() }
+                    var buffer = [UInt8](repeating: 0, count: 1024)
+                    while stream.hasBytesAvailable {
+                        let count = stream.read(&buffer, maxLength: buffer.count)
+                        if count <= 0 { break }
+                        data.append(contentsOf: buffer.prefix(count))
+                    }
+                }
+                guard !data.isEmpty,
+                      let body = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+                      let id = body["requestId"] as? String else { respond([:], status: 400); return }
+                Self.lock.withLock { Self.deletionRequestID = id }
+            }
+            guard let id = Self.lock.withLock({ Self.deletionRequestID }) else { respond(["error": ["code": "FORBIDDEN"]], status: 403); return }
+            let completed = Self.lock.withLock { Self.deletionCompleted }
+            respond(["version": 1, "requestId": id, "tripId": Self.tripID, "scope": "trip-core-v1",
+                     "state": completed ? "completed" : "queued", "completedAt": completed ? "2026-09-26T00:00:00Z" as Any : NSNull(),
+                     "allUserDataCompleted": false, "backupErasure": "not_verified", "providerErasure": "not_performed"],
+                    status: request.httpMethod == "POST" && !completed ? 202 : 200)
         } else if path.hasSuffix("archive") {
             if Self.lock.withLock({ Self.unavailable }) { respond(["error": ["code": "PROVIDER_UNAVAILABLE"]], status: 503); return }
             if request.httpMethod == "POST" { Self.lock.withLock { Self.archived = true; Self.postCount += 1 } }
@@ -408,12 +476,12 @@ nonisolated private final class ArchiveTripProtocol: URLProtocol, @unchecked Sen
                 let body = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
                 guard let id = body?["tripId"] as? String else { respond([:], status: 400); return }
                 respond(["version": 2, "trip": trip(id), "reused": false], status: 201)
-            } else { respond(["version": 2, "trips": [trip(Self.tripID)], "currentTripId": NSNull()]) }
+            } else { respond(["version": 2, "trips": Self.lock.withLock({ Self.deletionCompleted }) ? [] : [trip(Self.tripID)], "currentTripId": NSNull()]) }
         } else if path.contains("/trips/native/v2/") {
             let id = request.url?.lastPathComponent ?? Self.tripID
             let days: [[String: Any]] = id == Self.tripID ? [["id": "old-day", "date": "2020-01-01", "items": [["id": "old-item", "dayId": "old-day", "title": "Temporary meeting"]]]] : []
             respond(["version": 2, "trip": trip(id), "content": ["days": days], "hardLocks": "not_enabled", "externalOrderStatus": "not_connected", "confirmationState": id == Self.tripID ? "confirmed" : "initial"])
-        } else { respond(["subject": "archive-owner", "mobileEpoch": 1]) }
+        } else { respond(["subject": Self.ownerID, "mobileEpoch": 1]) }
     }
     private func trip(_ id: String) -> [String: Any] {
         ["id": id, "title": id == Self.tripID ? "Old" : "Fresh", "headVersion": id == Self.tripID ? 1 : 0, "updatedAt": "2026-09-22T01:00:00Z"]

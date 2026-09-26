@@ -294,3 +294,35 @@ struct NativeTripArchiveReply: Decodable {
     let version: Int
     let archive: NativeTripArchive?
 }
+
+struct NativePendingTripDeletion: Codable, Equatable {
+    let owner: String
+    let tripID: String
+    let requestID: String
+    let expectedVersion: Int
+
+    var isValid: Bool {
+        UUID(uuidString: owner) != nil && UUID(uuidString: tripID) != nil &&
+        UUID(uuidString: requestID) != nil && expectedVersion >= 0
+    }
+}
+
+struct NativeTripDeletionReceipt: Decodable, Equatable {
+    let version: Int
+    let requestId: String
+    let tripId: String
+    let scope: String
+    let state: String
+    let completedAt: String?
+    let allUserDataCompleted: Bool
+    let backupErasure: String
+    let providerErasure: String
+
+    func isValid(for request: NativePendingTripDeletion) -> Bool {
+        version == 1 && requestId.lowercased() == request.requestID.lowercased() &&
+        tripId.lowercased() == request.tripID.lowercased() && scope == "trip-core-v1" &&
+        (state == "queued" || (state == "completed" && completedAt != nil)) &&
+        allUserDataCompleted == false && backupErasure == "not_verified" &&
+        providerErasure == "not_performed"
+    }
+}

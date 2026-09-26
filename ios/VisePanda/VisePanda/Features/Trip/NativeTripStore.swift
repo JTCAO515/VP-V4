@@ -10,6 +10,8 @@ final class NativeTripStore {
     private(set) var pending: NativeTripPending?
     private(set) var archive: NativeTripArchive?
     private(set) var archiveAvailable = false
+    private(set) var deletionReceipt: NativeTripDeletionReceipt?
+    private(set) var deletionRequest: NativePendingTripDeletion?
     private var archiveKeys: [String: String] = [:]
     var draft: NativeTripDraft?
     private(set) var busy = false
@@ -33,6 +35,7 @@ final class NativeTripStore {
         self.scope = scope
         trips = []; selectedID = nil; detail = nil; pending = nil; draft = nil
         archive = nil; archiveAvailable = false; archiveKeys = [:]
+        deletionReceipt = nil; deletionRequest = nil
         confirmationKeys = [:]; creation = nil; notice = nil; busy = false
         proposalOutcomeUnknown = false
         uncertainProposalPatch = nil
@@ -56,9 +59,98 @@ final class NativeTripStore {
 
     func reload(using session: NativeSession) async {
         await perform(session) { scope in
+            try await self.reconcileDeletion(session, scope)
             try await self.loadList(session, scope)
-            if self.selectedID != nil { try await self.loadSelected(session, scope) }
+            if self.selectedID != nil && self.selectedID != self.deletionRequest?.tripID {
+                try await self.loadSelected(session, scope)
+            }
         }
+    }
+
+    var deletionReference: String? {
+        guard !busy, deletionRequest == nil, let detail, selectedID == detail.trip.id,
+              draft == nil, pending == nil, !proposalOutcomeUnknown else { return nil }
+        return "\(detail.trip.id):\(detail.trip.headVersion)"
+    }
+
+    func deleteTrip(reviewedReference: String, using session: NativeSession) async {
+        guard deletionReference == reviewedReference, let detail, let scope,
+              session.dataScope == scope else { return }
+        let request = NativePendingTripDeletion(owner: scope.subject, tripID: detail.trip.id,
+            requestID: UUID().uuidString.lowercased(), expectedVersion: detail.trip.headVersion)
+        await perform(session) { scope in
+            try session.rememberTripDeletion(request)
+            self.deletionRequest = request
+            self.clearDeletedTripCache(request.tripID)
+            try await self.postDeletion(request, session, scope)
+            try await self.loadList(session, scope)
+        }
+    }
+
+    func retryDeletion(using session: NativeSession) async {
+        await perform(session) { scope in
+            try await self.reconcileDeletion(session, scope)
+            try await self.loadList(session, scope)
+        }
+    }
+
+    private func reconcileDeletion(_ session: NativeSession, _ scope: NativeDataScope) async throws {
+        let saved: NativePendingTripDeletion?
+        do { saved = try session.pendingTripDeletion() }
+        catch {
+            trips = []; selectedID = nil; detail = nil; pending = nil; draft = nil
+            throw error
+        }
+        guard let request = saved else { return }
+        deletionRequest = request
+        clearDeletedTripCache(request.tripID)
+        let data: Data
+        do { data = try await session.tripDeletionRequest(method: "GET", requestID: request.requestID) }
+        catch NativeDataError.server(let code) where code == "FORBIDDEN" {
+            // The journal was written before POST. A lost first send has no
+            // receipt; replay exactly that confirmed request, never a new key.
+            try await postDeletion(request, session, scope)
+            return
+        }
+        guard self.scope == scope, session.dataScope == scope else { throw NativeDataError.staleSessionResponse }
+        let receipt = try JSONDecoder().decode(NativeTripDeletionReceipt.self, from: data)
+        guard receipt.isValid(for: request) else { throw NativeDataError.invalidResponse }
+        deletionReceipt = receipt
+        if receipt.state == "completed" {
+            try session.forgetTripDeletion(request)
+            deletionRequest = nil
+        }
+    }
+
+    private func postDeletion(_ request: NativePendingTripDeletion, _ session: NativeSession,
+                              _ scope: NativeDataScope) async throws {
+        let body = DeleteBody(requestId: request.requestID, tripId: request.tripID,
+                              expectedVersion: request.expectedVersion, confirmed: true)
+        let data: Data
+        do { data = try await session.tripDeletionRequest(method: "POST", body: JSONEncoder().encode(body)) }
+        catch NativeDataError.server(let code) where ["FORBIDDEN", "INVALID_INPUT", "STALE_TRIP_VERSION", "TRIP_HAS_CHAT_REFERENCES", "IDEMPOTENCY_KEY_REUSE", "DELETION_ALREADY_REQUESTED"].contains(code) {
+            // These are admission rejections. Keep an uncertain transport result
+            // and a reauthentication requirement under the original request ID.
+            try session.forgetTripDeletion(request)
+            deletionRequest = nil
+            throw NativeDataError.server(code: code)
+        }
+        guard self.scope == scope, session.dataScope == scope else { throw NativeDataError.staleSessionResponse }
+        let receipt = try JSONDecoder().decode(NativeTripDeletionReceipt.self, from: data)
+        guard receipt.isValid(for: request) else { throw NativeDataError.invalidResponse }
+        deletionReceipt = receipt
+        if receipt.state == "completed" {
+            try session.forgetTripDeletion(request)
+            deletionRequest = nil
+        }
+    }
+
+    private func clearDeletedTripCache(_ tripID: String) {
+        trips.removeAll { $0.id == tripID }
+        guard selectedID == tripID else { return }
+        selectedID = nil; detail = nil; pending = nil; draft = nil
+        archive = nil; archiveAvailable = false; archiveKeys = [:]
+        confirmationKeys = [:]; proposalOutcomeUnknown = false; uncertainProposalPatch = nil
     }
 
     /// Read the saved snapshot before handing local content to the system share UI.
@@ -239,7 +331,7 @@ final class NativeTripStore {
     private func loadList(_ session: NativeSession, _ scope: NativeDataScope) async throws {
         let result: NativeTripList = try await call(session, scope, path: base, method: "GET")
         guard result.version == 2, result.trips.allSatisfy({ UUID(uuidString: $0.id) != nil }) else { throw NativeDataError.invalidResponse }
-        trips = result.trips
+        trips = result.trips.filter { $0.id != deletionRequest?.tripID }
     }
 
     private func loadSelected(_ session: NativeSession, _ scope: NativeDataScope) async throws {
@@ -307,4 +399,5 @@ final class NativeTripStore {
     private struct ProposalBody: Encodable { let patch: NativeTripPatch }
     private struct ConfirmBody: Encodable { let proposalId: String; let idempotencyKey: String; let digest: String }
     private struct Rejected: Decodable { let version: Int; let proposalId: String; let status: String }
+    private struct DeleteBody: Encodable { let requestId: String; let tripId: String; let expectedVersion: Int; let confirmed: Bool }
 }

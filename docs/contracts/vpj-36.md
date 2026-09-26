@@ -29,6 +29,11 @@ for at most three attempts. Failed transactions preserve queued state, but anoth
 worker may complete concurrently: after an unavailable result, read the receipt
 before retrying by request ID.
 Repeated execution returns the original terminal receipt.
+`next_trip_deletion_v1()` exposes only the oldest queued request ID to service
+role. The bounded Staging worker polls that ID and calls the existing atomic
+executor. Duplicate polling is safe because execution serializes on the receipt;
+a crash leaves the request queued for a later poll. The worker is disabled by
+default and requires an operator-owned, private Staging credential file.
 
 `GET /api/privacy/native/v1/trips?requestId=UUID` requires a currently existing
 owner session and returns the same receipt after the Trip is gone. Only a committed
@@ -50,11 +55,16 @@ No financial erasure or backup expiry is claimed. Tombstones must be preserved
 outside a restored backup and reconciled before restored data is served; recovery
 re-erasure tooling and backup retention verification remain #230/#239 work.
 
-An offline phone cannot receive immediate revocation. This slice blocks server
-writes on reconnect; native cache clearing/lease enforcement is not implemented or
-verified here. Receipt `offlineRevocation: on_reconnect_only` describes the earliest
-possible contact, not proof of local cache removal. Exported files cannot be remotely
-recalled. Do not promise erasure from devices or provider systems.
+An offline phone cannot receive immediate revocation. The native Trip screen
+stores an uncertain request ID in the device-only Keychain, hides that Trip's
+in-memory plan, draft, proposal, archive, share sheet and screenshot inbox once
+the user confirms the request, and reads the owner-bound receipt before loading
+Trip content on its next authenticated opening. A queued receipt never displays
+completion. The server tombstone blocks old writes when the device reconnects.
+This does not prove a background purge of every app feature or an immediate wipe
+of a phone that stays offline. Receipt `offlineRevocation: on_reconnect_only`
+describes the earliest possible contact, not proof of local cache removal.
+Exported files cannot be remotely recalled.
 
 ## Operator and rollback
 
@@ -63,6 +73,12 @@ No production/staging scheduler is enabled. The one-shot
 `VP_PRIVACY_LOCAL_DISPOSABLE=true`, loopback `VP_PRIVACY_LOCAL_URL` and a local
 `VP_PRIVACY_LOCAL_SERVICE_KEY`. It is only for a separately provisioned disposable
 stack with synthetic users. Never supply a shared local stack or real users.
+`node lib/server/jobs/run-staging-trip-deletion.mjs` is a separate, bounded
+consumer with `VP_PRIVACY_STAGING_WORKER=true`,
+`VP_PRIVACY_STAGING_CYCLES=1..100` and an absolute 0600
+`VP_PRIVACY_STAGING_DB_KEY_FILE`. It is hard-bound to the Staging project,
+never enabled by a Vercel request or a Trip HTTP 202. Operator deployment,
+shared Staging execution and production execution are separate gates.
 Database integration tests create their own network-disabled container and apply
 all migrations with synthetic auth/session SQL scaffolding (not live GoTrue proof).
 

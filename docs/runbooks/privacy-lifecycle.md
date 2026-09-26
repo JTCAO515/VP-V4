@@ -36,3 +36,11 @@ service-only atomic executor and persistent tombstone. This does not advance the
 V4-17 all-user-data request. Only the named module's committed terminal receipt is
 completion evidence. Its local runner is restricted to explicitly disposable,
 synthetic loopback stacks; no shared or deployed execution is authorized here.
+
+D1 #504 adds a separate service-only queued-ID reader and bounded Staging
+worker entry, still disabled by default. Operator deployment and shared Staging
+execution require their own authority and readback. The native Trip screen
+keeps the request ID in device-only Keychain storage and checks the receipt
+before loading that Trip on reconnect; HTTP 202 remains queued. See the
+[Trip deletion contract](../contracts/vpj-36.md) and scoped
+[verification](../../artifacts/VPJ-36/verification.md).
