@@ -58,3 +58,43 @@ times, redacted commands and exit codes, the three exercise results, schema/RLS/
 queue/secret-reference checks, Storage reconciliation or TTL deletion result, residual risk, and
 rollback. Attach no raw user data or secrets. A failed or unrun exercise remains failed or unrun;
 it does not establish beta recovery readiness.
+
+## VPJ-38 K1: deny reads before reconciliation
+
+This sequence is for a fresh **isolated synthetic** target. Keep its public API and Storage
+ingress denied, and pause worker writes, before importing a database or object. An application
+maintenance page alone is insufficient: direct database/RPC, signed object URLs and worker
+credentials must remain blocked or invalidated. Confirm denial from an ordinary synthetic test
+identity and from an anonymous client. Never attach this target to shared Staging or Production.
+
+1. Preserve an integrity-checked deletion/revocation journal **outside the backup being
+   restored**. Quiesce its writers, record the coverage watermark and verify it covers every
+   event after the backup cutoff. Missing coverage stops recovery. The journal must include
+   completed and queued Trip deletion requests, account erasure tombstones, StoreKit transaction
+   revocations/erasure markers, licence withdrawals and object deletion obligations. A DB dump
+   of the earlier point is not this source.
+2. Restore the DB and required Storage files into the isolated target. Reconcile object metadata
+   with actual files and digests. Classify data by backup or no-backup TTL; expired/no-backup
+   files stay absent. Record backup cutoff, restore start/end, object coverage and missing files
+   separately. Do not calculate a real RPO/RTO from a fixture.
+3. With reads still denied, replay the journal through the sealed watermark. Reapply Trip
+   tombstones and run the reviewed deletion executor where a restored Trip reappears; keep
+   queued requests queued until their executor can finish. Reconcile account erasure, StoreKit
+   revocations/refunds and licence withdrawals. Preserve StoreKit transaction tombstones so
+   transaction replay cannot recreate a grant. Verify no deleted row or revoked entitlement is
+   readable, including through cached/signed object access.
+4. Verify schema head, RLS, table/function grants, security-definer functions, triggers, queues,
+   owner isolation and object metadata/file parity independently. If a check is FAIL or UNRUN,
+   ingress stays denied. Recheck the journal watermark if new deletion/revocation events can
+   arrive during recovery; K2 owns interrupted/late-event recovery.
+5. Record observed controls and UTC times in a protected operator record. The executable synthetic
+   rehearsal is `node scripts/db/restore/synthetic-recovery.mjs --execute`; it uses two new local
+   PostgreSQL containers without network access, an independent journal, real dump/restore,
+   object files and SQL/FS probes. Its isolated read gate opens only after those actual checks;
+   owner/other/anon probes then run against the restored container. No self-reported JSON alone
+   authorizes a read. The synthetic run does not open shared ingress or establish service RPO/RTO.
+
+Do not put IDs, paths, hostnames, backup names, credentials or raw query output in the committed
+evidence JSON. Record actual measured RPO/RTO only after a permitted real backup/object source,
+cutoff and restore endpoint exist; retain their calculation inputs in a protected operator log.
+K1 is incomplete until that isolated runtime exercise and read matrix pass.

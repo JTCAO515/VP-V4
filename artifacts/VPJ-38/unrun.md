@@ -1,0 +1,8 @@
+# VPJ-38 K1 remaining runtime acceptance
+
+- **PASS, SYNTHETIC ONLY:** Main executed the isolated local DB/object backup→restore→journal replay→read-probe script on 2026-09-27 (Asia/Shanghai). The synthetic schema's RLS, grants, definer function, trigger, queue, object files/metadata and owner/other/anon reads were checked by SQL and filesystem assertions. This does not validate the full application schema or deployed entrypoints.
+- **UNRUN:** Actual service RPO/RTO, independent real backup/PITR coverage and restoration, full-schema data consistency, Auth/RLS/grants/functions/queue inventory and authenticated deployed-client read paths.
+- **UNRUN:** Per-data-class backup/no-backup TTL and deletion from every retained copy. The earlier AI-49 plan covers only ephemeral media with no-backup TTL; it is not a complete Storage policy registry.
+- **UNRUN:** Actual Trip/account erasure, StoreKit refund/revocation and licence withdrawal events replayed from an independent operational journal against a service-equivalent isolated target. The synthetic exercise covers a Trip tombstone, grant revocation, licence withdrawal and object deletion only; it does not prove account erasure, refund processing or late-event recovery.
+
+Next input: a permitted, service-equivalent isolated backup/object set and independently retained operational deletion/revocation journal, plus approved per-class Storage retention and protected timing record. Keep ingress denied before restore; perform the runbook and record actual UTC cutoff/start/end, RPO/RTO and authenticated read results. Parent #230 stays OPEN.
