@@ -1,7 +1,7 @@
 # Tool Gateway v1
 
 **Owner:** Tool Gateway (#88 / V4-03)
-**Status:** frozen deterministic contract baseline
+**Status:** deterministic baseline with VPJ-80 durable action-claim extension
 **Consumers:** future TurnCoordinator, Product Tool adapters, ContextAssembler's model-safe Tool candidate boundary, and trace recorder
 **Non-consumers:** model providers, HTTP routes, UI components, database clients, Trip writers, and arbitrary external payloads
 
@@ -9,7 +9,7 @@
 
 `ToolCallIntent` is a structured request from a model or UI, not authority to execute. `ToolRegistry` owns the registered server allowlist. `executeToolIntent` is the sole execution seam: it validates a resolved definition, actor policy, input, exact approval when required, idempotency and deadline before invoking the supplied executor.
 
-The module has no provider implementation, route, persistence adapter, retry loop, direct Trip write, credential, or external account. `trip.*` definitions are rejected. `P_proposal_producing` registration is also rejected until its typed Proposal capability is frozen: an arbitrary injected executor cannot be treated as a Trip-write boundary. This v1 gateway therefore contains no executable Proposal or Trip adapter.
+The module has no provider implementation, route, retry loop, direct Trip write, credential, or external account. VPJ-80 adds an injected service-only PostgreSQL action store for an existing lease; no worker or tool is activated. `trip.*` definitions are rejected. `P_proposal_producing` registration is also rejected until its typed Proposal capability is frozen: an arbitrary injected executor cannot be treated as a Trip-write boundary. This gateway contains no executable Proposal or Trip adapter.
 
 ## Definition and actor contract
 
@@ -23,8 +23,8 @@ The effective sequence is:
 2. validate task profile and data class policy;
 3. validate input schema and compute a canonical SHA-256 intent digest;
 4. require a non-expired exact actor-bound approval for an external side effect;
-5. claim the idempotency key, apply the deadline, then invoke the injected executor;
-6. validate and bound JSON-safe output; project it inside an escaped `<untrusted-tool-output>` boundary;
+5. require a durable action store for a tool marked `idempotency: required`; claim a lease-bound key before invoking the executor;
+6. validate and bound JSON-safe output; project it inside an escaped `<untrusted-tool-output>` boundary and persist the receipt digest;
 7. return only a receipt with tool/version/call/digest/timestamps/policy fingerprint and the model-safe projection.
 
 No ToolCallIntent is the no-tool/clarification path: no executor is supplied or called. Unknown, out-of-profile, data/license-invalid, schema-invalid, feature-disabled, malformed-call, or unapproved calls fail before execution. Callers translate those typed errors into their own bounded unavailable or clarification outcome; the gateway never selects another tool or retries a policy/safety failure.
@@ -33,7 +33,7 @@ No ToolCallIntent is the no-tool/clarification path: no executor is supplied or 
 
 `approvalDigestForToolIntent` canonicalizes object keys before SHA-256 hashing, so equivalent JSON object ordering cannot alter approval or replay identity. Reusing a call ID with the same digest is rejected as replay; reusing it with a different digest is also rejected.
 
-Read-only/deterministic executor failures and rejected output release their in-process claim because they are safe to retry. External side effects are completely disabled in v1: an unverified structural `durable` flag is not a persistence guarantee. A later Issue may add X tools only with a verified multi-instance persistent, atomic pending/succeeded/unknown adapter and its own conformance evidence. The declared retry policy is deliberately not an executor loop in v1.
+The old in-process claim Map is removed. A required action without a durable store fails before execution. A claimed action whose executor or receipt acknowledgement fails remains `unknown`; an automatic retry is denied until reconciliation. The PostgreSQL store binds a claim to current owner, ServiceTask, assistant message/goal version, explicit Memory revisions and Turn lease, and caps actions at four per ServiceTask. It stores hashes and status, not raw tool output. The store starts with no scheduler or registered production tools. External side effects and Proposal tools remain disabled; the declared retry policy is deliberately not an executor loop.
 
 Tool output must validate, serialize as finite acyclic JSON, and fit `maxModelOutputTokens` measured as code points of the complete escaped projection including wrapper and safe bounded tool/version attributes. Receipt output never exposes the raw executor object.
 
@@ -41,4 +41,4 @@ Tool output must validate, serialize as finite acyclic JSON, and fit `maxModelOu
 
 ## Rollback and verification
 
-Rollback is a revert of the #88 merge; no database, schema, provider configuration, cache, external request or runtime data is created. Contract tests in `tests/contract/tools/` prove allowlist/policy/approval/replay/deadline/output behavior. Security tests in `tests/security/tools/` prove raw output is excluded and an attempted boundary break is escaped. Command and unrun records are in `artifacts/V4-03/`.
+The VPJ-80 extension can be disabled by leaving the planning producer unwired, reverting the TypeScript seam, and retaining the append-only receipt table for audit until reviewed forward cleanup. It has no provider or external request. Contract tests in `tests/contract/tools/` cover fail-closed replay and output behavior; SQL integration must cover lease, owner, cancellation, revocation, stale basis and unknown costs before activation. The earlier #88 command records remain in `artifacts/V4-03/`.
