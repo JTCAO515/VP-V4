@@ -4,6 +4,7 @@ import {randomUUID} from 'node:crypto';
 import {createNativeTextEnvironment} from './native-text-environment.mjs';
 import {waitUntil} from '../identity/database-barrier.mjs';
 import {identityLocalEnv} from '../identity/local-supabase.mjs';
+import {createClient} from '@supabase/supabase-js';
 
 test('real local Auth, native HTTP, consent, durable worker and recovery enforce owner/session boundaries',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
  const continuous=process.env.VP_NATIVE_TEXT_SERVICE_INTEGRATION==='true';
@@ -312,4 +313,259 @@ test('v5 goal context manifest selects current owner Memory without dispatch or 
  assert.equal((await memoryRpc('revoke_memory_retrieval_consent',{p_consent_id:consent.body[0].consent_id})).status,200);
  assert.equal((await call('/api/chat/native/v5/context',token,'POST',{...input,messageId:amended.messageId,expectedGoalVersion:2})).status,403,'revoked retrieval consent denies a previously selected Memory');
  await login(e.users[0]);assert.equal((await context()).status,401,'replaced mobile session cannot return a manifest');
+});
+
+test('v5 explicit goal Trip link has CAS, owner, deletion and revoked-consent boundaries',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
+ const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
+ const call=async(path,token,method='GET',body)=>{const r=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,body:await r.json()};};
+ const login=async user=>{const attemptId=randomUUID();const c=await call('/api/auth/native/v2/credentials',null,'POST',{email:user.email,password:user.password,attemptId});assert.equal(c.status,200);assert.equal((await call('/api/auth/native/v2/login',c.body.accessToken,'POST',{attemptId})).status,200);return c.body.accessToken;};
+ const owner=await login(e.users[0]),other=await login(e.users[1]);
+ assert.equal((await call('/api/chat/native/v5/consent',owner,'POST',{policyId:e.policyId,noticeHash:e.noticeHash})).status,200);
+ const tripA=randomUUID(),tripB=randomUUID(),foreignTrip=randomUUID();
+ for(const [token,tripId,title] of [[owner,tripA,'Owned A'],[owner,tripB,'Owned B'],[other,foreignTrip,'Other owner']])
+  assert.equal((await call('/api/trips/native/v2',token,'POST',{tripId,title})).status,201);
+ const conversationId=randomUUID(),goalId=randomUUID(),rootMessageId=randomUUID();
+ const message=(relationship,overrides={})=>({conversationId,messageId:randomUUID(),idempotencyKey:randomUUID(),policyId:e.policyId,locale:'en',text:'Plan my Trip',relationship,
+  goalId,expectedGoalVersion:null,taskId:null,parentMessageId:null,turnId:null,...overrides});
+ const start=message('goal_start',{messageId:rootMessageId});
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',start)).status,201);
+ const path='/api/chat/native/v5/goals/'+goalId+'/trip';
+ const binding=(tripId,expectedGoalScopeVersion,expectedLinkVersion,sourceMessageId,overrides={})=>({operationId:randomUUID(),conversationId,
+  sourceMessageId,expectedGoalScopeVersion,expectedLinkVersion,action:'link',tripId,expectedTripVersion:0,confirmed:true,...overrides});
+ const first=binding(tripA,1,0,rootMessageId);
+ assert.equal((await call(path,owner,'POST',{...first,confirmed:false})).status,400);
+ assert.equal((await call(path,owner,'POST',{...first,tripId:foreignTrip})).status,403,'same actor cannot select another owner Trip');
+ assert.equal((await call(path,owner,'POST',{...first,expectedTripVersion:1})).status,409,'Trip head CAS required');
+ const pair=await Promise.all([call(path,owner,'POST',first),call(path,owner,'POST',first)]);
+ assert.deepEqual(pair.map(r=>r.status).sort(),[200,201]);
+ assert.equal((await call(path,owner)).body.tripId,tripA);
+ assert.equal((await call(path,owner)).body.linkVersion,1);
+ assert.equal((await call(path,other)).status,403);
+ assert.equal((await call(path,owner,'POST',{...first,tripId:tripB})).status,409,'same operation cannot switch Trip');
+ assert.equal((await call(path,owner,'POST',binding(tripB,1,0,rootMessageId))).status,409,'stale scope/link cannot retarget');
+ const proposal=await call('/api/trips/native/v2/'+tripA+'/proposal',owner,'POST',{patch:{expectedVersion:0,operations:[{kind:'set_title',title:'Owned A revised'}]}});
+ assert.equal(proposal.status,201);
+ const pending=await call('/api/trips/native/v2/'+tripA+'/proposal?proposalId='+proposal.body.proposalId,owner);
+ assert.equal((await call('/api/trips/native/v2/'+tripA+'/confirm',owner,'POST',{proposalId:proposal.body.proposalId,idempotencyKey:randomUUID(),digest:pending.body.proposal.digest})).status,200);
+ assert.equal((await call(path,owner)).body.current,false,'a newer confirmed Trip version makes the old binding stale');
+ assert.equal(e.sql(`select head_version from public.trips where id='${tripA}';`),'1','only separate confirmed proposal changed Trip');
+ const follow=message('follow_up',{expectedGoalVersion:2,parentMessageId:rootMessageId,text:'Use a different existing Trip'});
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',follow)).status,201);
+ assert.equal((await call(path,owner,'POST',binding(tripB,2,1,follow.messageId))).status,201,'explicit retarget increments both versions');
+ let read=(await call(path,owner)).body;assert.deepEqual([read.tripId,read.linkVersion,read.goalScopeVersion,read.current],[tripB,2,3,true]);
+ const unlink={operationId:randomUUID(),conversationId,sourceMessageId:null,expectedGoalScopeVersion:3,expectedLinkVersion:2,action:'unlink',tripId:null,expectedTripVersion:null,confirmed:true};
+ assert.equal((await call(path,owner,'POST',unlink)).status,201);assert.equal((await call(path,owner,'POST',unlink)).body.reused,true);
+ read=(await call(path,owner)).body;assert.deepEqual([read.tripId,read.linkVersion,read.goalScopeVersion],[null,3,4]);
+ const next=message('follow_up',{expectedGoalVersion:4,parentMessageId:follow.messageId,text:'Use owned B again'});
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',next)).status,201);
+ assert.equal((await call(path,owner,'POST',binding(tripB,4,3,next.messageId))).status,201);
+ const otherGoalId=randomUUID(),otherRoot=message('goal_start',{goalId:otherGoalId,messageId:randomUUID(),text:'Another goal for owned A'});
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',otherRoot)).status,201);
+ const otherPath='/api/chat/native/v5/goals/'+otherGoalId+'/trip';
+ assert.equal((await call(otherPath,owner,'POST',{...binding(tripA,1,0,otherRoot.messageId),expectedTripVersion:1})).status,201);
+ const racingTrip=randomUUID(),racingGoal=randomUUID(),racingRoot=message('goal_start',{goalId:racingGoal,messageId:randomUUID(),text:'Concurrent deletion goal'});
+ assert.equal((await call('/api/trips/native/v2',owner,'POST',{tripId:racingTrip,title:'Racing Trip'})).status,201);
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',racingRoot)).status,201);
+ const racingPath='/api/chat/native/v5/goals/'+racingGoal+'/trip',racingRequest=randomUUID();
+ const raced=await Promise.all([
+  call(racingPath,owner,'POST',binding(racingTrip,1,0,racingRoot.messageId)),
+  call('/api/privacy/native/v1/trips',owner,'POST',{requestId:racingRequest,tripId:racingTrip,expectedVersion:0,confirmed:true}),
+ ]);
+ assert.ok([201,409,503].includes(raced[0].status));
+ const raceDeletion=raced[1].status===202?raced[1]:await call('/api/privacy/native/v1/trips',owner,'POST',{requestId:racingRequest,tripId:racingTrip,expectedVersion:0,confirmed:true});
+ assert.equal(raceDeletion.status,202,'either order must permit the confirmed deletion transaction');
+ assert.equal((await call(racingPath,owner)).body.tripId,null,'a queued deletion and live goal link cannot coexist');
+ assert.match(e.sql(`select public.execute_trip_deletion_v1('${racingRequest}');`),/completed/);
+ const requestId=randomUUID();
+ const deletion={requestId,tripId:tripB,expectedVersion:0,confirmed:true};
+ const queued=await call('/api/privacy/native/v1/trips',owner,'POST',deletion);
+ assert.equal(queued.status,202,JSON.stringify(queued.body));assert.equal(queued.body.state,'queued');
+ read=(await call(path,owner)).body;
+ assert.deepEqual([read.tripId,read.linkVersion,read.goalScopeVersion,read.sourceKind],[null,5,6,'trip_deletion_confirmed']);
+ const otherLink=(await call(otherPath,owner)).body;
+ assert.deepEqual([otherLink.tripId,otherLink.goalScopeVersion,otherLink.current],[tripA,2,true],'confirmed deletion detached only the selected Trip');
+ assert.equal((await call('/api/privacy/native/v1/trips',owner,'POST',deletion)).body.state,'queued');
+ assert.equal((await call(path,owner)).body.linkVersion,5,'request replay cannot detach twice');
+ const afterDelete=message('follow_up',{expectedGoalVersion:6,parentMessageId:next.messageId,text:'Do not reattach deleting Trip'});
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',afterDelete)).status,201);
+ assert.equal((await call(path,owner,'POST',binding(tripB,6,5,afterDelete.messageId))).status,409,'queued tombstone denies new link');
+ // A fixture-only private write simulates a corrupt late link: execution must
+ // reject it by name before it can claim deletion complete, then recover.
+ e.sql(`update turn_private.assistant_goal_trip_links set trip_id='${tripB}',trip_head_version=0,source_message_id='${afterDelete.messageId}',source_kind='native_user_confirmed' where goal_id='${goalId}';`);
+ assert.throws(()=>e.sql(`select public.execute_trip_deletion_v1('${requestId}');`),/TRIP_HAS_CHAT_REFERENCES/);
+ e.sql(`update turn_private.assistant_goal_trip_links set trip_id=null,trip_head_version=null,source_message_id=null,source_kind='trip_deletion_confirmed' where goal_id='${goalId}';`);
+ assert.match(e.sql(`select public.execute_trip_deletion_v1('${requestId}');`),/completed/);
+ assert.equal(e.sql(`select count(*) from public.trips where id='${tripB}';`),'0');
+ assert.equal(e.sql(`select count(*) from public.trips where id='${tripA}';`),'1','unrelated Trip survives');
+ const finalMessage=message('follow_up',{expectedGoalVersion:6,parentMessageId:afterDelete.messageId,text:'Keep my remaining Trip'});
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',finalMessage)).status,201);
+ assert.equal((await call(path,owner,'POST',binding(tripA,6,5,finalMessage.messageId,{expectedTripVersion:1}))).status,201);
+ assert.equal((await call('/api/chat/native/v5/consent',owner,'DELETE',{policyId:e.policyId})).status,200);
+ read=(await call(path,owner)).body;assert.equal(read.current,false);assert.equal(read.sourceMessageId,null);
+ const privacyList=await call('/api/chat/native/v5/goal-trips',owner);
+ assert.equal(privacyList.status,200);
+ assert.ok(privacyList.body.links.some(link=>link.goalId===goalId&&link.tripId===tripA));
+ assert.equal(JSON.stringify(privacyList.body).includes('Keep my remaining Trip'),false,'privacy list does not restore withdrawn goal text');
+ const privacyUnlink={...unlink,operationId:randomUUID(),expectedGoalScopeVersion:7,expectedLinkVersion:6};
+ const runtime=identityLocalEnv();assert.ok(runtime?.API_URL && runtime.ANON_KEY);
+ const envPatch={NEXT_PUBLIC_SUPABASE_URL:runtime.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:runtime.ANON_KEY,
+  VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_NATIVE_LOCAL_TEXT:'false',VISEPANDA_NATIVE_LOCAL_ASSISTANT_CONVERSATION:'false'};
+ const previous=new Map(Object.keys(envPatch).map(key=>[key,process.env[key]]));
+ Object.assign(process.env,envPatch);
+ try {
+  const {nativeAssistantTripHTTP,nativeAssistantTripPrivacyHTTP}=await import('../../../lib/server/turn/native-assistant-trip-http.ts');
+  const {NextRequest}=await import('next/server.js');
+  const origin='http://127.0.0.1:59651',headers={Authorization:'Bearer '+owner};
+  const privacyRead=await nativeAssistantTripPrivacyHTTP(new NextRequest(origin+'/api/chat/native/v5/goal-trips',{headers}));
+  assert.equal(privacyRead.status,200);
+  assert.ok((await privacyRead.json()).links.some(link=>link.goalId===goalId));
+  const detached=await nativeAssistantTripHTTP(new NextRequest(origin+path,{method:'POST',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify(privacyUnlink)}),goalId);
+  assert.equal(detached.status,201,'unlink remains available after text consent and v5 producer withdrawal');
+ } finally {for(const [key,value] of previous)value===undefined?delete process.env[key]:process.env[key]=value;}
+ assert.equal((await call(path,owner)).body.tripId,null);
+ assert.equal((await call('/api/chat/native/v5/goal-trips',owner)).body.links.some(link=>link.goalId===goalId),false);
+ assert.equal((await call(path,owner,'POST',binding(tripA,8,7,finalMessage.messageId,{expectedTripVersion:1}))).status,403,'withdrawal denies new link');
+ const local=identityLocalEnv();assert.ok(local?.API_URL && local.SERVICE_ROLE_KEY);
+ const service=createClient(local.API_URL,local.SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+ const ordinary=createClient(local.API_URL,local.ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:'Bearer '+owner}}});
+ assert.ok((await ordinary.rpc('assistant_goal_trip_export_owner_v1',{p_owner:e.users[0].id})).error,'ordinary actor cannot call export helper');
+ assert.ok((await ordinary.rpc('assistant_goal_trip_erase_owner_v1',{p_owner:e.users[0].id})).error,'ordinary actor cannot erase links directly');
+ const exported=await service.rpc('assistant_goal_trip_export_owner_v1',{p_owner:e.users[0].id});
+ assert.ifError(exported.error);
+ assert.ok(exported.data.links.length>=2&&exported.data.links.length<=3,'racing link may lose to deletion without ever creating a row');
+ assert.ok((await service.rpc('assistant_goal_trip_erase_owner_v1',{p_owner:e.users[0].id})).data.receipts>=8);
+ assert.equal(e.sql(`select count(*) from turn_private.assistant_goal_trip_links where owner_id='${e.users[0].id}';`),'0');
+ assert.equal(e.counts.http,0,'Trip linking and deletion never invokes a model');
+ await login(e.users[0]);assert.equal((await call(path,owner)).status,401,'replaced session cannot read old link');
+});
+
+test('v5 Trip deletion takes the Trip lock before goal/link and fences an interleaved retarget',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
+ const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
+ const call=async(path,token,method='GET',body)=>{const r=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,body:await r.json()};};
+ const attemptId=randomUUID();const credentials=await call('/api/auth/native/v2/credentials',null,'POST',{email:e.users[0].email,password:e.users[0].password,attemptId});
+ assert.equal(credentials.status,200);
+ const owner=credentials.body.accessToken;
+ assert.equal((await call('/api/auth/native/v2/login',owner,'POST',{attemptId})).status,200);
+ assert.equal((await call('/api/chat/native/v5/consent',owner,'POST',{policyId:e.policyId,noticeHash:e.noticeHash})).status,200);
+ const oldTrip=randomUUID(),nextTrip=randomUUID(),conversationId=randomUUID(),goalId=randomUUID(),messageId=randomUUID();
+ for(const [tripId,title] of [[oldTrip,'Held Trip'],[nextTrip,'Next Trip']])
+  assert.equal((await call('/api/trips/native/v2',owner,'POST',{tripId,title})).status,201);
+ const goal={conversationId,messageId,idempotencyKey:randomUUID(),policyId:e.policyId,locale:'en',text:'Plan a Trip',relationship:'goal_start',goalId,expectedGoalVersion:null,taskId:null,parentMessageId:null,turnId:null};
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',goal)).status,201);
+ const path='/api/chat/native/v5/goals/'+goalId+'/trip';
+ const link={operationId:randomUUID(),conversationId,sourceMessageId:messageId,expectedGoalScopeVersion:1,expectedLinkVersion:0,action:'link',tripId:oldTrip,expectedTripVersion:0,confirmed:true};
+ assert.equal((await call(path,owner,'POST',link)).status,201);
+ // This disposable trigger runs before the production guard, after the delete
+ // RPC has locked oldTrip. It makes the opposing lock order deterministic.
+ const key=827001;
+ e.sql(`create function turn_private.test_pause_goal_trip_delete() returns trigger language plpgsql set search_path='' as $$begin perform pg_catalog.pg_advisory_xact_lock(${key});perform pg_catalog.pg_sleep(0.8);return new;end$$;create trigger a_pause_goal_trip_delete before insert on privacy_private.trip_deletions for each row execute function turn_private.test_pause_goal_trip_delete();`);
+ const requestId=randomUUID();
+ try {
+  const deletion=call('/api/privacy/native/v1/trips',owner,'POST',{requestId,tripId:oldTrip,expectedVersion:0,confirmed:true});
+  await waitUntil(()=>e.sql(`select pg_catalog.pg_try_advisory_lock(${key});`)==='f',3000,'confirmed deletion entered the Trip-locked trigger');
+  const retarget=call(path,owner,'POST',{...link,operationId:randomUUID(),sourceMessageId:null,expectedGoalScopeVersion:2,expectedLinkVersion:1,tripId:nextTrip});
+  const [deleted,moved]=await Promise.all([deletion,retarget]);
+  assert.equal(deleted.status,202,JSON.stringify(deleted.body));
+  assert.equal(moved.status,409,JSON.stringify(moved.body));
+  const read=await call(path,owner);
+  assert.equal(read.status,200);assert.equal(read.body.tripId,null);
+  assert.equal(read.body.sourceKind,'trip_deletion_confirmed');
+  assert.equal(e.sql(`select state from privacy_private.trip_deletions where request_id='${requestId}';`),'queued');
+  assert.match(e.sql(`select public.execute_trip_deletion_v1('${requestId}');`),/completed/);
+  assert.equal(e.sql(`select count(*) from public.trips where id='${nextTrip}';`),'1');
+ } finally {
+  e.sql('drop trigger a_pause_goal_trip_delete on privacy_private.trip_deletions;drop function turn_private.test_pause_goal_trip_delete();');
+ }
+});
+
+test('v5 Trip unlink and confirmed deletion reserve a terminal goal version at the ordinary cap',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
+ const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
+ const call=async(path,token,method='GET',body)=>{const r=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,body:await r.json()};};
+ const attemptId=randomUUID(),credentials=await call('/api/auth/native/v2/credentials',null,'POST',{email:e.users[0].email,password:e.users[0].password,attemptId});
+ assert.equal(credentials.status,200);
+ const owner=credentials.body.accessToken;
+ assert.equal((await call('/api/auth/native/v2/login',owner,'POST',{attemptId})).status,200);
+ assert.equal((await call('/api/chat/native/v5/consent',owner,'POST',{policyId:e.policyId,noticeHash:e.noticeHash})).status,200);
+ for(const route of ['explicit','deletion']){
+  const tripId=randomUUID(),conversationId=randomUUID(),goalId=randomUUID(),messageId=randomUUID(),path='/api/chat/native/v5/goals/'+goalId+'/trip';
+  assert.equal((await call('/api/trips/native/v2',owner,'POST',{tripId,title:'Cap '+route})).status,201);
+  const start={conversationId,messageId,idempotencyKey:randomUUID(),policyId:e.policyId,locale:'en',text:'Plan capped goal',relationship:'goal_start',goalId,expectedGoalVersion:null,taskId:null,parentMessageId:null,turnId:null};
+  assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',start)).status,201);
+  assert.equal((await call(path,owner,'POST',{operationId:randomUUID(),conversationId,sourceMessageId:messageId,
+   expectedGoalScopeVersion:1,expectedLinkVersion:0,action:'link',tripId,expectedTripVersion:0,confirmed:true})).status,201);
+  // Disposable privileged fixture places a valid active reference at the old
+  // maximum; no real user must perform thousands of edits to reach this case.
+  e.sql(`update turn_private.assistant_goals set scope_version=10000 where id='${goalId}';
+    update turn_private.assistant_goal_trip_links set link_version=10000,goal_scope_version=10000 where goal_id='${goalId}';
+    update turn_private.assistant_messages set scope_version=10000 where id='${messageId}';`);
+  const before=await call('/api/chat/native/v5/context',owner,'POST',{conversationId,goalId,messageId,expectedGoalVersion:10000,memoryIds:[]});
+  assert.equal(before.status,200);
+  const amend={...start,messageId:randomUUID(),idempotencyKey:randomUUID(),text:'Do not consume terminal version',relationship:'amendment',expectedGoalVersion:10000,parentMessageId:messageId};
+  assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',amend)).status,409,'ordinary amendment cannot consume terminal version');
+  if(route==='explicit'){
+   const unlink={operationId:randomUUID(),conversationId,sourceMessageId:null,expectedGoalScopeVersion:10000,
+    expectedLinkVersion:10000,action:'unlink',tripId:null,expectedTripVersion:null,confirmed:true};
+   const response=await call(path,owner,'POST',unlink);
+   assert.equal(response.status,201,JSON.stringify(response.body));
+   assert.deepEqual([response.body.goalScopeVersion,response.body.linkVersion],[10001,10001]);
+  }else{
+   const requestId=randomUUID();
+   const accepted=await call('/api/privacy/native/v1/trips',owner,'POST',{requestId,tripId,expectedVersion:0,confirmed:true});
+   assert.equal(accepted.status,202,JSON.stringify(accepted.body));
+   assert.equal((await call('/api/privacy/native/v1/trips',owner,'POST',{requestId,tripId,expectedVersion:0,confirmed:true})).body.state,'queued');
+   assert.match(e.sql(`select public.execute_trip_deletion_v1('${requestId}');`),/completed/);
+  }
+  const read=await call(path,owner);
+  assert.deepEqual([read.body.tripId,read.body.linkVersion,read.body.goalScopeVersion,read.body.terminalUnlinked],[null,10001,10001,true]);
+  assert.equal(e.sql(`select trip_terminal from turn_private.assistant_goals where id='${goalId}';`),'t');
+  assert.equal((await call('/api/chat/native/v5/context',owner,'POST',{conversationId,goalId,messageId,expectedGoalVersion:10000,memoryIds:[]})).status,409,
+   'the old goal/context basis is stale after terminal unlink');
+  assert.equal((await call(path,owner,'POST',{operationId:randomUUID(),conversationId,sourceMessageId:null,
+   expectedGoalScopeVersion:10001,expectedLinkVersion:10001,action:'link',tripId,expectedTripVersion:0,confirmed:true})).status,400,
+   'terminal goal cannot silently re-link under the old contract');
+ }
+});
+
+test('v5 owner privacy cursor reaches and can unlink the 101st active link after withdrawal',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
+ const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
+ const call=async(path,token,method='GET',body)=>{const r=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,body:await r.json()};};
+ const attemptId=randomUUID(),c=await call('/api/auth/native/v2/credentials',null,'POST',{email:e.users[0].email,password:e.users[0].password,attemptId});
+ assert.equal(c.status,200);const owner=c.body.accessToken;
+ assert.equal((await call('/api/auth/native/v2/login',owner,'POST',{attemptId})).status,200);
+ assert.equal((await call('/api/chat/native/v5/consent',owner,'POST',{policyId:e.policyId,noticeHash:e.noticeHash})).status,200);
+ const candidateTrip=randomUUID(),dummyTrip=randomUUID(),conversationId=randomUUID(),goalId=randomUUID(),messageId=randomUUID(),dummyConversation=randomUUID();
+ for(const [tripId,title] of [[candidateTrip,'New candidate'],[dummyTrip,'Owned prior links']])
+  assert.equal((await call('/api/trips/native/v2',owner,'POST',{tripId,title})).status,201);
+ const goal={conversationId,messageId,idempotencyKey:randomUUID(),policyId:e.policyId,locale:'en',text:'One more goal',relationship:'goal_start',goalId,expectedGoalVersion:null,taskId:null,parentMessageId:null,turnId:null};
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',goal)).status,201);
+ const consent=e.sql(`select consent_id from turn_private.text_consents where owner_id='${e.users[0].id}' and policy_id='${e.policyId}';`);
+ e.sql(`insert into turn_private.assistant_conversations(id,owner_id,policy_id,consent_id) values('${dummyConversation}','${e.users[0].id}','${e.policyId}','${consent}');
+ with goals as (insert into turn_private.assistant_goals(id,conversation_id,owner_id,current_text)
+   select gen_random_uuid(),'${dummyConversation}','${e.users[0].id}','Synthetic bounded link' from generate_series(1,100) returning id)
+ insert into turn_private.assistant_goal_trip_links(goal_id,conversation_id,owner_id,link_version,goal_scope_version,operation_id,trip_id,trip_head_version,source_kind)
+ select id,'${dummyConversation}','${e.users[0].id}',1,1,gen_random_uuid(),'${dummyTrip}',0,'native_user_confirmed' from goals;`);
+ const privacy=cursor=>call('/api/chat/native/v5/goal-trips'+(cursor?'/'+cursor:''),owner);
+ const allPages=async()=>{
+  const links=[];let cursor=null;
+  do {
+   const page=await privacy(cursor);assert.equal(page.status,200,JSON.stringify(page.body));
+   assert.ok(page.body.links.length<=50);
+   links.push(...page.body.links);cursor=page.body.nextCursor;
+  }while(cursor);
+  assert.equal(new Set(links.map(link=>link.goalId)).size,links.length);
+  return links;
+ };
+ assert.equal((await allPages()).length,100,'no active owner link is hidden by the first-page bound');
+ const path='/api/chat/native/v5/goals/'+goalId+'/trip',input={operationId:randomUUID(),conversationId,sourceMessageId:messageId,
+  expectedGoalScopeVersion:1,expectedLinkVersion:0,action:'link',tripId:candidateTrip,expectedTripVersion:0,confirmed:true};
+ assert.equal((await call(path,owner,'POST',input)).status,201,'a 101st link is allowed and must be pageable');
+ assert.equal((await call('/api/chat/native/v5/consent',owner,'DELETE',{policyId:e.policyId})).status,200);
+ const links=await allPages();assert.equal(links.length,101);
+ const last=links.at(-1),unlink={operationId:randomUUID(),conversationId:last.conversationId,sourceMessageId:null,
+  expectedGoalScopeVersion:last.goalScopeVersion,expectedLinkVersion:last.linkVersion,
+  action:'unlink',tripId:null,expectedTripVersion:null,confirmed:true};
+ assert.equal((await call('/api/chat/native/v5/goals/'+last.goalId+'/trip',owner,'POST',unlink)).status,201);
+ assert.equal((await allPages()).length,100,'the far-page link remains removable after consent withdrawal');
+ e.sql(`delete from turn_private.assistant_goal_trip_links where owner_id='${e.users[0].id}';
+  delete from turn_private.assistant_goal_trip_receipts where owner_id='${e.users[0].id}';`);
 });
