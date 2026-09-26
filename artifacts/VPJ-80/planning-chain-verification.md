@@ -1,6 +1,6 @@
 # VPJ-80 planning-chain evidence
 
-Branch `codex/vpj80-planning-chain-20260927`, initially from main `972cfdb01b35217a09ce7644acd39d524ce2305d`. Rebase to current main and final SHA checks are pending. Related to #561; parent remains OPEN.
+Branch `codex/vpj80-planning-chain-20260927`, initially from main `972cfdb01b35217a09ce7644acd39d524ce2305d`, rebased onto `0cbd481b57cce03539ce1b1fbad445bbb758cb98` after #572. Final SHA checks are pending. Related to #561; parent remains OPEN.
 
 ## Implemented
 
@@ -10,8 +10,8 @@ Branch `codex/vpj80-planning-chain-20260927`, initially from main `972cfdb01b352
 
 ## Local observations
 
-- PASS: disposable PostgreSQL planning test: migration rollback/reapply; direct owner admission/lease/checkpoint/budget/publication/readback; worker function provider fixture; expired lease recovery; concurrent claim; goal and Memory revision changes; cancellation, planning consent withdrawal and unknown provider cost stop; late stale-basis publication rollback.
-- PASS: disposable PostgreSQL `postgres` lane before final rebase, 16 files / 131 tests / 0 skip or fail. Final-code rerun pending.
+- PASS: disposable PostgreSQL planning test: migration rollback/reapply after #572's 050000; direct owner admission/lease/checkpoint/budget/publication/readback; worker function provider fixture; expired lease recovery; concurrent claim; goal and Memory revision changes; linked-Trip goal rejection; cancellation, planning consent withdrawal and unknown provider cost stop; late stale-basis publication rollback.
+- PASS: disposable PostgreSQL `postgres` lane before the latest Trip-link boundary checks, 16 files / 131 tests / 0 skip or fail. Final-code rerun pending.
 - PASS: local real Auth + native HTTP + migrated PostgreSQL + worker function + owner result HTTP with synthetic model/place fixtures. The title and test state identify synthetic content. Final-code rerun pending.
 - PASS: TypeScript typecheck, source-policy lint and feature-flag check on the development branch before final rebase. Final checks pending.
 

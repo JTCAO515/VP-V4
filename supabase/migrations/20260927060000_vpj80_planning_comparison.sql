@@ -62,8 +62,32 @@ alter table turn_private.planning_model_dispatches enable row level security;
 revoke all on turn_private.planning_policies,turn_private.planning_consents,turn_private.planning_comparisons,
   turn_private.planning_model_dispatches from public,anon,authenticated,service_role;
 
+create function turn_private.immutable_planning_policy_v1() returns trigger language plpgsql set search_path='' as $$
+begin
+  if TG_OP='DELETE' or (to_jsonb(NEW)-'revoked_at') is distinct from (to_jsonb(OLD)-'revoked_at')
+    or OLD.revoked_at is not null or NEW.revoked_at is null or NEW.revoked_at>clock_timestamp()
+    then raise exception 'IMMUTABLE_POLICY'; end if;
+  return NEW;
+end $$;
+create trigger immutable_planning_policy_v1 before update or delete on turn_private.planning_policies
+  for each row execute function turn_private.immutable_planning_policy_v1();
+revoke all on function turn_private.immutable_planning_policy_v1() from public,anon,authenticated,service_role;
+
+create function turn_private.immutable_planning_consent_v1() returns trigger language plpgsql set search_path='' as $$
+begin
+  -- Parent account erasure may cascade this private consent; it cannot revive.
+  if TG_OP='DELETE' then return OLD; end if;
+  if (to_jsonb(NEW)-'revoked_at') is distinct from (to_jsonb(OLD)-'revoked_at')
+    or OLD.revoked_at is not null or NEW.revoked_at is null or NEW.revoked_at>clock_timestamp()
+    then raise exception 'IMMUTABLE_CONSENT'; end if;
+  return NEW;
+end $$;
+create trigger immutable_planning_consent_v1 before update or delete on turn_private.planning_consents
+  for each row execute function turn_private.immutable_planning_consent_v1();
+revoke all on function turn_private.immutable_planning_consent_v1() from public,anon,authenticated,service_role;
+
 create function turn_private.planning_policy_current(p_policy_id uuid) returns boolean
-language sql stable security definer set search_path='' as $$
+language sql security definer set search_path='' as $$
   select exists(select 1 from turn_private.planning_policies p
     where p.id=p_policy_id and p.revoked_at is null and p.effective_at<=clock_timestamp()
       and p.expires_at>clock_timestamp() and turn_private.text_policy_current(p.text_policy_id))
@@ -150,6 +174,9 @@ begin
   linked:=public.submit_assistant_message_v1(p_conversation_id,p_message_id,p_message_key,p_text_policy_id,
     p_locale,p_text,'follow_up',p_goal_id,p_expected_goal_version,p_task_id,p_parent_message_id,null);
   if linked->>'kind'<>'accepted' then raise exception 'SERVICE_TASK_CONFLICT'; end if;
+  if exists(select 1 from turn_private.assistant_goals g where g.id=p_goal_id and g.owner_id=u and g.trip_terminal)
+    or exists(select 1 from turn_private.assistant_goal_trip_links l where l.goal_id=p_goal_id and l.owner_id=u
+      and (l.trip_id is not null or l.terminal_unlinked)) then raise exception 'SERVICE_TASK_CONFLICT'; end if;
   select * into prior from turn_private.planning_comparisons where turn_id=p_turn_id;
   if found then
     if prior.owner_id<>u or prior.task_id<>p_task_id or prior.message_id<>p_message_id or prior.goal_id<>p_goal_id
@@ -239,6 +266,41 @@ begin
   return jsonb_build_object('kind','empty');
 end $$;
 
+-- A planning-only row must not occupy one of the hosted text worker's
+-- groupLimit slots and starve real text/grounded work during discovery.
+create or replace function public.hosted_worker_ready_groups(p_limit integer)
+returns jsonb language plpgsql security definer set search_path='' as $$
+declare c turn_private.hosted_worker_control%rowtype; groups jsonb;
+begin
+  if p_limit is null or p_limit not between 1 and 50 then raise exception 'INVALID_INPUT'; end if;
+  select * into c from turn_private.hosted_worker_control where singleton;
+  if not found or not c.enabled then return jsonb_build_object('kind','disabled'); end if;
+  select coalesce(jsonb_agg(jsonb_build_object(
+      'ownerId', g.owner_id, 'policyId', g.policy_id, 'contextMode', g.context_mode,
+      'provider', g.provider, 'endpoint', g.endpoint,
+      'scopes', (select coalesce(jsonb_agg(jsonb_build_object('scopeId', b.scope_id, 'model', b.model, 'priceVersion', b.price_version) order by b.scope_id), '[]'::jsonb)
+        from (select s.id as scope_id, l.model, l.price_version from public.model_budget_scopes s
+          join public.model_budget_provider_limits l on l.scope_id = s.id and l.provider = g.provider
+          where s.owner_id = g.owner_id and s.enabled and not s.frozen and s.expires_at > clock_timestamp() and l.enabled
+          order by s.id limit 5) b)
+    ) order by g.oldest, g.owner_id, g.policy_id), '[]'::jsonb)
+  into groups
+  from (
+    select q.owner_id, x.policy_id, p.context_mode, p.provider, p.endpoint, min(q.created_at) as oldest
+    from turn_private.work q
+    join turn_private.text_content x on x.turn_id = q.turn_id and x.owner_id = q.owner_id
+    join turn_private.text_policies p on p.id = x.policy_id
+    join turn_private.text_consents s on s.owner_id = x.owner_id and s.policy_id = x.policy_id and s.consent_id = x.consent_id
+    where q.execution_mode='text' and x.hidden_at is null and p.revoked_at is null and p.effective_at <= clock_timestamp()
+      and p.expires_at > clock_timestamp() and p.terms_recheck_at > clock_timestamp() and s.revoked_at is null
+      and (q.state = 'queued' or (q.state = 'leased' and q.expires_at <= clock_timestamp()))
+    group by q.owner_id, x.policy_id, p.context_mode, p.provider, p.endpoint
+    order by min(q.created_at), q.owner_id, x.policy_id
+    limit p_limit
+  ) g;
+  return jsonb_build_object('kind','groups','groups',groups);
+end $$;
+
 create or replace function public.read_text_work(p_turn_id uuid,p_lease_token uuid)
 returns jsonb language plpgsql security definer set search_path='' as $$
 declare c turn_private.text_content%rowtype; p turn_private.text_policies%rowtype; history jsonb; payload jsonb;
@@ -275,8 +337,8 @@ end $$;
 -- Preserve original grants after CREATE OR REPLACE. Private claimer stays
 -- unreachable to service_role directly; public worker RPCs stay service-only.
 revoke all on function turn_private.claim_text_mode(uuid,uuid,text) from public,anon,authenticated,service_role;
-revoke all on function public.claim_turn_work(),public.read_text_work(uuid,uuid),public.authorize_text_dispatch(uuid,uuid,uuid,text) from public,anon,authenticated;
-grant execute on function public.claim_turn_work(),public.read_text_work(uuid,uuid),public.authorize_text_dispatch(uuid,uuid,uuid,text) to service_role;
+revoke all on function public.claim_turn_work(),public.hosted_worker_ready_groups(integer),public.read_text_work(uuid,uuid),public.authorize_text_dispatch(uuid,uuid,uuid,text) from public,anon,authenticated;
+grant execute on function public.claim_turn_work(),public.hosted_worker_ready_groups(integer),public.read_text_work(uuid,uuid),public.authorize_text_dispatch(uuid,uuid,uuid,text) to service_role;
 
 -- The #571 action basis now also includes this mode's separate purpose and
 -- recipient consent. Old action rows without a planning job keep their v1 path.
@@ -298,6 +360,8 @@ begin
     then return null; end if;
   select * into goal from turn_private.assistant_goals where id=source.goal_id and owner_id=p_owner_id;
   if not found or goal.conversation_id<>source.conversation_id or goal.scope_version<>source.scope_version
+    or goal.trip_terminal or exists(select 1 from turn_private.assistant_goal_trip_links l where l.goal_id=goal.id and l.owner_id=p_owner_id
+      and (l.trip_id is not null or l.terminal_unlinked))
     or not turn_private.text_policy_current(source.policy_id)
     or not exists(select 1 from turn_private.text_consents c where c.owner_id=p_owner_id and c.policy_id=source.policy_id and c.consent_id=source.consent_id and c.revoked_at is null)
     then return null; end if;
@@ -510,7 +574,7 @@ begin
   if p_value is null or jsonb_typeof(p_value)<>'object' then return false; end if;
   if p_tool_id='evidence.lookup' then
     return p_value ?& array['schemaVersion','coverage'] and p_value-'schemaVersion'-'coverage'='{}'::jsonb
-      and p_value->>'schemaVersion'='planning-evidence/1' and p_value->>'coverage'='no_qualified_area_evidence';
+      and p_value->>'schemaVersion'='planning-evidence/1' and p_value->>'coverage'='not_integrated';
   elsif p_tool_id='place.read' then
     if not (p_value ?& array['schemaVersion','source','observedAt','providerCalls','areas'])
       or p_value-'schemaVersion'-'source'-'observedAt'-'providerCalls'-'areas'<>'{}'::jsonb

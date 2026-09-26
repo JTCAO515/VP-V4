@@ -52,7 +52,7 @@ test('native planning admission and owner result use the same durable task',{ski
    transport:async()=>{modelCalls++;return Response.json({model:'qwen3.7-plus-2026-05-26',
     choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:'{"highlight":"peoples_square"}'}}],
     usage:{prompt_tokens:20,completion_tokens:10,total_tokens:30}});},
-   price:()=>1,evidenceLookup:async()=>({schemaVersion:'planning-evidence/1',coverage:'no_qualified_area_evidence'}),
+   price:()=>1,evidenceLookup:async()=>({schemaVersion:'planning-evidence/1',coverage:'not_integrated'}),
    placeRead:async()=>({schemaVersion:'planning-place/1',source:'synthetic_fixture',observedAt:new Date().toISOString(),providerCalls:0,
     areas:[{id:'jingan',label:"Jing'an Temple anchor",railMinutes:21,transfers:1},
      {id:'peoples_square',label:"People's Square anchor",railMinutes:16,transfers:0}]})},new AbortController().signal);

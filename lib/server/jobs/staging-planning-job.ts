@@ -43,7 +43,7 @@ export function createStagingPlanningJob(config:StagingPlanningJobConfig,deps:Re
     reservedMicros:config.reservedMicros,timeoutMs:config.timeoutMs,maxOutputTokens:config.maxOutputTokens},
   {credential:deps.workerCredential,binding:{provider:"qwen",endpoint:config.provider.endpoint,transport,price,
     recordUsage:deps.recordUsage,
-    evidenceLookup:async()=>({schemaVersion:"planning-evidence/1",coverage:"no_qualified_area_evidence"}),
+    evidenceLookup:async()=>({schemaVersion:"planning-evidence/1",coverage:"not_integrated"}),
     placeRead:signal=>readShanghaiStayAreaRoutes({env:deps.mapsEnv,signal,fetcher:deps.fetcher})},
     ...(deps.fetcher?{fetcher:deps.fetcher}:{})});
 }

@@ -11,7 +11,7 @@ import { assembleGoalContext } from "../context/goal-context.ts";
 
 type Rpc = (name: string, params: Readonly<Record<string, unknown>>) => Promise<unknown>;
 type AreaId = "jingan" | "peoples_square";
-type Evidence = Readonly<{ schemaVersion: "planning-evidence/1"; coverage: "no_qualified_area_evidence" }>;
+type Evidence = Readonly<{ schemaVersion: "planning-evidence/1"; coverage: "not_integrated" }>;
 type Area = Readonly<{ id: AreaId; label: string; railMinutes: number | null; transfers: number | null }>;
 type Place = Readonly<{ schemaVersion: "planning-place/1"; source: "amap" | "synthetic_fixture"; observedAt: string; providerCalls: number; areas: readonly [Area, Area] }>;
 type Constraints = Readonly<{ schemaVersion: "planning-constraints/1"; fasterAreaId: AreaId | null; hotelPrice: "unknown"; availability: "unknown" }>;
@@ -111,7 +111,7 @@ export async function runPlanningComparisonWorker(workRpc: TurnWorkRpc, rpc: Rpc
       place=await step("place.read",validPlace,()=>binding.placeRead(leaseSignal));
       constraints=await step("constraints.evaluate",validConstraints,async()=>evaluateConstraints(place));
     }catch{return await pause(rpc,lease);}
-    if(evidence.coverage!=="no_qualified_area_evidence"||leaseSignal.aborted
+    if(evidence.coverage!=="not_integrated"||leaseSignal.aborted
       || !Number.isFinite(Date.parse(place.observedAt)) || Date.parse(place.observedAt)>Date.now()+5000
       || Date.now()-Date.parse(place.observedAt)>300000
       || place.source!==(config.environment==="staging"?"amap":"synthetic_fixture")) return await pause(rpc,lease);
@@ -147,7 +147,8 @@ export async function runPlanningComparisonWorker(workRpc: TurnWorkRpc, rpc: Rpc
 }
 
 async function pause(rpc:Rpc,lease:DurableTurnLease):Promise<"persisted">{
-  await rpc("pause_planning_comparison_v1",{p_turn_id:lease.turnId,p_lease_token:lease.leaseToken}).catch(()=>{});
+  const result=await rpc("pause_planning_comparison_v1",{p_turn_id:lease.turnId,p_lease_token:lease.leaseToken});
+  if(!record(result)||result.kind!=="paused_unknown")throw Error("Planning pause acknowledgement unknown");
   return "persisted";
 }
 function record(v:unknown):v is Record<string,unknown>{return typeof v==="object"&&v!==null&&!Array.isArray(v);}
@@ -161,7 +162,7 @@ function validInput(v:unknown):v is PlanningInput{return record(v)&&v.kind==="pl
     &&x.consentStatus==="granted"&&["explicit","confirmed"].includes(String(x.state))&&str(x.updatedAt,64))
   && Array.isArray(v.memoryBasis)&&v.memoryBasis.length<=3&&v.memoryBasis.every(x=>record(x)&&typeof x.id==="string"&&UUID.test(x.id)&&Number.isSafeInteger(x.revision))
   && typeof v.contextDigest==="string"&&/^[a-f0-9]{64}$/.test(v.contextDigest);}
-function validEvidence(v:unknown):v is Evidence{return record(v)&&Object.keys(v).length===2&&v.schemaVersion==="planning-evidence/1"&&v.coverage==="no_qualified_area_evidence";}
+function validEvidence(v:unknown):v is Evidence{return record(v)&&Object.keys(v).length===2&&v.schemaVersion==="planning-evidence/1"&&v.coverage==="not_integrated";}
 function validArea(v:unknown):v is Area{return record(v)&&Object.keys(v).length===4&&(v.id==="jingan"||v.id==="peoples_square")&&str(v.label,80)
   &&(v.railMinutes===null||Number.isSafeInteger(v.railMinutes)&&Number(v.railMinutes)>=0&&Number(v.railMinutes)<=180)
   &&(v.transfers===null||Number.isSafeInteger(v.transfers)&&Number(v.transfers)>=0&&Number(v.transfers)<=5);}
@@ -176,7 +177,7 @@ function evaluateConstraints(place:Place):Constraints{const [a,b]=place.areas;co
 function validSelection(v:unknown):v is PlanningSelection{return record(v)&&Object.keys(v).length===1&&["jingan","peoples_square","none"].includes(String(v.highlight));}
 function planningPrompt(input:PlanningInput,memories:readonly PlanningMemory[],place:Place,constraints:Constraints):string{
   return JSON.stringify({goal:input.goalText,delegation:input.messageText,explicitMemories:memories.map(m=>({kind:m.constraintKind,text:m.summary})),
-    qualifiedAreaEvidence:"none",railAccess:place.areas.map(a=>({area:a.id,minutes:a.railMinutes,transfers:a.transfers})),
+    qualifiedAreaEvidence:"not_integrated",railAccess:place.areas.map(a=>({area:a.id,minutes:a.railMinutes,transfers:a.transfers})),
     fasterAreaId:constraints.fasterAreaId,unknown:["hotel_price","availability"]});
 }
 function buildComparison(input:PlanningInput,place:Place,constraints:Constraints,selection:PlanningSelection){

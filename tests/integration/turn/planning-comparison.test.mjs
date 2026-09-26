@@ -56,6 +56,7 @@ test('one synthetic owner task follows existing lease, checkpoint, budget and co
   p_expected_goal_version:null,p_task_id:null,p_parent_message_id:null,p_turn_id:null});
  assert.equal(started.kind,'accepted',JSON.stringify(started));
  assert.equal((await user('accept_planning_policy_v1',{p_policy_id:a.planningPolicy,p_notice_hash:notice})).kind,'accepted');
+ assert.match((await sql(container,`update turn_private.planning_policies set notice_en='Changed recipient notice' where id='${a.planningPolicy}';`)).stderr,/IMMUTABLE_POLICY/);
  const admission={p_conversation_id:a.conversation,p_goal_id:a.goal,p_expected_goal_version:1,p_parent_message_id:a.parent,
   p_message_id:a.message,p_message_key:uuid(),p_thread_id:a.thread,p_turn_id:a.turn,p_task_id:a.task,p_task_key:uuid(),
   p_text_policy_id:a.policy,p_planning_policy_id:a.planningPolicy,p_locale:'en',p_text:'Compare Jing’an Temple and People’s Square for staying',p_memory_basis:'[]'};
@@ -65,6 +66,9 @@ test('one synthetic owner task follows existing lease, checkpoint, budget and co
  assert.equal(await db(`select execution_mode from turn_private.work where turn_id='${a.turn}';`),'planning_comparison_v1');
  assert.equal((await service('claim_text_work',{p_owner_id:a.owner,p_policy_id:a.policy})).kind,'empty','text claimer cannot steal planning');
  assert.equal((await service('claim_turn_work',{})).kind,'empty','legacy generic claimer cannot steal planning');
+ assert.equal((await service('set_hosted_worker_enabled',{p_enabled:true,p_reason:'synthetic test'})).enabled,true);
+ assert.deepEqual((await service('hosted_worker_ready_groups',{p_limit:10})).groups,[],'planning rows do not occupy hosted text group slots');
+ await service('set_hosted_worker_enabled',{p_enabled:false,p_reason:'synthetic test'});
  const lease=await service('claim_planning_comparison_work_v1',{p_owner_id:a.owner,p_planning_policy_id:a.planningPolicy});
  assert.equal(lease.kind,'leased',JSON.stringify(lease));
  assert.equal((await service('read_text_work',{p_turn_id:a.turn,p_lease_token:lease.leaseToken})).kind,'blocked');
@@ -73,7 +77,7 @@ test('one synthetic owner task follows existing lease, checkpoint, budget and co
  assert.equal(input.kind,'planning_input',JSON.stringify(input));assert.equal(input.taskId,a.task);
  const keys={p_turn_id:a.turn,p_owner_id:a.owner,p_lease_token:lease.leaseToken,p_message_id:a.message,p_memory_basis:'[]'};
  const observations=[
-  ['evidence.lookup',{schemaVersion:'planning-evidence/1',coverage:'no_qualified_area_evidence'}],
+  ['evidence.lookup',{schemaVersion:'planning-evidence/1',coverage:'not_integrated'}],
   ['place.read',{schemaVersion:'planning-place/1',source:'synthetic_fixture',observedAt:now,providerCalls:0,
    areas:[{id:'jingan',label:"Jing'an Temple anchor",railMinutes:21,transfers:1},{id:'peoples_square',label:"People's Square anchor",railMinutes:16,transfers:0}]}],
   ['constraints.evaluate',{schemaVersion:'planning-constraints/1',fasterAreaId:'peoples_square',hotelPrice:'unknown',availability:'unknown'}],
@@ -143,7 +147,7 @@ test('one synthetic owner task follows existing lease, checkpoint, budget and co
  const result=await runPlanningComparisonWorker(rpc,rpc,rpc,{environment:'local_synthetic',ownerId:a.owner,planningPolicyId:a.planningPolicy,
   scopeId:scope,priceVersion:'test-v1',reservedMicros:1000,timeoutMs:10000,maxOutputTokens:256},
   {provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',transport:fakeTransport,
-   price:()=>7,evidenceLookup:async()=>({schemaVersion:'planning-evidence/1',coverage:'no_qualified_area_evidence'}),
+   price:()=>7,evidenceLookup:async()=>({schemaVersion:'planning-evidence/1',coverage:'not_integrated'}),
    placeRead:async()=>{placeCalls++;return fakePlace;}},new AbortController().signal);
  assert.equal(result,'finished','real worker function drives existing lease and terminal');
  assert.equal(providerCalls,1);assert.equal(placeCalls,1);
@@ -223,7 +227,7 @@ test('one synthetic owner task follows existing lease, checkpoint, budget and co
  assert.equal(await runPlanningComparisonWorker(rpc,rpc,rpc,{environment:'local_synthetic',ownerId:a.owner,planningPolicyId:a.planningPolicy,
   scopeId:scope,priceVersion:'test-v1',reservedMicros:1000,timeoutMs:10000,maxOutputTokens:256},
   {provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',transport:memoryTransport,
-   price:()=>7,evidenceLookup:async()=>({schemaVersion:'planning-evidence/1',coverage:'no_qualified_area_evidence'}),
+   price:()=>7,evidenceLookup:async()=>({schemaVersion:'planning-evidence/1',coverage:'not_integrated'}),
    placeRead:async()=>fakePlace},new AbortController().signal),'finished');
  assert.equal(selectedMemory,true,'#559 source selection includes current relevant explicit Memory');
  assert.equal((await user('read_result_artifacts_v1',{p_artifact_id:currentMemory.artifactId,p_revision:null})).basis.memories[0].revision,2);
@@ -234,7 +238,7 @@ test('one synthetic owner task follows existing lease, checkpoint, budget and co
  const inFlightRun=runPlanningComparisonWorker(rpc,rpc,rpc,{environment:'local_synthetic',ownerId:a.owner,planningPolicyId:a.planningPolicy,
   scopeId:scope,priceVersion:'test-v1',reservedMicros:1000,timeoutMs:10000,maxOutputTokens:256},
   {provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',transport:heldTransport,
-   price:()=>7,evidenceLookup:async()=>({schemaVersion:'planning-evidence/1',coverage:'no_qualified_area_evidence'}),
+   price:()=>7,evidenceLookup:async()=>({schemaVersion:'planning-evidence/1',coverage:'not_integrated'}),
    placeRead:async()=>fakePlace},new AbortController().signal);
  let providerTimeout;try{await Promise.race([providerReached,new Promise((_,reject)=>{
   providerTimeout=setTimeout(()=>reject(Error('provider was never reached')),15000);})]);}finally{clearTimeout(providerTimeout);}
@@ -263,13 +267,28 @@ test('one synthetic owner task follows existing lease, checkpoint, budget and co
  assert.equal(await runPlanningComparisonWorker(rpc,rpc,rpc,{environment:'local_synthetic',ownerId:a.owner,planningPolicyId:a.planningPolicy,
   scopeId:scope,priceVersion:'test-v1',reservedMicros:1000,timeoutMs:10000,maxOutputTokens:256},
   {provider:'qwen',endpoint:'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',transport:noUsageTransport,
-   price:()=>7,evidenceLookup:async()=>({schemaVersion:'planning-evidence/1',coverage:'no_qualified_area_evidence'}),
+   price:()=>7,evidenceLookup:async()=>({schemaVersion:'planning-evidence/1',coverage:'not_integrated'}),
    placeRead:async()=>fakePlace},new AbortController().signal),'finished');
  assert.equal(providerCalls,modelHitsBefore+1);
  assert.equal(await db(`select status from public.model_budget_attempts where task_id='${unknownModel.task}';`),'pending');
  assert.equal(await db(`select state from turn_private.planning_comparisons where turn_id='${unknownModel.turn}';`),'paused_unknown');
  assert.equal((await service('claim_planning_comparison_work_v1',{p_owner_id:a.owner,p_planning_policy_id:a.planningPolicy})).kind,'empty');
  assert.equal(providerCalls,modelHitsBefore+1,'unknown cost is not retried');
+
+ const linkedGoal=uuid(),linkedStart=uuid(),trip=uuid(),linkedTurn=uuid();
+ assert.equal((await user('submit_assistant_message_v1',{p_conversation_id:a.conversation,p_message_id:linkedStart,p_idempotency_key:uuid(),
+  p_policy_id:a.policy,p_locale:'en',p_text:'Plan a linked Shanghai Trip',p_relationship:'goal_start',p_goal_id:linkedGoal,
+  p_expected_goal_version:null,p_task_id:null,p_parent_message_id:null,p_turn_id:null})).kind,'accepted');
+ await db(`insert into public.trips(id,owner_id,title) values('${trip}','${a.owner}','Synthetic linked Trip');
+ update turn_private.assistant_goals set scope_version=2 where id='${linkedGoal}';
+ insert into turn_private.assistant_goal_trip_links(goal_id,conversation_id,owner_id,link_version,goal_scope_version,operation_id,
+  trip_id,trip_head_version,source_message_id,source_kind)
+ values('${linkedGoal}','${a.conversation}','${a.owner}',1,2,'${uuid()}','${trip}',0,'${linkedStart}','native_user_confirmed');`);
+ const linkedAttempt=await user('submit_planning_comparison_v1',{...admission,p_goal_id:linkedGoal,p_expected_goal_version:2,
+  p_parent_message_id:linkedStart,p_message_id:uuid(),p_message_key:uuid(),p_thread_id:uuid(),p_turn_id:linkedTurn,
+  p_task_id:uuid(),p_task_key:uuid()});
+ assert.match(linkedAttempt.error,/SERVICE_TASK_CONFLICT/,'this no-Trip planner refuses a linked Trip goal');
+ assert.equal(await db(`select count(*) from turn_private.work where turn_id='${linkedTurn}';`),'0','failed admission rolls back its Turn');
 
  const revoked=await delegate(amendment.messageId,2);
  const racedClaims=await Promise.all([service('claim_planning_comparison_work_v1',{p_owner_id:a.owner,p_planning_policy_id:a.planningPolicy}),
@@ -278,6 +297,7 @@ test('one synthetic owner task follows existing lease, checkpoint, budget and co
  const revokedLease=racedClaims.find(x=>x.kind==='leased');
  assert.equal(revokedLease.turnId,revoked.turn);
  assert.equal((await user('withdraw_planning_policy_v1',{p_policy_id:a.planningPolicy})).kind,'withdrawn');
+ assert.match((await sql(container,`update turn_private.planning_consents set revoked_at=null where owner_id='${a.owner}' and policy_id='${a.planningPolicy}';`)).stderr,/IMMUTABLE_CONSENT/);
  const denied=await service('claim_planning_action_v1',{p_turn_id:revoked.turn,p_owner_id:a.owner,p_lease_token:revokedLease.leaseToken,
   p_message_id:revoked.message,p_action_key:'f'.repeat(64),p_tool_id:'place.read',p_input_digest:digest,p_memory_basis:'[]'});
  assert.equal(denied.kind,'stale_basis','withdrawn planning purpose stops a new effect');
