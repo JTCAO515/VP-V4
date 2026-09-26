@@ -183,9 +183,9 @@ struct NativeTodayView: View {
             VisePandaCard {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(text("Preparation", "出行准备")).font(.headline)
-                    Text(text("No preparation result is saved to this Trip. Check current evidence for your situation when needed.", "此行程未保存准备检查结果。需要时请按当前情况与依据重新检查。"))
+                    Text(text("No preparation result is saved to this Trip. The available check covers carrier SIM documents and uses current evidence.", "此行程未保存准备检查结果。当前可用检查仅针对运营商 SIM 证件，并按现有依据判断。"))
                         .foregroundStyle(.secondary)
-                    NavigationLink(text("Check preparation", "检查准备状态")) {
+                    NavigationLink(text("Check carrier SIM documents", "检查运营商 SIM 证件")) {
                         NativeReadinessView(tripID: detail.trip.id, tripVersion: detail.trip.headVersion)
                     }
                     .accessibilityIdentifier("today.readiness")
