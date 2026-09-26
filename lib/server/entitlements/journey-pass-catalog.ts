@@ -27,7 +27,7 @@ export const journeyPassCatalog = freezeDeep({
       kind: "non_renewing",
       purchasable: false,
       sharedBenefits,
-      storeKitProductId: null,
+      storeKitProductId: null as string | null,
       localTestProductId: "dev.visepanda.journey-pass.30-day",
       durationHours: 720,
       priceExperiment: {
