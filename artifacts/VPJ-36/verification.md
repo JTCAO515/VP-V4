@@ -100,3 +100,9 @@ The latter includes a loopback Next HTTP and local worker run with the new
 VPJ-35 migration present. PASS native Simulator state suite 14/14; final
 post-rebase bundle `Test-VisePanda-2026.09.26_22-16-19-+0800.xcresult`.
 No shared Staging or real-user deletion was performed during rebase checks.
+
+One further display guard clears the previous Trip's receipt as soon as the
+user selects or creates another Trip, and before a new deletion request is
+written to Keychain. This also covers a Keychain write failure. PASS: the
+Simulator state suite remained 14/14, bundle
+`Test-VisePanda-2026.09.26_22-19-15-+0800.xcresult`.

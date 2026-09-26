@@ -36,6 +36,7 @@ nonisolated final class NativeTripStateTests: XCTestCase {
         XCTAssertTrue(reopened.trips.isEmpty)
         XCTAssertNil(reopened.detail)
         await reopened.create(title: "Second synthetic Trip", using: session)
+        XCTAssertNil(reopened.deletionReceipt, "Switching to a new Trip must clear the previous completion card")
         let secondReference = try XCTUnwrap(reopened.deletionReference)
         ArchiveTripProtocol.setDeletionPostOffline(true)
         await reopened.deleteTrip(reviewedReference: secondReference, using: session)

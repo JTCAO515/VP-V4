@@ -51,6 +51,7 @@ final class NativeTripStore {
         guard draft == nil || selectedID == id else { notice = "finishDraft"; return }
         await perform(session) { scope in
             guard UUID(uuidString: id) != nil else { throw NativeDataError.invalidResponse }
+            if self.deletionReceipt?.tripId != id { self.deletionReceipt = nil }
             if self.selectedID != id { self.detail = nil; self.pending = nil; self.archive = nil; self.archiveAvailable = false }
             self.selectedID = id
             try await self.loadSelected(session, scope)
@@ -79,9 +80,9 @@ final class NativeTripStore {
         let request = NativePendingTripDeletion(owner: scope.subject, tripID: detail.trip.id,
             requestID: UUID().uuidString.lowercased(), expectedVersion: detail.trip.headVersion)
         await perform(session) { scope in
+            self.deletionReceipt = nil
             try session.rememberTripDeletion(request)
             self.deletionRequest = request
-            self.deletionReceipt = nil
             self.clearDeletedTripCache(request.tripID)
             try await self.postDeletion(request, session, scope)
             try await self.loadList(session, scope)
@@ -170,6 +171,7 @@ final class NativeTripStore {
         let title = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !title.isEmpty, title.count <= 160 else { notice = "INVALID_INPUT"; return }
         await perform(session) { scope in
+            self.deletionReceipt = nil
             if self.creation?.title != title { self.creation = (UUID().uuidString.lowercased(), title) }
             guard let creation = self.creation else { throw NativeDataError.invalidResponse }
             let reply: NativeTripCreated = try await self.call(session, scope, path: self.base, method: "POST", body: ["tripId": creation.id, "title": title])
