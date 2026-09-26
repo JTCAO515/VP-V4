@@ -7,5 +7,6 @@
 - UNRUN: All-user-data export/delete executor, derived global search index invalidation, actual event relay, old shipped-client compatibility, production migration/rollback and real user acceptance.
 - UNRUN: Relevant Profile travel-pace revision basis and qualified nonempty evidence basis. This first slice accepts only explicit Memory revisions and an empty evidence list, so it cannot present sourced destination advice.
 - UNRUN: Real producer and target-environment acceptance of the #572 confirmed-link → post-link Task → Trip-bound comparison chain. The second slice tests non-null Trip basis, Trip-base invalidation and dependent deletion only in disposable local Auth/Next/Postgres; same-owner alone still grants no binding authority.
+- UNRUN: Per-Trip result pagination or an index covering more than 64 candidate artifacts. The current reader fails unavailable at that bound and preserves exact owned artifact ID/revision reads; no production volume measurement exists yet.
 
 #560 remains OPEN. These gaps are required for full Issue acceptance and release claims.

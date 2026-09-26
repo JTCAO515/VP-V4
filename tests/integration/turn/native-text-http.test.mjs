@@ -165,6 +165,42 @@ test('v5 comparison binds only a confirmed goal Trip and reads one exact revisio
  assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,other)).body.data.kind,'empty');
  assert.equal((await call(exactA,other)).body.data.kind,'empty');
  assert.equal((await call('/api/results/native/v1/trip?tripId=invalid',owner)).status,400);
+ const secondGoal=randomUUID(),secondRoot=message('goal_start',{goalId:secondGoal,text:'Another goal on the same Trip'});
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',secondRoot)).status,201);
+ const secondLinkPath='/api/chat/native/v5/goals/'+secondGoal+'/trip';
+ assert.equal((await call(secondLinkPath,owner,'POST',link(tripA,1,0,secondRoot.messageId,1))).status,201);
+ const secondTask=randomUUID(),secondTurn=randomUUID();
+ assert.equal((await call('/api/chat/native/v2/turns',owner,'POST',{threadId:randomUUID(),turnId:secondTurn,idempotencyKey:randomUUID(),
+  policyId:e.policyId,locale:'en',text:'Synthetic second-goal task',serviceTask:{id:secondTask,scopeVersion:1,relationship:'new_goal',parentTurnId:null}})).status,201);
+ const secondInput=message('follow_up',{goalId:secondGoal,expectedGoalVersion:2,parentMessageId:secondRoot.messageId,taskId:secondTask});
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',secondInput)).status,201);
+ await waitUntil(()=>e.sql(`select status from public.turns where id='${secondTurn}';`)==='completed',30000,'second goal answer');
+ const secondArtifact=randomUUID(),secondTaskRef={taskId:secondTask};
+ assert.equal((await publish({...params(secondArtifact,secondTaskRef,secondInput,tripA,1,2),p_goal_id:secondGoal})).status,200);
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,owner)).body.data.artifactId,secondArtifact,'newer eligible goal wins');
+ const laterTurn=randomUUID();
+ e.sql(`begin;insert into public.turns(id,owner_id,status) values('${laterTurn}','${e.users[0].id}','accepted');
+   insert into turn_private.text_content(turn_id,owner_id,thread_id,policy_id,consent_id,locale,input_text)
+   select '${laterTurn}',owner_id,thread_id,policy_id,consent_id,'en','Synthetic later Task Turn' from turn_private.service_tasks where id='${secondTask}';
+   update turn_private.service_tasks set last_turn_id='${laterTurn}' where id='${secondTask}';commit;`);
+ assert.equal((await call('/api/results/native/v1?artifactId='+secondArtifact+'&revision=1',owner)).body.data.current,false);
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,owner)).body.data.artifactId,artifactA,
+  'an ineligible newest artifact must not hide an older current goal result');
+ // Fixture-only private rows make the candidate scan overflow without changing
+ // any user-authorised link or result. Overflow must be unavailable, not empty.
+ e.sql(`with clones as materialized (select gen_random_uuid() id,gen_random_uuid() key from generate_series(1,64)),
+   inserted as (insert into turn_private.result_artifacts(id,owner_id,task_id,goal_id,input_message_id,trip_id,current_revision)
+     select c.id,a.owner_id,a.task_id,a.goal_id,a.input_message_id,a.trip_id,a.current_revision
+     from clones c cross join turn_private.result_artifacts a where a.id='${secondArtifact}' returning id)
+   insert into turn_private.result_revisions(artifact_id,revision,owner_id,idempotency_key,request_digest,input_sequence,
+     task_turn_id,goal_version,trip_version,trip_link_operation_id,trip_link_version,memory_basis,content)
+   select c.id,r.revision,r.owner_id,c.key,r.request_digest,r.input_sequence,r.task_turn_id,r.goal_version,
+     r.trip_version,r.trip_link_operation_id,r.trip_link_version,r.memory_basis,r.content
+   from clones c join inserted x on x.id=c.id cross join turn_private.result_revisions r where r.artifact_id='${secondArtifact}';`);
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,owner)).body.data.kind,'unavailable',
+  'bounded overflow cannot claim that an older eligible result does not exist');
+ e.sql(`delete from turn_private.result_artifacts where task_id='${secondTask}' and id<>'${secondArtifact}';`);
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,owner)).body.data.artifactId,artifactA);
  assert.equal((await call('/api/trips/native/v2/'+tripA+'/archive',owner,'POST',{expectedVersion:1,idempotencyKey:randomUUID(),confirmed:true})).status,200);
  const archivedA=(await call(exactA,owner)).body.data;
  assert.equal(archivedA.current,false,'archive keeps history but invalidates currentness');

@@ -7,6 +7,8 @@ alter table turn_private.result_revisions
     (trip_version is null and trip_link_operation_id is null and trip_link_version is null)
     or (trip_version is not null and trip_link_operation_id is not null and trip_link_version is not null)
   );
+create index result_artifacts_trip_created_v1 on turn_private.result_artifacts(trip_id,created_at desc,id desc)
+  where trip_id is not null;
 
 create or replace function turn_private.result_basis_state(a turn_private.result_artifacts,r turn_private.result_revisions)
 returns jsonb language plpgsql security definer set search_path='' as $$
@@ -66,7 +68,7 @@ end $$;
 create function public.read_trip_result_reference_v1(p_trip_id uuid)
 returns jsonb language plpgsql security definer set search_path='' as $$
 declare u uuid:=turn_private.text_owner(); a turn_private.result_artifacts%rowtype;
-  r turn_private.result_revisions%rowtype; authorised jsonb;
+  r turn_private.result_revisions%rowtype; authorised jsonb; candidate record; examined integer:=0;
 begin
   if p_trip_id is null then raise exception 'INVALID_INPUT'; end if;
   if not exists(select 1 from public.trips t where t.id=p_trip_id and t.owner_id=u)
@@ -75,7 +77,10 @@ begin
     then return jsonb_build_object('kind','unavailable'); end if;
   if exists(select 1 from public.trip_archives archive where archive.trip_id=p_trip_id and archive.owner_id=u)
     then return jsonb_build_object('kind','empty'); end if;
-  select artifact.* into a from turn_private.result_artifacts artifact
+  -- Examine at most 64 newest references. If older candidates exist beyond
+  -- that bound, report unavailable rather than falsely claim an empty Trip.
+  for candidate in select artifact.id as artifact_id,artifact.current_revision as revision
+    from turn_private.result_artifacts artifact
     join turn_private.result_revisions revision on revision.artifact_id=artifact.id
       and revision.revision=artifact.current_revision and revision.owner_id=u
     join turn_private.assistant_goal_trip_links link on link.goal_id=artifact.goal_id
@@ -87,16 +92,21 @@ begin
       and goal.scope_version=revision.goal_version
     join public.trips trip on trip.id=p_trip_id and trip.owner_id=u and trip.head_version=revision.trip_version
     where artifact.trip_id=p_trip_id and artifact.owner_id=u and artifact.lifecycle='active'
-    order by artifact.created_at desc,artifact.id desc limit 1;
-  if a.id is null then return jsonb_build_object('kind','empty'); end if;
-  select * into r from turn_private.result_revisions
-    where artifact_id=a.id and owner_id=u and revision=a.current_revision;
-  if not found then return jsonb_build_object('kind','empty'); end if;
-  authorised:=public.read_result_artifacts_v1(a.id,r.revision);
-  if authorised->>'kind'='unavailable' then return jsonb_build_object('kind','unavailable'); end if;
-  if authorised->>'kind'<>'result_artifact' or authorised->>'current'<>'true'
-    then return jsonb_build_object('kind','empty'); end if;
-  return jsonb_build_object('kind','result_reference','artifactId',a.id,'revision',r.revision,'tripId',p_trip_id);
+    order by artifact.created_at desc,artifact.id desc limit 65 loop
+    examined:=examined+1;
+    if examined>64 then return jsonb_build_object('kind','unavailable'); end if;
+    select * into a from turn_private.result_artifacts
+      where id=candidate.artifact_id and owner_id=u and lifecycle='active';
+    if not found then continue; end if;
+    select * into r from turn_private.result_revisions
+      where artifact_id=a.id and owner_id=u and revision=candidate.revision;
+    if not found or turn_private.result_basis_state(a,r)->>'current'<>'true' then continue; end if;
+    authorised:=public.read_result_artifacts_v1(a.id,r.revision);
+    if authorised->>'kind'='result_artifact' and authorised->>'current'='true' then
+      return jsonb_build_object('kind','result_reference','artifactId',a.id,'revision',r.revision,'tripId',p_trip_id);
+    end if;
+  end loop;
+  return jsonb_build_object('kind','empty');
 end $$;
 revoke all on function public.read_trip_result_reference_v1(uuid) from public,anon,service_role;
 grant execute on function public.read_trip_result_reference_v1(uuid) to authenticated;
