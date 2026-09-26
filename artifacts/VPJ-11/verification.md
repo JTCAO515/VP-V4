@@ -118,6 +118,39 @@ remains UNRUN after the interrupted local launches, pending the final PR SHA's N
 Rollback: revert this client code. Preserve Profile revisions, prior withdrawal state, and all
 confirmed Trips; no migration or shared environment was changed in this slice.
 
+## 2026-09-27 explicit Web Memory create/Undo preparation
+
+Base `origin/main` at `253930f9`, branch `codex/vpj11-memory-create-undo-20260927`.
+The existing Web Memory page had a real explicit-create API but no write-success toast; its
+generic `deleted` transition had no source or version condition and could not safely be used
+as Undo. This slice keeps `memory_profiles` as the sole authority, adds a monotonic row revision,
+returns the create source receipt/version, and adds an owner-locked Undo of exactly revision 1.
+Both new definer RPCs check the mobile session before any replay/read return; the create wrapper
+locks and rechecks the Profile state and granted consent before acknowledging the write.
+An identical Undo operation reuses its deletion receipt; later transitions or a different source
+make the old Undo conflict. The page shows a top zh/en saved prompt after the first acknowledged
+create result and same-owner readback of the exact source, revision, explicit state and granted
+consent, including a first acknowledgment delivered by replay. A later change gets a truthful
+status message and no stale Undo entry.
+The prompt has only Undo, normally hides after four seconds, and never displays the summary by
+default. An unknown Undo result retains the same operation for retry; owner change clears it.
+Consent/create requests also send the last read owner ID as a rejection-only guard so an A-initiated
+write cannot land in B if browser credentials switch before those requests.
+No model recipient, Trip writer or generic Memory summary update was added.
+When a deployment lacks this migration, only a specifically missing v2 RPC/`revision` column
+uses the old owner-scoped list/create path; the response has no Undo eligibility and the page
+does not show the new toast. Other failures remain failures. This prevents a code-first rollout
+from breaking existing Memory creation, but is not a tested shared-environment deployment.
+
+Checks observed in this worktree: eight focused Memory/error/Copilot source contract tests PASS;
+`node scripts/lint.mjs` PASS (393 files); `node scripts/docs-check.mjs` PASS;
+`git diff --check` PASS. TypeScript compiler API with the original repo's dependency tree
+reported no changed-file diagnostic and one unrelated missing StoreKit module; it is not a
+full passing `pnpm typecheck`. `pnpm check`, `pnpm typecheck`, and offline install produced no
+output in this dependency-free worktree and were stopped, so they remain UNRUN. Docker socket
+access was denied; disposable `initdb` could not create a shared memory segment in the sandbox.
+No database assertion, browser timing, live account or Staging write has been observed yet.
+
 ## 2026-09-27 final-head Native CI assertion
 
 PR #555 head `9f2abaf341ad458ba82c6d0031572b1b64305f58` ran Native iOS CI

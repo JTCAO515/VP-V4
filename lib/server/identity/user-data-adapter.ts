@@ -2,6 +2,7 @@ import { nativeFetch } from "./native-fetch.ts";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { verifyNativeCredentials } from "./native-credentials.ts";
+import { missingMemoryCreateV2, missingMemoryRevision } from "../memory/compat.ts";
 import type { NextRequest, NextResponse } from "next/server";
 import type { FailureCode } from "@/lib/server/contracts/errors";
 import type {
@@ -50,6 +51,7 @@ export type MemoryImpactRead = Readonly<{
 }>;
 export type MemoryProfileRead = Readonly<{
   id: string;
+  revision: number | null;
   state:
     | "explicit"
     | "confirmed"
@@ -346,17 +348,29 @@ function createDataOperations(
       : { error: "INTERNAL_ERROR" };
   };
   const listMemoryProfiles = async (): Promise<
-    AdapterResult<readonly MemoryProfileRead[]>
+    AdapterResult<Readonly<{ ownerId: string; profiles: readonly MemoryProfileRead[] }>>
   > => {
     const actor = await authenticated();
     if ("error" in actor) return { error: actor.error };
-    const { data: profiles, error: profileError } = await client
+    const currentRead = await client
       .from("memory_profiles")
       .select(
-        "id,state,constraint_kind,summary,source_receipt_id,consent_id,created_at,updated_at",
+        "id,revision,state,constraint_kind,summary,source_receipt_id,consent_id,created_at,updated_at",
       )
       .order("updated_at", { ascending: false });
+    const legacyRead = currentRead.error && missingMemoryRevision(currentRead.error)
+      ? await client.from("memory_profiles")
+          .select("id,state,constraint_kind,summary,source_receipt_id,consent_id,created_at,updated_at")
+          .order("updated_at", { ascending: false })
+      : null;
+    const profileError = legacyRead ? legacyRead.error : currentRead.error;
     if (profileError) return { error: "INTERNAL_ERROR" };
+    const profiles = legacyRead
+      ? (legacyRead.data ?? []).map(profile => ({ ...profile, revision: null as number | null }))
+      : (currentRead.data ?? []);
+    if (profiles.some(profile => profile.revision !== null &&
+      (!Number.isSafeInteger(profile.revision) || profile.revision < 1)))
+      return { error: "INTERNAL_ERROR" };
     const { data: consents, error: consentError } = await client
       .from("memory_consents")
       .select("id,status");
@@ -404,38 +418,38 @@ function createDataOperations(
       });
       impactsByMemory.set(impact.memory_id, list);
     }
-    return {
-      data: (profiles ?? []).flatMap((profile): MemoryProfileRead[] => {
-        const state = memoryState(profile.state);
-        const consentStatus = consentStatusById.get(profile.consent_id);
-        if (
-          !state ||
-          !consentStatus ||
-          (profile.constraint_kind !== "preference" &&
-            profile.constraint_kind !== "hard_constraint")
-        )
-          return [];
-        return [
-          {
-            id: profile.id,
-            state,
-            constraintKind: profile.constraint_kind,
-            summary:
-              typeof profile.summary === "string" ? profile.summary : null,
-            sourceReceiptId: profile.source_receipt_id,
-            consentId: profile.consent_id,
-            consentStatus,
-            createdAt: profile.created_at,
-            updatedAt: profile.updated_at,
-            impacts: impactsByMemory.get(profile.id) ?? [],
-          },
-        ];
-      }),
-    };
+    const visibleProfiles = (profiles ?? []).flatMap((profile): MemoryProfileRead[] => {
+      const state = memoryState(profile.state);
+      const consentStatus = consentStatusById.get(profile.consent_id);
+      if (
+        !state ||
+        !consentStatus ||
+        (profile.constraint_kind !== "preference" &&
+          profile.constraint_kind !== "hard_constraint")
+      )
+        return [];
+      return [
+        {
+          id: profile.id,
+          revision: profile.revision,
+          state,
+          constraintKind: profile.constraint_kind,
+          summary:
+            typeof profile.summary === "string" ? profile.summary : null,
+          sourceReceiptId: profile.source_receipt_id,
+          consentId: profile.consent_id,
+          consentStatus,
+          createdAt: profile.created_at,
+          updatedAt: profile.updated_at,
+          impacts: impactsByMemory.get(profile.id) ?? [],
+        },
+      ];
+    });
+    return { data: { ownerId: actor.data, profiles: visibleProfiles } };
   };
   const setMemoryConsent = async (
     input:
-      | Readonly<{ action: "create" }>
+      | Readonly<{ action: "create"; expectedOwnerId?: string }>
       | Readonly<{ consentId: string; action: "grant" | "revoke" }>,
   ): Promise<
     AdapterResult<
@@ -448,6 +462,8 @@ function createDataOperations(
   > => {
     const actor = await authenticated();
     if ("error" in actor) return { error: actor.error };
+    if (input.action === "create" && input.expectedOwnerId && input.expectedOwnerId !== actor.data)
+      return { error: "FORBIDDEN" };
     const { data, error } = input.action === "create"
       ? await client.rpc("create_memory_retrieval_consent")
       : await client.rpc(
@@ -481,31 +497,71 @@ function createDataOperations(
       consentId: string;
       constraintKind: "preference" | "hard_constraint";
       summary: string;
+      expectedOwnerId?: string;
     }>,
   ): Promise<
     AdapterResult<
-      Readonly<{ memoryId: string; state: "explicit"; reused: boolean }>
+      Readonly<{ memoryId: string; state: "explicit"; reused: boolean; revision: number | null;
+        sourceReceiptId: string | null; ownerId: string; undoAvailable: boolean }>
     >
   > => {
     const actor = await authenticated();
     if ("error" in actor) return { error: actor.error };
-    const { data, error } = await client.rpc("create_explicit_memory_profile", {
+    if (input.expectedOwnerId && input.expectedOwnerId !== actor.data) return { error: "FORBIDDEN" };
+    const params = {
       p_memory_id: input.memoryId,
       p_receipt_id: input.receiptId,
       p_consent_id: input.consentId,
       p_constraint_kind: input.constraintKind,
       p_summary: input.summary.trim(),
-    });
+    };
+    const { data, error } = await client.rpc("create_explicit_memory_profile_v2", params);
+    if (error && missingMemoryCreateV2(error)) {
+      const legacy = await client.rpc("create_explicit_memory_profile", params);
+      if (legacy.error) return { error: mapRpcFailure(legacy.error.message) };
+      const result = legacy.data?.[0];
+      return result?.memory_id === input.memoryId && result.state === "explicit" &&
+        typeof result.reused === "boolean"
+        ? { data: { memoryId: input.memoryId, state: "explicit", reused: result.reused,
+            revision: null, sourceReceiptId: null, ownerId: actor.data, undoAvailable: false } }
+        : { error: "INTERNAL_ERROR" };
+    }
     if (error) return { error: mapRpcFailure(error.message) };
     const result = data?.[0];
-    return result?.memory_id && result.state === "explicit"
+    return result?.memory_id === input.memoryId && result.state === "explicit" &&
+      result.source_receipt_id === input.receiptId &&
+      Number.isSafeInteger(result.revision) && result.revision >= 1 &&
+      typeof result.reused === "boolean"
       ? {
           data: {
             memoryId: result.memory_id,
             state: "explicit",
-            reused: result.reused === true,
+            reused: result.reused,
+            revision: result.revision,
+            sourceReceiptId: result.source_receipt_id,
+            ownerId: actor.data,
+            undoAvailable: true,
           },
         }
+      : { error: "INTERNAL_ERROR" };
+  };
+  const undoExplicitMemoryCreate = async (
+    memoryId: string,
+    input: Readonly<{ sourceReceiptId: string; expectedRevision: number; operationId: string }>,
+  ): Promise<AdapterResult<Readonly<{ memoryId: string; state: "deleted"; reused: boolean; revision: number; ownerId: string }>>> => {
+    const actor = await authenticated();
+    if ("error" in actor) return { error: actor.error };
+    const { data, error } = await client.rpc("undo_explicit_memory_create_v1", {
+      p_memory_id: memoryId,
+      p_source_receipt_id: input.sourceReceiptId,
+      p_expected_revision: input.expectedRevision,
+      p_operation_id: input.operationId,
+    });
+    if (error) return { error: mapRpcFailure(error.message) };
+    const result = data?.[0];
+    return result?.memory_id === memoryId && result.state === "deleted" &&
+      result.revision === input.expectedRevision + 1 && typeof result.reused === "boolean"
+      ? { data: { memoryId, state: "deleted", reused: result.reused, revision: result.revision, ownerId: actor.data } }
       : { error: "INTERNAL_ERROR" };
   };
   const transitionMemory = async (
@@ -1286,6 +1342,7 @@ function createDataOperations(
     listMemoryProfiles,
     setMemoryConsent,
     createExplicitMemory,
+    undoExplicitMemoryCreate,
     transitionMemory,
     listTrips,
     createTrip,
@@ -1404,10 +1461,13 @@ function mapRpcFailure(message: string): FailureCode {
   if (message.includes("CONFIRMATION_DIGEST_MISMATCH") || message.includes("INVALID_INPUT")) return "INVALID_INPUT";
   if (
     message.includes("IDEMPOTENCY_KEY_REUSE") ||
+    message.includes("MEMORY_ID_REUSE") ||
+    message.includes("MEMORY_OPERATION_REUSE") ||
     message.includes("PRIVACY_REQUEST_ID_REUSE")
   )
     return "IDEMPOTENCY_KEY_REUSE";
   if (message.includes("FORBIDDEN")) return "FORBIDDEN";
+  if (message.includes("MEMORY_CONFLICT")) return "MEMORY_CONFLICT";
   if (message.includes("terminal turn cannot emit events")) return "CANCELLED";
   if (message.includes("INVALID_FEEDBACK")) return "INVALID_INPUT";
   if (message.includes("NO_RESULT_TO_FEEDBACK"))

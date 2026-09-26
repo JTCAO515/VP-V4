@@ -24,6 +24,7 @@ const AUTHENTICATED = [
   "public.connection_probe_ops_visible_count()",
   "public.consume_place_quota_v1(text,integer,integer)",
   "public.create_explicit_memory_profile(uuid,uuid,uuid,text,text)",
+  "public.create_explicit_memory_profile_v2(uuid,uuid,uuid,text,text)",
   "public.create_memory_retrieval_consent()",
   "public.create_trip_proposal_patch(uuid,jsonb)",
   "public.create_trip_rollback_proposal(uuid,integer)",
@@ -71,6 +72,7 @@ const AUTHENTICATED = [
   "public.submit_service_task_turn(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid)",
   "public.submit_text_turn(uuid,uuid,uuid,uuid,text,text)",
   "public.transition_memory_profile(uuid,text)",
+  "public.undo_explicit_memory_create_v1(uuid,uuid,bigint,uuid)",
   "public.travel_reminders_v1(uuid,text,jsonb)",
   "public.withdraw_text_policy(uuid)",
 ];
@@ -105,6 +107,17 @@ test("repository functions grant EXECUTE to anon and authenticated only through 
     for (const role of ["anon", "authenticated", "service_role"]) {
       assert.deepEqual(sql(`select has_function_privilege('${role}', 'public.trip_content_snapshot(uuid,text)'::regprocedure, 'EXECUTE'), has_function_privilege('${role}', 'public.apply_trip_content_patch(jsonb,jsonb)'::regprocedure, 'EXECUTE');`), ["f|f"], role);
     }
+  });
+
+  await t.test("Memory create/Undo grants only authenticated, never anonymous or service role", () => {
+    for (const role of ["anon", "service_role"]) {
+      assert.deepEqual(sql(`select has_function_privilege('${role}', 'public.create_explicit_memory_profile_v2(uuid,uuid,uuid,text,text)'::regprocedure, 'EXECUTE'), has_function_privilege('${role}', 'public.undo_explicit_memory_create_v1(uuid,uuid,bigint,uuid)'::regprocedure, 'EXECUTE');`), ["f|f"], role);
+    }
+  });
+
+  await t.test("Memory create/Undo definer RPCs guard replay and read branches against replaced mobile sessions", () => {
+    assert.deepEqual(sql(`select position('identity_private.guard_mobile_rpc_v2()' in pg_get_functiondef('public.create_explicit_memory_profile_v2(uuid,uuid,uuid,text,text)'::regprocedure)) > 0,
+      position('identity_private.guard_mobile_rpc_v2()' in pg_get_functiondef('public.undo_explicit_memory_create_v1(uuid,uuid,bigint,uuid)'::regprocedure)) > 0;`), ["t|t"]);
   });
 
   await t.test("default privileges give a new function no implicit anon, authenticated or PUBLIC EXECUTE", () => {
