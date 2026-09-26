@@ -1,0 +1,13 @@
+{"command":"pnpm lint","result":"PASS","environment":"local source"}
+{"command":"pnpm typecheck","result":"PASS","environment":"local source"}
+{"command":"pnpm build","result":"PASS","environment":"local production build"}
+{"command":"pnpm test:contract","result":"PASS","environment":"local suite"}
+{"command":"pnpm test:security","result":"PASS","environment":"local suite"}
+{"command":"pnpm test:integration","result":"INCOMPLETE","environment":"local always-on tests; 117 gated skipped"}
+{"command":"node tests/integration/turn/run-native-http.mjs","result":"PASS 2/2","environment":"disposable local Supabase, Auth, HTTP, synthetic model"}
+{"command":"node scripts/ci-suites/db-integration.mjs --lane supabase-rls","result":"PASS 21/21","environment":"disposable local Supabase RLS"}
+{"command":"node scripts/ci-suites/db-integration.mjs --lane postgres","result":"PASS 128/128","environment":"disposable local Postgres"}
+{"command":"xcodebuild -quiet -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=B0AD77FD-33C3-4616-92CE-2E76ACD93148' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- build","result":"PASS","environment":"iPhone 15 Pro iOS 17.5 simulator"}
+{"command":"xcodebuild -quiet test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=B0AD77FD-33C3-4616-92CE-2E76ACD93148' -only-testing:VisePandaTests/NativeAskStateTests -only-testing:VisePandaTests/NativeAskPersistenceTests CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-","result":"PASS","environment":"iPhone 15 Pro iOS 17.5 simulator"}
+{"command":"pnpm docs:check","result":"PASS","environment":"local docs"}
+{"command":"git diff --check origin/main","result":"PASS","environment":"local diff"}

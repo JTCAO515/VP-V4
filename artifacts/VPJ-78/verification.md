@@ -11,6 +11,7 @@ Producer: native v5 composer. Transport: bearer-only `/api/chat/native/v5/conver
 | Check | Result | Scope |
 | --- | --- | --- |
 | `pnpm lint`, `pnpm typecheck`, `pnpm docs:check`, `git diff --check` | PASS | Source and docs |
+| `pnpm build` | PASS | Production build includes native v5 API routes |
 | `pnpm test:contract`, `pnpm test:security` | PASS | Repository suite; skips remain as reported by runner |
 | `pnpm test:integration` | PASS for always-on tests; gated tests UNRUN in this command | Runner reported `incomplete`, 117 skipped |
 | `node tests/integration/turn/run-native-http.mjs` | PASS 2/2 | Disposable local Auth/Postgres/HTTP and synthetic local model; v5 answer/readback, multi-message order, exact retry/conflict, two existing Tasks, stale goal version, other actor, session replacement, withdrawal |
