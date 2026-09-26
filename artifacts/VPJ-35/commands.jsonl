@@ -1,0 +1,7 @@
+{"command":"VP_TURN_DB_TEST=1 node --experimental-strip-types --test tests/integration/turn/text-work.test.mjs","result":"PASS","details":"29 tests, 0 fail, 0 skip; disposable Docker PostgreSQL; main coordinator on final SQL/test files"}
+{"command":"pnpm typecheck","result":"PASS","details":"main coordinator after pnpm install --frozen-lockfile; lockfile unchanged"}
+{"command":"pnpm lint","result":"PASS","details":"main coordinator; source policy lint 390 files"}
+{"command":"pnpm test:contract","result":"PASS","details":"main coordinator"}
+{"command":"node scripts/run-ci-suite.mjs security","result":"INCOMPLETE","details":"main coordinator exit 0; 177 pass, 0 fail, 1 skip; AI-14 disposable identity target unavailable"}
+{"command":"node scripts/docs-check.mjs","result":"PASS","details":"VPJ plan and documentation baseline"}
+{"command":"git diff --check","result":"PASS","details":"final local diff"}
