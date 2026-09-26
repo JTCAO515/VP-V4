@@ -92,3 +92,11 @@ to carry a parseable UTC timestamp. PASS: the updated Simulator state suite
 14/14, including a completed first Trip followed by an uncertain second POST
 and malformed receipt counterexamples. The final result bundle is
 `Test-VisePanda-2026.09.26_22-12-52-+0800.xcresult` under Xcode DerivedData.
+
+After #550 merged, this PR rebased onto main `ac16545c`. The combined migration
+history and affected paths were rechecked: PASS `pnpm check`, unit 148/148,
+contract 681/681, `postgres` DB lane 125/125 and `supabase-rls` lane 18/18.
+The latter includes a loopback Next HTTP and local worker run with the new
+VPJ-35 migration present. PASS native Simulator state suite 14/14; final
+post-rebase bundle `Test-VisePanda-2026.09.26_22-16-19-+0800.xcresult`.
+No shared Staging or real-user deletion was performed during rebase checks.
