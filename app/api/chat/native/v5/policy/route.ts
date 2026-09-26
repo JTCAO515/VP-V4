@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { nativeTextHTTP } from "@/lib/server/turn/native-http";
+import { nativeAssistantTextHTTP } from "@/lib/server/turn/native-assistant-http";
 
 export const runtime = "nodejs";
-export async function GET(request: NextRequest) { return nativeTextHTTP(request, "policy"); }
+export async function GET(request: NextRequest) { return nativeAssistantTextHTTP(request, "policy"); }

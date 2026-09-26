@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { nativeRequestScope } from "../identity/native-request.ts";
 import { verifyNativeCredentials } from "../identity/native-credentials.ts";
-import { getNativeTextConfig } from "./native-http.ts";
+import { getNativeTextConfig, nativeTextHTTP } from "./native-http.ts";
 import { isUuid } from "../identity/request-guards.ts";
 import { FAILURE_TAXONOMY, type FailureCode } from "../contracts/errors/index.ts";
 
@@ -12,8 +12,23 @@ const uuid = (value: unknown): value is string => typeof value === "string" && i
 const record = (value: unknown): value is Payload => typeof value === "object" && value !== null && !Array.isArray(value);
 const exact = (value: Payload, keys: string[]) => Object.keys(value).length === keys.length && keys.every(key => Object.hasOwn(value, key));
 
-export async function nativeAssistantHTTP(request: NextRequest) {
+export function getNativeAssistantConfig(request: NextRequest) {
   const config = getNativeTextConfig(request);
+  if (!config) return null;
+  const enabled = process.env.VISEPANDA_NATIVE_STAGING === "true" ? process.env.VISEPANDA_NATIVE_STAGING_ASSISTANT_CONVERSATION
+    : process.env.VISEPANDA_NATIVE_PRODUCTION === "true" ? process.env.VISEPANDA_NATIVE_PRODUCTION_ASSISTANT_CONVERSATION
+    : process.env.VISEPANDA_NATIVE_LOCAL_ASSISTANT_CONVERSATION;
+  return enabled === "true" ? config : null;
+}
+
+export async function nativeAssistantTextHTTP(request: NextRequest, action: "policy" | "accept" | "withdraw") {
+  // Withdrawal of an existing grant remains reachable after the new producer is disabled.
+  if (action !== "withdraw" && !getNativeAssistantConfig(request)) return failure("PROVIDER_UNAVAILABLE");
+  return nativeTextHTTP(request, action);
+}
+
+export async function nativeAssistantHTTP(request: NextRequest) {
+  const config = getNativeAssistantConfig(request);
   if (!config) return failure("PROVIDER_UNAVAILABLE");
   if (request.headers.has("cookie") || request.headers.has("origin") || [...request.nextUrl.searchParams].length) return failure("INVALID_INPUT");
   const scope = nativeRequestScope(request.signal);

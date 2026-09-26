@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
-import { nativeTextHTTP } from "@/lib/server/turn/native-http";
+import { nativeAssistantTextHTTP } from "@/lib/server/turn/native-assistant-http";
 
 export const runtime = "nodejs";
-export async function POST(request: NextRequest) { return nativeTextHTTP(request, "accept"); }
-export async function DELETE(request: NextRequest) { return nativeTextHTTP(request, "withdraw"); }
+export async function POST(request: NextRequest) { return nativeAssistantTextHTTP(request, "accept"); }
+export async function DELETE(request: NextRequest) { return nativeAssistantTextHTTP(request, "withdraw"); }

@@ -113,24 +113,25 @@ struct NativeAssistantConversationView: View {
                     .font(.footnote).foregroundStyle(Color.vpSecondaryText)
                 if let policy {
                     if policy.consentState == .accepted {
-                        if let goal { Text((chinese ? "当前目标 v" : "Current goal v") + String(goal.scopeVersion) + ": " + goal.text).font(.headline) }
+                        if let goal { Text((chinese ? "当前目标 v" : "Current goal v") + String(goal.scopeVersion) + ": " + goal.text).font(.headline).accessibilityIdentifier("assistant.current-goal") }
                         ForEach(conversation?.messages ?? []) { message in
                             VStack(alignment: .leading, spacing: 8) {
-                                Text(message.text).font(.body)
+                                Text(message.text).font(.body).accessibilityIdentifier("assistant.message.\(message.sequence)")
                                 Text(label(message)).font(.caption).foregroundStyle(Color.vpSecondaryText)
-                                if let output = message.output { Text(output).textSelection(.enabled) }
+                                if let output = message.output { Text(output).textSelection(.enabled).accessibilityIdentifier("assistant.answer.\(message.sequence)") }
                             }
                             .frame(maxWidth: .infinity, alignment: .leading).padding(14)
                             .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
-                            .accessibilityIdentifier("assistant.message.\(message.sequence)")
                         }
                         Button(chinese ? "撤回文本授权" : "Withdraw text consent", role: .destructive) { Task { await withdraw() } }
                             .disabled(busy)
                     } else {
                         Text(chinese ? policy.noticeZh : policy.noticeEn)
                         Toggle(chinese ? "我同意上述文本处理" : "I agree to this text processing", isOn: $agreed)
+                            .accessibilityIdentifier("assistant.agree")
                         Button(chinese ? "同意并继续" : "Agree and continue") { Task { await accept() } }
                             .disabled(!agreed || busy)
+                            .accessibilityIdentifier("assistant.accept")
                     }
                 } else { Text(chinese ? "正在读取授权状态" : "Loading consent") }
                 if notice != nil { Text(chinese ? "请求未确认，请重试或刷新。" : "Request not confirmed. Retry or refresh.").font(.footnote) }
@@ -142,10 +143,10 @@ struct NativeAssistantConversationView: View {
                 VStack(spacing: 8) {
                     Picker(chinese ? "消息类型" : "Message type", selection: $operation) {
                         ForEach(actions, id: \.self) { action in Text(actionLabel(action)).tag(action) }
-                    }.pickerStyle(.menu)
+                    }.pickerStyle(.menu).accessibilityIdentifier("assistant.operation")
                     HStack {
                         TextField(chinese ? "告诉 VP…" : "Ask VP…", text: $draft, axis: .vertical)
-                            .lineLimit(1...5).accessibilityIdentifier("assistant.composer")
+                            .lineLimit(1...5).autocorrectionDisabled().accessibilityIdentifier("assistant.composer")
                         Button(chinese ? "发送" : "Send") { Task { await send() } }
                             .disabled(busy || (pending == nil && draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
                             .accessibilityIdentifier("assistant.send")
@@ -166,6 +167,11 @@ struct NativeAssistantConversationView: View {
                 guard !Task.isCancelled, session.dataScope == requested else { return }
             }
             await reload()
+        }
+        .onChange(of: session.busy) { wasBusy, isBusy in
+            if wasBusy && !isBusy && session.dataScope != nil {
+                Task { await reload() }
+            }
         }
         .task(id: waitingKey) {
             guard isActive, !waitingKey.isEmpty else { return }

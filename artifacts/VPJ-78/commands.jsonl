@@ -1,10 +1,13 @@
 {"command":"pnpm lint","result":"PASS","environment":"local source"}
 {"command":"pnpm typecheck","result":"PASS","environment":"local source"}
 {"command":"pnpm build","result":"PASS","environment":"local production build"}
-{"command":"pnpm test:contract","result":"PASS","environment":"local suite"}
-{"command":"pnpm test:security","result":"PASS","environment":"local suite"}
+{"command":"pnpm test:contract","result":"PASS 685/685","environment":"local suite"}
+{"command":"pnpm test:security","result":"INCOMPLETE 178 passed, 1 gated skipped","environment":"local suite"}
 {"command":"pnpm test:integration","result":"INCOMPLETE","environment":"local always-on tests; 117 gated skipped"}
 {"command":"node tests/integration/turn/run-native-http.mjs","result":"PASS 2/2","environment":"disposable local Supabase, Auth, HTTP, synthetic model"}
+{"command":"VP_NATIVE_ASSISTANT_OUTPUT=/tmp/vpj78-native-ui-20260927-0241 VP_NATIVE_ASSISTANT_SIMULATOR=B0AD77FD-33C3-4616-92CE-2E76ACD93148 node tests/integration/turn/run-native-http.mjs --assistant-native","result":"PASS 1/1","environment":"iPhone 15 Pro iOS 17.5 simulator, disposable local Supabase, Auth, HTTP, synthetic model"}
+{"command":"xcodebuild build-for-testing -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=B0AD77FD-33C3-4616-92CE-2E76ACD93148' -derivedDataPath /tmp/vpj78-native-ui-20260927-0241/build CODE_SIGNING_ALLOWED=YES CODE_SIGNING_REQUIRED=YES CODE_SIGN_IDENTITY=-","result":"PASS","environment":"inside focused native UI runner"}
+{"command":"xcodebuild test-without-building -xctestrun /tmp/vpj78-native-ui-20260927-0241/build/Build/Products/AssistantConversation.xctestrun -destination 'platform=iOS Simulator,id=B0AD77FD-33C3-4616-92CE-2E76ACD93148' -parallel-testing-enabled NO -resultBundlePath /tmp/vpj78-native-ui-20260927-0241/tests.xcresult -only-testing:VisePandaUITests/NativeAskUITests/testEnglishAssistantConversationReadback","result":"PASS 1/1","environment":"inside focused native UI runner with disposable test environment injected into xctestrun"}
 {"command":"node scripts/ci-suites/db-integration.mjs --lane supabase-rls","result":"PASS 21/21","environment":"disposable local Supabase RLS"}
 {"command":"node scripts/ci-suites/db-integration.mjs --lane postgres","result":"PASS 128/128","environment":"disposable local Postgres"}
 {"command":"xcodebuild -quiet -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=B0AD77FD-33C3-4616-92CE-2E76ACD93148' CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- build","result":"PASS","environment":"iPhone 15 Pro iOS 17.5 simulator"}

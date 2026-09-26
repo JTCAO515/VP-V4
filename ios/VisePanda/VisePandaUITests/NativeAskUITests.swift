@@ -1,6 +1,55 @@
 import XCTest
 
 nonisolated final class NativeAskUITests: XCTestCase {
+    @MainActor func testEnglishAssistantConversationReadback() throws {
+        let environment = ProcessInfo.processInfo.environment
+        guard environment["VP_NATIVE_ASSISTANT_TEST"] == "1" else { throw XCTSkip("UNRUN: disposable assistant v5 environment required") }
+        continueAfterFailure = false
+        let api = try XCTUnwrap(environment["VP_NATIVE_TEXT_API_URL"])
+        let email = try XCTUnwrap(environment["VP_NATIVE_TEXT_UI_EN_EMAIL"])
+        let app = XCUIApplication()
+        app.launchArguments = ["-VisePandaNativeAPI", api, "-VisePandaAssistantConversation", "-VisePandaLocale", "en", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        app.tabBars.buttons["Profile"].tap()
+        let signOut = app.buttons["Sign out"]
+        if signOut.waitForExistence(timeout: 2) { reveal(signOut, app); signOut.tap() }
+        let emailField = app.textFields["native.login.email"]
+        XCTAssertTrue(emailField.waitForExistence(timeout: 15)); reveal(emailField, app); emailField.tap(); emailField.typeText(email)
+        let password = app.secureTextFields["native.login.password"]
+        reveal(password, app); password.tap(); password.typeText("VPJ07-Local-Synthetic-Only-195!")
+        let login = app.buttons["native.login.submit"]; reveal(login, app); login.tap()
+        expectation(for: NSPredicate(format: "label == %@", "Session active"), evaluatedWith: app.staticTexts["native.session.status"])
+        waitForExpectations(timeout: 30)
+        app.tabBars.buttons["Ask"].tap()
+        let agree = app.switches["assistant.agree"]
+        XCTAssertTrue(agree.waitForExistence(timeout: 20)); reveal(agree, app); agree.tap()
+        app.buttons["assistant.accept"].tap()
+        let composer = app.descendants(matching: .any).matching(identifier: "assistant.composer").firstMatch
+        XCTAssertTrue(composer.waitForExistence(timeout: 20)); reveal(composer, app); composer.tap()
+        composer.typeText("Synthetic assistant v5 question")
+        app.buttons["assistant.send"].tap()
+        let answer = app.staticTexts["assistant.answer.1"]
+        XCTAssertTrue(answer.waitForExistence(timeout: 30)); XCTAssertEqual(answer.label, "Local synthetic answer: request completed.")
+        app.buttons["assistant.operation"].tap()
+        app.buttons["Start goal"].tap()
+        reveal(composer, app); composer.tap(); composer.typeText("Plan China before dates are known")
+        app.buttons["assistant.send"].tap()
+        let goal = app.staticTexts["assistant.current-goal"]
+        XCTAssertTrue(goal.waitForExistence(timeout: 20)); XCTAssertTrue(goal.label.contains("Current goal v1"))
+        app.buttons["assistant.operation"].tap()
+        app.buttons["Change goal"].tap()
+        reveal(composer, app); composer.tap(); composer.typeText("Prefer rail and fewer transfers")
+        app.buttons["assistant.send"].tap()
+        expectation(for: NSPredicate(format: "label CONTAINS %@", "Current goal v2"), evaluatedWith: goal)
+        waitForExpectations(timeout: 20)
+        app.terminate(); app.launch()
+        app.tabBars.buttons["Ask"].tap()
+        XCTAssertTrue(answer.waitForExistence(timeout: 30))
+        XCTAssertTrue(goal.waitForExistence(timeout: 30)); XCTAssertTrue(goal.label.contains("Current goal v2"))
+        XCTAssertTrue(composer.exists, "The composer remains available after durable readback")
+        capture("Assistant-v5-question-goal-amendment-readback-en", app)
+    }
+
     @MainActor func testEnglishConsentSendAndRelaunch() throws { try exercise(locale: "en", userKey: "VP_NATIVE_TEXT_UI_EN_EMAIL") }
     @MainActor func testChineseConsentSendAndRelaunch() throws { try exercise(locale: "zh-Hans", userKey: "VP_NATIVE_TEXT_UI_ZH_EMAIL") }
 
