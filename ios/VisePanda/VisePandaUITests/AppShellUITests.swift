@@ -38,8 +38,15 @@ final class AppShellUITests: XCTestCase {
             app.tabBars.buttons["Memory"].tap()
             let edit = app.textFields["specimen.memory.edit"]
             XCTAssertTrue(edit.exists)
+            let hint = app.staticTexts["specimen.memory.correction-hint"]
+            XCTAssertTrue(hint.exists)
+            XCTAssertLessThanOrEqual(hint.frame.maxY, app.tabBars.firstMatch.frame.minY - 4)
+            XCTAssertLessThanOrEqual(edit.frame.maxY, app.tabBars.firstMatch.frame.minY - 4)
+            XCTAssertFalse(app.buttons["specimen.memory.correct"].exists)
+            capture("VPJ77 Memory empty correction \(locale)", app: app)
             edit.tap()
             edit.typeText(locale == "en" ? "Prefer slower days" : "喜欢慢节奏")
+            XCTAssertTrue(app.buttons["specimen.memory.correct"].exists)
             app.buttons["specimen.keyboard.correct"].tap()
             XCTAssertTrue(app.staticTexts["specimen.memory.corrected"].waitForExistence(timeout: 5))
             app.tabBars.buttons["VP"].tap()

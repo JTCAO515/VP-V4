@@ -39,6 +39,7 @@ struct AssistantSpecimenView: View {
     @FocusState private var memoryFocused: Bool
 
     private var zh: Bool { settings.selectedLocale == .zh }
+    private var hasCorrectionInput: Bool { !correction.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     private func t(_ chinese: String, _ english: String) -> String { zh ? chinese : english }
 
     var body: some View {
@@ -72,7 +73,7 @@ struct AssistantSpecimenView: View {
                         ToolbarItemGroup(placement: .keyboard) {
                             if tab == .memory {
                                 Button(t("演示纠正", "Correct example")) { applyCorrection() }
-                                    .disabled(correction.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                                    .disabled(!hasCorrectionInput)
                                     .accessibilityIdentifier("specimen.keyboard.correct")
                             }
                             Spacer()
@@ -188,19 +189,24 @@ struct AssistantSpecimenView: View {
     }
 
     private var memoryContent: some View {
-        VStack(alignment: .leading, spacing: VPSpacing.section) {
+        VStack(alignment: .leading, spacing: VPSpacing.standard) {
             card(t("VP 可以记住什么", "What VP can remember"), t("明确保存的长期偏好应显示来源、适用范围，并可纠正、暂停和忘记。这里仅演示纠正；没有写入账户。", "Explicit long-term preferences should show source and scope, with correction, pause and forget. This only demonstrates correction; nothing is saved to an account."))
             card(t("旅行节奏 · FIXTURE", "Travel pace · FIXTURE"), corrected ? correction : t("不想太赶", "Prefer a calmer pace"))
             Text(t("来源：样例首次输入 · 范围：本次样例；非长期记忆", "Source: example first input · Scope: this example; not long-term memory"))
                 .font(.caption).foregroundStyle(Color.vpSecondaryText)
+            if !hasCorrectionInput {
+                note(t("在下方输入纠正内容；仅本地预览，不会保存。", "Enter a correction below. This preview won't save."))
+                    .accessibilityIdentifier("specimen.memory.correction-hint")
+            }
             TextField(t("改成你的意思", "Correct the wording"), text: $correction)
                 .textFieldStyle(.roundedBorder)
                 .focused($memoryFocused)
                 .accessibilityIdentifier("specimen.memory.edit")
-            action(t("仅在本地演示纠正", "Correct local example only"), id: "specimen.memory.correct") {
-                applyCorrection()
+            if hasCorrectionInput {
+                action(t("仅在本地演示纠正", "Correct local example only"), id: "specimen.memory.correct") {
+                    applyCorrection()
+                }
             }
-            .disabled(correction.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             if corrected {
                 note(t("本地样例已更新；真实保存、撤回和受影响任务重算尚未接线。", "Local example updated. Real save, undo and affected task recomputation are not connected."))
                     .accessibilityIdentifier("specimen.memory.corrected")
@@ -284,7 +290,7 @@ struct AssistantSpecimenView: View {
     private func stateRow(_ heading: String, _ body: String) -> some View { card(heading, body) }
 
     private func applyCorrection() {
-        guard !correction.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        guard hasCorrectionInput else { return }
         corrected = true
         inputFocused = false
         memoryFocused = false
