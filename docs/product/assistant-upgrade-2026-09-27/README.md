@@ -10,6 +10,8 @@ Date: 2026-09-27. Authority: JT's explicit acceptance of the discussed experienc
 4. Use [CODING-AGENT.md](CODING-AGENT.md) to select one bounded delivery and checks.
 5. Get task identity, scope, complete acceptance and dependencies from the existing [manifest](../../program/2026-09-05/issue-plan.json) and generated [execution rows](../../program/2026-09-05/EXECUTION-CONTRACT.md). This directory is the experience/architecture contract, not a second task database.
 
+VPJ-77's launch-only native fixture and visible component contract are in [INTERACTION-SPECIMEN.md](INTERACTION-SPECIMEN.md). Its simulated return and Memory correction do not claim live service behavior.
+
 ## Accepted product direction
 
 - Main relationship: one recognisable VP, natural continuous conversation, explicit memory and accepted work that survives leaving the app.
