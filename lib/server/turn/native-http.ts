@@ -16,6 +16,14 @@ export function getNativeTextConfig(request: Pick<Request, "url">, taskContext: 
     return enabled === "true" && config?.environment === "staging" && uuid(policyId)
       ? { ...config, policyId: policyId.toLowerCase() } : null;
   }
+  if (process.env.VISEPANDA_NATIVE_PRODUCTION === "true") {
+    const config = getNativeRuntimeConfig(request, "trip", "text");
+    const policyId = taskContext === "grounded" ? process.env.VISEPANDA_NATIVE_PRODUCTION_GROUNDED_POLICY
+      : taskContext ? process.env.VISEPANDA_NATIVE_PRODUCTION_TASK_POLICY : process.env.VISEPANDA_NATIVE_PRODUCTION_TEXT_POLICY;
+    const enabled = taskContext === "grounded" ? process.env.VISEPANDA_NATIVE_PRODUCTION_GROUNDED : process.env.VISEPANDA_NATIVE_PRODUCTION_TEXT;
+    return enabled === "true" && config?.environment === "production" && uuid(policyId)
+      ? { ...config, policyId: policyId.toLowerCase() } : null;
+  }
   const config = getSupabasePublicConfig(), policyId = taskContext === "grounded" ? process.env.VISEPANDA_NATIVE_LOCAL_GROUNDED_POLICY : taskContext ? process.env.VISEPANDA_NATIVE_LOCAL_TASK_POLICY : process.env.VISEPANDA_NATIVE_LOCAL_TEXT_POLICY;
   const enabled = taskContext === "grounded" ? process.env.VISEPANDA_NATIVE_LOCAL_GROUNDED : process.env.VISEPANDA_NATIVE_LOCAL_TEXT;
   if (process.env.VERCEL_ENV || enabled !== "true" || !config || !uuid(policyId)) return null;
@@ -27,7 +35,7 @@ export async function nativeTextHTTP(request: NextRequest, action: Action, turnI
   const textConfig = action === "cancel" ? null : getNativeTextConfig(request, taskContext);
   // Stopping an existing Turn does not require an enabled generation mode/policy.
   // The native runtime, active session and cancel_chat_turn still enforce authority.
-  const config = action === "cancel" ? getNativeRuntimeConfig(request, "trip") : textConfig;
+  const config = action === "cancel" ? getNativeRuntimeConfig(request, "trip", "text") : textConfig;
   if (!config) return failure("PROVIDER_UNAVAILABLE");
   if (request.headers.has("cookie") || request.headers.has("origin") || [...request.nextUrl.searchParams].length
     || (turnId !== undefined && !uuid(turnId))) return failure("INVALID_INPUT");
