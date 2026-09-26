@@ -155,11 +155,17 @@ struct NativeAssistantConversationView: View {
         }
         .toolbar { ToolbarItem(placement: .topBarTrailing) { Button(chinese ? "刷新" : "Refresh") { Task { await reload() } }.disabled(busy) } }
         .task(id: session.dataScope) {
+            let requested = session.dataScope
             if boundScope != session.retainedDataScope {
                 pending = nil; draft = ""; boundScope = session.retainedDataScope
             }
             policy = nil; conversation = nil; notice = nil
-            if session.dataScope != nil { await reload() }
+            guard requested != nil else { return }
+            while busy {
+                do { try await Task.sleep(for: .milliseconds(50)) } catch { return }
+                guard !Task.isCancelled, session.dataScope == requested else { return }
+            }
+            await reload()
         }
         .task(id: waitingKey) {
             guard isActive, !waitingKey.isEmpty else { return }
@@ -212,7 +218,7 @@ struct NativeAssistantConversationView: View {
         do {
             let body = try JSONEncoder().encode(["policyId": policy.id, "noticeHash": policy.noticeHash])
             _ = try await session.askRequest(path: "api/chat/native/v5/consent", method: "POST", body: body)
-            guard session.dataScope == initial else { return }
+            guard session.dataScope == initial else { throw NativeDataError.staleSessionResponse }
             self.policy = nil
         } catch { if session.dataScope == initial { notice = "retry" } }
         busy = false
@@ -224,7 +230,7 @@ struct NativeAssistantConversationView: View {
         do {
             let body = try JSONEncoder().encode(["policyId": policy.id])
             _ = try await session.askRequest(path: "api/chat/native/v5/consent", method: "DELETE", body: body)
-            guard session.dataScope == initial else { return }
+            guard session.dataScope == initial else { throw NativeDataError.staleSessionResponse }
             conversation = nil; pending = nil; draft = ""; self.policy = nil
         } catch { if session.dataScope == initial { notice = "retry" } }
         busy = false
@@ -254,7 +260,7 @@ struct NativeAssistantConversationView: View {
         do {
             let body = try JSONEncoder().encode(request)
             let data = try await session.askRequest(path: "api/chat/native/v5/conversation", method: "POST", body: body)
-            guard session.dataScope == initial else { return }
+            guard session.dataScope == initial else { throw NativeDataError.staleSessionResponse }
             let accepted = try JSONDecoder().decode(AssistantAccepted.self, from: data)
             guard accepted.version == 5 && accepted.kind == "accepted" && accepted.messageId == request.messageId else { throw NativeDataError.invalidResponse }
             notice = nil
