@@ -32,7 +32,7 @@ export type ToolReceipt = Readonly<{ toolId: string; toolVersion: string; callId
 /** A durable, lease-bound store. `unknown` must be reconciled before another effect. */
 export type ToolActionStore = Readonly<{
   claim: (key: string, toolId: string, inputDigest: string) => Promise<"claimed" | "duplicate" | "unknown" | "stale" | "stale_basis" | "step_limit" | "conflict">;
-  complete: (key: string, receiptDigest: string) => Promise<boolean>;
+  complete: (key: string, receiptDigest: string, validatedOutput: unknown) => Promise<boolean>;
   markUnknown: (key: string) => Promise<void>;
 }>;
 
@@ -116,7 +116,7 @@ export async function executeToolIntent<O>(input: Readonly<{
       finishedAt,
       policyReceipt: digest({ toolId: definition.id, callId: input.intent.callId, inputDigest, policy: "allowed" }),
     });
-    if (claimRequired && !await input.actionStore!.complete(idempotencyKey, receipt.policyReceipt)) throw new ToolGatewayError("Action receipt is unknown; reconcile before retry.", "TOOL_REPLAY_REJECTED");
+    if (claimRequired && !await input.actionStore!.complete(idempotencyKey, receipt.policyReceipt, output)) throw new ToolGatewayError("Action receipt is unknown; reconcile before retry.", "TOOL_REPLAY_REJECTED");
     return receipt;
   } catch (error) {
     // The executor may have performed a chargeable or external effect before an
