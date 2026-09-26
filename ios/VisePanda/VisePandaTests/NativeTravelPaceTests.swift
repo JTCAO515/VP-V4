@@ -55,4 +55,44 @@ nonisolated final class NativeTravelPaceTests: XCTestCase {
         let invalid = Data("{\"schemaVersion\":\"travel-pace/1\",\"revision\":0,\"state\":\"unset\",\"travelPace\":\"balanced\"}".utf8)
         XCTAssertFalse(try JSONDecoder().decode(NativeTravelPaceSnapshot.self, from: invalid).valid)
     }
+
+    @MainActor func testTaskProjectionRequiresMatchingTripPurposeSourceAndExplicitChoice() throws {
+        let trip = UUID().uuidString
+        func projection(_ source: String, _ pace: Any, revision: Any = NSNull(), operation: Any = NSNull(), purpose: String = "local_trip_planning") throws -> NativeTaskTravelPace {
+            let data = try JSONSerialization.data(withJSONObject: ["schemaVersion": "task-travel-pace/1", "tripId": trip,
+                "travelPace": pace, "source": source, "sourceRevision": revision, "sourceOperationId": operation, "purpose": purpose])
+            return try JSONDecoder().decode(NativeTaskTravelPace.self, from: data)
+        }
+        let saved = try projection("profile", "relaxed", revision: 4, operation: UUID().uuidString)
+        XCTAssertTrue(saved.valid(for: trip, choice: .saved))
+        XCTAssertFalse(saved.canPromoteToTripDraft(for: trip, choice: .saved))
+        XCTAssertFalse(saved.valid(for: UUID().uuidString, choice: .saved))
+        XCTAssertFalse(saved.valid(for: trip, choice: .thisTimeNone))
+        XCTAssertFalse(try projection("profile", "relaxed", revision: 4).valid(for: trip, choice: .saved))
+        XCTAssertFalse(try projection("profile", "relaxed", revision: 4, operation: UUID().uuidString, purpose: "provider_prompt").valid(for: trip, choice: .saved))
+        let thisTime = try projection("current_input", "packed")
+        XCTAssertTrue(thisTime.valid(for: trip, choice: .packed))
+        XCTAssertTrue(thisTime.canPromoteToTripDraft(for: trip, choice: .packed))
+        XCTAssertFalse(thisTime.canPromoteToTripDraft(for: UUID().uuidString, choice: .packed))
+        let skipped = try projection("none", NSNull())
+        XCTAssertTrue(skipped.valid(for: trip, choice: .thisTimeNone))
+        XCTAssertTrue(skipped.canPromoteToTripDraft(for: trip, choice: .thisTimeNone))
+        let body = try JSONSerialization.jsonObject(with: JSONEncoder().encode(NativeTaskTravelPaceInput(tripId: trip, choice: .saved))) as? [String: Any]
+        XCTAssertTrue(body?["currentPace"] is NSNull)
+        XCTAssertEqual(body?["useSaved"] as? Bool, true)
+    }
+
+    @MainActor func testTaskProjectionDiscardsLateResponseAfterAccountChange() async throws {
+        let trip = UUID().uuidString, original = scope(), replacement = scope("b")
+        var current: NativeDataScope? = original
+        do {
+            _ = try await NativeTaskTravelPaceReader.read(tripID: trip, choice: .saved, currentScope: { current }) { _ in
+                current = replacement
+                return try JSONSerialization.data(withJSONObject: ["schemaVersion": "task-travel-pace/1", "tripId": trip,
+                    "travelPace": "relaxed", "source": "profile", "sourceRevision": 4,
+                    "sourceOperationId": UUID().uuidString, "purpose": "local_trip_planning"])
+            }
+            XCTFail("Late account-A projection must not enter account B")
+        } catch NativeDataError.staleSessionResponse { }
+    }
 }

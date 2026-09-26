@@ -7,3 +7,14 @@
 {"command":"node scripts/docs-check.mjs","result":"PASS"}
 {"command":"node node_modules/typescript/bin/tsc --noEmit --strict --target es2022 --module esnext --moduleResolution bundler --allowImportingTsExtensions --skipLibCheck lib/server/memory/travel-pace.ts lib/server/memory/native-http.ts tests/contract/memory/travel-pace.test.ts","result":"UNRUN","note":"No output after three minutes through shared dependency tree; own compiler stopped, Linux CI remains required."}
 {"command":"node --test --test-concurrency=1 tests/integration/memory/travel-pace.test.mjs","result":"UNRUN","skipped":4,"note":"Initial four-case suite; explicit local database flag absent, resource restriction. Fifth rollback case added afterward; execute all in Linux CI."}
+{"command":"gh api repos/JTCAO515/VP-V4/commits/main --jq .sha","result":"PASS","head":"0fff80e8b1b0fd0fb1ccffffd5c71fd92f06e1c9"}
+{"command":"pnpm docs:check","result":"PASS","note":"2026-09-26 consumer slice"}
+{"command":"node scripts/lint.mjs","result":"PASS","files":390,"note":"2026-09-26 consumer slice"}
+{"command":"git diff --check","result":"PASS","note":"2026-09-26 consumer slice"}
+{"command":"xcrun swiftc -frontend -parse ios/VisePanda/VisePanda/Features/Profile/NativeTravelPace.swift ios/VisePanda/VisePanda/Features/Trip/NativeTripModels.swift ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift ios/VisePanda/VisePandaTests/NativeTravelPaceTests.swift ios/VisePanda/VisePandaTests/NativeTripStateTests.swift","result":"PASS","scope":"syntax only"}
+{"command":"xcrun simctl list devices available","result":"UNRUN","note":"CoreSimulatorService connection refused in sandbox"}
+{"command":"xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' -derivedDataPath /private/tmp/vpj11-native-build CODE_SIGNING_ALLOWED=NO","result":"FAIL","note":"Sandbox SwiftUI/Observation macro server malformed response; no reliable typecheck"}
+{"command":"xcodebuild -quiet build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS' -derivedDataPath /private/tmp/vpj11-native-device-build CODE_SIGNING_ALLOWED=NO","result":"FAIL","note":"Ignored device AMap.bundle absent in this checkout"}
+{"command":"pnpm docs:check","result":"PASS","note":"2026-09-27 preview-only safety change"}
+{"command":"xcrun swiftc -frontend -parse ios/VisePanda/VisePanda/Features/Profile/NativeTravelPace.swift ios/VisePanda/VisePanda/Features/Trip/NativeTripModels.swift ios/VisePanda/VisePanda/Features/Trip/NativeTripView.swift ios/VisePanda/VisePandaTests/NativeTravelPaceTests.swift ios/VisePanda/VisePandaTests/NativeTripStateTests.swift","result":"PASS","scope":"syntax only; 2026-09-27 preview-only safety change"}
+{"command":"git diff --check","result":"PASS","note":"2026-09-27 preview-only safety change"}

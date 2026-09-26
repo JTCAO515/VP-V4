@@ -197,6 +197,27 @@ struct NativeRelativeOutline: Equatable {
     var hasAlternatives: Bool { includesFood && includesWalking }
     var initialTitles: [String] { includesFood ? foodFirst : walkFirst }
 
+    func titles(for pace: NativeTravelPace, chinese: Bool) -> [String] {
+        let food = chinese ? "探索一个美食片区，地点与营业时间待核" : "Explore one food area; venues and hours to verify"
+        let walk = chinese ? "探索一条街区散步路线，距离与开放条件待核" : "Explore one neighborhood walk; route and access to verify"
+        let free = chinese ? "保留自由日，活动与时间待定" : "Keep this day free; activities and timing undecided"
+        let themes = [includesFood ? food : nil, includesWalking ? walk : nil].compactMap { $0 }
+        guard !themes.isEmpty else { return initialTitles }
+        return (0..<count).map { day in
+            switch pace {
+            case .relaxed:
+                return day.isMultiple(of: 2) ? themes[(day / 2) % themes.count] : free
+            case .balanced:
+                return themes[day % themes.count]
+            case .packed:
+                let first = themes[day % themes.count]
+                let second = themes.count == 2 ? themes[(day + 1) % 2]
+                    : (chinese ? "另一项同类主题待核" : "Another theme of the same interest to verify")
+                return first + (chinese ? "；" : "; ") + second
+            }
+        }
+    }
+
     /// Only the user's original request crosses from a current, completed Ask
     /// read. Reviewed answer text and place claims never become Trip items.
     static func planningRequest(from turn: NativeTextTurn, evidenceCurrent: Bool, chinese: Bool) -> String? {
