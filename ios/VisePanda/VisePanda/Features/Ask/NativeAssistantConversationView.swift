@@ -215,17 +215,27 @@ struct NativeAssistantConversationView: View {
                         }
                         Button(chinese ? "撤回文本授权" : "Withdraw text consent", role: .destructive) { Task { await withdraw() } }
                             .disabled(busy)
-                    } else {
+                    } else if policy.consentState == .notAccepted {
                         Text(chinese ? policy.noticeZh : policy.noticeEn)
                         Toggle(chinese ? "我同意上述文本处理" : "I agree to this text processing", isOn: $agreed)
                             .accessibilityIdentifier("assistant.agree")
                         Button(chinese ? "同意并继续" : "Agree and continue") { Task { await accept() } }
                             .disabled(!agreed || busy)
                             .accessibilityIdentifier("assistant.accept")
+                    } else {
+                        Text(chinese ? "文本授权已撤回。无法在此恢复；已有行程关联仍可在下方解除。" : "Text consent was withdrawn and cannot be restored here. Existing Trip links can still be removed below.")
+                            .font(.footnote).foregroundStyle(Color.vpSecondaryText)
+                            .accessibilityIdentifier("assistant.consent.withdrawn")
                     }
-                } else { Text(chinese ? "正在读取授权状态" : "Loading consent") }
+                } else {
+                    Text(privacyLinks.isEmpty
+                         ? (chinese ? "正在读取授权状态" : "Loading consent")
+                         : (chinese ? "对话暂不可用；已有行程关联仍可在下方解除。" : "Conversation unavailable; existing Trip links can still be removed below."))
+                }
                 if policy?.consentState != .accepted && !privacyLinks.isEmpty { privacyTripControls }
-                if notice != nil { Text(chinese ? "请求未确认，请重试或刷新。" : "Request not confirmed. Retry or refresh.").font(.footnote) }
+                if notice != nil && privacyLinks.isEmpty {
+                    Text(chinese ? "请求未确认，请重试或刷新。" : "Request not confirmed. Retry or refresh.").font(.footnote)
+                }
             }.padding(VPSpacing.standard)
         }
         .sheet(isPresented: $showTripPicker) {
@@ -379,9 +389,9 @@ struct NativeAssistantConversationView: View {
                 Button(chinese ? "解除此关联" : "Unlink this Trip", role: .destructive) {
                     tripConfirmation = .privacyUnlink(link)
                 }
-                .disabled(tripBusy || (pendingTripMutation != nil && pendingTripMutation?.goalId != link.goalId))
+                .disabled(tripBusy || (pendingTripMutation?.action == "unlink" && pendingTripMutation?.goalId != link.goalId))
                 .accessibilityIdentifier("assistant.trip.privacy-unlink.\(link.goalId)")
-                if pendingTripMutation?.goalId == link.goalId {
+                if pendingTripMutation?.goalId == link.goalId && pendingTripMutation?.action == "unlink" {
                     Button(chinese ? "重试同一次解除" : "Retry the same unlink") { Task { await retryTripMutation() } }
                         .disabled(tripBusy).accessibilityIdentifier("assistant.trip.privacy-retry.\(link.goalId)")
                 }
@@ -433,7 +443,8 @@ struct NativeAssistantConversationView: View {
     private func unlinkPrivacy(_ link: AssistantGoalTripLink) async {
         guard !tripBusy, let initial = session.dataScope, link.tripId != nil else { return }
         let request: AssistantTripMutation
-        if let pendingTripMutation, pendingTripMutation.goalId == link.goalId { request = pendingTripMutation }
+        if let pendingTripMutation, pendingTripMutation.goalId == link.goalId,
+           pendingTripMutation.action == "unlink" { request = pendingTripMutation }
         else {
             request = AssistantTripMutation(goalId:link.goalId, operationId:UUID().uuidString.lowercased(),
                 conversationId:link.conversationId, sourceMessageId:nil,
@@ -478,6 +489,7 @@ struct NativeAssistantConversationView: View {
             let read = try JSONDecoder().decode(AssistantGoalTripLinksRead.self, from: data)
             guard read.valid else { throw NativeDataError.invalidResponse }
             privacyLinks = read.links
+            if pendingTripMutation?.action == "link" { pendingTripMutation = nil }
             if let pendingTripMutation, pendingTripMutation.action == "unlink",
                !read.links.contains(where: { $0.goalId == pendingTripMutation.goalId }) {
                 self.pendingTripMutation = nil

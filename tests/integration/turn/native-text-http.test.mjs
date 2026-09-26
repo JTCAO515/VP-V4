@@ -407,7 +407,21 @@ test('v5 explicit goal Trip link has CAS, owner, deletion and revoked-consent bo
  assert.ok(privacyList.body.links.some(link=>link.goalId===goalId&&link.tripId===tripA));
  assert.equal(JSON.stringify(privacyList.body).includes('Keep my remaining Trip'),false,'privacy list does not restore withdrawn goal text');
  const privacyUnlink={...unlink,operationId:randomUUID(),expectedGoalScopeVersion:7,expectedLinkVersion:6};
- assert.equal((await call(path,owner,'POST',privacyUnlink)).status,201,'unlink remains available after text consent withdrawal');
+ const runtime=identityLocalEnv();assert.ok(runtime?.API_URL && runtime.ANON_KEY);
+ const envPatch={NEXT_PUBLIC_SUPABASE_URL:runtime.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:runtime.ANON_KEY,
+  VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_NATIVE_LOCAL_TEXT:'false',VISEPANDA_NATIVE_LOCAL_ASSISTANT_CONVERSATION:'false'};
+ const previous=new Map(Object.keys(envPatch).map(key=>[key,process.env[key]]));
+ Object.assign(process.env,envPatch);
+ try {
+  const {nativeAssistantTripHTTP,nativeAssistantTripPrivacyHTTP}=await import('../../../lib/server/turn/native-assistant-trip-http.ts');
+  const {NextRequest}=await import('next/server.js');
+  const origin='http://127.0.0.1:59651',headers={Authorization:'Bearer '+owner};
+  const privacyRead=await nativeAssistantTripPrivacyHTTP(new NextRequest(origin+'/api/chat/native/v5/goal-trips',{headers}));
+  assert.equal(privacyRead.status,200);
+  assert.ok((await privacyRead.json()).links.some(link=>link.goalId===goalId));
+  const detached=await nativeAssistantTripHTTP(new NextRequest(origin+path,{method:'POST',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify(privacyUnlink)}),goalId);
+  assert.equal(detached.status,201,'unlink remains available after text consent and v5 producer withdrawal');
+ } finally {for(const [key,value] of previous)value===undefined?delete process.env[key]:process.env[key]=value;}
  assert.equal((await call(path,owner)).body.tripId,null);
  assert.equal((await call('/api/chat/native/v5/goal-trips',owner)).body.links.some(link=>link.goalId===goalId),false);
  assert.equal((await call(path,owner,'POST',binding(tripA,8,7,finalMessage.messageId,{expectedTripVersion:1}))).status,403,'withdrawal denies new link');
@@ -510,4 +524,38 @@ test('v5 Trip unlink and confirmed deletion reserve a terminal goal version at t
    expectedGoalScopeVersion:10001,expectedLinkVersion:10001,action:'link',tripId,expectedTripVersion:0,confirmed:true})).status,400,
    'terminal goal cannot silently re-link under the old contract');
  }
+});
+
+test('v5 owner privacy list covers every admitted active link at its capacity',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
+ const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
+ const call=async(path,token,method='GET',body)=>{const r=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,body:await r.json()};};
+ const attemptId=randomUUID(),c=await call('/api/auth/native/v2/credentials',null,'POST',{email:e.users[0].email,password:e.users[0].password,attemptId});
+ assert.equal(c.status,200);const owner=c.body.accessToken;
+ assert.equal((await call('/api/auth/native/v2/login',owner,'POST',{attemptId})).status,200);
+ assert.equal((await call('/api/chat/native/v5/consent',owner,'POST',{policyId:e.policyId,noticeHash:e.noticeHash})).status,200);
+ const candidateTrip=randomUUID(),dummyTrip=randomUUID(),conversationId=randomUUID(),goalId=randomUUID(),messageId=randomUUID(),dummyConversation=randomUUID();
+ for(const [tripId,title] of [[candidateTrip,'New candidate'],[dummyTrip,'Owned prior links']])
+  assert.equal((await call('/api/trips/native/v2',owner,'POST',{tripId,title})).status,201);
+ const goal={conversationId,messageId,idempotencyKey:randomUUID(),policyId:e.policyId,locale:'en',text:'One more goal',relationship:'goal_start',goalId,expectedGoalVersion:null,taskId:null,parentMessageId:null,turnId:null};
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',goal)).status,201);
+ const consent=e.sql(`select consent_id from turn_private.text_consents where owner_id='${e.users[0].id}' and policy_id='${e.policyId}';`);
+ e.sql(`insert into turn_private.assistant_conversations(id,owner_id,policy_id,consent_id) values('${dummyConversation}','${e.users[0].id}','${e.policyId}','${consent}');
+ with goals as (insert into turn_private.assistant_goals(id,conversation_id,owner_id,current_text)
+   select gen_random_uuid(),'${dummyConversation}','${e.users[0].id}','Synthetic bounded link' from generate_series(1,100) returning id)
+ insert into turn_private.assistant_goal_trip_links(goal_id,conversation_id,owner_id,link_version,goal_scope_version,operation_id,trip_id,trip_head_version,source_kind)
+ select id,'${dummyConversation}','${e.users[0].id}',1,1,gen_random_uuid(),'${dummyTrip}',0,'native_user_confirmed' from goals;`);
+ const privacy=()=>call('/api/chat/native/v5/goal-trips',owner);
+ assert.equal((await privacy()).body.links.length,100,'all admitted active references remain reachable for unlink');
+ const path='/api/chat/native/v5/goals/'+goalId+'/trip',input={operationId:randomUUID(),conversationId,sourceMessageId:messageId,
+  expectedGoalScopeVersion:1,expectedLinkVersion:0,action:'link',tripId:candidateTrip,expectedTripVersion:0,confirmed:true};
+ assert.equal((await call(path,owner,'POST',input)).status,409,'a 101st active link cannot become invisible');
+ const previousGoal=e.sql(`select goal_id from turn_private.assistant_goal_trip_links where conversation_id='${dummyConversation}' order by goal_id limit 1;`);
+ const unlink={operationId:randomUUID(),conversationId:dummyConversation,sourceMessageId:null,
+  expectedGoalScopeVersion:1,expectedLinkVersion:1,action:'unlink',tripId:null,expectedTripVersion:null,confirmed:true};
+ assert.equal((await call('/api/chat/native/v5/goals/'+previousGoal+'/trip',owner,'POST',unlink)).status,201);
+ assert.equal((await privacy()).body.links.length,99);
+ assert.equal((await call(path,owner,'POST',{...input,operationId:randomUUID()})).status,201);
+ assert.equal((await privacy()).body.links.length,100);
+ e.sql(`delete from turn_private.assistant_goal_trip_links where owner_id='${e.users[0].id}';
+  delete from turn_private.assistant_goal_trip_receipts where owner_id='${e.users[0].id}';`);
 });

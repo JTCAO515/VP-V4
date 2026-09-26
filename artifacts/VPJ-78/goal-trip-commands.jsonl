@@ -1,16 +1,16 @@
-{"command":"node tests/integration/turn/run-native-http.mjs","result":"PASS 4/4","environment":"disposable local Supabase/Auth/HTTP and synthetic model; link actions made zero model calls"}
-{"command":"node --experimental-strip-types --test tests/security/turn/native-assistant-trip-http.test.mjs","result":"PASS 3/3","environment":"intercepted local Auth/HTTP fixture"}
+{"command":"node tests/integration/turn/run-native-http.mjs","result":"PASS 6/6","environment":"disposable local Supabase/Auth/HTTP and synthetic model; link actions made zero model calls"}
+{"command":"node --experimental-strip-types --test tests/security/turn/native-assistant-trip-http.test.mjs","result":"PASS 4/4","environment":"intercepted local Auth/HTTP fixture"}
 {"command":"VP_NATIVE_ASSISTANT_ONLY_TRIP_LINK=1 VP_NATIVE_ASSISTANT_OUTPUT=/tmp/vpj78-goal-trip-ui-20260927-0415 VP_NATIVE_ASSISTANT_SIMULATOR=B0AD77FD-33C3-4616-92CE-2E76ACD93148 node tests/integration/turn/run-native-http.mjs --assistant-native","result":"PASS 1/1","environment":"iPhone 15 Pro iOS 17.5 simulator, disposable local Supabase/Auth/HTTP"}
 {"command":"xcodebuild build-for-testing -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=B0AD77FD-33C3-4616-92CE-2E76ACD93148' -derivedDataPath /tmp/vpj78-goal-trip-ui-20260927-0415/build CODE_SIGNING_ALLOWED=YES CODE_SIGNING_REQUIRED=YES CODE_SIGN_IDENTITY=-","result":"PASS","environment":"inside focused native UI runner"}
 {"command":"xcodebuild test-without-building -xctestrun /tmp/vpj78-goal-trip-ui-20260927-0415/build/Build/Products/AssistantConversation.xctestrun -destination 'platform=iOS Simulator,id=B0AD77FD-33C3-4616-92CE-2E76ACD93148' -parallel-testing-enabled NO -resultBundlePath /tmp/vpj78-goal-trip-ui-20260927-0415/tests.xcresult -only-testing:VisePandaUITests/NativeAskUITests/testEnglishAssistantGoalTripLinkReadback","result":"PASS 1/1","environment":"focused local simulator UI with disposable test profile"}
 {"command":"node scripts/ci-suites/db-integration.mjs --lane supabase-rls","result":"PASS 22/22","environment":"disposable local Supabase RLS and ACL"}
-{"command":"node scripts/ci-suites/db-integration.mjs --lane postgres","result":"PASS 128/128","environment":"disposable local Postgres migration and regression"}
+{"command":"node scripts/ci-suites/db-integration.mjs --lane postgres","result":"PASS 129/129","environment":"disposable local Postgres migration and regression after #571"}
 {"command":"pnpm lint","result":"PASS","environment":"local source"}
 {"command":"pnpm typecheck","result":"PASS","environment":"local source"}
 {"command":"pnpm build","result":"PASS","environment":"local production build"}
 {"command":"pnpm docs:check","result":"PASS","environment":"local docs"}
 {"command":"git diff --check","result":"PASS","environment":"local diff"}
-{"command":"pnpm test:contract","result":"PASS 690/690","environment":"local suite"}
-{"command":"pnpm test:security","result":"INCOMPLETE 188 passed, 1 target-gated skipped","environment":"local suite"}
-{"command":"pnpm test:integration","result":"INCOMPLETE 39 passed, 120 target-gated skipped","environment":"local suite"}
+{"command":"pnpm test:contract","result":"PASS 691/691","environment":"local suite"}
+{"command":"pnpm test:security","result":"INCOMPLETE 189 passed, 1 target-gated skipped","environment":"local suite"}
+{"command":"pnpm test:integration","result":"INCOMPLETE 39 passed, 123 target-gated skipped","environment":"local suite"}
 {"command":"pnpm db:verify","result":"PASS baseline-present, probes not configured","environment":"local read-only probe; no Production connection"}

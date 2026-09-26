@@ -70,10 +70,16 @@ nonisolated final class NativeAskUITests: XCTestCase {
         let privacyUnlink = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "assistant.trip.privacy-unlink.")).firstMatch
         XCTAssertTrue(privacyUnlink.waitForExistence(timeout: 20), "A withdrawn account must still reach unlink")
         XCTAssertFalse(goal.exists, "Withdrawing text consent hides the goal body")
+        XCTAssertTrue(app.staticTexts["assistant.consent.withdrawn"].exists)
+        XCTAssertFalse(app.switches["assistant.agree"].exists, "A withdrawn policy cannot be silently reaccepted")
+        capture("Assistant-goal-Trip-privacy-control-en", app)
         privacyUnlink.tap()
         let confirmPrivacy = app.buttons["Confirm privacy unlink"]
         XCTAssertTrue(confirmPrivacy.waitForExistence(timeout: 10)); confirmPrivacy.tap()
         XCTAssertFalse(privacyUnlink.waitForExistence(timeout: 5), "The owner privacy list no longer contains the detached Trip")
+        app.tabBars.buttons["Ask"].tap()
+        XCTAssertTrue(app.staticTexts["assistant.consent.withdrawn"].waitForExistence(timeout: 10),
+                      "The revoked state remains readable after unlink")
         capture("Assistant-goal-Trip-privacy-unlinked-en", app)
     }
 

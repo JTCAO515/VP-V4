@@ -123,6 +123,12 @@ begin
     then raise exception 'SERVICE_TASK_CONFLICT'; end if;
   if p_action='unlink' and (linked.goal_id is null or linked.trip_id is null)
     then raise exception 'SERVICE_TASK_CONFLICT'; end if;
+  -- The privacy index is bounded to 100 active links per owner. text_owner()
+  -- holds the mobile-account row lock, so competing owner admissions cannot
+  -- both count below the bound and hide an older link from privacy controls.
+  if p_action='link' and linked.trip_id is null
+    and (select count(*) from turn_private.assistant_goal_trip_links where owner_id=u and trip_id is not null)>=100
+    then raise exception 'SERVICE_TASK_CONFLICT'; end if;
   if p_action='unlink' then
     perform 1 from public.trips where id=linked.trip_id and owner_id=u;
     if not found then raise exception 'SERVICE_TASK_CONFLICT'; end if;
@@ -217,6 +223,8 @@ create function public.list_assistant_goal_trip_links_v1()
 returns jsonb language plpgsql security definer set search_path='' as $$
 declare u uuid:=turn_private.text_owner(); links jsonb;
 begin
+  if (select count(*) from turn_private.assistant_goal_trip_links where owner_id=u and trip_id is not null)>100
+    then raise exception 'SERVICE_TASK_CONFLICT'; end if;
   select coalesce(jsonb_agg(x.item order by x.updated_at desc,x.goal_id),'[]'::jsonb)
     into links from (
       select l.updated_at,l.goal_id,jsonb_build_object('version',5,'kind','goal_trip_link',
