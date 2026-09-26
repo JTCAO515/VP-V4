@@ -1,6 +1,68 @@
 import XCTest
 
 nonisolated final class NativeAskUITests: XCTestCase {
+    @MainActor func testEnglishAssistantGoalTripLinkReadback() throws {
+        let environment = ProcessInfo.processInfo.environment
+        guard environment["VP_NATIVE_ASSISTANT_TRIP_TEST"] == "1" else { throw XCTSkip("UNRUN: disposable goal Trip fixture required") }
+        continueAfterFailure = false
+        let api = try XCTUnwrap(environment["VP_NATIVE_TEXT_API_URL"])
+        let email = try XCTUnwrap(environment["VP_NATIVE_TEXT_UI_EN_EMAIL"])
+        let tripA = try XCTUnwrap(environment["VP_NATIVE_ASSISTANT_TRIP_A"])
+        let tripB = try XCTUnwrap(environment["VP_NATIVE_ASSISTANT_TRIP_B"])
+        let app = XCUIApplication()
+        app.launchArguments = ["-VisePandaNativeAPI", api, "-VisePandaAssistantConversation", "-VisePandaLocale", "en", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        app.tabBars.buttons["Profile"].tap()
+        let signOut = app.buttons["Sign out"]
+        if signOut.waitForExistence(timeout: 2) { reveal(signOut, app); signOut.tap() }
+        let emailField = app.textFields["native.login.email"]
+        XCTAssertTrue(emailField.waitForExistence(timeout: 15)); reveal(emailField, app); emailField.tap(); emailField.typeText(email)
+        let password = app.secureTextFields["native.login.password"]
+        reveal(password, app); password.tap(); password.typeText("VPJ07-Local-Synthetic-Only-195!")
+        let login = app.buttons["native.login.submit"]; reveal(login, app); login.tap()
+        expectation(for: NSPredicate(format: "label == %@", "Session active"), evaluatedWith: app.staticTexts["native.session.status"])
+        waitForExpectations(timeout: 30)
+        app.tabBars.buttons["Ask"].tap()
+        let agree = app.switches["assistant.agree"]
+        XCTAssertTrue(agree.waitForExistence(timeout: 20)); reveal(agree, app); agree.tap()
+        app.buttons["assistant.accept"].tap()
+        let composer = app.descendants(matching: .any).matching(identifier: "assistant.composer").firstMatch
+        XCTAssertTrue(composer.waitForExistence(timeout: 20))
+        app.buttons["assistant.operation"].tap(); app.buttons["Start goal"].tap()
+        reveal(composer, app); composer.tap(); composer.typeText("Plan a rail journey before dates are known")
+        app.buttons["assistant.send"].tap()
+        let goal = app.staticTexts["assistant.current-goal"]
+        XCTAssertTrue(goal.waitForExistence(timeout: 20)); XCTAssertTrue(goal.label.contains("Current goal v1"))
+        let choose = app.buttons["assistant.trip.choose"]
+        XCTAssertTrue(choose.waitForExistence(timeout: 20)); reveal(choose, app); choose.tap()
+        let first = app.buttons["assistant.trip.select.\(tripA)"]
+        XCTAssertTrue(first.waitForExistence(timeout: 15)); first.tap()
+        let confirm = app.buttons["Confirm link"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 10)); confirm.tap()
+        let linked = app.staticTexts["assistant.trip.linked"]
+        expectation(for: NSPredicate(format: "label CONTAINS %@", "Synthetic Goal Trip A"), evaluatedWith: linked)
+        waitForExpectations(timeout: 20)
+        XCTAssertTrue(goal.label.contains("Current goal v2"))
+        app.terminate(); app.launch(); app.tabBars.buttons["Ask"].tap()
+        XCTAssertTrue(linked.waitForExistence(timeout: 30)); XCTAssertTrue(linked.label.contains("Synthetic Goal Trip A"))
+        XCTAssertTrue(goal.label.contains("Current goal v2"))
+        XCTAssertTrue(composer.exists)
+        capture("Assistant-goal-existing-Trip-reload-en", app)
+        let change = app.buttons["assistant.trip.choose"]; reveal(change, app); change.tap()
+        let second = app.buttons["assistant.trip.select.\(tripB)"]
+        XCTAssertTrue(second.waitForExistence(timeout: 15)); second.tap()
+        XCTAssertTrue(confirm.waitForExistence(timeout: 10)); confirm.tap()
+        expectation(for: NSPredicate(format: "label CONTAINS %@", "Synthetic Goal Trip B"), evaluatedWith: linked)
+        waitForExpectations(timeout: 20)
+        XCTAssertTrue(goal.label.contains("Current goal v3"))
+        app.buttons["assistant.trip.unlink"].tap()
+        let confirmUnlink = app.buttons["Confirm unlink"]
+        XCTAssertTrue(confirmUnlink.waitForExistence(timeout: 10)); confirmUnlink.tap()
+        XCTAssertTrue(app.staticTexts["assistant.trip.unlinked"].waitForExistence(timeout: 20))
+        XCTAssertTrue(goal.label.contains("Current goal v4"))
+        capture("Assistant-goal-Trip-unlinked-en", app)
+    }
+
     @MainActor func testEnglishAssistantConversationReadback() throws {
         let environment = ProcessInfo.processInfo.environment
         guard environment["VP_NATIVE_ASSISTANT_TEST"] == "1" else { throw XCTSkip("UNRUN: disposable assistant v5 environment required") }
