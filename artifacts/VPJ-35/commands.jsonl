@@ -1,4 +1,4 @@
-{"command":"VP_TURN_DB_TEST=1 node --experimental-strip-types --test tests/integration/turn/text-work.test.mjs","result":"PASS","details":"29 tests, 0 fail, 0 skip; disposable Docker PostgreSQL; main coordinator on final SQL/test files"}
+{"command":"VP_TURN_DB_TEST=1 node --experimental-strip-types --test tests/integration/turn/text-work.test.mjs","result":"PASS","details":"31 tests, 0 fail, 0 skip; disposable Docker PostgreSQL after partial and missing-config review repairs"}
 {"command":"pnpm typecheck","result":"PASS","details":"main coordinator after pnpm install --frozen-lockfile; lockfile unchanged"}
 {"command":"pnpm lint","result":"PASS","details":"main coordinator; source policy lint 390 files"}
 {"command":"pnpm test:contract","result":"PASS","details":"main coordinator"}

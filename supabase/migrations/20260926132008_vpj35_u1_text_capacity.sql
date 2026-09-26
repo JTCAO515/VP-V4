@@ -93,6 +93,7 @@ begin
   select capacity_enforced into task_enforced from turn_private.service_tasks where id=p_task_id;
   select * into prior_capacity from turn_private.service_task_capacity where task_id=p_task_id;
   select * into current_policy from turn_private.service_task_capacity_settings where singleton=true;
+  if not found then raise exception 'CAPACITY_POLICY_UNAVAILABLE'; end if;
   if not current_policy.enabled then
     if task_enforced then
       if prior_capacity.task_id is null or prior_capacity.state='released' then raise exception 'CAPACITY_POLICY_UNAVAILABLE'; end if;
@@ -152,7 +153,7 @@ begin
         and g.ends_at>pg_catalog.clock_timestamp()) then raise exception 'SERVICE_TASK_GRANT_UNAVAILABLE'; end if;
     update turn_private.service_task_capacity set state='settled',settled_turn_id=p_turn_id,settled_at=pg_catalog.clock_timestamp()
       where task_id=task and state='reserved';
-  elsif p_kind in ('blocked','technical_failure') then
+  elsif p_kind in ('partial','blocked','technical_failure') then
     update turn_private.service_task_capacity set state='released',released_at=pg_catalog.clock_timestamp()
       where task_id=task and state='reserved';
   end if;

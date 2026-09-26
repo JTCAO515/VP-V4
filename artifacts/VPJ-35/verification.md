@@ -5,7 +5,7 @@ Date: 2026-09-26. Base: `origin/main` `c74c2ba66fd6922f2d815e0667f36768650b0cee`
 ## Implemented
 
 - Atomic owner-serialized new-goal capacity reservation, using the frozen #225 development policy and the active #226 Sandbox grant snapshot. No effective grant means Free; an active Pass never falls back to Free on exhaustion.
-- One task ledger row across clarification and repair. A durable owner-readable `answered` Turn settles it once in the same transaction as the output. Technical failure, blocked outcome, and pre-delivery cancel release the reservation; repair rechecks capacity without creating another task or resetting the existing internal provider budget.
+- One task ledger row across clarification and repair. A durable owner-readable `answered` Turn settles it once in the same transaction as the output. Partial output remains readable and releases its reservation without settlement or an automatic continuation path. Technical failure, blocked outcome, and pre-delivery cancel also release the reservation; repair rechecks capacity without creating another task or resetting the existing internal provider budget.
 - Existing task/Turn idempotency and owner checks remain the admission authority. A metered task cannot silently revert to record-only after the development switch is turned off or its ledger row is erased. The new table is private with RLS and service-role-only export/erase RPCs; it holds IDs and timestamps, not prompt text or attempt charges.
 - A distinct HTTP 429 error code reports task capacity exhaustion without changing the internal model budget code.
 
@@ -13,7 +13,7 @@ Date: 2026-09-26. Base: `origin/main` `c74c2ba66fd6922f2d815e0667f36768650b0cee`
 
 | Check | Result | Scope |
 | --- | --- | --- |
-| `VP_TURN_DB_TEST=1 node --experimental-strip-types --test tests/integration/turn/text-work.test.mjs` | PASS 29/29, 0 skip; main coordinator ran on final migration/test files | Disposable network-disabled PostgreSQL, all migrations, real concurrent SQL |
+| `VP_TURN_DB_TEST=1 node --experimental-strip-types --test tests/integration/turn/text-work.test.mjs` | PASS 31/31, 0 skip; rerun after review repairs | Disposable network-disabled PostgreSQL, all migrations, real concurrent SQL; partial release and missing settings fail-closed added |
 | `pnpm typecheck` | PASS | Main coordinator ran after frozen-lockfile install |
 | `pnpm lint` | PASS | Main coordinator: source policy lint, 390 files |
 | `pnpm test:contract` | PASS | Main coordinator |

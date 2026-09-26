@@ -122,4 +122,4 @@ VPJ-35 的追加迁移建立私有 ServiceTask 容量记录，默认关闭容量
 
 开发策略使用 #225 冻结的 Free 168 小时 4 项、24 小时 2 项，或 #226 已验证且正在有效期内的 Sandbox Pass 快照 720 小时 80 项、账号 24 小时 12 项。账号统一的 24 小时窗口计入 Free/Pass 的已结算及有效预留；有效 Pass 用尽不回退 Free。接纳与 grant 变更共用账号事务锁；请求幂等、归属、同键异参仍由 #195 原接纳契约核验。Pass 未到 `startsAt`、已过 `endsAt` 或已撤销不提供容量。
 
-单个文本任务的 `clarification` 沿原预留；`technical_failure` 释放预留，合法 `repair` 在同一任务及原内部成本范围内重新校验容量。`answered` 仅在当前 Turn 成功提交、原 owner 可读取持久结果、相关 grant 仍有效时，将该任务预留唯一结算；失败、阻断与交付前取消释放预留。结算与成果写入在同一数据库事务，旧 worker 的重复完成与取消竞态不能重复结算。`partial` 不结算，保留预留等待后续策略；跨窗口续作、等待 TTL、完成后改稿、真实收费及媒体任务均不在 U1 启用范围。新账本提供 service-role 限定的导出与删除 RPC；不复制 StoreKit 交易或供应商 attempt 账本。
+单个文本任务的 `clarification` 沿原预留；`technical_failure` 释放预留，合法 `repair` 在同一任务及原内部成本范围内重新校验容量。`answered` 仅在当前 Turn 成功提交、原 owner 可读取持久结果、相关 grant 仍有效时，将该任务预留唯一结算；失败、阻断与交付前取消释放预留。结算与成果写入在同一数据库事务，旧 worker 的重复完成与取消竞态不能重复结算。`partial` 保留已写入的部分成果、释放预留且不结算；该 Turn 已终结，现有归属契约禁止从 partial 自动续作或改稿，旧 worker 也不能再结算同一 Turn。跨窗口续作、等待 TTL、完成后改稿、真实收费及媒体任务均不在 U1 启用范围。新账本提供 service-role 限定的导出与删除 RPC；不复制 StoreKit 交易或供应商 attempt 账本。

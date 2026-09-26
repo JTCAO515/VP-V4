@@ -385,6 +385,35 @@ run('clarification and failed repair retain one task identity and re-admit after
   assert.equal(await db(`select count(*) from turn_private.service_task_turns where task_id='${a.task}';`),'3');
  }finally{await db("update turn_private.service_task_capacity_settings set enabled=false where singleton=true;");await clean();}
 });
+run('partial text keeps readable output but releases capacity without a later settlement path',async()=>{
+ await db("update turn_private.service_task_capacity_settings set enabled=true where singleton=true;");
+ try{
+  const a=await taskFixture();await a.submit();
+  const lease=await service('claim_text_work',{p_owner_id:a.owner,p_policy_id:a.policy});
+  assert.equal(lease.kind,'leased');assert.equal((await authorize(a,lease)).kind,'authorized');
+  assert.equal((await complete(lease,'partial')).kind,'finished');
+  const saved=await a.call('read_text_turn',{p_turn_id:a.turn});
+  assert.equal(saved.outcome,'partial');assert.equal(saved.output,'Synthetic result');
+  assert.equal(await db(`select state||':'||(settled_turn_id is null)::text from turn_private.service_task_capacity where task_id='${a.task}';`),'released:true');
+  assert.equal((await complete(lease,'answered')).kind,'blocked','the terminal Turn rejects a late old worker');
+  for(const relationship of ['repair','clarification'])await assert.rejects(a.submit(a.next(a.turn,relationship)),/SERVICE_TASK_CONFLICT/);
+  assert.equal((await a.submit()).reused,true,'exact replay cannot recreate a reservation');
+  assert.equal(await db(`select count(*) from turn_private.service_task_capacity where task_id='${a.task}' and state='settled';`),'0');
+  const fresh={...a.taskInput,p_thread_id:uuid(),p_turn_id:uuid(),p_idempotency_key:uuid(),p_task_id:uuid()};
+  assert.equal((await a.call('submit_service_task_turn',fresh)).capacityState,'reserved','released partial capacity may serve a new goal');
+ }finally{await db("update turn_private.service_task_capacity_settings set enabled=false where singleton=true;");await clean();}
+});
+run('missing development capacity settings fail closed without a task or Turn',async()=>{
+ const a=await taskFixture();
+ await db('delete from turn_private.service_task_capacity_settings where singleton=true;');
+ try{
+  await assert.rejects(a.submit(),/CAPACITY_POLICY_UNAVAILABLE/);
+  assert.equal(await db(`select count(*) from turn_private.service_tasks where id='${a.task}';`),'0');
+  assert.equal(await db(`select count(*) from public.turns where id='${a.turn}';`),'0');
+ }finally{await db("insert into turn_private.service_task_capacity_settings(singleton,enabled) values(true,false);");}
+ assert.equal((await a.submit()).capacityMode,'record_only','a valid disabled configuration restores legacy behavior');
+ await clean();
+});
 run('future and revoked Sandbox grants never authorize text capacity or late settlement',async()=>{
  await db("update turn_private.service_task_capacity_settings set enabled=true where singleton=true;");
  try{
