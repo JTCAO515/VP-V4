@@ -368,6 +368,47 @@ run('development capacity serializes the last text slot and settles only a reada
   assert.equal((await a.call('submit_service_task_turn',rejected)).capacityState,'reserved');
  }finally{await db("update turn_private.service_task_capacity_settings set enabled=false where singleton=true;");await clean();}
 });
+run('U1 capacity cannot be relabeled as a Trip or reviewed-answer task',async()=>{
+ await db("update turn_private.service_task_capacity_settings set enabled=true where singleton=true;");
+ try{
+  const a=await taskFixture();await a.submit();
+  const relabel=await sql(container,`update turn_private.service_tasks set expected_result='reviewed_answer' where id='${a.task}';`);
+  assert.notEqual(relabel.code,0);assert.match(relabel.stderr,/SERVICE_TASK_CAPACITY_SCOPE_CONFLICT/);
+  const tripId=uuid();
+  const move=await sql(container,`begin;insert into public.trips(id,owner_id,title) values('${tripId}','${a.owner}','Synthetic trip');update public.chat_threads set trip_id='${tripId}' where id='${a.thread}';update turn_private.service_task_capacity set state='settled',settled_turn_id='${a.turn}',settled_at=clock_timestamp() where task_id='${a.task}';commit;`);
+  assert.notEqual(move.code,0);assert.match(move.stderr,/SERVICE_TASK_CAPACITY_SCOPE_CONFLICT/);
+  assert.equal(await db(`select state from turn_private.service_task_capacity where task_id='${a.task}';`),'reserved');
+  assert.equal(await db(`select trip_id is null from public.chat_threads where id='${a.thread}';`),'t');
+ }finally{await db("update turn_private.service_task_capacity_settings set enabled=false where singleton=true;");await clean();}
+});
+run('concurrent task relabel and capacity insert cannot commit a mismatched task',async()=>{
+ const a=await taskFixture();assert.equal((await a.submit()).capacityMode,'record_only');
+ const marker='vpj35_task_'+uuid().replaceAll('-','');
+ const blocker=await transaction(`update turn_private.service_tasks set expected_result='reviewed_answer' where id='${a.task}'`);
+ const raced=sql(container,`set application_name='${marker}';insert into turn_private.service_task_capacity(task_id,owner_id,policy_version,tier,admitted_at,state) values('${a.task}','${a.owner}','service-task-development/1','free',clock_timestamp(),'reserved');`);
+ try{
+  await waitUntil(async()=>Number(await db(`select count(*) from pg_stat_activity where application_name='${marker}' and wait_event_type='Lock';`))===1,3000,'capacity waits for task relabel');
+ }finally{await blocker.finish();}
+ const result=await raced;
+ assert.notEqual(result.code,0);assert.match(result.stderr,/SERVICE_TASK_CAPACITY_SCOPE_CONFLICT/);
+ assert.equal(await db(`select count(*) from turn_private.service_task_capacity where task_id='${a.task}';`),'0');
+ await clean();
+});
+run('concurrent capacity insert and Trip rebind cannot commit a metered Trip thread',async()=>{
+ const a=await taskFixture();assert.equal((await a.submit()).capacityMode,'record_only');
+ const tripId=uuid(),marker='vpj35_trip_'+uuid().replaceAll('-','');
+ await db(`insert into public.trips(id,owner_id,title) values('${tripId}','${a.owner}','Synthetic trip');`);
+ const blocker=await transaction(`insert into turn_private.service_task_capacity(task_id,owner_id,policy_version,tier,admitted_at,state) values('${a.task}','${a.owner}','service-task-development/1','free',clock_timestamp(),'reserved')`);
+ const raced=sql(container,`set application_name='${marker}';update public.chat_threads set trip_id='${tripId}' where id='${a.thread}';`);
+ try{
+  await waitUntil(async()=>Number(await db(`select count(*) from pg_stat_activity where application_name='${marker}' and wait_event_type='Lock';`))===1,3000,'Trip rebind waits for capacity insert');
+ }finally{await blocker.finish();}
+ const result=await raced;
+ assert.notEqual(result.code,0);assert.match(result.stderr,/SERVICE_TASK_CAPACITY_SCOPE_CONFLICT/);
+ assert.equal(await db(`select state from turn_private.service_task_capacity where task_id='${a.task}';`),'reserved');
+ assert.equal(await db(`select trip_id is null from public.chat_threads where id='${a.thread}';`),'t');
+ await clean();
+});
 run('clarification and failed repair retain one task identity and re-admit after release',async()=>{
  await db("update turn_private.service_task_capacity_settings set enabled=true where singleton=true;");
  try{
