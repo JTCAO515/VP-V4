@@ -3,6 +3,64 @@ import UIKit
 
 @MainActor
 final class AppShellUITests: XCTestCase {
+    func testVPJ77FixtureJourneyAndMemoryCorrection() {
+        for locale in ["en", "zh-Hans"] {
+            let app = XCUIApplication()
+            app.launchArguments = ["-VPJ77Specimen", "-VisePandaLocale", locale,
+                                   "-AppleLanguages", "(\(locale))"]
+            app.launch()
+            XCTAssertTrue(app.staticTexts["specimen.fixture-banner"].waitForExistence(timeout: 10))
+            XCTAssertEqual(app.tabBars.buttons.count, 4)
+            XCTAssertTrue(app.tabBars.buttons["VP"].exists)
+            XCTAssertTrue(app.tabBars.buttons["Memory"].exists)
+            app.buttons["specimen.first.compare"].tap()
+            app.buttons["specimen.comparison.open"].tap()
+            XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", locale == "en" ? "Option A" : "方向 A")).firstMatch.exists)
+            app.buttons[locale == "en" ? "Done" : "关闭"].tap()
+            app.buttons["specimen.delegate"].tap()
+            app.buttons["specimen.task.open"].tap()
+            XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "fixture-task-1")).firstMatch.exists)
+            app.buttons[locale == "en" ? "Done" : "关闭"].tap()
+            app.buttons["specimen.return"].tap()
+            app.tabBars.buttons[locale == "en" ? "Journeys" : "旅程"].tap()
+            app.buttons["specimen.journeys.artifact"].tap()
+            XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "fixture-artifact-1")).firstMatch.exists)
+            app.buttons[locale == "en" ? "Done" : "关闭"].tap()
+            app.tabBars.buttons[locale == "en" ? "Library" : "资源库"].tap()
+            app.buttons["specimen.library.artifact"].tap()
+            XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "fixture-artifact-1")).firstMatch.exists)
+            app.buttons[locale == "en" ? "Done" : "关闭"].tap()
+            app.buttons["specimen.search.open"].tap()
+            XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", locale == "en" ? "Discover a direction" : "发现值得探索")).firstMatch.exists)
+            app.buttons["specimen.search.artifact"].tap()
+            XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "fixture-artifact-1")).firstMatch.waitForExistence(timeout: 5))
+            app.buttons[locale == "en" ? "Done" : "关闭"].tap()
+            app.tabBars.buttons["Memory"].tap()
+            let edit = app.textFields["specimen.memory.edit"]
+            XCTAssertTrue(edit.exists)
+            edit.tap()
+            edit.typeText(locale == "en" ? "Prefer slower days" : "喜欢慢节奏")
+            app.buttons["specimen.memory.correct"].tap()
+            XCTAssertTrue(app.staticTexts["specimen.memory.corrected"].exists)
+            app.tabBars.buttons["VP"].tap()
+            XCTAssertTrue(app.staticTexts["specimen.memory-impact"].exists)
+            app.terminate()
+        }
+    }
+
+    func testVPJ77FixtureRemainsReachableAtAccessibilityTextSize() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-VPJ77Specimen", "-VisePandaLocale", "en",
+                               "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"]
+        app.launch()
+        XCTAssertTrue(app.staticTexts["specimen.fixture-banner"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.tabBars.buttons["Memory"].exists)
+        app.tabBars.buttons["Memory"].tap()
+        XCTAssertTrue(app.textFields["specimen.memory.edit"].exists)
+        app.buttons["specimen.search.open"].tap()
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Discover a direction")).firstMatch.exists)
+    }
+
     private func launch(locale: String = "en", largeText: Bool = false) -> XCUIApplication {
         continueAfterFailure = false
         let app = XCUIApplication()

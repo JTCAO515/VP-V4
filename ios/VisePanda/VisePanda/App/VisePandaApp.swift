@@ -6,7 +6,13 @@ struct VisePandaApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AppShellView()
+            Group {
+                if ProcessInfo.processInfo.arguments.contains("-VPJ77Specimen") {
+                    AssistantSpecimenView()
+                } else {
+                    AppShellView()
+                }
+            }
                 .environment(settings)
                 .environment(\.locale, settings.selectedLocale.locale)
                 .environment(\.layoutDirection, settings.selectedLocale.layoutDirection)
