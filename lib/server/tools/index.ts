@@ -29,6 +29,12 @@ export type ToolDefinition<I, O> = Readonly<{
 export type ToolCallIntent = Readonly<{ source: "model" | "ui"; callId: string; toolId: string; dataClasses: readonly ToolDataClass[]; input: unknown }>;
 export type ToolActor = Readonly<{ id: string; taskProfile: ToolTaskProfile; dataClasses: readonly ToolDataClass[]; licensedScopes: readonly ToolDataClass[]; enabledFeatureFlags: readonly string[]; approvals: readonly ToolApproval[] }>;
 export type ToolReceipt = Readonly<{ toolId: string; toolVersion: string; callId: string; inputDigest: string; modelSafeProjection: string; startedAt: string; finishedAt: string; policyReceipt: string }>;
+/** A durable, lease-bound store. `unknown` must be reconciled before another effect. */
+export type ToolActionStore = Readonly<{
+  claim: (key: string, toolId: string, inputDigest: string) => Promise<"claimed" | "duplicate" | "unknown" | "stale" | "stale_basis" | "step_limit" | "conflict">;
+  complete: (key: string, receiptDigest: string) => Promise<boolean>;
+  markUnknown: (key: string) => Promise<void>;
+}>;
 
 export class ToolGatewayError extends Error {
   readonly code: ToolGatewayErrorCode;
@@ -42,7 +48,6 @@ export class ToolGatewayError extends Error {
 
 export class ToolRegistry {
   #definitions = new Map<string, ToolDefinition<unknown, unknown>>();
-  #callDigests = new Map<string, string>();
   constructor(definitions: readonly ToolDefinition<unknown, unknown>[] = []) { for (const definition of definitions) this.register(definition); }
 
   register(definition: ToolDefinition<unknown, unknown>): void {
@@ -61,13 +66,6 @@ export class ToolRegistry {
     return definition;
   }
 
-  async claimCall(key: string, inputDigest: string): Promise<void> {
-    const previous = this.#callDigests.get(key);
-    if (previous) throw new ToolGatewayError(previous === inputDigest ? "Idempotent tool call was already executed." : "Tool call id reuse with a different input is forbidden.", "TOOL_REPLAY_REJECTED");
-    this.#callDigests.set(key, inputDigest);
-  }
-
-  releaseCall(key: string, inputDigest: string): void { if (this.#callDigests.get(key) === inputDigest) this.#callDigests.delete(key); }
 }
 
 export function approvalDigestForToolIntent(definition: Readonly<{ id: string; version: string }>, input: unknown): string {
@@ -78,6 +76,7 @@ export async function executeToolIntent<O>(input: Readonly<{
   registry: ToolRegistry;
   intent: ToolCallIntent;
   actor: ToolActor;
+  actionStore?: ToolActionStore;
   execute: (input: unknown) => Promise<O>;
   now: () => string;
 }>): Promise<Readonly<ToolReceipt>> {
@@ -94,14 +93,20 @@ export async function executeToolIntent<O>(input: Readonly<{
   if (definition.requiresApproval && !hasExactApproval(input.actor, input.intent, inputDigest, startedAt)) throw new ToolGatewayError("Exact actor-bound approval is required.");
   const claimRequired = definition.idempotency === "required";
   const idempotencyKey = digest({ actorId: input.actor.id, toolId: definition.id, version: definition.version, callId: input.intent.callId });
-  if (claimRequired) await input.registry.claimCall(idempotencyKey, inputDigest);
+  if (claimRequired) {
+    if (!input.actionStore) throw new ToolGatewayError("Durable action store is required.");
+    let state: Awaited<ReturnType<ToolActionStore["claim"]>>;
+    try { state = await input.actionStore.claim(idempotencyKey, definition.id, inputDigest); }
+    catch { throw new ToolGatewayError("Durable action claim is unavailable."); }
+    if (state !== "claimed") throw new ToolGatewayError(`Action claim ${state}; reconcile before retry.`, "TOOL_REPLAY_REJECTED");
+  }
 
   try {
     const output = await withDeadline(input.execute(input.intent.input), definition.timeoutMs);
     if (!definition.validateOutput(output)) throw new ToolGatewayError("Tool output is invalid.", "TOOL_OUTPUT_REJECTED");
     const modelSafeProjection = projectToolOutput(definition, output);
     const finishedAt = input.now();
-    return Object.freeze({
+    const receipt = Object.freeze({
       toolId: definition.id,
       toolVersion: definition.version,
       callId: input.intent.callId,
@@ -111,8 +116,12 @@ export async function executeToolIntent<O>(input: Readonly<{
       finishedAt,
       policyReceipt: digest({ toolId: definition.id, callId: input.intent.callId, inputDigest, policy: "allowed" }),
     });
+    if (claimRequired && !await input.actionStore!.complete(idempotencyKey, receipt.policyReceipt)) throw new ToolGatewayError("Action receipt is unknown; reconcile before retry.", "TOOL_REPLAY_REJECTED");
+    return receipt;
   } catch (error) {
-    if (claimRequired) input.registry.releaseCall(idempotencyKey, inputDigest);
+    // The executor may have performed a chargeable or external effect before an
+    // error or lost acknowledgement. Never delete the claim and blindly replay.
+    if (claimRequired) await input.actionStore!.markUnknown(idempotencyKey).catch(() => {});
     throw error;
   }
 }

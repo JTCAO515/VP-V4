@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { approvalDigestForToolIntent, ToolGatewayError, ToolRegistry, executeToolIntent, type ToolDataClass, type ToolDefinition } from "../../../lib/server/tools/index.ts";
+import { approvalDigestForToolIntent, ToolGatewayError, ToolRegistry, executeToolIntent, type ToolActionStore, type ToolDataClass, type ToolDefinition } from "../../../lib/server/tools/index.ts";
 
 const definition: ToolDefinition<{ readonly cityId: string }, { readonly summary: string }> = {
   id: "evidence.city-summary", version: "v1", description: "Return one normalized city evidence summary.", riskClass: "R1_read_only",
@@ -13,9 +13,17 @@ const definition: ToolDefinition<{ readonly cityId: string }, { readonly summary
 const actor = { id: "actor-a", taskProfile: "information_lookup" as const, dataClasses: ["public_evidence"] as const, licensedScopes: ["public_evidence"] as const, enabledFeatureFlags: [definition.featureFlag] as const, approvals: [] as const };
 const intent = (callId: string, input: unknown = { cityId: "shanghai" }, dataClasses: readonly ToolDataClass[] = ["public_evidence"]) => ({ source: "model" as const, callId, toolId: definition.id, dataClasses, input });
 const now = () => "2026-08-28T00:00:00.000Z";
+function store(): ToolActionStore {
+  const claims = new Map<string, "started" | "completed" | "unknown">();
+  return {
+    async claim(key) { if (claims.has(key)) return claims.get(key) === "completed" ? "duplicate" : "unknown"; claims.set(key, "started"); return "claimed"; },
+    async complete(key) { if (claims.get(key) !== "started") return false; claims.set(key, "completed"); return true; },
+    async markUnknown(key) { if (claims.get(key) === "started") claims.set(key, "unknown"); },
+  };
+}
 
 test("executes only an allowlisted policy-valid intent and returns no raw output", async () => {
-  const receipt = await executeToolIntent({ registry: new ToolRegistry([definition]), intent: intent("call-1"), actor, execute: async () => ({ summary: "Shanghai evidence." }), now });
+  const receipt = await executeToolIntent({ registry: new ToolRegistry([definition]), actionStore: store(), intent: intent("call-1"), actor, execute: async () => ({ summary: "Shanghai evidence." }), now });
   assert.match(receipt.modelSafeProjection, /Shanghai evidence/);
   assert.equal("output" in receipt, false);
 });
@@ -40,18 +48,24 @@ test("rejects unsafe registration and external/proposal execution until typed pe
 test("requires a non-expired actor/call/source-bound approval when a registered tool needs approval", async () => {
   const protectedTool = { ...definition, id: "evidence.approved-read", requiresApproval: true }; const call = { ...intent("call-approved"), toolId: protectedTool.id };
   const approval = { actorId: actor.id, callId: call.callId, source: call.source, taskProfile: actor.taskProfile, dataClasses: actor.dataClasses, inputDigest: approvalDigestForToolIntent(protectedTool, call.input), expiresAt: "2026-08-29T00:00:00.000Z" };
-  await executeToolIntent({ registry: new ToolRegistry([protectedTool]), intent: call, actor: { ...actor, approvals: [approval] }, execute: async () => ({ summary: "ok" }), now });
+  await executeToolIntent({ registry: new ToolRegistry([protectedTool]), actionStore: store(), intent: call, actor: { ...actor, approvals: [approval] }, execute: async () => ({ summary: "ok" }), now });
   await assert.rejects(() => executeToolIntent({ registry: new ToolRegistry([protectedTool]), intent: call, actor: { ...actor, id: "actor-b", approvals: [approval] }, execute: async () => ({ summary: "unexpected" }), now }), /approval/i);
 });
 
-test("rejects replay, releases definite read failures, times out reads, and counts the final projection budget", async () => {
-  const registry = new ToolRegistry([definition]); const request = { registry, intent: intent("call-replay"), actor, now };
-  await executeToolIntent({ ...request, execute: async () => ({ summary: "ok" }) });
-  await assert.rejects(() => executeToolIntent({ ...request, execute: async () => ({ summary: "replay" }) }), /already executed/i);
+test("rejects replay across registry instances, preserves unknown failures, and bounds projection", async () => {
+  const actionStore = store(); const request = { actionStore, intent: intent("call-replay"), actor, now };
+  await executeToolIntent({ ...request, registry: new ToolRegistry([definition]), execute: async () => ({ summary: "ok" }) });
+  await assert.rejects(() => executeToolIntent({ ...request, registry: new ToolRegistry([definition]), execute: async () => ({ summary: "replay" }) }), /reconcile before retry/i);
   const retry = { ...request, intent: intent("call-retry") };
-  await assert.rejects(() => executeToolIntent({ ...retry, execute: async () => { throw new Error("provider unavailable"); } }));
-  await executeToolIntent({ ...retry, execute: async () => ({ summary: "recovered" }) });
+  await assert.rejects(() => executeToolIntent({ ...retry, registry: new ToolRegistry([definition]), execute: async () => { throw new Error("provider unavailable"); } }));
+  await assert.rejects(() => executeToolIntent({ ...retry, registry: new ToolRegistry([definition]), execute: async () => ({ summary: "recovered" }) }), /reconcile before retry/i);
   const short = { ...definition, id: "evidence.short", timeoutMs: 5, maxModelOutputTokens: 1 };
-  await assert.rejects(() => executeToolIntent({ registry: new ToolRegistry([short]), intent: { ...intent("call-timeout"), toolId: short.id }, actor, execute: async () => new Promise<{ summary: string }>((resolve) => setTimeout(() => resolve({ summary: "late" }), 25)), now }), /deadline/i);
-  await assert.rejects(() => executeToolIntent({ registry: new ToolRegistry([short]), intent: { ...intent("call-budget"), toolId: short.id }, actor, execute: async () => ({ summary: "{}" }), now }), /budget/i);
+  await assert.rejects(() => executeToolIntent({ registry: new ToolRegistry([short]), actionStore, intent: { ...intent("call-timeout"), toolId: short.id }, actor, execute: async () => new Promise<{ summary: string }>((resolve) => setTimeout(() => resolve({ summary: "late" }), 25)), now }), /deadline/i);
+  await assert.rejects(() => executeToolIntent({ registry: new ToolRegistry([short]), actionStore, intent: { ...intent("call-budget"), toolId: short.id }, actor, execute: async () => ({ summary: "{}" }), now }), /budget/i);
+});
+
+test("required actions fail closed without a durable store", async () => {
+  let calls = 0;
+  await assert.rejects(() => executeToolIntent({ registry: new ToolRegistry([definition]), intent: intent("no-store"), actor, execute: async () => { calls++; return { summary: "bad" }; }, now }), /Durable action store/);
+  assert.equal(calls, 0);
 });
