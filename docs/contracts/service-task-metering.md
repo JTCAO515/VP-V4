@@ -123,3 +123,9 @@ VPJ-35 的追加迁移建立私有 ServiceTask 容量记录，默认关闭容量
 开发策略使用 #225 冻结的 Free 168 小时 4 项、24 小时 2 项，或 #226 已验证且正在有效期内的 Sandbox Pass 快照 720 小时 80 项、账号 24 小时 12 项。账号统一的 24 小时窗口计入 Free/Pass 的已结算及有效预留；有效 Pass 用尽不回退 Free。接纳与 grant 变更共用账号事务锁；请求幂等、归属、同键异参仍由 #195 原接纳契约核验。Pass 未到 `startsAt`、已过 `endsAt` 或已撤销不提供容量。
 
 单个文本任务的 `clarification` 沿原预留；`technical_failure` 释放预留，合法 `repair` 在同一任务及原内部成本范围内重新校验容量。`answered` 仅在当前 Turn 成功提交、原 owner 可读取持久结果、相关 grant 仍有效时，将该任务预留唯一结算；失败、阻断与交付前取消释放预留。结算与成果写入在同一数据库事务，旧 worker 的重复完成与取消竞态不能重复结算。`partial` 保留已写入的部分成果、释放预留且不结算；该 Turn 已终结，现有归属契约禁止从 partial 自动续作或改稿，旧 worker 也不能再结算同一 Turn。跨窗口续作、等待 TTL、完成后改稿、真实收费及媒体任务均不在 U1 启用范围。新账本提供 service-role 限定的导出与删除 RPC；不复制 StoreKit 交易或供应商 attempt 账本。
+
+## 2026-09-26 U2 Trip 确认成果凭证（准备切片）
+
+`read_trip_confirmation_receipt_v1(proposal_id)` 只向当前 owner 返回仍是 Trip 最新版本的确认成果。它交叉核对已应用的 Proposal、唯一 Trip event、绑定该 Proposal 的幂等提交记录、可读取的版本快照和当前 Trip head；提案展示、拒绝、过期、旧版本和历史上未绑定 Proposal 的回执均不返回成果。结果只包含 Proposal、Trip 和版本 ID，不复制行程内容。
+
+此凭证不是扣次接口。现有 ServiceTask 表允许 `text_answer` 与 `reviewed_answer`；U1 的容量接纳仍仅覆盖现有文本目标路径，没有 `trip_modification` 类型或 Trip thread 绑定。#198 的 Trip 确认入口尚未携带可验证的 ServiceTask 身份；因此不能把手动 Trip 编辑、任意文本任务或按钮点击视作可计量 Trip 目标。后续接入须在同一数据库事务中锁定 owner、任务与 Trip，验证任务目标/范围、当前 Proposal 和确认意图，原子 Patch 成功且版本可读后才把已有任务预留结算一次。现有确认 RPC 保持原有 owner/RLS 与幂等保护，开发容量开关仍默认关闭。Trip 变更后的延迟独立结算不能依赖本凭证，因为最新版本可能已变化。
