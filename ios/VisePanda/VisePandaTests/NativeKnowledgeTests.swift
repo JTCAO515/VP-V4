@@ -351,6 +351,37 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         XCTAssertNil(store.result, "a cleared account must not revive a late result")
     }
 
+    @MainActor func testTripResultOpensOnlyExactCurrentReference() async throws {
+        let tripID = UUID().uuidString.lowercased(), otherTrip = UUID().uuidString.lowercased()
+        let artifactID = UUID().uuidString.lowercased(), store = NativeResultStore()
+        func bytes(_ value: [String: Any]) throws -> Data { try JSONSerialization.data(withJSONObject: value) }
+        let reference = try bytes(["version": 1, "data": ["kind": "result_reference", "artifactId": artifactID, "revision": 2, "tripId": tripID]])
+        func result(_ sourceTrip: String, current: Bool = true) throws -> Data {
+            try bytes(["version": 1, "data": ["kind": "result_artifact", "artifactId": artifactID, "revision": 2,
+                "current": current, "lifecycle": "active", "source": ["tripId": sourceTrip, "tripVersion": 0],
+                "content": ["schemaVersion": "comparison/1", "title": "Synthetic Trip comparison", "summary": "No real travel advice.",
+                    "options": [["id": "one", "title": "One", "tradeoff": "Time unknown"],
+                                ["id": "two", "title": "Two", "tradeoff": "Availability unknown"]]]]])
+        }
+        await store.load(scope: owner, tripID: tripID, reference: { reference }, open: { id, revision in
+            XCTAssertEqual(id, artifactID); XCTAssertEqual(revision, 2)
+            return try result(tripID)
+        })
+        XCTAssertEqual(store.result?.artifactId, artifactID)
+        XCTAssertEqual(store.result?.revision, 2)
+        XCTAssertTrue(store.isCurrent(owner))
+        await store.load(scope: owner, tripID: tripID, reference: { reference }, open: { _, _ in try result(otherTrip) })
+        XCTAssertNil(store.result, "another Trip's body cannot replace this reference")
+        XCTAssertEqual(store.state, "unavailable")
+        await store.load(scope: owner, tripID: tripID, reference: { reference }, open: { _, _ in try result(tripID, current: false) })
+        XCTAssertNil(store.result, "a changed basis cannot remain in the selected Trip")
+        let empty = try bytes(["version": 1, "data": ["kind": "empty"]])
+        await store.load(scope: owner, tripID: tripID, reference: { empty }, open: { _, _ in
+            XCTFail("an empty reference must not open a result"); return Data()
+        })
+        XCTAssertEqual(store.state, "empty")
+    }
+
 }
 
 private actor KnowledgeReadBarrier {

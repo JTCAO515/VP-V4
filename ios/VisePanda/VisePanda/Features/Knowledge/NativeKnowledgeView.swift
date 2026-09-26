@@ -110,12 +110,37 @@ struct NativeResultEnvelope: Decodable {
     let data: NativeResultPayload
 }
 
+struct NativeTripResultReferenceEnvelope: Decodable {
+    let version: Int
+    let data: NativeTripResultReference
+}
+
+struct NativeTripResultReference: Decodable {
+    let kind: String
+    let artifactId: String?
+    let revision: Int?
+    let tripId: String?
+
+    func valid(for expectedTripID: String) -> Bool {
+        if kind == "empty" || kind == "unavailable" { return artifactId == nil && revision == nil && tripId == nil }
+        guard kind == "result_reference", let artifactId, UUID(uuidString: artifactId) != nil,
+              let revision, (1...1000).contains(revision), tripId == expectedTripID else { return false }
+        return true
+    }
+}
+
+struct NativeResultSource: Decodable {
+    let tripId: String?
+    let tripVersion: Int?
+}
+
 struct NativeResultPayload: Decodable {
     let kind: String
     let artifactId: String?
     let revision: Int?
     let current: Bool?
     let lifecycle: String?
+    let source: NativeResultSource?
     let content: NativeResultContent?
 
     var valid: Bool {
@@ -178,6 +203,36 @@ final class NativeResultStore {
         }
     }
 
+    func load(scope requested: NativeDataScope?, tripID: String, using session: NativeSession) async {
+        await load(scope: requested, tripID: tripID, reference: {
+            guard session.dataScope == requested else { throw NativeDataError.staleSessionResponse }
+            return try await session.tripResultReferenceRequest(tripID: tripID)
+        }, open: { artifactID, revision in
+            guard session.dataScope == requested else { throw NativeDataError.staleSessionResponse }
+            let bytes = try await session.resultRequest(artifactID: artifactID, revision: revision)
+            guard session.dataScope == requested else { throw NativeDataError.staleSessionResponse }
+            return bytes
+        })
+    }
+
+    func load(scope requested: NativeDataScope?, tripID: String,
+              reference: () async throws -> Data, open: (String, Int) async throws -> Data) async {
+        await load(scope: requested) {
+            let referenceBytes = try await reference()
+            let reference = try JSONDecoder().decode(NativeTripResultReferenceEnvelope.self, from: referenceBytes)
+            guard reference.version == 1, reference.data.valid(for: tripID) else { throw NativeDataError.invalidResponse }
+            if reference.data.kind != "result_reference" { return referenceBytes }
+            guard let artifactID = reference.data.artifactId, let revision = reference.data.revision else { throw NativeDataError.invalidResponse }
+            let bytes = try await open(artifactID, revision)
+            let result = try JSONDecoder().decode(NativeResultEnvelope.self, from: bytes)
+            guard result.version == 1, result.data.valid, result.data.kind == "result_artifact",
+                  result.data.artifactId == artifactID, result.data.revision == revision,
+                  result.data.current == true, result.data.source?.tripId == tripID,
+                  result.data.source?.tripVersion != nil else { throw NativeDataError.invalidResponse }
+            return bytes
+        }
+    }
+
     func load(scope requested: NativeDataScope?, fetch: () async throws -> Data) async {
         clear()
         guard let requested, !Task.isCancelled else { return }
@@ -200,6 +255,7 @@ struct NativeResultCard: View {
     let store: NativeResultStore
     let scope: NativeDataScope?
     let chinese: Bool
+    var expectedTripID: String? = nil
     private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
 
     var body: some View {
@@ -207,6 +263,9 @@ struct NativeResultCard: View {
             Text(text("My comparison result", "我的比较成果")).font(.headline)
             if scope == nil {
                 Text(text("Sign in to read saved results.", "登录后可读取已保存的成果。"))
+            } else if store.state == "result_artifact", let expectedTripID,
+                      store.result?.source?.tripId != expectedTripID {
+                Text(text("Checking the selected Trip's result…", "正在核对所选行程的成果……"))
             } else if store.isCurrent(scope), let result = store.result, result.kind == "result_artifact", let content = result.content {
                 Text(content.title).font(.title3.bold()).textSelection(.enabled)
                 Text(content.summary).textSelection(.enabled)

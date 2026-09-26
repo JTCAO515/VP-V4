@@ -213,6 +213,15 @@ final class NativeSession {
         return bytes
     }
 
+    /// Journeys resolves only an owned exact result reference for its selected Trip.
+    func tripResultReferenceRequest(tripID: String) async throws -> Data {
+        guard UUID(uuidString: tripID) != nil else { throw NativeDataError.invalidResponse }
+        let bytes = try await dataRequest(prefix: "api/results/native/v1/trip", path: "api/results/native/v1/trip", method: "GET",
+                                          queryItems: [.init(name: "tripId", value: tripID)])
+        guard bytes.count <= 10_000 else { throw NativeDataError.invalidResponse }
+        return bytes
+    }
+
     /// Read-only place observations use the same active native-session fence as
     /// Trip and Knowledge. The provider credential remains server-side.
     func placeLookupRequest(_ parameters: [String: String]) async throws -> Data {
