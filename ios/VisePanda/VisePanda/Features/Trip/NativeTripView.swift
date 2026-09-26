@@ -44,9 +44,11 @@ struct NativeTripView: View {
         let headVersion: Int?
         let archived: Bool
         let deleting: Bool
+        let active: Bool
     }
     var initialPlanningRequest: String? = nil
     @Environment(AppSettings.self) private var settings
+    @Environment(\.scenePhase) private var scenePhase
     @State private var store = NativeTripStore()
     @State private var resultStore = NativeResultStore()
     @State private var newTitle = ""
@@ -74,7 +76,8 @@ struct NativeTripView: View {
     private var session: NativeSession { settings.nativeSession }
     private var resultLoadKey: ResultLoadKey {
         .init(scope: session.dataScope, tripID: store.detail?.trip.id, headVersion: store.detail?.trip.headVersion,
-              archived: store.archive != nil, deleting: store.deletionRequest != nil || store.deletionReceipt != nil)
+              archived: store.archive != nil, deleting: store.deletionRequest != nil || store.deletionReceipt != nil,
+              active: scenePhase == .active)
     }
     private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
     private var outlineCanPromote: Bool {
@@ -127,8 +130,10 @@ struct NativeTripView: View {
                     if let detail = store.detail {
                         confirmed(detail)
                         if store.archive == nil && store.deletionRequest == nil && store.deletionReceipt == nil {
-                            NativeResultCard(store: resultStore, scope: session.dataScope, chinese: chinese,
-                                             expectedTripID: detail.trip.id)
+                            TimelineView(.periodic(from: .now, by: 1)) { _ in
+                                NativeResultCard(store: resultStore, scope: session.dataScope, chinese: chinese,
+                                                 expectedTripID: detail.trip.id)
+                            }
                         }
                         NativeTravelRemindersView(detail: detail, session: session, chinese: chinese)
                             .id("reminders-\(detail.trip.id)-\(session.dataScope?.subject ?? "")")
@@ -194,7 +199,7 @@ struct NativeTripView: View {
         .task(id: resultLoadKey) {
             let key = resultLoadKey
             guard let scope = key.scope, let tripID = key.tripID, !key.archived, !key.deleting,
-                  store.scope == scope else { resultStore.clear(); return }
+                  key.active, store.scope == scope else { resultStore.clear(); return }
             await resultStore.load(scope: scope, tripID: tripID, using: session)
         }
         .onChange(of: session.retainedDataScope) { _, retained in
