@@ -45,6 +45,7 @@ final class NativeSession {
         endpoint = Self.resolveEndpoint(arguments: arguments, bundleConfiguration: bundleConfiguration)
         let installed = bundleConfiguration["VisePandaNativeTaskContext", default: ""]
         if !installed.isEmpty { askMode = NativeAskMode(rawValue: installed) ?? .unavailable }
+        else if endpoint?.scheme == "http", arguments.contains("-VisePandaAssistantConversation") { askMode = .assistant }
         else if endpoint?.scheme == "http", arguments.contains("-VisePandaGroundedMode") { askMode = .grounded }
         else if endpoint?.scheme == "http", arguments.contains("-VisePandaTaskContext") { askMode = .taskContext }
         else { askMode = .currentInput }

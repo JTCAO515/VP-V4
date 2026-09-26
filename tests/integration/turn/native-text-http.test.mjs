@@ -92,3 +92,63 @@ test('real local Auth, native HTTP, consent, durable worker and recovery enforce
   assert.ok(evidence.runs[3].some(r=>r.phase==='poll-returned'&&r.result==='finished'),'task mode continues after process restart');
  }
 });
+
+test('v5 conversation persists independent answer and versioned goal changes without extra task attempts',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
+ const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
+ const call=async(path,token,method='GET',body)=>{const response=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:response.status,body:await response.json()};};
+ const login=async(user)=>{const attemptId=randomUUID();const c=await call('/api/auth/native/v2/credentials',null,'POST',{email:user.email,password:user.password,attemptId});assert.equal(c.status,200);assert.equal((await call('/api/auth/native/v2/login',c.body.accessToken,'POST',{attemptId})).status,200);return c.body.accessToken;};
+ const owner=await login(e.users[0]),other=await login(e.users[1]),base='/api/chat/native/v5';
+ const policy=(await call(base+'/policy',owner)).body.policy;
+ const conversationId=randomUUID();
+ const make=(relationship,overrides={})=>({conversationId,messageId:randomUUID(),idempotencyKey:randomUUID(),policyId:policy.id,locale:'en',text:'Synthetic independent question',relationship,goalId:null,expectedGoalVersion:null,taskId:null,parentMessageId:null,turnId:relationship==='independent_question'?randomUUID():null,...overrides});
+ const question=make('independent_question');
+ assert.equal((await call(base+'/conversation',owner,'POST',question)).status,403,'consent required');
+ assert.equal(e.sql(`select count(*) from turn_private.assistant_conversations where id='${conversationId}';`),'0');
+ assert.equal((await call(base+'/consent',owner,'POST',{policyId:policy.id,noticeHash:policy.noticeHash})).status,200);
+ const responses=await Promise.all([call(base+'/conversation',owner,'POST',question),call(base+'/conversation',owner,'POST',question)]);
+ assert.deepEqual(responses.map(x=>x.status).sort(),[200,201]);
+ await waitUntil(async()=>{const read=await call(base+'/conversation',owner);return read.body.messages?.[0]?.outcome==='answered';},30000,'v5 independent text answer');
+ let read=(await call(base+'/conversation',owner)).body;
+ assert.equal(read.version,5);assert.equal(read.conversationId,conversationId);assert.equal(read.messages[0].output,'Local synthetic answer: request completed.');
+ assert.equal((await call(base+'/conversation',other)).status,403,'other owner without consent sees nothing');
+ assert.equal((await call(base+'/consent',other,'POST',{policyId:policy.id,noticeHash:policy.noticeHash})).status,200);
+ assert.deepEqual((await call(base+'/conversation',other)).body.messages,[],'consented other owner sees no conversation');
+ assert.equal((await call(base+'/conversation',other,'POST',make('goal_start',{goalId:randomUUID(),turnId:null}))).status,403,'other owner cannot append to conversation');
+ assert.equal((await call(base+'/conversation',owner,'POST',{...question,text:'Changed'})).status,409);
+ assert.equal((await call(base+'/conversation',owner,'POST',{...question,selectedArtifactId:randomUUID()})).status,400,'unknown artifact field closed');
+ const goalId=randomUUID();const start=make('goal_start',{text:'Plan a China trip without dates',goalId,turnId:null});
+ assert.equal((await call(base+'/conversation',owner,'POST',start)).status,201);
+ read=(await call(base+'/conversation',owner)).body;
+ assert.equal(read.goals[0].scopeVersion,1);assert.equal(read.messages.length,2);
+ const amend=make('amendment',{text:'Prefer rail and fewer transfers',goalId,expectedGoalVersion:1,parentMessageId:start.messageId,turnId:null});
+ const conflict=make('amendment',{text:'Prefer buses',goalId,expectedGoalVersion:1,parentMessageId:start.messageId,turnId:null});
+ const raced=await Promise.all([call(base+'/conversation',owner,'POST',amend),call(base+'/conversation',owner,'POST',conflict)]);
+ assert.deepEqual(raced.map(x=>x.status).sort(),[201,409]);
+ const winner=raced[0].status===201?amend:conflict;
+ read=(await call(base+'/conversation',owner)).body;
+ assert.equal(read.goals[0].scopeVersion,2);assert.deepEqual(read.messages.map(x=>x.sequence),[1,2,3]);
+ const follow=make('follow_up',{text:'Please keep this in mind',goalId,expectedGoalVersion:2,parentMessageId:winner.messageId,turnId:null});
+ assert.equal((await call(base+'/conversation',owner,'POST',follow)).status,201);
+ assert.equal((await call(base+'/conversation',owner,'POST',{...follow,expectedGoalVersion:1,messageId:randomUUID(),idempotencyKey:randomUUID()})).status,409);
+ assert.equal((await call(base+'/conversation',owner,'POST',{...follow,taskId:randomUUID(),messageId:randomUUID(),idempotencyKey:randomUUID()})).status,409,'unowned task rejected');
+ assert.equal(e.sql(`select count(*) from public.model_budget_attempts where scope_id='${e.users[0].scopeId}';`),'1','goal edits did not enqueue or settle another attempt');
+ const taskIds=[];
+ for(let index=0;index<2;index++){
+  const taskId=randomUUID(),taskTurn=randomUUID();taskIds.push(taskId);
+  const task={threadId:randomUUID(),turnId:taskTurn,idempotencyKey:randomUUID(),policyId:policy.id,locale:'en',text:'Synthetic related task '+index,serviceTask:{id:taskId,scopeVersion:1,relationship:'new_goal',parentTurnId:null}};
+  assert.equal((await call('/api/chat/native/v2/turns',owner,'POST',task)).status,201,'existing task explicitly admitted');
+  const link=make('follow_up',{text:'Attach accepted task '+index,goalId,expectedGoalVersion:2,parentMessageId:follow.messageId,taskId,turnId:null});
+  assert.equal((await call(base+'/conversation',owner,'POST',link)).status,201,'goal references existing task');
+ }
+ read=(await call(base+'/conversation',owner)).body;
+ assert.deepEqual(read.messages.filter(x=>x.taskId).map(x=>x.taskId),taskIds);
+ const otherGoalId=randomUUID(),otherStart=make('goal_start',{text:'A separate goal',goalId:otherGoalId,turnId:null});
+ assert.equal((await call(base+'/conversation',owner,'POST',otherStart)).status,201);
+ assert.equal((await call(base+'/conversation',owner,'POST',make('follow_up',{text:'Do not reassign the first task',goalId:otherGoalId,expectedGoalVersion:1,parentMessageId:otherStart.messageId,taskId:taskIds[0],turnId:null}))).status,409);
+ await login(e.users[0]);assert.equal((await call(base+'/conversation',owner)).status,401,'replaced session cannot read');
+ const replacement=await login(e.users[0]);
+ assert.equal((await call(base+'/conversation',replacement)).body.messages.length,7,'new session reads durable conversation');
+ assert.equal((await call(base+'/consent',replacement,'DELETE',{policyId:policy.id})).status,200);
+ assert.equal((await call(base+'/conversation',replacement)).status,403,'withdrawal hides transcript');
+ assert.equal((await call(base+'/conversation',replacement,'POST',make('independent_question'))).status,403,'withdrawal denies new work');
+});

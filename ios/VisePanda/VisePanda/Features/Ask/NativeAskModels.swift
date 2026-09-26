@@ -119,9 +119,9 @@ struct NativeServiceTaskLink: Codable, Equatable {
 }
 
 enum NativeAskMode: String, Codable {
-    case currentInput = "", taskContext = "task_history_v1", grounded = "knowledge_intent_v1", unavailable
+    case currentInput = "", taskContext = "task_history_v1", grounded = "knowledge_intent_v1", assistant = "assistant_conversation_v1", unavailable
     var usesTask: Bool { self == .taskContext || self == .grounded }
-    var version: Int { self == .grounded ? 4 : self == .taskContext ? 3 : 1 }
+    var version: Int { self == .assistant ? 5 : self == .grounded ? 4 : self == .taskContext ? 3 : 1 }
     var base: String { "api/chat/native/v\(version)" }
 }
 
