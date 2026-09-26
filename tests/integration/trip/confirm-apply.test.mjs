@@ -38,12 +38,16 @@ test("AI-10 confirms exactly one pending proposal in a local RLS transaction", a
     const receipt = (id, authHeaders = headers) => request("/rest/v1/rpc/read_trip_confirmation_receipt_v1", {
       method: "POST", headers: authHeaders, body: JSON.stringify({ p_proposal_id: id }),
     });
+    const capacityCount = () => execFileSync("docker", ["exec", env.DB_CONTAINER, "psql", "-U", "postgres", "-d", "postgres", "-Atq", "-c",
+      `select count(*) from turn_private.service_task_capacity where owner_id='${ownerId}'::uuid;`], { encoding: "utf8" }).trim();
+    assert.equal(capacityCount(), "0", "a manually created Trip proposal has no ServiceTask admission");
     assert.deepEqual(JSON.parse((await receipt(proposal.id)).body), [], "a pending proposal is not a Trip result");
     const call = (digest) => request("/rest/v1/rpc/confirm_and_apply_trip_proposal", { method: "POST", headers, body: JSON.stringify({ p_proposal_id: proposal.id, p_idempotency_key: "probe-key", p_digest: digest }) });
     const digest = await confirmationDigest(env, headers, proposal.id, "digest-a");
     assert.equal(JSON.parse((await call(digest)).body)[0].outcome, "applied");
     assert.equal(JSON.parse((await call(digest)).body)[0].outcome, "already_applied");
     assert.deepEqual(JSON.parse((await receipt(proposal.id)).body), [{ proposal_id: proposal.id, trip_id: trip.id, resulting_version: 1 }]);
+    assert.equal(capacityCount(), "0", "a Trip confirmation receipt cannot settle or create text capacity");
     assert.notEqual((await receipt(proposal.id, { apikey: env.ANON_KEY, "content-type": "application/json" })).response.status, 200, "anonymous cannot read the receipt");
     const otherEmail = `ai10-other-${crypto.randomUUID()}@local.test`;
     result = await request("/auth/v1/admin/users", { method: "POST", headers: { apikey: env.SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SERVICE_ROLE_KEY}`, "content-type": "application/json" },
@@ -88,6 +92,7 @@ test("AI-10 confirms exactly one pending proposal in a local RLS transaction", a
     assert.equal(JSON.parse(result.body)[0].outcome, "applied");
     assert.deepEqual(JSON.parse((await receipt(proposal.id)).body), [], "a superseded Trip head is not the current result");
     assert.deepEqual(JSON.parse((await receipt(newer.id)).body), [{ proposal_id: newer.id, trip_id: trip.id, resulting_version: 2 }]);
+    assert.equal(capacityCount(), "0", "a newer manual confirmation remains unmetered");
   } finally {
     if (ownerId) execFileSync("docker", ["exec", env.DB_CONTAINER, "psql", "-U", "postgres", "-d", "postgres", "-c", `delete from public.trips where owner_id = '${ownerId}'::uuid;`], { stdio: "ignore" });
     if (ownerId) await request(`/auth/v1/admin/users/${ownerId}`, { method: "DELETE", headers: { apikey: env.SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SERVICE_ROLE_KEY}` } });
