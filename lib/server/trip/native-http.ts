@@ -11,7 +11,7 @@ type Action = "list" | "create" | "read" | "proposal_read" | "proposal_create" |
 const response = (value: unknown, status = 200) => Response.json(value, { status, headers: { "Cache-Control": "private, no-store" } });
 const failure = (code: FailureCode) => response({ error: { code } }, FAILURE_TAXONOMY[code].httpStatus);
 export async function nativeTripHTTP(request: NextRequest, action: Action, tripId?: string) {
-  const config = getNativeRuntimeConfig(request, "trip");
+  const config = getNativeRuntimeConfig(request, "trip", "trip");
   if (!config) return failure("PROVIDER_UNAVAILABLE");
   if (request.headers.has("cookie") || request.headers.has("origin")) return failure("INVALID_INPUT");
   if (tripId !== undefined && !isUuid(tripId)) return failure("INVALID_INPUT");

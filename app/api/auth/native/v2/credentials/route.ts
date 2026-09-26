@@ -3,5 +3,5 @@ import { getNativeRuntimeConfig } from "@/lib/server/identity/native-config";
 
 export const runtime = "nodejs";
 export async function POST(request: Request) {
-  return nativeIdentityHTTP(request, "credentials", getNativeRuntimeConfig(request, "session"));
+  return nativeIdentityHTTP(request, "credentials", getNativeRuntimeConfig(request, "session", "identity"));
 }

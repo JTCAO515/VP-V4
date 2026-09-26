@@ -1,4 +1,5 @@
 import { getNativeRuntimeConfig } from "@/lib/server/identity/native-config";
+import { nativeReadEnabled } from "@/lib/server/knowledge/native-read-flag";
 import { verifyNativeCredentials } from "@/lib/server/identity/native-credentials";
 import { nativeRequestScope } from "@/lib/server/identity/native-request";
 import { knowledgeQuestionScope } from "@/lib/server/knowledge/claim/question";
@@ -8,7 +9,7 @@ export async function GET(request:Request){
  const reply=(data:unknown,status=200)=>Response.json(data,{status,headers:{"Cache-Control":"private, no-store"}});
  const failure=(code:string,status:number)=>reply({error:{code}},status);
  const config=getNativeRuntimeConfig(request,"session");
- const allowed=config?.environment==="staging" ? process.env.KNOWLEDGE_STAGING_READ==="1" : process.env.KNOWLEDGE_LOCAL_READ==="1";
+ const allowed=nativeReadEnabled(config?.environment,process.env);
  if(!config||!allowed)return failure('KNOWLEDGE_DISABLED',503);
  if(request.headers.has('cookie')||request.headers.has('origin'))return failure('INVALID_INPUT',400);
  const input=knowledgeQuestionScope(new URL(request.url));if(!input)return failure('INVALID_INPUT',400);
