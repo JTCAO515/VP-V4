@@ -18,6 +18,7 @@ Branch `codex/vpj80-planning-chain-20260927`, initially from main `972cfdb01b352
 - PASS: `pnpm lint`, `pnpm typecheck`, `pnpm docs:check`, `pnpm check:flags`, `git diff --check` and DB test classification on the rebased branch.
 - PASS: `pnpm build` compiled the new planning policy/tasks routes as dynamic server routes. Next-generated `AGENTS.md` diff was removed from the PR worktree after the build.
 - PASS: `pnpm test:contract` 695/695 with no skips. `pnpm test:security` exited 0 with 189 pass/1 environment skip and reports incomplete; `pnpm test:integration` exited 0 with 39 pass/127 environment skips and reports incomplete. The dedicated DB/native runs above are separate actual local integration evidence.
+- Initial PR head `7f2a293d` failed the remote `supabase-rls` exact authenticated-function allowlist because four new planning caller RPCs had not been registered in `tests/integration/identity/function-acl.test.mjs`. The intended grants were reviewed and only those four exact signatures added; a new subtest checks private planning functions/tables. PASS: focused disposable `supabase-rls` lane after the fix, 13 files / 23 tests / 0 skips or failures. New-head CI remains pending.
 
 ## UNRUN / limits
 

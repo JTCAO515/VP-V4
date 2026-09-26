@@ -16,6 +16,7 @@ const AUTHENTICATED = [
   "identity_private.mobile_access_v2()",
   "identity_private.mobile_session_v2(text,uuid)",
   "ops_budget_private.read_ops_budget_scope_for_member_v1(uuid)",
+  "public.accept_planning_policy_v1(uuid,text)",
   "public.accept_text_policy(uuid,text)",
   "public.archive_trip_v1(uuid,integer,uuid,boolean)",
   "public.cancel_chat_turn(uuid)",
@@ -52,6 +53,7 @@ const AUTHENTICATED = [
   "public.read_grounded_turn(uuid)",
   "public.read_assistant_conversation_v1(uuid,uuid)",
   "public.read_assistant_goal_trip_link_v1(uuid)",
+  "public.read_planning_policy_v1(uuid)",
   "public.read_result_artifacts_v1(uuid,integer)",
   "public.read_retrievable_memory_profiles()",
   "public.read_text_policy(uuid)",
@@ -75,11 +77,13 @@ const AUTHENTICATED = [
   "public.start_text_turn(uuid,uuid,uuid,uuid,text,text)",
   "public.submit_grounded_turn(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid,text)",
   "public.submit_assistant_message_v1(uuid,uuid,uuid,uuid,text,text,text,uuid,integer,uuid,uuid,uuid)",
+  "public.submit_planning_comparison_v1(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,jsonb)",
   "public.submit_service_task_turn(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid)",
   "public.submit_text_turn(uuid,uuid,uuid,uuid,text,text)",
   "public.transition_memory_profile(uuid,text)",
   "public.undo_explicit_memory_create_v1(uuid,uuid,bigint,uuid)",
   "public.travel_reminders_v1(uuid,text,jsonb)",
+  "public.withdraw_planning_policy_v1(uuid)",
   "public.withdraw_text_policy(uuid)",
 ];
 
@@ -133,6 +137,21 @@ test("repository functions grant EXECUTE to anon and authenticated only through 
       has_function_privilege('service_role','public.read_result_events_v1(bigint,integer)'::regprocedure,'EXECUTE');`), ["f|f|t"]);
     for (const table of ["result_artifacts", "result_revisions", "result_events"]) {
       assert.deepEqual(sql(`select has_table_privilege('authenticated','turn_private.${table}','SELECT'),has_table_privilege('service_role','turn_private.${table}','SELECT');`), ["f|f"]);
+    }
+  });
+
+  await t.test("planning execution stays service-only with private, RLS-enabled storage", () => {
+    for (const fn of ["claim_planning_comparison_work_v1(uuid,uuid)","read_planning_comparison_work_v1(uuid,uuid)",
+      "authorize_planning_dispatch_v1(uuid,uuid,text,uuid,uuid)","complete_planning_observation_v1(uuid,uuid,uuid,text,jsonb)",
+      "complete_planning_comparison_v1(uuid,uuid,uuid,text,uuid,text,jsonb)"]) {
+      assert.deepEqual(sql(`select has_function_privilege('anon','public.${fn}'::regprocedure,'EXECUTE'),
+        has_function_privilege('authenticated','public.${fn}'::regprocedure,'EXECUTE'),
+        has_function_privilege('service_role','public.${fn}'::regprocedure,'EXECUTE');`),["f|f|t"],fn);
+    }
+    for (const table of ["planning_consents","planning_comparisons","planning_model_dispatches","planning_observations"]) {
+      assert.deepEqual(sql(`select relrowsecurity from pg_class where oid='turn_private.${table}'::regclass;`),["t"],table);
+      assert.deepEqual(sql(`select has_table_privilege('authenticated','turn_private.${table}','SELECT'),
+        has_table_privilege('service_role','turn_private.${table}','SELECT');`),["f|f"],table);
     }
   });
 
