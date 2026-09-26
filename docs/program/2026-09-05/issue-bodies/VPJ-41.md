@@ -8,9 +8,9 @@
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：WEB1：Web完成基本编辑、Ask、diff确认并同步原生；材料状态和权益可读。
-- 本票责任/非目标：负责轻量Web最终整合验收；不做第二完整App，不重建05数据层、20内容或34权益。 2026-09-22已确认的实施顺序：WEB1 → WEB2；交接输入不新增原生blocked，完整父票验收保留。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
+- 首个可交付结果：复验轻量Web与原生使用同一Trip、支持成果和准确确认revision。
+- 本票责任/非目标：保留轻量Web范围；不复制原生四Tab全产品，不新建第二套artifact/Trip数据。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/S4-S5-SLICES-2026-09-22.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
@@ -28,6 +28,7 @@
 - [VPJ-05 #192](https://github.com/JTCAO515/VP-V4/issues/192)
 - [VPJ-20 #210](https://github.com/JTCAO515/VP-V4/issues/210)
 - [VPJ-34 #226](https://github.com/JTCAO515/VP-V4/issues/226)
+- [VPJ-79 #560](https://github.com/JTCAO515/VP-V4/issues/560)
 
 可按首个切片独立推进；这些输入的实际能力与适用证据仍须在集成/整票验收时核对，不能用 fixture 或移除图标替代。
 
@@ -37,6 +38,7 @@
 - [ ] 公开Landing/Explore明确当前可用/覆盖/第三方预订，Early Access邮箱同意可撤。
 - [ ] 桌面+390x844、中英、键盘无障碍/真实品牌资产/claim scan通过；不重做第二全功能App。
 - [ ] 真实Web消费者按VP响应规范呈现主结果、必要限定与下一步；英文原生表达、中英状态一致，正文不控制按钮权限/确认目标，保留轻量同Trip范围与原有可访问性门。
+- [ ] 助手升级2026-09-27：支持的新成果和proposal通过同源版本读取；未知schema安全降级，旧客户端不能在丢字段后确认新语义。
 
 ## 不得触碰
 

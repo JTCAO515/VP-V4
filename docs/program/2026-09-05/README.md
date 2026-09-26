@@ -8,6 +8,13 @@
 
 ## 当前状态
 
+2026-09-27当前升级：先读[新开发计划](../../product/assistant-upgrade-2026-09-27/README.md)、
+[体验合同](../../product/assistant-upgrade-2026-09-27/EXPERIENCE.md)与[ADR-0027](../../adr/ADR-0027-personal-journey-assistant.md)。
+JT确认重做交互层、复用领域核心；原生VP/Journeys/Library/Memory四Tab，全局Search与Memory四处可见。
+新增VPJ-77…83及修订既有任务仍以issue-plan.json为唯一定义源。新计划U0–U4优先于下方历史
+队列固定顺序；S1–S6继续表示验收分类。在途基础工作、有效证据和未验项保留。本轮只交付规划。
+旧主报告和ADR中的导航/新包装冲突按ADR-0027定向替代，未冲突领域与发布门继续适用。
+
 [2026-09-24 GitHub 全队列读回](CURRENT-STATUS-2026-09-24.md)（可用 `node scripts/program-status.mjs` 重新生成）区分已合并实现、开放 PR 和未验项。下文初始任务数、首批分工和有日期的增量是规划记录，不是实时待办。
 
 ## 从哪里开始

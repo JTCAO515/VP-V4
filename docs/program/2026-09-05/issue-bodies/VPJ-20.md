@@ -4,13 +4,13 @@
 
 ## 用户结果
 
-Explore 浏览内容并保存、问 VP、加入 Trip。
+全局探索中的地点发现、保存和交给VP。
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：让一条当前有资格的Explore内容完成浏览→Save→Ask→经确认Add到现有Trip的用户行为。
-- 本票责任/非目标：负责发现与消费界面；#365是本票地图/路线集成切片，地点身份归19、知识发布归15，不重建两套收藏/Trip。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：复用真实内容和地点身份，在全局搜索/探索页展示有依据的旅行发现并交给VP。
+- 本票责任/非目标：旧Explore独立Tab迁入搜索/探索；本票拥有内容/Save/Ask/Add行为，VPJ-82拥有跨域搜索聚合。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
@@ -36,6 +36,7 @@ Explore 浏览内容并保存、问 VP、加入 Trip。
 - [ ] 中英官方/编辑内容可主动浏览、搜索和收藏；说明覆盖与来源。
 - [ ] Save/Ask/Add使用同一实体ID，Add走Proposal/Confirm；地点没找到可发起消歧/研究。
 - [ ] 无内容、已下架、过期图片/许可、分页/弱网状态可用，不用静态假数据冒充全国。
+- [ ] 助手升级2026-09-27：新四Tab无独立Explore，全球入口使用明确选区/实体/来源带入主会话；不能把照片或用户偏好当地点证据，生产图片有权利与真实地点对应。
 
 ## 不得触碰
 

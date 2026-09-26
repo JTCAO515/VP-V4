@@ -10,7 +10,7 @@ Harness：故障取消与重连不伪造成功或重复提交。
 
 - 首个可交付结果：在68同一任务的一个提交/回执检查点注入真实中断，验证原任务恢复、取消和重复投递的终态。
 - 本票责任/非目标：负责跨执行/确认的故障整合；07/08实现运行机制，59记attempt费用，不重复建设队列。
-- 先读/复用：[docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md)
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/harness/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/harness/README.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
@@ -25,7 +25,7 @@ Harness：故障取消与重连不伪造成功或重复提交。
 
 ## 集成与最终验收依赖（普通关联）
 
-无其他普通关联；上列真实开工依赖仍保留。
+- [VPJ-80 #561](https://github.com/JTCAO515/VP-V4/issues/561)
 
 可按首个切片独立推进；这些输入的实际能力与适用证据仍须在集成/整票验收时核对，不能用 fixture 或移除图标替代。
 
@@ -36,6 +36,7 @@ Harness：故障取消与重连不伪造成功或重复提交。
 - [ ] 取消阻止后续新副作用；提交已发生则显示已提交，不能伪称撤销。旧租约不能继续提交，跨账号旧事件不能回放。
 - [ ] 实际Staging持久worker/数据/客户端在进程重启后仍恢复同一任务；进程内fake只能作为准备证据。任务次数/期限/费用均有预设上限。
 - [ ] 将12场景中的故障与取消案例及命名注入点加入回归，保存实际最终状态/回执/失败矩阵；原生中英及现有Web受影响恢复路径验证。
+- [ ] 助手升级2026-09-27：覆盖独立对话与后台任务、重启检查点、改口/撤回后旧成果失效、at-least-once工具执行和逻辑成果幂等；unknown不得变completed。
 
 ## 不得触碰
 

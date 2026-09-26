@@ -3,6 +3,10 @@
 用户已于 2026-09-05 授权重新设计整体产品、定价/订阅、代码与文档处置，并将原有全部开放 Issue 关闭后建立新队列。
 
 ## 目标
+
+2026-09-27 JT明确授权重排repo内说明文档、ADR和既有Issue。当前采用[ADR-0027](https://github.com/JTCAO515/VP-V4/blob/main/docs/adr/ADR-0027-personal-journey-assistant.md)：重做交互层、复用领域核心；VP/Journeys/Library/Memory四Tab、全局Search、可见Memory、持续对话、后台委托与同源成果。
+
+面向coding agent的[新计划](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md)及U0–U4是当前升级顺序；新增VPJ-77…83并修订原任务，保留实际owner、进展和未验项。旧五Tab、新产品Pass-only及固定排期由本决定定向替代。规划不代表新能力已运行或正式发布。
 交付中英双语原生 iOS 的一站式陪伴 Journey Agent。规划、准备、现场翻译/讲解、用户报告变化后的恢复共享同一 Trip；Web 为可基本编辑/确认的精简 Planning Studio。酒店首发止于需求/候选解释与经验证的联盟跳转。
 
 ## 初始统筹交付（2026-09-05历史）
@@ -14,7 +18,7 @@
 
 ## 实施入口
 
-2026-09-17用户授权的[Issue整理与排期](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/ISSUE-AUDIT-2026-09-17.md)为现有开放任务补充首个可交付切片、复用入口和不重复负责的范围。开放未开工任务默认`status:planned`，实际依赖不等于整票必须blocked。VPJ-02/49/62/75/76由原线程继续，本轮不修改。任务身份、阶段和依赖保留；不以关闭数量或标签判断产品完成。
+2026-09-17用户授权的[Issue整理与排期](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/ISSUE-AUDIT-2026-09-17.md)为现有开放任务补充首个可交付切片、复用入口和不重复负责的范围。开放未开工任务默认`status:planned`，实际依赖不等于整票必须blocked。该次整理排除了VPJ-02/49/62/75/76；2026-09-27授权已解除该历史整理排除，仍保留实际执行归属。任务身份、阶段和依赖保留；不以关闭数量或标签判断产品完成。
 
 当前执行入口：[main / Program README](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/README.md)，完整任务与依赖见[当前任务表](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/ISSUES.md)。
 PR #253记录初始规划基线；实际调度核对当前main、原生依赖、可用接口和获准环境，不从历史基线文案推断仍未合并或已就绪。

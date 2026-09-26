@@ -4,13 +4,13 @@
 
 ## 用户结果
 
-长期订阅或交易深度升级的证据决策。
+年订阅与交易深度升级的证据决策。
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：保持expand门：用重复旅行价值、单位经济性和责任证据决定是否探索长期订阅或某一类交易深度。
-- 本票责任/非目标：只交付有证据的采纳/暂缓/否决决定；不启用商品/代客执行，不把联盟收入当充分扩展理由。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
+- 首个可交付结果：评估年订阅与更深外部执行的重复价值、责任和成本；不阻塞已接受的首轮订阅设计。
+- 本票责任/非目标：本票保留未来扩展证据门；首轮订阅包装归#225，代订/支付/履约每类单独验证。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
@@ -32,9 +32,9 @@
 
 ## Acceptance criteria
 
-- [ ] 只有重复旅行/持续价值证据才考虑Plus月/年订阅；只读Live Offer、代客执行、签约履约按品类分别决策。
+- [ ] 以重复旅行/持续价值证据评估年订阅；首轮订阅方向已由ADR-0027接受，包装由VPJ-33负责。只读Live Offer、代客执行、签约履约按品类分别决策。
 - [ ] 比较责任、服务成本、恢复/退款和排名中立性；不把affiliate增长自动当升级理由。
-- [ ] 没有授权保持当前Free+Pass与L1a/L1b；本Issue只决策，不启用外部交易。
+- [ ] 本Issue只评估更长期或更深的商业扩展，不启用外部交易；现有L1a/L1b与旧Pass账本兼容继续保留，不能恢复已被替代的首轮订阅禁令。
 
 ## 不得触碰
 

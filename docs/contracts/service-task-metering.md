@@ -1,5 +1,7 @@
 # 完整服务任务与计量语义
 
+2026-09-27：新助手交互与新增版本接缝见[ADR-0027](../adr/ADR-0027-personal-journey-assistant.md)和[ARCHITECTURE](../product/assistant-upgrade-2026-09-27/ARCHITECTURE.md)。既有运行版本与权限/计量/记忆权威保持，新模式不得静默改写旧wire。
+
 2026-09-12开发修订：本文涉及供应商、法务或产品许可的历史前置条件已由[开发接入规则](../agents/development-integration-policy.md)取消；技术实现与实际验收继续按当前任务推进。
 
 状态：**已确认产品方向的规划契约**，2026-09-10。Q37 的必要澄清、系统修复不另扣已确认；具体 schema、API、事务与客户端行为须在 producer/consumer PR 中实现并验证。本文件不证明运行能力、购买权益或真实消费账本已经存在。

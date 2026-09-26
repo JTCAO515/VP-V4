@@ -4,13 +4,13 @@
 
 ## 用户结果
 
-真实 Ask 得到可恢复的最终回答。
+真实文本与持久任务执行基础。
 
 ## 执行边界与首个切片
 
-- 首个可交付结果：在现有持久Ask上补一个中英可用结果与下一步的实际缺口；必要澄清/修复沿同一ServiceTask，核对回执与成本。
-- 本票责任/非目标：已勾选的首条文本纵切保留；08负责事件恢复，16既有知识结果复用，67负责跨场景真实验收，不重写worker。
-- 先读/复用：[docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [artifacts/VPJ-07/grounded-service-20260913/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-07/grounded-service-20260913/verification.md) · [artifacts/VPJ-07/worker-service-20260912/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-07/worker-service-20260912/verification.md)
+- 首个可交付结果：保留现有文本纵切和真实worker验收；为新助手模式提供实际执行/恢复接缝。
+- 本票责任/非目标：本票保留text/grounded旧模式；持续会话归VPJ-78，多步骤规划归VPJ-80，不能把启用worker当完整助手升级。
+- 先读/复用：[docs/product/assistant-upgrade-2026-09-27/README.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/README.md) · [docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/EXPERIENCE.md) · [docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/product/assistant-upgrade-2026-09-27/ARCHITECTURE.md) · [docs/program/2026-09-05/INTERFACES.md](https://github.com/JTCAO515/VP-V4/blob/main/docs/program/2026-09-05/INTERFACES.md) · [artifacts/VPJ-07/grounded-service-20260913/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-07/grounded-service-20260913/verification.md) · [artifacts/VPJ-07/worker-service-20260912/verification.md](https://github.com/JTCAO515/VP-V4/blob/main/artifacts/VPJ-07/worker-service-20260912/verification.md)
 - 排期：上游未结票不自动停止开发；先核对本片实际输入。整票关闭仍需全部适用验收，局部/离线通过不能代替真实能力。
 
 ## 实施与验收入口
@@ -42,6 +42,7 @@
 - [ ] 真实输出producer采用版本化VP内容与表达策略，英文直接创作、中英事实与动作状态一致；沿现有schema显式扩展并验证消费者，不新增人格服务或无约束二次润色。
 - [ ] 体验增量2026-09-17：五种结果均给出自然中英用户结果和可执行下一步，不以outcome/intent代码作为最终回答；answered先给结论，partial保留可靠部分并指出具体缺口，clarification只问影响当前目标的一项，blocked给许可内替代，technical_failure给同任务恢复入口。必要澄清和系统修复沿既有ServiceTask，不以表达优化新增扣次。
 - [ ] 体验增量2026-09-17：在受支持城市输入“机场地址”等有歧义问题时，仅用已核实实体构造必要选择；未知城市/实体不猜测，已有上下文不重复索取。复用#206已验行为与当前证据资格；正常可答却全拒答、技术失败伪称缺知识、没有来源的选项均为失败。
+- [ ] 助手升级2026-09-27：向VPJ-78/80提供当前真实job、授权、attempt成本、取消与完成回执接缝；新模式通过版本化接入，既有文本模式边界及已勾选证据保持原范围。
 
 ## 不得触碰
 

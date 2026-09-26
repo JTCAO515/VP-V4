@@ -1,5 +1,7 @@
 # 基础明确偏好跨 Trip
 
+2026-09-27：新助手交互与新增版本接缝见[ADR-0027](../adr/ADR-0027-personal-journey-assistant.md)和[ARCHITECTURE](../product/assistant-upgrade-2026-09-27/ARCHITECTURE.md)。既有运行版本与权限/计量/记忆权威保持，新模式不得静默改写旧wire。
+
 **状态：**Q36 产品方向已接受；Profile 旅行节奏的版本化保存/撤回、原生管理及任务资格 API 已有仓库实现，见下方最小切片。数据库应用、实际规划消费者接线和用户验收仍须分别验证，其余字段保持规划状态。
 **Owner：**VPJ-11 #199；协作 #190（数据政策）、#195（真实 Ask）、#206（有依据回答）。
 **依据：**[品牌蒸馏 Q36](https://github.com/JTCAO515/VP-V4/blob/8ae95a7/docs/brand/VISEPANDA-BRAND-DISTILLATION-Q1-Q38-2026-09-10.md#q36--免费用户的基础长期偏好能否跨规划使用)、[代码与研究证据](../research/brand-engineering-2026-09-10/memory-evidence.md)。

@@ -53,7 +53,9 @@ commands, evidence, external prerequisites and rollback. GitHub delivery milesto
 2026-09-17 经用户确认复核原生关系，逐票处置见
 [依赖复核](../program/2026-09-05/NATIVE-DEPENDENCY-AUDIT-2026-09-17.md)。
 
-## 现行范围限制（用户指定，未解除前有效）
+## 历史整理范围与本轮授权
 
-VPJ-02/49/62/75/76 的定义、正文、标签、状态与依赖不得在整理类工作中修改；涉及其任一端的原生依赖边
-保持原样。该限制只约束 Issue 整理，不阻止这些任务自身的正常开发；用户解除后按新范围执行。
+2026-09-17整理曾冻结VPJ-02/49/62/75/76及其原生依赖。2026-09-27 JT明确授权本轮助手升级
+重排仓库全部文档/ADR/Issue，包括既有任务的修改或删除，因此该整理排除不再阻止本轮规划。
+仍按最小必要范围迁移，保留已完成证据、实际owner与尚未满足的验收，不默认重写所有票或删除历史。
+本轮新入口：[assistant plan](../product/assistant-upgrade-2026-09-27/README.md)。
