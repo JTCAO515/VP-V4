@@ -34,9 +34,15 @@ async function handle(request:NextRequest,kind:"policy"|"task"){
     const session=await scope.run(()=>actor.client.rpc("native_session_v2",{p_action:"session"}).abortSignal(scope.signal));
     if(session.error||session.data?.subject!==actor.subject||session.data?.sessionId!==actor.sessionId)return fail("UNAUTHENTICATED",401);
     const rpc=async(name:string,params:Record<string,unknown>)=>scope.run(()=>actor.client.rpc(name,params).abortSignal(scope.signal));
-    if(kind==="policy"&&request.method==="GET"){
+    const expectedEnvironment=base.environment??"local_synthetic";
+    const policy=async()=>{
       const result=await rpc("read_planning_policy_v1",{p_text_policy_id:planningConfig!.policyId});
-      return result.error?fail("PROVIDER_UNAVAILABLE",503):reply({version:1,data:result.data});
+      return !result.error&&record(result.data)&&result.data.kind==="planning_policy"
+        &&result.data.environment===expectedEnvironment?result.data:null;
+    };
+    if(kind==="policy"&&request.method==="GET"){
+      const current=await policy();
+      return reply({version:1,data:current??{kind:"unavailable"}});
     }
     const raw=await scope.run(()=>scope.body(request,8192));let body:unknown;
     try{body=raw?JSON.parse(raw):null;}catch{return fail("INVALID_INPUT",400);}
@@ -44,6 +50,7 @@ async function handle(request:NextRequest,kind:"policy"|"task"){
     let result;
     if(kind==="policy"&&request.method==="POST"){
       if(!exact(body,["policyId","noticeHash"])||!uuid(body.policyId)||typeof body.noticeHash!=="string"||!/^[a-f0-9]{64}$/.test(body.noticeHash))return fail("INVALID_INPUT",400);
+      if((await policy())?.policyId!==body.policyId)return fail("DATA_POLICY_BLOCKED",403);
       result=await rpc("accept_planning_policy_v1",{p_policy_id:body.policyId,p_notice_hash:body.noticeHash});
     }else if(kind==="policy"&&request.method==="DELETE"){
       if(!exact(body,["policyId"])||!uuid(body.policyId))return fail("INVALID_INPUT",400);
@@ -54,6 +61,7 @@ async function handle(request:NextRequest,kind:"policy"|"task"){
         ||!Number.isSafeInteger(body.expectedGoalVersion)||Number(body.expectedGoalVersion)<1
         ||!["zh","en"].includes(String(body.locale))||typeof body.text!=="string"||!body.text.trim()||body.text.length>4000
         ||!Array.isArray(body.memoryBasis)||body.memoryBasis.length>3||!body.memoryBasis.every(item=>record(item)&&exact(item,["id","revision"])&&uuid(item.id)&&Number.isSafeInteger(item.revision)&&Number(item.revision)>0))return fail("INVALID_INPUT",400);
+      if((await policy())?.policyId!==body.planningPolicyId)return fail("DATA_POLICY_BLOCKED",403);
       result=await rpc("submit_planning_comparison_v1",{
         p_conversation_id:body.conversationId,p_goal_id:body.goalId,p_expected_goal_version:body.expectedGoalVersion,
         p_parent_message_id:body.parentMessageId,p_message_id:body.messageId,p_message_key:body.messageKey,

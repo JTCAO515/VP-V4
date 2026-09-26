@@ -11,9 +11,13 @@ Branch `codex/vpj80-planning-chain-20260927`, initially from main `972cfdb01b352
 ## Local observations
 
 - PASS: disposable PostgreSQL planning test: migration rollback/reapply after #572's 050000; direct owner admission/lease/checkpoint/budget/publication/readback; worker function provider fixture; expired lease recovery; concurrent claim; goal and Memory revision changes; linked-Trip goal rejection; cancellation, planning consent withdrawal and unknown provider cost stop; late stale-basis publication rollback.
-- PASS: disposable PostgreSQL `postgres` lane before the latest Trip-link boundary checks, 16 files / 131 tests / 0 skip or fail. Final-code rerun pending.
-- PASS: local real Auth + native HTTP + migrated PostgreSQL + worker function + owner result HTTP with synthetic model/place fixtures. The title and test state identify synthetic content. Final-code rerun pending.
-- PASS: TypeScript typecheck, source-policy lint and feature-flag check on the development branch before final rebase. Final checks pending.
+- PASS: final local disposable PostgreSQL `postgres` lane after #572 and the planning policy/discovery refinements, 16 files / 131 tests / 0 skip or fail. Final remote CI remains pending.
+- PASS: local real Auth + native HTTP + migrated PostgreSQL + worker function + owner result HTTP with synthetic model/place fixtures. The title and test state identify synthetic content. In the full local native lane, native-local-session (1/1), native-text-http (7/7), native-planning-http (1/1), and native-grounded-http (1/1) passed.
+- FAIL (local environment): the old `native-same-trip` browser test stopped before its assertions because the pinned Playwright Chromium Headless Shell binary is absent. Both the full Chromium and headless-only downloads completed, but local cache extraction stalled for more than four minutes; installation processes were stopped without changing tests or CI. The full local native lane therefore remains FAIL until a browser is available. Remote CI must run that check.
+- PASS: the focused native planning Auth/HTTP/worker/result test was rerun after the final policy-target checks (1/1). CI's native lane explicitly installs pinned Chromium before running the full lane; its result remains pending for this branch.
+- PASS: `pnpm lint`, `pnpm typecheck`, `pnpm docs:check`, `pnpm check:flags`, `git diff --check` and DB test classification on the rebased branch.
+- PASS: `pnpm build` compiled the new planning policy/tasks routes as dynamic server routes. Next-generated `AGENTS.md` diff was removed from the PR worktree after the build.
+- PASS: `pnpm test:contract` 695/695 with no skips. `pnpm test:security` exited 0 with 189 pass/1 environment skip and reports incomplete; `pnpm test:integration` exited 0 with 39 pass/127 environment skips and reports incomplete. The dedicated DB/native runs above are separate actual local integration evidence.
 
 ## UNRUN / limits
 

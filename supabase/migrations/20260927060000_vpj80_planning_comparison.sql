@@ -89,14 +89,16 @@ revoke all on function turn_private.immutable_planning_consent_v1() from public,
 create function turn_private.planning_policy_current(p_policy_id uuid) returns boolean
 language sql security definer set search_path='' as $$
   select exists(select 1 from turn_private.planning_policies p
+    join turn_private.text_policies t on t.id=p.text_policy_id
     where p.id=p_policy_id and p.revoked_at is null and p.effective_at<=clock_timestamp()
-      and p.expires_at>clock_timestamp() and turn_private.text_policy_current(p.text_policy_id))
+      and p.expires_at>clock_timestamp() and t.provider='qwen' and turn_private.text_policy_current(p.text_policy_id))
 $$;
 revoke all on function turn_private.planning_policy_current(uuid) from public,anon,authenticated,service_role;
 
 create function public.read_planning_policy_v1(p_text_policy_id uuid) returns jsonb
 language plpgsql security definer set search_path='' as $$
 declare u uuid:=turn_private.text_owner(); p turn_private.planning_policies%rowtype; c turn_private.planning_consents%rowtype;
+  recipient text; provider text;
 begin
   if p_text_policy_id is null or not turn_private.text_policy_current(p_text_policy_id)
     or not exists(select 1 from turn_private.text_consents x where x.owner_id=u and x.policy_id=p_text_policy_id and x.revoked_at is null)
@@ -105,8 +107,10 @@ begin
     and revoked_at is null and effective_at<=clock_timestamp() and expires_at>clock_timestamp()
     order by effective_at desc,id desc limit 1;
   if not found then return jsonb_build_object('kind','unavailable'); end if;
+  select t.recipient,t.provider into recipient,provider from turn_private.text_policies t where t.id=p.text_policy_id;
   select * into c from turn_private.planning_consents where owner_id=u and policy_id=p.id;
-  return jsonb_build_object('kind','planning_policy','policyId',p.id,'noticeVersion',p.notice_version,
+  return jsonb_build_object('kind','planning_policy','policyId',p.id,'environment',p.environment,
+    'modelRecipient',recipient,'modelProvider',provider,'placeProvider','amap','noticeVersion',p.notice_version,
     'noticeHash',p.notice_hash,'noticeZh',p.notice_zh,'noticeEn',p.notice_en,
     'consentState',case when c.consent_id is null then 'not_accepted' when c.revoked_at is null then 'accepted' else 'withdrawn' end);
 end $$;

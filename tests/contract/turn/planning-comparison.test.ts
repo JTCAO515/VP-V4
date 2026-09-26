@@ -35,3 +35,33 @@ test("AMap comparison cannot run without explicit search, detail, route flags an
     signal:new AbortController().signal,fetcher:async()=>{calls++;throw Error("unexpected request");}}),/unavailable/i);
   assert.equal(calls,0);
 });
+
+test("fixed AMap reads preserve exact anchors, current routes and a 13-call cap",async()=>{
+  const ids:Record<string,string>={"静安寺":"jingan-poi","人民广场":"square-poi","上海站":"station-poi"};
+  const coordinates:Record<string,string>={"jingan-poi":"121.440000,31.220000","square-poi":"121.480000,31.230000","station-poi":"121.450000,31.250000"};
+  const calls:string[]=[];
+  const fetcher=async(request:RequestInfo|URL)=>{
+    const url=request instanceof URL?request:new URL(String(request));calls.push(url.pathname);
+    if(url.pathname.includes("place/text")){
+      const name=url.searchParams.get("keywords")!;
+      return Response.json({status:"1",infocode:"10000",pois:[{id:ids[name],name}]});
+    }
+    if(url.pathname.includes("place/detail")){
+      const id=url.searchParams.get("id")!;
+      return Response.json({status:"1",infocode:"10000",pois:[{id,name:id,citycode:"021",location:coordinates[id],address:"Synthetic address"}]});
+    }
+    const origin=url.searchParams.get("origin")!,destination=url.searchParams.get("destination")!;
+    const jingan=origin===coordinates["jingan-poi"],transit=url.pathname.includes("transit");
+    const segment={walking:{distance:"100",steps:[{instruction:"Walk to station"}]},
+      bus:{buslines:[{name:"Synthetic line",departure_stop:{name:"A"},arrival_stop:{name:"B"}}]}};
+    return Response.json({status:"1",infocode:"10000",route:{origin,destination,
+      [transit?"transits":"paths"]:[{distance:"1000",cost:{duration:jingan?"1260":"960"},
+        steps:[{instruction:"Walk"}],segments:jingan?[segment,segment]:[segment]}]}});
+  };
+  const observed=await readShanghaiStayAreaRoutes({env:{AMAP_SEARCH_ENABLED:"true",AMAP_DETAIL_ENABLED:"true",
+    AMAP_ROUTES_ENABLED:"true",AMAP_WEB_SERVICE_KEY:"synthetic-key"},signal:new AbortController().signal,fetcher:fetcher as typeof fetch});
+  assert.equal(observed.source,"amap");assert.equal(observed.providerCalls,13);assert.equal(calls.length,13);
+  assert.deepEqual(observed.areas.map(area=>[area.id,area.railMinutes,area.transfers]),
+    [["jingan",21,1],["peoples_square",16,0]]);
+  assert.equal(JSON.stringify(observed).includes("synthetic-key"),false);
+});
