@@ -81,6 +81,7 @@ final class NativeTripStore {
         await perform(session) { scope in
             try session.rememberTripDeletion(request)
             self.deletionRequest = request
+            self.deletionReceipt = nil
             self.clearDeletedTripCache(request.tripID)
             try await self.postDeletion(request, session, scope)
             try await self.loadList(session, scope)
@@ -102,6 +103,9 @@ final class NativeTripStore {
             throw error
         }
         guard let request = saved else { return }
+        if deletionReceipt?.requestId.lowercased() != request.requestID.lowercased() {
+            deletionReceipt = nil
+        }
         deletionRequest = request
         clearDeletedTripCache(request.tripID)
         let data: Data

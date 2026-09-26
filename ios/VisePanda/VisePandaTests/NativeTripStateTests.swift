@@ -35,6 +35,36 @@ nonisolated final class NativeTripStateTests: XCTestCase {
         XCTAssertNil(try session.pendingTripDeletion())
         XCTAssertTrue(reopened.trips.isEmpty)
         XCTAssertNil(reopened.detail)
+        await reopened.create(title: "Second synthetic Trip", using: session)
+        let secondReference = try XCTUnwrap(reopened.deletionReference)
+        ArchiveTripProtocol.setDeletionPostOffline(true)
+        await reopened.deleteTrip(reviewedReference: secondReference, using: session)
+        XCTAssertNil(reopened.deletionReceipt, "A first Trip's completion must not describe an uncertain second request")
+        XCTAssertNotNil(reopened.deletionRequest)
+        XCTAssertNotNil(try session.pendingTripDeletion())
+        XCTAssertNil(reopened.detail)
+        ArchiveTripProtocol.setDeletionPostOffline(false)
+        let savedSecond = try XCTUnwrap(session.pendingTripDeletion())
+        try session.forgetTripDeletion(savedSecond)
+    }
+
+    @MainActor
+    func testDeletionReceiptRejectsMalformedCompletionState() {
+        let request = NativePendingTripDeletion(owner: "22222222-2222-4222-8222-222222222222",
+            tripID: ArchiveTripProtocol.tripID, requestID: "33333333-3333-4333-8333-333333333333", expectedVersion: 1)
+        func receipt(_ state: String, _ completedAt: String?) -> NativeTripDeletionReceipt {
+            .init(version: 1, requestId: request.requestID, tripId: request.tripID, scope: "trip-core-v1",
+                  state: state, completedAt: completedAt, allUserDataCompleted: false,
+                  backupErasure: "not_verified", providerErasure: "not_performed")
+        }
+        XCTAssertTrue(receipt("queued", nil).isValid(for: request))
+        XCTAssertFalse(receipt("queued", "2026-09-26T00:00:00Z").isValid(for: request))
+        XCTAssertFalse(receipt("completed", nil).isValid(for: request))
+        XCTAssertFalse(receipt("completed", "").isValid(for: request))
+        XCTAssertFalse(receipt("completed", "not-a-date").isValid(for: request))
+        XCTAssertTrue(receipt("completed", "2026-09-26T00:00:00Z").isValid(for: request))
+        XCTAssertTrue(receipt("completed", "2026-09-26T00:00:00.123+00:00").isValid(for: request))
+        XCTAssertTrue(receipt("completed", "2026-09-26T00:00:00.123456+00:00").isValid(for: request))
     }
 
     @MainActor
@@ -412,11 +442,13 @@ nonisolated private final class ArchiveTripProtocol: URLProtocol, @unchecked Sen
     nonisolated(unsafe) private static var deletionRequestID: String?
     nonisolated(unsafe) private static var deletionCompleted = false
     nonisolated(unsafe) private static var deletionOffline = false
+    nonisolated(unsafe) private static var deletionPostOffline = false
     static var posts: Int { lock.withLock { postCount } }
     static func setUnavailable(_ value: Bool) { lock.withLock { unavailable = value } }
-    static func reset(unavailable: Bool = false) { lock.withLock { archived = false; Self.unavailable = unavailable; postCount = 0; deletionRequestID = nil; deletionCompleted = false; deletionOffline = false } }
+    static func reset(unavailable: Bool = false) { lock.withLock { archived = false; Self.unavailable = unavailable; postCount = 0; deletionRequestID = nil; deletionCompleted = false; deletionOffline = false; deletionPostOffline = false } }
     static func completeDeletion() { lock.withLock { deletionCompleted = true } }
     static func setDeletionOffline(_ value: Bool) { lock.withLock { deletionOffline = value } }
+    static func setDeletionPostOffline(_ value: Bool) { lock.withLock { deletionPostOffline = value } }
     override class func canInit(with request: URLRequest) -> Bool { true }
     override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
     override func stopLoading() {}
@@ -427,6 +459,10 @@ nonisolated private final class ArchiveTripProtocol: URLProtocol, @unchecked Sen
         } else if path.hasSuffix("profile") {
             respond(["subject": Self.ownerID, "displayName": "Archive owner"])
         } else if path == "/api/privacy/native/v1/trips" {
+            if request.httpMethod == "POST" && Self.lock.withLock({ Self.deletionPostOffline }) {
+                client?.urlProtocol(self, didFailWithError: URLError(.notConnectedToInternet))
+                return
+            }
             if request.httpMethod == "GET" && Self.lock.withLock({ Self.deletionOffline }) {
                 client?.urlProtocol(self, didFailWithError: URLError(.notConnectedToInternet))
                 return

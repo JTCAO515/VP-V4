@@ -319,9 +319,20 @@ struct NativeTripDeletionReceipt: Decodable, Equatable {
     let providerErasure: String
 
     func isValid(for request: NativePendingTripDeletion) -> Bool {
-        version == 1 && requestId.lowercased() == request.requestID.lowercased() &&
+        let completionValid: Bool
+        if state == "queued" { completionValid = completedAt == nil }
+        else if state == "completed", let completedAt,
+                !completedAt.isEmpty, completedAt.count <= 64,
+                completedAt.hasSuffix("Z") || completedAt.hasSuffix("+00:00") {
+            let withFraction = ISO8601DateFormatter()
+            withFraction.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+            let withoutFraction = ISO8601DateFormatter()
+            withoutFraction.formatOptions = [.withInternetDateTime]
+            completionValid = withFraction.date(from: completedAt) != nil || withoutFraction.date(from: completedAt) != nil
+        } else { completionValid = false }
+        return version == 1 && requestId.lowercased() == request.requestID.lowercased() &&
         tripId.lowercased() == request.tripID.lowercased() && scope == "trip-core-v1" &&
-        (state == "queued" || (state == "completed" && completedAt != nil)) &&
+        completionValid &&
         allUserDataCompleted == false && backupErasure == "not_verified" &&
         providerErasure == "not_performed"
     }

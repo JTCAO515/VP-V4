@@ -79,3 +79,16 @@ restored the lockfile-resolved dependencies; the same checks then passed.
 An initial isolated SQL run lacked the test fixture's `auth.role()` helper;
 the fixture now models its JWT role claim and the rerun passed. No production
 grant or RLS check was weakened.
+
+### PR #551 review follow-up
+
+Main's independent review found that a second Trip deletion could retain the
+first Trip's `completed` receipt if the second POST failed. The native store now
+clears the old receipt when a new confirmed request is journaled, drops any
+receipt whose request ID differs from the reconnected Keychain request, and
+leaves no old completion after a definite admission rejection. Receipt
+validation now requires `queued` to have no completion time and `completed`
+to carry a parseable UTC timestamp. PASS: the updated Simulator state suite
+14/14, including a completed first Trip followed by an uncertain second POST
+and malformed receipt counterexamples. The final result bundle is
+`Test-VisePanda-2026.09.26_22-12-52-+0800.xcresult` under Xcode DerivedData.
