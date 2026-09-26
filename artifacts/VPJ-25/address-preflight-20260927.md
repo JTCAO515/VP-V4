@@ -1,6 +1,6 @@
 # #506 confirmed Chinese address contract preflight · 2026-09-27
 
-Scope: proposed v3 producer/contract boundary and a v2 fail-closed regression. Base `origin/main` `a25af6c24f8d86b778f8b679d3f17eaede38588c`, read back from the GitHub main ref before branching. #506 and #215 remain OPEN. PR #555 is OPEN and owns concurrent native Trip view/model edits; this slice changes no native runtime consumer.
+Scope: proposed v3 producer/contract boundary and a v2 fail-closed regression. Initial base `origin/main` `a25af6c24f8d86b778f8b679d3f17eaede38588c`, read back from the GitHub main ref before branching. #506 and #215 remain OPEN. #555's native Trip view/model changes have since merged into main `253930f975959909a2e18c26cc4ed7cddf8e071e`; this slice changes no native runtime consumer.
 
 ## Observed inputs
 
@@ -14,6 +14,8 @@ Scope: proposed v3 producer/contract boundary and a v2 fail-closed regression. B
 - **IMPLEMENTED — repository preparation:** [proposed ADR-0026](../../docs/adr/ADR-0026-confirmed-trip-item-chinese-address.md) specifies one Trip Item/version source, owner-entered provenance, explicit address diff/confirmation, v2 compatibility, privacy and staged activation. The v2 contract test now rejects address-shaped writes.
 - **NOT MET — capability:** no address producer, migration, v3 endpoint, owner-visible confirmation UI, native Today address read or target-environment readback is present in this PR. No provider address or Trip title is converted into a saved address.
 - **UNRUN — target environment:** authenticated same-version Web/native observation, RLS/adversarial database run, privacy export/delete lifecycle, device, offline and entitlement cases. An accepted contract and append-only migration are prerequisites for those checks.
+
+After merging main `253930f9` into this branch, the PR diff still contains only this preflight record, ADR/index/manifest and the v2 contract regression. It contains no `NativeTripView` or `NativeTripModels` change. Those merged models still have no address field, so the capability limit is unchanged.
 
 ## Checks
 

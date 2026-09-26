@@ -22,7 +22,7 @@ An address must remain part of the same authoritative Trip version as the Item. 
 - Contract and SQL tests pair a real owner proposal producer with native/Web confirmed snapshot consumers. Assert same Item ID, address and `headVersion` after explicit confirm, plus unchanged v2 behavior for address-free Trips.
 - Adversarial tests cover wrong owner, wrong Item/Day, stale base, absent diff, changed proposal revision/digest, duplicate idempotency key, deletion, restore and legacy v2 edits of addressed content. A simulated provider response alone must leave Trip unchanged.
 - Exercise migration forward compatibility and rollback behavior on an isolated database, including RLS and privacy export/delete. Only then activate the versioned API. Actual Staging and device observations remain separate acceptance evidence.
-- After #555's NativeTripView/NativeTripModels ownership settles, connect the native editor and Today to the accepted v3 snapshot. Today may label the saved text owner-confirmed and unverified; it must not label it provider-current. Keep #506/#215 open until target-environment and parent offline/entitlement criteria are met.
+- With #555's NativeTripView/NativeTripModels changes merged, connect the native editor and Today in a later implementation PR to the accepted v3 snapshot. Today may label the saved text owner-confirmed and unverified; it must not label it provider-current. Keep #506/#215 open until target-environment and parent offline/entitlement criteria are met.
 
 ## Rejected shortcuts
 
