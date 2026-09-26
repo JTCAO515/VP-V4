@@ -15,6 +15,7 @@ Producer: a future bounded planning worker holding an existing `turn_private.wor
 - `pnpm test:integration` exited 0 with 39 pass / 119 skip; its suite reports `incomplete` because DB/target environment gates are not configured in that command. The targeted disposable PostgreSQL test above was run explicitly.
 - `pnpm test:security` exited 0 with 178 pass / 1 skip; suite reports `incomplete` because the disposable identity Supabase target was not configured.
 - `pnpm test:contract` exited 0; detailed result recorded by CI for the final commit.
+- The first PR head (`49454d46`) failed the DB CI classification gate before any lane test: this new gated file was not registered. The fix adds it to the existing disposable `postgres` lane in `scripts/ci-suites/db-integration.mjs`; `--list` now classifies it there. PASS: `node scripts/ci-suites/db-integration.mjs --lane postgres` (129 pass, 0 fail/skip, 15 files). New-head remote CI must still pass before merge.
 
 ## UNRUN and follow-up
 
