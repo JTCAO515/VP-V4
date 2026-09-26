@@ -61,6 +61,20 @@ nonisolated final class NativeAskUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["assistant.trip.unlinked"].waitForExistence(timeout: 20))
         XCTAssertTrue(goal.label.contains("Current goal v4"))
         capture("Assistant-goal-Trip-unlinked-en", app)
+        choose.tap()
+        XCTAssertTrue(first.waitForExistence(timeout: 15)); first.tap()
+        XCTAssertTrue(confirm.waitForExistence(timeout: 10)); confirm.tap()
+        expectation(for: NSPredicate(format: "label CONTAINS %@", "Synthetic Goal Trip A"), evaluatedWith: linked)
+        waitForExpectations(timeout: 20)
+        app.buttons["Withdraw text consent"].tap()
+        let privacyUnlink = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "assistant.trip.privacy-unlink.")).firstMatch
+        XCTAssertTrue(privacyUnlink.waitForExistence(timeout: 20), "A withdrawn account must still reach unlink")
+        XCTAssertFalse(goal.exists, "Withdrawing text consent hides the goal body")
+        privacyUnlink.tap()
+        let confirmPrivacy = app.buttons["Confirm privacy unlink"]
+        XCTAssertTrue(confirmPrivacy.waitForExistence(timeout: 10)); confirmPrivacy.tap()
+        XCTAssertFalse(privacyUnlink.waitForExistence(timeout: 5), "The owner privacy list no longer contains the detached Trip")
+        capture("Assistant-goal-Trip-privacy-unlinked-en", app)
     }
 
     @MainActor func testEnglishAssistantConversationReadback() throws {

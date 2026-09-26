@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server";
 import { nativeRequestScope } from "../identity/native-request.ts";
 import { verifyNativeCredentials } from "../identity/native-credentials.ts";
 import { isUuid } from "../identity/request-guards.ts";
+import { getNativeRuntimeConfig } from "../identity/native-config.ts";
 import { FAILURE_TAXONOMY, type FailureCode } from "../contracts/errors/index.ts";
 import { getNativeAssistantConfig } from "./native-assistant-http.ts";
 
@@ -12,8 +13,6 @@ const record = (value: unknown): value is Payload => value !== null && typeof va
 const uuid = (value: unknown): value is string => typeof value === "string" && isUuid(value);
 
 export async function nativeAssistantTripHTTP(request: NextRequest, goalId: string) {
-  const config = getNativeAssistantConfig(request);
-  if (!config) return failure("PROVIDER_UNAVAILABLE");
   if (!uuid(goalId) || !["GET","POST"].includes(request.method) || request.headers.has("cookie")
     || request.headers.has("origin") || [...request.nextUrl.searchParams].length) return failure("INVALID_INPUT");
   const scope = nativeRequestScope(request.signal, 15_000);
@@ -37,6 +36,11 @@ export async function nativeAssistantTripHTTP(request: NextRequest, goalId: stri
         || (input.action === "unlink" && (input.sourceMessageId !== null || input.tripId !== null || input.expectedTripVersion !== null)))
         return failure("INVALID_INPUT");
     }
+    // A disabled assistant producer never permits a new link. Existing owner
+    // references remain readable/removable through the native Trip authority.
+    const config = getNativeAssistantConfig(request) ??
+      (request.method === "GET" || input?.action === "unlink" ? getNativeRuntimeConfig(request, "trip", "text") : null);
+    if (!config) return failure("PROVIDER_UNAVAILABLE");
     const actor = await scope.run(() => verifyNativeCredentials(request, config, scope.fetch, scope.unavailable));
     if (!actor) return failure("UNAUTHENTICATED");
     const rpc = async (name: string, params: Record<string,string|number|boolean|null>) => scope.run(() => actor.client.rpc(name, params).abortSignal(scope.signal));
@@ -64,11 +68,34 @@ export async function nativeAssistantTripHTTP(request: NextRequest, goalId: stri
   finally { scope.dispose(); }
 }
 
+export async function nativeAssistantTripPrivacyHTTP(request: NextRequest) {
+  const config = getNativeRuntimeConfig(request, "trip", "text");
+  if (!config) return failure("PROVIDER_UNAVAILABLE");
+  if (request.method !== "GET" || request.headers.has("cookie") || request.headers.has("origin")
+    || [...request.nextUrl.searchParams].length) return failure("INVALID_INPUT");
+  const scope = nativeRequestScope(request.signal, 15_000);
+  try {
+    const actor = await scope.run(() => verifyNativeCredentials(request, config, scope.fetch, scope.unavailable));
+    if (!actor) return failure("UNAUTHENTICATED");
+    const session = await scope.run(() => actor.client.rpc("native_session_v2", {p_action:"session"}).abortSignal(scope.signal));
+    if (session.error) return failure(mapError(session.error.message));
+    if (!record(session.data) || session.data.subject !== actor.subject || session.data.sessionId !== actor.sessionId)
+      return failure("UNAUTHENTICATED");
+    const result = await scope.run(() => actor.client.rpc("list_assistant_goal_trip_links_v1").abortSignal(scope.signal));
+    if (result.error) return failure(mapError(result.error.message));
+    if (!record(result.data) || result.data.kind !== "goal_trip_links" || !Array.isArray(result.data.links)
+      || result.data.links.length > 100) return failure("INTERNAL_ERROR");
+    return response({version:5,...result.data});
+  } catch { return failure("PROVIDER_UNAVAILABLE"); }
+  finally { scope.dispose(); }
+}
+
 function mapError(message: string): FailureCode {
   if (/UNAUTHENTICATED|SESSION_REPLACED/.test(message)) return "UNAUTHENTICATED";
   if (message.includes("IDEMPOTENCY_KEY_REUSE")) return "IDEMPOTENCY_KEY_REUSE";
   if (message.includes("STALE_TRIP_VERSION")) return "STALE_TRIP_VERSION";
   if (/TRIP_DELETION_PENDING_OR_COMPLETED|PROPOSAL_NOT_CONFIRMABLE/.test(message)) return "PROPOSAL_NOT_CONFIRMABLE";
+  if (/lock timeout|deadlock detected/i.test(message)) return "PROVIDER_UNAVAILABLE";
   if (message.includes("SERVICE_TASK_CONFLICT")) return "SERVICE_TASK_CONFLICT";
   if (message.includes("DATA_POLICY_BLOCKED")) return "DATA_POLICY_BLOCKED";
   if (message.includes("INVALID_INPUT")) return "INVALID_INPUT";

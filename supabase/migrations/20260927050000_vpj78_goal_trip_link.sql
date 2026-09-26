@@ -1,18 +1,40 @@
 -- VPJ-78: a user-confirmed, versioned reference from an existing goal to an
 -- existing owned Trip. This stores no Trip content and cannot write a Trip.
+-- Reserve 10001 exclusively for terminal unlink/deletion. Legacy amendments
+-- cannot consume it, so even a goal at the ordinary 10000 cap can invalidate
+-- every older goal-version basis before its Trip is deleted.
+alter table turn_private.assistant_goals drop constraint assistant_goals_scope_version_check;
+alter table turn_private.assistant_goals add column trip_terminal boolean not null default false;
+alter table turn_private.assistant_goals add constraint assistant_goals_scope_version_check
+  check(scope_version between 1 and 10001 and (not trip_terminal or scope_version=10001));
+create function turn_private.guard_goal_terminal_scope_v1()
+returns trigger language plpgsql set search_path='' as $$
+begin
+  if (new.scope_version=10001 and (new.trip_terminal is distinct from true or old.trip_terminal))
+    or (new.trip_terminal is distinct from old.trip_terminal and (new.trip_terminal is distinct from true or new.scope_version<>10001))
+    or (old.trip_terminal and new.scope_version is distinct from old.scope_version)
+    then raise exception 'SERVICE_TASK_CONFLICT'; end if;
+  return new;
+end $$;
+revoke all on function turn_private.guard_goal_terminal_scope_v1() from public,anon,authenticated,service_role;
+create trigger guard_goal_terminal_scope_v1 before update on turn_private.assistant_goals
+  for each row execute function turn_private.guard_goal_terminal_scope_v1();
+
 create table turn_private.assistant_goal_trip_links (
   goal_id uuid primary key references turn_private.assistant_goals(id) on delete cascade,
   conversation_id uuid not null references turn_private.assistant_conversations(id) on delete cascade,
   owner_id uuid not null references auth.users(id) on delete cascade,
-  link_version integer not null check(link_version between 1 and 10000),
-  goal_scope_version integer not null check(goal_scope_version between 1 and 10000),
+  link_version integer not null check(link_version between 1 and 10001),
+  goal_scope_version integer not null check(goal_scope_version between 1 and 10001),
   operation_id uuid not null,
   trip_id uuid references public.trips(id) on delete restrict,
   trip_head_version integer check(trip_head_version >= 0),
   source_message_id uuid,
   source_kind text not null check(source_kind in ('native_user_confirmed','trip_deletion_confirmed')),
+  terminal_unlinked boolean not null default false,
   updated_at timestamptz not null default clock_timestamp(),
-  check ((trip_id is null)=(trip_head_version is null))
+  check ((trip_id is null)=(trip_head_version is null)),
+  check (not terminal_unlinked or (trip_id is null and (link_version=10001 or goal_scope_version=10001)))
 );
 create index assistant_goal_trip_links_owner on turn_private.assistant_goal_trip_links(owner_id,goal_id);
 create index assistant_goal_trip_links_trip on turn_private.assistant_goal_trip_links(trip_id) where trip_id is not null;
@@ -31,9 +53,9 @@ create table turn_private.assistant_goal_trip_receipts (
   action text not null check(action in ('link','unlink')),
   source_kind text not null check(source_kind in ('native_user_confirmed','trip_deletion_confirmed')),
   source_message_id uuid,
-  before_link_version integer not null check(before_link_version between 0 and 9999),
+  before_link_version integer not null check(before_link_version between 0 and 10000),
   after_link_version integer not null check(after_link_version=before_link_version+1),
-  before_goal_scope_version integer not null check(before_goal_scope_version between 1 and 9999),
+  before_goal_scope_version integer not null check(before_goal_scope_version between 1 and 10000),
   after_goal_scope_version integer not null check(after_goal_scope_version=before_goal_scope_version+1),
   trip_id uuid references public.trips(id) on delete set null,
   trip_head_version integer check(trip_head_version >= 0),
@@ -52,12 +74,13 @@ create function public.set_assistant_goal_trip_link_v1(
 declare u uuid:=turn_private.text_owner(); mobile_session uuid:=(auth.jwt()->>'session_id')::uuid;
   conversation turn_private.assistant_conversations%rowtype; goal turn_private.assistant_goals%rowtype;
   linked turn_private.assistant_goal_trip_links%rowtype; prior turn_private.assistant_goal_trip_receipts%rowtype;
-  source turn_private.assistant_messages%rowtype; trip public.trips%rowtype; digest text;
+  source turn_private.assistant_messages%rowtype; trip public.trips%rowtype; digest text; preexisting_trip uuid;
 begin
   if p_operation_id is null or p_conversation_id is null or p_goal_id is null
-    or p_expected_goal_scope_version is null or p_expected_goal_scope_version not between 1 and 9999
-    or p_expected_link_version is null or p_expected_link_version not between 0 and 9999
+    or p_expected_goal_scope_version is null or p_expected_goal_scope_version not between 1 and 10000
+    or p_expected_link_version is null or p_expected_link_version not between 0 and 10000
     or p_confirmed is distinct from true or p_action is null or p_action not in ('link','unlink')
+    or (p_action='link' and (p_expected_goal_scope_version>=10000 or p_expected_link_version>=10000))
     or (p_action='link' and (p_trip_id is null or p_expected_trip_version is null or p_expected_trip_version<0))
     or (p_action='unlink' and (p_source_message_id is not null or p_trip_id is not null or p_expected_trip_version is not null))
     then raise exception 'INVALID_INPUT'; end if;
@@ -72,7 +95,7 @@ begin
       and c.consent_id=conversation.consent_id and c.revoked_at is null))
     then raise exception 'DATA_POLICY_BLOCKED'; end if;
   select * into goal from turn_private.assistant_goals where id=p_goal_id and owner_id=u
-    and conversation_id=p_conversation_id for update;
+    and conversation_id=p_conversation_id;
   if not found then raise exception 'FORBIDDEN'; end if;
   select * into prior from turn_private.assistant_goal_trip_receipts where operation_id=p_operation_id;
   if found then
@@ -81,15 +104,27 @@ begin
     return jsonb_build_object('kind','goal_trip_link','operationId',prior.operation_id,'linkVersion',prior.after_link_version,
       'goalScopeVersion',prior.after_goal_scope_version,'tripId',prior.trip_id,'tripHeadVersion',prior.trip_head_version,'reused',true);
   end if;
+  -- Trip deletion owns Trip before link/goal. Read the old Trip without a row
+  -- lock, then acquire all involved owned Trips in UUID order before either
+  -- link or goal. A concurrent deletion may invalidate this preview; the
+  -- locked link/CAS recheck below rejects it without committing a half-link.
+  select l.trip_id into preexisting_trip from turn_private.assistant_goal_trip_links l
+    where l.goal_id=p_goal_id and l.owner_id=u and l.conversation_id=p_conversation_id;
+  for trip in select t.* from public.trips t where t.id=any(array[preexisting_trip,p_trip_id])
+      and t.owner_id=u order by t.id for update loop null; end loop;
   select * into linked from turn_private.assistant_goal_trip_links where goal_id=p_goal_id for update;
+  select * into goal from turn_private.assistant_goals where id=p_goal_id and owner_id=u
+    and conversation_id=p_conversation_id for update;
+  if not found then raise exception 'FORBIDDEN'; end if;
   if linked.goal_id is not null and (linked.owner_id<>u or linked.conversation_id<>p_conversation_id)
     then raise exception 'FORBIDDEN'; end if;
+  if linked.trip_id is distinct from preexisting_trip then raise exception 'SERVICE_TASK_CONFLICT'; end if;
   if coalesce(linked.link_version,0)<>p_expected_link_version or goal.scope_version<>p_expected_goal_scope_version
     then raise exception 'SERVICE_TASK_CONFLICT'; end if;
   if p_action='unlink' and (linked.goal_id is null or linked.trip_id is null)
     then raise exception 'SERVICE_TASK_CONFLICT'; end if;
   if p_action='unlink' then
-    perform 1 from public.trips where id=linked.trip_id and owner_id=u for update;
+    perform 1 from public.trips where id=linked.trip_id and owner_id=u;
     if not found then raise exception 'SERVICE_TASK_CONFLICT'; end if;
   end if;
   if p_action='link' then
@@ -99,7 +134,7 @@ begin
       if not found or source.policy_id<>conversation.policy_id or source.consent_id<>conversation.consent_id
         or source.relationship not in ('goal_start','follow_up','amendment') then raise exception 'SERVICE_TASK_CONFLICT'; end if;
     end if;
-    select * into trip from public.trips where id=p_trip_id and owner_id=u for update;
+    select * into trip from public.trips where id=p_trip_id and owner_id=u;
     if not found then raise exception 'FORBIDDEN'; end if;
     if trip.head_version<>p_expected_trip_version then raise exception 'STALE_TRIP_VERSION'; end if;
     if exists(select 1 from public.trip_archives where trip_id=p_trip_id and owner_id=u)
@@ -107,14 +142,16 @@ begin
     if exists(select 1 from privacy_private.trip_deletions where trip_id=p_trip_id)
       then raise exception 'TRIP_DELETION_PENDING_OR_COMPLETED'; end if;
   end if;
-  update turn_private.assistant_goals set scope_version=scope_version+1 where id=p_goal_id;
+  update turn_private.assistant_goals set scope_version=scope_version+1,
+    trip_terminal=(p_action='unlink' and p_expected_goal_scope_version=10000) where id=p_goal_id;
   insert into turn_private.assistant_goal_trip_links(goal_id,conversation_id,owner_id,link_version,goal_scope_version,operation_id,
-    trip_id,trip_head_version,source_message_id,source_kind)
+    trip_id,trip_head_version,source_message_id,source_kind,terminal_unlinked)
   values(p_goal_id,p_conversation_id,u,p_expected_link_version+1,p_expected_goal_scope_version+1,p_operation_id,
-    p_trip_id,p_expected_trip_version,case when p_action='link' then p_source_message_id else null end,'native_user_confirmed')
+    p_trip_id,p_expected_trip_version,case when p_action='link' then p_source_message_id else null end,'native_user_confirmed',
+    p_action='unlink' and (p_expected_link_version=10000 or p_expected_goal_scope_version=10000))
   on conflict(goal_id) do update set link_version=excluded.link_version,goal_scope_version=excluded.goal_scope_version,
     operation_id=excluded.operation_id,trip_id=excluded.trip_id,trip_head_version=excluded.trip_head_version,source_message_id=excluded.source_message_id,
-    updated_at=clock_timestamp();
+    terminal_unlinked=excluded.terminal_unlinked,updated_at=clock_timestamp();
   insert into turn_private.assistant_goal_trip_receipts(operation_id,owner_id,conversation_id,goal_id,session_id,
     request_digest,action,source_kind,source_message_id,before_link_version,after_link_version,before_goal_scope_version,
     after_goal_scope_version,trip_id,trip_head_version)
@@ -146,6 +183,7 @@ begin
   select * into linked from turn_private.assistant_goal_trip_links where goal_id=p_goal_id and owner_id=u;
   if not found then return jsonb_build_object('kind','goal_trip_link','conversationId',goal.conversation_id,
     'goalId',goal.id,'goalScopeVersion',goal.scope_version,'linkVersion',0,'lastOperationId',null,'tripId',null,'tripHeadVersion',null,
+    'terminalUnlinked',false,
     'sourceMessageId',null,'sourceKind',null,'current',false); end if;
   if linked.trip_id is not null then
     select * into trip from public.trips where id=linked.trip_id and owner_id=u;
@@ -164,6 +202,7 @@ begin
       and m.policy_id=conversation.policy_id and m.consent_id=conversation.consent_id));
   return jsonb_build_object('kind','goal_trip_link','conversationId',goal.conversation_id,
     'goalId',goal.id,'goalScopeVersion',goal.scope_version,'linkVersion',linked.link_version,'lastOperationId',linked.operation_id,
+    'terminalUnlinked',linked.terminal_unlinked,
     'tripId',linked.trip_id,'tripHeadVersion',linked.trip_head_version,
     'sourceMessageId',case when consent_current then linked.source_message_id else null end,
     'sourceKind',case when consent_current then linked.source_kind else 'privacy_control' end,
@@ -171,6 +210,29 @@ begin
 end $$;
 revoke all on function public.read_assistant_goal_trip_link_v1(uuid) from public,anon,service_role;
 grant execute on function public.read_assistant_goal_trip_link_v1(uuid) to authenticated;
+
+-- Minimal owner privacy index. It stays readable after text withdrawal so the
+-- user can find and unlink an existing Trip reference without reopening consent.
+create function public.list_assistant_goal_trip_links_v1()
+returns jsonb language plpgsql security definer set search_path='' as $$
+declare u uuid:=turn_private.text_owner(); links jsonb;
+begin
+  select coalesce(jsonb_agg(x.item order by x.updated_at desc,x.goal_id),'[]'::jsonb)
+    into links from (
+      select l.updated_at,l.goal_id,jsonb_build_object('version',5,'kind','goal_trip_link',
+        'conversationId',l.conversation_id,'goalId',l.goal_id,'goalScopeVersion',g.scope_version,
+        'linkVersion',l.link_version,'lastOperationId',l.operation_id,'tripId',l.trip_id,
+        'tripHeadVersion',l.trip_head_version,'terminalUnlinked',l.terminal_unlinked,
+        'sourceMessageId',null,'sourceKind','privacy_control','current',false) item
+      from turn_private.assistant_goal_trip_links l
+      join turn_private.assistant_goals g on g.id=l.goal_id and g.owner_id=u
+      where l.owner_id=u and l.trip_id is not null
+      order by l.updated_at desc,l.goal_id limit 100
+    ) x;
+  return jsonb_build_object('kind','goal_trip_links','links',links);
+end $$;
+revoke all on function public.list_assistant_goal_trip_links_v1() from public,anon,service_role;
+grant execute on function public.list_assistant_goal_trip_links_v1() to authenticated;
 
 -- A confirmed, recently reauthenticated Trip deletion is also an explicit
 -- decision to end that Trip's goal associations. Admission already holds the
@@ -185,15 +247,16 @@ begin
   for linked in select * from turn_private.assistant_goal_trip_links l where l.trip_id=new.trip_id
       order by l.goal_id for update loop
     select * into goal from turn_private.assistant_goals g where g.id=linked.goal_id for update;
-    if not found or goal.owner_id<>new.owner_id or linked.owner_id<>new.owner_id
-      or goal.scope_version>=10000 or linked.link_version>=10000 then raise exception 'TRIP_HAS_CHAT_REFERENCES'; end if;
+    if not found or goal.owner_id<>new.owner_id or linked.owner_id<>new.owner_id then raise exception 'TRIP_HAS_CHAT_REFERENCES'; end if;
     operation:=gen_random_uuid();
     digest:=encode(pg_catalog.sha256(convert_to(jsonb_build_array(new.request_id,new.trip_id,linked.goal_id,
       linked.link_version,goal.scope_version,'trip_deletion_confirmed')::text,'UTF8')),'hex');
-    update turn_private.assistant_goals set scope_version=scope_version+1 where id=goal.id;
+    update turn_private.assistant_goals set scope_version=scope_version+1,
+      trip_terminal=(goal.scope_version=10000) where id=goal.id;
     update turn_private.assistant_goal_trip_links set link_version=link_version+1,operation_id=operation,
       goal_scope_version=goal.scope_version+1,trip_id=null,trip_head_version=null,source_message_id=null,
-      source_kind='trip_deletion_confirmed',updated_at=clock_timestamp() where goal_id=goal.id;
+      source_kind='trip_deletion_confirmed',terminal_unlinked=(goal.scope_version=10000 or linked.link_version=10000),
+      updated_at=clock_timestamp() where goal_id=goal.id;
     insert into turn_private.assistant_goal_trip_receipts(operation_id,owner_id,conversation_id,goal_id,session_id,
       request_digest,action,source_kind,source_message_id,before_link_version,after_link_version,
       before_goal_scope_version,after_goal_scope_version,trip_id,trip_head_version)
@@ -249,7 +312,8 @@ declare links jsonb; receipts jsonb;
 begin
   if (select auth.role())<>'service_role' or p_owner is null then raise exception 'FORBIDDEN'; end if;
   select coalesce(jsonb_agg(jsonb_build_object('goalId',l.goal_id,'conversationId',l.conversation_id,
-    'linkVersion',l.link_version,'goalScopeVersion',l.goal_scope_version,'lastOperationId',l.operation_id,'tripId',l.trip_id,
+    'linkVersion',l.link_version,'goalScopeVersion',l.goal_scope_version,'lastOperationId',l.operation_id,
+    'terminalUnlinked',l.terminal_unlinked,'tripId',l.trip_id,
     'tripHeadVersion',l.trip_head_version,'sourceMessageId',l.source_message_id,'updatedAt',l.updated_at)
     order by l.goal_id),'[]'::jsonb) into links from turn_private.assistant_goal_trip_links l where l.owner_id=p_owner;
   select coalesce(jsonb_agg(jsonb_build_object('operationId',r.operation_id,'goalId',r.goal_id,

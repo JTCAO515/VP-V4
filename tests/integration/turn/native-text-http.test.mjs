@@ -402,9 +402,14 @@ test('v5 explicit goal Trip link has CAS, owner, deletion and revoked-consent bo
  assert.equal((await call(path,owner,'POST',binding(tripA,6,5,finalMessage.messageId,{expectedTripVersion:1}))).status,201);
  assert.equal((await call('/api/chat/native/v5/consent',owner,'DELETE',{policyId:e.policyId})).status,200);
  read=(await call(path,owner)).body;assert.equal(read.current,false);assert.equal(read.sourceMessageId,null);
+ const privacyList=await call('/api/chat/native/v5/goal-trips',owner);
+ assert.equal(privacyList.status,200);
+ assert.ok(privacyList.body.links.some(link=>link.goalId===goalId&&link.tripId===tripA));
+ assert.equal(JSON.stringify(privacyList.body).includes('Keep my remaining Trip'),false,'privacy list does not restore withdrawn goal text');
  const privacyUnlink={...unlink,operationId:randomUUID(),expectedGoalScopeVersion:7,expectedLinkVersion:6};
  assert.equal((await call(path,owner,'POST',privacyUnlink)).status,201,'unlink remains available after text consent withdrawal');
  assert.equal((await call(path,owner)).body.tripId,null);
+ assert.equal((await call('/api/chat/native/v5/goal-trips',owner)).body.links.some(link=>link.goalId===goalId),false);
  assert.equal((await call(path,owner,'POST',binding(tripA,8,7,finalMessage.messageId,{expectedTripVersion:1}))).status,403,'withdrawal denies new link');
  const local=identityLocalEnv();assert.ok(local?.API_URL && local.SERVICE_ROLE_KEY);
  const service=createClient(local.API_URL,local.SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
@@ -418,4 +423,91 @@ test('v5 explicit goal Trip link has CAS, owner, deletion and revoked-consent bo
  assert.equal(e.sql(`select count(*) from turn_private.assistant_goal_trip_links where owner_id='${e.users[0].id}';`),'0');
  assert.equal(e.counts.http,0,'Trip linking and deletion never invokes a model');
  await login(e.users[0]);assert.equal((await call(path,owner)).status,401,'replaced session cannot read old link');
+});
+
+test('v5 Trip deletion takes the Trip lock before goal/link and fences an interleaved retarget',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
+ const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
+ const call=async(path,token,method='GET',body)=>{const r=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,body:await r.json()};};
+ const attemptId=randomUUID();const credentials=await call('/api/auth/native/v2/credentials',null,'POST',{email:e.users[0].email,password:e.users[0].password,attemptId});
+ assert.equal(credentials.status,200);
+ const owner=credentials.body.accessToken;
+ assert.equal((await call('/api/auth/native/v2/login',owner,'POST',{attemptId})).status,200);
+ assert.equal((await call('/api/chat/native/v5/consent',owner,'POST',{policyId:e.policyId,noticeHash:e.noticeHash})).status,200);
+ const oldTrip=randomUUID(),nextTrip=randomUUID(),conversationId=randomUUID(),goalId=randomUUID(),messageId=randomUUID();
+ for(const [tripId,title] of [[oldTrip,'Held Trip'],[nextTrip,'Next Trip']])
+  assert.equal((await call('/api/trips/native/v2',owner,'POST',{tripId,title})).status,201);
+ const goal={conversationId,messageId,idempotencyKey:randomUUID(),policyId:e.policyId,locale:'en',text:'Plan a Trip',relationship:'goal_start',goalId,expectedGoalVersion:null,taskId:null,parentMessageId:null,turnId:null};
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',goal)).status,201);
+ const path='/api/chat/native/v5/goals/'+goalId+'/trip';
+ const link={operationId:randomUUID(),conversationId,sourceMessageId:messageId,expectedGoalScopeVersion:1,expectedLinkVersion:0,action:'link',tripId:oldTrip,expectedTripVersion:0,confirmed:true};
+ assert.equal((await call(path,owner,'POST',link)).status,201);
+ // This disposable trigger runs before the production guard, after the delete
+ // RPC has locked oldTrip. It makes the opposing lock order deterministic.
+ const key=827001;
+ e.sql(`create function turn_private.test_pause_goal_trip_delete() returns trigger language plpgsql set search_path='' as $$begin perform pg_catalog.pg_advisory_xact_lock(${key});perform pg_catalog.pg_sleep(0.8);return new;end$$;create trigger a_pause_goal_trip_delete before insert on privacy_private.trip_deletions for each row execute function turn_private.test_pause_goal_trip_delete();`);
+ const requestId=randomUUID();
+ try {
+  const deletion=call('/api/privacy/native/v1/trips',owner,'POST',{requestId,tripId:oldTrip,expectedVersion:0,confirmed:true});
+  await waitUntil(()=>e.sql(`select pg_catalog.pg_try_advisory_lock(${key});`)==='f',3000,'confirmed deletion entered the Trip-locked trigger');
+  const retarget=call(path,owner,'POST',{...link,operationId:randomUUID(),sourceMessageId:null,expectedGoalScopeVersion:2,expectedLinkVersion:1,tripId:nextTrip});
+  const [deleted,moved]=await Promise.all([deletion,retarget]);
+  assert.equal(deleted.status,202,JSON.stringify(deleted.body));
+  assert.equal(moved.status,409,JSON.stringify(moved.body));
+  const read=await call(path,owner);
+  assert.equal(read.status,200);assert.equal(read.body.tripId,null);
+  assert.equal(read.body.sourceKind,'trip_deletion_confirmed');
+  assert.equal(e.sql(`select state from privacy_private.trip_deletions where request_id='${requestId}';`),'queued');
+  assert.match(e.sql(`select public.execute_trip_deletion_v1('${requestId}');`),/completed/);
+  assert.equal(e.sql(`select count(*) from public.trips where id='${nextTrip}';`),'1');
+ } finally {
+  e.sql('drop trigger a_pause_goal_trip_delete on privacy_private.trip_deletions;drop function turn_private.test_pause_goal_trip_delete();');
+ }
+});
+
+test('v5 Trip unlink and confirmed deletion reserve a terminal goal version at the ordinary cap',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
+ const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
+ const call=async(path,token,method='GET',body)=>{const r=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:r.status,body:await r.json()};};
+ const attemptId=randomUUID(),credentials=await call('/api/auth/native/v2/credentials',null,'POST',{email:e.users[0].email,password:e.users[0].password,attemptId});
+ assert.equal(credentials.status,200);
+ const owner=credentials.body.accessToken;
+ assert.equal((await call('/api/auth/native/v2/login',owner,'POST',{attemptId})).status,200);
+ assert.equal((await call('/api/chat/native/v5/consent',owner,'POST',{policyId:e.policyId,noticeHash:e.noticeHash})).status,200);
+ for(const route of ['explicit','deletion']){
+  const tripId=randomUUID(),conversationId=randomUUID(),goalId=randomUUID(),messageId=randomUUID(),path='/api/chat/native/v5/goals/'+goalId+'/trip';
+  assert.equal((await call('/api/trips/native/v2',owner,'POST',{tripId,title:'Cap '+route})).status,201);
+  const start={conversationId,messageId,idempotencyKey:randomUUID(),policyId:e.policyId,locale:'en',text:'Plan capped goal',relationship:'goal_start',goalId,expectedGoalVersion:null,taskId:null,parentMessageId:null,turnId:null};
+  assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',start)).status,201);
+  assert.equal((await call(path,owner,'POST',{operationId:randomUUID(),conversationId,sourceMessageId:messageId,
+   expectedGoalScopeVersion:1,expectedLinkVersion:0,action:'link',tripId,expectedTripVersion:0,confirmed:true})).status,201);
+  // Disposable privileged fixture places a valid active reference at the old
+  // maximum; no real user must perform thousands of edits to reach this case.
+  e.sql(`update turn_private.assistant_goals set scope_version=10000 where id='${goalId}';
+    update turn_private.assistant_goal_trip_links set link_version=10000,goal_scope_version=10000 where goal_id='${goalId}';
+    update turn_private.assistant_messages set scope_version=10000 where id='${messageId}';`);
+  const before=await call('/api/chat/native/v5/context',owner,'POST',{conversationId,goalId,messageId,expectedGoalVersion:10000,memoryIds:[]});
+  assert.equal(before.status,200);
+  const amend={...start,messageId:randomUUID(),idempotencyKey:randomUUID(),text:'Do not consume terminal version',relationship:'amendment',expectedGoalVersion:10000,parentMessageId:messageId};
+  assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',amend)).status,409,'ordinary amendment cannot consume terminal version');
+  if(route==='explicit'){
+   const unlink={operationId:randomUUID(),conversationId,sourceMessageId:null,expectedGoalScopeVersion:10000,
+    expectedLinkVersion:10000,action:'unlink',tripId:null,expectedTripVersion:null,confirmed:true};
+   const response=await call(path,owner,'POST',unlink);
+   assert.equal(response.status,201,JSON.stringify(response.body));
+   assert.deepEqual([response.body.goalScopeVersion,response.body.linkVersion],[10001,10001]);
+  }else{
+   const requestId=randomUUID();
+   const accepted=await call('/api/privacy/native/v1/trips',owner,'POST',{requestId,tripId,expectedVersion:0,confirmed:true});
+   assert.equal(accepted.status,202,JSON.stringify(accepted.body));
+   assert.equal((await call('/api/privacy/native/v1/trips',owner,'POST',{requestId,tripId,expectedVersion:0,confirmed:true})).body.state,'queued');
+   assert.match(e.sql(`select public.execute_trip_deletion_v1('${requestId}');`),/completed/);
+  }
+  const read=await call(path,owner);
+  assert.deepEqual([read.body.tripId,read.body.linkVersion,read.body.goalScopeVersion,read.body.terminalUnlinked],[null,10001,10001,true]);
+  assert.equal(e.sql(`select trip_terminal from turn_private.assistant_goals where id='${goalId}';`),'t');
+  assert.equal((await call('/api/chat/native/v5/context',owner,'POST',{conversationId,goalId,messageId,expectedGoalVersion:10000,memoryIds:[]})).status,409,
+   'the old goal/context basis is stale after terminal unlink');
+  assert.equal((await call(path,owner,'POST',{operationId:randomUUID(),conversationId,sourceMessageId:null,
+   expectedGoalScopeVersion:10001,expectedLinkVersion:10001,action:'link',tripId,expectedTripVersion:0,confirmed:true})).status,400,
+   'terminal goal cannot silently re-link under the old contract');
+ }
 });

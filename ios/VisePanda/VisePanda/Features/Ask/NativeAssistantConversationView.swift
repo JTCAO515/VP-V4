@@ -84,7 +84,7 @@ private struct AssistantSubmission: Encodable {
     }
 }
 
-private struct AssistantGoalTripLink: Decodable {
+private struct AssistantGoalTripLink: Decodable, Equatable {
     let version: Int
     let kind: String
     let conversationId: String
@@ -96,6 +96,7 @@ private struct AssistantGoalTripLink: Decodable {
     let tripHeadVersion: Int?
     let sourceMessageId: String?
     let sourceKind: String?
+    let terminalUnlinked: Bool
     let current: Bool
     var valid: Bool {
         version == 5 && kind == "goal_trip_link" && UUID(uuidString: conversationId) != nil
@@ -105,11 +106,23 @@ private struct AssistantGoalTripLink: Decodable {
         && ((tripId == nil) == (tripHeadVersion == nil))
         && (tripHeadVersion == nil || tripHeadVersion! >= 0)
         && (sourceMessageId == nil || UUID(uuidString: sourceMessageId!) != nil)
-        && (!current || tripId != nil)
+        && (!current || tripId != nil) && (!terminalUnlinked || tripId == nil)
+    }
+}
+
+private struct AssistantGoalTripLinksRead: Decodable {
+    let version: Int
+    let kind: String
+    let links: [AssistantGoalTripLink]
+    var valid: Bool {
+        version == 5 && kind == "goal_trip_links" && links.count <= 100
+        && links.allSatisfy { $0.valid && $0.tripId != nil }
+        && Set(links.map(\.goalId)).count == links.count
     }
 }
 
 private struct AssistantTripMutation: Encodable, Equatable {
+    let goalId: String // local retry scope; never sent as a body authority
     let operationId: String
     let conversationId: String
     let sourceMessageId: String?
@@ -138,7 +151,7 @@ private struct AssistantTripMutation: Encodable, Equatable {
 }
 
 private enum AssistantTripConfirmation: Equatable {
-    case link(NativeTripSummary), unlink
+    case link(NativeTripSummary), unlink, privacyUnlink(AssistantGoalTripLink)
 }
 
 /// Opt-in v5 consumer. Conversation membership is read back from the server;
@@ -159,6 +172,7 @@ struct NativeAssistantConversationView: View {
     @State private var tripLink: AssistantGoalTripLink?
     @State private var ownedTrips: [NativeTripSummary] = []
     @State private var pendingTripMutation: AssistantTripMutation?
+    @State private var privacyLinks: [AssistantGoalTripLink] = []
     @State private var tripBusy = false
     @State private var tripNotice: String?
     @State private var showTripPicker = false
@@ -210,6 +224,7 @@ struct NativeAssistantConversationView: View {
                             .accessibilityIdentifier("assistant.accept")
                     }
                 } else { Text(chinese ? "正在读取授权状态" : "Loading consent") }
+                if policy?.consentState != .accepted && !privacyLinks.isEmpty { privacyTripControls }
                 if notice != nil { Text(chinese ? "请求未确认，请重试或刷新。" : "Request not confirmed. Retry or refresh.").font(.footnote) }
             }.padding(VPSpacing.standard)
         }
@@ -241,11 +256,16 @@ struct NativeAssistantConversationView: View {
             } else if case .unlink = tripConfirmation {
                 Button(chinese ? "确认解除" : "Confirm unlink", role: .destructive) { Task { await changeTrip(to: nil) } }
                     .accessibilityIdentifier("assistant.trip.confirm-unlink")
+            } else if case .privacyUnlink(let link) = tripConfirmation {
+                Button(chinese ? "确认隐私解除" : "Confirm privacy unlink", role: .destructive) { Task { await unlinkPrivacy(link) } }
+                    .accessibilityIdentifier("assistant.trip.confirm-privacy-unlink")
             }
             Button(chinese ? "取消" : "Cancel", role: .cancel) { tripConfirmation = nil }
         } message: {
             if case .link(let trip) = tripConfirmation {
                 Text((chinese ? "把「" : "Link ") + trip.title + (chinese ? "」（版本 \(trip.headVersion)）关联到当前目标？不会更改行程。" : " (version \(trip.headVersion)) to this goal? The Trip will not change."))
+            } else if case .privacyUnlink = tripConfirmation {
+                Text(chinese ? "文本授权已撤回。这里只解除已有行程关联，不恢复授权，也不删除行程。" : "Text consent is withdrawn. Remove only this saved Trip link without restoring consent or deleting the Trip.")
             } else {
                 Text(chinese ? "只解除当前目标与行程的关联，不删除或更改行程。" : "Remove this goal's link only. The Trip will not be deleted or changed.")
             }
@@ -274,7 +294,8 @@ struct NativeAssistantConversationView: View {
                 pending = nil; draft = ""; boundScope = session.retainedDataScope
             }
             policy = nil; conversation = nil; resultStore.clear(); notice = nil
-            tripLink = nil; ownedTrips = []; pendingTripMutation = nil; tripNotice = nil; tripConfirmation = nil; showTripPicker = false
+            tripLink = nil; ownedTrips = []; pendingTripMutation = nil; privacyLinks = []
+            tripNotice = nil; tripConfirmation = nil; showTripPicker = false
             guard requested != nil else { return }
             while busy {
                 do { try await Task.sleep(for: .milliseconds(50)) } catch { return }
@@ -320,24 +341,50 @@ struct NativeAssistantConversationView: View {
                     Button(chinese ? "解除行程关联" : "Unlink Trip", role: .destructive) { tripConfirmation = .unlink }
                         .disabled(tripBusy || pendingTripMutation != nil).accessibilityIdentifier("assistant.trip.unlink")
                 } else {
-                    Text(chinese ? "尚未关联行程" : "No Trip linked")
+                    Text(link.terminalUnlinked
+                         ? (chinese ? "已达到关联版本上限；请建立新目标继续。" : "Trip linking is closed at its version limit. Start a new goal to continue.")
+                         : (chinese ? "尚未关联行程" : "No Trip linked"))
                         .font(.subheadline).foregroundStyle(Color.vpSecondaryText).accessibilityIdentifier("assistant.trip.unlinked")
                 }
                 Button(link.tripId == nil ? (chinese ? "选择已有行程" : "Choose existing Trip")
                        : (chinese ? "改关联其他行程" : "Change linked Trip")) { Task { await chooseTrip() } }
-                    .disabled(tripBusy || pendingTripMutation != nil)
+                    .disabled(tripBusy || pendingTripMutation != nil || link.terminalUnlinked)
                     .accessibilityIdentifier("assistant.trip.choose")
             } else {
                 Text(chinese ? "正在核对行程关联" : "Checking Trip link")
                     .font(.footnote).foregroundStyle(Color.vpSecondaryText)
             }
-            if pendingTripMutation != nil {
-                Button(chinese ? "重试上次行程操作" : "Retry the same Trip action") { Task { await changeTrip(to: nil) } }
+            if pendingTripMutation?.goalId == currentGoal.goalId {
+                Button(chinese ? "重试上次行程操作" : "Retry the same Trip action") { Task { await retryTripMutation() } }
                     .disabled(tripBusy).accessibilityIdentifier("assistant.trip.retry")
             }
             if tripNotice != nil {
                 Text(chinese ? "行程关联尚未确认，请刷新或重试。" : "Trip link not confirmed. Refresh or retry.")
                     .font(.caption).foregroundStyle(Color.vpSecondaryText).accessibilityIdentifier("assistant.trip.error")
+            }
+        }
+        .padding(14).frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
+    }
+    private var privacyTripControls: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(chinese ? "已有行程关联" : "Existing Trip links").font(.headline)
+            Text(chinese ? "文本授权未开放。你仍可解除已有行程关联；不会恢复授权或更改行程。" : "Text processing is unavailable. You can still remove an existing Trip link without restoring consent or changing the Trip.")
+                .font(.footnote).foregroundStyle(Color.vpSecondaryText)
+            ForEach(privacyLinks, id: \.goalId) { link in
+                let title = ownedTrips.first(where: { $0.id == link.tripId })?.title
+                    ?? String((link.tripId ?? link.goalId).prefix(8))
+                Text(title + " · " + (chinese ? "目标 " : "Goal ") + String(link.goalId.prefix(8)))
+                    .font(.subheadline).accessibilityIdentifier("assistant.trip.privacy-link.\(link.goalId)")
+                Button(chinese ? "解除此关联" : "Unlink this Trip", role: .destructive) {
+                    tripConfirmation = .privacyUnlink(link)
+                }
+                .disabled(tripBusy || (pendingTripMutation != nil && pendingTripMutation?.goalId != link.goalId))
+                .accessibilityIdentifier("assistant.trip.privacy-unlink.\(link.goalId)")
+                if pendingTripMutation?.goalId == link.goalId {
+                    Button(chinese ? "重试同一次解除" : "Retry the same unlink") { Task { await retryTripMutation() } }
+                        .disabled(tripBusy).accessibilityIdentifier("assistant.trip.privacy-retry.\(link.goalId)")
+                }
             }
         }
         .padding(14).frame(maxWidth: .infinity, alignment: .leading)
@@ -369,20 +416,42 @@ struct NativeAssistantConversationView: View {
               let conversationId = conversation?.conversationId, let link = tripLink,
               link.goalId == goal.goalId, link.goalScopeVersion == goal.scopeVersion else { return }
         let request: AssistantTripMutation
-        if let pendingTripMutation { request = pendingTripMutation }
+        if let pendingTripMutation, pendingTripMutation.goalId == goal.goalId { request = pendingTripMutation }
         else {
             let source = selected == nil ? nil : conversation?.messages.last(where: {
                 $0.goalId == goal.goalId && $0.scopeVersion == goal.scopeVersion
             })?.messageId
-            request = AssistantTripMutation(operationId: UUID().uuidString.lowercased(), conversationId: conversationId,
+            request = AssistantTripMutation(goalId:goal.goalId, operationId: UUID().uuidString.lowercased(), conversationId: conversationId,
                 sourceMessageId: source, expectedGoalScopeVersion: goal.scopeVersion,
                 expectedLinkVersion: link.linkVersion, action: selected == nil ? "unlink" : "link",
                 tripId: selected?.id, expectedTripVersion: selected?.headVersion)
             self.pendingTripMutation = request
         }
-        tripConfirmation = nil; tripBusy = true
+        tripConfirmation = nil
+        await performTripMutation(request, initial: initial)
+    }
+    private func unlinkPrivacy(_ link: AssistantGoalTripLink) async {
+        guard !tripBusy, let initial = session.dataScope, link.tripId != nil else { return }
+        let request: AssistantTripMutation
+        if let pendingTripMutation, pendingTripMutation.goalId == link.goalId { request = pendingTripMutation }
+        else {
+            request = AssistantTripMutation(goalId:link.goalId, operationId:UUID().uuidString.lowercased(),
+                conversationId:link.conversationId, sourceMessageId:nil,
+                expectedGoalScopeVersion:link.goalScopeVersion, expectedLinkVersion:link.linkVersion,
+                action:"unlink", tripId:nil, expectedTripVersion:nil)
+            pendingTripMutation = request
+        }
+        tripConfirmation = nil
+        await performTripMutation(request, initial:initial)
+    }
+    private func retryTripMutation() async {
+        guard !tripBusy, let initial = session.dataScope, let pendingTripMutation else { return }
+        await performTripMutation(pendingTripMutation, initial:initial)
+    }
+    private func performTripMutation(_ request: AssistantTripMutation, initial: NativeDataScope) async {
+        tripBusy = true
         do {
-            let data = try await session.askRequest(path: tripPath(goal.goalId), method: "POST", body: JSONEncoder().encode(request))
+            let data = try await session.askRequest(path: tripPath(request.goalId), method: "POST", body: JSONEncoder().encode(request))
             guard session.dataScope == initial else { throw NativeDataError.staleSessionResponse }
             let accepted = try JSONDecoder().decode(AssistantGoalTripAccepted.self, from: data)
             guard accepted.version == 5 && accepted.kind == "goal_trip_link" && accepted.operationId == request.operationId
@@ -402,6 +471,25 @@ struct NativeAssistantConversationView: View {
         tripBusy = false
         await reload()
     }
+    private func loadPrivacyLinks(_ initial: NativeDataScope) async {
+        do {
+            let data = try await session.askRequest(path: "api/chat/native/v5/goal-trips", method: "GET")
+            guard session.dataScope == initial else { return }
+            let read = try JSONDecoder().decode(AssistantGoalTripLinksRead.self, from: data)
+            guard read.valid else { throw NativeDataError.invalidResponse }
+            privacyLinks = read.links
+            if let pendingTripMutation, pendingTripMutation.action == "unlink",
+               !read.links.contains(where: { $0.goalId == pendingTripMutation.goalId }) {
+                self.pendingTripMutation = nil
+            }
+            if !read.links.isEmpty {
+                do { ownedTrips = try await ownedTripList(initial) }
+                catch { if session.dataScope == initial { ownedTrips = [] } }
+            } else { ownedTrips = [] }
+        } catch {
+            if session.dataScope == initial { privacyLinks = []; tripNotice = "retry" }
+        }
+    }
     private func reload() async {
         guard !busy, let initial = session.dataScope else { return }
         busy = true; defer { busy = false }
@@ -412,9 +500,11 @@ struct NativeAssistantConversationView: View {
             guard policyReply.kind == "policy", policyReply.policy.valid else { throw NativeDataError.invalidResponse }
             policy = policyReply.policy
             if policyReply.policy.consentState != .accepted {
-                conversation = nil; pending = nil; resultStore.clear(); tripLink = nil; ownedTrips = []; pendingTripMutation = nil
+                conversation = nil; pending = nil; resultStore.clear(); tripLink = nil
+                await loadPrivacyLinks(initial)
                 return
             }
+            privacyLinks = []
             let data = try await session.askRequest(path: "api/chat/native/v5/conversation", method: "GET")
             guard session.dataScope == initial else { return }
             let read = try JSONDecoder().decode(AssistantConversation.self, from: data)
@@ -429,7 +519,17 @@ struct NativeAssistantConversationView: View {
                     guard link.valid && link.goalId == currentGoal.goalId && link.conversationId == conversationID
                         && link.goalScopeVersion == currentGoal.scopeVersion else { throw NativeDataError.invalidResponse }
                     tripLink = link
-                    if pendingTripMutation?.operationId == link.lastOperationId { pendingTripMutation = nil }
+                    if let pendingTripMutation {
+                        if pendingTripMutation.goalId == link.goalId && pendingTripMutation.operationId == link.lastOperationId {
+                            self.pendingTripMutation = nil
+                        } else if pendingTripMutation.goalId == link.goalId
+                                    && (link.linkVersion > pendingTripMutation.expectedLinkVersion
+                                    || link.goalScopeVersion > pendingTripMutation.expectedGoalScopeVersion) {
+                            // Another confirmed action superseded the uncertain request.
+                            // Its old CAS cannot apply later; keep the current server read.
+                            self.pendingTripMutation = nil
+                        }
+                    }
                     if let linkedID = link.tripId, !ownedTrips.contains(where: { $0.id == linkedID }) {
                         ownedTrips = try await ownedTripList(initial)
                     }
@@ -443,7 +543,8 @@ struct NativeAssistantConversationView: View {
             notice = nil
         } catch {
             guard session.dataScope == initial else { return }
-            policy = nil; conversation = nil; resultStore.clear(); tripLink = nil; ownedTrips = []; notice = "retry"
+            policy = nil; conversation = nil; resultStore.clear(); tripLink = nil; notice = "retry"
+            await loadPrivacyLinks(initial)
         }
     }
     private func accept() async {
@@ -465,7 +566,8 @@ struct NativeAssistantConversationView: View {
             let body = try JSONEncoder().encode(["policyId": policy.id])
             _ = try await session.askRequest(path: "api/chat/native/v5/consent", method: "DELETE", body: body)
             guard session.dataScope == initial else { throw NativeDataError.staleSessionResponse }
-            conversation = nil; resultStore.clear(); pending = nil; draft = ""; self.policy = nil
+            conversation = nil; resultStore.clear(); pending = nil; pendingTripMutation = nil
+            draft = ""; tripLink = nil; self.policy = nil
         } catch { if session.dataScope == initial { notice = "retry" } }
         busy = false
         await reload()
