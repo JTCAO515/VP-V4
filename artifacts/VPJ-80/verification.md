@@ -1,6 +1,6 @@
 # VPJ-80 first slice: durable action claim boundary
 
-Scope: isolated branch `codex/vpj80-bounded-execution-20260927`, based on `0437f9401c767bd77b08f4b751b286a747f477c7`. This is a preparation slice of #561, not the lodging comparison result or target-environment acceptance.
+Scope: isolated branch `codex/vpj80-bounded-execution-20260927`, rebased from initial `0437f9401c767bd77b08f4b751b286a747f477c7` onto main `32a06d9fc8974c21a01a9c14bd1b72c43be70165` after #570. This is a preparation slice of #561, not the lodging comparison result or target-environment acceptance.
 
 ## Observable result and path
 
