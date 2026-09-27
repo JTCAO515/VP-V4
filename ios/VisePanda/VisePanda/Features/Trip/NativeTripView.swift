@@ -38,9 +38,19 @@ struct NativeTripView: View {
         let choice: NativeOutlinePaceChoice
         let projection: NativeTaskTravelPace
     }
+    private struct ResultLoadKey: Equatable {
+        let scope: NativeDataScope?
+        let tripID: String?
+        let headVersion: Int?
+        let archived: Bool
+        let deleting: Bool
+        let active: Bool
+    }
     var initialPlanningRequest: String? = nil
     @Environment(AppSettings.self) private var settings
+    @Environment(\.scenePhase) private var scenePhase
     @State private var store = NativeTripStore()
+    @State private var resultStore = NativeResultStore()
     @State private var newTitle = ""
     @State private var shareSource: NativeTripShareSource?
     @State private var screenshotReviewSource: NativeScreenshotReviewSource?
@@ -64,6 +74,11 @@ struct NativeTripView: View {
     @FocusState private var titleFocused: Bool
     private var chinese: Bool { settings.selectedLocale == .zh }
     private var session: NativeSession { settings.nativeSession }
+    private var resultLoadKey: ResultLoadKey {
+        .init(scope: session.dataScope, tripID: store.detail?.trip.id, headVersion: store.detail?.trip.headVersion,
+              archived: store.archive != nil, deleting: store.deletionRequest != nil || store.deletionReceipt != nil,
+              active: scenePhase == .active)
+    }
     private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
     private var outlineCanPromote: Bool {
         guard let basis = outlinePaceBasis else { return false }
@@ -114,6 +129,12 @@ struct NativeTripView: View {
                     }
                     if let detail = store.detail {
                         confirmed(detail)
+                        if store.archive == nil && store.deletionRequest == nil && store.deletionReceipt == nil {
+                            TimelineView(.periodic(from: .now, by: 1)) { _ in
+                                NativeResultCard(store: resultStore, scope: session.dataScope, chinese: chinese,
+                                                 expectedTripID: detail.trip.id)
+                            }
+                        }
                         NativeTravelRemindersView(detail: detail, session: session, chinese: chinese)
                             .id("reminders-\(detail.trip.id)-\(session.dataScope?.subject ?? "")")
                         if initialPlanningRequest == nil && store.canEdit && store.draft == nil && store.pending == nil { outlineComposer }
@@ -174,6 +195,12 @@ struct NativeTripView: View {
                 await generateOutline()
             }
             if session.dataScope != nil && !session.busy { await store.reload(using: session) }
+        }
+        .task(id: resultLoadKey) {
+            let key = resultLoadKey
+            guard let scope = key.scope, let tripID = key.tripID, !key.archived, !key.deleting,
+                  key.active, store.scope == scope else { resultStore.clear(); return }
+            await resultStore.load(scope: scope, tripID: tripID, using: session)
         }
         .onChange(of: session.retainedDataScope) { _, retained in
             if store.scope != retained {

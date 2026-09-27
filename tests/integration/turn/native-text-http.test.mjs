@@ -95,6 +95,162 @@ test('real local Auth, native HTTP, consent, durable worker and recovery enforce
  }
 });
 
+test('v5 comparison binds only a confirmed goal Trip and reads one exact revision across native entries',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
+ const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
+ const local=identityLocalEnv();assert.ok(local?.API_URL&&local.SERVICE_ROLE_KEY);
+ const call=async(path,token,method='GET',body)=>{const response=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:response.status,body:await response.json()};};
+ const login=async user=>{const attemptId=randomUUID();const credentials=await call('/api/auth/native/v2/credentials',null,'POST',{email:user.email,password:user.password,attemptId});assert.equal(credentials.status,200);assert.equal((await call('/api/auth/native/v2/login',credentials.body.accessToken,'POST',{attemptId})).status,200);return credentials.body.accessToken;};
+ const owner=await login(e.users[0]),other=await login(e.users[1]);
+ assert.equal((await call('/api/chat/native/v5/consent',owner,'POST',{policyId:e.policyId,noticeHash:e.noticeHash})).status,200);
+ const tripA=randomUUID(),tripB=randomUUID(),tripC=randomUUID(),foreignTrip=randomUUID();
+ for(const [token,id] of [[owner,tripA],[owner,tripB],[owner,tripC],[other,foreignTrip]])
+  assert.equal((await call('/api/trips/native/v2',token,'POST',{tripId:id,title:'Synthetic owned Trip'})).status,201);
+ const patchTrip=async(tripId,version)=>{
+  const proposal=await call('/api/trips/native/v2/'+tripId+'/proposal',owner,'POST',{patch:{expectedVersion:version,operations:[{kind:'set_title',title:'Synthetic confirmed Trip '+(version+1)}]}});
+  assert.equal(proposal.status,201,JSON.stringify(proposal.body));
+  const pending=await call('/api/trips/native/v2/'+tripId+'/proposal?proposalId='+proposal.body.proposalId,owner);
+  assert.equal((await call('/api/trips/native/v2/'+tripId+'/confirm',owner,'POST',{proposalId:proposal.body.proposalId,idempotencyKey:randomUUID(),digest:pending.body.proposal.digest})).status,200);
+ };
+ await patchTrip(tripA,0);
+ const conversationId=randomUUID(),goalId=randomUUID();
+ const message=(relationship,overrides={})=>({conversationId,messageId:randomUUID(),idempotencyKey:randomUUID(),policyId:e.policyId,
+  locale:'en',text:'Synthetic result basis',relationship,goalId,expectedGoalVersion:null,taskId:null,parentMessageId:null,turnId:null,...overrides});
+ const root=message('goal_start');assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',root)).status,201);
+ const attachTask=async(scope,parent,text)=>{
+  const taskId=randomUUID(),turnId=randomUUID();
+  assert.equal((await call('/api/chat/native/v2/turns',owner,'POST',{threadId:randomUUID(),turnId,idempotencyKey:randomUUID(),policyId:e.policyId,
+   locale:'en',text,serviceTask:{id:taskId,scopeVersion:1,relationship:'new_goal',parentTurnId:null}})).status,201);
+  const input=message('follow_up',{expectedGoalVersion:scope,parentMessageId:parent,taskId,text:'Attach '+text});
+  assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',input)).status,201);
+  await waitUntil(()=>e.sql(`select status from public.turns where id='${turnId}';`)==='completed',30000,'real task answer');
+  return {taskId,turnId,input};
+ };
+ const old=await attachTask(1,root.messageId,'Synthetic old task');
+ const linkPath='/api/chat/native/v5/goals/'+goalId+'/trip';
+ const link=(tripId,goalVersion,linkVersion,sourceMessageId,tripVersion)=>({operationId:randomUUID(),conversationId,sourceMessageId,
+  expectedGoalScopeVersion:goalVersion,expectedLinkVersion:linkVersion,action:'link',tripId,expectedTripVersion:tripVersion,confirmed:true});
+ const firstLink=await call(linkPath,owner,'POST',link(tripA,1,0,old.input.messageId,1));
+ assert.equal(firstLink.status,201,JSON.stringify(firstLink.body));
+ assert.equal(firstLink.body.goalScopeVersion,2);
+ const content={schemaVersion:'comparison/1',title:'Synthetic directions',summary:'Fixture only; no travel advice.',options:[
+  {id:'one',title:'Synthetic one',tradeoff:'Timing unknown'},{id:'two',title:'Synthetic two',tradeoff:'Availability unknown'}],actions:[]};
+ const params=(artifactId,task,input,tripId,tripVersion,goalVersion,key=randomUUID())=>({p_owner_id:e.users[0].id,p_artifact_id:artifactId,
+  p_expected_revision:0,p_idempotency_key:key,p_task_id:task.taskId,p_goal_id:goalId,p_input_message_id:input.messageId,
+  p_trip_id:tripId,p_trip_version:tripVersion,p_goal_version:goalVersion,p_memory_basis:[],p_content:content});
+ const publish=async body=>{const response=await fetch(local.API_URL+'/rest/v1/rpc/publish_comparison_result_v1',{method:'POST',
+  headers:{apikey:local.SERVICE_ROLE_KEY,Authorization:'Bearer '+local.SERVICE_ROLE_KEY,'Content-Type':'application/json'},body:JSON.stringify(body)});
+  return {status:response.status,body:await response.json()};};
+ assert.equal((await publish(params(randomUUID(),old,old.input,tripA,1,1))).body.message,'STALE_BASIS','pre-link Task and scope cannot inherit the later link');
+ const recycled=message('follow_up',{expectedGoalVersion:2,parentMessageId:old.input.messageId,taskId:old.taskId,text:'Try old Task after link'});
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',recycled)).status,201);
+ assert.equal((await publish(params(randomUUID(),old,recycled,tripA,1,2))).body.message,'STALE_BASIS','new message cannot launder an old Task');
+ const taskA=await attachTask(2,recycled.messageId,'Synthetic linked A');
+ assert.equal((await publish(params(randomUUID(),taskA,taskA.input,tripB,0,2))).body.message,'STALE_BASIS','same-owner but unlinked Trip is denied');
+ assert.equal((await publish(params(randomUUID(),taskA,taskA.input,foreignTrip,0,2))).body.message,'STALE_BASIS','foreign Trip is denied');
+ const artifactA=randomUUID(),attempts=await Promise.all([publish(params(artifactA,taskA,taskA.input,tripA,1,2)),publish(params(artifactA,taskA,taskA.input,tripA,1,2))]);
+ assert.equal(attempts.filter(x=>x.status===200).length,1,'concurrent CAS has one winner');
+ const lost=attempts.find(x=>x.status!==200);
+ assert.ok(lost && ((lost.status===400&&lost.body.message==='REVISION_CONFLICT')
+  || (lost.status===409&&lost.body.code==='23505'&&/result_artifacts_pkey/.test(lost.body.message))));
+ assert.equal(e.sql(`select count(*) from turn_private.result_revisions where artifact_id='${artifactA}';`),'1');
+ assert.equal(e.sql(`select count(*) from turn_private.result_events where artifact_id='${artifactA}';`),'1');
+ const exactA='/api/results/native/v1?artifactId='+artifactA+'&revision=1';
+ const directA=await call(exactA,owner),latest=await call('/api/results/native/v1',owner);
+ const referenceA=await call('/api/results/native/v1/trip?tripId='+tripA,owner);
+ assert.equal(directA.status,200,JSON.stringify(directA.body));assert.equal(directA.body.data.current,true);
+ assert.deepEqual([latest.body.data.artifactId,latest.body.data.revision],[artifactA,1]);
+ assert.deepEqual([referenceA.body.data.artifactId,referenceA.body.data.revision],[artifactA,1]);
+ assert.equal(directA.body.data.source.tripId,tripA);assert.equal(directA.body.data.source.tripVersion,1);
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripB,owner)).body.data.kind,'empty');
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,other)).body.data.kind,'empty');
+ assert.equal((await call(exactA,other)).body.data.kind,'empty');
+ assert.equal((await call('/api/results/native/v1/trip?tripId=invalid',owner)).status,400);
+ const secondGoal=randomUUID(),secondRoot=message('goal_start',{goalId:secondGoal,text:'Another goal on the same Trip'});
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',secondRoot)).status,201);
+ const secondLinkPath='/api/chat/native/v5/goals/'+secondGoal+'/trip';
+ assert.equal((await call(secondLinkPath,owner,'POST',link(tripA,1,0,secondRoot.messageId,1))).status,201);
+ const secondTask=randomUUID(),secondTurn=randomUUID();
+ assert.equal((await call('/api/chat/native/v2/turns',owner,'POST',{threadId:randomUUID(),turnId:secondTurn,idempotencyKey:randomUUID(),
+  policyId:e.policyId,locale:'en',text:'Synthetic second-goal task',serviceTask:{id:secondTask,scopeVersion:1,relationship:'new_goal',parentTurnId:null}})).status,201);
+ const secondInput=message('follow_up',{goalId:secondGoal,expectedGoalVersion:2,parentMessageId:secondRoot.messageId,taskId:secondTask});
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',secondInput)).status,201);
+ await waitUntil(()=>e.sql(`select status from public.turns where id='${secondTurn}';`)==='completed',30000,'second goal answer');
+ const secondArtifact=randomUUID(),secondTaskRef={taskId:secondTask};
+ assert.equal((await publish({...params(secondArtifact,secondTaskRef,secondInput,tripA,1,2),p_goal_id:secondGoal})).status,200);
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,owner)).body.data.artifactId,secondArtifact,'newer eligible goal wins');
+ const laterTurn=randomUUID();
+ e.sql(`begin;insert into public.turns(id,owner_id,status) values('${laterTurn}','${e.users[0].id}','accepted');
+   insert into turn_private.text_content(turn_id,owner_id,thread_id,policy_id,consent_id,locale,input_text)
+   select '${laterTurn}',owner_id,thread_id,policy_id,consent_id,'en','Synthetic later Task Turn' from turn_private.service_tasks where id='${secondTask}';
+   update turn_private.service_tasks set last_turn_id='${laterTurn}' where id='${secondTask}';commit;`);
+ assert.equal((await call('/api/results/native/v1?artifactId='+secondArtifact+'&revision=1',owner)).body.data.current,false);
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,owner)).body.data.artifactId,artifactA,
+  'an ineligible newest artifact must not hide an older current goal result');
+ // Fixture-only private rows make the candidate scan overflow without changing
+ // any user-authorised link or result. Overflow must be unavailable, not empty.
+ e.sql(`with clones as materialized (select gen_random_uuid() id,gen_random_uuid() key from generate_series(1,64)),
+   inserted as (insert into turn_private.result_artifacts(id,owner_id,task_id,goal_id,input_message_id,trip_id,current_revision)
+     select c.id,a.owner_id,a.task_id,a.goal_id,a.input_message_id,a.trip_id,a.current_revision
+     from clones c cross join turn_private.result_artifacts a where a.id='${secondArtifact}' returning id)
+   insert into turn_private.result_revisions(artifact_id,revision,owner_id,idempotency_key,request_digest,input_sequence,
+     task_turn_id,goal_version,trip_version,trip_link_operation_id,trip_link_version,memory_basis,content)
+   select c.id,r.revision,r.owner_id,c.key,r.request_digest,r.input_sequence,r.task_turn_id,r.goal_version,
+     r.trip_version,r.trip_link_operation_id,r.trip_link_version,r.memory_basis,r.content
+   from clones c join inserted x on x.id=c.id cross join turn_private.result_revisions r where r.artifact_id='${secondArtifact}';`);
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,owner)).body.data.kind,'unavailable',
+  'bounded overflow cannot claim that an older eligible result does not exist');
+ e.sql(`delete from turn_private.result_artifacts where task_id='${secondTask}' and id<>'${secondArtifact}';`);
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,owner)).body.data.artifactId,artifactA);
+ assert.equal((await call('/api/trips/native/v2/'+tripA+'/archive',owner,'POST',{expectedVersion:1,idempotencyKey:randomUUID(),confirmed:true})).status,200);
+ const archivedA=(await call(exactA,owner)).body.data;
+ assert.equal(archivedA.current,false,'archive keeps history but invalidates currentness');
+ assert.equal(archivedA.historicalReadable,true);
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,owner)).body.data.kind,'empty');
+ const retarget=await call(linkPath,owner,'POST',link(tripB,2,1,taskA.input.messageId,0));
+ assert.equal(retarget.status,201,JSON.stringify(retarget.body));assert.equal(retarget.body.goalScopeVersion,3);
+ const taskB=await attachTask(3,taskA.input.messageId,'Synthetic linked B');
+ const artifactB=randomUUID();assert.equal((await publish(params(artifactB,taskB,taskB.input,tripB,0,3))).status,200);
+ const exactB='/api/results/native/v1?artifactId='+artifactB+'&revision=1';
+ assert.equal((await call(exactB,owner)).body.data.current,true);
+ assert.equal((await call(linkPath,owner,'POST',link(tripC,3,2,taskB.input.messageId,0))).status,201);
+ assert.equal((await call(exactB,owner)).body.data.current,false,'retarget invalidates an otherwise current Trip result');
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripB,owner)).body.data.kind,'empty');
+ const returnMessage=message('follow_up',{expectedGoalVersion:4,parentMessageId:taskB.input.messageId,text:'Return to Trip B'});
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',returnMessage)).status,201);
+ assert.equal((await call(linkPath,owner,'POST',link(tripB,4,3,returnMessage.messageId,0))).status,201);
+ const taskB2=await attachTask(5,returnMessage.messageId,'Synthetic linked B again');
+ const artifactB2=randomUUID();assert.equal((await publish(params(artifactB2,taskB2,taskB2.input,tripB,0,5))).status,200);
+ const exactB2='/api/results/native/v1?artifactId='+artifactB2+'&revision=1';
+ assert.equal((await call(exactB2,owner)).body.data.current,true);
+ const unlink={operationId:randomUUID(),conversationId,sourceMessageId:null,expectedGoalScopeVersion:5,expectedLinkVersion:4,
+  action:'unlink',tripId:null,expectedTripVersion:null,confirmed:true};
+ assert.equal((await call(linkPath,owner,'POST',unlink)).status,201);
+ const unlinkedB=(await call(exactB2,owner)).body.data;
+ assert.equal(unlinkedB.current,false,'unlink does not erase authorised history');
+ assert.equal(unlinkedB.historicalReadable,true);
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripB,owner)).body.data.kind,'empty');
+ const deletionId=randomUUID();assert.equal((await call('/api/privacy/native/v1/trips',owner,'POST',{requestId:deletionId,tripId:tripB,expectedVersion:0,confirmed:true})).status,202);
+ assert.equal((await call(exactB2,owner)).body.data.kind,'unavailable','queued deletion hides linked history');
+ assert.match(e.sql(`select public.execute_trip_deletion_v1('${deletionId}');`),/completed/);
+ assert.equal((await call(exactB,owner)).body.data.kind,'empty','Trip deletion cascades result revisions');
+ assert.equal((await call(exactB2,owner)).body.data.kind,'empty');
+ assert.equal((await call(exactA,owner)).body.data.kind,'result_artifact','unrelated Trip history survives');
+ const currentMessage=message('follow_up',{expectedGoalVersion:6,parentMessageId:taskB2.input.messageId,text:'Use a third Trip'});
+ assert.equal((await call('/api/chat/native/v5/conversation',owner,'POST',currentMessage)).status,201);
+ assert.equal((await call(linkPath,owner,'POST',link(tripC,6,5,currentMessage.messageId,0))).status,201);
+ const taskC=await attachTask(7,currentMessage.messageId,'Synthetic linked C');
+ const artifactC=randomUUID();assert.equal((await publish(params(artifactC,taskC,taskC.input,tripC,0,7))).status,200);
+ const exactC='/api/results/native/v1?artifactId='+artifactC+'&revision=1';
+ assert.equal((await call(exactC,owner)).body.data.current,true);
+ await patchTrip(tripC,0);
+ assert.equal((await call(exactC,owner)).body.data.current,false,'new Trip head invalidates exact saved base');
+ assert.equal((await call('/api/results/native/v1/trip?tripId='+tripC,owner)).body.data.kind,'empty');
+ assert.equal((await publish(params(randomUUID(),taskC,taskC.input,tripC,0,7))).body.message,'STALE_BASIS','late worker cannot publish on old head');
+ assert.equal((await call('/api/chat/native/v5/consent',owner,'DELETE',{policyId:e.policyId})).status,200);
+ assert.equal((await call(exactC,owner)).body.data.kind,'unavailable','withdrawn source cannot be read');
+ await login(e.users[0]);assert.equal((await call(exactC,owner)).status,401,'replaced session cannot read exact history');
+});
+
 test('v5 conversation persists independent answer and versioned goal changes without extra task attempts',{skip:process.env.VP_NATIVE_TEXT_INTEGRATION!=='true',timeout:180000},async t=>{
  const e=await createNativeTextEnvironment();t.after(()=>e.cleanup());
  const call=async(path,token,method='GET',body)=>{const response=await fetch(e.api+path,{method,headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});return {status:response.status,body:await response.json()};};
@@ -242,8 +398,8 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  const dependentContent=JSON.stringify(content).replaceAll("'","''");
  const basis=JSON.stringify([{id:memoryId,revision:1}]).replaceAll("'","''");
  assert.throws(()=>e.sql(`set request.jwt.claim.role='service_role';select public.publish_comparison_result_v1('${e.users[0].id}','${dependentId}',0,'${dependentKey}',
-   '${taskIds[0]}','${goalId}','${currentLink.messageId}','${tripId}',0,3,'${basis}'::jsonb,'${dependentContent}'::jsonb);`),/INVALID_INPUT/,
-   'same-owner Trip is not enough without an explicit task/goal membership contract');
+   '${taskIds[0]}','${goalId}','${currentLink.messageId}','${tripId}',0,3,'${basis}'::jsonb,'${dependentContent}'::jsonb);`),/STALE_BASIS/,
+   'same-owner but unlinked Trip still cannot receive this result');
  const dependentPublish=e.sql(`set request.jwt.claim.role='service_role';select public.publish_comparison_result_v1('${e.users[0].id}','${dependentId}',0,'${dependentKey}',
    '${taskIds[0]}','${goalId}','${currentLink.messageId}',null,null,3,'${basis}'::jsonb,'${dependentContent}'::jsonb);`);
  assert.equal(JSON.parse(dependentPublish).revision,1);
