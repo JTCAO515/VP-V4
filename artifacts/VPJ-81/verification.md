@@ -2,7 +2,7 @@
 
 ## Result and ownership
 
-The opt-in v5 VP conversation now reads the existing planning policy, admits one bounded comparison through the existing `planning/tasks` writer, and keeps its ordinary composer available while that request is in flight. Task cards pair the server's conversation `taskId` with the existing owner-scoped v2 ServiceTask history `serviceTaskId`; absent or truncated history stays unknown. Cancellation uses the existing Turn cancel route and shows only the subsequent server readback state. Opening a completed task reads the existing result endpoint and requires an active, current artifact whose source `taskId` is the selected task. The exact accepted artifact ID is retained during the session; after relaunch only a latest owned result with matching source can be opened. No result is copied into a second store.
+The opt-in v5 VP conversation now reads the existing planning policy, admits one bounded comparison through the existing `planning/tasks` writer, and keeps its ordinary composer available while that request is in flight. One card per conversation ServiceTask pairs its latest message `taskId` with the existing owner-scoped v2 ServiceTask history `serviceTaskId`; absent or truncated history stays unknown, and unrelated owner tasks never drive this conversation's polling. Cancellation uses the existing Turn cancel route and shows only the subsequent server readback state. Opening a completed task reads the existing result endpoint and requires an active, current artifact whose source `taskId` is the selected task. The exact accepted artifact ID is retained during the session; after relaunch only a latest owned result with matching source can be opened. No result is copied into a second store.
 
 `NativeSession.askRequest` has only two assistant cross-version paths: exact `GET api/chat/native/v2/turns` and the existing UUID-scoped v1 `POST .../cancel`. The v5 producer remains opt-in; the existing Ask modes are the fallback. This PR does not change the server writer, database, Knowledge/Library, or the shared shell.
 
@@ -13,7 +13,7 @@ The opt-in v5 VP conversation now reads the existing planning policy, admits one
 | `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj` | PASS | Project and scheme present |
 | `xcrun simctl list devices available` | PASS | iPhone 15 Pro iOS 17.5 UDID `B0AD77FD-33C3-4616-92CE-2E76ACD93148` available |
 | `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO -quiet` | PASS | Native compile |
-| `xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=B0AD77FD-33C3-4616-92CE-2E76ACD93148' -only-testing:VisePandaTests/AssistantResultIdentityTests -only-testing:VisePandaTests/NativeSessionIntegrationTests/testAssistantCrossVersionRoutesAreExactAndReadOnly CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -resultBundlePath /tmp/vpj81-native-rebased.xcresult -quiet` | PASS, 2/2 | Wrong-task, stale and withdrawn result rejection; exact cross-version route allowance |
+| `xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=B0AD77FD-33C3-4616-92CE-2E76ACD93148' -only-testing:VisePandaTests/AssistantResultIdentityTests -only-testing:VisePandaTests/AssistantTaskProjectionTests -only-testing:VisePandaTests/NativeSessionIntegrationTests/testAssistantCrossVersionRoutesAreExactAndReadOnly CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -resultBundlePath /tmp/vpj81-task-scope.xcresult -quiet` | PASS, 3/3 | Wrong-task/stale/withdrawn result rejection; unrelated task polling and duplicate card rejection; exact cross-version route allowance |
 | `pnpm docs:check`, `pnpm lint`, `pnpm typecheck` | PASS | Repository docs, source policy and TypeScript checks |
 | `pnpm test:contract` | PASS, 695/695 | Repository contract suite |
 | `git diff --check` | PASS | Patch whitespace |
@@ -21,6 +21,8 @@ The opt-in v5 VP conversation now reads the existing planning policy, admits one
 `pnpm typecheck` and the first `pnpm test:contract` attempt encountered an absent local `node_modules`; `pnpm install --frozen-lockfile` restored the locked dependencies, after which both passed. The install made no tracked dependency changes.
 
 After #563 merged, this commit was rebased onto main `93898f44b23817638b7ddb7f4526f73a9c41ef15` without conflicts. Native build, the two simulator tests, docs check and diff check passed again on the rebased tree; #563's Library/Knowledge files were preserved.
+
+Independent PR review found that the owner-wide v2 history could trigger polling for another conversation and repeated messages could duplicate one task card. The final projection restricts both to unique ServiceTask IDs present in the current conversation; the three targeted simulator tests above include those negative cases.
 
 ## Acceptance limit
 

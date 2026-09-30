@@ -23,7 +23,7 @@ private struct AssistantGoal: Decodable, Identifiable {
     var id: String { goalId }
 }
 
-private struct AssistantMessage: Decodable, Identifiable {
+struct AssistantMessage: Decodable, Identifiable {
     let messageId: String
     let sequence: Int
     let locale: String
@@ -48,6 +48,26 @@ private struct AssistantMessage: Decodable, Identifiable {
         && (turnId == nil || UUID(uuidString: turnId!) != nil)
         && (turnId != nil || status == "recorded")
         && (output == nil || outcome != nil)
+    }
+}
+
+enum AssistantTaskProjection {
+    static func latestMessages(_ messages: [AssistantMessage]) -> [AssistantMessage] {
+        var seen = Set<String>()
+        let latest = messages.reversed().filter { message in
+            guard let taskID = message.taskId else { return false }
+            return seen.insert(taskID).inserted
+        }
+        return Array(latest.reversed())
+    }
+
+    static func turn(for message: AssistantMessage, in history: [NativeTextTurn]) -> NativeTextTurn? {
+        guard let taskID = message.taskId else { return nil }
+        return history.first { $0.serviceTaskId == taskID }
+    }
+
+    static func waitingTurnIDs(messages: [AssistantMessage], history: [NativeTextTurn]) -> [String] {
+        latestMessages(messages).compactMap { turn(for: $0, in: history) }.filter(\.waiting).map(\.turnId)
     }
 }
 
@@ -269,13 +289,12 @@ struct NativeAssistantConversationView: View {
     private var actions: [String] { goal == nil ? ["independent_question", "goal_start"] : ["independent_question", "goal_start", "follow_up", "amendment"] }
     private var waitingKey: String {
         let messages = (conversation?.messages ?? []).filter { $0.turnId != nil && ["accepted","planning","retrieving","generating","validating"].contains($0.status) }.map(\.messageId)
-        let tasks = taskTurns.filter(\.waiting).map(\.turnId)
+        let tasks = AssistantTaskProjection.waitingTurnIDs(messages: conversation?.messages ?? [], history: taskTurns)
         return (messages + tasks).joined(separator: ":")
     }
-    private var taskMessages: [AssistantMessage] { (conversation?.messages ?? []).filter { $0.taskId != nil } }
+    private var taskMessages: [AssistantMessage] { AssistantTaskProjection.latestMessages(conversation?.messages ?? []) }
     private func taskTurn(for message: AssistantMessage) -> NativeTextTurn? {
-        guard let taskID = message.taskId else { return nil }
-        return taskTurns.first(where: { $0.serviceTaskId == taskID && $0.validTask })
+        AssistantTaskProjection.turn(for: message, in: taskTurns)
     }
     private var linkedTripTitle: String {
         guard let id = tripLink?.tripId else { return "" }
@@ -771,7 +790,10 @@ struct NativeAssistantConversationView: View {
                 guard session.dataScope == initial else { return }
                 let history = try JSONDecoder().decode(NativeTextHistory.self, from: historyData)
                 guard history.version == 2, history.kind == "history" else { throw NativeDataError.invalidResponse }
-                taskTurns = history.turns.filter { $0.validTask && UUID(uuidString: $0.turnId) != nil }
+                taskTurns = history.turns.filter {
+                    $0.serviceTaskId.flatMap(UUID.init(uuidString:)) != nil
+                        && UUID(uuidString: $0.turnId) != nil && ($0.scopeVersion ?? 0) > 0
+                }
             } catch { if session.dataScope == initial { taskTurns = [] } }
             if let selectedTaskID,
                !taskTurns.contains(where: { $0.serviceTaskId == selectedTaskID && $0.status == "completed" }) {

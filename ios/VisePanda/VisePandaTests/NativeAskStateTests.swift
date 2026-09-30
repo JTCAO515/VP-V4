@@ -279,6 +279,33 @@ nonisolated final class AssistantResultIdentityTests: XCTestCase {
     }
 }
 
+nonisolated final class AssistantTaskProjectionTests: XCTestCase {
+    @MainActor func testOnlyCurrentConversationTasksDriveCardsAndPolling() throws {
+        let taskA = UUID().uuidString.lowercased()
+        let taskB = UUID().uuidString.lowercased()
+        let unrelated = UUID().uuidString.lowercased()
+        let activeTurn = UUID().uuidString.lowercased()
+        func message(_ sequence: Int, taskID: String?) throws -> AssistantMessage {
+            let value: [String: Any] = ["messageId": UUID().uuidString.lowercased(), "sequence": sequence,
+                "locale": "en", "text": "Compare", "relationship": "follow_up", "taskId": taskID as Any,
+                "status": "recorded"]
+            return try JSONDecoder().decode(AssistantMessage.self, from: JSONSerialization.data(withJSONObject: value))
+        }
+        func turn(_ id: String, taskID: String, status: String) throws -> NativeTextTurn {
+            let value: [String: Any] = ["turnId": id, "threadId": UUID().uuidString.lowercased(),
+                "locale": "en", "input": "Compare", "status": status, "createdAt": "2026-09-30",
+                "serviceTaskId": taskID, "scopeVersion": 1, "relationship": "new_goal"]
+            return try JSONDecoder().decode(NativeTextTurn.self, from: JSONSerialization.data(withJSONObject: value))
+        }
+        let messages = try [message(1, taskID: taskA), message(2, taskID: taskB), message(3, taskID: taskA)]
+        let history = try [turn(UUID().uuidString.lowercased(), taskID: unrelated, status: "accepted"),
+                           turn(activeTurn, taskID: taskA, status: "accepted"),
+                           turn(UUID().uuidString.lowercased(), taskID: taskB, status: "completed")]
+        XCTAssertEqual(AssistantTaskProjection.latestMessages(messages).map(\.sequence), [2, 3])
+        XCTAssertEqual(AssistantTaskProjection.waitingTurnIDs(messages: messages, history: history), [activeTurn])
+    }
+}
+
 /// Only test callback state is shared, under one lock; no production credential.
 nonisolated private final class TextStateProtocol: URLProtocol, @unchecked Sendable {
     private static let lock = NSLock()
