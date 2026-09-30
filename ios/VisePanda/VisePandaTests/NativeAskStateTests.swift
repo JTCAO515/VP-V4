@@ -255,6 +255,66 @@ nonisolated final class NativeAskStateTests: XCTestCase {
     }
 }
 
+nonisolated final class AssistantResultIdentityTests: XCTestCase {
+    @MainActor func testOnlyCurrentResultFromSelectedTaskCanOpen() throws {
+        let task = UUID().uuidString.lowercased()
+        let other = UUID().uuidString.lowercased()
+        let artifact = UUID().uuidString.lowercased()
+        func result(taskID: String, current: Bool, lifecycle: String) throws -> AssistantResult {
+            let wire: [String: Any] = ["version": 1, "data": [
+                "kind": "result_artifact", "artifactId": artifact, "revision": 1,
+                "current": current, "lifecycle": lifecycle,
+                "source": ["taskId": taskID],
+                "content": ["schemaVersion": "comparison/1", "title": "Stay areas", "summary": "Two options",
+                            "options": [["id": "a", "title": "Area A", "tradeoff": "Close to rail"],
+                                        ["id": "b", "title": "Area B", "tradeoff": "Quieter"]]]
+            ]]
+            return try JSONDecoder().decode(AssistantResultEnvelope.self,
+                from: JSONSerialization.data(withJSONObject: wire)).data
+        }
+        XCTAssertTrue(try result(taskID: task, current: true, lifecycle: "active").belongs(to: task))
+        XCTAssertFalse(try result(taskID: other, current: true, lifecycle: "active").belongs(to: task))
+        XCTAssertFalse(try result(taskID: task, current: false, lifecycle: "active").belongs(to: task))
+        XCTAssertFalse(try result(taskID: task, current: true, lifecycle: "withdrawn").belongs(to: task))
+    }
+}
+
+nonisolated final class AssistantTaskProjectionTests: XCTestCase {
+    @MainActor func testOnlyCurrentConversationTasksDriveCardsAndPolling() throws {
+        let taskA = UUID().uuidString.lowercased()
+        let taskB = UUID().uuidString.lowercased()
+        let unrelated = UUID().uuidString.lowercased()
+        let activeTurn = UUID().uuidString.lowercased()
+        func message(_ sequence: Int, taskID: String?) throws -> AssistantMessage {
+            let value: [String: Any] = ["messageId": UUID().uuidString.lowercased(), "sequence": sequence,
+                "locale": "en", "text": "Compare", "relationship": "follow_up", "taskId": taskID as Any,
+                "status": "recorded"]
+            return try JSONDecoder().decode(AssistantMessage.self, from: JSONSerialization.data(withJSONObject: value))
+        }
+        func turn(_ id: String, taskID: String, status: String, validCompletion: Bool = true) throws -> NativeTextTurn {
+            var value: [String: Any] = ["turnId": id, "threadId": UUID().uuidString.lowercased(),
+                "locale": "en", "input": "Compare", "status": status, "createdAt": "2026-09-30",
+                "serviceTaskId": taskID, "scopeVersion": 1, "relationship": "new_goal"]
+            if status == "completed" && validCompletion {
+                value["outcome"] = "answered"; value["output"] = "Comparison ready"
+            }
+            return try JSONDecoder().decode(NativeTextTurn.self, from: JSONSerialization.data(withJSONObject: value))
+        }
+        let messages = try [message(1, taskID: taskA), message(2, taskID: taskB), message(3, taskID: taskA)]
+        let history = try [turn(UUID().uuidString.lowercased(), taskID: unrelated, status: "accepted"),
+                           turn(activeTurn, taskID: taskA, status: "accepted"),
+                           turn(UUID().uuidString.lowercased(), taskID: taskB, status: "completed", validCompletion: false),
+                           turn(UUID().uuidString.lowercased(), taskID: taskB, status: "completed")]
+        XCTAssertEqual(AssistantTaskProjection.latestMessages(messages).map(\.sequence), [2, 3])
+        XCTAssertEqual(AssistantTaskProjection.waitingTurnIDs(messages: messages, history: history), [activeTurn])
+        let eligible = AssistantTaskProjection.eligibleHistory(history, messages: messages)
+        XCTAssertEqual(eligible.count, 1)
+        XCTAssertNil(AssistantTaskProjection.turn(for: messages[1], in: eligible), "invalid latest row cannot reveal an older completion")
+        let validLatest = AssistantTaskProjection.eligibleHistory([history[0], history[1], history[3]], messages: messages)
+        XCTAssertEqual(AssistantTaskProjection.turn(for: messages[1], in: validLatest)?.status, "completed")
+    }
+}
+
 /// Only test callback state is shared, under one lock; no production credential.
 nonisolated private final class TextStateProtocol: URLProtocol, @unchecked Sendable {
     private static let lock = NSLock()
