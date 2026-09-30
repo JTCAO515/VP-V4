@@ -43,6 +43,7 @@ private struct AssistantMessage: Decodable, Identifiable {
         && !text.isEmpty && text.utf16.count <= 4000
         && ["independent_question", "goal_start", "follow_up", "amendment", "clarification"].contains(relationship)
         && (goalId == nil || UUID(uuidString: goalId!) != nil)
+        && (taskId == nil || UUID(uuidString: taskId!) != nil)
         && (scopeVersion == nil || scopeVersion! > 0)
         && (turnId == nil || UUID(uuidString: turnId!) != nil)
         && (turnId != nil || status == "recorded")
@@ -81,6 +82,73 @@ private struct AssistantSubmission: Encodable {
         try c.encode(taskId, forKey: .taskId)
         try c.encode(parentMessageId, forKey: .parentMessageId)
         try c.encode(turnId, forKey: .turnId)
+    }
+}
+
+private struct AssistantPlanningPolicyReply: Decodable {
+    let version: Int
+    let data: AssistantPlanningPolicy
+}
+
+private struct AssistantPlanningPolicy: Decodable {
+    let kind: String
+    let policyId: String?
+    let noticeHash: String?
+    let noticeZh: String?
+    let noticeEn: String?
+    let consentState: String?
+    var valid: Bool {
+        if kind == "unavailable" { return policyId == nil }
+        return kind == "planning_policy" && policyId.flatMap(UUID.init(uuidString:)) != nil
+            && noticeHash?.range(of: "^[a-f0-9]{64}$", options: .regularExpression) != nil
+            && noticeZh != nil && noticeEn != nil
+            && ["accepted", "not_accepted", "withdrawn"].contains(consentState ?? "")
+    }
+}
+
+private struct AssistantPlanningSubmission: Encodable {
+    let conversationId: String
+    let goalId: String
+    let expectedGoalVersion: Int
+    let parentMessageId: String
+    let messageId: String
+    let messageKey: String
+    let threadId: String
+    let turnId: String
+    let taskId: String
+    let taskKey: String
+    let planningPolicyId: String
+    let locale: String
+    let text: String
+    let memoryBasis: [String]
+}
+
+private struct AssistantPlanningAccepted: Decodable {
+    let version: Int
+    let kind: String
+    let taskId: String
+    let turnId: String
+    let artifactId: String
+}
+
+struct AssistantResultEnvelope: Decodable {
+    let version: Int
+    let data: AssistantResult
+}
+
+struct AssistantResult: Decodable {
+    struct Source: Decodable { let taskId: String }
+    let kind: String
+    let artifactId: String?
+    let revision: Int?
+    let current: Bool?
+    let lifecycle: String?
+    let source: Source?
+    let content: NativeResultContent?
+    func belongs(to taskId: String) -> Bool {
+        kind == "result_artifact" && current == true && lifecycle == "active"
+            && source?.taskId == taskId && artifactId.flatMap(UUID.init(uuidString:)) != nil
+            && (1...1000).contains(revision ?? 0) && content?.valid == true
     }
 }
 
@@ -165,11 +233,24 @@ struct NativeAssistantConversationView: View {
     @Environment(AppSettings.self) private var settings
     @State private var policy: NativeTextPolicy?
     @State private var conversation: AssistantConversation?
-    @State private var resultStore = NativeResultStore()
     @State private var draft = ""
+    @State private var planningDraft = ""
+    @State private var planningPolicy: AssistantPlanningPolicy?
+    @State private var planningAgreed = false
+    @State private var planningBusy = false
+    @State private var planningPending: AssistantPlanningSubmission?
+    @State private var planningNotice: String?
+    @State private var taskTurns: [NativeTextTurn] = []
+    @State private var taskNotice: String?
+    @State private var selectedTaskID: String?
+    @State private var selectedArtifactID: String?
+    @State private var selectedArtifactTaskID: String?
+    @State private var selectedResult: AssistantResult?
+    @State private var resultNotice: String?
     @State private var operation = "independent_question"
     @State private var agreed = false
     @State private var busy = false
+    @State private var refreshBusy = false
     @State private var notice: String?
     @State private var pending: AssistantSubmission?
     @State private var boundScope: NativeDataScope?
@@ -186,7 +267,16 @@ struct NativeAssistantConversationView: View {
     private var chinese: Bool { settings.selectedLocale == .zh }
     private var goal: AssistantGoal? { conversation?.goals.last }
     private var actions: [String] { goal == nil ? ["independent_question", "goal_start"] : ["independent_question", "goal_start", "follow_up", "amendment"] }
-    private var waitingKey: String { (conversation?.messages ?? []).filter { ["accepted","planning","retrieving","generating","validating"].contains($0.status) }.map(\.messageId).joined(separator: ":") }
+    private var waitingKey: String {
+        let messages = (conversation?.messages ?? []).filter { $0.turnId != nil && ["accepted","planning","retrieving","generating","validating"].contains($0.status) }.map(\.messageId)
+        let tasks = taskTurns.filter(\.waiting).map(\.turnId)
+        return (messages + tasks).joined(separator: ":")
+    }
+    private var taskMessages: [AssistantMessage] { (conversation?.messages ?? []).filter { $0.taskId != nil } }
+    private func taskTurn(for message: AssistantMessage) -> NativeTextTurn? {
+        guard let taskID = message.taskId else { return nil }
+        return taskTurns.first(where: { $0.serviceTaskId == taskID && $0.validTask })
+    }
     private var linkedTripTitle: String {
         guard let id = tripLink?.tripId else { return "" }
         return ownedTrips.first(where: { $0.id == id })?.title ?? (chinese ? "已关联行程" : "Linked Trip")
@@ -197,7 +287,7 @@ struct NativeAssistantConversationView: View {
             VStack(alignment: .leading, spacing: 16) {
                 BrandHeader()
                 Text(chinese ? "与 VP 继续" : "Continue with VP").font(.title2.bold())
-                Text(chinese ? "对话和目标会保存。独立问题沿用当前文本回答；目标改口先记录，尚不会自动启动规划任务。" : "Your conversation and goal are saved. Separate questions use the current text answer; goal changes are recorded without starting planning work.")
+                Text(chinese ? "对话和目标会保存。你可以继续提问，也可以委托一项比较任务。" : "Your conversation and goal are saved. Keep asking questions while a comparison runs.")
                     .font(.footnote).foregroundStyle(Color.vpSecondaryText)
                 if let policy {
                     if policy.consentState == .accepted {
@@ -215,8 +305,13 @@ struct NativeAssistantConversationView: View {
                             .frame(maxWidth: .infinity, alignment: .leading).padding(14)
                             .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
                         }
-                        TimelineView(.periodic(from: .now, by: 1)) { _ in
-                            NativeResultCard(store: resultStore, scope: session.dataScope, chinese: chinese)
+                        if let goal { planningControls(goal) }
+                        if !taskMessages.isEmpty { taskList }
+                        if let selectedResult, let selectedTaskID, selectedResult.belongs(to: selectedTaskID) {
+                            resultCard(selectedResult)
+                        } else if resultNotice != nil {
+                            Text(chinese ? "此任务的成果暂不可读，请刷新后重试。" : "This task's result is unavailable. Refresh and try again.")
+                                .font(.footnote).accessibilityIdentifier("assistant.result.unavailable")
                         }
                         Button(chinese ? "撤回文本授权" : "Withdraw text consent", role: .destructive) { Task { await withdraw() } }
                             .disabled(busy)
@@ -302,17 +397,21 @@ struct NativeAssistantConversationView: View {
                 }.padding().background(.bar)
             }
         }
-        .toolbar { ToolbarItem(placement: .topBarTrailing) { Button(chinese ? "刷新" : "Refresh") { Task { await reload() } }.disabled(busy) } }
+        .toolbar { ToolbarItem(placement: .topBarTrailing) { Button(chinese ? "刷新" : "Refresh") { Task { await reload() } }.disabled(refreshBusy) } }
         .task(id: session.dataScope) {
             let requested = session.dataScope
             if boundScope != session.retainedDataScope {
                 pending = nil; draft = ""; boundScope = session.retainedDataScope
             }
-            policy = nil; conversation = nil; resultStore.clear(); notice = nil
+            policy = nil; conversation = nil; notice = nil
+            planningPolicy = nil; planningPending = nil; planningDraft = ""; planningNotice = nil
+            taskTurns = []; taskNotice = nil
+            selectedTaskID = nil; selectedArtifactID = nil; selectedArtifactTaskID = nil
+            selectedResult = nil; resultNotice = nil
             tripLink = nil; ownedTrips = []; pendingTripMutation = nil; privacyLinks = []; privacyNextCursor = nil
             tripNotice = nil; tripConfirmation = nil; showTripPicker = false
             guard requested != nil else { return }
-            while busy {
+            while busy || refreshBusy {
                 do { try await Task.sleep(for: .milliseconds(50)) } catch { return }
                 guard !Task.isCancelled, session.dataScope == requested else { return }
             }
@@ -323,11 +422,11 @@ struct NativeAssistantConversationView: View {
                 Task { await reload() }
             }
         }
-        .task(id: waitingKey) {
+        .task(id: waitingKey + ":" + String(isActive)) {
             guard isActive, !waitingKey.isEmpty else { return }
-            for _ in 0..<60 {
-                do { try await Task.sleep(for: .seconds(1)) } catch { return }
-                guard !Task.isCancelled, session.dataScope != nil, !waitingKey.isEmpty else { return }
+            while true {
+                do { try await Task.sleep(for: .seconds(5)) } catch { return }
+                guard !Task.isCancelled, isActive, session.dataScope != nil, !waitingKey.isEmpty else { return }
                 await reload()
             }
         }
@@ -343,8 +442,116 @@ struct NativeAssistantConversationView: View {
     }
     private func label(_ message: AssistantMessage) -> String {
         let prefix = actionLabel(message.relationship) + " · #" + String(message.sequence)
-        if message.status == "recorded" { return prefix + (chinese ? " · 已记录，未启动任务" : " · Saved, no task started") }
-        return prefix + " · " + message.status
+        if message.status == "recorded" {
+            return prefix + (message.taskId == nil
+                ? (chinese ? " · 已记录，未启动任务" : " · Saved, no task started")
+                : (chinese ? " · 已关联任务，状态见下方" : " · Task linked; see status below"))
+        }
+        return prefix + " · " + statusLabel(message.status)
+    }
+    private func statusLabel(_ status: String) -> String {
+        switch status {
+        case "accepted": return chinese ? "已接纳，等待处理" : "Accepted, waiting"
+        case "planning", "retrieving", "generating", "validating": return chinese ? "处理中" : "Working"
+        case "completed": return chinese ? "已完成" : "Completed"
+        case "cancelled": return chinese ? "已取消" : "Cancelled"
+        case "failed", "unavailable": return chinese ? "未完成" : "Not completed"
+        default: return chinese ? "状态待核对" : "Checking status"
+        }
+    }
+    private func planningControls(_ currentGoal: AssistantGoal) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(chinese ? "委托比较" : "Delegate a comparison").font(.headline)
+            if let planningPolicy, planningPolicy.kind == "planning_policy" {
+                if tripLink?.goalId == currentGoal.goalId && tripLink?.tripId != nil {
+                    Text(chinese ? "当前目标已关联行程；此版后台比较仅支持未关联行程的目标。" : "This goal is linked to a Trip. Background comparison currently supports goals without a Trip link.")
+                        .font(.footnote)
+                } else if planningPolicy.consentState == "accepted" {
+                    TextField(chinese ? "要比较什么？" : "What should VP compare?", text: $planningDraft, axis: .vertical)
+                        .lineLimit(2...5).accessibilityIdentifier("assistant.planning.composer")
+                    Button(planningPending == nil ? (chinese ? "开始后台比较" : "Start background comparison")
+                           : (chinese ? "重试同一次委托" : "Retry the same request")) {
+                        Task { await delegateComparison(currentGoal) }
+                    }
+                    .disabled(planningBusy || (planningPending == nil && planningDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
+                    .accessibilityIdentifier("assistant.planning.send")
+                } else if planningPolicy.consentState == "not_accepted" {
+                    Text(chinese ? (planningPolicy.noticeZh ?? "") : (planningPolicy.noticeEn ?? ""))
+                        .font(.footnote)
+                    Toggle(chinese ? "我同意上述规划处理" : "I agree to this planning processing", isOn: $planningAgreed)
+                    Button(chinese ? "同意规划处理" : "Agree to planning processing") { Task { await acceptPlanning() } }
+                        .disabled(!planningAgreed || planningBusy).accessibilityIdentifier("assistant.planning.accept")
+                } else {
+                    Text(chinese ? "规划授权已撤回。" : "Planning consent was withdrawn.")
+                }
+            } else {
+                Text(chinese ? "此环境暂未开放后台比较。" : "Background comparison is unavailable in this environment.")
+                    .font(.footnote).foregroundStyle(Color.vpSecondaryText)
+            }
+            if planningNotice != nil {
+                Text(chinese ? "委托尚未确认；请重试同一次请求或刷新。" : "Delegation is unconfirmed. Retry the same request or refresh.")
+                    .font(.footnote).accessibilityIdentifier("assistant.planning.error")
+            }
+        }
+        .padding(14).frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
+        .accessibilityIdentifier("assistant.planning.controls")
+    }
+    private var taskList: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(chinese ? "任务" : "Tasks").font(.headline)
+            ForEach(taskMessages) { message in
+                let turn = taskTurn(for: message)
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(message.text).font(.subheadline)
+                    Text(turn.map { statusLabel($0.status) } ?? (chinese ? "状态待核对" : "Checking status"))
+                        .font(.caption).foregroundStyle(Color.vpSecondaryText)
+                    HStack {
+                        if turn?.status == "completed", let taskID = message.taskId {
+                            Button(chinese ? "打开此任务成果" : "Open this task's result") {
+                                Task { await openResult(for: taskID) }
+                            }.accessibilityIdentifier("assistant.task.open.\(message.sequence)")
+                        }
+                        if let turn, turn.waiting {
+                            Button(chinese ? "取消任务" : "Cancel task", role: .destructive) {
+                                Task { await cancelTask(turn.turnId) }
+                            }.accessibilityIdentifier("assistant.task.cancel.\(message.sequence)")
+                        }
+                    }
+                }.padding(.vertical, 4)
+            }
+            if taskNotice != nil {
+                Text(chinese ? "任务操作尚未确认，请刷新状态后重试。" : "Task action is unconfirmed. Refresh its status before retrying.")
+                    .font(.footnote).accessibilityIdentifier("assistant.task.error")
+            }
+        }
+        .padding(14).frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
+        .accessibilityIdentifier("assistant.tasks")
+    }
+    private func resultCard(_ result: AssistantResult) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(chinese ? "此任务的成果" : "Result for this task").font(.headline)
+            if let content = result.content {
+                Text(content.title).font(.title3.bold()).textSelection(.enabled)
+                Text(content.summary).textSelection(.enabled)
+                if content.schemaVersion == "comparison/1", let options = content.options {
+                    ForEach(options) { option in
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(option.title).font(.subheadline.bold())
+                            Text(option.tradeoff)
+                        }
+                    }
+                } else {
+                    Text(chinese ? "此成果需要更新版本的应用查看。" : "Update the app to view this result format.")
+                        .font(.footnote)
+                }
+            }
+            Text("\(result.artifactId ?? "") · r\(result.revision ?? 0)")
+                .font(.caption2).textSelection(.enabled).accessibilityIdentifier("assistant.result.identity")
+        }
+        .padding(14).frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
     }
     private func tripControls(_ currentGoal: AssistantGoal) -> some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -531,8 +738,15 @@ struct NativeAssistantConversationView: View {
         } catch { if session.dataScope == initial { tripNotice = "retry" } }
     }
     private func reload() async {
-        guard !busy, let initial = session.dataScope else { return }
-        busy = true; defer { busy = false }
+        guard let initial = session.dataScope else { return }
+        // A send/cancel readback must follow any refresh already in progress.
+        // Returning early here can leave an accepted message invisible until
+        // another unrelated refresh happens.
+        while refreshBusy {
+            do { try await Task.sleep(for: .milliseconds(50)) } catch { return }
+            guard session.dataScope == initial else { return }
+        }
+        refreshBusy = true; defer { refreshBusy = false }
         do {
             let policyData = try await session.askRequest(path: "api/chat/native/v5/policy", method: "GET")
             guard session.dataScope == initial else { return }
@@ -540,7 +754,9 @@ struct NativeAssistantConversationView: View {
             guard policyReply.kind == "policy", policyReply.policy.valid else { throw NativeDataError.invalidResponse }
             policy = policyReply.policy
             if policyReply.policy.consentState != .accepted {
-                conversation = nil; pending = nil; resultStore.clear(); tripLink = nil
+                conversation = nil; pending = nil; planningPolicy = nil; planningPending = nil
+                selectedTaskID = nil; selectedArtifactID = nil; selectedArtifactTaskID = nil
+                selectedResult = nil; taskTurns = []; tripLink = nil
                 await loadPrivacyLinks(initial)
                 return
             }
@@ -550,7 +766,38 @@ struct NativeAssistantConversationView: View {
             let read = try JSONDecoder().decode(AssistantConversation.self, from: data)
             guard read.valid else { throw NativeDataError.invalidResponse }
             conversation = read
-            await resultStore.load(scope: initial, using: session)
+            do {
+                let historyData = try await session.askRequest(path: "api/chat/native/v2/turns", method: "GET")
+                guard session.dataScope == initial else { return }
+                let history = try JSONDecoder().decode(NativeTextHistory.self, from: historyData)
+                guard history.version == 2, history.kind == "history" else { throw NativeDataError.invalidResponse }
+                taskTurns = history.turns.filter { $0.validTask && UUID(uuidString: $0.turnId) != nil }
+            } catch { if session.dataScope == initial { taskTurns = [] } }
+            if let selectedTaskID,
+               !taskTurns.contains(where: { $0.serviceTaskId == selectedTaskID && $0.status == "completed" }) {
+                selectedResult = nil
+            }
+            if let selectedTaskID, selectedResult != nil {
+                do {
+                    let bytes = try await session.resultRequest(artifactID: selectedArtifactTaskID == selectedTaskID ? selectedArtifactID : nil)
+                    guard session.dataScope == initial, self.selectedTaskID == selectedTaskID else { return }
+                    let reply = try JSONDecoder().decode(AssistantResultEnvelope.self, from: bytes)
+                    guard reply.version == 1, reply.data.belongs(to: selectedTaskID) else { throw NativeDataError.invalidResponse }
+                    selectedResult = reply.data; resultNotice = nil
+                } catch {
+                    if session.dataScope == initial { selectedResult = nil; resultNotice = "unavailable" }
+                }
+            }
+            if let planningPending, read.messages.contains(where: { $0.messageId == planningPending.messageId }) {
+                self.planningPending = nil; planningDraft = ""; planningNotice = nil
+            }
+            do {
+                let bytes = try await session.askRequest(path: "api/chat/native/v5/planning/policy", method: "GET")
+                guard session.dataScope == initial else { return }
+                let reply = try JSONDecoder().decode(AssistantPlanningPolicyReply.self, from: bytes)
+                guard reply.version == 1, reply.data.valid else { throw NativeDataError.invalidResponse }
+                planningPolicy = reply.data
+            } catch { if session.dataScope == initial { planningPolicy = nil } }
             if let currentGoal = read.goals.last, let conversationID = read.conversationId {
                 do {
                     let linkData = try await session.askRequest(path: tripPath(currentGoal.goalId), method: "GET")
@@ -583,7 +830,8 @@ struct NativeAssistantConversationView: View {
             notice = nil
         } catch {
             guard session.dataScope == initial else { return }
-            policy = nil; conversation = nil; resultStore.clear(); tripLink = nil; notice = "retry"
+            policy = nil; conversation = nil; planningPolicy = nil; taskTurns = []
+            selectedResult = nil; tripLink = nil; notice = "retry"
             await loadPrivacyLinks(initial)
         }
     }
@@ -606,7 +854,9 @@ struct NativeAssistantConversationView: View {
             let body = try JSONEncoder().encode(["policyId": policy.id])
             _ = try await session.askRequest(path: "api/chat/native/v5/consent", method: "DELETE", body: body)
             guard session.dataScope == initial else { throw NativeDataError.staleSessionResponse }
-            conversation = nil; resultStore.clear(); pending = nil; pendingTripMutation = nil
+            conversation = nil; planningPolicy = nil; planningPending = nil; taskTurns = []; selectedResult = nil
+            selectedTaskID = nil; selectedArtifactID = nil; selectedArtifactTaskID = nil
+            pending = nil; pendingTripMutation = nil
             draft = ""; tripLink = nil; self.policy = nil
         } catch { if session.dataScope == initial { notice = "retry" } }
         busy = false
@@ -644,6 +894,98 @@ struct NativeAssistantConversationView: View {
         busy = false
         await reload()
     }
+    private func acceptPlanning() async {
+        guard !planningBusy, planningAgreed, let planningPolicy,
+              planningPolicy.consentState == "not_accepted", let policyID = planningPolicy.policyId,
+              let noticeHash = planningPolicy.noticeHash, let initial = session.dataScope else { return }
+        planningBusy = true
+        do {
+            let body = try JSONEncoder().encode(["policyId": policyID, "noticeHash": noticeHash])
+            let bytes = try await session.askRequest(path: "api/chat/native/v5/planning/policy", method: "POST", body: body)
+            guard session.dataScope == initial else { throw NativeDataError.staleSessionResponse }
+            let reply = try JSONDecoder().decode(AssistantPlanningConsentReply.self, from: bytes)
+            guard reply.version == 1 && reply.kind == "accepted" else { throw NativeDataError.invalidResponse }
+            planningNotice = nil
+        } catch { if session.dataScope == initial { planningNotice = "retry" } }
+        planningBusy = false
+        await reload()
+    }
+    private func delegateComparison(_ currentGoal: AssistantGoal) async {
+        guard !planningBusy, let initial = session.dataScope,
+              let conversationID = conversation?.conversationId,
+              let planningPolicy, planningPolicy.consentState == "accepted",
+              let policyID = planningPolicy.policyId else { return }
+        let request: AssistantPlanningSubmission
+        if let planningPending { request = planningPending }
+        else {
+            let input = planningDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !input.isEmpty, input.utf16.count <= 4000,
+                  let parent = conversation?.messages.last(where: { $0.goalId == currentGoal.goalId && $0.scopeVersion == currentGoal.scopeVersion })
+            else { return }
+            request = AssistantPlanningSubmission(conversationId: conversationID, goalId: currentGoal.goalId,
+                expectedGoalVersion: currentGoal.scopeVersion, parentMessageId: parent.messageId,
+                messageId: UUID().uuidString.lowercased(), messageKey: UUID().uuidString.lowercased(),
+                threadId: UUID().uuidString.lowercased(), turnId: UUID().uuidString.lowercased(),
+                taskId: UUID().uuidString.lowercased(), taskKey: UUID().uuidString.lowercased(),
+                planningPolicyId: policyID, locale: chinese ? "zh" : "en", text: input, memoryBasis: [])
+            planningPending = request
+        }
+        planningBusy = true
+        do {
+            let bytes = try await session.askRequest(path: "api/chat/native/v5/planning/tasks", method: "POST",
+                                                     body: JSONEncoder().encode(request))
+            guard session.dataScope == initial else { throw NativeDataError.staleSessionResponse }
+            let accepted = try JSONDecoder().decode(AssistantPlanningAccepted.self, from: bytes)
+            guard accepted.version == 1, accepted.kind == "accepted", accepted.taskId == request.taskId,
+                  accepted.turnId == request.turnId, UUID(uuidString: accepted.artifactId) != nil
+            else { throw NativeDataError.invalidResponse }
+            selectedArtifactID = accepted.artifactId
+            selectedArtifactTaskID = accepted.taskId
+            planningNotice = nil
+        } catch {
+            if session.dataScope == initial {
+                if case NativeDataError.server(let code) = error,
+                   ["INVALID_INPUT", "FORBIDDEN", "DATA_POLICY_BLOCKED", "SERVICE_TASK_CONFLICT"].contains(code) {
+                    planningPending = nil
+                }
+                planningNotice = "retry"
+            }
+        }
+        planningBusy = false
+        await reload()
+    }
+    private func cancelTask(_ turnID: String) async {
+        guard !planningBusy, UUID(uuidString: turnID) != nil, let initial = session.dataScope else { return }
+        planningBusy = true
+        do {
+            _ = try await session.askRequest(path: "api/chat/native/v1/turns/\(turnID)/cancel", method: "POST", body: Data("{}".utf8))
+            guard session.dataScope == initial else { throw NativeDataError.staleSessionResponse }
+            taskNotice = nil
+        } catch { if session.dataScope == initial { taskNotice = "retry" } }
+        planningBusy = false
+        await reload() // Only server readback determines whether cancellation won the race.
+    }
+    private func openResult(for taskID: String) async {
+        guard let initial = session.dataScope, UUID(uuidString: taskID) != nil else { return }
+        selectedTaskID = taskID; selectedResult = nil; resultNotice = nil
+        do {
+            // The accepted ID is exact within this session. After relaunch the latest
+            // owned result is usable only if its server source names this task.
+            let exactID = selectedArtifactTaskID == taskID ? selectedArtifactID : nil
+            let bytes = try await session.resultRequest(artifactID: exactID)
+            guard session.dataScope == initial, selectedTaskID == taskID else { return }
+            let reply = try JSONDecoder().decode(AssistantResultEnvelope.self, from: bytes)
+            guard reply.version == 1, reply.data.belongs(to: taskID) else { throw NativeDataError.invalidResponse }
+            selectedArtifactID = reply.data.artifactId
+            selectedArtifactTaskID = taskID
+            selectedResult = reply.data
+        } catch { if session.dataScope == initial && selectedTaskID == taskID { resultNotice = "unavailable" } }
+    }
+}
+
+private struct AssistantPlanningConsentReply: Decodable {
+    let version: Int
+    let kind: String
 }
 
 private struct AssistantAccepted: Decodable {

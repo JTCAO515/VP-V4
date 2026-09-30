@@ -3,6 +3,15 @@ import XCTest
 
 nonisolated final class NativeSessionIntegrationTests: XCTestCase {
     @MainActor
+    func testAssistantCrossVersionRoutesAreExactAndReadOnly() {
+        let turn = UUID().uuidString.lowercased()
+        XCTAssertEqual(NativeSession.askRequestPrefix(mode: .assistant, path: "api/chat/native/v2/turns", method: "GET"), "api/chat/native/v2")
+        XCTAssertEqual(NativeSession.askRequestPrefix(mode: .assistant, path: "api/chat/native/v2/turns", method: "POST"), "api/chat/native/v5")
+        XCTAssertEqual(NativeSession.askRequestPrefix(mode: .assistant, path: "api/chat/native/v2/turns/other", method: "GET"), "api/chat/native/v5")
+        XCTAssertEqual(NativeSession.askRequestPrefix(mode: .assistant, path: "api/chat/native/v1/turns/\(turn)/cancel", method: "POST"), "api/chat/native/v1")
+        XCTAssertEqual(NativeSession.askRequestPrefix(mode: .assistant, path: "api/chat/native/v1/turns/invalid/cancel", method: "POST"), "api/chat/native/v5")
+    }
+    @MainActor
     func testJourneyPassStateIsHiddenAcrossAccountOrSessionGeneration() {
         let first = NativeDataScope(endpoint: "https://staging.go2china.space", subject: "owner-a", mobileEpoch: 1, generation: 10)
         let other = NativeDataScope(endpoint: first.endpoint, subject: "owner-b", mobileEpoch: 1, generation: 11)

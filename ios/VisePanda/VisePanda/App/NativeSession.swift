@@ -256,14 +256,20 @@ final class NativeSession {
     /// Local Ask shares identity fencing, never credentials, with the Trip consumer.
     func askRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
         guard askMode != .unavailable else { throw NativeDataError.invalidResponse }
+        let prefix = Self.askRequestPrefix(mode: askMode, path: path, method: method)
+        let data = try await dataRequest(prefix: prefix, path: path, method: method, body: body)
+        guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
+        return data
+    }
+
+    static func askRequestPrefix(mode: NativeAskMode, path: String, method: String) -> String {
         let cancelPrefix = "api/chat/native/v1/turns/"
         let cancelID = path.hasPrefix(cancelPrefix) && path.hasSuffix("/cancel")
             ? String(path.dropFirst(cancelPrefix.count).dropLast("/cancel".count)) : ""
         let cancellation = method == "POST" && UUID(uuidString: cancelID) != nil
-        let prefix = askMode.usesTask && cancellation ? "api/chat/native/v1" : askMode.base
-        let data = try await dataRequest(prefix: prefix, path: path, method: method, body: body)
-        guard data.count <= 1_000_000 else { throw NativeDataError.invalidResponse }
-        return data
+        let assistantTaskHistory = mode == .assistant && method == "GET" && path == "api/chat/native/v2/turns"
+        return (mode.usesTask || mode == .assistant) && cancellation ? "api/chat/native/v1"
+            : assistantTaskHistory ? "api/chat/native/v2" : mode.base
     }
 
     func memoryRequest(path: String = "api/memory/native/v1/travel-pace", method: String, body: Data? = nil) async throws -> Data {

@@ -255,6 +255,30 @@ nonisolated final class NativeAskStateTests: XCTestCase {
     }
 }
 
+nonisolated final class AssistantResultIdentityTests: XCTestCase {
+    @MainActor func testOnlyCurrentResultFromSelectedTaskCanOpen() throws {
+        let task = UUID().uuidString.lowercased()
+        let other = UUID().uuidString.lowercased()
+        let artifact = UUID().uuidString.lowercased()
+        func result(taskID: String, current: Bool, lifecycle: String) throws -> AssistantResult {
+            let wire: [String: Any] = ["version": 1, "data": [
+                "kind": "result_artifact", "artifactId": artifact, "revision": 1,
+                "current": current, "lifecycle": lifecycle,
+                "source": ["taskId": taskID],
+                "content": ["schemaVersion": "comparison/1", "title": "Stay areas", "summary": "Two options",
+                            "options": [["id": "a", "title": "Area A", "tradeoff": "Close to rail"],
+                                        ["id": "b", "title": "Area B", "tradeoff": "Quieter"]]]
+            ]]
+            return try JSONDecoder().decode(AssistantResultEnvelope.self,
+                from: JSONSerialization.data(withJSONObject: wire)).data
+        }
+        XCTAssertTrue(try result(taskID: task, current: true, lifecycle: "active").belongs(to: task))
+        XCTAssertFalse(try result(taskID: other, current: true, lifecycle: "active").belongs(to: task))
+        XCTAssertFalse(try result(taskID: task, current: false, lifecycle: "active").belongs(to: task))
+        XCTAssertFalse(try result(taskID: task, current: true, lifecycle: "withdrawn").belongs(to: task))
+    }
+}
+
 /// Only test callback state is shared, under one lock; no production credential.
 nonisolated private final class TextStateProtocol: URLProtocol, @unchecked Sendable {
     private static let lock = NSLock()
