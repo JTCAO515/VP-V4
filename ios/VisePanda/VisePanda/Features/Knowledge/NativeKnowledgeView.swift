@@ -8,6 +8,8 @@ struct NativeKnowledgeView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var store = NativeKnowledgeStore()
     @State private var resultStore = NativeResultStore()
+    @State private var search = ""
+    @State private var openedResult: LibraryResultSelection?
     @State private var city = "shanghai"
     @State private var scene = "arrival"
     @State private var refresh = UUID()
@@ -16,12 +18,17 @@ struct NativeKnowledgeView: View {
     private var selection: NativeKnowledgeSelection { .init(city: city, scene: question ? "rail" : scene, locale: chinese ? "zh" : "en") }
     private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
     private var loadKey: LoadKey { .init(scope: session.dataScope, selection: selection, active: scenePhase == .active && isActive, refresh: refresh) }
+    private var resultLoadKey: ResultLoadKey { .init(scope: session.dataScope, active: scenePhase == .active && isActive, refresh: refresh, search: search) }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: VPSpacing.section) {
                 BrandHeader()
-                Text(question ? text("Which documents do I need to board?", "乘车需要哪些证件？") : text("Travel notes", "旅途参考")).font(.largeTitle.bold())
+                Text(question ? text("Which documents do I need to board?", "乘车需要哪些证件？") : text("Library", "资源库")).font(.largeTitle.bold())
+                if !question {
+                    TimelineView(.periodic(from: .now, by: 1)) { _ in libraryContent }
+                }
+                if !question { Text(text("Reviewed travel notes", "已审核旅途参考")).font(.title2.bold()) }
                 Text(question ? text("For adults travelling with a foreign passport on a domestic mainland China railway e-ticket. This answers only the booking ID and ticket-proof question. Read all conditions and check current station guidance. This read-only answer is not saved in your conversation.", "适用于持外国护照的成年旅客、境内铁路电子客票行程。这里只回答购票证件和车票凭证问题；请阅读全部条件，并核对车站最新指引。本次只读回答不保存到对话。") : text("Reviewed information for your selected city and situation. Read each note's conditions and check its source before taking action. This is not complete city coverage.", "按所选城市和场景提供已审核信息。请阅读每条内容的适用条件，行动前核对来源；这里不代表完整城市覆盖。"))
                     .foregroundStyle(Color.vpSecondaryText)
                 Picker(text("City", "城市"), selection: selectionBinding($city)) {
@@ -34,12 +41,11 @@ struct NativeKnowledgeView: View {
                         Text(chinese ? ["入境", "机场交通", "支付", "手机与网络", "公共交通", "出租车", "高铁", "景点", "住宿", "紧急求助"][index] : ["Arrival", "Airport transport", "Payment", "Phone and internet", "Public transport", "Taxis", "Rail", "Attractions", "Accommodation", "Emergency help"][index]).tag(value)
                     }
                 }.accessibilityIdentifier("knowledge.scene") }
-                Button(text("Refresh", "刷新")) { store.clear(); resultStore.clear(); refresh = UUID() }
+                Button(text("Refresh", "刷新")) { store.clear(); resultStore.clear(); openedResult = nil; refresh = UUID() }
                     .buttonStyle(.bordered).accessibilityIdentifier("knowledge.refresh")
                 TimelineView(.periodic(from: .now, by: 1)) { _ in
                     VStack(alignment: .leading, spacing: VPSpacing.section) {
                         content
-                        if !question { NativeResultCard(store: resultStore, scope: session.dataScope, chinese: chinese) }
                     }
                 }
             }.padding(VPSpacing.standard)
@@ -64,12 +70,21 @@ struct NativeKnowledgeView: View {
                 catch { return }
             } while !Task.isCancelled && loadKey == key
         }
-        .task(id: loadKey) {
-            let key = loadKey
-            guard key.active else { resultStore.clear(); return }
+        .task(id: resultLoadKey) {
+            let key = resultLoadKey
+            guard key.active, !question else { resultStore.clear(); return }
+            if !search.isEmpty {
+                do { try await Task.sleep(for: .milliseconds(250)) } catch { return }
+                guard !Task.isCancelled, resultLoadKey == key else { return }
+            }
             await resultStore.load(scope: key.scope, using: session)
         }
-        .onDisappear { store.clear(); resultStore.clear() }
+        .sheet(item: $openedResult) { selection in
+            NativeLibraryResultDetail(selection: selection, scope: session.dataScope, chinese: chinese, session: session)
+        }
+        .onChange(of: search) { _, _ in resultStore.clear(); openedResult = nil }
+        .onChange(of: session.dataScope) { _, _ in resultStore.clear(); openedResult = nil; search = "" }
+        .onDisappear { store.clear(); resultStore.clear(); openedResult = nil }
     }
 
     @ViewBuilder private var content: some View {
@@ -95,11 +110,105 @@ struct NativeKnowledgeView: View {
         Binding(get: { value.wrappedValue }, set: { store.clear(); value.wrappedValue = $0 })
     }
 
+    @ViewBuilder private var libraryContent: some View {
+        Text(text("Tools", "工具")).font(.title2.bold())
+        NavigationLink {
+            NativeTranslationView()
+        } label: {
+            Label(text("Translation and saved phrases", "翻译与已存短语"), systemImage: "character.bubble")
+        }
+        .accessibilityIdentifier("library.tool.translation")
+        Text(text("My materials and results", "我的资料与成果")).font(.title2.bold())
+        Text(text("Search your latest readable comparison. Other materials are not indexed here yet.", "查找最近一份当前可读的比较成果。其他资料尚未纳入此处搜索。"))
+            .font(.footnote).foregroundStyle(Color.vpSecondaryText)
+        TextField(text("Search my result", "搜索我的成果"), text: $search)
+            .textFieldStyle(.roundedBorder).accessibilityIdentifier("library.search")
+        if session.dataScope == nil {
+            Text(text("Sign in to find your results.", "登录后可查找自己的成果。"))
+        } else if scenePhase == .active && isActive && resultStore.isCurrent(session.dataScope) {
+            if let result = resultStore.result, result.kind == "result_artifact",
+               result.current == true, result.lifecycle == "active", let content = result.content,
+               let artifactID = result.artifactId, let revision = result.revision,
+               NativeLibrarySearch.matches(content, query: search) {
+                Button {
+                    openedResult = LibraryResultSelection(artifactID: artifactID, revision: revision)
+                } label: {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(content.title).font(.headline)
+                        Text(content.summary).lineLimit(2).font(.footnote)
+                    }.frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .accessibilityIdentifier("library.result.open")
+            } else {
+                Text(text("No matching result is currently available.", "当前没有可读的匹配成果。"))
+            }
+        } else if resultStore.state == "unavailable" {
+            Text(text("Results unavailable. Check your session and refresh.", "成果暂不可用，请检查登录状态并刷新。"))
+        } else if resultStore.state == "result_artifact" || resultStore.state == "empty" {
+            Text(text("Refresh to check your current results.", "请刷新以核对当前成果。"))
+        } else {
+            ProgressView().accessibilityLabel(text("Checking my results", "正在核对我的成果"))
+        }
+    }
+
     private struct LoadKey: Equatable {
         let scope: NativeDataScope?
         let selection: NativeKnowledgeSelection
         let active: Bool
         let refresh: UUID
+    }
+
+    private struct ResultLoadKey: Equatable {
+        let scope: NativeDataScope?
+        let active: Bool
+        let refresh: UUID
+        let search: String
+    }
+}
+
+struct LibraryResultSelection: Identifiable {
+    let artifactID: String
+    let revision: Int
+    var id: String { "\(artifactID):\(revision)" }
+}
+
+enum NativeLibrarySearch {
+    static func matches(_ content: NativeResultContent, query: String) -> Bool {
+        let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        return term.isEmpty || content.title.localizedStandardContains(term) || content.summary.localizedStandardContains(term)
+    }
+}
+
+private struct NativeLibraryResultDetail: View {
+    let selection: LibraryResultSelection
+    let scope: NativeDataScope?
+    let chinese: Bool
+    let session: NativeSession
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var store = NativeResultStore()
+    private var loadKey: LoadKey { .init(scope: session.dataScope, active: scenePhase == .active) }
+
+    var body: some View {
+        ScrollView {
+            NativeResultCard(store: store, scope: scenePhase == .active ? session.dataScope : nil, chinese: chinese)
+                .padding()
+        }
+        .task(id: loadKey) {
+            guard loadKey.active, session.dataScope == scope else { store.clear(); return }
+            await store.loadExact(scope: scope, artifactID: selection.artifactID, revision: selection.revision) {
+                guard session.dataScope == scope else { throw NativeDataError.staleSessionResponse }
+                let bytes = try await session.resultRequest(artifactID: selection.artifactID, revision: selection.revision)
+                guard session.dataScope == scope else { throw NativeDataError.staleSessionResponse }
+                return bytes
+            }
+        }
+        .onChange(of: scenePhase) { _, phase in if phase != .active { store.clear() } }
+        .onDisappear { store.clear() }
+    }
+
+    private struct LoadKey: Equatable {
+        let scope: NativeDataScope?
+        let active: Bool
     }
 }
 
@@ -199,6 +308,21 @@ final class NativeResultStore {
             guard session.dataScope == requested else { throw NativeDataError.staleSessionResponse }
             let bytes = try await session.resultRequest()
             guard session.dataScope == requested else { throw NativeDataError.staleSessionResponse }
+            return bytes
+        }
+    }
+
+    func loadExact(scope requested: NativeDataScope?, artifactID: String, revision: Int,
+                   fetch: () async throws -> Data) async {
+        await load(scope: requested) {
+            let bytes = try await fetch()
+            let envelope = try JSONDecoder().decode(NativeResultEnvelope.self, from: bytes)
+            guard envelope.version == 1, envelope.data.valid,
+                  envelope.data.kind == "result_artifact",
+                  envelope.data.artifactId == artifactID,
+                  envelope.data.revision == revision,
+                  envelope.data.current == true,
+                  envelope.data.lifecycle == "active" else { throw NativeDataError.invalidResponse }
             return bytes
         }
     }

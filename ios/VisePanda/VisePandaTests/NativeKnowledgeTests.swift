@@ -351,6 +351,35 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         XCTAssertNil(store.result, "a cleared account must not revive a late result")
     }
 
+    @MainActor func testLibrarySearchAndExactOpenRejectChangedOrRevokedResult() async throws {
+        let artifact = UUID().uuidString.lowercased()
+        let content = NativeResultContent(schemaVersion: "comparison/1", title: "Shanghai directions",
+                                          summary: "Two routes compared", options: nil)
+        XCTAssertTrue(NativeLibrarySearch.matches(content, query: " routes "))
+        XCTAssertFalse(NativeLibrarySearch.matches(content, query: "Beijing"))
+        func bytes(id: String, revision: Int = 1, current: Bool = true, lifecycle: String = "active") throws -> Data {
+            try JSONSerialization.data(withJSONObject: ["version": 1, "data": [
+                "kind": "result_artifact", "artifactId": id, "revision": revision,
+                "current": current, "lifecycle": lifecycle,
+                "content": ["schemaVersion": "comparison/1", "title": "Shanghai directions",
+                    "summary": "Two routes compared", "options": [
+                        ["id": "one", "title": "One", "tradeoff": "Time unknown"],
+                        ["id": "two", "title": "Two", "tradeoff": "Availability unknown"]]]
+            ]])
+        }
+        let store = NativeResultStore()
+        await store.loadExact(scope: owner, artifactID: artifact, revision: 1) { try bytes(id: artifact) }
+        XCTAssertTrue(store.isCurrent(owner))
+        await store.loadExact(scope: owner, artifactID: artifact, revision: 1) { try bytes(id: UUID().uuidString.lowercased()) }
+        XCTAssertNil(store.result)
+        await store.loadExact(scope: owner, artifactID: artifact, revision: 1) { try bytes(id: artifact, revision: 2) }
+        XCTAssertNil(store.result)
+        await store.loadExact(scope: owner, artifactID: artifact, revision: 1) { try bytes(id: artifact, current: false) }
+        XCTAssertNil(store.result)
+        await store.loadExact(scope: owner, artifactID: artifact, revision: 1) { try bytes(id: artifact, lifecycle: "withdrawn") }
+        XCTAssertNil(store.result)
+    }
+
     @MainActor func testTripResultOpensOnlyExactCurrentReference() async throws {
         let tripID = UUID().uuidString.lowercased(), otherTrip = UUID().uuidString.lowercased()
         let artifactID = UUID().uuidString.lowercased(), store = NativeResultStore()
