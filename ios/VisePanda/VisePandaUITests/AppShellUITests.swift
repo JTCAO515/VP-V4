@@ -3,6 +3,89 @@ import UIKit
 
 @MainActor
 final class AppShellUITests: XCTestCase {
+    func testFourTabShellRoutesAndFallback() {
+        for locale in ["en", "zh-Hans"] {
+            let app = launchFourTabShell(locale: locale)
+            let titles = locale == "en" ? ["VP", "Journeys", "Library", "Memory"] : ["VP", "旅程", "资源库", "Memory"]
+            XCTAssertEqual(app.tabBars.buttons.count, 4)
+            XCTAssertTrue(app.tabBars.buttons["VP"].isSelected)
+            XCTAssertFalse(app.staticTexts["specimen.fixture-banner"].exists)
+            for title in titles {
+                app.tabBars.buttons[title].tap()
+                XCTAssertTrue(app.buttons["shell.search.open"].isHittable)
+            }
+            app.tabBars.buttons[titles[2]].tap()
+            XCTAssertTrue(app.textFields["library.search"].exists)
+            app.buttons["shell.search.open"].tap()
+            XCTAssertTrue(app.buttons["shell.search.places"].waitForExistence(timeout: 3))
+            app.buttons["shell.search.places"].tap()
+            XCTAssertTrue(app.navigationBars[locale == "en" ? "Explore" : "探索"].waitForExistence(timeout: 3))
+            app.buttons["shell.entry.done"].tap()
+            XCTAssertTrue(app.tabBars.buttons[titles[2]].isSelected)
+            for entry in ["profile", "today", "tools", "explore"] {
+                app.buttons["shell.entries.open"].tap()
+                app.buttons["shell.entry.\(entry)"].tap()
+                XCTAssertTrue(app.buttons["shell.entry.done"].waitForExistence(timeout: 3))
+                if entry == "profile" {
+                    let privacy = app.staticTexts.matching(NSPredicate(format: "label ==[c] %@",
+                        locale == "en" ? "Privacy in this version" : "此版本的隐私状态")).firstMatch
+                    for _ in 0..<6 where !privacy.isHittable { app.swipeUp() }
+                    capture("Profile-privacy-\(locale)", app: app)
+                    XCTAssertTrue(privacy.isHittable)
+                }
+                app.buttons["shell.entry.done"].tap()
+            }
+            capture("Four-tab-shell-\(locale)", app: app)
+            app.terminate()
+        }
+        let fallback = launch()
+        XCTAssertEqual(fallback.tabBars.buttons.count, 5)
+        XCTAssertTrue(fallback.tabBars.buttons["Ask"].isSelected)
+        fallback.buttons["shell.entries.open"].tap()
+        fallback.buttons["shell.mode.toggle"].tap()
+        XCTAssertEqual(fallback.tabBars.buttons.count, 4)
+        XCTAssertTrue(fallback.tabBars.buttons["VP"].isSelected)
+        fallback.buttons["shell.entries.open"].tap()
+        fallback.buttons["shell.mode.toggle"].tap()
+        XCTAssertEqual(fallback.tabBars.buttons.count, 5)
+        XCTAssertTrue(fallback.tabBars.buttons["Ask"].isSelected)
+        fallback.buttons["shell.entries.open"].tap()
+        fallback.buttons["shell.entry.knowledge"].tap()
+        XCTAssertTrue(fallback.textFields["library.search"].waitForExistence(timeout: 3))
+        fallback.buttons["shell.entry.done"].tap()
+        fallback.buttons["shell.entries.open"].tap()
+        fallback.buttons["shell.entry.memory"].tap()
+        XCTAssertTrue(fallback.navigationBars["Saved travel pace"].waitForExistence(timeout: 3))
+    }
+
+    func testFourTabShellMaximumTextAndAccessibility() throws {
+        for locale in ["en", "zh-Hans", "ar"] {
+            let app = launchFourTabShell(locale: locale, largeText: true)
+            let titles = locale == "zh-Hans" ? ["VP", "旅程", "资源库", "Memory"] : ["VP", "Journeys", "Library", "Memory"]
+            for title in titles {
+                app.tabBars.buttons[title].tap()
+                XCTAssertTrue(app.buttons["shell.search.open"].isHittable)
+                app.buttons["shell.search.open"].tap()
+                XCTAssertTrue(app.buttons["shell.search.places"].isHittable)
+                try app.performAccessibilityAudit(for: [.hitRegion, .elementDetection, .trait])
+                app.buttons["shell.entry.done"].tap()
+            }
+            capture("Four-tab-maximum-text-\(locale)", app: app)
+            app.terminate()
+        }
+    }
+
+    private func launchFourTabShell(locale: String, largeText: Bool = false) -> XCUIApplication {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-VisePandaFourTabShell", "-VisePandaLocale", locale,
+                               "-AppleLanguages", "(\(locale))", "-UIPreferredContentSizeCategoryName",
+                               largeText ? "UICTContentSizeCategoryAccessibilityXXXL" : "UICTContentSizeCategoryL"]
+        app.launch()
+        XCTAssertTrue(app.tabBars.buttons["VP"].waitForExistence(timeout: 10))
+        return app
+    }
+
     func testVPJ77FixtureJourneyAndMemoryCorrection() {
         for locale in ["en", "zh-Hans"] {
             let app = XCUIApplication()

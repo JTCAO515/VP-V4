@@ -5,19 +5,50 @@ import Testing
 struct AppNavigationContractTests {
     @Test("Top-level tabs keep the operator-approved order")
     func tabOrder() {
-        #expect(AppTab.allCases == [.trip, .explore, .ask, .tools, .profile])
+        #expect(AppTab.legacyTabs == [.trip, .explore, .ask, .tools, .profile])
+        #expect(AppTab.assistantTabs == [.vp, .journeys, .library, .memory])
     }
 
-    @Test("Ask is the default launch destination")
+    @Test("VP is the default assistant-shell destination")
     func defaultTab() {
-        #expect(AppTab.defaultSelection == .ask)
+        #expect(AppTab.defaultSelection == .vp)
     }
 
     @Test("Tab localization keys remain stable")
     func tabLocalizationKeys() {
-        #expect(AppTab.allCases.map(\.localizationKey) == [
+        #expect(AppTab.legacyTabs.map(\.localizationKey) == [
             "tab.trip", "tab.explore", "tab.ask", "tab.tools", "tab.profile"
         ])
+    }
+
+    @Test("Shell rollout has an explicit old-shell override")
+    func shellRollout() {
+        #expect(!NativeShellRollout.enabled(arguments: [], bundled: false))
+        #expect(NativeShellRollout.enabled(arguments: ["-VisePandaFourTabShell"], bundled: false))
+        #expect(NativeShellRollout.enabled(arguments: [], bundled: true))
+        #expect(!NativeShellRollout.enabled(arguments: ["-VisePandaFourTabShell", "-VisePandaLegacyShell"], bundled: true))
+    }
+
+    @Test("Legacy entry URLs map to existing consumers and reject payloads")
+    func entryURLs() throws {
+        for entry in AppEntry.allCases {
+            #expect(AppEntry.deepLink(try #require(URL(string: "visepanda://\(entry.rawValue)"))) == entry)
+        }
+        for alias in ["account", "privacy", "purchase", "logout"] {
+            #expect(AppEntry.deepLink(try #require(URL(string: "visepanda://\(alias)"))) == .profile)
+        }
+        for raw in ["https://visepanda/memory", "visepanda://unknown", "visepanda://trip/foreign-id",
+                    "visepanda://trip?write=true", "visepanda://user:password@memory", "visepanda://trip#foreign-id"] {
+            #expect(AppEntry.deepLink(try #require(URL(string: raw))) == nil)
+        }
+        #expect(AppEntry.ask.tab(inAssistantShell: true) == .vp)
+        #expect(AppEntry.trip.tab(inAssistantShell: true) == .journeys)
+        #expect(AppEntry.knowledge.tab(inAssistantShell: true) == .library)
+        #expect(AppEntry.memory.tab(inAssistantShell: true) == .memory)
+        #expect(AppEntry.ask.tab(inAssistantShell: false) == .ask)
+        #expect(AppEntry.profile.tab(inAssistantShell: false) == .profile)
+        #expect(AppEntry.search.tab(inAssistantShell: true) == nil)
+        #expect(AppEntry.search.tab(inAssistantShell: false) == nil)
     }
 
     @Test("Every first-version capability is explicitly preview-only")

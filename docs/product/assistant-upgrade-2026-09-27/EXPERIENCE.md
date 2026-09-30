@@ -97,3 +97,11 @@ Extend existing Harness/UX suites; these scenario names are behaviour cases, not
 | E10 Proactivity | Accepted follow-up delivers only a meaningful, timely, scoped update | Replayed notification, stale journey, quiet-hours violation |
 
 Record implemented, fixture-tested, target-environment observed and user acceptance separately. Observe whether a traveller can explain what VP remembers, what it is doing, how to correct it and where the result lives. Completion, useful partial, clarification, blocked and technical failure have separate denominators. No numeric improvement is presumed.
+
+### First shell rollout (VPJ-83)
+
+The opt-in native shell now places VP, Journeys, Library and Memory in that order, with VP selected on launch. It reuses the existing consumers rather than displaying the offline specimen. Search is a global navigation sheet that offers the existing bounded place search and Library's latest readable comparison search. More destinations retains Profile/account/privacy/Pass/logout, Today, Tools and Explore. The five-tab fallback also exposes Library and saved Memory so an accepted task/result remains reachable when the shell flag is disabled.
+
+This first shell slice does not complete the ideal journey: Journeys still renders existing Trip content, and Memory opens the existing authoritative travel-pace editor/undo without claiming an AI-result recomputation. Undated goals, real Memory impact, hosted work and device/accessibility acceptance stay open with #564. Enable via `-VisePandaFourTabShell`; use `-VisePandaLegacyShell` to validate fallback. Detailed observed evidence and UNRUN are in `artifacts/VPJ-83/`.
+
+Travellers can also choose “Try four-tab navigation” in More destinations without a launch argument, then return with “Use previous navigation”. This per-launch navigation choice is not persisted; neither switch cancels a server task, deletes an artifact or grants data/provider consent.

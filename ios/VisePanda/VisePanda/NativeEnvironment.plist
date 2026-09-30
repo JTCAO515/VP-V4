@@ -10,6 +10,13 @@
     <string>$(VP_NATIVE_STAGING_API_ORIGIN)</string>
     <key>VisePandaNativeTaskContext</key>
     <string>$(VP_NATIVE_TASK_CONTEXT)</string>
+    <key>VisePandaFourTabShellEnabled</key>
+    <false/>
+    <key>CFBundleURLTypes</key>
+    <array><dict>
+        <key>CFBundleURLName</key><string>space.go2china.VisePanda.navigation</string>
+        <key>CFBundleURLSchemes</key><array><string>visepanda</string></array>
+    </dict></array>
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
     <key>NSLocationWhenInUseUsageDescription</key>
