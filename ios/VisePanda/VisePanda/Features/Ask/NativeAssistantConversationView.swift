@@ -66,8 +66,24 @@ enum AssistantTaskProjection {
         return history.first { $0.serviceTaskId == taskID }
     }
 
+    static func eligibleHistory(_ history: [NativeTextTurn], messages: [AssistantMessage]) -> [NativeTextTurn] {
+        let visibleTaskIDs = Set(latestMessages(messages).compactMap(\.taskId))
+        var seen = Set<String>()
+        return history.filter { turn in
+            // The history is newest first. An invalid latest row makes that task
+            // unknown; never fall back to an older completed Turn.
+            guard let taskID = turn.serviceTaskId, visibleTaskIDs.contains(taskID),
+                  seen.insert(taskID).inserted, turn.valid,
+                  let scopeVersion = turn.scopeVersion, scopeVersion > 0 else { return false }
+            if turn.relationship == "new_goal" { return turn.parentTurnId == nil }
+            return ["clarification", "repair"].contains(turn.relationship ?? "")
+                && turn.parentTurnId.flatMap(UUID.init(uuidString:)) != nil
+        }
+    }
+
     static func waitingTurnIDs(messages: [AssistantMessage], history: [NativeTextTurn]) -> [String] {
-        latestMessages(messages).compactMap { turn(for: $0, in: history) }.filter(\.waiting).map(\.turnId)
+        let eligible = eligibleHistory(history, messages: messages)
+        return latestMessages(messages).compactMap { turn(for: $0, in: eligible) }.filter(\.waiting).map(\.turnId)
     }
 }
 
@@ -790,10 +806,7 @@ struct NativeAssistantConversationView: View {
                 guard session.dataScope == initial else { return }
                 let history = try JSONDecoder().decode(NativeTextHistory.self, from: historyData)
                 guard history.version == 2, history.kind == "history" else { throw NativeDataError.invalidResponse }
-                taskTurns = history.turns.filter {
-                    $0.serviceTaskId.flatMap(UUID.init(uuidString:)) != nil
-                        && UUID(uuidString: $0.turnId) != nil && ($0.scopeVersion ?? 0) > 0
-                }
+                taskTurns = AssistantTaskProjection.eligibleHistory(history.turns, messages: read.messages)
             } catch { if session.dataScope == initial { taskTurns = [] } }
             if let selectedTaskID,
                !taskTurns.contains(where: { $0.serviceTaskId == selectedTaskID && $0.status == "completed" }) {

@@ -13,7 +13,7 @@ The opt-in v5 VP conversation now reads the existing planning policy, admits one
 | `xcodebuild -list -project ios/VisePanda/VisePanda.xcodeproj` | PASS | Project and scheme present |
 | `xcrun simctl list devices available` | PASS | iPhone 15 Pro iOS 17.5 UDID `B0AD77FD-33C3-4616-92CE-2E76ACD93148` available |
 | `xcodebuild build -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO -quiet` | PASS | Native compile |
-| `xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=B0AD77FD-33C3-4616-92CE-2E76ACD93148' -only-testing:VisePandaTests/AssistantResultIdentityTests -only-testing:VisePandaTests/AssistantTaskProjectionTests -only-testing:VisePandaTests/NativeSessionIntegrationTests/testAssistantCrossVersionRoutesAreExactAndReadOnly CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -resultBundlePath /tmp/vpj81-task-scope.xcresult -quiet` | PASS, 3/3 | Wrong-task/stale/withdrawn result rejection; unrelated task polling and duplicate card rejection; exact cross-version route allowance |
+| `xcodebuild test -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -destination 'platform=iOS Simulator,id=B0AD77FD-33C3-4616-92CE-2E76ACD93148' -only-testing:VisePandaTests/AssistantResultIdentityTests -only-testing:VisePandaTests/AssistantTaskProjectionTests -only-testing:VisePandaTests/NativeSessionIntegrationTests/testAssistantCrossVersionRoutesAreExactAndReadOnly CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -resultBundlePath /tmp/vpj81-no-fallback.xcresult -quiet` | PASS, 3/3 | Wrong-task/stale/withdrawn result rejection; unrelated task polling, duplicate card and malformed-latest completion fallback rejection; exact cross-version route allowance |
 | `pnpm docs:check`, `pnpm lint`, `pnpm typecheck` | PASS | Repository docs, source policy and TypeScript checks |
 | `pnpm test:contract` | PASS, 695/695 | Repository contract suite |
 | `git diff --check` | PASS | Patch whitespace |
@@ -23,6 +23,7 @@ The opt-in v5 VP conversation now reads the existing planning policy, admits one
 After #563 merged, this commit was rebased onto main `93898f44b23817638b7ddb7f4526f73a9c41ef15` without conflicts. Native build, the two simulator tests, docs check and diff check passed again on the rebased tree; #563's Library/Knowledge files were preserved.
 
 Independent PR review found that the owner-wide v2 history could trigger polling for another conversation and repeated messages could duplicate one task card. The final projection restricts both to unique ServiceTask IDs present in the current conversation; the three targeted simulator tests above include those negative cases.
+The same review caught an impossible completed Turn with no outcome/output in the projection fixture. The newest raw history row for each visible task is selected before validation; an invalid latest row stays unknown and cannot fall back to an older completed Turn. Accepted rows require `NativeTextTurn.valid` and the current conversation's task association. The fixture includes a rejected malformed latest completion and an older valid answered completion. Future positive scope versions remain eligible.
 
 ## Acceptance limit
 
