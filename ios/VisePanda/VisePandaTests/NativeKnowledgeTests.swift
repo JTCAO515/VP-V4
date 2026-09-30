@@ -407,6 +407,15 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         XCTAssertEqual(store.state, "unavailable", "cursor must identify the final eligible result in a full page")
     }
 
+    @MainActor func testLibraryUnavailablePageCannotClaimCurrentEmptySearch() async throws {
+        let store = NativeLibrarySearchStore()
+        let unavailable = try JSONSerialization.data(withJSONObject: ["version": 1, "data": ["kind": "unavailable"]])
+        await store.load(scope: owner) { unavailable }
+        XCTAssertEqual(store.state, "unavailable")
+        XCTAssertTrue(store.rows.isEmpty)
+        XCTAssertFalse(store.isCurrent(owner), "scan overflow must render unavailable, not a current empty page")
+    }
+
     @MainActor func testTripResultOpensOnlyExactCurrentReference() async throws {
         let tripID = UUID().uuidString.lowercased(), otherTrip = UUID().uuidString.lowercased()
         let artifactID = UUID().uuidString.lowercased(), store = NativeResultStore()

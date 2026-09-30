@@ -18,7 +18,8 @@ final class NativeLibrarySearchStore {
         generation = UUID(); rows = []; nextCursor = nil; scope = nil; state = "idle"; deadline = 0; query = ""; cursor = nil
     }
     func isCurrent(_ current: NativeDataScope?, query: String = "", cursor: String? = nil) -> Bool {
-        current != nil && current == scope && self.query == query && self.cursor == cursor && deadline > uptime()
+        state == "result_search" && current != nil && current == scope
+        && self.query == query && self.cursor == cursor && deadline > uptime()
     }
     func load(scope requested: NativeDataScope?, query: String = "", cursor: String? = nil, fetch: () async throws -> Data) async {
         clear()
@@ -32,7 +33,7 @@ final class NativeLibrarySearchStore {
             let envelope = try JSONDecoder().decode(NativeLibrarySearchEnvelope.self, from: bytes)
             guard envelope.version == 1, envelope.data.valid, uptime() - started < 30 else { throw NativeDataError.invalidResponse }
             rows = envelope.data.results ?? []; nextCursor = envelope.data.nextCursor
-            state = envelope.data.kind; deadline = started + 30
+            state = envelope.data.kind; deadline = state == "result_search" ? started + 30 : 0
         } catch {
             guard generation == own else { return }
             rows = []; nextCursor = nil; deadline = 0; state = Task.isCancelled ? "idle" : "unavailable"
