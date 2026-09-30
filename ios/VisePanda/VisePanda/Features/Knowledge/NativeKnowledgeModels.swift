@@ -1,5 +1,38 @@
 import Foundation
 
+struct NativeLibrarySearchEnvelope: Decodable {
+    let version: Int
+    let data: NativeLibrarySearchPage
+}
+
+struct NativeLibrarySearchPage: Decodable {
+    let kind: String
+    let results: [NativeLibrarySearchItem]?
+    let nextCursor: String?
+    var valid: Bool {
+        if kind == "unavailable" { return results == nil && nextCursor == nil }
+        guard kind == "result_search", let results, results.count <= 20,
+              results.allSatisfy(\.valid), Set(results.map(\.artifactId)).count == results.count else { return false }
+        return nextCursor == nil || (results.count == 20 && results.last?.artifactId == nextCursor)
+    }
+}
+
+struct NativeLibrarySearchItem: Decodable, Identifiable {
+    let artifactId: String
+    let revision: Int
+    let title: String
+    let summary: String
+    let tripId: String?
+    let tripVersion: Int?
+    var id: String { "\(artifactId):\(revision)" }
+    var valid: Bool {
+        UUID(uuidString: artifactId) != nil && (1...1000).contains(revision)
+        && !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && title.utf16.count <= 120
+        && !summary.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && summary.utf16.count <= 1000
+        && (tripId == nil ? tripVersion == nil : UUID(uuidString: tripId ?? "") != nil && tripVersion != nil && (tripVersion ?? -1) >= 0)
+    }
+}
+
 struct NativeKnowledgeSelection: Codable, Hashable, Sendable {
     var city = "shanghai"
     var scene = "arrival"

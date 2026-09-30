@@ -380,6 +380,33 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         XCTAssertNil(store.result)
     }
 
+    @MainActor func testLibraryPagesReplaceExpireAndFenceLateResponses() async throws {
+        var now: TimeInterval = 100
+        let store = NativeLibrarySearchStore(uptime: { now })
+        let ids = (0..<20).map { _ in UUID().uuidString.lowercased() }
+        func page(_ values: [String], next: String? = nil) throws -> Data {
+            try JSONSerialization.data(withJSONObject: ["version": 1, "data": ["kind": "result_search",
+                "results": values.map { ["artifactId": $0, "revision": 1, "title": "Synthetic title", "summary": "Fixture only", "tripId": NSNull(), "tripVersion": NSNull()] as [String: Any] },
+                "nextCursor": next as Any? ?? NSNull()]])
+        }
+        await store.load(scope: owner) { try page(ids, next: ids.last) }
+        XCTAssertEqual(store.rows.count, 20); XCTAssertEqual(store.nextCursor, ids.last)
+        XCTAssertFalse(store.isCurrent(owner, query: "different"))
+        XCTAssertFalse(store.isCurrent(owner, cursor: ids.last))
+        await store.load(scope: owner) { try page([UUID().uuidString.lowercased()]) }
+        XCTAssertEqual(store.rows.count, 1, "a page replaces previous excerpts rather than retaining revoked rows")
+        now = 131; XCTAssertFalse(store.isCurrent(owner))
+        let other = NativeDataScope(endpoint: owner.endpoint, subject: "other", mobileEpoch: 1, generation: 2)
+        XCTAssertFalse(store.isCurrent(other))
+        let barrier = KnowledgeReadBarrier()
+        let pending = Task { await store.load(scope: owner) { await barrier.wait() } }
+        await barrier.awaitStart(); store.clear()
+        await barrier.finish(try page(ids)); await pending.value
+        XCTAssertTrue(store.rows.isEmpty); XCTAssertNil(store.nextCursor)
+        await store.load(scope: owner) { try page(ids, next: UUID().uuidString) }
+        XCTAssertEqual(store.state, "unavailable", "cursor must identify the final eligible result in a full page")
+    }
+
     @MainActor func testTripResultOpensOnlyExactCurrentReference() async throws {
         let tripID = UUID().uuidString.lowercased(), otherTrip = UUID().uuidString.lowercased()
         let artifactID = UUID().uuidString.lowercased(), store = NativeResultStore()

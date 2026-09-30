@@ -1,6 +1,45 @@
 import Foundation
 import Observation
 
+@MainActor @Observable
+final class NativeLibrarySearchStore {
+    private(set) var rows: [NativeLibrarySearchItem] = []
+    private(set) var nextCursor: String?
+    private(set) var scope: NativeDataScope?
+    private(set) var state = "idle"
+    private var query = ""
+    private var cursor: String?
+    private var generation = UUID()
+    private var deadline: TimeInterval = 0
+    private let uptime: () -> TimeInterval
+    init(uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) { self.uptime = uptime }
+
+    func clear() {
+        generation = UUID(); rows = []; nextCursor = nil; scope = nil; state = "idle"; deadline = 0; query = ""; cursor = nil
+    }
+    func isCurrent(_ current: NativeDataScope?, query: String = "", cursor: String? = nil) -> Bool {
+        current != nil && current == scope && self.query == query && self.cursor == cursor && deadline > uptime()
+    }
+    func load(scope requested: NativeDataScope?, query: String = "", cursor: String? = nil, fetch: () async throws -> Data) async {
+        clear()
+        guard let requested, !Task.isCancelled else { return }
+        scope = requested; state = "loading"; self.query = query; self.cursor = cursor
+        let own = generation, started = uptime()
+        do {
+            let bytes = try await fetch()
+            guard generation == own, !Task.isCancelled else { return }
+            guard bytes.count <= 100_000 else { throw NativeDataError.invalidResponse }
+            let envelope = try JSONDecoder().decode(NativeLibrarySearchEnvelope.self, from: bytes)
+            guard envelope.version == 1, envelope.data.valid, uptime() - started < 30 else { throw NativeDataError.invalidResponse }
+            rows = envelope.data.results ?? []; nextCursor = envelope.data.nextCursor
+            state = envelope.data.kind; deadline = started + 30
+        } catch {
+            guard generation == own else { return }
+            rows = []; nextCursor = nil; deadline = 0; state = Task.isCancelled ? "idle" : "unavailable"
+        }
+    }
+}
+
 @MainActor
 @Observable
 final class NativeKnowledgeStore {

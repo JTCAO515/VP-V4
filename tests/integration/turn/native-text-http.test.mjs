@@ -188,7 +188,7 @@ test('v5 comparison binds only a confirmed goal Trip and reads one exact revisio
   'an ineligible newest artifact must not hide an older current goal result');
  // Fixture-only private rows make the candidate scan overflow without changing
  // any user-authorised link or result. Overflow must be unavailable, not empty.
- e.sql(`with clones as materialized (select gen_random_uuid() id,gen_random_uuid() key from generate_series(1,64)),
+ const seedStale=amount=>e.sql(`with clones as materialized (select gen_random_uuid() id,gen_random_uuid() key from generate_series(1,${amount})),
    inserted as (insert into turn_private.result_artifacts(id,owner_id,task_id,goal_id,input_message_id,trip_id,current_revision)
      select c.id,a.owner_id,a.task_id,a.goal_id,a.input_message_id,a.trip_id,a.current_revision
      from clones c cross join turn_private.result_artifacts a where a.id='${secondArtifact}' returning id)
@@ -197,8 +197,15 @@ test('v5 comparison binds only a confirmed goal Trip and reads one exact revisio
    select c.id,r.revision,r.owner_id,c.key,r.request_digest,r.input_sequence,r.task_turn_id,r.goal_version,
      r.trip_version,r.trip_link_operation_id,r.trip_link_version,r.memory_basis,r.content
    from clones c join inserted x on x.id=c.id cross join turn_private.result_revisions r where r.artifact_id='${secondArtifact}';`);
+ seedStale(64);
  assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,owner)).body.data.kind,'unavailable',
   'bounded overflow cannot claim that an older eligible result does not exist');
+ const searchedPastStale=(await call('/api/results/native/v1/search',owner)).body.data;
+ assert.deepEqual(searchedPastStale.results.map(x=>x.artifactId),[artifactA],'65 newer stale candidates cannot hide an older eligible search result');
+ assert.equal(searchedPastStale.nextCursor,null,'ineligible candidates do not create a pagination count oracle');
+ seedStale(64);
+ assert.deepEqual((await call('/api/results/native/v1/search',owner)).body.data,{kind:'unavailable'},'raw candidate overflow is unavailable without hidden excerpts or cursor');
+ assert.deepEqual((await call('/api/results/native/v1/search?query=SparseNoMatch',owner)).body.data,{kind:'unavailable'},'a sparse query cannot claim empty beyond the scan cap');
  e.sql(`delete from turn_private.result_artifacts where task_id='${secondTask}' and id<>'${secondArtifact}';`);
  assert.equal((await call('/api/results/native/v1/trip?tripId='+tripA,owner)).body.data.artifactId,artifactA);
  assert.equal((await call('/api/trips/native/v2/'+tripA+'/archive',owner,'POST',{expectedVersion:1,idempotencyKey:randomUUID(),confirmed:true})).status,200);
@@ -231,6 +238,7 @@ test('v5 comparison binds only a confirmed goal Trip and reads one exact revisio
  assert.equal((await call('/api/results/native/v1/trip?tripId='+tripB,owner)).body.data.kind,'empty');
  const deletionId=randomUUID();assert.equal((await call('/api/privacy/native/v1/trips',owner,'POST',{requestId:deletionId,tripId:tripB,expectedVersion:0,confirmed:true})).status,202);
  assert.equal((await call(exactB2,owner)).body.data.kind,'unavailable','queued deletion hides linked history');
+ assert.ok(!(await call('/api/results/native/v1/search',owner)).body.data.results.some(x=>x.tripId===tripB),'queued Trip deletion hides search excerpts');
  assert.match(e.sql(`select public.execute_trip_deletion_v1('${deletionId}');`),/completed/);
  assert.equal((await call(exactB,owner)).body.data.kind,'empty','Trip deletion cascades result revisions');
  assert.equal((await call(exactB2,owner)).body.data.kind,'empty');
@@ -339,6 +347,35 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  assert.equal(second.revision,2);
  const currentPath='/api/results/native/v1?artifactId='+artifactId+'&revision=2';
  assert.equal((await call(currentPath,owner)).body.data.current,true);
+ const searchPath='/api/results/native/v1/search';
+ const libraryIds=JSON.parse(e.sql(`set request.jwt.claim.role='service_role';
+   select jsonb_agg(public.publish_comparison_result_v1('${e.users[0].id}',gen_random_uuid(),0,gen_random_uuid(),
+     '${taskIds[0]}','${goalId}','${links[0].messageId}',null,null,2,'[]'::jsonb,
+     jsonb_set('${JSON.stringify(content).replaceAll("'","''")}'::jsonb,'{title}',to_jsonb('Library needle '||n))))
+   from generate_series(1,25) n;`)).map(x=>x.artifactId);
+ const searchStarted=performance.now();
+ const pageOne=await call(searchPath+'?query=Library%20needle',owner);
+ assert.equal(pageOne.status,200,JSON.stringify(pageOne.body));
+ assert.equal(pageOne.body.data.results.length,20);assert.ok(pageOne.body.data.nextCursor);
+ const pageTwo=await call(searchPath+'?query=Library%20needle&cursor='+pageOne.body.data.nextCursor,owner);
+ const twoPageMilliseconds=Math.round(performance.now()-searchStarted);
+ assert.equal(pageTwo.body.data.results.length,5);assert.equal(pageTwo.body.data.nextCursor,null);
+ assert.equal(new Set([...pageOne.body.data.results,...pageTwo.body.data.results].map(x=>x.artifactId)).size,25);
+ assert.equal((await call(searchPath+'?query=Library%20needle',other)).body.data.results.length,0);
+ assert.equal((await call(searchPath+'?cursor='+pageOne.body.data.nextCursor,other)).body.data.kind,'unavailable');
+ assert.equal((await call(searchPath+'?query=%25',owner)).body.data.results.length,0,'percent is literal');
+ assert.equal((await call(searchPath+'?query=x&query=y',owner)).status,400);
+ assert.equal((await call(searchPath+'?cursor=bad',owner)).status,400);
+ assert.equal((await call(searchPath+'?query='+('x'.repeat(121)),owner)).status,400);
+ assert.equal((await fetch(e.api+searchPath,{headers:{Authorization:'Bearer '+owner,Cookie:'forbidden=1'}})).status,400);
+ const firstId=pageOne.body.data.results[0].artifactId;
+ e.sql(`set request.jwt.claim.role='service_role';select public.withdraw_result_artifact_v1('${e.users[0].id}','${firstId}',1);`);
+ const afterWithdraw=await call(searchPath+'?query=Library%20needle',owner);
+ assert.equal(afterWithdraw.body.data.results.length,20,'withdrawn newest cannot hide older eligible matches');
+ assert.ok(!afterWithdraw.body.data.results.some(x=>x.artifactId===firstId));
+ e.sql(`delete from turn_private.result_artifacts where id='${pageOne.body.data.nextCursor}';`);
+ assert.equal((await call(searchPath+'?cursor='+pageOne.body.data.nextCursor,owner)).body.data.kind,'unavailable','deleted cursor requires refresh');
+ console.log('VPJ82_SEARCH_LOCAL_SYNTHETIC '+JSON.stringify({published:libraryIds.length,twoPageMilliseconds}));
  assert.equal((await call(resultPath,owner)).body.data.current,false,'older immutable revision cannot remain current');
  assert.throws(()=>e.sql(`update turn_private.result_revisions set content='{}'::jsonb where artifact_id='${artifactId}' and revision=1;`),/IMMUTABLE_RESULT_REVISION/);
  const serviceKey=identityLocalEnv()?.SERVICE_ROLE_KEY;assert.ok(serviceKey);
@@ -369,6 +406,9 @@ test('v5 conversation persists independent answer and versioned goal changes wit
      select '${nextTaskTurn}',owner_id,thread_id,policy_id,consent_id,'en','Synthetic later turn' from turn_private.service_tasks where id='${taskIds[1]}';
    update turn_private.service_tasks set last_turn_id='${nextTaskTurn}' where id='${taskIds[1]}';commit;`);
  assert.equal((await call(shiftedPath,owner)).body.data.current,false,'new latest Task Turn invalidates old result without changing goal version');
+ const afterTaskChange=(await call(searchPath+'?query=Synthetic%20directions',owner)).body.data.results;
+ assert.ok(!afterTaskChange.some(x=>x.artifactId===shiftedId));
+ assert.ok(afterTaskChange.some(x=>x.artifactId===artifactId),'older current result remains searchable');
  assert.equal((await call(shiftedPath,owner)).body.data.historicalReadable,true);
  assert.equal(JSON.parse(e.sql(`set request.jwt.claim.role='service_role';select public.withdraw_result_artifact_v1('${e.users[0].id}','${shiftedId}',1);`)).reused,false,
    'withdraw remains available after source Task advances');
@@ -404,7 +444,9 @@ test('v5 conversation persists independent answer and versioned goal changes wit
    '${taskIds[0]}','${goalId}','${currentLink.messageId}',null,null,3,'${basis}'::jsonb,'${dependentContent}'::jsonb);`);
  assert.equal(JSON.parse(dependentPublish).revision,1);
  assert.equal((await call(dependentPath,owner)).body.data.current,true);
+ assert.ok((await call(searchPath,owner)).body.data.results.some(x=>x.artifactId===dependentId));
  e.sql(`update public.memory_profiles set summary='Changed synthetic pace' where id='${memoryId}';`);
+ assert.ok(!(await call(searchPath,owner)).body.data.results.some(x=>x.artifactId===dependentId),'changed Memory removes search excerpt');
  assert.equal((await call(dependentPath,owner)).body.data.current,false,'memory revision invalidates currentness');
  assert.equal((await call(dependentPath,owner)).body.data.historicalReadable,true);
  e.sql(`update public.memory_profiles set state='deleted',summary=null where id='${memoryId}';`);
@@ -420,12 +462,14 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  assert.equal((await call(base+'/conversation',owner,'POST',otherStart)).status,201);
  assert.equal((await call(base+'/conversation',owner,'POST',make('follow_up',{text:'Do not reassign the first task',goalId:otherGoalId,expectedGoalVersion:1,parentMessageId:otherStart.messageId,taskId:taskIds[0],turnId:null}))).status,409);
  await login(e.users[0]);assert.equal((await call(base+'/conversation',owner)).status,401,'replaced session cannot read');
+ assert.equal((await call(searchPath,owner)).status,401,'replaced session cannot search');
  assert.equal((await call(resultPath,owner)).status,401,'replaced session cannot read result');
  const replacement=await login(e.users[0]);
  assert.equal((await call(base+'/conversation',replacement)).body.messages.length,10,'new session reads durable conversation');
  assert.equal((await call(base+'/consent',replacement,'DELETE',{policyId:policy.id})).status,200);
  assert.equal((await call(base+'/conversation',replacement)).status,403,'withdrawal hides transcript');
  assert.equal((await call(resultPath,replacement)).body.data.kind,'unavailable','withdrawal hides result content');
+ assert.deepEqual((await call(searchPath,replacement)).body.data.results,[],'consent withdrawal hides search excerpts and counts');
  assert.equal((await call(base+'/conversation',replacement,'POST',make('independent_question'))).status,403,'withdrawal denies new work');
 });
 
