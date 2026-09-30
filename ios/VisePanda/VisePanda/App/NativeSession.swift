@@ -213,6 +213,18 @@ final class NativeSession {
         return bytes
     }
 
+    /// Bounded owner search uses the same fixed native transport and identity fence.
+    func resultSearchRequest(query: String, cursor: String? = nil) async throws -> Data {
+        guard query.utf16.count <= 120, cursor == nil || UUID(uuidString: cursor ?? "") != nil else {
+            throw NativeDataError.invalidResponse
+        }
+        var items: [URLQueryItem] = [.init(name: "query", value: query)]
+        if let cursor { items.append(.init(name: "cursor", value: cursor)) }
+        let bytes = try await dataRequest(prefix: "api/results/native/v1/search", path: "api/results/native/v1/search", method: "GET", queryItems: items)
+        guard bytes.count <= 100_000 else { throw NativeDataError.invalidResponse }
+        return bytes
+    }
+
     /// Journeys resolves only an owned exact result reference for its selected Trip.
     func tripResultReferenceRequest(tripID: String) async throws -> Data {
         guard UUID(uuidString: tripID) != nil else { throw NativeDataError.invalidResponse }
