@@ -54,6 +54,7 @@ const AUTHENTICATED = [
   "public.read_grounded_turn(uuid)",
   "public.read_assistant_conversation_v1(uuid,uuid)",
   "public.read_assistant_goal_trip_link_v1(uuid)",
+  "public.read_assistant_journeys_page_v1(uuid,text)",
   "public.read_planning_policy_v1(uuid)",
   "public.read_result_artifacts_v1(uuid,integer)",
   "public.read_task_result_reference_v1(uuid)",

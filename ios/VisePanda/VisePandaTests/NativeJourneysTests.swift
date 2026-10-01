@@ -13,8 +13,7 @@ nonisolated final class NativeJourneysTests: XCTestCase {
     private func wire(_ path: String, linked: Bool = false, revision: Int = 1) throws -> Data {
         if path.hasSuffix("/policy") { return try policy() }
         if path == "api/trips/native/v2" { return try data(["version":2,"trips":[["id":trip,"title":"Saved Shanghai","headVersion":2,"updatedAt":"2026-10-02"]],"currentTripId":NSNull()]) }
-        if path.hasSuffix("/conversation") { return try data(["version":5,"kind":"conversation","conversationId":conversation,"goals":[["goalId":goal,"scopeVersion":1,"text":"China someday, dates undecided"]]]) }
-        return try data(["version":5,"kind":"goal_trip_link","conversationId":conversation,"goalId":goal,"goalScopeVersion":revision,"linkVersion":linked ? 1 : 0,"tripId":linked ? trip as Any : NSNull(),"tripHeadVersion":linked ? 2 as Any : NSNull(),"terminalUnlinked":false,"current":linked])
+        return try data(["version":5,"kind":"journeys_page","conversationId":conversation,"conversationVersion":1,"snapshot":String(repeating:"a",count:32),"goals":[["goalId":goal,"scopeVersion":1,"text":"China someday, dates undecided","relation":["state":linked ? "linked" : "unlinked","tripId":linked ? trip as Any : NSNull(),"tripHeadVersion":linked ? (revision == 1 ? 2 : 3) as Any : NSNull()]]],"nextCursor":NSNull()])
     }
 
     @MainActor
@@ -27,7 +26,7 @@ nonisolated final class NativeJourneysTests: XCTestCase {
         XCTAssertEqual(store.rows.first?.relation, .unlinked)
         XCTAssertEqual(store.trips.first?.id, trip)
         XCTAssertTrue(store.goalsAvailable); XCTAssertTrue(store.tripsAvailable)
-        XCTAssertEqual(paths, ["api/trips/native/v2","api/chat/native/v5/policy","api/chat/native/v5/conversation","api/chat/native/v5/goals/\(goal)/trip","api/chat/native/v5/policy"])
+        XCTAssertEqual(paths, ["api/trips/native/v2","api/chat/native/v5/policy","api/chat/native/v5/journeys","api/chat/native/v5/policy"])
     }
     @MainActor
     func testExactOwnedCurrentTripLinkAndStaleVersion() async throws {
@@ -39,21 +38,29 @@ nonisolated final class NativeJourneysTests: XCTestCase {
         for patch in [["tripHeadVersion": 3 as Any], ["tripId": "40000000-0000-4000-8000-000000000001" as Any]] {
             await store.load(scope: scope, assistant: true, currentScope: { self.scope }) { path in
                 let bytes = try self.wire(path, linked: true)
-                guard path.hasSuffix("/trip") else { return bytes }
+                guard path == "api/chat/native/v5/journeys" else { return bytes }
                 var reply = try XCTUnwrap(JSONSerialization.jsonObject(with: bytes) as? [String:Any])
-                for (key,value) in patch { reply[key] = value }
+                var goals = try XCTUnwrap(reply["goals"] as? [[String:Any]])
+                var relation = try XCTUnwrap(goals[0]["relation"] as? [String:Any])
+                for (key,value) in patch { relation[key] = value }
+                goals[0]["relation"] = relation; reply["goals"] = goals
                 return try self.data(reply)
             }
             XCTAssertEqual(store.rows.first?.relation, .unknown)
         }
     }
     @MainActor
-    func testMissingLinkFieldsAreUnknownRatherThanUnlinked() async throws {
+    func testMissingPageRelationFieldsAreUnavailableRatherThanUnlinked() async throws {
         let store = NativeJourneysStore()
         await store.load(scope: scope, assistant: true, currentScope: { self.scope }) { path in
-            path.hasSuffix("/trip") ? try self.data(["version":5,"kind":"goal_trip_link"]) : try self.wire(path)
+            let bytes = try self.wire(path)
+            guard path == "api/chat/native/v5/journeys" else { return bytes }
+            var reply = try XCTUnwrap(JSONSerialization.jsonObject(with: bytes) as? [String:Any])
+            var goals = try XCTUnwrap(reply["goals"] as? [[String:Any]])
+            goals[0]["relation"] = ["state":"unlinked"]; reply["goals"] = goals
+            return try self.data(reply)
         }
-        XCTAssertEqual(store.rows.first?.relation, .unknown)
+        XCTAssertFalse(store.goalsAvailable); XCTAssertTrue(store.rows.isEmpty); XCTAssertTrue(store.tripsAvailable)
     }
     @MainActor
     func testWithdrawalDuringReadHidesGoalsButRetainsIndependentTripList() async throws {
@@ -107,9 +114,9 @@ nonisolated final class NativeJourneysTests: XCTestCase {
         for malformed in [true, false] {
             let store = NativeJourneysStore()
             await store.load(scope: scope, assistant: true, currentScope: { self.scope }) { path in
-                if path.hasSuffix("/conversation") {
+                if path == "api/chat/native/v5/journeys" {
                     let row: [String:Any] = malformed ? ["goalId":self.goal,"text":"missing version"] : ["goalId":self.goal,"scopeVersion":1,"text":"duplicate/over bound"]
-                    return try self.data(["version":5,"kind":"conversation","conversationId":self.conversation,"goals":Array(repeating:row,count:malformed ? 1 : 51)])
+                    return try self.data(["version":5,"kind":"journeys_page","conversationId":self.conversation,"conversationVersion":1,"snapshot":String(repeating:"a",count:32),"nextCursor":NSNull(),"goals":Array(repeating:row,count:malformed ? 1 : 51)])
                 }
                 return try self.wire(path)
             }
@@ -180,6 +187,64 @@ nonisolated final class NativeJourneysTests: XCTestCase {
         XCTAssertTrue(store.isCurrent(scope)); XCTAssertEqual(store.rows.count, 1)
         clock += 20
         XCTAssertFalse(store.isCurrent(scope))
+    }
+
+    @MainActor
+    func testHundredGoalsUseFiveSummaryReadsAndReplaceEachPage() async throws {
+        let store = NativeJourneysStore(); var ids: [String] = []; var pageReads = 0
+        for _ in 0..<5 {
+            let cursor = store.nextCursor
+            await store.load(scope: scope, assistant: true, cursor: cursor, currentScope: { self.scope }) { path in
+                guard path.hasPrefix("api/chat/native/v5/journeys") else { return try self.wire(path) }
+                pageReads += 1
+                let after = path.split(separator: "/").last!.split(separator: ".")
+                let start = after.count == 5 ? Int(after[3].suffix(12))! : 0
+                let rows = (start+1...start+20).map { n -> [String:Any] in
+                    ["goalId":String(format:"90000000-0000-4000-8000-%012d",n),"scopeVersion":1,"text":"Goal \(n)","relation":["state":"unlinked","tripId":NSNull(),"tripHeadVersion":NSNull()]]
+                }
+                let last = rows.last!["goalId"] as! String
+                let next: Any = start+20 < 100 ? "v1.\(self.conversation).101.\(last).\(String(repeating:"a",count:32))" : NSNull()
+                return try self.data(["version":5,"kind":"journeys_page","conversationId":self.conversation,"conversationVersion":101,"snapshot":String(repeating:"a",count:32),"goals":rows,"nextCursor":next])
+            }
+            XCTAssertTrue(store.goalsAvailable); XCTAssertEqual(store.rows.count,20)
+            ids += store.rows.map(\.id)
+        }
+        XCTAssertEqual(pageReads,5); XCTAssertEqual(Set(ids).count,100); XCTAssertNil(store.nextCursor)
+        XCTAssertEqual(store.rows.first?.goal.text,"Goal 81")
+    }
+
+    @MainActor
+    func testPageCursorVersionDriftAndInvalidTokenCannotRestoreOldRows() async throws {
+        let store = NativeJourneysStore()
+        await store.load(scope: scope, assistant: true, currentScope: { self.scope }) { try self.wire($0) }
+        XCTAssertEqual(store.rows.count,1)
+        let cursor = "v1.\(conversation).2.\(goal).\(String(repeating:"a",count:32))"
+        await store.load(scope: scope, assistant: true, cursor: cursor, currentScope: { self.scope }) { try self.wire($0) }
+        XCTAssertFalse(store.goalsAvailable); XCTAssertTrue(store.rows.isEmpty); XCTAssertNil(store.nextCursor)
+        var reads = 0
+        await store.load(scope: scope, assistant: true, cursor: "../bad", currentScope: { self.scope }) { _ in reads += 1; return Data() }
+        XCTAssertEqual(reads,0); XCTAssertNil(store.scope)
+    }
+
+    @MainActor
+    func testTerminalScope10001KeepsMixedPageReadableBut10002IsUnavailable() async throws {
+        for version in [10001,10002] {
+            let store = NativeJourneysStore()
+            await store.load(scope: scope, assistant: true, currentScope: { self.scope }) { path in
+                let bytes = try self.wire(path)
+                guard path.hasPrefix("api/chat/native/v5/journeys") else { return bytes }
+                var reply = try XCTUnwrap(JSONSerialization.jsonObject(with: bytes) as? [String:Any])
+                var rows = try XCTUnwrap(reply["goals"] as? [[String:Any]])
+                var ordinary = rows[0]; ordinary["goalId"] = "20000000-0000-4000-8000-000000000002"
+                rows[0]["scopeVersion"] = version; rows.append(ordinary); reply["goals"] = rows
+                return try self.data(reply)
+            }
+            if version == 10001 {
+                XCTAssertTrue(store.goalsAvailable); XCTAssertEqual(store.rows.count,2)
+                XCTAssertEqual(store.rows[0].goal.scopeVersion,10001); XCTAssertEqual(store.rows[0].relation,.unlinked)
+                XCTAssertEqual(store.rows[1].goal.scopeVersion,1)
+            } else { XCTAssertFalse(store.goalsAvailable); XCTAssertTrue(store.rows.isEmpty) }
+        }
     }
 
 }

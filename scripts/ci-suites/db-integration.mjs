@@ -83,6 +83,7 @@ export const LANES = {
           "tests/integration/turn/text-work.test.mjs",
         ],
       },
+      { name: "journeys-pages", env: { VP_TURN_DB_TEST: "1" }, files: ["tests/integration/turn/journeys-pages.test.mjs"] },
     ],
   },
   // Native (non-Docker) PostgreSQL binaries + the `pg` client module, supplied by the caller.
