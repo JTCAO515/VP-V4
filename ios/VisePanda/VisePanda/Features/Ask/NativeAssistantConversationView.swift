@@ -188,6 +188,31 @@ struct AssistantResult: Decodable {
     }
 }
 
+@MainActor enum AssistantTaskResultReader {
+    private struct ReferenceEnvelope: Decodable {
+        struct Reference: Decodable { let kind: String; let artifactId: String?; let revision: Int?; let taskId: String? }
+        let version: Int
+        let data: Reference
+    }
+    static func open(taskID: String, isCurrent: () -> Bool,
+                     resolve: () async throws -> Data,
+                     exact: (String, Int) async throws -> Data) async throws -> Data {
+        guard UUID(uuidString: taskID) != nil, isCurrent(), !Task.isCancelled else { throw NativeDataError.staleSessionResponse }
+        let referenceBytes = try await resolve()
+        guard isCurrent(), !Task.isCancelled, referenceBytes.count <= 10_000 else { throw NativeDataError.staleSessionResponse }
+        let reference = try JSONDecoder().decode(ReferenceEnvelope.self, from: referenceBytes)
+        guard reference.version == 1, reference.data.kind == "result_reference", reference.data.taskId == taskID,
+              let id = reference.data.artifactId, UUID(uuidString: id) != nil,
+              let revision = reference.data.revision, (1...1000).contains(revision) else { throw NativeDataError.invalidResponse }
+        let bytes = try await exact(id, revision)
+        guard isCurrent(), !Task.isCancelled, bytes.count <= 100_000 else { throw NativeDataError.staleSessionResponse }
+        let result = try JSONDecoder().decode(AssistantResultEnvelope.self, from: bytes)
+        guard result.version == 1, result.data.belongs(to: taskID), result.data.artifactId == id,
+              result.data.revision == revision else { throw NativeDataError.invalidResponse }
+        return bytes
+    }
+}
+
 private struct AssistantGoalTripLink: Decodable, Equatable {
     let version: Int
     let kind: String
@@ -280,6 +305,7 @@ struct NativeAssistantConversationView: View {
     @State private var taskNotice: String?
     @State private var selectedTaskID: String?
     @State private var selectedArtifactID: String?
+    @State private var resultReadGeneration = UUID()
     @State private var selectedArtifactTaskID: String?
     @State private var selectedResult: AssistantResult?
     @State private var resultNotice: String?
@@ -813,14 +839,15 @@ struct NativeAssistantConversationView: View {
                 selectedResult = nil
             }
             if let selectedTaskID, selectedResult != nil {
+                let generation = UUID(); resultReadGeneration = generation
                 do {
-                    let bytes = try await session.resultRequest(artifactID: selectedArtifactTaskID == selectedTaskID ? selectedArtifactID : nil)
-                    guard session.dataScope == initial, self.selectedTaskID == selectedTaskID else { return }
+                    let bytes = try await session.taskResultRequest(taskID: selectedTaskID)
+                    guard session.dataScope == initial, self.selectedTaskID == selectedTaskID, resultReadGeneration == generation else { return }
                     let reply = try JSONDecoder().decode(AssistantResultEnvelope.self, from: bytes)
                     guard reply.version == 1, reply.data.belongs(to: selectedTaskID) else { throw NativeDataError.invalidResponse }
                     selectedResult = reply.data; resultNotice = nil
                 } catch {
-                    if session.dataScope == initial { selectedResult = nil; resultNotice = "unavailable" }
+                    if session.dataScope == initial && self.selectedTaskID == selectedTaskID && resultReadGeneration == generation { selectedResult = nil; resultNotice = "unavailable" }
                 }
             }
             if let planningPending, read.messages.contains(where: { $0.messageId == planningPending.messageId }) {
@@ -1003,18 +1030,16 @@ struct NativeAssistantConversationView: View {
     private func openResult(for taskID: String) async {
         guard let initial = session.dataScope, UUID(uuidString: taskID) != nil else { return }
         selectedTaskID = taskID; selectedResult = nil; resultNotice = nil
+        let generation = UUID(); resultReadGeneration = generation
         do {
-            // The accepted ID is exact within this session. After relaunch the latest
-            // owned result is usable only if its server source names this task.
-            let exactID = selectedArtifactTaskID == taskID ? selectedArtifactID : nil
-            let bytes = try await session.resultRequest(artifactID: exactID)
-            guard session.dataScope == initial, selectedTaskID == taskID else { return }
+            let bytes = try await session.taskResultRequest(taskID: taskID)
+            guard session.dataScope == initial, selectedTaskID == taskID, resultReadGeneration == generation else { return }
             let reply = try JSONDecoder().decode(AssistantResultEnvelope.self, from: bytes)
             guard reply.version == 1, reply.data.belongs(to: taskID) else { throw NativeDataError.invalidResponse }
             selectedArtifactID = reply.data.artifactId
             selectedArtifactTaskID = taskID
             selectedResult = reply.data
-        } catch { if session.dataScope == initial && selectedTaskID == taskID { resultNotice = "unavailable" } }
+        } catch { if session.dataScope == initial && selectedTaskID == taskID && resultReadGeneration == generation { resultNotice = "unavailable" } }
     }
 }
 
