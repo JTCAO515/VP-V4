@@ -319,6 +319,18 @@ final class NativeSession {
         return data
     }
 
+    /// Fixed GET-only opt-in saved translation readers; no producer or body.
+    func translationHistoryRequest(cursor: String? = nil, turnID: String? = nil) async throws -> Data {
+        guard cursor == nil || UUID(uuidString: cursor ?? "") != nil,
+              turnID == nil || (cursor == nil && UUID(uuidString: turnID ?? "") != nil) else { throw NativeDataError.invalidResponse }
+        let base = "api/translate/history/v2"
+        let path = turnID.map { base + "/turns/" + $0.lowercased() } ?? base
+        let query = cursor.map { [URLQueryItem(name: "cursor", value: $0.lowercased())] } ?? []
+        let data = try await dataRequest(prefix: base, path: path, method: "GET", queryItems: query)
+        guard data.count <= 250_000 else { throw NativeDataError.invalidResponse }
+        return data
+    }
+
     private func dataRequest(prefix: String, path: String, method: String, body: Data? = nil, queryItems: [URLQueryItem] = []) async throws -> Data {
         guard enabled, !busy, let initial = dataScope else { throw NativeDataError.sessionUnavailable }
         if let credential, credential.expiresAt <= Date().timeIntervalSince1970 + 10 {

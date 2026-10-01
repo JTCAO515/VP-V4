@@ -2,6 +2,10 @@
 
 Related to #216; S4 incremental implementation, not full Issue acceptance.
 
+The opt-in [saved translation history v2](translation-history-v2.md) adds bounded
+pages and exact reads to the Translation tool; the v1 interfaces below retain
+their existing semantics, including the 20-text-request projection.
+
 ## User result and boundary
 
 The native translation/address-card/safe-phrase entry opens a zh/en text form. A user types a short phrase or pastes an address they explicitly chose. An accepted request is polled for up to 60 seconds, then can be refreshed manually. A structurally valid answered result shows the unchanged original, target translation, model-generated back-translation and a scrollable Dynamic Type large card.

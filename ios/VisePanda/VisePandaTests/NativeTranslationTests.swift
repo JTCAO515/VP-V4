@@ -78,4 +78,83 @@ import Testing
         let bad = NativeTranslationPhrase(turnId: id, sourceLocale: "en", targetLocale: "zh", original: "Keep me", state: "translated", translation: "保留", backTranslation: nil)
         #expect(!bad.valid)
     }
+    private func savedPhrase(_ number: Int = 1) -> NativeTranslationPhrase {
+        .init(turnId: String(format: "22222222-2222-4222-8222-%012d", number), sourceLocale: "en", targetLocale: "zh",
+              original: "CNY 50.", state: "translated", translation: "50元。", backTranslation: "CNY 50.")
+    }
+    private func savedPage(_ phrases: [NativeTranslationPhrase], cursor: String? = nil) throws -> Data {
+        let rows = phrases.map { ["turnId": $0.turnId, "sourceLocale": $0.sourceLocale, "targetLocale": $0.targetLocale,
+                                  "original": $0.original, "state": $0.state, "translation": $0.translation!, "backTranslation": $0.backTranslation!] }
+        return try JSONSerialization.data(withJSONObject: ["version": 2, "kind": "translations", "policyId": id,
+            "phrases": rows, "nextCursor": cursor as Any? ?? NSNull()])
+    }
+    private func savedExact(_ phrase: NativeTranslationPhrase) throws -> Data {
+        let row = ["turnId": phrase.turnId, "sourceLocale": phrase.sourceLocale, "targetLocale": phrase.targetLocale,
+                   "original": phrase.original, "state": phrase.state, "translation": phrase.translation!, "backTranslation": phrase.backTranslation!]
+        return try JSONSerialization.data(withJSONObject: ["version": 2, "kind": "translation", "policyId": id, "phrase": row])
+    }
+
+    @Test func savedHistoryPagesReplaceRowsAndOlderTranslationUsesFreshExactGET() async throws {
+        let store = NativeSavedTranslationHistoryStore(uptime: { 0 }), detail = NativeSavedTranslationHistoryStore(uptime: { 0 })
+        let rows = (1...20).map(savedPhrase), old = savedPhrase(21)
+        let policyRequest: NativeTranslationStore.Request = { path, method, body in
+            #expect(path == "api/translate/policy" && method == "GET" && body == nil); return policy()
+        }
+        await store.load(scope: scope, currentScope: { scope }, policyRequest: policyRequest) { cursor, turn in
+            #expect(cursor == nil && turn == nil); return try savedPage(rows, cursor: rows.last?.id)
+        }
+        #expect(store.phrases.count == 20)
+        await store.load(scope: scope, cursor: store.nextCursor, currentScope: { scope }, policyRequest: policyRequest) { cursor, turn in
+            #expect(cursor == rows.last?.id && turn == nil); return try savedPage([old])
+        }
+        #expect(store.phrases == [old]); #expect(store.nextCursor == nil)
+        let reference = try #require(store.reference(old, scope: scope))
+        await detail.load(scope: scope, exact: reference, currentScope: { scope }, policyRequest: policyRequest) { cursor, turn in
+            #expect(cursor == nil && turn == old.id); return try savedExact(old)
+        }
+        #expect(detail.opened == old)
+    }
+
+    @Test(arguments: [19.0, 20.0, 21.0]) func savedHistoryUsesMonotonicLifetimeIncludingRequestTime(delay: Double) async throws {
+        var time = 0.0
+        let store = NativeSavedTranslationHistoryStore(uptime: { time })
+        await store.load(scope: scope, currentScope: { scope }, policyRequest: { _, _, _ in policy() }) { _, _ in
+            time = delay; return try savedPage([savedPhrase()])
+        }
+        #expect(store.isCurrent(scope) == (delay < 20))
+        time = 20
+        #expect(!store.isCurrent(scope)); #expect(store.reference(savedPhrase(), scope: scope) == nil)
+    }
+
+    @Test func savedHistoryDropsLateScopeChangeAndRevokedFinalPolicy() async throws {
+        let store = NativeSavedTranslationHistoryStore(uptime: { 0 })
+        var current: NativeDataScope? = scope
+        await store.load(scope: scope, currentScope: { current }, policyRequest: { _, _, _ in policy() }) { _, _ in
+            current = nil; return try savedPage([savedPhrase()])
+        }
+        #expect(store.phrases.isEmpty && store.state == "unavailable")
+        var reads = 0
+        await store.load(scope: scope, currentScope: { scope }, policyRequest: { _, _, _ in reads += 1; return policy(reads == 1) }) { _, _ in try savedPage([savedPhrase()]) }
+        #expect(store.phrases.isEmpty && store.state == "unavailable")
+    }
+
+    @Test func savedHistoryCannotOpenChangedExactContentOrPublishMalformedCursor() async throws {
+        let store = NativeSavedTranslationHistoryStore(uptime: { 0 }), detail = NativeSavedTranslationHistoryStore(uptime: { 0 })
+        let phrase = savedPhrase()
+        await store.load(scope: scope, currentScope: { scope }, policyRequest: { _, _, _ in policy() }) { _, _ in try savedPage([phrase]) }
+        let reference = try #require(store.reference(phrase, scope: scope))
+        await detail.load(scope: scope, exact: reference, currentScope: { scope }, policyRequest: { _, _, _ in policy() }) { _, _ in try savedExact(savedPhrase(99)) }
+        #expect(detail.opened == nil && detail.state == "unavailable")
+        await store.load(scope: scope, currentScope: { scope }, policyRequest: { _, _, _ in policy() }) { _, _ in try savedPage([phrase], cursor: savedPhrase(99).id) }
+        #expect(store.phrases.isEmpty && store.nextCursor == nil)
+    }
+
+    @Test func savedHistoryClearDuringReadCannotPublishLateContent() async throws {
+        let store = NativeSavedTranslationHistoryStore(uptime: { 0 })
+        await store.load(scope: scope, currentScope: { scope }, policyRequest: { _, _, _ in policy() }) { _, _ in
+            store.clear(); return try savedPage([savedPhrase()])
+        }
+        #expect(store.state == "idle" && store.phrases.isEmpty && store.scope == nil)
+    }
+
 }
