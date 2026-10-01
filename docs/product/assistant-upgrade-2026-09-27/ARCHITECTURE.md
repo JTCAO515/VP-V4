@@ -56,6 +56,8 @@ VPJ-82's multi-comparison consumer uses `GET /api/results/native/v1/search?query
 
 Native components accept schema-versioned content and typed actions, not arbitrary model HTML, URLs or code. Validate location identity and media rights/provenance. Unsupported card types fall back to safe readable content; old clients must not hide fields and then confirm a different meaning. Production imagery is not generated concept art masquerading as a real place.
 
+Task-directed result reopening uses `GET /api/results/native/v1/task?taskId=...`. The authenticated read-only RPC resolves at most 64 newest active artifacts for that owner/Task, validates each exact revision through `read_result_artifacts_v1`, and returns only its ID/revision/Task reference. Overflow reports unavailable; missing, revoked or non-current results never fall back to global latest. Native VP resolves this reference before the exact content GET on both open and refresh, matching Task, artifact and revision and fencing session/request generations. This does not change the 20-Turn task-history projection or authorise another task execution.
+
 ## Bounded execution (VPJ-80)
 
 Extend the existing durable lease runner and attempt budget. State progression distinguishes accepted/queued/running/waiting-input/waiting-confirmation/paused/completed/failed/cancelled; concrete unions and transitions are versioned before migration. Business outcome, execution state, artifact currentness and accounting status remain separate.

@@ -256,6 +256,47 @@ nonisolated final class NativeAskStateTests: XCTestCase {
 }
 
 nonisolated final class AssistantResultIdentityTests: XCTestCase {
+    @MainActor func testRestartReopensEarlierTaskThroughExactReferenceAndFencesLateData() async throws {
+        let task = UUID().uuidString.lowercased(), artifact = UUID().uuidString.lowercased(), other = UUID().uuidString.lowercased()
+        func reference(_ kind: String = "result_reference") throws -> Data {
+            let value: [String: Any] = kind == "result_reference"
+                ? ["kind": kind, "taskId": task, "artifactId": artifact, "revision": 2] : ["kind": kind]
+            return try JSONSerialization.data(withJSONObject: ["version": 1, "data": value])
+        }
+        func body(_ source: String, current: Bool = true) throws -> Data {
+            try JSONSerialization.data(withJSONObject: ["version": 1, "data": ["kind": "result_artifact", "artifactId": artifact,
+                "revision": 2, "current": current, "lifecycle": "active", "source": ["taskId": source],
+                "content": ["schemaVersion": "comparison/1", "title": "Synthetic", "summary": "Two options",
+                    "options": [["id": "a", "title": "A", "tradeoff": "Unknown"], ["id": "b", "title": "B", "tradeoff": "Unknown"]]]]])
+        }
+        let expected = try body(task)
+        let opened = try await AssistantTaskResultReader.open(taskID: task, isCurrent: { true }, resolve: { try reference() }, exact: { id, revision in
+            XCTAssertEqual(id, artifact); XCTAssertEqual(revision, 2); return expected
+        })
+        XCTAssertEqual(opened, expected) // No selectedArtifactID or global-latest request exists.
+        for kind in ["empty", "unavailable"] {
+            do {
+                _ = try await AssistantTaskResultReader.open(taskID: task, isCurrent: { true }, resolve: { try reference(kind) }, exact: { _, _ in
+                    XCTFail("Missing reference must never fall back"); return expected
+                })
+                XCTFail("Missing reference must fail")
+            } catch {}
+        }
+        for invalid in [try body(other), try body(task, current: false)] {
+            do {
+                _ = try await AssistantTaskResultReader.open(taskID: task, isCurrent: { true }, resolve: { try reference() }, exact: { _, _ in invalid })
+                XCTFail("Wrong Task or stale body must fail")
+            } catch {}
+        }
+        var currentGeneration = true
+        do {
+            _ = try await AssistantTaskResultReader.open(taskID: task, isCurrent: { currentGeneration }, resolve: { try reference() }, exact: { _, _ in
+                currentGeneration = false; return expected
+            })
+            XCTFail("A late response cannot enter a changed session/generation")
+        } catch NativeDataError.staleSessionResponse { }
+        catch { XCTFail("Expected a stale session response, got \(error)") }
+    }
     @MainActor func testOnlyCurrentResultFromSelectedTaskCanOpen() throws {
         let task = UUID().uuidString.lowercased()
         let other = UUID().uuidString.lowercased()

@@ -55,6 +55,7 @@ const AUTHENTICATED = [
   "public.read_assistant_goal_trip_link_v1(uuid)",
   "public.read_planning_policy_v1(uuid)",
   "public.read_result_artifacts_v1(uuid,integer)",
+  "public.read_task_result_reference_v1(uuid)",
   "public.search_result_artifacts_v1(text,uuid)",
   "public.read_trip_result_reference_v1(uuid)",
   "public.read_retrievable_memory_profiles()",

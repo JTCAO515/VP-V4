@@ -347,6 +347,41 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  assert.equal(second.revision,2);
  const currentPath='/api/results/native/v1?artifactId='+artifactId+'&revision=2';
  assert.equal((await call(currentPath,owner)).body.data.current,true);
+ await waitUntil(()=>e.sql(`select status from public.turns where id='${taskTurns[1]}';`)==='completed',10000,'other Task completed');
+ const newerArtifact=randomUUID();
+ e.sql(`set request.jwt.claim.role='service_role';select public.publish_comparison_result_v1('${e.users[0].id}','${newerArtifact}',0,'${randomUUID()}',
+   '${taskIds[1]}','${goalId}','${links[1].messageId}',null,null,2,'[]'::jsonb,'${JSON.stringify(content).replaceAll("'","''")}'::jsonb);`);
+ const taskResultPath='/api/results/native/v1/task?taskId='+taskIds[0];
+ assert.equal((await call('/api/results/native/v1',owner)).body.data.source.taskId,taskIds[1],'restart global latest belongs to another Task');
+ const reopened=await call(taskResultPath,owner);
+ assert.equal(reopened.status,200,'Task-scoped resolution must survive loss of selected artifact memory');
+ assert.deepEqual([reopened.body.data.artifactId,reopened.body.data.revision],[artifactId,2]);
+ assert.equal((await call('/api/results/native/v1?artifactId='+reopened.body.data.artifactId+'&revision='+reopened.body.data.revision,owner)).body.data.source.taskId,taskIds[0]);
+ assert.equal((await call(taskResultPath,other)).body.data.kind,'empty');
+ assert.equal((await call('/api/results/native/v1/task?taskId='+randomUUID(),owner)).body.data.kind,'empty');
+ // Private disposable fixtures isolate candidate selection without inventing a
+ // new producer. Their older goal basis is stale but otherwise owner/Task bound.
+ const cloneStale=(template,count)=>e.sql(`with clones as materialized (select gen_random_uuid() id,gen_random_uuid() key from generate_series(1,${count})),
+   inserted as (insert into turn_private.result_artifacts(id,owner_id,task_id,goal_id,input_message_id,trip_id,current_revision)
+     select c.id,a.owner_id,a.task_id,a.goal_id,a.input_message_id,a.trip_id,a.current_revision
+     from clones c cross join turn_private.result_artifacts a where a.id='${template}' returning id)
+   insert into turn_private.result_revisions(artifact_id,revision,owner_id,idempotency_key,request_digest,input_sequence,
+     task_turn_id,goal_version,trip_version,trip_link_operation_id,trip_link_version,memory_basis,content)
+   select c.id,r.revision,r.owner_id,c.key,r.request_digest,r.input_sequence,r.task_turn_id,1,
+     r.trip_version,r.trip_link_operation_id,r.trip_link_version,r.memory_basis,r.content
+   from clones c join inserted x on x.id=c.id cross join turn_private.result_revisions r
+   join turn_private.result_artifacts a on a.id=r.artifact_id and a.current_revision=r.revision where a.id='${template}';`);
+ cloneStale(artifactId,1);
+ assert.deepEqual([(await call(taskResultPath,owner)).body.data.artifactId,(await call(taskResultPath,owner)).body.data.revision],[artifactId,2],
+   'newer stale candidate must not hide an older eligible result for this Task');
+ cloneStale(newerArtifact,64);
+ e.sql(`delete from turn_private.result_artifacts where id='${newerArtifact}';`);
+ const otherTaskPath='/api/results/native/v1/task?taskId='+taskIds[1];
+ assert.equal((await call(otherTaskPath,owner)).body.data.kind,'empty','exactly 64 stale candidates can prove empty');
+ const template=e.sql(`select id from turn_private.result_artifacts where task_id='${taskIds[1]}' limit 1;`);
+ cloneStale(template,1);
+ assert.equal((await call(otherTaskPath,owner)).body.data.kind,'unavailable','65 candidates cannot produce a false empty');
+ e.sql(`delete from turn_private.result_artifacts where task_id='${taskIds[1]}';`);
  const searchPath='/api/results/native/v1/search';
  const libraryIds=JSON.parse(e.sql(`set request.jwt.claim.role='service_role';
    select jsonb_agg(public.publish_comparison_result_v1('${e.users[0].id}',gen_random_uuid(),0,gen_random_uuid(),
@@ -421,6 +456,7 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  assert.equal((await call(base+'/conversation',owner,'POST',revised)).status,201);
  const stale=await call(currentPath,owner);assert.equal(stale.body.data.current,false,'goal CAS makes prior basis stale');
  assert.equal(stale.body.data.historicalReadable,true,'authorized history remains readable');
+ assert.equal((await call(taskResultPath,owner)).body.data.kind,'empty','stale Task cannot fall back to a global result');
  assert.equal(e.sql(`select count(*) from turn_private.result_events where artifact_id='${artifactId}' and event_type='ready';`),'1','result and ready outbox were committed together');
  assert.equal((await call('/api/results/native/v1?artifactId=bad',owner)).status,400);
  const currentLink=make('follow_up',{text:'Attach task under current scope',goalId,expectedGoalVersion:3,parentMessageId:revised.messageId,taskId:taskIds[0],turnId:null});
@@ -464,11 +500,13 @@ test('v5 conversation persists independent answer and versioned goal changes wit
  await login(e.users[0]);assert.equal((await call(base+'/conversation',owner)).status,401,'replaced session cannot read');
  assert.equal((await call(searchPath,owner)).status,401,'replaced session cannot search');
  assert.equal((await call(resultPath,owner)).status,401,'replaced session cannot read result');
+ assert.equal((await call(taskResultPath,owner)).status,401);
  const replacement=await login(e.users[0]);
  assert.equal((await call(base+'/conversation',replacement)).body.messages.length,10,'new session reads durable conversation');
  assert.equal((await call(base+'/consent',replacement,'DELETE',{policyId:policy.id})).status,200);
  assert.equal((await call(base+'/conversation',replacement)).status,403,'withdrawal hides transcript');
  assert.equal((await call(resultPath,replacement)).body.data.kind,'unavailable','withdrawal hides result content');
+ assert.equal((await call(taskResultPath,replacement)).body.data.kind,'empty','revocation resolves no actionable reference');
  assert.deepEqual((await call(searchPath,replacement)).body.data.results,[],'consent withdrawal hides search excerpts and counts');
  assert.equal((await call(base+'/conversation',replacement,'POST',make('independent_question'))).status,403,'withdrawal denies new work');
 });

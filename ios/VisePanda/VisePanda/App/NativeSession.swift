@@ -225,6 +225,17 @@ final class NativeSession {
         return bytes
     }
 
+    /// Reopen a Task after restart without relying on a remembered artifact ID.
+    func taskResultRequest(taskID: String) async throws -> Data {
+        guard let initial = dataScope else { throw NativeDataError.sessionUnavailable }
+        return try await AssistantTaskResultReader.open(taskID: taskID, isCurrent: { self.dataScope == initial }, resolve: {
+            try await self.dataRequest(prefix: "api/results/native/v1/task", path: "api/results/native/v1/task", method: "GET",
+                                       queryItems: [.init(name: "taskId", value: taskID)])
+        }, exact: { id, revision in
+            try await self.resultRequest(artifactID: id, revision: revision)
+        })
+    }
+
     /// Journeys resolves only an owned exact result reference for its selected Trip.
     func tripResultReferenceRequest(tripID: String) async throws -> Data {
         guard UUID(uuidString: tripID) != nil else { throw NativeDataError.invalidResponse }
