@@ -1,0 +1,32 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/auth/native/v2/refresh",
+    "status": 401
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/native/v2/credentials",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/native/v2/login",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/auth/native/v2/profile",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/chat/native/v1/policy",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/chat/native/v1/turns",
+    "status": 200
+  }
+]

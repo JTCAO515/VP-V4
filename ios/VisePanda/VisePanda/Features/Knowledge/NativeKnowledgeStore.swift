@@ -1,75 +1,63 @@
 import Foundation
 import Observation
 
-struct NativeLibraryPhraseReference: Identifiable {
-    let phrase: NativeTranslationPhrase
-    let policyID: String
-    let noticeHash: String
-    let scope: NativeDataScope
-    var id: String { phrase.id }
-}
+typealias NativeLibraryPhraseReference = NativeSavedTranslationReference
 
-/// A read-only consumer of the existing retained translation window.
+/// Library keeps one authorized v2 page; the domain reader owns permission and exact read.
 @MainActor @Observable
 final class NativeLibraryPhraseStore {
-    private(set) var rows: [NativeTranslationPhrase] = []
-    private(set) var opened: NativeTranslationPhrase?
-    private(set) var policyID: String?
-    private(set) var noticeHash: String?
-    private(set) var scope: NativeDataScope?
-    private(set) var state = "idle"
+    private let history: NativeSavedTranslationHistoryStore
     private var generation = UUID()
-    private var deadline: TimeInterval = 0
-    private let uptime: () -> TimeInterval
-    init(uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) { self.uptime = uptime }
+    private var loading = false
+    private var rejected = false
+    private(set) var pageCursor: String?
+    var rows: [NativeTranslationPhrase] { history.phrases }
+    var opened: NativeTranslationPhrase? { history.opened }
+    var nextCursor: String? { history.nextCursor }
+    var scope: NativeDataScope? { history.scope }
+    var state: String { loading ? "loading" : rejected ? "unavailable" : history.state }
+    init(uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) {
+        history = NativeSavedTranslationHistoryStore(uptime: uptime)
+    }
     func clear() {
-        generation = UUID(); rows = []; opened = nil; policyID = nil; noticeHash = nil
-        scope = nil; deadline = 0; state = "idle"
+        generation = UUID(); loading = false; rejected = false; pageCursor = nil; history.clear()
     }
-    func isCurrent(_ requested: NativeDataScope?) -> Bool {
-        state == "ready" && requested != nil && scope == requested && uptime() < deadline
+    func isCurrent(_ requested: NativeDataScope?, cursor: String? = nil) -> Bool {
+        !loading && !rejected && pageCursor == cursor && history.isCurrent(requested)
     }
-    /// nil means the window is not currently readable, never zero matches.
-    /// Matching only reads the existing snapshot; it cannot renew its lifetime.
-    func matches(scope requested: NativeDataScope?, query: String) -> [NativeTranslationPhrase]? {
-        guard isCurrent(requested), query.utf16.count <= 120 else { return nil }
+    /// nil is unreadable, never zero matches. Filtering never renews the source deadline.
+    func matches(scope requested: NativeDataScope?, query: String, cursor: String? = nil) -> [NativeTranslationPhrase]? {
+        guard isCurrent(requested, cursor: cursor), query.utf16.count <= 120 else { return nil }
         let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
         return rows.filter { phrase in
             term.isEmpty || [phrase.original, phrase.translation ?? "", phrase.backTranslation ?? ""]
                 .contains { $0.localizedStandardContains(term) }
         }
     }
-    func reference(_ phrase: NativeTranslationPhrase, scope requested: NativeDataScope?) -> NativeLibraryPhraseReference? {
-        guard isCurrent(requested), rows.contains(phrase), let scope, let policyID, let noticeHash else { return nil }
-        return .init(phrase: phrase, policyID: policyID, noticeHash: noticeHash, scope: scope)
+    func reference(_ phrase: NativeTranslationPhrase, scope requested: NativeDataScope?, cursor: String? = nil) -> NativeLibraryPhraseReference? {
+        guard isCurrent(requested, cursor: cursor) else { return nil }
+        return history.reference(phrase, scope: requested)
     }
-    func load(scope requested: NativeDataScope?, exact: NativeLibraryPhraseReference? = nil,
-              currentScope: () -> NativeDataScope?, request: NativeTranslationStore.Request) async {
-        clear()
-        guard let requested, requested == currentScope(), !Task.isCancelled,
-              exact == nil || exact?.scope == requested else { return }
-        let own = generation, started = uptime()
-        scope = requested; state = "loading"
-        // A fresh domain reader has no retained text to survive a failed refresh.
-        let reader = NativeTranslationStore()
-        await reader.load(scope: requested) { path, method, body in
-            guard method == "GET", body == nil, ["api/translate/policy", "api/translate"].contains(path),
+    func load(scope requested: NativeDataScope?, cursor: String? = nil, exact: NativeLibraryPhraseReference? = nil,
+              currentScope: () -> NativeDataScope?, request: NativeTranslationStore.Request,
+              read: NativeSavedTranslationHistoryStore.Read) async {
+        generation = UUID(); let own = generation
+        loading = true; rejected = false
+        await history.load(scope: requested, cursor: cursor, exact: exact, currentScope: currentScope, policyRequest: { path, method, body in
+            guard method == "GET", body == nil, path == "api/translate/policy",
                   currentScope() == requested, self.generation == own, !Task.isCancelled else { throw NativeDataError.staleSessionResponse }
-            let data = try await request(path, method, body)
+            let bytes = try await request(path, method, body)
             guard currentScope() == requested, self.generation == own, !Task.isCancelled else { throw NativeDataError.staleSessionResponse }
-            return data
-        }
+            return bytes
+        }, read: { after, turnID in
+            guard currentScope() == requested, self.generation == own, !Task.isCancelled else { throw NativeDataError.staleSessionResponse }
+            let bytes = try await read(after, turnID)
+            guard currentScope() == requested, self.generation == own, !Task.isCancelled else { throw NativeDataError.staleSessionResponse }
+            return bytes
+        })
         guard generation == own, !Task.isCancelled else { return }
-        guard currentScope() == requested, reader.errorCode == nil, let policy = reader.policy,
-              policy.consentState == .accepted, uptime() - started < 20 else { state = "unavailable"; return }
-        let eligible = reader.phrases.filter { $0.state == "translated" && $0.valid }
-        if let exact {
-            guard policy.id == exact.policyID, policy.noticeHash == exact.noticeHash,
-                  let phrase = eligible.first(where: { $0.id == exact.id }), phrase == exact.phrase else { state = "unavailable"; return }
-            opened = phrase
-        } else { rows = eligible }
-        policyID = policy.id; noticeHash = policy.noticeHash
-        deadline = started + 20; state = "ready"
+        pageCursor = cursor; loading = false
+        rejected = requested != nil && history.state == "idle"
     }
 }
 

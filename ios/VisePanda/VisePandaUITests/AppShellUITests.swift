@@ -3,6 +3,77 @@ import UIKit
 
 @MainActor
 final class AppShellUITests: XCTestCase {
+    func testLibraryV2AuthenticatedOlderExactAndReturn() throws {
+        let env = ProcessInfo.processInfo.environment
+        guard env["VP_LIBRARY_UI_TEST"] == "1" else { throw XCTSkip("UNRUN: owned disposable Library environment required") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-VisePandaLegacyShell", "-VisePandaNativeAPI", try XCTUnwrap(env["VP_LIBRARY_API"]), "-VisePandaLocale", "en", "-AppleLanguages", "(en)", "-AppleLocale", "en_US", "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryL"]
+        app.launch()
+        func reveal(_ element: XCUIElement) {
+            for _ in 0..<16 where !element.isHittable {
+                if app.keyboards.firstMatch.exists {
+                    app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.35)).press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1)))
+                } else { app.swipeUp(velocity: .fast) }
+            }
+            if !element.isHittable { capture("Library-control-not-hittable", app: app) }
+            XCTAssertTrue(element.isHittable)
+        }
+        app.tabBars.buttons["Profile"].tap()
+        let signOut = app.buttons["Sign out"]
+        if signOut.waitForExistence(timeout: 2) { reveal(signOut); signOut.tap() }
+        let email = app.textFields["native.login.email"]
+        XCTAssertTrue(email.waitForExistence(timeout: 15)); reveal(email); email.tap(); email.typeText(try XCTUnwrap(env["VP_LIBRARY_EMAIL"]))
+        let password = app.secureTextFields["native.login.password"]
+        reveal(password); password.tap(); password.typeText("VPJ07-Local-Synthetic-Only-195!")
+        reveal(app.buttons["native.login.submit"]); app.buttons["native.login.submit"].tap()
+        capture("Library-after-login-navigation", app: app)
+        let proofURL = try XCTUnwrap(URL(string: try XCTUnwrap(env["VP_LIBRARY_SESSION_PROOF"])))
+        func verifyOwnedSession() {
+            let proof = expectation(description: "actual owned session readable")
+            URLSession.shared.dataTask(with: proofURL) { data, response, error in
+                XCTAssertNil(error); XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200)
+                let value = data.flatMap { try? JSONSerialization.jsonObject(with: $0) as? [String: Bool] }
+                XCTAssertEqual(value?["authenticated"], true); proof.fulfill()
+            }.resume()
+            wait(for: [proof], timeout: 15)
+        }
+        verifyOwnedSession()
+        app.terminate()
+        app.launchArguments.removeAll { $0 == "-VisePandaLegacyShell" }
+        app.launchArguments.append("-VisePandaFourTabShell")
+        app.launch()
+        let restored = app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Local synthetic test only.")).firstMatch
+        XCTAssertTrue(restored.waitForExistence(timeout: 20), "cold-start authenticated policy restored before tab navigation")
+        verifyOwnedSession()
+        XCTAssertTrue(app.tabBars.buttons["Library"].waitForExistence(timeout: 10)); app.tabBars.buttons["Library"].tap()
+        let older = app.buttons["library.phrases.older"]
+        XCTAssertTrue(older.waitForExistence(timeout: 30)); reveal(older); older.tap()
+        let oldID = try XCTUnwrap(env["VP_LIBRARY_OLD_TURN"])
+        let old = app.buttons["library.phrase.open." + oldID]
+        XCTAssertTrue(old.waitForExistence(timeout: 20)); reveal(old)
+        XCTAssertFalse(app.buttons["library.phrase.open." + (try XCTUnwrap(env["VP_LIBRARY_NEWEST_TURN"]))].exists, "second page replaces first")
+        old.tap()
+        let card = app.staticTexts["translation.largeText"]
+        XCTAssertTrue(card.waitForExistence(timeout: 15)); XCTAssertEqual(card.label, "旧译50元")
+        capture("Library-v2-old-exact-auth-synthetic", app: app)
+        app.buttons["Done"].tap()
+        XCTAssertTrue(older.waitForExistence(timeout: 20), "return refreshes first page")
+        let control = try XCTUnwrap(URL(string: try XCTUnwrap(env["VP_LIBRARY_CONTROL"])))
+        var revoke = URLRequest(url: control); revoke.httpMethod = "POST"
+        let revoked = expectation(description: "owned consent revoked")
+        URLSession.shared.dataTask(with: revoke) { _, response, error in
+            XCTAssertNil(error); XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200); revoked.fulfill()
+        }.resume()
+        wait(for: [revoked], timeout: 15)
+        let refresh = app.buttons["library.phrases.refresh"]
+        reveal(refresh); refresh.tap()
+        XCTAssertTrue(app.staticTexts["library.phrases.unavailable"].waitForExistence(timeout: 15))
+        XCTAssertFalse(old.exists); XCTAssertFalse(app.buttons["library.phrases.older"].exists)
+        capture("Library-v2-withdrawn-auth-synthetic", app: app)
+        app.terminate()
+    }
+
     func testFourTabShellRoutesAndFallback() {
         for locale in ["en", "zh-Hans"] {
             let app = launchFourTabShell(locale: locale)

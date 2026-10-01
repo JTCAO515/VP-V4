@@ -460,7 +460,7 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
     }
     @MainActor private func phraseHistory(_ translated: String? = "合成短语", id: String = "22222222-2222-4222-8222-222222222222", back: String = "Synthetic phrase") throws -> Data {
         let rows: [[String: Any]] = translated.map { value in [["turnId": id, "sourceLocale": "en", "targetLocale": "zh", "original": "Synthetic phrase", "state": "translated", "translation": value, "backTranslation": back]] } ?? []
-        return try JSONSerialization.data(withJSONObject: ["version": 1, "kind": "translations", "phrases": rows])
+        return try JSONSerialization.data(withJSONObject: ["version": 2, "kind": "translations", "policyId": "11111111-1111-4111-8111-111111111111", "phrases": rows, "nextCursor": NSNull()])
     }
     @MainActor func testLibraryPhraseReusesReadonlyReaderAndRechecksExactBodyAndPolicy() async throws {
         let store = NativeLibraryPhraseStore()
@@ -470,7 +470,7 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
             return path.hasSuffix("policy") ? self.phrasePolicy() : try self.phraseHistory()
         }
         await store.load(scope: owner, currentScope: { self.owner }, request: read)
-        XCTAssertEqual(requests, 2); XCTAssertTrue(store.isCurrent(owner))
+        XCTAssertEqual(requests, 3); XCTAssertTrue(store.isCurrent(owner))
         let reference = try XCTUnwrap(store.reference(try XCTUnwrap(store.rows.first), scope: owner))
         await store.load(scope: owner, exact: reference, currentScope: { self.owner }, request: read)
         XCTAssertEqual(store.opened, reference.phrase)
@@ -529,7 +529,7 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         XCTAssertNil(store.matches(scope: owner, query: String(repeating: "x", count: 121)))
         now = 119
         XCTAssertEqual(store.matches(scope: owner, query: "合成")?.count, 1)
-        XCTAssertEqual(reads, 2, "matching does not re-read or renew the source window")
+        XCTAssertEqual(reads, 3, "matching does not re-read or renew the source window")
         now = 120
         XCTAssertNil(store.matches(scope: owner, query: "合成"), "expiry is unavailable, not zero matches")
         XCTAssertNil(store.matches(scope: nil, query: ""))
@@ -620,6 +620,52 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         }
     }
 
+    @MainActor func testLibraryV2OlderPageReplacesRowsAndReopensOutsideLegacyWindow() async throws {
+        let store = NativeLibraryPhraseStore()
+        let newest = (0..<20).map { index in NativeTranslationPhrase(turnId: UUID().uuidString.lowercased(), sourceLocale: "en", targetLocale: "zh", original: "New \(index)", state: "translated", translation: "新", backTranslation: "New \(index)") }
+        let old = NativeTranslationPhrase(turnId: UUID().uuidString.lowercased(), sourceLocale: "en", targetLocale: "zh", original: "Older CNY 50", state: "translated", translation: "旧50元", backTranslation: "Older CNY 50")
+        func wire(_ phrases: [NativeTranslationPhrase], exact: Bool = false, next: String? = nil) throws -> Data {
+            let rows = phrases.map { ["turnId": $0.id, "sourceLocale": $0.sourceLocale, "targetLocale": $0.targetLocale, "original": $0.original, "state": $0.state, "translation": $0.translation ?? "", "backTranslation": $0.backTranslation ?? ""] }
+            var value: [String: Any] = ["version": 2, "kind": exact ? "translation" : "translations", "policyId": "11111111-1111-4111-8111-111111111111"]
+            if exact { value["phrase"] = rows.first } else { value["phrases"] = rows; value["nextCursor"] = next as Any? ?? NSNull() }
+            return try JSONSerialization.data(withJSONObject: value)
+        }
+        let policy: NativeTranslationStore.Request = { _, method, body in XCTAssertEqual(method, "GET"); XCTAssertNil(body); return self.phrasePolicy() }
+        let next = try XCTUnwrap(newest.last?.id)
+        await store.load(scope: owner, currentScope: { self.owner }, request: policy, read: { after, id in
+            XCTAssertNil(after); XCTAssertNil(id); return try wire(newest, next: next)
+        })
+        XCTAssertEqual(store.matches(scope: owner, query: "Older")?.count, 0, "only first-page matching")
+        await store.load(scope: owner, cursor: next, currentScope: { self.owner }, request: policy, read: { after, id in
+            XCTAssertEqual(after, next); XCTAssertNil(id); return try wire([old])
+        })
+        XCTAssertEqual(store.rows, [old]); XCTAssertNil(store.nextCursor)
+        XCTAssertNil(store.matches(scope: owner, query: "Older"), "old page identity cannot expose the new page")
+        XCTAssertEqual(store.matches(scope: owner, query: "Older", cursor: next), [old])
+        let reference = try XCTUnwrap(store.reference(old, scope: owner, cursor: next))
+        await store.load(scope: owner, exact: reference, currentScope: { self.owner }, request: policy, read: { after, id in
+            XCTAssertNil(after); XCTAssertEqual(id, old.id); return try wire([old], exact: true)
+        })
+        XCTAssertEqual(store.opened, old, "exact endpoint does not require the phrase in an owner-latest20 page")
+    }
+
+    @MainActor func testLibraryV2UnavailableAndExpiredAnchorNeverClaimEmptyPage() async throws {
+        var now: TimeInterval = 100
+        let store = NativeLibraryPhraseStore(uptime: { now })
+        let ids = (0..<20).map { _ in UUID().uuidString.lowercased() }
+        let rows = ids.map { ["turnId": $0, "sourceLocale": "en", "targetLocale": "zh", "original": "Synthetic", "state": "translated", "translation": "合成", "backTranslation": "Synthetic"] }
+        let data = try JSONSerialization.data(withJSONObject: ["version": 2, "kind": "translations", "policyId": "11111111-1111-4111-8111-111111111111", "phrases": rows, "nextCursor": ids.last!])
+        let policy: NativeTranslationStore.Request = { _, _, _ in self.phrasePolicy() }
+        await store.load(scope: owner, currentScope: { self.owner }, request: policy, read: { _, _ in data })
+        now = 120
+        var reads = 0
+        await store.load(scope: owner, cursor: ids.last, currentScope: { self.owner }, request: policy, read: { _, _ in reads += 1; return data })
+        XCTAssertEqual(reads, 0); XCTAssertEqual(store.state, "unavailable")
+        XCTAssertNil(store.matches(scope: owner, query: "", cursor: ids.last))
+        await store.load(scope: owner, currentScope: { self.owner }, request: policy, read: { _, _ in Data("{\"version\":2,\"kind\":\"unavailable\"}".utf8) })
+        XCTAssertEqual(store.state, "unavailable"); XCTAssertNil(store.matches(scope: owner, query: ""))
+    }
+
     @MainActor func testTripResultOpensOnlyExactCurrentReference() async throws {
         let tripID = UUID().uuidString.lowercased(), otherTrip = UUID().uuidString.lowercased()
         let artifactID = UUID().uuidString.lowercased(), store = NativeResultStore()
@@ -664,4 +710,19 @@ private actor KnowledgeReadBarrier {
         await withCheckedContinuation { started = $0 }
     }
     func finish(_ data: Data) { response?.resume(returning: data); response = nil }
+}
+
+// Test-only v2 wire adapter preserves the earlier Library permission regression cases.
+@MainActor private extension NativeLibraryPhraseStore {
+    func load(scope requested: NativeDataScope?, exact: NativeLibraryPhraseReference? = nil,
+              currentScope: () -> NativeDataScope?, request: NativeTranslationStore.Request) async {
+        await load(scope: requested, exact: exact, currentScope: currentScope, request: request, read: { _, id in
+            let data = try await request("fixture/history", "GET", nil)
+            guard let id else { return data }
+            let page = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+            let row = (page?["phrases"] as? [[String: Any]])?.first { $0["turnId"] as? String == id }
+            guard let row else { return Data("{\"version\":2,\"kind\":\"unavailable\"}".utf8) }
+            return try JSONSerialization.data(withJSONObject: ["version": 2, "kind": "translation", "policyId": page?["policyId"] as Any, "phrase": row])
+        })
+    }
 }
