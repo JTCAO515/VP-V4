@@ -64,4 +64,26 @@ test("fixed AMap reads preserve exact anchors, current routes and a 13-call cap"
   assert.deepEqual(observed.areas.map(area=>[area.id,area.railMinutes,area.transfers]),
     [["jingan",21,1],["peoples_square",16,0]]);
   assert.equal(JSON.stringify(observed).includes("synthetic-key"),false);
+  // Route adapters can return partial options after a fetch error. A denied
+  // final driving request must still invalidate the whole place checkpoint.
+  calls.length=0;let checks=0;
+  await assert.rejects(()=>readShanghaiStayAreaRoutes({env:{AMAP_SEARCH_ENABLED:"true",AMAP_DETAIL_ENABLED:"true",
+    AMAP_ROUTES_ENABLED:"true",AMAP_WEB_SERVICE_KEY:"synthetic-key"},signal:new AbortController().signal,
+    beforeRequest:async()=>{if(++checks===13)throw Error("SYNTHETIC late denial");},fetcher:fetcher as typeof fetch}));
+  assert.equal(checks,13);assert.ok(calls.length<=12);
+
+});
+
+test("map egress fails closed on denied or aborted fresh request authorization",async()=>{
+ const env={AMAP_SEARCH_ENABLED:"true",AMAP_DETAIL_ENABLED:"true",AMAP_ROUTES_ENABLED:"true",AMAP_WEB_SERVICE_KEY:"synthetic-key"};
+ for(const allowed of [0,1]){
+  let calls=0,checks=0;
+  await assert.rejects(()=>readShanghaiStayAreaRoutes({env,signal:new AbortController().signal,
+   beforeRequest:async()=>{if(checks++>=allowed)throw Error("SYNTHETIC authorization lost");},
+   fetcher:async()=>{calls++;return Response.json({status:"1",infocode:"10000",pois:[{id:"j",name:"静安寺"}]});}}));
+  assert.equal(calls,allowed);assert.equal(checks,allowed+1);
+ }
+ const controller=new AbortController();let calls=0;
+ await assert.rejects(()=>readShanghaiStayAreaRoutes({env,signal:controller.signal,beforeRequest:async()=>{controller.abort();},
+  fetcher:async()=>{calls++;throw Error("unexpected dispatch");}}));assert.equal(calls,0);
 });

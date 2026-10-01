@@ -1,0 +1,11 @@
+# Per-request map authorization, repo-only evidence
+
+Base: `c7cde77bbf4e261918703775357599501121a76c`. Parent #561 stays OPEN.
+
+Observed old-code regression on a migrated disposable PostgreSQL and actual hosted CLI child process: fake AMap first response barrier invoked the existing SQL worker-stop RPC while the action was leased; the subsequent trace still reached 13 map calls, no model call. Expected one call: assertion `13 !== 1` failed. An initial test waiting specifically for unknown timed out because old code completed the whole place checkpoint; it was corrected to wait for the hosted cycle and inspect actual call count.
+
+The fix forwards a trusted callback into the map adapter's actual fetch boundary. Before each outgoing map request it reuses `authorize_planning_read_v1` for this Turn/lease/context and the existing exact-claim `hosted_planning_target_v1` for stop/policy/scope qualification. Denial latches for the compound action and cannot become a partial successful checkpoint. No SQL change, new lifecycle, actor impersonation, AMap pricing or second budget ledger. This is a fresh read check, not an atomic money reservation. Revocation may still race between the final check and dispatch; already dispatched parallel route requests are not recalled.
+
+PASS: hosted planning+legacy text integration 12/12; planning action receipts+comparison integration 3/3; focused contract/profile/CLI/journal 25/25; typecheck, lint (435 files), docs, diff checks. Seven new barrier cases cover SQL stop/consent withdrawal/user cancellation/scope freeze/lease expiry at response 1, stop at response 3 and freeze at response 8. Each binds the actual database claimed Turn/lease/owner/policy/scope; only 1/3/8 map calls, no place checkpoint or model attempt/artifact, no partial action replay on a new process. Consent remains revoked and cancellation remains terminal; only reversible operator gates are restored for restart. Prior completed checkpoint recovery and dispatched/pending cost non-replay tests remain passing. Zero-before-first and abort-after-authorization contract tests send no map request.
+
+Applicable current-head remote CI is recorded in the PR. Actual providers, target host/Staging, paid calls, real device/App-closed acceptance and atomic map cost remain UNRUN. No target/credential/deploy/native/Web/Translation/schema action occurred.

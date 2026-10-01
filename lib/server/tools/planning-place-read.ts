@@ -14,13 +14,18 @@ const ANCHORS = [
  * Every request is fixed, bounded, abortable and counted in the checkpoint. */
 export async function readShanghaiStayAreaRoutes(input: Readonly<{
   env: Readonly<Record<string,string|undefined>>; signal: AbortSignal; fetcher?: typeof fetch;
+  /** Fresh exact-lease/context/hosted-stop guard supplied by the trusted worker. */
+  beforeRequest?: () => Promise<void>;
 }>): Promise<PlanningPlaceObservation> {
   if (input.signal.aborted || input.env.AMAP_SEARCH_ENABLED!=="true" || input.env.AMAP_DETAIL_ENABLED!=="true"
     || input.env.AMAP_ROUTES_ENABLED!=="true" || !input.env.AMAP_WEB_SERVICE_KEY?.trim()) throw Error("AMap route read unavailable");
-  let calls=0;
+  let calls=0,authorizationLost=false;
   const underlying=input.fetcher??fetch;
   const guarded:typeof fetch=async(request,init)=>{
-    if(input.signal.aborted || ++calls>13) throw Error("Provider request bound exceeded");
+    if(authorizationLost || input.signal.aborted || calls>=13) throw Error("Provider request bound exceeded");
+    try{await input.beforeRequest?.();}catch{authorizationLost=true;throw Error("Area read authorization lost");}
+    if(authorizationLost || input.signal.aborted || init?.signal?.aborted || calls>=13) throw Error("Area read interrupted");
+    calls++;
     const signals=[input.signal,init?.signal].filter((v):v is AbortSignal=>v instanceof AbortSignal);
     return underlying(request,{...init,signal:AbortSignal.any(signals)});
   };
@@ -46,6 +51,7 @@ export async function readShanghaiStayAreaRoutes(input: Readonly<{
       railMinutes:observed?Math.ceil(transit.durationSeconds!/60):null,
       transfers:observed&&typeof transit.transfers==="number"?transit.transfers:null});
   }
+  if(authorizationLost || input.signal.aborted) throw Error("Area read interrupted");
   if(areas.every(area=>area.railMinutes===null)) throw Error("No observed rail comparison");
   return {schemaVersion:"planning-place/1",source:"amap",observedAt:new Date().toISOString(),providerCalls:calls,areas:areas as unknown as [Area,Area]};
 }

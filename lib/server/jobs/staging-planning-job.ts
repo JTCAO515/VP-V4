@@ -48,6 +48,6 @@ export function createStagingPlanningJob(config:StagingPlanningJobConfig,deps:Re
     recordUsage:deps.recordUsage,
     authorizeExternalRead:deps.authorizeExternalRead,
     evidenceLookup:async()=>({schemaVersion:"planning-evidence/1",coverage:"not_integrated"}),
-    placeRead:signal=>readShanghaiStayAreaRoutes({env:deps.mapsEnv,signal,fetcher:deps.fetcher})},
+    placeRead:(signal,beforeRequest)=>readShanghaiStayAreaRoutes({env:deps.mapsEnv,signal,fetcher:deps.fetcher,beforeRequest})},
     ...(deps.fetcher?{fetcher:deps.fetcher}:{})});
 }
