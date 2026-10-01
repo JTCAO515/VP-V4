@@ -28,11 +28,16 @@ export async function nativeAssistantTextHTTP(request: NextRequest, action: "pol
   return nativeTextHTTP(request, action);
 }
 
-export async function nativeAssistantHTTP(request: NextRequest) {
+export async function nativeAssistantHTTP(request: NextRequest, action: "conversation" | "list" = "conversation") {
   // Rollback disables new intake, not owner/consent-checked reads of accepted work.
   const config = request.method === "GET" ? getNativeTextConfig(request) : getNativeAssistantConfig(request);
   if (!config) return failure("PROVIDER_UNAVAILABLE");
-  if (request.headers.has("cookie") || request.headers.has("origin") || [...request.nextUrl.searchParams].length) return failure("INVALID_INPUT");
+  const query = [...request.nextUrl.searchParams];
+  const conversationId = request.nextUrl.searchParams.get("conversationId");
+  if (request.headers.has("cookie") || request.headers.has("origin")
+    || (action === "list" && request.method !== "GET")
+    || (query.length > 0 && (action !== "conversation" || request.method !== "GET"
+      || query.length !== 1 || query[0][0] !== "conversationId" || !uuid(conversationId)))) return failure("INVALID_INPUT");
   const scope = nativeRequestScope(request.signal);
   try {
     const actor = await scope.run(() => verifyNativeCredentials(request, config, scope.fetch, scope.unavailable));
@@ -43,7 +48,9 @@ export async function nativeAssistantHTTP(request: NextRequest) {
     if (!record(session.data) || session.data.subject !== actor.subject || session.data.sessionId !== actor.sessionId) return failure("UNAUTHENTICATED");
     let result;
     if (request.method === "GET") {
-      result = await rpc("read_assistant_conversation_v1", { p_policy_id: config.policyId, p_conversation_id: null });
+      result = action === "list"
+        ? await rpc("list_assistant_conversations_v1", { p_policy_id: config.policyId })
+        : await rpc("read_assistant_conversation_v1", { p_policy_id: config.policyId, p_conversation_id: conversationId });
     } else if (request.method === "POST") {
       const input = await boundedBody(request, scope.signal);
       if (!record(input) || !exact(input, ["conversationId", "messageId", "idempotencyKey", "policyId", "locale", "text", "relationship", "goalId", "expectedGoalVersion", "taskId", "parentMessageId", "turnId"])
@@ -64,7 +71,9 @@ export async function nativeAssistantHTTP(request: NextRequest) {
     if (result.error) return failure(mapError(result.error.message));
     if (!record(result.data)) return failure("INTERNAL_ERROR");
     if (["unavailable", "blocked"].includes(String(result.data.kind))) return failure("DATA_POLICY_BLOCKED");
-    if (!["conversation","accepted"].includes(String(result.data.kind))) return failure("INTERNAL_ERROR");
+    if (request.method === "GET" && action === "conversation" && conversationId !== null
+      && result.data.conversationId !== conversationId) return failure("FORBIDDEN");
+    if (!(action === "list" ? ["conversations"] : ["conversation","accepted"]).includes(String(result.data.kind))) return failure("INTERNAL_ERROR");
     return reply({ version: 5, ...result.data }, request.method === "POST" && result.data.reused !== true ? 201 : 200);
   } catch { return failure("PROVIDER_UNAVAILABLE"); }
   finally { scope.dispose(); }

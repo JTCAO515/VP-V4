@@ -492,3 +492,51 @@ nonisolated private final class ObsoleteTaskProtocol: URLProtocol, @unchecked Se
         client?.urlProtocol(self, didLoad: data); client?.urlProtocolDidFinishLoading(self)
     }
 }
+
+nonisolated final class AssistantConversationSelectionTests: XCTestCase {
+    @MainActor func testReaderRejectsWrongConversationAndActualLateCompletion() async throws {
+        let first = UUID().uuidString, second = UUID().uuidString
+        func body(_ id: String) throws -> Data {
+            try JSONSerialization.data(withJSONObject: ["version": 5, "kind": "conversation", "conversationId": id,
+                "nextSequence": 1, "messages": [], "goals": []])
+        }
+        let bytes = try body(first)
+        var selection = AssistantConversationSelection()
+        selection.select(first)
+        let token = selection.generation
+        let read = try await AssistantConversationReader.read(requestedID: first, isCurrent: { selection.owns(token) }, load: { bytes })
+        XCTAssertEqual(read.conversationId, first)
+        do {
+            _ = try await AssistantConversationReader.read(requestedID: second, isCurrent: { true }, load: { bytes })
+            XCTFail("Wrong conversation cannot enter selected state")
+        } catch NativeDataError.invalidResponse {} catch { XCTFail("Unexpected error: \(error)") }
+        do {
+            _ = try await AssistantConversationReader.read(requestedID: first, isCurrent: { selection.owns(token) }, load: {
+                selection.select(second)
+                await Task.yield()
+                return bytes
+            })
+            XCTFail("Response arriving after a switch cannot enter selected state")
+        } catch NativeDataError.staleSessionResponse {} catch { XCTFail("Unexpected error: \(error)") }
+    }
+
+    @MainActor func testSwitchAndReturnToLatestRejectLateReadsEvenForSameConversation() {
+        var selection = AssistantConversationSelection()
+        let first = UUID().uuidString, second = UUID().uuidString
+        selection.select(first)
+        let old = selection.generation
+        selection.select(second)
+        XCTAssertEqual(selection.conversationID, second)
+        XCTAssertFalse(selection.owns(old))
+        let secondRead = selection.generation
+        selection.select(selection.conversationID)
+        XCTAssertEqual(selection.conversationID, second, "same retained scope reconnect pins immutable intake to its original ID")
+        XCTAssertFalse(selection.owns(secondRead))
+        selection.select(first)
+        XCTAssertFalse(selection.owns(old), "returning to the same ID cannot revive an old response")
+        XCTAssertFalse(selection.owns(secondRead))
+        selection.select(nil)
+        XCTAssertNil(selection.conversationID)
+        XCTAssertTrue(selection.owns(selection.generation))
+    }
+}
