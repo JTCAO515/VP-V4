@@ -130,7 +130,7 @@ export const LANES = {
       { name: "native-same-trip", runner: node("tests/integration/identity/run-native-io.mjs", "--same-trip"), files: ["tests/integration/trip/native-same-trip.test.mjs"] },
       { name: "native-text-http", runner: node("tests/integration/turn/run-native-http.mjs"), files: ["tests/integration/turn/native-text-http.test.mjs"] },
       { name: "translation-history-http", runner: node("tests/integration/turn/run-native-http.mjs", "--translation-history"), files: ["tests/integration/translate/history-http.test.mjs"] },
-      { name: "native-assistant-rollback", runner: node("tests/integration/turn/run-native-http.mjs", "--assistant-rollback"), files: ["tests/integration/turn/assistant-rollback.test.mjs"] },
+      { name: "native-assistant-rollback", runner: node("tests/integration/turn/run-native-http.mjs", "--assistant-rollback"), files: ["tests/integration/turn/assistant-rollback.test.mjs", "tests/integration/turn/assistant-task-activity.test.mjs"] },
       { name: "native-planning-http", runner: node("tests/integration/turn/run-native-http.mjs", "--planning"), files: ["tests/integration/turn/native-planning-http.test.mjs"] },
       { name: "native-grounded-http", runner: node("tests/integration/turn/run-native-http.mjs", "--grounded"), files: ["tests/integration/turn/native-grounded-http.test.mjs"] },
     ],
