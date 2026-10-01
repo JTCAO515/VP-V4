@@ -37,6 +37,7 @@ const AUTHENTICATED = [
   "public.list_assistant_goal_trip_links_v1(uuid,integer)",
   "public.list_assistant_conversations_v1(uuid)",
   "public.list_assistant_conversation_tasks_v1(uuid,uuid,jsonb)",
+  "public.read_assistant_task_activity_v1(uuid,uuid,uuid)",
   "public.list_service_task_turns(uuid,integer)",
   "public.list_saved_translations_v1(uuid,uuid)",
   "public.list_text_turns(uuid,integer)",
