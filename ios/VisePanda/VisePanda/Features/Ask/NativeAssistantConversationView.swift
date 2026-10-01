@@ -188,6 +188,24 @@ struct AssistantResult: Decodable {
     }
 }
 
+struct AssistantResultReadFence {
+    private var scope: NativeDataScope?
+    private var generation = UUID()
+    private var deadline: TimeInterval = 0
+
+    mutating func begin(scope: NativeDataScope, now: TimeInterval) -> UUID {
+        generation = UUID(); self.scope = scope; deadline = now + 30
+        return generation
+    }
+    mutating func clear() { generation = UUID(); scope = nil; deadline = 0 }
+    func owns(scope: NativeDataScope?, generation: UUID? = nil) -> Bool {
+        scope != nil && self.scope == scope && (generation == nil || self.generation == generation)
+    }
+    func isCurrent(scope: NativeDataScope?, generation: UUID? = nil, active: Bool, now: TimeInterval) -> Bool {
+        active && deadline > now && owns(scope: scope, generation: generation)
+    }
+}
+
 @MainActor enum AssistantTaskResultReader {
     private struct ReferenceEnvelope: Decodable {
         struct Reference: Decodable { let kind: String; let artifactId: String?; let revision: Int?; let taskId: String? }
@@ -292,6 +310,7 @@ private enum AssistantTripConfirmation: Equatable {
 struct NativeAssistantConversationView: View {
     var isActive: Bool
     @Environment(AppSettings.self) private var settings
+    @Environment(\.scenePhase) private var scenePhase
     @State private var policy: NativeTextPolicy?
     @State private var conversation: AssistantConversation?
     @State private var draft = ""
@@ -305,7 +324,7 @@ struct NativeAssistantConversationView: View {
     @State private var taskNotice: String?
     @State private var selectedTaskID: String?
     @State private var selectedArtifactID: String?
-    @State private var resultReadGeneration = UUID()
+    @State private var resultFence = AssistantResultReadFence()
     @State private var selectedArtifactTaskID: String?
     @State private var selectedResult: AssistantResult?
     @State private var resultNotice: String?
@@ -327,6 +346,7 @@ struct NativeAssistantConversationView: View {
     @State private var tripConfirmation: AssistantTripConfirmation?
     private var session: NativeSession { settings.nativeSession }
     private var chinese: Bool { settings.selectedLocale == .zh }
+    private var resultActive: Bool { isActive && scenePhase == .active }
     private var goal: AssistantGoal? { conversation?.goals.last }
     private var actions: [String] { goal == nil ? ["independent_question", "goal_start"] : ["independent_question", "goal_start", "follow_up", "amendment"] }
     private var waitingKey: String {
@@ -368,11 +388,14 @@ struct NativeAssistantConversationView: View {
                         }
                         if let goal { planningControls(goal) }
                         if !taskMessages.isEmpty { taskList }
-                        if let selectedResult, let selectedTaskID, selectedResult.belongs(to: selectedTaskID) {
-                            resultCard(selectedResult)
-                        } else if resultNotice != nil {
-                            Text(chinese ? "此任务的成果暂不可读，请刷新后重试。" : "This task's result is unavailable. Refresh and try again.")
-                                .font(.footnote).accessibilityIdentifier("assistant.result.unavailable")
+                        TimelineView(.periodic(from: .now, by: 1)) { _ in
+                            if let selectedResult, let selectedTaskID, selectedResult.belongs(to: selectedTaskID),
+                               resultFence.isCurrent(scope: session.dataScope, active: resultActive, now: ProcessInfo.processInfo.systemUptime) {
+                                resultCard(selectedResult)
+                            } else if resultNotice != nil || selectedResult != nil {
+                                Text(chinese ? "请刷新以重新核对此任务的成果与授权。" : "Refresh to recheck this task's result and permissions.")
+                                    .font(.footnote).accessibilityIdentifier("assistant.result.unavailable")
+                            }
                         }
                         Button(chinese ? "撤回文本授权" : "Withdraw text consent", role: .destructive) { Task { await withdraw() } }
                             .disabled(busy)
@@ -468,7 +491,7 @@ struct NativeAssistantConversationView: View {
             planningPolicy = nil; planningPending = nil; planningDraft = ""; planningNotice = nil
             taskTurns = []; taskNotice = nil
             selectedTaskID = nil; selectedArtifactID = nil; selectedArtifactTaskID = nil
-            selectedResult = nil; resultNotice = nil
+            selectedResult = nil; resultNotice = nil; resultFence.clear()
             tripLink = nil; ownedTrips = []; pendingTripMutation = nil; privacyLinks = []; privacyNextCursor = nil
             tripNotice = nil; tripConfirmation = nil; showTripPicker = false
             guard requested != nil else { return }
@@ -483,14 +506,30 @@ struct NativeAssistantConversationView: View {
                 Task { await reload() }
             }
         }
-        .task(id: waitingKey + ":" + String(isActive)) {
-            guard isActive, !waitingKey.isEmpty else { return }
+        .onChange(of: resultActive) { _, active in
+            if !active { invalidateResult() }
+        }
+        .task(id: resultActive) {
+            guard resultActive else { invalidateResult(); return }
+            while refreshBusy || busy {
+                do { try await Task.sleep(for: .milliseconds(50)) } catch { return }
+                guard !Task.isCancelled, resultActive else { return }
+            }
+            await reload()
+        }
+        .task(id: waitingKey + ":" + String(resultActive)) {
+            guard resultActive, !waitingKey.isEmpty else { return }
             while true {
                 do { try await Task.sleep(for: .seconds(5)) } catch { return }
-                guard !Task.isCancelled, isActive, session.dataScope != nil, !waitingKey.isEmpty else { return }
+                guard !Task.isCancelled, resultActive, session.dataScope != nil, !waitingKey.isEmpty else { return }
                 await reload()
             }
         }
+    }
+
+    private func invalidateResult() {
+        resultFence.clear(); selectedResult = nil
+        if selectedTaskID != nil { resultNotice = "retry" }
     }
 
     private func actionLabel(_ action: String) -> String {
@@ -817,7 +856,7 @@ struct NativeAssistantConversationView: View {
             if policyReply.policy.consentState != .accepted {
                 conversation = nil; pending = nil; planningPolicy = nil; planningPending = nil
                 selectedTaskID = nil; selectedArtifactID = nil; selectedArtifactTaskID = nil
-                selectedResult = nil; taskTurns = []; tripLink = nil
+                invalidateResult(); taskTurns = []; tripLink = nil
                 await loadPrivacyLinks(initial)
                 return
             }
@@ -836,18 +875,24 @@ struct NativeAssistantConversationView: View {
             } catch { if session.dataScope == initial { taskTurns = [] } }
             if let selectedTaskID,
                !taskTurns.contains(where: { $0.serviceTaskId == selectedTaskID && $0.status == "completed" }) {
-                selectedResult = nil
+                invalidateResult()
             }
-            if let selectedTaskID, selectedResult != nil {
-                let generation = UUID(); resultReadGeneration = generation
+            if resultActive, let selectedTaskID,
+               taskTurns.contains(where: { $0.serviceTaskId == selectedTaskID && $0.status == "completed" }) {
+                let generation = resultFence.begin(scope: initial, now: ProcessInfo.processInfo.systemUptime)
+                selectedResult = nil
                 do {
                     let bytes = try await session.taskResultRequest(taskID: selectedTaskID)
-                    guard session.dataScope == initial, self.selectedTaskID == selectedTaskID, resultReadGeneration == generation else { return }
+                    guard resultActive, session.dataScope == initial, self.selectedTaskID == selectedTaskID,
+                          resultFence.owns(scope: initial, generation: generation) else { return }
+                    guard resultFence.isCurrent(scope: initial, generation: generation, active: resultActive, now: ProcessInfo.processInfo.systemUptime)
+                    else { resultNotice = "unavailable"; return }
                     let reply = try JSONDecoder().decode(AssistantResultEnvelope.self, from: bytes)
                     guard reply.version == 1, reply.data.belongs(to: selectedTaskID) else { throw NativeDataError.invalidResponse }
                     selectedResult = reply.data; resultNotice = nil
                 } catch {
-                    if session.dataScope == initial && self.selectedTaskID == selectedTaskID && resultReadGeneration == generation { selectedResult = nil; resultNotice = "unavailable" }
+                    if resultActive && session.dataScope == initial && self.selectedTaskID == selectedTaskID,
+                       resultFence.owns(scope: initial, generation: generation) { selectedResult = nil; resultNotice = "unavailable" }
                 }
             }
             if let planningPending, read.messages.contains(where: { $0.messageId == planningPending.messageId }) {
@@ -893,7 +938,7 @@ struct NativeAssistantConversationView: View {
         } catch {
             guard session.dataScope == initial else { return }
             policy = nil; conversation = nil; planningPolicy = nil; taskTurns = []
-            selectedResult = nil; tripLink = nil; notice = "retry"
+            invalidateResult(); tripLink = nil; notice = "retry"
             await loadPrivacyLinks(initial)
         }
     }
@@ -916,7 +961,7 @@ struct NativeAssistantConversationView: View {
             let body = try JSONEncoder().encode(["policyId": policy.id])
             _ = try await session.askRequest(path: "api/chat/native/v5/consent", method: "DELETE", body: body)
             guard session.dataScope == initial else { throw NativeDataError.staleSessionResponse }
-            conversation = nil; planningPolicy = nil; planningPending = nil; taskTurns = []; selectedResult = nil
+            conversation = nil; planningPolicy = nil; planningPending = nil; taskTurns = []; invalidateResult()
             selectedTaskID = nil; selectedArtifactID = nil; selectedArtifactTaskID = nil
             pending = nil; pendingTripMutation = nil
             draft = ""; tripLink = nil; self.policy = nil
@@ -1028,18 +1073,24 @@ struct NativeAssistantConversationView: View {
         await reload() // Only server readback determines whether cancellation won the race.
     }
     private func openResult(for taskID: String) async {
-        guard let initial = session.dataScope, UUID(uuidString: taskID) != nil else { return }
+        guard resultActive, let initial = session.dataScope, UUID(uuidString: taskID) != nil else { return }
         selectedTaskID = taskID; selectedResult = nil; resultNotice = nil
-        let generation = UUID(); resultReadGeneration = generation
+        let generation = resultFence.begin(scope: initial, now: ProcessInfo.processInfo.systemUptime)
         do {
             let bytes = try await session.taskResultRequest(taskID: taskID)
-            guard session.dataScope == initial, selectedTaskID == taskID, resultReadGeneration == generation else { return }
+            guard resultActive, session.dataScope == initial, selectedTaskID == taskID,
+                  resultFence.owns(scope: initial, generation: generation) else { return }
+            guard resultFence.isCurrent(scope: initial, generation: generation, active: resultActive, now: ProcessInfo.processInfo.systemUptime)
+            else { resultNotice = "unavailable"; return }
             let reply = try JSONDecoder().decode(AssistantResultEnvelope.self, from: bytes)
             guard reply.version == 1, reply.data.belongs(to: taskID) else { throw NativeDataError.invalidResponse }
             selectedArtifactID = reply.data.artifactId
             selectedArtifactTaskID = taskID
             selectedResult = reply.data
-        } catch { if session.dataScope == initial && selectedTaskID == taskID && resultReadGeneration == generation { resultNotice = "unavailable" } }
+        } catch {
+            if resultActive && session.dataScope == initial && selectedTaskID == taskID,
+               resultFence.owns(scope: initial, generation: generation) { resultNotice = "unavailable" }
+        }
     }
 }
 
