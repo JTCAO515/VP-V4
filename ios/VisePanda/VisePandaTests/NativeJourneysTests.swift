@@ -226,4 +226,25 @@ nonisolated final class NativeJourneysTests: XCTestCase {
         XCTAssertEqual(reads,0); XCTAssertNil(store.scope)
     }
 
+    @MainActor
+    func testTerminalScope10001KeepsMixedPageReadableBut10002IsUnavailable() async throws {
+        for version in [10001,10002] {
+            let store = NativeJourneysStore()
+            await store.load(scope: scope, assistant: true, currentScope: { self.scope }) { path in
+                let bytes = try self.wire(path)
+                guard path.hasPrefix("api/chat/native/v5/journeys") else { return bytes }
+                var reply = try XCTUnwrap(JSONSerialization.jsonObject(with: bytes) as? [String:Any])
+                var rows = try XCTUnwrap(reply["goals"] as? [[String:Any]])
+                var ordinary = rows[0]; ordinary["goalId"] = "20000000-0000-4000-8000-000000000002"
+                rows[0]["scopeVersion"] = version; rows.append(ordinary); reply["goals"] = rows
+                return try self.data(reply)
+            }
+            if version == 10001 {
+                XCTAssertTrue(store.goalsAvailable); XCTAssertEqual(store.rows.count,2)
+                XCTAssertEqual(store.rows[0].goal.scopeVersion,10001); XCTAssertEqual(store.rows[0].relation,.unlinked)
+                XCTAssertEqual(store.rows[1].goal.scopeVersion,1)
+            } else { XCTAssertFalse(store.goalsAvailable); XCTAssertTrue(store.rows.isEmpty) }
+        }
+    }
+
 }

@@ -54,7 +54,7 @@ private struct JourneyPageRead: Decodable {
     let nextCursor: String?
     func valid(cursor: String?) -> Bool {
         guard version == 5, kind == "journeys_page", goals.count <= 20,
-              goals.allSatisfy({ $0.goal.valid && $0.scopeVersion <= 10000 && $0.relation.valid }),
+              goals.allSatisfy({ $0.goal.valid && $0.scopeVersion <= 10001 && $0.relation.valid }),
               Set(goals.map(\.goalId)).count == goals.count,
               zip(goals, goals.dropFirst()).allSatisfy({ $0.0.goalId < $0.1.goalId }) else { return false }
         guard let conversationId else { return cursor == nil && conversationVersion == 0 && snapshot == nil && goals.isEmpty && nextCursor == nil }

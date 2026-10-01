@@ -76,9 +76,14 @@ struct NativeJourneysView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(row.goal.text).font(.headline).fixedSize(horizontal: false, vertical: true)
                     Text(text("Goal version ", "目标版本 ") + String(row.goal.scopeVersion)).font(.caption)
+                    if row.goal.scopeVersion == 10001 {
+                        Text(text("This goal’s Trip link is closed. Read only here.", "该目标的行程关联已终止，此处只读。"))
+                    }
                     switch row.relation {
                     case .unlinked:
-                        Text(text("No Trip linked. Goal changes stay in VP.", "尚未关联行程，目标修改仍在 VP 中进行。"))
+                        if row.goal.scopeVersion != 10001 {
+                            Text(text("No Trip linked. Goal changes stay in VP.", "尚未关联行程，目标修改仍在 VP 中进行。"))
+                        }
                     case .unknown:
                         Text(text("Trip relationship needs checking. Refresh or open VP.", "行程关系待核对，请刷新或打开 VP。"))
                     case .linked(let id):

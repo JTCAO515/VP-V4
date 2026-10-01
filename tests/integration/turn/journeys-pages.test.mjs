@@ -75,3 +75,24 @@ test('relation eligibility is live per page when Trip head/archive/deletion chan
  await db(`set request.jwt.claims='{"session_id":"${a.session}","role":"authenticated"}';delete from public.trip_archives where trip_id='${trip}';insert into privacy_private.trip_deletions(request_id,owner_id,trip_id,expected_version) values('${uuid()}','${a.owner}','${trip}',1);`);
  assert.deepEqual(await read(a,cursor),{kind:'unavailable'});
 });
+test('canonical unlink and queued-deletion paths cross ordinary 10000 to terminal 10001 without hiding the rest of a page',{skip:!enabled,timeout:120000},async()=>{
+ for(const action of ['unlink','deletion']){
+  const a=await fixture();const ids=JSON.parse(await db(`select jsonb_agg(id order by id) from turn_private.assistant_goals where conversation_id='${a.conversation}';`));
+  const goal=ids[30],trip=uuid();await db(`insert into public.trips(id,owner_id,title,head_version) values('${trip}','${a.owner}','Owned terminal test Trip',1);`);
+  await db(actor(a,`select public.set_assistant_goal_trip_link_v1('${uuid()}','${a.conversation}','${goal}',null,1,0,'link','${trip}',1,true);`));
+  // Only ordinary precondition is seeded. Never write 10001 or trip_terminal.
+  await db(`update turn_private.assistant_goals set scope_version=10000 where id='${goal}';`);
+  const before=await read(a),oldCursor=before.nextCursor;
+  assert.equal((await read(a,oldCursor)).goals.find(g=>g.goalId===goal).scopeVersion,10000);
+  if(action==='unlink')await db(actor(a,`select public.set_assistant_goal_trip_link_v1('${uuid()}','${a.conversation}','${goal}',null,10000,1,'unlink',null,null,true);`));
+  else await db(`set request.jwt.claims='{"session_id":"${a.session}","role":"authenticated"}';insert into privacy_private.trip_deletions(request_id,owner_id,trip_id,expected_version) values('${uuid()}','${a.owner}','${trip}',1);`);
+  const actual=JSON.parse(await db(`select jsonb_build_object('version',scope_version,'terminal',trip_terminal) from turn_private.assistant_goals where id='${goal}';`));
+  assert.deepEqual(actual,{version:10001,terminal:true});
+  assert.deepEqual(await read(a,oldCursor),{kind:'unavailable'});
+  const fresh=await read(a),page=await read(a,fresh.nextCursor);
+  assert.equal(page.goals.length,20);assert.ok(page.goals.some(g=>g.goalId!==goal&&g.scopeVersion===1));
+  const terminal=page.goals.find(g=>g.goalId===goal);assert.equal(terminal.scopeVersion,10001);assert.deepEqual(terminal.relation,{state:'unlinked',tripId:null,tripHeadVersion:null});
+  const rejected=await sql(container,actor(a,`select public.set_assistant_goal_trip_link_v1('${uuid()}','${a.conversation}','${goal}',null,10001,2,'link','${trip}',1,true);`));
+  assert.notEqual(rejected.code,0);assert.match(rejected.stderr,/INVALID_INPUT|SERVICE_TASK_CONFLICT/);
+ }
+});

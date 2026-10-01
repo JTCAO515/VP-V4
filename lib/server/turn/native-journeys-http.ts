@@ -20,7 +20,7 @@ export function validJourneysPage(value: unknown): boolean {
     || typeof value.snapshot !== "string" || !/^[a-f0-9]{32}$/.test(value.snapshot)) return false;
   let last = "";
   for (const row of value.goals) {
-    if (!record(row) || !exact(row, ["goalId", "scopeVersion", "text", "relation"]) || !uuid(row.goalId) || row.goalId <= last || !Number.isSafeInteger(row.scopeVersion) || Number(row.scopeVersion) < 1 || Number(row.scopeVersion) > 10000
+    if (!record(row) || !exact(row, ["goalId", "scopeVersion", "text", "relation"]) || !uuid(row.goalId) || row.goalId <= last || !Number.isSafeInteger(row.scopeVersion) || Number(row.scopeVersion) < 1 || Number(row.scopeVersion) > 10001
       || typeof row.text !== "string" || !row.text.trim() || [...row.text].length > 4000 || !record(row.relation) || !exact(row.relation, ["state", "tripId", "tripHeadVersion"])) return false;
     const r = row.relation;
     if (!["unlinked", "linked", "unknown"].includes(String(r.state))) return false;
