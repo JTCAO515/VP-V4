@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {NextRequest} from 'next/server.js';
 import {getNativeTextConfig,nativeTextHTTP} from '../../../lib/server/turn/native-http.ts';
-import {getNativeAssistantConfig,nativeAssistantHTTP} from '../../../lib/server/turn/native-assistant-http.ts';
+import {getNativeAssistantConfig,nativeAssistantHTTP,nativeAssistantTextHTTP} from '../../../lib/server/turn/native-assistant-http.ts';
 const request=new NextRequest('http://127.0.0.1/api/chat/native/v1/policy');
 const names=['VERCEL_ENV','VERCEL_URL','VISEPANDA_NATIVE_STAGING','VISEPANDA_TRIP_PROTOCOL_V2','VISEPANDA_NATIVE_STAGING_TEXT','VISEPANDA_NATIVE_STAGING_TEXT_POLICY','VISEPANDA_NATIVE_STAGING_ASSISTANT_CONVERSATION','NEXT_PUBLIC_SUPABASE_URL','NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY','VISEPANDA_NATIVE_LOCAL_TEXT','VISEPANDA_NATIVE_LOCAL_TEXT_POLICY','VISEPANDA_NATIVE_LOCAL_ASSISTANT_CONVERSATION','VISEPANDA_NATIVE_PRODUCTION','VISEPANDA_NATIVE_PRODUCTION_TRIP','VISEPANDA_NATIVE_PRODUCTION_PROJECT_REF','VISEPANDA_NATIVE_PRODUCTION_ORIGIN','VISEPANDA_PUBLIC_ORIGIN','VISEPANDA_NATIVE_PRODUCTION_TEXT','VISEPANDA_NATIVE_PRODUCTION_TEXT_POLICY','VISEPANDA_NATIVE_PRODUCTION_ASSISTANT_CONVERSATION','VISEPANDA_NATIVE_PRODUCTION_TASK_POLICY','VISEPANDA_NATIVE_PRODUCTION_GROUNDED','VISEPANDA_NATIVE_PRODUCTION_GROUNDED_POLICY'];
 function configure(t,patch={}){
@@ -16,11 +16,14 @@ test('native text is closed by default and remote or credential-bearing targets 
  process.env.VISEPANDA_NATIVE_LOCAL_TEXT='true';
  for(const url of ['https://project.supabase.co','http://127.0.0.1.attacker.test','http://user:pass@127.0.0.1:59641','http://127.0.0.1/path','http://127.0.0.1?key=bad','http://127.0.0.1#bad']){process.env.NEXT_PUBLIC_SUPABASE_URL=url;assert.equal(getNativeTextConfig(request),null);}
 });
-test('assistant v5 requires its own environment flag even when legacy text is enabled',async t=>{
- configure(t);
+test('assistant v5 flag gates new intake while rollback reads still require verified credentials',async t=>{
+ configure(t);let calls=0;t.mock.method(globalThis,'fetch',async()=>{calls++;throw Error('must not call');});
  const local=new NextRequest('http://127.0.0.1/api/chat/native/v5/conversation');
  assert.equal(getNativeAssistantConfig(local),null);
- assert.equal((await nativeAssistantHTTP(local)).status,503);
+ assert.equal((await nativeAssistantHTTP(local)).status,401,'rollback reads must authenticate rather than bypass identity');
+ assert.equal((await nativeAssistantTextHTTP(local,'policy')).status,401);
+ assert.equal((await nativeAssistantHTTP(new NextRequest(local.url,{method:'POST'}))).status,503,'new messages remain disabled');
+ assert.equal((await nativeAssistantTextHTTP(local,'accept')).status,503,'new grants remain disabled');
  process.env.VISEPANDA_NATIVE_LOCAL_ASSISTANT_CONVERSATION='true';
  assert.ok(getNativeAssistantConfig(local));
  process.env.VERCEL_ENV='preview';
@@ -29,14 +32,19 @@ test('assistant v5 requires its own environment flag even when legacy text is en
  Object.assign(process.env,{NEXT_PUBLIC_SUPABASE_URL:'https://dzqdzetcctkhbrhlxxgn.supabase.co',VERCEL_URL:host,VISEPANDA_NATIVE_STAGING:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',VISEPANDA_NATIVE_STAGING_TEXT:'true',VISEPANDA_NATIVE_STAGING_TEXT_POLICY:'AAAAAAAA-1111-4111-8111-111111111111'});
  const preview=new NextRequest('https://'+host+'/api/chat/native/v5/conversation');
  assert.equal(getNativeAssistantConfig(preview),null,'old Staging text flag alone cannot open v5');
+ assert.equal((await nativeAssistantHTTP(preview)).status,401);
+ assert.equal((await nativeAssistantHTTP(new NextRequest(preview.url,{method:'POST'}))).status,503);
  process.env.VISEPANDA_NATIVE_STAGING_ASSISTANT_CONVERSATION='true';
  assert.equal(getNativeAssistantConfig(preview)?.environment,'staging');
  const ref='abcdefghijklmnopqrst',origin='https://go2china.space';
  Object.assign(process.env,{VERCEL_ENV:'production',VISEPANDA_NATIVE_STAGING:'false',VISEPANDA_NATIVE_PRODUCTION:'true',VISEPANDA_NATIVE_PRODUCTION_TRIP:'true',VISEPANDA_NATIVE_PRODUCTION_PROJECT_REF:ref,VISEPANDA_NATIVE_PRODUCTION_ORIGIN:origin,VISEPANDA_PUBLIC_ORIGIN:origin,NEXT_PUBLIC_SUPABASE_URL:`https://${ref}.supabase.co`,VISEPANDA_NATIVE_PRODUCTION_TEXT:'true',VISEPANDA_NATIVE_PRODUCTION_TEXT_POLICY:'AAAAAAAA-1111-4111-8111-111111111111'});
  const production=new NextRequest(origin+'/api/chat/native/v5/conversation');
  assert.equal(getNativeAssistantConfig(production),null,'old Production text flag alone cannot open v5');
+ assert.equal((await nativeAssistantHTTP(production)).status,401);
+ assert.equal((await nativeAssistantHTTP(new NextRequest(production.url,{method:'POST'}))).status,503);
  process.env.VISEPANDA_NATIVE_PRODUCTION_ASSISTANT_CONVERSATION='true';
  assert.equal(getNativeAssistantConfig(production)?.environment,'production');
+ assert.equal(calls,0,'neither anonymous read nor disabled producer reaches Supabase');
 });
 test('native text rejects ambient cookies, Origin and unexpected query fields before credential access',async t=>{
  configure(t);let calls=0;t.mock.method(globalThis,'fetch',async()=>{calls++;throw Error('must not call');});

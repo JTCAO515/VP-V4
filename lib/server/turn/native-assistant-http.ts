@@ -22,13 +22,15 @@ export function getNativeAssistantConfig(request: NextRequest) {
 }
 
 export async function nativeAssistantTextHTTP(request: NextRequest, action: "policy" | "accept" | "withdraw") {
-  // Withdrawal of an existing grant remains reachable after the new producer is disabled.
-  if (action !== "withdraw" && !getNativeAssistantConfig(request)) return failure("PROVIDER_UNAVAILABLE");
+  // Policy readback bootstraps the native reader. Only new consent requires the
+  // assistant producer; withdrawal and reads retain the base text/runtime gates.
+  if (action === "accept" && !getNativeAssistantConfig(request)) return failure("PROVIDER_UNAVAILABLE");
   return nativeTextHTTP(request, action);
 }
 
 export async function nativeAssistantHTTP(request: NextRequest) {
-  const config = getNativeAssistantConfig(request);
+  // Rollback disables new intake, not owner/consent-checked reads of accepted work.
+  const config = request.method === "GET" ? getNativeTextConfig(request) : getNativeAssistantConfig(request);
   if (!config) return failure("PROVIDER_UNAVAILABLE");
   if (request.headers.has("cookie") || request.headers.has("origin") || [...request.nextUrl.searchParams].length) return failure("INVALID_INPUT");
   const scope = nativeRequestScope(request.signal);
