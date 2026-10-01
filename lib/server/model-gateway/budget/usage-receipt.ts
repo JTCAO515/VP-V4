@@ -12,6 +12,11 @@ export type ValidatedUsageReceipt = Readonly<{
   observedAt: string;
 }>;
 export type RecordValidatedUsage = (receipt: ValidatedUsageReceipt, signal: AbortSignal) => Promise<void>;
+export type ValidatedPlanningUsageReceipt = Omit<ValidatedUsageReceipt,"schemaVersion"> & Readonly<{
+  schemaVersion: "validated-planning-usage/1";
+  /** policyId is the separately accepted planning policy, not the text policy. */
+}>;
+export type RecordPlanningUsage = (receipt: ValidatedPlanningUsageReceipt, signal: AbortSignal) => Promise<void>;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const TOKEN = /^[A-Za-z0-9._-]{1,100}$/;
@@ -49,3 +54,19 @@ export function validatedUsageReceipt(raw: unknown): ValidatedUsageReceipt {
     actualMicros: raw.actualMicros, observedAt: raw.observedAt }) as ValidatedUsageReceipt;
 }
 function invalid(): Error { return new Error("Validated usage receipt unavailable."); }
+
+/** The worker supplies the task/Turn/policy captured from its current SQL input
+ * and lease. This validates the receipt against that binding; UUID inequality
+ * alone does not establish a ServiceTask relationship. SQL dispatch/publication
+ * independently enforce the actual relationship and attempt ownership. */
+export function validatedPlanningUsageReceipt(raw: unknown, binding: Readonly<{taskId:string;turnId:string;planningPolicyId:string}>): ValidatedPlanningUsageReceipt {
+  if (!record(raw) || raw.schemaVersion !== "validated-planning-usage/1" || !record(raw.attempt)
+    || !record(binding) || !keys(binding,["taskId","turnId","planningPolicyId"])
+    || ![binding.taskId,binding.turnId,binding.planningPolicyId].every(id=>typeof id==="string"&&UUID.test(id))
+    || binding.taskId===binding.turnId || raw.attempt.taskId!==binding.taskId || raw.turnId!==binding.turnId
+    || raw.policyId!==binding.planningPolicyId) throw invalid();
+  // Reuse all exact-field, tariff, usage and timestamp checks while preserving
+  // the public v1 validator's single-Turn budget identity rule unchanged.
+  const checked=validatedUsageReceipt({...raw,schemaVersion:"validated-model-usage/1",attempt:{...raw.attempt,taskId:binding.turnId}});
+  return Object.freeze({...checked,schemaVersion:"validated-planning-usage/1",attempt:Object.freeze({...checked.attempt,taskId:binding.taskId})});
+}

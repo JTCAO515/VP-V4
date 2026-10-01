@@ -2,10 +2,11 @@ import { setTimeout as delay } from "node:timers/promises";
 import { createHash } from "node:crypto";
 import { createStagingTextJob, type StagingTextJobConfig, type StagingTextJobDependencies, type TextJobPricing } from "./staging-text-job.ts";
 import { PROTOCOL_MODELS } from "../model-gateway/adapters/provider-protocol.ts";
-import type { ValidatedUsageReceipt } from "../model-gateway/budget/usage-receipt.ts";
+import type { ValidatedUsageReceipt, ValidatedPlanningUsageReceipt } from "../model-gateway/budget/usage-receipt.ts";
 import type { KnowledgeValidationReceipt } from "../turn/text-worker.ts";
 import type { DestinationReceipt } from "../model-gateway/adapters/http-transport.ts";
 import { supabaseWorkerHeaders } from "./supabase-worker-headers.ts";
+import { createStagingPlanningJob, type StagingPlanningJobConfig } from "./staging-planning-job.ts";
 
 /**
  * VPJ-07 #195 hosted text worker. One long-running trusted process (a small
@@ -35,7 +36,7 @@ export type HostedTariff = Readonly<{
   configurationVersion: number;
 }>;
 export type HostedWorkerProfile = Readonly<{
-  schemaVersion: "vpj07-hosted-text-worker/1";
+  schemaVersion: "vpj07-hosted-text-worker/1" | "vpj07-hosted-text-worker/2";
   pollIntervalMs: number;
   maxLifetimeMs: number;
   drainMs: number;
@@ -43,6 +44,8 @@ export type HostedWorkerProfile = Readonly<{
   groupLimit: number;
   modes: readonly HostedMode[];
   qwen: HostedTariff;
+  /** v2 only; null keeps the planning producer off. No task text or credential. */
+  planning?: Readonly<{ ownerId: string; planningPolicyId: string; scopeId: string }> | null;
 }>;
 export type ReadyGroup = Readonly<{
   ownerId: string; policyId: string; contextMode: string; provider: string; endpoint: string;
@@ -62,7 +65,11 @@ export type HostedEvent = Readonly<{
 
 /** Strict, closed profile. Non-secret and content-free; secrets never enter it. */
 export function parseHostedWorkerProfile(raw: unknown): HostedWorkerProfile {
-  if (!record(raw) || Object.keys(raw).length !== 8 || raw.schemaVersion !== "vpj07-hosted-text-worker/1"
+  if (!record(raw) || (raw.schemaVersion === "vpj07-hosted-text-worker/1"
+    ? Object.keys(raw).length !== 8 || Object.hasOwn(raw,"planning")
+    : raw.schemaVersion !== "vpj07-hosted-text-worker/2" || Object.keys(raw).length !== 9 || !Object.hasOwn(raw,"planning")
+      || (raw.planning !== null && (!record(raw.planning) || Object.keys(raw.planning).length !== 3
+        || ![raw.planning.ownerId,raw.planning.planningPolicyId,raw.planning.scopeId].every(id=>typeof id==="string"&&UUID.test(id)))))
     || !int(raw.pollIntervalMs, 1000, 60000) || !int(raw.maxLifetimeMs, 60000, 86400000) || !int(raw.drainMs, 0, 60000)
     || !int(raw.concurrency, 1, 8) || !int(raw.groupLimit, 1, 50)
     || !Array.isArray(raw.modes) || raw.modes.length < 1 || raw.modes.length > 3 || new Set(raw.modes).size !== raw.modes.length
@@ -77,7 +84,10 @@ export function parseHostedWorkerProfile(raw: unknown): HostedWorkerProfile {
   createStagingTextJob(jobConfig(profile, "current_input_v1", NIL, NIL, NIL, "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"), {
     workerCredential: () => null, providerCredential: () => null, recordDestination: async () => {},
   });
-  return Object.freeze({ ...profile, modes: Object.freeze([...profile.modes]), qwen: Object.freeze({ ...profile.qwen, pricing: Object.freeze({ ...profile.qwen.pricing }) }) });
+  return Object.freeze({ ...profile, ...(profile.schemaVersion === "vpj07-hosted-text-worker/2" ? {planning:profile.planning ? Object.freeze({
+    ownerId:profile.planning.ownerId.toLowerCase(),planningPolicyId:profile.planning.planningPolicyId.toLowerCase(),scopeId:profile.planning.scopeId.toLowerCase(),
+  }) : null} : {}),
+    modes: Object.freeze([...profile.modes]), qwen: Object.freeze({ ...profile.qwen, pricing: Object.freeze({ ...profile.qwen.pricing }) }) });
 }
 const NIL = "00000000-0000-4000-8000-000000000000";
 
@@ -250,6 +260,8 @@ export type HostedJournal = Readonly<{
   knowledge: (digest: string, receipt: KnowledgeValidationReceipt) => Promise<void>;
   destination: (receipt: DestinationReceipt, signal: AbortSignal) => Promise<void>;
   event: (event: HostedEvent) => Promise<void>;
+  planningJob?: (digest: string, job: StagingPlanningJobConfig) => Promise<void>;
+  planningUsage?: (digest: string, receipt: ValidatedPlanningUsageReceipt, signal: AbortSignal) => Promise<void>;
 }>;
 export type HostedWorkerDependencies = Readonly<{
   workerId: string;
@@ -260,6 +272,9 @@ export type HostedWorkerDependencies = Readonly<{
   providerCredential: StagingTextJobDependencies["providerCredential"];
   /** File-secret process only: no discovery until first SQL heartbeat is disabled. */
   requireInitialDisabled?: boolean;
+  /** Separate process opt-in and secure key; v1 cannot accidentally consume it. */
+  planningEnabled?: boolean;
+  amapCredential?: () => string | null;
   journal: HostedJournal;
   /** Content-free liveness observer for an optional local health endpoint. */
   onHeartbeat?: (ok: boolean, enabled: boolean | null) => void;
@@ -269,12 +284,50 @@ export type HostedWorkerDependencies = Readonly<{
 
 /** Compose the loop with the real Staging service RPCs and existing scoped jobs. */
 export function createHostedTextWorker(profile: HostedWorkerProfile, dependencies: HostedWorkerDependencies) {
+  profile = parseHostedWorkerProfile(profile);
   if (typeof window !== "undefined" || !UUID.test(dependencies.workerId) || !/^[A-Za-z0-9._-]{1,64}$/.test(dependencies.build)
     || !Number.isFinite(Date.parse(dependencies.startedAt)) || new Date(dependencies.startedAt).toISOString() !== dependencies.startedAt
     || typeof dependencies.workerCredential !== "function" || typeof dependencies.providerCredential !== "function") throw unavailable();
+  const planningTarget = profile.schemaVersion === "vpj07-hosted-text-worker/2" ? profile.planning : null;
+  if (Boolean(planningTarget) !== (dependencies.planningEnabled === true)
+    || (planningTarget && (typeof dependencies.amapCredential !== "function" || typeof dependencies.journal.planningJob !== "function"
+      || typeof dependencies.journal.planningUsage !== "function"))) throw unavailable();
+  let planningJob: StagingPlanningJobConfig | null = null;
+  let planningPoll: ((signal: AbortSignal) => Promise<PollResult>) | null = null;
+  if (planningTarget) {
+    const amapKey = dependencies.amapCredential!();
+    if (typeof amapKey !== "string" || !/^[\x21-\x7e]{1,4096}$/.test(amapKey)) throw unavailable();
+    const tariff = profile.qwen;
+    planningJob = {schemaVersion:"vpj80-staging-planning-job/1",...planningTarget,
+      priceVersion:tariff.priceVersion,reservedMicros:tariff.reservedMicros,timeoutMs:tariff.timeoutMs,maxOutputTokens:tariff.maxOutputTokens,
+      provider:{provider:"qwen",endpoint:dependencies.qwenEndpoint,configurationId:tariff.configurationId,configurationVersion:tariff.configurationVersion,timeoutMs:tariff.timeoutMs},
+      pricing:{...tariff.pricing}};
+    const digest = createHash("sha256").update(JSON.stringify(planningJob)).digest("hex");
+    const poll = createStagingPlanningJob(planningJob,{
+      workerCredential:dependencies.workerCredential,providerCredential:dependencies.providerCredential,qwenEndpoint:dependencies.qwenEndpoint,
+      recordDestination:dependencies.journal.destination,recordUsage:(receipt,stop)=>dependencies.journal.planningUsage!(digest,receipt,stop),
+      authorizeExternalRead:async(lease,stop)=>{
+        const value=await rpc("hosted_planning_target_v1",{p_owner_id:planningTarget.ownerId,p_planning_policy_id:planningTarget.planningPolicyId,
+          p_scope_id:planningTarget.scopeId,p_price_version:tariff.priceVersion,p_reserved_micros:tariff.reservedMicros,
+          p_turn_id:lease.turnId,p_lease_token:lease.leaseToken},stop);
+        return record(value)&&value.kind === "ready";
+      },
+      mapsEnv:{AMAP_SEARCH_ENABLED:"true",AMAP_DETAIL_ENABLED:"true",AMAP_ROUTES_ENABLED:"true",AMAP_WEB_SERVICE_KEY:amapKey},
+      ...(dependencies.fetch ? {fetcher:dependencies.fetch}:{}),
+    });
+    let journaled = false;
+    planningPoll = async stop=>{
+      const ready = await rpc("hosted_planning_target_v1",{p_owner_id:planningTarget.ownerId,p_planning_policy_id:planningTarget.planningPolicyId,
+        p_scope_id:planningTarget.scopeId,p_price_version:tariff.priceVersion,p_reserved_micros:tariff.reservedMicros},stop);
+      if(!record(ready) || !["ready","idle"].includes(String(ready.kind)))return "unavailable";
+      if(ready.kind === "idle")return "empty";
+      if(!journaled){await dependencies.journal.planningJob!(digest,planningJob!);journaled=true;}
+      return poll(stop);
+    };
+  }
   const fetcher = dependencies.fetch ?? globalThis.fetch;
   const journaled = new Set<string>();
-  const rpc = async (name: "hosted_worker_heartbeat" | "hosted_worker_ready_groups", parameters: Record<string, unknown>, signal: AbortSignal) => {
+  const rpc = async (name: "hosted_worker_heartbeat" | "hosted_worker_ready_groups" | "hosted_planning_target_v1", parameters: Record<string, unknown>, signal: AbortSignal) => {
     if (process.env.VERCEL_ENV || signal.aborted) throw unavailable();
     const timeout = AbortSignal.any([signal, AbortSignal.timeout(10000)]);
     const secret = await dependencies.workerCredential(timeout);
@@ -305,9 +358,13 @@ export function createHostedTextWorker(profile: HostedWorkerProfile, dependencie
     readyGroups: async stop => {
       const value = await rpc("hosted_worker_ready_groups", { p_limit: profile.groupLimit }, stop);
       if (record(value) && value.kind === "disabled") return "disabled";
-      return record(value) && value.kind === "groups" && Array.isArray(value.groups) && value.groups.length <= profile.groupLimit ? value.groups : null;
+      if (!record(value) || value.kind !== "groups" || !Array.isArray(value.groups) || value.groups.length > profile.groupLimit) return null;
+      // This exact object is internal, never accepted from discovery JSON. The
+      // same owner lane serializes planning after that owner's text groups.
+      return planningTarget ? [...value.groups,planningTarget] : value.groups;
     },
     workerFor: group => {
+      if (planningTarget && group === planningTarget) return {ownerId:planningTarget.ownerId,poll:planningPoll!};
       const job = planGroup(profile, group, dependencies.qwenEndpoint);
       if (!job) return null;
       const digest = createHash("sha256").update(JSON.stringify(job)).digest("hex");

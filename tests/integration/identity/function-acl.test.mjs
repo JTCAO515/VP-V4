@@ -144,6 +144,7 @@ test("repository functions grant EXECUTE to anon and authenticated only through 
 
   await t.test("planning execution stays service-only with private, RLS-enabled storage", () => {
     for (const fn of ["claim_planning_comparison_work_v1(uuid,uuid)","read_planning_comparison_work_v1(uuid,uuid)",
+      "hosted_planning_target_v1(uuid,uuid,uuid,text,bigint,uuid,uuid)",
       "authorize_planning_dispatch_v1(uuid,uuid,text,uuid,uuid)","complete_planning_observation_v1(uuid,uuid,uuid,text,jsonb)",
       "complete_planning_comparison_v1(uuid,uuid,uuid,text,uuid,text,jsonb)"]) {
       assert.deepEqual(sql(`select has_function_privilege('anon','public.${fn}'::regprocedure,'EXECUTE'),

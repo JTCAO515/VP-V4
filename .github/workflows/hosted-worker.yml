@@ -10,6 +10,7 @@ on:
       - 'supabase/migrations/**'
       - 'deploy/hosted-worker/**'
       - 'tests/integration/turn/hosted-worker.test.mjs'
+      - 'tests/integration/turn/hosted-planning-worker.test.mjs'
       - 'tests/security/turn/hosted-text-worker.test.mjs'
       - 'tests/security/turn/hosted-secret-profile.test.mjs'
       - 'tests/security/cost/hosted-usage-audit.test.mjs'
@@ -54,7 +55,7 @@ jobs:
       - name: Hosted worker end-to-end on isolated PostgreSQL (fake provider, no remote)
         env:
           VP_TURN_DB_TEST: '1'
-        run: node --experimental-strip-types --test tests/integration/turn/hosted-worker.test.mjs
+        run: node --experimental-strip-types --test --test-concurrency=1 tests/integration/turn/hosted-worker.test.mjs tests/integration/turn/hosted-planning-worker.test.mjs
       - name: Build the worker image and prove it fails closed without configuration
         shell: bash
         run: |

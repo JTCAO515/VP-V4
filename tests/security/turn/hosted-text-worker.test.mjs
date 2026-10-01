@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {join,resolve} from 'node:path';
 import {spawn} from 'node:child_process';
 import {randomUUID as uuid} from 'node:crypto';
-import {parseHostedWorkerProfile,planGroup,runHostedTextLoop} from '../../../lib/server/jobs/hosted-text-worker.ts';
+import {parseHostedWorkerProfile,planGroup,runHostedTextLoop,createHostedTextWorker} from '../../../lib/server/jobs/hosted-text-worker.ts';
 import {PROTOCOL_MODELS} from '../../../lib/server/model-gateway/adapters/provider-protocol.ts';
 
 const QWEN='https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
@@ -21,6 +21,38 @@ test('profile is closed and reuses the existing tariff/reservation qualification
   {qwen:{...profile().qwen,reservedMicros:1}},{qwen:{...profile().qwen,extra:1}},{qwen:{...profile().qwen,configurationId:'x'}},
   {qwen:{...profile().qwen,pricing:{mode:'flat',inputMicrosPerMillion:0,outputMicrosPerMillion:1,cachedInputMicrosPerMillion:null}}}])
   assert.throws(()=>parseHostedWorkerProfile({...profile(),...patch}),undefined,JSON.stringify(patch));
+});
+
+test('profile/2 planning scope is closed, optional and canonical',()=>{
+ const target={ownerId:uuid().toUpperCase(),planningPolicyId:uuid().toUpperCase(),scopeId:uuid().toUpperCase()};
+ const p=parseHostedWorkerProfile(profile({schemaVersion:'vpj07-hosted-text-worker/2',planning:target}));
+ assert.deepEqual(p.planning,Object.fromEntries(Object.entries(target).map(([k,v])=>[k,v.toLowerCase()])));
+ assert.equal(parseHostedWorkerProfile(profile({schemaVersion:'vpj07-hosted-text-worker/2',planning:null})).planning,null);
+ for(const body of [profile({planning:target}),profile({schemaVersion:'vpj07-hosted-text-worker/2'}),
+  profile({schemaVersion:'vpj07-hosted-text-worker/2',planning:{...target,secret:'canary'}}),
+  profile({schemaVersion:'vpj07-hosted-text-worker/2',planning:{...target,scopeId:'x'}})])assert.throws(()=>parseHostedWorkerProfile(body));
+});
+
+test('uppercase planning target shares the discovered lowercase text owner lane',async()=>{
+ const owner=uuid(),target={ownerId:owner.toUpperCase(),planningPolicyId:uuid().toUpperCase(),scopeId:uuid().toUpperCase()};
+ const controller=new AbortController(),order=[];let active=0,maxActive=0;
+ const p=parseHostedWorkerProfile(profile({schemaVersion:'vpj07-hosted-text-worker/2',planning:target}));
+ const worker=createHostedTextWorker(p,{workerId:uuid(),build:'synthetic-test',startedAt:new Date().toISOString(),qwenEndpoint:QWEN,
+  workerCredential:()=> 'synthetic-db',providerCredential:()=> 'synthetic-model',planningEnabled:true,amapCredential:()=> 'synthetic-map',
+  journal:{job:async()=>{},usage:async()=>{},knowledge:async()=>{},destination:async()=>{},planningJob:async()=>{},planningUsage:async()=>{},
+   event:async event=>{if(event.phase==='cycle')controller.abort();}},
+  fetch:async(url)=>{
+   const name=new URL(url).pathname.split('/').at(-1);
+   if(name==='hosted_worker_heartbeat')return Response.json({kind:'ok',enabled:true});
+   if(name==='hosted_worker_ready_groups')return Response.json({kind:'groups',groups:[group({ownerId:owner})]});
+   if(name==='claim_text_work'){order.push('text-start');maxActive=Math.max(maxActive,++active);
+    await new Promise(r=>setTimeout(r,30));active--;order.push('text-end');return Response.json({kind:'empty'});}
+   if(name==='hosted_planning_target_v1'){order.push('planning');maxActive=Math.max(maxActive,++active);active--;return Response.json({kind:'ready'});}
+   if(name==='claim_planning_comparison_work_v1')return Response.json({kind:'empty'});
+   throw Error('Unexpected RPC');
+  }});
+ const result=await worker(controller.signal);assert.equal(result.reason,'stopped');assert.equal(maxActive,1);
+ assert.deepEqual(order,['text-start','text-end','planning']);
 });
 
 test('a group runs only with exactly one qualifying scope, an allowed mode and the bound endpoint',()=>{
@@ -116,7 +148,7 @@ test('absolute lifetime ends the loop as expired and a throwing worker factory o
  assert.equal(result.reason,'expired');assert.ok(result.skipped>=1);assert.equal(result.finished,0);
 });
 
-const CANARY_DB='SYNTHETIC_DB_CANARY_'+uuid(),CANARY_QWEN='SYNTHETIC_QWEN_CANARY_'+uuid();
+const CANARY_DB='SYNTHETIC_DB_CANARY_'+uuid(),CANARY_QWEN='SYNTHETIC_QWEN_CANARY_'+uuid(),CANARY_AMAP='SYNTHETIC_AMAP_CANARY_'+uuid();
 async function cli(t,{env={},mapper=null,journalMode=0o700,wait=null}={}){
  const dir=await mkdtemp(join(tmpdir(),'vp-hosted-cli-'));t.after(()=>rm(dir,{recursive:true,force:true}));
  const journals=join(dir,'j');await (await import('node:fs/promises')).mkdir(journals);await chmod(journals,journalMode);
@@ -132,12 +164,17 @@ async function cli(t,{env={},mapper=null,journalMode=0o700,wait=null}={}){
  if(wait)await wait(child,journals);
  const code=await exited;const files=await readdir(journals);
  const journal=(await Promise.all(files.map(f=>readFile(join(journals,f),'utf8')))).join('');
- for(const text of [stdout,stderr,journal]){assert.ok(!text.includes(CANARY_DB));assert.ok(!text.includes(CANARY_QWEN));}
+ for(const text of [stdout,stderr,journal]){assert.ok(!text.includes(CANARY_DB));assert.ok(!text.includes(CANARY_QWEN));assert.ok(!text.includes(CANARY_AMAP));}
  return {code,stdout,stderr,files,journal};
 }
 
 test('CLI fails closed before any I/O without every explicit prerequisite',async t=>{
+ const p2=profile({schemaVersion:'vpj07-hosted-text-worker/2',planning:{ownerId:uuid(),planningPolicyId:uuid(),scopeId:uuid()}});
  for(const env of [{VISEPANDA_HOSTED_TEXT_WORKER:''},{VERCEL_ENV:'preview'},{VISEPANDA_HOSTED_WORKER_DB_KEY:''},{VISEPANDA_HOSTED_WORKER_QWEN_KEY:CANARY_DB},
+  {VISEPANDA_HOSTED_PLANNING_WORKER:'true'}, {VISEPANDA_HOSTED_WORKER_AMAP_KEY:CANARY_AMAP},
+  {VISEPANDA_HOSTED_WORKER_PROFILE:JSON.stringify(p2)},
+  {VISEPANDA_HOSTED_WORKER_PROFILE:JSON.stringify(p2),VISEPANDA_HOSTED_PLANNING_WORKER:'true'},
+  {VISEPANDA_HOSTED_WORKER_PROFILE:JSON.stringify(p2),VISEPANDA_HOSTED_PLANNING_WORKER:'true',VISEPANDA_HOSTED_WORKER_AMAP_KEY:CANARY_DB},
   {VISEPANDA_HOSTED_WORKER_SECRET_MODE:'files'},{VISEPANDA_HOSTED_WORKER_SECRET_MODE:'unexpected'},
   {VISEPANDA_HOSTED_WORKER_PROFILE:'{}'},{VISEPANDA_HOSTED_WORKER_PROFILE:JSON.stringify(profile({modes:['x']}))},{VISEPANDA_HOSTED_WORKER_JOURNAL_DIR:'relative'},
   {VISEPANDA_HOSTED_WORKER_BUILD:'bad build'},{VISEPANDA_QWEN_ENDPOINT:'https://evil.example/v1'},{VISEPANDA_HOSTED_WORKER_HEALTH_PORT:'0'}]){
@@ -168,6 +205,19 @@ test('CLI serves disabled heartbeat, exposes content-free health and drains on S
  assert.equal(r.files.length,1);assert.match(r.files[0],/^hosted-.*\.jsonl$/);
  const phases=r.journal.trim().split('\n').map(line=>JSON.parse(line).phase);
  assert.equal(phases[0],'started');assert.equal(phases.at(-1),'returned');assert.ok(phases.includes('disabled'));
+});
+
+test('profile/2 requires separate planning opt-in and removes AMap secret before disabled startup journal',async t=>{
+ const p=profile({schemaVersion:'vpj07-hosted-text-worker/2',planning:{ownerId:uuid(),planningPolicyId:uuid(),scopeId:uuid()},pollIntervalMs:1000});
+ const r=await cli(t,{env:{VISEPANDA_HOSTED_WORKER_PROFILE:JSON.stringify(p),VISEPANDA_HOSTED_PLANNING_WORKER:'true',
+  VISEPANDA_HOSTED_WORKER_AMAP_KEY:CANARY_AMAP},mapper:`globalThis.fetch=async url=>{
+   if(process.env.VISEPANDA_HOSTED_WORKER_AMAP_KEY!==undefined)throw Error('key retained');
+   if(url.endsWith('/hosted_worker_heartbeat'))return Response.json({kind:'ok',enabled:false});throw Error('no discovery');};`,
+  wait:async(child,journals)=>{for(let i=0;i<100;i++){const files=await readdir(journals);
+   if(files.length&& (await readFile(join(journals,files[0]),'utf8')).includes('"phase":"disabled"'))break;
+   await new Promise(resolve=>setTimeout(resolve,50));}child.kill('SIGTERM');}});
+ assert.equal(r.code,0,r.stderr);assert.match(r.journal,/vpj07-hosted-text-worker\/2/);
+ assert.doesNotMatch(r.journal,/vpj80-hosted-planning-job/,'disabled startup did not poll planning');
 });
 
 test('hosted discovery accepts a dedicated Supabase secret key without a Bearer header',async t=>{
