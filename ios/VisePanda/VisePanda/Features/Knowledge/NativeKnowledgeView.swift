@@ -211,7 +211,10 @@ private struct NativeLibraryPhrasePanel: View {
                     if store.rows.isEmpty { Text(text("No completed translation in this recent window.", "当前最近窗口中没有已完成的翻译。")) }
                     ForEach(store.rows) { phrase in
                         Button {
-                            selected = store.reference(phrase, scope: scope)
+                            guard let reference = store.reference(phrase, scope: scope) else {
+                                store.clear(); refresh = UUID(); return
+                            }
+                            selected = reference
                             store.clear()
                         } label: {
                             VStack(alignment: .leading, spacing: 4) {
