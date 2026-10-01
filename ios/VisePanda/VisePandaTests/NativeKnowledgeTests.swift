@@ -452,6 +452,67 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         XCTAssertFalse(store.isCurrent(owner), "scan overflow must render unavailable, not a current empty page")
     }
 
+    @MainActor private func phrasePolicy(_ accepted: Bool = true, hash: String = String(repeating: "a", count: 64)) -> Data {
+        Data("""
+        {"version":1,"kind":"policy","policy":{"id":"11111111-1111-4111-8111-111111111111","provider":"qwen","recipient":"Synthetic recipient","sourceRegion":"test","processingRegion":"test","storageRegion":"test","termsVersion":"test","noticeVersion":"test","noticeHash":"\(hash)","noticeZh":"测试","noticeEn":"Test notice","retention":"retain_after_hide_v1","expiresAt":"2099-01-01T00:00:00Z","consentState":"\(accepted ? "accepted" : "not_accepted")"}}
+        """.utf8)
+    }
+    @MainActor private func phraseHistory(_ translated: String? = "合成短语", id: String = "22222222-2222-4222-8222-222222222222") throws -> Data {
+        let rows: [[String: Any]] = translated.map { value in [["turnId": id, "sourceLocale": "en", "targetLocale": "zh", "original": "Synthetic phrase", "state": "translated", "translation": value, "backTranslation": "Synthetic phrase"]] } ?? []
+        return try JSONSerialization.data(withJSONObject: ["version": 1, "kind": "translations", "phrases": rows])
+    }
+    @MainActor func testLibraryPhraseReusesReadonlyReaderAndRechecksExactBodyAndPolicy() async throws {
+        let store = NativeLibraryPhraseStore()
+        var requests = 0
+        let read: NativeTranslationStore.Request = { path, method, body in
+            XCTAssertEqual(method, "GET"); XCTAssertNil(body); requests += 1
+            return path.hasSuffix("policy") ? self.phrasePolicy() : try self.phraseHistory()
+        }
+        await store.load(scope: owner, currentScope: { self.owner }, request: read)
+        XCTAssertEqual(requests, 2); XCTAssertTrue(store.isCurrent(owner))
+        let reference = try XCTUnwrap(store.reference(try XCTUnwrap(store.rows.first), scope: owner))
+        await store.load(scope: owner, exact: reference, currentScope: { self.owner }, request: read)
+        XCTAssertEqual(store.opened, reference.phrase)
+        for change in ["changed", "missing", "other", "policy", "revoked"] {
+            await store.load(scope: owner, exact: reference, currentScope: { self.owner }) { path, _, _ in
+                if path.hasSuffix("policy") { return self.phrasePolicy(change != "revoked", hash: String(repeating: change == "policy" ? "b" : "a", count: 64)) }
+                return try self.phraseHistory(change == "missing" ? nil : change == "changed" ? "改变内容" : "合成短语", id: change == "other" ? "33333333-3333-4333-8333-333333333333" : reference.id)
+            }
+            XCTAssertNil(store.opened, change); XCTAssertFalse(store.isCurrent(owner), change)
+            XCTAssertEqual(store.state, "unavailable", change)
+        }
+    }
+    @MainActor func testLibraryPhraseExpiryAccountChangeAndLateResponseHideAllText() async throws {
+        var now: TimeInterval = 100
+        let store = NativeLibraryPhraseStore(uptime: { now })
+        await store.load(scope: owner, currentScope: { self.owner }) { path, _, _ in
+            path.hasSuffix("policy") ? self.phrasePolicy() : try self.phraseHistory()
+        }
+        now = 120; XCTAssertFalse(store.isCurrent(owner))
+        let other = NativeDataScope(endpoint: owner.endpoint, subject: "another", mobileEpoch: 1, generation: 2)
+        XCTAssertFalse(store.isCurrent(other))
+        let barrier = KnowledgeReadBarrier()
+        let pending = Task {
+            await store.load(scope: self.owner, currentScope: { self.owner }) { path, _, _ in
+                if path.hasSuffix("policy") { return self.phrasePolicy() }
+                return await barrier.wait()
+            }
+        }
+        await barrier.awaitStart(); store.clear(); await barrier.finish(try phraseHistory()); await pending.value
+        XCTAssertTrue(store.rows.isEmpty); XCTAssertNil(store.opened)
+        var actor: NativeDataScope? = owner
+        await store.load(scope: owner, currentScope: { actor }) { path, _, _ in
+            if path.hasSuffix("policy") { return self.phrasePolicy() }
+            actor = other; return try self.phraseHistory()
+        }
+        XCTAssertFalse(store.isCurrent(owner)); XCTAssertTrue(store.rows.isEmpty)
+        await store.load(scope: owner, currentScope: { self.owner }) { path, _, _ in
+            if path.hasSuffix("policy") { return self.phrasePolicy() }
+            now += 21; return try self.phraseHistory()
+        }
+        XCTAssertEqual(store.state, "unavailable"); XCTAssertTrue(store.rows.isEmpty)
+    }
+
     @MainActor func testTripResultOpensOnlyExactCurrentReference() async throws {
         let tripID = UUID().uuidString.lowercased(), otherTrip = UUID().uuidString.lowercased()
         let artifactID = UUID().uuidString.lowercased(), store = NativeResultStore()

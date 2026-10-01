@@ -125,6 +125,8 @@ struct NativeKnowledgeView: View {
         }
         .accessibilityIdentifier("library.tool.translation")
         Text(text("My materials and results", "我的资料与成果")).font(.title2.bold())
+        NativeLibraryPhrasePanel(isActive: isActive)
+        Text(text("Comparison results", "比较成果")).font(.headline)
         Text(text("Search your current comparisons across journeys. Each page shows up to 20 results. Other materials are not searched here yet.", "查找各旅程中当前有效的比较成果，每页最多显示 20 份。其他资料尚未纳入此处搜索。"))
             .font(.footnote).foregroundStyle(Color.vpSecondaryText)
         TextField(text("Search my result", "搜索我的成果"), text: $search)
@@ -182,6 +184,90 @@ struct LibraryResultSelection: Identifiable {
     let artifactID: String
     let revision: Int
     var id: String { "\(artifactID):\(revision)" }
+}
+
+private struct NativeLibraryPhrasePanel: View {
+    let isActive: Bool
+    @Environment(AppSettings.self) private var settings
+    @Environment(\.scenePhase) private var phase
+    @State private var store = NativeLibraryPhraseStore()
+    @State private var selected: NativeLibraryPhraseReference?
+    @State private var refresh = UUID()
+    private var session: NativeSession { settings.nativeSession }
+    private var scope: NativeDataScope? { isActive && phase == .active ? session.dataScope : nil }
+    private func text(_ en: String, _ zh: String) -> String { settings.selectedLocale == .zh ? zh : en }
+    private var key: Key { .init(scope: scope, refresh: refresh) }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(text("Saved translations", "已存翻译")).font(.headline)
+            Text(text("Translated phrases from your 20 most recent text requests. This is a limited window, not your complete materials history. No translation is generated when reading.", "显示最近 20 次文字请求中已完成的翻译。这是有限窗口，不代表完整资料历史；阅读不会重新生成翻译。"))
+                .font(.footnote).foregroundStyle(Color.vpSecondaryText)
+            Button(text("Refresh translations", "刷新翻译资料")) { store.clear(); selected = nil; refresh = UUID() }
+                .disabled(scope == nil).accessibilityIdentifier("library.phrases.refresh")
+            TimelineView(.periodic(from: .now, by: 1)) { _ in
+                if scope == nil {
+                    Text(text("Sign in to read your materials.", "登录后可读取自己的资料。"))
+                } else if store.isCurrent(scope) {
+                    if store.rows.isEmpty { Text(text("No completed translation in this recent window.", "当前最近窗口中没有已完成的翻译。")) }
+                    ForEach(store.rows) { phrase in
+                        Button {
+                            guard let reference = store.reference(phrase, scope: scope) else {
+                                store.clear(); refresh = UUID(); return
+                            }
+                            selected = reference
+                            store.clear()
+                        } label: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(phrase.original).lineLimit(2)
+                                Text(phrase.translation ?? "").font(.footnote).lineLimit(2)
+                            }.frame(maxWidth: .infinity, alignment: .leading)
+                        }.accessibilityIdentifier("library.phrase.open")
+                    }
+                } else if store.state == "unavailable" {
+                    Text(text("Materials unavailable. Check your session and translation consent in the Translation tool, then refresh.", "资料暂不可读，请检查登录及翻译工具中的同意状态后刷新。"))
+                } else if store.state == "ready" {
+                    Text(text("Refresh to recheck these materials.", "请刷新以重新核对资料资格。"))
+                } else { ProgressView() }
+            }
+        }
+        .task(id: key) {
+            await store.load(scope: scope, currentScope: { scope }) { path, method, body in
+                try await session.translateRequest(path: path, method: method, body: body)
+            }
+        }
+        .onChange(of: scope) { _, _ in store.clear(); selected = nil }
+        .onDisappear { store.clear(); selected = nil }
+        .sheet(item: $selected, onDismiss: { refresh = UUID() }) { reference in
+            NativeLibraryPhraseDetail(reference: reference)
+        }
+    }
+    private struct Key: Equatable { let scope: NativeDataScope?; let refresh: UUID }
+}
+
+private struct NativeLibraryPhraseDetail: View {
+    let reference: NativeLibraryPhraseReference
+    @Environment(AppSettings.self) private var settings
+    @Environment(\.scenePhase) private var phase
+    @State private var store = NativeLibraryPhraseStore()
+    private var scope: NativeDataScope? { phase == .active ? settings.nativeSession.dataScope : nil }
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 1)) { _ in
+            if store.isCurrent(scope), let phrase = store.opened {
+                NativeTranslationCard(phrase: phrase, chinese: settings.selectedLocale == .zh)
+            } else if store.state == "idle" || store.state == "loading" { ProgressView() }
+            else {
+                Text(settings.selectedLocale == .zh ? "这份资料暂不可读，可能已改变、删除、撤权或超出最近窗口。请返回刷新；未确认旧内容仍可使用。" : "This material is unavailable. It may have changed, been deleted, lost permission, or left the recent window. Return and refresh; the earlier content is not confirmed usable.")
+                    .padding().accessibilityIdentifier("library.phrase.unavailable")
+            }
+        }
+        .task(id: scope) {
+            await store.load(scope: reference.scope, exact: reference, currentScope: { scope }) { path, method, body in
+                try await settings.nativeSession.translateRequest(path: path, method: method, body: body)
+            }
+        }
+        .onChange(of: scope) { _, _ in store.clear() }
+        .onDisappear { store.clear() }
+    }
 }
 
 enum NativeLibrarySearch {
