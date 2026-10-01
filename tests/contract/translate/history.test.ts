@@ -58,3 +58,39 @@ test('twenty legal maximum CJK projections and JSON-escaped wire exceed250k with
  assert.ok(Buffer.byteLength(escaped, 'utf8') < TRANSLATION_HISTORY_MAX_BYTES);
  console.log('translation wire boundary bytes:', bytes, Buffer.byteLength(escaped, 'utf8'), 'cap:', TRANSLATION_HISTORY_MAX_BYTES);
 });
+
+test('history query matches each projected field literally after the bounded canonical projection', () => {
+ const t = { ...turn(1), input: translationPrompt({ ...input, text: 'Only ORIGINAL %_\\ CNY 50.' }),
+  output: JSON.stringify({ translation: '独有目标 50', backTranslation: 'Only BACKFIELD CNY 50.' }) };
+ for (const query of [' original ', '独有目标', 'backfield', '%_\\']) {
+  const page = projectTranslationHistory(raw([t]), policy, null, undefined, query);
+  assert.equal(page?.kind, 'translations');
+  if (page?.kind !== 'translations') throw Error('page');
+  assert.equal(page.phrases.length, 1); assert.equal(page.query, query);
+ }
+ for (const query of ['absent', 'original 独有目标']) {
+  const page = projectTranslationHistory(raw([t]), policy, null, undefined, query);
+  assert.equal(page?.kind, 'translations');
+  if (page?.kind !== 'translations') throw Error('page');
+  assert.equal(page.phrases.length, 0);
+ }
+ assert.equal(projectTranslationHistory(raw([t], true), policy, null, undefined, 'absent')?.kind, 'unavailable');
+ assert.equal(projectTranslationHistory(raw([{ ...t, output: '{}' }]), policy, null, undefined, 'original')?.kind, 'unavailable');
+ assert.equal(projectTranslationHistory(raw([t]), policy, null, undefined, 'x'.repeat(121)), null);
+});
+
+test('search continuation binds raw query while no-query UUID pagination stays unchanged', async () => {
+ const { translationSearchCursor, parseTranslationSearchCursor } = await import('../../../lib/server/media-translation/text/history-http.ts');
+ const data = raw(Array.from({ length: 22 }, (_, i) => turn(i + 1)));
+ const old = projectTranslationHistory(data, policy, null);
+ if (old?.kind !== 'translations') throw Error('page');
+ assert.equal(old.nextCursor, id(20)); assert.equal(old.query, undefined);
+ const page = projectTranslationHistory(data, policy, null, undefined, ' 50 ');
+ if (page?.kind !== 'translations' || !page.nextCursor) throw Error('page');
+ assert.deepEqual(parseTranslationSearchCursor(page.nextCursor), { turnId: id(20), query: ' 50 ' });
+ assert.equal(projectTranslationHistory(raw([], false, turn(20)), policy, id(20), undefined, 'absent')?.kind, 'unavailable');
+ assert.equal(parseTranslationSearchCursor('q1.' + 'x'.repeat(1200)), null);
+ assert.equal(parseTranslationSearchCursor(id(20)), null);
+ assert.equal(parseTranslationSearchCursor(translationSearchCursor(id(20), 'x'.repeat(121))), null);
+ assert.notEqual(translationSearchCursor(id(20), 'é'), translationSearchCursor(id(20), 'e\u0301'));
+});

@@ -332,13 +332,15 @@ final class NativeSession {
     }
 
     /// Fixed GET-only opt-in saved translation readers; no producer or body.
-    func translationHistoryRequest(cursor: String? = nil, turnID: String? = nil) async throws -> Data {
-        guard cursor == nil || UUID(uuidString: cursor ?? "") != nil,
-              turnID == nil || (cursor == nil && UUID(uuidString: turnID ?? "") != nil) else { throw NativeDataError.invalidResponse }
+    func translationHistoryRequest(cursor: String? = nil, turnID: String? = nil, query: String? = nil) async throws -> Data {
+        guard query == nil || (query?.utf16.count ?? 0) <= NativeTranslationHistoryWire.maximumQueryUnits,
+              cursor == nil || NativeTranslationHistoryWire.cursorTurn(cursor ?? "", query: query) != nil,
+              turnID == nil || (cursor == nil && query == nil && UUID(uuidString: turnID ?? "") != nil) else { throw NativeDataError.invalidResponse }
         let base = "api/translate/history/v2"
         let path = turnID.map { base + "/turns/" + $0.lowercased() } ?? base
-        let query = cursor.map { [URLQueryItem(name: "cursor", value: $0.lowercased())] } ?? []
-        let data = try await dataRequest(prefix: base, path: path, method: "GET", queryItems: query)
+        var queryItems = cursor.map { [URLQueryItem(name: "cursor", value: query == nil ? $0.lowercased() : $0)] } ?? []
+        if let query { queryItems.append(URLQueryItem(name: "query", value: query)) }
+        let data = try await dataRequest(prefix: base, path: path, method: "GET", queryItems: queryItems)
         guard data.count <= NativeTranslationHistoryWire.maximumResponseBytes else { throw NativeDataError.invalidResponse }
         return data
     }

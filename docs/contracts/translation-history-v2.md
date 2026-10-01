@@ -6,7 +6,8 @@ policy, consent, retained text and `projectTranslation` validator.
 
 ## Explicit reader and permission
 
-`GET /api/translate/history/v2` accepts only optional `cursor=<Turn UUID>`.
+`GET /api/translate/history/v2` accepts optional `cursor` and optional `query`.
+Without query, the original UUID cursor and response shape remain unchanged.
 `GET /api/translate/history/v2/turns/{turnId}` accepts no query. Both reject
 cookies/origin, verify native bearer credentials and active mobile session, use
 the deployment's enabled current-input text policy, and stay `private, no-store`.
@@ -55,6 +56,43 @@ subject/session mismatch; ordinary RPC/transport/5xx and malformed protocol repl
 return 503, so a temporary read failure does not invalidate the native login. Each read is
 bounded; the existing 10-second request deadline remains. This is live traversal,
 not a snapshot or a full-history completeness guarantee across concurrent edits.
+
+## Opt-in bounded keyword search
+
+A query-present GET uses at most120 raw UTF-16 units. The server trims outer
+whitespace and uses JavaScript Unicode default lowercase for literal substring
+matching within each of original, translation and back-translation independently.
+Percent, underscore and backslash are ordinary characters; there is no wildcard,
+NFKC/accent normalization, tokenization, cross-field concatenation or model call.
+The original query is echoed only in successful query-present pages. Omitting
+query retains the existing browse response, including no query field. An empty
+query-present value matches all eligible translations but retains its query scope.
+
+Filtering happens after the unchanged SQL128+sentinel bound and canonical/numeric
+projection. At least21 fully valid matching phrases permit20 results and a safe
+continuation. Raw tail or malformed candidates without a safe continuation remain
+uniform unavailable with no partial phrases; sparse scans cannot claim all history
+has no matches. There is no text index/copy, new SQL or permission/recipient change.
+
+Search cursors use `q1.` plus canonical base64url JSON with exactly `turnId` and
+raw `query`, bounded to1200 ASCII characters. The raw query must equal the request
+byte-for-byte; the SQL reader still validates current owner/policy/consent/source,
+and the HTTP projection rechecks that anchor is canonical and matches this query.
+A valid cursor belonging to another query, actor or no-longer-eligible/nonmatching
+anchor is unavailable. Malformed tokens are invalid input. This unsigned binding
+is not encryption, authorization or proof that the server previously issued the
+cursor. An actor can name an eligible anchor; every source qualification still runs.
+The old no-query UUID cursor remains compatible and cannot be passed as a search
+cursor. Exact read accepts no query and retains its original permission contract.
+
+The Translation-tool field submits an explicit browse/search read. Editing it
+immediately clears page/cursor/card and invalidates late responses; the next request
+starts at the first page. Raw UTF-8 equality fences query scope and echo, preserving
+the distinction between Unicode spellings that Swift String equality considers
+canonically equivalent. Search reads have an independent UI task and do not cancel
+translation submission/polling. Query changes do not renew a loaded page's lifetime;
+a fresh read is required. Actor/background changes clear the keyword too. Library's
+no-query reader/Read alias and its current-page local matching remain unchanged.
 
 ## Wire byte ceiling
 
