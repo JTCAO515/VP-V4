@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { randomUUID as uuid } from 'node:crypto';
 import { createNativeTextEnvironment } from '../turn/native-text-environment.mjs';
 import { identityLocalEnv } from '../identity/local-supabase.mjs';
-import { translationHistoryHTTP } from '../../../lib/server/media-translation/text/history-http.ts';
+import { translationHistoryHTTP, translationSearchCursor } from '../../../lib/server/media-translation/text/history-http.ts';
 
 test('real disposable Auth/HTTP saved translation pages reopen beyond legacy20 with no model calls', {
  skip: process.env.VP_NATIVE_TEXT_INTEGRATION !== 'true', timeout: 180000,
@@ -23,12 +23,12 @@ test('real disposable Auth/HTTP saved translation pages reopen beyond legacy20 w
  for (const token of [owner, other]) assert.equal((await call('/api/translate/consent', token, 'POST', { policyId: e.policyId, noticeHash: e.noticeHash })).status, 200);
  const base = '/api/translate/history/v2';
  assert.equal((await call(base)).status, 401);
- const seed = async (token = owner, ordinary = false) => {
+ const seed = async (token = owner, ordinary = false, text = 'Synthetic CNY 50.', output = { translation: '合成50元。', backTranslation: 'Synthetic CNY 50.' }) => {
   const turnId = uuid(), threadId = uuid(), idempotencyKey = uuid();
   const data = ordinary ? { turnId, threadId, idempotencyKey, policyId: e.policyId, locale: 'en', text: 'PRIVATE ORDINARY TITLE' }
-   : { turnId, threadId, idempotencyKey, policyId: e.policyId, sourceLocale: 'en', targetLocale: 'zh', text: 'Synthetic CNY 50.' };
+   : { turnId, threadId, idempotencyKey, policyId: e.policyId, sourceLocale: 'en', targetLocale: 'zh', text };
   assert.equal((await call(ordinary ? '/api/chat/native/v1/turns' : '/api/translate', token, 'POST', data)).status, 201);
-  e.sql(`update public.turns set status='completed' where id='${turnId}'; update turn_private.text_content set output_kind='answered',output_text='{"translation":"合成50元。","backTranslation":"Synthetic CNY 50."}' where turn_id='${turnId}';`);
+  e.sql(`update public.turns set status='completed' where id='${turnId}'; update turn_private.text_content set output_kind='answered',output_text='${JSON.stringify(output).replaceAll("'", "''")}' where turn_id='${turnId}';`);
   return turnId;
  };
  const old = await seed(), foreign = await seed(other);
@@ -41,6 +41,26 @@ test('real disposable Auth/HTTP saved translation pages reopen beyond legacy20 w
  const second = await call(base + '?cursor=' + first.body.nextCursor, owner);
  assert.equal(second.body.phrases.length, 6); assert.equal(second.body.nextCursor, null); assert.ok(second.body.phrases.some(p => p.turnId === old));
  assert.ok(!JSON.stringify(first.body).includes('PRIVATE ORDINARY')); assert.ok(!JSON.stringify(first.body).includes(foreign));
+ const query = 'synthetic', search = await call(base + '?query=' + query, owner);
+ assert.equal(search.body.phrases.length, 20); assert.equal(search.body.query, query); assert.ok(search.body.nextCursor.startsWith('q1.'));
+ const nextSearch = await call(base + '?query=' + query + '&cursor=' + search.body.nextCursor, owner);
+ assert.equal(nextSearch.body.phrases.length, 6); assert.equal(nextSearch.body.nextCursor, null);
+ assert.equal((await call(base + '?query=other&cursor=' + search.body.nextCursor, owner)).body.kind, 'unavailable');
+ assert.equal((await call(base + '?query=absent&cursor=' + translationSearchCursor(first.body.nextCursor, 'absent'), owner)).body.kind, 'unavailable');
+ assert.equal((await call(base + '?query=synthetic&cursor=' + translationSearchCursor(foreign, 'synthetic'), owner)).body.kind, 'unavailable');
+ assert.equal((await call(base + '?query=synthetic&cursor=' + first.body.nextCursor, owner)).status, 400);
+ assert.equal((await call(base + '?query=' + 'x'.repeat(121), owner)).status, 400);
+ assert.equal((await call(base + '?query=a&query=b', owner)).status, 400);
+ assert.equal((await call(base + '/turns/' + old + '?query=synthetic', owner)).status, 400);
+ const selected = await seed(other, false, 'Only ORIGINAL %_\\', { translation: '独有目标', backTranslation: 'Only BACKFIELD' });
+ for (const term of ['original', '独有目标', 'BACKFIELD', '%_\\']) {
+  const result = await call(base + '?query=' + encodeURIComponent(term), other);
+  assert.equal(result.body.phrases.length, 1); assert.equal(result.body.phrases[0].turnId, selected); assert.equal(result.body.query, term);
+ }
+ const reopenedSearch = await call(base + '/turns/' + selected, other);
+ assert.equal(reopenedSearch.body.phrase.turnId, selected);
+ assert.equal((await call(base + '?query=original', owner)).body.phrases.length, 0, 'other actor matching source is never returned');
+
  assert.equal((await call(base + '/turns/' + old, other)).body.kind, 'unavailable');
  assert.equal((await call(base + '?cursor=' + foreign, owner)).body.kind, 'unavailable');
  e.sql(`update public.turns set status='failed' where id='${old}';`);
@@ -49,6 +69,8 @@ test('real disposable Auth/HTTP saved translation pages reopen beyond legacy20 w
  assert.equal((await call(base + '?cursor=' + first.body.nextCursor, owner)).body.kind, 'unavailable');
  assert.equal((await call('/api/translate/consent', owner, 'DELETE', { policyId: e.policyId })).status, 200);
  assert.equal((await call(base, owner)).body.kind, 'unavailable');
+ assert.equal((await call(base + '?query=synthetic', owner)).body.kind, 'unavailable');
+ assert.equal((await call(base + '?query=synthetic&cursor=' + search.body.nextCursor, owner)).body.kind, 'unavailable');
  assert.equal((await call(base + '/turns/' + second.body.phrases[0].turnId, owner)).body.kind, 'unavailable');
  const largeActor = await login(e.users[2]);
  assert.equal((await call('/api/translate/consent', largeActor, 'POST', { policyId: e.policyId, noticeHash: e.noticeHash })).status, 200);

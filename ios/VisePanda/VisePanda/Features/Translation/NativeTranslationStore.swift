@@ -157,12 +157,37 @@ struct NativeSavedTranslationReference: Identifiable {
     let noticeHash: String
     let scope: NativeDataScope
     let deadline: TimeInterval
+    let query: String?
     var id: String { phrase.id }
+    init(phrase: NativeTranslationPhrase, policyID: String, noticeHash: String, scope: NativeDataScope, deadline: TimeInterval, query: String? = nil) {
+        self.phrase = phrase; self.policyID = policyID; self.noticeHash = noticeHash; self.scope = scope; self.deadline = deadline; self.query = query
+    }
 }
 
 enum NativeTranslationHistoryWire {
     // Mirrors the documented server wire cap, including JSON escape overhead.
     static let maximumResponseBytes = 1_000_000
+    static let maximumQueryUnits = 120
+    static let maximumCursorCharacters = 1200
+    static func sameQuery(_ lhs: String?, _ rhs: String?) -> Bool {
+        switch (lhs, rhs) {
+        case (nil, nil): true
+        case (.some(let lhs), .some(let rhs)): lhs.utf8.elementsEqual(rhs.utf8)
+        default: false
+        }
+    }
+    static func cursorTurn(_ value: String, query: String?) -> String? {
+        guard let query else { return UUID(uuidString: value) == nil ? nil : value }
+        guard value.hasPrefix("q1."), value.utf8.count <= maximumCursorCharacters else { return nil }
+        let encoded = String(value.dropFirst(3))
+        guard !encoded.isEmpty, encoded.utf8.allSatisfy({ (65...90).contains($0) || (97...122).contains($0) || (48...57).contains($0) || $0 == 45 || $0 == 95 }) else { return nil }
+        let padded = encoded.replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+            + String(repeating: "=", count: (4 - encoded.count % 4) % 4)
+        guard let bytes = Data(base64Encoded: padded), let object = try? JSONSerialization.jsonObject(with: bytes) as? [String: String],
+              object.count == 2, let turn = object["turnId"], UUID(uuidString: turn) != nil,
+              sameQuery(object["query"], query), query.utf16.count <= maximumQueryUnits else { return nil }
+        return turn
+    }
 }
 
 private struct NativeSavedTranslationReply: Decodable {
@@ -172,6 +197,7 @@ private struct NativeSavedTranslationReply: Decodable {
     let phrases: [NativeTranslationPhrase]?
     let nextCursor: String?
     let phrase: NativeTranslationPhrase?
+    let query: String?
 }
 
 /// Opt-in v2 reader; keeps one page and fresh exact content, never model context.
@@ -183,6 +209,7 @@ final class NativeSavedTranslationHistoryStore {
     private(set) var nextCursor: String?
     private(set) var opened: NativeTranslationPhrase?
     private(set) var state = "idle"
+    private(set) var query: String?
     private var policyID: String?
     private var noticeHash: String?
     private var generation = UUID()
@@ -192,26 +219,27 @@ final class NativeSavedTranslationHistoryStore {
 
     func clear() {
         generation = UUID(); scope = nil; phrases = []; nextCursor = nil; opened = nil
-        policyID = nil; noticeHash = nil; deadline = 0; state = "idle"
+        policyID = nil; noticeHash = nil; deadline = 0; state = "idle"; query = nil
     }
-    func isCurrent(_ requested: NativeDataScope?) -> Bool {
-        requested != nil && scope == requested && state == "ready" && uptime() < deadline
+    func isCurrent(_ requested: NativeDataScope?, query requestedQuery: String? = nil) -> Bool {
+        requested != nil && scope == requested && state == "ready" && uptime() < deadline && NativeTranslationHistoryWire.sameQuery(query, requestedQuery)
     }
-    func reference(_ phrase: NativeTranslationPhrase, scope requested: NativeDataScope?) -> NativeSavedTranslationReference? {
-        guard isCurrent(requested), phrases.contains(phrase), let scope, let policyID, let noticeHash else { return nil }
-        return .init(phrase: phrase, policyID: policyID, noticeHash: noticeHash, scope: scope, deadline: deadline)
+    func reference(_ phrase: NativeTranslationPhrase, scope requested: NativeDataScope?, query requestedQuery: String? = nil) -> NativeSavedTranslationReference? {
+        guard isCurrent(requested, query: requestedQuery), phrases.contains(phrase), let scope, let policyID, let noticeHash else { return nil }
+        return .init(phrase: phrase, policyID: policyID, noticeHash: noticeHash, scope: scope, deadline: deadline, query: query)
     }
-    func load(scope requested: NativeDataScope?, cursor: String? = nil, exact: NativeSavedTranslationReference? = nil,
+    func load(scope requested: NativeDataScope?, query requestedQuery: String? = nil, cursor: String? = nil, exact: NativeSavedTranslationReference? = nil,
               currentScope: () -> NativeDataScope?, policyRequest: NativeTranslationStore.Request, read: Read) async {
         let previousPolicy = policyID, previousNotice = noticeHash
         if let cursor {
-            guard exact == nil, isCurrent(requested), cursor == nextCursor else { clear(); state = "unavailable"; return }
+            guard exact == nil, isCurrent(requested, query: requestedQuery), cursor == nextCursor else { clear(); state = "unavailable"; return }
         }
         clear()
-        guard let requested, requested == currentScope(), !Task.isCancelled,
+        guard requestedQuery == nil || (requestedQuery?.utf16.count ?? 0) <= NativeTranslationHistoryWire.maximumQueryUnits,
+              let requested, requested == currentScope(), !Task.isCancelled,
               exact == nil || (exact?.scope == requested && uptime() < (exact?.deadline ?? 0)) else { return }
         let own = generation, started = uptime()
-        scope = requested; state = "loading"
+        scope = requested; query = exact?.query ?? requestedQuery; state = "loading"
         func current() -> Bool { generation == own && requested == currentScope() && !Task.isCancelled && uptime() - started < 20 }
         do {
             let policyData = try await policyRequest("api/translate/policy", "GET", nil)
@@ -223,7 +251,8 @@ final class NativeSavedTranslationHistoryStore {
             let data = try await read(cursor, exact?.id)
             guard current(), data.count <= NativeTranslationHistoryWire.maximumResponseBytes else { throw NativeDataError.staleSessionResponse }
             let reply = try JSONDecoder().decode(NativeSavedTranslationReply.self, from: data)
-            guard reply.version == 2, reply.policyId == first.policy.id else { throw NativeDataError.invalidResponse }
+            guard reply.version == 2, reply.policyId == first.policy.id,
+                  NativeTranslationHistoryWire.sameQuery(reply.query, exact == nil ? requestedQuery : nil) else { throw NativeDataError.invalidResponse }
             let rows: [NativeTranslationPhrase]
             if let exact {
                 guard reply.kind == "translation", let phrase = reply.phrase, phrase == exact.phrase,
@@ -234,7 +263,7 @@ final class NativeSavedTranslationHistoryStore {
                       phrases.allSatisfy({ $0.valid && $0.state == "translated" }),
                       Set(phrases.map(\.id)).count == phrases.count,
                       reply.phrase == nil,
-                      reply.nextCursor == nil || (phrases.count == 20 && reply.nextCursor == phrases.last?.id && UUID(uuidString: reply.nextCursor ?? "") != nil),
+                      reply.nextCursor == nil || (phrases.count == 20 && NativeTranslationHistoryWire.cursorTurn(reply.nextCursor ?? "", query: requestedQuery) == phrases.last?.id),
                       reply.nextCursor == nil || reply.nextCursor != cursor else { throw NativeDataError.invalidResponse }
                 rows = phrases
             }

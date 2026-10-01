@@ -186,4 +186,68 @@ import Testing
         #expect(rejected.phrases.isEmpty && rejected.state == "unavailable")
     }
 
+    private func searchPage(_ rows: [NativeTranslationPhrase], query: String, cursor: String? = nil) throws -> Data {
+        var data = try #require(JSONSerialization.jsonObject(with: savedPage(rows, cursor: cursor)) as? [String: Any])
+        data["query"] = query
+        return try JSONSerialization.data(withJSONObject: data)
+    }
+    private func searchCursor(_ turn: String, query: String) -> String {
+        let json = "{\"turnId\":\"\(turn)\",\"query\":\"\(query)\"}"
+        return "q1." + Data(json.utf8).base64EncodedString().replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
+    }
+
+    @Test func searchPagesBindQueryAndExactReadKeepsOriginalPermissionWire() async throws {
+        let store = NativeSavedTranslationHistoryStore(uptime: { 0 }), detail = NativeSavedTranslationHistoryStore(uptime: { 0 })
+        let rows = (1...20).map(savedPhrase), last = try #require(rows.last), query = "source"
+        let cursor = searchCursor(last.id, query: query)
+        await store.load(scope: scope, query: query, currentScope: { scope }, policyRequest: { _, _, _ in policy() }) { _, _ in
+            try searchPage(rows, query: query, cursor: cursor)
+        }
+        #expect(store.isCurrent(scope, query: query)); #expect(!store.isCurrent(scope, query: "other"))
+        #expect(store.reference(last, scope: scope, query: "other") == nil)
+        await store.load(scope: scope, query: query, cursor: cursor, currentScope: { scope }, policyRequest: { _, _, _ in policy() }) { value, turn in
+            #expect(value == cursor && turn == nil); return try searchPage([savedPhrase(21)], query: query)
+        }
+        let row = try #require(store.phrases.first), reference = try #require(store.reference(row, scope: scope, query: query))
+        await detail.load(scope: scope, exact: reference, currentScope: { scope }, policyRequest: { _, _, _ in policy() }) { value, turn in
+            #expect(value == nil && turn == row.id); return try savedExact(row)
+        }
+        #expect(detail.opened == row && detail.isCurrent(scope, query: query))
+        var reads = 0
+        await store.load(scope: scope, query: "other", cursor: cursor, currentScope: { scope }, policyRequest: { _, _, _ in reads += 1; return policy() }) { _, _ in reads += 1; return try searchPage([], query: "other") }
+        #expect(reads == 0 && store.phrases.isEmpty && store.state == "unavailable")
+    }
+
+    @Test func queryChangeAndLateOldReplyCannotOverwriteNewQueryPage() async throws {
+        let store = NativeSavedTranslationHistoryStore(uptime: { 0 })
+        await store.load(scope: scope, query: "old", currentScope: { scope }, policyRequest: { _, _, _ in policy() }) { _, _ in
+            store.clear()
+            await store.load(scope: scope, query: "new", currentScope: { scope }, policyRequest: { _, _, _ in policy() }) { _, _ in try searchPage([savedPhrase(2)], query: "new") }
+            return try searchPage([savedPhrase(1)], query: "old")
+        }
+        #expect(store.query == "new" && store.phrases == [savedPhrase(2)])
+        #expect(store.isCurrent(scope, query: "new") && !store.isCurrent(scope, query: "old"))
+    }
+
+    @Test func queryEchoMismatchAndCanonicalUnicodeDifferenceFailClosed() async throws {
+        #expect("é" == "e\u{301}")
+        #expect(!NativeTranslationHistoryWire.sameQuery("é", "e\u{301}"))
+        let store = NativeSavedTranslationHistoryStore(uptime: { 0 })
+        await store.load(scope: scope, query: "é", currentScope: { scope }, policyRequest: { _, _, _ in policy() }) { _, _ in try searchPage([savedPhrase()], query: "e\u{301}") }
+        #expect(store.phrases.isEmpty && store.state == "unavailable")
+        #expect(NativeTranslationHistoryWire.cursorTurn(searchCursor(savedPhrase().id, query: "one"), query: "two") == nil)
+    }
+
+    @Test func searchPermissionWithdrawalAndExpiredReferenceNeverExposeRows() async throws {
+        var time = 0.0, policyReads = 0
+        let store = NativeSavedTranslationHistoryStore(uptime: { time })
+        await store.load(scope: scope, query: "source", currentScope: { scope }, policyRequest: { _, _, _ in policy() }) { _, _ in try searchPage([savedPhrase()], query: "source") }
+        time = 20
+        #expect(!store.isCurrent(scope, query: "source")); #expect(store.reference(savedPhrase(), scope: scope, query: "source") == nil)
+        time = 0
+        await store.load(scope: scope, query: "source", currentScope: { scope }, policyRequest: { _, _, _ in policyReads += 1; return policy(policyReads == 1) }) { _, _ in try searchPage([savedPhrase()], query: "source") }
+        #expect(store.phrases.isEmpty && store.state == "unavailable")
+    }
+
 }

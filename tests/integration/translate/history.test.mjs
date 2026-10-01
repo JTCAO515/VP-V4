@@ -105,6 +105,7 @@ test('sparse raw128 window is unavailable without exposing a hidden scan cursor 
   const raw = await page(a);
   assert.equal(raw.hasUnscannedTail, true); assert.deepEqual(raw.turns, []);
   assert.deepEqual(projectTranslationHistory(raw, a.policy, null), { version: 2, kind: 'unavailable' });
+ assert.deepEqual(projectTranslationHistory(raw, a.policy, null, undefined, 'Synthetic'), { version: 2, kind: 'unavailable' });
   assert.equal(projectTranslationHistory(await exact(a, old.id), a.policy, null, old.id).kind, 'translation');
   assert.equal(await db(`select count(*) from turn_private.text_dispatches;`), '0');
   assert.equal(await db(`select count(*) from public.model_budget_attempts;`), '0');

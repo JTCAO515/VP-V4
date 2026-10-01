@@ -10,7 +10,9 @@ struct NativeTranslationView: View {
     @State private var savedHistory = NativeSavedTranslationHistoryStore()
     @State private var savedDetail = NativeSavedTranslationHistoryStore()
     @State private var savedCard: NativeSavedTranslationReference?
+    @State private var savedQuery = ""
     @State private var action: Task<Void, Never>?
+    @State private var historyAction: Task<Void, Never>?
     private var session: NativeSession { settings.nativeSession }
     private var activeScope: NativeDataScope? { scenePhase == .active ? session.dataScope : nil }
     private func text(_ en: String, _ zh: String) -> String { settings.selectedLocale == .zh ? zh : en }
@@ -76,13 +78,16 @@ struct NativeTranslationView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task(id: activeScope) { await store.load(scope: activeScope, request: request) }
         .onChange(of: session.dataScope) { _, _ in
-            action?.cancel(); input = ""; card = nil; savedCard = nil; savedHistory.clear(); savedDetail.clear()
+            action?.cancel(); historyAction?.cancel(); input = ""; savedQuery = ""; card = nil; savedCard = nil; savedHistory.clear(); savedDetail.clear()
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase != .active { action?.cancel(); card = nil; savedCard = nil; store.clear(); savedHistory.clear(); savedDetail.clear(); input = "" }
+            if phase != .active { action?.cancel(); historyAction?.cancel(); card = nil; savedCard = nil; store.clear(); savedHistory.clear(); savedDetail.clear(); input = ""; savedQuery = "" }
+        }
+        .onChange(of: Array(savedQuery.utf8)) { _, _ in
+            historyAction?.cancel(); savedHistory.clear(); savedDetail.clear(); savedCard = nil
         }
         .onDisappear {
-            action?.cancel()
+            action?.cancel(); historyAction?.cancel()
             if savedCard == nil { savedHistory.clear(); savedDetail.clear() }
         }
         .fullScreenCover(item: $card) { phrase in
@@ -90,7 +95,7 @@ struct NativeTranslationView: View {
         }
         .fullScreenCover(item: $savedCard, onDismiss: { savedDetail.clear() }) { reference in
             TimelineView(.periodic(from: .now, by: 1)) { _ in
-                if savedDetail.isCurrent(activeScope), let phrase = savedDetail.opened {
+                if savedDetail.isCurrent(activeScope, query: reference.query), let phrase = savedDetail.opened {
                     NativeTranslationCard(phrase: phrase, chinese: settings.selectedLocale == .zh)
                 } else {
                     VStack(spacing: 20) {
@@ -116,7 +121,7 @@ struct NativeTranslationView: View {
                     .font(.caption)
                 Button(policy.consentState == .accepted ? text("Withdraw consent", "撤回同意") : text("Agree to text processing", "同意文字处理")) {
                     card = nil
-                    savedCard = nil; savedHistory.clear(); savedDetail.clear()
+                    savedCard = nil; historyAction?.cancel(); savedHistory.clear(); savedDetail.clear()
                     action?.cancel()
                     action = Task { await store.consent(accept: policy.consentState != .accepted, request: request) }
                 }.disabled(store.busy)
@@ -126,8 +131,9 @@ struct NativeTranslationView: View {
 
     private func loadSaved(cursor: String? = nil, exact: NativeSavedTranslationReference? = nil,
                            into reader: NativeSavedTranslationHistoryStore) async {
-        await reader.load(scope: activeScope, cursor: cursor, exact: exact, currentScope: { activeScope }, policyRequest: request) { cursor, turnID in
-            try await session.translationHistoryRequest(cursor: cursor, turnID: turnID)
+        let query = exact == nil && !savedQuery.isEmpty ? savedQuery : nil
+        await reader.load(scope: activeScope, query: query, cursor: cursor, exact: exact, currentScope: { activeScope }, policyRequest: request) { cursor, turnID in
+            try await session.translationHistoryRequest(cursor: cursor, turnID: turnID, query: query)
         }
     }
 
@@ -136,29 +142,34 @@ struct NativeTranslationView: View {
             Text(text("Saved translation history", "已存翻译历史")).font(.title2.bold())
             Text(text("Browse earlier saved translations without generating again. Permission is checked on each page and when opening a card.", "查看更早的已存翻译，不会再次生成。每页和打开卡片时都会重新核对权限。"))
                 .font(.caption).foregroundStyle(.secondary)
-            Button(text("Browse saved translations", "浏览已存翻译")) {
-                action?.cancel(); action = Task { await loadSaved(into: savedHistory) }
-            }.disabled(activeScope == nil || savedHistory.state == "loading")
+            TextField(text("Search original, translation or back-translation", "搜索原文、译文或回译"), text: $savedQuery)
+                .textFieldStyle(.roundedBorder).accessibilityIdentifier("translation.history.query")
+                .onSubmit { historyAction?.cancel(); historyAction = Task { await loadSaved(into: savedHistory) } }
+            Text(text("Literal keywords, up to 120 characters. Each scan is bounded; sparse history can be unavailable and does not mean there are no matches in all history.", "按字面关键词搜索，最多 120 字符。每次扫描有界；稀疏历史可能暂不可读，不代表全部历史无匹配。"))
+                .font(.caption).foregroundStyle(.secondary)
+            Button(text(savedQuery.isEmpty ? "Browse saved translations" : "Search saved translations", savedQuery.isEmpty ? "浏览已存翻译" : "搜索已存翻译")) {
+                historyAction?.cancel(); historyAction = Task { await loadSaved(into: savedHistory) }
+            }.disabled(activeScope == nil || savedHistory.state == "loading" || savedQuery.utf16.count > NativeTranslationHistoryWire.maximumQueryUnits)
                 .accessibilityIdentifier("translation.history.refresh")
             TimelineView(.periodic(from: .now, by: 1)) { _ in
                 if savedHistory.state == "loading" { ProgressView() }
-                else if savedHistory.isCurrent(activeScope) {
-                    if savedHistory.phrases.isEmpty { Text(text("No saved translations on this page.", "本页没有已存翻译。")) }
+                else if savedHistory.isCurrent(activeScope, query: savedQuery.isEmpty ? nil : savedQuery) {
+                    if savedHistory.phrases.isEmpty { Text(text(savedQuery.isEmpty ? "No saved translations on this page." : "No matches in the checked history.", savedQuery.isEmpty ? "本页没有已存翻译。" : "当前已检范围没有匹配。")) }
                     ForEach(savedHistory.phrases) { phrase in
                         VStack(alignment: .leading, spacing: 8) {
                             Text(phrase.original).textSelection(.enabled)
                             Button(text("Open saved translation", "打开已存翻译")) {
-                                savedCard = savedHistory.reference(phrase, scope: activeScope)
+                                savedCard = savedHistory.reference(phrase, scope: activeScope, query: savedQuery.isEmpty ? nil : savedQuery)
                             }.accessibilityIdentifier("translation.history.open.\(phrase.id)")
                         }
                     }
                     if let cursor = savedHistory.nextCursor {
                         Button(text("Older translations", "更早的翻译")) {
-                            action?.cancel(); action = Task { await loadSaved(cursor: cursor, into: savedHistory) }
+                            historyAction?.cancel(); historyAction = Task { await loadSaved(cursor: cursor, into: savedHistory) }
                         }.accessibilityIdentifier("translation.history.older")
                     }
                 } else if savedHistory.state != "idle" {
-                    Text(text("History is unavailable or needs refreshing. Try Browse saved translations again.", "历史暂不可读或需要刷新，请再次选择「浏览已存翻译」。"))
+                    Text(text("History is unavailable or needs refreshing. Browse or search again.", "历史暂不可读或需要刷新，请重新浏览或搜索。"))
                 }
             }
         }
