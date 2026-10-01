@@ -3,12 +3,12 @@
   "projectId": "visepanda-vp-v4",
   "lastUpdated": "2026-10-02",
   "objective": "交付以行前规划为购买入口、具有可见Memory/持续目标/真实后台工作/可操作成果的个人China Journey Assistant；中英原生iOS完整产品，Web轻量同Trip。VPJ-00 #187统一统筹，正式上架收费目标保留。",
-  "status": "2026-10-02核查VPJ-77/78/81/82/83：九个原交付PR全部真实合并，最终提交CI全部通过；它们是有界切片，五张父票仍有未完成验收。本轮修复#582资源库刷新/有效期和#585 producer关闭后的会话读回，均已通过全部CI并合并；独立审阅并合并#581任务定向成果重开。#562原CLOSED但未完成整票验收，已恢复OPEN。VP缓存跨Tab/后台/到期复查修复#586正在核最终CI；真实Staging/provider/device与完整Memory/Journeys链未据此验收。",
+  "status": "2026-10-02核查VPJ-77/78/81/82/83：九个原交付PR全部真实合并，最终提交CI全部通过；它们是有界切片，五张父票仍有未完成验收。本轮修复#582资源库刷新/有效期和#585 producer关闭后的会话读回，均已通过全部CI并合并；独立审阅并合并#581任务定向成果重开。#562原CLOSED但未完成整票验收，已恢复OPEN。VP缓存跨Tab/后台/到期复查修复#586最终11项CI已全部通过并合并；真实Staging/provider/device与完整Memory/Journeys链未据此验收。",
   "currentPhase": "助手升级U0–U4整票验收推进：Conversation/goal、持久成果、有界规划、VP/Library/四Tab的首轮代码已合并；继续修复真实读取/恢复缺口，补齐Memory影响、Journeys目标聚合和目标环境三段体验。S1–S6保留为验收分类，不用切片合并数代替完整验收。",
   "acceptedIssue": "https://github.com/JTCAO515/VP-V4/issues/187",
   "owner": "Overall / current Issue owner",
   "intendedNextAgent": "从docs/product/assistant-upgrade-2026-09-27/CODING-AGENT.md、当前live任务及main开始，一次交付一项用户可见结果。复用已验领域核心，重做交互；保留当前协调者实际并发/模型设置与owner，不因历史六线程记录自动派工。",
-  "nextAction": "完成#586最终CI和正常合并；依当前COORDINATION的实际owner补五票剩余验收，优先Memory纠正/保存/Undo与真实成果变化、Journeys未定日期goal/Task聚合、其他私有资料来源及实体VoiceOver/用户观察。真实Staging迁移、policy/scope/provider/host就绪须按当前主协调的具体对象/环境授权核对；本轮没有目标迁移/部署/预算开启。保留#199和其他在途任务原owner，不重复派工。",
+  "nextAction": "依当前COORDINATION的实际owner补五票剩余验收，优先Memory纠正/保存/Undo与真实成果变化、Journeys未定日期goal/Task聚合、其他私有资料来源及实体VoiceOver/用户观察。真实Staging迁移、policy/scope/provider/host就绪须按当前主协调的具体对象/环境授权核对；本轮没有目标迁移/部署/预算开启。保留#199和其他在途任务原owner，不重复派工。",
   "program": {
     "id": "VPJ-00",
     "issue": 187,
@@ -108,7 +108,8 @@
     "2026-09-17 VPJ-49 #241: native confirmed-only local share cards implement bilingual field selection, privacy preview, exact UIImage system handoff, day/whole-trip selection, version/time stamps, pagination and stale/account fencing. Per-criterion code mapping, native runtime evidence, full Quality PR commands and retained environment skips are recorded in artifacts/VPJ-49/verification.md and unrun.md. Main S2 VPJ-75/76 lane and its outstanding work remain owned by the other task.",
     "2026-09-18 VPJ-09/#197 bounded relative-day outline on branch codex/vpj-09-relative-day-20260918: native guided four-city food/walk directions remain local until a user supplies non-overlapping dates; existing Trip Proposal/diff/exact confirmation unchanged. Disposable local Supabase ordinary Auth/PostgreSQL native+Web integration passed with a prior dinner retained and two appended days; native simulator end-to-end outline/proposal/confirmation/relaunch passed on synthetic account. See artifacts/VPJ-09/verification.md. This does not close #197.",
     "2026-09-26 主协调只读核对 main cfaa5b18 与开放 PR #530，读取 #539/#544/#545 的已记录边界及新上架收费规划；#503/#243 独立任务已从 main 开工。未在本次执行 Apple 安装、真实购买、Production/Supabase 变更或 Provider 请求；新方向和历史状态修正在此 handoff，不建立第二套任务定义。",
-    "2026-10-02 VPJ-77/78/81/82/83审计：#567/#573、#568/#570/#572、#577、#576/#579、#578最终head全部checks SUCCESS，merge提交均在main。#582 final0fbb0317全11项检查PASS，merge b329cfe1；#585 final76eca453全12项PASS，merge1dfd1ea2；#581 finala3af6019全16项PASS，经独立审阅merge28739875。#582本地原生21/21、契约698/698；#585先复现503失败再一次性Auth/Postgres1/1PASS，gate5/5、governance5/5、契约698/698；localsecurity192pass/1环境skip明确INCOMPLETE。目标provider/device不在这些证据内。"
+    "2026-10-02 VPJ-77/78/81/82/83审计：#567/#573、#568/#570/#572、#577、#576/#579、#578最终head全部checks SUCCESS，merge提交均在main。#582 final0fbb0317全11项检查PASS，merge b329cfe1；#585 final76eca453全12项PASS，merge1dfd1ea2；#581 finala3af6019全16项PASS，经独立审阅merge28739875。#582本地原生21/21、契约698/698；#585先复现503失败再一次性Auth/Postgres1/1PASS，gate5/5、governance5/5、契约698/698；localsecurity192pass/1环境skip明确INCOMPLETE。目标provider/device不在这些证据内。",
+    "2026-10-02 #586 final4a44f50f2a3c9a138f04a21a11f1ddb755038019全部11项CI通过，normal head-matched merge036e8f855f3e8b903b28aa4739179631c8a90534；VP缓存到期/离开/后台清理、同Task精确复查已实现。本地final source原生4/4及契约698/698，独立actor/epoch/read fence；真实Memory→provider结果变化、Staging、实体机和完整整票仍UNRUN。"
   ],
   "unrun": [
     "#359/#360：PR #479已于2026-09-22合并（2ef0950），其报告的Staging61、真实Qwen与双端有界回读是该PR证据，本次未重新运行。独立审核发布、新内容双端回读、answered EvidencePack v2、真机、账单与最终恢复演练仍未完成；两票仍OPEN。",

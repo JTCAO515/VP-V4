@@ -6,7 +6,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付以行前规划为购买入口、具有可见Memory/持续目标/真实后台工作/可操作成果的个人China Journey Assistant；中英原生iOS完整产品，Web轻量同Trip。VPJ-00 #187统一统筹，正式上架收费目标保留。
 
-状态：2026-10-02核查VPJ-77/78/81/82/83：九个原交付PR全部真实合并，最终提交CI全部通过；它们是有界切片，五张父票仍有未完成验收。本轮修复#582资源库刷新/有效期和#585 producer关闭后的会话读回，均已通过全部CI并合并；独立审阅并合并#581任务定向成果重开。#562原CLOSED但未完成整票验收，已恢复OPEN。VP缓存跨Tab/后台/到期复查修复#586正在核最终CI；真实Staging/provider/device与完整Memory/Journeys链未据此验收。
+状态：2026-10-02核查VPJ-77/78/81/82/83：九个原交付PR全部真实合并，最终提交CI全部通过；它们是有界切片，五张父票仍有未完成验收。本轮修复#582资源库刷新/有效期和#585 producer关闭后的会话读回，均已通过全部CI并合并；独立审阅并合并#581任务定向成果重开。#562原CLOSED但未完成整票验收，已恢复OPEN。VP缓存跨Tab/后台/到期复查修复#586最终11项CI已全部通过并合并；真实Staging/provider/device与完整Memory/Journeys链未据此验收。
 
 阶段：助手升级U0–U4整票验收推进：Conversation/goal、持久成果、有界规划、VP/Library/四Tab的首轮代码已合并；继续修复真实读取/恢复缺口，补齐Memory影响、Journeys目标聚合和目标环境三段体验。S1–S6保留为验收分类，不用切片合并数代替完整验收。
 
@@ -103,10 +103,11 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - 2026-09-18 VPJ-09/#197 bounded relative-day outline on branch codex/vpj-09-relative-day-20260918: native guided four-city food/walk directions remain local until a user supplies non-overlapping dates; existing Trip Proposal/diff/exact confirmation unchanged. Disposable local Supabase ordinary Auth/PostgreSQL native+Web integration passed with a prior dinner retained and two appended days; native simulator end-to-end outline/proposal/confirmation/relaunch passed on synthetic account. See artifacts/VPJ-09/verification.md. This does not close #197.
 - 2026-09-26 主协调只读核对 main cfaa5b18 与开放 PR #530，读取 #539/#544/#545 的已记录边界及新上架收费规划；#503/#243 独立任务已从 main 开工。未在本次执行 Apple 安装、真实购买、Production/Supabase 变更或 Provider 请求；新方向和历史状态修正在此 handoff，不建立第二套任务定义。
 - 2026-10-02 VPJ-77/78/81/82/83审计：#567/#573、#568/#570/#572、#577、#576/#579、#578最终head全部checks SUCCESS，merge提交均在main。#582 final0fbb0317全11项检查PASS，merge b329cfe1；#585 final76eca453全12项PASS，merge1dfd1ea2；#581 finala3af6019全16项PASS，经独立审阅merge28739875。#582本地原生21/21、契约698/698；#585先复现503失败再一次性Auth/Postgres1/1PASS，gate5/5、governance5/5、契约698/698；localsecurity192pass/1环境skip明确INCOMPLETE。目标provider/device不在这些证据内。
+- 2026-10-02 #586 final4a44f50f2a3c9a138f04a21a11f1ddb755038019全部11项CI通过，normal head-matched merge036e8f855f3e8b903b28aa4739179631c8a90534；VP缓存到期/离开/后台清理、同Task精确复查已实现。本地final source原生4/4及契约698/698，独立actor/epoch/read fence；真实Memory→provider结果变化、Staging、实体机和完整整票仍UNRUN。
 
 ## 下一动作与回滚
 
-完成#586最终CI和正常合并；依当前COORDINATION的实际owner补五票剩余验收，优先Memory纠正/保存/Undo与真实成果变化、Journeys未定日期goal/Task聚合、其他私有资料来源及实体VoiceOver/用户观察。真实Staging迁移、policy/scope/provider/host就绪须按当前主协调的具体对象/环境授权核对；本轮没有目标迁移/部署/预算开启。保留#199和其他在途任务原owner，不重复派工。
+依当前COORDINATION的实际owner补五票剩余验收，优先Memory纠正/保存/Undo与真实成果变化、Journeys未定日期goal/Task聚合、其他私有资料来源及实体VoiceOver/用户观察。真实Staging迁移、policy/scope/provider/host就绪须按当前主协调的具体对象/环境授权核对；本轮没有目标迁移/部署/预算开启。保留#199和其他在途任务原owner，不重复派工。
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
