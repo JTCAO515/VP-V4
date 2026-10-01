@@ -87,27 +87,32 @@ final class NativeJourneysStore {
     private(set) var tripsAvailable = false
     private(set) var busy = false
     private var generation = UUID()
-    private var readableUntil: Date?
+    private var readableUntil: TimeInterval?
+    private let uptime: () -> TimeInterval
+
+    init(uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) {
+        self.uptime = uptime
+    }
 
     func clear() {
         generation = UUID(); scope = nil; rows = []; trips = []
         goalsAvailable = false; tripsAvailable = false; readableUntil = nil; busy = false
     }
 
-    func isCurrent(_ current: NativeDataScope?, now: Date = .now) -> Bool {
-        scope != nil && scope == current && readableUntil.map { now < $0 } == true
+    func isCurrent(_ current: NativeDataScope?) -> Bool {
+        scope != nil && scope == current && readableUntil.map { uptime() < $0 } == true
     }
 
     // Fixed-path GET closures are supplied by the existing NativeSession transport.
     func load(scope requested: NativeDataScope?, assistant: Bool,
               currentScope: () -> NativeDataScope?,
-              request: (String) async throws -> Data, now: () -> Date = { .now }) async {
+              request: (String) async throws -> Data) async {
         clear()
         guard let requested, currentScope() == requested else { return }
         scope = requested; busy = true
         let token = generation
-        let deadline = now().addingTimeInterval(20)
-        func valid() -> Bool { !Task.isCancelled && generation == token && currentScope() == requested && now() < deadline }
+        let deadline = uptime() + 20
+        func valid() -> Bool { !Task.isCancelled && generation == token && currentScope() == requested && uptime() < deadline }
         defer { if generation == token { busy = false } }
         var ownedTrips: [NativeTripSummary] = []
         var tripRead = false

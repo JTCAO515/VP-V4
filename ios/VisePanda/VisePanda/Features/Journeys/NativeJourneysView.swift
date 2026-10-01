@@ -25,11 +25,11 @@ struct NativeJourneysView: View {
                 Button(text("Refresh", "刷新")) { store.clear(); refresh = UUID() }
                     .accessibilityIdentifier("journeys.refresh")
             }
-            TimelineView(.periodic(from: .now, by: 1)) { context in
+            TimelineView(.periodic(from: .now, by: 1)) { _ in
                 if session.dataScope == nil {
                     Text(text("Sign in from Profile to read your journeys.", "请在「我的」登录后查看旅程。"))
                         .accessibilityIdentifier("journeys.signed-out")
-                } else if key.active && store.isCurrent(session.dataScope, now: context.date) {
+                } else if key.active && store.isCurrent(session.dataScope) {
                     projection
                 } else {
                     Text(store.busy ? text("Checking current journeys…", "正在核对当前旅程…") : text("Journey reads are unavailable or expired. Refresh to check again.", "旅程读取暂不可用或已过期，请刷新核对。"))

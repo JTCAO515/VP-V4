@@ -90,13 +90,16 @@ nonisolated final class NativeJourneysTests: XCTestCase {
     }
     @MainActor
     func testExpiryIsRequestBoundAndOldModeKeepsTripReadsOnly() async throws {
-        let store = NativeJourneysStore(); let start = Date(timeIntervalSince1970: 1000); var clock = start
+        let start: TimeInterval = 1000; var clock = start
+        let store = NativeJourneysStore(uptime: { clock })
         await store.load(scope: scope, assistant: false, currentScope: { self.scope }, request: { path in
-            XCTAssertEqual(path, "api/trips/native/v2"); clock = start.addingTimeInterval(10)
+            XCTAssertEqual(path, "api/trips/native/v2"); clock = start + 10
             return try self.wire(path)
-        }, now: { clock })
-        XCTAssertTrue(store.isCurrent(scope, now: start.addingTimeInterval(19)))
-        XCTAssertFalse(store.isCurrent(scope, now: start.addingTimeInterval(20)))
+        })
+        clock = start + 19
+        XCTAssertTrue(store.isCurrent(scope))
+        clock = start + 20
+        XCTAssertFalse(store.isCurrent(scope))
         XCTAssertFalse(store.goalsAvailable); XCTAssertTrue(store.tripsAvailable)
     }
     @MainActor
@@ -141,6 +144,42 @@ nonisolated final class NativeJourneysTests: XCTestCase {
             [.init(id: self.trip, title: "Owned", headVersion: 2, updatedAt: "today")]
         }, select: { _ in false })
         XCTAssertFalse(opened)
+    }
+
+    @MainActor
+    func testSlowReadCannotPublishAfterTwentySecondsOfUptime() async throws {
+        var clock: TimeInterval = 1000
+        let store = NativeJourneysStore(uptime: { clock })
+        var requests = 0
+        await store.load(scope: scope, assistant: true, currentScope: { self.scope }) { path in
+            requests += 1
+            clock += 21 // Elapsed read time, independent of wall-clock correction.
+            return try self.wire(path)
+        }
+        XCTAssertEqual(requests, 1)
+        XCTAssertTrue(store.rows.isEmpty); XCTAssertTrue(store.trips.isEmpty)
+        XCTAssertFalse(store.isCurrent(scope)); XCTAssertFalse(store.busy)
+    }
+
+    @MainActor
+    func testLateFinalPolicyReadCannotPublishAndRenderUsesTheSameClock() async throws {
+        var clock: TimeInterval = 1000
+        let store = NativeJourneysStore(uptime: { clock })
+        var policyReads = 0
+        await store.load(scope: scope, assistant: true, currentScope: { self.scope }) { path in
+            if path.hasSuffix("/policy") {
+                policyReads += 1
+                if policyReads == 2 { clock += 20 }
+            }
+            return try self.wire(path)
+        }
+        XCTAssertEqual(policyReads, 2)
+        XCTAssertTrue(store.rows.isEmpty); XCTAssertTrue(store.trips.isEmpty)
+        XCTAssertFalse(store.isCurrent(scope))
+        await store.load(scope: scope, assistant: true, currentScope: { self.scope }) { try self.wire($0) }
+        XCTAssertTrue(store.isCurrent(scope)); XCTAssertEqual(store.rows.count, 1)
+        clock += 20
+        XCTAssertFalse(store.isCurrent(scope))
     }
 
 }
