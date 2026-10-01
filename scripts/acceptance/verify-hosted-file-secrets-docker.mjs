@@ -8,6 +8,7 @@ import {spawnSync} from 'node:child_process';
 const image=process.argv[2];
 if(process.argv.length!==3||typeof image!=='string'||!/^vp-hosted-text-worker:[A-Za-z0-9._-]+$/.test(image))throw Error('image unavailable');
 const name='vp-hosted-file-proof-'+randomUUID().slice(0,8),dir=mkdtempSync(join(tmpdir(),'vp-hosted-file-proof-'));
+const planningName=name+'-planning',amap='SYNTHETIC_FILE_AMAP_'+randomUUID();
 const db='sb_secret_SYNTHETIC_FILE_DB_'+randomUUID(),qwen='SYNTHETIC_FILE_QWEN_'+randomUUID();
 const mapper=join(dir,'mapper.mjs');
 writeFileSync(mapper,`import {existsSync} from 'node:fs';
@@ -36,8 +37,8 @@ function run(args,input){
  if(result.status!==0)throw Error('synthetic Docker operation failed: '+args[0]);
  return result.stdout.trim();
 }
-function logs(){
- const result=spawnSync('docker',['logs',name],{encoding:'utf8',timeout:30000,maxBuffer:1024*1024});
+function logs(target=name){
+ const result=spawnSync('docker',['logs',target],{encoding:'utf8',timeout:30000,maxBuffer:1024*1024});
  if(result.status!==0)throw Error('synthetic Docker logs unavailable');
  return result.stdout+result.stderr;
 }
@@ -133,7 +134,33 @@ try{
   dockerEnvClean:true,journalClean:true,logsClean:true,restartWithoutFilesBlocked:true,
   badPermissionsFailClosed:true,symlinkFailClosed:true,enabledSwitchFailClosed:true,
   firstHeartbeatRaceFailClosed:true,network:'none'}));
+ const p2={...profile,schemaVersion:'vpj07-hosted-text-worker/2',planning:{ownerId:randomUUID(),planningPolicyId:randomUUID(),scopeId:randomUUID()}};
+ run(['run','-d','--name',planningName,'--network','none','--read-only','--cap-drop','ALL','--user','1000:1000',
+  '--tmpfs','/run/vp-worker-secrets:rw,uid=1000,gid=1000,mode=0700','--mount',`type=bind,src=${resolve(mapper)},dst=/test/mapper.mjs,readonly`,
+  '--env','NODE_OPTIONS=--import=/test/mapper.mjs','--env','VISEPANDA_HOSTED_TEXT_WORKER=true','--env','VISEPANDA_HOSTED_PLANNING_WORKER=true',
+  '--env','VISEPANDA_HOSTED_WORKER_SECRET_MODE=files','--env','VISEPANDA_HOSTED_WORKER_PROFILE='+JSON.stringify(p2),
+  '--entrypoint','sh',image,'-c','while [ ! -f /run/vp-worker-secrets/ready ]; do sleep 0.05; done; exec node --experimental-strip-types --disable-warning=ExperimentalWarning lib/server/jobs/run-hosted-text-worker.mjs']);
+ const inject=(mapMode)=>run(['exec','-i','--user','1000:1000',planningName,'sh','-c',
+  'umask 077; IFS= read -r db; IFS= read -r qwen; IFS= read -r amap; printf %s "$db" > /run/vp-worker-secrets/db.key; printf %s "$qwen" > /run/vp-worker-secrets/qwen.key; '
+   +(mapMode==='valid'?'printf %s "$amap" > /run/vp-worker-secrets/amap.key; ':mapMode==='symlink'?'ln -s qwen.key /run/vp-worker-secrets/amap.key; ':'')
+   +'chmod 0400 /run/vp-worker-secrets/*.key; touch /run/vp-worker-secrets/ready'],db+'\n'+qwen+'\n'+amap+'\n');
+ const waitExit=async()=>{for(let i=0;i<80;i++){if(run(['inspect','--format','{{.State.Status}}:{{.State.ExitCode}}',planningName])==='exited:1')return;await wait(100);}throw Error('planning file failure did not exit');};
+ inject('missing');await waitExit();
+ if(logs(planningName).includes('"phase":"started"'))throw Error('missing AMap file started planning');
+ run(['start',planningName]);inject('symlink');await waitExit();
+ run(['start',planningName]);inject('valid');let planningStarted=false;
+ for(let i=0;i<80;i++){if(logs(planningName).includes('"phase":"started"')){planningStarted=true;break;}await wait(100);}
+ if(!planningStarted)throw Error('valid planning files did not start disabled');
+ const planningEnv=run(['inspect','--format','{{json .Config.Env}}',planningName]);
+ run(['cp',`${planningName}:/var/lib/vp-worker/journal`,join(dir,'planning-journal')]);
+ const planningJournal=readdirSync(join(dir,'planning-journal')).map(f=>readFileSync(join(dir,'planning-journal',f),'utf8')).join('');
+ for(const value of [planningEnv,logs(planningName),planningJournal])for(const key of [db,qwen,amap])if(value.includes(key))throw Error('planning secret leaked');
+ if(planningEnv.includes('VISEPANDA_HOSTED_WORKER_AMAP_KEY')||planningJournal.includes('vpj80-hosted-planning-job/1'))throw Error('planning secret/disabled gate failed');
+ run(['stop','--time','5',planningName]);
+ console.log(JSON.stringify({schemaVersion:'vpj80-hosted-file-secret-proof/1',missingAmapRejected:true,symlinkAmapRejected:true,
+  validPrivateFilesStartedDisabled:true,dockerEnvClean:true,journalClean:true,logsClean:true,network:'none'}));
 }finally{
+ spawnSync('docker',['rm','-fv',planningName],{encoding:'utf8',timeout:30000,stdio:'ignore'});
  spawnSync('docker',['rm','-fv',name],{encoding:'utf8',timeout:30000,stdio:'ignore'});
  rmSync(dir,{recursive:true,force:true});
 }

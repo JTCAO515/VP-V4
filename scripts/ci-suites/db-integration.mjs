@@ -75,6 +75,7 @@ export const LANES = {
           "tests/integration/trip/archive.test.mjs",
           "tests/integration/turn/durable-work.test.mjs",
           "tests/integration/turn/hosted-worker.test.mjs",
+          "tests/integration/turn/hosted-planning-worker.test.mjs",
           "tests/integration/turn/planning-action-receipts.test.mjs",
           "tests/integration/turn/planning-comparison.test.mjs",
           "tests/integration/turn/text-work.test.mjs",

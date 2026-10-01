@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { CostGuard } from "../model-gateway/budget/index.ts";
 import { runWithDurableBudget, type BudgetRpc } from "../model-gateway/budget/durable.ts";
-import { validatedUsageReceipt, type RecordValidatedUsage } from "../model-gateway/budget/usage-receipt.ts";
+import { validatedPlanningUsageReceipt, type RecordPlanningUsage } from "../model-gateway/budget/usage-receipt.ts";
 import { invokePlanningComparisonProtocol, PROTOCOL_MODELS, type ProtocolTransport, type ProtocolUsage } from "../model-gateway/adapters/provider-protocol.ts";
 import type { PlanningSelection } from "../model-gateway/prompt/planning-comparison.ts";
 import { ToolRegistry, executeToolIntent, type ToolActionStore, type ToolDefinition } from "../tools/index.ts";
@@ -25,7 +25,9 @@ export type PlanningWorkerConfig = Readonly<{ environment: "local_synthetic" | "
   reservedMicros: number; timeoutMs: number; maxOutputTokens: number }>;
 export type PlanningWorkerBinding = Readonly<{ provider: keyof typeof PROTOCOL_MODELS; endpoint: string; transport: ProtocolTransport;
   price: (usage: ProtocolUsage) => number | null; evidenceLookup: (signal: AbortSignal) => Promise<Evidence>;
-  placeRead: (signal: AbortSignal) => Promise<Place>; recordUsage?: RecordValidatedUsage }>;
+  placeRead: (signal: AbortSignal) => Promise<Place>; recordUsage?: RecordPlanningUsage;
+  /** Hosted target budget check bound to this exact lease before map egress. */
+  authorizeExternalRead?: (lease: DurableTurnLease, signal: AbortSignal) => Promise<boolean> }>;
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const FLAG="planning-comparison-v1";
 const definitions: readonly ToolDefinition<unknown, unknown>[] = [
@@ -108,7 +110,10 @@ export async function runPlanningComparisonWorker(workRpc: TurnWorkRpc, rpc: Rpc
     let evidence:Evidence,place:Place,constraints:Constraints;
     try{
       evidence=await step("evidence.lookup",validEvidence,()=>binding.evidenceLookup(leaseSignal));
-      place=await step("place.read",validPlace,()=>binding.placeRead(leaseSignal));
+      place=await step("place.read",validPlace,async()=>{
+        if(binding.authorizeExternalRead && !await binding.authorizeExternalRead(lease,leaseSignal))throw Error("External read budget unavailable");
+        return binding.placeRead(leaseSignal);
+      });
       constraints=await step("constraints.evaluate",validConstraints,async()=>evaluateConstraints(place));
     }catch{return await pause(rpc,lease);}
     if(evidence.coverage!=="not_integrated"||leaseSignal.aborted
@@ -127,8 +132,9 @@ export async function runPlanningComparisonWorker(workRpc: TurnWorkRpc, rpc: Rpc
           p_scope_id:config.scopeId,p_attempt_id:attemptId});return record(decision)&&decision.kind==="authorized";},guard,binding.transport,budgetSignal);
       const actualMicros=value.kind==="protocol_validated"?binding.price(value.usage):null;
       if(actualMicros!==null&&value.kind==="protocol_validated"&&binding.recordUsage){
-        await binding.recordUsage(validatedUsageReceipt({schemaVersion:"validated-model-usage/1",attempt,
-          turnId:lease.turnId,policyId:input.policyId,usage:value.usage,actualMicros,observedAt:new Date().toISOString()}),budgetSignal);
+        await binding.recordUsage(validatedPlanningUsageReceipt({schemaVersion:"validated-planning-usage/1",attempt,
+          turnId:lease.turnId,policyId:input.policyId,usage:value.usage,actualMicros,observedAt:new Date().toISOString()},
+          {taskId:input.taskId,turnId:lease.turnId,planningPolicyId:input.policyId}),budgetSignal);
       }
       return {value,actualMicros};
     },leaseSignal);

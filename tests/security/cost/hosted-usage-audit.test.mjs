@@ -46,6 +46,7 @@ test('rejects forged jobs, orphan or conflicting receipts, cross-group attempt r
   [first,{...a.row,job:{...a.job,ownerId:randomUUID()}},r],
   [first,r,a.row],
   [first,a.row,{...r,receipt:{...r.receipt,actualMicros:61}}],
+  [first,a.row,{...r,receipt:{...r.receipt,schemaVersion:'validated-planning-usage/1',attempt:{...r.receipt.attempt,taskId:randomUUID()}}}],
   [first,a.row,r,{...r,receipt:{...r.receipt,usage:{...r.receipt.usage,inputTokens:11,totalTokens:16},actualMicros:62}}],
   [first,a.row,b.row,r,reused],
   [first,a.row,{...r,text:'private question'}],
