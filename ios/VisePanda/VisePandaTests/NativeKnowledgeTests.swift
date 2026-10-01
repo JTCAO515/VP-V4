@@ -380,6 +380,42 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         XCTAssertNil(store.result)
     }
 
+    @MainActor func testExactResultReadDeadlineIncludesNetworkAndAllowsSameReferenceRetry() async throws {
+        let artifact = UUID().uuidString.lowercased()
+        var now: TimeInterval = 100
+        let store = NativeResultStore(uptime: { now })
+        func bytes(current: Bool = true) throws -> Data {
+            try JSONSerialization.data(withJSONObject: ["version": 1, "data": [
+                "kind": "result_artifact", "artifactId": artifact, "revision": 3,
+                "current": current, "lifecycle": "active", "content": ["schemaVersion": "comparison/1",
+                    "title": "Synthetic comparison", "summary": "Fixture only",
+                    "options": [["id": "one", "title": "One", "tradeoff": "Unknown"],
+                                ["id": "two", "title": "Two", "tradeoff": "Unknown"]]]
+            ]])
+        }
+        await store.loadExact(scope: owner, artifactID: artifact, revision: 3) {
+            now = 129; return try bytes()
+        }
+        XCTAssertTrue(store.isCurrent(owner))
+        now = 130
+        XCTAssertFalse(store.isCurrent(owner), "network time cannot extend the 30-second read authority")
+
+        await store.loadExact(scope: owner, artifactID: artifact, revision: 3) { try bytes(current: false) }
+        XCTAssertNil(store.result, "refresh must remove a superseded revision")
+        XCTAssertEqual(store.state, "unavailable")
+        await store.loadExact(scope: owner, artifactID: artifact, revision: 3) { try bytes() }
+        XCTAssertEqual(store.result?.artifactId, artifact)
+        XCTAssertEqual(store.result?.revision, 3)
+        XCTAssertTrue(store.isCurrent(owner), "retry opens only the original exact reference")
+
+        await store.loadExact(scope: owner, artifactID: artifact, revision: 3) {
+            now = 160; return try bytes()
+        }
+        XCTAssertNil(store.result, "a response arriving at the deadline must not restore private content")
+        XCTAssertEqual(store.state, "unavailable")
+        XCTAssertFalse(store.isCurrent(owner))
+    }
+
     @MainActor func testLibraryPagesReplaceExpireAndFenceLateResponses() async throws {
         var now: TimeInterval = 100
         let store = NativeLibrarySearchStore(uptime: { now })
