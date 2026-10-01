@@ -11,6 +11,8 @@
 迁移 `supabase/migrations/20260923090000_vpj_07_hosted_text_worker.sql`、镜像
 `deploy/hosted-worker/Dockerfile`、`deploy/hosted-worker/ecs-worker.sh`。契约见
 [VPJ-07 常驻 worker](../contracts/vpj-07.md#hosted-resident-text-worker)。
+profile/2 planning 的显式离线打包和部署准备见 [planning 准备说明](hosted-planning-deployment-preparation.md)。
+
 仅合成 S1 文件密钥模式使用 `deploy/hosted-worker/ecs-worker-files.sh`，不得拿旧脚本替代。
 当前目标环境的价格、过期 policy/consent、单 owner 窄预算及逐步授权门槛见
 [2026-09-25 激活审查方案](hosted-text-worker-activation-review-20260925.md)。

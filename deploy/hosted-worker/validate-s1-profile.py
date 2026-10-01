@@ -60,12 +60,14 @@ def valid(profile):
 
 
 try:
-    if len(sys.argv) != 2:
+    if len(sys.argv) not in (2, 3) or (len(sys.argv) == 3 and sys.argv[2] != "--emit"):
         raise ValueError("path required")
     with open(sys.argv[1], encoding="utf-8") as source:
         profile = json.load(source, object_pairs_hook=closed_pairs)
     if not valid(profile):
         raise ValueError("invalid profile")
+    if len(sys.argv) == 3:
+        print(json.dumps(profile, separators=(",", ":")))
 except (OSError, UnicodeError, ValueError, TypeError, KeyError):
     print("S1 profile unavailable.", file=sys.stderr)
     sys.exit(1)
