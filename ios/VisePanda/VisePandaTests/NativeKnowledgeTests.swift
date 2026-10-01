@@ -319,6 +319,126 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         request.city = nil; XCTAssertFalse(pending(.grounded).valid)
     }
 
+    @MainActor private func basisReceipt(memories: Int = 0, schema: String = "comparison/1", omit: String? = nil, historical: Bool = false) throws -> Data {
+        let id = "11111111-1111-4111-8111-111111111111"
+        var row: [String: Any] = ["kind": "result_artifact", "artifactId": id, "revision": 2,
+            "current": !historical, "currentRevision": historical ? 3 : 2, "historicalReadable": true, "lifecycle": "active", "createdAt": "2026-10-02T00:00:00Z",
+            "source": ["taskId": id, "taskTurnId": id, "goalId": id, "goalVersion": 3,
+                       "inputMessageId": id, "inputSequence": 7, "tripId": id, "tripVersion": 2],
+            "basis": ["memories": (0..<memories).map { ["id": UUID().uuidString, "revision": $0 == 0 ? 1 : 4] as [String: Any] }, "evidence": []],
+            "content": ["schemaVersion": schema, "title": "Synthetic comparison", "summary": "Local read-only test.",
+                        "options": [["id": "one", "title": "One", "tradeoff": "Unknown"], ["id": "two", "title": "Two", "tradeoff": "Unknown"]]]]
+        if let omit {
+            if omit == "source" || omit == "basis" || omit == "createdAt" || omit == "currentRevision" || omit == "historicalReadable" { row.removeValue(forKey: omit) }
+            else if omit == "memories" || omit == "evidence" { var basis = row["basis"] as! [String: Any]; basis.removeValue(forKey: omit); row["basis"] = basis }
+            else { var source = row["source"] as! [String: Any]; source.removeValue(forKey: omit); row["source"] = source }
+        }
+        return try JSONSerialization.data(withJSONObject: ["version": 1, "data": row])
+    }
+
+    @MainActor func testResultBasisUsesOnlyCompleteRecordedFactsInBothLanguages() throws {
+        for count in [0, 2] {
+            let result = try JSONDecoder().decode(NativeResultEnvelope.self, from: basisReceipt(memories: count)).data
+            XCTAssertTrue(result.valid)
+            for chinese in [false, true] {
+                let lines = result.basisLines(chinese: chinese).joined(separator: "\n")
+                XCTAssertTrue(lines.contains("v2")); XCTAssertTrue(lines.contains("7"))
+                XCTAssertTrue(lines.contains(chinese ? "无法说明" : "unknown"))
+                XCTAssertTrue(lines.contains(chinese ? "来源记录没有说明" : "does not provide"))
+                XCTAssertTrue(lines.contains(chinese ? "此次读取" : "This read"))
+                if count == 0 { XCTAssertTrue(lines.contains(chinese ? "未记录记忆引用" : "No Memory references were recorded")) }
+                else { XCTAssertTrue(lines.contains(chinese ? "2 项" : "2 entries")); XCTAssertTrue(lines.contains("v1")); XCTAssertTrue(lines.contains("v4")) }
+                XCTAssertFalse(lines.contains(result.artifactId!))
+                for memory in result.basis!.memories! { XCTAssertFalse(lines.contains(memory.id)) }
+            }
+        }
+        let historical = try JSONDecoder().decode(NativeResultEnvelope.self, from: basisReceipt(historical: true)).data
+        XCTAssertTrue(historical.basisLines(chinese: false).last!.contains("earlier result"))
+        XCTAssertFalse(historical.basisLines(chinese: false).joined().contains("source-version checks"))
+    }
+
+    @MainActor func testResultBasisMissingAndUnknownRecordsNeverFabricateZeroReferences() throws {
+        for missing in ["source", "basis", "createdAt", "currentRevision", "historicalReadable", "memories", "evidence", "inputSequence", "tripVersion", "goalVersion", "taskTurnId"] {
+            let result = try JSONDecoder().decode(NativeResultEnvelope.self, from: basisReceipt(omit: missing)).data
+            XCTAssertTrue(result.valid, "old body compatibility is retained")
+            for chinese in [true, false] {
+                let lines = result.basisLines(chinese: chinese)
+                XCTAssertEqual(lines.count, 1)
+                XCTAssertTrue(lines[0].contains(chinese ? "无法说明" : "unknown"))
+                XCTAssertFalse(lines[0].contains(chinese ? "未记录记忆引用" : "No Memory references"))
+            }
+        }
+        let unknown = try JSONDecoder().decode(NativeResultEnvelope.self, from: basisReceipt(schema: "comparison/99")).data
+        XCTAssertEqual(unknown.basisLines(chinese: true).count, 1)
+        for mutation in ["evidence", "extra", "badMemory", "tooMany", "badSequence", "badDate", "revisionMismatch", "unreadable"] {
+            var envelope = try JSONSerialization.jsonObject(with: basisReceipt()) as! [String: Any]
+            var row = envelope["data"] as! [String: Any]
+            var basis = row["basis"] as! [String: Any]
+            if mutation == "evidence" { basis["evidence"] = [["title": "Do not infer verified search"]] }
+            if mutation == "extra" { basis["guessedPreference"] = "rail" }
+            if mutation == "badMemory" { basis["memories"] = [["id": "PREFER_RAIL", "revision": 1]] }
+            if mutation == "tooMany" { basis["memories"] = (0..<21).map { _ in ["id": UUID().uuidString, "revision": 1] as [String: Any] } }
+            row["basis"] = basis
+            if mutation == "badSequence" { var source = row["source"] as! [String: Any]; source["inputSequence"] = 0; row["source"] = source }
+            if mutation == "badDate" { row["createdAt"] = "Not a date" }
+            if mutation == "revisionMismatch" { row["currentRevision"] = 3 }
+            if mutation == "unreadable" { row["historicalReadable"] = false }
+            envelope["data"] = row
+            let result = try JSONDecoder().decode(NativeResultEnvelope.self, from: JSONSerialization.data(withJSONObject: envelope)).data
+            XCTAssertEqual(result.basisLines(chinese: false).count, 1, mutation)
+        }
+    }
+
+    @MainActor func testResultBasisSharesBodyScopeDeadlineTripAndLateClearGate() async throws {
+        var now: TimeInterval = 100
+        let store = NativeResultStore(uptime: { now })
+        await store.load(scope: owner) { try basisReceipt(memories: 2) }
+        XCTAssertEqual(store.visibleResult(owner)?.basisLines(chinese: false).count, 6)
+        let other = NativeDataScope(endpoint: owner.endpoint, subject: "other", mobileEpoch: 1, generation: 2)
+        XCTAssertNil(store.visibleResult(other))
+        XCTAssertNil(store.visibleResult(nil), "background/non-active scope hides both")
+        XCTAssertNil(store.visibleResult(owner, expectedTripID: UUID().uuidString))
+        now = 130; XCTAssertNil(store.visibleResult(owner))
+        await store.load(scope: owner) { throw NativeDataError.invalidResponse }
+        XCTAssertNil(store.result); XCTAssertNil(store.visibleResult(owner))
+        let barrier = KnowledgeReadBarrier()
+        let pending = Task { await store.load(scope: owner) { await barrier.wait() } }
+        await barrier.awaitStart(); store.clear()
+        await barrier.finish(try basisReceipt(memories: 2)); await pending.value
+        XCTAssertNil(store.result); XCTAssertNil(store.visibleResult(owner))
+    }
+
+    @MainActor func testResultBasisNativeDisclosureSmallMaximumTextRendering() async throws {
+        for chinese in [false, true] {
+            let store = NativeResultStore()
+            await store.load(scope: owner) { try basisReceipt(memories: chinese ? 2 : 0) }
+            let host = UIHostingController(rootView: ScrollView {
+                NativeResultCard(store: store, scope: owner, chinese: chinese).padding(12)
+            }.dynamicTypeSize(.accessibility5))
+            let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 568))
+            window.windowScene = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first
+            window.windowLevel = .alert + 1
+            host.view.accessibilityViewIsModal = true
+            window.rootViewController = host; window.makeKeyAndVisible()
+            defer { window.isHidden = true }
+            host.view.frame = window.bounds; host.view.layoutIfNeeded()
+            try await Task.sleep(for: .milliseconds(200))
+            func scrolls(_ view: UIView) -> [UIScrollView] {
+                (view as? UIScrollView).map { [$0] } ?? view.subviews.flatMap(scrolls)
+            }
+            let scroll = try XCTUnwrap(scrolls(host.view).first)
+            scroll.setContentOffset(CGPoint(x: 0, y: max(0, scroll.contentSize.height - scroll.bounds.height)), animated: false)
+            try await Task.sleep(for: .milliseconds(150))
+            XCTAssertLessThanOrEqual(scroll.contentSize.width, 320, "maximum text remains vertically scrollable without horizontal overflow")
+            XCTAssertGreaterThan(scroll.contentSize.height, 568, "maximum text has a scrollable reading surface")
+            let image = UIGraphicsImageRenderer(bounds: host.view.bounds).image { _ in host.view.drawHierarchy(in: host.view.bounds, afterScreenUpdates: true) }
+            let attachment = XCTAttachment(image: image); attachment.name = "result-basis-\(chinese ? "zh" : "en")-320-max-folded"
+            attachment.lifetime = .keepAlways; add(attachment)
+            store.clear()
+
+        }
+    }
+
     @MainActor func testSavedComparisonReadbackFencesScopeAndUnknownSchema() async throws {
         let artifact = UUID().uuidString.lowercased()
         func bytes(_ schema: String = "comparison/1") throws -> Data {

@@ -368,6 +368,65 @@ struct NativeTripResultReference: Decodable {
 struct NativeResultSource: Decodable {
     let tripId: String?
     let tripVersion: Int?
+    let taskId: String?
+    let taskTurnId: String?
+    let goalId: String?
+    let goalVersion: Int?
+    let inputMessageId: String?
+    let inputSequence: Int?
+    private let recordedKeys: Set<String>
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: NativeResultRecordKey.self)
+        recordedKeys = Set(values.allKeys.map(\.stringValue))
+        func string(_ key: String) throws -> String? { try values.decodeIfPresent(String.self, forKey: .init(key)) }
+        func integer(_ key: String) throws -> Int? { try values.decodeIfPresent(Int.self, forKey: .init(key)) }
+        tripId = try string("tripId"); tripVersion = try integer("tripVersion")
+        taskId = try string("taskId"); taskTurnId = try string("taskTurnId")
+        goalId = try string("goalId"); goalVersion = try integer("goalVersion")
+        inputMessageId = try string("inputMessageId"); inputSequence = try integer("inputSequence")
+    }
+
+    var complete: Bool {
+        recordedKeys == Set(["taskId", "taskTurnId", "goalId", "goalVersion", "inputMessageId", "inputSequence", "tripId", "tripVersion"])
+        && [taskId, taskTurnId, goalId, inputMessageId].allSatisfy { $0.flatMap(UUID.init(uuidString:)) != nil }
+        && (goalVersion ?? 0) > 0 && (inputSequence ?? 0) > 0
+        && (tripId == nil ? tripVersion == nil : UUID(uuidString: tripId ?? "") != nil && tripVersion != nil && (tripVersion ?? -1) >= 0)
+    }
+}
+
+private struct NativeResultRecordKey: CodingKey {
+    let stringValue: String
+    var intValue: Int? { nil }
+    init(_ value: String) { stringValue = value }
+    init?(stringValue: String) { self.init(stringValue) }
+    init?(intValue: Int) { return nil }
+}
+
+struct NativeResultBasis: Decodable {
+    struct Memory: Decodable {
+        let id: String
+        let revision: Int
+        let valid: Bool
+        init(from decoder: Decoder) throws {
+            let values = try decoder.container(keyedBy: NativeResultRecordKey.self)
+            id = try values.decode(String.self, forKey: .init("id"))
+            revision = try values.decode(Int.self, forKey: .init("revision"))
+            valid = Set(values.allKeys.map(\.stringValue)) == Set(["id", "revision"])
+                && UUID(uuidString: id) != nil && revision > 0
+        }
+    }
+    let memories: [Memory]?
+    let complete: Bool
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: NativeResultRecordKey.self)
+        memories = try values.decodeIfPresent([Memory].self, forKey: .init("memories"))
+        // Only the existing closed empty-evidence schema is supported. Never interpret future evidence.
+        let evidence = try? values.nestedUnkeyedContainer(forKey: .init("evidence"))
+        complete = Set(values.allKeys.map(\.stringValue)) == Set(["memories", "evidence"])
+            && memories != nil && (memories?.count ?? 21) <= 20 && memories?.allSatisfy(\.valid) == true
+            && evidence?.isAtEnd == true
+    }
 }
 
 struct NativeResultPayload: Decodable {
@@ -375,9 +434,43 @@ struct NativeResultPayload: Decodable {
     let artifactId: String?
     let revision: Int?
     let current: Bool?
+    let currentRevision: Int?
+    let historicalReadable: Bool?
     let lifecycle: String?
     let source: NativeResultSource?
+    let basis: NativeResultBasis?
+    let createdAt: String?
     let content: NativeResultContent?
+
+    /// Read-only receipt facts. Missing/old/unknown metadata cannot become zero references.
+    func basisLines(chinese: Bool) -> [String] {
+        guard content?.schemaVersion == "comparison/1", historicalReadable == true,
+              let currentRevision, currentRevision > 0,
+              current != true || (lifecycle == "active" && revision == currentRevision),
+              let source, source.complete,
+              let basis, basis.complete, let memories = basis.memories,
+              let createdAt, NativeKnowledgeRead.date(createdAt) != nil else {
+            return [chinese ? "此成果的依据记录不完整或使用了未知格式，当前记录无法说明。"
+                    : "This result's basis record is incomplete or uses an unknown format; its basis is unknown from this record."]
+        }
+        let versions = memories.map { "v\($0.revision)" }.joined(separator: chinese ? "、" : ", ")
+        return [
+            source.tripVersion.map { chinese ? "读取时关联的已保存行程版本：v\($0)。" : "Linked saved Trip version at this read: v\($0)." }
+                ?? (chinese ? "未记录关联的行程版本。" : "No linked Trip version was recorded."),
+            chinese ? "关联的请求记录：第 \(source.inputSequence ?? 0) 条。" : "Linked request record: \(source.inputSequence ?? 0).",
+            memories.isEmpty ? (chinese ? "未记录记忆引用。" : "No Memory references were recorded.")
+                : (chinese ? "记忆引用记录：\(memories.count) 项，版本 \(versions)。" : "Memory reference records: \(memories.count) entries, versions \(versions)."),
+            chinese ? "未记录外部证据引用。是否经过检索核验、是否实时，当前记录无法说明。"
+                : "No external evidence references were recorded. Search verification and real-time freshness are unknown from this record.",
+            chinese ? "原始请求文字、记忆的具体内容，以及它们如何影响这些选项，来源记录没有说明。"
+                : "The source record does not provide the original request text or memory contents, or explain how they influenced these choices.",
+            current == true && lifecycle == "active"
+                ? (chinese ? "此次读取通过了权限和来源版本检查。后续变更可能使成果失效，请刷新核对。"
+                   : "This read passed the access and source-version checks. Later changes may make it stale; refresh to check again.")
+                : (chinese ? "此保存版本在此次读取时可读。它是旧成果，使用前请核对当前输入。"
+                   : "This saved revision was readable at this read. It is an earlier result; review current inputs before using it.")
+        ]
+    }
 
     var valid: Bool {
         if kind == "empty" || kind == "unavailable" { return artifactId == nil && content == nil }
@@ -430,6 +523,12 @@ final class NativeResultStore {
 
     func isCurrent(_ currentScope: NativeDataScope?) -> Bool {
         currentScope != nil && scope == currentScope && deadline > uptime()
+    }
+
+    func visibleResult(_ currentScope: NativeDataScope?, expectedTripID: String? = nil) -> NativeResultPayload? {
+        guard isCurrent(currentScope), let result, result.kind == "result_artifact",
+              expectedTripID == nil || result.source?.tripId == expectedTripID else { return nil }
+        return result
     }
 
     func load(scope requested: NativeDataScope?, using session: NativeSession) async {
@@ -519,7 +618,7 @@ struct NativeResultCard: View {
             } else if store.state == "result_artifact", let expectedTripID,
                       store.result?.source?.tripId != expectedTripID {
                 Text(text("Checking the selected Trip's result…", "正在核对所选行程的成果……"))
-            } else if store.isCurrent(scope), let result = store.result, result.kind == "result_artifact", let content = result.content {
+            } else if let result = store.visibleResult(scope, expectedTripID: expectedTripID), let content = result.content {
                 Text(content.title).font(.title3.bold()).textSelection(.enabled)
                 Text(content.summary).textSelection(.enabled)
                 if content.schemaVersion == "comparison/1", let options = content.options {
@@ -533,8 +632,8 @@ struct NativeResultCard: View {
                     Text(text("This result uses a newer format. Open it in an updated app before acting.", "此成果使用较新格式，请更新应用后再操作。"))
                         .font(.footnote)
                 }
-                Text("\(result.artifactId ?? "") · r\(result.revision ?? 0)")
-                    .font(.caption2).textSelection(.enabled).accessibilityIdentifier("result.identity")
+                NativeResultBasisDisclosure(result: result, chinese: chinese)
+                    .id("\(result.artifactId ?? ""):\(result.revision ?? 0)")
                 if result.current != true {
                     Text(text("Earlier result. Review current inputs before using it.", "这是旧成果；使用前请核对当前输入。"))
                         .font(.footnote).foregroundStyle(Color.vpSecondaryText)
@@ -552,6 +651,63 @@ struct NativeResultCard: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(14).background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
         .accessibilityIdentifier("result.card")
+    }
+}
+
+/// The caller's body gate owns scope, lifetime and visibility; this view stores only expansion state.
+struct NativeResultBasisDisclosure: View {
+    let result: NativeResultPayload
+    let chinese: Bool
+    private func text(_ en: String, _ zh: String) -> String { chinese ? zh : en }
+
+    var body: some View {
+        DisclosureGroup {
+            VStack(alignment: .leading, spacing: 10) {
+                let lines = result.basisLines(chinese: chinese)
+                ForEach(lines.indices, id: \.self) { index in Text(lines[index]).textSelection(.enabled) }
+                DisclosureGroup {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("\(result.artifactId ?? "") · r\(result.revision ?? 0)")
+                            .accessibilityIdentifier("result.identity")
+                        if result.source?.complete == true, let source = result.source {
+                            Text(text("Goal record version", "目标记录版本") + ": v\(source.goalVersion ?? 0)")
+                            Text(text("Task completion record", "任务完成记录") + ": \(source.taskTurnId ?? "")")
+                        }
+                        if let createdAt = result.createdAt, NativeKnowledgeRead.date(createdAt) != nil {
+                            Text(text("Result revision recorded at", "成果版本记录时间") + ": \(createdAt)")
+                        }
+                    }.font(.caption).textSelection(.enabled)
+                } label: {
+                    Text(text("Version records", "版本记录")).frame(minHeight: 44, alignment: .leading)
+                }
+                .disclosureGroupStyle(NativeResultDisclosureStyle(chinese: chinese))
+                .accessibilityIdentifier("result.basis.records")
+            }.font(.footnote).fixedSize(horizontal: false, vertical: true)
+        } label: {
+            Text(text("What is this comparison based on?", "这份比较依据什么？"))
+                .font(.subheadline.bold()).fixedSize(horizontal: false, vertical: true)
+                .frame(minHeight: 44, alignment: .leading)
+        }
+        .disclosureGroupStyle(NativeResultDisclosureStyle(chinese: chinese))
+        .accessibilityIdentifier("result.basis")
+    }
+}
+
+private struct NativeResultDisclosureStyle: DisclosureGroupStyle {
+    let chinese: Bool
+    func makeBody(configuration: Configuration) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Button { configuration.isExpanded.toggle() } label: {
+                HStack(alignment: .center, spacing: 10) {
+                    configuration.label.frame(maxWidth: .infinity, alignment: .leading)
+                    Image(systemName: configuration.isExpanded ? "chevron.down" : "chevron.right")
+                        .accessibilityHidden(true)
+                }.contentShape(Rectangle()).frame(minHeight: 44)
+            }
+            .buttonStyle(.plain)
+            .accessibilityValue(chinese ? (configuration.isExpanded ? "已展开" : "已折叠") : (configuration.isExpanded ? "Expanded" : "Collapsed"))
+            if configuration.isExpanded { configuration.content }
+        }
     }
 }
 
