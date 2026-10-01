@@ -130,6 +130,75 @@ nonisolated final class NativeAskUITests: XCTestCase {
         capture("Assistant-goal-Trip-privacy-unlinked-en", app)
     }
 
+    @MainActor func testEnglishAssistantBackgroundRefreshComposer() async throws {
+        let environment = ProcessInfo.processInfo.environment
+        guard environment["VP_NATIVE_ASSISTANT_REFRESH_TEST"] == "1" else { throw XCTSkip("UNRUN: controlled local refresh environment required") }
+        continueAfterFailure = false
+        let api = try XCTUnwrap(environment["VP_NATIVE_TEXT_API_URL"])
+        let controlURL = try XCTUnwrap(URL(string: environment["VP_NATIVE_ASSISTANT_REFRESH_CONTROL"] ?? ""))
+        func control(_ action: [String: Any]? = nil) async throws -> Int {
+            var request = URLRequest(url: controlURL)
+            if let action { request.httpMethod = "POST"; request.httpBody = try JSONSerialization.data(withJSONObject: action) }
+            let (bytes, _) = try await URLSession.shared.data(for: request)
+            return (try JSONSerialization.jsonObject(with: bytes) as? [String: Int])?["held"] ?? 0
+        }
+        let app = XCUIApplication()
+        app.launchArguments = ["-VisePandaNativeAPI", api, "-VisePandaAssistantConversation", "-VisePandaLocale", "en", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch(); app.tabBars.buttons["Profile"].tap()
+        let signOut = app.buttons["Sign out"]
+        if signOut.waitForExistence(timeout: 2) { reveal(signOut, app); signOut.tap() }
+        let email = app.textFields["native.login.email"]
+        XCTAssertTrue(email.waitForExistence(timeout: 15)); reveal(email, app); email.tap()
+        email.typeText(try XCTUnwrap(environment["VP_NATIVE_TEXT_UI_EN_EMAIL"]))
+        let password = app.secureTextFields["native.login.password"]
+        reveal(password, app); password.tap(); password.typeText("VPJ07-Local-Synthetic-Only-195!")
+        let login = app.buttons["native.login.submit"]; reveal(login, app); login.tap()
+        let selected = app.staticTexts["assistant.conversation.selected"]
+        XCTAssertTrue(selected.waitForExistence(timeout: 20))
+        let refresh = app.buttons["Refresh"]
+        await fulfillment(of: [expectation(for: NSPredicate(format: "enabled == true"), evaluatedWith: refresh)], timeout: 20)
+        let composer = app.descendants(matching: .any).matching(identifier: "assistant.composer").firstMatch
+        app.buttons["assistant.operation"].tap(); app.buttons["Start goal"].tap()
+        for (index, stage) in ["history", "list", "goal"].enumerated() {
+            composer.tap()
+            if let value = composer.value as? String, value != "Ask VP…", !value.isEmpty {
+                composer.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: value.count))
+            }
+            composer.typeText("Synthetic refresh concurrent intake " + stage)
+            _ = try await control(["stage": stage])
+            refresh.tap()
+            for _ in 0..<60 { if try await control() == 1 { break }; try await Task.sleep(for: .milliseconds(50)) }
+            let held = try await control(); XCTAssertEqual(held, 1)
+            let send = app.buttons["assistant.send"]
+            if environment["VP_NATIVE_ASSISTANT_REFRESH_REPRO"] == "1" {
+                XCTAssertFalse(send.isEnabled, "Baseline: slow ancillary refresh disables confirmed composer")
+                capture("Assistant-confirmed-composer-blocked-by-refresh", app)
+                _ = try await control(["release": true]); return
+            }
+            XCTAssertTrue(send.isEnabled, "Confirmed conversation remains sendable during slow " + stage)
+            send.tap()
+            let message = app.staticTexts["assistant.message.\(index + 2)"]
+            XCTAssertTrue(message.waitForExistence(timeout: 20))
+            composer.tap(); composer.typeText("Keep this next draft " + stage)
+            _ = try await control(["release": true])
+            await fulfillment(of: [expectation(for: NSPredicate(format: "enabled == true"), evaluatedWith: refresh)], timeout: 20)
+            XCTAssertTrue(message.exists, "Late refresh cannot overwrite the accepted send readback")
+            XCTAssertTrue(String(describing: composer.value).contains("Keep this next draft " + stage), "Readbacks cannot clear a newer draft")
+        }
+        _ = try await control(["stage": "conversation"])
+        let choose = app.buttons["assistant.conversation.choose"]; reveal(choose, app); choose.tap()
+        let first = try XCTUnwrap(environment["VP_NATIVE_ASSISTANT_CONVERSATION_FIRST"])
+        app.buttons["assistant.conversation.select.\(first)"].tap()
+        for _ in 0..<60 { if try await control() == 1 { break }; try await Task.sleep(for: .milliseconds(50)) }
+        let switchingHeld = try await control(); XCTAssertEqual(switchingHeld, 1)
+        composer.tap(); composer.typeText("Must wait for selection authority")
+        XCTAssertFalse(app.buttons["assistant.send"].isEnabled, "Unknown selected conversation cannot inherit the old send authority")
+        _ = try await control(["release": true])
+        await fulfillment(of: [expectation(for: NSPredicate(format: "label == %@", "Synthetic earlier conversation"), evaluatedWith: selected)], timeout: 20)
+        XCTAssertTrue(String(describing: composer.value).contains("Must wait for selection authority"))
+        capture("Assistant-refresh-concurrent-send-and-selection-authority", app)
+    }
+
     @MainActor func testEnglishAssistantConversationSelection() throws {
         let environment = ProcessInfo.processInfo.environment
         guard environment["VP_NATIVE_ASSISTANT_CONVERSATION_SELECTION"] == "1" else {

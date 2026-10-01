@@ -32,6 +32,15 @@ struct AssistantConversation: Decodable {
     }
 }
 
+struct AssistantConversationRefreshState {
+    private var active: UUID?
+    var busy: Bool { active != nil }
+    mutating func begin() -> UUID { let token = UUID(); active = token; return token }
+    mutating func invalidate() { active = nil }
+    func owns(_ token: UUID) -> Bool { active == token }
+    mutating func finish(_ token: UUID) { if owns(token) { active = nil } }
+}
+
 struct AssistantConversationSelection {
     var conversationID: String?
     private(set) var generation = UUID()
@@ -376,7 +385,7 @@ struct NativeAssistantConversationView: View {
     @State private var operation = "independent_question"
     @State private var agreed = false
     @State private var busy = false
-    @State private var refreshBusy = false
+    @State private var refreshState = AssistantConversationRefreshState()
     @State private var notice: String?
     @State private var pending: AssistantSubmission?
     @State private var boundScope: NativeDataScope?
@@ -392,6 +401,13 @@ struct NativeAssistantConversationView: View {
     private var session: NativeSession { settings.nativeSession }
     private var chinese: Bool { settings.selectedLocale == .zh }
     private var resultActive: Bool { isActive && scenePhase == .active }
+    private var refreshBusy: Bool { refreshState.busy }
+    private var composerScopeCurrent: Bool { session.dataScope != nil && boundScope == session.dataScope }
+    private var confirmedConversation: Bool {
+        guard composerScopeCurrent, let conversation else { return false }
+        return conversation.valid && conversation.conversationId == selection.conversationID
+    }
+    private var composerWaitingForAuthority: Bool { refreshBusy && !confirmedConversation }
     private var goal: AssistantGoal? { conversation?.goals.last }
     private var actions: [String] { goal == nil ? ["independent_question", "goal_start"] : ["independent_question", "goal_start", "follow_up", "amendment"] }
     private var waitingKey: String {
@@ -523,7 +539,7 @@ struct NativeAssistantConversationView: View {
                         TextField(chinese ? "告诉 VP…" : "Ask VP…", text: $draft, axis: .vertical)
                             .lineLimit(1...5).autocorrectionDisabled().accessibilityIdentifier("assistant.composer")
                         Button(pending != nil && conversation == nil ? (chinese ? "重试同一次消息" : "Retry same message") : (chinese ? "发送" : "Send")) { Task { await send() } }
-                            .disabled(busy || refreshBusy || (conversation == nil && pending == nil) || (pending == nil && draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
+                            .disabled(busy || !composerScopeCurrent || composerWaitingForAuthority || (conversation == nil && pending == nil) || (pending == nil && draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
                             .accessibilityIdentifier("assistant.send")
                     }
                 }.padding().background(.bar)
@@ -532,6 +548,7 @@ struct NativeAssistantConversationView: View {
         .toolbar { ToolbarItem(placement: .topBarTrailing) { Button(chinese ? "刷新" : "Refresh") { Task { await reload() } }.disabled(refreshBusy) } }
         .task(id: session.dataScope) {
             let requested = session.dataScope
+            refreshState.invalidate()
             // A temporary offline scope may retain a pending immutable intake.
             // Keep its selected ID only for that exact retained account/epoch/generation.
             selection.select(boundScope == session.retainedDataScope ? selection.conversationID : nil)
@@ -611,8 +628,9 @@ struct NativeAssistantConversationView: View {
     private func selectConversation(_ id: String?) {
         guard !busy, !planningBusy, !tripBusy else { return }
         selection.select(id)
+        refreshState.invalidate()
         clearConversationContext()
-        Task { await reload() }
+        Task { await reload(replacing: true) }
     }
 
     private func clearConversationProjection() {
@@ -631,6 +649,10 @@ struct NativeAssistantConversationView: View {
 
     private func ownsSelection(_ initial: NativeDataScope, _ generation: UUID) -> Bool {
         session.dataScope == initial && selection.owns(generation) && !Task.isCancelled
+    }
+
+    private func ownsRefresh(_ initial: NativeDataScope, _ generation: UUID, _ refreshToken: UUID) -> Bool {
+        ownsSelection(initial, generation) && refreshState.owns(refreshToken)
     }
 
     private func invalidateResult() {
@@ -882,6 +904,7 @@ struct NativeAssistantConversationView: View {
         await performTripMutation(pendingTripMutation, initial:initial)
     }
     private func performTripMutation(_ request: AssistantTripMutation, initial: NativeDataScope) async {
+        refreshState.invalidate()
         tripBusy = true
         do {
             let data = try await session.askRequest(path: tripPath(request.goalId), method: "POST", body: JSONEncoder().encode(request))
@@ -902,7 +925,7 @@ struct NativeAssistantConversationView: View {
             }
         }
         tripBusy = false
-        await reload()
+        await reload(replacing: true)
     }
     private func loadPrivacyLinks(_ initial: NativeDataScope) async {
         do {
@@ -943,21 +966,18 @@ struct NativeAssistantConversationView: View {
             tripNotice = nil
         } catch { if session.dataScope == initial { tripNotice = "retry" } }
     }
-    private func reload() async {
+    private func reload(replacing: Bool = false) async {
         guard let initial = session.dataScope else { return }
         let generation = selection.generation
         let requestedID = selection.conversationID
-        // A send/cancel readback must follow any refresh already in progress.
-        // Returning early here can leave an accepted message invisible until
-        // another unrelated refresh happens.
-        while refreshBusy {
-            do { try await Task.sleep(for: .milliseconds(50)) } catch { return }
-            guard ownsSelection(initial, generation) else { return }
-        }
-        refreshBusy = true; defer { refreshBusy = false }
+        // Background work coalesces. A mutation readback takes ownership immediately;
+        // an older slow response cannot keep the composer or the new readback waiting.
+        guard !busy, replacing || !refreshBusy else { return }
+        let refreshToken = refreshState.begin()
+        defer { refreshState.finish(refreshToken) }
         do {
             let policyData = try await session.askRequest(path: "api/chat/native/v5/policy", method: "GET")
-            guard ownsSelection(initial, generation) else { return }
+            guard ownsRefresh(initial, generation, refreshToken) else { return }
             let policyReply = try JSONDecoder().decode(NativeTextPolicyReply.self, from: policyData)
             guard policyReply.kind == "policy", policyReply.policy.valid else { throw NativeDataError.invalidResponse }
             policy = policyReply.policy
@@ -971,30 +991,30 @@ struct NativeAssistantConversationView: View {
             }
             privacyLinks = []; privacyNextCursor = nil
             let read = try await AssistantConversationReader.read(requestedID: requestedID,
-                isCurrent: { ownsSelection(initial, generation) },
+                isCurrent: { ownsRefresh(initial, generation, refreshToken) },
                 load: { try await session.assistantConversationRequest(conversationID: requestedID) })
-            guard ownsSelection(initial, generation) else { return }
+            guard ownsRefresh(initial, generation, refreshToken) else { return }
             conversation = read
             selection.conversationID = read.conversationId
             do {
                 let bytes = try await session.assistantConversationRequest(list: true)
-                guard ownsSelection(initial, generation) else { return }
+                guard ownsRefresh(initial, generation, refreshToken) else { return }
                 let list = try JSONDecoder().decode(AssistantConversationList.self, from: bytes)
                 guard list.valid else { throw NativeDataError.invalidResponse }
                 conversations = list.conversations; conversationsNotice = nil
             } catch {
-                guard ownsSelection(initial, generation) else { return }
+                guard ownsRefresh(initial, generation, refreshToken) else { return }
                 if case NativeDataError.server(let code) = error, ["DATA_POLICY_BLOCKED", "FORBIDDEN", "UNAUTHENTICATED"].contains(code) { throw error }
                 conversations = []; conversationsNotice = "retry"
             }
             do {
                 let historyData = try await session.askRequest(path: "api/chat/native/v2/turns", method: "GET")
-                guard ownsSelection(initial, generation) else { return }
+                guard ownsRefresh(initial, generation, refreshToken) else { return }
                 let history = try JSONDecoder().decode(NativeTextHistory.self, from: historyData)
                 guard history.version == 2, history.kind == "history" else { throw NativeDataError.invalidResponse }
                 taskTurns = AssistantTaskProjection.eligibleHistory(history.turns, messages: read.messages)
             } catch {
-                guard ownsSelection(initial, generation) else { return }
+                guard ownsRefresh(initial, generation, refreshToken) else { return }
                 taskTurns = []
             }
             if let selectedTaskID,
@@ -1007,7 +1027,7 @@ struct NativeAssistantConversationView: View {
                 selectedResult = nil
                 do {
                     let bytes = try await session.taskResultRequest(taskID: selectedTaskID)
-                    guard resultActive, ownsSelection(initial, generation), self.selectedTaskID == selectedTaskID,
+                    guard resultActive, ownsRefresh(initial, generation, refreshToken), self.selectedTaskID == selectedTaskID,
                           resultFence.owns(scope: initial, generation: resultGeneration) else { return }
                     guard resultFence.isCurrent(scope: initial, generation: resultGeneration, active: resultActive, now: ProcessInfo.processInfo.systemUptime)
                     else { resultNotice = "unavailable"; return }
@@ -1015,27 +1035,29 @@ struct NativeAssistantConversationView: View {
                     guard reply.version == 1, reply.data.belongs(to: selectedTaskID) else { throw NativeDataError.invalidResponse }
                     selectedResult = reply.data; resultNotice = nil
                 } catch {
-                    if resultActive && ownsSelection(initial, generation) && self.selectedTaskID == selectedTaskID,
+                    if resultActive && ownsRefresh(initial, generation, refreshToken) && self.selectedTaskID == selectedTaskID,
                        resultFence.owns(scope: initial, generation: resultGeneration) { selectedResult = nil; resultNotice = "unavailable" }
                 }
             }
             if let planningPending, read.messages.contains(where: { $0.messageId == planningPending.messageId }) {
-                self.planningPending = nil; planningDraft = ""; planningNotice = nil
+                self.planningPending = nil
+                if planningDraft.trimmingCharacters(in: .whitespacesAndNewlines) == planningPending.text { planningDraft = "" }
+                planningNotice = nil
             }
             do {
                 let bytes = try await session.askRequest(path: "api/chat/native/v5/planning/policy", method: "GET")
-                guard ownsSelection(initial, generation) else { return }
+                guard ownsRefresh(initial, generation, refreshToken) else { return }
                 let reply = try JSONDecoder().decode(AssistantPlanningPolicyReply.self, from: bytes)
                 guard reply.version == 1, reply.data.valid else { throw NativeDataError.invalidResponse }
                 planningPolicy = reply.data
             } catch {
-                guard ownsSelection(initial, generation) else { return }
+                guard ownsRefresh(initial, generation, refreshToken) else { return }
                 planningPolicy = nil
             }
             if let currentGoal = read.goals.last, let conversationID = read.conversationId {
                 do {
                     let linkData = try await session.askRequest(path: tripPath(currentGoal.goalId), method: "GET")
-                    guard ownsSelection(initial, generation) else { return }
+                    guard ownsRefresh(initial, generation, refreshToken) else { return }
                     let link = try JSONDecoder().decode(AssistantGoalTripLink.self, from: linkData)
                     guard link.valid && link.goalId == currentGoal.goalId && link.conversationId == conversationID
                         && link.goalScopeVersion == currentGoal.scopeVersion else { throw NativeDataError.invalidResponse }
@@ -1053,20 +1075,23 @@ struct NativeAssistantConversationView: View {
                     }
                     if let linkedID = link.tripId, !ownedTrips.contains(where: { $0.id == linkedID }) {
                         let refreshedTrips = try await ownedTripList(initial)
-                        guard ownsSelection(initial, generation) else { return }
+                        guard ownsRefresh(initial, generation, refreshToken) else { return }
                         ownedTrips = refreshedTrips
                     }
-                    guard ownsSelection(initial, generation) else { return }
+                    guard ownsRefresh(initial, generation, refreshToken) else { return }
                     tripNotice = nil
                 } catch {
-                    guard ownsSelection(initial, generation) else { return }
+                    guard ownsRefresh(initial, generation, refreshToken) else { return }
                     tripLink = nil; tripNotice = "retry"
                 }
             } else { tripLink = nil; ownedTrips = [] }
-            if let pending, read.messages.contains(where: { $0.messageId == pending.messageId }) { self.pending = nil; draft = "" }
+            if let pending, read.messages.contains(where: { $0.messageId == pending.messageId }) {
+                self.pending = nil
+                if draft.trimmingCharacters(in: .whitespacesAndNewlines) == pending.text { draft = "" }
+            }
             notice = nil
         } catch {
-            guard ownsSelection(initial, generation) else { return }
+            guard ownsRefresh(initial, generation, refreshToken) else { return }
             // A lost POST receipt followed by a transient read failure must retain
             // the same immutable request keys. Only authoritative denial clears intake.
             let authorityLost: Bool
@@ -1082,6 +1107,7 @@ struct NativeAssistantConversationView: View {
     }
     private func accept() async {
         guard !busy, agreed, let policy, let initial = session.dataScope else { return }
+        refreshState.invalidate()
         busy = true
         do {
             let body = try JSONEncoder().encode(["policyId": policy.id, "noticeHash": policy.noticeHash])
@@ -1090,10 +1116,11 @@ struct NativeAssistantConversationView: View {
             self.policy = nil
         } catch { if session.dataScope == initial { notice = "retry" } }
         busy = false
-        await reload()
+        await reload(replacing: true)
     }
     private func withdraw() async {
         guard !busy, let policy, let initial = session.dataScope else { return }
+        refreshState.invalidate()
         busy = true
         conversations = []; selection.select(nil)
         do {
@@ -1106,10 +1133,11 @@ struct NativeAssistantConversationView: View {
             draft = ""; tripLink = nil; self.policy = nil
         } catch { if session.dataScope == initial { notice = "retry" } }
         busy = false
-        await reload()
+        await reload(replacing: true)
     }
     private func send() async {
-        guard !busy, !refreshBusy, let policy, policy.consentState == .accepted, let initial = session.dataScope,
+        guard !busy, !composerWaitingForAuthority, let policy, policy.consentState == .accepted, let initial = session.dataScope,
+              boundScope == initial,
               conversation != nil || (pending != nil && pending?.conversationId == selection.conversationID) else { return }
         if let pending, pending.conversationId != selection.conversationID || pending.policyId != policy.id { return }
         let text = draft.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -1131,6 +1159,7 @@ struct NativeAssistantConversationView: View {
             pending = request
         }
         selection.conversationID = request.conversationId
+        refreshState.invalidate()
         busy = true
         do {
             let body = try JSONEncoder().encode(request)
@@ -1141,12 +1170,13 @@ struct NativeAssistantConversationView: View {
             notice = nil
         } catch { if session.dataScope == initial { notice = "retry" } }
         busy = false
-        await reload()
+        await reload(replacing: true)
     }
     private func acceptPlanning() async {
         guard !planningBusy, planningAgreed, let planningPolicy,
               planningPolicy.consentState == "not_accepted", let policyID = planningPolicy.policyId,
               let noticeHash = planningPolicy.noticeHash, let initial = session.dataScope else { return }
+        refreshState.invalidate()
         planningBusy = true
         do {
             let body = try JSONEncoder().encode(["policyId": policyID, "noticeHash": noticeHash])
@@ -1157,7 +1187,7 @@ struct NativeAssistantConversationView: View {
             planningNotice = nil
         } catch { if session.dataScope == initial { planningNotice = "retry" } }
         planningBusy = false
-        await reload()
+        await reload(replacing: true)
     }
     private func delegateComparison(_ currentGoal: AssistantGoal) async {
         guard !planningBusy, goal?.goalId == currentGoal.goalId, goal?.scopeVersion == currentGoal.scopeVersion,
@@ -1179,6 +1209,7 @@ struct NativeAssistantConversationView: View {
                 planningPolicyId: policyID, locale: chinese ? "zh" : "en", text: input, memoryBasis: [])
             planningPending = request
         }
+        refreshState.invalidate()
         planningBusy = true
         do {
             let bytes = try await session.askRequest(path: "api/chat/native/v5/planning/tasks", method: "POST",
@@ -1201,11 +1232,12 @@ struct NativeAssistantConversationView: View {
             }
         }
         planningBusy = false
-        await reload()
+        await reload(replacing: true)
     }
     private func cancelTask(_ turnID: String) async {
         guard !planningBusy, UUID(uuidString: turnID) != nil, let initial = session.dataScope,
               AssistantTaskProjection.waitingTurnIDs(messages: conversation?.messages ?? [], history: taskTurns).contains(turnID) else { return }
+        refreshState.invalidate()
         planningBusy = true
         do {
             _ = try await session.askRequest(path: "api/chat/native/v1/turns/\(turnID)/cancel", method: "POST", body: Data("{}".utf8))
@@ -1213,7 +1245,7 @@ struct NativeAssistantConversationView: View {
             taskNotice = nil
         } catch { if session.dataScope == initial { taskNotice = "retry" } }
         planningBusy = false
-        await reload() // Only server readback determines whether cancellation won the race.
+        await reload(replacing: true) // Only server readback determines whether cancellation won the race.
     }
     private func openResult(for taskID: String) async {
         guard resultActive, let initial = session.dataScope, UUID(uuidString: taskID) != nil,

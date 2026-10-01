@@ -540,3 +540,28 @@ nonisolated final class AssistantConversationSelectionTests: XCTestCase {
         XCTAssertTrue(selection.owns(selection.generation))
     }
 }
+
+nonisolated final class AssistantConversationRefreshTests: XCTestCase {
+    @MainActor func testMutationSupersedesActualLateReadWithoutFinishingNewReadback() async throws {
+        let id = UUID().uuidString
+        let bytes = try JSONSerialization.data(withJSONObject: ["version": 5, "kind": "conversation", "conversationId": id,
+            "nextSequence": 1, "messages": [], "goals": []])
+        var refresh = AssistantConversationRefreshState()
+        let old = refresh.begin()
+        var newer: UUID?
+        do {
+            _ = try await AssistantConversationReader.read(requestedID: id, isCurrent: { refresh.owns(old) }, load: {
+                refresh.invalidate()
+                newer = refresh.begin()
+                await Task.yield()
+                return bytes
+            })
+            XCTFail("A refresh started before a send cannot publish afterwards")
+        } catch NativeDataError.staleSessionResponse {} catch { XCTFail("Unexpected error: \(error)") }
+        refresh.finish(old)
+        XCTAssertTrue(refresh.busy, "Old completion cannot unlock a newer authoritative readback")
+        XCTAssertTrue(refresh.owns(try XCTUnwrap(newer)))
+        refresh.finish(try XCTUnwrap(newer))
+        XCTAssertFalse(refresh.busy)
+    }
+}
