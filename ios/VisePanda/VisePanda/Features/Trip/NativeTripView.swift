@@ -47,6 +47,10 @@ struct NativeTripView: View {
         let active: Bool
     }
     var initialPlanningRequest: String? = nil
+    var initialTripID: String? = nil
+    var initialTripScope: NativeDataScope? = nil
+    @State private var initialTripReady = false
+    @State private var initialTripFailed = false
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var scenePhase
     @State private var store = NativeTripStore()
@@ -86,6 +90,43 @@ struct NativeTripView: View {
     }
 
     var body: some View {
+        Group {
+            if initialTripID == nil {
+                tripBody
+            } else if initialTripScope != session.dataScope || initialTripFailed || initialPlanningRequest != nil {
+                ContentUnavailableView(text("Trip unavailable", "行程暂不可用"), systemImage: "map",
+                    description: Text(text("Return to Journeys and refresh before choosing this Trip again.", "请返回旅程并刷新，再选择本行程。")))
+                    .accessibilityIdentifier("journeys.trip.unavailable")
+            } else if initialTripReady {
+                tripBody
+            } else {
+                ProgressView(text("Opening selected Trip", "正在打开所选行程"))
+            }
+        }
+        .task(id: session.dataScope) {
+            guard let initialTripID else { return }
+            initialTripReady = false; initialTripFailed = false
+            guard let initialTripScope, session.dataScope == initialTripScope, initialPlanningRequest == nil else {
+                initialTripFailed = true; return
+            }
+            while session.busy {
+                do { try await Task.sleep(for: .milliseconds(50)) } catch { return }
+                guard session.dataScope == initialTripScope, !Task.isCancelled else { return }
+            }
+            let opened = await NativeJourneyTripEntry.open(.init(tripID: initialTripID, scope: initialTripScope),
+                currentScope: { session.dataScope }, reload: {
+                    await store.reload(using: session)
+                    return store.scope == initialTripScope ? store.trips : []
+                }, select: { id in
+                    await store.select(id, using: session)
+                    return store.scope == initialTripScope && store.detail?.trip.id == id
+                })
+            guard session.dataScope == initialTripScope, !Task.isCancelled else { return }
+            initialTripReady = opened; initialTripFailed = !opened
+        }
+    }
+
+    private var tripBody: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: VPSpacing.section) {
                 BrandHeader()
@@ -194,7 +235,7 @@ struct NativeTripView: View {
                 planningRequest = initialPlanningRequest
                 await generateOutline()
             }
-            if session.dataScope != nil && !session.busy { await store.reload(using: session) }
+            if initialTripID == nil && session.dataScope != nil && !session.busy { await store.reload(using: session) }
         }
         .task(id: resultLoadKey) {
             let key = resultLoadKey

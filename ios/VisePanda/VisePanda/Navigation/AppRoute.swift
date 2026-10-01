@@ -5,6 +5,7 @@ enum AppRoute: Hashable {
     case capability(CapabilityKind)
     case today
     case entry(AppEntry)
+    case journeyTrip(NativeJourneyTripSelection)
 }
 
 @MainActor
@@ -29,6 +30,7 @@ struct TabRootView: View {
     var onEntry: ((AppEntry) -> Void)?
     var assistantShell = false
     var onSwitchShell: (() -> Void)?
+    var rootResetID: UUID?
     @State private var router = RouterPath()
 
     var body: some View {
@@ -36,49 +38,57 @@ struct TabRootView: View {
 
         NavigationStack(path: $router.path) {
             rootContent
-                .toolbar {
-                    ToolbarItemGroup(placement: .topBarLeading) {
-                        if let onSearch {
-                            Button(action: onSearch) {
-                                Label("shell.search", systemImage: "magnifyingglass")
-                            }.accessibilityIdentifier("shell.search.open")
-                        }
-                        if let onEntry {
-                            Menu {
-                                ForEach(AppEntry.allCases.filter { $0 != .search }) { entry in
-                                    Button { onEntry(entry) } label: { Text(LocalizedStringKey(entry.titleKey)) }
-                                        .accessibilityIdentifier("shell.entry.\(entry.rawValue)")
-                                }
-                                if let onSwitchShell {
-                                    Divider()
-                                    Button(assistantShell ? "shell.useLegacy" : "shell.useFourTabs", action: onSwitchShell)
-                                        .accessibilityIdentifier("shell.mode.toggle")
-                                }
-                            } label: {
-                                Label("shell.entries", systemImage: "line.3.horizontal")
-                            }.accessibilityIdentifier("shell.entries.open")
-                        }
-                    }
-                }
+                .toolbar { shellToolbar }
                 .navigationDestination(for: AppRoute.self) { route in
-                    switch route {
-                    case .entry(let entry):
-                        AppEntryView(entry: entry, isActive: isActive)
-                    case .today:
-                        TodayView()
-                    case .capability(let capability):
-                        CapabilityDetailView(capability: capability)
-                    }
+                    Group {
+                        switch route {
+                        case .entry(let entry):
+                            AppEntryView(entry: entry, isActive: isActive)
+                        case .journeyTrip(let selection):
+                            NativeTripView(initialTripID: selection.tripID, initialTripScope: selection.scope)
+                        case .today:
+                            TodayView()
+                        case .capability(let capability):
+                            CapabilityDetailView(capability: capability)
+                        }
+                    }.toolbar { shellToolbar }
                 }
         }
         .environment(router)
+        .onChange(of: rootResetID) { _, _ in router.reset() }
+    }
+
+    @ToolbarContentBuilder
+    private var shellToolbar: some ToolbarContent {
+        ToolbarItemGroup(placement: .topBarLeading) {
+            if let onSearch {
+                Button(action: onSearch) {
+                    Label("shell.search", systemImage: "magnifyingglass")
+                }.accessibilityIdentifier("shell.search.open")
+            }
+            if let onEntry {
+                Menu {
+                    ForEach(AppEntry.allCases.filter { $0 != .search }) { entry in
+                        Button { onEntry(entry) } label: { Text(LocalizedStringKey(entry.titleKey)) }
+                            .accessibilityIdentifier("shell.entry.\(entry.rawValue)")
+                    }
+                    if let onSwitchShell {
+                        Divider()
+                        Button(assistantShell ? "shell.useLegacy" : "shell.useFourTabs", action: onSwitchShell)
+                            .accessibilityIdentifier("shell.mode.toggle")
+                    }
+                } label: {
+                    Label("shell.entries", systemImage: "line.3.horizontal")
+                }.accessibilityIdentifier("shell.entries.open")
+            }
+        }
     }
 
     @ViewBuilder
     private var rootContent: some View {
         switch tab {
         case .vp: AskView(isActive: isActive)
-        case .journeys: TripView()
+        case .journeys: NativeJourneysView(isActive: isActive, onOpenVP: onEntry.map { handler in { handler(.ask) } })
         case .library: NativeKnowledgeView(isActive: isActive)
         case .memory: NativeTravelPaceView()
         case .tools: ToolsView()

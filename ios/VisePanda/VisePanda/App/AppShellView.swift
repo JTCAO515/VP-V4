@@ -21,8 +21,7 @@ struct AppShellView: View {
             ForEach(tabs) { tab in
                 TabRootView(tab: tab, isActive: selectedTab == tab && presentedEntry == nil,
                             onSearch: { presentedEntry = .search }, onEntry: open,
-                            assistantShell: assistantShell, onSwitchShell: switchShell)
-                    .id(entryResets[tab])
+                            assistantShell: assistantShell, onSwitchShell: switchShell, rootResetID: entryResets[tab])
                     .tabItem {
                         tab.label
                     }
@@ -85,6 +84,8 @@ private struct ShellEntrySheet: View {
                     .navigationDestination(for: AppRoute.self) { route in
                         switch route {
                         case .entry(let entry): AppEntryView(entry: entry)
+                        case .journeyTrip(let selection):
+                            NativeTripView(initialTripID: selection.tripID, initialTripScope: selection.scope)
                         case .today: TodayView()
                         case .capability(let kind): CapabilityDetailView(capability: kind)
                         }
