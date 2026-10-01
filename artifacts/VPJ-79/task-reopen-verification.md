@@ -6,6 +6,8 @@ The new owner/Task-only reference RPC uses an indexed, maximum-64 candidate scan
 
 PASS: disposable Auth/Next/Postgres native HTTP 8/8 (two Tasks, earlier-task exact reopening, foreign actor, missing, stale, revoked and replaced session); full-migration RLS/ACL 23/23; Simulator AssistantResultIdentityTests/AssistantTaskProjectionTests 3/3; contract 698/698; lint/typecheck/build/docs/diff checks.
 
+Coordinator review requested Task-specific candidate boundaries. The same disposable suite now also proves newer stale candidates do not hide an older current result for that Task; exactly 64 stale candidates return empty, while 65 return unavailable. Private fixture rows are removed before continuing the suite. No Library enumeration is used by the resolver.
+
 INCOMPLETE: default integration 39 pass/133 environment skips; security 192 pass/1 environment skip. The relevant disposable DB lane ran separately. Initial native test compilation failed on a dictionary inference expression and was fixed using an explicit type before passing.
 
 UNRUN: Staging/real provider/physical-device restart, production migration/release and complete #560 acceptance. #562 remains CLOSED; its status is not used as acceptance evidence. #560 remains OPEN.
