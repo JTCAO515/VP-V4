@@ -50,6 +50,23 @@ test('real disposable Auth/HTTP saved translation pages reopen beyond legacy20 w
  assert.equal((await call('/api/translate/consent', owner, 'DELETE', { policyId: e.policyId })).status, 200);
  assert.equal((await call(base, owner)).body.kind, 'unavailable');
  assert.equal((await call(base + '/turns/' + second.body.phrases[0].turnId, owner)).body.kind, 'unavailable');
+ const largeActor = await login(e.users[2]);
+ assert.equal((await call('/api/translate/consent', largeActor, 'POST', { policyId: e.policyId, noticeHash: e.noticeHash })).status, 200);
+ const longOutput = JSON.stringify({ translation: '译'.repeat(2400), backTranslation: '回'.repeat(2400) });
+ assert.ok(longOutput.length < 8000);
+ for (let i = 0; i < 20; i++) {
+  const turnId = uuid();
+  assert.equal((await call('/api/translate', largeActor, 'POST', { threadId: uuid(), turnId, idempotencyKey: uuid(), policyId: e.policyId,
+   sourceLocale: 'zh', targetLocale: 'en', text: '原'.repeat(600) })).status, 201);
+  e.sql(`update public.turns set status='completed' where id='${turnId}'; update turn_private.text_content set output_kind='answered',output_text='${longOutput}' where turn_id='${turnId}';`);
+ }
+ const largeResponse = await fetch(e.api + base, { headers: { Authorization: 'Bearer ' + largeActor } });
+ assert.equal(largeResponse.status, 200);
+ const largeWire = await largeResponse.text(), largePage = JSON.parse(largeWire);
+ assert.equal(largePage.kind, 'translations'); assert.equal(largePage.phrases.length, 20); assert.equal(largePage.nextCursor, null);
+ const wireBytes = Buffer.byteLength(largeWire, 'utf8');
+ assert.ok(wireBytes > 324_000 && wireBytes < 1_000_000);
+ t.diagnostic('actual HTTP legal CJK page bytes=' + wireBytes + ', phrases=20, existing output ceiling<8000 retained');
  assert.equal(e.counts.http, 0, 'history admission fixtures never dispatch a model');
  assert.equal(e.sql('select count(*) from public.model_budget_attempts;'), '0');
 

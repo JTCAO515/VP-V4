@@ -4,7 +4,16 @@ import { nativeRequestScope } from "../../identity/native-request.ts";
 import { isUuid } from "../../identity/request-guards.ts";
 import { projectTranslation, record } from "./contract.ts";
 
-const reply = (data: unknown, status = 200) => Response.json(data, { status, headers: { "Cache-Control": "private, no-store" } });
+// 20 * (600 + 2400 + 2400) UTF-16 units need at most648k bytes with
+// six-byte JSON Unicode escaping, plus bounded metadata. See the v2 contract.
+export const TRANSLATION_HISTORY_MAX_BYTES = 1_000_000;
+const reply = (data: unknown, status = 200) => {
+  const serialized = JSON.stringify(data);
+  if (Buffer.byteLength(serialized, "utf8") > TRANSLATION_HISTORY_MAX_BYTES) {
+    return Response.json({ error: { code: "PROVIDER_UNAVAILABLE" } }, { status: 503, headers: { "Cache-Control": "private, no-store" } });
+  }
+  return new Response(serialized, { status, headers: { "Content-Type": "application/json", "Cache-Control": "private, no-store" } });
+};
 const failure = (code: string, status: number) => reply({ error: { code } }, status);
 const unavailable = () => ({ version: 2 as const, kind: "unavailable" as const });
 

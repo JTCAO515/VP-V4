@@ -327,7 +327,7 @@ final class NativeSession {
         let path = turnID.map { base + "/turns/" + $0.lowercased() } ?? base
         let query = cursor.map { [URLQueryItem(name: "cursor", value: $0.lowercased())] } ?? []
         let data = try await dataRequest(prefix: base, path: path, method: "GET", queryItems: query)
-        guard data.count <= 250_000 else { throw NativeDataError.invalidResponse }
+        guard data.count <= NativeTranslationHistoryWire.maximumResponseBytes else { throw NativeDataError.invalidResponse }
         return data
     }
 

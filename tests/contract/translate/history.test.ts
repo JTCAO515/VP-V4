@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { translationPrompt } from '../../../lib/server/media-translation/text/contract.ts';
-import { projectTranslationHistory, translationHistoryHTTP } from '../../../lib/server/media-translation/text/history-http.ts';
+import { projectTranslationHistory, translationHistoryHTTP, TRANSLATION_HISTORY_MAX_BYTES } from '../../../lib/server/media-translation/text/history-http.ts';
 const id = (n: number) => `11111111-1111-4111-8111-${String(n).padStart(12, '0')}`;
 const policy = id(900), input = { sourceLocale: 'en' as const, targetLocale: 'zh' as const, text: 'CNY 50.' };
 const turn = (n: number) => ({ turnId: id(n), locale: 'zh', input: translationPrompt(input), status: 'completed', outcome: 'answered', output: JSON.stringify({ translation: '50元。', backTranslation: input.text }) });
@@ -37,4 +37,24 @@ test('new history rejects ambient authority/query expansion and keeps Production
  const prior = process.env.VERCEL_ENV; process.env.VERCEL_ENV = 'production';
  try { assert.equal((await translationHistoryHTTP(new Request('https://example.test/api/translate/history/v2'))).status, 503); }
  finally { if (prior === undefined) delete process.env.VERCEL_ENV; else process.env.VERCEL_ENV = prior; }
+});
+
+test('twenty legal maximum CJK projections and JSON-escaped wire exceed250k without changing text limits', () => {
+ const input = { sourceLocale: 'zh' as const, targetLocale: 'en' as const, text: '原'.repeat(600) };
+ const output = JSON.stringify({ translation: '译'.repeat(2400), backTranslation: '回'.repeat(2400) });
+ assert.ok(output.length < 8000, 'existing stored-output gate retained');
+ const turns = Array.from({ length: 20 }, (_, i) => ({ turnId: id(i + 1), locale: 'en', input: translationPrompt(input),
+  status: 'completed', outcome: 'answered', output }));
+ const page = projectTranslationHistory(raw(turns), policy, null);
+ assert.equal(page?.kind, 'translations');
+ if (page?.kind !== 'translations') throw Error('expected actual validated page');
+ assert.equal(page.phrases.length, 20);
+ const serialized = JSON.stringify(page), bytes = Buffer.byteLength(serialized, 'utf8');
+ const escaped = serialized.replace(/原/g, '\\u539f').replace(/译/g, '\\u8bd1').replace(/回/g, '\\u56de');
+ assert.ok(bytes > 324_000);
+ assert.ok(Buffer.byteLength(escaped, 'utf8') > 648_000);
+ assert.deepEqual(JSON.parse(escaped), page);
+ assert.ok(bytes < TRANSLATION_HISTORY_MAX_BYTES);
+ assert.ok(Buffer.byteLength(escaped, 'utf8') < TRANSLATION_HISTORY_MAX_BYTES);
+ console.log('translation wire boundary bytes:', bytes, Buffer.byteLength(escaped, 'utf8'), 'cap:', TRANSLATION_HISTORY_MAX_BYTES);
 });

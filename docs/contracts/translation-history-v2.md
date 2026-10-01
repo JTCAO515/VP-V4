@@ -50,11 +50,29 @@ can still be reopened independently of that scan window. Exact success has
 
 The HTTP layer rereads source eligibility/content and the mobile session before
 responding, failing unavailable when the projected source changes. Both session
-checks return401 only for explicit UNAUTHENTICATED/SESSION_REPLACED or a valid
+checks return 401 only for explicit UNAUTHENTICATED/SESSION_REPLACED or a valid
 subject/session mismatch; ordinary RPC/transport/5xx and malformed protocol replies
-return503, so a temporary read failure does not invalidate the native login. Each read is
+return 503, so a temporary read failure does not invalidate the native login. Each read is
 bounded; the existing 10-second request deadline remains. This is live traversal,
 not a snapshot or a full-history completeness guarantee across concurrent edits.
+
+## Wire byte ceiling
+
+HTTP and both native transport/decoder checks use a shared documented ceiling of
+1,000,000 UTF-8 response bytes for pages and exact reads. One page contains at most
+20 records, each with original600 + translation2400 + back-translation2400 UTF-16
+units. Even six-byte JSON Unicode escaping requires at most648,000 content bytes;
+closed keys, UUIDs, locales/state and envelope metadata fit well within the remaining
+352,000 bytes. The cap also matches the existing v1 translation transport budget.
+This does not increase any phrase field, stored-output8000-unit gate, provider input
+or output token limit. No page is truncated to fit; an oversized HTTP response fails
+503 with no partial content, and native rejects over-ceiling bytes before decoding.
+
+A `projectTranslation`-accepted 20-record CJK page measured327,375 bytes; escaping
+those same content fields measured651,375 bytes. The old250,000-byte native check
+rejected this legal page. Literal and escaped forms now both decode all20 records;
+an otherwise valid JSON envelope padded beyond1,000,000 bytes is still rejected.
+These are structural/numeric synthetic fixtures, not translation-quality evidence.
 
 ## Native consumer and rollback
 

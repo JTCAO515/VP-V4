@@ -160,6 +160,11 @@ struct NativeSavedTranslationReference: Identifiable {
     var id: String { phrase.id }
 }
 
+enum NativeTranslationHistoryWire {
+    // Mirrors the documented server wire cap, including JSON escape overhead.
+    static let maximumResponseBytes = 1_000_000
+}
+
 private struct NativeSavedTranslationReply: Decodable {
     let version: Int
     let kind: String
@@ -216,7 +221,7 @@ final class NativeSavedTranslationHistoryStore {
                   cursor == nil || (first.policy.id == previousPolicy && first.policy.noticeHash == previousNotice),
                   exact == nil || (first.policy.id == exact?.policyID && first.policy.noticeHash == exact?.noticeHash) else { throw NativeDataError.invalidResponse }
             let data = try await read(cursor, exact?.id)
-            guard current(), data.count <= 250_000 else { throw NativeDataError.staleSessionResponse }
+            guard current(), data.count <= NativeTranslationHistoryWire.maximumResponseBytes else { throw NativeDataError.staleSessionResponse }
             let reply = try JSONDecoder().decode(NativeSavedTranslationReply.self, from: data)
             guard reply.version == 2, reply.policyId == first.policy.id else { throw NativeDataError.invalidResponse }
             let rows: [NativeTranslationPhrase]

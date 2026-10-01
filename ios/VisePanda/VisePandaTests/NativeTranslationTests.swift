@@ -157,4 +157,33 @@ import Testing
         #expect(store.state == "idle" && store.phrases.isEmpty && store.scope == nil)
     }
 
+    @Test func savedHistoryAcceptsTwentyMaximumCJKPhrasesAndEscapedWire() async throws {
+        let rows = (1...20).map { number in
+            NativeTranslationPhrase(turnId: String(format: "33333333-3333-4333-8333-%012d", number), sourceLocale: "zh", targetLocale: "en",
+                original: String(repeating: "原", count: 600), state: "translated",
+                translation: String(repeating: "译", count: 2400), backTranslation: String(repeating: "回", count: 2400))
+        }
+        let literal = try savedPage(rows)
+        #expect(literal.count > 324_000)
+        let escapedString = try #require(String(data: literal, encoding: .utf8))
+            .replacingOccurrences(of: "原", with: "\\u539f")
+            .replacingOccurrences(of: "译", with: "\\u8bd1")
+            .replacingOccurrences(of: "回", with: "\\u56de")
+        let escaped = Data(escapedString.utf8)
+        #expect(escaped.count > literal.count)
+        for data in [literal, escaped] {
+            let store = NativeSavedTranslationHistoryStore(uptime: { 0 })
+            await store.load(scope: scope, currentScope: { scope }, policyRequest: { _, _, _ in policy() }) { _, _ in data }
+            #expect(store.state == "ready")
+            #expect(store.phrases == rows)
+        }
+        let limit = NativeTranslationHistoryWire.maximumResponseBytes
+        #expect(escaped.count < limit)
+        var oversized = literal
+        oversized.append(Data(repeating: 0x20, count: limit + 1 - oversized.count))
+        let rejected = NativeSavedTranslationHistoryStore(uptime: { 0 })
+        await rejected.load(scope: scope, currentScope: { scope }, policyRequest: { _, _, _ in policy() }) { _, _ in oversized }
+        #expect(rejected.phrases.isEmpty && rejected.state == "unavailable")
+    }
+
 }

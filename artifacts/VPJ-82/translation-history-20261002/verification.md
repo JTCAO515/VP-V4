@@ -64,6 +64,25 @@ HTTP stack was uniquely named and removed by its runner; its credential-bearing
 startup output is suppressed. The owned Simulator is9F5D7CD1; no other session's
 device or original user checkout was touched. No secret/private user data was read.
 
+## Independent review: legal wire boundary repair
+
+Main found the native250k byte cap could reject a valid20-record page. A new
+`projectTranslation` fixture retains original600/each output2400 UTF-16 and stored
+JSON output<8000 units. Actual compact UTF-8 is327,375 bytes; the same Unicode-escaped
+wire is651,375 bytes. The old native case failed as expected (wire-red-summary).
+
+HTTP plus both NativeSession and saved-history decoder now use1,000,000 bytes:
+20*5400*6=648,000 bytes for worst content escaping, with bounded metadata and headroom.
+No field/provider/output ceiling or permissions change. Native focused suite11 tests
+PASS (literal, escaped, all20 records and over-cap rejection); actual Auth/HTTP large
+page returns200/all20 with327,375 bytes and zero model calls. All24 session-fault
+injections still pass. HTTP/contract/native summary logs are committed separately.
+Unchanged SQL and other contract evidence is reused; latest-head CI is the gate.
+
+Native wire command used newly owned Simulator0699D4FB-8BFE-4D19-BF63-D212EFBD5297,
+same project/scheme/derivedData, result bundles `/tmp/vpj82-translation-wire-red.xcresult`
+and `/tmp/vpj82-translation-wire-green.xcresult`. No other device was touched.
+
 ## Remaining boundaries and rollback
 
 UNRUN: logged-in native Auth→history/card UI chain, physical device, full global
