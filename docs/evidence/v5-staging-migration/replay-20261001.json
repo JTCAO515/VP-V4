@@ -1,0 +1,84 @@
+{
+  "startedAt": "2026-10-01T15:33:35.970Z",
+  "result": "PASS_LOCAL_SYNTHETIC_REPLAY_ONLY",
+  "targetAcceptance": "UNRUN",
+  "stages": [
+    {
+      "stage": "reconstructed synthetic applied baseline",
+      "result": "PASS"
+    },
+    {
+      "stage": "forward missing set replay",
+      "result": "PASS"
+    },
+    {
+      "stage": "preexisting data invariants",
+      "result": "PASS"
+    },
+    {
+      "stage": "fresh catalog replay",
+      "result": "PASS"
+    },
+    {
+      "stage": "forward actor and revocation invariants",
+      "result": "PASS"
+    },
+    {
+      "stage": "fresh actor and revocation invariants",
+      "result": "PASS"
+    },
+    {
+      "stage": "structure and permission comparison",
+      "result": "PASS"
+    }
+  ],
+  "versionSet": {
+    "localCount": 90,
+    "appliedCount": 75,
+    "unknown": [],
+    "missing": [
+      "20260922033000",
+      "20260926113804",
+      "20260926132008",
+      "20260926150000",
+      "20260926170000",
+      "20260926180000",
+      "20260927010000",
+      "20260927021000",
+      "20260927030000",
+      "20260927040000",
+      "20260927050000",
+      "20260927055000",
+      "20260927060000",
+      "20260930010000",
+      "20260930020000"
+    ],
+    "outOfOrderMissing": [
+      "20260922033000"
+    ],
+    "catalogSha256": "83d15933203f6f9f80a32ebbcef85351334dd09db47a6beedc6e78f9436ec0b2",
+    "replayable": true
+  },
+  "provenance": "Coordinator supplied 2026-10-01 version-set audit of dzqdzetcctkhbrhlxxgn: 75 applied, no remote-only, 15 missing. Version list reconstructed from base 27c45b05 and that exact missing set; not a remote schema or data copy.",
+  "toolSha256": {
+    "scripts/acceptance/v5-staging-migration-replay.mjs": "39a269de437b58e3e96bfda31c610a85821475b88b2a1e03bdd29c08cba16725",
+    "scripts/acceptance/v5-staging-migration-set.mjs": "f8698c8f926c012fe6c9ac6d71bfff5c2daf848fc9fd15818ff41144051ce370",
+    "tests/fixtures/v5-staging-migration/baseline.sql": "c7f87cd9aa4df4e5bf0f91affdefc9ddd1a00df076dfbf3539e231f9a5b62826",
+    "tests/fixtures/v5-staging-migration/probes.sql": "5f35bf7517e7458fd493d2d9cbf6e4a9e5f692299ebd2b3dd5727686bf19ee75"
+  },
+  "imageId": "sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+  "schemaDifferences": [],
+  "forwardSchemaSha256": "9cbae52a1362f2cf08bc21a03dc4cacdbb770e6ea5e963e91583e1e9dfb94a5b",
+  "freshSchemaSha256": "9cbae52a1362f2cf08bc21a03dc4cacdbb770e6ea5e963e91583e1e9dfb94a5b",
+  "cleanup": [
+    {
+      "container": "v5-migration-ba89a248-5bd-fresh",
+      "result": "PASS"
+    },
+    {
+      "container": "v5-migration-ba89a248-5bd-forward",
+      "result": "PASS"
+    }
+  ],
+  "completedAt": "2026-10-01T15:33:45.108Z"
+}
