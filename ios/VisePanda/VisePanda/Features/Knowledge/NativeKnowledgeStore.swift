@@ -29,6 +29,16 @@ final class NativeLibraryPhraseStore {
     func isCurrent(_ requested: NativeDataScope?) -> Bool {
         state == "ready" && requested != nil && scope == requested && uptime() < deadline
     }
+    /// nil means the window is not currently readable, never zero matches.
+    /// Matching only reads the existing snapshot; it cannot renew its lifetime.
+    func matches(scope requested: NativeDataScope?, query: String) -> [NativeTranslationPhrase]? {
+        guard isCurrent(requested), query.utf16.count <= 120 else { return nil }
+        let term = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        return rows.filter { phrase in
+            term.isEmpty || [phrase.original, phrase.translation ?? "", phrase.backTranslation ?? ""]
+                .contains { $0.localizedStandardContains(term) }
+        }
+    }
     func reference(_ phrase: NativeTranslationPhrase, scope requested: NativeDataScope?) -> NativeLibraryPhraseReference? {
         guard isCurrent(requested), rows.contains(phrase), let scope, let policyID, let noticeHash else { return nil }
         return .init(phrase: phrase, policyID: policyID, noticeHash: noticeHash, scope: scope)

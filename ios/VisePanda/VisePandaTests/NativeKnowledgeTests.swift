@@ -1,4 +1,5 @@
 import XCTest
+import SwiftUI
 @testable import VisePanda
 
 nonisolated final class NativeKnowledgeTests: XCTestCase {
@@ -457,8 +458,8 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         {"version":1,"kind":"policy","policy":{"id":"11111111-1111-4111-8111-111111111111","provider":"qwen","recipient":"Synthetic recipient","sourceRegion":"test","processingRegion":"test","storageRegion":"test","termsVersion":"test","noticeVersion":"test","noticeHash":"\(hash)","noticeZh":"测试","noticeEn":"Test notice","retention":"retain_after_hide_v1","expiresAt":"2099-01-01T00:00:00Z","consentState":"\(accepted ? "accepted" : "not_accepted")"}}
         """.utf8)
     }
-    @MainActor private func phraseHistory(_ translated: String? = "合成短语", id: String = "22222222-2222-4222-8222-222222222222") throws -> Data {
-        let rows: [[String: Any]] = translated.map { value in [["turnId": id, "sourceLocale": "en", "targetLocale": "zh", "original": "Synthetic phrase", "state": "translated", "translation": value, "backTranslation": "Synthetic phrase"]] } ?? []
+    @MainActor private func phraseHistory(_ translated: String? = "合成短语", id: String = "22222222-2222-4222-8222-222222222222", back: String = "Synthetic phrase") throws -> Data {
+        let rows: [[String: Any]] = translated.map { value in [["turnId": id, "sourceLocale": "en", "targetLocale": "zh", "original": "Synthetic phrase", "state": "translated", "translation": value, "backTranslation": back]] } ?? []
         return try JSONSerialization.data(withJSONObject: ["version": 1, "kind": "translations", "phrases": rows])
     }
     @MainActor func testLibraryPhraseReusesReadonlyReaderAndRechecksExactBodyAndPolicy() async throws {
@@ -511,6 +512,112 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
             now += 21; return try self.phraseHistory()
         }
         XCTAssertEqual(store.state, "unavailable"); XCTAssertTrue(store.rows.isEmpty)
+    }
+
+    @MainActor func testGroupedPhraseMatchingIsBoundedAndNeverRenewsEligibility() async throws {
+        var now: TimeInterval = 100
+        let store = NativeLibraryPhraseStore(uptime: { now })
+        var reads = 0
+        await store.load(scope: owner, currentScope: { self.owner }) { path, _, _ in
+            reads += 1
+            return path.hasSuffix("policy") ? self.phrasePolicy() : try self.phraseHistory(back: "Back-only wording")
+        }
+        for term in [" SYNTHETIC ", "合成", "back-only", ""] {
+            XCTAssertEqual(store.matches(scope: owner, query: term)?.count, 1, term)
+        }
+        XCTAssertEqual(store.matches(scope: owner, query: "not present")?.count, 0)
+        XCTAssertNil(store.matches(scope: owner, query: String(repeating: "x", count: 121)))
+        now = 119
+        XCTAssertEqual(store.matches(scope: owner, query: "合成")?.count, 1)
+        XCTAssertEqual(reads, 2, "matching does not re-read or renew the source window")
+        now = 120
+        XCTAssertNil(store.matches(scope: owner, query: "合成"), "expiry is unavailable, not zero matches")
+        XCTAssertNil(store.matches(scope: nil, query: ""))
+        await store.load(scope: owner, currentScope: { self.owner }) { _, _, _ in self.phrasePolicy(false) }
+        XCTAssertNil(store.matches(scope: owner, query: ""), "revoked/unaccepted must not claim an empty search")
+    }
+
+    @MainActor func testGroupedPhraseLateWindowUsesLatestQueryAndClearedScopeCannotReviveMatches() async throws {
+        let store = NativeLibraryPhraseStore()
+        let barrier = KnowledgeReadBarrier()
+        let pending = Task {
+            await store.load(scope: self.owner, currentScope: { self.owner }) { path, _, _ in
+                if path.hasSuffix("policy") { return self.phrasePolicy() }
+                return await barrier.wait()
+            }
+        }
+        await barrier.awaitStart()
+        XCTAssertNil(store.matches(scope: owner, query: "Synthetic"))
+        await barrier.finish(try phraseHistory()); await pending.value
+        XCTAssertEqual(store.matches(scope: owner, query: "new missing query")?.count, 0)
+        XCTAssertEqual(store.matches(scope: owner, query: "Synthetic")?.count, 1)
+        let other = NativeDataScope(endpoint: owner.endpoint, subject: "other", mobileEpoch: 1, generation: 2)
+        XCTAssertNil(store.matches(scope: other, query: "Synthetic"))
+        store.clear()
+        XCTAssertNil(store.matches(scope: owner, query: "Synthetic"))
+    }
+
+    @MainActor func testGroupedSearchSmallMaximumTextNativeRendering() async throws {
+        for locale in [SupportedLocale.en, .zh] {
+            let settings = AppSettings(selectedLocale: locale, nativeSession: NativeSession(arguments: [], bundleConfiguration: [:]), defaults: try XCTUnwrap(UserDefaults(suiteName: "vpj82.render.\(UUID().uuidString)")))
+            let host = UIHostingController(rootView: NativeKnowledgeView().environment(settings).dynamicTypeSize(.accessibility5))
+            let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 568))
+            window.rootViewController = host; window.makeKeyAndVisible()
+            defer { window.isHidden = true }
+            host.view.frame = window.bounds; host.view.layoutIfNeeded()
+            try await Task.sleep(for: .milliseconds(250))
+            func fields(_ view: UIView) -> [UITextField] {
+                (view as? UITextField).map { [$0] } ?? view.subviews.flatMap(fields)
+            }
+            let field = try XCTUnwrap(fields(host.view).first)
+            XCTAssertGreaterThan(field.bounds.width, 0)
+            XCTAssertGreaterThan(field.font?.pointSize ?? 0, 17)
+            XCTAssertLessThanOrEqual(field.convert(field.bounds, to: host.view).maxX, 320)
+            field.text = locale == .zh ? "合成" : "Synthetic"
+            field.sendActions(for: .editingChanged)
+            try await Task.sleep(for: .milliseconds(100))
+            var ancestor = field.superview
+            while let view = ancestor {
+                if let scroll = view as? UIScrollView {
+                    let rect = field.convert(field.bounds, to: scroll)
+                    scroll.setContentOffset(CGPoint(x: 0, y: max(0, rect.minY - 20)), animated: false)
+                    break
+                }
+                ancestor = view.superview
+            }
+            host.view.layoutIfNeeded()
+            let image = UIGraphicsImageRenderer(bounds: host.view.bounds).image { _ in
+                host.view.drawHierarchy(in: host.view.bounds, afterScreenUpdates: true)
+            }
+            let attachment = XCTAttachment(image: image)
+            attachment.name = "Library-grouped-search-\(locale.rawValue)-small-max-signedout"
+            attachment.lifetime = .keepAlways; add(attachment)
+        }
+    }
+
+    @MainActor func testMatchedPhraseExactLocalReadRendersReadonlyCard() async throws {
+        let store = NativeLibraryPhraseStore()
+        let reader: NativeTranslationStore.Request = { path, _, _ in
+            path.hasSuffix("policy") ? self.phrasePolicy() : try self.phraseHistory()
+        }
+        await store.load(scope: owner, currentScope: { self.owner }, request: reader)
+        let match = try XCTUnwrap(store.matches(scope: owner, query: "合成")?.first)
+        let reference = try XCTUnwrap(store.reference(match, scope: owner))
+        await store.load(scope: owner, exact: reference, currentScope: { self.owner }, request: reader)
+        let opened = try XCTUnwrap(store.opened)
+        XCTAssertEqual(opened, match)
+        for chinese in [false, true] {
+            let host = UIHostingController(rootView: NativeTranslationCard(phrase: opened, chinese: chinese).dynamicTypeSize(.accessibility5))
+            let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 568))
+            window.rootViewController = host; window.makeKeyAndVisible()
+            defer { window.isHidden = true }
+            host.view.frame = window.bounds; host.view.layoutIfNeeded()
+            try await Task.sleep(for: .milliseconds(150))
+            let image = UIGraphicsImageRenderer(bounds: host.view.bounds).image { _ in host.view.drawHierarchy(in: host.view.bounds, afterScreenUpdates: true) }
+            let attachment = XCTAttachment(image: image)
+            attachment.name = "Library-exact-local-reader-card-\(chinese ? "zh" : "en")-small-max"
+            attachment.lifetime = .keepAlways; add(attachment)
+        }
     }
 
     @MainActor func testTripResultOpensOnlyExactCurrentReference() async throws {

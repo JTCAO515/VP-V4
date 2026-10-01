@@ -125,12 +125,17 @@ struct NativeKnowledgeView: View {
         }
         .accessibilityIdentifier("library.tool.translation")
         Text(text("My materials and results", "我的资料与成果")).font(.title2.bold())
-        NativeLibraryPhrasePanel(isActive: isActive)
-        Text(text("Comparison results", "比较成果")).font(.headline)
-        Text(text("Search your current comparisons across journeys. Each page shows up to 20 results. Other materials are not searched here yet.", "查找各旅程中当前有效的比较成果，每页最多显示 20 份。其他资料尚未纳入此处搜索。"))
-            .font(.footnote).foregroundStyle(Color.vpSecondaryText)
-        TextField(text("Search my result", "搜索我的成果"), text: $search)
+        TextField(text("Search my materials and results", "搜索我的资料与成果"), text: $search)
             .textFieldStyle(.roundedBorder).accessibilityIdentifier("library.search")
+        Text(text("Current comparisons. Translations from your latest 20 text requests. Other sources are excluded.", "当前比较成果；最近 20 次文字请求中的翻译。其他来源未纳入。"))
+            .font(.footnote).foregroundStyle(Color.vpSecondaryText)
+        if search.utf16.count > 120 {
+            Text(text("Use a search of up to 120 characters.", "搜索内容最多 120 个字符。"))
+        }
+        NativeLibraryPhrasePanel(isActive: isActive, query: search)
+        Text(text("Comparison results", "比较成果")).font(.headline)
+        Text(text("Current comparisons across journeys, up to 20 per page.", "各旅程中当前有效的比较成果，每页最多 20 份。"))
+            .font(.footnote).foregroundStyle(Color.vpSecondaryText)
         if session.dataScope == nil {
             Text(text("Sign in to find your results.", "登录后可查找自己的成果。"))
         } else if scenePhase == .active && isActive && resultStore.isCurrent(session.dataScope, query: search, cursor: cursor) {
@@ -188,6 +193,7 @@ struct LibraryResultSelection: Identifiable {
 
 private struct NativeLibraryPhrasePanel: View {
     let isActive: Bool
+    let query: String
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var phase
     @State private var store = NativeLibraryPhraseStore()
@@ -207,9 +213,11 @@ private struct NativeLibraryPhrasePanel: View {
             TimelineView(.periodic(from: .now, by: 1)) { _ in
                 if scope == nil {
                     Text(text("Sign in to read your materials.", "登录后可读取自己的资料。"))
-                } else if store.isCurrent(scope) {
-                    if store.rows.isEmpty { Text(text("No completed translation in this recent window.", "当前最近窗口中没有已完成的翻译。")) }
-                    ForEach(store.rows) { phrase in
+                } else if query.utf16.count > 120 && store.isCurrent(scope) {
+                    Text(text("Shorten the search to check this window.", "请缩短搜索内容后查找此窗口。"))
+                } else if let matches = store.matches(scope: scope, query: query) {
+                    if matches.isEmpty { Text(text("No matching completed translation in this recent window.", "当前最近窗口中没有匹配的已完成翻译。")) }
+                    ForEach(matches) { phrase in
                         Button {
                             guard let reference = store.reference(phrase, scope: scope) else {
                                 store.clear(); refresh = UUID(); return
@@ -220,6 +228,11 @@ private struct NativeLibraryPhrasePanel: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(phrase.original).lineLimit(2)
                                 Text(phrase.translation ?? "").font(.footnote).lineLimit(2)
+                                if !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                                   let back = phrase.backTranslation,
+                                   back.localizedStandardContains(query.trimmingCharacters(in: .whitespacesAndNewlines)) {
+                                    Text(text("Back-translation: ", "回译：") + back).font(.footnote).lineLimit(2)
+                                }
                             }.frame(maxWidth: .infinity, alignment: .leading)
                         }.accessibilityIdentifier("library.phrase.open")
                     }
@@ -236,6 +249,7 @@ private struct NativeLibraryPhrasePanel: View {
             }
         }
         .onChange(of: scope) { _, _ in store.clear(); selected = nil }
+        .onChange(of: query) { _, _ in selected = nil }
         .onDisappear { store.clear(); selected = nil }
         .sheet(item: $selected, onDismiss: { refresh = UUID() }) { reference in
             NativeLibraryPhraseDetail(reference: reference)
