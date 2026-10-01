@@ -205,14 +205,12 @@ final class AppShellUITests: XCTestCase {
     }
 
     private func checkVPJ77FixtureFullAccessibilityAudit(appearance: XCUIDevice.Appearance) {
-        let previousAppearance = XCUIDevice.shared.appearance
-        XCUIDevice.shared.appearance = appearance
-        defer { XCUIDevice.shared.appearance = previousAppearance }
         continueAfterFailure = true
         for locale in ["en", "zh-Hans"] {
             let app = XCUIApplication()
             app.launchArguments = ["-VPJ77Specimen", "-VisePandaLocale", locale,
-                                   "-AppleLanguages", "(\(locale))",
+                                   "-AppleLanguages", "(\(locale))", "-VPJ77AppearanceProbe",
+                                   "-VPJ77AuditAppearance", appearance == .dark ? "dark" : "light",
                                    "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryL"]
             app.launch()
             XCTAssertTrue(app.staticTexts["specimen.fixture-banner"].waitForExistence(timeout: 10))
@@ -224,6 +222,16 @@ final class AppShellUITests: XCTestCase {
                     if position == "detail" {
                         action.tap()
                         XCTAssertTrue(app.navigationBars[locale == "en" ? "Example detail" : "样例详情"].waitForExistence(timeout: 3))
+                    }
+                    let expectedStyle = appearance == .dark ? "dark" : "light"
+                    let observedStyle = app.staticTexts.matching(identifier: "specimen.fixture-banner")
+                        .firstMatch.value as? String
+                    print("VPJ77 appearance requested=\(expectedStyle), device=\(XCUIDevice.shared.appearance.rawValue), fixture=\(observedStyle ?? "missing")")
+                    guard observedStyle == expectedStyle else {
+                        capture("VPJ77-appearance-mismatch-\(locale)-\(tab)-\(position)", app: app)
+                        XCTFail("Requested \(expectedStyle), but fixture rendered \(observedStyle ?? "missing")")
+                        app.terminate()
+                        return
                     }
                     print("VPJ77 viewport \(locale) \(tab) \(position): action=\(action.frame), nav=\(app.navigationBars.firstMatch.frame), tabs=\(app.tabBars.firstMatch.frame)")
                     capture("VPJ77-full-AX-\(locale)-\(tab)-\(position)-theme\(appearance.rawValue)", app: app)
