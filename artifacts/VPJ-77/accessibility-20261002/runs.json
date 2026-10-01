@@ -1,0 +1,46 @@
+{
+  "scope": "launch-only -VPJ77Specimen, no live writes",
+  "base": "036e8f855f3e8b903b28aa4739179631c8a90534",
+  "date": "2026-10-02 Asia/Shanghai",
+  "sourceSha256": {
+    "ios/VisePanda/VisePanda/Features/Ask/AssistantSpecimenView.swift": "38996a0413d0e8de8dfb3a4be8c8d10bf0b4cb3f4850fdf0e9fc7e517e569aae",
+    "ios/VisePanda/VisePandaUITests/AppShellUITests.swift": "b3f90ca4ff8215551dca22019216a65e3cd90f99a98b1bd3d5a15a580fea6fa0"
+  },
+  "tests": [
+    {
+      "device": "iPhone SE (3rd generation)",
+      "os": "17.5",
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "xcresult": "test_sim_2026-10-01T17-31-49-755Z_pid31617_b7ef64df.xcresult"
+    },
+    {
+      "device": "iPhone 17 Pro, owned VPJ77-AX-20261002",
+      "os": "26.5",
+      "theme": "light",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "xcresult": "test_sim_2026-10-01T17-26-35-065Z_pid31617_50b6e27d.xcresult"
+    },
+    {
+      "device": "iPhone 17 Pro, owned VPJ77-AX-20261002",
+      "os": "26.5",
+      "theme": "dark",
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "xcresult": "test_sim_2026-10-01T17-29-16-415Z_pid31617_adaa11c7.xcresult"
+    }
+  ],
+  "fullAudit": "all, both locales, VP + Memory, initial + detail, both themes on both runtimes; issue handler always false",
+  "fullAuditPageStates": 32,
+  "seSystemTextSize": "large -> accessibility-extra-extra-extra-large before final test -> large restored with readback",
+  "cleanup": "original SE shutdown; owned temporary iOS26 device deleted",
+  "unrun": [
+    "physical VoiceOver gestures/spoken order",
+    "traveller observation",
+    "Staging/provider/full product acceptance"
+  ]
+}
