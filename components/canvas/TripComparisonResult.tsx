@@ -5,6 +5,7 @@ import { createPasswordAuthClient } from "@/lib/server/identity/browser-auth-cli
 import { parseResultArtifactRead, type ResultArtifactRead } from "@/lib/server/artifacts/result-contract";
 import type { Locale } from "@/lib/i18n";
 import styles from "./TripComparisonResult.module.css";
+import { comparisonBasisFacts } from "./comparison-basis";
 
 type Read = { tripId: string; tripVersion: number; result: ResultArtifactRead };
 type State = "loading" | "ready" | "empty" | "unavailable" | "unauthenticated" | "expired";
@@ -53,6 +54,7 @@ export function TripComparisonResult({ tripId, tripVersion, locale }: { tripId: 
     return () => { generation.current += 1; controller.abort(); if (timer) clearTimeout(timer); };
   }, [tripId, tripVersion, refresh, visible]);
   const result = visible && state === "ready" && read?.tripId === tripId && read.tripVersion === tripVersion ? read.result : null;
+  const basis = result ? comparisonBasisFacts(result, zh) : null;
   const notice = state === "empty" ? (zh ? "此行程暂无当前有效的比较成果。" : "No current comparison is saved for this Trip.")
     : state === "unauthenticated" ? (zh ? "请重新登录后读取成果。" : "Sign in again to read this comparison.")
     : state === "unavailable" ? (zh ? "成果暂不可安全读取，请刷新重试。" : "This comparison cannot be read safely. Refresh to retry.")
@@ -64,7 +66,17 @@ export function TripComparisonResult({ tripId, tripVersion, locale }: { tripId: 
     <p className={styles.note}>{zh ? "已保存成果 · 只读" : "Saved comparison · Read only"}</p>
     {result ? <><h3>{result.content.title}</h3><p>{result.content.summary}</p><ul>{result.content.options.map(option =>
       <li key={option.id}><h4>{option.title}</h4><p>{option.tradeoff}</p></li>)}</ul>
-      <p className={styles.identity} data-testid="comparison-identity">{result.artifactId} · r{result.revision}</p></>
+      {basis ? <details className={styles.basis} key={`${result.artifactId}:${result.revision}`} data-testid="comparison-basis">
+        <summary>{basis.heading}</summary>
+        <p>{basis.trip}</p><p>{basis.request}</p><p>{basis.memory}</p>
+        <p>{basis.evidence}</p><p>{basis.explanation}</p><p className={styles.note}>{basis.currentness}</p>
+        <details className={styles.records}><summary>{basis.records}</summary>
+          <p className={styles.identity} data-testid="comparison-identity">{result.artifactId} · r{result.revision}</p>
+          <p>{zh ? "目标记录版本" : "Goal record version"}：v{result.source.goalVersion}</p>
+          <p className={styles.identity}>{zh ? "任务完成记录" : "Task completion record"}：{result.source.taskTurnId}</p>
+          <p className={styles.identity}>{zh ? "成果版本记录时间" : "Result revision recorded at"}：{result.createdAt}</p>
+        </details>
+      </details> : null}</>
       : <p role="status" aria-live="polite">{notice}</p>}
   </section>;
 }
