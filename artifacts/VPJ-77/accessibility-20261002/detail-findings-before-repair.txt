@@ -1,0 +1,6 @@
+VPJ77 full AX en VP detail: Dynamic Type font sizes are partially unsupported; Optional(Attributes: Button, 0x10a19c8c0, {{317.7, 82.0}, {64.3, 36.0}}, label: 'Done'
+VPJ77 full AX en Memory detail: Dynamic Type font sizes are partially unsupported; Optional(Attributes: Button, 0x10a19c500, {{317.7, 82.0}, {64.3, 36.0}}, label: 'Done'
+VPJ77 full AX zh-Hans VP detail: Dynamic Type font sizes are partially unsupported; Optional(Attributes: Button, 0x10a19cb40, {{324.0, 82.0}, {58.0, 36.0}}, label: '关闭'
+VPJ77 full AX zh-Hans VP detail: Text clipped; Optional(Attributes: StaticText, 0x10a19ea80, {{32.0, 730.0}, {202.7, 20.3}}, label: '明确无新结果，不制造活动'
+VPJ77 full AX zh-Hans Memory detail: Dynamic Type font sizes are partially unsupported; Optional(Attributes: Button, 0x10a19c640, {{324.0, 82.0}, {58.0, 36.0}}, label: '关闭'
+VPJ77 full AX zh-Hans Memory detail: Text clipped; Optional(Attributes: StaticText, 0x10a19d900, {{32.0, 246.7}, {324.3, 64.3}}, label: '长期旅行节奏应读现有 Profile 权威；其他明确事实读 Memory 权威。纠正须等版本化回执，撤回仅针对该操作。'

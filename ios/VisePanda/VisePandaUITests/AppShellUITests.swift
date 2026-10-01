@@ -87,53 +87,165 @@ final class AppShellUITests: XCTestCase {
     }
 
     func testVPJ77FixtureJourneyAndMemoryCorrection() {
+        checkVPJ77FixtureJourneyAndMemoryCorrection(largeText: false)
+    }
+
+    func testVPJ77FixtureJourneyAndMemoryCorrectionAtLargestTextSize() {
+        checkVPJ77FixtureJourneyAndMemoryCorrection(largeText: true)
+    }
+
+    private func tapVPJ77Fixture(_ element: XCUIElement, in app: XCUIApplication) {
+        if element.identifier == "specimen.keyboard.correct" || element.identifier == "specimen.keyboard.done"
+            || element.identifier == "specimen.search.open"
+            || element.identifier == "specimen.states.open" || element.identifier == "specimen.memory.details"
+            || element.label == "Done" || element.label == "关闭" {
+            XCTAssertTrue(element.isHittable)
+        } else {
+            revealVPJ77Fixture(element, in: app)
+        }
+        element.tap()
+    }
+
+    private func revealVPJ77Fixture(_ element: XCUIElement, in app: XCUIApplication) {
+        XCTAssertTrue(element.exists)
+        let scroll = app.scrollViews.firstMatch
+        guard scroll.exists else { XCTAssertTrue(element.isHittable); return }
+        let top = app.navigationBars.firstMatch.frame.maxY + 4
+        let inSheet = ["Example detail", "样例详情", "Global search", "全局搜索"]
+            .contains { app.navigationBars[$0].exists }
+        let bottom = !inSheet && app.tabBars.firstMatch.exists
+            ? app.tabBars.firstMatch.frame.minY - 4 : app.frame.maxY - 4
+        for _ in 0..<15 {
+            let frame = element.frame
+            if frame.minY >= top && frame.maxY <= bottom { break }
+            let distance = frame.maxY > bottom
+                ? min(max(frame.maxY - bottom + 12, 80), (bottom - top) * 0.4)
+                : -min(max(top - frame.minY + 12, 80), (bottom - top) * 0.4)
+            let start = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0))
+                .withOffset(CGVector(dx: 0, dy: (top + bottom) / 2))
+            start.press(forDuration: 0.05, thenDragTo: start.withOffset(CGVector(dx: 0, dy: -distance)),
+                        withVelocity: .slow, thenHoldForDuration: 0.2)
+        }
+        XCTAssertGreaterThanOrEqual(element.frame.minY, top)
+        XCTAssertLessThanOrEqual(element.frame.maxY, bottom)
+        XCTAssertTrue(element.isHittable)
+    }
+
+    private func checkVPJ77FixtureJourneyAndMemoryCorrection(largeText: Bool) {
+        continueAfterFailure = false
         for locale in ["en", "zh-Hans"] {
             let app = XCUIApplication()
             app.launchArguments = ["-VPJ77Specimen", "-VisePandaLocale", locale,
-                                   "-AppleLanguages", "(\(locale))"]
+                                   "-AppleLanguages", "(\(locale))",
+                                   "-UIPreferredContentSizeCategoryName",
+                                   largeText ? "UICTContentSizeCategoryAccessibilityXXXL" : "UICTContentSizeCategoryL"]
             app.launch()
             XCTAssertTrue(app.staticTexts["specimen.fixture-banner"].waitForExistence(timeout: 10))
             XCTAssertEqual(app.tabBars.buttons.count, 4)
             XCTAssertTrue(app.tabBars.buttons["VP"].exists)
             XCTAssertTrue(app.tabBars.buttons["Memory"].exists)
-            app.buttons["specimen.first.compare"].tap()
-            app.buttons["specimen.comparison.open"].tap()
+            tapVPJ77Fixture(app.buttons["specimen.first.compare"], in: app)
+            tapVPJ77Fixture(app.buttons["specimen.comparison.open"], in: app)
             XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", locale == "en" ? "Option A" : "方向 A")).firstMatch.exists)
-            app.buttons[locale == "en" ? "Done" : "关闭"].tap()
-            app.buttons["specimen.delegate"].tap()
-            app.buttons["specimen.task.open"].tap()
+            tapVPJ77Fixture(app.buttons[locale == "en" ? "Done" : "关闭"], in: app)
+            tapVPJ77Fixture(app.buttons["specimen.delegate"], in: app)
+            tapVPJ77Fixture(app.buttons["specimen.task.open"], in: app)
             XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "fixture-task-1")).firstMatch.exists)
-            app.buttons[locale == "en" ? "Done" : "关闭"].tap()
-            app.buttons["specimen.return"].tap()
+            tapVPJ77Fixture(app.buttons[locale == "en" ? "Done" : "关闭"], in: app)
+            tapVPJ77Fixture(app.buttons["specimen.return"], in: app)
             app.tabBars.buttons[locale == "en" ? "Journeys" : "旅程"].tap()
-            app.buttons["specimen.journeys.artifact"].tap()
+            tapVPJ77Fixture(app.buttons["specimen.journeys.artifact"], in: app)
             XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "fixture-artifact-1")).firstMatch.exists)
-            app.buttons[locale == "en" ? "Done" : "关闭"].tap()
+            tapVPJ77Fixture(app.buttons[locale == "en" ? "Done" : "关闭"], in: app)
             app.tabBars.buttons[locale == "en" ? "Library" : "资源库"].tap()
-            app.buttons["specimen.library.artifact"].tap()
+            tapVPJ77Fixture(app.buttons["specimen.library.artifact"], in: app)
             XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "fixture-artifact-1")).firstMatch.exists)
-            app.buttons[locale == "en" ? "Done" : "关闭"].tap()
-            app.buttons["specimen.search.open"].tap()
+            tapVPJ77Fixture(app.buttons[locale == "en" ? "Done" : "关闭"], in: app)
+            tapVPJ77Fixture(app.buttons["specimen.search.open"], in: app)
             XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", locale == "en" ? "Discover a direction" : "发现值得探索")).firstMatch.exists)
-            app.buttons["specimen.search.artifact"].tap()
+            tapVPJ77Fixture(app.buttons["specimen.search.artifact"], in: app)
             XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "fixture-artifact-1")).firstMatch.waitForExistence(timeout: 5))
-            app.buttons[locale == "en" ? "Done" : "关闭"].tap()
+            tapVPJ77Fixture(app.buttons[locale == "en" ? "Done" : "关闭"], in: app)
             app.tabBars.buttons["Memory"].tap()
             let edit = app.textFields["specimen.memory.edit"]
             XCTAssertTrue(edit.exists)
             let hint = app.staticTexts["specimen.memory.correction-hint"]
             XCTAssertTrue(hint.exists)
-            XCTAssertLessThanOrEqual(hint.frame.maxY, app.tabBars.firstMatch.frame.minY - 4)
-            XCTAssertLessThanOrEqual(edit.frame.maxY, app.tabBars.firstMatch.frame.minY - 4)
+            if !largeText {
+                XCTAssertLessThanOrEqual(hint.frame.maxY, app.tabBars.firstMatch.frame.minY - 4)
+                XCTAssertLessThanOrEqual(edit.frame.maxY, app.tabBars.firstMatch.frame.minY - 4)
+            }
             XCTAssertFalse(app.buttons["specimen.memory.correct"].exists)
             capture("VPJ77 Memory empty correction \(locale)", app: app)
+            revealVPJ77Fixture(edit, in: app)
             edit.tap()
+            XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
+            XCTAssertFalse(app.buttons["specimen.keyboard.correct"].exists)
+            XCTAssertTrue(app.buttons["specimen.keyboard.done"].isHittable)
             edit.typeText(locale == "en" ? "Prefer slower days" : "喜欢慢节奏")
             XCTAssertTrue(app.buttons["specimen.memory.correct"].exists)
-            app.buttons["specimen.keyboard.correct"].tap()
+            tapVPJ77Fixture(app.buttons["specimen.keyboard.correct"], in: app)
             XCTAssertTrue(app.staticTexts["specimen.memory.corrected"].waitForExistence(timeout: 5))
             app.tabBars.buttons["VP"].tap()
             XCTAssertTrue(app.staticTexts["specimen.memory-impact"].waitForExistence(timeout: 5))
+            app.tabBars.buttons["Memory"].tap()
+            tapVPJ77Fixture(app.buttons["specimen.memory.details"], in: app)
+            XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", locale == "en" ? "Memory authority seam" : "Memory 权威接线")).firstMatch.exists)
+            capture("VPJ77 source seam \(locale) large=\(largeText)", app: app)
+            app.terminate()
+        }
+    }
+
+    func testVPJ77FixtureFullAccessibilityAudit() throws {
+        checkVPJ77FixtureFullAccessibilityAudit(appearance: .light)
+    }
+
+    func testVPJ77FixtureFullAccessibilityAuditInDarkMode() throws {
+        checkVPJ77FixtureFullAccessibilityAudit(appearance: .dark)
+    }
+
+    private func checkVPJ77FixtureFullAccessibilityAudit(appearance: XCUIDevice.Appearance) {
+        continueAfterFailure = true
+        for locale in ["en", "zh-Hans"] {
+            let app = XCUIApplication()
+            app.launchArguments = ["-VPJ77Specimen", "-VisePandaLocale", locale,
+                                   "-AppleLanguages", "(\(locale))", "-VPJ77AppearanceProbe",
+                                   "-VPJ77AuditAppearance", appearance == .dark ? "dark" : "light",
+                                   "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryL"]
+            app.launch()
+            XCTAssertTrue(app.staticTexts["specimen.fixture-banner"].waitForExistence(timeout: 10))
+            for tab in ["VP", "Memory"] {
+                app.tabBars.buttons[tab].tap()
+                let action = app.buttons[tab == "VP" ? "specimen.states.open" : "specimen.memory.details"]
+                for position in ["initial", "detail"] {
+                    XCTAssertTrue(action.isHittable)
+                    if position == "detail" {
+                        action.tap()
+                        XCTAssertTrue(app.navigationBars[locale == "en" ? "Example detail" : "样例详情"].waitForExistence(timeout: 3))
+                    }
+                    let expectedStyle = appearance == .dark ? "dark" : "light"
+                    let observedStyle = app.staticTexts.matching(identifier: "specimen.fixture-banner")
+                        .firstMatch.value as? String
+                    print("VPJ77 appearance requested=\(expectedStyle), device=\(XCUIDevice.shared.appearance.rawValue), fixture=\(observedStyle ?? "missing")")
+                    guard observedStyle == expectedStyle else {
+                        capture("VPJ77-appearance-mismatch-\(locale)-\(tab)-\(position)", app: app)
+                        XCTFail("Requested \(expectedStyle), but fixture rendered \(observedStyle ?? "missing")")
+                        app.terminate()
+                        return
+                    }
+                    print("VPJ77 viewport \(locale) \(tab) \(position): action=\(action.frame), nav=\(app.navigationBars.firstMatch.frame), tabs=\(app.tabBars.firstMatch.frame)")
+                    capture("VPJ77-full-AX-\(locale)-\(tab)-\(position)-theme\(appearance.rawValue)", app: app)
+                    do {
+                        try app.performAccessibilityAudit(for: .all) { issue in
+                            print("VPJ77 full AX \(locale) \(tab) \(position): \(issue.compactDescription); \(String(describing: issue.element))")
+                            return false
+                        }
+                    } catch {
+                        XCTFail("VPJ77 full AX \(locale) \(tab) \(position): \(error)")
+                    }
+                }
+                app.buttons[locale == "en" ? "Done" : "关闭"].tap()
+            }
             app.terminate()
         }
     }

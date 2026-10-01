@@ -1,0 +1,58 @@
+{
+  "scope": "launch-only -VPJ77Specimen, no live writes",
+  "base": "036e8f855f3e8b903b28aa4739179631c8a90534",
+  "date": "2026-10-02 Asia/Shanghai",
+  "sourceSha256": {
+    "ios/VisePanda/VisePanda/Features/Ask/AssistantSpecimenView.swift": "ddcd0aec0bef617adf6dc726f85aa8b8e125e49b58ef3b227998dff7c76595a6",
+    "ios/VisePanda/VisePandaUITests/AppShellUITests.swift": "097380de294224f9b26b4fcef0cc8a83546d75c727380ca811d834c4aadcc925"
+  },
+  "tests": [
+    {
+      "device": "iPhone SE (3rd generation)",
+      "os": "17.5",
+      "kind": "explicit fixture QA palette, actual scheme equality guard, all audits",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "xcresult": "test_sim_2026-10-01T20-10-03-304Z_pid31617_17300573.xcresult"
+    },
+    {
+      "device": "iPhone 17 Pro, owned temporary device",
+      "os": "26.5",
+      "kind": "explicit fixture QA palette, actual scheme equality guard, all audits",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "xcresult": "test_sim_2026-10-01T20-16-00-371Z_pid31617_50a41ab5.xcresult"
+    },
+    {
+      "device": "iPhone SE (3rd generation)",
+      "os": "17.5",
+      "kind": "latest standard/max full chains and original large entrance passed; audit failure in same run is separately retained",
+      "passed": 3,
+      "failedAudit": 1,
+      "xcresult": "test_sim_2026-10-01T18-54-38-576Z_pid31617_9fd5c7ed.xcresult"
+    }
+  ],
+  "fullAudit": "Explicit fixture presentation QA palette only, requested light/dark must equal actual colorScheme; all, both locales, VP + Memory initial/detail on both runtimes; every finding returns false",
+  "fullAuditPageStates": 32,
+  "seSystemTextSize": "large -> accessibility-extra-extra-extra-large before final test -> large restored with readback",
+  "cleanup": "original SE shutdown; owned temporary iOS26 device deleted",
+  "unrun": [
+    "physical VoiceOver gestures/spoken order",
+    "traveller observation",
+    "Staging/provider/full product acceptance"
+  ],
+  "appearanceCorrection": "Original named-dark screenshots were light; invalid dark-render claim withdrawn and screenshots preserved under requested-dark-observed-light names.",
+  "defaultSystemFollowing": {
+    "qaPreference": "nil without both QA parameters; no global appearance change",
+    "se": "PASS direct launch system dark readback and screenshot; English detail unfiltered all audit PASS in targeted comparison",
+    "ios26": "PASS one default launch system-dark readback and screenshot; full default-system dark matrix UNRUN",
+    "sdkSetterPath": "FAIL requested dark / observed light on iOS26; not repaired or counted as default-system acceptance"
+  },
+  "remainingLimitations": [
+    "iOS26 XCTest appearance setter path did not establish actual dark; failure retained",
+    "Transparent/material QA title audit reported contrast despite dark screenshots and white resolved title; QA visible background passes, precise audit algorithm cause unconfirmed",
+    "One exploratory maximum-chain runner was killed; cause unconfirmed; isolated later chain passed"
+  ]
+}

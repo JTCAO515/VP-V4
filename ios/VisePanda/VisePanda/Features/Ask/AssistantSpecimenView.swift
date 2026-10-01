@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 // VPJ-77 is an explicitly local interaction specimen. These values are presentation
 // examples, never authoritative conversation, task, artifact or memory records.
@@ -27,6 +28,7 @@ enum AssistantSpecimenDetail: String, Identifiable {
 @MainActor
 struct AssistantSpecimenView: View {
     @Environment(AppSettings.self) private var settings
+    @Environment(\.colorScheme) private var colorScheme
     @State private var selectedTab: AssistantSpecimenTab = .vp
     @State private var moment: AssistantSpecimenMoment = .first
     @State private var detail: AssistantSpecimenDetail?
@@ -41,6 +43,19 @@ struct AssistantSpecimenView: View {
     private var zh: Bool { settings.selectedLocale == .zh }
     private var hasCorrectionInput: Bool { !correction.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
     private func t(_ chinese: String, _ english: String) -> String { zh ? chinese : english }
+
+    // A fixture-only audit preference; ordinary fixture launches inherit the system.
+    private var auditAppearance: ColorScheme? {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard arguments.contains("-VPJ77AppearanceProbe"),
+              let index = arguments.firstIndex(of: "-VPJ77AuditAppearance"),
+              arguments.indices.contains(index + 1) else { return nil }
+        switch arguments[index + 1] {
+        case "dark": return .dark
+        case "light": return .light
+        default: return nil
+        }
+    }
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -63,7 +78,23 @@ struct AssistantSpecimenView: View {
                     .background(Color.vpBackground)
                     .scrollDismissesKeyboard(.interactively)
                     .navigationTitle(title(tab))
+                    .toolbarColorScheme(auditAppearance, for: .navigationBar, .tabBar)
                     .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            if tab == .vp {
+                                Button { detail = .states } label: {
+                                    Image(systemName: "ellipsis.circle")
+                                }
+                                .accessibilityLabel(t("查看其他可见状态", "Inspect other visible states"))
+                                .accessibilityIdentifier("specimen.states.open")
+                            } else if tab == .memory {
+                                Button { detail = .memory } label: {
+                                    Image(systemName: "doc.text.magnifyingglass")
+                                }
+                                .accessibilityLabel(t("查看来源与接线", "View source and seam"))
+                                .accessibilityIdentifier("specimen.memory.details")
+                            }
+                        }
                         ToolbarItem(placement: .topBarTrailing) {
                             Button { showingSearch = true } label: {
                                 Label(t("搜索", "Search"), systemImage: "magnifyingglass")
@@ -71,9 +102,8 @@ struct AssistantSpecimenView: View {
                             .accessibilityIdentifier("specimen.search.open")
                         }
                         ToolbarItemGroup(placement: .keyboard) {
-                            if tab == .memory {
+                            if tab == .memory && hasCorrectionInput {
                                 Button(t("演示纠正", "Correct example")) { applyCorrection() }
-                                    .disabled(!hasCorrectionInput)
                                     .accessibilityIdentifier("specimen.keyboard.correct")
                             }
                             Spacer()
@@ -97,6 +127,7 @@ struct AssistantSpecimenView: View {
                 detail = .artifact
             }
         }) { searchSheet }
+        .preferredColorScheme(auditAppearance)
     }
 
     private func title(_ tab: AssistantSpecimenTab) -> String {
@@ -116,6 +147,8 @@ struct AssistantSpecimenView: View {
             .padding(12)
             .background(Color.vpLavender.opacity(0.22), in: RoundedRectangle(cornerRadius: 12))
             .accessibilityIdentifier("specimen.fixture-banner")
+            .accessibilityValue(ProcessInfo.processInfo.arguments.contains("-VPJ77AppearanceProbe")
+                ? (colorScheme == .dark ? "dark" : "light") : "")
     }
 
     private var vpContent: some View {
@@ -129,6 +162,8 @@ struct AssistantSpecimenView: View {
                         .foregroundStyle(Color.vpSecondaryText)
                 }
             }
+            Text(t("仅交互样例；请用下方按钮走预设路径。", "Interaction specimen only. Use the scripted actions below."))
+                .font(.caption).foregroundStyle(Color.vpSecondaryText)
             if corrected {
                 note(t("本地样例已改为：\(correction)。正式结果须等真实 Memory 回执与重新计算。",
                        "Local example changed to: \(correction). A real result needs a Memory receipt and recomputation."))
@@ -152,16 +187,16 @@ struct AssistantSpecimenView: View {
                 action(t("纠正 Memory", "Correct Memory"), id: "specimen.memory.goto") { selectedTab = .memory }
             }
             VStack(alignment: .leading, spacing: 8) {
-                TextField(t("可试键盘；文字不会发送", "Try the keyboard; text is not sent"), text: $draftInput, axis: .vertical)
+                TextField("", text: $draftInput,
+                          prompt: Text(t("可试键盘；文字不会发送", "Try the keyboard; text is not sent"))
+                            .foregroundColor(.vpSecondaryText), axis: .vertical)
                     .lineLimit(1...3)
                     .focused($inputFocused)
+                    .accessibilityLabel(t("可试键盘；文字不会发送", "Try the keyboard; text is not sent"))
                     .accessibilityIdentifier("specimen.composer")
-                Text(t("仅交互样例；请用上方按钮走预设路径。", "Interaction specimen only. Use the scripted actions above."))
-                    .font(.caption).foregroundStyle(Color.vpSecondaryText)
             }
             .padding(14)
             .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
-            action(t("查看其他可见状态", "Inspect other visible states"), id: "specimen.states.open") { detail = .states }
         }
     }
 
@@ -198,9 +233,12 @@ struct AssistantSpecimenView: View {
                 note(t("在下方输入纠正内容；仅本地预览，不会保存。", "Enter a correction below. This preview won't save."))
                     .accessibilityIdentifier("specimen.memory.correction-hint")
             }
-            TextField(t("改成你的意思", "Correct the wording"), text: $correction)
+            TextField("", text: $correction,
+                      prompt: Text(t("改成你的意思", "Correct the wording"))
+                        .foregroundColor(.vpSecondaryText))
                 .textFieldStyle(.roundedBorder)
                 .focused($memoryFocused)
+                .accessibilityLabel(t("改成你的意思", "Correct the wording"))
                 .accessibilityIdentifier("specimen.memory.edit")
             if hasCorrectionInput {
                 action(t("仅在本地演示纠正", "Correct local example only"), id: "specimen.memory.correct") {
@@ -211,7 +249,6 @@ struct AssistantSpecimenView: View {
                 note(t("本地样例已更新；真实保存、撤回和受影响任务重算尚未接线。", "Local example updated. Real save, undo and affected task recomputation are not connected."))
                     .accessibilityIdentifier("specimen.memory.corrected")
             }
-            action(t("查看来源与接线", "View source and seam"), id: "specimen.memory.details") { detail = .memory }
         }
     }
 
@@ -246,38 +283,60 @@ struct AssistantSpecimenView: View {
             .background(Color.vpBackground)
             .navigationTitle(t("样例详情", "Example detail"))
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button(t("关闭", "Done")) { detail = nil } } }
+            .toolbarColorScheme(auditAppearance, for: .navigationBar)
+            .toolbarBackground(auditAppearance == nil ? .automatic : .visible, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { detail = nil } label: {
+                        Label(t("关闭", "Done"), systemImage: "xmark").labelStyle(.iconOnly)
+                            .frame(minWidth: 44, minHeight: 44)
+                    }
+                }
+            }
         }
+        .preferredColorScheme(auditAppearance)
     }
 
     private var searchSheet: some View {
         NavigationStack {
-            VStack(alignment: .leading, spacing: VPSpacing.section) {
-                banner
-                Image(systemName: "magnifyingglass").font(.largeTitle).foregroundStyle(Color.vpBrand)
-                Text(t("发现值得探索的方向", "Discover a direction worth exploring")).font(.title2.bold())
-                Text(t("全局搜索接线将区分有依据的外部内容与你有权限查看的私人结果。样例没有搜索索引或虚构地点结果。", "The global search seam separates qualified external content from private results you may access. This specimen has no search index or invented place results."))
-                if moment == .returned {
-                    action(t("打开同一成果 · fixture-artifact-1 r1", "Open same result · fixture-artifact-1 r1"), id: "specimen.search.artifact") {
-                        openSearchArtifact = true
-                        showingSearch = false
+            ScrollView {
+                VStack(alignment: .leading, spacing: VPSpacing.section) {
+                    banner
+                    Image(systemName: "magnifyingglass").font(.largeTitle).foregroundStyle(Color.vpBrand)
+                    Text(t("发现值得探索的方向", "Discover a direction worth exploring")).font(.title2.bold())
+                    Text(t("全局搜索接线将区分有依据的外部内容与你有权限查看的私人结果。样例没有搜索索引或虚构地点结果。", "The global search seam separates qualified external content from private results you may access. This specimen has no search index or invented place results."))
+                    if moment == .returned {
+                        action(t("打开同一成果 · fixture-artifact-1 r1", "Open same result · fixture-artifact-1 r1"), id: "specimen.search.artifact") {
+                            openSearchArtifact = true
+                            showingSearch = false
+                        }
                     }
                 }
-                Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(VPSpacing.standard)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(VPSpacing.standard)
             .background(Color.vpBackground)
             .navigationTitle(t("全局搜索", "Global search"))
-            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button(t("关闭", "Done")) { showingSearch = false } } }
+            .toolbarColorScheme(auditAppearance, for: .navigationBar)
+            .toolbarBackground(auditAppearance == nil ? .automatic : .visible, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { showingSearch = false } label: {
+                        Label(t("关闭", "Done"), systemImage: "xmark").labelStyle(.iconOnly)
+                            .frame(minWidth: 44, minHeight: 44)
+                    }
+                }
+            }
         }
+        .preferredColorScheme(auditAppearance)
     }
 
     private func card(_ heading: String, _ body: String) -> some View {
         VisePandaCard {
             VStack(alignment: .leading, spacing: 8) {
-                Text(heading).font(.headline)
-                Text(body).font(.body)
+                Text(heading).font(.headline).fixedSize(horizontal: false, vertical: true)
+                AssistantSpecimenBodyText(text: body)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }
@@ -298,11 +357,45 @@ struct AssistantSpecimenView: View {
 
     private func action(_ title: String, id: String, perform: @escaping () -> Void) -> some View {
         Button(action: perform) {
-            HStack { Text(title); Spacer(); Image(systemName: "arrow.right") }
-                .frame(minHeight: 44)
+            HStack {
+                Text(title).fixedSize(horizontal: false, vertical: true)
+                Spacer()
+                Image(systemName: "arrow.right").accessibilityHidden(true)
+            }
+            .frame(minHeight: 44)
         }
         .buttonStyle(.bordered)
         .accessibilityIdentifier(id)
+    }
+}
+
+// Use an intrinsic multiline label for the fixture's mixed CJK/Latin paragraphs.
+// It keeps the complete text and preferred body font exposed to accessibility.
+private struct AssistantSpecimenBodyText: UIViewRepresentable {
+    let text: String
+
+    func makeUIView(context: Context) -> UILabel {
+        let label = UILabel()
+        label.numberOfLines = 0
+        label.adjustsFontForContentSizeCategory = true
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        return label
+    }
+
+    func updateUIView(_ label: UILabel, context: Context) {
+        label.text = text
+        // UIViewRepresentable can inherit UIKit's system-light traits while the
+        // fixture presentation explicitly requests dark. Resolve against its
+        // SwiftUI environment so paragraph text matches the rendered surface.
+        let style: UIUserInterfaceStyle = context.environment.colorScheme == .dark ? .dark : .light
+        label.textColor = UIColor.label.resolvedColor(with: UITraitCollection(userInterfaceStyle: style))
+        label.font = UIFont.preferredFont(forTextStyle: .body, compatibleWith: label.traitCollection)
+    }
+
+    func sizeThatFits(_ proposal: ProposedViewSize, uiView: UILabel, context: Context) -> CGSize? {
+        guard let width = proposal.width, width.isFinite, width > 0 else { return nil }
+        let size = uiView.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
+        return CGSize(width: min(width, size.width), height: ceil(size.height))
     }
 }
 
