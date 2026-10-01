@@ -1,0 +1,19 @@
+# VPJ-81 conversation-scoped Task visibility — 2026-10-02
+
+Started from clean maince61d912, branch codex/vpj81-conversation-task-history-20261002; earlier branches retained. #562 OPEN. Exact read contract: docs/contracts/conversation-task-history-v1.md. One bounded read result, no whole-ticket closure or target action.
+
+PASS baseline actual local Auth/HTTP/PostgreSQL reproduction: two accepted conversations, an associated Task,21 unrelated text Turns. Old `/v2/turns` returns no Task while authoritative conversation association remains. The old endpoint and shared runner remain unchanged.
+
+PASS expanded existing assistant-rollback lane: new read retains the older Task,20+2 pages cover22 eligible Task memberships, forged/foreign/version-stale/duplicate cursors denied, raw128+sentinel sparse overflow unavailable with no partial metadata. Association beyond50 transcript messages remains visible. Synthetic completed Task publishes through the existing publisher and resolves/opens its still-current exact revision. A canonical latest failed/cancelled Turn overrides the older completed root; hidden latest and archived thread are omitted without fallback. Cross-actor, current policy/consent, producer-off and mobile-session replacement gates covered. Source Task input/output bodies absent from the new wire. Test seeding/completion is disposable synthetic data, not evidence of a real provider completion. A first publication fixture omitted required actions[] and was correctly rejected; the fixture was fixed without relaxing publisher validation.
+
+PASS focused HTTP security3/3: fixed owner/membership RPC, no-store and producer-off, closed cursor/input rejection, transient session error503 versus actual replacement401 (does not clear login for storage failure).
+
+PASS actual native/Auth/HTTP/SQL older-Task reopen UI1/1: /tmp/vpj81-task-history-native-r3/tests.xcresult. The older association is outside the50-message transcript and owner-20 window; selected old conversation displays canonical completed status and opens the specified current exact artifact. First UI query failed because it searched a sequence accessibility ID before/while scrolling; real screenshot showed the completed card/action. Final test reaches the unique actual Open action and requires the exact expected artifact title, not a weaker success assertion.
+
+PASS native9/9: /tmp/vpj81-task-unit.log, shared projection, member/status mismatch rejection, failed/cancelled no false completion, terminal goal10001 compatibility, actual late selection/refresh fencing and existing exact result/lifetime tests. PASS generic unsigned and signed Simulator builds, contract711/711, lint/typecheck/diff. PASS migrated Supabase RLS/ACL23/23. Existing HTTP lane carries the augmented test; no new gated file or runner registration required. Only one public read ACL signature added, private helper explicitly non-executable to all runtime roles. Summaries/commands under conversation-task-history-20261002; large logs and xcresult remain at stated local paths.
+
+Integrated mainf4511103/#597 without overwriting its NativeSession method, two read ACL signatures, migration050000 or shared runner/lane registration. Post-integration generic Simulator build, lint/typecheck and contract716/716 PASS. Current-head CI belongs in PR; earlier local counts are scoped to tested code, not real target acceptance.
+
+UNRUN: real Staging/shared migration activation, Production, real provider/worker, physical device, full zh/large-text/VoiceOver/Reduce Motion and user/full #562 acceptance. New API cursor supports readable memberships within its scan bound; sparse overflow is unavailable, never complete. No multi-page atomic status snapshot or total-count claim.
+
+Rollback UI/route to old bounded reader while retaining applied additive migration/indexes and records. Old owner-20 APIs stay intact for translation and older clients. No target deployment or deletion/export/retention change.

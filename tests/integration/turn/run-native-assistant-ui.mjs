@@ -24,9 +24,10 @@ try{
  await run(['build-for-testing','-project','ios/VisePanda/VisePanda.xcodeproj','-scheme','VisePanda','-destination','platform=iOS Simulator,id='+device,'-derivedDataPath',join(output,'build'),'CODE_SIGNING_ALLOWED=YES','CODE_SIGNING_REQUIRED=YES','CODE_SIGN_IDENTITY=-'],'build');
  e=await createNativeTextEnvironment();
  const profile={VP_NATIVE_ASSISTANT_TEST:'1',VP_NATIVE_TEXT_API_URL:e.api,VP_NATIVE_TEXT_UI_EN_EMAIL:e.users[2].email};
+ const taskHistoryMode=process.env.VP_NATIVE_ASSISTANT_TASK_HISTORY==='1';
  const refreshMode=process.env.VP_NATIVE_ASSISTANT_REFRESH_TEST==='1';
  const retryMode=process.env.VP_NATIVE_ASSISTANT_CONVERSATION_RETRY==='1';
- const selectionMode=process.env.VP_NATIVE_ASSISTANT_CONVERSATION_SELECTION==='1'||retryMode||refreshMode;
+ const selectionMode=process.env.VP_NATIVE_ASSISTANT_CONVERSATION_SELECTION==='1'||retryMode||refreshMode||taskHistoryMode;
  const privacyPaginationMode=process.env.VP_NATIVE_ASSISTANT_PRIVACY_PAGINATION==='1';
  const tripMode=process.env.VP_NATIVE_ASSISTANT_ONLY_TRIP_LINK==='1'||privacyPaginationMode;
  if(tripMode){
@@ -61,6 +62,35 @@ try{
    await call('/api/chat/native/v5/conversation',credentials.accessToken,{conversationId,messageId:randomUUID(),idempotencyKey:randomUUID(),policyId:e.policyId,locale:'en',text,relationship:'goal_start',goalId:randomUUID(),expectedGoalVersion:null,taskId:null,parentMessageId:null,turnId:null});
   }
   Object.assign(profile,{VP_NATIVE_ASSISTANT_CONVERSATION_SELECTION:'1',VP_NATIVE_ASSISTANT_CONVERSATION_FIRST:first,VP_NATIVE_ASSISTANT_CONVERSATION_SECOND:second});
+ }
+ if(taskHistoryMode){
+  const first=profile.VP_NATIVE_ASSISTANT_CONVERSATION_FIRST,owner=e.users[2].id;
+  const task=randomUUID(),turn=randomUUID(),thread=randomUUID(),member=randomUUID(),artifact=randomUUID();
+  const source=JSON.parse(e.sql(`select json_build_object('goal',goal_id,'message',id) from turn_private.assistant_messages where conversation_id='${first}' order by sequence limit 1;`));
+  e.sql(`insert into public.chat_threads(id,owner_id) values('${thread}','${owner}');
+   insert into public.turns(id,owner_id,thread_id,status) values('${turn}','${owner}','${thread}','completed');
+   insert into turn_private.text_content(turn_id,owner_id,thread_id,policy_id,consent_id,locale,input_text,output_kind,output_text)
+    select '${turn}',owner_id,'${thread}',policy_id,consent_id,'en','Synthetic old Task','answered','Synthetic old answer' from turn_private.assistant_conversations where id='${first}';
+   insert into turn_private.service_tasks(id,owner_id,thread_id,goal_turn_id,last_turn_id,policy_id,consent_id,scope_version,goal_digest)
+    select '${task}',owner_id,'${thread}','${turn}','${turn}',policy_id,consent_id,1,'${'a'.repeat(64)}' from turn_private.assistant_conversations where id='${first}';
+   insert into turn_private.service_task_turns(turn_id,task_id,owner_id,relationship,idempotency_key,request_digest)
+    values('${turn}','${task}','${owner}','new_goal','${randomUUID()}','${'a'.repeat(64)}');
+   insert into turn_private.assistant_messages(id,conversation_id,owner_id,sequence,idempotency_key,request_digest,policy_id,consent_id,locale,input_text,relationship,goal_id,scope_version,task_id,parent_message_id)
+    select '${member}',id,owner_id,next_sequence,'${randomUUID()}','${'a'.repeat(64)}',policy_id,consent_id,'en','Earlier synthetic conversation Task','follow_up','${source.goal}',1,'${task}','${source.message}' from turn_private.assistant_conversations where id='${first}';
+   update turn_private.assistant_conversations set next_sequence=next_sequence+1 where id='${first}';`);
+  const content={schemaVersion:'comparison/1',title:'Older synthetic Task result',summary:'Disposable fixture only',options:[{id:'a',title:'A',tradeoff:'Synthetic A'},{id:'b',title:'B',tradeoff:'Synthetic B'}],actions:[]};
+  e.sql(`set request.jwt.claim.role='service_role';select public.publish_comparison_result_v1('${owner}','${artifact}',0,'${randomUUID()}','${task}','${source.goal}','${member}',null,null,1,'[]'::jsonb,'${JSON.stringify(content)}'::jsonb);`);
+  e.sql(`with rows as(select gen_random_uuid() thread_id,gen_random_uuid() turn_id from generate_series(1,21)),
+   threads as(insert into public.chat_threads(id,owner_id) select thread_id,'${owner}' from rows returning id),
+   turns as(insert into public.turns(id,owner_id,thread_id,status) select turn_id,'${owner}',thread_id,'cancelled' from rows returning id,thread_id)
+   insert into turn_private.text_content(turn_id,owner_id,thread_id,policy_id,consent_id,locale,input_text)
+    select t.id,c.owner_id,t.thread_id,c.policy_id,c.consent_id,'en','Unrelated synthetic text' from turns t cross join turn_private.assistant_conversations c where c.id='${first}';
+   with rows as(select gen_random_uuid() id,n from generate_series(1,51) n)
+   insert into turn_private.assistant_messages(id,conversation_id,owner_id,sequence,idempotency_key,request_digest,policy_id,consent_id,locale,input_text,relationship,goal_id,scope_version,parent_message_id)
+    select r.id,c.id,c.owner_id,c.next_sequence+r.n-1,gen_random_uuid(),'${'b'.repeat(64)}',c.policy_id,c.consent_id,'en','Synthetic transcript only','follow_up','${source.goal}',1,'${source.message}'
+    from rows r cross join turn_private.assistant_conversations c where c.id='${first}';
+   update turn_private.assistant_conversations set next_sequence=next_sequence+51 where id='${first}';`);
+  Object.assign(profile,{VP_NATIVE_ASSISTANT_TASK_HISTORY:'1'});
  }
  if(retryMode||refreshMode){
   // Faults are confined to one synthetic accepted intake and its next readback.
@@ -117,7 +147,7 @@ data['VisePandaUITests'].setdefault('EnvironmentVariables',{}).update(profile)
 path=root/'AssistantConversation.xctestrun';path.write_bytes(plistlib.dumps(data));path.chmod(0o600)
 `,products],{input:JSON.stringify(profile)});
  await run(['test-without-building','-xctestrun',patched,'-destination','platform=iOS Simulator,id='+device,'-parallel-testing-enabled','NO',...(selectionMode?['-collect-test-diagnostics','never']:[]),'-resultBundlePath',join(output,'tests.xcresult'),
-  '-only-testing:VisePandaUITests/NativeAskUITests/'+(refreshMode?'testEnglishAssistantBackgroundRefreshComposer':selectionMode?'testEnglishAssistantConversationSelection':privacyPaginationMode?'testEnglishAssistantTripPrivacyPagination':tripMode?'testEnglishAssistantGoalTripLinkReadback':'testEnglishAssistantConversationReadback')],'tests');
+  '-only-testing:VisePandaUITests/NativeAskUITests/'+(taskHistoryMode?'testEnglishAssistantOlderTaskReopen':refreshMode?'testEnglishAssistantBackgroundRefreshComposer':selectionMode?'testEnglishAssistantConversationSelection':privacyPaginationMode?'testEnglishAssistantTripPrivacyPagination':tripMode?'testEnglishAssistantGoalTripLinkReadback':'testEnglishAssistantConversationReadback')],'tests');
  if(retryMode){
   assert.equal(retryReadFailures,1);assert.equal(retryPosts.length,2);
   assert.deepEqual(retryPosts[1],retryPosts[0],'retry must retain all IDs, scope, text and idempotency key');
@@ -129,7 +159,7 @@ path=root/'AssistantConversation.xctestrun';path.write_bytes(plistlib.dumps(data
   assert.equal(e.sql(`select count(*) from turn_private.assistant_messages where conversation_id='${first}';`),'1');
   assert.equal(e.sql(`select count(*) from turn_private.assistant_messages where conversation_id='${second}';`),expected);
  }
- if(selectionMode&&!refreshMode){
+ if(selectionMode&&!refreshMode&&!taskHistoryMode){
   const first=profile.VP_NATIVE_ASSISTANT_CONVERSATION_FIRST,second=profile.VP_NATIVE_ASSISTANT_CONVERSATION_SECOND;
   if(e.sql(`select count(*) from turn_private.assistant_messages where conversation_id='${first}';`)!=='2'
     || e.sql(`select count(*) from turn_private.assistant_messages where conversation_id='${second}';`)!=='1')throw Error('Selected send attached to wrong conversation');
