@@ -251,7 +251,7 @@ private struct NativeLibraryPhraseDetail: View {
         TimelineView(.periodic(from: .now, by: 1)) { _ in
             if store.isCurrent(scope), let phrase = store.opened {
                 NativeTranslationCard(phrase: phrase, chinese: settings.selectedLocale == .zh)
-            } else if store.state == "loading" { ProgressView() }
+            } else if store.state == "idle" || store.state == "loading" { ProgressView() }
             else {
                 Text(settings.selectedLocale == .zh ? "这份资料暂不可读，可能已改变、删除、撤权或超出最近窗口。请返回刷新；未确认旧内容仍可使用。" : "This material is unavailable. It may have changed, been deleted, lost permission, or left the recent window. Return and refresh; the earlier content is not confirmed usable.")
                     .padding().accessibilityIdentifier("library.phrase.unavailable")
