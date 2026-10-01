@@ -30,6 +30,14 @@ Journeys, privacy export, global architecture/handoff or applied migration chang
 - PASS real disposable Auth → Next.js → RPC1/1, no skips: old20 omission vs new
   exact/page reopen, owner isolation, source state/hidden cursor invalidation,
   withdrawal, double-source revocation race, no-store and model HTTP/budget attempts0.
+  Independent main review found session RPC errors were all mapped401; fixed both
+  initial/publication checks. The same real synthetic JWT chain passed24 fault
+  injections (page/exact x initial/final x ordinary RPC/503/network/explicit replaced/
+  subject mismatch/malformed). Temporary failures return503/no source content; only
+  explicit session loss or real mismatch401. Removing faults lets the same login
+  read again. See auth-http-review-fix.log.gz; original green c2aef510 is superseded.
+  Prior unchanged SQL/native/contract evidence is reused; focused HTTP, types, lint,
+  docs and diff validation passed for this classification-only repair.
   Commands: `VP_TRANSLATION_HISTORY_DB_TEST=1 node --experimental-strip-types --test tests/integration/translate/history.test.mjs`;
   `node --experimental-strip-types tests/integration/turn/run-native-http.mjs --translation-history`.
 - PASS `pnpm test:integration:db --lane postgres`:142/142 isolated-postgres +5/5

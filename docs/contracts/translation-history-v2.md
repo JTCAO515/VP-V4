@@ -49,7 +49,10 @@ can still be reopened independently of that scan window. Exact success has
 `version:2, kind:unavailable` or an explicit input/session/transport error.
 
 The HTTP layer rereads source eligibility/content and the mobile session before
-responding, failing unavailable when the projected source changes. Each read is
+responding, failing unavailable when the projected source changes. Both session
+checks return401 only for explicit UNAUTHENTICATED/SESSION_REPLACED or a valid
+subject/session mismatch; ordinary RPC/transport/5xx and malformed protocol replies
+return503, so a temporary read failure does not invalidate the native login. Each read is
 bounded; the existing 10-second request deadline remains. This is live traversal,
 not a snapshot or a full-history completeness guarantee across concurrent edits.
 

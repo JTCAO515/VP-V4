@@ -47,11 +47,18 @@ export async function translationHistoryHTTP(request: Request, turnId?: string) 
     const actor = await scope.run(() => verifyNativeCredentials(request, config, scope.fetch, scope.unavailable));
     if (!actor) return failure("UNAUTHENTICATED", 401);
     const rpc = (name: string, input: Record<string, string | null>) => scope.run(() => actor.client.rpc(name, input).abortSignal(scope.signal));
-    const sessionCurrent = async () => {
+    const sessionFailure = async (): Promise<Response | null> => {
       const session = await rpc("native_session_v2", { p_action: "session" });
-      return !session.error && session.data?.subject === actor.subject && session.data?.sessionId === actor.sessionId;
+      if (session.error) return failure(/UNAUTHENTICATED|SESSION_REPLACED/.test(session.error.message)
+        ? "UNAUTHENTICATED" : "PROVIDER_UNAVAILABLE",
+        /UNAUTHENTICATED|SESSION_REPLACED/.test(session.error.message) ? 401 : 503);
+      if (!record(session.data) || typeof session.data.subject !== "string" || !isUuid(session.data.subject)
+        || typeof session.data.sessionId !== "string" || !isUuid(session.data.sessionId)) return failure("PROVIDER_UNAVAILABLE", 503);
+      return session.data.subject === actor.subject && session.data.sessionId === actor.sessionId
+        ? null : failure("UNAUTHENTICATED", 401);
     };
-    if (!await sessionCurrent()) return failure("UNAUTHENTICATED", 401);
+    const initialSessionFailure = await sessionFailure();
+    if (initialSessionFailure) return initialSessionFailure;
     const read = () => rpc(turnId === undefined ? "list_saved_translations_v1" : "read_saved_translation_v1",
       turnId === undefined ? { p_policy_id: config.policyId, p_cursor: cursor } : { p_policy_id: config.policyId, p_turn_id: turnId });
     const first = await read();
@@ -65,7 +72,8 @@ export async function translationHistoryHTTP(request: Request, turnId?: string) 
     if (last.error) return failure(/UNAUTHENTICATED|SESSION_REPLACED/.test(last.error.message) ? "UNAUTHENTICATED" : "PROVIDER_UNAVAILABLE",
       /UNAUTHENTICATED|SESSION_REPLACED/.test(last.error.message) ? 401 : 503);
     if (JSON.stringify(projectTranslationHistory(last.data, config.policyId, cursor, turnId)) !== JSON.stringify(page)) return reply(unavailable());
-    if (!await sessionCurrent()) return failure("UNAUTHENTICATED", 401);
+    const finalSessionFailure = await sessionFailure();
+    if (finalSessionFailure) return finalSessionFailure;
     scope.check();
     return reply(page);
   } catch { return failure("PROVIDER_UNAVAILABLE", 503); }

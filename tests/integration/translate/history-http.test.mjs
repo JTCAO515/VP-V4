@@ -60,7 +60,40 @@ test('real disposable Auth/HTTP saved translation pages reopen beyond legacy20 w
   VISEPANDA_NATIVE_LOCAL_TEXT: 'true', VISEPANDA_NATIVE_LOCAL_TEXT_POLICY: e.policyId };
  const prior = Object.fromEntries(Object.keys(patch).map(key => [key, process.env[key]]));
  Object.assign(process.env, patch);
- const originalFetch = globalThis.fetch; let reads = 0;
+ const originalFetch = globalThis.fetch; let reads = 0, faultCases = 0;
+ try {
+  for (const phase of [1, 2]) {
+   for (const mode of ['rpc-transient', 'transport-503', 'network', 'session-replaced', 'subject-mismatch', 'malformed']) {
+    for (const turnId of [undefined, foreign]) {
+     let sessions = 0, sourceReads = 0;
+     globalThis.fetch = async (input, init) => {
+      const url = typeof input === 'string' ? input : input.url ?? String(input);
+      if (/\/rest\/v1\/rpc\/(list_saved_translations_v1|read_saved_translation_v1)$/.test(url)) sourceReads++;
+      if (url.endsWith('/rest/v1/rpc/native_session_v2') && ++sessions === phase) {
+       if (mode === 'network') throw Error('Synthetic session transport unavailable');
+       if (mode === 'rpc-transient') return Response.json({ code: 'P0001', message: 'Synthetic database temporarily unavailable' }, { status: 400 });
+       if (mode === 'transport-503') return Response.json({ message: 'Synthetic gateway unavailable' }, { status: 503 });
+       if (mode === 'session-replaced') return Response.json({ code: 'P0001', message: 'SESSION_REPLACED' }, { status: 400 });
+       if (mode === 'subject-mismatch') return Response.json({ subject: uuid(), sessionId: uuid() });
+       return Response.json({});
+      }
+      return originalFetch(input, init);
+     };
+     const response = await translationHistoryHTTP(new Request(e.api + base + (turnId ? '/turns/' + turnId : ''), { headers: { Authorization: 'Bearer ' + other } }), turnId);
+     const denied = ['session-replaced', 'subject-mismatch'].includes(mode);
+     assert.equal(response.status, denied ? 401 : 503, `${mode} phase${phase}`);
+     assert.deepEqual(await response.json(), { error: { code: denied ? 'UNAUTHENTICATED' : 'PROVIDER_UNAVAILABLE' } });
+     assert.equal(sourceReads, phase === 1 ? 0 : 2, 'failed session returns no source content');
+     faultCases++;
+    }
+   }
+  }
+  assert.equal(faultCases, 24);
+  t.diagnostic('24/24 session fault injections observed: initial/final x page/exact x RPC transient,503,network,replaced,mismatch,malformed');
+  globalThis.fetch = originalFetch;
+  const recovered = await translationHistoryHTTP(new Request(e.api + base, { headers: { Authorization: 'Bearer ' + other } }));
+  assert.equal(recovered.status, 200); assert.equal((await recovered.json()).kind, 'translations', 'transient failure did not revoke or mutate the synthetic session');
+ } finally { globalThis.fetch = originalFetch; }
  globalThis.fetch = async (input, init) => {
   const url = typeof input === 'string' ? input : input.url ?? String(input);
   if (url.endsWith('/rest/v1/rpc/list_saved_translations_v1') && ++reads === 2) {
