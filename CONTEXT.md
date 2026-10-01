@@ -3,19 +3,19 @@
 Generated from [docs/handoff.json](docs/handoff.json). Full decisions, blockers and evidence: [HANDOFF.md](HANDOFF.md).
 This entry is a navigation summary, not a grant of authority or a capability acceptance report. Historical records never override the current user request.
 
-Program: [VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187) · Source updated: 2026-09-27
+Program: [VPJ-00 #187](https://github.com/JTCAO515/VP-V4/issues/187) · Source updated: 2026-10-02
 
 目标：交付以行前规划为购买入口、具有可见Memory/持续目标/真实后台工作/可操作成果的个人China Journey Assistant；中英原生iOS完整产品，Web轻量同Trip。VPJ-00 #187统一统筹，正式上架收费目标保留。
 
-阶段：助手升级U0–U1：统一三段交互与Memory纠正体验，版本化持续会话/目标归属；再贯通真实后台规划、持久成果与四Tab。U0–U4优先于旧固定切片顺序，S1–S6保留为验收分类；在途基础工作及真实发布/用户保护门继续。
+阶段：助手升级U0–U4整票验收推进：Conversation/goal、持久成果、有界规划、VP/Library/四Tab的首轮代码已合并；继续修复真实读取/恢复缺口，补齐Memory影响、Journeys目标聚合和目标环境三段体验。S1–S6保留为验收分类，不用切片合并数代替完整验收。
 
 ## 源记录状态（执行前核对 GitHub）
 
-2026-09-27本轮只读核对main 72059c6327d6ec658e86dee64508f88dd88314e6，开始时无开放PR。#555已合并原生travel pace consumer，#557已合并地址v3边界文档；本轮未运行provider、worker、设备、Store或Production，既有环境缺口及证据保留。当前交付是ADR-0027与助手任务重排，不是新产品实现。
+2026-10-02核查VPJ-77/78/81/82/83：九个原交付PR全部真实合并，最终提交CI全部通过；它们是有界切片，五张父票仍有未完成验收。本轮修复#582资源库刷新/有效期和#585 producer关闭后的会话读回，均已通过全部CI并合并；独立审阅并合并#581任务定向成果重开。#562原CLOSED但未完成整票验收，已恢复OPEN。VP缓存跨Tab/后台/到期复查修复#586最终11项CI已全部通过并合并；真实Staging/provider/device与完整Memory/Journeys链未据此验收。
 
 ## 下一动作
 
-先实施VPJ-77三段交互样例；可独立准备VPJ-78持续Conversation/goal/ServiceTask版本契约，由#199接真实Memory消费/纠正。后续VPJ-79/80连接持久成果与后台执行，再接VPJ-81/82/83和#197/198。#243/#237/#503在途基础工作保留原owner与证据；新规划不是部署/购买授权。
+依当前COORDINATION的实际owner补五票剩余验收，优先Memory纠正/保存/Undo与真实成果变化、Journeys未定日期goal/Task聚合、其他私有资料来源及实体VoiceOver/用户观察。真实Staging迁移、policy/scope/provider/host就绪须按当前主协调的具体对象/环境授权核对；本轮没有目标迁移/部署/预算开启。保留#199和其他在途任务原owner，不重复派工。
 
 ## 开工入口
 

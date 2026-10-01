@@ -6,9 +6,9 @@ Generated from docs/handoff.json by vpj-program.mjs.
 
 目标：交付以行前规划为购买入口、具有可见Memory/持续目标/真实后台工作/可操作成果的个人China Journey Assistant；中英原生iOS完整产品，Web轻量同Trip。VPJ-00 #187统一统筹，正式上架收费目标保留。
 
-状态：2026-09-27本轮只读核对main 72059c6327d6ec658e86dee64508f88dd88314e6，开始时无开放PR。#555已合并原生travel pace consumer，#557已合并地址v3边界文档；本轮未运行provider、worker、设备、Store或Production，既有环境缺口及证据保留。当前交付是ADR-0027与助手任务重排，不是新产品实现。
+状态：2026-10-02核查VPJ-77/78/81/82/83：九个原交付PR全部真实合并，最终提交CI全部通过；它们是有界切片，五张父票仍有未完成验收。本轮修复#582资源库刷新/有效期和#585 producer关闭后的会话读回，均已通过全部CI并合并；独立审阅并合并#581任务定向成果重开。#562原CLOSED但未完成整票验收，已恢复OPEN。VP缓存跨Tab/后台/到期复查修复#586最终11项CI已全部通过并合并；真实Staging/provider/device与完整Memory/Journeys链未据此验收。
 
-阶段：助手升级U0–U1：统一三段交互与Memory纠正体验，版本化持续会话/目标归属；再贯通真实后台规划、持久成果与四Tab。U0–U4优先于旧固定切片顺序，S1–S6保留为验收分类；在途基础工作及真实发布/用户保护门继续。
+阶段：助手升级U0–U4整票验收推进：Conversation/goal、持久成果、有界规划、VP/Library/四Tab的首轮代码已合并；继续修复真实读取/恢复缺口，补齐Memory影响、Journeys目标聚合和目标环境三段体验。S1–S6保留为验收分类，不用切片合并数代替完整验收。
 
 ## 读取顺序
 
@@ -48,6 +48,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - 2026-09-24 JT亲自执行（协调者核实）：1) 按2026-09-23授权完成仅含next安全补丁的生产发布，方式为Vercel控制台Promote热修分支Preview；2) 共享数据库dzqdzetcctkhbrhlxxgn先备份再应用14个既有迁移。research intake与hosted worker开关均保持默认关闭；这两项执行不授权开启收件、激活worker或其他生产变更。
 - 2026-09-26 JT明确将目标改为 App Store 正式上架并可收费；保留已接受的完整旅程、中英原生 iOS 与轻量同 Trip Web。六个交付包是现有 Issue 的排程视图，不另建队列；旧只到 TestFlight 和一律暂停 S3–S5 的阶段限制不再适用。两线优先真实阻塞：#503 Sandbox 购买到 grant 与 #243 Production 隔离包；#530 由主协调按最新 base/CI 审阅收尾。新增供应商横评、非必要重构与扩展研究暂停；既有 12 场景 required mode、RLS/同意/Trip 确认、数据退出和发布门保留。
 - 2026-09-26 JT明确授权主协调批准子任务的所有请求，并允许把请求审批权直接下放子任务，以减少重复确认。子任务在所属 Issue/对象/环境范围内审清影响、预算、前后不变量与回退后自主决定；需要 JT 本人官方界面操作的步骤集中由主协调给出，不索取聊天中的秘密。工具沙箱审批属独立技术限制，受限 Git/CLI 命令由主协调在其授权环境代执行，不把业务授权误报为验收通过或技术权限已经改变。
+- 2026-10-02本轮按JT“确认完成后关闭Issue”的直接请求审计五票：父票只有全部适用验收满足才关闭；真实已合并切片和已修复bug可以报告，明确保留未验项。本轮将#562恢复OPEN并保留status:planned，不改变任何已接受产品范围或业务不变量。
 
 ## 未决与运行证据
 
@@ -62,6 +63,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - 最大结构风险——生产与Staging共用数据库dzqdzetcctkhbrhlxxgn（Production/Preview/Development三个Vercel环境同一NEXT_PUBLIC_SUPABASE_URL，见docs/runbooks/staging-vercel-maintenance.md）：任何“Staging”迁移、测试写入或开关变更都同时作用于生产站，须JT先备份并决定。2026-09-24的14个迁移已应用，此后新增迁移同样适用该约束。独立Production数据库仍属#243，未建立。
 - 2026-09-24 #206 Preview 403如带x-vercel-mitigated: deny，阻断发生在Vercel Firewall、请求未进入应用；不据此判定应用或Provider失败。需要可达的目标环境及真实请求回执才能验收。相关早期Firewall证据见artifacts/VPJ-75/staging-ops-20260919/verification.md和VPJ-76/staging-web-20260919/verification.md。
 - 2026-09-26 首发关键门：#243 独立 Production 尚未建立，原生会话/服务端 native 路由当前仅接受 Staging/本地，hosted worker 固定共享 Staging ref；#503 真 StoreKit SKU 为 null，交易到 grant 尚未验；#237 TestFlight 目标安装 FAIL、Apple 支持 Send 送达 UNKNOWN；#195 当前 S1 普通会话 owner/RLS 精确核验及常驻真实 Provider 仍未完成。各自代码准备与真实环境动作、整票验收分开。
+- 2026-10-02主协调2026-10-01的Staging只读快照：共享Staging助手迁移/规划端点、host heartbeat、usable policy/scope/consent尚未就绪；#583离线profile/2部署准备与#584一次性迁移重放属于repo-only准备。remote75/local90/缺15是当时精确版本集合；#581新增迁移后必须重新比较，不沿用15作为当前值。不能用本地迁移重放、process fixture或CI代替目标部署/provider/设备。
 
 - #359/#360：PR #479已于2026-09-22合并（2ef0950），其报告的Staging61、真实Qwen与双端有界回读是该PR证据，本次未重新运行。独立审核发布、新内容双端回读、answered EvidencePack v2、真机、账单与最终恢复演练仍未完成；两票仍OPEN。
 - Production/customer and complete native/Harness acceptance remain unrun. Scoped Staging and actual C0 model protocol/worker behavior are verified; supplier billing, semantic quality and real user data consumers remain separate.
@@ -76,6 +78,7 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - 生产（2026-09-24起）：dpl_9t4iY7YF48r9Suru34hZFdxH8sdw（30e98013，Next 16.3.6），Next Critical已消除。它等同于a8fa82ad加安全补丁，不含main之后的功能（#520安全头/地点配额、#522 worker等未上线生产）；生产未启用native/ops开关。早先“冻结于db5fb7b”“最后生产部署f14ee46”两种记载不成立，历史见固定commit bb43c5d的handoff。
 - 2026-09-24 历史状态：#522 常驻 text worker 未激活，research intake enabled=false；当时 #534 的签名 Archive/上传/安装尚未运行。签名上传与内部组分发随后已由 #539 更新，目标 TestFlight 安装在2026-09-25实测 FAIL；此历史项不能作为当前安装 UNRUN 结论。
 - 2026-09-26 当前未完成：#195 正式容器/真实 Provider/目标用户同意与 owner RLS；#237 目标 TestFlight 安装 FAIL，目标启动和安装后数据 UNRUN，Apple 支持请求送达 UNKNOWN；#503 官方 Sandbox 购买→grant→两端读回 UNRUN；#243 独立 Production/迁移/回退/切流 UNRUN；#206/#264 完整真实知识/H07 与 12 场景 required mode、真机 VoiceOver 仍未完成。已合并代码和离线测试不替代这些目标结果。
+- 2026-10-02本轮五票完整未验项：#558全量对比度FAIL、实体VoiceOver/旅客观察UNRUN；#559完整all-user-data导出删除与真实context/model消费；#562自然Memory纠正/长期保存/版本Undo/成果使用解释、会话选择和真实返回链；#563比较之外的材料来源、完整搜索发现交接/质量性能/目标权限；#564未定日期goal/下一决定/task聚合、Memory→真实结果→TripProposal确认→Library同源读回及完整适用E1–E10。五票均OPEN；#562旧关闭事件不等于验收。
 
 ## 验证
 
@@ -99,13 +102,15 @@ Generated from docs/handoff.json by vpj-program.mjs.
 - 2026-09-17 VPJ-49 #241: native confirmed-only local share cards implement bilingual field selection, privacy preview, exact UIImage system handoff, day/whole-trip selection, version/time stamps, pagination and stale/account fencing. Per-criterion code mapping, native runtime evidence, full Quality PR commands and retained environment skips are recorded in artifacts/VPJ-49/verification.md and unrun.md. Main S2 VPJ-75/76 lane and its outstanding work remain owned by the other task.
 - 2026-09-18 VPJ-09/#197 bounded relative-day outline on branch codex/vpj-09-relative-day-20260918: native guided four-city food/walk directions remain local until a user supplies non-overlapping dates; existing Trip Proposal/diff/exact confirmation unchanged. Disposable local Supabase ordinary Auth/PostgreSQL native+Web integration passed with a prior dinner retained and two appended days; native simulator end-to-end outline/proposal/confirmation/relaunch passed on synthetic account. See artifacts/VPJ-09/verification.md. This does not close #197.
 - 2026-09-26 主协调只读核对 main cfaa5b18 与开放 PR #530，读取 #539/#544/#545 的已记录边界及新上架收费规划；#503/#243 独立任务已从 main 开工。未在本次执行 Apple 安装、真实购买、Production/Supabase 变更或 Provider 请求；新方向和历史状态修正在此 handoff，不建立第二套任务定义。
+- 2026-10-02 VPJ-77/78/81/82/83审计：#567/#573、#568/#570/#572、#577、#576/#579、#578最终head全部checks SUCCESS，merge提交均在main。#582 final0fbb0317全11项检查PASS，merge b329cfe1；#585 final76eca453全12项PASS，merge1dfd1ea2；#581 finala3af6019全16项PASS，经独立审阅merge28739875。#582本地原生21/21、契约698/698；#585先复现503失败再一次性Auth/Postgres1/1PASS，gate5/5、governance5/5、契约698/698；localsecurity192pass/1环境skip明确INCOMPLETE。目标provider/device不在这些证据内。
+- 2026-10-02 #586 final4a44f50f2a3c9a138f04a21a11f1ddb755038019全部11项CI通过，normal head-matched merge036e8f855f3e8b903b28aa4739179631c8a90534；VP缓存到期/离开/后台清理、同Task精确复查已实现。本地final source原生4/4及契约698/698，独立actor/epoch/read fence；真实Memory→provider结果变化、Staging、实体机和完整整票仍UNRUN。
 
 ## 下一动作与回滚
 
-先实施VPJ-77三段交互样例；可独立准备VPJ-78持续Conversation/goal/ServiceTask版本契约，由#199接真实Memory消费/纠正。后续VPJ-79/80连接持久成果与后台执行，再接VPJ-81/82/83和#197/198。#243/#237/#503在途基础工作保留原owner与证据；新规划不是部署/购买授权。
+依当前COORDINATION的实际owner补五票剩余验收，优先Memory纠正/保存/Undo与真实成果变化、Journeys未定日期goal/Task聚合、其他私有资料来源及实体VoiceOver/用户观察。真实Staging迁移、policy/scope/provider/host就绪须按当前主协调的具体对象/环境授权核对；本轮没有目标迁移/部署/预算开启。保留#199和其他在途任务原owner，不重复派工。
 
 For the local consumer, disable its opt-in or revert its code while keeping a database-compatible default client. Preserve append-only snapshots, receipts and all applied migrations; never revive revoked user data or bypass confirmation proof. Remote rollout/rollback requires the named environment gate.
 
-Technical release acceptance in VPJ-45 and commercial lifecycle evidence in VPJ-47 are distinct terminal conditions.
+本轮观察范围为VPJ-77/78/81/82/83及其合并代码、CI和局部恢复缺陷。上架、StoreKit、Production及其他历史阶段记录保留原日期和原owner；本轮未刷新这些对象，不能从handoff的更新时间推导其当前完成状态。
 
 历史：[docs/archive/2026-09-10/handoff-before-astra-docs.json](docs/archive/2026-09-10/handoff-before-astra-docs.json), [docs/archive/2026-09-05/baseline/handoff.json](docs/archive/2026-09-05/baseline/handoff.json), [docs/archive/2026-09-05/baseline/CONTEXT.md](docs/archive/2026-09-05/baseline/CONTEXT.md), [docs/archive/2026-09-05/baseline/HANDOFF.md](docs/archive/2026-09-05/baseline/HANDOFF.md), [docs/archive/2026-09-05/baseline/issue-execution-contract.md](docs/archive/2026-09-05/baseline/issue-execution-contract.md), [https://github.com/JTCAO515/VP-V4/blob/c5aaa4d/docs/handoff.json](https://github.com/JTCAO515/VP-V4/blob/c5aaa4d/docs/handoff.json), [https://github.com/JTCAO515/VP-V4/blob/ce46abd/docs/handoff.json](https://github.com/JTCAO515/VP-V4/blob/ce46abd/docs/handoff.json), [https://github.com/JTCAO515/VP-V4/blob/a90ce61/docs/handoff.json](https://github.com/JTCAO515/VP-V4/blob/a90ce61/docs/handoff.json), [https://github.com/JTCAO515/VP-V4/blob/9e0553f/docs/handoff.json](https://github.com/JTCAO515/VP-V4/blob/9e0553f/docs/handoff.json), [https://github.com/JTCAO515/VP-V4/blob/bb43c5d/docs/handoff.json](https://github.com/JTCAO515/VP-V4/blob/bb43c5d/docs/handoff.json), [docs/archive/2026-09-27-assistant-replan/handoff-before.json](docs/archive/2026-09-27-assistant-replan/handoff-before.json)。
