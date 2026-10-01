@@ -3466,6 +3466,74 @@
           }
         }
       }
+    },
+    "shell.switch.pending": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resolve the pending change before switching navigation."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请先处理未决更改，再切换导航。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resolve the pending change before switching navigation."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resolve the pending change before switching navigation."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resolve the pending change before switching navigation."
+          }
+        }
+      }
+    },
+    "shell.switch.temporary": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switching resets temporary page history and unsent drafts. Saved work stays."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "切换会重置临时页面历史和未发送草稿，已保存工作保留。"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switching resets temporary page history and unsent drafts. Saved work stays."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switching resets temporary page history and unsent drafts. Saved work stays."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switching resets temporary page history and unsent drafts. Saved work stays."
+          }
+        }
+      }
     }
   },
   "version": "1.0"
