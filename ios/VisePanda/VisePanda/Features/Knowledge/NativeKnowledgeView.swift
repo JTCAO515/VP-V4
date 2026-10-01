@@ -127,7 +127,7 @@ struct NativeKnowledgeView: View {
         Text(text("My materials and results", "我的资料与成果")).font(.title2.bold())
         TextField(text("Search my materials and results", "搜索我的资料与成果"), text: $search)
             .textFieldStyle(.roundedBorder).accessibilityIdentifier("library.search")
-        Text(text("Current comparisons. Translations from your latest 20 text requests. Other sources are excluded.", "当前比较成果；最近 20 次文字请求中的翻译。其他来源未纳入。"))
+        Text(text("Search current comparisons. Translation matches cover the displayed page only.", "搜索当前比较成果；翻译只匹配当前显示页。"))
             .font(.footnote).foregroundStyle(Color.vpSecondaryText)
         if search.utf16.count > 120 {
             Text(text("Use a search of up to 120 characters.", "搜索内容最多 120 个字符。"))
@@ -199,28 +199,29 @@ private struct NativeLibraryPhrasePanel: View {
     @State private var store = NativeLibraryPhraseStore()
     @State private var selected: NativeLibraryPhraseReference?
     @State private var refresh = UUID()
+    @State private var cursor: String?
     private var session: NativeSession { settings.nativeSession }
     private var scope: NativeDataScope? { isActive && phase == .active ? session.dataScope : nil }
     private func text(_ en: String, _ zh: String) -> String { settings.selectedLocale == .zh ? zh : en }
-    private var key: Key { .init(scope: scope, refresh: refresh) }
+    private var key: Key { .init(scope: scope, cursor: cursor, refresh: refresh) }
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(text("Saved translations", "已存翻译")).font(.headline)
-            Text(text("Translated phrases from your 20 most recent text requests. This is a limited window, not your complete materials history. No translation is generated when reading.", "显示最近 20 次文字请求中已完成的翻译。这是有限窗口，不代表完整资料历史；阅读不会重新生成翻译。"))
+            Text(text("Up to 20 saved translations per page. Search matches this page only; another page may still match. Reading never generates a translation.", "每页最多 20 份已存翻译。搜索只匹配本页，其他页仍可能有匹配资料；阅读不会生成翻译。"))
                 .font(.footnote).foregroundStyle(Color.vpSecondaryText)
-            Button(text("Refresh translations", "刷新翻译资料")) { store.clear(); selected = nil; refresh = UUID() }
+            Button(text("Refresh first translation page", "刷新翻译首页")) { store.clear(); selected = nil; cursor = nil; refresh = UUID() }
                 .disabled(scope == nil).accessibilityIdentifier("library.phrases.refresh")
             TimelineView(.periodic(from: .now, by: 1)) { _ in
                 if scope == nil {
                     Text(text("Sign in to read your materials.", "登录后可读取自己的资料。"))
-                } else if query.utf16.count > 120 && store.isCurrent(scope) {
+                } else if query.utf16.count > 120 && store.isCurrent(scope, cursor: cursor) {
                     Text(text("Shorten the search to check this window.", "请缩短搜索内容后查找此窗口。"))
-                } else if let matches = store.matches(scope: scope, query: query) {
-                    if matches.isEmpty { Text(text("No matching completed translation in this recent window.", "当前最近窗口中没有匹配的已完成翻译。")) }
+                } else if let matches = store.matches(scope: scope, query: query, cursor: cursor) {
+                    if matches.isEmpty { Text(text("No matching saved translation on this page. Other pages may still match.", "本页没有匹配的已存翻译，其他页仍可能有匹配资料。")) }
                     ForEach(matches) { phrase in
                         Button {
-                            guard let reference = store.reference(phrase, scope: scope) else {
-                                store.clear(); refresh = UUID(); return
+                            guard let reference = store.reference(phrase, scope: scope, cursor: cursor) else {
+                                store.clear(); cursor = nil; refresh = UUID(); return
                             }
                             selected = reference
                             store.clear()
@@ -234,28 +235,33 @@ private struct NativeLibraryPhrasePanel: View {
                                     Text(text("Back-translation: ", "回译：") + back).font(.footnote).lineLimit(2)
                                 }
                             }.frame(maxWidth: .infinity, alignment: .leading)
-                        }.accessibilityIdentifier("library.phrase.open")
+                        }.accessibilityIdentifier("library.phrase.open.\(phrase.id)")
+                    }
+                    if let next = store.nextCursor {
+                        Button(text("Older translations", "更早的翻译")) { cursor = next }
+                            .accessibilityIdentifier("library.phrases.older")
                     }
                 } else if store.state == "unavailable" {
-                    Text(text("Materials unavailable. Check your session and translation consent in the Translation tool, then refresh.", "资料暂不可读，请检查登录及翻译工具中的同意状态后刷新。"))
+                    Text(text("This page is unavailable or its scan could not finish. Check your session/consent and refresh the first page.", "本页暂不可读，或扫描未能完成。请检查登录与同意状态，并刷新首页。"))
+                        .accessibilityIdentifier("library.phrases.unavailable")
                 } else if store.state == "ready" {
                     Text(text("Refresh to recheck these materials.", "请刷新以重新核对资料资格。"))
                 } else { ProgressView() }
             }
         }
         .task(id: key) {
-            await store.load(scope: scope, currentScope: { scope }) { path, method, body in
+            await store.load(scope: scope, cursor: cursor, currentScope: { scope }, request: { path, method, body in
                 try await session.translateRequest(path: path, method: method, body: body)
-            }
+            }, read: { after, id in try await session.translationHistoryRequest(cursor: after, turnID: id) })
         }
-        .onChange(of: scope) { _, _ in store.clear(); selected = nil }
+        .onChange(of: scope) { _, _ in store.clear(); selected = nil; cursor = nil }
         .onChange(of: query) { _, _ in selected = nil }
         .onDisappear { store.clear(); selected = nil }
-        .sheet(item: $selected, onDismiss: { refresh = UUID() }) { reference in
+        .sheet(item: $selected, onDismiss: { cursor = nil; refresh = UUID() }) { reference in
             NativeLibraryPhraseDetail(reference: reference)
         }
     }
-    private struct Key: Equatable { let scope: NativeDataScope?; let refresh: UUID }
+    private struct Key: Equatable { let scope: NativeDataScope?; let cursor: String?; let refresh: UUID }
 }
 
 private struct NativeLibraryPhraseDetail: View {
@@ -270,14 +276,14 @@ private struct NativeLibraryPhraseDetail: View {
                 NativeTranslationCard(phrase: phrase, chinese: settings.selectedLocale == .zh)
             } else if store.state == "idle" || store.state == "loading" { ProgressView() }
             else {
-                Text(settings.selectedLocale == .zh ? "这份资料暂不可读，可能已改变、删除、撤权或超出最近窗口。请返回刷新；未确认旧内容仍可使用。" : "This material is unavailable. It may have changed, been deleted, lost permission, or left the recent window. Return and refresh; the earlier content is not confirmed usable.")
+                Text(settings.selectedLocale == .zh ? "这份资料暂不可读，可能已改变、删除、撤权或读取期限已过。请返回刷新；未确认旧内容仍可使用。" : "This material is unavailable. It may have changed, been deleted, lost permission, or the read expired. Return and refresh; the earlier content is not confirmed usable.")
                     .padding().accessibilityIdentifier("library.phrase.unavailable")
             }
         }
         .task(id: scope) {
-            await store.load(scope: reference.scope, exact: reference, currentScope: { scope }) { path, method, body in
+            await store.load(scope: reference.scope, exact: reference, currentScope: { scope }, request: { path, method, body in
                 try await settings.nativeSession.translateRequest(path: path, method: method, body: body)
-            }
+            }, read: { after, id in try await settings.nativeSession.translationHistoryRequest(cursor: after, turnID: id) })
         }
         .onChange(of: scope) { _, _ in store.clear() }
         .onDisappear { store.clear() }
