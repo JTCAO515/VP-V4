@@ -67,3 +67,39 @@ Migration rollback is tested with transactional apply/rollback before forward
 application. Operational rollback disables this new helper through an
 append-only compensating migration revoking service-role EXECUTE; existing
 readers, retained data and deletion behavior remain available.
+
+## Result module export preparation (VPJ-79)
+
+`result_artifact_export_owner_v1(owner, section, cursor, limit)` is a service-only
+module helper with schema `result-artifact-export/1` and closed sections
+`artifacts`, `revisions`, `events`. It reuses the Conversation page envelope:
+at most 100 `items`, `hasMore`, `nextCursor`, `sectionComplete`. Exhausting a
+section marks only its terminal page; the future executor must collect every
+page of all three sections and reconcile other modules before claiming completion.
+
+Artifact pages carry lifecycle and Task/goal/input/Trip references. Revision
+pages carry the physically retained comparison content and original input,
+Task-Turn, goal, Trip-link and Memory revision basis. They do not dereference
+those sources or copy Task answers, Trip content or Memory summaries. Events
+remain content-free references. Credential/session identifiers, publication
+idempotency keys and request digests are excluded.
+
+Keysets are ascending artifact UUID, `(artifact UUID, revision)` or bigint event
+ID. Closed cursors bind owner and section to an existing source anchor; unknown,
+foreign, malformed and deleted anchors uniformly require restart. Event IDs
+are decimal strings in both items and cursors to avoid JavaScript precision loss.
+This is live traversal with the same snapshot/retry gap as Conversation export.
+
+Withdrawal changes ordinary read eligibility and retains stored result records;
+the service privacy helper includes those physically retained owned records.
+It introduces no retention period or erase rule and cannot restore deleted
+source bodies. Existing account/Trip cascades still remove dependent results;
+after removal there is no exported row or valid old cursor. Ordinary readers
+remain subject to their currentness/consent rules. No authenticated/anonymous
+EXECUTE or direct table grant is added, and no request/download/executor is created.
+The future executor must obtain `owner` from its reauthenticated privacy request,
+collect every section and define snapshot/retry and protected delivery first.
+
+Rollback is transactional before application; after application an append-only
+compensating migration can revoke service-role EXECUTE. The local cascade tests
+are not an operational account-deletion or user-export acceptance claim.
