@@ -170,6 +170,15 @@ nonisolated final class NativeAskUITests: XCTestCase {
         reveal(composer, app); composer.tap(); composer.typeText("Synthetic selected conversation continuation")
         expectation(for: NSPredicate(format: "enabled == true"), evaluatedWith: send); waitForExpectations(timeout: 20)
         send.tap()
+        if environment["VP_NATIVE_ASSISTANT_CONVERSATION_RETRY"] == "1" {
+            let notice = app.staticTexts["assistant.notice"]
+            XCTAssertTrue(notice.waitForExistence(timeout: 20))
+            expectation(for: NSPredicate(format: "enabled == true"), evaluatedWith: send); waitForExpectations(timeout: 20)
+            XCTAssertTrue(String(describing: composer.value).contains("Synthetic selected conversation continuation"), "Transient read failure retains the user's draft")
+            XCTAssertFalse(selected.exists, "Failed read clears the old sensitive projection")
+            XCTAssertEqual(send.label, "Retry same message")
+            send.tap()
+        }
         let message = app.staticTexts["assistant.message.2"]
         XCTAssertTrue(message.waitForExistence(timeout: 20)); XCTAssertEqual(message.label, "Synthetic selected conversation continuation")
         capture("Assistant-earlier-selected-send-en", app)

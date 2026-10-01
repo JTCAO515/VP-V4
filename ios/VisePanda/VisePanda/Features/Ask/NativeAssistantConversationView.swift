@@ -466,7 +466,7 @@ struct NativeAssistantConversationView: View {
                 }
                 if policy?.consentState != .accepted && !privacyLinks.isEmpty { privacyTripControls }
                 if notice != nil && privacyLinks.isEmpty {
-                    Text(chinese ? "请求未确认，请重试或刷新。" : "Request not confirmed. Retry or refresh.").font(.footnote)
+                    Text(chinese ? "请求未确认，请重试或刷新。" : "Request not confirmed. Retry or refresh.").font(.footnote).accessibilityIdentifier("assistant.notice")
                 }
             }.padding(VPSpacing.standard)
         }
@@ -522,8 +522,8 @@ struct NativeAssistantConversationView: View {
                     HStack {
                         TextField(chinese ? "告诉 VP…" : "Ask VP…", text: $draft, axis: .vertical)
                             .lineLimit(1...5).autocorrectionDisabled().accessibilityIdentifier("assistant.composer")
-                        Button(chinese ? "发送" : "Send") { Task { await send() } }
-                            .disabled(busy || refreshBusy || conversation == nil || (pending == nil && draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
+                        Button(pending != nil && conversation == nil ? (chinese ? "重试同一次消息" : "Retry same message") : (chinese ? "发送" : "Send")) { Task { await send() } }
+                            .disabled(busy || refreshBusy || (conversation == nil && pending == nil) || (pending == nil && draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
                             .accessibilityIdentifier("assistant.send")
                     }
                 }.padding().background(.bar)
@@ -615,13 +615,18 @@ struct NativeAssistantConversationView: View {
         Task { await reload() }
     }
 
-    private func clearConversationContext() {
-        conversation = nil; pending = nil; draft = ""; operation = "independent_question"; notice = nil
-        planningPolicy = nil; planningPending = nil; planningDraft = ""; planningAgreed = false; planningNotice = nil
-        taskTurns = []; taskNotice = nil; selectedTaskID = nil; selectedArtifactID = nil; selectedArtifactTaskID = nil
+    private func clearConversationProjection() {
+        conversation = nil; planningPolicy = nil; taskTurns = []
+        selectedTaskID = nil; selectedArtifactID = nil; selectedArtifactTaskID = nil
         invalidateResult()
-        tripLink = nil; ownedTrips = []; pendingTripMutation = nil; tripNotice = nil
-        tripConfirmation = nil; showTripPicker = false
+        tripLink = nil; ownedTrips = []; tripConfirmation = nil; showTripPicker = false
+    }
+
+    private func clearConversationContext() {
+        clearConversationProjection()
+        pending = nil; draft = ""; operation = "independent_question"; notice = nil
+        planningPending = nil; planningDraft = ""; planningAgreed = false; planningNotice = nil
+        taskNotice = nil; pendingTripMutation = nil; tripNotice = nil
     }
 
     private func ownsSelection(_ initial: NativeDataScope, _ generation: UUID) -> Bool {
@@ -1047,7 +1052,9 @@ struct NativeAssistantConversationView: View {
                         }
                     }
                     if let linkedID = link.tripId, !ownedTrips.contains(where: { $0.id == linkedID }) {
-                        ownedTrips = try await ownedTripList(initial)
+                        let refreshedTrips = try await ownedTripList(initial)
+                        guard ownsSelection(initial, generation) else { return }
+                        ownedTrips = refreshedTrips
                     }
                     guard ownsSelection(initial, generation) else { return }
                     tripNotice = nil
@@ -1060,9 +1067,17 @@ struct NativeAssistantConversationView: View {
             notice = nil
         } catch {
             guard ownsSelection(initial, generation) else { return }
-            policy = nil; clearConversationContext(); conversations = []
-            invalidateResult(); tripLink = nil; notice = "retry"
-            await loadPrivacyLinks(initial)
+            // A lost POST receipt followed by a transient read failure must retain
+            // the same immutable request keys. Only authoritative denial clears intake.
+            let authorityLost: Bool
+            if case NativeDataError.server(let code) = error {
+                authorityLost = ["DATA_POLICY_BLOCKED", "FORBIDDEN", "UNAUTHENTICATED"].contains(code)
+            } else { authorityLost = false }
+            if authorityLost {
+                policy = nil; clearConversationContext()
+            } else { clearConversationProjection() }
+            conversations = []; notice = "retry"
+            if authorityLost { await loadPrivacyLinks(initial) }
         }
     }
     private func accept() async {
@@ -1094,7 +1109,9 @@ struct NativeAssistantConversationView: View {
         await reload()
     }
     private func send() async {
-        guard !busy, !refreshBusy, conversation != nil, let policy, policy.consentState == .accepted, let initial = session.dataScope else { return }
+        guard !busy, !refreshBusy, let policy, policy.consentState == .accepted, let initial = session.dataScope,
+              conversation != nil || (pending != nil && pending?.conversationId == selection.conversationID) else { return }
+        if let pending, pending.conversationId != selection.conversationID || pending.policyId != policy.id { return }
         let text = draft.trimmingCharacters(in: .whitespacesAndNewlines)
         guard pending != nil || (!text.isEmpty && text.utf16.count <= 4000) else { return }
         let request: AssistantSubmission
