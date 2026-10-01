@@ -130,6 +130,61 @@ nonisolated final class NativeAskUITests: XCTestCase {
         capture("Assistant-goal-Trip-privacy-unlinked-en", app)
     }
 
+    @MainActor func testEnglishAssistantConversationSelection() throws {
+        let environment = ProcessInfo.processInfo.environment
+        guard environment["VP_NATIVE_ASSISTANT_CONVERSATION_SELECTION"] == "1" else {
+            throw XCTSkip("UNRUN: disposable two-conversation environment required")
+        }
+        continueAfterFailure = false
+        let api = try XCTUnwrap(environment["VP_NATIVE_TEXT_API_URL"])
+        let email = try XCTUnwrap(environment["VP_NATIVE_TEXT_UI_EN_EMAIL"])
+        let first = try XCTUnwrap(environment["VP_NATIVE_ASSISTANT_CONVERSATION_FIRST"])
+        let second = try XCTUnwrap(environment["VP_NATIVE_ASSISTANT_CONVERSATION_SECOND"])
+        let app = XCUIApplication()
+        app.launchArguments = ["-VisePandaNativeAPI", api, "-VisePandaAssistantConversation", "-VisePandaLocale", "en", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch()
+        app.tabBars.buttons["Profile"].tap()
+        let signOut = app.buttons["Sign out"]
+        if signOut.waitForExistence(timeout: 2) { reveal(signOut, app); signOut.tap() }
+        let emailField = app.textFields["native.login.email"]
+        XCTAssertTrue(emailField.waitForExistence(timeout: 15)); reveal(emailField, app); emailField.tap(); emailField.typeText(email)
+        let password = app.secureTextFields["native.login.password"]
+        reveal(password, app); password.tap(); password.typeText("VPJ07-Local-Synthetic-Only-195!")
+        let login = app.buttons["native.login.submit"]; reveal(login, app); login.tap()
+        // Session activation restores the default Ask tab; the selected read proves login completed.
+        let selected = app.staticTexts["assistant.conversation.selected"]
+        XCTAssertTrue(selected.waitForExistence(timeout: 20))
+        expectation(for: NSPredicate(format: "label == %@", "Synthetic latest conversation"), evaluatedWith: selected)
+        waitForExpectations(timeout: 20)
+        let composer = app.descendants(matching: .any).matching(identifier: "assistant.composer").firstMatch
+        reveal(composer, app); composer.tap(); composer.typeText("Unsent latest draft")
+        let choose = app.buttons["assistant.conversation.choose"]
+        reveal(choose, app); choose.tap()
+        app.buttons["assistant.conversation.select.\(first)"].tap()
+        expectation(for: NSPredicate(format: "label == %@", "Synthetic earlier conversation"), evaluatedWith: selected)
+        waitForExpectations(timeout: 20)
+        XCTAssertFalse(String(describing: composer.value).contains("Unsent latest draft"))
+        XCTAssertFalse(app.staticTexts.matching(NSPredicate(format: "label == %@", "Synthetic latest conversation")).firstMatch.exists)
+        let send = app.buttons["assistant.send"]
+        app.buttons["assistant.operation"].tap(); app.buttons["Start goal"].tap()
+        reveal(composer, app); composer.tap(); composer.typeText("Synthetic selected conversation continuation")
+        expectation(for: NSPredicate(format: "enabled == true"), evaluatedWith: send); waitForExpectations(timeout: 20)
+        send.tap()
+        let message = app.staticTexts["assistant.message.2"]
+        XCTAssertTrue(message.waitForExistence(timeout: 20)); XCTAssertEqual(message.label, "Synthetic selected conversation continuation")
+        capture("Assistant-earlier-selected-send-en", app)
+        let latest = app.buttons["assistant.conversation.latest"]; reveal(latest, app); latest.tap()
+        expectation(for: NSPredicate(format: "label == %@", "Synthetic latest conversation"), evaluatedWith: selected)
+        waitForExpectations(timeout: 20)
+        XCTAssertFalse(message.exists)
+        choose.tap(); app.buttons["assistant.conversation.select.\(second)"].tap()
+        app.terminate(); app.launch(); app.tabBars.buttons["Ask"].tap()
+        XCTAssertTrue(selected.waitForExistence(timeout: 20))
+        expectation(for: NSPredicate(format: "label == %@", "Synthetic latest conversation"), evaluatedWith: selected)
+        waitForExpectations(timeout: 20)
+        capture("Assistant-return-latest-relaunch-en", app)
+    }
+
     @MainActor func testEnglishAssistantConversationReadback() throws {
         let environment = ProcessInfo.processInfo.environment
         guard environment["VP_NATIVE_ASSISTANT_TEST"] == "1" else { throw XCTSkip("UNRUN: disposable assistant v5 environment required") }

@@ -21,6 +21,7 @@ try{
  await run(['build-for-testing','-project','ios/VisePanda/VisePanda.xcodeproj','-scheme','VisePanda','-destination','platform=iOS Simulator,id='+device,'-derivedDataPath',join(output,'build'),'CODE_SIGNING_ALLOWED=YES','CODE_SIGNING_REQUIRED=YES','CODE_SIGN_IDENTITY=-'],'build');
  e=await createNativeTextEnvironment();
  const profile={VP_NATIVE_ASSISTANT_TEST:'1',VP_NATIVE_TEXT_API_URL:e.api,VP_NATIVE_TEXT_UI_EN_EMAIL:e.users[2].email};
+ const selectionMode=process.env.VP_NATIVE_ASSISTANT_CONVERSATION_SELECTION==='1';
  const privacyPaginationMode=process.env.VP_NATIVE_ASSISTANT_PRIVACY_PAGINATION==='1';
  const tripMode=process.env.VP_NATIVE_ASSISTANT_ONLY_TRIP_LINK==='1'||privacyPaginationMode;
  if(tripMode){
@@ -45,6 +46,17 @@ try{
    Object.assign(profile,{VP_NATIVE_ASSISTANT_PRIVACY_PAGINATION:'1',VP_NATIVE_ASSISTANT_LAST_GOAL:marker});
   }
  }
+ if(selectionMode){
+  const call=async(path,token,body)=>{const result=await fetch(e.api+path,{method:'POST',headers:{...(token?{Authorization:'Bearer '+token}:{}),'Content-Type':'application/json'},body:JSON.stringify(body)});if(!result.ok)throw Error('Synthetic conversation request failed: '+result.status);return result.json();};
+  const attemptId=randomUUID(),credentials=await call('/api/auth/native/v2/credentials',null,{email:e.users[2].email,password:e.users[2].password,attemptId});
+  await call('/api/auth/native/v2/login',credentials.accessToken,{attemptId});
+  await call('/api/chat/native/v5/consent',credentials.accessToken,{policyId:e.policyId,noticeHash:e.noticeHash});
+  const first=randomUUID(),second=randomUUID();
+  for(const [conversationId,text] of [[first,'Synthetic earlier conversation'],[second,'Synthetic latest conversation']]){
+   await call('/api/chat/native/v5/conversation',credentials.accessToken,{conversationId,messageId:randomUUID(),idempotencyKey:randomUUID(),policyId:e.policyId,locale:'en',text,relationship:'goal_start',goalId:randomUUID(),expectedGoalVersion:null,taskId:null,parentMessageId:null,turnId:null});
+  }
+  Object.assign(profile,{VP_NATIVE_ASSISTANT_CONVERSATION_SELECTION:'1',VP_NATIVE_ASSISTANT_CONVERSATION_FIRST:first,VP_NATIVE_ASSISTANT_CONVERSATION_SECOND:second});
+ }
  const products=join(output,'build/Build/Products'),patched=join(products,'AssistantConversation.xctestrun');
  execFileSync('python3',['-c',`import sys,json,plistlib,pathlib
 root=pathlib.Path(sys.argv[1]); sources=list(root.glob('*.xctestrun'));assert len(sources)==1
@@ -52,8 +64,13 @@ data=plistlib.loads(sources[0].read_bytes());profile=json.loads(sys.stdin.read()
 data['VisePandaUITests'].setdefault('EnvironmentVariables',{}).update(profile)
 path=root/'AssistantConversation.xctestrun';path.write_bytes(plistlib.dumps(data));path.chmod(0o600)
 `,products],{input:JSON.stringify(profile)});
- await run(['test-without-building','-xctestrun',patched,'-destination','platform=iOS Simulator,id='+device,'-parallel-testing-enabled','NO','-resultBundlePath',join(output,'tests.xcresult'),
-  '-only-testing:VisePandaUITests/NativeAskUITests/'+(privacyPaginationMode?'testEnglishAssistantTripPrivacyPagination':tripMode?'testEnglishAssistantGoalTripLinkReadback':'testEnglishAssistantConversationReadback')],'tests');
+ await run(['test-without-building','-xctestrun',patched,'-destination','platform=iOS Simulator,id='+device,'-parallel-testing-enabled','NO',...(selectionMode?['-collect-test-diagnostics','never']:[]),'-resultBundlePath',join(output,'tests.xcresult'),
+  '-only-testing:VisePandaUITests/NativeAskUITests/'+(selectionMode?'testEnglishAssistantConversationSelection':privacyPaginationMode?'testEnglishAssistantTripPrivacyPagination':tripMode?'testEnglishAssistantGoalTripLinkReadback':'testEnglishAssistantConversationReadback')],'tests');
+ if(selectionMode){
+  const first=profile.VP_NATIVE_ASSISTANT_CONVERSATION_FIRST,second=profile.VP_NATIVE_ASSISTANT_CONVERSATION_SECOND;
+  if(e.sql(`select count(*) from turn_private.assistant_messages where conversation_id='${first}';`)!=='2'
+    || e.sql(`select count(*) from turn_private.assistant_messages where conversation_id='${second}';`)!=='1')throw Error('Selected send attached to wrong conversation');
+ }
  if(privacyPaginationMode){
   const marker=profile.VP_NATIVE_ASSISTANT_LAST_GOAL;
   if(e.sql(`select trip_id is null from turn_private.assistant_goal_trip_links where goal_id='${marker}';`)!=='t')

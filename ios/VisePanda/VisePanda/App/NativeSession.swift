@@ -276,6 +276,19 @@ final class NativeSession {
         ])
     }
 
+    /// Explicit conversation reads retain the transport's account/session fence.
+    func assistantConversationRequest(conversationID: String? = nil, list: Bool = false) async throws -> Data {
+        guard askMode == .assistant, !list || conversationID == nil,
+              conversationID == nil || UUID(uuidString: conversationID ?? "") != nil else {
+            throw NativeDataError.invalidResponse
+        }
+        let path = list ? "api/chat/native/v5/conversations" : "api/chat/native/v5/conversation"
+        let items = conversationID.map { [URLQueryItem(name: "conversationId", value: $0)] } ?? []
+        let bytes = try await dataRequest(prefix: "api/chat/native/v5", path: path, method: "GET", queryItems: items)
+        guard bytes.count <= (list ? 30_000 : 1_000_000) else { throw NativeDataError.invalidResponse }
+        return bytes
+    }
+
     /// Local Ask shares identity fencing, never credentials, with the Trip consumer.
     func askRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
         guard askMode != .unavailable else { throw NativeDataError.invalidResponse }
