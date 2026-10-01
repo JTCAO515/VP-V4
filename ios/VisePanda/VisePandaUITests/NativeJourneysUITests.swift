@@ -12,13 +12,13 @@ final class NativeJourneysUITests: XCTestCase {
             XCTAssertTrue(app.tabBars.buttons["VP"].waitForExistence(timeout: 10))
             app.tabBars.buttons[locale == "en" ? "Journeys" : "旅程"].tap()
             let vp = app.buttons["journeys.open-vp"]
-            for _ in 0..<6 where !vp.isHittable { app.swipeUp() }
+            for _ in 0..<6 where !vp.exists || !vp.isHittable { app.swipeUp() }
             XCTAssertTrue(vp.isHittable)
             vp.tap()
             XCTAssertTrue(app.tabBars.buttons["VP"].isSelected)
             app.tabBars.buttons[locale == "en" ? "Journeys" : "旅程"].tap()
             let trips = app.buttons["journeys.open-trips"]
-            for _ in 0..<6 where !trips.isHittable { app.swipeUp() }
+            for _ in 0..<6 where !trips.exists || !trips.isHittable { app.swipeUp() }
             XCTAssertTrue(trips.isHittable)
             trips.tap()
             XCTAssertTrue(app.navigationBars[locale == "en" ? "Trip" : "行程"].waitForExistence(timeout: 3))

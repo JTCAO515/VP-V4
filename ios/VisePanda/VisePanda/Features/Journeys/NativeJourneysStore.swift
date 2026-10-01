@@ -10,60 +10,67 @@ struct NativeJourneyGoal: Decodable, Identifiable, Equatable {
     var valid: Bool { UUID(uuidString: goalId) != nil && scopeVersion > 0 && !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && text.count <= 4000 }
 }
 
-private struct JourneyConversationRead: Decodable {
-    let version: Int
-    let kind: String
-    let conversationId: String?
-    let goals: [NativeJourneyGoal]
-    var valid: Bool {
-        version == 5 && kind == "conversation" && goals.count <= 50 && goals.allSatisfy(\.valid)
-        && Set(goals.map(\.id)).count == goals.count
-        && (conversationId.map { UUID(uuidString: $0) != nil } ?? goals.isEmpty)
-    }
+private struct JourneyPageGoal: Decodable {
+    let goalId: String
+    let scopeVersion: Int
+    let text: String
+    let relation: JourneyPageRelation
+    var goal: NativeJourneyGoal { .init(goalId: goalId, scopeVersion: scopeVersion, text: text) }
 }
 
-private struct JourneyLinkRead: Decodable {
-    let version: Int
-    let kind: String
-    let conversationId: String
-    let goalId: String
-    let goalScopeVersion: Int
-    let linkVersion: Int
+private struct JourneyPageRelation: Decodable {
+    let state: String
     let tripId: String?
     let tripHeadVersion: Int?
-    let terminalUnlinked: Bool
-    let current: Bool
-
-    private enum CodingKeys: String, CodingKey {
-        case version, kind, conversationId, goalId, goalScopeVersion, linkVersion
-        case tripId, tripHeadVersion, terminalUnlinked, current
-    }
+    private enum CodingKeys: String, CodingKey { case state, tripId, tripHeadVersion }
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         guard c.contains(.tripId), c.contains(.tripHeadVersion) else { throw NativeDataError.invalidResponse }
-        version = try c.decode(Int.self, forKey: .version)
-        kind = try c.decode(String.self, forKey: .kind)
-        conversationId = try c.decode(String.self, forKey: .conversationId)
-        goalId = try c.decode(String.self, forKey: .goalId)
-        goalScopeVersion = try c.decode(Int.self, forKey: .goalScopeVersion)
-        linkVersion = try c.decode(Int.self, forKey: .linkVersion)
+        state = try c.decode(String.self, forKey: .state)
         tripId = try c.decodeIfPresent(String.self, forKey: .tripId)
         tripHeadVersion = try c.decodeIfPresent(Int.self, forKey: .tripHeadVersion)
-        terminalUnlinked = try c.decode(Bool.self, forKey: .terminalUnlinked)
-        current = try c.decode(Bool.self, forKey: .current)
     }
-
-    func relation(conversation: String, goal: NativeJourneyGoal, trips: [NativeTripSummary]) -> NativeJourneyRelation {
-        guard version == 5, kind == "goal_trip_link", conversationId == conversation,
-              goalId == goal.id, goalScopeVersion == goal.scopeVersion, linkVersion >= 0,
-              (tripId == nil) == (tripHeadVersion == nil), !current || tripId != nil,
-              !terminalUnlinked || tripId == nil else { return .unknown }
-        if let tripId {
-            guard UUID(uuidString: tripId) != nil, let head = tripHeadVersion, head >= 0 else { return .unknown }
-            guard current, trips.contains(where: { $0.id == tripId && $0.headVersion == head }) else { return .unknown }
-            return .linked(tripId)
+    var valid: Bool {
+        switch state {
+        case "unlinked", "unknown": tripId == nil && tripHeadVersion == nil
+        case "linked": tripId.map { UUID(uuidString: $0) != nil } == true && tripHeadVersion.map { $0 >= 0 } == true
+        default: false
         }
-        return .unlinked
+    }
+    func project(trips: [NativeTripSummary]) -> NativeJourneyRelation {
+        if state == "unlinked" { return .unlinked }
+        if state == "linked", let tripId, trips.contains(where: { $0.id == tripId && $0.headVersion == tripHeadVersion }) { return .linked(tripId) }
+        return .unknown
+    }
+}
+
+private struct JourneyPageRead: Decodable {
+    let version: Int
+    let kind: String
+    let conversationId: String?
+    let conversationVersion: Int
+    let snapshot: String?
+    let goals: [JourneyPageGoal]
+    let nextCursor: String?
+    func valid(cursor: String?) -> Bool {
+        guard version == 5, kind == "journeys_page", goals.count <= 20,
+              goals.allSatisfy({ $0.goal.valid && $0.scopeVersion <= 10000 && $0.relation.valid }),
+              Set(goals.map(\.goalId)).count == goals.count,
+              zip(goals, goals.dropFirst()).allSatisfy({ $0.0.goalId < $0.1.goalId }) else { return false }
+        guard let conversationId else { return cursor == nil && conversationVersion == 0 && snapshot == nil && goals.isEmpty && nextCursor == nil }
+        guard UUID(uuidString: conversationId) != nil, (1...1000001).contains(conversationVersion),
+              let snapshot, snapshot.range(of: "^[a-f0-9]{32}$", options: .regularExpression) != nil else { return false }
+        if let cursor {
+            let parts = cursor.split(separator: ".")
+            guard parts.count == 5, parts[0] == "v1", parts[1] == conversationId,
+                  parts[2] == String(conversationVersion), parts[4] == snapshot, !goals.isEmpty,
+                  goals.allSatisfy({ $0.goalId > String(parts[3]) }) else { return false }
+        }
+        if let nextCursor {
+            guard goals.count == 20, let last = goals.last,
+                  nextCursor == "v1.\(conversationId).\(conversationVersion).\(last.goalId).\(snapshot)" else { return false }
+        }
+        return true
     }
 }
 
@@ -86,6 +93,7 @@ final class NativeJourneysStore {
     private(set) var goalsAvailable = false
     private(set) var tripsAvailable = false
     private(set) var busy = false
+    private(set) var nextCursor: String?
     private var generation = UUID()
     private var readableUntil: TimeInterval?
     private let uptime: () -> TimeInterval
@@ -96,7 +104,7 @@ final class NativeJourneysStore {
 
     func clear() {
         generation = UUID(); scope = nil; rows = []; trips = []
-        goalsAvailable = false; tripsAvailable = false; readableUntil = nil; busy = false
+        goalsAvailable = false; tripsAvailable = false; readableUntil = nil; busy = false; nextCursor = nil
     }
 
     func isCurrent(_ current: NativeDataScope?) -> Bool {
@@ -104,11 +112,12 @@ final class NativeJourneysStore {
     }
 
     // Fixed-path GET closures are supplied by the existing NativeSession transport.
-    func load(scope requested: NativeDataScope?, assistant: Bool,
+    func load(scope requested: NativeDataScope?, assistant: Bool, cursor: String? = nil,
               currentScope: () -> NativeDataScope?,
               request: (String) async throws -> Data) async {
         clear()
         guard let requested, currentScope() == requested else { return }
+        if let cursor, cursor.range(of: "^v1\\.[a-f0-9-]{36}\\.[1-9][0-9]{0,6}\\.[a-f0-9-]{36}\\.[a-f0-9]{32}$", options: .regularExpression) == nil { return }
         scope = requested; busy = true
         let token = generation
         let deadline = uptime() + 20
@@ -127,38 +136,30 @@ final class NativeJourneysStore {
         } catch { guard valid() else { return } }
         var projected: [NativeJourneyRow] = []
         var goalRead = false
+        var following: String?
         if assistant {
             do {
                 let policyBytes = try await request("api/chat/native/v5/policy")
                 guard valid(), policyBytes.count <= 32_768 else { return }
                 let policy = try JSONDecoder().decode(NativeTextPolicyReply.self, from: policyBytes)
                 guard policy.kind == "policy", policy.policy.valid, policy.policy.consentState == .accepted else { throw NativeDataError.invalidResponse }
-                let bytes = try await request("api/chat/native/v5/conversation")
-                guard valid(), bytes.count <= 256_000 else { return }
-                let read = try JSONDecoder().decode(JourneyConversationRead.self, from: bytes)
-                guard read.valid else { throw NativeDataError.invalidResponse }
-                for goal in read.goals {
-                    var relation: NativeJourneyRelation = .unknown
-                    if let conversation = read.conversationId {
-                        do {
-                            let linkBytes = try await request("api/chat/native/v5/goals/\(goal.id)/trip")
-                            guard valid(), linkBytes.count <= 16_384 else { return }
-                            let link = try JSONDecoder().decode(JourneyLinkRead.self, from: linkBytes)
-                            relation = link.relation(conversation: conversation, goal: goal, trips: ownedTrips)
-                        } catch { guard valid() else { return } }
-                    }
-                    projected.append(.init(goal: goal, relation: relation))
-                }
+                let path = "api/chat/native/v5/journeys" + (cursor.map { "/" + $0 } ?? "")
+                let bytes = try await request(path)
+                guard valid(), bytes.count <= 512_000 else { return }
+                let read = try JSONDecoder().decode(JourneyPageRead.self, from: bytes)
+                guard read.valid(cursor: cursor) else { throw NativeDataError.invalidResponse }
+                projected = read.goals.map { .init(goal: $0.goal, relation: $0.relation.project(trips: ownedTrips)) }
+                following = read.nextCursor
                 guard valid() else { return }
                 let finalPolicyBytes = try await request("api/chat/native/v5/policy")
                 guard valid(), finalPolicyBytes.count <= 32_768 else { return }
                 let finalPolicy = try JSONDecoder().decode(NativeTextPolicyReply.self, from: finalPolicyBytes)
                 guard finalPolicy.kind == "policy", finalPolicy.policy == policy.policy else { throw NativeDataError.invalidResponse }
                 goalRead = true
-            } catch { guard valid() else { return }; projected = [] }
+            } catch { guard valid() else { return }; projected = []; following = nil }
         }
         guard valid() else { return }
-        rows = projected; trips = ownedTrips; goalsAvailable = goalRead; tripsAvailable = tripRead
+        rows = projected; trips = ownedTrips; goalsAvailable = goalRead; tripsAvailable = tripRead; nextCursor = following
         // No partial publication while the goal/link reads are still in flight.
         readableUntil = deadline
     }
