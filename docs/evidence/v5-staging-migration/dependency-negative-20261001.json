@@ -1,0 +1,56 @@
+{
+  "startedAt": "2026-10-01T15:34:03.859Z",
+  "result": "FAIL_LOCAL_SYNTHETIC_REPLAY",
+  "targetAcceptance": "UNRUN",
+  "stages": [],
+  "versionSet": {
+    "localCount": 90,
+    "appliedCount": 74,
+    "unknown": [],
+    "missing": [
+      "20260825052328",
+      "20260922033000",
+      "20260926113804",
+      "20260926132008",
+      "20260926150000",
+      "20260926170000",
+      "20260926180000",
+      "20260927010000",
+      "20260927021000",
+      "20260927030000",
+      "20260927040000",
+      "20260927050000",
+      "20260927055000",
+      "20260927060000",
+      "20260930010000",
+      "20260930020000"
+    ],
+    "outOfOrderMissing": [
+      "20260825052328",
+      "20260922033000"
+    ],
+    "catalogSha256": "83d15933203f6f9f80a32ebbcef85351334dd09db47a6beedc6e78f9436ec0b2",
+    "replayable": true
+  },
+  "provenance": "Intentional local dependency-negative fixture: omit Trip schema prerequisite; not a remote observation.",
+  "toolSha256": {
+    "scripts/acceptance/v5-staging-migration-replay.mjs": "39a269de437b58e3e96bfda31c610a85821475b88b2a1e03bdd29c08cba16725",
+    "scripts/acceptance/v5-staging-migration-set.mjs": "f8698c8f926c012fe6c9ac6d71bfff5c2daf848fc9fd15818ff41144051ce370",
+    "tests/fixtures/v5-staging-migration/baseline.sql": "c7f87cd9aa4df4e5bf0f91affdefc9ddd1a00df076dfbf3539e231f9a5b62826",
+    "tests/fixtures/v5-staging-migration/probes.sql": "5f35bf7517e7458fd493d2d9cbf6e4a9e5f692299ebd2b3dd5727686bf19ee75"
+  },
+  "imageId": "sha256:86a2e078779e5bdccda1f6f6c5063aa9779a322d1fface5fb408d051909b230f",
+  "failedStage": "forward migration 20260825160314_ai10_durable_trip_proposals.sql",
+  "reason": "forward migration 20260825160314_ai10_durable_trip_proposals.sql: command failed (3): ERROR:  relation \"public.trips\" does not exist",
+  "cleanup": [
+    {
+      "container": "v5-migration-d281dc2a-277-fresh",
+      "result": "PASS"
+    },
+    {
+      "container": "v5-migration-d281dc2a-277-forward",
+      "result": "PASS"
+    }
+  ],
+  "completedAt": "2026-10-01T15:34:05.981Z"
+}
