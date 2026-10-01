@@ -26,7 +26,8 @@ const call=(role,actor)=>async(name,p={})=>{
 const service=call('service_role'),notice='a'.repeat(64),workers=new Set(),rpcLog=[];
 const waitFor=async(predicate,label,ms=30000)=>{const end=Date.now()+ms;for(;;){if(await predicate())return;if(Date.now()>end)throw Error('Timed out: '+label);await new Promise(r=>setTimeout(r,100));}};
 let gateway,model,maps,dir,created=false,mapCalls=0,modelCalls=0,holdAuthTurn=null,authHeld=false,holdModel=false,holdPauseTurn=null,pauseHeld=false;
-const readCounts=new Map(),heldResponses=new Set();
+const readCounts=new Map(),heldResponses=new Set(),targetChecks=[];
+let afterMapRequest=null,mapHookAt=0;
 const setSwitch=enabled=>service('set_hosted_worker_enabled',{p_enabled:enabled,p_reason:'synthetic integration'});
 const profile=(a,patch={})=>({schemaVersion:'vpj07-hosted-text-worker/2',pollIntervalMs:1000,maxLifetimeMs:600000,drainMs:1000,concurrency:2,groupLimit:10,
  modes:['current_input_v1','task_history_v1','knowledge_intent_v1'],planning:{ownerId:a.owner,planningPolicyId:a.planningPolicy,scopeId:a.scope},
@@ -96,12 +97,12 @@ before(async()=>{
  gateway=createServer(async(req,res)=>{
   const name=/^\/rest\/v1\/rpc\/([a-z_0-9]+)$/.exec(req.url??'')?.[1],parts=[];for await(const p of req)parts.push(p);
   if(!name||req.headers.apikey!==DB_KEY||req.headers.authorization!=='Bearer '+DB_KEY){res.writeHead(401);res.end('{}');return;}
-  const params=JSON.parse(Buffer.concat(parts).toString());rpcLog.push(name);
+  const params=JSON.parse(Buffer.concat(parts).toString());rpcLog.push(name);if(name==='hosted_planning_target_v1')targetChecks.push(params);
   const value=await sql(container,`set role service_role;set request.jwt.claim.role='service_role';select public.${name}(`+Object.entries(params).map(([k,v])=>k+'=>'+lit(v)).join(',')+');');
   const reply=()=>{if(res.destroyed)return;res.writeHead(value.code===0?200:400,{'content-type':'application/json'});res.end(value.code===0?value.stdout.trim():JSON.stringify({message:'synthetic RPC rejected'}));};
   if(name==='authorize_planning_read_v1'){
    const count=(readCounts.get(params.p_turn_id)??0)+1;readCounts.set(params.p_turn_id,count);
-   if(params.p_turn_id===holdAuthTurn&&count===3){authHeld=true;heldResponses.add(reply);return;}
+   if(params.p_turn_id===holdAuthTurn&&count===16){authHeld=true;heldResponses.add(reply);return;}
   }
   if(name==='pause_planning_comparison_v1'&&params.p_turn_id===holdPauseTurn){pauseHeld=true;heldResponses.add(reply);return;}
   reply();
@@ -112,7 +113,7 @@ before(async()=>{
    choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:'{"highlight":"peoples_square"}'}}],usage:{prompt_tokens:20,completion_tokens:10,total_tokens:30}}));};
   if(holdModel){heldResponses.add(reply);return;}reply();
  });model.listen(0,'127.0.0.1');await once(model,'listening');
- maps=createServer((req,res)=>{
+ maps=createServer(async(req,res)=>{
   mapCalls++;const u=new URL(req.url,'http://fixture'),query=u.searchParams.get('keywords'),id=u.searchParams.get('id');
   if(u.searchParams.get('key')!==MAP_KEY){res.writeHead(401);res.end();return;}
   const ids={'静安寺':'j','人民广场':'p','上海站':'s'},coordinates={j:'121.440000,31.220000',p:'121.480000,31.230000',s:'121.450000,31.250000'};
@@ -122,6 +123,7 @@ before(async()=>{
   else {const transit=u.pathname.includes('transit'),origin=u.searchParams.get('origin'),destination=u.searchParams.get('destination');
    const segment={walking:{distance:'100',steps:[{instruction:'SYNTHETIC walk'}]},bus:{buslines:[{name:'SYNTHETIC line',departure_stop:{name:'A'},arrival_stop:{name:'B'}}]}};
    body={status:'1',infocode:'10000',route:{origin,destination,[transit?'transits':'paths']:[{distance:'1000',cost:{duration:'960'},steps:[{instruction:'SYNTHETIC walk'}],segments:[segment]}]}};}
+  if(afterMapRequest&&mapCalls===mapHookAt){const hook=afterMapRequest;afterMapRequest=null;await hook();}
   res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify(body));
  });maps.listen(0,'127.0.0.1');await once(maps,'listening');
  dir=mkdtempSync(join(tmpdir(),'vpj80-hosted-'));
@@ -164,6 +166,38 @@ run('default closed and invalid owner/budget configuration send neither maps nor
  await a.user('withdraw_planning_policy_v1',{p_policy_id:a.planningPolicy});
  const n=rpcLog.length,revoked=start(a);await waitFor(()=>rpcLog.slice(n).includes('hosted_planning_target_v1'),'withdrawal preflight');await revoked.stop();
  assert.equal(mapCalls,before.maps);assert.equal(modelCalls,before.model);
+});
+
+run('each map request stops after current claimed task loses authorization',async()=>{
+ for(const [branch,stage] of [['stop',1],['withdraw',1],['cancel',1],['frozen',1],['expired_lease',1],['stop',3],['frozen',8]]){
+  const a=await owner('per request '+branch),before={maps:mapCalls,model:modelCalls},checks=targetChecks.length;
+  await setSwitch(true);
+  let claimedLease;mapHookAt=before.maps+stage;afterMapRequest=async()=>{
+   assert.equal(await db(`select state from turn_private.work where turn_id='${a.task.turn}';`),'leased');
+   claimedLease=await db(`select lease_token from turn_private.work where turn_id='${a.task.turn}';`);
+   if(branch==='stop')await setSwitch(false);
+   if(branch==='withdraw')await a.user('withdraw_planning_policy_v1',{p_policy_id:a.planningPolicy});
+   if(branch==='cancel')await db(`set request.jwt.claim.sub='${a.owner}';set request.jwt.claims='${JSON.stringify({session_id:a.session})}';set role authenticated;set request.jwt.claim.role='authenticated';select row_to_json(c) from public.cancel_chat_turn('${a.task.turn}') c;`);
+   if(branch==='frozen')await db(`update public.model_budget_scopes set frozen=true where id='${a.scope}';`);
+   if(branch==='expired_lease')await db(`update turn_private.work set expires_at=clock_timestamp()-interval '1 second' where turn_id='${a.task.turn}';`);
+  };
+  const w=start(a);
+  await waitFor(()=>w.journal().includes('"phase":"cycle"'),'partial map cycle '+branch);
+  await w.stop();
+  assert.equal(mapCalls-before.maps,stage,'no subsequent egress after '+branch);assert.equal(modelCalls-before.model,0);
+  const exact=targetChecks.slice(checks).filter(p=>p.p_turn_id!==undefined);assert.ok(exact.length>=2);
+  for(const p of exact){assert.equal(p.p_turn_id,a.task.turn);assert.equal(p.p_lease_token,claimedLease);assert.equal(p.p_owner_id,a.owner);assert.equal(p.p_scope_id,a.scope);assert.equal(p.p_planning_policy_id,a.planningPolicy);}
+  assert.equal(await db(`select count(*) from turn_private.planning_observations o join turn_private.planning_action_receipts r using(turn_id,action_key) where o.turn_id='${a.task.turn}' and r.tool_id='place.read';`),'0');
+  // Restore only reversible operator gates; withdrawn consent stays revoked.
+  assert.match(await db(`select state from turn_private.planning_action_receipts where turn_id='${a.task.turn}' and tool_id='place.read';`),/^(started|unknown)$/);
+  await setSwitch(true);
+  if(branch==='frozen')await db(`update public.model_budget_scopes set frozen=false where id='${a.scope}';`);
+  await db(`update turn_private.work set expires_at=clock_timestamp()-interval '1 second' where turn_id='${a.task.turn}' and state='leased';`);
+  const restarted=start(a);await waitFor(()=>restarted.journal().includes('"phase":"cycle"'),'partial restart completed cycle '+branch);await restarted.stop();
+  assert.equal(mapCalls-before.maps,stage,'unknown partial action never replayed after '+branch);assert.equal(modelCalls-before.model,0);
+  assert.equal(await db(`select count(*) from public.model_budget_attempts where task_id='${a.task.id}';`),'0');
+  assert.equal(await db(`select count(*) from turn_private.result_artifacts where id='${a.accepted.artifactId}';`),'0');
+ }
 });
 
 run('SIGKILL after persisted place checkpoint resumes in new competing processes without repeated maps or model',async()=>{

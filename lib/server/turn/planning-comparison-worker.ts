@@ -25,7 +25,7 @@ export type PlanningWorkerConfig = Readonly<{ environment: "local_synthetic" | "
   reservedMicros: number; timeoutMs: number; maxOutputTokens: number }>;
 export type PlanningWorkerBinding = Readonly<{ provider: keyof typeof PROTOCOL_MODELS; endpoint: string; transport: ProtocolTransport;
   price: (usage: ProtocolUsage) => number | null; evidenceLookup: (signal: AbortSignal) => Promise<Evidence>;
-  placeRead: (signal: AbortSignal) => Promise<Place>; recordUsage?: RecordPlanningUsage;
+  placeRead: (signal: AbortSignal, beforeRequest: () => Promise<void>) => Promise<Place>; recordUsage?: RecordPlanningUsage;
   /** Hosted target budget check bound to this exact lease before map egress. */
   authorizeExternalRead?: (lease: DurableTurnLease, signal: AbortSignal) => Promise<boolean> }>;
 const UUID=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -112,7 +112,15 @@ export async function runPlanningComparisonWorker(workRpc: TurnWorkRpc, rpc: Rpc
       evidence=await step("evidence.lookup",validEvidence,()=>binding.evidenceLookup(leaseSignal));
       place=await step("place.read",validPlace,async()=>{
         if(binding.authorizeExternalRead && !await binding.authorizeExternalRead(lease,leaseSignal))throw Error("External read budget unavailable");
-        return binding.placeRead(leaseSignal);
+        return binding.placeRead(leaseSignal,async()=>{
+          // A compound action does not extend authorization to later egress.
+          // Rebuild this claimed Turn's basis and hosted stop/scope immediately
+          // before every actual map request. This read is not a cost reservation.
+          const fresh=await rpc("authorize_planning_read_v1",{...keys,p_context_digest:input.contextDigest});
+          if(!record(fresh)||fresh.kind!=="authorized"||leaseSignal.aborted
+            || (binding.authorizeExternalRead && !await binding.authorizeExternalRead(lease,leaseSignal)))
+            throw Error("External read authorization lost");
+        });
       });
       constraints=await step("constraints.evaluate",validConstraints,async()=>evaluateConstraints(place));
     }catch{return await pause(rpc,lease);}
