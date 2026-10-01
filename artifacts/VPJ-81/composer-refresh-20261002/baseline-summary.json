@@ -1,0 +1,9 @@
+{
+  "scope": "actual local native/Auth/HTTP/SQL; synthetic model only",
+  "modelCalls": 0,
+  "messages": "2",
+  "goals": "2",
+  "taskAttempts": "0",
+  "tripLinks": "0",
+  "tripLinkReceipts": "0"
+}
