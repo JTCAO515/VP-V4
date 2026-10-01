@@ -71,6 +71,7 @@ export const LANES = {
           "tests/integration/memory/travel-pace.test.mjs",
           "tests/integration/notifications/storage.test.mjs",
           "tests/integration/observability/ops-ledger.test.mjs",
+          "tests/integration/privacy/assistant-data-rights.test.mjs",
           "tests/integration/privacy/trip-deletion.test.mjs",
           "tests/integration/trip/archive.test.mjs",
           "tests/integration/turn/durable-work.test.mjs",
