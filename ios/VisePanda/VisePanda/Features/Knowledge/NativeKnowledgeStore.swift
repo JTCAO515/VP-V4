@@ -1,6 +1,68 @@
 import Foundation
 import Observation
 
+struct NativeLibraryPhraseReference: Identifiable {
+    let phrase: NativeTranslationPhrase
+    let policyID: String
+    let noticeHash: String
+    let scope: NativeDataScope
+    var id: String { phrase.id }
+}
+
+/// A read-only consumer of the existing retained translation window.
+@MainActor @Observable
+final class NativeLibraryPhraseStore {
+    private(set) var rows: [NativeTranslationPhrase] = []
+    private(set) var opened: NativeTranslationPhrase?
+    private(set) var policyID: String?
+    private(set) var noticeHash: String?
+    private(set) var scope: NativeDataScope?
+    private(set) var state = "idle"
+    private var generation = UUID()
+    private var deadline: TimeInterval = 0
+    private let uptime: () -> TimeInterval
+    init(uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) { self.uptime = uptime }
+    func clear() {
+        generation = UUID(); rows = []; opened = nil; policyID = nil; noticeHash = nil
+        scope = nil; deadline = 0; state = "idle"
+    }
+    func isCurrent(_ requested: NativeDataScope?) -> Bool {
+        state == "ready" && requested != nil && scope == requested && uptime() < deadline
+    }
+    func reference(_ phrase: NativeTranslationPhrase, scope requested: NativeDataScope?) -> NativeLibraryPhraseReference? {
+        guard isCurrent(requested), rows.contains(phrase), let scope, let policyID, let noticeHash else { return nil }
+        return .init(phrase: phrase, policyID: policyID, noticeHash: noticeHash, scope: scope)
+    }
+    func load(scope requested: NativeDataScope?, exact: NativeLibraryPhraseReference? = nil,
+              currentScope: () -> NativeDataScope?, request: NativeTranslationStore.Request) async {
+        clear()
+        guard let requested, requested == currentScope(), !Task.isCancelled,
+              exact == nil || exact?.scope == requested else { return }
+        let own = generation, started = uptime()
+        scope = requested; state = "loading"
+        // A fresh domain reader has no retained text to survive a failed refresh.
+        let reader = NativeTranslationStore()
+        await reader.load(scope: requested) { path, method, body in
+            guard method == "GET", body == nil, ["api/translate/policy", "api/translate"].contains(path),
+                  currentScope() == requested, self.generation == own, !Task.isCancelled else { throw NativeDataError.staleSessionResponse }
+            let data = try await request(path, method, body)
+            guard currentScope() == requested, self.generation == own, !Task.isCancelled else { throw NativeDataError.staleSessionResponse }
+            return data
+        }
+        guard generation == own, !Task.isCancelled else { return }
+        guard currentScope() == requested, reader.errorCode == nil, let policy = reader.policy,
+              policy.consentState == .accepted, uptime() - started < 20 else { state = "unavailable"; return }
+        let eligible = reader.phrases.filter { $0.state == "translated" && $0.valid }
+        if let exact {
+            guard policy.id == exact.policyID, policy.noticeHash == exact.noticeHash,
+                  let phrase = eligible.first(where: { $0.id == exact.id }), phrase == exact.phrase else { state = "unavailable"; return }
+            opened = phrase
+        } else { rows = eligible }
+        policyID = policy.id; noticeHash = policy.noticeHash
+        deadline = started + 20; state = "ready"
+    }
+}
+
 @MainActor @Observable
 final class NativeLibrarySearchStore {
     private(set) var rows: [NativeLibrarySearchItem] = []
