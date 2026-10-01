@@ -193,7 +193,7 @@ run('each map request stops after current claimed task loses authorization',asyn
   await setSwitch(true);
   if(branch==='frozen')await db(`update public.model_budget_scopes set frozen=false where id='${a.scope}';`);
   await db(`update turn_private.work set expires_at=clock_timestamp()-interval '1 second' where turn_id='${a.task.turn}' and state='leased';`);
-  const n=rpcLog.length,restarted=start(a);await waitFor(()=>rpcLog.slice(n).includes('hosted_planning_target_v1'),'partial restart '+branch);await restarted.stop();
+  const restarted=start(a);await waitFor(()=>restarted.journal().includes('"phase":"cycle"'),'partial restart completed cycle '+branch);await restarted.stop();
   assert.equal(mapCalls-before.maps,stage,'unknown partial action never replayed after '+branch);assert.equal(modelCalls-before.model,0);
   assert.equal(await db(`select count(*) from public.model_budget_attempts where task_id='${a.task.id}';`),'0');
   assert.equal(await db(`select count(*) from turn_private.result_artifacts where id='${a.accepted.artifactId}';`),'0');
