@@ -198,14 +198,20 @@ private struct NativeLibraryResultDetail: View {
     let session: NativeSession
     @Environment(\.scenePhase) private var scenePhase
     @State private var store = NativeResultStore()
-    private var loadKey: LoadKey { .init(scope: session.dataScope, active: scenePhase == .active) }
+    @State private var refresh = UUID()
+    private var loadKey: LoadKey { .init(scope: session.dataScope, active: scenePhase == .active, refresh: refresh) }
 
     var body: some View {
         ScrollView {
-            TimelineView(.periodic(from: .now, by: 1)) { _ in
-                NativeResultCard(store: store, scope: scenePhase == .active ? session.dataScope : nil, chinese: chinese)
-                    .padding()
-            }
+            VStack(alignment: .leading, spacing: VPSpacing.standard) {
+                Button(chinese ? "刷新此成果" : "Refresh this result") { store.clear(); refresh = UUID() }
+                    .buttonStyle(.bordered)
+                    .disabled(store.state == "loading" || session.dataScope != scope)
+                    .accessibilityIdentifier("library.result.refresh")
+                TimelineView(.periodic(from: .now, by: 1)) { _ in
+                    NativeResultCard(store: store, scope: scenePhase == .active ? session.dataScope : nil, chinese: chinese)
+                }
+            }.padding()
         }
         .task(id: loadKey) {
             guard loadKey.active, session.dataScope == scope else { store.clear(); return }
@@ -223,6 +229,7 @@ private struct NativeLibraryResultDetail: View {
     private struct LoadKey: Equatable {
         let scope: NativeDataScope?
         let active: Bool
+        let refresh: UUID
     }
 }
 
@@ -306,15 +313,17 @@ final class NativeResultStore {
     private(set) var state = "idle"
     private(set) var scope: NativeDataScope?
     private var generation = UUID()
-    private var loadedAt: TimeInterval = 0
+    private var deadline: TimeInterval = 0
+    private let uptime: () -> TimeInterval
+
+    init(uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) { self.uptime = uptime }
 
     func clear() {
-        generation = UUID(); result = nil; state = "idle"; scope = nil; loadedAt = 0
+        generation = UUID(); result = nil; state = "idle"; scope = nil; deadline = 0
     }
 
     func isCurrent(_ currentScope: NativeDataScope?) -> Bool {
-        currentScope != nil && scope == currentScope && loadedAt > 0
-        && ProcessInfo.processInfo.systemUptime - loadedAt < 30
+        currentScope != nil && scope == currentScope && deadline > uptime()
     }
 
     func load(scope requested: NativeDataScope?, using session: NativeSession) async {
@@ -375,16 +384,16 @@ final class NativeResultStore {
         clear()
         guard let requested, !Task.isCancelled else { return }
         scope = requested; state = "loading"
-        let own = generation
+        let own = generation, started = uptime()
         do {
             let bytes = try await fetch()
             guard !Task.isCancelled, generation == own else { return }
             let envelope = try JSONDecoder().decode(NativeResultEnvelope.self, from: bytes)
-            guard envelope.version == 1, envelope.data.valid else { throw NativeDataError.invalidResponse }
-            result = envelope.data; state = envelope.data.kind; loadedAt = ProcessInfo.processInfo.systemUptime
+            guard envelope.version == 1, envelope.data.valid, uptime() - started < 30 else { throw NativeDataError.invalidResponse }
+            result = envelope.data; state = envelope.data.kind; deadline = started + 30
         } catch {
             guard generation == own else { return }
-            result = nil; state = "unavailable"; loadedAt = 0
+            result = nil; state = "unavailable"; deadline = 0
         }
     }
 }
