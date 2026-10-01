@@ -1,0 +1,13 @@
+✔ Test savedHistoryCannotOpenChangedExactContentOrPublishMalformedCursor() passed after 0.005 seconds.
+✔ Test savedHistoryClearDuringReadCannotPublishLateContent() passed after 0.005 seconds.
+✔ Test withdrawalHidesCachedPhraseEvenIfNetworkFails() passed after 0.007 seconds.
+✔ Test savedHistoryPagesReplaceRowsAndOlderTranslationUsesFreshExactGET() passed after 0.007 seconds.
+✔ Test scopeChangeDropsLateResponseAndPendingText() passed after 0.008 seconds.
+✔ Test ambiguousSendRetriesSameIdentityAndRejectsEditedInput() passed after 0.008 seconds.
+✔ Test noConsentNeverSubmits() passed after 0.008 seconds.
+✔ Test savedHistoryDropsLateScopeChangeAndRevokedFinalPolicy() passed after 0.007 seconds.
+​​​✔ Test savedHistoryUsesMonotonicLifetimeIncludingRequestTime(delay:) with 3 test cases passed after 0.007 seconds.
+✔ Test cardRequiresBothTranslationsAndPreservesOriginal() passed after 0.009 seconds.
+✔ Suite NativeTranslationTests passed after 0.010 seconds.
+✔ Test run with 10 tests in 1 suite passed after 0.010 seconds.
+** TEST SUCCEEDED **

@@ -150,3 +150,105 @@ final class NativeTranslationStore {
         } else { errorCode = "PROVIDER_UNAVAILABLE" }
     }
 }
+
+struct NativeSavedTranslationReference: Identifiable {
+    let phrase: NativeTranslationPhrase
+    let policyID: String
+    let noticeHash: String
+    let scope: NativeDataScope
+    let deadline: TimeInterval
+    var id: String { phrase.id }
+}
+
+enum NativeTranslationHistoryWire {
+    // Mirrors the documented server wire cap, including JSON escape overhead.
+    static let maximumResponseBytes = 1_000_000
+}
+
+private struct NativeSavedTranslationReply: Decodable {
+    let version: Int
+    let kind: String
+    let policyId: String?
+    let phrases: [NativeTranslationPhrase]?
+    let nextCursor: String?
+    let phrase: NativeTranslationPhrase?
+}
+
+/// Opt-in v2 reader; keeps one page and fresh exact content, never model context.
+@MainActor @Observable
+final class NativeSavedTranslationHistoryStore {
+    typealias Read = (_ cursor: String?, _ turnID: String?) async throws -> Data
+    private(set) var scope: NativeDataScope?
+    private(set) var phrases: [NativeTranslationPhrase] = []
+    private(set) var nextCursor: String?
+    private(set) var opened: NativeTranslationPhrase?
+    private(set) var state = "idle"
+    private var policyID: String?
+    private var noticeHash: String?
+    private var generation = UUID()
+    private var deadline: TimeInterval = 0
+    private let uptime: () -> TimeInterval
+    init(uptime: @escaping () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) { self.uptime = uptime }
+
+    func clear() {
+        generation = UUID(); scope = nil; phrases = []; nextCursor = nil; opened = nil
+        policyID = nil; noticeHash = nil; deadline = 0; state = "idle"
+    }
+    func isCurrent(_ requested: NativeDataScope?) -> Bool {
+        requested != nil && scope == requested && state == "ready" && uptime() < deadline
+    }
+    func reference(_ phrase: NativeTranslationPhrase, scope requested: NativeDataScope?) -> NativeSavedTranslationReference? {
+        guard isCurrent(requested), phrases.contains(phrase), let scope, let policyID, let noticeHash else { return nil }
+        return .init(phrase: phrase, policyID: policyID, noticeHash: noticeHash, scope: scope, deadline: deadline)
+    }
+    func load(scope requested: NativeDataScope?, cursor: String? = nil, exact: NativeSavedTranslationReference? = nil,
+              currentScope: () -> NativeDataScope?, policyRequest: NativeTranslationStore.Request, read: Read) async {
+        let previousPolicy = policyID, previousNotice = noticeHash
+        if let cursor {
+            guard exact == nil, isCurrent(requested), cursor == nextCursor else { clear(); state = "unavailable"; return }
+        }
+        clear()
+        guard let requested, requested == currentScope(), !Task.isCancelled,
+              exact == nil || (exact?.scope == requested && uptime() < (exact?.deadline ?? 0)) else { return }
+        let own = generation, started = uptime()
+        scope = requested; state = "loading"
+        func current() -> Bool { generation == own && requested == currentScope() && !Task.isCancelled && uptime() - started < 20 }
+        do {
+            let policyData = try await policyRequest("api/translate/policy", "GET", nil)
+            guard current() else { throw NativeDataError.staleSessionResponse }
+            let first = try JSONDecoder().decode(NativeTextPolicyReply.self, from: policyData)
+            guard first.version == 1, first.kind == "policy", first.policy.valid, first.policy.consentState == .accepted,
+                  cursor == nil || (first.policy.id == previousPolicy && first.policy.noticeHash == previousNotice),
+                  exact == nil || (first.policy.id == exact?.policyID && first.policy.noticeHash == exact?.noticeHash) else { throw NativeDataError.invalidResponse }
+            let data = try await read(cursor, exact?.id)
+            guard current(), data.count <= NativeTranslationHistoryWire.maximumResponseBytes else { throw NativeDataError.staleSessionResponse }
+            let reply = try JSONDecoder().decode(NativeSavedTranslationReply.self, from: data)
+            guard reply.version == 2, reply.policyId == first.policy.id else { throw NativeDataError.invalidResponse }
+            let rows: [NativeTranslationPhrase]
+            if let exact {
+                guard reply.kind == "translation", let phrase = reply.phrase, phrase == exact.phrase,
+                      phrase.valid, phrase.state == "translated", reply.phrases == nil, reply.nextCursor == nil else { throw NativeDataError.invalidResponse }
+                rows = [phrase]
+            } else {
+                guard reply.kind == "translations", let phrases = reply.phrases, phrases.count <= 20,
+                      phrases.allSatisfy({ $0.valid && $0.state == "translated" }),
+                      Set(phrases.map(\.id)).count == phrases.count,
+                      reply.phrase == nil,
+                      reply.nextCursor == nil || (phrases.count == 20 && reply.nextCursor == phrases.last?.id && UUID(uuidString: reply.nextCursor ?? "") != nil),
+                      reply.nextCursor == nil || reply.nextCursor != cursor else { throw NativeDataError.invalidResponse }
+                rows = phrases
+            }
+            let finalData = try await policyRequest("api/translate/policy", "GET", nil)
+            guard current() else { throw NativeDataError.staleSessionResponse }
+            let last = try JSONDecoder().decode(NativeTextPolicyReply.self, from: finalData)
+            guard last.version == 1, last.kind == "policy", last.policy.valid, last.policy.consentState == .accepted,
+                  last.policy.id == first.policy.id, last.policy.noticeHash == first.policy.noticeHash else { throw NativeDataError.invalidResponse }
+            policyID = first.policy.id; noticeHash = first.policy.noticeHash; deadline = started + 20
+            if exact != nil { opened = rows.first } else { phrases = rows; nextCursor = reply.nextCursor }
+            state = "ready"
+        } catch {
+            guard generation == own, !Task.isCancelled else { return }
+            phrases = []; nextCursor = nil; opened = nil; deadline = 0; state = "unavailable"
+        }
+    }
+}
