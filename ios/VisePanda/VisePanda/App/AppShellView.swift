@@ -7,6 +7,7 @@ struct AppShellView: View {
     @State private var assistantShell: Bool
     @State private var selectedTab: AppTab
     @State private var presentedEntry: AppEntry?
+    @State private var switchState = ShellSwitchState()
     @State private var entryResets: [AppTab: UUID] = [:]
 
     init(assistantShell: Bool = NativeShellRollout.enabled()) {
@@ -19,9 +20,16 @@ struct AppShellView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             ForEach(tabs) { tab in
+                let capturedScope = settings.nativeSession.dataScope
+                let capturedHost = switchState.generation
                 TabRootView(tab: tab, isActive: selectedTab == tab && presentedEntry == nil,
                             onSearch: { presentedEntry = .search }, onEntry: open,
-                            assistantShell: assistantShell, onSwitchShell: switchShell, rootResetID: entryResets[tab])
+                            assistantShell: assistantShell, onSwitchShell: switchShell, rootResetID: entryResets[tab],
+                            switchBlocked: switchState.blocked || settings.nativeSession.busy,
+                            onSwitchBlock: { blocked in
+                                guard capturedScope == settings.nativeSession.dataScope else { return }
+                                switchState.update(blocked: blocked, tab: tab, scope: capturedScope, host: capturedHost)
+                            })
                     .tabItem {
                         tab.label
                     }
@@ -29,7 +37,7 @@ struct AppShellView: View {
             }
         }
         // Recreate view-owned drafts, paths and projections when the actor/epoch changes.
-        .id(settings.nativeSession.dataScope)
+        .id(ShellNavigationIdentity(scope: settings.nativeSession.dataScope, assistant: assistantShell, generation: switchState.generation))
         .accessibilityIdentifier("main-tab-view")
         .sheet(item: $presentedEntry) { entry in
             ShellEntrySheet(entry: entry)
@@ -39,7 +47,8 @@ struct AppShellView: View {
             guard let entry = AppEntry.deepLink(url) else { return }
             open(entry)
         }
-        .onChange(of: settings.nativeSession.dataScope) { _, _ in
+        .onChange(of: settings.nativeSession.dataScope, initial: true) { _, scope in
+            switchState.actorChanged(to: scope)
             presentedEntry = nil
             selectedTab = assistantShell ? .defaultSelection : .ask
         }
@@ -49,7 +58,9 @@ struct AppShellView: View {
         }
     }
     private func switchShell() {
+        guard !switchState.blocked, !settings.nativeSession.busy else { return }
         presentedEntry = nil
+        switchState.modeChanged()
         assistantShell.toggle()
         selectedTab = assistantShell ? .defaultSelection : .ask
     }
@@ -62,6 +73,28 @@ struct AppShellView: View {
         } else {
             presentedEntry = entry
         }
+    }
+}
+
+struct ShellNavigationIdentity: Hashable {
+    let scope: NativeDataScope?
+    let assistant: Bool
+    let generation: UUID
+}
+
+struct ShellSwitchState {
+    private(set) var scope: NativeDataScope?
+    private(set) var generation = UUID()
+    private var tabs: Set<AppTab> = []
+    var blocked: Bool { !tabs.isEmpty }
+    mutating func actorChanged(to next: NativeDataScope?) {
+        guard scope != next else { return }
+        scope = next; generation = UUID(); tabs.removeAll()
+    }
+    mutating func modeChanged() { generation = UUID(); tabs.removeAll() }
+    mutating func update(blocked: Bool, tab: AppTab, scope captured: NativeDataScope?, host: UUID) {
+        guard captured == scope, host == generation else { return }
+        if blocked { tabs.insert(tab) } else { tabs.remove(tab) }
     }
 }
 

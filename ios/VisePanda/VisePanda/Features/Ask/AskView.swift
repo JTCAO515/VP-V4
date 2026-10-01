@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AskView: View {
     var isActive = true
+    var onSwitchBlock: ((Bool) -> Void)?
     @Environment(AppSettings.self) private var settings
     @State private var draft = ""
     @FocusState private var isComposerFocused: Bool
@@ -14,7 +15,7 @@ struct AskView: View {
 
     var body: some View {
         if settings.nativeSession.enabled {
-            if settings.nativeSession.askMode == .assistant { NativeAssistantConversationView(isActive: isActive) }
+            if settings.nativeSession.askMode == .assistant { NativeAssistantConversationView(isActive: isActive, onSwitchBlock: onSwitchBlock) }
             else { NativeAskView(store: NativeAskStore(mode: settings.nativeSession.askMode), isActive: isActive) }
         } else { previewBody }
     }

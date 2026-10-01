@@ -421,6 +421,7 @@ private enum AssistantTripConfirmation: Equatable {
 /// the old Ask modes remain separate and their four-Turn rules are unchanged.
 struct NativeAssistantConversationView: View {
     var isActive: Bool
+    var onSwitchBlock: ((Bool) -> Void)?
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var scenePhase
     @State private var policy: NativeTextPolicy?
@@ -467,6 +468,10 @@ struct NativeAssistantConversationView: View {
     private var chinese: Bool { settings.selectedLocale == .zh }
     private var resultActive: Bool { isActive && scenePhase == .active }
     private var refreshBusy: Bool { refreshState.busy }
+    private var shellSwitchBlocked: Bool {
+        AssistantShellSwitchGate.blocked(busy: busy || planningBusy || tripBusy,
+            intakePending: pending != nil, planningPending: planningPending != nil, tripPending: pendingTripMutation != nil)
+    }
     private var composerScopeCurrent: Bool { session.dataScope != nil && boundScope == session.dataScope }
     private var confirmedConversation: Bool {
         guard composerScopeCurrent, let conversation else { return false }
@@ -635,6 +640,7 @@ struct NativeAssistantConversationView: View {
             }
             await reload()
         }
+        .onChange(of: shellSwitchBlocked, initial: true) { _, blocked in onSwitchBlock?(blocked) }
         .onChange(of: session.busy) { wasBusy, isBusy in
             if wasBusy && !isBusy && session.dataScope != nil {
                 Task { await reload() }
@@ -1400,4 +1406,12 @@ private struct AssistantGoalTripAccepted: Decodable {
     let linkVersion: Int
     let goalScopeVersion: Int
     let tripId: String?
+}
+
+
+// Navigation protection only. An uncertain immutable request is never cancelled by a mode switch.
+enum AssistantShellSwitchGate {
+    static func blocked(busy: Bool, intakePending: Bool, planningPending: Bool, tripPending: Bool) -> Bool {
+        busy || intakePending || planningPending || tripPending
+    }
 }

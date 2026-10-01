@@ -31,6 +31,8 @@ struct TabRootView: View {
     var assistantShell = false
     var onSwitchShell: (() -> Void)?
     var rootResetID: UUID?
+    var switchBlocked = false
+    var onSwitchBlock: ((Bool) -> Void)?
     @State private var router = RouterPath()
 
     var body: some View {
@@ -76,6 +78,8 @@ struct TabRootView: View {
                         Divider()
                         Button(assistantShell ? "shell.useLegacy" : "shell.useFourTabs", action: onSwitchShell)
                             .accessibilityIdentifier("shell.mode.toggle")
+                            .disabled(switchBlocked)
+                        Text(switchBlocked ? "shell.switch.pending" : "shell.switch.temporary")
                     }
                 } label: {
                     Label("shell.entries", systemImage: "line.3.horizontal")
@@ -87,13 +91,13 @@ struct TabRootView: View {
     @ViewBuilder
     private var rootContent: some View {
         switch tab {
-        case .vp: AskView(isActive: isActive)
+        case .vp: AskView(isActive: isActive, onSwitchBlock: onSwitchBlock)
         case .journeys: NativeJourneysView(isActive: isActive, onOpenVP: onEntry.map { handler in { handler(.ask) } })
         case .library: NativeKnowledgeView(isActive: isActive)
         case .memory: NativeTravelPaceView()
         case .tools: ToolsView()
         case .trip: TripView()
-        case .ask: AskView(isActive: isActive)
+        case .ask: AskView(isActive: isActive, onSwitchBlock: onSwitchBlock)
         case .explore: ExploreView(isActive: isActive)
         case .profile: ProfileView()
         }

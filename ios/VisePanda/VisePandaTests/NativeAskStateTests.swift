@@ -610,3 +610,48 @@ nonisolated final class AssistantConversationTaskPageTests: XCTestCase {
         XCTAssertFalse(belongs)
     }
 }
+
+nonisolated final class ShellNavigationStateTests: XCTestCase {
+    @MainActor
+    func testShellSwitchKeepsUncertainIntakePlanningAndTripChangesBlocked() {
+        XCTAssertFalse(AssistantShellSwitchGate.blocked(busy: false, intakePending: false, planningPending: false, tripPending: false))
+        for position in 0..<4 {
+            XCTAssertTrue(AssistantShellSwitchGate.blocked(busy: position == 0, intakePending: position == 1, planningPending: position == 2, tripPending: position == 3))
+        }
+    }
+
+    @MainActor
+    func testShellHostIdentityChangesOnlyForActorOrNavigationMode() {
+        let a = NativeDataScope(endpoint: "http://127.0.0.1", subject: "a", mobileEpoch: 1, generation: 1)
+        let b = NativeDataScope(endpoint: a.endpoint, subject: "b", mobileEpoch: 1, generation: 2)
+        let generation = UUID()
+        XCTAssertEqual(ShellNavigationIdentity(scope: a, assistant: true, generation: generation), ShellNavigationIdentity(scope: a, assistant: true, generation: generation))
+        XCTAssertNotEqual(ShellNavigationIdentity(scope: a, assistant: false, generation: generation), ShellNavigationIdentity(scope: a, assistant: true, generation: generation))
+        XCTAssertNotEqual(ShellNavigationIdentity(scope: a, assistant: true, generation: generation), ShellNavigationIdentity(scope: b, assistant: true, generation: generation))
+    }
+
+    @MainActor
+    func testShellPendingLockSurvivesTabNavigationAndRejectsOldActorOrHostCallbacks() {
+        let a = NativeDataScope(endpoint: "http://127.0.0.1", subject: "a", mobileEpoch: 1, generation: 1)
+        let b = NativeDataScope(endpoint: a.endpoint, subject: "b", mobileEpoch: 1, generation: 2)
+        var state = ShellSwitchState(); state.actorChanged(to: a)
+        let first = state.generation
+        state.update(blocked: true, tab: .vp, scope: a, host: first)
+        // Library's own false/read-only state cannot release VP's uncertain change.
+        state.update(blocked: false, tab: .library, scope: a, host: first)
+        XCTAssertTrue(state.blocked)
+        state.update(blocked: false, tab: .vp, scope: a, host: first)
+        XCTAssertFalse(state.blocked)
+        state.actorChanged(to: b)
+        let second = state.generation
+        state.update(blocked: true, tab: .vp, scope: b, host: second)
+        state.update(blocked: false, tab: .vp, scope: a, host: first)
+        XCTAssertTrue(state.blocked)
+        state.update(blocked: false, tab: .vp, scope: b, host: second)
+        XCTAssertFalse(state.blocked)
+        state.modeChanged()
+        state.update(blocked: true, tab: .vp, scope: b, host: second)
+        XCTAssertFalse(state.blocked)
+    }
+
+}
