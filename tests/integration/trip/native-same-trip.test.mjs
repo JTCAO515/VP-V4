@@ -7,6 +7,7 @@ import { createServerClient } from '@supabase/ssr';
 import { NextRequest } from 'next/server.js';
 import { createNativeTripDataAdapter } from '../../../lib/server/identity/user-data-adapter.ts';
 import { identityLocalEnv } from '../identity/local-supabase.mjs';
+import { webActor, webTripResult } from '../artifacts/fixtures/web-trip-result.mjs';
 import { waitForNativeAPI } from '../identity/native-api-readiness.mjs';
 
 test('local native/Web share one immutable Trip with confirmed intent, CAS and ordinary-owner isolation', {skip:process.env.VP_LOCAL_SAME_TRIP!=='true',timeout:180000},async t=>{
@@ -122,4 +123,39 @@ test('local native/Web share one immutable Trip with confirmed intent, CAS and o
  assert.ok((await users[1].sdk.from('trip_proposals').insert({owner_id:users[1].id,trip_id:tripId,revision:200,base_trip_version:5,status:'pending',patch:{title:'foreign'},expires_at:'2099-01-01T00:00:00Z'})).error,'foreign Trip pending insert denied');
  await login(users[0]);assert.equal((await n('/'+tripId)).status,401,'replaced mobile read denied');const oldReplay=await owner.rpc('confirm_and_apply_trip_proposal',{p_proposal_id:confirm.proposalId,p_idempotency_key:confirm.idempotencyKey,p_digest:confirm.digest});assert.ok(oldReplay.error,'replaced mobile raw replay denied');assert.equal((await w('/'+tripId)).status,200,'Web Cookie survives');
  t.diagnostic('Native/Web same UUID and five atomic confirmed versions; raw authority attacks rejected; all exact synthetic users removed.');
+});
+
+test('ordinary Web cookies read the same exact comparison with unchanged SQL session and source guards',{skip:process.env.VP_LOCAL_SAME_TRIP!=='true',timeout:180000},async t=>{
+ const state=identityLocalEnv(),api='http://127.0.0.1:'+process.env.VP_NATIVE_API_PORT;
+ const sql=input=>execFileSync('docker',['exec','-i',state.DB_CONTAINER,'psql','-U','postgres','-d','postgres','-X','-Atq','-v','ON_ERROR_STOP=1'],{input,encoding:'utf8',stdio:['pipe','pipe','pipe']}).trim();
+ const a=await webActor(state),b=await webActor(state);
+ t.after(()=>sql(`delete from auth.users where id in ('${a.owner}','${b.owner}');`));
+ const fixture=await webTripResult(state,sql,a),path=trip=>'/api/trips/'+trip+'/comparison-result';
+ const read=async(trip,actor=a,headers={})=>{const r=await fetch(api+path(trip),{headers:{Cookie:actor.cookie,...headers}});return {status:r.status,body:await r.json(),headers:r.headers};};
+ const raw=await fixture.rpc('read_result_artifacts_v1',{p_artifact_id:fixture.artifact,p_revision:1});
+ const response=await read(fixture.trip);assert.equal(response.status,200,JSON.stringify(response.body));
+ assert.deepEqual([response.body.data.artifactId,response.body.data.revision],[fixture.artifact,1]);
+ assert.deepEqual(response.body.data,raw,'Web adapter reuses the exact native authority/schema');
+ assert.match(response.headers.get('cache-control'),/private.*no-store/);assert.ok(response.headers.get('vary').split(/,\s*/).includes('Cookie'));
+ assert.equal(sql(`select count(*) from identity_private.mobile_attempts where owner_id='${a.owner}';`),'0','ordinary Web session created no native proof');
+ assert.equal((await read(fixture.trip,b)).body.data.kind,'empty');
+ assert.equal((await read(fixture.trip,a,{Authorization:'Bearer denied'})).status,401);
+ assert.equal((await read(fixture.trip,a,{Origin:'https://other.invalid'})).status,400);
+ const navigation=await webTripResult(state,sql,a);
+ if(process.env.VP_S1_BROWSER==='true') {
+  const {exerciseWebTripResult}=await import('../artifacts/web-trip-result-browser.mjs');
+  await exerciseWebTripResult({api,actor:a,fixture,nextFixture:navigation,data:response.body.data,t});
+ }
+ await fixture.rpc('withdraw_text_policy',{p_policy_id:fixture.policy});
+ assert.equal((await read(fixture.trip)).body.data.kind,'empty','withdrawal reveals no result body');
+ assert.equal((await fixture.rpc('read_result_artifacts_v1',{p_artifact_id:fixture.artifact,p_revision:1})).kind,'unavailable');
+ const deletion=randomUUID();await fixture.rpc('request_trip_deletion_v1',{p_request_id:deletion,p_trip_id:fixture.trip,p_expected_version:1,p_confirmed:true});
+ sql(`select public.execute_trip_deletion_v1('${deletion}');`);
+ assert.equal((await read(fixture.trip)).body.data.kind,'empty');
+ const archived=await webTripResult(state,sql,a);assert.equal((await read(archived.trip)).status,200);
+ await archived.rpc('archive_trip_v1',{p_trip_id:archived.trip,p_expected_version:1,p_idempotency_key:randomUUID(),p_confirmed:true});
+ assert.equal((await read(archived.trip)).body.data.kind,'empty');
+ const remembered=await webTripResult(state,sql,a,{memory:true});assert.equal((await read(remembered.trip)).body.data.kind,'result_artifact');
+ await remembered.rpc('transition_memory_profile',{p_memory_id:remembered.memory,p_next_state:'deleted'});
+ assert.equal((await read(remembered.trip)).body.data.kind,'empty','deleted Memory cannot be revived by Web reader');
 });
