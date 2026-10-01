@@ -102,6 +102,67 @@ struct AssistantMessage: Decodable, Identifiable {
     }
 }
 
+protocol AssistantTaskStatus {
+    var turnId: String { get }
+    var serviceTaskId: String? { get }
+    var scopeVersion: Int? { get }
+    var relationship: String? { get }
+    var parentTurnId: String? { get }
+    var status: String { get }
+    var valid: Bool { get }
+    var waiting: Bool { get }
+}
+
+extension NativeTextTurn: AssistantTaskStatus {}
+
+struct AssistantConversationTaskStatus: Decodable, AssistantTaskStatus {
+    let turnId: String
+    let serviceTaskId: String?
+    let scopeVersion: Int?
+    let relationship: String?
+    let parentTurnId: String?
+    let status: String
+    let outcome: NativeTextTurn.Outcome?
+    let goalScopeVersion: Int
+    let currentGoalScopeVersion: Int
+    var waiting: Bool { ["accepted", "planning", "retrieving", "generating", "validating"].contains(status) }
+    var goalScopeCurrent: Bool { goalScopeVersion == currentGoalScopeVersion }
+    var valid: Bool {
+        guard UUID(uuidString: turnId) != nil, serviceTaskId.flatMap(UUID.init(uuidString:)) != nil,
+              (scopeVersion ?? 0) > 0, (1...10001).contains(goalScopeVersion),
+              (1...10001).contains(currentGoalScopeVersion) else { return false }
+        switch outcome {
+        case .answered, .partial, .clarification: return status == "completed"
+        case .blocked: return status == "unavailable"
+        case .technicalFailure: return status == "failed"
+        case nil: return waiting || status == "cancelled" || status == "failed"
+        }
+    }
+}
+
+struct AssistantConversationTaskPage: Decodable {
+    let version: Int
+    let kind: String
+    let conversationId: String
+    let conversationSequence: Int
+    let limit: Int
+    let messages: [AssistantMessage]
+    let turns: [AssistantConversationTaskStatus]
+    let nextCursor: String?
+    var valid: Bool {
+        version == 5 && kind == "conversation_tasks" && UUID(uuidString: conversationId) != nil
+            && (1...1000001).contains(conversationSequence) && limit == 20 && messages.count <= limit
+            && messages.count == turns.count && messages.allSatisfy { $0.valid && $0.taskId != nil && $0.turnId == nil }
+            && Set(messages.compactMap(\.taskId)).count == messages.count
+            && turns.allSatisfy(\.valid) && Set(turns.compactMap(\.serviceTaskId)).count == turns.count
+            && Set(messages.compactMap(\.taskId)) == Set(turns.compactMap(\.serviceTaskId))
+            && messages.allSatisfy { message in turns.contains { $0.serviceTaskId == message.taskId && $0.goalScopeVersion == message.scopeVersion } }
+            && zip(messages, messages.dropFirst()).allSatisfy { $0.0.sequence > $0.1.sequence }
+            && AssistantTaskProjection.eligibleHistory(turns, messages: messages).count == turns.count
+            && (nextCursor == nil || (messages.count == limit && nextCursor!.utf8.count <= 512))
+    }
+}
+
 enum AssistantTaskProjection {
     static func latestMessages(_ messages: [AssistantMessage]) -> [AssistantMessage] {
         var seen = Set<String>()
@@ -112,12 +173,12 @@ enum AssistantTaskProjection {
         return Array(latest.reversed())
     }
 
-    static func turn(for message: AssistantMessage, in history: [NativeTextTurn]) -> NativeTextTurn? {
+    static func turn<T: AssistantTaskStatus>(for message: AssistantMessage, in history: [T]) -> T? {
         guard let taskID = message.taskId else { return nil }
         return history.first { $0.serviceTaskId == taskID }
     }
 
-    static func eligibleHistory(_ history: [NativeTextTurn], messages: [AssistantMessage]) -> [NativeTextTurn] {
+    static func eligibleHistory<T: AssistantTaskStatus>(_ history: [T], messages: [AssistantMessage]) -> [T] {
         let visibleTaskIDs = Set(latestMessages(messages).compactMap(\.taskId))
         var seen = Set<String>()
         return history.filter { turn in
@@ -132,7 +193,7 @@ enum AssistantTaskProjection {
         }
     }
 
-    static func waitingTurnIDs(messages: [AssistantMessage], history: [NativeTextTurn]) -> [String] {
+    static func waitingTurnIDs<T: AssistantTaskStatus>(messages: [AssistantMessage], history: [T]) -> [String] {
         let eligible = eligibleHistory(history, messages: messages)
         return latestMessages(messages).compactMap { turn(for: $0, in: eligible) }.filter(\.waiting).map(\.turnId)
     }
@@ -374,7 +435,11 @@ struct NativeAssistantConversationView: View {
     @State private var planningBusy = false
     @State private var planningPending: AssistantPlanningSubmission?
     @State private var planningNotice: String?
-    @State private var taskTurns: [NativeTextTurn] = []
+    @State private var taskTurns: [AssistantConversationTaskStatus] = []
+    @State private var taskSourceMessages: [AssistantMessage] = []
+    @State private var taskNextCursor: String?
+    @State private var taskPageCursor: String?
+    @State private var taskSnapshotSequence: Int?
     @State private var taskNotice: String?
     @State private var selectedTaskID: String?
     @State private var selectedArtifactID: String?
@@ -412,11 +477,11 @@ struct NativeAssistantConversationView: View {
     private var actions: [String] { goal == nil ? ["independent_question", "goal_start"] : ["independent_question", "goal_start", "follow_up", "amendment"] }
     private var waitingKey: String {
         let messages = (conversation?.messages ?? []).filter { $0.turnId != nil && ["accepted","planning","retrieving","generating","validating"].contains($0.status) }.map(\.messageId)
-        let tasks = AssistantTaskProjection.waitingTurnIDs(messages: conversation?.messages ?? [], history: taskTurns)
+        let tasks = AssistantTaskProjection.waitingTurnIDs(messages: taskSourceMessages, history: taskTurns)
         return (messages + tasks).joined(separator: ":")
     }
-    private var taskMessages: [AssistantMessage] { AssistantTaskProjection.latestMessages(conversation?.messages ?? []) }
-    private func taskTurn(for message: AssistantMessage) -> NativeTextTurn? {
+    private var taskMessages: [AssistantMessage] { AssistantTaskProjection.latestMessages(taskSourceMessages) }
+    private func taskTurn(for message: AssistantMessage) -> AssistantConversationTaskStatus? {
         AssistantTaskProjection.turn(for: message, in: taskTurns)
     }
     private var linkedTripTitle: String {
@@ -451,7 +516,7 @@ struct NativeAssistantConversationView: View {
                             .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
                         }
                         if let goal { planningControls(goal) }
-                        if !taskMessages.isEmpty { taskList }
+                        if !taskMessages.isEmpty || taskNotice != nil || taskNextCursor != nil || taskPageCursor != nil || conversation?.messages.contains(where: { $0.taskId != nil }) == true { taskList }
                         TimelineView(.periodic(from: .now, by: 1)) { _ in
                             if let selectedResult, let selectedTaskID, selectedResult.belongs(to: selectedTaskID),
                                resultFence.isCurrent(scope: session.dataScope, active: resultActive, now: ProcessInfo.processInfo.systemUptime) {
@@ -558,7 +623,7 @@ struct NativeAssistantConversationView: View {
             }
             policy = nil; conversation = nil; notice = nil
             planningPolicy = nil; planningPending = nil; planningDraft = ""; planningNotice = nil
-            taskTurns = []; taskNotice = nil
+            taskTurns = []; taskSourceMessages = []; taskNextCursor = nil; taskPageCursor = nil; taskSnapshotSequence = nil; taskNotice = nil
             selectedTaskID = nil; selectedArtifactID = nil; selectedArtifactTaskID = nil
             selectedResult = nil; resultNotice = nil; resultFence.clear()
             tripLink = nil; ownedTrips = []; pendingTripMutation = nil; privacyLinks = []; privacyNextCursor = nil
@@ -634,7 +699,7 @@ struct NativeAssistantConversationView: View {
     }
 
     private func clearConversationProjection() {
-        conversation = nil; planningPolicy = nil; taskTurns = []
+        conversation = nil; planningPolicy = nil; taskTurns = []; taskSourceMessages = []; taskNextCursor = nil; taskPageCursor = nil; taskSnapshotSequence = nil
         selectedTaskID = nil; selectedArtifactID = nil; selectedArtifactTaskID = nil
         invalidateResult()
         tripLink = nil; ownedTrips = []; tripConfirmation = nil; showTripPicker = false
@@ -727,15 +792,18 @@ struct NativeAssistantConversationView: View {
     }
     private var taskList: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text(chinese ? "任务" : "Tasks").font(.headline)
+            Text(chinese ? "任务（当前页，最多 20 项）" : "Tasks (current page, up to 20)").font(.headline)
             ForEach(taskMessages) { message in
                 let turn = taskTurn(for: message)
                 VStack(alignment: .leading, spacing: 6) {
                     Text(message.text).font(.subheadline)
                     Text(turn.map { statusLabel($0.status) } ?? (chinese ? "状态待核对" : "Checking status"))
                         .font(.caption).foregroundStyle(Color.vpSecondaryText)
+                    if turn?.goalScopeCurrent == false {
+                        Text(chinese ? "该任务的目标已改变，成果需重新核对。" : "This task's goal changed. Its result needs rechecking.").font(.caption)
+                    }
                     HStack {
-                        if turn?.status == "completed", let taskID = message.taskId {
+                        if turn?.status == "completed", turn?.goalScopeCurrent == true, let taskID = message.taskId {
                             Button(chinese ? "打开此任务成果" : "Open this task's result") {
                                 Task { await openResult(for: taskID) }
                             }.accessibilityIdentifier("assistant.task.open.\(message.sequence)")
@@ -748,8 +816,21 @@ struct NativeAssistantConversationView: View {
                     }
                 }.padding(.vertical, 4)
             }
+            if taskMessages.isEmpty && taskNotice == nil {
+                Text(chinese ? "当前页没有可读取的任务。" : "No readable tasks on this page.").font(.caption)
+            }
+            if taskPageCursor != nil {
+                Button(chinese ? "返回任务第一页" : "First task page") {
+                    taskPageCursor = nil; refreshState.invalidate()
+                    Task { await reload(replacing: true) }
+                }.disabled(refreshBusy || busy || planningBusy).accessibilityIdentifier("assistant.tasks.first")
+            }
+            if taskNextCursor != nil {
+                Button(chinese ? "下一页任务" : "Next task page") { Task { await nextTaskPage() } }
+                    .disabled(refreshBusy || busy || planningBusy).accessibilityIdentifier("assistant.tasks.next")
+            }
             if taskNotice != nil {
-                Text(chinese ? "任务操作尚未确认，请刷新状态后重试。" : "Task action is unconfirmed. Refresh its status before retrying.")
+                Text(chinese ? "任务状态暂不可用，请刷新后重新核对。" : "Task status is unavailable. Refresh to recheck.")
                     .font(.footnote).accessibilityIdentifier("assistant.task.error")
             }
         }
@@ -966,6 +1047,28 @@ struct NativeAssistantConversationView: View {
             tripNotice = nil
         } catch { if session.dataScope == initial { tripNotice = "retry" } }
     }
+    private func nextTaskPage() async {
+        guard composerScopeCurrent, !busy, !planningBusy, !refreshBusy, let initial = session.dataScope,
+              let id = conversation?.conversationId, let sequence = conversation?.nextSequence,
+              let cursor = taskNextCursor else { return }
+        let generation = selection.generation
+        let refreshToken = refreshState.begin()
+        defer { refreshState.finish(refreshToken) }
+        do {
+            let bytes = try await session.assistantTaskHistoryRequest(conversationID: id, cursor: cursor)
+            guard ownsRefresh(initial, generation, refreshToken) else { return }
+            let page = try JSONDecoder().decode(AssistantConversationTaskPage.self, from: bytes)
+            guard page.valid, page.conversationId == id, page.conversationSequence == sequence else { throw NativeDataError.invalidResponse }
+            taskSourceMessages = page.messages; taskTurns = page.turns; taskNextCursor = page.nextCursor
+            taskPageCursor = cursor; taskSnapshotSequence = page.conversationSequence
+            selectedTaskID = nil; selectedArtifactID = nil; selectedArtifactTaskID = nil; invalidateResult()
+            taskNotice = nil
+        } catch {
+            guard ownsRefresh(initial, generation, refreshToken) else { return }
+            taskSourceMessages = []; taskTurns = []; taskNextCursor = nil; invalidateResult(); taskNotice = "retry"
+        }
+    }
+
     private func reload(replacing: Bool = false) async {
         guard let initial = session.dataScope else { return }
         let generation = selection.generation
@@ -1008,14 +1111,21 @@ struct NativeAssistantConversationView: View {
                 conversations = []; conversationsNotice = "retry"
             }
             do {
-                let historyData = try await session.askRequest(path: "api/chat/native/v2/turns", method: "GET")
-                guard ownsRefresh(initial, generation, refreshToken) else { return }
-                let history = try JSONDecoder().decode(NativeTextHistory.self, from: historyData)
-                guard history.version == 2, history.kind == "history" else { throw NativeDataError.invalidResponse }
-                taskTurns = AssistantTaskProjection.eligibleHistory(history.turns, messages: read.messages)
+                if let id = read.conversationId {
+                    let pageCursor = !replacing && taskSnapshotSequence == read.nextSequence ? taskPageCursor : nil
+                    let bytes = try await session.assistantTaskHistoryRequest(conversationID: id, cursor: pageCursor)
+                    guard ownsRefresh(initial, generation, refreshToken) else { return }
+                    let page = try JSONDecoder().decode(AssistantConversationTaskPage.self, from: bytes)
+                    guard page.valid, page.conversationId == id, page.conversationSequence == read.nextSequence else {
+                        throw NativeDataError.invalidResponse
+                    }
+                    taskSourceMessages = page.messages; taskTurns = page.turns; taskNextCursor = page.nextCursor
+                    taskPageCursor = pageCursor; taskSnapshotSequence = page.conversationSequence
+                    taskNotice = nil
+                } else { taskSourceMessages = []; taskTurns = []; taskNextCursor = nil }
             } catch {
                 guard ownsRefresh(initial, generation, refreshToken) else { return }
-                taskTurns = []
+                taskTurns = []; taskSourceMessages = []; taskNextCursor = nil; taskPageCursor = nil; taskSnapshotSequence = nil; taskNotice = "retry"
             }
             if let selectedTaskID,
                !taskTurns.contains(where: { $0.serviceTaskId == selectedTaskID && $0.status == "completed" }) {
@@ -1236,7 +1346,7 @@ struct NativeAssistantConversationView: View {
     }
     private func cancelTask(_ turnID: String) async {
         guard !planningBusy, UUID(uuidString: turnID) != nil, let initial = session.dataScope,
-              AssistantTaskProjection.waitingTurnIDs(messages: conversation?.messages ?? [], history: taskTurns).contains(turnID) else { return }
+              AssistantTaskProjection.waitingTurnIDs(messages: taskSourceMessages, history: taskTurns).contains(turnID) else { return }
         refreshState.invalidate()
         planningBusy = true
         do {
@@ -1250,7 +1360,7 @@ struct NativeAssistantConversationView: View {
     private func openResult(for taskID: String) async {
         guard resultActive, let initial = session.dataScope, UUID(uuidString: taskID) != nil,
               taskMessages.contains(where: { $0.taskId == taskID }),
-              taskTurns.contains(where: { $0.serviceTaskId == taskID && $0.status == "completed" }) else { return }
+              taskTurns.contains(where: { $0.serviceTaskId == taskID && $0.status == "completed" && $0.goalScopeCurrent }) else { return }
         selectedTaskID = taskID; selectedResult = nil; resultNotice = nil
         let generation = resultFence.begin(scope: initial, now: ProcessInfo.processInfo.systemUptime)
         do {

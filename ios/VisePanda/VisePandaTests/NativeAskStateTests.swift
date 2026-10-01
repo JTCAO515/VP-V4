@@ -565,3 +565,48 @@ nonisolated final class AssistantConversationRefreshTests: XCTestCase {
         XCTAssertFalse(refresh.busy)
     }
 }
+
+nonisolated final class AssistantConversationTaskPageTests: XCTestCase {
+    @MainActor func testMembershipBeyondTranscriptAndLatestStateDriveProjection() throws {
+        let task = UUID().uuidString, turn = UUID().uuidString, message = UUID().uuidString, goal = UUID().uuidString
+        func page(status: String, outcome: String? = nil, taskID: String? = nil, goalVersion: Int = 1, currentGoalVersion: Int = 1) throws -> AssistantConversationTaskPage {
+            let member: [String: Any] = ["messageId": message, "sequence": 2, "locale": "en", "text": "Earlier task reference",
+                "relationship": "follow_up", "goalId": goal, "scopeVersion": 1, "taskId": task, "parentMessageId": NSNull(),
+                "turnId": NSNull(), "status": "recorded", "outcome": NSNull(), "output": NSNull()]
+            let state: [String: Any] = ["turnId": turn, "serviceTaskId": taskID ?? task, "scopeVersion": 1,
+                "relationship": "new_goal", "parentTurnId": NSNull(), "status": status, "outcome": outcome.map { $0 as Any } ?? NSNull(),
+                "goalScopeVersion": goalVersion, "currentGoalScopeVersion": currentGoalVersion]
+            return try JSONDecoder().decode(AssistantConversationTaskPage.self, from: JSONSerialization.data(withJSONObject:
+                ["version": 5, "kind": "conversation_tasks", "conversationId": UUID().uuidString,
+                 "conversationSequence": 90, "limit": 20, "messages": [member], "turns": [state], "nextCursor": NSNull()]))
+        }
+        let completed = try page(status: "completed", outcome: "answered")
+        XCTAssertTrue(completed.valid)
+        XCTAssertEqual(AssistantTaskProjection.turn(for: completed.messages[0], in: completed.turns)?.status, "completed")
+        for status in ["failed", "cancelled"] {
+            let latest = try page(status: status)
+            XCTAssertTrue(latest.valid)
+            XCTAssertEqual(AssistantTaskProjection.turn(for: latest.messages[0], in: latest.turns)?.status, status)
+            XCTAssertTrue(AssistantTaskProjection.waitingTurnIDs(messages: latest.messages, history: latest.turns).isEmpty)
+        }
+        let terminal = try page(status: "completed", outcome: "answered", currentGoalVersion: 10001)
+        XCTAssertTrue(terminal.valid); XCTAssertFalse(terminal.turns[0].goalScopeCurrent)
+        XCTAssertFalse(try page(status: "failed", outcome: "answered").valid)
+        XCTAssertFalse(try page(status: "completed", outcome: "answered", taskID: UUID().uuidString).valid)
+        XCTAssertFalse(try page(status: "completed", outcome: "answered", goalVersion: 2).valid, "Member and status goal basis must agree")
+    }
+
+    @MainActor func testLatePageCannotPublishAcrossSelectionAndMutationGeneration() async throws {
+        var selection = AssistantConversationSelection()
+        selection.select(UUID().uuidString)
+        var refresh = AssistantConversationRefreshState()
+        let selectionToken = selection.generation, readToken = refresh.begin()
+        let reply = Task { @MainActor in
+            await Task.yield()
+            return selection.owns(selectionToken) && refresh.owns(readToken)
+        }
+        selection.select(UUID().uuidString); refresh.invalidate()
+        let belongs = await reply.value
+        XCTAssertFalse(belongs)
+    }
+}

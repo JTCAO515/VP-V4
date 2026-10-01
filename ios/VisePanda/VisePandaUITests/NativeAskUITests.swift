@@ -130,6 +130,33 @@ nonisolated final class NativeAskUITests: XCTestCase {
         capture("Assistant-goal-Trip-privacy-unlinked-en", app)
     }
 
+    @MainActor func testEnglishAssistantOlderTaskReopen() throws {
+        let env = ProcessInfo.processInfo.environment
+        guard env["VP_NATIVE_ASSISTANT_TASK_HISTORY"] == "1" else { throw XCTSkip("UNRUN: older Task local fixture required") }
+        continueAfterFailure = false
+        let app = XCUIApplication(), api = try XCTUnwrap(env["VP_NATIVE_TEXT_API_URL"])
+        app.launchArguments = ["-VisePandaNativeAPI", api, "-VisePandaAssistantConversation", "-VisePandaLocale", "en", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch(); app.tabBars.buttons["Profile"].tap()
+        let signOut = app.buttons["Sign out"]
+        if signOut.waitForExistence(timeout: 2) { reveal(signOut, app); signOut.tap() }
+        let email = app.textFields["native.login.email"]
+        XCTAssertTrue(email.waitForExistence(timeout: 15)); reveal(email, app); email.tap(); email.typeText(try XCTUnwrap(env["VP_NATIVE_TEXT_UI_EN_EMAIL"]))
+        let password = app.secureTextFields["native.login.password"]; reveal(password, app); password.tap(); password.typeText("VPJ07-Local-Synthetic-Only-195!")
+        let login = app.buttons["native.login.submit"]; reveal(login, app); login.tap()
+        XCTAssertTrue(app.buttons["assistant.conversation.choose"].waitForExistence(timeout: 20))
+        app.buttons["assistant.conversation.choose"].tap()
+        app.buttons["assistant.conversation.select.\(try XCTUnwrap(env["VP_NATIVE_ASSISTANT_CONVERSATION_FIRST"]))"].tap()
+        let open = app.buttons["Open this task's result"]
+        for _ in 0..<60 where !open.isHittable { app.swipeUp() }
+        XCTAssertTrue(open.exists, "Task membership outside the recent transcript must remain visible")
+        XCTAssertTrue(open.isHittable); open.tap()
+        let result = app.staticTexts["Older synthetic Task result"]
+        XCTAssertTrue(result.waitForExistence(timeout: 20))
+        for _ in 0..<15 where !result.isHittable { app.swipeUp() }
+        XCTAssertTrue(result.isHittable)
+        capture("Assistant-older-conversation-Task-exact-reopen", app)
+    }
+
     @MainActor func testEnglishAssistantBackgroundRefreshComposer() async throws {
         let environment = ProcessInfo.processInfo.environment
         guard environment["VP_NATIVE_ASSISTANT_REFRESH_TEST"] == "1" else { throw XCTSkip("UNRUN: controlled local refresh environment required") }

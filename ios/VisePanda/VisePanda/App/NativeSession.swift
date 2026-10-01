@@ -289,6 +289,18 @@ final class NativeSession {
         return bytes
     }
 
+    /// Task status authority comes from server-validated conversation membership only.
+    func assistantTaskHistoryRequest(conversationID: String, cursor: String? = nil) async throws -> Data {
+        guard askMode == .assistant, UUID(uuidString: conversationID) != nil,
+              cursor == nil || (cursor!.utf8.count <= 512 && cursor!.range(of: "^[A-Za-z0-9_-]+$", options: .regularExpression) != nil) else {
+            throw NativeDataError.invalidResponse
+        }
+        let items = cursor.map { [URLQueryItem(name: "cursor", value: $0)] } ?? []
+        let bytes = try await dataRequest(prefix: "api/chat/native/v5/conversations", path: "api/chat/native/v5/conversations/\(conversationID)/tasks", method: "GET", queryItems: items)
+        guard bytes.count <= 50_000 else { throw NativeDataError.invalidResponse }
+        return bytes
+    }
+
     /// Local Ask shares identity fencing, never credentials, with the Trip consumer.
     func askRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
         guard askMode != .unavailable else { throw NativeDataError.invalidResponse }
