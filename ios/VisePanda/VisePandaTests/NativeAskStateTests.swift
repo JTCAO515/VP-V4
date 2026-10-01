@@ -256,6 +256,23 @@ nonisolated final class NativeAskStateTests: XCTestCase {
 }
 
 nonisolated final class AssistantResultIdentityTests: XCTestCase {
+    @MainActor func testResultReadWindowExpiresAndClearsAcrossNavigationAndAccountChanges() {
+        let scope = NativeDataScope(endpoint: "http://127.0.0.1:59651", subject: UUID().uuidString, mobileEpoch: 1, generation: 1)
+        var fence = AssistantResultReadFence()
+        let first = fence.begin(scope: scope, now: 100)
+        XCTAssertTrue(fence.isCurrent(scope: scope, generation: first, active: true, now: 129))
+        XCTAssertFalse(fence.isCurrent(scope: scope, generation: first, active: true, now: 130), "30 seconds includes request time")
+        XCTAssertFalse(fence.isCurrent(scope: scope, generation: first, active: false, now: 110), "a hidden/background VP cannot render this read")
+        fence.clear()
+        XCTAssertFalse(fence.owns(scope: scope, generation: first), "Memory navigation, withdrawal or backgrounding invalidates a late result")
+        let returned = fence.begin(scope: scope, now: 140)
+        XCTAssertFalse(fence.isCurrent(scope: scope, generation: first, active: true, now: 141))
+        XCTAssertTrue(fence.isCurrent(scope: scope, generation: returned, active: true, now: 141))
+        let replacement = NativeDataScope(endpoint: scope.endpoint, subject: scope.subject, mobileEpoch: 2, generation: 2)
+        XCTAssertFalse(fence.isCurrent(scope: replacement, generation: returned, active: true, now: 141))
+        XCTAssertFalse(fence.isCurrent(scope: nil, active: true, now: 141))
+    }
+
     @MainActor func testRestartReopensEarlierTaskThroughExactReferenceAndFencesLateData() async throws {
         let task = UUID().uuidString.lowercased(), artifact = UUID().uuidString.lowercased(), other = UUID().uuidString.lowercased()
         func reference(_ kind: String = "result_reference") throws -> Data {
