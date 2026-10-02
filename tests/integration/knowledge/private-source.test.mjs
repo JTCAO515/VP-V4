@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { createClient } from '@supabase/supabase-js';
 import { createServerClient } from '@supabase/ssr';
 import { identityLocalEnv } from '../identity/local-supabase.mjs';
+import { browserFailureDiagnostics } from './fixtures/browser-failure-diagnostics.mjs';
 const migration='20260910213151_vpj_15_private_source_assertion.sql';
 test('private source revision → pending assertion → review → restart; real34→35 compatibility', {skip:process.env.VP_OPS_LOCAL_INTEGRATION!=='true',timeout:240000},async t=>{
  const state=identityLocalEnv();assert.ok(state&&/^supabase_db_vp-ops-review-/.test(state.DB_CONTAINER));
@@ -72,19 +73,22 @@ test('private source revision → pending assertion → review → restart; real
  });
  if(process.env.VP_OPS_BROWSER_EXECUTABLE) await t.test('existing Ops form registers and reviews a synthetic bilingual address at desktop and390px',async()=>{
   const {chromium}=await import('@playwright/test');const browser=await chromium.launch({executablePath:process.env.VP_OPS_BROWSER_EXECUTABLE,headless:true});
+  let diagnostics;
   try{
-   const page=await browser.newPage({viewport:{width:1440,height:1000}});const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',message=>{if(message.type()==='error')errors.push(message.text());});
+   const page=await browser.newPage({viewport:{width:1440,height:1000}});const errors=[];
+   diagnostics=browserFailureDiagnostics(page,{origin:api,errors,emit:report=>t.diagnostic(JSON.stringify(report))});
    async function login(who){await page.goto(api+'/auth/sign-in?returnTo=/ops/review');const signOut=page.getByRole('button',{name:'退出登录',exact:true});await signOut.or(page.getByRole('textbox',{name:'邮箱',exact:true})).first().waitFor();if(await signOut.isVisible())await signOut.click();await page.getByRole('textbox',{name:'邮箱',exact:true}).fill(who.email);await page.getByRole('textbox',{name:'密码',exact:true}).fill(who.password);await page.getByRole('button',{name:'登录',exact:true}).click();await page.waitForURL(api+'/ops/review');await page.getByRole('textbox',{name:'标题',exact:true}).waitFor();}
-   await login(author);await page.getByRole('checkbox',{name:'登记来源与双语地址草稿',exact:true}).check();await page.locator('[name=sourceKey]').fill('bad key');assert.equal(await page.locator('[name=sourceKey]').evaluate(node=>node.validity.patternMismatch),true,'browser identifier pattern remains valid under Unicode Sets');
+   diagnostics.setPhase('author_login');await login(author);diagnostics.setPhase('author_form');await page.getByRole('checkbox',{name:'登记来源与双语地址草稿',exact:true}).check();await page.locator('[name=sourceKey]').fill('bad key');assert.equal(await page.locator('[name=sourceKey]').evaluate(node=>node.validity.patternMismatch),true,'browser identifier pattern remains valid under Unicode Sets');
    const title='Synthetic browser source assertion';
    for(const [name,value] of [['title',title],['sourceKey','browser-'+randomUUID()],['revisionLabel','r1'],['publisher','Synthetic browser author'],['uri','urn:vpj15:synthetic:browser-material'],['locator','paragraph1'],['snippet','Synthetic help desk is at Test Hall.'],['usageDeclaration','Synthetic declaration, not a licence grant.'],['subjectId','test-browser-desk'],['addressLines','Test Hall'],['locality','Synthetic City'],['countryCode','CN'],['expressionZh','合成服务台位于测试大厅。'],['expressionEn','The synthetic desk is at Test Hall.']])await page.locator('[name="'+name+'"]').fill(value);
-   await page.locator('main > form').screenshot({path:'/tmp/vpj15-source-form-desktop.png'});await page.getByRole('button',{name:'提交候选',exact:true}).click();
+   diagnostics.setPhase('submit');await page.locator('main > form').screenshot({path:'/tmp/vpj15-source-form-desktop.png'});await page.getByRole('button',{name:'提交候选',exact:true}).click();
    let article=page.getByRole('article').filter({has:page.getByRole('heading',{name:title,exact:true})});await article.waitFor();assert.ok(await article.getByText('请由另一位成员审核。',{exact:true}).isVisible());
-   await login(reviewer);article=page.getByRole('article').filter({has:page.getByRole('heading',{name:title,exact:true})});await article.getByRole('textbox',{name:'审核说明',exact:true}).fill('Independent synthetic source/assertion review; no usage grant.');await article.getByRole('button',{name:'审核通过',exact:true}).click();await article.getByText('Independent synthetic source/assertion review; no usage grant.',{exact:true}).waitFor();
+   diagnostics.setPhase('reviewer_login');await login(reviewer);diagnostics.setPhase('review');article=page.getByRole('article').filter({has:page.getByRole('heading',{name:title,exact:true})});await article.getByRole('textbox',{name:'审核说明',exact:true}).fill('Independent synthetic source/assertion review; no usage grant.');await article.getByRole('button',{name:'审核通过',exact:true}).click();await article.getByText('Independent synthetic source/assertion review; no usage grant.',{exact:true}).waitFor();
    await article.getByText('来源与双语草稿',{exact:true}).click();assert.ok(await article.getByText('未经核验；未获运行授权',{exact:true}).isVisible());
-   await article.screenshot({path:'/tmp/vpj15-reviewed-desktop.png'});await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth),390);await article.screenshot({path:'/tmp/vpj15-reviewed-mobile.png'});
-   await page.getByRole('combobox',{name:'语言',exact:true}).selectOption('ar');assert.deepEqual(await page.evaluate(()=>({lang:document.documentElement.lang,dir:document.documentElement.dir,width:document.documentElement.scrollWidth})),{lang:'ar',dir:'rtl',width:390});await article.screenshot({path:'/tmp/vpj15-reviewed-ar.png'});assert.deepEqual(errors,[]);
-  }finally{await browser.close();}
+   diagnostics.setPhase('desktop');await article.screenshot({path:'/tmp/vpj15-reviewed-desktop.png'});diagnostics.setPhase('mobile');await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth),390);await article.screenshot({path:'/tmp/vpj15-reviewed-mobile.png'});
+   diagnostics.setPhase('rtl');await page.getByRole('combobox',{name:'语言',exact:true}).selectOption('ar');assert.deepEqual(await page.evaluate(()=>({lang:document.documentElement.lang,dir:document.documentElement.dir,width:document.documentElement.scrollWidth})),{lang:'ar',dir:'rtl',width:390});await article.screenshot({path:'/tmp/vpj15-reviewed-ar.png'});assert.deepEqual(errors,[]);
+  }catch(error){try{diagnostics?.reportFailure(error);}finally{throw error;}}
+  finally{diagnostics?.dispose();await browser.close();}
  });
  await t.test('member revocation and real sign-out still reject old and structured receipts',async()=>{
   sql(`update knowledge_review_private.members set active=false where actor_id='${author.id}';`);assert.equal((await call(author,oldInput)).status,403);assert.equal((await call(author,draft)).status,403);
