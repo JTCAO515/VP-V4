@@ -26,7 +26,7 @@ const call=(role,actor)=>async(name,p={})=>{
 const service=call('service_role'),notice='a'.repeat(64),workers=new Set(),rpcLog=[];
 const waitFor=async(predicate,label,ms=30000)=>{const end=Date.now()+ms;for(;;){if(await predicate())return;if(Date.now()>end)throw Error('Timed out: '+label);await new Promise(r=>setTimeout(r,100));}};
 let gateway,model,maps,dir,created=false,mapCalls=0,modelCalls=0,holdAuthTurn=null,authHeld=false,holdModel=false,holdPauseTurn=null,pauseHeld=false;
-const readCounts=new Map(),heldResponses=new Set(),targetChecks=[];
+const readCounts=new Map(),heldResponses=new Set(),targetChecks=[],modelRequests=[];
 let afterMapRequest=null,mapHookAt=0,holdConstraintTurn=null,constraintHeld=false;
 const setSwitch=enabled=>service('set_hosted_worker_enabled',{p_enabled:enabled,p_reason:'synthetic integration'});
 const profile=(a,patch={})=>({schemaVersion:'vpj07-hosted-text-worker/2',pollIntervalMs:1000,maxLifetimeMs:600000,drainMs:1000,concurrency:2,groupLimit:10,
@@ -49,7 +49,7 @@ function start(a,patch={}){
   for(const content of [w.stdout,w.stderr,w.journal()])for(const secret of [DB_KEY,MODEL_KEY,MAP_KEY])assert.ok(!content.includes(secret));return value;};
  return w;
 }
-async function owner(label){
+async function owner(label,goalText='SYNTHETIC '+label){
  const a={owner:uuid(),session:uuid(),policy:uuid(),planningPolicy:uuid(),scope:uuid(),conversation:uuid(),goal:uuid(),parent:uuid()};
  await db(`insert into auth.users(id) values('${a.owner}');insert into identity_private.mobile_accounts(owner_id) values('${a.owner}');
  insert into auth.sessions(id,user_id) values('${a.session}','${a.owner}');
@@ -65,7 +65,7 @@ async function owner(label){
  await a.user('accept_text_policy',{p_policy_id:a.policy,p_notice_hash:notice});
  await a.user('accept_planning_policy_v1',{p_policy_id:a.planningPolicy,p_notice_hash:notice});
  assert.equal((await a.user('submit_assistant_message_v1',{p_conversation_id:a.conversation,p_message_id:a.parent,p_idempotency_key:uuid(),
-  p_policy_id:a.policy,p_locale:'en',p_text:'SYNTHETIC '+label,p_relationship:'goal_start',p_goal_id:a.goal,
+  p_policy_id:a.policy,p_locale:'en',p_text:goalText,p_relationship:'goal_start',p_goal_id:a.goal,
   p_expected_goal_version:null,p_task_id:null,p_parent_message_id:null,p_turn_id:null})).kind,'accepted');
  a.task={turn:uuid(),id:uuid(),message:uuid()};
  a.accepted=await a.user('submit_planning_comparison_v1',{p_conversation_id:a.conversation,p_goal_id:a.goal,p_expected_goal_version:1,
@@ -110,7 +110,7 @@ before(async()=>{
   reply();
  });gateway.listen(0,'127.0.0.1');await once(gateway,'listening');
  model=createServer(async(req,res)=>{
-  req.resume();if(req.headers.authorization!=='Bearer '+MODEL_KEY){res.writeHead(401);res.end();return;}modelCalls++;
+  const chunks=[];for await(const chunk of req)chunks.push(chunk);modelRequests.push(JSON.parse(Buffer.concat(chunks).toString('utf8')));if(req.headers.authorization!=='Bearer '+MODEL_KEY){res.writeHead(401);res.end();return;}modelCalls++;
   const reply=()=>{if(res.destroyed)return;res.writeHead(200,{'content-type':'application/json'});res.end(JSON.stringify({model:'qwen3.7-plus-2026-05-26',
    choices:[{index:0,finish_reason:'stop',message:{role:'assistant',content:'{"highlight":"peoples_square"}'}}],usage:{prompt_tokens:20,completion_tokens:10,total_tokens:30}}));};
   if(holdModel){heldResponses.add(reply);return;}reply();
@@ -295,4 +295,12 @@ run('planning usage journal failure keeps pending cost and does not repeat the p
  const n=rpcLog.length,restarted=start(a);await waitFor(()=>rpcLog.slice(n).includes('hosted_planning_target_v1'),'pending restart');await restarted.stop();
  assert.equal(modelCalls-before.model,1);assert.equal(mapCalls-before.maps,13);
  assert.equal(await db(`select count(*) from turn_private.result_artifacts where id='${a.accepted.artifactId}';`),'0');
+});
+
+run('natural demo goal survives real planning composition without dropping its unconfirmed source',async()=>{
+ const demo='First China visit, ten days with partner, food and photography, relaxed pace.',a=await owner('natural demo context',demo),before={maps:mapCalls,model:modelCalls};await setSwitch(true);
+ const w=start(a);await waitFor(async()=>await db(`select status from public.turns where id='${a.task.turn}';`)==='completed','natural demo artifact');await w.stop();
+ assert.equal(mapCalls-before.maps,13);assert.equal(modelCalls-before.model,1);
+ const prompt=JSON.parse(modelRequests.at(-1).messages.at(-1).content);assert.equal(prompt.goal,demo);assert.equal(prompt.delegation,'SYNTHETIC natural demo context Shanghai stay area comparison');
+ const result=await a.user('read_result_artifacts_v1',{p_artifact_id:a.accepted.artifactId,p_revision:null});assert.equal(result.kind,'result_artifact');assert.equal(result.current,true);assert.equal(result.source.taskId,a.task.id);
 });
