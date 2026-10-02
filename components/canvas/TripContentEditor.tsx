@@ -35,7 +35,7 @@ export function TripContentEditor({ data, pending, locale, onReload, onPending }
   const pendingIdentity = pending ? `${pending.proposal.id}:${pending.proposal.digest ?? ""}` : null;
   const pendingStale = pending?.proposal.stale === true;
   useEffect(() => {
-    if (pendingIdentity) setNotice(pendingStale ? "conflict" : "pending");
+    if (pendingIdentity) setNotice(previous => pendingStale || previous === "conflict" ? "conflict" : "pending");
   }, [pendingIdentity, pendingStale]);
   const stale = dirty && base.version !== data.trip.headVersion;
   function reset(next = data) { const value = snapshotOf(next); setBase(value); setDraft(value); setDirty(false); reviewedDraft.current = null; }

@@ -1,0 +1,6 @@
+{"cwd": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj78-conversation-goal", "command": "node tests/integration/web-trip-continuity/run.mjs", "result": "PASS"}
+{"cwd": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj78-conversation-goal", "command": "node scripts/ci-suites/db-integration.mjs --list", "result": "PASS"}
+{"cwd": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj78-conversation-goal", "command": "pnpm lint", "result": "PASS"}
+{"cwd": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj78-conversation-goal", "command": "pnpm typecheck", "result": "PASS"}
+{"cwd": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj78-conversation-goal", "command": "pnpm docs:check", "result": "PASS"}
+{"cwd": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj78-conversation-goal", "command": "git diff --check", "result": "PASS"}

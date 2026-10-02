@@ -1,0 +1,39 @@
+{
+  "result": "PASS",
+  "sourceCommit": "03e9627ee753ccc19a447e9edd8c55794b635368",
+  "testedFiles": {
+    "components/canvas/TripContentEditor.tsx": "35f8cc1b624632ff3a26974682edb567d630bd9e42dad2a69cf1f13c3e37ba78",
+    "tests/integration/web-trip-continuity/continuity.test.mjs": "38f8f03cfdef67a438f14bc79f27a4e5056baa9d26c724e2447229deed3b3eab",
+    "tests/integration/web-trip-continuity/run.mjs": "1fcda6fd4b668e7841c9fb9ce9d41e7efb14aad383f1a4567c80cd6e251e14d4"
+  },
+  "scope": "local synthetic Web cookie + native HTTP protocol; no native UI/provider",
+  "viewport": "1280x900",
+  "locale": "en",
+  "tripId": "0546383c-fedf-456b-b246-2ea8c55fdc8b",
+  "initialProposal": {
+    "id": "ccd65425-7fa0-438c-87e0-c8a3a9da997c",
+    "revision": 2
+  },
+  "webChild": {
+    "id": "cce72f01-310b-4a62-9816-4ef4680cd5c0",
+    "revision": 3
+  },
+  "webConfirmedHead": 2,
+  "finalNativeHead": 3,
+  "unknownSchema": "controlled comparison-response seam; canonical real confirm target unchanged",
+  "staleRevisionStatus": 409,
+  "staleHeadStatus": 409,
+  "casSetup": "existing ordinary-owner legacy pending row compatibility fixture; head advanced only through native confirm API",
+  "recovery": "explicit new review clears conflict; Trip switch resets notice",
+  "events": {
+    "base": 1,
+    "afterWeb": 2,
+    "final": 3
+  },
+  "unrun": [
+    "physical native UI",
+    "Staging/Production",
+    "real provider",
+    "full #234 acceptance"
+  ]
+}
