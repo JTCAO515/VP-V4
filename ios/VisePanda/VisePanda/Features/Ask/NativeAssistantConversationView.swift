@@ -449,6 +449,7 @@ struct NativeAssistantConversationView: View {
     @State private var taskPageCursor: String?
     @State private var taskSnapshotSequence: Int?
     @State private var taskNotice: String?
+    @State private var showTravelIntake = false
     @State private var activityPresentation: ActivityPresentation?
     @State private var selectedTaskID: String?
     @State private var selectedArtifactID: String?
@@ -498,6 +499,14 @@ struct NativeAssistantConversationView: View {
             return selected
         }
         return conversation?.goals.last
+    }
+    private var travelIntakeSelection: NativeTravelIntakeSelection? {
+        guard resultActive, !entryBlocking, !composerWaitingForAuthority, let scope = session.dataScope,
+              boundScope == scope, let policy, policy.consentState == .accepted,
+              let goal, goal.scopeVersion < 10001, let id = conversation?.conversationId,
+              let parent = AssistantPlanningEligibility.parent(for: goal, messages: conversation?.messages ?? []) else { return nil }
+        return NativeTravelIntakeSelection(scope: scope, conversationID: id, goalID: goal.goalId,
+            goalVersion: goal.scopeVersion, parentMessageID: parent.messageId, policyID: policy.id)
     }
     private var goalHasCurrentMessage: Bool {
         guard let goal else { return false }
@@ -574,6 +583,9 @@ struct NativeAssistantConversationView: View {
                         if let goal {
                             Text((chinese ? "当前目标 v" : "Current goal v") + String(goal.scopeVersion) + ": " + goal.text)
                                 .font(.headline).accessibilityIdentifier("assistant.current-goal")
+                            Button(chinese ? "查看或纠正当前旅行需求" : "View or correct current travel requirements") { showTravelIntake = true }
+                                .buttonStyle(.borderless).disabled(travelIntakeSelection == nil)
+                                .accessibilityIdentifier("assistant.intake.open")
                             if goal.scopeVersion < 10001 { tripControls(goal) }
                             else { Text(chinese ? "此终止目标只读。" : "This terminal goal is read only.") }
                         }
@@ -621,6 +633,19 @@ struct NativeAssistantConversationView: View {
                     Text(chinese ? "请求未确认，请重试或刷新。" : "Request not confirmed. Retry or refresh.").font(.footnote).accessibilityIdentifier("assistant.notice")
                 }
             }.padding(VPSpacing.standard)
+        }
+        .sheet(isPresented: $showTravelIntake) {
+            NavigationStack {
+                NativeTravelIntakeView(selection: travelIntakeSelection, session: session, chinese: chinese,
+                    accepted: { await reload() },
+                    reviewGoal: { await reload(); return travelIntakeSelection })
+                    .navigationTitle(chinese ? "当前旅行需求" : "Current travel requirements")
+                    .toolbar { Button(chinese ? "完成" : "Done") { showTravelIntake = false } }
+            }
+        }
+        .onChange(of: travelIntakeSelection) { old, value in
+            if value == nil || (old != nil && (old?.scope != value?.scope || old?.conversationID != value?.conversationID
+                || old?.goalID != value?.goalID || old?.policyID != value?.policyID)) { showTravelIntake = false }
         }
         .sheet(item: $activityPresentation) { presentation in
             NavigationStack {
