@@ -1,0 +1,140 @@
+[
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+      "appearance",
+      "light"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+      "appearance"
+    ],
+    "exitCode": 0,
+    "output": "light\n"
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+      "appearance",
+      "dark"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+      "appearance"
+    ],
+    "exitCode": 0,
+    "output": "dark\n"
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+      "appearance",
+      "light"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+      "appearance"
+    ],
+    "exitCode": 0,
+    "output": "light\n"
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+      "appearance",
+      "dark"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+      "appearance"
+    ],
+    "exitCode": 0,
+    "output": "dark\n"
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+      "appearance",
+      "dark"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+      "appearance"
+    ],
+    "exitCode": 0,
+    "output": "dark\n"
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+      "appearance",
+      "light"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+      "appearance"
+    ],
+    "exitCode": 0,
+    "output": "light\n"
+  }
+]

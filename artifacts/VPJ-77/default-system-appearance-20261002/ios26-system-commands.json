@@ -1,0 +1,140 @@
+[
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "600143EA-67DC-4DC5-A30B-C7EE2C891F9A",
+      "appearance",
+      "light"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "600143EA-67DC-4DC5-A30B-C7EE2C891F9A",
+      "appearance"
+    ],
+    "exitCode": 0,
+    "output": "light\n"
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "600143EA-67DC-4DC5-A30B-C7EE2C891F9A",
+      "appearance",
+      "dark"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "600143EA-67DC-4DC5-A30B-C7EE2C891F9A",
+      "appearance"
+    ],
+    "exitCode": 0,
+    "output": "dark\n"
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "600143EA-67DC-4DC5-A30B-C7EE2C891F9A",
+      "appearance",
+      "light"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "600143EA-67DC-4DC5-A30B-C7EE2C891F9A",
+      "appearance"
+    ],
+    "exitCode": 0,
+    "output": "light\n"
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "600143EA-67DC-4DC5-A30B-C7EE2C891F9A",
+      "appearance",
+      "dark"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "600143EA-67DC-4DC5-A30B-C7EE2C891F9A",
+      "appearance"
+    ],
+    "exitCode": 0,
+    "output": "dark\n"
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "600143EA-67DC-4DC5-A30B-C7EE2C891F9A",
+      "appearance",
+      "dark"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "600143EA-67DC-4DC5-A30B-C7EE2C891F9A",
+      "appearance"
+    ],
+    "exitCode": 0,
+    "output": "dark\n"
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "600143EA-67DC-4DC5-A30B-C7EE2C891F9A",
+      "appearance",
+      "light"
+    ],
+    "exitCode": 0,
+    "output": ""
+  },
+  {
+    "argv": [
+      "xcrun",
+      "simctl",
+      "ui",
+      "600143EA-67DC-4DC5-A30B-C7EE2C891F9A",
+      "appearance"
+    ],
+    "exitCode": 0,
+    "output": "light\n"
+  }
+]
