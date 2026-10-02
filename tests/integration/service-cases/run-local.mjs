@@ -5,6 +5,7 @@ import { join, resolve } from 'node:path';
 import { spawn, spawnSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import net from 'node:net';
+import { runOpsProcess } from './ops-process.mjs';
 const repo=resolve(import.meta.dirname,'../../..');
 const selectedTest='tests/integration/service-cases/access.test.mjs';
 if(!/^tests\/integration\/(service-cases)\/[a-z0-9-]+\.test\.mjs$/.test(selectedTest))throw new Error('Invalid disposable test selection');
@@ -28,11 +29,12 @@ if(before)for(const file of readdirSync(join(target,'supabase/migrations')))if(f
 function run(command,args,visible=false,env=process.env){return new Promise((resolve,reject)=>{const child=spawn(command,args,{cwd:repo,env,stdio:visible?'inherit':['ignore','pipe','pipe']});if(!visible){child.stdout.resume();child.stderr.resume();}child.once('error',()=>reject(new Error(`Disposable process launch failed: ${command}`)));child.once('exit',code=>resolve(code??1));});}
 let exit=1;
 try{
-  const started=await run('supabase',['start','--workdir',target,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor']);
-  if(started!==0)throw new Error('Disposable Ops stack failed to start; credential-bearing output suppressed');
-  exit=await run(process.execPath,['--test',selectedTest],true,{...process.env,VP_OPS_LOCAL_INTEGRATION:'true',VP_IDENTITY_SUPABASE_WORKDIR:target,VP_IDENTITY_SUPABASE_API_URL:`http://127.0.0.1:${base+21}`,VP_OPS_API_PORT:String(base+31)});
+  const started=await runOpsProcess('supabase',['start','--workdir',target,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor'],{phase:'start',cwd:repo});
+  exit=started;
+  if(started===0)exit=await run(process.execPath,['--test',selectedTest],true,{...process.env,VP_OPS_LOCAL_INTEGRATION:'true',VP_IDENTITY_SUPABASE_WORKDIR:target,VP_IDENTITY_SUPABASE_API_URL:`http://127.0.0.1:${base+21}`,VP_OPS_API_PORT:String(base+31)});
 }finally{
-  const stopped=await run('supabase',['stop','--workdir',target,'--no-backup']);
-  if(stopped!==0){console.error('Disposable Ops cleanup failed for '+project);exit=1;}else rmSync(target,{recursive:true});
+  const stopped=await runOpsProcess('supabase',['stop','--workdir',target,'--no-backup'],{phase:'cleanup',cwd:repo});
+  // Preserve the first failure; cleanup must not hide a startup/test exit.
+  if(stopped!==0){if(exit===0)exit=stopped;}else rmSync(target,{recursive:true});
 }
 process.exitCode=exit;
