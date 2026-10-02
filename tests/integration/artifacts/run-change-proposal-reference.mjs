@@ -6,7 +6,9 @@ import { spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import {nativeHTTPOptions,nativeHTTPChildEnv,nativeHTTPSupabaseConfig,assertNativeHTTPPortsFree} from '../turn/native-http-ports.mjs';
 const repo=process.cwd();
-const {mode,ports}=nativeHTTPOptions(process.argv.slice(2),process.env);
+const args=process.argv.slice(2),discovery=args.includes('--discovery');
+if(args.filter(value=>value==='--discovery').length>1)throw Error('Duplicate discovery mode');
+const {mode,ports}=nativeHTTPOptions(args.filter(value=>value!=='--discovery'),process.env);
 if(mode)throw Error('Only --port-base is supported by the reference test runner');
 await assertNativeHTTPPortsFree(ports);
 if(process.env.DOCKER_HOST||process.env.DOCKER_CONTEXT)throw new Error('Explicit Docker overrides refused');
@@ -28,7 +30,7 @@ try{
   if(started!==0)throw new Error('Disposable native Ask stack failed to start; credential-bearing output suppressed');
   console.log('VP_NATIVE_HTTP_TARGET '+JSON.stringify({project,base:ports.base,supabaseAPI:ports.supabaseAPI,api:ports.api}));
   exit=await run(process.execPath,['--experimental-strip-types','--test','--test-concurrency=1',
-    'tests/integration/artifacts/change-proposal-reference.test.mjs','tests/integration/identity/function-acl.test.mjs'],true,
+    discovery?'tests/integration/artifacts/trip-proposal-reference-discovery.test.mjs':'tests/integration/artifacts/change-proposal-reference.test.mjs','tests/integration/identity/function-acl.test.mjs'],true,
     {...process.env,VP_NATIVE_TEXT_INTEGRATION:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',...nativeHTTPChildEnv(ports,target)});
 }finally{
   const stopped=await run('supabase',['stop','--workdir',target,'--no-backup']);
