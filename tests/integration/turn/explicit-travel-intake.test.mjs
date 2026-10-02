@@ -23,6 +23,15 @@ test('explicit intake is ordinary-owner, atomic, versioned and current only at e
  const endpoint=base+'/travel-intake',read=()=>call(endpoint+'?conversationId='+conversationId+'&goalId='+goalId,owner),write=body=>call(endpoint,owner,'POST',body);
  let r=await write(root);assert.equal(r.status,201,JSON.stringify(r));assert.equal(r.body.goalVersion,1);assert.equal(r.body.intakeRevision,1);assert.equal(r.body.current,true);assert.equal(r.body.readyForProvider,false);
  const firstDigest=r.body.contextDigest;
+ const protectedState=()=>e.sql(`select jsonb_build_array(g.scope_version,g.current_text,a.next_sequence,(select count(*) from turn_private.assistant_messages where goal_id=g.id),(select count(*) from turn_private.assistant_travel_intakes where goal_id=g.id)) from turn_private.assistant_goals g join turn_private.assistant_conversations a on a.id=g.conversation_id where g.id='${goalId}';`);
+ const unchangedBefore=protectedState();
+ for(const schemaVersion of [null,7,{},['stay-area-intake/1'],'stay-area-intake/99']){
+  const rejected=await client.rpc('submit_assistant_travel_intake_v1',{p_conversation_id:conversationId,p_goal_id:goalId,p_message_id:uuid(),p_parent_message_id:root.messageId,
+   p_expected_goal_version:1,p_expected_intake_revision:1,p_idempotency_key:uuid(),p_policy_id:e.policyId,p_locale:'en',p_text:'Invalid direct RPC schema must not change the goal',p_relationship:'amendment',p_intake:{...projection,schemaVersion},p_memory_basis:[]});
+  assert.equal(rejected.error?.message,'INVALID_INPUT','direct ordinary RPC rejects null/nonstring/wrong schema version');
+  assert.equal(protectedState(),unchangedBefore,'invalid direct RPC leaves message/goal/sequence and typed versions unchanged');
+ }
+
  assert.equal((await write(root)).status,200);assert.equal((await write(root)).body.messageId,root.messageId);
  assert.equal((await write({...root,intake:{...projection,pace:'fast'}})).status,409,'same key cannot change full explicit projection');
  r=await read();assert.equal(r.status,200);assert.equal(r.cache,'private, no-store');assert.deepEqual(r.body.readiness,{kind:'waiting_user',questions:['city','comparison_target']});

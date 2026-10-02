@@ -5,7 +5,7 @@ declare v jsonb; k text; n numeric; start_date date; end_date date;
 begin
  if p is null or jsonb_typeof(p)<>'object' or p-'schemaVersion'-'city'-'comparisonTarget'-'durationDays'-'partySize'-'interests'-'pace'-'lodgingBudget'-'dates'-'mobilityConstraints'<>'{}'
    or not(p ?& array['schemaVersion','city','comparisonTarget','durationDays','partySize','interests','pace','lodgingBudget','dates','mobilityConstraints'])
-   or p->>'schemaVersion'<>'stay-area-intake/1' then return false; end if;
+   or jsonb_typeof(p->'schemaVersion') is distinct from 'string' or p->>'schemaVersion' is distinct from 'stay-area-intake/1' then return false; end if;
  if p->'city'<>'null'::jsonb and (jsonb_typeof(p->'city')<>'string' or p->>'city'<>btrim(p->>'city') or length(p->>'city') not between 1 and 80) then return false; end if;
  if p->'comparisonTarget'<>'null'::jsonb and (jsonb_typeof(p->'comparisonTarget')<>'string' or p->>'comparisonTarget' not in ('area_transport','lodging_budget_filter')) then return false; end if;
  if p->'pace'<>'null'::jsonb and (jsonb_typeof(p->'pace')<>'string' or p->>'pace' not in ('relaxed','balanced','fast')) then return false; end if;
@@ -123,7 +123,7 @@ create function public.submit_assistant_travel_intake_v1(
 declare u uuid:=turn_private.text_owner(); prior turn_private.assistant_travel_intakes%rowtype;
  c turn_private.text_consents%rowtype; digest text; next_revision integer; accepted jsonb; current_digest text;
 begin
- if not turn_private.valid_explicit_travel_intake_v1(p_intake) or p_relationship not in ('goal_start','follow_up','amendment')
+ if not turn_private.valid_explicit_travel_intake_v1(p_intake) or p_relationship is null or p_relationship not in ('goal_start','follow_up','amendment')
    or p_expected_intake_revision is null or p_expected_intake_revision not between 0 and 999 then raise exception 'INVALID_INPUT'; end if;
  if not turn_private.text_policy_current(p_policy_id) then raise exception 'DATA_POLICY_BLOCKED'; end if;
  select * into c from turn_private.text_consents where owner_id=u and policy_id=p_policy_id and revoked_at is null for share;
