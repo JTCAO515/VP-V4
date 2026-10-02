@@ -6,11 +6,13 @@ import {randomUUID as uuid} from 'node:crypto';
 import {readFileSync,readdirSync} from 'node:fs';
 import {createServer} from 'node:http';
 import {once} from 'node:events';
+import {stripTypeScriptTypes} from 'node:module';
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 import {decodePlanningV2Read,runPlanningV2LocalProtocol} from '../../../lib/server/turn/planning-intake-worker-protocol.ts';
 import {readShanghaiStayAreaRoutes} from '../../../lib/server/tools/planning-place-read.ts';
 const enabled=process.env.VPJ80_V2_PROTOCOL_TEST==='1',container='vpj80-v2-protocol-'+uuid().slice(0,8),fixed='f9cea1735b42cbb7f9cec76503116e9e256cc86e',privateFile='20261003030000_vpj79_private_qualified_comparison.sql';
-let created=false,server,mapCalls=0,hook=null;
+const checkpointFixed='1dc05a1013686837c85336d4febaaf38a7319958',checkpointFile='20261003040000_vpj78_v2_durable_checkpoints.sql';
+const privateTransportKinds=[];let createPrivatePorts;let created=false,server,mapCalls=0,hook=null;
 const db=async q=>{const r=await sql(container,q);assert.equal(r.code,0,r.stderr);return r.stdout.trim();};
 const lit=v=>v===null?'null':typeof v==='number'||typeof v==='boolean'?String(v):"'"+(typeof v==='object'?JSON.stringify(v):String(v)).replaceAll("'","''")+"'";
 const rpc=async(a,name,p)=>JSON.parse(await db(`set role authenticated;set request.jwt.claim.role='authenticated';set request.jwt.claim.sub='${a.ownerId}';set request.jwt.claims='${JSON.stringify({session_id:a.session})}';select public.${name}(`+Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')+');'));
@@ -44,6 +46,11 @@ before(async()=>{if(!enabled)return;const r=await command('docker',['run','--pul
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
  for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
  if(!readdirSync('supabase/migrations').includes(privateFile)){const f=await command('git',['show',fixed+':supabase/migrations/'+privateFile]);assert.equal(f.code,0,f.stderr);await db('begin;'+f.stdout+'commit;');}
+ if(process.env.VPJ80_V2_PRIVATE_CHECKPOINT_TEST==='1'){
+  const checkpoint=await command('git',['show',checkpointFixed+':supabase/migrations/'+checkpointFile]);assert.equal(checkpoint.code,0,checkpoint.stderr);await db('begin;'+checkpoint.stdout+'commit;');
+  const adapter=await command('git',['show',checkpointFixed+':lib/server/turn/planning-v2-checkpoint-test-ports.ts']);assert.equal(adapter.code,0,adapter.stderr);
+  const module=await import('data:text/javascript;base64,'+Buffer.from(stripTypeScriptTypes(adapter.stdout,{mode:'strip'})).toString('base64'));createPrivatePorts=module.createPlanningV2CheckpointTestPorts;
+ }
  await db('create schema protocol_fixture;create table protocol_fixture.steps(owner_id uuid,task_id uuid,turn_id uuid primary key,intake_digest text,planning_digest text,state text,observation jsonb);');
  server=createServer(async(req,res)=>{mapCalls++;const u=new URL(req.url,'http://fixture'),q=u.searchParams.get('keywords'),id=u.searchParams.get('id'),ids={'静安寺':'j','人民广场':'p','上海站':'s'},coords={j:'121.440000,31.220000',p:'121.480000,31.230000',s:'121.450000,31.250000'};assert.equal(u.searchParams.get('key'),'SYNTHETIC_PROTOCOL_KEY');let body;
  if(u.pathname.includes('place/text'))body={status:'1',infocode:'10000',pois:[{id:ids[q],name:q}]};else if(u.pathname.includes('place/detail'))body={status:'1',infocode:'10000',pois:[{id,name:id,location:coords[id],citycode:'021',address:'Synthetic'}]};else{const transit=u.pathname.includes('transit');body={status:'1',infocode:'10000',route:{origin:u.searchParams.get('origin'),destination:u.searchParams.get('destination'),[transit?'transits':'paths']:[{distance:'1000',cost:{duration:'960'},steps:[{instruction:'Synthetic'}],segments:[{walking:{distance:'100',steps:[{instruction:'Synthetic'}]},bus:{buslines:[{name:'Synthetic',departure_stop:{name:'A'},arrival_stop:{name:'B'}}]}}]}]}};}
@@ -106,4 +113,31 @@ run('malformed scalar enums, dates beyond frozen bound and invalid clock fail be
  for(const now of [NaN,Infinity,-Infinity]){const p=ports(a);p.now=()=>now;assert.equal((await runPlanningV2LocalProtocol(l,p,new AbortController().signal)).kind,'blocked');}
  for(const fields of [{modelAttempt:['none']},{place:{state:['missing']}}]){const p=ports(a),original=p.checkpoints;p.checkpoints=async()=>({...await original(l),...fields});assert.equal((await runPlanningV2LocalProtocol(l,p,new AbortController().signal)).kind,'blocked');}
  assert.equal(mapCalls,before);assert.equal(await db(`select state from protocol_fixture.steps where turn_id='${l.turnId}';`),'missing');
+});
+
+const runPrivate=(name,fn)=>test(name,{skip:!enabled||process.env.VPJ80_V2_PRIVATE_CHECKPOINT_TEST!=='1',timeout:120000},fn);
+function privatePorts(a){return {...ports(a),...createPrivatePorts({mode:'local_protocol_test',now:()=>Date.now(),transport:async(name,params)=>{
+ assert.ok(['read_planning_v2_checkpoints_v1','claim_planning_v2_place_v1','save_planning_v2_place_v1','unknown_planning_v2_place_v1'].includes(name));
+ const value=await db('select to_jsonb(turn_private.'+name+'('+Object.entries(params).map(([k,v])=>k+'=>'+lit(v)).join(',')+'))::text;');privateTransportKinds.push({operation:name,serializedScalar:value==='true'||value==='false'?value:value?'json-object':'SQL NULL'});return value?JSON.parse(value):null;
+}})};}
+runPrivate('pre-timestamp-fix real private adapter canonical Z claim/save and new lease readback do not repeat calls',async t=>{
+ const a=await owner(),l=a.lease,before=mapCalls;const result=await runPlanningV2LocalProtocol(l,privatePorts(a),new AbortController().signal);assert.equal(result.kind,'prepared');assert.equal(mapCalls-before,13);
+ assert.equal(await db(`select state from turn_private.planning_v2_place_checkpoints where turn_id='${l.turnId}';`),'completed');assert.equal(await db(`select state from protocol_fixture.steps where turn_id='${l.turnId}';`),'missing','fixture store was not the adapter');
+ assert.match(await db(`select observation->>'observedAt' from turn_private.planning_v2_place_checkpoints where turn_id='${l.turnId}';`),/\.\d{3}Z$/);
+ const next={...l,leaseToken:uuid()};await db(`update turn_private.work set lease_token='${next.leaseToken}',expires_at=clock_timestamp()+interval '120 seconds' where turn_id='${l.turnId}';`);
+ assert.equal((await runPlanningV2LocalProtocol(next,privatePorts({...a,lease:next}),new AbortController().signal)).kind,'prepared');assert.equal(mapCalls-before,13);
+ assert.equal(await db(`select count(*) from turn_private.result_artifacts where id='${l.artifactId}';`),'0');
+ t.diagnostic(JSON.stringify({checkpointSource:checkpointFixed,workerSource:'0f49f4264b17a06930f2092f6339fa6442167821',privateProjectionSource:fixed,timestampCoverage:'canonical Z milliseconds only, pre-fix',mapCalls:13,preparedOnly:true,transportScalars:privateTransportKinds.filter(x=>x.operation==='save_planning_v2_place_v1')}));
+});
+runPrivate('pre-timestamp-fix private started/unknown and lost save acknowledgment use only durable readback',async t=>{
+ for(const state of ['started','unknown']){const a=await owner(),p=privatePorts(a),before=mapCalls;assert.equal(await p.claimPlace(a.lease,new AbortController().signal),'claimed');if(state==='unknown'){await p.unknownPlace(a.lease);const raw=await db(`select turn_private.unknown_planning_v2_place_v1('${a.ownerId}','${a.lease.taskId}','${a.lease.turnId}','${a.lease.leaseToken}','${a.lease.intakeContextDigest}','${a.lease.planningContextDigest}');`);assert.equal(raw,'f');t.diagnostic(JSON.stringify({sqlFunctionType:await db("select pg_get_function_result('turn_private.unknown_planning_v2_place_v1(uuid,uuid,uuid,uuid,text,text)'::regprocedure);"),rawRepeatScalar:raw,adapterUses:'to_jsonb(single function invocation)::text, explicit SQL NULL'}));}
+  assert.equal((await runPlanningV2LocalProtocol(a.lease,p,new AbortController().signal)).kind,'unknown_effect');assert.equal(mapCalls,before);}
+ const a=await owner(),p=privatePorts(a),save=p.savePlace,before=mapCalls;p.savePlace=async(...args)=>{assert.equal(await save(...args),true);return false;};
+ assert.equal((await runPlanningV2LocalProtocol(a.lease,p,new AbortController().signal)).kind,'checkpoint_pending');assert.equal(await db(`select state from turn_private.planning_v2_place_checkpoints where turn_id='${a.lease.turnId}';`),'completed');
+ assert.equal((await runPlanningV2LocalProtocol(a.lease,privatePorts(a),new AbortController().signal)).kind,'prepared');assert.equal(mapCalls-before,13);
+});
+runPrivate('pre-timestamp-fix private current-source correction cannot rewrite started or replay',async()=>{
+ const a=await owner(),l=a.lease,before=mapCalls;hook=()=>rpc(a,'submit_assistant_travel_intake_v1',{...a.intakeRequest,p_message_id:uuid(),p_parent_message_id:l.source.messageId,p_expected_goal_version:l.source.goalVersion,p_expected_intake_revision:l.source.intakeRevision,p_idempotency_key:uuid(),p_relationship:'amendment',p_text:'Explicit corrected source',p_intake:{...intake,pace:'balanced'}});
+ assert.equal((await runPlanningV2LocalProtocol(l,privatePorts(a),new AbortController().signal)).kind,'unknown_effect');assert.equal(mapCalls-before,1);assert.equal(await db(`select state from turn_private.planning_v2_place_checkpoints where turn_id='${l.turnId}';`),'started','revoked basis cannot authorize an unknown update');
+ assert.equal((await runPlanningV2LocalProtocol(l,privatePorts(a),new AbortController().signal)).kind,'blocked');assert.equal(mapCalls-before,1);
 });
