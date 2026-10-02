@@ -31,6 +31,8 @@ struct TabRootView: View {
     var assistantShell = false
     var onSwitchShell: (() -> Void)?
     var rootResetID: UUID?
+    var goalEntry: Binding<NativeJourneyGoalEntry?> = .constant(nil)
+    var onOpenGoal: ((NativeJourneyGoalEntry) -> Void)?
     var switchBlocked = false
     var onSwitchBlock: ((Bool) -> Void)?
     @State private var router = RouterPath()
@@ -91,13 +93,13 @@ struct TabRootView: View {
     @ViewBuilder
     private var rootContent: some View {
         switch tab {
-        case .vp: AskView(isActive: isActive, onSwitchBlock: onSwitchBlock)
-        case .journeys: NativeJourneysView(isActive: isActive, onOpenVP: onEntry.map { handler in { handler(.ask) } })
+        case .vp: AskView(isActive: isActive, goalEntry: goalEntry, onSwitchBlock: onSwitchBlock)
+        case .journeys: NativeJourneysView(isActive: isActive, onOpenVP: onEntry.map { handler in { handler(.ask) } }, onOpenGoal: onOpenGoal)
         case .library: NativeKnowledgeView(isActive: isActive)
         case .memory: NativeTravelPaceView()
         case .tools: ToolsView()
         case .trip: TripView()
-        case .ask: AskView(isActive: isActive, onSwitchBlock: onSwitchBlock)
+        case .ask: AskView(isActive: isActive, goalEntry: goalEntry, onSwitchBlock: onSwitchBlock)
         case .explore: ExploreView(isActive: isActive)
         case .profile: ProfileView()
         }

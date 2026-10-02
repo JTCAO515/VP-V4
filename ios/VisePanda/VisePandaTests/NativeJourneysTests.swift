@@ -247,4 +247,87 @@ nonisolated final class NativeJourneysTests: XCTestCase {
         }
     }
 
+    private func entryConversation(_ id: String, version: Int = 7) throws -> Data {
+        try data(["version":5,"kind":"conversation","conversationId":id,"nextSequence":3,"messages":[],"goals":[
+            ["goalId":goal,"scopeVersion":version,"text":"Selected earlier goal"],
+            ["goalId":"20000000-0000-4000-8000-000000000002","scopeVersion":1,"text":"Last goal is different"]]])
+    }
+
+    @MainActor
+    func testGoalEntryReadsExactConversationAndSelectsEarlierGoalRatherThanLast() async throws {
+        let entry = NativeJourneyGoalEntry(scope: scope, conversationID: conversation, goalID: goal, scopeVersion: 7)
+        var policies = 0
+        let (_,read) = try await NativeJourneyGoalReader.read(entry, isCurrent: { true }, policy: {
+            policies += 1; return try self.policy()
+        }, conversation: { try self.entryConversation(entry.conversationID) })
+        let selected = try XCTUnwrap(entry.goal(in: read, scope: scope))
+        XCTAssertEqual(selected.goalId,goal); XCTAssertEqual(selected.scopeVersion,7)
+        XCTAssertNotEqual(selected.goalId,read.goals.last?.goalId); XCTAssertEqual(policies,2)
+        let other = NativeJourneyGoalEntry(scope: scope, conversationID: "10000000-0000-4000-8000-000000000002", goalID: goal, scopeVersion:7)
+        XCTAssertNil(other.goal(in: read,scope:scope))
+    }
+
+    @MainActor
+    func testGoalEntryRejectsWrongConversationOldVersionAndWithdrawnPolicy() async throws {
+        let entry = NativeJourneyGoalEntry(scope: scope, conversationID: conversation, goalID: goal, scopeVersion:7)
+        for mode in ["conversation","version","withdrawal"] {
+            var policies = 0
+            do {
+                _ = try await NativeJourneyGoalReader.read(entry,isCurrent:{true},policy:{
+                    policies += 1; return try self.policy(mode == "withdrawal" && policies == 2 ? "withdrawn":"accepted")
+                },conversation:{ try self.entryConversation(mode == "conversation" ? "10000000-0000-4000-8000-000000000002":self.conversation,version:mode == "version" ? 8:7) })
+                XCTFail("Stale/foreign/withdrawn goal must not become a selection")
+            } catch {}
+        }
+    }
+
+    @MainActor
+    func testGoalEntryLateActorOrRequestChangeCannotPublish() async throws {
+        let entry = NativeJourneyGoalEntry(scope:scope,conversationID:conversation,goalID:goal,scopeVersion:7)
+        var current = true
+        do {
+            _ = try await NativeJourneyGoalReader.read(entry,isCurrent:{current},policy:{try self.policy()},conversation:{
+                await Task.yield(); current = false; return try self.entryConversation(self.conversation)
+            })
+            XCTFail("Late handoff cannot publish after scope/request changes")
+        } catch NativeDataError.staleSessionResponse {} catch { XCTFail("Unexpected error \(error)") }
+        let read = try JSONDecoder().decode(AssistantConversation.self,from:entryConversation(conversation))
+        let other = NativeDataScope(endpoint:scope.endpoint,subject:"other",mobileEpoch:1,generation:2)
+        XCTAssertNil(entry.goal(in:read,scope:other))
+    }
+
+    @MainActor
+    func testGoalEntryDraftDecisionRequiresExplicitDiscardAndNeverOverridesPending() {
+        XCTAssertEqual(NativeJourneyGoalDraftDecision.decide(pending:true,draft:"draft",planningDraft:"",discard:true),.blocked)
+        XCTAssertEqual(NativeJourneyGoalDraftDecision.decide(pending:false,draft:"draft",planningDraft:"",discard:false),.confirmDiscard)
+        XCTAssertEqual(NativeJourneyGoalDraftDecision.decide(pending:false,draft:"",planningDraft:"plan",discard:false),.confirmDiscard)
+        XCTAssertEqual(NativeJourneyGoalDraftDecision.decide(pending:false,draft:"draft",planningDraft:"",discard:true),.open)
+        XCTAssertEqual(NativeJourneyGoalDraftDecision.decide(pending:false,draft:"",planningDraft:"",discard:false),.open)
+    }
+
+    @MainActor
+    func testSameCompleteScopeReappearancePreservesSelectionButReplacementDoesNot() {
+        let a = scope
+        let replaced = NativeDataScope(endpoint:a.endpoint,subject:a.subject,mobileEpoch:a.mobileEpoch+1,generation:a.generation+1)
+        XCTAssertTrue(NativeAssistantScopeAppearance.preservesContext(bound:a,retained:a,active:a))
+        XCTAssertTrue(NativeAssistantScopeAppearance.preservesContext(bound:a,retained:a,active:nil))
+        XCTAssertFalse(NativeAssistantScopeAppearance.preservesContext(bound:a,retained:replaced,active:replaced))
+        XCTAssertFalse(NativeAssistantScopeAppearance.preservesContext(bound:a,retained:a,active:replaced))
+        XCTAssertFalse(NativeAssistantScopeAppearance.preservesContext(bound:a,retained:nil,active:nil))
+    }
+
+    @MainActor
+    func testConversationAndGoalSelectionPublishAtomicallyAndManualSelectionClearsPin() {
+        var selection = AssistantConversationSelection()
+        selection.select("10000000-0000-4000-8000-000000000002")
+        let entry = NativeJourneyGoalEntry(scope:scope,conversationID:conversation,goalID:goal,scopeVersion:7)
+        selection.selectGoal(entry)
+        XCTAssertEqual(selection.conversationID,conversation); XCTAssertEqual(selection.goalEntry,entry)
+        let generation=selection.generation
+        XCTAssertTrue(NativeAssistantScopeAppearance.preservesContext(bound:scope,retained:scope,active:scope))
+        XCTAssertEqual(selection.generation,generation); XCTAssertEqual(selection.goalEntry,entry)
+        selection.select(nil)
+        XCTAssertNil(selection.goalEntry); XCTAssertNil(selection.conversationID)
+    }
+
 }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AskView: View {
     var isActive = true
+    var goalEntry: Binding<NativeJourneyGoalEntry?> = .constant(nil)
     var onSwitchBlock: ((Bool) -> Void)?
     @Environment(AppSettings.self) private var settings
     @State private var draft = ""
@@ -15,7 +16,7 @@ struct AskView: View {
 
     var body: some View {
         if settings.nativeSession.enabled {
-            if settings.nativeSession.askMode == .assistant { NativeAssistantConversationView(isActive: isActive, onSwitchBlock: onSwitchBlock) }
+            if settings.nativeSession.askMode == .assistant { NativeAssistantConversationView(isActive: isActive, onSwitchBlock: onSwitchBlock, goalEntry: goalEntry) }
             else { NativeAskView(store: NativeAskStore(mode: settings.nativeSession.askMode), isActive: isActive) }
         } else { previewBody }
     }
