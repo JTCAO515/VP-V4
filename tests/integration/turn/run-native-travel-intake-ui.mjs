@@ -39,6 +39,12 @@ try{
  execFileSync('python3',['-c',`import sys,pathlib,plistlib,json
 sources=[p for p in pathlib.Path(sys.argv[1]).glob('*.xctestrun') if p.name!='AssistantConversation.xctestrun'];assert len(sources)==1
 data=plistlib.loads(sources[0].read_bytes());data['VisePandaUITests'].setdefault('EnvironmentVariables',{}).update(json.loads(sys.stdin.read()))
+def absolutize(v):
+ if isinstance(v,str):return v.replace('__TESTROOT__',sys.argv[1])
+ if isinstance(v,dict):return {k:absolutize(x) for k,x in v.items()}
+ if isinstance(v,list):return [absolutize(x) for x in v]
+ return v
+data=absolutize(data)
 path=pathlib.Path(sys.argv[2]);path.write_bytes(plistlib.dumps(data));path.chmod(0o600)
 `,join(dd,'Build/Products'),patched],{input:JSON.stringify(profile)});
  await run(['test-without-building','-xctestrun',patched,'-destination','platform=iOS Simulator,id='+device,'-parallel-testing-enabled','NO','-resultBundlePath',join(output,'tests.xcresult'),'-only-testing:VisePandaUITests/NativeTravelIntakeUITests/testExplicitInputCorrectionClearAndCurrentStatus'],'tests');

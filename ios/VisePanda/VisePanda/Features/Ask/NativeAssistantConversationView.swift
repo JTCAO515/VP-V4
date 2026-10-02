@@ -567,6 +567,15 @@ struct NativeAssistantConversationView: View {
     }
 
     var body: some View {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-VisePandaTravelIntakeInjected") {
+            NativeTravelIntakeInjectedHarness(session: session, chinese: chinese)
+        } else { productionBody }
+        #else
+        productionBody
+        #endif
+    }
+    private var productionBody: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 BrandHeader()

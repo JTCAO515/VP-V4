@@ -160,3 +160,22 @@ struct NativeTravelIntakeReceipt: Decodable {
         return .current(try NativeTravelIntakeBasis.decode(bytes))
     }
 }
+
+struct NativeTravelIntakeWriteBasis: Decodable {
+    let version: Int; let kind: String; let conversationId: String; let goalId: String
+    let goalVersion: Int; let parentMessageId: String; let messageSequence: Int
+    let intakeRevision: Int; let policyId: String; let readyForProvider: Bool
+    static func decode(_ bytes: Data) throws -> Self {
+        guard bytes.count <= 10_000, let root = try JSONSerialization.jsonObject(with: bytes) as? [String: Any],
+              Set(root.keys) == Set(["version", "kind", "conversationId", "goalId", "goalVersion", "parentMessageId", "messageSequence", "intakeRevision", "policyId", "readyForProvider"]) else { throw NativeDataError.invalidResponse }
+        let value = try JSONDecoder().decode(Self.self, from: bytes)
+        guard value.version == 5, value.kind == "travel_intake_write_basis", !value.readyForProvider,
+              [value.conversationId, value.goalId, value.parentMessageId, value.policyId].allSatisfy({ UUID(uuidString: $0) != nil }),
+              value.goalVersion > 0, value.goalVersion < 10001, value.messageSequence > 0, value.intakeRevision >= 0 else { throw NativeDataError.invalidResponse }
+        return value
+    }
+    func matches(_ target: NativeTravelIntakeSelection) -> Bool {
+        target.valid && conversationId == target.conversationID && goalId == target.goalID
+        && goalVersion == target.goalVersion && parentMessageId == target.parentMessageID && policyId == target.policyID
+    }
+}

@@ -344,6 +344,16 @@ final class NativeSession {
         return data
     }
 
+    func travelIntakeWriteBasisRequest(conversationID: String, goalID: String) async throws -> Data {
+        guard askMode == .assistant, UUID(uuidString: conversationID) != nil,
+              UUID(uuidString: goalID) != nil else { throw NativeDataError.invalidResponse }
+        let path = "api/chat/native/v5/travel-intake/write-basis"
+        let data = try await dataRequest(prefix: path, path: path, method: "GET",
+            queryItems: [URLQueryItem(name: "conversationId", value: conversationID), URLQueryItem(name: "goalId", value: goalID)])
+        guard data.count <= 10_000 else { throw NativeDataError.invalidResponse }
+        return data
+    }
+
     func submitTravelIntakeRequest(_ body: Data) async throws -> Data {
         guard askMode == .assistant, body.count <= 32_000 else { throw NativeDataError.invalidResponse }
         let path = "api/chat/native/v5/travel-intake"

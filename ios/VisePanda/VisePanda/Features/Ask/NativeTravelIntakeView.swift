@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct NativeTravelIntakeView: View {
+    var injected: NativeTravelIntakeInjectedTransport? = nil
     let selection: NativeTravelIntakeSelection?
     let session: NativeSession
     let chinese: Bool
@@ -25,7 +26,9 @@ struct NativeTravelIntakeView: View {
     @State private var editingTarget: NativeTravelIntakeSelection?
     private func t(_ zh: String, _ en: String) -> String { chinese ? zh : en }
     private var qualified: NativeTravelIntakeSelection? {
-        guard let selection, session.dataScope == selection.scope else { return nil }
+        guard let selection else { return nil }
+        if let injected, injected.allowed { return selection }
+        guard session.dataScope == selection.scope else { return nil }
         return selection
     }
     private var projection: NativeTravelIntake? {
@@ -61,15 +64,25 @@ struct NativeTravelIntakeView: View {
                 }
             }
             if store.state == .current || store.state == .needsReview || store.state == .submitting || preserveDraft {
+                if store.writeBasis != nil {
+                    Text(t("仅取得当前纠正版本。请逐项重新确认完整需求；旧 Memory 选择已清空，不会自动恢复。", "Only correction versions were read. Recheck every requirement; prior Memory references were cleared and will not be restored automatically.")).accessibilityIdentifier("assistant.intake.correction.notice")
+                }
                 Section(t("当前旅行需求", "Current travel requirements")) {
-                    TextField(t("城市（未知可留空）", "City (blank if unknown)"), text: $city).accessibilityIdentifier("assistant.intake.city")
+                    HStack {
+                        TextField(t("城市（未知可留空）", "City (blank if unknown)"), text: $city)
+                            .autocorrectionDisabled().textInputAutocapitalization(.never).accessibilityIdentifier("assistant.intake.city")
+                        Button(t("设为未知", "Set unknown")) { city = "" }.buttonStyle(.borderless)
+                            .accessibilityIdentifier("assistant.intake.city.clear")
+                    }
+                    Text(t("当前交通范围仅支持明确填写 shanghai（上海）；其他城市会保留并显示不支持。", "Transport coverage currently requires explicitly entering shanghai. Other cities are retained and shown as unsupported."))
+                        .font(.footnote)
                     Picker(t("比较目的", "Comparison purpose"), selection: $target) {
                         Text(t("未知", "Unknown")).tag("")
                         Text(t("住宿区域与交通", "Stay areas and transport")).tag("area_transport")
                         Text(t("按住宿预算筛选", "Filter by lodging budget")).tag("lodging_budget_filter")
                     }.accessibilityIdentifier("assistant.intake.target")
-                    TextField(t("旅行天数 1–30", "Duration in days, 1–30"), text: $days).keyboardType(.numberPad)
-                    TextField(t("人数 1–10", "Party size, 1–10"), text: $party).keyboardType(.numberPad)
+                    TextField(t("旅行天数 1–30", "Duration in days, 1–30"), text: $days).keyboardType(.numberPad).accessibilityIdentifier("assistant.intake.days")
+                    TextField(t("人数 1–10", "Party size, 1–10"), text: $party).keyboardType(.numberPad).accessibilityIdentifier("assistant.intake.party")
                     Picker(t("旅行节奏", "Travel pace"), selection: $pace) {
                         Text(t("未知", "Unknown")).tag("")
                         Text(t("悠闲", "Relaxed")).tag("relaxed")
@@ -90,18 +103,23 @@ struct NativeTravelIntakeView: View {
                 }
                 Section(t("可选条件（未知不阻止交通范围评估）", "Optional conditions (unknown does not block transport screening)")) {
                     Picker(t("预算币种", "Budget currency"), selection: $currency) { ForEach(["CNY", "USD", "EUR", "GBP"], id: \.self) { Text($0).tag($0) } }
-                    TextField(t("每晚预算，最小货币单位（如分）", "Nightly budget in minor units (e.g. cents)"), text: $budget).keyboardType(.numberPad)
-                    TextField(t("开始日期 YYYY-MM-DD", "Start date YYYY-MM-DD"), text: $start)
-                    TextField(t("结束日期 YYYY-MM-DD", "End date YYYY-MM-DD"), text: $end)
+                    HStack {
+                        TextField(t("每晚预算，最小货币单位（如分）", "Nightly budget in minor units (e.g. cents)"), text: $budget)
+                            .keyboardType(.numberPad).accessibilityIdentifier("assistant.intake.budget")
+                        Button(t("设为未知", "Set unknown")) { budget = "" }.buttonStyle(.borderless)
+                            .accessibilityIdentifier("assistant.intake.budget.clear")
+                    }
+                    TextField(t("开始日期 YYYY-MM-DD", "Start date YYYY-MM-DD"), text: $start).accessibilityIdentifier("assistant.intake.start")
+                    TextField(t("结束日期 YYYY-MM-DD", "End date YYYY-MM-DD"), text: $end).accessibilityIdentifier("assistant.intake.end")
                     Toggle(t("已明确行动限制（可为空）", "Mobility constraints are known (none is allowed)"), isOn: $mobilityKnown)
-                    if mobilityKnown { TextField(t("每行一个限制，最多 6 条", "One constraint per line, up to 6"), text: $mobility, axis: .vertical) }
+                    if mobilityKnown { TextField(t("每行一个限制，最多 6 条", "One constraint per line, up to 6"), text: $mobility, axis: .vertical).accessibilityIdentifier("assistant.intake.mobility") }
                     Text(t("输入限制不代表现有路线证据已验证满足。", "Entered constraints do not mean available route evidence verifies them."))
                 }
                 if store.state == .needsReview || (preserveDraft && store.state == .unavailable) {
                     Section {
                         Text(t("提交未获得当前有效状态。草稿已保留，请重新读取并核对，不会自动合并或重试写入。", "No current qualified state was obtained. Your draft is retained. Read and review again; no automatic merge or write retry."))
                         Button(t("重新核对目标并读取（保留草稿）", "Recheck goal and read (keep draft)")) {
-                            Task { guard await reviewGoal() != nil else { return }; await load() }
+                            Task { await reviewWriteBasis() }
                         }
                     }
                 }
@@ -113,17 +131,19 @@ struct NativeTravelIntakeView: View {
             } else if store.state == .loading { ProgressView() }
             else {
                 Text(t("尚无可编辑的当前旅行需求。先选择或建立当前目标，再读取需求；过期或未记录的输入需重新明确确认。", "No editable current travel requirements are available. Select or create a current goal, then read its requirements. Stale or unrecorded input needs explicit confirmation again."))
-                if store.unavailableReason == "intake_unrecorded" {
+                if ["intake_unrecorded", "stale_basis"].contains(store.unavailableReason ?? "") {
                     Button(t("重新核对当前目标并填写需求", "Recheck the current goal and enter requirements")) {
                         Task {
                             guard let reviewed = await reviewGoal(), reviewed == qualified else { return }
-                            store.prepareUnrecorded(afterReview: reviewed)
+                            await store.reviewForCorrection(request: { try await writeMetadata($0, $1) }, current: { qualified })
                         }
                     }.disabled(qualified == nil)
                 }
                 Button(t("读取当前需求", "Read current requirements")) { Task { await load() } }.disabled(qualified == nil)
             }
         }
+        .scrollDismissesKeyboard(.interactively)
+        .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); Button(t("收起键盘", "Hide keyboard")) { hideKeyboard() } } }
         .disabled(store.state == .submitting)
         .sheet(isPresented: $confirmation) {
             NavigationStack {
@@ -133,8 +153,8 @@ struct NativeTravelIntakeView: View {
                     Button(t("明确提交当前需求", "Submit these explicit requirements")) {
                         confirmation = false
                         store.submit(locale: chinese ? "zh" : "en", current: { qualified },
-                            post: { try await session.submitTravelIntakeRequest($0) },
-                            read: { try await session.travelIntakeRequest(conversationID: $0, goalID: $1) }, accepted: accepted)
+                            post: { try await post($0) },
+                            read: { try await read($0, $1) }, accepted: accepted)
                     }.accessibilityIdentifier("assistant.intake.submit")
                 }.navigationTitle(t("确认当前需求", "Confirm requirements"))
                     .toolbar { Button(t("返回修改", "Back to edit")) { confirmation = false } }
@@ -151,12 +171,33 @@ struct NativeTravelIntakeView: View {
         .onChange(of: store.selection) { _, value in if value == nil { discardEditor() } }
         .onDisappear { store.invalidate(); discardEditor() }
     }
+    private func reviewWriteBasis() async {
+        preserveDraft = true
+        guard let reviewed = await reviewGoal(), reviewed == qualified else { return }
+        store.bind(reviewed)
+        await store.reviewForCorrection(request: { try await writeMetadata($0, $1) }, current: { qualified })
+    }
+    private func writeMetadata(_ conversation: String, _ goal: String) async throws -> Data {
+        if let injected, injected.allowed { return try await injected.writeBasis() }
+        return try await session.travelIntakeWriteBasisRequest(conversationID: conversation, goalID: goal)
+    }
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+    private func read(_ conversation: String, _ goal: String) async throws -> Data {
+        if let injected, injected.allowed { return try await injected.read() }
+        return try await session.travelIntakeRequest(conversationID: conversation, goalID: goal)
+    }
+    private func post(_ body: Data) async throws -> Data {
+        if let injected, injected.allowed { return try await injected.post(body) }
+        return try await session.submitTravelIntakeRequest(body)
+    }
     private func discardEditor() {
         city = ""; target = ""; days = ""; party = ""; pace = ""; interests = nil
         budget = ""; start = ""; end = ""; mobility = ""; mobilityKnown = false; loadedMobility = nil; confirmation = false; preserveDraft = false
     }
     private func load() async {
-        await store.load(request: { try await session.travelIntakeRequest(conversationID: $0, goalID: $1) }, current: { qualified })
+        await store.load(request: { try await read($0, $1) }, current: { qualified })
         guard !preserveDraft, let v = store.basis?.intake else { return }
         city = v.city ?? ""; target = v.comparisonTarget ?? ""; days = v.durationDays.map(String.init) ?? ""
         party = v.partySize.map(String.init) ?? ""; interests = v.interests; pace = v.pace ?? ""

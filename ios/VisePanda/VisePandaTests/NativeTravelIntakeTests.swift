@@ -61,9 +61,9 @@ nonisolated final class NativeTravelIntakeTests: XCTestCase {
         let t = target(), store = NativeTravelIntakeStore(); store.bind(t)
         await store.load(request: { _, _ in try JSONSerialization.data(withJSONObject: ["version": 5, "kind": "unavailable", "reason": "intake_unrecorded", "readyForProvider": false]) }, current: { t })
         XCTAssertNil(store.basis); XCTAssertEqual(store.state, .unavailable)
-        store.prepareUnrecorded(afterReview: target()); XCTAssertEqual(store.state, .unavailable)
-        store.prepareUnrecorded(afterReview: t); XCTAssertEqual(store.state, .current)
-        XCTAssertEqual(store.draft, NativeTravelIntake())
+        await store.reviewForCorrection(request: { _, _ in try self.metadata(t, revision: 0) }, current: { t })
+        XCTAssertEqual(store.state, .current); XCTAssertEqual(store.writeBasis?.intakeRevision, 0)
+        XCTAssertNil(store.basis); XCTAssertEqual(store.draft, NativeTravelIntake())
     }
     @MainActor func testCASFailureRetainsFullDraftWithoutAutomaticWriteRetry() async throws {
         let t = target(), store = NativeTravelIntakeStore(); store.bind(t)
@@ -140,5 +140,47 @@ nonisolated final class NativeTravelIntakeTests: XCTestCase {
         store.invalidate(); resume?.resume(returning: Data("{}".utf8))
         for _ in 0..<10 { await Task.yield() }
         XCTAssertEqual(reads, 0); XCTAssertNil(store.selection); XCTAssertNil(store.basis); XCTAssertEqual(store.state, .idle)
+    }
+    @MainActor private func metadata(_ t: NativeTravelIntakeSelection, revision: Int = 1) throws -> Data {
+        try JSONSerialization.data(withJSONObject: ["version": 5, "kind": "travel_intake_write_basis", "conversationId": t.conversationID,
+            "goalId": t.goalID, "goalVersion": t.goalVersion, "parentMessageId": t.parentMessageID, "messageSequence": 4,
+            "intakeRevision": revision, "policyId": t.policyID, "readyForProvider": false])
+    }
+    @MainActor func testWriteBasisRejectsContentAndWrongGoalWithoutRestoringAuthority() throws {
+        let t = target(); let value = try NativeTravelIntakeWriteBasis.decode(metadata(t))
+        XCTAssertTrue(value.matches(t)); XCTAssertFalse(value.matches(target()))
+        var root = try XCTUnwrap(JSONSerialization.jsonObject(with: metadata(t)) as? [String: Any])
+        for (key, value): (String, Any) in [("intake", ["city": "shanghai"]), ("contextDigest", String(repeating: "a", count: 64)), ("readyForProvider", true), ("intakeRevision", -1)] {
+            var invalid = root; invalid[key] = value
+            XCTAssertThrowsError(try NativeTravelIntakeWriteBasis.decode(JSONSerialization.data(withJSONObject: invalid)))
+        }
+        root["kind"] = "travel_intake"; XCTAssertThrowsError(try NativeTravelIntakeWriteBasis.decode(JSONSerialization.data(withJSONObject: root)))
+    }
+    @MainActor func testExplicitMetadataReviewPreservesDraftClearsMemoryAndNeverPostsAutomatically() async throws {
+        let t = target(), store = NativeTravelIntakeStore(); store.bind(t)
+        await store.load(request: { _, _ in try self.wire(t) }, current: { t }); store.draft.city = "beijing"
+        let saved = store.draft
+        await store.reviewForCorrection(request: { _, _ in try self.metadata(t, revision: 7) }, current: { t })
+        XCTAssertEqual(store.draft, saved); XCTAssertNil(store.basis); XCTAssertEqual(store.writeBasis?.intakeRevision, 7)
+        var writes = 0
+        store.submit(locale: "en", current: { t }, post: { body in
+            writes += 1; let root = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: Any])
+            XCTAssertEqual(root["expectedIntakeRevision"] as? Int, 7)
+            XCTAssertEqual((root["memoryBasis"] as? [Any])?.count, 0)
+            throw NativeDataError.server(code: "VERSION_CONFLICT")
+        }, read: { _, _ in XCTFail(); return Data() }, accepted: { XCTFail() })
+        while store.state == .submitting { await Task.yield() }
+        XCTAssertEqual(writes, 1); XCTAssertEqual(store.draft, saved); XCTAssertNil(store.writeBasis)
+        XCTAssertEqual(store.state, .needsReview)
+    }
+    @MainActor func testLateWriteBasisDoesNotReplaceNewerReviewOrRestoreDismissedScope() async throws {
+        let t = target(), store = NativeTravelIntakeStore(); store.bind(t)
+        var resume: CheckedContinuation<Data, Never>?
+        let old = Task { await store.reviewForCorrection(request: { _, _ in await withCheckedContinuation { resume = $0 } }, current: { store.selection }) }
+        while resume == nil { await Task.yield() }
+        await store.reviewForCorrection(request: { _, _ in try self.metadata(t, revision: 3) }, current: { store.selection })
+        resume?.resume(returning: try metadata(t, revision: 1)); await old.value
+        XCTAssertEqual(store.writeBasis?.intakeRevision, 3)
+        store.invalidate(); XCTAssertNil(store.writeBasis); XCTAssertNil(store.selection)
     }
 }
