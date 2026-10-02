@@ -78,7 +78,7 @@ nonisolated final class NativeTravelIntakeUITests: XCTestCase {
         fill("assistant.intake.mobility", "Prefer fewer stairs\nNeed regular rest breaks")
         confirm(); await currentStatus("transport screening")
         fill("assistant.intake.city", "beijing", down: true); fill("assistant.intake.days", "12"); fill("assistant.intake.party", "3")
-        fill("assistant.intake.budget", "45000"); confirm(); await currentStatus("not covered")
+        fill("assistant.intake.budget", "450.00"); confirm(); await currentStatus("not covered")
         let clearBudget = app.buttons["assistant.intake.budget.clear"]; reveal(clearBudget); clearBudget.tap()
         let clearCity = app.buttons["assistant.intake.city.clear"]; reveal(clearCity, down: true); clearCity.tap()
         XCTAssertEqual(app.textFields["assistant.intake.city"].value as? String, app.textFields["assistant.intake.city"].placeholderValue)
@@ -159,6 +159,31 @@ nonisolated final class NativeTravelIntakeUITests: XCTestCase {
         let final = try await control(); XCTAssertEqual(final["withdrawals"], 1); XCTAssertGreaterThanOrEqual(final["denied403"] ?? 0, 2)
         let screenshot = XCTAttachment(screenshot: app.screenshot()); screenshot.name = "REAL-AUTH-request-boundary-cleared"; screenshot.lifetime = .keepAlways; add(screenshot)
     }
+    @MainActor func testInjectedConventionalBudgetSubmission() async throws {
+        guard ProcessInfo.processInfo.environment["VP_NATIVE_INTAKE_INJECTED"] == "1" else { throw XCTSkip("UNRUN: local injected budget fixture required") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-VisePandaNativeAPI", "http://127.0.0.1:63251", "-VisePandaAssistantConversation", "-VisePandaTravelIntakeInjected", "-VisePandaLocale", "en", "-AppleLanguages", "(en)"]
+        app.launch(); let open = app.buttons["intake.injected.open"]
+        if !open.waitForExistence(timeout: 3), app.tabBars.buttons["Ask"].exists { app.tabBars.buttons["Ask"].tap() }
+        XCTAssertTrue(open.waitForExistence(timeout: 10)); open.tap()
+        let budget = app.textFields["assistant.intake.budget"], review = app.buttons["assistant.intake.review"]
+        func reveal(_ e: XCUIElement, down: Bool = false) {
+            for _ in 0..<12 where !e.isHittable { if down { app.swipeDown() } else { app.swipeUp() } }; XCTAssertTrue(e.isHittable)
+        }
+        reveal(budget); budget.tap(); budget.typeText("450.001"); app.buttons["Hide keyboard"].tap()
+        reveal(review); XCTAssertFalse(review.isEnabled, "A third decimal digit is rejected, not rounded")
+        let clear = app.buttons["assistant.intake.budget.clear"]; reveal(clear, down: true); clear.tap()
+        budget.tap(); budget.typeText("450.00"); app.buttons["Hide keyboard"].tap()
+        reveal(review); XCTAssertTrue(review.isEnabled); review.tap()
+        XCTAssertTrue(app.buttons["assistant.intake.submit"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "CNY 450.00 /night")).firstMatch.exists)
+        let capture = XCTAttachment(screenshot: app.screenshot()); capture.name = "LOCAL-INJECTED-conventional-budget-confirmation"; capture.lifetime = .keepAlways; add(capture)
+        app.buttons["assistant.intake.submit"].tap(); reveal(budget)
+        await fulfillment(of: [expectation(for: NSPredicate(format: "value == %@", "450.00"), evaluatedWith: budget)], timeout: 10)
+        app.buttons["intake.injected.cancel"].tap()
+        XCTAssertTrue(app.staticTexts["intake.injected.counts"].label.contains("writes=1 revision=2"))
+    }
     @MainActor func testInjectedEnglishEditingAndConflict() async throws { try await injectedEditor(locale: "en") }
     @MainActor func testInjectedChineseEditingAndConflict() async throws { try await injectedEditor(locale: "zh") }
     @MainActor private func injectedEditor(locale: String) async throws {
@@ -196,9 +221,9 @@ nonisolated final class NativeTravelIntakeUITests: XCTestCase {
         replace("assistant.intake.budget", "10000001")
         let review = app.buttons["assistant.intake.review"]; reveal(review)
         XCTAssertFalse(review.isEnabled, "Invalid budget cannot silently become unknown")
-        replace("assistant.intake.budget", "45000", down: true); reveal(review); XCTAssertTrue(review.isEnabled); review.tap()
+        replace("assistant.intake.budget", "450.00", down: true); reveal(review); XCTAssertTrue(review.isEnabled); review.tap()
         XCTAssertTrue(app.buttons["assistant.intake.submit"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "45000")).firstMatch.exists)
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "450.00")).firstMatch.exists)
         let fullReview = XCTAttachment(screenshot: app.screenshot()); fullReview.name = "LOCAL-INJECTED-" + locale + "-complete-review"; fullReview.lifetime = .keepAlways; add(fullReview)
         app.buttons[zh ? "返回修改" : "Back to edit"].tap()
         reveal(city, down: true)

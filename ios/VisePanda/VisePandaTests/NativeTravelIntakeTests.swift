@@ -197,4 +197,72 @@ nonisolated final class NativeTravelIntakeTests: XCTestCase {
         XCTAssertEqual(store.draft, saved); XCTAssertNil(store.basis); XCTAssertEqual(store.writeBasis?.intakeRevision, 4); XCTAssertEqual(store.state, .current)
         store.bind(target()); XCTAssertEqual(store.draft, NativeTravelIntake()); XCTAssertNil(store.writeBasis)
     }
+    @MainActor func testFrozenReadAndReceiptNumericBounds() throws {
+        let t = target(); let base = try XCTUnwrap(JSONSerialization.jsonObject(with: wire(t)) as? [String: Any])
+        for edits: [String: Any] in [["goalVersion": 10001], ["messageSequence": 1000001], ["intakeRevision": 1001],
+            ["memoryBasis": [["id": UUID().uuidString, "revision": 1000000000000000]]]] {
+            var v = base; v.merge(edits) { _, new in new }
+            XCTAssertThrowsError(try NativeTravelIntakeBasis.decode(JSONSerialization.data(withJSONObject: v)))
+        }
+        var max = base; max["goalVersion"] = 10000; max["messageSequence"] = 1000000; max["intakeRevision"] = 1000
+        max["memoryBasis"] = [["id": UUID().uuidString, "revision": 999999999999999]]
+        let decoded = try NativeTravelIntakeBasis.decode(JSONSerialization.data(withJSONObject: max))
+        XCTAssertEqual(decoded.intakeRevision, 1000); XCTAssertEqual(decoded.goalVersion, 10000)
+        let receipt: [String: Any] = ["version": 5, "kind": "accepted", "conversationId": t.conversationID, "goalId": t.goalID,
+            "messageId": t.parentMessageID, "messageSequence": 1000000, "goalVersion": 10000, "intakeRevision": 1000,
+            "reused": true, "current": false, "readyForProvider": false]
+        XCTAssertNoThrow(try NativeTravelIntakeReceipt.decode(JSONSerialization.data(withJSONObject: receipt)))
+        for (key, bad) in [("goalVersion", 10001), ("messageSequence", 1000001), ("intakeRevision", 1001)] {
+            var invalid = receipt; invalid[key] = bad
+            XCTAssertThrowsError(try NativeTravelIntakeReceipt.decode(JSONSerialization.data(withJSONObject: invalid)))
+        }
+    }
+    @MainActor func testFrozenWriteBasisBoundsDistinguishReadMetadataFromWritableRevision() throws {
+        let t = target(); let base = try XCTUnwrap(JSONSerialization.jsonObject(with: metadata(t)) as? [String: Any])
+        for (key, bad) in [("goalVersion", 10000), ("messageSequence", 1000001), ("intakeRevision", 1001)] {
+            var invalid = base; invalid[key] = bad
+            XCTAssertThrowsError(try NativeTravelIntakeWriteBasis.decode(JSONSerialization.data(withJSONObject: invalid)))
+        }
+        let max = try NativeTravelIntakeWriteBasis.decode(metadata(t, revision: 1000))
+        XCTAssertEqual(max.correctionLimit, .intakeRevision)
+        let readable = NativeTravelIntakeSelection(scope: t.scope, conversationID: t.conversationID, goalID: t.goalID,
+            goalVersion: 10000, parentMessageID: t.parentMessageID, policyID: t.policyID)
+        XCTAssertTrue(readable.valid); XCTAssertFalse(readable.canCorrect); XCTAssertFalse(max.matches(readable))
+    }
+    @MainActor func testQualifiedLimitRecordsRemainReadableButNeverDispatchCorrection() async throws {
+        for (goalVersion, revision, sequence, reason) in [(10000, 1, 4, NativeTravelIntakeCorrectionLimit.goalVersion), (2, 1000, 4, .intakeRevision), (2, 1, 1000000, .messageSequence)] {
+            let initial = target()
+            let t = NativeTravelIntakeSelection(scope: initial.scope, conversationID: initial.conversationID, goalID: initial.goalID,
+                goalVersion: goalVersion, parentMessageID: initial.parentMessageID, policyID: initial.policyID)
+            let store = NativeTravelIntakeStore(); store.bind(t)
+            await store.load(request: { _, _ in
+                var v = try XCTUnwrap(JSONSerialization.jsonObject(with: self.wire(t)) as? [String: Any]); v["intakeRevision"] = revision; v["messageSequence"] = sequence
+                return try JSONSerialization.data(withJSONObject: v)
+            }, current: { t })
+            XCTAssertEqual(store.state, .readOnly); XCTAssertEqual(store.readOnlyReason, reason)
+            XCTAssertEqual(store.basis?.intake.city, "shanghai"); XCTAssertFalse(store.canSubmit)
+            var writes = 0, reads = 0
+            store.submit(locale: "en", current: { t }, post: { _ in writes += 1; return Data() }, read: { _, _ in reads += 1; return Data() }, accepted: { XCTFail() })
+            await store.reviewForCorrection(request: { _, _ in reads += 1; return Data() }, current: { t })
+            XCTAssertEqual(writes, 0); XCTAssertEqual(reads, 0); XCTAssertNotNil(store.basis)
+        }
+        let t = target(), store = NativeTravelIntakeStore(); store.bind(t)
+        await store.reviewForCorrection(request: { _, _ in try self.metadata(t, revision: 1000) }, current: { t })
+        XCTAssertEqual(store.state, .readOnly); XCTAssertEqual(store.readOnlyReason, .intakeRevision)
+        XCTAssertNil(store.writeBasis); XCTAssertNil(store.basis); XCTAssertFalse(store.canSubmit)
+    }
+    @MainActor func testConventionalBudgetExactDecimalParserAndFormatterBounds() {
+        for (text, minor) in [("450", 45000), ("450.0", 45000), ("450.00", 45000), ("000450.00", 45000), ("0.01", 1), ("0.1", 10), ("100000.00", 10000000)] {
+            XCTAssertEqual(NativeTravelBudgetAmount.minorUnits(text), minor)
+        }
+        for invalid in ["", "0", "0.00", ".01", "1.", "1.001", "-1", "+1", "1e2", "1E2", "450,00", "1,000.00", " 1", "1 ", "NaN", "Infinity", "99999999999999999999999", "100000.01", "١٢"] {
+            XCTAssertNil(NativeTravelBudgetAmount.minorUnits(invalid), invalid)
+        }
+        for minor in [1, 9, 10, 99, 100, 45000, 10000000] {
+            let text = NativeTravelBudgetAmount.display(minor)
+            XCTAssertEqual(text.flatMap(NativeTravelBudgetAmount.minorUnits), minor)
+        }
+        XCTAssertEqual(NativeTravelBudgetAmount.display(45000), "450.00")
+        XCTAssertNil(NativeTravelBudgetAmount.display(0)); XCTAssertNil(NativeTravelBudgetAmount.display(10000001))
+    }
 }

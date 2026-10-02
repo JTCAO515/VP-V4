@@ -1,0 +1,11 @@
+{
+  "result": "PASS",
+  "passed": 1,
+  "failed": 0,
+  "skipped": 0,
+  "kind": "LOCAL_INJECTED_RESPONSES_NOT_AUTH",
+  "backend": "UNRUN",
+  "mode": "conventional_budget_submit",
+  "submittedMinorUnits": 45000,
+  "source": "/tmp/vpj81-intake-major-budget-ui2/source.json"
+}

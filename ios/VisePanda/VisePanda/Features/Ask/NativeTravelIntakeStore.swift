@@ -4,8 +4,13 @@ import OSLog
 
 @MainActor @Observable
 final class NativeTravelIntakeStore {
-    enum State: Equatable { case idle, loading, current, submitting, needsReview, unavailable }
+    enum State: Equatable { case idle, loading, current, submitting, needsReview, unavailable, readOnly }
     private(set) var state = State.idle
+    private(set) var readOnlyReason: NativeTravelIntakeCorrectionLimit?
+    var canSubmit: Bool {
+        state == .current && selection?.canCorrect == true
+            && ((basis != nil && basis?.correctionLimit == nil) || (writeBasis != nil && writeBasis?.correctionLimit == nil))
+    }
     private(set) var selection: NativeTravelIntakeSelection?
     private(set) var unavailableReason: String?
     private(set) var writeBasis: NativeTravelIntakeWriteBasis?
@@ -36,7 +41,7 @@ final class NativeTravelIntakeStore {
         operation?.cancel(); operation = nil; readOperation?.cancel(); readOperation = nil
         generation = UUID(); traceGeneration += 1; selection = nil
         basis = nil; writeBasis = nil; unavailableReason = nil; pending = nil; draft = NativeTravelIntake(); state = .idle
-        needsExplicitReview = false; metadataLoading = false
+        needsExplicitReview = false; metadataLoading = false; readOnlyReason = nil
         trace("invalidate", scopeCurrent: false)
     }
     func load(request: @escaping (String, String) async throws -> Data, current: @escaping () -> NativeTravelIntakeSelection?) async {
@@ -46,7 +51,7 @@ final class NativeTravelIntakeStore {
         let own = UUID(); generation = own; traceGeneration += 1
         let requestGeneration = traceGeneration
         state = needsExplicitReview ? .needsReview : .loading
-        basis = nil; writeBasis = nil; pending = nil
+        basis = nil; writeBasis = nil; pending = nil; readOnlyReason = nil
         trace("intake_read_start", scopeCurrent: current() == target, requestGeneration: requestGeneration)
         let reader = Task { try await request(target.conversationID, target.goalID) }; readOperation = reader
         do {
@@ -60,6 +65,9 @@ final class NativeTravelIntakeStore {
             unavailableReason = nil
             guard value.conversationId == target.conversationID, value.goalId == target.goalID,
                   value.goalVersion == target.goalVersion, value.messageId == target.parentMessageID else { throw NativeDataError.invalidResponse }
+            if let limit = value.correctionLimit {
+                basis = value; draft = value.intake; readOnlyReason = limit; state = .readOnly; return
+            }
             if needsExplicitReview { basis = nil; state = .needsReview; return }
             basis = value; draft = value.intake; state = .current
         } catch {
@@ -77,6 +85,8 @@ final class NativeTravelIntakeStore {
     func reviewForCorrection(request: @escaping (String, String) async throws -> Data,
                              current: () -> NativeTravelIntakeSelection?) async {
         guard let target = selection, target.valid, target == current(), !Task.isCancelled else { return }
+        guard state != .readOnly else { return }
+        guard target.canCorrect else { writeBasis = nil; readOnlyReason = .goalVersion; state = .readOnly; return }
         readOperation?.cancel()
         let own = UUID(); generation = own; traceGeneration += 1; basis = nil; writeBasis = nil; metadataLoading = true
         let reader = Task { try await request(target.conversationID, target.goalID) }; readOperation = reader
@@ -85,7 +95,9 @@ final class NativeTravelIntakeStore {
             let metadata = try NativeTravelIntakeWriteBasis.decode(bytes)
             guard generation == own, selection == target, target == current(), !Task.isCancelled else { return }
             guard metadata.matches(target) else { throw NativeDataError.invalidResponse }
-            writeBasis = metadata; metadataLoading = false; needsExplicitReview = false; state = .current
+            metadataLoading = false
+            if let limit = metadata.correctionLimit { writeBasis = nil; readOnlyReason = limit; state = .readOnly; return }
+            writeBasis = metadata; readOnlyReason = nil; needsExplicitReview = false; state = .current
         } catch {
             guard generation == own, selection == target, target == current() else { return }
             if case NativeDataError.server(let code) = error, ["DATA_POLICY_BLOCKED", "UNAUTHENTICATED"].contains(code) { invalidate(); state = .unavailable }
@@ -96,7 +108,7 @@ final class NativeTravelIntakeStore {
                 post: @escaping (Data) async throws -> Data,
                 read: @escaping (String, String) async throws -> Data,
                 accepted: @escaping () async -> Void) {
-        guard state == .current, let target = selection, target == current(), draft.valid,
+        guard canSubmit, let target = selection, target == current(), draft.valid,
               basis != nil || writeBasis?.matches(target) == true else { return }
         let request = NativeTravelIntakeSubmission(conversationId: target.conversationID, goalId: target.goalID,
             messageId: UUID().uuidString.lowercased(), idempotencyKey: UUID().uuidString.lowercased(),
@@ -120,7 +132,8 @@ final class NativeTravelIntakeStore {
                       fresh.intakeRevision == receipt.intakeRevision, fresh.contextDigest == receipt.contextDigest,
                       fresh.messageSequence == receipt.messageSequence, fresh.intake == request.intake, fresh.memoryBasis == request.memoryBasis else { throw NativeDataError.invalidResponse }
                 self.basis = fresh; writeBasis = nil; draft = fresh.intake; pending = nil
-                needsExplicitReview = false; state = .current
+                needsExplicitReview = false; readOnlyReason = fresh.correctionLimit
+                state = readOnlyReason == nil ? .current : .readOnly
                 await accepted()
             } catch {
                 guard generation == own, selection == target, current() == target else { return }

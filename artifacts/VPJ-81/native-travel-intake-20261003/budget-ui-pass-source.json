@@ -1,0 +1,20 @@
+{
+  "kind": "LOCAL_INJECTED_RESPONSES_NOT_AUTH",
+  "head": "b1f719e5cef1e4f3fd4a663466c4fe7055769ee1",
+  "device": "5DB8E4CE-76AA-48A7-8F9C-861AF1A25E6E",
+  "dd": "/tmp/vpj81-native-task-activity-20261002",
+  "files": {
+    "ios/VisePanda/VisePanda/App/NativeSession.swift": "d0c2219ee8ed9cf461b44b6fd3716ced84ae7a573ff43d3812a39b4eae030c8b",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeAssistantConversationView.swift": "a59a13323b10b7194092ea002477cbae9b4e5a5e5a0d9e852580fdd8f1f635a2",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeTravelIntakeView.swift": "361bdc6fea460185cdef2c7f10bfcb00201e534179161a3b042aeb2087421d00",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeTravelIntakeStore.swift": "dca4009db47b08ce080a3e83af8bf5ca4fa92d0cd41c92beb503dd7eb159a195",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeTravelIntakeModels.swift": "2a6ad0122bfe1703741d72c98ee3ce409557f61399cd4fa333923fbe381f2e0d",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeTravelIntakeInjectedHarness.swift": "fc72e51ee4fdc3e2a412bbab4b9264a4ceb70f7727c4f45f2a7f055d980bbd63",
+    "ios/VisePanda/VisePandaUITests/NativeTravelIntakeUITests.swift": "37dec0c0668c7c8df3faf3d6515e251a64446f66c2a4ecd632a4589ca1a766f4"
+  },
+  "backend": "UNRUN",
+  "mode": "conventional_budget_submit",
+  "locales": [
+    "en"
+  ]
+}

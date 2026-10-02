@@ -38,11 +38,11 @@ struct NativeTravelIntakeView: View {
         func number(_ s: String, range: ClosedRange<Int>) -> Int? { guard let n = Int(s), range.contains(n) else { return nil }; return n }
         if !days.isEmpty && number(days, range: 1...30) == nil { return nil }
         if !party.isEmpty && number(party, range: 1...10) == nil { return nil }
-        if !budget.isEmpty && number(budget, range: 1...10_000_000) == nil { return nil }
+        if !budget.isEmpty && NativeTravelBudgetAmount.minorUnits(budget) == nil { return nil }
         if start.isEmpty != end.isEmpty { return nil }
         let value = NativeTravelIntake(city: city.isEmpty ? nil : city, comparisonTarget: target.isEmpty ? nil : target,
             durationDays: Int(days), partySize: Int(party), interests: interests, pace: pace.isEmpty ? nil : pace,
-            lodgingBudget: budget.isEmpty ? nil : .init(currency: currency, perNightMinorUnits: Int(budget)!),
+            lodgingBudget: budget.isEmpty ? nil : .init(currency: currency, perNightMinorUnits: NativeTravelBudgetAmount.minorUnits(budget)!),
             dates: start.isEmpty ? nil : .init(startDate: start, endDate: end),
             mobilityConstraints: mobilityKnown ? (mobility == loadedMobility?.joined(separator: "\n") ? loadedMobility : mobility.split(separator: "\n").map(String.init)) : nil)
         return value.valid ? value : nil
@@ -66,7 +66,13 @@ struct NativeTravelIntakeView: View {
                     Text(t("尚未开始规划或后台处理。", "Planning and background processing have not started."))
                 }
             }
-            if store.state == .current || store.state == .needsReview || store.state == .submitting || preserveDraft {
+            if store.state == .readOnly {
+                Section(t("已达上限 · 只读", "Limit reached · Read only")) {
+                    Text(limitMessage).accessibilityIdentifier("assistant.intake.limit")
+                    if let basis = store.basis { Text(summary(basis.intake)).textSelection(.enabled) }
+                    else { Text(t("没有可读取的当前需求。本地草稿没有提交资格。", "No qualified current requirements are readable. The local draft cannot be submitted.")) }
+                }
+            } else if store.state == .current || store.state == .needsReview || store.state == .submitting || preserveDraft {
                 if store.writeBasis != nil {
                     Text(t("仅取得当前纠正版本。请逐项重新确认完整需求；旧 Memory 选择已清空，不会自动恢复。", "Only correction versions were read. Recheck every requirement; prior Memory references were cleared and will not be restored automatically.")).accessibilityIdentifier("assistant.intake.correction.notice")
                 }
@@ -107,11 +113,13 @@ struct NativeTravelIntakeView: View {
                 Section(t("可选条件（未知不阻止交通范围评估）", "Optional conditions (unknown does not block transport screening)")) {
                     Picker(t("预算币种", "Budget currency"), selection: $currency) { ForEach(["CNY", "USD", "EUR", "GBP"], id: \.self) { Text($0).tag($0) } }
                     HStack {
-                        TextField(t("每晚预算，最小货币单位（如分）", "Nightly budget in minor units (e.g. cents)"), text: $budget)
-                            .keyboardType(.numberPad).accessibilityIdentifier("assistant.intake.budget")
+                        TextField(t("每晚预算（\(currency)）", "Nightly budget (\(currency))"), text: $budget)
+                            .keyboardType(.decimalPad).accessibilityIdentifier("assistant.intake.budget")
                         Button(t("设为未知", "Set unknown")) { budget = "" }.buttonStyle(.borderless)
                             .accessibilityIdentifier("assistant.intake.budget.clear")
                     }
+                    Text(t("金额最多两位小数，留空表示未知。预算不是已验证的房价或库存。", "Use at most two decimal places; blank means unknown. Your budget is not verified hotel pricing or availability."))
+                        .font(.footnote)
                     TextField(t("开始日期 YYYY-MM-DD", "Start date YYYY-MM-DD"), text: $start).accessibilityIdentifier("assistant.intake.start")
                     TextField(t("结束日期 YYYY-MM-DD", "End date YYYY-MM-DD"), text: $end).accessibilityIdentifier("assistant.intake.end")
                     Toggle(t("已明确行动限制（可为空）", "Mobility constraints are known (none is allowed)"), isOn: $mobilityKnown)
@@ -128,7 +136,7 @@ struct NativeTravelIntakeView: View {
                 }
                 Button(t("查看并确认完整需求", "Review and confirm all requirements")) {
                     guard let value = projection else { return }; store.draft = value; confirmation = true
-                }.disabled(projection == nil || store.state != .current || qualified == nil)
+                }.disabled(projection == nil || !store.canSubmit || qualified == nil)
                     .accessibilityIdentifier("assistant.intake.review")
                 if projection == nil { Text(t("请核对数字范围、日期和字段长度；无效输入不会提交。", "Check number ranges, dates, and text lengths. Invalid values cannot be submitted.")) }
             } else if store.state == .loading { ProgressView() }
@@ -212,19 +220,27 @@ struct NativeTravelIntakeView: View {
         guard !preserveDraft, let v = store.basis?.intake else { return }
         city = v.city ?? ""; target = v.comparisonTarget ?? ""; days = v.durationDays.map(String.init) ?? ""
         party = v.partySize.map(String.init) ?? ""; interests = v.interests; pace = v.pace ?? ""
-        currency = v.lodgingBudget?.currency ?? "CNY"; budget = v.lodgingBudget?.perNightMinorUnits.description ?? ""
+        currency = v.lodgingBudget?.currency ?? "CNY"; budget = v.lodgingBudget.flatMap { NativeTravelBudgetAmount.display($0.perNightMinorUnits) } ?? ""
         start = v.dates?.startDate ?? ""; end = v.dates?.endDate ?? ""
         loadedMobility = v.mobilityConstraints; mobilityKnown = v.mobilityConstraints != nil; mobility = v.mobilityConstraints?.joined(separator: "\n") ?? ""
     }
-    private var reviewSummary: String {
-        let unknown = t("未知", "Unknown")
-        func show(_ s: String) -> String { s.isEmpty ? unknown : s }
-        return [t("城市", "City") + ": " + show(city), t("目的", "Purpose") + ": " + purposeLabel(target),
-            t("天数", "Days") + ": " + show(days), t("人数", "Party") + ": " + show(party),
-            t("兴趣", "Interests") + ": " + (interests.map { $0.isEmpty ? t("明确无", "Explicitly none") : $0.map(interestLabel).joined(separator: ", ") } ?? unknown),
-            t("节奏", "Pace") + ": " + paceLabel(pace), t("预算", "Budget") + ": " + (budget.isEmpty ? unknown : currency + " " + budget + t(" 最小单位/晚", " minor units/night")),
-            t("日期", "Dates") + ": " + (start.isEmpty ? unknown : start + " – " + end),
-            t("行动限制", "Mobility") + ": " + (mobilityKnown ? (mobility.isEmpty ? t("明确无", "Explicitly none") : mobility) : unknown)].joined(separator: "\n")
+    private var limitMessage: String {
+        switch store.readOnlyReason {
+        case .goalVersion: return t("目标版本已达上限（10000）。当前需求可查看，不能继续提交更正。", "Goal version limit (10000) reached. Current requirements remain readable; further corrections are unavailable.")
+        case .intakeRevision: return t("需求修订已达上限（1000）。不能继续提交更正。", "Input revision limit (1000) reached. Further corrections are unavailable.")
+        case .messageSequence: return t("来源消息序号已达上限（1000000）。不能继续提交更正。", "Source message limit (1000000) reached. Further corrections are unavailable.")
+        case nil: return t("当前需求仅供查看。", "Current requirements are read only.")
+        }
+    }
+    private var reviewSummary: String { projection.map(summary) ?? "" }
+    private func summary(_ value: NativeTravelIntake) -> String {
+        let unknown = t("未知", "Unknown"), none = t("明确无", "Explicitly none")
+        return [t("城市", "City") + ": " + (value.city ?? unknown), t("目的", "Purpose") + ": " + purposeLabel(value.comparisonTarget ?? ""),
+            t("天数", "Days") + ": " + (value.durationDays.map(String.init) ?? unknown), t("人数", "Party") + ": " + (value.partySize.map(String.init) ?? unknown),
+            t("兴趣", "Interests") + ": " + (value.interests.map { $0.isEmpty ? none : $0.map(interestLabel).joined(separator: ", ") } ?? unknown),
+            t("节奏", "Pace") + ": " + paceLabel(value.pace ?? ""), t("预算", "Budget") + ": " + (value.lodgingBudget.map { $0.currency + " " + (NativeTravelBudgetAmount.display($0.perNightMinorUnits) ?? "") + t(" /晚", " /night") } ?? unknown),
+            t("日期", "Dates") + ": " + (value.dates.map { $0.startDate + " – " + $0.endDate } ?? unknown),
+            t("行动限制", "Mobility") + ": " + (value.mobilityConstraints.map { $0.isEmpty ? none : $0.joined(separator: "\n") } ?? unknown)].joined(separator: "\n")
     }
     private func purposeLabel(_ s: String) -> String { s == "area_transport" ? t("区域与交通", "Areas and transport") : s == "lodging_budget_filter" ? t("预算筛选", "Budget filter") : t("未知", "Unknown") }
     private func interestLabel(_ s: String) -> String {

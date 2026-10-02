@@ -50,6 +50,8 @@ struct NativeTravelIntake: Codable, Equatable {
     }
 }
 
+enum NativeTravelIntakeCorrectionLimit: Equatable { case goalVersion, intakeRevision, messageSequence }
+
 struct NativeTravelMemoryReference: Codable, Equatable { let id: String; let revision: Int }
 struct NativeTravelIntakeBasis: Decodable, Equatable {
     let version: Int; let kind: String; let schemaVersion: String
@@ -59,6 +61,12 @@ struct NativeTravelIntakeBasis: Decodable, Equatable {
     let memoryBasis: [NativeTravelMemoryReference]; let contextDigest: String
     let readiness: Readiness; let readyForProvider: Bool
     struct Readiness: Decodable, Equatable { let kind: String; let scope: String?; let unknown: [String]?; let questions: [String]?; let reason: String? }
+    var correctionLimit: NativeTravelIntakeCorrectionLimit? {
+        if goalVersion == 10_000 { return .goalVersion }
+        if intakeRevision == 1_000 { return .intakeRevision }
+        if messageSequence == 1_000_000 { return .messageSequence }
+        return nil
+    }
     static func decode(_ bytes: Data) throws -> Self {
         guard bytes.count <= 32_000, let root = try JSONSerialization.jsonObject(with: bytes) as? [String: Any],
               Set(root.keys) == Set(["version", "kind", "schemaVersion", "conversationId", "goalId", "goalVersion", "messageId", "messageSequence", "intakeRevision", "sourceKind", "intake", "memoryBasis", "contextDigest", "readiness", "readyForProvider"]),
@@ -88,9 +96,9 @@ struct NativeTravelIntakeBasis: Decodable, Equatable {
         let v = try JSONDecoder().decode(Self.self, from: bytes)
         guard v.version == 5, v.kind == "travel_intake", v.schemaVersion == "assistant-travel-current-basis/1",
               [v.conversationId, v.goalId, v.messageId].allSatisfy({ UUID(uuidString: $0) != nil }),
-              v.goalVersion > 0, v.messageSequence > 0, v.intakeRevision > 0, v.sourceKind == "explicit_current_input",
+              (1...10_000).contains(v.goalVersion), (1...1_000_000).contains(v.messageSequence), (1...1_000).contains(v.intakeRevision), v.sourceKind == "explicit_current_input",
               v.intake.valid, v.memoryBasis.count <= 3, Set(v.memoryBasis.map(\.id)).count == v.memoryBasis.count,
-              v.memoryBasis.allSatisfy({ UUID(uuidString: $0.id) != nil && $0.revision > 0 }),
+              v.memoryBasis.allSatisfy({ UUID(uuidString: $0.id) != nil && (1...999_999_999_999_999).contains($0.revision) }),
               v.contextDigest.count == 64, v.contextDigest.allSatisfy({ "0123456789abcdef".contains($0) }), !v.readyForProvider,
               ["ready", "waiting_user", "unavailable"].contains(v.readiness.kind) else { throw NativeDataError.invalidResponse }
         let missing = Set(projection.filter { $0.value is NSNull }.map(\.key))
@@ -117,7 +125,8 @@ struct NativeTravelIntakeBasis: Decodable, Equatable {
 struct NativeTravelIntakeSelection: Equatable {
     let scope: NativeDataScope; let conversationID: String; let goalID: String
     let goalVersion: Int; let parentMessageID: String; let policyID: String
-    var valid: Bool { goalVersion > 0 && goalVersion < 10001 && [conversationID, goalID, parentMessageID, policyID].allSatisfy { UUID(uuidString: $0) != nil } }
+    var canCorrect: Bool { valid && goalVersion < 10_000 }
+    var valid: Bool { (1...10_000).contains(goalVersion) && [conversationID, goalID, parentMessageID, policyID].allSatisfy { UUID(uuidString: $0) != nil } }
 }
 struct NativeTravelIntakeSubmission: Encodable {
     let conversationId: String; let goalId: String; let messageId: String; let idempotencyKey: String
@@ -136,6 +145,10 @@ struct NativeTravelIntakeReceipt: Decodable {
         let keys = Set(["version", "kind", "conversationId", "goalId", "messageId", "messageSequence", "goalVersion", "intakeRevision", "reused", "current", "readyForProvider"] + (current ? ["contextDigest"] : []))
         guard Set(root.keys) == keys else { throw NativeDataError.invalidResponse }
         let value = try JSONDecoder().decode(Self.self, from: bytes)
+        guard value.version == 5, value.kind == "accepted", !value.readyForProvider,
+              [value.conversationId, value.goalId, value.messageId].allSatisfy({ UUID(uuidString: $0) != nil }),
+              (1...10_000).contains(value.goalVersion), (1...1_000_000).contains(value.messageSequence),
+              (1...1_000).contains(value.intakeRevision) else { throw NativeDataError.invalidResponse }
         if current { guard let digest = value.contextDigest, digest.count == 64, digest.allSatisfy({ "0123456789abcdef".contains($0) }) else { throw NativeDataError.invalidResponse } }
         return value
     }
@@ -165,17 +178,47 @@ struct NativeTravelIntakeWriteBasis: Decodable {
     let version: Int; let kind: String; let conversationId: String; let goalId: String
     let goalVersion: Int; let parentMessageId: String; let messageSequence: Int
     let intakeRevision: Int; let policyId: String; let readyForProvider: Bool
+    var correctionLimit: NativeTravelIntakeCorrectionLimit? {
+        if intakeRevision == 1_000 { return .intakeRevision }
+        if messageSequence == 1_000_000 { return .messageSequence }
+        return nil
+    }
     static func decode(_ bytes: Data) throws -> Self {
         guard bytes.count <= 10_000, let root = try JSONSerialization.jsonObject(with: bytes) as? [String: Any],
               Set(root.keys) == Set(["version", "kind", "conversationId", "goalId", "goalVersion", "parentMessageId", "messageSequence", "intakeRevision", "policyId", "readyForProvider"]) else { throw NativeDataError.invalidResponse }
         let value = try JSONDecoder().decode(Self.self, from: bytes)
         guard value.version == 5, value.kind == "travel_intake_write_basis", !value.readyForProvider,
               [value.conversationId, value.goalId, value.parentMessageId, value.policyId].allSatisfy({ UUID(uuidString: $0) != nil }),
-              value.goalVersion > 0, value.goalVersion < 10001, value.messageSequence > 0, value.intakeRevision >= 0 else { throw NativeDataError.invalidResponse }
+              (1...9_999).contains(value.goalVersion), (1...1_000_000).contains(value.messageSequence), (0...1_000).contains(value.intakeRevision) else { throw NativeDataError.invalidResponse }
         return value
     }
     func matches(_ target: NativeTravelIntakeSelection) -> Bool {
-        target.valid && conversationId == target.conversationID && goalId == target.goalID
+        target.canCorrect && conversationId == target.conversationID && goalId == target.goalID
         && goalVersion == target.goalVersion && parentMessageId == target.parentMessageID && policyId == target.policyID
+    }
+}
+
+/// The supported currencies all have two fractional digits. No floating-point conversion.
+enum NativeTravelBudgetAmount {
+    static func minorUnits(_ text: String) -> Int? {
+        let parts = text.split(separator: ".", omittingEmptySubsequences: false)
+        guard (1...2).contains(parts.count), !parts[0].isEmpty,
+              parts.allSatisfy({ $0.utf8.allSatisfy { (48...57).contains($0) } }) else { return nil }
+        if parts.count == 2 && !(1...2).contains(parts[1].utf8.count) { return nil }
+        var whole = 0
+        for byte in parts[0].utf8 {
+            let digit = Int(byte) - 48
+            guard whole <= (100_000 - digit) / 10 else { return nil }
+            whole = whole * 10 + digit
+        }
+        let fraction = parts.count == 2 ? Array(parts[1].utf8) : []
+        let cents = fraction.isEmpty ? 0 : (Int(fraction[0]) - 48) * 10 + (fraction.count == 2 ? Int(fraction[1]) - 48 : 0)
+        let amount = whole * 100 + cents
+        return (1...10_000_000).contains(amount) ? amount : nil
+    }
+    static func display(_ minorUnits: Int) -> String? {
+        guard (1...10_000_000).contains(minorUnits) else { return nil }
+        let cents = String(minorUnits % 100)
+        return String(minorUnits / 100) + "." + (cents.count == 1 ? "0" + cents : cents)
     }
 }
