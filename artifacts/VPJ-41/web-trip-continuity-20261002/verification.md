@@ -28,3 +28,9 @@ PASS: dedicated runner, local classification (`db-integration --list`), lint, ty
 UNRUN: physical native UI, Staging/Production, real provider, materials/entitlements and full #234 acceptance. The prior dual-viewport/zh-en evidence is reused; this effect-only notice fix introduces no layout or translation change, so no extra full viewport/locale matrix was run.
 
 Rollback: revert this one effect change and its dedicated regression runner/step. No schema, writer, authorization or data conversion changes.
+
+## Runner diagnostic review fix
+
+The independent review identified a CLI diagnostic leak: substring redaction did not guarantee that short passwords, punctuated cookies, DSNs or Authorization values could not enter an Error. Startup and cleanup now reuse the already merged #612 fixed-enum process classifier without changing it. Raw CLI output is never returned; successful CLI output stays silent. Nonzero startup does not launch the test, cleanup runs only on the runner-created workdir/project, failed cleanup preserves that directory, and cleanup failure cannot replace the original nonzero exit.
+
+PASS: controlled process injection tests2/2, zero skips; includes short/punctuated secret-like stdout/stderr, successful silence, start37 with cleanup0/29, exact allowed diagnostic enums and owned recovery cleanup. Syntax, lint, typecheck and diff checks passed. The original real browser1/1 evidence and its original runner fingerprint remain unchanged historical records; the product and real continuity test fingerprints still match exactly. The browser chain was not repeated for this diagnostic-only fix. The new runner remains subject to final-head CI.
