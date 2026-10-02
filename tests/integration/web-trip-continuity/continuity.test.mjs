@@ -10,6 +10,41 @@ import {identityLocalEnv} from '../identity/local-supabase.mjs';
 import {webActor,webTripResult} from '../artifacts/fixtures/web-trip-result.mjs';
 import {tripLocalEditorCopy} from '../../../lib/i18n.ts';
 
+async function boundedBarrier(promise,label,timeoutMs=20000){
+ let timer;
+ try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error(label+' did not settle')),timeoutMs);})]);}
+ finally{clearTimeout(timer);}
+}
+function canonicalBarrier(){
+ let release,arrive,rejectArrival,finish,rejectFinish,value,started=false;
+ const held=new Promise(resolve=>release=resolve),arrived=new Promise((resolve,reject)=>{arrive=resolve;rejectArrival=reject;}),done=new Promise((resolve,reject)=>{finish=resolve;rejectFinish=reject;});
+ // Early observers prevent unhandled rejection before the owning test reaches its await.
+ void arrived.catch(()=>{});void done.catch(()=>{});
+ const handler=async route=>{
+  started=true;
+  try{const response=await route.fetch({timeout:15000});value=await response.json();arrive(value);await held;await route.fulfill({response});finish();}
+  catch(error){rejectArrival(error);rejectFinish(error);}
+ };
+ return {handler,arrived,release,get value(){return value;},async cleanup(remove){
+  release();try{if(started)await boundedBarrier(done,'canonical route fulfillment');}finally{await remove();}
+ }};
+}
+test('canonical barrier completes fulfillment before removal and preserves response errors',async()=>{
+ const order=[],b=canonicalBarrier();
+ const task=b.handler({fetch:async()=>({json:async()=>({proof:true})}),fulfill:async()=>{order.push('fulfilled');}});
+ assert.deepEqual(await b.arrived,{proof:true});assert.deepEqual(order,[]);
+ await b.cleanup(async()=>order.push('removed'));await task;assert.deepEqual(order,['fulfilled','removed']);
+ for(const phase of ['fetch','json','fulfill']){
+  const failure=Error('Controlled '+phase+' failure'),gate=canonicalBarrier();let removed=false;
+  const handling=gate.handler({fetch:async()=>{if(phase==='fetch')throw failure;return {json:async()=>{if(phase==='json')throw failure;return {};}};},fulfill:async()=>{throw failure;}});
+  if(phase==='fulfill')await gate.arrived;else await assert.rejects(gate.arrived,e=>e===failure);
+  await assert.rejects(gate.cleanup(async()=>{removed=true;}),e=>e===failure);await handling;assert.equal(removed,true);
+ }
+});
+test('canonical barrier has a bounded failure when no arrival occurs',async()=>{
+ await assert.rejects(boundedBarrier(new Promise(()=>{}),'controlled absent request',10),/controlled absent request did not settle/);
+});
+
 test('V5 result consumer cannot retarget canonical Web/native Trip confirmation',{
  skip:process.env.VP_WEB_TRIP_CONTINUITY!=='true',timeout:180000,
 },async t=>{
@@ -20,7 +55,7 @@ test('V5 result consumer cannot retarget canonical Web/native Trip confirmation'
  const actor=await webActor(state);
  t.after(()=>{sql(`delete from public.trip_events where owner_id='${actor.owner}';delete from public.trip_audit_events where owner_id='${actor.owner}';delete from auth.users where id='${actor.owner}';`);});
  const fixture=await webTripResult(state,sql,actor);
- const call=async(path,token,body)=>{const r=await fetch(api+path,{method:body===undefined?'GET':'POST',headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)})});return {status:r.status,body:await r.json()};};
+ const call=async(path,token,body)=>{const r=await fetch(api+path,{method:body===undefined?'GET':'POST',headers:{...(token?{Authorization:'Bearer '+token}:{}),...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{body:JSON.stringify(body)})});assert.match(r.headers.get('content-type')||'',/application\/json/,'Expected JSON for '+path+' status '+r.status);return {status:r.status,body:await r.json()};};
  const attemptId=uuid(),issued=await call('/api/auth/native/v2/credentials',null,{email:actor.email,password:actor.password,attemptId});assert.equal(issued.status,200);
  const token=issued.body.accessToken;assert.equal((await call('/api/auth/native/v2/login',token,{attemptId})).status,200);
  const n=(suffix='',body)=>call('/api/trips/native/v2/'+fixture.trip+suffix,token,body);
@@ -111,11 +146,38 @@ test('V5 result consumer cannot retarget canonical Web/native Trip confirmation'
  await expect(editor.getByRole('button',{name:copy.confirm,exact:true})).toHaveCount(0);
  // Explicit new review can replace the conflict; automatic refresh alone could not.
  await editor.getByLabel(copy.tripTitle,{exact:true}).fill('Explicit review after conflict');
+ const canonical=canonicalBarrier();
+ let recoveredCanonical;
+ const canonicalRoute=api+'/api/trips/'+fixture.trip+'/proposal?proposalId=*';
+ await page.route(canonicalRoute,canonical.handler);
+ let recoveredReceipt,reviewFailure;
+ try {
  const recoveryResponse=page.waitForResponse(r=>r.url()===api+'/api/trips/'+fixture.trip+'/proposal'&&r.request().method()==='POST');
- await editor.getByRole('button',{name:copy.review,exact:true}).click();assert.equal((await recoveryResponse).status(),201);
+ await editor.getByRole('button',{name:copy.review,exact:true}).click();
+ const recovered=await recoveryResponse;assert.equal(recovered.status(),201);recoveredReceipt=await recovered.json();
+ recoveredCanonical=await boundedBarrier(canonical.arrived,'canonical fetch/JSON arrival');
+ assert.equal(recoveredCanonical.proposal.id,recoveredReceipt.proposalId);assert.equal(recoveredCanonical.proposal.baseTripVersion,3);
+ assert.equal(recoveredCanonical.proposal.stale,false,'explicit review has a real current server proof');
+ // A creation receipt alone is insufficient. Keep the old conflict until canonical review finishes.
+  await expect(editor.getByRole('status')).toHaveText(copy.conflict);
+  await expect(editor.getByRole('button',{name:copy.confirm,exact:true})).toHaveCount(0);
+  assert.equal((await n()).body.trip.headVersion,3);assert.equal(count(),headEvents);
+  t.diagnostic('POST_201_REVIEW_BARRIER '+JSON.stringify({postStatus:recovered.status(),canonicalGetStatus:200,canonicalBase:recoveredCanonical.proposal.baseTripVersion,canonicalStale:recoveredCanonical.proposal.stale,delivered:false}));
+ } catch(error){reviewFailure=error;throw error;}
+ finally {
+  try{await canonical.cleanup(()=>page.unroute(canonicalRoute,canonical.handler));}
+  catch(cleanupError){throw reviewFailure?new AggregateError([reviewFailure,cleanupError],'Review failed and response cleanup also failed'):cleanupError;}
+ }
  await expect(editor.getByRole('status')).toHaveText(copy.pending);
  await expect(editor.getByRole('button',{name:copy.confirm,exact:true})).toBeEnabled();
+ await editor.getByRole('status').scrollIntoViewIfNeeded();await page.screenshot({path:join(evidence,'explicit-review-pending.png')});
  assert.equal((await n()).body.trip.headVersion,3);assert.equal(count(),headEvents,'review is still not a write');
+ const recoveryConfirmResponse=page.waitForResponse(r=>r.url()===api+'/api/trips/'+fixture.trip+'/confirm'&&r.request().method()==='POST');
+ await editor.getByRole('button',{name:copy.confirm,exact:true}).click();const recoveryConfirm=await recoveryConfirmResponse;
+ assert.equal(recoveryConfirm.status(),200);assert.equal(recoveryConfirm.request().postDataJSON().proposalId,recoveredCanonical.proposal.id);
+ assert.equal(recoveryConfirm.request().postDataJSON().digest,recoveredCanonical.proposal.digest);
+ await expect(editor.getByRole('status')).toHaveText(copy.stored);
+ assert.equal((await n()).body.trip.headVersion,4);assert.equal(count(),headEvents+1,'only explicit confirmation applies the reviewed proposal');
  const secondTrip=uuid();assert.equal((await call('/api/trips/native/v2',token,{tripId:secondTrip,title:'Second isolated synthetic Trip'})).status,201);
  await page.goto(api+'/visepanda/trips/'+secondTrip,{waitUntil:'domcontentloaded'});
  await expect(page.getByTestId('same-trip-editor')).toBeVisible({timeout:30000});await page.locator('select').first().selectOption('en');
@@ -125,9 +187,9 @@ test('V5 result consumer cannot retarget canonical Web/native Trip confirmation'
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);assert.deepEqual(errors,[]);
  const summary={result:'PASS',sourceCommit:execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),testedFiles:Object.fromEntries(['components/canvas/TripContentEditor.tsx','tests/integration/web-trip-continuity/continuity.test.mjs','tests/integration/web-trip-continuity/run.mjs'].map(path=>[path,createHash('sha256').update(readFileSync(path)).digest('hex')])),scope:'local synthetic Web cookie + native HTTP protocol; no native UI/provider',
   viewport:'1280x900',locale:'en',tripId:fixture.trip,initialProposal:{id:initial.proposal.id,revision:initial.proposal.revision},
-  webChild:{id:child.proposal.id,revision:child.proposal.revision},webConfirmedHead:2,finalNativeHead:3,
+  webChild:{id:child.proposal.id,revision:child.proposal.revision},webConfirmedHead:2,finalNativeHead:4,
   unknownSchema:'controlled comparison-response seam; canonical real confirm target unchanged',staleRevisionStatus:rejected.status(),staleHeadStatus:staleHead.status(),casSetup:'existing ordinary-owner legacy pending row compatibility fixture; head advanced only through native confirm API',
-  recovery:'explicit new review clears conflict; Trip switch resets notice',events:{base:baseEvents,afterWeb:baseEvents+1,final:headEvents},unrun:['physical native UI','Staging/Production','real provider','full #234 acceptance']};
+  recovery:'delayed canonical read keeps conflict until actual current proof; explicit new review enters pending; exact user confirmation applies head4; Trip switch resets notice',events:{base:baseEvents,afterWeb:baseEvents+1,final:headEvents+1},unrun:['physical native UI','Staging/Production','real provider','full #234 acceptance']};
  writeFileSync(join(evidence,'summary.json'),JSON.stringify(summary,null,2)+'\n');
  t.diagnostic('WEB1_V5_CANONICAL_CONFIRM_PASS: real local cookie/Bearer/Trip receipts; unknown schema seam; immutable revision and stale head rejects, no extra events');
 });
