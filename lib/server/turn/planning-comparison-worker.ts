@@ -128,6 +128,14 @@ export async function runPlanningComparisonWorker(workRpc: TurnWorkRpc, rpc: Rpc
       || !Number.isFinite(Date.parse(place.observedAt)) || Date.parse(place.observedAt)>Date.now()+5000
       || Date.now()-Date.parse(place.observedAt)>300000
       || place.source!==(config.environment==="staging"?"amap":"synthetic_fixture")) return await pause(rpc,lease);
+    // Tool completion receipts do not freeze the goal/Memory basis. Recheck
+    // after the final checkpoint before creating another budget attempt/hold.
+    let current:unknown;
+    try{
+      current=await rpc("authorize_planning_read_v1",{...keys,p_context_digest:input.contextDigest});
+      if(binding.authorizeExternalRead && !await binding.authorizeExternalRead(lease,leaseSignal))current=null;
+    }catch{return await pause(rpc,lease);}
+    if(!record(current)||current.kind!=="authorized"||leaseSignal.aborted)return await pause(rpc,lease);
     const attemptId=randomUUID();
     const attempt={scopeId:config.scopeId,ownerId:lease.ownerId,taskId:input.taskId,attemptId,
       provider:binding.provider,model:PROTOCOL_MODELS[binding.provider],priceVersion:config.priceVersion,
