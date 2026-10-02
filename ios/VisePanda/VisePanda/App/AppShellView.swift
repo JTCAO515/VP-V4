@@ -6,6 +6,7 @@ struct AppShellView: View {
     @Environment(\.scenePhase) private var scenePhase
     @State private var assistantShell: Bool
     @State private var selectedTab: AppTab
+    @State private var goalEntry: NativeJourneyGoalEntry?
     @State private var presentedEntry: AppEntry?
     @State private var switchState = ShellSwitchState()
     @State private var entryResets: [AppTab: UUID] = [:]
@@ -25,6 +26,7 @@ struct AppShellView: View {
                 TabRootView(tab: tab, isActive: selectedTab == tab && presentedEntry == nil,
                             onSearch: { presentedEntry = .search }, onEntry: open,
                             assistantShell: assistantShell, onSwitchShell: switchShell, rootResetID: entryResets[tab],
+                            goalEntry: $goalEntry, onOpenGoal: openGoal,
                             switchBlocked: switchState.blocked || settings.nativeSession.busy,
                             onSwitchBlock: { blocked in
                                 guard capturedScope == settings.nativeSession.dataScope else { return }
@@ -48,6 +50,7 @@ struct AppShellView: View {
             open(entry)
         }
         .onChange(of: settings.nativeSession.dataScope, initial: true) { _, scope in
+            goalEntry = nil
             switchState.actorChanged(to: scope)
             presentedEntry = nil
             selectedTab = assistantShell ? .defaultSelection : .ask
@@ -63,6 +66,12 @@ struct AppShellView: View {
         switchState.modeChanged()
         assistantShell.toggle()
         selectedTab = assistantShell ? .defaultSelection : .ask
+    }
+
+    private func openGoal(_ entry: NativeJourneyGoalEntry) {
+        guard entry.valid, entry.scope == settings.nativeSession.dataScope, settings.nativeSession.askMode == .assistant else { return }
+        goalEntry = entry
+        open(.ask)
     }
 
     private func open(_ entry: AppEntry) {

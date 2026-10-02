@@ -43,8 +43,10 @@ struct AssistantConversationRefreshState {
 
 struct AssistantConversationSelection {
     var conversationID: String?
+    var goalEntry: NativeJourneyGoalEntry?
     private(set) var generation = UUID()
-    mutating func select(_ id: String?) { conversationID = id; generation = UUID() }
+    mutating func select(_ id: String?) { conversationID = id; goalEntry = nil; generation = UUID() }
+    mutating func selectGoal(_ entry: NativeJourneyGoalEntry) { conversationID = entry.conversationID; goalEntry = entry; generation = UUID() }
     func owns(_ token: UUID) -> Bool { generation == token }
 }
 
@@ -422,6 +424,10 @@ private enum AssistantTripConfirmation: Equatable {
 struct NativeAssistantConversationView: View {
     var isActive: Bool
     var onSwitchBlock: ((Bool) -> Void)?
+    var goalEntry: Binding<NativeJourneyGoalEntry?> = .constant(nil)
+    @State private var entryBusy = false
+    @State private var entryFailed = false
+    @State private var entryConfirm: NativeJourneyGoalEntry?
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var scenePhase
     @State private var policy: NativeTextPolicy?
@@ -469,7 +475,7 @@ struct NativeAssistantConversationView: View {
     private var resultActive: Bool { isActive && scenePhase == .active }
     private var refreshBusy: Bool { refreshState.busy }
     private var shellSwitchBlocked: Bool {
-        AssistantShellSwitchGate.blocked(busy: busy || planningBusy || tripBusy,
+        AssistantShellSwitchGate.blocked(busy: busy || planningBusy || tripBusy || entryBlocking,
             intakePending: pending != nil, planningPending: planningPending != nil, tripPending: pendingTripMutation != nil)
     }
     private var composerScopeCurrent: Bool { session.dataScope != nil && boundScope == session.dataScope }
@@ -477,9 +483,25 @@ struct NativeAssistantConversationView: View {
         guard composerScopeCurrent, let conversation else { return false }
         return conversation.valid && conversation.conversationId == selection.conversationID
     }
-    private var composerWaitingForAuthority: Bool { refreshBusy && !confirmedConversation }
-    private var goal: AssistantGoal? { conversation?.goals.last }
-    private var actions: [String] { goal == nil ? ["independent_question", "goal_start"] : ["independent_question", "goal_start", "follow_up", "amendment"] }
+    private var composerWaitingForAuthority: Bool { entryBlocking || (refreshBusy && !confirmedConversation) }
+    private var explicitGoalEntry: NativeJourneyGoalEntry? {
+        get { selection.goalEntry }
+        nonmutating set { selection.goalEntry = newValue }
+    }
+    private var entryPinInvalid: Bool { explicitGoalEntry != nil && explicitGoalEntry?.goal(in: conversation, scope: session.dataScope) == nil }
+    private var entryBlocking: Bool { goalEntry.wrappedValue != nil || entryBusy || entryFailed || entryConfirm != nil || entryPinInvalid }
+    private var goal: AssistantGoal? {
+        if let explicitGoalEntry {
+            let selected = explicitGoalEntry.goal(in: conversation, scope: session.dataScope)
+            return selected
+        }
+        return conversation?.goals.last
+    }
+    private var goalHasCurrentMessage: Bool {
+        guard let goal else { return false }
+        return AssistantPlanningEligibility.parent(for: goal, messages: conversation?.messages ?? []) != nil
+    }
+    private var actions: [String] { goal == nil || goal?.scopeVersion == 10001 || !goalHasCurrentMessage ? ["independent_question", "goal_start"] : ["independent_question", "goal_start", "follow_up", "amendment"] }
     private var waitingKey: String {
         let messages = (conversation?.messages ?? []).filter { $0.turnId != nil && ["accepted","planning","retrieving","generating","validating"].contains($0.status) }.map(\.messageId)
         let tasks = AssistantTaskProjection.waitingTurnIDs(messages: taskSourceMessages, history: taskTurns)
@@ -501,15 +523,18 @@ struct NativeAssistantConversationView: View {
                 Text(chinese ? "与 VP 继续" : "Continue with VP").font(.title2.bold())
                 Text(chinese ? "对话和目标会保存。你可以继续提问，也可以委托一项比较任务。" : "Your conversation and goal are saved. Keep asking questions while a comparison runs.")
                     .font(.footnote).foregroundStyle(Color.vpSecondaryText)
-                if session.dataScope != nil && (policy?.consentState == .accepted || selection.conversationID != nil) {
+                if !entryBlocking && session.dataScope != nil && (policy?.consentState == .accepted || selection.conversationID != nil) {
                     conversationControls
                 }
-                if let policy {
+                if entryBlocking {
+                    goalEntryStatus
+                } else if let policy {
                     if policy.consentState == .accepted {
                         if let goal {
                             Text((chinese ? "当前目标 v" : "Current goal v") + String(goal.scopeVersion) + ": " + goal.text)
                                 .font(.headline).accessibilityIdentifier("assistant.current-goal")
-                            tripControls(goal)
+                            if goal.scopeVersion < 10001 { tripControls(goal) }
+                            else { Text(chinese ? "此终止目标只读。" : "This terminal goal is read only.") }
                         }
                         ForEach(conversation?.messages ?? []) { message in
                             VStack(alignment: .leading, spacing: 8) {
@@ -520,7 +545,7 @@ struct NativeAssistantConversationView: View {
                             .frame(maxWidth: .infinity, alignment: .leading).padding(14)
                             .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
                         }
-                        if let goal { planningControls(goal) }
+                        if let goal, goal.scopeVersion < 10001 || planningPending != nil { planningControls(goal) }
                         if !taskMessages.isEmpty || taskNotice != nil || taskNextCursor != nil || taskPageCursor != nil || conversation?.messages.contains(where: { $0.taskId != nil }) == true { taskList }
                         TimelineView(.periodic(from: .now, by: 1)) { _ in
                             if let selectedResult, let selectedTaskID, selectedResult.belongs(to: selectedTaskID),
@@ -600,7 +625,7 @@ struct NativeAssistantConversationView: View {
         }
         .background(Color.vpBackground)
         .safeAreaInset(edge: .bottom) {
-            if policy?.consentState == .accepted && session.dataScope != nil {
+            if !entryBlocking && policy?.consentState == .accepted && session.dataScope != nil {
                 VStack(spacing: 8) {
                     Picker(chinese ? "消息类型" : "Message type", selection: $operation) {
                         ForEach(actions, id: \.self) { action in Text(actionLabel(action)).tag(action) }
@@ -616,11 +641,34 @@ struct NativeAssistantConversationView: View {
             }
         }
         .toolbar { ToolbarItem(placement: .topBarTrailing) { Button(chinese ? "刷新" : "Refresh") { Task { await reload() } }.disabled(refreshBusy) } }
+        .task(id: GoalEntryLoadKey(id: goalEntry.wrappedValue?.id, active: resultActive)) {
+            guard resultActive, let entry = goalEntry.wrappedValue else { return }
+            await openGoalEntry(entry, discardDraft: false)
+        }
+        .alert(chinese ? "切换目标？" : "Switch goal?", isPresented: Binding(
+            get: { entryConfirm != nil }, set: { if !$0 { entryConfirm = nil } })) {
+            Button(chinese ? "保留草稿，留在原上下文" : "Keep draft and stay") { cancelGoalEntry() }
+            Button(chinese ? "丢弃未发草稿并切换" : "Discard unsent draft and switch", role: .destructive) {
+                guard let entry = goalEntry.wrappedValue else { return }
+                entryConfirm = nil
+                Task { await openGoalEntry(entry, discardDraft: true) }
+            }
+        } message: {
+            Text(chinese ? "当前未发送内容不会带入另一个目标。取消可保留；切换前会再次核对目标。" : "Your unsent content will not move to another goal. Cancel to keep it; switching rechecks the target first.")
+        }
         .task(id: session.dataScope) {
             let requested = session.dataScope
             refreshState.invalidate()
+            // Reappearance under the same actor is not a conversation switch.
+            // Preserve immutable recovery and drafts; an entry owns its own read.
+            if NativeAssistantScopeAppearance.preservesContext(bound: boundScope, retained: session.retainedDataScope, active: requested) {
+                if requested == nil { policy = nil; clearConversationProjection() }
+                else if !entryBlocking { await reload(replacing: true) }
+                return
+            }
             // A temporary offline scope may retain a pending immutable intake.
             // Keep its selected ID only for that exact retained account/epoch/generation.
+            if explicitGoalEntry?.scope != session.retainedDataScope { explicitGoalEntry = nil; entryFailed = false; entryConfirm = nil }
             selection.select(boundScope == session.retainedDataScope ? selection.conversationID : nil)
             conversations = []; conversationsNotice = nil
             if boundScope != session.retainedDataScope {
@@ -667,6 +715,65 @@ struct NativeAssistantConversationView: View {
         }
     }
 
+    private struct GoalEntryLoadKey: Hashable { let id: UUID?; let active: Bool }
+
+    private var goalEntryStatus: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(entryBusy ? (chinese ? "正在核对此会话与目标…" : "Checking this conversation and goal…")
+                 : (chinese ? "尚未打开此目标。目标可能已变更，或当前有未决更改/未发草稿。" : "This goal has not been opened. It may have changed, or a pending change/unsent draft needs your decision."))
+                .accessibilityIdentifier("assistant.goal-entry.status")
+            Button(goalEntry.wrappedValue == nil && entryPinInvalid
+                   ? (chinese ? "退出已失效的目标选择" : "Leave expired goal selection")
+                   : (chinese ? "取消，保留原上下文" : "Cancel and keep previous context")) { cancelGoalEntry() }
+                .accessibilityIdentifier("assistant.goal-entry.cancel")
+        }
+    }
+
+    private func cancelGoalEntry() {
+        let invalidAppliedPin = goalEntry.wrappedValue == nil && entryPinInvalid
+        goalEntry.wrappedValue = nil; entryFailed = false; entryConfirm = nil; entryBusy = false
+        if invalidAppliedPin { explicitGoalEntry = nil }
+    }
+
+    private func openGoalEntry(_ entry: NativeJourneyGoalEntry, discardDraft: Bool) async {
+        guard resultActive, entry.scope == session.dataScope, goalEntry.wrappedValue?.id == entry.id else { return }
+        // First mount's scope task binds/rotates selection before entry validation.
+        while session.busy || boundScope != entry.scope {
+            do { try await Task.sleep(for: .milliseconds(50)) } catch { return }
+            guard resultActive, session.dataScope == entry.scope, goalEntry.wrappedValue?.id == entry.id, !Task.isCancelled else { return }
+        }
+        guard !busy, !planningBusy, !tripBusy, pending == nil, planningPending == nil, pendingTripMutation == nil else { entryFailed = true; return }
+        let generation = selection.generation
+        func current() -> Bool { resultActive && session.dataScope == entry.scope && goalEntry.wrappedValue?.id == entry.id && selection.owns(generation) }
+        refreshState.invalidate(); entryBusy = true; entryFailed = false
+        defer { if goalEntry.wrappedValue?.id == entry.id { entryBusy = false } }
+        do {
+            let (readPolicy, read) = try await NativeJourneyGoalReader.read(entry, isCurrent: current,
+                policy: { try await session.askRequest(path: "api/chat/native/v5/policy", method: "GET") },
+                conversation: { try await session.assistantConversationRequest(conversationID: entry.conversationID) })
+            guard current(), !busy, !planningBusy, !tripBusy, pending == nil, planningPending == nil, pendingTripMutation == nil else { return }
+            switch NativeJourneyGoalDraftDecision.decide(pending: pending != nil || planningPending != nil || pendingTripMutation != nil,
+                                                        draft: draft, planningDraft: planningDraft, discard: discardDraft) {
+            case .blocked: entryFailed = true; return
+            case .confirmDiscard: entryConfirm = entry; return
+            case .open: break
+            }
+            // Only now, after revalidation and the user's draft decision, replace context.
+            clearConversationContext(); selection.selectGoal(entry)
+            policy = readPolicy; conversation = read; boundScope = entry.scope
+            operation = read.goals.first(where: { $0.goalId == entry.goalID })?.scopeVersion != 10001 && read.messages.contains(where: { $0.goalId == entry.goalID && $0.scopeVersion == entry.scopeVersion }) ? "follow_up" : "independent_question"
+            goalEntry.wrappedValue = nil; entryBusy = false; entryFailed = false; entryConfirm = nil
+            let appliedGeneration = selection.generation
+            Task {
+                guard session.dataScope == entry.scope, selection.owns(appliedGeneration) else { return }
+                await reload(replacing: true)
+            }
+        } catch {
+            guard current() else { return }
+            entryFailed = true
+        }
+    }
+
     private var conversationControls: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(chinese ? "当前会话" : "Current conversation").font(.headline)
@@ -698,6 +805,7 @@ struct NativeAssistantConversationView: View {
 
     private func selectConversation(_ id: String?) {
         guard !busy, !planningBusy, !tripBusy else { return }
+        explicitGoalEntry = nil; entryFailed = false; entryConfirm = nil; goalEntry.wrappedValue = nil
         selection.select(id)
         refreshState.invalidate()
         clearConversationContext()
@@ -766,14 +874,24 @@ struct NativeAssistantConversationView: View {
                     Text(chinese ? "当前目标已关联行程；此版后台比较仅支持未关联行程的目标。" : "This goal is linked to a Trip. Background comparison currently supports goals without a Trip link.")
                         .font(.footnote)
                 } else if planningPolicy.consentState == "accepted" {
-                    TextField(chinese ? "要比较什么？" : "What should VP compare?", text: $planningDraft, axis: .vertical)
-                        .lineLimit(2...5).accessibilityIdentifier("assistant.planning.composer")
-                    Button(planningPending == nil ? (chinese ? "开始后台比较" : "Start background comparison")
-                           : (chinese ? "重试同一次委托" : "Retry the same request")) {
-                        Task { await delegateComparison(currentGoal) }
+                    let eligibility = AssistantPlanningEligibility.evaluate(goal: currentGoal,
+                        messages: conversation?.messages ?? [], hasPending: planningPending != nil)
+                    if eligibility == .missingParent {
+                        Text(chinese ? "当前消息页中没有此目标版本的消息，暂无法创建后台比较。" : "This message page has no message for this goal version. Background comparison cannot be started.")
+                            .font(.footnote).accessibilityIdentifier("assistant.planning.missingParent")
+                    } else if eligibility == .terminal {
+                        Text(chinese ? "此目标版本已结束，无法创建后台比较。" : "This goal version has ended. Background comparison cannot be started.")
+                            .font(.footnote)
+                    } else {
+                        TextField(chinese ? "要比较什么？" : "What should VP compare?", text: $planningDraft, axis: .vertical)
+                            .lineLimit(2...5).accessibilityIdentifier("assistant.planning.composer")
+                        Button(planningPending == nil ? (chinese ? "开始后台比较" : "Start background comparison")
+                               : (chinese ? "重试同一次委托" : "Retry the same request")) {
+                            Task { await delegateComparison(currentGoal) }
+                        }
+                        .disabled(planningBusy || (planningPending == nil && planningDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
+                        .accessibilityIdentifier("assistant.planning.send")
                     }
-                    .disabled(planningBusy || (planningPending == nil && planningDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
-                    .accessibilityIdentifier("assistant.planning.send")
                 } else if planningPolicy.consentState == "not_accepted" {
                     Text(chinese ? (planningPolicy.noticeZh ?? "") : (planningPolicy.noticeEn ?? ""))
                         .font(.footnote)
@@ -1076,6 +1194,7 @@ struct NativeAssistantConversationView: View {
     }
 
     private func reload(replacing: Bool = false) async {
+        guard !entryBlocking else { return }
         guard let initial = session.dataScope else { return }
         let generation = selection.generation
         let requestedID = selection.conversationID
@@ -1264,7 +1383,7 @@ struct NativeAssistantConversationView: View {
             let relationship = operation
             let relatedGoal = ["follow_up", "amendment"].contains(relationship) ? goal : nil
             guard relatedGoal != nil || !["follow_up", "amendment"].contains(relationship) else { return }
-            let parent = relatedGoal.flatMap { current in conversation?.messages.last(where: { $0.goalId == current.goalId }) }
+            let parent = relatedGoal.flatMap { current in conversation?.messages.last(where: { $0.goalId == current.goalId && $0.scopeVersion == current.scopeVersion }) }
             guard relatedGoal == nil || parent != nil else { return }
             request = AssistantSubmission(conversationId: conversation?.conversationId ?? UUID().uuidString.lowercased(),
                 messageId: UUID().uuidString.lowercased(), idempotencyKey: UUID().uuidString.lowercased(), policyId: policy.id,
@@ -1310,12 +1429,15 @@ struct NativeAssistantConversationView: View {
               let initial = session.dataScope, let conversationID = conversation?.conversationId,
               let planningPolicy, planningPolicy.consentState == "accepted",
               let policyID = planningPolicy.policyId else { return }
+        let eligibility = AssistantPlanningEligibility.evaluate(goal: currentGoal,
+            messages: conversation?.messages ?? [], hasPending: planningPending != nil)
+        guard eligibility == .create || eligibility == .retry else { return }
         let request: AssistantPlanningSubmission
         if let planningPending { request = planningPending }
         else {
             let input = planningDraft.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !input.isEmpty, input.utf16.count <= 4000,
-                  let parent = conversation?.messages.last(where: { $0.goalId == currentGoal.goalId && $0.scopeVersion == currentGoal.scopeVersion })
+                  let parent = AssistantPlanningEligibility.parent(for: currentGoal, messages: conversation?.messages ?? [])
             else { return }
             request = AssistantPlanningSubmission(conversationId: conversationID, goalId: currentGoal.goalId,
                 expectedGoalVersion: currentGoal.scopeVersion, parentMessageId: parent.messageId,
@@ -1413,5 +1535,20 @@ private struct AssistantGoalTripAccepted: Decodable {
 enum AssistantShellSwitchGate {
     static func blocked(busy: Bool, intakePending: Bool, planningPending: Bool, tripPending: Bool) -> Bool {
         busy || intakePending || planningPending || tripPending
+    }
+}
+
+// Retry preserves the admitted immutable request even when its parent leaves the recent page.
+enum AssistantPlanningEligibility: Equatable {
+    case create, retry, missingParent, terminal
+
+    static func parent(for goal: AssistantGoal, messages: [AssistantMessage]) -> AssistantMessage? {
+        messages.last { $0.goalId == goal.goalId && $0.scopeVersion == goal.scopeVersion }
+    }
+
+    static func evaluate(goal: AssistantGoal, messages: [AssistantMessage], hasPending: Bool) -> Self {
+        if hasPending { return .retry }
+        guard goal.scopeVersion < 10001 else { return .terminal }
+        return parent(for: goal, messages: messages) == nil ? .missingParent : .create
     }
 }

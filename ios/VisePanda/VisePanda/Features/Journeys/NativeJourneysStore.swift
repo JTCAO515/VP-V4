@@ -93,6 +93,7 @@ final class NativeJourneysStore {
     private(set) var goalsAvailable = false
     private(set) var tripsAvailable = false
     private(set) var busy = false
+    private(set) var conversationID: String?
     private(set) var nextCursor: String?
     private var generation = UUID()
     private var readableUntil: TimeInterval?
@@ -104,7 +105,7 @@ final class NativeJourneysStore {
 
     func clear() {
         generation = UUID(); scope = nil; rows = []; trips = []
-        goalsAvailable = false; tripsAvailable = false; readableUntil = nil; busy = false; nextCursor = nil
+        goalsAvailable = false; tripsAvailable = false; readableUntil = nil; busy = false; nextCursor = nil; conversationID = nil
     }
 
     func isCurrent(_ current: NativeDataScope?) -> Bool {
@@ -137,6 +138,7 @@ final class NativeJourneysStore {
         var projected: [NativeJourneyRow] = []
         var goalRead = false
         var following: String?
+        var readConversation: String?
         if assistant {
             do {
                 let policyBytes = try await request("api/chat/native/v5/policy")
@@ -149,17 +151,17 @@ final class NativeJourneysStore {
                 let read = try JSONDecoder().decode(JourneyPageRead.self, from: bytes)
                 guard read.valid(cursor: cursor) else { throw NativeDataError.invalidResponse }
                 projected = read.goals.map { .init(goal: $0.goal, relation: $0.relation.project(trips: ownedTrips)) }
-                following = read.nextCursor
+                following = read.nextCursor; readConversation = read.conversationId
                 guard valid() else { return }
                 let finalPolicyBytes = try await request("api/chat/native/v5/policy")
                 guard valid(), finalPolicyBytes.count <= 32_768 else { return }
                 let finalPolicy = try JSONDecoder().decode(NativeTextPolicyReply.self, from: finalPolicyBytes)
                 guard finalPolicy.kind == "policy", finalPolicy.policy == policy.policy else { throw NativeDataError.invalidResponse }
                 goalRead = true
-            } catch { guard valid() else { return }; projected = []; following = nil }
+            } catch { guard valid() else { return }; projected = []; following = nil; readConversation = nil }
         }
         guard valid() else { return }
-        rows = projected; trips = ownedTrips; goalsAvailable = goalRead; tripsAvailable = tripRead; nextCursor = following
+        rows = projected; trips = ownedTrips; goalsAvailable = goalRead; tripsAvailable = tripRead; nextCursor = following; conversationID = readConversation
         // No partial publication while the goal/link reads are still in flight.
         readableUntil = deadline
     }
@@ -180,5 +182,61 @@ enum NativeJourneyTripEntry {
               owned.contains(where: { $0.id == selection.tripID }) else { return false }
         let selected = await select(selection.tripID)
         return selected && currentScope() == selection.scope && !Task.isCancelled
+    }
+}
+
+// Ephemeral navigation reference, never a copy of goal text or a writer authority.
+struct NativeJourneyGoalEntry: Identifiable, Equatable {
+    let id: UUID
+    let scope: NativeDataScope
+    let conversationID: String
+    let goalID: String
+    let scopeVersion: Int
+    init(scope: NativeDataScope, conversationID: String, goalID: String, scopeVersion: Int) {
+        self.id = UUID(); self.scope = scope; self.conversationID = conversationID
+        self.goalID = goalID; self.scopeVersion = scopeVersion
+    }
+    var valid: Bool { UUID(uuidString: conversationID) != nil && UUID(uuidString: goalID) != nil && (1...10001).contains(scopeVersion) }
+    func goal(in read: AssistantConversation?, scope current: NativeDataScope?) -> AssistantGoal? {
+        guard valid, current == scope, let read, read.valid, read.conversationId == conversationID else { return nil }
+        return read.goals.first { $0.goalId == goalID && $0.scopeVersion == scopeVersion }
+    }
+}
+
+@MainActor
+enum NativeJourneyGoalReader {
+    static func read(_ entry: NativeJourneyGoalEntry, isCurrent: () -> Bool,
+                     policy: () async throws -> Data, conversation: () async throws -> Data,
+                     uptime: () -> TimeInterval = { ProcessInfo.processInfo.systemUptime }) async throws -> (NativeTextPolicy, AssistantConversation) {
+        let deadline = uptime() + 30
+        func current() -> Bool { isCurrent() && !Task.isCancelled && uptime() < deadline }
+        guard entry.valid, current() else { throw NativeDataError.staleSessionResponse }
+        let beforeBytes = try await policy()
+        guard current(), beforeBytes.count <= 32_768 else { throw NativeDataError.staleSessionResponse }
+        let before = try JSONDecoder().decode(NativeTextPolicyReply.self, from: beforeBytes)
+        guard before.kind == "policy", before.policy.valid, before.policy.consentState == .accepted else { throw NativeDataError.invalidResponse }
+        let read = try await AssistantConversationReader.read(requestedID: entry.conversationID, isCurrent: current, load: conversation)
+        guard entry.goal(in: read, scope: entry.scope) != nil else { throw NativeDataError.invalidResponse }
+        let afterBytes = try await policy()
+        guard current(), afterBytes.count <= 32_768 else { throw NativeDataError.staleSessionResponse }
+        let after = try JSONDecoder().decode(NativeTextPolicyReply.self, from: afterBytes)
+        guard after.kind == "policy", after.policy == before.policy else { throw NativeDataError.invalidResponse }
+        return (after.policy, read)
+    }
+}
+
+enum NativeJourneyGoalDraftDecision: Equatable {
+    case blocked, confirmDiscard, open
+    static func decide(pending: Bool, draft: String, planningDraft: String, discard: Bool) -> Self {
+        if pending { return .blocked }
+        if !discard && (!draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || !planningDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty) { return .confirmDiscard }
+        return .open
+    }
+}
+
+// Complete scope equality, not just a matching user ID, controls restoration.
+enum NativeAssistantScopeAppearance {
+    static func preservesContext(bound: NativeDataScope?, retained: NativeDataScope?, active: NativeDataScope?) -> Bool {
+        bound == retained && (active == nil || active == bound)
     }
 }

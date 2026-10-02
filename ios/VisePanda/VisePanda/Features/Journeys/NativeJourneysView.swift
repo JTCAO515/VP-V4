@@ -3,6 +3,7 @@ import SwiftUI
 struct NativeJourneysView: View {
     var isActive = true
     var onOpenVP: (() -> Void)?
+    var onOpenGoal: ((NativeJourneyGoalEntry) -> Void)?
     @Environment(AppSettings.self) private var settings
     @Environment(\.scenePhase) private var scenePhase
     @State private var store = NativeJourneysStore()
@@ -76,6 +77,13 @@ struct NativeJourneysView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(row.goal.text).font(.headline).fixedSize(horizontal: false, vertical: true)
                     Text(text("Goal version ", "目标版本 ") + String(row.goal.scopeVersion)).font(.caption)
+                    if let onOpenGoal, let capturedScope = store.scope, let conversationID = store.conversationID {
+                        Button(text("Open this goal in VP", "在 VP 打开此目标")) {
+                            guard store.isCurrent(session.dataScope), session.dataScope == capturedScope else { return }
+                            onOpenGoal(.init(scope: capturedScope, conversationID: conversationID, goalID: row.id, scopeVersion: row.goal.scopeVersion))
+                        }.buttonStyle(.borderless)
+                            .accessibilityIdentifier("journeys.goal.open.\(row.id)")
+                    }
                     if row.goal.scopeVersion == 10001 {
                         Text(text("This goal’s Trip link is closed. Read only here.", "该目标的行程关联已终止，此处只读。"))
                     }
@@ -91,7 +99,8 @@ struct NativeJourneysView: View {
                             Text(text("Linked Trip: ", "已关联行程：") + trip.title)
                         }
                     }
-                }.accessibilityIdentifier("journeys.goal.\(row.id)")
+                }.accessibilityElement(children: .contain)
+                    .accessibilityIdentifier("journeys.goal.\(row.id)")
             }
         }
         Section(text("Saved Trips", "已保存行程")) {

@@ -6,6 +6,27 @@ nonisolated final class NativeJourneysTests: XCTestCase {
     private let goal = "20000000-0000-4000-8000-000000000001"
     private let trip = "30000000-0000-4000-8000-000000000001"
     private var scope: NativeDataScope { .init(endpoint: "http://127.0.0.1", subject: "owner", mobileEpoch: 1, generation: 1) }
+    @MainActor
+    func testPlanningEligibilityRequiresExactCurrentParentAndPreservesImmutableRetry() {
+        let selected = AssistantGoal(goalId: goal, scopeVersion: 7, text: "Older goal")
+        func message(_ id: String, _ version: Int) -> AssistantMessage {
+            AssistantMessage(messageId: trip, sequence: 1, locale: "en", text: "Input",
+                relationship: "goal_start", goalId: id, scopeVersion: version, taskId: nil,
+                parentMessageId: nil, turnId: nil, status: "recorded", outcome: nil, output: nil)
+        }
+        let otherGoal = "20000000-0000-4000-8000-000000000002"
+        let unrelated = [message(goal, 6), message(otherGoal, 7)]
+        XCTAssertEqual(AssistantPlanningEligibility.evaluate(goal: selected, messages: [], hasPending: false), .missingParent)
+        XCTAssertEqual(AssistantPlanningEligibility.evaluate(goal: selected, messages: unrelated, hasPending: false), .missingParent)
+        let current = unrelated + [message(goal, 7)]
+        XCTAssertEqual(AssistantPlanningEligibility.evaluate(goal: selected, messages: current, hasPending: false), .create)
+        XCTAssertEqual(AssistantPlanningEligibility.parent(for: selected, messages: current)?.scopeVersion, 7)
+        XCTAssertEqual(AssistantPlanningEligibility.evaluate(goal: selected, messages: unrelated, hasPending: true), .retry)
+        let terminal = AssistantGoal(goalId: goal, scopeVersion: 10001, text: "Ended")
+        XCTAssertEqual(AssistantPlanningEligibility.evaluate(goal: terminal, messages: [message(goal, 10001)], hasPending: false), .terminal)
+        XCTAssertEqual(AssistantPlanningEligibility.evaluate(goal: terminal, messages: [], hasPending: true), .retry)
+    }
+
     private func data(_ value: Any) throws -> Data { try JSONSerialization.data(withJSONObject: value) }
     private func policy(_ state: String = "accepted") throws -> Data {
         try data(["version":5,"kind":"policy","policy":["id":conversation,"provider":"qwen","recipient":"test","sourceRegion":"test","processingRegion":"test","storageRegion":"test","termsVersion":"test","noticeVersion":"test","noticeHash":String(repeating:"a",count:64),"noticeZh":"test","noticeEn":"test","retention":"retain_after_hide_v1","expiresAt":"2099-01-01","consentState":state]])
@@ -245,6 +266,89 @@ nonisolated final class NativeJourneysTests: XCTestCase {
                 XCTAssertEqual(store.rows[1].goal.scopeVersion,1)
             } else { XCTAssertFalse(store.goalsAvailable); XCTAssertTrue(store.rows.isEmpty) }
         }
+    }
+
+    private func entryConversation(_ id: String, version: Int = 7) throws -> Data {
+        try data(["version":5,"kind":"conversation","conversationId":id,"nextSequence":3,"messages":[],"goals":[
+            ["goalId":goal,"scopeVersion":version,"text":"Selected earlier goal"],
+            ["goalId":"20000000-0000-4000-8000-000000000002","scopeVersion":1,"text":"Last goal is different"]]])
+    }
+
+    @MainActor
+    func testGoalEntryReadsExactConversationAndSelectsEarlierGoalRatherThanLast() async throws {
+        let entry = NativeJourneyGoalEntry(scope: scope, conversationID: conversation, goalID: goal, scopeVersion: 7)
+        var policies = 0
+        let (_,read) = try await NativeJourneyGoalReader.read(entry, isCurrent: { true }, policy: {
+            policies += 1; return try self.policy()
+        }, conversation: { try self.entryConversation(entry.conversationID) })
+        let selected = try XCTUnwrap(entry.goal(in: read, scope: scope))
+        XCTAssertEqual(selected.goalId,goal); XCTAssertEqual(selected.scopeVersion,7)
+        XCTAssertNotEqual(selected.goalId,read.goals.last?.goalId); XCTAssertEqual(policies,2)
+        let other = NativeJourneyGoalEntry(scope: scope, conversationID: "10000000-0000-4000-8000-000000000002", goalID: goal, scopeVersion:7)
+        XCTAssertNil(other.goal(in: read,scope:scope))
+    }
+
+    @MainActor
+    func testGoalEntryRejectsWrongConversationOldVersionAndWithdrawnPolicy() async throws {
+        let entry = NativeJourneyGoalEntry(scope: scope, conversationID: conversation, goalID: goal, scopeVersion:7)
+        for mode in ["conversation","version","withdrawal"] {
+            var policies = 0
+            do {
+                _ = try await NativeJourneyGoalReader.read(entry,isCurrent:{true},policy:{
+                    policies += 1; return try self.policy(mode == "withdrawal" && policies == 2 ? "withdrawn":"accepted")
+                },conversation:{ try self.entryConversation(mode == "conversation" ? "10000000-0000-4000-8000-000000000002":self.conversation,version:mode == "version" ? 8:7) })
+                XCTFail("Stale/foreign/withdrawn goal must not become a selection")
+            } catch {}
+        }
+    }
+
+    @MainActor
+    func testGoalEntryLateActorOrRequestChangeCannotPublish() async throws {
+        let entry = NativeJourneyGoalEntry(scope:scope,conversationID:conversation,goalID:goal,scopeVersion:7)
+        var current = true
+        do {
+            _ = try await NativeJourneyGoalReader.read(entry,isCurrent:{current},policy:{try self.policy()},conversation:{
+                await Task.yield(); current = false; return try self.entryConversation(self.conversation)
+            })
+            XCTFail("Late handoff cannot publish after scope/request changes")
+        } catch NativeDataError.staleSessionResponse {} catch { XCTFail("Unexpected error \(error)") }
+        let read = try JSONDecoder().decode(AssistantConversation.self,from:entryConversation(conversation))
+        let other = NativeDataScope(endpoint:scope.endpoint,subject:"other",mobileEpoch:1,generation:2)
+        XCTAssertNil(entry.goal(in:read,scope:other))
+    }
+
+    @MainActor
+    func testGoalEntryDraftDecisionRequiresExplicitDiscardAndNeverOverridesPending() {
+        XCTAssertEqual(NativeJourneyGoalDraftDecision.decide(pending:true,draft:"draft",planningDraft:"",discard:true),.blocked)
+        XCTAssertEqual(NativeJourneyGoalDraftDecision.decide(pending:false,draft:"draft",planningDraft:"",discard:false),.confirmDiscard)
+        XCTAssertEqual(NativeJourneyGoalDraftDecision.decide(pending:false,draft:"",planningDraft:"plan",discard:false),.confirmDiscard)
+        XCTAssertEqual(NativeJourneyGoalDraftDecision.decide(pending:false,draft:"draft",planningDraft:"",discard:true),.open)
+        XCTAssertEqual(NativeJourneyGoalDraftDecision.decide(pending:false,draft:"",planningDraft:"",discard:false),.open)
+    }
+
+    @MainActor
+    func testSameCompleteScopeReappearancePreservesSelectionButReplacementDoesNot() {
+        let a = scope
+        let replaced = NativeDataScope(endpoint:a.endpoint,subject:a.subject,mobileEpoch:a.mobileEpoch+1,generation:a.generation+1)
+        XCTAssertTrue(NativeAssistantScopeAppearance.preservesContext(bound:a,retained:a,active:a))
+        XCTAssertTrue(NativeAssistantScopeAppearance.preservesContext(bound:a,retained:a,active:nil))
+        XCTAssertFalse(NativeAssistantScopeAppearance.preservesContext(bound:a,retained:replaced,active:replaced))
+        XCTAssertFalse(NativeAssistantScopeAppearance.preservesContext(bound:a,retained:a,active:replaced))
+        XCTAssertFalse(NativeAssistantScopeAppearance.preservesContext(bound:a,retained:nil,active:nil))
+    }
+
+    @MainActor
+    func testConversationAndGoalSelectionPublishAtomicallyAndManualSelectionClearsPin() {
+        var selection = AssistantConversationSelection()
+        selection.select("10000000-0000-4000-8000-000000000002")
+        let entry = NativeJourneyGoalEntry(scope:scope,conversationID:conversation,goalID:goal,scopeVersion:7)
+        selection.selectGoal(entry)
+        XCTAssertEqual(selection.conversationID,conversation); XCTAssertEqual(selection.goalEntry,entry)
+        let generation=selection.generation
+        XCTAssertTrue(NativeAssistantScopeAppearance.preservesContext(bound:scope,retained:scope,active:scope))
+        XCTAssertEqual(selection.generation,generation); XCTAssertEqual(selection.goalEntry,entry)
+        selection.select(nil)
+        XCTAssertNil(selection.goalEntry); XCTAssertNil(selection.conversationID)
     }
 
 }
