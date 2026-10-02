@@ -2,11 +2,8 @@
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID as uuid,createHash} from 'node:crypto';
-import {gunzipSync} from 'node:zlib';
-import {tmpdir} from 'node:os';
-import {join,resolve} from 'node:path';
-import {pathToFileURL} from 'node:url';
-import {readFileSync,readdirSync,mkdtempSync,writeFileSync,rmSync} from 'node:fs';
+import {runPlanningV2LocalProtocol} from '../../../lib/server/turn/planning-intake-worker-protocol.ts';
+import {readFileSync,readdirSync} from 'node:fs';
 import {createPlanningV2CheckpointTestPorts,decodePlanningV2CheckpointSnapshot} from '../../../lib/server/turn/planning-v2-checkpoint-test-ports.ts';
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj78-checkpoints-'+uuid().slice(0,8);
@@ -138,14 +135,8 @@ run('strict injected private ports recover saved receipt in a new process withou
  await assert.rejects(lostAck.savePlace(l,p,signal));const after=await stored(x),newProcess=createPlanningV2CheckpointTestPorts({mode:'local_protocol_test',now:Date.now,transport});assert.deepEqual((await newProcess.checkpoints(l,signal)).place,{state:'completed',observation:p});assert.equal(await newProcess.claimPlace(l,signal),'duplicate');assert.equal(await newProcess.savePlace(l,p,signal),false);assert.equal(await stored(x),after);
 });
 
-run('the same UTC millisecond observation matches SQL, strict adapter and frozen worker date acceptance',async t=>{
- // Immutable worker test dependency, not a copied runtime module or mutable checkout.
- const source=gunzipSync(readFileSync('tests/integration/turn/fixtures/planning-v2-worker-0f49f426.ts.gz'));
- const blob=createHash('sha1').update(Buffer.concat([Buffer.from('blob '+source.length+'\0'),source])).digest('hex');assert.equal(blob,'90a63e1846d58ad3dc8038137d7e517d3018d411');
- const folder=mkdtempSync(join(tmpdir(),'vpj78-date-worker-'));t.after(()=>rmSync(folder,{recursive:true,force:true}));const moduleFile=join(folder,'fixed-worker.ts');
- // Only relocate its unchanged endpoint dependency so the exact frozen source can run from tmp.
- writeFileSync(moduleFile,source.toString().replace("'../model-gateway/adapters/provider-endpoints.ts'",JSON.stringify(pathToFileURL(resolve('lib/server/model-gateway/adapters/provider-endpoints.ts')).href)));
- const {runPlanningV2LocalProtocol}=await import(pathToFileURL(moduleFile).href),base=new Date(Math.floor(Date.now()/1000)*1000).toISOString().slice(0,19),matrix=[];
+run('the same UTC millisecond observation matches SQL, strict adapter and current worker date acceptance',async t=>{
+ const workerHash=createHash('sha256').update(readFileSync('lib/server/turn/planning-intake-worker-protocol.ts')).digest('hex'),base=new Date(Math.floor(Date.now()/1000)*1000).toISOString().slice(0,19),matrix=[];
  const cases=[['utc-seconds',base+'Z',true],['utc-tenths',base+'.1Z',true],['utc-hundredths',base+'.12Z',true],['utc-milliseconds',base+'.123Z',true],
   ['zero-offset',base+'.123+00:00',false],['positive-offset',new Date(Date.now()+8*3600000).toISOString().replace('Z','+08:00'),false],['negative-offset',new Date(Date.now()-4*3600000).toISOString().replace('Z','-04:00'),false],
   ['fraction-four',base+'.1234Z',false],['microseconds',base+'.123456Z',false],['invalid-calendar','2026-02-30T00:00:00Z',false],['hour-24',base.slice(0,11)+'24:00:00Z',false],['leap-second',base.slice(0,17)+'60Z',false],
@@ -160,5 +151,5 @@ run('the same UTC millisecond observation matches SQL, strict adapter and frozen
   assert.equal(prepareReached,accepted?1:0,'worker observation acceptance '+name);assert.equal(result.executionAvailable,false);assert.equal(result.readyForPublication,false);
   assert.equal(await db(`select count(*) from turn_private.result_artifacts where id='${x.r.artifactId}';`),'0');matrix.push({name,SQL:accepted,adapter:adapterAccepted,worker:prepareReached===1});
  }
- t.diagnostic(JSON.stringify({workerCommit:'0f49f4264b17a06930f2092f6339fa6442167821',workerBlob:blob,SQLSource:'current40000',matrix,providerCalls:0,preparationProbeOnly:true}));
+ t.diagnostic(JSON.stringify({workerSource:'current normal import',workerSha256:workerHash,SQLSource:'current40000',matrix,providerCalls:0,preparationProbeOnly:true}));
 });
