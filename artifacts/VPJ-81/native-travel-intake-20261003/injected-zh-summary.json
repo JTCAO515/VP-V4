@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "passed": 1,
+  "failed": 0,
+  "skipped": 0,
+  "kind": "LOCAL_INJECTED_RESPONSES_NOT_AUTH",
+  "backend": "UNRUN",
+  "source": "/tmp/vpj81-intake-injected-ui9/source.json"
+}

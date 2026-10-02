@@ -1,0 +1,22 @@
+{
+  "result": "PASS",
+  "sourceCommit": "2e7dfa8b2f5c895dce3955085728c45e3ef1a87f",
+  "backendFreeze": "2e7dfa8b2f5c895dce3955085728c45e3ef1a87f",
+  "scope": "actual disposable Auth/HTTP/SQL + native request-boundary guards only",
+  "inputRevisions": 1,
+  "serviceTasks": 0,
+  "casConflict": "reused Auth5 actual409",
+  "sessionGuard": 401,
+  "withdrawGuard": 403,
+  "fullReplacementUntouchedFields": "UNRUN in guard case; separate Auth5 full-chain evidence",
+  "explicitNullClear": "UNRUN in guard case; separate Auth5 full-chain evidence",
+  "modelCalls": 0,
+  "taskAttempts": 0,
+  "tripWrites": 0,
+  "unrun": [
+    "physical device/VoiceOver",
+    "Staging/Production",
+    "real user acceptance",
+    "full #562/#559 acceptance"
+  ]
+}

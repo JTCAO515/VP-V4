@@ -13,6 +13,9 @@ import test from "node:test";
 const ANON = ["public.research_intake_v1(jsonb)"];
 
 const AUTHENTICATED = [
+  "public.submit_assistant_travel_intake_v1(uuid,uuid,uuid,uuid,integer,integer,uuid,uuid,text,text,text,jsonb,jsonb)",
+  "public.read_assistant_travel_intake_v1(uuid,uuid,uuid)",
+  "public.read_assistant_travel_intake_write_basis_v1(uuid,uuid,uuid)",
   "identity_private.mobile_access_v2()",
   "identity_private.mobile_session_v2(text,uuid)",
   "ops_budget_private.read_ops_budget_scope_for_member_v1(uuid)",

@@ -1,0 +1,23 @@
+{
+  "kind": "MAIN_REVIEW_NATIVE_BOUNDS_AND_BUDGET",
+  "tests": {
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "xcresult": "/tmp/vpj81-intake-review-fix-tests.xcresult"
+  },
+  "budgetUI": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "kind": "LOCAL_INJECTED_NOT_AUTH",
+    "xcresult": "/tmp/vpj81-intake-major-budget-ui2/tests.xcresult"
+  },
+  "amount": "450.00 CNY -> 45000 integer minor units -> 450.00 CNY",
+  "oldBudgetUI": "FAIL retained: post-readback scroll direction",
+  "backend": "unchanged frozen wire",
+  "fullAuth": "not rerun; Auth5/guards6 source boundaries retained",
+  "unrun": [
+    "physical/target/provider/whole parent acceptance"
+  ]
+}

@@ -1,0 +1,984 @@
+{
+  "held": 0,
+  "nativePosts": 5,
+  "nativeReads": 14,
+  "writeBasisReads": 2,
+  "rivalWrites": 1,
+  "denied401": 2,
+  "nativeDenied401": 2,
+  "denied403": 2,
+  "sessionReplacements": 1,
+  "withdrawals": 1,
+  "events": [
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "unavailable",
+        "reason": "intake_unrecorded",
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "write_basis",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake_write_basis",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "policyId": "ae4bc1a7-cdd8-491c-b574-318cb58be10e",
+        "goalVersion": 1,
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "intakeRevision": 0,
+        "messageSequence": 1,
+        "parentMessageId": "cf6a4a7d-1c26-4055-b9f1-b748032017d0",
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "POST",
+      "kind": "intake",
+      "status": 201,
+      "request": {
+        "policyId": "ae4bc1a7-cdd8-491c-b574-318cb58be10e",
+        "intake": {
+          "partySize": 2,
+          "lodgingBudget": null,
+          "city": "shanghai",
+          "dates": {
+            "startDate": "2026-10-03",
+            "endDate": "2026-10-10"
+          },
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ],
+          "durationDays": 10,
+          "schemaVersion": "stay-area-intake/1",
+          "pace": "relaxed",
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "comparisonTarget": "area_transport"
+        },
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "text": "I explicitly confirm the current travel requirements I entered.",
+        "locale": "en",
+        "expectedIntakeRevision": 0,
+        "expectedGoalVersion": 1,
+        "memoryBasis": [],
+        "idempotencyKey": "a167535a-9599-45b8-bc7f-c6abb3b9f4b3",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "relationship": "follow_up",
+        "messageId": "cb211888-eb53-442f-a86a-c556b532d085",
+        "parentMessageId": "cf6a4a7d-1c26-4055-b9f1-b748032017d0"
+      },
+      "receipt": {
+        "version": 5,
+        "kind": "accepted",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "messageId": "cb211888-eb53-442f-a86a-c556b532d085",
+        "messageSequence": 2,
+        "goalVersion": 1,
+        "intakeRevision": 1,
+        "reused": false,
+        "current": true,
+        "readyForProvider": false,
+        "contextDigest": "d64ea1c09597025bf32d6494cccda5cab93cd047f072b155115dbebf9e8f9056"
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "intake": {
+          "city": "shanghai",
+          "pace": "relaxed",
+          "dates": {
+            "endDate": "2026-10-10",
+            "startDate": "2026-10-03"
+          },
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "partySize": 2,
+          "durationDays": 10,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ]
+        },
+        "messageId": "cb211888-eb53-442f-a86a-c556b532d085",
+        "readiness": {
+          "kind": "ready",
+          "scope": "transport_screening",
+          "unknown": [
+            "lodgingBudget"
+          ]
+        },
+        "sourceKind": "explicit_current_input",
+        "goalVersion": 1,
+        "memoryBasis": [],
+        "contextDigest": "d64ea1c09597025bf32d6494cccda5cab93cd047f072b155115dbebf9e8f9056",
+        "schemaVersion": "assistant-travel-current-basis/1",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "intakeRevision": 1,
+        "messageSequence": 2,
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "intake": {
+          "city": "shanghai",
+          "pace": "relaxed",
+          "dates": {
+            "endDate": "2026-10-10",
+            "startDate": "2026-10-03"
+          },
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "partySize": 2,
+          "durationDays": 10,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ]
+        },
+        "messageId": "cb211888-eb53-442f-a86a-c556b532d085",
+        "readiness": {
+          "kind": "ready",
+          "scope": "transport_screening",
+          "unknown": [
+            "lodgingBudget"
+          ]
+        },
+        "sourceKind": "explicit_current_input",
+        "goalVersion": 1,
+        "memoryBasis": [],
+        "contextDigest": "d64ea1c09597025bf32d6494cccda5cab93cd047f072b155115dbebf9e8f9056",
+        "schemaVersion": "assistant-travel-current-basis/1",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "intakeRevision": 1,
+        "messageSequence": 2,
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "POST",
+      "kind": "intake",
+      "status": 201,
+      "request": {
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "expectedGoalVersion": 1,
+        "expectedIntakeRevision": 1,
+        "parentMessageId": "cb211888-eb53-442f-a86a-c556b532d085",
+        "intake": {
+          "pace": "relaxed",
+          "dates": {
+            "startDate": "2026-10-03",
+            "endDate": "2026-10-10"
+          },
+          "schemaVersion": "stay-area-intake/1",
+          "durationDays": 12,
+          "partySize": 3,
+          "lodgingBudget": {
+            "perNightMinorUnits": 45000,
+            "currency": "CNY"
+          },
+          "comparisonTarget": "area_transport",
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "city": "beijing",
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ]
+        },
+        "relationship": "amendment",
+        "locale": "en",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "messageId": "93c52436-1c14-4407-a35d-8ffc656676dc",
+        "policyId": "ae4bc1a7-cdd8-491c-b574-318cb58be10e",
+        "text": "I explicitly confirm the current travel requirements I entered.",
+        "memoryBasis": [],
+        "idempotencyKey": "6ce23e5e-9485-44e7-a21b-b7c8bd30e38d"
+      },
+      "receipt": {
+        "version": 5,
+        "kind": "accepted",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "messageId": "93c52436-1c14-4407-a35d-8ffc656676dc",
+        "messageSequence": 3,
+        "goalVersion": 2,
+        "intakeRevision": 2,
+        "reused": false,
+        "current": true,
+        "readyForProvider": false,
+        "contextDigest": "5c1c06b9692caabff9b86ece8cf4c88d1c67bc23e21733ba4638ce2a967a9b29"
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "intake": {
+          "city": "beijing",
+          "pace": "relaxed",
+          "dates": {
+            "endDate": "2026-10-10",
+            "startDate": "2026-10-03"
+          },
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "partySize": 3,
+          "durationDays": 12,
+          "lodgingBudget": {
+            "currency": "CNY",
+            "perNightMinorUnits": 45000
+          },
+          "schemaVersion": "stay-area-intake/1",
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ]
+        },
+        "messageId": "93c52436-1c14-4407-a35d-8ffc656676dc",
+        "readiness": {
+          "kind": "unavailable",
+          "reason": "city_not_covered"
+        },
+        "sourceKind": "explicit_current_input",
+        "goalVersion": 2,
+        "memoryBasis": [],
+        "contextDigest": "5c1c06b9692caabff9b86ece8cf4c88d1c67bc23e21733ba4638ce2a967a9b29",
+        "schemaVersion": "assistant-travel-current-basis/1",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "intakeRevision": 2,
+        "messageSequence": 3,
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "intake": {
+          "city": "beijing",
+          "pace": "relaxed",
+          "dates": {
+            "endDate": "2026-10-10",
+            "startDate": "2026-10-03"
+          },
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "partySize": 3,
+          "durationDays": 12,
+          "lodgingBudget": {
+            "currency": "CNY",
+            "perNightMinorUnits": 45000
+          },
+          "schemaVersion": "stay-area-intake/1",
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ]
+        },
+        "messageId": "93c52436-1c14-4407-a35d-8ffc656676dc",
+        "readiness": {
+          "kind": "unavailable",
+          "reason": "city_not_covered"
+        },
+        "sourceKind": "explicit_current_input",
+        "goalVersion": 2,
+        "memoryBasis": [],
+        "contextDigest": "5c1c06b9692caabff9b86ece8cf4c88d1c67bc23e21733ba4638ce2a967a9b29",
+        "schemaVersion": "assistant-travel-current-basis/1",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "intakeRevision": 2,
+        "messageSequence": 3,
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "POST",
+      "kind": "intake",
+      "status": 201,
+      "request": {
+        "idempotencyKey": "9c26dd41-014e-4bff-b1c9-bb9c120b77ed",
+        "policyId": "ae4bc1a7-cdd8-491c-b574-318cb58be10e",
+        "expectedGoalVersion": 2,
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "relationship": "amendment",
+        "memoryBasis": [],
+        "intake": {
+          "pace": "relaxed",
+          "partySize": 3,
+          "city": null,
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ],
+          "comparisonTarget": "area_transport",
+          "schemaVersion": "stay-area-intake/1",
+          "durationDays": 12,
+          "lodgingBudget": null,
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "dates": {
+            "endDate": "2026-10-10",
+            "startDate": "2026-10-03"
+          }
+        },
+        "expectedIntakeRevision": 2,
+        "text": "I explicitly confirm the current travel requirements I entered.",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "parentMessageId": "93c52436-1c14-4407-a35d-8ffc656676dc",
+        "locale": "en",
+        "messageId": "86e66b1a-8e7e-4fae-b501-331208dc6c3d"
+      },
+      "receipt": {
+        "version": 5,
+        "kind": "accepted",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "messageId": "86e66b1a-8e7e-4fae-b501-331208dc6c3d",
+        "messageSequence": 4,
+        "goalVersion": 3,
+        "intakeRevision": 3,
+        "reused": false,
+        "current": true,
+        "readyForProvider": false,
+        "contextDigest": "4d94f0932e4ac0975a4af7c4569d27d61c672827a866c7754b9c0fce93d0f0b5"
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "intake": {
+          "city": null,
+          "pace": "relaxed",
+          "dates": {
+            "endDate": "2026-10-10",
+            "startDate": "2026-10-03"
+          },
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "partySize": 3,
+          "durationDays": 12,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ]
+        },
+        "messageId": "86e66b1a-8e7e-4fae-b501-331208dc6c3d",
+        "readiness": {
+          "kind": "waiting_user",
+          "questions": [
+            "city"
+          ]
+        },
+        "sourceKind": "explicit_current_input",
+        "goalVersion": 3,
+        "memoryBasis": [],
+        "contextDigest": "4d94f0932e4ac0975a4af7c4569d27d61c672827a866c7754b9c0fce93d0f0b5",
+        "schemaVersion": "assistant-travel-current-basis/1",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "intakeRevision": 3,
+        "messageSequence": 4,
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "intake": {
+          "city": null,
+          "pace": "relaxed",
+          "dates": {
+            "endDate": "2026-10-10",
+            "startDate": "2026-10-03"
+          },
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "partySize": 3,
+          "durationDays": 12,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ]
+        },
+        "messageId": "86e66b1a-8e7e-4fae-b501-331208dc6c3d",
+        "readiness": {
+          "kind": "waiting_user",
+          "questions": [
+            "city"
+          ]
+        },
+        "sourceKind": "explicit_current_input",
+        "goalVersion": 3,
+        "memoryBasis": [],
+        "contextDigest": "4d94f0932e4ac0975a4af7c4569d27d61c672827a866c7754b9c0fce93d0f0b5",
+        "schemaVersion": "assistant-travel-current-basis/1",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "intakeRevision": 3,
+        "messageSequence": 4,
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "POST",
+      "kind": "intake",
+      "status": 409,
+      "request": {
+        "parentMessageId": "86e66b1a-8e7e-4fae-b501-331208dc6c3d",
+        "text": "I explicitly confirm the current travel requirements I entered.",
+        "policyId": "ae4bc1a7-cdd8-491c-b574-318cb58be10e",
+        "expectedIntakeRevision": 3,
+        "messageId": "e5baac1e-07f5-43c7-9bb2-21ec011e9910",
+        "expectedGoalVersion": 3,
+        "idempotencyKey": "f70bff0a-1a96-4202-88fb-9238eae8b72b",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "intake": {
+          "lodgingBudget": null,
+          "durationDays": 12,
+          "partySize": 3,
+          "dates": {
+            "startDate": "2026-10-03",
+            "endDate": "2026-10-10"
+          },
+          "comparisonTarget": "area_transport",
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "schemaVersion": "stay-area-intake/1",
+          "pace": "relaxed",
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ],
+          "city": "beijing"
+        },
+        "locale": "en",
+        "relationship": "amendment",
+        "memoryBasis": [],
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75"
+      },
+      "receipt": {
+        "error": {
+          "code": "SERVICE_TASK_CONFLICT"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "intake": {
+          "city": null,
+          "pace": "relaxed",
+          "dates": {
+            "endDate": "2026-10-10",
+            "startDate": "2026-10-03"
+          },
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "partySize": 3,
+          "durationDays": 12,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ]
+        },
+        "messageId": "22333171-eacd-4519-bce1-61dea1088b17",
+        "readiness": {
+          "kind": "waiting_user",
+          "questions": [
+            "city"
+          ]
+        },
+        "sourceKind": "explicit_current_input",
+        "goalVersion": 4,
+        "memoryBasis": [],
+        "contextDigest": "b4a68bc85e9f911f3e4105a61b5cdfb56f706631ea520d80b90fd4b7d939267c",
+        "schemaVersion": "assistant-travel-current-basis/1",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "intakeRevision": 4,
+        "messageSequence": 5,
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "write_basis",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake_write_basis",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "policyId": "ae4bc1a7-cdd8-491c-b574-318cb58be10e",
+        "goalVersion": 4,
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "intakeRevision": 4,
+        "messageSequence": 5,
+        "parentMessageId": "22333171-eacd-4519-bce1-61dea1088b17",
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "POST",
+      "kind": "intake",
+      "status": 201,
+      "request": {
+        "policyId": "ae4bc1a7-cdd8-491c-b574-318cb58be10e",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "messageId": "a660ac8c-7847-470f-859f-c896cffbdcee",
+        "expectedIntakeRevision": 4,
+        "idempotencyKey": "e8868e7c-e417-429d-93a8-5f16e41103df",
+        "memoryBasis": [],
+        "intake": {
+          "lodgingBudget": null,
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "city": "shanghai",
+          "pace": "relaxed",
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ],
+          "comparisonTarget": "area_transport",
+          "partySize": 3,
+          "durationDays": 12,
+          "schemaVersion": "stay-area-intake/1",
+          "dates": {
+            "startDate": "2026-10-03",
+            "endDate": "2026-10-10"
+          }
+        },
+        "expectedGoalVersion": 4,
+        "relationship": "amendment",
+        "parentMessageId": "22333171-eacd-4519-bce1-61dea1088b17",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "locale": "en",
+        "text": "I explicitly confirm the current travel requirements I entered."
+      },
+      "receipt": {
+        "version": 5,
+        "kind": "accepted",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "messageId": "a660ac8c-7847-470f-859f-c896cffbdcee",
+        "messageSequence": 6,
+        "goalVersion": 5,
+        "intakeRevision": 5,
+        "reused": false,
+        "current": true,
+        "readyForProvider": false,
+        "contextDigest": "c54b26240f00b1fbe4d6e3d72423aebcdac45e61c6df0eef5abee0f0349b747a"
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "intake": {
+          "city": "shanghai",
+          "pace": "relaxed",
+          "dates": {
+            "endDate": "2026-10-10",
+            "startDate": "2026-10-03"
+          },
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "partySize": 3,
+          "durationDays": 12,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ]
+        },
+        "messageId": "a660ac8c-7847-470f-859f-c896cffbdcee",
+        "readiness": {
+          "kind": "ready",
+          "scope": "transport_screening",
+          "unknown": [
+            "lodgingBudget"
+          ]
+        },
+        "sourceKind": "explicit_current_input",
+        "goalVersion": 5,
+        "memoryBasis": [],
+        "contextDigest": "c54b26240f00b1fbe4d6e3d72423aebcdac45e61c6df0eef5abee0f0349b747a",
+        "schemaVersion": "assistant-travel-current-basis/1",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "intakeRevision": 5,
+        "messageSequence": 6,
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "intake": {
+          "city": "shanghai",
+          "pace": "relaxed",
+          "dates": {
+            "endDate": "2026-10-10",
+            "startDate": "2026-10-03"
+          },
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "partySize": 3,
+          "durationDays": 12,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ]
+        },
+        "messageId": "a660ac8c-7847-470f-859f-c896cffbdcee",
+        "readiness": {
+          "kind": "ready",
+          "scope": "transport_screening",
+          "unknown": [
+            "lodgingBudget"
+          ]
+        },
+        "sourceKind": "explicit_current_input",
+        "goalVersion": 5,
+        "memoryBasis": [],
+        "contextDigest": "c54b26240f00b1fbe4d6e3d72423aebcdac45e61c6df0eef5abee0f0349b747a",
+        "schemaVersion": "assistant-travel-current-basis/1",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "intakeRevision": 5,
+        "messageSequence": 6,
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "intake": {
+          "city": "shanghai",
+          "pace": "relaxed",
+          "dates": {
+            "endDate": "2026-10-10",
+            "startDate": "2026-10-03"
+          },
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "partySize": 3,
+          "durationDays": 12,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ]
+        },
+        "messageId": "a660ac8c-7847-470f-859f-c896cffbdcee",
+        "readiness": {
+          "kind": "ready",
+          "scope": "transport_screening",
+          "unknown": [
+            "lodgingBudget"
+          ]
+        },
+        "sourceKind": "explicit_current_input",
+        "goalVersion": 5,
+        "memoryBasis": [],
+        "contextDigest": "c54b26240f00b1fbe4d6e3d72423aebcdac45e61c6df0eef5abee0f0349b747a",
+        "schemaVersion": "assistant-travel-current-basis/1",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "intakeRevision": 5,
+        "messageSequence": 6,
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 401,
+      "body": {
+        "error": {
+          "code": "UNAUTHENTICATED"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake",
+        "goalId": "c179107d-5d1c-4e6f-b9d7-71cf56642323",
+        "intake": {
+          "city": "shanghai",
+          "pace": "relaxed",
+          "dates": {
+            "endDate": "2026-10-10",
+            "startDate": "2026-10-03"
+          },
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "partySize": 3,
+          "durationDays": 12,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": [
+            "Prefer fewer stairs",
+            "Need regular rest breaks"
+          ]
+        },
+        "messageId": "a660ac8c-7847-470f-859f-c896cffbdcee",
+        "readiness": {
+          "kind": "ready",
+          "scope": "transport_screening",
+          "unknown": [
+            "lodgingBudget"
+          ]
+        },
+        "sourceKind": "explicit_current_input",
+        "goalVersion": 5,
+        "memoryBasis": [],
+        "contextDigest": "c54b26240f00b1fbe4d6e3d72423aebcdac45e61c6df0eef5abee0f0349b747a",
+        "schemaVersion": "assistant-travel-current-basis/1",
+        "conversationId": "6d0326fb-c97f-434a-81ec-ae420d8eee75",
+        "intakeRevision": 5,
+        "messageSequence": 6,
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 403,
+      "body": {
+        "error": {
+          "code": "DATA_POLICY_BLOCKED"
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "sessionProof": {
+    "sameOwner": true,
+    "expectedOwner": true,
+    "changedSession": true,
+    "heldSessionMatchesOld": true,
+    "heldSessionHash": "6c70a69734738a35",
+    "oldSessionHash": "6c70a69734738a35",
+    "newSessionHash": "c3d04ae586853bd8"
+  },
+  "timeline": [
+    {
+      "kind": "native401",
+      "atMs": 12075
+    },
+    {
+      "kind": "held_read200",
+      "atMs": 270572
+    },
+    {
+      "kind": "replacement_start",
+      "atMs": 271520
+    },
+    {
+      "kind": "replacement_login200",
+      "atMs": 271643
+    },
+    {
+      "kind": "old_session_probe401",
+      "atMs": 271648
+    },
+    {
+      "kind": "native401",
+      "atMs": 271892
+    },
+    {
+      "kind": "release_old_response",
+      "atMs": 273791
+    },
+    {
+      "kind": "withdraw200",
+      "atMs": 289675
+    }
+  ],
+  "sessionReads": [
+    {
+      "kind": "intake",
+      "sessionHash": "6c70a69734738a35",
+      "expectedOwner": true
+    },
+    {
+      "kind": "write_basis",
+      "sessionHash": "6c70a69734738a35",
+      "expectedOwner": true
+    },
+    {
+      "kind": "intake",
+      "sessionHash": "6c70a69734738a35",
+      "expectedOwner": true
+    },
+    {
+      "kind": "intake",
+      "sessionHash": "6c70a69734738a35",
+      "expectedOwner": true
+    },
+    {
+      "kind": "intake",
+      "sessionHash": "6c70a69734738a35",
+      "expectedOwner": true
+    },
+    {
+      "kind": "intake",
+      "sessionHash": "6c70a69734738a35",
+      "expectedOwner": true
+    },
+    {
+      "kind": "intake",
+      "sessionHash": "6c70a69734738a35",
+      "expectedOwner": true
+    },
+    {
+      "kind": "intake",
+      "sessionHash": "6c70a69734738a35",
+      "expectedOwner": true
+    },
+    {
+      "kind": "intake",
+      "sessionHash": "6c70a69734738a35",
+      "expectedOwner": true
+    },
+    {
+      "kind": "write_basis",
+      "sessionHash": "6c70a69734738a35",
+      "expectedOwner": true
+    },
+    {
+      "kind": "intake",
+      "sessionHash": "6c70a69734738a35",
+      "expectedOwner": true
+    },
+    {
+      "kind": "intake",
+      "sessionHash": "6c70a69734738a35",
+      "expectedOwner": true
+    },
+    {
+      "kind": "intake",
+      "sessionHash": "6c70a69734738a35",
+      "expectedOwner": true
+    },
+    {
+      "kind": "intake",
+      "sessionHash": "8bd28e1a9b588d1e",
+      "expectedOwner": true
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "kind": "LOCAL_INJECTED_NATIVE_UI_NOT_AUTH",
+  "scope": "explicit travel intake consumer local checkpoint",
+  "ui": {
+    "en": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "xcresult": "/tmp/vpj81-intake-injected-ui8/tests.xcresult"
+    },
+    "zh": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "xcresult": "/tmp/vpj81-intake-injected-ui9/tests.xcresult"
+    }
+  },
+  "stateTests": {
+    "passed": 15,
+    "failed": 0,
+    "skipped": 0,
+    "xcresult": "/tmp/vpj81-intake-unit-write-basis.xcresult"
+  },
+  "sameTestedCodeHashes": true,
+  "testedFromHead": "1fc0d24294e50225809ba56d504fbfb494036ed9",
+  "backendAuth": "UNRUN awaiting backend freeze",
+  "staleCASContract": "implemented closed write-basis; local-only validation",
+  "oldFailures": "retained as FAIL; old runtime/cache cause UNKNOWN",
+  "parentAcceptance": "OPEN/UNRUN",
+  "releaseBuild": "PASS; injected banner/activation absent"
+}

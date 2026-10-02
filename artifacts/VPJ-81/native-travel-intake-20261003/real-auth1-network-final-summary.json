@@ -1,0 +1,41 @@
+{
+  "held": 0,
+  "nativePosts": 0,
+  "nativeReads": 1,
+  "writeBasisReads": 1,
+  "rivalWrites": 0,
+  "denied401": 0,
+  "denied403": 0,
+  "sessionReplacements": 0,
+  "withdrawals": 0,
+  "events": [
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "unavailable",
+        "reason": "intake_unrecorded",
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "write_basis",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake_write_basis",
+        "goalId": "4c5c2e9c-b8e5-4de5-937d-92113591da5e",
+        "policyId": "f1ca8c4c-f09e-4199-b0ef-84715c197bb1",
+        "goalVersion": 1,
+        "conversationId": "b40f6529-e7f6-4090-b01b-280a872ab315",
+        "intakeRevision": 0,
+        "messageSequence": 1,
+        "parentMessageId": "b484abf5-c24d-40b5-b3bd-eff25b570c3f",
+        "readyForProvider": false
+      }
+    }
+  ]
+}

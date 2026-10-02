@@ -1,0 +1,55 @@
+{
+  "result": "PASS for bounded local combined consumer/backend flow",
+  "backendSnapshots": [
+    "05c0042c590b79ce41b6f8141799e64b34334e84",
+    "4728c18f96d60138cbc6718fc31f5f10ae3ad20b"
+  ],
+  "backendUnion": "2e7dfa8b2f5c895dce3955085728c45e3ef1a87f",
+  "fullChain": {
+    "run": "real-auth5",
+    "nativeUI": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "scope": "actual Auth/HTTP/SQL full projection/null/CAS+write-basis recovery before final read-task cancellation and safe-trace changes",
+    "postStatuses": [
+      201,
+      201,
+      201,
+      409,
+      201
+    ],
+    "rivalWrites": 1,
+    "intakeRows": 5
+  },
+  "finalRequestBoundary": {
+    "run": "real-guards6",
+    "nativeUI": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "scope": "actual current source cancellation/generation/consumer401+403/modal/late200; NOT full-edit rerun",
+    "requests": "held travel_intake GET#12=200; Refresh GET#13=401; old#12 delivered after closure; new-session#23=200; withdrawn#24=403"
+  },
+  "stateTests": {
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0,
+    "xcresult": "/tmp/vpj81-intake-cancelled-reader-tests.xcresult"
+  },
+  "tasks": 0,
+  "providerCalls": 0,
+  "modelBudgetAttempts": 0,
+  "tripWrites": 0,
+  "releaseBuild": "PASS; injection/auth-trace activation strings absent",
+  "unrun": [
+    "physical device/VoiceOver/large text",
+    "Staging/Production",
+    "real provider",
+    "real user acceptance",
+    "full #559/#562 acceptance"
+  ],
+  "oldFailures": "real-auth1\u20134 retained FAIL; no claim they passed"
+}
