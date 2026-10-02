@@ -137,6 +137,7 @@ export const LANES = {
       { name: "native-planning-http", runner: node("tests/integration/turn/run-native-http.mjs", "--planning"), files: ["tests/integration/turn/native-planning-http.test.mjs"] },
       { name: "native-grounded-http", runner: node("tests/integration/turn/run-native-http.mjs", "--grounded"), files: ["tests/integration/turn/native-grounded-http.test.mjs"] },
       { name: "journeys-goal-index-http", runner: node("tests/integration/turn/run-journeys-goal-index-http.mjs"), files: ["tests/integration/turn/journeys-goal-index-http.test.mjs"] },
+      { name: "web-trip-continuity", runner: node("tests/integration/web-trip-continuity/run.mjs"), files: ["tests/integration/web-trip-continuity/continuity.test.mjs"] },
     ],
   },
   "supabase-http-ops": {
