@@ -103,16 +103,19 @@ try{
 p=pathlib.Path(sys.argv[1]);files=[x for x in p.glob('*.xctestrun') if x.name not in ('ProposalReference.xctestrun','ProposalReferenceEntry.xctestrun')];assert len(files)==1
 d=plistlib.loads(files[0].read_bytes());d['VisePandaUITests'].setdefault('EnvironmentVariables',{}).update(json.loads(sys.stdin.read()))
 q=p/'ProposalReferenceEntry.xctestrun';q.write_bytes(plistlib.dumps(d));q.chmod(0o600)`,products],{input:JSON.stringify(profile)});
-  await run('xcodebuild',['test-without-building','-xctestrun',runfile,'-destination','platform=iOS Simulator,id='+device,'-parallel-testing-enabled','NO','-collect-test-diagnostics','never','-only-testing:VisePandaUITests/NativeProposalReferenceUITests/testLibraryOwnedTripDiscoveryExactAndInvalidation',...(process.env.VP_PROPOSAL_UI_ONLY==='1'?[]:['-only-testing:VisePandaTests/NativeProposalReferenceTests/testFrozenTripDiscoveryIsClosedAndBindsSelectedTrip','-only-testing:VisePandaTests/NativeProposalReferenceTests/testTripDiscoveryExactUsesSharedDeadlineAndSource','-only-testing:VisePandaTests/NativeProposalReferenceTests/testTripDiscoveryCannotOpenAfterSelectionOrAuthorityChanges']),'-resultBundlePath',join(output,'tests.xcresult')],'tests');
+  await run('xcodebuild',['test-without-building','-xctestrun',runfile,'-destination','platform=iOS Simulator,id='+device,'-parallel-testing-enabled','NO','-collect-test-diagnostics','never','-only-testing:VisePandaUITests/NativeProposalReferenceUITests/'+(process.env.VP_PROPOSAL_SAME_TRIP_ONLY==='1'?'testLibrarySameTripSelectionKeepsCurrentCard':'testLibraryOwnedTripDiscoveryExactAndInvalidation'),...(process.env.VP_PROPOSAL_UI_ONLY==='1'?[]:['-only-testing:VisePandaTests/NativeProposalReferenceTests/testFrozenTripDiscoveryIsClosedAndBindsSelectedTrip','-only-testing:VisePandaTests/NativeProposalReferenceTests/testTripDiscoveryExactUsesSharedDeadlineAndSource','-only-testing:VisePandaTests/NativeProposalReferenceTests/testTripDiscoveryCannotOpenAfterSelectionOrAuthorityChanges']),'-resultBundlePath',join(output,'tests.xcresult')],'tests');
  }finally {rmSync(runfile,{force:true});}
  const result=JSON.parse(execFileSync('xcrun',['xcresulttool','get','test-results','summary','--path',join(output,'tests.xcresult')],{encoding:'utf8'}));
  assert.equal(result.passedTests,process.env.VP_PROPOSAL_UI_ONLY==='1'?1:4);assert.equal(result.failedTests,0);assert.equal(result.skippedTests,0);
- assert.ok(raced,'actual Proposal revision between discovery and exact');assert.ok(revoked,'actual owned consent withdrawal');
+ if(process.env.VP_PROPOSAL_SAME_TRIP_ONLY==='1') {
+  assert.equal(routes.filter(r=>r.path==='/api/results/native/v1/change-proposal-reference/trip').length,1,'reselect does not clear or refetch the current reference');
+  assert.equal(routes.filter(r=>r.path==='/api/results/native/v1/change-proposal-reference').length,1,'exact read remains pinned after same-Trip selection');
+ }else {assert.ok(raced,'actual Proposal revision between discovery and exact');assert.ok(revoked,'actual owned consent withdrawal');}
  assert.ok(routes.some(r=>r.path==='/api/results/native/v1/change-proposal-reference/trip'&&r.kind==='result_reference'));
  assert.ok(routes.some(r=>r.path==='/api/results/native/v1/change-proposal-reference'&&r.kind==='result_artifact'));
- assert.ok(routes.some(r=>r.path==='/api/results/native/v1/change-proposal-reference'&&r.kind==='unavailable'));
+ if(process.env.VP_PROPOSAL_SAME_TRIP_ONLY!=='1')assert.ok(routes.some(r=>r.path==='/api/results/native/v1/change-proposal-reference'&&r.kind==='unavailable'));
  assert.equal(state(),before,'reader and revision never apply Trip changes');assert.equal(e.requests.length,providerBefore);
- writeFileSync(join(output,'summary.json'),JSON.stringify({scope:'owned disposable real Auth/HTTP/SQL full Library Trip→discovery→exact→card',passed:result.passedTests,failed:0,skipped:0,tripUnchanged:true,providerCallsDuringUI:0,revisionBetweenDiscoveryAndExact:raced,consentWithdrawal:revoked,crossActorOwnedTripList:true},null,2)+'\n');
+ writeFileSync(join(output,'summary.json'),JSON.stringify({scope:'owned disposable real Auth/HTTP/SQL full Library Trip→discovery→exact→card',passed:result.passedTests,failed:0,skipped:0,tripUnchanged:true,providerCallsDuringUI:0,revisionBetweenDiscoveryAndExact:raced,consentWithdrawal:revoked,crossActorOwnedTripList:process.env.VP_PROPOSAL_SAME_TRIP_ONLY!=='1',sameTripReselection:process.env.VP_PROPOSAL_SAME_TRIP_ONLY==='1'},null,2)+'\n');
  console.log('PROPOSAL_ENTRY_PASS '+join(output,'summary.json'));
 }finally{
  writeFileSync(join(output,'routes-status.json'),JSON.stringify(routes,null,2)+'\n');

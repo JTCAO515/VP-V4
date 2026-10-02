@@ -67,6 +67,7 @@ struct NativeLibraryProposalReferenceView: View {
                 }
                 ForEach(trips.trips) { trip in
                     Button {
+                        guard selectedTrip != trip.id else { return }
                         store.clear(); selectedTrip = trip.id
                     } label: {
                         HStack {

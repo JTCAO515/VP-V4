@@ -80,6 +80,41 @@ final class NativeProposalReferenceUITests: XCTestCase {
         XCTAssertFalse(app.buttons["library.proposal.trip." + (try XCTUnwrap(env["VP_PROPOSAL_TRIP"]))].exists)
         capture("Library-other-actor-owned-list", app)
     }
+    func testLibrarySameTripSelectionKeepsCurrentCard() throws {
+        let env = ProcessInfo.processInfo.environment
+        guard env["VP_PROPOSAL_ENTRY_TEST"] == "1" else { throw XCTSkip("Dedicated owned disposable entry runner required") }
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launchArguments = ["-VisePandaLegacyShell", "-VisePandaNativeAPI", try XCTUnwrap(env["VP_PROPOSAL_API"]), "-VisePandaLocale", "en", "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        app.launch(); app.tabBars.buttons["Profile"].tap()
+        func reveal(_ element: XCUIElement) {
+            for _ in 0..<12 where !element.isHittable {
+                if app.keyboards.firstMatch.exists {
+                    app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.35)).press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.1)))
+                } else if element.frame.minY < 100 { app.swipeDown(velocity: .slow) }
+                else { app.swipeUp(velocity: .slow) }
+            }
+            XCTAssertTrue(element.isHittable)
+        }
+        let email = app.textFields["native.login.email"]
+        XCTAssertTrue(email.waitForExistence(timeout: 15)); reveal(email); email.tap(); email.typeText(try XCTUnwrap(env["VP_PROPOSAL_EMAIL"]))
+        let password = app.secureTextFields["native.login.password"]
+        reveal(password); password.tap(); password.typeText(try XCTUnwrap(env["VP_PROPOSAL_PASSWORD"]))
+        let submit = app.buttons["native.login.submit"]; reveal(submit); submit.tap()
+        let transitioned = XCTNSPredicateExpectation(predicate: NSPredicate(format: "selected == true"), object: app.tabBars.buttons["Ask"])
+        XCTAssertEqual(XCTWaiter.wait(for: [transitioned], timeout: 20), .completed)
+        app.terminate(); app.launchArguments.removeAll { $0 == "-VisePandaLegacyShell" }; app.launchArguments.append("-VisePandaFourTabShell"); app.launch()
+        XCTAssertTrue(app.tabBars.buttons["Library"].waitForExistence(timeout: 20)); app.tabBars.buttons["Library"].tap()
+        let trip = app.buttons["library.proposal.trip." + (try XCTUnwrap(env["VP_PROPOSAL_TRIP"]))]
+        XCTAssertTrue(trip.waitForExistence(timeout: 20)); reveal(trip); trip.tap()
+        let qualifier = app.staticTexts["proposal.reference.qualifier"]
+        XCTAssertTrue(qualifier.waitForExistence(timeout: 15))
+        let original = qualifier.label
+        reveal(trip); trip.tap()
+        XCTAssertTrue(qualifier.exists); XCTAssertEqual(qualifier.label, original)
+        XCTAssertFalse(app.staticTexts["proposal.reference.unavailable"].exists)
+        capture("Library-current-Trip-reselection-keeps-card", app)
+    }
     private func capture(_ name: String, _ app: XCUIApplication) {
         let attachment = XCTAttachment(screenshot: app.screenshot()); attachment.name = name; attachment.lifetime = .keepAlways; add(attachment)
     }
