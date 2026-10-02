@@ -1,14 +1,13 @@
-// Explicit local preparation: frozen backend SQL snapshot, no runtime migration
-// or future bridge RPC is installed by this test. Synthetic actor claims only.
+// Current repository migrations on disposable PostgreSQL; synthetic actor
+// claims/providers only. No historical Git objects or target fallback.
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID as uuid} from 'node:crypto';
 import {readFileSync,readdirSync} from 'node:fs';
 import {runPlanningComparisonWorker} from '../../../lib/server/turn/planning-comparison-worker.ts';
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
-const enabled=process.env.VPJ80_INTAKE_ADMISSION_PREP==='1',container='vpj80-intake-prep-'+uuid().slice(0,8);
-const bridge='20261003020000_vpj80_intake_admission_binding.sql';
-const snapshot='4728c18f96d60138cbc6718fc31f5f10ae3ad20b',migration='20261002200000_vpj78_explicit_travel_intake.sql';
+const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj80-intake-prep-'+uuid().slice(0,8);
+const migrationSource='supabase/migrations (current checkout, lexical order)';
 let created=false;
 const db=async q=>{const r=await sql(container,q);assert.equal(r.code,0,r.stderr);return r.stdout.trim();};
 const lit=v=>v===null?'null':typeof v==='number'||typeof v==='boolean'?String(v):"'"+(typeof v==='object'?JSON.stringify(v):String(v)).replaceAll("'","''")+"'";
@@ -36,14 +35,13 @@ before(async()=>{
  const image='public.ecr.aws/supabase/postgres:17.6.1.159';const r=await command('docker',['run','--pull=never','--rm','-d','--network','none','--name',container,'--user','postgres','--entrypoint','/bin/sh',image,'-c','umask 077; mkdir /tmp/vpj59-socket; initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);assert.equal(r.code,0,r.stderr);created=true;
  for(let i=0;i<100;i++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;await new Promise(r=>setTimeout(r,100));}
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
- for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f!==migration&&f!==bridge).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
- const fixed=await command('git',['show',snapshot+':supabase/migrations/'+migration]);assert.equal(fixed.code,0,'Frozen backend snapshot must exist locally; not an arbitrary fallback. '+fixed.stderr);await db('begin;'+fixed.stdout+'commit;');
- if(process.env.VPJ80_INTAKE_ADMISSION_V2==='1')await db('begin;'+readFileSync('supabase/migrations/'+bridge,'utf8')+'commit;');
+ for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
+
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 const run=(name,fn)=>test(name,{skip:!enabled,timeout:120000},fn);
 run('legacy planning admission invalidates current typed source without replacing its binding',async t=>{
- t.diagnostic(JSON.stringify({container,snapshot,network:'none',socket:'/tmp/vpj59-socket'}));
+ t.diagnostic(JSON.stringify({container,migrationSource,network:'none',socket:'/tmp/vpj59-socket'}));
  const a=await owner(),p=planning(a);assert.equal(a.receipt.current,true);
  const before=await call(a,'read_assistant_travel_intake_v1',{p_policy_id:a.policy,p_conversation_id:a.conversation,p_goal_id:a.goal});assert.equal(before.contextDigest,a.receipt.contextDigest);
  const r=await call(a,'submit_planning_comparison_v1',p);assert.equal(r.kind,'accepted');
@@ -94,7 +92,7 @@ run('staged Task then nested old planning admission is rejected and fully rolled
 });
 
 const v2=a=>({...planning(a),p_expected_intake_message_id:a.source,p_expected_source_sequence:1,p_expected_intake_revision:1,p_expected_intake_digest:a.receipt.contextDigest,p_intake:projection});
-const runV2=(name,fn)=>test(name,{skip:!enabled||process.env.VPJ80_INTAKE_ADMISSION_V2!=='1',timeout:120000},fn);
+const runV2=(name,fn)=>test(name,{skip:!enabled,timeout:120000},fn);
 runV2('v2 atomically binds new latest typed source with distinct digests and idempotent receipts',async t=>{
  const a=await owner(),p=v2(a),r=await call(a,'submit_planning_comparison_v2',p);
  assert.equal(r.current,true);assert.equal(r.readyForProvider,false);assert.equal(r.executionAvailable,false);assert.equal(r.goalVersion,1);assert.equal(r.messageSequence,2);assert.equal(r.intakeRevision,2);

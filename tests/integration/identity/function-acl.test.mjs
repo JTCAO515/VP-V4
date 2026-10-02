@@ -93,6 +93,7 @@ const AUTHENTICATED = [
   "public.submit_grounded_turn(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid,text)",
   "public.submit_assistant_message_v1(uuid,uuid,uuid,uuid,text,text,text,uuid,integer,uuid,uuid,uuid)",
   "public.submit_planning_comparison_v1(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,jsonb)",
+  "public.submit_planning_comparison_v2(uuid,uuid,integer,uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,uuid,text,text,jsonb,uuid,bigint,integer,text,jsonb)",
   "public.submit_service_task_turn(uuid,uuid,uuid,uuid,text,text,uuid,integer,text,uuid)",
   "public.submit_text_turn(uuid,uuid,uuid,uuid,text,text)",
   "public.transition_memory_profile(uuid,text)",
