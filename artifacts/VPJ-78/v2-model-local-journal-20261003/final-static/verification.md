@@ -1,0 +1,3 @@
+# Final bounded static handoff
+
+2026-10-03. Source fixed0d949ad96e2bcb46ae712c9507df69812217fb8c after MainNULLdigest review. PASS sourcepolicy lint/docs/mjssyntax/cached diff. No new implementation in this commit. Originalcanonical2/full6/targetNULL2/cascade1 logs retain their exact source boundaries. Mainindependentreview and560 fixedSQLconsumer tests remain separate, not assumedPASS. No broadmatrix repeated, no API/publicgrant/providerorigin/paidpermit/ledgerwrite/worker/completion expansion. Originalbaseline7/7 preserved on6d1bce56. Current registry addition stillMain-coordinated; new060file not silentlytreatedregistered. OwnedPG fixtures andmoduletemps cleaned, dependency symlink removed before handoff.
