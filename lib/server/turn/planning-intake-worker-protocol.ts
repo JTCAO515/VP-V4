@@ -9,6 +9,7 @@ const obj=(v:unknown):v is Row=>!!v&&typeof v==='object'&&!Array.isArray(v);
 const exact=(v:Row,keys:readonly string[])=>Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
 const id=(v:unknown):v is string=>typeof v==='string'&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(v);
 const hash=(v:unknown):v is string=>typeof v==='string'&&/^[a-f0-9]{64}$/.test(v);
+const member=(v:unknown,values:readonly string[]):v is string=>typeof v==='string'&&values.includes(v);
 const int=(v:unknown,min:number,max:number)=>Number.isSafeInteger(v)&&Number(v)>=min&&Number(v)<=max;
 const text=(v:unknown,max:number):v is string=>typeof v==='string'&&v===v.trim()&&v.length>0&&v.length<=max;
 const same=(a:unknown,b:unknown):boolean=>Array.isArray(a)&&Array.isArray(b)?a.length===b.length&&a.every((x,i)=>same(x,b[i])):obj(a)&&obj(b)?Object.keys(a).length===Object.keys(b).length&&Object.keys(a).every(k=>Object.hasOwn(b,k)&&same(a[k],b[k])):Object.is(a,b);
@@ -19,14 +20,14 @@ function memories(v:unknown):boolean{return Array.isArray(v)&&v.length<=3&&v.eve
 function source(v:unknown):v is V2Source{return obj(v)&&exact(v,sourceKeys)&&[v.conversationId,v.goalId,v.messageId].every(id)&&int(v.goalVersion,1,10000)&&int(v.messageSequence,1,1000000)&&int(v.intakeRevision,1,1000)&&memories(v.memoryBasis);}
 function intake(v:unknown):v is Row{
  if(!obj(v)||!exact(v,intakeKeys)||v.schemaVersion!=='stay-area-intake/1'||v.city!=='shanghai'||v.comparisonTarget!=='area_transport'
-  ||v.durationDays!==null&&!int(v.durationDays,1,30)||v.partySize!==null&&!int(v.partySize,1,10)||v.pace!==null&&!['relaxed','balanced','fast'].includes(String(v.pace)))return false;
+  ||v.durationDays!==null&&!int(v.durationDays,1,30)||v.partySize!==null&&!int(v.partySize,1,10)||v.pace!==null&&!member(v.pace,['relaxed','balanced','fast']))return false;
  for(const k of ['interests','mobilityConstraints']){const a=v[k];if(a!==null&&(!Array.isArray(a)||a.length>(k==='interests'?8:6)||new Set(a).size!==a.length||a.some(x=>!text(x,k==='interests'?40:120)||k==='interests'&&!['food','photography','culture','nature'].includes(x))))return false;}
- if(v.lodgingBudget!==null&&(!obj(v.lodgingBudget)||!exact(v.lodgingBudget,['currency','perNightMinorUnits'])||!['CNY','USD','EUR','GBP'].includes(String(v.lodgingBudget.currency))||!int(v.lodgingBudget.perNightMinorUnits,1,10000000)))return false;
+ if(v.lodgingBudget!==null&&(!obj(v.lodgingBudget)||!exact(v.lodgingBudget,['currency','perNightMinorUnits'])||!member(v.lodgingBudget.currency,['CNY','USD','EUR','GBP'])||!int(v.lodgingBudget.perNightMinorUnits,1,10000000)))return false;
  const date=(x:unknown)=>typeof x==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x)&&Number.isFinite(Date.parse(x))&&new Date(x).toISOString().slice(0,10)===x;
- if(v.dates!==null&&(!obj(v.dates)||!exact(v.dates,['startDate','endDate'])||!date(v.dates.startDate)||!date(v.dates.endDate)||String(v.dates.startDate)>String(v.dates.endDate)))return false;
+ if(v.dates!==null&&(!obj(v.dates)||!exact(v.dates,['startDate','endDate'])||!date(v.dates.startDate)||!date(v.dates.endDate)||(v.dates.startDate as string)>(v.dates.endDate as string)||(Date.parse(v.dates.endDate as string)-Date.parse(v.dates.startDate as string))/86400000>30))return false;
  return true;
 }
-export function validPlanningV2Lease(v:unknown):v is V2Lease{return obj(v)&&exact(v,['ownerId','taskId','turnId','leaseToken','artifactId','planningPolicyId','intakeContextDigest','planningContextDigest','source','environment','locale'])&&[v.ownerId,v.taskId,v.turnId,v.leaseToken,v.artifactId,v.planningPolicyId].every(id)&&v.taskId!==v.turnId&&hash(v.intakeContextDigest)&&hash(v.planningContextDigest)&&v.intakeContextDigest!==v.planningContextDigest&&source(v.source)&&['local_synthetic','staging'].includes(String(v.environment))&&['en','zh'].includes(String(v.locale));}
+export function validPlanningV2Lease(v:unknown):v is V2Lease{return obj(v)&&exact(v,['ownerId','taskId','turnId','leaseToken','artifactId','planningPolicyId','intakeContextDigest','planningContextDigest','source','environment','locale'])&&[v.ownerId,v.taskId,v.turnId,v.leaseToken,v.artifactId,v.planningPolicyId].every(id)&&v.taskId!==v.turnId&&hash(v.intakeContextDigest)&&hash(v.planningContextDigest)&&v.intakeContextDigest!==v.planningContextDigest&&source(v.source)&&member(v.environment,['local_synthetic','staging'])&&member(v.locale,['en','zh']);}
 /** Exact SQL qualification data only: false flags never grant dispatch. Lease
  * eligibility is freshly enforced by the trusted read port, not inferred here. */
 export function decodePlanningV2Read(v:unknown,lease:V2Lease):V2Read|null{
@@ -43,8 +44,8 @@ export function decodePlanningV2Read(v:unknown,lease:V2Lease):V2Read|null{
  return v as V2Read;
 }
 function observation(v:unknown,l:V2Lease,now:number):v is Row{
- if(!obj(v)||!exact(v,['schemaVersion','source','observedAt','providerCalls','areas'])||v.schemaVersion!=='planning-place/1'||v.source!==(l.environment==='staging'?'amap':'synthetic_fixture')||!text(v.observedAt,40)||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/.test(v.observedAt)||!Number.isFinite(Date.parse(v.observedAt))||new Date(v.observedAt).toISOString().slice(0,19)!==v.observedAt.slice(0,19)||now-Date.parse(v.observedAt)>300000||Date.parse(v.observedAt)-now>5000||!int(v.providerCalls,0,13)||!Array.isArray(v.areas)||v.areas.length!==2)return false;
- return new Set(v.areas.map(a=>obj(a)?a.id:null)).size===2&&v.areas.every(a=>obj(a)&&exact(a,['id','label','railMinutes','transfers'])&&['jingan','peoples_square'].includes(String(a.id))&&text(a.label,80)&&(a.railMinutes===null||int(a.railMinutes,0,180))&&(a.transfers===null||int(a.transfers,0,5)));
+ if(!Number.isFinite(now)||!obj(v)||!exact(v,['schemaVersion','source','observedAt','providerCalls','areas'])||v.schemaVersion!=='planning-place/1'||v.source!==(l.environment==='staging'?'amap':'synthetic_fixture')||!text(v.observedAt,40)||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/.test(v.observedAt)||!Number.isFinite(Date.parse(v.observedAt))||new Date(v.observedAt).toISOString().slice(0,19)!==v.observedAt.slice(0,19)||now-Date.parse(v.observedAt)>300000||Date.parse(v.observedAt)-now>5000||!int(v.providerCalls,0,13)||!Array.isArray(v.areas)||v.areas.length!==2)return false;
+ return new Set(v.areas.map(a=>obj(a)?a.id:null)).size===2&&v.areas.every(a=>obj(a)&&exact(a,['id','label','railMinutes','transfers'])&&member(a.id,['jingan','peoples_square'])&&text(a.label,80)&&(a.railMinutes===null||int(a.railMinutes,0,180))&&(a.transfers===null||int(a.transfers,0,5)));
 }
 function prepared(v:unknown,r:V2Read,l:V2Lease,place:Row,now:number):v is Row{
  if(!obj(v)||!exact(v,['schemaVersion','request','binding','observation','coverage','content','readyForProvider','readyForPublication'])||v.schemaVersion!=='qualified-intake-comparison-projection/1'||v.readyForProvider!==false||v.readyForPublication!==false||!same(v.request,r.qualifiedIntake.intake)||!obj(v.binding)||!exact(v.binding,[...sourceKeys,'contextDigest'])||v.binding.contextDigest!==l.intakeContextDigest)return false;
@@ -76,15 +77,15 @@ const outcome=(kind:'blocked'|'unknown_effect'|'checkpoint_pending'):V2ProtocolO
 /** One already-owned synthetic lease. No claimer, scheduler, model dispatch,
  * settlement, publication or assumption of real-provider authorization. */
 export async function runPlanningV2LocalProtocol(lease:V2Lease,ports:V2ProtocolPorts,signal:AbortSignal):Promise<V2ProtocolOutcome>{
- if(!validPlanningV2Lease(lease)||ports.mode!=='local_protocol_test'||signal.aborted)return outcome('blocked');
- const fresh=async()=>{if(signal.aborted)throw Error('aborted');const r=decodePlanningV2Read(await ports.read(lease,signal),lease);if(!r||signal.aborted)throw Error('stale qualification');return r;};
+ if(!validPlanningV2Lease(lease)||ports.mode!=='local_protocol_test'||signal.aborted||!Number.isFinite(ports.now()))return outcome('blocked');
+ const fresh=async()=>{if(signal.aborted||!Number.isFinite(ports.now()))throw Error('aborted or invalid clock');const r=decodePlanningV2Read(await ports.read(lease,signal),lease);if(!r||signal.aborted)throw Error('stale qualification');return r;};
  const permit=async()=>{await fresh();const p=await ports.permit(lease,signal);if(!obj(p)||!exact(p,['kind','ownerId','taskId','turnId','leaseToken','intakeContextDigest','planningContextDigest'])||p.kind!=='local_protocol_permit'||['ownerId','taskId','turnId','leaseToken','intakeContextDigest','planningContextDigest'].some(k=>p[k]!== (lease as unknown as Row)[k])||signal.aborted)throw Error('protocol permit unavailable');};
  let read:V2Read;try{read=await fresh();}catch{return outcome('blocked');}
  let snapshot:unknown;try{snapshot=await ports.checkpoints(lease,signal);}catch{return outcome('blocked');}
- if(!obj(snapshot)||!exact(snapshot,['schemaVersion','ownerId','taskId','turnId','intakeContextDigest','planningContextDigest','place','modelAttempt'])||snapshot.schemaVersion!=='planning-v2-checkpoints/1'||['ownerId','taskId','turnId','intakeContextDigest','planningContextDigest'].some(k=>snapshot[k] !== (lease as unknown as Row)[k])||!obj(snapshot.place)||!['none','released','reserved','dispatched','pending','settled'].includes(String(snapshot.modelAttempt)))return outcome('blocked');
- if(['missing','started','unknown'].includes(String(snapshot.place.state))&&!exact(snapshot.place,['state']))return outcome('blocked');
- if(['dispatched','pending'].includes(String(snapshot.modelAttempt))||['started','unknown'].includes(String(snapshot.place.state)))return outcome('unknown_effect');
- if(['reserved','settled'].includes(String(snapshot.modelAttempt)))return outcome('blocked');
+ if(!obj(snapshot)||!exact(snapshot,['schemaVersion','ownerId','taskId','turnId','intakeContextDigest','planningContextDigest','place','modelAttempt'])||snapshot.schemaVersion!=='planning-v2-checkpoints/1'||['ownerId','taskId','turnId','intakeContextDigest','planningContextDigest'].some(k=>snapshot[k] !== (lease as unknown as Row)[k])||!obj(snapshot.place)||!member(snapshot.modelAttempt,['none','released','reserved','dispatched','pending','settled'])||!member(snapshot.place.state,['missing','started','unknown','completed']))return outcome('blocked');
+ if(member(snapshot.place.state,['missing','started','unknown'])&&!exact(snapshot.place,['state']))return outcome('blocked');
+ if(member(snapshot.modelAttempt,['dispatched','pending'])||member(snapshot.place.state,['started','unknown']))return outcome('unknown_effect');
+ if(member(snapshot.modelAttempt,['reserved','settled']))return outcome('blocked');
  let place:Row;
  if(snapshot.place.state==='completed'){
   if(!exact(snapshot.place,['state','observation'])||!observation(snapshot.place.observation,lease,ports.now()))return outcome('blocked');place=snapshot.place.observation;

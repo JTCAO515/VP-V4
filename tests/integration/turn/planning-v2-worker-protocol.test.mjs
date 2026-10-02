@@ -30,7 +30,7 @@ const read=l=>db(`select turn_private.read_planning_qualified_intake_v1('${l.own
 const keys=l=>`owner_id='${l.ownerId}' and task_id='${l.taskId}' and turn_id='${l.turnId}' and intake_digest='${l.intakeContextDigest}' and planning_digest='${l.planningContextDigest}'`;
 function ports(a){const l=a.lease;return {mode:'local_protocol_test',read:()=>read(l),now:()=>Date.now(),checkpoints:async()=>{
  const place=JSON.parse(await db(`select case when state='completed' then jsonb_build_object('state',state,'observation',observation) else jsonb_build_object('state',state) end from protocol_fixture.steps where ${keys(l)};`));
- const attempt=await db(`select coalesce((select status from public.model_budget_attempts where task_id='${l.taskId}' order by case status when 'pending' then 0 when 'dispatched' then 1 when 'reserved' then 2 when 'settled' then 3 else 4 end limit 1),'none');`);
+ const attempt=await db(`select coalesce((select a.status from public.model_budget_attempts a join public.model_budget_scopes s on s.id=a.scope_id where a.task_id='${l.taskId}' and s.owner_id='${l.ownerId}' order by case a.status when 'pending' then 0 when 'dispatched' then 1 when 'reserved' then 2 when 'settled' then 3 else 4 end limit 1),'none');`);
  return {schemaVersion:'planning-v2-checkpoints/1',ownerId:l.ownerId,taskId:l.taskId,turnId:l.turnId,intakeContextDigest:l.intakeContextDigest,planningContextDigest:l.planningContextDigest,place,modelAttempt:attempt};},
  permit:async()=>({kind:'local_protocol_permit',ownerId:l.ownerId,taskId:l.taskId,turnId:l.turnId,leaseToken:l.leaseToken,intakeContextDigest:l.intakeContextDigest,planningContextDigest:l.planningContextDigest}),
  claimPlace:async()=>await db(`update protocol_fixture.steps set state='started' where ${keys(l)} and state='missing' returning state;`)==='started'?'claimed':'unknown',
@@ -95,4 +95,15 @@ run('released later attempt cannot hide an earlier unresolved effect',async()=>{
  const a=await owner(),l=a.lease,scope=uuid(),before=mapCalls;
  await db(`insert into public.model_budget_scopes(id,owner_id,currency,limit_micros,task_limit_micros,task_attempt_limit,concurrency_limit,enabled,expires_at) values('${scope}','${a.ownerId}','CNY',100000,10000,4,1,true,now()+interval '1 day');insert into public.model_budget_provider_limits(scope_id,provider,model,price_version,limit_micros,attempt_limit_micros,enabled) values('${scope}','qwen','qwen3.7-plus-2026-05-26','synthetic-protocol',100000,1000,true);insert into public.model_budget_attempts(scope_id,attempt_id,task_id,provider,model,price_version,reserved_micros,status) values('${scope}','${uuid()}','${l.taskId}','qwen','qwen3.7-plus-2026-05-26','synthetic-protocol',1000,'pending'),('${scope}','${uuid()}','${l.taskId}','qwen','qwen3.7-plus-2026-05-26','synthetic-protocol',1000,'released');`);
  assert.equal((await runPlanningV2LocalProtocol(l,ports(a),new AbortController().signal)).kind,'unknown_effect');assert.equal(mapCalls,before);assert.equal(await db(`select count(*) from public.model_budget_attempts where task_id='${l.taskId}';`),'2');
+});
+run('malformed scalar enums, dates beyond frozen bound and invalid clock fail before requests',async()=>{
+ const a=await owner(),l=a.lease,raw=await read(l),before=mapCalls;
+ for(const patch of [{environment:['staging']},{locale:['en']}]){const bad={...l,...patch};assert.equal(decodePlanningV2Read(raw,bad),null);assert.equal((await runPlanningV2LocalProtocol(bad,ports(a),new AbortController().signal)).kind,'blocked');}
+ for(const change of [{pace:['relaxed']},{lodgingBudget:{currency:['USD'],perNightMinorUnits:50000}},{dates:{startDate:'2026-01-01',endDate:'2026-02-01'}}]){
+  const malformed={...raw,qualifiedIntake:{...raw.qualifiedIntake,intake:{...raw.qualifiedIntake.intake,...change}}};assert.equal(decodePlanningV2Read(malformed,l),null);
+  const p=ports(a);p.read=async()=>malformed;assert.equal((await runPlanningV2LocalProtocol(l,p,new AbortController().signal)).kind,'blocked');
+ }
+ for(const now of [NaN,Infinity,-Infinity]){const p=ports(a);p.now=()=>now;assert.equal((await runPlanningV2LocalProtocol(l,p,new AbortController().signal)).kind,'blocked');}
+ for(const fields of [{modelAttempt:['none']},{place:{state:['missing']}}]){const p=ports(a),original=p.checkpoints;p.checkpoints=async()=>({...await original(l),...fields});assert.equal((await runPlanningV2LocalProtocol(l,p,new AbortController().signal)).kind,'blocked');}
+ assert.equal(mapCalls,before);assert.equal(await db(`select state from protocol_fixture.steps where turn_id='${l.turnId}';`),'missing');
 });
