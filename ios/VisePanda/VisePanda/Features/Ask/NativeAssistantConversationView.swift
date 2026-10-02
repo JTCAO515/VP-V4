@@ -499,7 +499,7 @@ struct NativeAssistantConversationView: View {
     }
     private var goalHasCurrentMessage: Bool {
         guard let goal else { return false }
-        return conversation?.messages.contains(where: { $0.goalId == goal.goalId && $0.scopeVersion == goal.scopeVersion }) == true
+        return AssistantPlanningEligibility.parent(for: goal, messages: conversation?.messages ?? []) != nil
     }
     private var actions: [String] { goal == nil || goal?.scopeVersion == 10001 || !goalHasCurrentMessage ? ["independent_question", "goal_start"] : ["independent_question", "goal_start", "follow_up", "amendment"] }
     private var waitingKey: String {
@@ -545,7 +545,7 @@ struct NativeAssistantConversationView: View {
                             .frame(maxWidth: .infinity, alignment: .leading).padding(14)
                             .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
                         }
-                        if let goal, goal.scopeVersion < 10001 { planningControls(goal) }
+                        if let goal, goal.scopeVersion < 10001 || planningPending != nil { planningControls(goal) }
                         if !taskMessages.isEmpty || taskNotice != nil || taskNextCursor != nil || taskPageCursor != nil || conversation?.messages.contains(where: { $0.taskId != nil }) == true { taskList }
                         TimelineView(.periodic(from: .now, by: 1)) { _ in
                             if let selectedResult, let selectedTaskID, selectedResult.belongs(to: selectedTaskID),
@@ -874,14 +874,24 @@ struct NativeAssistantConversationView: View {
                     Text(chinese ? "当前目标已关联行程；此版后台比较仅支持未关联行程的目标。" : "This goal is linked to a Trip. Background comparison currently supports goals without a Trip link.")
                         .font(.footnote)
                 } else if planningPolicy.consentState == "accepted" {
-                    TextField(chinese ? "要比较什么？" : "What should VP compare?", text: $planningDraft, axis: .vertical)
-                        .lineLimit(2...5).accessibilityIdentifier("assistant.planning.composer")
-                    Button(planningPending == nil ? (chinese ? "开始后台比较" : "Start background comparison")
-                           : (chinese ? "重试同一次委托" : "Retry the same request")) {
-                        Task { await delegateComparison(currentGoal) }
+                    let eligibility = AssistantPlanningEligibility.evaluate(goal: currentGoal,
+                        messages: conversation?.messages ?? [], hasPending: planningPending != nil)
+                    if eligibility == .missingParent {
+                        Text(chinese ? "当前消息页中没有此目标版本的消息，暂无法创建后台比较。" : "This message page has no message for this goal version. Background comparison cannot be started.")
+                            .font(.footnote).accessibilityIdentifier("assistant.planning.missingParent")
+                    } else if eligibility == .terminal {
+                        Text(chinese ? "此目标版本已结束，无法创建后台比较。" : "This goal version has ended. Background comparison cannot be started.")
+                            .font(.footnote)
+                    } else {
+                        TextField(chinese ? "要比较什么？" : "What should VP compare?", text: $planningDraft, axis: .vertical)
+                            .lineLimit(2...5).accessibilityIdentifier("assistant.planning.composer")
+                        Button(planningPending == nil ? (chinese ? "开始后台比较" : "Start background comparison")
+                               : (chinese ? "重试同一次委托" : "Retry the same request")) {
+                            Task { await delegateComparison(currentGoal) }
+                        }
+                        .disabled(planningBusy || (planningPending == nil && planningDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
+                        .accessibilityIdentifier("assistant.planning.send")
                     }
-                    .disabled(planningBusy || (planningPending == nil && planningDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty))
-                    .accessibilityIdentifier("assistant.planning.send")
                 } else if planningPolicy.consentState == "not_accepted" {
                     Text(chinese ? (planningPolicy.noticeZh ?? "") : (planningPolicy.noticeEn ?? ""))
                         .font(.footnote)
@@ -1419,12 +1429,15 @@ struct NativeAssistantConversationView: View {
               let initial = session.dataScope, let conversationID = conversation?.conversationId,
               let planningPolicy, planningPolicy.consentState == "accepted",
               let policyID = planningPolicy.policyId else { return }
+        let eligibility = AssistantPlanningEligibility.evaluate(goal: currentGoal,
+            messages: conversation?.messages ?? [], hasPending: planningPending != nil)
+        guard eligibility == .create || eligibility == .retry else { return }
         let request: AssistantPlanningSubmission
         if let planningPending { request = planningPending }
         else {
             let input = planningDraft.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !input.isEmpty, input.utf16.count <= 4000,
-                  let parent = conversation?.messages.last(where: { $0.goalId == currentGoal.goalId && $0.scopeVersion == currentGoal.scopeVersion })
+                  let parent = AssistantPlanningEligibility.parent(for: currentGoal, messages: conversation?.messages ?? [])
             else { return }
             request = AssistantPlanningSubmission(conversationId: conversationID, goalId: currentGoal.goalId,
                 expectedGoalVersion: currentGoal.scopeVersion, parentMessageId: parent.messageId,
@@ -1522,5 +1535,20 @@ private struct AssistantGoalTripAccepted: Decodable {
 enum AssistantShellSwitchGate {
     static func blocked(busy: Bool, intakePending: Bool, planningPending: Bool, tripPending: Bool) -> Bool {
         busy || intakePending || planningPending || tripPending
+    }
+}
+
+// Retry preserves the admitted immutable request even when its parent leaves the recent page.
+enum AssistantPlanningEligibility: Equatable {
+    case create, retry, missingParent, terminal
+
+    static func parent(for goal: AssistantGoal, messages: [AssistantMessage]) -> AssistantMessage? {
+        messages.last { $0.goalId == goal.goalId && $0.scopeVersion == goal.scopeVersion }
+    }
+
+    static func evaluate(goal: AssistantGoal, messages: [AssistantMessage], hasPending: Bool) -> Self {
+        if hasPending { return .retry }
+        guard goal.scopeVersion < 10001 else { return .terminal }
+        return parent(for: goal, messages: messages) == nil ? .missingParent : .create
     }
 }

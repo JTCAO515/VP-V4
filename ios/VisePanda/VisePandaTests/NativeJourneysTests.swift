@@ -6,6 +6,27 @@ nonisolated final class NativeJourneysTests: XCTestCase {
     private let goal = "20000000-0000-4000-8000-000000000001"
     private let trip = "30000000-0000-4000-8000-000000000001"
     private var scope: NativeDataScope { .init(endpoint: "http://127.0.0.1", subject: "owner", mobileEpoch: 1, generation: 1) }
+    @MainActor
+    func testPlanningEligibilityRequiresExactCurrentParentAndPreservesImmutableRetry() {
+        let selected = AssistantGoal(goalId: goal, scopeVersion: 7, text: "Older goal")
+        func message(_ id: String, _ version: Int) -> AssistantMessage {
+            AssistantMessage(messageId: trip, sequence: 1, locale: "en", text: "Input",
+                relationship: "goal_start", goalId: id, scopeVersion: version, taskId: nil,
+                parentMessageId: nil, turnId: nil, status: "recorded", outcome: nil, output: nil)
+        }
+        let otherGoal = "20000000-0000-4000-8000-000000000002"
+        let unrelated = [message(goal, 6), message(otherGoal, 7)]
+        XCTAssertEqual(AssistantPlanningEligibility.evaluate(goal: selected, messages: [], hasPending: false), .missingParent)
+        XCTAssertEqual(AssistantPlanningEligibility.evaluate(goal: selected, messages: unrelated, hasPending: false), .missingParent)
+        let current = unrelated + [message(goal, 7)]
+        XCTAssertEqual(AssistantPlanningEligibility.evaluate(goal: selected, messages: current, hasPending: false), .create)
+        XCTAssertEqual(AssistantPlanningEligibility.parent(for: selected, messages: current)?.scopeVersion, 7)
+        XCTAssertEqual(AssistantPlanningEligibility.evaluate(goal: selected, messages: unrelated, hasPending: true), .retry)
+        let terminal = AssistantGoal(goalId: goal, scopeVersion: 10001, text: "Ended")
+        XCTAssertEqual(AssistantPlanningEligibility.evaluate(goal: terminal, messages: [message(goal, 10001)], hasPending: false), .terminal)
+        XCTAssertEqual(AssistantPlanningEligibility.evaluate(goal: terminal, messages: [], hasPending: true), .retry)
+    }
+
     private func data(_ value: Any) throws -> Data { try JSONSerialization.data(withJSONObject: value) }
     private func policy(_ state: String = "accepted") throws -> Data {
         try data(["version":5,"kind":"policy","policy":["id":conversation,"provider":"qwen","recipient":"test","sourceRegion":"test","processingRegion":"test","storageRegion":"test","termsVersion":"test","noticeVersion":"test","noticeHash":String(repeating:"a",count:64),"noticeZh":"test","noticeEn":"test","retention":"retain_after_hide_v1","expiresAt":"2099-01-01","consentState":state]])
