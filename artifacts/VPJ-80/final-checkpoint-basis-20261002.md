@@ -1,0 +1,13 @@
+# Final-checkpoint basis guard — frozen closeout
+
+Base `f916bdc32fa7ba3bbb00e8dfaabc19c88cd7d2c1`; branch `codex/vpj80-stay-comparison-producer-20261002`. #603 branch/evidence retained. Main relayed JT's pause on new work; this closeout contains only the already reproduced guard repair, regression and three seam proposals. No intake/continuation/publisher SQL or new adapter was implemented.
+
+Observed FAIL on base: actual hosted CLI against migrated disposable PostgreSQL, synthetic Qwen/AMap protocol servers. Hold the response after SQL commits the third/final tool observation; ordinary-auth amendment changes current goal version 1→2; release the old response. Old worker emits zero Qwen requests and publishes no artifact, but creates one model budget attempt. Assertion `1 !== 0` proves the unnecessary stale-basis attempt/hold. Known map checkpoint already contains 13 calls; those completed observations are not repeated.
+
+Repair: re-use `authorize_planning_read_v1` with exact Turn/lease/context digest and the existing hosted exact scope/stop qualification after the final tool checkpoint, before creating a model budget attempt. Error/denial/abort pauses under the original lease. Existing dispatch/publication guards remain necessary because change can still race after this read; no atomic cost guarantee or unknown-hold release is claimed.
+
+Focused regression PASS after repair: 13 completed map calls, zero Qwen calls, zero model attempts, zero artifact; a new process completes a worker cycle without replay. PASS: existing hosted planning and direct planning integration 9/9, typecheck, lint (444 files), docs and diff checks. Applicable current-head CI is recorded in the PR. No broader new validation batch or real target run.
+
+Three candidate writer seams are in `docs/contracts/vpj80-stay-area-producer-seams.md`: authoritative intake/readiness, comparison/1 publisher projection, ordinary-auth same-Task continuation. They remain proposals and UNRUN. Actual source facts support transport-first screening only; food/photo/noise/safety/prices/inventory remain unknown. Budget missing alone does not block a transport comparison. No Shanghai product default or keyword-persisted intake is proposed. Current goal amendment replacement and initial admission's new-Task semantics are not changed.
+
+UNRUN: real provider/tool, target migrations/deployment/credentials/fees, complete personalized stay comparison, same-Task correction/continuation, native cross-tab/relaunch and JT acceptance. Full producer flow remains incomplete; #561 remains OPEN. Independent ports use loopback listen(0) OS leases and network-none local PostgreSQL; teardown releases only these resources. Stop after this frozen closeout until JT explicitly resumes.

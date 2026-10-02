@@ -27,7 +27,7 @@ const service=call('service_role'),notice='a'.repeat(64),workers=new Set(),rpcLo
 const waitFor=async(predicate,label,ms=30000)=>{const end=Date.now()+ms;for(;;){if(await predicate())return;if(Date.now()>end)throw Error('Timed out: '+label);await new Promise(r=>setTimeout(r,100));}};
 let gateway,model,maps,dir,created=false,mapCalls=0,modelCalls=0,holdAuthTurn=null,authHeld=false,holdModel=false,holdPauseTurn=null,pauseHeld=false;
 const readCounts=new Map(),heldResponses=new Set(),targetChecks=[];
-let afterMapRequest=null,mapHookAt=0;
+let afterMapRequest=null,mapHookAt=0,holdConstraintTurn=null,constraintHeld=false;
 const setSwitch=enabled=>service('set_hosted_worker_enabled',{p_enabled:enabled,p_reason:'synthetic integration'});
 const profile=(a,patch={})=>({schemaVersion:'vpj07-hosted-text-worker/2',pollIntervalMs:1000,maxLifetimeMs:600000,drainMs:1000,concurrency:2,groupLimit:10,
  modes:['current_input_v1','task_history_v1','knowledge_intent_v1'],planning:{ownerId:a.owner,planningPolicyId:a.planningPolicy,scopeId:a.scope},
@@ -104,6 +104,8 @@ before(async()=>{
    const count=(readCounts.get(params.p_turn_id)??0)+1;readCounts.set(params.p_turn_id,count);
    if(params.p_turn_id===holdAuthTurn&&count===16){authHeld=true;heldResponses.add(reply);return;}
   }
+  if(name==='complete_planning_observation_v1'&&params.p_turn_id===holdConstraintTurn
+    &&await db(`select count(*) from turn_private.planning_observations where turn_id='${params.p_turn_id}';`)==='3'){constraintHeld=true;heldResponses.add(reply);return;}
   if(name==='pause_planning_comparison_v1'&&params.p_turn_id===holdPauseTurn){pauseHeld=true;heldResponses.add(reply);return;}
   reply();
  });gateway.listen(0,'127.0.0.1');await once(gateway,'listening');
@@ -198,6 +200,23 @@ run('each map request stops after current claimed task loses authorization',asyn
   assert.equal(await db(`select count(*) from public.model_budget_attempts where task_id='${a.task.id}';`),'0');
   assert.equal(await db(`select count(*) from turn_private.result_artifacts where id='${a.accepted.artifactId}';`),'0');
  }
+});
+
+run('correction after the final tool checkpoint stops before a new model budget attempt',async()=>{
+ const a=await owner('corrected current basis'),before={maps:mapCalls,model:modelCalls};await setSwitch(true);
+ holdConstraintTurn=a.task.turn;constraintHeld=false;const w=start(a);
+ await waitFor(()=>constraintHeld,'final tool checkpoint response');
+ const correction=await a.user('submit_assistant_message_v1',{p_conversation_id:a.conversation,p_message_id:uuid(),p_idempotency_key:uuid(),
+  p_policy_id:a.policy,p_locale:'en',p_text:'First China visit, ten days with my partner. Food and photography, relaxed pace. Shanghai stay-area comparison; budget is not yet specified.',
+  p_relationship:'amendment',p_goal_id:a.goal,p_expected_goal_version:1,p_task_id:null,p_parent_message_id:a.task.message,p_turn_id:null});
+ assert.equal(correction.kind,'accepted');assert.equal(correction.scopeVersion,2);
+ holdConstraintTurn=null;for(const reply of heldResponses)reply();heldResponses.clear();
+ await waitFor(()=>w.journal().includes('"phase":"cycle"'),'corrected basis cycle');await w.stop();
+ assert.equal(mapCalls-before.maps,13,'known complete map checkpoint preserved');assert.equal(modelCalls-before.model,0);
+ assert.equal(await db(`select count(*) from public.model_budget_attempts where task_id='${a.task.id}';`),'0','stale basis must not consume a new model attempt or hold');
+ assert.equal(await db(`select count(*) from turn_private.result_artifacts where id='${a.accepted.artifactId}';`),'0');
+ const restarted=start(a);await waitFor(()=>restarted.journal().includes('"phase":"cycle"'),'corrected basis restart');await restarted.stop();
+ assert.equal(mapCalls-before.maps,13);assert.equal(modelCalls-before.model,0);
 });
 
 run('SIGKILL after persisted place checkpoint resumes in new competing processes without repeated maps or model',async()=>{
