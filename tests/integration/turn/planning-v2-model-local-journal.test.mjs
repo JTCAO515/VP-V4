@@ -2,11 +2,8 @@
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID as uuid,createHash} from 'node:crypto';
-import {gunzipSync} from 'node:zlib';
-import {tmpdir} from 'node:os';
-import {join,resolve} from 'node:path';
-import {pathToFileURL} from 'node:url';
-import {readFileSync,readdirSync,mkdtempSync,writeFileSync,rmSync} from 'node:fs';
+import {readFileSync,readdirSync} from 'node:fs';
+import {createPlanningV2ModelOutputReceipt as create} from '../../../lib/server/turn/planning-v2-model-output-receipt.ts';
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj78-journal-'+uuid().slice(0,8);
 
@@ -78,7 +75,6 @@ run('real SQL request bytes equal lowercase shared golden hashes and JS Unicode/
 });
 
 run('SQL independently validates closed output and recomputes exact fixed TS digest bytes',async t=>{
- const source=gunzipSync(readFileSync('tests/integration/turn/fixtures/planning-v2-pure-output-9c9c96cc.ts.gz')),folder=mkdtempSync(join(tmpdir(),'journal-pure-'));t.after(()=>rmSync(folder,{recursive:true,force:true}));const file=join(folder,'pure.ts');writeFileSync(file,source.toString().replace('"../model-gateway/budget/usage-receipt.ts"',JSON.stringify(pathToFileURL(resolve('lib/server/model-gateway/budget/usage-receipt.ts')).href)));const {createPlanningV2ModelOutputReceipt:create}=await import(pathToFileURL(file).href);
  const raw={schemaVersion:'planning-v2-model-output/1',binding,output:{highlight:'none'},observedAt:'2026-10-03T00:00:01.000Z',usageReceipt:{schemaVersion:'validated-planning-usage/1',attempt:{scopeId:binding.scope,ownerId:binding.owner,taskId:binding.task,attemptId:binding.attempt,provider:'qwen',model:binding.model,priceVersion:binding.priceVersion,reservedMicros:10,timeoutMs:1000},turnId:binding.turn,policyId:binding.planningPolicy,usage:{inputTokens:12,outputTokens:8,totalTokens:20,cachedInputTokens:null,uncachedInputTokens:null,reasoningTokens:null,cost:'unknown'},actualMicros:0,observedAt:'2026-10-03T00:00:00.000Z'}};
  const w=create(raw,binding);assert.ok(w);const valid=async v=>await db(`select turn_private.validate_planning_v2_output_v1(${lit(v)}::jsonb,${lit(binding)}::jsonb);`)==='t';assert.equal(await valid(w),true);
  for(const v of [{...w,output:{highlight:'jingan'}},{...w,usageReceipt:{...w.usageReceipt,actualMicros:1}},{...w,usageDigest:'0'.repeat(64)},{...w,binding:{...binding,owner:'ABCDEFAB-0000-0000-0000-000000000001'}},{...w,extra:true}])assert.equal(await valid(v),false);
@@ -94,10 +90,8 @@ const local=(x,kind)=>({schemaVersion:'planning-v2-local-observation/1',source:'
 const send=(x,m,rev=1)=>rpcJournal('record_planning_v2_send_ack_v1',x,[x.id,x.request.requestDigest,rev,m]);
 const response=(x,m,w,rev=2)=>rpcJournal('record_planning_v2_response_v1',x,[x.id,x.request.requestDigest,rev,m,w]);
 const uncertain=(x,rev,reason='timeout')=>rpcJournal('unknown_planning_v2_request_v1',x,[x.id,x.request.requestDigest,rev,reason]);
-let outputModule;
 async function output(x,micros=0,highlight='none'){
- if(!outputModule){const source=gunzipSync(readFileSync('tests/integration/turn/fixtures/planning-v2-pure-output-9c9c96cc.ts.gz'));const folder=mkdtempSync(join(tmpdir(),'journal-output-'));const file=join(folder,'pure.ts');writeFileSync(file,source.toString().replace('"../model-gateway/budget/usage-receipt.ts"',JSON.stringify(pathToFileURL(resolve('lib/server/model-gateway/budget/usage-receipt.ts')).href)));outputModule=await import(pathToFileURL(file).href);rmSync(folder,{recursive:true,force:true});}
- const t=jt(x),now=new Date().toISOString(),r=outputModule.createPlanningV2ModelOutputReceipt({schemaVersion:'planning-v2-model-output/1',binding:t,output:{highlight},observedAt:now,usageReceipt:{schemaVersion:'validated-planning-usage/1',attempt:{scopeId:t.scope,ownerId:t.owner,taskId:t.task,attemptId:t.attempt,provider:t.provider,model:t.model,priceVersion:t.priceVersion,reservedMicros:10,timeoutMs:1000},turnId:t.turn,policyId:t.planningPolicy,usage:{inputTokens:12,outputTokens:8,totalTokens:20,cachedInputTokens:null,uncachedInputTokens:null,reasoningTokens:null,cost:'unknown'},actualMicros:micros,observedAt:now}},t);assert.ok(r);return r;
+ const t=jt(x),now=new Date().toISOString(),r=create({schemaVersion:'planning-v2-model-output/1',binding:t,output:{highlight},observedAt:now,usageReceipt:{schemaVersion:'validated-planning-usage/1',attempt:{scopeId:t.scope,ownerId:t.owner,taskId:t.task,attemptId:t.attempt,provider:t.provider,model:t.model,priceVersion:t.priceVersion,reservedMicros:10,timeoutMs:1000},turnId:t.turn,policyId:t.planningPolicy,usage:{inputTokens:12,outputTokens:8,totalTokens:20,cachedInputTokens:null,uncachedInputTokens:null,reasoningTokens:null,cost:'unknown'},actualMicros:micros,observedAt:now}},t);assert.ok(r);return r;
 }
 function closed(r,keys){assert.equal(Object.keys(r).length,keys);assert.equal(r.providerOriginVerified,false);assert.equal(r.executionAvailable,false);assert.equal(r.readyForPublication,false);assert.equal(r.reconciliationRequired,true);for(const k of ['intentRecordedAt','sendAckRecordedAt','responseRecordedAt','unknownAt'])if(r[k]!==null)assert.match(r[k],/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/);}
 run('real journal phases, no raw prompt storage, exact loss-ack readback and closed UTCms wire',async()=>{

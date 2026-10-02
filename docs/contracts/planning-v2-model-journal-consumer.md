@@ -25,3 +25,8 @@ A separate defect reproduction showsMain'sNULLdigestbypass in e039:SQLvalidatorN
 ## Fixed rejection difference
 
 Unmerged0d949ad96e2bcb46ae712c9507df69812217fb8c actualSQL was testedonlyfortheaffectedNULLdifference:strictfalseforindividual/bothNULLdigests,blockedresponse/closedTSfailure,unchangedjournalfullrow/ledger,actualtriggerexceptionrollback. Target1/1PASS5488ms;legal3groupsarepreciselyreusedafterexactdiffreview. Thissupersedese039'sunsafeNULLadoptionresultonlyonthisfixedsource. Providerorigin/permission/completion/target/fullacceptanceremainoutside this consumer.
+
+
+## Formal current-checkout union
+
+On unionbase fixed627head570bbf0a (unmerged atinitialrun), actualcheckout060000+050000/migrationhistory andnormalTSimports replacedhistoricalprepsources. Threeformaljournal/canonicaltests are registeredinexistingpostgreslane; noGitshow/gzipruntime. Actualregisteredlane30files228/228PASS0skip includesfresh19/20wire+NULLrepaircases; priorpre-reviewevidence remainshistorical. Dependencymerge/review/CI/providerorigin/paidexecution/completion/target/fullparent gates remainseparate.

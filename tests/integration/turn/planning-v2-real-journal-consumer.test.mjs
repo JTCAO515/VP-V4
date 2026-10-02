@@ -1,14 +1,14 @@
-// Actual base migrations plus fixed pre-review fixed0d949 journal SQL. Synthetic actor/ledger only.
-import {createPlanningV2ModelRequest as createRequest} from '../../lib/server/turn/planning-v2-model-request.ts';
-import {createPlanningV2ModelOutputReceipt as createOutput} from '../../lib/server/turn/planning-v2-model-output-receipt.ts';
-import {parsePlanningV2ModelJournalRead as parseRead,parsePlanningV2ModelJournalWrite as parseWrite} from '../../lib/server/turn/planning-v2-model-journal.ts';
-import {PROTOCOL_MODELS} from '../../lib/server/model-gateway/adapters/provider-protocol.ts';
-import {PLANNING_COMPARISON_PROMPT} from '../../lib/server/model-gateway/prompt/planning-comparison.ts';
+// Formal current-checkout migrations and TS modules. Synthetic actor/ledger only.
+import {createPlanningV2ModelRequest as createRequest} from '../../../lib/server/turn/planning-v2-model-request.ts';
+import {createPlanningV2ModelOutputReceipt as createOutput} from '../../../lib/server/turn/planning-v2-model-output-receipt.ts';
+import {parsePlanningV2ModelJournalRead as parseRead,parsePlanningV2ModelJournalWrite as parseWrite} from '../../../lib/server/turn/planning-v2-model-journal.ts';
+import {PROTOCOL_MODELS} from '../../../lib/server/model-gateway/adapters/provider-protocol.ts';
+import {PLANNING_COMPARISON_PROMPT} from '../../../lib/server/model-gateway/prompt/planning-comparison.ts';
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID as uuid} from 'node:crypto';
 import {readFileSync,readdirSync} from 'node:fs';
-import {command,sql} from '../integration/cost/fixtures/postgres-rpc.mjs';
+import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj79-journal-real-'+uuid().slice(0,8);
 const migrationSource='supabase/migrations (current checkout, lexical order)';
 let created=false;
@@ -39,7 +39,6 @@ before(async()=>{
  for(let i=0;i<100;i++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;await new Promise(r=>setTimeout(r,100));}
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
  for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
- for(const file of ['20261003050000_vpj78_v2_model_attempt_binding.sql','20261003060000_vpj78_v2_model_local_journal.sql']){const fixed=await command('git',['show','0d949ad96e2bcb46ae712c9507df69812217fb8c:supabase/migrations/'+file]);assert.equal(fixed.code,0,fixed.stderr);await db('begin;'+fixed.stdout+'commit;');}
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 const run=(name,fn)=>test(name,{skip:!enabled,timeout:120000},fn);
@@ -78,7 +77,7 @@ run('real intent/send/response commits survive discarded write acknowledgments w
  assert.deepEqual(await journal(x,{...w,outputDigest:'f'.repeat(64)}),{kind:'conflict'});
  assert.equal(await db(`select count(*) from turn_private.planning_v2_model_local_journal where request_id='${x.request.requestId}';`),'1');
  assert.equal(await db(`select count(*) from turn_private.result_artifacts where id='${x.r.artifactId}';`),'0');
- t.diagnostic(JSON.stringify({source:'0d949ad96e2bcb46ae712c9507df69812217fb8c',discardedWriteACK:'controlled fixture',readKeys:Object.keys(result).length,revision:result.revision,providerSends:sends,providerOriginVerified:false}));
+ t.diagnostic(JSON.stringify({source:'all current-checkout migrations',discardedWriteACK:'controlled fixture',readKeys:Object.keys(result).length,revision:result.revision,providerSends:sends,providerOriginVerified:false}));
 });
 run('real SQL server timestamp truncation preserves internal microseconds and nullable phase fields for TS decoder',async()=>{
  const x=await fixture();await intent(x);
