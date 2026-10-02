@@ -86,6 +86,7 @@ export const LANES = {
         ],
       },
       { name: "journeys-pages", env: { VP_TURN_DB_TEST: "1" }, files: ["tests/integration/turn/journeys-pages.test.mjs"] },
+      { name: "journeys-goal-index", env: { VP_TURN_DB_TEST: "1" }, files: ["tests/integration/turn/journeys-goal-index.test.mjs"] },
     ],
   },
   // Native (non-Docker) PostgreSQL binaries + the `pg` client module, supplied by the caller.
@@ -133,6 +134,7 @@ export const LANES = {
       { name: "native-assistant-rollback", runner: node("tests/integration/turn/run-native-http.mjs", "--assistant-rollback"), files: ["tests/integration/turn/assistant-rollback.test.mjs", "tests/integration/turn/assistant-task-activity.test.mjs"] },
       { name: "native-planning-http", runner: node("tests/integration/turn/run-native-http.mjs", "--planning"), files: ["tests/integration/turn/native-planning-http.test.mjs"] },
       { name: "native-grounded-http", runner: node("tests/integration/turn/run-native-http.mjs", "--grounded"), files: ["tests/integration/turn/native-grounded-http.test.mjs"] },
+      { name: "journeys-goal-index-http", runner: node("tests/integration/turn/run-journeys-goal-index-http.mjs"), files: ["tests/integration/turn/journeys-goal-index-http.test.mjs"] },
     ],
   },
   "supabase-http-ops": {

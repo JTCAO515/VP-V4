@@ -32,7 +32,7 @@ test('real Auth/HTTP cross-conversation goal pages, actor/session/consent change
  assert.equal((await call(index+'?owner='+e.users[1].id,owner)).status,400);assert.equal((await call(index,undefined)).status,401);
  assert.equal((await call(base+'/conversation',owner,'POST',{...root,messageId:uuid(),idempotencyKey:uuid(),relationship:'amendment',expectedGoalVersion:1,parentMessageId:root.messageId,text:'Corrected old goal'})).status,201);
  assert.equal((await call(index+'/'+first.body.nextCursor,owner)).status,403);
- first=await call(index,owner);e.sql(`delete from turn_private.assistant_goals where id='${first.body.goals[0].goalId}';`);assert.equal((await call(index+'/'+first.body.nextCursor,owner)).status,403);
+ first=await call(index,owner);const deletable=first.body.goals.find(g=>g.goalId!==root.goalId&&g.goalId!==latest.goalId);assert.ok(deletable);e.sql(`delete from turn_private.assistant_goals where id='${deletable.goalId}';`);assert.equal((await call(index+'/'+first.body.nextCursor,owner)).status,403);
  const replacement=await login(e.users[0]);assert.equal((await call(index,owner)).status,401);assert.equal((await call(index+'/'+first.body.nextCursor,replacement)).status,403);
  assert.equal((await call(base+'/consent',replacement,'DELETE',{policyId:e.policyId})).status,200);
  const withdrawn=await call(index,replacement);assert.equal(withdrawn.status,403);assert.deepEqual(withdrawn.body,{error:{code:'DATA_POLICY_BLOCKED'}});

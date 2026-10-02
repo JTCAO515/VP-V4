@@ -39,7 +39,7 @@ begin
     left join turn_private.assistant_goal_trip_receipts r on r.operation_id=l.operation_id and r.owner_id=u
     left join turn_private.assistant_messages m on m.id=l.source_message_id and m.owner_id=u;
   -- Includes private owner/session/consent identity, all bounded memberships,
-  -- text corrections and live relation inputs. Only the digest leaves SQL.
+  -- text corrections and live relation inputs. These inputs leave SQL only as a digest.
   stamp:=md5(jsonb_build_array(u,auth.jwt()->>'session_id',p_policy_id,consent,conversations,goals,relations)::text);
   return jsonb_build_object('snapshot',stamp,'goals',rows);
 end $$;

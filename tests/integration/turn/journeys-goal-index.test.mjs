@@ -38,7 +38,9 @@ const fixture=async(expired=false)=>{
 test('cross-conversation index includes older goals, has exact references, stable pages and closed payload',{skip:!enabled},async()=>{
  const a=await fixture(),old=uuid();
  await db(`insert into turn_private.assistant_conversations(id,owner_id,policy_id,consent_id,created_at) values('${old}','${a.owner}','${a.policy}','${a.consent}',now()-interval '1 day');
- insert into turn_private.assistant_goals(id,conversation_id,owner_id,current_text) values('${uuid()}','${old}','${a.owner}','Older conversation goal');`);
+ insert into turn_private.assistant_goals(id,conversation_id,owner_id,current_text) values('${uuid()}','${old}','${a.owner}','Older conversation goal');
+ insert into turn_private.assistant_conversations(id,owner_id,policy_id,consent_id) select gen_random_uuid(),'${a.owner}','${a.policy}','${a.consent}' from generate_series(1,20);`);
+ const legacyList=JSON.parse(await db(actor(a,`select public.list_assistant_conversations_v1('${a.policy}');`)));assert.equal(legacyList.conversations.length,20);assert.ok(!legacyList.conversations.some(c=>c.conversationId===old));
  const rows=[];let cursor=null;let stamp;
  do {const p=await read(a,cursor);assert.equal(p.kind,'journeys_goal_index');assert.equal(p.snapshot,stamp??p.snapshot);stamp=p.snapshot;
  assert.deepEqual(Object.keys(p).sort(),['goals','kind','nextCursor','snapshot']);assert.ok(p.goals.length<=20);rows.push(...p.goals);cursor=p.nextCursor;}while(cursor);
@@ -86,7 +88,9 @@ test('Trip head/archive changes invalidate cursor; fresh unknown has no Trip ID;
  const r=await sql(container,actor(a,`select public.set_assistant_goal_trip_link_v1('${uuid()}','${a.conversation}','${goal}',null,10001,2,'link','${trip}',1,true);`));assert.notEqual(r.code,0);
 });
 test('malformed/memberless cursor and direct RPC ACL exclude anon/service and internal helper',{skip:!enabled},async()=>{
- const a=await fixture(),p=await read(a);assert.deepEqual(await read(a,'bad'),{kind:'unavailable'});
+ const a=await fixture(),p=await read(a);
+ for(const role of ['anon','authenticated','service_role']){assert.equal(await db(`select has_function_privilege('${role}','turn_private.journeys_goal_index_snapshot_v1(uuid)','execute');`),'f');assert.equal(await db(`select has_function_privilege('${role}','public.read_journeys_goal_index_v1(uuid,text)','execute');`),role==='authenticated'?'t':'f');}
+ assert.deepEqual(await read(a,'bad'),{kind:'unavailable'});
  const parts=p.nextCursor.split('.');parts[2]=uuid();assert.deepEqual(await read(a,parts.join('.')),{kind:'unavailable'});
  for(const role of ['anon','service_role']){const r=await sql(container,`set role ${role};select public.read_journeys_goal_index_v1('${a.policy}',null);`);assert.notEqual(r.code,0);assert.match(r.stderr,/permission denied/);}
  const r=await sql(container,actor(a,`select turn_private.journeys_goal_index_snapshot_v1('${a.policy}');`));assert.notEqual(r.code,0);assert.match(r.stderr,/permission denied/);

@@ -7,7 +7,8 @@ import { randomUUID } from 'node:crypto';
 import {nativeHTTPOptions,nativeHTTPChildEnv,nativeHTTPSupabaseConfig,assertNativeHTTPPortsFree} from './native-http-ports.mjs';
 const repo=process.cwd();
 if(process.env.VP_NATIVE_HTTP_PORT_BASE===undefined)process.env.VP_NATIVE_HTTP_PORT_BASE='63820';
-const {ports}=nativeHTTPOptions(process.argv.slice(2),process.env);
+const {mode,ports}=nativeHTTPOptions(process.argv.slice(2),process.env);
+if(mode!==undefined)throw new Error('This runner accepts only --port-base');
 await assertNativeHTTPPortsFree(ports);
 if(process.env.DOCKER_HOST||process.env.DOCKER_CONTEXT)throw new Error('Explicit Docker overrides refused');
 const {execFileSync}=await import('node:child_process');
@@ -27,7 +28,7 @@ try{
   const started=await run('supabase',['start','--workdir',target,'-x','realtime,storage-api,imgproxy,mailpit,postgres-meta,studio,edge-runtime,logflare,vector,supavisor']);
   if(started!==0)throw new Error('Disposable native Ask stack failed to start; credential-bearing output suppressed');
   console.log('VP_NATIVE_HTTP_TARGET '+JSON.stringify({project,base:ports.base,supabaseAPI:ports.supabaseAPI,api:ports.api}));
-  exit=await run(process.execPath,['--experimental-strip-types','--test','tests/integration/turn/journeys-goal-index-http.test.mjs'],true,{...process.env,VP_NATIVE_TEXT_INTEGRATION:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',...nativeHTTPChildEnv(ports,target)});
+  exit=await run(process.execPath,['--experimental-strip-types','--test','--test-concurrency=1','tests/integration/identity/function-acl.test.mjs','tests/integration/turn/journeys-goal-index-http.test.mjs'],true,{...process.env,VP_NATIVE_TEXT_INTEGRATION:'true',VISEPANDA_TRIP_PROTOCOL_V2:'true',...nativeHTTPChildEnv(ports,target)});
 }finally{
   const stopped=await run('supabase',['stop','--workdir',target,'--no-backup']);
   if(stopped!==0){console.error('Disposable native Ask cleanup failed for '+project);exit=1;}else {rmSync(target,{recursive:true});console.log('VP_NATIVE_HTTP_CLEANUP '+JSON.stringify({project,result:'PASS'}));}
