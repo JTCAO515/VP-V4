@@ -7,21 +7,22 @@ import { mkdtempSync, mkdirSync, cpSync, readFileSync, writeFileSync, rmSync, ex
 import { tmpdir } from 'node:os';
 import { join, isAbsolute } from 'node:path';
 import assert from 'node:assert/strict';
+import {nativeHTTPPorts,nativeHTTPChildEnv,nativeHTTPSupabaseConfig,assertNativeHTTPPortsFree} from '../turn/native-http-ports.mjs';
 
 const output=process.env.VP_LIBRARY_OUTPUT,device=process.env.VP_LIBRARY_SIMULATOR;
 if(!output||!isAbsolute(output)||existsSync(output)||!device||!/^[-0-9a-f]{36}$/i.test(device))throw Error('Fresh absolute output and Simulator required');
 if(process.env.DOCKER_HOST||process.env.DOCKER_CONTEXT)throw Error('Docker overrides refused');
 const context=execFileSync('docker',['context','show'],{encoding:'utf8'}).trim();
 if(!JSON.parse(execFileSync('docker',['context','inspect',context],{encoding:'utf8'}))[0].Endpoints.docker.Host.startsWith('unix:///'))throw Error('Local Docker required');
-for(const port of [59640,59641,59642,59643,59644,59647,59649,59651,59652])await new Promise((ok,fail)=>{const s=createServer();s.once('error',()=>fail(Error('Disposable port busy')));s.listen(port,'127.0.0.1',()=>s.close(ok));});
+const ports=nativeHTTPPorts(process.env.VP_NATIVE_HTTP_PORT_BASE||63020),proxyPort=ports.base+32;
+await assertNativeHTTPPortsFree(ports);
+for(const port of [proxyPort])await new Promise((ok,fail)=>{const s=createServer();s.once('error',()=>fail(Error('Disposable port busy')));s.listen(port,'127.0.0.1',()=>s.close(ok));});
 mkdirSync(output,{recursive:true});
 const target=mkdtempSync(join(tmpdir(),'vp-library-ui-')),project='vp-native-ask-'+uuid().slice(0,8);
 mkdirSync(join(target,'supabase'));
-let config=readFileSync('supabase/config.toml','utf8').replace(/^project_id\s*=.*$/m,'project_id = "'+project+'"');
-for(const offset of [20,21,22,23,24,27,29])config=config.replaceAll(String(54300+offset),String(59620+offset));
-writeFileSync(join(target,'supabase/config.toml'),config.replace(/(\[db.seed\][\s\S]*?enabled = )true/,'$1false'));
+writeFileSync(join(target,'supabase/config.toml'),nativeHTTPSupabaseConfig(readFileSync('supabase/config.toml','utf8'),project,ports));
 cpSync('supabase/migrations',join(target,'supabase/migrations'),{recursive:true});
-const env={...process.env,DOCKER_CONTEXT:context,VP_IDENTITY_SUPABASE_WORKDIR:target,VP_IDENTITY_SUPABASE_API_URL:'http://127.0.0.1:59641',VP_NATIVE_API_PORT:'59651',VISEPANDA_TRIP_PROTOCOL_V2:'true'};
+const env={...process.env,DOCKER_CONTEXT:context,...nativeHTTPChildEnv(ports,target),VISEPANDA_TRIP_PROTOCOL_V2:'true'};
 Object.assign(process.env,env);
 async function run(command,args,name){
  const log=name?createWriteStream(join(output,name+'.log'),{mode:0o600}):null;
@@ -76,9 +77,9 @@ try{
    if(['/api/auth/native/v2/login','/api/auth/native/v2/profile'].includes(req.url)&&r.ok&&headers.authorization?.startsWith('Bearer '))bearer=headers.authorization.slice(7);
    res.writeHead(r.status,{'Content-Type':'application/json','Cache-Control':'private, no-store'});res.end(Buffer.from(await r.arrayBuffer()));
   }catch{res.writeHead(503);res.end('{"error":{"code":"SYNTHETIC_CONTROL_UNAVAILABLE"}}');}
- });await new Promise(ok=>proxy.listen(59652,'127.0.0.1',ok));
+ });await new Promise(ok=>proxy.listen(proxyPort,'127.0.0.1',ok));
  await run('xcodebuild',['build-for-testing','-project','ios/VisePanda/VisePanda.xcodeproj','-scheme','VisePanda','-destination','platform=iOS Simulator,id='+device,'-derivedDataPath',join(output,'build'),'CODE_SIGNING_ALLOWED=YES','CODE_SIGN_IDENTITY=-'],'build');
- const products=join(output,'build/Build/Products'),profile={VP_LIBRARY_UI_TEST:'1',VP_LIBRARY_API:'http://127.0.0.1:59652',VP_LIBRARY_EMAIL:actor.email,VP_LIBRARY_OLD_TURN:old,VP_LIBRARY_NEWEST_TURN:newest,VP_LIBRARY_CONTROL:'http://127.0.0.1:59652/__library/revoke',VP_LIBRARY_SESSION_PROOF:'http://127.0.0.1:59652/__library/session-proof'};
+ const products=join(output,'build/Build/Products'),profile={VP_LIBRARY_UI_TEST:'1',VP_LIBRARY_API:'http://127.0.0.1:'+proxyPort,VP_LIBRARY_EMAIL:actor.email,VP_LIBRARY_OLD_TURN:old,VP_LIBRARY_NEWEST_TURN:newest,VP_LIBRARY_CONTROL:'http://127.0.0.1:'+proxyPort+'/__library/revoke',VP_LIBRARY_SESSION_PROOF:'http://127.0.0.1:'+proxyPort+'/__library/session-proof'};
  execFileSync('python3',['-c',`import sys,json,plistlib,pathlib
 p=pathlib.Path(sys.argv[1]);files=list(p.glob('*.xctestrun'));assert len(files)==1
 d=plistlib.loads(files[0].read_bytes());d['VisePandaUITests'].setdefault('EnvironmentVariables',{}).update(json.loads(sys.stdin.read()))

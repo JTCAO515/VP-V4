@@ -786,6 +786,68 @@ nonisolated final class NativeKnowledgeTests: XCTestCase {
         XCTAssertEqual(store.state, "unavailable"); XCTAssertNil(store.matches(scope: owner, query: ""))
     }
 
+    @MainActor func testLibraryHistoryQueryFindsBeyondBrowsePageAndPreservesRawBinding() async throws {
+        var now: TimeInterval = 100
+        let store = NativeLibraryPhraseStore(uptime: { now })
+        let raw = " é "
+        let alternate = " e\u{301} "
+        XCTAssertEqual(raw, alternate)
+        func page(query: String?) throws -> Data {
+            var value = try XCTUnwrap(JSONSerialization.jsonObject(with: phraseHistory()) as? [String: Any])
+            var phrases = try XCTUnwrap(value["phrases"] as? [[String: Any]])
+            phrases[0]["original"] = "Café"; phrases[0]["translation"] = "咖啡"; phrases[0]["backTranslation"] = "Café"
+            value["phrases"] = phrases
+            if let query { value["query"] = query }
+            return try JSONSerialization.data(withJSONObject: value)
+        }
+        let policy: NativeTranslationStore.Request = { _, _, _ in self.phrasePolicy() }
+        await store.load(scope: owner, query: raw, currentScope: { self.owner }, request: policy, read: { after, id in
+            XCTAssertNil(after); XCTAssertNil(id); return try page(query: raw)
+        })
+        let matched = try XCTUnwrap(store.searchResults(scope: owner, query: raw)?.first)
+        XCTAssertNil(store.searchResults(scope: owner, query: alternate), "canonically equal strings cannot reuse another raw query")
+        XCTAssertNil(store.searchResults(scope: owner, query: nil))
+        now = 119; XCTAssertEqual(store.searchResults(scope: owner, query: raw)?.count, 1)
+        let reference = try XCTUnwrap(store.reference(matched, scope: owner, query: raw))
+        await store.load(scope: owner, exact: reference, currentScope: { self.owner }, request: policy, read: { after, id in
+            XCTAssertNil(after); XCTAssertEqual(id, matched.id)
+            return try JSONSerialization.data(withJSONObject: ["version": 2, "kind": "translation", "policyId": reference.policyID, "phrase": ["turnId": matched.id, "sourceLocale": matched.sourceLocale, "targetLocale": matched.targetLocale, "original": matched.original, "state": matched.state, "translation": matched.translation!, "backTranslation": matched.backTranslation!]])
+        })
+        XCTAssertEqual(store.opened, matched); XCTAssertTrue(store.isCurrent(owner, query: raw))
+        now = 139; XCTAssertNil(store.searchResults(scope: owner, query: raw), "inspection cannot renew request-start lifetime")
+        await store.load(scope: owner, query: raw, currentScope: { self.owner }, request: policy, read: { _, _ in try page(query: alternate) })
+        XCTAssertEqual(store.state, "unavailable"); XCTAssertNil(store.searchResults(scope: owner, query: raw))
+    }
+
+    @MainActor func testLibraryQueryChangeRejectsLatePageAndWrongQueryCursor() async throws {
+        let store = NativeLibraryPhraseStore(), barrier = KnowledgeReadBarrier()
+        let policy: NativeTranslationStore.Request = { _, _, _ in self.phrasePolicy() }
+        let pending = Task {
+            await store.load(scope: self.owner, query: "old", currentScope: { self.owner }, request: policy, read: { _, _ in await barrier.wait() })
+        }
+        await barrier.awaitStart(); store.clear()
+        var value = try XCTUnwrap(JSONSerialization.jsonObject(with: phraseHistory()) as? [String: Any]); value["query"] = "old"
+        await barrier.finish(try JSONSerialization.data(withJSONObject: value)); await pending.value
+        XCTAssertNil(store.searchResults(scope: owner, query: "new")); XCTAssertNil(store.searchResults(scope: owner, query: "old"))
+        let ids = (0..<20).map { _ in UUID().uuidString.lowercased() }
+        let payload = try JSONSerialization.data(withJSONObject: ["turnId": ids.last!, "query": "old"])
+        let cursor = "q1." + payload.base64EncodedString().replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
+        let rows = ids.map { ["turnId": $0, "sourceLocale": "en", "targetLocale": "zh", "original": "Old", "state": "translated", "translation": "旧", "backTranslation": "Old"] }
+        let data = try JSONSerialization.data(withJSONObject: ["version": 2, "kind": "translations", "policyId": "11111111-1111-4111-8111-111111111111", "query": "old", "phrases": rows, "nextCursor": cursor])
+        await store.load(scope: owner, query: "old", currentScope: { self.owner }, request: policy, read: { _, _ in data })
+        XCTAssertEqual(store.nextCursor, cursor)
+        let second = try JSONSerialization.data(withJSONObject: ["version": 2, "kind": "translations", "policyId": "11111111-1111-4111-8111-111111111111", "query": "old", "phrases": [rows[0]], "nextCursor": NSNull()])
+        await store.load(scope: owner, query: "old", cursor: cursor, currentScope: { self.owner }, request: policy, read: { after, id in
+            XCTAssertEqual(after?.utf8.map { $0 }, cursor.utf8.map { $0 }); XCTAssertNil(id)
+            return second
+        })
+        XCTAssertEqual(store.searchResults(scope: owner, query: "old", cursor: cursor)?.count, 1)
+        XCTAssertNil(store.nextCursor)
+        var calls = 0
+        await store.load(scope: owner, query: "new", cursor: cursor, currentScope: { self.owner }, request: policy, read: { _, _ in calls += 1; return data })
+        XCTAssertEqual(calls, 0); XCTAssertEqual(store.state, "unavailable")
+    }
+
     @MainActor func testTripResultOpensOnlyExactCurrentReference() async throws {
         let tripID = UUID().uuidString.lowercased(), otherTrip = UUID().uuidString.lowercased()
         let artifactID = UUID().uuidString.lowercased(), store = NativeResultStore()

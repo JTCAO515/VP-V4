@@ -1,0 +1,127 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/auth/native/v2/credentials",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/native/v2/login",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/auth/native/v2/profile",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/chat/native/v1/policy",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/chat/native/v1/turns",
+    "status": 200
+  },
+  {
+    "method": "POST",
+    "path": "/api/auth/native/v2/refresh",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/auth/native/v2/profile",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/chat/native/v1/policy",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/chat/native/v1/turns",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/knowledge/native/v1",
+    "status": 503
+  },
+  {
+    "method": "GET",
+    "path": "/api/translate/policy",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/results/native/v1/search",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/translate/history/v2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/translate/policy",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/results/native/v1/search",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/translate/policy",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/translate/history/v2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/translate/policy",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/translate/policy",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/translate/history/v2/turns/8b6b8121-6e4b-4621-b451-f41b1a8ae1a2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/translate/policy",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/translate/policy",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/translate/history/v2",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/translate/policy",
+    "status": 200
+  },
+  {
+    "method": "GET",
+    "path": "/api/translate/policy",
+    "status": 200
+  }
+]

@@ -48,17 +48,20 @@ final class AppShellUITests: XCTestCase {
         verifyOwnedSession()
         XCTAssertTrue(app.tabBars.buttons["Library"].waitForExistence(timeout: 10)); app.tabBars.buttons["Library"].tap()
         let older = app.buttons["library.phrases.older"]
-        XCTAssertTrue(older.waitForExistence(timeout: 30)); reveal(older); older.tap()
+        XCTAssertTrue(older.waitForExistence(timeout: 30))
         let oldID = try XCTUnwrap(env["VP_LIBRARY_OLD_TURN"])
         let old = app.buttons["library.phrase.open." + oldID]
+        XCTAssertFalse(old.exists, "target is beyond the initial browse page")
+        let search = app.textFields["library.search"]
+        reveal(search); search.tap(); search.typeText("old")
         XCTAssertTrue(old.waitForExistence(timeout: 20)); reveal(old)
-        XCTAssertFalse(app.buttons["library.phrase.open." + (try XCTUnwrap(env["VP_LIBRARY_NEWEST_TURN"]))].exists, "second page replaces first")
+        XCTAssertFalse(app.buttons["library.phrase.open." + (try XCTUnwrap(env["VP_LIBRARY_NEWEST_TURN"]))].exists, "query page replaces browse page")
         old.tap()
         let card = app.staticTexts["translation.largeText"]
         XCTAssertTrue(card.waitForExistence(timeout: 15)); XCTAssertEqual(card.label, "旧译50元")
         capture("Library-v2-old-exact-auth-synthetic", app: app)
         app.buttons["Done"].tap()
-        XCTAssertTrue(older.waitForExistence(timeout: 20), "return refreshes first page")
+        XCTAssertTrue(old.waitForExistence(timeout: 20), "return refreshes query first page")
         let control = try XCTUnwrap(URL(string: try XCTUnwrap(env["VP_LIBRARY_CONTROL"])))
         var revoke = URLRequest(url: control); revoke.httpMethod = "POST"
         let revoked = expectation(description: "owned consent revoked")

@@ -1,0 +1,9 @@
+{
+  "scope": "owned disposable Auth/HTTP/SQL and native UI; synthetic terminal output",
+  "translationRows": 26,
+  "ordinaryRows": 21,
+  "olderAbsentFromLegacy20": true,
+  "modelCalls": 0,
+  "ui": "PASS",
+  "consentWithdrawal": true
+}
