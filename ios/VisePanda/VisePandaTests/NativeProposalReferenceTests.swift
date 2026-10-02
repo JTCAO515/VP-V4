@@ -53,6 +53,29 @@ nonisolated final class NativeProposalReferenceTests: XCTestCase {
     }
     private func bytes(_ data: [String: Any]) throws -> Data { try JSONSerialization.data(withJSONObject: ["version": 1, "data": data]) }
 
+    @MainActor func testTripDiscoveryExactUsesSharedDeadlineAndSource() async throws {
+        var now: TimeInterval = 100
+        let store = NativeProposalReferenceStore(uptime: { now })
+        let discovery = try bytes(["kind": "result_reference", "tripId": id, "artifactId": id, "revision": 1])
+        let exact = try bytes(payload())
+        await store.loadTrip(tripID: id, scope: owner, active: true, currentScope: { self.owner }, selectedTrip: { self.id }, discover: { _ in now = 110; return discovery }, read: { _, _ in now = 119; return exact })
+        XCTAssertNotNil(store.visible(scope: owner)); now = 120; XCTAssertNil(store.visible(scope: owner))
+        var mismatch = payload(), source = try XCTUnwrap(mismatch["source"] as? [String: Any])
+        source["tripId"] = UUID().uuidString; mismatch["source"] = source
+        let wrongTrip = try bytes(mismatch)
+        await store.loadTrip(tripID: id, scope: owner, active: true, currentScope: { self.owner }, selectedTrip: { self.id }, discover: { _ in discovery }, read: { _, _ in wrongTrip })
+        XCTAssertNil(store.visible(scope: owner)); XCTAssertEqual(store.state, .unavailable)
+    }
+    @MainActor func testTripDiscoveryCannotOpenAfterSelectionOrAuthorityChanges() async throws {
+        let discovery = try bytes(["kind": "result_reference", "tripId": id, "artifactId": id, "revision": 1])
+        let store = NativeProposalReferenceStore()
+        var selected: String? = id, live: NativeDataScope? = owner, calls = 0
+        await store.loadTrip(tripID: id, scope: owner, active: true, currentScope: { live }, selectedTrip: { selected }, discover: { _ in selected = nil; return discovery }, read: { _, _ in calls += 1; return Data() })
+        XCTAssertEqual(calls, 0); XCTAssertNil(store.visible(scope: owner))
+        selected = id
+        await store.loadTrip(tripID: id, scope: owner, active: true, currentScope: { live }, selectedTrip: { selected }, discover: { _ in live = nil; return discovery }, read: { _, _ in calls += 1; return Data() })
+        XCTAssertEqual(calls, 0); XCTAssertNil(store.visible(scope: owner))
+    }
     @MainActor func testFrozenTripDiscoveryIsClosedAndBindsSelectedTrip() throws {
         let reference: [String: Any] = ["kind": "result_reference", "tripId": id, "artifactId": id, "revision": 1]
         let value = try XCTUnwrap(NativeTripProposalReference.decode(bytes(reference), expectedTripID: id))

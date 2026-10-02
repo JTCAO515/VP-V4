@@ -33,4 +33,30 @@ final class NativeProposalReferenceStore {
             guard generation == own else { return }; record = nil; deadline = 0; state = .unavailable
         }
     }
+    /// Discovery and exact open share one request-start deadline and selected-Trip fence.
+    func loadTrip(tripID: String, scope requested: NativeDataScope?, active: Bool,
+                  currentScope: () -> NativeDataScope?, selectedTrip: () -> String?,
+                  discover: (String) async throws -> Data, read: Read) async {
+        clear()
+        guard active, let requested, currentScope() == requested, selectedTrip() == tripID,
+              UUID(uuidString: tripID) != nil, !Task.isCancelled else { state = .unavailable; return }
+        let own = generation, started = uptime(); scope = requested; state = .loading
+        do {
+            let receipt = try await discover(tripID)
+            guard generation == own, !Task.isCancelled else { return }
+            guard currentScope() == requested, selectedTrip() == tripID, uptime() - started < 20,
+                  let reference = try NativeTripProposalReference.decode(receipt, expectedTripID: tripID)
+            else { throw NativeDataError.invalidResponse }
+            let bytes = try await read(reference.artifactID, reference.revision)
+            guard generation == own, !Task.isCancelled else { return }
+            guard currentScope() == requested, selectedTrip() == tripID, uptime() - started < 20,
+                  let value = try NativeProposalReferenceRecord.decode(bytes),
+                  value.artifactID == reference.artifactID, value.artifactRevision == reference.revision,
+                  value.tripID == reference.tripID else { throw NativeDataError.invalidResponse }
+            record = value; deadline = started + 20; state = .ready
+        } catch {
+            guard generation == own else { return }; record = nil; deadline = 0; state = .unavailable
+        }
+    }
+
 }
