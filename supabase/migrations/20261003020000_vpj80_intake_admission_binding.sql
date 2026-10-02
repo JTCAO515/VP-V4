@@ -241,3 +241,24 @@ create trigger reject_unavailable_intake_completion before update of state on tu
  for each row execute function turn_private.reject_unavailable_intake_completion_v1();
 revoke all on function turn_private.reject_unavailable_intake_completion_v1() from public,anon,authenticated,service_role;
 notify pgrst,'reload schema';
+
+-- Bounded data-rights metadata only. This does not wire a privacy executor or
+-- assert request/snapshot completion; no lease/credential/input body exists.
+create function public.planning_intake_binding_export_owner_v1(p_owner uuid,p_after_turn_id uuid default null,p_limit integer default 100)
+returns jsonb language plpgsql stable security definer set search_path='' as $$
+declare items jsonb;more boolean;last_id uuid;
+begin
+ if (select auth.role()) is distinct from 'service_role' or p_owner is null then raise exception 'FORBIDDEN';end if;
+ if p_limit is null or p_limit not between 1 and 100 then raise exception 'INVALID_INPUT';end if;
+ if p_after_turn_id is not null and not exists(select 1 from turn_private.planning_intake_bindings where owner_id=p_owner and turn_id=p_after_turn_id) then raise exception 'INVALID_EXPORT_CURSOR';end if;
+ with candidates as (select * from turn_private.planning_intake_bindings where owner_id=p_owner and (p_after_turn_id is null or turn_id>p_after_turn_id) order by turn_id limit p_limit+1),
+ delivered as (select * from candidates order by turn_id limit p_limit)
+ select coalesce((select jsonb_agg(jsonb_build_object('turn_id',d.turn_id,'owner_id',d.owner_id,'source_message_id',d.source_message_id,'source_sequence',d.source_sequence,
+  'source_revision',d.source_revision,'source_goal_version',d.source_goal_version,'source_digest',d.source_digest,'message_id',d.message_id,'intake_revision',d.intake_revision,
+  'new_digest',d.new_digest,'request_key',d.request_key,'request_digest',d.request_digest,'created_at',d.created_at) order by d.turn_id) from delivered d),'[]'),
+ (select count(*)>p_limit from candidates),(select turn_id from delivered order by turn_id desc limit 1) into items,more,last_id;
+ return jsonb_build_object('schemaVersion','planning-intake-binding-export/1','items',items,'hasMore',more,'nextCursor',case when more then last_id else null end,'sectionComplete',not more);
+end $$;
+revoke all on function public.planning_intake_binding_export_owner_v1(uuid,uuid,integer) from public,anon,authenticated;
+grant execute on function public.planning_intake_binding_export_owner_v1(uuid,uuid,integer) to service_role;
+notify pgrst,'reload schema';
