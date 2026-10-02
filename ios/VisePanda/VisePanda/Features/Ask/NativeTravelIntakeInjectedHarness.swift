@@ -103,7 +103,7 @@ struct NativeTravelIntakeInjectedHarness: View {
         .sheet(isPresented: $open) {
             NavigationStack {
                 NativeTravelIntakeView(injected: .init(writeBasis: { try fixture.writeMetadata() }, read: { try fixture.read() }, post: { try fixture.post($0) }),
-                    selection: fixture.selection, session: session, chinese: chinese, accepted: { fixture.publishCurrent() }, reviewGoal: { fixture.publishCurrent(); return fixture.selection })
+                    currentSelection: { fixture.selection }, selection: fixture.selection, session: session, chinese: chinese, accepted: { fixture.publishCurrent() }, reviewGoal: { fixture.publishCurrent(); return fixture.selection })
                     .navigationTitle(chinese ? "当前旅行需求（注入验证）" : "Requirements (injected verification)")
                     .toolbar { ToolbarItem(placement: .topBarTrailing) { Button(chinese ? "取消" : "Cancel") { open = false }.accessibilityIdentifier("intake.injected.cancel") } }
             }

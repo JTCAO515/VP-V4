@@ -645,9 +645,10 @@ struct NativeAssistantConversationView: View {
         }
         .sheet(isPresented: $showTravelIntake) {
             NavigationStack {
-                NativeTravelIntakeView(selection: travelIntakeSelection, session: session, chinese: chinese,
+                NativeTravelIntakeView(currentSelection: { travelIntakeSelection }, selection: travelIntakeSelection, session: session, chinese: chinese,
                     accepted: { await reload() },
-                    reviewGoal: { await reload(); return travelIntakeSelection })
+                    reviewGoal: { await reload(); return travelIntakeSelection },
+                    onInvalidation: { showTravelIntake = false; Task { await reload() } })
                     .navigationTitle(chinese ? "当前旅行需求" : "Current travel requirements")
                     .toolbar { Button(chinese ? "完成" : "Done") { showTravelIntake = false } }
             }

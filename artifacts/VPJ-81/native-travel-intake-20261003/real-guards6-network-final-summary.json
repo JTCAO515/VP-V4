@@ -1,0 +1,808 @@
+{
+  "held": 0,
+  "nativePosts": 0,
+  "nativeReads": 5,
+  "writeBasisReads": 0,
+  "rivalWrites": 0,
+  "denied401": 2,
+  "nativeDenied401": 2,
+  "denied403": 2,
+  "sessionReplacements": 1,
+  "withdrawals": 1,
+  "events": [
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake",
+        "goalId": "f057b35e-f6a2-4840-b3d0-0f03eb34a997",
+        "intake": {
+          "city": "shanghai",
+          "pace": "relaxed",
+          "dates": null,
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "partySize": 2,
+          "durationDays": 10,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": null
+        },
+        "messageId": "73959b08-d6f9-432f-a9c4-0c19cf692234",
+        "readiness": {
+          "kind": "ready",
+          "scope": "transport_screening",
+          "unknown": [
+            "lodgingBudget",
+            "dates",
+            "mobilityConstraints"
+          ]
+        },
+        "sourceKind": "explicit_current_input",
+        "goalVersion": 1,
+        "memoryBasis": [],
+        "contextDigest": "6c5653c016a5429f8c7884ebd70d00289cdc486a44cb6aaee0b66d946a5130e3",
+        "schemaVersion": "assistant-travel-current-basis/1",
+        "conversationId": "054e781d-6f14-4adf-9042-6adc4b2d6ac5",
+        "intakeRevision": 1,
+        "messageSequence": 2,
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake",
+        "goalId": "f057b35e-f6a2-4840-b3d0-0f03eb34a997",
+        "intake": {
+          "city": "shanghai",
+          "pace": "relaxed",
+          "dates": null,
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "partySize": 2,
+          "durationDays": 10,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": null
+        },
+        "messageId": "73959b08-d6f9-432f-a9c4-0c19cf692234",
+        "readiness": {
+          "kind": "ready",
+          "scope": "transport_screening",
+          "unknown": [
+            "lodgingBudget",
+            "dates",
+            "mobilityConstraints"
+          ]
+        },
+        "sourceKind": "explicit_current_input",
+        "goalVersion": 1,
+        "memoryBasis": [],
+        "contextDigest": "6c5653c016a5429f8c7884ebd70d00289cdc486a44cb6aaee0b66d946a5130e3",
+        "schemaVersion": "assistant-travel-current-basis/1",
+        "conversationId": "054e781d-6f14-4adf-9042-6adc4b2d6ac5",
+        "intakeRevision": 1,
+        "messageSequence": 2,
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 401,
+      "body": {
+        "error": {
+          "code": "UNAUTHENTICATED"
+        }
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 200,
+      "body": {
+        "version": 5,
+        "kind": "travel_intake",
+        "goalId": "f057b35e-f6a2-4840-b3d0-0f03eb34a997",
+        "intake": {
+          "city": "shanghai",
+          "pace": "relaxed",
+          "dates": null,
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "partySize": 2,
+          "durationDays": 10,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": null
+        },
+        "messageId": "73959b08-d6f9-432f-a9c4-0c19cf692234",
+        "readiness": {
+          "kind": "ready",
+          "scope": "transport_screening",
+          "unknown": [
+            "lodgingBudget",
+            "dates",
+            "mobilityConstraints"
+          ]
+        },
+        "sourceKind": "explicit_current_input",
+        "goalVersion": 1,
+        "memoryBasis": [],
+        "contextDigest": "6c5653c016a5429f8c7884ebd70d00289cdc486a44cb6aaee0b66d946a5130e3",
+        "schemaVersion": "assistant-travel-current-basis/1",
+        "conversationId": "054e781d-6f14-4adf-9042-6adc4b2d6ac5",
+        "intakeRevision": 1,
+        "messageSequence": 2,
+        "readyForProvider": false
+      }
+    },
+    {
+      "method": "GET",
+      "kind": "intake",
+      "status": 403,
+      "body": {
+        "error": {
+          "code": "DATA_POLICY_BLOCKED"
+        }
+      }
+    }
+  ],
+  "errors": [],
+  "sessionProof": {
+    "sameOwner": true,
+    "expectedOwner": true,
+    "changedSession": true,
+    "heldSessionMatchesOld": true,
+    "heldSessionHash": "bcc457eab2b4925f",
+    "oldSessionHash": "bcc457eab2b4925f",
+    "newSessionHash": "ebbd5a7117f0aa4f"
+  },
+  "timeline": [
+    {
+      "kind": "native401",
+      "atMs": 7855
+    },
+    {
+      "kind": "held_read200",
+      "atMs": 28589
+    },
+    {
+      "kind": "replacement_start",
+      "atMs": 30459
+    },
+    {
+      "kind": "replacement_login200",
+      "atMs": 30555
+    },
+    {
+      "kind": "old_session_probe401",
+      "atMs": 30560
+    },
+    {
+      "kind": "native401",
+      "atMs": 30797
+    },
+    {
+      "kind": "release_old_response",
+      "atMs": 32806
+    },
+    {
+      "kind": "withdraw200",
+      "atMs": 47915
+    }
+  ],
+  "sessionReads": [
+    {
+      "kind": "intake",
+      "sessionHash": "bcc457eab2b4925f",
+      "expectedOwner": true
+    },
+    {
+      "kind": "intake",
+      "sessionHash": "bcc457eab2b4925f",
+      "expectedOwner": true
+    },
+    {
+      "kind": "intake",
+      "sessionHash": "d20c79a5529e9340",
+      "expectedOwner": true
+    }
+  ],
+  "nativeRequests": [
+    {
+      "requestID": 1,
+      "path": "other_native",
+      "method": "POST",
+      "phase": "start",
+      "atMs": 7743
+    },
+    {
+      "requestID": 1,
+      "path": "other_native",
+      "method": "POST",
+      "phase": "received",
+      "status": 401,
+      "atMs": 7855
+    },
+    {
+      "requestID": 1,
+      "path": "other_native",
+      "phase": "delivery",
+      "status": 401,
+      "atMs": 7855
+    },
+    {
+      "requestID": 2,
+      "path": "native_credentials",
+      "method": "POST",
+      "phase": "start",
+      "atMs": 17792
+    },
+    {
+      "requestID": 2,
+      "path": "native_credentials",
+      "method": "POST",
+      "phase": "received",
+      "status": 200,
+      "atMs": 17896
+    },
+    {
+      "requestID": 2,
+      "path": "native_credentials",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 17896
+    },
+    {
+      "requestID": 3,
+      "path": "native_login",
+      "method": "POST",
+      "phase": "start",
+      "atMs": 17901
+    },
+    {
+      "requestID": 3,
+      "path": "native_login",
+      "method": "POST",
+      "phase": "received",
+      "status": 200,
+      "atMs": 17921
+    },
+    {
+      "requestID": 3,
+      "path": "native_login",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 17921
+    },
+    {
+      "requestID": 4,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 17924
+    },
+    {
+      "requestID": 4,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 18038
+    },
+    {
+      "requestID": 4,
+      "path": "other_native",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 18038
+    },
+    {
+      "requestID": 5,
+      "path": "policy",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 18087
+    },
+    {
+      "requestID": 5,
+      "path": "policy",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 18165
+    },
+    {
+      "requestID": 5,
+      "path": "policy",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 18165
+    },
+    {
+      "requestID": 6,
+      "path": "conversation",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 18170
+    },
+    {
+      "requestID": 6,
+      "path": "conversation",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 18184
+    },
+    {
+      "requestID": 6,
+      "path": "conversation",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 18184
+    },
+    {
+      "requestID": 7,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 18211
+    },
+    {
+      "requestID": 7,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 18298
+    },
+    {
+      "requestID": 7,
+      "path": "other_native",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 18298
+    },
+    {
+      "requestID": 8,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 18301
+    },
+    {
+      "requestID": 8,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 18579
+    },
+    {
+      "requestID": 8,
+      "path": "other_native",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 18579
+    },
+    {
+      "requestID": 9,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 18582
+    },
+    {
+      "requestID": 9,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "received",
+      "status": 503,
+      "atMs": 18669
+    },
+    {
+      "requestID": 9,
+      "path": "other_native",
+      "phase": "delivery",
+      "status": 503,
+      "atMs": 18669
+    },
+    {
+      "requestID": 10,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 18676
+    },
+    {
+      "requestID": 10,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 18935
+    },
+    {
+      "requestID": 10,
+      "path": "other_native",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 18935
+    },
+    {
+      "requestID": 11,
+      "path": "travel_intake",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 21629
+    },
+    {
+      "requestID": 11,
+      "path": "travel_intake",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 21655
+    },
+    {
+      "requestID": 11,
+      "path": "travel_intake",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 21655
+    },
+    {
+      "requestID": 12,
+      "path": "travel_intake",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 28558
+    },
+    {
+      "requestID": 12,
+      "path": "travel_intake",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 28589
+    },
+    {
+      "requestID": 12,
+      "path": "travel_intake",
+      "phase": "held",
+      "status": 200,
+      "atMs": 28589
+    },
+    {
+      "requestID": 13,
+      "path": "travel_intake",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 30789
+    },
+    {
+      "requestID": 13,
+      "path": "travel_intake",
+      "method": "GET",
+      "phase": "received",
+      "status": 401,
+      "atMs": 30797
+    },
+    {
+      "requestID": 13,
+      "path": "travel_intake",
+      "phase": "delivery",
+      "status": 401,
+      "atMs": 30797
+    },
+    {
+      "requestID": 12,
+      "path": "travel_intake",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 32806
+    },
+    {
+      "requestID": 14,
+      "path": "native_credentials",
+      "method": "POST",
+      "phase": "start",
+      "atMs": 41149
+    },
+    {
+      "requestID": 14,
+      "path": "native_credentials",
+      "method": "POST",
+      "phase": "received",
+      "status": 200,
+      "atMs": 41252
+    },
+    {
+      "requestID": 14,
+      "path": "native_credentials",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 41252
+    },
+    {
+      "requestID": 15,
+      "path": "native_login",
+      "method": "POST",
+      "phase": "start",
+      "atMs": 41256
+    },
+    {
+      "requestID": 15,
+      "path": "native_login",
+      "method": "POST",
+      "phase": "received",
+      "status": 200,
+      "atMs": 41280
+    },
+    {
+      "requestID": 15,
+      "path": "native_login",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 41280
+    },
+    {
+      "requestID": 16,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 41283
+    },
+    {
+      "requestID": 16,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 41301
+    },
+    {
+      "requestID": 16,
+      "path": "other_native",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 41301
+    },
+    {
+      "requestID": 17,
+      "path": "policy",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 41416
+    },
+    {
+      "requestID": 17,
+      "path": "policy",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 41428
+    },
+    {
+      "requestID": 17,
+      "path": "policy",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 41428
+    },
+    {
+      "requestID": 18,
+      "path": "conversation",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 41429
+    },
+    {
+      "requestID": 18,
+      "path": "conversation",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 41441
+    },
+    {
+      "requestID": 18,
+      "path": "conversation",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 41441
+    },
+    {
+      "requestID": 19,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 41447
+    },
+    {
+      "requestID": 19,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 41457
+    },
+    {
+      "requestID": 19,
+      "path": "other_native",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 41457
+    },
+    {
+      "requestID": 20,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 41458
+    },
+    {
+      "requestID": 20,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 41470
+    },
+    {
+      "requestID": 20,
+      "path": "other_native",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 41470
+    },
+    {
+      "requestID": 21,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 41472
+    },
+    {
+      "requestID": 21,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "received",
+      "status": 503,
+      "atMs": 41477
+    },
+    {
+      "requestID": 21,
+      "path": "other_native",
+      "phase": "delivery",
+      "status": 503,
+      "atMs": 41477
+    },
+    {
+      "requestID": 22,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 41478
+    },
+    {
+      "requestID": 22,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 41489
+    },
+    {
+      "requestID": 22,
+      "path": "other_native",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 41489
+    },
+    {
+      "requestID": 23,
+      "path": "travel_intake",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 44845
+    },
+    {
+      "requestID": 23,
+      "path": "travel_intake",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 44867
+    },
+    {
+      "requestID": 23,
+      "path": "travel_intake",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 44867
+    },
+    {
+      "requestID": 24,
+      "path": "travel_intake",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 48126
+    },
+    {
+      "requestID": 24,
+      "path": "travel_intake",
+      "method": "GET",
+      "phase": "received",
+      "status": 403,
+      "atMs": 48145
+    },
+    {
+      "requestID": 24,
+      "path": "travel_intake",
+      "phase": "delivery",
+      "status": 403,
+      "atMs": 48145
+    },
+    {
+      "requestID": 25,
+      "path": "policy",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 48169
+    },
+    {
+      "requestID": 25,
+      "path": "policy",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 48181
+    },
+    {
+      "requestID": 25,
+      "path": "policy",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 48181
+    },
+    {
+      "requestID": 26,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "start",
+      "atMs": 48182
+    },
+    {
+      "requestID": 26,
+      "path": "other_native",
+      "method": "GET",
+      "phase": "received",
+      "status": 200,
+      "atMs": 48341
+    },
+    {
+      "requestID": 26,
+      "path": "other_native",
+      "phase": "delivery",
+      "status": 200,
+      "atMs": 48341
+    }
+  ]
+}

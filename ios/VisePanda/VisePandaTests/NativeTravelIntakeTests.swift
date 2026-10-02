@@ -183,4 +183,18 @@ nonisolated final class NativeTravelIntakeTests: XCTestCase {
         XCTAssertEqual(store.writeBasis?.intakeRevision, 3)
         store.invalidate(); XCTAssertNil(store.writeBasis); XCTAssertNil(store.selection)
     }
+    @MainActor func testSameGoalRefreshAfterCASRetainsDraftAndCannotAutomaticallyRestoreWriteQualification() async throws {
+        let t = target(), store = NativeTravelIntakeStore(); store.bind(t)
+        await store.load(request: { _, _ in try self.wire(t) }, current: { t }); store.draft.city = "beijing"
+        let saved = store.draft
+        store.submit(locale: "en", current: { t }, post: { _ in throw NativeDataError.server(code: "SERVICE_TASK_CONFLICT") }, read: { _, _ in Data() }, accepted: { XCTFail() })
+        while store.state == .submitting { await Task.yield() }
+        let next = NativeTravelIntakeSelection(scope: t.scope, conversationID: t.conversationID, goalID: t.goalID, goalVersion: 3, parentMessageID: UUID().uuidString, policyID: t.policyID)
+        store.bind(next); XCTAssertEqual(store.draft, saved); XCTAssertEqual(store.state, .needsReview)
+        await store.load(request: { _, _ in try self.wire(next) }, current: { next })
+        XCTAssertEqual(store.draft, saved); XCTAssertNil(store.basis); XCTAssertNil(store.writeBasis); XCTAssertEqual(store.state, .needsReview)
+        await store.reviewForCorrection(request: { _, _ in try self.metadata(next, revision: 4) }, current: { next })
+        XCTAssertEqual(store.draft, saved); XCTAssertNil(store.basis); XCTAssertEqual(store.writeBasis?.intakeRevision, 4); XCTAssertEqual(store.state, .current)
+        store.bind(target()); XCTAssertEqual(store.draft, NativeTravelIntake()); XCTAssertNil(store.writeBasis)
+    }
 }

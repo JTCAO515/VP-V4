@@ -2,11 +2,13 @@ import SwiftUI
 
 struct NativeTravelIntakeView: View {
     var injected: NativeTravelIntakeInjectedTransport? = nil
+    var currentSelection: (() -> NativeTravelIntakeSelection?)? = nil
     let selection: NativeTravelIntakeSelection?
     let session: NativeSession
     let chinese: Bool
     let accepted: () async -> Void
     let reviewGoal: () async -> NativeTravelIntakeSelection?
+    var onInvalidation: () -> Void = {}
     @State private var store = NativeTravelIntakeStore()
     @State private var city = ""
     @State private var target = ""
@@ -26,10 +28,11 @@ struct NativeTravelIntakeView: View {
     @State private var editingTarget: NativeTravelIntakeSelection?
     private func t(_ zh: String, _ en: String) -> String { chinese ? zh : en }
     private var qualified: NativeTravelIntakeSelection? {
-        guard let selection else { return nil }
-        if let injected, injected.allowed { return selection }
-        guard session.dataScope == selection.scope else { return nil }
-        return selection
+        let target = currentSelection.map { $0() } ?? selection
+        guard let target else { return nil }
+        if let injected, injected.allowed { return target }
+        guard session.dataScope == target.scope else { return nil }
+        return target
     }
     private var projection: NativeTravelIntake? {
         func number(_ s: String, range: ClosedRange<Int>) -> Int? { guard let n = Int(s), range.contains(n) else { return nil }; return n }
@@ -142,6 +145,12 @@ struct NativeTravelIntakeView: View {
                 Button(t("读取当前需求", "Read current requirements")) { Task { await load() } }.disabled(qualified == nil)
             }
         }
+        .toolbar { ToolbarItem(placement: .topBarLeading) {
+            Button(t("刷新资格", "Refresh access")) {
+                preserveDraft = true
+                Task { await load() }
+            }.disabled(store.state == .submitting || qualified == nil).accessibilityIdentifier("assistant.intake.refresh")
+        } }
         .scrollDismissesKeyboard(.interactively)
         .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); Button(t("收起键盘", "Hide keyboard")) { hideKeyboard() } } }
         .disabled(store.state == .submitting)
@@ -168,7 +177,9 @@ struct NativeTravelIntakeView: View {
         }
         .onChange(of: store.state) { _, state in if state == .needsReview { preserveDraft = true } }
         .onChange(of: qualified) { _, value in store.bind(value); if value == nil { confirmation = false } }
-        .onChange(of: store.selection) { _, value in if value == nil { discardEditor() } }
+        .onChange(of: store.selection) { _, value in
+            if value == nil { discardEditor(); if store.state == .unavailable { onInvalidation() } }
+        }
         .onDisappear { store.invalidate(); discardEditor() }
     }
     private func reviewWriteBasis() async {
