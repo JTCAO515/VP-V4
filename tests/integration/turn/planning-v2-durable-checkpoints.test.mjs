@@ -140,10 +140,14 @@ run('the same UTC millisecond observation matches SQL, strict adapter and curren
  const cases=[['utc-seconds',base+'Z',true],['utc-tenths',base+'.1Z',true],['utc-hundredths',base+'.12Z',true],['utc-milliseconds',base+'.123Z',true],
   ['zero-offset',base+'.123+00:00',false],['positive-offset',new Date(Date.now()+8*3600000).toISOString().replace('Z','+08:00'),false],['negative-offset',new Date(Date.now()-4*3600000).toISOString().replace('Z','-04:00'),false],
   ['fraction-four',base+'.1234Z',false],['microseconds',base+'.123456Z',false],['invalid-calendar','2026-02-30T00:00:00Z',false],['hour-24',base.slice(0,11)+'24:00:00Z',false],['leap-second',base.slice(0,17)+'60Z',false],
-  ['expired',new Date(Date.now()-301000).toISOString(),false],['future',new Date(Date.now()+20000).toISOString(),false],['date-array',[base+'Z'],false]];
+  ['expired',new Date(Date.now()-301000).toISOString(),false],['future',()=>new Date(Date.now()+60000).toISOString(),false],['date-array',[base+'Z'],false]];
  for(const [name,observedAt,accepted]of cases){
-  const x=await leased(),q=await bound(x.a,x.r,x.lease),qi=q.qualifiedIntake,p=place('synthetic_fixture',observedAt),l={ownerId:x.a.owner,taskId:x.r.taskId,turnId:x.r.turnId,leaseToken:x.lease,artifactId:x.r.artifactId,planningPolicyId:x.a.planningPolicy,intakeContextDigest:x.r.intakeContextDigest,planningContextDigest:x.r.planningContextDigest,source:Object.fromEntries(['conversationId','goalId','goalVersion','messageId','messageSequence','intakeRevision','memoryBasis'].map(k=>[k,qi[k]])),environment:'local_synthetic',locale:'en'};
-  await claim(x);assert.equal(await save(x,p),accepted,'SQL save '+name);
+  const x=await leased(),q=await bound(x.a,x.r,x.lease),qi=q.qualifiedIntake,l={ownerId:x.a.owner,taskId:x.r.taskId,turnId:x.r.turnId,leaseToken:x.lease,artifactId:x.r.artifactId,planningPolicyId:x.a.planningPolicy,intakeContextDigest:x.r.intakeContextDigest,planningContextDigest:x.r.planningContextDigest,source:Object.fromEntries(['conversationId','goalId','goalVersion','messageId','messageSequence','intakeRevision','memoryBasis'].map(k=>[k,qi[k]])),environment:'local_synthetic',locale:'en'};
+  await claim(x);
+  // Generate relative-clock negatives at the invocation, after fixture/claim work.
+  // Keep a clear out-of-window value despite bounded RPC scheduling latency.
+  const generatedAt=Date.now(),p=place('synthetic_fixture',typeof observedAt==='function'?observedAt():observedAt);assert.equal(await save(x,p),accepted,'SQL save '+name);
+  if(name==='future'){const serverAfter=Number(await db("select extract(epoch from clock_timestamp())*1000;")),delta=Date.parse(p.observedAt)-serverAfter;assert.ok(delta>5000,'future sample must remain illegal after SQL evaluation');t.diagnostic(JSON.stringify({case:name,generatedAt:new Date(generatedAt).toISOString(),observedAt:p.observedAt,serverAfter:new Date(serverAfter).toISOString(),futureDeltaMs:delta,unchangedMaxFutureMs:5000}));}
   const actual=await read(x),snapshot=accepted?actual:{...actual,place:{state:'completed',observation:p}};
   const adapterAccepted=decodePlanningV2CheckpointSnapshot(snapshot,l,Date.now())!==null;assert.equal(adapterAccepted,accepted,'adapter '+name);
   let prepareReached=0;const forbid=async()=>{assert.fail('completed parser test must not claim, permit or call provider');};
