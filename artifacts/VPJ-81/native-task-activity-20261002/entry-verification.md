@@ -1,0 +1,34 @@
+# VP task activity entry and actual local Auth verification
+
+Continues checkpointfdd71d1c, integrated released mainf4b39415/#614 without changing goal pin, draft handoff confirmation, parent-message planning qualification or their borderless behavior. Rebase project registration was a union: Appearance references retained. Own NativeSession fixed GET is disjoint from proposalReferenceRequest. API#605 is merged; no unmerged runtime dependency.
+
+Task area adds one explicit activity action for a qualified current conversation/Task/canonical latest Turn in the current full NativeDataScope. Sheet captures selection generation and goalID/version, has distinct presentation identity, and clears on qualification/current Turn/task-page/goal/context/actor/foreground changes. Activity view binds its store, rejects old closures/responses and clears on request-inclusive30s expiry; expiry closes only its own presentation. No shared composer writer busy, worker, provider, percentage/cost/Online or receipt-private data. Unknown/unrecorded truth remains the closed API fact, independent of terminal status or number of receipts.
+
+PASS actual local Auth/HTTP/migrated SQL UI1/1, zero skips: /tmp/vpj81-activity-auth-final/tests.xcresult. Synthetic receipts/work explicitly separated from real API/session behavior. TaskA canonical cancelled+unknown receipt and TaskB accepted+unrecorded displayed; no inferred completion. Real A response held before delivery, sheet closed, B loaded, released A cannot replace B. Composer receives draft and remains enabled while activity work is independent. Background and real30s expiry close sheet; goal scope change closes then fresh qualification reopens. Real session replacement invalidates old native credentials during held A response; sheet clears and old receipt cannot return. Legitimate re-login followed by planning-consent withdrawal returns actual403 and old receipts disappear.9 activity reads, modelCalls0/taskAttempts0/Trip writes0. Dedicated base63220/API63251/Supabase63241, own5DB8 Simulator; owned stack cleanup PASS.
+
+Reused checkpoint native8/8 and signed Simulator build proof for unchanged closed decode/store identity/window semantics. Final UI covers new expiry notification and attachment. PASS734/734 contract on #614 base; after integration with main03e9627e, contract757/757 and native build/lint/typecheck PASS, lint, typecheck, whitespace. Physical device, real provider/tool execution, restart delivery, target Staging/Production, full accessibility/language and full #561/#562 remain UNRUN. No synthetic receipt is presented as real provider execution.
+
+## Failures and causal corrections retained
+
+- Auth1 build failed on new UITest reference path,0UI; corrected that source path only.
+- Auth2 fixture lacked required work FK,0UI. Auth3 work max_attempts/lease_ms missing,0UI; legal synthetic cancelled work now has required fields, not queued execution or invented completion.
+- Auth4 actual1test failed at composer keyboard focus after foreground. Added real readback/keyboard-focus acknowledgements, not a longer activity wait.
+- Auth5/6 actual1test failed at second B sheet, not B wire decoding; A/B/A response count insufficient alone. Auth7 diagnostic attempted private endpoint access and compile failed,0UI; endpoint remains private.
+- Auth8 FileHandle trace was not in XCTest output; no absence-based handler conclusion. Auth9 local-only OSLog trace path /tmp/vpj81-activity-auth9-safe-trace.log showed first A/B and second A open→selected, no second B handler. AX51712BF3... showed B framey497.3..517.6 overlapping keyboard-focused composery501..523 and outside visible scrolly116..434.7. Click was consumed by inset/focus, not late receipt replacement. Test now scrolls action inside visible scroll and above composer and asserts non-overlap before tap; B/late-A/composer assertions retained.
+- Auth10 actual1test advanced beyond B/lateA/expiry/goal/withdraw, then control restore after revoked consent threw and empty500 caused JSON3840. Existing constraints retained; restore removed. Test order now session replacement→legitimate login→final withdrawal. Safe control status/type/bodylength/operation enum asserted before decoding; safe error JSON, no private SQL/receipt data logged. Auth11 actual1/1 PASS; final tightened geometry/control assertions rerun also1/1 PASS.
+
+Runtime trace is local-HTTP + explicit test argument only and includes finite phase/task-position/active/scope/presentation/qualification booleans, no endpoint identifiers/tokens/receipt keys/digests/leases/content. Request diagnostics are capped16 synthetic A/B alias/status events. Historical failures are not erased or converted into acceptance.
+
+Integrated current main03e9627e after final Auth evidence; preserved all Journeys/Appearance project references and other NativeSession methods. One final PR includes component and entry; no isolated-component PR was created. Current-head CI and independent main review remain separate from full-ticket/target acceptance.
+
+## CI port failure and diagnostic baseline integration
+
+Original head4c73cc80 DB Integration run36964961440 attempt1: native-same-trip2/2PASS, then five default59620 groups failed bind preflight59640 with0tests; other ports/groups passed. Not an activity product assertion failure. Implementer triggered one exact --failed rerun (attempt2) before coordinator requested normal rebase to #619. No repeated blind retry, port fallback, guard weakening or shared-resource cleanup. New baselinee40ed097 includes safe kernel TCP observation on preflight failure; normal rebase retained main/project/source references and all owner methods. Necessary compatibility native build/contract757/757/lint/typecheck PASS; Auth1/1/component8/8 evidence reused. New-head CI results must be used for acceptance; original failure/rerun remain history.
+
+
+## Final main compatibility rebase (2026-10-02)
+
+- Rebased normally onto `f916bdc3` (#620). Preserved main NativeSession proposal-reference transport; the activity GET method is the only NativeSession addition relative to main.
+- Resolved project reference conflicts by union, preserving all main A983/A77D/B979 IDs and own AC71 app/unit/UI references. `plutil -lint`, reference-subset assertion, and `git diff --check origin/main`: PASS.
+- Explicit owned Simulator `5DB8E4CE-76AA-48A7-8F9C-861AF1A25E6E`, existing owned DerivedData: `xcodebuild ... build-for-testing`: PASS (app, unit and UI targets). Log: `/tmp/vpj81-activity-f916-build.log`.
+- Existing native 8/8 and actual local Auth/HTTP/SQL/UI 1/1 evidence is retained; these runtime suites were not repeated for project-reference-only conflict resolution. Old head CI does not validate the rebased head. New head requires its own CI and Main review/merge. No target/provider/device acceptance is claimed.

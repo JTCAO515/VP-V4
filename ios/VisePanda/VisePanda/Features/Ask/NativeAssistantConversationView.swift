@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import OSLog
 
 struct AssistantConversation: Decodable {
     let version: Int
@@ -448,6 +449,7 @@ struct NativeAssistantConversationView: View {
     @State private var taskPageCursor: String?
     @State private var taskSnapshotSequence: Int?
     @State private var taskNotice: String?
+    @State private var activityPresentation: ActivityPresentation?
     @State private var selectedTaskID: String?
     @State private var selectedArtifactID: String?
     @State private var resultFence = AssistantResultReadFence()
@@ -507,6 +509,45 @@ struct NativeAssistantConversationView: View {
         let tasks = AssistantTaskProjection.waitingTurnIDs(messages: taskSourceMessages, history: taskTurns)
         return (messages + tasks).joined(separator: ":")
     }
+    private struct ActivityPresentation: Identifiable {
+        let id = UUID()
+        let target: NativeTaskActivitySelection
+        let selectionGeneration: UUID
+        let goalID: String?
+        let goalVersion: Int?
+    }
+    private func activityTarget(for taskID: String) -> NativeTaskActivitySelection? {
+        guard resultActive, composerScopeCurrent, !entryBusy, !entryFailed, policy?.consentState == .accepted,
+              let scope = session.dataScope, let conversationID = conversation?.conversationId,
+              taskMessages.contains(where: { $0.taskId == taskID }),
+              let turn = taskTurns.first(where: { $0.serviceTaskId == taskID }), turn.valid, turn.goalScopeCurrent else { return nil }
+        return NativeTaskActivitySelection(scope: scope, conversationID: conversationID, taskID: taskID,
+            latestTurnID: turn.turnId, eligible: true)
+    }
+    private var currentActivityTarget: NativeTaskActivitySelection? {
+        guard let presentation = activityPresentation,
+              selection.owns(presentation.selectionGeneration), goal?.goalId == presentation.goalID,
+              goal?.scopeVersion == presentation.goalVersion,
+              activityTarget(for: presentation.target.taskID) == presentation.target else { return nil }
+        return presentation.target
+    }
+    private func openActivity(for taskID: String) {
+        traceActivity("open", taskIndex: taskMessages.firstIndex(where: { $0.taskId == taskID }))
+        guard let target = activityTarget(for: taskID) else { traceActivity("rejected"); return }
+        activityPresentation = ActivityPresentation(target: target, selectionGeneration: selection.generation,
+            goalID: goal?.goalId, goalVersion: goal?.scopeVersion)
+        traceActivity("selected")
+    }
+    private func traceActivity(_ phase: String, taskIndex: Int? = nil) {
+        guard ProcessInfo.processInfo.arguments.contains("-VisePandaActivityTrace"), session.dataScope.flatMap({ URL(string: $0.endpoint) })?.scheme == "http" else { return }
+        let data: [String: Any] = ["phase": phase, "taskIndex": taskIndex ?? -1, "active": resultActive,
+            "scope": composerScopeCurrent, "sheet": activityPresentation != nil, "qualified": currentActivityTarget != nil]
+        if let bytes = try? JSONSerialization.data(withJSONObject: data) {
+            let safe = String(decoding: bytes, as: UTF8.self)
+            Logger(subsystem: "space.go2china.activity", category: "local-test").notice("VP_ACTIVITY_TRACE \(safe, privacy: .public)")
+        }
+    }
+
     private var taskMessages: [AssistantMessage] { AssistantTaskProjection.latestMessages(taskSourceMessages) }
     private func taskTurn(for message: AssistantMessage) -> AssistantConversationTaskStatus? {
         AssistantTaskProjection.turn(for: message, in: taskTurns)
@@ -580,6 +621,22 @@ struct NativeAssistantConversationView: View {
                     Text(chinese ? "请求未确认，请重试或刷新。" : "Request not confirmed. Retry or refresh.").font(.footnote).accessibilityIdentifier("assistant.notice")
                 }
             }.padding(VPSpacing.standard)
+        }
+        .sheet(item: $activityPresentation) { presentation in
+            NavigationStack {
+                NativeTaskActivityView(selection: currentActivityTarget, isPresented: currentActivityTarget != nil,
+                    session: session, chinese: chinese, onInvalidate: {
+                        if activityPresentation?.id == presentation.id { activityPresentation = nil }
+                    })
+                    .id(presentation.id)
+                    .navigationTitle(chinese ? "任务活动" : "Task activity")
+                    .toolbar { ToolbarItem(placement: .topBarTrailing) {
+                        Button(chinese ? "完成" : "Done") { activityPresentation = nil }.accessibilityIdentifier("assistant.activity.done")
+                    } }
+            }
+        }
+        .onChange(of: currentActivityTarget) { _, target in
+            if target == nil && currentActivityTarget == nil { traceActivity("invalidate"); activityPresentation = nil }
         }
         .sheet(isPresented: $showTripPicker) {
             NavigationStack {
@@ -813,6 +870,7 @@ struct NativeAssistantConversationView: View {
     }
 
     private func clearConversationProjection() {
+        activityPresentation = nil
         conversation = nil; planningPolicy = nil; taskTurns = []; taskSourceMessages = []; taskNextCursor = nil; taskPageCursor = nil; taskSnapshotSequence = nil
         selectedTaskID = nil; selectedArtifactID = nil; selectedArtifactTaskID = nil
         invalidateResult()
@@ -927,6 +985,10 @@ struct NativeAssistantConversationView: View {
                         Text(chinese ? "该任务的目标已改变，成果需重新核对。" : "This task's goal changed. Its result needs rechecking.").font(.caption)
                     }
                     HStack {
+                        if let taskID = message.taskId, activityTarget(for: taskID) != nil {
+                            Button(chinese ? "查看任务活动" : "View task activity") { openActivity(for: taskID) }
+                                .buttonStyle(.borderless).accessibilityIdentifier("assistant.task.activity.\(message.sequence)")
+                        }
                         if turn?.status == "completed", turn?.goalScopeCurrent == true, let taskID = message.taskId {
                             Button(chinese ? "打开此任务成果" : "Open this task's result") {
                                 Task { await openResult(for: taskID) }
@@ -960,6 +1022,7 @@ struct NativeAssistantConversationView: View {
         }
         .padding(14).frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.vpSurface, in: RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier("assistant.tasks")
     }
     private func resultCard(_ result: AssistantResult) -> some View {

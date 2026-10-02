@@ -25,8 +25,9 @@ final class NativeTaskActivityStore {
         guard active, let current, current.valid, selection == current, state == .ready, deadline > uptime() else { return nil }
         return activity
     }
-    func expireIfNeeded() {
-        if state == .ready && deadline <= uptime() { clear() }
+    @discardableResult func expireIfNeeded() -> Bool {
+        guard state == .ready && deadline <= uptime() else { return false }
+        clear(); return true
     }
     func load(selection requested: NativeTaskActivitySelection?, currentSelection: () -> NativeTaskActivitySelection?,
               active: () -> Bool, request: (String, String) async throws -> Data) async {

@@ -7,6 +7,7 @@ struct NativeTaskActivityView: View {
     let isPresented: Bool
     let session: NativeSession
     let chinese: Bool
+    var onInvalidate: () -> Void = {}
     @Environment(\.scenePhase) private var scenePhase
     @State private var store = NativeTaskActivityStore()
     private var active: Bool { isPresented && scenePhase == .active }
@@ -61,7 +62,7 @@ struct NativeTaskActivityView: View {
         .task {
             while !Task.isCancelled {
                 do { try await Task.sleep(for: .seconds(1)) } catch { return }
-                store.expireIfNeeded()
+                if store.expireIfNeeded() { onInvalidate() }
             }
         }
     }

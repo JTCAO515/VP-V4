@@ -18,12 +18,13 @@ async function run(args,name){
  const code=await new Promise((resolve,reject)=>{child.once('exit',resolve);child.once('error',reject);});log.end();
  if(code!==0)throw Error(name+' failed: '+code+' (see '+join(output,name+'.log')+')');
 }
-let e,retryProxy;
+let e,retryProxy,activityFixture;
 const retryPosts=[];let retryReadFailures=0;
 try{
  await run(['build-for-testing','-project','ios/VisePanda/VisePanda.xcodeproj','-scheme','VisePanda','-destination','platform=iOS Simulator,id='+device,'-derivedDataPath',join(output,'build'),'CODE_SIGNING_ALLOWED=YES','CODE_SIGNING_REQUIRED=YES','CODE_SIGN_IDENTITY=-'],'build');
  e=await createNativeTextEnvironment();
  const profile={VP_NATIVE_ASSISTANT_TEST:'1',VP_NATIVE_TEXT_API_URL:e.api,VP_NATIVE_TEXT_UI_EN_EMAIL:e.users[2].email};
+ const activityMode=process.env.VP_NATIVE_ASSISTANT_ACTIVITY==='1';
  const taskHistoryMode=process.env.VP_NATIVE_ASSISTANT_TASK_HISTORY==='1';
  const refreshMode=process.env.VP_NATIVE_ASSISTANT_REFRESH_TEST==='1';
  const retryMode=process.env.VP_NATIVE_ASSISTANT_CONVERSATION_RETRY==='1';
@@ -139,6 +140,11 @@ try{
   Object.assign(profile,{...(retryMode?{VP_NATIVE_ASSISTANT_CONVERSATION_RETRY:'1'}:{}),VP_NATIVE_TEXT_API_URL:'http://127.0.0.1:'+retryProxy.address().port});
   if(refreshMode)Object.assign(profile,{VP_NATIVE_ASSISTANT_REFRESH_TEST:'1',VP_NATIVE_ASSISTANT_REFRESH_CONTROL:profile.VP_NATIVE_TEXT_API_URL+'/__refresh/control',VP_NATIVE_ASSISTANT_REFRESH_REPRO:process.env.VP_NATIVE_ASSISTANT_REFRESH_REPRO||'0'});
  }
+ if(activityMode){
+  const {createNativeActivityFixture}=await import('./native-task-activity-fixture.mjs');
+  activityFixture=await createNativeActivityFixture(e,e.users[2]);
+  Object.assign(profile,activityFixture.profile);retryProxy=activityFixture.proxy;
+ }
  const products=join(output,'build/Build/Products'),patched=join(products,'AssistantConversation.xctestrun');
  execFileSync('python3',['-c',`import sys,json,plistlib,pathlib
 root=pathlib.Path(sys.argv[1]); sources=list(root.glob('*.xctestrun'));assert len(sources)==1
@@ -146,8 +152,8 @@ data=plistlib.loads(sources[0].read_bytes());profile=json.loads(sys.stdin.read()
 data['VisePandaUITests'].setdefault('EnvironmentVariables',{}).update(profile)
 path=root/'AssistantConversation.xctestrun';path.write_bytes(plistlib.dumps(data));path.chmod(0o600)
 `,products],{input:JSON.stringify(profile)});
- await run(['test-without-building','-xctestrun',patched,'-destination','platform=iOS Simulator,id='+device,'-parallel-testing-enabled','NO',...(selectionMode?['-collect-test-diagnostics','never']:[]),'-resultBundlePath',join(output,'tests.xcresult'),
-  '-only-testing:VisePandaUITests/NativeAskUITests/'+(taskHistoryMode?'testEnglishAssistantOlderTaskReopen':refreshMode?'testEnglishAssistantBackgroundRefreshComposer':selectionMode?'testEnglishAssistantConversationSelection':privacyPaginationMode?'testEnglishAssistantTripPrivacyPagination':tripMode?'testEnglishAssistantGoalTripLinkReadback':'testEnglishAssistantConversationReadback')],'tests');
+ await run(['test-without-building','-xctestrun',patched,'-destination','platform=iOS Simulator,id='+device,'-parallel-testing-enabled','NO',...(selectionMode||activityMode?['-collect-test-diagnostics','never']:[]),'-resultBundlePath',join(output,'tests.xcresult'),
+  ...(activityMode?['-only-testing:VisePandaUITests/NativeTaskActivityUITests/testActivityReadSwitchBackgroundExpiryAndRevocation']:['-only-testing:VisePandaUITests/NativeAskUITests/'+(taskHistoryMode?'testEnglishAssistantOlderTaskReopen':refreshMode?'testEnglishAssistantBackgroundRefreshComposer':selectionMode?'testEnglishAssistantConversationSelection':privacyPaginationMode?'testEnglishAssistantTripPrivacyPagination':tripMode?'testEnglishAssistantGoalTripLinkReadback':'testEnglishAssistantConversationReadback')])],'tests');
  if(retryMode){
   assert.equal(retryReadFailures,1);assert.equal(retryPosts.length,2);
   assert.deepEqual(retryPosts[1],retryPosts[0],'retry must retain all IDs, scope, text and idempotency key');
@@ -171,9 +177,11 @@ path=root/'AssistantConversation.xctestrun';path.write_bytes(plistlib.dumps(data
   if(e.sql(`select count(*) from public.trips where id in ('${profile.VP_NATIVE_ASSISTANT_TRIP_A}','${profile.VP_NATIVE_ASSISTANT_TRIP_B}') and head_version=0;`)!=='2')
    throw Error('Privacy pagination changed an existing Trip');
  }
+ if(activityMode)writeFileSync(join(output,'activity-summary.json'),JSON.stringify(activityFixture.summary(),null,2)+'\n');
  writeFileSync(join(output,'summary.json'),JSON.stringify({scope:'actual local native/Auth/HTTP/SQL; synthetic model only',modelCalls:e.counts.http,messages:e.sql('select count(*) from turn_private.assistant_messages;'),goals:e.sql('select count(*) from turn_private.assistant_goals;'),taskAttempts:e.sql('select count(*) from public.model_budget_attempts;'),tripLinks:e.sql('select count(*) from turn_private.assistant_goal_trip_links;'),tripLinkReceipts:e.sql('select count(*) from turn_private.assistant_goal_trip_receipts;')},null,2)+'\n');
  console.log('VPJ78_NATIVE_UI_PASS '+join(output,'summary.json'));
 }finally{
+ if(activityFixture)writeFileSync(join(output,'activity-final-summary.json'),JSON.stringify(activityFixture.summary(),null,2)+'\n');
  if(retryProxy){retryProxy.closeAllConnections();await new Promise(resolve=>retryProxy.close(resolve));}
  if(e){
   if(process.env.VP_NATIVE_ASSISTANT_PRIVACY_PAGINATION==='1')e.sql(`delete from turn_private.assistant_goal_trip_links where owner_id='${e.users[2].id}';
