@@ -27,6 +27,7 @@ struct NativeKnowledgeView: View {
                 BrandHeader()
                 Text(question ? text("Which documents do I need to board?", "乘车需要哪些证件？") : text("Library", "资源库")).font(.largeTitle.bold())
                 if !question {
+                    NativeLibraryProposalReferenceView(isActive: isActive)
                     TimelineView(.periodic(from: .now, by: 1)) { _ in libraryContent }
                 }
                 if !question { Text(text("Reviewed travel notes", "已审核旅途参考")).font(.title2.bold()) }
