@@ -22,8 +22,11 @@ final class NativeLibraryPhraseStore {
     func clear() {
         generation = UUID(); loading = false; rejected = false; pageCursor = nil; history.clear()
     }
-    func isCurrent(_ requested: NativeDataScope?, cursor: String? = nil) -> Bool {
-        !loading && !rejected && pageCursor == cursor && history.isCurrent(requested)
+    func isCurrent(_ requested: NativeDataScope?, cursor: String? = nil, query: String? = nil) -> Bool {
+        !loading && !rejected && pageCursor == cursor && history.isCurrent(requested, query: query)
+    }
+    func searchResults(scope requested: NativeDataScope?, query: String?, cursor: String? = nil) -> [NativeTranslationPhrase]? {
+        isCurrent(requested, cursor: cursor, query: query) ? rows : nil
     }
     /// nil is unreadable, never zero matches. Filtering never renews the source deadline.
     func matches(scope requested: NativeDataScope?, query: String, cursor: String? = nil) -> [NativeTranslationPhrase]? {
@@ -34,16 +37,16 @@ final class NativeLibraryPhraseStore {
                 .contains { $0.localizedStandardContains(term) }
         }
     }
-    func reference(_ phrase: NativeTranslationPhrase, scope requested: NativeDataScope?, cursor: String? = nil) -> NativeLibraryPhraseReference? {
-        guard isCurrent(requested, cursor: cursor) else { return nil }
-        return history.reference(phrase, scope: requested)
+    func reference(_ phrase: NativeTranslationPhrase, scope requested: NativeDataScope?, cursor: String? = nil, query: String? = nil) -> NativeLibraryPhraseReference? {
+        guard isCurrent(requested, cursor: cursor, query: query) else { return nil }
+        return history.reference(phrase, scope: requested, query: query)
     }
-    func load(scope requested: NativeDataScope?, cursor: String? = nil, exact: NativeLibraryPhraseReference? = nil,
+    func load(scope requested: NativeDataScope?, query: String? = nil, cursor: String? = nil, exact: NativeLibraryPhraseReference? = nil,
               currentScope: () -> NativeDataScope?, request: NativeTranslationStore.Request,
               read: NativeSavedTranslationHistoryStore.Read) async {
         generation = UUID(); let own = generation
         loading = true; rejected = false
-        await history.load(scope: requested, cursor: cursor, exact: exact, currentScope: currentScope, policyRequest: { path, method, body in
+        await history.load(scope: requested, query: query, cursor: cursor, exact: exact, currentScope: currentScope, policyRequest: { path, method, body in
             guard method == "GET", body == nil, path == "api/translate/policy",
                   currentScope() == requested, self.generation == own, !Task.isCancelled else { throw NativeDataError.staleSessionResponse }
             let bytes = try await request(path, method, body)

@@ -88,7 +88,7 @@ struct NativeKnowledgeView: View {
         .sheet(item: $openedResult, onDismiss: { resultStore.clear(); refresh = UUID() }) { selection in
             NativeLibraryResultDetail(selection: selection, scope: session.dataScope, chinese: chinese, session: session)
         }
-        .onChange(of: search) { _, _ in resultStore.clear(); openedResult = nil; cursor = nil }
+        .onChange(of: Data(search.utf8)) { _, _ in resultStore.clear(); openedResult = nil; cursor = nil }
         .onChange(of: session.dataScope) { _, _ in resultStore.clear(); openedResult = nil; search = ""; cursor = nil }
         .onDisappear { store.clear(); resultStore.clear(); openedResult = nil }
     }
@@ -127,7 +127,7 @@ struct NativeKnowledgeView: View {
         Text(text("My materials and results", "我的资料与成果")).font(.title2.bold())
         TextField(text("Search my materials and results", "搜索我的资料与成果"), text: $search)
             .textFieldStyle(.roundedBorder).accessibilityIdentifier("library.search")
-        Text(text("Search current comparisons. Translation matches cover the displayed page only.", "搜索当前比较成果；翻译只匹配当前显示页。"))
+        Text(text("Search current comparisons and saved translations within their supported scan windows.", "在支持的扫描窗口内查找当前比较成果与已存翻译。"))
             .font(.footnote).foregroundStyle(Color.vpSecondaryText)
         if search.utf16.count > 120 {
             Text(text("Use a search of up to 120 characters.", "搜索内容最多 120 个字符。"))
@@ -182,6 +182,10 @@ struct NativeKnowledgeView: View {
         let refresh: UUID
         let search: String
         let cursor: String?
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.scope == rhs.scope && lhs.active == rhs.active && lhs.refresh == rhs.refresh
+            && lhs.cursor == rhs.cursor && lhs.search.utf8.elementsEqual(rhs.search.utf8)
+        }
     }
 }
 
@@ -203,24 +207,25 @@ private struct NativeLibraryPhrasePanel: View {
     private var session: NativeSession { settings.nativeSession }
     private var scope: NativeDataScope? { isActive && phase == .active ? session.dataScope : nil }
     private func text(_ en: String, _ zh: String) -> String { settings.selectedLocale == .zh ? zh : en }
-    private var key: Key { .init(scope: scope, cursor: cursor, refresh: refresh) }
+    private var searchQuery: String? { query.isEmpty ? nil : query }
+    private var key: Key { .init(scope: scope, query: searchQuery, cursor: cursor, refresh: refresh) }
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(text("Saved translations", "已存翻译")).font(.headline)
-            Text(text("Up to 20 saved translations per page. Search matches this page only; another page may still match. Reading never generates a translation.", "每页最多 20 份已存翻译。搜索只匹配本页，其他页仍可能有匹配资料；阅读不会生成翻译。"))
+            Text(text("Up to 20 matching translations per page. Search is bounded to supported source windows, not unlimited history. Reading never generates a translation.", "每页最多 20 份匹配译文。搜索有来源扫描窗口限制，不代表无限全库；阅读不会生成翻译。"))
                 .font(.footnote).foregroundStyle(Color.vpSecondaryText)
             Button(text("Refresh first translation page", "刷新翻译首页")) { store.clear(); selected = nil; cursor = nil; refresh = UUID() }
                 .disabled(scope == nil).accessibilityIdentifier("library.phrases.refresh")
             TimelineView(.periodic(from: .now, by: 1)) { _ in
                 if scope == nil {
                     Text(text("Sign in to read your materials.", "登录后可读取自己的资料。"))
-                } else if query.utf16.count > 120 && store.isCurrent(scope, cursor: cursor) {
+                } else if query.utf16.count > 120 {
                     Text(text("Shorten the search to check this window.", "请缩短搜索内容后查找此窗口。"))
-                } else if let matches = store.matches(scope: scope, query: query, cursor: cursor) {
-                    if matches.isEmpty { Text(text("No matching saved translation on this page. Other pages may still match.", "本页没有匹配的已存翻译，其他页仍可能有匹配资料。")) }
+                } else if let matches = store.searchResults(scope: scope, query: searchQuery, cursor: cursor) {
+                    if matches.isEmpty { Text(text("No matching saved translation in this readable search window.", "当前可读搜索窗口内没有匹配的已存翻译。")) }
                     ForEach(matches) { phrase in
                         Button {
-                            guard let reference = store.reference(phrase, scope: scope, cursor: cursor) else {
+                            guard let reference = store.reference(phrase, scope: scope, cursor: cursor, query: searchQuery) else {
                                 store.clear(); cursor = nil; refresh = UUID(); return
                             }
                             selected = reference
@@ -250,18 +255,29 @@ private struct NativeLibraryPhrasePanel: View {
             }
         }
         .task(id: key) {
-            await store.load(scope: scope, cursor: cursor, currentScope: { scope }, request: { path, method, body in
+            let requested = key
+            if requested.query != nil && requested.cursor == nil {
+                do { try await Task.sleep(for: .milliseconds(250)) } catch { return }
+            }
+            guard !Task.isCancelled, key == requested else { return }
+            await store.load(scope: requested.scope, query: requested.query, cursor: requested.cursor, currentScope: { scope }, request: { path, method, body in
                 try await session.translateRequest(path: path, method: method, body: body)
-            }, read: { after, id in try await session.translationHistoryRequest(cursor: after, turnID: id) })
+            }, read: { after, id in try await session.translationHistoryRequest(cursor: after, turnID: id, query: id == nil ? requested.query : nil) })
         }
         .onChange(of: scope) { _, _ in store.clear(); selected = nil; cursor = nil }
-        .onChange(of: query) { _, _ in selected = nil }
+        .onChange(of: Data(query.utf8)) { _, _ in store.clear(); selected = nil; cursor = nil }
         .onDisappear { store.clear(); selected = nil }
         .sheet(item: $selected, onDismiss: { cursor = nil; refresh = UUID() }) { reference in
             NativeLibraryPhraseDetail(reference: reference)
         }
     }
-    private struct Key: Equatable { let scope: NativeDataScope?; let cursor: String?; let refresh: UUID }
+    private struct Key: Equatable {
+        let scope: NativeDataScope?; let query: String?; let cursor: String?; let refresh: UUID
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.scope == rhs.scope && lhs.cursor == rhs.cursor && lhs.refresh == rhs.refresh
+            && NativeTranslationHistoryWire.sameQuery(lhs.query, rhs.query)
+        }
+    }
 }
 
 private struct NativeLibraryPhraseDetail: View {
@@ -272,7 +288,7 @@ private struct NativeLibraryPhraseDetail: View {
     private var scope: NativeDataScope? { phase == .active ? settings.nativeSession.dataScope : nil }
     var body: some View {
         TimelineView(.periodic(from: .now, by: 1)) { _ in
-            if store.isCurrent(scope), let phrase = store.opened {
+            if store.isCurrent(scope, query: reference.query), let phrase = store.opened {
                 NativeTranslationCard(phrase: phrase, chinese: settings.selectedLocale == .zh)
             } else if store.state == "idle" || store.state == "loading" { ProgressView() }
             else {
