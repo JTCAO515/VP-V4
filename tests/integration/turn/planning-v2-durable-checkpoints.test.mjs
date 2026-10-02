@@ -1,9 +1,13 @@
 // Explicit network-none preparation only; all dependencies from this current checkout.
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
-import {randomUUID as uuid} from 'node:crypto';
-import {readFileSync,readdirSync} from 'node:fs';
-import {createPlanningV2CheckpointTestPorts} from '../../../lib/server/turn/planning-v2-checkpoint-test-ports.ts';
+import {randomUUID as uuid,createHash} from 'node:crypto';
+import {gunzipSync} from 'node:zlib';
+import {tmpdir} from 'node:os';
+import {join,resolve} from 'node:path';
+import {pathToFileURL} from 'node:url';
+import {readFileSync,readdirSync,mkdtempSync,writeFileSync,rmSync} from 'node:fs';
+import {createPlanningV2CheckpointTestPorts,decodePlanningV2CheckpointSnapshot} from '../../../lib/server/turn/planning-v2-checkpoint-test-ports.ts';
 import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj78-checkpoints-'+uuid().slice(0,8);
 const mine='20261003040000_vpj78_v2_durable_checkpoints.sql';
@@ -132,4 +136,29 @@ run('strict injected private ports recover saved receipt in a new process withou
  const first=createPlanningV2CheckpointTestPorts({mode:'local_protocol_test',now:Date.now,transport});assert.equal(await first.claimPlace(l,signal),'claimed');
  const lostAck=createPlanningV2CheckpointTestPorts({mode:'local_protocol_test',now:Date.now,transport:async(name,params)=>{const result=await transport(name,params);if(name==='save_planning_v2_place_v1')throw Error('Synthetic saved acknowledgment loss');return result;}});
  await assert.rejects(lostAck.savePlace(l,p,signal));const after=await stored(x),newProcess=createPlanningV2CheckpointTestPorts({mode:'local_protocol_test',now:Date.now,transport});assert.deepEqual((await newProcess.checkpoints(l,signal)).place,{state:'completed',observation:p});assert.equal(await newProcess.claimPlace(l,signal),'duplicate');assert.equal(await newProcess.savePlace(l,p,signal),false);assert.equal(await stored(x),after);
+});
+
+run('the same UTC millisecond observation matches SQL, strict adapter and frozen worker date acceptance',async t=>{
+ // Immutable worker test dependency, not a copied runtime module or mutable checkout.
+ const source=gunzipSync(readFileSync('tests/integration/turn/fixtures/planning-v2-worker-0f49f426.ts.gz'));
+ const blob=createHash('sha1').update(Buffer.concat([Buffer.from('blob '+source.length+'\0'),source])).digest('hex');assert.equal(blob,'90a63e1846d58ad3dc8038137d7e517d3018d411');
+ const folder=mkdtempSync(join(tmpdir(),'vpj78-date-worker-'));t.after(()=>rmSync(folder,{recursive:true,force:true}));const moduleFile=join(folder,'fixed-worker.ts');
+ // Only relocate its unchanged endpoint dependency so the exact frozen source can run from tmp.
+ writeFileSync(moduleFile,source.toString().replace("'../model-gateway/adapters/provider-endpoints.ts'",JSON.stringify(pathToFileURL(resolve('lib/server/model-gateway/adapters/provider-endpoints.ts')).href)));
+ const {runPlanningV2LocalProtocol}=await import(pathToFileURL(moduleFile).href),base=new Date(Math.floor(Date.now()/1000)*1000).toISOString().slice(0,19),matrix=[];
+ const cases=[['utc-seconds',base+'Z',true],['utc-tenths',base+'.1Z',true],['utc-hundredths',base+'.12Z',true],['utc-milliseconds',base+'.123Z',true],
+  ['zero-offset',base+'.123+00:00',false],['positive-offset',new Date(Date.now()+8*3600000).toISOString().replace('Z','+08:00'),false],['negative-offset',new Date(Date.now()-4*3600000).toISOString().replace('Z','-04:00'),false],
+  ['fraction-four',base+'.1234Z',false],['microseconds',base+'.123456Z',false],['invalid-calendar','2026-02-30T00:00:00Z',false],['hour-24',base.slice(0,11)+'24:00:00Z',false],['leap-second',base.slice(0,17)+'60Z',false],
+  ['expired',new Date(Date.now()-301000).toISOString(),false],['future',new Date(Date.now()+20000).toISOString(),false],['date-array',[base+'Z'],false]];
+ for(const [name,observedAt,accepted]of cases){
+  const x=await leased(),q=await bound(x.a,x.r,x.lease),qi=q.qualifiedIntake,p=place('synthetic_fixture',observedAt),l={ownerId:x.a.owner,taskId:x.r.taskId,turnId:x.r.turnId,leaseToken:x.lease,artifactId:x.r.artifactId,planningPolicyId:x.a.planningPolicy,intakeContextDigest:x.r.intakeContextDigest,planningContextDigest:x.r.planningContextDigest,source:Object.fromEntries(['conversationId','goalId','goalVersion','messageId','messageSequence','intakeRevision','memoryBasis'].map(k=>[k,qi[k]])),environment:'local_synthetic',locale:'en'};
+  await claim(x);assert.equal(await save(x,p),accepted,'SQL save '+name);
+  const actual=await read(x),snapshot=accepted?actual:{...actual,place:{state:'completed',observation:p}};
+  const adapterAccepted=decodePlanningV2CheckpointSnapshot(snapshot,l,Date.now())!==null;assert.equal(adapterAccepted,accepted,'adapter '+name);
+  let prepareReached=0;const forbid=async()=>{assert.fail('completed parser test must not claim, permit or call provider');};
+  const result=await runPlanningV2LocalProtocol(l,{mode:'local_protocol_test',read:()=>bound(x.a,x.r,x.lease),checkpoints:async()=>snapshot,claimPlace:forbid,savePlace:forbid,unknownPlace:forbid,permit:forbid,place:forbid,prepare:async()=>{prepareReached++;return null;},verifyPreparation:forbid,now:Date.now},new AbortController().signal);
+  assert.equal(prepareReached,accepted?1:0,'worker observation acceptance '+name);assert.equal(result.executionAvailable,false);assert.equal(result.readyForPublication,false);
+  assert.equal(await db(`select count(*) from turn_private.result_artifacts where id='${x.r.artifactId}';`),'0');matrix.push({name,SQL:accepted,adapter:adapterAccepted,worker:prepareReached===1});
+ }
+ t.diagnostic(JSON.stringify({workerCommit:'0f49f4264b17a06930f2092f6339fa6442167821',workerBlob:blob,SQLSource:'current40000',matrix,providerCalls:0,preparationProbeOnly:true}));
 });

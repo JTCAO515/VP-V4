@@ -15,8 +15,8 @@ function params(l:CheckpointLease):Row{
  return {p_owner:l.ownerId,p_task:l.taskId,p_turn:l.turnId,p_lease:l.leaseToken,p_intake_digest:l.intakeContextDigest,p_planning_digest:l.planningContextDigest};
 }
 function date(v:unknown):v is string{
- if(typeof v!=='string'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?(Z|[+-]\d{2}:\d{2})$/.test(v)||!Number.isFinite(Date.parse(v)))return false;
- const calendar=Date.parse(v.slice(0,10)+'T00:00:00Z');return Number.isFinite(calendar)&&new Date(calendar).toISOString().slice(0,10)===v.slice(0,10);
+ if(typeof v!=='string'||!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/.test(v)||!Number.isFinite(Date.parse(v)))return false;
+ return new Date(v).toISOString().slice(0,19)===v.slice(0,19);
 }
 function observation(v:unknown,l:CheckpointLease,now:number):boolean{
  if(!obj(v)||!exact(v,['schemaVersion','source','observedAt','providerCalls','areas'])||v.schemaVersion!=='planning-place/1'||v.source!==(l.environment==='staging'?'amap':'synthetic_fixture')||!text(v.observedAt,40)||!date(v.observedAt)||!Number.isSafeInteger(now)||now<=0||now-Date.parse(v.observedAt)>300000||Date.parse(v.observedAt)-now>5000||!integer(v.providerCalls,13)||!Array.isArray(v.areas)||v.areas.length!==2)return false;

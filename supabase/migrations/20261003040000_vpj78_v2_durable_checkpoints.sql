@@ -60,7 +60,7 @@ begin
   or p_environment not in ('local_synthetic','staging') or p_environment is null
   or v->>'source' is distinct from (case when p_environment='staging' then 'amap' else 'synthetic_fixture' end)
   or jsonb_typeof(v->'observedAt') is distinct from 'string' or length(v->>'observedAt')>40
-  or (v->>'observedAt') !~ '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?(Z|[+-]\d{2}:\d{2})$'
+  or (v->>'observedAt') !~ '^\d{4}-\d{2}-\d{2}T([01]\d|2[0-3]):[0-5]\d:[0-5]\d(\.\d{1,3})?Z$'
   or jsonb_typeof(v->'providerCalls') is distinct from 'number' or (v->>'providerCalls') !~ '^(0|[1-9][0-9]*)$' or (v->>'providerCalls')::numeric>13
   or jsonb_typeof(v->'areas') is distinct from 'array' or jsonb_array_length(v->'areas')<>2 then return false;end if;
  observed:=(v->>'observedAt')::timestamptz;

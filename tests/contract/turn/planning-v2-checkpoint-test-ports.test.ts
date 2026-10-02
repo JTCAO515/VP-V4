@@ -28,5 +28,5 @@ test('completed snapshot requires a strict valid date and a positive finite inte
  const now=Date.now(),observation={schemaVersion:'planning-place/1',source:'synthetic_fixture',observedAt:new Date(now).toISOString(),providerCalls:0,areas:[{id:'jingan',label:'Jingan',railMinutes:20,transfers:1},{id:'peoples_square',label:'Square',railMinutes:null,transfers:null}]},completed={...snapshot,place:{state:'completed',observation}};
  assert.ok(decodePlanningV2CheckpointSnapshot(completed,lease,now));
  for(const bad of [NaN,Infinity,-1,0,now+0.5])assert.equal(decodePlanningV2CheckpointSnapshot(completed,lease,bad),null);
- for(const bad of ['2026-02-30T00:00:00Z','2026-10-03','tomorrow',[observation.observedAt]])assert.equal(decodePlanningV2CheckpointSnapshot({...completed,place:{state:'completed',observation:{...observation,observedAt:bad}}},lease,now),null);
+ for(const bad of ['2026-02-30T00:00:00Z','2026-10-03','tomorrow',observation.observedAt.replace('Z','+00:00'),observation.observedAt.replace('Z','123Z'),observation.observedAt.slice(0,11)+'24:00:00Z',[observation.observedAt]])assert.equal(decodePlanningV2CheckpointSnapshot({...completed,place:{state:'completed',observation:{...observation,observedAt:bad}}},lease,now),null);
 });
