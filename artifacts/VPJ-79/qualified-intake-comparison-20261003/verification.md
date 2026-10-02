@@ -28,3 +28,12 @@ Rebased successfully onto actual main `a9e02f3a196b8c299f79e680ace7cdac0f26c5c2`
 PASS: the same four affected PostgreSQL groups, 4/4, zero skips, 8215ms, using the opt-in command above; no unchanged TS/typecheck/lint suites were rerun. Full zh/en projection equality, invalid-source/digest/lease/correction/consent cases, API role EXECUTE denial and the existing v2 completion hard fence all hold on merged dependencies. `private-pg-current-main-pass.log.gz` contains this run. Container cleanup succeeded.
 
 Dependency Git blob provenance (both files byte-identical to earlier frozen sources): intake200000 `35da6ecb49f1eb34ba1c881b22bc0d6efe5076d6`; bridge020000 `f269bffd62184576b1a1014b15013b5afc7fa6cc`. Own SQL blob `2a377ad243e0c121a6d97bc7c028013311b7cad5` is unchanged from private preparation. Scope and all execution/publication/target/provider UNRUN limits above remain. No producer/claim/public permission wiring was added.
+
+
+## Standard postgres gate adaptation
+
+Main requested the existing four cases be moved to `tests/integration/turn/qualified-intake-comparison.test.mjs` and gated by the standard `VP_TURN_DB_TEST=1`. Only the file path, two relative imports and opt-in environment name changed. The four test bodies, actual-current-checkout migration loader, pinned network-none database, private SQL and product TS are unchanged; prior evidence remains valid.
+
+PASS: `node --check tests/integration/turn/qualified-intake-comparison.test.mjs`; direct gate execution `VP_TURN_DB_TEST=1 node --experimental-strip-types --test tests/integration/turn/qualified-intake-comparison.test.mjs` — 4/4, zero skipped/cancelled/todo/fail, 8383ms, own container removed. Log: `private-pg-standard-gate-pass.log.gz`. Diff reviewed and whitespace check passed.
+
+Registration handoff: add this exact test path to `LANES.postgres.steps[name=isolated-postgres].files` in `scripts/ci-suites/db-integration.mjs`. Existing lane environment already sets `VP_TURN_DB_TEST: "1"` and its Node command already uses `--experimental-strip-types`; no new runner switch or image is required. This shared registry file is assigned to HTTP owner and was not edited here. Full registered lane/CI remains UNRUN pending their one registration and Main combined integration. No broad lane or unchanged product suite was rerun.
