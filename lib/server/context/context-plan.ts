@@ -32,7 +32,7 @@ export type ContextPolicy = Readonly<{
 }>;
 
 export type ContextPlan = Readonly<{
-  contextVersion: typeof CONTEXT_PLAN_VERSION;
+  contextVersion: typeof CONTEXT_PLAN_VERSION | "planning-goal-context-plan-v1";
   policy: ContextPolicy;
   sectionOrder: readonly ContextSection[];
 }>;
