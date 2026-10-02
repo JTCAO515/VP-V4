@@ -1,0 +1,41 @@
+{
+  "kind": "LOCAL_NATIVE_HTTP_PRIVATE_PREPARATION_NOT_EXECUTION",
+  "backendFrozen": "f9cea1735b42cbb7f9cec76503116e9e256cc86e",
+  "unionBeforeFinalNativeTests": "583b1f9707bd450edfbe24936e54c6ee697d577c",
+  "nativeStateRender": {
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "xcresult": "/tmp/vpj81-qualified-delegation-closed-unit3.xcresult"
+  },
+  "actualNativeTransport": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "xcresult": "/tmp/vpj81-qualified-native-transport2/tests.xcresult",
+    "vault": "in-memory fixture; no Keychain claim",
+    "statuses": [
+      201,
+      200,
+      200,
+      200,
+      401,
+      403
+    ],
+    "admissions": 1,
+    "retryNewAdmissions": 0
+  },
+  "providerCalls": 0,
+  "modelAttempts": 0,
+  "tripWrites": 0,
+  "executionAvailable": false,
+  "readyForProvider": false,
+  "productGate": "hard disabled; component not mounted into production hierarchy",
+  "releaseBuild": "PASS",
+  "unrun": [
+    "dedicated worker/claimer/completion channel",
+    "real provider",
+    "Staging/Production",
+    "physical device/VoiceOver/real user/full parent acceptance"
+  ]
+}

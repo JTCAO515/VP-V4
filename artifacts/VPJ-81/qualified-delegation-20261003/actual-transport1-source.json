@@ -1,0 +1,14 @@
+{
+  "head": "583b1f9707bd450edfbe24936e54c6ee697d577c",
+  "backend": "f9cea1735b42cbb7f9cec76503116e9e256cc86e",
+  "kind": "LOCAL_TESTPROCESS_NATIVE_SESSION_HTTP_RPC_NO_EXECUTION",
+  "device": "5DB8E4CE-76AA-48A7-8F9C-861AF1A25E6E",
+  "dd": "/tmp/vpj81-native-task-activity-20261002",
+  "base": 63220,
+  "files": {
+    "ios/VisePanda/VisePanda/Features/Ask/NativeQualifiedDelegationModels.swift": "4c59c0f7a2d268db4ab20f8fc9e522ac9ae1fc65d841f55b75abf23f55e33d56",
+    "ios/VisePanda/VisePanda/Features/Ask/NativeQualifiedDelegationStore.swift": "0f4c92ac1c3a2d343bbecafa24ebc4b3f01f39d4f10ff39a81c783aa75525305",
+    "ios/VisePanda/VisePandaTests/NativeQualifiedDelegationTransportTests.swift": "2367e2ce3b802187b62cafbd8eed69f1acc0541bd05e24dd1d4d90d9941012c2",
+    "lib/server/turn/native-planning-intake-http.ts": "e1bb047b0639203e093f39c9c0635cf65de289d9cf4adbd03e2edb6935089d06"
+  }
+}
