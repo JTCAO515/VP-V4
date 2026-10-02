@@ -1,4 +1,4 @@
-// Actual base migrations plus fixed pre-review e039 journal SQL. Synthetic actor/ledger only.
+// Actual base migrations plus fixed pre-review fixed0d949 journal SQL. Synthetic actor/ledger only.
 import {createPlanningV2ModelRequest as createRequest} from '../../lib/server/turn/planning-v2-model-request.ts';
 import {createPlanningV2ModelOutputReceipt as createOutput} from '../../lib/server/turn/planning-v2-model-output-receipt.ts';
 import {parsePlanningV2ModelJournalRead as parseRead,parsePlanningV2ModelJournalWrite as parseWrite} from '../../lib/server/turn/planning-v2-model-journal.ts';
@@ -39,7 +39,7 @@ before(async()=>{
  for(let i=0;i<100;i++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;await new Promise(r=>setTimeout(r,100));}
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
  for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
- for(const file of ['20261003050000_vpj78_v2_model_attempt_binding.sql','20261003060000_vpj78_v2_model_local_journal.sql']){const fixed=await command('git',['show','e039e357035ba45d9a628aad73a5bf20e3cae311:supabase/migrations/'+file]);assert.equal(fixed.code,0,fixed.stderr);await db('begin;'+fixed.stdout+'commit;');}
+ for(const file of ['20261003050000_vpj78_v2_model_attempt_binding.sql','20261003060000_vpj78_v2_model_local_journal.sql']){const fixed=await command('git',['show','0d949ad96e2bcb46ae712c9507df69812217fb8c:supabase/migrations/'+file]);assert.equal(fixed.code,0,fixed.stderr);await db('begin;'+fixed.stdout+'commit;');}
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 const run=(name,fn)=>test(name,{skip:!enabled,timeout:120000},fn);
@@ -78,7 +78,7 @@ run('real intent/send/response commits survive discarded write acknowledgments w
  assert.deepEqual(await journal(x,{...w,outputDigest:'f'.repeat(64)}),{kind:'conflict'});
  assert.equal(await db(`select count(*) from turn_private.planning_v2_model_local_journal where request_id='${x.request.requestId}';`),'1');
  assert.equal(await db(`select count(*) from turn_private.result_artifacts where id='${x.r.artifactId}';`),'0');
- t.diagnostic(JSON.stringify({source:'e039e357035ba45d9a628aad73a5bf20e3cae311',discardedWriteACK:'controlled fixture',readKeys:Object.keys(result).length,revision:result.revision,providerSends:sends,providerOriginVerified:false}));
+ t.diagnostic(JSON.stringify({source:'0d949ad96e2bcb46ae712c9507df69812217fb8c',discardedWriteACK:'controlled fixture',readKeys:Object.keys(result).length,revision:result.revision,providerSends:sends,providerOriginVerified:false}));
 });
 run('real SQL server timestamp truncation preserves internal microseconds and nullable phase fields for TS decoder',async()=>{
  const x=await fixture();await intent(x);
@@ -98,8 +98,17 @@ run('real unknown/original lease/current source and settled-amount conflict fail
  const actual=wire(y,7);assert.ok(actual);assert.equal(decoded(await response(y,obs(y,'response_received'),actual),y,true,actual).phase,'response_recorded');
 });
 
-run('pre-fix e039 NULL digest bypass is reproduced while strict TS consumer rejects the adopted wire',async()=>{
- const x=await fixture();await intent(x);await dispatch(x);await send(x,obs(x,'send_ack'));const w=wire(x);assert.ok(w);
- const bad={...w,outputDigest:null,usageDigest:null};assert.equal(await db(`select turn_private.validate_planning_v2_output_v1(${lit(bad)}::jsonb,${lit(x.tuple)}::jsonb) is null;`),'t');
- const adopted=await response(x,obs(x,'response_received'),bad);assert.equal(adopted.kind,'model_request_journal');assert.equal(adopted.phase,'response_recorded');assert.equal(parseWrite(adopted,x.expected),null);assert.equal(parseRead(await journal(x),x.expected),null);
+
+run('fixed NULL digest rejection returns strict false/blocked and preserves journal/ledger with trigger rollback',async()=>{
+ const x=await fixture();await intent(x);await dispatch(x);const ack=obs(x,'send_ack');await send(x,ack);const w=wire(x);assert.ok(w);
+ const snapshot=()=>db(`select jsonb_build_object('journal',(select to_jsonb(j) from turn_private.planning_v2_model_local_journal j where request_id='${x.request.requestId}'),'ledger',(select to_jsonb(b) from public.model_budget_attempts b where scope_id='${x.scope}' and attempt_id='${x.attempt}'));`);
+ const before=await snapshot(),readback=await journal(x);
+ for(const patch of [{outputDigest:null},{usageDigest:null},{outputDigest:null,usageDigest:null}]){
+  const bad={...w,...patch};assert.equal(await db(`select turn_private.validate_planning_v2_output_v1(${lit(bad)}::jsonb,${lit(x.tuple)}::jsonb);`),'f');
+  const refused=await response(x,obs(x,'response_received'),bad);assert.deepEqual(refused,{kind:'blocked'});assert.deepEqual(decoded(refused,x,true),{kind:'blocked'});assert.equal(await snapshot(),before);
+  assert.equal(parseRead({...readback,phase:'response_recorded',revision:3,responseRecordedAt:new Date().toISOString(),responseObservation:obs(x,'response_received'),outputWire:bad},x.expected),null);
+ }
+ const bad={...w,outputDigest:null,usageDigest:null},failed=await sql(container,`begin;update turn_private.planning_v2_model_local_journal set phase='response_recorded',revision=revision+1,response_at=clock_timestamp(),response_observation=${lit(obs(x,'response_received'))}::jsonb,output_wire=${lit(bad)}::jsonb where request_id='${x.request.requestId}';commit;`);
+ assert.notEqual(failed.code,0);assert.match(failed.stderr,/INVALID_LOCAL_OUTPUT/);assert.equal(await snapshot(),before);
+ const stable=decoded(await journal(x),x);assert.equal(stable.phase,'send_ack_recorded');assert.equal(stable.revision,2);assert.equal(stable.outputWire,null);
 });

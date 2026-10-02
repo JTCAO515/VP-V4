@@ -20,3 +20,8 @@ Contract tests3/3PASS cover allphase/null layouts,19vs20 keys, outputexact/phase
 Fixed unmerged `e039e357035ba45d9a628aad73a5bf20e3cae311` actual050000/060000 was loaded with baseb930. Newprep test proves actual19/20wire,controlledlost-write-returnexactreadback,serverUTCms/null/composite microsecond case,unknown/originallease/currenttypedsource andsettledamount conflict throughactualprivatefunctions andstrictTSconsumer. This supersedes the earlier missing-journal UNRUN for those exact localrecord cases only.
 
 A separate defect reproduction showsMain'sNULLdigestbypass in e039:SQLvalidatorNULL permitsadoption,whilestrictTSconsumer rejects. E039is **not** fullyaccepted;finalfixedSQLdifference remainspending559source. NoSQLchanged here; canonical/otherunaffectedmatrices reused.
+
+
+## Fixed rejection difference
+
+Unmerged0d949ad96e2bcb46ae712c9507df69812217fb8c actualSQL was testedonlyfortheaffectedNULLdifference:strictfalseforindividual/bothNULLdigests,blockedresponse/closedTSfailure,unchangedjournalfullrow/ledger,actualtriggerexceptionrollback. Target1/1PASS5488ms;legal3groupsarepreciselyreusedafterexactdiffreview. Thissupersedese039'sunsafeNULLadoptionresultonlyonthisfixedsource. Providerorigin/permission/completion/target/fullacceptanceremainoutside this consumer.

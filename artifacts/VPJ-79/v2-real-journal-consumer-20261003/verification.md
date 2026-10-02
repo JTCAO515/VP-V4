@@ -9,3 +9,14 @@ Legal evidence: actual intent→sendack→response produce19-keyread/20-keywrite
 Actual Main-review finding reproduced: e039 output/usageDigest JSONnull makesvalidator returnSQLNULL;record_response/trigger IF NOT acceptsbadwire andjournaladvancestoresponse_recorded. StrictTSread/write rejects the resultingwire. This defect reproduction PASS means the unsafe oldSQLbehavior was observed, **not** that it is acceptable. SoleSQLowner559 is fixing strictfalse + IS DISTINCT FROM true; finalfixedSHA/null-difference test remain UNRUN until frozen source arrives. Do not changeSQL here or claimvalid3cases close this finding.
 
 UNCHANGED/REUSED: priorc6 canonical3cases/hardcoded bytes andplainTScontracts; notwide-rerun. OtherSQL/fullcurrentcheckoutCI/providerorigin/paidpermit/worker/completion/target/fullparentUNRUN. Mainreceivesexactsource/logs before finalrepair integration.
+
+
+## Fixed NULL difference — actual0d949
+
+The pre-fix e039source/log/reproduction remains frozen at ownercommit `5fa87f24133da3c0a7deca28a65c0f9d717dfe61`. Finalprep input now uses exact unmergedrepair `0d949ad96e2bcb46ae712c9507df69812217fb8c` for both actual050000/060000.060000 SHA256 `6120eafe95fc529cfbc95050038e727d1bde82145f64dbbdec2923d07fd80563`;050000 unchanged. Reviewed exactdiff: addsstrictdigeststring/lowerSHA guards+coalescefalse, andfunction/trigger rejectvalidator IS DISTINCT FROM true. Requestcanonicalization, wire/time/lock/read/CAS/ledger state paths and validwire digestdomains unchanged; legal3groups above reused by precise source/diff, not claimed freshlyrerun.
+
+PASS targeted actual command `VP_TURN_DB_TEST=1 node --experimental-strip-types --test --test-name-pattern='fixed NULL digest rejection' tests/preparation/planning-v2-real-journal-consumer.test.mjs`:1/1,0fail/skip/cancelled/todo5488ms. Syntax/diffPASS, owncontainercleanup0. Only requireddifference run, notwide matrix.
+
+Threeactualpatches outputDigest:null /usageDigest:null /both:null all returnstrictSQLfalse;actualrecord_response returns exactblocked parsedasclosedfailure byTS. Fulljournal+ledgerJSONsnapshot isunchanged aftereachattempt. Badwire embedded in a forgedresponse shape is rejected byTS. A privilegedfixture directresponseUPDATE hits actualINVALID_LOCAL_OUTPUT triggerexception androllsback; finalactualread remains send_ack_recorded/revision2/outputWire:null. No adoptedbadwire, release/charge/output/publication or extraeffect. SoleSQLowner'srepair was consumedunchanged; thisownernevereditedSQL.
+
+This closes the demonstrated e039NULLadoption finding on this fixed localSQLsource. It does notestablishproviderorigin/paidpermit/executor/completion/mergedcurrentcheckoutCI/target/fullparentacceptance. E039reproduction remains historicalunsafeevidence, notcurrentacceptance.
