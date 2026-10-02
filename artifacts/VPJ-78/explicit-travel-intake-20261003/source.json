@@ -1,0 +1,16 @@
+{
+  "base": "80fa7862060f9549e0665a2c818667f4955fd3a1",
+  "sha256": {
+    "supabase/migrations/20261002200000_vpj78_explicit_travel_intake.sql": "d5bf868f2c0e6a7de1050cdb27ee3af050414a835811cbb127c38b180db486b6",
+    "lib/server/turn/native-travel-intake-http.ts": "6365bf91abed85559c6813d2a9d412eecee3c2aaca615f7ed2c5702fe07c0a27",
+    "tests/integration/turn/explicit-travel-intake.test.mjs": "433de85e3e553f20c8106f4a70a2b88bc17325be185cf166383c59b4d8a72ba7",
+    "tests/security/turn/native-travel-intake-http.test.mjs": "df92c97fd9b33d6d572561cd217bff6fc18ee876bc033b07df2c67db4ebbf396",
+    "docs/contracts/assistant-explicit-travel-intake-v1.md": "a4cab2ea8f995ddee561d83d4d0308a6a8118602bc587142bd96a947ab10eb95"
+  },
+  "ports": {
+    "base": 64720,
+    "api": 64751,
+    "supabase": 64741
+  },
+  "scope": "disposable local Auth/HTTP/SQL; no provider/worker/publication/native/target"
+}
