@@ -1,19 +1,17 @@
-// PREPARATION ONLY: frozen private SQL/TS, network-none PostgreSQL, loopback fake HTTP.
-import {PROTOCOL_MODELS} from '../../lib/server/model-gateway/adapters/provider-protocol.ts';
-import {PLANNING_COMPARISON_PROMPT} from '../../lib/server/model-gateway/prompt/planning-comparison.ts';
+// Current-checkout private SQL/TS; network-none PostgreSQL and loopback fake HTTP only.
+import {PROTOCOL_MODELS} from '../../../lib/server/model-gateway/adapters/provider-protocol.ts';
+import {PLANNING_COMPARISON_PROMPT} from '../../../lib/server/model-gateway/prompt/planning-comparison.ts';
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID as uuid,createHash} from 'node:crypto';
-import {readFileSync,readdirSync,mkdtempSync,mkdirSync,writeFileSync,symlinkSync,rmSync} from 'node:fs';
-import {tmpdir} from 'node:os';
-import {resolve,join} from 'node:path';
-import {pathToFileURL} from 'node:url';
+import {readFileSync,readdirSync} from 'node:fs';
+import {createPlanningV2ModelRequest as createRequest} from '../../../lib/server/turn/planning-v2-model-request.ts';
+import {createPlanningV2ModelOutputReceipt as createOutput} from '../../../lib/server/turn/planning-v2-model-output-receipt.ts';
+import {parsePlanningV2ModelJournalRead as parseRead,parsePlanningV2ModelJournalWrite as parseWrite} from '../../../lib/server/turn/planning-v2-model-journal.ts';
 import http from 'node:http';
-import {command,sql} from '../integration/cost/fixtures/postgres-rpc.mjs';
+import {command,sql} from '../cost/fixtures/postgres-rpc.mjs';
 const enabled=process.env.VP_TURN_DB_TEST==='1',container='vpj80-local-model-flow-'+uuid().slice(0,8);
-let created=false,temp;
-let createRequest,createOutput,parseRead,parseWrite;
-const SQL_SOURCE='aa759054bfc83aa2d4d367234a2d35a93b7571ba',TS_SOURCE='b64ec9458fed017265ab705a6a155310c5b49f2b';
+let created=false;
 const db=async q=>{const r=await sql(container,q);assert.equal(r.code,0,r.stderr);return r.stdout.trim();};
 const lit=v=>v===null?'null':typeof v==='number'||typeof v==='boolean'?String(v):"'"+(typeof v==='object'?JSON.stringify(v):String(v)).replaceAll("'","''")+"'";
 const query=(a,name,p)=>`begin;set role authenticated;set request.jwt.claim.role='authenticated';set request.jwt.claim.sub='${a.owner}';set request.jwt.claims='${JSON.stringify({session_id:a.session})}';select public.${name}(`+Object.entries(p).map(([k,v])=>k+'=>'+lit(v)).join(',')+');commit;';
@@ -35,18 +33,12 @@ async function owner(environment='staging',goalText='First China visit, ten days
 const planning=a=>({p_conversation_id:a.conversation,p_goal_id:a.goal,p_expected_goal_version:1,p_parent_message_id:a.source,p_message_id:uuid(),p_message_key:uuid(),p_thread_id:uuid(),p_turn_id:uuid(),p_task_id:uuid(),p_task_key:uuid(),p_text_policy_id:a.policy,p_planning_policy_id:a.planningPolicy,p_locale:'en',p_text:'Compare Shanghai areas',p_memory_basis:[]});
 before(async()=>{
  if(!enabled)return;
- temp=mkdtempSync(join(tmpdir(),'vpj80-frozen-consumer-'));mkdirSync(join(temp,'turn'));symlinkSync(resolve('lib/server/model-gateway'),join(temp,'model-gateway'));
- for(const name of ['request','output-receipt','journal']){const file='planning-v2-model-'+name+'.ts',r=await command('git',['show',TS_SOURCE+':lib/server/turn/'+file]);assert.equal(r.code,0,r.stderr);writeFileSync(join(temp,'turn',file),r.stdout);}
- ({createPlanningV2ModelRequest:createRequest}=await import(pathToFileURL(join(temp,'turn/planning-v2-model-request.ts'))));
- ({createPlanningV2ModelOutputReceipt:createOutput}=await import(pathToFileURL(join(temp,'turn/planning-v2-model-output-receipt.ts'))));
- ({parsePlanningV2ModelJournalRead:parseRead,parsePlanningV2ModelJournalWrite:parseWrite}=await import(pathToFileURL(join(temp,'turn/planning-v2-model-journal.ts'))));
  const image='public.ecr.aws/supabase/postgres:17.6.1.159';const r=await command('docker',['run','--pull=never','--rm','-d','--network','none','--name',container,'--user','postgres','--entrypoint','/bin/sh',image,'-c','umask 077; mkdir /tmp/vpj59-socket; initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);assert.equal(r.code,0,r.stderr);created=true;
  for(let i=0;i<100;i++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;await new Promise(r=>setTimeout(r,100));}
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
  for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
- for(const file of ['20261003050000_vpj78_v2_model_attempt_binding.sql','20261003060000_vpj78_v2_model_local_journal.sql']){const fixed=await command('git',['show',SQL_SOURCE+':supabase/migrations/'+file]);assert.equal(fixed.code,0,fixed.stderr);await db('begin;'+fixed.stdout+'commit;');}
 });
-after(async()=>{try{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);}finally{if(temp)rmSync(temp,{recursive:true,force:true});}});
+after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
 const run=(name,fn)=>test(name,{skip:!enabled,timeout:120000},fn);
 
 const fields=['owner','task','turn','lease','textPolicy','planningPolicy','scope','attempt','provider','model','priceVersion','intakeDigest','planningDigest'];
@@ -116,7 +108,7 @@ run('exact serializer bytes make one loopback HTTP round trip and strict real SQ
  await assert.rejects(sendOnce(x,provider),/recorded local send cannot retry/);assert.equal(provider.received.length,1);
  assert.equal(await ledger(x),before);assert.equal(JSON.parse(before).status,'dispatched');
  assert.equal(await db(`select count(*) from turn_private.planning_v2_model_local_journal where request_id='${x.request.requestId}';`),'1');await noPublication(x);
- t.diagnostic(JSON.stringify({SQL_SOURCE,TS_SOURCE,providerSends:1,exactBytes:true,readRevision:3,providerOriginVerified:false,actualMicros:'synthetic known zero; ledger remains dispatched'}));
+ t.diagnostic(JSON.stringify({source:'current-checkout SQL/TS',providerSends:1,exactBytes:true,readRevision:3,providerOriginVerified:false,actualMicros:'synthetic known zero; ledger remains dispatched'}));
 });
 for(const mode of ['timeout','disconnected'])run(`local transport ${mode} becomes sticky unknown without retry or lease adoption`,async t=>{
  const x=await fixture(),provider=await localProvider(t,mode);await intent(x);

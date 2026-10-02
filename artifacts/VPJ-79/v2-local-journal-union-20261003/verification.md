@@ -17,3 +17,12 @@ PASS typecheck/lint/docs/registry-list/diff. No unrelatedfrontend/native/HTTP/pr
 ## Boundaries
 
 060000 isactualcurrentcheckout append-onlyprivateSQL withallAPIEXECUTErevoked; noledgerwrite/providerpermit/workerhook/completiongatechange. Journaltimestamps/observations/output/amounts arelocalrecordfacts, providerOriginVerified:false/executionAvailable:false/readyForPublication:false/reconciliationRequired:true. Paidpermission/provenance/executor/fullcompletion/target/realdevice/fullparentacceptance remainUNRUN. Existingfixturesincludingactualsettlementare syntheticdisposableledger operations.627base isnotmainuntilitslegalmerge; formalPR waits for that dependency andMainreview/allrequiredCI.
+
+
+## Same-batch local HTTP flow increment
+
+Mainauthorizeddedicated561four-filecommit `5e135e44e9fd837dced195c2fb81d46e8a2c316e` wascherry-pickednormallyonly; nootherownerhistory. Its originalpreparation+source/evidence are retained. Test movedto `tests/integration/turn/planning-v2-local-model-flow.test.mjs`, nowallactualcheckout migrations/ordinarycurrentrequest-output-journal imports; removedGitshow/tempSQL/TSsnapshotloaders. Solewriterregisteredthisoneadditionalfile inexistingpostgresstep;registryclassification/syntax/diffPASS.
+
+Only newaffectedtest ran: `VP_TURN_DB_TEST=1 node --experimental-strip-types --test tests/integration/turn/planning-v2-local-model-flow.test.mjs`3/3PASS0fail/skip/cancelled/todo7654ms. Real127.0.0.1ephemeralloopbackHTTP receivesexactbodybytes/payloadSHA, Nodefinishrecordsonecaller-localACK, actualSQLresponsecommitthencontrolledthrow simulateslostwriteACK; sameuniquejournalrow exactreadback recoversrevision3/norepeatHTTP. Timeout/disconnectedleaveunknownsticky/noretry/oldleaseblocked andledgerstilldispatched/unchanged; noartifact/Turncompletion/settlement. Ownloopbackservers/sockets/network-nonePG cleaned. Thisfake-providerlocalobservation isnevertrustedproviderorigin orpaidpermit; allfalseflags/truereconciliationretain.
+
+Prior0436fullregisteredlane228/228sourceevidence remainspre-increment; it was **not** blindlyrerun forone newfile. Currentregistry31fileswouldincludeadditional3cases; finalheadwhole-laneCI231countremainsUNRUNuntilactualCI, notclaimedfromsum. Typecheck/lint/docsfrom0436unchangedruntimecontentreused; only MJSloading/registration changedhere. PRstillwaitslegal627merge.

@@ -87,6 +87,7 @@ export const LANES = {
           "tests/integration/turn/planning-v2-model-attempt-binding.test.mjs",
           "tests/integration/turn/planning-v2-canonical-sql-consumer.test.mjs",
           "tests/integration/turn/planning-v2-model-local-journal.test.mjs",
+          "tests/integration/turn/planning-v2-local-model-flow.test.mjs",
           "tests/integration/turn/planning-v2-real-journal-consumer.test.mjs",
           "tests/integration/turn/planning-v2-worker-protocol.test.mjs",
           "tests/integration/turn/qualified-intake-comparison.test.mjs",
