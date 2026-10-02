@@ -236,6 +236,15 @@ final class NativeSession {
         })
     }
 
+    /// Fixed, read-only goal index; the existing session fence owns credentials.
+    func journeysGoalIndexRequest(cursor: String? = nil) async throws -> Data {
+        if let cursor, NativeJourneyGoalIndexCursor(cursor) == nil { throw NativeDataError.invalidResponse }
+        let base = "api/chat/native/v5/journeys-goals"
+        let bytes = try await dataRequest(prefix: base, path: base + (cursor.map { "/" + $0 } ?? ""), method: "GET")
+        guard bytes.count <= 512_000 else { throw NativeDataError.invalidResponse }
+        return bytes
+    }
+
     /// Journeys resolves only an owned exact result reference for its selected Trip.
     func tripResultReferenceRequest(tripID: String) async throws -> Data {
         guard UUID(uuidString: tripID) != nil else { throw NativeDataError.invalidResponse }
