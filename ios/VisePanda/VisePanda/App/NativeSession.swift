@@ -334,6 +334,15 @@ final class NativeSession {
         return bytes
     }
 
+    /// The qualified v2 route is distinct from v1; the prepared real UI keeps this disabled.
+    func submitQualifiedIntakeDelegationRequest(_ body: Data) async throws -> Data {
+        guard askMode == .assistant, body.count <= 16_000 else { throw NativeDataError.invalidResponse }
+        let path = "api/chat/native/v5/planning/intake-tasks"
+        let bytes = try await dataRequest(prefix: path, path: path, method: "POST", body: body)
+        guard bytes.count <= 12_000 else { throw NativeDataError.invalidResponse }
+        return bytes
+    }
+
     func travelIntakeRequest(conversationID: String, goalID: String) async throws -> Data {
         guard askMode == .assistant, UUID(uuidString: conversationID) != nil,
               UUID(uuidString: goalID) != nil else { throw NativeDataError.invalidResponse }

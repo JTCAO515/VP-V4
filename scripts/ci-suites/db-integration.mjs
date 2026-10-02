@@ -83,6 +83,7 @@ export const LANES = {
           "tests/integration/turn/planning-action-receipts.test.mjs",
           "tests/integration/turn/planning-comparison.test.mjs",
           "tests/integration/turn/planning-intake-admission.test.mjs",
+          "tests/integration/turn/qualified-intake-comparison.test.mjs",
           "tests/integration/turn/text-work.test.mjs",
         ],
       },
@@ -140,6 +141,7 @@ export const LANES = {
       { name: "journeys-goal-index-http", runner: node("tests/integration/turn/run-journeys-goal-index-http.mjs"), files: ["tests/integration/turn/journeys-goal-index-http.test.mjs"] },
       { name: "web-trip-continuity", runner: node("tests/integration/web-trip-continuity/run.mjs"), files: ["tests/integration/web-trip-continuity/continuity.test.mjs"] },
       { name: "explicit-travel-intake", runner: node("tests/integration/turn/run-explicit-travel-intake.mjs"), files: ["tests/integration/turn/explicit-travel-intake.test.mjs"] },
+      { name: "planning-intake-http", runner: node("tests/integration/turn/run-planning-intake-http.mjs"), files: ["tests/integration/turn/planning-intake-http.test.mjs"] },
     ],
   },
   "supabase-http-ops": {

@@ -1,0 +1,320 @@
+{
+  "counts": {
+    "admissions": 1,
+    "posts": 6,
+    "unauthorized401": 1,
+    "blocked403": 1
+  },
+  "events": [
+    {
+      "status": 201,
+      "request": {
+        "locale": "en",
+        "conversationId": "c7eda5a6-37a3-437f-8720-26e1bb009874",
+        "text": "Explicit local synthetic comparison delegation",
+        "messageId": "04e4288d-fb58-4234-852b-050ef53064e5",
+        "memoryBasis": [],
+        "expectedIntakeRevision": 1,
+        "expectedIntakeDigest": "d3fbc8aa9c7844d5b750470556d91d3a0f639949d1f2613dd8ced5fbc22ee9ce",
+        "intake": {
+          "lodgingBudget": null,
+          "partySize": 2,
+          "schemaVersion": "stay-area-intake/1",
+          "dates": null,
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": null,
+          "pace": "relaxed",
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "durationDays": 10,
+          "city": "shanghai"
+        },
+        "expectedIntakeMessageId": "d470dbf6-901c-4707-a049-aa1ae0603009",
+        "messageKey": "3abb55d9-d5ef-4e1f-8a3c-443ca01b5cb1",
+        "parentMessageId": "d470dbf6-901c-4707-a049-aa1ae0603009",
+        "expectedGoalVersion": 1,
+        "planningPolicyId": "ab67f413-0983-4308-9cb4-67276a7c22a8",
+        "threadId": "dd82f8e2-e10b-4c49-ab9f-735c55d30736",
+        "expectedSourceSequence": 1,
+        "taskId": "0355c6b1-3b0d-4eca-a796-125b5cf4c73c",
+        "turnId": "5967e9ec-2de5-43d8-bd02-0bba0d99726d",
+        "goalId": "29eb1ec9-2444-45f7-9ffa-c26ae242c426",
+        "taskKey": "83cf369f-a5e3-4f9f-be64-15484e918717"
+      },
+      "receipt": {
+        "version": 2,
+        "kind": "accepted",
+        "reused": false,
+        "taskId": "0355c6b1-3b0d-4eca-a796-125b5cf4c73c",
+        "turnId": "5967e9ec-2de5-43d8-bd02-0bba0d99726d",
+        "artifactId": "165eacb5-0624-498d-bb7a-8566cb510e25",
+        "conversationId": "c7eda5a6-37a3-437f-8720-26e1bb009874",
+        "goalId": "29eb1ec9-2444-45f7-9ffa-c26ae242c426",
+        "goalVersion": 1,
+        "messageId": "04e4288d-fb58-4234-852b-050ef53064e5",
+        "messageSequence": 2,
+        "intakeRevision": 2,
+        "current": true,
+        "readyForProvider": false,
+        "executionAvailable": false,
+        "intakeContextDigest": "2aced425be5a65cfb854b252c9e36bed528abceb633f6c3747d42d3b406453d8",
+        "planningContextDigest": "70475b71f9d5c658abe0fbe4be2f37534f27fa37e6863209c4b4c6cf02fb4b9a"
+      }
+    },
+    {
+      "status": 200,
+      "request": {
+        "turnId": "5967e9ec-2de5-43d8-bd02-0bba0d99726d",
+        "parentMessageId": "d470dbf6-901c-4707-a049-aa1ae0603009",
+        "text": "Explicit local synthetic comparison delegation",
+        "expectedSourceSequence": 1,
+        "planningPolicyId": "ab67f413-0983-4308-9cb4-67276a7c22a8",
+        "expectedGoalVersion": 1,
+        "expectedIntakeRevision": 1,
+        "locale": "en",
+        "intake": {
+          "lodgingBudget": null,
+          "partySize": 2,
+          "schemaVersion": "stay-area-intake/1",
+          "dates": null,
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": null,
+          "pace": "relaxed",
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "durationDays": 10,
+          "city": "shanghai"
+        },
+        "expectedIntakeMessageId": "d470dbf6-901c-4707-a049-aa1ae0603009",
+        "memoryBasis": [],
+        "taskId": "0355c6b1-3b0d-4eca-a796-125b5cf4c73c",
+        "messageKey": "3abb55d9-d5ef-4e1f-8a3c-443ca01b5cb1",
+        "messageId": "04e4288d-fb58-4234-852b-050ef53064e5",
+        "threadId": "dd82f8e2-e10b-4c49-ab9f-735c55d30736",
+        "expectedIntakeDigest": "d3fbc8aa9c7844d5b750470556d91d3a0f639949d1f2613dd8ced5fbc22ee9ce",
+        "taskKey": "83cf369f-a5e3-4f9f-be64-15484e918717",
+        "conversationId": "c7eda5a6-37a3-437f-8720-26e1bb009874",
+        "goalId": "29eb1ec9-2444-45f7-9ffa-c26ae242c426"
+      },
+      "receipt": {
+        "version": 2,
+        "kind": "accepted",
+        "reused": true,
+        "taskId": "0355c6b1-3b0d-4eca-a796-125b5cf4c73c",
+        "turnId": "5967e9ec-2de5-43d8-bd02-0bba0d99726d",
+        "artifactId": "165eacb5-0624-498d-bb7a-8566cb510e25",
+        "conversationId": "c7eda5a6-37a3-437f-8720-26e1bb009874",
+        "goalId": "29eb1ec9-2444-45f7-9ffa-c26ae242c426",
+        "goalVersion": 1,
+        "messageId": "04e4288d-fb58-4234-852b-050ef53064e5",
+        "messageSequence": 2,
+        "intakeRevision": 2,
+        "current": true,
+        "readyForProvider": false,
+        "executionAvailable": false,
+        "intakeContextDigest": "2aced425be5a65cfb854b252c9e36bed528abceb633f6c3747d42d3b406453d8",
+        "planningContextDigest": "70475b71f9d5c658abe0fbe4be2f37534f27fa37e6863209c4b4c6cf02fb4b9a"
+      }
+    },
+    {
+      "status": 200,
+      "request": {
+        "taskId": "0355c6b1-3b0d-4eca-a796-125b5cf4c73c",
+        "conversationId": "c7eda5a6-37a3-437f-8720-26e1bb009874",
+        "text": "Explicit local synthetic comparison delegation",
+        "messageId": "04e4288d-fb58-4234-852b-050ef53064e5",
+        "memoryBasis": [],
+        "expectedIntakeRevision": 1,
+        "expectedIntakeDigest": "d3fbc8aa9c7844d5b750470556d91d3a0f639949d1f2613dd8ced5fbc22ee9ce",
+        "intake": {
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "mobilityConstraints": null,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "city": "shanghai",
+          "pace": "relaxed",
+          "dates": null,
+          "partySize": 2,
+          "comparisonTarget": "area_transport",
+          "durationDays": 10
+        },
+        "expectedIntakeMessageId": "d470dbf6-901c-4707-a049-aa1ae0603009",
+        "parentMessageId": "d470dbf6-901c-4707-a049-aa1ae0603009",
+        "messageKey": "3abb55d9-d5ef-4e1f-8a3c-443ca01b5cb1",
+        "expectedGoalVersion": 1,
+        "planningPolicyId": "ab67f413-0983-4308-9cb4-67276a7c22a8",
+        "threadId": "dd82f8e2-e10b-4c49-ab9f-735c55d30736",
+        "expectedSourceSequence": 1,
+        "goalId": "29eb1ec9-2444-45f7-9ffa-c26ae242c426",
+        "turnId": "5967e9ec-2de5-43d8-bd02-0bba0d99726d",
+        "locale": "en",
+        "taskKey": "83cf369f-a5e3-4f9f-be64-15484e918717"
+      },
+      "receipt": {
+        "version": 2,
+        "kind": "accepted",
+        "reused": true,
+        "taskId": "0355c6b1-3b0d-4eca-a796-125b5cf4c73c",
+        "turnId": "5967e9ec-2de5-43d8-bd02-0bba0d99726d",
+        "artifactId": "165eacb5-0624-498d-bb7a-8566cb510e25",
+        "conversationId": "c7eda5a6-37a3-437f-8720-26e1bb009874",
+        "goalId": "29eb1ec9-2444-45f7-9ffa-c26ae242c426",
+        "goalVersion": 1,
+        "messageId": "04e4288d-fb58-4234-852b-050ef53064e5",
+        "messageSequence": 2,
+        "intakeRevision": 2,
+        "current": false,
+        "readyForProvider": false,
+        "executionAvailable": false
+      }
+    },
+    {
+      "status": 200,
+      "request": {
+        "turnId": "5967e9ec-2de5-43d8-bd02-0bba0d99726d",
+        "parentMessageId": "d470dbf6-901c-4707-a049-aa1ae0603009",
+        "text": "Explicit local synthetic comparison delegation",
+        "expectedSourceSequence": 1,
+        "planningPolicyId": "ab67f413-0983-4308-9cb4-67276a7c22a8",
+        "expectedGoalVersion": 1,
+        "expectedIntakeRevision": 1,
+        "locale": "en",
+        "intake": {
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "mobilityConstraints": null,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "city": "shanghai",
+          "pace": "relaxed",
+          "dates": null,
+          "comparisonTarget": "area_transport",
+          "durationDays": 10,
+          "partySize": 2
+        },
+        "expectedIntakeMessageId": "d470dbf6-901c-4707-a049-aa1ae0603009",
+        "memoryBasis": [],
+        "messageKey": "3abb55d9-d5ef-4e1f-8a3c-443ca01b5cb1",
+        "taskId": "0355c6b1-3b0d-4eca-a796-125b5cf4c73c",
+        "messageId": "04e4288d-fb58-4234-852b-050ef53064e5",
+        "threadId": "dd82f8e2-e10b-4c49-ab9f-735c55d30736",
+        "expectedIntakeDigest": "d3fbc8aa9c7844d5b750470556d91d3a0f639949d1f2613dd8ced5fbc22ee9ce",
+        "taskKey": "83cf369f-a5e3-4f9f-be64-15484e918717",
+        "conversationId": "c7eda5a6-37a3-437f-8720-26e1bb009874",
+        "goalId": "29eb1ec9-2444-45f7-9ffa-c26ae242c426"
+      },
+      "receipt": {
+        "version": 2,
+        "kind": "accepted",
+        "reused": true,
+        "taskId": "0355c6b1-3b0d-4eca-a796-125b5cf4c73c",
+        "turnId": "5967e9ec-2de5-43d8-bd02-0bba0d99726d",
+        "artifactId": "165eacb5-0624-498d-bb7a-8566cb510e25",
+        "conversationId": "c7eda5a6-37a3-437f-8720-26e1bb009874",
+        "goalId": "29eb1ec9-2444-45f7-9ffa-c26ae242c426",
+        "goalVersion": 1,
+        "messageId": "04e4288d-fb58-4234-852b-050ef53064e5",
+        "messageSequence": 2,
+        "intakeRevision": 2,
+        "current": false,
+        "readyForProvider": false,
+        "executionAvailable": false
+      }
+    },
+    {
+      "status": 401,
+      "request": {
+        "locale": "en",
+        "conversationId": "c7eda5a6-37a3-437f-8720-26e1bb009874",
+        "text": "Explicit local synthetic comparison delegation",
+        "messageId": "04e4288d-fb58-4234-852b-050ef53064e5",
+        "memoryBasis": [],
+        "expectedIntakeRevision": 1,
+        "expectedIntakeDigest": "d3fbc8aa9c7844d5b750470556d91d3a0f639949d1f2613dd8ced5fbc22ee9ce",
+        "intake": {
+          "lodgingBudget": null,
+          "partySize": 2,
+          "schemaVersion": "stay-area-intake/1",
+          "dates": null,
+          "comparisonTarget": "area_transport",
+          "mobilityConstraints": null,
+          "pace": "relaxed",
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "durationDays": 10,
+          "city": "shanghai"
+        },
+        "expectedIntakeMessageId": "d470dbf6-901c-4707-a049-aa1ae0603009",
+        "messageKey": "3abb55d9-d5ef-4e1f-8a3c-443ca01b5cb1",
+        "parentMessageId": "d470dbf6-901c-4707-a049-aa1ae0603009",
+        "expectedGoalVersion": 1,
+        "planningPolicyId": "ab67f413-0983-4308-9cb4-67276a7c22a8",
+        "threadId": "dd82f8e2-e10b-4c49-ab9f-735c55d30736",
+        "expectedSourceSequence": 1,
+        "taskId": "0355c6b1-3b0d-4eca-a796-125b5cf4c73c",
+        "turnId": "5967e9ec-2de5-43d8-bd02-0bba0d99726d",
+        "goalId": "29eb1ec9-2444-45f7-9ffa-c26ae242c426",
+        "taskKey": "83cf369f-a5e3-4f9f-be64-15484e918717"
+      },
+      "receipt": {
+        "error": {
+          "code": "UNAUTHENTICATED"
+        }
+      }
+    },
+    {
+      "status": 403,
+      "request": {
+        "turnId": "ac5a1e6b-b953-471a-bf8d-d81e64c24cdc",
+        "parentMessageId": "9545abd4-1bca-44c8-94e6-b8c4c159112f",
+        "text": "Explicit current delegation after new login",
+        "expectedSourceSequence": 3,
+        "planningPolicyId": "ab67f413-0983-4308-9cb4-67276a7c22a8",
+        "expectedGoalVersion": 2,
+        "expectedIntakeRevision": 3,
+        "locale": "en",
+        "intake": {
+          "dates": null,
+          "partySize": 2,
+          "city": "shanghai",
+          "comparisonTarget": "area_transport",
+          "interests": [
+            "food",
+            "photography"
+          ],
+          "durationDays": 10,
+          "lodgingBudget": null,
+          "schemaVersion": "stay-area-intake/1",
+          "pace": "relaxed",
+          "mobilityConstraints": null
+        },
+        "expectedIntakeMessageId": "9545abd4-1bca-44c8-94e6-b8c4c159112f",
+        "memoryBasis": [],
+        "taskId": "db17d166-de4a-4642-ae30-db64808aed84",
+        "messageKey": "db96be6f-b3f9-4785-ac57-ce477ee8837b",
+        "messageId": "d0398069-ce9b-4399-a748-7bc06e7cc3ae",
+        "threadId": "8ab37b47-c009-4469-88b5-c02d505e0cc5",
+        "expectedIntakeDigest": "15b205ba384555009096979c1ce0f0b6986fce91914be25509c047d9f5750f0b",
+        "taskKey": "4435aab9-7eea-4a6d-93b6-4e41534923f1",
+        "conversationId": "c7eda5a6-37a3-437f-8720-26e1bb009874",
+        "goalId": "29eb1ec9-2444-45f7-9ffa-c26ae242c426"
+      },
+      "receipt": {
+        "error": {
+          "code": "DATA_POLICY_BLOCKED"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "result": "PASS",
+  "scope": "actual NativeSession URLSession/local Auth HTTP RPC; in-memory test vault, not Keychain or product activation",
+  "admissions": 1,
+  "retryNewAdmissions": 0,
+  "providerCalls": 0,
+  "modelAttempts": 0,
+  "tripWrites": 0,
+  "executionAvailable": false,
+  "readyForProvider": false,
+  "productEntry": "disabled",
+  "unrun": [
+    "worker/claimer/completion",
+    "provider/target/device/human/full acceptance"
+  ]
+}
