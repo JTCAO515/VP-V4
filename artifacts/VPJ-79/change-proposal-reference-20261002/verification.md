@@ -24,6 +24,12 @@ Effective upstream session/Proposal/Trip permission evidence is reused. Required
 
 JT restarted the computer after the implementation was committed and rebased. On recovery the original branch/worktree was clean at checkpoint `81f70ca4ef6a7694bae30eb2ea5e7cd7dac41c32`; no PR existed yet. Temporary raw logs under `/tmp` were removed by restart and are not claimed as retained artifacts. The completed results above were observed before restart, including the final Auth/ACL 11/11 and contract 3/3/typecheck results independently checked by main. They are reused for the unchanged implementation. No unfinished test is promoted to PASS. Docker's missing local socket on initial recovery is an unavailable runtime dependency, not a product failure; PR preparation does not require another full local run.
 
+## PR #615 review repair
+
+Main found that malformed successful session RPC replies were classified as 401 by the shared comparison/reference HTTP gate. Before comparing identity, the gate now requires a non-array object containing UUID subject/sessionId; malformed data returns 503 `RESULT_UNAVAILABLE`. Valid identity mismatch and explicit `UNAUTHENTICATED`/`SESSION_REPLACED` remain 401. No private result RPC follows malformed/mismatched/error session responses; no-store remains on every outcome.
+
+Focused in-memory signed-credential/transport regression: 2/2 PASS for both reader types, covering null/empty/array/scalar/missing/invalid session fields, valid mismatches, transient/explicit authority errors, and valid exact RPC dispatch. Typecheck/diff PASS after repair. These mocks are transport classification evidence, not real Auth/DB acceptance; the effective real Auth/ACL evidence above is reused as instructed. Applicable CI runs on the repaired final SHA.
+
 ## UNRUN
 
 Real provider-produced reference, new consumer UI, real Staging/production migration, physical device and whole #560 acceptance. No Simulator use, target writes, payment, confirmation or deployment in this slice. Rollback/retention on an existing target is not claimed from fresh disposable migration application.
