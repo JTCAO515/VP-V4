@@ -334,6 +334,17 @@ final class NativeSession {
         return bytes
     }
 
+    /// Fixed read-only activity path; credentials and scope remain in this transport.
+    func taskActivityRequest(conversationID: String, taskID: String) async throws -> Data {
+        guard askMode == .assistant, UUID(uuidString: conversationID) != nil,
+              UUID(uuidString: taskID) != nil else { throw NativeDataError.invalidResponse }
+        let prefix = "api/chat/native/v5/conversations"
+        let bytes = try await dataRequest(prefix: prefix,
+            path: "\(prefix)/\(conversationID)/tasks/\(taskID)/activity", method: "GET")
+        guard bytes.count <= 10_000 else { throw NativeDataError.invalidResponse }
+        return bytes
+    }
+
     /// Local Ask shares identity fencing, never credentials, with the Trip consumer.
     func askRequest(path: String, method: String, body: Data? = nil) async throws -> Data {
         guard askMode != .unavailable else { throw NativeDataError.invalidResponse }
