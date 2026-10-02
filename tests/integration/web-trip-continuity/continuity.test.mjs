@@ -15,17 +15,18 @@ async function boundedBarrier(promise,label,timeoutMs=20000){
  try{return await Promise.race([promise,new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error(label+' did not settle')),timeoutMs);})]);}
  finally{clearTimeout(timer);}
 }
+function failureKind(error){return {name:['Error','TypeError','SyntaxError','AssertionError','TimeoutError','AggregateError'].includes(error?.name)?error.name:'OtherError',kind:/timeout|timed out/i.test(error?.message??'')?'timeout':error?.code==='ERR_ASSERTION'?'assertion':error?.name==='SyntaxError'?'decode':'other'};}
 function canonicalBarrier(){
- let release,arrive,rejectArrival,finish,rejectFinish,value,started=false;
+ let release,arrive,rejectArrival,finish,rejectFinish,value,started=false,phase='idle',failurePhase=null,status=null;
  const held=new Promise(resolve=>release=resolve),arrived=new Promise((resolve,reject)=>{arrive=resolve;rejectArrival=reject;}),done=new Promise((resolve,reject)=>{finish=resolve;rejectFinish=reject;});
  // Early observers prevent unhandled rejection before the owning test reaches its await.
  void arrived.catch(()=>{});void done.catch(()=>{});
  const handler=async route=>{
   started=true;
-  try{const response=await route.fetch({timeout:15000});value=await response.json();arrive(value);await held;await route.fulfill({response});finish();}
-  catch(error){rejectArrival(error);rejectFinish(error);}
+  try{phase='fetch';const response=await route.fetch({timeout:15000});status=typeof response.status==='function'?response.status():null;phase='json';value=await response.json();arrive(value);phase='held';await held;phase='fulfill';await route.fulfill({response});phase='done';finish();}
+  catch(error){failurePhase=phase;phase='failed';rejectArrival(error);rejectFinish(error);}
  };
- return {handler,arrived,release,get value(){return value;},async cleanup(remove){
+ return {handler,arrived,release,get value(){return value;},get diagnostic(){return {started,phase,failurePhase,status};},async cleanup(remove){
   release();try{if(started)await boundedBarrier(done,'canonical route fulfillment');}finally{await remove();}
  }};
 }
@@ -41,6 +42,12 @@ test('canonical barrier completes fulfillment before removal and preserves respo
   await assert.rejects(gate.cleanup(async()=>{removed=true;}),e=>e===failure);await handling;assert.equal(removed,true);
  }
 });
+test('canonical diagnostic exposes only fixed failure categories and transport phase',async()=>{
+ const secret='SYNTHETIC_PRIVATE_COOKIE_TOKEN';const error=Object.assign(Error(secret),{name:secret,code:secret});assert.deepEqual(failureKind(error),{name:'OtherError',kind:'other'});
+ const b=canonicalBarrier();await b.handler({fetch:async()=>({status:()=>500,json:async()=>{throw SyntaxError(secret);}}),fulfill:async()=>assert.fail('failed decode cannot fulfill')});
+ assert.deepEqual(b.diagnostic,{started:true,phase:'failed',failurePhase:'json',status:500});assert.ok(!JSON.stringify({diagnostic:b.diagnostic,error:failureKind(error)}).includes(secret));await assert.rejects(b.cleanup(async()=>{}),SyntaxError);
+});
+
 test('canonical barrier has a bounded failure when no arrival occurs',async()=>{
  await assert.rejects(boundedBarrier(new Promise(()=>{}),'controlled absent request',10),/controlled absent request did not settle/);
 });
@@ -150,23 +157,24 @@ test('V5 result consumer cannot retarget canonical Web/native Trip confirmation'
  let recoveredCanonical;
  const canonicalRoute=api+'/api/trips/'+fixture.trip+'/proposal?proposalId=*';
  await page.route(canonicalRoute,canonical.handler);
- let recoveredReceipt,reviewFailure;
+ let recoveredReceipt,reviewFailure,reviewPhase='initial';
  try {
- const recoveryResponse=page.waitForResponse(r=>r.url()===api+'/api/trips/'+fixture.trip+'/proposal'&&r.request().method()==='POST');
- await editor.getByRole('button',{name:copy.review,exact:true}).click();
- const recovered=await recoveryResponse;assert.equal(recovered.status(),201);recoveredReceipt=await recovered.json();
- recoveredCanonical=await boundedBarrier(canonical.arrived,'canonical fetch/JSON arrival');
+ reviewPhase='post_response_wait';const recoveryResponse=page.waitForResponse(r=>r.url()===api+'/api/trips/'+fixture.trip+'/proposal'&&r.request().method()==='POST');
+ reviewPhase='review_click';await editor.getByRole('button',{name:copy.review,exact:true}).click();
+ reviewPhase='post_response';const recovered=await recoveryResponse;assert.equal(recovered.status(),201);recoveredReceipt=await recovered.json();
+ reviewPhase='canonical_arrival';recoveredCanonical=await boundedBarrier(canonical.arrived,'canonical fetch/JSON arrival');
  assert.equal(recoveredCanonical.proposal.id,recoveredReceipt.proposalId);assert.equal(recoveredCanonical.proposal.baseTripVersion,3);
  assert.equal(recoveredCanonical.proposal.stale,false,'explicit review has a real current server proof');
+ reviewPhase='held_ui_assert';
  // A creation receipt alone is insufficient. Keep the old conflict until canonical review finishes.
   await expect(editor.getByRole('status')).toHaveText(copy.conflict);
   await expect(editor.getByRole('button',{name:copy.confirm,exact:true})).toHaveCount(0);
   assert.equal((await n()).body.trip.headVersion,3);assert.equal(count(),headEvents);
   t.diagnostic('POST_201_REVIEW_BARRIER '+JSON.stringify({postStatus:recovered.status(),canonicalGetStatus:200,canonicalBase:recoveredCanonical.proposal.baseTripVersion,canonicalStale:recoveredCanonical.proposal.stale,delivered:false}));
- } catch(error){reviewFailure=error;throw error;}
+ } catch(error){reviewFailure=error;t.diagnostic('CANONICAL_REVIEW_FAILURE '+JSON.stringify({reviewPhase,barrier:canonical.diagnostic,error:failureKind(error)}));throw error;}
  finally {
   try{await canonical.cleanup(()=>page.unroute(canonicalRoute,canonical.handler));}
-  catch(cleanupError){throw reviewFailure?new AggregateError([reviewFailure,cleanupError],'Review failed and response cleanup also failed'):cleanupError;}
+  catch(cleanupError){t.diagnostic('CANONICAL_CLEANUP_FAILURE '+JSON.stringify({reviewPhase,barrier:canonical.diagnostic,reviewError:reviewFailure?failureKind(reviewFailure):null,cleanupError:failureKind(cleanupError)}));throw reviewFailure?new AggregateError([reviewFailure,cleanupError],'Review failed and response cleanup also failed'):cleanupError;}
  }
  await expect(editor.getByRole('status')).toHaveText(copy.pending);
  await expect(editor.getByRole('button',{name:copy.confirm,exact:true})).toBeEnabled();
