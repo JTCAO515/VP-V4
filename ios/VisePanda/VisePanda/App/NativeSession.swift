@@ -213,6 +213,19 @@ final class NativeSession {
         return bytes
     }
 
+    /// Read only the discovered exact Proposal reference through the native identity fence.
+    func proposalReferenceRequest(artifactID: String, revision: Int) async throws -> Data {
+        guard UUID(uuidString: artifactID) != nil, (1...1000).contains(revision) else {
+            throw NativeDataError.invalidResponse
+        }
+        let path = "api/results/native/v1/change-proposal-reference"
+        let bytes = try await dataRequest(prefix: path, path: path, method: "GET", queryItems: [
+            .init(name: "artifactId", value: artifactID), .init(name: "revision", value: String(revision))
+        ])
+        guard bytes.count <= 100_000 else { throw NativeDataError.invalidResponse }
+        return bytes
+    }
+
     /// Bounded owner search uses the same fixed native transport and identity fence.
     func resultSearchRequest(query: String, cursor: String? = nil) async throws -> Data {
         guard query.utf16.count <= 120, cursor == nil || UUID(uuidString: cursor ?? "") != nil else {

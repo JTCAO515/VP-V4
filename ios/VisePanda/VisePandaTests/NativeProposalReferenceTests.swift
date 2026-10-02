@@ -3,6 +3,45 @@ import SwiftUI
 @testable import VisePanda
 
 nonisolated final class NativeProposalReferenceTests: XCTestCase {
+    /// Dedicated disposable Auth/HTTP/SQL acceptance; never supplies a production entry source.
+    @MainActor func testOwnedLocalAuthExactCard() async throws {
+        let env = ProcessInfo.processInfo.environment
+        guard env["VP_PROPOSAL_NATIVE_TEST"] == "1" else { throw XCTSkip("Dedicated disposable runner required") }
+        let endpoint = try XCTUnwrap(env["VP_PROPOSAL_API"])
+        guard let url = URL(string: endpoint), url.scheme == "http", url.host == "127.0.0.1" else { throw NativeDataError.invalidResponse }
+        let artifact = try XCTUnwrap(env["VP_PROPOSAL_ARTIFACT"])
+        let proposal = try XCTUnwrap(env["VP_PROPOSAL_ID"])
+        let suite = "ProposalReference." + UUID().uuidString
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let session = NativeSession(arguments: ["-VisePandaNativeAPI", endpoint], defaults: defaults, bundleConfiguration: [:])
+        await session.login(email: try XCTUnwrap(env["VP_PROPOSAL_EMAIL"]), password: try XCTUnwrap(env["VP_PROPOSAL_PASSWORD"]))
+        let scope = try XCTUnwrap(session.dataScope)
+        let store = NativeProposalReferenceStore()
+        await store.load(artifactID: artifact, revision: 1, scope: scope, active: true, currentScope: { session.dataScope }) {
+            try await session.proposalReferenceRequest(artifactID: $0, revision: $1)
+        }
+        XCTAssertEqual(store.visible(scope: session.dataScope)?.proposalID, proposal.lowercased())
+        XCTAssertEqual(store.visible(scope: session.dataScope)?.tripID, env["VP_PROPOSAL_TRIP"])
+        let host = UIHostingController(rootView: NativeProposalReferenceView(store: store, scope: scope, isActive: true, chinese: true).environment(\.scenePhase, .active))
+        let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 568))
+        window.rootViewController = host; window.makeKeyAndVisible()
+        defer { window.isHidden = true }
+        host.view.frame = window.bounds; host.view.layoutIfNeeded()
+        try await Task.sleep(for: .milliseconds(150))
+        let image = UIGraphicsImageRenderer(bounds: host.view.bounds).image { _ in host.view.drawHierarchy(in: host.view.bounds, afterScreenUpdates: true) }
+        let attachment = XCTAttachment(image: image); attachment.name = "Owned-local-Auth-exact-proposal-reference"; attachment.lifetime = .keepAlways; add(attachment)
+        await session.logout()
+        XCTAssertNil(store.visible(scope: session.dataScope))
+        store.clear()
+        await session.login(email: try XCTUnwrap(env["VP_PROPOSAL_OTHER_EMAIL"]), password: try XCTUnwrap(env["VP_PROPOSAL_OTHER_PASSWORD"]))
+        let other = try XCTUnwrap(session.dataScope)
+        await store.load(artifactID: artifact, revision: 1, scope: other, active: true, currentScope: { session.dataScope }) {
+            try await session.proposalReferenceRequest(artifactID: $0, revision: $1)
+        }
+        XCTAssertNil(store.visible(scope: session.dataScope)); XCTAssertEqual(store.state, .unavailable)
+        await session.logout()
+    }
     private let id = "11111111-1111-4111-8111-111111111111"
     @MainActor private var owner: NativeDataScope { .init(endpoint: "http://127.0.0.1", subject: "synthetic-owner", mobileEpoch: 1, generation: 1) }
     private func payload() -> [String: Any] {
