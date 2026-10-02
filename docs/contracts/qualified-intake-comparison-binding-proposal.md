@@ -26,4 +26,6 @@ Planning must carry both the intake binding identity/digest and its existing pla
 
 Main must freeze exact admission/private intake-writer ownership, parameter/receipt shape, new-source revision semantics, correction behaviour and lock order with the #559/#561 owners before SQL implementation. This owner proposes only result-domain projection/validation; it does not take their admission/worker functions.
 
+Main readback on2026-10-03: explicit atomic rebind is accepted in principle; exact runtime SQL is **not approved**. Original #561 owner owns the admission/worker bridge's exact parameter/receipt/version/lock-order proposal and local reproduction; original #559 owner checks existing intake locks/helpers. #560 owns only the publisher validator/result functions. The bridge receives a separately reserved migration; #560's010000 stays uncreated. No private intake append helper or admission change is authorised in this branch.
+
 Reserved (Main conflict-checked, not created/applied): `20261003010000_vpj79_qualified_intake_comparison.sql`. Future local lease63420 requires fresh prebind; this pure-function phase starts no stack or Simulator. Real storage/admission/producer/native/target/provider/cost/full #560/#561 acceptance remain UNRUN. Existing #615/#617 evidence and `559dab77` pause note remain preserved.
