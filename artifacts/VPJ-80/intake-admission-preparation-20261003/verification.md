@@ -1,0 +1,15 @@
+# Exact intake admission bridge — preparation evidence
+
+2026-10-03; base `80fa7862060f9549e0665a2c818667f4955fd3a1`, branch `codex/vpj80-intake-admission-binding-20261003`. Backend snapshot `05c0042c590b79ce41b6f8141799e64b34334e84` plus `4728c18f96d60138cbc6718fc31f5f10ae3ad20b` loaded only as local isolated test SQL. No cherry-pick into runtime or edit of migration 200000/result projection/publisher occurred.
+
+Command: `VPJ80_INTAKE_ADMISSION_PREP=1 node --experimental-strip-types --test tests/integration/turn/planning-intake-admission-preparation.test.mjs`.
+
+PASS: exit0, 4/4, zero skipped, 10029.58ms. Raw synthetic receipts, current basis/readiness/digest, legacy admission reply, before/after state, controlled wait events and SQL errors are in [postgres-probe.log.gz](postgres-probe.log.gz). Container `vpj80-intake-prep-a0e77960`, pinned existing local PostgreSQL image `public.ecr.aws/supabase/postgres:17.6.1.159`, network none, private socket `/tmp/vpj59-socket`. Teardown removed only this owned container; final exact-name `docker ps -a` returned no rows. No HTTP/server port or Simulator was used.
+
+Observed defect, not repaired by this preparation: the legacy planning admission appends a new same-goal message, after which fixed intake read returns `{kind:"unavailable",reason:"stale_basis"}`; old private basis is null and new message has no typed intake row. Historical receipt cannot revive current authority. The existing gates work correctly; reusing an old digest to work around this would violate them.
+
+Baseline concurrency evidence: same immutable legacy request races into one Task/Turn/artifact identity, false/true reused receipts, one planning row and zero attempts. Planning versus explicit correction has one winner. Controlled correction-first and planning-first transactions each hold their writer transaction with `pg_sleep(2)` only on this disposable fixture; the second actual connection is observed in `pg_stat_activity` with wait_event_type `Lock`, then exits3 with SERVICE_TASK_CONFLICT after the first commits. No deadlock. Correction-first leaves Task/work/planning/capacity zero, typed intakes2 and goalversion2; planning-first leaves one Task/work/planning, typed intake1 and goalversion1. A late wrong goal-version admission failure preserves the entire goal/text/sequence/message/intake/Task/work/planning/capacity/attempt snapshot.
+
+PASS: source lint (444 files), docs baseline, diff whitespace. Runtime v2/new helper/dual-digest worker/publisher integration, future bridge failure matrix and remote CI for that implementation are UNRUN; no runtime implementation is authorized until Main freezes signatures/receipt/lock order and #559/private-helper ownership. Proposed contract is `docs/contracts/vpj80-intake-admission-binding-v2-proposal.md`. This test is explicitly local preparation and requires the exact frozen Git snapshot; no arbitrary backend fallback or CI rollout is claimed.
+
+No real provider, target migration, deployment, activation, fee or complete producer/user acceptance. #561 stays OPEN. #622 branch/evidence remain preserved.
