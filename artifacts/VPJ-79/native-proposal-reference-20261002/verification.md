@@ -24,3 +24,9 @@ Command: set fresh absolute `VP_PROPOSAL_OUTPUT`, dedicated `VP_PROPOSAL_SIMULAT
 The merged exact API cannot discover a reference. Existing Library search and Task/Trip comparison APIs deliberately exclude Proposal references. Main assigned the original backend owner an independent owned Trip-to-current-reference discovery contract (bounded 64 + sentinel, exact eligibility recheck). Runtime discovery wiring and complete Library entry await that contract's normal merge. No user-entered internal ID, fixed fixture ID or comparison scan is used as an entry.
 
 Complete product-entry acceptance, real provider producer, Staging, physical device, VoiceOver and production remain UNRUN. No PR is submitted for this partial checkpoint.
+
+## Frozen discovery checkpoint
+
+Main supplied RPC `read_trip_change_proposal_reference_v1(p_trip_id uuid)` and GET `/api/results/native/v1/change-proposal-reference/trip?tripId=UUID`. Closed `{version:1,data:{kind:"result_reference",tripId,artifactId,revision}}`, revision 1..1000; terminal kinds have only `kind`. Latest current candidate ordering is created_at DESC/id DESC, 64 + sentinel; no comparison fallback.
+
+Added only a dedicated NativeSession GET method and closed receipt decoder pinned to the expected selected Trip. Added focused decoder cases for later execution. Syntax parse and diff check passed; no backend runtime was consumed, no UI entry enabled and no test suite rerun for waiting. These additions remain UNRUN for typechecked/runtime validation until backend normal merge and complete wiring.

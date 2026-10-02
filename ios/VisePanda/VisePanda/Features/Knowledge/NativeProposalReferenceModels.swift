@@ -48,12 +48,12 @@ struct NativeProposalReferenceRecord: Equatable {
                      proposalRevision: proposalRevision, tripID: trip, tripVersion: tripVersion,
                      taskID: task, goalID: goal, goalVersion: goalVersion, inputSequence: sequence)
     }
-    private static func closed(_ value: [String: Any], _ keys: [String]) -> Bool { Set(value.keys) == Set(keys) }
-    private static func identifier(_ value: Any?) -> String? {
+    fileprivate static func closed(_ value: [String: Any], _ keys: [String]) -> Bool { Set(value.keys) == Set(keys) }
+    fileprivate static func identifier(_ value: Any?) -> String? {
         guard let text = value as? String, text.range(of: #"^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"#, options: [.regularExpression, .caseInsensitive]) != nil else { return nil }
         return text.lowercased()
     }
-    private static func integer(_ value: Any?, minimum: Int = 1, maximum: Int = 9_007_199_254_740_991) -> Int? {
+    fileprivate static func integer(_ value: Any?, minimum: Int = 1, maximum: Int = 9_007_199_254_740_991) -> Int? {
         guard let number = value as? NSNumber, CFGetTypeID(number) != CFBooleanGetTypeID(),
               number.doubleValue.isFinite, number.doubleValue.rounded() == number.doubleValue,
               number.doubleValue >= Double(minimum), number.doubleValue <= Double(maximum) else { return nil }
@@ -61,5 +61,32 @@ struct NativeProposalReferenceRecord: Equatable {
     }
     private static func boolean(_ value: Any?) -> Bool? {
         guard let number = value as? NSNumber, CFGetTypeID(number) == CFBooleanGetTypeID() else { return nil }; return number.boolValue
+    }
+}
+
+/// Frozen Trip discovery receipt; it carries no Proposal content or future eligibility guarantee.
+struct NativeTripProposalReference: Equatable {
+    let tripID: String
+    let artifactID: String
+    let revision: Int
+
+    static func decode(_ bytes: Data, expectedTripID: String) throws -> Self? {
+        guard bytes.count <= 10_000,
+              let expected = NativeProposalReferenceRecord.identifier(expectedTripID),
+              let envelope = try JSONSerialization.jsonObject(with: bytes) as? [String: Any],
+              NativeProposalReferenceRecord.closed(envelope, ["version", "data"]),
+              NativeProposalReferenceRecord.integer(envelope["version"], maximum: 1) == 1,
+              let data = envelope["data"] as? [String: Any] else { throw NativeDataError.invalidResponse }
+        if ["empty", "unavailable"].contains(data["kind"] as? String ?? "") {
+            guard NativeProposalReferenceRecord.closed(data, ["kind"]) else { throw NativeDataError.invalidResponse }
+            return nil
+        }
+        guard NativeProposalReferenceRecord.closed(data, ["kind", "tripId", "artifactId", "revision"]),
+              data["kind"] as? String == "result_reference",
+              let trip = NativeProposalReferenceRecord.identifier(data["tripId"]), trip == expected,
+              let artifact = NativeProposalReferenceRecord.identifier(data["artifactId"]),
+              let revision = NativeProposalReferenceRecord.integer(data["revision"], maximum: 1000)
+        else { throw NativeDataError.invalidResponse }
+        return .init(tripID: trip, artifactID: artifact, revision: revision)
     }
 }

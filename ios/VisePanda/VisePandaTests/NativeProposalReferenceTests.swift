@@ -53,6 +53,24 @@ nonisolated final class NativeProposalReferenceTests: XCTestCase {
     }
     private func bytes(_ data: [String: Any]) throws -> Data { try JSONSerialization.data(withJSONObject: ["version": 1, "data": data]) }
 
+    @MainActor func testFrozenTripDiscoveryIsClosedAndBindsSelectedTrip() throws {
+        let reference: [String: Any] = ["kind": "result_reference", "tripId": id, "artifactId": id, "revision": 1]
+        let value = try XCTUnwrap(NativeTripProposalReference.decode(bytes(reference), expectedTripID: id))
+        XCTAssertEqual(value.artifactID, id); XCTAssertEqual(value.revision, 1)
+        XCTAssertThrowsError(try NativeTripProposalReference.decode(bytes(reference), expectedTripID: UUID().uuidString))
+        for field in ["content", "proposalId", "actions", "current", "url"] {
+            var extra = reference; extra[field] = "unexpected"
+            XCTAssertThrowsError(try NativeTripProposalReference.decode(bytes(extra), expectedTripID: id))
+        }
+        for revision: Any in [0, 1001, true, "1"] {
+            var invalid = reference; invalid["revision"] = revision
+            XCTAssertThrowsError(try NativeTripProposalReference.decode(bytes(invalid), expectedTripID: id))
+        }
+        for kind in ["empty", "unavailable"] {
+            XCTAssertNil(try NativeTripProposalReference.decode(bytes(["kind": kind]), expectedTripID: id))
+            XCTAssertThrowsError(try NativeTripProposalReference.decode(bytes(["kind": kind, "tripId": id]), expectedTripID: id))
+        }
+    }
     @MainActor func testFrozenReferenceAndClosedAuthorityProjection() throws {
         let value = try XCTUnwrap(NativeProposalReferenceRecord.decode(bytes(payload())))
         XCTAssertEqual(value.proposalRevision, 2); XCTAssertEqual(value.tripVersion, 0)

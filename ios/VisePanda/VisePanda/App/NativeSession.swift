@@ -226,6 +226,17 @@ final class NativeSession {
         return bytes
     }
 
+    /// Frozen owned Trip discovery contract; consumers must re-read the returned exact reference.
+    func tripProposalReferenceRequest(tripID: String) async throws -> Data {
+        guard UUID(uuidString: tripID) != nil else { throw NativeDataError.invalidResponse }
+        let path = "api/results/native/v1/change-proposal-reference/trip"
+        let bytes = try await dataRequest(prefix: path, path: path, method: "GET", queryItems: [
+            .init(name: "tripId", value: tripID)
+        ])
+        guard bytes.count <= 10_000 else { throw NativeDataError.invalidResponse }
+        return bytes
+    }
+
     /// Bounded owner search uses the same fixed native transport and identity fence.
     func resultSearchRequest(query: String, cursor: String? = nil) async throws -> Data {
         guard query.utf16.count <= 120, cursor == nil || UUID(uuidString: cursor ?? "") != nil else {
