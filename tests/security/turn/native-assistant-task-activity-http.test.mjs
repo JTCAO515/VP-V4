@@ -11,14 +11,14 @@ async function setup(t){
   VISEPANDA_NATIVE_LOCAL_TEXT:'true',VISEPANDA_NATIVE_LOCAL_TEXT_POLICY:policy,VISEPANDA_NATIVE_LOCAL_ASSISTANT_CONVERSATION:'false'};
  const prior=new Map(Object.keys(patch).map(k=>[k,process.env[k]]));Object.assign(process.env,patch);
  t.after(()=>{for(const[k,v]of prior)v===undefined?delete process.env[k]:process.env[k]=v;});
- const transport=globalThis.fetch,seen=[];let sessionError=null,kind='task_activity',actions=[{tool:'place.read',state:'unknown'}];
+ const transport=globalThis.fetch,seen=[];let sessionData={subject,sessionId},sessionError=null,kind='task_activity',actions=[{tool:'place.read',state:'unknown'}];
  t.mock.method(globalThis,'fetch',async(input,init)=>{
   const request=new Request(input,init),path=new URL(request.url).pathname;
-  if(path.endsWith('/native_session_v2'))return sessionError?Response.json({message:sessionError},{status:400}):Response.json({subject,sessionId});
+  if(path.endsWith('/native_session_v2'))return sessionError?Response.json({message:sessionError},{status:400}):Response.json(sessionData);
   if(path.endsWith('/read_assistant_task_activity_v1')){seen.push(await request.json());return Response.json({kind,conversationId:conversation,taskId:message,turnId:message,turnStatus:'cancelled',limit:4,recording:'recorded',actions,privateDigest:'must-not-leak'});}
   return transport(input,init);
  });
- return {seen,actions:value=>{actions=value;},error:value=>{sessionError=value;},kind:value=>{kind=value;},request:(query='',headers={},method='GET')=>new NextRequest('http://127.0.0.1/api/chat/native/v5/conversations/'+conversation+'/tasks/'+message+'/activity'+query,{method,headers:{Authorization:'Bearer '+fixture.token,...headers}})};
+ return {seen,session:value=>{sessionData=value;},actions:value=>{actions=value;},error:value=>{sessionError=value;},kind:value=>{kind=value;},request:(query='',headers={},method='GET')=>new NextRequest('http://127.0.0.1/api/chat/native/v5/conversations/'+conversation+'/tasks/'+message+'/activity'+query,{method,headers:{Authorization:'Bearer '+fixture.token,...headers}})};
 }
 test('activity read retains unknown/terminal state with producer off and allowlists private fields',async t=>{
  const e=await setup(t),response=await nativeAssistantTaskActivityHTTP(e.request(),conversation,message);
@@ -36,6 +36,7 @@ test('closed task read rejects arbitrary IDs, duplicate cursor and browser crede
 });
 test('transient session RPC failure is unavailable while actual replacement is unauthenticated',async t=>{
  const e=await setup(t);e.error('Temporary storage failure');assert.equal((await nativeAssistantTaskActivityHTTP(e.request(),conversation,message)).status,503);
+ e.error('UNAUTHENTICATED');assert.equal((await nativeAssistantTaskActivityHTTP(e.request(),conversation,message)).status,401);
  e.error('SESSION_REPLACED');assert.equal((await nativeAssistantTaskActivityHTTP(e.request(),conversation,message)).status,401);
  assert.deepEqual(e.seen,[]);
 });
@@ -46,4 +47,15 @@ test('activity response rejects invented tools, states, overflow and private act
   Array.from({length:5},()=>({tool:'place.read',state:'completed'})),[{tool:'place.read',state:'unknown',lease:'private'}]]){
   e.actions(actions);assert.equal((await nativeAssistantTaskActivityHTTP(e.request(),conversation,message)).status,500);
  }
+});
+
+for(const [name,data,status] of [
+ ['null',null,503],['empty',{},503],['missing-subject',{sessionId},503],['missing-session',{subject},503],
+ ['invalid-subject',{subject:'invalid',sessionId},503],['invalid-session',{subject,sessionId:'invalid'},503],
+ ['valid-subject-mismatch',{subject:conversation,sessionId},401],['valid-session-mismatch',{subject,sessionId:conversation},401],
+])test('session reply classification: '+name,async t=>{
+ const e=await setup(t);e.session(data);const response=await nativeAssistantTaskActivityHTTP(e.request(),conversation,message);
+ assert.equal(response.status,status);assert.equal(response.headers.get('cache-control'),'private, no-store');
+ assert.deepEqual(await response.json(),{error:{code:status===503?'PROVIDER_UNAVAILABLE':'UNAUTHENTICATED'}});
+ assert.deepEqual(e.seen,[],'no private read after invalid session response');
 });

@@ -32,3 +32,26 @@ for(const mode of ['success','terminal','foreign-cursor','revoked','wrong-sessio
 });
 
 test('read boundary includes terminal 10001 but excludes unsupported 10002',()=>{assert.equal(validJourneysPage({...page,goals:[{...page.goals[0],scopeVersion:10001}]}),true);assert.equal(validJourneysPage({...page,goals:[{...page.goals[0],scopeVersion:10002}]}),false);});
+
+for(const [name,data,error,status] of [
+ ['null',null,null,503],['empty',{},null,503],['missing-subject',{sessionId},null,503],['missing-session',{subject},null,503],
+ ['invalid-subject',{subject:'invalid',sessionId},null,503],['invalid-session',{subject,sessionId:'invalid'},null,503],
+ ['valid-subject-mismatch',{subject:goal,sessionId},null,401],['valid-session-mismatch',{subject,sessionId:goal},null,401],
+ ['explicit-unauthenticated',null,'UNAUTHENTICATED',401],['explicit-replacement',null,'SESSION_REPLACED',401],
+])test('journeys session reply classification: '+name,async t=>{
+ const f=await nativeFixture(t,'http://127.0.0.1:58710');
+ const env={NEXT_PUBLIC_SUPABASE_URL:f.config.url,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:f.config.publishableKey,
+  VISEPANDA_NATIVE_LOCAL_TEXT:'true',VISEPANDA_NATIVE_LOCAL_TEXT_POLICY:conversation};
+ const old=Object.fromEntries(Object.keys(env).map(k=>[k,process.env[k]]));Object.assign(process.env,env);
+ t.after(()=>{for(const[k,v]of Object.entries(old))v===undefined?delete process.env[k]:process.env[k]=v;});
+ const previous=globalThis.fetch;let reads=0;
+ t.mock.method(globalThis,'fetch',async(i,init)=>{const request=new Request(i,init),path=new URL(request.url).pathname;
+  if(path.endsWith('/native_session_v2'))return error?Response.json({message:error},{status:400}):Response.json(data);
+  if(path.endsWith('/read_assistant_journeys_page_v1')){reads++;return Response.json(page);}
+  return previous(i,init);
+ });
+ const response=await nativeJourneysHTTP(new NextRequest('http://127.0.0.1/api/chat/native/v5/journeys',{headers:{Authorization:'Bearer '+f.token}}));
+ assert.equal(response.status,status);assert.equal(response.headers.get('cache-control'),'private, no-store');
+ assert.deepEqual(await response.json(),{error:{code:status===503?'PROVIDER_UNAVAILABLE':'UNAUTHENTICATED'}});
+ assert.equal(reads,0);
+});

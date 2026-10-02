@@ -44,7 +44,9 @@ export async function nativeJourneysHTTP(request: NextRequest, cursor?: string) 
     if (!actor) return fail("UNAUTHENTICATED");
     const session = await scope.run(() => actor.client.rpc("native_session_v2", { p_action: "session" }).abortSignal(scope.signal));
     if (session.error) return fail(/UNAUTHENTICATED|SESSION_REPLACED/.test(session.error.message) ? "UNAUTHENTICATED" : "PROVIDER_UNAVAILABLE");
-    if (!record(session.data) || session.data.subject !== actor.subject || session.data.sessionId !== actor.sessionId) return fail("UNAUTHENTICATED");
+    if (!record(session.data) || typeof session.data.subject !== "string" || !isUuid(session.data.subject)
+      || typeof session.data.sessionId !== "string" || !isUuid(session.data.sessionId)) return fail("PROVIDER_UNAVAILABLE");
+    if (session.data.subject !== actor.subject || session.data.sessionId !== actor.sessionId) return fail("UNAUTHENTICATED");
     const result = await scope.run(() => actor.client.rpc("read_assistant_journeys_page_v1", { p_policy_id: config.policyId, p_cursor: cursor ?? null }).abortSignal(scope.signal));
     if (result.error) return fail(/UNAUTHENTICATED|SESSION_REPLACED/.test(result.error.message) ? "UNAUTHENTICATED" : "PROVIDER_UNAVAILABLE");
     if (record(result.data) && result.data.kind === "unavailable") return fail("DATA_POLICY_BLOCKED");
