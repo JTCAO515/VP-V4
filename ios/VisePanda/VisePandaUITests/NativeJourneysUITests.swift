@@ -168,4 +168,60 @@ final class NativeJourneysUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["assistant.current-goal"].label.contains("Goal A original"))
     }
 
+    func testAuthenticatedCrossConversationIndexAndUnavailableRestart() throws {
+        let env = ProcessInfo.processInfo.environment
+        guard env["VP_JOURNEY_INDEX_TEST"] == "1" else { throw XCTSkip("UNRUN: disposable cross-conversation Auth environment") }
+        continueAfterFailure = false
+        let oldGoal = try XCTUnwrap(env["VP_JOURNEY_INDEX_OLD_GOAL"])
+        let newGoal = try XCTUnwrap(env["VP_JOURNEY_INDEX_NEW_GOAL"])
+        let app = XCUIApplication()
+        app.launchArguments = ["-VisePandaNativeAPI", try XCTUnwrap(env["VP_NATIVE_TEXT_API_URL"]), "-VisePandaAssistantConversation", "-VisePandaLocale", "en", "-AppleLanguages", "(en)"]
+        app.launch(); app.tabBars.buttons["Profile"].tap()
+        let email = app.textFields["native.login.email"]
+        XCTAssertTrue(email.waitForExistence(timeout: 10)); email.tap(); email.typeText(try XCTUnwrap(env["VP_NATIVE_TEXT_UI_EN_EMAIL"]))
+        let password = app.secureTextFields["native.login.password"]
+        password.tap(); password.typeText("VPJ07-Local-Synthetic-Only-195!")
+        app.buttons["native.login.submit"].tap()
+        XCTAssertTrue(app.buttons["assistant.conversation.choose"].waitForExistence(timeout: 20))
+        app.buttons["shell.entries.open"].tap(); app.buttons["shell.mode.toggle"].tap()
+        func journeys() { app.buttons["shell.entries.open"].tap(); app.buttons["shell.entry.trip"].tap() }
+        func findButton(_ id: String) -> XCUIElement {
+            let button = app.buttons[id]
+            for _ in 0..<10 where !button.exists || !button.isHittable {
+                if id == "journeys.refresh" { app.swipeDown() } else { app.swipeUp() }
+            }
+            XCTAssertTrue(button.waitForExistence(timeout: 15)); XCTAssertTrue(button.isHittable)
+            return button
+        }
+        func control(_ action: String) throws {
+            let done = expectation(description: action)
+            var request = URLRequest(url: try XCTUnwrap(URL(string: env["VP_JOURNEY_INDEX_CONTROL"]!)))
+            request.httpMethod = "POST"; request.httpBody = try JSONSerialization.data(withJSONObject: ["action": action])
+            URLSession.shared.dataTask(with: request) { _, response, error in
+                XCTAssertNil(error); XCTAssertEqual((response as? HTTPURLResponse)?.statusCode, 200); done.fulfill()
+            }.resume(); wait(for: [done], timeout: 10)
+        }
+        journeys()
+        findButton("journeys.goal.open.\(oldGoal)").tap()
+        let older = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "Current goal v7: Older conversation goal"), object: app.staticTexts["assistant.current-goal"])
+        XCTAssertEqual(XCTWaiter.wait(for: [older], timeout: 15), .completed)
+        journeys(); findButton("journeys.refresh").tap()
+        findButton("journeys.next-page").tap()
+        let newerButton = findButton("journeys.goal.open.\(newGoal)")
+        XCTAssertFalse(app.buttons["journeys.goal.open.\(oldGoal)"].exists)
+        newerButton.tap()
+        let newer = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label CONTAINS %@", "Current goal v3: Newer conversation goal"), object: app.staticTexts["assistant.current-goal"])
+        XCTAssertEqual(XCTWaiter.wait(for: [newer], timeout: 15), .completed)
+        journeys(); findButton("journeys.refresh").tap()
+        let next = findButton("journeys.next-page")
+        try control("amend"); next.tap()
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Goals unavailable")).firstMatch.waitForExistence(timeout: 15))
+        XCTAssertFalse(app.buttons["journeys.goal.open.\(oldGoal)"].exists)
+        findButton("journeys.refresh").tap()
+        XCTAssertTrue(findButton("journeys.goal.open.\(oldGoal)").exists)
+        try control("withdraw"); findButton("journeys.refresh").tap()
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Goals unavailable")).firstMatch.waitForExistence(timeout: 15))
+        XCTAssertFalse(app.buttons["journeys.goal.open.\(oldGoal)"].exists)
+        app.terminate()
+    }
 }

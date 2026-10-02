@@ -160,4 +160,54 @@ nonisolated final class NativeJourneyGoalIndexTests: XCTestCase {
         XCTAssertEqual(store.state, .unavailable)
         XCTAssertNil(store.visiblePage(qualification: q, foreground: true))
     }
+
+    @MainActor func testJourneysHostUsesEachConversationAndDropsUnavailableContinuation() async throws {
+        let q = qualification(); let store = NativeJourneysStore()
+        let policy: [String: Any] = ["version": 5, "kind": "policy", "policy": [
+            "id": q.policy.id, "provider": "qwen", "recipient": "test", "sourceRegion": "test", "processingRegion": "test", "storageRegion": "test",
+            "termsVersion": "1", "noticeVersion": "1", "noticeHash": q.policy.noticeHash, "noticeZh": "测试", "noticeEn": "Test",
+            "retention": "retain_after_hide_v1", "expiresAt": q.policy.expiresAt, "consentState": "accepted"]]
+        var fail = false; var paths: [String] = []
+        let request: (String) async throws -> Data = { path in
+            paths.append(path)
+            if path == "api/trips/native/v2" { return try self.bytes(["version": 2, "trips": [], "currentTripId": NSNull()]) }
+            if path.hasSuffix("/policy") { return try self.bytes(policy) }
+            XCTAssertTrue(path.hasPrefix("api/chat/native/v5/journeys-goals"))
+            if fail { throw NativeDataError.server(code: "DATA_POLICY_BLOCKED") }
+            return try self.bytes(self.value(1..<21, more: true))
+        }
+        await store.load(scope: q.scope, assistant: true, crossConversation: true, currentScope: { q.scope }, request: request)
+        XCTAssertTrue(store.goalsAvailable); XCTAssertEqual(store.rows.count, 20)
+        XCTAssertEqual(store.rows.first?.conversationID, "10000000-0000-4000-8000-000000000001")
+        XCTAssertNil(store.conversationID)
+        let cursor = try XCTUnwrap(store.nextCursor)
+        store.beginPageChange(); XCTAssertTrue(store.rows.isEmpty)
+        fail = true
+        await store.load(scope: q.scope, assistant: true, cursor: cursor, crossConversation: true, currentScope: { q.scope }, request: request)
+        XCTAssertFalse(store.goalsAvailable); XCTAssertNil(store.nextCursor); XCTAssertTrue(store.rows.isEmpty)
+        XCTAssertFalse(paths.contains("api/chat/native/v5/journeys"))
+    }
+
+    @MainActor func testLateHostReadCannotEraseNewerIndexPage() async throws {
+        let q = qualification(); let store = NativeJourneysStore()
+        let policy = try bytes(["version": 5, "kind": "policy", "policy": [
+            "id": q.policy.id, "provider": "qwen", "recipient": "test", "sourceRegion": "test", "processingRegion": "test", "storageRegion": "test",
+            "termsVersion": "1", "noticeVersion": "1", "noticeHash": q.policy.noticeHash, "noticeZh": "测试", "noticeEn": "Test",
+            "retention": "retain_after_hide_v1", "expiresAt": q.policy.expiresAt, "consentState": "accepted"]])
+        let trips = try bytes(["version": 2, "trips": [], "currentTripId": NSNull()])
+        var held: CheckedContinuation<Data, Never>?
+        let old = Task { await store.load(scope: q.scope, assistant: true, crossConversation: true, currentScope: { q.scope }) { path in
+            if path.hasSuffix("/policy") { return policy }
+            if path == "api/trips/native/v2" { return trips }
+            return await withCheckedContinuation { held = $0 }
+        } }
+        while held == nil { await Task.yield() }
+        let newer = try bytes(value(9..<10))
+        await store.load(scope: q.scope, assistant: true, crossConversation: true, currentScope: { q.scope }) { path in
+            path.hasSuffix("/policy") ? policy : path == "api/trips/native/v2" ? trips : newer
+        }
+        held?.resume(returning: try bytes(value(1..<21, more: true))); await old.value
+        XCTAssertEqual(store.rows.first?.goal.text, "Goal 9")
+        XCTAssertTrue(store.isCurrent(q.scope)); XCTAssertTrue(store.goalsAvailable)
+    }
 }

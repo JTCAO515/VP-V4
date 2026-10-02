@@ -17,7 +17,7 @@ struct NativeJourneysView: View {
     var body: some View {
         List {
             Section {
-                Text(text("Latest available VP conversation goals, one page at a time. Goals can come before dates or a Trip. Confirmed content stays in Trip.", "最近可读取的 VP 会话目标，按页显示。目标可先于日期或行程存在；已确认内容仍保存在行程中。"))
+                Text(text("Available goals across your VP conversations, one page at a time. Goals can come before dates or a Trip. Confirmed content stays in Trip.", "跨 VP 会话的可读取目标，按页显示。目标可先于日期或行程存在；已确认内容仍保存在行程中。"))
                     .accessibilityIdentifier("journeys.scope")
                 Button(text("Open VP", "打开 VP")) { onOpenVP?() }
                     .disabled(onOpenVP == nil).accessibilityIdentifier("journeys.open-vp")
@@ -36,7 +36,7 @@ struct NativeJourneysView: View {
                     if let next = store.nextCursor {
                         Button(text("Next goals", "下一页目标")) {
                             guard store.isCurrent(session.dataScope) else { return }
-                            store.clear(); cursor = next
+                            store.beginPageChange(); cursor = next
                         }.accessibilityIdentifier("journeys.next-page")
                     }
                 } else {
@@ -48,15 +48,18 @@ struct NativeJourneysView: View {
         .navigationTitle(text("Journeys", "旅程"))
         .task(id: key) {
             let captured = key
-            store.clear()
-            guard captured.active, captured.scope != nil else { return }
+            guard captured.active, captured.scope != nil else { store.clear(); return }
             while session.busy {
                 do { try await Task.sleep(for: .milliseconds(50)) } catch { return }
                 guard key == captured, !Task.isCancelled else { return }
             }
-            await store.load(scope: captured.scope, assistant: session.askMode == .assistant, cursor: captured.cursor,
+            await store.load(scope: captured.scope, assistant: session.askMode == .assistant, cursor: captured.cursor, crossConversation: true,
                              currentScope: { session.dataScope }) { path in
                 if path == "api/trips/native/v2" { return try await session.tripRequest(path: path, method: "GET") }
+                let base = "api/chat/native/v5/journeys-goals"
+                if path == base || path.hasPrefix(base + "/") {
+                    return try await session.journeysGoalIndexRequest(cursor: path == base ? nil : String(path.dropFirst(base.count + 1)))
+                }
                 return try await session.askRequest(path: path, method: "GET")
             }
         }
@@ -67,17 +70,17 @@ struct NativeJourneysView: View {
     }
 
     @ViewBuilder private var projection: some View {
-        Section(text("Latest conversation goals", "最近会话目标")) {
+        Section(text("Conversation goals", "会话目标")) {
             if !store.goalsAvailable {
                 Text(text("Goals unavailable. Existing Trips remain separate below.", "目标暂不可用，下方仍独立显示已有行程。"))
             } else if store.rows.isEmpty {
-                Text(text("No goal in the current conversation.", "当前会话暂无目标。"))
+                Text(text("No available goal in your conversations.", "会话中暂无可读取目标。"))
             }
             ForEach(store.rows) { row in
                 VStack(alignment: .leading, spacing: 8) {
                     Text(row.goal.text).font(.headline).fixedSize(horizontal: false, vertical: true)
                     Text(text("Goal version ", "目标版本 ") + String(row.goal.scopeVersion)).font(.caption)
-                    if let onOpenGoal, let capturedScope = store.scope, let conversationID = store.conversationID {
+                    if let onOpenGoal, let capturedScope = store.scope, let conversationID = row.conversationID ?? store.conversationID {
                         Button(text("Open this goal in VP", "在 VP 打开此目标")) {
                             guard store.isCurrent(session.dataScope), session.dataScope == capturedScope else { return }
                             onOpenGoal(.init(scope: capturedScope, conversationID: conversationID, goalID: row.id, scopeVersion: row.goal.scopeVersion))
