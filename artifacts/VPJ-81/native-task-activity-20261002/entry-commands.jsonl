@@ -1,0 +1,6 @@
+{"command": "VP_NATIVE_HTTP_PORT_BASE=63220 VP_NATIVE_ASSISTANT_ACTIVITY=1 VP_NATIVE_ASSISTANT_OUTPUT=/tmp/vpj81-activity-auth-final VP_NATIVE_ASSISTANT_SIMULATOR=5DB8E4CE-76AA-48A7-8F9C-861AF1A25E6E node tests/integration/turn/run-native-http.mjs --assistant-native", "cwd": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj81-conversation-selection", "result": "PASS actual Auth UI 1/1"}
+{"command": "pnpm test:contract", "cwd": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj81-conversation-selection", "result": "PASS 734/734"}
+{"command": "pnpm lint", "cwd": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj81-conversation-selection", "result": "PASS"}
+{"command": "pnpm typecheck", "cwd": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj81-conversation-selection", "result": "PASS"}
+{"command": "git diff --check", "cwd": "/Users/jtsm5p/Documents/Codex/VP-V5-worktrees/vpj81-conversation-selection", "result": "PASS"}
+{"command": "xcodebuild -project ios/VisePanda/VisePanda.xcodeproj -scheme VisePanda -configuration Debug -destination platform=iOS Simulator,id=5DB8E4CE-76AA-48A7-8F9C-861AF1A25E6E -derivedDataPath /tmp/vpj81-native-task-activity-20261002 CODE_SIGNING_ALLOWED=NO build-for-testing", "base": "f916bdc3", "result": "PASS TEST BUILD SUCCEEDED", "log": "/tmp/vpj81-activity-f916-build.log"}

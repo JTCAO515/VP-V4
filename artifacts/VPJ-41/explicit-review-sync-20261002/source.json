@@ -1,0 +1,9 @@
+{
+  "base": "f916bdc32fa7ba3bbb00e8dfaabc19c88cd7d2c1",
+  "testedFiles": {
+    "components/canvas/TripContentEditor.tsx": "35f8cc1b624632ff3a26974682edb567d630bd9e42dad2a69cf1f13c3e37ba78",
+    "tests/integration/web-trip-continuity/continuity.test.mjs": "37ae3d2e2b5059a2f517ec210ccd6342a1e644585fee4d2f26e3ddd9c831ad5b",
+    "tests/integration/web-trip-continuity/run.mjs": "07723b83275ced3c32e4891681aff1b4e58fd17cf60a19b78efba285645daf13"
+  },
+  "productChoice": "unchanged f916 baseline; ref candidate remains /tmp/web-review-product-candidate.tsx and is not committed"
+}

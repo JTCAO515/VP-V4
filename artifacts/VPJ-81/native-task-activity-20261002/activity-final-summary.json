@@ -1,0 +1,52 @@
+{
+  "activityReads": 9,
+  "syntheticReceipts": 1,
+  "actualModelCalls": 0,
+  "events": [
+    {
+      "phase": "response",
+      "task": "A",
+      "status": 200
+    },
+    {
+      "phase": "response",
+      "task": "B",
+      "status": 200
+    },
+    {
+      "phase": "response",
+      "task": "A",
+      "status": 200
+    },
+    {
+      "phase": "response",
+      "task": "B",
+      "status": 200
+    },
+    {
+      "phase": "response",
+      "task": "B",
+      "status": 200
+    },
+    {
+      "phase": "response",
+      "task": "B",
+      "status": 200
+    },
+    {
+      "phase": "response",
+      "task": "A",
+      "status": 200
+    },
+    {
+      "phase": "response",
+      "task": "B",
+      "status": 200
+    },
+    {
+      "phase": "response",
+      "task": "B",
+      "status": 403
+    }
+  ]
+}
