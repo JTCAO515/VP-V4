@@ -13,3 +13,10 @@ intentRecordedAt always UTCms; unknownAt null or UTCms. Intent phase has null ac
 Response wire is revalidated by the new canonicalUUID output decoder, including independent13tuple, usage identity, actualMicros knowninteger/null rejection, selection enum, recomputed output/usage hashes and false flags. Exact-output expectations must match both recomputed hashes and require response phase. Captured binding/observations/output are detached/frozen; data can survive caller mutation without being interpreted as provenance.
 
 Contract tests3/3PASS cover allphase/null layouts,19vs20 keys, outputexact/phase-only reads, blocked/conflict, key/type/flag/timestamp/request/oldtuple denial, observation-source denial, outputtamper/crossattempt, stickyunknown representation and immutablecapture. SQL actual goldens, internalmicrosecond→wiremillisecond example and lost-ack exactreadback are pending a fixed559060000 runtime snapshot. No fakeSQL or schema-only fixture counts as those integration proofs.
+
+
+## Actual complete SQL pre-fix checkpoint
+
+Fixed unmerged `e039e357035ba45d9a628aad73a5bf20e3cae311` actual050000/060000 was loaded with baseb930. Newprep test proves actual19/20wire,controlledlost-write-returnexactreadback,serverUTCms/null/composite microsecond case,unknown/originallease/currenttypedsource andsettledamount conflict throughactualprivatefunctions andstrictTSconsumer. This supersedes the earlier missing-journal UNRUN for those exact localrecord cases only.
+
+A separate defect reproduction showsMain'sNULLdigestbypass in e039:SQLvalidatorNULL permitsadoption,whilestrictTSconsumer rejects. E039is **not** fullyaccepted;finalfixedSQLdifference remainspending559source. NoSQLchanged here; canonical/otherunaffectedmatrices reused.
