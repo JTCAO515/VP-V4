@@ -54,6 +54,7 @@ create function turn_private.validate_planning_v2_output_v1(w jsonb,t jsonb) ret
 declare tb text;u jsonb;a jsonb;tokens jsonb;out_bytes text;usage_bytes text;od text;ud text;input_n text;output_n text;total_n text;cached text;uncached text;reasoning text;reserved text;timeout text;actual text;
 begin
  tb:=turn_private.planning_v2_binding_bytes_v1(t);if tb is null or w is null or jsonb_typeof(w)<>'object' or w-array['schemaVersion','binding','usageReceipt','output','observedAt','outputDigest','usageDigest','executionAvailable','readyForPublication']<>'{}'::jsonb or (select count(*) from jsonb_object_keys(w))<>9
+  or jsonb_typeof(w->'outputDigest') is distinct from 'string' or jsonb_typeof(w->'usageDigest') is distinct from 'string' or (w->>'outputDigest') !~ '^[a-f0-9]{64}$' or (w->>'usageDigest') !~ '^[a-f0-9]{64}$'
   or w->>'schemaVersion' is distinct from 'planning-v2-model-output/1' or w->'binding' is distinct from t or w->'executionAvailable' is distinct from 'false'::jsonb or w->'readyForPublication' is distinct from 'false'::jsonb or not turn_private.planning_v2_valid_ms_v1(w->'observedAt') then return false;end if;
  if jsonb_typeof(w->'output') is distinct from 'object' or (w->'output')-'highlight'<>'{}'::jsonb or jsonb_typeof(w->'output'->'highlight') is distinct from 'string' or w->'output'->>'highlight' not in ('jingan','peoples_square','none') then return false;end if;
  u:=w->'usageReceipt';a:=u->'attempt';tokens:=u->'usage';
@@ -73,7 +74,7 @@ begin
  usage_bytes:='{"schemaVersion":"validated-planning-usage/1","turnId":'||turn_private.planning_v2_json_string_v1(t->>'turn')||',"policyId":'||turn_private.planning_v2_json_string_v1(t->>'planningPolicy')||',"attempt":{"scopeId":'||turn_private.planning_v2_json_string_v1(t->>'scope')||',"ownerId":'||turn_private.planning_v2_json_string_v1(t->>'owner')||',"taskId":'||turn_private.planning_v2_json_string_v1(t->>'task')||',"attemptId":'||turn_private.planning_v2_json_string_v1(t->>'attempt')||',"provider":"qwen","model":'||turn_private.planning_v2_json_string_v1(t->>'model')||',"priceVersion":'||turn_private.planning_v2_json_string_v1(t->>'priceVersion')||',"reservedMicros":'||reserved||',"timeoutMs":'||timeout||'},"usage":{"inputTokens":'||input_n||',"outputTokens":'||output_n||',"totalTokens":'||total_n||',"cachedInputTokens":'||cached||',"uncachedInputTokens":'||uncached||',"reasoningTokens":'||reasoning||',"cost":"unknown"},"actualMicros":'||actual||',"observedAt":'||turn_private.planning_v2_json_string_v1(u->>'observedAt')||'}';
  od:=encode(sha256(convert_to('["planning-v2-model-output/1",'||tb||','||turn_private.planning_v2_json_string_v1(w->>'observedAt')||','||out_bytes||']','UTF8')),'hex');
  ud:=encode(sha256(convert_to('["planning-v2-model-output-usage/1",'||tb||','||turn_private.planning_v2_json_string_v1(w->>'observedAt')||','||usage_bytes||']','UTF8')),'hex');
- return w->>'outputDigest'=od and w->>'usageDigest'=ud;
+ return coalesce(w->>'outputDigest'=od and w->>'usageDigest'=ud,false);
 exception when invalid_text_representation or numeric_value_out_of_range or invalid_parameter_value then return false;
 end $$;
 revoke all on function turn_private.planning_v2_json_string_v1(text),turn_private.planning_v2_binding_bytes_v1(jsonb),turn_private.planning_v2_valid_ms_v1(jsonb),turn_private.planning_v2_integer_bytes_v1(jsonb,bigint,boolean),turn_private.serialize_planning_v2_request_v1(jsonb,uuid,jsonb),turn_private.validate_planning_v2_output_v1(jsonb,jsonb) from public,anon,authenticated,service_role;
@@ -125,7 +126,7 @@ begin
   elsif old.phase='intent_saved' and new.phase='send_ack_recorded' then
    if not turn_private.planning_v2_local_observation_v1(new.send_observation,'send_ack',new.request_id,new.request_digest) then raise exception 'INVALID_LOCAL_OBSERVATION';end if;
   elsif old.phase='send_ack_recorded' and new.phase='response_recorded' then
-   if new.send_observation is distinct from old.send_observation or not turn_private.planning_v2_local_observation_v1(new.response_observation,'response_received',new.request_id,new.request_digest) or not turn_private.validate_planning_v2_output_v1(new.output_wire,new.binding) then raise exception 'INVALID_LOCAL_OUTPUT';end if;
+   if new.send_observation is distinct from old.send_observation or not turn_private.planning_v2_local_observation_v1(new.response_observation,'response_received',new.request_id,new.request_digest) or turn_private.validate_planning_v2_output_v1(new.output_wire,new.binding) is distinct from true then raise exception 'INVALID_LOCAL_OUTPUT';end if;
   else raise exception 'IMMUTABLE_LOCAL_JOURNAL';end if;
  end if;
  return new;
@@ -187,7 +188,7 @@ declare q jsonb;t jsonb;r turn_private.planning_v2_model_local_journal%rowtype;
 begin
  q:=turn_private.read_planning_v2_model_binding_v1(p_owner,p_task,p_turn,p_lease,p_text_policy,p_planning_policy,p_scope,p_attempt,p_provider,p_model,p_price_version,p_intake_digest,p_planning_digest);if q->>'kind' is distinct from 'model_attempt_binding' then return jsonb_build_object('kind','blocked');end if;t:=jsonb_build_object('owner',p_owner,'task',p_task,'turn',p_turn,'lease',p_lease,'textPolicy',p_text_policy,'planningPolicy',p_planning_policy,'scope',p_scope,'attempt',p_attempt,'provider',p_provider,'model',p_model,'priceVersion',p_price_version,'intakeDigest',p_intake_digest,'planningDigest',p_planning_digest);
  if p_expected_revision is null or not turn_private.planning_v2_local_observation_v1(p_local_observation,'response_received',p_request_id,p_request_digest) then return jsonb_build_object('kind','blocked');end if;
- if not turn_private.validate_planning_v2_output_v1(p_output_wire,t) or (q->>'ledgerStatus'='settled' and q->'actualMicros' is distinct from p_output_wire->'usageReceipt'->'actualMicros') then return jsonb_build_object('kind','blocked');end if;
+ if turn_private.validate_planning_v2_output_v1(p_output_wire,t) is distinct from true or (q->>'ledgerStatus'='settled' and q->'actualMicros' is distinct from p_output_wire->'usageReceipt'->'actualMicros') then return jsonb_build_object('kind','blocked');end if;
  select * into r from turn_private.planning_v2_model_local_journal where request_id=p_request_id for update nowait;
  if not found or r.binding is distinct from t or r.request_digest is distinct from p_request_digest then return jsonb_build_object('kind','blocked');end if;
  if r.unknown_at is not null or q->'unknown'='true'::jsonb then return jsonb_build_object('kind','blocked');end if;

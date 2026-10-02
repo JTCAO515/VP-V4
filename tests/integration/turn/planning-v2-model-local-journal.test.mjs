@@ -132,3 +132,18 @@ run('malformed payload/observation, revised settled amount, expired lease and AP
  const signatures=await db("select string_agg(p.oid::regprocedure::text,E'\n') from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='turn_private' and p.proname in ('create_planning_v2_request_intent_v1','record_planning_v2_send_ack_v1','record_planning_v2_response_v1','read_planning_v2_request_journal_v1','unknown_planning_v2_request_v1');");
  for(const role of ['anon','authenticated','service_role'])for(const sig of signatures.split('\n'))assert.equal(await db(`select has_function_privilege('${role}',${lit(sig)},'EXECUTE');`),'f');
 });
+run('journal identity/phase cannot reset and turn deletion cascades only its local row',async()=>{
+ const x=await makeIntent(),y=await makeIntent(),before=await ledger(x);
+ for(const update of [`request_digest='${'c'.repeat(64)}'`,`binding=${lit({...jt(x),lease:uuid()})}::jsonb`,`revision=revision+1,phase='intent_saved'`]){const r=await sql(container,`update turn_private.planning_v2_model_local_journal set ${update} where request_id='${x.id}';`);assert.notEqual(r.code,0);}
+ const cascades=await db("select count(*) from pg_constraint where conrelid='turn_private.planning_v2_model_local_journal'::regclass and contype='f' and confdeltype='c';");assert.equal(Number(cascades),4,'owner/Task/planningTurn/actualAttempt parent cascades');
+ await db(`delete from public.turns where id='${x.r.turnId}';`);assert.equal(await db(`select count(*) from turn_private.planning_v2_model_local_journal where request_id='${x.id}';`),'0');assert.equal((await readJournal(y)).requestId,y.id);assert.equal(await ledger(x),before,'turn/receipt deletion does not erase financial ledger');
+});
+
+run('NULL/non-string digest cannot bypass validator, response gate or table trigger',async()=>{
+ const x=await makeIntent();await dispatch(x);await send(x,local(x,'send_ack'));const valid=await output(x),before=await db(`select to_jsonb(j) from turn_private.planning_v2_model_local_journal j where request_id='${x.id}';`),money=await ledger(x);
+ assert.equal(await db(`select turn_private.validate_planning_v2_output_v1(${lit(valid)}::jsonb,${lit(jt(x))}::jsonb);`),'t','original valid vector remains true');
+ for(const patch of [{outputDigest:null},{usageDigest:null},{outputDigest:null,usageDigest:null},{outputDigest:1},{usageDigest:[]},{outputDigest:true},{usageDigest:{}}]){const bad={...valid,...patch};assert.equal(await db(`select turn_private.validate_planning_v2_output_v1(${lit(bad)}::jsonb,${lit(jt(x))}::jsonb);`),'f','strict nonNULL false');assert.equal((await response(x,local(x,'response_received'),bad)).kind,'blocked');assert.equal(await db(`select to_jsonb(j) from turn_private.planning_v2_model_local_journal j where request_id='${x.id}';`),before,'no phase/revision/output write');
+  const trigger=await sql(container,`update turn_private.planning_v2_model_local_journal set phase='response_recorded',revision=revision+1,response_at=clock_timestamp(),response_observation=${lit(local(x,'response_received'))}::jsonb,output_wire=${lit(bad)}::jsonb where request_id='${x.id}';`);assert.notEqual(trigger.code,0);assert.match(trigger.stderr,/INVALID_LOCAL_OUTPUT/);assert.equal(await db(`select to_jsonb(j) from turn_private.planning_v2_model_local_journal j where request_id='${x.id}';`),before);
+ }
+ assert.equal(await ledger(x),money);assert.equal((await response(x,local(x,'response_received'),valid)).phase,'response_recorded');
+});
