@@ -1,0 +1,25 @@
+# Journeys cross-conversation goal index v1
+
+Related to #564 / #559. This backend extends the latest-conversation reader with a read-only projection over existing conversations and goals. It introduces no goal/Trip model, writer, selection state or scheduling. Native integration and full product acceptance remain separate.
+
+## HTTP and qualification
+
+`GET /api/chat/native/v5/journeys-goals` starts a page; `GET /api/chat/native/v5/journeys-goals/<cursor>` continues. No query parameters, cookies or Origin headers are accepted. Existing native JWT validation and `native_session_v2` check precede authenticated `read_journeys_goal_index_v1(policyId, cursor)`. Every response has `Cache-Control: private, no-store`. Missing/malformed transient session replies return 503; a valid mismatched/replaced session returns 401.
+
+The SQL reader uses the existing `text_owner()` account/session/mobile-epoch gate, `text_policy_current()` and current nonrevoked same-owner consent. Goals qualify only through their same-owner conversation with that exact policy and consent. Older conversations with the current consent are included; old-policy, old-consent and foreign goals are omitted. Withdrawn/expired policy or consent returns unavailable, not an empty list. The private snapshot helper has no API-role EXECUTE grants; the public RPC permits only authenticated callers.
+
+A successful response is closed: `version: 5`, `kind: journeys_goal_index`, `snapshot`, `goals`, `nextCursor`. Each goal has only `conversationId`, `goalId`, `scopeVersion` (1…10001), `text`, and `relation { state, tripId, tripHeadVersion }`. Relations use `read_assistant_goal_trip_link_v1` on at most 20 returned rows. Only `linked` includes a currently qualified Trip ID/head; `unknown` and `unlinked` have null Trip fields. No transcript, Memory, receipt, source message, hidden title, hidden count or total count is returned. Terminal 10001 is readable and does not grant mutation authority.
+
+## Bounded history and pagination
+
+Each snapshot reads at most 101 same-owner conversation candidates and 501 same-owner goal candidates using owner/order indexes, before aggregating. More than 100 conversations or 500 goals returns unavailable, including when excess candidates have an ineligible policy/consent. Thus sparse/excess history is never reported as no goals. This is a bounded history contract, not unlimited history or an incremental scan of all history. Within these bounds the entire eligible cross-conversation goal set is addressable, including conversations older than the existing 20-conversation list.
+
+Order is ascending conversation UUID, then goal UUID. A page has at most 20 qualified goals; a 21st eligible row is the continuation sentinel. The next cursor identifies only the last delivered qualified goal: `v1.<conversationId>.<goalId>.<snapshot>`. It is a resume hint, not an authorization capability; there is no requirement that a client prove prior delivery. Every page recomputes eligibility, requires an eligible owner anchor and checks the digest. Malformed, foreign, deleted or stale anchors return unavailable.
+
+The opaque digest is bound to owner/session, current policy/consent identity, all bounded conversation membership/sequence and goal membership/version/text, plus set-based relation inputs (link versions, Trip ownership/head/archive/deletion, canonical receipt and linked source identity/qualification fields). These inputs stay server-side. This uses bounded set joins; it does not execute the Trip reader 500 times. New/deleted conversations/goals, corrections, link changes, receipt/source removal and Trip eligibility changes invalidate an existing cursor. A session/epoch change is rejected by the existing native/account gate; a different valid session also cannot reuse a digest.
+
+Each request compares the bounded digest before and after its <=20 canonical relation reads and rechecks account/session, policy and consent. This detects observable concurrent membership/qualification changes during that request. It is not a persistent database snapshot or a lock across requests: changes committed after the final check are handled on the next page/exact read. Consumers must discard accumulated pages on unavailable and restart at the first page, clear them on session/actor/policy/consent changes, and revalidate the exact conversation/goal/version through existing readers before use. No cached index authorizes a selection, link or Trip write.
+
+## Compatibility and rollback
+
+The old Journeys, conversation and goal-Trip APIs are unchanged. Migration `20261002120000_journeys_goal_index.sql` adds two indexes, one internal helper and one public read RPC without table/role ownership changes. A transaction rollback of the migration leaves the legacy reader present and the new RPC absent (covered by the disposable SQL suite). Operational rollback can disable the new endpoint consumer without touching any existing goals, links or Trips. An applied migration stays append-only; any later removal requires a new migration. No Staging/Production migration was applied by this slice.
