@@ -12,3 +12,5 @@ Branch `codex/v5-journeys-goal-index-20261002`; original base `aaff761f4a7aa0718
 - Shared registration: coordinator authorized three nonoverlapping additions (SQL lane, HTTP lane end, authenticated read RPC allowlist). Internal helper remains excluded. Remote applicable CI and independent main review precede merge.
 
 No goal/Trip writer/model/receipt copy or hidden-row count was introduced. Page consumers must restart after unavailable and use exact readers before acting. Parents #564/#559 remain open.
+
+- Review repair PASS: `node --test tests/unit/governance/journeys-goal-index-options.test.mjs` — 2/2, zero skips. The runner now defaults to63820 only when CLI and environment both omit a base. CLI64020, env64220, matching explicit inputs and genuine mismatch/invalid flags were checked before preflight. Caller environment is unchanged; shared port helper semantics are unchanged. Matching SQL/Auth/ACL evidence above is reused, as requested by main review.
