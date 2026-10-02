@@ -47,3 +47,13 @@ test("actual UTF8 outbound byte ceiling is inclusive; legal controls preserved, 
  assert.ok(create(raw("😀\b\f\n\r\t"),expected));
  const changed=create({...raw(vectors[0].text),requestId:tuple[0]},expected);assert.ok(changed);assert.equal(changed.payloadDigest,vectors[0].payloadDigest);assert.notEqual(changed.requestDigest,vectors[0].requestDigest);
 });
+
+test("request correlation requires canonical lowercase UUIDs before expected comparison and hashing",()=>{
+ const lower="abcdef00-0000-0000-0000-000000000001",upper=lower.toUpperCase();
+ for(const k of tupleKeys.slice(0,8)){
+  const b={...expected,[k]:lower},input={...raw("synthetic"),binding:b};assert.ok(create(input,b));
+  assert.equal(create({...input,binding:{...b,[k]:upper}},{...b,[k]:upper}),null,k);
+  assert.equal(create(input,{...b,[k]:upper}),null,k);
+ }
+ assert.ok(create({...raw("synthetic"),requestId:lower},expected));assert.equal(create({...raw("synthetic"),requestId:upper},expected),null);
+});

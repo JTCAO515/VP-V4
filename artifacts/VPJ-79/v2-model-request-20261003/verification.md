@@ -10,3 +10,6 @@ UNRUN:559actualSQLcanonicalserializer/journalgoldens/readback (awaitfixedsource)
 
 
 Normal fetch/rebase onto actual merged626 main `b9309495e5ea3f0184b4ef54aa2d40b7fecff144` succeeded. Provider-protocol, registered model profile and planning prompt source are byte-unchanged from f97; original module evidence reused. Shared initial contract/golden checkpoint `4cc12295d9ac8e6c347b06fca64f662394bb4e68` remains historical. Final test enrichment adds independent Python vectors for all31 legal ASCII controls and both65536 boundary hashes; request serializer runtime source is unchanged. Only affected request tests rerun:4/4PASS0skip/fail/cancelled/todo72ms. No other matrices rerun. Final hash consumer/SQL joint equality still pending fixed559source.
+
+
+Main review found UUID case mismatch against SQL uuid::text. Authorized minimal repair requires canonical lowercase UUIDs in both newrequest/newoutput binding/expected/requestId, with usage identities strictly equal to canonicaltuple; oldvalidator unchanged. Current request branch incorporates fixed own2d25 output commit only, originalbranch preserved. Affected request5+output6 tests11/11PASS0skip/fail71ms, typecheckPASS. All lowercase golden/control/boundary hashes unchanged. 4cc initialsnapshot is historical, not final SQLhash acceptance. No normalizing credentials/otherdata/Memory or wider matrices.

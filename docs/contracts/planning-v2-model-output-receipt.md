@@ -12,7 +12,7 @@
 - `output`: the existing closed PlanningSelection `{highlight:"jingan"|"peoples_square"|"none"}`.
 - `observedAt`: real ISO UTC with exactly three fractional digits and `Z`, checked by Date roundtrip.
 
-The independent expected object must itself be exactly that13tuple; each field must match as a string, with no inferred/latest/default source. First8 fields are UUIDs, provider literally string `qwen`, model/priceVersion bounded ASCII keys, both digests distinct lower SHA256. Task differs from Turn as required by the existing planning usage contract. Exact string equality preserves the captured identities; UUIDs are not silently normalized.
+The independent expected object must itself be exactly that13tuple; each field must match as a string, with no inferred/latest/default source. First8 fields require canonical lowercase UUIDs, provider literally string `qwen`, model/priceVersion bounded ASCII keys, both digests distinct lower SHA256. Task differs from Turn as required by the existing planning usage contract. Exact string equality preserves the captured identities; Uppercase raw/expected UUIDs are rejected, not silently normalized. Corresponding usage UUID identities must match the lowercase tuple exactly; the old usage validator is unchanged.
 
 Existing `validatedPlanningUsageReceipt` checks the complete usage/attempt shape, tariffs, time and token invariants. This module additionally rejects provider-array coercion and matches scope/owner/Task/attempt/provider/model/priceVersion to the tuple, plus usage turnId and separately accepted planning policyId. Existing legacy validators are unchanged. Selection requires an actual string enum; arrays, facts, prose, actions and suitability fields are rejected.
 

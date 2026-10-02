@@ -22,7 +22,7 @@ export type PlanningV2ModelOutputReceipt = Readonly<{
 const bindingKeys = ["owner", "task", "turn", "lease", "textPolicy", "planningPolicy", "scope", "attempt", "provider", "model", "priceVersion", "intakeDigest", "planningDigest"] as const;
 const inputKeys = ["schemaVersion", "binding", "usageReceipt", "output", "observedAt"];
 const wireKeys = [...inputKeys, "outputDigest", "usageDigest", "executionAvailable", "readyForPublication"];
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const TOKEN = /^[A-Za-z0-9._-]{1,100}$/;
 const SHA = /^[a-f0-9]{64}$/;
 const record = (v: unknown): v is Record<string, unknown> => v !== null && typeof v === "object" && !Array.isArray(v);

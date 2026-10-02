@@ -47,3 +47,15 @@ test("module-computed digests ignore object order and detect output or usage cha
   const paid = create({ ...raw, usageReceipt: { ...raw.usageReceipt, actualMicros: 1 } }, expected); assert.ok(paid); assert.notEqual(paid.usageDigest, r.usageDigest); assert.equal(paid.outputDigest, r.outputDigest);
   assert.equal(parse({ ...r, output: changed.output }, expected), null); assert.equal(parse({ ...r, usageReceipt: paid.usageReceipt }, expected), null);
 });
+
+test("output binding/expected and usage identities require canonical lowercase UUIDs",()=>{
+ const lower="abcdef00-0000-0000-0000-000000000001",upper=lower.toUpperCase();
+ for(const [k,u]of [["owner","ownerId"],["task","taskId"],["scope","scopeId"],["attempt","attemptId"],["turn","turnId"],["planningPolicy","policyId"],["lease",null],["textPolicy",null]] as const){
+  const {raw,expected}=fixture(),b={...raw.binding,[k]:lower};
+  const usageReceipt={...raw.usageReceipt,attempt:{...raw.usageReceipt.attempt,...(u&&u!=="turnId"&&u!=="policyId"?{[u]:lower}:{})},...(u==="turnId"||u==="policyId"?{[u]:lower}:{})};
+  const input={...raw,binding:b,usageReceipt};assert.ok(create(input,{...expected,[k]:lower}));
+  assert.equal(create({...input,binding:{...b,[k]:upper}},{...expected,[k]:upper}),null,k);
+  assert.equal(create(input,{...expected,[k]:upper}),null,k);
+  if(u){const bad={...usageReceipt,...(u==="turnId"||u==="policyId"?{[u]:upper}:{}),attempt:{...usageReceipt.attempt,...(u!=="turnId"&&u!=="policyId"?{[u]:upper}:{})}};assert.equal(create({...input,usageReceipt:bad},{...expected,[k]:lower}),null,u);}
+ }
+});
