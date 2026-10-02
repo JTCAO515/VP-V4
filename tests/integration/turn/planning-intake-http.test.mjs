@@ -2,6 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID as uuid} from 'node:crypto';
+import {createClient} from '@supabase/supabase-js';
 import {NextRequest} from 'next/server.js';
 import {nativePlanningIntakeHTTP} from '../../../lib/server/turn/native-planning-intake-http.ts';
 import {createNativeTextEnvironment} from './native-text-environment.mjs';
@@ -19,9 +20,23 @@ test('v2 local transport preserves atomic admission, current receipt and revoked
  e.sql(`insert into turn_private.planning_policies(id,text_policy_id,environment,notice_version,notice_hash,notice_zh,notice_en,effective_at,expires_at) values('${planningPolicyId}','${e.policyId}','local_synthetic','test','${noticeHash}','合成','Synthetic',now()-interval '1 minute',now()+interval '1 day');`);
  const planningConsent=()=>call(base+'/planning/policy',owner,'POST',{policyId:planningPolicyId,noticeHash});assert.equal((await planningConsent()).status,201);
  const write=body=>call(endpoint,owner,'POST',body);
- const seed=async()=>{const conversationId=uuid(),goalId=uuid(),messageId=uuid();const r=await call(base+'/travel-intake',owner,'POST',{conversationId,goalId,messageId,idempotencyKey:uuid(),policyId:e.policyId,locale:'en',text:'Explicit Shanghai stay-area comparison',relationship:'goal_start',parentMessageId:null,expectedGoalVersion:null,expectedIntakeRevision:0,intake,memoryBasis:[]});assert.equal(r.status,201,JSON.stringify(r));
-  return {conversationId,goalId,expectedGoalVersion:1,parentMessageId:messageId,messageId:uuid(),messageKey:uuid(),threadId:uuid(),turnId:uuid(),taskId:uuid(),taskKey:uuid(),planningPolicyId,locale:'en',text:'Compare explicit Shanghai stay areas',memoryBasis:[],expectedIntakeMessageId:messageId,expectedSourceSequence:r.body.messageSequence,expectedIntakeRevision:1,expectedIntakeDigest:r.body.contextDigest,intake};};
+ const seed=async(memoryBasis=[])=>{const conversationId=uuid(),goalId=uuid(),messageId=uuid();const r=await call(base+'/travel-intake',owner,'POST',{conversationId,goalId,messageId,idempotencyKey:uuid(),policyId:e.policyId,locale:'en',text:'Explicit Shanghai stay-area comparison',relationship:'goal_start',parentMessageId:null,expectedGoalVersion:null,expectedIntakeRevision:0,intake,memoryBasis});assert.equal(r.status,201,JSON.stringify(r));
+  return {conversationId,goalId,expectedGoalVersion:1,parentMessageId:messageId,messageId:uuid(),messageKey:uuid(),threadId:uuid(),turnId:uuid(),taskId:uuid(),taskKey:uuid(),planningPolicyId,locale:'en',text:'Compare explicit Shanghai stay areas',memoryBasis,expectedIntakeMessageId:messageId,expectedSourceSequence:r.body.messageSequence,expectedIntakeRevision:1,expectedIntakeDigest:r.body.contextDigest,intake};};
  const state=()=>e.sql(`select jsonb_build_array((select count(*) from turn_private.service_tasks where owner_id='${e.users[0].id}'),(select count(*) from turn_private.assistant_messages where owner_id='${e.users[0].id}'),(select count(*) from turn_private.assistant_travel_intakes where owner_id='${e.users[0].id}'));`);
+ // Two actual ordinary Memory refs: SQL canonicalizes UUID case/order in its set and retry digest.
+ const memoryClient=createClient(local.API_URL,local.PUBLISHABLE_KEY||local.ANON_KEY,{auth:{persistSession:false,autoRefreshToken:false},global:{headers:{Authorization:'Bearer '+owner}}});
+ const memoryRPC=async(name,p)=>{const r=await memoryClient.rpc(name,p);assert.ifError(r.error);return r.data;};
+ const consent=(await memoryRPC('create_memory_retrieval_consent',{}))[0].consent_id,refs=[];
+ for(let n=0;n<2;n++){const id='a'+uuid().slice(1);await memoryRPC('create_explicit_memory_profile_v2',{p_memory_id:id,p_receipt_id:uuid(),p_consent_id:consent,p_constraint_kind:'preference',p_summary:'Synthetic explicit Memory reference '+n});refs.push({id,revision:1});}
+ refs.sort((a,b)=>a.id.localeCompare(b.id));const memoryBody=await seed(refs),memoryBefore=state();
+ for(const bad of [[{...refs[0],revision:2},refs[1]],[refs[0]]]){const r=await write({...memoryBody,memoryBasis:bad});assert.equal(r.status,409,JSON.stringify(r));assert.equal(state(),memoryBefore,'wrong/missing revision set leaves no admission writes');}
+ assert.equal((await write({...memoryBody,memoryBasis:[refs[0],{...refs[0],id:refs[0].id.toUpperCase()}]})).status,400,'case-equivalent duplicate UUIDs are rejected');assert.equal(state(),memoryBefore);
+ const reversed=await write({...memoryBody,memoryBasis:[...refs].reverse()});assert.equal(reversed.status,201,JSON.stringify(reversed));assert.equal(reversed.body.current,true);assert.ok(reversed.body.intakeContextDigest);assert.ok(reversed.body.planningContextDigest);
+ const memoryAfter=state();
+ for(const sameSet of [refs,refs.map(x=>({...x,id:x.id.toUpperCase()})).reverse()]){const r=await write({...memoryBody,memoryBasis:sameSet});assert.equal(r.status,200,JSON.stringify(r));assert.equal(r.body.reused,true);assert.equal(r.body.current,true);assert.equal(r.body.artifactId,reversed.body.artifactId);assert.equal(r.body.intakeContextDigest,reversed.body.intakeContextDigest);assert.equal(r.body.planningContextDigest,reversed.body.planningContextDigest);assert.equal(state(),memoryAfter);}
+ const caseBody=await seed(refs),caseAccepted=await write({...caseBody,memoryBasis:refs.map(x=>({...x,id:x.id.toUpperCase()})).reverse()});assert.equal(caseAccepted.status,201,JSON.stringify(caseAccepted));assert.equal(caseAccepted.body.current,true);assert.ok(caseAccepted.body.intakeContextDigest);assert.ok(caseAccepted.body.planningContextDigest);
+ const caseReplay=await write(caseBody);assert.equal(caseReplay.status,200);assert.equal(caseReplay.body.current,true);assert.equal(caseReplay.body.artifactId,caseAccepted.body.artifactId);
+ t.diagnostic('MEMORY_REF_SET_AUTH_HTTP_SQL_PASS: two real refs, reversed/uppercase fresh and same-key reuse current=true; wrong revision/missing set409, normalized duplicate400');
  const b=await seed();const before=state();
  for(const patch of [{expectedIntakeDigest:'d'.repeat(64)},{expectedSourceSequence:b.expectedSourceSequence+1},{expectedIntakeRevision:2},{expectedGoalVersion:2},{intake:{...intake,pace:'fast'}},{memoryBasis:[{id:uuid(),revision:1}]}]){const r=await write({...b,...patch});assert.equal(r.status,409,JSON.stringify(r));assert.equal(state(),before,'failed transport admission rolls back all writes');}
  assert.equal((await call(endpoint,other,'POST',b)).status,403);assert.equal((await call(endpoint,null,'POST',b)).status,401);assert.equal((await write({...b,ownerId:uuid()})).status,400);

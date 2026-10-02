@@ -33,8 +33,7 @@ export function planningIntakeParams(body:unknown,textPolicyId:string):Record<st
   ||body.parentMessageId!==body.expectedIntakeMessageId||body.taskId===body.turnId||body.messageId===body.expectedIntakeMessageId
   ||!int(body.expectedGoalVersion,1,10000)||!int(body.expectedSourceSequence,1,999999)||!int(body.expectedIntakeRevision,1,999)||!digest(body.expectedIntakeDigest)
   ||typeof body.locale!=="string"||!["zh","en"].includes(body.locale)||typeof body.text!=="string"||!body.text.trim()||body.text.length>4000
-  ||!Array.isArray(body.memoryBasis)||body.memoryBasis.length>3||!body.memoryBasis.every(x=>record(x)&&exact(x,["id","revision"])&&uuid(x.id)&&int(x.revision,1,999999999999999))
-  ||new Set(body.memoryBasis.map(x=>x.id)).size!==body.memoryBasis.length||!validExplicitTravelIntake(body.intake)||!uuid(textPolicyId))return null;
+  ||canonicalMemoryRefs(body.memoryBasis)===null||!validExplicitTravelIntake(body.intake)||!uuid(textPolicyId))return null;
  return {p_conversation_id:body.conversationId,p_goal_id:body.goalId,p_expected_goal_version:body.expectedGoalVersion,p_parent_message_id:body.parentMessageId,
   p_message_id:body.messageId,p_message_key:body.messageKey,p_thread_id:body.threadId,p_turn_id:body.turnId,p_task_id:body.taskId,p_task_key:body.taskKey,
   p_text_policy_id:textPolicyId,p_planning_policy_id:body.planningPolicyId,p_locale:body.locale,p_text:body.text,p_memory_basis:body.memoryBasis,
@@ -51,13 +50,22 @@ export function validPlanningIntakeReceipt(data:unknown,params:Record<string,unk
   ||data.intakeRevision!==Number(params.p_expected_intake_revision)+1)return false;
  return !data.current||(digest(data.intakeContextDigest)&&digest(data.planningContextDigest)&&data.intakeContextDigest!==data.planningContextDigest&&data.intakeContextDigest!==params.p_expected_intake_digest);
 }
+/** SQL v2 Memory basis is a UUID/revision set; only this array is order-insensitive. */
+function canonicalMemoryRefs(v:unknown):string|null{
+ if(!Array.isArray(v)||v.length>3)return null;
+ const refs:{id:string;revision:number}[]=[],seen=new Set<string>();
+ for(const x of v){
+  if(!record(x)||!exact(x,["id","revision"])||!uuid(x.id)||!int(x.revision,1,999999999999999))return null;
+  const id=x.id.toLowerCase();if(seen.has(id))return null;seen.add(id);refs.push({id,revision:Number(x.revision)});
+ }
+ return JSON.stringify(refs.sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0));
+}
 function canonical(v:unknown):string{return JSON.stringify(v,(_key,value)=>record(value)?Object.fromEntries(Object.entries(value).sort(([a],[b])=>a.localeCompare(b))):value);}
 function qualifiedCurrentIntake(v:unknown):v is Record<string,unknown>{
  const keys=["kind","schemaVersion","conversationId","goalId","goalVersion","messageId","messageSequence","intakeRevision","sourceKind","intake","memoryBasis","contextDigest","readiness","readyForProvider"];
  if(!record(v)||!exact(v,keys)||v.kind!=="travel_intake"||v.schemaVersion!=="assistant-travel-current-basis/1"||![v.conversationId,v.goalId,v.messageId].every(uuid)
   ||!int(v.goalVersion,1,10000)||!int(v.messageSequence,1,1000000)||!int(v.intakeRevision,1,1000)||v.sourceKind!=="explicit_current_input"||v.readyForProvider!==false
-  ||!digest(v.contextDigest)||!validExplicitTravelIntake(v.intake)||!Array.isArray(v.memoryBasis)||v.memoryBasis.length>3
-  ||!v.memoryBasis.every(x=>record(x)&&exact(x,["id","revision"])&&uuid(x.id)&&int(x.revision,1,999999999999999))||new Set(v.memoryBasis.map(x=>x.id)).size!==v.memoryBasis.length||!record(v.readiness))return false;
+  ||!digest(v.contextDigest)||!validExplicitTravelIntake(v.intake)||canonicalMemoryRefs(v.memoryBasis)===null||!record(v.readiness))return false;
  const intake=v.intake;
  return v.readiness.kind==="ready"?exact(v.readiness,["kind","scope","unknown"])&&v.readiness.scope==="transport_screening"&&Array.isArray(v.readiness.unknown)
   &&intake.city==="shanghai"&&intake.comparisonTarget==="area_transport"&&v.readiness.unknown.length===Object.values(intake).filter(x=>x===null).length&&new Set(v.readiness.unknown).size===v.readiness.unknown.length&&v.readiness.unknown.every(x=>intake[x as string]===null&&typeof x==="string"&&["city","comparisonTarget","durationDays","partySize","interests","pace","lodgingBudget","dates","mobilityConstraints"].includes(x))
@@ -105,7 +113,7 @@ export async function nativePlanningIntakeHTTP(request:NextRequest){
   if(missing===null&&!qualifiedCurrentIntake(intakeRead.data))return await failed("PROVIDER_UNAVAILABLE",503);
   const current=result.data.current&&qualifiedCurrentIntake(intakeRead.data)&&intakeRead.data.conversationId===result.data.conversationId&&intakeRead.data.goalId===result.data.goalId
    &&intakeRead.data.goalVersion===result.data.goalVersion&&intakeRead.data.messageId===result.data.messageId&&intakeRead.data.messageSequence===result.data.messageSequence&&intakeRead.data.intakeRevision===result.data.intakeRevision
-   &&intakeRead.data.contextDigest===result.data.intakeContextDigest&&canonical(intakeRead.data.intake)===canonical(params.p_intake)&&canonical(intakeRead.data.memoryBasis)===canonical(params.p_memory_basis);
+   &&intakeRead.data.contextDigest===result.data.intakeContextDigest&&canonical(intakeRead.data.intake)===canonical(params.p_intake)&&canonicalMemoryRefs(intakeRead.data.memoryBasis)===canonicalMemoryRefs(params.p_memory_basis);
   await session();
   const minimal=Object.fromEntries(receiptKeys.map(key=>[key,key==="current"?Boolean(current):result.data[key]]));
   return reply({version:2,...minimal,...(current?{intakeContextDigest:result.data.intakeContextDigest,planningContextDigest:result.data.planningContextDigest}:{})},result.data.reused?200:201);

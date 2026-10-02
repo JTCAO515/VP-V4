@@ -39,7 +39,7 @@ The RPC mapping uses all twenty frozen parameters in declared order:
 | expectedIntakeDigest | p_expected_intake_digest |
 | intake | p_intake |
 
-parentMessageId must equal expectedIntakeMessageId. sourceSequence1–999999, intakeRevision1–999, goalVersion1–10000, text1–4000 and localezh/en. memoryBasis≤3 unique UUID/exactpositive revision pairs. Complete intake uses frozen stay-area-intake/1 parser. New identities cannot reuse expected source; taskId≠turnId. No owner/provider/environment/budget/execution flag or extra field is accepted. SQL revalidates the unchanged full projection, current source/CAS/policies/Memory and entire atomic admission; client JSON is not authority. No automatic retry.
+parentMessageId must equal expectedIntakeMessageId. sourceSequence1–999999, intakeRevision1–999, goalVersion1–10000, text1–4000 and localezh/en. memoryBasis≤3 unique UUID/exactpositive revision pairs. Memory refs follow SQL v2 set semantics: normalize only UUID case to lowercase, reject duplicate canonical UUIDs, sort the unique UUID/revision pairs for comparison. Submission still forwards the original client refs and SQL owns canonical admission/retry authority; this comparison never sorts intake.interests or other ordered arrays. Complete intake uses frozen stay-area-intake/1 parser. New identities cannot reuse expected source; taskId≠turnId. No owner/provider/environment/budget/execution flag or extra field is accepted. SQL revalidates the unchanged full projection, current source/CAS/policies/Memory and entire atomic admission; client JSON is not authority. No automatic retry.
 
 ## Exact receipt
 

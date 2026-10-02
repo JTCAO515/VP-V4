@@ -23,17 +23,18 @@ test('receipt closes both digest branches and binds exact request identities',()
 const policy={kind:'planning_policy',policyId:body.planningPolicyId,environment:'local_synthetic',consentState:'accepted',modelRecipient:'Synthetic',modelProvider:'qwen',placeProvider:'amap',noticeVersion:'test',noticeHash:'a'.repeat(64),noticeZh:'合成',noticeEn:'Synthetic'};
 let port=59120;
 async function setup(t,options={}){
+ const requestBody=options.body??body;
  const f=await nativeFixture(t,'http://127.0.0.1:'+port++),api='http://127.0.0.1:64751',patch={NEXT_PUBLIC_SUPABASE_URL:f.config.url,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:f.config.publishableKey,VISEPANDA_NATIVE_LOCAL_TEXT:'true',VISEPANDA_NATIVE_LOCAL_TEXT_POLICY:textPolicy,VISEPANDA_NATIVE_LOCAL_ASSISTANT_CONVERSATION:'true',VISEPANDA_NATIVE_LOCAL_PLANNING:'true',VP_NATIVE_INTAKE_PLANNING_HTTP_TEST:'1',VP_NATIVE_INTAKE_PLANNING_HTTP_API:api,VP_NATIVE_INTAKE_PLANNING_HTTP_PROJECT:'vp-native-ask-1234abcd',VP_IDENTITY_SUPABASE_API_URL:f.config.url,VERCEL_ENV:undefined,...options.env};
  const old=new Map(Object.keys(patch).map(k=>[k,process.env[k]]));for(const[k,v]of Object.entries(patch))v===undefined?delete process.env[k]:process.env[k]=v;t.after(()=>{for(const[k,v]of old)v===undefined?delete process.env[k]:process.env[k]=v;});
  const calls=[];let sessions=0,policies=0;const previous=globalThis.fetch;
  t.mock.method(globalThis,'fetch',async(input,init)=>{const r=new Request(input,init),name=new URL(r.url).pathname.split('/').at(-1);
   if(name==='native_session_v2'){calls.push(name);sessions++;return Response.json(sessions===1?(options.firstSession??{subject,sessionId}):(options.lastSession??{subject,sessionId}));}
   if(name==='read_planning_policy_v1'){calls.push(name);policies++;return Response.json(policies===1?(options.firstPolicy??policy):(options.lastPolicy??policy));}
-  if(name==='submit_planning_comparison_v2'){calls.push(name);assert.deepEqual(await r.json(),planningIntakeParams(body,textPolicy));return options.rpcError?Response.json({message:options.rpcError,code:'P0001'},{status:400}):Response.json(options.receipt??receipt);}
+  if(name==='submit_planning_comparison_v2'){calls.push(name);assert.deepEqual(await r.json(),planningIntakeParams(requestBody,textPolicy));return options.rpcError?Response.json({message:options.rpcError,code:'P0001'},{status:400}):Response.json(options.receipt??receipt);}
   if(name==='read_assistant_travel_intake_v1'){calls.push(name);return Response.json(options.current??current);}
   return previous(input,init);
  });
- const request=new NextRequest((options.api??api)+'/api/chat/native/v5/planning/intake-tasks',{method:'POST',headers:{Authorization:'Bearer '+f.token,'Content-Type':'application/json'},body:JSON.stringify(body)});
+ const request=new NextRequest((options.api??api)+'/api/chat/native/v5/planning/intake-tasks',{method:'POST',headers:{Authorization:'Bearer '+f.token,'Content-Type':'application/json'},body:JSON.stringify(requestBody)});
  return {request,calls,f};
 }
 for(const[name,env,api]of [['default',{VP_NATIVE_INTAKE_PLANNING_HTTP_TEST:undefined}],['deployed',{VERCEL_ENV:'preview'}],['remote-db',{VP_IDENTITY_SUPABASE_API_URL:'https://db.example.com'}],['remote-api',{VP_NATIVE_INTAKE_PLANNING_HTTP_API:'https://api.example.com'}],['project',{VP_NATIVE_INTAKE_PLANNING_HTTP_PROJECT:'vp-native-ask-fixed'}],['port',{},'http://127.0.0.1:64752'],['prefix',{},'http://127.0.0.1.evil.invalid:64751']])test('gate '+name+' makes zero RPC/auth calls',async t=>{const e=await setup(t,{env,api}),r=await nativePlanningIntakeHTTP(e.request);assert.equal(r.status,503);assert.deepEqual(e.calls,[]);assert.deepEqual(e.f.seen,[]);});
@@ -53,4 +54,22 @@ for(const[name,options,status]of [
  if(status===201||status===200){assert.equal(result.version,2);assert.equal(result.executionAvailable,false);assert.equal(result.readyForProvider,false);assert.equal(result.taskId,body.taskId);
   const stale=['historical','source-changed','projection-changed','stale','unrecorded'].includes(name);assert.equal(result.current,!stale);assert.equal(Object.hasOwn(result,'intakeContextDigest'),!stale);assert.equal(Object.hasOwn(result,'planningContextDigest'),!stale);
  }else assert.ok(result.error.code);
+});
+
+const refs=[{id:'abcdefab-1111-4111-8111-111111111111',revision:1},{id:'bcdefabc-2222-4222-8222-222222222222',revision:2}];
+for(const[name,inputRefs,readRefs,status,isCurrent]of [
+ ['reversed',[...refs].reverse(),refs,201,true],
+ ['uppercase',refs.map(x=>({...x,id:x.id.toUpperCase()})).reverse(),refs,201,true],
+ ['missing-read',refs,[refs[0]],201,false],
+ ['wrong-revision-read',refs,[refs[0],{...refs[1],revision:3}],201,false],
+ ['duplicate-input',[refs[0],{...refs[0],id:refs[0].id.toUpperCase()}],refs,400,false],
+ ['duplicate-read',refs,[refs[0],{...refs[0],id:refs[0].id.toUpperCase()}],503,false],
+])test('Memory ref set qualification '+name,async t=>{
+ const e=await setup(t,{body:{...body,memoryBasis:inputRefs},current:{...current,memoryBasis:readRefs}}),r=await nativePlanningIntakeHTTP(e.request);assert.equal(r.status,status);const data=await r.json();
+ if(status===201){assert.equal(data.current,isCurrent);assert.equal(Object.hasOwn(data,'intakeContextDigest'),isCurrent);assert.equal(Object.hasOwn(data,'planningContextDigest'),isCurrent);}
+ if(status===400)assert.equal(e.calls.includes('submit_planning_comparison_v2'),false);
+});
+test('Memory set normalization preserves ordered intake interests',async t=>{
+ const ordered={...intake,interests:['food','photography']},e=await setup(t,{body:{...body,intake:ordered,memoryBasis:refs},current:{...current,intake:{...ordered,interests:['photography','food']},memoryBasis:[...refs].reverse()}}),r=await nativePlanningIntakeHTTP(e.request);
+ assert.equal(r.status,201);const data=await r.json();assert.equal(data.current,false);assert.equal(Object.hasOwn(data,'intakeContextDigest'),false);assert.equal(Object.hasOwn(data,'planningContextDigest'),false);
 });
