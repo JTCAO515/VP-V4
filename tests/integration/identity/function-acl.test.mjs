@@ -60,6 +60,7 @@ const AUTHENTICATED = [
   "public.read_assistant_journeys_page_v1(uuid,text)",
   "public.read_planning_policy_v1(uuid)",
   "public.read_result_artifacts_v1(uuid,integer)",
+  "public.read_change_proposal_reference_v1(uuid,integer)",
   "public.read_task_result_reference_v1(uuid)",
   "public.search_result_artifacts_v1(text,uuid)",
   "public.read_trip_result_reference_v1(uuid)",
