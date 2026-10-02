@@ -7,6 +7,7 @@ import {createWriteStream,mkdtempSync,writeFileSync,readFileSync,rmSync} from 'n
 import {join,resolve} from 'node:path';
 import {tmpdir} from 'node:os';
 import {createClient} from '@supabase/supabase-js';
+import {nativeHTTPEnvironmentPorts} from './native-http-ports.mjs';
 import {identityLocalEnv} from '../identity/local-supabase.mjs';
 import {waitForNativeAPI} from '../identity/native-api-readiness.mjs';
 import {createStagingTextJob} from '../../../lib/server/jobs/staging-text-job.ts';
@@ -14,14 +15,15 @@ import {KNOWLEDGE_INTENT_SYSTEM_PROMPT} from '../../../lib/server/model-gateway/
 import {PROTOCOL_MODELS} from '../../../lib/server/model-gateway/adapters/provider-protocol.ts';
 
 export async function createNativeTextEnvironment({continuous=false,grounded=false}={}){
+ const ports=nativeHTTPEnvironmentPorts(process.env);
  const e=identityLocalEnv();
- if(!e || e.API_URL!=='http://127.0.0.1:59641' || !/^supabase_db_vp-native-ask-[a-z0-9]+$/.test(e.DB_CONTAINER))throw Error('Only an explicit disposable native Ask instance is allowed');
+ if(!e || e.API_URL!==ports.supabaseAPI || !/^supabase_db_vp-native-ask-[a-z0-9]+$/.test(e.DB_CONTAINER))throw Error('Only an explicit disposable native Ask instance is allowed');
  const sql=q=>execFileSync('docker',['exec','-i',e.DB_CONTAINER,'psql','-U','postgres','-d','postgres','-X','-Atq','-v','ON_ERROR_STOP=1'],{input:"set statement_timeout='10s';"+q,encoding:'utf8',stdio:['pipe','pipe','pipe']}).trim();
  const literal=s=>"'"+s.replaceAll("'","''")+"'";
  const key=e.PUBLISHABLE_KEY||e.ANON_KEY;
  const users=[],pendingResponses=new Set();let next,model,timer,stopping=false,active=Promise.resolve();
  let serviceDirectory;const serviceChildren=[],serviceJournals=[],serviceFailures=[];
- const controller=new AbortController(),policyId=randomUUID(),taskPolicyId=randomUUID(),groundedPolicyId=randomUUID(),api='http://127.0.0.1:59651';
+ const controller=new AbortController(),policyId=randomUUID(),taskPolicyId=randomUUID(),groundedPolicyId=randomUUID(),api=ports.api;
  const noticeZh='仅用于本机合成测试，不向外部模型发送数据。测试输入和回答保存在本次独立数据库中；删除对话或账号会隐藏正文，正文保留到此测试实例销毁。可随时撤回新处理授权，仍可手动编辑行程。';
  const noticeEn='Local synthetic test only. No data goes to an external model. Test inputs and answers remain in this disposable database; deleting a conversation or account hides content until this test instance is destroyed. You may withdraw permission for new processing and continue editing Trip manually.';
  const noticeHash=createHash('sha256').update(JSON.stringify({version:'local-text-v1',zh:noticeZh,en:noticeEn})).digest('hex');
@@ -90,8 +92,8 @@ export async function createNativeTextEnvironment({continuous=false,grounded=fal
    if(input.includes('HOLD'))pendingResponses.add(deliver);else deliver();
   });
   model.listen(0,'127.0.0.1');await once(model,'listening');const modelURL='http://127.0.0.1:'+model.address().port;
-  const log=createWriteStream('/tmp/vpj07-native-text-api.log',{mode:0o600});
-  next=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port','59651'],{env:{...process.env,NEXT_PUBLIC_SUPABASE_URL:e.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:key,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:e.SERVICE_ROLE_KEY,VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_NATIVE_LOCAL_TEXT:grounded?'false':'true',VISEPANDA_NATIVE_LOCAL_ASSISTANT_CONVERSATION:'true',VISEPANDA_NATIVE_LOCAL_GOAL_CONTEXT:'true',VISEPANDA_NATIVE_LOCAL_TEXT_POLICY:policyId,VISEPANDA_NATIVE_LOCAL_TASK_POLICY:taskPolicyId,...(grounded?{VISEPANDA_GROUNDED_WEB_READ:'true',VISEPANDA_NATIVE_LOCAL_GROUNDED:'true',VISEPANDA_NATIVE_LOCAL_GROUNDED_POLICY:groundedPolicyId}:{})},stdio:['ignore','pipe','pipe']});
+  const log=createWriteStream(join(process.env.VP_IDENTITY_SUPABASE_WORKDIR,'native-text-api-'+randomUUID()+'.log'),{mode:0o600});
+  next=spawn(process.execPath,['node_modules/next/dist/bin/next','dev','--webpack','--hostname','127.0.0.1','--port',String(ports.apiPort)],{env:{...process.env,NEXT_PUBLIC_SUPABASE_URL:e.API_URL,NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:key,VISEPANDA_NATIVE_LOCAL_SESSION:'true',VISEPANDA_NATIVE_LOCAL_SERVICE_KEY:e.SERVICE_ROLE_KEY,VISEPANDA_NATIVE_LOCAL_TRIP:'true',VISEPANDA_NATIVE_LOCAL_TEXT:grounded?'false':'true',VISEPANDA_NATIVE_LOCAL_ASSISTANT_CONVERSATION:'true',VISEPANDA_NATIVE_LOCAL_GOAL_CONTEXT:'true',VISEPANDA_NATIVE_LOCAL_TEXT_POLICY:policyId,VISEPANDA_NATIVE_LOCAL_TASK_POLICY:taskPolicyId,...(grounded?{VISEPANDA_GROUNDED_WEB_READ:'true',VISEPANDA_NATIVE_LOCAL_GROUNDED:'true',VISEPANDA_NATIVE_LOCAL_GROUNDED_POLICY:groundedPolicyId}:{})},stdio:['ignore','pipe','pipe']});
   next.stdout.pipe(log);next.stderr.pipe(log);next.once('exit',()=>log.end());
   await waitForNativeAPI(api,next);
   // Exercise the exact Staging job composition through an explicit closed test
