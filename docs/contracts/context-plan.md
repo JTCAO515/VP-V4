@@ -56,3 +56,9 @@ Eligible Tool projections are rendered only inside `<untrusted-data source="tool
 Unknown profiles/risk classes, malformed candidates, missing actor ID, and absent required sources throw typed `ContextPlanError` or `ContextAssemblyError`. Callers must publish their own bounded unavailable/clarification outcome; this module never weakens authorization or falls back to another actor's context.
 
 Rollback is a revert of the #85 merge. No database, schema, cache, provider configuration, or runtime data needs rollback. Contract checks are in `tests/contract/context/`; synthetic full-history/compaction and zero-leak cases are in `evals/context/` with their privacy statement in `artifacts/V4-02/`.
+
+## Planning-worker goal formatting profile
+
+The default `createContextPlan` v1 allocations above remain fixed. A trusted planning-worker call may explicitly select `planning_worker` in `assembleGoalContext`; this separate deterministic profile is identified as `planning-goal-context-plan-v1`. It transfers exactly the 28 code-point `Current goal (unconfirmed): ` marker overhead from the unintegrated Trip partition (180→152) to thread (100→128), keeping the aggregate cap 1420 and every other allocation/required-source/constraint/item limit unchanged. The original goal payload still fits at most 100 code points; 101 fails. No goal or marker is truncated or removed, and `readyForProvider:false` remains mandatory. The source manifest is not dispatch permission.
+
+This profile is not a client field or a user-chosen budget. The HTTP preview continues calling the default profile, unknown profiles fail closed, and the planning profile rejects additional Trip/proposal/evidence/tool candidate kinds. Integrating real Trip or other currently absent sources requires an explicit revised contract; the unused-partition assumption cannot silently discard their context. Subsequent SQL basis/consent/lease and model budget checks remain authoritative.

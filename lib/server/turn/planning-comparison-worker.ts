@@ -70,7 +70,7 @@ export async function runPlanningComparisonWorker(workRpc: TurnWorkRpc, rpc: Rpc
         goal:{id:input.goalId,scopeVersion:input.goalVersion,text:input.goalText},
         message:{id:input.messageId,sequence:input.messageSequence,goalId:input.goalId,
           scopeVersion:input.goalVersion,text:input.messageText,taskId:null},
-        selectedMemoryIds:input.memoryBasis.map(m=>m.id),memories:input.memories.map(m=>({...m,ownerId:input.ownerId}))});
+        selectedMemoryIds:input.memoryBasis.map(m=>m.id),memories:input.memories.map(m=>({...m,ownerId:input.ownerId}))},"planning_worker");
       if(preview.readyForProvider!==false || !preview.context.sourceRefs.some(ref=>ref.id===`goal:${input.goalId}`)
         || !preview.context.sourceRefs.some(ref=>ref.id===`message:${input.messageId}`)) throw Error("Goal sources omitted");
       const selected=new Set(preview.context.sourceRefs.filter(ref=>ref.id.startsWith("memory:")).map(ref=>ref.id.slice(7)));
