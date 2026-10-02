@@ -1,0 +1,150 @@
+{
+  "runtime": "17.5",
+  "ownedDevice": "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+  "qaAppearanceOverride": false,
+  "runs": [
+    {
+      "name": "default-light",
+      "systemReadback": "light",
+      "switchTo": null,
+      "summary": {
+        "passedTests": 1,
+        "failedTests": 0,
+        "skippedTests": 0,
+        "expectedFailures": 0,
+        "result": "Passed",
+        "devicesAndConfigurations": [
+          {
+            "device": {
+              "architecture": "arm64",
+              "deviceId": "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+              "deviceName": "VPJ77-Default-cac22a98b285444ba0a169c49608b908",
+              "modelName": "iPhone SE (3rd generation)",
+              "osBuildNumber": "21F79",
+              "osVersion": "17.5",
+              "platform": "iOS Simulator"
+            },
+            "expectedFailures": 0,
+            "failedTests": 0,
+            "passedTests": 1,
+            "skippedTests": 0,
+            "testPlanConfiguration": {
+              "configurationId": "1",
+              "configurationName": "Test Scheme Action"
+            }
+          }
+        ]
+      },
+      "resultPath": "/private/tmp/vpj77-default-17-run-20261002/default-light.xcresult"
+    },
+    {
+      "name": "default-dark",
+      "systemReadback": "dark",
+      "switchTo": null,
+      "summary": {
+        "passedTests": 1,
+        "failedTests": 0,
+        "skippedTests": 0,
+        "expectedFailures": 0,
+        "result": "Passed",
+        "devicesAndConfigurations": [
+          {
+            "device": {
+              "architecture": "arm64",
+              "deviceId": "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+              "deviceName": "VPJ77-Default-cac22a98b285444ba0a169c49608b908",
+              "modelName": "iPhone SE (3rd generation)",
+              "osBuildNumber": "21F79",
+              "osVersion": "17.5",
+              "platform": "iOS Simulator"
+            },
+            "expectedFailures": 0,
+            "failedTests": 0,
+            "passedTests": 1,
+            "skippedTests": 0,
+            "testPlanConfiguration": {
+              "configurationId": "1",
+              "configurationName": "Test Scheme Action"
+            }
+          }
+        ]
+      },
+      "resultPath": "/private/tmp/vpj77-default-17-run-20261002/default-dark.xcresult"
+    },
+    {
+      "name": "default-light-to-dark",
+      "systemReadback": "light",
+      "switchTo": "dark",
+      "summary": {
+        "passedTests": 1,
+        "failedTests": 0,
+        "skippedTests": 0,
+        "expectedFailures": 0,
+        "result": "Passed",
+        "devicesAndConfigurations": [
+          {
+            "device": {
+              "architecture": "arm64",
+              "deviceId": "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+              "deviceName": "VPJ77-Default-cac22a98b285444ba0a169c49608b908",
+              "modelName": "iPhone SE (3rd generation)",
+              "osBuildNumber": "21F79",
+              "osVersion": "17.5",
+              "platform": "iOS Simulator"
+            },
+            "expectedFailures": 0,
+            "failedTests": 0,
+            "passedTests": 1,
+            "skippedTests": 0,
+            "testPlanConfiguration": {
+              "configurationId": "1",
+              "configurationName": "Test Scheme Action"
+            }
+          }
+        ]
+      },
+      "resultPath": "/private/tmp/vpj77-default-17-run-20261002/default-light-to-dark.xcresult"
+    },
+    {
+      "name": "default-dark-to-light",
+      "systemReadback": "dark",
+      "switchTo": "light",
+      "summary": {
+        "passedTests": 1,
+        "failedTests": 0,
+        "skippedTests": 0,
+        "expectedFailures": 0,
+        "result": "Passed",
+        "devicesAndConfigurations": [
+          {
+            "device": {
+              "architecture": "arm64",
+              "deviceId": "423E944B-DA7C-4BD2-99D2-0197C2CE235D",
+              "deviceName": "VPJ77-Default-cac22a98b285444ba0a169c49608b908",
+              "modelName": "iPhone SE (3rd generation)",
+              "osBuildNumber": "21F79",
+              "osVersion": "17.5",
+              "platform": "iOS Simulator"
+            },
+            "expectedFailures": 0,
+            "failedTests": 0,
+            "passedTests": 1,
+            "skippedTests": 0,
+            "testPlanConfiguration": {
+              "configurationId": "1",
+              "configurationName": "Test Scheme Action"
+            }
+          }
+        ]
+      },
+      "resultPath": "/private/tmp/vpj77-default-17-run-20261002/default-dark-to-light.xcresult"
+    }
+  ],
+  "ownedDeviceDeleted": true,
+  "base": "c7cde77bbf4e261918703775357599501121a76c",
+  "sourceSha256": {
+    "ios/VisePanda/VisePandaUITests/NativeAssistantFixtureDefaultAppearanceUITests.swift": "677a5af51538d167d1fdcf3f9e70d706f449cc005c0516e13f2691be52091ca6",
+    "ios/VisePanda/VisePanda/Features/Ask/AssistantSpecimenView.swift": "3f82ba9a9188ebc86ce6243c69ae5991d0db3b8768a71db45502c9bb9be44494",
+    "scripts/ios/run-vpj77-default-appearance.py": "d6d2988620c5be4cd74bc0a4a09e4140c975fd91ffffc9d0d561e744ace288bc"
+  }
+}

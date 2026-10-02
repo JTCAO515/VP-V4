@@ -375,7 +375,8 @@ private struct AssistantSpecimenBodyText: UIViewRepresentable {
     let text: String
 
     func makeUIView(context: Context) -> UILabel {
-        let label = UILabel()
+        let label: UILabel = ProcessInfo.processInfo.arguments.contains("-VPJ77SystemAppearanceProbe")
+            ? AssistantSpecimenSystemTraitLabel() : UILabel()
         label.numberOfLines = 0
         label.adjustsFontForContentSizeCategory = true
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
@@ -396,6 +397,15 @@ private struct AssistantSpecimenBodyText: UIViewRepresentable {
         guard let width = proposal.width, width.isFinite, width > 0 else { return nil }
         let size = uiView.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
         return CGSize(width: min(width, size.width), height: ceil(size.height))
+    }
+}
+
+// Read-only diagnostics for the default-system harness. Ordinary fixture labels
+// retain UIKit's normal accessibility value and presentation behavior.
+private final class AssistantSpecimenSystemTraitLabel: UILabel {
+    override var accessibilityValue: String? {
+        get { "UIKitStyle:\(traitCollection.userInterfaceStyle.rawValue)" }
+        set { super.accessibilityValue = newValue }
     }
 }
 

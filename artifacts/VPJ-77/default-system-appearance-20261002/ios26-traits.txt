@@ -1,0 +1,24 @@
+RUN default-light
+VPJ77 DEFAULT light en VP initial swiftUI=light UIKit=[UIKitStyle:1]
+VPJ77 DEFAULT light en VP detail swiftUI=light UIKit=[UIKitStyle:1, UIKitStyle:1, UIKitStyle:1, UIKitStyle:1, UIKitStyle:1, UIKitStyle:1]
+VPJ77 DEFAULT light en Memory initial swiftUI=light UIKit=[UIKitStyle:1, UIKitStyle:1]
+VPJ77 DEFAULT light en Memory detail swiftUI=light UIKit=[UIKitStyle:1]
+VPJ77 DEFAULT light zh-Hans VP initial swiftUI=light UIKit=[UIKitStyle:1]
+VPJ77 DEFAULT light zh-Hans VP detail swiftUI=light UIKit=[UIKitStyle:1, UIKitStyle:1, UIKitStyle:1, UIKitStyle:1, UIKitStyle:1, UIKitStyle:1]
+VPJ77 DEFAULT light zh-Hans Memory initial swiftUI=light UIKit=[UIKitStyle:1, UIKitStyle:1]
+VPJ77 DEFAULT light zh-Hans Memory detail swiftUI=light UIKit=[UIKitStyle:1]
+RUN default-dark
+VPJ77 DEFAULT dark en VP initial swiftUI=dark UIKit=[UIKitStyle:2]
+VPJ77 DEFAULT dark en VP detail swiftUI=dark UIKit=[UIKitStyle:2, UIKitStyle:2, UIKitStyle:2, UIKitStyle:2, UIKitStyle:2, UIKitStyle:2]
+VPJ77 DEFAULT dark en Memory initial swiftUI=dark UIKit=[UIKitStyle:2, UIKitStyle:2]
+VPJ77 DEFAULT dark en Memory detail swiftUI=dark UIKit=[UIKitStyle:2]
+VPJ77 DEFAULT dark zh-Hans VP initial swiftUI=dark UIKit=[UIKitStyle:2]
+VPJ77 DEFAULT dark zh-Hans VP detail swiftUI=dark UIKit=[UIKitStyle:2, UIKitStyle:2, UIKitStyle:2, UIKitStyle:2, UIKitStyle:2, UIKitStyle:2]
+VPJ77 DEFAULT dark zh-Hans Memory initial swiftUI=dark UIKit=[UIKitStyle:2, UIKitStyle:2]
+VPJ77 DEFAULT dark zh-Hans Memory detail swiftUI=dark UIKit=[UIKitStyle:2]
+RUN default-light-to-dark
+VPJ77_SWITCH_READY
+VPJ77_SWITCH_OBSERVED initial=light target=dark swiftUI=dark UIKit=[UIKitStyle:2]
+RUN default-dark-to-light
+VPJ77_SWITCH_READY
+VPJ77_SWITCH_OBSERVED initial=dark target=light swiftUI=light UIKit=[UIKitStyle:1]
