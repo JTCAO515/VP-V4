@@ -1,4 +1,4 @@
-// Explicit network-none preparation only; fixed dependencies via exact git objects.
+// Explicit network-none preparation only; all dependencies from this current checkout.
 import test,{before,after} from 'node:test';
 import assert from 'node:assert/strict';
 import {randomUUID as uuid} from 'node:crypto';
@@ -6,8 +6,7 @@ import {readFileSync,readdirSync} from 'node:fs';
 import {command,sql} from '../integration/cost/fixtures/postgres-rpc.mjs';
 import {projectQualifiedIntakeComparison} from '../../lib/server/artifacts/qualified-intake-comparison.ts';
 const enabled=process.env.VPJ79_QUALIFIED_COMPARISON_PREP==='1',container='vpj79-qualified-'+uuid().slice(0,8);
-const intakeSHA='4728c18f96d60138cbc6718fc31f5f10ae3ad20b',bridgeSHA='9570497ce19fdbd26a1335a534547ad568db9b0f';
-const intakeMigration='20261002200000_vpj78_explicit_travel_intake.sql',bridgeMigration='20261003020000_vpj80_intake_admission_binding.sql',mine='20261003030000_vpj79_private_qualified_comparison.sql';
+const mine='20261003030000_vpj79_private_qualified_comparison.sql';
 let created=false;
 const db=async q=>{const r=await sql(container,q);assert.equal(r.code,0,r.stderr);return r.stdout.trim();};
 const lit=v=>v===null?'null':typeof v==='number'||typeof v==='boolean'?String(v):"'"+(typeof v==='object'?JSON.stringify(v):String(v)).replaceAll("'","''")+"'";
@@ -34,8 +33,7 @@ before(async()=>{
  const r=await command('docker',['run','--pull=never','--rm','-d','--network','none','--name',container,'--user','postgres','--entrypoint','/bin/sh','public.ecr.aws/supabase/postgres:17.6.1.159','-c','umask 077;mkdir /tmp/vpj59-socket;initdb -D /tmp/vpj59-db -A trust --no-locale -E UTF8 >/tmp/init.log 2>&1 && exec postgres -D /tmp/vpj59-db -c listen_addresses= -c unix_socket_directories=/tmp/vpj59-socket -c unix_socket_permissions=0700']);assert.equal(r.code,0,r.stderr);created=true;
  for(let n=0;n<100;n++){if((await command('docker',['exec',container,'pg_isready','-h','/tmp/vpj59-socket','-U','postgres'])).code===0)break;await new Promise(r=>setTimeout(r,100));}
  await db(readFileSync('tests/integration/turn/fixtures/durable-work-schema.sql','utf8'));await db("create function auth.role() returns text language sql as $$select nullif(current_setting('request.jwt.claim.role',true),'')$$;create schema extensions;create extension pgcrypto with schema extensions;");
- for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&! [mine,intakeMigration,bridgeMigration].includes(f)).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
- for(const [sha,file]of [[intakeSHA,intakeMigration],[bridgeSHA,bridgeMigration]]){const fixed=await command('git',['show',sha+':supabase/migrations/'+file]);assert.equal(fixed.code,0,'Fixed dependency object unavailable: '+sha+' '+fixed.stderr);await db('begin;'+fixed.stdout+'commit;');}
+ for(const f of readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')&&f!==mine).sort())await db('begin;'+readFileSync('supabase/migrations/'+f,'utf8')+'commit;');
  const migration=readFileSync('supabase/migrations/'+mine,'utf8');await db('begin;'+migration+'rollback;');assert.equal(await db("select to_regprocedure('turn_private.project_planning_qualified_comparison_v1(uuid,uuid,uuid,text,text,jsonb,text)') is null;"),'t');await db('begin;'+migration+'commit;');
 });
 after(async()=>{if(created)assert.equal((await command('docker',['rm','-f',container])).code,0);});
@@ -46,7 +44,7 @@ const place=()=>({schemaVersion:'planning-place/1',source:'synthetic_fixture',ob
 const project=async(a,r,p,locale=a.input.p_locale,lease=null,digests={})=>JSON.parse((await db(`select turn_private.project_planning_qualified_comparison_v1('${a.owner}','${r.turnId}',${lit(lease)},${lit(digests.intake??r.intakeContextDigest)},${lit(digests.planning??r.planningContextDigest)},${lit(p)}::jsonb,${lit(locale)});`))||'null');
 const validates=async(a,r,p,content,locale=a.input.p_locale)=>await db(`select turn_private.valid_planning_qualified_comparison_v1('${a.owner}','${r.turnId}',null,${lit(r.intakeContextDigest)},${lit(r.planningContextDigest)},${lit(p)}::jsonb,${lit(locale)},${lit(content)}::jsonb);`);
 run('fixed current binding yields exact TS projection in en/zh, no action/storage/execution authority and transactional migration rollback',async t=>{
- t.diagnostic(JSON.stringify({intakeSHA,bridgeSHA,network:'none',container}));
+ t.diagnostic(JSON.stringify({dependencies:'all current checkout migrations',network:'none',container}));
  for(const locale of ['en','zh']){const a=await owner('local_synthetic',locale),r=await call(a,'submit_planning_comparison_v2',v2(a)),context=await bound(a,r),p=place(),before=await state(a),s=await project(a,r,p),q=context.qualifiedIntake;
   const expected={conversationId:q.conversationId,goalId:q.goalId,goalVersion:q.goalVersion,messageId:q.messageId,messageSequence:q.messageSequence,intakeRevision:q.intakeRevision,contextDigest:q.contextDigest,memoryBasis:q.memoryBasis};
   assert.deepEqual(s,projectQualifiedIntakeComparison(q,expected,p,locale,Date.now(),'local_synthetic'));assert.equal(await validates(a,r,p,s.content),'t');assert.equal(s.readyForPublication,false);assert.equal(s.readyForProvider,false);assert.equal(await state(a),before);

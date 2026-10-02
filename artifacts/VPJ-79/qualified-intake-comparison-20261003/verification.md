@@ -18,4 +18,13 @@ PASS: `VPJ79_QUALIFIED_COMPARISON_PREP=1 node --experimental-strip-types --test 
 
 Original run:2PASS/2FAIL from fixture JSON.parse(empty psql output for correct SQL NULL). Fixed only NULL result decoding, retained original failure log, reran four affected groups with4PASS. No guard/role/trigger/completion change. The fixture removes only its own container;63420 and all Simulators remain unused.
 
-UNRUN: actual claim/dispatch/checkpoint/settled-attempt/publication, real producer/consumer integration, CI/target migrations and provider/cost operations. The observation argument is not a persisted tool receipt. This preparation cannot bypass the remaining v2 executor/completion seam; false readiness/execution flags remain. Local test is opt-in preparation outside CI until the frozen020000 dependency enters main, not claimed as integrated pipeline evidence.
+UNRUN: actual claim/dispatch/checkpoint/settled-attempt/publication, real producer/consumer integration, CI/target migrations and provider/cost operations. The observation argument is not a persisted tool receipt. This preparation cannot bypass the remaining v2 executor/completion seam; false readiness/execution flags remain. Local test remains opt-in preparation outside CI; CI registration is Main integration work, not claimed as integrated pipeline evidence.
+
+
+## Formal integration on merged main
+
+Rebased successfully onto actual main `a9e02f3a196b8c299f79e680ace7cdac0f26c5c2` (#623 intake + #624 bridge). The formal test now loads **all actual current-checkout migrations** in filename order (this owner migration additionally checked with rollback then commit). No git-object replacement or skipped dependency. The earlier fixed-fixture logs remain historical evidence.
+
+PASS: the same four affected PostgreSQL groups, 4/4, zero skips, 8215ms, using the opt-in command above; no unchanged TS/typecheck/lint suites were rerun. Full zh/en projection equality, invalid-source/digest/lease/correction/consent cases, API role EXECUTE denial and the existing v2 completion hard fence all hold on merged dependencies. `private-pg-current-main-pass.log.gz` contains this run. Container cleanup succeeded.
+
+Dependency Git blob provenance (both files byte-identical to earlier frozen sources): intake200000 `35da6ecb49f1eb34ba1c881b22bc0d6efe5076d6`; bridge020000 `f269bffd62184576b1a1014b15013b5afc7fa6cc`. Own SQL blob `2a377ad243e0c121a6d97bc7c028013311b7cad5` is unchanged from private preparation. Scope and all execution/publication/target/provider UNRUN limits above remain. No producer/claim/public permission wiring was added.
